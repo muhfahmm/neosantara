@@ -2,8 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, HandHelping, Check } from "lucide-react";
+import { HandHelping, Check } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import {
   INITIAL_SUBSIDY_ITEMS,
   SubsidyItem,
@@ -227,12 +230,12 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
 
           {/* HEADER */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
                 <HandHelping className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
               </div>
-              <div>
-                <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Alokasi & Kebijakan Subsidi</h2>
+              <div className="min-w-0">
+                <h2 className={rootModalTypography.title}>Alokasi & Kebijakan Subsidi</h2>
               </div>
             </div>
 
@@ -246,35 +249,28 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
                   Konfirmasi
                 </button>
               )}
-              <button
-                type="button"
-                onClick={onClose}
-                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-              >
-                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-4 w-4" />
-              </button>
+              <RootModalCloseButton onClick={onClose} />
             </div>
           </div>
 
           {/* TOP STATS SUMMARY BANNER */}
           {!forumDialogMode && <div className="px-4 lg:px-6 py-2 lg:py-3 bg-[#0A1A1A]/80 border-b border-[#00FFAA]/15 grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-2.5 shrink-0">
-            <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 rounded-xl">
+            <div className={`border border-[#00FFAA]/20 bg-[#0F2424] p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
               <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Total Beban Anggaran Subsidi</p>
               <p className="text-xs lg:text-sm font-black text-[#00FFAA] mt-0.5">{formatCurrencyCompact(summary.totalCost)}</p>
             </div>
 
-            <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 rounded-xl">
+            <div className={`border border-[#00FFAA]/20 bg-[#0F2424] p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
               <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Sektor Aktif / Total</p>
               <p className="text-xs lg:text-sm font-black text-[#E0E0E0] mt-0.5">{summary.activeCount} dari {summary.totalCount} Sektor</p>
             </div>
 
-            <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 rounded-xl">
+            <div className={`border border-[#00FFAA]/20 bg-[#0F2424] p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
               <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Dukungan Kepuasan Rakyat</p>
               <p className="text-xs lg:text-sm font-black text-emerald-400 mt-0.5">+{summary.totalApprovalBonus}% Approval</p>
             </div>
 
-            <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 rounded-xl">
+            <div className={`border border-[#00FFAA]/20 bg-[#0F2424] p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
               <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Dampak Netto Populasi</p>
               <p className={`text-xs lg:text-sm font-black mt-0.5 ${subsidyMonthlyPopModifier >= 0 ? "text-[#00FFAA]" : "text-rose-400"
                 }`}>
@@ -285,7 +281,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
 
           {/* FEEDBACK SUCCESS TOAST */}
           {isSavedSuccess && (
-            <div className="absolute top-24 left-1/2 -translate-x-1/2 z-30 px-6 py-2.5 rounded-xl bg-emerald-500 text-[#0A1A1A] font-black text-xs uppercase tracking-widest shadow-2xl flex items-center gap-2 animate-in fade-in zoom-in-95">
+            <div className={`absolute top-24 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 bg-emerald-500 px-6 py-2.5 text-xs font-black uppercase tracking-widest text-[#0A1A1A] shadow-2xl animate-in fade-in zoom-in-95 ${rootBorderRadius.card}`}>
               <Check className="w-4 h-4" /> Alokasi Subsidi Berhasil Diperbarui!
             </div>
           )}
@@ -307,9 +303,9 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
                   <button
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`flex items-center justify-between w-full p-2 lg:p-2.5 rounded-xl border text-left transition-all cursor-pointer ${selectedCategory === cat.id
+                    className={`flex w-full items-center justify-between border p-2 text-left transition-all cursor-pointer lg:p-2.5 ${rootBorderRadius.card} ${selectedCategory === cat.id
                       ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
-                      : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
+                      : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA] hover:text-[#00FFAA]"
                       }`}
                   >
                     <span className="text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{cat.label}</span>
@@ -352,7 +348,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
                 <PerlindunganSosialTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
               )}
 
-              {!forumDialogMode && <div className="mt-6 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-5">
+              {!forumDialogMode && <div className={`mt-6 border border-[#00FFAA]/30 bg-[#0F2424] p-5 ${rootBorderRadius.card}`}>
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-sm font-black uppercase tracking-widest text-[#00FFAA]">
                     Indeks Kepuasan Rakyat (Subsidi)
@@ -383,7 +379,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
       />
       {isConfirmDialogOpen && createPortal(
         <div className="fixed inset-0 z-[2147483647] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-          <div role="dialog" aria-modal="true" aria-labelledby="subsidy-confirm-title" className="w-full max-w-md rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-2xl">
+          <div role="dialog" aria-modal="true" aria-labelledby="subsidy-confirm-title" className={`w-full max-w-md border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-2xl ${rootBorderRadius.card}`}>
             <h3 id="subsidy-confirm-title" className="text-lg font-bold text-white">Konfirmasi kebijakan subsidi</h3>
             <p className="mt-2 text-sm text-slate-300">
               Perubahan alokasi subsidi akan diterapkan. Lanjutkan?

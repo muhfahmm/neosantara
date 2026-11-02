@@ -7,6 +7,8 @@ import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
 import { applyNpcCountrySimulationState } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
 
 import { NPC_COUNTRY_SIMULATION_UPDATED_EVENT } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 
 interface CountryPopulationRow {
   id: number;
@@ -182,35 +184,35 @@ export default function TabelPopulasiNegara({
   return (
     <section
       aria-label="Tabel populasi negara"
-      className="rounded-xl border border-[#00FFAA]/20 bg-[#0F2424] p-3.5 lg:p-4.5 2xl:p-6"
+      className={`${rootBorderRadius.card} border border-[#00FFAA]/20 bg-[#0F2424] p-3.5 lg:p-4.5 2xl:p-6`}
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h3 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[#00FFAA] lg:text-sm">
+          <h3 className={`${rootModalTypography.sectionTitle} flex items-center gap-2`}>
             <Users className="h-4 w-4" />
             Populasi Negara
           </h3>
-          <p className="mt-1 text-[9px] text-[#6B8A8A] lg:text-[10px]">
+          <p className={`${rootModalTypography.muted} mt-1 text-[9px] lg:text-[10px]`}>
             {loading
               ? "Memuat data negara..."
               : `${countries.length} negara · urut dari pertumbuhan harian tertinggi`}
           </p>
         </div>
         <label className="flex min-w-[170px] items-center gap-2 rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] px-2.5 py-2">
-          <Search className="h-3.5 w-3.5 shrink-0 text-[#6B8A8A]" />
+          <Search className="h-3.5 w-3.5 shrink-0 text-[#AAB6B6]" />
           <input
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Cari negara..."
             aria-label="Cari negara"
-            className="w-full bg-transparent text-xs text-[#E0E0E0] outline-none placeholder:text-[#6B8A8A]"
+            className="w-full bg-transparent text-xs text-[#E0E0E0] outline-none placeholder:text-[#AAB6B6]"
           />
         </label>
       </div>
 
       {loading && (
-        <p className="mt-4 text-xs text-[#6B8A8A]" role="status">
+        <p className={`${rootModalTypography.muted} mt-4 text-xs`} role="status">
           Sedang mengambil data populasi...
         </p>
       )}
@@ -222,10 +224,10 @@ export default function TabelPopulasiNegara({
       )}
 
       {!loading && !error && (
-        <div className="mt-3 max-h-[50vh] overflow-auto rounded-lg border border-[#00FFAA]/15">
+        <div className={`mt-3 max-h-[50vh] overflow-auto ${rootBorderRadius.card} border border-[#00FFAA]/15`}>
           <table className="w-full min-w-[420px] border-collapse text-left">
             <thead className="sticky top-0 z-10 bg-[#0A1A1A]">
-              <tr className="text-[9px] font-black uppercase tracking-wider text-[#6B8A8A]">
+              <tr className={`${rootModalTypography.label} text-left`}>
                 <th scope="col" className="px-3 py-2.5">No.</th>
                 <th scope="col" className="px-3 py-2.5">Negara</th>
                 <th scope="col" className="px-3 py-2.5 text-right">Pertumbuhan / hari</th>
@@ -237,8 +239,7 @@ export default function TabelPopulasiNegara({
                 (() => {
                   const dailyChange = getDailyChange(country.perubahan_harian);
                   const monthlyChange = dailyChange * 30;
-                  const changeColor =
-                    dailyChange < 0 ? "text-rose-400" : "text-[#00FFAA]";
+                  const changeColor = rootModalTypography.value;
 
                   return (
                     <tr

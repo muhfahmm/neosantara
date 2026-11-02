@@ -11,7 +11,7 @@ import { MapSettingsSection } from './4_settings/MapSettingsSection';
 import { ExitConfirmModal } from './ExitConfirmModal';
 import { LoadGameView } from './2_load_game/LoadGameView';
 import { deleteGameSave, fetchLoadableGameSaves, loadGameSave, type LoadGameSave } from './2_load_game/loadGameLogic';
-import NotebookModalWrapper from '../navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
+import PausedMenuFrame from '../root_modals_design_menu/rootFrameMenu';
 import { soundManager } from '@/lib/soundManager';
 
 interface GameMenuModalProps {
@@ -33,7 +33,6 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
     const [musicVol, setMusicVol] = useState(() => soundManager ? soundManager.getMusicVolume() : 80);
     const [sfxVol, setSfxVol] = useState(() => soundManager ? soundManager.getSfxVolume() : 70);
     const [resolution, setResolution] = useState('1920x1080');
-    const [showExitConfirm, setShowExitConfirm] = useState(false);
     const [showMainMenuConfirm, setShowMainMenuConfirm] = useState(false);
 
     useEffect(() => {
@@ -48,7 +47,6 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
         if (isOpen) {
             setSubview('menu');
             setShowKeywordModal(false);
-            setShowExitConfirm(false);
             setShowMainMenuConfirm(false);
             if (soundManager) {
                 setMusicVol(soundManager.getMusicVolume());
@@ -98,10 +96,6 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
         setShowMainMenuConfirm(true);
     };
 
-    const handleCloseWindow = () => {
-        setShowExitConfirm(true);
-    };
-
     const executeMainMenu = () => {
         try {
             localStorage.removeItem('dailyRewardData');
@@ -116,33 +110,13 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
         router.replace('/page');
     };
 
-    const executeCloseWindow = () => {
-        try {
-            localStorage.removeItem('dailyRewardData');
-            sessionStorage.removeItem('programNuklirActive');
-            sessionStorage.removeItem('program_nuklir_modal_open');
-            sessionStorage.removeItem('icbm_detail_open');
-            sessionStorage.removeItem('perang_nuklir_detail_open');
-            sessionStorage.removeItem('presiden_simulator_load_save');
-            localStorage.removeItem('programNuklirActive');
-            localStorage.removeItem('icbmBuildTask');
-        } catch (e) {}
-        if (soundManager) {
-            soundManager.stopMusic();
-        }
-        window.close();
-    };
-
-    const isConfirming = showExitConfirm || showMainMenuConfirm;
+    const isConfirming = showMainMenuConfirm;
 
     return createPortal(
         <React.Fragment>
             <div className={isConfirming ? 'pointer-events-none' : 'pointer-events-auto'}>
-                <NotebookModalWrapper zIndexClass="z-[99999999]">
+                <PausedMenuFrame zIndexClass="z-[99999999]">
                     <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-4 custom-scrollbar sm:p-8">
-                        {/* Subtle radial glow */}
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
-
                         {/* Decorative Elegant Divider at the Top */}
                         <div className="flex items-center justify-center gap-1.5 text-[#00FFAA]/40 mb-6 shrink-0">
                             <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-[#00FFAA]/40" />
@@ -200,15 +174,9 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                     </button>
                                 </div>
 
-                                <div className="space-y-4 pt-12">
+                                <div className="pt-12">
                                     <button
                                         onClick={handleExitGame}
-                                        className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3.5 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
-                                    >
-                                        Menu Utama
-                                    </button>
-                                    <button
-                                        onClick={handleCloseWindow}
                                         className="w-full bg-[#0A1A1A] hover:bg-rose-500/10 active:bg-rose-500/20 border border-rose-500/30 hover:border-rose-500/60 rounded py-3.5 text-center text-[#E0E0E0] hover:text-rose-300 font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(244,63,94,0.15)] active:scale-[0.99]"
                                     >
                                         Keluar Permainan
@@ -317,31 +285,21 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                             <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-[#00FFAA]/40" />
                         </div>
                     </div>
-                </NotebookModalWrapper>
+                </PausedMenuFrame>
             </div>
             <KeywordModal
                 isOpen={showKeywordModal}
                 onClose={() => setShowKeywordModal(false)}
             />
-            {/* Modal Konfirmasi Exit Game */}
-            <ExitConfirmModal
-                isOpen={showExitConfirm}
-                onClose={() => setShowExitConfirm(false)}
-                onConfirm={executeCloseWindow}
-                title="Keluar dari Permainan?"
-                subtitle="TERMINASI SESI"
-                message="Apakah Anda yakin ingin keluar dari permainan? Progres yang belum disimpan akan hilang."
-                confirmText="Keluar Game"
-            />
-            {/* Modal Konfirmasi Kembali ke Main Menu */}
+            {/* Modal konfirmasi sebelum kembali ke menu utama */}
             <ExitConfirmModal
                 isOpen={showMainMenuConfirm}
                 onClose={() => setShowMainMenuConfirm(false)}
                 onConfirm={executeMainMenu}
-                title="Kembali ke Main Menu?"
-                subtitle="NAVIGASI UTAMA"
-                message="Apakah Anda yakin ingin kembali ke Menu Utama? Progres yang tidak disimpan akan hilang."
-                confirmText="Ke Main Menu"
+                title="Keluar Permainan?"
+                subtitle="KONFIRMASI KELUAR"
+                message="Anda akan kembali ke Menu Utama. Progres yang belum disimpan akan hilang."
+                confirmText="Ya, Keluar Permainan"
             />
         </React.Fragment>,
         document.body

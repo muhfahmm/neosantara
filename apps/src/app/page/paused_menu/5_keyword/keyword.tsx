@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { ArrowLeft, Command, Search } from 'lucide-react';
-import NotebookModalWrapper from '../../navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
+import PausedMenuFrame from '../../root_modals_design_menu/rootFrameMenu';
 import { GAME_SHORTCUTS, type ShortcutDefinition } from './index';
 
 interface KeywordModalProps {
@@ -31,10 +31,8 @@ export function KeywordModal({ isOpen, onClose }: KeywordModalProps) {
   });
 
   return (
-    <NotebookModalWrapper zIndexClass="z-[999999999]">
+    <PausedMenuFrame zIndexClass="z-[999999999]">
       <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden p-4 text-[#E0E0E0] custom-scrollbar sm:p-8">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
-
         <div className="relative z-10 flex min-h-0 flex-1 flex-col">
           <div className="mb-4 flex shrink-0 items-center justify-center gap-1.5 text-[#00FFAA]/40">
             <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-[#00FFAA]/40" />
@@ -137,7 +135,7 @@ export function KeywordModal({ isOpen, onClose }: KeywordModalProps) {
           </div>
         </div>
       </div>
-    </NotebookModalWrapper>
+    </PausedMenuFrame>
   );
 }
 

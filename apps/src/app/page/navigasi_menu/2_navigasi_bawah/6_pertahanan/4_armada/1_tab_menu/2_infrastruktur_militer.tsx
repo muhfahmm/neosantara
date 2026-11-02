@@ -468,7 +468,7 @@ export default function InfrastrukturMiliter({
   // 🟢 Render UI
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 lg:gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
         {Object.keys(infrastrukturData).map((key) => {
           const item = infrastrukturData[key];
           if (!item) return null;
@@ -488,7 +488,7 @@ export default function InfrastrukturMiliter({
                 setSelectedForBuild({ key, label: item.label });
                 setIsConfirmBuildOpen(true);
               }}
-              className={`relative rounded-xl overflow-visible flex flex-col justify-between transition-all bg-[#0A1A1A] border p-2 sm:p-2.5 min-h-[88px] sm:min-h-[96px] cursor-pointer ${
+              className={`relative rounded-2xl overflow-visible flex flex-col justify-between transition-all bg-[#0A1A1A] border p-2 sm:p-2.5 min-h-[88px] sm:min-h-[96px] cursor-pointer ${
                 highlightKey === key 
                   ? 'border-[#00FFAA] shadow-[0_0_12px_rgba(0,255,170,0.3)]' 
                   : 'border-[#00FFAA]/20 hover:border-[#00FFAA]/50 hover:shadow-md'

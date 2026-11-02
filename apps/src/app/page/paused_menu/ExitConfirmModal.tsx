@@ -3,6 +3,7 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { LogOut, AlertTriangle, ArrowLeft } from 'lucide-react';
+import PausedMenuFrame from '../root_modals_design_menu/rootFrameMenu';
 
 interface ExitConfirmModalProps {
     isOpen: boolean;
@@ -37,25 +38,8 @@ export function ExitConfirmModal({
     const isExitWindow = confirmText?.toLowerCase().includes('keluar') ?? false;
 
     const content = (
-        <div className="fixed inset-0 z-[9999999999] flex items-center justify-center pt-[88px] sm:pt-[100px] lg:pt-[clamp(92px,10dvh,115px)] pb-3 sm:pb-4 lg:pb-5 px-3 sm:px-6 lg:px-10 bg-transparent font-sans pointer-events-none select-none animate-fadeIn">
-            
-            <section className="bg-[#0A1A1A] border-[6px] border-[#0F2424] rounded-2xl w-full max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl h-full max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)] shadow-2xl relative flex flex-col min-w-0 p-3 sm:p-4 pl-10 sm:pl-12 pointer-events-auto overflow-y-auto custom-scrollbar">
-                
-                {/* Jilid Buku (Spiral & Besi) */}
-                <div className="absolute left-3 sm:left-3.5 top-6 bottom-6 w-2 sm:w-2.5 bg-gradient-to-r from-[#2A3F3F] via-[#3D5252] to-[#1F3030] rounded-full shadow-md z-20 border border-[#0A1A1A]/80" />
-                <div className="absolute left-[8px] sm:left-[10px] top-[24px] w-[16px] sm:w-[18px] h-3.5 bg-[#0F2424] rounded-sm border border-[#0A1A1A] z-21 shadow" />
-                <div className="absolute left-[8px] sm:left-[10px] bottom-[24px] w-[16px] sm:w-[18px] h-3.5 bg-[#0F2424] rounded-sm border border-[#0A1A1A] z-21 shadow" />
-                <div className="absolute left-[22px] sm:left-[26px] top-10 bottom-10 flex flex-col justify-between items-center py-4 pointer-events-none z-30">
-                    {[...Array(11)].map((_, i) => (
-                        <div key={i} className="w-3 sm:w-3.5 h-3 sm:h-3.5 rounded-full bg-[#0A1A1A] shadow-inner border border-[#00FFAA]/20 flex items-center justify-center">
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#0F2424]" />
-                        </div>
-                    ))}
-                </div>
-
-                {/* Kertas / Panel Dalam */}
-                <div className="flex-1 bg-[#0F2424] border-[3px] border-[#00FFAA]/20 rounded-r-xl shadow-inner relative p-8 flex flex-col overflow-hidden text-[#E0E0E0]">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
+        <PausedMenuFrame zIndexClass="z-[9999999999]">
+                <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-8 text-[#E0E0E0] custom-scrollbar">
                     
                     {/* Ornamen Atas */}
                     <div className="flex items-center justify-center gap-1.5 text-[#00FFAA]/40 mb-4 shrink-0">
@@ -112,7 +96,16 @@ export function ExitConfirmModal({
                         </div>
                     </div>
 
-                    {/* Footer Tombol Dihapus */}
+                    <footer className="flex shrink-0 justify-center border-t border-rose-500/20 pt-5">
+                        <button
+                            type="button"
+                            onClick={handleExit}
+                            className="inline-flex min-w-56 items-center justify-center gap-2 rounded-lg border border-rose-500/60 bg-rose-600 px-6 py-3 text-sm font-black uppercase tracking-wider text-white shadow-[0_0_18px_rgba(244,63,94,0.2)] transition-all hover:border-rose-400 hover:bg-rose-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F2424] active:scale-[0.98] cursor-pointer"
+                        >
+                            <LogOut className="h-4 w-4" />
+                            {confirmText}
+                        </button>
+                    </footer>
 
                     {/* Ornamen Bawah */}
                     <div className="flex items-center justify-center gap-1.5 text-[#00FFAA]/40 mt-4 shrink-0">
@@ -121,8 +114,7 @@ export function ExitConfirmModal({
                         <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-[#00FFAA]/40" />
                     </div>
                 </div>
-            </section>
-        </div>
+        </PausedMenuFrame>
     );
 
     if (typeof document !== 'undefined') {

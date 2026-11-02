@@ -3,11 +3,14 @@
 "use client"
 
 import React, { useState } from "react";
-import { X, Handshake, ChevronRight, Globe, Plus } from "lucide-react";
+import { Handshake, ChevronRight, Globe, Plus } from "lucide-react";
 import MitraDetailModals from "./mitraDetailModals";
 import ConfirmRemoveTradeModal from "./ConfirmRemoveTradeModal";
 import TambahMitraBaru from "./tambahMitraBaru";
 import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
+import NotebookModalWrapper from "../../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 
 export interface TradePartner {
   id: number;
@@ -77,29 +80,26 @@ export default function MitraModalsMenu({
       />
 
       {!isDetailOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
+        <NotebookModalWrapper onClose={onClose} zIndexClass="z-[65]">
+          <div className="flex h-full min-w-0 flex-col overflow-hidden">
             <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
-              <div className="flex items-center gap-2 sm:gap-3">
+              <div className="flex min-w-0 items-center gap-2 sm:gap-3">
                 <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
                   <Handshake className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
                 </div>
-                <div>
-                  <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Mitra Dagang Global</h2>
+                <div className="min-w-0">
+                  <h2 className={rootModalTypography.title}>Mitra Dagang Global</h2>
                 </div>
               </div>
-              <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
-                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-4 w-4" />
-              </button>
+              <RootModalCloseButton onClick={onClose} />
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6 relative z-10 neon-scrollbar">
+            <div className="root-no-scrollbar-glow min-h-0 flex-1 overflow-y-auto p-4 sm:p-6 relative z-10 neon-scrollbar">
               {partners.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-10 text-[#6B8A8A]">
                   <Globe className="h-12 w-12 mb-3 opacity-30 text-[#00FFAA]" />
                   <p className="text-sm font-bold text-[#E0E0E0]">Belum ada hubungan dagang</p>
-                  <p className="text-xs text-[#6B8A8A]">Jalin hubungan dagang dengan negara lain melalui menu Jual/Beli.</p>
+                  <p className={`${rootModalTypography.body} break-words`}>Jalin hubungan dagang dengan negara lain melalui menu Jual/Beli.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -128,10 +128,10 @@ export default function MitraModalsMenu({
                             </div>
                           );
                         })()}
-                        <div>
+                        <div className="min-w-0">
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <h4 className="text-sm font-black text-[#E0E0E0] uppercase">{partner.nama_negara}</h4>
-                            {partner.jenis_perjanjian && (
+                            <h4 className="min-w-0 break-words text-sm font-black text-[#E0E0E0] uppercase">{partner.nama_negara}</h4>
+                            {partner.jenis_perjanjian && partner.jenis_perjanjian.trim().toLowerCase() !== "perdagangan" && (
                               <span className="px-2 py-0.5 bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30 rounded-full text-[8px] font-bold uppercase tracking-wider">
                                 {partner.jenis_perjanjian}
                               </span>
@@ -143,9 +143,11 @@ export default function MitraModalsMenu({
                               {partner.status_hubungan}
                             </span>
                           </div>
-                          <p className="text-[10px] text-[#6B8A8A] font-semibold flex items-center gap-1">
-                            {partner.region}
-                          </p>
+                          {partner.region.trim().toLowerCase() !== "internasional" && (
+                            <p className="break-words text-[10px] text-[#6B8A8A] font-semibold flex items-center gap-1">
+                              {partner.region}
+                            </p>
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
@@ -186,7 +188,7 @@ export default function MitraModalsMenu({
               )}
             </div>
           </div>
-        </div>
+        </NotebookModalWrapper>
       )}
       <ConfirmRemoveTradeModal
         isOpen={isRemoveConfirmOpen}

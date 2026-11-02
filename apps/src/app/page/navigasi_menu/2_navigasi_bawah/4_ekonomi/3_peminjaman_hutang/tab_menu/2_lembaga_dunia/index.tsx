@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { Landmark, ArrowUp, ArrowDown } from "lucide-react";
 import PilihTenorModal from "./PilihTenorModal";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 
 interface LoanCooldowns {
   [key: number]: string;
@@ -131,9 +133,9 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
   };
 
   return (
-    <div className="space-y-4 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar">
+    <div className="space-y-3 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar">
       {loanRestriction && (
-        <div className="rounded-xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm font-bold text-rose-300">
+        <div className={`border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm font-bold text-rose-300 ${rootBorderRadius.card}`}>
           Pinjaman IMF dan Bank Dunia diblokir: ideologi Komunis dengan rata-rata nasionalisasi sektor di atas 50%.
         </div>
       )}
@@ -144,33 +146,33 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
         const nextAvailable = cooldownEnd ? formatIdDate(cooldownEnd) : null;
 
         return (
-          <div key={lembaga.id} className="bg-[#0F2424] border border-[#00FFAA]/30 p-5 rounded-2xl flex flex-col gap-4">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30">
-                  <Landmark className="h-6 w-6 text-[#00FFAA]" />
+          <div key={lembaga.id} className={`flex min-w-0 flex-col gap-4 border border-[#00FFAA]/30 bg-[#0F2424] p-4 ${rootBorderRadius.card}`}>
+            <div className="flex min-w-0 flex-col justify-between gap-3 sm:flex-row sm:items-center">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className={`shrink-0 border border-[#00FFAA]/30 bg-[#0A1A1A] p-2 ${rootBorderRadius.card}`}>
+                  <Landmark className="h-5 w-5 text-[#00FFAA]" />
                 </div>
-                <div>
-                  <h4 className="text-base font-black text-[#00FFAA]">{lembaga.name}</h4>
-                  <p className="text-[10px] text-[#6B8A8A]">
-                    Bunga: {lembaga.interest}% | Maks: {lembaga.maxCap.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO | Tenor: 180–1825 hari
+                <div className="min-w-0">
+                  <h4 className={`${rootModalTypography.sectionTitle} break-words text-[#00FFAA]`}>{lembaga.name}</h4>
+                  <p className="mt-1 break-words text-[10px] font-medium leading-relaxed text-[#6B8A8A]">
+                    Bunga {lembaga.interest}% <span aria-hidden="true">·</span> Maks {lembaga.maxCap.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO <span aria-hidden="true">·</span> Tenor 180–1825 hari
                   </p>
                 </div>
               </div>
-              <div className="flex flex-col gap-2 md:items-end">
-                <div className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">Cooldown</div>
-                <div className={`text-sm font-bold ${isCooldownActive || loanRestriction ? "text-rose-400" : "text-emerald-400"}`}>
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 sm:shrink-0 sm:justify-end">
+                <span className={`${rootModalTypography.label}`}>Cooldown</span>
+                <span className={`text-xs font-bold ${isCooldownActive || loanRestriction ? "text-rose-400" : "text-emerald-400"}`}>
                   {loanRestriction
                     ? "Pengajuan diblokir"
                     : isCooldownActive
                       ? `Tersisa sampai ${nextAvailable}`
                       : "Bisa pinjam sekarang"}
-                </div>
+                </span>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <label className="space-y-2 text-[10px] font-black uppercase tracking-wider text-[#00FFAA]">
+            <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
+              <label className="min-w-0 space-y-1.5 text-[10px] font-black uppercase tracking-wider text-[#00FFAA]">
                 Jumlah Pinjaman
                 <div className="relative">
                   <input
@@ -179,30 +181,30 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
                     placeholder={lembaga.maxCap.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                     value={amounts[lembaga.id] && amounts[lembaga.id] !== "" ? Number(amounts[lembaga.id]).toLocaleString('id-ID', { maximumFractionDigits: 2 }) : ""}
                     onChange={(e) => handleAmountChange(lembaga.id, e.target.value)}
-                    className="w-full rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] px-4 py-3 pr-24 text-sm font-bold text-[#E0E0E0] outline-none focus:border-[#00FFAA]"
+                    className={`h-10 w-full border border-[#00FFAA]/30 bg-[#0A1A1A] px-3 pr-20 text-sm font-bold text-[#E0E0E0] outline-none transition focus:border-[#00FFAA] ${rootBorderRadius.card}`}
                   />
-                  <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-2">
+                  <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center gap-1">
                     <button
                       type="button"
                       onClick={() => decrementLoanAmount(lembaga.id, 1_000_000)}
-                      className="flex items-center justify-center rounded-full bg-[#0F2424] text-[#00FFAA] border border-[#00FFAA]/30 w-9 h-9 hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-colors cursor-pointer"
+                      className={`flex h-7 w-7 cursor-pointer items-center justify-center border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] transition-colors hover:bg-[#00FFAA] hover:text-[#0A1A1A] ${rootBorderRadius.card}`}
                       aria-label="Kurangi 1 juta"
                     >
-                      <ArrowDown className="h-4 w-4" />
+                      <ArrowDown className="h-3.5 w-3.5" />
                     </button>
                     <button
                       type="button"
                       onClick={() => setQuickLoanAmount(lembaga.id, 15_000_000)}
-                      className="flex items-center justify-center rounded-full bg-[#0F2424] text-[#00FFAA] border border-[#00FFAA]/30 w-9 h-9 hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-colors cursor-pointer"
+                      className={`flex h-7 w-7 cursor-pointer items-center justify-center border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] transition-colors hover:bg-[#00FFAA] hover:text-[#0A1A1A] ${rootBorderRadius.card}`}
                       aria-label="Setel 15 juta"
                     >
-                      <ArrowUp className="h-4 w-4" />
+                      <ArrowUp className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 </div>
               </label>
 
-              <div className="space-y-2 text-[10px] font-black uppercase tracking-wider text-[#00FFAA] cursor-pointer">
+              <div className="min-w-0 space-y-1.5 text-[10px] font-black uppercase tracking-wider text-[#00FFAA]">
                 <div className="flex items-center justify-between">
                   <span>Tenor Pengembalian</span>
                   <span className="text-[10px] text-[#6B8A8A]">
@@ -212,7 +214,7 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
                 <button
                   type="button"
                   onClick={() => setTermModalTarget(lembaga.id)}
-                  className="w-full rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] px-4 py-3 text-left text-sm font-bold text-[#E0E0E0] outline-none transition hover:border-[#00FFAA] cursor-pointer"
+                  className={`h-10 w-full cursor-pointer border border-[#00FFAA]/30 bg-[#0A1A1A] px-3 text-left text-sm font-bold text-[#E0E0E0] outline-none transition hover:border-[#00FFAA] ${rootBorderRadius.card}`}
                 >
                   {TENOR_OPTIONS.find((option) => option.days === Number(terms[lembaga.id] ?? 180))?.label ?? "6m"} / {Number(terms[lembaga.id] ?? 180).toLocaleString("id-ID", { maximumFractionDigits: 2 })} hari
                 </button>
@@ -220,7 +222,7 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
             </div>
 
             {errors[lembaga.id] && (
-              <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm font-bold text-rose-400">
+              <div className={`break-words border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm font-bold text-rose-400 ${rootBorderRadius.card}`}>
                 {errors[lembaga.id]}
               </div>
             )}
@@ -228,7 +230,7 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
             <button
               onClick={() => handleRequestLoan(lembaga)}
               disabled={isCooldownActive || loanRestriction}
-              className={`w-full px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${
+              className={`w-full px-5 py-2.5 text-[10px] font-black uppercase tracking-wider transition-all ${rootBorderRadius.card} ${
                 isCooldownActive || loanRestriction
                   ? "bg-[#0A1A1A] text-[#6B8A8A] border border-gray-800 cursor-not-allowed"
                   : "cursor-pointer bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 font-bold"

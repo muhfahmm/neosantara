@@ -15,6 +15,7 @@ import {
 import { fetchDoktrinKeterbukaanFromDb } from "../../../../../../../../json/2_database_doktrin_keterbukaan/index";
 import { generateDoctrineChangeNotification } from "@/app/page/menus/inbox/logic/10_sosial_budaya/3_keterbukaan/doctrineChangeLogic";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 
 interface DoktrinKeterbukaanModalProps {
   isOpen: boolean;
@@ -250,7 +251,7 @@ export default function DoktrinKeterbukaanModal({
             <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30">
               <Globe className="h-5 w-5 text-[#00FFAA]" />
             </div>
-            <h3 className="text-sm sm:text-base font-bold text-[#E0E0E0] tracking-wide uppercase">
+            <h3 className={rootModalTypography.title}>
               Doktrin & Keterbukaan Negara
             </h3>
           </div>

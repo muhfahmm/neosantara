@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Users, Heart, Shield, Home, HeartPulse, Utensils, AlertTriangle, ArrowUpRight, Skull, Info } from "lucide-react";
+import { Users, Heart, Shield, Home, HeartPulse, Utensils, AlertTriangle, ArrowUpRight, Skull } from "lucide-react";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 
 import {
@@ -11,21 +11,15 @@ import {
   calculateDailyDeaths,
 } from "@/app/logic/populations_logic/population_logic";
 import { calculatePanganScore, calculateKesehatanScore, calculatePenegakanHukumScore } from "@/app/logic/kepuasanCalculator";
-
-// 🔥 Import 7 modal detail (pastikan path sesuai struktur Anda)
-import DetailHarapanHidupModal from './grid_modals/DetailHarapanHidupModal';
-import DetailKeamananModal from './grid_modals/DetailKeamananModal';
-import DetailTunawismaModal from './grid_modals/DetailTunawismaModal';
-import DetailKesehatanModal from './grid_modals/DetailKesehatanModal';
-import DetailKetahananPanganModal from './grid_modals/DetailKetahananPanganModal';
-import DetailKriminalitasModal from './grid_modals/DetailKriminalitasModal';
-
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 // Import dari logic yang baru dibuat
 import { calculateKeamananLogic } from "./logic/keamananLogic";
 import { calculateKesehatanLogic } from "./logic/kesehatanLogic";
 import { calculateTunawismaLogic } from "./logic/tunawismaLogic";
 import { calculateKriminalitasLogic } from "./logic/kriminalitasLogic";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 
 interface DetailKematianModalProps {
   isOpen: boolean;
@@ -50,13 +44,6 @@ export default function DetailKematianModal({
   onOpenIndustriPangan,
   onOpenArmada,
 }: DetailKematianModalProps) {
-  // 🔥 State untuk 7 modal detail (agar tombol Info bisa membuka modal)
-  const [isHarapanHidupOpen, setIsHarapanHidupOpen] = useState(false);
-  const [isKeamananOpen, setIsKeamananOpen] = useState(false);
-  const [isTunawismaOpen, setIsTunawismaOpen] = useState(false);
-  const [isKesehatanOpen, setIsKesehatanOpen] = useState(false);
-  const [isKetahananPanganOpen, setIsKetahananPanganOpen] = useState(false);
-  const [isKriminalitasOpen, setIsKriminalitasOpen] = useState(false);
 
   // Fetch building metadata agar rumus Pangan identik 100% dengan IndeksKesejahteraanModal
   const [metadata, setMetadata] = useState<any>(null);
@@ -120,13 +107,10 @@ export default function DetailKematianModal({
               <Users className="h-4 w-4 sm:h-5 sm:w-5 text-rose-400" />
             </div>
             <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Rincian Angka Kematian</h2>
+              <h2 className={`${rootModalTypography.title} leading-none`}>Rincian Angka Kematian</h2>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
+          <RootModalCloseButton onClick={onClose} />
         </div>
 
         {/* Body */}
@@ -134,10 +118,10 @@ export default function DetailKematianModal({
           <div className="space-y-6">
             
             {/* Ringkasan Utama */}
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl">
+            <div className={`bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 ${rootBorderRadius.card}`}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-black text-[#6B8A8A] uppercase tracking-wider">Kematian Harian</p>
+                  <p className="text-sm font-black text-[#AAB6B6] uppercase tracking-wider">Kematian Harian</p>
                   <p className="text-4xl font-black text-rose-400 mt-1">-{formatNumber(dailyDeaths)}</p>
                 </div>
                 <div className="p-4 bg-rose-500/10 rounded-full border border-rose-500/30">
@@ -147,194 +131,110 @@ export default function DetailKematianModal({
             </div>
 
             {/* Breakdown Faktor */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
               {/* 1. Harapan Hidup */}
-              <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative">
-                <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
-                  onClick={() => setIsHarapanHidupOpen(true)}
-                >
-                  <Info className="w-4 h-4" />
-                </button>
-                <div className="flex items-center gap-2">
+              <div className={`min-w-0 bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 ${rootBorderRadius.card} space-y-2 relative`}>
+                <div className="flex min-w-0 items-center gap-2">
                   <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
-                    <Heart className="h-4 w-4 text-[#00FFAA]" />
+                    <Heart className="h-4 w-4 text-[#E0E0E0]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Harapan Hidup</h4>
+                  <h4 className="min-w-0 break-words text-xs font-black uppercase text-[#E0E0E0]">Harapan Hidup</h4>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#E0E0E0]">{harapanHidup} tahun</span>
-                  <span className="text-[10px] text-[#6B8A8A]">× {lifeExpectancyFactor.toFixed(2)}</span>
+                <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+                  <span className="min-w-0 break-words text-sm font-bold text-[#E0E0E0]">{harapanHidup} tahun</span>
+                  <span className="text-[10px] text-[#AAB6B6]">× {lifeExpectancyFactor.toFixed(2)}</span>
                 </div>
-                <p className="text-[10px] text-[#6B8A8A]">Semakin tinggi harapan hidup, semakin rendah angka kematian.</p>
+                <p className="min-w-0 whitespace-normal break-words [overflow-wrap:anywhere] text-[10px] leading-relaxed text-[#AAB6B6]">Semakin tinggi harapan hidup, semakin rendah angka kematian.</p>
               </div>
 
               {/* 2. Keamanan */}
-              <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative">
-                <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
-                  onClick={() => setIsKeamananOpen(true)}
-                >
-                  <Info className="w-4 h-4" />
-                </button>
-                <div className="flex items-center gap-2">
+              <div className={`min-w-0 bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 ${rootBorderRadius.card} space-y-2 relative`}>
+                <div className="flex min-w-0 items-center gap-2">
                   <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
-                    <Shield className="h-4 w-4 text-[#00FFAA]" />
+                    <Shield className="h-4 w-4 text-[#E0E0E0]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Tingkat Keamanan</h4>
+                  <h4 className="min-w-0 break-words text-xs font-black uppercase text-[#E0E0E0]">Tingkat Keamanan</h4>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#E0E0E0]">{tingkatKeamanan}%</span>
-                  <span className="text-[10px] text-[#6B8A8A]">× {securityFactor.toFixed(2)}</span>
+                <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+                  <span className="min-w-0 break-words text-sm font-bold text-[#E0E0E0]">{tingkatKeamanan}%</span>
+                  <span className="text-[10px] text-[#AAB6B6]">× {securityFactor.toFixed(2)}</span>
                 </div>
-                <p className="text-[10px] text-[#6B8A8A]">Lingkungan aman mengurangi kematian akibat kriminalitas dan kecelakaan.</p>
+                <p className="min-w-0 whitespace-normal break-words [overflow-wrap:anywhere] text-[10px] leading-relaxed text-[#AAB6B6]">Lingkungan aman mengurangi kematian akibat kriminalitas dan kecelakaan.</p>
               </div>
 
               {/* 3. Tunawisma */}
-              <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative">
-                <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
-                  onClick={() => setIsTunawismaOpen(true)}
-                >
-                  <Info className="w-4 h-4" />
-                </button>
-                <div className="flex items-center gap-2">
+              <div className={`min-w-0 bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 ${rootBorderRadius.card} space-y-2 relative`}>
+                <div className="flex min-w-0 items-center gap-2">
                   <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
-                    <Home className="h-4 w-4 text-[#00FFAA]" />
+                    <Home className="h-4 w-4 text-[#E0E0E0]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Tunawisma</h4>
+                  <h4 className="min-w-0 break-words text-xs font-black uppercase text-[#E0E0E0]">Tunawisma</h4>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#E0E0E0]">{formatNumber(homelessCount)} jiwa ({ (homelessRatio * 100).toFixed(2)}%)</span>
-                  <span className="text-[10px] text-[#6B8A8A]">× {homelessFactor.toFixed(2)}</span>
+                <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+                  <span className="min-w-0 break-words text-sm font-bold text-[#E0E0E0]">{formatNumber(homelessCount)} jiwa ({ (homelessRatio * 100).toFixed(2)}%)</span>
+                  <span className="text-[10px] text-[#AAB6B6]">× {homelessFactor.toFixed(2)}</span>
                 </div>
-                <p className="text-[10px] text-[#6B8A8A]">Setiap 1% populasi tunawisma meningkatkan kematian sebesar 5%.</p>
+                <p className="min-w-0 whitespace-normal break-words [overflow-wrap:anywhere] text-[10px] leading-relaxed text-[#AAB6B6]">Setiap 1% populasi tunawisma meningkatkan kematian sebesar 5%.</p>
               </div>
 
               {/* 4. Kesehatan */}
               <div 
-                className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative cursor-pointer hover:border-[#00FFAA]/60 hover:bg-[#00FFAA]/5 transition-all duration-200"
+                className={`min-w-0 bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 ${rootBorderRadius.card} space-y-2 relative cursor-pointer hover:border-[#00FFAA]/60 hover:bg-[#00FFAA]/5 transition-all duration-200`}
                 onClick={() => onOpenTempatUmum?.('kesehatan')}
               >
-                <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsKesehatanOpen(true);
-                  }}
-                >
-                  <Info className="w-4 h-4" />
-                </button>
-                <div className="flex items-center gap-2">
+                <div className="flex min-w-0 items-center gap-2">
                   <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
-                    <HeartPulse className="h-4 w-4 text-[#00FFAA]" />
+                    <HeartPulse className="h-4 w-4 text-[#E0E0E0]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Fasilitas Kesehatan</h4>
+                  <h4 className="min-w-0 break-words text-xs font-black uppercase text-[#E0E0E0]">Fasilitas Kesehatan</h4>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#E0E0E0]">{calculateKesehatanScore(countryDetail)} POIN <span className="text-xs font-normal text-[#6B8A8A]">(rasio {hospitalRatio.toFixed(2)})</span></span>
-                  <span className="text-[10px] text-[#6B8A8A]">× {healthFactor.toFixed(2)}</span>
+                <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+                  <span className="min-w-0 break-words text-sm font-bold text-[#E0E0E0]">{calculateKesehatanScore(countryDetail)} POIN <span className="text-xs font-normal text-[#AAB6B6]">(rasio {hospitalRatio.toFixed(2)})</span></span>
+                  <span className="text-[10px] text-[#AAB6B6]">× {healthFactor.toFixed(2)}</span>
                 </div>
-                <p className="text-[10px] text-[#6B8A8A]">Ketersediaan RS yang cukup menurunkan kematian akibat penyakit yang dapat diobati.</p>
+                <p className="min-w-0 whitespace-normal break-words [overflow-wrap:anywhere] text-[10px] leading-relaxed text-[#AAB6B6]">Ketersediaan RS yang cukup menurunkan kematian akibat penyakit yang dapat diobati.</p>
               </div>
 
               {/* 5. Ketahanan Pangan */}
               <div 
-                className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative cursor-pointer hover:border-[#00FFAA]/60 hover:bg-[#00FFAA]/5 transition-all duration-200"
+                className={`min-w-0 bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 ${rootBorderRadius.card} space-y-2 relative cursor-pointer hover:border-[#00FFAA]/60 hover:bg-[#00FFAA]/5 transition-all duration-200`}
                 onClick={() => onOpenIndustriPangan?.()}
               >
-                <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsKetahananPanganOpen(true);
-                  }}
-                >
-                  <Info className="w-4 h-4" />
-                </button>
-                <div className="flex items-center gap-2">
+                <div className="flex min-w-0 items-center gap-2">
                   <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
-                    <Utensils className="h-4 w-4 text-[#00FFAA]" />
+                    <Utensils className="h-4 w-4 text-[#E0E0E0]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Ketahanan Pangan</h4>
+                  <h4 className="min-w-0 break-words text-xs font-black uppercase text-[#E0E0E0]">Ketahanan Pangan</h4>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#E0E0E0]">{indeksKetahananPangan} POIN</span>
-                  <span className="text-[10px] text-[#6B8A8A]">× {foodSecurityFactor.toFixed(2)}</span>
+                <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+                  <span className="min-w-0 break-words text-sm font-bold text-[#E0E0E0]">{indeksKetahananPangan} POIN</span>
+                  <span className="text-[10px] text-[#AAB6B6]">× {foodSecurityFactor.toFixed(2)}</span>
                 </div>
-                <p className="text-[10px] text-[#6B8A8A]">Ketersediaan pangan yang cukup mengurangi kematian akibat malnutrisi.</p>
+                <p className="min-w-0 whitespace-normal break-words [overflow-wrap:anywhere] text-[10px] leading-relaxed text-[#AAB6B6]">Ketersediaan pangan yang cukup mengurangi kematian akibat malnutrisi.</p>
               </div>
 
               {/* 6. Kriminalitas */}
               <div 
-                className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative cursor-pointer hover:border-[#00FFAA]/60 hover:bg-[#00FFAA]/5 transition-all duration-200"
+                className={`min-w-0 bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 ${rootBorderRadius.card} space-y-2 relative cursor-pointer hover:border-[#00FFAA]/60 hover:bg-[#00FFAA]/5 transition-all duration-200`}
                 onClick={() => onOpenArmada?.('polisi')}
               >
-                <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsKriminalitasOpen(true);
-                  }}
-                >
-                  <Info className="w-4 h-4" />
-                </button>
-                <div className="flex items-center gap-2">
+                <div className="flex min-w-0 items-center gap-2">
                   <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
-                    <AlertTriangle className="h-4 w-4 text-[#00FFAA]" />
+                    <AlertTriangle className="h-4 w-4 text-[#E0E0E0]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Penegakan Hukum & Kriminalitas</h4>
+                  <h4 className="min-w-0 break-words text-xs font-black uppercase text-[#E0E0E0]">Penegakan Hukum & Kriminalitas</h4>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#E0E0E0]">{calculatePenegakanHukumScore(countryDetail)} POIN</span>
-                  <span className="text-[10px] text-[#6B8A8A]">× {crimeFactor.toFixed(2)}</span>
+                <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+                  <span className="min-w-0 break-words text-sm font-bold text-[#E0E0E0]">{calculatePenegakanHukumScore(countryDetail)} POIN</span>
+                  <span className="text-[10px] text-[#AAB6B6]">× {crimeFactor.toFixed(2)}</span>
                 </div>
-                <p className="text-[10px] text-[#6B8A8A]">Skor kepuasan penegakan hukum dari Indeks Kesejahteraan.</p>
+                <p className="min-w-0 whitespace-normal break-words [overflow-wrap:anywhere] text-[10px] leading-relaxed text-[#AAB6B6]">Skor kepuasan penegakan hukum dari Indeks Kesejahteraan.</p>
               </div>
 
             </div>
           </div>
         </div>
-
       </NotebookModalWrapper>
-
-      {/* ðŸ”¥ RENDER 7 MODAL DETAIL DI SINI (Agar tombol Info berfungsi) */}
-      <DetailHarapanHidupModal
-        isOpen={isHarapanHidupOpen}
-        onClose={() => setIsHarapanHidupOpen(false)}
-        countryDetail={countryDetail}
-        selectedCountry={selectedCountry}
-      />
-      <DetailKeamananModal
-        isOpen={isKeamananOpen}
-        onClose={() => setIsKeamananOpen(false)}
-        countryDetail={countryDetail}
-        selectedCountry={selectedCountry}
-      />
-      <DetailTunawismaModal
-        isOpen={isTunawismaOpen}
-        onClose={() => setIsTunawismaOpen(false)}
-        countryDetail={countryDetail}
-        selectedCountry={selectedCountry}
-      />
-      <DetailKesehatanModal
-        isOpen={isKesehatanOpen}
-        onClose={() => setIsKesehatanOpen(false)}
-        countryDetail={countryDetail}
-        selectedCountry={selectedCountry}
-      />
-      <DetailKetahananPanganModal
-        isOpen={isKetahananPanganOpen}
-        onClose={() => setIsKetahananPanganOpen(false)}
-        countryDetail={countryDetail}
-        selectedCountry={selectedCountry}
-      />
-      <DetailKriminalitasModal
-        isOpen={isKriminalitasOpen}
-        onClose={() => setIsKriminalitasOpen(false)}
-        countryDetail={countryDetail}
-        selectedCountry={selectedCountry}
-      />
     </>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, Info, ShieldAlert, Star, TrendingDown, X } from "lucide-react";
+import { AlertTriangle, Info, ShieldAlert, Star, TrendingDown } from "lucide-react";
 import {
   countLowSatisfactionSectors,
   calculateKeterbukaanScore,
@@ -8,6 +8,8 @@ import {
 import { getDecayMultiplierFromSatisfaction } from "@/app/logic/peringkatCalculator";
 import { applyKementerianKebudayaanDecayMultiplierBonus } from "@/app/page/bonus_logic";
 import NotebookModalWrapper from "../NotebookModalWrapper";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 
 interface RingkasanPeringkatModalProps {
   isOpen: boolean;
@@ -101,18 +103,11 @@ export default function RingkasanPeringkatModal({
               </p>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex cursor-pointer items-center gap-1 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 text-xs font-bold uppercase text-[#6B8A8A] shadow-sm transition-all hover:border-[#00FFAA] hover:text-[#00FFAA] hover:shadow-[0_0_15px_rgba(0,255,170,0.3)] lg:p-2"
-          >
-            <span className="pl-1 text-[10px] font-semibold uppercase tracking-widest lg:text-xs">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
+          <RootModalCloseButton onClick={onClose} />
         </div>
 
         <div className="relative z-10 flex-1 space-y-4 overflow-y-auto bg-[#0A1A1A]/80 p-3 sm:space-y-5 sm:p-5 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0A1A1A] [&::-webkit-scrollbar-thumb]:bg-[#00FFAA] [&::-webkit-scrollbar-track]:bg-[#0A1A1A]">
-          <section className="relative overflow-hidden rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-4 shadow-[inset_0_0_20px_rgba(0,255,170,0.03)] sm:p-5">
+          <section className={`relative overflow-hidden ${rootBorderRadius.card} border border-[#00FFAA]/30 bg-[#0F2424] p-4 shadow-[inset_0_0_20px_rgba(0,255,170,0.03)] sm:p-5`}>
             <div className="pointer-events-none absolute right-0 top-0 h-32 w-32 rounded-full bg-[#00FFAA]/5 blur-3xl" />
             <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
               <div>
@@ -146,7 +141,7 @@ export default function RingkasanPeringkatModal({
               {PENALTY_SECTIONS.map((section) => (
                 <article
                   key={section.title}
-                  className="rounded-xl border border-[#00FFAA]/20 bg-[#0F2424] p-3 sm:p-4"
+                  className={`${rootBorderRadius.card} border border-[#00FFAA]/20 bg-[#0F2424] p-3 sm:p-4`}
                 >
                   <div className="mb-2 flex items-start gap-2">
                     <TrendingDown className="mt-0.5 h-4 w-4 shrink-0 text-rose-400" />
@@ -163,7 +158,7 @@ export default function RingkasanPeringkatModal({
             </div>
           </section>
 
-          <section className="rounded-xl border border-amber-400/30 bg-amber-400/5 p-3 sm:p-4">
+          <section className={`${rootBorderRadius.card} border border-amber-400/30 bg-amber-400/5 p-3 sm:p-4`}>
             <h3 className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-amber-300 sm:text-xs">
               <AlertTriangle className="h-4 w-4" />
               Faktor decay dan catatan implementasi
@@ -185,7 +180,7 @@ export default function RingkasanPeringkatModal({
             </ul>
           </section>
 
-          <section className="rounded-xl border border-sky-400/25 bg-sky-400/5 p-3 sm:p-4">
+          <section className={`${rootBorderRadius.card} border border-sky-400/25 bg-sky-400/5 p-3 sm:p-4`}>
             <h3 className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-sky-300 sm:text-xs">
               <Info className="h-4 w-4" />
               Dampak yang perlu dibedakan
@@ -196,7 +191,7 @@ export default function RingkasanPeringkatModal({
             </div>
           </section>
 
-          <section className="rounded-xl border border-[#00FFAA]/15 bg-[#0F2424]/70 p-3 text-[10px] leading-relaxed text-[#8FAAAA] sm:p-4 sm:text-xs">
+          <section className={`${rootBorderRadius.card} border border-[#00FFAA]/15 bg-[#0F2424]/70 p-3 text-[10px] leading-relaxed text-[#8FAAAA] sm:p-4 sm:text-xs`}>
             <div className="flex items-start gap-2">
               <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-[#00FFAA]" />
               <p>Rentang nilai 0–100; nilai ≤1 dapat memicu kudeta. Bonus: penuhi tuntutan demo +10, tangani bencana/wabah +5, respons polisi +2.</p>

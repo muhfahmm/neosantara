@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { FlaskConical, X, Banknote, Shield, Globe2, Info } from 'lucide-react';
+import PausedMenuFrame from '@/app/page/root_modals_design_menu/rootFrameMenu';
+import RootModalCloseButton from '@/app/page/root_modals_design_menu/RootModalCloseButton';
 import { ATHEISM_RESEARCH_SPEED_BONUS } from '@/app/page/bonus_logic/agama_bonus_logic/ateisme';
 import {
   calculateEducationPoints,
@@ -56,11 +58,8 @@ export default function PenelitianSelectionModal({
   if (!isOpen || !mounted) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[10000] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-auto">
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl p-6 sm:p-8 items-center text-center justify-center overflow-y-auto custom-scrollbar"
-      >
+    <PausedMenuFrame zIndexClass="z-[10000]">
+      <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto p-6 text-center font-sans custom-scrollbar sm:p-8">
         {/* BUTTON INFO / BONUS RISET (DISAMPING KIRI) */}
         <button
           onClick={() => setShowBonusModal(!showBonusModal)}
@@ -72,14 +71,7 @@ export default function PenelitianSelectionModal({
         </button>
 
         {/* BUTTON TUTUP */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm z-30"
-          title="Tutup Modal"
-        >
-          <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-          <X className="h-4 w-4" />
-        </button>
+        <RootModalCloseButton onClick={onClose} className="absolute right-4 top-4 z-30" />
 
         {/* MODAL / POPOVER BONUS & MODIFIER RISET */}
         {showBonusModal && (
@@ -308,7 +300,7 @@ export default function PenelitianSelectionModal({
           })()}
         </div>
       </div>
-    </div>,
+    </PausedMenuFrame>,
     document.body
   );
 }

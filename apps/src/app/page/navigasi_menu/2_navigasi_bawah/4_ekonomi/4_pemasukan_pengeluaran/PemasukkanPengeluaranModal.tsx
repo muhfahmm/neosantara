@@ -2,8 +2,12 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { X, BarChart3, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { BarChart3, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import {
   calculateTotalTaxIncome,
   calculateGoldIncome,
@@ -179,53 +183,26 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
 
         {/* Header */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
               <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
             </div>
-            <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Neraca Pemasukkan & Pengeluaran</h2>
+            <div className="min-w-0">
+              <h2 className={rootModalTypography.title}>Neraca Pemasukkan & Pengeluaran</h2>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
+          <RootModalCloseButton onClick={onClose} />
         </div>
 
         {/* Tab Navigation (Hanya 3 Tab) */}
         <div className="px-4 lg:px-6 2xl:px-8 pt-3.5 lg:pt-4.5 2xl:pt-6 relative z-10 bg-[#0A1A1A]">
-          <div className="flex gap-2 lg:gap-2.5 2xl:gap-3 border-b border-[#00FFAA]/20 pb-2.5 lg:pb-3">
-            <button
-              onClick={() => setActiveTab("summary")}
-              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${activeTab === "summary"
-                  ? "bg-[#00FFAA] text-[#0A1A1A]"
-                  : "text-[#6B8A8A] hover:text-[#E0E0E0] hover:bg-[#0F2424]"
-                }`}
-            >
-              Ringkasan PDB
-            </button>
-            <button
-              onClick={() => setActiveTab("income")}
-              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 lg:gap-2 cursor-pointer ${activeTab === "income"
-                  ? "bg-[#00FFAA] text-[#0A1A1A]"
-                  : "text-[#6B8A8A] hover:text-[#E0E0E0] hover:bg-[#0F2424]"
-                }`}
-            >
-              <ArrowUpRight className="h-3.5 w-3.5" />
-              Pemasukkan
-            </button>
-            <button
-              onClick={() => setActiveTab("outcome")}
-              className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${activeTab === "outcome"
-                  ? "bg-[#00FFAA] text-[#0A1A1A]"
-                  : "text-[#6B8A8A] hover:text-[#E0E0E0] hover:bg-[#0F2424]"
-                }`}
-            >
-              <ArrowDownRight className="h-3.5 w-3.5" />
-              Pengeluaran
-            </button>
-          </div>
+          <RootModalTabs
+            items={[
+              { label: "Ringkasan PDB", isActive: activeTab === "summary", onClick: () => setActiveTab("summary") },
+              { label: "Pemasukkan", isActive: activeTab === "income", onClick: () => setActiveTab("income"), icon: <ArrowUpRight className="h-3.5 w-3.5" /> },
+              { label: "Pengeluaran", isActive: activeTab === "outcome", onClick: () => setActiveTab("outcome"), icon: <ArrowDownRight className="h-3.5 w-3.5" /> },
+            ]}
+          />
         </div>
 
         {/* Content Area */}
@@ -235,7 +212,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
             {/* Summary Tab */}
             {activeTab === "summary" && (
               <div className="space-y-6">
-                <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-xl space-y-4">
+                <div className={`space-y-4 border border-[#00FFAA]/30 bg-[#0F2424] p-6 ${rootBorderRadius.card}`}>
                   <h4 className="text-[10px] text-[#00FFAA] font-black uppercase tracking-wider mb-2">
                     Rincian Aliran Saldo & PDB Negara
                   </h4>
@@ -314,7 +291,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
             {/* Income Tab */}
             {activeTab === "income" && (
               <div className="space-y-4">
-                <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-xl space-y-4">
+                <div className={`space-y-4 border border-[#00FFAA]/30 bg-[#0F2424] p-6 ${rootBorderRadius.card}`}>
                   <div className="space-y-3">
                     {incomeItems.map((item, index) => (
                       <div key={index} className="border-b border-[#00FFAA]/20 last:border-0 pb-2">
@@ -360,41 +337,19 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
             {activeTab === "outcome" && (
               <div className="space-y-5">
                 {/* Top Level Tabs: Kabinet (22), Alokasi Subsidi (6), Total Pengeluaran */}
-                <div className="flex gap-2 border-b border-[#00FFAA]/20 pb-3">
-                  <button
-                    onClick={() => setOutcomeMainTab("kabinet")}
-                    className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${outcomeMainTab === "kabinet"
-                        ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
-                        : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#E0E0E0] border border-[#00FFAA]/20"
-                      }`}
-                  >
-                    Kabinet (22)
-                  </button>
-                  <button
-                    onClick={() => setOutcomeMainTab("subsidi")}
-                    className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${outcomeMainTab === "subsidi"
-                        ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
-                        : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#E0E0E0] border border-[#00FFAA]/20"
-                      }`}
-                  >
-                    Alokasi Subsidi (6)
-                  </button>
-                  <button
-                    onClick={() => setOutcomeMainTab("total")}
-                    className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${outcomeMainTab === "total"
-                        ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
-                        : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#E0E0E0] border border-[#00FFAA]/20"
-                      }`}
-                  >
-                    Total Pengeluaran
-                  </button>
-                </div>
+                <RootModalTabs
+                  items={[
+                    { label: "Kabinet (22)", isActive: outcomeMainTab === "kabinet", onClick: () => setOutcomeMainTab("kabinet") },
+                    { label: "Alokasi Subsidi (6)", isActive: outcomeMainTab === "subsidi", onClick: () => setOutcomeMainTab("subsidi") },
+                    { label: "Total Pengeluaran", isActive: outcomeMainTab === "total", onClick: () => setOutcomeMainTab("total") },
+                  ]}
+                />
 
                 {outcomeMainTab === "subsidi" ? (
                   <AlokasiSubsidiTab countryDetail={countryDetail} />
                 ) : outcomeMainTab === "total" ? (
                   <div className="space-y-4">
-                    <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-xl space-y-4">
+                    <div className={`space-y-4 border border-[#00FFAA]/30 bg-[#0F2424] p-6 ${rootBorderRadius.card}`}>
                       <h4 className="text-[10px] text-[#00FFAA] font-black uppercase tracking-wider mb-4">
                         Ringkasan Total Pengeluaran Negara
                       </h4>
@@ -465,7 +420,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                       </button>
                     </div>
 
-                    <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-xl space-y-4">
+                    <div className={`space-y-4 border border-[#00FFAA]/30 bg-[#0F2424] p-6 ${rootBorderRadius.card}`}>
                       <h4 className="text-[10px] text-[#00FFAA] font-black uppercase tracking-wider mb-4">
                         {kabinetSubTab === "kementerian" ? "Kementerian" : kabinetSubTab === "keamanan" ? "Keamanan" : "Layanan"}
                       </h4>
@@ -506,7 +461,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                       </div>
                     </div>
 
-                    <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-xl space-y-2">
+                    <div className={`space-y-2 border border-[#00FFAA]/30 bg-[#0F2424] p-6 ${rootBorderRadius.card}`}>
                       <div className="pt-2">
                         <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
                           <span>Total Pengeluaran Dewan Kabinet:</span>

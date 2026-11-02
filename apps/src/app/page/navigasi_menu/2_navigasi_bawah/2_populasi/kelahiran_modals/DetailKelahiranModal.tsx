@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { X, Users, HeartPulse, GraduationCap, Banknote, Activity, TrendingUp, Sparkles } from "lucide-react";
+import { Users, HeartPulse, GraduationCap, Banknote, Activity, TrendingUp, Sparkles } from "lucide-react";
 
 import {
   calculateGeneralSatisfaction,
@@ -14,6 +14,9 @@ import {
 import { calculateKesehatanScore, calculatePendidikanScore } from "@/app/logic/kesejahteraanCalculator";
 import { calculateKesehatanLogic } from "../kematian_modals/logic/kesehatanLogic";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 
 interface DetailKelahiranModalProps {
   isOpen: boolean;
@@ -79,30 +82,23 @@ export default function DetailKelahiranModal({
 
   return (
     <NotebookModalWrapper onClose={onClose}>
-      <div className="flex flex-col h-full overflow-hidden bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-[0_0_30px_rgba(0,255,170,0.15)]">
+      <div className="flex flex-col h-full overflow-hidden bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 ">
 
         {/* ============ HEADER (DISAMAKAN DENGAN MODAL KEPENDUDUKAN) ============ */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0 shadow-[0_0_10px_rgba(0,255,170,0.2)]">
-              <Users className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+            <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0 ">
+              <Users className="h-4 w-4 sm:h-5 sm:w-5 text-[#E0E0E0]" />
             </div>
             <div>
               {/* Font size dinaikkan kembali ke text-base sm:text-xl */}
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase drop-shadow-[0_0_8px_rgba(0,255,170,0.5)]">
+              <h2 className={`${rootModalTypography.title} leading-none`}>
                 Rincian Pertumbuhan Penduduk
               </h2>
             </div>
           </div>
 
-          <button 
-            onClick={onClose} 
-            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] hover:shadow-[0_0_15px_rgba(0,255,170,0.3)] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-          >
-            {/* Teks Tutup ditampilkan di semua ukuran layar dan ukurannya disesuaikan */}
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
+          <RootModalCloseButton onClick={onClose} />
         </div>
 
         {/* ============ BODY (TETAP COMPACT & RESPONSIF) ============ */}
@@ -114,43 +110,42 @@ export default function DetailKelahiranModal({
           [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A]
           [&::-webkit-scrollbar-thumb]:rounded-full 
           [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0A1A1A]
-          [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)]
+
           hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]
           [&::-webkit-scrollbar-button]:hidden
         ">
           <div className="space-y-3">
 
             {/* ============ RINGKASAN UTAMA ============ */}
-            <div className="relative bg-gradient-to-br from-[#0F2424] to-[#0A1A1A] border border-[#00FFAA]/30 p-3 sm:p-4 rounded-xl overflow-hidden shadow-[inset_0_0_25px_rgba(0,255,170,0.05)]">
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#00FFAA]/10 blur-3xl rounded-full pointer-events-none" />
+            <div className={`relative bg-gradient-to-br from-[#0F2424] to-[#0A1A1A] border border-[#00FFAA]/30 p-3 sm:p-4 ${rootBorderRadius.card} overflow-hidden`}>
               
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 relative z-10">
                 <div className="min-w-0 flex-1">
-                  <p className="text-[9px] sm:text-[10px] font-black text-[#6B8A8A] uppercase tracking-widest flex items-center gap-1.5">
-                    <TrendingUp className="h-3 w-3 text-[#00FFAA]" />
+                  <p className="text-[9px] sm:text-[10px] font-black text-[#AAB6B6] uppercase tracking-widest flex items-center gap-1.5">
+                    <TrendingUp className="h-3 w-3 text-[#E0E0E0]" />
                     Pertumbuhan Bersih Harian
                   </p>
                   {/* Angka Utama Tetap Kecil: text-2xl sm:text-3xl */}
-                  <p className={`text-2xl sm:text-3xl font-black mt-1 tracking-tight ${netDailyChange >= 0 ? 'text-[#00FFAA] drop-shadow-[0_0_10px_rgba(0,255,170,0.5)]' : 'text-rose-400 drop-shadow-[0_0_10px_rgba(244,63,94,0.5)]'}`}>
+                  <p className={`text-2xl sm:text-3xl font-black mt-1 tracking-tight ${netDailyChange >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                     {netDailyChange >= 0 ? '+' : ''}{formatNumber(netDailyChange)}
-                    <span className="text-xs sm:text-sm text-[#6B8A8A] font-bold ml-1 tracking-normal">/hr</span>
+                    <span className="text-xs sm:text-sm text-[#AAB6B6] font-bold ml-1 tracking-normal">/hr</span>
                   </p>
                 </div>
-                <div className="p-2 bg-[#00FFAA]/10 rounded-full border border-[#00FFAA]/30 shadow-[0_0_20px_rgba(0,255,170,0.2)] self-start sm:self-auto">
-                  <Activity className="h-6 w-6 sm:h-7 sm:w-7 text-[#00FFAA]" />
+                <div className="p-2 bg-[#00FFAA]/10 rounded-full border border-[#00FFAA]/30  self-start sm:self-auto">
+                  <Activity className="h-6 w-6 sm:h-7 sm:w-7 text-[#E0E0E0]" />
                 </div>
               </div>
 
               <div className="mt-3 grid grid-cols-2 gap-2 relative z-10">
-                <div className="bg-[#0F2424]/80 backdrop-blur-sm p-2 rounded-lg border border-emerald-500/40 shadow-[inset_0_0_15px_rgba(16,185,129,0.1)]">
+                <div className={`bg-[#0F2424]/80 backdrop-blur-sm p-2 ${rootBorderRadius.card} border border-emerald-500/40`}>
                   <p className="text-[8px] sm:text-[9px] text-emerald-400 font-black uppercase tracking-wider">Kelahiran</p>
-                  <p className="text-sm sm:text-base font-black text-emerald-400 mt-0.5 drop-shadow-[0_0_5px_rgba(16,185,129,0.4)]">
+                  <p className="text-sm sm:text-base font-black text-emerald-400 mt-0.5 ">
                     +{formatNumber(dailyBirths)}
                   </p>
                 </div>
-                <div className="bg-[#0F2424]/80 backdrop-blur-sm p-2 rounded-lg border border-rose-500/40 shadow-[inset_0_0_15px_rgba(244,63,94,0.1)]">
+                <div className={`bg-[#0F2424]/80 backdrop-blur-sm p-2 ${rootBorderRadius.card} border border-rose-500/40`}>
                   <p className="text-[8px] sm:text-[9px] text-rose-400 font-black uppercase tracking-wider">Kematian</p>
-                  <p className="text-sm sm:text-base font-black text-rose-400 mt-0.5 drop-shadow-[0_0_5px_rgba(244,63,94,0.4)]">
+                  <p className="text-sm sm:text-base font-black text-rose-400 mt-0.5 ">
                     -{formatNumber(dailyDeaths)}
                   </p>
                 </div>
@@ -160,8 +155,8 @@ export default function DetailKelahiranModal({
             {/* ============ BREAKDOWN FAKTOR ============ */}
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <div className="p-1 rounded-md bg-[#0F2424] border border-[#00FFAA]/30 shadow-[0_0_8px_rgba(0,255,170,0.2)]">
-                  <Sparkles className="h-3 w-3 text-[#00FFAA]" />
+                <div className="p-1 rounded-md bg-[#0F2424] border border-[#00FFAA]/30 ">
+                  <Sparkles className="h-3 w-3 text-[#E0E0E0]" />
                 </div>
                 <h3 className="text-[10px] sm:text-xs font-black text-[#E0E0E0] uppercase tracking-wider italic">
                   Faktor yang Memengaruhi
@@ -171,31 +166,31 @@ export default function DetailKelahiranModal({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {/* 1. Populasi Dasar */}
-                <div className="group bg-[#0F2424] border border-[#00FFAA]/20 p-2 sm:p-2.5 rounded-lg space-y-1 transition-all hover:border-[#00FFAA]/40">
+                <div                 className={`group bg-[#0F2424] border border-[#00FFAA]/20 p-2 sm:p-2.5 ${rootBorderRadius.card} space-y-1 transition-all hover:border-[#00FFAA]/40`}>
                   <div className="flex items-center gap-1.5">
                     <div className="p-1 bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-md shrink-0">
-                      <Users className="h-3 w-3 text-[#00FFAA]" />
+                      <Users className="h-3 w-3 text-[#E0E0E0]" />
                     </div>
-                    <h4 className="text-[9px] sm:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Populasi Dasar</h4>
+                    <h4 className="text-[9px] sm:text-[10px] font-black text-[#E0E0E0] uppercase tracking-wider">Populasi Dasar</h4>
                   </div>
                   <p className="text-xs sm:text-sm font-bold text-[#E0E0E0]">
-                    {formatNumber(populasi)} <span className="text-[8px] text-[#6B8A8A] font-medium">jiwa</span>
+                    {formatNumber(populasi)} <span className="text-[8px] text-[#AAB6B6] font-medium">jiwa</span>
                   </p>
                 </div>
 
                 {/* 2. Kesejahteraan */}
-                <div className="group bg-[#0F2424] border border-[#00FFAA]/20 p-2 sm:p-2.5 rounded-lg space-y-1 transition-all hover:border-[#00FFAA]/40">
+                <div                 className={`group bg-[#0F2424] border border-[#00FFAA]/20 p-2 sm:p-2.5 ${rootBorderRadius.card} space-y-1 transition-all hover:border-[#00FFAA]/40`}>
                   <div className="flex items-center gap-1.5">
                     <div className="p-1 bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-md shrink-0">
-                      <Banknote className="h-3 w-3 text-[#00FFAA]" />
+                      <Banknote className="h-3 w-3 text-[#E0E0E0]" />
                     </div>
-                    <h4 className="text-[9px] sm:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Kesejahteraan</h4>
+                    <h4 className="text-[9px] sm:text-[10px] font-black text-[#E0E0E0] uppercase tracking-wider">Kesejahteraan</h4>
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5">
                     <span className="text-xs sm:text-sm font-bold text-[#E0E0E0]">
-                      {countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : 50} <span className="text-[8px] text-[#6B8A8A] font-medium">INDX</span>
+                      {countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : 50} <span className="text-[8px] text-[#AAB6B6] font-medium">INDX</span>
                     </span>
-                    <span className="text-[8px] text-[#00FFAA] font-bold bg-[#00FFAA]/10 px-1 py-0.5 rounded border border-[#00FFAA]/20">
+                    <span className="text-[8px] text-[#E0E0E0] font-bold bg-[#00FFAA]/10 px-1 py-0.5 rounded border border-[#00FFAA]/20">
                       × {welfareFactor.toFixed(2)}
                     </span>
                   </div>
@@ -203,24 +198,24 @@ export default function DetailKelahiranModal({
 
                 {/* 3. Fasilitas Kesehatan (clickable) */}
                 <div
-                  className="group bg-[#0F2424] border border-[#00FFAA]/20 p-2 sm:p-2.5 rounded-lg space-y-1 cursor-pointer transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 hover:shadow-[0_0_15px_rgba(0,255,170,0.2)] active:scale-[0.98]"
+                  className={`group bg-[#0F2424] border border-[#00FFAA]/20 p-2 sm:p-2.5 ${rootBorderRadius.card} space-y-1 cursor-pointer transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 active:scale-[0.98]`}
                   onClick={() => onOpenTempatUmum?.('kesehatan')}
                 >
                   <div className="flex items-center justify-between gap-1">
                     <div className="flex items-center gap-1.5">
                       <div className="p-1 bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-md shrink-0 group-hover:scale-110 transition-transform">
-                        <HeartPulse className="h-3 w-3 text-[#00FFAA]" />
+                        <HeartPulse className="h-3 w-3 text-[#E0E0E0]" />
                       </div>
-                      <h4 className="text-[9px] sm:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Fasilitas Kesehatan</h4>
+                      <h4 className="text-[9px] sm:text-[10px] font-black text-[#E0E0E0] uppercase tracking-wider">Fasilitas Kesehatan</h4>
                     </div>
-                    <span className="text-[8px] text-[#6B8A8A] font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity">Buka →</span>
+                    <span className="text-[8px] text-[#AAB6B6] font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity">Buka →</span>
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5">
                     <span className="text-xs sm:text-sm font-bold text-[#E0E0E0]">
-                      {kesehatanScore} <span className="text-[8px] text-[#6B8A8A] font-medium">POIN</span>
+                      {kesehatanScore} <span className="text-[8px] text-[#AAB6B6] font-medium">POIN</span>
                     </span>
-                    <span className="text-[8px] text-[#6B8A8A]">(rasio {hospitalRatio.toFixed(2)})</span>
-                    <span className="text-[8px] text-[#00FFAA] font-bold bg-[#00FFAA]/10 px-1 py-0.5 rounded border border-[#00FFAA]/20">
+                    <span className="text-[8px] text-[#AAB6B6]">(rasio {hospitalRatio.toFixed(2)})</span>
+                    <span className="text-[8px] text-[#E0E0E0] font-bold bg-[#00FFAA]/10 px-1 py-0.5 rounded border border-[#00FFAA]/20">
                       × {healthFactor.toFixed(2)}
                     </span>
                   </div>
@@ -228,24 +223,24 @@ export default function DetailKelahiranModal({
 
                 {/* 4. Tingkat Pendidikan (clickable) */}
                 <div
-                  className="group bg-[#0F2424] border border-[#00FFAA]/20 p-2 sm:p-2.5 rounded-lg space-y-1 cursor-pointer transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 hover:shadow-[0_0_15px_rgba(0,255,170,0.2)] active:scale-[0.98]"
+                  className={`group bg-[#0F2424] border border-[#00FFAA]/20 p-2 sm:p-2.5 ${rootBorderRadius.card} space-y-1 cursor-pointer transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 active:scale-[0.98]`}
                   onClick={() => onOpenTempatUmum?.('pendidikan')}
                 >
                   <div className="flex items-center justify-between gap-1">
                     <div className="flex items-center gap-1.5">
                       <div className="p-1 bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-md shrink-0 group-hover:scale-110 transition-transform">
-                        <GraduationCap className="h-3 w-3 text-[#00FFAA]" />
+                        <GraduationCap className="h-3 w-3 text-[#E0E0E0]" />
                       </div>
-                      <h4 className="text-[9px] sm:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Tingkat Pendidikan</h4>
+                      <h4 className="text-[9px] sm:text-[10px] font-black text-[#E0E0E0] uppercase tracking-wider">Tingkat Pendidikan</h4>
                     </div>
-                    <span className="text-[8px] text-[#6B8A8A] font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity">Buka →</span>
+                    <span className="text-[8px] text-[#AAB6B6] font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity">Buka →</span>
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5">
                     <span className="text-xs sm:text-sm font-bold text-[#E0E0E0]">
-                      {pendidikanScore} <span className="text-[8px] text-[#6B8A8A] font-medium">POIN</span>
+                      {pendidikanScore} <span className="text-[8px] text-[#AAB6B6] font-medium">POIN</span>
                     </span>
-                    <span className="text-[8px] text-[#6B8A8A]">(rasio {educationRatio.toFixed(2)})</span>
-                    <span className="text-[8px] text-[#00FFAA] font-bold bg-[#00FFAA]/10 px-1 py-0.5 rounded border border-[#00FFAA]/20">
+                    <span className="text-[8px] text-[#AAB6B6]">(rasio {educationRatio.toFixed(2)})</span>
+                    <span className="text-[8px] text-[#E0E0E0] font-bold bg-[#00FFAA]/10 px-1 py-0.5 rounded border border-[#00FFAA]/20">
                       × {educationFactor.toFixed(2)}
                     </span>
                   </div>

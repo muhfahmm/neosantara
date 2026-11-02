@@ -18,6 +18,7 @@ import PilihItemModal from "@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/
 import { getMaterialStock } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
 import { getRelationValue, setRelationModifier } from "../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
+import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 
 const CATEGORY_MAP: Record<string, string[]> = {
   "Mineral & Energi": ["uranium", "batu_bara", "minyak_bumi", "gas_alam", "garam", "litium", "logam_tanah_jarang", "bijih_besi"],
@@ -190,9 +191,8 @@ export default function BeriHadiahModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-        {/* Modal Container */}
-        <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+      <NotebookModalWrapper onClose={onClose}>
+        <div className="flex h-full min-h-0 flex-col overflow-hidden bg-[#0F2424] font-sans shadow-2xl">
           {/* HEADER */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
             <div className="flex items-center gap-2 sm:gap-3">
@@ -267,17 +267,17 @@ export default function BeriHadiahModal({
                 <label className="block text-[10px] sm:text-xs font-black text-[#00FFAA] uppercase tracking-wider mb-2">
                   Jumlah Komoditas (Unit)
                 </label>
-                <div className="flex items-center gap-2 bg-[#0A1A1A] border border-[#00FFAA]/40 rounded-xl px-3 h-11">
+                <div className="flex h-11 w-full min-w-0 items-center gap-1.5 rounded-xl border border-[#00FFAA]/40 bg-[#0A1A1A] px-2 sm:gap-2 sm:px-3">
                   <input
                     type="number"
                     min={1}
                     value={quantity || ""}
                     onChange={(e) => setQuantity(Math.max(0, parseInt(e.target.value) || 0))}
-                    className="flex-1 bg-transparent text-sm font-sans font-black text-[#E0E0E0] outline-none placeholder-[#6B8A8A]"
+                    className="w-0 min-w-0 flex-1 bg-transparent text-sm font-sans font-black text-[#E0E0E0] outline-none placeholder-[#6B8A8A]"
                     placeholder="0"
                   />
-                  <span className="text-xs font-bold text-[#6B8A8A] mr-2">Unit</span>
-                  <div className="flex gap-1">
+                  <span className="mr-1 shrink-0 text-xs font-bold text-[#6B8A8A]">Unit</span>
+                  <div className="flex shrink-0 gap-1">
                     <button
                       type="button"
                       onClick={() => handleAddQty(-10)}
@@ -425,7 +425,7 @@ export default function BeriHadiahModal({
             </div>
           </div>
         </div>
-      </div>
+      </NotebookModalWrapper>
 
       {/* MODAL PILIH PRODUK KOMODITAS */}
       <PilihItemModal

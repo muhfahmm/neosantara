@@ -1,6 +1,9 @@
 "use client"
 import React from "react";
-import { X, Users } from "lucide-react";
+import { Users } from "lucide-react";
+import NotebookModalWrapper from "../../../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 
 interface CountryOption {
   id: number;
@@ -27,25 +30,19 @@ export default function CountryListModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-black/80 pointer-events-auto">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+    <NotebookModalWrapper onClose={onClose} zIndexClass="z-[200]">
+      <div className="flex h-full flex-col overflow-hidden">
         <div className="px-8 py-5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-[#00FFAA]/10 rounded-xl border border-[#00FFAA]/30">
               <Users className="h-6 w-6 text-[#00FFAA]" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-[#E0E0E0] uppercase tracking-wide">{title}</h3>
+              <h3 className={rootModalTypography.title}>{title}</h3>
               <p className="text-xs text-[#6B8A8A] font-medium mt-0.5">{countries.length} negara terdaftar</p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-xl border border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA] hover:bg-[#00FFAA]/20 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
-          >
-            <span className="text-[10px] font-bold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
-          </button>
+          <RootModalCloseButton onClick={onClose} />
         </div>
         <div className="flex-1 overflow-y-auto p-8 bg-[#0F2424] relative z-10 custom-scrollbar flex flex-col items-center">
           <div className="w-full">
@@ -68,15 +65,7 @@ export default function CountryListModal({
             )}
           </div>
         </div>
-        <div className="flex items-center justify-end gap-4 px-8 py-4 border-t border-[#00FFAA]/20 bg-[#0A1A1A] relative z-10 shrink-0">
-          <button
-            onClick={onClose}
-            className="px-6 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA] hover:bg-[#00FFAA]/20 transition-all font-bold text-xs uppercase tracking-wider cursor-pointer"
-          >
-            Tutup
-          </button>
-        </div>
       </div>
-    </div>
+    </NotebookModalWrapper>
   );
 }

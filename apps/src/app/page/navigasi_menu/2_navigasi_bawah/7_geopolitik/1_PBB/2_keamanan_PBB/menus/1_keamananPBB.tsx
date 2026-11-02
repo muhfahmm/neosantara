@@ -16,6 +16,9 @@ import { ActiveSecurityCouncilItem, loadActiveSecurityCouncilItems, saveActiveSe
 import { tickPBBResolutions } from "../../1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { PBB_RESOLUTION_DURATION_OPTIONS } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { clearAnnexedCountryVotes, isCountryAnnexed } from "../../pbbVotingEligibility";
+import NotebookModalWrapper from "../../../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import {
   getStoredCouncilMembers,
   markLimitedVetoUsed,
@@ -923,25 +926,22 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
 
       {/* Modal Buat Resolusi (Besar) */}
       {isResolusiModalOpen && createPortal(
-        <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+        <NotebookModalWrapper
+          onClose={() => setIsResolusiModalOpen(false)}
+          zIndexClass="z-[200]"
+          maxWidthClass="max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl"
+        >
+          <div className="flex h-full flex-col overflow-hidden">
             <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
               <div className="flex items-center gap-2 sm:gap-3">
                 <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
                   <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Resolusi Dewan Keamanan PBB</h3>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">Pilih aksi, durasi, dan target resolusi Anda.</p>
+                  <h3 className={rootModalTypography.title}>Resolusi Dewan Keamanan PBB</h3>
                 </div>
               </div>
-              <button 
-                onClick={() => setIsResolusiModalOpen(false)} 
-                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-              >
-                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-4 w-4" />
-              </button>
+              <RootModalCloseButton onClick={() => setIsResolusiModalOpen(false)} />
             </div>
 
             <div className="flex-1 p-4 sm:p-6 bg-[#0F2424] relative z-10 flex flex-col items-center overflow-y-auto custom-scrollbar">
@@ -1089,7 +1089,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
               </button>
             </div>
           </div>
-        </div>
+        </NotebookModalWrapper>
       , document.body)}
 
       {/* Modal Pilih Negara (Besar) */}

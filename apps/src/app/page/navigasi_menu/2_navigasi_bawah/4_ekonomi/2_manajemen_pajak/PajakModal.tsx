@@ -1,8 +1,11 @@
 "use client";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { X, FileText } from "lucide-react";
+import { FileText } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { calculateIncomeAtRate } from "@/app/logic/economic_logic/2_tax_logic/taxLogic";
 import { calculateTaxPopulationImpact } from "@/app/logic/economic_logic/2_tax_logic/taxPopulationImpact";
 import { generatePajakChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/1_perubahan_pajak/pajakChangeLogic";
@@ -465,12 +468,12 @@ function PajakModalContent({
     <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
               <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
             </div>
-            <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
+            <div className="min-w-0">
+              <h2 className={rootModalTypography.title}>
                 Kebijakan Perpajakan Fiskal
               </h2>
             </div>
@@ -486,28 +489,19 @@ function PajakModalContent({
                 Konfirmasi
               </button>
             )}
-            <button
-              type="button"
-              onClick={onClose}
-              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-            >
-              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">
-                Tutup
-              </span>
-              <X className="h-4 w-4" />
-            </button>
+            <RootModalCloseButton onClick={onClose} />
           </div>
         </div>
 
         {corruptionImpacts.taxRevenueLossPercent > 0 && (
-          <div className="mx-4 mt-3 rounded-xl border border-rose-500/25 bg-rose-950/20 px-4 py-3 text-xs text-rose-200 sm:mx-6">
+          <div className={`mx-4 mt-3 ${rootBorderRadius.card} border border-rose-500/25 bg-rose-950/20 px-4 py-3 text-xs text-rose-200 sm:mx-6 break-words`}>
             Kebocoran pajak dari kasus korupsi aktif mengurangi estimasi
             penerimaan sebesar {corruptionImpacts.taxRevenueLossPercent}%.
           </div>
         )}
 
         <div className="flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 neon-scrollbar">
-          <p className="text-[10px] lg:text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-3.5 lg:mb-5 2xl:mb-6">
+          <p className={`${rootModalTypography.body} ${rootModalTypography.muted} mb-3.5 break-words lg:mb-5 2xl:mb-6`}>
             Sesuaikan tarif pajak nasional untuk membiayai belanja militer dan
             infrastruktur publik. Hati-hati, pajak tinggi memicu protes rakyat!
           </p>
@@ -515,7 +509,7 @@ function PajakModalContent({
           <div className="space-y-5">
             {/* 1. PPN - Pajak Pertambahan Nilai */}
             <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold text-[#00FFAA] uppercase">
+              <div className={`flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
                 <span>Pajak Pertambahan Nilai (PPN)</span>
                 <div className="flex items-center gap-2">
                   <span className="text-[#E0E0E0]">{tempRates.vat}%</span>
@@ -552,14 +546,11 @@ function PajakModalContent({
                 }
                 className="w-full accent-[#00FFAA] cursor-pointer"
               />
-              <p className="text-[10px] text-[#6B8A8A]">
-                0% = 0 NEO, 100% = 500 NEO income
-              </p>
             </div>
 
             {/* 2. Korporasi - Pajak Korporasi */}
             <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold text-[#00FFAA] uppercase">
+              <div className={`flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
                 <span>Pajak Korporasi</span>
                 <div className="flex items-center gap-2">
                   <span className="text-[#E0E0E0]">
@@ -598,14 +589,11 @@ function PajakModalContent({
                 }
                 className="w-full accent-[#00FFAA] cursor-pointer"
               />
-              <p className="text-[10px] text-[#6B8A8A]">
-                0% = 0 NEO, 100% = 500 NEO income
-              </p>
             </div>
 
             {/* 3. Penghasilan - Pajak Penghasilan Pribadi */}
             <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold text-[#00FFAA] uppercase">
+              <div className={`flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
                 <span>Pajak Penghasilan Pribadi</span>
                 <div className="flex items-center gap-2">
                   <span className="text-[#E0E0E0]">{tempRates.income_tax}%</span>
@@ -642,9 +630,6 @@ function PajakModalContent({
                 }
                 className="w-full accent-[#00FFAA] cursor-pointer"
               />
-              <p className="text-[10px] text-[#6B8A8A]">
-                0% = 0 NEO, 100% = 500 NEO income
-              </p>
               {hasOrthodoxTaxBonus && (
                 <span className="inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
                   Bonus Kristen Ortodoks: Penerimaan +
@@ -655,7 +640,7 @@ function PajakModalContent({
 
             {/* 4. Cukai - Cukai */}
             <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold text-[#00FFAA] uppercase">
+              <div className={`flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
                 <span>Cukai</span>
                 <div className="flex items-center gap-2">
                   <span className="text-[#E0E0E0]">
@@ -694,14 +679,11 @@ function PajakModalContent({
                 }
                 className="w-full accent-[#00FFAA] cursor-pointer"
               />
-              <p className="text-[10px] text-[#6B8A8A]">
-                0% = 0 NEO, 100% = 500 NEO income
-              </p>
             </div>
 
             {/* 5. Lingkungan - Pajak Lingkungan */}
             <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold text-[#00FFAA] uppercase">
+              <div className={`flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
                 <span>Pajak Lingkungan</span>
                 <div className="flex items-center gap-2">
                   <span className="text-[#E0E0E0]">
@@ -740,9 +722,6 @@ function PajakModalContent({
                 }
                 className="w-full accent-[#00FFAA] cursor-pointer"
               />
-              <p className="text-[10px] text-[#6B8A8A]">
-                0% = 0 NEO, 100% = 500 NEO income
-              </p>
               {hasBuddhaTaxBonus && (
                 <span className="inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
                   Bonus Buddha: Penerimaan pajak lingkungan +
@@ -755,9 +734,9 @@ function PajakModalContent({
           {!forumDialogMode && (
           <>
           {/* Total Income Summary */}
-          <div className="mt-8 p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424]">
+          <div className={`mt-8 p-5 ${rootBorderRadius.card} border border-[#00FFAA]/30 bg-[#0F2424]`}>
             <div className="flex justify-between items-center flex-wrap gap-2">
-              <span className="text-sm font-black text-[#00FFAA] uppercase tracking-widest flex items-center gap-1.5">
+              <span className={`${rootModalTypography.sectionTitle} uppercase tracking-widest flex items-center gap-1.5`}>
                 Total Pendapatan Pajak
                 {hasKemenkeuBonus && (
                   <span className="text-xs font-black text-[#00FFAA] normal-case">
@@ -782,52 +761,54 @@ function PajakModalContent({
                 </span>
               </div>
             </div>
-            {hasKemenkeuBonus && (
-              <span className="mt-3 inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                Bonus Kementerian Keuangan: Seluruh penerimaan pajak +
-                {kemenkeuTaxBonusPercent}% (+
-                {kemenkeuBonusAmount.toLocaleString("id-ID", {
-                  maximumFractionDigits: 2,
-                })}{" "}
-                NEO)
-              </span>
-            )}
-            {hasDemocracyTaxBonus && (
-              <span className="mt-3 inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                Bonus Demokrasi: seluruh penerimaan pajak +
-                {DEMOCRACY_TAX_REVENUE_BONUS * 100}%
-              </span>
-            )}
-            {hasCapitalismTaxBonus && (
-              <span className="mt-3 inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                Bonus Kapitalisme: seluruh penerimaan pajak +
-                {CAPITALISM_TAX_REVENUE_BONUS * 100}%
-              </span>
-            )}
-            {hasLiberalismTaxBonus && (
-              <span className="mt-3 inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                Bonus Liberalisme: seluruh penerimaan pajak +
-                {LIBERALISM_TAX_REVENUE_BONUS * 100}%
-              </span>
-            )}
-            {hasConservatismTaxBonus && (
-              <span className="mt-3 inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                Bonus Konservatisme: seluruh penerimaan pajak +
-                {CONSERVATISM_TAX_REVENUE_BONUS * 100}%
-              </span>
-            )}
-            {harmonisasiTaxBonusPercent > 0 && (
-              <span className="mt-3 inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                Bonus Harmonisasi Fiskal Global: Seluruh penerimaan pajak +
-                {harmonisasiTaxBonusPercent}%
-              </span>
-            )}
+            <div className="mt-3 flex flex-wrap gap-2">
+              {hasKemenkeuBonus && (
+                <span className={`inline-flex ${rootBorderRadius.card} border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400`}>
+                  Bonus Kementerian Keuangan: Seluruh penerimaan pajak +
+                  {kemenkeuTaxBonusPercent}% (+
+                  {kemenkeuBonusAmount.toLocaleString("id-ID", {
+                    maximumFractionDigits: 2,
+                  })}{" "}
+                  NEO)
+                </span>
+              )}
+              {hasDemocracyTaxBonus && (
+                <span className={`inline-flex ${rootBorderRadius.card} border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400`}>
+                  Bonus Demokrasi: seluruh penerimaan pajak +
+                  {DEMOCRACY_TAX_REVENUE_BONUS * 100}%
+                </span>
+              )}
+              {hasCapitalismTaxBonus && (
+                <span className={`inline-flex ${rootBorderRadius.card} border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400`}>
+                  Bonus Kapitalisme: seluruh penerimaan pajak +
+                  {CAPITALISM_TAX_REVENUE_BONUS * 100}%
+                </span>
+              )}
+              {hasLiberalismTaxBonus && (
+                <span className={`inline-flex ${rootBorderRadius.card} border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400`}>
+                  Bonus Liberalisme: seluruh penerimaan pajak +
+                  {LIBERALISM_TAX_REVENUE_BONUS * 100}%
+                </span>
+              )}
+              {hasConservatismTaxBonus && (
+                <span className={`inline-flex ${rootBorderRadius.card} border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400`}>
+                  Bonus Konservatisme: seluruh penerimaan pajak +
+                  {CONSERVATISM_TAX_REVENUE_BONUS * 100}%
+                </span>
+              )}
+              {harmonisasiTaxBonusPercent > 0 && (
+                <span className={`inline-flex ${rootBorderRadius.card} border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400`}>
+                  Bonus Harmonisasi Fiskal Global: Seluruh penerimaan pajak +
+                  {harmonisasiTaxBonusPercent}%
+                </span>
+              )}
+            </div>
           </div>
 
           {/* ---- INDEKS KEPUASAN RAKYAT ---- */}
-          <div className="mt-6 p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424]">
+          <div className={`mt-6 p-5 ${rootBorderRadius.card} border border-[#00FFAA]/30 bg-[#0F2424]`}>
             <div className="flex justify-between items-center">
-              <span className="text-sm font-black text-[#00FFAA] uppercase tracking-widest">
+              <span className={`${rootModalTypography.sectionTitle} uppercase tracking-widest`}>
                 Indeks Kepuasan Rakyat (Pajak)
               </span>
               <span className="text-3xl font-black text-amber-400">
@@ -857,9 +838,9 @@ function PajakModalContent({
     </NotebookModalWrapper>
     {isConfirmDialogOpen && createPortal(
       <div className="fixed inset-0 z-[2147483647] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-        <div role="dialog" aria-modal="true" aria-labelledby="tax-confirm-title" className="w-full max-w-md rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-2xl">
-          <h3 id="tax-confirm-title" className="text-lg font-bold text-white">Konfirmasi tuntutan pajak</h3>
-          <p className="mt-2 text-sm text-slate-300">
+        <div role="dialog" aria-modal="true" aria-labelledby="tax-confirm-title" className={`w-full max-w-md ${rootBorderRadius.card} border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-2xl`}>
+          <h3 id="tax-confirm-title" className={rootModalTypography.title}>Konfirmasi tuntutan pajak</h3>
+          <p className={`mt-2 ${rootModalTypography.body} break-words`}>
             {pendingTaxChanges.length > 0
               ? "Perubahan tarif pajak akan diterapkan sesuai pilihan Anda. Lanjutkan?"
               : "Belum ada perubahan tarif. Konfirmasi untuk kembali ke forum dialog."}

@@ -3,8 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
+import PausedMenuFrame from '@/app/page/root_modals_design_menu/rootFrameMenu';
+import RootModalCloseButton from '@/app/page/root_modals_design_menu/RootModalCloseButton';
 import {
-  Target, X, Compass, Award, Rocket,
+  Target, Compass, Award, Rocket,
   Music, Trophy, PartyPopper, Coins, Landmark, TrendingUp, TrendingDown, Zap,
   Battery, Droplet, Atom, Wind, Waves, Home, Building2, Swords, Plane,
   Ship, Radio, Play, Users2, HeartHandshake, Eye, Globe, Star, Shield,
@@ -1256,11 +1258,8 @@ export default function MissionModals({
 
       {/* Modal Misi */}
       {isOpen && mounted && createPortal(
-        <div className="fixed inset-0 z-[100000] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl"
-          >
+        <PausedMenuFrame zIndexClass="z-[100000]">
+          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden font-sans">
             {/* HEADER */}
             <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0 rounded-t-2xl">
               <div className="flex items-center gap-2">
@@ -1288,13 +1287,7 @@ export default function MissionModals({
                   </p>
                 </div>
               </div>
-              <button
-                onClick={onClose}
-                className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
-              >
-                <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-5 w-5" />
-              </button>
+              <RootModalCloseButton onClick={onClose} />
             </div>
 
             {/* BODY: HANYA 5 KARTU KEBAWAH */}
@@ -1457,7 +1450,7 @@ export default function MissionModals({
               )}
             </div>
           </div>
-        </div>,
+        </PausedMenuFrame>,
         document.body
       )}
     </>

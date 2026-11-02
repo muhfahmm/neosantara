@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { X, Zap, Activity, Building2, Home, Factory, Search, Shield, TrendingUp, TrendingDown } from "lucide-react";
+import { Zap, Activity, Building2, Home, Factory, Search, Shield, TrendingUp, TrendingDown } from "lucide-react";
 import { getCountryConsumptionBreakdown } from "./consumptionLogic";
+import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 
 interface DetailKonsumsiTerestimasiModalProps {
   isOpen: boolean;
@@ -66,8 +68,8 @@ export default function DetailKonsumsiTerestimasiModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424] border border-rose-500/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+    <NotebookModalWrapper onClose={onClose}>
+      <div className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
 
         {/* HEADER */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-rose-500/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
@@ -77,17 +79,10 @@ export default function DetailKonsumsiTerestimasiModal({
             </div>
             <div>
               <h2 className="text-base sm:text-xl font-bold text-rose-400 tracking-tight leading-none uppercase">Rincian Konsumsi Listrik Terestimasi</h2>
-              <p className="text-[10px] text-[#6B8A8A] font-semibold mt-0.5">Detail beban konsumsi listrik dari seluruh sektor nasional</p>
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-1.5 lg:p-2 rounded-xl border border-rose-500/30 bg-[#0F2424] text-[#6B8A8A] hover:text-rose-400 hover:border-rose-400 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-          >
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
+          <RootModalCloseButton onClick={onClose} />
         </div>
 
         {/* BODY */}
@@ -321,6 +316,6 @@ export default function DetailKonsumsiTerestimasiModal({
         </div>
 
       </div>
-    </div>
+    </NotebookModalWrapper>
   );
 }

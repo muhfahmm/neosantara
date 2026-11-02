@@ -8,6 +8,9 @@ interface NotebookModalWrapperProps {
   ringCount?: number;
   maxWidthClass?: string;
   zIndexClass?: string;
+  isHidden?: boolean;
+  compact?: boolean;
+  backdropClassName?: string;
 }
 
 export function NotebookModalWrapper({
@@ -16,15 +19,18 @@ export function NotebookModalWrapper({
   ringCount = 11,
   maxWidthClass = 'max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl',
   zIndexClass = 'z-[60]',
+  isHidden = false,
+  compact = false,
+  backdropClassName = '',
 }: NotebookModalWrapperProps) {
   return (
     <div
-      className={`fixed inset-0 ${zIndexClass} flex items-center justify-center pt-[88px] sm:pt-[100px] lg:pt-[clamp(92px,10dvh,115px)] pb-3 sm:pb-4 lg:pb-5 px-3 sm:px-6 lg:px-10 bg-transparent font-sans pointer-events-none`}
+      className={`${isHidden ? 'hidden' : ''} fixed inset-0 ${zIndexClass} flex items-center justify-center pt-[88px] sm:pt-[100px] lg:pt-[clamp(92px,10dvh,115px)] pb-3 sm:pb-4 lg:pb-5 px-3 sm:px-6 lg:px-10 ${backdropClassName || 'bg-transparent'} font-sans pointer-events-none`}
     >
       {/* Notebook Outer Frame */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`bg-[#0A1A1A] border-[6px] border-[#0F2424] rounded-2xl w-full ${maxWidthClass} h-full max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)] shadow-2xl relative flex flex-col min-w-0 p-3 sm:p-4 pl-10 sm:pl-12 pointer-events-auto overflow-hidden`}
+        className={`bg-[#0A1A1A] border-[6px] border-[#0F2424] rounded-2xl w-full ${maxWidthClass} ${compact ? 'h-auto max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)]' : 'h-full max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)]'} shadow-2xl relative flex flex-col min-w-0 p-3 sm:p-4 pl-10 sm:pl-12 pointer-events-auto overflow-hidden`}
       >
         {/* Silver Binder Spine on the Left */}
         <div className="absolute left-3 sm:left-3.5 top-6 bottom-6 w-2 sm:w-2.5 bg-gradient-to-r from-[#2A3F3F] via-[#3D5252] to-[#1F3030] rounded-full shadow-md z-20 border border-[#0A1A1A]/80" />
@@ -44,12 +50,12 @@ export function NotebookModalWrapper({
         </div>
 
         {/* Main Panel Sheet — Green Theme */}
-        <div className="flex-1 bg-[#0F2424] border-[3px] border-[#00FFAA]/20 rounded-r-xl shadow-inner relative flex flex-col overflow-hidden">
+        <div className={`${compact ? 'flex-none' : 'flex-1'} min-w-0 bg-[#0F2424] border-[3px] border-[#00FFAA]/20 rounded-r-xl shadow-inner relative flex flex-col overflow-hidden`}>
           {/* Subtle radial glow */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
           {/* Render Actual Modal Children */}
-          <div className="flex-1 flex flex-col min-h-0 relative z-10 overflow-hidden">
+          <div className={`${compact ? 'flex-none max-h-[calc(100dvh-160px)] overflow-y-auto' : 'flex-1 min-h-0 overflow-hidden'} flex flex-col min-w-0 relative z-10`}>
             {children}
           </div>
         </div>

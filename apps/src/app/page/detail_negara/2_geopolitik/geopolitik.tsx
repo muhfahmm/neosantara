@@ -197,7 +197,7 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
   return (
     <div className="space-y-6 lg:space-y-4 xl:space-y-6">
       {/* Grid Layout 5 Tombol Aksi */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-3 xl:gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 items-stretch gap-4 lg:gap-3 xl:gap-4 pt-6 lg:pt-4 xl:pt-6">
         <ActionButton icon={Sword} label="Beri Tentara" onClick={() => setIsBeriTentaraOpen(true)} disabled={!hasDefenseAlliance} />
         <ActionButton icon={Gift} label="Beri Hadiah" onClick={() => setIsBeriHadiahOpen(true)} />
         <ActionButton icon={Heart} label="Tingkatkan Hubungan" onClick={() => setIsTingkatkanOpen(true)} />

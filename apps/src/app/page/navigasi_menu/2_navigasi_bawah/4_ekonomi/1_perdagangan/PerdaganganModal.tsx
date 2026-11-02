@@ -1,7 +1,9 @@
 "use client"
 import React, { useMemo, useState, useEffect, useRef } from "react";
-import { X, ArrowRightLeft, Info, AlertTriangle } from "lucide-react";
+import { ArrowRightLeft, Info, AlertTriangle } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import TradeMarketBlockedModal from "./TradeMarketBlockedModal";
 import JualModalsMenu from "./jual/modalsKonfirmasiJual";
 import MitraModalsMenu, { TradePartner } from "./mitra/mitraModalsMenu";
@@ -975,13 +977,13 @@ export default function PerdaganganModal({
           <div className="flex flex-col h-full overflow-hidden">
 
             {/* HEADER */}
-            <div className="px-3 sm:px-4 py-2 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
-              <div className="flex items-center gap-2">
-                <div className="p-1 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-                  <ArrowRightLeft className="h-4 w-4 text-[#00FFAA]" />
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+              <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+                <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
+                  <ArrowRightLeft className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
                 </div>
-                <div>
-                  <h2 className="text-sm sm:text-base font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Pasar Perdagangan Global</h2>
+                <div className="min-w-0">
+                  <h2 className={rootModalTypography.title}>Pasar Perdagangan Global</h2>
                 </div>
                 {!isTradeMarketBlocked && (
                   <button
@@ -1007,10 +1009,7 @@ export default function PerdaganganModal({
                   </button>
                 )}
 
-                <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
-                  <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                  <X className="h-4 w-4" />
-                </button>
+                <RootModalCloseButton onClick={onClose} />
               </div>
             </div>
 
@@ -1045,17 +1044,17 @@ export default function PerdaganganModal({
               ) : (
                 <>
                   {tradeAccess.status === "waspada" && (
-                    <p className="mb-3 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[11px] font-bold text-amber-300">
+                    <p className="mb-3 min-w-0 break-words rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[11px] font-bold text-amber-300">
                       Sentralisasi tinggi. Tarif impor: +{Math.round(tradeAccess.importTariffModifier * 100)}%. Skor: {tradeAccess.centralizationScore.toFixed(1)}.
                     </p>
                   )}
                   {tradeAccess.status === "dibatasi" && (
-                    <p className="mb-3 rounded-lg border border-orange-500/30 bg-orange-500/10 px-3 py-2 text-[11px] font-bold text-orange-300">
+                    <p className="mb-3 min-w-0 break-words rounded-lg border border-orange-500/30 bg-orange-500/10 px-3 py-2 text-[11px] font-bold text-orange-300">
                       Impor diblokir. Tarif ekspor: +{Math.round(tradeAccess.exportTariffModifier * 100)}%. Skor: {tradeAccess.centralizationScore.toFixed(1)}.
                     </p>
                   )}
                   {isCountryUnderEconomicEmbargo(countryName) && (
-                    <p className="mb-3 rounded-lg border border-rose-500/40 bg-rose-950/40 px-3 py-2 text-[11px] font-bold text-rose-300">
+                    <p className="mb-3 min-w-0 break-words rounded-lg border border-rose-500/40 bg-rose-950/40 px-3 py-2 text-[11px] font-bold text-rose-300">
                       Embargo ekonomi PBB aktif. Perdagangan internasional diblokir.
                     </p>
                   )}
@@ -1251,38 +1250,32 @@ export default function PerdaganganModal({
 
       {/* MODAL INFORMASI EFEK HARGA PERDAGANGAN (WTO & AGAMA) */}
       {showWTOTradeInfoModal && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-            <div className="px-4 py-2 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] shrink-0">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 text-[#00FFAA]">
-                  <ArrowRightLeft className="w-4 h-4" />
+        <NotebookModalWrapper onClose={() => setShowWTOTradeInfoModal(false)} zIndexClass="z-[200]">
+          <div className="flex h-full min-w-0 flex-col overflow-hidden">
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+              <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+                <div className="p-1 sm:p-1.5 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 shrink-0">
+                  <ArrowRightLeft className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
                 </div>
-                <div>
-                  <h3 className="text-sm font-bold text-[#00FFAA] uppercase tracking-tight leading-none">
+                <div className="min-w-0">
+                  <h2 className={rootModalTypography.title}>
                     Informasi Efek Harga Perdagangan
-                  </h3>
-                  <p className="text-[9px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-0.5">
+                  </h2>
+                  <p className={`${rootModalTypography.body} break-words`}>
                     Organisasi & Kebijakan Agama / Ideologi
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => setShowWTOTradeInfoModal(false)}
-                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-              >
-                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-4 w-4" />
-              </button>
+              <RootModalCloseButton onClick={() => setShowWTOTradeInfoModal(false)} />
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 sm:p-5 bg-[#0F2424] neon-scrollbar space-y-3">
+            <div className="root-no-scrollbar-glow min-h-0 flex-1 overflow-y-auto p-4 sm:p-5 bg-[#0F2424] neon-scrollbar space-y-3">
               {activeBonusesList.length === 0 ? (
                 <div className="p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 text-center space-y-2">
-                  <p className="text-xs font-bold text-[#E0E0E0]">
+                  <p className={`${rootModalTypography.body} break-words`}>
                     Belum ada bonus harga perdagangan yang aktif.
                   </p>
-                  <p className="text-[11px] text-[#6B8A8A] max-w-lg mx-auto">
+                  <p className={`${rootModalTypography.body} ${rootModalTypography.muted} mx-auto max-w-lg break-words`}>
                     Bergabunglah dengan WTO atau OPEC, tingkatkan Kementerian Perdagangan, riset Diplomasi Dagang, atau terapkan agama terkait.
                   </p>
                 </div>
@@ -1304,24 +1297,24 @@ export default function PerdaganganModal({
                           <span className="text-[8px] font-black uppercase px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 tracking-wider">
                             {item.category}
                           </span>
-                          <h4 className="text-xs font-black text-white mt-0.5">
+                          <h4 className="mt-0.5 min-w-0 break-words text-xs font-black text-white">
                             {item.title}
                           </h4>
                         </div>
                       </div>
 
-                      <p className="text-[10px] text-[#C3D5D5] leading-snug">
+                      <p className="min-w-0 break-words text-[10px] leading-snug text-[#C3D5D5]">
                         {item.desc}
                       </p>
 
                       <div className="pt-1.5 border-t border-emerald-500/20 flex flex-wrap gap-1.5 text-[10px] font-black">
                         {item.sellBonusText && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded bg-[#0F2424] border border-emerald-500/40 text-emerald-300">
+                          <span className="inline-flex min-w-0 max-w-full items-center break-words px-2 py-0.5 rounded bg-[#0F2424] border border-emerald-500/40 text-emerald-300">
                             • {item.sellBonusText}
                           </span>
                         )}
                         {item.buyDiscountText && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded bg-[#0F2424] border border-emerald-500/40 text-emerald-300">
+                          <span className="inline-flex min-w-0 max-w-full items-center break-words px-2 py-0.5 rounded bg-[#0F2424] border border-emerald-500/40 text-emerald-300">
                             • {item.buyDiscountText}
                           </span>
                         )}
@@ -1333,7 +1326,7 @@ export default function PerdaganganModal({
             </div>
             {/* Tombol "Mengerti" di footer telah dihapus */}
           </div>
-        </div>
+        </NotebookModalWrapper>
       )}
     </>
   );

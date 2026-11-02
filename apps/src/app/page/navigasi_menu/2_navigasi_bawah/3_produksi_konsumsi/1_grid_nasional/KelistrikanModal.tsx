@@ -11,12 +11,15 @@ import {
 } from "lucide-react";
 
 import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
-import CountryKelistrikanModal from "./CountryKelistrikanModal";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 import { getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/construction_support/1_produksi/1_kelistrikan/fuelLogic";
 import { getCountryConsumptionBreakdown } from "./consumptionLogic";
 import { getProductionBonusMultiplier } from "../../../../bonus_logic";
 import { applyNpcCountrySimulationState } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 
 interface ModalProps {
   isOpen: boolean;
@@ -52,7 +55,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
   const [searchQuery, setSearchQuery] = useState('');
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'production', direction: 'desc' });
   const [isDetailKonsumsiOpen, setIsDetailKonsumsiOpen] = useState(false);
-  const [selectedCountryData, setSelectedCountryData] = useState<any | null>(null);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -73,17 +75,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
       }
     })();
   }, [isOpen, prefetchedAllCountries, allCountries.length]);
-
-  useEffect(() => {
-    const selectedSlug = String(selectedCountryData?.country_slug || '').trim().toLowerCase();
-    if (!selectedSlug) return;
-    const refreshedCountry = allCountries.find(
-      country => String(country?.country_slug || '').trim().toLowerCase() === selectedSlug,
-    );
-    if (refreshedCountry && refreshedCountry !== selectedCountryData) {
-      setSelectedCountryData(refreshedCountry);
-    }
-  }, [allCountries, selectedCountryData?.country_slug, selectedCountryData]);
 
   if (!isOpen) return null;
 
@@ -260,26 +251,23 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
   return (
     <>
       <NotebookModalWrapper onClose={onClose}>
-        <div className="flex flex-col h-full overflow-hidden">
+        <div className="flex h-full min-w-0 flex-col overflow-hidden">
           {/* HEADER */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
                 <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
               </div>
-              <div>
-                <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Grid Kelistrikan Nasional</h2>
+              <div className="min-w-0">
+                <h2 className={rootModalTypography.title}>Grid Kelistrikan Nasional</h2>
               </div>
             </div>
 
-            <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
-              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-4 w-4" />
-            </button>
+            <RootModalCloseButton onClick={onClose} />
           </div>
 
           {/* BODY (SCROLLBAR HIJAU DITERAPKAN DI SINI) */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10
+          <div className="root-no-scrollbar-glow flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10
             [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 
             [&::-webkit-scrollbar-track]:bg-[#0A1A1A] 
             [&::-webkit-scrollbar-track]:rounded-full 
@@ -287,7 +275,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
             [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A]
             [&::-webkit-scrollbar-thumb]:rounded-full 
             [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0A1A1A]
-            [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)]
             hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]
             [&::-webkit-scrollbar-button]:hidden
           ">
@@ -295,22 +282,12 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
             {/* TAB NAVIGASI & SEARCH BAR */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 lg:gap-4 mb-3.5 lg:mb-5 2xl:mb-6">
               {/* Tab Menu */}
-              <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/30 inline-flex">
-                <button
-                  onClick={() => setActiveTab("user")}
-                  className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${activeTab === "user" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
-                    }`}
-                >
-                  Neraca User
-                </button>
-                <button
-                  onClick={() => setActiveTab("global")}
-                  className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${activeTab === "global" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
-                    }`}
-                >
-                  Neraca {allCountries.length || 207} Negara
-                </button>
-              </div>
+              <RootModalTabs
+                items={[
+                  { label: "Neraca User", isActive: activeTab === "user", onClick: () => setActiveTab("user") },
+                  { label: `Neraca ${allCountries.length || 207} Negara`, isActive: activeTab === "global", onClick: () => setActiveTab("global") },
+                ]}
+              />
 
               {/* Input Search (Hanya muncul di tab global) */}
               {activeTab === "global" && (
@@ -340,34 +317,34 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
               <>
                 <div className="grid grid-cols-1 lg:grid-cols-[1.25fr_0.95fr] gap-3 lg:gap-4">
                   {/* KOLOM KIRI: STATISTIK GRID */}
-                  <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3 lg:p-3.5 2xl:p-4 rounded-xl 2xl:rounded-2xl">
+                  <div className={`bg-[#0A1A1A] border border-[#00FFAA]/20 p-3 lg:p-3.5 2xl:p-4 ${rootBorderRadius.card}`}>
                     <div className="flex items-center gap-2.5 lg:gap-3 mb-2.5 lg:mb-3">
                       <div className="p-2 lg:p-2.5 2xl:p-3 rounded-xl 2xl:rounded-2xl bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30">
                         <BatteryCharging className="h-4 w-4 lg:h-5 lg:w-5" />
                       </div>
                       <div>
-                        <h3 className="text-xs lg:text-sm 2xl:text-base font-black text-[#00FFAA] uppercase tracking-wide">Statistik Grid</h3>
+                        <h3 className={rootModalTypography.sectionTitle}>Statistik Grid</h3>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 gap-2.5 lg:gap-3">
-                      <div className="bg-emerald-950/40 border border-emerald-500/30 p-2.5 lg:p-3 rounded-xl 2xl:rounded-2xl">
-                        <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest text-emerald-400">✓ Total Produksi Listrik</p>
+                      <div className={`bg-emerald-950/40 border border-emerald-500/30 p-2.5 lg:p-3 ${rootBorderRadius.card}`}>
+                        <p className={rootModalTypography.label}>✓ Total Produksi Listrik</p>
                         <p className="text-lg lg:text-xl 2xl:text-2xl font-black text-emerald-400 mt-1.5 lg:mt-2 2xl:mt-3">{totalCapacityMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</p>
                       </div>
                       <div
                         onClick={() => setIsDetailKonsumsiOpen(true)}
-                        className="bg-rose-950/40 border border-rose-500/30 hover:border-rose-400 hover:scale-[1.01] p-2.5 lg:p-3 rounded-xl 2xl:rounded-2xl transition-all cursor-pointer group shadow-md"
+                        className={`bg-rose-950/40 border border-rose-500/30 hover:border-rose-400 hover:scale-[1.01] p-2.5 lg:p-3 ${rootBorderRadius.card} transition-all cursor-pointer group`}
                       >
                         <div className="flex items-center justify-between">
-                          <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest text-rose-400">✗ Konsumsi Terestimasi</p>
+                          <p className={rootModalTypography.label}>✗ Konsumsi Terestimasi</p>
                           <span className="text-[9px] text-rose-300 font-bold opacity-80 group-hover:opacity-100 transition-opacity">Detail →</span>
                         </div>
                         <p className="text-lg lg:text-xl 2xl:text-2xl font-black text-rose-400 mt-1.5 lg:mt-2 2xl:mt-3">{estimatedConsumptionMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</p>
                       </div>
 
                       {/* NERACA DAYA: LOGIKA WARNA HIJAU/MERAH/ABU-ABU */}
-                      <div className={`p-2.5 lg:p-3 rounded-xl 2xl:rounded-2xl border ${balanceMW > 0 ? 'bg-emerald-950/40 border-emerald-500/30' :
+                      <div className={`p-2.5 lg:p-3 ${rootBorderRadius.card} border ${balanceMW > 0 ? 'bg-emerald-950/40 border-emerald-500/30' :
                           balanceMW < 0 ? 'bg-rose-950/40 border-rose-500/30' :
                             'bg-slate-900/40 border-slate-500/30'
                         }`}>
@@ -385,34 +362,34 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                     </div>
 
                     <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3 rounded-2xl">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">Jumlah Sumber Energi Aktif</p>
-                        <p className="text-lg font-black text-[#E0E0E0] mt-2">{totalSources}</p>
+                      <div className={`bg-[#0F2424] border border-[#00FFAA]/20 p-3 ${rootBorderRadius.card}`}>
+                        <p className={rootModalTypography.label}>Jumlah Sumber Energi Aktif</p>
+                        <p className={`${rootModalTypography.value} mt-2 text-lg`}>{totalSources}</p>
                       </div>
-                      <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3 rounded-2xl">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">Perkiraan Beban Warga</p>
-                        <p className="text-lg font-black text-[#E0E0E0] mt-2">{((countryDetail?.jumlah_penduduk ?? 0) / 1000000).toFixed(1)} Juta Jiwa</p>
+                      <div className={`bg-[#0F2424] border border-[#00FFAA]/20 p-3 ${rootBorderRadius.card}`}>
+                        <p className={rootModalTypography.label}>Perkiraan Beban Warga</p>
+                        <p className={`${rootModalTypography.value} mt-2 text-lg`}>{((countryDetail?.jumlah_penduduk ?? 0) / 1000000).toFixed(1)} Juta Jiwa</p>
                       </div>
                     </div>
                   </div>
 
                   {/* KOLOM KANAN: RINGKASAN SUMBER DAYA */}
-                  <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl">
+                  <div className={`bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 ${rootBorderRadius.card}`}>
                     <div className="flex items-center gap-3 mb-4">
                       <div className="p-3 rounded-2xl bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30">
                         <MapPin className="h-5 w-5" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-black text-[#00FFAA] uppercase tracking-wide">Ringkasan Sumber Daya</h3>
+                        <h3 className={rootModalTypography.sectionTitle}>Ringkasan Sumber Daya</h3>
                       </div>
                     </div>
 
                     <div className="space-y-3">
                       {powerSources.length > 0 ? powerSources.map((source) => (
-                        <div key={source.key} className="flex items-center justify-between gap-3 p-4 bg-[#0F2424] border border-[#00FFAA]/20 rounded-2xl">
+                        <div key={source.key} className={`flex items-center justify-between gap-3 p-4 bg-[#0F2424] border border-[#00FFAA]/20 ${rootBorderRadius.card}`}>
                           <div>
-                            <p className="text-sm font-black text-[#E0E0E0] uppercase tracking-wide">{source.label}</p>
-                            <p className="text-[10px] text-[#6B8A8A]">{source.desc}</p>
+                            <p className={rootModalTypography.sectionTitle}>{source.label}</p>
+                            <p className={`${rootModalTypography.body} ${rootModalTypography.muted}`}>{source.desc}</p>
                           </div>
                           <div className="text-right">
                             <p className="text-sm font-black text-[#00FFAA]">
@@ -422,7 +399,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                           </div>
                         </div>
                       )) : (
-                        <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0F2424] p-4 text-sm text-[#6B8A8A]">
+                        <div className={`border border-[#00FFAA]/20 bg-[#0F2424] p-4 ${rootBorderRadius.card} ${rootModalTypography.body}`}>
                           Data pembangkit listrik tidak tersedia.
                         </div>
                       )}
@@ -431,9 +408,9 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                 </div>
 
                 {/* INDEKS KEPUASAN LISTRIK */}
-                <div className="mt-6 p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A]">
+                <div className={`mt-6 p-5 border border-[#00FFAA]/30 bg-[#0A1A1A] ${rootBorderRadius.card}`}>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-black text-[#00FFAA] uppercase tracking-widest">
+                    <span className={rootModalTypography.sectionTitle}>
                       Indeks Kepuasan Rakyat (Listrik)
                     </span>
                     <span className="text-3xl font-black text-[#00FFAA]">
@@ -452,9 +429,9 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
             {/* TAB NERACA GLOBAL */}
             {activeTab === "global" && (
-              <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl w-full">
+              <div className={`w-full bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 ${rootBorderRadius.card}`}>
                 {/* SCROLLBAR HIJAU DITERAPKAN JUGA DI TABEL (VERTIKAL & HORIZONTAL) */}
-                <div className="overflow-x-auto border border-[#00FFAA]/20 rounded-xl bg-[#0F2424] max-h-[60vh] overflow-y-auto
+                <div className={`root-no-scrollbar-glow overflow-x-auto border border-[#00FFAA]/20 ${rootBorderRadius.card} bg-[#0F2424] max-h-[60vh] overflow-y-auto
                   [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 
                   [&::-webkit-scrollbar]:h-1.5 sm:[&::-webkit-scrollbar]:h-2
                   [&::-webkit-scrollbar-track]:bg-[#0F2424] 
@@ -463,10 +440,9 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                   [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A]
                   [&::-webkit-scrollbar-thumb]:rounded-full 
                   [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0F2424]
-                  [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)]
                   hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]
                   [&::-webkit-scrollbar-button]:hidden
-                ">
+                `}>
                   <table className="w-full text-xs">
                     <thead className="sticky top-0 text-[10px] sm:text-xs z-10">
                       <tr className="bg-[#0A1A1A] border-b border-[#00FFAA]/20">
@@ -510,8 +486,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                           return (
                             <tr
                               key={`country-${country.name}-${rowIndex}`}
-                              onClick={() => setSelectedCountryData(country.rawData)}
-                              className={`transition-colors cursor-pointer hover:bg-[#00FFAA]/10 ${isUserCountry
+                              className={`transition-colors ${isUserCountry
                                   ? 'bg-emerald-950/50 font-black border-l-4 border-l-emerald-400'
                                   : 'bg-[#0F2424]'
                                 }`}
@@ -579,22 +554,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
         }}
       />
 
-      <CountryKelistrikanModal
-        isOpen={Boolean(selectedCountryData)}
-        onClose={() => setSelectedCountryData(null)}
-        countryData={selectedCountryData}
-        metadata={metadata}
-        isUserCountry={Boolean(
-          selectedCountryData &&
-          userCountryName &&
-          (
-            (selectedCountryData?.name_id && selectedCountryData.name_id.toLowerCase().trim() === userCountryName) ||
-            (selectedCountryData?.name_en && selectedCountryData.name_en.toLowerCase().trim() === userCountryName) ||
-            (selectedCountryData?.country && selectedCountryData.country.toLowerCase().trim() === userCountryName) ||
-            (selectedCountryData?.nama && selectedCountryData.nama.toLowerCase().trim() === userCountryName)
-          )
-        )}
-      />
     </>
   );
 } 

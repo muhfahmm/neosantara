@@ -9,8 +9,11 @@ import React, {
   useDeferredValue,
 } from "react";
 import { createPortal } from "react-dom";
-import { X, Tag, Loader2 } from "lucide-react";
+import { Tag, Loader2 } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { generateHargaChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/2_harga_barang_pokok/hargaChangeLogic";
 import { generateDemonstrasiHargaNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/demonstrasiEkonomiLogic";
 import { calculatePriceCommodityImpacts } from "@/app/logic/economic_logic/economicPopulationImpact";
@@ -73,7 +76,7 @@ const CommodityCard = React.memo(
     });
 
     return (
-      <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-xl p-3 lg:p-4">
+      <div className={`border border-[#00FFAA]/30 bg-[#0A1A1A] p-3 lg:p-4 ${rootBorderRadius.card}`}>
         <div className="flex items-center justify-between mb-2.5 lg:mb-3">
           <div>
             <p className="text-xs lg:text-sm font-black text-[#00FFAA] uppercase">
@@ -545,12 +548,12 @@ function HargaModalContent({
     <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
               <Tag className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
             </div>
-            <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
+            <div className="min-w-0">
+              <h2 className={rootModalTypography.title}>
                 Kontrol Harga Barang Pokok
               </h2>
             </div>
@@ -566,16 +569,7 @@ function HargaModalContent({
                 Konfirmasi
               </button>
             )}
-            <button
-              type="button"
-              onClick={onClose}
-              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-            >
-              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">
-                Tutup
-              </span>
-              <X className="h-4 w-4" />
-            </button>
+            <RootModalCloseButton onClick={onClose} />
           </div>
         </div>
 
@@ -629,7 +623,7 @@ function HargaModalContent({
 
           {/* ---- INDEKS KEPUASAN RAKYAT (HARGA) ---- */}
           {!forumDialogMode && (
-          <div className="mt-4 lg:mt-6 p-4 lg:p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A]">
+          <div className={`mt-4 border border-[#00FFAA]/30 bg-[#0A1A1A] p-4 lg:mt-6 lg:p-5 ${rootBorderRadius.card}`}>
             <div className="flex justify-between items-center">
               <span className="text-[11px] lg:text-xs font-black text-[#00FFAA] uppercase tracking-widest">
                 Indeks Kepuasan Rakyat (Harga Pokok)
@@ -664,7 +658,7 @@ function HargaModalContent({
     </NotebookModalWrapper>
     {isConfirmDialogOpen && createPortal(
       <div className="fixed inset-0 z-[2147483647] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-        <div role="dialog" aria-modal="true" aria-labelledby="price-confirm-title" className="w-full max-w-md rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-2xl">
+        <div role="dialog" aria-modal="true" aria-labelledby="price-confirm-title" className={`w-full max-w-md border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-2xl ${rootBorderRadius.card}`}>
           <h3 id="price-confirm-title" className="text-lg font-bold text-white">Konfirmasi kebijakan harga</h3>
           <p className="mt-2 text-sm text-slate-300">
             {pendingPriceChanges.length > 0

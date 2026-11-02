@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { renderFlag, LoanRecord } from "../utils";
 import { Info } from "lucide-react";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 
 interface RiwayatProps {
   loanHistory: LoanRecord[];
@@ -35,10 +36,10 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
 
   return (
     <div>
-      <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/30 inline-flex mb-4">
+      <div className={`mb-4 inline-flex max-w-full flex-wrap gap-1 border border-[#00FFAA]/30 bg-[#0A1A1A] p-1 ${rootBorderRadius.card}`}>
         <button
           onClick={() => setHistorySubTab("active")}
-          className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
+          className={`px-4 py-2 ${rootBorderRadius.card} text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
             historySubTab === "active" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
           }`}
         >
@@ -46,7 +47,7 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
         </button>
         <button
           onClick={() => setHistorySubTab("paid")}
-          className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
+          className={`px-4 py-2 ${rootBorderRadius.card} text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
             historySubTab === "paid" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
           }`}
         >
@@ -54,15 +55,15 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
         </button>
       </div>
 
-      <div className="overflow-x-auto border border-[#00FFAA]/30 rounded-xl bg-[#0F2424]">
-        <table className="w-full text-xs">
+      <div className={`overflow-x-auto border border-[#00FFAA]/30 bg-[#0F2424] ${rootBorderRadius.card}`}>
+        <table className="w-full min-w-[960px] table-fixed text-xs">
           <thead className="bg-[#0A1A1A] border-b border-[#00FFAA]/30 sticky top-0 z-10">
             <tr>
-              <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider">Negara</th>
-              <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider">Pokok Pinjaman</th>
-              <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider">Bunga Awal</th>
-              <th className="px-4 py-3 text-left font-black text-emerald-400 uppercase tracking-wider">Sudah Dibayar</th>
-              <th className="px-4 py-3 text-left font-black text-rose-400 uppercase tracking-wider">
+              <th className="whitespace-nowrap px-4 py-3 text-left text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Negara</th>
+              <th className="whitespace-nowrap px-4 py-3 text-left text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Pokok Pinjaman</th>
+              <th className="whitespace-nowrap px-4 py-3 text-left text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Bunga Awal</th>
+              <th className="whitespace-nowrap px-4 py-3 text-left text-[10px] font-black text-emerald-400 uppercase tracking-wider">Sudah Dibayar</th>
+              <th className="whitespace-nowrap px-4 py-3 text-left text-[10px] font-black text-rose-400 uppercase tracking-wider">
                 <div className="flex items-center gap-2">
                   <span>Denda</span>
                   <button
@@ -75,9 +76,9 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
                   </button>
                 </div>
               </th>
-              <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider">Total Saat Ini</th>
-              <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider">Jatuh Tempo</th>
-              <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider">Aksi</th>
+              <th className="whitespace-nowrap px-4 py-3 text-left text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Total Saat Ini</th>
+              <th className="whitespace-nowrap px-4 py-3 text-left text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Jatuh Tempo</th>
+              <th className="whitespace-nowrap px-4 py-3 text-left text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Aksi</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#00FFAA]/10">

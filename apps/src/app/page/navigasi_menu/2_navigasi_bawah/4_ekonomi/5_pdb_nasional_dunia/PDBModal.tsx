@@ -1,7 +1,10 @@
 "use client"
 import React, { useState, useEffect } from "react";
-import { X, TrendingUp, Search, User, ChevronUp, ChevronDown } from "lucide-react";
+import { TrendingUp, Search, User, ChevronUp, ChevronDown } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import {
   calculateTotalTaxIncome,
   calculateGoldIncome,
@@ -425,7 +428,7 @@ function AllCountriesGDP({
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 border border-[#00FFAA]/30 rounded-xl bg-[#0A1A1A] overflow-hidden flex flex-col">
+      <div className={`flex min-h-0 flex-1 flex-col overflow-hidden border border-[#00FFAA]/30 bg-[#0A1A1A] ${rootBorderRadius.card}`}>
         <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden neon-scrollbar">
           <table className="w-full table-fixed text-xs text-left">
             <thead className="bg-[#0A1A1A] border-b border-[#00FFAA]/30 sticky top-0 z-10">
@@ -458,19 +461,16 @@ export default function PDBModal({ isOpen, onClose, countryDetail, selectedCount
     <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
               <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
             </div>
-            <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Produk Domestik Bruto (PDB)</h2>
+            <div className="min-w-0">
+              <h2 className={rootModalTypography.title}>Produk Domestik Bruto (PDB)</h2>
             </div>
           </div>
 
-          <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
+          <RootModalCloseButton onClick={onClose} />
         </div>
 
         <div className="flex-1 min-h-0 flex flex-col p-4 lg:p-6 bg-[#0F2424] relative z-10">

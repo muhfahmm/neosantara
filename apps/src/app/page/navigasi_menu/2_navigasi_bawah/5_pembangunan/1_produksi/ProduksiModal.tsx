@@ -3,6 +3,9 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { X, Hammer, TrendingUp, TrendingDown, AlertCircle, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { fetchBuildingMetadata } from '../../../../../../lib/buildingMetadata';
 import { isBuildingAvailable } from '../../../../../logic';
 import { calculateProductionIncrement, formatDate, getDaysElapsed } from '../../../../../logic/production_logic';
@@ -638,18 +641,15 @@ export default function ProduksiModal({
           <div className="flex flex-col h-full overflow-hidden">
 
             <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
-              <div className="flex items-center gap-2 sm:gap-3">
+              <div className="flex min-w-0 items-center gap-2 sm:gap-3">
                 <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
                   <Hammer className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
                 </div>
-                <div>
-                  <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Produksi & Pembangunan</h2>
+                <div className="min-w-0">
+                  <h2 className={rootModalTypography.title}>Produksi & Pembangunan</h2>
                 </div>
               </div>
-              <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
-                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-4 w-4" />
-              </button>
+              <RootModalCloseButton onClick={onClose} />
             </div>
 
             <div className="flex-1 flex min-h-0 relative z-10">
@@ -658,9 +658,9 @@ export default function ProduksiModal({
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center justify-between w-full px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl border text-left transition-all cursor-pointer ${activeTab === tab.id
+                    className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${activeTab === tab.id
                         ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
-                        : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
+                        : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA] hover:text-[#00FFAA]"
                       }`}
                   >
                     <span className="text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{tab.label}</span>

@@ -1,8 +1,12 @@
 "use client"
 import React, { useState, useEffect, useRef } from "react";
-import { X, CreditCard, ArrowRight, AlertCircle } from "lucide-react";
+import { CreditCard, ArrowRight, AlertCircle, Search } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 
 // 🔥 IMPOR TAB TERPISAH
 import NegaraLain from "./tab_menu/1_negara_lain";
@@ -96,6 +100,7 @@ const generateLoanSources = () => {
 
 export default function HutangModal({ isOpen, onClose, countryDetail, setCountryDetail, currentDate, resetTrigger }: ModalProps) {
   const [activeTab, setActiveTab] = useState<"bilateral" | "multilateral" | "history">("bilateral");
+  const [countrySearchQuery, setCountrySearchQuery] = useState("");
   const [loanSources, setLoanSources] = useState<any[]>([]);
   const initialLoanLoadRef = useRef(true);
 
@@ -354,49 +359,49 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
 
           {/* Header */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
               <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
             </div>
-            <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Pinjaman & Hutang</h2>
+            <div className="min-w-0">
+              <h2 className={rootModalTypography.title}>Pinjaman & Hutang</h2>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
+          <RootModalCloseButton onClick={onClose} />
         </div>
 
         {/* Body Content */}
         <div className="flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
           
-          {/* Tabs and debt summary share one row on desktop. */}
-          <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] gap-3 lg:gap-4 mb-3.5 lg:mb-5 2xl:mb-6 items-stretch">
-            <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/30 inline-flex self-center w-fit max-w-full">
-              <button
-                onClick={() => setActiveTab("bilateral")}
-                className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                  activeTab === "bilateral" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
-                }`}
-              >Negara Lain</button>
-              <button
-                onClick={() => setActiveTab("multilateral")}
-                className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                  activeTab === "multilateral" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
-                }`}
-              >Lembaga Dunia</button>
-              <button
-                onClick={() => setActiveTab("history")}
-                className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                  activeTab === "history" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
-                }`}
-              >Riwayat</button>
+          <div className="mb-3.5 space-y-3 lg:mb-5 lg:space-y-4 2xl:mb-6">
+            <div className="flex flex-col items-stretch gap-3 xl:flex-row xl:items-center">
+              <RootModalTabs
+                compact
+                className="w-full xl:w-3/5 xl:flex-none [&>button]:min-w-0 [&>button]:flex-1"
+                items={[
+                  { label: "Negara Lain", isActive: activeTab === "bilateral", onClick: () => setActiveTab("bilateral") },
+                  { label: "Lembaga Dunia", isActive: activeTab === "multilateral", onClick: () => setActiveTab("multilateral") },
+                  { label: "Riwayat", isActive: activeTab === "history", onClick: () => setActiveTab("history") },
+                ]}
+              />
+              {activeTab === "bilateral" && (
+                <div className={`relative min-w-0 flex-1 ${rootBorderRadius.card} xl:w-[35%] xl:flex-none`}>
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#6B8A8A]" />
+                  <input
+                    type="text"
+                    aria-label="Cari nama negara peminjam"
+                    placeholder="Cari nama negara peminjam..."
+                    value={countrySearchQuery}
+                    onChange={(event) => setCountrySearchQuery(event.target.value)}
+                    className={`h-9 w-full border border-[#00FFAA]/30 bg-[#0F2424] px-4 pl-10 text-sm font-bold text-[#E0E0E0] placeholder:text-[#6B8A8A] transition-all focus:border-[#00FFAA] focus:outline-none ${rootBorderRadius.card}`}
+                  />
+                </div>
+              )}
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-3">
-              <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-3.5 lg:p-4 rounded-xl flex flex-col justify-center min-w-0">
-                <h4 className="text-[8px] lg:text-[9px] text-[#6B8A8A] font-black uppercase tracking-wider mb-1.5">Rasio Hutang terhadap PDB</h4>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+              <div className={`flex min-w-0 flex-col justify-center border border-[#00FFAA]/30 bg-[#0F2424] p-3.5 lg:p-4 ${rootBorderRadius.card}`}>
+                <h4 className={`${rootModalTypography.label} mb-1.5`}>Rasio Hutang terhadap PDB</h4>
                 <div className="flex justify-between items-end gap-2 mb-2">
                   <span className="text-xl lg:text-2xl font-black text-[#00FFAA]">{debtRatio}%</span>
                   <div className="text-[10px] lg:text-xs font-bold text-right flex items-center gap-1">
@@ -429,8 +434,8 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
                 </div>
               </div>
 
-              <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-3.5 lg:p-4 rounded-xl flex flex-col justify-center min-w-0">
-                <span className="text-xs lg:text-sm font-bold text-[#E0E0E0]">Total Beban Hutang</span>
+              <div className={`flex min-w-0 flex-col justify-center border border-[#00FFAA]/30 bg-[#0F2424] p-3.5 lg:p-4 ${rootBorderRadius.card}`}>
+                <span className={rootModalTypography.sectionTitle}>Total Beban Hutang</span>
                 <span className="text-base lg:text-lg font-black text-rose-400 mt-1 break-words">{totalHutang.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
               </div>
             </div>
@@ -442,6 +447,7 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
               loanSources={loanSources}
               renderFlag={renderFlag}
               setPendingLoan={setPendingLoan}
+              searchQuery={countrySearchQuery}
             />
           )}
 
@@ -463,10 +469,6 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
               setGeneralPenaltyOpen={setIsGeneralPenaltyOpen}
             />
           )}
-          {activeTab !== "multilateral" && (
-            <></>
-          )}
-
         </div>
         </div>
       </NotebookModalWrapper>

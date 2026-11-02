@@ -1,7 +1,10 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import { X, Shield, Globe2, MapPin } from "lucide-react";
+import { Shield, Globe2, MapPin } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 
 interface ModalProps {
@@ -77,24 +80,18 @@ export default function WilayahDirebutModal({
     <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <div className={`shrink-0 border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 sm:p-2 ${rootBorderRadius.card}`}>
               <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500" />
             </div>
-            <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Wilayah yang Direbut</h2>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">
+            <div className="min-w-0">
+              <h2 className={rootModalTypography.title}>Wilayah yang Direbut</h2>
+              <p className={`${rootModalTypography.label} mt-1`}>
                 {playerCountryName || countryDetailName || "Negara"}
               </p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-          >
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
+          <RootModalCloseButton onClick={onClose} />
         </div>
 
         <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] relative z-10 neon-scrollbar">
@@ -112,7 +109,7 @@ export default function WilayahDirebutModal({
             </div>
           ) : (
             <div>
-              <div className="mb-4 flex items-center justify-between gap-3">
+              <div className={`mb-4 flex items-center justify-between gap-3 border border-[#00FFAA]/20 bg-[#0A1A1A] p-3 ${rootBorderRadius.card}`}>
                 <p className="text-xs font-bold uppercase tracking-wider text-[#6B8A8A]">
                   Wilayah yang berada di bawah kendali {playerCountryName}
                 </p>

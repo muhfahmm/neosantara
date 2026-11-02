@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { X, ShieldAlert, Swords, Building2, TrendingUp, TrendingDown, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import ArmadaAktif from "./1_tab_menu/1_armada_aktif";
 import InfrastrukturMiliter from "./1_tab_menu/2_infrastruktur_militer";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
@@ -78,22 +81,16 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
           
           {/* HEADER */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
-            <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+            <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <div className={`shrink-0 border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 sm:p-2 ${rootBorderRadius.card}`}>
               <ShieldAlert className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
             </div>
-            <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Pertahanan & Keamanan</h2>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">{countryName}</p>
+            <div className="min-w-0">
+              <h2 className={rootModalTypography.title}>Pertahanan & Keamanan</h2>
+              <p className={`${rootModalTypography.label} mt-1`}>{countryName}</p>
             </div>
           </div>
-          <button 
-            onClick={onClose} 
-            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-          >
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
+          <RootModalCloseButton onClick={onClose} />
         </div>
 
         {/* BODY MODAL WITH SIDEBAR */}
@@ -102,10 +99,10 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
           <div className="w-40 sm:w-44 lg:w-48 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
             <button 
               onClick={() => setActiveTab("aktif")} 
-              className={`flex items-center justify-between w-full px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl border text-left transition-all cursor-pointer ${
+              className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${
                 activeTab === "aktif" 
                   ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md" 
-                  : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
+                  : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA] hover:text-[#00FFAA]"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -116,10 +113,10 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
 
             <button 
               onClick={() => setActiveTab("infrastruktur")} 
-              className={`flex items-center justify-between w-full px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl border text-left transition-all cursor-pointer ${
+              className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${
                 activeTab === "infrastruktur" 
                   ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md" 
-                  : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
+                  : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA] hover:text-[#00FFAA]"
               }`}
             >
               <div className="flex items-center gap-2">

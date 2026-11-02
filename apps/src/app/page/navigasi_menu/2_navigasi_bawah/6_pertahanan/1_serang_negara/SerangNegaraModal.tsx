@@ -1,7 +1,10 @@
 "use client";
 import React, { useMemo, useState } from "react";
-import { X, Shield, Swords, ChevronUp, ChevronDown, Search } from "lucide-react";
+import { Shield, Swords, ChevronUp, ChevronDown, Search } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { getArmadaPowerSummary } from "../4_armada/logic/armadaLogic";
 // 🔥 Import modal serang baru yang akan kita buat
 import SerangModals from "./modals_menu/KonfirmasiSerangModals";
@@ -347,34 +350,31 @@ export default function SerangNegaraModal({
         <div className="flex flex-col h-full overflow-hidden">
           
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
-            <div className="flex items-center gap-4 lg:gap-8">
-              <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex min-w-0 items-center gap-4 lg:gap-8">
+              <div className="flex min-w-0 items-center gap-2 sm:gap-3">
                 <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
                   <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
                 </div>
-                <div>
-                  <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Serang Negara</h2>
+                <div className="min-w-0">
+                  <h2 className={rootModalTypography.title}>Serang Negara</h2>
                 </div>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
               {/* Input Search Bar */}
-              <div className="relative w-48 sm:w-60">
+              <div className={`relative w-40 sm:w-52 ${rootBorderRadius.card}`}>
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#00FFAA]/60" />
                 <input
                   type="text"
                   placeholder="Cari negara..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-[#051111] border border-[#00FFAA]/30 rounded-lg pl-8 pr-3 py-1 text-xs text-[#E0E0E0] placeholder-[#6B8A8A] focus:outline-none focus:border-[#00FFAA] transition-colors"
+                  className={`h-9 w-full border border-[#00FFAA]/30 bg-[#051111] py-1 pl-8 pr-3 text-xs text-[#E0E0E0] placeholder-[#6B8A8A] transition-colors focus:border-[#00FFAA] focus:outline-none ${rootBorderRadius.card}`}
                 />
               </div>
 
-              <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
-                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-4 w-4" />
-              </button>
+              <RootModalCloseButton onClick={onClose} />
             </div>
           </div>
 

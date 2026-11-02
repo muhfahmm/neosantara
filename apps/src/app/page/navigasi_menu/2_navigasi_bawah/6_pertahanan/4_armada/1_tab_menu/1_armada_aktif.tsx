@@ -415,7 +415,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
               </span>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 lg:gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
               {armadaCatalog[group].map((item) => {
                 const value = getData(item.key, group);
                 let displayText = formatNumber(value);
@@ -444,7 +444,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                       setSelectedForBuild({ key: item.key, label: item.label });
                       setIsConfirmBuildOpen(true);
                     }}
-                    className={`relative rounded-xl flex flex-col justify-between transition-all bg-[#0A1A1A] border border-[#00FFAA]/20 shadow-sm hover:border-[#00FFAA]/50 hover:shadow-md cursor-pointer p-2 sm:p-2.5 min-h-[88px] sm:min-h-[96px] ${hasPending ? 'overflow-visible' : 'overflow-hidden'}`}
+                    className={`relative rounded-2xl flex flex-col justify-between transition-all bg-[#0A1A1A] border border-[#00FFAA]/20 shadow-sm hover:border-[#00FFAA]/50 hover:shadow-md cursor-pointer p-2 sm:p-2.5 min-h-[88px] sm:min-h-[96px] ${hasPending ? 'overflow-visible' : 'overflow-hidden'}`}
                   >
                     {hasPending && lastEndDate && (
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[9px] sm:text-[10px] font-bold px-2 py-0.5 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">

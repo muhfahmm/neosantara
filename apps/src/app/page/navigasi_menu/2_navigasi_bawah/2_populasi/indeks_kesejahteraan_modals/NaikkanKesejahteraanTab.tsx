@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { X, Heart, Coins, Sparkles, AlertCircle, CheckCircle2, Clock } from "lucide-react";
 import DanaTidakCukupModal from "../../1_kepuasan/2_naikkan_kepuasan/DanaTidakCukupModal";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 
 interface NaikkanKesejahteraanTabProps {
   countryDetail: any;
@@ -288,7 +289,7 @@ export default function NaikkanKesejahteraanTab({
     <div className="space-y-6">
 
       {feedback && (
-        <div className={`p-4 rounded-xl border flex items-start gap-3 relative ${
+        <div className={`p-4 ${rootBorderRadius.card} border flex items-start gap-3 relative ${
           feedback.type === "success" ? "bg-[#0F2424] border-emerald-500/40 text-emerald-400" : "bg-[#0F2424] border-rose-500/40 text-rose-400"
         }`}>
           {feedback.type === "success" ? <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5" /> : <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />}
@@ -310,7 +311,7 @@ export default function NaikkanKesejahteraanTab({
             <div
               key={init.id}
               id={`initiative-card-${init.id}`}
-              className={`rounded-xl p-5 border bg-[#0A1A1A] flex flex-col justify-between space-y-4 relative overflow-hidden transition-all duration-500 ${
+              className={`${rootBorderRadius.card} p-5 border bg-[#0A1A1A] flex flex-col justify-between space-y-4 relative overflow-hidden transition-all duration-500 ${
                 isHighlighted
                   ? "border-2 border-[#00FFAA] shadow-[0_0_25px_rgba(0,255,170,0.6)] ring-2 ring-[#00FFAA]/50 bg-[#0d2621] scale-[1.01]"
                   : isLaunched

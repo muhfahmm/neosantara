@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { ArrowLeft, Check, Package, X } from "lucide-react";
+import { ArrowLeft, Check, Package } from "lucide-react";
+import NotebookModalWrapper from "../../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import {
   formatProductionProductName,
   PRODUCTION_BAN_CATEGORIES,
@@ -29,26 +32,19 @@ export default function PilihProdukLarangan({
     || PRODUCTION_BAN_CATEGORIES[0];
 
   return createPortal(
-    <div className="fixed inset-0 z-[220] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+    <NotebookModalWrapper onClose={onClose} zIndexClass="z-[220]">
+      <div className="flex h-full flex-col overflow-hidden">
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] shrink-0">
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
               <Package className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
             </div>
             <div>
-              <h3 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Pilih Produk yang Dilarang</h3>
+              <h3 className={rootModalTypography.title}>Pilih Produk yang Dilarang</h3>
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">Pilih satu produk dari sektor produksi negara.</p>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-          >
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Kembali</span>
-            <X className="h-4 w-4" />
-          </button>
+          <RootModalCloseButton onClick={onClose} />
         </div>
 
         <div className="flex-1 flex min-h-0">
@@ -114,7 +110,7 @@ export default function PilihProdukLarangan({
           )}
         </div>
       </div>
-    </div>,
+    </NotebookModalWrapper>,
     document.body
   );
 }

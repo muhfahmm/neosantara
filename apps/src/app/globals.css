@@ -62,6 +62,10 @@ body {
   display: none;
 }
 
+.root-no-scrollbar-glow::-webkit-scrollbar-thumb {
+  box-shadow: none !important;
+}
+
 ::selection {
   background: #2563eb;
   color: #ffffff;

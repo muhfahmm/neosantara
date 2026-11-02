@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { AlertCircle, Landmark, X, Activity, Building2, Search, ScrollText, ShieldCheck } from 'lucide-react';
 import NotebookModalWrapper from '../../NotebookModalWrapper';
+import { rootModalTypography } from '@/app/page/root_modals_design_menu/rootModalTypography';
 import IndeksKorupsiCard from './components/IndeksKorupsiCard';
 import LembagaAntikorupsiPanel from './components/LembagaAntikorupsiPanel';
 import SkandalAktifList from './components/SkandalAktifList';
@@ -180,7 +181,7 @@ export default function KorupsiMenu({
               <Landmark className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-sm font-black uppercase tracking-wide text-[#E0E0E0] sm:text-base">Pemberantasan Korupsi</h2>
+              <h2 className={rootModalTypography.title}>Pemberantasan Korupsi</h2>
               <p className="text-xs text-[#8BA3A3]">{String(countryDetail.name_id ?? countryDetail.country ?? countryDetail.name_en ?? 'Negara aktif')}</p>
             </div>
           </div>

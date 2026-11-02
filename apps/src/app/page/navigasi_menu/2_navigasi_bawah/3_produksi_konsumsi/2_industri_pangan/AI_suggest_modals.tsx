@@ -1,7 +1,10 @@
 "use client"
 import React from "react";
-import { X, AlertCircle, CheckCircle, MessageSquare, ArrowRight } from "lucide-react";
+import { AlertCircle, CheckCircle, MessageSquare, ArrowRight, Utensils } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import { SECTOR_MAP } from "./logic/AI_suggestionsLogic";
 
 interface AISuggestModalProps {
   isOpen: boolean;
@@ -40,25 +43,21 @@ export default function AISuggestModal({
 
   const totalDeficitCommodities = commodities.filter(c => c.isDeficit).length;
   const totalSurplusCommodities = commodities.filter(c => c.isSurplus).length;
+  const SectorIcon = Object.values(SECTOR_MAP).find(sector => sector.label === sectorLabel)?.icon ?? Utensils;
 
   return (
-    <NotebookModalWrapper onClose={onClose}>
+    <NotebookModalWrapper onClose={onClose} zIndexClass="z-[75]">
       <div className="flex h-full flex-col overflow-hidden">
         
         {/* HEADER */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
-          <div>
-            <h3 className="text-base font-black uppercase tracking-[0.2em] text-[#00FFAA]">Analisis Sektor AI</h3>
-            <p className="text-[11px] font-bold text-[#6B8A8A] uppercase tracking-wider">{sectorLabel}</p>
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <div className="shrink-0 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] p-1 sm:p-1.5">
+              <SectorIcon className="h-4 w-4 text-[#00FFAA] sm:h-5 sm:w-5" />
+            </div>
+            <h2 className={`${rootModalTypography.title} min-w-0`}>Analisis Sektor AI - {sectorLabel}</h2>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-            aria-label="Tutup analisis AI"
-          >
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
+          <RootModalCloseButton onClick={onClose} />
         </div>
 
         {/* BODY */}

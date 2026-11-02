@@ -1,7 +1,10 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import { X, Shield, Atom, Rocket, Bomb, Clock, Target, Lock, Check, Globe, Flame } from "lucide-react";
+import { Shield, Atom, Rocket, Bomb, Clock, Target, Lock, Check, Globe, Flame } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 import { calculateProductionIncrement, formatDate, getDaysElapsed } from "@/app/logic/production_logic";
 import ProgramNuklirModals from "./modals_menu/1_program_nuklir/programNuklirModals";
@@ -333,24 +336,18 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
           
           {/* HEADER */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
-            <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+            <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <div className={`shrink-0 border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 sm:p-2 ${rootBorderRadius.card}`}>
               <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
             </div>
-            <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Komando Strategis Nuklir</h2>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">
+            <div className="min-w-0">
+              <h2 className={rootModalTypography.title}>Komando Strategis Nuklir</h2>
+              <p className={`${rootModalTypography.label} mt-1`}>
                 {countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "Negara"}
               </p>
             </div>
           </div>
-          <button 
-            onClick={onClose} 
-            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-          >
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
+          <RootModalCloseButton onClick={onClose} />
         </div>
 
         {/* BODY MODAL */}
@@ -358,7 +355,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
           <div className="w-full space-y-6">
 
             {/* STATUS PENGEMBANGAN */}
-            <div className="p-6 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/20 shadow-inner">
+            <div className={`border border-[#00FFAA]/20 bg-[#0A1A1A] p-6 shadow-inner ${rootBorderRadius.card}`}>
               <div className="flex justify-center items-center gap-4">
                 <div className={`px-6 py-3 rounded-xl border ${status.isActive ? 'border-[#00FFAA]/40 bg-[#00FFAA]/10 text-[#00FFAA]' : isNuclearProgramBuilding ? 'border-amber-500/40 bg-amber-500/10 text-amber-400' : 'border-rose-500/40 bg-rose-500/10 text-rose-400'} shadow-sm min-w-[200px] text-center transition-colors duration-300`}>
                   <p className="text-[11px] font-black uppercase tracking-wider mb-1">

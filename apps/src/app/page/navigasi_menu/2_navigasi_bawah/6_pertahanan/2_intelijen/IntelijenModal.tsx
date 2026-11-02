@@ -1,7 +1,10 @@
 "use client"
 import React, { useEffect, useRef, useState } from "react";
-import { X, Eye, Bomb } from "lucide-react";
+import { Eye, Bomb } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import Spionase from "./table_menu/1_tabel_spionase";
 import Sabotase from "./table_menu/2_tabel_sabotase";
 import CovertOperationResultModal from "@/app/page/detail_negara/3_operasi_militer/CovertOperationResultModal";
@@ -88,8 +91,8 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
 
           {/* HEADER MODAL */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
-          <div className="flex items-center gap-4 lg:gap-8">
-            <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex min-w-0 items-center gap-3 lg:gap-6">
+            <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
                 {activeTab === 'spionase' ? (
                   <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA] animate-pulse" />
@@ -97,42 +100,26 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
                   <Bomb className="h-4 w-4 sm:h-5 sm:w-5 text-orange-400 animate-pulse" />
                 )}
               </div>
-              <div>
-                <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
+              <div className="min-w-0">
+                <h2 className={rootModalTypography.title}>
                   {activeTab === 'spionase' ? 'Badan Intelijen & Sandi Negara' : 'Divisi Operasi Khusus'}
                 </h2>
               </div>
             </div>
 
             {/* 2 TAB MENU - dipindah ke header */}
-            <div className="hidden sm:flex items-center gap-1 ml-4 lg:ml-8 pl-4 lg:pl-8 border-l border-[#00FFAA]/30">
-              <button
-                onClick={() => setActiveTab('spionase')}
-                className={`px-4 lg:px-5 py-1.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                  activeTab === 'spionase'
-                    ? 'bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20'
-                    : 'text-[#6B8A8A] hover:text-[#00FFAA]'
-                }`}
-              >
-                Spionase
-              </button>
-              <button
-                onClick={() => setActiveTab('sabotase')}
-                className={`px-4 lg:px-5 py-1.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                  activeTab === 'sabotase'
-                    ? 'bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20'
-                    : 'text-[#6B8A8A] hover:text-[#00FFAA]'
-                }`}
-              >
-                Sabotase
-              </button>
+            <div className="hidden sm:block">
+              <RootModalTabs
+                compact
+                items={[
+                  { label: "Spionase", isActive: activeTab === "spionase", onClick: () => setActiveTab("spionase") },
+                  { label: "Sabotase", isActive: activeTab === "sabotase", onClick: () => setActiveTab("sabotase") },
+                ]}
+              />
             </div>
           </div>
 
-          <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
+          <RootModalCloseButton onClick={onClose} />
         </div>
 
         {/* BODY MODAL */}
@@ -140,27 +127,14 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
           <div className="w-full flex-1 min-h-0 flex flex-col gap-4">
 
             {/* 2 TAB MENU - tampilan mobile */}
-            <div className="flex sm:hidden bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 w-full shadow-sm shrink-0">
-              <button
-                onClick={() => setActiveTab('spionase')}
-                className={`flex-1 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
-                  activeTab === 'spionase'
-                    ? 'bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20'
-                    : 'text-[#6B8A8A] hover:text-[#00FFAA]'
-                }`}
-              >
-                Spionase
-              </button>
-              <button
-                onClick={() => setActiveTab('sabotase')}
-                className={`flex-1 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
-                  activeTab === 'sabotase'
-                    ? 'bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20'
-                    : 'text-[#6B8A8A] hover:text-[#00FFAA]'
-                }`}
-              >
-                Sabotase
-              </button>
+            <div className="sm:hidden">
+              <RootModalTabs
+                className="w-full [&>button]:flex-1"
+                items={[
+                  { label: "Spionase", isActive: activeTab === "spionase", onClick: () => setActiveTab("spionase") },
+                  { label: "Sabotase", isActive: activeTab === "sabotase", onClick: () => setActiveTab("sabotase") },
+                ]}
+              />
             </div>
 
             {/* RENDER KOMPONEN TABEL TERPISAH */}

@@ -1,8 +1,11 @@
 "use client"
 import React from "react";
-import { X, CreditCard } from "lucide-react";
+import { CreditCard } from "lucide-react";
 import { renderFlag } from "../../utils";
 import NotebookModalWrapper from "../../../../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 
 interface KonfirmasiPinjamanModalProps {
   isOpen: boolean;
@@ -35,30 +38,27 @@ export default function KonfirmasiPinjamanModal({
 
   return (
     <NotebookModalWrapper zIndexClass="z-[70]">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full h-full flex flex-col relative font-sans pointer-events-auto">
+      <div className="relative flex h-full w-full flex-col overflow-hidden bg-[#0F2424] font-sans pointer-events-auto">
 
         {/* HEADER */}
-        <div className="px-8 py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
-          <div>
-            <h3 className="text-2xl font-black text-[#00FFAA] uppercase tracking-tight">Konfirmasi Pinjaman</h3>
-            <p className="text-xs text-[#6B8A8A] font-semibold mt-1">Verifikasi detail pinjaman sebelum disetujui.</p>
+        <div className="relative z-10 flex items-center justify-between gap-3 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-3 sm:px-6">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <div className={`shrink-0 border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 ${rootBorderRadius.card}`}>
+              <CreditCard className="h-4 w-4 text-[#00FFAA] sm:h-5 sm:w-5" />
+            </div>
+            <div className="min-w-0">
+              <h3 className={rootModalTypography.title}>Konfirmasi Pinjaman</h3>
+            </div>
           </div>
-          
-          <button
-            onClick={onClose}
-            className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
-          >
-            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
-          </button>
+          <RootModalCloseButton onClick={onClose} />
         </div>
 
         <div className="flex-1 overflow-y-auto p-8 bg-[#0A1A1A]/80 custom-scrollbar">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-            <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl p-8 flex flex-col justify-between">
+            <div className={`flex flex-col justify-between border border-[#00FFAA]/30 bg-[#0F2424] p-6 ${rootBorderRadius.card}`}>
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/30">
+                  <div className={`border border-[#00FFAA]/30 bg-[#0A1A1A] p-3 ${rootBorderRadius.card}`}>
                     <CreditCard className="h-6 w-6 text-[#00FFAA]" />
                   </div>
                   <div>
@@ -67,7 +67,7 @@ export default function KonfirmasiPinjamanModal({
                   </div>
                 </div>
 
-                <div className="rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/20 p-6">
+                <div className={`border border-[#00FFAA]/20 bg-[#0A1A1A] p-5 ${rootBorderRadius.card}`}>
                   <div className="flex items-center gap-3 mb-4 text-[#00FFAA] font-black">
                     {renderFlag(iso, loanSource)}
                     <span>{loanSource}</span>
@@ -94,7 +94,7 @@ export default function KonfirmasiPinjamanModal({
               </div>
             </div>
 
-            <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl p-8 flex flex-col justify-between">
+            <div className={`flex flex-col justify-between border border-[#00FFAA]/30 bg-[#0F2424] p-6 ${rootBorderRadius.card}`}>
               <div className="space-y-6 text-[#E0E0E0]">
                 <div>
                   <h4 className="text-lg font-black text-[#00FFAA] uppercase tracking-wider">Ringkasan Pinjaman</h4>
@@ -102,15 +102,15 @@ export default function KonfirmasiPinjamanModal({
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 text-sm">
-                  <div className="rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/20 p-4">
+                  <div className={`border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 ${rootBorderRadius.card}`}>
                     <p className="text-[#6B8A8A] text-xs font-bold uppercase">Saldo Kas Negara</p>
                     <p className="mt-2 text-2xl font-black text-[#00FFAA]">{currentMoney.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</p>
                   </div>
-                  <div className="rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/20 p-4">
+                  <div className={`border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 ${rootBorderRadius.card}`}>
                     <p className="text-[#6B8A8A] text-xs font-bold uppercase">Total Outstanding</p>
                     <p className="mt-2 text-2xl font-black text-rose-400">{totalPayment.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</p>
                   </div>
-                  <div className="rounded-2xl p-4 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                  <div className={`border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-400 ${rootBorderRadius.card}`}>
                     <p className="font-black uppercase text-[10px] tracking-wider">Pinjaman siap dikonfirmasi</p>
                   </div>
                 </div>
@@ -120,19 +120,19 @@ export default function KonfirmasiPinjamanModal({
         </div>
 
         <div className="flex flex-col gap-4 px-8 pb-8 pt-4 lg:flex-row lg:items-center lg:justify-end bg-[#0A1A1A] border-t border-[#00FFAA]/20">
-          <div className="rounded-2xl bg-emerald-500/10 border border-emerald-500/30 p-4 text-xs font-bold text-emerald-400 lg:flex-1">
+          <div className={`border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs font-bold text-emerald-400 lg:flex-1 ${rootBorderRadius.card}`}>
             Pinjaman akan langsung ditambahkan ke kas negara saat disetujui.
           </div>
 
           <button
             onClick={onClose}
-            className="w-full lg:w-auto px-6 py-4 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#E0E0E0] transition-all font-black text-xs uppercase tracking-wider cursor-pointer"
+            className={`w-full cursor-pointer border border-[#00FFAA]/30 bg-[#0F2424] px-5 py-3 text-xs font-bold uppercase text-[#E0E0E0] transition-all hover:border-[#00FFAA] lg:w-auto ${rootBorderRadius.card}`}
           >
             Batal
           </button>
           <button
             onClick={onConfirm}
-            className="w-full lg:w-auto px-6 py-4 rounded-xl font-black text-xs uppercase tracking-wider transition-all cursor-pointer bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80"
+            className={`w-full cursor-pointer bg-[#00FFAA] px-5 py-3 text-xs font-bold uppercase text-[#0A1A1A] transition-all hover:bg-[#00FFAA]/80 lg:w-auto ${rootBorderRadius.card}`}
           >
             Konfirmasi Pinjaman
           </button>

@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { X, Info, Shield, Globe, Vote, Crown, DollarSign, Handshake, Hammer, Flag, Feather, Sword, Check } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
 import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
 
@@ -237,7 +238,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
               <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30">
                 <Shield className="h-5 w-5 text-[#00FFAA]" />
               </div>
-              <h3 className="text-sm sm:text-base font-bold text-[#E0E0E0] tracking-wide uppercase">Ideologi Dasar Kedaulatan</h3>
+              <h3 className={rootModalTypography.title}>Ideologi Dasar Kedaulatan</h3>
             </div>
             <button
               onClick={onClose}

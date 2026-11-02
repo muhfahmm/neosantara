@@ -1,6 +1,8 @@
 "use client";
-import React, { useState, type ReactNode } from "react";
-import { ArrowRight, Search } from "lucide-react";
+import React, { type ReactNode } from "react";
+import { ArrowRight } from "lucide-react";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 
 interface NegaraLainProps {
   loanSources: Array<{
@@ -13,44 +15,40 @@ interface NegaraLainProps {
   }>;
   renderFlag: (iso: string | undefined | null, altName: string) => ReactNode;
   setPendingLoan: (loan: any) => void;
+  searchQuery: string;
 }
 
-export default function NegaraLain({ loanSources, renderFlag, setPendingLoan }: NegaraLainProps) {
-  const [searchQuery, setSearchQuery] = useState("");
+export default function NegaraLain({ loanSources, renderFlag, setPendingLoan, searchQuery }: NegaraLainProps) {
   const filteredCountries = loanSources.filter((country) =>
     country.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <div>
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#6B8A8A]" />
-        <input
-          type="text"
-          placeholder="Cari nama negara peminjam..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-3 bg-[#0F2424] border border-[#00FFAA]/30 rounded-xl text-sm font-bold text-[#E0E0E0] placeholder:text-[#6B8A8A] focus:outline-none focus:border-[#00FFAA] transition-all"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+    <div className="min-w-0">
+      {filteredCountries.length === 0 ? (
+        <div className={`border border-[#00FFAA]/20 bg-[#0F2424] px-4 py-8 text-center ${rootBorderRadius.card}`}>
+          <p className={`${rootModalTypography.body} ${rootModalTypography.muted}`}>
+            Tidak ada negara yang cocok dengan pencarian.
+          </p>
+        </div>
+      ) : (
+      <div className="grid max-h-[450px] min-w-0 grid-cols-1 gap-3 overflow-y-auto pr-2 custom-scrollbar md:grid-cols-2">
         {filteredCountries.map((negara) => (
-          <div key={negara.id ?? negara.name} className="bg-[#0F2424] border border-[#00FFAA]/30 p-4 rounded-xl hover:border-[#00FFAA]/60 transition-all duration-300">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
+          <div key={negara.id ?? negara.name} className={`min-w-0 border border-[#00FFAA]/30 bg-[#0F2424] p-4 transition-colors duration-300 hover:border-[#00FFAA]/60 ${rootBorderRadius.card}`}>
+            <div className="mb-3 flex min-w-0 items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-3">
                 {renderFlag(negara.iso, negara.name)}
-                <span className="text-sm font-black text-[#00FFAA]">{negara.name}</span>
+                <span className="break-words text-sm font-black text-[#00FFAA]">{negara.name}</span>
               </div>
-              <span className="text-xs font-black text-rose-400 bg-rose-500/10 border border-rose-500/30 px-2 py-1 rounded-lg">{negara.interest}%</span>
+              <span className={`shrink-0 border border-rose-500/30 bg-rose-500/10 px-2 py-1 text-xs font-black text-rose-400 ${rootBorderRadius.card}`}>{negara.interest}%</span>
             </div>
-            <div className="space-y-1 text-[10px] font-bold text-[#6B8A8A]">
-              <p className="flex justify-between"><span>Plafon Pinjaman:</span> <span className="text-[#E0E0E0] font-black">{negara.maxLoan.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span></p>
-              <p className="flex justify-between"><span>Masa Tenggang:</span> <span className="text-[#00FFAA] font-black">{negara.term} Hari</span></p>
+            <div className="space-y-2 text-[10px] font-bold text-[#6B8A8A]">
+              <p className="flex flex-wrap justify-between gap-x-3 gap-y-1"><span>Plafon Pinjaman</span><span className="font-black text-[#E0E0E0]">{negara.maxLoan.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span></p>
+              <p className="flex flex-wrap justify-between gap-x-3 gap-y-1"><span>Masa Tenggang</span><span className="font-black text-[#00FFAA]">{negara.term} Hari</span></p>
             </div>
             <button
               onClick={() => setPendingLoan(negara)}
-              className="w-full mt-4 py-2.5 rounded-lg bg-[#00FFAA] text-[#0A1A1A] text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#00FFAA]/80 active:scale-95 transition-all cursor-pointer"
+              className={`mt-4 flex w-full cursor-pointer items-center justify-center gap-2 bg-[#00FFAA] px-4 py-2.5 text-[10px] font-black uppercase tracking-wider text-[#0A1A1A] transition-all hover:bg-[#00FFAA]/80 active:scale-[0.99] ${rootBorderRadius.card}`}
             >
               <span>Pinjam Dana</span>
               <ArrowRight className="h-4 w-4" />
@@ -58,6 +56,7 @@ export default function NegaraLain({ loanSources, renderFlag, setPendingLoan }: 
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 }

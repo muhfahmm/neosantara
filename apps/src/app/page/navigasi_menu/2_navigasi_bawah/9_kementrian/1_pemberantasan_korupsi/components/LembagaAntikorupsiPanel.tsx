@@ -10,6 +10,7 @@ import {
   type CorruptionUpgradeTrack,
 } from '../logic/auditLogic';
 import { formatCorruptionCurrency, getCorruptionMetrics, type CorruptionCountryDetail } from '../logic/corruptionLogic';
+import NotebookModalWrapper from '../../../NotebookModalWrapper';
 
 const MAX_CORRUPTION_LEVEL = 20;
 
@@ -186,16 +187,15 @@ export default function LembagaAntikorupsiPanel({
       </article>
 
       {confirmation && selectedTrack && (
-        <div
-          className="fixed inset-0 z-[220] flex items-center justify-center bg-black/60 p-4"
-          onClick={() => setConfirmation(null)}
+        <NotebookModalWrapper
+          onClose={() => setConfirmation(null)}
+          zIndexClass="z-[220]"
         >
           <section
             role="dialog"
             aria-modal="true"
             aria-labelledby="corruption-upgrade-title"
-            onClick={(event) => event.stopPropagation()}
-            className="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl border border-[#00FFAA]/30 bg-[#0F2424] p-5 shadow-2xl sm:p-7 neon-scrollbar"
+            className="relative flex-1 w-full overflow-y-auto p-4 sm:p-5"
           >
             <button
               type="button"
@@ -277,7 +277,7 @@ export default function LembagaAntikorupsiPanel({
               </button>
             </div>
           </section>
-        </div>
+        </NotebookModalWrapper>
       )}
     </section>
   );

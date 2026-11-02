@@ -28,6 +28,7 @@ import {
   ShieldAlert,
   Ship,
 } from "lucide-react";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { calculateCountryNetBalance, getDepartmentLevel } from "@/app/logic/economic_logic/treasuryUpdater";
 import { CABINET_DEPARTMENT_IMAGES, LEVEL_UP_COST, MAX_CABINET_LEVEL } from "@/app/logic/economic_logic/departments";
 import { generateKabinetChangeNotification } from "@/app/page/menus/inbox/logic/13_notifikasi_kabinet/kabinetChangeLogic";
@@ -493,7 +494,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                 <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30">
                   <Landmark className="h-5 w-5 text-[#00FFAA] shrink-0" />
                 </div>
-                <h3 className="text-sm sm:text-base font-bold text-[#E0E0E0] tracking-wide uppercase">
+                <h3 className={rootModalTypography.title}>
                   Dewan Kabinet Menteri
                 </h3>
                 <button
@@ -504,10 +505,6 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                   <Info className="h-4 w-4" />
                 </button>
               </div>
-              <div className="text-[11px] sm:text-xs font-bold text-[#00FFAA] bg-[#0F2424] px-3 py-1 rounded-lg border border-[#00FFAA]/20">
-                Kas: {money.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
-              </div>
-
               {/* Badge Ibukota Saat Ini & Tombol Ubah Ibukota */}
               <div className="flex items-center gap-1.5 bg-[#0F2424] px-2.5 py-1 rounded-lg border border-[#FFE600]/30 shadow-sm">
                 <span className="text-[10px] text-[#A2B7B2] font-semibold uppercase tracking-wider">Ibukota:</span>
@@ -797,17 +794,16 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
 
       {/* ========== CONFIRMATION UPGRADE POPUP ========== */}
       {confirmUpgrade && (
-        <div
-          className="fixed inset-0 z-[210] flex items-center justify-center p-4 bg-transparent pointer-events-auto"
-          onClick={() => setConfirmUpgrade(null)}
+        <NotebookModalWrapper
+          onClose={() => setConfirmUpgrade(null)}
+          zIndexClass="z-[210]"
         >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative font-sans"
-          >
+          <div className="relative flex-1 w-full overflow-y-auto p-4 font-sans sm:p-5">
             <button
+              type="button"
+              aria-label="Tutup konfirmasi upgrade"
               onClick={() => setConfirmUpgrade(null)}
-              className="absolute top-3 right-3 text-[#6B8A8A] hover:text-[#00FFAA] cursor-pointer"
+              className="absolute right-4 top-4 text-[#6B8A8A] transition hover:text-[#00FFAA] cursor-pointer"
             >
               <X className="h-5 w-5" />
             </button>
@@ -885,7 +881,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
               </button>
             </div>
           </div>
-        </div>
+        </NotebookModalWrapper>
       )}
 
       {/* ========== CONFIRMATION DOWNGRADE POPUP ========== */}

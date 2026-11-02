@@ -22,6 +22,7 @@ import { getProvinceRebellionChance } from './1_informasi_umum/provinsi_logic/ke
 import { getProvinceDemonstrationChance } from './1_informasi_umum/provinsi_logic/ketegangan_provinsi/2_demonstrasi';
 import { getCountryProfileSummary } from '@/lib/countryProfileSummaryRegistry';
 import { estimateTravelTime } from '../path_logic/time_logic';
+import NotebookModalWrapper from '../navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 
 // Import 3 komponen terpisah
 import InformasiUmum from "./1_informasi_umum/informasi_umum";
@@ -723,11 +724,10 @@ export function CountryDetailModal({
     );
   };
 
-  return createPortal(
-    <div className={`fixed inset-0 z-[100000000] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent ${isDevelopingAIBuildingTab ? 'pointer-events-auto' : 'pointer-events-none'} ${isActionModalOpen || isDevelopingAIBuildingTab ? '!p-0' : ''}`}>
+  const detailModalContent = (
       <div
         style={{ display: isActionModalOpen ? 'none' : undefined }}
-        className={`bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl ${isDevelopingAIBuildingTab ? '!max-w-none !h-[100dvh] !max-h-none !rounded-none !border-none !p-0' : ''}`}>
+        className={`bg-[#0F2424] border-none rounded-none overflow-hidden w-full h-full max-h-full flex flex-col relative font-sans pointer-events-auto shadow-none ${isDevelopingAIBuildingTab ? '!max-w-none !h-[100dvh] !max-h-none !rounded-none !border-none !p-0' : ''}`}>
 
         {/* Background Glow Texture */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.05)_0%,transparent_100%)] pointer-events-none" />
@@ -778,7 +778,7 @@ export function CountryDetailModal({
 
         {/* DATA RINGKASAN */}
         <div className="px-6 sm:px-8 py-3 lg:px-3 lg:py-1.5 xl:px-8 xl:py-3 bg-[#0A1A1A]/80 border-b border-[#00FFAA]/20 flex items-center gap-6 sm:gap-8 lg:gap-3 xl:gap-8 relative z-10 overflow-x-auto lg:overflow-x-hidden shrink-0 no-scrollbar">
-          <div className="flex items-center gap-6 lg:grid lg:grid-cols-6 lg:gap-3 lg:w-full lg:min-w-0 xl:gap-6">
+          <div className="flex items-center gap-6 lg:grid lg:w-full lg:min-w-0 lg:grid-cols-[repeat(6,minmax(0,1fr))] lg:gap-3 xl:gap-6">
             {/* Hubungan */}
             <div className="flex min-w-0 items-center gap-2 lg:gap-1.5">
               <div className="p-1.5 lg:p-1 xl:p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
@@ -841,7 +841,7 @@ export function CountryDetailModal({
               <div className="flex min-w-0 flex-col">
                 <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Populasi</span>
                 <div className="flex min-w-0 flex-wrap items-center gap-x-1 lg:gap-x-0.5">
-                  <span className="text-[11px] lg:text-[9px] xl:text-[11px] font-bold text-[#00FFAA] uppercase">
+                  <span className="min-w-0 break-words text-[11px] lg:text-[9px] xl:text-[11px] font-bold text-[#00FFAA] uppercase">
                     {headerDetailData?.jumlah_penduduk
                       ? Number(headerDetailData.jumlah_penduduk).toLocaleString('id-ID', { maximumFractionDigits: 2 })
                       : isLoadingDetail
@@ -850,7 +850,7 @@ export function CountryDetailModal({
                     }
                   </span>
                   {!isLoadingDetail && detailData && (
-                    <span className={`text-[10px] lg:text-[8px] xl:text-[10px] font-black ${dailyNetPopulation >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    <span className={`break-words text-[10px] lg:text-[8px] xl:text-[10px] font-black ${dailyNetPopulation >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                       ({dailyNetPopulation >= 0 ? `+${dailyNetPopulation.toLocaleString('id-ID', { maximumFractionDigits: 2 })}` : dailyNetPopulation.toLocaleString('id-ID', { maximumFractionDigits: 2 })})
                     </span>
                   )}
@@ -866,7 +866,7 @@ export function CountryDetailModal({
               <div className="flex min-w-0 flex-col">
                 <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Anggaran</span>
                 <div className="flex min-w-0 flex-wrap items-center gap-x-1 lg:gap-x-0.5">
-                  <span className="text-[11px] lg:text-[9px] xl:text-[11px] font-bold text-[#00FFAA] uppercase">
+                  <span className="min-w-0 break-words text-[11px] lg:text-[9px] xl:text-[11px] font-bold text-[#00FFAA] uppercase">
                     {headerDetailData?.anggaran !== undefined
                       ? `${Number(headerDetailData.anggaran).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`
                       : isLoadingDetail
@@ -875,7 +875,7 @@ export function CountryDetailModal({
                     }
                   </span>
                   {!isLoadingDetail && detailData && (
-                    <span className={`text-[10px] lg:text-[8px] xl:text-[10px] font-black ${targetEffectiveNetBalance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    <span className={`break-words text-[10px] lg:text-[8px] xl:text-[10px] font-black ${targetEffectiveNetBalance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                       ({targetEffectiveNetBalance >= 0 ? `+${targetEffectiveNetBalance.toLocaleString('id-ID', { maximumFractionDigits: 2 })}` : targetEffectiveNetBalance.toLocaleString('id-ID', { maximumFractionDigits: 2 })})
                     </span>
                   )}
@@ -1043,7 +1043,23 @@ export function CountryDetailModal({
         </div>
 
       </div>
-    </div>,
+  );
+
+  return createPortal(
+    isDevelopingAIBuildingTab ? (
+      <div className="fixed inset-0 z-[100000000] flex items-center justify-center pointer-events-auto">
+        {detailModalContent}
+      </div>
+    ) : (
+      <NotebookModalWrapper
+        onClose={onClose}
+        isHidden={isActionModalOpen}
+        maxWidthClass="max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl"
+        zIndexClass="z-[100000000]"
+      >
+        {detailModalContent}
+      </NotebookModalWrapper>
+    ),
     document.body
   );
 }

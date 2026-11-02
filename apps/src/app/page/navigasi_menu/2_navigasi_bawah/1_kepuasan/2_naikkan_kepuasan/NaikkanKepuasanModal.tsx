@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
-  X,
   Smile,
   Sparkles,
   AlertCircle,
@@ -16,6 +15,10 @@ import {
 } from "lucide-react";
 import DanaTidakCukupModal from "./DanaTidakCukupModal";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import {
   applyDiplomasiAcaraSatisfactionBonus,
   applyKementerianOlahragaSatisfactionBoost,
@@ -370,7 +373,7 @@ export default function NaikkanKepuasanModal({
     <>
       {!isDanaTidakCukupOpen && (
       <NotebookModalWrapper onClose={onClose}>
-        <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] shadow-[0_0_30px_rgba(0,255,170,0.15)]">
+        <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A]">
           
           {/* ============ HEADER ============ */}
           <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2.5 sm:px-6 sm:py-3">
@@ -379,38 +382,29 @@ export default function NaikkanKepuasanModal({
             <div className="flex items-center gap-3 sm:gap-6 overflow-x-auto no-scrollbar whitespace-nowrap">
               {/* Judul */}
               <div className="flex items-center gap-2">
-                <div className="shrink-0 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] p-1 shadow-[0_0_10px_rgba(0,255,170,0.2)] sm:p-1.5">
-                  <Smile className="h-4 w-4 text-[#00FFAA] sm:h-5 sm:w-5" />
+                <div className="shrink-0 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] p-1 sm:p-1.5">
+                  <Smile className="h-4 w-4 text-[#E0E0E0] sm:h-5 sm:w-5" />
                 </div>
-                <h2 className="text-base font-bold uppercase leading-none tracking-tight text-[#00FFAA] drop-shadow-[0_0_8px_rgba(0,255,170,0.5)] sm:text-xl">
+                <h2 className={`${rootModalTypography.title} leading-none`}>
                   Kepuasan Rakyat
                 </h2>
               </div>
 
               {/* Tabs */}
-              <div className="flex items-center rounded-lg border border-[#00FFAA]/30 bg-[#0A1A1A] p-0.5 sm:p-1">
-                <button
-                  onClick={() => setActiveMenu?.("Dashboard:Kepuasan")}
-                  className="cursor-pointer whitespace-nowrap rounded-md px-2 py-1 text-[9px] font-black uppercase tracking-wider text-[#6B8A8A] transition-all hover:text-[#E0E0E0] sm:px-3 sm:text-[10px] lg:text-xs"
-                >
-                  Statistik
-                </button>
-                <button className="cursor-pointer whitespace-nowrap rounded-md bg-[#00FFAA] px-2 py-1 text-[9px] font-black uppercase tracking-wider text-[#0A1A1A] transition-all sm:px-3 sm:text-[10px] lg:text-xs">
-                  Naikkan Peringkat
-                </button>
-              </div>
+              <RootModalTabs
+                items={[
+                  {
+                    label: "Statistik",
+                    isActive: false,
+                    onClick: () => setActiveMenu?.("Dashboard:Kepuasan"),
+                  },
+                  { label: "Naikkan Peringkat", isActive: true },
+                ]}
+              />
             </div>
 
             {/* Tombol Tutup */}
-            <button
-              onClick={onClose}
-              className="flex shrink-0 cursor-pointer items-center gap-1 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 text-xs font-bold uppercase text-[#6B8A8A] shadow-sm transition-all hover:border-[#00FFAA] hover:text-[#00FFAA] hover:shadow-[0_0_15px_rgba(0,255,170,0.3)] lg:p-2"
-            >
-              <span className="pl-1 text-[10px] font-semibold uppercase tracking-widest lg:text-xs">
-                Tutup
-              </span>
-              <X className="h-4 w-4 shrink-0" />
-            </button>
+            <RootModalCloseButton onClick={onClose} />
           </div>
 
           {/* ============ TREASURY BAR (Info Button Dipindah ke Sini) ============ */}
@@ -418,11 +412,11 @@ export default function NaikkanKepuasanModal({
             
             {/* Teks Kepuasan Sipil */}
             <div className="flex items-center gap-2">
-              <Smile className="h-4 w-4 shrink-0 text-[#00FFAA]" />
-              <span className="text-[10px] font-bold uppercase tracking-wide text-[#6B8A8A] sm:text-xs">
+              <Smile className="h-4 w-4 shrink-0 text-[#E0E0E0]" />
+              <span className={`${rootModalTypography.label} text-[10px] sm:text-xs`}>
                 Kepuasan Sipil:
               </span>
-              <span className="text-xs font-black text-[#00FFAA] sm:text-sm">
+              <span className={`${rootModalTypography.value} text-xs sm:text-sm`}>
                 {Math.round(kepuasan)}%
               </span>
             </div>
@@ -431,7 +425,7 @@ export default function NaikkanKepuasanModal({
             <button
               onClick={() => setShowInfoModal(true)}
               title="Lihat penjelasan setiap tab"
-              className="flex shrink-0 cursor-pointer items-center justify-center rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] p-1 text-[#6B8A8A] transition-all hover:border-[#00FFAA] hover:text-[#00FFAA] hover:shadow-[0_0_10px_rgba(0,255,170,0.2)] sm:p-1.5"
+              className="flex shrink-0 cursor-pointer items-center justify-center rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] p-1 text-[#E0E0E0] transition-all hover:border-[#00FFAA] sm:p-1.5"
             >
               <Info className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </button>
@@ -446,23 +440,22 @@ export default function NaikkanKepuasanModal({
             [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A]
             [&::-webkit-scrollbar-thumb]:rounded-full 
             [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0A1A1A]
-            [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)]
             hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]
             [&::-webkit-scrollbar-button]:hidden
           ">
             <div className="animate-in fade-in space-y-4 duration-500">
               {feedback && (
                 <div
-                  className={`animate-in fade-in slide-in-from-top-4 flex items-center gap-3 rounded-xl border p-4 duration-300 ${
+                  className={`animate-in fade-in slide-in-from-top-4 flex items-center gap-3 ${rootBorderRadius.card} border p-4 duration-300 ${
                     feedback.type === "success"
-                      ? "border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA]"
-                      : "border-rose-500/30 bg-rose-500/10 text-rose-400"
+                      ? "border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#E0E0E0]"
+                      : "border-rose-500/30 bg-rose-500/10 text-[#E0E0E0]"
                   }`}
                 >
                   {feedback.type === "success" ? (
-                    <CheckCircle2 className="h-5 w-5 shrink-0 text-[#00FFAA]" />
+                    <CheckCircle2 className="h-5 w-5 shrink-0 text-[#E0E0E0]" />
                   ) : (
-                    <AlertCircle className="h-5 w-5 shrink-0 text-rose-400" />
+                    <AlertCircle className="h-5 w-5 shrink-0 text-[#E0E0E0]" />
                   )}
                   <p className="text-xs font-bold">{feedback.message}</p>
                 </div>
@@ -506,21 +499,21 @@ export default function NaikkanKepuasanModal({
                     <div
                       key={item.id}
                       id={`event-card-${item.id}`}
-                      className={`relative flex flex-col items-center justify-between gap-2.5 rounded-xl bg-[#0F2424] p-2.5 transition-all duration-500 md:flex-row lg:gap-3 lg:p-3 ${
+                      className={`relative flex flex-col items-center justify-between gap-2.5 ${rootBorderRadius.card} bg-[#0F2424] p-2.5 transition-all duration-500 md:flex-row lg:gap-3 lg:p-3 ${
                         isHighlighted
-                          ? "scale-[1.01] border-2 border-[#00FFAA] bg-[#122A26] shadow-[0_0_25px_rgba(0,255,170,0.6)] ring-2 ring-[#00FFAA]/50"
+                          ? "border-2 border-[#00FFAA] bg-[#122A26] ring-2 ring-[#00FFAA]/50"
                           : "border border-[#00FFAA]/20 hover:border-[#00FFAA]/50"
                       }`}
                     >
                       {isHighlighted && (
-                        <div className="absolute left-3 top-0 z-20 flex animate-pulse items-center gap-1 rounded-b-md bg-[#00FFAA] px-2.5 py-0.5 text-[8px] font-black uppercase tracking-widest text-[#0A1A1A] shadow-sm">
+                        <div className="absolute left-3 top-0 z-20 flex items-center gap-1 rounded-b-md bg-[#00FFAA] px-2.5 py-0.5 text-[8px] font-black uppercase tracking-widest text-[#0A1A1A]">
                           <Sparkles className="h-2.5 w-2.5" />
                           Target Misi Aktif
                         </div>
                       )}
 
                       {isEventOngoing && (
-                        <div className="absolute -top-3.5 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-sm border border-[#00FFAA]/40 bg-[#0A1A1A] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#00FFAA]">
+                        <div className="absolute -top-3.5 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-sm border border-[#00FFAA]/40 bg-[#0A1A1A] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#E0E0E0]">
                           Selesai: {formatBadgeDate(lastEndDate)}
                         </div>
                       )}
@@ -542,27 +535,27 @@ export default function NaikkanKepuasanModal({
                             </h4>
                             {hasAcaraBonus ? (
                               <span className="flex items-center gap-1.5 rounded-full border border-[#00FFAA]/30 bg-[#00FFAA]/10 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider lg:px-2 lg:text-[9px]">
-                                <span className="text-rose-400 line-through">
+                                <span className="text-[#AAB6B6] line-through">
                                   +{baseBoost}%
                                 </span>
-                                <span className="text-emerald-400">
+                                <span className="text-[#E0E0E0]">
                                   +{boostedBoost}% Kepuasan
                                 </span>
                               </span>
                             ) : (
-                              <span className="rounded-full border border-[#00FFAA]/30 bg-[#00FFAA]/10 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider text-[#00FFAA] lg:px-2 lg:text-[9px]">
+                              <span className="rounded-full border border-[#00FFAA]/30 bg-[#00FFAA]/10 px-1.5 py-0.5 text-[8px] font-semibold uppercase tracking-wider text-[#E0E0E0] lg:px-2 lg:text-[9px]">
                                 +{baseBoost}% Kepuasan
                               </span>
                             )}
                             {isSport && olahragaBonusPercent > 0 && (
-                              <span className="rounded-md border border-sky-500/30 bg-sky-500/10 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-wider text-sky-300 lg:text-[8px]">
+                              <span className="rounded-md border border-sky-500/30 bg-sky-500/10 px-1.5 py-0.5 text-[7px] font-semibold uppercase tracking-wider text-[#E0E0E0] lg:text-[8px]">
                                 +Kem. Olahraga (
                                 {olahragaBonusPercent.toFixed(0)}%)
                               </span>
                             )}
                           </div>
-                          <div className="mt-0.5 flex items-center gap-1.5 text-[9px] font-medium text-[#6B8A8A] lg:mt-1 lg:text-[10px]">
-                            <Clock className="h-3 w-3 text-[#00FFAA] lg:h-3.5 lg:w-3.5" />
+                          <div className={`${rootModalTypography.muted} mt-0.5 flex items-center gap-1.5 text-[9px] font-medium lg:mt-1 lg:text-[10px]`}>
+                            <Clock className="h-3 w-3 text-[#E0E0E0] lg:h-3.5 lg:w-3.5" />
                             <span>Durasi: {item.duration} hari</span>
                           </div>
                         </div>
@@ -570,10 +563,10 @@ export default function NaikkanKepuasanModal({
 
                       <div className="flex shrink-0 flex-col items-center gap-1 md:items-end lg:gap-1.5">
                         <div className="text-right">
-                          <p className="text-center text-[8px] font-black uppercase leading-none tracking-wider text-[#6B8A8A] md:text-right lg:text-[10px]">
+                          <p className={`${rootModalTypography.label} text-center leading-none md:text-right`}>
                             Biaya Alokasi
                           </p>
-                          <p className="mt-0.5 text-xs font-black text-[#00FFAA] lg:mt-1 lg:text-sm">
+                          <p className={`${rootModalTypography.value} mt-0.5 text-xs lg:mt-1 lg:text-sm`}>
                             {item.cost.toLocaleString("id-ID", {
                               maximumFractionDigits: 2,
                             })}
@@ -592,7 +585,7 @@ export default function NaikkanKepuasanModal({
                           disabled={isEventOngoing}
                           className={`rounded-lg px-3.5 py-1.5 text-[10px] font-black uppercase transition-all lg:px-4 lg:py-1.5 lg:text-xs ${
                             isEventOngoing
-                              ? "cursor-not-allowed border border-[#6B8A8A]/30 bg-[#0A1A1A] text-[#6B8A8A] opacity-60"
+                              ? "cursor-not-allowed border border-[#6B8A8A]/30 bg-[#0A1A1A] text-[#AAB6B6] opacity-60"
                               : "cursor-pointer border border-[#00FFAA] bg-[#00FFAA] text-[#0A1A1A] hover:brightness-110 active:scale-95"
                           }`}
                         >
@@ -615,32 +608,24 @@ export default function NaikkanKepuasanModal({
           onClose={() => setShowInfoModal(false)}
           zIndexClass="z-[300]"
         >
-          <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] shadow-[0_0_30px_rgba(0,255,170,0.15)]">
+          <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A]">
             {/* Header Modal Info */}
             <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2.5 sm:px-6 sm:py-3">
               <div className="flex items-center gap-2.5 sm:gap-3">
                 <div className="shrink-0 rounded-lg border border-[#00FFAA]/30 bg-[#00FFAA]/10 p-1.5 sm:p-2">
-                  <Info className="h-4 w-4 text-[#00FFAA] sm:h-5 sm:w-5" />
+                  <Info className="h-4 w-4 text-[#E0E0E0] sm:h-5 sm:w-5" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-black uppercase leading-none tracking-wider text-[#00FFAA] sm:text-base">
+                  <h3 className={`${rootModalTypography.sectionTitle} leading-none sm:text-base`}>
                     Panduan Menu Kepuasan
                   </h3>
-                  <p className="mt-1 text-[10px] font-semibold text-[#6B8A8A] sm:text-xs">
+                  <p className={`${rootModalTypography.muted} mt-1 text-[10px] font-semibold sm:text-xs`}>
                     Penjelasan setiap tab di atas
                   </p>
                 </div>
               </div>
 
-              <button
-                onClick={() => setShowInfoModal(false)}
-                className="flex shrink-0 cursor-pointer items-center gap-1 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 text-xs font-bold uppercase text-[#6B8A8A] shadow-sm transition-all hover:border-[#00FFAA] hover:text-[#00FFAA] hover:shadow-[0_0_15px_rgba(0,255,170,0.3)] lg:p-2"
-              >
-                <span className="pl-1 text-[10px] font-semibold uppercase tracking-widest lg:text-xs">
-                  Tutup
-                </span>
-                <X className="h-4 w-4 shrink-0" />
-              </button>
+              <RootModalCloseButton onClick={() => setShowInfoModal(false)} />
             </div>
 
             {/* Body Modal Info */}
@@ -652,53 +637,52 @@ export default function NaikkanKepuasanModal({
               [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A]
               [&::-webkit-scrollbar-thumb]:rounded-full 
               [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0F2424]
-              [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)]
               hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]
               [&::-webkit-scrollbar-button]:hidden
             ">
               {/* Tab 1: Statistik */}
-              <div className="rounded-xl border border-sky-500/30 bg-[#0A1A1A] p-4 sm:p-5">
+              <div className={`${rootBorderRadius.card} border border-sky-500/30 bg-[#0A1A1A] p-4 sm:p-5`}>
                 <div className="mb-3 flex items-center gap-2.5">
                   <div className="rounded-lg border border-sky-500/30 bg-sky-500/10 p-1.5 sm:p-2">
-                    <BarChart3 className="h-4 w-4 text-sky-400 sm:h-5 sm:w-5" />
+                    <BarChart3 className="h-4 w-4 text-[#E0E0E0] sm:h-5 sm:w-5" />
                   </div>
-                  <h4 className="text-xs font-black uppercase tracking-widest text-sky-300 sm:text-sm">
+                  <h4 className={`${rootModalTypography.sectionTitle} tracking-widest sm:text-sm`}>
                     Tab Statistik
                   </h4>
                 </div>
                 <p className="text-[11px] font-semibold leading-relaxed text-[#E0E0E0] sm:text-xs">
                   Menampilkan{" "}
-                  <strong className="text-sky-300">dashboard lengkap</strong>{" "}
+                  <strong className="text-[#E0E0E0]">dashboard lengkap</strong>{" "}
                   kondisi kepuasan rakyat saat ini. Berisi grafik historis,
                   faktor-faktor yang mempengaruhi kepuasan (ekonomi, keamanan,
                   layanan publik), serta proyeksi tren beberapa hari ke depan.
                 </p>
-                <p className="mt-2.5 text-[10px] font-medium italic text-[#6B8A8A] sm:text-[11px]">
+                <p className={`${rootModalTypography.muted} mt-2.5 text-[10px] font-medium italic sm:text-[11px]`}>
                   Cocok untuk: analisis mendalam sebelum mengambil keputusan
                   strategis.
                 </p>
               </div>
 
               {/* Tab 2: Naikkan Peringkat */}
-              <div className="rounded-xl border border-[#00FFAA]/50 bg-[#0A1A1A] p-4 sm:p-5">
+              <div className={`${rootBorderRadius.card} border border-[#00FFAA]/50 bg-[#0A1A1A] p-4 sm:p-5`}>
                 <div className="mb-3 flex items-center gap-2.5">
                   <div className="rounded-lg border border-[#00FFAA]/30 bg-[#00FFAA]/10 p-1.5 sm:p-2">
-                    <PartyPopper className="h-4 w-4 text-[#00FFAA] sm:h-5 sm:w-5" />
+                    <PartyPopper className="h-4 w-4 text-[#E0E0E0] sm:h-5 sm:w-5" />
                   </div>
-                  <h4 className="text-xs font-black uppercase tracking-widest text-[#00FFAA] sm:text-sm">
+                  <h4 className={`${rootModalTypography.sectionTitle} tracking-widest sm:text-sm`}>
                     Tab Naikkan Peringkat
                   </h4>
                 </div>
                 <p className="text-[11px] font-semibold leading-relaxed text-[#E0E0E0] sm:text-xs">
                   Menampilkan daftar{" "}
-                  <strong className="text-[#00FFAA]">
+                  <strong className="text-[#E0E0E0]">
                     acara & program publik
                   </strong>{" "}
                   yang bisa presiden luncurkan untuk meningkatkan kepuasan
                   rakyat. Setiap acara punya biaya, durasi, dan boost kepuasan
                   tersendiri.
                 </p>
-                <ul className="mt-2.5 list-inside list-disc space-y-1.5 text-[10px] font-medium text-[#6B8A8A] sm:text-[11px]">
+                <ul className={`${rootModalTypography.muted} mt-2.5 list-inside list-disc space-y-1.5 text-[10px] font-medium sm:text-[11px]`}>
                   <li>
                     Acara berjalan sesuai durasi, boost kepuasan berlaku setelah
                     selesai.
@@ -706,18 +690,18 @@ export default function NaikkanKepuasanModal({
                   <li>Satu acara hanya bisa aktif satu kali dalam satu waktu.</li>
                   <li>
                     Bonus riset{" "}
-                    <strong className="text-[#00FFAA]">Diplomasi Acara</strong>{" "}
+                    <strong className="text-[#E0E0E0]">Diplomasi Acara</strong>{" "}
                     dapat meningkatkan boost secara signifikan.
                   </li>
                 </ul>
               </div>
 
               {/* Tips */}
-              <div className="flex items-start gap-2.5 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 sm:p-4">
+              <div className={`flex items-start gap-2.5 ${rootBorderRadius.card} border border-amber-500/30 bg-amber-500/10 p-3 sm:p-4`}>
                 <div className="shrink-0 rounded-lg border border-amber-500/40 bg-amber-500/20 p-1.5">
-                  <Lightbulb className="h-3.5 w-3.5 text-amber-400 sm:h-4 sm:w-4" />
+                  <Lightbulb className="h-3.5 w-3.5 text-[#E0E0E0] sm:h-4 sm:w-4" />
                 </div>
-                <p className="text-[10px] font-semibold leading-relaxed text-amber-200 sm:text-[11px]">
+                <p className={`${rootModalTypography.body} text-[10px] font-semibold sm:text-[11px]`}>
                   <strong>Tips:</strong> Cek tab <strong>Statistik</strong> dulu
                   untuk melihat kondisi kepuasan saat ini, lalu pilih acara yang
                   paling cocok di tab <strong>Naikkan Peringkat</strong>.

@@ -1,8 +1,11 @@
 "use client";
 
 import React, { startTransition, useState, useEffect, useCallback, useMemo, useRef, useDeferredValue } from "react";
-import { X, Scale } from "lucide-react";
+import { Scale } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { 
   getEconomicSystemDetails, 
   EconomicSystemEffect 
@@ -77,7 +80,7 @@ const SektorTab = React.memo(({
 }: any) => {
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4">
+      <div className={`border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 ${rootBorderRadius.card}`}>
         <h3 className="text-sm font-black uppercase tracking-wide text-[#00FFAA]">Nasionalisasi & Ekonomi Terpusat</h3>
         <p className="mt-2 text-xs leading-relaxed text-[#A7C4C4]">
           Atur kepemilikan setiap sektor. Bagian negara berlaku saat komoditas dijual melalui Perdagangan;
@@ -103,7 +106,7 @@ const SektorTab = React.memo(({
           return (
             <section
               key={sector.id}
-              className="rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4"
+              className={`border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 ${rootBorderRadius.card}`}
               style={{ contentVisibility: "auto", containIntrinsicSize: "170px" }}
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -155,7 +158,7 @@ const SektorTab = React.memo(({
 
 const SatisfactionBar = React.memo(({ average }: { average: number }) => {
   return (
-    <div className="mt-6 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-5">
+    <div className={`mt-6 border border-[#00FFAA]/30 bg-[#0F2424] p-5 ${rootBorderRadius.card}`}>
       <div className="flex items-center justify-between gap-3">
         <span className="text-sm font-black uppercase tracking-widest text-[#00FFAA]">
           Indeks Kepuasan Rakyat (Kebijakan Ekonomi)
@@ -351,23 +354,17 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
         
         {/* HEADER */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
               <Scale className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
             </div>
-            <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Kebijakan & Sistem Ekonomi</h2>
+            <div className="min-w-0">
+              <h2 className={rootModalTypography.title}>Kebijakan & Sistem Ekonomi</h2>
             </div>
           </div>
 
           <div className="flex items-center gap-2 lg:gap-3">
-            <button 
-              onClick={onClose} 
-              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-            >
-              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-4 w-4" />
-            </button>
+            <RootModalCloseButton onClick={onClose} />
           </div>
         </div>
 
@@ -380,10 +377,10 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex flex-col w-full p-2 lg:p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                className={`flex w-full flex-col border p-2 text-left transition-all cursor-pointer lg:p-2.5 ${rootBorderRadius.card} ${
                   activeTab === tab.id
                     ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
-                    : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
+                    : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA] hover:text-[#00FFAA]"
                 }`}
               >
                 <span className="text-[10px] lg:text-xs font-bold uppercase tracking-wider">{tab.label}</span>

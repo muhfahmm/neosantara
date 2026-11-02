@@ -1,7 +1,7 @@
 // 1_konfirmasi_armada_aktif_modal.tsx
 "use client";
 import React, { useEffect, useState } from "react";
-import { X, Hammer, Eye, EyeOff, Calendar } from "lucide-react";
+import { Hammer, Eye, EyeOff, Calendar } from "lucide-react";
 import { BARAK_TO_SOLDIERS_MULTIPLIER } from "../logic/1_barak_logic";
 import { HANGAR_TANK_CAPACITY } from "../logic/2_hangar_tank_logic";
 import { GUDANG_SENJATA_CAPACITY } from "../logic/3_gudang_senjata_logic";
@@ -10,6 +10,7 @@ import { PANGKALAN_UDARA_CAPACITY } from "../logic/5_pangkalan_udara_logic";
 import { KonfirmasiPembangunanModalProps } from "../construction_support/konfirmasi_pembangunan_types";
 import { calculateRecruitmentDays } from "../logic/recruitmentLogic";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 
 export default function KonfirmasiArmadaAktifModal({
   isOpen,
@@ -345,13 +346,7 @@ export default function KonfirmasiArmadaAktifModal({
             </div>
             <h3 className="text-base font-black uppercase tracking-wider">Perekrutan / Pembangunan Militer</h3>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
-          >
-            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
-          </button>
+          <RootModalCloseButton onClick={onClose} />
         </div>
 
         {/* Body */}

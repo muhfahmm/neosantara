@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { ArrowLeft, Calendar, Globe, Plus, RotateCw } from 'lucide-react';
+import PausedMenuFrame from '../../root_modals_design_menu/rootFrameMenu';
 import type { GameSaveRecord } from './saveGameLogic';
 
 interface SaveGameModalProps {
@@ -45,20 +46,8 @@ export function SaveGameModal({
     };
 
     return (
-        <div className="fixed inset-0 z-[99999999] flex items-center justify-center pt-[88px] sm:pt-[100px] lg:pt-[clamp(92px,10dvh,115px)] pb-3 sm:pb-4 lg:pb-5 px-3 sm:px-6 lg:px-10 bg-transparent font-sans pointer-events-none select-none">
-            <section className="bg-[#0A1A1A] border-[6px] border-[#0F2424] rounded-2xl w-full max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl h-full max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)] shadow-2xl relative flex flex-col min-w-0 p-3 sm:p-4 pl-10 sm:pl-12 pointer-events-auto overflow-y-auto custom-scrollbar">
-                <div className="absolute left-3 sm:left-3.5 top-6 bottom-6 w-2 sm:w-2.5 bg-gradient-to-r from-[#2A3F3F] via-[#3D5252] to-[#1F3030] rounded-full shadow-md z-20 border border-[#0A1A1A]/80" />
-                <div className="absolute left-[8px] sm:left-[10px] top-[24px] w-[16px] sm:w-[18px] h-3.5 bg-[#0F2424] rounded-sm border border-[#0A1A1A] z-21 shadow" />
-                <div className="absolute left-[8px] sm:left-[10px] bottom-[24px] w-[16px] sm:w-[18px] h-3.5 bg-[#0F2424] rounded-sm border border-[#0A1A1A] z-21 shadow" />
-                <div className="absolute left-[22px] sm:left-[26px] top-10 bottom-10 flex flex-col justify-between items-center py-4 pointer-events-none z-30">
-                    {[...Array(11)].map((_, i) => (
-                        <div key={i} className="w-3 sm:w-3.5 h-3 sm:h-3.5 rounded-full bg-[#0A1A1A] shadow-inner border border-[#00FFAA]/20 flex items-center justify-center">
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#0F2424]" />
-                        </div>
-                    ))}
-                </div>
-                <div className="flex-1 bg-[#0F2424] border-[3px] border-[#00FFAA]/20 rounded-r-xl shadow-inner relative p-8 flex flex-col overflow-hidden text-[#E0E0E0]">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
+        <PausedMenuFrame zIndexClass="z-[99999999]">
+                <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-8 text-[#E0E0E0] custom-scrollbar">
                     <div className="flex items-center justify-center gap-1.5 text-[#00FFAA]/40 mb-4 shrink-0">
                         <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-[#00FFAA]/40" />
                         <span className="text-[10px] tracking-widest font-black uppercase">❖ ❖ ❖</span>
@@ -162,7 +151,6 @@ export function SaveGameModal({
                         </div>
                     )}
                 </div>
-            </section>
-        </div>
+        </PausedMenuFrame>
     );
 }
