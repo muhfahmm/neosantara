@@ -1,6 +1,7 @@
 "use client"
 import React from "react";
 import { X, AlertCircle, Banknote } from "lucide-react";
+import NotebookModalWrapper from "../../../../NotebookModalWrapper";
 
 interface IcbmInsufficientFundsModalProps {
   isOpen: boolean;
@@ -23,9 +24,9 @@ export default function IcbmInsufficientFundsModal({
   const deficit = Math.max(0, requiredBudget - currentBudget);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-auto">
-      <div className="bg-[#061312] border-2 border-[#FF2D55] rounded-2xl w-full max-w-lg overflow-hidden shadow-[0_0_30px_rgba(255,45,85,0.35)] flex flex-col relative font-sans">
-        <div className="px-8 py-6 border-b border-[#FF2D55]/25 flex items-center justify-between">
+    <NotebookModalWrapper onClose={onClose} compact maxWidthClass="max-w-lg" zIndexClass="z-[100]">
+      <div className="flex flex-col font-sans">
+        <div className="px-4 sm:px-5 py-3 border-b border-[#FF2D55]/25 bg-[#0A1A1A] flex items-center justify-between">
           <div className="flex items-center gap-3">
             <AlertCircle className="h-6 w-6 text-[#FF2D55] drop-shadow-[0_0_6px_#FF2D55]" />
             <div>
@@ -39,7 +40,7 @@ export default function IcbmInsufficientFundsModal({
           </button>
         </div>
 
-        <div className="p-6">
+        <div className="p-4 sm:p-5 bg-[#0F2424]">
           <div className="space-y-4 text-sm text-[#D6F5EC]">
             <div className="rounded-2xl border border-[#FF2D55]/40 bg-[#FF2D55]/10 p-4">
               <p className="text-sm font-bold text-[#FF6B88]">Dana saat ini tidak mencukupi</p>
@@ -62,7 +63,7 @@ export default function IcbmInsufficientFundsModal({
           </div>
         </div>
 
-        <div className="px-6 py-4 border-t border-[#FF2D55]/25 flex w-full gap-3">
+        <div className="px-4 sm:px-5 py-3 border-t border-[#FF2D55]/25 bg-[#0A1A1A] flex w-full gap-3">
           <button
             onClick={() => {
               onOpenDebt?.(); // Buka modal Pinjaman & Hutang
@@ -81,7 +82,7 @@ export default function IcbmInsufficientFundsModal({
             Kembali
           </button>
         </div>
-      </div>
     </div>
+    </NotebookModalWrapper>
   );
 }

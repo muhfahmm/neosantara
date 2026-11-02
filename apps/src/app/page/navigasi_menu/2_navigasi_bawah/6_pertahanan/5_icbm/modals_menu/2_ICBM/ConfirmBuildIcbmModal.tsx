@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { X } from "lucide-react";
+import NotebookModalWrapper from "../../../../NotebookModalWrapper";
 
 interface ConfirmBuildIcbmModalProps {
   isOpen: boolean;
@@ -26,9 +27,9 @@ export default function ConfirmBuildIcbmModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-auto">
-      <div className="bg-[#061312] border-2 border-[#00FFAA] rounded-2xl w-full max-w-lg overflow-hidden shadow-[0_0_30px_rgba(0,255,170,0.3)] flex flex-col relative font-sans">
-        <div className="px-8 py-6 border-b border-[#00FFAA]/20 flex items-center justify-between">
+    <NotebookModalWrapper onClose={onClose} compact maxWidthClass="max-w-lg" zIndexClass="z-[100]">
+      <div className="flex flex-col font-sans">
+        <div className="px-4 sm:px-5 py-3 border-b border-[#00FFAA]/20 bg-[#0A1A1A] flex items-center justify-between">
           <div>
             <h3 className="text-xl font-black text-[#00FFAA] uppercase tracking-wide drop-shadow-[0_0_8px_rgba(0,255,170,0.6)]">Konfirmasi Pembangunan ICBM</h3>
             <p className="text-[11px] text-[#6B8A8A] mt-1">Pastikan sumber daya mencukupi sebelum melanjutkan.</p>
@@ -39,7 +40,7 @@ export default function ConfirmBuildIcbmModal({
           </button>
         </div>
 
-        <div className="p-6">
+        <div className="p-4 sm:p-5 bg-[#0F2424]">
           <div className="space-y-4 text-sm text-[#D6F5EC]">
             <p className="font-bold">Anda akan membangun <span className="text-[#00FFAA]">{quantity} ICBM</span> dengan biaya:</p>
             <ul className="space-y-2 pl-4 list-disc marker:text-[#00FFAA]">
@@ -52,11 +53,11 @@ export default function ConfirmBuildIcbmModal({
           </div>
         </div>
 
-        <div className="px-6 py-4 border-t border-[#00FFAA]/20 flex justify-end gap-3">
+        <div className="px-4 sm:px-5 py-3 border-t border-[#00FFAA]/20 bg-[#0A1A1A] flex justify-end gap-3">
           <button onClick={onClose} className="px-5 py-2 rounded-lg border border-[#00FFAA]/40 text-[#9CC9BD] font-bold hover:bg-[#00FFAA]/10 transition-all cursor-pointer">Batal</button>
           <button onClick={() => { onConfirm(); }} className="px-5 py-2 rounded-lg bg-[#00FFAA] text-[#04100F] font-black shadow-[0_0_16px_rgba(0,255,170,0.5)] hover:brightness-110 active:scale-95 transition-all cursor-pointer">Oke</button>
         </div>
-      </div>
     </div>
+    </NotebookModalWrapper>
   );
 }

@@ -2,6 +2,7 @@
 import React from "react";
 import { X, Binoculars, Eye } from "lucide-react";
 import { getCovertOperationSuccessChance } from "@/app/page/detail_negara/3_operasi_militer/covertOperationLogic";
+import NotebookModalWrapper from "../../../NotebookModalWrapper";
 
 interface KonfirmasiSpionaseModalsProps {
   isOpen: boolean;
@@ -24,11 +25,16 @@ export default function KonfirmasiSpionaseModals({
   const successChance = getCovertOperationSuccessChance('spionase', playerCountryDetail);
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto shadow-2xl">
+    <NotebookModalWrapper
+      onClose={onClose}
+      compact
+      maxWidthClass="max-w-xl"
+      zIndexClass="z-[60]"
+    >
+      <div className="flex flex-col font-sans animate-in fade-in zoom-in-95 duration-150">
         
         {/* HEADER */}
-        <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+        <div className="px-4 sm:px-5 py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-3">
               <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
@@ -49,7 +55,7 @@ export default function KonfirmasiSpionaseModals({
         </div>
 
         {/* BODY */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 neon-scrollbar flex flex-col items-center justify-center">
+        <div className="p-4 sm:p-5 bg-[#0F2424] relative z-10 neon-scrollbar flex flex-col items-center justify-center">
           <div className="w-full max-w-lg space-y-6">
             <div className="flex justify-center">
               <div className="p-5 rounded-full bg-[#0A1A1A] border border-[#00FFAA]/30 shadow-inner">
@@ -81,7 +87,7 @@ export default function KonfirmasiSpionaseModals({
         </div>
 
         {/* FOOTER */}
-        <div className="px-6 py-4 border-t border-[#00FFAA]/30 bg-[#0A1A1A] relative z-10 shrink-0 flex items-center justify-end gap-3">
+        <div className="px-4 sm:px-5 py-3 border-t border-[#00FFAA]/30 bg-[#0A1A1A] relative z-10 shrink-0 flex items-center justify-end gap-3">
           <button onClick={onClose} className="px-6 py-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
             Batal
           </button>
@@ -94,6 +100,6 @@ export default function KonfirmasiSpionaseModals({
           </button>
         </div>
       </div>
-    </div>
+      </NotebookModalWrapper>
   );
 }

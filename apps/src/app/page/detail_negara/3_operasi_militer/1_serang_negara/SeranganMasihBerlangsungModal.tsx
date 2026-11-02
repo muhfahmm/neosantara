@@ -24,18 +24,16 @@ export default function SeranganMasihBerlangsungModal({
       aria-modal="true"
       aria-labelledby="attack-in-progress-title"
     >
-      {/* 🔥 PERBAIKAN: Container lebih lebar (max-w-2xl) dan panjang (min-h-[450px]) */}
-      <div className="w-full max-w-2xl min-h-[450px] flex flex-col bg-[#0F2424] border border-amber-400/40 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(251,191,36,0.15)] relative pointer-events-auto">
+      <div className="w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto flex flex-col bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl shadow-2xl relative pointer-events-auto">
         
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-amber-400/20 pb-4 mb-6">
+        <div className="flex items-center justify-between border-b border-amber-400/20 bg-[#0A1A1A] px-5 sm:px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg border border-amber-400/30 bg-amber-500/10 shrink-0">
               <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-amber-400" />
             </div>
             <h2
               id="attack-in-progress-title"
-              className="text-xl sm:text-2xl font-black uppercase tracking-wide text-amber-300"
+              className="text-base sm:text-lg font-black uppercase tracking-wide text-amber-300"
             >
               Serangan Masih Berlangsung
             </h2>
@@ -44,29 +42,26 @@ export default function SeranganMasihBerlangsungModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 lg:p-2 rounded-xl border border-amber-400/30 bg-[#0F2424] text-amber-400 hover:bg-amber-500 hover:text-white transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
+            className="rounded-lg p-1.5 text-[#6B8A8A] transition-colors hover:text-amber-400 cursor-pointer shrink-0"
             aria-label="Tutup"
           >
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
           </button>
         </div>
 
-        {/* Body Content */}
-        <div className="flex-1 flex flex-col space-y-4">
-          <p className="text-sm sm:text-base leading-relaxed text-[#E0E0E0]">
+        <div className="space-y-4 p-5 sm:p-6">
+          <p className="text-sm leading-relaxed text-[#E0E0E0]">
             Negara Anda sedang menjalankan operasi militer terhadap{' '}
             <strong className="text-white">{countryName}</strong>. Anda tidak dapat
             melancarkan serangan kedua ke negara yang sama sebelum operasi ini selesai.
           </p>
-          <p className="text-sm sm:text-base leading-relaxed text-[#6B8A8A]">
+          <p className="text-sm leading-relaxed text-[#6B8A8A]">
             Tunggu hingga hasil perang ditentukan dan pilih tindakan untuk mengakhiri
             operasi yang sedang berlangsung.
           </p>
         </div>
 
-        {/* Footer Action */}
-        <div className="flex justify-end mt-6 pt-4 border-t border-amber-400/20">
+        <div className="flex justify-end border-t border-amber-400/20 bg-[#0A1A1A] p-4">
           <button
             type="button"
             onClick={onClose}

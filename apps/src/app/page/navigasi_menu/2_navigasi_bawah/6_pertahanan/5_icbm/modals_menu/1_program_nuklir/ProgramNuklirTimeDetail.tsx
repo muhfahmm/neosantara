@@ -1,6 +1,7 @@
 "use client"
 import React from "react";
 import { X, Clock3 } from "lucide-react";
+import NotebookModalWrapper from "../../../../NotebookModalWrapper";
 
 interface ProgramNuklirTimeDetailProps {
   isOpen: boolean;
@@ -18,9 +19,9 @@ export default function ProgramNuklirTimeDetail({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-auto">
-      <div className="bg-[#061312] border-2 border-[#FBBF24] rounded-2xl w-full max-w-3xl overflow-hidden shadow-[0_0_30px_rgba(251,191,36,0.3)] flex flex-col relative font-sans">
-        <div className="px-8 py-6 border-b border-[#FBBF24]/25 flex items-center justify-between">
+    <NotebookModalWrapper onClose={onClose} compact maxWidthClass="max-w-xl" zIndexClass="z-[100]">
+      <div className="flex flex-col font-sans">
+        <div className="px-4 sm:px-5 py-3 border-b border-[#FBBF24]/25 bg-[#0A1A1A] flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Clock3 className="h-6 w-6 text-[#FBBF24] drop-shadow-[0_0_6px_#FBBF24]" />
             <div>
@@ -37,8 +38,8 @@ export default function ProgramNuklirTimeDetail({
           </button>
         </div>
 
-        <div className="p-8">
-          <div className="rounded-3xl border border-[#FBBF24]/25 bg-[#FBBF24]/5 p-6">
+        <div className="p-4 sm:p-5 bg-[#0F2424]">
+          <div className="rounded-2xl border border-[#FBBF24]/25 bg-[#FBBF24]/5 p-4">
             <div className="flex items-center gap-4">
               <div className="p-4 rounded-full bg-[#FBBF24]/10 border border-[#FBBF24]/50 text-[#FBBF24]">
                 <Clock3 className="h-8 w-8" />
@@ -49,7 +50,7 @@ export default function ProgramNuklirTimeDetail({
               </div>
             </div>
 
-            <div className="mt-8 grid grid-cols-1 gap-4 text-sm text-[#D6F5EC]">
+            <div className="mt-5 grid grid-cols-1 gap-3 text-sm text-[#D6F5EC]">
               <div className="rounded-2xl bg-[#0A1D1B] p-4 border border-[#00FFAA]/15">
                 <p className="font-bold text-[#00FFAA]">Total Waktu:</p>
                 <p className="mt-2 text-base">{durationDays.toLocaleString("id-ID", { maximumFractionDigits: 0 })} Hari</p>
@@ -60,7 +61,7 @@ export default function ProgramNuklirTimeDetail({
               </div>
             </div>
 
-            <div className="mt-8 flex justify-end">
+            <div className="mt-5 flex justify-end">
               <button
                 onClick={onClose}
                 className="px-8 py-3 rounded-xl bg-[#FBBF24] text-[#04100F] font-black text-xs uppercase tracking-wider shadow-[0_0_16px_rgba(251,191,36,0.5)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
@@ -71,6 +72,6 @@ export default function ProgramNuklirTimeDetail({
           </div>
         </div>
       </div>
-    </div>
+    </NotebookModalWrapper>
   );
 }

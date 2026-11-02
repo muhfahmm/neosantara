@@ -36,27 +36,27 @@ export default function StatusMintaSerangModal({
 
 	const modalContent = (
 		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
-			<div className="w-full max-w-lg overflow-hidden rounded-2xl border-2 border-amber-400/50 bg-[#0d161a] text-white shadow-[0_0_40px_rgba(245,158,11,0.2)] relative pointer-events-auto">
+			<div className="w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-2xl border border-[#00FFAA]/30 bg-[#0F2424] text-white shadow-2xl relative pointer-events-auto">
 				{/* Header */}
-				<div className="flex items-center justify-between border-b border-amber-400/20 bg-[#14232a] px-6 py-4">
+				<div className="flex items-center justify-between border-b border-amber-400/20 bg-[#0A1A1A] px-5 sm:px-6 py-4">
 					<div className="flex items-center gap-3">
-						<PhoneForwarded className="h-6 w-6 text-amber-400" />
-						<h3 className="text-base font-black uppercase tracking-wider text-amber-300">
+						<PhoneForwarded className="h-5 w-5 text-amber-400" />
+						<h3 className="text-sm sm:text-base font-black uppercase tracking-wider text-amber-300">
 							Mandat Serangan Sedang Berjalan
 						</h3>
 					</div>
 					<button
 						type="button"
 						onClick={onClose}
-						className="rounded-lg p-2 text-[#8ab0b8] transition-colors hover:bg-white/5 hover:text-white cursor-pointer"
+						className="rounded-lg p-1.5 text-[#6B8A8A] transition-colors hover:text-amber-400 cursor-pointer"
 						aria-label="Tutup"
 					>
-						<X className="h-5 w-5" />
+						<X className="h-4 w-4" />
 					</button>
 				</div>
 
 				{/* Body Content */}
-				<div className="space-y-5 p-6">
+				<div className="space-y-5 p-5 sm:p-6">
 					<div className="flex items-start gap-3 rounded-xl bg-amber-400/10 border border-amber-400/20 p-4">
 						<AlertTriangle className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
 						<p className="text-sm leading-relaxed text-[#d5e3e6]">
@@ -104,4 +104,3 @@ export default function StatusMintaSerangModal({
 
 	return modalContent;
 }
-

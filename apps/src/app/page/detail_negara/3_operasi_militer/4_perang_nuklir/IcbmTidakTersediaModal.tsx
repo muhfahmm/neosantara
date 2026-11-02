@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 
 interface IcbmTidakTersediaModalProps {
@@ -21,10 +21,8 @@ export default function IcbmTidakTersediaModal({
       aria-modal="true"
       aria-labelledby="icbm-unavailable-title"
     >
-      <div className="w-full max-w-2xl min-h-[450px] flex flex-col bg-[#0F2424] border border-rose-500/40 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(225,29,72,0.15)] relative pointer-events-auto">
-        
-        {/* Header (Tombol Tutup dihapus) */}
-        <div className="flex items-center justify-start border-b border-rose-500/20 pb-4 mb-6">
+      <div className="w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto flex flex-col bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl shadow-2xl relative pointer-events-auto">
+        <div className="flex items-center justify-between border-b border-rose-500/20 bg-[#0A1A1A] px-5 sm:px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg border border-rose-500/30 bg-rose-500/10 shrink-0">
               <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-rose-400" />
@@ -36,18 +34,24 @@ export default function IcbmTidakTersediaModal({
               ICBM Tidak Tersedia
             </h2>
           </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg p-1.5 text-[#6B8A8A] transition-colors hover:text-rose-400"
+            aria-label="Tutup pemberitahuan ICBM"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
 
-        {/* Body Content */}
-        <div className="flex-1 flex flex-col space-y-4">
+        <div className="p-5 sm:p-6">
           <p className="text-sm sm:text-base leading-relaxed text-[#E0E0E0]">
             Negara Anda belum memiliki rudal ICBM siap diluncurkan. Serangan nuklir
             tidak dapat dikonfirmasi sebelum setidaknya satu ICBM tersedia.
           </p>
         </div>
 
-        {/* Footer Action */}
-        <div className="flex justify-end mt-6 pt-4 border-t border-rose-500/20">
+        <div className="flex justify-end border-t border-rose-500/20 bg-[#0A1A1A] p-4">
           <button
             type="button"
             onClick={onClose}

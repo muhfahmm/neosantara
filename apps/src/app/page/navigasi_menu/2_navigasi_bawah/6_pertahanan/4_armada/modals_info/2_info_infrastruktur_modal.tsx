@@ -84,18 +84,18 @@ export default function InfoInfrastrukturModal({
   const effectiveWaktu = discountPct > 0 ? Math.max(1, Math.floor(rawWaktu * (1 - discountPct / 100))) : rawWaktu;
 
   return (
-    <NotebookModalWrapper onClose={onClose}>
-      <div className="flex h-full flex-col overflow-hidden">
+    <NotebookModalWrapper onClose={onClose} compact maxWidthClass="max-w-3xl">
+      <div className="flex flex-col">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+        <div className="px-4 sm:px-5 py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
           <h3 className="font-black text-[#00FFAA] uppercase tracking-wider text-xl">{selectedItem?.label}</h3>
           <RootModalCloseButton onClick={onClose} />
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto p-6 bg-[#0F2424] relative z-10 space-y-4 text-xs font-semibold text-[#E0E0E0] custom-scrollbar">
+        <div className="overflow-y-auto p-4 sm:p-5 bg-[#0F2424] relative z-10 space-y-4 text-xs font-semibold text-[#E0E0E0] custom-scrollbar">
           {bonusParts.length > 0 && (
             <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs font-bold text-emerald-300">
               Infrastruktur ini ditingkatkan: {bonusParts.join(" dan ")}.

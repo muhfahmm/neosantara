@@ -46,18 +46,18 @@ export default function InfoArmadaAktifModal({
     getAuthoritarianMilitaryStrengthMultiplier(countryIdeology) > 1;
 
   return (
-    <NotebookModalWrapper onClose={onClose}>
-      <div className="flex h-full flex-col overflow-hidden">
+    <NotebookModalWrapper onClose={onClose} compact maxWidthClass="max-w-3xl">
+      <div className="flex flex-col">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+        <div className="px-4 sm:px-5 py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
           <h3 className="font-black text-[#00FFAA] uppercase tracking-wider text-xl">{selectedItem?.label}</h3>
           <RootModalCloseButton onClick={onClose} />
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto p-6 bg-[#0F2424] relative z-10 space-y-4 text-xs font-semibold text-[#E0E0E0] custom-scrollbar">
+        <div className="overflow-y-auto p-4 sm:p-5 bg-[#0F2424] relative z-10 space-y-4 text-xs font-semibold text-[#E0E0E0] custom-scrollbar">
           <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
             <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Kategori Matra</p>
             <p className="text-xl font-black text-white">

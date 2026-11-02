@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { X, Flame, ShieldAlert, CheckCircle2, AlertTriangle, Crosshair, MapPin } from "lucide-react";
 import { executeIcbmTestLaunch, getRealisticTargetLocationName, type NeighborImpact } from "./ujicobaIcbmLogic";
+import NotebookModalWrapper from "../../../../NotebookModalWrapper";
 
 interface UjicobaIcbmModalProps {
   isOpen: boolean;
@@ -221,8 +222,8 @@ export default function UjicobaIcbmModal({
   }
 
   return (
-    <div className="fixed inset-0 z-[95] flex items-center justify-center p-4 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col relative font-sans pointer-events-auto">
+    <NotebookModalWrapper onClose={handleCloseModal} compact maxWidthClass="max-w-lg" zIndexClass="z-[95]">
+      <div className="flex flex-col relative font-sans">
         
         {/* Header Modal */}
         <div className="px-6 py-4 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A]">
@@ -249,7 +250,7 @@ export default function UjicobaIcbmModal({
         </div>
 
         {/* Content */}
-        <div className="p-6 bg-[#0F2424] flex flex-col gap-4 text-xs">
+        <div className="p-4 sm:p-5 bg-[#0F2424] flex flex-col gap-4 text-xs">
           {testResult ? (
             <div className="rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-4 flex flex-col items-center text-center gap-3 max-h-[75vh] overflow-y-auto">
               <CheckCircle2 className="h-10 w-10 text-[#00FFAA] shrink-0" />
@@ -409,6 +410,6 @@ export default function UjicobaIcbmModal({
         </div>
 
       </div>
-    </div>
+    </NotebookModalWrapper>
   );
 }

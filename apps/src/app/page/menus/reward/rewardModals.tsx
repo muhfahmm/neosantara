@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import Image from 'next/image';
 import { Gift, X, Check, Lock, Zap, AlertTriangle } from 'lucide-react';
 import {
@@ -384,8 +385,8 @@ export default function TopRightGiftIcon({
 
       {/* Modal Hadiah */}
       {isOpen && mounted && createPortal(
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-transparent pointer-events-none">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/40 rounded-2xl overflow-hidden w-full max-w-md flex flex-col relative font-sans pointer-events-auto shadow-lg">
+        <NotebookModalWrapper compact maxWidthClass="max-w-md" zIndexClass="z-[200]">
+          <div className="w-full min-w-0 overflow-hidden flex flex-col relative font-sans pointer-events-auto">
 
             {/* ---- HEADER ---- */}
             <div className="px-5 sm:px-6 py-3 sm:py-3.5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
@@ -496,14 +497,14 @@ export default function TopRightGiftIcon({
               </div>
             </div>
           </div>
-        </div>,
+        </NotebookModalWrapper>,
         document.body
       )}
 
       {/* ---- MODAL FEEDBACK ---- */}
       {mounted && feedbackModal && createPortal(
-        <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-transparent pointer-events-none">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/40 rounded-2xl overflow-hidden w-full max-w-md shadow-lg pointer-events-auto flex flex-col">
+        <NotebookModalWrapper compact maxWidthClass="max-w-md" zIndexClass="z-[300]">
+          <div className="w-full min-w-0 overflow-hidden flex flex-col relative font-sans pointer-events-auto">
 
             {/* Header */}
             <div className="px-5 sm:px-6 py-3 sm:py-3.5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] gap-2 shrink-0">
@@ -576,7 +577,7 @@ export default function TopRightGiftIcon({
               )}
             </div>
           </div>
-        </div>,
+        </NotebookModalWrapper>,
         document.body
       )}
     </>

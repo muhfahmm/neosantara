@@ -1,6 +1,7 @@
 "use client";
 
 import { Info, X } from "lucide-react";
+import NotebookModalWrapper from "../../NotebookModalWrapper";
 
 interface TradeMarketBlockedModalProps {
   isOpen: boolean;
@@ -14,12 +15,21 @@ export default function TradeMarketBlockedModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 font-sans pointer-events-none">
-      <div className="relative w-full max-w-2xl rounded-2xl border border-rose-500/50 bg-[#0F2424] text-white shadow-[0_0_30px_rgba(225,29,72,0.2)] pointer-events-auto">
+    <NotebookModalWrapper
+      zIndexClass="z-[300]"
+      maxWidthClass="max-w-2xl"
+      compact
+    >
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="trade-market-blocked-title"
+        className="overflow-hidden text-white"
+      >
         <div className="flex items-center justify-between gap-4 rounded-t-2xl border-b border-rose-500/30 bg-[#0A1A1A] px-6 py-4">
           <div className="flex items-center gap-3">
             <Info className="h-5 w-5 shrink-0 text-rose-400" />
-            <h2 className="text-base font-black uppercase tracking-wide text-rose-400 sm:text-lg">
+            <h2 id="trade-market-blocked-title" className="text-base font-black uppercase tracking-wide text-rose-400 sm:text-lg">
               Informasi Blokir
             </h2>
           </div>
@@ -40,7 +50,7 @@ export default function TradeMarketBlockedModal({
             atau ubah ideologi/agama agar skor turun di bawah 85.
           </p>
         </div>
-      </div>
-    </div>
+      </section>
+    </NotebookModalWrapper>
   );
 }

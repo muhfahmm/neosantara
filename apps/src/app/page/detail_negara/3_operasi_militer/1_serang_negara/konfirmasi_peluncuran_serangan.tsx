@@ -1,6 +1,6 @@
 "use client";
 
-import { ShieldAlert, Swords } from "lucide-react";
+import { ShieldAlert, Swords, X } from "lucide-react";
 
 interface KonfirmasiPeluncuranSeranganProps {
 	playerName: string;
@@ -25,8 +25,8 @@ export default function KonfirmasiPeluncuranSerangan({
 }: KonfirmasiPeluncuranSeranganProps) {
 	return (
 		<div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-in fade-in duration-200">
-			<div className="w-full max-w-[700px] bg-[#0d161a] border-2 border-[#00FFAA]/40 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,255,170,0.2)] font-sans text-white relative">
-				<div className="bg-[#14232a] border-b border-[#00FFAA]/20 px-6 py-4 flex items-center justify-between">
+			<div className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl shadow-2xl font-sans text-white relative">
+				<div className="bg-[#0A1A1A] border-b border-[#00FFAA]/20 px-5 sm:px-6 py-4 flex items-center justify-between">
 					<div className="flex items-center gap-2.5">
 						<Swords className="w-5 h-5 text-[#00FFAA]" />
 						<h3 className="text-base font-black text-[#00FFAA] tracking-wider uppercase">
@@ -36,14 +36,14 @@ export default function KonfirmasiPeluncuranSerangan({
 					<button
 						type="button"
 						onClick={onBack}
-						className="text-[#6B8A8A] hover:text-[#00FFAA] font-black text-sm cursor-pointer transition-colors"
-						aria-label="Kembali ke konfirmasi serangan"
+						className="rounded-lg p-1.5 text-[#6B8A8A] hover:text-[#00FFAA] cursor-pointer transition-colors"
+						aria-label="Tutup konfirmasi serangan"
 					>
-						✕
+						<X className="h-4 w-4" />
 					</button>
 				</div>
 
-				<div className="p-6 sm:p-8 space-y-8">
+				<div className="p-5 sm:p-6 space-y-6">
 					<div className="flex items-center justify-between bg-[#111e24] border border-[#00FFAA]/20 rounded-xl p-5 sm:p-6">
 						<div className="flex flex-col items-center gap-2 flex-1 min-w-0">
 							<img

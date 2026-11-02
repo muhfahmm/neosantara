@@ -2,6 +2,7 @@
 import React from "react";
 import { createPortal } from "react-dom";
 
+import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 interface PaktaNonAgresiModalProps {
 	isOpen: boolean;
 	countryName?: string | null;
@@ -14,9 +15,9 @@ export default function PaktaNonAgresiModal({ isOpen, countryName, onClose, onCo
 	if (!isOpen) return null;
 
 	const modalContent = (
-		<div className="fixed inset-0 z-[100000001] flex items-center justify-center p-4 font-sans pointer-events-none">
+		<NotebookModalWrapper compact maxWidthClass="max-w-xl" zIndexClass="z-[100000001]">
 			{/* Container Modal */}
-			<div className="w-full max-w-2xl min-h-[450px] flex flex-col bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(0,255,170,0.15)] relative text-white pointer-events-auto">
+			<div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
 				
 				{/* Area Konten */}
 				<div className="flex-1">
@@ -51,7 +52,7 @@ export default function PaktaNonAgresiModal({ isOpen, countryName, onClose, onCo
 					</button>
 				</div>
 			</div>
-		</div>
+		</NotebookModalWrapper>
 	);
 
 	if (typeof window !== "undefined") {

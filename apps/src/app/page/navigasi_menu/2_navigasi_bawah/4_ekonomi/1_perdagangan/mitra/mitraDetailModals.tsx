@@ -5,6 +5,7 @@
 import React from "react";
 import { X, Building2, Globe, FileText, Handshake, ArrowRightLeft } from "lucide-react";
 import { TradePartner } from "./mitraModalsMenu";
+import NotebookModalWrapper from "../../../NotebookModalWrapper";
 
 interface MitraDetailModalsProps {
   isOpen: boolean;
@@ -26,8 +27,16 @@ export default function MitraDetailModals({
   if (!isOpen || !partner) return null;
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
+    <NotebookModalWrapper
+      zIndexClass="z-[70]"
+      maxWidthClass="max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl"
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="trade-partner-detail-title"
+        className="flex h-full min-w-0 flex-col overflow-hidden"
+      >
         {/* Header */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
           <div className="flex items-center gap-2 sm:gap-3">
@@ -35,12 +44,13 @@ export default function MitraDetailModals({
               <Building2 className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
             </div>
             <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
+              <h2 id="trade-partner-detail-title" className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
                 Detail Hubungan Dagang
               </h2>
             </div>
           </div>
-          <button 
+          <button
+            type="button"
             onClick={onClose} 
             className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
           >
@@ -142,7 +152,8 @@ export default function MitraDetailModals({
 
         {/* Footer */}
         <div className="px-8 py-4 border-t border-[#00FFAA]/20 flex justify-end bg-[#0A1A1A] relative z-10">
-          <button 
+          <button
+            type="button"
             onClick={onClose} 
             className="px-6 py-2.5 rounded-xl border border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer text-xs font-black uppercase tracking-wider"
           >
@@ -150,6 +161,6 @@ export default function MitraDetailModals({
           </button>
         </div>
       </div>
-    </div>
+    </NotebookModalWrapper>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertTriangle, X } from "lucide-react";
+import NotebookModalWrapper from "../../NotebookModalWrapper";
 
 interface ArmsTradeBudgetModalProps {
   availableCash: number;
@@ -19,12 +20,17 @@ export default function ArmsTradeBudgetModal({
   const shortfall = Math.max(0, requiredCash - availableCash);
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/70 p-4">
+    <NotebookModalWrapper
+      zIndexClass="z-[80]"
+      maxWidthClass="max-w-md"
+      compact
+      backdropClassName="bg-black/70"
+    >
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="arms-trade-budget-title"
-        className="w-full max-w-md overflow-hidden rounded-2xl border border-amber-500/40 bg-[#0F2424] shadow-2xl"
+        className="overflow-hidden"
       >
         <header className="flex items-center justify-between border-b border-amber-500/20 bg-[#0A1A1A] px-5 py-4">
           <div className="flex items-center gap-3 text-amber-300">
@@ -63,6 +69,6 @@ export default function ArmsTradeBudgetModal({
           </button>
         </div>
       </section>
-    </div>
+    </NotebookModalWrapper>
   );
 }

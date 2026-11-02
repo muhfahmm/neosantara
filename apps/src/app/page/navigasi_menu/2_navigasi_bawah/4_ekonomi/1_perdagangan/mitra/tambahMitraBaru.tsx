@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { X, Search, AlertTriangle } from 'lucide-react';
+import { X, Search } from 'lucide-react';
+import NotebookModalWrapper from '../../../NotebookModalWrapper';
 import { COUNTRIES_DATA } from '../../../../../map_system/map-data';
 import { getEmbassiesForCountry } from "../../../../../../../../../json/6_database_kedutaan_besar/embassyRegistry";
 
@@ -111,14 +112,23 @@ export default function TambahMitraBaru({
 
   return (
     <>
-      <div className="fixed inset-0 z-[70] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-        <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
+      <NotebookModalWrapper
+        zIndexClass="z-[70]"
+        maxWidthClass="max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl"
+      >
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="add-trade-partner-title"
+          className="flex h-full min-w-0 flex-col overflow-hidden"
+        >
           {/* HEADER */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
             <div className="flex-1">
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Tambah Mitra Dagang Baru</h2>
+              <h2 id="add-trade-partner-title" className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Tambah Mitra Dagang Baru</h2>
             </div>
             <button
+              type="button"
               onClick={onClose}
               className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
             >
@@ -201,12 +211,21 @@ export default function TambahMitraBaru({
             )}
           </div>
         </div>
-      </div>
+      </NotebookModalWrapper>
 
       {/* MODAL GAGAL TAMBAH MITRA (KARENA TIDAK ADA KEDUBES) */}
       {noEmbassyModalData && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-auto">
-          <div className="bg-[#0F2424] border-2 border-rose-500/40 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl shadow-2xl flex flex-col font-sans pointer-events-auto relative space-y-0">
+        <NotebookModalWrapper
+          zIndexClass="z-[100]"
+          maxWidthClass="max-w-xl"
+          compact
+        >
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="no-embassy-title"
+            className="overflow-hidden"
+          >
             <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-b border-rose-500/20 flex items-center justify-between bg-[#0A1A1A] shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="p-1.5 rounded-lg border border-rose-500/30 bg-rose-950/40 text-rose-400">
@@ -214,7 +233,7 @@ export default function TambahMitraBaru({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                 </div>
-                <h2 className="text-sm sm:text-base font-black tracking-wider uppercase text-rose-400">
+                <h2 id="no-embassy-title" className="text-sm sm:text-base font-black tracking-wider uppercase text-rose-400">
                   Pemberitahuan / Peringatan
                 </h2>
               </div>
@@ -230,7 +249,7 @@ export default function TambahMitraBaru({
             </div>
 
             {/* Body Content */}
-            <div className="flex-1 min-h-0 p-6 sm:p-8 overflow-y-auto neon-scrollbar">
+            <div className="p-5 sm:p-6">
               <h3 className="text-lg sm:text-xl font-black uppercase tracking-wide mb-3 text-rose-400">
                 Gagal Menambahkan Mitra
               </h3>
@@ -254,14 +273,23 @@ export default function TambahMitraBaru({
                 Paham
               </button>
             </div>
-          </div>
-        </div>
+          </section>
+        </NotebookModalWrapper>
       )}
 
       {/* MODAL KONFIRMASI TAMBAH MITRA DAGANG */}
       {confirmModalData && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-auto">
-          <div className="bg-[#0F2424] border-2 border-[#00FFAA]/40 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl shadow-2xl flex flex-col font-sans pointer-events-auto relative space-y-0">
+        <NotebookModalWrapper
+          zIndexClass="z-[100]"
+          maxWidthClass="max-w-xl"
+          compact
+        >
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="confirm-add-trade-partner-title"
+            className="overflow-hidden"
+          >
             <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA]">
@@ -269,7 +297,7 @@ export default function TambahMitraBaru({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h2 className="text-sm sm:text-base font-black tracking-wider uppercase text-[#00FFAA]">
+                <h2 id="confirm-add-trade-partner-title" className="text-sm sm:text-base font-black tracking-wider uppercase text-[#00FFAA]">
                   Konfirmasi Perjanjian Dagang
                 </h2>
               </div>
@@ -285,7 +313,7 @@ export default function TambahMitraBaru({
             </div>
 
             {/* Body Content */}
-            <div className="flex-1 min-h-0 p-6 sm:p-8 overflow-y-auto neon-scrollbar">
+            <div className="p-5 sm:p-6">
               <h3 className="text-lg sm:text-xl font-black uppercase tracking-wide mb-3 text-[#E0E0E0]">
                 Konfirmasi Perjanjian Dagang
               </h3>
@@ -316,8 +344,8 @@ export default function TambahMitraBaru({
                 Setuju & Tambahkan
               </button>
             </div>
-          </div>
-        </div>
+          </section>
+        </NotebookModalWrapper>
       )}
     </>
   );

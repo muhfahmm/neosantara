@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Flag, Skull, Swords, Trophy } from "lucide-react";
+import { ArrowLeft, Flag, Skull, Swords, Trophy, X } from "lucide-react";
 
 interface HasilPertempuranProps {
 	isVictory: boolean;
@@ -19,8 +19,8 @@ export default function HasilPertempuran({
 }: HasilPertempuranProps) {
 	return (
 		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-in fade-in duration-200">
-			<div className="w-full max-w-[560px] bg-[#0d161a] border-2 border-[#00FFAA]/40 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,255,170,0.2)] font-sans text-white relative">
-				<div className="bg-[#14232a] border-b border-[#00FFAA]/20 px-6 py-4 flex items-center justify-between">
+			<div className="w-full max-w-xl max-h-[calc(100dvh-2rem)] overflow-y-auto bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl shadow-2xl font-sans text-white relative">
+				<div className="bg-[#0A1A1A] border-b border-[#00FFAA]/20 px-5 sm:px-6 py-4 flex items-center justify-between">
 					<div className="flex items-center gap-2.5">
 						<Swords className="w-5 h-5 text-[#00FFAA]" />
 						<h3 className="text-base font-black text-[#00FFAA] tracking-wider uppercase">
@@ -29,14 +29,14 @@ export default function HasilPertempuran({
 					</div>
 					<button
 						onClick={onClose}
-						className="text-[#6B8A8A] hover:text-[#00FFAA] font-black text-sm cursor-pointer transition-colors"
+						className="rounded-lg p-1.5 text-[#6B8A8A] hover:text-[#00FFAA] cursor-pointer transition-colors"
 						aria-label="Tutup laporan hasil pertempuran"
 					>
-						✕
+						<X className="h-4 w-4" />
 					</button>
 				</div>
 
-				<div className="p-6 space-y-6">
+				<div className="p-5 sm:p-6 space-y-6">
 					{isVictory ? (
 						<div className="bg-gradient-to-r from-emerald-950/80 via-emerald-900/40 to-emerald-950/80 border-2 border-[#00FFAA]/60 rounded-xl p-5 text-center space-y-2 relative overflow-hidden">
 							<div className="flex justify-center mb-1">

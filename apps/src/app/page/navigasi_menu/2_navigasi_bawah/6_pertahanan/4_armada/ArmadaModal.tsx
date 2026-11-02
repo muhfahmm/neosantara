@@ -150,8 +150,8 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
 
     {/* POPUP MODAL INFO BONUS PERTAHANAN */}
     {showDefenseBonusInfo && (
-      <NotebookModalWrapper onClose={() => setShowDefenseBonusInfo(false)}>
-        <div className="flex h-full flex-col overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="defense-bonus-info-title">
+      <NotebookModalWrapper onClose={() => setShowDefenseBonusInfo(false)} compact maxWidthClass="max-w-2xl">
+        <div className="flex flex-col" role="dialog" aria-modal="true" aria-labelledby="defense-bonus-info-title">
             <div className="flex items-center justify-between border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-5 py-4">
               <div className="flex items-center gap-3">
                 <div className="rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-2">
@@ -170,7 +170,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-5 text-sm leading-relaxed text-slate-300 neon-scrollbar">
+            <div className="space-y-4 overflow-y-auto px-5 py-5 text-sm leading-relaxed text-slate-300 neon-scrollbar">
               <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-200 space-y-2.5">
                 <p>
                   <strong className="text-white">Kementerian Pertahanan:</strong>{" "}

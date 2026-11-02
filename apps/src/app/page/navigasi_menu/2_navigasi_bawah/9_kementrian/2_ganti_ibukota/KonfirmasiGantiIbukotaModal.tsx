@@ -2,6 +2,7 @@
 
 import React from "react";
 import { AlertTriangle, Landmark, Coins, CheckCircle2, X } from "lucide-react";
+import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 
 export const PINDAH_IBUKOTA_COST = 150000;
 export const PINDAH_IBUKOTA_COOLDOWN_YEARS = 5;
@@ -43,9 +44,9 @@ export default function KonfirmasiGantiIbukotaModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[100000050] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
+    <NotebookModalWrapper compact maxWidthClass="max-w-xl" zIndexClass="z-[100000050]">
       {/* Container Modal Mengikuti Ukuran & Style Modal Konfirmasi Kedutaan */}
-      <div className="w-full max-w-2xl min-h-[450px] flex flex-col bg-[#0F2424] border border-amber-400/40 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(251,191,36,0.15)] relative pointer-events-auto">
+      <div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
         {/* Header Modal */}
         <div className="flex items-center justify-between border-b border-amber-400/20 pb-4 mb-5">
           <div className="flex items-center gap-3">
@@ -148,6 +149,6 @@ export default function KonfirmasiGantiIbukotaModal({
           </button>
         </div>
       </div>
-    </div>
+    </NotebookModalWrapper>
   );
 }

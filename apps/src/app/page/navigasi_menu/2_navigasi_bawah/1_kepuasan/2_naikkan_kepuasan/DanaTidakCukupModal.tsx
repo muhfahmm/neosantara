@@ -3,6 +3,7 @@
 import { AlertCircle } from "lucide-react";
 import { createPortal } from "react-dom";
 
+import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 interface DanaTidakCukupModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -25,8 +26,8 @@ export default function DanaTidakCukupModal({
   const shortage = Math.max(0, requiredCost - currentBudget);
 
   const modalContent = (
-    <div className="fixed inset-0 z-[100000001] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
-      <div className="w-full max-w-2xl min-h-[450px] flex flex-col bg-[#0F2424] border border-rose-500/40 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(244,63,94,0.15)] relative pointer-events-auto">
+    <NotebookModalWrapper compact maxWidthClass="max-w-xl" zIndexClass="z-[100000001]">
+      <div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
         <div className="flex-1">
           <h3 className="text-xl sm:text-2xl font-black text-rose-400 tracking-wide uppercase mb-6 border-b border-rose-500/20 pb-4">
             Dana Tidak Mencukupi
@@ -79,7 +80,7 @@ export default function DanaTidakCukupModal({
           )}
         </div>
       </div>
-    </div>
+    </NotebookModalWrapper>
   );
 
   return typeof document !== "undefined"
