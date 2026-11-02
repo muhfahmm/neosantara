@@ -38,7 +38,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { COUNTRIES_DATA, CAPITALS_DATA } from '../map-data';
-import countryPaths from '../country-paths.json';
+import { countryPaths } from '../mapDataAssets';
 import { mergeClaimedTerritories } from '../world-map-geometry';
 
 // Import logika ekonomi dari folder logic agar kalkulasi sama persis

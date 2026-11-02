@@ -9,10 +9,9 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { COUNTRIES_DATA, CAPITALS_DATA } from './map-data';
-import MAJOR_CITIES_DATA from './major_cities.json';
+import { majorCities as MAJOR_CITIES_DATA, countryPaths } from './mapDataAssets';
 import { TERRITORY_OVERRIDES } from './territoryOverrides';
 import { getMapDisplaySettings, type MapDisplaySettings } from '../navbar/settings/mapSettingsLogic';
-import countryPaths from './country-paths.json';
 import { mergeClaimedTerritories } from './world-map-geometry';
 import { initializeSimulationClock, SimulationTimeManager, createSimulationCalendar } from '../time_controllers';
 import { handleGameRestart } from '../time_controllers';
@@ -735,7 +734,7 @@ const MapCanvasView = memo(function MapCanvasView({
     return (
         <div
             ref={containerRef}
-            className={`fixed top-20 inset-x-0 bottom-0 z-0 ${interactionDisabled && !isSelectingTarget ? 'pointer-events-none' : ''}`}
+            className={`fixed top-20 inset-x-0 bottom-0 z-0 select-none touch-none bg-[#0f244a] ${interactionDisabled && !isSelectingTarget ? 'pointer-events-none' : ''}`}
         >
             <canvas
                 id="map-canvas"
@@ -743,10 +742,17 @@ const MapCanvasView = memo(function MapCanvasView({
                 style={{
                     ...(isSelectingTarget ? { cursor: targetCursorStyle } : {}),
                     ...(isWarActive ? { visibility: 'visible' } : {}),
+                    userSelect: 'none',
+                    WebkitUserSelect: 'none',
                 }}
-                className={`w-full h-full block ${isSelectingTarget ? '' : 'cursor-grab'}`}
+                className={`w-full h-full block select-none touch-none bg-[#0f244a] ${isSelectingTarget ? '' : 'cursor-grab'}`}
                 onClick={onClick}
-                onPointerDown={onPointerDown}
+                onPointerDown={event => {
+                    if (event.cancelable && event.button === 0) {
+                        event.preventDefault();
+                    }
+                    onPointerDown(event);
+                }}
                 onPointerMove={onPointerMove}
                 onPointerUp={onPointerUp}
                 onPointerCancel={onPointerUp}

@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { ChevronDown, Coins, ArrowUp, Swords } from "lucide-react";
 import { CAPITALS_DATA, COUNTRIES_DATA } from "@/app/page/map_system/map-data";
-import MAJOR_CITIES_DATA from "@/app/page/map_system/major_cities.json";
+import { majorCities as MAJOR_CITIES_DATA } from "@/app/page/map_system/mapDataAssets";
 
 type AttackTargetCity = {
 	cityId: string;

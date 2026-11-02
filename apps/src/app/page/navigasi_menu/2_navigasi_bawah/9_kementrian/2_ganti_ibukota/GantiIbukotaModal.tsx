@@ -13,7 +13,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { CAPITALS_DATA } from "@/app/page/map_system/map-data";
-import MAJOR_CITIES_DATA from "@/app/page/map_system/major_cities.json";
+import { majorCities as MAJOR_CITIES_DATA } from "@/app/page/map_system/mapDataAssets";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import KonfirmasiGantiIbukotaModal, {
   PINDAH_IBUKOTA_COST,

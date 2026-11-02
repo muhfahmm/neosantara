@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { X, Globe, Landmark, Shield, Users, Banknote, Scale, Home, Handshake, Flame, Hammer } from 'lucide-react';
 import { COUNTRIES_DATA } from '../map_system/map-data';
-import countryPaths from '../map_system/country-paths.json';
+import { countryPaths } from '@/app/page/map_system/mapDataAssets';
 import {
   calculateNetBalanceWithEconomicEmbargo,
   ECONOMIC_SANCTIONS_UPDATED_EVENT,

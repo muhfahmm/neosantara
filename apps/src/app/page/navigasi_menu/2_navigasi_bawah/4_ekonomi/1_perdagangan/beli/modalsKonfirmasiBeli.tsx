@@ -6,7 +6,7 @@ import { X, Plus, Minus, ShoppingCart } from "lucide-react";
 import { TradePartner } from "../mitra/mitraModalsMenu";
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
 import { calculateProductionIncrement, formatDate, normalizePartnerBuildDates } from '@/app/logic/production_logic';
-import countryPaths from '@/app/page/map_system/country-paths.json';
+import { countryPaths } from '@/app/page/map_system/mapDataAssets';
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { isTradeEmbargoActive } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
 import {

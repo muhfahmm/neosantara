@@ -1,4 +1,4 @@
-import countryPathMap from "../../../../../map_system/country-paths.json";
+import { countryPaths as countryPathMap } from "@/app/page/map_system/mapDataAssets";
 import { isCountryAnnexed } from "../pbbVotingEligibility";
 
 export type ResolusiVotingStats = {
