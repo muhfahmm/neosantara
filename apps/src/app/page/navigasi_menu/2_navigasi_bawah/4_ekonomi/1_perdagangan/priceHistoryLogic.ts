@@ -658,6 +658,7 @@ export function updateTradePriceHistory(
     randomFactors: Record<string, number>;
     candleProfile?: CandlePriceProfile;
     globalProduction?: Record<string, number>;
+    currentPrice?: number;
   },
 ): Record<string, unknown> {
   const dayLabel = [
@@ -680,13 +681,13 @@ export function updateTradePriceHistory(
     globalProduction,
     events,
   };
-  const volumeSignature = getVolumeSignature(
+  const volumeSignature = `${getVolumeSignature(
     options.commodity,
     currentDay,
     volumeBuckets,
     globalProduction,
     events,
-  );
+  )}|${options.currentPrice ?? ''}`;
   const marketState: TradeMarketPriceState = existingMarketState?.updatedAt === dayLabel
     ? existingMarketState
     : {
@@ -704,8 +705,10 @@ export function updateTradePriceHistory(
     : {};
   const historyKey = getPriceHistoryKey(options.country, options.commodity);
   let nextHistory = getStoredPriceHistory(gameState, options.country, options.commodity);
-  if (options.commodity && marketState.prices[options.commodity] > 0) {
-    const currentPrice = marketState.prices[options.commodity];
+  const currentPrice = Number.isFinite(options.currentPrice) && Number(options.currentPrice) > 0
+    ? Number(options.currentPrice)
+    : marketState.prices[options.commodity];
+  if (options.commodity && currentPrice > 0) {
     nextHistory = nextHistory
       ? appendSimulationDays(
         nextHistory,
@@ -749,7 +752,7 @@ export function updateTradePriceHistory(
               options.commodity,
               currentDay,
               currentDayCandles[0].open,
-              currentDayCandles[23].close,
+              currentPrice,
               options.candleProfile || getProfile(options.commodity),
               { ...volumeOptions, baselineVolume },
             ),

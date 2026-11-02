@@ -1,5 +1,5 @@
 "use client"
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { ArrowRightLeft, Info, AlertTriangle } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
@@ -36,16 +36,13 @@ import {
 } from "./tradeAccessLogic";
 import {
   getArmsTradeProducts,
-  getArmsTransferUpdate,
   getArmsUnitCount,
 } from "./armsTradeLogic";
 import ArmsTradeBudgetModal from "./ArmsTradeBudgetModal";
 import { isArmsSaleEmbargoActive } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/2_armsSalesEmbargoLogic";
 import {
   applyNpcCountrySimulationState,
-  flushNpcCountrySimulation,
   NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
-  updateNpcCountrySimulationState,
 } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
 
 
@@ -96,6 +93,18 @@ export interface PartnerOffer {
   marketType?: "arms";
   armsDirection?: "buy_from_partner" | "sell_to_partner";
   partnerSlug?: string;
+}
+
+function parseStoredArmsOffers(value: unknown): unknown[] | null {
+  if (Array.isArray(value)) return value;
+  if (typeof value !== "string") return null;
+  try {
+    const parsed: unknown = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : null;
+  } catch (error) {
+    console.error("Gagal membaca daftar tawaran alutsista saat menyelesaikan transaksi:", error);
+    return null;
+  }
 }
 
 const DEFAULT_PRICES: Record<string, number> = {
@@ -222,7 +231,7 @@ export default function PerdaganganModal({
   const [isArmsOfferOpen, setIsArmsOfferOpen] = useState(false);
   const [partnerOffers, setPartnerOffers] = useState<PartnerOffer[]>([]);
   const [activeOfferProduct, setActiveOfferProduct] = useState<string | undefined>(undefined);
-  const armsTransactionsInProgress = useRef(new Set<string>());
+  const [activeArmsOffer, setActiveArmsOffer] = useState<PartnerOffer | null>(null);
   const [armsBudgetShortfall, setArmsBudgetShortfall] = useState<{
     availableCash: number;
     requiredCash: number;
@@ -235,6 +244,7 @@ export default function PerdaganganModal({
     }
     setActiveTradePartner(partner);
     setActiveOfferProduct(undefined);
+    setActiveArmsOffer(null);
     setIsMitraOpen(false);
     setIsConfirmBeliOpen(true);
   };
@@ -245,6 +255,8 @@ export default function PerdaganganModal({
       return;
     }
     setActiveTradePartner(partner ?? null);
+    setActiveOfferProduct(undefined);
+    setActiveArmsOffer(null);
     setIsMitraOpen(false);
     setIsJualOpen(true);
   };
@@ -252,21 +264,30 @@ export default function PerdaganganModal({
   const addHistoryEntry = (tipe: "jual" | "beli", biaya: number, kuantitas: string = "1x") => {
     const transactionDate = currentDate || new Date();
     const tanggalISO = formatDate(transactionDate);
-    setCountryDetail(previous => ({
-      ...previous,
-      tradeHistory: [
-        {
-          tanggal: formatTradeHistoryDate(transactionDate),
-          tanggalISO,
-          tipe,
-          kuantitas,
-          biaya,
-          negara: previous.country || previous.nama || "-"
-        },
-        ...(Array.isArray(previous.tradeHistory) ? previous.tradeHistory : [])
-          .filter((entry): entry is TradeHistoryItem => Boolean(entry) && typeof entry === "object")
-      ]
-    }));
+    setCountryDetail(previous => {
+      const currentArmsOffers = activeArmsOffer
+        ? parseStoredArmsOffers(previous.ai_arms_trade_offers)
+        : null;
+      const remainingArmsOffers = currentArmsOffers?.filter(offer => (
+        !offer || typeof offer !== "object" || !("id" in offer) || offer.id !== activeArmsOffer?.id
+      ));
+      return {
+        ...previous,
+        tradeHistory: [
+          {
+            tanggal: formatTradeHistoryDate(transactionDate),
+            tanggalISO,
+            tipe,
+            kuantitas,
+            biaya,
+            negara: previous.country || previous.nama || "-",
+          },
+          ...(Array.isArray(previous.tradeHistory) ? previous.tradeHistory : [])
+            .filter((entry): entry is TradeHistoryItem => Boolean(entry) && typeof entry === "object"),
+        ],
+        ...(remainingArmsOffers ? { ai_arms_trade_offers: remainingArmsOffers } : {}),
+      };
+    });
   };
 
   const countryName = countryDetail?.country || countryDetail?.nama || "";
@@ -284,6 +305,7 @@ export default function PerdaganganModal({
     }
     setActiveTradePartner(null);
     setActiveOfferProduct(undefined);
+    setActiveArmsOffer(null);
     setIsConfirmBeliOpen(true);
   };
 
@@ -708,127 +730,57 @@ export default function PerdaganganModal({
     }
   }, [isOpen, eligiblePartners, currentDate, prefetchedAllCountries, countryDetail, storedActiveOffers, metadata, setCountryDetail]);
 
-  const handleAcceptArmsOffer = async (offer: PartnerOffer) => {
-    if (armsTransactionsInProgress.current.has(offer.id)) return;
-    armsTransactionsInProgress.current.add(offer.id);
-    try {
-      const isBuying = offer.armsDirection === "buy_from_partner";
-      if (offer.marketType !== "arms" || !offer.partnerSlug || !offer.armsDirection) {
-        alert("Format tawaran alutsista tidak valid.");
-        return;
-      }
-      if ((isBuying && !tradeAccess.canBuy) || (!isBuying && !tradeAccess.canSell)) {
-        alert(isBuying ? buyRestrictionMessage : "Akses penjualan internasional negara Anda sedang dibatasi.");
-        return;
-      }
-      if (isTradeEmbargoActive(countryName, offer.partnerName) || isCountryUnderEconomicEmbargo(countryName)) {
-        alert("Transaksi alutsista tidak dapat dilakukan selama embargo atau blokade aktif.");
-        return;
-      }
-      const armsBuyer = isBuying ? countryName : offer.partnerName;
-      const armsSeller = isBuying ? offer.partnerName : countryName;
-      if (isArmsSaleEmbargoActive(armsSeller, armsBuyer)) {
-        alert(`Resolusi PBB melarang penjualan alutsista kepada ${armsBuyer}.`);
-        return;
-      }
-      if (
-        !Number.isInteger(offer.quantity) ||
-        offer.quantity <= 0 ||
-        !Number.isFinite(offer.pricePerUnit) ||
-        offer.pricePerUnit <= 0 ||
-        !Number.isFinite(offer.totalPrice) ||
-        offer.totalPrice <= 0
-      ) {
-        alert("Nilai tawaran alutsista tidak valid.");
-        return;
-      }
+  const handleOpenArmsOffer = (offer: PartnerOffer) => {
+    const isBuying = offer.armsDirection === "buy_from_partner";
+    if (
+      offer.marketType !== "arms" ||
+      !offer.partnerSlug ||
+      (offer.armsDirection !== "buy_from_partner" && offer.armsDirection !== "sell_to_partner") ||
+      !Number.isInteger(offer.quantity) ||
+      offer.quantity <= 0 ||
+      !Number.isFinite(offer.pricePerUnit) ||
+      offer.pricePerUnit <= 0 ||
+      !Number.isFinite(offer.totalPrice) ||
+      offer.totalPrice <= 0 ||
+      !getArmsTradeProducts().some(product => product.dataKey === offer.productKey)
+    ) {
+      alert("Format tawaran alutsista tidak valid.");
+      return;
+    }
+    if ((isBuying && !tradeAccess.canBuy) || (!isBuying && !tradeAccess.canSell)) {
+      alert(isBuying ? buyRestrictionMessage : "Akses penjualan internasional negara Anda sedang dibatasi.");
+      return;
+    }
+    if (isTradeEmbargoActive(countryName, offer.partnerName) || isCountryUnderEconomicEmbargo(countryName)) {
+      alert("Transaksi alutsista tidak dapat dilakukan selama embargo atau blokade aktif.");
+      return;
+    }
 
-      await flushNpcCountrySimulation();
-      const rawPartner = prefetchedAllCountries?.find(
-        country => String(country.country_slug || "").trim().toLowerCase() === offer.partnerSlug
-      );
-      if (!rawPartner) {
-        alert("Data negara mitra tidak ditemukan. Tawaran tidak dapat diproses.");
-        return;
-      }
-      const partner = applyNpcCountrySimulationState(rawPartner);
-      const product = getArmsTradeProducts().find(item => item.dataKey === offer.productKey);
-      if (!product) {
-        alert("Jenis alutsista pada tawaran tidak dikenali.");
-        return;
-      }
+    const partner = eligiblePartners.find(
+      item => item.nama_negara.toLowerCase().trim() === offer.partnerName.toLowerCase().trim(),
+    ) ?? {
+      id: Number.MAX_SAFE_INTEGER,
+      nama_negara: offer.partnerName,
+      region: COUNTRIES_DATA.find(
+        country => country.country.toLowerCase().trim() === offer.partnerName.toLowerCase().trim(),
+      )?.continent || "Internasional",
+      status_hubungan: "Aktif",
+    };
 
-      const totalPrice = offer.quantity * offer.pricePerUnit;
-      const playerBudget = Math.max(0, Number(countryDetail?.anggaran) || 0);
-      const partnerBudget = Math.max(0, Number(partner.anggaran) || 0);
-      if (isBuying) {
-        if (getArmsUnitCount(partner, product) < offer.quantity) {
-          alert("Stok alutsista mitra sudah tidak mencukupi.");
-          return;
-        }
-        if (playerBudget < totalPrice) {
-          alert("Kas negara tidak mencukupi untuk menerima tawaran ini.");
-          return;
-        }
-      } else {
-        if (getArmsUnitCount(countryDetail || {}, product) < offer.quantity) {
-          alert("Stok alutsista negara Anda sudah tidak mencukupi.");
-          return;
-        }
-        if (partnerBudget < totalPrice) {
-          setArmsBudgetShortfall({
-            availableCash: partnerBudget,
-            requiredCash: totalPrice,
-          });
-          return;
-        }
-      }
-
-      const partnerUpdate = {
-        ...getArmsTransferUpdate(partner, product, isBuying ? -offer.quantity : offer.quantity),
-        anggaran: partnerBudget + (isBuying ? totalPrice : -totalPrice),
-      };
-      if (!updateNpcCountrySimulationState(offer.partnerSlug, partnerUpdate)) {
-        alert("Simulasi negara mitra belum siap. Coba lagi setelah data negara selesai dimuat.");
-        return;
-      }
-
-      const transactionDate = currentDate || new Date();
-      const dateIso = formatDate(transactionDate);
-      const remainingOffers = storedArmsOffers.filter(item => item.id !== offer.id);
-      setCountryDetail(previous => ({
-        ...previous,
-        ...getArmsTransferUpdate(previous, product, isBuying ? offer.quantity : -offer.quantity),
-        anggaran: playerBudget + (isBuying ? -totalPrice : totalPrice),
-        ai_arms_trade_offers: remainingOffers,
-        tradeHistory: [
-          {
-            tanggal: formatTradeHistoryDate(transactionDate),
-            tanggalISO: dateIso,
-            tipe: isBuying ? "beli" : "jual",
-            kuantitas: `${offer.quantity} unit ${product.label}`,
-            biaya: totalPrice,
-            negara: offer.partnerName,
-          },
-          ...(Array.isArray(previous.tradeHistory) ? previous.tradeHistory : []),
-        ],
-      }));
-      alert(
-        isBuying
-          ? `Pembelian ${offer.quantity} unit ${product.label} dari ${offer.partnerName} berhasil.`
-          : `Penjualan ${offer.quantity} unit ${product.label} kepada ${offer.partnerName} berhasil.`
-      );
-    } catch (error) {
-      console.error("Gagal memproses transaksi alutsista:", error);
-      alert("Transaksi alutsista gagal diproses. Silakan coba lagi.");
-    } finally {
-      armsTransactionsInProgress.current.delete(offer.id);
+    setActiveTradePartner(partner);
+    setActiveOfferProduct(offer.productKey);
+    setActiveArmsOffer(offer);
+    setIsArmsOfferOpen(false);
+    if (isBuying) {
+      setIsConfirmBeliOpen(true);
+    } else {
+      setIsJualOpen(true);
     }
   };
 
   const handleAcceptOffer = (offer: PartnerOffer) => {
     if (offer.marketType === "arms") {
-      void handleAcceptArmsOffer(offer);
+      handleOpenArmsOffer(offer);
       return;
     }
     if (!tradeAccess.canBuy) {
@@ -1168,8 +1120,15 @@ export default function PerdaganganModal({
       />
 
       <ModalsKonfirmasiBeli
+        key={`buy-${activeArmsOffer?.id ?? "manual"}`}
         isOpen={isConfirmBeliOpen && tradeAccess.canBuy && !isTradeMarketBlocked}
-        onClose={() => { setIsConfirmBeliOpen(false); setActiveTradePartner(null); setActiveOfferProduct(undefined); setActiveInboxOfferId(null); }}
+        onClose={() => {
+          setIsConfirmBeliOpen(false);
+          setActiveTradePartner(null);
+          setActiveOfferProduct(undefined);
+          setActiveArmsOffer(null);
+          setActiveInboxOfferId(null);
+        }}
         countryDetail={countryDetail}
         setCountryDetail={setCountryDetail}
         onConfirm={(biaya, kuantitas) => {
@@ -1180,6 +1139,7 @@ export default function PerdaganganModal({
         currentDate={currentDate}
         initialPartnerName={activeTradePartner?.nama_negara}
         initialProductKey={activeOfferProduct}
+        initialQuantity={activeArmsOffer?.quantity}
         prefetchedAllCountries={prefetchedAllCountries}
         partnerOffers={activeOffers}
         importTariffModifier={tradeAccess.importTariffModifier}
@@ -1187,14 +1147,22 @@ export default function PerdaganganModal({
       />
 
       <JualModalsMenu
+        key={`sell-${activeArmsOffer?.id ?? "manual"}`}
         isOpen={isJualOpen && tradeAccess.canSell && !isTradeMarketBlocked}
-        onClose={() => { setIsJualOpen(false); setActiveTradePartner(null); }}
+        onClose={() => {
+          setIsJualOpen(false);
+          setActiveTradePartner(null);
+          setActiveOfferProduct(undefined);
+          setActiveArmsOffer(null);
+        }}
         countryDetail={countryDetail}
         setCountryDetail={setCountryDetail}
         onConfirm={(biaya, kuantitas) => addHistoryEntry("jual", biaya, kuantitas)}
         currentDate={currentDate}
         partners={eligiblePartners}
         initialPartnerName={activeTradePartner?.nama_negara}
+        initialProductKey={activeArmsOffer?.productKey}
+        initialQuantity={activeArmsOffer?.quantity}
         prefetchedAllCountries={prefetchedAllCountries}
         exportTariffModifier={tradeAccess.exportTariffModifier}
         canSell={tradeAccess.canSell}

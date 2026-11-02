@@ -159,6 +159,7 @@ interface ModalsKonfirmasiBeliProps {
   currentDate?: Date;
   initialPartnerName?: string;
   initialProductKey?: string;
+  initialQuantity?: number;
   prefetchedAllCountries?: any[];
   partnerOffers?: any[];
   importTariffModifier?: number;
@@ -175,6 +176,7 @@ export default function ModalsKonfirmasiBeli({
   currentDate,
   initialPartnerName,
   initialProductKey,
+  initialQuantity,
   prefetchedAllCountries,
   partnerOffers = [],
   importTariffModifier = 0,
@@ -419,6 +421,13 @@ export default function ModalsKonfirmasiBeli({
   }, [partners]);
 
   const effectiveSelectedProduct = selectedProduct || (partnerData ? getFirstAvailableProduct() : "");
+  const selectedChartArmsProduct = useMemo(
+    () => getArmsTradeProducts().find(product => product.dataKey === effectiveSelectedProduct),
+    [effectiveSelectedProduct],
+  );
+  const chartCurrentPrice = selectedChartArmsProduct
+    ? selectedChartArmsProduct.unitPrice
+    : marketPrices[effectiveSelectedProduct] || 0;
 
   useEffect(() => {
     if (!countryDetail || !simulationDate) return;
@@ -428,8 +437,9 @@ export default function ModalsKonfirmasiBeli({
       commodity: effectiveSelectedProduct,
       currentDate: simulationDate,
       randomFactors,
+      ...(selectedChartArmsProduct ? { currentPrice: chartCurrentPrice } : {}),
     }));
-  }, [countryDetail, simulationDate, effectiveSelectedProduct, setCountryDetail]);
+  }, [countryDetail, simulationDate, effectiveSelectedProduct, chartCurrentPrice, selectedChartArmsProduct, setCountryDetail]);
   const effectiveSelectedCountry = selectedCountry || partners[0]?.nama_negara || "";
 
   const stockAvailable = useMemo(() => {
@@ -488,14 +498,18 @@ export default function ModalsKonfirmasiBeli({
       targetProduct = getFirstAvailableProduct();
     }
 
-    let initialQty = 1;
+    let initialQty = typeof initialQuantity === "number" &&
+      Number.isInteger(initialQuantity) &&
+      initialQuantity > 0
+      ? initialQuantity
+      : 1;
     if (initialPartnerName && targetProduct && partnerOffers.length > 0) {
       const matchedOffer = partnerOffers.find(
         o => o.partnerName.toLowerCase().trim() === initialPartnerName.toLowerCase().trim() &&
           o.productKey === targetProduct
       );
       if (matchedOffer) {
-        initialQty = matchedOffer.quantity;
+        if (initialQuantity === undefined) initialQty = matchedOffer.quantity;
         // Dan set harga pasar untuk produk ini agar sesuai dengan tawaran
         setPartnerOfferPriceOverrides(previous => ({
           ...previous,
@@ -551,8 +565,9 @@ export default function ModalsKonfirmasiBeli({
       commodity: effectiveSelectedProduct,
       currentDate: simulationDate,
       randomFactors,
+      ...(selectedChartArmsProduct ? { currentPrice: chartCurrentPrice } : {}),
     });
-  }, [countryDetail, simulationDate, playerCountryName, effectiveSelectedProduct]);
+  }, [countryDetail, simulationDate, playerCountryName, effectiveSelectedProduct, chartCurrentPrice, selectedChartArmsProduct]);
 
   const hourlyCandles = getStoredPriceHistory(
     effectiveDetail,
@@ -894,7 +909,7 @@ export default function ModalsKonfirmasiBeli({
                 ))}
               </div>
             </div>
-            <CandlestickChart series={ohlcSeries} timeRange={timeRange} currentPrice={currentPrice} />
+            <CandlestickChart series={ohlcSeries} timeRange={timeRange} currentPrice={chartCurrentPrice} />
           </div>
         </div>
 

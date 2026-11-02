@@ -130,6 +130,8 @@ interface JualModalsMenuProps {
   currentDate?: Date;
   partners: TradePartner[];
   initialPartnerName?: string;
+  initialProductKey?: string;
+  initialQuantity?: number;
   prefetchedAllCountries?: any[];
   exportTariffModifier?: number;
   canSell?: boolean;
@@ -144,6 +146,8 @@ export default function JualModalsMenu({
   currentDate,
   partners,
   initialPartnerName,
+  initialProductKey,
+  initialQuantity,
   prefetchedAllCountries,
   exportTariffModifier = 0,
   canSell = true,
@@ -282,13 +286,24 @@ export default function JualModalsMenu({
 
   useEffect(() => {
     if (isOpen && selectedProduct === "") {
-      const firstAvailable = getFirstAvailableProduct();
+      const initialArmsProduct = initialProductKey
+        ? getArmsTradeProducts().find(product => product.dataKey === initialProductKey)
+        : undefined;
+      const firstAvailable = initialArmsProduct && getArmsUnitCount(countryDetail || {}, initialArmsProduct) > 0
+        ? initialArmsProduct.dataKey
+        : getFirstAvailableProduct();
       setSelectedProduct(firstAvailable);
       if (initialPartnerName && !selectedCountry) setSelectedCountry(initialPartnerName);
       else if (partners.length > 0 && !selectedCountry) setSelectedCountry(partners[0].nama_negara);
-      setQuantity(1);
+      setQuantity(
+        typeof initialQuantity === "number" &&
+          Number.isInteger(initialQuantity) &&
+          initialQuantity > 0
+          ? initialQuantity
+          : 1,
+      );
     }
-  }, [isOpen, partners, initialPartnerName]);
+  }, [isOpen, partners, initialPartnerName, initialProductKey, initialQuantity, countryDetail]);
 
   useEffect(() => {
     if (isOpen && selectedProduct) {
@@ -337,10 +352,6 @@ export default function JualModalsMenu({
       ? Math.round(armsProduct.unitPrice * 0.85)
       : Math.round(marketPrices[selectedProduct] || 0);
   }, [marketPrices, selectedProduct]);
-  const chartCurrentPrice = getArmsTradeProducts().some(product => product.dataKey === selectedProduct)
-    ? currentPrice
-    : marketPrices[selectedProduct] || 0;
-  
   const userCountryName = countryDetail?.country || countryDetail?.nama || "";
   const isWTOActive = isMemberOfWTO(userCountryName);
   const wtoSellMultiplier = applyKerjaSamaRegionalToMultiplier(
@@ -377,6 +388,15 @@ export default function JualModalsMenu({
     (sector) => sector.id === nationalizationSector
   )?.name;
 
+  const playerCountryName = String(countryDetail?.country || countryDetail?.nama || '');
+  const selectedChartArmsProduct = useMemo(
+    () => getArmsTradeProducts().find(product => product.dataKey === selectedProduct),
+    [selectedProduct],
+  );
+  const chartCurrentPrice = selectedChartArmsProduct
+    ? selectedChartArmsProduct.unitPrice
+    : marketPrices[selectedProduct] || 0;
+
   useEffect(() => {
     if (!countryDetail || !simulationDate) return;
     const randomFactors = createDailyMarketPriceFactors(simulationDate);
@@ -385,10 +405,10 @@ export default function JualModalsMenu({
       commodity: selectedProduct,
       currentDate: simulationDate,
       randomFactors,
+      ...(selectedChartArmsProduct ? { currentPrice: chartCurrentPrice } : {}),
     }));
-  }, [countryDetail, simulationDate, selectedProduct, setCountryDetail]);
+  }, [countryDetail, simulationDate, selectedProduct, chartCurrentPrice, selectedChartArmsProduct, setCountryDetail]);
 
-  const playerCountryName = String(countryDetail?.country || countryDetail?.nama || '');
   const effectiveDetail = useMemo(() => {
     if (!countryDetail || !simulationDate) return countryDetail;
     const randomFactors = createDailyMarketPriceFactors(simulationDate);
@@ -397,8 +417,9 @@ export default function JualModalsMenu({
       commodity: selectedProduct,
       currentDate: simulationDate,
       randomFactors,
+      ...(selectedChartArmsProduct ? { currentPrice: chartCurrentPrice } : {}),
     });
-  }, [countryDetail, simulationDate, playerCountryName, selectedProduct]);
+  }, [countryDetail, simulationDate, playerCountryName, selectedProduct, chartCurrentPrice, selectedChartArmsProduct]);
 
   const hourlyCandles = getStoredPriceHistory(
     effectiveDetail,

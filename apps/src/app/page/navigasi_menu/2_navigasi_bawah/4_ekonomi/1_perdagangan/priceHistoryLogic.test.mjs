@@ -113,6 +113,30 @@ test('unrelated game-state updates preserve the stored hourly candle array', () 
   assert.strictEqual(nextCandles, firstCandles);
 });
 
+test('custom-priced trade products receive persistent history anchored to their current price', () => {
+  const date = new Date(2026, 10, 2);
+  const options = {
+    country: 'Indonesia',
+    commodity: 'tank_tempur_utama',
+    currentDate: date,
+    randomFactors: {},
+    currentPrice: 1250,
+  };
+  const state = updateTradePriceHistory({ country: 'Indonesia' }, options);
+  const history = getStoredPriceHistory(state, 'Indonesia', 'tank_tempur_utama');
+
+  assert.ok(history);
+  assert.equal(history.candles.length, 366 * 24);
+  assert.equal(history.candles.at(-1).close, 1250);
+  assert.deepEqual(updateTradePriceHistory({ country: 'Indonesia' }, options), state);
+
+  const revisedState = updateTradePriceHistory(state, { ...options, currentPrice: 1300 });
+  const revisedHistory = getStoredPriceHistory(revisedState, 'Indonesia', 'tank_tempur_utama');
+  assert.ok(revisedHistory);
+  assert.equal(revisedHistory.candles.at(-1).close, 1300);
+  assert.deepEqual(revisedHistory.candles.slice(0, -24), history.candles.slice(0, -24));
+});
+
 test('1d always selects exactly the simulation day across month and year boundaries', () => {
   const dates = [
     new Date('2026-11-02T20:19:40.427+07:00'),
