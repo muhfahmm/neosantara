@@ -741,7 +741,11 @@ export default function ModalsKonfirmasiBeli({
   };
 
   return (
-    <NotebookModalWrapper onClose={onClose} zIndexClass="z-[70]">
+    <NotebookModalWrapper
+      onClose={onClose}
+      zIndexClass="z-[70]"
+      isHidden={isProductPickerOpen || isCountryPickerOpen}
+    >
       <>
       <div className="flex h-full min-w-0 flex-col overflow-hidden">
 

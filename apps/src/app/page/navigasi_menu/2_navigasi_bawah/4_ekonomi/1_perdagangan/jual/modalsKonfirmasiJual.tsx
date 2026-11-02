@@ -535,7 +535,11 @@ export default function JualModalsMenu({
   return (
     <>
       {isOpen && (
-        <NotebookModalWrapper onClose={onClose} zIndexClass="z-[70]">
+        <NotebookModalWrapper
+          onClose={onClose}
+          zIndexClass="z-[70]"
+          isHidden={isProductPickerOpen || isCountryPickerOpen}
+        >
           <div className="flex h-full min-w-0 flex-col overflow-hidden">
             <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
               <div className="flex min-w-0 items-center gap-2 sm:gap-3">
