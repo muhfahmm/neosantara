@@ -9548,6 +9548,7 @@ export default function MapPage() {
                 }}
                 onSkip={() => {
                     setIsTutorialWelcomeOpen(false);
+                    setTutorialStartup('suppressed');
                     setTutorialProgress({ stepIndex: 0, status: 'skipped' });
                 }}
             />

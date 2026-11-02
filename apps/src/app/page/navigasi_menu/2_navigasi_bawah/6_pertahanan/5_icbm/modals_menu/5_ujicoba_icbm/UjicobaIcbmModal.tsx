@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { X, Flame, ShieldAlert, CheckCircle2, AlertTriangle, Crosshair, MapPin, Eye } from "lucide-react";
-import { executeIcbmTestLaunch, getRealisticTargetLocationName, type SanctionApplied, type NeighborImpact } from "./ujicobaIcbmLogic";
+import { X, Flame, ShieldAlert, CheckCircle2, AlertTriangle, Crosshair, MapPin } from "lucide-react";
+import { executeIcbmTestLaunch, getRealisticTargetLocationName, type NeighborImpact } from "./ujicobaIcbmLogic";
 
 interface UjicobaIcbmModalProps {
   isOpen: boolean;
@@ -32,7 +32,6 @@ export default function UjicobaIcbmModal({
   const [testResult, setTestResult] = useState<{
     message: string;
     affectedNeighbors?: NeighborImpact[];
-    imposedSanctions?: SanctionApplied[];
   } | null>(null);
 
   const formatDateString = (date?: string | Date) => {
@@ -127,11 +126,6 @@ export default function UjicobaIcbmModal({
       );
     }
 
-    // Ringkasan sanksi dan relasi untuk notifikasi
-    let sanctionSummary = "";
-    if (result.imposedSanctions && result.imposedSanctions.length > 0) {
-      sanctionSummary = `\n\n⚠️ SANKSI PBB DIBERLAKUKAN:\n${result.imposedSanctions.map((s) => `• ${s.name} (${s.source})`).join("\n")}`;
-    }
     let neighborSummary = "";
     if (result.affectedNeighbors && result.affectedNeighbors.length > 0) {
       neighborSummary = `\n\n📉 PENURUNAN DIPLOMASI:\n${result.affectedNeighbors.map((n) => `• ${n.country}: -${n.penalty} poin hubungan`).join("\n")}`;
@@ -142,7 +136,7 @@ export default function UjicobaIcbmModal({
       id: `icbm-test-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
       title: `💥 UJI COBA PELUNCURAN ICBM: ${result.targetLocation}`,
       sender: `Pusat Komando Strategis Nuklir Nasional`,
-      message: `Presiden dan Panglima Tertinggi! Uji coba peluncuran rudal ICBM strategis ${userCountryName} telah dilaksanakan pada ${safeCurrentDate}. Rudal berhasil meluncur dan tepat menghantam ${result.targetLocation}. Sisa persediaan rudal ICBM: ${result.remainingIcbm} unit.${neighborSummary}${sanctionSummary}`,
+      message: `Presiden dan Panglima Tertinggi! Uji coba peluncuran rudal ICBM strategis ${userCountryName} telah dilaksanakan pada ${safeCurrentDate}. Rudal berhasil meluncur dan tepat menghantam ${result.targetLocation}. Sisa persediaan rudal ICBM: ${result.remainingIcbm} unit.${neighborSummary}`,
       timestamp: safeCurrentDate,
       type: "peringkat",
       value: 0,
@@ -152,9 +146,6 @@ export default function UjicobaIcbmModal({
       effectText: `Sisa Rudal ICBM: ${result.remainingIcbm} Unit`,
       isHandled: false,
     };
-
-    // Gabungkan notifikasi peluncuran ICBM dan seluruh notifikasi usulan sidang dari negara tetangga yang terdampak
-    const newInboxItems = [testNotif, ...(result.inboxNotifications || [])];
 
     setCountryDetail((prev: any) => {
       const existingPending = Array.isArray(prev?.pending_notifications)
@@ -179,14 +170,13 @@ export default function UjicobaIcbmModal({
         icbm_jumlah: result.remainingIcbm,
         icbmBuildTask: updatedTask,
         icbm_consumed: consumedCount,
-        pending_notifications: [...newInboxItems, ...existingPending],
+        pending_notifications: [testNotif, ...existingPending],
       };
     });
 
     setTestResult({
       message: result.message,
       affectedNeighbors: result.affectedNeighbors,
-      imposedSanctions: result.imposedSanctions,
     });
     setIsConfirming(false);
   };
@@ -287,28 +277,6 @@ export default function UjicobaIcbmModal({
                   </div>
                 )}
 
-                {/* Sanksi PBB yang dijatuhkan jika ada */}
-                {testResult.imposedSanctions && testResult.imposedSanctions.length > 0 && (
-                  <div className="p-3 rounded-lg border border-rose-500/40 bg-rose-500/10 space-y-1.5">
-                    <p className="font-bold text-rose-400 text-xs flex items-center gap-1.5">
-                      <ShieldAlert className="h-4 w-4" />
-                      Gugatan Usulan Sanksi Diajukan ke PBB (Voting 30 Hari):
-                    </p>
-                    <div className="space-y-1">
-                      {testResult.imposedSanctions.map((s, idx) => (
-                        <div key={idx} className="bg-[#0A1A1A]/80 p-2 rounded border border-rose-500/20 text-[11px]">
-                          <div className="flex items-center justify-between">
-                            <span className="font-bold text-rose-300">{s.name}</span>
-                            <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 font-bold">
-                              {s.source}
-                            </span>
-                          </div>
-                          <p className="text-[#6B8A8A] text-[10px] mt-0.5">{s.desc}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
               <button
                 onClick={handleCloseModal}
@@ -332,11 +300,11 @@ export default function UjicobaIcbmModal({
                 </p>
                 {selectedTarget?.isDomestic ? (
                   <p className="text-emerald-400 text-[11px] font-bold">
-                    🛡️ Pengujian di poligon militer domestik: Aman dari sanksi internasional dan penurunan relasi.
+                    🛡️ Pengujian di poligon militer domestik tidak memengaruhi hubungan diplomatik.
                   </p>
                 ) : selectedTarget?.isSea ? (
                   <p className="text-amber-400 text-[11px] leading-relaxed">
-                    ⚠️ Pengujian di perairan laut akan menurunkan hubungan dengan negara tetangga dekat (-5 s/d -10) dan memiliki risiko 50% masing-masing terkena sanksi (Embargo Senjata, Embargo Ekonomi, Larangan Produksi, Blokade Ekonomi, Blokade Laut, Blokade Penuh).
+                    ⚠️ Pengujian di perairan laut akan menurunkan hubungan dengan negara tetangga dekat (-5 s/d -10).
                   </p>
                 ) : null}
               </div>
@@ -444,4 +412,3 @@ export default function UjicobaIcbmModal({
     </div>
   );
 }
-
