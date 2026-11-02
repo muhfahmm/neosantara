@@ -2,14 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useRouter } from 'next/navigation';
 import {
     ArrowLeft, Volume2, Music, Monitor, Keyboard
 } from 'lucide-react';
-import { KeywordModal } from '../keyword/keyword';
+import { KeywordModal } from './5_keyword/keyword';
 import { MapSettingsSection } from './4_settings/MapSettingsSection';
 import { ExitConfirmModal } from './ExitConfirmModal';
 import { LoadGameView } from './2_load_game/LoadGameView';
 import { deleteGameSave, fetchLoadableGameSaves, loadGameSave, type LoadGameSave } from './2_load_game/loadGameLogic';
+import NotebookModalWrapper from '../navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 import { soundManager } from '@/lib/soundManager';
 
 interface GameMenuModalProps {
@@ -17,10 +19,10 @@ interface GameMenuModalProps {
     onClose: () => void;
     onSaveGameClick: () => void;
     onRestartClick: () => void;
-    onOpenTutorial?: () => void;
 }
 
-export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick, onOpenTutorial }: GameMenuModalProps) {
+export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick }: GameMenuModalProps) {
+    const router = useRouter();
     const [subview, setSubview] = useState<'menu' | 'load' | 'options'>('menu');
     const [saveFiles, setSaveFiles] = useState<LoadGameSave[]>([]);
     const [isLoadingSaves, setIsLoadingSaves] = useState(false);
@@ -111,7 +113,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
             localStorage.removeItem('programNuklirActive');
             localStorage.removeItem('icbmBuildTask');
         } catch (e) {}
-        window.location.href = '/page';
+        router.replace('/page');
     };
 
     const executeCloseWindow = () => {
@@ -135,25 +137,9 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
 
     return createPortal(
         <React.Fragment>
-            <div className={`fixed inset-0 z-[99999999] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent font-sans pointer-events-none transition-opacity duration-150 ${isConfirming ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-                {/* Notebook-style Game Menu Frame — Green Theme */}
-                <div className="bg-[#0A1A1A] border-[6px] border-[#0F2424] rounded-2xl w-full max-w-md sm:max-w-lg lg:max-w-xl xl:max-w-2xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] shadow-2xl relative flex flex-col p-4 pl-12 pointer-events-auto select-none overflow-y-auto custom-scrollbar">
-                    {/* Silver Binder Spine on the Left */}
-                    <div className="absolute left-3.5 top-6 bottom-6 w-2.5 bg-gradient-to-r from-[#2A3F3F] via-[#3D5252] to-[#1F3030] rounded-full shadow-md z-20 border border-[#0A1A1A]/80" />
-                    <div className="absolute left-[10px] top-[24px] w-[18px] h-3.5 bg-[#0F2424] rounded-sm border border-[#0A1A1A] z-21 shadow" />
-                    <div className="absolute left-[10px] bottom-[24px] w-[18px] h-3.5 bg-[#0F2424] rounded-sm border border-[#0A1A1A] z-21 shadow" />
-
-                    {/* Notebook Rings binding the paper */}
-                    <div className="absolute left-[26px] top-12 bottom-12 flex flex-col justify-between items-center py-6 pointer-events-none z-30">
-                        {[...Array(11)].map((_, i) => (
-                            <div key={i} className="w-3.5 h-3.5 rounded-full bg-[#0A1A1A] shadow-inner border border-[#00FFAA]/20 flex items-center justify-center">
-                                <div className="w-1.5 h-1.5 rounded-full bg-[#0F2424]" />
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Main Panel Sheet — Green Theme */}
-                    <div className="flex-1 bg-[#0F2424] border-[3px] border-[#00FFAA]/20 rounded-r-xl shadow-inner relative p-8 flex flex-col overflow-hidden">
+            <div className={isConfirming ? 'pointer-events-none' : 'pointer-events-auto'}>
+                <NotebookModalWrapper zIndexClass="z-[99999999]">
+                    <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-4 custom-scrollbar sm:p-8">
                         {/* Subtle radial glow */}
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
@@ -184,17 +170,6 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                     >
                                         Simpan Permainan
                                     </button>
-                                    {onOpenTutorial && (
-                                        <button
-                                            onClick={() => {
-                                                onClose();
-                                                onOpenTutorial();
-                                            }}
-                                            className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
-                                        >
-                                            Panduan Tutorial
-                                        </button>
-                                    )}
                                     <button
                                         onClick={handleOpenLoad}
                                         className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
@@ -342,7 +317,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                             <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-[#00FFAA]/40" />
                         </div>
                     </div>
-                </div>
+                </NotebookModalWrapper>
             </div>
             <KeywordModal
                 isOpen={showKeywordModal}

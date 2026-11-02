@@ -45,14 +45,14 @@ export function SaveGameModal({
     };
 
     return (
-        <div className="fixed inset-0 z-[99999999] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent font-sans pointer-events-none select-none">
-            <section className="bg-[#0A1A1A] border-[6px] border-[#0F2424] rounded-2xl w-full max-w-md sm:max-w-lg lg:max-w-xl xl:max-w-2xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] shadow-2xl relative flex flex-col p-4 pl-12 pointer-events-auto overflow-y-auto custom-scrollbar">
-                <div className="absolute left-3.5 top-6 bottom-6 w-2.5 bg-gradient-to-r from-[#2A3F3F] via-[#3D5252] to-[#1F3030] rounded-full shadow-md z-20 border border-[#0A1A1A]/80" />
-                <div className="absolute left-[10px] top-[24px] w-[18px] h-3.5 bg-[#0F2424] rounded-sm border border-[#0A1A1A] z-21 shadow" />
-                <div className="absolute left-[10px] bottom-[24px] w-[18px] h-3.5 bg-[#0F2424] rounded-sm border border-[#0A1A1A] z-21 shadow" />
-                <div className="absolute left-[26px] top-12 bottom-12 flex flex-col justify-between items-center py-6 pointer-events-none z-30">
+        <div className="fixed inset-0 z-[99999999] flex items-center justify-center pt-[88px] sm:pt-[100px] lg:pt-[clamp(92px,10dvh,115px)] pb-3 sm:pb-4 lg:pb-5 px-3 sm:px-6 lg:px-10 bg-transparent font-sans pointer-events-none select-none">
+            <section className="bg-[#0A1A1A] border-[6px] border-[#0F2424] rounded-2xl w-full max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl h-full max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)] shadow-2xl relative flex flex-col min-w-0 p-3 sm:p-4 pl-10 sm:pl-12 pointer-events-auto overflow-y-auto custom-scrollbar">
+                <div className="absolute left-3 sm:left-3.5 top-6 bottom-6 w-2 sm:w-2.5 bg-gradient-to-r from-[#2A3F3F] via-[#3D5252] to-[#1F3030] rounded-full shadow-md z-20 border border-[#0A1A1A]/80" />
+                <div className="absolute left-[8px] sm:left-[10px] top-[24px] w-[16px] sm:w-[18px] h-3.5 bg-[#0F2424] rounded-sm border border-[#0A1A1A] z-21 shadow" />
+                <div className="absolute left-[8px] sm:left-[10px] bottom-[24px] w-[16px] sm:w-[18px] h-3.5 bg-[#0F2424] rounded-sm border border-[#0A1A1A] z-21 shadow" />
+                <div className="absolute left-[22px] sm:left-[26px] top-10 bottom-10 flex flex-col justify-between items-center py-4 pointer-events-none z-30">
                     {[...Array(11)].map((_, i) => (
-                        <div key={i} className="w-3.5 h-3.5 rounded-full bg-[#0A1A1A] shadow-inner border border-[#00FFAA]/20 flex items-center justify-center">
+                        <div key={i} className="w-3 sm:w-3.5 h-3 sm:h-3.5 rounded-full bg-[#0A1A1A] shadow-inner border border-[#00FFAA]/20 flex items-center justify-center">
                             <div className="w-1.5 h-1.5 rounded-full bg-[#0F2424]" />
                         </div>
                     ))}
@@ -70,7 +70,7 @@ export function SaveGameModal({
                                 type="button"
                                 onClick={handleBack}
                                 aria-label="Kembali"
-                                className="rounded p-1 text-[#6B8A8A] transition-all hover:bg-[#00FFAA]/10 hover:text-[#00FFAA]"
+                                className="rounded p-1 text-[#6B8A8A] transition-all hover:bg-[#00FFAA]/10 hover:text-[#00FFAA] cursor-pointer"
                             >
                                 <ArrowLeft className="h-4 w-4" />
                             </button>
@@ -83,7 +83,7 @@ export function SaveGameModal({
                                 <button
                                     type="button"
                                     onClick={onCreateNewSlot}
-                                    className="flex items-center gap-1 rounded border border-[#00FFAA]/40 bg-[#00FFAA]/15 px-3 py-1.5 text-[11px] font-extrabold uppercase text-[#00FFAA]"
+                                    className="flex items-center gap-1 rounded border border-[#00FFAA]/40 bg-[#00FFAA]/15 px-3 py-1.5 text-[11px] font-extrabold uppercase text-[#00FFAA] cursor-pointer"
                                 >
                                     <Plus className="h-3.5 w-3.5" /> Slot Baru
                                 </button>
@@ -112,7 +112,7 @@ export function SaveGameModal({
                                             type="button"
                                             onClick={() => setSaveToOverwrite(save)}
                                             disabled={isSaving}
-                                            className="shrink-0 rounded border border-amber-500/40 bg-amber-500/15 px-3 py-1.5 text-[10px] font-extrabold uppercase text-amber-400 disabled:opacity-50"
+                                            className="shrink-0 rounded border border-amber-500/40 bg-amber-500/15 px-3 py-1.5 text-[10px] font-extrabold uppercase text-amber-400 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
                                         >
                                             Timpa
                                         </button>
@@ -139,7 +139,7 @@ export function SaveGameModal({
                                 </label>
                             </div>
                             <div className="flex justify-end border-t border-[#00FFAA]/15 pt-4">
-                                <button type="button" onClick={() => onSave(null, saveName)} disabled={isSaving} className="rounded border border-[#00FFAA]/60 bg-[#00FFAA]/20 px-5 py-2.5 text-xs font-extrabold uppercase text-[#00FFAA] disabled:opacity-50">
+                                <button type="button" onClick={() => onSave(null, saveName)} disabled={isSaving} className="rounded border border-[#00FFAA]/60 bg-[#00FFAA]/20 px-5 py-2.5 text-xs font-extrabold uppercase text-[#00FFAA] disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
                                     {isSaving ? 'Menyimpan...' : 'Simpan Baru'}
                                 </button>
                             </div>
@@ -153,8 +153,8 @@ export function SaveGameModal({
                                 <h3 className="text-sm font-extrabold">Timpa “{saveToOverwrite.save_name}”?</h3>
                                 <p className="text-xs text-[#6B8A8A]">Progres permainan saat ini akan menimpa slot ini.</p>
                                 <div className="grid grid-cols-2 gap-2">
-                                    <button type="button" onClick={() => setSaveToOverwrite(null)} disabled={isSaving} className="rounded border border-[#00FFAA]/30 py-2 text-xs font-bold">Batal</button>
-                                    <button type="button" onClick={() => onSave(saveToOverwrite.id, saveToOverwrite.save_name)} disabled={isSaving} className="rounded border border-amber-500 bg-amber-500/25 py-2 text-xs font-extrabold text-amber-300">
+                                    <button type="button" onClick={() => setSaveToOverwrite(null)} disabled={isSaving} className="rounded border border-[#00FFAA]/30 py-2 text-xs font-bold disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">Batal</button>
+                                    <button type="button" onClick={() => onSave(saveToOverwrite.id, saveToOverwrite.save_name)} disabled={isSaving} className="rounded border border-amber-500 bg-amber-500/25 py-2 text-xs font-extrabold text-amber-300 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
                                         {isSaving ? 'Menyimpan...' : 'Ya, Timpa'}
                                     </button>
                                 </div>

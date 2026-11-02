@@ -20,7 +20,7 @@ export function LoadGameView({ saves, isLoading, onBack, onLoad, onDelete }: Loa
                     type="button"
                     onClick={onBack}
                     aria-label="Kembali"
-                    className="rounded p-1 text-[#6B8A8A] transition-all hover:bg-[#00FFAA]/10 hover:text-[#00FFAA]"
+                    className="rounded p-1 text-[#6B8A8A] transition-all hover:bg-[#00FFAA]/10 hover:text-[#00FFAA] cursor-pointer"
                 >
                     <ArrowLeft className="h-4 w-4" />
                 </button>
@@ -60,7 +60,7 @@ export function LoadGameView({ saves, isLoading, onBack, onLoad, onDelete }: Loa
                             type="button"
                             onClick={event => onDelete(save.id, event)}
                             title="Hapus Save File"
-                            className="z-10 shrink-0 rounded bg-rose-500/10 p-1.5 text-rose-400 hover:bg-rose-500/20"
+                            className="z-10 shrink-0 rounded bg-rose-500/10 p-1.5 text-rose-400 hover:bg-rose-500/20 cursor-pointer"
                         >
                             <Trash2 className="h-3.5 w-3.5" />
                         </button>

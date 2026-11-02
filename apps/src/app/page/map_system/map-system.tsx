@@ -15,7 +15,7 @@ import { fetchGameSaves, saveGameToDatabase, type GameSaveRecord } from '../navb
 import { mergeClaimedTerritories } from './world-map-geometry';
 import { initializeSimulationClock, SimulationTimeManager, createSimulationCalendar } from '../time_controllers';
 import dynamic from 'next/dynamic';
-import useKeyboardShortcuts from '../keyword';
+import useKeyboardShortcuts from '../navbar/5_keyword';
 import { subMenuItems } from '../navigasi_menu/navigationData';
 import {
     canAcceptTradeDeal,
@@ -9549,10 +9549,6 @@ export default function MapPage() {
                 onClose={() => setIsPresidentMenuOpen(false)}
                 onSaveGameClick={openSaveModal}
                 onRestartClick={() => setIsRestartConfirmOpen(true)}
-                onOpenTutorial={() => {
-                    resetTutorial();
-                    setIsTutorialWelcomeOpen(true);
-                }}
             />
 
             <TutorialWelcomeModal
@@ -9575,7 +9571,10 @@ export default function MapPage() {
             {/* Confirm Restart Modal */}
             <ConfirmRestartModal
                 isOpen={isRestartConfirmOpen}
-                onClose={() => setIsRestartConfirmOpen(false)}
+                onClose={() => {
+                    setIsRestartConfirmOpen(false);
+                    setIsPresidentMenuOpen(true);
+                }}
                 onConfirm={handleRestart}
             />
 
