@@ -43,12 +43,25 @@ export default function TradeMarketBlockedModal({
           </button>
         </div>
 
-        <div className="px-6 py-8 text-center sm:px-10">
-          <p className="text-sm leading-relaxed text-[#A7C4C4] sm:text-lg">
-            Negara Anda terisolasi dari Pasar Perdagangan Global karena skor
-            sentralisasi melewati ambang blokir. Turunkan rata-rata nasionalisasi
-            atau ubah ideologi/agama agar skor turun di bawah 85.
-          </p>
+        <div className="space-y-4 px-5 py-5 sm:px-8">
+          <div className="mx-auto max-w-prose space-y-2 text-center">
+            <h3 className="text-sm font-black uppercase tracking-wide text-rose-300 sm:text-base">
+              Akses Pasar Global Ditolak
+            </h3>
+            <p className="text-xs leading-relaxed text-[#A7C4C4] sm:text-sm">
+              Negara Anda diblokir dari perdagangan global karena skor sentralisasi
+              melewati ambang batas.
+            </p>
+          </div>
+          <div className="mx-auto max-w-prose rounded-xl border border-amber-400/20 bg-amber-950/20 px-4 py-3">
+            <p className="mb-1 text-[10px] font-black uppercase tracking-wider text-amber-300">
+              Cara membuka akses
+            </p>
+            <p className="text-xs leading-relaxed text-[#D4E1E1] sm:text-sm">
+              Turunkan rata-rata nasionalisasi atau sesuaikan ideologi dan agama
+              hingga skor sentralisasi di bawah 85.
+            </p>
+          </div>
         </div>
       </section>
     </NotebookModalWrapper>

@@ -59,15 +59,29 @@ export default function ClosedTradeRejectionModal({
           
           <div className="max-w-2xl mx-auto space-y-4">
             
-            {/* Teks Utama */}
-            <div className="text-center">
-              <h3 className="text-base sm:text-lg font-black uppercase tracking-wide text-rose-400 mb-1">
+            {/* Ringkasan penolakan dan langkah yang disarankan */}
+            <div className="space-y-3">
+              <h3 className="text-center text-base sm:text-lg font-black uppercase tracking-wide text-rose-400">
                 Akses Pasar Global Ditolak
               </h3>
-              <p className="text-xs sm:text-sm text-[#A7C4C4] leading-relaxed">
-                Negara Anda terisolasi dari Pasar Perdagangan Global karena skor sentralisasi melewati ambang blokir.
-                {partnerCountry ? ` Tawaran dari ${partnerCountry} tidak dapat diratifikasi.` : ''} Turunkan nasionalisasi atau ubah ideologi/agama agar skor di bawah 85.
-              </p>
+              <div className="space-y-2 text-left text-xs sm:text-sm leading-relaxed text-[#A7C4C4]">
+                <p>
+                  Akses negara Anda ke pasar perdagangan global dibatasi karena skor sentralisasi melewati ambang 85.
+                </p>
+                {partnerCountry && (
+                  <p>
+                    Tawaran perdagangan dari <span className="font-bold text-white">{partnerCountry}</span> tidak dapat diratifikasi.
+                  </p>
+                )}
+              </div>
+              <div className="rounded-lg border border-amber-400/20 bg-amber-950/20 px-3 py-2.5">
+                <span className="mb-1 block text-[10px] font-black uppercase tracking-wider text-amber-300">
+                  Tindakan yang disarankan
+                </span>
+                <p className="text-xs leading-relaxed text-[#D4E1E1]">
+                  Turunkan tingkat nasionalisasi atau sesuaikan ideologi dan agama hingga skor sentralisasi di bawah 85.
+                </p>
+              </div>
             </div>
 
             {/* Metric Stats Box - Grid dibuat lebih padat */}
