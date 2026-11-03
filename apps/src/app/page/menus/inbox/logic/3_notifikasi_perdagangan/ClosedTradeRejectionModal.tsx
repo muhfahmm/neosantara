@@ -35,26 +35,28 @@ export default function ClosedTradeRejectionModal({
     <NotebookModalWrapper onClose={onClose} zIndexClass="z-[500000]">
       <div className="flex flex-col h-full overflow-hidden">
         
-        {/* HEADER - Lebih tipis */}
-        <div className="px-4 py-2 border-b border-rose-500/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
-          <div className="flex items-center gap-2">
-            <div className="p-1 bg-rose-950/40 rounded-lg border border-rose-500/30 shrink-0">
-              <AlertTriangle className="h-4 w-4 text-rose-400" />
+        {/* HEADER */}
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-rose-500/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="p-1 sm:p-1.5 bg-rose-950/40 rounded-lg border border-rose-500/30 shrink-0">
+              <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-rose-400" />
             </div>
             <h2 className="text-sm sm:text-base font-bold text-rose-400 tracking-tight leading-none uppercase">
               Akses Perdagangan Ditolak
             </h2>
           </div>
+          
+          {/* 🔥 PERBAIKAN: Tombol Tutup disamakan ukurannya dengan modal sebelumnya */}
           <button 
             onClick={onClose} 
-            className="p-1 rounded-lg border border-rose-500/30 bg-[#0F2424] text-rose-400 hover:bg-rose-500 hover:text-white transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1"
+            className="p-1.5 lg:p-2 rounded-xl border border-rose-500/30 bg-[#0F2424] text-rose-400 hover:bg-rose-500 hover:text-white transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
           >
-            <span className="text-[10px] font-semibold tracking-wider pl-1">Tutup</span>
-            <X className="h-3.5 w-3.5" />
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        {/* BODY CONTENT - Lebih padat, ikon besar dihapus */}
+        {/* BODY CONTENT */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
           
           <div className="max-w-2xl mx-auto space-y-4">
@@ -84,7 +86,7 @@ export default function ClosedTradeRejectionModal({
               </div>
             </div>
 
-            {/* Metric Stats Box - Grid dibuat lebih padat */}
+            {/* Metric Stats Box */}
             <div className="grid grid-cols-2 gap-2 rounded-lg border border-rose-500/20 bg-[#0F2424] p-3 text-xs shadow-sm">
               <div className="flex flex-col">
                 <span className="text-[#6B8A8A] text-[10px] uppercase font-bold">Skor Sentralisasi</span>
@@ -104,7 +106,7 @@ export default function ClosedTradeRejectionModal({
               </div>
             </div>
 
-            {/* Reasons List - Dibuat lebih rapat */}
+            {/* Reasons List */}
             {reasons.length > 0 && (
               <div className="rounded-lg border border-rose-500/20 bg-[#0F2424] p-3 shadow-sm">
                 <span className="block font-bold text-rose-400 mb-1.5 text-[10px] uppercase tracking-wider">
@@ -124,12 +126,12 @@ export default function ClosedTradeRejectionModal({
           </div>
         </div>
 
-        {/* FOOTER ACTIONS - Lebih tipis */}
+        {/* FOOTER ACTIONS */}
         <div className="px-4 py-2.5 border-t border-[#00FFAA]/20 bg-[#0A1A1A] flex justify-center shrink-0 relative z-10">
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-1.5 rounded-lg font-black text-[11px] uppercase tracking-wider cursor-pointer transition-all bg-rose-500/20 border border-rose-500/50 text-rose-400 hover:bg-rose-500/30 active:scale-95"
+            className="px-6 py-1.5 rounded-lg font-black text-[11px] uppercase tracking-wider cursor-pointer transition-all bg-rose-500/20 border border-rose-500/50 text-rose-400 hover:bg-rose-500/30 active:scale-95 shadow-sm"
           >
             Mengerti
           </button>
