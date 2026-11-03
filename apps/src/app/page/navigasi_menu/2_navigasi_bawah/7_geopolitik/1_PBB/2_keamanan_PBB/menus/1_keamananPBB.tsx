@@ -26,6 +26,7 @@ import {
 } from "../logika_anggota_tidak_tetap/securityCouncilElection";
 import { hasPermanentSecurityCouncilSeatResearch } from "@/app/page/bonus_logic";
 import { hasActiveGlobalWarBan } from "../../1_resolusi_PBB/logic/1_warBanLogic";
+import { getIsoForCountryName } from "../../pbbCountryIso";
 
 interface KeamananPBBProps {
   selectedCountry: any;
@@ -64,12 +65,19 @@ const formatCountryName = (name: string) => {
 };
 
 const renderFlag = (iso: string | undefined, altName: string, size: "sm" | "md" = "md") => {
-  if (!iso || iso.length !== 2) return null;
+  const resolvedIso = getIsoForCountryName(altName);
+  const suppliedIso = iso?.trim().toLowerCase().split("-").pop();
+  const flagCode = resolvedIso !== "un"
+    ? resolvedIso
+    : suppliedIso && /^[a-z]{2}$/.test(suppliedIso) && suppliedIso !== "un"
+      ? suppliedIso
+      : "";
+  if (!flagCode) return null;
   const wClass = size === "sm" ? "w-5 h-3.5" : "w-6 h-4";
   return (
     <div className={`${wClass} rounded-sm overflow-hidden border border-[#00FFAA]/20 flex-shrink-0 shadow-sm bg-[#051111] relative flex items-center justify-center`}>
       <img
-        src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
+        src={`https://flagcdn.com/w80/${flagCode}.png`}
         alt={altName}
         className="w-full h-full object-cover absolute inset-0"
         onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
@@ -474,7 +482,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
       id: `sec-user-${Date.now()}`,
       proposer: {
         name: selectedCountry?.country || 'Indonesia',
-        iso: selectedCountry?.iso?.toLowerCase() || 'id'
+        iso: getIsoForCountryName(selectedCountry?.country || 'Indonesia')
       },
       target: {
         name: selectedTarget.name,

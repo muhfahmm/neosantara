@@ -24,6 +24,7 @@ import { tickPBBSecurityCouncil } from "../../2_keamanan_PBB/logic/keamananPBBUI
 import { PBB_RESOLUTION_DURATION_OPTIONS } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { formatProductionProductName, getProductionBanProduct } from "../logic/productionBanCatalog";
 import { clearAnnexedCountryVotes, isCountryAnnexed } from "../../pbbVotingEligibility";
+import { getIsoForCountryName } from "../../pbbCountryIso";
 
 interface ResolusiPBBProps {
   selectedCountry: any;
@@ -41,8 +42,14 @@ interface CountryOption {
 // Helper function yang diekspor agar bisa digunakan file lain
 export const renderFlag = (iso: string | undefined, altName: string, size: "sm" | "md" = "md") => {
   const wClass = size === "sm" ? "w-5 h-3.5" : "w-6 h-4";
-  const flagCode = iso?.trim().toLowerCase().split("-").pop();
-  if (!flagCode || !/^[a-z]{2}$/.test(flagCode)) {
+  const resolvedIso = getIsoForCountryName(altName);
+  const suppliedIso = iso?.trim().toLowerCase().split("-").pop();
+  const flagCode = resolvedIso !== "un"
+    ? resolvedIso
+    : suppliedIso && /^[a-z]{2}$/.test(suppliedIso) && suppliedIso !== "un"
+      ? suppliedIso
+      : "";
+  if (!flagCode) {
     return (
       <span
         role="img"
@@ -471,7 +478,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
       id: `res-user-${Date.now()}`,
       proposer: {
         name: selectedCountry?.country || 'Indonesia',
-        iso: selectedCountry?.iso?.toLowerCase() || 'id'
+        iso: getIsoForCountryName(selectedCountry?.country || 'Indonesia')
       },
       target: {
         name: targetName,

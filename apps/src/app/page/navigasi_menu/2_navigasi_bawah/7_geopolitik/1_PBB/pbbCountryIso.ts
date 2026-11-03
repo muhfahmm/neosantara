@@ -4,6 +4,27 @@ import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 let databaseCountryIsoCache: Record<string, string> | null = null;
 let isFetchingDatabase = false;
 
+function normalizeCountryName(name: unknown): string {
+  return String(name || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function normalizeIsoCode(value: unknown): string {
+  const iso = String(value || '').trim().toLowerCase();
+  return /^[a-z]{2}$/.test(iso) && iso !== 'un' ? iso : '';
+}
+
+const COUNTRY_NAME_ALIASES: Record<string, string> = {
+  canada: 'kanada',
+  'north korea': 'korea utara',
+  'south korea': 'korea selatan',
+};
+
 /**
  * Mengambil data ISO negara dari database (/api/country-data?all=true) secara dinamis.
  */
@@ -28,11 +49,12 @@ export async function initCountryIsoFromDatabase(): Promise<Record<string, strin
       if (Array.isArray(data)) {
         const isoMap: Record<string, string> = {};
         data.forEach((c: any) => {
-          const iso = (c.iso || c.country_slug || '').toLowerCase();
-          if (c.name_id) isoMap[c.name_id.trim().toLowerCase()] = iso;
-          if (c.name_en) isoMap[c.name_en.trim().toLowerCase()] = iso;
-          if (c.country) isoMap[String(c.country).trim().toLowerCase()] = iso;
-          if (c.country_slug) isoMap[c.country_slug.trim().toLowerCase()] = iso;
+          const iso = normalizeIsoCode(c.iso);
+          if (!iso) return;
+          [c.name_id, c.name_en, c.country, c.country_slug].forEach(name => {
+            const key = normalizeCountryName(name);
+            if (key) isoMap[key] = iso;
+          });
         });
         databaseCountryIsoCache = isoMap;
         isFetchingDatabase = false;
@@ -53,9 +75,9 @@ function loadFallbackIsoMap(): Record<string, string> {
   const isoMap: Record<string, string> = {};
   if (Array.isArray(COUNTRIES_DATA)) {
     COUNTRIES_DATA.forEach((c: any) => {
-      if (c.country && c.iso) {
-        isoMap[String(c.country).trim().toLowerCase()] = String(c.iso).toLowerCase();
-      }
+      const key = normalizeCountryName(c.country);
+      const iso = normalizeIsoCode(c.iso);
+      if (key && iso) isoMap[key] = iso;
     });
   }
   return isoMap;
@@ -65,20 +87,23 @@ function loadFallbackIsoMap(): Record<string, string> {
  * Fungsi pencarian ISO berdasarkan nama negara dari database.
  */
 export function getIsoForCountryName(name: string): string {
-  const key = (name || '').trim().toLowerCase();
+  const key = normalizeCountryName(name);
   if (!key) return 'un';
+  const alias = COUNTRY_NAME_ALIASES[key];
 
   // 1. Cek dari cache Database MySQL jika sudah terisi
-  if (databaseCountryIsoCache && databaseCountryIsoCache[key]) {
-    return databaseCountryIsoCache[key];
+  if (databaseCountryIsoCache) {
+    const iso = normalizeIsoCode(databaseCountryIsoCache[key] || (alias && databaseCountryIsoCache[alias]));
+    if (iso) return iso;
   }
 
   // 2. Cek dari COUNTRIES_DATA / local fallback
   if (Array.isArray(COUNTRIES_DATA)) {
     const found = COUNTRIES_DATA.find(
-      (c: any) => c?.country && String(c.country).trim().toLowerCase() === key
+      (c: any) => normalizeCountryName(c?.country) === (alias || key)
     );
-    if (found?.iso) return String(found.iso).toLowerCase();
+    const iso = normalizeIsoCode(found?.iso);
+    if (iso) return iso;
   }
 
   // Panggil fetch async di background agar cache terisi untuk pemanggilan selanjutnya
