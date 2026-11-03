@@ -284,8 +284,12 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
       />
 
       {selectedCommodityInfo && (
-        <NotebookModalWrapper onClose={() => setSelectedCommodityInfo(null)}>
-          <div className="flex h-full min-w-0 flex-col overflow-hidden">
+        <NotebookModalWrapper
+          compact
+          maxWidthClass="max-w-2xl"
+          onClose={() => setSelectedCommodityInfo(null)}
+        >
+          <div className="flex min-w-0 flex-col overflow-hidden">
             {/* HEADER */}
             <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
               <div className="flex items-center gap-2 sm:gap-3">
@@ -299,7 +303,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
               <RootModalCloseButton onClick={() => setSelectedCommodityInfo(null)} />
             </div>
             {/* CONTENT */}
-            <div className="root-no-scrollbar-glow flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 neon-scrollbar space-y-3.5 lg:space-y-4.5 2xl:space-y-6">
+            <div className="root-no-scrollbar-glow overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 neon-scrollbar space-y-3.5 lg:space-y-4.5 2xl:space-y-6">
               <div className="grid grid-cols-2 gap-1.5 lg:gap-2">
                 <div className={`bg-emerald-950/40 p-2 lg:p-2.5 2xl:p-3.5 border border-emerald-500/30 ${rootBorderRadius.card} flex flex-col justify-between gap-1`}>
                   <span className={rootModalTypography.label}>Total Produksi</span>

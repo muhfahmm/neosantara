@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, X } from "lucide-react";
 import { createPortal } from "react-dom";
 
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
@@ -26,12 +26,22 @@ export default function DanaTidakCukupModal({
   const shortage = Math.max(0, requiredCost - currentBudget);
 
   const modalContent = (
-    <NotebookModalWrapper compact maxWidthClass="max-w-xl" zIndexClass="z-[100000001]">
+    <NotebookModalWrapper compact maxWidthClass="max-w-2xl" zIndexClass="z-[100000001]">
       <div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
         <div className="flex-1">
-          <h3 className="text-xl sm:text-2xl font-black text-rose-400 tracking-wide uppercase mb-6 border-b border-rose-500/20 pb-4">
-            Dana Tidak Mencukupi
-          </h3>
+          <div className="mb-6 flex items-center justify-between gap-4 border-b border-rose-500/20 pb-4">
+            <h3 className="text-xl sm:text-2xl font-black text-rose-400 tracking-wide uppercase">
+              Dana Tidak Mencukupi
+            </h3>
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-rose-500/30 bg-[#0F2424] px-3 py-2 text-xs font-bold uppercase text-rose-400 transition-colors hover:border-rose-500"
+            >
+              <span className="font-semibold tracking-wider">Tutup</span>
+              <X className="h-4 w-4" />
+            </button>
+          </div>
 
           <div className="rounded-2xl border border-rose-500/30 bg-[#0A1A1A]/60 p-5 text-center">
             <div className="mb-3 flex justify-center">
@@ -63,22 +73,16 @@ export default function DanaTidakCukupModal({
           </div>
         </div>
 
-        <div className="mt-6 flex justify-end gap-3 border-t border-rose-500/20 pt-4">
-          <button
-            onClick={onClose}
-            className="w-full sm:w-auto cursor-pointer rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] px-6 py-2 text-center text-[11px] font-black uppercase tracking-widest text-[#E0E0E0] transition-all duration-150 hover:bg-[#142A2A] sm:text-xs"
-          >
-            Mengerti
-          </button>
-          {onTakeLoan && (
+        {onTakeLoan && (
+          <div className="mt-6 flex justify-end gap-3 border-t border-rose-500/20 pt-4">
             <button
               onClick={onTakeLoan}
               className="w-full sm:w-auto cursor-pointer rounded-xl border border-[#00FFAA] bg-[#00FFAA] px-6 py-2 text-center text-[11px] font-black uppercase tracking-widest text-[#0A1A1A] shadow transition-all duration-150 hover:bg-[#00e699] sm:text-xs"
             >
               Ambil Pinjaman
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </NotebookModalWrapper>
   );

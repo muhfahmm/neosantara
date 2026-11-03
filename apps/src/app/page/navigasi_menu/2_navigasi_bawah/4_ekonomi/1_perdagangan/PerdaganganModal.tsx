@@ -1229,9 +1229,6 @@ export default function PerdaganganModal({
                   <h2 className={rootModalTypography.title}>
                     Informasi Efek Harga Perdagangan
                   </h2>
-                  <p className={`${rootModalTypography.body} break-words`}>
-                    Organisasi & Kebijakan Agama / Ideologi
-                  </p>
                 </div>
               </div>
               <RootModalCloseButton onClick={() => setShowWTOTradeInfoModal(false)} />
