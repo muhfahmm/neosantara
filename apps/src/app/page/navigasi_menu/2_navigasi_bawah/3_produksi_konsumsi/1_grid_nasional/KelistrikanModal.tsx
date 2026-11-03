@@ -49,6 +49,19 @@ const SOURCE_ORDER = [
   "pembangkit_listrik_tenaga_fusi_nuklir"
 ];
 
+const POWER_SOURCE_DESCRIPTIONS: Record<string, string> = {
+  "pembangkit_listrik_tenaga_nuklir": "Pembangkit Listrik Tenaga Nuklir (PLTN)",
+  "pembangkit_listrik_tenaga_air": "Pembangkit Listrik Tenaga Air (PLTA)",
+  "pembangkit_listrik_tenaga_surya": "Pembangkit Listrik Tenaga Surya (PLTS)",
+  "pembangkit_listrik_tenaga_uap": "Pembangkit Listrik Tenaga Uap (PLTU)",
+  "pembangkit_listrik_tenaga_gas": "Pembangkit Listrik Tenaga Gas (PLTG)",
+  "pembangkit_listrik_tenaga_angin": "Pembangkit Listrik Tenaga Bayu (PLTB)",
+  "pembangkit_listrik_tenaga_panas_bumi": "Pembangkit Listrik Tenaga Panas Bumi (PLTP)",
+  "pembangkit_listrik_tenaga_hidrogen": "Pembangkit Listrik Tenaga Hidrogen (PLTH)",
+  "pembangkit_listrik_tenaga_gelombang_laut": "Pembangkit Listrik Tenaga Gelombang Laut (PLTGL)",
+  "pembangkit_listrik_tenaga_fusi_nuklir": "Pembangkit Listrik Tenaga Fusi Nuklir (PLTFN)",
+};
+
 export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCountryDetail, metadata, prefetchedAllCountries, onNavigateToMenu }: ModalProps) {
   const [activeTab, setActiveTab] = useState<"user" | "global">("user");
   const [allCountries, setAllCountries] = useState<any[]>([]);
@@ -99,7 +112,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
       return {
         key,
         label: bMeta?.label || key.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase()),
-        desc: bMeta?.desc || "Sumber energi listrik nasional.",
+        desc: POWER_SOURCE_DESCRIPTIONS[key] || bMeta?.desc || "Sumber energi listrik nasional.",
         value: count,
         unitProduction: unitProduction * getProductionBonusMultiplier(countryDetail, key),
       };
@@ -107,7 +120,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
     .filter((source) => source.value > 0 || source.unitProduction > 0);
 
   const totalCapacityMW = powerSources.reduce((sum, source) => sum + (source.value * source.unitProduction), 0);
-  const totalSources = powerSources.filter((source) => source.value > 0).length;
 
   const calculateBuildingElectricityConsumption = (country: any) => {
     if (!country) return 0;
@@ -314,101 +326,95 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
             {/* TAB NERACA USER */}
             {activeTab === "user" && (
-              <>
-                <div className="grid grid-cols-1 lg:grid-cols-[1.25fr_0.95fr] gap-3 lg:gap-4">
-                  {/* KOLOM KIRI: STATISTIK GRID */}
-                  <div className={`bg-[#0A1A1A] border border-[#00FFAA]/20 p-3 lg:p-3.5 2xl:p-4 ${rootBorderRadius.card}`}>
-                    <div className="flex items-center gap-2.5 lg:gap-3 mb-2.5 lg:mb-3">
-                      <div className="p-2 lg:p-2.5 2xl:p-3 rounded-xl 2xl:rounded-2xl bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30">
-                        <BatteryCharging className="h-4 w-4 lg:h-5 lg:w-5" />
-                      </div>
-                      <div>
-                        <h3 className={rootModalTypography.sectionTitle}>Statistik Grid</h3>
-                      </div>
+              <div className="flex flex-col gap-4">
+                
+                {/* KOTAK 1: STATISTIK GRID (Memanjang ke kanan-kiri) */}
+                <div className={`w-full bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 lg:p-5 ${rootBorderRadius.card}`}>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2.5 rounded-xl bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30">
+                      <BatteryCharging className="h-5 w-5" />
                     </div>
-
-                    <div className="grid grid-cols-1 gap-2.5 lg:gap-3">
-                      <div className={`bg-emerald-950/40 border border-emerald-500/30 p-2.5 lg:p-3 ${rootBorderRadius.card}`}>
-                        <p className={rootModalTypography.label}>✓ Total Produksi Listrik</p>
-                        <p className="text-lg lg:text-xl 2xl:text-2xl font-black text-emerald-400 mt-1.5 lg:mt-2 2xl:mt-3">{totalCapacityMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</p>
-                      </div>
-                      <div
-                        onClick={() => setIsDetailKonsumsiOpen(true)}
-                        className={`bg-rose-950/40 border border-rose-500/30 hover:border-rose-400 hover:scale-[1.01] p-2.5 lg:p-3 ${rootBorderRadius.card} transition-all cursor-pointer group`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <p className={rootModalTypography.label}>✗ Konsumsi Terestimasi</p>
-                          <span className="text-[9px] text-rose-300 font-bold opacity-80 group-hover:opacity-100 transition-opacity">Detail →</span>
-                        </div>
-                        <p className="text-lg lg:text-xl 2xl:text-2xl font-black text-rose-400 mt-1.5 lg:mt-2 2xl:mt-3">{estimatedConsumptionMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</p>
-                      </div>
-
-                      {/* NERACA DAYA: LOGIKA WARNA HIJAU/MERAH/ABU-ABU */}
-                      <div className={`p-2.5 lg:p-3 ${rootBorderRadius.card} border ${balanceMW > 0 ? 'bg-emerald-950/40 border-emerald-500/30' :
-                          balanceMW < 0 ? 'bg-rose-950/40 border-rose-500/30' :
-                            'bg-slate-900/40 border-slate-500/30'
-                        }`}>
-                        <p className={`text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest ${balanceMW > 0 ? 'text-emerald-400' :
-                            balanceMW < 0 ? 'text-rose-400' :
-                              'text-slate-400'
-                          }`}>Neraca Daya</p>
-                        <p className={`text-lg lg:text-xl 2xl:text-2xl font-black mt-1.5 lg:mt-2 2xl:mt-3 ${balanceMW > 0 ? 'text-emerald-400' :
-                            balanceMW < 0 ? 'text-rose-400' :
-                              'text-slate-400'
-                          }`}>
-                          {balanceMW > 0 ? '+' : balanceMW < 0 ? '-' : ''}{Math.abs(balanceMW).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className={`bg-[#0F2424] border border-[#00FFAA]/20 p-3 ${rootBorderRadius.card}`}>
-                        <p className={rootModalTypography.label}>Jumlah Sumber Energi Aktif</p>
-                        <p className={`${rootModalTypography.value} mt-2 text-lg`}>{totalSources}</p>
-                      </div>
-                      <div className={`bg-[#0F2424] border border-[#00FFAA]/20 p-3 ${rootBorderRadius.card}`}>
-                        <p className={rootModalTypography.label}>Perkiraan Beban Warga</p>
-                        <p className={`${rootModalTypography.value} mt-2 text-lg`}>{((countryDetail?.jumlah_penduduk ?? 0) / 1000000).toFixed(1)} Juta Jiwa</p>
-                      </div>
+                    <div>
+                      <h3 className={rootModalTypography.sectionTitle}>Statistik Grid</h3>
                     </div>
                   </div>
 
-                  {/* KOLOM KANAN: RINGKASAN SUMBER DAYA */}
-                  <div className={`bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 ${rootBorderRadius.card}`}>
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="p-3 rounded-2xl bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30">
-                        <MapPin className="h-5 w-5" />
+                  {/* Grid Card di dalamnya memanjang ke samping (3 kolom) */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className={`bg-emerald-950/40 border border-emerald-500/30 p-3 lg:p-4 ${rootBorderRadius.card}`}>
+                      <p className={rootModalTypography.label}>✓ Total Produksi Listrik</p>
+                      <p className="text-xl lg:text-2xl font-black text-emerald-400 mt-2">
+                        {totalCapacityMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
+                      </p>
+                    </div>
+                    
+                    <div
+                      onClick={() => setIsDetailKonsumsiOpen(true)}
+                      className={`bg-rose-950/40 border border-rose-500/30 hover:border-rose-400 hover:scale-[1.01] p-3 lg:p-4 ${rootBorderRadius.card} transition-all cursor-pointer group`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <p className={rootModalTypography.label}>✗ Konsumsi Terestimasi</p>
+                        <span className="text-[10px] text-rose-300 font-bold opacity-80 group-hover:opacity-100 transition-opacity">Detail →</span>
                       </div>
-                      <div>
-                        <h3 className={rootModalTypography.sectionTitle}>Ringkasan Sumber Daya</h3>
-                      </div>
+                      <p className="text-xl lg:text-2xl font-black text-rose-400 mt-2">
+                        {estimatedConsumptionMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
+                      </p>
                     </div>
 
-                    <div className="space-y-3">
-                      {powerSources.length > 0 ? powerSources.map((source) => (
-                        <div key={source.key} className={`flex items-center justify-between gap-3 p-4 bg-[#0F2424] border border-[#00FFAA]/20 ${rootBorderRadius.card}`}>
-                          <div>
-                            <p className={rootModalTypography.sectionTitle}>{source.label}</p>
-                            <p className={`${rootModalTypography.body} ${rootModalTypography.muted}`}>{source.desc}</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm font-black text-[#00FFAA]">
-                              {(source.value * source.unitProduction).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
-                            </p>
-                            <p className="text-[10px] text-[#6B8A8A]">{source.value > 0 ? `${source.value} unit` : 'Tidak tersedia'}</p>
-                          </div>
-                        </div>
-                      )) : (
-                        <div className={`border border-[#00FFAA]/20 bg-[#0F2424] p-4 ${rootBorderRadius.card} ${rootModalTypography.body}`}>
-                          Data pembangkit listrik tidak tersedia.
-                        </div>
-                      )}
+                    <div className={`p-3 lg:p-4 ${rootBorderRadius.card} border ${balanceMW > 0 ? 'bg-emerald-950/40 border-emerald-500/30' :
+                        balanceMW < 0 ? 'bg-rose-950/40 border-rose-500/30' :
+                          'bg-slate-900/40 border-slate-500/30'
+                      }`}>
+                      <p className={`text-[10px] font-black uppercase tracking-widest ${balanceMW > 0 ? 'text-emerald-400' :
+                          balanceMW < 0 ? 'text-rose-400' :
+                            'text-slate-400'
+                        }`}>Neraca Daya</p>
+                      <p className={`text-xl lg:text-2xl font-black mt-2 ${balanceMW > 0 ? 'text-emerald-400' :
+                          balanceMW < 0 ? 'text-rose-400' :
+                            'text-slate-400'
+                        }`}>
+                        {balanceMW > 0 ? '+' : balanceMW < 0 ? '-' : ''}{Math.abs(balanceMW).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
+                      </p>
                     </div>
                   </div>
                 </div>
 
-                {/* INDEKS KEPUASAN LISTRIK */}
-                <div className={`mt-6 p-5 border border-[#00FFAA]/30 bg-[#0A1A1A] ${rootBorderRadius.card}`}>
+                {/* KOTAK 2: RINGKASAN SUMBER DAYA (Di Bawah, Berbentuk Grid) */}
+                <div className={`w-full bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 lg:p-5 ${rootBorderRadius.card}`}>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2.5 rounded-xl bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30">
+                      <MapPin className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h3 className={rootModalTypography.sectionTitle}>Ringkasan Sumber Daya</h3>
+                    </div>
+                  </div>
+
+                  {/* Card Sumber Daya dibuat Grid (2 atau 3 kolom) */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                    {powerSources.length > 0 ? powerSources.map((source) => (
+                      <div key={source.key} className={`flex items-center justify-between gap-3 p-4 bg-[#0F2424] border border-[#00FFAA]/20 ${rootBorderRadius.card}`}>
+                        <div>
+                          <p className={rootModalTypography.sectionTitle}>{source.label}</p>
+                          <p className={`${rootModalTypography.body} ${rootModalTypography.muted}`}>{source.desc}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-black text-[#00FFAA]">
+                            {(source.value * source.unitProduction).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
+                          </p>
+                          <p className="text-[10px] text-[#6B8A8A]">{source.value > 0 ? `${source.value} unit` : 'Tidak tersedia'}</p>
+                        </div>
+                      </div>
+                    )) : (
+                      <div className={`col-span-full border border-[#00FFAA]/20 bg-[#0F2424] p-4 ${rootBorderRadius.card} ${rootModalTypography.body}`}>
+                        Data pembangkit listrik tidak tersedia.
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* KOTAK 3: INDEKS KEPUASAN LISTRIK */}
+                <div className={`w-full p-5 border border-[#00FFAA]/30 bg-[#0A1A1A] ${rootBorderRadius.card}`}>
                   <div className="flex justify-between items-center">
                     <span className={rootModalTypography.sectionTitle}>
                       Indeks Kepuasan Rakyat (Listrik)
@@ -424,7 +430,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                     />
                   </div>
                 </div>
-              </>
+              </div>
             )}
 
             {/* TAB NERACA GLOBAL */}
@@ -556,4 +562,4 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
     </>
   );
-} 
+}
