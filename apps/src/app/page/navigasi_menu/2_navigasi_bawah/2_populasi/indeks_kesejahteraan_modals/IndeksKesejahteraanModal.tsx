@@ -24,7 +24,7 @@ import { getEducationResearchModifier } from "@/app/page/downgrade_logic";
 import { isMemberOfInterpol, getInterpolCrimeRiskModifier, isMemberOfWHO, getWHOPandemicRiskModifier } from "@/app/page/bonus_logic";
 import {
   EPIDEMIC_BASE_CHANCE_PERCENT,
-  PANDEMIC_BASE_CHANCE_PERCENT,
+  getMonthlyOutbreakChancePercent,
   getPandemicBaseChancePercentByYear,
 } from "@/app/page/menus/inbox/logic/6_notifikasi_bencana/2_wabah_penyakit/wabahLogic";
 import NaikkanKesejahteraanTab from "./NaikkanKesejahteraanTab";
@@ -331,8 +331,10 @@ export default function IndeksKesejahteraanModal({
                           ? `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`
                           : typeof currentDate === 'string' ? currentDate : new Date().toISOString().slice(0, 10);
                         const pandemicBase = getPandemicBaseChancePercentByYear(countryDetail, currentDateStr);
-                        const risikoEpidemiPercent = Math.max(0, EPIDEMIC_BASE_CHANCE_PERCENT + whoModifier);
-                        const risikoPandemiPercent = Math.max(0, pandemicBase + whoModifier);
+                        const risikoEpidemiPercent = Math.max(0, Math.min(100, EPIDEMIC_BASE_CHANCE_PERCENT + whoModifier));
+                        const risikoPandemiPercent = Math.max(0, Math.min(100, pandemicBase + whoModifier));
+                        const risikoEpidemiBulanan = getMonthlyOutbreakChancePercent(risikoEpidemiPercent);
+                        const risikoPandemiBulanan = getMonthlyOutbreakChancePercent(risikoPandemiPercent);
 
                         return (
                           <div
@@ -363,8 +365,8 @@ export default function IndeksKesejahteraanModal({
                             <div className="space-y-1 text-[10px] sm:text-xs text-[#E0E0E0] font-semibold bg-[#0A1A1A] p-1.5 rounded border border-[#00FFAA]/10">
                               <p>• Skor: <span className="font-black text-[#E0E0E0]">{kesehatanActualScore}/100</span></p>
                               <div className="flex items-center gap-1 flex-wrap">
-                                <p>• Epidemi: <span className="font-black text-rose-400">{risikoEpidemiPercent}%</span></p>
-                                <p>• Pandemi: <span className="font-black text-rose-400">{risikoPandemiPercent}%</span></p>
+                                <p>• Epidemi: <span className="font-black text-rose-400">{risikoEpidemiPercent}%/thn ({risikoEpidemiBulanan.toLocaleString("id-ID", { maximumFractionDigits: 2 })}%/bln)</span></p>
+                                <p>• Pandemi: <span className="font-black text-rose-400">{risikoPandemiPercent}%/thn ({risikoPandemiBulanan.toLocaleString("id-ID", { maximumFractionDigits: 2 })}%/bln)</span></p>
                                 {isWHOMember && (
                                   <span className="px-1 py-0.5 text-[8px] font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/50 rounded">WHO -5%</span>
                                 )}
@@ -649,8 +651,10 @@ export default function IndeksKesejahteraanModal({
               const isWHOMember = isMemberOfWHO(countryName);
               const currentDateStr = currentDate instanceof Date ? `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}` : typeof currentDate === 'string' ? currentDate : new Date().toISOString().slice(0, 10);
               const pandemicBase = getPandemicBaseChancePercentByYear(countryDetail, currentDateStr);
-              const risikoEpidemiPercent = Math.max(0, EPIDEMIC_BASE_CHANCE_PERCENT + whoModifier);
-              const risikoPandemiPercent = Math.max(0, pandemicBase + whoModifier);
+              const risikoEpidemiPercent = Math.max(0, Math.min(100, EPIDEMIC_BASE_CHANCE_PERCENT + whoModifier));
+              const risikoPandemiPercent = Math.max(0, Math.min(100, pandemicBase + whoModifier));
+              const risikoEpidemiBulanan = getMonthlyOutbreakChancePercent(risikoEpidemiPercent);
+              const risikoPandemiBulanan = getMonthlyOutbreakChancePercent(risikoPandemiPercent);
               const isPenalty = kesehatanActualScore <= 65;
               
               return (
@@ -662,8 +666,8 @@ export default function IndeksKesejahteraanModal({
                     </div>
                     <div className={`p-2.5 rounded-xl border text-[10px] font-bold flex items-center justify-between ${isPenalty ? 'bg-[#2A141A] border-rose-500/50 text-rose-300' : 'bg-[#0E2A20] border-emerald-500/50 text-emerald-300'}`}>
                       <div className="space-y-0.5">
-                        <p className="flex justify-between gap-2"><span>Epidemi:</span><span className="font-black">{risikoEpidemiPercent}%</span></p>
-                        <p className="flex justify-between gap-2"><span>Pandemi:</span><span className="font-black">{risikoPandemiPercent}%</span></p>
+                        <p className="flex justify-between gap-2"><span>Epidemi:</span><span className="font-black">{risikoEpidemiPercent}%/thn ({risikoEpidemiBulanan.toLocaleString("id-ID", { maximumFractionDigits: 2 })}%/bln)</span></p>
+                        <p className="flex justify-between gap-2"><span>Pandemi:</span><span className="font-black">{risikoPandemiPercent}%/thn ({risikoPandemiBulanan.toLocaleString("id-ID", { maximumFractionDigits: 2 })}%/bln)</span></p>
                       </div>
                       {isWHOMember && <span className="ml-2 px-1.5 py-0.5 text-[8px] font-black text-emerald-400 bg-emerald-500/20 border border-emerald-500/60 rounded">WHO -5%</span>}
                     </div>

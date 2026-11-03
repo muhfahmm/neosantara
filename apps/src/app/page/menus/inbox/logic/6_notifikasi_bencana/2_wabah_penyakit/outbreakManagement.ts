@@ -19,15 +19,9 @@ export interface YearlyOutbreakDistribution {
 /**
  * Pandemi: 0-1 kali per tahun
  * Pola Persentase Kemunculan Pandemi per Tahun:
- * - Tahun ke-1: 30%
- * - Tahun ke-2: 35%
- * - Tahun ke-3: 40%
- * - Tahun ke-4: 45%
- * - Tahun ke-5: 50%
- * - Tahun ke-6: kembali ke 30%
- * - ... Tahun ke-10: 40% (siklus 5 tahunan: [30, 35, 40, 45, 50])
+ * - Peluang tahunan: 10% (sekitar 0,87% per bulan)
  */
-export const PANDEMIC_YEARLY_PERCENTAGE_CYCLE = [30, 35, 40, 45, 50] as const;
+export const PANDEMIC_YEARLY_PERCENTAGE_CYCLE = [10] as const;
 
 export function getPandemicBaseChancePercentByYear(
   countryDetail: any,
@@ -67,27 +61,31 @@ export function getPandemicYearlyDistribution(
 }
 
 export const PANDEMIC_YEARLY_DISTRIBUTION: YearlyOutbreakDistribution[] = [
-  { count: 0, probability: 0.70, description: 'Tahun aman, 0 pandemi' },
-  { count: 1, probability: 0.30, description: '1 pandemi dalam tahun ini (default th-1)' },
+  { count: 0, probability: 0.90, description: 'Tahun aman, 0 pandemi (90%)' },
+  { count: 1, probability: 0.10, description: '1 pandemi dalam tahun ini (10%)' },
 ];
 
 /**
- * Epidemi: 1-5 kali per tahun
- * - 1 kali: 60%
- * - 2 kali: 15%
- * - 3 kali: 12%
- * - 4 kali: 8%
- * - 5 kali: 3%
- * - >5 kali: 2% (fallback ke 5 kali)
+ * Epidemi: peluang terjadi sekitar 40% per tahun, setara sekitar 4,17% per bulan.
  */
 export const EPIDEMIC_YEARLY_DISTRIBUTION: YearlyOutbreakDistribution[] = [
-  { count: 1, probability: 0.60, description: '1 epidemi dalam tahun ini' },
-  { count: 2, probability: 0.15, description: '2 epidemi dalam tahun ini' },
-  { count: 3, probability: 0.12, description: '3 epidemi dalam tahun ini' },
-  { count: 4, probability: 0.08, description: '4 epidemi dalam tahun ini' },
-  { count: 5, probability: 0.03, description: '5 epidemi dalam tahun ini' },
-  { count: 5, probability: 0.02, description: '5 epidemi (fallback dari >5)' },
+  { count: 0, probability: 0.60, description: 'Tahun aman, 0 epidemi (60%)' },
+  { count: 1, probability: 0.32, description: '1 epidemi dalam tahun ini (32%)' },
+  { count: 2, probability: 0.08, description: '2 epidemi dalam tahun ini (8%)' },
 ];
+
+export function getMonthlyOutbreakChancePercent(annualChancePercent: number): number {
+  const annualChance = Math.max(0, Math.min(100, annualChancePercent)) / 100;
+  return (1 - Math.pow(1 - annualChance, 1 / 12)) * 100;
+}
+
+export function getDailyOutbreakChancePercent(
+  annualChancePercent: number,
+  daysInYear: number
+): number {
+  const annualChance = Math.max(0, Math.min(100, annualChancePercent)) / 100;
+  return (1 - Math.pow(1 - annualChance, 1 / Math.max(1, daysInYear))) * 100;
+}
 
 // ===============================================
 // 🎯 DATE PARSING & UTILITY FUNCTIONS
@@ -247,31 +245,31 @@ export function canPandemicOccur(
   countryDetail: any,
   currentDateStr: string
 ): boolean {
-  const quota = getRemainingOutbreakQuota(
-    countryDetail,
-    false,
-    currentDateStr
-  );
-  return quota > 0;
+  const currentYearMonth = parseYearMonth(currentDateStr);
+  if (!currentYearMonth) return true;
+
+  const allOutbreaks = Array.isArray(countryDetail?.active_outbreaks)
+    ? countryDetail.active_outbreaks
+    : [];
+  return !allOutbreaks.some((outbreak: any) => {
+    if (!outbreak.startDate || !outbreak.category?.includes('Pandemi')) {
+      return false;
+    }
+
+    const outbreakYearMonth = parseYearMonth(outbreak.startDate);
+    return outbreakYearMonth?.year === currentYearMonth.year;
+  });
 }
 
 /**
  * CEK apakah EPIDEMI boleh terjadi hari ini
  * Rules:
- * - Belum exceed quota tahun ini
  * - Minimum 14 hari spacing dari epidemi terakhir
  */
 export function canEpidemicOccur(
   countryDetail: any,
   currentDateStr: string
 ): boolean {
-  const quota = getRemainingOutbreakQuota(
-    countryDetail,
-    true,
-    currentDateStr
-  );
-  if (quota <= 0) return false;
-
   // Cek spacing dari epidemi terakhir
   const allOutbreaks = Array.isArray(countryDetail?.active_outbreaks)
     ? countryDetail.active_outbreaks

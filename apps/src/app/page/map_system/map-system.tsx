@@ -188,7 +188,7 @@ import {
     generateWabahPenyakitNotification,
     canPandemicOccur,
     canEpidemicOccur,
-    PANDEMIC_BASE_CHANCE_PERCENT,
+    getDailyOutbreakChancePercent,
     getPandemicBaseChancePercentByYear,
     handleMedicalAssistance,
     deactivateOutbreak,
@@ -4659,11 +4659,13 @@ export default function MapPage() {
                 }
             }
 
-            // 🎲 WABAH & PANDEMI: Anomali acak, faktor resistensi & variabilitas tidak tertebak
+            // Peluang tahunan dikonversi ke peluang harian agar konsisten sepanjang simulasi.
             const whoPandemicModifier = getWHOPandemicRiskModifier(userCountryName, countryDetail);
-            const randomOutbreakNoise = (Math.random() - 0.5) * 12; // Fluktuasi risiko ±6%
             const currentYearPandemicBase = getPandemicBaseChancePercentByYear(countryDetail, currentDateStr);
-            const dynamicPandemicChance = Math.max(5, currentYearPandemicBase + whoPandemicModifier + randomOutbreakNoise);
+            const epidemicAnnualChance = Math.max(
+                0,
+                Math.min(100, EPIDEMIC_BASE_CHANCE_PERCENT + whoPandemicModifier)
+            );
 
             // ===== GRACE PERIOD: Jangan spawn outbreak di 30 hari pertama game =====
             const gameStartStr = countryDetail?.game_start_date as string | undefined;
@@ -4677,14 +4679,16 @@ export default function MapPage() {
             }
 
             const isInGracePeriod = daysSinceGameStart < 30;
-            const epidemicBaseForDaily = isInGracePeriod ? 1 : 25; // 25% base untuk daily = ~1x per 4 hari, atau ~7x per bulan (match dengan 1-5x per tahun frequency)
-            const dynamicEpidemicChance = Math.max(10, epidemicBaseForDaily + whoPandemicModifier + randomOutbreakNoise);
+            const daysInYear = (Date.UTC(currentDate.getFullYear() + 1, 0, 1) -
+                Date.UTC(currentDate.getFullYear(), 0, 1)) / 86400000;
+            const dynamicEpidemicChance = getDailyOutbreakChancePercent(
+                epidemicAnnualChance,
+                daysInYear
+            );
             const outbreakRoll = Math.random() * 100;
             let nextPandemicSchedule: { year: number; hit: boolean; day: number; fired?: boolean } | undefined;
 
-            // Ambang acak ganda agar probabilitas tidak berpola tetap
-            // Pandemi: diundi SEKALI per tahun dengan persentase siklus (30/35/40/45/50%),
-            // lalu dijadwalkan pada hari acak di tahun tersebut (bukan diundi tiap hari).
+            // Pandemi diundi sekali per tahun, lalu dijadwalkan pada hari acak di tahun tersebut.
             const pandemicYear = currentDate.getFullYear();
             const dayOfYear = Math.floor(
                 (new Date(pandemicYear, currentDate.getMonth(), currentDate.getDate()).getTime() -
@@ -4707,7 +4711,8 @@ export default function MapPage() {
             let isPandemicHit = !isInGracePeriod && pandemicSchedule.hit &&
                 !pandemicSchedule.fired && dayOfYear >= pandemicSchedule.day;
             nextPandemicSchedule = pandemicSchedule;
-            let isEpidemicHit = !isPandemicHit && outbreakRoll < (dynamicEpidemicChance * (0.75 + Math.random() * 0.5));
+            let isEpidemicHit = !isInGracePeriod && !isPandemicHit &&
+                outbreakRoll < dynamicEpidemicChance;
 
             // 🔒 APPLY FREQUENCY CONTROLS
             // Pandemi: 0-1 kali setahun
@@ -4718,7 +4723,7 @@ export default function MapPage() {
                 nextPandemicSchedule = { ...nextPandemicSchedule, fired: true };
             }
 
-            // Epidemi: 1-5 kali setahun dengan minimum 2 minggu spacing
+            // Epidemi mengikuti peluang tahunan dengan minimum 2 minggu spacing
             if (isEpidemicHit && !canEpidemicOccur(countryDetail, currentDateStr)) {
                 isEpidemicHit = false;
             }

@@ -1,5 +1,5 @@
 // wabahLogic.ts
-// Logika dan generator event Wabah Penyakit (Epidemi 30% + Pandemi 10% = Weight 40%)
+// Logika dan generator event Wabah Penyakit (Epidemi 40% + Pandemi 10% per tahun)
 
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import {
@@ -11,8 +11,10 @@ import {
   deactivateOutbreak,
   PANDEMIC_YEARLY_DISTRIBUTION,
   PANDEMIC_YEARLY_PERCENTAGE_CYCLE,
+  getDailyOutbreakChancePercent,
   getPandemicBaseChancePercentByYear,
   getPandemicYearlyDistribution,
+  getMonthlyOutbreakChancePercent,
   EPIDEMIC_YEARLY_DISTRIBUTION,
   determineYearlyOutbreakCount,
   parseYearMonth,
@@ -20,8 +22,10 @@ import {
 
 export {
   PANDEMIC_YEARLY_PERCENTAGE_CYCLE,
+  getDailyOutbreakChancePercent,
   getPandemicBaseChancePercentByYear,
   getPandemicYearlyDistribution,
+  getMonthlyOutbreakChancePercent,
 };
 
 export interface WabahPenyakitNotification extends NotificationMessage {
@@ -59,8 +63,8 @@ const SKENARIO_PANDEMI = [
 
 const POPULASI_ACUAN = 50_000_000;
 
-export const EPIDEMIC_BASE_CHANCE_PERCENT = 50;
-export const PANDEMIC_BASE_CHANCE_PERCENT = 30; // Tahun pertama: 30%
+export const EPIDEMIC_BASE_CHANCE_PERCENT = 40;
+export const PANDEMIC_BASE_CHANCE_PERCENT = 10;
 
 const randomInRange = (min: number, max: number): number =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -474,4 +478,3 @@ export {
   getDaysDifference,
   getMonthsDifference,
 } from './outbreakManagement';
-
