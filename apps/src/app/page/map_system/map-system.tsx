@@ -173,7 +173,7 @@ import { getActivePlayerAttack, setActivePlayerAttack } from '../navigasi_menu/2
 import { generateAITradeBeliNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/2_beli/tradeBeliLogic';
 import { generateAITradeJualNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/1_jual/tradeJualLogic';
 import { generateTradeRelationOfferNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/3_hubungan_dagang/tradeRelationLogic';
-import { checkAndGenerateEmbassyOffers, createEmbassyOfferNotification } from '../menus/inbox/logic/4_notifikasi_kedubes/1_penawaran_kedutaan_besar';
+import { createEmbassyOfferNotification } from '../menus/inbox/logic/4_notifikasi_kedubes/1_penawaran_kedutaan_besar';
 import { executeAparatOperation } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/bubarkanAparatLogic';
 import type { DetailOpsiBubarkan } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/opsiBubarkanMassaConfig';
 import type { DemonstrasiNotification } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/demonstrasiEkonomiLogic';
@@ -205,6 +205,7 @@ import {
     setRequestedAttackArrivalDate,
     setRequestedAttackInProgress,
     getRequestedAttackRequests,
+    type RequestedAttackRecord,
 } from '../detail_negara/3_operasi_militer/6_minta_serang_negara/requestedInvasionLogic';
 import { generateSpionaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/1_spionase/spionaseLogic';
 import { generateSabotaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/2_sabotase/sabotaseLogic';
@@ -213,7 +214,6 @@ import {
     getAttackChancePercentFromRelation,
 } from '../menus/inbox/logic/2_notifikasi_pertahanan/3_diserang/diserangLogic';
 import { generatePemberontakanNotification, calculateSeparatismeRiskPercent } from '../menus/inbox/logic/2_notifikasi_pertahanan/4_pemberontakan/pemberontakanLogic';
-import { getDefenseAllianceOfferChancePercent } from '../bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/3_Aliansi Pertahanan';
 import { applyDoktrinPertahananDiriBonus, applyWarCasualtyToPopulation } from '../bonus_logic';
 import { generateICBMNotification, generateProgramNuklirSelesaiNotification, generateUjicobaNuklirAINotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/5_icbm/icbmLogic';
 import { isNegaraNuklirBawaan, getNegaraNuklirBaseIcbm } from '@/app/logic/npc_ai_brain/military/nuclearControllerAI';
@@ -226,6 +226,20 @@ import { generateTempatUmumDefisitNotification } from '../menus/inbox/logic/8_ke
 import { generateNonAggressionOfferNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/1_pakta_non_agresi/nonAggressionLogic';
 import { generateDefenseAllianceOfferNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/2_aliansi_pertahanan/defenseAllianceLogic';
 import { generateResearchContractOfferNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/3_kontrak_penelitian/researchContractLogic';
+import {
+    DIPLOMATIC_OFFER_CONFIG,
+    getDiplomaticOfferResearchBonuses,
+    getPlayerCountryIdentity,
+    normalizeDiplomaticOfferState,
+    recordEmbassyOfferRejection,
+    rollMonthlyOffer,
+    isDiplomaticInteractionBlocked,
+    type DiplomaticOfferCandidate,
+    type DiplomaticOfferKind,
+    type DiplomaticOfferState,
+    type EmbassyOfferCandidate,
+    type PendingDiplomaticOffer,
+} from './diplomaticOfferLogic';
 import { generateHubunganPanasNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/4_hubungan_panas/hubunganPanasLogic';
 import {
     evaluateAIResolusiPBBTrigger,
@@ -272,7 +286,7 @@ import {
     hasActiveApprovedInvasionResolution,
     hasActiveApprovedInvasionResolutionForDifferentTarget
 } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/4_resolusiInvasiLogic';
-import { calculateNetBalanceWithEconomicEmbargo, getEconomicEmbargoProductionMultiplier } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
+import { calculateNetBalanceWithEconomicEmbargo, getEconomicEmbargoProductionMultiplier, isCountryUnderEconomicEmbargo } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import {
     clearReportedInvasionViolations,
     isTradeEmbargoActive,
@@ -3514,6 +3528,61 @@ export default function MapPage() {
         shouldShowBattleAnalysis?: boolean;
         isPlayerCoalitionAttacker?: boolean;
     }>>([]);
+    const npcWarQueueRef = useRef(npcWarQueue);
+    npcWarQueueRef.current = npcWarQueue;
+
+    const isBilateralWarWithCountry = useCallback((
+        partnerCountry: string,
+        requestedAttackRequests: readonly RequestedAttackRecord[] = getRequestedAttackRequests()
+    ): boolean => {
+        const playerCountryName = getPlayerCountryIdentity(countryDetail);
+        if (!playerCountryName || !partnerCountry) return false;
+
+        const pairIsAtWar = (war: {
+            attacker?: unknown;
+            target?: unknown;
+            coalitionParticipants?: unknown;
+        }): boolean => {
+            const attacker = typeof war.attacker === 'string' ? war.attacker : '';
+            const target = typeof war.target === 'string' ? war.target : '';
+            const coalitionNames = Array.isArray(war.coalitionParticipants)
+                ? war.coalitionParticipants.flatMap(participant => {
+                    if (!participant || typeof participant !== 'object') return [];
+                    const name = (participant as { name?: unknown }).name;
+                    return typeof name === 'string' && name.trim() ? [name] : [];
+                })
+                : [];
+            const attackerSide = [attacker, ...coalitionNames].filter(Boolean);
+            return (
+                attackerSide.some(country => areSameWarCountry(country, playerCountryName)) &&
+                areSameWarCountry(target, partnerCountry)
+            ) || (
+                attackerSide.some(country => areSameWarCountry(country, partnerCountry)) &&
+                areSameWarCountry(target, playerCountryName)
+            );
+        };
+
+        const activeWar = activeWarAnimationRef.current as {
+            attacker?: unknown;
+            target?: unknown;
+            coalitionParticipants?: unknown;
+        } | null;
+        if (activeWar && pairIsAtWar(activeWar)) return true;
+        if (npcWarQueueRef.current.some(war => pairIsAtWar(war))) return true;
+        return requestedAttackRequests.some(request =>
+            (request.status === 'pending' || request.status === 'in_progress') &&
+            pairIsAtWar({
+                attacker: request.attackerCountry,
+                target: request.targetCountry,
+            })
+        );
+    }, [countryDetail]);
+    const isDiplomacyBlockedWithCountry = useCallback((partnerCountry: string): boolean =>
+        isDiplomaticInteractionBlocked({
+            playerUnderEmbargo: isCountryUnderEconomicEmbargo(getPlayerCountryIdentity(countryDetail)),
+            partnerUnderEmbargo: isCountryUnderEconomicEmbargo(partnerCountry),
+            bilateralWar: isBilateralWarWithCountry(partnerCountry),
+        }), [countryDetail, isBilateralWarWithCountry]);
 
     const npcWarQueueRunningRef = useRef(false);
 
@@ -4325,16 +4394,26 @@ export default function MapPage() {
             const next = typeof action === 'function'
                 ? (action as (value: NotificationMessage[]) => NotificationMessage[])(prev)
                 : action;
-            const isExempt = (n: NotificationMessage) =>
-                /player|user|province|requested|self-|aid-|demo|demonstrasi|subsidi|harga|pajak/i.test(String(n.id)) ||
+            const isExempt = (n: NotificationMessage) => {
+                const tradeType = (n as NotificationMessage & { tradeType?: string }).tradeType;
+                return /player|user|province|requested|self-|aid-|demo|demonstrasi|subsidi|harga|pajak/i.test(String(n.id)) ||
                 String(n.id).startsWith('war-') ||
-                (n as any).tradeType === 'diserang' ||
-                (n as any).tradeType === 'demonstrasi_rakyat' ||
-                (n as any).tradeType === 'kebijakan_subsidi' ||
-                (n as any).tradeType === 'harga_barang_pokok' ||
-                (n as any).tradeType === 'perubahan_pajak';
+                [
+                    'penawaran_hubungan_dagang',
+                    'penawaran_pakta_non_agresi',
+                    'penawaran_kontrak_penelitian',
+                    'penawaran_aliansi_pertahanan',
+                    'penawaran_kedutaan_besar',
+                ].includes(String(tradeType)) ||
+                tradeType === 'diserang' ||
+                tradeType === 'demonstrasi_rakyat' ||
+                tradeType === 'kebijakan_subsidi' ||
+                tradeType === 'harga_barang_pokok' ||
+                tradeType === 'perubahan_pajak';
+            };
             const isPausedNow = isPausedRef.current ||
-                (typeof window !== 'undefined' && Boolean((window as any).neosantara_is_paused));
+                (typeof window !== 'undefined' &&
+                    Boolean((window as Window & { neosantara_is_paused?: boolean }).neosantara_is_paused));
             const today = notificationDateRef.current;
             // Tentukan kuota untuk hari ini jika belum ada (diundi sekali per hari)
 
@@ -4362,6 +4441,60 @@ export default function MapPage() {
             return result.length === next.length ? next : result;
         }));
     }, []);
+    useEffect(() => {
+        if (!countryDetail) return;
+        const playerCountryName = getPlayerCountryIdentity(countryDetail);
+        const playerEmbassies = Array.isArray(countryDetail.embassies) ? countryDetail.embassies : [];
+        const removedEmbassies = Array.isArray(countryDetail.removedEmbassies)
+            ? countryDetail.removedEmbassies.filter((country: unknown): country is string => typeof country === 'string')
+            : [];
+        const ongoingEmbassyConstructions = Array.isArray(countryDetail.ongoingEmbassyConstructions)
+            ? countryDetail.ongoingEmbassyConstructions
+            : [];
+        const hasEmbassyOrConstruction = (partnerCountry: string) =>
+            playerHasEmbassyWith(partnerCountry, playerEmbassies, playerCountryName, removedEmbassies) ||
+            ongoingEmbassyConstructions.some((construction: unknown) => {
+                if (!construction || typeof construction !== 'object') return false;
+                const targetCountry = (construction as { targetCountry?: unknown }).targetCountry;
+                return typeof targetCountry === 'string' && areSameWarCountry(targetCountry, partnerCountry);
+            });
+
+        const staleInboxIds = notifications.flatMap(notification => {
+            const embassyNotification = notification as NotificationMessage & {
+                tradeType?: string;
+                partnerCountry?: string;
+            };
+            return embassyNotification.tradeType === 'penawaran_kedutaan_besar' &&
+                typeof embassyNotification.partnerCountry === 'string' &&
+            hasEmbassyOrConstruction(embassyNotification.partnerCountry)
+                ? [notification.id]
+                : [];
+        });
+        if (staleInboxIds.length > 0) {
+            const staleIdSet = new Set(staleInboxIds);
+            setNotifications(previous => previous.filter(notification => !staleIdSet.has(notification.id)));
+        }
+
+        const pendingNotifications: unknown[] = Array.isArray(countryDetail.pending_notifications)
+            ? countryDetail.pending_notifications as unknown[]
+            : [];
+        const nextPendingNotifications = pendingNotifications.filter(notification => {
+            if (!notification || typeof notification !== 'object') return true;
+            const embassyNotification = notification as {
+                tradeType?: unknown;
+                partnerCountry?: unknown;
+            };
+            return embassyNotification.tradeType !== 'penawaran_kedutaan_besar' ||
+                typeof embassyNotification.partnerCountry !== 'string' ||
+            !hasEmbassyOrConstruction(embassyNotification.partnerCountry);
+        });
+        if (nextPendingNotifications.length !== pendingNotifications.length) {
+            setCountryDetail((previous: Record<string, unknown> | null) => previous
+                ? { ...previous, pending_notifications: nextPendingNotifications }
+                : previous);
+        }
+    }, [countryDetail, notifications, setCountryDetail, setNotifications]);
+
     useEffect(() => {
         const quotaDate = dailyQuotaRef.current.date;
         const quota = quotaDate === simulationDateString
@@ -4949,8 +5082,12 @@ export default function MapPage() {
 
     const lastProcessedNotificationMonthRef = useRef<string | null>(null);
     const lastProcessedNotificationDateRef = useRef<string | null>(null);
+    const diplomaticOfferStateRef = useRef<{
+        playerCountry: string;
+        state: DiplomaticOfferState;
+    } | null>(null);
 
-    // --- MONTHLY NOTIFICATIONS GENERATOR (25% CHANCE PER BULAN ~ 3-5 EVENT / TAHUN) ---
+    // --- DAILY NOTIFICATIONS GENERATOR (diplomatic offers roll once per game month) ---
     useEffect(() => {
         if (!currentDate || !countryDetail) return;
 
@@ -4991,7 +5128,7 @@ export default function MapPage() {
             lastProcessedNotificationMonthRef.current = currentDateStr;
             lastProcessedNotificationDateRef.current = currentDateStr;
 
-            const userCountryName = countryDetail.country || countryDetail.nama || "Indonesia";
+            const userCountryName = getPlayerCountryIdentity(countryDetail);
             let worldNewsResult;
             try {
                 worldNewsResult = await generateWorldNewsEventsInRust(
@@ -5052,6 +5189,10 @@ export default function MapPage() {
                 'Korea Selatan', 'Australia', 'Rusia', 'Arab Saudi', 'Kanada', 'Brasil',
                 'India', 'Turki', 'Meksiko', 'Singapura', 'Malaysia', 'Thailand', 'Vietnam'
             ];
+            const embassyCandidatePool = Array.from(new Set(
+                COUNTRIES_DATA.map(country => country.country.trim())
+                    .filter(country => country && !areSameWarCountry(country, userCountryName))
+            ));
 
             const staticEmbassyPartners = getEmbassiesForCountry(userCountryName);
             const activeEmbassies = Array.from(new Set([
@@ -5059,56 +5200,29 @@ export default function MapPage() {
                 ...playerEmbassies.map((e: any) => typeof e === 'string' ? e : e.mitra || e.nama_negara || '')
             ])).filter(Boolean);
 
-            const embassyPartnerPool = activeEmbassies.length > 0 ? activeEmbassies : internationalPool;
-
             const newNotifsToAdd: any[] = [];
+            let monthlyOfferStateForSave: DiplomaticOfferState | null = null;
 
             // 1. Penawaran Transaksi Ekspor / Impor (8% daily chance)
-            if (Math.random() < 0.08) {
-                const partnerName = allTradePartners.length > 0
-                    ? allTradePartners[Math.floor(Math.random() * allTradePartners.length)]
-                    : internationalPool[Math.floor(Math.random() * internationalPool.length)];
-                const premiumProducts = ["uranium", "pabrik_semikonduktor", "logam_tanah_jarang", "pabrik_mesin", "pabrik_besi", "litium"];
-                const productKey = premiumProducts[Math.floor(Math.random() * premiumProducts.length)];
-                const quantity = Math.floor(Math.random() * 300) + 20;
-                const prices: Record<string, number> = {
-                    uranium: 8000, pabrik_semikonduktor: 4000, logam_tanah_jarang: 5000, pabrik_mesin: 10000, pabrik_besi: 10000, litium: 3000
-                };
-                const basePrice = prices[productKey] || 100;
-                const pricePerUnit = Math.round(basePrice * (0.85 + Math.random() * 0.3) * 100) / 100;
+            const transactionPartnerPool = allTradePartners.length > 0 ? allTradePartners : internationalPool;
+            if (transactionPartnerPool.length > 0 && Math.random() < 0.08) {
+                const partnerName = transactionPartnerPool[Math.floor(Math.random() * transactionPartnerPool.length)];
+                if (!isDiplomacyBlockedWithCountry(partnerName)) {
+                    const premiumProducts = ["uranium", "pabrik_semikonduktor", "logam_tanah_jarang", "pabrik_mesin", "pabrik_besi", "litium"];
+                    const productKey = premiumProducts[Math.floor(Math.random() * premiumProducts.length)];
+                    const quantity = Math.floor(Math.random() * 300) + 20;
+                    const prices: Record<string, number> = {
+                        uranium: 8000, pabrik_semikonduktor: 4000, logam_tanah_jarang: 5000, pabrik_mesin: 10000, pabrik_besi: 10000, litium: 3000
+                    };
+                    const basePrice = prices[productKey] || 100;
+                    const pricePerUnit = Math.round(basePrice * (0.85 + Math.random() * 0.3) * 100) / 100;
 
-                if (Math.random() > 0.5) {
-                    newNotifsToAdd.push(generateAITradeJualNotification(partnerName, productKey, quantity, pricePerUnit, currentDateStr));
-                } else {
-                    newNotifsToAdd.push(generateAITradeBeliNotification(partnerName, productKey, quantity, pricePerUnit, currentDateStr));
+                    if (Math.random() > 0.5) {
+                        newNotifsToAdd.push(generateAITradeJualNotification(partnerName, productKey, quantity, pricePerUnit, currentDateStr));
+                    } else {
+                        newNotifsToAdd.push(generateAITradeBeliNotification(partnerName, productKey, quantity, pricePerUnit, currentDateStr));
+                    }
                 }
-            }
-
-            // 2. Penawaran Kedutaan Besar (6% daily chance)
-            if (Math.random() < 0.06) {
-                const embassyNotif = checkAndGenerateEmbassyOffers(
-                    userCountryName,
-                    notifications,
-                    currentDateStr,
-                    true,
-                    playerEmbassies,
-                    removedEmbassies
-                );
-                if (embassyNotif) {
-                    newNotifsToAdd.push(embassyNotif);
-                } else {
-                    const randomPartner = internationalPool[Math.floor(Math.random() * internationalPool.length)];
-                    newNotifsToAdd.push(createEmbassyOfferNotification(randomPartner, userCountryName, currentDateStr));
-                }
-            }
-
-            // 3. Penawaran Hubungan Dagang Bilateral (7% daily chance)
-            if (Math.random() < 0.07) {
-                const candidateTradePool = (activeEmbassies.length > 0 && Math.random() < 0.6)
-                    ? activeEmbassies
-                    : internationalPool;
-                const randomPartner = candidateTradePool[Math.floor(Math.random() * candidateTradePool.length)];
-                newNotifsToAdd.push(generateTradeRelationOfferNotification(randomPartner, userCountryName, currentDateStr));
             }
 
             // 🎲 RANDOMISASI BENCANA ALAM & WABAH (Sangat Tidak Terduga & Sulit Ditebak)
@@ -5549,23 +5663,182 @@ export default function MapPage() {
             ])).filter(c => c && c.trim().toLowerCase() !== userCountryName.trim().toLowerCase());
             const effectiveDiplomacyPool = diplomacyCandidatePool.length > 0 ? diplomacyCandidatePool : internationalPool;
 
-            // 5B. Penawaran Pakta Non-Agresi Bilateral (6% daily chance)
-            if (Math.random() < 0.06) {
-                const randomPartner = effectiveDiplomacyPool[Math.floor(Math.random() * effectiveDiplomacyPool.length)];
-                newNotifsToAdd.push(generateNonAggressionOfferNotification(randomPartner, userCountryName, currentDateStr));
+            const offerMonth = currentDateStr.slice(0, 7);
+            const normalizedPlayerCountry = userCountryName.trim().toLowerCase();
+            const currentOfferStateRef = diplomaticOfferStateRef.current;
+            const isSamePlayer = currentOfferStateRef !== null &&
+                currentOfferStateRef.playerCountry === normalizedPlayerCountry;
+            const savedOfferState = isSamePlayer
+                ? currentOfferStateRef.state
+                : normalizeDiplomaticOfferState(countryDetail.diplomaticOfferState);
+            if (!isSamePlayer) {
+                diplomaticOfferStateRef.current = {
+                    playerCountry: normalizedPlayerCountry,
+                    state: savedOfferState,
+                };
             }
 
-            // 5C. Peluang dasar 35% per hari/bulan jika ada riset/relasi baik Aliansi Pertahanan (8% daily roll)
-            const defenseAllianceOfferChance = getDefenseAllianceOfferChancePercent(countryDetail);
-            if (Math.random() < 0.08 || (Math.random() * 100 < defenseAllianceOfferChance && Math.random() < 0.15)) {
-                const randomPartner = effectiveDiplomacyPool[Math.floor(Math.random() * effectiveDiplomacyPool.length)];
-                newNotifsToAdd.push(generateDefenseAllianceOfferNotification(randomPartner, userCountryName, currentDateStr));
-            }
+            if (savedOfferState.lastRollMonth !== offerMonth && savedOfferState.lastOfferMonth !== offerMonth) {
+                const tradeCandidatePool = activeEmbassies.length > 0 && Math.random() < 0.6
+                    ? activeEmbassies
+                    : internationalPool;
+                const toOfferCandidates = (countries: readonly string[]): DiplomaticOfferCandidate[] =>
+                    Array.from(new Set(countries))
+                        .filter(country => country && country.trim().toLowerCase() !== normalizedPlayerCountry)
+                        .map(country => ({
+                            countryName: country,
+                            relationScore: getRelationValue(userCountryName, country, currentDateStr),
+                        }));
+                const pendingKindByTradeType: Record<string, DiplomaticOfferKind> = {
+                    penawaran_hubungan_dagang: "trade-agreement",
+                    penawaran_pakta_non_agresi: "non-aggression",
+                    penawaran_kontrak_penelitian: "research-contract",
+                    penawaran_aliansi_pertahanan: "defense-alliance",
+                };
+                const persistedPendingNotifications = Array.isArray(countryDetail.pending_notifications)
+                    ? countryDetail.pending_notifications
+                    : [];
+                const pendingOffers: PendingDiplomaticOffer[] = [
+                    ...notifications,
+                    ...persistedPendingNotifications,
+                ].flatMap(notification => {
+                    if (!notification || typeof notification !== "object") return [];
+                    const offerNotification = notification as {
+                        tradeType?: unknown;
+                        partnerCountry?: unknown;
+                        isHandled?: unknown;
+                        status?: unknown;
+                    };
+                    const tradeType = typeof offerNotification.tradeType === "string"
+                        ? offerNotification.tradeType
+                        : "";
+                    const kind = tradeType
+                        ? pendingKindByTradeType[tradeType]
+                        : undefined;
+                    if (
+                        !kind ||
+                        typeof offerNotification.partnerCountry !== "string" ||
+                        offerNotification.isHandled ||
+                        offerNotification.status === "accepted" ||
+                        offerNotification.status === "rejected"
+                    ) return [];
+                    return [{ kind, countryName: offerNotification.partnerCountry }];
+                });
+                const pendingEmbassyOffers = [
+                    ...notifications,
+                    ...persistedPendingNotifications,
+                ].filter(notification => {
+                    if (!notification || typeof notification !== "object") return false;
+                    const offerNotification = notification as {
+                        tradeType?: unknown;
+                        partnerCountry?: unknown;
+                        isHandled?: unknown;
+                        status?: unknown;
+                    };
+                    return offerNotification.tradeType === "penawaran_kedutaan_besar" &&
+                        typeof offerNotification.partnerCountry === "string" &&
+                        !offerNotification.isHandled &&
+                        offerNotification.status !== "accepted" &&
+                        offerNotification.status !== "rejected";
+                });
+                const diplomacyBlocked = isCountryUnderEconomicEmbargo(userCountryName);
+                const diplomacyCountryPool = Array.from(new Set([
+                    ...internationalPool,
+                    ...embassyCandidatePool,
+                    ...activeEmbassies,
+                    ...allTradePartners,
+                ]));
+                const monthlyAttackRequests = getRequestedAttackRequests();
+                const blockedCountryNames = diplomacyCountryPool.filter(country =>
+                    isDiplomaticInteractionBlocked({
+                        playerUnderEmbargo: false,
+                        partnerUnderEmbargo: isCountryUnderEconomicEmbargo(country),
+                        bilateralWar: isBilateralWarWithCountry(country, monthlyAttackRequests),
+                    })
+                );
+                const ongoingEmbassyConstructions = Array.isArray(countryDetail.ongoingEmbassyConstructions)
+                    ? countryDetail.ongoingEmbassyConstructions
+                    : [];
+                const embassyCandidates: EmbassyOfferCandidate[] = embassyCandidatePool.map(country => ({
+                    countryName: country,
+                    relationScore: getRelationValue(userCountryName, country, currentDateStr),
+                    hasEmbassy: playerHasEmbassyWith(country, playerEmbassies, userCountryName, removedEmbassies),
+                    hasPendingOffer: pendingEmbassyOffers.some(notification => {
+                        const partnerCountry = (notification as { partnerCountry?: unknown }).partnerCountry;
+                        return typeof partnerCountry === "string" &&
+                            areSameWarCountry(partnerCountry, country);
+                    }),
+                    hasOngoingConstruction: ongoingEmbassyConstructions.some((construction: unknown) => {
+                        if (!construction || typeof construction !== "object") return false;
+                        const targetCountry = (construction as { targetCountry?: unknown }).targetCountry;
+                        return typeof targetCountry === "string" &&
+                            areSameWarCountry(targetCountry, country);
+                    }),
+                }));
+                const offerResult = rollMonthlyOffer({
+                    month: offerMonth,
+                    state: savedOfferState,
+                    candidatesByType: {
+                        "trade-agreement": toOfferCandidates(tradeCandidatePool),
+                        "non-aggression": toOfferCandidates(effectiveDiplomacyPool),
+                        "research-contract": toOfferCandidates(effectiveDiplomacyPool)
+                            .filter(candidate => candidate.relationScore >= DIPLOMATIC_OFFER_CONFIG.minimumGoodRelation),
+                        "defense-alliance": toOfferCandidates(diplomacyCandidatePool),
+                    },
+                    embassyCandidates,
+                    pendingOffers,
+                    researchBonusPercent: getDiplomaticOfferResearchBonuses(countryDetail),
+                    diplomacyBlocked,
+                    blockedCountryNames,
+                });
+                monthlyOfferStateForSave = offerResult.state;
+                diplomaticOfferStateRef.current = {
+                    playerCountry: normalizedPlayerCountry,
+                    state: offerResult.state,
+                };
+                setCountryDetail((previous: Record<string, unknown> | null) => previous
+                    ? { ...previous, diplomaticOfferState: offerResult.state }
+                    : previous);
 
-            // 5D. Penawaran Kontrak Penelitian Joint-R&D (6% daily chance)
-            if (Math.random() < 0.06) {
-                const randomPartner = effectiveDiplomacyPool[Math.floor(Math.random() * effectiveDiplomacyPool.length)];
-                newNotifsToAdd.push(generateResearchContractOfferNotification(randomPartner, userCountryName, currentDateStr));
+                if (offerResult.offer) {
+                    switch (offerResult.offer.kind) {
+                        case "trade-agreement":
+                            newNotifsToAdd.push(generateTradeRelationOfferNotification(
+                                offerResult.offer.countryName,
+                                userCountryName,
+                                currentDateStr
+                            ));
+                            break;
+                        case "non-aggression":
+                            newNotifsToAdd.push(generateNonAggressionOfferNotification(
+                                offerResult.offer.countryName,
+                                userCountryName,
+                                currentDateStr
+                            ));
+                            break;
+                        case "research-contract":
+                            newNotifsToAdd.push(generateResearchContractOfferNotification(
+                                offerResult.offer.countryName,
+                                userCountryName,
+                                currentDateStr
+                            ));
+                            break;
+                        case "defense-alliance":
+                            newNotifsToAdd.push(generateDefenseAllianceOfferNotification(
+                                offerResult.offer.countryName,
+                                userCountryName,
+                                currentDateStr
+                            ));
+                            break;
+                        case "embassy":
+                            newNotifsToAdd.push(createEmbassyOfferNotification(
+                                offerResult.offer.countryName,
+                                userCountryName,
+                                currentDateStr
+                            ));
+                            break;
+                    }
+                }
             }
 
             // 5E. Notifikasi Hubungan Panas / Memburuk (Setiap bulan jika skor hubungan <= 20, 15, 10, 5, 1)
@@ -5891,11 +6164,22 @@ export default function MapPage() {
             const generalCandidates = newNotifsToAdd.filter(n => !n || !DIPLOMATIC_TRADE_TYPES.has(String(n.tradeType)));
 
             const MAX_GENERATOR_CAP = 3;
-            let cappedNotifs: any[] = [];
+            const cappedNotifs: Array<NotificationMessage & { tradeType?: string }> = [];
 
             // Pastikan jika ada penawaran diplomasi/dagang yang lolos undian harian, berikan 1 slot prioritas
             if (diplomaticCandidates.length > 0) {
-                const pickedDiplomacy = diplomaticCandidates[Math.floor(Math.random() * diplomaticCandidates.length)];
+                const monthlyTreatyOffer = diplomaticCandidates.find(notification =>
+                    [
+                        'penawaran_hubungan_dagang',
+                        'penawaran_pakta_non_agresi',
+                        'penawaran_kontrak_penelitian',
+                        'penawaran_aliansi_pertahanan',
+                    ].includes(String(notification.tradeType))
+                );
+                const pickedDiplomacy = diplomaticCandidates.find(notification =>
+                    String(notification.tradeType) === 'penawaran_kedutaan_besar'
+                ) || monthlyTreatyOffer
+                    || diplomaticCandidates[Math.floor(Math.random() * diplomaticCandidates.length)];
                 cappedNotifs.push(pickedDiplomacy);
             }
 
@@ -5970,7 +6254,10 @@ export default function MapPage() {
                         ? { invasion_schedule: (countryDetail as any).__invasionSchedulePending }
                         : {}),
                     world_news_country_cursor: worldNewsResult.nextCursor,
-                    last_notified_listrik_step: currentListrikStep
+                    last_notified_listrik_step: currentListrikStep,
+                    ...(monthlyOfferStateForSave
+                        ? { diplomaticOfferState: monthlyOfferStateForSave }
+                        : {})
                 };
                 const marketStartDay = Math.floor(Date.UTC(
                     currentDate.getFullYear(),
@@ -6067,7 +6354,15 @@ export default function MapPage() {
             window.removeEventListener('neosantara:map-pan-ended', scheduleNotificationGenerator);
             window.removeEventListener('neosantara:time-controller-idle', scheduleNotificationGenerator);
         };
-    }, [currentDate, countryDetail, notifications, metadata, setCountryDetail]);
+    }, [
+        currentDate,
+        countryDetail,
+        notifications,
+        metadata,
+        setCountryDetail,
+        isBilateralWarWithCountry,
+        isDiplomacyBlockedWithCountry,
+    ]);
 
     const nonModalMenus = [
         "",
@@ -8928,6 +9223,89 @@ export default function MapPage() {
                 }}
                 onActionClick={(notif, actionType) => {
                     const tNotif = notif as any;
+                    const diplomaticOfferTypes = [
+                        'jual',
+                        'beli',
+                        'penawaran_kedutaan_besar',
+                        'penawaran_hubungan_dagang',
+                        'penawaran_pakta_non_agresi',
+                        'penawaran_aliansi_pertahanan',
+                        'penawaran_kontrak_penelitian',
+                    ];
+                    const diplomaticPartner = typeof tNotif.partnerCountry === 'string'
+                        ? tNotif.partnerCountry
+                        : typeof tNotif.partnerName === 'string'
+                            ? tNotif.partnerName
+                            : '';
+                    if (
+                        diplomaticOfferTypes.includes(String(tNotif.tradeType)) &&
+                        diplomaticPartner &&
+                        isDiplomacyBlockedWithCountry(diplomaticPartner)
+                    ) {
+                        setInboxModalOpen(false);
+                        setResultModal({
+                            isOpen: true,
+                            title: 'Aksi Diplomatik Diblokir',
+                            message: `Tawaran dengan ${diplomaticPartner} tidak dapat diproses selama Perang Bilateral atau Embargo Ekonomi PBB masih aktif.`,
+                            type: 'error',
+                            persistent: true,
+                        });
+                        return;
+                    }
+                    const embassyConstructions = Array.isArray(countryDetail?.ongoingEmbassyConstructions)
+                        ? countryDetail.ongoingEmbassyConstructions
+                        : [];
+                    const embassyAlreadyPresentOrBuilding = diplomaticPartner && (
+                        playerHasEmbassyWith(
+                            diplomaticPartner,
+                            Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [],
+                            getPlayerCountryIdentity(countryDetail),
+                            Array.isArray(countryDetail?.removedEmbassies)
+                                ? countryDetail.removedEmbassies.filter((country: unknown): country is string => typeof country === 'string')
+                                : []
+                        ) ||
+                        embassyConstructions.some((construction: unknown) => {
+                            if (!construction || typeof construction !== 'object') return false;
+                            const targetCountry = (construction as { targetCountry?: unknown }).targetCountry;
+                            return typeof targetCountry === 'string' &&
+                                areSameWarCountry(targetCountry, diplomaticPartner);
+                        })
+                    );
+                    if (
+                        tNotif.tradeType === 'penawaran_kedutaan_besar' &&
+                        diplomaticPartner &&
+                        getRelationValue(
+                            getPlayerCountryIdentity(countryDetail),
+                            diplomaticPartner,
+                            currentDate
+                        ) < DIPLOMATIC_OFFER_CONFIG.embassy.aiOfferBuildMinimumRelation
+                    ) {
+                        setInboxModalOpen(false);
+                        setResultModal({
+                            isOpen: true,
+                            title: 'Tawaran Kedutaan Tidak Lagi Memenuhi Syarat',
+                            message: `Hubungan dengan ${diplomaticPartner} harus minimal ${DIPLOMATIC_OFFER_CONFIG.embassy.aiOfferBuildMinimumRelation} untuk menerima tawaran pembangunan Kedutaan.`,
+                            type: 'error',
+                            persistent: true,
+                        });
+                        return;
+                    }
+                    if (
+                        tNotif.tradeType === 'penawaran_kedutaan_besar' &&
+                        diplomaticPartner &&
+                        embassyAlreadyPresentOrBuilding
+                    ) {
+                        setNotifications(previous => previous.filter(n => n.id !== notif.id));
+                        setInboxModalOpen(false);
+                        setResultModal({
+                            isOpen: true,
+                            title: 'Kedutaan Sudah Tersedia',
+                            message: `Kedutaan dengan ${diplomaticPartner} sudah aktif atau sedang dibangun, sehingga tawaran yang tertunda tidak lagi diperlukan.`,
+                            type: 'info',
+                            persistent: true,
+                        });
+                        return;
+                    }
 
                     // Intersep aksi demonstrasi rakyat jika ada
                     if (tNotif.tradeType === 'demonstrasi_rakyat') {
@@ -9050,7 +9428,7 @@ export default function MapPage() {
                         }
 
                         const budget = Number(countryDetail?.anggaran || 0);
-                        const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || 'Indonesia';
+                        const playerCountryName = getPlayerCountryIdentity(countryDetail);
                         if (tNotif.partnerName) {
                             setRelationModifier(playerCountryName, tNotif.partnerName, 5);
                         }
@@ -9132,7 +9510,7 @@ export default function MapPage() {
                         }
 
                         const myStock = Number(countryDetail?.[tNotif.productKey] || 0);
-                        const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || 'Indonesia';
+                        const playerCountryName = getPlayerCountryIdentity(countryDetail);
                         if (tNotif.partnerName) {
                             setRelationModifier(playerCountryName, tNotif.partnerName, 5);
                         }
@@ -9165,7 +9543,7 @@ export default function MapPage() {
 
                     if (tNotif.tradeType === 'penawaran_kedutaan_besar') {
                         const partner = tNotif.partnerCountry;
-                        const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || 'Indonesia';
+                        const playerCountryName = getPlayerCountryIdentity(countryDetail);
                         if (partner) {
                             setRelationModifier(playerCountryName, partner, 5);
                         }
@@ -9180,7 +9558,7 @@ export default function MapPage() {
 
                     if (tNotif.tradeType === 'penawaran_hubungan_dagang') {
                         const partner = tNotif.partnerCountry;
-                        const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || 'Indonesia';
+                        const playerCountryName = getPlayerCountryIdentity(countryDetail);
 
                         // ✅ CHECK: Apakah negara menganut sistem tertutup (skor sentralisasi >= 85)?
                         const userTradeAccess = calculateTradeAccess(
@@ -9254,7 +9632,7 @@ export default function MapPage() {
 
                     if (tNotif.tradeType === 'penawaran_pakta_non_agresi') {
                         const partner = tNotif.partnerCountry;
-                        const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || 'Indonesia';
+                        const playerCountryName = getPlayerCountryIdentity(countryDetail);
                         const playerEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
                         const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
                         const removedTradePartners = Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [];
@@ -9312,7 +9690,7 @@ export default function MapPage() {
 
                     if (tNotif.tradeType === 'penawaran_aliansi_pertahanan') {
                         const partner = tNotif.partnerCountry;
-                        const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || 'Indonesia';
+                        const playerCountryName = getPlayerCountryIdentity(countryDetail);
                         const playerEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
                         const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
                         const removedTradePartners = Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [];
@@ -9353,7 +9731,7 @@ export default function MapPage() {
 
                     if (tNotif.tradeType === 'penawaran_kontrak_penelitian') {
                         const partner = tNotif.partnerCountry;
-                        const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || 'Indonesia';
+                        const playerCountryName = getPlayerCountryIdentity(countryDetail);
                         const playerEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
                         const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
                         const removedTradePartners = Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [];
@@ -9605,7 +9983,7 @@ export default function MapPage() {
                 }}
                 onRedirectClick={(notif) => {
                     const tNotif = notif as any;
-                    const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || 'Indonesia';
+                    const playerCountryName = getPlayerCountryIdentity(countryDetail);
                     const offerPartner = tNotif.partnerCountry || tNotif.partnerName;
 
                     if (tNotif.tradeType === 'penawaran_pakta_non_agresi' || tNotif.tradeType === 'penawaran_aliansi_pertahanan' || tNotif.tradeType === 'penawaran_kontrak_penelitian') {
@@ -9626,6 +10004,29 @@ export default function MapPage() {
                     if (internationalOfferTypes.includes(tNotif.tradeType)) {
                         if (offerPartner) {
                             setRelationModifier(playerCountryName, offerPartner, -2);
+                        }
+                        if (
+                            tNotif.tradeType === 'penawaran_kedutaan_besar' &&
+                            typeof offerPartner === 'string'
+                        ) {
+                            const normalizedPlayerCountry = playerCountryName.trim().toLowerCase();
+                            const rejectionMonth = simulationDateString.slice(0, 7);
+                            setCountryDetail((previous: Record<string, unknown> | null) => {
+                                if (!previous) return previous;
+                                const previousState = diplomaticOfferStateRef.current?.playerCountry === normalizedPlayerCountry
+                                    ? diplomaticOfferStateRef.current.state
+                                    : normalizeDiplomaticOfferState(previous.diplomaticOfferState);
+                                const nextState = recordEmbassyOfferRejection(
+                                    previousState,
+                                    offerPartner,
+                                    rejectionMonth
+                                );
+                                diplomaticOfferStateRef.current = {
+                                    playerCountry: normalizedPlayerCountry,
+                                    state: nextState,
+                                };
+                                return { ...previous, diplomaticOfferState: nextState };
+                            });
                         }
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
                         setInboxModalOpen(false);
@@ -10670,6 +11071,16 @@ export default function MapPage() {
                 playerNetBalanceAdjustment={playerNetBalanceAdjustment}
                 adjustPlayerNetBalance={(delta: number) => setPlayerNetBalanceAdjustment((prev) => prev + delta)}
                 autoBuildEmbassy={autoBuildEmbassyState}
+                isBilateralWar={countryDetailModalName
+                    ? isBilateralWarWithCountry(countryDetailModalName)
+                    : false}
+                onDiplomacyBlocked={() => setResultModal({
+                    isOpen: true,
+                    title: 'Aksi Diplomatik Diblokir',
+                    message: 'Aksi diplomatik tidak dapat dilakukan selama Perang Bilateral atau Embargo Ekonomi PBB masih aktif.',
+                    type: 'error',
+                    persistent: true,
+                })}
                 initialDevelopingBuildingKey={
                     aiConstructionNavigation &&
                         aiConstructionNavigation.countryName.toLowerCase() === countryDetailModalName?.toLowerCase()

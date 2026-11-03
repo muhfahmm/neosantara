@@ -48,6 +48,8 @@ interface CountryDetailModalProps {
   playerNetBalanceAdjustment?: number;
   adjustPlayerNetBalance?: (delta: number) => void;
   autoBuildEmbassy?: boolean;
+  isBilateralWar?: boolean;
+  onDiplomacyBlocked?: () => void;
   initialDevelopingBuildingKey?: string;
   initialDevelopingTab?: string;
 }
@@ -120,6 +122,8 @@ export function CountryDetailModal({
   playerNetBalanceAdjustment = 0,
   adjustPlayerNetBalance,
   autoBuildEmbassy,
+  isBilateralWar = false,
+  onDiplomacyBlocked,
   initialDevelopingBuildingKey,
   initialDevelopingTab,
 }: CountryDetailModalProps) {
@@ -996,6 +1000,8 @@ export function CountryDetailModal({
                 adjustNetBalance={adjustPlayerNetBalance}
                 currentDate={currentDate}
                 autoBuildEmbassy={autoBuildEmbassy}
+                isBilateralWar={isBilateralWar}
+                onDiplomacyBlocked={onDiplomacyBlocked}
                 isOccupiedProvince={isPlayerOccupiedProvince}
                 isAnnexedTerritory={isAnnexedTerritory && !hasForeignTerritoryOwner}
                 occupyingCountry={occupyingCountry}

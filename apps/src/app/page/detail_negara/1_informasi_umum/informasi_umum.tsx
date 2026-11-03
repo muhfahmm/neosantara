@@ -31,8 +31,15 @@ import ProvinsiInformasiUmum from './provinsi_logic/ProvinsiInformasiUmum';
 import type { NonAggressionPactPeriod } from '../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 import { addRelationSanctionModifier, getRelationValue } from '../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 import {
+  DIPLOMATIC_OFFER_CONFIG,
+  getPlayerCountryIdentity,
+  isEmbassyBuildRelationAllowed,
+  isDiplomaticInteractionBlocked,
+} from '@/app/page/map_system/diplomaticOfferLogic';
+import {
   addEconomicSanction,
   removeEconomicSanctions,
+  isCountryUnderEconomicEmbargo,
   ECONOMIC_SANCTION_REDUCTION_PER_ACTION,
 } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 
@@ -55,6 +62,8 @@ interface InformasiUmumProps {
 
   currentDate?: Date;
   autoBuildEmbassy?: boolean;
+  isBilateralWar?: boolean;
+  onDiplomacyBlocked?: () => void;
   isOccupiedProvince?: boolean;
   isAnnexedTerritory?: boolean;
   occupyingCountry?: string;
@@ -95,8 +104,8 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
   );
 };
 
-export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, targetNetBalance, adjustNetBalance, currentDate, autoBuildEmbassy, isOccupiedProvince, isAnnexedTerritory, occupyingCountry, isPbbOccupied, canLiberatePbbOccupation, playerReligion, targetReligion, updateTargetReligion, playerIdeology, targetIdeology, updateTargetIdeology, provinceBudget, provinceNetBalance, provinceTension, provinceData, onCloseDetailModal, onActionModalStateChange }: InformasiUmumProps) {
-  const playerCountryName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name || null;
+export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, targetNetBalance, adjustNetBalance, currentDate, autoBuildEmbassy, isBilateralWar = false, onDiplomacyBlocked, isOccupiedProvince, isAnnexedTerritory, occupyingCountry, isPbbOccupied, canLiberatePbbOccupation, playerReligion, targetReligion, updateTargetReligion, playerIdeology, targetIdeology, updateTargetIdeology, provinceBudget, provinceNetBalance, provinceTension, provinceData, onCloseDetailModal, onActionModalStateChange }: InformasiUmumProps) {
+  const playerCountryName = getPlayerCountryIdentity(playerCountryDetail, '');
   const [isDestroyModalOpen, setIsDestroyModalOpen] = useState(false);
   const [isBuildEmbassyModalOpen, setIsBuildEmbassyModalOpen] = useState(false);
   const [isEmbassyRelationRequirementModalOpen, setIsEmbassyRelationRequirementModalOpen] = useState(false);
@@ -247,12 +256,26 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   const addedTradePartners = Array.isArray(playerCountryDetail?.addedTradePartners) ? playerCountryDetail.addedTradePartners : [];
 
   const embassyCost = getEffectiveEmbassyCost(10, playerCountryDetail);
-  const minimumEmbassyRelation = 65;
+  const embassyBuildInitiator: 'AI' | 'USER' = autoBuildEmbassy ? 'AI' : 'USER';
+  const minimumEmbassyRelation = embassyBuildInitiator === 'AI'
+    ? DIPLOMATIC_OFFER_CONFIG.embassy.aiOfferBuildMinimumRelation
+    : DIPLOMATIC_OFFER_CONFIG.embassy.userBuildMinimumRelation;
   const embassyRelation = getRelationValue(
     playerCountryName || 'Indonesia',
     countryName,
     currentDate || undefined
   );
+  const isDiplomacyBlockedNow = () => isDiplomaticInteractionBlocked({
+    playerUnderEmbargo: isCountryUnderEconomicEmbargo(playerCountryName || 'Indonesia'),
+    partnerUnderEmbargo: isCountryUnderEconomicEmbargo(countryName),
+    bilateralWar: isBilateralWar,
+  });
+  const isDiplomacyBlocked = isDiplomacyBlockedNow();
+  const blockDiplomaticAction = () => {
+    if (!isDiplomacyBlockedNow()) return false;
+    onDiplomacyBlocked?.();
+    return true;
+  };
   const tradeAcceptanceChance = getTradeAgreementAcceptanceChancePercent(
     embassyRelation,
     playerCountryDetail
@@ -338,7 +361,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
       const requestKey = `${playerCountryName || ''}:${countryName}`;
       if (autoBuildRequestRef.current !== requestKey) {
         autoBuildRequestRef.current = requestKey;
-        if (embassyRelation >= minimumEmbassyRelation) {
+        if (isEmbassyBuildRelationAllowed(embassyBuildInitiator, embassyRelation)) {
           if (onCloseDetailModal) onCloseDetailModal();
           openActionModal(setIsBuildEmbassyModalOpen);
         } else {
@@ -357,9 +380,10 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
 
   const handleEmbassyClick = () => {
     if (isAnnexedTerritory) return;
+    if (blockDiplomaticAction()) return;
     if (embassyActive) {
       openActionModal(setIsDestroyModalOpen);
-    } else if (embassyRelation < minimumEmbassyRelation) {
+    } else if (!isEmbassyBuildRelationAllowed(embassyBuildInitiator, embassyRelation)) {
       openActionModal(setIsEmbassyRelationRequirementModalOpen);
     } else {
       openActionModal(setIsBuildEmbassyModalOpen);
@@ -460,7 +484,8 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
                   : 'Bangun Kedutaan'
             }
             onClick={handleEmbassyClick}
-            disabled={isEmbassyBuilding}
+            disabled={isEmbassyBuilding || isDiplomacyBlocked}
+            title={isDiplomacyBlocked ? 'Aksi diplomatik diblokir selama perang bilateral atau embargo PBB.' : undefined}
             keepOpacity={isEmbassyBuilding}
             className={
               isEmbassyBuilding
@@ -476,11 +501,11 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
 
         <div className="relative min-w-0">
           {isPactRatifying && pactEndDate && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{formatBadgeDate(pactEndDate)}</div>}
-          <ActionButton icon={ShieldOff} label={isPactRatifying ? 'Dalam Ratifikasi' : paktaIsActive ? 'Putus Pakta Non Agresi' : 'Pakta Non Agresi'} onClick={() => { paktaIsActive ? openActionModal(setIsDestroyPaktaOpen) : openActionModal(setIsPaktaModalOpen); }} disabled={!hasUsableEmbassy || isPactRatifying} keepOpacity={isPactRatifying} className={isPactRatifying ? inProgressBorderClass : paktaIsActive ? modernGreenBorderClass : undefined} iconClass={isPactRatifying ? 'text-amber-300' : paktaIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isPactRatifying ? 'text-amber-300' : paktaIsActive ? 'text-[#00FFAA]' : undefined} />
+          <ActionButton icon={ShieldOff} label={isPactRatifying ? 'Dalam Ratifikasi' : paktaIsActive ? 'Putus Pakta Non Agresi' : 'Pakta Non Agresi'} onClick={() => { paktaIsActive ? openActionModal(setIsDestroyPaktaOpen) : openActionModal(setIsPaktaModalOpen); }} disabled={!hasUsableEmbassy || isPactRatifying || isDiplomacyBlocked} keepOpacity={isPactRatifying} title={isDiplomacyBlocked ? 'Aksi diplomatik diblokir selama perang bilateral atau embargo PBB.' : undefined} className={isPactRatifying ? inProgressBorderClass : paktaIsActive ? modernGreenBorderClass : undefined} iconClass={isPactRatifying ? 'text-amber-300' : paktaIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isPactRatifying ? 'text-amber-300' : paktaIsActive ? 'text-[#00FFAA]' : undefined} />
         </div>
         <div className="relative min-w-0">
           {isAllianceRatifying && ratificationDate(allianceRatification) && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{ratificationDate(allianceRatification)}</div>}
-          <ActionButton icon={ShieldCheck} label={isAllianceRatifying ? 'Dalam Ratifikasi' : aliansiIsActive ? 'Putus Aliansi Pertahanan' : 'Aliansi Pertahanan'} onClick={() => { aliansiIsActive ? openActionModal(setIsDestroyAliansiOpen) : openActionModal(setIsAliansiModalOpen); }} disabled={!hasUsableEmbassy || isAllianceRatifying} keepOpacity={isAllianceRatifying} className={isAllianceRatifying ? inProgressBorderClass : aliansiIsActive ? modernGreenBorderClass : undefined} iconClass={isAllianceRatifying ? 'text-amber-300' : aliansiIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isAllianceRatifying ? 'text-amber-300' : aliansiIsActive ? 'text-[#00FFAA]' : undefined} />
+          <ActionButton icon={ShieldCheck} label={isAllianceRatifying ? 'Dalam Ratifikasi' : aliansiIsActive ? 'Putus Aliansi Pertahanan' : 'Aliansi Pertahanan'} onClick={() => { aliansiIsActive ? openActionModal(setIsDestroyAliansiOpen) : openActionModal(setIsAliansiModalOpen); }} disabled={!hasUsableEmbassy || isAllianceRatifying || isDiplomacyBlocked} keepOpacity={isAllianceRatifying} title={isDiplomacyBlocked ? 'Aksi diplomatik diblokir selama perang bilateral atau embargo PBB.' : undefined} className={isAllianceRatifying ? inProgressBorderClass : aliansiIsActive ? modernGreenBorderClass : undefined} iconClass={isAllianceRatifying ? 'text-amber-300' : aliansiIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isAllianceRatifying ? 'text-amber-300' : aliansiIsActive ? 'text-[#00FFAA]' : undefined} />
         </div>
 
         {/* PERBAIKAN: Tombol Perjanjian Dagang diubah menggunakan modernGreenBorderClass yang sama */}
@@ -497,9 +522,13 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
               }
             }}
             className={isTradeRatifying ? inProgressBorderClass : tradeIsActive ? modernGreenBorderClass : tradeClass}
-            disabled={!hasUsableEmbassy || isTradeRatifying || isTradeIdeologyRestricted}
+            disabled={!hasUsableEmbassy || isTradeRatifying || isTradeIdeologyRestricted || isDiplomacyBlocked}
             keepOpacity={isTradeRatifying}
-            title={isTradeIdeologyRestricted ? 'Perjanjian dagang tidak tersedia untuk ideologi Komunisme atau Sosialisme.' : undefined}
+            title={isDiplomacyBlocked
+              ? 'Aksi diplomatik diblokir selama perang bilateral atau embargo PBB.'
+              : isTradeIdeologyRestricted
+                ? 'Perjanjian dagang tidak tersedia untuk ideologi Komunisme atau Sosialisme.'
+                : undefined}
             iconClass={isTradeRatifying ? 'text-amber-300' : tradeIsActive ? 'text-[#00FFAA]' : tradeIconClass}
             labelClass={isTradeRatifying ? 'text-amber-300' : tradeIsActive ? 'text-[#00FFAA]' : tradeLabelClass}
           />
@@ -507,7 +536,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
 
         <div className="relative min-w-0">
           {isResearchRatifying && ratificationDate(researchRatification) && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{ratificationDate(researchRatification)}</div>}
-          <ActionButton icon={FlaskConical} label={isResearchRatifying ? 'Dalam Ratifikasi' : kontrakIsActive ? 'Putus Kontrak Penelitian' : 'Kontrak Penelitian'} onClick={() => { kontrakIsActive ? openActionModal(setIsDestroyKontrakOpen) : openActionModal(setIsKontrakModalOpen); }} disabled={!hasUsableEmbassy || isResearchRatifying} keepOpacity={isResearchRatifying} className={isResearchRatifying ? inProgressBorderClass : kontrakIsActive ? modernGreenBorderClass : undefined} iconClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-[#00FFAA]' : undefined} />
+          <ActionButton icon={FlaskConical} label={isResearchRatifying ? 'Dalam Ratifikasi' : kontrakIsActive ? 'Putus Kontrak Penelitian' : 'Kontrak Penelitian'} onClick={() => { kontrakIsActive ? openActionModal(setIsDestroyKontrakOpen) : openActionModal(setIsKontrakModalOpen); }} disabled={!hasUsableEmbassy || isResearchRatifying || isDiplomacyBlocked} keepOpacity={isResearchRatifying} title={isDiplomacyBlocked ? 'Aksi diplomatik diblokir selama perang bilateral atau embargo PBB.' : undefined} className={isResearchRatifying ? inProgressBorderClass : kontrakIsActive ? modernGreenBorderClass : undefined} iconClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-[#00FFAA]' : undefined} />
         </div>
         <ActionButton icon={Sword} label="Kirim Pasukan" onClick={() => { openActionModal(setIsKirimPasukanModalOpen); }} disabled={!aliansiIsActive} />
         <ActionButton icon={Phone} label="Panggil Sekutu" onClick={() => { openActionModal(setIsPanggilSekutuModalOpen); }} disabled={!aliansiIsActive} />
@@ -549,6 +578,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         countryName={countryName}
         onClose={() => setIsDestroyModalOpen(false)}
         onConfirm={() => {
+          if (blockDiplomaticAction()) return;
           setEmbassyActive(false);
           setTradeActive(false);
           setPaktaActive(false);
@@ -631,7 +661,8 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         countryDetail={playerCountryDetail}
         onClose={() => setIsBuildEmbassyModalOpen(false)}
         onConfirm={() => {
-          if (embassyRelation < minimumEmbassyRelation) {
+          if (blockDiplomaticAction()) return;
+          if (!isEmbassyBuildRelationAllowed(embassyBuildInitiator, embassyRelation)) {
             setIsEmbassyRelationRequirementModalOpen(true);
             return;
           }
@@ -690,6 +721,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         countryName={countryName}
         onClose={() => setIsDestroyTradeModalOpen(false)}
         onConfirm={() => {
+          if (blockDiplomaticAction()) return;
           setTradeActive(false);
           if (setPlayerCountryDetail) {
             setPlayerCountryDetail((prev: any) => {
@@ -722,6 +754,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         chancePercent={tradeAcceptanceChance}
         onClose={() => setIsBuildTradeModalOpen(false)}
         onConfirm={() => {
+          if (blockDiplomaticAction()) return;
           if (Math.random() * 100 >= tradeAcceptanceChance) {
             if (setPlayerCountryDetail) {
               setPlayerCountryDetail((prev: any) => {
@@ -759,6 +792,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         chancePercent={nonAggressionPactAcceptanceChance}
         onClose={() => setIsPaktaModalOpen(false)}
         onConfirm={() => {
+          if (blockDiplomaticAction()) return;
           if (Math.random() * 100 >= nonAggressionPactAcceptanceChance) {
             if (setPlayerCountryDetail) {
               setPlayerCountryDetail((prev: Record<string, unknown> | null) => {
@@ -801,6 +835,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         countryName={countryName}
         onClose={() => setIsDestroyPaktaOpen(false)}
         onConfirm={() => {
+          if (blockDiplomaticAction()) return;
           setPaktaActive(false);
           if (setPlayerCountryDetail) {
             setPlayerCountryDetail((prev: Record<string, unknown> | null) => {
@@ -830,6 +865,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         countryName={countryName}
         onClose={() => setIsAliansiModalOpen(false)}
         onConfirm={() => {
+          if (blockDiplomaticAction()) return;
           setAliansiActive(false);
           startDiplomacyRatification('defense-alliance');
           console.log(`Ratifikasi aliansi pertahanan dengan ${countryName} dimulai.`);
@@ -841,6 +877,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         countryName={countryName}
         onClose={() => setIsDestroyAliansiOpen(false)}
         onConfirm={() => {
+          if (blockDiplomaticAction()) return;
           setAliansiActive(false);
           if (setPlayerCountryDetail) {
             setPlayerCountryDetail((prev: any) => withDiplomacyNotification({
@@ -857,6 +894,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         countryName={countryName}
         onClose={() => setIsKontrakModalOpen(false)}
         onConfirm={() => {
+          if (blockDiplomaticAction()) return;
           setKontrakActive(false);
           startDiplomacyRatification('research-contract');
           console.log(`Ratifikasi kontrak penelitian dengan ${countryName} dimulai.`);
@@ -868,6 +906,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         countryName={countryName}
         onClose={() => setIsDestroyKontrakOpen(false)}
         onConfirm={() => {
+          if (blockDiplomaticAction()) return;
           setKontrakActive(false);
           if (setPlayerCountryDetail) {
             setPlayerCountryDetail((prev: any) => withDiplomacyNotification({

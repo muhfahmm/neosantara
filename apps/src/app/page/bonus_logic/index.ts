@@ -330,8 +330,6 @@ export {
 
 export {
   ALIANSI_PERTAHANAN_RESEARCH_ID,
-  BASE_DEFENSE_ALLIANCE_OFFER_CHANCE_PERCENT,
-  getDefenseAllianceOfferChancePercent,
 } from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/3_Aliansi Pertahanan";
 
 export {

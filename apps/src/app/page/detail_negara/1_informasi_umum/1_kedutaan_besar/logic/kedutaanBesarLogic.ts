@@ -71,11 +71,14 @@ export const countryHasTradePartners = (
 export const playerHasEmbassyWith = (
   viewedCountryName?: string | null,
   playerEmbassies?: any[],
-  playerCountryName?: string | null
+  playerCountryName?: string | null,
+  removedEmbassies?: string[]
 ): boolean => {
   if (!viewedCountryName) return false;
   if (isAnnexedCountry(viewedCountryName)) return false;
   const normViewed = normalizeName(viewedCountryName);
+  if (Array.isArray(removedEmbassies) &&
+      removedEmbassies.some(country => normalizeName(country) === normViewed)) return false;
   const hasCustomEmbassy = Array.isArray(playerEmbassies) &&
     playerEmbassies.some((embassy) => normalizeName(embassy?.mitra) === normViewed);
   if (hasCustomEmbassy) return true;
