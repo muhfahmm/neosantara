@@ -415,6 +415,7 @@ export function spawnAIResolutionFromTrigger(
     duration?: string;
     productKey?: string;
     aiInvasionAttackChance?: number;
+    violationId?: string;
   },
   dateStr: string
 ): void {
@@ -460,7 +461,8 @@ export function spawnAIResolutionFromTrigger(
     lastProcessedDate: dateStr,
     notifiedDay1: true,
     notified10Days: false,
-    aiInvasionAttackChance: trigger.aiInvasionAttackChance
+    aiInvasionAttackChance: trigger.aiInvasionAttackChance,
+    violationId: trigger.violationId
   };
 
   saveActiveResolutions([newItem, ...items]);

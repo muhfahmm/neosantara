@@ -449,11 +449,11 @@ export function getInitialActiveSecurityCouncilItems(_userCountryName: string = 
  * Notifikasi inbox sudah dikirim oleh pemicu bulanan, jadi notifiedDay1 = true agar tidak dobel.
  */
 export function spawnAISecurityCouncilFromTrigger(
-  trigger: { proposerCountry: string; targetCountry: string; securityAction: string; duration?: string },
+  trigger: { proposerCountry: string; targetCountry: string; securityAction: string; duration?: string; violationId?: string },
   dateStr: string
 ): void {
   if (typeof window === 'undefined') return;
-  if (trigger.securityAction === 'military' && hasActiveGlobalWarBan()) return;
+  if (trigger.securityAction === 'military' && hasActiveGlobalWarBan() && !trigger.violationId) return;
   if (isCountryAnnexed(trigger.proposerCountry, getIsoForCountryName(trigger.proposerCountry))) return;
 
   const tmpl = SECURITY_TEMPLATES.find(t => t.type === trigger.securityAction) || SECURITY_TEMPLATES[0];
@@ -485,7 +485,8 @@ export function spawnAISecurityCouncilFromTrigger(
     createdAt: dateStr,
     lastProcessedDate: dateStr,
     notifiedDay1: true,
-    notified10Days: false
+    notified10Days: false,
+    violationId: trigger.violationId
   };
 
   saveActiveSecurityCouncilItems([newItem, ...items]);

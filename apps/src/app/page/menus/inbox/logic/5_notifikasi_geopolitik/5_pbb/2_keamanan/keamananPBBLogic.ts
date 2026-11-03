@@ -53,9 +53,12 @@ export function generateAIKeamananPBBNotification(
   proposerCountry: string,
   targetCountry: string,
   relationScore: number,
-  dateStr: string
+  dateStr: string,
+  forcedAction?: AIKeamananPBBNotification['securityAction']
 ): AIKeamananPBBNotification {
-  const chosen = SECURITY_ACTIONS[Math.floor(Math.random() * SECURITY_ACTIONS.length)];
+  const chosen = forcedAction
+    ? SECURITY_ACTIONS.find(action => action.action === forcedAction) || SECURITY_ACTIONS[0]
+    : SECURITY_ACTIONS[Math.floor(Math.random() * SECURITY_ACTIONS.length)];
   const duration = chooseAIResolutionDuration(chosen.action, relationScore);
 
   return {
@@ -124,7 +127,8 @@ export function evaluateAIKeamananPBBTrigger(
         randomProposer,
         randomTarget,
         40,
-        dateStr
+        dateStr,
+        'treasure'
       );
     }
     return null;
@@ -135,6 +139,7 @@ export function evaluateAIKeamananPBBTrigger(
     selectedPair.proposer,
     selectedPair.target,
     selectedPair.score,
-    dateStr
+    dateStr,
+    'treasure'
   );
 }

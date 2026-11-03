@@ -281,16 +281,21 @@ import { getKelistrikanFuelRequirements } from '../navigasi_menu/2_navigasi_bawa
 import { getMaterialStock } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic';
 import { generateInvasionNews, evaluateAnnualHotRelationsInvasion, getCountryColor } from '../menus/news/logic/1_berita_invasi/beritaInvasiLogic';
 import { generateAnnexationNews, updateMapTerritoryColor } from '../menus/news/logic/2_berita_aneksasi/beritaAneksasiLogic';
-import { hasActiveGlobalWarBan, submitWarBanViolationSanctions } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/1_warBanLogic';
+import { hasActiveGlobalWarBan } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/1_warBanLogic';
 import {
-    hasActiveApprovedInvasionResolution,
-    hasActiveApprovedInvasionResolutionForDifferentTarget
+    hasActiveApprovedInvasionResolution
 } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/4_resolusiInvasiLogic';
 import { calculateNetBalanceWithEconomicEmbargo, getEconomicEmbargoProductionMultiplier, isCountryUnderEconomicEmbargo } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import {
     clearReportedInvasionViolations,
+    createWarAttackId,
+    getApprovedInvasionMandatesSnapshot,
+    isUnauthorizedInvasion,
     isTradeEmbargoActive,
-    submitInvasionViolationSanctions
+    PBB_REGULAR_TRIGGER_PROBABILITIES,
+    submitInvasionViolationSanctions,
+    type ApprovedInvasionMandateSnapshot,
+    type WarSanctionAttackResult
 } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
 import {
     getCountryIcbmCount,
@@ -1016,27 +1021,6 @@ function applyUniformRelationPenalty(attackerCountry: string, minimum: number, m
     }
 
     return penalty;
-}
-
-function shouldApplyUnauthorizedAttackSanctions({
-    attacker,
-    attackerIso,
-    isPbbCoalition,
-    hasMandate,
-    playerCountryName,
-    playerIso,
-}: {
-    attacker: string;
-    attackerIso?: string;
-    isPbbCoalition: boolean;
-    hasMandate: boolean;
-    playerCountryName: string;
-    playerIso?: string;
-}): boolean {
-    return Boolean(playerCountryName) &&
-        !isPbbCoalition &&
-        !hasMandate &&
-        areSameWarCountry(attacker, playerCountryName, attackerIso, playerIso);
 }
 
 function applyInvasionRelationPenalty(attackerCountry: string, targetCountry: string): string {
@@ -2569,18 +2553,6 @@ export default function MapPage() {
                     return;
                 }
             }
-            if (warBanActive && shouldApplyUnauthorizedAttackSanctions({
-                attacker: attackerCountry,
-                attackerIso,
-                isPbbCoalition: false,
-                hasMandate: hasInvasionMandate,
-                playerCountryName: selectedCountry?.country || countryDetail?.country || countryDetail?.nama_negara || '',
-                playerIso: selectedCountry?.iso || countryDetail?.iso,
-            })) {
-                const sanctionsNotifications = submitWarBanViolationSanctions(attackerCountry, targetCountry, dateStr);
-                setNotifications(prev => [...sanctionsNotifications, ...prev]);
-            }
-
             setNpcWarQueue(previous => [...previous, {
                 attacker: attackerCountry,
                 target: targetCountry,
@@ -2644,8 +2616,12 @@ export default function MapPage() {
 
             const { actionType, targetCountry, isPbbCoalition, pbbLiberationCountry } = detail;
             console.info('[CityAnnexation][2-event] trigger_player_attack received', detail);
-            const attackerCountry = selectedCountry?.country || countryDetail?.country || 'China';
-            const attackerIso = (selectedCountry?.iso || countryDetail?.iso || 'cn').toLowerCase();
+            const attackerCountry = typeof detail.attackerCountry === 'string'
+                ? detail.attackerCountry
+                : selectedCountry?.country || countryDetail?.country || 'China';
+            const attackerIso = String(
+                detail.attackerCountryDetail?.iso || selectedCountry?.iso || countryDetail?.iso || 'cn'
+            ).toLowerCase();
             if (areSameWarCountry(attackerCountry, targetCountry, attackerIso, getIsoForCountryName(targetCountry))) {
                 setNotifications(prev => [{
                     id: `notif-self-attack-block-${Date.now()}`,
@@ -2669,61 +2645,6 @@ export default function MapPage() {
             const newNewsItems: NewsItemData[] = [];
             if (actionType !== 'aneksasi') {
                 applyNpcWarLosses(detail.targetCountryDetail, Number(detail.targetLossRatio));
-            }
-
-            const isInvasionAction = actionType === 'aneksasi' || actionType === 'jarah';
-            const hasInvasionMandate = typeof detail.invasionMandateAtLaunch === 'boolean'
-                ? detail.invasionMandateAtLaunch
-                : hasActiveApprovedInvasionResolution(attackerCountry, targetCountry);
-            const shouldSanctionAttack = isInvasionAction && shouldApplyUnauthorizedAttackSanctions({
-                attacker: attackerCountry,
-                attackerIso,
-                isPbbCoalition: isPbbCoalition === true,
-                hasMandate: hasInvasionMandate,
-                playerCountryName: selectedCountry?.country || countryDetail?.country || '',
-                playerIso: selectedCountry?.iso || countryDetail?.iso,
-            });
-            if (shouldSanctionAttack && detail.unauthorizedAttackSanctionsApplied !== true) {
-                // Map attacks are sanctioned at launch; direct result events are handled here once.
-                if (hasActiveGlobalWarBan()) {
-                    console.warn('[CityAnnexation][3-handler] Global war ban active; war already fought, applying result.');
-                }
-
-                const reason = hasActiveApprovedInvasionResolutionForDifferentTarget(attackerCountry, targetCountry)
-                    ? 'wrong_military_target'
-                    : 'missing_military_resolution';
-                const expelledOrganizations = expelCountryFromOrganizations(attackerCountry);
-                if (expelledOrganizations.length > 0) {
-                    setNotifications(prev => [{
-                        id: `notif-organization-expulsion-${Date.now()}`,
-                        title: '🚫 KEANGGOTAAN ORGANISASI INTERNASIONAL DICABUT',
-                        sender: 'Sekretariat Perserikatan Bangsa-Bangsa & Komunitas Global',
-                        message: `${attackerCountry} dikeluarkan secara tidak hormat dari organisasi internasional (${expelledOrganizations.join(', ')}) karena menyerang ${targetCountry} tanpa resolusi invasi yang disetujui.`,
-                        timestamp: dateStr,
-                        type: 'peringkat',
-                        value: 100,
-                        isRead: false
-                    }, ...prev]);
-                }
-                const revokedCouncilMember = expelCountryFromSecurityCouncil(attackerCountry);
-                if (revokedCouncilMember) {
-                    setNotifications(prev => [{
-                        id: `notif-dk-pbb-expulsion-${Date.now()}`,
-                        title: '🏛️ KURSI ANGGOTA TIDAK TETAP DK PBB DICABUT',
-                        sender: 'Presidensi Dewan Keamanan PBB',
-                        message: `Status ${attackerCountry} sebagai Anggota Tidak Tetap Dewan Keamanan PBB resmi DICABUT seketika akibat melancarkan agresi militer terhadap ${targetCountry} tanpa mandat resolusi PBB. Hak suara istimewa di DK PBB dibatalkan!`,
-                        timestamp: dateStr,
-                        type: 'peringkat',
-                        value: 100,
-                        isRead: false
-                    }, ...prev]);
-                }
-                const sanctionsNotifications = hasActiveGlobalWarBan()
-                    ? submitWarBanViolationSanctions(attackerCountry, targetCountry, dateStr)
-                    : submitInvasionViolationSanctions(attackerCountry, targetCountry, dateStr, reason);
-                if (sanctionsNotifications.length > 0) {
-                    setNotifications(prev => [...sanctionsNotifications, ...prev]);
-                }
             }
 
             const applyAttackerArmyLosses = (fallbackRatio: number, randomizeLosses: boolean) => {
@@ -3592,7 +3513,7 @@ export default function MapPage() {
 
     useEffect(() => {
         const handleStartWarAnimation = async (event: Event) => {
-            const detail = (event as CustomEvent).detail;
+            let detail = (event as CustomEvent).detail;
             const requestedAttackRequestId = typeof detail?.requestedAttackRequestId === 'string'
                 ? detail.requestedAttackRequestId
                 : undefined;
@@ -3661,6 +3582,27 @@ export default function MapPage() {
                 reportDebugStatus('cancelled', 'Negara penyerang dan target sama.');
                 return;
             }
+            const approvedMandatesAtLaunch: ApprovedInvasionMandateSnapshot[] =
+                Array.isArray(detail.approvedMandatesAtLaunch)
+                    ? detail.approvedMandatesAtLaunch
+                    : getApprovedInvasionMandatesSnapshot();
+            const hasInvasionMandateAtLaunch = approvedMandatesAtLaunch.some(mandate =>
+                mandate.status === 'passed' &&
+                mandate.daysRemaining > 0 &&
+                areSameWarCountry(mandate.proposerName, detail.attacker) &&
+                areSameWarCountry(mandate.targetName, detail.target)
+            );
+            detail = {
+                ...detail,
+                attackId: typeof detail.attackId === 'string' && detail.attackId
+                    ? detail.attackId
+                    : createWarAttackId(currentDate.toISOString().slice(0, 10)),
+                attackDateAtLaunch: typeof detail.attackDateAtLaunch === 'string'
+                    ? detail.attackDateAtLaunch
+                    : currentDate.toISOString().slice(0, 10),
+                approvedMandatesAtLaunch,
+                invasionMandateAtLaunch: hasInvasionMandateAtLaunch,
+            };
             const playerCountryName = selectedCountry?.country ||
                 countryDetail?.country ||
                 countryDetail?.nama_negara ||
@@ -3831,20 +3773,22 @@ export default function MapPage() {
                 }
             }
 
-            const hasApprovedInvasionMandate = hasActiveApprovedInvasionResolution(
-                detail.attacker,
-                detail.target
-            );
+            const hasApprovedInvasionMandate = detail.invasionMandateAtLaunch === true;
             const unauthorizedAttackSanctionsApplied =
                 detail.unauthorizedAttackSanctionsApplied === true ||
-                shouldApplyUnauthorizedAttackSanctions({
+                (Boolean(playerCountryName) &&
+                areSameWarCountry(
+                    detail.attacker,
+                    playerCountryName || '',
+                    detail.attackerCountryDetail?.iso,
+                    selectedCountry?.iso || countryDetail?.iso
+                ) &&
+                isUnauthorizedInvasion({
                     attacker: detail.attacker,
-                    attackerIso: detail.attackerCountryDetail?.iso,
+                    target: detail.target,
                     isPbbCoalition: detail.isPbbCoalition === true,
-                    hasMandate: hasApprovedInvasionMandate,
-                    playerCountryName: playerCountryName || '',
-                    playerIso: selectedCountry?.iso || countryDetail?.iso,
-                });
+                    approvedMandates: approvedMandatesAtLaunch,
+                }));
             const resolutionViolationAuthorized = detail.resolutionViolationAuthorized === true;
             if (
                 !detail.isPbbCoalition &&
@@ -3888,30 +3832,7 @@ export default function MapPage() {
                 unauthorizedAttackSanctionsApplied &&
                 detail.unauthorizedAttackSanctionsApplied !== true
             ) {
-                const violationReason = hasActiveGlobalWarBan()
-                    ? 'war_ban'
-                    : hasActiveApprovedInvasionResolutionForDifferentTarget(detail.attacker, detail.target)
-                        ? 'wrong_military_target'
-                        : 'missing_military_resolution';
-
-                // 1. Sanksi PBB Resmi (Embargo Ekonomi & Sanksi Dewan Keamanan)
-                const violationNotifications = violationReason === 'war_ban'
-                    ? submitWarBanViolationSanctions(
-                        detail.attacker,
-                        detail.target,
-                        currentDate.toISOString().slice(0, 10)
-                    )
-                    : submitInvasionViolationSanctions(
-                        detail.attacker,
-                        detail.target,
-                        currentDate.toISOString().slice(0, 10),
-                        violationReason
-                    );
-                if (violationNotifications.length > 0) {
-                    setNotifications(previous => [...violationNotifications, ...previous]);
-                }
-
-                // 2. Pencabutan Keanggotaan Organisasi Internasional & Seluruh Organisasi PBB
+                // Existing membership and diplomatic penalties remain separate from reactive proposals.
                 const expelledOrganizations = expelCountryFromOrganizations(detail.attacker);
                 if (expelledOrganizations.length > 0) {
                     setNotifications(previous => [{
@@ -4397,7 +4318,9 @@ export default function MapPage() {
             const isExempt = (n: NotificationMessage) => {
                 const tradeType = (n as NotificationMessage & { tradeType?: string }).tradeType;
                 return /player|user|province|requested|self-|aid-|demo|demonstrasi|subsidi|harga|pajak/i.test(String(n.id)) ||
+                n.priority === 'critical' ||
                 String(n.id).startsWith('war-') ||
+                String(n.id).startsWith('notif-invasion-sanctions-') ||
                 [
                     'penawaran_hubungan_dagang',
                     'penawaran_pakta_non_agresi',
@@ -4429,7 +4352,12 @@ export default function MapPage() {
             let quota = Math.max(0, dailyQuotaRef.current.quota - alreadySent);
             const prevIds = new Set(prev.map(n => n.id));
             const result: NotificationMessage[] = [];
+            const seenSanctionIds = new Set<string>();
             for (const n of next) {
+                if (String(n.id).startsWith('notif-invasion-sanctions-')) {
+                    if (prevIds.has(n.id) || seenSanctionIds.has(n.id)) continue;
+                    seenSanctionIds.add(n.id);
+                }
                 if (!n || prevIds.has(n.id) || isExempt(n)) {
                     result.push(n);
                     continue;
@@ -4441,6 +4369,43 @@ export default function MapPage() {
             return result.length === next.length ? next : result;
         }));
     }, []);
+    const submitSanctionsForWar = (
+        war: {
+            attacker: string;
+            target: string;
+            attackId?: string;
+            attackDateAtLaunch?: string;
+            isPbbCoalition?: boolean;
+            approvedMandatesAtLaunch?: ApprovedInvasionMandateSnapshot[];
+        },
+        attackResult: WarSanctionAttackResult
+    ) => {
+        const playerCountryName = selectedCountry?.country ||
+            countryDetail?.country ||
+            countryDetail?.nama_negara ||
+            countryDetail?.name_id ||
+            '';
+        const playerIsInvolved = Boolean(playerCountryName) && (
+            areSameWarCountry(war.attacker, playerCountryName) ||
+            areSameWarCountry(war.target, playerCountryName)
+        );
+
+        const sanctions = submitInvasionViolationSanctions(
+            war.attacker,
+            war.target,
+            war.attackDateAtLaunch || currentDate.toISOString().slice(0, 10),
+            'missing_military_resolution',
+            {
+                attackId: war.attackId,
+                approvedMandates: war.approvedMandatesAtLaunch || [],
+                isPbbCoalition: war.isPbbCoalition === true,
+                attackResult,
+            }
+        );
+        if (playerIsInvolved && sanctions.length > 0) {
+            setNotifications(previous => [...sanctions, ...previous]);
+        }
+    };
     useEffect(() => {
         if (!countryDetail) return;
         const playerCountryName = getPlayerCountryIdentity(countryDetail);
@@ -5851,14 +5816,8 @@ export default function MapPage() {
 
             // 5F & 5G. Usulan Resolusi PBB & Dewan Keamanan PBB oleh AI.
             // Satu kali undian per bulan agar presisi:
-            //  - 10% keduanya muncul bersamaan
-            //  - 15% hanya Resolusi PBB
-            //  - 15% hanya Dewan Keamanan PBB
-            //  - 60% tidak ada
-            // => masing-masing tetap tepat 25% per bulan (~3-5x/tahun).
-            const pbbRoll = Math.random();
-            const triggerRes = pbbRoll < 0.25; // 0.00-0.10 (bersamaan) + 0.10-0.25 (hanya Resolusi)
-            const triggerSec = pbbRoll < 0.10 || (pbbRoll >= 0.25 && pbbRoll < 0.40); // 0.00-0.10 (bersamaan) + 0.25-0.40 (hanya DK)
+            const triggerRes = Math.random() < PBB_REGULAR_TRIGGER_PROBABILITIES.generalAssembly;
+            const triggerSec = Math.random() < PBB_REGULAR_TRIGGER_PROBABILITIES.securityCouncil;
 
             if (triggerRes) {
                 const aiResNotif = evaluateAIResolusiPBBTrigger(
@@ -5959,58 +5918,6 @@ export default function MapPage() {
                             isRead: false,
                         });
 
-                        const hasInvasionMandate = hasActiveApprovedInvasionResolution(inv.attackerCountry, inv.targetCountry);
-                        const shouldSanctionAttack = shouldApplyUnauthorizedAttackSanctions({
-                            attacker: inv.attackerCountry,
-                            attackerIso: inv.attackerIso,
-                            isPbbCoalition: false,
-                            hasMandate: hasInvasionMandate,
-                            playerCountryName: selectedCountry?.country || countryDetail?.country ||
-                                countryDetail?.nama_negara || countryDetail?.name_id || '',
-                            playerIso: selectedCountry?.iso || countryDetail?.iso,
-                        });
-                        if (shouldSanctionAttack) {
-                            const reason = warBanActive
-                                ? 'war_ban'
-                                : hasActiveApprovedInvasionResolutionForDifferentTarget(inv.attackerCountry, inv.targetCountry)
-                                    ? 'wrong_military_target'
-                                    : 'missing_military_resolution';
-                            const expelledOrganizations = expelCountryFromOrganizations(inv.attackerCountry);
-                            if (expelledOrganizations.length > 0) {
-                                newNotifsToAdd.push({
-                                    id: `notif-org-expulsion-ai-${currentDateStr}-${inv.attackerIso}`,
-                                    title: '🚫 KEANGGOTAAN ORGANISASI INTERNASIONAL DICABUT',
-                                    sender: 'Sekretariat Perserikatan Bangsa-Bangsa & Komunitas Global',
-                                    message: `${inv.attackerCountry} dikeluarkan secara tidak hormat dari organisasi internasional (${expelledOrganizations.join(', ')}) karena menyerang ${inv.targetCountry} tanpa mandat Resolusi Invasi PBB.`,
-                                    timestamp: currentDateStr,
-                                    type: 'peringkat',
-                                    value: 100,
-                                    isRead: false
-                                });
-                            }
-                            const revokedCouncilMember = expelCountryFromSecurityCouncil(inv.attackerCountry);
-                            if (revokedCouncilMember) {
-                                newNotifsToAdd.push({
-                                    id: `notif-dk-expulsion-ai-${currentDateStr}-${inv.attackerIso}`,
-                                    title: '🏛️ KURSI ANGGOTA TIDAK TETAP DK PBB DICABUT',
-                                    sender: 'Presidensi Dewan Keamanan PBB',
-                                    message: `Status ${inv.attackerCountry} sebagai Anggota Tidak Tetap Dewan Keamanan PBB resmi DICABUT seketika akibat melancarkan agresi militer terhadap ${inv.targetCountry} tanpa mandat resolusi PBB. Hak suara istimewa di DK PBB dibatalkan!`,
-                                    timestamp: currentDateStr,
-                                    type: 'peringkat',
-                                    value: 100,
-                                    isRead: false
-                                });
-                            }
-                            const sanctionsNotifications = warBanActive
-                                ? submitWarBanViolationSanctions(inv.attackerCountry, inv.targetCountry, currentDateStr)
-                                : submitInvasionViolationSanctions(
-                                    inv.attackerCountry,
-                                    inv.targetCountry,
-                                    currentDateStr,
-                                    reason
-                                );
-                            newNotifsToAdd.push(...sanctionsNotifications);
-                        }
                         generatedNewsItems.push(inv);
 
                         // CATATAN: Hasil perang (aneksasi wilayah atau penjarahan SDA) TIDAK BOLEH dieksekusi secara instan di sini!
@@ -10299,6 +10206,7 @@ export default function MapPage() {
                                 }
                             };
                             if (result !== 'win') {
+                                submitSanctionsForWar(activeWarAnimation, 'failed');
                                 if (activeWarAnimation.requestedInvasion === true) {
                                     resolveAttackRequest({
                                         requestId: activeWarAnimation.requestedAttackRequestId,
@@ -10341,6 +10249,7 @@ export default function MapPage() {
                             );
                             if (!targetCity) {
                                 console.error('[CityAnnexation] AI victory has no mapped target city.', activeWarAnimation);
+                                submitSanctionsForWar(activeWarAnimation, 'failed');
                                 if (activeWarAnimation.requestedInvasion === true) {
                                     resolveAttackRequest({
                                         requestId: activeWarAnimation.requestedAttackRequestId,
@@ -10368,6 +10277,10 @@ export default function MapPage() {
                                 // Otak AI: 60% peluang aneksasi, 40% peluang hanya menjarah SDA & kas
                                 const decisionRoll = Math.random();
                                 const isAnnexation = decisionRoll < 0.60;
+                                submitSanctionsForWar(
+                                    activeWarAnimation,
+                                    isAnnexation ? 'aneksasi' : 'jarah'
+                                );
 
                                 if (isAnnexation) {
                                     // ANEKSASI (60%): Ubah kepemilikan kota sekaligus warna wilayah peta.
@@ -10468,6 +10381,10 @@ export default function MapPage() {
                             // Perang antar-AI berakhir dengan aneksasi penuh atau penjarahan.
                             if (activeWarAnimation.isNpcWar === true && activeWarAnimation.isPbbCoalition !== true) {
                                 const isAnnexation = Math.random() < 0.6;
+                                submitSanctionsForWar(
+                                    activeWarAnimation,
+                                    isAnnexation ? 'aneksasi' : 'jarah'
+                                );
                                 if (isAnnexation) {
                                     const capitalCity = resolveWarTargetCity(activeWarAnimation.target);
                                     if (!capitalCity) {
@@ -10564,6 +10481,9 @@ export default function MapPage() {
                             );
                         }}
                         onClose={(battleOutcome) => {
+                            if (activeWarAnimation && !battleOutcome) {
+                                submitSanctionsForWar(activeWarAnimation, 'failed');
+                            }
                             if (activeWarAnimation?.requestedInvasion === true) {
                                 resolveAttackRequest({
                                     requestId: activeWarAnimation.requestedAttackRequestId,
@@ -10597,6 +10517,20 @@ export default function MapPage() {
                                 }
                                 setResultModal(modal);
                             };
+                            if (activeWarAnimation.isUserDefender === true) {
+                                if (result !== 'lose') {
+                                    submitSanctionsForWar(activeWarAnimation, 'failed');
+                                }
+                            } else {
+                                submitSanctionsForWar(
+                                    activeWarAnimation,
+                                    result === 'win' && action === 'annex'
+                                        ? 'aneksasi'
+                                        : result === 'win' && action === 'loot'
+                                            ? 'jarah'
+                                            : 'failed'
+                                );
+                            }
                             if (
                                 activeWarAnimation.isPbbCoalition !== true &&
                                 activeWarAnimation.isPlayerAttacker !== true
@@ -10635,6 +10569,10 @@ export default function MapPage() {
                                             activeWarAnimation.pbbLiberationCountry
                                         )
                                         : false;
+                                    submitSanctionsForWar(
+                                        activeWarAnimation,
+                                        countryCollapsed ? 'aneksasi' : 'jarah'
+                                    );
 
                                     if (countryCollapsed) {
                                         setCountryDetail(detailAfterLoss);
@@ -10782,6 +10720,9 @@ export default function MapPage() {
                                 new CustomEvent('trigger_player_attack', {
                                     detail: {
                                         actionType: mappedAction,
+                                        attackerCountry: activeWarAnimation.attacker,
+                                        attackId: activeWarAnimation.attackId,
+                                        attackDateAtLaunch: activeWarAnimation.attackDateAtLaunch,
                                         targetCountry: activeWarAnimation.target,
                                         targetCityId: activeWarAnimation.targetCityId,
                                         targetCityName: activeWarAnimation.targetCityName,
@@ -10792,6 +10733,8 @@ export default function MapPage() {
                                             activeWarAnimation.unauthorizedAttackSanctionsApplied === true,
                                         invasionMandateAtLaunch:
                                             activeWarAnimation.invasionMandateAtLaunch === true,
+                                        approvedMandatesAtLaunch:
+                                            activeWarAnimation.approvedMandatesAtLaunch,
                                         troopsCommitted: activeWarAnimation.troopsCommitted === true,
                                         attackerCountryDetail: activeWarAnimation.attackerCountryDetail,
                                         targetCountryDetail: activeWarAnimation.targetCountryDetail,

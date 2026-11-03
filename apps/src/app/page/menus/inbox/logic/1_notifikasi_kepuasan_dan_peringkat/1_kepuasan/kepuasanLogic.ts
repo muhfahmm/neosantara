@@ -7,6 +7,7 @@ export interface NotificationMessage {
   type: 'kepuasan' | 'peringkat' | 'kesejahteraan';
   value: number;
   isRead: boolean;
+  priority?: 'normal' | 'critical';
   diplomacyArrivalDate?: string;
   diplomacyArrivalDays?: number;
   isHandled?: boolean;

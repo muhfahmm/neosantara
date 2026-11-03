@@ -49,6 +49,12 @@ const RESOLUTION_TYPES: Array<{
   }
 ];
 
+const REGULAR_RESOLUTION_TYPES = RESOLUTION_TYPES.filter(resolution =>
+  resolution.type === 'war_ban' ||
+  resolution.type === 'military_invasion' ||
+  resolution.type === 'production_ban'
+);
+
 /**
  * Generator notifikasi usulan Resolusi PBB dari negara AI ke AI lain / User.
  * Syarat: Skor hubungan diplomatik antara pengusul & target berada pada kisaran 1 - 20 (Buruk / Musuh).
@@ -162,10 +168,14 @@ export function evaluateAIResolusiPBBTrigger(
 
   // Acak pasangan secara dinamis dan tidak terduga
   const selectedPair = candidatePairs[Math.floor(Math.random() * candidatePairs.length)];
+  const selectedType = REGULAR_RESOLUTION_TYPES[
+    Math.floor(Math.random() * REGULAR_RESOLUTION_TYPES.length)
+  ];
   return generateAIResolusiPBBNotification(
     selectedPair.proposer,
     selectedPair.target,
     selectedPair.score,
-    dateStr
+    dateStr,
+    selectedType.type
   );
 }
