@@ -343,7 +343,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <div className={`bg-emerald-950/40 border border-emerald-500/30 p-3 lg:p-4 ${rootBorderRadius.card}`}>
                       <p className={rootModalTypography.label}>✓ Total Produksi Listrik</p>
-                      <p className="text-xl lg:text-2xl font-black text-emerald-400 mt-2">
+                      <p className="text-lg lg:text-xl font-black text-emerald-400 mt-2">
                         {totalCapacityMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                       </p>
                     </div>
@@ -356,7 +356,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                         <p className={rootModalTypography.label}>✗ Konsumsi Terestimasi</p>
                         <span className="text-[10px] text-rose-300 font-bold opacity-80 group-hover:opacity-100 transition-opacity">Detail →</span>
                       </div>
-                      <p className="text-xl lg:text-2xl font-black text-rose-400 mt-2">
+                      <p className="text-lg lg:text-xl font-black text-rose-400 mt-2">
                         {estimatedConsumptionMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                       </p>
                     </div>
@@ -369,7 +369,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                           balanceMW < 0 ? 'text-rose-400' :
                             'text-slate-400'
                         }`}>Neraca Daya</p>
-                      <p className={`text-xl lg:text-2xl font-black mt-2 ${balanceMW > 0 ? 'text-emerald-400' :
+                      <p className={`text-lg lg:text-xl font-black mt-2 ${balanceMW > 0 ? 'text-emerald-400' :
                           balanceMW < 0 ? 'text-rose-400' :
                             'text-slate-400'
                         }`}>
