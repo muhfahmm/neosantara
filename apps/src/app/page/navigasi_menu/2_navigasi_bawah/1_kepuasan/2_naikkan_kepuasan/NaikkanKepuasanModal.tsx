@@ -19,6 +19,7 @@ import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import {
   applyDiplomasiAcaraSatisfactionBonus,
   applyKementerianOlahragaSatisfactionBoost,
@@ -57,6 +58,7 @@ export default function NaikkanKepuasanModal({
   const [pendingCost, setPendingCost] = useState(0);
   const [pendingTitle, setPendingTitle] = useState("");
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [isMenuInfoOpen, setIsMenuInfoOpen] = useState(false);
   const [activeMissionId, setActiveMissionId] = useState<string | null>(null);
   const [highlightedEventId, setHighlightedEventId] = useState<string | null>(
     null
@@ -371,7 +373,7 @@ export default function NaikkanKepuasanModal({
 
   return (
     <>
-      {!isDanaTidakCukupOpen && (
+      {!isDanaTidakCukupOpen && !isMenuInfoOpen && (
       <NotebookModalWrapper onClose={onClose}>
         <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A]">
           
@@ -404,7 +406,12 @@ export default function NaikkanKepuasanModal({
             </div>
 
             {/* Tombol Tutup */}
-            <RootModalCloseButton onClick={onClose} />
+            <div className="flex shrink-0 items-center gap-2">
+              <button type="button" onClick={() => setIsMenuInfoOpen(true)} title="Informasi peningkatan kepuasan rakyat" aria-label="Informasi peningkatan kepuasan rakyat" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]">
+                <Info className="h-3.5 w-3.5" />
+              </button>
+              <RootModalCloseButton onClick={onClose} />
+            </div>
           </div>
 
           {/* ============ TREASURY BAR (Info Button Dipindah ke Sini) ============ */}
@@ -721,6 +728,13 @@ export default function NaikkanKepuasanModal({
           </div>
         </NotebookModalWrapper>
       )}
+
+      <MenuInfoModal
+        isOpen={isMenuInfoOpen}
+        onClose={() => setIsMenuInfoOpen(false)}
+        title="Informasi Peningkatan Kepuasan Rakyat"
+        description="Pilih acara atau inisiatif untuk meningkatkan kepuasan rakyat. Periksa biaya dan durasinya sebelum memulai; dampak kepuasan diterapkan setelah kegiatan selesai. Tab Statistik membantu menilai kondisi sebelum memilih program."
+      />
 
       {/* ============ Modal Dana Tidak Cukup ============ */}
       <DanaTidakCukupModal

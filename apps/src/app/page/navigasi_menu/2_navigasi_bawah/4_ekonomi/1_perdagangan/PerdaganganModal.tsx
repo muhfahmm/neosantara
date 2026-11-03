@@ -5,6 +5,8 @@ import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import TradeMarketBlockedModal from "./umum/TradeMarketBlockedModal";
+import TradePriceEffectInfoModal from "./TradePriceEffectInfoModal";
+import type { TradePriceBonus } from "./TradePriceEffectInfoModal";
 import JualModalsMenu from "./jual/modalsKonfirmasiJual";
 import MitraModalsMenu, { TradePartner } from "./mitra/mitraModalsMenu";
 import ModalsKonfirmasiBeli from "./beli/modalsKonfirmasiBeli";
@@ -842,14 +844,7 @@ export default function PerdaganganModal({
   const ministryTradeBonusPercent = getKementerianPerdaganganPriceBonusPercent(countryDetail);
 
   const activeBonusesList = useMemo(() => {
-    const list: {
-      id: string;
-      title: string;
-      category: string;
-      desc: string;
-      sellBonusText?: string;
-      buyDiscountText?: string;
-    }[] = [];
+    const list: TradePriceBonus[] = [];
 
     if (isWTOActive) {
       list.push({
@@ -937,19 +932,20 @@ export default function PerdaganganModal({
                 <div className="min-w-0">
                   <h2 className={rootModalTypography.title}>Pasar Perdagangan Global</h2>
                 </div>
+              </div>
+
+              <div className="flex items-center gap-2">
                 {!isTradeMarketBlocked && (
                   <button
                     type="button"
                     onClick={() => setShowWTOTradeInfoModal(true)}
                     title="Lihat Informasi Efek Harga WTO & Agama"
-                    className="p-1 rounded-full bg-[#0A1A1A] border border-[#00FFAA]/50 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer shadow-sm flex items-center justify-center shrink-0 ml-1"
+                    aria-label="Informasi efek harga perdagangan"
+                    className="p-1 rounded-full bg-[#0A1A1A] border border-[#00FFAA]/50 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer shadow-sm flex items-center justify-center shrink-0"
                   >
                     <Info className="w-3.5 h-3.5" />
                   </button>
                 )}
-              </div>
-              
-              <div className="flex items-center gap-2">
                 {isTradeMarketBlocked && (
                   <button
                     type="button"
@@ -1217,82 +1213,11 @@ export default function PerdaganganModal({
       )}
 
       {/* MODAL INFORMASI EFEK HARGA PERDAGANGAN (WTO & AGAMA) */}
-      {showWTOTradeInfoModal && (
-        <NotebookModalWrapper onClose={() => setShowWTOTradeInfoModal(false)} zIndexClass="z-[200]">
-          <div className="flex h-full min-w-0 flex-col overflow-hidden">
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
-              <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                <div className="p-1 sm:p-1.5 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 shrink-0">
-                  <ArrowRightLeft className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
-                </div>
-                <div className="min-w-0">
-                  <h2 className={rootModalTypography.title}>
-                    Informasi Efek Harga Perdagangan
-                  </h2>
-                </div>
-              </div>
-              <RootModalCloseButton onClick={() => setShowWTOTradeInfoModal(false)} />
-            </div>
-
-            <div className="root-no-scrollbar-glow min-h-0 flex-1 overflow-y-auto p-4 sm:p-5 bg-[#0F2424] neon-scrollbar space-y-3">
-              {activeBonusesList.length === 0 ? (
-                <div className="p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 text-center space-y-2">
-                  <p className={`${rootModalTypography.body} break-words`}>
-                    Belum ada bonus harga perdagangan yang aktif.
-                  </p>
-                  <p className={`${rootModalTypography.body} ${rootModalTypography.muted} mx-auto max-w-lg break-words`}>
-                    Bergabunglah dengan WTO atau OPEC, tingkatkan Kementerian Perdagangan, riset Diplomasi Dagang, atau terapkan agama terkait.
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between pb-1 border-b border-[#00FFAA]/15">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-[#00FFAA]">
-                      Daftar Bonus Aktif ({activeBonusesList.length})
-                    </span>
-                  </div>
-
-                  {activeBonusesList.map((item) => (
-                    <div
-                      key={item.id}
-                      className="p-3 rounded-xl border border-emerald-500/40 bg-[#0E2A20] text-emerald-200 shadow-sm space-y-1.5"
-                    >
-                      <div className="flex flex-wrap items-center justify-between gap-1">
-                        <div>
-                          <span className="text-[8px] font-black uppercase px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 tracking-wider">
-                            {item.category}
-                          </span>
-                          <h4 className="mt-0.5 min-w-0 break-words text-xs font-black text-white">
-                            {item.title}
-                          </h4>
-                        </div>
-                      </div>
-
-                      <p className="min-w-0 break-words text-[10px] leading-snug text-[#C3D5D5]">
-                        {item.desc}
-                      </p>
-
-                      <div className="pt-1.5 border-t border-emerald-500/20 flex flex-wrap gap-1.5 text-[10px] font-black">
-                        {item.sellBonusText && (
-                          <span className="inline-flex min-w-0 max-w-full items-center break-words px-2 py-0.5 rounded bg-[#0F2424] border border-emerald-500/40 text-emerald-300">
-                            • {item.sellBonusText}
-                          </span>
-                        )}
-                        {item.buyDiscountText && (
-                          <span className="inline-flex min-w-0 max-w-full items-center break-words px-2 py-0.5 rounded bg-[#0F2424] border border-emerald-500/40 text-emerald-300">
-                            • {item.buyDiscountText}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            {/* Tombol "Mengerti" di footer telah dihapus */}
-          </div>
-        </NotebookModalWrapper>
-      )}
+      <TradePriceEffectInfoModal
+        isOpen={showWTOTradeInfoModal}
+        onClose={() => setShowWTOTradeInfoModal(false)}
+        bonuses={activeBonusesList}
+      />
     </>
   );
 }

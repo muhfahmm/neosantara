@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Shield, Atom, Rocket, Bomb, Clock, Target, Lock, Check, Globe, Flame } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import MenuInfoButton from "../../MenuInfoButton";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
@@ -347,7 +348,13 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
               </p>
             </div>
           </div>
-          <RootModalCloseButton onClick={onClose} />
+          <div className="flex shrink-0 items-center gap-2">
+            <MenuInfoButton
+              title="ICBM"
+              description="Kelola program rudal balistik antarbenua dan fasilitas strategis terkait. Status program, pembangunan, serta kesiapan peluncuran ditampilkan di menu ini; tindakan strategis dapat berdampak besar pada keamanan dan hubungan antarnegara."
+            />
+            <RootModalCloseButton onClick={onClose} />
+          </div>
         </div>
 
         {/* BODY MODAL */}

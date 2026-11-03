@@ -1,8 +1,9 @@
 "use client";
 
 import React, { startTransition, useState, useEffect, useCallback, useMemo, useRef, useDeferredValue } from "react";
-import { Scale } from "lucide-react";
+import { Scale, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
@@ -193,6 +194,7 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
   const [sectorLevels, setSectorLevels] = useState<NationalizationLevels>(
     () => resolveNationalizationLevels(countryDetail)
   );
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
 
   const [electricityMetadata, setElectricityMetadata] = useState<Record<string, BuildingMetadataEntry>>({});
   const [isElectricityMetadataLoading, setIsElectricityMetadataLoading] = useState(true);
@@ -349,7 +351,8 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
   );
 
   return (
-    <NotebookModalWrapper onClose={onClose}>
+    <>
+    {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
         
         {/* HEADER */}
@@ -364,6 +367,9 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
           </div>
 
           <div className="flex items-center gap-2 lg:gap-3">
+            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi kebijakan dan sistem ekonomi" aria-label="Informasi kebijakan dan sistem ekonomi" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]">
+              <Info className="h-3.5 w-3.5" />
+            </button>
             <RootModalCloseButton onClick={onClose} />
           </div>
         </div>
@@ -430,6 +436,13 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
         </div>
 
       </div>
-    </NotebookModalWrapper>
+    </NotebookModalWrapper>}
+    <MenuInfoModal
+      isOpen={isInfoOpen}
+      onClose={() => setIsInfoOpen(false)}
+      title="Informasi Kebijakan & Sistem Ekonomi"
+      description="Atur spektrum sistem ekonomi, pilih kebijakan sektoral, dan sesuaikan kepemilikan atau tingkat nasionalisasi sektor produksi. Perubahan kebijakan membentuk arah ekonomi serta porsi keuntungan negara."
+    />
+    </>
   );
 }

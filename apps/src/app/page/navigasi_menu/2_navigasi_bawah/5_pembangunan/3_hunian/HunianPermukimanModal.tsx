@@ -8,6 +8,7 @@ import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import ServiceAISuggestionsModal from "../ai_suggestions/ServiceAISuggestionsModal";
 import { generateHunianAIAnalysis } from "../ai_suggestions/serviceAISuggestionsLogic";
 import InfoBangunanModal from "./1_modals_info_bangunan/info_bangunan_modals";
@@ -31,6 +32,11 @@ const DEFAULT_ELECTRICITY_CONSUMPTION: Record<string, number> = {
   mansion: 0.0055,
 };
 
+const HOUSING_INFO_TITLES: Record<string, string> = {
+  rumah_subsidi: "Perumahan Subsidi Rakyat",
+  apartemen: "Apartemen Modern & High-Rise",
+  mansion: "Kompleks Mansion Mewah",
+};
 
 // 🟢 IMPOR REQUIREMENTS
 import * as perumahanSubsidiRequirements from "./construction_support/1_perumahan_subsidi/requirements";
@@ -115,6 +121,7 @@ export default function HunianPermukimanModal({
   initialTab,
 }: ModalProps) {
   const [activeTab, setActiveTab] = useState(initialTab || "rumah_subsidi");
+  const [selectedItemInfo, setSelectedItemInfo] = useState<{ title: string; description: string } | null>(null);
 
   useEffect(() => {
     if (initialTab) {
@@ -387,7 +394,7 @@ export default function HunianPermukimanModal({
   return (
     <>
       {/* MODAL UTAMA */}
-      <NotebookModalWrapper onClose={onClose}>
+      {!selectedItemInfo && <NotebookModalWrapper onClose={onClose}>
         <div className="flex flex-col h-full overflow-hidden">
 
           {/* HEADER */}
@@ -400,7 +407,21 @@ export default function HunianPermukimanModal({
                 <h2 className={rootModalTypography.title}>Hunian & Permukiman</h2>
               </div>
             </div>
-            <RootModalCloseButton onClick={onClose} />
+            <div className="flex shrink-0 items-center gap-2">
+              <button
+                type="button"
+                onClick={() => activeItem && setSelectedItemInfo({
+                  title: `Informasi ${HOUSING_INFO_TITLES[activeItem.key] || activeItem.label}`,
+                  description: activeItem.detailDesc,
+                })}
+                aria-label={`Informasi ${activeItem?.label ?? "hunian aktif"}`}
+                title={`Informasi ${activeItem?.label ?? "hunian aktif"}`}
+                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] transition-colors hover:border-[#00FFAA] hover:bg-[#00FFAA]/10"
+              >
+                <Info className="h-4 w-4" />
+              </button>
+              <RootModalCloseButton onClick={onClose} />
+            </div>
           </div>
 
           {/* BODY */}
@@ -408,22 +429,22 @@ export default function HunianPermukimanModal({
             {/* SIDEBAR TABS */}
             <div className="w-40 sm:w-44 lg:w-48 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
               {items.map((it) => (
-                <button
-                  key={it.key}
-                  onClick={() => setActiveTab(it.key)}
-                  className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${
-                    activeTab === it.key
-                      ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
-                      : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA] hover:text-[#00FFAA]"
-                  }`}
-                >
-                  <span className="text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{it.label}</span>
-                  <span className={`text-[9px] lg:text-[10px] font-black px-1.5 py-0.5 rounded-full ${
-                    activeTab === it.key ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
-                  }`}>
-                    {it.value > 0 ? "Tersedia" : "Kosong"}
-                  </span>
-                </button>
+                  <button
+                    key={it.key}
+                    onClick={() => setActiveTab(it.key)}
+                    className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${
+                      activeTab === it.key
+                        ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
+                        : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA] hover:text-[#00FFAA]"
+                    }`}
+                  >
+                    <span className="truncate text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{it.label}</span>
+                    <span className={`shrink-0 text-[9px] lg:text-[10px] font-black px-1.5 py-0.5 rounded-full ${
+                      activeTab === it.key ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
+                    }`}>
+                      {it.value > 0 ? "Tersedia" : "Kosong"}
+                    </span>
+                  </button>
               ))}
             </div>
 
@@ -703,7 +724,14 @@ export default function HunianPermukimanModal({
             </div>
           </div>
         </div>
-      </NotebookModalWrapper>
+      </NotebookModalWrapper>}
+
+      <MenuInfoModal
+        isOpen={selectedItemInfo !== null}
+        onClose={() => setSelectedItemInfo(null)}
+        title={selectedItemInfo?.title ?? ""}
+        description={selectedItemInfo?.description ?? ""}
+      />
 
       {/* TOAST */}
       {toast && <div className="fixed bottom-6 right-6 z-[80] bg-[#00FFAA] text-[#0A1A1A] font-black px-4 py-2 rounded-lg shadow-lg border border-[#00FFAA]">{toast}</div>}

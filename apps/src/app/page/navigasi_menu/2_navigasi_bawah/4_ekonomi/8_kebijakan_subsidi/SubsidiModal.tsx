@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { HandHelping, Check } from "lucide-react";
+import { HandHelping, Check, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
@@ -62,6 +63,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
   const [isSavedSuccess, setIsSavedSuccess] = useState<boolean>(false);
   const [selectedDetailItem, setSelectedDetailItem] = useState<SubsidyItem | null>(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
 
   // Sinkronisasi instan tanpa network fetch (0ms)
   useEffect(() => {
@@ -225,7 +227,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
 
   return (
     <>
-      <NotebookModalWrapper onClose={onClose}>
+      {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
         <div className="flex flex-col h-full overflow-hidden">
 
           {/* HEADER */}
@@ -240,6 +242,9 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
             </div>
 
             <div className="flex items-center gap-2 lg:gap-3">
+              <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi alokasi dan kebijakan subsidi" aria-label="Informasi alokasi dan kebijakan subsidi" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]">
+                <Info className="h-3.5 w-3.5" />
+              </button>
               {forumDialogMode && (
                 <button
                   type="button"
@@ -368,8 +373,14 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
 
           </div>
         </div>
-      </NotebookModalWrapper>
+      </NotebookModalWrapper>}
 
+      <MenuInfoModal
+        isOpen={isInfoOpen}
+        onClose={() => setIsInfoOpen(false)}
+        title="Informasi Alokasi & Kebijakan Subsidi"
+        description="Pilih program subsidi untuk berbagai sektor dan tinjau biaya bulanannya sebelum mengubah alokasi. Subsidi menggunakan anggaran negara serta dapat memengaruhi dukungan kepuasan rakyat dan pertumbuhan populasi."
+      />
       {/* DETAIL ITEM SUBSIDI MODAL */}
       <DetailSubsidiItemModal
         isOpen={!!selectedDetailItem}

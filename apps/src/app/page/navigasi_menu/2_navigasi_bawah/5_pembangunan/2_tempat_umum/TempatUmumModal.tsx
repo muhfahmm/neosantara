@@ -9,6 +9,7 @@ import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import ServiceAISuggestionsModal from "../ai_suggestions/ServiceAISuggestionsModal";
 import { generateTempatUmumAIAnalysis } from "../ai_suggestions/serviceAISuggestionsLogic";
 
@@ -101,6 +102,7 @@ export default function TempatUmumModal({
 }: ModalProps) {
   // 🔥 FIX 3: Pastikan nama state adalah activeTabId dan setActiveTabId
   const [activeTabId, setActiveTabId] = useState<string>(initialTab);
+  const [selectedGroupInfo, setSelectedGroupInfo] = useState<{ title: string; description: string } | null>(null);
 
   useEffect(() => {
     if (isOpen && initialTab) {
@@ -426,7 +428,7 @@ export default function TempatUmumModal({
 
   return (
     <>
-      <NotebookModalWrapper onClose={onClose}>
+      {!selectedGroupInfo && <NotebookModalWrapper onClose={onClose}>
         <div className="flex flex-col h-full overflow-hidden">
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
@@ -442,6 +444,18 @@ export default function TempatUmumModal({
                 <p className="text-[8px] sm:text-[9px] font-bold uppercase tracking-wider text-[#6B8A8A]">Indeks Kepuasan</p>
                 <p className="text-xs sm:text-sm font-black leading-tight text-[#00FFAA]">{averageServiceSatisfaction} / 100</p>
               </div>
+              <button
+                type="button"
+                onClick={() => activeGroup && setSelectedGroupInfo({
+                  title: `Informasi ${activeGroup.label}`,
+                  description: activeGroup.description,
+                })}
+                aria-label={`Informasi ${activeGroup?.label ?? "kategori aktif"}`}
+                title={`Informasi ${activeGroup?.label ?? "kategori aktif"}`}
+                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] transition-colors hover:border-[#00FFAA] hover:bg-[#00FFAA]/10"
+              >
+                <Info className="h-4 w-4" />
+              </button>
               <RootModalCloseButton onClick={onClose} />
             </div>
           </div>
@@ -453,27 +467,27 @@ export default function TempatUmumModal({
                   ongoingConstructions.some((c: any) => c.buildingKey === key)
                 );
                 return (
-                  <button
-                    key={group.id}
-                    onClick={() => setActiveTabId(group.id)}
-                    className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${
-                      activeTabId === group.id
-                        ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
-                        : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA] hover:text-[#00FFAA]"
-                    }`}
-                  >
-                    <span className="text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{group.label}</span>
-                    <div className="flex items-center gap-1">
-                       {hasConstruction && (
-                         <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                       )}
-                       <span className={`text-[9px] lg:text-[10px] font-black px-1.5 py-0.5 rounded-full ${
-                         activeTabId === group.id ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
-                       }`}>
-                         {group.activeCount}
-                       </span>
-                    </div>
-                  </button>
+                    <button
+                      key={group.id}
+                      onClick={() => setActiveTabId(group.id)}
+                      className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${
+                        activeTabId === group.id
+                          ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
+                          : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA] hover:text-[#00FFAA]"
+                      }`}
+                    >
+                      <span className="truncate text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{group.label}</span>
+                      <div className="flex shrink-0 items-center gap-1">
+                         {hasConstruction && (
+                           <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                         )}
+                         <span className={`text-[9px] lg:text-[10px] font-black px-1.5 py-0.5 rounded-full ${
+                           activeTabId === group.id ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
+                         }`                         }>
+                           {group.activeCount}
+                         </span>
+                      </div>
+                    </button>
                 );
               })}
             </div>
@@ -685,7 +699,14 @@ export default function TempatUmumModal({
             </div>
           </div>
         </div>
-      </NotebookModalWrapper>
+      </NotebookModalWrapper>}
+
+      <MenuInfoModal
+        isOpen={selectedGroupInfo !== null}
+        onClose={() => setSelectedGroupInfo(null)}
+        title={selectedGroupInfo?.title ?? ""}
+        description={selectedGroupInfo?.description ?? ""}
+      />
 
       {toast && <div className="fixed bottom-6 right-6 z-[80] bg-[#00FFAA] text-[#0A1A1A] font-black px-4 py-2 rounded-lg shadow-lg border border-[#00FFAA]">{toast}</div>}
 

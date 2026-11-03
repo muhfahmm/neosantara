@@ -9,8 +9,9 @@ import React, {
   useDeferredValue,
 } from "react";
 import { createPortal } from "react-dom";
-import { Tag, Loader2 } from "lucide-react";
+import { Tag, Loader2, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
@@ -160,6 +161,7 @@ function HargaModalContent({
   const [error, setError] = useState<string | null>(null);
   const [subsidyActive, setSubsidyActive] = useState(false);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
 
   // 2. DEFERRED STATE: Memberikan prioritas utama pada klik tombol.
   // Kalkulasi berat (satisfaction & impacts) akan mengekor di belakang.
@@ -545,7 +547,7 @@ function HargaModalContent({
   // ─────────────────────────────────────────────────────────────────────
   return (
     <>
-    <NotebookModalWrapper onClose={onClose}>
+    {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
@@ -560,6 +562,9 @@ function HargaModalContent({
           </div>
 
           <div className="flex items-center gap-2">
+            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi kontrol harga barang pokok" aria-label="Informasi kontrol harga barang pokok" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]">
+              <Info className="h-3.5 w-3.5" />
+            </button>
             {forumDialogMode && (
               <button
                 type="button"
@@ -655,7 +660,13 @@ function HargaModalContent({
           )}
         </div>
       </div>
-    </NotebookModalWrapper>
+    </NotebookModalWrapper>}
+    <MenuInfoModal
+      isOpen={isInfoOpen}
+      onClose={() => setIsInfoOpen(false)}
+      title="Informasi Kontrol Harga Barang Pokok"
+      description="Atur harga nasional untuk setiap barang pokok. Harga memengaruhi kepuasan rakyat dan dampak populasi; subsidi harga dapat membantu menekan beban, dengan biaya dari anggaran negara."
+    />
     {isConfirmDialogOpen && createPortal(
       <div className="fixed inset-0 z-[2147483647] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
         <div role="dialog" aria-modal="true" aria-labelledby="price-confirm-title" className={`w-full max-w-md border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-2xl ${rootBorderRadius.card}`}>

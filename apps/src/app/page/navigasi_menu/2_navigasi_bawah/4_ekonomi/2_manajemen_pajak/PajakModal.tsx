@@ -1,9 +1,10 @@
 "use client";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { FileText } from "lucide-react";
+import { FileText, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import TaxPolicyInfoModal from "./TaxPolicyInfoModal";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { calculateIncomeAtRate } from "@/app/logic/economic_logic/2_tax_logic/taxLogic";
@@ -159,6 +160,7 @@ function PajakModalContent({
     computeInitialRates(countryDetail)
   );
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [isTaxPolicyInfoOpen, setIsTaxPolicyInfoOpen] = useState(false);
 
   // ── Nilai "committed" terakhir — untuk dedupe notifikasi saat release ──
   const committedRatesRef = useRef<Record<string, number>>(
@@ -465,6 +467,7 @@ function PajakModalContent({
   // ─────────────────────────────────────────────────────────────────────
   return (
     <>
+    {!isTaxPolicyInfoOpen && (
     <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
@@ -480,6 +483,15 @@ function PajakModalContent({
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsTaxPolicyInfoOpen(true)}
+              title="Informasi kebijakan pajak"
+              aria-label="Informasi kebijakan pajak"
+              className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]"
+            >
+              <Info className="h-3.5 w-3.5" />
+            </button>
             {forumDialogMode && (
               <button
                 type="button"
@@ -501,11 +513,6 @@ function PajakModalContent({
         )}
 
         <div className="flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 neon-scrollbar">
-          <p className={`${rootModalTypography.body} ${rootModalTypography.muted} mb-3.5 break-words lg:mb-5 2xl:mb-6`}>
-            Sesuaikan tarif pajak nasional untuk membiayai belanja militer dan
-            infrastruktur publik. Hati-hati, pajak tinggi memicu protes rakyat!
-          </p>
-
           <div className="space-y-5">
             {/* 1. PPN - Pajak Pertambahan Nilai */}
             <div className="space-y-2">
@@ -836,6 +843,11 @@ function PajakModalContent({
         </div>
       </div>
     </NotebookModalWrapper>
+    )}
+    <TaxPolicyInfoModal
+      isOpen={isTaxPolicyInfoOpen}
+      onClose={() => setIsTaxPolicyInfoOpen(false)}
+    />
     {isConfirmDialogOpen && createPortal(
       <div className="fixed inset-0 z-[2147483647] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
         <div role="dialog" aria-modal="true" aria-labelledby="tax-confirm-title" className={`w-full max-w-md ${rootBorderRadius.card} border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-2xl`}>

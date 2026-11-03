@@ -23,6 +23,7 @@ import { calculatePanganScore } from "@/app/logic/kepuasanCalculator";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 
 import AISuggestModal from "./AI_suggest_modals";
 import AIDetailDefisitModal from "./AI_detail_defisit";
@@ -93,6 +94,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
   const [searchQuery, setSearchQuery] = useState('');
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'production', direction: 'desc' });
   const [expandedRows, setExpandedRows] = useState<'all' | Set<number>>('all');
+  const [isMenuInfoOpen, setIsMenuInfoOpen] = useState(false);
   const [selectedCommodityInfo, setSelectedCommodityInfo] = useState<{ key: string; label: string; production: number; consumption: number; balance: number; bonusDescription: string | null; } | null>(null);
 
   // 🔥 STATE UNTUK AI DETAIL DEFISIT
@@ -330,7 +332,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
         </NotebookModalWrapper>
       )}
 
-      {!selectedCommodityInfo && (
+      {!selectedCommodityInfo && !isMenuInfoOpen && (
       <NotebookModalWrapper onClose={onClose}>
         <div className="flex h-full min-w-0 flex-col overflow-hidden">
           {/* HEADER */}
@@ -343,7 +345,12 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                 <h2 className={rootModalTypography.title}>Industri Pangan & Konsumsi Masyarakat</h2>
               </div>
             </div>
-            <RootModalCloseButton onClick={onClose} />
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={() => setIsMenuInfoOpen(true)} title="Informasi industri pangan dan konsumsi" aria-label="Informasi industri pangan dan konsumsi" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]">
+                <Info className="h-3.5 w-3.5" />
+              </button>
+              <RootModalCloseButton onClick={onClose} />
+            </div>
           </div>
           {/* CONTENT */}
           <div className="root-no-scrollbar-glow flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 neon-scrollbar">
@@ -412,6 +419,12 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
         </div>
       </NotebookModalWrapper>
       )}
+      <MenuInfoModal
+        isOpen={isMenuInfoOpen}
+        onClose={() => setIsMenuInfoOpen(false)}
+        title="Informasi Industri Pangan & Konsumsi Masyarakat"
+        description="Tinjau produksi, konsumsi, dan neraca bersih komoditas pangan menurut sektor. Gunakan tombol informasi pada komoditas untuk melihat rinciannya, atau tombol tambah untuk menuju menu produksi."
+      />
     </>
   );
 }

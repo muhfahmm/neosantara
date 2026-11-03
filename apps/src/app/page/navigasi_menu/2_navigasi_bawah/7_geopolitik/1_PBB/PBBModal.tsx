@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { X, Award, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import MenuInfoButton from "../../MenuInfoButton";
 import ResolusiPBB from "./1_resolusi_PBB/menus/1_resolusiPBB";
 import KeamananPBB from "./2_keamanan_PBB/menus/1_keamananPBB";
 import SuaraPBB from "./3_suara_negara_PBB/suaraPBB";
@@ -38,13 +39,19 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">{countryName}</p>
             </div>
           </div>
-          <button 
-            onClick={onClose} 
-            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-          >
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <MenuInfoButton
+              title="PBB"
+              description="Pantau agenda Perserikatan Bangsa-Bangsa melalui resolusi, Dewan Keamanan, dan suara negara. Partisipasi serta keputusan di setiap bagian dapat memengaruhi kebijakan global dan posisi diplomatik negara."
+            />
+            <button
+              onClick={onClose}
+              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+            >
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         {/* Body Content */}

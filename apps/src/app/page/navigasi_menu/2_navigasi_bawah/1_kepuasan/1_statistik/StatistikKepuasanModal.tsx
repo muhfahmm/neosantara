@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
-import { Smile, TrendingUp } from "lucide-react";
+import { Smile, TrendingUp, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
@@ -33,6 +35,7 @@ export default function StatistikKepuasanModal({
   selectedCountry,
   metadata,
 }: StatistikKepuasanModalProps) {
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
   if (!isOpen) return null;
 
   // Gunakan utility terpusat agar konsisten dengan nilai di navbar
@@ -120,7 +123,8 @@ export default function StatistikKepuasanModal({
   ];
 
   return (
-    <NotebookModalWrapper onClose={onClose}>
+    <>
+    {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
       <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A]">
         {/* Header */}
         <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2.5 sm:px-6 sm:py-3">
@@ -148,7 +152,12 @@ export default function StatistikKepuasanModal({
             />
           </div>
 
-          <RootModalCloseButton onClick={onClose} />
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi statistik kepuasan rakyat" aria-label="Informasi statistik kepuasan rakyat" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]">
+              <Info className="h-3.5 w-3.5" />
+            </button>
+            <RootModalCloseButton onClick={onClose} />
+          </div>
         </div>
 
         {/* Content Area: HANYA MENGGANTI custom-scrollbar DENGAN TAILWIND SCROLLBAR */}
@@ -241,6 +250,13 @@ export default function StatistikKepuasanModal({
           </div>
         </div>
       </div>
-    </NotebookModalWrapper>
+    </NotebookModalWrapper>}
+    <MenuInfoModal
+      isOpen={isInfoOpen}
+      onClose={() => setIsInfoOpen(false)}
+      title="Informasi Statistik Kepuasan Rakyat"
+      description="Nilai kepuasan merangkum kondisi umum dan indikator sektoral seperti pajak, harga, pangan, serta layanan publik. Gunakan tab Statistik untuk meninjau skor dan akses sektor terkait untuk melihat kebijakan yang memengaruhinya."
+    />
+    </>
   );
 }

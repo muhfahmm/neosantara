@@ -5,6 +5,7 @@ import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import MenuInfoButton from "../../MenuInfoButton";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 
 interface ModalProps {
@@ -91,7 +92,13 @@ export default function WilayahDirebutModal({
               </p>
             </div>
           </div>
-          <RootModalCloseButton onClick={onClose} />
+          <div className="flex shrink-0 items-center gap-2">
+            <MenuInfoButton
+              title="Wilayah yang Direbut"
+              description="Daftar ini menampilkan negara atau wilayah yang saat ini berada di bawah kendali negara Anda setelah berhasil direbut. Jumlah dan daftar wilayah diperbarui ketika status penguasaan di peta berubah."
+            />
+            <RootModalCloseButton onClick={onClose} />
+          </div>
         </div>
 
         <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] relative z-10 neon-scrollbar">

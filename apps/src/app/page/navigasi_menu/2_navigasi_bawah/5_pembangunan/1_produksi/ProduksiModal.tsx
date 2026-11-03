@@ -6,6 +6,7 @@ import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import { fetchBuildingMetadata } from '../../../../../../lib/buildingMetadata';
 import { isBuildingAvailable } from '../../../../../logic';
 import { calculateProductionIncrement, formatDate, getDaysElapsed } from '../../../../../logic/production_logic';
@@ -144,6 +145,7 @@ export default function ProduksiModal({
   const [highlightedCardKey, setHighlightedCardKey] = useState<string | null>(null);
   const [showMaterialWarningModal, setShowMaterialWarningModal] = useState(false);
   const [showSanctionInfo, setShowSanctionInfo] = useState(false);
+  const [selectedTabInfo, setSelectedTabInfo] = useState<{ title: string; description: string } | null>(null);
   const [insufficientMaterials, setInsufficientMaterials] = useState<MaterialRequirement[]>([]);
   const [sdaStatus, setSdaStatus] = useState<Record<string, boolean> | null>(null);
   const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.country_name || "";
@@ -605,6 +607,16 @@ export default function ProduksiModal({
     { id: "olahan pangan", label: "Olahan Pangan", component: OlahanPanganTab },
   ];
 
+  const productionTabDescriptions: Record<string, string> = {
+    kelistrikan: "Kelola pembangunan pembangkit listrik. Kapasitas produksi dan ketersediaan bahan bakar menentukan pasokan listrik nasional; bandingkan produksi dengan konsumsi untuk melihat neraca energi.",
+    mineral: "Bangun fasilitas ekstraksi mineral dan energi seperti bijih besi, emas, batu bara, minyak, dan gas. Produksi sumber daya ini mendukung pendapatan serta menyediakan bahan untuk sektor industri.",
+    manufaktur: "Kembangkan pabrik untuk mengolah bahan mentah menjadi barang dan material industri. Pastikan pasokan bahan baku serta anggaran cukup sebelum menjadwalkan pembangunan.",
+    peternakan: "Kelola produksi komoditas peternakan untuk memenuhi konsumsi masyarakat. Periksa hasil produksi dan ketersediaan fasilitas sebelum menambah kapasitas.",
+    agrikultur: "Bangun fasilitas pertanian untuk menghasilkan komoditas pangan dan perkebunan. Produksi sektor ini berkontribusi pada pemenuhan kebutuhan domestik dan neraca pangan.",
+    perikanan: "Kembangkan perikanan tangkap dan budidaya untuk memasok hasil laut. Kapasitas fasilitas memengaruhi produksi yang tersedia bagi konsumsi nasional.",
+    "olahan pangan": "Bangun fasilitas pengolahan pangan yang mengubah bahan mentah menjadi produk konsumsi. Ketersediaan bahan baku dari sektor pertanian, peternakan, dan perikanan dapat mendukung produksinya.",
+  };
+
   if (!isOpen) return null;
 
   const handleBuild = (key: string, label: string, quantity?: number) => {
@@ -636,7 +648,7 @@ export default function ProduksiModal({
 
   return (
     <>
-      {isOpen && (
+      {isOpen && !selectedTabInfo && (
         <NotebookModalWrapper onClose={onClose}>
           <div className="flex flex-col h-full overflow-hidden">
 
@@ -649,22 +661,36 @@ export default function ProduksiModal({
                   <h2 className={rootModalTypography.title}>Produksi & Pembangunan</h2>
                 </div>
               </div>
-              <RootModalCloseButton onClick={onClose} />
+              <div className="flex shrink-0 items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedTabInfo({
+                    title: `Informasi ${activeSection.label}`,
+                    description: productionTabDescriptions[activeSection.id],
+                  })}
+                  aria-label={`Informasi ${activeSection.label}`}
+                  title={`Informasi ${activeSection.label}`}
+                  className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] transition-colors hover:border-[#00FFAA] hover:bg-[#00FFAA]/10"
+                >
+                  <Info className="h-4 w-4" />
+                </button>
+                <RootModalCloseButton onClick={onClose} />
+              </div>
             </div>
 
             <div className="flex-1 flex min-h-0 relative z-10">
               <div className="w-40 sm:w-44 lg:w-48 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
                 {TABS.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${activeTab === tab.id
-                        ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
-                        : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA] hover:text-[#00FFAA]"
-                      }`}
-                  >
-                    <span className="text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{tab.label}</span>
-                  </button>
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${activeTab === tab.id
+                          ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
+                          : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA] hover:text-[#00FFAA]"
+                        }`}
+                    >
+                      <span className="truncate text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{tab.label}</span>
+                    </button>
                 ))}
               </div>
               <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-[#0F2424] neon-scrollbar">
@@ -929,6 +955,12 @@ export default function ProduksiModal({
           </div>
         </div>
       )}
+      <MenuInfoModal
+        isOpen={selectedTabInfo !== null}
+        onClose={() => setSelectedTabInfo(null)}
+        title={selectedTabInfo?.title ?? ""}
+        description={selectedTabInfo?.description ?? ""}
+      />
     </>
   );
 }

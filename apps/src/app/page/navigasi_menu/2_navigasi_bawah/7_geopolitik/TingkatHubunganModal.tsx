@@ -10,6 +10,7 @@ import getTradeAgreementsForCountry from "../../../../../../../json/9_database_m
 import { getEmbassiesForCountry } from "../../../../../../../json/6_database_kedutaan_besar/embassyRegistry";
 import TingkatkanHubunganModal from "@/app/page/detail_negara/2_geopolitik/3_tingkatkan_hubungan/tingkatkanHubunganModals";
 import BeriHadiahModal from "@/app/page/detail_negara/2_geopolitik/2_beri_hadiah/beriHadiahModals";
+import MenuInfoButton from "../MenuInfoButton";
 
 interface ModalProps {
   isOpen: boolean;
@@ -176,6 +177,10 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                 <Heart className="h-3.5 w-3.5 fill-[#00FFAA] hover:fill-[#0A1A1A]" />
                 <span className="font-black tracking-wider whitespace-nowrap">Tingkatkan Hubungan Semua Negara</span>
               </button>
+              <MenuInfoButton
+                title="Tingkat Hubungan"
+                description="Lihat tingkat hubungan diplomatik dengan negara lain, telusuri negara berdasarkan hubungan, dan gunakan aksi diplomasi yang tersedia untuk memperbaikinya. Hubungan dapat memengaruhi kerja sama bilateral serta respons negara lain."
+              />
               <button
                 onClick={onClose}
                 className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"

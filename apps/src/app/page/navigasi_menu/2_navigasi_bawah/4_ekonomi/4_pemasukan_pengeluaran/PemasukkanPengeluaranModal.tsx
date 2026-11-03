@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { BarChart3, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { BarChart3, ArrowUpRight, ArrowDownRight, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
@@ -77,11 +78,12 @@ const calculateTourismIncome = (countryDetail: any) => {
 
 // --- KOMPONEN UTAMA ---
 export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDetail, selectedCountry, onGotoPajak, onGotoProduction }: ModalProps) {
-  if (!isOpen) return null;
-
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"summary" | "income" | "outcome">("summary");
   const [outcomeMainTab, setOutcomeMainTab] = useState<"kabinet" | "subsidi" | "total">("kabinet");
   const [kabinetSubTab, setKabinetSubTab] = useState<"kementerian" | "keamanan" | "layanan">("kementerian");
+
+  if (!isOpen) return null;
 
   const taxRevenue = calculateTotalTaxIncome(countryDetail);
   const goldIncome = calculateGoldIncome(countryDetail);
@@ -178,7 +180,8 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
   const outcomeTabCostDaily = calculateTabCostDaily(countryDetail, currentOutcomeTabDepts);
 
   return (
-    <NotebookModalWrapper onClose={onClose}>
+    <>
+    {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
 
         {/* Header */}
@@ -191,7 +194,12 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
               <h2 className={rootModalTypography.title}>Neraca Pemasukkan & Pengeluaran</h2>
             </div>
           </div>
-          <RootModalCloseButton onClick={onClose} />
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi neraca pemasukan dan pengeluaran" aria-label="Informasi neraca pemasukan dan pengeluaran" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]">
+              <Info className="h-3.5 w-3.5" />
+            </button>
+            <RootModalCloseButton onClick={onClose} />
+          </div>
         </div>
 
         {/* Tab Navigation (Hanya 3 Tab) */}
@@ -482,6 +490,13 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
           </div>
         </div>
       </div>
-    </NotebookModalWrapper>
+    </NotebookModalWrapper>}
+    <MenuInfoModal
+      isOpen={isInfoOpen}
+      onClose={() => setIsInfoOpen(false)}
+      title="Informasi Neraca Pemasukan & Pengeluaran"
+      description="Tinjau sumber pemasukan negara dan rincian pengeluaran, termasuk dampaknya pada saldo dan PDB. Gunakan tab Ringkasan PDB, Pemasukan, dan Pengeluaran untuk melihat setiap bagian anggaran."
+    />
+    </>
   );
 }

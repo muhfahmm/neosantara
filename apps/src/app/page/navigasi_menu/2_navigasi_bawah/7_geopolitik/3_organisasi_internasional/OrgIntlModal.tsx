@@ -6,6 +6,7 @@ import NotebookModalWrapper from "../../NotebookModalWrapper";
 import OrganisasiPBBModal from "./1_organisasi_PBB/organisasiPBBmodal";
 import OrganisasiRegional from "./2_organisasi_regional/organisasiRegional";
 import OrgIntlInfoModal from "./OrgIntlInfoModal";
+import MenuInfoButton from "../../MenuInfoButton";
 import {
   getOrgMembers,
   ORGANIZATION_MEMBERSHIP_UPDATED_EVENT
@@ -149,13 +150,19 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">{playerCountryName}</p>
             </div>
           </div>
-          <button 
-            onClick={handleClose}
-            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-          >
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <MenuInfoButton
+              title="Organisasi Internasional"
+              description="Jelajahi organisasi PBB dan badan khusus serta organisasi regional. Buka tiap organisasi untuk melihat keanggotaan, informasi, dan peluang kerja sama yang tersedia bagi negara Anda."
+            />
+            <button
+              onClick={handleClose}
+              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+            >
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         {/* BODY */}

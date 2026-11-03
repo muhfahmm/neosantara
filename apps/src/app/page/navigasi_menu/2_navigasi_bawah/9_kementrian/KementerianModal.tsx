@@ -33,6 +33,7 @@ import { calculateCountryNetBalance, getDepartmentLevel } from "@/app/logic/econ
 import { CABINET_DEPARTMENT_IMAGES, LEVEL_UP_COST, MAX_CABINET_LEVEL } from "@/app/logic/economic_logic/departments";
 import { generateKabinetChangeNotification } from "@/app/page/menus/inbox/logic/13_notifikasi_kabinet/kabinetChangeLogic";
 import PilihMenteriModal, { type MinisterCandidateDepartment } from "./PilihMenteriModal";
+import MenuInfoButton from "../MenuInfoButton";
 import GantiIbukotaModal from "./2_ganti_ibukota/GantiIbukotaModal";
 import { MapPin } from "lucide-react";
 import { applyReformasiBirokrasiToUpgradeCost } from "@/app/page/bonus_logic";
@@ -522,13 +523,19 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
               </div>
             </div>
 
-            <button
-              onClick={onClose}
-              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
-            >
-              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-4 w-4" />
-            </button>
+            <div className="flex shrink-0 items-center gap-2">
+              <MenuInfoButton
+                title="Kementerian"
+                description="Kelola kementerian, keamanan, dan layanan negara melalui penempatan menteri serta peningkatan level departemen. Susunan kabinet memengaruhi anggaran harian dan bonus atau layanan yang diberikan."
+              />
+              <button
+                onClick={onClose}
+                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
+              >
+                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+                <X className="h-4 w-4" />
+              </button>
+            </div>
           </div>
 
           {/* BODY LAYOUT WITH LEFT SIDEBAR & RIGHT CONTENT */}

@@ -5,6 +5,7 @@ import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import MenuInfoButton from "../../MenuInfoButton";
 import { getArmadaPowerSummary } from "../4_armada/logic/armadaLogic";
 // 🔥 Import modal serang baru yang akan kita buat
 import SerangModals from "./modals_menu/KonfirmasiSerangModals";
@@ -374,6 +375,10 @@ export default function SerangNegaraModal({
                 />
               </div>
 
+              <MenuInfoButton
+                title="Serang Negara"
+                description="Pilih negara sasaran dan tinjau perbandingan kekuatan darat, laut, serta udara sebelum memulai operasi militer. Periksa kesiapan armada dan status serangan aktif karena serangan dapat mengubah hubungan diplomatik dan kondisi negara."
+              />
               <RootModalCloseButton onClick={onClose} />
             </div>
           </div>

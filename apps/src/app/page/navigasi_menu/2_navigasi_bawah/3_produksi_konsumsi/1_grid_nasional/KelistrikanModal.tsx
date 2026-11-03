@@ -8,6 +8,7 @@ import {
   Search,
   ChevronUp,
   ChevronDown,
+  Info,
 } from "lucide-react";
 
 import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
@@ -20,6 +21,7 @@ import { getProductionBonusMultiplier } from "../../../../bonus_logic";
 import { applyNpcCountrySimulationState } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 
 interface ModalProps {
   isOpen: boolean;
@@ -68,6 +70,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
   const [searchQuery, setSearchQuery] = useState('');
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'production', direction: 'desc' });
   const [isDetailKonsumsiOpen, setIsDetailKonsumsiOpen] = useState(false);
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -262,7 +265,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
   return (
     <>
-      <NotebookModalWrapper onClose={onClose}>
+      {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
         <div className="flex h-full min-w-0 flex-col overflow-hidden">
           {/* HEADER */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
@@ -275,7 +278,12 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
               </div>
             </div>
 
-            <RootModalCloseButton onClick={onClose} />
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi grid kelistrikan nasional" aria-label="Informasi grid kelistrikan nasional" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]">
+                <Info className="h-3.5 w-3.5" />
+              </button>
+              <RootModalCloseButton onClick={onClose} />
+            </div>
           </div>
 
           {/* BODY (SCROLLBAR HIJAU DITERAPKAN DI SINI) */}
@@ -545,7 +553,14 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
           </div>
         </div>
-      </NotebookModalWrapper>
+      </NotebookModalWrapper>}
+
+      <MenuInfoModal
+        isOpen={isInfoOpen}
+        onClose={() => setIsInfoOpen(false)}
+        title="Informasi Grid Kelistrikan Nasional"
+        description="Pantau produksi listrik, estimasi konsumsi, dan neraca listrik negara melalui tab Neraca User. Tab negara lain memungkinkan perbandingan global; gunakan rincian sumber pembangkit untuk meninjau produksinya."
+      />
 
       <DetailKonsumsiTerestimasiModal
         isOpen={isDetailKonsumsiOpen}

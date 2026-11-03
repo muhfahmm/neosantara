@@ -1,7 +1,8 @@
 "use client"
 import React, { useState, useEffect } from "react";
-import { TrendingUp, Search, User, ChevronUp, ChevronDown } from "lucide-react";
+import { TrendingUp, Search, User, ChevronUp, ChevronDown, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
@@ -454,11 +455,13 @@ function AllCountriesGDP({
 
 // --- KOMPONEN UTAMA PDB MODAL ---
 export default function PDBModal({ isOpen, onClose, countryDetail, selectedCountry, prefetchedAllCountries }: ModalProps) {
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
   if (!isOpen) return null;
   const countryName = selectedCountry?.country || countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || "Indonesia";
 
   return (
-    <NotebookModalWrapper onClose={onClose}>
+    <>
+    {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
@@ -470,18 +473,29 @@ export default function PDBModal({ isOpen, onClose, countryDetail, selectedCount
             </div>
           </div>
 
-          <RootModalCloseButton onClick={onClose} />
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi PDB" aria-label="Informasi PDB" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]">
+              <Info className="h-3.5 w-3.5" />
+            </button>
+            <RootModalCloseButton onClick={onClose} />
+          </div>
         </div>
 
         <div className="flex-1 min-h-0 flex flex-col p-4 lg:p-6 bg-[#0F2424] relative z-10">
           <p className="text-[11px] lg:text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-3 lg:mb-4 flex-shrink-0">
-            PDB mengukur kekuatan ekonomi makro kedaulatan {countryName}. Pertumbuhan positif meningkatkan daya tawar diplomasi Anda.
-            <span className="ml-1 text-[#00FFAA] font-black">(Data PDB Seluruh Negara Di Bawah Ini)</span>
+            Data PDB seluruh negara tersedia dalam daftar di bawah ini.
           </p>
 
           <AllCountriesGDP playerCountryName={countryName} playerCountryDetail={countryDetail} prefetchedAllCountries={prefetchedAllCountries} />
         </div>
       </div>
-    </NotebookModalWrapper>
+    </NotebookModalWrapper>}
+    <MenuInfoModal
+      isOpen={isInfoOpen}
+      onClose={() => setIsInfoOpen(false)}
+      title="Informasi Produk Domestik Bruto"
+      description={`PDB mengukur kekuatan ekonomi makro kedaulatan ${countryName}. Pertumbuhan positif meningkatkan daya tawar diplomasi Anda. Data PDB negara Anda dan negara lain dapat dibandingkan pada daftar.`}
+    />
+    </>
   );
 }

@@ -5,6 +5,7 @@ import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import MenuInfoButton from "../../MenuInfoButton";
 import Spionase from "./table_menu/1_tabel_spionase";
 import Sabotase from "./table_menu/2_tabel_sabotase";
 import CovertOperationResultModal from "@/app/page/detail_negara/3_operasi_militer/CovertOperationResultModal";
@@ -119,7 +120,13 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
             </div>
           </div>
 
-          <RootModalCloseButton onClick={onClose} />
+          <div className="flex shrink-0 items-center gap-2">
+            <MenuInfoButton
+              title="Intelijen"
+              description="Gunakan Spionase untuk mengumpulkan informasi negara lain dan Sabotase untuk menjalankan operasi rahasia. Setiap operasi membutuhkan anggaran dan dapat menimbulkan konsekuensi diplomatik; pilih sasaran dengan mempertimbangkan risiko serta hasil yang diharapkan."
+            />
+            <RootModalCloseButton onClick={onClose} />
+          </div>
         </div>
 
         {/* BODY MODAL */}

@@ -1,6 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+
+export const MENU_INFO_MODAL_VISIBILITY_EVENT = 'neosantara_menu_info_modal_visibility';
 
 interface NotebookModalWrapperProps {
   children: React.ReactNode;
@@ -12,6 +14,7 @@ interface NotebookModalWrapperProps {
   compact?: boolean;
   backdropClassName?: string;
   squareCorners?: boolean;
+  hideWhenInfoModalOpen?: boolean;
 }
 
 export function NotebookModalWrapper({
@@ -24,10 +27,25 @@ export function NotebookModalWrapper({
   compact = false,
   backdropClassName = '',
   squareCorners = false,
+  hideWhenInfoModalOpen = true,
 }: NotebookModalWrapperProps) {
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!hideWhenInfoModalOpen) return;
+
+    const handleInfoModalVisibility = (event: Event) => {
+      const { isOpen } = (event as CustomEvent<{ isOpen: boolean }>).detail;
+      setIsInfoModalOpen(isOpen);
+    };
+
+    window.addEventListener(MENU_INFO_MODAL_VISIBILITY_EVENT, handleInfoModalVisibility);
+    return () => window.removeEventListener(MENU_INFO_MODAL_VISIBILITY_EVENT, handleInfoModalVisibility);
+  }, [hideWhenInfoModalOpen]);
+
   return (
     <div
-      className={`${isHidden ? 'hidden' : ''} fixed inset-0 ${zIndexClass} flex items-center justify-center pt-[88px] sm:pt-[100px] lg:pt-[clamp(92px,10dvh,115px)] pb-3 sm:pb-4 lg:pb-5 px-3 sm:px-6 lg:px-10 ${backdropClassName || 'bg-transparent'} font-sans pointer-events-none`}
+      className={`${isHidden || (hideWhenInfoModalOpen && isInfoModalOpen) ? 'hidden' : ''} fixed inset-0 ${zIndexClass} flex items-center justify-center pt-[88px] sm:pt-[100px] lg:pt-[clamp(92px,10dvh,115px)] pb-3 sm:pb-4 lg:pb-5 px-3 sm:px-6 lg:px-10 ${backdropClassName || 'bg-transparent'} font-sans pointer-events-none`}
     >
       {/* Notebook Outer Frame */}
       <div

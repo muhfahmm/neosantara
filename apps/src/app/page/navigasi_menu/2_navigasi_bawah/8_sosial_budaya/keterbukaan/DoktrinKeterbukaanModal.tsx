@@ -16,6 +16,7 @@ import { fetchDoktrinKeterbukaanFromDb } from "../../../../../../../../json/2_da
 import { generateDoctrineChangeNotification } from "@/app/page/menus/inbox/logic/10_sosial_budaya/3_keterbukaan/doctrineChangeLogic";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import MenuInfoButton from "../../MenuInfoButton";
 
 interface DoktrinKeterbukaanModalProps {
   isOpen: boolean;
@@ -256,13 +257,19 @@ export default function DoktrinKeterbukaanModal({
             </h3>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-          >
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <MenuInfoButton
+              title="Doktrin & Keterbukaan"
+              description="Atur kebijakan keterbukaan negara pada kebebasan sipil dan HAM, media dan informasi, serta perbatasan dan geopolitik. Perubahan indikator memengaruhi karakter kebijakan dalam negeri dan hubungan dengan dunia."
+            />
+            <button
+              onClick={onClose}
+              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+            >
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         {/* BODY LAYOUT WITH LEFT SIDEBAR & RIGHT CONTENT */}

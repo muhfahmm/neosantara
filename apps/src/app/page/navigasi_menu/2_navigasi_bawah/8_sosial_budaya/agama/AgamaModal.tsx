@@ -5,6 +5,7 @@ import Image from "next/image";
 import { X, Star, Globe, MoonStar, Church, Sun, CircleDot, Atom, Check } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import MenuInfoButton from "../../MenuInfoButton";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
 import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
 
@@ -226,13 +227,19 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
               </div>
               <h3 className={rootModalTypography.title}>Agama & Kebebasan Berkeyakinan</h3>
             </div>
-            <button
-              onClick={onClose}
-              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-            >
-              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-4 w-4" />
-            </button>
+            <div className="flex shrink-0 items-center gap-2">
+              <MenuInfoButton
+                title="Agama & Kepercayaan"
+                description="Pilih dan kelola agama atau kepercayaan negara, lalu tinjau persebarannya di dunia. Setiap pilihan memiliki bonus tersendiri dan perubahan agama memerlukan biaya serta konfirmasi."
+              />
+              <button
+                onClick={onClose}
+                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+              >
+                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+                <X className="h-4 w-4" />
+              </button>
+            </div>
           </div>
 
           <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-[#0F2424] relative z-10 neon-scrollbar">

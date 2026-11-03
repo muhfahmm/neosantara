@@ -32,6 +32,7 @@ import { calculatePopulationPolicyImpact } from "@/app/logic/populations_logic/p
 import TabelPopulasiNegara from "./TabelPopulasiNegara";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 
 // ==============================
 // Tipe data yang diharapkan dari countryDetail
@@ -145,6 +146,7 @@ export default function RingkasanPopulasiModal({
   const [tempatUmumActiveTab, setTempatUmumActiveTab] = useState<string>("infrastruktur");
   const [isKesejahteraanOpen, setIsKesejahteraanOpen] = useState(Boolean(initialOpenKesejahteraan));
   const [isTunawismaOpen, setIsTunawismaOpen] = useState(false);
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [activePopulationTab, setActivePopulationTab] = useState<"ringkasan" | "negara">("ringkasan");
 
   // Hitung metrik demografi secara sinkron
@@ -302,7 +304,7 @@ export default function RingkasanPopulasiModal({
 
   return (
     <>
-      <NotebookModalWrapper onClose={onClose}>
+      {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
         <div className="flex flex-col h-full overflow-hidden bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 relative">
         {/* ============ HEADER ============ */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
@@ -315,7 +317,12 @@ export default function RingkasanPopulasiModal({
             </div>
           </div>
 
-          <RootModalCloseButton onClick={onClose} />
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi kependudukan" aria-label="Informasi kependudukan" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]">
+              <Info className="h-3.5 w-3.5" />
+            </button>
+            <RootModalCloseButton onClick={onClose} />
+          </div>
         </div>
 
         {/* ============ SUMMARY CARDS ============ */}
@@ -613,7 +620,14 @@ export default function RingkasanPopulasiModal({
           )}
         </div>
       </div>
-    </NotebookModalWrapper>
+    </NotebookModalWrapper>}
+
+    <MenuInfoModal
+      isOpen={isInfoOpen}
+      onClose={() => setIsInfoOpen(false)}
+      title="Informasi Kependudukan"
+      description="Ringkasan ini menampilkan jumlah penduduk, pertumbuhan, kelahiran dan kematian, serta indikator kesejahteraan dan dampak kebijakan. Pilih kartu atau bagian terkait untuk membuka rincian lebih lanjut."
+    />
 
       {/* ============ RENDER MODAL DETAIL ============ */}
       {isDetailBirthOpen && <DetailKelahiranModal

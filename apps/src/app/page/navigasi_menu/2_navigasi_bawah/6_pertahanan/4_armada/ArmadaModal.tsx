@@ -90,7 +90,18 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
               <p className={`${rootModalTypography.label} mt-1`}>{countryName}</p>
             </div>
           </div>
-          <RootModalCloseButton onClick={onClose} />
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowDefenseBonusInfo(true)}
+              aria-label="Informasi armada dan bonus pertahanan"
+              title="Informasi armada dan bonus pertahanan"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FFAA] cursor-pointer"
+            >
+              <Info className="h-4 w-4" />
+            </button>
+            <RootModalCloseButton onClick={onClose} />
+          </div>
         </div>
 
         {/* BODY MODAL WITH SIDEBAR */}
@@ -133,18 +144,6 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
           </div>
         </div>
 
-        {/* FOOTER INFO BAR (Mirip dengan Produksi) */}
-        <div className="flex shrink-0 justify-center border-t border-[#00FFAA]/15 bg-[#0A1A1A] py-2">
-          <button
-            type="button"
-            onClick={() => setShowDefenseBonusInfo(true)}
-            aria-label="Informasi bonus militer & kementerian pertahanan"
-            title="Lihat informasi bonus kementerian pertahanan, ideologi, dan aliansi"
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 hover:shadow-md hover:shadow-[#00FFAA]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FFAA] cursor-pointer"
-          >
-            <Info className="h-4 w-4" />
-          </button>
-        </div>
       </div>
     </NotebookModalWrapper>}
 
@@ -158,7 +157,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
                   <Info className="h-5 w-5 text-[#00FFAA]" />
                 </div>
                 <h3 id="defense-bonus-info-title" className="text-sm font-black uppercase tracking-wide text-[#00FFAA]">
-                  Info Bonus Pertahanan & Kementerian
+                  Informasi Armada & Bonus Pertahanan
                 </h3>
               </div>
               <button
@@ -171,6 +170,9 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
               </button>
             </div>
             <div className="space-y-4 overflow-y-auto px-5 py-5 text-sm leading-relaxed text-slate-300 neon-scrollbar">
+              <p>
+                Kelola armada militer aktif dan infrastruktur pendukungnya. Armada aktif menentukan kemampuan pertahanan dan operasi laut, sementara infrastruktur militer mendukung kapasitas serta kesiapan pasukan.
+              </p>
               <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-200 space-y-2.5">
                 <p>
                   <strong className="text-white">Kementerian Pertahanan:</strong>{" "}

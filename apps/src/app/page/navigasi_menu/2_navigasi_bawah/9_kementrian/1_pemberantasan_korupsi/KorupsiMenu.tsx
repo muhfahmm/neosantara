@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { AlertCircle, Landmark, X, Activity, Building2, Search, ScrollText, ShieldCheck } from 'lucide-react';
 import NotebookModalWrapper from '../../NotebookModalWrapper';
+import MenuInfoButton from '../../MenuInfoButton';
 import { rootModalTypography } from '@/app/page/root_modals_design_menu/rootModalTypography';
 import IndeksKorupsiCard from './components/IndeksKorupsiCard';
 import LembagaAntikorupsiPanel from './components/LembagaAntikorupsiPanel';
@@ -185,15 +186,21 @@ export default function KorupsiMenu({
               <p className="text-xs text-[#8BA3A3]">{String(countryDetail.name_id ?? countryDetail.country ?? countryDetail.name_en ?? 'Negara aktif')}</p>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Tutup menu pemberantasan korupsi"
-            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
-          >
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <MenuInfoButton
+              title="Pemberantasan Korupsi"
+              description="Pantau indeks korupsi, lembaga antikorupsi, penyelidikan, kasus aktif, dan dampak korupsi pada sektor negara. Gunakan audit serta perlindungan pelapor untuk memperkuat pengawasan dan penegakan hukum."
+            />
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Tutup menu pemberantasan korupsi"
+              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
+            >
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </header>
 
         <nav aria-label="Bagian pemberantasan korupsi" className="flex shrink-0 gap-1 overflow-x-auto border-b border-[#00FFAA]/15 bg-[#0A1A1A] px-3 py-2 sm:px-5">

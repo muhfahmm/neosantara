@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect, useRef } from "react";
-import { CreditCard, ArrowRight, AlertCircle, Search } from "lucide-react";
+import { CreditCard, ArrowRight, AlertCircle, Search, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
@@ -32,6 +32,7 @@ import KonfirmasiPinjamanModalRiwayat from "./tab_menu/3_riwayat/modals_menu/kon
 import BayarHutangModal from "./tab_menu/3_riwayat/modals_menu/BayarHutangModal";
 import PenaltyInfoModal from "./tab_menu/3_riwayat/modals_menu/PenaltyInfoModal";
 import GeneralPenaltyModal from "./tab_menu/3_riwayat/modals_menu/GeneralPenaltyModal";
+import LoanInfoModal from "./LoanInfoModal";
 
 interface ModalProps {
   isOpen: boolean;
@@ -113,6 +114,7 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
   const [penaltyInfoLoan, setPenaltyInfoLoan] = useState<LoanRecord | null>(null);
   // STATE: general penalty modal open from header
   const [isGeneralPenaltyOpen, setIsGeneralPenaltyOpen] = useState(false);
+  const [isLoanInfoOpen, setIsLoanInfoOpen] = useState(false);
 
   const parseIdDate = (dateString: string) => {
     const parts = String(dateString).split("/").map((part) => Number(part));
@@ -354,6 +356,7 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
 
   return (
     <>
+      {!isLoanInfoOpen && (
       <NotebookModalWrapper onClose={onClose}>
         <div className="flex flex-col h-full overflow-hidden">
 
@@ -367,7 +370,18 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
               <h2 className={rootModalTypography.title}>Pinjaman & Hutang</h2>
             </div>
           </div>
-          <RootModalCloseButton onClick={onClose} />
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsLoanInfoOpen(true)}
+              title="Informasi pinjaman dan hutang"
+              aria-label="Informasi pinjaman dan hutang"
+              className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]"
+            >
+              <Info className="h-3.5 w-3.5" />
+            </button>
+            <RootModalCloseButton onClick={onClose} />
+          </div>
         </div>
 
         {/* Body Content */}
@@ -472,6 +486,11 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
         </div>
         </div>
       </NotebookModalWrapper>
+      )}
+      <LoanInfoModal
+        isOpen={isLoanInfoOpen}
+        onClose={() => setIsLoanInfoOpen(false)}
+      />
 
       {/* 🔥 RENDER MODAL BAYAR HUTANG */}
       {pendingPaymentLoan && (
