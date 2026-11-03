@@ -1,6 +1,6 @@
 import {
   getAverageNationalization,
-} from "../7_sistem_ekonomi/logic/nationalizationLogic";
+} from "../../7_sistem_ekonomi/logic/nationalizationLogic";
 
 export { getAverageNationalization };
 

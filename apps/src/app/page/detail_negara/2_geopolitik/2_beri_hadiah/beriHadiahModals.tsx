@@ -16,7 +16,7 @@ import {
   Plus,
   Minus
 } from "lucide-react";
-import PilihItemModal from "@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/1_perdagangan/PilihItemModal";
+import PilihItemModal from "@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/1_perdagangan/umum/PilihItemModal";
 import { getMaterialStock } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
 import { getRelationValue, setRelationModifier } from "../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";

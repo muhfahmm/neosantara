@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertTriangle, X } from "lucide-react";
-import NotebookModalWrapper from "../../NotebookModalWrapper";
+import NotebookModalWrapper from "../../../NotebookModalWrapper";
 
 interface ArmsTradeBudgetModalProps {
   availableCash: number;

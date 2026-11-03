@@ -8,7 +8,7 @@ import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
 import { calculateProductionIncrement, formatDate } from '@/app/logic/production_logic';
 import { TradePartner } from "../mitra/mitraModalsMenu";
 import { countryPaths } from '@/app/page/map_system/mapDataAssets';
-import PilihItemModal from "../PilihItemModal";
+import PilihItemModal from "../umum/PilihItemModal";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { isTradeEmbargoActive } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
 import {
@@ -39,8 +39,8 @@ import {
   getArmsTradeProducts,
   getArmsTransferUpdate,
   getArmsUnitCount,
-} from "../armsTradeLogic";
-import ArmsTradeBudgetModal from "../ArmsTradeBudgetModal";
+} from "../umum/armsTradeLogic";
+import ArmsTradeBudgetModal from "../umum/ArmsTradeBudgetModal";
 import { isArmsSaleEmbargoActive } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/2_armsSalesEmbargoLogic";
 import {
   createDailyMarketPriceFactors,
@@ -50,9 +50,9 @@ import {
   PRICE_TIME_RANGES,
   updateTradePriceHistory,
   type PriceTimeRange,
-} from "../priceHistoryLogic";
-import { recordTrade } from "../tradeVolumeLedger";
-import CandlestickChart from "../CandlestickChart";
+} from "../umum/priceHistoryLogic";
+import { recordTrade } from "../umum/tradeVolumeLedger";
+import CandlestickChart from "../umum/CandlestickChart";
 
 const getFlagEmoji = (countryName: string) => {
   const matched = COUNTRIES_DATA.find(c => c.country.toLowerCase().trim() === countryName.toLowerCase().trim());

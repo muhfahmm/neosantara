@@ -4,7 +4,7 @@ import { ArrowRightLeft, Info, AlertTriangle } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
-import TradeMarketBlockedModal from "./TradeMarketBlockedModal";
+import TradeMarketBlockedModal from "./umum/TradeMarketBlockedModal";
 import JualModalsMenu from "./jual/modalsKonfirmasiJual";
 import MitraModalsMenu, { TradePartner } from "./mitra/mitraModalsMenu";
 import ModalsKonfirmasiBeli from "./beli/modalsKonfirmasiBeli";
@@ -33,12 +33,12 @@ import { isTradeEmbargoActive, isCountryUnderEconomicEmbargo } from '@/app/page/
 import {
   calculateTradeAccess,
   getAverageNationalization,
-} from "./tradeAccessLogic";
+} from "./umum/tradeAccessLogic";
 import {
   getArmsTradeProducts,
   getArmsUnitCount,
-} from "./armsTradeLogic";
-import ArmsTradeBudgetModal from "./ArmsTradeBudgetModal";
+} from "./umum/armsTradeLogic";
+import ArmsTradeBudgetModal from "./umum/ArmsTradeBudgetModal";
 import { isArmsSaleEmbargoActive } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/2_armsSalesEmbargoLogic";
 import {
   applyNpcCountrySimulationState,

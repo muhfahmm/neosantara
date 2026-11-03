@@ -1,7 +1,7 @@
 "use client";
 
 import { Info, X } from "lucide-react";
-import NotebookModalWrapper from "../../NotebookModalWrapper";
+import NotebookModalWrapper from "../../../NotebookModalWrapper";
 
 interface TradeMarketBlockedModalProps {
   isOpen: boolean;

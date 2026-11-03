@@ -2,7 +2,7 @@
 import React from "react";
 import { X } from "lucide-react";
 import { PartnerOffer } from "../PerdaganganModal";
-import { getArmsTradeProducts } from "../armsTradeLogic";
+import { getArmsTradeProducts } from "../umum/armsTradeLogic";
 
 import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
 

@@ -5,7 +5,7 @@ import { ChevronRight, Handshake, PackageSearch } from "lucide-react";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
-import { COUNTRIES_DATA } from "../../../../map_system/map-data";
+import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
 
 // Definisikan tipe data agar modal bisa menerima format Flat ataupun Grouped
 type Item = { label: string; value: string; disabled?: boolean };

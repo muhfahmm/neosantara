@@ -24,11 +24,11 @@ import {
 import {
     calculateTradeAccess,
     getAverageNationalization,
-} from '../navigasi_menu/2_navigasi_bawah/4_ekonomi/1_perdagangan/tradeAccessLogic';
+} from '../navigasi_menu/2_navigasi_bawah/4_ekonomi/1_perdagangan/umum/tradeAccessLogic';
 import {
     advanceTradePriceHistoriesForSimulationDay,
     createDailyMarketPriceFactors,
-} from '../navigasi_menu/2_navigasi_bawah/4_ekonomi/1_perdagangan/priceHistoryLogic';
+} from '../navigasi_menu/2_navigasi_bawah/4_ekonomi/1_perdagangan/umum/priceHistoryLogic';
 import {
     buildEmbargoEvent,
     buildWarEvent,
@@ -36,11 +36,11 @@ import {
     registerMarketEvent,
     type MarketEvent,
     type MarketProducer,
-} from '../navigasi_menu/2_navigasi_bawah/4_ekonomi/1_perdagangan/marketEventsLogic';
+} from '../navigasi_menu/2_navigasi_bawah/4_ekonomi/1_perdagangan/umum/marketEventsLogic';
 import {
     calculateGlobalProduction,
     recordTrade,
-} from '../navigasi_menu/2_navigasi_bawah/4_ekonomi/1_perdagangan/tradeVolumeLedger';
+} from '../navigasi_menu/2_navigasi_bawah/4_ekonomi/1_perdagangan/umum/tradeVolumeLedger';
 
 const GameMenuModal = dynamic(() => import('../paused_menu/GameMenuModal').then(m => m.GameMenuModal), { ssr: false });
 const TopNav = dynamic(() => import('../navigasi_menu/1_navigasi_atas/TopNav'), { ssr: false });
