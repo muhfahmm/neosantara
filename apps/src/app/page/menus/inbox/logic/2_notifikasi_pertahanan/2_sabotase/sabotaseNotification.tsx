@@ -44,7 +44,7 @@ export default function SabotaseNotificationCard({ notification, onAccept, onRej
           {isHandled ? (
             <div className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/50 flex items-center gap-1.5">
               <Check className="w-3.5 h-3.5" />
-              <span>KERUSAKAN PERBAIKAN & PENANGANAN SELESAI</span>
+              <span>{notification.status === 'ignored' ? 'KERUSAKAN ALUTSISTA PERMANEN TERJADI' : 'KERUSAKAN PERBAIKAN & PENANGANAN SELESAI'}</span>
             </div>
           ) : (
             <>
@@ -54,7 +54,7 @@ export default function SabotaseNotificationCard({ notification, onAccept, onRej
                   className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-950/60 hover:bg-rose-900 border border-rose-500/40 text-rose-300 rounded-xl transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
                 >
                   <X className="w-3.5 h-3.5" />
-                  Biarkan (Pemulihan Alami 14 Hari)
+                  Abaikan (Risiko Kerusakan Permanen)
                 </button>
               )}
               {onAccept && (
@@ -69,6 +69,11 @@ export default function SabotaseNotificationCard({ notification, onAccept, onRej
             </>
           )}
         </div>
+        {!isHandled && typeof notification.remainingResponseDays === 'number' && (
+          <p className="text-[10px] font-bold text-amber-300">
+            Batas respons: {notification.remainingResponseDays} hari game
+          </p>
+        )}
       </div>
     </div>
   );

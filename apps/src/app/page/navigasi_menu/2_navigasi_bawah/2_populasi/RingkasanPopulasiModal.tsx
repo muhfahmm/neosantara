@@ -33,6 +33,7 @@ import TabelPopulasiNegara from "./TabelPopulasiNegara";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
+import { parseActiveEspionageEffects } from "@/app/page/detail_negara/3_operasi_militer/covertEffectsLogic";
 
 // ==============================
 // Tipe data yang diharapkan dari countryDetail
@@ -251,6 +252,8 @@ export default function RingkasanPopulasiModal({
         !outbreak.isHandled && String(outbreak.category || "").toLowerCase().includes("pandemi")
       )
     : null;
+  const activeEspionageEffect = parseActiveEspionageEffects(countryDetail?.active_disaster_effects)
+    .sort((first, second) => second.remainingDays - first.remainingDays)[0];
   const pandemicCost = Math.max(0, Number(activePandemic?.korban) || 0);
   const pandemicDeaths = Math.max(0, Number(activePandemic?.perkiraanKematian) || 0);
   const canTreatPandemic = Number(countryDetail?.anggaran || 0) >= pandemicCost;
@@ -514,6 +517,27 @@ export default function RingkasanPopulasiModal({
             </div>
 
             {/* Pandemic Section */}
+            {activeEspionageEffect && (
+              <section className={`${rootBorderRadius.card} border border-purple-500/50 bg-purple-500/10 p-3.5 lg:p-4.5`} aria-label="Efek spionase aktif">
+                <div className="flex items-start gap-3">
+                  <div className="rounded-lg border border-purple-400/40 bg-[#0A1A1A] p-2 text-purple-300">
+                    <ShieldAlert className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className={rootModalTypography.label}>Efek Spionase Aktif</p>
+                      <span className="flex items-center gap-1 rounded border border-purple-500/30 bg-purple-500/20 px-1.5 py-0.5 text-[9px] font-bold text-purple-100">
+                        <Clock className="w-2.5 h-2.5" />
+                        Sisa {activeEspionageEffect.remainingDays} hari game
+                      </span>
+                    </div>
+                    <h3 className={`${rootModalTypography.value} mt-0.5 text-sm`}>Kekuatan & HP militer ×{activeEspionageEffect.multiplier.toFixed(2)}</h3>
+                    <p className="mt-1 text-[11px] text-[#AAB6B6]">Jumlah pasukan dan alutsista tidak berubah. Efek pulih otomatis saat durasi habis.</p>
+                  </div>
+                </div>
+              </section>
+            )}
+
             {activePandemic && (
               <section className={`${rootBorderRadius.card} border border-rose-500/50 bg-rose-500/10 p-3.5 lg:p-4.5`} aria-label="Pandemi aktif">
                 <div className="flex flex-wrap items-center justify-between gap-3">

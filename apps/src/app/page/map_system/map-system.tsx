@@ -108,7 +108,16 @@ import { buildCapitalPoint } from '../path_logic/path-war';
 import { estimateTravelTime } from '../path_logic/time_logic';
 import { applyWarLossesToUserArmada } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
 import { mergeAnnexedForces, resolveCountryPoolOwner } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/annexedForcePool';
-import { getArmadaPowerSummary } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
+import { getArmadaPowerSummary, getArmadaUnitBreakdown } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
+import {
+    COVERT_OPS_EFFECT_CONFIG,
+    addEspionageEffect,
+    applySabotageLosses,
+    getElapsedGameDays,
+    parseActiveEspionageEffects,
+    rollEspionageDuration,
+    updateArmadaEquipmentCounts,
+} from '../detail_negara/3_operasi_militer/covertEffectsLogic';
 import { convertBarakToSoldiers } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/1_barak_logic';
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
 import { setCountryProfileSummaries, type CountryProfileSummary } from '@/lib/countryProfileSummaryRegistry';
@@ -4304,6 +4313,10 @@ export default function MapPage() {
     const [kesejahteraan, setKesejahteraan] = useState<number>(50);
     const [notifications, setNotificationsRaw] = useState<NotificationMessage[]>([]);
     const notificationDateRef = useRef('');
+    const processedCovertNotificationsRef = useRef<{ countryIdentity: string; ids: Set<string> }>({
+        countryIdentity: '',
+        ids: new Set<string>(),
+    });
     notificationDateRef.current = simulationDateString;
     // Gerbang pusat semua notifikasi inbox:
     // - 30% hari kosong (0 notif), 50% dapat 1 notif, 20% dapat 2 notif per hari simulasi
@@ -4369,6 +4382,223 @@ export default function MapPage() {
             return result.length === next.length ? next : result;
         }));
     }, []);
+    const claimCovertNotification = useCallback((notificationId: string): boolean => {
+        const countryIdentity = getWarCountryIdentity(getPlayerCountryIdentity(countryDetail));
+        const storedIds = Array.isArray(countryDetail?.processed_covert_notification_ids)
+            ? countryDetail.processed_covert_notification_ids.filter((id: unknown): id is string => typeof id === 'string')
+            : [];
+        if (processedCovertNotificationsRef.current.countryIdentity !== countryIdentity) {
+            processedCovertNotificationsRef.current = {
+                countryIdentity,
+                ids: new Set(storedIds),
+            };
+        }
+        const ids = processedCovertNotificationsRef.current.ids;
+        if (ids.has(notificationId) || storedIds.includes(notificationId)) return false;
+        ids.add(notificationId);
+        return true;
+    }, [countryDetail]);
+    const applyIgnoredCovertNotification = useCallback((
+        notification: NotificationMessage,
+        trigger: 'ignored' | 'expired',
+    ) => {
+        const covertNotification = notification as NotificationMessage & {
+            tradeType?: unknown;
+            costEM?: unknown;
+            targetCountry?: unknown;
+        };
+        if (
+            !countryDetail ||
+            (covertNotification.tradeType !== 'spionase' && covertNotification.tradeType !== 'sabotase') ||
+            (typeof covertNotification.targetCountry === 'string' &&
+                !areSameWarCountry(covertNotification.targetCountry, getPlayerCountryIdentity(countryDetail))) ||
+            notification.isHandled ||
+            notification.status === 'ignored' ||
+            !claimCovertNotification(notification.id)
+        ) return;
+
+        const currentDateStr = simulationDateString;
+        let resultNotification: NotificationMessage;
+
+        if (covertNotification.tradeType === 'spionase') {
+            const durationDays = rollEspionageDuration();
+            const activeEffects = parseActiveEspionageEffects(countryDetail?.active_disaster_effects);
+            const activeEffectsAtCurrentDate = activeEffects.filter(effect => {
+                const elapsedDays = getElapsedGameDays(effect.startDate, currentDateStr);
+                return elapsedDays !== null && elapsedDays < effect.durationDays;
+            });
+            const nextEffects = addEspionageEffect(activeEffectsAtCurrentDate, notification.id, currentDateStr, durationDays);
+            const activeEffect = nextEffects[0];
+            const wasAlreadyActive = activeEffectsAtCurrentDate.length > 0;
+            resultNotification = {
+                id: `notif-covert-espionage-active-${encodeURIComponent(notification.id)}`,
+                title: '🕵️ EFEK SPIONASE AKTIF',
+                sender: 'Badan Intelijen Negara',
+                message: wasAlreadyActive
+                    ? `Efek spionase baru memperpanjang atau mempertahankan efek aktif. Kekuatan dan HP militer tetap ×0,95 (tidak menumpuk), dengan ${activeEffect.remainingDays} hari tersisa.`
+                    : `Efek spionase menurunkan kekuatan dan HP militer menjadi ×0,95 selama ${activeEffect.remainingDays} hari game. Jumlah pasukan dan alutsista tidak berubah.`,
+                timestamp: currentDateStr,
+                type: 'peringkat',
+                value: 0,
+                isRead: false,
+                priority: 'critical',
+            };
+            setCountryDetail((previous: Record<string, unknown> | null) => {
+                if (!previous) return previous;
+                const existingIds = Array.isArray(previous.processed_covert_notification_ids)
+                    ? previous.processed_covert_notification_ids.filter((id: unknown): id is string => typeof id === 'string')
+                    : [];
+                if (existingIds.includes(notification.id)) return previous;
+                const pending = Array.isArray(previous.pending_notifications)
+                    ? previous.pending_notifications
+                    : [];
+                const pendingNext = pending.some((entry: unknown) =>
+                    entry !== null && typeof entry === 'object' &&
+                    (entry as { id?: unknown }).id === resultNotification.id
+                ) ? pending : [...pending, resultNotification];
+                const previousDisasterEffects = Array.isArray(previous.active_disaster_effects)
+                    ? previous.active_disaster_effects
+                    : [];
+                const expiredEspionageEffects = parseActiveEspionageEffects(previousDisasterEffects)
+                    .filter(effect => {
+                        const elapsedDays = getElapsedGameDays(effect.startDate, currentDateStr);
+                        return elapsedDays === null || elapsedDays >= effect.durationDays;
+                    })
+                    .map(effect => ({
+                        ...effect,
+                        remainingDays: 0,
+                        isHandled: true,
+                        healthMultiplier: effect.multiplier,
+                        militaryMultiplier: effect.multiplier,
+                    }));
+                return {
+                    ...previous,
+                    active_disaster_effects: [
+                        ...previousDisasterEffects.filter((effect: unknown) =>
+                                !effect || typeof effect !== 'object' ||
+                                (effect as { effectType?: unknown }).effectType !== 'covert_spionage'
+                        ),
+                        ...expiredEspionageEffects,
+                        ...addEspionageEffect(
+                            activeEffectsAtCurrentDate,
+                            notification.id,
+                            currentDateStr,
+                            durationDays,
+                        ).map(effect => ({
+                            ...effect,
+                            isHandled: true,
+                            healthMultiplier: effect.multiplier,
+                            militaryMultiplier: effect.multiplier,
+                        })),
+                    ],
+                    processed_covert_notification_ids: [...new Set([...existingIds, notification.id])],
+                    pending_notifications: pendingNext,
+                };
+            });
+            if (process.env.NODE_ENV !== 'production') {
+                console.debug('[CovertEffects] Espionage activated', {
+                    notificationId: notification.id,
+                    trigger,
+                    durationDays,
+                    multiplier: 0.95,
+                });
+            }
+        } else {
+            const breakdown = getArmadaUnitBreakdown(countryDetail || {});
+            const equipment = Object.fromEntries(
+                breakdown.map(unit => [unit.dataKey, unit.quantity]),
+            );
+            const { losses } = applySabotageLosses(equipment);
+            const updates = losses.map(loss => {
+                const unit = breakdown.find(item => item.dataKey === loss.unitKey);
+                return {
+                    unitKey: loss.unitKey,
+                    groupId: unit?.groupId || 'darat',
+                    quantity: loss.remainingQuantity,
+                };
+            });
+            const lossesMessage = losses.length > 0
+                ? losses.map(loss =>
+                    `${loss.unitKey.replace(/_/g, ' ')}: -${loss.lostQuantity.toLocaleString('id-ID')} (sisa ${loss.remainingQuantity.toLocaleString('id-ID')})`
+                ).join('; ')
+                : 'Tidak ada alutsista yang dapat dikurangi.';
+            resultNotification = {
+                id: `notif-covert-sabotage-result-${encodeURIComponent(notification.id)}`,
+                title: '💥 KERUSAKAN SABOTASE TERJADI',
+                sender: 'Kementerian Pertahanan & Keamanan',
+                message: `Sabotase mengurangi alutsista 5% per kategori secara permanen. Kerugian: ${lossesMessage}. Personel/infanteri tidak dikurangi.`,
+                timestamp: currentDateStr,
+                type: 'kesejahteraan',
+                value: 0,
+                isRead: false,
+                priority: 'critical',
+            };
+            setCountryDetail((previous: Record<string, unknown> | null) => {
+                if (!previous) return previous;
+                const existingIds = Array.isArray(previous.processed_covert_notification_ids)
+                    ? previous.processed_covert_notification_ids.filter((id: unknown): id is string => typeof id === 'string')
+                    : [];
+                if (existingIds.includes(notification.id)) return previous;
+                const pending = Array.isArray(previous.pending_notifications)
+                    ? previous.pending_notifications
+                    : [];
+                const pendingNext = pending.some((entry: unknown) =>
+                    entry !== null && typeof entry === 'object' &&
+                    (entry as { id?: unknown }).id === resultNotification.id
+                ) ? pending : [...pending, resultNotification];
+                return {
+                    ...updateArmadaEquipmentCounts(previous, updates),
+                    processed_covert_notification_ids: [...new Set([...existingIds, notification.id])],
+                    pending_notifications: pendingNext,
+                };
+            });
+            if (process.env.NODE_ENV !== 'production') {
+                console.debug('[CovertEffects] Sabotage losses applied', {
+                    notificationId: notification.id,
+                    trigger,
+                    losses,
+                });
+            }
+        }
+
+        setNotifications(previous => previous.map(item => item.id === notification.id
+            ? { ...item, isHandled: true, status: 'ignored' }
+            : item));
+        setInboxModalOpen(false);
+    }, [claimCovertNotification, countryDetail, setCountryDetail, setNotifications, simulationDateString]);
+    useEffect(() => {
+        if (!countryDetail) return;
+        for (const notification of notifications) {
+            const covertNotification = notification as NotificationMessage & {
+                tradeType?: unknown;
+                remainingResponseDays?: number;
+                targetCountry?: unknown;
+            };
+            if (
+                (covertNotification.tradeType !== 'spionase' && covertNotification.tradeType !== 'sabotase') ||
+                (typeof covertNotification.targetCountry === 'string' &&
+                    !areSameWarCountry(covertNotification.targetCountry, getPlayerCountryIdentity(countryDetail))) ||
+                notification.isHandled ||
+                notification.status === 'ignored'
+            ) continue;
+            const ageDays = getElapsedGameDays(notification.timestamp, simulationDateString);
+            if (ageDays === null) {
+                console.error('[CovertEffects] Invalid covert notification timestamp; expiry skipped.', {
+                    notificationId: notification.id,
+                    timestamp: notification.timestamp,
+                });
+                continue;
+            }
+            const remainingResponseDays = Math.max(0, COVERT_OPS_EFFECT_CONFIG.notificationExpiryDays - ageDays);
+            if (remainingResponseDays === 0) {
+                applyIgnoredCovertNotification(notification, 'expired');
+            } else if (covertNotification.remainingResponseDays !== remainingResponseDays) {
+                setNotifications(previous => previous.map(item => item.id === notification.id
+                    ? { ...item, remainingResponseDays }
+                    : item));
+            }
+        }
+    }, [applyIgnoredCovertNotification, countryDetail, notifications, simulationDateString, setNotifications]);
     const submitSanctionsForWar = (
         war: {
             attacker: string;
@@ -5372,9 +5602,9 @@ export default function MapPage() {
                 if (isSeparatismeTriggered) {
                     newNotifsToAdd.push(generatePemberontakanNotification(userCountryName, currentDateStr, separatismeRisk));
                 } else if (defRoll < 0.35) {
-                    newNotifsToAdd.push(generateSpionaseNotification(randomPartner, currentDateStr));
+                    newNotifsToAdd.push(generateSpionaseNotification(randomPartner, currentDateStr, userCountryName));
                 } else if (defRoll < 0.65) {
-                    newNotifsToAdd.push(generateSabotaseNotification(randomPartner, currentDateStr));
+                    newNotifsToAdd.push(generateSabotaseNotification(randomPartner, currentDateStr, userCountryName));
                 }
             }
 
@@ -7779,6 +8009,7 @@ export default function MapPage() {
                 const rawDisasters = Array.isArray(prev.active_disaster_effects) ? prev.active_disaster_effects : [];
 
                 let unhandledExpiredDisastersCount = 0;
+                const espionageRecoveryNotifications: NotificationMessage[] = [];
                 const nextActiveOutbreaks = rawOutbreaks.filter((event: any) => {
                     const elapsed = Date.parse(`${currentDateStr}T00:00:00Z`) - Date.parse(`${String(event.startDate || '').slice(0, 10)}T00:00:00Z`);
                     const isStillActive = Number.isFinite(elapsed) && elapsed >= 0 && elapsed < (Number(event.durationDays) || 0) * 86_400_000;
@@ -7793,9 +8024,13 @@ export default function MapPage() {
                     return isStillActive;
                 });
 
-                const nextActiveDisasters = rawDisasters.filter((event: any) => {
-                    const elapsed = Date.parse(`${currentDateStr}T00:00:00Z`) - Date.parse(`${String(event.startDate || '').slice(0, 10)}T00:00:00Z`);
-                    const isStillActive = Number.isFinite(elapsed) && elapsed >= 0 && elapsed < (Number(event.durationDays) || 30) * 86_400_000;
+                const nextActiveDisasters = rawDisasters.flatMap((event: Record<string, unknown>) => {
+                    const isEspionageEffect = event.effectType === 'covert_spionage';
+                    const elapsed = Date.parse(`${currentDateStr}T00:00:00Z`) -
+                        Date.parse(`${String(event.startDate || '').slice(0, 10)}T00:00:00Z`);
+                    const durationDays = Number(event.durationDays) || 30;
+                    const isStillActive = Number.isFinite(elapsed) && elapsed >= 0 &&
+                        elapsed < durationDays * 86_400_000;
                     if (!isStillActive) {
                         const notif = notifications.find((n: any) => n.id === event.id);
                         const isHandled = event.isHandled || notif?.isHandled;
@@ -7803,8 +8038,37 @@ export default function MapPage() {
                         if (!isHandled && !isRejected) {
                             unhandledExpiredDisastersCount++;
                         }
+                        if (isEspionageEffect) {
+                            const effectId = String(event.id || '');
+                            espionageRecoveryNotifications.push({
+                                id: `notif-covert-espionage-recovered-${encodeURIComponent(effectId)}`,
+                                title: '🛡️ EFEK SPIONASE BERAKHIR',
+                                sender: 'Badan Intelijen Negara',
+                                message: 'Efek spionase telah pulih. Kekuatan dan HP militer kembali ke nilai normal; jumlah pasukan dan alutsista tetap tidak berubah.',
+                                timestamp: currentDateStr,
+                                type: 'peringkat',
+                                value: 0,
+                                isRead: false,
+                                priority: 'critical',
+                            });
+                            if (process.env.NODE_ENV !== 'production') {
+                                console.debug('[CovertEffects] Espionage recovered', {
+                                    effectId,
+                                    multiplier: 1,
+                                    currentDate: currentDateStr,
+                                });
+                            }
+                        }
+                        return [];
                     }
-                    return isStillActive;
+                    if (isEspionageEffect) {
+                        const elapsedDays = Math.floor(elapsed / 86_400_000);
+                        return [{
+                            ...event,
+                            remainingDays: Math.max(0, durationDays - elapsedDays),
+                        }];
+                    }
+                    return [event];
                 });
 
                 // Setiap krisis yang dibiarkan selesai memberi satu penalti peringkat.
@@ -8034,7 +8298,12 @@ export default function MapPage() {
                     icbm_status: nextIcbmStatus,
                     icbmBuildTask: nextIcbmTask,
                     population_crisis_tiers: currentCrisisTiers,
-                    pending_notifications: [...diplomacyCompletionNotifications, ...nextPendingNotifications, ...newCrisisNotifications],
+                    pending_notifications: [
+                        ...diplomacyCompletionNotifications,
+                        ...nextPendingNotifications,
+                        ...newCrisisNotifications,
+                        ...espionageRecoveryNotifications,
+                    ],
                     active_outbreaks: nextActiveOutbreaks,
                     active_disaster_effects: nextActiveDisasters,
                     ongoingConstructions: currentOngoing,
@@ -8313,6 +8582,7 @@ export default function MapPage() {
                     ...countryDetail,
                     presidentRating,
                     playerDiamonds,
+                    notifications,
                     missionCompletions: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_mission_completions') : null,
                     activeMissionId: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_active_mission') : null,
                     claimableMissions: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_claimable_missions') : null,
@@ -9744,8 +10014,82 @@ export default function MapPage() {
                         return;
                     }
 
-                    // ── LOGIKA NOTIFIKASI PERTAHANAN LAINNYA (Spionase, Sabotase, Diserang, ICBM) ──
-                    if (tNotif.tradeType === 'spionase' || tNotif.tradeType === 'sabotase' || tNotif.tradeType === 'diserang' || tNotif.tradeType === 'icbm') {
+                    if (tNotif.tradeType === 'spionase' || tNotif.tradeType === 'sabotase') {
+                        if (
+                            typeof tNotif.targetCountry === 'string' &&
+                            !areSameWarCountry(tNotif.targetCountry, getPlayerCountryIdentity(countryDetail))
+                        ) {
+                            console.error('[CovertEffects] Notification belongs to a different player country.', {
+                                notificationId: notif.id,
+                                notificationTarget: tNotif.targetCountry,
+                                currentCountry: getPlayerCountryIdentity(countryDetail),
+                            });
+                            return;
+                        }
+                        const cost = Number(tNotif.costEM);
+                        const budget = Number(countryDetail?.anggaran || 0);
+                        if (!Number.isFinite(cost) || cost < 0) {
+                            console.error('[CovertEffects] Invalid operation response cost.', {
+                                notificationId: notif.id,
+                                cost: tNotif.costEM,
+                            });
+                            return;
+                        }
+                        if (budget < cost) {
+                            const warningId = `notif-covert-insufficient-funds-${encodeURIComponent(notif.id)}`;
+                            const warning: NotificationMessage = {
+                                id: warningId,
+                                title: '⚠️ KAS NEGARA TIDAK MENCUKUPI',
+                                sender: 'Kementerian Keuangan',
+                                message: `Penanganan "${tNotif.title}" membutuhkan ${cost.toLocaleString('id-ID')} EM, sedangkan kas tersedia ${budget.toLocaleString('id-ID')} EM. Aksi tidak diproses; notifikasi tetap menunggu respons.`,
+                                timestamp: simulationDateString,
+                                type: 'kesejahteraan',
+                                value: 0,
+                                isRead: false,
+                                priority: 'critical',
+                            };
+                            setNotifications(previous => previous.some(item => item.id === warningId)
+                                ? previous
+                                : [warning, ...previous]);
+                            setInboxModalOpen(false);
+                            setResultModal({
+                                isOpen: true,
+                                title: 'Kas Negara Tidak Mencukupi',
+                                message: `Dibutuhkan ${cost.toLocaleString('id-ID')} EM, tersedia ${budget.toLocaleString('id-ID')} EM. Agen belum ditangkap dan notifikasi tetap dapat ditangani setelah kas mencukupi.`,
+                                type: 'error',
+                                persistent: true,
+                            });
+                            return;
+                        }
+                        if (!claimCovertNotification(notif.id)) return;
+                        setCountryDetail((previous: Record<string, unknown> | null) => {
+                            if (!previous) return previous;
+                            const existingIds = Array.isArray(previous.processed_covert_notification_ids)
+                                ? previous.processed_covert_notification_ids.filter((id: unknown): id is string => typeof id === 'string')
+                                : [];
+                            if (existingIds.includes(notif.id)) return previous;
+                            return {
+                                ...previous,
+                                anggaran: Math.max(0, Number(previous.anggaran || 0) - cost),
+                                processed_covert_notification_ids: [...new Set([...existingIds, notif.id])],
+                            };
+                        });
+                        setNotifications(prev => prev.map(n => n.id === notif.id
+                            ? { ...n, isHandled: true, status: 'handled' }
+                            : n));
+                        setInboxModalOpen(false);
+                        setResultModal({
+                            isOpen: true,
+                            title: tNotif.tradeType === 'spionase' ? 'Agen Spionase Ditangkap' : 'Sabotase Berhasil Ditangani',
+                            message: `${tNotif.tradeType === 'spionase' ? 'Agen berhasil ditangkap' : 'Kerusakan berhasil ditangani'}. Biaya operasi sebesar ${cost.toLocaleString('id-ID')} EM telah dibayarkan; tidak ada dampak spionase atau sabotase yang diterapkan.`,
+                            type: 'success',
+                            persistent: true,
+                        });
+                        return;
+                    }
+
+                    // ── LOGIKA NOTIFIKASI PERTAHANAN LAINNYA (Diserang, ICBM) ──
+                    if (tNotif.tradeType === 'diserang' || tNotif.tradeType === 'icbm') {
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true } : n));
 
                         if (tNotif.tradeType === 'diserang' && typeof window !== 'undefined') {
@@ -9968,7 +10312,12 @@ export default function MapPage() {
                         return;
                     }
 
-                    const otherSpecialNotifTypes = ['keamanan', 'spionase', 'sabotase', 'diserang', 'pemberontakan', 'icbm'];
+                    if (tNotif.tradeType === 'spionase' || tNotif.tradeType === 'sabotase') {
+                        applyIgnoredCovertNotification(notif, 'ignored');
+                        return;
+                    }
+
+                    const otherSpecialNotifTypes = ['keamanan', 'diserang', 'pemberontakan', 'icbm'];
                     if (otherSpecialNotifTypes.includes(tNotif.tradeType)) {
                         // Tolak / Abaikan Notifikasi: Hapus notifikasi dari feed
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));

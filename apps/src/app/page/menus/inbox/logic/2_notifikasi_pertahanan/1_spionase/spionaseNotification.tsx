@@ -44,7 +44,7 @@ export default function SpionaseNotificationCard({ notification, onAccept, onRej
           {isHandled ? (
             <div className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/50 flex items-center gap-1.5">
               <Check className="w-3.5 h-3.5" />
-              <span>AGEN INTELIJEN TELAH DITANGKAP / DITANGANI</span>
+              <span>{notification.status === 'ignored' ? 'EFEK SPIONASE AKTIF' : 'AGEN INTELIJEN TELAH DITANGKAP / DITANGANI'}</span>
             </div>
           ) : (
             <>
@@ -69,6 +69,11 @@ export default function SpionaseNotificationCard({ notification, onAccept, onRej
             </>
           )}
         </div>
+        {!isHandled && typeof notification.remainingResponseDays === 'number' && (
+          <p className="text-[10px] font-bold text-amber-300">
+            Batas respons: {notification.remainingResponseDays} hari game
+          </p>
+        )}
       </div>
     </div>
   );
