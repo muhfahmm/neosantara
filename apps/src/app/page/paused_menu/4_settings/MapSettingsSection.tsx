@@ -8,6 +8,7 @@ import {
     saveMapDisplaySettings,
     DEFAULT_MAP_DISPLAY_SETTINGS
 } from './mapSettingsLogic';
+import { FpsMonitoringSettings } from './fpsMonitoring';
 
 export function MapSettingsSection() {
     const [settings, setSettings] = useState<MapDisplaySettings>(DEFAULT_MAP_DISPLAY_SETTINGS);
@@ -138,8 +139,9 @@ export function MapSettingsSection() {
                         }`} />
                     </div>
                 </div>
+
+                <FpsMonitoringSettings />
             </div>
         </div>
     );
 }
-

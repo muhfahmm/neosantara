@@ -15,6 +15,7 @@ import {
 } from '@/app/logic/populations_logic/population_logic';
 import { calculateKepuasan } from '@/app/logic/kepuasanCalculator';
 import { menuItems, subMenuItems } from '../navigasi_menu/navigationData';
+import { FpsMonitoring, type FpsMonitorWasmModule } from '../paused_menu/4_settings/fpsMonitoring';
 
 interface Country {
     id: number;
@@ -45,6 +46,7 @@ interface NavbarProps {
     onOpenPopulasi?: () => void;
     presidentRating?: number;
     kesejahteraan?: number;
+    wasmModuleRef: React.RefObject<FpsMonitorWasmModule | null>;
 }
 
 export function Navbar({
@@ -63,7 +65,9 @@ export function Navbar({
     onOpenPopulasi,
     presidentRating = 50,
     kesejahteraan = 50,
+    wasmModuleRef,
 }: NavbarProps) {
+    const [mapZoom, setMapZoom] = useState(1);
     const anggaran = Number(countryDetail?.anggaran) || 0;
     const countryName = selectedCountry?.country || countryDetail?.country || countryDetail?.nama_negara || '';
     const netBalance =
@@ -196,11 +200,27 @@ export function Navbar({
 
     const activeMenuInfo = getActiveMenuInfo();
 
+    useEffect(() => {
+        const updateMapZoom = () => {
+            const camera = (window as Window & {
+                __neosantara_map_camera?: { scale?: number };
+            }).__neosantara_map_camera;
+            if (typeof camera?.scale === 'number' && Number.isFinite(camera.scale)) {
+                setMapZoom(camera.scale);
+            }
+        };
+
+        updateMapZoom();
+        window.addEventListener('neosantara_map_camera', updateMapZoom);
+        return () => window.removeEventListener('neosantara_map_camera', updateMapZoom);
+    }, []);
+
     return (
         <nav className="fixed top-2.5 sm:top-3 left-0 right-0 z-[201] pointer-events-none px-3 sm:px-5 xl:px-6 2xl:px-8 flex items-center justify-between select-none bg-transparent border-none shadow-none">
             
             {/* 1. Left Side: Circular Menu & Selected Badge */}
-            <div className="flex items-center gap-2 2xl:gap-3 shrink-0 relative z-20 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
+            <div className="flex items-center gap-2 2xl:gap-3 shrink-0 relative z-20 pointer-events-auto">
+                <div className="flex items-center gap-2 2xl:gap-3 bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
                 {/* Circle Power Button */}
                 <div className="relative group shrink-0">
                     <button
@@ -216,7 +236,6 @@ export function Navbar({
                         Game Menu
                     </div>
                 </div>
-
                 <div data-tutorial="negara-terpilih" className="flex items-center gap-2 2xl:gap-3 px-2 2xl:px-3 py-0.5 sm:py-1 rounded-xl min-w-[110px] lg:min-w-[130px] 2xl:min-w-[160px]">
                     {selectedCountry ? (
                         <img 
@@ -240,7 +259,9 @@ export function Navbar({
                         </span>
                     </div>
                 </div>
-            </div>
+                    </div>
+                    <FpsMonitoring wasmModuleRef={wasmModuleRef} />
+                </div>
 
             {/* 2. Center: Live Stats Items */}
             <div data-tutorial="navbar-ringkasan" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-6 overflow-hidden z-10 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 px-3.5 lg:px-4.5 xl:px-5.5 2xl:px-6 py-1.5 2xl:py-2 rounded-2xl shadow-2xl">
@@ -335,6 +356,17 @@ export function Navbar({
 
             {/* 3. Right Side: Save & Restart Buttons */}
             <div className="flex items-center gap-1.5 2xl:gap-2 shrink-0 relative z-20 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
+                <div
+                    role="status"
+                    aria-label={`Zoom peta ${mapZoom.toFixed(1)} kali`}
+                    title="Tingkat zoom peta"
+                    className="flex h-8 min-w-[48px] flex-col items-center justify-center rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] px-1.5 lg:h-9 lg:min-w-[54px] 2xl:h-10"
+                >
+                    <span className="text-[7px] font-bold leading-none tracking-wider text-[#6B8A8A]">ZOOM</span>
+                    <span className="text-[10px] font-black leading-tight tabular-nums text-[#00FFAA] lg:text-[11px]">
+                        {mapZoom.toFixed(1)}x
+                    </span>
+                </div>
                 <button
                     onClick={onOpenSaveModal}
                     data-tutorial="tombol-simpan"

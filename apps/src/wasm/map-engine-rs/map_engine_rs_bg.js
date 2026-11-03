@@ -145,7 +145,6 @@ export class MapEngine {
         wasm.mapengine_set_show_province_borders(this.__wbg_ptr, show);
     }
     /**
-     * Batasi kerja render ke 60 FPS maksimum, terlepas dari refresh rate layar.
      * @param {number} now_ms
      */
     tick(now_ms) {

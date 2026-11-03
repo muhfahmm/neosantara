@@ -7,6 +7,7 @@ export class MapEngine {
     [Symbol.dispose](): void;
     get_country_at(mouse_x: number, mouse_y: number): any;
     get_menu_options(): any;
+    get_perf_stats(): any;
     handle_mouse_down(x: number, y: number, pointer_id: number): void;
     handle_mouse_move(x: number, y: number, buttons: number, pointer_id: number): void;
     handle_mouse_up(): void;
@@ -28,13 +29,12 @@ export class MapEngine {
     set_provinces_data(geojson_str: string): void;
     set_selected_country(iso: string | null | undefined, should_center: boolean): void;
     set_show_province_borders(show: boolean): void;
-    /**
-     * Batasi kerja render ke 60 FPS maksimum, terlepas dari refresh rate layar.
-     */
     tick(now_ms: number): void;
 }
 
 export function get_country_at_on_map(mouse_x: number, mouse_y: number): any;
+
+export function get_perf_stats_on_map(): any;
 
 export function set_capitals_on_map(capitals: any[]): void;
 
@@ -58,8 +58,10 @@ export interface InitOutput {
     readonly memory: WebAssembly.Memory;
     readonly __wbg_mapengine_free: (a: number, b: number) => void;
     readonly get_country_at_on_map: (a: number, b: number) => any;
+    readonly get_perf_stats_on_map: () => any;
     readonly mapengine_get_country_at: (a: number, b: number, c: number) => any;
     readonly mapengine_get_menu_options: (a: number) => any;
+    readonly mapengine_get_perf_stats: (a: number) => any;
     readonly mapengine_handle_mouse_down: (a: number, b: number, c: number, d: number) => void;
     readonly mapengine_handle_mouse_move: (a: number, b: number, c: number, d: number, e: number) => void;
     readonly mapengine_handle_mouse_up: (a: number) => void;
@@ -86,8 +88,8 @@ export interface InitOutput {
     readonly start_map_engine: (a: number, b: number, c: number, d: number, e: any, f: any) => [number, number];
     readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___f64______true_: (a: number, b: number, c: number) => void;
     readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_3713499aaf1b2e10___features__gen_MouseEvent__MouseEvent______true_: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_3713499aaf1b2e10___features__gen_MouseEvent__MouseEvent______true__29: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_3713499aaf1b2e10___features__gen_MouseEvent__MouseEvent______true__30: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_3713499aaf1b2e10___features__gen_MouseEvent__MouseEvent______true__31: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_3713499aaf1b2e10___features__gen_MouseEvent__MouseEvent______true__32: (a: number, b: number, c: any) => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_free: (a: number, b: number, c: number) => void;

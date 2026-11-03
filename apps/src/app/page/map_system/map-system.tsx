@@ -964,6 +964,7 @@ function getMarketProducers(
     }).filter(producer => producer.country.length > 0);
 }
 
+
 export default function MapPage() {
     const router = useRouter();
     const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
@@ -5625,6 +5626,7 @@ export default function MapPage() {
     const dragStartRef = useRef({ x: 0, y: 0 });
     const isDraggingRef = useRef(false);
     const isMapPointerDownRef = useRef(false);
+    const wheelIdleTimerRef = useRef<NodeJS.Timeout | null>(null);
     const isTimeControllerHoveredRef = useRef(false);
     const playerDailyTickInFlightRef = useRef(false);
     const playerDailyTickRerunRef = useRef(false);
@@ -7674,6 +7676,7 @@ export default function MapPage() {
                 }
 
                 wasmModuleRef.current = wasmModule;
+                (window as any).__neosantara_wasm = wasmModule;
 
                 // After init, the exported functions are available on the module
                 const { start_map_engine, set_selected_country_on_map, set_map_horizontal_wrap } = wasmModule;
@@ -7806,6 +7809,7 @@ export default function MapPage() {
                         const origSetTransform = ctx2d.setTransform.bind(ctx2d);
                         (ctx2d as any).__origSetTransform = origSetTransform;
                         ctx2d.setTransform = function (a: any, b?: any, c?: any, d?: any, e?: any, f?: any) {
+                            const jsT0 = performance.now();
                             if (typeof a === 'number' && typeof d === 'number' && typeof e === 'number' && typeof f === 'number') {
                                 const prevCam = (window as any).__neosantara_map_camera;
                                 const isDevicePixelRatioReset =
@@ -7819,7 +7823,7 @@ export default function MapPage() {
                                         scale: a,
                                         offsetX: e,
                                         offsetY: f,
-                                        time: performance.now(),
+                                        time: jsT0,
                                     };
                                     if (changed && !(window as any).__neosantara_cam_notify) {
                                         (window as any).__neosantara_cam_notify = true;
@@ -7830,7 +7834,10 @@ export default function MapPage() {
                                     }
                                 }
                             }
-                            return origSetTransform.apply(this, arguments as any);
+                            const res = origSetTransform.apply(this, arguments as any);
+                            const jsT1 = performance.now();
+                            (window as any).__neosantara_js_task_time_ms = ((window as any).__neosantara_js_task_time_ms || 0) * 0.8 + (jsT1 - jsT0) * 0.2;
+                            return res;
                         };
                     }
                 }
@@ -8105,8 +8112,16 @@ export default function MapPage() {
 
     const handleCanvasWheel = useCallback(() => {
         markMapInteraction();
+        (window as Window & { neosantara_map_pan_active?: boolean }).neosantara_map_pan_active = true;
+        if (wheelIdleTimerRef.current !== null) {
+            clearTimeout(wheelIdleTimerRef.current);
+        }
+        wheelIdleTimerRef.current = setTimeout(() => {
+            wheelIdleTimerRef.current = null;
+            signalMapPanEnded();
+        }, 150);
         schedulePendingDateCommit();
-    }, [markMapInteraction, schedulePendingDateCommit]);
+    }, [markMapInteraction, schedulePendingDateCommit, signalMapPanEnded]);
 
     const handleCanvasContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
         event.preventDefault();
@@ -8244,6 +8259,7 @@ export default function MapPage() {
                         netBalanceAdjustment={playerNetBalanceAdjustment}
                         currentDate={currentDate}
                         presidentRating={presidentRating}
+                        wasmModuleRef={wasmModuleRef}
                         kesejahteraan={countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : kesejahteraan}
                         onOpenGameMenu={openGameMenu}
                         onOpenSaveModal={openSaveModal}

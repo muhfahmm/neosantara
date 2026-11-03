@@ -1,6 +1,7 @@
 use geojson::{GeoJson, Value};
 use serde::Deserialize;
 use std::cell::RefCell;
+use std::collections::HashMap;
 use std::rc::Rc;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -84,6 +85,32 @@ impl ProvLine {
         let mut fine = self.fine.borrow_mut();
         if fine.is_none() {
             *fine = build_line_path(&self.pts, 0.004);
+        }
+        fine.clone()
+    }
+}
+
+struct ProvinceLineBatch {
+    bbox: [f64; 4],
+    line_indices: Vec<usize>,
+    coarse: Option<Path2d>,
+    fine: RefCell<Option<Path2d>>,
+}
+
+impl ProvinceLineBatch {
+    fn path(&self, lines: &[ProvLine], coarse: bool) -> Option<Path2d> {
+        if coarse {
+            return self.coarse.clone();
+        }
+
+        let mut fine = self.fine.borrow_mut();
+        if fine.is_none() {
+            let path = Path2d::new().ok()?;
+            for &line_index in &self.line_indices {
+                let line_path = lines.get(line_index)?.path(false)?;
+                path.add_path(&line_path);
+            }
+            *fine = Some(path);
         }
         fine.clone()
     }
@@ -198,6 +225,40 @@ fn is_small_feature(bbox: &[f64; 4], scale: f64, threshold: f64) -> bool {
         && bbox[3] >= bbox[1]
         && (bbox[2] - bbox[0]) * scale <= threshold
         && (bbox[3] - bbox[1]) * scale <= threshold
+}
+
+fn map_detail_level(scale: f64) -> usize {
+    if scale <= 1.0 {
+        0
+    } else if scale < 19.0 {
+        1
+    } else {
+        2
+    }
+}
+
+fn province_lines_use_coarse_detail(scale: f64, is_panning: bool) -> bool {
+    is_panning || scale < 19.0
+}
+
+fn is_zoom_interaction_active(now_ms: f64, preview_until_ms: f64) -> bool {
+    preview_until_ms > 0.0 && now_ms < preview_until_ms
+}
+
+fn province_line_batch_index(
+    bbox: &[f64; 4],
+    width: f64,
+    height: f64,
+    columns: usize,
+    rows: usize,
+) -> usize {
+    let center_x = ((bbox[0] + bbox[2]) * 0.5 / width * columns as f64)
+        .floor()
+        .clamp(0.0, columns as f64 - 1.0) as usize;
+    let center_y = ((bbox[1] + bbox[3]) * 0.5 / height * rows as f64)
+        .floor()
+        .clamp(0.0, rows as f64 - 1.0) as usize;
+    center_y * columns + center_x
 }
 
 fn screen_distance_to_bbox(
@@ -332,8 +393,10 @@ pub struct MapEngine {
     countries: Vec<CachedCountry>,
     capitals: Vec<CachedCapital>,
     city_ownership: Vec<CachedCityOwnership>,
+    city_ownership_by_iso: HashMap<String, Vec<usize>>,
     capital_flags: Vec<(String, HtmlImageElement)>,
     province_lines: Vec<ProvLine>,
+    province_line_batches: Vec<ProvinceLineBatch>,
     styles: Styles,
     selected_country_iso: Option<String>,
     selected_lower: Option<String>,
@@ -348,10 +411,14 @@ pub struct MapEngine {
     // --- Optimasi render ---
     dirty: bool,
     last_frame_ms: Option<f64>,
-    frame_accumulator_ms: f64,
+    zoom_preview_until_ms: f64,
     frame_counter: u32,
     flags_ready: usize,
     override_beats_selected: bool,
+    // MAPPERF-TEMP
+    perf_labels_drawn: u32,
+    perf_polys_drawn: u32,
+    perf_render_time_ms: f64,
 }
 
 #[wasm_bindgen]
@@ -383,8 +450,10 @@ impl MapEngine {
             countries: Vec::new(),
             capitals: Vec::new(),
             city_ownership: Vec::new(),
+            city_ownership_by_iso: HashMap::new(),
             capital_flags: Vec::new(),
             province_lines: Vec::new(),
+            province_line_batches: Vec::new(),
             styles: Styles {
                 bg: JsValue::from_str("#0f244a"),
                 sel_fill: JsValue::from_str("#00FFAA"),
@@ -410,10 +479,14 @@ impl MapEngine {
             target_scale: 1.0,
             dirty: true,
             last_frame_ms: None,
-            frame_accumulator_ms: 0.0,
+            zoom_preview_until_ms: 0.0,
             frame_counter: 0,
             flags_ready: 0,
             override_beats_selected: false,
+            // MAPPERF-TEMP
+            perf_labels_drawn: 0,
+            perf_polys_drawn: 0,
+            perf_render_time_ms: 0.0,
         }
     }
 
@@ -455,7 +528,61 @@ impl MapEngine {
             }
         }
         self.province_lines = lines;
+        self.rebuild_province_line_batches();
         self.dirty = true;
+    }
+
+    fn rebuild_province_line_batches(&mut self) {
+        const GRID_COLUMNS: usize = 72;
+        const GRID_ROWS: usize = 36;
+        let mut batches: Vec<Vec<usize>> = vec![Vec::new(); GRID_COLUMNS * GRID_ROWS];
+        let mut batch_bounds = vec![bbox_empty(); GRID_COLUMNS * GRID_ROWS];
+
+        for (line_index, line) in self.province_lines.iter().enumerate() {
+            let batch_index = province_line_batch_index(
+                &line.bbox,
+                self.width,
+                self.height,
+                GRID_COLUMNS,
+                GRID_ROWS,
+            );
+            batches[batch_index].push(line_index);
+            let bounds = &mut batch_bounds[batch_index];
+            bounds[0] = bounds[0].min(line.bbox[0]);
+            bounds[1] = bounds[1].min(line.bbox[1]);
+            bounds[2] = bounds[2].max(line.bbox[2]);
+            bounds[3] = bounds[3].max(line.bbox[3]);
+        }
+
+        self.province_line_batches = batches
+            .into_iter()
+            .zip(batch_bounds)
+            .filter_map(|(line_indices, bbox)| {
+                if line_indices.is_empty() {
+                    return None;
+                }
+
+                let coarse = Path2d::new().ok();
+                if let Some(path) = coarse.as_ref() {
+                    for &line_index in &line_indices {
+                        if let Some(line_path) = self.province_lines[line_index].path(true) {
+                            path.add_path(&line_path);
+                        }
+                    }
+                } else {
+                    web_sys::console::error_1(
+                        &"Could not create cached province-boundary path; using individual paths.".into(),
+                    );
+                }
+
+                Some(ProvinceLineBatch {
+                    bbox,
+                    line_indices,
+                    coarse,
+                    fine: RefCell::new(None),
+                })
+            })
+            .collect();
     }
 
     pub fn set_data(&mut self, geojson_str: &str) {
@@ -973,7 +1100,15 @@ impl MapEngine {
             });
         }
 
+        let mut ownership_by_iso: HashMap<String, Vec<usize>> = HashMap::new();
+        for (index, city) in ownership.iter().enumerate() {
+            ownership_by_iso
+                .entry(city.country_iso.clone())
+                .or_default()
+                .push(index);
+        }
         self.city_ownership = ownership;
+        self.city_ownership_by_iso = ownership_by_iso;
         self.dirty = true;
     }
 
@@ -1036,6 +1171,11 @@ impl MapEngine {
         self.target_offset_x = self.offset_x;
         self.target_offset_y = self.offset_y;
         self.apply_clamping();
+        let now_ms = web_sys::window()
+            .and_then(|window| window.performance())
+            .map(|performance| performance.now())
+            .unwrap_or(0.0);
+        self.zoom_preview_until_ms = now_ms + 150.0;
         self.dirty = true;
     }
 
@@ -1113,6 +1253,21 @@ impl MapEngine {
         }
     }
 
+    // MAPPERF-TEMP
+    pub fn get_perf_stats(&self) -> JsValue {
+        let stats = serde_json::json!({
+            "labelsDrawn": self.perf_labels_drawn,
+            "polysDrawn": self.perf_polys_drawn,
+            "renderTimeMs": self.perf_render_time_ms,
+            "scale": self.scale,
+            "offsetX": self.offset_x,
+            "offsetY": self.offset_y,
+            "dirty": self.dirty,
+            "isPanning": self.is_panning
+        });
+        serde_wasm_bindgen::to_value(&stats).unwrap_or(JsValue::NULL)
+    }
+
     pub fn get_menu_options(&self) -> JsValue {
         let options = vec!["Mulai Simulasi", "Lanjutkan", "Pengaturan", "Keluar"];
         serde_wasm_bindgen::to_value(&options).unwrap()
@@ -1148,7 +1303,7 @@ impl MapEngine {
     }
 
     /// Mengembalikan true jika kamera bergerak (butuh render ulang).
-    fn update_camera(&mut self) -> bool {
+    fn update_camera(&mut self, frame_delta_ms: f64) -> bool {
         let ds = self.target_scale - self.scale;
         let dx = self.target_offset_x - self.offset_x;
         let dy = self.target_offset_y - self.offset_y;
@@ -1167,7 +1322,7 @@ impl MapEngine {
             return true;
         }
 
-        let lerp_factor = 0.1;
+        let lerp_factor = 1.0 - 0.9_f64.powf(frame_delta_ms / (1000.0 / 60.0));
         self.scale += ds * lerp_factor;
         self.offset_x += dx * lerp_factor;
         self.offset_y += dy * lerp_factor;
@@ -1175,30 +1330,31 @@ impl MapEngine {
         true
     }
 
-    /// Batasi kerja render ke 60 FPS maksimum, terlepas dari refresh rate layar.
     pub fn tick(&mut self, now_ms: f64) {
-        const FRAME_INTERVAL_MS: f64 = 1000.0 / 60.0;
-        let Some(previous_frame_ms) = self.last_frame_ms.replace(now_ms) else {
-            self.render();
-            return;
-        };
-        self.frame_accumulator_ms += (now_ms - previous_frame_ms).max(0.0);
-        if self.frame_accumulator_ms < FRAME_INTERVAL_MS {
-            return;
+        let frame_delta_ms = self
+            .last_frame_ms
+            .replace(now_ms)
+            .map(|previous_frame_ms| (now_ms - previous_frame_ms).max(0.0))
+            .unwrap_or(1000.0 / 60.0);
+        let zooming = is_zoom_interaction_active(now_ms, self.zoom_preview_until_ms);
+        if self.zoom_preview_until_ms > 0.0 && !zooming {
+            self.zoom_preview_until_ms = 0.0;
+            self.dirty = true;
         }
-        self.frame_accumulator_ms %= FRAME_INTERVAL_MS;
-        self.render();
+        self.render_at(frame_delta_ms, zooming);
     }
 
     pub fn render(&mut self) {
-        let animating = self.update_camera();
-        let detail_level = if self.scale <= 1.0 {
-            0
-        } else if self.scale < 6.0 {
-            1
-        } else {
-            2
-        };
+        self.render_at(1000.0 / 60.0, false);
+    }
+
+    fn render_at(&mut self, frame_delta_ms: f64, zooming: bool) {
+        // MAPPERF-TEMP
+        let t0 = web_sys::window().and_then(|w| w.performance()).map(|p| p.now()).unwrap_or(0.0);
+        self.perf_labels_drawn = 0;
+        self.perf_polys_drawn = 0;
+        let animating = self.update_camera(frame_delta_ms);
+        let detail_level = map_detail_level(self.scale);
 
         // Rebuild cache bendera sekali setelah semua image selesai, bukan untuk
         // setiap batch image yang selesai dimuat.
@@ -1282,6 +1438,7 @@ impl MapEngine {
                         self.height,
                     ) {
                         Ok(()) => {
+                            self.perf_polys_drawn += self.features.len() as u32;
                             if let (Some(selected), Some(fill)) =
                                 (&self.cached_selected_path, &self.cached_selected_fill)
                             {
@@ -1382,7 +1539,7 @@ impl MapEngine {
                     };
                     if let Some(path) = feature.get_path(detail_level) {
                         self.ctx.set_fill_style(style);
-                        self.ctx.fill_with_path_2d(&path);
+                        self.perf_polys_drawn += 1; self.ctx.fill_with_path_2d(&path);
                         if selected_feature {
                             selected_path_to_draw = Some(path);
                         } else {
@@ -1428,14 +1585,19 @@ impl MapEngine {
 
             for &feature_index in &visible {
                 let feature = &self.features[feature_index];
-                for city in self.city_ownership.iter().filter(|city| {
-                    !city.cells.is_empty()
-                        && city.country_iso == feature.iso
-                        && city.x + city.radius_x >= vx0
-                        && city.x - city.radius_x <= vx1
-                        && city.y + city.radius_y >= vy0
-                        && city.y - city.radius_y <= vy1
-                }) {
+                let Some(city_indices) = self.city_ownership_by_iso.get(&feature.iso) else {
+                    continue;
+                };
+                for &city_index in city_indices {
+                    let city = &self.city_ownership[city_index];
+                    if city.cells.is_empty()
+                        || city.x + city.radius_x < vx0
+                        || city.x - city.radius_x > vx1
+                        || city.y + city.radius_y < vy0
+                        || city.y - city.radius_y > vy1
+                    {
+                        continue;
+                    }
                     let Some(country_path) = feature.get_path(detail_level) else {
                         continue;
                     };
@@ -1460,25 +1622,40 @@ impl MapEngine {
 
             // Garis batas provinsi solid (tidak putus-putus) langsung tersambung mulus
             if self.show_province_borders && self.scale >= 1.15 && !self.province_lines.is_empty() {
-                let coarse = self.scale < 4.0;
+                let coarse = province_lines_use_coarse_detail(self.scale, self.is_panning);
                 let min_screen = 1.0 / self.scale;
                 self.ctx.set_stroke_style(&self.styles.province_stroke);
                 self.ctx.set_line_width((0.65 / self.scale).clamp(0.25, 0.9));
-                for pl in &self.province_lines {
-                    if !bbox_hits(&pl.bbox, vx0, vy0, vx1, vy1) {
+                for batch in &self.province_line_batches {
+                    if !bbox_hits(&batch.bbox, vx0, vy0, vx1, vy1) {
                         continue;
                     }
-                    if (pl.bbox[2] - pl.bbox[0]).max(pl.bbox[3] - pl.bbox[1]) < min_screen {
+                    if (batch.bbox[2] - batch.bbox[0])
+                        .max(batch.bbox[3] - batch.bbox[1])
+                        < min_screen
+                    {
                         continue;
                     }
-                    if let Some(p) = pl.path(coarse) {
+                    if let Some(p) = batch.path(&self.province_lines, coarse) {
                         self.ctx.stroke_with_path(&p);
+                    } else {
+                        for &line_index in &batch.line_indices {
+                            let line = &self.province_lines[line_index];
+                            if bbox_hits(&line.bbox, vx0, vy0, vx1, vy1) {
+                                if let Some(path) = line.path(coarse) {
+                                    self.ctx.stroke_with_path(&path);
+                                }
+                            }
+                        }
                     }
                 }
             }
-            self.draw_capitals(vx0, vy0, vx1, vy1, true, animating);
+            self.draw_capitals(vx0, vy0, vx1, vy1, true, animating, zooming);
         }
         self.visible_features = visible;
+        // MAPPERF-TEMP
+        let t1 = web_sys::window().and_then(|w| w.performance()).map(|p| p.now()).unwrap_or(0.0);
+        self.perf_render_time_ms = t1 - t0;
     }
 
     /// Bangun path dengan culling per-ring + LOD (lewati titik < ~0.6px di layar).
@@ -1507,14 +1684,26 @@ impl MapEngine {
         }
     }
 
-    fn draw_capitals(&mut self, vx0: f64, vy0: f64, vx1: f64, vy1: f64, draw_labels: bool, animating: bool) {
+    fn draw_capitals(
+        &mut self,
+        vx0: f64,
+        vy0: f64,
+        vx1: f64,
+        vy1: f64,
+        draw_labels: bool,
+        animating: bool,
+        zooming: bool,
+    ) {
         if self.scale <= 1.0 {
             if let Some(cached_canvas) = &self.cached_capitals_canvas {
                 match self
                     .ctx
                     .draw_image_with_html_canvas_element(cached_canvas, -8.0, -8.0)
                 {
-                    Ok(()) => return,
+                    Ok(()) => {
+                        self.perf_labels_drawn += self.capitals.len() as u32;
+                        return;
+                    }
                     Err(error) => web_sys::console::error_2(
                         &"Could not draw capital-flags raster cache; using per-flag rendering."
                             .into(),
@@ -1524,7 +1713,12 @@ impl MapEngine {
             }
         }
         let margin = 40.0 / self.scale;
+        let is_panning = self.is_panning;
         let visible_capitals: Vec<_> = self.capitals.iter().filter(|c| {
+            // Saat panning, batasi gambar bendera non-capital agar tidak membebani canvas
+            if is_panning && !c.is_capital && self.scale < 3.5 {
+                return false;
+            }
             c.x >= vx0 - margin && c.x <= vx1 + margin && c.y >= vy0 - margin && c.y <= vy1 + margin
         }).collect();
 
@@ -1537,7 +1731,7 @@ impl MapEngine {
         }
 
         // Label hanya saat zoom cukup; jangan gambar label jika kamera sedang berinterpolasi cepat
-        if !draw_labels || self.scale <= 1.2 || animating {
+        if !draw_labels || self.scale <= 1.2 || animating || zooming {
             return;
         }
 
@@ -1557,8 +1751,24 @@ impl MapEngine {
         self.ctx.set_line_width(2.5 / self.scale);
         self.ctx.set_stroke_style(&self.styles.label_outline);
 
-        // Render kota biasa terlebih dahulu, kemudian ibukota di atasnya
-        for pass_capital in [false, true] {
+        // Maksimal label per frame: 80 saat diam, 30 saat aktif pan untuk mempertahankan 60 FPS
+        let max_labels = if is_panning { 30 } else { 80 };
+        let mut labels_drawn_count = 0;
+
+        // Level-of-Detail (LOD):
+        // scale < 1.8: hanya ibukota negara (is_capital = true)
+        // scale >= 1.8: ibukota negara dan kota besar
+        let allow_non_capital = self.scale >= 1.8 && (!is_panning || self.scale >= 4.0);
+
+        // Prioritas render: Ibukota negara diproses pertama (pass_capital = true), kemudian kota biasa
+        for pass_capital in [true, false] {
+            if !pass_capital && !allow_non_capital {
+                continue;
+            }
+            if labels_drawn_count >= max_labels {
+                break;
+            }
+
             if pass_capital {
                 self.ctx.set_font(&format!("bold {}px sans-serif", capital_font_size));
                 self.ctx.set_fill_style(&self.styles.capital_text);
@@ -1568,6 +1778,9 @@ impl MapEngine {
             }
 
             for &(capital_index, x, y) in &self.cached_capital_labels {
+                if labels_drawn_count >= max_labels {
+                    break;
+                }
                 let Some(capital) = self.capitals.get(capital_index) else {
                     continue;
                 };
@@ -1590,7 +1803,9 @@ impl MapEngine {
                     self.ctx.set_fill_style(&self.styles.city_text);
                 }
                 let _ = self.ctx.stroke_text(&label, x, y);
+                self.perf_labels_drawn += 1;
                 let _ = self.ctx.fill_text(&label, x, y);
+                labels_drawn_count += 1;
             }
         }
     }
@@ -1977,6 +2192,18 @@ thread_local! {
     static ACTIVE_ENGINE: RefCell<Option<Rc<RefCell<MapEngine>>>> = RefCell::new(None);
 }
 
+// MAPPERF-TEMP
+#[wasm_bindgen]
+pub fn get_perf_stats_on_map() -> JsValue {
+    ACTIVE_ENGINE.with(|global_engine| {
+        if let Some(engine) = global_engine.borrow().as_ref() {
+            engine.borrow().get_perf_stats()
+        } else {
+            JsValue::NULL
+        }
+    })
+}
+
 #[wasm_bindgen]
 pub fn set_selected_country_on_map(iso: String, should_center: bool) {
     ACTIVE_ENGINE.with(|global_engine| {
@@ -2210,7 +2437,10 @@ pub fn start_map_engine(
 
 #[cfg(test)]
 mod tests {
-    use super::{is_small_feature, normalize_feature_iso, screen_distance_to_bbox};
+    use super::{
+        is_small_feature, is_zoom_interaction_active, map_detail_level, normalize_feature_iso,
+        province_lines_use_coarse_detail, screen_distance_to_bbox,
+    };
 
     #[test]
     fn normalizes_prefixed_taiwan_iso_code() {
@@ -2232,6 +2462,30 @@ mod tests {
         assert!(is_small_feature(&[0.0, 0.0, 4.0, 5.0], 2.0, 10.0));
         assert!(!is_small_feature(&[0.0, 0.0, 6.0, 5.0], 2.0, 10.0));
         assert!(!is_small_feature(&[4.0, 0.0, 3.0, 5.0], 1.0, 10.0));
+    }
+
+    #[test]
+    fn reduces_map_detail_at_the_observed_frame_drop_zoom() {
+        assert_eq!(map_detail_level(50.0), 2);
+        assert_eq!(map_detail_level(19.1), 2);
+        assert_eq!(map_detail_level(18.6), 1);
+        assert_eq!(map_detail_level(1.0), 0);
+    }
+
+    #[test]
+    fn keeps_province_boundaries_visible_and_coarse_during_zoom_and_pan() {
+        assert!(province_lines_use_coarse_detail(1.15, false));
+        assert!(province_lines_use_coarse_detail(4.0, false));
+        assert!(province_lines_use_coarse_detail(18.6, false));
+        assert!(province_lines_use_coarse_detail(50.0, true));
+        assert!(!province_lines_use_coarse_detail(19.0, false));
+    }
+
+    #[test]
+    fn defers_expensive_label_layout_until_zoom_input_stops() {
+        assert!(is_zoom_interaction_active(100.0, 250.0));
+        assert!(!is_zoom_interaction_active(250.0, 250.0));
+        assert!(!is_zoom_interaction_active(250.0, 0.0));
     }
 
     #[test]
