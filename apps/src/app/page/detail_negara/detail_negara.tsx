@@ -1,5 +1,6 @@
 'use client';
 
+import { getRelationTextColor, getRelationTier } from '@/app/logic/relationTiers';
 import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { X, Globe, Landmark, Shield, Users, Banknote, Scale, Home, Handshake, Flame, Hammer } from 'lucide-react';
@@ -665,8 +666,8 @@ export function CountryDetailModal({
   const relationCountryName = annexedInfo?.attackerCountry || countryName || "";
   const relationValue = useMemo(() => {
     if (!countryName) return 0;
-    return getRelationValue(relationPlayerCountryName, relationCountryName);
-  }, [relationPlayerCountryName, relationCountryName, relationRevision, countryName]);
+    return getRelationValue(relationPlayerCountryName, relationCountryName, currentDate);
+  }, [relationPlayerCountryName, relationCountryName, relationRevision, countryName, currentDate]);
 
   if (!isOpen || !countryName) return null;
   if (typeof document === "undefined") return null;
@@ -790,14 +791,7 @@ export function CountryDetailModal({
                 <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">
                   {isPlayerOccupiedProvince ? 'Ketegangan' : 'Hubungan'}
                 </span>
-                <span className={`text-[11px] lg:text-[9px] xl:text-[11px] font-extrabold uppercase ${isPlayerOccupiedProvince
-                  ? 'text-emerald-400'
-                  : relationValue >= 75
-                    ? 'text-emerald-400'
-                    : relationValue >= 50
-                      ? 'text-[#00FFAA]'
-                      : 'text-rose-400'
-                  }`}>
+                <span className={`text-[11px] lg:text-[9px] xl:text-[11px] font-extrabold uppercase ${isPlayerOccupiedProvince ? 'text-emerald-400' : getRelationTextColor(relationValue)}`}>
                   {isPlayerOccupiedProvince
                     ? `${provinceTensionValue} · ${provinceTensionStatus}`
                     : relationValue}

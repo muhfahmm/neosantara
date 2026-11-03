@@ -790,6 +790,11 @@ export default function WarMap({
   onAutoResolve,
 }: WarMapProps) {
   const [phase, setPhase] = useState<WarPhase>('travel');
+  const phaseRef = useRef<WarPhase>('travel');
+  phaseRef.current = phase;
+  const lastAnalysisVisibilityRef = useRef<boolean | null>(null);
+  const impactHandledRef = useRef(false);
+  const battleOutcomeRef = useRef<WarResultOutput | null>(null);
   const [result, setResult] = useState<WarResult | null>(null);
   const [showFlash, setShowFlash] = useState(false);
   const [showAttackerForces, setShowAttackerForces] = useState(false);
@@ -802,9 +807,11 @@ export default function WarMap({
   const defenseResolutionReportedRef = useRef(false);
 
   useEffect(() => {
-    onAnalysisVisibilityChange?.(
-      phase === 'comparison' || phase === 'result'
-    );
+    const isVisible = phase === 'comparison' || phase === 'result';
+    if (lastAnalysisVisibilityRef.current !== isVisible) {
+      lastAnalysisVisibilityRef.current = isVisible;
+      onAnalysisVisibilityChange?.(isVisible);
+    }
   }, [phase, onAnalysisVisibilityChange]);
 
   useEffect(() => {
@@ -895,9 +902,15 @@ export default function WarMap({
 
   const warPath = useMemo<WarPath | null>(() => {
     if (!isOpen) return null;
-    return buildWarPath({ attacker: resolvedAttacker, target: resolvedTarget });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, resolvedAttacker.country, resolvedTarget.country, resolvedAttacker.lat, resolvedAttacker.lng, resolvedTarget.lat, resolvedTarget.lng]);
+    const path = buildWarPath({ attacker: resolvedAttacker, target: resolvedTarget });
+    if (!path) return null;
+    return isNpcWar && !isPbbCoalition
+      ? { ...path, travelDays: Math.min(path.travelDays, 1) }
+      : path;
+  }, [isOpen, isNpcWar, isPbbCoalition, resolvedAttacker.country, resolvedTarget.country, resolvedAttacker.lat, resolvedAttacker.lng, resolvedTarget.lat, resolvedTarget.lng]);
+
+  const attackerCountryName = attacker?.country || '';
+  const targetCountryName = target?.country || '';
 
   const battleOutcome = useMemo(() => {
     if (!isOpen) return null;
@@ -908,7 +921,7 @@ export default function WarMap({
       const percentage = committedDeploymentConfig?.[deploymentKey] ?? 0;
       return total + unit.totalPower * Math.max(0, Math.min(100, percentage)) / 100;
     }, 0);
-    return computeWarResult({
+    const outcome = computeWarResult({
       attackerPower:
         (Number((attacker as Record<string, unknown>).pbbCoalitionPower) || attackerPower) *
         effectiveAttackerDeploymentPercent / 100,
@@ -923,8 +936,24 @@ export default function WarMap({
       requestedInvasion,
       attackerWinRoll: requestedInvasionRollRef.current,
     });
+    battleOutcomeRef.current = outcome;
+    return outcome;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, attacker, attackerPower, committedDeploymentConfig, effectiveAttackerDeploymentPercent, targetPower, attackerBonus, defenderBonus, isUserDefender, isNpcWar, isPbbCoalition, requestedInvasion]);
+  }, [
+    isOpen,
+    attackerCountryName,
+    targetCountryName,
+    attackerPower,
+    targetPower,
+    effectiveAttackerDeploymentPercent,
+    isUserDefender,
+    isNpcWar,
+    isPbbCoalition,
+    requestedInvasion,
+    attackerBonus,
+    defenderBonus,
+  ]);
+  battleOutcomeRef.current = battleOutcome;
 
   const deploymentConfig = useMemo(() => {
     if (committedDeploymentConfig) return committedDeploymentConfig;
@@ -1002,9 +1031,12 @@ export default function WarMap({
   useEffect(() => {
     if (isOpen) {
       setPhase('travel');
+      phaseRef.current = 'travel';
       progressRef.current = 0;
       autoResolveReportedRef.current = false;
       defenseResolutionReportedRef.current = false;
+      impactHandledRef.current = false;
+      lastAnalysisVisibilityRef.current = false;
       requestedInvasionRollRef.current = Math.random();
       setAttackerDeploymentPercent(50 + Math.floor(Math.random() * 26));
       progressPathRef.current?.setAttribute('stroke-dasharray', '0 100');
@@ -1091,7 +1123,7 @@ export default function WarMap({
       const delta = now - lastTime;
       lastTime = now;
 
-      if (phase !== 'travel' || isGamePaused()) return;
+      if (phaseRef.current !== 'travel' || isGamePaused()) return;
       const currentDayPosition = getSimulationDayPosition();
       if (startingDayPosition !== null && currentDayPosition !== null) {
         elapsedDays = Math.max(elapsedDays, currentDayPosition - startingDayPosition);
@@ -1109,6 +1141,7 @@ export default function WarMap({
         tankRotationRef.current.setAttribute('transform', `rotate(${motion.angle * 180 / Math.PI})`);
       }
       if (currentProgress >= 1) {
+        phaseRef.current = 'impact';
         setPhase('impact');
         return;
       }
@@ -1123,24 +1156,42 @@ export default function WarMap({
       window.removeEventListener('neosantara_map_camera', refreshCameraGeometry);
       window.removeEventListener('neosantara:simulation-clock-state', handleClockState);
     };
-  }, [isOpen, phase, warPath, resolvedAttacker.lat, resolvedAttacker.lng, resolvedTarget.lat, resolvedTarget.lng]);
+  }, [isOpen, warPath, resolvedAttacker.lat, resolvedAttacker.lng, resolvedTarget.lat, resolvedTarget.lng]);
 
   useEffect(() => {
-    if (phase !== 'impact' || !battleOutcome) return;
+    if (phase !== 'impact') return;
+    if (impactHandledRef.current) return;
+    impactHandledRef.current = true;
     setShowFlash(true);
-    if (isNpcWar && !isUserDefender && !isPbbCoalition) {
-      if (!autoResolveReportedRef.current) {
-        autoResolveReportedRef.current = true;
-        onAutoResolveRef.current?.(battleOutcome.result);
+
+    const outcome = battleOutcomeRef.current || battleOutcome;
+
+    if (isPbbCoalition) {
+      if (lastAnalysisVisibilityRef.current !== true) {
+        lastAnalysisVisibilityRef.current = true;
+        onAnalysisVisibilityChange?.(true);
       }
-      const closeTimer = setTimeout(() => onCloseRef.current(battleOutcome), 1300);
+      phaseRef.current = 'comparison';
+      setPhase('comparison');
+      const flashTimer = setTimeout(() => setShowFlash(false), 500);
+      return () => clearTimeout(flashTimer);
+    }
+
+    if (isNpcWar && !isUserDefender && !isPbbCoalition) {
+      if (!autoResolveReportedRef.current && outcome) {
+        autoResolveReportedRef.current = true;
+        onAutoResolveRef.current?.(outcome.result);
+      }
+      const closeTimer = setTimeout(() => onCloseRef.current(outcome || undefined), 1300);
       const flashTimer = setTimeout(() => setShowFlash(false), 500);
       return () => {
         clearTimeout(closeTimer);
         clearTimeout(flashTimer);
       };
     }
+
     const t1 = setTimeout(() => {
+      phaseRef.current = 'comparison';
       setPhase('comparison');
     }, 700);
     const t2 = setTimeout(() => setShowFlash(false), 500);
@@ -1148,19 +1199,19 @@ export default function WarMap({
       clearTimeout(t1);
       clearTimeout(t2);
     };
-  }, [phase, battleOutcome, isNpcWar, isUserDefender, isPbbCoalition]);
+  }, [phase, battleOutcome, isNpcWar, isUserDefender, isPbbCoalition, onAnalysisVisibilityChange]);
 
   useEffect(() => {
-    if (phase !== 'comparison' || !isUserDefender || !battleOutcome) return;
+    if (phase !== 'comparison' || !isUserDefender || isPbbCoalition || !battleOutcome) return;
     const resultTimer = setTimeout(() => {
       setResult(battleOutcome.result);
       setPhase('result');
     }, 2500);
     return () => clearTimeout(resultTimer);
-  }, [phase, isUserDefender, battleOutcome]);
+  }, [phase, isUserDefender, isPbbCoalition, battleOutcome]);
 
   useEffect(() => {
-    if (phase !== 'result' || !isUserDefender || !result || !warPath ||
+    if (phase !== 'result' || !isUserDefender || isPbbCoalition || !result || !warPath ||
         defenseResolutionReportedRef.current) return;
     const resolutionTimer = setTimeout(() => {
       defenseResolutionReportedRef.current = true;
@@ -1173,7 +1224,7 @@ export default function WarMap({
       });
     }, 1800);
     return () => clearTimeout(resolutionTimer);
-  }, [phase, isUserDefender, result, warPath, isPbbCoalition]);
+  }, [phase, isUserDefender, isPbbCoalition, result, warPath]);
 
   const handleAction = useCallback(
     (action: WarAction) => {
@@ -1515,6 +1566,7 @@ export default function WarMap({
 
       {phase === 'comparison' && (
         <PerbandinganPasukan
+          key={`comparison-${attacker.country}-${target.country}`}
           attackerName={isPbbCoalition ? 'Pasukan Gabungan PBB' : attacker.country}
           attackerIso={attacker.iso || 'cn'}
           attackerPower={attackerPower}

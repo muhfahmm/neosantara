@@ -5,8 +5,8 @@
  *
  * KETENTUAN LOGIKA:
  * 1. Setiap peluncuran mengurangi 1 stok rudal ICBM pihak penyerang.
- * 2. Kedua belah pihak yang bertikai (penyerang dan target) menerima penalti hubungan diplomatik
- *    sebesar 5 poin (-5) dari seluruh 210 negara lain di dunia (selain 2 negara yang sedang bertikai).
+ * 2. Peluncuran oleh pemain memberi penalti hubungan diplomatik 5 poin (-5) kepada penyerang dan target
+ *    dari seluruh 210 negara lain di dunia (selain 2 negara yang sedang bertikai).
  * 3. Menghasilkan efek lintasan rute warna merah di peta (path-icbm) dan ledakan kilatan keclap putih
  *    di titik koordinat target melalui custom event.
  * 4. Berdampak pada kerusakan armada dan stabilitas negara target.
@@ -284,14 +284,16 @@ export function launchIcbmWarStrike(params: IcbmStrikeParams): IcbmStrikeResult 
   // 1. Hubungan dengan negara yang diserang langsung turun ke 1 terlebih dulu saat pertama kali diserang
   setIcbmBilateralRelation(attackerCountry, targetCountry, 1);
 
-  // 2. Terapkan pinalti hubungan diplomatik -5 poin ke seluruh negara di database selain 2 negara yang bertikai
-  const affectedCount = applyIcbmGlobalRelationPenalty(attackerCountry, targetCountry);
+  let affectedCount = 0;
+  if (params.isPlayerAttacker === true) {
+    // Penalti internasional ICBM hanya dijatuhkan kepada peluncuran oleh pemain.
+    affectedCount = applyIcbmGlobalRelationPenalty(attackerCountry, targetCountry);
 
-  // 3. Karena peluncuran ICBM adalah agresi tanpa mandat PBB, cabut status keanggotaan Dewan Keamanan
-  try {
-    expelCountryFromSecurityCouncil(attackerCountry);
-  } catch (err) {
-    console.warn("[ICBM War] Gagal memeriksa status DK PBB:", err);
+    try {
+      expelCountryFromSecurityCouncil(attackerCountry);
+    } catch (err) {
+      console.warn("[ICBM War] Gagal memeriksa status DK PBB:", err);
+    }
   }
 
   // 4. Picu animasi path-icbm berwarna merah di layar lewat event pelacakan diplomasi/perang
@@ -324,12 +326,17 @@ export function launchIcbmWarStrike(params: IcbmStrikeParams): IcbmStrikeResult 
     );
   }
 
+  const playerSanctionsApplied = params.isPlayerAttacker === true;
+  const resultMessage = playerSanctionsApplied
+    ? `Rudal balistik ICBM berhasil diluncurkan dari ${attackerCountry} menuju ${targetCountry}! Hubungan bilateral turun ke level 1. Hubungan dengan ${affectedCount} negara dunia lainnya turun 5 poin sebagai sanksi pinalti.`
+    : `Rudal balistik ICBM berhasil diluncurkan dari ${attackerCountry} menuju ${targetCountry}! Hubungan bilateral turun ke level 1.`;
+
   return {
     success: true,
-    message: `Rudal balistik ICBM berhasil diluncurkan dari ${attackerCountry} menuju ${targetCountry}! Hubungan bilateral turun ke level 1. Hubungan dengan ${affectedCount} negara dunia lainnya turun 5 poin sebagai sanksi pinalti.`,
+    message: resultMessage,
     attackerCountry,
     targetCountry,
     affectedWorldCountriesCount: affectedCount,
-    relationPenaltyPerCountry: 5,
+    relationPenaltyPerCountry: playerSanctionsApplied ? 5 : 0,
   };
 }

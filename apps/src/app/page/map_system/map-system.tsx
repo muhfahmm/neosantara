@@ -1,6 +1,6 @@
-// detail path: c:\EM\apps\src\app\page\map_system\map-system.tsx
 'use client';
 
+import { getRelationColor } from '@/app/logic/relationTiers';
 import React, { memo, startTransition, useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Crosshair, Pause, Palmtree, Play, Shield } from 'lucide-react';
@@ -712,6 +712,60 @@ const EMPTY_COUNTRY_OVERRIDES: Record<string, string> = {};
 const EMPTY_ANNEXED_COUNTRIES: Record<string, unknown> = {};
 const MAP_INTERACTION_IDLE_MS = 600;
 
+// Caches for fast O(1) diplomacy and territory color mapping
+let cachedFeatureCountryMap: (Country | undefined)[] | null = null;
+let cachedFeatureKeysMap: string[][] | null = null;
+const relationColorCache = new Map<string, { colors: Record<string, string>; featureColors: (string | undefined)[] }>();
+
+function buildFeatureCountryCache(features: Array<{ properties?: Record<string, unknown> }>) {
+    const normalizeKey = (value: unknown) =>
+        String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    const featureToCountry: (Country | undefined)[] = [];
+    const featureKeys: string[][] = [];
+
+    features.forEach(feature => {
+        const properties = feature.properties;
+        if (!properties) {
+            featureToCountry.push(undefined);
+            featureKeys.push([]);
+            return;
+        }
+
+        const isoKeys = [
+            properties.ISO_A2,
+            properties.ISO_A2_EH,
+            properties.ISO_A3,
+            properties.ISO_A3_EH,
+        ].map(normalizeKey).filter(Boolean);
+
+        const nameKeys = [
+            properties.NAME,
+            properties.ADMIN,
+            properties.NAME_LONG,
+            properties.GEOUNIT,
+            properties.NAME_ID,
+            properties.NAME_EN,
+            properties.NAME_IND,
+        ].map(normalizeKey).filter(Boolean);
+
+        const country = COUNTRIES_DATA.find(candidate => {
+            const countryIso = normalizeKey(candidate.iso);
+            const countryName = normalizeKey(candidate.country);
+            return isoKeys.includes(countryIso) ||
+                nameKeys.includes(countryName) ||
+                nameKeys.some(name => name.length > 4 && countryName.length > 4 &&
+                    (name.includes(countryName) || countryName.includes(name)));
+        });
+
+        featureToCountry.push(country);
+        featureKeys.push([...isoKeys, ...nameKeys]);
+    });
+
+    cachedFeatureCountryMap = featureToCountry;
+    cachedFeatureKeysMap = featureKeys;
+}
+
 const MapCanvasView = memo(function MapCanvasView({
     containerRef,
     interactionDisabled,
@@ -807,6 +861,27 @@ function applyUniformRelationPenalty(attackerCountry: string, minimum: number, m
     }
 
     return penalty;
+}
+
+function shouldApplyUnauthorizedAttackSanctions({
+    attacker,
+    attackerIso,
+    isPbbCoalition,
+    hasMandate,
+    playerCountryName,
+    playerIso,
+}: {
+    attacker: string;
+    attackerIso?: string;
+    isPbbCoalition: boolean;
+    hasMandate: boolean;
+    playerCountryName: string;
+    playerIso?: string;
+}): boolean {
+    return Boolean(playerCountryName) &&
+        !isPbbCoalition &&
+        !hasMandate &&
+        areSameWarCountry(attacker, playerCountryName, attackerIso, playerIso);
 }
 
 function applyInvasionRelationPenalty(attackerCountry: string, targetCountry: string): string {
@@ -1242,130 +1317,183 @@ export default function MapPage() {
         reasons: [],
     });
 
+    // Stable primitive player country name to avoid re-running diplomacy effects unnecessarily
+    const playerCountryName = useMemo(() => String(
+        selectedCountry?.country ||
+        countryDetail?.country ||
+        countryDetail?.nama_negara ||
+        countryDetail?.name ||
+        ''
+    ).trim(), [selectedCountry?.country, countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name]);
+
+    const simulationMonthString = simulationDateString.slice(0, 7);
+    const updateDiplomacyVersionRef = useRef(0);
+
+    const updateDiplomacyMapColors = useCallback((immediate: boolean = false) => {
+        if (typeof window === 'undefined') return;
+        const gameWindow = window as any;
+        const showDiplomacyMap = isDiplomacyMapActive && !isMenuModalOpen;
+        gameWindow.neosantara_diplomacy_map_active = showDiplomacyMap;
+
+        if (!showDiplomacyMap) {
+            gameWindow.neosantara_diplomacy_map_colors = {};
+            gameWindow.neosantara_diplomacy_map_feature_colors = [];
+            window.dispatchEvent(new Event(immediate ? 'map_feature_colors_now' : 'map_feature_colors_dirty'));
+            return;
+        }
+
+        const features = gameWindow.neosantara_world_geojson_features;
+        if (!Array.isArray(features)) return;
+
+        // Ensure feature country cache exists
+        if (!cachedFeatureCountryMap || cachedFeatureCountryMap.length !== features.length) {
+            buildFeatureCountryCache(features);
+        }
+
+        const currentVersion = ++updateDiplomacyVersionRef.current;
+        const cacheKey = `${playerCountryName}|${simulationMonthString}`;
+        const cached = relationColorCache.get(cacheKey);
+
+        if (cached) {
+            gameWindow.neosantara_diplomacy_map_colors = cached.colors;
+            gameWindow.neosantara_diplomacy_map_feature_colors = cached.featureColors;
+            window.dispatchEvent(new Event(immediate ? 'map_feature_colors_now' : 'map_feature_colors_dirty'));
+            return;
+        }
+
+        const featureToCountry = cachedFeatureCountryMap || [];
+        const featureKeys = cachedFeatureKeysMap || [];
+        const colors: Record<string, string> = {};
+        const featureColors: Array<string | undefined> = new Array(features.length);
+
+        // Pre-compute relation color per country to avoid duplicate lookups
+        const countryColorMap = new Map<string, string>();
+        for (let i = 0; i < featureToCountry.length; i++) {
+            const country = featureToCountry[i];
+            if (!country) {
+                featureColors[i] = undefined;
+                continue;
+            }
+            let color = countryColorMap.get(country.country);
+            if (!color) {
+                const relation = getRelationValue(playerCountryName, country.country, currentDate);
+                color = getRelationColor(relation);
+                countryColorMap.set(country.country, color);
+            }
+            featureColors[i] = color;
+            const keys = featureKeys[i];
+            if (keys) {
+                for (let k = 0; k < keys.length; k++) {
+                    colors[keys[k]] = color;
+                }
+            }
+        }
+
+        // Drop stale async calculations if another request superseded this
+        if (currentVersion !== updateDiplomacyVersionRef.current) return;
+
+        relationColorCache.set(cacheKey, { colors, featureColors });
+        gameWindow.neosantara_diplomacy_map_colors = colors;
+        gameWindow.neosantara_diplomacy_map_feature_colors = featureColors;
+        window.dispatchEvent(new Event(immediate ? 'map_feature_colors_now' : 'map_feature_colors_dirty'));
+    }, [isDiplomacyMapActive, isMenuModalOpen, playerCountryName, simulationMonthString, currentDate]);
+
     useEffect(() => {
         if (typeof window === 'undefined') return;
 
-        const gameWindow = window as any;
-        const normalizeKey = (value: unknown) =>
-            String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-        const updateDiplomacyMapColors = () => {
-            const showDiplomacyMap = isDiplomacyMapActive && !isMenuModalOpen;
+        // Run diplomacy color update
+        updateDiplomacyMapColors(false);
+
+        const handleRelationsOrAnnexationUpdated = () => {
+            relationColorCache.clear();
+            updateDiplomacyMapColors(false);
+        };
+
+        const handleFeaturesReady = () => {
+            const features = (window as any).neosantara_world_geojson_features;
+            if (Array.isArray(features)) {
+                buildFeatureCountryCache(features);
+            }
+            relationColorCache.clear();
+            updateDiplomacyMapColors(false);
+        };
+
+        window.addEventListener('country_relations_updated', handleRelationsOrAnnexationUpdated);
+        window.addEventListener('world_map_features_ready', handleFeaturesReady);
+        window.addEventListener('map_territory_color_updated', handleRelationsOrAnnexationUpdated);
+        window.addEventListener('annexation_completed', handleRelationsOrAnnexationUpdated);
+
+        return () => {
+            window.removeEventListener('country_relations_updated', handleRelationsOrAnnexationUpdated);
+            window.removeEventListener('world_map_features_ready', handleFeaturesReady);
+            window.removeEventListener('map_territory_color_updated', handleRelationsOrAnnexationUpdated);
+            window.removeEventListener('annexation_completed', handleRelationsOrAnnexationUpdated);
+        };
+    }, [updateDiplomacyMapColors]);
+
+    const handleTopNavSelect = useCallback((view: 'map' | 'diplomacy') => {
+        const nextDiplomacyActive = view === 'diplomacy';
+        setIsDiplomacyMapActive(nextDiplomacyActive);
+
+        if (typeof window !== 'undefined') {
+            const gameWindow = window as any;
+            const showDiplomacyMap = nextDiplomacyActive && !isMenuModalOpen;
             gameWindow.neosantara_diplomacy_map_active = showDiplomacyMap;
+
             if (!showDiplomacyMap) {
                 gameWindow.neosantara_diplomacy_map_colors = {};
-                return;
+                gameWindow.neosantara_diplomacy_map_feature_colors = [];
+                window.dispatchEvent(new Event('map_feature_colors_now'));
+            } else {
+                const features = gameWindow.neosantara_world_geojson_features;
+                if (Array.isArray(features)) {
+                    if (!cachedFeatureCountryMap || cachedFeatureCountryMap.length !== features.length) {
+                        buildFeatureCountryCache(features);
+                    }
+                    const cacheKey = `${playerCountryName}|${simulationMonthString}`;
+                    const cached = relationColorCache.get(cacheKey);
+                    if (cached) {
+                        gameWindow.neosantara_diplomacy_map_colors = cached.colors;
+                        gameWindow.neosantara_diplomacy_map_feature_colors = cached.featureColors;
+                        window.dispatchEvent(new Event('map_feature_colors_now'));
+                    } else {
+                        // Fast synchronous computation using pre-cached feature map
+                        const featureToCountry = cachedFeatureCountryMap || [];
+                        const featureKeys = cachedFeatureKeysMap || [];
+                        const colors: Record<string, string> = {};
+                        const featureColors: Array<string | undefined> = new Array(features.length);
+                        const countryColorMap = new Map<string, string>();
+
+                        for (let i = 0; i < featureToCountry.length; i++) {
+                            const country = featureToCountry[i];
+                            if (!country) {
+                                featureColors[i] = undefined;
+                                continue;
+                            }
+                            let color = countryColorMap.get(country.country);
+                            if (!color) {
+                                const relation = getRelationValue(playerCountryName, country.country, currentDate);
+                                color = getRelationColor(relation);
+                                countryColorMap.set(country.country, color);
+                            }
+                            featureColors[i] = color;
+                            const keys = featureKeys[i];
+                            if (keys) {
+                                for (let k = 0; k < keys.length; k++) {
+                                    colors[keys[k]] = color;
+                                }
+                            }
+                        }
+
+                        relationColorCache.set(cacheKey, { colors, featureColors });
+                        gameWindow.neosantara_diplomacy_map_colors = colors;
+                        gameWindow.neosantara_diplomacy_map_feature_colors = featureColors;
+                        window.dispatchEvent(new Event('map_feature_colors_now'));
+                    }
+                }
             }
-
-            const features = gameWindow.neosantara_world_geojson_features;
-            if (!Array.isArray(features)) return;
-
-            const playerCountryName = String(
-                selectedCountry?.country ||
-                countryDetail?.country ||
-                countryDetail?.nama_negara ||
-                countryDetail?.name ||
-                ''
-            ).trim();
-            const colors: Record<string, string> = {};
-            const featureColors: Array<string | undefined> = [];
-            const colorForRelation = (relation: number) => {
-                if (relation <= 25) return '#f87171';
-                if (relation <= 40) return '#fb7185';
-                if (relation <= 65) return '#facc15';
-                if (relation <= 80) return '#4ade80';
-                return '#00FFAA';
-            };
-
-            features.forEach((feature: { properties?: Record<string, unknown> }) => {
-                const properties = feature.properties;
-                if (!properties) {
-                    featureColors.push(undefined);
-                    return;
-                }
-
-                const isoKeys = [
-                    properties.ISO_A2,
-                    properties.ISO_A2_EH,
-                    properties.ISO_A3,
-                    properties.ISO_A3_EH,
-                ].map(normalizeKey).filter(Boolean);
-                const nameKeys = [
-                    properties.NAME,
-                    properties.ADMIN,
-                    properties.NAME_LONG,
-                    properties.GEOUNIT,
-                    properties.NAME_ID,
-                    properties.NAME_EN,
-                    properties.NAME_IND,
-                ].map(normalizeKey).filter(Boolean);
-                const country = COUNTRIES_DATA.find(candidate => {
-                    const countryIso = normalizeKey(candidate.iso);
-                    const countryName = normalizeKey(candidate.country);
-                    return isoKeys.includes(countryIso) ||
-                        nameKeys.includes(countryName) ||
-                        nameKeys.some(name => name.length > 4 && countryName.length > 4 &&
-                            (name.includes(countryName) || countryName.includes(name)));
-                });
-
-                if (!country) {
-                    featureColors.push(undefined);
-                    return;
-                }
-
-                const relation = getRelationValue(playerCountryName, country.country, currentDate);
-                const color = colorForRelation(relation);
-                featureColors.push(color);
-                [...isoKeys, ...nameKeys].forEach(key => {
-                    colors[key] = color;
-                });
-            });
-
-            gameWindow.neosantara_diplomacy_map_colors = colors;
-            gameWindow.neosantara_diplomacy_map_feature_colors = featureColors;
-        };
-
-        const runColorsChanged = () => {
-            updateDiplomacyMapColors();
-            window.dispatchEvent(new Event('map_feature_colors_dirty'));
-        };
-        // Gabungkan burst event (notifikasi inbox/berita) menjadi satu pekerjaan saat browser idle
-        let scheduled = false;
-        let rafId = 0;
-        let idleId: number | null = null;
-        const notifyColorsChanged = () => {
-            if (scheduled) return;
-            scheduled = true;
-            rafId = requestAnimationFrame(() => {
-                const run = () => {
-                    scheduled = false;
-                    idleId = null;
-                    runColorsChanged();
-                };
-                const ric = (window as any).requestIdleCallback as undefined | ((cb: () => void, o?: { timeout: number }) => number);
-                if (ric) idleId = ric(run, { timeout: 300 });
-                else setTimeout(run, 0);
-            });
-        };
-        runColorsChanged();
-        window.addEventListener('country_relations_updated', notifyColorsChanged);
-        window.addEventListener('world_map_features_ready', notifyColorsChanged);
-        window.addEventListener('map_territory_color_updated', notifyColorsChanged);
-        window.addEventListener('annexation_completed', notifyColorsChanged);
-        return () => {
-            cancelAnimationFrame(rafId);
-            const cic = (window as any).cancelIdleCallback as undefined | ((id: number) => void);
-            if (idleId !== null && cic) cic(idleId);
-            window.removeEventListener('country_relations_updated', notifyColorsChanged);
-            window.removeEventListener('world_map_features_ready', notifyColorsChanged);
-            window.removeEventListener('map_territory_color_updated', notifyColorsChanged);
-            window.removeEventListener('annexation_completed', notifyColorsChanged);
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isDiplomacyMapActive, isMenuModalOpen, selectedCountry?.country, countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name, isDiplomacyMapActive && !isMenuModalOpen ? simulationDateString.slice(0, 7) : '']);
-
-    const handleTopNavSelect = (view: 'map' | 'diplomacy') => {
-        setIsDiplomacyMapActive(view === 'diplomacy');
-    };
+        }
+    }, [isMenuModalOpen, playerCountryName, simulationMonthString, currentDate]);
     const openInbox = useCallback(() => {
         setHasilBubarkanState(prev => ({ ...prev, isOpen: false }));
         setInboxModalOpen(true);
@@ -2214,7 +2342,14 @@ export default function MapPage() {
                     return;
                 }
             }
-            if (warBanActive) {
+            if (warBanActive && shouldApplyUnauthorizedAttackSanctions({
+                attacker: attackerCountry,
+                attackerIso,
+                isPbbCoalition: false,
+                hasMandate: hasInvasionMandate,
+                playerCountryName: selectedCountry?.country || countryDetail?.country || countryDetail?.nama_negara || '',
+                playerIso: selectedCountry?.iso || countryDetail?.iso,
+            })) {
                 const sanctionsNotifications = submitWarBanViolationSanctions(attackerCountry, targetCountry, dateStr);
                 setNotifications(prev => [...sanctionsNotifications, ...prev]);
             }
@@ -2283,8 +2418,8 @@ export default function MapPage() {
 
             const { actionType, targetCountry, isPbbCoalition, pbbLiberationCountry } = detail;
             console.info('[CityAnnexation][2-event] trigger_player_attack received', detail);
-            const attackerCountry = countryDetail?.country || 'China';
-            const attackerIso = (countryDetail?.iso || 'cn').toLowerCase();
+            const attackerCountry = selectedCountry?.country || countryDetail?.country || 'China';
+            const attackerIso = (selectedCountry?.iso || countryDetail?.iso || 'cn').toLowerCase();
             if (areSameWarCountry(attackerCountry, targetCountry, attackerIso, getIsoForCountryName(targetCountry))) {
                 setNotifications(prev => [{
                     id: `notif-self-attack-block-${Date.now()}`,
@@ -2308,53 +2443,57 @@ export default function MapPage() {
             const newNewsItems: NewsItemData[] = [];
 
             const isInvasionAction = actionType === 'aneksasi' || actionType === 'jarah';
-            if (isInvasionAction && !isPbbCoalition) {
-                // Perang sudah dimenangkan; larangan PBB/sanksi sudah diproses saat perang dimulai
-                // (handleStartWarAnimation). Jangan membatalkan hasil aneksasi di sini.
+            const hasInvasionMandate = typeof detail.invasionMandateAtLaunch === 'boolean'
+                ? detail.invasionMandateAtLaunch
+                : hasActiveApprovedInvasionResolution(attackerCountry, targetCountry);
+            const shouldSanctionAttack = isInvasionAction && shouldApplyUnauthorizedAttackSanctions({
+                attacker: attackerCountry,
+                attackerIso,
+                isPbbCoalition: isPbbCoalition === true,
+                hasMandate: hasInvasionMandate,
+                playerCountryName: selectedCountry?.country || countryDetail?.country || '',
+                playerIso: selectedCountry?.iso || countryDetail?.iso,
+            });
+            if (shouldSanctionAttack && detail.unauthorizedAttackSanctionsApplied !== true) {
+                // Map attacks are sanctioned at launch; direct result events are handled here once.
                 if (hasActiveGlobalWarBan()) {
                     console.warn('[CityAnnexation][3-handler] Global war ban active; war already fought, applying result.');
                 }
 
-                const hasInvasionMandate = hasActiveApprovedInvasionResolution(attackerCountry, targetCountry);
-                if (!hasInvasionMandate) {
-                    const reason = hasActiveApprovedInvasionResolutionForDifferentTarget(attackerCountry, targetCountry)
-                        ? 'wrong_military_target'
-                        : 'missing_military_resolution';
-                    const expelledOrganizations = expelCountryFromOrganizations(attackerCountry);
-                    if (expelledOrganizations.length > 0) {
-                        setNotifications(prev => [{
-                            id: `notif-organization-expulsion-${Date.now()}`,
-                            title: '🚫 KEANGGOTAAN ORGANISASI INTERNASIONAL DICABUT',
-                            sender: 'Sekretariat Perserikatan Bangsa-Bangsa & Komunitas Global',
-                            message: `${attackerCountry} dikeluarkan secara tidak hormat dari organisasi internasional (${expelledOrganizations.join(', ')}) karena menyerang ${targetCountry} tanpa resolusi invasi yang disetujui.`,
-                            timestamp: dateStr,
-                            type: 'peringkat',
-                            value: 100,
-                            isRead: false
-                        }, ...prev]);
-                    }
-                    const revokedCouncilMember = expelCountryFromSecurityCouncil(attackerCountry);
-                    if (revokedCouncilMember) {
-                        setNotifications(prev => [{
-                            id: `notif-dk-pbb-expulsion-${Date.now()}`,
-                            title: '🏛️ KURSI ANGGOTA TIDAK TETAP DK PBB DICABUT',
-                            sender: 'Presidensi Dewan Keamanan PBB',
-                            message: `Status ${attackerCountry} sebagai Anggota Tidak Tetap Dewan Keamanan PBB resmi DICABUT seketika akibat melancarkan agresi militer terhadap ${targetCountry} tanpa mandat resolusi PBB. Hak suara istimewa di DK PBB dibatalkan!`,
-                            timestamp: dateStr,
-                            type: 'peringkat',
-                            value: 100,
-                            isRead: false
-                        }, ...prev]);
-                    }
-                    const sanctionsNotifications = submitInvasionViolationSanctions(
-                        attackerCountry,
-                        targetCountry,
-                        dateStr,
-                        reason
-                    );
-                    if (sanctionsNotifications.length > 0) {
-                        setNotifications(prev => [...sanctionsNotifications, ...prev]);
-                    }
+                const reason = hasActiveApprovedInvasionResolutionForDifferentTarget(attackerCountry, targetCountry)
+                    ? 'wrong_military_target'
+                    : 'missing_military_resolution';
+                const expelledOrganizations = expelCountryFromOrganizations(attackerCountry);
+                if (expelledOrganizations.length > 0) {
+                    setNotifications(prev => [{
+                        id: `notif-organization-expulsion-${Date.now()}`,
+                        title: '🚫 KEANGGOTAAN ORGANISASI INTERNASIONAL DICABUT',
+                        sender: 'Sekretariat Perserikatan Bangsa-Bangsa & Komunitas Global',
+                        message: `${attackerCountry} dikeluarkan secara tidak hormat dari organisasi internasional (${expelledOrganizations.join(', ')}) karena menyerang ${targetCountry} tanpa resolusi invasi yang disetujui.`,
+                        timestamp: dateStr,
+                        type: 'peringkat',
+                        value: 100,
+                        isRead: false
+                    }, ...prev]);
+                }
+                const revokedCouncilMember = expelCountryFromSecurityCouncil(attackerCountry);
+                if (revokedCouncilMember) {
+                    setNotifications(prev => [{
+                        id: `notif-dk-pbb-expulsion-${Date.now()}`,
+                        title: '🏛️ KURSI ANGGOTA TIDAK TETAP DK PBB DICABUT',
+                        sender: 'Presidensi Dewan Keamanan PBB',
+                        message: `Status ${attackerCountry} sebagai Anggota Tidak Tetap Dewan Keamanan PBB resmi DICABUT seketika akibat melancarkan agresi militer terhadap ${targetCountry} tanpa mandat resolusi PBB. Hak suara istimewa di DK PBB dibatalkan!`,
+                        timestamp: dateStr,
+                        type: 'peringkat',
+                        value: 100,
+                        isRead: false
+                    }, ...prev]);
+                }
+                const sanctionsNotifications = hasActiveGlobalWarBan()
+                    ? submitWarBanViolationSanctions(attackerCountry, targetCountry, dateStr)
+                    : submitInvasionViolationSanctions(attackerCountry, targetCountry, dateStr, reason);
+                if (sanctionsNotifications.length > 0) {
+                    setNotifications(prev => [...sanctionsNotifications, ...prev]);
                 }
             }
 
@@ -2749,7 +2888,7 @@ export default function MapPage() {
             window.removeEventListener('trigger_requested_invasion', handleRequestedInvasion);
             window.removeEventListener('trigger_player_attack', handlePlayerAttack);
         };
-    }, [currentDate, countryDetail]);
+    }, [currentDate, countryDetail, selectedCountry?.country, selectedCountry?.iso]);
 
     // ICBM Target Selection Mode & Efek Keclap Putih
     const [isSelectingIcbmTarget, setIsSelectingIcbmTarget] = useState(false);
@@ -3022,71 +3161,74 @@ export default function MapPage() {
     const [activeWarAnimation, setActiveWarAnimation] = useState<any>(null);
     const activeWarAnimationRef = useRef<any>(null);
     activeWarAnimationRef.current = activeWarAnimation;
+    const warMapAttackerCountry = activeWarAnimation?.attacker || '';
+    const warMapTargetCountry = activeWarAnimation?.target || '';
+    const warMapTargetCityId = activeWarAnimation?.targetCityId || '';
+    const warMapTargetCityLat = activeWarAnimation?.targetCityLat;
+    const warMapTargetCityLng = activeWarAnimation?.targetCityLng;
+    const warMapAttackerDetail = activeWarAnimation?.attackerCountryDetail;
+    const warMapTargetDetail = activeWarAnimation?.targetCountryDetail;
+    const userCountryDetailIso = countryDetail?.iso;
+    const selectedCountryIso = selectedCountry?.iso;
+    const userCountryDetailName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || countryDetail?.nama || selectedCountry?.country || '';
+
     const warMapAttacker = useMemo(() => {
-        if (!activeWarAnimation) return null;
-        const userCountryName =
-            countryDetail?.country ||
-            countryDetail?.nama_negara ||
-            countryDetail?.name_id ||
-            countryDetail?.name_en ||
-            countryDetail?.nama ||
-            selectedCountry?.country ||
-            '';
-        return {
-            ...(activeWarAnimation.attackerCountryDetail || (
-                areSameWarCountry(
-                    activeWarAnimation.attacker,
-                    userCountryName,
-                    undefined,
-                    countryDetail?.iso
-                ) ? countryDetail : {}
-            )),
-            ...(buildCapitalPoint(activeWarAnimation.attacker) || {
-                country: activeWarAnimation.attacker,
-                capital: activeWarAnimation.attacker,
-                lat: 0,
-                lng: 0,
-            }),
+        if (!warMapAttackerCountry) return null;
+        const isUser = areSameWarCountry(
+            warMapAttackerCountry,
+            userCountryDetailName,
+            undefined,
+            userCountryDetailIso || selectedCountryIso
+        );
+        const baseDetail = warMapAttackerDetail || (isUser ? countryDetail : {});
+        const capPoint = buildCapitalPoint(warMapAttackerCountry) || {
+            country: warMapAttackerCountry,
+            capital: warMapAttackerCountry,
+            lat: 0,
+            lng: 0,
         };
-    }, [activeWarAnimation, countryDetail, selectedCountry?.country]);
-    const warMapTarget = useMemo(() => {
-        if (!activeWarAnimation) return null;
-        const userCountryName =
-            countryDetail?.country ||
-            countryDetail?.nama_negara ||
-            countryDetail?.name_id ||
-            countryDetail?.name_en ||
-            countryDetail?.nama ||
-            selectedCountry?.country ||
-            '';
         return {
-            ...(activeWarAnimation.targetCountryDetail || (
-                areSameWarCountry(
-                    activeWarAnimation.target,
-                    userCountryName,
-                    activeWarAnimation.targetCountryDetail?.iso,
-                    countryDetail?.iso
-                ) ? countryDetail : {}
-            )),
-            ...(buildCapitalPoint(activeWarAnimation.target) || {
-                country: activeWarAnimation.target,
-                capital: activeWarAnimation.target,
-                lat: 0,
-                lng: 0,
-            }),
-            ...(activeWarAnimation.targetCityId ? {
-                cityId: activeWarAnimation.targetCityId,
-                cityName: activeWarAnimation.targetCityName,
-                cityIsCapital: activeWarAnimation.targetCityIsCapital,
-                lat: activeWarAnimation.targetCityLat,
-                lng: activeWarAnimation.targetCityLng,
+            ...baseDetail,
+            ...capPoint,
+        };
+    }, [warMapAttackerCountry, warMapAttackerDetail, userCountryDetailName, userCountryDetailIso, selectedCountryIso]);
+
+    const warMapTarget = useMemo(() => {
+        if (!warMapTargetCountry) return null;
+        const isUser = areSameWarCountry(
+            warMapTargetCountry,
+            userCountryDetailName,
+            warMapTargetDetail?.iso,
+            userCountryDetailIso || selectedCountryIso
+        );
+        const baseDetail = warMapTargetDetail || (isUser ? countryDetail : {});
+        const capPoint = buildCapitalPoint(warMapTargetCountry) || {
+            country: warMapTargetCountry,
+            capital: warMapTargetCountry,
+            lat: 0,
+            lng: 0,
+        };
+        return {
+            ...baseDetail,
+            ...capPoint,
+            ...(warMapTargetCityId ? {
+                cityId: warMapTargetCityId,
+                cityName: activeWarAnimationRef.current?.targetCityName,
+                cityIsCapital: activeWarAnimationRef.current?.targetCityIsCapital,
+                lat: warMapTargetCityLat,
+                lng: warMapTargetCityLng,
             } : {}),
         };
-    }, [activeWarAnimation, countryDetail, selectedCountry?.country]);
+    }, [warMapTargetCountry, warMapTargetDetail, warMapTargetCityId, warMapTargetCityLat, warMapTargetCityLng, userCountryDetailName, userCountryDetailIso, selectedCountryIso]);
+
     const [isWarAnalysisActive, setIsWarAnalysisActive] = useState(false);
+    const isWarAnalysisActiveRef = useRef(false);
     const [isAttackerForcesModalOpen, setIsAttackerForcesModalOpen] = useState(false);
     const handleWarAnalysisVisibilityChange = useCallback((isVisible: boolean) => {
-        setIsWarAnalysisActive(isVisible);
+        if (isWarAnalysisActiveRef.current !== isVisible) {
+            isWarAnalysisActiveRef.current = isVisible;
+            setIsWarAnalysisActive(isVisible);
+        }
     }, []);
     const [npcWarQueue, setNpcWarQueue] = useState<Array<{
         attacker: string;
@@ -3193,6 +3335,16 @@ export default function MapPage() {
                 detail.attacker,
                 detail.target
             );
+            const unauthorizedAttackSanctionsApplied =
+                detail.unauthorizedAttackSanctionsApplied === true ||
+                shouldApplyUnauthorizedAttackSanctions({
+                    attacker: detail.attacker,
+                    attackerIso: detail.attackerCountryDetail?.iso,
+                    isPbbCoalition: detail.isPbbCoalition === true,
+                    hasMandate: hasApprovedInvasionMandate,
+                    playerCountryName: playerCountryName || '',
+                    playerIso: selectedCountry?.iso || countryDetail?.iso,
+                });
             const resolutionViolationAuthorized = detail.resolutionViolationAuthorized === true;
             if (
                 !detail.isPbbCoalition &&
@@ -3230,7 +3382,10 @@ export default function MapPage() {
                     return hasExistingAlert ? previous : [incomingAttack, ...previous];
                 });
             }
-            if (!detail.isPbbCoalition && !hasApprovedInvasionMandate) {
+            if (
+                unauthorizedAttackSanctionsApplied &&
+                detail.unauthorizedAttackSanctionsApplied !== true
+            ) {
                 const violationReason = hasActiveGlobalWarBan()
                     ? 'war_ban'
                     : hasActiveApprovedInvasionResolutionForDifferentTarget(detail.attacker, detail.target)
@@ -3577,6 +3732,8 @@ export default function MapPage() {
                 targetCountryDetail: targetDetailData,
                 isUserDefender: isPlayerDefender,
                 isPlayerAttacker: isPlayerAttack,
+                unauthorizedAttackSanctionsApplied,
+                invasionMandateAtLaunch: hasApprovedInvasionMandate,
                 attackerPower: Number(attackerDetailData.pbbCoalitionPower) || attackerPowerSummary.totals.totalPower,
                 targetPower: targetPowerSummary.totals.totalPower
             });
@@ -3667,7 +3824,7 @@ export default function MapPage() {
             window.removeEventListener('start_pbb_military_operation', handlePbbMilitaryOperation);
             window.removeEventListener('pause_game_time', handlePauseGameTime);
         };
-    }, [countryDetail, selectedCountry?.country]);
+    }, [countryDetail, selectedCountry?.country, selectedCountry?.iso]);
 
     useEffect(() => {
         if (activeWarAnimation || npcWarQueue.length === 0 || npcWarQueueRunningRef.current) return;
@@ -5005,7 +5162,7 @@ export default function MapPage() {
                         id: `notif-npc-war-no-mandate-${currentDateStr}`,
                         title: '🕊️ SERANGAN TANPA MANDAT DIBATALKAN',
                         sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
-                        message: `${cancelledUnauthorizedCount} rencana konflik AI tanpa mandat dibatalkan. Peluang serangan tanpa resolusi adalah 25%; pelanggaran yang lolos akan diajukan untuk sanksi dan embargo.`,
+                        message: `${cancelledUnauthorizedCount} rencana konflik AI tanpa mandat dibatalkan. Peluang serangan tanpa resolusi adalah 25%; serangan AI yang lolos tetap dapat berjalan tanpa sanksi.`,
                         timestamp: currentDateStr,
                         type: 'peringkat',
                         value: 100,
@@ -5041,7 +5198,16 @@ export default function MapPage() {
                         });
 
                         const hasInvasionMandate = hasActiveApprovedInvasionResolution(inv.attackerCountry, inv.targetCountry);
-                        if (warBanActive || !hasInvasionMandate) {
+                        const shouldSanctionAttack = shouldApplyUnauthorizedAttackSanctions({
+                            attacker: inv.attackerCountry,
+                            attackerIso: inv.attackerIso,
+                            isPbbCoalition: false,
+                            hasMandate: hasInvasionMandate,
+                            playerCountryName: selectedCountry?.country || countryDetail?.country ||
+                                countryDetail?.nama_negara || countryDetail?.name_id || '',
+                            playerIso: selectedCountry?.iso || countryDetail?.iso,
+                        });
+                        if (shouldSanctionAttack) {
                             const reason = warBanActive
                                 ? 'war_ban'
                                 : hasActiveApprovedInvasionResolutionForDifferentTarget(inv.attackerCountry, inv.targetCountry)
@@ -7503,6 +7669,7 @@ export default function MapPage() {
 
                 if (typeof window !== 'undefined') {
                     (window as any).neosantara_world_geojson_features = drawableFeatures;
+                    buildFeatureCountryCache(drawableFeatures);
                     window.dispatchEvent(new Event('world_map_features_ready'));
                 }
 
@@ -7718,6 +7885,15 @@ export default function MapPage() {
                 };
                 window.addEventListener('neosantara_map_settings_changed', handleMapSettingsChange);
 
+                const immediateFeatureColorSync = () => {
+                    featureColorsPending = false;
+                    if (featureColorSyncTimer !== null) {
+                        window.clearTimeout(featureColorSyncTimer);
+                        featureColorSyncTimer = null;
+                    }
+                    syncFeatureColors();
+                };
+                window.addEventListener('map_feature_colors_now', immediateFeatureColorSync);
                 window.addEventListener('map_feature_colors_dirty', scheduleFeatureColorSync);
                 window.addEventListener('map_territory_color_updated', scheduleFeatureColorSync);
                 window.addEventListener('neosantara:map-pan-ended', resumeFeatureColorSync);
@@ -9189,16 +9365,32 @@ export default function MapPage() {
                         onAutoResolve={result => {
                             if (result !== 'win') {
                                 if (activeWarAnimation.requestedInvasion === true) {
+                                    const resultMessage = `Pasukan ${activeWarAnimation.attacker} gagal menembus pertahanan ${activeWarAnimation.target}. Tidak ada aneksasi maupun penjarahan.`;
                                     setNotifications(prev => [{
                                         id: `notif-req-inv-fail-${Date.now()}`,
                                         title: '❌ MANDAT SERANGAN GAGAL',
                                         sender: `Komando Tinggi ${activeWarAnimation.attacker}`,
-                                        message: `Pasukan ${activeWarAnimation.attacker} gagal menembus pertahanan ${activeWarAnimation.target}. Tidak ada aneksasi maupun penjarahan.`,
+                                        message: resultMessage,
                                         timestamp: currentDate.toISOString().slice(0, 10),
                                         type: 'peringkat',
                                         value: 0,
                                         isRead: false
                                     }, ...prev]);
+                                    setResultModal({
+                                        isOpen: true,
+                                        title: 'SERANGAN AI GAGAL',
+                                        message: resultMessage,
+                                        type: 'error',
+                                        compact: true,
+                                    });
+                                } else if (activeWarAnimation.isNpcWar === true && activeWarAnimation.isPbbCoalition !== true) {
+                                    setResultModal({
+                                        isOpen: true,
+                                        title: 'SERANGAN AI GAGAL',
+                                        message: `Pasukan ${activeWarAnimation.attacker} gagal menaklukkan ${activeWarAnimation.target}. Tidak terjadi aneksasi maupun penjarahan.`,
+                                        type: 'error',
+                                        compact: true,
+                                    });
                                 }
                                 return;
                             }
@@ -9209,6 +9401,15 @@ export default function MapPage() {
                             );
                             if (!targetCity) {
                                 console.error('[CityAnnexation] AI victory has no mapped target city.', activeWarAnimation);
+                                if (activeWarAnimation.isNpcWar === true && activeWarAnimation.isPbbCoalition !== true) {
+                                    setResultModal({
+                                        isOpen: true,
+                                        title: 'HASIL PERANG TIDAK DAPAT DITERAPKAN',
+                                        message: `Pasukan ${activeWarAnimation.attacker} memenangkan pertempuran, tetapi data wilayah ${activeWarAnimation.target} tidak tersedia sehingga hasil perang tidak dapat diterapkan.`,
+                                        type: 'error',
+                                        compact: true,
+                                    });
+                                }
                                 return;
                             }
                             const attackerIso = getIsoForCountryName(activeWarAnimation.attacker) || 'un';
@@ -9255,6 +9456,13 @@ export default function MapPage() {
                                         value: 100,
                                         isRead: false
                                     }, ...prev]);
+                                    setResultModal({
+                                        isOpen: true,
+                                        title: 'MANDAT SERANGAN: ANEKSASI',
+                                        message: `Pasukan ${activeWarAnimation.attacker} memenangkan operasi dan menganeksasi Kota ${targetCity.cityName} di ${activeWarAnimation.target}.`,
+                                        type: 'success',
+                                        compact: true,
+                                    });
                                 } else {
                                     // JARAH SDA (40%): Menjarah SDA dan kas tanpa menganeksasi wilayah
                                     const lootedCash = 15000000;
@@ -9281,6 +9489,13 @@ export default function MapPage() {
                                         value: 80,
                                         isRead: false
                                     }, ...prev]);
+                                    setResultModal({
+                                        isOpen: true,
+                                        title: 'MANDAT SERANGAN: PENJARAHAN',
+                                        message: `Pasukan ${activeWarAnimation.attacker} menjarah sumber daya ${activeWarAnimation.target} tanpa mengubah kepemilikan wilayah negara tersebut.`,
+                                        type: 'info',
+                                        compact: true,
+                                    });
                                 }
 
                                 window.dispatchEvent(new CustomEvent('requested_invasion_resolved', {
@@ -9293,7 +9508,82 @@ export default function MapPage() {
                                 return;
                             }
 
-                            // Alur NPC War biasa (bukan mandat user):
+                            // Perang antar-AI berakhir dengan aneksasi penuh atau penjarahan.
+                            if (activeWarAnimation.isNpcWar === true && activeWarAnimation.isPbbCoalition !== true) {
+                                const isAnnexation = Math.random() < 0.6;
+                                if (isAnnexation) {
+                                    const capitalCity = resolveWarTargetCity(activeWarAnimation.target);
+                                    if (!capitalCity) {
+                                        console.error('[CityAnnexation] AI victory has no mapped target capital.', activeWarAnimation);
+                                        return;
+                                    }
+                                    recordCityCapture(
+                                        capitalCity,
+                                        activeWarAnimation.target,
+                                        activeWarAnimation.attacker,
+                                        attackerIso,
+                                        getCountryColor(activeWarAnimation.attacker)
+                                    );
+                                    const { news } = generateAnnexationNews(
+                                        activeWarAnimation.attacker,
+                                        attackerIso,
+                                        getCountryColor(activeWarAnimation.attacker),
+                                        activeWarAnimation.target,
+                                        targetIso,
+                                        currentDateStr
+                                    );
+                                    setNewsList(previous => [news, ...previous]);
+                                    setNotifications(prev => [{
+                                        id: `notif-ai-war-annex-${Date.now()}`,
+                                        title: '🚩 PERANG AI: NEGARA DIANEKSASI',
+                                        sender: `Laporan Perang ${activeWarAnimation.attacker}`,
+                                        message: `${activeWarAnimation.attacker} memenangkan perang dan menganeksasi seluruh wilayah ${activeWarAnimation.target}.`,
+                                        timestamp: currentDateStr,
+                                        type: 'peringkat',
+                                        value: 100,
+                                        isRead: false
+                                    }, ...prev]);
+                                    setResultModal({
+                                        isOpen: true,
+                                        title: 'NEGARA DIANEKSASI',
+                                        message: `${activeWarAnimation.attacker} memenangkan perang. Seluruh wilayah ${activeWarAnimation.target} kini menjadi bagian dari ${activeWarAnimation.attacker}.`,
+                                        type: 'success',
+                                        compact: true,
+                                    });
+                                } else {
+                                    const lootedCash = 15000000;
+                                    const lootedResources = { emas: 350, minyak_bumi: 800, beras: 1500 };
+                                    const lootNews = generateResourceLootNews(
+                                        activeWarAnimation.attacker,
+                                        attackerIso,
+                                        activeWarAnimation.target,
+                                        targetIso,
+                                        lootedCash,
+                                        lootedResources,
+                                        currentDateStr
+                                    );
+                                    setNewsList(previous => [lootNews, ...previous]);
+                                    setNotifications(prev => [{
+                                        id: `notif-ai-war-loot-${Date.now()}`,
+                                        title: '💰 PERANG AI: NEGARA DIJARAH',
+                                        sender: `Laporan Perang ${activeWarAnimation.attacker}`,
+                                        message: `${activeWarAnimation.attacker} memenangkan perang dan menjarah sumber daya ${activeWarAnimation.target}. Kepemilikan wilayah negara tersebut tidak berubah.`,
+                                        timestamp: currentDateStr,
+                                        type: 'peringkat',
+                                        value: 80,
+                                        isRead: false
+                                    }, ...prev]);
+                                    setResultModal({
+                                        isOpen: true,
+                                        title: 'NEGARA DIJARAH',
+                                        message: `${activeWarAnimation.attacker} memenangkan perang dan menjarah sumber daya ${activeWarAnimation.target}. Tidak ada perubahan kepemilikan wilayah pada negara yang diserang.`,
+                                        type: 'info',
+                                        compact: true,
+                                    });
+                                }
+                                return;
+                            }
+
                             recordCityCapture(
                                 targetCity,
                                 activeWarAnimation.target,
@@ -9481,6 +9771,10 @@ export default function MapPage() {
                                         warResult: result,
                                         isPbbCoalition: activeWarAnimation.isPbbCoalition ?? false,
                                         pbbLiberationCountry: activeWarAnimation.pbbLiberationCountry,
+                                        unauthorizedAttackSanctionsApplied:
+                                            activeWarAnimation.unauthorizedAttackSanctionsApplied === true,
+                                        invasionMandateAtLaunch:
+                                            activeWarAnimation.invasionMandateAtLaunch === true,
                                         troopsCommitted: activeWarAnimation.troopsCommitted === true,
                                         attackerCountryDetail: activeWarAnimation.attackerCountryDetail,
                                         committedArmySnapshot: activeWarAnimation.committedArmySnapshot,

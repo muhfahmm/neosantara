@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Map, Smile, type LucideIcon } from 'lucide-react';
 
 interface TopNavProps {
@@ -8,6 +9,17 @@ interface TopNavProps {
 }
 
 export default function TopNav({ activeView, onSelect }: TopNavProps) {
+  const [localActiveView, setLocalActiveView] = useState<'map' | 'diplomacy'>(activeView);
+
+  useEffect(() => {
+    setLocalActiveView(activeView);
+  }, [activeView]);
+
+  const handleSelect = (nextView: 'map' | 'diplomacy') => {
+    setLocalActiveView(nextView);
+    onSelect(nextView);
+  };
+
   return (
     <div
       className="fixed bottom-[4.25rem] left-1/2 z-[200] flex -translate-x-1/2 items-center gap-0.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424]/90 px-1.5 py-1 shadow-lg backdrop-blur-md lg:bottom-[4.5rem] lg:gap-1 lg:rounded-2xl lg:px-2 lg:py-1.5 xl:bottom-[5.25rem] 2xl:bottom-[7rem]"
@@ -17,14 +29,14 @@ export default function TopNav({ activeView, onSelect }: TopNavProps) {
       <NavButton
         label="Peta Taktis"
         Icon={Map}
-        active={activeView === 'map'}
-        onClick={() => onSelect('map')}
+        active={localActiveView === 'map'}
+        onClick={() => handleSelect('map')}
       />
       <NavButton
         label="Hubungan Diplomatik"
         Icon={Smile}
-        active={activeView === 'diplomacy'}
-        onClick={() => onSelect(activeView === 'diplomacy' ? 'map' : 'diplomacy')}
+        active={localActiveView === 'diplomacy'}
+        onClick={() => handleSelect(localActiveView === 'diplomacy' ? 'map' : 'diplomacy')}
       />
     </div>
   );

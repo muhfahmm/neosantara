@@ -1,4 +1,6 @@
 "use client"
+
+import { getRelationBadge, RELATION_TIERS } from '@/app/logic/relationTiers';
 import React, { useEffect, useState } from "react";
 import { X, Globe, Search, Info, Building2, ShieldCheck, ShieldAlert, Heart, Gift, Coins, Sparkles, ArrowRight } from "lucide-react";
 import NotebookModalWrapper from "../NotebookModalWrapper";
@@ -108,43 +110,6 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
       hasEmbassy: embassyExists,
     };
   });
-
-  const getRelationBadge = (value: number) => {
-    if (value >= 81 && value <= 100) {
-      return {
-        alias: 'Sangat Baik',
-        className: 'bg-[#00FFAA]/15 text-[#00FFAA] border-[#00FFAA]/30'
-      };
-    }
-    if (value >= 66 && value <= 80) {
-      return {
-        alias: 'Baik',
-        className: 'bg-green-500/15 text-green-400 border-green-500/30'
-      };
-    }
-    if (value >= 41 && value <= 65) {
-      return {
-        alias: 'Netral',
-        className: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30'
-      };
-    }
-    if (value >= 26 && value <= 40) {
-      return {
-        alias: 'Buruk',
-        className: 'bg-rose-500/15 text-rose-400 border-rose-500/30'
-      };
-    }
-    if (value >= 0 && value <= 25) {
-      return {
-        alias: 'Sangat Buruk',
-        className: 'bg-red-500/15 text-red-400 border-red-500/30'
-      };
-    }
-    return {
-      alias: 'Tidak Diketahui',
-      className: 'bg-gray-500/15 text-gray-400 border-gray-500/30'
-    };
-  };
 
   const handleSort = (key: string) => {
     setSortConfig((prev) => ({

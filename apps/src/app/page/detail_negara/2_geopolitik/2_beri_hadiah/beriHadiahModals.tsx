@@ -1,4 +1,6 @@
 "use client";
+
+import { getRelationTier } from '@/app/logic/relationTiers';
 import React, { useState, useEffect, useMemo } from "react";
 import {
   Gift,
@@ -177,11 +179,8 @@ export default function BeriHadiahModal({
   };
 
   const getRelationStatusBadge = (val: number) => {
-    if (val >= 80) return { label: "Sangat Mesra", color: "text-emerald-400 bg-emerald-950/60 border-emerald-500/30" };
-    if (val >= 60) return { label: "Bersahabat", color: "text-[#00FFAA] bg-[#00FFAA]/10 border-[#00FFAA]/30" };
-    if (val >= 40) return { label: "Netral", color: "text-amber-300 bg-amber-950/60 border-amber-500/30" };
-    if (val >= 20) return { label: "Dingin", color: "text-orange-400 bg-orange-950/60 border-orange-500/30" };
-    return { label: "Musuh", color: "text-rose-400 bg-rose-950/60 border-rose-500/30" };
+    const tier = getRelationTier(val);
+    return { label: tier.label, color: `${tier.textColor} ${tier.badgeClassName}` };
   };
 
   const currentBadge = getRelationStatusBadge(currentRelation);
