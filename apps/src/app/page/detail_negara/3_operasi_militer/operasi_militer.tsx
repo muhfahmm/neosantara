@@ -339,7 +339,8 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
                   targetCountry: selectedTargetCountry, // Negara target sasaran yang dipilih di dropdown (Afganistan)
                   targetCityId: targetCity.cityId,
                   targetCityName: targetCity.name,
-                  amount
+                  amount,
+                  requestId: `requested-attack-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
                 }
               })
             );

@@ -754,8 +754,11 @@ interface WarMapProps {
   isNpcWar?: boolean;
   requestedInvasion?: boolean;
   isPbbCoalition?: boolean;
+  shouldShowBattleAnalysis?: boolean;
+  isPlayerCoalitionAttacker?: boolean;
   isExternalModalOpen?: boolean;
   onAnalysisVisibilityChange?: (isVisible: boolean) => void;
+  onBattlePhaseChange?: (phase: WarPhase) => void;
   onAttackerForcesModalVisibilityChange?: (isVisible: boolean) => void;
   onClose: (battleOutcome?: Pick<WarResultOutput, 'result' | 'attackerLossRatio'>) => void;
   onResolve: (payload: {
@@ -765,8 +768,9 @@ interface WarMapProps {
     isUserDefender?: boolean;
     isPbbCoalition?: boolean;
     attackerLossRatio?: number;
+    targetLossRatio?: number;
   }) => void;
-  onAutoResolve?: (result: WarResult) => void;
+  onAutoResolve?: (outcome: WarResultOutput) => void;
 }
 
 export default function WarMap({
@@ -782,8 +786,11 @@ export default function WarMap({
   isNpcWar = false,
   requestedInvasion = false,
   isPbbCoalition = false,
+  shouldShowBattleAnalysis = true,
+  isPlayerCoalitionAttacker = false,
   isExternalModalOpen = false,
   onAnalysisVisibilityChange,
+  onBattlePhaseChange,
   onAttackerForcesModalVisibilityChange,
   onClose,
   onResolve,
@@ -813,6 +820,10 @@ export default function WarMap({
       onAnalysisVisibilityChange?.(isVisible);
     }
   }, [phase, onAnalysisVisibilityChange]);
+
+  useEffect(() => {
+    onBattlePhaseChange?.(phase);
+  }, [phase, onBattlePhaseChange]);
 
   useEffect(() => {
     onCloseRef.current = onClose;
@@ -909,10 +920,7 @@ export default function WarMap({
       : path;
   }, [isOpen, isNpcWar, isPbbCoalition, resolvedAttacker.country, resolvedTarget.country, resolvedAttacker.lat, resolvedAttacker.lng, resolvedTarget.lat, resolvedTarget.lng]);
 
-  const attackerCountryName = attacker?.country || '';
-  const targetCountryName = target?.country || '';
-
-  const battleOutcome = useMemo(() => {
+  const calculateBattleOutcome = useCallback(() => {
     if (!isOpen) return null;
     const attackerBreakdown = getArmadaPowerSummary(attacker).breakdown;
     const totalAttackerPower = attackerBreakdown.reduce((total, unit) => total + unit.totalPower, 0);
@@ -936,22 +944,30 @@ export default function WarMap({
       requestedInvasion,
       attackerWinRoll: requestedInvasionRollRef.current,
     });
-    battleOutcomeRef.current = outcome;
     return outcome;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isOpen,
-    attackerCountryName,
-    targetCountryName,
+    attacker,
     attackerPower,
     targetPower,
     effectiveAttackerDeploymentPercent,
+    isAiAttacker,
+    isPbbCoalition,
+    committedDeploymentConfig,
     isUserDefender,
     isNpcWar,
-    isPbbCoalition,
     requestedInvasion,
     attackerBonus,
     defenderBonus,
+  ]);
+
+  const battleOutcome = useMemo(() => {
+    if (shouldShowBattleAnalysis && phase !== 'result') return null;
+    return calculateBattleOutcome();
+  }, [
+    calculateBattleOutcome,
+    shouldShowBattleAnalysis,
+    phase,
   ]);
   battleOutcomeRef.current = battleOutcome;
 
@@ -1166,7 +1182,7 @@ export default function WarMap({
 
     const outcome = battleOutcomeRef.current || battleOutcome;
 
-    if (isPbbCoalition) {
+    if (isPbbCoalition && shouldShowBattleAnalysis) {
       if (lastAnalysisVisibilityRef.current !== true) {
         lastAnalysisVisibilityRef.current = true;
         onAnalysisVisibilityChange?.(true);
@@ -1177,10 +1193,32 @@ export default function WarMap({
       return () => clearTimeout(flashTimer);
     }
 
-    if (isNpcWar && !isUserDefender && !isPbbCoalition) {
+    if (isPbbCoalition) {
+      const resolveTimer = setTimeout(() => {
+        if (outcome && warPath) {
+          onResolveRef.current({
+            result: outcome.result,
+            action: 'retreat',
+            path: warPath,
+            isPbbCoalition: true,
+            attackerLossRatio: outcome.attackerLossRatio,
+            targetLossRatio: outcome.targetLossRatio,
+          });
+        } else {
+          onCloseRef.current(outcome || undefined);
+        }
+      }, 1300);
+      const flashTimer = setTimeout(() => setShowFlash(false), 500);
+      return () => {
+        clearTimeout(resolveTimer);
+        clearTimeout(flashTimer);
+      };
+    }
+
+    if (isNpcWar && !isUserDefender && !isPbbCoalition && !shouldShowBattleAnalysis) {
       if (!autoResolveReportedRef.current && outcome) {
         autoResolveReportedRef.current = true;
-        onAutoResolveRef.current?.(outcome.result);
+        onAutoResolveRef.current?.(outcome);
       }
       const closeTimer = setTimeout(() => onCloseRef.current(outcome || undefined), 1300);
       const flashTimer = setTimeout(() => setShowFlash(false), 500);
@@ -1199,16 +1237,7 @@ export default function WarMap({
       clearTimeout(t1);
       clearTimeout(t2);
     };
-  }, [phase, battleOutcome, isNpcWar, isUserDefender, isPbbCoalition, onAnalysisVisibilityChange]);
-
-  useEffect(() => {
-    if (phase !== 'comparison' || !isUserDefender || isPbbCoalition || !battleOutcome) return;
-    const resultTimer = setTimeout(() => {
-      setResult(battleOutcome.result);
-      setPhase('result');
-    }, 2500);
-    return () => clearTimeout(resultTimer);
-  }, [phase, isUserDefender, isPbbCoalition, battleOutcome]);
+  }, [phase, battleOutcome, isNpcWar, isUserDefender, isPbbCoalition, shouldShowBattleAnalysis, warPath, onAnalysisVisibilityChange]);
 
   useEffect(() => {
     if (phase !== 'result' || !isUserDefender || isPbbCoalition || !result || !warPath ||
@@ -1221,10 +1250,12 @@ export default function WarMap({
         path: warPath,
         isUserDefender: true,
         isPbbCoalition,
+        attackerLossRatio: battleOutcome?.attackerLossRatio,
+        targetLossRatio: battleOutcome?.targetLossRatio,
       });
     }, 1800);
     return () => clearTimeout(resolutionTimer);
-  }, [phase, isUserDefender, isPbbCoalition, result, warPath]);
+  }, [phase, isUserDefender, isPbbCoalition, result, warPath, battleOutcome]);
 
   const handleAction = useCallback(
     (action: WarAction) => {
@@ -1236,17 +1267,20 @@ export default function WarMap({
         path: warPath,
         isPbbCoalition,
         attackerLossRatio: battleOutcome?.attackerLossRatio,
+        targetLossRatio: battleOutcome?.targetLossRatio,
       });
     },
     [warPath, result, onResolve, isPbbCoalition, battleOutcome]
   );
 
   const handleAutoResult = useCallback(() => {
-    if (battleOutcome) {
-      setResult(battleOutcome.result);
+    const outcome = calculateBattleOutcome();
+    if (outcome) {
+      battleOutcomeRef.current = outcome;
+      setResult(outcome.result);
       setPhase('result');
     }
-  }, [battleOutcome]);
+  }, [calculateBattleOutcome]);
 
   if (!isOpen || !warPath) return null;
 
@@ -1577,7 +1611,7 @@ export default function WarMap({
           targetIso={target.iso || 'un'}
           targetPower={targetPower}
           targetDetail={target}
-          isUserAttacker={!isNpcWar && !isUserDefender}
+          isUserAttacker={(!isNpcWar && !isUserDefender) || isPlayerCoalitionAttacker}
           isUserDefender={isUserDefender}
           isCoalitionForce={isPbbCoalition}
           onAutoResult={handleAutoResult}

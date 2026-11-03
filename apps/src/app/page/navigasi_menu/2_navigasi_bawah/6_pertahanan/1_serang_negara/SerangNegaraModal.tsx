@@ -11,7 +11,10 @@ import { getArmadaPowerSummary } from "../4_armada/logic/armadaLogic";
 import SerangModals from "./modals_menu/KonfirmasiSerangModals";
 // 🔥 Import COUNTRIES_DATA untuk meng-enrich ISO
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
-import { applyNpcCountrySimulationState } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
+import {
+  applyNpcCountrySimulationState,
+  NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
+} from "@/app/logic/npc_country_simulation/npcCountrySimulation";
 import KonfirmasiPeluncuranSerangan from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/konfirmasi_peluncuran_serangan";
 import HasilPertempuran from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/hasil_pertempuran";
 import { applyWarLossesToUserArmada } from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine";
@@ -91,6 +94,16 @@ export default function SerangNegaraModal({
     };
   }, [isOpen, prefetchedAllCountries]);
 
+  React.useEffect(() => {
+    const refreshNpcCountries = () => {
+      setInternalCountries(current =>
+        current ? current.map(country => applyNpcCountrySimulationState(country)) : current,
+      );
+    };
+    window.addEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshNpcCountries);
+    return () => window.removeEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshNpcCountries);
+  }, []);
+
   const rawRankings = React.useMemo(() => {
     let source: any[] = [];
     if (Array.isArray(prefetchedAllCountries) && prefetchedAllCountries.length > 0) {
@@ -99,6 +112,17 @@ export default function SerangNegaraModal({
       source = internalCountries.map(country => applyNpcCountrySimulationState(country));
     } else if (Array.isArray(COUNTRIES_DATA) && COUNTRIES_DATA.length > 0) {
       source = COUNTRIES_DATA;
+    }
+    const playerName = String(
+      countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "",
+    ).toLowerCase().trim();
+    if (playerName) {
+      source = source.map(country => {
+        const name = String(
+          country?.nama_negara || country?.country || country?.name_id || country?.name_en || "",
+        ).toLowerCase().trim();
+        return name === playerName ? { ...country, ...countryDetail } : country;
+      });
     }
 
     const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
@@ -187,7 +211,7 @@ export default function SerangNegaraModal({
           iso: iso,
         };
       });
-  }, [prefetchedAllCountries, internalCountries]);
+  }, [prefetchedAllCountries, internalCountries, countryDetail]);
 
   const rankings = useMemo(() => {
     let sortableItems = [...rawRankings];

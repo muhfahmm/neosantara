@@ -151,6 +151,7 @@ export default function PerbandinganPasukan({
   targetDetail,
   attackerDeploymentPercent,
   isUserDefender = false,
+  isUserAttacker = false,
   isCoalitionForce = false,
   onAutoResult,
 }: PerbandinganPasukanProps) {
@@ -302,8 +303,8 @@ export default function PerbandinganPasukan({
                   </div>
                   <p className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">
                     {isCoalitionForce
-                      ? "Pasukan Gabungan PBB"
-                      : isUserDefender ? "Pasukan Agresor (Musuh)" : "Pasukan Penyerang (Anda)"}
+                      ? isUserAttacker ? "Pasukan Penyerang (Anda)" : "Pasukan Gabungan PBB"
+                      : isUserDefender ? "Pasukan Penyerang (AI)" : "Pasukan Penyerang (Anda)"}
                   </p>
                   <p className="text-xl font-black text-[#00FFAA] uppercase tracking-wide">
                     {attackerName}
@@ -330,7 +331,7 @@ export default function PerbandinganPasukan({
                   </div>
                   <p className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">
                     {isCoalitionForce
-                      ? `Pasukan Target (${targetName})`
+                      ? isUserDefender ? "Pasukan Target (Anda)" : `Pasukan Target (${targetName})`
                       : isUserDefender ? "Pasukan Pertahanan (Anda)" : "Pasukan Target (Musuh)"}
                   </p>
                   <p className="text-xl font-black text-rose-400 uppercase tracking-wide">

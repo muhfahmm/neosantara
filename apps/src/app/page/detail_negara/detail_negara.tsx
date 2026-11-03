@@ -24,6 +24,10 @@ import { getProvinceDemonstrationChance } from './1_informasi_umum/provinsi_logi
 import { getCountryProfileSummary } from '@/lib/countryProfileSummaryRegistry';
 import { estimateTravelTime } from '../path_logic/time_logic';
 import NotebookModalWrapper from '../navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
+import {
+  getActiveRequestedAttackRequests,
+  REQUESTED_ATTACK_REQUESTS_CHANGED_EVENT,
+} from './3_operasi_militer/6_minta_serang_negara/requestedInvasionLogic';
 
 // Import 3 komponen terpisah
 import InformasiUmum from "./1_informasi_umum/informasi_umum";
@@ -126,6 +130,42 @@ export function CountryDetailModal({
   const [profileSummaryRevision, setProfileSummaryRevision] = useState(0);
   const [militaryActionDates, setMilitaryActionDates] = useState<Record<string, string>>({});
 
+  useEffect(() => {
+    const requesterCountry = countryDetail?.country ||
+      countryDetail?.nama_negara ||
+      countryDetail?.name_id;
+    const refreshRequestedAttackDate = () => {
+      const activeRequests = getActiveRequestedAttackRequests(
+        countryName || '',
+        typeof requesterCountry === 'string' ? requesterCountry : undefined
+      );
+      const latestArrivalDate = activeRequests
+        .map(request => request.arrivalDate)
+        .filter((date): date is string => typeof date === 'string')
+        .sort()
+        .at(-1);
+      const actionDateKey = `${normalizeCountryKey(countryName)}:minta_serang`;
+      setMilitaryActionDates(previous => {
+        if (latestArrivalDate) {
+          if (previous[actionDateKey] === latestArrivalDate) return previous;
+          return { ...previous, [actionDateKey]: latestArrivalDate };
+        }
+        if (!(actionDateKey in previous)) return previous;
+        const next = { ...previous };
+        delete next[actionDateKey];
+        return next;
+      });
+    };
+
+    refreshRequestedAttackDate();
+    window.addEventListener(REQUESTED_ATTACK_REQUESTS_CHANGED_EVENT, refreshRequestedAttackDate);
+    window.addEventListener('storage', refreshRequestedAttackDate);
+    return () => {
+      window.removeEventListener(REQUESTED_ATTACK_REQUESTS_CHANGED_EVENT, refreshRequestedAttackDate);
+      window.removeEventListener('storage', refreshRequestedAttackDate);
+    };
+  }, [countryDetail, countryName]);
+
   // State untuk menyembunyikan tampilan modal Detail Negara saat salah satu modal aksi dibuka
   const [isActionModalOpen, setIsActionModalOpen] = useState(false);
 
@@ -191,30 +231,6 @@ export function CountryDetailModal({
   };
 
   useEffect(() => {
-    const handleRequestedInvasionArrival = (event: Event) => {
-      const detail = (event as CustomEvent<{
-        attackerCountry?: string;
-        targetCountry?: string;
-        arrivalDate?: string;
-      }>).detail;
-      if (
-        !detail?.attackerCountry ||
-        !detail.arrivalDate ||
-        normalizeCountryKey(detail.attackerCountry) !== normalizeCountryKey(countryName)
-      ) {
-        return;
-      }
-      setMilitaryActionDates(previous => ({
-        ...previous,
-        [`${normalizeCountryKey(countryName)}:minta_serang`]: detail.arrivalDate!,
-      }));
-    };
-
-    window.addEventListener('requested_invasion_arrival_scheduled', handleRequestedInvasionArrival);
-    return () => window.removeEventListener('requested_invasion_arrival_scheduled', handleRequestedInvasionArrival);
-  }, [countryName]);
-
-  useEffect(() => {
     const refreshProfileSummaries = () => setProfileSummaryRevision(revision => revision + 1);
     window.addEventListener('country_profile_summaries_ready', refreshProfileSummaries);
     return () => window.removeEventListener('country_profile_summaries_ready', refreshProfileSummaries);
@@ -260,7 +276,23 @@ export function CountryDetailModal({
         return;
       }
       const actionDateKey = `${normalizeCountryKey(countryName)}:minta_serang`;
+      const requesterCountry = countryDetail?.country ||
+        countryDetail?.nama_negara ||
+        countryDetail?.name_id;
+      const activeRequests = getActiveRequestedAttackRequests(
+        countryName || '',
+        typeof requesterCountry === 'string' ? requesterCountry : undefined
+      );
+      const latestArrivalDate = activeRequests
+        .map(request => request.arrivalDate)
+        .filter((date): date is string => typeof date === 'string')
+        .sort()
+        .at(-1);
       setMilitaryActionDates(previous => {
+        if (latestArrivalDate) {
+          if (previous[actionDateKey] === latestArrivalDate) return previous;
+          return { ...previous, [actionDateKey]: latestArrivalDate };
+        }
         if (!(actionDateKey in previous)) return previous;
         const next = { ...previous };
         delete next[actionDateKey];
@@ -270,7 +302,7 @@ export function CountryDetailModal({
 
     window.addEventListener('requested_invasion_resolved', handleRequestedInvasionResolved);
     return () => window.removeEventListener('requested_invasion_resolved', handleRequestedInvasionResolved);
-  }, [countryName]);
+  }, [countryDetail, countryName]);
 
 
   useEffect(() => {

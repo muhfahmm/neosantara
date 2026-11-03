@@ -174,6 +174,7 @@ function getMutableCountryState(country: CountryRecord): Record<string, unknown>
       key === "health_tier" ||
       key === "population_status" ||
       key === "armada" ||
+      key === "annexed_forces_ledger" ||
       key === "kepuasan" ||
       key === "npc_country_metrics_initialized" ||
       key === "satisfaction_sector_baseline" ||

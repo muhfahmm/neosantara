@@ -59,7 +59,15 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, onActi
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const rawRankings = useMemo(() => {
-    const source = Array.isArray(prefetchedAllCountries) ? prefetchedAllCountries : [];
+    const playerName = String(
+      countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "",
+    ).toLowerCase().trim();
+    const source = (Array.isArray(prefetchedAllCountries) ? prefetchedAllCountries : []).map(country => {
+      const countryName = String(
+        country?.nama_negara || country?.country || country?.name_id || country?.name_en || "",
+      ).toLowerCase().trim();
+      return playerName && countryName === playerName ? { ...country, ...countryDetail } : country;
+    });
     const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
 
     return source
@@ -89,7 +97,7 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, onActi
           iso, // 🔥 Simpan ISO
         };
       });
-  }, [prefetchedAllCountries]);
+  }, [prefetchedAllCountries, countryDetail]);
 
   const rankings = useMemo(() => {
     let sortableItems = [...rawRankings];

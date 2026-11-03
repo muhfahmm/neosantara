@@ -107,6 +107,7 @@ const DialogTerbukaMenu = dynamic(() => import('../menus/inbox/logic/7_notifikas
 import { buildCapitalPoint } from '../path_logic/path-war';
 import { estimateTravelTime } from '../path_logic/time_logic';
 import { applyWarLossesToUserArmada } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
+import { mergeAnnexedForces, resolveCountryPoolOwner } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/annexedForcePool';
 import { getArmadaPowerSummary } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
 import { convertBarakToSoldiers } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/1_barak_logic';
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
@@ -195,6 +196,16 @@ import {
     applyOutbreakPopulationLoss,
 } from '../menus/inbox/logic/6_notifikasi_bencana/2_wabah_penyakit/wabahLogic';
 import { getDaysDifference } from '../menus/inbox/logic/6_notifikasi_bencana/2_wabah_penyakit/outbreakManagement';
+import { publishDebugNotificationState, publishDebugWarStatus } from '@/app/debug/attackDebugLogic';
+import { shouldShowBattleAnalysis, type WarPartyIdentity } from '../path_logic/warAnalysisLogic';
+import {
+    cancelOrphanedRequestedAttackRequests,
+    createRequestedAttackRequest,
+    resolveAttackRequest,
+    setRequestedAttackArrivalDate,
+    setRequestedAttackInProgress,
+    getRequestedAttackRequests,
+} from '../detail_negara/3_operasi_militer/6_minta_serang_negara/requestedInvasionLogic';
 import { generateSpionaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/1_spionase/spionaseLogic';
 import { generateSabotaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/2_sabotase/sabotaseLogic';
 import {
@@ -357,6 +368,136 @@ const normalizeMapKey = (value: unknown) => String(value || '')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]/g, '');
+
+const NPC_WAR_UNIT_GROUPS = {
+    darat: [
+        'pasukan_infanteri', 'tank_tempur_utama', 'apc_ifv', 'artileri_berat',
+        'sistem_peluncur_roket', 'pertahanan_udara_mobile', 'kendaraan_taktis',
+    ],
+    laut: [
+        'kapal_induk', 'kapal_induk_nuklir', 'kapal_destroyer', 'kapal_korvet',
+        'kapal_selam_nuklir', 'kapal_selam_regular', 'kapal_ranjau', 'kapal_logistik',
+    ],
+    udara: [
+        'jet_tempur_siluman', 'jet_tempur_interceptor', 'pesawat_pengebom',
+        'helikopter_serang', 'pesawat_pengintai', 'drone_intai_uav',
+        'drone_kamikaze', 'pesawat_angkut',
+    ],
+} as const;
+
+function toWarRecord(value: unknown): Record<string, unknown> {
+    return value && typeof value === 'object' && !Array.isArray(value)
+        ? value as Record<string, unknown>
+        : {};
+}
+
+function applyNpcWarLosses(
+    country: Record<string, unknown> | null | undefined,
+    lossRatio: number | undefined,
+): void {
+    if (!country || typeof lossRatio !== 'number' || !Number.isFinite(lossRatio) || lossRatio <= 0) return;
+
+    const countrySlug = typeof country.country_slug === 'string' ? country.country_slug : '';
+    if (!countrySlug) {
+        console.error('[WarLosses] Cannot persist NPC casualties: country profile has no country_slug.', country);
+        return;
+    }
+
+    const result = applyWarLossesToUserArmada(country, lossRatio, false, {});
+    const updatedDetail = toWarRecord(result.updatedDetail);
+    const { losses } = result;
+    if (losses.length === 0) return;
+
+    const armadaSource = toWarRecord(updatedDetail.armada);
+    const armada: Record<string, unknown> = {
+        ...armadaSource,
+        darat: { ...toWarRecord(armadaSource.darat) },
+        laut: { ...toWarRecord(armadaSource.laut) },
+        udara: { ...toWarRecord(armadaSource.udara) },
+    };
+    const armadaGroups = {
+        darat: toWarRecord(armada.darat),
+        laut: toWarRecord(armada.laut),
+        udara: toWarRecord(armada.udara),
+    };
+    const armyUpdates: Record<string, number> = {};
+
+    for (const [group, unitKeys] of Object.entries(NPC_WAR_UNIT_GROUPS)) {
+        for (const unitKey of unitKeys) {
+            const value = updatedDetail[unitKey] ??
+                armadaGroups[group as keyof typeof armadaGroups][unitKey] ??
+                armada[unitKey];
+            if (value === undefined || !Number.isFinite(Number(value))) continue;
+            const quantity = Math.max(0, Number(value));
+            armyUpdates[unitKey] = quantity;
+            armadaGroups[group as keyof typeof armadaGroups][unitKey] = quantity;
+            armada[unitKey] = quantity;
+        }
+    }
+    armada.darat = armadaGroups.darat;
+    armada.laut = armadaGroups.laut;
+    armada.udara = armadaGroups.udara;
+
+    for (const unitKey of ['barak', 'pasukan_infanteri'] as const) {
+        const groupValue = unitKey === 'pasukan_infanteri'
+            ? armadaGroups.darat[unitKey]
+            : undefined;
+        const value = updatedDetail[unitKey] ?? armada[unitKey] ?? groupValue;
+        if (value === undefined || !Number.isFinite(Number(value))) continue;
+        const quantity = Math.max(0, Number(value));
+        armyUpdates[unitKey] = quantity;
+        armada[unitKey] = quantity;
+        if (unitKey === 'pasukan_infanteri') armadaGroups.darat[unitKey] = quantity;
+    }
+    armada.darat = armadaGroups.darat;
+
+    if (!updateNpcCountrySimulationState(countrySlug, { ...armyUpdates, armada })) {
+        console.error('[WarLosses] NPC casualties could not be saved to the active simulation.', {
+            countrySlug,
+            lossRatio,
+            losses,
+        });
+    }
+}
+
+function mergeNpcAnnexedForces(
+    conqueror: Record<string, unknown>,
+    annexed: Record<string, unknown>,
+    targetLossRatio: number,
+): void {
+    const merged = mergeAnnexedForces(conqueror, annexed, targetLossRatio);
+    if (merged.alreadyMerged) return;
+
+    const countrySlug = typeof conqueror.country_slug === 'string'
+        ? conqueror.country_slug
+        : '';
+    if (!countrySlug) {
+        console.error('[WarForces] Cannot persist annexed forces: conqueror profile has no country_slug.', conqueror);
+        return;
+    }
+
+    const persisted = updateNpcCountrySimulationState(countrySlug, {
+        armada: merged.country.armada,
+        annexed_forces_ledger: merged.country.annexed_forces_ledger,
+    });
+    if (!persisted) {
+        console.warn('[WarForces] Annexed forces could not be written to the active NPC simulation pool.', {
+            conqueror: countrySlug,
+            annexed: annexed.country_slug || annexed.country,
+        });
+        return;
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+        console.debug('[WarForces] Annexed force pool merged', {
+            conqueror: countrySlug,
+            annexed: annexed.country_slug || annexed.country,
+            addedUnits: merged.addedUnits,
+            targetLossRatio,
+            armada: merged.country.armada,
+        });
+    }
+}
 
 const getCityOwnerId = (countryIso: string, cityName: string) =>
     `${countryIso.toLowerCase()}:${normalizeMapKey(cityName)}`;
@@ -2250,12 +2391,40 @@ export default function MapPage() {
             if (!detail) return;
 
             const { attackerCountry, targetCountry, targetCityId, targetCityName, amount } = detail;
-
             const year = currentDate.getFullYear();
             const month = String(currentDate.getMonth() + 1).padStart(2, '0');
             const day = String(currentDate.getDate()).padStart(2, '0');
             const dateStr = `${year}-${month}-${day}`;
+            if (typeof attackerCountry !== 'string' || typeof targetCountry !== 'string') {
+                console.error('[RequestedInvasion] Invalid attacker or target.', detail);
+                return;
+            }
+            const requestId = typeof detail.requestId === 'string'
+                ? detail.requestId
+                : `requested-attack-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+            const existingRequest = getRequestedAttackRequests().find(request => request.id === requestId);
+            if (existingRequest) {
+                console.warn('[RequestedInvasion] Duplicate request event ignored.', requestId);
+                return;
+            }
+            createRequestedAttackRequest({
+                id: requestId,
+                requesterCountry: String(
+                    selectedCountry?.country ||
+                    countryDetail?.country ||
+                    countryDetail?.nama_negara ||
+                    countryDetail?.name_id ||
+                    ''
+                ),
+                attackerCountry,
+                targetCountry,
+                requestedAt: dateStr,
+            });
+            const resolveRequest = (outcome: 'completed' | 'failed' | 'cancelled') =>
+                resolveAttackRequest({ requestId, attackerCountry, targetCountry }, outcome);
+
             if (areSameWarCountry(attackerCountry, targetCountry)) {
+                resolveRequest('cancelled');
                 setNotifications(prev => [{
                     id: `notif-self-invasion-block-${Date.now()}`,
                     title: 'Serangan Sekutu Dibatalkan',
@@ -2272,6 +2441,7 @@ export default function MapPage() {
             const targetIso = getIsoForCountryName(targetCountry) || 'un';
             if (typeof targetCityId !== 'string' || typeof targetCityName !== 'string') {
                 console.error('[RequestedInvasion] Target city was not provided.', detail);
+                resolveRequest('cancelled');
                 setNotifications(prev => [{
                     id: `notif-requested-invasion-no-city-${Date.now()}`,
                     title: '📍 KOTA TARGET BELUM DIPILIH',
@@ -2297,6 +2467,7 @@ export default function MapPage() {
                     targetCityName,
                     resolvedCityId: requestedTargetCity?.cityId,
                 });
+                resolveRequest('cancelled');
                 setNotifications(prev => [{
                     id: `notif-requested-invasion-invalid-city-${Date.now()}`,
                     title: '📍 KOTA TARGET TIDAK VALID',
@@ -2309,10 +2480,50 @@ export default function MapPage() {
                 }, ...prev]);
                 return;
             }
+            if (!areSameWarCountry(
+                requestedTargetCity.ownerCountry,
+                targetCountry
+            )) {
+                resolveRequest('cancelled');
+                setNotifications(prev => [{
+                    id: `notif-requested-invasion-target-captured-${Date.now()}`,
+                    title: '⚔️ PERMINTAAN SERANGAN DIBATALKAN',
+                    sender: 'Kementerian Pertahanan',
+                    message: `Permintaan serangan terhadap ${targetCountry} dibatalkan karena kota ${targetCityName} sudah dikuasai negara lain.`,
+                    timestamp: dateStr,
+                    type: 'peringkat',
+                    value: 0,
+                    isRead: false,
+                }, ...prev]);
+                return;
+            }
+            const attackerHasTerritory = getMapCities().some(city =>
+                areSameWarCountry(
+                    getCurrentCityOwner(city),
+                    attackerCountry,
+                    getIsoForCountryName(getCurrentCityOwner(city)),
+                    attackerIso
+                )
+            );
+            if (!attackerHasTerritory) {
+                resolveRequest('cancelled');
+                setNotifications(prev => [{
+                    id: `notif-requested-invasion-attacker-gone-${Date.now()}`,
+                    title: '⚔️ PERMINTAAN SERANGAN DIBATALKAN',
+                    sender: 'Kementerian Pertahanan',
+                    message: `Permintaan serangan dibatalkan karena ${attackerCountry} tidak lagi memiliki wilayah untuk melancarkan operasi.`,
+                    timestamp: dateStr,
+                    type: 'peringkat',
+                    value: 0,
+                    isRead: false,
+                }, ...prev]);
+                return;
+            }
 
             const paymentAmount = Math.max(0, Number(amount) || 0);
             const acceptanceChance = Math.min(100, Math.floor((paymentAmount / 100000) * 100));
             if (Math.random() * 100 >= acceptanceChance) {
+                resolveRequest('failed');
                 setNotifications(prev => [{
                     id: `notif-requested-invasion-declined-${Date.now()}`,
                     title: '📩 PERMINTAAN SERANGAN DITOLAK',
@@ -2330,6 +2541,7 @@ export default function MapPage() {
             const hasInvasionMandate = hasActiveApprovedInvasionResolution(attackerCountry, targetCountry);
             if (warBanActive) {
                 if (Math.random() >= 0.2) {
+                    resolveRequest('cancelled');
                     setNotifications(prev => [{
                         id: `notif-war-ban-block-${Date.now()}`,
                         title: '🕊️ SERANGAN DIBATALKAN OLEH RESOLUSI PBB',
@@ -2363,6 +2575,7 @@ export default function MapPage() {
                     selectedCountry?.country || countryDetail?.country || ''
                 ),
                 requestedInvasion: true,
+                requestedAttackRequestId: requestId,
                 targetCityId: requestedTargetCity?.cityId,
                 targetCityName: requestedTargetCity?.cityName,
                 targetCityLat: requestedTargetCity?.lat,
@@ -2376,17 +2589,15 @@ export default function MapPage() {
                 const arrivalDate = new Date(currentDate);
                 arrivalDate.setHours(0, 0, 0, 0);
                 arrivalDate.setDate(arrivalDate.getDate() + travelEstimate.days);
-                window.dispatchEvent(new CustomEvent('requested_invasion_arrival_scheduled', {
-                    detail: {
-                        attackerCountry,
-                        targetCountry,
-                        arrivalDate: [
-                            arrivalDate.getFullYear(),
-                            String(arrivalDate.getMonth() + 1).padStart(2, '0'),
-                            String(arrivalDate.getDate()).padStart(2, '0'),
-                        ].join('-'),
-                    },
-                }));
+                const arrivalDateString = [
+                    arrivalDate.getFullYear(),
+                    String(arrivalDate.getMonth() + 1).padStart(2, '0'),
+                    String(arrivalDate.getDate()).padStart(2, '0'),
+                ].join('-');
+                setRequestedAttackArrivalDate(requestId, arrivalDateString);
+            } else {
+                resolveRequest('cancelled');
+                return;
             }
 
             // Berita deklarasi perang dibuat saat serangan diluncurkan; wilayah berubah setelah hasil perang.
@@ -2442,6 +2653,9 @@ export default function MapPage() {
             const dateStr = `${year}-${month}-${day}`;
 
             const newNewsItems: NewsItemData[] = [];
+            if (actionType !== 'aneksasi') {
+                applyNpcWarLosses(detail.targetCountryDetail, Number(detail.targetLossRatio));
+            }
 
             const isInvasionAction = actionType === 'aneksasi' || actionType === 'jarah';
             const hasInvasionMandate = typeof detail.invasionMandateAtLaunch === 'boolean'
@@ -2521,10 +2735,7 @@ export default function MapPage() {
                     hasCommittedTroops ? false : randomizeLosses,
                     deploymentConfig,
                 );
-                const updatedDetail = hasCommittedTroops && detail.committedArmyDetail
-                    ? detail.committedArmyDetail
-                    : detailAfterBattle;
-                setCountryDetail(updatedDetail);
+                setCountryDetail(detailAfterBattle);
                 return lossSummaryText;
             };
 
@@ -2607,6 +2818,9 @@ export default function MapPage() {
                     false,
                     pbbLiberationCountry
                 );
+                if (!countryCollapsed) {
+                    applyNpcWarLosses(detail.targetCountryDetail, Number(detail.targetLossRatio));
+                }
 
                 // 4. Gabungkan statistik (populasi, kas negara, kepuasan, kesejahteraan, seluruh bangunan & sisa militer target setelah kalah >50%)
                 // dari SELURUH negara dalam hegemoni kekaisaran target (targetCountry + seluruh negara taklukannya) ke user (Cascading Annexation)
@@ -2697,7 +2911,6 @@ export default function MapPage() {
                                 ANNEXED_AGGREGATE_KEYS.forEach(key => {
                                     const prevVal = Number(currentDetail[key] ?? currentDetail?.armada?.[key] ?? currentDetail?.pertahanan?.[key] ?? 0);
                                     let targetVal = Number(targetData[key] ?? targetData?.armada?.[key] ?? targetData?.pertahanan?.[key] ?? 0);
-                                    // Sisa unit militer dari target yang kalah dipotong >50% (75% gugur dalam perang, 25% tersisa dirampas)
                                     const isMilitaryUnit = [
                                         'pasukan_infanteri', 'tank_tempur_utama', 'apc_ifv', 'artileri_berat',
                                         'sistem_peluncur_roket', 'pertahanan_udara_mobile', 'kendaraan_taktis',
@@ -2707,9 +2920,7 @@ export default function MapPage() {
                                         'helikopter_serang', 'pesawat_pengintai', 'drone_intai_uav', 'drone_kamikaze', 'pesawat_angkut'
                                     ].includes(key);
 
-                                    if (isMilitaryUnit && targetVal > 0) {
-                                        targetVal = Math.round(targetVal * 0.25);
-                                    }
+                                    if (isMilitaryUnit) return;
 
                                     if (targetVal > 0 || prevVal > 0) {
                                         aggregatedFields[key] = prevVal + targetVal;
@@ -2750,6 +2961,23 @@ export default function MapPage() {
                                     kesejahteraan: newKesejahteraan,
                                     kesejahteraan_masyarakat: newKesejahteraan
                                 };
+
+                                const targetLossRatio = Number.isFinite(Number(detail.targetLossRatio))
+                                    ? Number(detail.targetLossRatio)
+                                    : 0.75;
+                                const previousPoolPower = getArmadaPowerSummary(currentDetail).totals.totalPower;
+                                const mergedForces = mergeAnnexedForces(currentDetail, targetData, targetLossRatio);
+                                currentDetail = mergedForces.country;
+                                if (process.env.NODE_ENV !== 'production' && !mergedForces.alreadyMerged) {
+                                    console.debug('[WarForces] Player annexation force pool merged', {
+                                        conqueror: currentDetail.country || currentDetail.nama_negara,
+                                        annexed: cName,
+                                        previousPoolPower,
+                                        nextPoolPower: getArmadaPowerSummary(currentDetail).totals.totalPower,
+                                        targetLossRatio,
+                                        addedUnits: mergedForces.addedUnits,
+                                    });
+                                }
                             }
 
                             return currentDetail;
@@ -3162,6 +3390,32 @@ export default function MapPage() {
     const [activeWarAnimation, setActiveWarAnimation] = useState<any>(null);
     const activeWarAnimationRef = useRef<any>(null);
     activeWarAnimationRef.current = activeWarAnimation;
+    const activeDebugWarRef = useRef<{ runId: string; attacker: string; target: string } | null>(null);
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            (window as Window & { __neosantara_debug_active_war?: boolean })
+                .__neosantara_debug_active_war = Boolean(activeWarAnimation);
+        }
+        const runId = typeof activeWarAnimation?.__neosantaraDebugRunId === 'string'
+            ? activeWarAnimation.__neosantaraDebugRunId
+            : null;
+        if (runId) {
+            const debugWar = {
+                runId,
+                attacker: String(activeWarAnimation.attacker ?? ''),
+                target: String(activeWarAnimation.target ?? ''),
+            };
+            activeDebugWarRef.current = debugWar;
+            publishDebugWarStatus({ ...debugWar, status: 'active' });
+            return;
+        }
+
+        const previousDebugWar = activeDebugWarRef.current;
+        if (previousDebugWar) {
+            publishDebugWarStatus({ ...previousDebugWar, status: 'ended' });
+            activeDebugWarRef.current = null;
+        }
+    }, [activeWarAnimation]);
     const warMapAttackerCountry = activeWarAnimation?.attacker || '';
     const warMapTargetCountry = activeWarAnimation?.target || '';
     const warMapTargetCityId = activeWarAnimation?.targetCityId || '';
@@ -3231,6 +3485,14 @@ export default function MapPage() {
             setIsWarAnalysisActive(isVisible);
         }
     }, []);
+    const handleWarBattlePhaseChange = useCallback((phase: 'travel' | 'impact' | 'comparison' | 'result') => {
+        const runId = activeWarAnimationRef.current?.__neosantaraDebugRunId;
+        if (typeof window !== 'undefined' && typeof runId === 'string') {
+            window.dispatchEvent(new CustomEvent('neosantara_debug_battle_phase', {
+                detail: { runId, phase },
+            }));
+        }
+    }, []);
     const [npcWarQueue, setNpcWarQueue] = useState<Array<{
         attacker: string;
         target: string;
@@ -3243,25 +3505,77 @@ export default function MapPage() {
         isNpcWar?: boolean;
         isPlayerAttack?: boolean;
         requestedInvasion?: boolean;
+        requestedAttackRequestId?: string;
         isPbbCoalition?: boolean;
         isPlayerCoalitionProposer?: boolean;
         resolutionViolationAuthorized?: boolean;
         coalitionParticipants?: Array<{ name: string; iso: string }>;
         pbbLiberationCountry?: string;
+        shouldShowBattleAnalysis?: boolean;
+        isPlayerCoalitionAttacker?: boolean;
     }>>([]);
 
     const npcWarQueueRunningRef = useRef(false);
 
     useEffect(() => {
+        cancelOrphanedRequestedAttackRequests();
+    }, []);
+
+    useEffect(() => {
         const handleStartWarAnimation = async (event: Event) => {
             const detail = (event as CustomEvent).detail;
+            const requestedAttackRequestId = typeof detail?.requestedAttackRequestId === 'string'
+                ? detail.requestedAttackRequestId
+                : undefined;
+            const resolveRequestedAttack = (
+                outcome: 'completed' | 'failed' | 'cancelled'
+            ) => {
+                if (!detail?.requestedInvasion) return;
+                resolveAttackRequest({
+                    requestId: requestedAttackRequestId,
+                    attackerCountry: detail.attacker,
+                    targetCountry: detail.target,
+                }, outcome);
+            };
+            const storedRequestedAttack = requestedAttackRequestId
+                ? getRequestedAttackRequests().find(request => request.id === requestedAttackRequestId)
+                : undefined;
+            if (storedRequestedAttack && (
+                storedRequestedAttack.status === 'completed' ||
+                storedRequestedAttack.status === 'failed' ||
+                storedRequestedAttack.status === 'cancelled' ||
+                (detail.fromQueue !== true &&
+                    (storedRequestedAttack.status === 'pending' || storedRequestedAttack.status === 'in_progress'))
+            )) {
+                console.warn('[WarAnimation] Duplicate or resolved requested attack ignored.', requestedAttackRequestId);
+                return;
+            }
+            const debugRunId = typeof detail?.__neosantaraDebugRunId === 'string'
+                ? detail.__neosantaraDebugRunId
+                : null;
+            const reportDebugStatus = (
+                status: 'queued' | 'cancelled',
+                reason?: string
+            ) => {
+                if (!debugRunId) return;
+                publishDebugWarStatus({
+                    runId: debugRunId,
+                    status,
+                    attacker: typeof detail?.attacker === 'string' ? detail.attacker : '',
+                    target: typeof detail?.target === 'string' ? detail.target : '',
+                    ...(reason ? { reason } : {}),
+                });
+            };
             if (detail?.isPbbCoalition && hasActiveGlobalWarBan()) {
                 console.warn('[WarAnimation] Global war ban active; refusing PBB coalition attack.');
+                reportDebugStatus('cancelled', 'Dibatalkan karena larangan perang global aktif.');
                 return;
             }
             if (typeof detail?.attacker !== 'string' || !detail.attacker.trim() ||
                 typeof detail?.target !== 'string' || !detail.target.trim()) {
                 console.error('[WarAnimation] Invalid attacker or target name', detail);
+                resolveRequestedAttack('cancelled');
+                reportDebugStatus('cancelled', 'Nama penyerang atau target tidak valid.');
                 return;
             }
             if (areSameWarCountry(
@@ -3274,6 +3588,8 @@ export default function MapPage() {
                     attacker: detail.attacker,
                     target: detail.target,
                 });
+                resolveRequestedAttack('cancelled');
+                reportDebugStatus('cancelled', 'Negara penyerang dan target sama.');
                 return;
             }
             const playerCountryName = selectedCountry?.country ||
@@ -3282,6 +3598,58 @@ export default function MapPage() {
                 countryDetail?.name_id ||
                 countryDetail?.name_en ||
                 countryDetail?.nama;
+            const playerCountryIdentity: WarPartyIdentity | null = typeof playerCountryName === 'string'
+                ? {
+                    name: playerCountryName,
+                    ...(typeof (selectedCountry?.iso || countryDetail?.iso) === 'string'
+                        ? { iso: selectedCountry?.iso || countryDetail?.iso }
+                        : {}),
+                }
+                : null;
+            const pbbCoalitionParties: WarPartyIdentity[] = Array.isArray(detail.coalitionParticipants)
+                ? detail.coalitionParticipants.flatMap((participant: unknown) => {
+                    if (!participant || typeof participant !== 'object') return [];
+                    const record = participant as Record<string, unknown>;
+                    return typeof record.name === 'string'
+                        ? [{
+                            name: record.name,
+                            ...(typeof record.iso === 'string' ? { iso: record.iso } : {}),
+                        }]
+                        : [];
+                })
+                : [];
+            const attackingParties: WarPartyIdentity[] = [
+                {
+                    name: detail.attacker,
+                    ...(typeof detail.attackerCountryDetail?.iso === 'string'
+                        ? { iso: detail.attackerCountryDetail.iso }
+                        : {}),
+                },
+                ...pbbCoalitionParties,
+            ];
+            const source = detail.isPbbCoalition === true
+                ? 'pbb'
+                : detail.troopsCommitted === true
+                    ? 'player'
+                    : 'ai';
+            const isPlayerCoalitionAttacker = detail.isPbbCoalition === true &&
+                shouldShowBattleAnalysis({
+                    attackers: attackingParties,
+                    targets: [],
+                    playerCountry: playerCountryIdentity,
+                    source: 'pbb',
+                });
+            let showBattleAnalysis = shouldShowBattleAnalysis({
+                attackers: attackingParties,
+                targets: [{
+                    name: detail.target,
+                    ...(typeof detail.targetCountryDetail?.iso === 'string'
+                        ? { iso: detail.targetCountryDetail.iso }
+                        : {}),
+                }],
+                playerCountry: playerCountryIdentity,
+                source,
+            });
             const isPlayerAttacker = Boolean(playerCountryName) && (
                 detail.troopsCommitted === true ||
                 areSameWarCountry(
@@ -3290,15 +3658,17 @@ export default function MapPage() {
                     detail.attackerCountryDetail?.iso,
                     selectedCountry?.iso || countryDetail?.iso
                 )
-            );
-            const isPlayerDefender = Boolean(playerCountryName) && areSameWarCountry(
+            ) || isPlayerCoalitionAttacker;
+            let isPlayerDefender = Boolean(playerCountryName) && areSameWarCountry(
                 detail.target,
                 playerCountryName || '',
                 detail.targetCountryDetail?.iso,
                 selectedCountry?.iso || countryDetail?.iso
             );
-            const isNpcWar = !isPlayerAttacker && !isPlayerDefender;
-            const isPlayerAttack =
+            let isNpcWar = detail.isPbbCoalition === true
+                ? !isPlayerDefender
+                : !isPlayerAttacker && !isPlayerDefender;
+            let isPlayerAttack =
                 isPlayerAttacker &&
                 !isPlayerDefender &&
                 detail.requestedInvasion !== true &&
@@ -3322,6 +3692,7 @@ export default function MapPage() {
             if (activeWarAnimationRef.current) {
                 // Jangan batalkan animasi perang yang sedang berjalan, masukkan ke antrean!
                 setNpcWarQueue(previous => [...previous, { ...detail, isPlayerAttack }]);
+                reportDebugStatus('queued');
                 return;
             }
 
@@ -3331,6 +3702,65 @@ export default function MapPage() {
                 detail.targetCityName,
                 isNpcWar || isPlayerDefender
             );
+            const annexedTerritories = typeof window !== 'undefined'
+                ? (window as Window & {
+                    neosantara_annexed_countries?: Record<string, {
+                        attackerCountry?: string;
+                        attackerIso?: string;
+                    }>;
+                }).neosantara_annexed_countries || {}
+                : {};
+            const effectiveTargetCountry = resolveCountryPoolOwner(
+                targetCity?.isPbbOccupied ? detail.target : targetCity?.ownerCountry || detail.target,
+                annexedTerritories
+            );
+            if (!areSameWarCountry(effectiveTargetCountry, detail.target)) {
+                detail.target = effectiveTargetCountry;
+                isPlayerDefender = Boolean(playerCountryName) && areSameWarCountry(
+                    effectiveTargetCountry,
+                    playerCountryName,
+                    targetCity?.ownerIso,
+                    selectedCountry?.iso || countryDetail?.iso
+                );
+                isNpcWar = detail.isPbbCoalition === true
+                    ? !isPlayerDefender
+                    : !isPlayerAttacker && !isPlayerDefender;
+                isPlayerAttack = isPlayerAttacker &&
+                    !isPlayerDefender &&
+                    detail.requestedInvasion !== true &&
+                    detail.isNpcWar !== true;
+                showBattleAnalysis = shouldShowBattleAnalysis({
+                    attackers: attackingParties,
+                    targets: [{
+                        name: effectiveTargetCountry,
+                        ...(targetCity?.ownerIso ? { iso: targetCity.ownerIso } : {}),
+                    }],
+                    playerCountry: playerCountryIdentity,
+                    source,
+                });
+            }
+            if (detail.requestedInvasion === true) {
+                const attackerHasTerritory = getMapCities().some(city =>
+                    areSameWarCountry(
+                        getCurrentCityOwner(city),
+                        detail.attacker,
+                        getIsoForCountryName(getCurrentCityOwner(city)),
+                        getIsoForCountryName(detail.attacker)
+                    )
+                );
+                const targetStillOwnsRequestedCity = targetCity && areSameWarCountry(
+                    targetCity.ownerCountry,
+                    detail.target
+                );
+                if (!attackerHasTerritory || !targetStillOwnsRequestedCity) {
+                    resolveRequestedAttack('cancelled');
+                    npcWarQueueRunningRef.current = false;
+                    reportDebugStatus('cancelled', !attackerHasTerritory
+                        ? `${detail.attacker} tidak lagi memiliki wilayah.`
+                        : 'Kota target sudah dikuasai negara lain.');
+                    return;
+                }
+            }
 
             const hasApprovedInvasionMandate = hasActiveApprovedInvasionResolution(
                 detail.attacker,
@@ -3365,6 +3795,8 @@ export default function MapPage() {
                     value: 100,
                     isRead: false,
                 }, ...previous]);
+                resolveRequestedAttack('cancelled');
+                reportDebugStatus('cancelled', 'Dibatalkan oleh undian 25% serangan tanpa mandat PBB.');
                 return;
             }
             if (isPlayerDefender) {
@@ -3529,10 +3961,8 @@ export default function MapPage() {
                     return applyNpcCountrySimulationState({ ...provided, country: countryName });
                 }
                 const lookupKeys = getCountryLookupKeys(countryName);
-                if (candidateNames.some((name) => lookupKeys.has(name))) {
-                    return applyNpcCountrySimulationState(provided);
-                }
-                return applyNpcCountrySimulationState({ ...provided, country: countryName });
+                if (!candidateNames.some((name) => lookupKeys.has(name))) return null;
+                return applyNpcCountrySimulationState(provided);
             };
 
             let countries: any[] | null = null;
@@ -3585,6 +4015,9 @@ export default function MapPage() {
                     nama_negara: detail.target,
                     kekuatanMiliter: Number(detail.targetPower ?? 50),
                 });
+            }
+            if (detail.isPbbCoalition && countries) {
+                targetDetailData = resolveCountryDetail(detail.target, undefined) || targetDetailData;
             }
 
             if (detail.isPbbCoalition && Array.isArray(detail.coalitionParticipants)) {
@@ -3688,6 +4121,15 @@ export default function MapPage() {
 
             const attackerPowerSummary = getArmadaPowerSummary(attackerDetailData);
             const targetPowerSummary = getArmadaPowerSummary(targetDetailData);
+            if (process.env.NODE_ENV !== 'production') {
+                console.debug('[WarForces] Target force pool resolved', {
+                    target: detail.target,
+                    owner: effectiveTargetCountry,
+                    sourceCountry: targetDetailData.country || targetDetailData.nama_negara || targetDetailData.name_id,
+                    power: targetPowerSummary.totals.totalPower,
+                    armada: targetDetailData.armada,
+                });
+            }
             if (!countries) {
                 try {
                     const response = await fetch('/api/country-data?all=true');
@@ -3736,8 +4178,13 @@ export default function MapPage() {
                 unauthorizedAttackSanctionsApplied,
                 invasionMandateAtLaunch: hasApprovedInvasionMandate,
                 attackerPower: Number(attackerDetailData.pbbCoalitionPower) || attackerPowerSummary.totals.totalPower,
-                targetPower: targetPowerSummary.totals.totalPower
+                targetPower: targetPowerSummary.totals.totalPower,
+                shouldShowBattleAnalysis: showBattleAnalysis,
+                isPlayerCoalitionAttacker,
             });
+            if (typeof detail.requestedAttackRequestId === 'string') {
+                setRequestedAttackInProgress(detail.requestedAttackRequestId);
+            }
         };
         const handlePauseGameTime = (event: Event) => {
             const source = (event as CustomEvent<{ source?: string }>).detail?.source;
@@ -3803,6 +4250,14 @@ export default function MapPage() {
             const attacks = [{
                 attacker: operation.proposer.name,
                 target: operation.target.name,
+                attackerCountryDetail: {
+                    country: operation.proposer.name,
+                    iso: operation.proposer.iso,
+                },
+                targetCountryDetail: {
+                    country: operation.target.name,
+                    iso: operation.target.iso,
+                },
                 isNpcWar: !targetsPlayer,
                 isPbbCoalition: true,
                 isPlayerCoalitionProposer: Boolean(playerCountryName) && areSameWarCountry(
@@ -3832,9 +4287,16 @@ export default function MapPage() {
 
         const [nextWar, ...remainingWars] = npcWarQueue;
         if (!nextWar) return;
-        if (nextWar.isPbbCoalition && hasActiveGlobalWarBan()) {
+        if ((nextWar.isPbbCoalition || nextWar.requestedInvasion) && hasActiveGlobalWarBan()) {
             npcWarQueueRunningRef.current = false;
             setNpcWarQueue(remainingWars);
+            if (nextWar.requestedInvasion === true) {
+                resolveAttackRequest({
+                    requestId: nextWar.requestedAttackRequestId,
+                    attackerCountry: nextWar.attacker,
+                    targetCountry: nextWar.target,
+                }, 'cancelled');
+            }
             return;
         }
         npcWarQueueRunningRef.current = true;
@@ -3900,6 +4362,27 @@ export default function MapPage() {
             return result.length === next.length ? next : result;
         }));
     }, []);
+    useEffect(() => {
+        const quotaDate = dailyQuotaRef.current.date;
+        const quota = quotaDate === simulationDateString
+            ? dailyQuotaRef.current.quota - notifications.filter(notification => {
+                const extended = notification as NotificationMessage & { tradeType?: string };
+                const exempt =
+                    /player|user|province|requested|self-|aid-|demo|demonstrasi|subsidi|harga|pajak/i.test(String(notification.id)) ||
+                    String(notification.id).startsWith('war-') ||
+                    extended.tradeType === 'diserang' ||
+                    extended.tradeType === 'demonstrasi_rakyat' ||
+                    extended.tradeType === 'kebijakan_subsidi' ||
+                    extended.tradeType === 'harga_barang_pokok' ||
+                    extended.tradeType === 'perubahan_pajak';
+                return !exempt && notification.timestamp === simulationDateString;
+            }).length
+            : null;
+        publishDebugNotificationState(notifications, {
+            date: quotaDate,
+            quota: quota === null ? null : Math.max(0, quota),
+        });
+    }, [notifications, simulationDateString]);
 
     const [annexedModalData, setAnnexedModalData] = useState<{
         isOpen: boolean;
@@ -9380,12 +9863,47 @@ export default function MapPage() {
                         isNpcWar={activeWarAnimation.isNpcWar === true}
                         requestedInvasion={activeWarAnimation.requestedInvasion === true}
                         isPbbCoalition={activeWarAnimation.isPbbCoalition === true}
+                        shouldShowBattleAnalysis={activeWarAnimation.shouldShowBattleAnalysis === true}
+                        isPlayerCoalitionAttacker={activeWarAnimation.isPlayerCoalitionAttacker === true}
                         isExternalModalOpen={countryDetailModalOpen || playerDetailModalOpen}
                         onAnalysisVisibilityChange={handleWarAnalysisVisibilityChange}
+                        onBattlePhaseChange={handleWarBattlePhaseChange}
                         onAttackerForcesModalVisibilityChange={setIsAttackerForcesModalOpen}
-                        onAutoResolve={result => {
+                        onAutoResolve={outcome => {
+                            if (
+                                activeWarAnimation.isPbbCoalition !== true &&
+                                activeWarAnimation.isPlayerAttacker !== true
+                            ) {
+                                applyNpcWarLosses(
+                                    activeWarAnimation.attackerCountryDetail,
+                                    outcome.attackerLossRatio,
+                                );
+                            }
+                            if (activeWarAnimation.isUserDefender !== true) {
+                                applyNpcWarLosses(
+                                    activeWarAnimation.targetCountryDetail,
+                                    outcome.targetLossRatio,
+                                );
+                            }
+                            const result = outcome.result;
+                            const setWarResultModal = (modal: Parameters<typeof setResultModal>[0]) => {
+                                if (activeWarAnimation.shouldShowBattleAnalysis === true) {
+                                    const debugRunId = activeWarAnimation.__neosantaraDebugRunId;
+                                    if (typeof debugRunId === 'string') {
+                                        window.dispatchEvent(new CustomEvent('neosantara_debug_war_modal', {
+                                            detail: { runId: debugRunId },
+                                        }));
+                                    }
+                                    setResultModal(modal);
+                                }
+                            };
                             if (result !== 'win') {
                                 if (activeWarAnimation.requestedInvasion === true) {
+                                    resolveAttackRequest({
+                                        requestId: activeWarAnimation.requestedAttackRequestId,
+                                        attackerCountry: activeWarAnimation.attacker,
+                                        targetCountry: activeWarAnimation.target,
+                                    }, 'failed');
                                     const resultMessage = `Pasukan ${activeWarAnimation.attacker} gagal menembus pertahanan ${activeWarAnimation.target}. Tidak ada aneksasi maupun penjarahan.`;
                                     setNotifications(prev => [{
                                         id: `notif-req-inv-fail-${Date.now()}`,
@@ -9397,7 +9915,7 @@ export default function MapPage() {
                                         value: 0,
                                         isRead: false
                                     }, ...prev]);
-                                    setResultModal({
+                                    setWarResultModal({
                                         isOpen: true,
                                         title: 'SERANGAN AI GAGAL',
                                         message: resultMessage,
@@ -9405,7 +9923,7 @@ export default function MapPage() {
                                         compact: true,
                                     });
                                 } else if (activeWarAnimation.isNpcWar === true && activeWarAnimation.isPbbCoalition !== true) {
-                                    setResultModal({
+                                    setWarResultModal({
                                         isOpen: true,
                                         title: 'SERANGAN AI GAGAL',
                                         message: `Pasukan ${activeWarAnimation.attacker} gagal menaklukkan ${activeWarAnimation.target}. Tidak terjadi aneksasi maupun penjarahan.`,
@@ -9422,8 +9940,15 @@ export default function MapPage() {
                             );
                             if (!targetCity) {
                                 console.error('[CityAnnexation] AI victory has no mapped target city.', activeWarAnimation);
+                                if (activeWarAnimation.requestedInvasion === true) {
+                                    resolveAttackRequest({
+                                        requestId: activeWarAnimation.requestedAttackRequestId,
+                                        attackerCountry: activeWarAnimation.attacker,
+                                        targetCountry: activeWarAnimation.target,
+                                    }, 'failed');
+                                }
                                 if (activeWarAnimation.isNpcWar === true && activeWarAnimation.isPbbCoalition !== true) {
-                                    setResultModal({
+                                    setWarResultModal({
                                         isOpen: true,
                                         title: 'HASIL PERANG TIDAK DAPAT DITERAPKAN',
                                         message: `Pasukan ${activeWarAnimation.attacker} memenangkan pertempuran, tetapi data wilayah ${activeWarAnimation.target} tidak tersedia sehingga hasil perang tidak dapat diterapkan.`,
@@ -9445,7 +9970,7 @@ export default function MapPage() {
 
                                 if (isAnnexation) {
                                     // ANEKSASI (60%): Ubah kepemilikan kota sekaligus warna wilayah peta.
-                                    recordCityCapture(
+                                    const countryCollapsed = recordCityCapture(
                                         targetCity,
                                         activeWarAnimation.target,
                                         activeWarAnimation.attacker,
@@ -9455,6 +9980,18 @@ export default function MapPage() {
                                         false,
                                         activeWarAnimation.pbbLiberationCountry
                                     );
+                                    if (
+                                        countryCollapsed &&
+                                        activeWarAnimation.isPbbCoalition !== true &&
+                                        activeWarAnimation.attackerCountryDetail &&
+                                        activeWarAnimation.targetCountryDetail
+                                    ) {
+                                        mergeNpcAnnexedForces(
+                                            activeWarAnimation.attackerCountryDetail,
+                                            activeWarAnimation.targetCountryDetail,
+                                            outcome.targetLossRatio
+                                        );
+                                    }
 
                                     const { news } = generateAnnexationNews(
                                         activeWarAnimation.attacker,
@@ -9477,7 +10014,7 @@ export default function MapPage() {
                                         value: 100,
                                         isRead: false
                                     }, ...prev]);
-                                    setResultModal({
+                                    setWarResultModal({
                                         isOpen: true,
                                         title: 'MANDAT SERANGAN: ANEKSASI',
                                         message: `Pasukan ${activeWarAnimation.attacker} memenangkan operasi dan menganeksasi Kota ${targetCity.cityName} di ${activeWarAnimation.target}.`,
@@ -9510,7 +10047,7 @@ export default function MapPage() {
                                         value: 80,
                                         isRead: false
                                     }, ...prev]);
-                                    setResultModal({
+                                    setWarResultModal({
                                         isOpen: true,
                                         title: 'MANDAT SERANGAN: PENJARAHAN',
                                         message: `Pasukan ${activeWarAnimation.attacker} menjarah sumber daya ${activeWarAnimation.target} tanpa mengubah kepemilikan wilayah negara tersebut.`,
@@ -9519,13 +10056,11 @@ export default function MapPage() {
                                     });
                                 }
 
-                                window.dispatchEvent(new CustomEvent('requested_invasion_resolved', {
-                                    detail: {
-                                        attackerCountry: activeWarAnimation.attacker,
-                                        targetCountry: activeWarAnimation.target,
-                                        actionType: isAnnexation ? 'aneksasi' : 'jarah',
-                                    },
-                                }));
+                                resolveAttackRequest({
+                                    requestId: activeWarAnimation.requestedAttackRequestId,
+                                    attackerCountry: activeWarAnimation.attacker,
+                                    targetCountry: activeWarAnimation.target,
+                                }, 'completed', isAnnexation ? 'aneksasi' : 'jarah');
                                 return;
                             }
 
@@ -9538,13 +10073,24 @@ export default function MapPage() {
                                         console.error('[CityAnnexation] AI victory has no mapped target capital.', activeWarAnimation);
                                         return;
                                     }
-                                    recordCityCapture(
+                                    const countryCollapsed = recordCityCapture(
                                         capitalCity,
                                         activeWarAnimation.target,
                                         activeWarAnimation.attacker,
                                         attackerIso,
                                         getCountryColor(activeWarAnimation.attacker)
                                     );
+                                    if (
+                                        countryCollapsed &&
+                                        activeWarAnimation.attackerCountryDetail &&
+                                        activeWarAnimation.targetCountryDetail
+                                    ) {
+                                        mergeNpcAnnexedForces(
+                                            activeWarAnimation.attackerCountryDetail,
+                                            activeWarAnimation.targetCountryDetail,
+                                            outcome.targetLossRatio
+                                        );
+                                    }
                                     const { news } = generateAnnexationNews(
                                         activeWarAnimation.attacker,
                                         attackerIso,
@@ -9564,7 +10110,7 @@ export default function MapPage() {
                                         value: 100,
                                         isRead: false
                                     }, ...prev]);
-                                    setResultModal({
+                                    setWarResultModal({
                                         isOpen: true,
                                         title: 'NEGARA DIANEKSASI',
                                         message: `${activeWarAnimation.attacker} memenangkan perang. Seluruh wilayah ${activeWarAnimation.target} kini menjadi bagian dari ${activeWarAnimation.attacker}.`,
@@ -9594,7 +10140,7 @@ export default function MapPage() {
                                         value: 80,
                                         isRead: false
                                     }, ...prev]);
-                                    setResultModal({
+                                    setWarResultModal({
                                         isOpen: true,
                                         title: 'NEGARA DIJARAH',
                                         message: `${activeWarAnimation.attacker} memenangkan perang dan menjarah sumber daya ${activeWarAnimation.target}. Tidak ada perubahan kepemilikan wilayah pada negara yang diserang.`,
@@ -9617,6 +10163,13 @@ export default function MapPage() {
                             );
                         }}
                         onClose={(battleOutcome) => {
+                            if (activeWarAnimation?.requestedInvasion === true) {
+                                resolveAttackRequest({
+                                    requestId: activeWarAnimation.requestedAttackRequestId,
+                                    attackerCountry: activeWarAnimation.attacker,
+                                    targetCountry: activeWarAnimation.target,
+                                }, battleOutcome ? 'failed' : 'cancelled');
+                            }
                             if (
                                 activeWarAnimation?.troopsCommitted === true &&
                                 activeWarAnimation.committedArmySnapshot &&
@@ -9632,11 +10185,36 @@ export default function MapPage() {
                             npcWarQueueRunningRef.current = false;
                             resumeGameTimeAfterWar();
                         }}
-                        onResolve={({ action, result, attackerLossRatio }) => {
+                        onResolve={({ action, result, attackerLossRatio, targetLossRatio }) => {
+                            const setWarResultModal = (modal: Parameters<typeof setResultModal>[0]) => {
+                                if (activeWarAnimation.shouldShowBattleAnalysis !== true) return;
+                                const debugRunId = activeWarAnimation.__neosantaraDebugRunId;
+                                if (typeof debugRunId === 'string') {
+                                    window.dispatchEvent(new CustomEvent('neosantara_debug_war_modal', {
+                                        detail: { runId: debugRunId },
+                                    }));
+                                }
+                                setResultModal(modal);
+                            };
+                            if (
+                                activeWarAnimation.isPbbCoalition !== true &&
+                                activeWarAnimation.isPlayerAttacker !== true
+                            ) {
+                                applyNpcWarLosses(activeWarAnimation.attackerCountryDetail, attackerLossRatio);
+                            }
+                            if (
+                                activeWarAnimation.isPlayerAttacker !== true &&
+                                activeWarAnimation.isUserDefender !== true
+                            ) {
+                                applyNpcWarLosses(activeWarAnimation.targetCountryDetail, targetLossRatio);
+                            }
                             if (isUserDefender) {
                                 if (result === 'lose') {
                                     // 1. Potong armada pertahanan 75%
-                                    const { updatedDetail: detailAfterLoss, lossSummaryText, losses } = applyWarLossesToUserArmada(countryDetail, 0.75);
+                                    const defenderLossRatio = typeof targetLossRatio === 'number' && Number.isFinite(targetLossRatio)
+                                        ? Math.min(1, Math.max(0, targetLossRatio))
+                                        : 0.75;
+                                    const { updatedDetail: detailAfterLoss, lossSummaryText, losses } = applyWarLossesToUserArmada(countryDetail, defenderLossRatio);
                                     const targetCity = resolveWarTargetCity(
                                         activeWarAnimation.target,
                                         activeWarAnimation.targetCityId,
@@ -9659,6 +10237,13 @@ export default function MapPage() {
 
                                     if (countryCollapsed) {
                                         setCountryDetail(detailAfterLoss);
+                                        if (activeWarAnimation.attackerCountryDetail) {
+                                            mergeNpcAnnexedForces(
+                                                activeWarAnimation.attackerCountryDetail,
+                                                detailAfterLoss,
+                                                0
+                                            );
+                                        }
                                         setAnnexedModalData({
                                             isOpen: true,
                                             countryName: countryDetail?.country || countryDetail?.nama_negara || 'Indonesia',
@@ -9690,7 +10275,7 @@ export default function MapPage() {
                                             ...prev,
                                         ]);
 
-                                        setResultModal({
+                                        setWarResultModal({
                                             isOpen: true,
                                             title: 'Pertahanan Gagal — Produksi Dirampas!',
                                             message: `Pertahanan negara Anda gagal menahan agresi militer dari ${activeWarAnimation.attacker}. Negara berhasil menepis aneksasi total (peluang selamat 80%), namun seluruh stok hasil produksi (Mineral, Manufaktur, Peternakan, Agrikultur, Perikanan, Olahan Pangan) dirampas habis hingga 0. Dampak populasi: ${lostPopulation.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa (${lossPercent}% populasi). Kerugian alutsista dirinci di bawah.`,
@@ -9700,7 +10285,10 @@ export default function MapPage() {
                                     }
                                 } else {
                                     // Pertahanan Berhasil! (User Win - potong armada user sebesar 25%)
-                                    const { updatedDetail: detailAfterWin, lossSummaryText, losses } = applyWarLossesToUserArmada(countryDetail, 0.25, true);
+                                    const defenderLossRatio = typeof targetLossRatio === 'number' && Number.isFinite(targetLossRatio)
+                                        ? Math.min(1, Math.max(0, targetLossRatio))
+                                        : 0.25;
+                                    const { updatedDetail: detailAfterWin, lossSummaryText, losses } = applyWarLossesToUserArmada(countryDetail, defenderLossRatio, true);
                                     setCountryDetail(detailAfterWin);
 
                                     setNotifications((prev: any[]) => [
@@ -9715,7 +10303,7 @@ export default function MapPage() {
                                         },
                                         ...prev,
                                     ]);
-                                    setResultModal({
+                                    setWarResultModal({
                                         isOpen: true,
                                         title: 'Pertahanan Berhasil!',
                                         message: `Pasukan pertahanan nasional sukses memukul mundur agresi militer dari ${activeWarAnimation.attacker}! Kerugian tempur armada pertahanan sebesar 25%.`,
@@ -9724,6 +10312,13 @@ export default function MapPage() {
                                         persistent: true,
 
                                     });
+                                }
+                                if (activeWarAnimation.requestedInvasion === true) {
+                                    resolveAttackRequest({
+                                        requestId: activeWarAnimation.requestedAttackRequestId,
+                                        attackerCountry: activeWarAnimation.attacker,
+                                        targetCountry: activeWarAnimation.target,
+                                    }, result === 'lose' ? 'completed' : 'failed');
                                 }
                                 setIsWarAnalysisActive(false);
                                 if (activeWarAnimation?.isPlayerAttacker === true) {
@@ -9798,13 +10393,22 @@ export default function MapPage() {
                                             activeWarAnimation.invasionMandateAtLaunch === true,
                                         troopsCommitted: activeWarAnimation.troopsCommitted === true,
                                         attackerCountryDetail: activeWarAnimation.attackerCountryDetail,
+                                        targetCountryDetail: activeWarAnimation.targetCountryDetail,
                                         committedArmySnapshot: activeWarAnimation.committedArmySnapshot,
                                         committedArmyDetail: activeWarAnimation.committedArmyDetail,
                                         deployedUnitsConfig: activeWarAnimation.deployedUnitsConfig,
                                         attackerLossRatio,
+                                        targetLossRatio,
                                     },
                                 })
                             );
+                            if (activeWarAnimation.requestedInvasion === true) {
+                                resolveAttackRequest({
+                                    requestId: activeWarAnimation.requestedAttackRequestId,
+                                    attackerCountry: activeWarAnimation.attacker,
+                                    targetCountry: activeWarAnimation.target,
+                                }, 'completed');
+                            }
                             setIsWarAnalysisActive(false);
                             if (activeWarAnimation?.isPlayerAttacker === true) {
                                 setActivePlayerAttack(null);

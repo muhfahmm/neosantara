@@ -16,6 +16,7 @@ import {
 import { calculateKepuasan } from '@/app/logic/kepuasanCalculator';
 import { menuItems, subMenuItems } from '../navigasi_menu/navigationData';
 import { FpsMonitoring, type FpsMonitorWasmModule } from '../paused_menu/4_settings/fpsMonitoring';
+import { AttackDebugButton } from '@/app/debug/AttackDebugButton';
 
 interface Country {
     id: number;
@@ -356,6 +357,7 @@ export function Navbar({
 
             {/* 3. Right Side: Save & Restart Buttons */}
             <div className="flex items-center gap-1.5 2xl:gap-2 shrink-0 relative z-20 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
+                <AttackDebugButton selectedCountry={selectedCountry} countryDetail={countryDetail} />
                 <div
                     role="status"
                     aria-label={`Zoom peta ${mapZoom.toFixed(1)} kali`}
