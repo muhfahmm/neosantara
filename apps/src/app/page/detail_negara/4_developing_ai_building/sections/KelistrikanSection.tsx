@@ -14,39 +14,19 @@ import {
   Shield,
   Factory,
 } from "lucide-react";
-import { getCountryConsumptionBreakdown } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
-import { getProductionBonusMultiplier } from "@/app/page/bonus_logic";
+import {
+  calculateActualElectricityProduction,
+  ELECTRICITY_PLANT_KEYS,
+  findMeta,
+  getCountryConsumptionBreakdown,
+  logElectricityProductionCalculation,
+} from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
 import DetailKonsumsiTerestimasiModal from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/DetailKonsumsiTerestimasiModal";
 
 interface KelistrikanSectionProps {
   countryDetail: Record<string, any> | null;
   metadata: Record<string, any>;
 }
-
-const SOURCE_ORDER = [
-  "pembangkit_listrik_tenaga_nuklir",
-  "pembangkit_listrik_tenaga_air",
-  "pembangkit_listrik_tenaga_surya",
-  "pembangkit_listrik_tenaga_uap",
-  "pembangkit_listrik_tenaga_gas",
-  "pembangkit_listrik_tenaga_angin",
-  "pembangkit_listrik_tenaga_panas_bumi",
-  "pembangkit_listrik_tenaga_hidrogen",
-  "pembangkit_listrik_tenaga_gelombang_laut",
-  "pembangkit_listrik_tenaga_fusi_nuklir",
-];
-
-const findMeta = (metadata: Record<string, any> | undefined, key: string) => {
-  if (!metadata) return undefined;
-  if (metadata[key]) return metadata[key];
-  for (const k of Object.keys(metadata)) {
-    const entry = metadata[k];
-    if (!entry) continue;
-    if (entry.dataKey === key) return entry;
-    if (k.endsWith(`_${key}`) || k === `1_${key}`) return entry;
-  }
-  return undefined;
-};
 
 const formatNumber = (val: unknown): string => {
   const num = Number(val ?? 0);
@@ -58,27 +38,33 @@ export default function KelistrikanSection({
   metadata,
 }: KelistrikanSectionProps) {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const production = useMemo(
+    () => {
+      const calculation = calculateActualElectricityProduction(countryDetail, metadata);
+      logElectricityProductionCalculation(calculation, "country-section");
+      return calculation;
+    },
+    [countryDetail, metadata]
+  );
 
-  // Perhitungan sumber daya pembangkit listrik
   const powerSources = useMemo(() => {
-    return SOURCE_ORDER.map((key) => {
+    return ELECTRICITY_PLANT_KEYS.map((key) => {
       const bMeta = findMeta(metadata, key);
       const count = Number(countryDetail?.[key]) || 0;
       const unitProd = Number(bMeta?.produksi) || 0;
-      const bonusMult = countryDetail ? getProductionBonusMultiplier(countryDetail, key) : 1;
-      const effectiveUnitProd = unitProd * bonusMult;
-      const totalProd = count * effectiveUnitProd;
+      const plantProduction = production.perPlant[key];
 
       return {
         key,
         label: bMeta?.label || key.replace(/_/g, " ").toUpperCase(),
         desc: bMeta?.desc || "Pembangkit energi listrik nasional.",
         count,
-        unitProduction: effectiveUnitProd,
-        totalProduction: totalProd,
+        unitProduction: unitProd * plantProduction.bonusMultiplier,
+        totalProduction: plantProduction.actual,
+        fuelShortage: plantProduction.fuelShortage,
       };
     });
-  }, [countryDetail, metadata]);
+  }, [countryDetail, metadata, production]);
 
   const activeSources = useMemo(
     () => powerSources.filter((s) => s.count > 0 || s.unitProduction > 0),
@@ -86,8 +72,8 @@ export default function KelistrikanSection({
   );
 
   const totalProductionMW = useMemo(
-    () => powerSources.reduce((sum, s) => sum + s.totalProduction, 0),
-    [powerSources]
+    () => production.actualTotal,
+    [production]
   );
 
   const totalActivePlantsCount = useMemo(
@@ -362,7 +348,9 @@ export default function KelistrikanSection({
                   <div className="min-w-0 pr-2">
                     <p className="font-bold text-[#E0E0E0] truncate">{plant.label}</p>
                     <p className="text-[9px] text-[#6B8A8A]">
-                      {plant.count} unit aktif × {formatNumber(plant.unitProduction)} MW
+                      {plant.fuelShortage
+                        ? "Bahan bakar kurang — tidak berproduksi"
+                        : `${plant.count} unit aktif × ${formatNumber(plant.unitProduction)} MW`}
                     </p>
                   </div>
                   <div className="text-right shrink-0">

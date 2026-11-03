@@ -1,4 +1,5 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { formatElectricityMW } from '@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
 
 export interface ListrikDefisitNotification extends NotificationMessage {
   tradeType: 'defisit_listrik';
@@ -18,9 +19,9 @@ export function generateListrikDefisitNotification(
   deficitStep: number,
   dateStr: string
 ): ListrikDefisitNotification {
-  const formattedDeficitMW = deficitMW.toLocaleString('id-ID', { maximumFractionDigits: 2 });
-  const formattedProd = totalProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 });
-  const formattedCons = totalConsumption.toLocaleString('id-ID', { maximumFractionDigits: 2 });
+  const formattedDeficitMW = formatElectricityMW(deficitMW);
+  const formattedProd = formatElectricityMW(totalProduction);
+  const formattedCons = formatElectricityMW(totalConsumption);
 
   // Setiap notifikasi kelistrikan kurang menurunkan rating sebesar 1 poin
   const ratingPenalty = 1; // Setiap notifikasi turun 1 poin

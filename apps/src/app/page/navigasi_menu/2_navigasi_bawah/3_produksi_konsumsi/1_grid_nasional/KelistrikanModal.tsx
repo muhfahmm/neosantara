@@ -15,9 +15,13 @@ import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
-import { getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/construction_support/1_produksi/1_kelistrikan/fuelLogic";
-import { getCountryConsumptionBreakdown } from "./consumptionLogic";
-import { getProductionBonusMultiplier } from "../../../../bonus_logic";
+import {
+  calculateActualElectricityProduction,
+  ELECTRICITY_PLANT_KEYS,
+  formatElectricityMW,
+  getCountryConsumptionBreakdown,
+  logElectricityProductionCalculation,
+} from "./consumptionLogic";
 import { applyNpcCountrySimulationState } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
@@ -37,19 +41,6 @@ interface SortConfig {
   key: 'name' | 'production' | 'consumption' | 'balance';
   direction: 'asc' | 'desc';
 }
-
-const SOURCE_ORDER = [
-  "pembangkit_listrik_tenaga_nuklir",
-  "pembangkit_listrik_tenaga_air",
-  "pembangkit_listrik_tenaga_surya",
-  "pembangkit_listrik_tenaga_uap",
-  "pembangkit_listrik_tenaga_gas",
-  "pembangkit_listrik_tenaga_angin",
-  "pembangkit_listrik_tenaga_panas_bumi",
-  "pembangkit_listrik_tenaga_hidrogen",
-  "pembangkit_listrik_tenaga_gelombang_laut",
-  "pembangkit_listrik_tenaga_fusi_nuklir"
-];
 
 const POWER_SOURCE_DESCRIPTIONS: Record<string, string> = {
   "pembangkit_listrik_tenaga_nuklir": "Pembangkit Listrik Tenaga Nuklir (PLTN)",
@@ -106,23 +97,28 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
     return undefined;
   };
 
-  const powerSources = SOURCE_ORDER
+  const productionCalculation = calculateActualElectricityProduction(countryDetail, metadata);
+  logElectricityProductionCalculation(productionCalculation, "modal");
+  const powerSources = ELECTRICITY_PLANT_KEYS
     .map((key) => {
       const bMeta = findMeta(key);
       const count = Number(countryDetail?.[key]) || 0;
       const unitProduction = Number(bMeta?.produksi) || 0;
+      const plantProduction = productionCalculation.perPlant[key];
 
       return {
         key,
         label: bMeta?.label || key.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase()),
         desc: POWER_SOURCE_DESCRIPTIONS[key] || bMeta?.desc || "Sumber energi listrik nasional.",
         value: count,
-        unitProduction: unitProduction * getProductionBonusMultiplier(countryDetail, key),
+        unitProduction,
+        actualProduction: plantProduction.actual,
+        fuelShortage: plantProduction.fuelShortage,
       };
     })
     .filter((source) => source.value > 0 || source.unitProduction > 0);
 
-  const totalCapacityMW = powerSources.reduce((sum, source) => sum + (source.value * source.unitProduction), 0);
+  const totalCapacityMW = productionCalculation.actualTotal;
 
   const calculateBuildingElectricityConsumption = (country: any) => {
     if (!country) return 0;
@@ -158,15 +154,9 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
   // --- Logika global (sama) ---
   const calculateCountryElectricity = (country: any) => {
-    const totalProduction = SOURCE_ORDER.reduce((sum, key) => {
-      const bMeta = findMeta(key);
-      const count = Number(country?.[key]) || 0;
-      const unitProduction = Number(bMeta?.produksi) || 0;
-
-      const effectiveProd = count * unitProduction * getProductionBonusMultiplier(country, key);
-      const result = sum + effectiveProd;
-      return isNaN(result) ? sum : result;
-    }, 0);
+    const calculation = calculateActualElectricityProduction(country, metadata);
+    logElectricityProductionCalculation(calculation, "modal-global");
+    const totalProduction = calculation.actualTotal;
 
     const buildingConsumption = calculateBuildingElectricityConsumption(country);
     const population = Number(country?.jumlah_penduduk) || 0;
@@ -352,7 +342,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                     <div className={`bg-emerald-950/40 border border-emerald-500/30 p-3 lg:p-4 ${rootBorderRadius.card}`}>
                       <p className={rootModalTypography.label}>✓ Total Produksi Listrik</p>
                       <p className="text-lg lg:text-xl font-black text-emerald-400 mt-2">
-                        {totalCapacityMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
+                        {formatElectricityMW(totalCapacityMW)} MW
                       </p>
                     </div>
                     
@@ -365,7 +355,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                         <span className="text-[10px] text-rose-300 font-bold opacity-80 group-hover:opacity-100 transition-opacity">Detail →</span>
                       </div>
                       <p className="text-lg lg:text-xl font-black text-rose-400 mt-2">
-                        {estimatedConsumptionMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
+                        {formatElectricityMW(estimatedConsumptionMW)} MW
                       </p>
                     </div>
 
@@ -381,7 +371,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                           balanceMW < 0 ? 'text-rose-400' :
                             'text-slate-400'
                         }`}>
-                        {balanceMW > 0 ? '+' : balanceMW < 0 ? '-' : ''}{Math.abs(balanceMW).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
+                        {balanceMW > 0 ? '+' : balanceMW < 0 ? '-' : ''}{formatElectricityMW(Math.abs(balanceMW))} MW
                       </p>
                     </div>
                   </div>
@@ -408,9 +398,13 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                         </div>
                         <div className="text-right">
                           <p className="text-sm font-black text-[#00FFAA]">
-                            {(source.value * source.unitProduction).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
+                            {formatElectricityMW(source.actualProduction)} MW
                           </p>
-                          <p className="text-[10px] text-[#6B8A8A]">{source.value > 0 ? `${source.value} unit` : 'Tidak tersedia'}</p>
+                          <p className="text-[10px] text-[#6B8A8A]">
+                            {source.fuelShortage
+                              ? "Bahan bakar kurang — tidak berproduksi"
+                              : source.value > 0 ? `${source.value} unit` : 'Tidak tersedia'}
+                          </p>
                         </div>
                       </div>
                     )) : (

@@ -285,9 +285,12 @@ import {
 } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logika_anggota_tidak_tetap/securityCouncilElection';
 import { calculateLayananPublikScore, calculateHunianScore } from '@/app/logic/kepuasanCalculator';
 import { applyTotalHousingCapacityBonus } from '../bonus_logic';
-import { getCountryConsumptionBreakdown } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
-import { getKelistrikanFuelRequirements } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/construction_support/1_produksi/1_kelistrikan/fuelLogic';
-import { getMaterialStock } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic';
+import {
+    calculateActualElectricityProduction,
+    formatElectricityMW,
+    getCountryConsumptionBreakdown,
+    logElectricityProductionCalculation,
+} from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
 import { generateInvasionNews, evaluateAnnualHotRelationsInvasion, getCountryColor } from '../menus/news/logic/1_berita_invasi/beritaInvasiLogic';
 import { generateAnnexationNews, updateMapTerritoryColor } from '../menus/news/logic/2_berita_aneksasi/beritaAneksasiLogic';
 import { hasActiveGlobalWarBan } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/1_warBanLogic';
@@ -6160,34 +6163,9 @@ export default function MapPage() {
             }
 
             // 6. Notifikasi Defisit Listrik Grid Nasional (Kelipatan -5%: -5, -10, -15, ...)
-            const sourceKeys = [
-                "pembangkit_listrik_tenaga_nuklir",
-                "pembangkit_listrik_tenaga_air",
-                "pembangkit_listrik_tenaga_surya",
-                "pembangkit_listrik_tenaga_uap",
-                "pembangkit_listrik_tenaga_gas",
-                "pembangkit_listrik_tenaga_angin"
-            ];
-            let totalElectricityProd = 0;
-            sourceKeys.forEach(k => {
-                const count = Number(countryDetail?.[k]) || 0;
-                const bMeta = metadata?.[k];
-                const unitProd = Number(bMeta?.produksi) || 0;
-                let isFuelDeficit = false;
-                if (count > 0) {
-                    const fuelReqs = getKelistrikanFuelRequirements(k);
-                    for (const req of fuelReqs) {
-                        const stock = getMaterialStock(countryDetail, req.resourceKey);
-                        if (stock < req.amount * count) {
-                            isFuelDeficit = true;
-                            break;
-                        }
-                    }
-                }
-                if (!isFuelDeficit) {
-                    totalElectricityProd += count * unitProd;
-                }
-            });
+            const electricityProduction = calculateActualElectricityProduction(countryDetail, metadata);
+            const totalElectricityProd = electricityProduction.actualTotal;
+            logElectricityProductionCalculation(electricityProduction, 'notification');
             const totalElectricityCons = getCountryConsumptionBreakdown(countryDetail, metadata).totalAllBreakdownConsumption;
             let currentListrikStep = countryDetail?.last_notified_listrik_step || 0;
 

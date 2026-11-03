@@ -1,5 +1,107 @@
-import { getElectricityFuelBalance, getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/construction_support/1_produksi/1_kelistrikan/fuelLogic";
+import { getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/construction_support/1_produksi/1_kelistrikan/fuelLogic";
 import { getProductionBonusMultiplier } from "../../../../bonus_logic";
+
+export const ELECTRICITY_PLANT_KEYS = [
+  "pembangkit_listrik_tenaga_nuklir",
+  "pembangkit_listrik_tenaga_air",
+  "pembangkit_listrik_tenaga_surya",
+  "pembangkit_listrik_tenaga_uap",
+  "pembangkit_listrik_tenaga_gas",
+  "pembangkit_listrik_tenaga_angin",
+  "pembangkit_listrik_tenaga_panas_bumi",
+  "pembangkit_listrik_tenaga_hidrogen",
+  "pembangkit_listrik_tenaga_gelombang_laut",
+  "pembangkit_listrik_tenaga_fusi_nuklir",
+] as const;
+
+export type ElectricityPlantKey = (typeof ELECTRICITY_PLANT_KEYS)[number];
+
+export interface ElectricityPlantProduction {
+  theoretical: number;
+  actual: number;
+  fuelShortage: boolean;
+  bonusMultiplier: number;
+}
+
+export interface ElectricityProductionCalculation {
+  perPlant: Record<ElectricityPlantKey, ElectricityPlantProduction>;
+  theoreticalTotal: number;
+  actualTotal: number;
+  bonusMultiplier: Record<ElectricityPlantKey, number>;
+  productionAdjustmentMW: number;
+}
+
+function findElectricityMetadata(
+  metadata: Record<string, unknown>,
+  key: ElectricityPlantKey,
+): Record<string, unknown> | undefined {
+  const exactMatch = metadata[key];
+  if (exactMatch && typeof exactMatch === "object" && !Array.isArray(exactMatch)) {
+    return exactMatch as Record<string, unknown>;
+  }
+
+  for (const [metadataKey, value] of Object.entries(metadata)) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) continue;
+    const entry = value as Record<string, unknown>;
+    if (
+      metadataKey === key ||
+      entry.dataKey === key ||
+      metadataKey.endsWith(`_${key}`)
+    ) return entry;
+  }
+  return undefined;
+}
+
+export function calculateActualElectricityProduction(
+  countryDetail: Record<string, unknown> | null | undefined,
+  metadata: Record<string, unknown> | null = {},
+): ElectricityProductionCalculation {
+  const perPlant = {} as Record<ElectricityPlantKey, ElectricityPlantProduction>;
+  const bonusMultiplier = {} as Record<ElectricityPlantKey, number>;
+  let theoreticalTotal = 0;
+  let actualTotal = 0;
+
+  for (const key of ELECTRICITY_PLANT_KEYS) {
+    const count = Math.max(0, Number(countryDetail?.[key]) || 0);
+    const plantMetadata = findElectricityMetadata(metadata ?? {}, key);
+    const unitProduction = Math.max(0, Number(plantMetadata?.produksi) || 0);
+    const multiplier = countryDetail ? getProductionBonusMultiplier(countryDetail, key) : 1;
+    const theoretical = count * unitProduction * multiplier;
+    const fuelRequirements = getKelistrikanFuelRequirements(key);
+    const fuelShortage = count > 0 && fuelRequirements.some(requirement => {
+      const stock = Number(countryDetail?.[`inventory_${requirement.resourceKey}`]) || 0;
+      return stock < requirement.amount * count;
+    });
+    const actual = fuelShortage ? 0 : theoretical;
+
+    perPlant[key] = { theoretical, actual, fuelShortage, bonusMultiplier: multiplier };
+    bonusMultiplier[key] = multiplier;
+    theoreticalTotal += theoretical;
+    actualTotal += actual;
+  }
+
+  const productionAdjustmentMW = Number(countryDetail?.produksi_penyeimbang) || 0;
+  return {
+    perPlant,
+    theoreticalTotal: theoreticalTotal + productionAdjustmentMW,
+    actualTotal: actualTotal + productionAdjustmentMW,
+    bonusMultiplier,
+    productionAdjustmentMW,
+  };
+}
+
+export function formatElectricityMW(value: number): string {
+  return value.toLocaleString("id-ID", { maximumFractionDigits: 2 });
+}
+
+export function logElectricityProductionCalculation(
+  calculation: ElectricityProductionCalculation,
+  caller: string,
+): void {
+  if (process.env.NODE_ENV !== "production") {
+    console.debug("[ElectricityProduction]", { caller, ...calculation });
+  }
+}
 
 export function findMeta(metadata: Record<string, any> | undefined, key: string) {
   if (!metadata) return undefined;
@@ -12,19 +114,6 @@ export function findMeta(metadata: Record<string, any> | undefined, key: string)
   }
   return undefined;
 }
-
-const SOURCE_ORDER = [
-  "pembangkit_listrik_tenaga_nuklir",
-  "pembangkit_listrik_tenaga_air",
-  "pembangkit_listrik_tenaga_surya",
-  "pembangkit_listrik_tenaga_uap",
-  "pembangkit_listrik_tenaga_gas",
-  "pembangkit_listrik_tenaga_angin",
-  "pembangkit_listrik_tenaga_panas_bumi",
-  "pembangkit_listrik_tenaga_hidrogen",
-  "pembangkit_listrik_tenaga_gelombang_laut",
-  "pembangkit_listrik_tenaga_fusi_nuklir"
-];
 
 export function getCountryConsumptionBreakdown(countryData: any, metadata: Record<string, any> = {}) {
   if (!countryData) {
@@ -43,30 +132,9 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
     };
   }
 
-  // 0. Total Produksi Listrik (Pembangkit)
-  const rawProductionMW = SOURCE_ORDER.reduce((sum, key) => {
-    const bMeta = findMeta(metadata, key);
-    const count = Number(countryData?.[key]) || 0;
-    const unitProduction = Number(bMeta?.produksi) || 0;
-    let isFuelDeficit = false;
-    if (count > 0) {
-      const fuelReqs = getKelistrikanFuelRequirements(key);
-      if (fuelReqs.length > 0) {
-        for (const req of fuelReqs) {
-          const fuelBalance = getElectricityFuelBalance(countryData, req.resourceKey, metadata);
-          if (fuelBalance.balance < 0) {
-            isFuelDeficit = true;
-            break;
-          }
-        }
-      }
-    }
-    return sum + (isFuelDeficit ? 0 : count * unitProduction * getProductionBonusMultiplier(countryData, key));
-  }, 0);
-
-  // Koreksi penyeimbang (disimpan per-negara di DB agar neraca = 0)
-  const produksiPenyeimbang = Number(countryData?.produksi_penyeimbang) || 0;
-  const totalProductionMW = rawProductionMW + produksiPenyeimbang;
+  const electricityProduction = calculateActualElectricityProduction(countryData, metadata);
+  logElectricityProductionCalculation(electricityProduction, "consumption-breakdown");
+  const totalProductionMW = electricityProduction.actualTotal;
 
   // 1. Sektor Hunian
   const hunianKeys = [
@@ -211,7 +279,7 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
     "pos_polisi",
     "armada_mobil_polisi",
     "akademi_polisi",
-    ...SOURCE_ORDER,
+    ...ELECTRICITY_PLANT_KEYS,
   ]);
 
   const produksiBreakdown: Array<{ key: string; label: string; sector: string; count: number; rate: number; total: number }> = [];
