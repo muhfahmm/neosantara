@@ -1,20 +1,11 @@
 @import "./page/root_design/rootColors.css";
 @import "tailwindcss";
+@import "./page/root_design/rootScrollDark.css";
+@import "./page/root_design/rootScrollLight.css";
 
 :root {
   --background: var(--root-color-canvas);
   --foreground: var(--root-color-text);
-  --scrollbar-track: #0a1a1a;
-  --scrollbar-thumb-start: #00ffaa;
-  --scrollbar-thumb-end: #00b37a;
-  --scrollbar-thumb-border: #0a1a1a;
-}
-
-:root[data-theme='light'] {
-  --scrollbar-track: #e6dccb;
-  --scrollbar-thumb-start: #9a8c78;
-  --scrollbar-thumb-end: #8c5f2e;
-  --scrollbar-thumb-border: #f5efe4;
 }
 
 @theme inline {
@@ -82,43 +73,6 @@ body {
 
 :root[data-theme='light'] .paused-menu-frame .paused-menu-rail {
   background: linear-gradient(90deg, #d2c4ae, #b5a48b, #e1d5c3);
-}
-
-.neon-scrollbar,
-.custom-scrollbar {
-  scrollbar-color: var(--scrollbar-thumb-start) var(--scrollbar-track);
-  scrollbar-width: thin;
-}
-
-.neon-scrollbar::-webkit-scrollbar,
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.neon-scrollbar::-webkit-scrollbar-track,
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-  border-left: 1px solid rgb(0 255 170 / 20%);
-  border-radius: 9999px;
-}
-
-.neon-scrollbar::-webkit-scrollbar-thumb,
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--scrollbar-thumb-start), var(--scrollbar-thumb-end));
-  border: 2px solid var(--scrollbar-thumb-border);
-  border-radius: 9999px;
-  box-shadow: 0 0 10px rgb(0 255 170 / 60%);
-}
-
-.neon-scrollbar::-webkit-scrollbar-thumb:hover,
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--scrollbar-thumb-end), var(--scrollbar-thumb-start));
-}
-
-.neon-scrollbar::-webkit-scrollbar-button,
-.custom-scrollbar::-webkit-scrollbar-button {
-  display: none;
 }
 
 .root-no-scrollbar-glow::-webkit-scrollbar-thumb {

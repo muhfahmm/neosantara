@@ -1,0 +1,44 @@
+:root[data-theme='light'] {
+  --root-scrollbar-track: #e6dccb;
+  --root-scrollbar-thumb: #9a8c78;
+  --root-scrollbar-thumb-hover: #8c5f2e;
+  scrollbar-color: var(--root-scrollbar-thumb) var(--root-scrollbar-track);
+  scrollbar-width: thin;
+}
+
+:root[data-theme='light'] * {
+  scrollbar-color: var(--root-scrollbar-thumb) var(--root-scrollbar-track);
+  scrollbar-width: thin;
+}
+
+:root[data-theme='light']::-webkit-scrollbar,
+:root[data-theme='light'] *::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+:root[data-theme='light']::-webkit-scrollbar-track,
+:root[data-theme='light'] *::-webkit-scrollbar-track {
+  background: var(--root-scrollbar-track);
+  border-radius: 9999px;
+}
+
+:root[data-theme='light']::-webkit-scrollbar-thumb,
+:root[data-theme='light'] *::-webkit-scrollbar-thumb {
+  background: var(--root-scrollbar-thumb);
+  border: 2px solid var(--root-scrollbar-track);
+  border-radius: 9999px;
+}
+
+:root[data-theme='light']::-webkit-scrollbar-thumb:hover,
+:root[data-theme='light'] *::-webkit-scrollbar-thumb:hover {
+  background: var(--root-scrollbar-thumb-hover);
+}
+
+:root[data-theme='light'] *::-webkit-scrollbar-button,
+:root[data-theme='light']::-webkit-scrollbar-button,
+:root[data-theme='light']::-webkit-scrollbar-corner,
+:root[data-theme='light'] *::-webkit-scrollbar-corner {
+  display: none;
+  background: transparent;
+}
