@@ -648,7 +648,7 @@ export default function ProduksiModal({
 
   return (
     <>
-      {isOpen && !selectedTabInfo && (
+      {isOpen && !selectedTabInfo && !showSanctionInfo && (
         <NotebookModalWrapper onClose={onClose}>
           <div className="flex flex-col h-full overflow-hidden">
 
@@ -734,33 +734,12 @@ export default function ProduksiModal({
         </NotebookModalWrapper>
       )}
 
-      {showSanctionInfo && (
-        <div className="fixed inset-0 z-[90] flex items-center justify-center px-4 py-8">
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="production-sanction-info-title"
-            className="w-full max-w-xl overflow-hidden rounded-2xl border border-root-accent/30 bg-root-surface font-sans shadow-2xl"
-          >
-            <div className="flex items-center justify-between border-b border-root-accent/20 bg-root-canvas px-5 py-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-xl border border-root-accent/30 bg-root-surface p-2">
-                  <Info className="h-5 w-5 text-root-accent" />
-                </div>
-                <h3 id="production-sanction-info-title" className="text-sm font-black uppercase tracking-wide text-root-accent">
-                  Info Bonus Agama, Ideologi, Kementerian & Sanksi
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowSanctionInfo(false)}
-                aria-label="Tutup informasi"
-                className="rounded-lg border border-root-accent/20 p-2 text-root-subtle transition-colors hover:border-root-accent/50 hover:text-root-accent cursor-pointer"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="space-y-4 px-5 py-5 text-sm leading-relaxed text-slate-300">
+      <MenuInfoModal
+        isOpen={showSanctionInfo}
+        onClose={() => setShowSanctionInfo(false)}
+        title="Info Bonus Agama, Ideologi, Kementerian & Sanksi"
+      >
+        <div className="space-y-4 text-xs leading-relaxed text-root-body sm:text-sm">
               {currentReligionBonus || currentIdeologyBonus || isMemberOfFAO(playerCountryName) || pendidikanProductionBonusPercent > 0 ? (
                 <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-200 space-y-2">
                   {pendidikanProductionBonusPercent > 0 && (
@@ -852,10 +831,8 @@ export default function ProduksiModal({
                   </p>
                 </>
               )}
-            </div>
-          </div>
         </div>
-      )}
+      </MenuInfoModal>
 
       {toast && <div className="fixed bottom-6 right-6 z-[80] bg-root-accent text-root-canvas font-black px-4 py-2 rounded-lg shadow-lg border border-root-accent">{toast}</div>}
 
