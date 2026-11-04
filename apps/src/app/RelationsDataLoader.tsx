@@ -46,7 +46,17 @@ async function fetchEndpoint<T>(
   validate: (value: unknown) => value is T,
 ): Promise<T> {
   const response = await fetch(url, { cache: 'no-store' });
-  const payload: unknown = await response.json();
+  const contentType = response.headers.get('content-type');
+  let payload: unknown;
+  try {
+    payload = JSON.parse(await response.text());
+  } catch {
+    const responseMessage = response.ok
+      ? 'Response was not valid JSON'
+      : `Request failed with status ${response.status}`;
+    const contentTypeMessage = contentType ? ` (${contentType})` : '';
+    throw new Error(`${url}: ${responseMessage}${contentTypeMessage}`);
+  }
 
   if (!response.ok) {
     const errorMessage =
