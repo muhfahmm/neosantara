@@ -91,7 +91,7 @@ const safeNumber = (value: any): number => {
 
 const formatColoredNumber = (value: any, isPositive: boolean = true) => {
   const parsed = safeNumber(value);
-  if (parsed === 0) return <span className="font-black text-[#8b7e66]">0</span>;
+  if (parsed === 0) return <span className="font-black text-root-muted">0</span>;
   const absVal = Math.abs(parsed);
   const formatted = absVal.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 });
   const parts = formatted.split(',');
@@ -377,7 +377,7 @@ export default function InfoBangunan({
                           onClose();
                           onNavigateToTab(card1TabId, activeFoodKey);
                         }}
-                        className="px-3 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/40 hover:text-white transition-all cursor-pointer shadow-sm"
+                        className="px-3 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wider bg-root-modal-warning-bg text-root-modal-warning border border-root-modal-warning/40 hover:bg-root-modal-warning-bg hover:border-root-modal-warning transition-all cursor-pointer shadow-sm"
                       >
                         Buka Sektor {card1TabId.toUpperCase()} &rarr;
                       </button>
@@ -415,7 +415,7 @@ export default function InfoBangunan({
                                 onClose();
                                 onNavigateToTab(card2TabId, card2IngKey);
                               }}
-                              className="px-3 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/40 hover:text-white transition-all cursor-pointer shadow-sm"
+                              className="px-3 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wider bg-root-modal-negative-bg text-root-modal-negative border border-root-modal-negative/40 hover:bg-root-modal-negative-bg hover:border-root-modal-negative transition-all cursor-pointer shadow-sm"
                             >
                               Buka Sektor {card2TabId.toUpperCase()} &rarr;
                             </button>
@@ -506,7 +506,7 @@ export default function InfoBangunan({
                               onClose();
                               onNavigateToTab(card2ConsumerTabId, firstConsumerKey);
                             }}
-                            className="px-3 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/40 hover:text-white transition-all cursor-pointer shadow-sm"
+                            className="px-3 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wider bg-root-modal-negative-bg text-root-modal-negative border border-root-modal-negative/40 hover:bg-root-modal-negative-bg hover:border-root-modal-negative transition-all cursor-pointer shadow-sm"
                           >
                             Buka Sektor {card2ConsumerTabId.toUpperCase()} &rarr;
                           </button>

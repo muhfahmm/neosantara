@@ -36,7 +36,7 @@ const PolicyCard = memo(function PolicyCard({
           className={`p-2.5 lg:p-3 rounded-xl border text-left cursor-pointer flex flex-col justify-between ${
             currentChoice === "A"
               ? "bg-root-accent/15 border-root-accent text-root-accent"
-              : "bg-root-surface border-root-accent/15 text-root-subtle hover:border-root-accent/40"
+              : "bg-root-surface border-root-accent/15 text-root-muted hover:border-root-accent/60 hover:text-root-accent"
           }`}
         >
           <div className="flex items-center justify-between w-full mb-1">
@@ -57,7 +57,7 @@ const PolicyCard = memo(function PolicyCard({
           className={`p-2.5 lg:p-3 rounded-xl border text-left cursor-pointer flex flex-col justify-between ${
             currentChoice === "B"
               ? "bg-root-accent/15 border-root-accent text-root-accent"
-              : "bg-root-surface border-root-accent/15 text-root-subtle hover:border-root-accent/40"
+              : "bg-root-surface border-root-accent/15 text-root-muted hover:border-root-accent/60 hover:text-root-accent"
           }`}
         >
           <div className="flex items-center justify-between w-full mb-1">

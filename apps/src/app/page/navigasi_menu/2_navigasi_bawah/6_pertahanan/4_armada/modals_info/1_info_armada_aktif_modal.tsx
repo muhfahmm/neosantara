@@ -46,7 +46,7 @@ export default function InfoArmadaAktifModal({
     getAuthoritarianMilitaryStrengthMultiplier(countryIdeology) > 1;
 
   return (
-    <NotebookModalWrapper onClose={onClose} compact maxWidthClass="max-w-3xl">
+    <NotebookModalWrapper onClose={onClose} compact maxWidthClass="max-w-4xl">
       <div className="flex flex-col">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
@@ -59,16 +59,16 @@ export default function InfoArmadaAktifModal({
         {/* Body */}
         <div className="overflow-y-auto p-4 sm:p-5 bg-root-surface relative z-10 space-y-4 text-xs font-semibold text-root-text custom-scrollbar">
           <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
-            <p className="text-[12px] font-bold text-root-subtle mb-1">Kategori Matra</p>
-            <p className="text-xl font-black text-white">
+            <p className="text-sm font-bold text-root-subtle mb-1">Kategori Matra</p>
+            <p className="text-xl font-black text-root-text">
               {selectedCategory ? groupMeta[selectedCategory].title : '-'}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
-              <p className="text-[12px] font-bold text-root-subtle mb-1">Jumlah Unit Saat Ini</p>
-              <p className="text-xl font-black text-white">
+              <p className="text-sm font-bold text-root-subtle mb-1">Jumlah Unit Saat Ini</p>
+              <p className="text-xl font-black text-root-text">
                 {formatNumber(currentQuantity)} {selectedItem.key === "barak" ? "pasukan" : "unit"}
               </p>
             </div>

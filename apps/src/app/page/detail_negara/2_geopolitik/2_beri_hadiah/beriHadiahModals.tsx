@@ -249,7 +249,7 @@ export default function BeriHadiahModal({
                 <button
                   type="button"
                   onClick={() => setIsProductPickerOpen(true)}
-                  className="w-full h-11 bg-root-canvas hover:bg-root-accent/5 border border-root-accent/40 hover:border-root-accent rounded-xl px-3 flex items-center justify-between text-white transition-all cursor-pointer"
+                  className="w-full h-11 bg-root-canvas hover:bg-root-accent/5 border border-root-accent/40 hover:border-root-accent rounded-xl px-3 flex items-center justify-between text-root-text transition-all cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5 truncate">
                     <Layers className="h-4 w-4 text-root-accent shrink-0" />
@@ -382,14 +382,14 @@ export default function BeriHadiahModal({
 
             {/* Error / Warning Alert */}
             {isInsufficientStock && (
-              <div className="p-2.5 sm:p-3 bg-rose-950/60 border border-rose-500/40 rounded-xl text-rose-300 text-[11px] sm:text-xs flex items-center gap-2 shrink-0">
+              <div className="p-2.5 sm:p-3 bg-root-modal-negative-bg border border-root-modal-negative/40 rounded-xl text-root-modal-negative text-[11px] sm:text-xs flex items-center gap-2 shrink-0">
                 <AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
                 <span>Stok komoditas Anda tidak mencukupi (Tersedia: {stockAvailable.toLocaleString("id-ID", { maximumFractionDigits: 2 })} unit).</span>
               </div>
             )}
 
             {isMaxRelation && (
-              <div className="p-2.5 sm:p-3 bg-emerald-950/60 border border-emerald-500/40 rounded-xl text-emerald-300 text-[11px] sm:text-xs flex items-center gap-2 shrink-0">
+              <div className="p-2.5 sm:p-3 bg-root-modal-positive-bg border border-root-modal-positive-border rounded-xl text-root-modal-positive text-[11px] sm:text-xs flex items-center gap-2 shrink-0">
                 <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
                 <span>Tingkat hubungan dengan negara ini sudah mencapai nilai maksimum (100).</span>
               </div>
@@ -405,7 +405,7 @@ export default function BeriHadiahModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 bg-root-surface hover:bg-[#163535] border border-root-accent/30 rounded-xl py-2.5 sm:py-3 text-center text-root-text font-extrabold text-xs tracking-wider uppercase transition-all cursor-pointer"
+                className="flex-1 bg-root-surface hover:bg-root-accent/10 border border-root-accent/30 hover:border-root-accent rounded-xl py-2.5 sm:py-3 text-center text-root-text font-extrabold text-xs tracking-wider uppercase transition-all cursor-pointer"
               >
                 Batal
               </button>
@@ -414,8 +414,8 @@ export default function BeriHadiahModal({
                 disabled={!isValid}
                 onClick={handleConfirm}
                 className={`flex-1 rounded-xl py-2.5 sm:py-3 text-center font-black text-xs tracking-wider uppercase transition-all shadow-lg flex items-center justify-center gap-2 ${isValid
-                    ? "bg-root-accent hover:bg-[#00e699] text-root-canvas border border-root-accent cursor-pointer"
-                    : "bg-gray-700 text-gray-400 border border-gray-600 cursor-not-allowed opacity-50"
+                    ? "bg-root-accent hover:bg-root-accent/85 text-root-accent-ink border border-root-accent cursor-pointer"
+                    : "bg-root-modal-neutral-bg text-root-muted border border-root-accent/20 cursor-not-allowed opacity-60"
                   }`}
               >
                 <Gift className="h-4 w-4" />

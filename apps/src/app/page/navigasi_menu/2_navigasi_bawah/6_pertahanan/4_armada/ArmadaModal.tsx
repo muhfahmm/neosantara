@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { X, ShieldAlert, Swords, Building2, TrendingUp, TrendingDown, Info } from "lucide-react";
+import { ShieldAlert, Swords, Building2, TrendingUp, TrendingDown, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
@@ -149,7 +149,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
 
     {/* POPUP MODAL INFO BONUS PERTAHANAN */}
     {showDefenseBonusInfo && (
-      <NotebookModalWrapper onClose={() => setShowDefenseBonusInfo(false)} compact maxWidthClass="max-w-2xl">
+      <NotebookModalWrapper onClose={() => setShowDefenseBonusInfo(false)} compact maxWidthClass="max-w-3xl">
         <div className="flex flex-col" role="dialog" aria-modal="true" aria-labelledby="defense-bonus-info-title">
             <div className="flex items-center justify-between border-b border-root-accent/20 bg-root-canvas px-5 py-4">
               <div className="flex items-center gap-3">
@@ -160,36 +160,29 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
                   Informasi Armada & Bonus Pertahanan
                 </h3>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowDefenseBonusInfo(false)}
-                aria-label="Tutup informasi"
-                className="rounded-lg border border-root-accent/20 p-2 text-root-subtle transition-colors hover:border-root-accent/50 hover:text-root-accent cursor-pointer"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <RootModalCloseButton onClick={() => setShowDefenseBonusInfo(false)} />
             </div>
-            <div className="space-y-4 overflow-y-auto px-5 py-5 text-sm leading-relaxed text-slate-300 neon-scrollbar">
+            <div className="space-y-4 overflow-y-auto px-5 py-5 text-sm leading-relaxed text-root-body neon-scrollbar">
               <p>
                 Kelola armada militer aktif dan infrastruktur pendukungnya. Armada aktif menentukan kemampuan pertahanan dan operasi laut, sementara infrastruktur militer mendukung kapasitas serta kesiapan pasukan.
               </p>
-              <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-200 space-y-2.5">
+              <div className="rounded-lg border border-root-modal-positive-border bg-root-modal-positive-bg p-3 text-root-body space-y-2.5">
                 <p>
-                  <strong className="text-white">Kementerian Pertahanan:</strong>{" "}
-                  Bonus <strong className="text-emerald-300">+{pertahananBonusPercent.toFixed(1)}%</strong> Kekuatan Militer untuk seluruh matra (Darat, Laut, dan Udara). Berasal dari level kabinet (1% per blok) ditambah bonus pengangkatan menteri jika ada.
+                  <strong className="text-root-text">Kementerian Pertahanan:</strong>{" "}
+                  Bonus <strong className="text-root-modal-positive">+{pertahananBonusPercent.toFixed(1)}%</strong> Kekuatan Militer untuk seluruh matra (Darat, Laut, dan Udara). Berasal dari level kabinet (1% per blok) ditambah bonus pengangkatan menteri jika ada.
                 </p>
                 <p>
-                  <strong className="text-white">Komandan Matra Keamanan:</strong>{" "}
-                  Komandan Angkatan Darat memberikan <strong className="text-emerald-300">+{getKomandanAngkatanDaratBonusPercent(countryDetail).toFixed(1)}%</strong> Kekuatan Darat, dan Komandan Armada memberikan <strong className="text-emerald-300">+{getKomandanArmadaBonusPercent(countryDetail).toFixed(1)}%</strong> Kekuatan Laut (1% per level blok).
+                  <strong className="text-root-text">Komandan Matra Keamanan:</strong>{" "}
+                  Komandan Angkatan Darat memberikan <strong className="text-root-modal-positive">+{getKomandanAngkatanDaratBonusPercent(countryDetail).toFixed(1)}%</strong> Kekuatan Darat, dan Komandan Armada memberikan <strong className="text-root-modal-positive">+{getKomandanArmadaBonusPercent(countryDetail).toFixed(1)}%</strong> Kekuatan Laut (1% per level blok).
                 </p>
                 {countryDetail?.ideology && (
                   <p>
-                    <strong className="text-white">Ideologi ({countryDetail.ideology}):</strong>{" "}
+                    <strong className="text-root-text">Ideologi ({countryDetail.ideology}):</strong>{" "}
                     Mempengaruhi kekuatan militer nasional berdasarkan doktrin negara.
                   </p>
                 )}
                 <p>
-                  <strong className="text-white">Aliansi & Riset Militer:</strong>{" "}
+                  <strong className="text-root-text">Aliansi & Riset Militer:</strong>{" "}
                   Keanggotaan aliansi militer seperti NATO (+15%) serta riset militer (Tank Gen 5, Jet Superioritas, Kapal Perang) memberikan pengali kekuatan tambahan pada armada tempur.
                 </p>
               </div>

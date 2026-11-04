@@ -132,8 +132,8 @@ export default function DetailSubsidiItemModal({
               <button
                 onClick={() => toggleSubsidy(item.id)}
                 className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer shadow-md flex items-center gap-1.5 ${item.isSubsidized
-                    ? "bg-rose-500/20 text-rose-400 border border-rose-500/40 hover:bg-rose-500 hover:text-white"
-                    : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500 hover:text-root-canvas"
+                    ? "bg-root-modal-negative-bg text-root-modal-negative border border-root-modal-negative/40 hover:border-root-modal-negative"
+                    : "bg-root-modal-positive-bg text-root-modal-positive border border-root-modal-positive-border hover:border-root-modal-positive"
                   }`}
               >
                 {item.isSubsidized ? (

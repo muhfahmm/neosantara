@@ -249,7 +249,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
                 <button
                   type="button"
                   onClick={() => setIsConfirmDialogOpen(true)}
-                  className="rounded-xl border border-root-accent/40 bg-root-accent px-3 py-2 text-[10px] font-black uppercase tracking-wider text-root-accent-ink transition hover:bg-[#72ffd0] sm:px-4"
+                  className="rounded-xl border border-root-accent/40 bg-root-accent px-3 py-2 text-[10px] font-black uppercase tracking-wider text-root-accent-ink transition hover:bg-root-accent/85 sm:px-4"
                 >
                   Konfirmasi
                 </button>
@@ -392,12 +392,12 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
         <div className="fixed inset-0 z-[2147483647] flex items-center justify-center p-4 ">
           <div role="dialog" aria-modal="true" aria-labelledby="subsidy-confirm-title" className={`w-full max-w-md border border-root-accent/30 bg-root-canvas p-6 shadow-2xl ${rootBorderRadius.card}`}>
             <h3 id="subsidy-confirm-title" className="text-lg font-bold text-white">Konfirmasi kebijakan subsidi</h3>
-            <p className="mt-2 text-sm text-slate-300">
+            <p className="mt-2 text-sm text-root-body">
               Perubahan alokasi subsidi akan diterapkan. Lanjutkan?
             </p>
             <div className="mt-6 flex justify-end gap-2">
-              <button type="button" onClick={() => setIsConfirmDialogOpen(false)} className="rounded-lg border border-slate-600 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:text-white">Kembali</button>
-              <button type="button" onClick={confirmForumSubsidies} className="rounded-lg bg-root-accent px-4 py-2 text-xs font-bold text-root-accent-ink transition hover:bg-[#72ffd0]">Ya, konfirmasi</button>
+              <button type="button" onClick={() => setIsConfirmDialogOpen(false)} className="rounded-lg border border-root-accent/30 px-4 py-2 text-xs font-semibold text-root-muted transition hover:border-root-accent hover:text-root-accent">Kembali</button>
+              <button type="button" onClick={confirmForumSubsidies} className="rounded-lg bg-root-accent px-4 py-2 text-xs font-bold text-root-accent-ink transition hover:bg-root-accent/85">Ya, konfirmasi</button>
             </div>
           </div>
         </div>,

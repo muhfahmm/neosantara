@@ -504,11 +504,11 @@ export default function RingkasanPopulasiModal({
                     className="flex h-2.5 w-full overflow-hidden rounded-full bg-[#152626] border border-root-accent/10"
                   >
                     <div
-                      className="h-full bg-gradient-to-r from-[#00B37A] to-root-accent transition-[width] duration-500"
+                      className="h-full bg-emerald-500 transition-[width] duration-500"
                       style={{ width: `${birthShare}%` }}
                     />
                     <div
-                      className="h-full bg-gradient-to-r from-rose-500 to-rose-400 transition-[width] duration-500"
+                      className="h-full bg-rose-500 transition-[width] duration-500"
                       style={{ width: `${deathShare}%` }}
                     />
                   </div>

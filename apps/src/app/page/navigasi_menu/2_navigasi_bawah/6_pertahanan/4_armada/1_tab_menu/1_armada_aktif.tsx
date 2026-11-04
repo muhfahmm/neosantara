@@ -453,7 +453,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                     )}
 
                     <div className="flex items-start justify-between mb-1.5 sm:mb-2">
-                      <p className="text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1.5 leading-snug">
+                      <p className="text-[10px] sm:text-xs font-black uppercase text-root-subtle tracking-wider flex-1 pr-1.5 leading-snug">
                         {item.label}
                       </p>
                       <button
@@ -478,11 +478,11 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                       <div className="flex flex-col justify-between">
                       <div>
                         <div className="flex items-end gap-1 flex-wrap">
-                          <span className={`${item.key === "barak" ? "text-[11px] sm:text-xs" : "text-xs sm:text-sm lg:text-base"} font-black text-root-text leading-tight break-words`}>
+                          <span className={`${item.key === "barak" ? "text-xs sm:text-sm" : "text-sm sm:text-base lg:text-lg"} font-black text-root-text leading-tight break-words`}>
                             {displayText}
                           </span>
                           {hasPending && (
-                            <span className="text-[10px] sm:text-xs font-black text-root-accent">
+                            <span className="text-xs sm:text-sm font-black text-root-accent">
                               +{formatNumber(totalPendingQuantity)}
                             </span>
                           )}

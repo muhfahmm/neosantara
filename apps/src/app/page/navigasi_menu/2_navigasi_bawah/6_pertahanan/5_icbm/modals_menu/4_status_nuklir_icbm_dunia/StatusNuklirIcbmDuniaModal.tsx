@@ -32,6 +32,12 @@ const formatNumber = (value: unknown) => {
   return Number.isFinite(numeric) ? numeric.toLocaleString("id-ID", { maximumFractionDigits: 0 }) : "0";
 };
 
+const getIsoFlag = (iso: string) => {
+  const code = iso.trim().toUpperCase();
+  if (!/^[A-Z]{2}$/.test(code)) return null;
+  return String.fromCodePoint(...Array.from(code, (letter) => 127397 + letter.charCodeAt(0)));
+};
+
 export default function StatusNuklirIcbmDuniaModal({
   isOpen,
   onClose,
@@ -427,7 +433,6 @@ export default function StatusNuklirIcbmDuniaModal({
                   <tr>
                     <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">No</th>
                     <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Negara</th>
-                    <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Kode ISO</th>
                     <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Program Nuklir</th>
                     <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Status ICBM</th>
                     <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Jumlah ICBM</th>
@@ -437,7 +442,7 @@ export default function StatusNuklirIcbmDuniaModal({
                 <tbody className="divide-y divide-root-accent/10 text-xs font-bold text-root-text">
                   {isLoadingIcbm ? (
                     <tr>
-                      <td colSpan={7} className="px-4 py-8 text-center text-root-accent">
+                      <td colSpan={6} className="px-4 py-8 text-center text-root-accent">
                         Memuat data negara berkemampuan Nuklir & ICBM...
                       </td>
                     </tr>
@@ -458,12 +463,11 @@ export default function StatusNuklirIcbmDuniaModal({
                         >
                           <td className="px-3 py-2.5 text-root-subtle">#{idx + 1}</td>
                           <td className="px-3 py-2.5 font-black text-root-text flex items-center gap-2">
-                            <Rocket className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                            <span className="shrink-0 text-base leading-none" aria-label={row.iso ? `ISO ${row.iso}` : undefined} title={row.iso ? `ISO ${row.iso.toUpperCase()}` : undefined}>
+                              {getIsoFlag(row.iso) || <Rocket className="h-3.5 w-3.5 text-rose-500" />}
+                            </span>
                             <span>{row.country_name}</span>
                             {isUserCountry && <span className="text-[10px] text-root-accent ml-1 font-bold">(Anda)</span>}
-                          </td>
-                          <td className="px-3 py-2.5 text-center uppercase tracking-widest text-root-subtle font-mono">
-                            {row.iso}
                           </td>
                           <td className="px-3 py-2.5 text-center">
                             {row.nuclear_program_status === 'AKTIF' || (!row.nuclear_program_status && row.has_nuclear_program) ? (
@@ -511,7 +515,7 @@ export default function StatusNuklirIcbmDuniaModal({
                     })
                   ) : (
                     <tr>
-                      <td colSpan={7} className="px-4 py-8 text-center text-root-subtle">
+                      <td colSpan={6} className="px-4 py-8 text-center text-root-subtle">
                         Data negara berkemampuan nuklir belum ditemukan.
                       </td>
                     </tr>

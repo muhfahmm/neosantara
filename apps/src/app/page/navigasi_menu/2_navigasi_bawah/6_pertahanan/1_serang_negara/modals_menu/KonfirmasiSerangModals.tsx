@@ -326,7 +326,7 @@ export default function SerangModals({
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleSetAllGlobalPct(100)}
-                    className="px-3 py-1.5 rounded-lg bg-root-accent text-[#050B0B] hover:bg-[#00FFBB] font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer shadow-md active:scale-95"
+                    className="px-3 py-1.5 rounded-lg bg-root-accent text-root-accent-ink hover:bg-root-accent/85 font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer shadow-md active:scale-95"
                   >
                     Kerahkan Semua (100%)
                   </button>
@@ -353,7 +353,7 @@ export default function SerangModals({
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleSetAllGroupPct(group, 100)}
-                              className="px-2.5 py-1 rounded-md bg-root-accent/15 border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-[#050B0B] font-bold text-[10px] uppercase tracking-wider transition-all cursor-pointer"
+                              className="px-2.5 py-1 rounded-md bg-root-accent/15 border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-accent-ink font-bold text-[10px] uppercase tracking-wider transition-all cursor-pointer"
                             >
                               Kerahkan Matra (100%)
                             </button>

@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { X, Info, Globe, Shield, HeartPulse, BookOpen, ArrowRightLeft, Users, Sprout, Plane, Ship, Wifi, Cloud, Landmark, Flag, Star, Handshake, BarChart, Crown, TrendingUp } from "lucide-react";
+import { X, Info, Globe, Shield, HeartPulse, BookOpen, ArrowRightLeft, Users, Sprout, Ship, Wifi, Cloud, Landmark, Flag, Star, Handshake, BarChart, Crown, TrendingUp } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import OrganisasiPBBModal from "./1_organisasi_PBB/organisasiPBBmodal";
 import OrganisasiRegional from "./2_organisasi_regional/organisasiRegional";
@@ -128,16 +128,19 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
   };
 
   return (
-    <NotebookModalWrapper onClose={handleClose}>
-      <div className="flex flex-col h-full overflow-hidden relative">
+    <>
+      {infoOrgName && (
         <OrgIntlInfoModal
-          isOpen={Boolean(infoOrgName)}
+          isOpen
           onClose={() => setInfoOrgName(null)}
-          orgName={infoOrgName || ""}
-          orgIcon={infoOrgName ? orgIconMap[infoOrgName] || Globe : Globe}
-          isMember={Boolean(infoOrgName && membershipMap[infoOrgName])}
+          orgName={infoOrgName}
+          orgIcon={orgIconMap[infoOrgName] || Globe}
+          isMember={Boolean(membershipMap[infoOrgName])}
           countryDetail={countryDetail}
         />
+      )}
+      {!infoOrgName && <NotebookModalWrapper onClose={handleClose}>
+      <div className="flex flex-col h-full overflow-hidden relative">
         
         {/* HEADER */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
@@ -216,7 +219,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                     <button
                       type="button"
                       onClick={() => setInfoOrgName(org)}
-                      className="absolute right-2 top-2 rounded-lg border border-root-accent/20 bg-[#051111] p-1 text-root-subtle transition-all hover:border-root-accent hover:bg-root-accent/10 hover:text-root-accent cursor-pointer"
+                      className="absolute right-2 top-2 rounded-lg border border-root-accent/20 bg-root-surface p-1 text-root-subtle transition-all hover:border-root-accent hover:bg-root-accent/10 hover:text-root-accent cursor-pointer"
                       aria-label={`Informasi ${org}`}
                       title={`Informasi ${org}`}
                     >
@@ -254,7 +257,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                     <button
                       type="button"
                       onClick={() => setInfoOrgName(org)}
-                      className="absolute right-2 top-2 rounded-lg border border-root-accent/20 bg-[#051111] p-1 text-root-subtle transition-all hover:border-root-accent hover:bg-root-accent/10 hover:text-root-accent cursor-pointer"
+                      className="absolute right-2 top-2 rounded-lg border border-root-accent/20 bg-root-surface p-1 text-root-subtle transition-all hover:border-root-accent hover:bg-root-accent/10 hover:text-root-accent cursor-pointer"
                       aria-label={`Informasi ${org}`}
                       title={`Informasi ${org}`}
                     >
@@ -293,6 +296,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
         )}
 
       </div>
-    </NotebookModalWrapper>
+    </NotebookModalWrapper>}
+    </>
   );
 }

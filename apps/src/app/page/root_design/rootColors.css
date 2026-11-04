@@ -24,6 +24,7 @@
   --root-modal-info: #67C6D8;
   --root-modal-info-bg: rgb(103 198 216 / 14%);
   --root-modal-neutral-bg: rgb(255 255 255 / 5%);
+  --root-modal-alert-error: #FF2D55;
 }
 
 :root[data-theme='light'] {
@@ -52,6 +53,7 @@
   --root-modal-info: #52717A;
   --root-modal-info-bg: #E5ECEC;
   --root-modal-neutral-bg: #F0E9DD;
+  --root-modal-alert-error: #A83A32;
 }
 
 @theme inline {
@@ -64,4 +66,15 @@
   --color-root-muted: var(--root-color-muted);
   --color-root-subtle: var(--root-color-subtle);
   --color-root-danger: var(--root-color-danger);
+  --color-root-modal-positive: var(--root-modal-positive);
+  --color-root-modal-positive-bg: var(--root-modal-positive-bg);
+  --color-root-modal-positive-bg-strong: var(--root-modal-positive-bg-strong);
+  --color-root-modal-positive-border: var(--root-modal-positive-border);
+  --color-root-modal-negative: var(--root-modal-negative);
+  --color-root-modal-negative-bg: var(--root-modal-negative-bg);
+  --color-root-modal-warning: var(--root-modal-warning);
+  --color-root-modal-warning-bg: var(--root-modal-warning-bg);
+  --color-root-modal-info: var(--root-modal-info);
+  --color-root-modal-info-bg: var(--root-modal-info-bg);
+  --color-root-modal-neutral-bg: var(--root-modal-neutral-bg);
 }

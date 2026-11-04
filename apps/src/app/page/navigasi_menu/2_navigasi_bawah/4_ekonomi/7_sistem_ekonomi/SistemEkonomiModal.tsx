@@ -83,7 +83,7 @@ const SektorTab = React.memo(({
     <div className="space-y-4">
       <div className={`border border-root-accent/20 bg-root-canvas p-4 ${rootBorderRadius.card}`}>
         <h3 className="text-sm font-black uppercase tracking-wide text-root-accent">Nasionalisasi & Ekonomi Terpusat</h3>
-        <p className="mt-2 text-xs leading-relaxed text-[#A7C4C4]">
+        <p className="mt-2 text-xs leading-relaxed text-root-body">
           Atur kepemilikan setiap sektor. Bagian negara berlaku saat komoditas dijual melalui Perdagangan;
           emas mengikuti porsi Mineral & Energi pada pemasukan tambang yang sudah ada. Nasionalisasi aktif
           secara bertahap menurunkan hubungan dengan negara berideologi Kapitalisme.
@@ -112,8 +112,8 @@ const SektorTab = React.memo(({
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h4 className="text-sm font-black text-white">{sector.name}</h4>
-                  <p className="mt-1 text-[11px] text-[#A7C4C4]">{levelDetails.description}</p>
+                  <h4 className="text-sm font-black text-root-text">{sector.name}</h4>
+                  <p className="mt-1 text-[11px] text-root-body">{levelDetails.description}</p>
                 </div>
                 <label className="flex items-center gap-2 text-[10px] font-bold uppercase text-root-subtle">
                   Level

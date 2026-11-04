@@ -223,12 +223,12 @@ export default function BaseProduksiGrid({
           return (
             <React.Fragment key={key}>
               {isElectricityTab && key === fuelRequiredKeys[0] && (
-                <div className="col-span-full border-b border-root-accent/15 pb-2 pt-1 text-xs font-black uppercase tracking-wider text-[#8AB0A8]">
+                <div className="col-span-full border-b border-root-accent/15 pb-2 pt-1 text-xs font-black uppercase tracking-wider text-root-muted">
                   Pembangkit Membutuhkan Bahan Bakar
                 </div>
               )}
               {isElectricityTab && key === noFuelRequiredKeys[0] && (
-                <div className="col-span-full border-b border-root-accent/15 pb-2 pt-4 text-xs font-black uppercase tracking-wider text-[#8AB0A8]">
+                <div className="col-span-full border-b border-root-accent/15 pb-2 pt-4 text-xs font-black uppercase tracking-wider text-root-muted">
                   Pembangkit Tidak Membutuhkan Bahan Bakar
                 </div>
               )}

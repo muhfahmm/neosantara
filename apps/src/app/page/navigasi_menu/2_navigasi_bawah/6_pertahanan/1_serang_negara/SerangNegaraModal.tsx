@@ -272,9 +272,9 @@ export default function SerangNegaraModal({
   };
 
   const getSortArrow = (key: keyof RankingRow) => {
-    if (sortConfig?.key !== key) return <span className="text-[#8b7e66]/40 ml-1 text-xs font-normal">⇅</span>;
-    if (sortConfig.direction === 'asc') return <ChevronUp className="h-3 w-3 ml-1 inline text-[#5c3c10]" />;
-    return <ChevronDown className="h-3 w-3 ml-1 inline text-[#5c3c10]" />;
+    if (sortConfig?.key !== key) return <span className="text-root-subtle/60 ml-1 text-xs font-normal">⇅</span>;
+    if (sortConfig.direction === 'asc') return <ChevronUp className="h-3 w-3 ml-1 inline text-root-accent" />;
+    return <ChevronDown className="h-3 w-3 ml-1 inline text-root-accent" />;
   };
 
   // 🔥 Fungsi ketika tombol pedang diklik: Buka modal serang
@@ -443,7 +443,7 @@ export default function SerangNegaraModal({
                   placeholder="Cari negara..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className={`h-9 w-full border border-root-accent/30 bg-[#051111] py-1 pl-8 pr-3 text-xs text-root-text placeholder-root-subtle transition-colors focus:border-root-accent focus:outline-none ${rootBorderRadius.card}`}
+                  className={`h-9 w-full border border-root-accent/30 bg-root-canvas py-1 pl-8 pr-3 text-xs text-root-text placeholder-root-subtle transition-colors focus:border-root-accent focus:outline-none ${rootBorderRadius.card}`}
                 />
               </div>
 
@@ -528,7 +528,7 @@ export default function SerangNegaraModal({
                                   className={`p-1.5 rounded-lg border transition-all ${
                                     isUser
                                       ? 'bg-rose-500/10 text-rose-500 border-rose-500/40 cursor-not-allowed'
-                                      : 'bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white border-rose-500/30 cursor-pointer'
+                                      : 'bg-root-modal-negative-bg text-root-modal-negative hover:border-root-modal-negative border-root-modal-negative/30 cursor-pointer'
                                   }`}
                                   title={isUser ? "Ini negara yang sedang Anda gunakan" : "Serang negara ini"}
                                   aria-label={isUser ? `${row.countryName}, negara yang sedang Anda gunakan` : `Serang ${row.countryName}`}

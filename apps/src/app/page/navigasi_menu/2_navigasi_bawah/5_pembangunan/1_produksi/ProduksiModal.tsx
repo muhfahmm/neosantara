@@ -741,11 +741,11 @@ export default function ProduksiModal({
       >
         <div className="space-y-4 text-xs leading-relaxed text-root-body sm:text-sm">
               {currentReligionBonus || currentIdeologyBonus || isMemberOfFAO(playerCountryName) || pendidikanProductionBonusPercent > 0 ? (
-                <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-200 space-y-2">
+                <div className="rounded-lg border border-root-modal-positive-border bg-root-modal-positive-bg p-3 text-root-body space-y-2">
                   {pendidikanProductionBonusPercent > 0 && (
                     <p>
                       <strong className="text-white">Kementerian Pendidikan:</strong>{" "}
-                      Bonus <strong className="text-emerald-300">+{pendidikanProductionBonusPercent.toFixed(1)}%</strong> produksi pangan dan sumber daya alam, berdasarkan level kabinet (1% per blok) serta bonus menteri jika ada. Berlaku di sektor <strong className="text-emerald-300">Mineral & Energi, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan</strong>.
+                      Bonus <strong className="text-root-modal-positive">+{pendidikanProductionBonusPercent.toFixed(1)}%</strong> produksi pangan dan sumber daya alam, berdasarkan level kabinet (1% per blok) serta bonus menteri jika ada. Berlaku di sektor <strong className="text-root-modal-positive">Mineral & Energi, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan</strong>.
                     </p>
                   )}
                   {currentReligionBonus && (
@@ -763,7 +763,7 @@ export default function ProduksiModal({
                   {isMemberOfFAO(playerCountryName) && (
                     <p>
                       <strong className="text-white">Keanggotaan Organisasi Internasional (FAO):</strong>{" "}
-                      Bonus +10% hasil produksi nasional di sektor <strong className="text-emerald-300">Peternakan, Agrikultur, Perikanan, dan Olahan Pangan</strong>.
+                      Bonus +10% hasil produksi nasional di sektor <strong className="text-root-modal-positive">Peternakan, Agrikultur, Perikanan, dan Olahan Pangan</strong>.
                     </p>
                   )}
                 </div>
@@ -790,7 +790,7 @@ export default function ProduksiModal({
                 </p>
               )}
               {hasActiveSanctions && (activeAssemblyEmbargoes.length > 0 || activeSecurityBlockades.some(item => item.type === "economic" || item.type === "naval")) && (
-                <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-amber-200">
+                <p className="rounded-lg border border-root-modal-warning/30 bg-root-modal-warning-bg p-3 text-root-body">
                   Dampak setiap resolusi produksi aktif diakumulasikan. Total pengurangan produksi sektor terdampak saat ini:{" "}
                   <strong>{effectiveProductionReduction}%</strong>
                   {activeAssemblyEmbargoes.length > 0 && (

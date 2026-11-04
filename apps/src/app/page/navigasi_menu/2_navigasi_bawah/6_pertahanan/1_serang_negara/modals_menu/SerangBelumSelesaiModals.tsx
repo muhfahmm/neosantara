@@ -82,7 +82,7 @@ export default function SerangBelumSelesaiModals({
             ref={closeButtonRef}
             type="button"
             onClick={onClose}
-            className="w-full sm:w-auto px-6 py-2 rounded-xl bg-root-accent hover:bg-[#00e699] border border-root-accent text-root-canvas font-black text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-root-accent"
+            className="w-full sm:w-auto px-6 py-2 rounded-xl bg-root-accent hover:bg-root-accent/85 border border-root-accent text-root-accent-ink font-black text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-root-accent"
           >
             Mengerti
           </button>

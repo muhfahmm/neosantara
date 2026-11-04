@@ -177,7 +177,7 @@ export default function TingkatkanHubunganModal({
 								value={inputAmount || ""}
 								onChange={(e) => setInputAmount(Math.max(0, parseInt(e.target.value) || 0))}
 								placeholder="Masukkan nominal NEO (Kelipatan 10.000)"
-								className="w-full bg-[#051010] border-2 border-root-accent/40 focus:border-root-accent rounded-xl py-2.5 px-4 text-base font-black text-root-accent outline-none transition placeholder-root-subtle/60"
+								className="w-full bg-root-canvas border-2 border-root-accent/40 focus:border-root-accent rounded-xl py-2.5 px-4 text-base font-black text-root-accent outline-none transition placeholder-root-subtle/60"
 							/>
 							<span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-root-accent/60">
 								NEO
@@ -284,21 +284,21 @@ export default function TingkatkanHubunganModal({
 
 					{/* Warning / Error Messages */}
 					{isInsufficientBudget && (
-						<div className="p-2.5 sm:p-3 bg-rose-950/60 border border-rose-500/40 rounded-xl text-rose-300 text-[11px] sm:text-xs flex items-center gap-2 shrink-0">
+						<div className="p-2.5 sm:p-3 bg-root-modal-negative-bg border border-root-modal-negative/40 rounded-xl text-root-modal-negative text-[11px] sm:text-xs flex items-center gap-2 shrink-0">
 							<AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
 							<span>Anggaran NEO Anda tidak mencukupi (Tersedia: {formatNEO(playerBudget)} NEO).</span>
 						</div>
 					)}
 
 					{isLessThanMin && (
-						<div className="p-2.5 sm:p-3 bg-amber-950/60 border border-amber-500/40 rounded-xl text-amber-300 text-[11px] sm:text-xs flex items-center gap-2 shrink-0">
+						<div className="p-2.5 sm:p-3 bg-root-modal-warning-bg border border-root-modal-warning/40 rounded-xl text-root-modal-warning text-[11px] sm:text-xs flex items-center gap-2 shrink-0">
 							<AlertCircle className="h-4 w-4 shrink-0 text-amber-400" />
 							<span>Minimal pemberian bantuan adalah 10.000 NEO untuk 1 tingkat hubungan.</span>
 						</div>
 					)}
 
 					{isMaxRelation && (
-						<div className="p-2.5 sm:p-3 bg-emerald-950/60 border border-emerald-500/40 rounded-xl text-emerald-300 text-[11px] sm:text-xs flex items-center gap-2 shrink-0">
+						<div className="p-2.5 sm:p-3 bg-root-modal-positive-bg border border-root-modal-positive-border rounded-xl text-root-modal-positive text-[11px] sm:text-xs flex items-center gap-2 shrink-0">
 							<CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
 							<span>Tingkat hubungan dengan negara ini sudah mencapai nilai maksimum (100).</span>
 						</div>
@@ -314,7 +314,7 @@ export default function TingkatkanHubunganModal({
 						<button
 							type="button"
 							onClick={onClose}
-							className="flex-1 bg-root-surface hover:bg-[#163535] border border-root-accent/30 rounded-xl py-2.5 sm:py-3 text-center text-root-text font-extrabold text-xs tracking-wider uppercase transition-all cursor-pointer"
+							className="flex-1 bg-root-surface hover:bg-root-accent/10 border border-root-accent/30 hover:border-root-accent rounded-xl py-2.5 sm:py-3 text-center text-root-text font-extrabold text-xs tracking-wider uppercase transition-all cursor-pointer"
 						>
 							Batal
 						</button>
@@ -323,8 +323,8 @@ export default function TingkatkanHubunganModal({
 							disabled={!isValid}
 							onClick={handleConfirm}
 							className={`flex-1 rounded-xl py-2.5 sm:py-3 text-center font-black text-xs tracking-wider uppercase transition-all shadow-lg flex items-center justify-center gap-2 ${isValid
-									? "bg-root-accent hover:bg-[#00e699] text-root-canvas border border-root-accent cursor-pointer"
-									: "bg-gray-700 text-gray-400 border border-gray-600 cursor-not-allowed opacity-50"
+									? "bg-root-accent hover:bg-root-accent/85 text-root-accent-ink border border-root-accent cursor-pointer"
+									: "bg-root-modal-neutral-bg text-root-muted border border-root-accent/20 cursor-not-allowed opacity-60"
 								}`}
 						>
 							<Heart className="h-4 w-4" />

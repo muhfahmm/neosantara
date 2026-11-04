@@ -84,7 +84,7 @@ export default function InfoInfrastrukturModal({
   const effectiveWaktu = discountPct > 0 ? Math.max(1, Math.floor(rawWaktu * (1 - discountPct / 100))) : rawWaktu;
 
   return (
-    <NotebookModalWrapper onClose={onClose} compact maxWidthClass="max-w-3xl">
+    <NotebookModalWrapper onClose={onClose} compact maxWidthClass="max-w-4xl">
       <div className="flex flex-col">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
@@ -110,15 +110,15 @@ export default function InfoInfrastrukturModal({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
-              <p className="text-[12px] font-bold text-root-subtle mb-1">Jumlah Fasilitas</p>
-              <p className="text-xl font-black text-white">
+              <p className="text-sm font-bold text-root-subtle mb-1">Jumlah Fasilitas</p>
+              <p className="text-xl font-black text-root-text">
                 {formatNumber(value)} unit
               </p>
             </div>
 
             {capacityDetail && (
               <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
-                <p className="text-[12px] font-bold text-root-subtle mb-1">Status Kapasitas Terpakai</p>
+                <p className="text-sm font-bold text-root-subtle mb-1">Status Kapasitas Terpakai</p>
                 <p className={`text-xl font-black ${capacityDetail.isFull ? "text-rose-400" : "text-root-accent"}`}>
                   {formatNumber(capacityDetail.used)} / {formatNumber(capacityDetail.totalCapacity)}
                 </p>

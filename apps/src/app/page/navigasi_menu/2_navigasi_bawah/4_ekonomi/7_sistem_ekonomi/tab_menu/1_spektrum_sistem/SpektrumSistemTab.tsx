@@ -79,7 +79,7 @@ export default function SpektrumSistemTab({
                 {populationImpact.monthlyModifierPercent >= 0 ? "+" : ""}
                 {populationImpact.monthlyModifierPercent.toFixed(2)}% / bulan
               </span>{" "}
-              <span className="text-[9px] text-[#A7C4C4]">
+              <span className="text-[9px] text-root-muted">
                 (Skor Kebijakan: {populationImpact.policyScore.toFixed(0)}/100)
               </span>
             </p>
@@ -130,8 +130,8 @@ export default function SpektrumSistemTab({
                   onClick={() => handleSelectPreset(preset.value)}
                   className={`px-2 py-1.5 rounded-lg border text-center transition-all cursor-pointer flex flex-col items-center justify-center ${
                     isActive
-                      ? "bg-root-accent text-root-canvas border-root-accent font-black shadow-sm"
-                      : "bg-root-surface text-[#A7C4C4] border-root-accent/25 hover:border-root-accent/60 hover:text-root-accent"
+                      ? "bg-root-accent text-root-accent-ink border-root-accent font-black shadow-sm"
+                      : "bg-root-surface text-root-muted border-root-accent/25 hover:border-root-accent/60 hover:text-root-accent"
                   }`}
                 >
                   <span className="text-[9px] lg:text-[10px] uppercase font-bold tracking-tight leading-tight">

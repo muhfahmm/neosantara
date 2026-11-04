@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { createPortal } from "react-dom";
-import { Info, X } from "lucide-react";
+import { Info } from "lucide-react";
 import { getKerjaSamaOrganisasiRegionalBonusPercent } from "@/app/page/bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/4_Kerja Sama Organisasi Regional";
+import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 
 interface OrgIntlInfoModalProps {
   isOpen: boolean;
@@ -146,18 +147,13 @@ export default function OrgIntlInfoModal({
     (_match, value: string) => scaleBenefitValue(value)
   );
 
-  return createPortal(
-    <div
-      className="fixed inset-0 z-[250] flex items-center justify-center p-4"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
-      }}
-    >
+  return (
+    <NotebookModalWrapper onClose={onClose} compact maxWidthClass="max-w-3xl" zIndexClass="z-[250]">
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="organization-info-title"
-        className="flex max-h-[min(80vh,640px)] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-root-accent/30 bg-root-surface font-sans shadow-2xl"
+        className="flex max-h-[calc(100dvh-160px)] min-w-0 flex-col overflow-hidden font-sans"
       >
         <header className="flex items-center justify-between border-b border-root-accent/30 bg-root-canvas px-5 py-4">
           <div className="flex min-w-0 items-center gap-3">
@@ -172,31 +168,26 @@ export default function OrgIntlInfoModal({
               <h2 id="organization-info-title" className="text-sm font-bold leading-tight text-root-text sm:text-base">{orgName}</h2>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="ml-3 rounded-lg border border-root-accent/30 p-2 text-root-subtle transition-colors hover:border-root-accent hover:text-root-accent"
-            aria-label="Tutup informasi"
-          >
-            <X className="h-4 w-4" />
-          </button>
+          <div className="ml-3">
+            <RootModalCloseButton onClick={onClose} />
+          </div>
         </header>
 
-        <div className="space-y-5 overflow-y-auto p-5 sm:p-6">
+        <div className="min-h-0 space-y-5 overflow-y-auto bg-root-surface p-5 sm:p-6">
           <section>
             <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-root-accent">Tentang organisasi</h3>
-            <p className="text-sm leading-relaxed text-[#C3D5D5]">{info.description}</p>
+            <p className="text-sm leading-relaxed text-root-body">{info.description}</p>
           </section>
           <section className="rounded-xl border border-root-accent/20 bg-root-canvas p-4">
             <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-root-accent">Fokus kerja</h3>
-            <p className="text-sm leading-relaxed text-[#C3D5D5]">{info.focus}</p>
+            <p className="text-sm leading-relaxed text-root-body">{info.focus}</p>
           </section>
           {info.benefit && (
-            <section className="rounded-xl border border-emerald-500/40 bg-[#0E2A20] p-4 flex items-center justify-between">
+            <section className="flex items-center justify-between rounded-xl border border-root-modal-positive-border bg-root-modal-positive-bg p-4">
               <div>
-                <h3 className="text-xs font-black uppercase tracking-widest text-emerald-300">Efek Keanggotaan / Bonus:</h3>
+                <h3 className="text-xs font-black uppercase tracking-widest text-root-modal-positive">Efek Keanggotaan / Bonus:</h3>
                 {isMember && researchBonusPercent > 0 && (
-                  <p className="mt-1 text-[11px] font-semibold text-emerald-200/80">
+                  <p className="mt-1 text-[11px] font-semibold text-root-body">
                     Riset Kerja Sama Organisasi Internasional: +{researchBonusPercent}% terhadap manfaat
                   </p>
                 )}
@@ -204,22 +195,11 @@ export default function OrgIntlInfoModal({
                   <p className="mt-1 text-[11px] font-semibold text-root-subtle">Manfaat aktif setelah negara menjadi anggota.</p>
                 )}
               </div>
-              <span className="text-right text-sm font-black text-emerald-400">{adjustedBenefit}</span>
+              <span className="text-right text-sm font-black text-root-modal-positive">{adjustedBenefit}</span>
             </section>
           )}
         </div>
-
-        <footer className="flex justify-end border-t border-root-accent/20 bg-root-canvas px-5 py-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-xl bg-root-accent px-5 py-2 text-xs font-extrabold uppercase tracking-wider text-root-canvas transition-colors hover:bg-[#00C282]"
-          >
-            Mengerti
-          </button>
-        </footer>
       </section>
-    </div>,
-    document.body,
+    </NotebookModalWrapper>
   );
 }

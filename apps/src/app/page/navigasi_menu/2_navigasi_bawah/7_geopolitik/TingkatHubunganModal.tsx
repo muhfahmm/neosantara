@@ -11,6 +11,7 @@ import { getEmbassiesForCountry } from "../../../../../../../json/6_database_ked
 import TingkatkanHubunganModal from "@/app/page/detail_negara/2_geopolitik/3_tingkatkan_hubungan/tingkatkanHubunganModals";
 import BeriHadiahModal from "@/app/page/detail_negara/2_geopolitik/2_beri_hadiah/beriHadiahModals";
 import MenuInfoButton from "../MenuInfoButton";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 
 interface ModalProps {
   isOpen: boolean;
@@ -154,7 +155,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
 
   return (
     <>
-      {!isPilihJalurOpen && !isTingkatkanUangOpen && !isBeriHadiahBarangOpen && <NotebookModalWrapper onClose={onClose}>
+      {!isLegendOpen && !isPilihJalurOpen && !isTingkatkanUangOpen && !isBeriHadiahBarangOpen && <NotebookModalWrapper onClose={onClose}>
         <div className="flex flex-col h-full overflow-hidden">
 
           {/* HEADER */}
@@ -244,7 +245,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                                 {row.hasEmbassy ? (
                                   <Building2 className="w-4 h-4 text-root-accent shrink-0" />
                                 ) : (
-                                  <Building2 className="w-4 h-4 text-gray-600 opacity-40 shrink-0" />
+                                  <Building2 className="w-4 h-4 text-root-muted opacity-60 shrink-0" />
                                 )}
                                 <span>{row.name}</span>
                               </div>
@@ -257,7 +258,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                                   Ada Kedutaan
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-800/60 text-slate-400 border border-slate-700/50 text-[11px] font-medium">
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-root-canvas text-root-muted border border-root-accent/20 text-[11px] font-medium">
                                   <ShieldAlert className="w-3.5 h-3.5 opacity-60" />
                                   Tidak Ada
                                 </span>
@@ -282,26 +283,21 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
 
       {/* MODAL LEGENDA */}
       {isLegendOpen && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 pointer-events-auto">
-          <div className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-lg shadow-2xl relative pointer-events-auto overflow-hidden">
+        <NotebookModalWrapper onClose={() => setIsLegendOpen(false)} compact maxWidthClass="max-w-2xl" zIndexClass="z-[70]">
+          <div role="dialog" aria-modal="true" aria-labelledby="relation-legend-title" className="flex max-h-[calc(100dvh-160px)] min-w-0 flex-col overflow-hidden">
             <div className="px-4 sm:px-5 py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas gap-2 shrink-0">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 bg-root-surface rounded-lg border border-root-accent/30">
                   <Info className="h-4 w-4 text-root-accent" />
                 </div>
-                <h3 className="text-sm font-bold text-root-accent uppercase tracking-wide">
+                <h3 id="relation-legend-title" className="text-sm font-bold text-root-accent uppercase tracking-wide">
                   Indikator Hubungan Diplomatik
                 </h3>
               </div>
-              <button
-                onClick={() => setIsLegendOpen(false)}
-                className="p-1.5 rounded-lg border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <RootModalCloseButton onClick={() => setIsLegendOpen(false)} />
             </div>
 
-            <div className="p-5 space-y-3">
+            <div className="min-h-0 overflow-y-auto bg-root-surface p-5 space-y-3">
               <div className="flex items-center justify-between border-b border-root-accent/15 pb-2">
                 <span className="text-xs font-bold text-root-text">0 - 25</span>
                 <div className="flex items-center gap-3">
@@ -348,7 +344,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
               </button>
             </div>
           </div>
-        </div>
+        </NotebookModalWrapper>
       )}
 
       {/* MODAL PILIH JALUR */}
@@ -434,7 +430,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                 <button
                   type="button"
                   onClick={() => setIsPilihJalurOpen(false)}
-                  className="px-6 py-3 bg-root-surface hover:bg-[#163535] border border-root-accent/30 rounded-xl text-center text-root-text font-black text-xs tracking-wider uppercase transition-all cursor-pointer"
+                  className="px-6 py-3 bg-root-surface hover:bg-root-accent/10 border border-root-accent/30 hover:border-root-accent rounded-xl text-center text-root-text font-black text-xs tracking-wider uppercase transition-all cursor-pointer"
                 >
                   Batal
                 </button>

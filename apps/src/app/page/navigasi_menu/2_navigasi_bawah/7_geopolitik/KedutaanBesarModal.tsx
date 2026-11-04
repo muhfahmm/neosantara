@@ -116,7 +116,7 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
   const renderFlag = (iso: string, altName: string) => {
     if (!iso || iso.length !== 2) return null;
     return (
-      <div className="w-6 h-4 rounded-sm overflow-hidden border border-root-accent/20 flex-shrink-0 shadow-sm bg-[#051111] relative">
+      <div className="w-6 h-4 rounded-sm overflow-hidden border border-root-accent/20 flex-shrink-0 shadow-sm bg-root-canvas relative">
         <img
           src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
           alt={altName}
@@ -209,7 +209,7 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
                 {embassies.map((item: any, idx: number) => {
                   const iso = getIsoFromName(item.mitra);
                   return (
-                    <div key={idx} className="bg-root-canvas border border-root-accent/20 p-4 rounded-xl flex flex-row items-center justify-between w-full gap-4">
+                    <div key={idx} className="bg-root-canvas border border-root-accent/20 hover:border-root-accent/50 hover:bg-root-accent/5 p-4 rounded-xl flex flex-row items-center justify-between w-full gap-4 transition-colors">
 
                       {/* Bagian Informasi Kedutaan */}
                       <div>
@@ -230,7 +230,7 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
                       <div className="flex flex-row items-center gap-2 flex-shrink-0">
                         <button
                           onClick={() => handleOpenCountryDetail(item.mitra)}
-                          className="border border-root-accent/40 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5"
+                          className="border border-root-accent/40 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-accent-ink px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5"
                         >
                           <Globe className="w-3.5 h-3.5" />
                           Lihat Detail
