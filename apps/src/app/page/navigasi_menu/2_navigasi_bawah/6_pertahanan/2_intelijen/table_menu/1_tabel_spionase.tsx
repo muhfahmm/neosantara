@@ -1,8 +1,10 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Binoculars, ChevronUp, ChevronDown, Search } from "lucide-react";
 import { getArmadaPowerSummary } from "../../4_armada/logic/armadaLogic";
 import KonfirmasiSpionaseModals from "../modals_konfirmasi/konfirmasiSpionaseModals";
+import { getTravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
+import { useTravelFuelQuote } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/useTravelFuelQuote";
 // 🔥 Import COUNTRIES_DATA untuk meng-enrich ISO
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 
@@ -45,7 +47,7 @@ const extractISO = (country: any, countryName: string): string => {
 interface SpionaseProps {
   prefetchedAllCountries?: any[];
   countryDetail?: any; // 🔥 Tambahkan prop untuk negara user
-  onAction: (targetCountry: any) => void;
+  onAction: (targetCountry: RankingRow, cost: number, tripId: string) => void;
 }
 
 export default function Spionase({ prefetchedAllCountries, countryDetail, onAction }: SpionaseProps) {
@@ -57,6 +59,30 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, onActi
   const [selectedTarget, setSelectedTarget] = useState<RankingRow | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const tripIdRef = useRef<string | null>(null);
+  const playerCountryName = String(
+    countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || "",
+  );
+  const travelFuelQuote = useTravelFuelQuote(
+    playerCountryName,
+    selectedTarget?.countryName ?? "",
+    "spionase",
+    isModalOpen,
+  );
+  const travelFuelStatus = getTravelFuelStatus(
+    countryDetail,
+    travelFuelQuote.cost,
+    travelFuelQuote.loading,
+    travelFuelQuote.fallback,
+  );
+
+  useEffect(() => {
+    if (isModalOpen && !tripIdRef.current) {
+      tripIdRef.current = `travel-spionase-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    } else if (!isModalOpen) {
+      tripIdRef.current = null;
+    }
+  }, [isModalOpen]);
 
   const rawRankings = useMemo(() => {
     const playerName = String(
@@ -254,9 +280,11 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, onActi
           onClose={() => setIsModalOpen(false)}
           targetCountry={selectedTarget}
           playerCountryDetail={countryDetail}
+          travelFuelStatus={travelFuelStatus}
           onConfirm={() => {
+            if (!travelFuelStatus.ok || travelFuelQuote.cost === null || !tripIdRef.current) return;
             setIsModalOpen(false);
-            onAction(selectedTarget);
+            onAction(selectedTarget, travelFuelQuote.cost, tripIdRef.current);
           }}
         />
       )}

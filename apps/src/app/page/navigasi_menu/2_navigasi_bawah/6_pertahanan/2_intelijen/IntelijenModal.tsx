@@ -14,6 +14,10 @@ import {
   type CovertOperationResult,
   type CovertOperationType,
 } from "@/app/page/detail_negara/3_operasi_militer/covertOperationLogic";
+import {
+  checkTravelFuel,
+  consumeTravelFuel,
+} from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -27,6 +31,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
   const [activeTab, setActiveTab] = useState<'spionase' | 'sabotase'>('spionase');
   const [covertOperationResult, setCovertOperationResult] = useState<CovertOperationResult | null>(null);
   const pendingCovertOperationsRef = useRef(new Map<string, CovertOperationType>());
+  const launchedTravelFuelIdsRef = useRef(new Set<string>());
 
   useEffect(() => {
     const handleCovertOperationArrival = (event: Event) => {
@@ -46,8 +51,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
   if (!isOpen) return null;
 
   const anggaran = countryDetail?.anggaran || 0;
-  const launchCovertOperation = (operation: CovertOperationType, targetCountry: string) => {
-    const pathId = `covert-${operation}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+  const launchCovertOperation = (operation: CovertOperationType, targetCountry: string, pathId: string) => {
     pendingCovertOperationsRef.current.set(pathId, operation);
     window.dispatchEvent(new CustomEvent('neosantara_diplomacy_path', {
       detail: {
@@ -60,29 +64,53 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
   };
 
   // 🔥 Logika aksi untuk Spionase
-  const handleSpionaseAction = (target: any) => {
+  const handleSpionaseAction = (target: { countryName: string }, fuelCost: number, pathId: string) => {
+    if (!countryDetail || !checkTravelFuel(countryDetail, fuelCost).ok) return;
     if (anggaran < 10000000) {
       alert("Kas negara tidak mencukupi untuk misi spionase!");
       return;
     }
-    setCountryDetail({
-      ...countryDetail,
-      anggaran: anggaran - 10000000
-    });
-    launchCovertOperation('spionase', target.countryName);
+    if (launchedTravelFuelIdsRef.current.has(pathId)) return;
+    const updatedDetail = consumeTravelFuel(
+      { ...countryDetail, anggaran: anggaran - 10000000 },
+      fuelCost,
+      {
+        id: pathId,
+        date: String(countryDetail?.currentDate || countryDetail?.gameDate || new Date().toISOString()).slice(0, 10),
+        targetCountry: target.countryName,
+        travelType: "spionase",
+        amount: fuelCost,
+      },
+    );
+    if (updatedDetail === countryDetail) return;
+    launchedTravelFuelIdsRef.current.add(pathId);
+    setCountryDetail(updatedDetail);
+    launchCovertOperation('spionase', target.countryName, pathId);
   };
 
   // 🔥 Logika aksi untuk Sabotase
-  const handleSabotaseAction = (target: any) => {
+  const handleSabotaseAction = (target: { countryName: string }, fuelCost: number, pathId: string) => {
+    if (!countryDetail || !checkTravelFuel(countryDetail, fuelCost).ok) return;
     if (anggaran < 20000000) {
       alert("Kas negara tidak mencukupi untuk operasi sabotase!");
       return;
     }
-    setCountryDetail({
-      ...countryDetail,
-      anggaran: anggaran - 20000000
-    });
-    launchCovertOperation('sabotase', target.countryName);
+    if (launchedTravelFuelIdsRef.current.has(pathId)) return;
+    const updatedDetail = consumeTravelFuel(
+      { ...countryDetail, anggaran: anggaran - 20000000 },
+      fuelCost,
+      {
+        id: pathId,
+        date: String(countryDetail?.currentDate || countryDetail?.gameDate || new Date().toISOString()).slice(0, 10),
+        targetCountry: target.countryName,
+        travelType: "sabotase",
+        amount: fuelCost,
+      },
+    );
+    if (updatedDetail === countryDetail) return;
+    launchedTravelFuelIdsRef.current.add(pathId);
+    setCountryDetail(updatedDetail);
+    launchCovertOperation('sabotase', target.countryName, pathId);
   };
 
   return (

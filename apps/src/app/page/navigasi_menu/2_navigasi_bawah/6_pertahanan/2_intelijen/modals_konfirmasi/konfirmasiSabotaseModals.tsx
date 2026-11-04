@@ -3,12 +3,15 @@ import React from "react";
 import { X, Bomb, AlertTriangle } from "lucide-react";
 import { getCovertOperationSuccessChance } from "@/app/page/detail_negara/3_operasi_militer/covertOperationLogic";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
+import TravelFuelCostPanel from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
+import type { TravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
 
 interface KonfirmasiSabotaseModalsProps {
   isOpen: boolean;
   onClose: () => void;
   targetCountry: any;
   playerCountryDetail?: Record<string, unknown> | null;
+  travelFuelStatus?: TravelFuelStatus;
   onConfirm: () => void;
 }
 
@@ -17,6 +20,7 @@ export default function KonfirmasiSabotaseModals({
   onClose,
   targetCountry,
   playerCountryDetail,
+  travelFuelStatus,
   onConfirm,
 }: KonfirmasiSabotaseModalsProps) {
   if (!isOpen || !targetCountry) return null;
@@ -83,6 +87,7 @@ export default function KonfirmasiSabotaseModals({
                 Peluang keberhasilan: <span className="font-black text-rose-400">{successChance}%</span>
               </p>
             </div>
+            {travelFuelStatus && <TravelFuelCostPanel status={travelFuelStatus} />}
           </div>
         </div>
 
@@ -93,7 +98,8 @@ export default function KonfirmasiSabotaseModals({
           </button>
           <button
             onClick={onConfirm}
-            className="px-6 py-2 rounded-xl bg-orange-500 text-white shadow-lg shadow-orange-900/30 font-black text-xs uppercase tracking-wider hover:bg-orange-400 active:scale-95 transition-all cursor-pointer flex items-center gap-2"
+            disabled={travelFuelStatus ? !travelFuelStatus.ok : false}
+            className="px-6 py-2 rounded-xl bg-orange-500 text-white shadow-lg shadow-orange-900/30 font-black text-xs uppercase tracking-wider hover:bg-orange-400 active:scale-95 transition-all cursor-pointer flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Bomb className="w-4 h-4" />
             Luncurkan Sabotase

@@ -10,6 +10,7 @@ import {
 } from "../../3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
 import { getProductionBonusMultiplier } from "../../../../bonus_logic";
 import { getTotalIndustrialMaterialConsumption } from "../1_produksi/construction_support/1_produksi/industrialMaterialLogic";
+import { getMaterialStock as readMaterialStock } from "./materialStockLogic";
 
 export const RESOURCE_KEY_ALIASES: Record<string, string> = {};
 
@@ -17,17 +18,11 @@ export const normalizeResourceKey = (key: string): string => {
   return RESOURCE_KEY_ALIASES[key] || key;
 };
 
-export const getMaterialStock = (countryDetail: any, resourceKey: string, metadata?: Record<string, any>): number => {
-  if (!countryDetail) return 0;
-  const normalizedKey = normalizeResourceKey(resourceKey);
-  const inventoryKey = `inventory_${normalizedKey}`;
-  if (countryDetail[inventoryKey] !== undefined && countryDetail[inventoryKey] !== null) {
-    return Number(countryDetail[inventoryKey]) || 0;
-  }
-
-  // Jika belum ada data akumulasi inventory (hari pertama), stok diawali dari 0
-  return 0;
-};
+export const getMaterialStock = (
+  countryDetail: Record<string, unknown> | null | undefined,
+  resourceKey: string,
+  metadata?: Record<string, unknown>,
+): number => readMaterialStock(countryDetail, normalizeResourceKey(resourceKey), metadata);
 
 export const getBulkBuildQuantityTarget = (originalCost: number): number =>
   Math.max(

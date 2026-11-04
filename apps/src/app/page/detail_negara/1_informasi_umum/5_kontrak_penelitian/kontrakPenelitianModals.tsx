@@ -3,14 +3,17 @@ import React from "react";
 import { createPortal } from "react-dom";
 
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
+import TravelFuelCostPanel from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
+import type { TravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
 interface KontrakPenelitianModalProps {
 	isOpen: boolean;
 	countryName?: string | null;
 	onClose: () => void;
 	onConfirm: () => void;
+	travelFuelStatus?: TravelFuelStatus;
 }
 
-export default function KontrakPenelitianModal({ isOpen, countryName, onClose, onConfirm }: KontrakPenelitianModalProps) {
+export default function KontrakPenelitianModal({ isOpen, countryName, onClose, onConfirm, travelFuelStatus }: KontrakPenelitianModalProps) {
 	if (!isOpen) return null;
 	const modalContent = (
 		<NotebookModalWrapper compact maxWidthClass="max-w-xl" zIndexClass="z-[100000001]">
@@ -26,6 +29,7 @@ export default function KontrakPenelitianModal({ isOpen, countryName, onClose, o
 					<p className="text-sm sm:text-base text-[#E0E0E0] mb-6 leading-relaxed">
 						Mulai kontrak penelitian dengan <strong className="text-white">{countryName}</strong>? Kolaborasi ini mengurangi durasi semua penelitian nasional sebesar <strong className="text-[#00FFAA]">0,1%</strong> per negara mitra.
 					</p>
+					{travelFuelStatus && <TravelFuelCostPanel status={travelFuelStatus} />}
 				</div>
 
 				{/* Area Tombol di bagian paling bawah (Diperkecil) */}
@@ -39,6 +43,7 @@ export default function KontrakPenelitianModal({ isOpen, countryName, onClose, o
 
 					<button
 						onClick={() => { onConfirm(); onClose(); }}
+						disabled={travelFuelStatus ? !travelFuelStatus.ok : false}
 						className="w-full sm:w-auto px-6 bg-[#00FFAA] hover:bg-[#00e699] border border-[#00FFAA] rounded-xl py-2 text-center text-[#0A1A1A] font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
 					>
 						Mulai Kontrak

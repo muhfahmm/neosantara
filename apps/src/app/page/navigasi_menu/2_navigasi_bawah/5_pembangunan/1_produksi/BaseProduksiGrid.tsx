@@ -20,6 +20,7 @@ import { getEconomicEmbargoProductionMultiplier } from "../../7_geopolitik/1_PBB
 import { getActiveProductionBanForResource } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/5_laranganProduksiLogic";
 import { formatProductionProductName } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog";
 import { getProductionBonusMultiplier } from "../../../../bonus_logic";
+import { getTravelOilConsumptionThisMonth } from "../../3_produksi_konsumsi/fuelLogic/travelFuelLogic";
 
 const ELECTRICITY_FUEL_RESOURCE_KEYS = [
   "gas_alam",
@@ -361,10 +362,20 @@ export default function BaseProduksiGrid({
                       const stock = getMaterialStock(countryDetail, key);
                       const isFuel = ELECTRICITY_FUEL_RESOURCE_KEYS.includes(key);
                       const colorClass = (isFuel && stock > 0) ? 'text-emerald-400' : 'text-[#00FFAA]';
+                      const travelOilConsumption = key === 'minyak_bumi'
+                        ? getTravelOilConsumptionThisMonth(countryDetail, currentDate ?? new Date())
+                        : 0;
                       return (
-                        <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${colorClass}`}>
-                          {stock.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
-                        </span>
+                        <div className="flex flex-col items-center">
+                          <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${colorClass}`}>
+                            {stock.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
+                          </span>
+                          {travelOilConsumption > 0 && (
+                            <span className="mt-0.5 text-[8px] sm:text-[9px] font-bold leading-tight text-amber-300">
+                              Konsumsi perjalanan bulan ini: {travelOilConsumption.toLocaleString('id-ID')} barel
+                            </span>
+                          )}
+                        </div>
                       );
                     })()}
                   </div>

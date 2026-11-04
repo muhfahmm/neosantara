@@ -5,6 +5,8 @@ import { X, Swords, Shield, Ship, Plane, ChevronDown, ChevronUp } from "lucide-r
 import { getArmadaPowerSummary } from "../../4_armada/logic/armadaLogic";
 import { convertBarakToSoldiers } from "../../4_armada/logic/1_barak_logic";
 import { getActivePlayerAttack, type PlayerAttackStatus } from "./playerAttackStatus";
+import TravelFuelCostPanel from "../../../3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
+import type { TravelFuelStatus } from "../../../3_produksi_konsumsi/fuelLogic/travelFuelLogic";
 
 interface SerangModalsProps {
   isOpen: boolean;
@@ -13,6 +15,7 @@ interface SerangModalsProps {
   countryDetail: any;
   onConfirm: (deploymentConfig: Record<string, number>) => void;
   onAttackBlocked: (status: PlayerAttackStatus, requestedTarget: string) => void;
+  travelFuelStatus: TravelFuelStatus;
 }
 
 type ArmadaGroup = "darat" | "laut" | "udara";
@@ -121,6 +124,7 @@ export default function SerangModals({
   countryDetail,
   onConfirm,
   onAttackBlocked,
+  travelFuelStatus,
 }: SerangModalsProps) {
   const [deploymentPct, setDeploymentPct] = useState<Record<string, number>>({});
 
@@ -310,6 +314,8 @@ export default function SerangModals({
 
             </div>
 
+            <TravelFuelCostPanel status={travelFuelStatus} label="Bahan bakar serangan" />
+
             {/* BAGIAN 2: RINCIAN PASUKAN PER MATRA */}
             <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl shadow-sm space-y-4">
               {/* BUTTON OTOMATISASI GLOBAL */}
@@ -423,9 +429,9 @@ export default function SerangModals({
           </button>
           <button 
             onClick={handleConfirm}
-            disabled={!hasDeployedUnits}
+            disabled={!hasDeployedUnits || !travelFuelStatus.ok}
             className={`px-8 py-2 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${
-              hasDeployedUnits
+              hasDeployedUnits && travelFuelStatus.ok
                 ? "bg-rose-600 text-white shadow-lg shadow-rose-900/30 hover:bg-rose-500 active:scale-95 cursor-pointer"
                 : "bg-gray-800 text-gray-500 border border-gray-700/60 cursor-not-allowed opacity-60"
             }`}

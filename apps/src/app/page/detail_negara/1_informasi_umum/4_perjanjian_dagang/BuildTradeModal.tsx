@@ -3,15 +3,18 @@ import React from "react";
 import { createPortal } from "react-dom";
 
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
+import TravelFuelCostPanel from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
+import type { TravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
 interface BuildTradeModalProps {
   isOpen: boolean;
   countryName?: string | null;
   chancePercent?: number;
   onClose: () => void;
   onConfirm: () => void;
+  travelFuelStatus?: TravelFuelStatus;
 }
 
-export default function BuildTradeModal({ isOpen, countryName, onClose, onConfirm }: BuildTradeModalProps) {
+export default function BuildTradeModal({ isOpen, countryName, onClose, onConfirm, travelFuelStatus }: BuildTradeModalProps) {
   if (!isOpen) return null;
 
   const modalContent = (
@@ -28,6 +31,7 @@ export default function BuildTradeModal({ isOpen, countryName, onClose, onConfir
           <p className="text-sm sm:text-base text-[#E0E0E0] mb-6 leading-relaxed">
             Apakah Anda ingin mengajukan perjanjian dagang kepada <strong className="text-white">{countryName}</strong>? Ini akan membuka jalur perdagangan antara kedua negara jika diterima.
           </p>
+          {travelFuelStatus && <TravelFuelCostPanel status={travelFuelStatus} />}
           
           {/* 🔥 PERBAIKAN: Blok Peluang Diterima telah dihapus */}
         </div>
@@ -43,6 +47,7 @@ export default function BuildTradeModal({ isOpen, countryName, onClose, onConfir
 
           <button
             onClick={() => { onConfirm(); onClose(); }}
+            disabled={travelFuelStatus ? !travelFuelStatus.ok : false}
             className="w-full sm:w-auto px-6 bg-[#00FFAA] hover:bg-[#00e699] border border-[#00FFAA] rounded-xl py-2 text-center text-[#0A1A1A] font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
           >
             Jalin Perjanjian

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ShieldAlert, X } from "lucide-react";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import KonfirmasiPeluncuranSerangan from "./konfirmasi_peluncuran_serangan";
@@ -9,6 +9,12 @@ import { areSameWarCountry, getWarCountryIdentity } from './warCountryIdentity';
 import { getArmadaPowerSummary } from "@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic";
 import { applyWarLossesToUserArmada } from './war_algoritm/battleEngine';
 import { getActivePlayerAttack, type PlayerAttackStatus } from '@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/playerAttackStatus';
+import { useTravelFuelQuote } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/useTravelFuelQuote";
+import {
+	checkTravelFuel,
+	consumeTravelFuel,
+	getTravelFuelStatus,
+} from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
 
 interface SerangNegaraModalProps {
 	isOpen: boolean;
@@ -45,6 +51,36 @@ export default function SerangNegaraModal({
 }: SerangNegaraModalProps) {
 	const [isLaunchConfirmationOpen, setIsLaunchConfirmationOpen] = useState(false);
 	const [blockedAttackReason, setBlockedAttackReason] = useState<'pact' | 'self' | null>(null);
+	const attackFuelTripIdRef = useRef<string | null>(null);
+	const launchedAttackFuelIdsRef = useRef(new Set<string>());
+	const playerNameForFuel = String(
+		playerCountryDetail?.country ||
+		playerCountryDetail?.nama_negara ||
+		playerCountryDetail?.name_id ||
+		playerCountryDetail?.name_en ||
+		"",
+	);
+	const attackFuelQuote = useTravelFuelQuote(
+		playerNameForFuel,
+		countryName ?? "",
+		"military-attack",
+		isOpen && Boolean(countryName),
+	);
+	const attackFuelStatus = getTravelFuelStatus(
+		playerCountryDetail,
+		attackFuelQuote.cost,
+		attackFuelQuote.loading,
+		attackFuelQuote.fallback,
+	);
+
+	useEffect(() => {
+		if (!isOpen || !countryName) {
+			attackFuelTripIdRef.current = null;
+			return;
+		}
+		attackFuelTripIdRef.current = `military-attack-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+		launchedAttackFuelIdsRef.current.clear();
+	}, [isOpen, countryName]);
 
 	if (!isOpen || !countryName) return null;
 
@@ -109,6 +145,21 @@ export default function SerangNegaraModal({
 	const targetPower = targetSummary?.totals?.totalPower ?? 1000000;
 
 	const handleLaunchAttack = (deploymentConfig?: Record<string, number>) => {
+		const fuelCost = attackFuelQuote.cost;
+		const fuelTripId = attackFuelTripIdRef.current;
+		if (
+			!fuelTripId ||
+			launchedAttackFuelIdsRef.current.has(fuelTripId) ||
+			fuelCost === null ||
+			!getTravelFuelStatus(
+				playerCountryDetail,
+				fuelCost,
+				attackFuelQuote.loading,
+				attackFuelQuote.fallback,
+			).ok ||
+			!checkTravelFuel(playerCountryDetail, fuelCost).ok
+		) return;
+
 		const activeAttack = getActivePlayerAttack();
 		if (activeAttack) {
 			setIsLaunchConfirmationOpen(false);
@@ -175,8 +226,25 @@ export default function SerangNegaraModal({
 			console.error("Serangan dibatalkan karena stok pasukan yang dipilih sudah habis.");
 			return;
 		}
+		if (!updatePlayerCountryDetail) {
+			console.error("Serangan dibatalkan karena stok minyak tidak dapat disimpan.");
+			return;
+		}
+		const fuelUpdatedDetail = consumeTravelFuel(updatedDetail, fuelCost, {
+			id: fuelTripId,
+			date: String(
+				playerCountryDetail?.currentDate ||
+				playerCountryDetail?.gameDate ||
+				new Date().toISOString(),
+			).slice(0, 10),
+			targetCountry: countryName,
+			travelType: "military-attack",
+			amount: fuelCost,
+		});
+		if (fuelUpdatedDetail === updatedDetail) return;
+		launchedAttackFuelIdsRef.current.add(fuelTripId);
 		if (updatePlayerCountryDetail) {
-			updatePlayerCountryDetail(() => updatedDetail);
+			updatePlayerCountryDetail(() => fuelUpdatedDetail);
 		}
 
 		onAttackLaunched?.();
@@ -246,6 +314,7 @@ export default function SerangNegaraModal({
 			targetCountry={targetForConfirmation}
 			countryDetail={playerCountryDetail}
 			onAttackBlocked={(status, requestedTarget) => onPlayerAttackBlocked?.(status, requestedTarget)}
+			travelFuelStatus={attackFuelStatus}
 			onConfirm={(deploymentConfig) => {
 				if (isSelfTarget) {
 					setBlockedAttackReason('self');

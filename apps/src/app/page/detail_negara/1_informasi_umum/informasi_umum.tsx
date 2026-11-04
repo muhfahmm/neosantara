@@ -51,6 +51,13 @@ import {
   getNonAggressionPactAcceptanceChancePercent,
 } from "@/app/page/bonus_logic";
 import { estimateTravelTime } from '../../path_logic/time_logic';
+import TravelFuelCostPanel from "../../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
+import {
+  consumeTravelFuel,
+  getTravelFuelStatus,
+  type TravelFuelType,
+} from "../../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
+import { useTravelFuelQuote } from "../../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/useTravelFuelQuote";
 
 interface InformasiUmumProps {
   countryName: string;
@@ -126,6 +133,38 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   const [isKirimPasukanModalOpen, setIsKirimPasukanModalOpen] = useState(false);
   const [isPanggilSekutuModalOpen, setIsPanggilSekutuModalOpen] = useState(false);
   const [isBerikanSanksiModalOpen, setIsBerikanSanksiModalOpen] = useState(false);
+  const travelFuelModalOpen = isPaktaModalOpen || isAliansiModalOpen || isKontrakModalOpen || isBuildTradeModalOpen;
+  const travelFuelType: TravelFuelType = isPaktaModalOpen
+    ? "non-aggression-pact"
+    : isAliansiModalOpen
+      ? "defense-alliance"
+      : isKontrakModalOpen
+        ? "research-contract"
+        : "trade-agreement";
+  const travelFuelQuote = useTravelFuelQuote(
+    playerCountryName || "Indonesia",
+    countryName,
+    travelFuelType,
+    travelFuelModalOpen,
+  );
+  const travelFuelStatus = getTravelFuelStatus(
+    playerCountryDetail,
+    travelFuelQuote.cost,
+    travelFuelQuote.loading,
+    travelFuelQuote.fallback,
+  );
+  const travelFuelTripIdRef = useRef<string | null>(null);
+  const consumedTravelFuelIdsRef = useRef(new Set<string>());
+  const wasTravelFuelModalOpenRef = useRef(false);
+
+  useEffect(() => {
+    if (travelFuelModalOpen && !wasTravelFuelModalOpenRef.current) {
+      travelFuelTripIdRef.current = `travel-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    } else if (!travelFuelModalOpen) {
+      travelFuelTripIdRef.current = null;
+    }
+    wasTravelFuelModalOpenRef.current = travelFuelModalOpen;
+  }, [travelFuelModalOpen]);
 
   const isAnyModalActive = isDestroyModalOpen || isBuildEmbassyModalOpen || isEmbassyRelationRequirementModalOpen ||
     isDestroyTradeModalOpen || isBuildTradeModalOpen || isPaktaModalOpen || isAliansiModalOpen || isKontrakModalOpen ||
@@ -170,16 +209,38 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     }, ...(Array.isArray(detail.pending_notifications) ? detail.pending_notifications : [])],
   });
   const startDiplomacyPath = (
-    kind: 'non-aggression-pact' | 'defense-alliance' | 'trade-agreement' | 'research-contract'
+    kind: 'non-aggression-pact' | 'defense-alliance' | 'trade-agreement' | 'research-contract',
+    pathId = `diplomacy-path-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
   ) => {
     window.dispatchEvent(new CustomEvent('neosantara_diplomacy_path', {
       detail: {
-        pathId: `diplomacy-path-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+        pathId,
         kind,
         senderCountry: playerCountryName || 'Indonesia',
         targetCountry: countryName,
       },
     }));
+  };
+  const consumeDiplomacyTravelFuel = (kind: TravelFuelType): string | null => {
+    const cost = travelFuelQuote.cost;
+    const tripId = travelFuelTripIdRef.current;
+    if (!setPlayerCountryDetail || !playerCountryDetail || cost === null || !tripId) return null;
+    if (consumedTravelFuelIdsRef.current.has(tripId)) return null;
+
+    const status = getTravelFuelStatus(playerCountryDetail, cost);
+    if (!status.ok) return null;
+    const nextDetail = consumeTravelFuel(playerCountryDetail, cost, {
+      id: tripId,
+      date: getCurrentDateString(),
+      targetCountry: countryName,
+      travelType: kind,
+      amount: cost,
+    });
+    if (nextDetail === playerCountryDetail) return null;
+
+    consumedTravelFuelIdsRef.current.add(tripId);
+    setPlayerCountryDetail(nextDetail);
+    return tripId;
   };
   const getDiplomacyTravelArrival = () => {
     const senderCountry = playerCountryName || 'Indonesia';
@@ -208,9 +269,11 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   };
   const startDiplomacyRatification = (
     kind: 'defense-alliance' | 'trade-agreement' | 'research-contract'
-  ) => {
+  ): boolean => {
     const arrival = getDiplomacyTravelArrival();
-    if (!arrival) return;
+    if (!arrival) return false;
+    const pathId = consumeDiplomacyTravelFuel(kind);
+    if (!pathId) return false;
     setPlayerCountryDetail?.((prev: Record<string, unknown> | null) => {
       if (!prev) return prev;
       const ongoing = Array.isArray(prev.ongoingDiplomacyRatifications)
@@ -234,7 +297,8 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         ],
       }, 'Ratifikasi Diplomatik Dimulai', `Ratifikasi ${kind === 'defense-alliance' ? 'Aliansi Pertahanan' : kind === 'trade-agreement' ? 'Perjanjian Dagang' : 'Kontrak Penelitian'} dengan ${countryName} dimulai. Perjalanan diplomatik diperkirakan tiba pada ${arrival.date}.`);
     });
-    startDiplomacyPath(kind);
+    startDiplomacyPath(kind, pathId);
+    return true;
   };
 
   const currentNetBalance = Number(currentNetBalanceProp ?? 0);
@@ -752,6 +816,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         isOpen={isBuildTradeModalOpen}
         countryName={countryName}
         chancePercent={tradeAcceptanceChance}
+        travelFuelStatus={travelFuelStatus}
         onClose={() => setIsBuildTradeModalOpen(false)}
         onConfirm={() => {
           if (blockDiplomaticAction()) return;
@@ -781,8 +846,9 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           }
 
           setTradeActive(false);
-          startDiplomacyRatification('trade-agreement');
-          console.log(`Ratifikasi perjanjian dagang dengan ${countryName} dimulai.`);
+          if (startDiplomacyRatification('trade-agreement')) {
+            console.log(`Ratifikasi perjanjian dagang dengan ${countryName} dimulai.`);
+          }
         }}
       />
 
@@ -790,6 +856,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         isOpen={isPaktaModalOpen}
         countryName={countryName}
         chancePercent={nonAggressionPactAcceptanceChance}
+        travelFuelStatus={travelFuelStatus}
         onClose={() => setIsPaktaModalOpen(false)}
         onConfirm={() => {
           if (blockDiplomaticAction()) return;
@@ -820,12 +887,14 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
 
           const arrival = getDiplomacyTravelArrival();
           if (!arrival) return;
+          const pathId = consumeDiplomacyTravelFuel('non-aggression-pact');
+          if (!pathId) return;
           setPlayerCountryDetail?.((prev: Record<string, unknown> | null) => {
             if (!prev) return prev;
             const ongoing = Array.isArray(prev.ongoingNonAggressionPactRatifications) ? prev.ongoingNonAggressionPactRatifications : [];
             return withDiplomacyNotification({ ...prev, ongoingNonAggressionPactRatifications: [...ongoing.filter((p: any) => String(p.targetCountry || '').toLowerCase().trim() !== normCountryName), { id: `pact-${Date.now()}`, targetCountry: countryName, startDate: getCurrentDateString(), endDate: arrival.date, durationDays: arrival.days }] }, 'Ratifikasi Pakta Non-Agresi Dimulai', `Pakta Non-Agresi dengan ${countryName} sedang diratifikasi. Perjalanan diplomatik diperkirakan tiba pada ${arrival.date}.`);
           });
-          startDiplomacyPath('non-aggression-pact');
+          startDiplomacyPath('non-aggression-pact', pathId);
           console.log(`Ratifikasi Pakta Non-Agresi dengan ${countryName} dimulai. Estimasi tiba: ${arrival.date} (${arrival.days} hari).`);
         }}
       />
@@ -863,12 +932,14 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
       <AliansiPertahananModal
         isOpen={isAliansiModalOpen}
         countryName={countryName}
+        travelFuelStatus={travelFuelStatus}
         onClose={() => setIsAliansiModalOpen(false)}
         onConfirm={() => {
           if (blockDiplomaticAction()) return;
           setAliansiActive(false);
-          startDiplomacyRatification('defense-alliance');
-          console.log(`Ratifikasi aliansi pertahanan dengan ${countryName} dimulai.`);
+          if (startDiplomacyRatification('defense-alliance')) {
+            console.log(`Ratifikasi aliansi pertahanan dengan ${countryName} dimulai.`);
+          }
         }}
       />
 
@@ -892,12 +963,14 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
       <KontrakPenelitianModal
         isOpen={isKontrakModalOpen}
         countryName={countryName}
+        travelFuelStatus={travelFuelStatus}
         onClose={() => setIsKontrakModalOpen(false)}
         onConfirm={() => {
           if (blockDiplomaticAction()) return;
           setKontrakActive(false);
-          startDiplomacyRatification('research-contract');
-          console.log(`Ratifikasi kontrak penelitian dengan ${countryName} dimulai.`);
+          if (startDiplomacyRatification('research-contract')) {
+            console.log(`Ratifikasi kontrak penelitian dengan ${countryName} dimulai.`);
+          }
         }}
       />
 

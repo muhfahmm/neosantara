@@ -1,5 +1,6 @@
 import { getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/construction_support/1_produksi/1_kelistrikan/fuelLogic";
 import { getProductionBonusMultiplier } from "../../../../bonus_logic";
+import { getTravelOilConsumptionThisMonth } from "../fuelLogic/travelFuelLogic";
 
 export const ELECTRICITY_PLANT_KEYS = [
   "pembangkit_listrik_tenaga_nuklir",
@@ -115,7 +116,11 @@ export function findMeta(metadata: Record<string, any> | undefined, key: string)
   return undefined;
 }
 
-export function getCountryConsumptionBreakdown(countryData: any, metadata: Record<string, any> = {}) {
+export function getCountryConsumptionBreakdown(
+  countryData: any,
+  metadata: Record<string, any> = {},
+  currentDate: Date | string = new Date(),
+) {
   if (!countryData) {
     return {
       totalProductionMW: 0,
@@ -128,6 +133,7 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
       totalPertahananConsumption: 0,
       totalProduksiConsumption: 0,
       totalAllBreakdownConsumption: 0,
+      travelOilConsumptionThisMonth: 0,
       balanceMW: 0,
     };
   }
@@ -324,6 +330,7 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
     totalPertahananConsumption,
     totalProduksiConsumption,
     totalAllBreakdownConsumption,
+    travelOilConsumptionThisMonth: getTravelOilConsumptionThisMonth(countryData, currentDate),
     balanceMW,
   };
 }

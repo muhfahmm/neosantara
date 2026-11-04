@@ -3,12 +3,15 @@ import React from "react";
 import { X, Binoculars, Eye } from "lucide-react";
 import { getCovertOperationSuccessChance } from "@/app/page/detail_negara/3_operasi_militer/covertOperationLogic";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
+import TravelFuelCostPanel from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
+import type { TravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
 
 interface KonfirmasiSpionaseModalsProps {
   isOpen: boolean;
   onClose: () => void;
   targetCountry: any;
   playerCountryDetail?: Record<string, unknown> | null;
+  travelFuelStatus?: TravelFuelStatus;
   onConfirm: () => void;
 }
 
@@ -17,6 +20,7 @@ export default function KonfirmasiSpionaseModals({
   onClose,
   targetCountry,
   playerCountryDetail,
+  travelFuelStatus,
   onConfirm,
 }: KonfirmasiSpionaseModalsProps) {
   if (!isOpen || !targetCountry) return null;
@@ -83,6 +87,7 @@ export default function KonfirmasiSpionaseModals({
                 Peluang keberhasilan: <span className="font-black text-[#00FFAA]">{successChance}%</span>
               </p>
             </div>
+            {travelFuelStatus && <TravelFuelCostPanel status={travelFuelStatus} />}
           </div>
         </div>
 
@@ -93,7 +98,8 @@ export default function KonfirmasiSpionaseModals({
           </button>
           <button
             onClick={onConfirm}
-            className="px-6 py-2 rounded-xl bg-[#00FFAA] text-[#0A1A1A] shadow-lg shadow-[#00FFAA]/20 font-black text-xs uppercase tracking-wider hover:bg-[#00FFAA]/80 active:scale-95 transition-all cursor-pointer flex items-center gap-2"
+            disabled={travelFuelStatus ? !travelFuelStatus.ok : false}
+            className="px-6 py-2 rounded-xl bg-[#00FFAA] text-[#0A1A1A] shadow-lg shadow-[#00FFAA]/20 font-black text-xs uppercase tracking-wider hover:bg-[#00FFAA]/80 active:scale-95 transition-all cursor-pointer flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Binoculars className="w-4 h-4" />
             Luncurkan Misi
