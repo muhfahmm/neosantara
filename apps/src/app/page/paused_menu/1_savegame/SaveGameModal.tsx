@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ArrowLeft, Calendar, Globe, Plus, RotateCw } from 'lucide-react';
+import { Calendar, Globe, Plus, RotateCw } from 'lucide-react';
 import PausedMenuFrame from '../../root_modals_design_menu/rootFrameMenu';
+import { PausedMenuHeader } from '../../root_modals_design_menu/PausedMenuHeader';
 import type { GameSaveRecord } from './saveGameLogic';
 
 interface SaveGameModalProps {
@@ -47,28 +48,12 @@ export function SaveGameModal({
 
     return (
         <PausedMenuFrame zIndexClass="z-[99999999]">
-                <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-8 text-root-text custom-scrollbar">
-                    <div className="flex items-center justify-center gap-1.5 text-root-accent/40 mb-4 shrink-0">
-                        <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-root-accent/40" />
-                        <span className="text-[10px] tracking-widest font-black uppercase">❖ ❖ ❖</span>
-                        <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-root-accent/40" />
-                    </div>
-                    <header className="mb-4 flex shrink-0 items-center justify-between border-b border-root-accent/20 pb-3 text-left">
-                        <div className="flex items-center gap-2">
-                            <button
-                                type="button"
-                                onClick={handleBack}
-                                aria-label="Kembali"
-                                className="rounded p-1 text-root-subtle transition-all hover:bg-root-accent/10 hover:text-root-accent cursor-pointer"
-                            >
-                                <ArrowLeft className="h-4 w-4" />
-                            </button>
-                            <h2 className="text-sm font-extrabold uppercase tracking-wider text-root-accent">
-                                {isCreatingNewSlot ? 'BUAT SIMPANAN BARU' : 'SIMPAN PERMAINAN'}
-                            </h2>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            {!isCreatingNewSlot && (
+                <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-4 text-root-text custom-scrollbar sm:p-8">
+                    <PausedMenuHeader
+                        title={isCreatingNewSlot ? 'Buat Simpanan Baru' : 'Simpan Permainan'}
+                        onBack={handleBack}
+                        rightContent={
+                            !isCreatingNewSlot ? (
                                 <button
                                     type="button"
                                     onClick={onCreateNewSlot}
@@ -76,9 +61,9 @@ export function SaveGameModal({
                                 >
                                     <Plus className="h-3.5 w-3.5" /> Slot Baru
                                 </button>
-                            )}
-                        </div>
-                    </header>
+                            ) : null
+                        }
+                    />
 
                     {!isCreatingNewSlot ? (
                         <div className="min-h-0 flex-1 overflow-y-auto pr-1">

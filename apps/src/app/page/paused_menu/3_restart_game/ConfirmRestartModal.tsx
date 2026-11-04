@@ -2,8 +2,9 @@
 
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { AlertTriangle, RotateCcw, ArrowLeft } from 'lucide-react';
+import { AlertTriangle, RotateCcw } from 'lucide-react';
 import PausedMenuFrame from '../../root_modals_design_menu/rootFrameMenu';
+import { PausedMenuHeader } from '../../root_modals_design_menu/PausedMenuHeader';
 
 interface ConfirmRestartModalProps {
     isOpen: boolean;
@@ -16,31 +17,9 @@ export function ConfirmRestartModal({ isOpen, onClose, onConfirm }: ConfirmResta
 
     const content = (
         <PausedMenuFrame zIndexClass="z-[999999999]">
-                <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-8 text-root-text custom-scrollbar">
-                    
-                    {/* Ornamen Atas */}
-                    <div className="flex items-center justify-center gap-1.5 text-root-accent/40 mb-4 shrink-0">
-                        <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-root-accent/40" />
-                        <span className="text-[10px] tracking-widest font-black uppercase">❖ ❖ ❖</span>
-                        <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-root-accent/40" />
-                    </div>
+                <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-4 text-root-text custom-scrollbar sm:p-8">
 
-                    {/* Header - Menggunakan ArrowLeft seperti SaveGameModal */}
-                    <header className="mb-4 flex shrink-0 items-center justify-between border-b border-root-accent/20 pb-3 text-left">
-                        <div className="flex items-center gap-2">
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                aria-label="Kembali ke menu jeda"
-                                className="rounded p-1 text-root-subtle transition-all hover:bg-root-accent/10 hover:text-root-accent cursor-pointer"
-                            >
-                                <ArrowLeft className="h-4 w-4" />
-                            </button>
-                            <h2 className="text-sm font-extrabold uppercase tracking-wider text-amber-400">
-                                ATUR ULANG PROGRES?
-                            </h2>
-                        </div>
-                    </header>
+                    <PausedMenuHeader title="Atur Ulang Progres?" onBack={onClose} backLabel="Kembali ke menu jeda" />
 
                     {/* Konten Utama */}
                     <div className="flex-1 flex flex-col justify-center items-center space-y-5 my-4">
@@ -83,7 +62,6 @@ export function ConfirmRestartModal({ isOpen, onClose, onConfirm }: ConfirmResta
                         </button>
                     </div>
 
-                    {/* Ornamen Bawah */}
                     <div className="flex items-center justify-center gap-1.5 text-root-accent/40 mt-4 shrink-0">
                         <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-root-accent/40" />
                         <span className="text-[10px] tracking-widest font-black uppercase">❖ ❖ ❖</span>

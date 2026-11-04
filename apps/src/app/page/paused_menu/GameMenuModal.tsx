@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import {
-    ArrowLeft, Volume2, Music, Monitor, Keyboard
+    Volume2, Music, Monitor, Keyboard
 } from 'lucide-react';
 import { KeywordModal } from './5_keyword/keyword';
 import { MapSettingsSection } from './4_settings/MapSettingsSection';
@@ -13,6 +13,7 @@ import { ExitConfirmModal } from './ExitConfirmModal';
 import { LoadGameView } from './2_load_game/LoadGameView';
 import { deleteGameSave, fetchLoadableGameSaves, loadGameSave, type LoadGameSave } from './2_load_game/loadGameLogic';
 import PausedMenuFrame from '../root_modals_design_menu/rootFrameMenu';
+import { PausedMenuHeader } from '../root_modals_design_menu/PausedMenuHeader';
 import { soundManager } from '@/lib/soundManager';
 
 interface GameMenuModalProps {
@@ -118,17 +119,16 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
             <div className={isConfirming ? 'pointer-events-none' : 'pointer-events-auto'}>
                 <PausedMenuFrame zIndexClass="z-[99999999]">
                     <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-4 custom-scrollbar sm:p-8">
-                        {/* Decorative Elegant Divider at the Top */}
-                        <div className="flex items-center justify-center gap-1.5 text-root-accent/40 mb-6 shrink-0">
-                            <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-root-accent/40" />
-                            <span className="text-[10px] tracking-widest font-black uppercase">❖ ❖ ❖</span>
-                            <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-root-accent/40" />
-                        </div>
-
                         {/* View: MAIN LIST MENU */}
                         {subview === 'menu' && (
                             <div className="flex-1 flex flex-col justify-between">
-                                <div className="space-y-3">
+                                <div>
+                                    <div className="flex items-center justify-center gap-1.5 text-root-accent/40 mb-6 shrink-0">
+                                        <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-root-accent/40" />
+                                        <span className="text-[10px] tracking-widest font-black uppercase">❖ ❖ ❖</span>
+                                        <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-root-accent/40" />
+                                    </div>
+                                    <div className="space-y-3">
                                     <button
                                         onClick={onClose}
                                         className="w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
@@ -173,6 +173,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                         <Keyboard className="w-4 h-4 text-root-accent" />
                                         <span>Pintasan Keyboard</span>
                                     </button>
+                                    </div>
                                 </div>
 
                                 <div className="pt-12">
@@ -200,15 +201,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                         {/* View: OPTIONS CONFIG */}
                         {subview === 'options' && (
                             <div className="flex-1 flex flex-col justify-between">
-                                <div className="flex items-center gap-2 border-b border-root-accent/20 pb-2 mb-6 shrink-0 text-left">
-                                    <button
-                                        onClick={() => setSubview('menu')}
-                                        className="p-1 rounded hover:bg-root-accent/10 text-root-subtle hover:text-root-accent cursor-pointer transition-all"
-                                    >
-                                        <ArrowLeft className="w-4 h-4" />
-                                    </button>
-                                    <span className="font-extrabold text-[14px] text-root-accent uppercase tracking-wider">PENGATURAN</span>
-                                </div>
+                                <PausedMenuHeader title="Pengaturan" onBack={() => setSubview('menu')} backLabel="Kembali ke menu jeda" />
 
                                 <div className="flex-1 space-y-6 text-left shrink-0">
                                     {/* Option: Music Volume */}

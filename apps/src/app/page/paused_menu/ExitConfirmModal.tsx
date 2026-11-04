@@ -2,8 +2,9 @@
 
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { LogOut, AlertTriangle, ArrowLeft } from 'lucide-react';
+import { LogOut, AlertTriangle } from 'lucide-react';
 import PausedMenuFrame from '../root_modals_design_menu/rootFrameMenu';
+import { PausedMenuHeader } from '../root_modals_design_menu/PausedMenuHeader';
 
 interface ExitConfirmModalProps {
     isOpen: boolean;
@@ -39,31 +40,9 @@ export function ExitConfirmModal({
 
     const content = (
         <PausedMenuFrame zIndexClass="z-[9999999999]">
-                <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-8 text-root-text custom-scrollbar">
-                    
-                    {/* Ornamen Atas */}
-                    <div className="flex items-center justify-center gap-1.5 text-root-accent/40 mb-4 shrink-0">
-                        <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-root-accent/40" />
-                        <span className="text-[10px] tracking-widest font-black uppercase">❖ ❖ ❖</span>
-                        <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-root-accent/40" />
-                    </div>
+                <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-4 text-root-text custom-scrollbar sm:p-8">
 
-                    {/* Header dengan ArrowLeft di samping judul */}
-                    <header className="mb-4 flex shrink-0 items-center justify-start border-b border-root-accent/20 pb-3 text-left">
-                        <div className="flex items-center gap-2">
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                aria-label="Kembali ke menu jeda"
-                                className="rounded p-1 text-root-subtle transition-all hover:bg-root-accent/10 hover:text-root-accent cursor-pointer"
-                            >
-                                <ArrowLeft className="h-4 w-4" />
-                            </button>
-                            <h2 className={`text-sm font-extrabold uppercase tracking-wider ${isExitWindow ? 'text-rose-400' : 'text-root-accent'}`}>
-                                {title}
-                            </h2>
-                        </div>
-                    </header>
+                    <PausedMenuHeader title={title} onBack={onClose} backLabel="Kembali ke menu jeda" />
 
                     {/* Konten Utama */}
                     <div className="flex-1 flex flex-col justify-center items-center space-y-6 my-4">
@@ -107,7 +86,6 @@ export function ExitConfirmModal({
                         </button>
                     </footer>
 
-                    {/* Ornamen Bawah */}
                     <div className="flex items-center justify-center gap-1.5 text-root-accent/40 mt-4 shrink-0">
                         <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-root-accent/40" />
                         <span className="text-[10px] tracking-widest font-black uppercase">❖ ❖ ❖</span>

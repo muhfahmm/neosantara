@@ -250,8 +250,8 @@ export function FpsMonitoringSettings() {
                 <Activity className="h-3.5 w-3.5 text-root-accent" />
                 Monitor FPS di layar
             </span>
-            <span className={`flex h-[18px] w-8 items-center rounded-full p-0.5 transition-colors ${isEnabled ? 'bg-root-accent' : 'bg-gray-700'}`}>
-                <span className={`h-3.5 w-3.5 rounded-full bg-black shadow-sm transition-transform ${isEnabled ? 'translate-x-3.5' : 'translate-x-0'}`} />
+            <span className={`flex h-[18px] w-8 items-center rounded-full p-0.5 transition-colors ${isEnabled ? 'bg-root-accent' : 'bg-root-subtle/50'}`}>
+                <span className={`h-3.5 w-3.5 rounded-full bg-root-accent-ink shadow-sm transition-transform ${isEnabled ? 'translate-x-3.5' : 'translate-x-0'}`} />
             </span>
         </button>
     );

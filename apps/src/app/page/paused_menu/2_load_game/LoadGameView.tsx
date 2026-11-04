@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { ArrowLeft, Calendar, Globe, Trash2 } from 'lucide-react';
+import { Calendar, Globe, Trash2 } from 'lucide-react';
 import type { LoadGameSave } from './loadGameLogic';
+import { PausedMenuHeader } from '../../root_modals_design_menu/PausedMenuHeader';
 
 interface LoadGameViewProps {
     saves: LoadGameSave[];
@@ -15,17 +16,7 @@ interface LoadGameViewProps {
 export function LoadGameView({ saves, isLoading, onBack, onLoad, onDelete }: LoadGameViewProps) {
     return (
         <div className="flex flex-1 flex-col justify-between overflow-hidden">
-            <div className="mb-4 flex items-center gap-2 border-b border-root-accent/20 pb-2 text-left">
-                <button
-                    type="button"
-                    onClick={onBack}
-                    aria-label="Kembali"
-                    className="rounded p-1 text-root-subtle transition-all hover:bg-root-accent/10 hover:text-root-accent cursor-pointer"
-                >
-                    <ArrowLeft className="h-4 w-4" />
-                </button>
-                <span className="text-sm font-extrabold tracking-wider text-root-accent">MUAT PERMAINAN</span>
-            </div>
+            <PausedMenuHeader title="Muat Permainan" onBack={onBack} />
             <div className="flex-1 space-y-3 overflow-y-auto pr-1">
                 {isLoading ? (
                     <p className="py-16 text-center text-xs font-bold text-root-subtle">Memuat data simpanan...</p>

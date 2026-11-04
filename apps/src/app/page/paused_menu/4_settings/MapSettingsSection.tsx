@@ -96,9 +96,9 @@ export function MapSettingsSection() {
                         <span className="text-[11px] font-semibold text-gray-200">Garis Batas Provinsi / Kota</span>
                     </div>
                     <div className={`w-8 h-4.5 flex items-center rounded-full p-0.5 transition-colors ${
-                        settings.showProvinceBorders ? 'bg-root-accent' : 'bg-gray-700'
+                        settings.showProvinceBorders ? 'bg-root-accent' : 'bg-root-subtle/50'
                     }`}>
-                        <div className={`bg-black w-3.5 h-3.5 rounded-full shadow-sm transform transition-transform ${
+                        <div className={`bg-root-accent-ink w-3.5 h-3.5 rounded-full shadow-sm transform transition-transform ${
                             settings.showProvinceBorders ? 'translate-x-3.5' : 'translate-x-0'
                         }`} />
                     </div>
@@ -114,9 +114,9 @@ export function MapSettingsSection() {
                         <span className="text-[11px] font-semibold text-gray-200">Pin Kota-Kota Besar</span>
                     </div>
                     <div className={`w-8 h-4.5 flex items-center rounded-full p-0.5 transition-colors ${
-                        settings.showMajorCities ? 'bg-root-accent' : 'bg-gray-700'
+                        settings.showMajorCities ? 'bg-root-accent' : 'bg-root-subtle/50'
                     }`}>
-                        <div className={`bg-black w-3.5 h-3.5 rounded-full shadow-sm transform transition-transform ${
+                        <div className={`bg-root-accent-ink w-3.5 h-3.5 rounded-full shadow-sm transform transition-transform ${
                             settings.showMajorCities ? 'translate-x-3.5' : 'translate-x-0'
                         }`} />
                     </div>
@@ -132,9 +132,9 @@ export function MapSettingsSection() {
                         <span className="text-[11px] font-semibold text-gray-200">Pin Ibukota Negara</span>
                     </div>
                     <div className={`w-8 h-4.5 flex items-center rounded-full p-0.5 transition-colors ${
-                        settings.showCapitals ? 'bg-root-accent' : 'bg-gray-700'
+                        settings.showCapitals ? 'bg-root-accent' : 'bg-root-subtle/50'
                     }`}>
-                        <div className={`bg-black w-3.5 h-3.5 rounded-full shadow-sm transform transition-transform ${
+                        <div className={`bg-root-accent-ink w-3.5 h-3.5 rounded-full shadow-sm transform transition-transform ${
                             settings.showCapitals ? 'translate-x-3.5' : 'translate-x-0'
                         }`} />
                     </div>

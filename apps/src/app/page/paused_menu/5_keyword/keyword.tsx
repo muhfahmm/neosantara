@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ArrowLeft, Command, Search } from 'lucide-react';
+import { Command, Search } from 'lucide-react';
 import PausedMenuFrame from '../../root_modals_design_menu/rootFrameMenu';
+import { PausedMenuHeader } from '../../root_modals_design_menu/PausedMenuHeader';
 import { GAME_SHORTCUTS, type ShortcutDefinition } from './index';
 
 interface KeywordModalProps {
@@ -34,27 +35,7 @@ export function KeywordModal({ isOpen, onClose }: KeywordModalProps) {
     <PausedMenuFrame zIndexClass="z-[999999999]">
       <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden p-4 text-root-text custom-scrollbar sm:p-8">
         <div className="relative z-10 flex min-h-0 flex-1 flex-col">
-          <div className="mb-4 flex shrink-0 items-center justify-center gap-1.5 text-root-accent/40">
-            <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-root-accent/40" />
-            <span className="text-[10px] tracking-widest font-black uppercase">❖ ❖ ❖</span>
-            <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-root-accent/40" />
-          </div>
-
-          <header className="mb-4 flex shrink-0 items-center justify-between border-b border-root-accent/20 pb-3 text-left">
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label="Kembali ke menu jeda"
-                className="cursor-pointer rounded p-1 text-root-subtle transition-all hover:bg-root-accent/10 hover:text-root-accent"
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </button>
-              <h2 className="text-sm font-extrabold uppercase tracking-wider text-root-accent">
-                Pintasan Keyboard
-              </h2>
-            </div>
-          </header>
+          <PausedMenuHeader title="Pintasan Keyboard" onBack={onClose} backLabel="Kembali ke menu jeda" />
 
           <div className="mb-4 flex shrink-0 flex-col gap-3 border-b border-root-accent/15 pb-4">
             <div className="relative w-full">
