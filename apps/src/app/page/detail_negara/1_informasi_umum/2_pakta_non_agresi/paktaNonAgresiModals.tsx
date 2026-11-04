@@ -43,7 +43,7 @@ export default function PaktaNonAgresiModal({ isOpen, countryName, onClose, onCo
 				<div className="flex flex-col sm:flex-row gap-3 justify-end mt-6 pt-4 border-t border-root-accent/20">
 					<button
 						onClick={onClose}
-						className="w-full sm:w-auto px-6 bg-root-canvas hover:bg-[#142A2A] border border-root-accent/30 rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
+						className="w-full sm:w-auto px-6 bg-root-canvas border border-root-accent/30 hover:border-root-accent rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-colors duration-150 cursor-pointer shadow"
 					>
 						Batal
 					</button>
@@ -51,7 +51,7 @@ export default function PaktaNonAgresiModal({ isOpen, countryName, onClose, onCo
 					<button
 						onClick={() => { onConfirm(); onClose(); }}
 						disabled={travelFuelStatus ? !travelFuelStatus.ok : false}
-						className="w-full sm:w-auto px-6 bg-root-accent hover:bg-[#00e699] border border-root-accent rounded-xl py-2 text-center text-root-canvas font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
+						className="w-full sm:w-auto px-6 bg-root-accent border border-root-accent hover:border-root-text rounded-xl py-2 text-center text-root-canvas font-black text-[11px] sm:text-xs tracking-widest uppercase transition-colors duration-150 cursor-pointer shadow active:scale-[0.98]"
 					>
 						Jalin Pakta
 					</button>

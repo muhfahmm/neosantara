@@ -67,14 +67,6 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.paused-menu-frame .paused-menu-rail {
-  background: linear-gradient(90deg, #2a3f3f, #3d5252, #1f3030);
-}
-
-:root[data-theme='light'] .paused-menu-frame .paused-menu-rail {
-  background: linear-gradient(90deg, #d2c4ae, #b5a48b, #e1d5c3);
-}
-
 .root-no-scrollbar-glow::-webkit-scrollbar-thumb {
   box-shadow: none !important;
 }
