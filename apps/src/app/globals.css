@@ -67,6 +67,140 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+:root[data-theme='light'] .notebook-modal-frame [class*="text-emerald-"],
+:root[data-theme='light'] .notebook-modal-frame [class*="text-green-"],
+:root[data-theme='light'] .notebook-modal-frame [class*="text-lime-"] {
+  color: var(--root-modal-positive);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class*="text-rose-"],
+:root[data-theme='light'] .notebook-modal-frame [class*="text-red-"] {
+  color: var(--root-modal-negative);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class*="text-amber-"],
+:root[data-theme='light'] .notebook-modal-frame [class*="text-yellow-"] {
+  color: var(--root-modal-warning);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class*="text-cyan-"],
+:root[data-theme='light'] .notebook-modal-frame [class*="text-sky-"],
+:root[data-theme='light'] .notebook-modal-frame [class*="text-blue-"] {
+  color: var(--root-modal-info);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class~="text-[#A2B7B2]"],
+:root[data-theme='light'] .notebook-modal-frame [class~="text-[#A0B0B0]"] {
+  color: var(--root-color-muted);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class~="text-[#00D68F]"] {
+  color: var(--root-modal-positive);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class~="text-[#FFE600]"] {
+  color: var(--root-modal-warning);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-emerald-950"],
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-green-950"],
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-emerald-500/"],
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-green-500/"] {
+  background-color: var(--root-modal-positive-bg);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-emerald-600"],
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-green-600"] {
+  background-color: var(--root-modal-positive-bg-strong);
+  color: var(--root-color-text);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class*="border-emerald-"],
+:root[data-theme='light'] .notebook-modal-frame [class*="border-green-"] {
+  border-color: var(--root-modal-positive-border);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-rose-950"],
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-red-950"],
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-rose-500/"],
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-red-500/"] {
+  background-color: var(--root-modal-negative-bg);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class*="border-rose-"],
+:root[data-theme='light'] .notebook-modal-frame [class*="border-red-"] {
+  border-color: color-mix(in srgb, var(--root-modal-negative) 35%, transparent);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-amber-950"],
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-yellow-950"],
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-amber-500/"],
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-yellow-500/"] {
+  background-color: var(--root-modal-warning-bg);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class*="border-amber-"],
+:root[data-theme='light'] .notebook-modal-frame [class*="border-yellow-"] {
+  border-color: color-mix(in srgb, var(--root-modal-warning) 35%, transparent);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-slate-950"],
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-slate-900"],
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-gray-950"],
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-gray-900"],
+:root[data-theme='light'] .notebook-modal-frame [class~="bg-black"] {
+  background-color: var(--root-modal-neutral-bg);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class*="border-slate-800"],
+:root[data-theme='light'] .notebook-modal-frame [class*="border-slate-900"],
+:root[data-theme='light'] .notebook-modal-frame [class*="border-gray-800"],
+:root[data-theme='light'] .notebook-modal-frame [class*="border-gray-900"] {
+  border-color: color-mix(in srgb, var(--root-color-muted) 30%, transparent);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class*="text-slate-800"],
+:root[data-theme='light'] .notebook-modal-frame [class*="text-slate-900"],
+:root[data-theme='light'] .notebook-modal-frame [class*="text-gray-800"],
+:root[data-theme='light'] .notebook-modal-frame [class*="text-gray-900"] {
+  color: var(--root-color-body);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class~="bg-white"] {
+  background-color: var(--root-color-surface);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class~="bg-[#051111]"],
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-[#050D0D]"] {
+  background-color: var(--root-modal-neutral-bg);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class*="bg-[#FFE600]"] {
+  background-color: var(--root-modal-warning-bg);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class~="bg-[#00D68F]"] {
+  background-color: var(--root-modal-positive-bg-strong);
+  color: var(--root-color-text);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class~="bg-[#102727]"] {
+  background-color: var(--root-modal-neutral-bg);
+}
+
+:root[data-theme='light'] .notebook-modal-frame button[class*="bg-emerald-"] .text-white,
+:root[data-theme='light'] .notebook-modal-frame button[class*="bg-green-"] .text-white {
+  color: var(--root-color-text);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class*="hover:bg-[#00C282]"]:hover {
+  background-color: var(--root-modal-positive-bg-strong);
+}
+
+:root[data-theme='light'] .notebook-modal-frame [class*="hover:bg-[#FFE600]"]:hover {
+  background-color: var(--root-modal-warning-bg);
+}
+
 .root-no-scrollbar-glow::-webkit-scrollbar-thumb {
   box-shadow: none !important;
 }

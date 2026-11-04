@@ -13,6 +13,17 @@
   --root-frame-rail-end: #FFF8EC;
   --root-frame-rail-cap: #FFFDF7;
   --root-frame-rail-cap-border: #E8DDCB;
+  --root-modal-positive: #00D995;
+  --root-modal-positive-bg: rgb(0 217 149 / 12%);
+  --root-modal-positive-bg-strong: rgb(0 217 149 / 22%);
+  --root-modal-positive-border: rgb(0 217 149 / 35%);
+  --root-modal-negative: #FF6478;
+  --root-modal-negative-bg: rgb(255 100 120 / 12%);
+  --root-modal-warning: #F2BD62;
+  --root-modal-warning-bg: rgb(242 189 98 / 14%);
+  --root-modal-info: #67C6D8;
+  --root-modal-info-bg: rgb(103 198 216 / 14%);
+  --root-modal-neutral-bg: rgb(255 255 255 / 5%);
 }
 
 :root[data-theme='light'] {
@@ -30,6 +41,17 @@
   --root-frame-rail-end: #FFF8EC;
   --root-frame-rail-cap: #FFFDF7;
   --root-frame-rail-cap-border: #E8DDCB;
+  --root-modal-positive: #54734C;
+  --root-modal-positive-bg: #E8EEDF;
+  --root-modal-positive-bg-strong: #DBE6D1;
+  --root-modal-positive-border: #B5C5A9;
+  --root-modal-negative: #A65349;
+  --root-modal-negative-bg: #F3E5E0;
+  --root-modal-warning: #87672F;
+  --root-modal-warning-bg: #F1E9D9;
+  --root-modal-info: #52717A;
+  --root-modal-info-bg: #E5ECEC;
+  --root-modal-neutral-bg: #F0E9DD;
 }
 
 @theme inline {

@@ -20,7 +20,7 @@ interface NotebookModalWrapperProps {
 export function NotebookModalWrapper({
   children,
   onClose,
-  ringCount = 11,
+  ringCount,
   maxWidthClass = 'max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl',
   zIndexClass = 'z-[60]',
   isHidden = false,
@@ -29,6 +29,7 @@ export function NotebookModalWrapper({
   hideWhenInfoModalOpen = true,
 }: NotebookModalWrapperProps) {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const decorationsCount = ringCount ?? (compact ? 5 : 11);
 
   useEffect(() => {
     if (!hideWhenInfoModalOpen) return;
@@ -44,14 +45,14 @@ export function NotebookModalWrapper({
 
   return (
     <div
-      className={`${isHidden || (hideWhenInfoModalOpen && isInfoModalOpen) ? 'hidden' : ''} fixed inset-0 ${zIndexClass} flex items-center justify-center pt-[88px] sm:pt-[100px] lg:pt-[clamp(92px,10dvh,115px)] pb-3 sm:pb-4 lg:pb-5 px-3 sm:px-6 lg:px-10 font-sans pointer-events-none`}
+      className={`notebook-modal-frame ${isHidden || (hideWhenInfoModalOpen && isInfoModalOpen) ? 'hidden' : ''} fixed inset-0 ${zIndexClass} flex items-center justify-center pt-[88px] sm:pt-[100px] lg:pt-[clamp(92px,10dvh,115px)] pb-3 sm:pb-4 lg:pb-5 px-3 sm:px-6 lg:px-10 font-sans pointer-events-none`}
     >
       {/* Notebook Outer Frame */}
       <div
         onClick={(e) => e.stopPropagation()}
         className={`bg-root-canvas border-[6px] border-root-surface ${squareCorners ? 'rounded-none' : 'rounded-2xl'} w-full ${maxWidthClass} ${compact ? 'h-auto max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)]' : 'h-full max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)]'} shadow-2xl relative flex flex-col min-w-0 p-3 sm:p-4 pl-10 sm:pl-12 pointer-events-auto overflow-hidden`}
       >
-        <RootNotebookDecorations count={ringCount} />
+        <RootNotebookDecorations count={decorationsCount} />
 
         {/* Main Panel Sheet — Green Theme */}
         <div className={`${compact ? 'flex-none' : 'flex-1'} min-w-0 bg-root-surface border-[3px] border-root-accent/20 ${squareCorners ? 'rounded-none' : 'rounded-r-xl'} shadow-inner relative flex flex-col overflow-hidden`}>
