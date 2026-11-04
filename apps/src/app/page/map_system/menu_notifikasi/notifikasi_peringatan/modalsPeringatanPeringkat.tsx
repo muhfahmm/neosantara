@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { AlertTriangle, ShieldAlert } from 'lucide-react';
+import { ShieldAlert } from 'lucide-react';
+import { RootNotebookDecorations } from '@/app/page/root_modals_design_menu/RootNotebookDecorations';
 
 interface ModalsPeringatanPeringkatProps {
     isOpen: boolean;
@@ -45,21 +46,8 @@ export function ModalsPeringatanPeringkat({ isOpen, onClose, currentRating, warn
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-4  font-sans select-none animate-fade-in">
 
             {/* Skeuomorphic Confirmation Frame */}
-            <div className="bg-[#181111] border-[4px] border-red-950 rounded-2xl w-full max-w-[430px] shadow-2xl relative flex flex-col p-3.5 pl-9 min-h-[360px] animate-scale-up animate-in fade-in duration-300">
-
-                {/* Silver Binder Spine on the Left */}
-                <div className="absolute left-2.5 top-4 bottom-4 w-1.5 bg-gradient-to-r from-red-600 via-red-400 to-red-800 rounded-full shadow-md z-20 border border-red-950/40" />
-                <div className="absolute left-[7px] top-[18px] w-[12px] h-2 bg-red-950 rounded-sm border border-slate-950 z-21 shadow" />
-                <div className="absolute left-[7px] bottom-[18px] w-[12px] h-2 bg-red-950 rounded-sm border border-slate-950 z-21 shadow" />
-
-                {/* Notebook rings */}
-                <div className="absolute left-[16px] top-8 bottom-8 flex flex-col justify-between items-center py-4 pointer-events-none z-30">
-                    {[...Array(7)].map((_, i) => (
-                        <div key={i} className="w-2.5 h-2.5 rounded-full bg-slate-950 shadow-inner border border-red-900 flex items-center justify-center">
-                            <div className="w-1 h-1 rounded-full bg-red-950" />
-                        </div>
-                    ))}
-                </div>
+            <div className="bg-[#181111] border-[4px] border-red-950 rounded-2xl w-full max-w-[430px] shadow-2xl relative flex flex-col p-3.5 pl-[52px] min-h-[360px] animate-scale-up animate-in fade-in duration-300">
+                <RootNotebookDecorations count={7} />
 
                 {/* Parchment Sheet Card */}
                 <div className="flex-1 bg-[#FAF4F4] border-[3px] border-red-200/50 rounded-r-xl shadow-inner relative p-6 flex flex-col justify-between overflow-hidden text-center">

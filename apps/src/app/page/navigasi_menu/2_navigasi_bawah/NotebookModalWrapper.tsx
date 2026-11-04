@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { RootNotebookDecorations } from '@/app/page/root_modals_design_menu/RootNotebookDecorations';
 
 export const MENU_INFO_MODAL_VISIBILITY_EVENT = 'neosantara_menu_info_modal_visibility';
 
@@ -50,22 +51,7 @@ export function NotebookModalWrapper({
         onClick={(e) => e.stopPropagation()}
         className={`bg-root-canvas border-[6px] border-root-surface ${squareCorners ? 'rounded-none' : 'rounded-2xl'} w-full ${maxWidthClass} ${compact ? 'h-auto max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)]' : 'h-full max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)]'} shadow-2xl relative flex flex-col min-w-0 p-3 sm:p-4 pl-10 sm:pl-12 pointer-events-auto overflow-hidden`}
       >
-        {/* Silver Binder Spine on the Left */}
-        <div className="absolute left-3 sm:left-3.5 top-6 bottom-6 w-2 sm:w-2.5 bg-gradient-to-r from-[#2A3F3F] via-[#3D5252] to-[#1F3030] rounded-full shadow-md z-20 border border-root-canvas/80" />
-        <div className="absolute left-[8px] sm:left-[10px] top-[24px] w-[16px] sm:w-[18px] h-3.5 bg-root-surface rounded-sm border border-root-canvas z-21 shadow" />
-        <div className="absolute left-[8px] sm:left-[10px] bottom-[24px] w-[16px] sm:w-[18px] h-3.5 bg-root-surface rounded-sm border border-root-canvas z-21 shadow" />
-
-        {/* Notebook Rings binding the paper */}
-        <div className="absolute left-[22px] sm:left-[26px] top-10 bottom-10 flex flex-col justify-between items-center py-4 pointer-events-none z-30">
-          {[...Array(ringCount)].map((_, i) => (
-            <div
-              key={i}
-              className="w-3 sm:w-3.5 h-3 sm:h-3.5 rounded-full bg-root-canvas shadow-inner border border-root-accent/20 flex items-center justify-center"
-            >
-              <div className="w-1.5 h-1.5 rounded-full bg-root-surface" />
-            </div>
-          ))}
-        </div>
+        <RootNotebookDecorations count={ringCount} />
 
         {/* Main Panel Sheet — Green Theme */}
         <div className={`${compact ? 'flex-none' : 'flex-1'} min-w-0 bg-root-surface border-[3px] border-root-accent/20 ${squareCorners ? 'rounded-none' : 'rounded-r-xl'} shadow-inner relative flex flex-col overflow-hidden`}>

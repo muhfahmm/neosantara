@@ -8,9 +8,11 @@
   --root-color-muted: #AAB6B6;
   --root-color-subtle: #6B8A8A;
   --root-color-danger: #FF2D55;
-  --root-frame-rail-start: #2A3F3F;
-  --root-frame-rail-middle: #3D5252;
-  --root-frame-rail-end: #1F3030;
+  --root-frame-rail-start: #FFF8EC;
+  --root-frame-rail-middle: #E8DDCB;
+  --root-frame-rail-end: #FFF8EC;
+  --root-frame-rail-cap: #FFFDF7;
+  --root-frame-rail-cap-border: #E8DDCB;
 }
 
 :root[data-theme='light'] {
@@ -23,9 +25,11 @@
   --root-color-muted: #6F6353;
   --root-color-subtle: #9A8C78;
   --root-color-danger: #A83A32;
-  --root-frame-rail-start: #D2C4AE;
-  --root-frame-rail-middle: #B5A48B;
-  --root-frame-rail-end: #E1D5C3;
+  --root-frame-rail-start: #FFF8EC;
+  --root-frame-rail-middle: #E8DDCB;
+  --root-frame-rail-end: #FFF8EC;
+  --root-frame-rail-cap: #FFFDF7;
+  --root-frame-rail-cap-border: #E8DDCB;
 }
 
 @theme inline {
