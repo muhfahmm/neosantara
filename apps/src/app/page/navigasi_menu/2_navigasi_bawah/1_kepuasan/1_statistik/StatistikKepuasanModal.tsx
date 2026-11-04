@@ -125,13 +125,13 @@ export default function StatistikKepuasanModal({
   return (
     <>
     {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
-      <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A]">
+      <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-root-accent/20 bg-root-canvas">
         {/* Header */}
-        <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2.5 sm:px-6 sm:py-3">
+        <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
           <div className="flex flex-wrap items-center gap-3 sm:gap-6">
             <div className="flex items-center gap-2">
-              <div className="shrink-0 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] p-1 sm:p-1.5">
-                <Smile className="h-4 w-4 text-[#E0E0E0] sm:h-5 sm:w-5" />
+              <div className="shrink-0 rounded-lg border border-root-accent/30 bg-root-surface p-1 sm:p-1.5">
+                <Smile className="h-4 w-4 text-root-text sm:h-5 sm:w-5" />
               </div>
               <div>
                 <h2 className={`${rootModalTypography.title} leading-none`}>
@@ -153,7 +153,7 @@ export default function StatistikKepuasanModal({
           </div>
 
           <div className="flex items-center gap-2">
-            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi statistik kepuasan rakyat" aria-label="Informasi statistik kepuasan rakyat" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]">
+            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi statistik kepuasan rakyat" aria-label="Informasi statistik kepuasan rakyat" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas">
               <Info className="h-3.5 w-3.5" />
             </button>
             <RootModalCloseButton onClick={onClose} />
@@ -161,32 +161,32 @@ export default function StatistikKepuasanModal({
         </div>
 
         {/* Content Area: HANYA MENGGANTI custom-scrollbar DENGAN TAILWIND SCROLLBAR */}
-        <div className="relative z-10 flex-1 overflow-y-auto bg-[#0A1A1A]/80 p-3 sm:p-5
+        <div className="relative z-10 flex-1 overflow-y-auto bg-root-canvas/80 p-3 sm:p-5
           [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 
-          [&::-webkit-scrollbar-track]:bg-[#0A1A1A] 
+          [&::-webkit-scrollbar-track]:bg-root-canvas
           [&::-webkit-scrollbar-track]:rounded-full 
-          [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-[#00FFAA]/20
-          [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A]
+          [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20
+          [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A]
           [&::-webkit-scrollbar-thumb]:rounded-full 
-          [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0A1A1A]
-          hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]
+          [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas
+          hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent
           [&::-webkit-scrollbar-button]:hidden
         ">
           <div className="animate-in fade-in space-y-4 duration-300 sm:space-y-5">
             {/* Kartu skor umum */}
-            <div className={`flex flex-row items-center justify-between gap-2.5 ${rootBorderRadius.card} border border-[#00FFAA]/30 bg-[#0F2424] p-2.5 lg:gap-3 lg:p-3 2xl:p-4`}>
+            <div className={`flex flex-row items-center justify-between gap-2.5 ${rootBorderRadius.card} border border-root-accent/30 bg-root-surface p-2.5 lg:gap-3 lg:p-3 2xl:p-4`}>
               <div className="flex items-center gap-2.5 lg:gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#00FFAA]/40 bg-[#0A1A1A] lg:h-11 lg:w-11 2xl:h-14 2xl:w-14">
-                  <Smile className="h-4 w-4 text-[#E0E0E0] lg:h-5 lg:w-5 2xl:h-7 2xl:w-7" />
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-root-accent/40 bg-root-canvas lg:h-11 lg:w-11 2xl:h-14 2xl:w-14">
+                  <Smile className="h-4 w-4 text-root-text lg:h-5 lg:w-5 2xl:h-7 2xl:w-7" />
                 </div>
                 <div>
-                  <h3 className="mb-0.5 text-xs font-black uppercase leading-none tracking-wide text-[#E0E0E0] lg:mb-1 lg:text-sm 2xl:text-base">
+                  <h3 className="mb-0.5 text-xs font-black uppercase leading-none tracking-wide text-root-text lg:mb-1 lg:text-sm 2xl:text-base">
                     Persetujuan Umum Rakyat
                   </h3>
                 </div>
               </div>
 
-              <div className="min-w-[75px] shrink-0 rounded-lg border border-[#00FFAA]/30 bg-[#0A1A1A] px-2.5 py-1 text-right lg:min-w-[95px] lg:px-3.5 lg:py-1.5 2xl:min-w-[110px] 2xl:px-4 2xl:py-2">
+              <div className="min-w-[75px] shrink-0 rounded-lg border border-root-accent/30 bg-root-canvas px-2.5 py-1 text-right lg:min-w-[95px] lg:px-3.5 lg:py-1.5 2xl:min-w-[110px] 2xl:px-4 2xl:py-2">
                 <p className={`${rootModalTypography.value} text-base leading-none tracking-tight lg:text-xl 2xl:text-2xl`}>
                   {Math.round(generalSatisfaction)}%
                 </p>
@@ -198,13 +198,13 @@ export default function StatistikKepuasanModal({
 
             <section>
               <div className="mb-3 flex items-center gap-2.5 px-1 lg:mb-4 lg:gap-3 2xl:mb-5">
-                <div className="rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] p-1 lg:p-1.5">
-                  <TrendingUp className="h-3.5 w-3.5 text-[#E0E0E0] lg:h-4 lg:w-4" />
+                <div className="rounded-lg border border-root-accent/30 bg-root-surface p-1 lg:p-1.5">
+                  <TrendingUp className="h-3.5 w-3.5 text-root-text lg:h-4 lg:w-4" />
                 </div>
                 <h3 className={`${rootModalTypography.sectionTitle} italic lg:text-base 2xl:text-lg`}>
                   Sektor Utama
                 </h3>
-                <div className="ml-2 h-[1px] flex-1 bg-gradient-to-r from-[#00FFAA]/30 to-transparent lg:ml-4"></div>
+                <div className="ml-2 h-[1px] flex-1 bg-gradient-to-r from-root-accent/30 to-transparent lg:ml-4"></div>
               </div>
 
               <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2 lg:gap-3 2xl:gap-4">
@@ -215,7 +215,7 @@ export default function StatistikKepuasanModal({
                       onClick={() => {
                         setActiveMenu?.(sector.menuId);
                       }}
-                      className={`group relative flex cursor-pointer items-center gap-2.5 overflow-hidden ${rootBorderRadius.card} border border-[#00FFAA]/20 bg-[#0F2424] p-2.5 text-left transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 lg:gap-3.5 lg:p-3.5 2xl:gap-4 2xl:p-5`}
+                      className={`group relative flex cursor-pointer items-center gap-2.5 overflow-hidden ${rootBorderRadius.card} border border-root-accent/20 bg-root-surface p-2.5 text-left transition-all hover:border-root-accent hover:bg-root-accent/10 lg:gap-3.5 lg:p-3.5 2xl:gap-4 2xl:p-5`}
                     >
                       <div className="shrink-0">
                         <Image
@@ -227,17 +227,17 @@ export default function StatistikKepuasanModal({
                         />
                       </div>
                       <div className="min-w-0 flex-1 space-y-1 lg:space-y-1.5">
-                        <div className="flex items-center justify-between text-[11px] font-semibold uppercase text-[#E0E0E0] lg:text-xs">
+                        <div className="flex items-center justify-between text-[11px] font-semibold uppercase text-root-text lg:text-xs">
                           <span className="whitespace-normal pr-1 leading-tight">
                             {sector.name}
                           </span>
-                          <span className="shrink-0 text-[#E0E0E0]">
+                          <span className="shrink-0 text-root-text">
                             {sector.score}%
                           </span>
                         </div>
-                        <div className="h-1.5 w-full overflow-hidden rounded-full border border-[#00FFAA]/20 bg-[#0A1A1A] lg:h-2 2xl:h-2.5">
+                        <div className="h-1.5 w-full overflow-hidden rounded-full border border-root-accent/20 bg-root-canvas lg:h-2 2xl:h-2.5">
                           <div
-                            className="h-full rounded-full bg-[#00FFAA]"
+                            className="h-full rounded-full bg-root-accent"
                             style={{ width: `${sector.score}%` }}
                           />
                         </div>

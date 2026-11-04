@@ -24,14 +24,14 @@ export default function PaktaNonAgresiModal({ isOpen, countryName, onClose, onCo
 				
 				{/* Area Konten */}
 				<div className="flex-1">
-					<h3 className="text-xl sm:text-2xl font-black text-[#00FFAA] tracking-wide uppercase mb-6 border-b border-[#00FFAA]/20 pb-4">
+					<h3 className="text-xl sm:text-2xl font-black text-root-accent tracking-wide uppercase mb-6 border-b border-root-accent/20 pb-4">
 						Konfirmasi Pakta Non-Agresi
 					</h3>
 					
-					<p className="text-sm sm:text-base text-[#E0E0E0] mb-4 leading-relaxed">
+					<p className="text-sm sm:text-base text-root-text mb-4 leading-relaxed">
 						Apakah Anda ingin mengajukan Pakta Non-Agresi kepada <strong className="text-white text-lg">{countryName}</strong>?
 					</p>
-					<p className="text-sm sm:text-base text-[#E0E0E0] mb-6 leading-relaxed">
+					<p className="text-sm sm:text-base text-root-text mb-6 leading-relaxed">
 						Pakta ini akan berlaku jika diterima dan menegaskan bahwa kedua negara tidak akan saling menyerang dalam jangka waktu yang disepakati.
 					</p>
 					{travelFuelStatus && <TravelFuelCostPanel status={travelFuelStatus} />}
@@ -40,10 +40,10 @@ export default function PaktaNonAgresiModal({ isOpen, countryName, onClose, onCo
 				</div>
 
 				{/* Area Tombol di bagian paling bawah */}
-				<div className="flex flex-col sm:flex-row gap-3 justify-end mt-6 pt-4 border-t border-[#00FFAA]/20">
+				<div className="flex flex-col sm:flex-row gap-3 justify-end mt-6 pt-4 border-t border-root-accent/20">
 					<button
 						onClick={onClose}
-						className="w-full sm:w-auto px-6 bg-[#0A1A1A] hover:bg-[#142A2A] border border-[#00FFAA]/30 rounded-xl py-2 text-center text-[#E0E0E0] font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
+						className="w-full sm:w-auto px-6 bg-root-canvas hover:bg-[#142A2A] border border-root-accent/30 rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
 					>
 						Batal
 					</button>
@@ -51,7 +51,7 @@ export default function PaktaNonAgresiModal({ isOpen, countryName, onClose, onCo
 					<button
 						onClick={() => { onConfirm(); onClose(); }}
 						disabled={travelFuelStatus ? !travelFuelStatus.ok : false}
-						className="w-full sm:w-auto px-6 bg-[#00FFAA] hover:bg-[#00e699] border border-[#00FFAA] rounded-xl py-2 text-center text-[#0A1A1A] font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
+						className="w-full sm:w-auto px-6 bg-root-accent hover:bg-[#00e699] border border-root-accent rounded-xl py-2 text-center text-root-canvas font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
 					>
 						Jalin Pakta
 					</button>

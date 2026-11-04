@@ -541,9 +541,9 @@ export default function JualModalsMenu({
           isHidden={isProductPickerOpen || isCountryPickerOpen}
         >
           <div className="flex h-full min-w-0 flex-col overflow-hidden">
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
               <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-rose-500/30 shrink-0">
+                <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-rose-500/30 shrink-0">
                   <Send className="h-4 w-4 sm:h-5 sm:w-5 text-rose-400" />
                 </div>
                 <h2 className={rootModalTypography.title}>Jual Komoditas</h2>
@@ -551,29 +551,29 @@ export default function JualModalsMenu({
               <RootModalCloseButton onClick={onClose} />
             </div>
 
-            <div className="root-no-scrollbar-glow min-h-0 flex-1 overflow-y-auto px-5 pt-5 pb-2 relative z-10 space-y-4 bg-[#0F2424] neon-scrollbar [overflow-anchor:none]">
+            <div className="root-no-scrollbar-glow min-h-0 flex-1 overflow-y-auto px-5 pt-5 pb-2 relative z-10 space-y-4 bg-root-surface neon-scrollbar [overflow-anchor:none]">
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1">
-                  <label className="text-[#E0E0E0] font-bold text-sm tracking-wide">Produk:</label>
-                  <button onClick={() => setIsProductPickerOpen(true)} className="w-full px-4 py-3 rounded-md bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA] text-sm font-bold flex items-center justify-between hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer">
+                  <label className="text-root-text font-bold text-sm tracking-wide">Produk:</label>
+                  <button onClick={() => setIsProductPickerOpen(true)} className="w-full px-4 py-3 rounded-md bg-root-canvas border border-root-accent/30 text-root-accent text-sm font-bold flex items-center justify-between hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer">
                     <span>{getArmsTradeProducts().find(product => product.dataKey === selectedProduct)?.label || formatLabel(selectedProduct)}</span>
                     <span className="text-[10px] opacity-70 uppercase tracking-wider">Ubah</span>
                   </button>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-[#E0E0E0] font-bold text-sm tracking-wide">Negara:</label>
-                  <button onClick={() => setIsCountryPickerOpen(true)} className="w-full px-4 py-3 rounded-md bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA] text-sm font-bold flex items-center justify-between hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer">
+                  <label className="text-root-text font-bold text-sm tracking-wide">Negara:</label>
+                  <button onClick={() => setIsCountryPickerOpen(true)} className="w-full px-4 py-3 rounded-md bg-root-canvas border border-root-accent/30 text-root-accent text-sm font-bold flex items-center justify-between hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer">
                     <span className="flex items-center gap-2">
                       {(() => {
                         const matched = COUNTRIES_DATA.find(c => c.country.toLowerCase().trim() === effectiveSelectedCountry.toLowerCase().trim());
                         const iso = matched?.iso;
                         if (!iso || iso.length !== 2) {
                           return (
-                            <div className="w-8 h-5 rounded-sm bg-[#0F2424] border border-[#00FFAA]/20 flex-shrink-0" />
+                            <div className="w-8 h-5 rounded-sm bg-root-surface border border-root-accent/20 flex-shrink-0" />
                           );
                         }
                         return (
-                          <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#00FFAA]/30 flex-shrink-0 bg-[#0F2424] relative">
+                          <div className="w-8 h-5 rounded-sm overflow-hidden border border-root-accent/30 flex-shrink-0 bg-root-surface relative">
                             <img
                               src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
                               alt={effectiveSelectedCountry}
@@ -591,40 +591,40 @@ export default function JualModalsMenu({
 
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between items-center pt-1 pb-0">
-                  <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">{isArmsProduct(selectedProduct) ? "Unit Alutsista Mitra:" : `Bangunan ${formatLabel(selectedProduct)} (Mitra):`}</span>
-                  <span className="text-sm font-black text-[#E0E0E0]">{(isArmsProduct(selectedProduct)
+                  <span className="text-root-subtle font-bold text-sm tracking-wide">{isArmsProduct(selectedProduct) ? "Unit Alutsista Mitra:" : `Bangunan ${formatLabel(selectedProduct)} (Mitra):`}</span>
+                  <span className="text-sm font-black text-root-text">{(isArmsProduct(selectedProduct)
                     ? getArmsUnitCount(partnerData || {}, getArmsTradeProducts().find(product => product.dataKey === selectedProduct)!)
                     : Number(partnerData?.[selectedProduct] || 0)
-                  ).toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span></span>
+                  ).toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[10px] text-root-subtle font-bold">Unit</span></span>
                 </div>
                 {!isArmsProduct(selectedProduct) && (
                   <div className="flex justify-between items-center pt-0 pb-1">
-                    <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Produksi Mitra (Total):</span>
-                    <span className="text-sm font-black text-[#E0E0E0]">{(stockAvailable > 0 ? partnerProduction : 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span></span>
+                    <span className="text-root-subtle font-bold text-sm tracking-wide">Produksi Mitra (Total):</span>
+                    <span className="text-sm font-black text-root-text">{(stockAvailable > 0 ? partnerProduction : 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[10px] text-root-subtle font-bold">Unit</span></span>
                   </div>
                 )}
               </div>
 
               <div className="flex items-center justify-between gap-2">
-                <label className="text-[#E0E0E0] font-bold text-sm tracking-wide">Kuantitas:</label>
+                <label className="text-root-text font-bold text-sm tracking-wide">Kuantitas:</label>
                 <div className="flex items-center gap-1.5">
-                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-1.5 rounded bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"><Minus className="h-3.5 w-3.5" /></button>
-                  <input type="number" min={1} max={stockAvailable} value={quantity} onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))} className="w-16 px-2 py-1.5 text-center rounded bg-[#0A1A1A] text-[#00FFAA] text-sm font-bold border border-[#00FFAA]/30 focus:outline-none focus:border-[#00FFAA]" />
-                  <button onClick={() => setQuantity(quantity + 1)} className="p-1.5 rounded bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"><Plus className="h-3.5 w-3.5" /></button>
-                  <button onClick={() => setQuantity(quantity + 1000)} className="px-2.5 py-1.5 rounded bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA] text-[10px] font-bold hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer uppercase tracking-wide">+1k</button>
+                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-1.5 rounded bg-root-canvas border border-root-accent/30 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer"><Minus className="h-3.5 w-3.5" /></button>
+                  <input type="number" min={1} max={stockAvailable} value={quantity} onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))} className="w-16 px-2 py-1.5 text-center rounded bg-root-canvas text-root-accent text-sm font-bold border border-root-accent/30 focus:outline-none focus:border-root-accent" />
+                  <button onClick={() => setQuantity(quantity + 1)} className="p-1.5 rounded bg-root-canvas border border-root-accent/30 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer"><Plus className="h-3.5 w-3.5" /></button>
+                  <button onClick={() => setQuantity(quantity + 1000)} className="px-2.5 py-1.5 rounded bg-root-canvas border border-root-accent/30 text-root-accent text-[10px] font-bold hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer uppercase tracking-wide">+1k</button>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center pt-3 border-t border-[#00FFAA]/20">
-                <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Harga / unit:</span>
+              <div className="flex justify-between items-center pt-3 border-t border-root-accent/20">
+                <span className="text-root-subtle font-bold text-sm tracking-wide">Harga / unit:</span>
                 <div className="flex items-center gap-1.5">
                   {hasTradeBonus && (
                     <span className="text-sm font-bold text-rose-400 line-through opacity-80">
                       {formatTradePrice(currentPrice)}
                     </span>
                   )}
-                  <span className="text-lg font-black text-[#00FFAA]">{formatTradePrice(pricePerUnit)}</span>
-                  <span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">NEO</span>
+                  <span className="text-lg font-black text-root-accent">{formatTradePrice(pricePerUnit)}</span>
+                  <span className="text-[10px] text-root-subtle font-bold mt-0.5">NEO</span>
                 </div>
               </div>
               {hasTradeBonus && (
@@ -662,25 +662,25 @@ export default function JualModalsMenu({
                   <span>-{formatTradePrice(exportTariffCost)} NEO</span>
                 </div>
               )}
-              <div className="flex justify-between items-center border-t border-[#00FFAA]/20 pt-2 mt-1">
-                <span className="text-[#E0E0E0] font-bold text-sm tracking-wide">Nilai setelah tarif ekspor :</span>
-                <div className="flex items-center gap-1.5"><span className="text-lg font-black text-[#00FFAA]">{formatTradePrice(totalPrice)}</span><span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">NEO</span></div>
+              <div className="flex justify-between items-center border-t border-root-accent/20 pt-2 mt-1">
+                <span className="text-root-text font-bold text-sm tracking-wide">Nilai setelah tarif ekspor :</span>
+                <div className="flex items-center gap-1.5"><span className="text-lg font-black text-root-accent">{formatTradePrice(totalPrice)}</span><span className="text-[10px] text-root-subtle font-bold mt-0.5">NEO</span></div>
               </div>
               {nationalizationSectorName && (
                 <div className="mt-2 rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3">
                   <div className="flex justify-between gap-3 text-xs">
-                    <span className="text-[#6B8A8A]">{nationalizationSectorName} · bagian negara {stateProfitSharePercent}%</span>
+                    <span className="text-root-subtle">{nationalizationSectorName} · bagian negara {stateProfitSharePercent}%</span>
                     <strong className="text-emerald-400">{formatTradePrice(stateProfitIncome)} NEO ke APBN</strong>
                   </div>
                 </div>
               )}
 
-              <div className="pt-3 border-t border-[#00FFAA]/20 mt-2 w-full">
+              <div className="pt-3 border-t border-root-accent/20 mt-2 w-full">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="text-[#00FFAA] font-bold text-sm tracking-wide">Grafik Harga Historis (Candlestick)</div>
+                  <div className="text-root-accent font-bold text-sm tracking-wide">Grafik Harga Historis (Candlestick)</div>
                   <div className="flex gap-1.5">
                     {PRICE_TIME_RANGES.map(({ label, value }) => (
-                      <button key={value} onClick={() => setTimeRange(value)} className={`px-2.5 py-1 text-[11px] font-bold rounded border transition-colors cursor-pointer ${timeRange === value ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA]' : 'bg-[#0A1A1A] text-[#6B8A8A] border-[#00FFAA]/20 hover:text-[#00FFAA]'}`}>{label}</button>
+                      <button key={value} onClick={() => setTimeRange(value)} className={`px-2.5 py-1 text-[11px] font-bold rounded border transition-colors cursor-pointer ${timeRange === value ? 'bg-root-accent text-root-canvas border-root-accent' : 'bg-root-canvas text-root-subtle border-root-accent/20 hover:text-root-accent'}`}>{label}</button>
                     ))}
                   </div>
                 </div>
@@ -688,8 +688,8 @@ export default function JualModalsMenu({
               </div>
             </div>
 
-            <div className="px-5 py-4 pb-8 border-t border-[#00FFAA]/20 flex gap-3 bg-[#0A1A1A] relative z-10">
-              <button onClick={onClose} className="flex-1 py-2.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] text-xs font-black uppercase tracking-wide transition-all cursor-pointer">Batal</button>
+            <div className="px-5 py-4 pb-8 border-t border-root-accent/20 flex gap-3 bg-root-canvas relative z-10">
+              <button onClick={onClose} className="flex-1 py-2.5 rounded-lg border border-root-accent/30 bg-root-surface hover:bg-root-accent hover:text-root-canvas text-root-accent text-xs font-black uppercase tracking-wide transition-all cursor-pointer">Batal</button>
               <button onClick={handleConfirm} className="flex-1 py-2.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-black uppercase tracking-wide transition-all cursor-pointer">Jual</button>
             </div>
           </div>

@@ -112,27 +112,27 @@ export default function TingkatkanHubunganModal({
 
 	return (
 		<NotebookModalWrapper onClose={onClose}>
-			<div className="flex h-full min-h-0 flex-col overflow-hidden bg-[#0F2424] font-sans shadow-2xl">
+			<div className="flex h-full min-h-0 flex-col overflow-hidden bg-root-surface font-sans shadow-2xl">
 
 				{/* HEADER */}
-				<div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+				<div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
 					<div className="flex items-center gap-2 sm:gap-3">
-						<div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-							<Heart className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+						<div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+							<Heart className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
 						</div>
 						<div>
-							<h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
+							<h2 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">
 								Tingkatkan Hubungan Diplomatik
 							</h2>
-							<p className="text-[10px] sm:text-xs text-[#6B8A8A] font-semibold mt-1">
-								Negara Target: <span className="text-[#E0E0E0] font-bold">{targetCountryName}</span>
+							<p className="text-[10px] sm:text-xs text-root-subtle font-semibold mt-1">
+								Negara Target: <span className="text-root-text font-bold">{targetCountryName}</span>
 							</p>
 						</div>
 					</div>
 
 					<button
 						onClick={onClose}
-						className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
+						className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
 					>
 						<span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
 						<X className="h-4 w-4" />
@@ -140,25 +140,25 @@ export default function TingkatkanHubunganModal({
 				</div>
 
 				{/* BODY — Flex column, isi compact agar tidak perlu scroll */}
-				<div className="flex-1 min-h-0 bg-[#0F2424] relative z-10 p-4 sm:p-6 flex flex-col gap-3 sm:gap-4">
+				<div className="flex-1 min-h-0 bg-root-surface relative z-10 p-4 sm:p-6 flex flex-col gap-3 sm:gap-4">
 
 					{/* Notice + Budget Info — Grid 2 kolom */}
 					<div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 shrink-0">
 						{/* Notice */}
-						<div className="p-3 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 flex items-start gap-2.5">
-							<Sparkles className="h-4 w-4 text-[#00FFAA] shrink-0 mt-0.5" />
-							<p className="text-[11px] sm:text-xs text-[#E0E0E0] leading-relaxed">
-								Berikan bantuan <strong className="text-[#00FFAA]">NEO</strong> kepada <strong className="text-white">{targetCountryName}</strong>. Setiap <strong className="text-[#00FFAA]">10.000 NEO</strong> = <strong className="text-[#00FFAA]">+1 Tingkat</strong> hubungan.
+						<div className="p-3 rounded-xl bg-root-canvas border border-root-accent/20 flex items-start gap-2.5">
+							<Sparkles className="h-4 w-4 text-root-accent shrink-0 mt-0.5" />
+							<p className="text-[11px] sm:text-xs text-root-text leading-relaxed">
+								Berikan bantuan <strong className="text-root-accent">NEO</strong> kepada <strong className="text-white">{targetCountryName}</strong>. Setiap <strong className="text-root-accent">10.000 NEO</strong> = <strong className="text-root-accent">+1 Tingkat</strong> hubungan.
 							</p>
 						</div>
 
 						{/* Budget Info */}
-						<div className="flex items-center justify-between bg-[#0A1A1A] p-3 rounded-xl border border-[#00FFAA]/20">
-							<span className="text-[11px] sm:text-xs text-[#6B8A8A] font-semibold flex items-center gap-2">
-								<Coins className="h-4 w-4 text-[#00FFAA]" />
+						<div className="flex items-center justify-between bg-root-canvas p-3 rounded-xl border border-root-accent/20">
+							<span className="text-[11px] sm:text-xs text-root-subtle font-semibold flex items-center gap-2">
+								<Coins className="h-4 w-4 text-root-accent" />
 								Anggaran NEO Anda:
 							</span>
-							<span className="font-black text-[#00FFAA] text-sm">
+							<span className="font-black text-root-accent text-sm">
 								{formatNEO(playerBudget)} NEO
 							</span>
 						</div>
@@ -166,7 +166,7 @@ export default function TingkatkanHubunganModal({
 
 					{/* Input Nominal NEO */}
 					<div className="shrink-0">
-						<label className="block text-[10px] sm:text-xs font-black text-[#00FFAA] uppercase tracking-wider mb-2">
+						<label className="block text-[10px] sm:text-xs font-black text-root-accent uppercase tracking-wider mb-2">
 							Input Nominal Bantuan (NEO)
 						</label>
 						<div className="relative">
@@ -177,9 +177,9 @@ export default function TingkatkanHubunganModal({
 								value={inputAmount || ""}
 								onChange={(e) => setInputAmount(Math.max(0, parseInt(e.target.value) || 0))}
 								placeholder="Masukkan nominal NEO (Kelipatan 10.000)"
-								className="w-full bg-[#051010] border-2 border-[#00FFAA]/40 focus:border-[#00FFAA] rounded-xl py-2.5 px-4 text-base font-black text-[#00FFAA] outline-none transition placeholder-[#6B8A8A]/60"
+								className="w-full bg-[#051010] border-2 border-root-accent/40 focus:border-root-accent rounded-xl py-2.5 px-4 text-base font-black text-root-accent outline-none transition placeholder-root-subtle/60"
 							/>
-							<span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-[#00FFAA]/60">
+							<span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-root-accent/60">
 								NEO
 							</span>
 						</div>
@@ -189,28 +189,28 @@ export default function TingkatkanHubunganModal({
 							<button
 								type="button"
 								onClick={() => handleAddAmount(10000)}
-								className="py-1.5 px-2 bg-[#0A1A1A] hover:bg-[#00FFAA]/10 border border-[#00FFAA]/30 rounded-lg text-[11px] font-bold text-[#00FFAA] transition-all cursor-pointer flex items-center justify-center gap-1"
+								className="py-1.5 px-2 bg-root-canvas hover:bg-root-accent/10 border border-root-accent/30 rounded-lg text-[11px] font-bold text-root-accent transition-all cursor-pointer flex items-center justify-center gap-1"
 							>
 								<Plus className="h-3 w-3" /> 10rb
 							</button>
 							<button
 								type="button"
 								onClick={() => handleAddAmount(50000)}
-								className="py-1.5 px-2 bg-[#0A1A1A] hover:bg-[#00FFAA]/10 border border-[#00FFAA]/30 rounded-lg text-[11px] font-bold text-[#00FFAA] transition-all cursor-pointer flex items-center justify-center gap-1"
+								className="py-1.5 px-2 bg-root-canvas hover:bg-root-accent/10 border border-root-accent/30 rounded-lg text-[11px] font-bold text-root-accent transition-all cursor-pointer flex items-center justify-center gap-1"
 							>
 								<Plus className="h-3 w-3" /> 50rb
 							</button>
 							<button
 								type="button"
 								onClick={() => handleAddAmount(100000)}
-								className="py-1.5 px-2 bg-[#0A1A1A] hover:bg-[#00FFAA]/10 border border-[#00FFAA]/30 rounded-lg text-[11px] font-bold text-[#00FFAA] transition-all cursor-pointer flex items-center justify-center gap-1"
+								className="py-1.5 px-2 bg-root-canvas hover:bg-root-accent/10 border border-root-accent/30 rounded-lg text-[11px] font-bold text-root-accent transition-all cursor-pointer flex items-center justify-center gap-1"
 							>
 								<Plus className="h-3 w-3" /> 100rb
 							</button>
 							<button
 								type="button"
 								onClick={handleSetMax}
-								className="py-1.5 px-2 bg-[#00FFAA]/20 hover:bg-[#00FFAA]/30 border border-[#00FFAA]/50 rounded-lg text-[11px] font-black text-[#00FFAA] transition-all cursor-pointer"
+								className="py-1.5 px-2 bg-root-accent/20 hover:bg-root-accent/30 border border-root-accent/50 rounded-lg text-[11px] font-black text-root-accent transition-all cursor-pointer"
 							>
 								Maksimal
 							</button>
@@ -219,17 +219,17 @@ export default function TingkatkanHubunganModal({
 
 					{/* Impact Preview Card — Hanya ditampilkan jika untuk 1 negara spesifik */}
 					{!isAllCountries ? (
-						<div className="bg-[#0A1A1A] p-3 sm:p-4 rounded-xl border border-[#00FFAA]/30 shrink-0">
-							<div className="text-[10px] sm:text-xs font-black text-[#6B8A8A] uppercase tracking-wider flex items-center justify-between mb-3">
+						<div className="bg-root-canvas p-3 sm:p-4 rounded-xl border border-root-accent/30 shrink-0">
+							<div className="text-[10px] sm:text-xs font-black text-root-subtle uppercase tracking-wider flex items-center justify-between mb-3">
 								<span>Kalkulasi Peningkatan Hubungan</span>
-								<TrendingUp className="h-4 w-4 text-[#00FFAA]" />
+								<TrendingUp className="h-4 w-4 text-root-accent" />
 							</div>
 
-							<div className="flex items-center justify-between gap-3 bg-[#0F2424] p-3 rounded-lg border border-[#00FFAA]/20">
+							<div className="flex items-center justify-between gap-3 bg-root-surface p-3 rounded-lg border border-root-accent/20">
 								{/* Current Level */}
 								<div className="text-center flex-1">
-									<span className="block text-[9px] sm:text-[10px] font-bold text-[#6B8A8A] uppercase">Saat Ini</span>
-									<span className="text-lg sm:text-xl font-black text-[#E0E0E0]">{currentRelation}</span>
+									<span className="block text-[9px] sm:text-[10px] font-bold text-root-subtle uppercase">Saat Ini</span>
+									<span className="text-lg sm:text-xl font-black text-root-text">{currentRelation}</span>
 									<div className="mt-1">
 										<span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${currentBadge.color}`}>
 											{currentBadge.label}
@@ -239,16 +239,16 @@ export default function TingkatkanHubunganModal({
 
 								{/* Arrow & Delta */}
 								<div className="flex flex-col items-center justify-center px-2">
-									<span className="text-[11px] font-black text-[#00FFAA] bg-[#00FFAA]/10 px-2 py-0.5 rounded border border-[#00FFAA]/30 mb-1 whitespace-nowrap">
+									<span className="text-[11px] font-black text-root-accent bg-root-accent/10 px-2 py-0.5 rounded border border-root-accent/30 mb-1 whitespace-nowrap">
 										+{actualGained} Tingkat
 									</span>
-									<ArrowRight className="h-4 w-4 text-[#00FFAA]" />
+									<ArrowRight className="h-4 w-4 text-root-accent" />
 								</div>
 
 								{/* New Level */}
 								<div className="text-center flex-1">
-									<span className="block text-[9px] sm:text-[10px] font-bold text-[#6B8A8A] uppercase">Setelah Pemberian</span>
-									<span className="text-lg sm:text-xl font-black text-[#00FFAA]">{newRelation}</span>
+									<span className="block text-[9px] sm:text-[10px] font-bold text-root-subtle uppercase">Setelah Pemberian</span>
+									<span className="text-lg sm:text-xl font-black text-root-accent">{newRelation}</span>
 									<div className="mt-1">
 										<span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${newBadge.color}`}>
 											{newBadge.label}
@@ -269,14 +269,14 @@ export default function TingkatkanHubunganModal({
 						</div>
 					) : (
 						/* Info ringkasan global saat target adalah Semua Negara */
-						<div className="bg-[#0A1A1A] p-3 sm:p-4 rounded-xl border border-[#00FFAA]/30 shrink-0 flex items-center justify-between">
+						<div className="bg-root-canvas p-3 sm:p-4 rounded-xl border border-root-accent/30 shrink-0 flex items-center justify-between">
 							<div className="flex items-center gap-2.5">
-								<Sparkles className="h-4 w-4 text-[#00FFAA] shrink-0" />
-								<span className="text-xs text-[#E0E0E0] font-semibold">
+								<Sparkles className="h-4 w-4 text-root-accent shrink-0" />
+								<span className="text-xs text-root-text font-semibold">
 									Efek Global ke Seluruh Negara:
 								</span>
 							</div>
-							<span className="text-sm font-black text-[#00FFAA] bg-[#00FFAA]/10 px-3 py-1 rounded-lg border border-[#00FFAA]/30">
+							<span className="text-sm font-black text-root-accent bg-root-accent/10 px-3 py-1 rounded-lg border border-root-accent/30">
 								+{actualGained} Tingkat untuk Setiap Negara
 							</span>
 						</div>
@@ -309,12 +309,12 @@ export default function TingkatkanHubunganModal({
 				</div>
 
 				{/* FOOTER — Selalu di bawah */}
-				<div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-[#00FFAA]/20 bg-[#0A1A1A] shrink-0 rounded-b-2xl">
+				<div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-root-accent/20 bg-root-canvas shrink-0 rounded-b-2xl">
 					<div className="flex gap-3">
 						<button
 							type="button"
 							onClick={onClose}
-							className="flex-1 bg-[#0F2424] hover:bg-[#163535] border border-[#00FFAA]/30 rounded-xl py-2.5 sm:py-3 text-center text-[#E0E0E0] font-extrabold text-xs tracking-wider uppercase transition-all cursor-pointer"
+							className="flex-1 bg-root-surface hover:bg-[#163535] border border-root-accent/30 rounded-xl py-2.5 sm:py-3 text-center text-root-text font-extrabold text-xs tracking-wider uppercase transition-all cursor-pointer"
 						>
 							Batal
 						</button>
@@ -323,7 +323,7 @@ export default function TingkatkanHubunganModal({
 							disabled={!isValid}
 							onClick={handleConfirm}
 							className={`flex-1 rounded-xl py-2.5 sm:py-3 text-center font-black text-xs tracking-wider uppercase transition-all shadow-lg flex items-center justify-center gap-2 ${isValid
-									? "bg-[#00FFAA] hover:bg-[#00e699] text-[#0A1A1A] border border-[#00FFAA] cursor-pointer"
+									? "bg-root-accent hover:bg-[#00e699] text-root-canvas border border-root-accent cursor-pointer"
 									: "bg-gray-700 text-gray-400 border border-gray-600 cursor-not-allowed opacity-50"
 								}`}
 						>

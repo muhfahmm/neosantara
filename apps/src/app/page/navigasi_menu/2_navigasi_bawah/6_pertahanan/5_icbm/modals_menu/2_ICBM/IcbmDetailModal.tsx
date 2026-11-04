@@ -159,68 +159,68 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
           <div className="flex h-full flex-col overflow-hidden">
             
             {/* Header */}
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
                   <Rocket className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
                 </div>
                 <div>
-                  <h2 className="text-sm sm:text-lg font-bold text-[#00FFAA] tracking-tight leading-none uppercase">ICBM Strategis</h2>
+                  <h2 className="text-sm sm:text-lg font-bold text-root-accent tracking-tight leading-none uppercase">ICBM Strategis</h2>
                 </div>
               </div>
               <button
                 onClick={onClose} 
-                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+                className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
               >
                 <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#0F2424] relative z-10 custom-scrollbar">
+            <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-root-surface relative z-10 custom-scrollbar">
               <div className="w-full max-w-3xl mx-auto space-y-4 sm:space-y-5">
                 <div className="text-center space-y-3">
-                  <div className="p-4 sm:p-5 rounded-full bg-[#0A1A1A] border border-[#00FFAA]/30 inline-flex items-center justify-center mx-auto shadow-md">
+                  <div className="p-4 sm:p-5 rounded-full bg-root-canvas border border-root-accent/30 inline-flex items-center justify-center mx-auto shadow-md">
                     <Rocket className="w-12 h-12 sm:w-14 sm:h-14 text-rose-500" />
                   </div>
-                  <p className="text-xs sm:text-sm font-bold text-[#E0E0E0]">Kas Negara & Produksi Uranium</p>
+                  <p className="text-xs sm:text-sm font-bold text-root-text">Kas Negara & Produksi Uranium</p>
                 </div>
 
                 <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-2">
-                  <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 sm:p-5">
-                    <h3 className="text-[10px] sm:text-xs font-black text-[#6B8A8A] uppercase tracking-wider mb-2">Stok Uranium</h3>
+                  <div className="rounded-2xl border border-root-accent/20 bg-root-canvas p-4 sm:p-5">
+                    <h3 className="text-[10px] sm:text-xs font-black text-root-subtle uppercase tracking-wider mb-2">Stok Uranium</h3>
                     <div className="text-lg sm:text-xl font-black leading-tight text-amber-400 break-words">{uraniumStock.toLocaleString('id-ID', { maximumFractionDigits: 0 })}</div>
                   </div>
-                  <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 sm:p-5">
-                    <h3 className="text-[10px] sm:text-xs font-black text-[#6B8A8A] uppercase tracking-wider mb-2">Selesai Pada</h3>
+                  <div className="rounded-2xl border border-root-accent/20 bg-root-canvas p-4 sm:p-5">
+                    <h3 className="text-[10px] sm:text-xs font-black text-root-subtle uppercase tracking-wider mb-2">Selesai Pada</h3>
                     <div className="text-lg sm:text-xl font-black leading-tight text-emerald-400 break-words">{completionDate}</div>
                   </div>
                 </div>
 
                 {/* KUANTITAS & BANGUN */}
-                <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-2xl p-4 sm:p-5 mt-2">
+                <div className="bg-root-canvas border border-root-accent/20 rounded-2xl p-4 sm:p-5 mt-2">
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6">
                     
                     {/* Kuantitas */}
                     <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:gap-3">
-                      <span className="whitespace-nowrap text-[11px] sm:text-xs font-bold text-[#E0E0E0]">Kuantitas:</span>
+                      <span className="whitespace-nowrap text-[11px] sm:text-xs font-bold text-root-text">Kuantitas:</span>
                       <div className="flex items-center gap-2">
                         <input
                           type="number"
                           min={1}
                           value={quantity}
                           onChange={(e) => handleSetQuantity(parseInt(e.target.value) || 1)}
-                          className="w-20 sm:w-24 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] px-2 sm:px-3 py-2 text-center font-bold text-[#00FFAA] shadow-sm focus:border-[#00FFAA] focus:outline-none text-xs sm:text-sm"
+                          className="w-20 sm:w-24 rounded-xl border border-root-accent/30 bg-root-surface px-2 sm:px-3 py-2 text-center font-bold text-root-accent shadow-sm focus:border-root-accent focus:outline-none text-xs sm:text-sm"
                         />
                         <button
                           onClick={() => handleSetQuantity(quantity + 1)}
-                          className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0F2424] border border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-colors cursor-pointer"
+                          className="flex h-9 w-9 items-center justify-center rounded-xl bg-root-surface border border-root-accent/30 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-colors cursor-pointer"
                         >
                           <ArrowUp className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => handleSetQuantity(quantity + 10)}
-                          className="flex h-9 items-center justify-center rounded-xl bg-[#0F2424] border border-[#00FFAA]/30 px-2 sm:px-3 text-[10px] sm:text-xs font-bold text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-colors cursor-pointer"
+                          className="flex h-9 items-center justify-center rounded-xl bg-root-surface border border-root-accent/30 px-2 sm:px-3 text-[10px] sm:text-xs font-bold text-root-accent hover:bg-root-accent hover:text-root-canvas transition-colors cursor-pointer"
                         >
                           +10
                         </button>
@@ -236,11 +236,11 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
                         <div className="flex min-w-0 flex-1 items-center">
                           <button
                             onClick={handleBuildClick}
-                            className="flex w-full min-w-0 items-center justify-center gap-1.5 rounded-xl bg-[#00FFAA] px-3 py-2.5 text-[10px] font-black uppercase text-[#0A1A1A] shadow-md transition-all hover:bg-[#00FFAA]/80 active:scale-95 sm:gap-2 sm:px-4 sm:text-xs cursor-pointer"
+                            className="flex w-full min-w-0 items-center justify-center gap-1.5 rounded-xl bg-root-accent px-3 py-2.5 text-[10px] font-black uppercase text-root-canvas shadow-md transition-all hover:bg-root-accent/80 active:scale-95 sm:gap-2 sm:px-4 sm:text-xs cursor-pointer"
                           >
-                            <Clock className="h-4 w-4 text-[#0A1A1A]" />
+                            <Clock className="h-4 w-4 text-root-canvas" />
                             <span className="whitespace-nowrap">Bangun</span>
-                            <span className="whitespace-nowrap rounded-full bg-black/20 px-2 py-0.5 text-[10px] font-black text-[#0A1A1A]">{totalBuildDays} hari</span>
+                            <span className="whitespace-nowrap rounded-full bg-black/20 px-2 py-0.5 text-[10px] font-black text-root-canvas">{totalBuildDays} hari</span>
                           </button>
                         </div>
                       </div>

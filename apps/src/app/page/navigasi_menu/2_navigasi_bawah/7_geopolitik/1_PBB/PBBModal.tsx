@@ -29,14 +29,14 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
       <div className="flex flex-col h-full overflow-hidden">
         
         {/* Header */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-              <Award className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA] animate-pulse" />
+            <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
+              <Award className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent animate-pulse" />
             </div>
             <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Sidang Umum Perserikatan Bangsa-Bangsa</h2>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">{countryName}</p>
+              <h2 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Sidang Umum Perserikatan Bangsa-Bangsa</h2>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">{countryName}</p>
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
@@ -46,7 +46,7 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
             />
             <button
               onClick={onClose}
-              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+              className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
             >
               <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
               <X className="h-4 w-4" />
@@ -55,16 +55,16 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
         </div>
 
         {/* Body Content */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 neon-scrollbar">
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-root-surface relative z-10 neon-scrollbar">
           {/* 3 TAB MENU */}
           <div className="flex w-full items-center justify-between gap-3 mb-6">
-            <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex shadow-sm">
+            <div className="bg-root-canvas p-1 rounded-xl border border-root-accent/20 inline-flex shadow-sm">
               <button
                 onClick={() => setActiveTab("resolusi")}
                 className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
                   activeTab === "resolusi"
-                    ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20"
-                    : "text-[#6B8A8A] hover:text-[#00FFAA]"
+                    ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
+                    : "text-root-subtle hover:text-root-accent"
                 }`}
               >
                 Resolusi PBB
@@ -73,8 +73,8 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
                 onClick={() => setActiveTab("keamanan")}
                 className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
                   activeTab === "keamanan"
-                    ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20"
-                    : "text-[#6B8A8A] hover:text-[#00FFAA]"
+                    ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
+                    : "text-root-subtle hover:text-root-accent"
                 }`}
               >
                 Dewan Keamanan
@@ -83,8 +83,8 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
                 onClick={() => setActiveTab("suara")}
                 className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
                   activeTab === "suara"
-                    ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20"
-                    : "text-[#6B8A8A] hover:text-[#00FFAA]"
+                    ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
+                    : "text-root-subtle hover:text-root-accent"
                 }`}
               >
                 Suara Negara
@@ -99,8 +99,8 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
               title="Pemilihan anggota tidak tetap DK PBB"
               className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-all ${
                 isElectionInfoOpen
-                  ? "border-[#00FFAA] bg-[#00FFAA] text-[#0A1A1A]"
-                  : "border-[#00FFAA]/30 bg-[#0A1A1A] text-[#00FFAA] hover:border-[#00FFAA] hover:bg-[#00FFAA]/10"
+                  ? "border-root-accent bg-root-accent text-root-canvas"
+                  : "border-root-accent/30 bg-root-canvas text-root-accent hover:border-root-accent hover:bg-root-accent/10"
               }`}
             >
               <Info className="h-5 w-5" />

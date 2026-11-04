@@ -55,7 +55,7 @@ export default function AlokasiSubsidiTab({ countryDetail }: AlokasiSubsidiTabPr
   return (
     <div className="space-y-4">
       {/* Category Sub-Tabs */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border-b border-[#00FFAA]/20 pb-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border-b border-root-accent/20 pb-3">
         {CATEGORIES.map((cat) => {
           const countInCat = subsidyItems.filter(
             (i) => i.category === cat.id && i.isSubsidized
@@ -68,15 +68,15 @@ export default function AlokasiSubsidiTab({ countryDetail }: AlokasiSubsidiTabPr
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
               className={`flex items-center justify-between p-2.5 rounded-xl border text-left transition-all cursor-pointer ${isActive
-                  ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
-                  : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
+                  ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
+                  : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent/50 hover:text-root-accent"
                 }`}
             >
               <span className="text-[11px] font-black uppercase tracking-wider truncate pr-1">
                 {cat.label}
               </span>
               <span
-                className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${isActive ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
+                className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${isActive ? "bg-root-canvas text-root-accent" : "bg-root-canvas text-root-subtle"
                   }`}
               >
                 {countInCat}/{totalInCat}
@@ -87,9 +87,9 @@ export default function AlokasiSubsidiTab({ countryDetail }: AlokasiSubsidiTabPr
       </div>
 
       {/* Item List Container */}
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-xl space-y-4">
-        <div className="flex justify-between items-center border-b border-[#00FFAA]/20 pb-3">
-          <h4 className="text-[11px] text-[#00FFAA] font-black uppercase tracking-wider">
+      <div className="bg-root-surface border border-root-accent/30 p-6 rounded-xl space-y-4">
+        <div className="flex justify-between items-center border-b border-root-accent/20 pb-3">
+          <h4 className="text-[11px] text-root-accent font-black uppercase tracking-wider">
             ALOKASI SUBSIDI {activeCategory.toUpperCase()} ({activeCount}/{totalCategoryCount} AKTIF)
           </h4>
         </div>
@@ -98,14 +98,14 @@ export default function AlokasiSubsidiTab({ countryDetail }: AlokasiSubsidiTabPr
           {filteredItems.map((item) => (
             <div
               key={item.id}
-              className={`flex justify-between items-center text-xs font-bold py-2 border-b border-[#00FFAA]/20 last:border-0 ${item.isSubsidized ? "text-rose-400" : "text-gray-500"
+              className={`flex justify-between items-center text-xs font-bold py-2 border-b border-root-accent/20 last:border-0 ${item.isSubsidized ? "text-rose-400" : "text-gray-500"
                 }`}
             >
               <div className="flex flex-col">
-                <span className={`font-semibold ${item.isSubsidized ? "text-[#E0E0E0]" : "text-gray-500 line-through"}`}>
+                <span className={`font-semibold ${item.isSubsidized ? "text-root-text" : "text-gray-500 line-through"}`}>
                   {item.name}
                 </span>
-                <span className="text-[10px] text-[#6B8A8A] font-normal">
+                <span className="text-[10px] text-root-subtle font-normal">
                   Status: {item.isSubsidized ? "Aktif (Tersubsidi)" : "Tidak Aktif (Direncanakan/Dinonaktifkan)"}
                 </span>
               </div>
@@ -116,8 +116,8 @@ export default function AlokasiSubsidiTab({ countryDetail }: AlokasiSubsidiTabPr
           ))}
         </div>
 
-        <div className="pt-4 border-t border-[#00FFAA]/30 mt-4">
-          <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
+        <div className="pt-4 border-t border-root-accent/30 mt-4">
+          <div className="flex justify-between items-center text-sm font-black text-root-text">
             <span>Subtotal Subsidi {activeCategory}:</span>
             <span className="text-rose-400">- {subtotalCost.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
           </div>
@@ -125,9 +125,9 @@ export default function AlokasiSubsidiTab({ countryDetail }: AlokasiSubsidiTabPr
       </div>
 
       {/* Total Pengeluaran Subsidi Card */}
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-xl space-y-2">
+      <div className="bg-root-surface border border-root-accent/30 p-6 rounded-xl space-y-2">
         <div className="pt-2">
-          <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
+          <div className="flex justify-between items-center text-sm font-black text-root-text">
             <span>Total Pengeluaran Subsidi Alokasi:</span>
             <span className="text-rose-400">- {totalOverallCost.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
           </div>

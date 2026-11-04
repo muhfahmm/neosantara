@@ -267,23 +267,23 @@ export default function PerbandinganPasukan({
       {/* ══════════ FULL MENU CONTAINER ══════════ */}
       <div className="relative z-10 flex flex-col w-full h-full">
         {/* ══════════ HEADER ══════════ */}
-        <div className="px-6 sm:px-10 py-3.5 sm:py-4 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] shrink-0 shadow-lg">
+        <div className="px-6 sm:px-10 py-3.5 sm:py-4 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas shrink-0 shadow-lg">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2.5">
-              <div className="p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-                <Swords className="h-5 w-5 text-[#00FFAA] animate-pulse" />
+              <div className="p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+                <Swords className="h-5 w-5 text-root-accent animate-pulse" />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-black text-[#00FFAA] tracking-wider uppercase leading-none">
+                <h3 className="text-base sm:text-lg font-black text-root-accent tracking-wider uppercase leading-none">
                   ANALISIS PERTAHANAN & PERTEMPURAN
                 </h3>
-                <p className="text-[10px] text-[#6B8A8A] font-bold uppercase tracking-widest mt-1">
+                <p className="text-[10px] text-root-subtle font-bold uppercase tracking-widest mt-1">
                   Analisis Operasi Tempur Intelijen Militer
                 </p>
               </div>
             </div>
-            <div className="hidden sm:flex items-center gap-2 ml-4 pl-4 border-l border-[#00FFAA]/30">
-              <span className="text-xs font-black uppercase tracking-wider text-[#6B8A8A]">
+            <div className="hidden sm:flex items-center gap-2 ml-4 pl-4 border-l border-root-accent/30">
+              <span className="text-xs font-black uppercase tracking-wider text-root-subtle">
                 {attackerName} &rarr; {targetName}
               </span>
             </div>
@@ -294,24 +294,24 @@ export default function PerbandinganPasukan({
         <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#071313] space-y-6 custom-scrollbar">
           <div className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto space-y-6">
             {/* BAGIAN 1: PERBANDINGAN TOTAL KEKUATAN */}
-            <div className="flex flex-col bg-[#0A1A1A] border border-[#00FFAA]/20 p-5 rounded-2xl shadow-sm gap-4">
+            <div className="flex flex-col bg-root-canvas border border-root-accent/20 p-5 rounded-2xl shadow-sm gap-4">
               <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
                 {/* KARTU KIRI: PENYERANG */}
-                <div className="flex-1 w-full flex flex-col items-center text-center space-y-2 p-4 rounded-xl bg-[#0F2424] border border-[#00FFAA]/20">
-                  <div className="p-2.5 rounded-full bg-[#00FFAA]/10 border border-[#00FFAA]/30">
-                    <Shield className="w-6 h-6 text-[#00FFAA]" />
+                <div className="flex-1 w-full flex flex-col items-center text-center space-y-2 p-4 rounded-xl bg-root-surface border border-root-accent/20">
+                  <div className="p-2.5 rounded-full bg-root-accent/10 border border-root-accent/30">
+                    <Shield className="w-6 h-6 text-root-accent" />
                   </div>
-                  <p className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">
                     {isCoalitionForce
                       ? isUserAttacker ? "Pasukan Penyerang (Anda)" : "Pasukan Gabungan PBB"
                       : isUserDefender ? "Pasukan Penyerang (AI)" : "Pasukan Penyerang (Anda)"}
                   </p>
-                  <p className="text-xl font-black text-[#00FFAA] uppercase tracking-wide">
+                  <p className="text-xl font-black text-root-accent uppercase tracking-wide">
                     {attackerName}
                   </p>
-                  <p className="text-xs text-[#E0E0E0]">
+                  <p className="text-xs text-root-text">
                     Kekuatan pasukan dibawa:{' '}
-                    <span className="font-black text-[#00FFAA] font-mono">
+                    <span className="font-black text-root-accent font-mono">
                       {formatNumber(actualAttackerPower)}
                     </span>
                   </p>
@@ -319,17 +319,17 @@ export default function PerbandinganPasukan({
 
                 {/* ELEMEN TENGAH: VS */}
                 <div className="flex items-center justify-center py-2 md:py-0">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#00FFAA]/30 bg-[#0F2424] text-xl font-black text-[#00FFAA] shadow-sm">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-root-accent/30 bg-root-surface text-xl font-black text-root-accent shadow-sm">
                     VS
                   </div>
                 </div>
 
                 {/* KARTU KANAN: TARGET */}
-                <div className="flex-1 w-full flex flex-col items-center text-center space-y-2 p-4 rounded-xl bg-[#0F2424] border border-rose-500/20">
+                <div className="flex-1 w-full flex flex-col items-center text-center space-y-2 p-4 rounded-xl bg-root-surface border border-rose-500/20">
                   <div className="p-2.5 rounded-full bg-rose-500/10 border border-rose-500/30">
                     <Shield className="w-6 h-6 text-rose-400" />
                   </div>
-                  <p className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">
                     {isCoalitionForce
                       ? isUserDefender ? "Pasukan Target (Anda)" : `Pasukan Target (${targetName})`
                       : isUserDefender ? "Pasukan Pertahanan (Anda)" : "Pasukan Target (Musuh)"}
@@ -337,7 +337,7 @@ export default function PerbandinganPasukan({
                   <p className="text-xl font-black text-rose-400 uppercase tracking-wide">
                     {targetName}
                   </p>
-                  <p className="text-xs text-[#E0E0E0]">
+                  <p className="text-xs text-root-text">
                     Kekuatan pasukan dibawa:{' '}
                     <span className="font-black text-rose-400 font-mono">
                       {formatNumber(actualTargetPower)}
@@ -347,21 +347,21 @@ export default function PerbandinganPasukan({
               </div>
 
               {/* GARIS KESEIMBANGAN PASUKAN */}
-              <div className="w-full mt-2 pt-4 border-t border-[#00FFAA]/10">
+              <div className="w-full mt-2 pt-4 border-t border-root-accent/10">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6B8A8A]">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-root-subtle">
                       Keseimbangan Pasukan yang Dikerahkan:
                     </span>
-                    <span className="text-xs font-mono font-black text-[#00FFAA]">
+                    <span className="text-xs font-mono font-black text-root-accent">
                       {attackerPct.toFixed(1)}%
                     </span>
-                    <span className="text-xs font-bold text-[#6B8A8A]">/</span>
+                    <span className="text-xs font-bold text-root-subtle">/</span>
                     <span className="text-xs font-mono font-black text-rose-400">
                       {targetPct.toFixed(1)}%
                     </span>
                   </div>
-                  <span className="text-[10px] font-bold text-[#E0E0E0]">
+                  <span className="text-[10px] font-bold text-root-text">
                     {isUserDefender
                       ? (actualTargetPower > actualAttackerPower ? '🟢 Pertahanan Unggul' : actualTargetPower < actualAttackerPower ? '🔴 Pertahanan Terancam' : '⚖️ Seimbang')
                       : (actualAttackerPower > actualTargetPower ? '🟢 Unggul' : actualAttackerPower < actualTargetPower ? '🔴 Tertinggal' : '⚖️ Seimbang')}
@@ -369,13 +369,13 @@ export default function PerbandinganPasukan({
                 </div>
 
                 <div className="flex items-center gap-3 w-full">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#00FFAA]/10 border border-[#00FFAA]/30">
-                    <Shield className="h-4 w-4 text-[#00FFAA]" />
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-root-accent/10 border border-root-accent/30">
+                    <Shield className="h-4 w-4 text-root-accent" />
                   </div>
 
-                  <div className="flex-1 h-5 rounded-full bg-[#0F2424] overflow-hidden relative border border-[#00FFAA]/20 shadow-inner">
+                  <div className="flex-1 h-5 rounded-full bg-root-surface overflow-hidden relative border border-root-accent/20 shadow-inner">
                     <div
-                      className="absolute left-0 top-0 h-full bg-[#00FFAA] transition-all duration-700 ease-out"
+                      className="absolute left-0 top-0 h-full bg-root-accent transition-all duration-700 ease-out"
                       style={{ width: `${attackerPct}%` }}
                     />
                     <div
@@ -393,17 +393,17 @@ export default function PerbandinganPasukan({
             </div>
 
             {/* BAGIAN 2: PERBANDINGAN PASUKAN PER MATRA */}
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-5 rounded-2xl shadow-sm">
+            <div className="bg-root-canvas border border-root-accent/20 p-5 rounded-2xl shadow-sm">
               <div className="flex flex-col gap-4">
                 {(['darat', 'laut', 'udara'] as ArmadaGroup[]).map((group) => {
                   const Icon = groupMeta[group].icon;
 
                   return (
-                    <div key={group} className="rounded-xl border border-[#00FFAA]/20 bg-[#0F2424] p-4">
+                    <div key={group} className="rounded-xl border border-root-accent/20 bg-root-surface p-4">
                       <div className="space-y-3">
-                        <div className="w-full flex items-center justify-between rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-3 text-sm font-black text-[#00FFAA]">
+                        <div className="w-full flex items-center justify-between rounded-xl border border-root-accent/20 bg-root-canvas px-4 py-3 text-sm font-black text-root-accent">
                           <div className="flex items-center gap-3">
-                            <Icon className="h-5 w-5 text-[#00FFAA]" />
+                            <Icon className="h-5 w-5 text-root-accent" />
                             <span className="uppercase tracking-wider">{group}</span>
                           </div>
                         </div>
@@ -412,22 +412,22 @@ export default function PerbandinganPasukan({
                         <div className="flex flex-col md:flex-row md:gap-6 pt-1">
                           {/* Sisi Kiri: Penyerang */}
                           <div className="flex-1 w-full space-y-2">
-                            <div className="text-[10px] font-black uppercase tracking-wider text-[#00FFAA] mb-2">Penyerang</div>
+                            <div className="text-[10px] font-black uppercase tracking-wider text-root-accent mb-2">Penyerang</div>
                             {attackerBreakdown[group].map((item) => (
-                              <div key={item.key} className="flex items-center justify-between rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] px-3 py-2 text-xs font-semibold text-[#E0E0E0]">
+                              <div key={item.key} className="flex items-center justify-between rounded-lg border border-root-accent/20 bg-root-canvas px-3 py-2 text-xs font-semibold text-root-text">
                                 <span>{item.label}</span>
-                                <span className="font-black text-[#00FFAA] font-mono">{formatNumber(item.quantity)}</span>
+                                <span className="font-black text-root-accent font-mono">{formatNumber(item.quantity)}</span>
                               </div>
                             ))}
                           </div>
 
-                          <div className="hidden md:block w-[1px] self-stretch bg-[#00FFAA]/20 rounded-full" />
+                          <div className="hidden md:block w-[1px] self-stretch bg-root-accent/20 rounded-full" />
 
                           {/* Sisi Kanan: Target */}
                           <div className="flex-1 w-full space-y-2">
                             <div className="text-[10px] font-black uppercase tracking-wider text-rose-400 mb-2">Target</div>
                             {targetBreakdown[group].map((item) => (
-                              <div key={item.key} className="flex items-center justify-between rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] px-3 py-2 text-xs font-semibold text-[#E0E0E0]">
+                              <div key={item.key} className="flex items-center justify-between rounded-lg border border-root-accent/20 bg-root-canvas px-3 py-2 text-xs font-semibold text-root-text">
                                 <span>{item.label}</span>
                                 <span className="font-black text-rose-400 font-mono">{formatNumber(item.quantity)}</span>
                               </div>
@@ -444,10 +444,10 @@ export default function PerbandinganPasukan({
         </div>
 
         {/* ══════════ FOOTER ACTION BUTTONS ══════════ */}
-        <div className="px-6 py-4 border-t border-[#00FFAA]/30 bg-[#0A1A1A] shrink-0 flex items-center justify-end gap-3">
+        <div className="px-6 py-4 border-t border-root-accent/30 bg-root-canvas shrink-0 flex items-center justify-end gap-3">
           <button
             onClick={onAutoResult}
-            className="flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-[#0F2424] hover:bg-[#142E2E] border-2 border-[#FFEB3B]/60 hover:border-[#FFEB3B] text-[#FFEB3B] font-black text-xs uppercase tracking-widest transition-all cursor-pointer shadow-[0_0_15px_rgba(255,235,59,0.2)] active:scale-95"
+            className="flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-root-surface hover:bg-[#142E2E] border-2 border-[#FFEB3B]/60 hover:border-[#FFEB3B] text-[#FFEB3B] font-black text-xs uppercase tracking-widest transition-all cursor-pointer shadow-[0_0_15px_rgba(255,235,59,0.2)] active:scale-95"
           >
             <Zap className="h-4 w-4 fill-current text-[#FFEB3B]" />
             Hasil Otomatis

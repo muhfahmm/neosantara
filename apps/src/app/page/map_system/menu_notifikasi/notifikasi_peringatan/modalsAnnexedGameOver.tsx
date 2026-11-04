@@ -40,7 +40,6 @@ export default function ModalsAnnexedGameOver({
             className={`fixed inset-0 z-[350] flex items-center justify-center p-4 font-sans select-none transition-all duration-700 ${
                 visible ? 'opacity-100' : 'opacity-0'
             }`}
-            style={{ backgroundColor: 'rgba(0,0,0,0.94)', backdropFilter: 'blur(16px)' }}
         >
             {/* Dramatic Background Atmosphere */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -59,7 +58,7 @@ export default function ModalsAnnexedGameOver({
                     {/* Header */}
                     <div className="bg-gradient-to-b from-red-950 to-[#0D0505] p-6 flex flex-col items-center gap-3 border-b-2 border-red-900/40 text-center">
                         <div className="relative">
-                            <div className="absolute inset-0 rounded-full bg-red-600/30 blur-2xl animate-pulse" />
+
                             <div className="relative w-20 h-20 rounded-full bg-red-950/90 border-4 border-red-600 flex items-center justify-center text-red-400 shadow-xl shadow-red-950/80">
                                 <ShieldAlert className="w-10 h-10 animate-bounce" />
                             </div>

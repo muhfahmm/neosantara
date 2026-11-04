@@ -146,15 +146,15 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
         const nextAvailable = cooldownEnd ? formatIdDate(cooldownEnd) : null;
 
         return (
-          <div key={lembaga.id} className={`flex min-w-0 flex-col gap-4 border border-[#00FFAA]/30 bg-[#0F2424] p-4 ${rootBorderRadius.card}`}>
+          <div key={lembaga.id} className={`flex min-w-0 flex-col gap-4 border border-root-accent/30 bg-root-surface p-4 ${rootBorderRadius.card}`}>
             <div className="flex min-w-0 flex-col justify-between gap-3 sm:flex-row sm:items-center">
               <div className="flex min-w-0 items-center gap-3">
-                <div className={`shrink-0 border border-[#00FFAA]/30 bg-[#0A1A1A] p-2 ${rootBorderRadius.card}`}>
-                  <Landmark className="h-5 w-5 text-[#00FFAA]" />
+                <div className={`shrink-0 border border-root-accent/30 bg-root-canvas p-2 ${rootBorderRadius.card}`}>
+                  <Landmark className="h-5 w-5 text-root-accent" />
                 </div>
                 <div className="min-w-0">
-                  <h4 className={`${rootModalTypography.sectionTitle} break-words text-[#00FFAA]`}>{lembaga.name}</h4>
-                  <p className="mt-1 break-words text-[10px] font-medium leading-relaxed text-[#6B8A8A]">
+                  <h4 className={`${rootModalTypography.sectionTitle} break-words text-root-accent`}>{lembaga.name}</h4>
+                  <p className="mt-1 break-words text-[10px] font-medium leading-relaxed text-root-subtle">
                     Bunga {lembaga.interest}% <span aria-hidden="true">·</span> Maks {lembaga.maxCap.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO <span aria-hidden="true">·</span> Tenor 180–1825 hari
                   </p>
                 </div>
@@ -172,7 +172,7 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
             </div>
 
             <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
-              <label className="min-w-0 space-y-1.5 text-[10px] font-black uppercase tracking-wider text-[#00FFAA]">
+              <label className="min-w-0 space-y-1.5 text-[10px] font-black uppercase tracking-wider text-root-accent">
                 Jumlah Pinjaman
                 <div className="relative">
                   <input
@@ -181,13 +181,13 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
                     placeholder={lembaga.maxCap.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                     value={amounts[lembaga.id] && amounts[lembaga.id] !== "" ? Number(amounts[lembaga.id]).toLocaleString('id-ID', { maximumFractionDigits: 2 }) : ""}
                     onChange={(e) => handleAmountChange(lembaga.id, e.target.value)}
-                    className={`h-10 w-full border border-[#00FFAA]/30 bg-[#0A1A1A] px-3 pr-20 text-sm font-bold text-[#E0E0E0] outline-none transition focus:border-[#00FFAA] ${rootBorderRadius.card}`}
+                    className={`h-10 w-full border border-root-accent/30 bg-root-canvas px-3 pr-20 text-sm font-bold text-root-text outline-none transition focus:border-root-accent ${rootBorderRadius.card}`}
                   />
                   <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center gap-1">
                     <button
                       type="button"
                       onClick={() => decrementLoanAmount(lembaga.id, 1_000_000)}
-                      className={`flex h-7 w-7 cursor-pointer items-center justify-center border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] transition-colors hover:bg-[#00FFAA] hover:text-[#0A1A1A] ${rootBorderRadius.card}`}
+                      className={`flex h-7 w-7 cursor-pointer items-center justify-center border border-root-accent/30 bg-root-surface text-root-accent transition-colors hover:bg-root-accent hover:text-root-canvas ${rootBorderRadius.card}`}
                       aria-label="Kurangi 1 juta"
                     >
                       <ArrowDown className="h-3.5 w-3.5" />
@@ -195,7 +195,7 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
                     <button
                       type="button"
                       onClick={() => setQuickLoanAmount(lembaga.id, 15_000_000)}
-                      className={`flex h-7 w-7 cursor-pointer items-center justify-center border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] transition-colors hover:bg-[#00FFAA] hover:text-[#0A1A1A] ${rootBorderRadius.card}`}
+                      className={`flex h-7 w-7 cursor-pointer items-center justify-center border border-root-accent/30 bg-root-surface text-root-accent transition-colors hover:bg-root-accent hover:text-root-canvas ${rootBorderRadius.card}`}
                       aria-label="Setel 15 juta"
                     >
                       <ArrowUp className="h-3.5 w-3.5" />
@@ -204,17 +204,17 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
                 </div>
               </label>
 
-              <div className="min-w-0 space-y-1.5 text-[10px] font-black uppercase tracking-wider text-[#00FFAA]">
+              <div className="min-w-0 space-y-1.5 text-[10px] font-black uppercase tracking-wider text-root-accent">
                 <div className="flex items-center justify-between">
                   <span>Tenor Pengembalian</span>
-                  <span className="text-[10px] text-[#6B8A8A]">
+                  <span className="text-[10px] text-root-subtle">
                     {TENOR_OPTIONS.find((option) => option.days === Number(terms[lembaga.id] ?? 180))?.label ?? "6m"}
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setTermModalTarget(lembaga.id)}
-                  className={`h-10 w-full cursor-pointer border border-[#00FFAA]/30 bg-[#0A1A1A] px-3 text-left text-sm font-bold text-[#E0E0E0] outline-none transition hover:border-[#00FFAA] ${rootBorderRadius.card}`}
+                  className={`h-10 w-full cursor-pointer border border-root-accent/30 bg-root-canvas px-3 text-left text-sm font-bold text-root-text outline-none transition hover:border-root-accent ${rootBorderRadius.card}`}
                 >
                   {TENOR_OPTIONS.find((option) => option.days === Number(terms[lembaga.id] ?? 180))?.label ?? "6m"} / {Number(terms[lembaga.id] ?? 180).toLocaleString("id-ID", { maximumFractionDigits: 2 })} hari
                 </button>
@@ -232,8 +232,8 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
               disabled={isCooldownActive || loanRestriction}
               className={`w-full px-5 py-2.5 text-[10px] font-black uppercase tracking-wider transition-all ${rootBorderRadius.card} ${
                 isCooldownActive || loanRestriction
-                  ? "bg-[#0A1A1A] text-[#6B8A8A] border border-gray-800 cursor-not-allowed"
-                  : "cursor-pointer bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 font-bold"
+                  ? "bg-root-canvas text-root-subtle border border-gray-800 cursor-not-allowed"
+                  : "cursor-pointer bg-root-accent text-root-canvas hover:bg-root-accent/80 font-bold"
               }`}
             >
               Ajukan Kredit

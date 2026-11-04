@@ -119,12 +119,12 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
         <div className="flex flex-col h-full overflow-hidden">
 
           {/* HEADER MODAL */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
           <div className="flex min-w-0 items-center gap-3 lg:gap-6">
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-              <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
+              <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
                 {activeTab === 'spionase' ? (
-                  <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA] animate-pulse" />
+                  <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent animate-pulse" />
                 ) : (
                   <Bomb className="h-4 w-4 sm:h-5 sm:w-5 text-orange-400 animate-pulse" />
                 )}
@@ -158,7 +158,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
         </div>
 
         {/* BODY MODAL */}
-        <div className="flex-1 min-h-0 overflow-hidden p-6 bg-[#0F2424] relative z-10 no-scrollbar flex flex-col">
+        <div className="flex-1 min-h-0 overflow-hidden p-6 bg-root-surface relative z-10 no-scrollbar flex flex-col">
           <div className="w-full flex-1 min-h-0 flex flex-col gap-4">
 
             {/* 2 TAB MENU - tampilan mobile */}
@@ -173,7 +173,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
             </div>
 
             {/* RENDER KOMPONEN TABEL TERPISAH */}
-            <div className="w-full flex-1 min-h-0 overflow-hidden border border-[#00FFAA]/20 rounded-xl bg-[#0A1A1A] shadow-sm">
+            <div className="w-full flex-1 min-h-0 overflow-hidden border border-root-accent/20 rounded-xl bg-root-canvas shadow-sm">
               <div className="h-full min-h-0 overflow-hidden">
                 {activeTab === 'spionase' && (
                   <Spionase

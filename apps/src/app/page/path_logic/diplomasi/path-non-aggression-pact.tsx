@@ -27,9 +27,7 @@ const NonAggressionPactVehicle: DiplomacyPathVehicle = ({ accent }) => {
       {/* ================= DEFINISI GRADIEN & FILTER ================= */}
       <defs>
         {/* Bayangan mobil yang halus */}
-        <filter id={`blur-shadow-${uid}`} x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="1.5" />
-        </filter>
+
 
         {/* Gradien Bodi Baja (Armored Steel) */}
         <linearGradient id={`body-${uid}`} x1="0" y1="0" x2="0.2" y2="1">
@@ -58,7 +56,6 @@ const NonAggressionPactVehicle: DiplomacyPathVehicle = ({ accent }) => {
       <ellipse 
         cx="2" cy="5" rx="30" ry="13" 
         fill="#000" opacity=".5" 
-        filter={`url(#blur-shadow-${uid})`} 
       />
 
       {/* ================= RODA & KAKI-KAKI ================= */}
@@ -178,7 +175,7 @@ const NonAggressionPactVehicle: DiplomacyPathVehicle = ({ accent }) => {
       <circle cx="6" cy="0" r="1.5" fill="#fff" opacity=".8" />
       
       {/* Efek Pendaran Strobo */}
-      <circle cx="6" cy="0" r="6" fill="#ef4444" opacity=".2" filter={`url(#blur-shadow-${uid})`} className="animate-ping" />
+      <circle cx="6" cy="0" r="6" fill="#ef4444" opacity=".2" className="animate-ping" />
     </g>
   );
 };

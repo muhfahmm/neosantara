@@ -199,15 +199,6 @@ export default function IcbmPath({
   return (
     <div className="fixed inset-0 z-20 pointer-events-none overflow-hidden select-none">
       <svg ref={svgRef} className="absolute inset-0 h-full w-full" viewBox="0 0 1 1">
-        <defs>
-          <filter id="icbm-path-glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="6" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
 
         {/* Jalur pijar merah tebal */}
         <path

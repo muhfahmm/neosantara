@@ -3038,7 +3038,7 @@ export default function MapPage() {
                 newNewsItems.push(invNews);
 
                 const notifMsg: NotificationMessage = {
-                    id: `notif-player-[#00FFAA]-${Date.now()}`,
+                    id: `notif-player-root-accent-${Date.now()}`,
                     title: `🏳️ PASUKAN DITARIK MUNDUR`,
                     sender: `Markas Besar Angkatan Bersenjata (${attackerCountry})`,
                     message: `Operasi agresi terhadap ${targetCountry} disudahi. Pasukan ditarik mundur ke markas utama tanpa aneksasi wilayah.`,
@@ -10460,7 +10460,7 @@ export default function MapPage() {
                     <button
                         onClick={handleFocusHome}
                         title="🎯 Fokus & Zoom ke Negara Sendiri (F)"
-                        className="fixed bottom-3 lg:bottom-4 xl:bottom-6 2xl:bottom-12 left-18 lg:left-20 xl:left-22 2xl:left-26 z-[100] w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all group"
+                        className="fixed bottom-3 lg:bottom-4 xl:bottom-6 2xl:bottom-12 left-18 lg:left-20 xl:left-22 2xl:left-26 z-[100] w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all group"
                     >
                         <Crosshair className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 transition-transform group-hover:scale-110" />
                     </button>
@@ -11224,29 +11224,29 @@ export default function MapPage() {
                 }}
             >
                 {/* Upper Card */}
-                <div className="bg-[#0F2424]/90 backdrop-blur-md rounded-t-xl xl:rounded-t-2xl px-3.5 lg:px-4 xl:px-6 pt-3 lg:pt-4 xl:pt-5 pb-7 lg:pb-8 xl:pb-10 border-t border-x border-[#00FFAA]/30 flex flex-col relative overflow-hidden">
+                <div className="bg-root-surface rounded-t-xl xl:rounded-t-2xl px-3.5 lg:px-4 xl:px-6 pt-3 lg:pt-4 xl:pt-5 pb-7 lg:pb-8 xl:pb-10 border-t border-x border-root-accent/30 flex flex-col relative overflow-hidden">
                     <div className="flex items-center justify-end mb-2 xl:mb-3.5">
                         {/* Calendar date label */}
                         <div className="flex flex-col items-end leading-none">
-                            <span className="text-[8px] xl:text-[9px] font-black text-[#6B8A8A] tracking-wider xl:tracking-widest uppercase mb-0.5 xl:mb-1">SIMULATION CALENDAR</span>
-                            <span ref={dateTextRef} className="text-xs lg:text-sm xl:text-lg font-black text-[#E0E0E0] tracking-tight">
+                            <span className="text-[8px] xl:text-[9px] font-black text-root-subtle tracking-wider xl:tracking-widest uppercase mb-0.5 xl:mb-1">SIMULATION CALENDAR</span>
+                            <span ref={dateTextRef} className="text-xs lg:text-sm xl:text-lg font-black text-root-text tracking-tight">
                                 {timeManagerRef.current?.getFormattedDate() || calendarRef.current?.display.getDisplayDate() || '-'}
                             </span>
                         </div>
                     </div>
 
                     {/* Progress Bar Hijau */}
-                    <div className="w-full bg-[#0A1A1A] h-1.5 rounded-full overflow-hidden border border-[#00FFAA]/20">
+                    <div className="w-full bg-root-canvas h-1.5 rounded-full overflow-hidden border border-root-accent/20">
                         <div
                             ref={progressBarRef}
-                            className="bg-[#00FFAA] h-full w-full origin-left scale-x-0 transition-none rounded-full shadow-[0_0_8px_#00FFAA] will-change-transform"
+                            className="bg-root-accent h-full w-full origin-left scale-x-0 transition-none rounded-full shadow-[0_0_8px_#00FFAA] will-change-transform"
                         />
                     </div>
 
                 </div>
 
                 {/* Lower Dark Card with buttons */}
-                <div className="bg-[#0A1A1A] rounded-b-xl xl:rounded-b-2xl border-b border-x border-[#00FFAA]/30 h-10 lg:h-11 xl:h-14 relative flex items-center justify-between">
+                <div className="bg-root-canvas rounded-b-xl xl:rounded-b-2xl border-b border-x border-root-accent/30 h-10 lg:h-11 xl:h-14 relative flex items-center justify-between">
                     <div className="absolute inset-x-3 lg:inset-x-4 xl:inset-x-6 -top-4.5 lg:-top-5 xl:-top-7 flex items-center justify-between">
                         {/* 1. Play/Pause button */}
                         <button
@@ -11272,12 +11272,12 @@ export default function MapPage() {
                                 setIsPaused(nextPaused);
                             }}
                             title={calendarRef.current?.calendar.getPauseButtonTitle(isPaused) || (isPaused ? "Mulai Waktu" : "Jeda Waktu")}
-                            className="w-9 h-9 lg:w-10 lg:h-10 xl:w-14 xl:h-14 rounded-full bg-[#00FFAA] text-[#0A1A1A] border-2 xl:border-4 border-[#0A1A1A] flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition-all z-20 group"
+                            className="w-9 h-9 lg:w-10 lg:h-10 xl:w-14 xl:h-14 rounded-full bg-root-accent text-root-canvas border-2 xl:border-4 border-root-canvas flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition-all z-20 group"
                         >
                             {isPaused ? (
-                                <Play className="w-3.5 h-3.5 lg:w-4 lg:h-4 xl:w-5 xl:h-5 fill-[#0A1A1A] text-[#0A1A1A] translate-x-0.5 transition-transform group-hover:scale-110" />
+                                <Play className="w-3.5 h-3.5 lg:w-4 lg:h-4 xl:w-5 xl:h-5 fill-root-canvas text-root-canvas translate-x-0.5 transition-transform group-hover:scale-110" />
                             ) : (
-                                <Pause className="w-3.5 h-3.5 lg:w-4 lg:h-4 xl:w-5 xl:h-5 fill-[#0A1A1A] text-[#0A1A1A] transition-transform group-hover:scale-110" />
+                                <Pause className="w-3.5 h-3.5 lg:w-4 lg:h-4 xl:w-5 xl:h-5 fill-root-canvas text-root-canvas transition-transform group-hover:scale-110" />
                             )}
                         </button>
 
@@ -11293,7 +11293,7 @@ export default function MapPage() {
                                 }
                             }}
                             title={calendarRef.current?.calendar.getSpeedButtonTitle() || `Ubah Kecepatan: ${speed}x`}
-                            className="w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] flex items-center justify-center cursor-pointer transition-all z-20 text-[10px] xl:text-[12px] font-black uppercase tracking-tighter"
+                            className="w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas flex items-center justify-center cursor-pointer transition-all z-20 text-[10px] xl:text-[12px] font-black uppercase tracking-tighter"
                         >
                             {calendarRef.current?.display.getSpeedLabel() || `×${speed}`}
                         </button>
@@ -11308,7 +11308,7 @@ export default function MapPage() {
                                 }
                             }}
                             title="Liburan Negara"
-                            className="w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] flex items-center justify-center cursor-pointer transition-all z-20"
+                            className="w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas flex items-center justify-center cursor-pointer transition-all z-20"
                         >
                             <Palmtree className="w-3.5 h-3.5 xl:w-4.5 xl:h-4.5" />
                         </button>
@@ -11323,7 +11323,7 @@ export default function MapPage() {
                                 }
                             }}
                             title="Militer & Keamanan Negara"
-                            className="w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] flex items-center justify-center cursor-pointer transition-all z-20"
+                            className="w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas flex items-center justify-center cursor-pointer transition-all z-20"
                         >
                             <Shield className="w-3.5 h-3.5 xl:w-4.5 xl:h-4.5" />
                         </button>

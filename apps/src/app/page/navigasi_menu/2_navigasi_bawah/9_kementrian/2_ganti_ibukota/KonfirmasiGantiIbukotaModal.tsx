@@ -57,12 +57,12 @@ export default function KonfirmasiGantiIbukotaModal({
               <h3 className="text-xl sm:text-2xl font-black text-amber-300 tracking-wide uppercase leading-tight">
                 Konfirmasi Pemindahan Ibukota
               </h3>
-              <p className="text-xs text-[#6B8A8A]">Keputusan Strategis Kenegaraan</p>
+              <p className="text-xs text-root-subtle">Keputusan Strategis Kenegaraan</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-[#6B8A8A] hover:text-amber-300 hover:bg-amber-400/10 rounded-xl transition-colors cursor-pointer"
+            className="p-1.5 text-root-subtle hover:text-amber-300 hover:bg-amber-400/10 rounded-xl transition-colors cursor-pointer"
           >
             <X className="h-5 w-5" />
           </button>
@@ -71,10 +71,10 @@ export default function KonfirmasiGantiIbukotaModal({
         {/* Area Konten Utama */}
         <div className="flex-1 space-y-4">
           {/* Visualisasi Perpindahan */}
-          <div className="bg-[#0A1A1A]/90 border border-amber-400/20 rounded-xl p-4 flex items-center justify-between">
+          <div className="bg-root-canvas/90 border border-amber-400/20 rounded-xl p-4 flex items-center justify-between">
             <div className="text-center flex-1">
-              <span className="text-xs text-[#6B8A8A] uppercase font-bold block mb-1">Ibukota Lama</span>
-              <span className="text-base sm:text-lg font-black text-[#E0E0E0]">{currentCapital}</span>
+              <span className="text-xs text-root-subtle uppercase font-bold block mb-1">Ibukota Lama</span>
+              <span className="text-base sm:text-lg font-black text-root-text">{currentCapital}</span>
             </div>
             <div className="px-4 text-amber-400 font-black text-xl sm:text-2xl">➔</div>
             <div className="text-center flex-1">
@@ -84,7 +84,7 @@ export default function KonfirmasiGantiIbukotaModal({
           </div>
 
           {/* Rincian Finansial */}
-          <div className="bg-[#050D0D]/90 border border-[#00FFAA]/20 rounded-xl p-4 space-y-2.5 text-xs sm:text-sm">
+          <div className="bg-[#050D0D]/90 border border-root-accent/20 rounded-xl p-4 space-y-2.5 text-xs sm:text-sm">
             <div className="flex items-center justify-between">
               <span className="text-[#A2B7B2] flex items-center gap-2">
                 <Coins className="h-4 w-4 text-amber-400" />
@@ -97,14 +97,14 @@ export default function KonfirmasiGantiIbukotaModal({
 
             <div className="flex items-center justify-between">
               <span className="text-[#A2B7B2]">Kas Negara Saat Ini:</span>
-              <span className={`font-bold ${canAfford ? "text-[#00FFAA]" : "text-rose-400"}`}>
+              <span className={`font-bold ${canAfford ? "text-root-accent" : "text-rose-400"}`}>
                 {countryMoney.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
               </span>
             </div>
 
-            <div className="border-t border-[#00FFAA]/10 pt-2.5 flex items-center justify-between">
-              <span className="text-[#6B8A8A]">Perkiraan Sisa Kas:</span>
-              <span className={`font-bold ${canAfford ? "text-[#E0E0E0]" : "text-rose-400"}`}>
+            <div className="border-t border-root-accent/10 pt-2.5 flex items-center justify-between">
+              <span className="text-root-subtle">Perkiraan Sisa Kas:</span>
+              <span className={`font-bold ${canAfford ? "text-root-text" : "text-rose-400"}`}>
                 {(countryMoney - PINDAH_IBUKOTA_COST).toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
               </span>
             </div>
@@ -131,7 +131,7 @@ export default function KonfirmasiGantiIbukotaModal({
         <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-amber-400/20">
           <button
             onClick={onClose}
-            className="px-6 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#A2B7B2] hover:text-white hover:border-[#00FFAA]/50 transition-colors font-bold text-xs uppercase cursor-pointer"
+            className="px-6 py-2.5 rounded-xl border border-root-accent/30 bg-root-canvas text-[#A2B7B2] hover:text-white hover:border-root-accent/50 transition-colors font-bold text-xs uppercase cursor-pointer"
           >
             Batal
           </button>
@@ -140,7 +140,7 @@ export default function KonfirmasiGantiIbukotaModal({
             disabled={!canAfford}
             className={`px-7 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-2 transition-all shadow-md ${
               canAfford
-                ? "bg-[#00FFAA] hover:bg-[#00e699] text-[#0A1A1A] border border-[#00FFAA] cursor-pointer hover:shadow-lg active:scale-[0.98]"
+                ? "bg-root-accent hover:bg-[#00e699] text-root-canvas border border-root-accent cursor-pointer hover:shadow-lg active:scale-[0.98]"
                 : "bg-gray-700 text-gray-400 border border-gray-600 cursor-not-allowed opacity-50"
             }`}
           >

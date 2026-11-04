@@ -30,7 +30,7 @@ export default function EmbassyRelationRequirementModal({
             Kedutaan Belum Dapat Dibangun
           </h3>
           
-          <p className="text-sm sm:text-base text-[#E0E0E0] leading-relaxed">
+          <p className="text-sm sm:text-base text-root-text leading-relaxed">
             Hubungan dengan <strong className="text-white">{countryName}</strong> harus mencapai minimal{" "}
             <strong className="text-amber-300">{minimumRelation}</strong> untuk membangun kedutaan. Hubungan saat ini{" "}
             <strong className="text-amber-300">{currentRelation}</strong>.
@@ -41,7 +41,7 @@ export default function EmbassyRelationRequirementModal({
         <div className="flex justify-end mt-6 pt-4 border-t border-amber-400/20">
           <button
             onClick={onClose}
-            className="w-full sm:w-auto px-6 bg-[#00FFAA] hover:bg-[#00e699] border border-[#00FFAA] rounded-xl py-2 text-center text-[#0A1A1A] font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
+            className="w-full sm:w-auto px-6 bg-root-accent hover:bg-[#00e699] border border-root-accent rounded-xl py-2 text-center text-root-canvas font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
           >
             Mengerti
           </button>

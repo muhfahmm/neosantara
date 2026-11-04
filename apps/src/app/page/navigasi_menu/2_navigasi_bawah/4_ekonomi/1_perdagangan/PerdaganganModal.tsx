@@ -924,10 +924,10 @@ export default function PerdaganganModal({
           <div className="flex flex-col h-full overflow-hidden">
 
             {/* HEADER */}
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
               <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-                  <ArrowRightLeft className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+                <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+                  <ArrowRightLeft className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
                 </div>
                 <div className="min-w-0">
                   <h2 className={rootModalTypography.title}>Pasar Perdagangan Global</h2>
@@ -941,7 +941,7 @@ export default function PerdaganganModal({
                     onClick={() => setShowWTOTradeInfoModal(true)}
                     title="Lihat Informasi Efek Harga WTO & Agama"
                     aria-label="Informasi efek harga perdagangan"
-                    className="p-1 rounded-full bg-[#0A1A1A] border border-[#00FFAA]/50 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer shadow-sm flex items-center justify-center shrink-0"
+                    className="p-1 rounded-full bg-root-canvas border border-root-accent/50 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer shadow-sm flex items-center justify-center shrink-0"
                   >
                     <Info className="w-3.5 h-3.5" />
                   </button>
@@ -961,7 +961,7 @@ export default function PerdaganganModal({
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-3 sm:p-4 bg-[#0A1A1A]/80 relative z-10 neon-scrollbar [overflow-anchor:none]">
+            <div className="flex-1 overflow-y-auto p-3 sm:p-4 bg-root-canvas/80 relative z-10 neon-scrollbar [overflow-anchor:none]">
               {isTradeMarketBlocked ? (
                 <div className="flex min-h-full flex-col items-center justify-center rounded-xl border border-rose-500/30 bg-rose-950/20 p-5 text-center">
                   <AlertTriangle className="mb-3 h-12 w-12 text-rose-400 animate-pulse" />
@@ -969,17 +969,17 @@ export default function PerdaganganModal({
                     Akses Pasar Global Ditolak
                   </h3>
                   
-                  <div className="mb-4 grid w-full max-w-lg grid-cols-2 gap-2 rounded-lg border border-rose-500/20 bg-[#0A1A1A] p-3 text-left text-[11px]">
-                    <span className="text-[#6B8A8A]">Skor sentralisasi</span>
+                  <div className="mb-4 grid w-full max-w-lg grid-cols-2 gap-2 rounded-lg border border-rose-500/20 bg-root-canvas p-3 text-left text-[11px]">
+                    <span className="text-root-subtle">Skor sentralisasi</span>
                     <strong className="text-right text-rose-300">{tradeAccess.centralizationScore.toFixed(1)}</strong>
-                    <span className="text-[#6B8A8A]">Rata-rata nasionalisasi</span>
-                    <strong className="text-right text-[#E0E0E0]">{tradeAccess.averageNationalization.toFixed(1)}%</strong>
-                    <span className="text-[#6B8A8A]">Modifier ideologi</span>
-                    <strong className="text-right text-[#E0E0E0]">×{tradeAccess.ideologyModifier.toFixed(2)}</strong>
-                    <span className="text-[#6B8A8A]">Modifier agama</span>
-                    <strong className="text-right text-[#E0E0E0]">×{tradeAccess.religionModifier.toFixed(2)}</strong>
+                    <span className="text-root-subtle">Rata-rata nasionalisasi</span>
+                    <strong className="text-right text-root-text">{tradeAccess.averageNationalization.toFixed(1)}%</strong>
+                    <span className="text-root-subtle">Modifier ideologi</span>
+                    <strong className="text-right text-root-text">×{tradeAccess.ideologyModifier.toFixed(2)}</strong>
+                    <span className="text-root-subtle">Modifier agama</span>
+                    <strong className="text-right text-root-text">×{tradeAccess.religionModifier.toFixed(2)}</strong>
                   </div>
-                  <ul className="w-full max-w-lg space-y-1.5 text-left text-[11px] text-[#E0E0E0]">
+                  <ul className="w-full max-w-lg space-y-1.5 text-left text-[11px] text-root-text">
                     {tradeAccess.reason.map((reason) => (
                       <li key={reason} className="flex gap-2">
                         <span className="text-rose-400 font-bold">✕</span>
@@ -1010,40 +1010,40 @@ export default function PerdaganganModal({
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 mb-3">
                     <button
                       onClick={() => setIsMitraOpen(true)}
-                      className="px-2 py-1.5 rounded-lg border text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center bg-[#0F2424] border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] cursor-pointer"
+                      className="px-2 py-1.5 rounded-lg border text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center bg-root-surface border-root-accent/30 hover:bg-root-accent hover:text-root-canvas text-root-accent cursor-pointer"
                     >
                       Mitra
                     </button>
                     <button
                       onClick={() => openJualModals()}
                       disabled={!tradeAccess.canSell}
-                      className={`px-2 py-1.5 rounded-lg border text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center ${tradeAccess.canSell ? "bg-[#0F2424] border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] cursor-pointer" : "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed"}`}
+                      className={`px-2 py-1.5 rounded-lg border text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center ${tradeAccess.canSell ? "bg-root-surface border-root-accent/30 hover:bg-root-accent hover:text-root-canvas text-root-accent cursor-pointer" : "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed"}`}
                     >
                       Jual
                     </button>
                     <button
                       onClick={handleOpenGlobalBuy}
                       disabled={!tradeAccess.canBuy}
-                      className={`px-2 py-1.5 rounded-lg border text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center ${tradeAccess.canBuy ? "bg-[#0F2424] border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] cursor-pointer" : "bg-orange-950/30 border-orange-500/30 text-orange-300 cursor-not-allowed"}`}
+                      className={`px-2 py-1.5 rounded-lg border text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center ${tradeAccess.canBuy ? "bg-root-surface border-root-accent/30 hover:bg-root-accent hover:text-root-canvas text-root-accent cursor-pointer" : "bg-orange-950/30 border-orange-500/30 text-orange-300 cursor-not-allowed"}`}
                     >
                       Beli
                     </button>
                     <button
                       onClick={() => openJualModals()}
                       disabled={!tradeAccess.canSell}
-                      className={`px-2 py-1.5 rounded-lg border text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center ${tradeAccess.canSell ? "bg-[#0F2424] border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] cursor-pointer" : "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed"}`}
+                      className={`px-2 py-1.5 rounded-lg border text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center ${tradeAccess.canSell ? "bg-root-surface border-root-accent/30 hover:bg-root-accent hover:text-root-canvas text-root-accent cursor-pointer" : "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed"}`}
                     >
                       Jual Semua
                     </button>
                     <button
                       onClick={() => { setIsOfferOpen(!isOfferOpen); setIsArmsOfferOpen(false); }}
-                      className={`px-2 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wider cursor-pointer transition-all border flex items-center justify-center ${isOfferOpen ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA]' : 'bg-[#0F2424] border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A]'}`}
+                      className={`px-2 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wider cursor-pointer transition-all border flex items-center justify-center ${isOfferOpen ? 'bg-root-accent text-root-canvas border-root-accent' : 'bg-root-surface border-root-accent/30 text-root-accent hover:bg-root-accent hover:text-root-canvas'}`}
                     >
                       Tawaran
                     </button>
                     <button
                       onClick={() => { setIsArmsOfferOpen(!isArmsOfferOpen); setIsOfferOpen(false); }}
-                      className={`px-2 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wider cursor-pointer transition-all border flex items-center justify-center ${isArmsOfferOpen ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA]' : 'bg-[#0F2424] border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A]'}`}
+                      className={`px-2 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wider cursor-pointer transition-all border flex items-center justify-center ${isArmsOfferOpen ? 'bg-root-accent text-root-canvas border-root-accent' : 'bg-root-surface border-root-accent/30 text-root-accent hover:bg-root-accent hover:text-root-canvas'}`}
                     >
                       Alutsista
                     </button>
@@ -1068,35 +1068,35 @@ export default function PerdaganganModal({
                   )}
 
                   <div className="flex items-center justify-between mb-1.5">
-                    <h3 className="text-[10px] font-black text-[#00FFAA] uppercase tracking-widest">Riwayat 90 Hari</h3>
-                    <div className="inline-flex rounded-md overflow-hidden border border-[#00FFAA]/30">
-                      <button onClick={() => setHistoryFilter(effectiveFilter === "jual" ? "semua" : "jual")} className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${effectiveFilter === "jual" ? "bg-rose-600 text-white" : "bg-[#0A1A1A] text-rose-400 hover:bg-rose-950/40"}`}>Jual</button>
-                      <button onClick={() => setHistoryFilter(effectiveFilter === "beli" ? "semua" : "beli")} className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${effectiveFilter === "beli" ? "bg-emerald-600 text-white" : "bg-[#0A1A1A] text-emerald-400 hover:bg-emerald-950/40"}`}>Beli</button>
+                    <h3 className="text-[10px] font-black text-root-accent uppercase tracking-widest">Riwayat 90 Hari</h3>
+                    <div className="inline-flex rounded-md overflow-hidden border border-root-accent/30">
+                      <button onClick={() => setHistoryFilter(effectiveFilter === "jual" ? "semua" : "jual")} className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${effectiveFilter === "jual" ? "bg-rose-600 text-white" : "bg-root-canvas text-rose-400 hover:bg-rose-950/40"}`}>Jual</button>
+                      <button onClick={() => setHistoryFilter(effectiveFilter === "beli" ? "semua" : "beli")} className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${effectiveFilter === "beli" ? "bg-emerald-600 text-white" : "bg-root-canvas text-emerald-400 hover:bg-emerald-950/40"}`}>Beli</button>
                     </div>
                   </div>
 
-                  <div className="border border-[#00FFAA]/20 rounded-lg overflow-hidden bg-[#0F2424]">
+                  <div className="border border-root-accent/20 rounded-lg overflow-hidden bg-root-surface">
                     <table className="w-full text-left">
                       <thead>
-                        <tr className="bg-[#0A1A1A] border-b border-[#00FFAA]/20">
-                          <th className="px-2 py-1.5 text-[9px] font-black text-[#00FFAA] uppercase tracking-wider">Tanggal</th>
-                          <th className="px-2 py-1.5 text-[9px] font-black text-[#00FFAA] uppercase tracking-wider">Tipe</th>
-                          <th className="px-2 py-1.5 text-[9px] font-black text-[#00FFAA] uppercase tracking-wider">Kuantitas</th>
-                          <th className="px-2 py-1.5 text-[9px] font-black text-[#00FFAA] uppercase tracking-wider">Biaya</th>
-                          <th className="px-2 py-1.5 text-[9px] font-black text-[#00FFAA] uppercase tracking-wider">Negara</th>
+                        <tr className="bg-root-canvas border-b border-root-accent/20">
+                          <th className="px-2 py-1.5 text-[9px] font-black text-root-accent uppercase tracking-wider">Tanggal</th>
+                          <th className="px-2 py-1.5 text-[9px] font-black text-root-accent uppercase tracking-wider">Tipe</th>
+                          <th className="px-2 py-1.5 text-[9px] font-black text-root-accent uppercase tracking-wider">Kuantitas</th>
+                          <th className="px-2 py-1.5 text-[9px] font-black text-root-accent uppercase tracking-wider">Biaya</th>
+                          <th className="px-2 py-1.5 text-[9px] font-black text-root-accent uppercase tracking-wider">Negara</th>
                         </tr>
                       </thead>
-                      <tbody className="bg-[#0F2424] divide-y divide-[#00FFAA]/10">
+                      <tbody className="bg-root-surface divide-y divide-root-accent/10">
                         {filteredHistory.length === 0 ? (
-                          <tr><td colSpan={5} className="px-2 py-4 text-center text-[11px] text-[#6B8A8A] font-semibold">Belum ada riwayat.</td></tr>
+                          <tr><td colSpan={5} className="px-2 py-4 text-center text-[11px] text-root-subtle font-semibold">Belum ada riwayat.</td></tr>
                         ) : (
                           filteredHistory.map((item, idx) => (
-                            <tr key={idx} className="hover:bg-[#00FFAA]/5 transition-colors">
-                              <td className="px-2 py-1.5 text-[10px] font-semibold text-[#E0E0E0]">{item.tanggal}</td>
+                            <tr key={idx} className="hover:bg-root-accent/5 transition-colors">
+                              <td className="px-2 py-1.5 text-[10px] font-semibold text-root-text">{item.tanggal}</td>
                               <td className="px-2 py-1.5 text-[10px] font-bold uppercase"><span className={item.tipe === "jual" ? "text-rose-400" : "text-emerald-400"}>{item.tipe}</span></td>
-                              <td className="px-2 py-1.5 text-[10px] font-semibold text-[#E0E0E0]">{item.kuantitas}</td>
-                              <td className="px-2 py-1.5 text-[10px] font-bold text-[#00FFAA]">{item.tipe === "jual" ? "+" : "-"} {item.biaya.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</td>
-                              <td className="px-2 py-1.5 text-[10px] font-semibold text-[#E0E0E0]">{item.negara}</td>
+                              <td className="px-2 py-1.5 text-[10px] font-semibold text-root-text">{item.kuantitas}</td>
+                              <td className="px-2 py-1.5 text-[10px] font-bold text-root-accent">{item.tipe === "jual" ? "+" : "-"} {item.biaya.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</td>
+                              <td className="px-2 py-1.5 text-[10px] font-semibold text-root-text">{item.negara}</td>
                             </tr>
                           ))
                         )}

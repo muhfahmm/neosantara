@@ -15,41 +15,41 @@ interface LoadGameViewProps {
 export function LoadGameView({ saves, isLoading, onBack, onLoad, onDelete }: LoadGameViewProps) {
     return (
         <div className="flex flex-1 flex-col justify-between overflow-hidden">
-            <div className="mb-4 flex items-center gap-2 border-b border-[#00FFAA]/20 pb-2 text-left">
+            <div className="mb-4 flex items-center gap-2 border-b border-root-accent/20 pb-2 text-left">
                 <button
                     type="button"
                     onClick={onBack}
                     aria-label="Kembali"
-                    className="rounded p-1 text-[#6B8A8A] transition-all hover:bg-[#00FFAA]/10 hover:text-[#00FFAA] cursor-pointer"
+                    className="rounded p-1 text-root-subtle transition-all hover:bg-root-accent/10 hover:text-root-accent cursor-pointer"
                 >
                     <ArrowLeft className="h-4 w-4" />
                 </button>
-                <span className="text-sm font-extrabold tracking-wider text-[#00FFAA]">MUAT PERMAINAN</span>
+                <span className="text-sm font-extrabold tracking-wider text-root-accent">MUAT PERMAINAN</span>
             </div>
             <div className="flex-1 space-y-3 overflow-y-auto pr-1">
                 {isLoading ? (
-                    <p className="py-16 text-center text-xs font-bold text-[#6B8A8A]">Memuat data simpanan...</p>
+                    <p className="py-16 text-center text-xs font-bold text-root-subtle">Memuat data simpanan...</p>
                 ) : saves.length === 0 ? (
                     <div className="py-20 text-center">
-                        <p className="text-xs font-bold tracking-wider text-[#6B8A8A]">TIDAK ADA DATA SIMPANAN</p>
-                        <p className="mx-auto mt-2 max-w-[220px] text-[10px] text-[#6B8A8A]/70">Simpan permainan Anda melalui tombol “Simpan Permainan” terlebih dahulu.</p>
+                        <p className="text-xs font-bold tracking-wider text-root-subtle">TIDAK ADA DATA SIMPANAN</p>
+                        <p className="mx-auto mt-2 max-w-[220px] text-[10px] text-root-subtle/70">Simpan permainan Anda melalui tombol “Simpan Permainan” terlebih dahulu.</p>
                     </div>
                 ) : saves.map(save => (
                     <div
                         key={save.id}
                         onClick={() => onLoad(save)}
-                        className="group flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] p-3 text-left hover:border-[#00FFAA]/50"
+                        className="group flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-root-accent/20 bg-root-canvas p-3 text-left hover:border-root-accent/50"
                     >
                         <div className="flex min-w-0 items-start gap-2.5">
                             <img
                                 src={`https://flagcdn.com/w80/${save.country_iso?.toLowerCase() || 'un'}.png`}
-                                className="mt-0.5 h-5 w-8 rounded-sm border border-[#00FFAA]/20 object-cover"
+                                className="mt-0.5 h-5 w-8 rounded-sm border border-root-accent/20 object-cover"
                                 alt="flag"
                                 onError={event => { event.currentTarget.src = 'https://flagcdn.com/w80/un.png'; }}
                             />
                             <div className="min-w-0">
-                                <p className="truncate text-xs font-black text-[#E0E0E0] group-hover:text-[#00FFAA]">{save.save_name}</p>
-                                <p className="mt-1 flex items-center gap-2 text-[9px] font-bold text-[#6B8A8A]">
+                                <p className="truncate text-xs font-black text-root-text group-hover:text-root-accent">{save.save_name}</p>
+                                <p className="mt-1 flex items-center gap-2 text-[9px] font-bold text-root-subtle">
                                     <Globe className="h-3 w-3" />{save.country_name}
                                     <Calendar className="h-3 w-3" />
                                     {new Date(save.game_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}

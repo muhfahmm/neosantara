@@ -35,7 +35,7 @@ export default function DemonstrasiEkonomiNotificationCard({ notification, onAct
       </p>
 
       {/* STATUS & MASSA BADGE */}
-      <div className="bg-[#0A1A1A] border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex flex-wrap items-center justify-between gap-2">
+      <div className="bg-root-canvas border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5">
             <ShieldAlert className="w-4 h-4 text-rose-400" />

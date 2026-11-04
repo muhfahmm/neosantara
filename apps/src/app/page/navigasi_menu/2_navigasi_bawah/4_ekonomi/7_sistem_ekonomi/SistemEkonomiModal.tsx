@@ -81,8 +81,8 @@ const SektorTab = React.memo(({
 }: any) => {
   return (
     <div className="space-y-4">
-      <div className={`border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 ${rootBorderRadius.card}`}>
-        <h3 className="text-sm font-black uppercase tracking-wide text-[#00FFAA]">Nasionalisasi & Ekonomi Terpusat</h3>
+      <div className={`border border-root-accent/20 bg-root-canvas p-4 ${rootBorderRadius.card}`}>
+        <h3 className="text-sm font-black uppercase tracking-wide text-root-accent">Nasionalisasi & Ekonomi Terpusat</h3>
         <p className="mt-2 text-xs leading-relaxed text-[#A7C4C4]">
           Atur kepemilikan setiap sektor. Bagian negara berlaku saat komoditas dijual melalui Perdagangan;
           emas mengikuti porsi Mineral & Energi pada pemasukan tambang yang sudah ada. Nasionalisasi aktif
@@ -92,11 +92,11 @@ const SektorTab = React.memo(({
           Hubungan dengan negara terbuka turun 1 poin setiap 6 bulan selama ada sektor yang dinasionalisasi.
           Penurunan berjalan untuk negara berideologi Kapitalisme.
         </p>
-        <p className="mt-1 text-[10px] text-[#6B8A8A]">
+        <p className="mt-1 text-[10px] text-root-subtle">
           Progres periode berjalan: {diplomacyMonthsToNextPoint}/
           {NATIONALIZATION_DIPLOMACY_INTERVAL_MONTHS} bulan menuju penurunan 1 poin berikutnya.
         </p>
-        <p className="mt-1 text-[10px] text-[#6B8A8A]">
+        <p className="mt-1 text-[10px] text-root-subtle">
           Tahun acuan estimasi: {NATIONALIZATION_ESTIMATE_YEAR}
         </p>
       </div>
@@ -107,7 +107,7 @@ const SektorTab = React.memo(({
           return (
             <section
               key={sector.id}
-              className={`border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 ${rootBorderRadius.card}`}
+              className={`border border-root-accent/20 bg-root-canvas p-4 ${rootBorderRadius.card}`}
               style={{ contentVisibility: "auto", containIntrinsicSize: "170px" }}
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -115,12 +115,12 @@ const SektorTab = React.memo(({
                   <h4 className="text-sm font-black text-white">{sector.name}</h4>
                   <p className="mt-1 text-[11px] text-[#A7C4C4]">{levelDetails.description}</p>
                 </div>
-                <label className="flex items-center gap-2 text-[10px] font-bold uppercase text-[#6B8A8A]">
+                <label className="flex items-center gap-2 text-[10px] font-bold uppercase text-root-subtle">
                   Level
                   <select
                     value={level}
                     onChange={(event) => handleSectorLevelChange(sector.id, Number(event.target.value))}
-                    className="rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] px-3 py-2 text-xs font-bold text-[#00FFAA] outline-none"
+                    className="rounded-lg border border-root-accent/30 bg-root-surface px-3 py-2 text-xs font-bold text-root-accent outline-none"
                   >
                     {NATIONALIZATION_LEVELS.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -130,7 +130,7 @@ const SektorTab = React.memo(({
                   </select>
                 </label>
               </div>
-              <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 border-t border-[#00FFAA]/10 pt-3 text-[11px]">
+              <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 border-t border-root-accent/10 pt-3 text-[11px]">
                 <span className="text-emerald-300">Bagian negara: {levelDetails.stateProfitSharePercent}%</span>
               </div>
               {sector.id === "kelistrikan" && (
@@ -159,16 +159,16 @@ const SektorTab = React.memo(({
 
 const SatisfactionBar = React.memo(({ average }: { average: number }) => {
   return (
-    <div className={`mt-6 border border-[#00FFAA]/30 bg-[#0F2424] p-5 ${rootBorderRadius.card}`}>
+    <div className={`mt-6 border border-root-accent/30 bg-root-surface p-5 ${rootBorderRadius.card}`}>
       <div className="flex items-center justify-between gap-3">
-        <span className="text-sm font-black uppercase tracking-widest text-[#00FFAA]">
+        <span className="text-sm font-black uppercase tracking-widest text-root-accent">
           Indeks Kepuasan Rakyat (Kebijakan Ekonomi)
         </span>
         <span className="shrink-0 text-2xl font-black text-amber-400 sm:text-3xl">
           {average} / 100
         </span>
       </div>
-      <div className="mt-3 h-3 w-full overflow-hidden rounded-full border border-[#00FFAA]/20 bg-[#0A1A1A]">
+      <div className="mt-3 h-3 w-full overflow-hidden rounded-full border border-root-accent/20 bg-root-canvas">
         <div
           className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-200"
           style={{ width: `${average}%` }}
@@ -356,10 +356,10 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
       <div className="flex flex-col h-full overflow-hidden">
         
         {/* HEADER */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-              <Scale className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+            <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+              <Scale className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
             </div>
             <div className="min-w-0">
               <h2 className={rootModalTypography.title}>Kebijakan & Sistem Ekonomi</h2>
@@ -367,7 +367,7 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
           </div>
 
           <div className="flex items-center gap-2 lg:gap-3">
-            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi kebijakan dan sistem ekonomi" aria-label="Informasi kebijakan dan sistem ekonomi" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]">
+            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi kebijakan dan sistem ekonomi" aria-label="Informasi kebijakan dan sistem ekonomi" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas">
               <Info className="h-3.5 w-3.5" />
             </button>
             <RootModalCloseButton onClick={onClose} />
@@ -378,19 +378,19 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
         <div className="flex-1 flex min-h-0 relative z-10">
           
           {/* SIDEBAR TABS */}
-          <div className="w-44 lg:w-52 2xl:w-64 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 lg:p-3 flex flex-col gap-1.5 lg:gap-2 overflow-y-auto neon-scrollbar shrink-0">
+          <div className="w-44 lg:w-52 2xl:w-64 border-r border-root-accent/30 bg-root-canvas p-2 lg:p-3 flex flex-col gap-1.5 lg:gap-2 overflow-y-auto neon-scrollbar shrink-0">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex w-full flex-col border p-2 text-left transition-all cursor-pointer lg:p-2.5 ${rootBorderRadius.card} ${
                   activeTab === tab.id
-                    ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
-                    : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA] hover:text-[#00FFAA]"
+                    ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
+                    : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent hover:text-root-accent"
                 }`}
               >
                 <span className="text-[10px] lg:text-xs font-bold uppercase tracking-wider">{tab.label}</span>
-                <span className={`text-[8px] lg:text-[10px] mt-0.5 ${activeTab === tab.id ? "text-[#0A1A1A]/80 font-semibold" : "text-[#6B8A8A]"}`}>
+                <span className={`text-[8px] lg:text-[10px] mt-0.5 ${activeTab === tab.id ? "text-root-canvas/80 font-semibold" : "text-root-subtle"}`}>
                   {tab.desc}
                 </span>
               </button>
@@ -398,7 +398,7 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
           </div>
 
           {/* RIGHT CONTENT AREA */}
-          <div className="flex-1 overflow-y-auto p-3 lg:p-5 2xl:p-8 bg-[#0F2424] neon-scrollbar">
+          <div className="flex-1 overflow-y-auto p-3 lg:p-5 2xl:p-8 bg-root-surface neon-scrollbar">
             {activeTab === "sistem" && (
               <SpektrumSistemTab
                 sliderValue={sliderValue}

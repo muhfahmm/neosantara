@@ -42,7 +42,7 @@ export function ModalsPeringatanPeringkat({ isOpen, onClose, currentRating, warn
     const content = getWarningContent();
 
     return (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm font-sans select-none animate-fade-in">
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4  font-sans select-none animate-fade-in">
 
             {/* Skeuomorphic Confirmation Frame */}
             <div className="bg-[#181111] border-[4px] border-red-950 rounded-2xl w-full max-w-[430px] shadow-2xl relative flex flex-col p-3.5 pl-9 min-h-[360px] animate-scale-up animate-in fade-in duration-300">

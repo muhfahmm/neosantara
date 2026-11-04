@@ -508,10 +508,10 @@ export default function TopLeftIcon({
         return <KesejahteraanNotification key={notif.id} notification={notif} />;
       default:
         return (
-          <div key={notif.id} className="bg-[#0F2424] border border-[#00FFAA]/30 p-5 rounded-xl shadow-sm">
-            <h4 className="font-bold text-[#00FFAA] text-sm uppercase">{notif.title}</h4>
-            <div className="text-xs text-[#6B8A8A] mt-1">Pengirim: {notif.sender || 'Pemerintah'} | {notif.timestamp}</div>
-            <div className="text-xs text-[#E0E0E0] mt-3 leading-relaxed">{notif.message}</div>
+          <div key={notif.id} className="bg-root-surface border border-root-accent/30 p-5 rounded-xl shadow-sm">
+            <h4 className="font-bold text-root-accent text-sm uppercase">{notif.title}</h4>
+            <div className="text-xs text-root-subtle mt-1">Pengirim: {notif.sender || 'Pemerintah'} | {notif.timestamp}</div>
+            <div className="text-xs text-root-text mt-3 leading-relaxed">{notif.message}</div>
           </div>
         );
     }
@@ -542,7 +542,7 @@ export default function TopLeftIcon({
                 className="h-14 w-14 object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]"
               />
               {unreadCount > 0 && (
-                <div className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-600 px-1 text-[10px] font-black text-white shadow-lg border-2 border-[#0A1A1A] animate-pulse">
+                <div className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-600 px-1 text-[10px] font-black text-white shadow-lg border-2 border-root-canvas animate-pulse">
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </div>
               )}
@@ -554,7 +554,7 @@ export default function TopLeftIcon({
             className={`transition-[opacity,transform] duration-300 ease-out origin-top-left will-change-[opacity,transform] ${showToast && toastNotification
                 ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
                 : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
-              } flex h-28 w-64 flex-col rounded-xl border-2 border-[#00FFAA] bg-[#0F2424] p-2.5 shadow-lg cursor-pointer group`}
+              } flex h-28 w-64 flex-col rounded-xl border-2 border-root-accent bg-root-surface p-2.5 shadow-lg cursor-pointer group`}
             onClick={() => {
               if (toastNotification) {
                 dismissedToastIdRef.current = toastNotification.id;
@@ -563,9 +563,9 @@ export default function TopLeftIcon({
               if (onClick) onClick();
             }}
           >
-            <div className="flex items-center justify-between border-b border-[#00FFAA]/30 pb-1.5">
-              <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-[#00FFAA]">
-                <span className={`h-2 w-2 rounded-full bg-[#00FFAA] ${showToast ? 'animate-ping' : ''}`} />
+            <div className="flex items-center justify-between border-b border-root-accent/30 pb-1.5">
+              <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-root-accent">
+                <span className={`h-2 w-2 rounded-full bg-root-accent ${showToast ? 'animate-ping' : ''}`} />
                 Pesan Baru Masuk
               </span>
               <button
@@ -576,15 +576,15 @@ export default function TopLeftIcon({
                 }}
                 className="rounded p-0.5 text-slate-400 hover:text-white"
               >
-                <X className="h-3.5 w-3.5 text-[#00FFAA]" />
+                <X className="h-3.5 w-3.5 text-root-accent" />
               </button>
             </div>
-            <h5 className="mt-1.5 line-clamp-2 whitespace-normal break-words text-[11px] font-bold leading-snug text-white group-hover:text-[#00FFAA]">
+            <h5 className="mt-1.5 line-clamp-2 whitespace-normal break-words text-[11px] font-bold leading-snug text-white group-hover:text-root-accent">
               {toastNotification?.title}
             </h5>
-            <div className="mt-auto flex items-center justify-between border-t border-[#00FFAA]/10 pt-1">
-              <span className="text-[8px] font-semibold text-[#6B8A8A]">{toastNotification?.timestamp}</span>
-              <span className="text-[9px] font-black text-[#00FFAA] underline transition-transform group-hover:translate-x-1">
+            <div className="mt-auto flex items-center justify-between border-t border-root-accent/10 pt-1">
+              <span className="text-[8px] font-semibold text-root-subtle">{toastNotification?.timestamp}</span>
+              <span className="text-[9px] font-black text-root-accent underline transition-transform group-hover:translate-x-1">
                 Buka Inbox ({unreadCount}) →
               </span>
             </div>
@@ -599,16 +599,16 @@ export default function TopLeftIcon({
           <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden font-sans">
 
             {/* 🔥 HEADER MODAL */}
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0 rounded-t-2xl">
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0 rounded-t-2xl">
               <div className="flex items-center gap-2.5">
-                <div className="p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] shrink-0 text-[#00FFAA]">
+                <div className="p-1.5 rounded-lg border border-root-accent/30 bg-root-surface shrink-0 text-root-accent">
                   <Inbox className="h-4 w-4 sm:h-5 sm:w-5" />
                 </div>
                 <div>
-                  <h2 className="text-base sm:text-lg font-black text-[#00FFAA] tracking-tight leading-none uppercase">
+                  <h2 className="text-base sm:text-lg font-black text-root-accent tracking-tight leading-none uppercase">
                     Inbox & Notifikasi
                   </h2>
-                  <span className="text-[9px] font-bold text-[#6B8A8A] uppercase tracking-wider">
+                  <span className="text-[9px] font-bold text-root-subtle uppercase tracking-wider">
                     {orderedNotifications.length} Pesan ({unreadCount} Belum Dibaca)
                   </span>
                 </div>
@@ -619,17 +619,17 @@ export default function TopLeftIcon({
             </div>
 
             {/* 🔥 BODY MODAL: 2-COLUMN SPLIT PROTOTYPE */}
-            <div className="flex-1 flex overflow-hidden bg-[#0A1A1A]">
+            <div className="flex-1 flex overflow-hidden bg-root-canvas">
               {visibleNotifications.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4 max-w-md mx-auto my-auto p-6">
-                  <Inbox className="h-16 w-16 text-[#00FFAA]/30" />
-                  <h4 className="text-lg font-bold text-[#00FFAA] uppercase">Tidak Ada Pesan</h4>
+                  <Inbox className="h-16 w-16 text-root-accent/30" />
+                  <h4 className="text-lg font-bold text-root-accent uppercase">Tidak Ada Pesan</h4>
                   {/* 🔥 Teks "Kotak masuk Anda bersih..." telah dihapus dari sini */}
                 </div>
               ) : (
                 <>
                   {/* === KOLOM KIRI: DAFTAR PESAN / MASTER LIST === */}
-                  <div className="w-[42%] sm:w-[40%] lg:w-[36%] flex flex-col border-r border-[#00FFAA]/20 bg-[#081515] overflow-hidden shrink-0">
+                  <div className="w-[42%] sm:w-[40%] lg:w-[36%] flex flex-col border-r border-root-accent/20 bg-[#081515] overflow-hidden shrink-0">
                     <div className="flex-1 overflow-y-auto custom-scrollbar p-2 sm:p-2.5 space-y-1.5">
                       {orderedNotifications.map((notif) => {
                         const isSelected = selectedNotification?.id === notif.id;
@@ -642,12 +642,12 @@ export default function TopLeftIcon({
                             key={notif.id}
                             onClick={() => setSelectedNotificationId(notif.id)}
                             className={`group relative rounded-xl p-2.5 sm:p-3 transition-all cursor-pointer border flex items-center gap-2.5 sm:gap-3 ${isSelected
-                                ? 'bg-[#00FFAA]/15 border-[#00FFAA] shadow-[0_0_12px_rgba(0,255,170,0.2)]'
-                                : 'bg-[#0F2424]/60 border-[#00FFAA]/15 hover:bg-[#0F2424] hover:border-[#00FFAA]/40'
+                                ? 'bg-root-accent/15 border-root-accent shadow-[0_0_12px_rgba(0,255,170,0.2)]'
+                                : 'bg-root-surface/60 border-root-accent/15 hover:bg-root-surface hover:border-root-accent/40'
                               }`}
                           >
                             {/* Avatar / Country Flag / Persona */}
-                            <div className="relative shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 overflow-hidden flex items-center justify-center shadow">
+                            <div className="relative shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-root-canvas border border-root-accent/30 overflow-hidden flex items-center justify-center shadow">
                               {countryIso && countryIso !== 'un' ? (
                                 <img
                                   src={`https://flagcdn.com/w80/${countryIso.toLowerCase()}.png`}
@@ -658,7 +658,7 @@ export default function TopLeftIcon({
                                   }}
                                 />
                               ) : (
-                                <User className="w-4 h-4 text-[#00FFAA]" />
+                                <User className="w-4 h-4 text-root-accent" />
                               )}
                               {!notif.isRead && (
                                 <span className="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-rose-500" />
@@ -667,11 +667,11 @@ export default function TopLeftIcon({
 
                             {/* Info Singkat */}
                             <div className="flex-1 min-w-0">
-                              <h4 className={`text-[11px] sm:text-xs font-black leading-tight whitespace-normal break-words ${isUrgent ? 'text-rose-400' : isSelected ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'
+                              <h4 className={`text-[11px] sm:text-xs font-black leading-tight whitespace-normal break-words ${isUrgent ? 'text-rose-400' : isSelected ? 'text-root-accent' : 'text-root-text'
                                 }`}>
                                 {notif.title}
                               </h4>
-                              <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mt-1 text-[9px] text-[#6B8A8A] font-semibold">
+                              <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mt-1 text-[9px] text-root-subtle font-semibold">
                                 {countryIso && countryIso !== 'un' && (
                                   <img
                                     src={`https://flagcdn.com/w20/${countryIso.toLowerCase()}.png`}
@@ -687,7 +687,7 @@ export default function TopLeftIcon({
                               </div>
                             </div>
 
-                            <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-transform ${isSelected ? 'text-[#00FFAA] translate-x-0.5' : 'text-[#6B8A8A]/50 group-hover:text-[#00FFAA]'
+                            <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-transform ${isSelected ? 'text-root-accent translate-x-0.5' : 'text-root-subtle/50 group-hover:text-root-accent'
                               }`} />
                           </div>
                         );
@@ -696,7 +696,7 @@ export default function TopLeftIcon({
 
                     {/* Tombol Bersihkan Semua di Footer Kolom Kiri */}
                     {visibleNotifications.length > 0 && onClearAll && (
-                      <div className="p-2 sm:p-2.5 border-t border-[#00FFAA]/20 bg-[#051111]">
+                      <div className="p-2 sm:p-2.5 border-t border-root-accent/20 bg-[#051111]">
                         <button
                           onClick={onClearAll}
                           className="w-full py-2 px-3 rounded-lg border border-red-500/40 bg-red-950/30 text-red-400 hover:bg-red-900/50 hover:text-red-300 transition-all cursor-pointer font-bold text-[10px] sm:text-xs uppercase flex items-center justify-center gap-1.5 shadow-sm"
@@ -709,7 +709,7 @@ export default function TopLeftIcon({
                   </div>
 
                   {/* === KOLOM KANAN: DETAIL KONTEN & AKSI === */}
-                  <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-6 bg-[#0A1A1A]">
+                  <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-6 bg-root-canvas">
                     {selectedNotification ? (
                       <div className="max-w-2xl mx-auto space-y-4">
                         {renderActiveNotificationDetail(selectedNotification)}
@@ -719,7 +719,7 @@ export default function TopLeftIcon({
                           const imageUrl = getInboxNotificationImage(selectedNotification);
                           if (!imageUrl) return null;
                           return (
-                            <div className="mt-4 rounded-2xl border border-[#00FFAA]/25 bg-[#081515] p-3 shadow-lg flex items-center justify-center overflow-hidden">
+                            <div className="mt-4 rounded-2xl border border-root-accent/25 bg-[#081515] p-3 shadow-lg flex items-center justify-center overflow-hidden">
                               <img
                                 src={imageUrl}
                                 alt={selectedNotification.title || 'Ilustrasi Notifikasi'}

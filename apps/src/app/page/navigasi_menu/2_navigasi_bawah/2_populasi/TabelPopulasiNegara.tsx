@@ -184,7 +184,7 @@ export default function TabelPopulasiNegara({
   return (
     <section
       aria-label="Tabel populasi negara"
-      className={`${rootBorderRadius.card} border border-[#00FFAA]/20 bg-[#0F2424] p-3.5 lg:p-4.5 2xl:p-6`}
+      className={`${rootBorderRadius.card} border border-root-accent/20 bg-root-surface p-3.5 lg:p-4.5 2xl:p-6`}
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -198,15 +198,15 @@ export default function TabelPopulasiNegara({
               : `${countries.length} negara · urut dari pertumbuhan harian tertinggi`}
           </p>
         </div>
-        <label className="flex min-w-[170px] items-center gap-2 rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] px-2.5 py-2">
-          <Search className="h-3.5 w-3.5 shrink-0 text-[#AAB6B6]" />
+        <label className="flex min-w-[170px] items-center gap-2 rounded-lg border border-root-accent/20 bg-root-canvas px-2.5 py-2">
+          <Search className="h-3.5 w-3.5 shrink-0 text-root-muted" />
           <input
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Cari negara..."
             aria-label="Cari negara"
-            className="w-full bg-transparent text-xs text-[#E0E0E0] outline-none placeholder:text-[#AAB6B6]"
+            className="w-full bg-transparent text-xs text-root-text outline-none placeholder:text-root-muted"
           />
         </label>
       </div>
@@ -224,9 +224,9 @@ export default function TabelPopulasiNegara({
       )}
 
       {!loading && !error && (
-        <div className={`mt-3 max-h-[50vh] overflow-auto ${rootBorderRadius.card} border border-[#00FFAA]/15`}>
+        <div className={`mt-3 max-h-[50vh] overflow-auto ${rootBorderRadius.card} border border-root-accent/15`}>
           <table className="w-full min-w-[420px] border-collapse text-left">
-            <thead className="sticky top-0 z-10 bg-[#0A1A1A]">
+            <thead className="sticky top-0 z-10 bg-root-canvas">
               <tr className={`${rootModalTypography.label} text-left`}>
                 <th scope="col" className="px-3 py-2.5">No.</th>
                 <th scope="col" className="px-3 py-2.5">Negara</th>
@@ -244,13 +244,13 @@ export default function TabelPopulasiNegara({
                   return (
                     <tr
                       key={country.id ?? country.country_slug}
-                      className="border-t border-[#00FFAA]/10 text-xs odd:bg-[#0F2424] even:bg-[#0A1A1A]/50"
+                      className="border-t border-root-accent/10 text-xs odd:bg-root-surface even:bg-root-canvas/50"
                     >
-                      <td className="px-3 py-2 text-[#6B8A8A]">{index + 1}</td>
-                      <td className="px-3 py-2 font-semibold text-[#E0E0E0]">
+                      <td className="px-3 py-2 text-root-subtle">{index + 1}</td>
+                      <td className="px-3 py-2 font-semibold text-root-text">
                         {country.name_id}
                         {country.name_en && country.name_en !== country.name_id && (
-                          <span className="ml-1.5 text-[10px] font-normal text-[#6B8A8A]">
+                          <span className="ml-1.5 text-[10px] font-normal text-root-subtle">
                             ({country.name_en})
                           </span>
                         )}
@@ -269,7 +269,7 @@ export default function TabelPopulasiNegara({
               ))}
               {filteredCountries.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-3 py-6 text-center text-xs text-[#6B8A8A]">
+                  <td colSpan={4} className="px-3 py-6 text-center text-xs text-root-subtle">
                     Tidak ada negara yang cocok dengan pencarian.
                   </td>
                 </tr>

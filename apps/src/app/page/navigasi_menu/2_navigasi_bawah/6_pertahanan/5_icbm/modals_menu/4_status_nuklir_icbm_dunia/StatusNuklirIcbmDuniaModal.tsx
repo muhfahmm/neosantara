@@ -384,33 +384,33 @@ export default function StatusNuklirIcbmDuniaModal({
       <div className="flex h-full flex-col overflow-hidden">
         
         {/* Header Modal */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex flex-wrap items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0 gap-3">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex flex-wrap items-center justify-between bg-root-canvas relative z-10 shrink-0 gap-3">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-              <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA] animate-pulse" />
+            <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
+              <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent animate-pulse" />
             </div>
             <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Status Nuklir & ICBM Dunia</h2>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">
+              <h2 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Status Nuklir & ICBM Dunia</h2>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">
                 Daftar negara berkemampuan Nuklir & ICBM global ({filteredIcbmOwners.length} negara)
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-3 flex-1 max-w-xs justify-end">
             <div className="relative w-full">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#00FFAA]/60" />
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-root-accent/60" />
               <input
                 type="text"
                 placeholder="Cari negara nuklir / ICBM..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-[#0F2424] border border-[#00FFAA]/30 rounded-xl pl-8 pr-3 py-1.5 text-xs text-[#00FFAA] placeholder-[#6B8A8A] focus:outline-none focus:border-[#00FFAA] transition-all"
+                className="w-full bg-root-surface border border-root-accent/30 rounded-xl pl-8 pr-3 py-1.5 text-xs text-root-accent placeholder-root-subtle focus:outline-none focus:border-root-accent transition-all"
               />
             </div>
 
             <button 
               onClick={onClose} 
-              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
+              className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
             >
               <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
               <X className="h-4 w-4" />
@@ -419,25 +419,25 @@ export default function StatusNuklirIcbmDuniaModal({
         </div>
 
         {/* Body Content */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] custom-scrollbar flex flex-col gap-4">
-          <div className="overflow-hidden border border-[#00FFAA]/20 rounded-2xl bg-[#0A1A1A] shadow-inner flex flex-col flex-1">
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-root-surface custom-scrollbar flex flex-col gap-4">
+          <div className="overflow-hidden border border-root-accent/20 rounded-2xl bg-root-canvas shadow-inner flex flex-col flex-1">
             <div className="overflow-y-auto custom-scrollbar flex-1">
               <table className="w-full text-xs">
-                <thead className="bg-[#0A1A1A] text-[#00FFAA] border-b border-[#00FFAA]/20 sticky top-0 z-10">
+                <thead className="bg-root-canvas text-root-accent border-b border-root-accent/20 sticky top-0 z-10">
                   <tr>
-                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">No</th>
-                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Negara</th>
-                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Kode ISO</th>
-                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Program Nuklir</th>
-                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Status ICBM</th>
-                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Jumlah ICBM</th>
-                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Level Ancaman</th>
+                    <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">No</th>
+                    <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Negara</th>
+                    <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Kode ISO</th>
+                    <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Program Nuklir</th>
+                    <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Status ICBM</th>
+                    <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Jumlah ICBM</th>
+                    <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Level Ancaman</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#00FFAA]/10 text-xs font-bold text-[#E0E0E0]">
+                <tbody className="divide-y divide-root-accent/10 text-xs font-bold text-root-text">
                   {isLoadingIcbm ? (
                     <tr>
-                      <td colSpan={7} className="px-4 py-8 text-center text-[#00FFAA]">
+                      <td colSpan={7} className="px-4 py-8 text-center text-root-accent">
                         Memuat data negara berkemampuan Nuklir & ICBM...
                       </td>
                     </tr>
@@ -452,22 +452,22 @@ export default function StatusNuklirIcbmDuniaModal({
                           key={row.country_id || row.country_slug}
                           className={`transition-colors ${
                             isUserCountry
-                              ? 'bg-[#00FFAA]/10 border-l-4 border-l-[#00FFAA]'
-                              : 'hover:bg-[#0F2424]'
+                              ? 'bg-root-accent/10 border-l-4 border-l-root-accent'
+                              : 'hover:bg-root-surface'
                           }`}
                         >
-                          <td className="px-3 py-2.5 text-[#6B8A8A]">#{idx + 1}</td>
-                          <td className="px-3 py-2.5 font-black text-[#E0E0E0] flex items-center gap-2">
+                          <td className="px-3 py-2.5 text-root-subtle">#{idx + 1}</td>
+                          <td className="px-3 py-2.5 font-black text-root-text flex items-center gap-2">
                             <Rocket className="w-3.5 h-3.5 text-rose-500 shrink-0" />
                             <span>{row.country_name}</span>
-                            {isUserCountry && <span className="text-[10px] text-[#00FFAA] ml-1 font-bold">(Anda)</span>}
+                            {isUserCountry && <span className="text-[10px] text-root-accent ml-1 font-bold">(Anda)</span>}
                           </td>
-                          <td className="px-3 py-2.5 text-center uppercase tracking-widest text-[#6B8A8A] font-mono">
+                          <td className="px-3 py-2.5 text-center uppercase tracking-widest text-root-subtle font-mono">
                             {row.iso}
                           </td>
                           <td className="px-3 py-2.5 text-center">
                             {row.nuclear_program_status === 'AKTIF' || (!row.nuclear_program_status && row.has_nuclear_program) ? (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-[#00FFAA]/20 text-[#00FFAA] border border-[#00FFAA]/40">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-root-accent/20 text-root-accent border border-root-accent/40">
                                 AKTIF
                               </span>
                             ) : row.nuclear_program_status === 'RISET' ? (
@@ -475,7 +475,7 @@ export default function StatusNuklirIcbmDuniaModal({
                                 DALAM RISET
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#6B8A8A]/10 text-[#6B8A8A] border border-[#6B8A8A]/20">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-root-subtle/10 text-root-subtle border border-root-subtle/20">
                                 BELUM AKTIF
                               </span>
                             )}
@@ -487,22 +487,22 @@ export default function StatusNuklirIcbmDuniaModal({
                                 AKTIF
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#6B8A8A]/10 text-[#6B8A8A] border border-[#6B8A8A]/20">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-root-subtle/10 text-root-subtle border border-root-subtle/20">
                                 BELUM ADA
                               </span>
                             )}
                           </td>
-                          <td className="px-3 py-2.5 text-right font-black text-[#00FFAA] text-sm whitespace-nowrap">
+                          <td className="px-3 py-2.5 text-right font-black text-root-accent text-sm whitespace-nowrap">
                             {formatNumber(row.icbm_jumlah)}{" "}
                             {Boolean(row.in_progress_icbm && row.in_progress_icbm > 0) && (
                               <span className="text-[11px] font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-1.5 py-0.5 rounded-full ml-1" title="Sedang dalam proses perakitan">
                                 +{row.in_progress_icbm}
                               </span>
                             )}
-                            <span className="text-[10px] font-normal text-[#6B8A8A] ml-1">Unit</span>
+                            <span className="text-[10px] font-normal text-root-subtle ml-1">Unit</span>
                           </td>
                           <td className="px-3 py-2.5 text-center">
-                            <span className="px-2 py-0.5 rounded text-[10px] font-black bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA]">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-black bg-root-canvas border border-root-accent/30 text-root-accent">
                               {row.icbm_jumlah >= 300 ? 'Level V (Superpower)' : row.icbm_jumlah >= 10 ? 'Level III (Regional)' : row.icbm_jumlah > 0 ? 'Level II (Terkonfirmasi)' : 'Level I (Riset Nuklir)'}
                             </span>
                           </td>
@@ -511,7 +511,7 @@ export default function StatusNuklirIcbmDuniaModal({
                     })
                   ) : (
                     <tr>
-                      <td colSpan={7} className="px-4 py-8 text-center text-[#6B8A8A]">
+                      <td colSpan={7} className="px-4 py-8 text-center text-root-subtle">
                         Data negara berkemampuan nuklir belum ditemukan.
                       </td>
                     </tr>

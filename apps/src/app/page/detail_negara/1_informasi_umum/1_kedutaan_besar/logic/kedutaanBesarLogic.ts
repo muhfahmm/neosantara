@@ -131,9 +131,9 @@ export const getEmbassyButtonClass = (
   removedTradePartners?: string[]
 ): string => {
   if (playerHasEmbassyOrTradePartners(viewedCountryName, playerCountryName, playerEmbassies, removedEmbassies, removedTradePartners)) {
-    return 'border-2 border-[#00FFAA] bg-[#00FFAA]/20 text-[#00FFAA] hover:bg-[#00FFAA]/30';
+    return 'border-2 border-root-accent bg-root-accent/20 text-root-accent hover:bg-root-accent/30';
   }
-  return 'bg-[#0A1A1A] border border-[#00FFAA]/20 text-[#00FFAA]';
+  return 'bg-root-canvas border border-root-accent/20 text-root-accent';
 };
 
 export default {

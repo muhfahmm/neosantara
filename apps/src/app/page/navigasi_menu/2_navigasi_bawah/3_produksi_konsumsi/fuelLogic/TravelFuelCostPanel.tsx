@@ -15,12 +15,12 @@ export default function TravelFuelCostPanel({
   return (
     <div className={`mb-5 rounded-xl border p-3 text-sm ${
       status.ok
-        ? "border-[#00FFAA]/25 bg-[#00FFAA]/5"
-        : "border-[#FF2D55]/40 bg-[#FF2D55]/10"
+        ? "border-root-accent/25 bg-root-accent/5"
+        : "border-root-danger/40 bg-root-danger/10"
     }`}>
-      <p className="font-bold text-[#E0E0E0]">
+      <p className="font-bold text-root-text">
         {label}:{" "}
-        <span className={status.ok ? "text-[#00FFAA]" : "text-[#FF2D55]"}>
+        <span className={status.ok ? "text-root-accent" : "text-root-danger"}>
           {status.loading || status.cost === null
             ? "Menghitung..."
             : `${numberFormat(status.cost)} barel minyak`}
@@ -34,7 +34,7 @@ export default function TravelFuelCostPanel({
         </p>
       )}
       {!status.ok && !status.loading && (
-        <p className="mt-1 font-bold text-[#FF2D55]">
+        <p className="mt-1 font-bold text-root-danger">
           Stok minyak bumi tidak mencukupi
         </p>
       )}

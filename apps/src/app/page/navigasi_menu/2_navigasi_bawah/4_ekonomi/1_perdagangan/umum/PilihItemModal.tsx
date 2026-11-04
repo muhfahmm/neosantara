@@ -42,9 +42,9 @@ export default function PilihItemModal({
     >
       <div className="flex h-full min-w-0 flex-col overflow-hidden">
         {/* HEADER */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className="shrink-0 rounded-lg border border-emerald-500/30 bg-[#0F2424] p-1 sm:p-1.5">
+            <div className="shrink-0 rounded-lg border border-emerald-500/30 bg-root-surface p-1 sm:p-1.5">
               <HeaderIcon className="h-4 w-4 text-emerald-400 sm:h-5 sm:w-5" aria-hidden="true" />
             </div>
             <h2 className={rootModalTypography.title}>{title}</h2>
@@ -53,14 +53,14 @@ export default function PilihItemModal({
         </div>
 
         {/* BODY - Grid Card */}
-        <div className="flex-1 min-h-0 overflow-y-auto px-5 pt-5 pb-2 bg-[#0F2424] relative z-10 neon-scrollbar">
+        <div className="flex-1 min-h-0 overflow-y-auto px-5 pt-5 pb-2 bg-root-surface relative z-10 neon-scrollbar">
           
           {/* RENDER UNTUK DATA BERKATEGORI (PRODUK) */}
           {isGrouped ? (
             (data as CategoryGroup[]).map((group, groupIndex) => (
               <div key={groupIndex} className="mb-8 last:mb-0">
                 {/* Judul Kategori */}
-                <div className="col-span-full text-[12px] font-black text-[#00FFAA] uppercase tracking-wider mb-3 border-b border-[#00FFAA]/20 pb-2">
+                <div className="col-span-full text-[12px] font-black text-root-accent uppercase tracking-wider mb-3 border-b border-root-accent/20 pb-2">
                   {group.category}
                 </div>
                 
@@ -80,27 +80,27 @@ export default function PilihItemModal({
                         }}
                         className={`group flex items-center justify-between px-4 py-3 rounded-md border transition-all duration-200 w-full text-left
                           ${item.disabled 
-                            ? 'bg-[#0A1A1A]/40 border-[#6B8A8A]/20 cursor-not-allowed opacity-50' 
+                            ? 'bg-root-canvas/40 border-root-subtle/20 cursor-not-allowed opacity-50'
                             : 'cursor-pointer ' + (isSelected 
-                              ? 'bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-bold' 
-                              : 'bg-[#0A1A1A] border-[#00FFAA]/20 hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 text-[#E0E0E0]'
+                              ? 'bg-root-accent border-root-accent text-root-canvas font-bold'
+                              : 'bg-root-canvas border-root-accent/20 hover:border-root-accent hover:bg-root-accent/10 text-root-text'
                             )
                           }
                         `}
                       >
                         <div className="flex flex-col gap-1">
-                          <span className={`text-sm font-bold tracking-wide ${isSelected ? 'text-[#0A1A1A]' : 'text-[#E0E0E0]'}`}>
+                          <span className={`text-sm font-bold tracking-wide ${isSelected ? 'text-root-canvas' : 'text-root-text'}`}>
                             {item.label}
                           </span>
                           {item.disabled && (
                             <span className="text-[10px] text-rose-400 font-bold uppercase">Tidak Tersedia</span>
                           )}
                           {isSelected && (
-                            <span className="text-[10px] text-[#0A1A1A] font-extrabold uppercase">Terpilih</span>
+                            <span className="text-[10px] text-root-canvas font-extrabold uppercase">Terpilih</span>
                           )}
                         </div>
                         {!item.disabled && (
-                          <ChevronRight className={`h-4 w-4 transition-transform group-hover:translate-x-1 ${isSelected ? 'text-[#0A1A1A]' : 'text-[#00FFAA]'}`} />
+                          <ChevronRight className={`h-4 w-4 transition-transform group-hover:translate-x-1 ${isSelected ? 'text-root-canvas' : 'text-root-accent'}`} />
                         )}
                       </button>
                     );
@@ -120,10 +120,10 @@ export default function PilihItemModal({
                     onClick={() => { if (!item.disabled) { onSelect(item.value); onClose(); } }}
                     className={`group flex items-center justify-between px-4 py-3 rounded-md border transition-all duration-200 w-full text-left
                       ${item.disabled 
-                        ? 'bg-[#0A1A1A]/40 border-[#6B8A8A]/20 cursor-not-allowed opacity-50' 
+                        ? 'bg-root-canvas/40 border-root-subtle/20 cursor-not-allowed opacity-50'
                         : 'cursor-pointer ' + (isSelected 
-                          ? 'bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-bold' 
-                          : 'bg-[#0A1A1A] border-[#00FFAA]/20 hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 text-[#E0E0E0]'
+                          ? 'bg-root-accent border-root-accent text-root-canvas font-bold'
+                          : 'bg-root-canvas border-root-accent/20 hover:border-root-accent hover:bg-root-accent/10 text-root-text'
                         )
                       }
                     `}
@@ -134,11 +134,11 @@ export default function PilihItemModal({
                         const iso = matched?.iso;
                         if (!iso || iso.length !== 2) {
                           return (
-                            <div className="w-8 h-5 rounded-sm bg-[#0F2424] border border-[#00FFAA]/20 flex-shrink-0" />
+                            <div className="w-8 h-5 rounded-sm bg-root-surface border border-root-accent/20 flex-shrink-0" />
                           );
                         }
                         return (
-                          <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#00FFAA]/30 flex-shrink-0 bg-[#0F2424] relative">
+                          <div className="w-8 h-5 rounded-sm overflow-hidden border border-root-accent/30 flex-shrink-0 bg-root-surface relative">
                             <img
                               src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
                               alt={item.label}
@@ -147,10 +147,10 @@ export default function PilihItemModal({
                           </div>
                         );
                       })()}
-                      <span className={`text-sm font-bold tracking-wide ${isSelected ? 'text-[#0A1A1A]' : 'text-[#E0E0E0]'}`}>{item.label}</span>
+                      <span className={`text-sm font-bold tracking-wide ${isSelected ? 'text-root-canvas' : 'text-root-text'}`}>{item.label}</span>
                     </div>
                     {!item.disabled && (
-                      <ChevronRight className={`h-4 w-4 transition-transform group-hover:translate-x-1 ${isSelected ? 'text-[#0A1A1A]' : 'text-[#00FFAA]'}`} />
+                      <ChevronRight className={`h-4 w-4 transition-transform group-hover:translate-x-1 ${isSelected ? 'text-root-canvas' : 'text-root-accent'}`} />
                     )}
                   </button>
                 );

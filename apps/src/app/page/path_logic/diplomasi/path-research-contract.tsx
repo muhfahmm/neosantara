@@ -30,9 +30,7 @@ const ResearchContractVehicle: DiplomacyPathVehicle = ({ accent }) => {
     <g>
       {/* ================= DEFINISI GRADIEN & FILTER ================= */}
       <defs>
-        <filter id={`shadow-${uid}`} x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="1.5" />
-        </filter>
+
 
         {/* Gradien Bodi (Putih Mutiara / Silver Tech) */}
         <linearGradient id={`body-${uid}`} x1="0" y1="0" x2="0.2" y2="1">
@@ -61,7 +59,6 @@ const ResearchContractVehicle: DiplomacyPathVehicle = ({ accent }) => {
       <ellipse 
         cx="1" cy="5" rx="30" ry="12" 
         fill="#000" opacity=".45" 
-        filter={`url(#shadow-${uid})`} 
       />
 
       {/* ================= RODA & PELEK (Futuristik) ================= */}

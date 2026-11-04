@@ -88,17 +88,17 @@ export default function RingkasanPeringkatModal({
 
   return (
     <NotebookModalWrapper onClose={onClose}>
-      <div className="flex h-full flex-col overflow-hidden rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] shadow-[0_0_30px_rgba(0,255,170,0.15)]">
-        <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 rounded-t-2xl border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2.5 sm:px-6 sm:py-3">
+      <div className="flex h-full flex-col overflow-hidden rounded-xl border border-root-accent/20 bg-root-canvas shadow-[0_0_30px_rgba(0,255,170,0.15)]">
+        <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 rounded-t-2xl border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="shrink-0 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 shadow-[0_0_10px_rgba(0,255,170,0.2)]">
-              <Star className="h-4 w-4 fill-[#00FFAA] text-[#00FFAA] sm:h-5 sm:w-5" />
+            <div className="shrink-0 rounded-lg border border-root-accent/30 bg-root-surface p-1.5 shadow-[0_0_10px_rgba(0,255,170,0.2)]">
+              <Star className="h-4 w-4 fill-root-accent text-root-accent sm:h-5 sm:w-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold uppercase leading-none tracking-tight text-[#00FFAA] drop-shadow-[0_0_8px_rgba(0,255,170,0.5)] sm:text-xl">
+              <h2 className="text-base font-bold uppercase leading-none tracking-tight text-root-accent drop-shadow-[0_0_8px_rgba(0,255,170,0.5)] sm:text-xl">
                 Peringkat Presiden
               </h2>
-              <p className="mt-1 text-[9px] font-semibold text-[#6B8A8A] sm:text-[10px]">
+              <p className="mt-1 text-[9px] font-semibold text-root-subtle sm:text-[10px]">
                 Rincian penyebab perubahan nilai peringkat
               </p>
             </div>
@@ -106,22 +106,22 @@ export default function RingkasanPeringkatModal({
           <RootModalCloseButton onClick={onClose} />
         </div>
 
-        <div className="relative z-10 flex-1 space-y-4 overflow-y-auto bg-[#0A1A1A]/80 p-3 sm:space-y-5 sm:p-5 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0A1A1A] [&::-webkit-scrollbar-thumb]:bg-[#00FFAA] [&::-webkit-scrollbar-track]:bg-[#0A1A1A]">
-          <section className={`relative overflow-hidden ${rootBorderRadius.card} border border-[#00FFAA]/30 bg-[#0F2424] p-4 shadow-[inset_0_0_20px_rgba(0,255,170,0.03)] sm:p-5`}>
-            <div className="pointer-events-none absolute right-0 top-0 h-32 w-32 rounded-full bg-[#00FFAA]/5 blur-3xl" />
+        <div className="relative z-10 flex-1 space-y-4 overflow-y-auto bg-root-canvas/80 p-3 sm:space-y-5 sm:p-5 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas [&::-webkit-scrollbar-thumb]:bg-root-accent [&::-webkit-scrollbar-track]:bg-root-canvas">
+          <section className={`relative overflow-hidden ${rootBorderRadius.card} border border-root-accent/30 bg-root-surface p-4 shadow-[inset_0_0_20px_rgba(0,255,170,0.03)] sm:p-5`}>
+
             <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <p className="mb-1 text-[10px] font-black uppercase tracking-wider text-[#6B8A8A] sm:text-xs">
+                <p className="mb-1 text-[10px] font-black uppercase tracking-wider text-root-subtle sm:text-xs">
                   Nilai saat ini
                 </p>
                 <p className={`text-3xl font-black tracking-tight sm:text-4xl ${ratingColor}`}>
                   {Math.round(presidentRating)}
-                  <span className="ml-1 text-sm font-bold text-[#6B8A8A]">/100</span>
+                  <span className="ml-1 text-sm font-bold text-root-subtle">/100</span>
                 </p>
               </div>
-              <div className="rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] px-3 py-2 text-right">
-                <p className="text-[9px] font-black uppercase tracking-wider text-[#6B8A8A]">Decay terhitung</p>
-                <p className="mt-1 text-sm font-black text-[#00FFAA]">
+              <div className="rounded-lg border border-root-accent/20 bg-root-canvas px-3 py-2 text-right">
+                <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Decay terhitung</p>
+                <p className="mt-1 text-sm font-black text-root-accent">
                   {finalMultiplier.toFixed(2)} counter/bulan
                 </p>
               </div>
@@ -133,20 +133,20 @@ export default function RingkasanPeringkatModal({
           </section>
 
           <section className="space-y-3">
-            <h3 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[#00FFAA] sm:text-sm">
-              <span className="inline-block h-3 w-1 rounded-full bg-[#00FFAA]" />
+            <h3 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-root-accent sm:text-sm">
+              <span className="inline-block h-3 w-1 rounded-full bg-root-accent" />
               Semua sumber penurunan langsung
             </h3>
             <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2 sm:gap-3">
               {PENALTY_SECTIONS.map((section) => (
                 <article
                   key={section.title}
-                  className={`${rootBorderRadius.card} border border-[#00FFAA]/20 bg-[#0F2424] p-3 sm:p-4`}
+                  className={`${rootBorderRadius.card} border border-root-accent/20 bg-root-surface p-3 sm:p-4`}
                 >
                   <div className="mb-2 flex items-start gap-2">
                     <TrendingDown className="mt-0.5 h-4 w-4 shrink-0 text-rose-400" />
                     <div>
-                      <h4 className="text-[10px] font-black uppercase leading-relaxed text-[#E0E0E0] sm:text-xs">
+                      <h4 className="text-[10px] font-black uppercase leading-relaxed text-root-text sm:text-xs">
                         {section.title}
                       </h4>
                       <p className="mt-0.5 text-[10px] font-black text-rose-300 sm:text-xs">{section.amount}</p>
@@ -191,9 +191,9 @@ export default function RingkasanPeringkatModal({
             </div>
           </section>
 
-          <section className={`${rootBorderRadius.card} border border-[#00FFAA]/15 bg-[#0F2424]/70 p-3 text-[10px] leading-relaxed text-[#8FAAAA] sm:p-4 sm:text-xs`}>
+          <section className={`${rootBorderRadius.card} border border-root-accent/15 bg-root-surface/70 p-3 text-[10px] leading-relaxed text-[#8FAAAA] sm:p-4 sm:text-xs`}>
             <div className="flex items-start gap-2">
-              <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-[#00FFAA]" />
+              <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-root-accent" />
               <p>Rentang nilai 0–100; nilai ≤1 dapat memicu kudeta. Bonus: penuhi tuntutan demo +10, tangani bencana/wabah +5, respons polisi +2.</p>
             </div>
           </section>

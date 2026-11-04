@@ -185,17 +185,17 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
       <div className="flex flex-col h-full overflow-hidden">
 
         {/* Header */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-              <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+            <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+              <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
             </div>
             <div className="min-w-0">
               <h2 className={rootModalTypography.title}>Neraca Pemasukkan & Pengeluaran</h2>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi neraca pemasukan dan pengeluaran" aria-label="Informasi neraca pemasukan dan pengeluaran" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]">
+            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi neraca pemasukan dan pengeluaran" aria-label="Informasi neraca pemasukan dan pengeluaran" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas">
               <Info className="h-3.5 w-3.5" />
             </button>
             <RootModalCloseButton onClick={onClose} />
@@ -203,7 +203,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
         </div>
 
         {/* Tab Navigation (Hanya 3 Tab) */}
-        <div className="px-4 lg:px-6 2xl:px-8 pt-3.5 lg:pt-4.5 2xl:pt-6 relative z-10 bg-[#0A1A1A]">
+        <div className="px-4 lg:px-6 2xl:px-8 pt-3.5 lg:pt-4.5 2xl:pt-6 relative z-10 bg-root-canvas">
           <RootModalTabs
             items={[
               { label: "Ringkasan PDB", isActive: activeTab === "summary", onClick: () => setActiveTab("summary") },
@@ -214,35 +214,35 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-8 bg-[#0A1A1A]/80 relative z-10 neon-scrollbar">
+        <div className="flex-1 overflow-y-auto p-8 bg-root-canvas/80 relative z-10 neon-scrollbar">
           <div className="space-y-6 max-w-3xl mx-auto">
 
             {/* Summary Tab */}
             {activeTab === "summary" && (
               <div className="space-y-6">
-                <div className={`space-y-4 border border-[#00FFAA]/30 bg-[#0F2424] p-6 ${rootBorderRadius.card}`}>
-                  <h4 className="text-[10px] text-[#00FFAA] font-black uppercase tracking-wider mb-2">
+                <div className={`space-y-4 border border-root-accent/30 bg-root-surface p-6 ${rootBorderRadius.card}`}>
+                  <h4 className="text-[10px] text-root-accent font-black uppercase tracking-wider mb-2">
                     Rincian Aliran Saldo & PDB Negara
                   </h4>
                   <div className="space-y-4">
                     {/* Section Pemasukkan */}
                     <div className="space-y-2">
-                      <div className="flex justify-between items-center text-xs font-black text-emerald-400 pb-1 border-b border-[#00FFAA]/20">
+                      <div className="flex justify-between items-center text-xs font-black text-emerald-400 pb-1 border-b border-root-accent/20">
                         <span className="flex items-center gap-2">
                           <ArrowUpRight className="h-4 w-4" /> Rincian Pemasukkan (Pendapatan Negara)
                         </span>
                         <span>+ {totalIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                       </div>
                       <div className="pl-4 space-y-1.5 text-xs">
-                        <div className="flex justify-between items-center text-[#E0E0E0]">
+                        <div className="flex justify-between items-center text-root-text">
                           <span className="font-semibold">• Revenue Pajak Nasional:</span>
                           <span className="font-bold text-emerald-400">+ {taxRevenue.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                         </div>
-                        <div className="flex justify-between items-center text-[#E0E0E0]">
+                        <div className="flex justify-between items-center text-root-text">
                           <span className="font-semibold">• Sektor Komersial ({commercialCount} Gedung):</span>
                           <span className="font-bold text-emerald-400">+ {commercialIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                         </div>
-                        <div className="flex justify-between items-center text-[#E0E0E0]">
+                        <div className="flex justify-between items-center text-root-text">
                           <span className="font-semibold">• Sektor Wisata & Pariwisata ({tourismCount} Destinasi):</span>
                           <span className="font-bold text-emerald-400">
                             {baseTourismIncome > 0 && tourismIncome > baseTourismIncome && (
@@ -253,7 +253,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                             + {tourismIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center text-[#E0E0E0]">
+                        <div className="flex justify-between items-center text-root-text">
                           <span className="font-semibold">• Produksi Tambang Emas ({goldBuildingCount} Unit):</span>
                           <span className="font-bold text-emerald-400">+ {goldIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                         </div>
@@ -262,26 +262,26 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
 
                     {/* Section Pengeluaran */}
                     <div className="space-y-2 pt-2">
-                      <div className="flex justify-between items-center text-xs font-black text-rose-400 pb-1 border-b border-[#00FFAA]/20">
+                      <div className="flex justify-between items-center text-xs font-black text-rose-400 pb-1 border-b border-root-accent/20">
                         <span className="flex items-center gap-2">
                           <ArrowDownRight className="h-4 w-4" /> Rincian Pengeluaran (Beban Negara)
                         </span>
                         <span>- {totalOutcome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                       </div>
                       <div className="pl-4 space-y-1.5 text-xs">
-                        <div className="flex justify-between items-center text-[#E0E0E0]">
+                        <div className="flex justify-between items-center text-root-text">
                           <span className="font-semibold">• Biaya Operasional Dewan Kabinet (22 Departemen):</span>
                           <span className="font-bold text-rose-400">- {ministryCostPerDay.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                         </div>
-                        <div className="flex justify-between items-center text-[#E0E0E0]">
+                        <div className="flex justify-between items-center text-root-text">
                           <span className="font-semibold">• Alokasi Kebijakan Subsidi (6 Pos Kebutuhan):</span>
                           <span className="font-bold text-rose-400">- {totalSubsidyCost.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="mt-4 pt-4 border-t border-[#00FFAA]/30">
-                    <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
+                  <div className="mt-4 pt-4 border-t border-root-accent/30">
+                    <div className="flex justify-between items-center text-sm font-black text-root-text">
                       <span>Netto Saldo Harian (Pemasukkan - Pengeluaran):</span>
                       <span className={`${netBalance >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
                         {netBalance >= 0 ? "+ " : "- "}{Math.abs(netBalance).toLocaleString("id-ID", { maximumFractionDigits: 0 })}
@@ -289,9 +289,9 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-between items-center text-xs font-black text-[#E0E0E0] pt-2 px-1">
-                  <span className="text-[#6B8A8A]">Total Saldo Kas Negara:</span>
-                  <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                <div className="flex justify-between items-center text-xs font-black text-root-text pt-2 px-1">
+                  <span className="text-root-subtle">Total Saldo Kas Negara:</span>
+                  <span className="text-root-accent">{anggaran.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
                 </div>
               </div>
             )}
@@ -299,15 +299,15 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
             {/* Income Tab */}
             {activeTab === "income" && (
               <div className="space-y-4">
-                <div className={`space-y-4 border border-[#00FFAA]/30 bg-[#0F2424] p-6 ${rootBorderRadius.card}`}>
+                <div className={`space-y-4 border border-root-accent/30 bg-root-surface p-6 ${rootBorderRadius.card}`}>
                   <div className="space-y-3">
                     {incomeItems.map((item, index) => (
-                      <div key={index} className="border-b border-[#00FFAA]/20 last:border-0 pb-2">
+                      <div key={index} className="border-b border-root-accent/20 last:border-0 pb-2">
                         <div
                           onClick={item.onClick}
-                          className={`flex justify-between items-center text-xs font-bold text-emerald-400 py-2 transition-colors rounded px-1 ${item.onClick ? 'cursor-pointer hover:bg-[#00FFAA]/10' : ''}`}
+                          className={`flex justify-between items-center text-xs font-bold text-emerald-400 py-2 transition-colors rounded px-1 ${item.onClick ? 'cursor-pointer hover:bg-root-accent/10' : ''}`}
                         >
-                          <span className="flex items-center gap-2 font-semibold text-[#E0E0E0]">
+                          <span className="flex items-center gap-2 font-semibold text-root-text">
                             {item.label}
                             {item.badge && (
                               <span className="inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-wide text-emerald-400">
@@ -327,16 +327,16 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                       </div>
                     ))}
                   </div>
-                  <div className="pt-4 border-t border-[#00FFAA]/30 mt-4">
-                    <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
+                  <div className="pt-4 border-t border-root-accent/30 mt-4">
+                    <div className="flex justify-between items-center text-sm font-black text-root-text">
                       <span>Total Pemasukkan:</span>
                       <span className="text-emerald-400">+ {totalIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-between items-center text-xs font-black text-[#E0E0E0] pt-2 px-1">
-                  <span className="text-[#6B8A8A]">Total Saldo Kas Negara:</span>
-                  <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                <div className="flex justify-between items-center text-xs font-black text-root-text pt-2 px-1">
+                  <span className="text-root-subtle">Total Saldo Kas Negara:</span>
+                  <span className="text-root-accent">{anggaran.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
                 </div>
               </div>
             )}
@@ -357,16 +357,16 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                   <AlokasiSubsidiTab countryDetail={countryDetail} />
                 ) : outcomeMainTab === "total" ? (
                   <div className="space-y-4">
-                    <div className={`space-y-4 border border-[#00FFAA]/30 bg-[#0F2424] p-6 ${rootBorderRadius.card}`}>
-                      <h4 className="text-[10px] text-[#00FFAA] font-black uppercase tracking-wider mb-4">
+                    <div className={`space-y-4 border border-root-accent/30 bg-root-surface p-6 ${rootBorderRadius.card}`}>
+                      <h4 className="text-[10px] text-root-accent font-black uppercase tracking-wider mb-4">
                         Ringkasan Total Pengeluaran Negara
                       </h4>
                       <div className="space-y-3">
-                        <div className="flex justify-between items-center text-xs font-bold text-rose-400 py-2 border-b border-[#00FFAA]/20">
-                          <span className="font-semibold text-[#E0E0E0]">1. Biaya Operasional Kabinet (22)</span>
+                        <div className="flex justify-between items-center text-xs font-bold text-rose-400 py-2 border-b border-root-accent/20">
+                          <span className="font-semibold text-root-text">1. Biaya Operasional Kabinet (22)</span>
                           <span>- {ministryCostPerDay.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                         </div>
-                        <div className="pl-4 space-y-1 text-[11px] text-[#6B8A8A]">
+                        <div className="pl-4 space-y-1 text-[11px] text-root-subtle">
                           <div className="flex justify-between">
                             <span>• Subtotal Kementerian (15):</span>
                             <span>- {calculateTabCostDaily(countryDetail, KEMENTERIAN).toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
@@ -381,14 +381,14 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                           </div>
                         </div>
 
-                        <div className="flex justify-between items-center text-xs font-bold text-rose-400 py-2 border-b border-[#00FFAA]/20 pt-3">
-                          <span className="font-semibold text-[#E0E0E0]">2. Alokasi Kebijakan Subsidi (6)</span>
+                        <div className="flex justify-between items-center text-xs font-bold text-rose-400 py-2 border-b border-root-accent/20 pt-3">
+                          <span className="font-semibold text-root-text">2. Alokasi Kebijakan Subsidi (6)</span>
                           <span>- {totalSubsidyCost.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                         </div>
                       </div>
 
-                      <div className="pt-4 border-t border-[#00FFAA]/30 mt-4">
-                        <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
+                      <div className="pt-4 border-t border-root-accent/30 mt-4">
+                        <div className="flex justify-between items-center text-sm font-black text-root-text">
                           <span>Grand Total Pengeluaran (Kabinet + Subsidi):</span>
                           <span className="text-rose-400">- {totalOutcome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                         </div>
@@ -398,12 +398,12 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                 ) : (
                   <div className="space-y-4">
                     {/* Sub-tabs under Kabinet: Kementerian (15), Keamanan (5), Layanan (2) */}
-                    <div className="flex gap-2 border-b border-[#00FFAA]/10 pb-2">
+                    <div className="flex gap-2 border-b border-root-accent/10 pb-2">
                       <button
                         onClick={() => setKabinetSubTab("kementerian")}
                         className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${kabinetSubTab === "kementerian"
-                            ? "bg-[#00FFAA] text-[#0A1A1A]"
-                            : "bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#E0E0E0] border border-[#00FFAA]/20"
+                            ? "bg-root-accent text-root-canvas"
+                            : "bg-root-canvas text-root-subtle hover:text-root-text border border-root-accent/20"
                           }`}
                       >
                         Kementerian (15)
@@ -411,8 +411,8 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                       <button
                         onClick={() => setKabinetSubTab("keamanan")}
                         className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${kabinetSubTab === "keamanan"
-                            ? "bg-[#00FFAA] text-[#0A1A1A]"
-                            : "bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#E0E0E0] border border-[#00FFAA]/20"
+                            ? "bg-root-accent text-root-canvas"
+                            : "bg-root-canvas text-root-subtle hover:text-root-text border border-root-accent/20"
                           }`}
                       >
                         Keamanan (5)
@@ -420,16 +420,16 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                       <button
                         onClick={() => setKabinetSubTab("layanan")}
                         className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${kabinetSubTab === "layanan"
-                            ? "bg-[#00FFAA] text-[#0A1A1A]"
-                            : "bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#E0E0E0] border border-[#00FFAA]/20"
+                            ? "bg-root-accent text-root-canvas"
+                            : "bg-root-canvas text-root-subtle hover:text-root-text border border-root-accent/20"
                           }`}
                       >
                         Layanan (2)
                       </button>
                     </div>
 
-                    <div className={`space-y-4 border border-[#00FFAA]/30 bg-[#0F2424] p-6 ${rootBorderRadius.card}`}>
-                      <h4 className="text-[10px] text-[#00FFAA] font-black uppercase tracking-wider mb-4">
+                    <div className={`space-y-4 border border-root-accent/30 bg-root-surface p-6 ${rootBorderRadius.card}`}>
+                      <h4 className="text-[10px] text-root-accent font-black uppercase tracking-wider mb-4">
                         {kabinetSubTab === "kementerian" ? "Kementerian" : kabinetSubTab === "keamanan" ? "Keamanan" : "Layanan"}
                       </h4>
                       <div className="space-y-3">
@@ -439,7 +439,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                           const Icon = dept.icon;
                           const cabinetImage = CABINET_DEPARTMENT_IMAGES[dept.id];
                           return (
-                            <div key={index} className="flex justify-between items-center text-xs font-bold text-rose-400 py-2 border-b border-[#00FFAA]/20 last:border-0">
+                            <div key={index} className="flex justify-between items-center text-xs font-bold text-rose-400 py-2 border-b border-root-accent/20 last:border-0">
                               <div className="flex min-w-0 items-center gap-2">
                                 {cabinetImage ? (
                                   <Image
@@ -451,27 +451,27 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                                     className="h-8 w-8 shrink-0 object-contain"
                                   />
                                 ) : (
-                                  <Icon className="h-4 w-4 shrink-0 text-[#6B8A8A]" />
+                                  <Icon className="h-4 w-4 shrink-0 text-root-subtle" />
                                 )}
-                                <span className="font-semibold text-[#E0E0E0]">{dept.name}</span>
-                                <span className="text-[10px] text-[#6B8A8A]">(Level {level})</span>
+                                <span className="font-semibold text-root-text">{dept.name}</span>
+                                <span className="text-[10px] text-root-subtle">(Level {level})</span>
                               </div>
                               <span>- {dailyCost.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                             </div>
                           );
                         })}
                       </div>
-                      <div className="pt-4 border-t border-[#00FFAA]/30 mt-4">
-                        <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
+                      <div className="pt-4 border-t border-root-accent/30 mt-4">
+                        <div className="flex justify-between items-center text-sm font-black text-root-text">
                           <span>Subtotal {kabinetSubTab === "kementerian" ? "Kementerian" : kabinetSubTab === "keamanan" ? "Keamanan" : "Layanan"}:</span>
                           <span className="text-rose-400">- {outcomeTabCostDaily.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className={`space-y-2 border border-[#00FFAA]/30 bg-[#0F2424] p-6 ${rootBorderRadius.card}`}>
+                    <div className={`space-y-2 border border-root-accent/30 bg-root-surface p-6 ${rootBorderRadius.card}`}>
                       <div className="pt-2">
-                        <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
+                        <div className="flex justify-between items-center text-sm font-black text-root-text">
                           <span>Total Pengeluaran Dewan Kabinet:</span>
                           <span className="text-rose-400">- {ministryCostPerDay.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                         </div>
@@ -480,9 +480,9 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                   </div>
                 )}
 
-                <div className="flex justify-between items-center text-xs font-black text-[#E0E0E0] pt-2 px-1">
-                  <span className="text-[#6B8A8A]">Total Saldo Kas Negara:</span>
-                  <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                <div className="flex justify-between items-center text-xs font-black text-root-text pt-2 px-1">
+                  <span className="text-root-subtle">Total Saldo Kas Negara:</span>
+                  <span className="text-root-accent">{anggaran.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
                 </div>
               </div>
             )}

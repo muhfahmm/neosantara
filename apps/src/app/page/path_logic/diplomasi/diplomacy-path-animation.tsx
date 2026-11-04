@@ -196,13 +196,8 @@ export default function DiplomacyPathAnimation({
   const overlay = (
     <div className={`fixed inset-0 ${kind === 'serang-negara' ? 'z-[100000020]' : 'z-10'} pointer-events-none overflow-hidden select-none`}>
       <svg ref={svgRef} className="absolute inset-0 h-full w-full" viewBox="0 0 1 1">
-        <defs>
-          <filter id={`diplo-blur-${kind}`} x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="2.5" />
-          </filter>
-        </defs>
 
-        {/* Rute — soft glow blur */}
+        {/* Rute — garis pendukung tebal */}
         <path
           ref={glowRouteRef}
           fill="none"
@@ -210,7 +205,6 @@ export default function DiplomacyPathAnimation({
           strokeWidth="9"
           opacity=".14"
           strokeLinecap="round"
-          filter={`url(#diplo-blur-${kind})`}
         />
         {/* Rute — garis utama dashed */}
         <path

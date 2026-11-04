@@ -89,47 +89,47 @@ export default function InfoInfrastrukturModal({
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
         {/* Header */}
-        <div className="px-4 sm:px-5 py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
-          <h3 className="font-black text-[#00FFAA] uppercase tracking-wider text-xl">{selectedItem?.label}</h3>
+        <div className="px-4 sm:px-5 py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
+          <h3 className="font-black text-root-accent uppercase tracking-wider text-xl">{selectedItem?.label}</h3>
           <RootModalCloseButton onClick={onClose} />
         </div>
 
         {/* Body */}
-        <div className="overflow-y-auto p-4 sm:p-5 bg-[#0F2424] relative z-10 space-y-4 text-xs font-semibold text-[#E0E0E0] custom-scrollbar">
+        <div className="overflow-y-auto p-4 sm:p-5 bg-root-surface relative z-10 space-y-4 text-xs font-semibold text-root-text custom-scrollbar">
           {bonusParts.length > 0 && (
             <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs font-bold text-emerald-300">
               Infrastruktur ini ditingkatkan: {bonusParts.join(" dan ")}.
             </div>
           )}
           {selectedItem?.deskripsi && (
-            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
-              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Deskripsi</p>
-              <p className="text-sm font-semibold text-[#E0E0E0]">{selectedItem.deskripsi}</p>
+            <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
+              <p className="text-[12px] font-bold text-root-subtle mb-1">Deskripsi</p>
+              <p className="text-sm font-semibold text-root-text">{selectedItem.deskripsi}</p>
             </div>
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
-              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Jumlah Fasilitas</p>
+            <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
+              <p className="text-[12px] font-bold text-root-subtle mb-1">Jumlah Fasilitas</p>
               <p className="text-xl font-black text-white">
                 {formatNumber(value)} unit
               </p>
             </div>
 
             {capacityDetail && (
-              <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
-                <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Status Kapasitas Terpakai</p>
-                <p className={`text-xl font-black ${capacityDetail.isFull ? "text-rose-400" : "text-[#00FFAA]"}`}>
+              <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
+                <p className="text-[12px] font-bold text-root-subtle mb-1">Status Kapasitas Terpakai</p>
+                <p className={`text-xl font-black ${capacityDetail.isFull ? "text-rose-400" : "text-root-accent"}`}>
                   {formatNumber(capacityDetail.used)} / {formatNumber(capacityDetail.totalCapacity)}
                 </p>
-                <div className="text-[10px] text-[#6B8A8A] mt-1 flex items-center gap-1 flex-wrap font-medium">
+                <div className="text-[10px] text-root-subtle mt-1 flex items-center gap-1 flex-wrap font-medium">
                   {capacityDetail.capacityBonusPct > 0 ? (
                     <>
                       <span>(</span>
                       <span className="text-red-400 line-through">{formatNumber(capacityDetail.baseCapacityPerUnit)}</span>
-                      <span className="text-[#00FFAA] font-bold">{formatNumber(capacityDetail.capacityPerUnit)}</span>
+                      <span className="text-root-accent font-bold">{formatNumber(capacityDetail.capacityPerUnit)}</span>
                       <span>{capacityDetail.unitLabel} / 1 {selectedItem?.label})</span>
-                      <span className="text-[#00FFAA] font-bold bg-[#0F2424] px-1.5 py-0.5 rounded border border-[#00FFAA]/30">
+                      <span className="text-root-accent font-bold bg-root-surface px-1.5 py-0.5 rounded border border-root-accent/30">
                         +{capacityDetail.capacityBonusPct}% Riset
                       </span>
                     </>
@@ -144,14 +144,14 @@ export default function InfoInfrastrukturModal({
           </div>
 
           {capacityDetail && capacityDetail.supportedUnits && capacityDetail.supportedUnits.length > 0 && (
-            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
-              <p className="text-[12px] font-bold text-[#00FFAA] uppercase tracking-wider mb-2">
+            <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
+              <p className="text-[12px] font-bold text-root-accent uppercase tracking-wider mb-2">
                 🛡️ Jenis Armada yang Ditampung:
               </p>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                 {capacityDetail.supportedUnits.map((unitName, index) => (
-                  <li key={index} className="flex items-center gap-2 bg-[#0F2424] px-3 py-1.5 rounded-lg border border-[#00FFAA]/10 text-white font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#00FFAA]"></span>
+                  <li key={index} className="flex items-center gap-2 bg-root-surface px-3 py-1.5 rounded-lg border border-root-accent/10 text-white font-medium">
+                    <span className="w-1.5 h-1.5 rounded-full bg-root-accent"></span>
                     {unitName}
                   </li>
                 ))}
@@ -160,18 +160,18 @@ export default function InfoInfrastrukturModal({
           )}
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
-              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Biaya Pembangunan</p>
-              <p className="text-base font-black text-[#00FFAA]">
+            <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
+              <p className="text-[12px] font-bold text-root-subtle mb-1">Biaya Pembangunan</p>
+              <p className="text-base font-black text-root-accent">
                 {formatNumber(selectedItem?.biaya_pembangunan)} NEO
               </p>
             </div>
-            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
-              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Waktu Pembangunan</p>
+            <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
+              <p className="text-[12px] font-bold text-root-subtle mb-1">Waktu Pembangunan</p>
               {discountPct > 0 ? (
                 <div className="flex items-center gap-2 text-base font-black">
                   <span className="text-red-400 line-through text-sm">{rawWaktu} Hari</span>
-                  <span className="text-[#00FFAA]">{effectiveWaktu} Hari</span>
+                  <span className="text-root-accent">{effectiveWaktu} Hari</span>
                 </div>
               ) : (
                 <p className="text-base font-black text-white">

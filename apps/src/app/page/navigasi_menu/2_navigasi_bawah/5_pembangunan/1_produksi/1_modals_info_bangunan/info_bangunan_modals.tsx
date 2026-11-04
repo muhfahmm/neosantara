@@ -212,10 +212,10 @@ export default function InfoBangunan({
   return createPortal(
     <NotebookModalWrapper onClose={onClose}>
       <div className="flex h-full flex-col overflow-hidden">
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-              <Utensils className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+            <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+              <Utensils className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
             </div>
             <div className="min-w-0">
               <h2 className={rootModalTypography.title}>Info Bangunan - {label}</h2>
@@ -225,7 +225,7 @@ export default function InfoBangunan({
         </div>
 
         <div className={`p-6 relative z-10 flex-1 overflow-y-auto space-y-4 custom-scrollbar ${rootModalTypography.body}`}>
-          <div className={`space-y-2 border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 ${rootBorderRadius.card}`}>
+          <div className={`space-y-2 border border-root-accent/20 bg-root-canvas p-4 ${rootBorderRadius.card}`}>
             {productionMultiplier < 1 && (
               <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[10px] font-bold text-amber-300">
                 Produksi dikurangi {Math.round((1 - productionMultiplier) * 100)}% oleh resolusi PBB yang aktif.
@@ -267,7 +267,7 @@ export default function InfoBangunan({
             {isElectricityTab ? (
               <>
                 <div className="flex justify-between items-center">
-                  <span className="text-[#AAB6B6]">Produksi Listrik (Total):</span>
+                  <span className="text-root-muted">Produksi Listrik (Total):</span>
                   <span className="flex items-center gap-2 text-xs font-black">
                     {hasShintoElectricityBonus && (
                       <span className="text-rose-400 line-through">
@@ -280,9 +280,9 @@ export default function InfoBangunan({
                     {isProductionZero && ' (bahan bakar defisit)'}
                   </span>
                 </div>
-                <div className="flex justify-between items-center pl-4 text-[#AAB6B6]">
+                <div className="flex justify-between items-center pl-4 text-root-muted">
                   <span>Per Unit:</span>
-                  <span className="text-[#E0E0E0]">{(bMeta?.produksi || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</span>
+                  <span className="text-root-text">{(bMeta?.produksi || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</span>
                 </div>
 
               </>
@@ -292,7 +292,7 @@ export default function InfoBangunan({
                   const isRawDeficit = isFoodCommodity && isFoodRawMaterialDeficit(activeFoodKey, countryDetail, metadata);
                   return (
                     <div className="flex justify-between items-center">
-                      <span className="text-[#AAB6B6]">Total Produksi ({label}) Per Hari:</span>
+                      <span className="text-root-muted">Total Produksi ({label}) Per Hari:</span>
                       <span className={`text-xs font-black ${isRawDeficit ? 'text-rose-400' : 'text-emerald-400'}`}>
                         {totalFoodProduction.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
                         {isRawDeficit && ' (bahan baku defisit)'}
@@ -300,13 +300,13 @@ export default function InfoBangunan({
                     </div>
                   );
                 })()}
-                <div className="flex justify-between items-center pl-4 text-[#AAB6B6]">
+                <div className="flex justify-between items-center pl-4 text-root-muted">
                   <span>Total Produksi Per Unit:</span>
-                  <span className="text-[#E0E0E0]">{((bMeta?.produksi || 0) * totalProductionMultiplier).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
+                  <span className="text-root-text">{((bMeta?.produksi || 0) * totalProductionMultiplier).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
                 </div>
                 {isFoodCommodity && (
                   <div className="flex justify-between items-center">
-                    <span className="text-[#AAB6B6]">Total Konsumsi ({label}) Per Hari:</span>
+                    <span className="text-root-muted">Total Konsumsi ({label}) Per Hari:</span>
                     <span className="text-xs font-black text-rose-400">
                       {totalFoodConsumption.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
                     </span>
@@ -317,19 +317,19 @@ export default function InfoBangunan({
               </>
             )}
 
-            <div className="flex justify-between items-center border-t border-[#00FFAA]/10 pt-2 mt-2">
-              <span className="text-[#AAB6B6]">Biaya Pembangunan:</span>
-              <span className="text-[#00FFAA] font-black">{(Number(bMeta?.biaya_pembangunan) || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
+            <div className="flex justify-between items-center border-t border-root-accent/10 pt-2 mt-2">
+              <span className="text-root-muted">Biaya Pembangunan:</span>
+              <span className="text-root-accent font-black">{(Number(bMeta?.biaya_pembangunan) || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
             </div>
             {bMeta?.waktu_pembangunan !== undefined && (
               <div className="flex justify-between items-center">
-                <span className="text-[#AAB6B6]">Waktu Pembangunan:</span>
-                <span className="text-[#E0E0E0] font-bold">{bMeta.waktu_pembangunan} hari</span>
+                <span className="text-root-muted">Waktu Pembangunan:</span>
+                <span className="text-root-text font-bold">{bMeta.waktu_pembangunan} hari</span>
               </div>
             )}
             <div className="flex justify-between items-center">
-              <span className="text-[#AAB6B6]">Jumlah Bangunan Saat Ini:</span>
-              <span className="text-[#00FFAA] font-black">{perCount} unit</span>
+              <span className="text-root-muted">Jumlah Bangunan Saat Ini:</span>
+              <span className="text-root-accent font-black">{perCount} unit</span>
             </div>
           </div>
 
@@ -365,7 +365,7 @@ export default function InfoBangunan({
 
             return (
               <>
-                <div className="rounded-xl bg-[#0A1A1A] border border-amber-500/30 p-4 space-y-2 mt-3">
+                <div className="rounded-xl bg-root-canvas border border-amber-500/30 p-4 space-y-2 mt-3">
                   <div className="flex items-center justify-between border-b border-amber-500/20 pb-2 mb-1">
                     <div className="font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5 text-xs">
                       🍽️ TOTAL KONSUMSI ({displayFoodLabel.toUpperCase()})
@@ -384,11 +384,11 @@ export default function InfoBangunan({
                     )}
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-[#E0E0E0] font-bold">Total Produksi ({displayFoodLabel}):</span>
+                    <span className="text-root-text font-bold">Total Produksi ({displayFoodLabel}):</span>
                     {formatColoredNumber(totalFoodProduction, true)}
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-[#E0E0E0] font-bold">Total Konsumsi ({displayFoodLabel}):</span>
+                    <span className="text-root-text font-bold">Total Konsumsi ({displayFoodLabel}):</span>
                     {formatColoredNumber(totalFoodConsumption, false)}
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t border-amber-500/20 mt-1 text-xs">
@@ -403,7 +403,7 @@ export default function InfoBangunan({
                     const card2TabId = getItemTabId(card2IngKey);
 
                     return (
-                      <div className="rounded-xl bg-[#0A1A1A] border border-rose-500/30 p-4 space-y-3 mt-3">
+                      <div className="rounded-xl bg-root-canvas border border-rose-500/30 p-4 space-y-3 mt-3">
                         <div className="flex items-center justify-between border-b border-rose-500/20 pb-2 mb-1">
                           <div className="font-black uppercase tracking-wider text-rose-400 flex items-center gap-1.5 text-xs">
                             ⚡ TOTAL KONSUMSI {ingredients.length === 1 ? ingredients[0].label.toUpperCase() : 'BAHAN BAKU'}
@@ -437,15 +437,15 @@ export default function InfoBangunan({
                                 </div>
                               )}
                               <div className="flex justify-between items-center text-xs">
-                                <span className="text-[#E0E0E0] font-bold">Total Produksi ({ing.label}):</span>
+                                <span className="text-root-text font-bold">Total Produksi ({ing.label}):</span>
                                 {formatColoredNumber(ingGrossProd, true)}
                               </div>
                               <div className="flex justify-between items-center text-xs">
-                                <span className="text-[#E0E0E0] font-bold">Konsumsi ({displayFoodLabel} - {perCount} unit):</span>
+                                <span className="text-root-text font-bold">Konsumsi ({displayFoodLabel} - {perCount} unit):</span>
                                 {formatColoredNumber(-ingCons, false)}
                               </div>
                               {ingPopCons > 0 && (
-                                <div className="flex justify-between items-center text-xs pl-2 text-[#AAB6B6]">
+                                <div className="flex justify-between items-center text-xs pl-2 text-root-muted">
                                   <span className="font-semibold">Konsumsi (Masyarakat / Internal):</span>
                                   {formatColoredNumber(-ingPopCons, false)}
                                 </div>
@@ -494,7 +494,7 @@ export default function InfoBangunan({
                   const card2ConsumerTabId = getItemTabId(firstConsumerKey);
 
                   return (
-                    <div className="rounded-xl bg-[#0A1A1A] border border-rose-500/30 p-4 space-y-3 mt-3">
+                    <div className="rounded-xl bg-root-canvas border border-rose-500/30 p-4 space-y-3 mt-3">
                       <div className="flex items-center justify-between border-b border-rose-500/20 pb-2 mb-1">
                         <div className="font-black uppercase tracking-wider text-rose-400 flex items-center gap-1.5 text-xs">
                           ⚡ TOTAL KONSUMSI BAHAN BAKU PABRIK
@@ -513,18 +513,18 @@ export default function InfoBangunan({
                         )}
                       </div>
                       <div className="flex justify-between items-center text-xs">
-                        <span className="text-[#E0E0E0] font-bold">Total Produksi ({fuelName}):</span>
+                        <span className="text-root-text font-bold">Total Produksi ({fuelName}):</span>
                         {formatColoredNumber(totalFoodProduction, true)}
                       </div>
                       {factoryCons > 0 && (
                         <div className="flex justify-between items-center text-xs">
-                          <span className="text-[#E0E0E0] font-bold">Konsumsi ({consumerLabelStr}):</span>
+                          <span className="text-root-text font-bold">Konsumsi ({consumerLabelStr}):</span>
                           {formatColoredNumber(-factoryCons, false)}
                         </div>
                       )}
                       {popCons > 0 && (
                         <div className="flex justify-between items-center text-xs">
-                          <span className="text-[#E0E0E0] font-bold">Konsumsi (Masyarakat / Internal):</span>
+                          <span className="text-root-text font-bold">Konsumsi (Masyarakat / Internal):</span>
                           {formatColoredNumber(-popCons, false)}
                         </div>
                       )}
@@ -542,7 +542,7 @@ export default function InfoBangunan({
           {hasFuelConsumption &&
             (() => {
               return (
-                <div className="rounded-xl bg-[#0A1A1A] border border-rose-500/30 p-4 space-y-3 mt-3">
+                <div className="rounded-xl bg-root-canvas border border-rose-500/30 p-4 space-y-3 mt-3">
                   <div className="font-black uppercase tracking-wider text-rose-400 border-b border-rose-500/20 pb-2 mb-2 flex items-center gap-1.5 text-xs">
                     ⚡ Total Konsumsi Bahan Bakar
                   </div>
@@ -560,11 +560,11 @@ export default function InfoBangunan({
                           {req.label}
                         </div>
                         <div className="flex justify-between items-center text-xs">
-                          <span className="text-[#E0E0E0]">Produksi:</span>
+                          <span className="text-root-text">Produksi:</span>
                           <span className="font-black text-emerald-400">+{totalFuelProd.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between items-center text-xs">
-                          <span className="text-[#E0E0E0]">Konsumsi:</span>
+                          <span className="text-root-text">Konsumsi:</span>
                           <span className="font-black text-rose-400">-{totalFuelCons.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between items-center text-xs pt-1 border-t border-rose-500/20 mt-0.5">
@@ -581,7 +581,7 @@ export default function InfoBangunan({
             })()}
 
           {hasIndustrialMaterialConsumption && (
-            <div className="rounded-xl bg-[#0A1A1A] border border-rose-500/30 p-4 space-y-3 mt-3">
+            <div className="rounded-xl bg-root-canvas border border-rose-500/30 p-4 space-y-3 mt-3">
               <div className="font-black uppercase tracking-wider text-rose-400 border-b border-rose-500/20 pb-2 mb-2 flex items-center gap-1.5 text-xs">
                 ⚙️ Total Konsumsi Bahan Baku
               </div>
@@ -604,11 +604,11 @@ export default function InfoBangunan({
                       {requirement.label}
                     </div>
                     <div className="flex justify-between items-center text-xs">
-                      <span className="text-[#E0E0E0]">Produksi tambang / hari:</span>
+                      <span className="text-root-text">Produksi tambang / hari:</span>
                       <span className="font-black text-emerald-400">+{production.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                     </div>
                     <div className="flex justify-between items-center text-xs">
-                      <span className="text-[#E0E0E0]">Konsumsi pabrik / hari:</span>
+                      <span className="text-root-text">Konsumsi pabrik / hari:</span>
                       <span className="font-black text-rose-400">-{consumption.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                     </div>
                     <div className="flex justify-between items-center text-xs pt-1 border-t border-rose-500/20 mt-0.5">
@@ -633,16 +633,16 @@ export default function InfoBangunan({
                 + getTotalIndustrialMaterialConsumption(countryDetail, buildingKey, prodVal);
               const saldoVal = prodVal - consVal;
               return (
-                <div className="rounded-xl bg-[#0A1A1A] border border-rose-500/30 p-4 space-y-2 mt-3">
+                <div className="rounded-xl bg-root-canvas border border-rose-500/30 p-4 space-y-2 mt-3">
                   <div className="font-black uppercase tracking-wider text-rose-400 border-b border-rose-500/20 pb-2 mb-1 flex items-center gap-1.5 text-xs">
                     ⚡ Total Konsumsi {hasIndustrialResourceConsumption ? "Bahan Baku" : "Bahan Bakar"}
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-[#E0E0E0] font-bold">Total Produksi ({fuelName}) / hari:</span>
+                    <span className="text-root-text font-bold">Total Produksi ({fuelName}) / hari:</span>
                     <span className="font-black text-emerald-400">+{prodVal.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-[#E0E0E0] font-bold">Konsumsi ({fuelName}) / hari:</span>
+                    <span className="text-root-text font-bold">Konsumsi ({fuelName}) / hari:</span>
                     <span className="font-black text-rose-400">-{consVal.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t border-rose-500/20 mt-1 text-xs">
@@ -656,13 +656,13 @@ export default function InfoBangunan({
             })()}
         </div>
 
-        <div className="p-4 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex justify-end relative z-10 shrink-0">
+        <div className="p-4 bg-root-canvas border-t border-root-accent/20 flex justify-end relative z-10 shrink-0">
           <button
             onClick={(e) => {
               e.stopPropagation();
               onClose();
             }}
-            className="py-2.5 px-6 rounded-xl text-xs font-black uppercase tracking-wider transition-all text-center cursor-pointer bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 shadow-md"
+            className="py-2.5 px-6 rounded-xl text-xs font-black uppercase tracking-wider transition-all text-center cursor-pointer bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-md"
           >
             Tutup Info
           </button>

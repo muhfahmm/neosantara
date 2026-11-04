@@ -1261,17 +1261,17 @@ export default function MissionModals({
         <PausedMenuFrame zIndexClass="z-[100000]">
           <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden font-sans">
             {/* HEADER */}
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0 rounded-t-2xl">
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0 rounded-t-2xl">
               <div className="flex items-center gap-2">
-                <div className="p-1 sm:p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] shrink-0">
-                  <Target className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+                <div className="p-1 sm:p-1.5 rounded-lg border border-root-accent/30 bg-root-surface shrink-0">
+                  <Target className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
+                    <h2 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">
                       Misi Presiden
                     </h2>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-[#00FFAA]/15 border border-[#00FFAA]/30 px-2 py-0.5 text-[9px] font-black uppercase text-[#00FFAA]">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-root-accent/15 border border-root-accent/30 px-2 py-0.5 text-[9px] font-black uppercase text-root-accent">
                       <Dices className="h-2.5 w-2.5" />
                       5 Misi Aktif
                     </span>
@@ -1282,7 +1282,7 @@ export default function MissionModals({
                       </span>
                     )}
                   </div>
-                  <p className="text-[10px] text-[#6B8A8A] font-semibold uppercase tracking-wider mt-1">
+                  <p className="text-[10px] text-root-subtle font-semibold uppercase tracking-wider mt-1">
                     Jumlah Pengalaman: <span className="text-amber-400 font-black">Ex {totalExp}</span>
                   </p>
                 </div>
@@ -1291,7 +1291,7 @@ export default function MissionModals({
             </div>
 
             {/* BODY: HANYA 5 KARTU KEBAWAH */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0A1A1A] relative z-10 custom-scrollbar space-y-3">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-root-canvas relative z-10 custom-scrollbar space-y-3">
               {/* FEEDBACK TOAST */}
               {claimFeedback && (
                 <div className="flex items-center gap-2 rounded-xl border border-emerald-400/50 bg-emerald-500/15 p-3 text-xs font-black text-emerald-300 shadow-lg animate-fadeIn">
@@ -1319,8 +1319,8 @@ export default function MissionModals({
                       isClaimable
                         ? 'bg-[#122A26] border-2 border-emerald-400 shadow-[0_0_15px_rgba(0,255,170,0.2)]'
                         : isActiveThis
-                        ? 'bg-[#152824] border border-[#00FFAA]/50'
-                        : 'bg-[#0F2424] border border-[#00FFAA]/20 hover:border-[#00FFAA]/50'
+                        ? 'bg-[#152824] border border-root-accent/50'
+                        : 'bg-root-surface border border-root-accent/20 hover:border-root-accent/50'
                     }`}
                   >
                     {/* ICON BESAR */}
@@ -1360,7 +1360,7 @@ export default function MissionModals({
                           </span>
                         )}
 
-                        <h3 className="text-sm sm:text-base font-black text-[#E0E0E0] leading-tight">
+                        <h3 className="text-sm sm:text-base font-black text-root-text leading-tight">
                           {card.title}
                         </h3>
                         {(() => {
@@ -1423,7 +1423,7 @@ export default function MissionModals({
                         type="button"
                         onClick={() => handleClaim(card.id, card.title)}
                         aria-label={`Klaim hadiah misi: ${card.title}`}
-                        className="w-full sm:w-auto shrink-0 px-5 py-2.5 rounded-lg bg-gradient-to-r from-emerald-400 via-[#00FFAA] to-emerald-400 hover:from-emerald-300 hover:to-emerald-400 active:scale-95 text-[#0A1A1A] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-emerald-500/30 cursor-pointer animate-bounce"
+                        className="w-full sm:w-auto shrink-0 px-5 py-2.5 rounded-lg bg-gradient-to-r from-emerald-400 via-root-accent to-emerald-400 hover:from-emerald-300 hover:to-emerald-400 active:scale-95 text-root-canvas font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-emerald-500/30 cursor-pointer animate-bounce"
                       >
                         <Gift className="w-3.5 h-3.5" />
                         Klaim Hadiah
@@ -1433,9 +1433,9 @@ export default function MissionModals({
                         type="button"
                         onClick={() => handleStart(card)}
                         aria-label={`Mulai misi: ${card.title}`}
-                        className="w-full sm:w-auto shrink-0 px-5 py-2.5 rounded-lg bg-gradient-to-b from-[#00FFAA] to-emerald-400 hover:from-[#00e699] hover:to-emerald-500 active:scale-95 text-[#0A1A1A] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer"
+                        className="w-full sm:w-auto shrink-0 px-5 py-2.5 rounded-lg bg-gradient-to-b from-root-accent to-emerald-400 hover:from-[#00e699] hover:to-emerald-500 active:scale-95 text-root-canvas font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer"
                       >
-                        <Play className="w-3.5 h-3.5 fill-[#0A1A1A]" />
+                        <Play className="w-3.5 h-3.5 fill-root-canvas" />
                         {isActiveThis ? 'Lanjutkan' : 'Mulai'}
                       </button>
                     )}
@@ -1444,7 +1444,7 @@ export default function MissionModals({
               })}
 
               {currentCards.length === 0 && (
-                <div className="text-center py-12 text-sm font-bold text-[#6B8A8A]">
+                <div className="text-center py-12 text-sm font-bold text-root-subtle">
                   Tidak ada misi aktif saat ini.
                 </div>
               )}

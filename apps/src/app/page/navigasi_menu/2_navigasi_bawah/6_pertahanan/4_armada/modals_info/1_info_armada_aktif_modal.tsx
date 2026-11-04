@@ -51,35 +51,35 @@ export default function InfoArmadaAktifModal({
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
         {/* Header */}
-        <div className="px-4 sm:px-5 py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
-          <h3 className="font-black text-[#00FFAA] uppercase tracking-wider text-xl">{selectedItem?.label}</h3>
+        <div className="px-4 sm:px-5 py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
+          <h3 className="font-black text-root-accent uppercase tracking-wider text-xl">{selectedItem?.label}</h3>
           <RootModalCloseButton onClick={onClose} />
         </div>
 
         {/* Body */}
-        <div className="overflow-y-auto p-4 sm:p-5 bg-[#0F2424] relative z-10 space-y-4 text-xs font-semibold text-[#E0E0E0] custom-scrollbar">
-          <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
-            <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Kategori Matra</p>
+        <div className="overflow-y-auto p-4 sm:p-5 bg-root-surface relative z-10 space-y-4 text-xs font-semibold text-root-text custom-scrollbar">
+          <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
+            <p className="text-[12px] font-bold text-root-subtle mb-1">Kategori Matra</p>
             <p className="text-xl font-black text-white">
               {selectedCategory ? groupMeta[selectedCategory].title : '-'}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
-              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Jumlah Unit Saat Ini</p>
+            <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
+              <p className="text-[12px] font-bold text-root-subtle mb-1">Jumlah Unit Saat Ini</p>
               <p className="text-xl font-black text-white">
                 {formatNumber(currentQuantity)} {selectedItem.key === "barak" ? "pasukan" : "unit"}
               </p>
             </div>
 
             {capacityInfo && (
-              <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
-                <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Kapasitas {capacityInfo.infraName}</p>
-                <p className={`text-xl font-black ${capacityInfo.isFull ? "text-rose-400" : "text-[#00FFAA]"}`}>
+              <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
+                <p className="text-[12px] font-bold text-root-subtle mb-1">Kapasitas {capacityInfo.infraName}</p>
+                <p className={`text-xl font-black ${capacityInfo.isFull ? "text-rose-400" : "text-root-accent"}`}>
                   {formatNumber(capacityInfo.used)} / {formatNumber(capacityInfo.totalCapacity)}
                 </p>
-                <p className="text-[10px] text-[#6B8A8A] mt-1">
+                <p className="text-[10px] text-root-subtle mt-1">
                   (Total seluruh armada terpakai dalam {capacityInfo.infraName})
                 </p>
               </div>
@@ -87,9 +87,9 @@ export default function InfoArmadaAktifModal({
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
-              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Kekuatan</p>
-              <p className="flex items-center gap-2 text-lg font-black text-[#00FFAA]">
+            <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
+              <p className="text-[12px] font-bold text-root-subtle mb-1">Kekuatan</p>
+              <p className="flex items-center gap-2 text-lg font-black text-root-accent">
                 {currentUnit && currentUnit.totalPower > currentUnit.baseTotalPower && (
                   <span className="text-sm text-rose-400 line-through">
                     {formatNumber(currentUnit.baseTotalPower)}
@@ -98,8 +98,8 @@ export default function InfoArmadaAktifModal({
                 {formatNumber(currentUnit?.totalPower ?? 0)}
               </p>
             </div>
-            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
-              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Total HP</p>
+            <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
+              <p className="text-[12px] font-bold text-root-subtle mb-1">Total HP</p>
               <p className="flex items-center gap-2 text-lg font-black text-rose-400">
                 {currentUnit && currentUnit.totalHealth > currentUnit.baseTotalHealth && (
                   <span className="text-sm text-rose-300/60 line-through">

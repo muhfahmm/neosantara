@@ -16,19 +16,19 @@ export default function HinaModal({ isOpen, countryName, onClose, onConfirm }: H
 	const modalContent = (
 		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
 			<div
-				className="w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto flex flex-col bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl shadow-2xl relative pointer-events-auto"
+				className="w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto flex flex-col bg-root-surface border border-root-accent/30 rounded-2xl shadow-2xl relative pointer-events-auto"
 				role="dialog"
 				aria-modal="true"
 				aria-labelledby="hina-confirm-title"
 			>
-				<div className="flex items-center justify-between border-b border-amber-500/20 bg-[#0A1A1A] px-5 sm:px-6 py-4">
+				<div className="flex items-center justify-between border-b border-amber-500/20 bg-root-canvas px-5 sm:px-6 py-4">
 					<h3 id="hina-confirm-title" className="text-lg sm:text-xl font-black text-amber-400 tracking-wide uppercase">
 						Konfirmasi Hina
 					</h3>
 					<button
 						type="button"
 						onClick={onClose}
-						className="rounded-lg p-1.5 text-[#6B8A8A] transition-colors hover:text-amber-400"
+						className="rounded-lg p-1.5 text-root-subtle transition-colors hover:text-amber-400"
 						aria-label="Tutup konfirmasi hina"
 					>
 						<X className="h-4 w-4" />
@@ -36,16 +36,16 @@ export default function HinaModal({ isOpen, countryName, onClose, onConfirm }: H
 				</div>
 
 				<div className="p-5 sm:p-6">
-					<p className="text-sm sm:text-base text-[#E0E0E0] leading-relaxed">
+					<p className="text-sm sm:text-base text-root-text leading-relaxed">
 						Hina publik atau pemimpin <strong className="text-white">{countryName}</strong>? Tindakan diplomatik yang memalukan dapat memperburuk hubungan internasional.
 					</p>
 				</div>
 
-				<div className="flex flex-col sm:flex-row gap-3 justify-end border-t border-amber-500/20 bg-[#0A1A1A] p-4">
+				<div className="flex flex-col sm:flex-row gap-3 justify-end border-t border-amber-500/20 bg-root-canvas p-4">
 					<button
 						type="button"
 						onClick={onClose}
-						className="w-full sm:w-auto px-6 bg-[#0A1A1A] hover:bg-[#142A2A] border border-[#00FFAA]/30 rounded-xl py-2 text-center text-[#E0E0E0] font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
+						className="w-full sm:w-auto px-6 bg-root-canvas hover:bg-[#142A2A] border border-root-accent/30 rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
 					>
 						Batal
 					</button>

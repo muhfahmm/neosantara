@@ -33,9 +33,7 @@ const DefenseAllianceVehicle: DiplomacyPathVehicle = ({ accent }) => {
     <g>
       {/* ================= DEFINISI GRADIEN & FILTER ================= */}
       <defs>
-        <filter id={`shadow-${uid}`} x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="1.5" />
-        </filter>
+
 
         {/* Gradien Bodi (Baja Militer Gelap) */}
         <linearGradient id={`body-${uid}`} x1="0" y1="0" x2="0.2" y2="1">
@@ -64,7 +62,6 @@ const DefenseAllianceVehicle: DiplomacyPathVehicle = ({ accent }) => {
       <ellipse 
         cx="1" cy="5" rx="29" ry="12" 
         fill="#000" opacity=".55" 
-        filter={`url(#shadow-${uid})`} 
       />
 
       {/* ================= RODA & PELEK (Heavy Duty) ================= */}
@@ -182,7 +179,7 @@ const DefenseAllianceVehicle: DiplomacyPathVehicle = ({ accent }) => {
       {/* Sirine / Rotator Militer (Depan Atap) */}
       <rect x="4" y="-2.5" width="3" height="5" rx="1" fill="#ef4444" opacity=".9" />
       <path d="M 5.5,-2.5 L 5.5,2.5" stroke="#fff" strokeWidth="0.5" opacity=".5" />
-      <circle cx="5.5" cy="0" r="6" fill="#ef4444" opacity=".2" filter={`url(#shadow-${uid})`} />
+      <circle cx="5.5" cy="0" r="6" fill="#ef4444" opacity=".2" />
     </g>
   );
 };

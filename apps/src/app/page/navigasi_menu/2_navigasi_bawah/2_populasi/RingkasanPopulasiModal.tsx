@@ -199,14 +199,14 @@ export default function RingkasanPopulasiModal({
   if (!metrics) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-        <div className="flex h-full max-h-[calc(100vh-125px)] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-[#00FFAA]/30 bg-[#0F2424] pointer-events-auto lg:max-h-[calc(100vh-145px)] lg:max-w-[920px]">
-          <div className="flex shrink-0 items-center justify-between border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2.5 sm:px-6 sm:py-3">
+        <div className="flex h-full max-h-[calc(100vh-125px)] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-root-accent/30 bg-root-surface pointer-events-auto lg:max-h-[calc(100vh-145px)] lg:max-w-[920px]">
+          <div className="flex shrink-0 items-center justify-between border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
             <h2 className={rootModalTypography.title}>Kependudukan</h2>
             <RootModalCloseButton onClick={onClose} />
           </div>
           <div className="flex flex-1 items-center justify-center" role="status" aria-live="polite">
-            <div className="flex items-center gap-3 text-sm font-semibold text-[#E0E0E0]">
-              <span className="h-5 w-5 animate-spin rounded-full border-2 border-[#00FFAA]/30 border-t-[#00FFAA]" />
+            <div className="flex items-center gap-3 text-sm font-semibold text-root-text">
+              <span className="h-5 w-5 animate-spin rounded-full border-2 border-root-accent/30 border-t-root-accent" />
               Menyiapkan ringkasan populasi...
             </div>
           </div>
@@ -308,12 +308,12 @@ export default function RingkasanPopulasiModal({
   return (
     <>
       {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
-        <div className="flex flex-col h-full overflow-hidden bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 relative">
+        <div className="flex flex-col h-full overflow-hidden bg-root-canvas rounded-xl border border-root-accent/20 relative">
         {/* ============ HEADER ============ */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-              <Users2 className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+            <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+              <Users2 className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
             </div>
             <div>
               <h2 className={rootModalTypography.title}>Kependudukan</h2>
@@ -321,7 +321,7 @@ export default function RingkasanPopulasiModal({
           </div>
 
           <div className="flex items-center gap-2">
-            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi kependudukan" aria-label="Informasi kependudukan" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]">
+            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi kependudukan" aria-label="Informasi kependudukan" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas">
               <Info className="h-3.5 w-3.5" />
             </button>
             <RootModalCloseButton onClick={onClose} />
@@ -329,99 +329,99 @@ export default function RingkasanPopulasiModal({
         </div>
 
         {/* ============ SUMMARY CARDS ============ */}
-        <div className="px-3 sm:px-5 lg:px-6 2xl:px-8 py-2 sm:py-2.5 2xl:py-3 bg-[#0A1A1A] border-b border-[#00FFAA]/20 relative z-10 shrink-0">
+        <div className="px-3 sm:px-5 lg:px-6 2xl:px-8 py-2 sm:py-2.5 2xl:py-3 bg-root-canvas border-b border-root-accent/20 relative z-10 shrink-0">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-2.5 2xl:gap-4">
             {/* Total Populasi */}
-            <div className={`bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 2xl:p-4 ${rootBorderRadius.card} flex items-center gap-2 lg:gap-2.5 2xl:gap-3.5 transition-all hover:border-[#00FFAA]/40`}>
-              <div className="p-1.5 lg:p-2 2xl:p-2.5 bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-md lg:rounded-lg 2xl:rounded-xl shrink-0">
-                <Users className="h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5 text-[#00FFAA]" />
+            <div className={`bg-root-surface border border-root-accent/20 p-2 lg:p-2.5 2xl:p-4 ${rootBorderRadius.card} flex items-center gap-2 lg:gap-2.5 2xl:gap-3.5 transition-all hover:border-root-accent/40`}>
+              <div className="p-1.5 lg:p-2 2xl:p-2.5 bg-root-canvas border border-root-accent/30 rounded-md lg:rounded-lg 2xl:rounded-xl shrink-0">
+                <Users className="h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5 text-root-accent" />
               </div>
               <div className="min-w-0">
                 <p className={`${rootModalTypography.label} whitespace-nowrap`}>Total Populasi</p>
-                <p className={`${rootModalTypography.value} text-[11px] leading-tight whitespace-nowrap lg:text-xs 2xl:text-base`}>{populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[7px] text-[#AAB6B6] lg:text-[8px] 2xl:text-[9px]">JIWA</span></p>
+                <p className={`${rootModalTypography.value} text-[11px] leading-tight whitespace-nowrap lg:text-xs 2xl:text-base`}>{populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[7px] text-root-muted lg:text-[8px] 2xl:text-[9px]">JIWA</span></p>
               </div>
             </div>
 
             {/* Laju Pertumbuhan */}
             <div
-              className={`group bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 2xl:p-4 ${rootBorderRadius.card} flex items-center justify-between gap-1.5 lg:gap-2 2xl:gap-3 transition-all cursor-pointer hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 active:scale-[0.98]`}
+              className={`group bg-root-surface border border-root-accent/20 p-2 lg:p-2.5 2xl:p-4 ${rootBorderRadius.card} flex items-center justify-between gap-1.5 lg:gap-2 2xl:gap-3 transition-all cursor-pointer hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98]`}
               onClick={() => setIsDetailBirthOpen(true)}
             >
               <div className="flex items-center gap-2 lg:gap-2.5 2xl:gap-3.5 min-w-0">
-                <div className="p-1.5 lg:p-2 2xl:p-2.5 bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-md lg:rounded-lg 2xl:rounded-xl shrink-0 group-hover:scale-110 transition-transform">
-                  <TrendingUp className="h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5 text-[#00FFAA]" />
+                <div className="p-1.5 lg:p-2 2xl:p-2.5 bg-root-canvas border border-root-accent/30 rounded-md lg:rounded-lg 2xl:rounded-xl shrink-0 group-hover:scale-110 transition-transform">
+                  <TrendingUp className="h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5 text-root-accent" />
                 </div>
                 <div className="min-w-0">
                   <p className={`${rootModalTypography.label} whitespace-nowrap`}>Laju Pertumbuhan</p>
                   <p className={`${rootModalTypography.value} text-[11px] leading-tight whitespace-nowrap lg:text-xs 2xl:text-base`}>
-                    {totalDailyDelta >= 0 ? '+' : ''}{totalDailyDelta.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[7px] text-[#AAB6B6] lg:text-[8px] 2xl:text-[9px]">/hr</span>
+                    {totalDailyDelta >= 0 ? '+' : ''}{totalDailyDelta.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[7px] text-root-muted lg:text-[8px] 2xl:text-[9px]">/hr</span>
                   </p>
                 </div>
               </div>
-              <ChevronRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-[#6B8A8A] group-hover:text-[#00FFAA] group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5" />
+              <ChevronRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-root-subtle group-hover:text-root-accent group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5" />
             </div>
 
             {/* Tunawisma */}
             <div
-              className={`group bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 2xl:p-4 ${rootBorderRadius.card} flex items-center justify-between gap-1.5 lg:gap-2 2xl:gap-3 transition-all cursor-pointer hover:border-rose-400 hover:bg-rose-500/10 active:scale-[0.98]`}
+              className={`group bg-root-surface border border-root-accent/20 p-2 lg:p-2.5 2xl:p-4 ${rootBorderRadius.card} flex items-center justify-between gap-1.5 lg:gap-2 2xl:gap-3 transition-all cursor-pointer hover:border-rose-400 hover:bg-rose-500/10 active:scale-[0.98]`}
               onClick={() => setIsTunawismaOpen(true)}
             >
               <div className="flex items-center gap-2 lg:gap-2.5 2xl:gap-3.5 min-w-0">
-                <div className="p-1.5 lg:p-2 2xl:p-2.5 bg-[#0A1A1A] border border-rose-500/30 rounded-md lg:rounded-lg 2xl:rounded-xl shrink-0 group-hover:scale-110 transition-transform">
+                <div className="p-1.5 lg:p-2 2xl:p-2.5 bg-root-canvas border border-rose-500/30 rounded-md lg:rounded-lg 2xl:rounded-xl shrink-0 group-hover:scale-110 transition-transform">
                   <ShieldAlert className="h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5 text-rose-400" />
                 </div>
                 <div className="min-w-0">
                   <p className={`${rootModalTypography.label} whitespace-nowrap`}>Tunawisma</p>
-                  <p className={`${rootModalTypography.value} text-[11px] leading-tight whitespace-nowrap lg:text-xs 2xl:text-base`}>{homelessCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[7px] text-[#AAB6B6] lg:text-[8px] 2xl:text-[9px]">JIWA</span></p>
+                  <p className={`${rootModalTypography.value} text-[11px] leading-tight whitespace-nowrap lg:text-xs 2xl:text-base`}>{homelessCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[7px] text-root-muted lg:text-[8px] 2xl:text-[9px]">JIWA</span></p>
                 </div>
               </div>
-              <ChevronRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-[#6B8A8A] group-hover:text-rose-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5" />
+              <ChevronRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-root-subtle group-hover:text-rose-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5" />
             </div>
 
             {/* Kesejahteraan */}
             <div
-              className={`group bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 2xl:p-4 ${rootBorderRadius.card} flex items-center justify-between gap-1.5 lg:gap-2 2xl:gap-3 transition-all cursor-pointer hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 active:scale-[0.98]`}
+              className={`group bg-root-surface border border-root-accent/20 p-2 lg:p-2.5 2xl:p-4 ${rootBorderRadius.card} flex items-center justify-between gap-1.5 lg:gap-2 2xl:gap-3 transition-all cursor-pointer hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98]`}
               onClick={() => setIsKesejahteraanOpen(true)}
             >
               <div className="flex items-center gap-2 lg:gap-2.5 2xl:gap-3.5 min-w-0">
-                <div className="p-1.5 lg:p-2 2xl:p-2.5 bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-md lg:rounded-lg 2xl:rounded-xl shrink-0 group-hover:scale-110 transition-transform">
-                  <BadgeDollarSign className="h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5 text-[#00FFAA]" />
+                <div className="p-1.5 lg:p-2 2xl:p-2.5 bg-root-canvas border border-root-accent/30 rounded-md lg:rounded-lg 2xl:rounded-xl shrink-0 group-hover:scale-110 transition-transform">
+                  <BadgeDollarSign className="h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5 text-root-accent" />
                 </div>
                 <div className="min-w-0">
                   <p className={`${rootModalTypography.label} whitespace-nowrap`}>Kesejahteraan</p>
                   <p className={`${rootModalTypography.value} text-[11px] leading-tight whitespace-nowrap lg:text-xs 2xl:text-base`}>
                     {countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : 50}{" "}
-                    <span className="text-[7px] text-[#AAB6B6] lg:text-[8px] 2xl:text-[9px]">INDX</span>
+                    <span className="text-[7px] text-root-muted lg:text-[8px] 2xl:text-[9px]">INDX</span>
                   </p>
                 </div>
               </div>
-              <ChevronRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-[#6B8A8A] group-hover:text-[#00FFAA] group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5" />
+              <ChevronRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-root-subtle group-hover:text-root-accent group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5" />
             </div>
           </div>
         </div>
 
         {/* ============ CONTENT AREA dengan Modern Tailwind Scrollbar ============ */}
-        <div className="flex-1 overflow-y-auto p-3 lg:p-4.5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10
+        <div className="flex-1 overflow-y-auto p-3 lg:p-4.5 2xl:p-8 bg-root-canvas/80 relative z-10
           [&::-webkit-scrollbar]:w-2 
-          [&::-webkit-scrollbar-track]:bg-[#0A1A1A] 
+          [&::-webkit-scrollbar-track]:bg-root-canvas
           [&::-webkit-scrollbar-track]:rounded-full 
-          [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-[#00FFAA]/20
-          [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A]
+          [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20
+          [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A]
           [&::-webkit-scrollbar-thumb]:rounded-full 
-          [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0A1A1A]
-          hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]
+          [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas
+          hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent
           [&::-webkit-scrollbar-button]:hidden
         ">
           {/* Tab Navigation */}
-          <div className="mb-3 flex gap-2 border-b border-[#00FFAA]/15 pb-2">
+          <div className="mb-3 flex gap-2 border-b border-root-accent/15 pb-2">
             <button
               type="button"
               onClick={() => setActivePopulationTab("ringkasan")}
               aria-pressed={activePopulationTab === "ringkasan"}
               className={`rounded-lg border px-3 py-2 text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${
                 activePopulationTab === "ringkasan"
-                  ? "border-[#00FFAA]/40 bg-white/5 text-[#E0E0E0]"
-                  : "border-[#00FFAA]/15 text-[#AAB6B6] hover:text-[#E0E0E0] hover:border-[#00FFAA]/50"
+                  ? "border-root-accent/40 bg-white/5 text-root-text"
+                  : "border-root-accent/15 text-root-muted hover:text-root-text hover:border-root-accent/50"
               }`}
             >
               Ringkasan
@@ -432,8 +432,8 @@ export default function RingkasanPopulasiModal({
               aria-pressed={activePopulationTab === "negara"}
               className={`rounded-lg border px-3 py-2 text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${
                 activePopulationTab === "negara"
-                  ? "border-[#00FFAA]/40 bg-white/5 text-[#E0E0E0]"
-                  : "border-[#00FFAA]/15 text-[#AAB6B6] hover:text-[#E0E0E0] hover:border-[#00FFAA]/50"
+                  ? "border-root-accent/40 bg-white/5 text-root-text"
+                  : "border-root-accent/15 text-root-muted hover:text-root-text hover:border-root-accent/50"
               }`}
             >
               Tabel Populasi Negara
@@ -449,26 +449,26 @@ export default function RingkasanPopulasiModal({
           <div className="space-y-3.5 lg:space-y-4.5 2xl:space-y-6 animate-in fade-in duration-500">
 
             {/* Informasi Demografi */}
-            <div className={`bg-[#0F2424] border border-[#00FFAA]/20 p-3.5 lg:p-4.5 2xl:p-6 ${rootBorderRadius.card} space-y-2.5 lg:space-y-3 2xl:space-y-4`}>
+            <div className={`bg-root-surface border border-root-accent/20 p-3.5 lg:p-4.5 2xl:p-6 ${rootBorderRadius.card} space-y-2.5 lg:space-y-3 2xl:space-y-4`}>
               <h3 className={`${rootModalTypography.sectionTitle} flex items-center gap-2`}>
-                <Info className="h-4 w-4 lg:h-4.5 lg:w-4.5 2xl:h-5 2xl:w-5 text-[#00FFAA]" />
+                <Info className="h-4 w-4 lg:h-4.5 lg:w-4.5 2xl:h-5 2xl:w-5 text-root-accent" />
                 Informasi Demografi
               </h3>
               <div className={`${rootModalTypography.body} space-y-2.5 font-sans lg:space-y-3 2xl:space-y-4`}>
                 {/* 3 Card Sejajar: Kelahiran, Kematian, Pertumbuhan */}
-                <div className="pt-2.5 lg:pt-3 2xl:pt-4 border-t border-[#00FFAA]/20 grid grid-cols-1 sm:grid-cols-3 gap-2.5 lg:gap-3 2xl:gap-4">
+                <div className="pt-2.5 lg:pt-3 2xl:pt-4 border-t border-root-accent/20 grid grid-cols-1 sm:grid-cols-3 gap-2.5 lg:gap-3 2xl:gap-4">
                   <div
-                    className={`group cursor-pointer ${rootBorderRadius.card} p-2.5 lg:p-3 2xl:p-4 border border-[#00FFAA]/30 bg-[#0A1A1A] hover:bg-[#00FFAA]/10 hover:border-[#00FFAA] active:scale-[0.98] transition-all duration-200 flex items-center justify-between`}
+                    className={`group cursor-pointer ${rootBorderRadius.card} p-2.5 lg:p-3 2xl:p-4 border border-root-accent/30 bg-root-canvas hover:bg-root-accent/10 hover:border-root-accent active:scale-[0.98] transition-all duration-200 flex items-center justify-between`}
                     onClick={() => setIsDetailBirthOpen(true)}
                   >
                     <div className="flex flex-col items-start">
                       <p className={rootModalTypography.label}>Angka Kelahiran Harian</p>
                       <p className="mt-0.5 text-base font-semibold text-emerald-400 lg:mt-1 lg:text-xl 2xl:text-2xl">+{dailyBirths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</p>
                     </div>
-                    <ChevronRight className="h-4 w-4 lg:h-4.5 lg:w-4.5 2xl:h-5 2xl:w-5 text-[#00FFAA] group-hover:translate-x-1 transition-all shrink-0 ml-1.5" />
+                    <ChevronRight className="h-4 w-4 lg:h-4.5 lg:w-4.5 2xl:h-5 2xl:w-5 text-root-accent group-hover:translate-x-1 transition-all shrink-0 ml-1.5" />
                   </div>
                   <div
-                    className={`group cursor-pointer ${rootBorderRadius.card} p-2.5 lg:p-3 2xl:p-4 border border-rose-500/30 bg-[#0A1A1A] hover:bg-rose-500/10 hover:border-rose-400 active:scale-[0.98] transition-all duration-200 flex items-center justify-between`}
+                    className={`group cursor-pointer ${rootBorderRadius.card} p-2.5 lg:p-3 2xl:p-4 border border-rose-500/30 bg-root-canvas hover:bg-rose-500/10 hover:border-rose-400 active:scale-[0.98] transition-all duration-200 flex items-center justify-between`}
                     onClick={() => setIsDetailDeathOpen(true)}
                   >
                     <div className="flex flex-col items-start">
@@ -478,12 +478,12 @@ export default function RingkasanPopulasiModal({
                     <ChevronRight className="h-4 w-4 lg:h-4.5 lg:w-4.5 2xl:h-5 2xl:w-5 text-rose-400 group-hover:translate-x-1 transition-all shrink-0 ml-1.5" />
                   </div>
                   <div
-                    className={`${rootBorderRadius.card} p-2.5 lg:p-3 2xl:p-4 border ${totalMonthlyGrowthPercent >= 0 ? 'border-[#00FFAA]/30' : 'border-rose-500/30'} bg-[#0A1A1A] flex items-center justify-between`}
+                    className={`${rootBorderRadius.card} p-2.5 lg:p-3 2xl:p-4 border ${totalMonthlyGrowthPercent >= 0 ? 'border-root-accent/30' : 'border-rose-500/30'} bg-root-canvas flex items-center justify-between`}
                   >
                     <div className="flex flex-col items-start">
                       <p className={rootModalTypography.label}>Pertumbuhan Populasi</p>
                       <p className={`${rootModalTypography.value} mt-0.5 text-base lg:mt-1 lg:text-xl 2xl:text-2xl`}>
-                        {totalMonthlyGrowthPercent >= 0 ? '+' : ''}{totalMonthlyGrowthPercent.toFixed(2)}%<span className="ml-1 text-[9px] font-medium text-[#AAB6B6]">/ bulan</span>
+                        {totalMonthlyGrowthPercent >= 0 ? '+' : ''}{totalMonthlyGrowthPercent.toFixed(2)}%<span className="ml-1 text-[9px] font-medium text-root-muted">/ bulan</span>
                       </p>
                     </div>
                   </div>
@@ -501,10 +501,10 @@ export default function RingkasanPopulasiModal({
                   <div
                     role="img"
                     aria-label={`Perbandingan harian: kelahiran ${birthShare.toFixed(1)}%, kematian ${deathShare.toFixed(1)}%`}
-                    className="flex h-2.5 w-full overflow-hidden rounded-full bg-[#152626] border border-[#00FFAA]/10"
+                    className="flex h-2.5 w-full overflow-hidden rounded-full bg-[#152626] border border-root-accent/10"
                   >
                     <div
-                      className="h-full bg-gradient-to-r from-[#00B37A] to-[#00FFAA] transition-[width] duration-500"
+                      className="h-full bg-gradient-to-r from-[#00B37A] to-root-accent transition-[width] duration-500"
                       style={{ width: `${birthShare}%` }}
                     />
                     <div
@@ -520,7 +520,7 @@ export default function RingkasanPopulasiModal({
             {activeEspionageEffect && (
               <section className={`${rootBorderRadius.card} border border-purple-500/50 bg-purple-500/10 p-3.5 lg:p-4.5`} aria-label="Efek spionase aktif">
                 <div className="flex items-start gap-3">
-                  <div className="rounded-lg border border-purple-400/40 bg-[#0A1A1A] p-2 text-purple-300">
+                  <div className="rounded-lg border border-purple-400/40 bg-root-canvas p-2 text-purple-300">
                     <ShieldAlert className="h-5 w-5" />
                   </div>
                   <div>
@@ -532,7 +532,7 @@ export default function RingkasanPopulasiModal({
                       </span>
                     </div>
                     <h3 className={`${rootModalTypography.value} mt-0.5 text-sm`}>Kekuatan & HP militer ×{activeEspionageEffect.multiplier.toFixed(2)}</h3>
-                    <p className="mt-1 text-[11px] text-[#AAB6B6]">Jumlah pasukan dan alutsista tidak berubah. Efek pulih otomatis saat durasi habis.</p>
+                    <p className="mt-1 text-[11px] text-root-muted">Jumlah pasukan dan alutsista tidak berubah. Efek pulih otomatis saat durasi habis.</p>
                   </div>
                 </div>
               </section>
@@ -542,42 +542,42 @@ export default function RingkasanPopulasiModal({
               <section className={`${rootBorderRadius.card} border border-rose-500/50 bg-rose-500/10 p-3.5 lg:p-4.5`} aria-label="Pandemi aktif">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-start gap-3">
-                    <div className="rounded-lg border border-rose-400/40 bg-[#0A1A1A] p-2 text-rose-400">
+                    <div className="rounded-lg border border-rose-400/40 bg-root-canvas p-2 text-rose-400">
                       <ShieldAlert className="h-5 w-5" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
                         <p className={rootModalTypography.label}>Pandemi Aktif</p>
                         {remainingPandemicDays !== null && (
-                          <span className="flex items-center gap-1 rounded border border-rose-500/30 bg-rose-500/20 px-1.5 py-0.5 text-[9px] font-bold text-[#E0E0E0]">
+                          <span className="flex items-center gap-1 rounded border border-rose-500/30 bg-rose-500/20 px-1.5 py-0.5 text-[9px] font-bold text-root-text">
                             <Clock className="w-2.5 h-2.5" />
                             Sisa {remainingPandemicDays} Hari
                           </span>
                         )}
                       </div>
                       <h3 className={`${rootModalTypography.value} mt-0.5 text-sm`}>{activePandemic.eventName || "Pandemi global"}</h3>
-                      <p className="mt-1 text-[11px] text-[#AAB6B6]">Tangani sekarang: pulihkan {pandemicDeaths.toLocaleString("id-ID")} jiwa.</p>
+                      <p className="mt-1 text-[11px] text-root-muted">Tangani sekarang: pulihkan {pandemicDeaths.toLocaleString("id-ID")} jiwa.</p>
                     </div>
                   </div>
                   <button
                     type="button"
                     disabled={!canTreatPandemic || !setCountryDetail}
                     onClick={treatPandemic}
-                    className="rounded-lg border border-rose-400 bg-rose-500/20 px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#E0E0E0] transition-all hover:bg-rose-500 hover:text-white active:scale-95 disabled:cursor-not-allowed disabled:border-[#6B8A8A]/40 disabled:bg-transparent disabled:text-[#AAB6B6]"
+                    className="rounded-lg border border-rose-400 bg-rose-500/20 px-3 py-2 text-[10px] font-black uppercase tracking-wider text-root-text transition-all hover:bg-rose-500 hover:text-white active:scale-95 disabled:cursor-not-allowed disabled:border-root-subtle/40 disabled:bg-transparent disabled:text-root-muted"
                   >
                     Tangani · {pandemicCost.toLocaleString("id-ID")} NEO
                   </button>
                 </div>
-                {!canTreatPandemic && <p className="mt-2 text-[10px] font-bold text-[#E0E0E0]">Kas negara tidak mencukupi.</p>}
+                {!canTreatPandemic && <p className="mt-2 text-[10px] font-bold text-root-text">Kas negara tidak mencukupi.</p>}
               </section>
             )}
 
             {/* Dampak Kebijakan */}
             <section
               aria-label="Perhitungan dampak kebijakan ekonomi terhadap populasi"
-              className={`${rootBorderRadius.card} border border-[#00FFAA]/30 bg-[#0F2424] p-3.5 lg:p-4.5 2xl:p-6`}
+              className={`${rootBorderRadius.card} border border-root-accent/30 bg-root-surface p-3.5 lg:p-4.5 2xl:p-6`}
             >
-              <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[#00FFAA]/15 pb-3">
+              <div className="flex flex-wrap items-start justify-between gap-3 border-b border-root-accent/15 pb-3">
                 <div>
                   <h3 className={rootModalTypography.sectionTitle}>
                     Perhitungan Dampak Kebijakan ke Populasi
@@ -599,7 +599,7 @@ export default function RingkasanPopulasiModal({
                 ].map((item) => (
                   <div
                     key={item.label}
-                    className={`${rootBorderRadius.card} border border-[#00FFAA]/15 bg-[#0A1A1A] p-2.5 hover:border-[#00FFAA]/40 transition-colors duration-300`}
+                    className={`${rootBorderRadius.card} border border-root-accent/15 bg-root-canvas p-2.5 hover:border-root-accent/40 transition-colors duration-300`}
                   >
                     <p className={rootModalTypography.label}>
                       {item.label}
@@ -615,13 +615,13 @@ export default function RingkasanPopulasiModal({
               </div>
 
               {populationPolicyImpact.wasCapped && (
-                <p className="mt-2 text-[9px] font-semibold text-[#D0D8D8]">
+                <p className="mt-2 text-[9px] font-semibold text-root-body">
                   Modifier gabungan dibatasi maksimal ±0,75% per bulan.
                 </p>
               )}
 
               <div className="mt-2 grid grid-cols-2 gap-2">
-                <div className={`${rootBorderRadius.card} border border-[#00FFAA]/15 bg-[#0A1A1A] p-2.5 hover:border-[#00FFAA]/40 transition-colors duration-300`}>
+                <div className={`${rootBorderRadius.card} border border-root-accent/15 bg-root-canvas p-2.5 hover:border-root-accent/40 transition-colors duration-300`}>
                   <p className={rootModalTypography.label}>
                     Estimasi dampak harian
                   </p>
@@ -629,7 +629,7 @@ export default function RingkasanPopulasiModal({
                     {formatPeople(estimatedPolicyDailyChange)}
                   </p>
                 </div>
-                <div className={`${rootBorderRadius.card} border border-[#00FFAA]/15 bg-[#0A1A1A] p-2.5 hover:border-[#00FFAA]/40 transition-colors duration-300`}>
+                <div className={`${rootBorderRadius.card} border border-root-accent/15 bg-root-canvas p-2.5 hover:border-root-accent/40 transition-colors duration-300`}>
                   <p className={rootModalTypography.label}>
                     Estimasi dampak bulanan
                   </p>

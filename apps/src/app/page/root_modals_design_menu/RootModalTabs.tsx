@@ -17,7 +17,7 @@ interface RootModalTabsProps {
 
 export function RootModalTabs({ items, className = '', compact = false }: RootModalTabsProps) {
   return (
-    <div className={`inline-flex max-w-full flex-wrap items-center gap-1 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] p-1 ${compact ? 'h-9' : ''} ${className}`}>
+    <div className={`inline-flex max-w-full flex-wrap items-center gap-1 rounded-lg border border-root-accent/30 bg-root-surface p-1 ${compact ? 'h-9' : ''} ${className}`}>
       {items.map(item => (
         <button
           key={item.label}
@@ -26,8 +26,8 @@ export function RootModalTabs({ items, className = '', compact = false }: RootMo
           aria-pressed={item.isActive}
           className={`inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-3.5 ${compact ? 'py-1' : 'py-2'} text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
             item.isActive
-              ? 'bg-[#00FFAA] text-[#0A1A1A]'
-              : 'text-[#6B8A8A] hover:text-[#E0E0E0] hover:ring-1 hover:ring-inset hover:ring-[#00FFAA]/40'
+              ? 'bg-root-accent text-root-canvas'
+              : 'text-root-subtle hover:text-root-text hover:ring-1 hover:ring-inset hover:ring-root-accent/40'
           }`}
         >
           {item.icon}

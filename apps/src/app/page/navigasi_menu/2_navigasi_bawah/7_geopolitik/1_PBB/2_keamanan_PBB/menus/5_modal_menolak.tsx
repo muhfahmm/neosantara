@@ -84,7 +84,7 @@ export default function ModalMenolak({
             placeholder="Cari nama negara..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-transparent text-xs text-[#E0E0E0] placeholder-[#8A6B6B] focus:outline-none w-full"
+            className="bg-transparent text-xs text-root-text placeholder-[#8A6B6B] focus:outline-none w-full"
           />
         </div>
 
@@ -118,7 +118,7 @@ export default function ModalMenolak({
                         {renderFlag(country.iso, country.name, "md")}
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <h4 className="text-xs font-bold text-[#E0E0E0] truncate">
+                            <h4 className="text-xs font-bold text-root-text truncate">
                               {country.name}
                             </h4>
                             {country.isProposer && (

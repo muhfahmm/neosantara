@@ -290,7 +290,7 @@ export default function NaikkanKesejahteraanTab({
 
       {feedback && (
         <div className={`p-4 ${rootBorderRadius.card} border flex items-start gap-3 relative ${
-          feedback.type === "success" ? "bg-[#0F2424] border-emerald-500/40 text-emerald-400" : "bg-[#0F2424] border-rose-500/40 text-rose-400"
+          feedback.type === "success" ? "bg-root-surface border-emerald-500/40 text-emerald-400" : "bg-root-surface border-rose-500/40 text-rose-400"
         }`}>
           {feedback.type === "success" ? <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5" /> : <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />}
           <div className="flex-1 text-xs font-bold leading-relaxed">{feedback.message}</div>
@@ -311,16 +311,16 @@ export default function NaikkanKesejahteraanTab({
             <div
               key={init.id}
               id={`initiative-card-${init.id}`}
-              className={`${rootBorderRadius.card} p-5 border bg-[#0A1A1A] flex flex-col justify-between space-y-4 relative overflow-hidden transition-all duration-500 ${
+              className={`${rootBorderRadius.card} p-5 border bg-root-canvas flex flex-col justify-between space-y-4 relative overflow-hidden transition-all duration-500 ${
                 isHighlighted
-                  ? "border-2 border-[#00FFAA] shadow-[0_0_25px_rgba(0,255,170,0.6)] ring-2 ring-[#00FFAA]/50 bg-[#0d2621] scale-[1.01]"
+                  ? "border-2 border-root-accent shadow-[0_0_25px_rgba(0,255,170,0.6)] ring-2 ring-root-accent/50 bg-[#0d2621] scale-[1.01]"
                   : isLaunched
                   ? "border-amber-500/60"
-                  : "border-[#00FFAA]/20 hover:border-[#00FFAA]/50"
+                  : "border-root-accent/20 hover:border-root-accent/50"
               }`}
             >
               {isHighlighted && (
-                <div className="absolute top-0 left-0 bg-[#00FFAA] text-[#0A1A1A] px-2.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-br-lg shadow-sm flex items-center gap-1 animate-pulse">
+                <div className="absolute top-0 left-0 bg-root-accent text-root-canvas px-2.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-br-lg shadow-sm flex items-center gap-1 animate-pulse">
                   <Sparkles className="h-2.5 w-2.5" />
                   Target Misi Aktif
                 </div>
@@ -334,19 +334,19 @@ export default function NaikkanKesejahteraanTab({
               )}
 
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-lg bg-[#00FFAA]/10 border border-[#00FFAA]/30">
-                  <Icon className="h-5 w-5 text-[#00FFAA]" />
+                <div className="p-2.5 rounded-lg bg-root-accent/10 border border-root-accent/30">
+                  <Icon className="h-5 w-5 text-root-accent" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-black text-[#E0E0E0] leading-none">{init.title}</h4>
+                  <h4 className="text-sm font-black text-root-text leading-none">{init.title}</h4>
                   <p className="text-[10px] text-emerald-400 font-bold mt-1">Boost Kesejahteraan: +{init.boost}%</p>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-[#00FFAA]/10">
-                <div className="text-[11px] text-[#6B8A8A] font-bold space-y-0.5">
-                  <p>Biaya: <span className="font-black text-[#00FFAA]">{init.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span></p>
-                  <p>Durasi: <span className="font-black text-[#E0E0E0]">{init.duration} hari</span></p>
+              <div className="flex items-center justify-between pt-2 border-t border-root-accent/10">
+                <div className="text-[11px] text-root-subtle font-bold space-y-0.5">
+                  <p>Biaya: <span className="font-black text-root-accent">{init.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span></p>
+                  <p>Durasi: <span className="font-black text-root-text">{init.duration} hari</span></p>
                 </div>
 
                 <button
@@ -354,8 +354,8 @@ export default function NaikkanKesejahteraanTab({
                   disabled={isLaunched}
                   className={`px-4 py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all duration-150 ${
                     isLaunched
-                      ? "bg-[#0F2424] text-[#6B8A8A] cursor-not-allowed border border-[#00FFAA]/10"
-                      : "bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 cursor-pointer"
+                      ? "bg-root-surface text-root-subtle cursor-not-allowed border border-root-accent/10"
+                      : "bg-root-accent text-root-canvas hover:bg-root-accent/80 cursor-pointer"
                   }`}
                 >
                   {isLaunched ? "Aktif" : "Luncurkan"}

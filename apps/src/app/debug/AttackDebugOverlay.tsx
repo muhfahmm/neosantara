@@ -112,15 +112,6 @@ export function AttackDebugOverlay({
       viewBox={`0 0 ${viewport.width} ${viewport.height}`}
       style={{ pointerEvents: 'none' }}
     >
-      <defs>
-        <filter id={`${pathId}-glow`} x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="3" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
       <polyline
         id={pathId}
         points={pointList}
@@ -129,7 +120,6 @@ export function AttackDebugOverlay({
         strokeWidth="3"
         strokeDasharray="9 7"
         strokeLinecap="round"
-        filter={`url(#${pathId}-glow)`}
         opacity="0.9"
       />
       <circle cx={start.x} cy={start.y} r="7" fill="#FF2D55" stroke="#fff" strokeWidth="2" />

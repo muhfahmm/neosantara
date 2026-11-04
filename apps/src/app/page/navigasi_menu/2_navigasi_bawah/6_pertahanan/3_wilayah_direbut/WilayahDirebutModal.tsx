@@ -80,9 +80,9 @@ export default function WilayahDirebutModal({
   return (
     <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className={`shrink-0 border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 sm:p-2 ${rootBorderRadius.card}`}>
+            <div className={`shrink-0 border border-root-accent/30 bg-root-surface p-1.5 sm:p-2 ${rootBorderRadius.card}`}>
               <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500" />
             </div>
             <div className="min-w-0">
@@ -101,26 +101,26 @@ export default function WilayahDirebutModal({
           </div>
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] relative z-10 neon-scrollbar">
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-root-surface relative z-10 neon-scrollbar">
           {annexedCountries.length === 0 ? (
             <div className="flex min-h-[280px] flex-col items-center justify-center text-center">
-              <div className="p-5 rounded-full bg-[#0A1A1A] border border-[#00FFAA]/20 mb-5">
-                <Globe2 className="h-12 w-12 text-[#6B8A8A]" strokeWidth={1.5} />
+              <div className="p-5 rounded-full bg-root-canvas border border-root-accent/20 mb-5">
+                <Globe2 className="h-12 w-12 text-root-subtle" strokeWidth={1.5} />
               </div>
-              <h3 className="text-xl sm:text-2xl font-black uppercase text-[#E0E0E0]">
+              <h3 className="text-xl sm:text-2xl font-black uppercase text-root-text">
                 Belum ada negara yang dianeksasi
               </h3>
-              <p className="mt-2 max-w-md text-sm text-[#6B8A8A]">
+              <p className="mt-2 max-w-md text-sm text-root-subtle">
                 Negara yang berhasil direbut oleh {playerCountryName || "negara Anda"} akan ditampilkan di sini.
               </p>
             </div>
           ) : (
             <div>
-              <div className={`mb-4 flex items-center justify-between gap-3 border border-[#00FFAA]/20 bg-[#0A1A1A] p-3 ${rootBorderRadius.card}`}>
-                <p className="text-xs font-bold uppercase tracking-wider text-[#6B8A8A]">
+              <div className={`mb-4 flex items-center justify-between gap-3 border border-root-accent/20 bg-root-canvas p-3 ${rootBorderRadius.card}`}>
+                <p className="text-xs font-bold uppercase tracking-wider text-root-subtle">
                   Wilayah yang berada di bawah kendali {playerCountryName}
                 </p>
-                <span className="shrink-0 rounded-full border border-[#00FFAA]/30 bg-[#00FFAA]/10 px-3 py-1 text-xs font-black text-[#00FFAA]">
+                <span className="shrink-0 rounded-full border border-root-accent/30 bg-root-accent/10 px-3 py-1 text-xs font-black text-root-accent">
                   {annexedCountries.length} Negara
                 </span>
               </div>
@@ -128,18 +128,18 @@ export default function WilayahDirebutModal({
                 {annexedCountries.map(country => (
                   <div
                     key={country.name}
-                    className="flex items-center gap-3 rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4"
+                    className="flex items-center gap-3 rounded-xl border border-root-accent/20 bg-root-canvas p-4"
                   >
                     {country.iso ? (
                       <img
                         src={`https://flagcdn.com/w40/${country.iso.toLowerCase()}.png`}
                         alt={`Bendera ${country.name}`}
-                        className="h-6 w-9 rounded border border-[#00FFAA]/20 object-cover"
+                        className="h-6 w-9 rounded border border-root-accent/20 object-cover"
                       />
                     ) : (
-                      <MapPin className="h-5 w-5 text-[#00FFAA]" />
+                      <MapPin className="h-5 w-5 text-root-accent" />
                     )}
-                    <span className="text-sm font-bold text-[#E0E0E0]">{country.name}</span>
+                    <span className="text-sm font-bold text-root-text">{country.name}</span>
                   </div>
                 ))}
               </div>

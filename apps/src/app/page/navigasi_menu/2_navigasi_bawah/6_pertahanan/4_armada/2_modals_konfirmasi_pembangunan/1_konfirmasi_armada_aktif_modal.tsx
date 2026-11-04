@@ -339,10 +339,10 @@ export default function KonfirmasiArmadaAktifModal({
       <div className="flex h-full flex-col overflow-hidden">
         
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
-          <div className="flex items-center gap-3 text-[#E0E0E0]">
-            <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-              <Hammer className="h-5 w-5 text-[#00FFAA]" />
+        <div className="px-6 py-4 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
+          <div className="flex items-center gap-3 text-root-text">
+            <div className="p-2.5 bg-root-surface rounded-xl border border-root-accent/30">
+              <Hammer className="h-5 w-5 text-root-accent" />
             </div>
             <h3 className="text-base font-black uppercase tracking-wider">Perekrutan / Pembangunan Militer</h3>
           </div>
@@ -350,17 +350,17 @@ export default function KonfirmasiArmadaAktifModal({
         </div>
 
         {/* Body */}
-        <div className="p-6 relative z-10 flex-1 overflow-y-auto space-y-4 text-xs font-semibold text-[#E0E0E0] custom-scrollbar bg-[#0F2424]">
+        <div className="p-6 relative z-10 flex-1 overflow-y-auto space-y-4 text-xs font-semibold text-root-text custom-scrollbar bg-root-surface">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <h4 className="text-lg font-black text-[#00FFAA] uppercase tracking-wider">{buildingLabel}</h4>
+              <h4 className="text-lg font-black text-root-accent uppercase tracking-wider">{buildingLabel}</h4>
               {capacityDisplay && (
-                <div className="text-sm font-black text-[#00FFAA] bg-[#0A1A1A] px-3 py-1 rounded-lg border border-[#00FFAA]/30 shadow-sm">
+                <div className="text-sm font-black text-root-accent bg-root-canvas px-3 py-1 rounded-lg border border-root-accent/30 shadow-sm">
                   {capacityDisplay}
                 </div>
               )}
             </div>
-            <p className="text-xs text-[#6B8A8A]">{buildingDescription || 'Tidak ada deskripsi tersedia.'}</p>
+            <p className="text-xs text-root-subtle">{buildingDescription || 'Tidak ada deskripsi tersedia.'}</p>
           </div>
 
           {/* ========== PERINGATAN KAPASITAS PENUH ========== */}
@@ -376,13 +376,13 @@ export default function KonfirmasiArmadaAktifModal({
                      capacityType === "pangkalan_laut" ? "Kapasitas Pangkalan Laut Penuh" :
                      "Kapasitas Pangkalan Udara Penuh"}
                   </p>
-                  <p className="text-xs leading-relaxed text-[#E0E0E0] mt-1.5">{warningText}</p>
+                  <p className="text-xs leading-relaxed text-root-text mt-1.5">{warningText}</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={handleNavigateToInfra}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#00FFAA] px-4 py-3 text-xs font-black uppercase text-[#0A1A1A] transition hover:bg-[#00FFAA]/80 cursor-pointer shadow-md"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-root-accent px-4 py-3 text-xs font-black uppercase text-root-canvas transition hover:bg-root-accent/80 cursor-pointer shadow-md"
               >
                 Buka Tab Infrastruktur dan Sorot {
                   capacityType === "infanteri" ? "Barak" :
@@ -402,7 +402,7 @@ export default function KonfirmasiArmadaAktifModal({
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-rose-500/20 text-rose-400 font-black border border-rose-500/40">!</div>
                 <div>
                   <p className="text-sm font-black uppercase tracking-wider text-rose-400">Kas Negara Tidak Cukup</p>
-                  <p className="text-xs leading-relaxed text-[#E0E0E0] mt-1">
+                  <p className="text-xs leading-relaxed text-root-text mt-1">
                     Total biaya pembangunan ({totalCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO) melebihi kas negara saat ini ({anggaran.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO). Kurangi jumlah unit atau tunggu kas negara bertambah.
                   </p>
                 </div>
@@ -411,10 +411,10 @@ export default function KonfirmasiArmadaAktifModal({
           )}
 
           {/* ========== INPUT JUMLAH ========== */}
-          <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-4 space-y-3 text-xs text-[#E0E0E0]">
+          <div className="bg-root-canvas border border-root-accent/20 rounded-xl p-4 space-y-3 text-xs text-root-text">
             <label className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <span className="font-black uppercase tracking-wider text-[#6B8A8A]">
+                <span className="font-black uppercase tracking-wider text-root-subtle">
                   {capacityType === "infanteri" ? "Jumlah Pasukan yang Direkrut" : "Jumlah Unit yang Dibangun"}
                 </span>
                 <button
@@ -424,7 +424,7 @@ export default function KonfirmasiArmadaAktifModal({
                     setBuildAmount(effectiveMax > 0 ? effectiveMax : 0);
                   }}
                   disabled={capacityFull || effectiveMaxBuildable <= 0}
-                  className="px-3 py-1 bg-[#0F2424] hover:bg-[#00FFAA]/20 text-[#00FFAA] text-[10px] font-black uppercase rounded-lg transition-colors cursor-pointer border border-[#00FFAA]/30 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-3 py-1 bg-root-surface hover:bg-root-accent/20 text-root-accent text-[10px] font-black uppercase rounded-lg transition-colors cursor-pointer border border-root-accent/30 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Maks
                 </button>
@@ -440,11 +440,11 @@ export default function KonfirmasiArmadaAktifModal({
                   const effectiveMax = getEffectiveMaxBuildable();
                   setBuildAmount(Math.min(safeValue, effectiveMax));
                 }}
-                className="w-full rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] px-3.5 py-2.5 text-sm text-[#E0E0E0] focus:outline-none focus:border-[#00FFAA] font-bold"
+                className="w-full rounded-xl border border-root-accent/30 bg-root-surface px-3.5 py-2.5 text-sm text-root-text focus:outline-none focus:border-root-accent font-bold"
                 disabled={capacityFull || effectiveMaxBuildable <= 0}
               />
             </label>
-            <p className="text-[10px] text-[#6B8A8A]">
+            <p className="text-[10px] text-root-subtle">
               Maksimal: {Math.max(0, effectiveMaxBuildable).toLocaleString('id-ID', { maximumFractionDigits: 2 })} {capacityType === "infanteri" ? "pasukan" : "unit"}.
             </p>
             {budgetLimited && (
@@ -456,19 +456,19 @@ export default function KonfirmasiArmadaAktifModal({
 
           {/* ========== ESTIMASI WAKTU & TANGGAL SELESAI ========== */}
           {estimatedDays > 0 && !capacityFull && (
-            <div className="bg-[#0A1A1A] border border-emerald-500/30 rounded-xl p-3.5 space-y-2 mt-2">
+            <div className="bg-root-canvas border border-emerald-500/30 rounded-xl p-3.5 space-y-2 mt-2">
               <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
                 <Calendar className="w-4 h-4 text-emerald-400" />
                 <span>Estimasi Waktu Pembangunan</span>
               </div>
-              <div className="space-y-1 text-xs text-[#E0E0E0]">
+              <div className="space-y-1 text-xs text-root-text">
                 <div className="flex justify-between">
-                  <span className="text-[#6B8A8A]">Waktu Dibutuhkan:</span>
+                  <span className="text-root-subtle">Waktu Dibutuhkan:</span>
                   <span className="font-bold text-emerald-400">{estimatedDays} hari</span>
                 </div>
                 {completionDate && (
-                  <div className="flex justify-between border-t border-[#00FFAA]/10 pt-1 mt-1">
-                    <span className="text-[#6B8A8A]">Selesai Tanggal:</span>
+                  <div className="flex justify-between border-t border-root-accent/10 pt-1 mt-1">
+                    <span className="text-root-subtle">Selesai Tanggal:</span>
                     <span className="font-bold text-emerald-400">
                       {new Date(completionDate).toLocaleDateString('id-ID', {
                         weekday: 'short',
@@ -484,25 +484,25 @@ export default function KonfirmasiArmadaAktifModal({
           )}
 
           {/* ========== BIAYA & MATERIAL ========== */}
-          <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-4 space-y-2.5 text-xs text-[#E0E0E0]">
+          <div className="bg-root-canvas border border-root-accent/20 rounded-xl p-4 space-y-2.5 text-xs text-root-text">
             {capacityType === "infanteri" ? (
               <div className="flex justify-between font-bold">
-                <span className="text-[#6B8A8A]">Biaya Pembangunan:</span>
-                <span className="text-[#00FFAA] font-black">
+                <span className="text-root-subtle">Biaya Pembangunan:</span>
+                <span className="text-root-accent font-black">
                   {loadingMetadata ? 'Memuat...' : `${costPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`}
                 </span>
               </div>
             ) : (
               <>
                 <div className="flex justify-between">
-                  <span className="text-[#6B8A8A]">Biaya per Unit:</span>
-                  <span className="text-[#E0E0E0] font-bold">
+                  <span className="text-root-subtle">Biaya per Unit:</span>
+                  <span className="text-root-text font-bold">
                     {loadingMetadata ? 'Memuat...' : `${costPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`}
                   </span>
                 </div>
                 <div className="flex justify-between font-bold">
-                  <span className="text-[#6B8A8A]">Total Biaya ({buildAmount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit):</span>
-                  <span className={isAnggaranCukup ? "text-[#00FFAA] font-black" : "text-rose-400 font-black"}>
+                  <span className="text-root-subtle">Total Biaya ({buildAmount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit):</span>
+                  <span className={isAnggaranCukup ? "text-root-accent font-black" : "text-rose-400 font-black"}>
                     {loadingMetadata ? 'Memuat...' : `${totalCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`}
                   </span>
                 </div>
@@ -511,8 +511,8 @@ export default function KonfirmasiArmadaAktifModal({
 
             {waktuPembangunan !== undefined && capacityType !== "infanteri" && (
               <div className="flex justify-between">
-                <span className="text-[#6B8A8A]">Waktu Pembangunan per Unit:</span>
-                <span className="text-[#E0E0E0] font-bold">{waktuPembangunan} Hari</span>
+                <span className="text-root-subtle">Waktu Pembangunan per Unit:</span>
+                <span className="text-root-text font-bold">{waktuPembangunan} Hari</span>
               </div>
             )}
 
@@ -520,10 +520,10 @@ export default function KonfirmasiArmadaAktifModal({
               requirements && requirements.length > 0 ? (
                 <div className="space-y-3 text-xs pt-1">
                   <div className="flex items-center justify-between">
-                    <div className="font-black uppercase tracking-wider text-[#00FFAA]">Material Dibutuhkan</div>
+                    <div className="font-black uppercase tracking-wider text-root-accent">Material Dibutuhkan</div>
                     <button
                       onClick={() => setShowMaterialGrid(!showMaterialGrid)}
-                      className="flex items-center gap-1.5 px-2.5 py-1 bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg text-[#6B8A8A] hover:text-[#00FFAA] transition-all cursor-pointer"
+                      className="flex items-center gap-1.5 px-2.5 py-1 bg-root-surface border border-root-accent/30 rounded-lg text-root-subtle hover:text-root-accent transition-all cursor-pointer"
                     >
                       {showMaterialGrid ? (
                         <>
@@ -554,12 +554,12 @@ export default function KonfirmasiArmadaAktifModal({
                           type="button"
                           onClick={() => onMaterialClick(material.resourceKey, material.label)}
                           className={`flex flex-col items-center justify-center rounded-xl p-2.5 min-h-[50px] cursor-pointer border transition-all ${
-                            isStockZero ? 'border-rose-500/40 bg-rose-500/10 text-rose-300 hover:border-rose-500' : 'border-[#00FFAA]/30 bg-[#0F2424] hover:border-[#00FFAA]'
+                            isStockZero ? 'border-rose-500/40 bg-rose-500/10 text-rose-300 hover:border-rose-500' : 'border-root-accent/30 bg-root-surface hover:border-root-accent'
                           }`}
                         >
-                          <div className="font-bold text-[10px] text-center text-[#E0E0E0]">{material.label}</div>
+                          <div className="font-bold text-[10px] text-center text-root-text">{material.label}</div>
                           {material.amount !== undefined && (
-                            <div className="text-[9px] uppercase tracking-wider text-[#6B8A8A] mt-1">
+                            <div className="text-[9px] uppercase tracking-wider text-root-subtle mt-1">
                               x{material.amount}
                             </div>
                           )}
@@ -572,7 +572,7 @@ export default function KonfirmasiArmadaAktifModal({
                   </div>
                 </div>
               ) : (
-                <div className="text-[#6B8A8A]">Tidak ada material yang dibutuhkan untuk bangunan ini.</div>
+                <div className="text-root-subtle">Tidak ada material yang dibutuhkan untuk bangunan ini.</div>
               )
             )}
           </div>
@@ -581,7 +581,7 @@ export default function KonfirmasiArmadaAktifModal({
 
           {capacityType !== "infanteri" && buildAmount > 0 && (
             <div className="flex justify-between items-center text-xs font-bold pt-1">
-              <span className="text-[#6B8A8A]">Sisa Kas Setelah Pembangunan:</span>
+              <span className="text-root-subtle">Sisa Kas Setelah Pembangunan:</span>
               <span className={isAnggaranCukup ? "text-emerald-400 font-black" : "text-rose-400 font-black"}>
                 {(anggaran - totalCost).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO
               </span>
@@ -590,10 +590,10 @@ export default function KonfirmasiArmadaAktifModal({
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex gap-3 relative z-10 shrink-0">
+        <div className="p-4 bg-root-canvas border-t border-root-accent/20 flex gap-3 relative z-10 shrink-0">
           <button
             onClick={onClose}
-            className="flex-1 py-2.5 rounded-xl border border-[#00FFAA]/30 text-[#6B8A8A] bg-[#0F2424] hover:text-[#00FFAA] hover:border-[#00FFAA] text-xs font-black uppercase cursor-pointer transition-all text-center shadow-sm"
+            className="flex-1 py-2.5 rounded-xl border border-root-accent/30 text-root-subtle bg-root-surface hover:text-root-accent hover:border-root-accent text-xs font-black uppercase cursor-pointer transition-all text-center shadow-sm"
           >
             Batal
           </button>
@@ -601,9 +601,9 @@ export default function KonfirmasiArmadaAktifModal({
             onClick={handleConfirmClick}
             disabled={capacityFull || buildAmount <= 0 || (capacityType !== "infanteri" && (hasMissingMaterials || !isAnggaranCukup || loadingMetadata || isDisabled))}
             className={`flex-1 py-2.5 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer shadow-md ${
-              capacityFull || buildAmount <= 0 ? 'bg-[#0F2424] text-[#6B8A8A] border border-[#00FFAA]/20 cursor-not-allowed opacity-60' :
-              (capacityType !== "infanteri" && (hasMissingMaterials || !isAnggaranCukup || loadingMetadata || isDisabled)) ? 'bg-[#0F2424] text-[#6B8A8A] border border-[#00FFAA]/20 cursor-not-allowed opacity-60' :
-              'bg-[#00FFAA] text-[#0A1A1A] border border-[#00FFAA] hover:bg-[#00FFAA]/80'
+              capacityFull || buildAmount <= 0 ? 'bg-root-surface text-root-subtle border border-root-accent/20 cursor-not-allowed opacity-60' :
+              (capacityType !== "infanteri" && (hasMissingMaterials || !isAnggaranCukup || loadingMetadata || isDisabled)) ? 'bg-root-surface text-root-subtle border border-root-accent/20 cursor-not-allowed opacity-60' :
+              'bg-root-accent text-root-canvas border border-root-accent hover:bg-root-accent/80'
             }`}
           >
             {capacityFull ? 'Kapasitas Penuh' :

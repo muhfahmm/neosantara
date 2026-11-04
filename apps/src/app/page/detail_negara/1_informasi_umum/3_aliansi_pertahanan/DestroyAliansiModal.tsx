@@ -24,7 +24,7 @@ export default function DestroyAliansiModal({ isOpen, countryName, onClose, onCo
             Konfirmasi Putus Aliansi Pertahanan
           </h3>
           
-          <p className="text-sm sm:text-base text-[#E0E0E0] mb-6 leading-relaxed">
+          <p className="text-sm sm:text-base text-root-text mb-6 leading-relaxed">
             Apakah Anda yakin ingin memutus aliansi pertahanan dengan <strong className="text-white">{countryName}</strong>? Ini dapat berdampak pada dukungan militer di masa depan.
           </p>
         </div>
@@ -33,7 +33,7 @@ export default function DestroyAliansiModal({ isOpen, countryName, onClose, onCo
         <div className="flex flex-col sm:flex-row gap-3 justify-end mt-6 pt-4 border-t border-rose-500/20">
           <button
             onClick={onClose}
-            className="w-full sm:w-auto px-6 bg-[#0A1A1A] hover:bg-[#142A2A] border border-[#00FFAA]/30 rounded-xl py-2 text-center text-[#E0E0E0] font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
+            className="w-full sm:w-auto px-6 bg-root-canvas hover:bg-[#142A2A] border border-root-accent/30 rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
           >
             Batal
           </button>

@@ -76,10 +76,10 @@ export function getSatisfactionGrade(score: number) {
   }
   return {
     label: "Sangat Baik",
-    textColor: "text-[#00FFAA]", // Hijau neon / mint
-    barColor: "bg-[#00FFAA]",
+    textColor: "text-root-accent", // Hijau neon / mint
+    barColor: "bg-root-accent",
     glowColor: "shadow-[0_0_8px_rgba(0,255,170,0.5)]",
-    badgeBg: "bg-[#064E3B]/60 border-[#00FFAA]/40 text-[#00FFAA]",
+    badgeBg: "bg-[#064E3B]/60 border-root-accent/40 text-root-accent",
   };
 }
 
@@ -213,16 +213,16 @@ export default function SpektrumKepuasanSection({
   return (
     <div className="space-y-4">
       {/* HEADER SECTION SPEKTRUM KEPUASAN */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-[#0A1A1A]/80 border border-[#00FFAA]/20 p-4 rounded-2xl">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-root-canvas/80 border border-root-accent/20 p-4 rounded-2xl">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-[#0F2424] border border-[#00FFAA]/30">
-            <Smile className="w-5 h-5 text-[#00FFAA]" />
+          <div className="p-2.5 rounded-xl bg-root-surface border border-root-accent/30">
+            <Smile className="w-5 h-5 text-root-accent" />
           </div>
           <div>
-            <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-[#00FFAA] flex items-center gap-2">
+            <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-root-accent flex items-center gap-2">
               Spektrum Kepuasan Rakyat
             </h4>
-            <p className="text-[10px] sm:text-xs text-[#6B8A8A] font-semibold">
+            <p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
               Indikator persetujuan umum publik dan kepuasan di seluruh sektor vital nasional
             </p>
           </div>
@@ -230,10 +230,10 @@ export default function SpektrumKepuasanSection({
 
         {/* Quick Badges */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0F2424] border border-[#00FFAA]/30 rounded-xl">
-            <TrendingUp className="w-3.5 h-3.5 text-[#00FFAA]" />
-            <span className="text-[10px] font-bold text-[#6B8A8A] uppercase">Status Sosial:</span>
-            <span className="text-[11px] font-black text-[#00FFAA]">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-root-surface border border-root-accent/30 rounded-xl">
+            <TrendingUp className="w-3.5 h-3.5 text-root-accent" />
+            <span className="text-[10px] font-bold text-root-subtle uppercase">Status Sosial:</span>
+            <span className="text-[11px] font-black text-root-accent">
               {generalSatisfaction >= 70 ? "Sangat Stabil" : generalSatisfaction >= 45 ? "Cukup Stabil" : "Kritis / Gejolak"}
             </span>
           </div>
@@ -241,27 +241,27 @@ export default function SpektrumKepuasanSection({
       </div>
 
       {/* KARTU UTAMA: PERSETUJUAN UMUM RAKYAT (PERSIS SEPERTI GAMBAR) */}
-      <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg shadow-[#00FFAA]/5">
+      <div className="bg-root-canvas border border-root-accent/30 p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg shadow-root-accent/5">
         <div className="flex items-center gap-4 w-full sm:w-auto">
-          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#0F2424] border-2 border-[#00FFAA]/40 flex items-center justify-center shrink-0 shadow-inner">
-            <Smile className="w-6 h-6 sm:w-7 sm:h-7 text-[#00FFAA]" />
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-root-surface border-2 border-root-accent/40 flex items-center justify-center shrink-0 shadow-inner">
+            <Smile className="w-6 h-6 sm:w-7 sm:h-7 text-root-accent" />
           </div>
           <div>
-            <h3 className="text-xs sm:text-sm font-black text-[#E0E0E0] uppercase tracking-wider mb-1">
+            <h3 className="text-xs sm:text-sm font-black text-root-text uppercase tracking-wider mb-1">
               Persetujuan Umum Rakyat
             </h3>
-            <p className="text-[10px] sm:text-xs text-[#6B8A8A]">
+            <p className="text-[10px] sm:text-xs text-root-subtle">
               Agregat sentimen publik terhadap kinerja kepemimpinan dan pelayanan negara
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-          <div className="text-right bg-[#0F2424] border border-[#00FFAA]/30 px-4 py-2 rounded-xl min-w-[100px]">
-            <p className="text-2xl sm:text-3xl font-black text-[#00FFAA] tracking-tight leading-none">
+          <div className="text-right bg-root-surface border border-root-accent/30 px-4 py-2 rounded-xl min-w-[100px]">
+            <p className="text-2xl sm:text-3xl font-black text-root-accent tracking-tight leading-none">
               {generalSatisfaction}%
             </p>
-            <p className="text-[9px] text-[#00FFAA] font-black uppercase tracking-widest mt-1 flex items-center justify-end gap-1">
+            <p className="text-[9px] text-root-accent font-black uppercase tracking-widest mt-1 flex items-center justify-end gap-1">
               <TrendingUp className="w-3 h-3" /> Stabil
             </p>
           </div>
@@ -270,9 +270,9 @@ export default function SpektrumKepuasanSection({
 
       {/* SUMMARY STATS KECIL */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3.5 rounded-2xl flex items-center justify-between">
+        <div className="bg-root-canvas border border-root-accent/20 p-3.5 rounded-2xl flex items-center justify-between">
           <div>
-            <span className="text-[9px] font-black uppercase tracking-widest text-[#6B8A8A] block mb-0.5">
+            <span className="text-[9px] font-black uppercase tracking-widest text-root-subtle block mb-0.5">
               Sektor Tertinggi
             </span>
             <span className="text-xs font-black text-emerald-400 uppercase">
@@ -284,9 +284,9 @@ export default function SpektrumKepuasanSection({
           </span>
         </div>
 
-        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3.5 rounded-2xl flex items-center justify-between">
+        <div className="bg-root-canvas border border-root-accent/20 p-3.5 rounded-2xl flex items-center justify-between">
           <div>
-            <span className="text-[9px] font-black uppercase tracking-widest text-[#6B8A8A] block mb-0.5">
+            <span className="text-[9px] font-black uppercase tracking-widest text-root-subtle block mb-0.5">
               Perlu Ditingkatkan
             </span>
             <span className="text-xs font-black text-amber-400 uppercase">
@@ -302,20 +302,20 @@ export default function SpektrumKepuasanSection({
       {/* SECTION TITLE SEKTOR UTAMA */}
       <div className="pt-2">
         <div className="flex items-center gap-2.5 mb-3 px-1">
-          <div className="p-1 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30">
-            <TrendingUp className="h-3.5 w-3.5 text-[#00FFAA]" />
+          <div className="p-1 rounded-lg bg-root-surface border border-root-accent/30">
+            <TrendingUp className="h-3.5 w-3.5 text-root-accent" />
           </div>
-          <h4 className="text-xs sm:text-sm font-black text-[#E0E0E0] uppercase tracking-wider italic">
+          <h4 className="text-xs sm:text-sm font-black text-root-text uppercase tracking-wider italic">
             Sektor Utama
           </h4>
-          <div className="h-[1px] flex-1 bg-gradient-to-r from-[#00FFAA]/30 to-transparent ml-2" />
+          <div className="h-[1px] flex-1 bg-gradient-to-r from-root-accent/30 to-transparent ml-2" />
         </div>
 
         {/* LEGENDA SPEKTRUM WARNA (PERSIS GAMBAR 2) */}
-        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3 rounded-2xl mb-3">
+        <div className="bg-root-canvas border border-root-accent/20 p-3 rounded-2xl mb-3">
           <div className="flex flex-wrap items-center justify-between gap-2 text-[10px] font-bold">
-            <span className="text-[#6B8A8A] uppercase tracking-wider font-black text-[9px] flex items-center gap-1">
-              <Percent className="w-3 h-3 text-[#00FFAA]" /> Spektrum Kepuasan:
+            <span className="text-root-subtle uppercase tracking-wider font-black text-[9px] flex items-center gap-1">
+              <Percent className="w-3 h-3 text-root-accent" /> Spektrum Kepuasan:
             </span>
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#EF4444]/15 border border-[#EF4444]/30 text-[#EF4444]">
@@ -334,8 +334,8 @@ export default function SpektrumKepuasanSection({
                 <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
                 66 - 80: Baik
               </span>
-              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#064E3B]/60 border border-[#00FFAA]/40 text-[#00FFAA]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00FFAA]" />
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#064E3B]/60 border border-root-accent/40 text-root-accent">
+                <span className="w-1.5 h-1.5 rounded-full bg-root-accent" />
                 81 - 100: Sangat Baik
               </span>
             </div>
@@ -359,7 +359,7 @@ export default function SpektrumKepuasanSection({
                     onNavigateTab(sector.tabTarget);
                   }
                 }}
-                className={`bg-[#0A1A1A] border p-3.5 sm:p-4 rounded-2xl flex items-center gap-3.5 transition-all relative overflow-hidden group shadow-sm ${
+                className={`bg-root-canvas border p-3.5 sm:p-4 rounded-2xl flex items-center gap-3.5 transition-all relative overflow-hidden group shadow-sm ${
                   activeAlert?.tingkat === "KRITIS"
                     ? "border-red-500/70 shadow-[0_0_12px_rgba(239,68,68,0.25)]"
                     : activeAlert?.tingkat === "TINGGI"
@@ -367,7 +367,7 @@ export default function SpektrumKepuasanSection({
                     : activeAlert?.tingkat === "SEDANG"
                     ? "border-amber-500/40"
                     : grade.textColor.includes("00FFAA")
-                    ? "border-[#00FFAA]/30 hover:border-[#00FFAA]"
+                    ? "border-root-accent/30 hover:border-root-accent"
                     : grade.textColor.includes("10B981")
                     ? "border-emerald-500/30 hover:border-emerald-400"
                     : grade.textColor.includes("EAB308")
@@ -377,18 +377,18 @@ export default function SpektrumKepuasanSection({
                     : "border-red-500/35 hover:border-red-500"
                 } ${
                   isClickable
-                    ? "hover:bg-[#0F2424]/80 cursor-pointer"
+                    ? "hover:bg-root-surface/80 cursor-pointer"
                     : "cursor-default"
                 }`}
               >
                 <div
-                  className={`p-2.5 rounded-xl bg-[#0F2424] border shrink-0 transition-colors ${
+                  className={`p-2.5 rounded-xl bg-root-surface border shrink-0 transition-colors ${
                     activeAlert?.tingkat === "KRITIS"
                       ? "border-red-500 text-red-400"
                       : activeAlert?.tingkat === "TINGGI"
                       ? "border-rose-500 text-rose-400"
                       : grade.textColor.includes("00FFAA")
-                      ? "border-[#00FFAA]/30 text-[#00FFAA]"
+                      ? "border-root-accent/30 text-root-accent"
                       : grade.textColor.includes("10B981")
                       ? "border-emerald-500/30 text-emerald-400"
                       : grade.textColor.includes("EAB308")
@@ -402,7 +402,7 @@ export default function SpektrumKepuasanSection({
                 </div>
 
                 <div className="flex-1 min-w-0 space-y-1.5">
-                  <div className="flex items-center justify-between text-xs font-black text-[#E0E0E0] uppercase tracking-wide transition-colors">
+                  <div className="flex items-center justify-between text-xs font-black text-root-text uppercase tracking-wide transition-colors">
                     <div className="flex items-center gap-2 truncate pr-2">
                       <span className="truncate">{sector.name}</span>
                       {activeAlert && (
@@ -432,14 +432,14 @@ export default function SpektrumKepuasanSection({
                   </div>
 
                   {/* Progress Bar Dinamis Mengikuti Spektrum Persentase */}
-                  <div className="h-2 w-full bg-[#0F2424] rounded-full overflow-hidden border border-[#00FFAA]/15">
+                  <div className="h-2 w-full bg-root-surface rounded-full overflow-hidden border border-root-accent/15">
                     <div
                       className={`h-full rounded-full transition-all duration-500 ${grade.barColor} ${grade.glowColor}`}
                       style={{ width: `${Math.min(100, Math.max(0, sector.score))}%` }}
                     />
                   </div>
 
-                  <p className="text-[9px] text-[#6B8A8A] font-medium leading-tight truncate">
+                  <p className="text-[9px] text-root-subtle font-medium leading-tight truncate">
                     {activeAlert ? activeAlert.penyebab : sector.desc}
                   </p>
                 </div>

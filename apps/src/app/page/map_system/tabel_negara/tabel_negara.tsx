@@ -316,39 +316,39 @@ export default function TabelNegaraPage() {
   };
 
   const renderSortIcon = (key: SortKey) => {
-    if (sortKey !== key) return <ArrowUpDown className="w-3 h-3 text-[#6B8A8A] ml-1" />;
+    if (sortKey !== key) return <ArrowUpDown className="w-3 h-3 text-root-subtle ml-1" />;
     return sortDirection === 'asc' ? (
-      <ChevronUp className="w-3.5 h-3.5 text-[#00FFAA] ml-1" />
+      <ChevronUp className="w-3.5 h-3.5 text-root-accent ml-1" />
     ) : (
-      <ChevronDown className="w-3.5 h-3.5 text-[#00FFAA] ml-1" />
+      <ChevronDown className="w-3.5 h-3.5 text-root-accent ml-1" />
     );
   };
 
   return (
-    <div className="min-h-screen bg-[#061212] text-[#E0E0E0] p-4 md:p-8 font-sans selection:bg-[#00FFAA] selection:text-[#0A1A1A]">
+    <div className="min-h-screen bg-[#061212] text-root-text p-4 md:p-8 font-sans selection:bg-root-accent selection:text-root-canvas">
       {/* Background Subtle Gradient Glow */}
-      <div className="fixed top-0 left-1/4 w-96 h-96 bg-[#00FFAA]/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-[#00FFAA]/5 rounded-full blur-3xl pointer-events-none" />
+
+
 
       <div className="max-w-7xl mx-auto relative z-10 space-y-6">
         {/* Header Bar */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#0F2424]/90 backdrop-blur-md p-6 rounded-3xl border border-[#00FFAA]/30 shadow-2xl">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-root-surface/90  p-6 rounded-3xl border border-root-accent/30 shadow-2xl">
           <div className="flex items-center gap-4">
             <Link
               href="/page/map_system/pilih-negara"
-              className="p-3 bg-[#0A1A1A] hover:bg-[#00FFAA] text-[#00FFAA] hover:text-[#0A1A1A] rounded-2xl border border-[#00FFAA]/30 transition-all duration-200 cursor-pointer shadow-md"
+              className="p-3 bg-root-canvas hover:bg-root-accent text-root-accent hover:text-root-canvas rounded-2xl border border-root-accent/30 transition-all duration-200 cursor-pointer shadow-md"
               title="Kembali ke Pilih Negara"
             >
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-[#00FFAA]/10 border border-[#00FFAA]/40 text-[#00FFAA] text-[10px] font-black uppercase tracking-wider">
+                <span className="px-2.5 py-0.5 rounded-full bg-root-accent/10 border border-root-accent/40 text-root-accent text-[10px] font-black uppercase tracking-wider">
                   DATABASE SYSTEM
                 </span>
-                <span className="text-xs text-[#6B8A8A]">| {countries.length} Negara Terdaftar</span>
+                <span className="text-xs text-root-subtle">| {countries.length} Negara Terdaftar</span>
               </div>
-              <h1 className="text-2xl md:text-3xl font-black text-[#E0E0E0] uppercase tracking-wide mt-1">
+              <h1 className="text-2xl md:text-3xl font-black text-root-text uppercase tracking-wide mt-1">
                 Tabel Statistik 207 Negara
               </h1>
             </div>
@@ -357,7 +357,7 @@ export default function TabelNegaraPage() {
           <button
             onClick={fetchData}
             disabled={isLoading}
-            className="flex items-center gap-2 px-5 py-2.5 bg-[#0A1A1A] hover:bg-[#00FFAA]/20 text-[#00FFAA] rounded-2xl border border-[#00FFAA]/40 text-xs font-bold transition-all cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-2.5 bg-root-canvas hover:bg-root-accent/20 text-root-accent rounded-2xl border border-root-accent/40 text-xs font-bold transition-all cursor-pointer disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
             <span>Refresh Data</span>
@@ -366,52 +366,52 @@ export default function TabelNegaraPage() {
 
         {/* Top Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-[#0F2424]/80 backdrop-blur-md p-5 rounded-2xl border border-[#00FFAA]/20 flex items-center gap-4 shadow-lg">
-            <div className="p-3 bg-[#00FFAA]/10 rounded-xl border border-[#00FFAA]/30 text-[#00FFAA]">
+          <div className="bg-root-surface/80  p-5 rounded-2xl border border-root-accent/20 flex items-center gap-4 shadow-lg">
+            <div className="p-3 bg-root-accent/10 rounded-xl border border-root-accent/30 text-root-accent">
               <Globe className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-widest">Total Negara</p>
-              <p className="text-xl font-black text-[#E0E0E0] mt-0.5">{countries.length}</p>
+              <p className="text-[10px] font-black text-root-subtle uppercase tracking-widest">Total Negara</p>
+              <p className="text-xl font-black text-root-text mt-0.5">{countries.length}</p>
             </div>
           </div>
 
-          <div className="bg-[#0F2424]/80 backdrop-blur-md p-5 rounded-2xl border border-[#00FFAA]/20 flex items-center gap-4 shadow-lg">
-            <div className="p-3 bg-[#00FFAA]/10 rounded-xl border border-[#00FFAA]/30 text-[#00FFAA]">
+          <div className="bg-root-surface/80  p-5 rounded-2xl border border-root-accent/20 flex items-center gap-4 shadow-lg">
+            <div className="p-3 bg-root-accent/10 rounded-xl border border-root-accent/30 text-root-accent">
               <Users className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-widest">Total Populasi Dunia</p>
-              <p className="text-xl font-black text-[#00FFAA] mt-0.5">
+              <p className="text-[10px] font-black text-root-subtle uppercase tracking-widest">Total Populasi Dunia</p>
+              <p className="text-xl font-black text-root-accent mt-0.5">
                 {isLoading ? '...' : summary.totalPop.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
               </p>
-              <p className={`text-[10px] font-bold ${summary.totalPopChange >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'}`}>
+              <p className={`text-[10px] font-bold ${summary.totalPopChange >= 0 ? 'text-root-accent' : 'text-rose-400'}`}>
                 {summary.totalPopChange >= 0 ? '+' : ''}{summary.totalPopChange.toLocaleString('id-ID', { maximumFractionDigits: 2 })} /hari
               </p>
             </div>
           </div>
 
-          <div className="bg-[#0F2424]/80 backdrop-blur-md p-5 rounded-2xl border border-[#00FFAA]/20 flex items-center gap-4 shadow-lg">
-            <div className="p-3 bg-[#00FFAA]/10 rounded-xl border border-[#00FFAA]/30 text-[#00FFAA]">
+          <div className="bg-root-surface/80  p-5 rounded-2xl border border-root-accent/20 flex items-center gap-4 shadow-lg">
+            <div className="p-3 bg-root-accent/10 rounded-xl border border-root-accent/30 text-root-accent">
               <Landmark className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-widest">Total Kas Global</p>
-              <p className="text-xl font-black text-[#E0E0E0] mt-0.5">
+              <p className="text-[10px] font-black text-root-subtle uppercase tracking-widest">Total Kas Global</p>
+              <p className="text-xl font-black text-root-text mt-0.5">
                 {isLoading ? '...' : `${summary.totalKas.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`}
               </p>
             </div>
           </div>
 
-          <div className="bg-[#0F2424]/80 backdrop-blur-md p-5 rounded-2xl border border-[#00FFAA]/20 flex items-center gap-4 shadow-lg">
-            <div className="p-3 bg-[#00FFAA]/10 rounded-xl border border-[#00FFAA]/30 text-[#00FFAA]">
+          <div className="bg-root-surface/80  p-5 rounded-2xl border border-root-accent/20 flex items-center gap-4 shadow-lg">
+            <div className="p-3 bg-root-accent/10 rounded-xl border border-root-accent/30 text-root-accent">
               <TrendingUp className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-widest">Netto APBN Global / Hari</p>
+              <p className="text-[10px] font-black text-root-subtle uppercase tracking-widest">Netto APBN Global / Hari</p>
               <p
                 className={`text-xl font-black mt-0.5 ${
-                  summary.totalNetto >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'
+                  summary.totalNetto >= 0 ? 'text-root-accent' : 'text-rose-400'
                 }`}
               >
                 {isLoading
@@ -423,21 +423,21 @@ export default function TabelNegaraPage() {
         </div>
 
         {/* Controls: Search and Filter Bar */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[#0F2424]/90 backdrop-blur-md p-4 rounded-2xl border border-[#00FFAA]/30">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-root-surface/90  p-4 rounded-2xl border border-root-accent/30">
           <div className="relative w-full md:w-96">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#00FFAA]" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-root-accent" />
             <input
               type="text"
               placeholder="Cari negara, ibukota, atau kode ISO..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-xl py-2.5 pl-11 pr-4 text-xs text-[#E0E0E0] placeholder:text-[#6B8A8A] focus:outline-none focus:border-[#00FFAA] transition-all"
+              className="w-full bg-root-canvas border border-root-accent/30 rounded-xl py-2.5 pl-11 pr-4 text-xs text-root-text placeholder:text-root-subtle focus:outline-none focus:border-root-accent transition-all"
             />
           </div>
 
           <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
-            <SlidersHorizontal className="w-4 h-4 text-[#00FFAA] shrink-0 ml-2" />
-            <span className="text-xs font-bold text-[#6B8A8A] uppercase tracking-wider shrink-0 mr-1">
+            <SlidersHorizontal className="w-4 h-4 text-root-accent shrink-0 ml-2" />
+            <span className="text-xs font-bold text-root-subtle uppercase tracking-wider shrink-0 mr-1">
               Filter Benua:
             </span>
             {continents.map((continent) => (
@@ -446,8 +446,8 @@ export default function TabelNegaraPage() {
                 onClick={() => setSelectedContinent(continent)}
                 className={`px-3 py-1.5 rounded-xl text-[11px] font-bold tracking-wide transition-all whitespace-nowrap cursor-pointer ${
                   selectedContinent === continent
-                    ? 'bg-[#00FFAA] text-[#0A1A1A] shadow-md'
-                    : 'bg-[#0A1A1A] text-[#6B8A8A] border border-[#00FFAA]/20 hover:text-[#E0E0E0] hover:border-[#00FFAA]/40'
+                    ? 'bg-root-accent text-root-canvas shadow-md'
+                    : 'bg-root-canvas text-root-subtle border border-root-accent/20 hover:text-root-text hover:border-root-accent/40'
                 }`}
               >
                 {continent}
@@ -464,14 +464,14 @@ export default function TabelNegaraPage() {
         )}
 
         {/* Data Table */}
-        <div className="bg-[#0F2424]/90 backdrop-blur-md rounded-3xl border border-[#00FFAA]/30 shadow-2xl overflow-hidden">
+        <div className="bg-root-surface/90  rounded-3xl border border-root-accent/30 shadow-2xl overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-[#E0E0E0]">
-              <thead className="bg-[#0A1A1A]/90 text-[#6B8A8A] uppercase text-[10px] font-black tracking-widest border-b border-[#00FFAA]/20 select-none">
+            <table className="w-full text-left text-xs text-root-text">
+              <thead className="bg-root-canvas/90 text-root-subtle uppercase text-[10px] font-black tracking-widest border-b border-root-accent/20 select-none">
                 <tr>
                   <th
                     onClick={() => handleSort('no')}
-                    className="py-4 px-6 cursor-pointer hover:text-[#00FFAA] transition-colors w-16"
+                    className="py-4 px-6 cursor-pointer hover:text-root-accent transition-colors w-16"
                   >
                     <div className="flex items-center">
                       <span>NO</span>
@@ -480,7 +480,7 @@ export default function TabelNegaraPage() {
                   </th>
                   <th
                     onClick={() => handleSort('name')}
-                    className="py-4 px-6 cursor-pointer hover:text-[#00FFAA] transition-colors"
+                    className="py-4 px-6 cursor-pointer hover:text-root-accent transition-colors"
                   >
                     <div className="flex items-center">
                       <span>NAMA NEGARA</span>
@@ -489,7 +489,7 @@ export default function TabelNegaraPage() {
                   </th>
                   <th
                     onClick={() => handleSort('population')}
-                    className="py-4 px-6 cursor-pointer hover:text-[#00FFAA] transition-colors text-right"
+                    className="py-4 px-6 cursor-pointer hover:text-root-accent transition-colors text-right"
                   >
                     <div className="flex items-center justify-end">
                       <span>POPULASI</span>
@@ -498,7 +498,7 @@ export default function TabelNegaraPage() {
                   </th>
                   <th
                     onClick={() => handleSort('netPopChange')}
-                    className="py-4 px-6 cursor-pointer hover:text-[#00FFAA] transition-colors text-right"
+                    className="py-4 px-6 cursor-pointer hover:text-root-accent transition-colors text-right"
                   >
                     <div className="flex items-center justify-end">
                       <span>PERUBAHAN POPULASI</span>
@@ -507,7 +507,7 @@ export default function TabelNegaraPage() {
                   </th>
                   <th
                     onClick={() => handleSort('treasury')}
-                    className="py-4 px-6 cursor-pointer hover:text-[#00FFAA] transition-colors text-right"
+                    className="py-4 px-6 cursor-pointer hover:text-root-accent transition-colors text-right"
                   >
                     <div className="flex items-center justify-end">
                       <span>KAS NEGARA</span>
@@ -516,7 +516,7 @@ export default function TabelNegaraPage() {
                   </th>
                   <th
                     onClick={() => handleSort('netBalance')}
-                    className="py-4 px-6 cursor-pointer hover:text-[#00FFAA] transition-colors text-right"
+                    className="py-4 px-6 cursor-pointer hover:text-root-accent transition-colors text-right"
                   >
                     <div className="flex items-center justify-end">
                       <span>NETTO APBN / HARI</span>
@@ -526,13 +526,13 @@ export default function TabelNegaraPage() {
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-[#00FFAA]/10">
+              <tbody className="divide-y divide-root-accent/10">
                 {isLoading ? (
                   <tr>
-                    <td colSpan={6} className="py-16 text-center text-[#6B8A8A]">
+                    <td colSpan={6} className="py-16 text-center text-root-subtle">
                       <div className="flex flex-col items-center justify-center gap-3">
-                        <div className="w-10 h-10 border-4 border-[#00FFAA]/20 border-t-[#00FFAA] rounded-full animate-spin" />
-                        <span className="text-xs font-bold uppercase tracking-wider text-[#00FFAA]">
+                        <div className="w-10 h-10 border-4 border-root-accent/20 border-t-root-accent rounded-full animate-spin" />
+                        <span className="text-xs font-bold uppercase tracking-wider text-root-accent">
                           Memuat Data Database 207 Negara...
                         </span>
                       </div>
@@ -540,7 +540,7 @@ export default function TabelNegaraPage() {
                   </tr>
                 ) : sortedCountries.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-12 text-center text-[#6B8A8A]">
+                    <td colSpan={6} className="py-12 text-center text-root-subtle">
                       Tidak ada negara yang sesuai dengan kriteria pencarian "{searchQuery}".
                     </td>
                   </tr>
@@ -548,10 +548,10 @@ export default function TabelNegaraPage() {
                   sortedCountries.map((country, index) => (
                     <tr
                       key={`${country.countryName}-${country.isoCode}-${country.id}-${index}`}
-                      className="hover:bg-[#00FFAA]/5 transition-colors group"
+                      className="hover:bg-root-accent/5 transition-colors group"
                     >
                       {/* Column 1: No */}
-                      <td className="py-4 px-6 font-mono font-bold text-[#6B8A8A] group-hover:text-[#00FFAA]">
+                      <td className="py-4 px-6 font-mono font-bold text-root-subtle group-hover:text-root-accent">
                         {country.id}
                       </td>
 
@@ -561,26 +561,26 @@ export default function TabelNegaraPage() {
                           <img
                             src={`https://flagcdn.com/w40/${country.isoCode}.png`}
                             alt={country.countryName}
-                            className="w-7 h-4.5 rounded-xs object-cover border border-[#00FFAA]/30 shadow-sm shrink-0"
+                            className="w-7 h-4.5 rounded-xs object-cover border border-root-accent/30 shadow-sm shrink-0"
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = 'https://flagcdn.com/w40/un.png';
                             }}
                           />
                           <div>
-                            <div className="font-bold text-[#E0E0E0] group-hover:text-[#00FFAA] transition-colors text-xs">
+                            <div className="font-bold text-root-text group-hover:text-root-accent transition-colors text-xs">
                               {country.countryName}
                             </div>
-                            <div className="text-[10px] text-[#6B8A8A] font-medium flex items-center gap-1.5 mt-0.5">
+                            <div className="text-[10px] text-root-subtle font-medium flex items-center gap-1.5 mt-0.5">
                               <span>Ibukota: {country.capitalName || '-'}</span>
                               <span>•</span>
-                              <span className="text-[#00FFAA]/70">{country.continentName}</span>
+                              <span className="text-root-accent/70">{country.continentName}</span>
                             </div>
                           </div>
                         </div>
                       </td>
 
                       {/* Column 3: Populasi */}
-                      <td className="py-4 px-6 text-right font-mono font-bold text-[#E0E0E0]">
+                      <td className="py-4 px-6 text-right font-mono font-bold text-root-text">
                         {country.population ? country.population.toLocaleString('id-ID', { maximumFractionDigits: 2 }) : '0'}
                       </td>
 
@@ -589,7 +589,7 @@ export default function TabelNegaraPage() {
                         <span
                           className={`px-2.5 py-1 rounded-lg border text-xs inline-block ${
                             country.netPopChange >= 0
-                              ? 'bg-[#00FFAA]/10 border-[#00FFAA]/30 text-[#00FFAA]'
+                              ? 'bg-root-accent/10 border-root-accent/30 text-root-accent'
                               : 'bg-rose-500/10 border-rose-500/30 text-rose-400'
                           }`}
                         >
@@ -599,7 +599,7 @@ export default function TabelNegaraPage() {
                       </td>
 
                       {/* Column 5: Kas Negara */}
-                      <td className="py-4 px-6 text-right font-mono font-bold text-[#00FFAA]">
+                      <td className="py-4 px-6 text-right font-mono font-bold text-root-accent">
                         {country.treasury ? `${country.treasury.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO` : '0 NEO'}
                       </td>
 
@@ -608,7 +608,7 @@ export default function TabelNegaraPage() {
                         <span
                           className={`px-2.5 py-1 rounded-lg border text-xs inline-block ${
                             country.netBalance >= 0
-                              ? 'bg-[#00FFAA]/10 border-[#00FFAA]/30 text-[#00FFAA]'
+                              ? 'bg-root-accent/10 border-root-accent/30 text-root-accent'
                               : 'bg-rose-500/10 border-rose-500/30 text-rose-400'
                           }`}
                         >
@@ -624,10 +624,10 @@ export default function TabelNegaraPage() {
           </div>
 
           {/* Table Footer */}
-          <div className="bg-[#0A1A1A]/80 p-4 px-6 border-t border-[#00FFAA]/20 flex flex-col sm:flex-row items-center justify-between text-xs text-[#6B8A8A] gap-2">
+          <div className="bg-root-canvas/80 p-4 px-6 border-t border-root-accent/20 flex flex-col sm:flex-row items-center justify-between text-xs text-root-subtle gap-2">
             <span>
-              Menampilkan <strong className="text-[#00FFAA]">{sortedCountries.length}</strong> dari{' '}
-              <strong className="text-[#E0E0E0]">{countries.length}</strong> Negara
+              Menampilkan <strong className="text-root-accent">{sortedCountries.length}</strong> dari{' '}
+              <strong className="text-root-text">{countries.length}</strong> Negara
             </span>
             <span className="text-[10px] uppercase font-bold tracking-wider">
               Sumber Data: MySQL Database (`database_profiles_negara`)

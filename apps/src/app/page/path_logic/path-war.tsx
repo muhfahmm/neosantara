@@ -1299,13 +1299,7 @@ export default function WarMap({
             viewBox={VB}
           >
             <defs>
-              <filter id="glow-red" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="6" result="b" />
-                <feMerge>
-                  <feMergeNode in="b" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
+
               <radialGradient id="impact-burst">
                 <stop offset="0%" stopColor="#FFEB3B" stopOpacity="1" />
                 <stop offset="40%" stopColor="#FF2D55" stopOpacity="0.85" />
@@ -1531,14 +1525,14 @@ export default function WarMap({
             role="dialog"
             aria-modal="true"
             aria-labelledby="attacker-forces-title"
-            className="relative flex h-full flex-col overflow-hidden rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] shadow-[0_0_30px_rgba(0,255,170,0.15)]"
+            className="relative flex h-full flex-col overflow-hidden rounded-xl border border-root-accent/20 bg-root-canvas shadow-[0_0_30px_rgba(0,255,170,0.15)]"
           >
-            <header className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2.5 sm:px-6 sm:py-3">
+            <header className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
               <div className="min-w-0">
                 <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#FF7088]">
                   Informasi Pergerakan Militer
                 </p>
-                <h2 id="attacker-forces-title" className="mt-1 break-words text-base font-black text-[#00FFAA] sm:text-xl">
+                <h2 id="attacker-forces-title" className="mt-1 break-words text-base font-black text-root-accent sm:text-xl">
                   {attackerForceDisplayName}
                 </h2>
                 <p className="mt-1 break-words text-xs text-white/65">
@@ -1548,7 +1542,7 @@ export default function WarMap({
               <button
                 type="button"
                 onClick={() => setShowAttackerForces(false)}
-                className="flex shrink-0 cursor-pointer items-center gap-1 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 text-xs font-bold uppercase text-[#6B8A8A] shadow-sm transition-all hover:border-[#00FFAA] hover:text-[#00FFAA] lg:p-2"
+                className="flex shrink-0 cursor-pointer items-center gap-1 rounded-xl border border-root-accent/30 bg-root-surface p-1.5 text-xs font-bold uppercase text-root-subtle shadow-sm transition-all hover:border-root-accent hover:text-root-accent lg:p-2"
               >
                 <span className="pl-1 text-[10px] font-semibold uppercase tracking-widest lg:text-xs">
                   Tutup
@@ -1557,12 +1551,12 @@ export default function WarMap({
               </button>
             </header>
 
-            <div className="relative z-10 flex-1 overflow-y-auto bg-[#0A1A1A]/80 p-3 sm:p-5 [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-[#0A1A1A] [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-[#00FFAA]/20 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0A1A1A] [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A] [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)] hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]">
+            <div className="relative z-10 flex-1 overflow-y-auto bg-root-canvas/80 p-3 sm:p-5 [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-root-canvas [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A] [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)] hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent">
                 {attackerForceGroups.length > 0 ? (
                   <div className="flex flex-col gap-4">
                     {attackerForceGroups.map(group => (
-                      <section key={group.id} className="min-w-0 rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A]/70 p-3">
-                        <h3 className="mb-2 break-words text-xs font-bold uppercase tracking-wider text-[#00FFAA]">
+                      <section key={group.id} className="min-w-0 rounded-xl border border-root-accent/20 bg-root-canvas/70 p-3">
+                        <h3 className="mb-2 break-words text-xs font-bold uppercase tracking-wider text-root-accent">
                           {group.label}
                         </h3>
                         <ul className="space-y-1.5">
@@ -1620,33 +1614,33 @@ export default function WarMap({
       )}
 
       {/* ══════════ LAYAR HASIL PERTEMPURAN (Fase 'result') ══════════ */}
-      {/* FIX: Container utama transparan (tanpa bg-black/backdrop-blur) dan pointer-events-none. */}
+      {/* Container utama transparan dan tidak menghalangi interaksi. */}
       {phase === 'result' && result && (
         <div className="fixed inset-0 z-[300] flex items-center justify-center pt-[88px] sm:pt-[100px] lg:pt-[clamp(92px,10dvh,115px)] pb-3 sm:pb-4 lg:pb-5 px-3 sm:px-6 lg:px-10 pointer-events-none animate-[warFadeIn_0.4s_ease-out]">
           {/* FIX: pointer-events-auto ditambahkan di sini agar kotak modal bisa diklik */}
-          <div className="w-full max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl h-full max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)] overflow-y-auto bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-3xl shadow-[0_0_80px_rgba(0,255,170,0.2)] font-sans select-none pointer-events-auto">
+          <div className="w-full max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl h-full max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)] overflow-y-auto bg-root-canvas border border-root-accent/30 rounded-3xl shadow-[0_0_80px_rgba(0,255,170,0.2)] font-sans select-none pointer-events-auto">
             <div
               className={`p-6 text-center border-b ${result === 'win'
-                ? 'bg-[#00FFAA]/10 border-[#00FFAA]/30'
-                : 'bg-[#FF2D55]/10 border-[#FF2D55]/30'
+                ? 'bg-root-accent/10 border-root-accent/30'
+                : 'bg-root-danger/10 border-root-danger/30'
                 }`}
             >
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-3">
                 {result === 'win' ? (
                   <Trophy className="h-10 w-10 text-[#FFEB3B]" />
                 ) : (
-                  <TrendingDown className="h-10 w-10 text-[#FF2D55]" />
+                  <TrendingDown className="h-10 w-10 text-root-danger" />
                 )}
               </div>
               <h2
-                className={`text-xl font-black uppercase tracking-widest ${result === 'win' ? 'text-[#00FFAA]' : 'text-[#FF2D55]'
+                className={`text-xl font-black uppercase tracking-widest ${result === 'win' ? 'text-root-accent' : 'text-root-danger'
                   }`}
               >
                 {isUserDefender
                   ? (result === 'win' ? 'Pertahanan Berhasil!' : 'Pertahanan Terpukul Kalah!')
                   : (result === 'win' ? 'Kemenangan Mutlak!' : 'Pasukan Terpukul Mundur')}
               </h2>
-              <p className="text-xs text-[#E0E0E0] mt-2 leading-relaxed">
+              <p className="text-xs text-root-text mt-2 leading-relaxed">
                 {isUserDefender ? (
                   result === 'win' ? (
                     <>
@@ -1684,12 +1678,12 @@ export default function WarMap({
                 )}
               </p>
               {target.cityName && (
-                <div className="mx-auto mt-4 flex w-fit items-center gap-2 rounded-xl border border-[#00FFAA]/30 bg-[#00FFAA]/10 px-4 py-2">
-                  <Flag className="h-4 w-4 text-[#00FFAA]" />
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B8A8A]">
+                <div className="mx-auto mt-4 flex w-fit items-center gap-2 rounded-xl border border-root-accent/30 bg-root-accent/10 px-4 py-2">
+                  <Flag className="h-4 w-4 text-root-accent" />
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-root-subtle">
                     Kota sasaran
                   </span>
-                  <strong className="text-sm text-[#00FFAA]">
+                  <strong className="text-sm text-root-accent">
                     {target.cityName}, {target.country}
                   </strong>
                   {target.cityIsCapital && (
@@ -1701,31 +1695,31 @@ export default function WarMap({
               )}
             </div>
 
-            <div className="grid grid-cols-2 divide-x divide-[#00FFAA]/10 border-b border-[#00FFAA]/10">
+            <div className="grid grid-cols-2 divide-x divide-root-accent/10 border-b border-root-accent/10">
               <div className="p-4 text-center">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mb-1">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mb-1">
                   {isPbbCoalition ? 'Skor Pasukan Gabungan PBB' : `Skor Penyerang (${attacker.country})`}
                 </p>
-                <p className="text-lg font-black text-[#00FFAA]">
+                <p className="text-lg font-black text-root-accent">
                   {battleOutcome?.attackerScore.toLocaleString()}
                 </p>
               </div>
               <div className="p-4 text-center">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mb-1">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mb-1">
                   {isPbbCoalition ? `Skor Pertahanan (${target.country})` : `Skor Bertahan (${target.country})`}
                 </p>
-                <p className="text-lg font-black text-[#FF2D55]">
+                <p className="text-lg font-black text-root-danger">
                   {battleOutcome?.targetScore.toLocaleString()}
                 </p>
               </div>
             </div>
 
-            <div className="border-b border-[#00FFAA]/10 p-5">
-              <h3 className="mb-1 flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#E0E0E0]">
-                <Skull className="h-4 w-4 text-[#FF2D55]" />
+            <div className="border-b border-root-accent/10 p-5">
+              <h3 className="mb-1 flex items-center gap-2 text-xs font-black uppercase tracking-widest text-root-text">
+                <Skull className="h-4 w-4 text-root-danger" />
                 Rincian Kehilangan Unit
               </h3>
-              <p className="mb-4 text-[10px] text-[#6B8A8A]">
+              <p className="mb-4 text-[10px] text-root-subtle">
                 Estimasi kehilangan dibagi proporsional berdasarkan penurunan kekuatan tempur.
               </p>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -1742,15 +1736,15 @@ export default function WarMap({
                       {side.name}
                     </h4>
                     {side.losses.length === 0 ? (
-                      <p className="text-[10px] text-[#6B8A8A]">Tidak ada kehilangan unit yang tercatat.</p>
+                      <p className="text-[10px] text-root-subtle">Tidak ada kehilangan unit yang tercatat.</p>
                     ) : (
                       <div className="max-h-36 space-y-2 overflow-y-auto pr-1">
                         {side.losses.map((loss) => (
                           <div key={loss.label} className="flex items-start justify-between gap-2 text-[10px]">
                             <span className="text-[#CBD5D5]">{loss.label}</span>
                             <span className="shrink-0 text-right">
-                              <span className="font-bold text-[#FF2D55]">-{loss.lost.toLocaleString('id-ID')}</span>
-                              <span className="block text-[9px] text-[#6B8A8A]">
+                              <span className="font-bold text-root-danger">-{loss.lost.toLocaleString('id-ID')}</span>
+                              <span className="block text-[9px] text-root-subtle">
                                 sisa {loss.remaining.toLocaleString('id-ID')} / {loss.deployed.toLocaleString('id-ID')}
                               </span>
                             </span>
@@ -1766,9 +1760,9 @@ export default function WarMap({
             <div className="p-5 space-y-3">
               {isUserDefender ? (
                 <div className="space-y-3">
-                  <div className={`flex items-start gap-3 p-3 rounded-xl ${result === 'win' ? 'bg-[#00FFAA]/10 border border-[#00FFAA]/30' : 'bg-[#FF2D55]/10 border border-[#FF2D55]/30'}`}>
-                    <AlertTriangle className={`h-4 w-4 ${result === 'win' ? 'text-[#00FFAA]' : 'text-[#FF2D55]'} mt-0.5 flex-shrink-0`} />
-                    <p className="text-[11px] text-[#E0E0E0] leading-relaxed">
+                  <div className={`flex items-start gap-3 p-3 rounded-xl ${result === 'win' ? 'bg-root-accent/10 border border-root-accent/30' : 'bg-root-danger/10 border border-root-danger/30'}`}>
+                    <AlertTriangle className={`h-4 w-4 ${result === 'win' ? 'text-root-accent' : 'text-root-danger'} mt-0.5 flex-shrink-0`} />
+                    <p className="text-[11px] text-root-text leading-relaxed">
                       {result === 'win'
                         ? `Operasi pertahanan nasional sukses besar! ${isPbbCoalition ? 'Pasukan Gabungan PBB' : `Pasukan ${attacker.country}`} dipaksa mundur.`
                         : `Wilayah nasional terdampak serangan ${isPbbCoalition ? 'Pasukan Gabungan PBB' : `musuh (${attacker.country})`}. Kerugian armada pertahanan telah terjadi.`}
@@ -1776,14 +1770,14 @@ export default function WarMap({
                   </div>
                   <button
                     onClick={() => handleAction('retreat')}
-                    className="w-full py-3 rounded-xl bg-[#0F2424] hover:bg-[#1A3838] border border-[#00FFAA]/30 text-xs font-black uppercase tracking-widest text-[#E0E0E0] transition-colors cursor-pointer"
+                    className="w-full py-3 rounded-xl bg-root-surface hover:bg-[#1A3838] border border-root-accent/30 text-xs font-black uppercase tracking-widest text-root-text transition-colors cursor-pointer"
                   >
                     {result === 'win' ? 'Selesai Pertahanan' : 'Tarik Sisa Pasukan & Evaluasi'}
                   </button>
                 </div>
               ) : (
                 <>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A] mb-2">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-root-subtle mb-2">
                     {result === 'win'
                       ? (isPbbCoalition ? 'PILIH OPSI TAKTIS PASUKAN PBB:' : 'Pilih Aneksasi atau Opsi Taktis:')
                       : 'Pilihan:'}
@@ -1823,16 +1817,16 @@ export default function WarMap({
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      <div className="flex items-start gap-3 p-3 rounded-xl bg-[#FF2D55]/10 border border-[#FF2D55]/30">
-                        <AlertTriangle className="h-4 w-4 text-[#FF2D55] mt-0.5 flex-shrink-0" />
-                        <p className="text-[11px] text-[#E0E0E0] leading-relaxed">
+                      <div className="flex items-start gap-3 p-3 rounded-xl bg-root-danger/10 border border-root-danger/30">
+                        <AlertTriangle className="h-4 w-4 text-root-danger mt-0.5 flex-shrink-0" />
+                        <p className="text-[11px] text-root-text leading-relaxed">
                           Hubungan diplomatik dengan {target.country} memburuk. Reputasi
                           internasional Anda menurun.
                         </p>
                       </div>
                       <button
                         onClick={() => handleAction('retreat')}
-                        className="w-full py-3 rounded-xl bg-[#0F2424] hover:bg-[#1A3838] border border-[#00FFAA]/30 text-xs font-black uppercase tracking-widest text-[#E0E0E0] transition-colors cursor-pointer"
+                        className="w-full py-3 rounded-xl bg-root-surface hover:bg-[#1A3838] border border-root-accent/30 text-xs font-black uppercase tracking-widest text-root-text transition-colors cursor-pointer"
                       >
                         Tarik Pasukan
                       </button>
@@ -1885,7 +1879,7 @@ function ActionButton({
   return (
     <button
       onClick={onClick}
-      className="group flex flex-col items-center text-center gap-2 p-4 rounded-2xl bg-[#0F2424] hover:bg-[#142E2E] border border-[#00FFAA]/15 hover:border-[#00FFAA]/40 transition-all cursor-pointer"
+      className="group flex flex-col items-center text-center gap-2 p-4 rounded-2xl bg-root-surface hover:bg-[#142E2E] border border-root-accent/15 hover:border-root-accent/40 transition-all cursor-pointer"
       style={{ borderColor: `${accent}33` }}
     >
       <div
@@ -1900,7 +1894,7 @@ function ActionButton({
       >
         {title}
       </h3>
-      <p className="text-[10px] text-[#6B8A8A] font-semibold leading-tight">
+      <p className="text-[10px] text-root-subtle font-semibold leading-tight">
         {desc}
       </p>
     </button>

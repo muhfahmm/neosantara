@@ -61,7 +61,7 @@ export const renderFlag = (iso: string | undefined, altName: string, size: "sm" 
     );
   }
   return (
-    <div className={`${wClass} rounded-sm overflow-hidden border border-[#00FFAA]/20 flex-shrink-0 shadow-sm bg-[#051111] relative flex items-center justify-center`}>
+    <div className={`${wClass} rounded-sm overflow-hidden border border-root-accent/20 flex-shrink-0 shadow-sm bg-[#051111] relative flex items-center justify-center`}>
       <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center text-[10px]">
         🏳️
       </span>
@@ -530,21 +530,21 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
     <div className="space-y-4 relative">
       
       {/* UI Utama: Card Status */}
-      <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-8 rounded-xl shadow-lg flex flex-col items-center justify-center text-center space-y-4 min-h-[260px]">
-        <div className="p-3 rounded-full bg-[#00FFAA]/10 border border-[#00FFAA]/30">
-          <FileText className="h-8 w-8 text-[#00FFAA]" />
+      <div className="bg-root-canvas border border-root-accent/20 p-8 rounded-xl shadow-lg flex flex-col items-center justify-center text-center space-y-4 min-h-[260px]">
+        <div className="p-3 rounded-full bg-root-accent/10 border border-root-accent/30">
+          <FileText className="h-8 w-8 text-root-accent" />
         </div>
         <div>
-          <h3 className="text-lg font-black text-[#E0E0E0] uppercase tracking-wide">
+          <h3 className="text-lg font-black text-root-text uppercase tracking-wide">
             {activeResolutions.length > 0 ? "Sidang umum majelis PBB aktif" : "Belum Ada Resolusi Aktif"}
           </h3>
-          <p className="text-xs text-[#6B8A8A] mt-1 max-w-md">
+          <p className="text-xs text-root-subtle mt-1 max-w-md">
             Mulailah dengan mengajukan rancangan resolusi baru untuk dibahas oleh negara-negara anggota Majelis Umum.
           </p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="mt-2 px-6 py-3 rounded-xl bg-[#00FFAA] text-[#0A1A1A] border border-[#00FFAA] shadow-lg shadow-[#00FFAA]/20 text-sm font-black uppercase tracking-wider flex items-center gap-2 hover:bg-[#00FFAA]/80 active:scale-95 transition-all cursor-pointer"
+          className="mt-2 px-6 py-3 rounded-xl bg-root-accent text-root-canvas border border-root-accent shadow-lg shadow-root-accent/20 text-sm font-black uppercase tracking-wider flex items-center gap-2 hover:bg-root-accent/80 active:scale-95 transition-all cursor-pointer"
         >
           <Plus className="h-5 w-5" />
           Buat Resolusi Baru
@@ -555,11 +555,11 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
       {activeResolutions.length > 0 && (
         <div className="space-y-4 pt-2">
           <div className="flex items-center justify-between px-1">
-            <h4 className="text-xs font-black text-[#00FFAA] uppercase tracking-widest flex items-center gap-2">
-              <Clock className="w-4 h-4 text-[#00FFAA]" />
+            <h4 className="text-xs font-black text-root-accent uppercase tracking-widest flex items-center gap-2">
+              <Clock className="w-4 h-4 text-root-accent" />
               Daftar Resolusi Sedang Dibahas ({activeResolutions.length})
             </h4>
-            <span className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-wider">
+            <span className="text-[10px] font-bold text-root-subtle uppercase tracking-wider">
               Majelis Umum PBB
             </span>
           </div>
@@ -568,12 +568,12 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
             {activeResolutions.map((res) => (
               <div 
                 key={res.id}
-                className="bg-[#0A1A1A] border border-[#00FFAA]/30 p-5 rounded-xl shadow-lg relative space-y-4 hover:border-[#00FFAA]/50 transition-all"
+                className="bg-root-canvas border border-root-accent/30 p-5 rounded-xl shadow-lg relative space-y-4 hover:border-root-accent/50 transition-all"
               >
                 {/* Header Card Resolusi */}
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#00FFAA]/15 pb-3">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-root-accent/15 pb-3">
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-black text-[#00FFAA] bg-[#00FFAA]/10 px-3 py-1 rounded-lg border border-[#00FFAA]/30 uppercase">
+                    <span className="text-xs font-black text-root-accent bg-root-accent/10 px-3 py-1 rounded-lg border border-root-accent/30 uppercase">
                       {res.label}
                     </span>
                     <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md border ${
@@ -599,27 +599,27 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                 </div>
 
                 {/* Info Pengusul & Target */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-[#051111] p-3.5 rounded-xl border border-[#00FFAA]/15">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-[#051111] p-3.5 rounded-xl border border-root-accent/15">
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-bold text-[#6B8A8A] uppercase">Pengusul:</span>
+                    <span className="text-[10px] font-bold text-root-subtle uppercase">Pengusul:</span>
                     <div className="flex items-center gap-2">
                       {renderFlag(res.proposer.iso, res.proposer.name, "sm")}
-                      <span className="text-xs font-bold text-[#E0E0E0]">{res.proposer.name}</span>
+                      <span className="text-xs font-bold text-root-text">{res.proposer.name}</span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-bold text-[#6B8A8A] uppercase">Target:</span>
+                    <span className="text-[10px] font-bold text-root-subtle uppercase">Target:</span>
                     <div className="flex items-center gap-2">
                       {renderFlag(res.target.iso, res.target.name, "sm")}
-                      <span className="text-xs font-bold text-[#E0E0E0]">{res.target.name}</span>
+                      <span className="text-xs font-bold text-root-text">{res.target.name}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Badge Kategori & Deskripsi */}
                 <div className="space-y-1.5">
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#00FFAA]/10 border border-[#00FFAA]/30 text-[#00FFAA] text-[10px] font-black uppercase tracking-wider">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-root-accent/10 border border-root-accent/30 text-root-accent text-[10px] font-black uppercase tracking-wider">
                     <span>Kategori: {res.label}</span>
                   </div>
                   <p className="text-xs font-medium text-slate-300 leading-relaxed">
@@ -628,8 +628,8 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                 </div>
 
                 {/* Info Durasi & Sisa Hari / Cooldown Penghapusan */}
-                <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[11px] font-bold text-[#6B8A8A] bg-[#051111] px-3.5 py-2 rounded-lg border border-[#00FFAA]/10">
-                  <span className="text-[#00FFAA]">Durasi: {res.duration || '30 Hari'}</span>
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[11px] font-bold text-root-subtle bg-[#051111] px-3.5 py-2 rounded-lg border border-root-accent/10">
+                  <span className="text-root-accent">Durasi: {res.duration || '30 Hari'}</span>
                   <span>•</span>
                   {res.status === 'voting' ? (
                     <span>Progres sisa hari: <strong className="text-amber-400">{res.daysRemaining} hari tersisa</strong> (30 Hari - {30 - res.daysRemaining} Hari)</span>
@@ -641,7 +641,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                 </div>
 
                 {/* Perolehan Suara & Voting User */}
-                <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-2 border-t border-[#00FFAA]/15">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-2 border-t border-root-accent/15">
                   <div className="flex items-center gap-2 sm:gap-4 text-xs font-bold w-full md:w-auto justify-around">
                     <button
                       type="button"
@@ -681,7 +681,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
 
                   {/* Tombol Aksi Vote Player */}
                   <div className="flex items-center gap-2 w-full md:w-auto justify-end">
-                    <span className="text-[10px] font-bold text-[#6B8A8A] uppercase mr-1">
+                    <span className="text-[10px] font-bold text-root-subtle uppercase mr-1">
                       {isSelectedCountryAnnexed
                         ? 'Negara dianeksasi — tidak memiliki hak suara'
                         : res.status !== 'voting' ? 'Voting Ditutup:' : 'Suara Anda:'}
@@ -748,10 +748,10 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
         >
           <div className="flex h-full flex-col overflow-hidden">
             
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-                  <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+                <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
+                  <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
                 </div>
                 <div>
                   <h3 className={rootModalTypography.title}>Resolusi Sidang Umum PBB</h3>
@@ -760,7 +760,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
               <RootModalCloseButton onClick={() => setShowCreateModal(false)} />
             </div>
 
-            <div className="flex-1 p-4 sm:p-6 bg-[#0F2424] relative z-10 flex flex-col items-center overflow-y-auto custom-scrollbar">
+            <div className="flex-1 p-4 sm:p-6 bg-root-surface relative z-10 flex flex-col items-center overflow-y-auto custom-scrollbar">
               <div className="w-full max-w-4xl space-y-6 sm:space-y-8 py-2">
                 
                 <div>
@@ -773,8 +773,8 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                           onClick={() => setSelectedType(action.id)}
                           className={`p-3 rounded-xl border transition-all cursor-pointer flex flex-col items-center justify-center w-28 h-28 group ${
                             isActive
-                              ? 'border-[#00FFAA] bg-[#00FFAA]/15 shadow-md text-[#00FFAA]'
-                              : 'border-[#00FFAA]/20 bg-[#0A1A1A] text-[#6B8A8A] hover:border-[#00FFAA]/50 hover:text-[#E0E0E0]'
+                              ? 'border-root-accent bg-root-accent/15 shadow-md text-root-accent'
+                              : 'border-root-accent/20 bg-root-canvas text-root-subtle hover:border-root-accent/50 hover:text-root-text'
                           }`}
                           title={action.label}
                         >
@@ -788,10 +788,10 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
 
                 {selectedType && (
                   <div className="text-center">
-                    <h3 className="text-2xl font-black text-[#E0E0E0] uppercase tracking-wide">
+                    <h3 className="text-2xl font-black text-root-text uppercase tracking-wide">
                       {RESOLUTION_ACTIONS.find(a => a.id === selectedType)?.label}
                     </h3>
-                    <p className="text-sm text-[#6B8A8A] mt-2 leading-relaxed max-w-2xl mx-auto">
+                    <p className="text-sm text-root-subtle mt-2 leading-relaxed max-w-2xl mx-auto">
                       {RESOLUTION_ACTIONS.find(a => a.id === selectedType)?.desc}
                     </p>
                   </div>
@@ -799,16 +799,16 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
 
                 <div className={`grid grid-cols-1 ${isWarBan ? '' : 'md:grid-cols-2'} gap-6`}>
                   <div className={isWarBan ? 'w-full' : ''}>
-                    <p className="text-[10px] font-black text-[#00FFAA] uppercase tracking-wider mb-2">Pilih durasi:</p>
+                    <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-2">Pilih durasi:</p>
                     <div className="relative" ref={durationRef}>
-                      <button type="button" onClick={() => setIsDurationOpen(!isDurationOpen)} className="w-full flex items-center justify-between gap-3 px-5 py-3.5 rounded-xl bg-[#0A1A1A] text-[#E0E0E0] border border-[#00FFAA]/30 shadow-md hover:border-[#00FFAA]/60 transition-all cursor-pointer">
+                      <button type="button" onClick={() => setIsDurationOpen(!isDurationOpen)} className="w-full flex items-center justify-between gap-3 px-5 py-3.5 rounded-xl bg-root-canvas text-root-text border border-root-accent/30 shadow-md hover:border-root-accent/60 transition-all cursor-pointer">
                         <span className="text-sm font-bold">{selectedDuration}</span>
-                        <div className="flex items-center gap-1"><Clock className="w-4 h-4 text-[#00FFAA]" /></div>
+                        <div className="flex items-center gap-1"><Clock className="w-4 h-4 text-root-accent" /></div>
                       </button>
                       {isDurationOpen && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-[#051111] border border-[#00FFAA]/30 rounded-xl shadow-xl z-30 overflow-hidden">
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-[#051111] border border-root-accent/30 rounded-xl shadow-xl z-30 overflow-hidden">
                           {PBB_RESOLUTION_DURATION_OPTIONS.map((dur) => (
-                            <button key={dur} onClick={() => { setSelectedDuration(dur); setIsDurationOpen(false); }} className={`w-full px-5 py-3 text-left text-sm font-bold transition-colors cursor-pointer hover:bg-[#00FFAA]/10 ${selectedDuration === dur ? 'bg-[#00FFAA]/20 text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>{dur}</button>
+                            <button key={dur} onClick={() => { setSelectedDuration(dur); setIsDurationOpen(false); }} className={`w-full px-5 py-3 text-left text-sm font-bold transition-colors cursor-pointer hover:bg-root-accent/10 ${selectedDuration === dur ? 'bg-root-accent/20 text-root-accent' : 'text-root-text'}`}>{dur}</button>
                           ))}
                         </div>
                       )}
@@ -817,7 +817,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
 
                   {!isWarBan && (
                     <div>
-                      <p className="text-[10px] font-black text-[#00FFAA] uppercase tracking-wider mb-2">
+                      <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-2">
                         {isProductionBan ? "Pilih produk:" : "Pilih negara:"}
                       </p>
                       
@@ -826,22 +826,22 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                           <button
                             type="button"
                             onClick={() => setIsProductionProductModalOpen(true)}
-                            className="w-full min-h-[52px] flex items-center justify-between gap-3 px-5 py-3.5 rounded-xl bg-[#0A1A1A] text-[#E0E0E0] border border-[#00FFAA]/30 shadow-md hover:border-[#00FFAA]/60 transition-all cursor-pointer"
+                            className="w-full min-h-[52px] flex items-center justify-between gap-3 px-5 py-3.5 rounded-xl bg-root-canvas text-root-text border border-root-accent/30 shadow-md hover:border-root-accent/60 transition-all cursor-pointer"
                           >
-                            <span className={`text-sm font-bold ${selectedProductKey ? 'text-[#00FFAA]' : 'text-[#6B8A8A]'}`}>
+                            <span className={`text-sm font-bold ${selectedProductKey ? 'text-root-accent' : 'text-root-subtle'}`}>
                               {selectedProductKey
                                 ? `${getProductionBanProduct(selectedProductKey)?.category}: ${formatProductionProductName(selectedProductKey)}`
                                 : 'Pilih kategori dan produk'}
                             </span>
-                            <Package className="w-4 h-4 text-[#00FFAA]" />
+                            <Package className="w-4 h-4 text-root-accent" />
                           </button>
-                          <p className="text-[10px] text-[#6B8A8A] mt-2">Pemilihan produk membuka daftar sektor dan produk produksi.</p>
+                          <p className="text-[10px] text-root-subtle mt-2">Pemilihan produk membuka daftar sektor dan produk produksi.</p>
                         </div>
                       ) : (
                         <button 
                           type="button"
                           onClick={() => setIsCountryModalOpen(true)}
-                          className="w-full flex items-center justify-between gap-3 px-5 py-3.5 rounded-xl bg-[#0A1A1A] text-[#E0E0E0] border border-[#00FFAA]/30 shadow-md hover:border-[#00FFAA]/60 transition-all cursor-pointer"
+                          className="w-full flex items-center justify-between gap-3 px-5 py-3.5 rounded-xl bg-root-canvas text-root-text border border-root-accent/30 shadow-md hover:border-root-accent/60 transition-all cursor-pointer"
                         >
                           <div className="flex items-center gap-3 truncate">
                             {selectedTarget ? (
@@ -850,10 +850,10 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                                 <span className="text-sm font-bold truncate">{selectedTarget.name}</span>
                               </>
                             ) : (
-                              <span className="text-sm font-bold text-[#6B8A8A]">-- Pilih Negara --</span>
+                              <span className="text-sm font-bold text-root-subtle">-- Pilih Negara --</span>
                             )}
                           </div>
-                          <ChevronDown className="w-4 h-4 text-[#00FFAA]" />
+                          <ChevronDown className="w-4 h-4 text-root-accent" />
                         </button>
                       )}
                     </div>
@@ -861,19 +861,19 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                 </div>
 
                 <div className="flex items-center justify-center gap-4">
-                  <span className="text-sm font-bold text-[#6B8A8A]">Durasi pemungutan suara:</span>
-                  <div className="flex items-center gap-2"><span className="text-sm font-bold text-[#00FFAA]">30 h.</span><Clock className="w-4 h-4 text-[#00FFAA]" /></div>
+                  <span className="text-sm font-bold text-root-subtle">Durasi pemungutan suara:</span>
+                  <div className="flex items-center gap-2"><span className="text-sm font-bold text-root-accent">30 h.</span><Clock className="w-4 h-4 text-root-accent" /></div>
                 </div>
 
-                <div className="p-6 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/20 shadow-inner">
-                  <p className="text-center text-[11px] font-black text-[#6B8A8A] uppercase tracking-wider mb-4">Perkiraan Jumlah Suara</p>
+                <div className="p-6 rounded-2xl bg-root-canvas border border-root-accent/20 shadow-inner">
+                  <p className="text-center text-[11px] font-black text-root-subtle uppercase tracking-wider mb-4">Perkiraan Jumlah Suara</p>
                   <div className="flex justify-between items-center px-4 max-w-sm mx-auto gap-3">
                     <button
                       onClick={() => { if (voteStats.supporters.length > 0) setIsSupportersModalOpen(true); }}
                       className={`flex flex-col items-center w-full px-4 py-3 rounded-xl border transition-all duration-200 shadow-sm ${
                         voteStats.supporters.length === 0
-                          ? 'border-[#00FFAA]/10 bg-[#00FFAA]/5 opacity-50 cursor-not-allowed text-[#6B8A8A]'
-                          : 'border-[#00FFAA]/30 bg-[#00FFAA]/10 hover:bg-[#00FFAA]/20 hover:border-[#00FFAA] text-[#00FFAA] cursor-pointer'
+                          ? 'border-root-accent/10 bg-root-accent/5 opacity-50 cursor-not-allowed text-root-subtle'
+                          : 'border-root-accent/30 bg-root-accent/10 hover:bg-root-accent/20 hover:border-root-accent text-root-accent cursor-pointer'
                       }`}
                       title={voteStats.supporters.length === 0 ? "Tidak ada negara yang mendukung" : "Lihat daftar negara pendukung"}
                     >
@@ -887,7 +887,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                       onClick={() => { if (voteStats.opponents.length > 0) setIsOpponentsModalOpen(true); }}
                       className={`flex flex-col items-center w-full px-4 py-3 rounded-xl border transition-all duration-200 shadow-sm ${
                         voteStats.opponents.length === 0
-                          ? 'border-rose-500/10 bg-rose-500/5 opacity-50 cursor-not-allowed text-[#6B8A8A]'
+                          ? 'border-rose-500/10 bg-rose-500/5 opacity-50 cursor-not-allowed text-root-subtle'
                           : 'border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 hover:border-rose-500 text-rose-400 cursor-pointer'
                       }`}
                       title={voteStats.opponents.length === 0 ? "Tidak ada negara yang menentang" : "Lihat daftar negara penentang"}
@@ -902,12 +902,12 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-4 px-8 py-4 border-t border-[#00FFAA]/20 bg-[#0A1A1A] relative z-10 shrink-0">
-              <button onClick={() => { setShowCreateModal(false); }} className="px-6 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA] hover:bg-[#00FFAA]/20 transition-all font-bold text-xs uppercase tracking-wider cursor-pointer">Batal</button>
+            <div className="flex items-center justify-end gap-4 px-8 py-4 border-t border-root-accent/20 bg-root-canvas relative z-10 shrink-0">
+              <button onClick={() => { setShowCreateModal(false); }} className="px-6 py-2.5 rounded-xl border border-root-accent/30 bg-root-accent/10 text-root-accent hover:bg-root-accent/20 transition-all font-bold text-xs uppercase tracking-wider cursor-pointer">Batal</button>
               <button
                 onClick={handleSubmitResolution}
                 disabled={isProductionBan && !selectedProductKey}
-                className="px-6 py-2.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black text-xs uppercase tracking-wider shadow-md hover:bg-[#00FFAA]/80 active:scale-95 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-6 py-2.5 rounded-xl bg-root-accent text-root-canvas font-black text-xs uppercase tracking-wider shadow-md hover:bg-root-accent/80 active:scale-95 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Tambahkan
               </button>

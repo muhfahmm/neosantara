@@ -191,26 +191,26 @@ export default function BeriHadiahModal({
   return (
     <>
       <NotebookModalWrapper onClose={onClose}>
-        <div className="flex h-full min-h-0 flex-col overflow-hidden bg-[#0F2424] font-sans shadow-2xl">
+        <div className="flex h-full min-h-0 flex-col overflow-hidden bg-root-surface font-sans shadow-2xl">
           {/* HEADER */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-                <Gift className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+              <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+                <Gift className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
               </div>
               <div>
-                <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
+                <h2 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">
                   Beri Hadiah Komoditas
                 </h2>
-                <p className="text-[10px] sm:text-xs text-[#6B8A8A] font-semibold mt-1">
-                  Negara Penerima: <span className="text-[#E0E0E0] font-bold">{targetCountryName}</span>
+                <p className="text-[10px] sm:text-xs text-root-subtle font-semibold mt-1">
+                  Negara Penerima: <span className="text-root-text font-bold">{targetCountryName}</span>
                 </p>
               </div>
             </div>
 
             <button
               onClick={onClose}
-              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
+              className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
             >
               <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
               <X className="h-4 w-4" />
@@ -218,22 +218,22 @@ export default function BeriHadiahModal({
           </div>
 
           {/* BODY */}
-          <div className="flex-1 min-h-0 bg-[#0F2424] relative z-10 p-4 sm:p-6 flex flex-col gap-3 sm:gap-4 overflow-y-auto custom-scrollbar">
+          <div className="flex-1 min-h-0 bg-root-surface relative z-10 p-4 sm:p-6 flex flex-col gap-3 sm:gap-4 overflow-y-auto custom-scrollbar">
             {/* Notice + Stock Info */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 shrink-0">
-              <div className="p-3 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 flex items-start gap-2.5">
-                <Sparkles className="h-4 w-4 text-[#00FFAA] shrink-0 mt-0.5" />
-                <p className="text-[11px] sm:text-xs text-[#E0E0E0] leading-relaxed">
-                  Kirim bantuan komoditas ke <strong className="text-white">{targetCountryName}</strong>. Setiap setara <strong className="text-[#00FFAA]">10.000 Nilai Komoditas</strong> akan menaikkan <strong className="text-[#00FFAA]">+1 Tingkat Hubungan</strong>.
+              <div className="p-3 rounded-xl bg-root-canvas border border-root-accent/20 flex items-start gap-2.5">
+                <Sparkles className="h-4 w-4 text-root-accent shrink-0 mt-0.5" />
+                <p className="text-[11px] sm:text-xs text-root-text leading-relaxed">
+                  Kirim bantuan komoditas ke <strong className="text-white">{targetCountryName}</strong>. Setiap setara <strong className="text-root-accent">10.000 Nilai Komoditas</strong> akan menaikkan <strong className="text-root-accent">+1 Tingkat Hubungan</strong>.
                 </p>
               </div>
 
-              <div className="flex items-center justify-between bg-[#0A1A1A] p-3 rounded-xl border border-[#00FFAA]/20">
-                <span className="text-[11px] sm:text-xs text-[#6B8A8A] font-semibold flex items-center gap-2">
-                  <Package className="h-4 w-4 text-[#00FFAA]" />
+              <div className="flex items-center justify-between bg-root-canvas p-3 rounded-xl border border-root-accent/20">
+                <span className="text-[11px] sm:text-xs text-root-subtle font-semibold flex items-center gap-2">
+                  <Package className="h-4 w-4 text-root-accent" />
                   Stok Komoditas Tersedia:
                 </span>
-                <span className={`font-black text-sm ${stockAvailable > 0 ? "text-[#00FFAA]" : "text-rose-400"}`}>
+                <span className={`font-black text-sm ${stockAvailable > 0 ? "text-root-accent" : "text-rose-400"}`}>
                   {stockAvailable.toLocaleString("id-ID", { maximumFractionDigits: 2 })} Unit
                 </span>
               </div>
@@ -243,44 +243,44 @@ export default function BeriHadiahModal({
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 shrink-0">
               {/* Button Pemilih Produk */}
               <div>
-                <label className="block text-[10px] sm:text-xs font-black text-[#00FFAA] uppercase tracking-wider mb-2">
+                <label className="block text-[10px] sm:text-xs font-black text-root-accent uppercase tracking-wider mb-2">
                   Pilih Produk Komoditas
                 </label>
                 <button
                   type="button"
                   onClick={() => setIsProductPickerOpen(true)}
-                  className="w-full h-11 bg-[#0A1A1A] hover:bg-[#00FFAA]/5 border border-[#00FFAA]/40 hover:border-[#00FFAA] rounded-xl px-3 flex items-center justify-between text-white transition-all cursor-pointer"
+                  className="w-full h-11 bg-root-canvas hover:bg-root-accent/5 border border-root-accent/40 hover:border-root-accent rounded-xl px-3 flex items-center justify-between text-white transition-all cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5 truncate">
-                    <Layers className="h-4 w-4 text-[#00FFAA] shrink-0" />
-                    <span className="font-sans font-bold text-xs sm:text-sm tracking-wide truncate text-[#E0E0E0]">
+                    <Layers className="h-4 w-4 text-root-accent shrink-0" />
+                    <span className="font-sans font-bold text-xs sm:text-sm tracking-wide truncate text-root-text">
                       {formatLabel(selectedProduct)}
                     </span>
                   </div>
-                  <ChevronDown className="w-4 h-4 text-[#00FFAA] shrink-0" />
+                  <ChevronDown className="w-4 h-4 text-root-accent shrink-0" />
                 </button>
               </div>
 
               {/* Input Kuantitas Hadiah */}
               <div>
-                <label className="block text-[10px] sm:text-xs font-black text-[#00FFAA] uppercase tracking-wider mb-2">
+                <label className="block text-[10px] sm:text-xs font-black text-root-accent uppercase tracking-wider mb-2">
                   Jumlah Komoditas (Unit)
                 </label>
-                <div className="flex h-11 w-full min-w-0 items-center gap-1.5 rounded-xl border border-[#00FFAA]/40 bg-[#0A1A1A] px-2 sm:gap-2 sm:px-3">
+                <div className="flex h-11 w-full min-w-0 items-center gap-1.5 rounded-xl border border-root-accent/40 bg-root-canvas px-2 sm:gap-2 sm:px-3">
                   <input
                     type="number"
                     min={1}
                     value={quantity || ""}
                     onChange={(e) => setQuantity(Math.max(0, parseInt(e.target.value) || 0))}
-                    className="w-0 min-w-0 flex-1 bg-transparent text-sm font-sans font-black text-[#E0E0E0] outline-none placeholder-[#6B8A8A]"
+                    className="w-0 min-w-0 flex-1 bg-transparent text-sm font-sans font-black text-root-text outline-none placeholder-root-subtle"
                     placeholder="0"
                   />
-                  <span className="mr-1 shrink-0 text-xs font-bold text-[#6B8A8A]">Unit</span>
+                  <span className="mr-1 shrink-0 text-xs font-bold text-root-subtle">Unit</span>
                   <div className="flex shrink-0 gap-1">
                     <button
                       type="button"
                       onClick={() => handleAddQty(-10)}
-                      className="p-1.5 bg-[#0F2424] hover:bg-[#00FFAA]/20 border border-[#00FFAA]/30 rounded text-[#00FFAA] transition-all cursor-pointer"
+                      className="p-1.5 bg-root-surface hover:bg-root-accent/20 border border-root-accent/30 rounded text-root-accent transition-all cursor-pointer"
                       title="-10"
                     >
                       <Minus className="h-3 w-3" />
@@ -288,7 +288,7 @@ export default function BeriHadiahModal({
                     <button
                       type="button"
                       onClick={() => handleAddQty(10)}
-                      className="p-1.5 bg-[#0F2424] hover:bg-[#00FFAA]/20 border border-[#00FFAA]/30 rounded text-[#00FFAA] transition-all cursor-pointer"
+                      className="p-1.5 bg-root-surface hover:bg-root-accent/20 border border-root-accent/30 rounded text-root-accent transition-all cursor-pointer"
                       title="+10"
                     >
                       <Plus className="h-3 w-3" />
@@ -296,7 +296,7 @@ export default function BeriHadiahModal({
                     <button
                       type="button"
                       onClick={handleSetMax}
-                      className="px-2 py-1 bg-[#00FFAA]/20 hover:bg-[#00FFAA]/30 border border-[#00FFAA]/50 rounded text-[10px] font-black text-[#00FFAA] transition-all cursor-pointer"
+                      className="px-2 py-1 bg-root-accent/20 hover:bg-root-accent/30 border border-root-accent/50 rounded text-[10px] font-black text-root-accent transition-all cursor-pointer"
                     >
                       Max
                     </button>
@@ -306,28 +306,28 @@ export default function BeriHadiahModal({
             </div>
 
             {/* Nilai Diplomatik Hadiah */}
-            <div className="p-3 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl flex items-center justify-between shrink-0 text-xs">
-              <span className="text-[#6B8A8A] font-semibold">
+            <div className="p-3 bg-root-canvas border border-root-accent/20 rounded-xl flex items-center justify-between shrink-0 text-xs">
+              <span className="text-root-subtle font-semibold">
                 Estimasi Nilai Diplomatik ({quantity.toLocaleString("id-ID", { maximumFractionDigits: 2 })} x {unitValue.toLocaleString("id-ID", { maximumFractionDigits: 2 })}):
               </span>
-              <span className="font-black text-[#00FFAA] text-sm">
+              <span className="font-black text-root-accent text-sm">
                 {totalGiftValue.toLocaleString("id-ID", { maximumFractionDigits: 2 })} Nilai
               </span>
             </div>
 
             {/* Impact Preview Card — Hanya ditampilkan jika untuk 1 negara spesifik */}
             {!isAllCountries ? (
-              <div className="bg-[#0A1A1A] p-3 sm:p-4 rounded-xl border border-[#00FFAA]/30 shrink-0">
-                <div className="text-[10px] sm:text-xs font-black text-[#6B8A8A] uppercase tracking-wider flex items-center justify-between mb-3">
+              <div className="bg-root-canvas p-3 sm:p-4 rounded-xl border border-root-accent/30 shrink-0">
+                <div className="text-[10px] sm:text-xs font-black text-root-subtle uppercase tracking-wider flex items-center justify-between mb-3">
                   <span>Kalkulasi Peningkatan Hubungan</span>
-                  <TrendingUp className="h-4 w-4 text-[#00FFAA]" />
+                  <TrendingUp className="h-4 w-4 text-root-accent" />
                 </div>
 
-                <div className="flex items-center justify-between gap-3 bg-[#0F2424] p-3 rounded-lg border border-[#00FFAA]/20">
+                <div className="flex items-center justify-between gap-3 bg-root-surface p-3 rounded-lg border border-root-accent/20">
                   {/* Current Level */}
                   <div className="text-center flex-1">
-                    <span className="block text-[9px] sm:text-[10px] font-bold text-[#6B8A8A] uppercase">Saat Ini</span>
-                    <span className="text-lg sm:text-xl font-black text-[#E0E0E0]">{currentRelation}</span>
+                    <span className="block text-[9px] sm:text-[10px] font-bold text-root-subtle uppercase">Saat Ini</span>
+                    <span className="text-lg sm:text-xl font-black text-root-text">{currentRelation}</span>
                     <div className="mt-1">
                       <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${currentBadge.color}`}>
                         {currentBadge.label}
@@ -337,16 +337,16 @@ export default function BeriHadiahModal({
 
                   {/* Arrow & Delta */}
                   <div className="flex flex-col items-center justify-center px-2">
-                    <span className="text-[11px] font-black text-[#00FFAA] bg-[#00FFAA]/10 px-2 py-0.5 rounded border border-[#00FFAA]/30 mb-1 whitespace-nowrap">
+                    <span className="text-[11px] font-black text-root-accent bg-root-accent/10 px-2 py-0.5 rounded border border-root-accent/30 mb-1 whitespace-nowrap">
                       +{actualGained} Tingkat
                     </span>
-                    <ArrowRight className="h-4 w-4 text-[#00FFAA]" />
+                    <ArrowRight className="h-4 w-4 text-root-accent" />
                   </div>
 
                   {/* New Level */}
                   <div className="text-center flex-1">
-                    <span className="block text-[9px] sm:text-[10px] font-bold text-[#6B8A8A] uppercase">Setelah Pemberian</span>
-                    <span className="text-lg sm:text-xl font-black text-[#00FFAA]">{newRelation}</span>
+                    <span className="block text-[9px] sm:text-[10px] font-bold text-root-subtle uppercase">Setelah Pemberian</span>
+                    <span className="text-lg sm:text-xl font-black text-root-accent">{newRelation}</span>
                     <div className="mt-1">
                       <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${newBadge.color}`}>
                         {newBadge.label}
@@ -367,14 +367,14 @@ export default function BeriHadiahModal({
               </div>
             ) : (
               /* Ringkasan dampak global saat target adalah Semua Negara */
-              <div className="bg-[#0A1A1A] p-3 sm:p-4 rounded-xl border border-[#00FFAA]/30 shrink-0 flex items-center justify-between">
+              <div className="bg-root-canvas p-3 sm:p-4 rounded-xl border border-root-accent/30 shrink-0 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <Sparkles className="h-4 w-4 text-[#00FFAA] shrink-0" />
-                  <span className="text-xs text-[#E0E0E0] font-semibold">
+                  <Sparkles className="h-4 w-4 text-root-accent shrink-0" />
+                  <span className="text-xs text-root-text font-semibold">
                     Efek Global ke Seluruh Negara:
                   </span>
                 </div>
-                <span className="text-sm font-black text-[#00FFAA] bg-[#00FFAA]/10 px-3 py-1 rounded-lg border border-[#00FFAA]/30">
+                <span className="text-sm font-black text-root-accent bg-root-accent/10 px-3 py-1 rounded-lg border border-root-accent/30">
                   +{actualGained} Tingkat untuk Setiap Negara
                 </span>
               </div>
@@ -400,12 +400,12 @@ export default function BeriHadiahModal({
           </div>
 
           {/* FOOTER */}
-          <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-[#00FFAA]/20 bg-[#0A1A1A] shrink-0 rounded-b-2xl">
+          <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-root-accent/20 bg-root-canvas shrink-0 rounded-b-2xl">
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 bg-[#0F2424] hover:bg-[#163535] border border-[#00FFAA]/30 rounded-xl py-2.5 sm:py-3 text-center text-[#E0E0E0] font-extrabold text-xs tracking-wider uppercase transition-all cursor-pointer"
+                className="flex-1 bg-root-surface hover:bg-[#163535] border border-root-accent/30 rounded-xl py-2.5 sm:py-3 text-center text-root-text font-extrabold text-xs tracking-wider uppercase transition-all cursor-pointer"
               >
                 Batal
               </button>
@@ -414,7 +414,7 @@ export default function BeriHadiahModal({
                 disabled={!isValid}
                 onClick={handleConfirm}
                 className={`flex-1 rounded-xl py-2.5 sm:py-3 text-center font-black text-xs tracking-wider uppercase transition-all shadow-lg flex items-center justify-center gap-2 ${isValid
-                    ? "bg-[#00FFAA] hover:bg-[#00e699] text-[#0A1A1A] border border-[#00FFAA] cursor-pointer"
+                    ? "bg-root-accent hover:bg-[#00e699] text-root-canvas border border-root-accent cursor-pointer"
                     : "bg-gray-700 text-gray-400 border border-gray-600 cursor-not-allowed opacity-50"
                   }`}
               >

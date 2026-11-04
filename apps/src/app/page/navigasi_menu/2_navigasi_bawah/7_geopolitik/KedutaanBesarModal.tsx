@@ -116,7 +116,7 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
   const renderFlag = (iso: string, altName: string) => {
     if (!iso || iso.length !== 2) return null;
     return (
-      <div className="w-6 h-4 rounded-sm overflow-hidden border border-[#00FFAA]/20 flex-shrink-0 shadow-sm bg-[#051111] relative">
+      <div className="w-6 h-4 rounded-sm overflow-hidden border border-root-accent/20 flex-shrink-0 shadow-sm bg-[#051111] relative">
         <img
           src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
           alt={altName}
@@ -168,14 +168,14 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
         <div className="flex flex-col h-full overflow-hidden">
 
           {/* HEADER */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-                <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA] animate-pulse" />
+              <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
+                <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent animate-pulse" />
               </div>
               <div>
-                <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Kantor Kedutaan Besar Asing</h2>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">{currentCountryName}</p>
+                <h2 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Kantor Kedutaan Besar Asing</h2>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">{currentCountryName}</p>
               </div>
             </div>
             <div className="flex shrink-0 items-center gap-2">
@@ -185,7 +185,7 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
               />
               <button
                 onClick={onClose}
-                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+                className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
               >
                 <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
@@ -194,35 +194,35 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
           </div>
 
           {/* BODY */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 neon-scrollbar">
-            <p className="text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-4">
+          <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-root-surface relative z-10 neon-scrollbar">
+            <p className="text-xs text-root-subtle font-semibold leading-relaxed mb-4">
               Kelola daftar kedutaan asing yang dimiliki negara Anda. Setiap kedutaan yang dibangun akan muncul di sini dan dapat dihancurkan jika diperlukan.
             </p>
 
             {embassies.length === 0 ? (
-              <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-8 text-center">
-                <p className="text-sm text-[#00FFAA] font-black mb-2">Belum ada kedutaan asing yang terdaftar.</p>
-                <p className="text-xs text-[#6B8A8A]">Bangun kedutaan melalui halaman detail negara untuk mulai menambahkan hubungan diplomatik.</p>
+              <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-8 text-center">
+                <p className="text-sm text-root-accent font-black mb-2">Belum ada kedutaan asing yang terdaftar.</p>
+                <p className="text-xs text-root-subtle">Bangun kedutaan melalui halaman detail negara untuk mulai menambahkan hubungan diplomatik.</p>
               </div>
             ) : (
               <div className="flex flex-col gap-3 w-full">
                 {embassies.map((item: any, idx: number) => {
                   const iso = getIsoFromName(item.mitra);
                   return (
-                    <div key={idx} className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl flex flex-row items-center justify-between w-full gap-4">
+                    <div key={idx} className="bg-root-canvas border border-root-accent/20 p-4 rounded-xl flex flex-row items-center justify-between w-full gap-4">
 
                       {/* Bagian Informasi Kedutaan */}
                       <div>
                         <div className="flex items-center gap-2 mb-1">
                           {renderFlag(iso, item.mitra)}
-                          <h4 className="text-sm font-black text-[#E0E0E0] uppercase tracking-wider">{item.mitra}</h4>
+                          <h4 className="text-sm font-black text-root-text uppercase tracking-wider">{item.mitra}</h4>
                         </div>
                         <div className="flex flex-wrap gap-2 text-[10px] leading-none mt-2">
-                          <span className="bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">{item.status || 'Aktif'}</span>
-                          {item.type && <span className="bg-[#0F2424] text-[#6B8A8A] border border-[#00FFAA]/20 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">{item.type}</span>}
+                          <span className="bg-root-accent/10 text-root-accent border border-root-accent/30 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">{item.status || 'Aktif'}</span>
+                          {item.type && <span className="bg-root-surface text-root-subtle border border-root-accent/20 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">{item.type}</span>}
                         </div>
                         {item.continent && (
-                          <p className="text-[10px] text-[#6B8A8A] mt-2">Benua: {item.continent}</p>
+                          <p className="text-[10px] text-root-subtle mt-2">Benua: {item.continent}</p>
                         )}
                       </div>
 
@@ -230,7 +230,7 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
                       <div className="flex flex-row items-center gap-2 flex-shrink-0">
                         <button
                           onClick={() => handleOpenCountryDetail(item.mitra)}
-                          className="border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5"
+                          className="border border-root-accent/40 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5"
                         >
                           <Globe className="w-3.5 h-3.5" />
                           Lihat Detail
@@ -238,7 +238,7 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
 
                         <button
                           onClick={() => handleDestroyEmbassy(item.mitra)}
-                          className="border border-rose-500/40 bg-[#0F2424] text-rose-400 hover:bg-rose-500 hover:text-white px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer"
+                          className="border border-rose-500/40 bg-root-surface text-rose-400 hover:bg-rose-500 hover:text-white px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer"
                         >
                           Hancurkan Kedutaan
                         </button>
@@ -254,22 +254,22 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
 
       {/* Modal Konfirmasi Hancurkan Kedutaan */}
       {confirmModal.isOpen && (
-        <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-8 pointer-events-auto rounded-2xl">
-          <div className="bg-[#0F2424] border border-rose-500/40 rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-8 pointer-events-auto rounded-2xl">
+          <div className="bg-root-surface border border-rose-500/40 rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
             <button
               onClick={() => setConfirmModal({ isOpen: false, partnerName: null })}
-              className="absolute top-4 right-4 p-1.5 rounded-lg text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
+              className="absolute top-4 right-4 p-1.5 rounded-lg text-root-subtle hover:text-root-accent transition-colors cursor-pointer"
             >
               <X className="h-5 w-5" />
             </button>
             <h3 className="text-lg font-bold text-rose-400 uppercase tracking-wide mb-3">Konfirmasi Hancurkan Kedutaan</h3>
-            <p className="text-sm text-[#6B8A8A] font-medium leading-relaxed mb-6">
-              Apakah Anda yakin ingin menghancurkan Kedutaan Besar di <strong className="text-[#E0E0E0]">{confirmModal.partnerName}</strong>? Tindakan ini tidak dapat dibatalkan dan akan memutuskan hubungan diplomatik.
+            <p className="text-sm text-root-subtle font-medium leading-relaxed mb-6">
+              Apakah Anda yakin ingin menghancurkan Kedutaan Besar di <strong className="text-root-text">{confirmModal.partnerName}</strong>? Tindakan ini tidak dapat dibatalkan dan akan memutuskan hubungan diplomatik.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setConfirmModal({ isOpen: false, partnerName: null })}
-                className="flex-1 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#E0E0E0] text-xs font-bold uppercase transition-all cursor-pointer"
+                className="flex-1 py-2.5 rounded-xl border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-text text-xs font-bold uppercase transition-all cursor-pointer"
               >
                 Batal
               </button>
@@ -286,15 +286,15 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
 
       {/* Modal Notifikasi Sukses */}
       {successModal.isOpen && (
-        <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-8 pointer-events-auto rounded-2xl">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/40 rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
-            <h3 className="text-lg font-bold text-[#00FFAA] uppercase tracking-wide mb-3">Berhasil</h3>
-            <p className="text-sm text-[#6B8A8A] font-medium leading-relaxed mb-6">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-8 pointer-events-auto rounded-2xl">
+          <div className="bg-root-surface border border-root-accent/40 rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
+            <h3 className="text-lg font-bold text-root-accent uppercase tracking-wide mb-3">Berhasil</h3>
+            <p className="text-sm text-root-subtle font-medium leading-relaxed mb-6">
               {successModal.message}
             </p>
             <button
               onClick={() => setSuccessModal({ isOpen: false, message: null })}
-              className="w-full py-2.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 transition-all font-black text-xs uppercase cursor-pointer"
+              className="w-full py-2.5 rounded-xl bg-root-accent text-root-canvas hover:bg-root-accent/80 transition-all font-black text-xs uppercase cursor-pointer"
             >
               Tutup
             </button>

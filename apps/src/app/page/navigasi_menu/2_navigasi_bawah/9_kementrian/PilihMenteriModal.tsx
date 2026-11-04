@@ -53,34 +53,34 @@ export default function PilihMenteriModal({
   return createPortal(
     <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
-        <header className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] shrink-0">
+        <header className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas shrink-0">
           <div className="flex items-center gap-3">
-            <div className="p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#00FFAA]/10">
-              <Icon className="h-5 w-5 text-[#00FFAA]" />
+            <div className="p-1.5 rounded-lg border border-root-accent/30 bg-root-accent/10">
+              <Icon className="h-5 w-5 text-root-accent" />
             </div>
             <div>
-              <h2 className="text-sm sm:text-base font-bold uppercase tracking-wide text-[#E0E0E0]">
+              <h2 className="text-sm sm:text-base font-bold uppercase tracking-wide text-root-text">
                 Kandidat Menteri
               </h2>
-              <p className="text-[10px] font-semibold text-[#6B8A8A]">{department.name}</p>
+              <p className="text-[10px] font-semibold text-root-subtle">{department.name}</p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
+            className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
           >
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
           </button>
         </header>
 
-        <div className="flex-1 overflow-y-auto bg-[#0F2424] p-4 sm:p-6 neon-scrollbar">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-3">
+        <div className="flex-1 overflow-y-auto bg-root-surface p-4 sm:p-6 neon-scrollbar">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-root-accent/20 bg-root-canvas p-3">
             <p className="text-xs font-semibold text-[#A0B0B0]">
               Pilih satu kandidat untuk meningkatkan efek {department.effectLabel}.
             </p>
-            <p className="flex items-center gap-1.5 text-xs font-bold text-[#00FFAA]">
+            <p className="flex items-center gap-1.5 text-xs font-bold text-root-accent">
               <Banknote className="h-4 w-4" />
               Netto harian: {availableNetIncome.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
             </p>
@@ -108,25 +108,25 @@ export default function PilihMenteriModal({
               return (
                 <article
                   key={candidate.tier}
-                  className={`flex flex-col rounded-xl border bg-[#0A1A1A] p-4 ${
+                  className={`flex flex-col rounded-xl border bg-root-canvas p-4 ${
                     isHired
                       ? "border-emerald-400/60 shadow-lg shadow-emerald-500/10"
-                      : "border-[#00FFAA]/20"
+                      : "border-root-accent/20"
                   }`}
                 >
                   <div className="mb-3 flex items-center justify-between">
-                    <span className="flex items-center gap-2 text-sm font-black text-[#E0E0E0]">
-                      <Award className="h-4 w-4 text-[#00FFAA]" />
+                    <span className="flex items-center gap-2 text-sm font-black text-root-text">
+                      <Award className="h-4 w-4 text-root-accent" />
                       Menteri {candidate.tier}
                     </span>
                     {isHired && <span className="text-[9px] font-black uppercase text-emerald-300">Menjabat</span>}
                   </div>
-                  <p className="mb-4 flex-1 text-xs font-bold text-[#00FFAA]">
+                  <p className="mb-4 flex-1 text-xs font-bold text-root-accent">
                     {signedEffect} {department.effectLabel}
                   </p>
-                  <div className="mb-3 flex items-center justify-between border-t border-[#00FFAA]/10 pt-3 text-[11px]">
-                    <span className="font-semibold text-[#6B8A8A]">Biaya rekrutmen</span>
-                    <span className="font-black text-[#E0E0E0]">{candidate.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
+                  <div className="mb-3 flex items-center justify-between border-t border-root-accent/10 pt-3 text-[11px]">
+                    <span className="font-semibold text-root-subtle">Biaya rekrutmen</span>
+                    <span className="font-black text-root-text">{candidate.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
                   </div>
                   <button
                     type="button"
@@ -137,7 +137,7 @@ export default function PilihMenteriModal({
                         ? "cursor-default bg-emerald-500/20 text-emerald-300"
                         : insufficientCash
                           ? "cursor-pointer border border-rose-500/40 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20"
-                          : "bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80"
+                          : "bg-root-accent text-root-canvas hover:bg-root-accent/80"
                     }`}
                   >
                     {isHired ? "Sedang Menjabat" : hiredTier > 0 ? "Posisi Terisi" : insufficientCash ? "Netto Tidak Cukup" : "Rekrut Menteri"}

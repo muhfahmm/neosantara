@@ -82,10 +82,10 @@ export default function MitraModalsMenu({
       {!isDetailOpen && (
         <NotebookModalWrapper onClose={onClose} zIndexClass="z-[65]">
           <div className="flex h-full min-w-0 flex-col overflow-hidden">
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
               <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-                  <Handshake className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+                <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+                  <Handshake className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
                 </div>
                 <div className="min-w-0">
                   <h2 className={rootModalTypography.title}>Mitra Dagang Global</h2>
@@ -96,9 +96,9 @@ export default function MitraModalsMenu({
 
             <div className="root-no-scrollbar-glow min-h-0 flex-1 overflow-y-auto p-4 sm:p-6 relative z-10 neon-scrollbar">
               {partners.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-10 text-[#6B8A8A]">
-                  <Globe className="h-12 w-12 mb-3 opacity-30 text-[#00FFAA]" />
-                  <p className="text-sm font-bold text-[#E0E0E0]">Belum ada hubungan dagang</p>
+                <div className="flex flex-col items-center justify-center py-10 text-root-subtle">
+                  <Globe className="h-12 w-12 mb-3 opacity-30 text-root-accent" />
+                  <p className="text-sm font-bold text-root-text">Belum ada hubungan dagang</p>
                   <p className={`${rootModalTypography.body} break-words`}>Jalin hubungan dagang dengan negara lain melalui menu Jual/Beli.</p>
                 </div>
               ) : (
@@ -106,7 +106,7 @@ export default function MitraModalsMenu({
                   {partners.map((partner, idx) => (
                     <div 
                       key={idx}
-                      className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all hover:border-[#00FFAA]/50"
+                      className="bg-root-canvas border border-root-accent/20 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all hover:border-root-accent/50"
                     >
                       <div className="flex-1 flex items-center gap-3">
                         {/* Flag Image Rendering */}
@@ -115,11 +115,11 @@ export default function MitraModalsMenu({
                           const iso = matched?.iso;
                           if (!iso || iso.length !== 2) {
                             return (
-                              <div className="w-8 h-5 rounded-sm bg-[#0F2424] border border-[#00FFAA]/20 flex-shrink-0" />
+                              <div className="w-8 h-5 rounded-sm bg-root-surface border border-root-accent/20 flex-shrink-0" />
                             );
                           }
                           return (
-                            <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#00FFAA]/30 flex-shrink-0 bg-[#0F2424] relative">
+                            <div className="w-8 h-5 rounded-sm overflow-hidden border border-root-accent/30 flex-shrink-0 bg-root-surface relative">
                               <img
                                 src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
                                 alt={partner.nama_negara}
@@ -130,21 +130,21 @@ export default function MitraModalsMenu({
                         })()}
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <h4 className="min-w-0 break-words text-sm font-black text-[#E0E0E0] uppercase">{partner.nama_negara}</h4>
+                            <h4 className="min-w-0 break-words text-sm font-black text-root-text uppercase">{partner.nama_negara}</h4>
                             {partner.jenis_perjanjian && partner.jenis_perjanjian.trim().toLowerCase() !== "perdagangan" && (
-                              <span className="px-2 py-0.5 bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30 rounded-full text-[8px] font-bold uppercase tracking-wider">
+                              <span className="px-2 py-0.5 bg-root-accent/10 text-root-accent border border-root-accent/30 rounded-full text-[8px] font-bold uppercase tracking-wider">
                                 {partner.jenis_perjanjian}
                               </span>
                             )}
                             <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider
                               ${partner.status_hubungan === 'Aktif' ? 'bg-emerald-950/40 text-emerald-400 border border-emerald-500/30' : 
                                 partner.status_hubungan === 'Pasif' ? 'bg-amber-950/40 text-amber-400 border border-amber-500/30' : 
-                                'bg-[#0F2424] text-[#6B8A8A] border border-[#6B8A8A]/30'}`}>
+                                'bg-root-surface text-root-subtle border border-root-subtle/30'}`}>
                               {partner.status_hubungan}
                             </span>
                           </div>
                           {partner.region.trim().toLowerCase() !== "internasional" && (
-                            <p className="break-words text-[10px] text-[#6B8A8A] font-semibold flex items-center gap-1">
+                            <p className="break-words text-[10px] text-root-subtle font-semibold flex items-center gap-1">
                               {partner.region}
                             </p>
                           )}
@@ -153,8 +153,8 @@ export default function MitraModalsMenu({
                       <div className="flex items-center gap-4">
                         {partner.total_nilai_dagang !== undefined && (
                           <div className="text-right">
-                            <p className="text-[9px] text-[#6B8A8A] uppercase">Nilai Dagang</p>
-                            <p className="text-xs font-black text-[#00FFAA]">{partner.total_nilai_dagang.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</p>
+                            <p className="text-[9px] text-root-subtle uppercase">Nilai Dagang</p>
+                            <p className="text-xs font-black text-root-accent">{partner.total_nilai_dagang.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</p>
                           </div>
                         )}
                         <div className="flex items-center gap-3">
@@ -168,7 +168,7 @@ export default function MitraModalsMenu({
                           >
                             Putus Hubungan
                           </button>
-                          <ChevronRight className="h-4 w-4 text-[#6B8A8A] group-hover:text-[#00FFAA] group-hover:translate-x-0.5 transition-all" />
+                          <ChevronRight className="h-4 w-4 text-root-subtle group-hover:text-root-accent group-hover:translate-x-0.5 transition-all" />
                         </div>
                       </div>
                     </div>
@@ -177,12 +177,12 @@ export default function MitraModalsMenu({
                   {/* BUTTON TAMBAH MITRA */}
                   <button
                     onClick={() => setIsTambahOpen(true)}
-                    className="bg-[#0A1A1A] border border-dashed border-[#00FFAA]/30 hover:border-[#00FFAA] p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-center gap-3 transition-all hover:bg-[#00FFAA]/5 cursor-pointer min-h-[80px]"
+                    className="bg-root-canvas border border-dashed border-root-accent/30 hover:border-root-accent p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-center gap-3 transition-all hover:bg-root-accent/5 cursor-pointer min-h-[80px]"
                   >
-                    <div className="p-2 rounded-full bg-[#00FFAA]/10 border border-[#00FFAA]/30">
-                      <Plus className="h-6 w-6 text-[#00FFAA]" />
+                    <div className="p-2 rounded-full bg-root-accent/10 border border-root-accent/30">
+                      <Plus className="h-6 w-6 text-root-accent" />
                     </div>
-                    <span className="text-sm font-black text-[#00FFAA] uppercase tracking-wider">Tambah Mitra</span>
+                    <span className="text-sm font-black text-root-accent uppercase tracking-wider">Tambah Mitra</span>
                   </button>
                 </div>
               )}

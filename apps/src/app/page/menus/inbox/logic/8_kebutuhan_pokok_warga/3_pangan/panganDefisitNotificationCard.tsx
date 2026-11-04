@@ -36,7 +36,7 @@ export default function PanganDefisitNotificationCard({ notification }: Props) {
           {notification.message}
         </p>
 
-        <div className="bg-[#0A1A1A] border border-rose-500/20 rounded-xl p-2.5 text-xs space-y-1">
+        <div className="bg-root-canvas border border-rose-500/20 rounded-xl p-2.5 text-xs space-y-1">
           <div className="flex justify-between items-center text-[10px] text-slate-400 font-bold uppercase">
             <span>Daftar Sektor Defisit ({deficitCount} dari {totalSectors}):</span>
           </div>

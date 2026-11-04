@@ -159,26 +159,26 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
   }, [countryVotes, searchQuery]);
 
   return (
-    <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-xl shadow-lg">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#00FFAA]/15 mb-4">
+    <div className="bg-root-canvas border border-root-accent/20 p-6 rounded-xl shadow-lg">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-root-accent/15 mb-4">
         <div className="flex items-center gap-3">
-          <Vote className="h-5 w-5 text-[#00FFAA]" />
-          <h4 className="text-sm font-black text-[#E0E0E0] uppercase tracking-wide">Suara Negara di Majelis Umum</h4>
+          <Vote className="h-5 w-5 text-root-accent" />
+          <h4 className="text-sm font-black text-root-text uppercase tracking-wide">Suara Negara di Majelis Umum</h4>
         </div>
 
         <div className="flex items-center gap-3">
           {/* Search Input Bar */}
           <div className="relative flex-1 sm:w-64">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#00FFAA]/60" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-root-accent/60" />
             <input
               type="text"
               placeholder="Cari negara..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#051111] border border-[#00FFAA]/30 rounded-lg pl-8 pr-3 py-1 text-xs text-[#E0E0E0] placeholder-[#6B8A8A] focus:outline-none focus:border-[#00FFAA] transition-colors"
+              className="w-full bg-[#051111] border border-root-accent/30 rounded-lg pl-8 pr-3 py-1 text-xs text-root-text placeholder-root-subtle focus:outline-none focus:border-root-accent transition-colors"
             />
           </div>
-          <div className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A] whitespace-nowrap">
+          <div className="text-[10px] font-black uppercase tracking-widest text-root-subtle whitespace-nowrap">
             {filteredVotes.length} negara
           </div>
         </div>
@@ -186,19 +186,19 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
 
       <div className="overflow-x-auto max-h-[450px] overflow-y-auto neon-scrollbar">
         <table className="w-full text-xs border-collapse">
-          <thead className="bg-[#051111] border-b border-[#00FFAA]/20 sticky top-0 z-10">
+          <thead className="bg-[#051111] border-b border-root-accent/20 sticky top-0 z-10">
             <tr>
               {/* ✅ KOLOM NOMOR BARU */}
-              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-center text-[9px] sm:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider whitespace-nowrap w-12">No</th>
-              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider whitespace-nowrap">Negara</th>
-              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider whitespace-nowrap">Bendera</th>
-              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider whitespace-nowrap">Suara PBB</th>
+              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-center text-[9px] sm:text-[10px] font-black text-root-accent uppercase tracking-wider whitespace-nowrap w-12">No</th>
+              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black text-root-accent uppercase tracking-wider whitespace-nowrap">Negara</th>
+              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black text-root-accent uppercase tracking-wider whitespace-nowrap">Bendera</th>
+              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black text-root-accent uppercase tracking-wider whitespace-nowrap">Suara PBB</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#00FFAA]/10">
+          <tbody className="divide-y divide-root-accent/10">
             {filteredVotes.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-3 py-6 text-center text-xs text-[#6B8A8A]">
+                <td colSpan={4} className="px-3 py-6 text-center text-xs text-root-subtle">
                   Tidak ada negara yang ditemukan.
                 </td>
               </tr>
@@ -211,29 +211,29 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
                   <tr
                     key={`${item.name_id}-${idx}`}
                     className={`transition-colors ${isUserCountry
-                        ? 'bg-[#00FFAA]/15 hover:bg-[#00FFAA]/25 border-l-4 border-l-[#00FFAA]'
-                        : 'hover:bg-[#00FFAA]/5'
+                        ? 'bg-root-accent/15 hover:bg-root-accent/25 border-l-4 border-l-root-accent'
+                        : 'hover:bg-root-accent/5'
                       }`}
                   >
                     {/* ✅ NOMOR URUT DENGAN BADGE */}
                     <td className="px-3 py-2 text-center">
                       <span
                         className={`inline-flex items-center justify-center min-w-[24px] h-[20px] px-1.5 rounded-md font-black text-[10px] sm:text-[11px] ${isUserCountry
-                            ? 'bg-[#00FFAA] text-[#0A1A1A]'
+                            ? 'bg-root-accent text-root-canvas'
                             : idx < 3
                               ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50'
-                              : 'bg-[#0F2424] text-[#6B8A8A] border border-[#00FFAA]/20'
+                              : 'bg-root-surface text-root-subtle border border-root-accent/20'
                           }`}
                       >
                         {idx + 1}
                       </span>
                     </td>
-                    <td className={`px-3 py-2 font-bold ${isUserCountry ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>{item.name_id}</td>
+                    <td className={`px-3 py-2 font-bold ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>{item.name_id}</td>
                     <td className="px-3 py-2">{renderFlag(item.iso, item.name_id)}</td>
-                    <td className={`px-3 py-2 font-bold ${isUserCountry ? 'text-[#00FFAA]' : 'text-[#6B8A8A]'}`}>
+                    <td className={`px-3 py-2 font-bold ${isUserCountry ? 'text-root-accent' : 'text-root-subtle'}`}>
                       <span>{item.un_vote}</span>
                       {isUserCountry && getSuaraPBBResearchBonus(countryDetail) > 0 && (
-                        <span className="ml-2 inline-flex items-center rounded-md bg-[#00FFAA]/20 border border-[#00FFAA]/40 px-2 py-0.5 text-[9px] font-black text-[#00FFAA] uppercase">
+                        <span className="ml-2 inline-flex items-center rounded-md bg-root-accent/20 border border-root-accent/40 px-2 py-0.5 text-[9px] font-black text-root-accent uppercase">
                           +{getSuaraPBBResearchBonus(countryDetail)} Riset Suara PBB
                         </span>
                       )}

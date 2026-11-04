@@ -209,7 +209,7 @@ export default function DoktrinKeterbukaanSection({
     } else {
       return {
         label: "Negara Globalis & Terbuka Penuh",
-        color: "bg-teal-950/80 text-[#00FFAA] border-[#00FFAA]/50",
+        color: "bg-teal-950/80 text-root-accent border-root-accent/50",
         badge: "Tipe Kosmopolitan",
         desc: "Jaminan penuh kebebasan pers, perbatasan bebas, internet terbuka mutlak, dan integrasi pasar global tanpa hambatan.",
       };
@@ -221,7 +221,7 @@ export default function DoktrinKeterbukaanSection({
     if (val <= 40) return "text-amber-400";
     if (val <= 65) return "text-yellow-400";
     if (val <= 80) return "text-emerald-400";
-    return "text-[#00FFAA]";
+    return "text-root-accent";
   };
 
   const getBarGradient = (val: number) => {
@@ -229,7 +229,7 @@ export default function DoktrinKeterbukaanSection({
     if (val <= 40) return "from-rose-500 to-amber-500";
     if (val <= 65) return "from-amber-500 to-yellow-400";
     if (val <= 80) return "from-emerald-500 to-emerald-400";
-    return "from-[#00FFAA] to-[#10B981]";
+    return "from-root-accent to-[#10B981]";
   };
 
   const filteredIndicators = useMemo(() => {
@@ -240,12 +240,12 @@ export default function DoktrinKeterbukaanSection({
   return (
     <div className="space-y-6">
       {/* 1. HERO BANNER INDEKS KETERBUKAAN */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0F2826] via-[#0A1F1E] to-[#041211] p-5 sm:p-7 border border-[#00FFAA]/30 shadow-2xl">
-        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-[#00FFAA]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0F2826] via-[#0A1F1E] to-[#041211] p-5 sm:p-7 border border-root-accent/30 shadow-2xl">
+
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="space-y-2 max-w-xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00FFAA]/15 border border-[#00FFAA]/30 text-[#00FFAA] text-xs font-black tracking-wider uppercase">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-root-accent/15 border border-root-accent/30 text-root-accent text-xs font-black tracking-wider uppercase">
               <Globe className="w-3.5 h-3.5" />
               <span>Doktrin & Keterbukaan Negara</span>
             </div>
@@ -256,16 +256,16 @@ export default function DoktrinKeterbukaanSection({
           </div>
 
           {/* INDEKS OVERALL CARD */}
-          <div className="bg-[#031510]/80 backdrop-blur-md border-2 border-[#00FFAA]/40 rounded-2xl p-4 sm:p-5 flex items-center gap-4 min-w-[260px] shadow-lg">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#00FFAA]/30 to-[#00FFAA]/5 border border-[#00FFAA]/50 flex items-center justify-center shrink-0">
-              <Sparkles className="w-7 h-7 text-[#00FFAA]" />
+          <div className="bg-[#031510]/80  border-2 border-root-accent/40 rounded-2xl p-4 sm:p-5 flex items-center gap-4 min-w-[260px] shadow-lg">
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-root-accent/30 to-root-accent/5 border border-root-accent/50 flex items-center justify-center shrink-0">
+              <Sparkles className="w-7 h-7 text-root-accent" />
             </div>
             <div>
-              <span className="text-[10px] font-black tracking-wider uppercase text-[#6B8A8A]">
+              <span className="text-[10px] font-black tracking-wider uppercase text-root-subtle">
                 Indeks Keterbukaan
               </span>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl sm:text-4xl font-black text-[#00FFAA]">
+                <span className="text-3xl sm:text-4xl font-black text-root-accent">
                   {overallScore}
                 </span>
                 <span className="text-xs font-bold text-gray-300">/ 100</span>
@@ -278,19 +278,19 @@ export default function DoktrinKeterbukaanSection({
         </div>
 
         {/* PROGRESS SPEKTRUM NASIONAL */}
-        <div className="mt-6 pt-5 border-t border-[#00FFAA]/20 space-y-2">
+        <div className="mt-6 pt-5 border-t border-root-accent/20 space-y-2">
           <div className="flex justify-between text-[11px] font-bold uppercase">
             <span className="flex items-center gap-1.5 text-rose-400">
               <Lock className="w-3.5 h-3.5" /> Tertutup Total (0%)
             </span>
-            <span className="flex items-center gap-1.5 text-[#00FFAA]">
+            <span className="flex items-center gap-1.5 text-root-accent">
               Terbuka Penuh (100%) <Unlock className="w-3.5 h-3.5" />
             </span>
           </div>
 
-          <div className="h-3 w-full bg-[#051714] rounded-full overflow-hidden border border-[#00FFAA]/20 p-0.5">
+          <div className="h-3 w-full bg-[#051714] rounded-full overflow-hidden border border-root-accent/20 p-0.5">
             <div
-              className="h-full bg-gradient-to-r from-rose-600 via-amber-500 via-yellow-400 to-[#00FFAA] rounded-full transition-all duration-500 relative"
+              className="h-full bg-gradient-to-r from-rose-600 via-amber-500 via-yellow-400 to-root-accent rounded-full transition-all duration-500 relative"
               style={{ width: `${Math.max(5, Math.min(100, overallScore))}%` }}
             />
           </div>
@@ -298,7 +298,7 @@ export default function DoktrinKeterbukaanSection({
       </div>
 
       {/* 2. FILTER KATEGORI */}
-      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar bg-[#0A1A1A] p-2.5 rounded-xl border border-[#00FFAA]/20">
+      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar bg-root-canvas p-2.5 rounded-xl border border-root-accent/20">
         {[
           { id: "all", label: "Semua Indikator (9)", icon: Globe },
           { id: "civil", label: "Kebebasan Sipil & HAM (4)", icon: Users },
@@ -312,8 +312,8 @@ export default function DoktrinKeterbukaanSection({
               key={tab.id}
               onClick={() => setSelectedCategory(tab.id)}
               className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 ${isActive
-                  ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md font-black"
-                  : "bg-[#0F2424] text-[#A0C0C0] hover:text-[#00FFAA] border border-[#00FFAA]/20"
+                  ? "bg-root-accent text-root-canvas shadow-md font-black"
+                  : "bg-root-surface text-[#A0C0C0] hover:text-root-accent border border-root-accent/20"
                 }`}
             >
               <Icon className="w-3.5 h-3.5" />
@@ -334,19 +334,19 @@ export default function DoktrinKeterbukaanSection({
           return (
             <div
               key={item.key}
-              className="bg-[#0A1A1A] rounded-2xl p-5 border border-[#00FFAA]/20 hover:border-[#00FFAA]/50 transition-all flex flex-col justify-between group shadow-lg"
+              className="bg-root-canvas rounded-2xl p-5 border border-root-accent/20 hover:border-root-accent/50 transition-all flex flex-col justify-between group shadow-lg"
             >
               <div>
                 <div className="flex items-start justify-between gap-2.5 mb-2.5">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-[#00FFAA]/10 border border-[#00FFAA]/20 flex items-center justify-center shrink-0 text-[#00FFAA]">
+                    <div className="w-8 h-8 rounded-lg bg-root-accent/10 border border-root-accent/20 flex items-center justify-center shrink-0 text-root-accent">
                       <Icon className="w-4 h-4" />
                     </div>
                     <div>
-                      <h3 className="text-xs font-bold text-white group-hover:text-[#00FFAA] transition-colors leading-tight">
+                      <h3 className="text-xs font-bold text-white group-hover:text-root-accent transition-colors leading-tight">
                         {item.name}
                       </h3>
-                      <span className="text-[9px] font-black uppercase text-[#6B8A8A] tracking-wider">
+                      <span className="text-[9px] font-black uppercase text-root-subtle tracking-wider">
                         {item.category === "civil"
                           ? "Sipil & HAM"
                           : item.category === "media"
@@ -365,13 +365,13 @@ export default function DoktrinKeterbukaanSection({
               </div>
 
               {/* PROGRESS BAR & SPEKTRUM NILAI */}
-              <div className="space-y-1.5 pt-2 border-t border-[#00FFAA]/10">
+              <div className="space-y-1.5 pt-2 border-t border-root-accent/10">
                 <div className="flex justify-between text-[10px] font-semibold text-gray-400">
                   <span className="truncate max-w-[120px]">{item.lowLabel}</span>
                   <span className="truncate max-w-[120px] text-right">{item.highLabel}</span>
                 </div>
 
-                <div className="h-2 w-full bg-[#0F2424] rounded-full overflow-hidden border border-[#00FFAA]/20">
+                <div className="h-2 w-full bg-root-surface rounded-full overflow-hidden border border-root-accent/20">
                   <div
                     className={`h-full bg-gradient-to-r ${barGradient} transition-all duration-300`}
                     style={{ width: `${Math.max(4, Math.min(100, val))}%` }}
@@ -379,7 +379,7 @@ export default function DoktrinKeterbukaanSection({
                 </div>
 
                 <div className="flex items-center justify-between pt-1 text-[10px]">
-                  <span className="text-[#6B8A8A]">Status Regulasi</span>
+                  <span className="text-root-subtle">Status Regulasi</span>
                   <span className={`font-bold flex items-center gap-1 ${scoreColor}`}>
                     <CheckCircle2 className="w-3 h-3" />
                     {val >= 70

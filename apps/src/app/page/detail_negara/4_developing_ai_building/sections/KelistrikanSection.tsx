@@ -103,16 +103,16 @@ export default function KelistrikanSection({
   return (
     <div className="space-y-4">
       {/* HEADER SECTION GRID LISTRIK */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-[#0A1A1A]/80 border border-[#00FFAA]/20 p-4 rounded-2xl">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-root-canvas/80 border border-root-accent/20 p-4 rounded-2xl">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-[#0F2424] border border-[#00FFAA]/30">
-            <Zap className="w-5 h-5 text-[#00FFAA]" />
+          <div className="p-2.5 rounded-xl bg-root-surface border border-root-accent/30">
+            <Zap className="w-5 h-5 text-root-accent" />
           </div>
           <div>
-            <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-[#00FFAA] flex items-center gap-2">
+            <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-root-accent flex items-center gap-2">
               Statistik Grid Kelistrikan Nasional
             </h4>
-            <p className="text-[10px] sm:text-xs text-[#6B8A8A] font-semibold">
+            <p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
               Keseimbangan kapasitas pembangkitan daya terhadap beban konsumsi sektor nasional
             </p>
           </div>
@@ -120,16 +120,16 @@ export default function KelistrikanSection({
 
         {/* Quick Badges */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0F2424] border border-[#00FFAA]/30 rounded-xl">
-            <TrendingUp className="w-3.5 h-3.5 text-[#00FFAA]" />
-            <span className="text-[10px] font-bold text-[#6B8A8A] uppercase">Produksi:</span>
-            <span className="text-[11px] font-black text-[#00FFAA]">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-root-surface border border-root-accent/30 rounded-xl">
+            <TrendingUp className="w-3.5 h-3.5 text-root-accent" />
+            <span className="text-[10px] font-bold text-root-subtle uppercase">Produksi:</span>
+            <span className="text-[11px] font-black text-root-accent">
               {formatNumber(totalProductionMW)} MW
             </span>
           </div>
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0F2424] border border-rose-500/30 rounded-xl">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-root-surface border border-rose-500/30 rounded-xl">
             <TrendingDown className="w-3.5 h-3.5 text-rose-400" />
-            <span className="text-[10px] font-bold text-[#6B8A8A] uppercase">Beban:</span>
+            <span className="text-[10px] font-bold text-root-subtle uppercase">Beban:</span>
             <span className="text-[11px] font-black text-rose-400">
               {formatNumber(estimatedConsumptionMW)} MW
             </span>
@@ -189,7 +189,7 @@ export default function KelistrikanSection({
               ? "bg-emerald-950/30 border-emerald-500/30 text-emerald-400"
               : balanceMW < 0
               ? "bg-rose-950/30 border-rose-500/30 text-rose-400"
-              : "bg-[#0A1A1A] border-[#00FFAA]/20 text-[#6B8A8A]"
+              : "bg-root-canvas border-root-accent/20 text-root-subtle"
           }`}
         >
           <div className="flex items-center justify-between mb-2">
@@ -220,25 +220,25 @@ export default function KelistrikanSection({
       </div>
 
       {/* INDEKS KEPUASAN LISTRIK */}
-      <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 sm:p-5 rounded-2xl shadow-sm">
+      <div className="bg-root-canvas border border-root-accent/20 p-4 sm:p-5 rounded-2xl shadow-sm">
         <div className="flex justify-between items-center mb-2">
           <div>
-            <span className="text-xs sm:text-sm font-black text-[#00FFAA] uppercase tracking-wider">
+            <span className="text-xs sm:text-sm font-black text-root-accent uppercase tracking-wider">
               Indeks Kepuasan Rakyat (Sektor Listrik)
             </span>
-            <p className="text-[10px] text-[#6B8A8A] mt-0.5">
+            <p className="text-[10px] text-root-subtle mt-0.5">
               Ketersediaan pasokan listrik bagi fasilitas umum, permukiman, dan lini industri negara
             </p>
           </div>
-          <span className="text-2xl sm:text-3xl font-black text-[#00FFAA]">
-            {electricitySatisfaction} <span className="text-sm text-[#6B8A8A]">/ 100</span>
+          <span className="text-2xl sm:text-3xl font-black text-root-accent">
+            {electricitySatisfaction} <span className="text-sm text-root-subtle">/ 100</span>
           </span>
         </div>
-        <div className="w-full h-3 bg-[#0F2424] rounded-full overflow-hidden border border-[#00FFAA]/20">
+        <div className="w-full h-3 bg-root-surface rounded-full overflow-hidden border border-root-accent/20">
           <div
             className={`h-full rounded-full transition-all duration-300 ${
               electricitySatisfaction >= 80
-                ? "bg-[#00FFAA]"
+                ? "bg-root-accent"
                 : electricitySatisfaction >= 50
                 ? "bg-amber-400"
                 : "bg-rose-500"
@@ -251,20 +251,20 @@ export default function KelistrikanSection({
       {/* RINCIAN BEBAN LISTRIK PER SEKTOR & DAFTAR PEMBANGKIT */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Kolom 1: Beban Konsumsi per Sektor */}
-        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-2xl flex flex-col justify-between">
+        <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl flex flex-col justify-between">
           <div>
-            <h5 className="text-xs font-black uppercase tracking-wider text-[#00FFAA] flex items-center gap-2 mb-3">
+            <h5 className="text-xs font-black uppercase tracking-wider text-root-accent flex items-center gap-2 mb-3">
               <Layers className="w-4 h-4" /> Distribusi Beban Sektor
             </h5>
 
             <div className="space-y-2.5">
               {/* Hunian */}
-              <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#0F2424] border border-[#00FFAA]/15">
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-root-surface border border-root-accent/15">
                 <div className="flex items-center gap-2">
                   <Home className="w-4 h-4 text-teal-400" />
                   <div>
-                    <p className="text-xs font-bold text-[#E0E0E0]">Sektor Hunian / Permukiman</p>
-                    <p className="text-[10px] text-[#6B8A8A]">Rumah subsidi, apartemen, mansion</p>
+                    <p className="text-xs font-bold text-root-text">Sektor Hunian / Permukiman</p>
+                    <p className="text-[10px] text-root-subtle">Rumah subsidi, apartemen, mansion</p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -275,12 +275,12 @@ export default function KelistrikanSection({
               </div>
 
               {/* Tempat Umum */}
-              <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#0F2424] border border-[#00FFAA]/15">
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-root-surface border border-root-accent/15">
                 <div className="flex items-center gap-2">
                   <Building2 className="w-4 h-4 text-blue-400" />
                   <div>
-                    <p className="text-xs font-bold text-[#E0E0E0]">Tempat Umum & Layanan Publik</p>
-                    <p className="text-[10px] text-[#6B8A8A]">Sekolah, rumah sakit, kantor, hiburan</p>
+                    <p className="text-xs font-bold text-root-text">Tempat Umum & Layanan Publik</p>
+                    <p className="text-[10px] text-root-subtle">Sekolah, rumah sakit, kantor, hiburan</p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -291,12 +291,12 @@ export default function KelistrikanSection({
               </div>
 
               {/* Produksi */}
-              <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#0F2424] border border-[#00FFAA]/15">
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-root-surface border border-root-accent/15">
                 <div className="flex items-center gap-2">
                   <Factory className="w-4 h-4 text-amber-400" />
                   <div>
-                    <p className="text-xs font-bold text-[#E0E0E0]">Pabrik & Sentra Produksi</p>
-                    <p className="text-[10px] text-[#6B8A8A]">Pabrik manufaktur, tambang, pengolahan</p>
+                    <p className="text-xs font-bold text-root-text">Pabrik & Sentra Produksi</p>
+                    <p className="text-[10px] text-root-subtle">Pabrik manufaktur, tambang, pengolahan</p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -307,12 +307,12 @@ export default function KelistrikanSection({
               </div>
 
               {/* Militer */}
-              <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#0F2424] border border-[#00FFAA]/15">
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-root-surface border border-root-accent/15">
                 <div className="flex items-center gap-2">
                   <Shield className="w-4 h-4 text-rose-400" />
                   <div>
-                    <p className="text-xs font-bold text-[#E0E0E0]">Infrastruktur & Pangkalan Militer</p>
-                    <p className="text-[10px] text-[#6B8A8A]">Barak, hangar, pangkalan laut & udara</p>
+                    <p className="text-xs font-bold text-root-text">Infrastruktur & Pangkalan Militer</p>
+                    <p className="text-[10px] text-root-subtle">Barak, hangar, pangkalan laut & udara</p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -326,16 +326,16 @@ export default function KelistrikanSection({
 
           <button
             onClick={() => setIsDetailModalOpen(true)}
-            className="w-full mt-4 py-2 rounded-xl bg-[#0F2424] hover:bg-[#00FFAA]/15 border border-[#00FFAA]/30 text-xs font-black uppercase tracking-wider text-[#00FFAA] transition-all cursor-pointer flex items-center justify-center gap-1.5"
+            className="w-full mt-4 py-2 rounded-xl bg-root-surface hover:bg-root-accent/15 border border-root-accent/30 text-xs font-black uppercase tracking-wider text-root-accent transition-all cursor-pointer flex items-center justify-center gap-1.5"
           >
             Buka Rincian Beban Lengkap <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {/* Kolom 2: Inventaris Pembangkit Listrik */}
-        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-2xl flex flex-col justify-between">
+        <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl flex flex-col justify-between">
           <div>
-            <h5 className="text-xs font-black uppercase tracking-wider text-[#00FFAA] flex items-center gap-2 mb-3">
+            <h5 className="text-xs font-black uppercase tracking-wider text-root-accent flex items-center gap-2 mb-3">
               <Zap className="w-4 h-4" /> Pasokan Berdasarkan Jenis Pembangkit
             </h5>
 
@@ -343,18 +343,18 @@ export default function KelistrikanSection({
               {activeSources.map((plant) => (
                 <div
                   key={plant.key}
-                  className="flex items-center justify-between p-2 rounded-xl bg-[#0F2424]/70 border border-[#00FFAA]/10 text-xs"
+                  className="flex items-center justify-between p-2 rounded-xl bg-root-surface/70 border border-root-accent/10 text-xs"
                 >
                   <div className="min-w-0 pr-2">
-                    <p className="font-bold text-[#E0E0E0] truncate">{plant.label}</p>
-                    <p className="text-[9px] text-[#6B8A8A]">
+                    <p className="font-bold text-root-text truncate">{plant.label}</p>
+                    <p className="text-[9px] text-root-subtle">
                       {plant.fuelShortage
                         ? "Bahan bakar kurang — tidak berproduksi"
                         : `${plant.count} unit aktif × ${formatNumber(plant.unitProduction)} MW`}
                     </p>
                   </div>
                   <div className="text-right shrink-0">
-                    <span className="font-black text-[#00FFAA]">
+                    <span className="font-black text-root-accent">
                       {formatNumber(plant.totalProduction)} MW
                     </span>
                   </div>

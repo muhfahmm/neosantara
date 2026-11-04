@@ -398,10 +398,10 @@ export default function HunianPermukimanModal({
         <div className="flex flex-col h-full overflow-hidden">
 
           {/* HEADER */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-              <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-                <Home className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+              <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+                <Home className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
               </div>
               <div className="min-w-0">
                 <h2 className={rootModalTypography.title}>Hunian & Permukiman</h2>
@@ -416,7 +416,7 @@ export default function HunianPermukimanModal({
                 })}
                 aria-label={`Informasi ${activeItem?.label ?? "hunian aktif"}`}
                 title={`Informasi ${activeItem?.label ?? "hunian aktif"}`}
-                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] transition-colors hover:border-[#00FFAA] hover:bg-[#00FFAA]/10"
+                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent transition-colors hover:border-root-accent hover:bg-root-accent/10"
               >
                 <Info className="h-4 w-4" />
               </button>
@@ -427,20 +427,20 @@ export default function HunianPermukimanModal({
           {/* BODY */}
           <div className="flex-1 flex min-h-0 relative z-10">
             {/* SIDEBAR TABS */}
-            <div className="w-40 sm:w-44 lg:w-48 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
+            <div className="w-40 sm:w-44 lg:w-48 border-r border-root-accent/30 bg-root-canvas p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
               {items.map((it) => (
                   <button
                     key={it.key}
                     onClick={() => setActiveTab(it.key)}
                     className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${
                       activeTab === it.key
-                        ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
-                        : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA] hover:text-[#00FFAA]"
+                        ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
+                        : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent hover:text-root-accent"
                     }`}
                   >
                     <span className="truncate text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{it.label}</span>
                     <span className={`shrink-0 text-[9px] lg:text-[10px] font-black px-1.5 py-0.5 rounded-full ${
-                      activeTab === it.key ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
+                      activeTab === it.key ? "bg-root-canvas text-root-accent" : "bg-root-canvas text-root-subtle"
                     }`}>
                       {it.value > 0 ? "Tersedia" : "Kosong"}
                     </span>
@@ -449,26 +449,26 @@ export default function HunianPermukimanModal({
             </div>
 
             {/* KONTEN UTAMA */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-[#0F2424] flex flex-col justify-between neon-scrollbar">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-root-surface flex flex-col justify-between neon-scrollbar">
               <div>
                 {activeItem && (
                   <div className="max-w-3xl">
-                    <div className="mb-4 sm:mb-6 bg-[#0A1A1A]/60 p-3 sm:p-4 rounded-2xl border border-[#00FFAA]/20">
+                    <div className="mb-4 sm:mb-6 bg-root-canvas/60 p-3 sm:p-4 rounded-2xl border border-root-accent/20">
                       <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-4">
                         <div className="flex-1 min-w-[180px]">
-                          <h3 className="text-base sm:text-lg lg:text-xl font-black text-[#00FFAA] uppercase tracking-wider">{activeItem.label}</h3>
+                          <h3 className="text-base sm:text-lg lg:text-xl font-black text-root-accent uppercase tracking-wider">{activeItem.label}</h3>
                         </div>
 
                         {/* Card Rasio Kapasitas Unit Hunian */}
-                        <div className="flex items-center gap-2 px-3 py-1.5 sm:py-2 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30 shrink-0 shadow-inner">
-                          <div className="p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/20">
-                            <Users className="w-3.5 h-3.5 text-[#00FFAA]" />
+                        <div className="flex items-center gap-2 px-3 py-1.5 sm:py-2 rounded-xl bg-root-canvas border border-root-accent/30 shrink-0 shadow-inner">
+                          <div className="p-1.5 bg-root-surface rounded-lg border border-root-accent/20">
+                            <Users className="w-3.5 h-3.5 text-root-accent" />
                           </div>
                           <div>
                             <div className="flex items-center gap-1.5">
-                              <p className="text-[9px] font-black uppercase text-[#6B8A8A] tracking-wider">Kapasitas Standar AI</p>
+                              <p className="text-[9px] font-black uppercase text-root-subtle tracking-wider">Kapasitas Standar AI</p>
                               {housingBonusPercent > 0 && (
-                                <span className="text-[8px] font-black px-1.5 py-0.2 rounded bg-[#00FFAA]/20 text-[#00FFAA] border border-[#00FFAA]/40">
+                                <span className="text-[8px] font-black px-1.5 py-0.2 rounded bg-root-accent/20 text-root-accent border border-root-accent/40">
                                   +{housingBonusPercent}% Bonus
                                 </span>
                               )}
@@ -488,7 +488,7 @@ export default function HunianPermukimanModal({
                                         {baseCap.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                                       </span>
                                     )}
-                                    <span className="text-[#00FFAA] font-black">
+                                    <span className="text-root-accent font-black">
                                       {effectiveCap.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Jiwa
                                     </span>
                                   </span>
@@ -500,16 +500,16 @@ export default function HunianPermukimanModal({
 
                         <button
                           onClick={handleOpenAIModal}
-                          className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#00FFAA]/10 border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all text-[10px] sm:text-xs font-black shadow-md cursor-pointer shrink-0 active:scale-95"
+                          className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-root-accent/10 border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all text-[10px] sm:text-xs font-black shadow-md cursor-pointer shrink-0 active:scale-95"
                         >
-                          <Sparkles className="w-3.5 h-3.5 text-[#00FFAA] hover:text-[#0A1A1A]" />
+                          <Sparkles className="w-3.5 h-3.5 text-root-accent hover:text-root-canvas" />
                           <span>Rekomendasi AI</span>
                         </button>
                       </div>
-                      <p className="text-[11px] sm:text-xs text-[#E0E0E0] mt-3 leading-relaxed bg-[#0A1A1A] border border-[#00FFAA]/20 p-3 sm:p-4 rounded-xl sm:rounded-2xl">{activeItem.detailDesc}</p>
+                      <p className="text-[11px] sm:text-xs text-root-text mt-3 leading-relaxed bg-root-canvas border border-root-accent/20 p-3 sm:p-4 rounded-xl sm:rounded-2xl">{activeItem.detailDesc}</p>
                     </div>
 
-                    <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-2xl p-2 sm:p-2.5 shadow-sm w-44 sm:w-52 lg:w-56 relative overflow-visible flex flex-col justify-between">
+                    <div className="bg-root-canvas border border-root-accent/20 rounded-2xl p-2 sm:p-2.5 shadow-sm w-44 sm:w-52 lg:w-56 relative overflow-visible flex flex-col justify-between">
                       {hoveredBuildingKey === activeItem.key && (() => {
                         const bMeta = findMeta(activeItem.key) || {};
                         const perCount = activeItem.value || 0;
@@ -531,9 +531,9 @@ export default function HunianPermukimanModal({
 
                       <div>
                         <div className="flex items-start justify-between gap-1 mb-0.5">
-                          <p className="text-[9px] sm:text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider flex-1 pr-1 leading-snug">Total Terdaftar</p>
+                          <p className="text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1 leading-snug">Total Terdaftar</p>
                           <button
-                            className="flex-shrink-0 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-colors cursor-pointer bg-[#0F2424] border border-[#00FFAA]/30 hover:border-[#00FFAA] text-[#6B8A8A] hover:text-[#00FFAA]"
+                            className="flex-shrink-0 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
                             onClick={(e) => {
                               e.stopPropagation();
                               setHoveredBuildingKey(hoveredBuildingKey === activeItem.key ? null : activeItem.key);
@@ -553,13 +553,13 @@ export default function HunianPermukimanModal({
                           />
                         )}
                         <div className="flex items-end gap-1 mt-1 flex-wrap">
-                          <p className="text-xs sm:text-sm lg:text-base font-black text-[#E0E0E0] leading-none">{activeItem.value.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</p>
+                          <p className="text-xs sm:text-sm lg:text-base font-black text-root-text leading-none">{activeItem.value.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</p>
                         </div>
                       </div>
-                      <div className="border-t border-[#00FFAA]/10 mt-1.5 pt-1">
+                      <div className="border-t border-root-accent/10 mt-1.5 pt-1">
                         <button
                           onClick={() => handleBuild(activeItem.key, activeItem.label)}
-                          className="w-full py-1 sm:py-1.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black border border-[#00FFAA] text-[9px] sm:text-[10px] uppercase cursor-pointer hover:bg-[#00FFAA]/80 transition-all shadow-md active:scale-[0.98]"
+                          className="w-full py-1 sm:py-1.5 rounded-xl bg-root-accent text-root-canvas font-black border border-root-accent text-[9px] sm:text-[10px] uppercase cursor-pointer hover:bg-root-accent/80 transition-all shadow-md active:scale-[0.98]"
                         >
                           Bangun
                         </button>
@@ -570,41 +570,41 @@ export default function HunianPermukimanModal({
               </div>
 
               {/* FOOTER STATISTIK */}
-              <div className="mt-8 border-t border-[#00FFAA]/20 pt-6 space-y-4">
+              <div className="mt-8 border-t border-root-accent/20 pt-6 space-y-4">
                 {/* Ringkasan total unit & populasi */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">Total Keseluruhan Unit Hunian</p>
-                    <p className="text-lg sm:text-xl font-black text-[#00FFAA] mt-1 break-words">{totalValue.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</p>
+                  <div className="rounded-2xl border border-root-accent/20 bg-root-canvas p-4">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-root-subtle">Total Keseluruhan Unit Hunian</p>
+                    <p className="text-lg sm:text-xl font-black text-root-accent mt-1 break-words">{totalValue.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</p>
                   </div>
-                  <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">Populasi</p>
-                    <p className="text-lg sm:text-xl font-black text-[#E0E0E0] mt-1 break-words">{formatNumber(population)} Jiwa</p>
+                  <div className="rounded-2xl border border-root-accent/20 bg-root-canvas p-4">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-root-subtle">Populasi</p>
+                    <p className="text-lg sm:text-xl font-black text-root-text mt-1 break-words">{formatNumber(population)} Jiwa</p>
                   </div>
                 </div>
 
                 {/* 🏠 CARD KAPASITAS HUNIAN */}
-                <div className="rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-4 shadow-sm">
+                <div className="rounded-2xl border border-root-accent/30 bg-root-canvas p-4 shadow-sm">
                   <div className="flex items-center gap-2 mb-3">
-                    <Home className="h-5 w-5 text-[#00FFAA]" />
-                    <h4 className="text-sm font-black uppercase tracking-wider text-[#00FFAA]">Kapasitas Hunian vs Kebutuhan</h4>
+                    <Home className="h-5 w-5 text-root-accent" />
+                    <h4 className="text-sm font-black uppercase tracking-wider text-root-accent">Kapasitas Hunian vs Kebutuhan</h4>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-[#0F2424] rounded-xl p-3 border border-[#00FFAA]/20 flex flex-col justify-between">
-                      <p className="text-[9px] font-bold uppercase text-[#6B8A8A]">Total Kapasitas</p>
+                    <div className="bg-root-surface rounded-xl p-3 border border-root-accent/20 flex flex-col justify-between">
+                      <p className="text-[9px] font-bold uppercase text-root-subtle">Total Kapasitas</p>
                       <p className="text-xs sm:text-sm lg:text-base font-black text-emerald-400 leading-tight mt-1 break-words">
-                        {totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[9px] font-bold text-[#6B8A8A]">orang</span>
+                        {totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[9px] font-bold text-root-subtle">orang</span>
                       </p>
                     </div>
-                    <div className="bg-[#0F2424] rounded-xl p-3 border border-[#00FFAA]/20 flex flex-col justify-between">
-                      <p className="text-[9px] font-bold uppercase text-[#6B8A8A]">Kebutuhan (Populasi)</p>
+                    <div className="bg-root-surface rounded-xl p-3 border border-root-accent/20 flex flex-col justify-between">
+                      <p className="text-[9px] font-bold uppercase text-root-subtle">Kebutuhan (Populasi)</p>
                       <p className={`text-xs sm:text-sm lg:text-base font-black leading-tight mt-1 break-words ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
                         {population.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className={`text-[9px] font-bold ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>orang</span>
                       </p>
                     </div>
-                    <div className={`bg-[#0F2424] rounded-xl p-3 border ${isSufficient ? 'border-emerald-500/30' : 'border-rose-500/30'} flex flex-col justify-between`}>
-                      <p className="text-[9px] font-bold uppercase text-[#6B8A8A]">
+                    <div className={`bg-root-surface rounded-xl p-3 border ${isSufficient ? 'border-emerald-500/30' : 'border-rose-500/30'} flex flex-col justify-between`}>
+                      <p className="text-[9px] font-bold uppercase text-root-subtle">
                         {isSufficient ? 'Surplus Hunian' : 'Kekurangan / Tunawisma'}
                       </p>
                       <p className={`text-xs sm:text-sm lg:text-base font-black leading-tight mt-1 break-words ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
@@ -616,8 +616,8 @@ export default function HunianPermukimanModal({
                         </span>
                       </p>
                     </div>
-                    <div className="bg-[#0F2424] rounded-xl p-3 border border-[#00FFAA]/20 flex flex-col justify-between">
-                      <p className="text-[9px] font-bold uppercase text-[#6B8A8A]">Keterpenuhan</p>
+                    <div className="bg-root-surface rounded-xl p-3 border border-root-accent/20 flex flex-col justify-between">
+                      <p className="text-[9px] font-bold uppercase text-root-subtle">Keterpenuhan</p>
                       <p className={`text-xs sm:text-sm lg:text-base font-black leading-tight mt-1 ${percentageMet >= 100 ? 'text-emerald-400' : 'text-amber-400'}`}>
                         {percentageMet.toFixed(1)}%
                       </p>
@@ -629,53 +629,53 @@ export default function HunianPermukimanModal({
                     {capacityBreakdown.filter((item) => item.key === activeTab).map((item) => (
                       <div
                         key={item.key}
-                        className="bg-[#00FFAA]/10 border border-[#00FFAA] shadow-[0_0_15px_rgba(0,255,170,0.15)] ring-1 ring-[#00FFAA] rounded-xl p-3.5 sm:p-4"
+                        className="bg-root-accent/10 border border-root-accent shadow-[0_0_15px_rgba(0,255,170,0.15)] ring-1 ring-root-accent rounded-xl p-3.5 sm:p-4"
                       >
                         <div className="flex items-center justify-between gap-1 mb-2">
-                          <p className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#00FFAA]">
+                          <p className="text-xs sm:text-sm font-black uppercase tracking-wider text-root-accent">
                             {item.label}
                           </p>
-                          <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-[#00FFAA] text-[#0A1A1A] shrink-0">
+                          <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-root-accent text-root-canvas shrink-0">
                             Kategori Aktif
                           </span>
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                          <div className="bg-[#0F2424] p-2.5 rounded-lg border border-[#00FFAA]/20 flex flex-col justify-between">
-                            <span className="text-[10px] text-[#6B8A8A] font-bold uppercase">Jumlah Unit Terdaftar</span>
-                            <span className="font-black text-sm text-[#E0E0E0] mt-1">{item.count.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span>
+                          <div className="bg-root-surface p-2.5 rounded-lg border border-root-accent/20 flex flex-col justify-between">
+                            <span className="text-[10px] text-root-subtle font-bold uppercase">Jumlah Unit Terdaftar</span>
+                            <span className="font-black text-sm text-root-text mt-1">{item.count.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span>
                           </div>
-                          <div className="bg-[#0F2424] p-2.5 rounded-lg border border-[#00FFAA]/20 flex flex-col justify-between">
-                            <span className="text-[10px] text-[#6B8A8A] font-bold uppercase">Kapasitas / Unit</span>
+                          <div className="bg-root-surface p-2.5 rounded-lg border border-root-accent/20 flex flex-col justify-between">
+                            <span className="text-[10px] text-root-subtle font-bold uppercase">Kapasitas / Unit</span>
                             <div className="flex items-center gap-1.5 mt-1">
                               {housingBonusPercent > 0 && item.capacityPerUnit !== item.baseCapacityPerUnit && (
                                 <span className="line-through text-rose-400 font-bold text-xs opacity-80">
                                   {item.baseCapacityPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                                 </span>
                               )}
-                              <span className="font-black text-sm text-[#E0E0E0]">
+                              <span className="font-black text-sm text-root-text">
                                 {item.capacityPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa/unit
                               </span>
                             </div>
                           </div>
-                          <div className="bg-[#0F2424] p-2.5 rounded-lg border border-[#00FFAA]/20 flex flex-col justify-between">
-                            <span className="text-[10px] text-[#6B8A8A] font-bold uppercase">Total Kapasitas Kategori</span>
-                            <span className="font-black text-sm text-[#00FFAA] mt-1">{item.totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa</span>
+                          <div className="bg-root-surface p-2.5 rounded-lg border border-root-accent/20 flex flex-col justify-between">
+                            <span className="text-[10px] text-root-subtle font-bold uppercase">Total Kapasitas Kategori</span>
+                            <span className="font-black text-sm text-root-accent mt-1">{item.totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa</span>
                           </div>
                         </div>
 
-                        <div className="w-full bg-[#0A1A1A] rounded-full h-2 mt-3 border border-[#00FFAA]/10 overflow-hidden">
+                        <div className="w-full bg-root-canvas rounded-full h-2 mt-3 border border-root-accent/10 overflow-hidden">
                           <div
-                            className="h-full rounded-full transition-all duration-300 bg-[#00FFAA]"
+                            className="h-full rounded-full transition-all duration-300 bg-root-accent"
                             style={{ width: `${Math.min(100, item.percentage)}%` }}
                           />
                         </div>
-                        <p className="text-[10px] text-[#6B8A8A] mt-1.5 font-semibold">Mengakomodasi {item.percentage.toFixed(1)}% dari total populasi negara.</p>
+                        <p className="text-[10px] text-root-subtle mt-1.5 font-semibold">Mengakomodasi {item.percentage.toFixed(1)}% dari total populasi negara.</p>
                       </div>
                     ))}
                   </div>
 
-                  <div className={`mt-4 p-3 rounded-xl text-xs font-bold ${isSufficient ? 'bg-[#0F2424] border border-emerald-500/30 text-emerald-400' : 'bg-[#0F2424] border border-rose-500/30 text-rose-400'}`}>
+                  <div className={`mt-4 p-3 rounded-xl text-xs font-bold ${isSufficient ? 'bg-root-surface border border-emerald-500/30 text-emerald-400' : 'bg-root-surface border border-rose-500/30 text-rose-400'}`}>
                     {isSufficient 
                       ? `✅ Kapasitas hunian mencukupi untuk seluruh populasi. Tersedia kelebihan ${(totalCapacity - population).toLocaleString('id-ID', { maximumFractionDigits: 2 })} tempat.`
                       : `⚠️ Masih terdapat ${shortage.toLocaleString('id-ID', { maximumFractionDigits: 2 })} tunawisma (kekurangan tempat hunian). ${Math.round(100 - percentageMet)}% populasi belum terakomodasi.`}
@@ -683,39 +683,39 @@ export default function HunianPermukimanModal({
                 </div>
 
                 {/* 🔥 INDEKS KEPUASAN PERUMAHAN */}
-                <div className="p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] shadow-md">
+                <div className="p-5 rounded-xl border border-root-accent/30 bg-root-canvas shadow-md">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-black text-[#6B8A8A] uppercase tracking-wider">
+                    <span className="text-sm font-black text-root-subtle uppercase tracking-wider">
                       Indeks Kepuasan Rakyat (Perumahan)
                     </span>
-                    <span className="text-3xl font-black text-[#00FFAA]">
+                    <span className="text-3xl font-black text-root-accent">
                       {housingSatisfaction} / 100
                     </span>
                   </div>
-                  <div className="w-full h-3 bg-[#0F2424] border border-[#00FFAA]/20 rounded-full mt-3 overflow-hidden">
+                  <div className="w-full h-3 bg-root-surface border border-root-accent/20 rounded-full mt-3 overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all duration-200 ${
                         housingSatisfaction <= 40
                           ? "bg-rose-500"
                           : housingSatisfaction <= 75
                           ? "bg-amber-400"
-                          : "bg-[#00FFAA]"
+                          : "bg-root-accent"
                       }`}
                       style={{ width: `${housingSatisfaction}%` }}
                     />
                   </div>
-                  <p className="text-[10px] text-[#E0E0E0] font-bold mt-3">
+                  <p className="text-[10px] text-root-text font-bold mt-3">
                     {housingSatisfaction <= 40
                       ? "🔴 Krisis fasilitas perumahan, tingkat keterpenuhan sangat rendah."
                       : housingSatisfaction <= 75
                       ? "⚠️ Fasilitas perumahan masih terbatas, perlu pembangunan lebih lanjut."
                       : "✅ Ketersediaan fasilitas perumahan sangat mencukupi bagi seluruh rakyat."}
                   </p>
-                  <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-[#6B8A8A]">
-                    <div>Kapasitas per kapita: <span className="font-bold text-[#E0E0E0]">
+                  <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-root-subtle">
+                    <div>Kapasitas per kapita: <span className="font-bold text-root-text">
                       {population > 0 ? (totalCapacity / population).toFixed(2) : 'N/A'}
                     </span></div>
-                    <div>Persentase keterpenuhan: <span className="font-bold text-[#E0E0E0]">{percentageMet.toFixed(1)}%</span></div>
+                    <div>Persentase keterpenuhan: <span className="font-bold text-root-text">{percentageMet.toFixed(1)}%</span></div>
                   </div>
                 </div>
 
@@ -734,7 +734,7 @@ export default function HunianPermukimanModal({
       />
 
       {/* TOAST */}
-      {toast && <div className="fixed bottom-6 right-6 z-[80] bg-[#00FFAA] text-[#0A1A1A] font-black px-4 py-2 rounded-lg shadow-lg border border-[#00FFAA]">{toast}</div>}
+      {toast && <div className="fixed bottom-6 right-6 z-[80] bg-root-accent text-root-canvas font-black px-4 py-2 rounded-lg shadow-lg border border-root-accent">{toast}</div>}
       
       {/* KONFIRMASI PEMBANGUNAN */}
       {showConfirm && selectedBuilding && (() => {
@@ -778,34 +778,34 @@ export default function HunianPermukimanModal({
       {/* MODAL PERINGATAN MATERIAL */}
       {showMaterialWarningModal && insufficientMaterials.length > 0 && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-transparent pointer-events-none">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto">
-            <div className="px-6 py-5 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10">
+          <div className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto">
+            <div className="px-6 py-5 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10">
               <div className="flex items-center gap-2 text-rose-400">
                 <AlertCircle className="h-5 w-5" />
                 <h3 className="text-base font-black uppercase tracking-wider">⚠️ Stok Material Kosong</h3>
               </div>
-              <button onClick={() => setShowMaterialWarningModal(false)} className="text-[#6B8A8A] hover:text-[#00FFAA]">
+              <button onClick={() => setShowMaterialWarningModal(false)} className="text-root-subtle hover:text-root-accent">
                 <X className="h-5 w-5" />
               </button>
             </div>
             <div className="p-6 relative z-10 flex-1 space-y-4">
-              <p className="text-sm text-[#E0E0E0]">
-                Pembangunan <strong className="font-black text-[#00FFAA]">{selectedBuilding?.label}</strong> tidak dapat dilanjutkan karena material berikut ini stoknya kosong (0):
+              <p className="text-sm text-root-text">
+                Pembangunan <strong className="font-black text-root-accent">{selectedBuilding?.label}</strong> tidak dapat dilanjutkan karena material berikut ini stoknya kosong (0):
               </p>
-              <div className="bg-[#0A1A1A] border border-rose-500/30 rounded-xl p-4 flex flex-col gap-2 text-xs font-bold text-[#E0E0E0]">
+              <div className="bg-root-canvas border border-rose-500/30 rounded-xl p-4 flex flex-col gap-2 text-xs font-bold text-root-text">
                 {insufficientMaterials.map((mat, idx) => (
                   <div key={idx} className="flex justify-between items-center">
-                    <span className="text-[#E0E0E0]">{mat.label}</span>
+                    <span className="text-root-text">{mat.label}</span>
                     <span className="text-rose-400 font-black">0</span>
                   </div>
                 ))}
               </div>
-              <p className="text-[10px] text-[#6B8A8A] italic">
+              <p className="text-[10px] text-root-subtle italic">
                 Klik nama material pada daftar di atas untuk melihat informasi produksinya.
               </p>
             </div>
-            <div className="p-4 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex justify-end relative z-10">
-              <button onClick={() => setShowMaterialWarningModal(false)} className="py-2.5 px-6 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 shadow-md">Tutup & Lengkapi Stok</button>
+            <div className="p-4 bg-root-canvas border-t border-root-accent/20 flex justify-end relative z-10">
+              <button onClick={() => setShowMaterialWarningModal(false)} className="py-2.5 px-6 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-md">Tutup & Lengkapi Stok</button>
             </div>
           </div>
         </div>

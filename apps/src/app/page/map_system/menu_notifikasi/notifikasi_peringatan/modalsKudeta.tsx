@@ -83,7 +83,6 @@ export default function ModalsKudeta({ isOpen, kudetaType, currentValue, country
             className={`fixed inset-0 z-[200] flex items-center justify-center p-4 font-sans select-none transition-all duration-700 ${
                 visible ? 'opacity-100' : 'opacity-0'
             }`}
-            style={{ backgroundColor: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(12px)' }}
         >
             {/* Dramatic background pattern */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -106,7 +105,7 @@ export default function ModalsKudeta({ isOpen, kudetaType, currentValue, country
                     <div className={`bg-gradient-to-r ${content.bgColor} p-6 flex flex-col items-center gap-3 border-b-2 border-red-900/50`}>
                         {/* Skull icon overlay */}
                         <div className="relative">
-                            <div className="absolute inset-0 rounded-full bg-red-600/20 blur-xl animate-pulse" />
+                            <div className="absolute inset-0 rounded-full bg-red-600/20  animate-pulse" />
                             <div className="relative w-20 h-20 rounded-full bg-red-950/80 border-4 border-red-700 flex items-center justify-center text-red-400 shadow-lg shadow-red-900/50">
                                 <Skull className="w-10 h-10" />
                             </div>

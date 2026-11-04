@@ -489,32 +489,32 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
         <NotebookModalWrapper onClose={onClose}>
         <div className="flex flex-col h-full overflow-hidden">
           {/* Header */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
             <div className="flex items-center gap-3 sm:gap-6 flex-wrap">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30">
-                  <Landmark className="h-5 w-5 text-[#00FFAA] shrink-0" />
+                <div className="p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/30">
+                  <Landmark className="h-5 w-5 text-root-accent shrink-0" />
                 </div>
                 <h3 className={rootModalTypography.title}>
                   Dewan Kabinet Menteri
                 </h3>
                 <button
                   onClick={() => setShowGeneralInfo(true)}
-                  className="p-1 text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#00FFAA]/10 rounded-lg transition-colors cursor-pointer"
+                  className="p-1 text-root-subtle hover:text-root-accent hover:bg-root-accent/10 rounded-lg transition-colors cursor-pointer"
                   title="Informasi & Panduan Dewan Kabinet"
                 >
                   <Info className="h-4 w-4" />
                 </button>
               </div>
               {/* Badge Ibukota Saat Ini & Tombol Ubah Ibukota */}
-              <div className="flex items-center gap-1.5 bg-[#0F2424] px-2.5 py-1 rounded-lg border border-[#FFE600]/30 shadow-sm">
+              <div className="flex items-center gap-1.5 bg-root-surface px-2.5 py-1 rounded-lg border border-[#FFE600]/30 shadow-sm">
                 <span className="text-[10px] text-[#A2B7B2] font-semibold uppercase tracking-wider">Ibukota:</span>
                 <span className="text-[11px] sm:text-xs font-black text-[#FFE600] uppercase tracking-wide">
                   {countryDetail?.capital || countryDetail?.ibukota || (typeof window !== "undefined" ? (window as any).neosantara_player_capital : null) || "Jakarta"}
                 </span>
                 <button
                   onClick={() => setIsGantiIbukotaOpen(true)}
-                  className="ml-1 px-2 py-0.5 rounded-md bg-[#FFE600]/20 hover:bg-[#FFE600] text-[#FFE600] hover:text-[#0A1A1A] border border-[#FFE600]/40 transition-all font-bold text-[10px] uppercase tracking-wider flex items-center gap-1 cursor-pointer"
+                  className="ml-1 px-2 py-0.5 rounded-md bg-[#FFE600]/20 hover:bg-[#FFE600] text-[#FFE600] hover:text-root-canvas border border-[#FFE600]/40 transition-all font-bold text-[10px] uppercase tracking-wider flex items-center gap-1 cursor-pointer"
                   title="Pindah / Ganti Ibukota Negara"
                 >
                   <MapPin className="h-3 w-3" />
@@ -530,7 +530,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
               />
               <button
                 onClick={onClose}
-                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
+                className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
               >
                 <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
@@ -541,7 +541,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
           {/* BODY LAYOUT WITH LEFT SIDEBAR & RIGHT CONTENT */}
           <div className="flex-1 flex min-h-0 relative z-10">
             {/* LEFT SIDEBAR TABS */}
-            <div className="w-44 sm:w-52 lg:w-56 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2.5 sm:p-3 flex flex-col gap-2 overflow-y-auto neon-scrollbar shrink-0">
+            <div className="w-44 sm:w-52 lg:w-56 border-r border-root-accent/30 bg-root-canvas p-2.5 sm:p-3 flex flex-col gap-2 overflow-y-auto neon-scrollbar shrink-0">
               {TABS.map((tab) => {
                 const isActive = activeTab === tab.key;
                 return (
@@ -550,8 +550,8 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                     onClick={() => setActiveTab(tab.key)}
                     className={`flex items-center justify-between w-full px-3.5 py-3 rounded-2xl border text-left transition-all cursor-pointer ${
                       isActive
-                        ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
-                        : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
+                        ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
+                        : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent/50 hover:text-root-accent"
                     }`}
                   >
                     <span className="text-xs font-bold uppercase tracking-wider">{tab.label}</span>
@@ -561,7 +561,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
             </div>
 
             {/* RIGHT CONTENT AREA */}
-            <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#0F2424] relative z-10 neon-scrollbar">
+            <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-root-surface relative z-10 neon-scrollbar">
               <div className="space-y-4">
                 {activeData.map((dept) => {
                   const level = getLevel(dept.id);
@@ -577,20 +577,20 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                   return (
                     <div
                       key={dept.id}
-                      className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl overflow-hidden shadow-sm"
+                      className="bg-root-canvas border border-root-accent/20 rounded-xl overflow-hidden shadow-sm"
                     >
                       {/* Header hijau */}
-                      <div className="bg-[#0F2424] px-4 py-2.5 flex items-center justify-between border-b border-[#00FFAA]/20">
+                      <div className="bg-root-surface px-4 py-2.5 flex items-center justify-between border-b border-root-accent/20">
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => setInfoTarget(dept)}
-                            className="text-[#6B8A8A] hover:text-[#00FFAA] cursor-pointer transition-colors"
+                            className="text-root-subtle hover:text-root-accent cursor-pointer transition-colors"
                           >
                             <Info className="h-4 w-4" />
                           </button>
-                          <span className="text-[#E0E0E0] text-sm font-bold">{dept.name}</span>
+                          <span className="text-root-text text-sm font-bold">{dept.name}</span>
                         </div>
-                        <span className="text-[#00FFAA] text-[10px] font-bold uppercase bg-[#0A1A1A] px-2 py-0.5 rounded border border-[#00FFAA]/20">
+                        <span className="text-root-accent text-[10px] font-bold uppercase bg-root-canvas px-2 py-0.5 rounded border border-root-accent/20">
                           Level {level}/{MAX_LEVEL}
                         </span>
                       </div>
@@ -607,13 +607,13 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                               className="h-20 w-20 object-contain"
                             />
                           ) : (
-                            <Icon className="h-8 w-8 text-[#00FFAA]" />
+                            <Icon className="h-8 w-8 text-root-accent" />
                           )}
                         </div>
 
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5 mb-2 text-[#E0E0E0] font-bold text-sm">
-                            <span className="h-3 w-3 rounded-full bg-[#00FFAA] inline-block shadow-[0_0_8px_#00FFAA]" />
+                          <div className="flex items-center gap-1.5 mb-2 text-root-text font-bold text-sm">
+                            <span className="h-3 w-3 rounded-full bg-root-accent inline-block shadow-[0_0_8px_#00FFAA]" />
                             {income.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO per hari
                           </div>
 
@@ -651,11 +651,11 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                                   }
                                   className={`h-4 flex-1 rounded-sm transition-all ${
                                     boxLevel === level
-                                      ? "bg-[#00FFAA] cursor-default shadow-[0_0_8px_#00FFAA]"
+                                      ? "bg-root-accent cursor-default shadow-[0_0_8px_#00FFAA]"
                                       : filled
-                                      ? "bg-[#00FFAA]/70 hover:bg-[#00FFAA] cursor-pointer"
+                                      ? "bg-root-accent/70 hover:bg-root-accent cursor-pointer"
                                       : canAffordJump
-                                      ? "bg-[#0F2424] border border-[#00FFAA]/30 hover:border-[#00FFAA] hover:bg-[#00FFAA]/20 cursor-pointer"
+                                      ? "bg-root-surface border border-root-accent/30 hover:border-root-accent hover:bg-root-accent/20 cursor-pointer"
                                       : "bg-gray-800 border border-gray-700 cursor-not-allowed opacity-50"
                                   }`}
                                 />
@@ -675,8 +675,8 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                           aria-label={`Pilih kandidat menteri untuk ${dept.name}`}
                           className={`h-12 w-12 shrink-0 rounded-lg border flex items-center justify-center cursor-pointer hover:scale-105 transition-transform ${
                             maxed
-                              ? "border-[#00FFAA]/10 bg-[#0F2424] text-[#6B8A8A]"
-                              : "border-[#00FFAA]/40 bg-[#00FFAA] text-[#0A1A1A] shadow-md"
+                              ? "border-root-accent/10 bg-root-surface text-root-subtle"
+                              : "border-root-accent/40 bg-root-accent text-root-canvas shadow-md"
                           }`}
                         >
                           <Hammer className="h-5 w-5" />
@@ -684,19 +684,19 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                       </div>
 
                       <div className="px-4 pb-3 -mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[10px] font-bold">
-                        <span className="text-[#00FFAA]">
-                          Efek saat ini: <span className="text-[#E0E0E0]">{currentEffect}</span>
+                        <span className="text-root-accent">
+                          Efek saat ini: <span className="text-root-text">{currentEffect}</span>
                         </span>
                         {!maxed && nextEffect && (
-                          <span className="text-[#6B8A8A]">
-                            Level berikutnya: <span className="text-[#00FFAA]">{nextEffect}</span>
+                          <span className="text-root-subtle">
+                            Level berikutnya: <span className="text-root-accent">{nextEffect}</span>
                           </span>
                         )}
                       </div>
 
                       {!maxed && (
-                        <div className="px-4 pb-3 -mt-1 text-[10px] font-bold text-[#6B8A8A]">
-                          Upgrade ke level {level + 1}: <span className="text-[#00FFAA]">{getLevelUpCostForStep(level + 1, countryDetail)?.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span> &nbsp;•&nbsp;
+                        <div className="px-4 pb-3 -mt-1 text-[10px] font-bold text-root-subtle">
+                          Upgrade ke level {level + 1}: <span className="text-root-accent">{getLevelUpCostForStep(level + 1, countryDetail)?.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span> &nbsp;•&nbsp;
                           Tekan kotak level manapun untuk lompat langsung ke level tersebut
                         </div>
                       )}
@@ -737,26 +737,26 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative font-sans"
+            className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative font-sans"
           >
             <button
               onClick={() => setShowGeneralInfo(false)}
-              className="absolute top-3 right-3 text-[#6B8A8A] hover:text-[#00FFAA] cursor-pointer"
+              className="absolute top-3 right-3 text-root-subtle hover:text-root-accent cursor-pointer"
             >
               <X className="h-5 w-5" />
             </button>
             <div className="flex items-center gap-2.5 mb-3">
-              <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30">
-                <Info className="h-5 w-5 text-[#00FFAA]" />
+              <div className="p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/30">
+                <Info className="h-5 w-5 text-root-accent" />
               </div>
-              <h3 className="text-base font-bold text-[#E0E0E0] uppercase">Panduan Dewan Kabinet</h3>
+              <h3 className="text-base font-bold text-root-text uppercase">Panduan Dewan Kabinet</h3>
             </div>
-            <p className="text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-5">
+            <p className="text-xs text-root-subtle font-semibold leading-relaxed mb-5">
               Kelola kabinet pemerintahan tertinggi negara untuk menjaga kinerja pelayanan birokrasi Anda tetap berintegritas. Tekan salah satu kotak level untuk melompat langsung ke level tersebut — biaya akan dijumlahkan dari semua level yang dilewati. Tekan kotak yang sudah terisi untuk menurunkan level (downgrade) dan mengurangi biaya operasional harian.
             </p>
             <button
               onClick={() => setShowGeneralInfo(false)}
-              className="w-full py-2.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-extrabold text-xs uppercase hover:bg-[#00FFAA]/80 transition-all cursor-pointer shadow-md"
+              className="w-full py-2.5 rounded-xl bg-root-accent text-root-canvas font-extrabold text-xs uppercase hover:bg-root-accent/80 transition-all cursor-pointer shadow-md"
             >
               Mengerti
             </button>
@@ -772,24 +772,24 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative font-sans"
+            className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative font-sans"
           >
             <button
               onClick={() => setInfoTarget(null)}
-              className="absolute top-3 right-3 text-[#6B8A8A] hover:text-[#00FFAA] cursor-pointer"
+              className="absolute top-3 right-3 text-root-subtle hover:text-root-accent cursor-pointer"
             >
               <X className="h-5 w-5" />
             </button>
-            <h3 className="text-lg font-bold text-[#E0E0E0] mb-2 uppercase">{infoTarget.name}</h3>
-            <p className="text-xs text-[#6B8A8A] font-semibold mb-4">{infoTarget.description}</p>
+            <h3 className="text-lg font-bold text-root-text mb-2 uppercase">{infoTarget.name}</h3>
+            <p className="text-xs text-root-subtle font-semibold mb-4">{infoTarget.description}</p>
             <div className="space-y-2">
-              <p className="text-[10px] font-black uppercase tracking-wide text-[#00FFAA]">
+              <p className="text-[10px] font-black uppercase tracking-wide text-root-accent">
                 Dampak:
               </p>
               <ul className="space-y-1.5">
                 {infoTarget.effects.map((effect, i) => (
-                  <li key={i} className="text-xs text-[#E0E0E0] font-semibold flex gap-2">
-                    <span className="text-[#00FFAA]">•</span>
+                  <li key={i} className="text-xs text-root-text font-semibold flex gap-2">
+                    <span className="text-root-accent">•</span>
                     {effect}
                   </li>
                 ))}
@@ -810,23 +810,23 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
               type="button"
               aria-label="Tutup konfirmasi upgrade"
               onClick={() => setConfirmUpgrade(null)}
-              className="absolute right-4 top-4 text-[#6B8A8A] transition hover:text-[#00FFAA] cursor-pointer"
+              className="absolute right-4 top-4 text-root-subtle transition hover:text-root-accent cursor-pointer"
             >
               <X className="h-5 w-5" />
             </button>
 
             <div className="flex items-center gap-3 mb-4">
-              <div className="h-12 w-12 rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 flex items-center justify-center shrink-0">
-                <confirmUpgrade.dept.icon className="h-6 w-6 text-[#00FFAA]" />
+              <div className="h-12 w-12 rounded-lg bg-root-canvas border border-root-accent/30 flex items-center justify-center shrink-0">
+                <confirmUpgrade.dept.icon className="h-6 w-6 text-root-accent" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-[#E0E0E0] uppercase leading-none">
+                <h3 className="text-lg font-bold text-root-text uppercase leading-none">
                   {confirmUpgrade.dept.name}
                 </h3>
-                <p className="text-[10px] text-[#6B8A8A] font-semibold mt-1">
+                <p className="text-[10px] text-root-subtle font-semibold mt-1">
                   Level {confirmUpgrade.fromLevel} → {confirmUpgrade.targetLevel}
                   {confirmUpgrade.targetLevel - confirmUpgrade.fromLevel > 1 && (
-                    <span className="ml-1 text-[#00FFAA]">
+                    <span className="ml-1 text-root-accent">
                       (melewati {confirmUpgrade.targetLevel - confirmUpgrade.fromLevel} level)
                     </span>
                   )}
@@ -834,55 +834,55 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
               </div>
             </div>
 
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-lg p-4 mb-4">
+            <div className="bg-root-canvas border border-root-accent/20 rounded-lg p-4 mb-4">
               <div className="space-y-1.5 mb-3">
                 {Array.from(
                   { length: confirmUpgrade.targetLevel - confirmUpgrade.fromLevel },
                   (_, idx) => confirmUpgrade.fromLevel + idx
                 ).map((stepLevel) => (
-                  <div key={stepLevel} className="flex justify-between text-[11px] font-bold text-[#6B8A8A]">
+                  <div key={stepLevel} className="flex justify-between text-[11px] font-bold text-root-subtle">
                     <span>Biaya dari level {stepLevel} ke {stepLevel + 1}:</span>
-                    <span className="text-[#E0E0E0]">
+                    <span className="text-root-text">
                       {getLevelUpCostForStep(stepLevel + 1, countryDetail).toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
                     </span>
                   </div>
                 ))}
               </div>
 
-              <div className="flex justify-between items-center border-t border-[#00FFAA]/20 pt-3 mb-3">
-                <span className="text-xs font-bold text-[#6B8A8A] uppercase">Total Biaya:</span>
-                <span className="text-lg font-black text-[#00FFAA]">
+              <div className="flex justify-between items-center border-t border-root-accent/20 pt-3 mb-3">
+                <span className="text-xs font-bold text-root-subtle uppercase">Total Biaya:</span>
+                <span className="text-lg font-black text-root-accent">
                   {confirmUpgrade.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-[#6B8A8A] uppercase">Kas Negara Sekarang:</span>
-                <span className="text-lg font-black text-[#E0E0E0]">
+                <span className="text-xs font-bold text-root-subtle uppercase">Kas Negara Sekarang:</span>
+                <span className="text-lg font-black text-root-text">
                   {money.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
                 </span>
               </div>
-              <div className="border-t border-[#00FFAA]/20 mt-3 pt-3 flex justify-between items-center">
-                <span className="text-xs font-bold text-[#6B8A8A] uppercase">Kas Setelah Upgrade:</span>
+              <div className="border-t border-root-accent/20 mt-3 pt-3 flex justify-between items-center">
+                <span className="text-xs font-bold text-root-subtle uppercase">Kas Setelah Upgrade:</span>
                 <span className="text-lg font-black text-amber-400">
                   {(money - confirmUpgrade.cost).toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
                 </span>
               </div>
             </div>
 
-            <p className="text-xs text-[#6B8A8A] font-semibold mb-6">
+            <p className="text-xs text-root-subtle font-semibold mb-6">
               {confirmUpgrade.dept.description}
             </p>
 
             <div className="flex gap-3">
               <button
                 onClick={() => setConfirmUpgrade(null)}
-                className="flex-1 px-4 py-2.5 rounded-lg border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#E0E0E0] active:scale-95 transition-all font-bold text-sm uppercase cursor-pointer"
+                className="flex-1 px-4 py-2.5 rounded-lg border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-text active:scale-95 transition-all font-bold text-sm uppercase cursor-pointer"
               >
                 Batal
               </button>
               <button
                 onClick={handleConfirmUpgrade}
-                className="flex-1 px-4 py-2.5 rounded-lg bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 active:scale-95 transition-all font-bold text-sm uppercase cursor-pointer shadow-md"
+                className="flex-1 px-4 py-2.5 rounded-lg bg-root-accent text-root-canvas hover:bg-root-accent/80 active:scale-95 transition-all font-bold text-sm uppercase cursor-pointer shadow-md"
               >
                 Upgrade
               </button>
@@ -899,52 +899,52 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative font-sans"
+            className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative font-sans"
           >
             <button
               onClick={() => setConfirmDowngrade(null)}
-              className="absolute top-3 right-3 text-[#6B8A8A] hover:text-[#00FFAA] cursor-pointer"
+              className="absolute top-3 right-3 text-root-subtle hover:text-root-accent cursor-pointer"
             >
               <X className="h-5 w-5" />
             </button>
 
             <div className="flex items-center gap-3 mb-4">
-              <div className="h-12 w-12 rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 flex items-center justify-center shrink-0">
-                <confirmDowngrade.dept.icon className="h-6 w-6 text-[#00FFAA]" />
+              <div className="h-12 w-12 rounded-lg bg-root-canvas border border-root-accent/30 flex items-center justify-center shrink-0">
+                <confirmDowngrade.dept.icon className="h-6 w-6 text-root-accent" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-[#E0E0E0] uppercase leading-none">
+                <h3 className="text-lg font-bold text-root-text uppercase leading-none">
                   {confirmDowngrade.dept.name}
                 </h3>
-                <p className="text-[10px] text-[#6B8A8A] font-semibold mt-1">
+                <p className="text-[10px] text-root-subtle font-semibold mt-1">
                   Level {confirmDowngrade.fromLevel} → {confirmDowngrade.targetLevel}
                 </p>
               </div>
             </div>
 
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-lg p-4 mb-4">
-              <p className="text-xs text-[#6B8A8A] font-semibold mb-2">
+            <div className="bg-root-canvas border border-root-accent/20 rounded-lg p-4 mb-4">
+              <p className="text-xs text-root-subtle font-semibold mb-2">
                 Anda akan menurunkan level departemen ini dari {confirmDowngrade.fromLevel} ke {confirmDowngrade.targetLevel}.
                 Biaya operasional harian akan berkurang sesuai level baru.
               </p>
-              <div className="flex justify-between items-center text-xs font-bold text-[#E0E0E0] border-t border-[#00FFAA]/20 pt-3">
+              <div className="flex justify-between items-center text-xs font-bold text-root-text border-t border-root-accent/20 pt-3">
                 <span>Biaya harian saat ini (level {confirmDowngrade.fromLevel}):</span>
                 <span className="text-rose-400">- {LEVEL_UP_COST[confirmDowngrade.fromLevel].toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
               </div>
-              <div className="flex justify-between items-center text-xs font-bold text-[#E0E0E0] mt-1">
+              <div className="flex justify-between items-center text-xs font-bold text-root-text mt-1">
                 <span>Biaya harian baru (level {confirmDowngrade.targetLevel}):</span>
-                <span className="text-[#00FFAA]">- {LEVEL_UP_COST[confirmDowngrade.targetLevel].toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
+                <span className="text-root-accent">- {LEVEL_UP_COST[confirmDowngrade.targetLevel].toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
               </div>
             </div>
 
-            <p className="text-xs text-[#6B8A8A] font-semibold mb-6">
+            <p className="text-xs text-root-subtle font-semibold mb-6">
               {confirmDowngrade.dept.description}
             </p>
 
             <div className="flex gap-3">
               <button
                 onClick={() => setConfirmDowngrade(null)}
-                className="flex-1 px-4 py-2.5 rounded-lg border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#E0E0E0] active:scale-95 transition-all font-bold text-sm uppercase cursor-pointer"
+                className="flex-1 px-4 py-2.5 rounded-lg border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-text active:scale-95 transition-all font-bold text-sm uppercase cursor-pointer"
               >
                 Batal
               </button>

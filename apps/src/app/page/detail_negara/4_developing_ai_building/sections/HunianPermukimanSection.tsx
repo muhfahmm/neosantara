@@ -152,12 +152,12 @@ export default function HunianPermukimanSection({
   return (
     <div className="space-y-6">
       {/* 1. HERO SUMMARY SECTION */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0D2E2B] via-[#09221F] to-[#041412] p-5 sm:p-7 border border-[#00FFAA]/30 shadow-2xl">
-        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-[#00FFAA]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0D2E2B] via-[#09221F] to-[#041412] p-5 sm:p-7 border border-root-accent/30 shadow-2xl">
+
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="space-y-2 max-w-xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00FFAA]/15 border border-[#00FFAA]/30 text-[#00FFAA] text-xs font-black tracking-wider uppercase">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-root-accent/15 border border-root-accent/30 text-root-accent text-xs font-black tracking-wider uppercase">
               <Home className="w-3.5 h-3.5" />
               <span>Sektor Hunian & Infrastruktur Permukiman</span>
             </div>
@@ -171,16 +171,16 @@ export default function HunianPermukimanSection({
           </div>
 
           {/* STATUS KAPASITAS VS POPULASI CARD */}
-          <div className="bg-[#031510]/80 backdrop-blur-md border-2 border-[#00FFAA]/40 rounded-2xl p-4 sm:p-5 flex items-center gap-4 min-w-[270px] shadow-lg">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#00FFAA]/30 to-[#00FFAA]/5 border border-[#00FFAA]/50 flex items-center justify-center shrink-0">
-              <Users className="w-7 h-7 text-[#00FFAA]" />
+          <div className="bg-[#031510]/80  border-2 border-root-accent/40 rounded-2xl p-4 sm:p-5 flex items-center gap-4 min-w-[270px] shadow-lg">
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-root-accent/30 to-root-accent/5 border border-root-accent/50 flex items-center justify-center shrink-0">
+              <Users className="w-7 h-7 text-root-accent" />
             </div>
             <div>
-              <span className="text-[10px] font-black tracking-wider uppercase text-[#6B8A8A]">
+              <span className="text-[10px] font-black tracking-wider uppercase text-root-subtle">
                 Kapasitas Daya Tampung
               </span>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl sm:text-4xl font-black text-[#00FFAA]">
+                <span className="text-3xl sm:text-4xl font-black text-root-accent">
                   {housingStats.coveragePercent}%
                 </span>
                 <span className="text-xs font-bold text-gray-300">
@@ -209,7 +209,7 @@ export default function HunianPermukimanSection({
         </div>
 
         {/* 2. SUB-STATS: BREAKDOWN TIAP TIPE HUNIAN */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-6 pt-6 border-t border-[#00FFAA]/20">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-6 pt-6 border-t border-root-accent/20">
           {housingStats.items.map((it) => {
             const Icon = it.icon;
             const isSelected = selectedCategory === it.category;
@@ -219,8 +219,8 @@ export default function HunianPermukimanSection({
                 onClick={() => setSelectedCategory(isSelected ? "all" : it.category)}
                 className={`p-4 rounded-xl border text-left transition-all cursor-pointer relative overflow-hidden group ${
                   isSelected
-                    ? "bg-[#0F2E28] border-[#00FFAA] shadow-md shadow-[#00FFAA]/15 scale-[1.02]"
-                    : "bg-[#061C17]/80 hover:bg-[#0A2620] border-[#00FFAA]/20 hover:border-[#00FFAA]/40"
+                    ? "bg-[#0F2E28] border-root-accent shadow-md shadow-root-accent/15 scale-[1.02]"
+                    : "bg-[#061C17]/80 hover:bg-[#0A2620] border-root-accent/20 hover:border-root-accent/40"
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
@@ -233,7 +233,7 @@ export default function HunianPermukimanSection({
                   <span
                     className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
                       isSelected
-                        ? "bg-[#00FFAA] text-black border-[#00FFAA]"
+                        ? "bg-root-accent text-black border-root-accent"
                         : "bg-black/30 text-gray-400 border-white/10"
                     }`}
                   >
@@ -254,7 +254,7 @@ export default function HunianPermukimanSection({
                     <span className="text-[10px] text-gray-400 font-bold">unit</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] text-[#6B8A8A] block">Daya Tampung</span>
+                    <span className="text-[10px] text-root-subtle block">Daya Tampung</span>
                     <span className="text-xs font-black text-gray-200">
                       {formatNumber(it.subtotalCapacity)} jiwa
                     </span>
@@ -267,7 +267,7 @@ export default function HunianPermukimanSection({
       </div>
 
       {/* 3. CONTROLS: FILTER CATEGORY & SEARCH */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#0A1A1A] p-3 rounded-xl border border-[#00FFAA]/20">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-root-canvas p-3 rounded-xl border border-root-accent/20">
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
           {HOUSING_CONFIGS.map((cfg) => {
             const Icon = cfg.icon;
@@ -279,8 +279,8 @@ export default function HunianPermukimanSection({
                 onClick={() => setSelectedCategory(cfg.category)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   isActive
-                    ? "bg-[#00FFAA] text-[#0A1A1A] shadow-sm font-black"
-                    : "bg-[#0F2424] text-[#A0C0C0] hover:text-[#00FFAA] border border-[#00FFAA]/20"
+                    ? "bg-root-accent text-root-canvas shadow-sm font-black"
+                    : "bg-root-surface text-[#A0C0C0] hover:text-root-accent border border-root-accent/20"
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -293,13 +293,13 @@ export default function HunianPermukimanSection({
         </div>
 
         <div className="relative min-w-[200px]">
-          <Search className="w-3.5 h-3.5 text-[#6B8A8A] absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-3.5 h-3.5 text-root-subtle absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari jenis hunian..."
-            className="w-full bg-[#0F2424] border border-[#00FFAA]/20 rounded-lg pl-8 pr-3 py-1.5 text-xs text-[#E0E0E0] placeholder-[#6B8A8A] focus:outline-none focus:border-[#00FFAA]"
+            className="w-full bg-root-surface border border-root-accent/20 rounded-lg pl-8 pr-3 py-1.5 text-xs text-root-text placeholder-root-subtle focus:outline-none focus:border-root-accent"
           />
         </div>
       </div>
@@ -316,7 +316,7 @@ export default function HunianPermukimanSection({
           return (
             <div
               key={item.key}
-              className="bg-[#0A1A1A] rounded-2xl p-5 border border-[#00FFAA]/20 hover:border-[#00FFAA]/50 transition-all flex flex-col justify-between group shadow-lg"
+              className="bg-root-canvas rounded-2xl p-5 border border-root-accent/20 hover:border-root-accent/50 transition-all flex flex-col justify-between group shadow-lg"
             >
               <div>
                 <div className="flex items-start justify-between gap-3 mb-3">
@@ -328,15 +328,15 @@ export default function HunianPermukimanSection({
                       <Icon className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-bold text-white group-hover:text-[#00FFAA] transition-colors">
+                      <h3 className="text-sm font-bold text-white group-hover:text-root-accent transition-colors">
                         {item.label}
                       </h3>
-                      <span className="text-[10px] text-[#6B8A8A] uppercase font-bold tracking-wider">
+                      <span className="text-[10px] text-root-subtle uppercase font-bold tracking-wider">
                         {item.categoryLabel}
                       </span>
                     </div>
                   </div>
-                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-[#0F2424] text-[#00FFAA] border border-[#00FFAA]/30 shrink-0">
+                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-root-surface text-root-accent border border-root-accent/30 shrink-0">
                     {sharePercent}% Porsi
                   </span>
                 </div>
@@ -344,17 +344,17 @@ export default function HunianPermukimanSection({
                 <p className="text-xs text-gray-300 leading-relaxed mb-4">{item.detailDesc}</p>
 
                 {/* STATS HIGHLIGHT */}
-                <div className="space-y-2 bg-[#0F2424] p-3 rounded-xl border border-[#00FFAA]/15">
+                <div className="space-y-2 bg-root-surface p-3 rounded-xl border border-root-accent/15">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-[#6B8A8A] font-semibold">Jumlah Bangunan</span>
+                    <span className="text-root-subtle font-semibold">Jumlah Bangunan</span>
                     <span className="font-black text-white text-sm">
                       {formatNumber(item.count)} Unit
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-[#6B8A8A] font-semibold">Daya Tampung / Unit</span>
-                    <span className="font-bold text-[#00FFAA]">
+                    <span className="text-root-subtle font-semibold">Daya Tampung / Unit</span>
+                    <span className="font-bold text-root-accent">
                       {formatNumber(item.effectiveCap)} Jiwa/Unit
                       {housingBonusPercent > 0 && (
                         <span className="text-[10px] text-emerald-400 ml-1">
@@ -364,8 +364,8 @@ export default function HunianPermukimanSection({
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between text-xs pt-2 border-t border-[#00FFAA]/10">
-                    <span className="text-[#6B8A8A] font-semibold">Total Kapasitas</span>
+                  <div className="flex items-center justify-between text-xs pt-2 border-t border-root-accent/10">
+                    <span className="text-root-subtle font-semibold">Total Kapasitas</span>
                     <span className="font-black text-emerald-400 text-sm">
                       {formatNumber(item.subtotalCapacity)} Jiwa
                     </span>
@@ -373,8 +373,8 @@ export default function HunianPermukimanSection({
                 </div>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-[#00FFAA]/10 flex items-center justify-between text-[11px]">
-                <span className="text-[#6B8A8A] font-medium">Status Ketersediaan</span>
+              <div className="mt-4 pt-3 border-t border-root-accent/10 flex items-center justify-between text-[11px]">
+                <span className="text-root-subtle font-medium">Status Ketersediaan</span>
                 <span
                   className={`font-black flex items-center gap-1 ${
                     item.count > 0 ? "text-emerald-400" : "text-amber-400"

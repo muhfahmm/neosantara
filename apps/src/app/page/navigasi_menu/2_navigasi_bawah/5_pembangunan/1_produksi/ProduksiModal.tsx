@@ -652,10 +652,10 @@ export default function ProduksiModal({
         <NotebookModalWrapper onClose={onClose}>
           <div className="flex flex-col h-full overflow-hidden">
 
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
               <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-                  <Hammer className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+                <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+                  <Hammer className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
                 </div>
                 <div className="min-w-0">
                   <h2 className={rootModalTypography.title}>Produksi & Pembangunan</h2>
@@ -670,7 +670,7 @@ export default function ProduksiModal({
                   })}
                   aria-label={`Informasi ${activeSection.label}`}
                   title={`Informasi ${activeSection.label}`}
-                  className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] transition-colors hover:border-[#00FFAA] hover:bg-[#00FFAA]/10"
+                  className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent transition-colors hover:border-root-accent hover:bg-root-accent/10"
                 >
                   <Info className="h-4 w-4" />
                 </button>
@@ -679,21 +679,21 @@ export default function ProduksiModal({
             </div>
 
             <div className="flex-1 flex min-h-0 relative z-10">
-              <div className="w-40 sm:w-44 lg:w-48 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
+              <div className="w-40 sm:w-44 lg:w-48 border-r border-root-accent/30 bg-root-canvas p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
                 {TABS.map((tab) => (
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
                       className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${activeTab === tab.id
-                          ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
-                          : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA] hover:text-[#00FFAA]"
+                          ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
+                          : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent hover:text-root-accent"
                         }`}
                     >
                       <span className="truncate text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{tab.label}</span>
                     </button>
                 ))}
               </div>
-              <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-[#0F2424] neon-scrollbar">
+              <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-root-surface neon-scrollbar">
                 <ComponentToRender
                   countryDetail={countryDetail}
                   setCountryDetail={setCountryDetail}
@@ -719,13 +719,13 @@ export default function ProduksiModal({
               </div>
             </div>
 
-            <div className="flex shrink-0 justify-center border-t border-[#00FFAA]/15 bg-[#0A1A1A] py-2">
+            <div className="flex shrink-0 justify-center border-t border-root-accent/15 bg-root-canvas py-2">
               <button
                 type="button"
                 onClick={() => setShowSanctionInfo(true)}
                 aria-label="Informasi bonus agama, ideologi, kementerian, sanksi, dan embargo"
                 title="Lihat informasi bonus agama, ideologi, kementerian, sanksi, dan embargo"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 hover:shadow-md hover:shadow-[#00FFAA]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FFAA] cursor-pointer"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent transition-all hover:border-root-accent hover:bg-root-accent/10 hover:shadow-md hover:shadow-root-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent cursor-pointer"
               >
                 <Info className="h-4 w-4" />
               </button>
@@ -735,19 +735,19 @@ export default function ProduksiModal({
       )}
 
       {showSanctionInfo && (
-        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/60 px-4 py-8">
+        <div className="fixed inset-0 z-[90] flex items-center justify-center px-4 py-8">
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="production-sanction-info-title"
-            className="w-full max-w-xl overflow-hidden rounded-2xl border border-[#00FFAA]/30 bg-[#0F2424] font-sans shadow-2xl"
+            className="w-full max-w-xl overflow-hidden rounded-2xl border border-root-accent/30 bg-root-surface font-sans shadow-2xl"
           >
-            <div className="flex items-center justify-between border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-5 py-4">
+            <div className="flex items-center justify-between border-b border-root-accent/20 bg-root-canvas px-5 py-4">
               <div className="flex items-center gap-3">
-                <div className="rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-2">
-                  <Info className="h-5 w-5 text-[#00FFAA]" />
+                <div className="rounded-xl border border-root-accent/30 bg-root-surface p-2">
+                  <Info className="h-5 w-5 text-root-accent" />
                 </div>
-                <h3 id="production-sanction-info-title" className="text-sm font-black uppercase tracking-wide text-[#00FFAA]">
+                <h3 id="production-sanction-info-title" className="text-sm font-black uppercase tracking-wide text-root-accent">
                   Info Bonus Agama, Ideologi, Kementerian & Sanksi
                 </h3>
               </div>
@@ -755,7 +755,7 @@ export default function ProduksiModal({
                 type="button"
                 onClick={() => setShowSanctionInfo(false)}
                 aria-label="Tutup informasi"
-                className="rounded-lg border border-[#00FFAA]/20 p-2 text-[#6B8A8A] transition-colors hover:border-[#00FFAA]/50 hover:text-[#00FFAA] cursor-pointer"
+                className="rounded-lg border border-root-accent/20 p-2 text-root-subtle transition-colors hover:border-root-accent/50 hover:text-root-accent cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -789,7 +789,7 @@ export default function ProduksiModal({
                   )}
                 </div>
               ) : (
-                <div className="rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] p-3 space-y-2">
+                <div className="rounded-lg border border-root-accent/20 bg-root-canvas p-3 space-y-2">
                   <p>
                     Agama saat ini: <strong className="text-white">{currentReligion || "Belum tersedia"}</strong>. Tidak ada bonus agama khusus yang tercatat.
                   </p>
@@ -797,7 +797,7 @@ export default function ProduksiModal({
                     Ideologi saat ini: <strong className="text-white">{countryDetail?.ideology || "Belum tersedia"}</strong>. Tidak ada bonus ideologi khusus yang tercatat.
                   </p>
                   <p>
-                    Keanggotaan FAO: <strong className="text-[#6B8A8A]">Tidak Aktif (Bukan Anggota Organisasi Pangan dan Pertanian FAO)</strong>.
+                    Keanggotaan FAO: <strong className="text-root-subtle">Tidak Aktif (Bukan Anggota Organisasi Pangan dan Pertanian FAO)</strong>.
                   </p>
                 </div>
               )}
@@ -821,7 +821,7 @@ export default function ProduksiModal({
               )}
               {hasActiveSanctions && (
                 <>
-                  <ul className="list-disc space-y-2 pl-5 marker:text-[#00FFAA]">
+                  <ul className="list-disc space-y-2 pl-5 marker:text-root-accent">
                     {activeAssemblyEmbargoes.length > 0 && (
                       <li>
                         <strong className="text-white">Embargo ekonomi — Sidang Umum PBB:</strong>{" "}
@@ -847,7 +847,7 @@ export default function ProduksiModal({
                       </li>
                     )}
                   </ul>
-                  <p className="text-xs text-[#6B8A8A]">
+                  <p className="text-xs text-root-subtle">
                     Dampak berakhir otomatis saat resolusi berakhir atau masa berlakunya habis.
                   </p>
                 </>
@@ -857,7 +857,7 @@ export default function ProduksiModal({
         </div>
       )}
 
-      {toast && <div className="fixed bottom-6 right-6 z-[80] bg-[#00FFAA] text-[#0A1A1A] font-black px-4 py-2 rounded-lg shadow-lg border border-[#00FFAA]">{toast}</div>}
+      {toast && <div className="fixed bottom-6 right-6 z-[80] bg-root-accent text-root-canvas font-black px-4 py-2 rounded-lg shadow-lg border border-root-accent">{toast}</div>}
 
       {selectedBuilding && (() => {
         const bMeta = findMeta(selectedBuilding.key);
@@ -927,28 +927,28 @@ export default function ProduksiModal({
 
       {showMaterialWarningModal && insufficientMaterials.length > 0 && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-transparent pointer-events-none">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto">
-            <div className="px-6 py-5 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10">
+          <div className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto">
+            <div className="px-6 py-5 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10">
               <div className="flex items-center gap-2 text-rose-400">
                 <AlertCircle className="h-5 w-5" />
                 <h3 className="text-base font-black uppercase tracking-wider">⚠️ Stok Material Kosong</h3>
               </div>
-              <button onClick={() => setShowMaterialWarningModal(false)} className="text-[#6B8A8A] hover:text-[#00FFAA]"><X className="h-5 w-5" /></button>
+              <button onClick={() => setShowMaterialWarningModal(false)} className="text-root-subtle hover:text-root-accent"><X className="h-5 w-5" /></button>
             </div>
             <div className="p-6 relative z-10 flex-1 space-y-4">
-              <p className="text-sm text-[#E0E0E0]">Pembangunan <strong className="font-black text-[#00FFAA]">{selectedBuilding?.label}</strong> tidak dapat dilanjutkan karena material berikut ini stoknya kosong (0):</p>
-              <div className="bg-[#0A1A1A] border border-rose-500/30 rounded-xl p-4 flex flex-col gap-2 text-xs font-bold text-[#E0E0E0]">
+              <p className="text-sm text-root-text">Pembangunan <strong className="font-black text-root-accent">{selectedBuilding?.label}</strong> tidak dapat dilanjutkan karena material berikut ini stoknya kosong (0):</p>
+              <div className="bg-root-canvas border border-rose-500/30 rounded-xl p-4 flex flex-col gap-2 text-xs font-bold text-root-text">
                 {insufficientMaterials.map((mat, idx) => (
                   <div key={idx} className="flex justify-between items-center">
-                    <span className="text-[#E0E0E0]">{mat.label}</span>
+                    <span className="text-root-text">{mat.label}</span>
                     <span className="text-rose-400 font-black">0</span>
                   </div>
                 ))}
               </div>
-              <p className="text-[10px] text-[#6B8A8A] italic">Klik nama material pada daftar di atas untuk menambah stok (kembali ke tab terkait).</p>
+              <p className="text-[10px] text-root-subtle italic">Klik nama material pada daftar di atas untuk menambah stok (kembali ke tab terkait).</p>
             </div>
-            <div className="p-4 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex justify-end relative z-10">
-              <button onClick={() => setShowMaterialWarningModal(false)} className="py-2.5 px-6 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 shadow-md">
+            <div className="p-4 bg-root-canvas border-t border-root-accent/20 flex justify-end relative z-10">
+              <button onClick={() => setShowMaterialWarningModal(false)} className="py-2.5 px-6 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-md">
                 Tutup & Lengkapi Stok
               </button>
             </div>

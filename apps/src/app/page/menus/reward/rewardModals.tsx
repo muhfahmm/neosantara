@@ -377,7 +377,7 @@ export default function TopRightGiftIcon({
           className="h-14 w-14 object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]"
         />
         {!claimedToday && (
-          <span className="absolute -top-1 -right-1 bg-red-500 border border-[#0A1A1A] text-white text-[9px] font-bold rounded-full w-4 h-4 lg:w-5 lg:h-5 flex items-center justify-center animate-pulse">
+          <span className="absolute -top-1 -right-1 bg-red-500 border border-root-canvas text-white text-[9px] font-bold rounded-full w-4 h-4 lg:w-5 lg:h-5 flex items-center justify-center animate-pulse">
             !
           </span>
         )}
@@ -389,18 +389,18 @@ export default function TopRightGiftIcon({
           <div className="w-full min-w-0 overflow-hidden flex flex-col relative font-sans pointer-events-auto">
 
             {/* ---- HEADER ---- */}
-            <div className="px-5 sm:px-6 py-3 sm:py-3.5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+            <div className="px-5 sm:px-6 py-3 sm:py-3.5 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] shrink-0">
-                  <Gift className="h-3.5 w-3.5 text-[#00FFAA]" />
+                <div className="p-1.5 rounded-lg border border-root-accent/30 bg-root-surface shrink-0">
+                  <Gift className="h-3.5 w-3.5 text-root-accent" />
                 </div>
-                <h2 className="text-sm sm:text-base font-black text-[#00FFAA] tracking-wide uppercase">
+                <h2 className="text-sm sm:text-base font-black text-root-accent tracking-wide uppercase">
                   Hadiah Harian
                 </h2>
               </div>
               <button
                 onClick={onClose}
-                className="p-1.5 sm:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
+                className="p-1.5 sm:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
               >
                 <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
@@ -408,9 +408,9 @@ export default function TopRightGiftIcon({
             </div>
 
             {/* ---- BODY (GRID HARIAN) ---- */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-5 bg-[#0A1A1A] relative z-10 flex flex-col items-center justify-start">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 bg-root-canvas relative z-10 flex flex-col items-center justify-start">
               <div className="w-full text-center mb-4">
-                <p className="text-xs sm:text-sm text-[#6B8A8A] font-semibold">
+                <p className="text-xs sm:text-sm text-root-subtle font-semibold">
                   Hari ke-{currentDay} dari 7
                   {claimedToday
                     ? ' ✅ Sudah diklaim hari ini'
@@ -430,7 +430,7 @@ export default function TopRightGiftIcon({
                   let statusIcon = null;
                   let statusColor = '';
                   let borderColor = '';
-                  let bgColor = 'bg-[#0F2424]';
+                  let bgColor = 'bg-root-surface';
                   let cursor = 'cursor-default';
                   let onClickHandler = undefined;
 
@@ -440,17 +440,17 @@ export default function TopRightGiftIcon({
                     borderColor = 'border-emerald-500/50';
                     bgColor = 'bg-emerald-950/30';
                   } else if (isToday && !claimedToday) {
-                    statusIcon = <Zap className="h-5 w-5 text-[#00FFAA] animate-pulse" />;
-                    statusColor = 'text-[#00FFAA]';
-                    borderColor = 'border-[#00FFAA]';
-                    bgColor = 'bg-[#00FFAA]/10';
+                    statusIcon = <Zap className="h-5 w-5 text-root-accent animate-pulse" />;
+                    statusColor = 'text-root-accent';
+                    borderColor = 'border-root-accent';
+                    bgColor = 'bg-root-accent/10';
                     cursor = 'cursor-pointer';
                     onClickHandler = handleClaim;
                   } else if (isFuture) {
-                    statusIcon = <Lock className="h-5 w-5 text-[#6B8A8A]/50" />;
-                    statusColor = 'text-[#6B8A8A]/50';
-                    borderColor = 'border-[#00FFAA]/10';
-                    bgColor = 'bg-[#0A1A1A]/60';
+                    statusIcon = <Lock className="h-5 w-5 text-root-subtle/50" />;
+                    statusColor = 'text-root-subtle/50';
+                    borderColor = 'border-root-accent/10';
+                    bgColor = 'bg-root-canvas/60';
                   }
 
                   return (
@@ -459,22 +459,22 @@ export default function TopRightGiftIcon({
                       onClick={onClickHandler}
                       className={`relative flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border ${borderColor} ${bgColor} ${cursor} transition-all duration-200 ${isToday && !claimedToday ? 'hover:scale-105 hover:shadow-[0_0_15px_rgba(0,255,170,0.2)]' : ''}`}
                     >
-                      <span className="text-[10px] sm:text-xs font-bold text-[#6B8A8A] uppercase tracking-wider">
+                      <span className="text-[10px] sm:text-xs font-bold text-root-subtle uppercase tracking-wider">
                         Hari {day}
                       </span>
 
-                      <span className="text-xs sm:text-sm font-bold text-[#E0E0E0] mt-1 whitespace-nowrap">
+                      <span className="text-xs sm:text-sm font-bold text-root-text mt-1 whitespace-nowrap">
                         {reward?.amount.toLocaleString('id-ID', { maximumFractionDigits: 2 }) ?? '—'}
                       </span>
 
-                      <span className="text-[9px] sm:text-[10px] text-center text-[#6B8A8A] mt-1 leading-tight">
+                      <span className="text-[9px] sm:text-[10px] text-center text-root-subtle mt-1 leading-tight">
                         {reward ? formatProductionProductName(reward.resourceKey) : 'Memuat produk'}
                       </span>
 
                       <div className={`mt-2 ${statusColor}`}>{statusIcon}</div>
 
                       {isToday && !claimedToday && (
-                        <span className="absolute -top-2 -right-2 bg-[#00FFAA] text-[#0A1A1A] text-[9px] font-black px-2 py-0.5 rounded-full shadow">
+                        <span className="absolute -top-2 -right-2 bg-root-accent text-root-canvas text-[9px] font-black px-2 py-0.5 rounded-full shadow">
                           Klaim!
                         </span>
                       )}
@@ -484,7 +484,7 @@ export default function TopRightGiftIcon({
               </div>
 
               <div className="mt-8 text-center max-w-md">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#0F2424] rounded-full border border-[#00FFAA]/30 text-[#00FFAA] text-xs">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-root-surface rounded-full border border-root-accent/30 text-root-accent text-xs">
                   <Zap className="h-4 w-4" />
                   <span>
                     Hadiah berbeda setiap hari dan diacak setiap minggu. Nominal{' '}
@@ -507,21 +507,21 @@ export default function TopRightGiftIcon({
           <div className="w-full min-w-0 overflow-hidden flex flex-col relative font-sans pointer-events-auto">
 
             {/* Header */}
-            <div className="px-5 sm:px-6 py-3 sm:py-3.5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] gap-2 shrink-0">
+            <div className="px-5 sm:px-6 py-3 sm:py-3.5 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas gap-2 shrink-0">
               <div className="flex items-center gap-2">
                 <div className={`p-1.5 rounded-lg border shrink-0 ${
                   feedbackModal.variant === 'success'
-                    ? 'bg-[#00FFAA]/10 border-[#00FFAA]/30'
+                    ? 'bg-root-accent/10 border-root-accent/30'
                     : 'bg-rose-500/10 border-rose-500/30'
                 }`}>
                   {feedbackModal.variant === 'success' ? (
-                    <Check className="h-3.5 w-3.5 text-[#00FFAA]" />
+                    <Check className="h-3.5 w-3.5 text-root-accent" />
                   ) : (
                     <AlertTriangle className="h-3.5 w-3.5 text-rose-400" />
                   )}
                 </div>
                 <h3 className={`text-xs sm:text-sm font-black tracking-wide uppercase ${
-                  feedbackModal.variant === 'success' ? 'text-[#00FFAA]' : 'text-rose-400'
+                  feedbackModal.variant === 'success' ? 'text-root-accent' : 'text-rose-400'
                 }`}>
                   {feedbackModal.title}
                 </h3>
@@ -532,7 +532,7 @@ export default function TopRightGiftIcon({
                 aria-label="Tutup feedback"
                 className={`p-1 rounded-lg border transition-all cursor-pointer font-bold text-xs uppercase flex items-center justify-center w-6 h-6 ${
                   feedbackModal.variant === 'success'
-                    ? 'border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A]'
+                    ? 'border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas'
                     : 'border-rose-500/30 bg-rose-950/30 text-rose-400 hover:bg-rose-500 hover:text-white'
                 }`}
               >
@@ -548,12 +548,12 @@ export default function TopRightGiftIcon({
             </div>
 
             {/* Footer */}
-            <div className="px-5 sm:px-6 py-2.5 sm:py-3 border-t border-[#00FFAA]/20 bg-[#0A1A1A] flex gap-2 justify-end shrink-0">
+            <div className="px-5 sm:px-6 py-2.5 sm:py-3 border-t border-root-accent/20 bg-root-canvas flex gap-2 justify-end shrink-0">
               {feedbackModal.variant === 'success' ? (
                 <button
                   onClick={() => setFeedbackModal(null)}
                   type="button"
-                  className="px-4 py-1.5 bg-[#00FFAA] hover:bg-[#00FFAA]/80 text-[#0A1A1A] rounded-lg font-black text-xs uppercase tracking-wider cursor-pointer transition-all"
+                  className="px-4 py-1.5 bg-root-accent hover:bg-root-accent/80 text-root-canvas rounded-lg font-black text-xs uppercase tracking-wider cursor-pointer transition-all"
                 >
                   Mengerti
                 </button>
@@ -562,7 +562,7 @@ export default function TopRightGiftIcon({
                   <button
                     onClick={feedbackModal.onCancel ?? (() => setFeedbackModal(null))}
                     type="button"
-                    className="px-4 py-1.5 bg-[#0F2424] hover:bg-[#1A3838] border border-[#00FFAA]/30 rounded-lg text-[#6B8A8A] hover:text-white font-black text-xs uppercase tracking-wider cursor-pointer transition-all"
+                    className="px-4 py-1.5 bg-root-surface hover:bg-[#1A3838] border border-root-accent/30 rounded-lg text-root-subtle hover:text-white font-black text-xs uppercase tracking-wider cursor-pointer transition-all"
                   >
                     {feedbackModal.cancelLabel ?? 'Batal'}
                   </button>

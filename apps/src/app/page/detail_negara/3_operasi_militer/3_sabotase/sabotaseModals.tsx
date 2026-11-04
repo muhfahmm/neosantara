@@ -94,12 +94,12 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 		// 🔥 PERBAIKAN: Menghapus bg-black/60 agar tidak ada backdrop
 		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
 			{/* Container Modal Lebih Lebar dan Panjang */}
-			<div className="w-full max-w-2xl min-h-[450px] flex flex-col bg-[#0F2424] border border-rose-500/40 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(225,29,72,0.15)] relative pointer-events-auto">
+			<div className="w-full max-w-2xl min-h-[450px] flex flex-col bg-root-surface border border-rose-500/40 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(225,29,72,0.15)] relative pointer-events-auto">
 				
 				{/* HEADER */}
 				<div className="flex items-center justify-between mb-6 border-b border-rose-500/20 pb-4">
 					<div className="flex items-center gap-3">
-						<div className="p-2 bg-[#0A1A1A] rounded-lg border border-rose-500/30 shrink-0">
+						<div className="p-2 bg-root-canvas rounded-lg border border-rose-500/30 shrink-0">
 							<Bomb className="h-5 w-5 text-rose-400 animate-pulse" />
 						</div>
 						<h3 className="text-xl sm:text-2xl font-black text-rose-400 tracking-wide uppercase">
@@ -108,7 +108,7 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 					</div>
 					<button
 						onClick={onClose}
-						className="p-1.5 rounded-lg text-[#6B8A8A] hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+						className="p-1.5 rounded-lg text-root-subtle hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
 					>
 						<X className="h-5 w-5" />
 					</button>
@@ -116,7 +116,7 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 
 				{/* BODY CONTENT */}
 				<div className="flex-1 flex flex-col">
-					<p className="text-sm sm:text-base text-[#E0E0E0] mb-4 leading-relaxed">
+					<p className="text-sm sm:text-base text-root-text mb-4 leading-relaxed">
 						Pilih negara target untuk melancarkan aksi sabotase rahasia:
 					</p>
 
@@ -125,7 +125,7 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 						<button
 							type="button"
 							onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-							className="w-full h-12 bg-[#0A1A1A] hover:bg-[#1f1515] border border-rose-500/40 rounded-xl px-4 flex items-center justify-between text-white transition-colors cursor-pointer"
+							className="w-full h-12 bg-root-canvas hover:bg-[#1f1515] border border-rose-500/40 rounded-xl px-4 flex items-center justify-between text-white transition-colors cursor-pointer"
 						>
 							<div className="flex items-center gap-3 truncate">
 								{renderFlag(selectedData?.iso, selectedData?.country)}
@@ -137,23 +137,23 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 						</button>
 
 						{isDropdownOpen && (
-							<div className="absolute left-0 right-0 top-full mt-2 max-h-60 overflow-y-auto bg-[#0A1A1A] border border-rose-500/40 rounded-xl shadow-2xl z-50 divide-y divide-rose-500/15">
+							<div className="absolute left-0 right-0 top-full mt-2 max-h-60 overflow-y-auto bg-root-canvas border border-rose-500/40 rounded-xl shadow-2xl z-50 divide-y divide-rose-500/15">
 								{/* INPUT SEARCH INSIDE DROPDOWN */}
-								<div className="p-2 sticky top-0 bg-[#0F2424] border-b border-rose-500/30 z-10">
+								<div className="p-2 sticky top-0 bg-root-surface border-b border-rose-500/30 z-10">
 									<div className="relative">
-										<Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B8A8A]" />
+										<Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-root-subtle" />
 										<input
 											type="text"
 											placeholder="Cari negara..."
 											value={searchQuery}
 											onChange={(e) => setSearchQuery(e.target.value)}
-											className="w-full bg-[#0A1A1A] border border-rose-500/30 rounded-lg px-9 py-2 text-sm text-[#E0E0E0] placeholder-[#6B8A8A] outline-none focus:border-rose-400"
+											className="w-full bg-root-canvas border border-rose-500/30 rounded-lg px-9 py-2 text-sm text-root-text placeholder-root-subtle outline-none focus:border-rose-400"
 										/>
 									</div>
 								</div>
 
 								{filteredCountries.length === 0 ? (
-									<div className="p-4 text-center text-sm text-[#6B8A8A]">Tidak ada negara ditemukan</div>
+									<div className="p-4 text-center text-sm text-root-subtle">Tidak ada negara ditemukan</div>
 								) : (
 									filteredCountries.map((c) => (
 										<button
@@ -163,13 +163,13 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 												setSelectedCountry(c.country);
 												setIsDropdownOpen(false);
 											}}
-											className={`w-full px-4 py-2.5 flex items-center gap-3 text-left hover:bg-rose-500/10 transition-colors text-sm font-bold text-[#E0E0E0] ${
+											className={`w-full px-4 py-2.5 flex items-center gap-3 text-left hover:bg-rose-500/10 transition-colors text-sm font-bold text-root-text ${
 												selectedCountry === c.country ? 'bg-rose-500/20 text-rose-300 border-l-4 border-rose-500' : ''
 											}`}
 										>
 											{renderFlag(c.iso, c.country)}
 											<span className="truncate flex-1">{c.country}</span>
-											<span className="text-[10px] text-[#6B8A8A] font-mono uppercase bg-[#0A1A1A] px-1.5 py-0.5 rounded border border-rose-500/20">
+											<span className="text-[10px] text-root-subtle font-mono uppercase bg-root-canvas px-1.5 py-0.5 rounded border border-rose-500/20">
 												{c.iso?.toUpperCase()}
 											</span>
 										</button>
@@ -179,8 +179,8 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 						)}
 					</div>
 
-					<div className="bg-[#0A1A1A] border border-rose-500/20 rounded-xl p-4 inline-block">
-						<div className="flex items-center justify-between gap-8 text-sm font-bold text-[#6B8A8A]">
+					<div className="bg-root-canvas border border-rose-500/20 rounded-xl p-4 inline-block">
+						<div className="flex items-center justify-between gap-8 text-sm font-bold text-root-subtle">
 							<span>Peluang Keberhasilan:</span>
 							<span className="text-rose-400 font-black text-lg">{successChance}%</span>
 						</div>
@@ -192,7 +192,7 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 					<button
 						type="button"
 						onClick={onClose}
-						className="w-full sm:w-auto px-6 bg-[#0A1A1A] hover:bg-[#142A2A] border border-[#00FFAA]/30 rounded-xl py-2 text-center text-[#E0E0E0] font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
+						className="w-full sm:w-auto px-6 bg-root-canvas hover:bg-[#142A2A] border border-root-accent/30 rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
 					>
 						Batal
 					</button>

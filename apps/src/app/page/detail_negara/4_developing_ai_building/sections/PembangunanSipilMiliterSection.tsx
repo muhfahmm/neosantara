@@ -553,10 +553,10 @@ function PembangunanSipilMiliterSectionView({
   }, [searchQuery]);
 
   return (
-    <div className="flex flex-col h-full w-full bg-[#0F2424] text-[#E0E0E0] rounded-2xl overflow-hidden border border-[#00FFAA]/20 shadow-sm">
+    <div className="flex flex-col h-full w-full bg-root-surface text-root-text rounded-2xl overflow-hidden border border-root-accent/20 shadow-sm">
       {/* HEADER SUB SWITCHER */}
-      <div className="bg-[#0A1A1A] border-b border-[#00FFAA]/20 px-4 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
-        {!categoryOnly && <div className="flex items-center gap-1.5 bg-[#0F2424] p-1 rounded-xl border border-[#00FFAA]/30">
+      <div className="bg-root-canvas border-b border-root-accent/20 px-4 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
+        {!categoryOnly && <div className="flex items-center gap-1.5 bg-root-surface p-1 rounded-xl border border-root-accent/30">
           <button
             onClick={() => {
               setSubTab("sipil");
@@ -564,8 +564,8 @@ function PembangunanSipilMiliterSectionView({
             }}
             className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
               subTab === "sipil"
-                ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20"
-                : "text-[#6B8A8A] hover:text-[#00FFAA]"
+                ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
+                : "text-root-subtle hover:text-root-accent"
             }`}
           >
             <Factory className="w-3.5 h-3.5" />
@@ -578,8 +578,8 @@ function PembangunanSipilMiliterSectionView({
             }}
             className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
               subTab === "militer"
-                ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20"
-                : "text-[#6B8A8A] hover:text-[#00FFAA]"
+                ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
+                : "text-root-subtle hover:text-root-accent"
             }`}
           >
             <Shield className="w-3.5 h-3.5" />
@@ -588,13 +588,13 @@ function PembangunanSipilMiliterSectionView({
         </div>}
 
         <div className="relative min-w-[200px]">
-          <Search className="w-3.5 h-3.5 text-[#6B8A8A] absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-3.5 h-3.5 text-root-subtle absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari item pembangunan..."
-            className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-[#0F2424] border border-[#00FFAA]/30 text-xs text-[#E0E0E0] placeholder:text-[#6B8A8A] focus:outline-none focus:border-[#00FFAA]"
+            className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-root-surface border border-root-accent/30 text-xs text-root-text placeholder:text-root-subtle focus:outline-none focus:border-root-accent"
           />
         </div>
       </div>
@@ -604,8 +604,8 @@ function PembangunanSipilMiliterSectionView({
         {subTab === "sipil" && (
           <>
             {/* Sidebar Kategori */}
-            {!categoryOnly && <div className="w-48 sm:w-56 border-r border-[#00FFAA]/20 bg-[#0A1A1A] p-2.5 flex flex-col gap-1 overflow-y-auto no-scrollbar shrink-0">
-              <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A] px-2 py-1 mb-1">
+            {!categoryOnly && <div className="w-48 sm:w-56 border-r border-root-accent/20 bg-root-canvas p-2.5 flex flex-col gap-1 overflow-y-auto no-scrollbar shrink-0">
+              <p className="text-[10px] font-black uppercase tracking-widest text-root-subtle px-2 py-1 mb-1">
                 Kategori Sektor
               </p>
               {CIVIL_CATEGORIES.map((cat) => {
@@ -622,14 +622,14 @@ function PembangunanSipilMiliterSectionView({
                     }}
                     className={`flex items-center justify-between w-full px-2.5 py-2 rounded-xl text-left border transition-all cursor-pointer group ${
                       isActive
-                        ? "bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA] font-black shadow-md shadow-[#00FFAA]/20"
-                        : "bg-[#0F2424]/60 border-[#00FFAA]/15 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/10 hover:text-[#00FFAA]"
+                        ? "bg-root-accent text-root-canvas border-root-accent font-black shadow-md shadow-root-accent/20"
+                        : "bg-root-surface/60 border-root-accent/15 text-root-text hover:border-root-accent/50 hover:bg-root-accent/10 hover:text-root-accent"
                     }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       <Icon
                         className={`w-3.5 h-3.5 shrink-0 ${
-                          isActive ? "text-[#0A1A1A]" : "text-[#00FFAA] group-hover:scale-110"
+                          isActive ? "text-root-canvas" : "text-root-accent group-hover:scale-110"
                         } transition-transform`}
                       />
                       <span className="text-[11px] font-bold uppercase tracking-wider truncate">
@@ -642,7 +642,7 @@ function PembangunanSipilMiliterSectionView({
                         {cat.badgeCount !== undefined && (
                           <span
                             className={`text-[9px] font-black px-1.5 py-0.2 rounded ${
-                              isActive ? "bg-[#0A1A1A]/30 text-[#0A1A1A]" : "bg-[#0A1A1A] text-amber-400 border border-amber-400/30"
+                              isActive ? "bg-root-canvas/30 text-root-canvas" : "bg-root-canvas text-amber-400 border border-amber-400/30"
                             }`}
                           >
                             {cat.badgeCount}
@@ -650,7 +650,7 @@ function PembangunanSipilMiliterSectionView({
                         )}
                         <span
                           className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
-                            isActive ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
+                            isActive ? "bg-root-canvas text-root-accent" : "bg-root-canvas text-root-subtle"
                           }`}
                         >
                           {formatNumber(totalCount)}
@@ -663,13 +663,13 @@ function PembangunanSipilMiliterSectionView({
             </div>}
 
             {/* Grid Kartu Sipil */}
-            <div className="flex-1 flex flex-col min-w-0 bg-[#0F2424] overflow-y-auto p-4 custom-scrollbar">
+            <div className="flex-1 flex flex-col min-w-0 bg-root-surface overflow-y-auto p-4 custom-scrollbar">
               <div className="mb-3">
-                <h4 className="text-sm font-black uppercase tracking-wider text-[#00FFAA] flex items-center gap-2">
-                  <CategoryIcon className="w-4 h-4 text-[#00FFAA]" />
+                <h4 className="text-sm font-black uppercase tracking-wider text-root-accent flex items-center gap-2">
+                  <CategoryIcon className="w-4 h-4 text-root-accent" />
                   {activeCategoryObj.title}
                 </h4>
-                <p className="text-[10px] text-[#6B8A8A] font-semibold">
+                <p className="text-[10px] text-root-subtle font-semibold">
                   {activeCategoryObj.description}
                 </p>
               </div>
@@ -691,10 +691,10 @@ function PembangunanSipilMiliterSectionView({
                   return (
                     <div
                       key={item.key}
-                      className="relative overflow-visible bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-2xl p-3 flex flex-col justify-between hover:border-[#00FFAA]/50 transition-all shadow-sm min-h-[95px]"
+                      className="relative overflow-visible bg-root-canvas border border-root-accent/20 rounded-2xl p-3 flex flex-col justify-between hover:border-root-accent/50 transition-all shadow-sm min-h-[95px]"
                     >
                       {pendingCount > 0 && completionDate && (
-                        <div className="absolute -top-3 left-2 z-10 bg-[#0A1A1A] text-amber-300 text-[9px] font-bold px-2 py-0.5 border border-amber-400/40 rounded whitespace-nowrap">
+                        <div className="absolute -top-3 left-2 z-10 bg-root-canvas text-amber-300 text-[9px] font-bold px-2 py-0.5 border border-amber-400/40 rounded whitespace-nowrap">
                           Dalam pembangunan · selesai {formatCompletionDate(completionDate)}
                           {remainingDays > 0 ? ` · ${remainingDays} hari` : ""}
                         </div>
@@ -706,12 +706,12 @@ function PembangunanSipilMiliterSectionView({
                         <div className="flex items-baseline gap-1">
                           <span
                             className={`text-lg font-black tracking-tight leading-none ${
-                              isZero ? "text-[#6B8A8A]" : "text-[#E0E0E0]"
+                              isZero ? "text-root-subtle" : "text-root-text"
                             }`}
                           >
                             {formatNumber(count)}
                           </span>
-                          <span className="text-[9px] font-bold text-[#6B8A8A] uppercase">
+                          <span className="text-[9px] font-bold text-root-subtle uppercase">
                             {item.unitSuffix || "unit"}
                           </span>
                         </div>
@@ -721,7 +721,7 @@ function PembangunanSipilMiliterSectionView({
                           </p>
                         )}
                         {item.defaultUnit && (
-                          <p className="text-[8px] text-[#6B8A8A] font-semibold mt-0.5 truncate">
+                          <p className="text-[8px] text-root-subtle font-semibold mt-0.5 truncate">
                             {item.defaultUnit}
                           </p>
                         )}
@@ -735,12 +735,12 @@ function PembangunanSipilMiliterSectionView({
         )}
 
         {subTab === "militer" && (
-          <div className="flex-1 flex flex-col min-w-0 bg-[#0F2424] overflow-y-auto p-4 custom-scrollbar space-y-5">
+          <div className="flex-1 flex flex-col min-w-0 bg-root-surface overflow-y-auto p-4 custom-scrollbar space-y-5">
             {/* Unit Armada */}
             <div>
-              <div className="flex items-center gap-2 mb-2.5 border-b border-[#00FFAA]/15 pb-1.5">
-                <Swords className="w-3.5 h-3.5 text-[#00FFAA]" />
-                <h5 className="text-xs font-black uppercase tracking-wider text-[#00FFAA]">
+              <div className="flex items-center gap-2 mb-2.5 border-b border-root-accent/15 pb-1.5">
+                <Swords className="w-3.5 h-3.5 text-root-accent" />
+                <h5 className="text-xs font-black uppercase tracking-wider text-root-accent">
                   Unit Armada Aktif (23 Jenis Unit)
                 </h5>
               </div>
@@ -776,14 +776,14 @@ function PembangunanSipilMiliterSectionView({
                   return (
                     <div
                       key={unit.key}
-                      className={`relative overflow-visible bg-[#0A1A1A] border rounded-2xl p-3 flex flex-col justify-between transition-all shadow-sm min-h-[95px] ${
+                      className={`relative overflow-visible bg-root-canvas border rounded-2xl p-3 flex flex-col justify-between transition-all shadow-sm min-h-[95px] ${
                         isHighlighted
-                          ? "border-[#00FFAA]/40 bg-[#0A1A1A]/90 hover:border-[#00FFAA]"
-                          : "border-[#00FFAA]/20 hover:border-[#00FFAA]/50"
+                          ? "border-root-accent/40 bg-root-canvas/90 hover:border-root-accent"
+                          : "border-root-accent/20 hover:border-root-accent/50"
                       }`}
                     >
                       {pendingCount > 0 && completionDate && (
-                        <div className="absolute -top-3 left-2 z-10 bg-[#0A1A1A] text-amber-300 text-[9px] font-bold px-2 py-0.5 border border-amber-400/40 rounded whitespace-nowrap">
+                        <div className="absolute -top-3 left-2 z-10 bg-root-canvas text-amber-300 text-[9px] font-bold px-2 py-0.5 border border-amber-400/40 rounded whitespace-nowrap">
                           Dalam pembuatan · selesai {formatCompletionDate(completionDate)}
                           {remainingDays > 0 ? ` · ${remainingDays} hari` : ""}
                         </div>
@@ -792,7 +792,7 @@ function PembangunanSipilMiliterSectionView({
                         <p className="text-[10px] font-black uppercase tracking-wider text-[#8AB0A8] leading-tight line-clamp-2">
                           {unit.label}
                         </p>
-                        <span className="p-1 rounded-md bg-[#0F2424] text-[#00FFAA]/70 shrink-0">
+                        <span className="p-1 rounded-md bg-root-surface text-root-accent/70 shrink-0">
                           <GroupIcon className="w-2.5 h-2.5" />
                         </span>
                       </div>
@@ -800,12 +800,12 @@ function PembangunanSipilMiliterSectionView({
                       <div className="mt-auto">
                         <span
                           className={`font-black tracking-tight leading-none ${
-                            unit.isInfantry ? "text-sm text-[#00FFAA]" : "text-lg text-[#E0E0E0]"
+                            unit.isInfantry ? "text-sm text-root-accent" : "text-lg text-root-text"
                           }`}
                         >
                           {displayText}
                         </span>
-                        <p className="text-[9px] font-bold text-[#6B8A8A] mt-0.5 uppercase tracking-wider">
+                        <p className="text-[9px] font-bold text-root-subtle mt-0.5 uppercase tracking-wider">
                           {subText}
                         </p>
                         {pendingCount > 0 && (
@@ -822,9 +822,9 @@ function PembangunanSipilMiliterSectionView({
 
             {/* Infrastruktur Militer */}
             <div>
-              <div className="flex items-center gap-2 mb-2.5 border-b border-[#00FFAA]/15 pb-1.5">
+              <div className="flex items-center gap-2 mb-2.5 border-b border-root-accent/15 pb-1.5">
                 <Warehouse className="w-3.5 h-3.5 text-amber-400" />
-                <h5 className="text-xs font-black uppercase tracking-wider text-[#00FFAA]">
+                <h5 className="text-xs font-black uppercase tracking-wider text-root-accent">
                   Infrastruktur Militer & Pangkalan (5 Fasilitas)
                 </h5>
               </div>
@@ -846,10 +846,10 @@ function PembangunanSipilMiliterSectionView({
                   return (
                     <div
                       key={infra.key}
-                      className="relative overflow-visible bg-[#0A1A1A] border border-[#00FFAA]/25 rounded-2xl p-3 flex flex-col justify-between hover:border-[#00FFAA] transition-all shadow-sm min-h-[95px]"
+                      className="relative overflow-visible bg-root-canvas border border-root-accent/25 rounded-2xl p-3 flex flex-col justify-between hover:border-root-accent transition-all shadow-sm min-h-[95px]"
                     >
                       {pendingCount > 0 && completionDate && (
-                        <div className="absolute -top-3 left-2 z-10 bg-[#0A1A1A] text-amber-300 text-[9px] font-bold px-2 py-0.5 border border-amber-400/40 rounded whitespace-nowrap">
+                        <div className="absolute -top-3 left-2 z-10 bg-root-canvas text-amber-300 text-[9px] font-bold px-2 py-0.5 border border-amber-400/40 rounded whitespace-nowrap">
                           Dalam pembangunan · selesai {formatCompletionDate(completionDate)}
                           {remainingDays > 0 ? ` · ${remainingDays} hari` : ""}
                         </div>
@@ -858,7 +858,7 @@ function PembangunanSipilMiliterSectionView({
                         <p className="text-[10px] font-black uppercase tracking-wider text-[#8AB0A8] leading-tight line-clamp-2">
                           {infra.label}
                         </p>
-                        <span className="p-1 rounded-md bg-[#0F2424] text-amber-400 shrink-0">
+                        <span className="p-1 rounded-md bg-root-surface text-amber-400 shrink-0">
                           <Warehouse className="w-2.5 h-2.5" />
                         </span>
                       </div>
@@ -867,12 +867,12 @@ function PembangunanSipilMiliterSectionView({
                         <div className="flex items-baseline gap-1">
                           <span
                             className={`text-lg font-black tracking-tight leading-none ${
-                              isZero ? "text-[#6B8A8A]" : "text-[#00FFAA]"
+                              isZero ? "text-root-subtle" : "text-root-accent"
                             }`}
                           >
                             {formatNumber(count)}
                           </span>
-                          <span className="text-[9px] font-bold text-[#6B8A8A] uppercase">
+                          <span className="text-[9px] font-bold text-root-subtle uppercase">
                             Pangkalan
                           </span>
                         </div>
@@ -881,7 +881,7 @@ function PembangunanSipilMiliterSectionView({
                             +{formatNumber(pendingCount)} dalam pembangunan
                           </p>
                         )}
-                        <p className="text-[8px] font-semibold text-[#6B8A8A] mt-0.5 leading-tight truncate">
+                        <p className="text-[8px] font-semibold text-root-subtle mt-0.5 leading-tight truncate">
                           {infra.supportedUnitsLabel}
                         </p>
                       </div>

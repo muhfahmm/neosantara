@@ -139,13 +139,13 @@ export default function MintaSerangNegaraModal({
 
 	const renderFlag = (iso?: string, name?: string) => {
 		if (!iso || iso.length !== 2) {
-			return <span className="w-6 h-4 rounded-sm bg-[#0A1A1A] border border-[#00FFAA]/20 flex items-center justify-center text-[9px]">🏳️</span>;
+			return <span className="w-6 h-4 rounded-sm bg-root-canvas border border-root-accent/20 flex items-center justify-center text-[9px]">🏳️</span>;
 		}
 		return (
 			<img
 				src={`https://flagcdn.com/w40/${iso.toLowerCase()}.png`}
 				alt={name || iso}
-				className="w-6 h-4 rounded-sm object-cover border border-[#00FFAA]/20 shadow-sm shrink-0"
+				className="w-6 h-4 rounded-sm object-cover border border-root-accent/20 shadow-sm shrink-0"
 				onError={(e) => {
 					(e.target as HTMLImageElement).src = "https://flagcdn.com/w40/un.png";
 				}}
@@ -155,32 +155,32 @@ export default function MintaSerangNegaraModal({
 
 	const modalContent = (
 		<div className="fixed inset-0 z-[9999] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">
-			<div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+			<div className="bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
 				{/* Header (Tombol Tutup dihapus) */}
-				<div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-start bg-[#0A1A1A] gap-2 shrink-0 rounded-t-2xl">
+				<div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-start bg-root-canvas gap-2 shrink-0 rounded-t-2xl">
 					<div className="flex items-center gap-2 sm:gap-3">
-						<div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-							<Swords className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+						<div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+							<Swords className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
 						</div>
 						<div className="flex flex-col">
-							<h3 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
+							<h3 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">
 								Minta Serang Negara
 							</h3>
-							<p className="text-[10px] sm:text-xs text-[#6B8A8A] font-semibold mt-1">
-								Diplomasi Militer · Target: <span className="text-[#E0E0E0] font-bold">{countryName || "Sekutu"}</span>
+							<p className="text-[10px] sm:text-xs text-root-subtle font-semibold mt-1">
+								Diplomasi Militer · Target: <span className="text-root-text font-bold">{countryName || "Sekutu"}</span>
 							</p>
 						</div>
 					</div>
 				</div>
 
 				{/* Body */}
-				<div className="flex-1 min-h-0 bg-[#0F2424] relative z-10 p-4 sm:p-6 lg:p-8 flex flex-col gap-4 overflow-y-auto custom-scrollbar">
+				<div className="flex-1 min-h-0 bg-root-surface relative z-10 p-4 sm:p-6 lg:p-8 flex flex-col gap-4 overflow-y-auto custom-scrollbar">
 
 					{/* Info Banner */}
-					<div className="p-3 sm:p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 shrink-0">
-						<p className="text-[11px] sm:text-xs text-[#E0E0E0] leading-relaxed">
-							Minta <strong className="text-[#00FFAA] font-bold">{countryName || "Sekutu"}</strong> melancarkan serangan terhadap sasaran pilihan Anda. Tetapkan jumlah yang bersedia Anda bayar untuk permintaan tersebut.
+					<div className="p-3 sm:p-4 rounded-xl bg-root-canvas border border-root-accent/20 shrink-0">
+						<p className="text-[11px] sm:text-xs text-root-text leading-relaxed">
+							Minta <strong className="text-root-accent font-bold">{countryName || "Sekutu"}</strong> melancarkan serangan terhadap sasaran pilihan Anda. Tetapkan jumlah yang bersedia Anda bayar untuk permintaan tersebut.
 						</p>
 					</div>
 
@@ -189,27 +189,27 @@ export default function MintaSerangNegaraModal({
 
 						{/* Dropdown Negara */}
 						<div>
-							<label className="block text-[10px] sm:text-xs font-black text-[#00FFAA] uppercase tracking-wider mb-2">
+							<label className="block text-[10px] sm:text-xs font-black text-root-accent uppercase tracking-wider mb-2">
 								Negara Target
 							</label>
 							<div className="relative" ref={dropdownRef}>
 								<button
 									type="button"
 									onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-									className="w-full h-11 bg-[#0A1A1A] hover:bg-[#00FFAA]/5 border border-[#00FFAA]/40 hover:border-[#00FFAA] rounded-xl px-3 flex items-center justify-between text-white transition-all cursor-pointer"
+									className="w-full h-11 bg-root-canvas hover:bg-root-accent/5 border border-root-accent/40 hover:border-root-accent rounded-xl px-3 flex items-center justify-between text-white transition-all cursor-pointer"
 								>
 									<div className="flex items-center gap-2.5 truncate">
 										{renderFlag(selectedData?.iso, selectedData?.country)}
-										<span className="font-sans font-bold text-xs sm:text-sm tracking-wide truncate text-[#E0E0E0]">
+										<span className="font-sans font-bold text-xs sm:text-sm tracking-wide truncate text-root-text">
 											{selectedData?.country || "Pilih Negara"}
 										</span>
 									</div>
-									<ChevronDown className={`w-4 h-4 text-[#00FFAA] transition-transform duration-200 shrink-0 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+									<ChevronDown className={`w-4 h-4 text-root-accent transition-transform duration-200 shrink-0 ${isDropdownOpen ? 'rotate-180' : ''}`} />
 								</button>
 
 								{/* Dropdown menu */}
 								{isDropdownOpen && (
-									<div className="absolute left-0 right-0 top-full mt-1 max-h-56 overflow-y-auto bg-[#0A1A1A] border border-[#00FFAA]/40 rounded-xl shadow-2xl z-50 divide-y divide-[#00FFAA]/10 custom-scrollbar">
+									<div className="absolute left-0 right-0 top-full mt-1 max-h-56 overflow-y-auto bg-root-canvas border border-root-accent/40 rounded-xl shadow-2xl z-50 divide-y divide-root-accent/10 custom-scrollbar">
 										{countryList.map((c) => (
 											<button
 												key={c.country}
@@ -218,13 +218,13 @@ export default function MintaSerangNegaraModal({
 													setSelectedCountry(c.country);
 													setIsDropdownOpen(false);
 												}}
-												className={`w-full px-3 py-2 flex items-center gap-3 text-left hover:bg-[#00FFAA]/10 transition-colors text-xs font-bold text-[#E0E0E0] cursor-pointer ${
-													selectedCountry === c.country ? 'bg-[#00FFAA]/10 border-l-4 border-[#00FFAA]' : ''
+												className={`w-full px-3 py-2 flex items-center gap-3 text-left hover:bg-root-accent/10 transition-colors text-xs font-bold text-root-text cursor-pointer ${
+													selectedCountry === c.country ? 'bg-root-accent/10 border-l-4 border-root-accent' : ''
 												}`}
 											>
 												{renderFlag(c.iso, c.country)}
 												<span className="truncate flex-1">{c.country}</span>
-												<span className="text-[10px] text-[#6B8A8A] font-mono uppercase bg-[#0F2424] px-1.5 py-0.5 rounded border border-[#00FFAA]/20">
+												<span className="text-[10px] text-root-subtle font-mono uppercase bg-root-surface px-1.5 py-0.5 rounded border border-root-accent/20">
 													{c.iso?.toUpperCase()}
 												</span>
 											</button>
@@ -236,23 +236,23 @@ export default function MintaSerangNegaraModal({
 
 						{/* Input Pembayaran */}
 						<div>
-							<label className="block text-[10px] sm:text-xs font-black text-[#00FFAA] uppercase tracking-wider mb-2">
+							<label className="block text-[10px] sm:text-xs font-black text-root-accent uppercase tracking-wider mb-2">
 								Jumlah Pembayaran (NEO)
 							</label>
-							<div className="flex items-center gap-2 bg-[#0A1A1A] border border-[#00FFAA]/40 rounded-xl px-3 h-11">
-								<Coins className="w-4 h-4 text-[#00FFAA] shrink-0" />
+							<div className="flex items-center gap-2 bg-root-canvas border border-root-accent/40 rounded-xl px-3 h-11">
+								<Coins className="w-4 h-4 text-root-accent shrink-0" />
 								<input
 									type="number"
 									min="0"
 									value={paymentAmount || ""}
 									onChange={(e) => setPaymentAmount(Math.max(0, parseInt(e.target.value) || 0))}
-									className="flex-1 bg-transparent text-sm font-sans font-black text-[#E0E0E0] outline-none placeholder-[#6B8A8A]"
+									className="flex-1 bg-transparent text-sm font-sans font-black text-root-text outline-none placeholder-root-subtle"
 									placeholder="0"
 								/>
 								<button
 									type="button"
 									onClick={() => handleAddMoney(1000)}
-									className="h-8 px-2.5 bg-[#00FFAA] hover:bg-[#00e699] active:scale-95 text-[#0A1A1A] font-sans font-black text-[11px] rounded-lg flex items-center gap-1 transition-all cursor-pointer shadow-md shrink-0"
+									className="h-8 px-2.5 bg-root-accent hover:bg-[#00e699] active:scale-95 text-root-canvas font-sans font-black text-[11px] rounded-lg flex items-center gap-1 transition-all cursor-pointer shadow-md shrink-0"
 									title="Tambah 1.000"
 								>
 									<ArrowUp className="w-3 h-3" />
@@ -264,7 +264,7 @@ export default function MintaSerangNegaraModal({
 
 					{/* Kota target dipilih dari kota-kota yang saat ini dimiliki negara sasaran */}
 					<div className="shrink-0">
-						<label htmlFor="requested-invasion-target-city" className="block text-[10px] sm:text-xs font-black text-[#00FFAA] uppercase tracking-wider mb-2">
+						<label htmlFor="requested-invasion-target-city" className="block text-[10px] sm:text-xs font-black text-root-accent uppercase tracking-wider mb-2">
 							Kota yang Diserang
 						</label>
 						<select
@@ -272,7 +272,7 @@ export default function MintaSerangNegaraModal({
 							value={selectedCityId}
 							onChange={event => setSelectedCityId(event.target.value)}
 							disabled={targetCities.length === 0}
-							className="w-full h-11 bg-[#0A1A1A] border border-[#00FFAA]/40 rounded-xl px-3 text-white font-bold text-xs sm:text-sm disabled:opacity-50 cursor-pointer"
+							className="w-full h-11 bg-root-canvas border border-root-accent/40 rounded-xl px-3 text-white font-bold text-xs sm:text-sm disabled:opacity-50 cursor-pointer"
 						>
 							{targetCities.length === 0
 								? <option value="">Tidak ada data kota untuk negara ini</option>
@@ -286,20 +286,20 @@ export default function MintaSerangNegaraModal({
 					</div>
 
 					{/* Success Rate Bar */}
-					<div className="bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-xl p-3 sm:p-4 shrink-0">
-						<div className="flex items-center justify-between text-xs font-black text-[#6B8A8A] uppercase tracking-wider mb-2.5">
+					<div className="bg-root-canvas border border-root-accent/30 rounded-xl p-3 sm:p-4 shrink-0">
+						<div className="flex items-center justify-between text-xs font-black text-root-subtle uppercase tracking-wider mb-2.5">
 							<span>Peluang Kesuksesan</span>
 							<span className={`font-black text-sm ${successRate > 50 ? 'text-emerald-400' : successRate > 20 ? 'text-amber-400' : 'text-rose-400'}`}>
 								{successRate}%
 							</span>
 						</div>
-						<div className="w-full h-2.5 bg-[#0F2424] rounded-full overflow-hidden border border-[#00FFAA]/20">
+						<div className="w-full h-2.5 bg-root-surface rounded-full overflow-hidden border border-root-accent/20">
 							<div
-								className="h-full bg-gradient-to-r from-amber-500 via-[#00FFAA] to-emerald-400 transition-all duration-300"
+								className="h-full bg-gradient-to-r from-amber-500 via-root-accent to-emerald-400 transition-all duration-300"
 								style={{ width: `${successRate}%` }}
 							/>
 						</div>
-						<p className="text-[10px] text-[#6B8A8A] font-semibold mt-2.5">
+						<p className="text-[10px] text-root-subtle font-semibold mt-2.5">
 							Peluang meningkat seiring besarnya pembayaran. Minimum efektif: 20.000 NEO untuk hasil yang berarti.
 						</p>
 					</div>
@@ -309,12 +309,12 @@ export default function MintaSerangNegaraModal({
 				</div>
 
 				{/* Footer */}
-				<div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-[#00FFAA]/20 bg-[#0A1A1A] shrink-0 rounded-b-2xl">
+				<div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-root-accent/20 bg-root-canvas shrink-0 rounded-b-2xl">
 					<div className="flex gap-3 justify-end">
 						<button
 							type="button"
 							onClick={onClose}
-							className="px-6 py-3 bg-[#0F2424] hover:bg-[#163535] border border-[#00FFAA]/30 rounded-xl text-center text-[#E0E0E0] font-black text-xs tracking-wider uppercase transition-all cursor-pointer"
+							className="px-6 py-3 bg-root-surface hover:bg-[#163535] border border-root-accent/30 rounded-xl text-center text-root-text font-black text-xs tracking-wider uppercase transition-all cursor-pointer"
 						>
 							Batal
 						</button>
@@ -330,7 +330,7 @@ export default function MintaSerangNegaraModal({
 							}}
 							className={`px-6 py-3 rounded-xl text-center font-black text-xs tracking-wider uppercase transition-all shadow-md ${
 								selectedCountry && targetCities.length > 0 && selectedCityId
-									? "bg-[#00FFAA] hover:bg-[#00e699] text-[#0A1A1A] border border-[#00FFAA] cursor-pointer"
+									? "bg-root-accent hover:bg-[#00e699] text-root-canvas border border-root-accent cursor-pointer"
 									: "bg-gray-700 text-gray-400 border border-gray-600 cursor-not-allowed opacity-50"
 							}`}
 						>

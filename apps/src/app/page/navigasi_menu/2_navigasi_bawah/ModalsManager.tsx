@@ -22,12 +22,12 @@ export { preloadModalForMenu } from './modalPreloaders';
 
 const ModalLoadingFallback = () => (
   <div
-    className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 px-4 py-8"
+    className="fixed inset-0 z-[60] flex items-center justify-center px-4 py-8"
     role="status"
     aria-label="Memuat menu"
   >
-    <div className="flex items-center gap-3 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] px-5 py-4 text-sm font-semibold text-[#E0E0E0] shadow-2xl">
-      <span className="h-5 w-5 animate-spin rounded-full border-2 border-[#00FFAA]/30 border-t-[#00FFAA]" />
+    <div className="flex items-center gap-3 rounded-xl border border-root-accent/30 bg-root-surface px-5 py-4 text-sm font-semibold text-root-text shadow-2xl">
+      <span className="h-5 w-5 animate-spin rounded-full border-2 border-root-accent/30 border-t-root-accent" />
       Menyiapkan menu...
     </div>
   </div>
@@ -365,14 +365,14 @@ function ModalsManager({
     isCountryUnderEconomicEmbargo(selectedCountry.country || "")
   ) {
     return (
-      <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 px-4 py-8">
+      <div className="fixed inset-0 z-[60] flex items-center justify-center px-4 py-8">
         <div
           role="alertdialog"
           aria-modal="true"
           aria-labelledby="economic-embargo-access-title"
-          className="w-full max-w-lg overflow-hidden rounded-2xl border border-rose-500/40 bg-[#0F2424] font-sans shadow-2xl"
+          className="w-full max-w-lg overflow-hidden rounded-2xl border border-rose-500/40 bg-root-surface font-sans shadow-2xl"
         >
-          <div className="border-b border-rose-500/20 bg-[#0A1A1A] px-6 py-4">
+          <div className="border-b border-rose-500/20 bg-root-canvas px-6 py-4">
             <h2 id="economic-embargo-access-title" className="text-base font-black uppercase tracking-wide text-rose-400">
               Akses dibatasi oleh embargo ekonomi
             </h2>
@@ -381,15 +381,15 @@ function ModalsManager({
             <p>
               Negara {selectedCountry.country} tidak dapat mengakses Pasar Perdagangan Global atau Pinjaman & Hutang selama embargo ekonomi aktif.
             </p>
-            <p className="text-xs text-[#6B8A8A]">
+            <p className="text-xs text-root-subtle">
               Pembatasan berakhir ketika resolusi embargo tidak lagi aktif. Embargo dan sanksi yang berlaku saat ini akan hilang setelah halaman dimuat ulang.
             </p>
           </div>
-          <div className="flex justify-end border-t border-[#00FFAA]/15 bg-[#0A1A1A] px-6 py-4">
+          <div className="flex justify-end border-t border-root-accent/15 bg-root-canvas px-6 py-4">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl bg-[#00FFAA] px-5 py-2.5 text-xs font-black uppercase tracking-wider text-[#0A1A1A] transition-colors hover:bg-[#00FFAA]/80 cursor-pointer"
+              className="rounded-xl bg-root-accent px-5 py-2.5 text-xs font-black uppercase tracking-wider text-root-canvas transition-colors hover:bg-root-accent/80 cursor-pointer"
             >
               Mengerti
             </button>

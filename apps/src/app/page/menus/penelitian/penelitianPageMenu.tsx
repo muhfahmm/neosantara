@@ -617,35 +617,35 @@ export default function PenelitianPageModal({
   };
 
   return createPortal(
-    <div className="fixed top-16 sm:top-20 inset-x-0 bottom-0 z-[200] bg-[#0A1A1A] flex flex-col font-sans animate-in fade-in duration-300">
+    <div className="fixed top-16 sm:top-20 inset-x-0 bottom-0 z-[200] bg-root-canvas flex flex-col font-sans animate-in fade-in duration-300">
 
       {/* HEADER */}
-      <div className="px-4 sm:px-8 py-3 bg-[#0F2424] border-b border-[#00FFAA]/30 flex flex-col xl:flex-row xl:items-center justify-between shadow-lg relative z-20 shrink-0 gap-3">
+      <div className="px-4 sm:px-8 py-3 bg-root-surface border-b border-root-accent/30 flex flex-col xl:flex-row xl:items-center justify-between shadow-lg relative z-20 shrink-0 gap-3">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 sm:gap-4">
-            <div className="p-2 rounded-xl bg-[#00FFAA]/10 border border-[#00FFAA]/40 text-[#00FFAA] shrink-0">
+            <div className="p-2 rounded-xl bg-root-accent/10 border border-root-accent/40 text-root-accent shrink-0">
               <FlaskConical className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
-              <h1 className="text-base sm:text-xl font-black text-[#00FFAA] tracking-wider uppercase leading-none">
+              <h1 className="text-base sm:text-xl font-black text-root-accent tracking-wider uppercase leading-none">
                 Pusat Penelitian & Riset Nasional
               </h1>
-              <p className="text-[10px] sm:text-xs text-[#6B8A8A] font-semibold mt-0.5">
+              <p className="text-[10px] sm:text-xs text-root-subtle font-semibold mt-0.5">
                 Setiap riset dapat di-upgrade hingga Level 5
               </p>
             </div>
           </div>
 
-          <button onClick={onClose} className="xl:hidden p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0">
+          <button onClick={onClose} className="xl:hidden p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0">
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
           </button>
         </div>
 
         <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
-          <div className="flex items-center gap-2 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-lg px-3 py-1.5">
-            <span className="text-[10px] text-[#6B8A8A] font-black uppercase">Riset Selesai:</span>
-            <span className="text-[11px] font-black text-[#00FFAA]">{globalStats.done}/{globalStats.total}</span>
+          <div className="flex items-center gap-2 bg-root-canvas border border-root-accent/20 rounded-lg px-3 py-1.5">
+            <span className="text-[10px] text-root-subtle font-black uppercase">Riset Selesai:</span>
+            <span className="text-[11px] font-black text-root-accent">{globalStats.done}/{globalStats.total}</span>
           </div>
 
           <div className="relative">
@@ -654,23 +654,23 @@ export default function PenelitianPageModal({
               placeholder="Cari riset..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 pr-3 py-1.5 rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 text-xs font-bold text-[#E0E0E0] outline-none focus:border-[#00FFAA] w-36 sm:w-48 xl:w-56 transition-all placeholder:text-[#6B8A8A]"
+              className="pl-8 pr-3 py-1.5 rounded-lg bg-root-canvas border border-root-accent/30 text-xs font-bold text-root-text outline-none focus:border-root-accent w-36 sm:w-48 xl:w-56 transition-all placeholder:text-root-subtle"
             />
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#6B8A8A]" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-root-subtle" />
           </div>
 
           {onBackToSelection && (
             <button
               onClick={onBackToSelection}
               title="Ganti Sektor Utama"
-              className="px-3 py-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#00FFAA] hover:bg-[#00FFAA]/10 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-lg border border-root-accent/30 bg-root-canvas text-root-accent hover:bg-root-accent/10 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
             >
               <FlaskConical className="w-3.5 h-3.5" />
               <span>Ganti Sektor</span>
             </button>
           )}
 
-          <button onClick={onClose} className="hidden xl:flex p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase items-center gap-1 shadow-sm shrink-0 ml-auto">
+          <button onClick={onClose} className="hidden xl:flex p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase items-center gap-1 shadow-sm shrink-0 ml-auto">
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
           </button>
@@ -681,8 +681,8 @@ export default function PenelitianPageModal({
       <div className="flex-1 flex min-h-0 relative z-10">
 
         {/* SIDEBAR */}
-        <div className="w-52 sm:w-60 lg:w-64 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2.5 sm:p-3 flex flex-col gap-2 overflow-y-auto custom-scrollbar shrink-0">
-          <div className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-widest px-2 py-1.5">
+        <div className="w-52 sm:w-60 lg:w-64 border-r border-root-accent/30 bg-root-canvas p-2.5 sm:p-3 flex flex-col gap-2 overflow-y-auto custom-scrollbar shrink-0">
+          <div className="text-[10px] font-black text-root-subtle uppercase tracking-widest px-2 py-1.5">
             Kategori Riset
           </div>
           {CATEGORIES.filter((cat) => allowedCategories.includes(cat.key)).map((cat) => {
@@ -694,8 +694,8 @@ export default function PenelitianPageModal({
                 key={cat.key}
                 onClick={() => setActiveCategory(cat.key)}
                 className={`flex items-center justify-between w-full px-3 py-2.5 rounded-xl border text-left transition-all cursor-pointer ${isActiveTab
-                  ? 'bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md'
-                  : 'bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]'
+                  ? 'bg-root-accent border-root-accent text-root-canvas font-black shadow-md'
+                  : 'bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent/50 hover:text-root-accent'
                   }`}
               >
                 <div className="flex items-center gap-2 min-w-0">
@@ -705,7 +705,7 @@ export default function PenelitianPageModal({
                   </span>
                 </div>
                 <span
-                  className={`text-[9px] font-black px-1.5 py-0.5 rounded ml-1 shrink-0 ${isActiveTab ? 'bg-[#0A1A1A]/20 text-[#0A1A1A]' : 'bg-[#0A1A1A] text-[#00FFAA]'
+                  className={`text-[9px] font-black px-1.5 py-0.5 rounded ml-1 shrink-0 ${isActiveTab ? 'bg-root-canvas/20 text-root-canvas' : 'bg-root-canvas text-root-accent'
                     }`}
                 >
                   {stats.done}/{stats.total}
@@ -716,14 +716,14 @@ export default function PenelitianPageModal({
 
           {/* PANEL RISET AKTIF */}
           {(activeResearch || activeUpgradeData) && (
-            <div className="p-3 rounded-xl bg-[#0F2424] border border-[#00FFAA]/40 mt-4">
+            <div className="p-3 rounded-xl bg-root-surface border border-root-accent/40 mt-4">
               <div className="flex items-center gap-2 mb-2">
-                <Clock className="w-3.5 h-3.5 text-[#00FFAA] animate-pulse" />
-                <span className="text-[10px] font-black text-[#00FFAA] uppercase tracking-widest">
+                <Clock className="w-3.5 h-3.5 text-root-accent animate-pulse" />
+                <span className="text-[10px] font-black text-root-accent uppercase tracking-widest">
                   {activeUpgradeData ? 'Upgrade Aktif' : 'Riset Aktif'}
                 </span>
               </div>
-              <p className="text-xs font-bold text-[#E0E0E0] truncate">
+              <p className="text-xs font-bold text-root-text truncate">
                 {activeUpgradeData ? activeUpgradeData.research.name : activeResearch?.name}
               </p>
               {activeUpgradeData && (
@@ -731,24 +731,24 @@ export default function PenelitianPageModal({
                   → Level {activeUpgradeData.targetLevel}
                 </p>
               )}
-              <div className="w-full h-2 bg-[#0A1A1A] rounded-full mt-2 overflow-hidden border border-[#00FFAA]/20">
+              <div className="w-full h-2 bg-root-canvas rounded-full mt-2 overflow-hidden border border-root-accent/20">
                 <div
-                  className="h-full bg-[#00FFAA] transition-all duration-300"
+                  className="h-full bg-root-accent transition-all duration-300"
                   style={{ width: `${activeCategoryResearchProgress}%` }}
                 />
               </div>
-              <p className="text-[10px] font-black text-[#00FFAA] mt-1.5">
+              <p className="text-[10px] font-black text-root-accent mt-1.5">
                 {activeCategoryResearchProgress}% selesai
               </p>
             </div>
           )}
 
           {/* STATUS PENDIDIKAN */}
-          <div className="mt-2 p-3 rounded-2xl bg-[#0F2424] border border-[#00FFAA]/30 space-y-2.5">
+          <div className="mt-2 p-3 rounded-2xl bg-root-surface border border-root-accent/30 space-y-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-[#00FFAA]" />
-                <span className="text-xs font-black text-[#00FFAA] uppercase tracking-wider">
+                <BookOpen className="w-5 h-5 text-root-accent" />
+                <span className="text-xs font-black text-root-accent uppercase tracking-wider">
                   POIN PENDIDIKAN
                 </span>
               </div>
@@ -795,34 +795,34 @@ export default function PenelitianPageModal({
           </div>
 
           {/* INFO SISTEM */}
-          <div className="mt-2 p-2.5 rounded-xl bg-[#0F2424] border border-[#00FFAA]/20">
+          <div className="mt-2 p-2.5 rounded-xl bg-root-surface border border-root-accent/20">
             <div className="flex items-center gap-1.5 mb-2">
-              <TrendingUp className="w-3 h-3 text-[#00FFAA]" />
-              <span className="text-[9px] font-black text-[#00FFAA] uppercase tracking-widest">
+              <TrendingUp className="w-3 h-3 text-root-accent" />
+              <span className="text-[9px] font-black text-root-accent uppercase tracking-widest">
                 Bonus Level Card
               </span>
             </div>
             <div className="space-y-1 pr-1">
               {Array.from({ length: 5 }, (_, i) => i + 1).map((lvl) => (
-                <div key={lvl} className="flex items-center justify-between px-2 py-0.5 rounded bg-[#0A1A1A]">
-                  <span className="text-[9px] font-black text-[#6B8A8A]">Level {lvl}</span>
-                  <span className="text-[9px] font-black text-[#00FFAA]">+{RESEARCH_CARD_LEVEL_BONUS[lvl]}%</span>
+                <div key={lvl} className="flex items-center justify-between px-2 py-0.5 rounded bg-root-canvas">
+                  <span className="text-[9px] font-black text-root-subtle">Level {lvl}</span>
+                  <span className="text-[9px] font-black text-root-accent">+{RESEARCH_CARD_LEVEL_BONUS[lvl]}%</span>
                 </div>
               ))}
             </div>
-            <p className="text-[8px] text-[#6B8A8A] font-semibold mt-2 leading-tight">
+            <p className="text-[8px] text-root-subtle font-semibold mt-2 leading-tight">
               Setiap card riset bisa di-upgrade dari Level 1 hingga Level 5. Bonus level mengamplifikasi semua efek riset tersebut.
             </p>
           </div>
         </div>
 
         {/* KONTEN UTAMA */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] custom-scrollbar">
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-root-surface custom-scrollbar">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-base sm:text-lg font-black text-[#00FFAA] uppercase tracking-wider">
+            <h2 className="text-base sm:text-lg font-black text-root-accent uppercase tracking-wider">
               {CATEGORIES.find((c) => c.key === activeCategory)?.label}
             </h2>
-            <p className="text-[11px] text-[#6B8A8A] font-semibold">
+            <p className="text-[11px] text-root-subtle font-semibold">
               {filteredData.length} teknologi tersedia
             </p>
           </div>
@@ -850,11 +850,11 @@ export default function PenelitianPageModal({
                   <div key={tierNum} className="flex flex-col gap-7 relative z-10">
 
                     {/* Header Tier Badge */}
-                    <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 shrink-0">
-                      <span className="text-xs font-black text-[#00FFAA] uppercase tracking-wider">
+                    <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-root-canvas border border-root-accent/30 shrink-0">
+                      <span className="text-xs font-black text-root-accent uppercase tracking-wider">
                         TIER {ROMAN_NUMERALS[tierNum - 1]}
                       </span>
-                      <span className="text-[10px] font-bold text-[#6B8A8A]">
+                      <span className="text-[10px] font-bold text-root-subtle">
                         {tierItems.filter((r) => isUnlocked(r.id)).length}/{tierItems.length}
                       </span>
                     </div>
@@ -876,19 +876,19 @@ export default function PenelitianPageModal({
                       return (
                         <div key={research.id} className={`relative group ${isResearching ? 'pt-5' : ''}`}>
                           {tierNum < tierCount && (
-                            <div className="hidden lg:block absolute -right-6 top-1/2 -translate-y-1/2 w-6 border-t-2 border-dashed border-[#00FFAA]/30 z-0 pointer-events-none" />
+                            <div className="hidden lg:block absolute -right-6 top-1/2 -translate-y-1/2 w-6 border-t-2 border-dashed border-root-accent/30 z-0 pointer-events-none" />
                           )}
 
                           <div
                             className={`relative rounded-xl overflow-visible border transition-all z-10 flex flex-col justify-between min-h-[195px] ${isMaxed
-                              ? 'bg-gradient-to-r from-[#0F2424] via-[#0A1A1A] to-[#122E2E] border-amber-500/60 shadow-[0_0_15px_rgba(245,158,11,0.15)]'
+                              ? 'bg-gradient-to-r from-root-surface via-root-canvas to-[#122E2E] border-amber-500/60 shadow-[0_0_15px_rgba(245,158,11,0.15)]'
                               : unlocked
-                                ? 'bg-[#0F2424] border-[#00FFAA]/50 shadow-[0_2px_10px_rgba(0,255,170,0.1)]'
+                                ? 'bg-root-surface border-root-accent/50 shadow-[0_2px_10px_rgba(0,255,170,0.1)]'
                                 : active
-                                  ? 'bg-[#0F2424] border-[#00FFAA] shadow-[0_0_20px_rgba(0,255,170,0.2)]'
+                                  ? 'bg-root-surface border-root-accent shadow-[0_0_20px_rgba(0,255,170,0.2)]'
                                   : locked
-                                    ? 'bg-[#0A1A1A]/80 border-gray-800 opacity-60'
-                                    : 'bg-[#0A1A1A] border-[#00FFAA]/25 hover:border-[#00FFAA]/60'
+                                    ? 'bg-root-canvas/80 border-gray-800 opacity-60'
+                                    : 'bg-root-canvas border-root-accent/25 hover:border-root-accent/60'
                               }`}
                           >
                             {/* TANGGAL SELESAI */}
@@ -905,7 +905,7 @@ export default function PenelitianPageModal({
                               const formattedDateStr = `${d} ${monthNames[date.getMonth()]}, ${date.getFullYear()}`;
 
                               return (
-                                <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
+                                <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[10px] font-bold px-2 py-1 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
                                   {formattedDateStr}
                                 </div>
                               );
@@ -914,26 +914,26 @@ export default function PenelitianPageModal({
                             {/* Top Portion (Header + Body Effects) */}
                             <div className="flex flex-col">
                               {/* Header Card */}
-                              <div className="p-3 pb-2 flex items-center justify-between gap-2 border-b border-[#00FFAA]/10 bg-[#0F2424] rounded-t-xl min-h-[44px]">
+                              <div className="p-3 pb-2 flex items-center justify-between gap-2 border-b border-root-accent/10 bg-root-surface rounded-t-xl min-h-[44px]">
                                 <div className="flex items-center gap-2 min-w-0">
                                   <div
                                     className={`p-1.5 rounded-lg border shrink-0 ${isMaxed
                                       ? 'bg-amber-500/20 border-amber-500/50 text-amber-300'
                                       : unlocked
                                         ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300'
-                                        : 'bg-[#00FFAA]/10 border-[#00FFAA]/30 text-[#00FFAA]'
+                                        : 'bg-root-accent/10 border-root-accent/30 text-root-accent'
                                       }`}
                                   >
                                     <Icon className="w-3.5 h-3.5" />
                                   </div>
                                   <div className="min-w-0">
-                                    <h3 className="text-[11px] font-bold text-[#E0E0E0] truncate leading-tight">
+                                    <h3 className="text-[11px] font-bold text-root-text truncate leading-tight">
                                       {research.name}
                                     </h3>
                                   </div>
                                 </div>
 
-                                <div className="px-1.5 py-0.5 rounded border border-[#00FFAA]/30 bg-[#0A1A1A] text-[9px] font-black text-[#00FFAA] shrink-0 uppercase tracking-widest">
+                                <div className="px-1.5 py-0.5 rounded border border-root-accent/30 bg-root-canvas text-[9px] font-black text-root-accent shrink-0 uppercase tracking-widest">
                                   {ROMAN_NUMERALS[tierNum - 1]}
                                 </div>
                               </div>
@@ -955,8 +955,8 @@ export default function PenelitianPageModal({
                                     );
                                     return (
                                       <div key={i} className="flex items-center gap-1 text-[9px] font-bold">
-                                        <Sparkles className="w-2.5 h-2.5 text-[#00FFAA] shrink-0" />
-                                        <span className="text-[#E0E0E0] truncate">{amplifiedLabel}</span>
+                                        <Sparkles className="w-2.5 h-2.5 text-root-accent shrink-0" />
+                                        <span className="text-root-text truncate">{amplifiedLabel}</span>
                                       </div>
                                     );
                                   })}
@@ -966,8 +966,8 @@ export default function PenelitianPageModal({
 
                             {/* Bottom Portion (Progress & Action Button Footer) */}
                             <div className="p-2.5 pt-0">
-                              <div className="flex items-center justify-between gap-1.5 pt-1.5 border-t border-[#00FFAA]/10">
-                                <div className="flex items-center gap-0.5 text-[9px] font-bold text-[#6B8A8A] shrink-0">
+                              <div className="flex items-center justify-between gap-1.5 pt-1.5 border-t border-root-accent/10">
+                                <div className="flex items-center gap-0.5 text-[9px] font-bold text-root-subtle shrink-0">
                                   <Clock className="w-2.5 h-2.5 text-sky-400" />
                                   {(() => {
                                     const baseDur = unlocked && !isMaxed ? getCardUpgradeDuration(research, nextLevel) : research.duration;
@@ -990,12 +990,12 @@ export default function PenelitianPageModal({
                                   })()}
                                 </div>
 
-                                <div className="flex-1 h-1.5 bg-[#0A1A1A] rounded-full overflow-hidden border border-[#00FFAA]/20">
+                                <div className="flex-1 h-1.5 bg-root-canvas rounded-full overflow-hidden border border-root-accent/20">
                                   <div
                                     className={`h-full transition-all duration-300 ${isMaxed
                                       ? 'bg-amber-400'
                                       : isResearching
-                                        ? 'bg-[#00FFAA] animate-pulse'
+                                        ? 'bg-root-accent animate-pulse'
                                         : unlocked
                                           ? 'bg-emerald-400'
                                           : 'bg-gray-700'
@@ -1011,7 +1011,7 @@ export default function PenelitianPageModal({
                                   />
                                 </div>
 
-                                <div className="text-[9px] font-black text-[#00FFAA] shrink-0 tracking-wider">
+                                <div className="text-[9px] font-black text-root-accent shrink-0 tracking-wider">
                                   {level}/{MAX_CARD_LEVEL}
                                 </div>
                               </div>
@@ -1024,7 +1024,7 @@ export default function PenelitianPageModal({
                                       Terkunci
                                     </div>
                                   ) : activeCategoryResearchId ? (
-                                    <div className="w-full py-1 rounded bg-[#0A1A1A] border border-[#6B8A8A]/30 flex items-center justify-center gap-1 text-[#6B8A8A] text-[9px] font-black uppercase">
+                                    <div className="w-full py-1 rounded bg-root-canvas border border-root-subtle/30 flex items-center justify-center gap-1 text-root-subtle text-[9px] font-black uppercase">
                                       <Clock className="w-2.5 h-2.5" />
                                       Antrian Penuh
                                     </div>
@@ -1033,7 +1033,7 @@ export default function PenelitianPageModal({
                                       onClick={() => canUnlock && setConfirmTarget(research)}
                                       disabled={!canUnlock}
                                       className={`w-full py-1 rounded border flex items-center justify-center gap-1 text-[9px] font-black uppercase transition-all cursor-pointer ${canUnlock
-                                        ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA] hover:bg-[#00FFAA]/80 active:scale-95 shadow-md'
+                                        ? 'bg-root-accent text-root-canvas border-root-accent hover:bg-root-accent/80 active:scale-95 shadow-md'
                                         : 'bg-gray-800/50 border-gray-700 text-gray-500 cursor-not-allowed'
                                         }`}
                                     >
@@ -1044,7 +1044,7 @@ export default function PenelitianPageModal({
                                 )}
 
                                 {active && (
-                                  <div className="w-full py-1 rounded bg-[#00FFAA]/20 border border-[#00FFAA]/50 flex items-center justify-center gap-1 text-[#00FFAA] text-[9px] font-black uppercase">
+                                  <div className="w-full py-1 rounded bg-root-accent/20 border border-root-accent/50 flex items-center justify-center gap-1 text-root-accent text-[9px] font-black uppercase">
                                     <Clock className="w-2.5 h-2.5 animate-pulse" />
                                     Diteliti ({activeCategoryResearchProgress}%)
                                   </div>
@@ -1057,12 +1057,12 @@ export default function PenelitianPageModal({
                                       MAX (5/5)
                                     </div>
                                   ) : isResearching ? (
-                                    <div className="w-full py-1 rounded bg-[#00FFAA]/20 border border-[#00FFAA]/50 flex items-center justify-center gap-1 text-[#00FFAA] text-[9px] font-black uppercase">
+                                    <div className="w-full py-1 rounded bg-root-accent/20 border border-root-accent/50 flex items-center justify-center gap-1 text-root-accent text-[9px] font-black uppercase">
                                       <Clock className="w-2.5 h-2.5 animate-pulse" />
                                       Diteliti ({activeCategoryResearchProgress}%)
                                     </div>
                                   ) : activeCategoryResearchId ? (
-                                    <div className="w-full py-1 rounded bg-[#0A1A1A] border border-[#6B8A8A]/30 flex items-center justify-center gap-1 text-[#6B8A8A] text-[9px] font-black uppercase">
+                                    <div className="w-full py-1 rounded bg-root-canvas border border-root-subtle/30 flex items-center justify-center gap-1 text-root-subtle text-[9px] font-black uppercase">
                                       <Clock className="w-2.5 h-2.5" />
                                       Antrian Penuh
                                     </div>
@@ -1072,14 +1072,14 @@ export default function PenelitianPageModal({
                                         onClick={() => canUpgrade && setConfirmUpgrade({ research, targetLevel: nextLevel })}
                                         disabled={!canUpgrade}
                                         className={`w-full py-1 rounded border flex items-center justify-center gap-1 text-[9px] font-black uppercase transition-all cursor-pointer ${canUpgrade
-                                          ? 'bg-gradient-to-r from-[#00FFAA] to-emerald-400 text-[#0A1A1A] border-[#00FFAA] hover:opacity-90 active:scale-95 shadow-md'
+                                          ? 'bg-gradient-to-r from-root-accent to-emerald-400 text-root-canvas border-root-accent hover:opacity-90 active:scale-95 shadow-md'
                                           : 'bg-gray-800/50 border-gray-700 text-gray-500 cursor-not-allowed'
                                           }`}
                                       >
                                         <ChevronUp className="w-2.5 h-2.5" />
                                         {canUpgrade ? `Upgrade Lv.${nextLevel}` : 'Kas Tidak Cukup'}
                                       </button>
-                                      <div className="text-[8px] font-bold text-[#00FFAA] text-center tracking-tight">
+                                      <div className="text-[8px] font-bold text-root-accent text-center tracking-tight">
                                         Efek Berikutnya: {applyLevelBonus(
                                           research.effects[0],
                                           nextLevel,
@@ -1107,7 +1107,7 @@ export default function PenelitianPageModal({
           </div>
 
           {filteredData.length === 0 && (
-            <div className="text-center py-12 text-[#6B8A8A] text-sm font-bold">
+            <div className="text-center py-12 text-root-subtle text-sm font-bold">
               Tidak ada riset yang cocok dengan "{searchQuery}"
             </div>
           )}
@@ -1122,30 +1122,30 @@ export default function PenelitianPageModal({
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative"
+            className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative"
           >
-            <button onClick={() => setConfirmTarget(null)} className="absolute top-3 right-3 text-[#6B8A8A] hover:text-[#00FFAA] cursor-pointer">
+            <button onClick={() => setConfirmTarget(null)} className="absolute top-3 right-3 text-root-subtle hover:text-root-accent cursor-pointer">
               <X className="h-5 w-5" />
             </button>
 
             <div className="flex items-center gap-3 mb-4">
-              <div className="h-12 w-12 rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 flex items-center justify-center shrink-0">
-                <confirmTarget.icon className="h-6 w-6 text-[#00FFAA]" />
+              <div className="h-12 w-12 rounded-lg bg-root-canvas border border-root-accent/30 flex items-center justify-center shrink-0">
+                <confirmTarget.icon className="h-6 w-6 text-root-accent" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-[#E0E0E0] uppercase leading-tight">
+                <h3 className="text-base font-bold text-root-text uppercase leading-tight">
                   {confirmTarget.name}
                 </h3>
-                <p className="text-[10px] text-[#6B8A8A] font-semibold mt-0.5">
+                <p className="text-[10px] text-root-subtle font-semibold mt-0.5">
                   Mulai Riset — Level 1
                 </p>
               </div>
             </div>
 
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-lg p-4 mb-4">
+            <div className="bg-root-canvas border border-root-accent/20 rounded-lg p-4 mb-4">
               <div className="flex justify-between items-center mb-2.5">
-                <span className="text-xs font-bold text-[#6B8A8A] uppercase">Biaya Riset</span>
-                <span className="text-sm font-black text-[#00FFAA]">
+                <span className="text-xs font-bold text-root-subtle uppercase">Biaya Riset</span>
+                <span className="text-sm font-black text-root-accent">
                   {confirmTarget.cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO
                 </span>
               </div>
@@ -1162,7 +1162,7 @@ export default function PenelitianPageModal({
                 return (
                   <div>
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold text-[#6B8A8A] uppercase">Durasi</span>
+                      <span className="text-xs font-bold text-root-subtle uppercase">Durasi</span>
                       <span className="text-sm font-black text-sky-300 flex items-center gap-2">
                         {hasDiscount && (
                           <span className="text-rose-400 line-through">{confirmTarget.duration} hari</span>
@@ -1173,9 +1173,9 @@ export default function PenelitianPageModal({
                       </span>
                     </div>
 
-                    <div className="flex justify-between items-center mt-2 border-t border-[#00FFAA]/10 pt-2">
-                      <span className="text-xs font-bold text-[#6B8A8A] uppercase">Estimasi Selesai</span>
-                      <span className="text-xs font-black text-[#00FFAA]">
+                    <div className="flex justify-between items-center mt-2 border-t border-root-accent/10 pt-2">
+                      <span className="text-xs font-bold text-root-subtle uppercase">Estimasi Selesai</span>
+                      <span className="text-xs font-black text-root-accent">
                         {formattedEndDate}
                       </span>
                     </div>
@@ -1184,12 +1184,12 @@ export default function PenelitianPageModal({
               })()}
             </div>
 
-            <div className="bg-[#00FFAA]/5 border border-[#00FFAA]/20 rounded-lg p-3 mb-5">
-              <p className="text-[10px] font-black text-[#00FFAA] uppercase tracking-wider mb-2">
+            <div className="bg-root-accent/5 border border-root-accent/20 rounded-lg p-3 mb-5">
+              <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-2">
                 Efek pada Level 1:
               </p>
               {confirmTarget.effects.map((eff, i) => (
-                <p key={i} className="text-[11px] font-bold text-[#E0E0E0]">
+                <p key={i} className="text-[11px] font-bold text-root-text">
                   • {applyLevelBonus(
                     eff,
                     1,
@@ -1207,13 +1207,13 @@ export default function PenelitianPageModal({
             <div className="flex gap-3">
               <button
                 onClick={() => setConfirmTarget(null)}
-                className="flex-1 px-4 py-2.5 rounded-lg border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#E0E0E0] active:scale-95 transition-all font-bold text-xs uppercase cursor-pointer"
+                className="flex-1 px-4 py-2.5 rounded-lg border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-text active:scale-95 transition-all font-bold text-xs uppercase cursor-pointer"
               >
                 Batal
               </button>
               <button
                 onClick={() => handleStartResearch(confirmTarget)}
-                className="flex-1 px-4 py-2.5 rounded-lg bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 active:scale-95 transition-all font-bold text-xs uppercase cursor-pointer shadow-md"
+                className="flex-1 px-4 py-2.5 rounded-lg bg-root-accent text-root-canvas hover:bg-root-accent/80 active:scale-95 transition-all font-bold text-xs uppercase cursor-pointer shadow-md"
               >
                 Mulai Riset
               </button>
@@ -1230,21 +1230,21 @@ export default function PenelitianPageModal({
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative"
+            className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative"
           >
-            <button onClick={() => setConfirmUpgrade(null)} className="absolute top-3 right-3 text-[#6B8A8A] hover:text-[#00FFAA] cursor-pointer">
+            <button onClick={() => setConfirmUpgrade(null)} className="absolute top-3 right-3 text-root-subtle hover:text-root-accent cursor-pointer">
               <X className="h-5 w-5" />
             </button>
 
             <div className="flex items-center gap-3 mb-4">
-              <div className="h-12 w-12 rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 flex items-center justify-center shrink-0">
-                <confirmUpgrade.research.icon className="h-6 w-6 text-[#00FFAA]" />
+              <div className="h-12 w-12 rounded-lg bg-root-canvas border border-root-accent/30 flex items-center justify-center shrink-0">
+                <confirmUpgrade.research.icon className="h-6 w-6 text-root-accent" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-[#E0E0E0] uppercase leading-tight">
+                <h3 className="text-base font-bold text-root-text uppercase leading-tight">
                   {confirmUpgrade.research.name}
                 </h3>
-                <p className="text-[10px] text-[#00FFAA] font-black mt-0.5">
+                <p className="text-[10px] text-root-accent font-black mt-0.5">
                   Upgrade ke Level {confirmUpgrade.targetLevel}
                 </p>
               </div>
@@ -1252,28 +1252,28 @@ export default function PenelitianPageModal({
 
             <div className="flex items-center justify-center gap-3 mb-4">
               <div className="text-center">
-                <p className="text-[9px] text-[#6B8A8A] font-black uppercase">Sekarang</p>
-                <p className="text-lg font-black text-[#6B8A8A]">
+                <p className="text-[9px] text-root-subtle font-black uppercase">Sekarang</p>
+                <p className="text-lg font-black text-root-subtle">
                   LV.{getLevel(confirmUpgrade.research.id)}
                 </p>
-                <p className="text-[10px] text-[#6B8A8A] font-bold">
+                <p className="text-[10px] text-root-subtle font-bold">
                   +{getCardBonus(getLevel(confirmUpgrade.research.id))}%
                 </p>
               </div>
-              <ChevronUp className="w-5 h-5 text-[#00FFAA] rotate-90" />
+              <ChevronUp className="w-5 h-5 text-root-accent rotate-90" />
               <div className="text-center">
-                <p className="text-[9px] text-[#00FFAA] font-black uppercase">Target</p>
-                <p className="text-lg font-black text-[#00FFAA]">LV.{confirmUpgrade.targetLevel}</p>
-                <p className="text-[10px] text-[#00FFAA] font-bold">
+                <p className="text-[9px] text-root-accent font-black uppercase">Target</p>
+                <p className="text-lg font-black text-root-accent">LV.{confirmUpgrade.targetLevel}</p>
+                <p className="text-[10px] text-root-accent font-bold">
                   +{getCardBonus(confirmUpgrade.targetLevel)}%
                 </p>
               </div>
             </div>
 
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-lg p-4 mb-4">
+            <div className="bg-root-canvas border border-root-accent/20 rounded-lg p-4 mb-4">
               <div className="flex justify-between items-center mb-2.5">
-                <span className="text-xs font-bold text-[#6B8A8A] uppercase">Biaya Upgrade</span>
-                <span className="text-sm font-black text-[#00FFAA]">
+                <span className="text-xs font-bold text-root-subtle uppercase">Biaya Upgrade</span>
+                <span className="text-sm font-black text-root-accent">
                   {getCardUpgradeCost(confirmUpgrade.research, confirmUpgrade.targetLevel).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO
                 </span>
               </div>
@@ -1291,7 +1291,7 @@ export default function PenelitianPageModal({
                 return (
                   <div>
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold text-[#6B8A8A] uppercase">Durasi</span>
+                      <span className="text-xs font-bold text-root-subtle uppercase">Durasi</span>
                       <span className="text-sm font-black text-sky-300 flex items-center gap-2">
                         {hasDiscount && (
                           <span className="text-rose-400 line-through">{baseDur} hari</span>
@@ -1302,9 +1302,9 @@ export default function PenelitianPageModal({
                       </span>
                     </div>
 
-                    <div className="flex justify-between items-center mt-2 border-t border-[#00FFAA]/10 pt-2">
-                      <span className="text-xs font-bold text-[#6B8A8A] uppercase">Estimasi Selesai</span>
-                      <span className="text-xs font-black text-[#00FFAA]">
+                    <div className="flex justify-between items-center mt-2 border-t border-root-accent/10 pt-2">
+                      <span className="text-xs font-bold text-root-subtle uppercase">Estimasi Selesai</span>
+                      <span className="text-xs font-black text-root-accent">
                         {formattedEndDate}
                       </span>
                     </div>
@@ -1313,12 +1313,12 @@ export default function PenelitianPageModal({
               })()}
             </div>
 
-            <div className="bg-[#00FFAA]/5 border border-[#00FFAA]/20 rounded-lg p-3 mb-5">
-              <p className="text-[10px] font-black text-[#00FFAA] uppercase tracking-wider mb-2">
+            <div className="bg-root-accent/5 border border-root-accent/20 rounded-lg p-3 mb-5">
+              <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-2">
                 Efek Baru (Level {confirmUpgrade.targetLevel} +{getCardBonus(confirmUpgrade.targetLevel)}%):
               </p>
               {confirmUpgrade.research.effects.map((eff, i) => (
-                <p key={i} className="text-[11px] font-bold text-[#E0E0E0]">
+                <p key={i} className="text-[11px] font-bold text-root-text">
                   • {applyLevelBonus(
                     eff,
                     confirmUpgrade.targetLevel,
@@ -1336,13 +1336,13 @@ export default function PenelitianPageModal({
             <div className="flex gap-3">
               <button
                 onClick={() => setConfirmUpgrade(null)}
-                className="flex-1 px-4 py-2.5 rounded-lg border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#E0E0E0] active:scale-95 transition-all font-bold text-xs uppercase cursor-pointer"
+                className="flex-1 px-4 py-2.5 rounded-lg border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-text active:scale-95 transition-all font-bold text-xs uppercase cursor-pointer"
               >
                 Batal
               </button>
               <button
                 onClick={handleUpgradeResearch}
-                className="flex-1 px-4 py-2.5 rounded-lg bg-gradient-to-r from-[#00FFAA] to-emerald-400 text-[#0A1A1A] hover:opacity-90 active:scale-95 transition-all font-bold text-xs uppercase cursor-pointer shadow-md"
+                className="flex-1 px-4 py-2.5 rounded-lg bg-gradient-to-r from-root-accent to-emerald-400 text-root-canvas hover:opacity-90 active:scale-95 transition-all font-bold text-xs uppercase cursor-pointer shadow-md"
               >
                 Upgrade
               </button>

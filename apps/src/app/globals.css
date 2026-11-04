@@ -1,3 +1,4 @@
+@import "./page/root_design/rootColors.css";
 @import "tailwindcss";
 
 :root {

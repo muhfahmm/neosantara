@@ -37,7 +37,7 @@ export default function HunianDefisitNotificationCard({ notification }: Props) {
           {notification.message}
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 bg-[#0A1A1A] border border-slate-700/50 rounded-xl p-2.5 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 bg-root-canvas border border-slate-700/50 rounded-xl p-2.5 text-xs">
           <div className="flex flex-col">
             <span className="text-[9px] font-bold text-slate-400 uppercase">Indeks Perumahan</span>
             <span className={isCritical ? 'text-rose-400 font-black' : 'text-amber-400 font-black'}>{housingSatisfaction} / 100</span>

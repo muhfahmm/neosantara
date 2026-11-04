@@ -118,10 +118,10 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                 <PausedMenuFrame zIndexClass="z-[99999999]">
                     <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-4 custom-scrollbar sm:p-8">
                         {/* Decorative Elegant Divider at the Top */}
-                        <div className="flex items-center justify-center gap-1.5 text-[#00FFAA]/40 mb-6 shrink-0">
-                            <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-[#00FFAA]/40" />
+                        <div className="flex items-center justify-center gap-1.5 text-root-accent/40 mb-6 shrink-0">
+                            <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-root-accent/40" />
                             <span className="text-[10px] tracking-widest font-black uppercase">❖ ❖ ❖</span>
-                            <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-[#00FFAA]/40" />
+                            <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-root-accent/40" />
                         </div>
 
                         {/* View: MAIN LIST MENU */}
@@ -130,7 +130,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                 <div className="space-y-3">
                                     <button
                                         onClick={onClose}
-                                        className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
+                                        className="w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
                                         Lanjutkan
                                     </button>
@@ -140,13 +140,13 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                             onSaveGameClick();
                                         }}
                                         data-tutorial="tombol-simpan"
-                                        className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
+                                        className="w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
                                         Simpan Permainan
                                     </button>
                                     <button
                                         onClick={handleOpenLoad}
-                                        className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
+                                        className="w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
                                         Muat Permainan
                                     </button>
@@ -155,21 +155,21 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                             onClose();
                                             onRestartClick();
                                         }}
-                                        className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
+                                        className="w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
                                         Mulai Ulang
                                     </button>
                                     <button
                                         onClick={() => setSubview('options')}
-                                        className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
+                                        className="w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
                                         Pengaturan
                                     </button>
                                     <button
                                         onClick={() => setShowKeywordModal(true)}
-                                        className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99] flex items-center justify-center gap-2"
+                                        className="w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99] flex items-center justify-center gap-2"
                                     >
-                                        <Keyboard className="w-4 h-4 text-[#00FFAA]" />
+                                        <Keyboard className="w-4 h-4 text-root-accent" />
                                         <span>Pintasan Keyboard</span>
                                     </button>
                                 </div>
@@ -177,7 +177,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                 <div className="pt-12">
                                     <button
                                         onClick={handleExitGame}
-                                        className="w-full bg-[#0A1A1A] hover:bg-rose-500/10 active:bg-rose-500/20 border border-rose-500/30 hover:border-rose-500/60 rounded py-3.5 text-center text-[#E0E0E0] hover:text-rose-300 font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(244,63,94,0.15)] active:scale-[0.99]"
+                                        className="w-full bg-root-canvas hover:bg-rose-500/10 active:bg-rose-500/20 border border-rose-500/30 hover:border-rose-500/60 rounded py-3.5 text-center text-root-text hover:text-rose-300 font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(244,63,94,0.15)] active:scale-[0.99]"
                                     >
                                         Keluar Permainan
                                     </button>
@@ -199,21 +199,21 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                         {/* View: OPTIONS CONFIG */}
                         {subview === 'options' && (
                             <div className="flex-1 flex flex-col justify-between">
-                                <div className="flex items-center gap-2 border-b border-[#00FFAA]/20 pb-2 mb-6 shrink-0 text-left">
+                                <div className="flex items-center gap-2 border-b border-root-accent/20 pb-2 mb-6 shrink-0 text-left">
                                     <button
                                         onClick={() => setSubview('menu')}
-                                        className="p-1 rounded hover:bg-[#00FFAA]/10 text-[#6B8A8A] hover:text-[#00FFAA] cursor-pointer transition-all"
+                                        className="p-1 rounded hover:bg-root-accent/10 text-root-subtle hover:text-root-accent cursor-pointer transition-all"
                                     >
                                         <ArrowLeft className="w-4 h-4" />
                                     </button>
-                                    <span className="font-extrabold text-[14px] text-[#00FFAA] uppercase tracking-wider">PENGATURAN</span>
+                                    <span className="font-extrabold text-[14px] text-root-accent uppercase tracking-wider">PENGATURAN</span>
                                 </div>
 
                                 <div className="flex-1 space-y-6 text-left shrink-0">
                                     {/* Option: Music Volume */}
                                     <div className="space-y-2">
-                                        <label className="text-[11px] font-black text-[#E0E0E0] uppercase tracking-wider flex items-center gap-1.5">
-                                            <Music className="w-3.5 h-3.5 text-[#00FFAA]" />
+                                        <label className="text-[11px] font-black text-root-text uppercase tracking-wider flex items-center gap-1.5">
+                                            <Music className="w-3.5 h-3.5 text-root-accent" />
                                             <span>Volume Musik ({musicVol}%)</span>
                                         </label>
                                         <input
@@ -226,14 +226,14 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                                 setMusicVol(val);
                                                 soundManager?.setMusicVolume(val);
                                             }}
-                                            className="w-full accent-[#00FFAA] cursor-pointer"
+                                            className="w-full accent-root-accent cursor-pointer"
                                         />
                                     </div>
 
                                     {/* Option: Sound Effects */}
                                     <div className="space-y-2">
-                                        <label className="text-[11px] font-black text-[#E0E0E0] uppercase tracking-wider flex items-center gap-1.5">
-                                            <Volume2 className="w-3.5 h-3.5 text-[#00FFAA]" />
+                                        <label className="text-[11px] font-black text-root-text uppercase tracking-wider flex items-center gap-1.5">
+                                            <Volume2 className="w-3.5 h-3.5 text-root-accent" />
                                             <span>Efek Suara ({sfxVol}%)</span>
                                         </label>
                                         <input
@@ -246,20 +246,20 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                                 setSfxVol(val);
                                                 soundManager?.setSfxVolume(val);
                                             }}
-                                            className="w-full accent-[#00FFAA] cursor-pointer"
+                                            className="w-full accent-root-accent cursor-pointer"
                                         />
                                     </div>
 
                                     {/* Option: Resolution */}
                                     <div className="space-y-2">
-                                        <label className="text-[11px] font-black text-[#E0E0E0] uppercase tracking-wider flex items-center gap-1.5">
-                                            <Monitor className="w-3.5 h-3.5 text-[#00FFAA]" />
+                                        <label className="text-[11px] font-black text-root-text uppercase tracking-wider flex items-center gap-1.5">
+                                            <Monitor className="w-3.5 h-3.5 text-root-accent" />
                                             <span>Resolusi Layar</span>
                                         </label>
                                         <select
                                             value={resolution}
                                             onChange={(e) => setResolution(e.target.value)}
-                                            className="w-full bg-[#0A1A1A] border border-[#00FFAA]/30 rounded px-3 py-2 text-xs font-bold text-[#E0E0E0] focus:outline-none focus:border-[#00FFAA] cursor-pointer transition-colors"
+                                            className="w-full bg-root-canvas border border-root-accent/30 rounded px-3 py-2 text-xs font-bold text-root-text focus:outline-none focus:border-root-accent cursor-pointer transition-colors"
                                         >
                                             <option value="1920x1080">1920 x 1080 (16:9)</option>
                                             <option value="1600x900">1600 x 900 (16:9)</option>
@@ -274,15 +274,15 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                         )}
 
                         {/* Ink Stamp at the Bottom Right — Green Theme */}
-                        <div className="absolute bottom-6 right-6 border-2 border-dashed border-[#00FFAA]/30 text-[#00FFAA]/40 px-3 py-1 font-mono text-[9px] font-black uppercase tracking-wider rounded rotate-[-4deg] pointer-events-none select-none">
+                        <div className="absolute bottom-6 right-6 border-2 border-dashed border-root-accent/30 text-root-accent/40 px-3 py-1 font-mono text-[9px] font-black uppercase tracking-wider rounded rotate-[-4deg] pointer-events-none select-none">
                             PRESIDEN EXEC. 16FA-923
                         </div>
 
                         {/* Decorative Elegant Divider at the Bottom */}
-                        <div className="flex items-center justify-center gap-1.5 text-[#00FFAA]/40 mt-6 shrink-0">
-                            <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-[#00FFAA]/40" />
+                        <div className="flex items-center justify-center gap-1.5 text-root-accent/40 mt-6 shrink-0">
+                            <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-root-accent/40" />
                             <span className="text-[10px] tracking-widest font-black uppercase">❖ ❖ ❖</span>
-                            <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-[#00FFAA]/40" />
+                            <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-root-accent/40" />
                         </div>
                     </div>
                 </PausedMenuFrame>

@@ -171,12 +171,12 @@ export default function ProduksiPanganSection({
   return (
     <div className="space-y-6">
       {/* 1. HERO TOTAL PRODUKSI PANGAN GABUNGAN */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0B3A2C] via-[#082820] to-[#041612] p-5 sm:p-7 border border-[#00FFAA]/30 shadow-2xl">
-        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-[#00FFAA]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0B3A2C] via-[#082820] to-[#041612] p-5 sm:p-7 border border-root-accent/30 shadow-2xl">
+
         
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="space-y-2 max-w-xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00FFAA]/15 border border-[#00FFAA]/30 text-[#00FFAA] text-xs font-black tracking-wider uppercase">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-root-accent/15 border border-root-accent/30 text-root-accent text-xs font-black tracking-wider uppercase">
               <Apple className="w-3.5 h-3.5" />
               <span>Sektor Pangan Nasional Terpadu</span>
             </div>
@@ -190,16 +190,16 @@ export default function ProduksiPanganSection({
           </div>
 
           {/* TOTAL GABUNGAN CARD */}
-          <div className="bg-[#031510]/80 backdrop-blur-md border-2 border-[#00FFAA]/40 rounded-2xl p-4 sm:p-5 flex items-center gap-4 min-w-[260px] shadow-lg">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#00FFAA]/30 to-[#00FFAA]/5 border border-[#00FFAA]/50 flex items-center justify-center shrink-0">
-              <Warehouse className="w-7 h-7 text-[#00FFAA]" />
+          <div className="bg-[#031510]/80  border-2 border-root-accent/40 rounded-2xl p-4 sm:p-5 flex items-center gap-4 min-w-[260px] shadow-lg">
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-root-accent/30 to-root-accent/5 border border-root-accent/50 flex items-center justify-center shrink-0">
+              <Warehouse className="w-7 h-7 text-root-accent" />
             </div>
             <div>
-              <span className="text-[10px] font-black tracking-wider uppercase text-[#6B8A8A]">
+              <span className="text-[10px] font-black tracking-wider uppercase text-root-subtle">
                 Total Fasilitas Pangan
               </span>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl sm:text-4xl font-black text-[#00FFAA]">
+                <span className="text-3xl sm:text-4xl font-black text-root-accent">
                   {formatNumber(stats.totalAll)}
                 </span>
                 <span className="text-xs font-bold text-gray-300">Unit / Fasilitas</span>
@@ -213,7 +213,7 @@ export default function ProduksiPanganSection({
         </div>
 
         {/* 2. SUB-CARDS 4 SEKTOR PANGAN (TOTAL PER SEKTOR) */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-6 pt-6 border-t border-[#00FFAA]/20">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-6 pt-6 border-t border-root-accent/20">
           {FOOD_SUB_CATEGORIES.map((cat) => {
             const Icon = cat.icon;
             const count = stats.subCatCounts[cat.id] ?? 0;
@@ -225,8 +225,8 @@ export default function ProduksiPanganSection({
                 onClick={() => setSelectedSubCat(isSelected ? "all" : cat.id)}
                 className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer relative overflow-hidden group ${
                   isSelected
-                    ? "bg-[#0F2E28] border-[#00FFAA] shadow-md shadow-[#00FFAA]/15 scale-[1.02]"
-                    : "bg-[#061C17]/80 hover:bg-[#0A2620] border-[#00FFAA]/20 hover:border-[#00FFAA]/40"
+                    ? "bg-[#0F2E28] border-root-accent shadow-md shadow-root-accent/15 scale-[1.02]"
+                    : "bg-[#061C17]/80 hover:bg-[#0A2620] border-root-accent/20 hover:border-root-accent/40"
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
@@ -239,7 +239,7 @@ export default function ProduksiPanganSection({
                   <span
                     className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
                       isSelected
-                        ? "bg-[#00FFAA] text-black border-[#00FFAA]"
+                        ? "bg-root-accent text-black border-root-accent"
                         : "bg-black/30 text-gray-400 border-white/10"
                     }`}
                   >
@@ -265,14 +265,14 @@ export default function ProduksiPanganSection({
       </div>
 
       {/* 3. CONTROLS: SUB-CATEGORY SELECTOR & SEARCH */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#0A1A1A] p-3 rounded-xl border border-[#00FFAA]/20">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-root-canvas p-3 rounded-xl border border-root-accent/20">
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
           <button
             onClick={() => setSelectedSubCat("all")}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
               selectedSubCat === "all"
-                ? "bg-[#00FFAA] text-[#0A1A1A] shadow-sm font-black"
-                : "bg-[#0F2424] text-[#A0C0C0] hover:text-[#00FFAA] border border-[#00FFAA]/20"
+                ? "bg-root-accent text-root-canvas shadow-sm font-black"
+                : "bg-root-surface text-[#A0C0C0] hover:text-root-accent border border-root-accent/20"
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -289,8 +289,8 @@ export default function ProduksiPanganSection({
                 onClick={() => setSelectedSubCat(cat.id)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   isActive
-                    ? "bg-[#00FFAA] text-[#0A1A1A] shadow-sm font-black"
-                    : "bg-[#0F2424] text-[#A0C0C0] hover:text-[#00FFAA] border border-[#00FFAA]/20"
+                    ? "bg-root-accent text-root-canvas shadow-sm font-black"
+                    : "bg-root-surface text-[#A0C0C0] hover:text-root-accent border border-root-accent/20"
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -303,13 +303,13 @@ export default function ProduksiPanganSection({
         </div>
 
         <div className="relative min-w-[200px]">
-          <Search className="w-3.5 h-3.5 text-[#6B8A8A] absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-3.5 h-3.5 text-root-subtle absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari komoditas pangan..."
-            className="w-full bg-[#0F2424] border border-[#00FFAA]/20 rounded-lg pl-8 pr-3 py-1.5 text-xs text-[#E0E0E0] placeholder-[#6B8A8A] focus:outline-none focus:border-[#00FFAA]"
+            className="w-full bg-root-surface border border-root-accent/20 rounded-lg pl-8 pr-3 py-1.5 text-xs text-root-text placeholder-root-subtle focus:outline-none focus:border-root-accent"
           />
         </div>
       </div>
@@ -317,7 +317,7 @@ export default function ProduksiPanganSection({
       {/* 4. GRID DETAIL FASILITAS & KOMODITAS */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xs font-black uppercase tracking-wider text-[#00FFAA] flex items-center gap-2">
+          <h2 className="text-xs font-black uppercase tracking-wider text-root-accent flex items-center gap-2">
             <span>Daftar Fasilitas & Kapasitas Produksi ({displayedItems.length} Komoditas)</span>
           </h2>
           <span className="text-[11px] text-gray-400">
@@ -326,8 +326,8 @@ export default function ProduksiPanganSection({
         </div>
 
         {displayedItems.length === 0 ? (
-          <div className="p-8 text-center bg-[#0A1A1A] rounded-xl border border-dashed border-[#00FFAA]/20">
-            <Apple className="w-8 h-8 text-[#6B8A8A] mx-auto mb-2 opacity-50" />
+          <div className="p-8 text-center bg-root-canvas rounded-xl border border-dashed border-root-accent/20">
+            <Apple className="w-8 h-8 text-root-subtle mx-auto mb-2 opacity-50" />
             <p className="text-xs text-gray-400">Tidak ada komoditas pangan yang sesuai dengan filter.</p>
           </div>
         ) : (
@@ -340,7 +340,7 @@ export default function ProduksiPanganSection({
               return (
                 <div
                   key={item.key}
-                  className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20 hover:border-[#00FFAA]/50 transition-all flex flex-col justify-between group shadow-sm hover:shadow-[#00FFAA]/10 hover:shadow-lg"
+                  className="bg-root-canvas p-4 rounded-xl border border-root-accent/20 hover:border-root-accent/50 transition-all flex flex-col justify-between group shadow-sm hover:shadow-root-accent/10 hover:shadow-lg"
                 >
                   <div>
                     <div className="flex items-start justify-between gap-2 mb-2">
@@ -354,21 +354,21 @@ export default function ProduksiPanganSection({
                         >
                           <Icon className="w-3.5 h-3.5" />
                         </div>
-                        <span className="text-xs font-bold text-white group-hover:text-[#00FFAA] transition-colors leading-tight line-clamp-1">
+                        <span className="text-xs font-bold text-white group-hover:text-root-accent transition-colors leading-tight line-clamp-1">
                           {item.label}
                         </span>
                       </div>
-                      <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-[#0F2424] text-[#A0C0C0] border border-[#00FFAA]/20 shrink-0">
+                      <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-root-surface text-[#A0C0C0] border border-root-accent/20 shrink-0">
                         {parentSubCat?.title}
                       </span>
                     </div>
 
-                    <div className="bg-[#0F2424] p-2.5 rounded-lg border border-[#00FFAA]/10 mt-2">
-                      <span className="text-[10px] text-[#6B8A8A] font-semibold block uppercase tracking-wider">
+                    <div className="bg-root-surface p-2.5 rounded-lg border border-root-accent/10 mt-2">
+                      <span className="text-[10px] text-root-subtle font-semibold block uppercase tracking-wider">
                         Jumlah Fasilitas Bangunan
                       </span>
                       <div className="flex items-baseline justify-between mt-0.5">
-                        <span className="text-xl font-black text-white group-hover:text-[#00FFAA] transition-colors">
+                        <span className="text-xl font-black text-white group-hover:text-root-accent transition-colors">
                           {formatNumber(val)}
                         </span>
                         <span className="text-[10px] text-gray-400 font-bold uppercase">
@@ -378,8 +378,8 @@ export default function ProduksiPanganSection({
                     </div>
                   </div>
 
-                  <div className="mt-3 pt-2.5 border-t border-[#00FFAA]/10 flex items-center justify-between text-[10px]">
-                    <span className="text-[#6B8A8A] font-medium">Status Produksi</span>
+                  <div className="mt-3 pt-2.5 border-t border-root-accent/10 flex items-center justify-between text-[10px]">
+                    <span className="text-root-subtle font-medium">Status Produksi</span>
                     <span
                       className={`font-black flex items-center gap-1 ${
                         val > 0 ? "text-emerald-400" : "text-amber-400"

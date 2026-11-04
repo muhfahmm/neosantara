@@ -286,25 +286,25 @@ export function TutorialOverlay({
         aria-labelledby="tutorial-title"
         aria-describedby="tutorial-body"
         aria-live="polite"
-        className="pointer-events-auto absolute max-h-[calc(100vh-32px)] w-[min(360px,calc(100vw-32px))] overflow-y-auto rounded-2xl border border-[#00FFAA]/50 bg-[#0F2424] p-5 text-[#E0E0E0] shadow-[0_0_36px_rgba(0,255,170,0.2)]"
+        className="pointer-events-auto absolute max-h-[calc(100vh-32px)] w-[min(360px,calc(100vw-32px))] overflow-y-auto rounded-2xl border border-root-accent/50 bg-root-surface p-5 text-root-text shadow-[0_0_36px_rgba(0,255,170,0.2)]"
         style={{ top: layout.card.top, left: layout.card.left }}
       >
         <div className="mb-3 flex items-center justify-between gap-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#00FFAA]">
+          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-root-accent">
             Langkah {progress.stepIndex + 1} dari {tutorialRegistry.length}
           </p>
           <button
             type="button"
             onClick={skip}
-            className="rounded-lg px-2 py-1 text-xs font-bold text-[#6B8A8A] hover:text-[#00FFAA] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00FFAA]"
+            className="rounded-lg px-2 py-1 text-xs font-bold text-root-subtle hover:text-root-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-root-accent"
           >
             Lewati
           </button>
         </div>
-        <h2 id="tutorial-title" className="mb-2 text-lg font-black text-[#00FFAA]">
+        <h2 id="tutorial-title" className="mb-2 text-lg font-black text-root-accent">
           {step.title}
         </h2>
-        <p id="tutorial-body" className="text-sm leading-relaxed text-[#E0E0E0]">
+        <p id="tutorial-body" className="text-sm leading-relaxed text-root-text">
           {step.body}
         </p>
         <div className="mt-5 flex items-center justify-between gap-3">
@@ -312,14 +312,14 @@ export function TutorialOverlay({
             type="button"
             onClick={previous}
             disabled={progress.stepIndex === 0}
-            className="rounded-lg border border-[#00FFAA]/25 px-3 py-2 text-xs font-bold text-[#6B8A8A] hover:border-[#00FFAA]/60 hover:text-[#00FFAA] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00FFAA] disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-lg border border-root-accent/25 px-3 py-2 text-xs font-bold text-root-subtle hover:border-root-accent/60 hover:text-root-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-root-accent disabled:cursor-not-allowed disabled:opacity-40"
           >
             Kembali
           </button>
           <button
             type="button"
             onClick={next}
-            className="rounded-lg bg-[#00FFAA] px-4 py-2 text-xs font-black text-[#0A1A1A] hover:bg-[#00FFAA]/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00FFAA]"
+            className="rounded-lg bg-root-accent px-4 py-2 text-xs font-black text-root-canvas hover:bg-root-accent/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-root-accent"
           >
             Lanjut
           </button>

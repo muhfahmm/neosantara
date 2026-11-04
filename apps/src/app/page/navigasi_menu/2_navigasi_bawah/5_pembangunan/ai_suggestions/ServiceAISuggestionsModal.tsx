@@ -22,21 +22,21 @@ export default function ServiceAISuggestionsModal({
 
   return (
     <div className="fixed inset-0 z-[75] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden flex flex-col pointer-events-auto shadow-2xl">
+      <div className="w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col pointer-events-auto shadow-2xl">
         
         {/* HEADER */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
           <div>
-            <h3 className="text-base font-black uppercase tracking-[0.2em] text-[#00FFAA]">
+            <h3 className="text-base font-black uppercase tracking-[0.2em] text-root-accent">
               REKOMENDASI & ANALISIS AI SEKTOR {tempatUmumAnalysis?.tabLabel || hunianAnalysis?.tabLabel}
             </h3>
-            <p className="text-[11px] font-bold text-[#6B8A8A] uppercase tracking-wider">
+            <p className="text-[11px] font-bold text-root-subtle uppercase tracking-wider">
               EVALUASI KEBUTUHAN PUBLIK & HUNIAN MASYARAKAT
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+            className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
             aria-label="Tutup rekomendasi AI"
           >
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
@@ -45,40 +45,40 @@ export default function ServiceAISuggestionsModal({
         </div>
 
         {/* BODY */}
-        <div className="p-6 overflow-y-auto flex-1 space-y-5 text-sm text-[#E0E0E0] bg-[#0F2424] neon-scrollbar">
+        <div className="p-6 overflow-y-auto flex-1 space-y-5 text-sm text-root-text bg-root-surface neon-scrollbar">
           
           {/* TEMPAT UMUM ANALYSIS */}
           {tempatUmumAnalysis && (
             <>
               {/* CARD INDEKS KEPUASAN RAKYAT (SEPERTI GAMBAR 1) */}
-              <div className="bg-[#0A1A1A] p-5 rounded-2xl border border-[#00FFAA]/30 flex flex-col gap-4 shadow-inner">
+              <div className="bg-root-canvas p-5 rounded-2xl border border-root-accent/30 flex flex-col gap-4 shadow-inner">
                 <div className="flex justify-between items-start">
-                  <span className="text-xs font-black text-[#6B8A8A] uppercase tracking-wider max-w-[70%]">
+                  <span className="text-xs font-black text-root-subtle uppercase tracking-wider max-w-[70%]">
                     INDEKS KEPUASAN RAKYAT ({tempatUmumAnalysis.tabLabel.toUpperCase()})
                   </span>
                   <div className="text-right">
-                    <span className="text-3xl sm:text-4xl font-black text-[#00FFAA] tracking-tight">
+                    <span className="text-3xl sm:text-4xl font-black text-root-accent tracking-tight">
                       {tempatUmumAnalysis.satisfactionScore} / 100
                     </span>
                   </div>
                 </div>
 
                 {/* PROGRESS BAR */}
-                <div className="w-full h-3 bg-[#0F2424] rounded-full overflow-hidden border border-[#00FFAA]/20 p-0.5">
+                <div className="w-full h-3 bg-root-surface rounded-full overflow-hidden border border-root-accent/20 p-0.5">
                   <div
                     className={`h-full rounded-full transition-all duration-500 ${
                       tempatUmumAnalysis.satisfactionScore <= 40
                         ? "bg-rose-500"
                         : tempatUmumAnalysis.satisfactionScore <= 75
                         ? "bg-amber-400"
-                        : "bg-[#00FFAA]"
+                        : "bg-root-accent"
                     }`}
                     style={{ width: `${Math.min(100, Math.max(2, tempatUmumAnalysis.satisfactionScore))}%` }}
                   />
                 </div>
 
                 {/* STATUS MESSAGE & DOT INDICATOR */}
-                <div className="flex items-center gap-2 text-xs font-bold text-[#E0E0E0]">
+                <div className="flex items-center gap-2 text-xs font-bold text-root-text">
                   <span>
                     {tempatUmumAnalysis.satisfactionScore <= 40
                       ? `🔴 Krisis fasilitas ${tempatUmumAnalysis.tabLabel.toLowerCase()}, tingkat keterpenuhan sangat rendah.`
@@ -89,19 +89,19 @@ export default function ServiceAISuggestionsModal({
                 </div>
 
                 {/* DIVIDER & METRICS */}
-                <div className="border-t border-[#00FFAA]/15 pt-3 flex justify-between items-center text-xs text-[#6B8A8A] font-semibold">
+                <div className="border-t border-root-accent/15 pt-3 flex justify-between items-center text-xs text-root-subtle font-semibold">
                   <div>
-                    Rasio per kapita: <strong className="text-[#E0E0E0] font-black">{tempatUmumAnalysis.ratio.toFixed(2)}</strong>
+                    Rasio per kapita: <strong className="text-root-text font-black">{tempatUmumAnalysis.ratio.toFixed(2)}</strong>
                   </div>
                   <div>
-                    Persentase keterpenuhan: <strong className="text-[#E0E0E0] font-black">{tempatUmumAnalysis.percentageMet.toFixed(1)}%</strong>
+                    Persentase keterpenuhan: <strong className="text-root-text font-black">{tempatUmumAnalysis.percentageMet.toFixed(1)}%</strong>
                   </div>
                 </div>
               </div>
 
               {/* RINCIAN ANALISIS FASILITAS (SEPERTI GAMBAR 2) */}
-              <div className="border-t border-[#00FFAA]/20 pt-4">
-                <p className="font-bold text-[#00FFAA] uppercase tracking-wider mb-3 text-xs">
+              <div className="border-t border-root-accent/20 pt-4">
+                <p className="font-bold text-root-accent uppercase tracking-wider mb-3 text-xs">
                   RINCIAN ANALISIS FASILITAS ({tempatUmumAnalysis.facilities.length} FASILITAS)
                 </p>
                 <div className="space-y-2 max-h-[35vh] overflow-y-auto pr-1 neon-scrollbar">
@@ -121,9 +121,9 @@ export default function ServiceAISuggestionsModal({
                           <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
                         )}
                         <div>
-                          <span className="font-bold text-xs uppercase text-[#E0E0E0] block">{item.label}</span>
-                          <span className="text-[10px] text-[#6B8A8A] block">
-                            Tersedia: <strong className="text-[#E0E0E0]">{item.count} Unit</strong> | Target Ideal: {item.targetCount} Unit
+                          <span className="font-bold text-xs uppercase text-root-text block">{item.label}</span>
+                          <span className="text-[10px] text-root-subtle block">
+                            Tersedia: <strong className="text-root-text">{item.count} Unit</strong> | Target Ideal: {item.targetCount} Unit
                           </span>
                         </div>
                       </div>
@@ -151,11 +151,11 @@ export default function ServiceAISuggestionsModal({
               </div>
 
               {/* AI SUMMARY TEXT */}
-              <div className="rounded-xl bg-[#0A1A1A] p-4 border border-[#00FFAA]/30 flex items-start gap-3">
-                <MessageSquare className="w-5 h-5 text-[#00FFAA] shrink-0 mt-0.5" />
+              <div className="rounded-xl bg-root-canvas p-4 border border-root-accent/30 flex items-start gap-3">
+                <MessageSquare className="w-5 h-5 text-root-accent shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <div className="text-xs font-black uppercase text-[#00FFAA]">Ringkasan AI:</div>
-                  <div className="text-xs text-[#E0E0E0] leading-relaxed">{tempatUmumAnalysis.recommendation}</div>
+                  <div className="text-xs font-black uppercase text-root-accent">Ringkasan AI:</div>
+                  <div className="text-xs text-root-text leading-relaxed">{tempatUmumAnalysis.recommendation}</div>
                 </div>
               </div>
             </>
@@ -165,13 +165,13 @@ export default function ServiceAISuggestionsModal({
           {hunianAnalysis && (
             <>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="rounded-xl bg-[#0A1A1A] p-4 border border-[#00FFAA]/20">
-                  <div className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-tight">Kapasitas Per Unit</div>
-                  <div className="mt-1 font-black text-[#00FFAA] text-lg">{hunianAnalysis.capacityPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Jiwa</div>
+                <div className="rounded-xl bg-root-canvas p-4 border border-root-accent/20">
+                  <div className="text-[10px] font-bold text-root-subtle uppercase tracking-tight">Kapasitas Per Unit</div>
+                  <div className="mt-1 font-black text-root-accent text-lg">{hunianAnalysis.capacityPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Jiwa</div>
                 </div>
-                <div className="rounded-xl bg-[#0A1A1A] p-4 border border-[#00FFAA]/20">
-                  <div className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-tight">Total Kapasitas Terpasang</div>
-                  <div className="mt-1 font-black text-[#00FFAA] text-lg">{hunianAnalysis.totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Jiwa</div>
+                <div className="rounded-xl bg-root-canvas p-4 border border-root-accent/20">
+                  <div className="text-[10px] font-bold text-root-subtle uppercase tracking-tight">Total Kapasitas Terpasang</div>
+                  <div className="mt-1 font-black text-root-accent text-lg">{hunianAnalysis.totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Jiwa</div>
                 </div>
                 <div className={`rounded-xl p-4 border ${hunianAnalysis.isDeficit ? 'bg-rose-950/40 border-rose-500/30' : 'bg-emerald-950/40 border-emerald-500/30'}`}>
                   <div className={`text-[10px] font-bold uppercase tracking-tight ${hunianAnalysis.isDeficit ? 'text-rose-400' : 'text-emerald-400'}`}>
@@ -186,8 +186,8 @@ export default function ServiceAISuggestionsModal({
               </div>
 
               {/* RINCIAN ANALISIS HUNIAN */}
-              <div className="border-t border-[#00FFAA]/20 pt-4">
-                <p className="font-bold text-[#00FFAA] uppercase tracking-wider mb-3 text-xs">
+              <div className="border-t border-root-accent/20 pt-4">
+                <p className="font-bold text-root-accent uppercase tracking-wider mb-3 text-xs">
                   RINCIAN ANALISIS HUNIAN PERMUKIMAN ({hunianAnalysis.housingItems.length} KATEGORI)
                 </p>
                 <div className="space-y-2 max-h-[35vh] overflow-y-auto pr-1 neon-scrollbar">
@@ -207,9 +207,9 @@ export default function ServiceAISuggestionsModal({
                           <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
                         )}
                         <div>
-                          <span className="font-bold text-xs uppercase text-[#E0E0E0] block">{item.label}</span>
-                          <span className="text-[10px] text-[#6B8A8A] block">
-                            Kapasitas/Unit: {item.capacityPerUnit} Jiwa | Terpasang: <strong className="text-[#E0E0E0]">{item.count} Unit</strong> ({item.totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Jiwa)
+                          <span className="font-bold text-xs uppercase text-root-text block">{item.label}</span>
+                          <span className="text-[10px] text-root-subtle block">
+                            Kapasitas/Unit: {item.capacityPerUnit} Jiwa | Terpasang: <strong className="text-root-text">{item.count} Unit</strong> ({item.totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Jiwa)
                           </span>
                         </div>
                       </div>
@@ -237,11 +237,11 @@ export default function ServiceAISuggestionsModal({
               </div>
 
               {/* AI SUMMARY TEXT */}
-              <div className="rounded-xl bg-[#0A1A1A] p-4 border border-[#00FFAA]/30 flex items-start gap-3">
-                <MessageSquare className="w-5 h-5 text-[#00FFAA] shrink-0 mt-0.5" />
+              <div className="rounded-xl bg-root-canvas p-4 border border-root-accent/30 flex items-start gap-3">
+                <MessageSquare className="w-5 h-5 text-root-accent shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <div className="text-xs font-black uppercase text-[#00FFAA]">Ringkasan AI:</div>
-                  <div className="text-xs text-[#E0E0E0] leading-relaxed">{hunianAnalysis.recommendation}</div>
+                  <div className="text-xs font-black uppercase text-root-accent">Ringkasan AI:</div>
+                  <div className="text-xs text-root-text leading-relaxed">{hunianAnalysis.recommendation}</div>
                 </div>
               </div>
             </>

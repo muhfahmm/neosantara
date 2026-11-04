@@ -46,13 +46,13 @@ export function MapSettingsSection() {
     const isAll = settings.showProvinceBorders && settings.showMajorCities;
 
     return (
-        <div className="space-y-3 pt-4 border-t border-[#00FFAA]/15 text-left">
+        <div className="space-y-3 pt-4 border-t border-root-accent/15 text-left">
             <div className="flex items-center justify-between">
-                <label className="text-[11px] font-black text-[#E0E0E0] uppercase tracking-wider flex items-center gap-1.5">
-                    <Globe className="w-3.5 h-3.5 text-[#00FFAA]" />
+                <label className="text-[11px] font-black text-root-text uppercase tracking-wider flex items-center gap-1.5">
+                    <Globe className="w-3.5 h-3.5 text-root-accent" />
                     <span>Tampilan Garis & Kota Peta</span>
                 </label>
-                <span className="text-[9px] font-mono text-[#00FFAA]/70 uppercase">MAP DISPLAY</span>
+                <span className="text-[9px] font-mono text-root-accent/70 uppercase">MAP DISPLAY</span>
             </div>
 
             {/* Mode Cepat (Preset) */}
@@ -62,8 +62,8 @@ export function MapSettingsSection() {
                     onClick={() => handlePreset('borders_only')}
                     className={`px-2.5 py-2 rounded border text-[11px] font-bold tracking-wide transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                         isBordersOnly
-                            ? 'bg-[#00FFAA]/20 border-[#00FFAA] text-[#00FFAA] shadow-[0_0_10px_rgba(0,255,170,0.25)]'
-                            : 'bg-[#0A1A1A] border-[#00FFAA]/20 text-gray-400 hover:text-white hover:border-[#00FFAA]/40'
+                            ? 'bg-root-accent/20 border-root-accent text-root-accent shadow-[0_0_10px_rgba(0,255,170,0.25)]'
+                            : 'bg-root-canvas border-root-accent/20 text-gray-400 hover:text-white hover:border-root-accent/40'
                     }`}
                 >
                     <Globe className="w-3.5 h-3.5" />
@@ -75,8 +75,8 @@ export function MapSettingsSection() {
                     onClick={() => handlePreset('all')}
                     className={`px-2.5 py-2 rounded border text-[11px] font-bold tracking-wide transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                         isAll
-                            ? 'bg-[#00FFAA]/20 border-[#00FFAA] text-[#00FFAA] shadow-[0_0_10px_rgba(0,255,170,0.25)]'
-                            : 'bg-[#0A1A1A] border-[#00FFAA]/20 text-gray-400 hover:text-white hover:border-[#00FFAA]/40'
+                            ? 'bg-root-accent/20 border-root-accent text-root-accent shadow-[0_0_10px_rgba(0,255,170,0.25)]'
+                            : 'bg-root-canvas border-root-accent/20 text-gray-400 hover:text-white hover:border-root-accent/40'
                     }`}
                 >
                     <Building2 className="w-3.5 h-3.5" />
@@ -89,14 +89,14 @@ export function MapSettingsSection() {
                 {/* Switch Batas Provinsi / Kota */}
                 <div
                     onClick={() => handleToggle('showProvinceBorders')}
-                    className="flex items-center justify-between p-2 rounded bg-[#0A1A1A]/80 border border-[#00FFAA]/20 hover:border-[#00FFAA]/40 cursor-pointer transition-all"
+                    className="flex items-center justify-between p-2 rounded bg-root-canvas/80 border border-root-accent/20 hover:border-root-accent/40 cursor-pointer transition-all"
                 >
                     <div className="flex items-center gap-2">
-                        <Layers className="w-3.5 h-3.5 text-[#00FFAA]" />
+                        <Layers className="w-3.5 h-3.5 text-root-accent" />
                         <span className="text-[11px] font-semibold text-gray-200">Garis Batas Provinsi / Kota</span>
                     </div>
                     <div className={`w-8 h-4.5 flex items-center rounded-full p-0.5 transition-colors ${
-                        settings.showProvinceBorders ? 'bg-[#00FFAA]' : 'bg-gray-700'
+                        settings.showProvinceBorders ? 'bg-root-accent' : 'bg-gray-700'
                     }`}>
                         <div className={`bg-black w-3.5 h-3.5 rounded-full shadow-sm transform transition-transform ${
                             settings.showProvinceBorders ? 'translate-x-3.5' : 'translate-x-0'
@@ -107,14 +107,14 @@ export function MapSettingsSection() {
                 {/* Switch Pin Kota-Kota Besar */}
                 <div
                     onClick={() => handleToggle('showMajorCities')}
-                    className="flex items-center justify-between p-2 rounded bg-[#0A1A1A]/80 border border-[#00FFAA]/20 hover:border-[#00FFAA]/40 cursor-pointer transition-all"
+                    className="flex items-center justify-between p-2 rounded bg-root-canvas/80 border border-root-accent/20 hover:border-root-accent/40 cursor-pointer transition-all"
                 >
                     <div className="flex items-center gap-2">
                         <Building2 className="w-3.5 h-3.5 text-amber-400" />
                         <span className="text-[11px] font-semibold text-gray-200">Pin Kota-Kota Besar</span>
                     </div>
                     <div className={`w-8 h-4.5 flex items-center rounded-full p-0.5 transition-colors ${
-                        settings.showMajorCities ? 'bg-[#00FFAA]' : 'bg-gray-700'
+                        settings.showMajorCities ? 'bg-root-accent' : 'bg-gray-700'
                     }`}>
                         <div className={`bg-black w-3.5 h-3.5 rounded-full shadow-sm transform transition-transform ${
                             settings.showMajorCities ? 'translate-x-3.5' : 'translate-x-0'
@@ -125,14 +125,14 @@ export function MapSettingsSection() {
                 {/* Switch Ibukota Negara */}
                 <div
                     onClick={() => handleToggle('showCapitals')}
-                    className="flex items-center justify-between p-2 rounded bg-[#0A1A1A]/80 border border-[#00FFAA]/20 hover:border-[#00FFAA]/40 cursor-pointer transition-all"
+                    className="flex items-center justify-between p-2 rounded bg-root-canvas/80 border border-root-accent/20 hover:border-root-accent/40 cursor-pointer transition-all"
                 >
                     <div className="flex items-center gap-2">
                         <MapPin className="w-3.5 h-3.5 text-emerald-400" />
                         <span className="text-[11px] font-semibold text-gray-200">Pin Ibukota Negara</span>
                     </div>
                     <div className={`w-8 h-4.5 flex items-center rounded-full p-0.5 transition-colors ${
-                        settings.showCapitals ? 'bg-[#00FFAA]' : 'bg-gray-700'
+                        settings.showCapitals ? 'bg-root-accent' : 'bg-gray-700'
                     }`}>
                         <div className={`bg-black w-3.5 h-3.5 rounded-full shadow-sm transform transition-transform ${
                             settings.showCapitals ? 'translate-x-3.5' : 'translate-x-0'

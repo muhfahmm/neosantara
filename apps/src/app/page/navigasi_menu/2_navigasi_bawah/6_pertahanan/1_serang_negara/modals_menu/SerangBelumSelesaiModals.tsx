@@ -53,7 +53,7 @@ export default function SerangBelumSelesaiModals({
       >
         
         {/* Header */}
-        <div className="flex items-center justify-start border-b border-rose-500/20 bg-[#0A1A1A] p-4">
+        <div className="flex items-center justify-start border-b border-rose-500/20 bg-root-canvas p-4">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg border border-rose-500/30 bg-rose-500/10 shrink-0">
               <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-rose-400" aria-hidden="true" />
@@ -68,8 +68,8 @@ export default function SerangBelumSelesaiModals({
         </div>
 
         {/* Body Content */}
-        <div className="flex flex-col space-y-4 bg-[#0F2424] p-4">
-          <p className="text-sm leading-relaxed text-[#E0E0E0]">
+        <div className="flex flex-col space-y-4 bg-root-surface p-4">
+          <p className="text-sm leading-relaxed text-root-text">
             Pasukan Anda sedang bergerak menuju <strong className="text-white">{targetLabel}</strong>.
             {' '}Selesaikan serangan tersebut sampai pasukan tiba dan hasil pertempuran diproses
             sebelum menyerang <strong className="text-white">{requestedTarget ?? 'negara lain'}</strong>.
@@ -77,12 +77,12 @@ export default function SerangBelumSelesaiModals({
         </div>
 
         {/* Footer Action */}
-        <div className="flex justify-end border-t border-rose-500/20 bg-[#0A1A1A] p-4">
+        <div className="flex justify-end border-t border-rose-500/20 bg-root-canvas p-4">
           <button
             ref={closeButtonRef}
             type="button"
             onClick={onClose}
-            className="w-full sm:w-auto px-6 py-2 rounded-xl bg-[#00FFAA] hover:bg-[#00e699] border border-[#00FFAA] text-[#0A1A1A] font-black text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00FFAA]"
+            className="w-full sm:w-auto px-6 py-2 rounded-xl bg-root-accent hover:bg-[#00e699] border border-root-accent text-root-canvas font-black text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-root-accent"
           >
             Mengerti
           </button>

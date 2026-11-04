@@ -36,9 +36,9 @@ export default function SistemEkonomiChangeNotificationCard({ notification }: Pr
           {notification.message}
         </p>
 
-        <div className="bg-[#0A1A1A] border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex justify-between items-center">
+        <div className="bg-root-canvas border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex justify-between items-center">
           <span>Sistem: <strong className="text-white">{systemName}</strong></span>
-          <span className="text-[10px] font-bold text-[#00FFAA]">Kartu Kebijakan Diterapkan</span>
+          <span className="text-[10px] font-bold text-root-accent">Kartu Kebijakan Diterapkan</span>
         </div>
       </div>
     </div>

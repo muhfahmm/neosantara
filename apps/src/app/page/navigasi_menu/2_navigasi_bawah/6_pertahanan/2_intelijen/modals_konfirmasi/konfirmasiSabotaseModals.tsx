@@ -38,52 +38,52 @@ export default function KonfirmasiSabotaseModals({
       <div className="flex flex-col font-sans animate-in fade-in zoom-in-95 duration-150">
         
         {/* HEADER */}
-        <div className="px-4 sm:px-5 py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+        <div className="px-4 sm:px-5 py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+              <div className="p-2.5 bg-root-surface rounded-xl border border-root-accent/30">
                 <Bomb className="h-6 w-6 text-orange-400 animate-pulse" />
               </div>
               <div>
-                <h2 className="text-xl font-black text-[#00FFAA] tracking-wider uppercase">Konfirmasi Sabotase</h2>
-                <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-0.5">
+                <h2 className="text-xl font-black text-root-accent tracking-wider uppercase">Konfirmasi Sabotase</h2>
+                <p className="text-[11px] font-bold uppercase tracking-widest text-root-subtle mt-0.5">
                   Target: {targetName}
                 </p>
               </div>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
+          <button onClick={onClose} className="p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* BODY */}
-        <div className="p-4 sm:p-5 bg-[#0F2424] relative z-10 neon-scrollbar flex flex-col items-center justify-center">
+        <div className="p-4 sm:p-5 bg-root-surface relative z-10 neon-scrollbar flex flex-col items-center justify-center">
           <div className="w-full max-w-lg space-y-6">
             <div className="flex justify-center">
-              <div className="p-5 rounded-full bg-[#0A1A1A] border border-orange-500/30 shadow-inner">
+              <div className="p-5 rounded-full bg-root-canvas border border-orange-500/30 shadow-inner">
                 <AlertTriangle className="w-16 h-16 text-orange-400" />
               </div>
             </div>
 
             <div className="text-center space-y-2">
-              <p className="text-lg font-black text-[#00FFAA] uppercase tracking-wider">
+              <p className="text-lg font-black text-root-accent uppercase tracking-wider">
                 Lancarkan Operasi Khusus!
               </p>
-              <p className="text-xs text-[#6B8A8A] font-medium leading-relaxed max-w-lg mx-auto">
-                Kirim tim operasi khusus untuk melumpuhkan fasilitas vital di negara <span className="text-[#E0E0E0] font-bold">{targetName}</span>.
-                Biaya operasional diperkirakan sebesar <span className="font-black text-[#00FFAA]">20.000.000 NEO</span>.
+              <p className="text-xs text-root-subtle font-medium leading-relaxed max-w-lg mx-auto">
+                Kirim tim operasi khusus untuk melumpuhkan fasilitas vital di negara <span className="text-root-text font-bold">{targetName}</span>.
+                Biaya operasional diperkirakan sebesar <span className="font-black text-root-accent">20.000.000 NEO</span>.
               </p>
             </div>
 
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl shadow-sm flex flex-col items-center">
-              <p className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A] mb-1">Target Operasi</p>
+            <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-xl shadow-sm flex flex-col items-center">
+              <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle mb-1">Target Operasi</p>
               <p className="text-base font-black text-orange-400">{targetName}</p>
-              <p className="text-xs text-[#6B8A8A] mt-1">
-                Kekuatan Militer: <span className="font-black text-[#E0E0E0]">{targetCountry?.totalPower?.toLocaleString("id-ID", { maximumFractionDigits: 0 }) || "Tidak diketahui"}</span>
+              <p className="text-xs text-root-subtle mt-1">
+                Kekuatan Militer: <span className="font-black text-root-text">{targetCountry?.totalPower?.toLocaleString("id-ID", { maximumFractionDigits: 0 }) || "Tidak diketahui"}</span>
               </p>
-              <p className="text-xs text-[#6B8A8A] mt-2">
+              <p className="text-xs text-root-subtle mt-2">
                 Peluang keberhasilan: <span className="font-black text-rose-400">{successChance}%</span>
               </p>
             </div>
@@ -92,8 +92,8 @@ export default function KonfirmasiSabotaseModals({
         </div>
 
         {/* FOOTER */}
-        <div className="px-4 sm:px-5 py-3 border-t border-[#00FFAA]/30 bg-[#0A1A1A] relative z-10 shrink-0 flex items-center justify-end gap-3">
-          <button onClick={onClose} className="px-6 py-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
+        <div className="px-4 sm:px-5 py-3 border-t border-root-accent/30 bg-root-canvas relative z-10 shrink-0 flex items-center justify-end gap-3">
+          <button onClick={onClose} className="px-6 py-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
             Batal
           </button>
           <button

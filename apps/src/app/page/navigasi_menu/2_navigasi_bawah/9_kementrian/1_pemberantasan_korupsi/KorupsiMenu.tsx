@@ -176,9 +176,9 @@ export default function KorupsiMenu({
   return (
     <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
-        <header className="relative z-10 flex shrink-0 items-center justify-between border-b border-[#00FFAA]/30 bg-[#0A1A1A] px-4 py-3 sm:px-6">
+        <header className="relative z-10 flex shrink-0 items-center justify-between border-b border-root-accent/30 bg-root-canvas px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
-            <div className="rounded-lg border border-[#00FFAA]/30 bg-[#00FFAA]/10 p-2 text-[#00FFAA]">
+            <div className="rounded-lg border border-root-accent/30 bg-root-accent/10 p-2 text-root-accent">
               <Landmark className="h-5 w-5" />
             </div>
             <div>
@@ -195,7 +195,7 @@ export default function KorupsiMenu({
               type="button"
               onClick={onClose}
               aria-label="Tutup menu pemberantasan korupsi"
-              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
+              className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
             >
               <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
               <X className="h-4 w-4" />
@@ -203,7 +203,7 @@ export default function KorupsiMenu({
           </div>
         </header>
 
-        <nav aria-label="Bagian pemberantasan korupsi" className="flex shrink-0 gap-1 overflow-x-auto border-b border-[#00FFAA]/15 bg-[#0A1A1A] px-3 py-2 sm:px-5">
+        <nav aria-label="Bagian pemberantasan korupsi" className="flex shrink-0 gap-1 overflow-x-auto border-b border-root-accent/15 bg-root-canvas px-3 py-2 sm:px-5">
           {tabs.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
@@ -212,8 +212,8 @@ export default function KorupsiMenu({
               onClick={() => setActiveTab(id)}
               className={`inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold transition cursor-pointer ${
                 activeTab === id
-                  ? 'bg-[#00FFAA] text-[#0A1A1A]'
-                  : 'text-[#8BA3A3] hover:bg-[#00FFAA]/10 hover:text-[#00FFAA]'
+                  ? 'bg-root-accent text-root-canvas'
+                  : 'text-[#8BA3A3] hover:bg-root-accent/10 hover:text-root-accent'
               }`}
             >
               <Icon className="h-4 w-4" />
@@ -224,13 +224,13 @@ export default function KorupsiMenu({
 
         <main className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4 sm:p-6 neon-scrollbar">
           {(notice || currentProfileError || profileIdentityError) && (
-            <div role="status" className="flex items-start gap-2 rounded-xl border border-[#00FFAA]/20 bg-[#00FFAA]/5 px-4 py-3 text-sm text-[#B7F5DD]">
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#00FFAA]" />
+            <div role="status" className="flex items-start gap-2 rounded-xl border border-root-accent/20 bg-root-accent/5 px-4 py-3 text-sm text-[#B7F5DD]">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-root-accent" />
               <span>{notice || currentProfileError || profileIdentityError}</span>
             </div>
           )}
           {profileLoading && (
-            <div role="status" className="rounded-xl border border-[#00FFAA]/20 bg-[#00FFAA]/5 px-4 py-3 text-sm text-[#B7F5DD]">
+            <div role="status" className="rounded-xl border border-root-accent/20 bg-root-accent/5 px-4 py-3 text-sm text-[#B7F5DD]">
               Memuat data level antikorupsi negara...
             </div>
           )}

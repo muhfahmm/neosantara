@@ -19,7 +19,6 @@ export default function ConfirmRemoveTradeModal({ isOpen, partnerName, onClose, 
       zIndexClass="z-[80]"
       maxWidthClass="max-w-md"
       compact
-      backdropClassName="bg-black/80"
     >
       <section
         role="dialog"
@@ -27,13 +26,13 @@ export default function ConfirmRemoveTradeModal({ isOpen, partnerName, onClose, 
         aria-labelledby="remove-trade-title"
         className="overflow-hidden"
       >
-        <header className="border-b border-rose-500/20 bg-[#0A1A1A] px-5 py-4">
+        <header className="border-b border-rose-500/20 bg-root-canvas px-5 py-4">
           <h2 id="remove-trade-title" className="text-sm font-black uppercase tracking-wide text-rose-400">
             Putus Hubungan Dagang
           </h2>
         </header>
         <div className="space-y-5 p-5">
-          <p className="text-sm text-[#E0E0E0]">
+          <p className="text-sm text-root-text">
             Apakah Anda yakin ingin memutus hubungan dagang dengan{" "}
             <strong className="text-rose-400">{partnerName}</strong>? Anda dapat menjalin kembali melalui menu Mitra.
           </p>
@@ -42,7 +41,7 @@ export default function ConfirmRemoveTradeModal({ isOpen, partnerName, onClose, 
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 rounded-lg border border-[#00FFAA]/30 bg-[#0A1A1A] py-2.5 text-center text-[12px] font-black uppercase tracking-widest text-[#00FFAA] transition-all duration-150 hover:bg-[#00FFAA] hover:text-[#0A1A1A]"
+              className="flex-1 rounded-lg border border-root-accent/30 bg-root-canvas py-2.5 text-center text-[12px] font-black uppercase tracking-widest text-root-accent transition-all duration-150 hover:bg-root-accent hover:text-root-canvas"
             >
               Batal
             </button>

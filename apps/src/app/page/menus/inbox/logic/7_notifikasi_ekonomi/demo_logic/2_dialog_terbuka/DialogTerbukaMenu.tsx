@@ -349,23 +349,23 @@ export default function DialogTerbukaMenu({
       
       <div className="relative flex min-h-0 flex-1 flex-col">
         {/* === HEADER === */}
-        <header className="flex shrink-0 items-center justify-between gap-4 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-3 sm:px-6 sm:py-4 shadow-lg z-10">
+        <header className="flex shrink-0 items-center justify-between gap-4 border-b border-root-accent/20 bg-root-canvas px-4 py-3 sm:px-6 sm:py-4 shadow-lg z-10">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="shrink-0 rounded-xl border border-[#00FFAA]/30 bg-[#00FFAA]/10 p-2 text-[#00FFAA]">
+            <div className="shrink-0 rounded-xl border border-root-accent/30 bg-root-accent/10 p-2 text-root-accent">
               <MessageSquare className="h-5 w-5" />
             </div>
             <div className="min-w-0">
               <h3 className="text-base font-black text-white uppercase tracking-wider">
                 <span id="dialog-terbuka-title">Forum Dialog Terbuka</span>
               </h3>
-              <p className="text-xs text-[#6B8A8A]">Negosiasi &amp; Mediasi Massa Demonstran</p>
+              <p className="text-xs text-root-subtle">Negosiasi &amp; Mediasi Massa Demonstran</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <button
               type="button"
               onClick={handleReturn}
-              className="flex shrink-0 items-center gap-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-slate-300 transition-colors hover:border-[#00FFAA] hover:text-[#00FFAA]"
+              className="flex shrink-0 items-center gap-2 rounded-xl border border-root-accent/30 bg-root-surface px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-slate-300 transition-colors hover:border-root-accent hover:text-root-accent"
             >
               <ArrowLeft className="h-4 w-4" />
               <span className="hidden sm:inline">Kembali ke Permainan</span>
@@ -377,28 +377,28 @@ export default function DialogTerbukaMenu({
         <div className="flex min-h-0 flex-1 overflow-hidden">
           
           {/* --- SIDEBAR KIRI (STATUS NPC & TUNTUTAN) --- */}
-          <aside className="w-full max-w-[320px] shrink-0 border-r border-[#00FFAA]/20 bg-[#0A1A1A] flex flex-col hidden md:flex">
+          <aside className="w-full max-w-[320px] shrink-0 border-r border-root-accent/20 bg-root-canvas flex flex-col hidden md:flex">
             
             {/* Profil NPC */}
-            <div className="p-6 border-b border-[#00FFAA]/10 flex flex-col items-center text-center">
-              <div className="relative w-20 h-20 rounded-full border-2 border-[#00FFAA]/50 bg-[#0F2424] flex items-center justify-center mb-3 shadow-[0_0_15px_rgba(0,255,170,0.2)]">
-                <User className="w-10 h-10 text-[#00FFAA]" />
-                <div className="absolute -bottom-2 -right-2 bg-rose-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full border-2 border-[#0A1A1A] flex items-center gap-1">
+            <div className="p-6 border-b border-root-accent/10 flex flex-col items-center text-center">
+              <div className="relative w-20 h-20 rounded-full border-2 border-root-accent/50 bg-root-surface flex items-center justify-center mb-3 shadow-[0_0_15px_rgba(0,255,170,0.2)]">
+                <User className="w-10 h-10 text-root-accent" />
+                <div className="absolute -bottom-2 -right-2 bg-rose-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full border-2 border-root-canvas flex items-center gap-1">
                   <Flame className="w-3 h-3" /> MARAH
                 </div>
               </div>
               <h4 className="font-bold text-lg text-white">Ketua Aliansi Buruh</h4>
-              <p className="text-xs text-[#6B8A8A]">Perwakilan Massa Demonstran</p>
+              <p className="text-xs text-root-subtle">Perwakilan Massa Demonstran</p>
             </div>
 
             {/* Bar Emosi & Kepercayaan */}
-            <div className="p-6 border-b border-[#00FFAA]/10 space-y-4">
+            <div className="p-6 border-b border-root-accent/10 space-y-4">
               <div>
                 <div className="flex justify-between text-xs font-bold mb-1">
                   <span className="text-rose-400 uppercase flex items-center gap-1"><Flame className="w-3 h-3"/> Kemarahan</span>
                   <span className="text-white">{angerPercent}%</span>
                 </div>
-                <div className="h-2 w-full bg-[#0F2424] rounded-full overflow-hidden border border-rose-500/30">
+                <div className="h-2 w-full bg-root-surface rounded-full overflow-hidden border border-rose-500/30">
                   <div 
                     className="h-full bg-gradient-to-r from-rose-600 to-rose-400 transition-all duration-500" 
                     style={{ width: `${angerPercent}%` }}
@@ -410,9 +410,9 @@ export default function DialogTerbukaMenu({
                   <span className="text-emerald-400 uppercase flex items-center gap-1"><ShieldAlert className="w-3 h-3"/> Kepercayaan</span>
                   <span className="text-white">{trustPercent}%</span>
                 </div>
-                <div className="h-2 w-full bg-[#0F2424] rounded-full overflow-hidden border border-[#00FFAA]/30">
+                <div className="h-2 w-full bg-root-surface rounded-full overflow-hidden border border-root-accent/30">
                   <div 
-                    className="h-full bg-gradient-to-r from-emerald-600 to-[#00FFAA] transition-all duration-500" 
+                    className="h-full bg-gradient-to-r from-emerald-600 to-root-accent transition-all duration-500"
                     style={{ width: `${trustPercent}%` }}
                   />
                 </div>
@@ -421,7 +421,7 @@ export default function DialogTerbukaMenu({
 
             {/* Daftar Tuntutan */}
             <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
-              <h5 className="text-xs font-black text-[#6B8A8A] uppercase tracking-wider mb-4">{context.title}</h5>
+              <h5 className="text-xs font-black text-root-subtle uppercase tracking-wider mb-4">{context.title}</h5>
               <div className="space-y-3">
                 {context.demands.map((demand) => (
                   <button type="button" onClick={() => {
@@ -429,7 +429,7 @@ export default function DialogTerbukaMenu({
                     setSelectedDemand(demand);
                     if (menu) setPolicyMenu(menu);
                     else setMessages(previous => [...previous, { id: `sys-${Date.now()}`, sender: 'system', text: 'Menu kebijakan untuk tuntutan ini belum tersedia.' }]);
-                  }} key={demand.id} className="w-full text-left flex items-start gap-2 bg-[#0F2424] p-3 rounded-lg border border-[#00FFAA]/10 transition hover:border-[#00FFAA]/60 hover:bg-[#123333]">
+                  }} key={demand.id} className="w-full text-left flex items-start gap-2 bg-root-surface p-3 rounded-lg border border-root-accent/10 transition hover:border-root-accent/60 hover:bg-[#123333]">
                     {demand.status === 'completed' && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />}
                     {demand.status === 'rejected' && <XCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />}
                     {demand.status === 'pending' && <Clock className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />}
@@ -466,7 +466,7 @@ export default function DialogTerbukaMenu({
                 if (msg.sender === 'system') {
                   return (
                     <div key={msg.id} className="flex justify-center">
-                      <span className="text-[10px] font-bold text-[#6B8A8A] bg-[#0F2424] px-4 py-1.5 rounded-full uppercase tracking-widest border border-slate-700/50">
+                      <span className="text-[10px] font-bold text-root-subtle bg-root-surface px-4 py-1.5 rounded-full uppercase tracking-widest border border-slate-700/50">
                         {msg.text}
                       </span>
                     </div>
@@ -478,13 +478,13 @@ export default function DialogTerbukaMenu({
                   <div key={msg.id} className={`flex ${isPlayer ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-[85%] sm:max-w-[70%] rounded-2xl p-4 sm:p-5 shadow-lg ${
                       isPlayer 
-                        ? 'bg-[#00FFAA] text-[#0A1A1A] rounded-tr-sm' 
-                        : 'bg-[#0F2424] border border-[#00FFAA]/30 text-[#E0E0E0] rounded-tl-sm'
+                        ? 'bg-root-accent text-root-canvas rounded-tr-sm'
+                        : 'bg-root-surface border border-root-accent/30 text-root-text rounded-tl-sm'
                     }`}>
                       {!isPlayer && (
                         <div className="flex items-center gap-2 mb-2">
-                          <User className="w-4 h-4 text-[#00FFAA]" />
-                          <span className="text-xs font-black uppercase text-[#00FFAA]">Ketua Aliansi</span>
+                          <User className="w-4 h-4 text-root-accent" />
+                          <span className="text-xs font-black uppercase text-root-accent">Ketua Aliansi</span>
                         </div>
                       )}
                       <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
@@ -496,11 +496,11 @@ export default function DialogTerbukaMenu({
             </div>
 
             {/* --- PANEL INPUT BAWAH --- */}
-            <div className="p-4 sm:p-6 bg-[#0A1A1A] border-t border-[#00FFAA]/20 shrink-0">
+            <div className="p-4 sm:p-6 bg-root-canvas border-t border-root-accent/20 shrink-0">
               
               <div className="flex flex-wrap gap-2">
                 {choices.map(option => (
-                  <button key={option.choice} onClick={() => handleChoice(option)} disabled={loading || status !== 'ongoing'} className="px-3 py-2 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 text-xs font-semibold text-slate-300 hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all disabled:opacity-50">
+                  <button key={option.choice} onClick={() => handleChoice(option)} disabled={loading || status !== 'ongoing'} className="px-3 py-2 rounded-lg bg-root-surface border border-root-accent/30 text-xs font-semibold text-slate-300 hover:text-root-accent hover:border-root-accent transition-all disabled:opacity-50">
                     {option.choice === 'HARD_POWER' && <Flame className="inline w-3.5 h-3.5 mr-1 text-rose-400" />}
                     {option.choice === 'SOFT_POWER' && <ShieldAlert className="inline w-3.5 h-3.5 mr-1 text-emerald-400" />}
                     {option.choice === 'CONCESSION' && <Target className="inline w-3.5 h-3.5 mr-1 text-blue-400" />}
@@ -508,7 +508,7 @@ export default function DialogTerbukaMenu({
                   </button>
                 ))}
               </div>
-              <button onClick={regenerateChoices} disabled={refreshCount >= 3 || loading || status !== 'ongoing'} className="mt-3 inline-flex items-center gap-1 rounded-lg border border-[#00FFAA]/30 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:border-[#00FFAA] hover:text-[#00FFAA] disabled:cursor-not-allowed disabled:opacity-40">
+              <button onClick={regenerateChoices} disabled={refreshCount >= 3 || loading || status !== 'ongoing'} className="mt-3 inline-flex items-center gap-1 rounded-lg border border-root-accent/30 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:border-root-accent hover:text-root-accent disabled:cursor-not-allowed disabled:opacity-40">
                 <RefreshCw className="h-3.5 w-3.5" /> Ganti jawaban ({3 - refreshCount} tersisa)
               </button>
               <button 
@@ -560,11 +560,11 @@ export default function DialogTerbukaMenu({
         </>
       )}
       {policyMenu && (!countryDetail || !setCountryDetail) && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4">
-          <div role="dialog" aria-modal="true" className="w-full max-w-md rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-2xl">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div role="dialog" aria-modal="true" className="w-full max-w-md rounded-2xl border border-root-accent/30 bg-root-canvas p-6 shadow-2xl">
             <h3 className="text-lg font-bold text-white">Menu ekonomi tidak tersedia</h3>
             <p className="mt-2 text-sm text-slate-400">Buka dialog ini dari sesi permainan aktif untuk mengubah kebijakan.</p>
-            <button type="button" onClick={() => setPolicyMenu(null)} className="mt-5 rounded-lg bg-[#00FFAA] px-3 py-2 text-xs font-bold text-[#071414]">Tutup</button>
+            <button type="button" onClick={() => setPolicyMenu(null)} className="mt-5 rounded-lg bg-root-accent px-3 py-2 text-xs font-bold text-root-accent-ink">Tutup</button>
           </div>
         </div>
       )}

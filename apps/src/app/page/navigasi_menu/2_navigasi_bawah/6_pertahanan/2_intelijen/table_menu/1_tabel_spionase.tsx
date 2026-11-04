@@ -179,42 +179,42 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, onActi
       {/* Search Input Bar */}
       <div className="flex items-center justify-end shrink-0 pt-3">
         <div className="relative w-full sm:w-64">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#00FFAA]/60" />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-root-accent/60" />
           <input
             type="text"
             placeholder="Cari negara target..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#051111] border border-[#00FFAA]/30 rounded-lg pl-8 pr-3 py-1.5 text-xs text-[#E0E0E0] placeholder-[#6B8A8A] focus:outline-none focus:border-[#00FFAA] transition-colors"
+            className="w-full bg-[#051111] border border-root-accent/30 rounded-lg pl-8 pr-3 py-1.5 text-xs text-root-text placeholder-root-subtle focus:outline-none focus:border-root-accent transition-colors"
           />
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 overflow-hidden border border-[#00FFAA]/20 rounded-xl bg-[#0A1A1A] shadow-sm">
+      <div className="flex-1 min-h-0 overflow-hidden border border-root-accent/20 rounded-xl bg-root-canvas shadow-sm">
         <div className="h-full min-h-0 overflow-auto">
           <table className="w-full text-xs">
-            <thead className="bg-[#0A1A1A] border-b border-[#00FFAA]/20 sticky top-0 z-10 text-[9px] sm:text-[10px] lg:text-xs whitespace-nowrap">
+            <thead className="bg-root-canvas border-b border-root-accent/20 sticky top-0 z-10 text-[9px] sm:text-[10px] lg:text-xs whitespace-nowrap">
               <tr>
-                <th className="px-2 py-1.5 text-left font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider w-10 bg-[#0A1A1A]">Rank</th>
-                <th className="px-2 py-1.5 text-left font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors bg-[#0A1A1A]" onClick={() => handleSort('countryName')}>
+                <th className="px-2 py-1.5 text-left font-black text-root-accent uppercase tracking-normal sm:tracking-wider w-10 bg-root-canvas">Rank</th>
+                <th className="px-2 py-1.5 text-left font-black text-root-accent uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors bg-root-canvas" onClick={() => handleSort('countryName')}>
                   Negara{getSortArrow('countryName')}
                 </th>
-                <th className="px-2 py-1.5 text-right font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors bg-[#0A1A1A]" onClick={() => handleSort('darat')}>
+                <th className="px-2 py-1.5 text-right font-black text-root-accent uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors bg-root-canvas" onClick={() => handleSort('darat')}>
                   Darat{getSortArrow('darat')}
                 </th>
-                <th className="px-2 py-1.5 text-right font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors bg-[#0A1A1A]" onClick={() => handleSort('laut')}>
+                <th className="px-2 py-1.5 text-right font-black text-root-accent uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors bg-root-canvas" onClick={() => handleSort('laut')}>
                   Laut{getSortArrow('laut')}
                 </th>
-                <th className="px-2 py-1.5 text-right font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors bg-[#0A1A1A]" onClick={() => handleSort('udara')}>
+                <th className="px-2 py-1.5 text-right font-black text-root-accent uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors bg-root-canvas" onClick={() => handleSort('udara')}>
                   Udara{getSortArrow('udara')}
                 </th>
-                <th className="px-2 py-1.5 text-right font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors bg-[#0A1A1A]" onClick={() => handleSort('totalPower')}>
+                <th className="px-2 py-1.5 text-right font-black text-root-accent uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors bg-root-canvas" onClick={() => handleSort('totalPower')}>
                   Total Kekuatan{getSortArrow('totalPower')}
                 </th>
-                <th className="px-2 py-1.5 text-center font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider bg-[#0A1A1A]">Aksi</th>
+                <th className="px-2 py-1.5 text-center font-black text-root-accent uppercase tracking-normal sm:tracking-wider bg-root-canvas">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#00FFAA]/10">
+            <tbody className="divide-y divide-root-accent/10">
               {rankings.map((row, index) => {
                 const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "Negara";
                 const isUserCountry = row.countryName.toLowerCase().trim() === selectedCountryName.toLowerCase().trim();
@@ -224,32 +224,32 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, onActi
                     key={`${row.countryName}-${index}`} 
                     className={`transition-colors ${
                       isUserCountry
-                        ? 'bg-[#00FFAA]/10 hover:bg-[#00FFAA]/20 border-l-4 border-l-[#00FFAA]'
-                        : 'hover:bg-[#00FFAA]/5'
+                        ? 'bg-root-accent/10 hover:bg-root-accent/20 border-l-4 border-l-root-accent'
+                        : 'hover:bg-root-accent/5'
                     }`}
                   >
-                    <td className={`px-3 py-2.5 font-black ${isUserCountry ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>{index + 1}</td>
+                    <td className={`px-3 py-2.5 font-black ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>{index + 1}</td>
                     
-                    <td className={`px-3 py-2.5 font-bold ${isUserCountry ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>
+                    <td className={`px-3 py-2.5 font-bold ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>
                       <div className="flex items-center gap-2 min-h-[20px]">
                         {row.iso && row.iso.length === 2 ? (
                           <img
                             src={`https://flagcdn.com/w20/${row.iso.toLowerCase()}.png`}
                             alt={row.countryName}
-                            className="w-5 h-4 object-cover rounded-sm border border-[#00FFAA]/20 shadow-sm flex-shrink-0"
+                            className="w-5 h-4 object-cover rounded-sm border border-root-accent/20 shadow-sm flex-shrink-0"
                             onError={(e) => (e.target as HTMLImageElement).style.display = "none"}
                           />
                         ) : (
-                          <div className="w-5 h-4 rounded-sm bg-[#0F2424] border border-[#00FFAA]/20 flex-shrink-0" />
+                          <div className="w-5 h-4 rounded-sm bg-root-surface border border-root-accent/20 flex-shrink-0" />
                         )}
                         <span>{row.countryName}</span>
                       </div>
                     </td>
 
-                    <td className="px-3 py-2.5 text-[#E0E0E0]">{formatNumber(row.darat)}</td>
-                    <td className="px-3 py-2.5 text-[#E0E0E0]">{formatNumber(row.laut)}</td>
-                    <td className="px-3 py-2.5 text-[#E0E0E0]">{formatNumber(row.udara)}</td>
-                    <td className={`px-3 py-2.5 font-black ${isUserCountry ? 'text-[#00FFAA]' : 'text-rose-400'}`}>{formatNumber(row.totalPower)}</td>
+                    <td className="px-3 py-2.5 text-root-text">{formatNumber(row.darat)}</td>
+                    <td className="px-3 py-2.5 text-root-text">{formatNumber(row.laut)}</td>
+                    <td className="px-3 py-2.5 text-root-text">{formatNumber(row.udara)}</td>
+                    <td className={`px-3 py-2.5 font-black ${isUserCountry ? 'text-root-accent' : 'text-rose-400'}`}>{formatNumber(row.totalPower)}</td>
                     <td className="px-3 py-2.5 text-center">
                       <button
                         type="button"
@@ -258,7 +258,7 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, onActi
                         className={`p-1.5 rounded-lg border transition-all ${
                           isUserCountry
                             ? 'bg-rose-500/10 text-rose-500 border-rose-500/40 cursor-not-allowed'
-                            : 'bg-[#00FFAA]/10 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] border-[#00FFAA]/30 cursor-pointer'
+                            : 'bg-root-accent/10 text-root-accent hover:bg-root-accent hover:text-root-canvas border-root-accent/30 cursor-pointer'
                         }`}
                         title={isUserCountry ? "Ini negara yang sedang Anda gunakan" : "Luncurkan misi spionase"}
                         aria-label={isUserCountry ? `${row.countryName}, negara yang sedang Anda gunakan` : `Luncurkan misi spionase ke ${row.countryName}`}

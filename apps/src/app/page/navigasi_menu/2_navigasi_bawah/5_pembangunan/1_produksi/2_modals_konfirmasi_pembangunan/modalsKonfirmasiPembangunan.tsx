@@ -111,10 +111,10 @@ export default function KonfirmasiPembangunanModal({
     <NotebookModalWrapper onClose={onClose}>
       <div className="flex h-full flex-col overflow-hidden">
 
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-              <Hammer className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+            <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+              <Hammer className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
             </div>
             <div>
               <h3 className={rootModalTypography.title}>Konfirmasi Pembangunan</h3>
@@ -130,19 +130,19 @@ export default function KonfirmasiPembangunanModal({
             <p className={`mt-1 text-xs ${rootModalTypography.muted}`}>{buildingDescription || 'Tidak ada deskripsi tersedia.'}</p>
           </div>
 
-          <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-4 space-y-2.5 text-xs text-[#E0E0E0]">
+          <div className="bg-root-canvas border border-root-accent/20 rounded-xl p-4 space-y-2.5 text-xs text-root-text">
             <div className="flex justify-between font-bold">
-              <span className="text-[#AAB6B6]">Biaya Pembangunan (Total):</span>
-              <span className="text-[#00FFAA] font-black">
+              <span className="text-root-muted">Biaya Pembangunan (Total):</span>
+              <span className="text-root-accent font-black">
                 {loadingMetadata ? 'Memuat...' : `${totalCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`}
               </span>
             </div>
-            <div className="flex justify-between text-xs text-[#AAB6B6]">
+            <div className="flex justify-between text-xs text-root-muted">
               <span>Biaya per bangunan:</span>
-              <span className="text-[#E0E0E0]">{cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
+              <span className="text-root-text">{cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
             </div>
 
-            <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-xl p-4 mt-3 text-xs text-[#E0E0E0]">
+            <div className="bg-root-surface border border-root-accent/30 rounded-xl p-4 mt-3 text-xs text-root-text">
               <label className="flex flex-col gap-2">
                 <span className={rootModalTypography.sectionTitle}>Jumlah Bangunan</span>
                 <div className="flex gap-2 items-center">
@@ -161,13 +161,13 @@ export default function KonfirmasiPembangunanModal({
                           : 1
                       );
                     }}
-                    className="h-9 flex-1 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] px-3 py-2 text-xs font-bold text-[#E0E0E0] focus:outline-none focus:border-[#00FFAA]"
+                    className="h-9 flex-1 rounded-xl border border-root-accent/30 bg-root-canvas px-3 py-2 text-xs font-bold text-root-text focus:outline-none focus:border-root-accent"
                   />
                   <button
                     type="button"
                     onClick={() => setBuildQuantity(maxBuildQuantity)}
                     disabled={maxBuildQuantity < 1}
-                    className="px-4 py-2 rounded-xl bg-[#00FFAA] hover:bg-[#00FFAA]/80 text-[#0A1A1A] text-xs font-black uppercase cursor-pointer transition-all shadow-sm disabled:cursor-not-allowed disabled:opacity-50"
+                    className="px-4 py-2 rounded-xl bg-root-accent hover:bg-root-accent/80 text-root-canvas text-xs font-black uppercase cursor-pointer transition-all shadow-sm disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Maks ({maxBuildQuantity})
                   </button>
@@ -179,23 +179,23 @@ export default function KonfirmasiPembangunanModal({
             {waktuPembangunan !== undefined && (
               <>
                 <div className="flex justify-between">
-                  <span className="text-[#AAB6B6]">Estimasi Waktu Pembangunan per bangunan:</span>
+                  <span className="text-root-muted">Estimasi Waktu Pembangunan per bangunan:</span>
                   <span className="flex items-center gap-2 font-semibold">
                     {hasConstructionTimeDiscount && (
                       <span className="text-rose-400 line-through">{waktuPembangunan} Hari</span>
                     )}
-                    <span className={hasConstructionTimeDiscount ? "text-emerald-400" : "text-[#E0E0E0]"}>
+                    <span className={hasConstructionTimeDiscount ? "text-emerald-400" : "text-root-text"}>
                       {constructionTime} Hari
                     </span>
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#AAB6B6]">Estimasi Waktu Pembangunan Total:</span>
+                  <span className="text-root-muted">Estimasi Waktu Pembangunan Total:</span>
                   <span className="flex items-center gap-2 font-semibold">
                     {hasConstructionTimeDiscount && (
                       <span className="text-rose-400 line-through">{originalTotalTime} Hari</span>
                     )}
-                    <span className={hasConstructionTimeDiscount ? "text-emerald-400" : "text-[#E0E0E0]"}>
+                    <span className={hasConstructionTimeDiscount ? "text-emerald-400" : "text-root-text"}>
                       {totalTime} Hari
                     </span>
                   </span>
@@ -203,12 +203,12 @@ export default function KonfirmasiPembangunanModal({
                 {(hasConstructionTimeDiscount || infraBonusPercent > 0 || pembangunanBonusPercent > 0 || hasJewishDiscount) && (
                   <div className="flex justify-end gap-2 flex-wrap">
                     {infraBonusPercent > 0 && (
-                      <span className="inline-flex rounded-full border border-[#00FFAA]/40 bg-[#00FFAA]/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-[#00FFAA]">
+                      <span className="inline-flex rounded-full border border-root-accent/40 bg-root-accent/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-root-accent">
                         Kementerian Infrastruktur: +{infraBonusPercent.toFixed(1)}% Kecepatan Pembangunan
                       </span>
                     )}
                     {pembangunanBonusPercent > 0 && (
-                      <span className="inline-flex rounded-full border border-[#00FFAA]/40 bg-[#00FFAA]/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-[#00FFAA]">
+                      <span className="inline-flex rounded-full border border-root-accent/40 bg-root-accent/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-root-accent">
                         Kementerian Pembangunan: +{pembangunanBonusPercent.toFixed(1)}% Kecepatan Pembangunan
                       </span>
                     )}
@@ -225,7 +225,7 @@ export default function KonfirmasiPembangunanModal({
             {produksiPerHari !== undefined && (
               <>
                 <div className="flex justify-between">
-                  <span className="text-[#AAB6B6]">Produksi {produksiLabel || ''} per hari:</span>
+                  <span className="text-root-muted">Produksi {produksiLabel || ''} per hari:</span>
                   <span className="flex items-center gap-2 font-bold">
                     {kementerianPendidikanBonusPercent > 0 && (
                       <span className="text-rose-400 line-through">
@@ -239,7 +239,7 @@ export default function KonfirmasiPembangunanModal({
                 </div>
                 {kementerianPendidikanBonusPercent > 0 && (
                   <div className="flex justify-end">
-                    <span className="inline-flex rounded-full border border-[#00FFAA]/40 bg-[#00FFAA]/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-[#00FFAA]">
+                    <span className="inline-flex rounded-full border border-root-accent/40 bg-root-accent/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-root-accent">
                       Kementerian Pendidikan: +{kementerianPendidikanBonusPercent.toFixed(1)}% Produksi Pangan & SDA
                     </span>
                   </div>
@@ -249,7 +249,7 @@ export default function KonfirmasiPembangunanModal({
 
             {dampakKepuasan !== undefined && (
               <div className="flex justify-between">
-                <span className="text-[#AAB6B6]">Dampak ke Kepuasan:</span>
+                <span className="text-root-muted">Dampak ke Kepuasan:</span>
                 <span className="text-emerald-400 font-bold">+{dampakKepuasan.toFixed(1)}</span>
               </div>
             )}
@@ -262,7 +262,7 @@ export default function KonfirmasiPembangunanModal({
                   <div className={rootModalTypography.sectionTitle}>Material Dibutuhkan</div>
                   <button
                     onClick={() => setShowMaterialGrid(!showMaterialGrid)}
-                    className="flex items-center gap-1.5 px-2 py-1 bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg text-[#AAB6B6] hover:text-[#00FFAA] transition-all cursor-pointer"
+                    className="flex items-center gap-1.5 px-2 py-1 bg-root-surface border border-root-accent/30 rounded-lg text-root-muted hover:text-root-accent transition-all cursor-pointer"
                   >
                     {showMaterialGrid ? (
                       <>
@@ -300,19 +300,19 @@ export default function KonfirmasiPembangunanModal({
                         }}
                         className={`flex flex-col items-center justify-center border rounded-xl p-2.5 min-h-[50px] cursor-pointer transition-all ${
                           isSelected
-                            ? 'border-[#00FFAA] bg-[#00FFAA]/15 text-[#00FFAA]'
+                            ? 'border-root-accent bg-root-accent/15 text-root-accent'
                             : isStockInsufficient
                             ? 'border-rose-500/40 bg-rose-500/10 text-rose-300'
-                            : 'border-[#00FFAA]/20 bg-[#0F2424] text-[#E0E0E0] hover:border-[#00FFAA]/50'
+                            : 'border-root-accent/20 bg-root-surface text-root-text hover:border-root-accent/50'
                         }`}
                       >
                         <div className="text-center text-xs font-bold">{material.label}</div>
                         {material.amount !== undefined && (
-                          <div className="text-[9px] uppercase tracking-wider text-[#00FFAA] mt-1">
+                          <div className="text-[9px] uppercase tracking-wider text-root-accent mt-1">
                             x{requiredAmount.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                           </div>
                         )}
-                        <div className={`mt-0.5 text-xs font-black ${isStockInsufficient ? 'text-rose-400' : 'text-[#AAB6B6]'}`}>
+                        <div className={`mt-0.5 text-xs font-black ${isStockInsufficient ? 'text-rose-400' : 'text-root-muted'}`}>
                           {stock.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                         </div>
                       </button>
@@ -321,21 +321,21 @@ export default function KonfirmasiPembangunanModal({
                 </div>
               </div>
             ) : (
-              <div className="text-[#AAB6B6]">Tidak ada material yang dibutuhkan untuk bangunan ini.</div>
+              <div className="text-root-muted">Tidak ada material yang dibutuhkan untuk bangunan ini.</div>
             )}
           </div>
 
-          <div className="flex justify-between items-center text-xs font-black text-[#E0E0E0] pt-1">
-            <span className="text-[#AAB6B6]">Kas Negara Saat Ini:</span>
-            <span className="text-[#00FFAA]">{anggaran.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
+          <div className="flex justify-between items-center text-xs font-black text-root-text pt-1">
+            <span className="text-root-muted">Kas Negara Saat Ini:</span>
+            <span className="text-root-accent">{anggaran.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex gap-3 relative z-10 shrink-0">
+        <div className="p-4 bg-root-canvas border-t border-root-accent/20 flex gap-3 relative z-10 shrink-0">
           <button
             onClick={onClose}
-            className="flex-1 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#AAB6B6] hover:text-[#00FFAA] text-xs font-bold uppercase cursor-pointer transition-all text-center"
+            className="flex-1 py-2.5 rounded-xl border border-root-accent/30 bg-root-surface text-root-muted hover:text-root-accent text-xs font-bold uppercase cursor-pointer transition-all text-center"
           >
             Batal
           </button>
@@ -344,8 +344,8 @@ export default function KonfirmasiPembangunanModal({
             disabled={loadingMetadata || hasMissingMaterials || !isAnggaranCukup || isDisabled || quantityExceedsAvailable}
             className={`flex-1 py-2.5 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer ${
               hasMissingMaterials || !isAnggaranCukup || loadingMetadata || isDisabled || quantityExceedsAvailable
-                ? 'bg-[#0F2424] text-[#AAB6B6] border border-[#00FFAA]/10 cursor-not-allowed opacity-50'
-                : 'bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 shadow-md'
+                ? 'bg-root-surface text-root-muted border border-root-accent/10 cursor-not-allowed opacity-50'
+                : 'bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-md'
             }`}
           >
             {hasMissingMaterials ? 'Material Kurang' : quantityExceedsAvailable ? 'Jumlah Melebihi Stok' : !isAnggaranCukup ? 'Dana Tidak Cukup' : 'Mulai Pembangunan'}

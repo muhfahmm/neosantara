@@ -18,21 +18,21 @@ export default function SkandalAktifList({
     .sort((a, b) => b.exposedDate.localeCompare(a.exposedDate));
 
   return (
-    <section className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-5">
+    <section className="rounded-2xl border border-root-accent/20 bg-root-canvas p-5">
       <div className="mb-4 flex items-center gap-3">
         <AlertTriangle className="h-5 w-5 text-amber-300" />
         <div>
-          <h3 className="font-black text-[#E0E0E0]">Skandal & Pengungkapan</h3>
+          <h3 className="font-black text-root-text">Skandal & Pengungkapan</h3>
         </div>
       </div>
       {scandals.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-[#00FFAA]/15 px-4 py-8 text-center text-sm text-[#6B8A8A]">
+        <div className="rounded-xl border border-dashed border-root-accent/15 px-4 py-8 text-center text-sm text-root-subtle">
           Belum ada skandal yang terungkap. Risiko diperiksa setiap bulan simulasi.
         </div>
       ) : (
         <div className="max-h-72 space-y-2 overflow-y-auto pr-1 neon-scrollbar">
           {scandals.map(scandal => (
-            <article key={scandal.id} className="rounded-xl border border-[#00FFAA]/10 bg-[#0F2424] p-3">
+            <article key={scandal.id} className="rounded-xl border border-root-accent/10 bg-root-surface p-3">
               <div className="flex flex-wrap items-center gap-2">
                 {scandal.resolved
                   ? <CheckCircle2 className="h-4 w-4 text-emerald-400" />

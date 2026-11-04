@@ -204,16 +204,16 @@ export default function PajakSection({ countryDetail }: PajakSectionProps) {
   return (
     <div className="space-y-4">
       {/* HEADER SECTION PAJAK */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-[#0A1A1A]/80 border border-[#00FFAA]/20 p-4 rounded-2xl">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-root-canvas/80 border border-root-accent/20 p-4 rounded-2xl">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-[#0F2424] border border-[#00FFAA]/30">
-            <FileText className="w-5 h-5 text-[#00FFAA]" />
+          <div className="p-2.5 rounded-xl bg-root-surface border border-root-accent/30">
+            <FileText className="w-5 h-5 text-root-accent" />
           </div>
           <div>
-            <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-[#00FFAA] flex items-center gap-2">
+            <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-root-accent flex items-center gap-2">
               Sistem & Manajemen Pajak Negara
             </h4>
-            <p className="text-[10px] sm:text-xs text-[#6B8A8A] font-semibold">
+            <p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
               Tarif penerimaan fiskal dan estimasi kas pajak nasional
             </p>
           </div>
@@ -221,10 +221,10 @@ export default function PajakSection({ countryDetail }: PajakSectionProps) {
 
         {/* Quick Summary Badges */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0F2424] border border-[#00FFAA]/30 rounded-xl">
-            <TrendingUp className="w-3.5 h-3.5 text-[#00FFAA]" />
-            <span className="text-[10px] font-bold text-[#6B8A8A] uppercase">Total Penerimaan:</span>
-            <span className="text-[11px] font-black text-[#00FFAA]">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-root-surface border border-root-accent/30 rounded-xl">
+            <TrendingUp className="w-3.5 h-3.5 text-root-accent" />
+            <span className="text-[10px] font-bold text-root-subtle uppercase">Total Penerimaan:</span>
+            <span className="text-[11px] font-black text-root-accent">
               +{formatNumber(totalEstimatedRevenue)} NEO / hari
             </span>
           </div>
@@ -233,20 +233,20 @@ export default function PajakSection({ countryDetail }: PajakSectionProps) {
 
       {/* TOP SUMMARY CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-2xl shadow-sm">
+        <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">
+            <span className="text-[10px] font-black uppercase tracking-widest text-root-subtle">
               Rata-rata Tarif Pajak
             </span>
-            <Percent className="w-4 h-4 text-[#00FFAA]" />
+            <Percent className="w-4 h-4 text-root-accent" />
           </div>
-          <p className="text-2xl font-black text-[#E0E0E0]">{averageTaxRate}%</p>
+          <p className="text-2xl font-black text-root-text">{averageTaxRate}%</p>
           <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">Beban fiskal gabungan 5 sektor</p>
         </div>
 
-        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-2xl shadow-sm">
+        <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">
+            <span className="text-[10px] font-black uppercase tracking-widest text-root-subtle">
               Estimasi Kas Harian
             </span>
             <DollarSign className="w-4 h-4 text-emerald-400" />
@@ -258,17 +258,17 @@ export default function PajakSection({ countryDetail }: PajakSectionProps) {
           <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">Pemasukan kas APBN negara</p>
         </div>
 
-        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-2xl shadow-sm">
+        <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">
+            <span className="text-[10px] font-black uppercase tracking-widest text-root-subtle">
               Indeks Kepuasan Pajak
             </span>
-            <span className="text-xs font-bold text-[#00FFAA]">{taxSatisfactionScore}/100</span>
+            <span className="text-xs font-bold text-root-accent">{taxSatisfactionScore}/100</span>
           </div>
-          <p className="text-2xl font-black text-[#00FFAA]">{taxSatisfactionScore}%</p>
-          <div className="w-full h-2 bg-[#0F2424] rounded-full overflow-hidden mt-2 border border-[#00FFAA]/20">
+          <p className="text-2xl font-black text-root-accent">{taxSatisfactionScore}%</p>
+          <div className="w-full h-2 bg-root-surface rounded-full overflow-hidden mt-2 border border-root-accent/20">
             <div
-              className="h-full rounded-full bg-[#00FFAA]"
+              className="h-full rounded-full bg-root-accent"
               style={{ width: `${taxSatisfactionScore}%` }}
             />
           </div>
@@ -288,27 +288,27 @@ export default function PajakSection({ countryDetail }: PajakSectionProps) {
           return (
             <div
               key={tax.id}
-              className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-2xl p-4 flex flex-col justify-between hover:border-[#00FFAA]/50 transition-all shadow-sm"
+              className="bg-root-canvas border border-root-accent/20 rounded-2xl p-4 flex flex-col justify-between hover:border-root-accent/50 transition-all shadow-sm"
             >
               <div>
                 <div className="flex items-start justify-between gap-2 mb-2">
-                  <div className="p-2 rounded-xl bg-[#0F2424] text-[#00FFAA] border border-[#00FFAA]/20">
+                  <div className="p-2 rounded-xl bg-root-surface text-root-accent border border-root-accent/20">
                     <IconComponent className="w-4 h-4" />
                   </div>
-                  <span className="text-sm sm:text-base font-black text-[#00FFAA] px-2.5 py-0.5 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30">
+                  <span className="text-sm sm:text-base font-black text-root-accent px-2.5 py-0.5 rounded-lg bg-root-surface border border-root-accent/30">
                     {tax.currentRate}%
                   </span>
                 </div>
-                <h5 className="text-xs font-black uppercase tracking-wider text-[#E0E0E0] mb-1">
+                <h5 className="text-xs font-black uppercase tracking-wider text-root-text mb-1">
                   {tax.name}
                 </h5>
-                <p className="text-[10px] text-[#6B8A8A]">
+                <p className="text-[10px] text-root-subtle">
                   Batas rentang tarif: {tax.minRate}% - {tax.maxRate}% (Standar {tax.baseRate}%)
                 </p>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-[#00FFAA]/15 flex items-center justify-between">
-                <span className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-wider">
+              <div className="mt-4 pt-3 border-t border-root-accent/15 flex items-center justify-between">
+                <span className="text-[10px] font-bold text-root-subtle uppercase tracking-wider">
                   Estimasi Pendapatan:
                 </span>
                 <span className="text-xs font-black text-emerald-400">

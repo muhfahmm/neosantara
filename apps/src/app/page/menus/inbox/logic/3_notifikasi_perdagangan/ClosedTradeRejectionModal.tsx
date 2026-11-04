@@ -36,7 +36,7 @@ export default function ClosedTradeRejectionModal({
       <div className="flex flex-col h-full overflow-hidden">
         
         {/* HEADER */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-rose-500/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-rose-500/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="p-1 sm:p-1.5 bg-rose-950/40 rounded-lg border border-rose-500/30 shrink-0">
               <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-rose-400" />
@@ -49,7 +49,7 @@ export default function ClosedTradeRejectionModal({
           {/* 🔥 PERBAIKAN: Tombol Tutup disamakan ukurannya dengan modal sebelumnya */}
           <button 
             onClick={onClose} 
-            className="p-1.5 lg:p-2 rounded-xl border border-rose-500/30 bg-[#0F2424] text-rose-400 hover:bg-rose-500 hover:text-white transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
+            className="p-1.5 lg:p-2 rounded-xl border border-rose-500/30 bg-root-surface text-rose-400 hover:bg-rose-500 hover:text-white transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
           >
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
@@ -57,7 +57,7 @@ export default function ClosedTradeRejectionModal({
         </div>
 
         {/* BODY CONTENT */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-5 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-5 bg-root-canvas/80 relative z-10 custom-scrollbar">
           
           <div className="max-w-2xl mx-auto space-y-4">
             
@@ -87,28 +87,28 @@ export default function ClosedTradeRejectionModal({
             </div>
 
             {/* Metric Stats Box */}
-            <div className="grid grid-cols-2 gap-2 rounded-lg border border-rose-500/20 bg-[#0F2424] p-3 text-xs shadow-sm">
+            <div className="grid grid-cols-2 gap-2 rounded-lg border border-rose-500/20 bg-root-surface p-3 text-xs shadow-sm">
               <div className="flex flex-col">
-                <span className="text-[#6B8A8A] text-[10px] uppercase font-bold">Skor Sentralisasi</span>
+                <span className="text-root-subtle text-[10px] uppercase font-bold">Skor Sentralisasi</span>
                 <strong className="text-rose-400 font-black text-sm">{centralizationScore.toFixed(1)}</strong>
               </div>
               <div className="flex flex-col">
-                <span className="text-[#6B8A8A] text-[10px] uppercase font-bold">Rata-rata Nasionalisasi</span>
-                <strong className="text-[#E0E0E0] font-bold text-sm">{averageNationalization.toFixed(1)}%</strong>
+                <span className="text-root-subtle text-[10px] uppercase font-bold">Rata-rata Nasionalisasi</span>
+                <strong className="text-root-text font-bold text-sm">{averageNationalization.toFixed(1)}%</strong>
               </div>
               <div className="flex flex-col">
-                <span className="text-[#6B8A8A] text-[10px] uppercase font-bold">Mod. Ideologi</span>
-                <strong className="text-[#E0E0E0] font-bold text-sm">×{ideologyModifier.toFixed(2)}</strong>
+                <span className="text-root-subtle text-[10px] uppercase font-bold">Mod. Ideologi</span>
+                <strong className="text-root-text font-bold text-sm">×{ideologyModifier.toFixed(2)}</strong>
               </div>
               <div className="flex flex-col">
-                <span className="text-[#6B8A8A] text-[10px] uppercase font-bold">Mod. Agama</span>
-                <strong className="text-[#E0E0E0] font-bold text-sm">×{religionModifier.toFixed(2)}</strong>
+                <span className="text-root-subtle text-[10px] uppercase font-bold">Mod. Agama</span>
+                <strong className="text-root-text font-bold text-sm">×{religionModifier.toFixed(2)}</strong>
               </div>
             </div>
 
             {/* Reasons List */}
             {reasons.length > 0 && (
-              <div className="rounded-lg border border-rose-500/20 bg-[#0F2424] p-3 shadow-sm">
+              <div className="rounded-lg border border-rose-500/20 bg-root-surface p-3 shadow-sm">
                 <span className="block font-bold text-rose-400 mb-1.5 text-[10px] uppercase tracking-wider">
                   Alasan Penolakan:
                 </span>
@@ -127,7 +127,7 @@ export default function ClosedTradeRejectionModal({
         </div>
 
         {/* FOOTER ACTIONS */}
-        <div className="px-4 py-2.5 border-t border-[#00FFAA]/20 bg-[#0A1A1A] flex justify-center shrink-0 relative z-10">
+        <div className="px-4 py-2.5 border-t border-root-accent/20 bg-root-canvas flex justify-center shrink-0 relative z-10">
           <button
             type="button"
             onClick={onClose}

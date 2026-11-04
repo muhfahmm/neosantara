@@ -103,15 +103,15 @@ export default function ProvinceAidModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="province-aid-title"
-        className="bg-[#0F2424] border-2 sm:border-3 border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl"
+        className="bg-root-surface border-2 sm:border-3 border-root-accent/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl"
       >
-        <div className="shrink-0 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-6 py-4 sm:px-8 sm:py-5">
+        <div className="shrink-0 border-b border-root-accent/20 bg-root-canvas px-6 py-4 sm:px-8 sm:py-5">
           <div className="flex items-center gap-3">
-            <div className="rounded-lg border border-[#00FFAA]/30 bg-[#00FFAA]/10 p-2 text-[#00FFAA]">
+            <div className="rounded-lg border border-root-accent/30 bg-root-accent/10 p-2 text-root-accent">
               <HandHeart className="h-6 w-6" />
             </div>
             <div>
-              <h3 id="province-aid-title" className="text-lg font-black text-[#00FFAA]">Pilih Bantuan</h3>
+              <h3 id="province-aid-title" className="text-lg font-black text-root-accent">Pilih Bantuan</h3>
               <p className="text-sm text-[#B7D5CD]">Pilih hasil produksi yang akan dikirim ke {targetCountry}.</p>
               <p className="mt-1 text-xs font-bold text-orange-300">
                 Ketegangan saat ini: {provinceTension} · bantuan tetap dapat dikirim saat ketegangan 0
@@ -130,8 +130,8 @@ export default function ProvinceAidModal({
               onClick={() => selectSector(sector)}
               className={`rounded-lg border px-3 py-2 text-xs font-black uppercase transition-colors ${
                 selectedSectorId === sector.id
-                  ? 'border-[#00FFAA] bg-[#00FFAA]/20 text-[#00FFAA]'
-                  : 'border-[#00FFAA]/20 bg-[#0A1A1A] text-[#B7D5CD] hover:border-[#00FFAA]/50'
+                  ? 'border-root-accent bg-root-accent/20 text-root-accent'
+                  : 'border-root-accent/20 bg-root-canvas text-[#B7D5CD] hover:border-root-accent/50'
               }`}
             >
               {sector.label}
@@ -151,8 +151,8 @@ export default function ProvinceAidModal({
                 onClick={() => setSelectedItemKey(item.key)}
                 className={`flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left ${
                   selectedItemKey === item.key
-                    ? 'border-[#00FFAA] bg-[#00FFAA]/15 text-[#00FFAA]'
-                    : 'border-[#00FFAA]/20 bg-[#0A1A1A] text-white hover:border-[#00FFAA]/50'
+                    ? 'border-root-accent bg-root-accent/15 text-root-accent'
+                    : 'border-root-accent/20 bg-root-canvas text-white hover:border-root-accent/50'
                 }`}
               >
                 <span className="text-sm font-bold">{item.label}</span>
@@ -169,12 +169,12 @@ export default function ProvinceAidModal({
         )}
 
         </div>
-        <div className="shrink-0 border-t border-[#00FFAA]/20 bg-[#0A1A1A] p-4 sm:px-8">
+        <div className="shrink-0 border-t border-root-accent/20 bg-root-canvas p-4 sm:px-8">
         <div className="flex gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 rounded-lg border border-[#00FFAA]/30 px-4 py-3 text-xs font-black uppercase text-[#00FFAA] hover:bg-[#00FFAA]/10"
+            className="flex-1 rounded-lg border border-root-accent/30 px-4 py-3 text-xs font-black uppercase text-root-accent hover:bg-root-accent/10"
           >
             Batal
           </button>
@@ -182,7 +182,7 @@ export default function ProvinceAidModal({
             type="button"
             disabled={!selectedSector || !selectedItem}
             onClick={() => selectedSector && selectedItem && onConfirm(selectedSector.label, selectedItem.label)}
-            className="flex-1 rounded-lg bg-[#00FFAA] px-4 py-3 text-xs font-black uppercase text-[#0A1A1A] hover:bg-[#00D991] disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex-1 rounded-lg bg-root-accent px-4 py-3 text-xs font-black uppercase text-root-canvas hover:bg-[#00D991] disabled:cursor-not-allowed disabled:opacity-40"
           >
             Kirim Bantuan
           </button>

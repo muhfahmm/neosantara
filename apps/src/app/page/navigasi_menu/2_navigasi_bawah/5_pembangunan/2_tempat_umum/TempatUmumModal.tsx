@@ -430,19 +430,19 @@ export default function TempatUmumModal({
     <>
       {!selectedGroupInfo && <NotebookModalWrapper onClose={onClose}>
         <div className="flex flex-col h-full overflow-hidden">
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-              <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-                <Landmark className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+              <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+                <Landmark className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
               </div>
               <div className="min-w-0">
                 <h2 className={rootModalTypography.title}>Tempat Umum & Layanan Publik</h2>
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <div className="px-2 py-1 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-right">
-                <p className="text-[8px] sm:text-[9px] font-bold uppercase tracking-wider text-[#6B8A8A]">Indeks Kepuasan</p>
-                <p className="text-xs sm:text-sm font-black leading-tight text-[#00FFAA]">{averageServiceSatisfaction} / 100</p>
+              <div className="px-2 py-1 rounded-lg border border-root-accent/30 bg-root-surface text-right">
+                <p className="text-[8px] sm:text-[9px] font-bold uppercase tracking-wider text-root-subtle">Indeks Kepuasan</p>
+                <p className="text-xs sm:text-sm font-black leading-tight text-root-accent">{averageServiceSatisfaction} / 100</p>
               </div>
               <button
                 type="button"
@@ -452,7 +452,7 @@ export default function TempatUmumModal({
                 })}
                 aria-label={`Informasi ${activeGroup?.label ?? "kategori aktif"}`}
                 title={`Informasi ${activeGroup?.label ?? "kategori aktif"}`}
-                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] transition-colors hover:border-[#00FFAA] hover:bg-[#00FFAA]/10"
+                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent transition-colors hover:border-root-accent hover:bg-root-accent/10"
               >
                 <Info className="h-4 w-4" />
               </button>
@@ -461,7 +461,7 @@ export default function TempatUmumModal({
           </div>
 
           <div className="flex-1 flex min-h-0 relative z-10">
-            <div className="w-40 sm:w-44 lg:w-48 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
+            <div className="w-40 sm:w-44 lg:w-48 border-r border-root-accent/30 bg-root-canvas p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
               {groups.map((group) => {
                 const hasConstruction = group.keys.some((key) => 
                   ongoingConstructions.some((c: any) => c.buildingKey === key)
@@ -472,8 +472,8 @@ export default function TempatUmumModal({
                       onClick={() => setActiveTabId(group.id)}
                       className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${
                         activeTabId === group.id
-                          ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
-                          : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA] hover:text-[#00FFAA]"
+                          ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
+                          : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent hover:text-root-accent"
                       }`}
                     >
                       <span className="truncate text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{group.label}</span>
@@ -482,7 +482,7 @@ export default function TempatUmumModal({
                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
                          )}
                          <span className={`text-[9px] lg:text-[10px] font-black px-1.5 py-0.5 rounded-full ${
-                           activeTabId === group.id ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
+                           activeTabId === group.id ? "bg-root-canvas text-root-accent" : "bg-root-canvas text-root-subtle"
                          }`                         }>
                            {group.activeCount}
                          </span>
@@ -492,26 +492,26 @@ export default function TempatUmumModal({
               })}
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-[#0F2424] flex flex-col justify-between neon-scrollbar">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-root-surface flex flex-col justify-between neon-scrollbar">
               <div>
                 {activeGroup && (
                   <>
-                    <div className="mb-4 sm:mb-6 flex flex-wrap items-center justify-between gap-2.5 sm:gap-4 bg-[#0A1A1A]/60 p-3 sm:p-4 rounded-2xl border border-[#00FFAA]/20">
+                    <div className="mb-4 sm:mb-6 flex flex-wrap items-center justify-between gap-2.5 sm:gap-4 bg-root-canvas/60 p-3 sm:p-4 rounded-2xl border border-root-accent/20">
                       <div className="flex-1 min-w-[180px]">
-                        <h3 className="text-base sm:text-lg lg:text-xl font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-2">
+                        <h3 className="text-base sm:text-lg lg:text-xl font-black text-root-accent uppercase tracking-wider flex items-center gap-2">
                           {activeGroup.label}
                         </h3>
-                        <p className="text-[10px] sm:text-xs text-[#6B8A8A] mt-0.5">{activeGroup.description}</p>
+                        <p className="text-[10px] sm:text-xs text-root-subtle mt-0.5">{activeGroup.description}</p>
                       </div>
 
                       {/* Card Rasio Kapasitas Bangunan */}
-                      <div className="flex items-center gap-2 px-3 py-1.5 sm:py-2 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30 shrink-0 shadow-inner">
-                        <div className="p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/20">
-                          <Users className="w-3.5 h-3.5 text-[#00FFAA]" />
+                      <div className="flex items-center gap-2 px-3 py-1.5 sm:py-2 rounded-xl bg-root-canvas border border-root-accent/30 shrink-0 shadow-inner">
+                        <div className="p-1.5 bg-root-surface rounded-lg border border-root-accent/20">
+                          <Users className="w-3.5 h-3.5 text-root-accent" />
                         </div>
                         <div>
-                          <p className="text-[9px] font-black uppercase text-[#6B8A8A] tracking-wider">Kapasitas Standar AI</p>
-                          <p className="text-[10px] sm:text-xs font-black text-[#00FFAA]">
+                          <p className="text-[9px] font-black uppercase text-root-subtle tracking-wider">Kapasitas Standar AI</p>
+                          <p className="text-[10px] sm:text-xs font-black text-root-accent">
                             1 Bangunan : {
                               activeGroup.id === 'infrastruktur' ? '20.000 Jiwa' :
                               activeGroup.id === 'pendidikan' ? '10.000 Jiwa' :
@@ -525,9 +525,9 @@ export default function TempatUmumModal({
 
                       <button
                         onClick={handleOpenAIModal}
-                        className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#00FFAA]/10 border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all text-[10px] sm:text-xs font-black shadow-md cursor-pointer shrink-0 active:scale-95"
+                        className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-root-accent/10 border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all text-[10px] sm:text-xs font-black shadow-md cursor-pointer shrink-0 active:scale-95"
                       >
-                        <Sparkles className="w-3.5 h-3.5 text-[#00FFAA] hover:text-[#0A1A1A]" />
+                        <Sparkles className="w-3.5 h-3.5 text-root-accent hover:text-root-canvas" />
                         <span>Rekomendasi AI</span>
                       </button>
                     </div>
@@ -546,7 +546,7 @@ export default function TempatUmumModal({
                         const isBuilding = queueCount > 0;
 
                         return (
-                          <div key={it.key} className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-2xl overflow-visible flex flex-col justify-between shadow-sm hover:border-[#00FFAA]/50 transition-all relative">
+                          <div key={it.key} className="bg-root-canvas border border-root-accent/20 rounded-2xl overflow-visible flex flex-col justify-between shadow-sm hover:border-root-accent/50 transition-all relative">
                             
                             {isBuilding && (() => {
                                const lastEndDate = buildingConstruction[buildingConstruction.length - 1].endDate;
@@ -558,7 +558,7 @@ export default function TempatUmumModal({
                                const month = parts.find((p) => p.type === 'month')?.value || '';
                                const year = parts.find((p) => p.type === 'year')?.value || '';
                                return (
-                                 <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[9px] font-bold px-2 py-0.5 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
+                                 <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[9px] font-bold px-2 py-0.5 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
                                    {`${day} ${month}, ${year}`}
                                  </div>
                                );
@@ -581,9 +581,9 @@ export default function TempatUmumModal({
                             <div className="p-2 sm:p-2.5 flex flex-col flex-grow justify-between">
                               <div>
                                 <div className="flex items-start justify-between gap-1 mb-0.5">
-                                  <p className="text-[9px] sm:text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider flex-1 pr-1 leading-snug">{it.label}</p>
+                                  <p className="text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1 leading-snug">{it.label}</p>
                                   <button
-                                    className="flex-shrink-0 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-colors cursor-pointer bg-[#0F2424] border border-[#00FFAA]/30 hover:border-[#00FFAA] text-[#6B8A8A] hover:text-[#00FFAA]"
+                                    className="flex-shrink-0 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       setHoveredBuildingKey(hoveredBuildingKey === it.key ? null : it.key);
@@ -604,17 +604,17 @@ export default function TempatUmumModal({
                                     />
                                   )}
                                   <div className="flex items-end gap-1 flex-wrap">
-                                    <p className="text-xs sm:text-sm lg:text-base font-black text-[#E0E0E0] leading-none">{formatNumber(perCount)}</p>
+                                    <p className="text-xs sm:text-sm lg:text-base font-black text-root-text leading-none">{formatNumber(perCount)}</p>
                                     {isBuilding && (
                                       <span className="text-[10px] sm:text-xs font-bold text-emerald-400 leading-none">+{queueCount}</span>
                                     )}
                                   </div>
                                 </div>
                               </div>
-                              <div className="border-t border-[#00FFAA]/10 mt-1.5 pt-1">
+                              <div className="border-t border-root-accent/10 mt-1.5 pt-1">
                                 <button
                                   onClick={() => handleBuild(it.key, it.label)}
-                                  className="w-full py-1 sm:py-1.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black border border-[#00FFAA] text-[9px] sm:text-[10px] uppercase cursor-pointer hover:bg-[#00FFAA]/80 transition-all shadow-md active:scale-[0.98]"
+                                  className="w-full py-1 sm:py-1.5 rounded-xl bg-root-accent text-root-canvas font-black border border-root-accent text-[9px] sm:text-[10px] uppercase cursor-pointer hover:bg-root-accent/80 transition-all shadow-md active:scale-[0.98]"
                                 >
                                   Bangun
                                 </button>
@@ -628,15 +628,15 @@ export default function TempatUmumModal({
                 )}
               </div>
 
-              <div className="mt-8 border-t border-[#00FFAA]/20 pt-6 space-y-4">
+              <div className="mt-8 border-t border-root-accent/20 pt-6 space-y-4">
                 {/* Grid 2 Kartu Ringkasan (Full Width) */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch w-full">
                   
                   {/* 1. Total Fasilitas Publik */}
-                  <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 flex flex-col justify-between">
+                  <div className="rounded-2xl border border-root-accent/20 bg-root-canvas p-4 flex flex-col justify-between">
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">Total Fasilitas Publik</p>
-                      <p className="text-2xl sm:text-3xl font-black text-[#00FFAA] mt-2 break-words">{formatNumber(totalValue)}</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-root-subtle">Total Fasilitas Publik</p>
+                      <p className="text-2xl sm:text-3xl font-black text-root-accent mt-2 break-words">{formatNumber(totalValue)}</p>
                     </div>
                   </div>
 
@@ -652,33 +652,33 @@ export default function TempatUmumModal({
                     const satisfactionScore = publicServiceCategoryScores[activeCategory.id];
 
                     return (
-                      <div className="rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-4 shadow-md flex flex-col justify-between">
+                      <div className="rounded-2xl border border-root-accent/30 bg-root-canvas p-4 shadow-md flex flex-col justify-between">
                         <div>
                           <div className="flex justify-between items-center gap-2">
-                            <span className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">
+                            <span className="text-[10px] font-black text-root-subtle uppercase tracking-wider">
                               {activeCategory.id === "kesehatan" || activeCategory.id === "penegakan_hukum"
                                 ? `Kepuasan Rakyat (${activeCategory.label})`
                                 : `Indeks Kepuasan (${activeCategory.label})`}
                             </span>
-                            <span className="text-xl font-black text-[#00FFAA]">
+                            <span className="text-xl font-black text-root-accent">
                               {satisfactionScore} / 100
                             </span>
                           </div>
                           
-                          <div className="w-full h-2.5 bg-[#0F2424] border border-[#00FFAA]/20 rounded-full mt-2 overflow-hidden">
+                          <div className="w-full h-2.5 bg-root-surface border border-root-accent/20 rounded-full mt-2 overflow-hidden">
                             <div
                               className={`h-full rounded-full transition-all duration-200 ${
                                 satisfactionScore <= 40
                                   ? "bg-rose-500"
                                   : satisfactionScore <= 75
                                   ? "bg-amber-400"
-                                  : "bg-[#00FFAA]"
+                                  : "bg-root-accent"
                               }`}
                               style={{ width: `${satisfactionScore}%` }}
                             />
                           </div>
 
-                          <p className="text-[10px] text-[#E0E0E0] font-bold mt-2">
+                          <p className="text-[10px] text-root-text font-bold mt-2">
                             {satisfactionScore <= 40
                               ? `🔴 Krisis fasilitas ${activeCategory.label.toLowerCase()}, keterpenuhan sangat rendah.`
                               : satisfactionScore <= 75
@@ -687,9 +687,9 @@ export default function TempatUmumModal({
                           </p>
                         </div>
 
-                        <div className="mt-2 grid grid-cols-2 gap-2 text-[9px] text-[#6B8A8A] border-t border-[#00FFAA]/10 pt-1.5">
-                          <div>Rasio: <span className="font-bold text-[#E0E0E0]">{activeCategory.index.toFixed(2)}</span></div>
-                          <div>Keterpenuhan fasilitas: <span className="font-bold text-[#E0E0E0]">{percentageMet.toFixed(1)}%</span></div>
+                        <div className="mt-2 grid grid-cols-2 gap-2 text-[9px] text-root-subtle border-t border-root-accent/10 pt-1.5">
+                          <div>Rasio: <span className="font-bold text-root-text">{activeCategory.index.toFixed(2)}</span></div>
+                          <div>Keterpenuhan fasilitas: <span className="font-bold text-root-text">{percentageMet.toFixed(1)}%</span></div>
                         </div>
                       </div>
                     );
@@ -708,7 +708,7 @@ export default function TempatUmumModal({
         description={selectedGroupInfo?.description ?? ""}
       />
 
-      {toast && <div className="fixed bottom-6 right-6 z-[80] bg-[#00FFAA] text-[#0A1A1A] font-black px-4 py-2 rounded-lg shadow-lg border border-[#00FFAA]">{toast}</div>}
+      {toast && <div className="fixed bottom-6 right-6 z-[80] bg-root-accent text-root-canvas font-black px-4 py-2 rounded-lg shadow-lg border border-root-accent">{toast}</div>}
 
       {selectedBuilding && (() => {
         const bMeta = findMeta(selectedBuilding.key) || metadata[selectedBuilding.key] || {};
@@ -758,34 +758,34 @@ export default function TempatUmumModal({
 
       {showMaterialWarningModal && insufficientMaterials.length > 0 && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-transparent pointer-events-none">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto">
-            <div className="px-6 py-5 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10">
+          <div className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto">
+            <div className="px-6 py-5 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10">
               <div className="flex items-center gap-2 text-rose-400">
                 <AlertTriangle className="h-5 w-5" />
                 <h3 className="text-base font-black uppercase tracking-wider">⚠️ Stok Material Kosong</h3>
               </div>
-              <button onClick={() => setShowMaterialWarningModal(false)} className="text-[#6B8A8A] hover:text-[#00FFAA]">
+              <button onClick={() => setShowMaterialWarningModal(false)} className="text-root-subtle hover:text-root-accent">
                 <X className="h-5 w-5" />
               </button>
             </div>
             <div className="p-6 relative z-10 flex-1 space-y-4">
-              <p className="text-sm text-[#E0E0E0]">
-                Pembangunan <strong className="font-black text-[#00FFAA]">{selectedBuilding?.label}</strong> tidak dapat dilanjutkan karena material berikut ini stoknya kosong (0):
+              <p className="text-sm text-root-text">
+                Pembangunan <strong className="font-black text-root-accent">{selectedBuilding?.label}</strong> tidak dapat dilanjutkan karena material berikut ini stoknya kosong (0):
               </p>
-              <div className="bg-[#0A1A1A] border border-rose-500/30 rounded-xl p-4 flex flex-col gap-2 text-xs font-bold text-[#E0E0E0]">
+              <div className="bg-root-canvas border border-rose-500/30 rounded-xl p-4 flex flex-col gap-2 text-xs font-bold text-root-text">
                 {insufficientMaterials.map((mat, idx) => (
                   <div key={idx} className="flex justify-between items-center">
-                    <span className="text-[#E0E0E0]">{mat.label}</span>
+                    <span className="text-root-text">{mat.label}</span>
                     <span className="text-rose-400 font-black">0</span>
                   </div>
                 ))}
               </div>
-              <p className="text-[10px] text-[#6B8A8A] italic">
+              <p className="text-[10px] text-root-subtle italic">
                 Klik nama material pada daftar di atas meihat informasi produksinya.
               </p>
             </div>
-            <div className="p-4 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex justify-end relative z-10">
-              <button onClick={() => setShowMaterialWarningModal(false)} className="py-2.5 px-6 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 shadow-md">Tutup & Lengkapi Stok</button>
+            <div className="p-4 bg-root-canvas border-t border-root-accent/20 flex justify-end relative z-10">
+              <button onClick={() => setShowMaterialWarningModal(false)} className="py-2.5 px-6 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-md">Tutup & Lengkapi Stok</button>
             </div>
           </div>
         </div>

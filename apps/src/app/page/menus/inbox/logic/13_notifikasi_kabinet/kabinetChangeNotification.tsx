@@ -35,7 +35,7 @@ export default function KabinetChangeNotificationCard({ notification }: Props) {
           {notification.message}
         </p>
 
-        <div className="bg-[#0A1A1A] border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex justify-between items-center">
+        <div className="bg-root-canvas border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex justify-between items-center">
           <span>Kementerian: <strong className="text-white">{deptName}</strong></span>
           <span className={isUpgrade ? 'text-emerald-400 font-black' : 'text-amber-400 font-black'}>
             Dampak: {effectLabel}

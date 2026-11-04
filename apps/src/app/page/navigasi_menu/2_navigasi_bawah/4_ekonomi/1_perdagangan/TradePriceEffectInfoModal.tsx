@@ -35,10 +35,10 @@ export default function TradePriceEffectInfoModal({
       zIndexClass="z-[200]"
     >
       <div className="flex min-w-0 flex-col overflow-hidden">
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 shrink-0">
-              <ArrowRightLeft className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+            <div className="p-1 sm:p-1.5 rounded-lg bg-root-surface border border-root-accent/30 shrink-0">
+              <ArrowRightLeft className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
             </div>
             <div className="min-w-0">
               <h2 className={rootModalTypography.title}>
@@ -49,9 +49,9 @@ export default function TradePriceEffectInfoModal({
           <RootModalCloseButton onClick={onClose} />
         </div>
 
-        <div className="root-no-scrollbar-glow overflow-y-auto p-4 sm:p-5 bg-[#0F2424] neon-scrollbar space-y-3">
+        <div className="root-no-scrollbar-glow overflow-y-auto p-4 sm:p-5 bg-root-surface neon-scrollbar space-y-3">
           {bonuses.length === 0 ? (
-            <div className="p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 text-center space-y-2">
+            <div className="p-4 rounded-xl bg-root-canvas border border-root-accent/20 text-center space-y-2">
               <p className={`${rootModalTypography.body} break-words`}>
                 Belum ada bonus harga perdagangan yang aktif.
               </p>
@@ -61,8 +61,8 @@ export default function TradePriceEffectInfoModal({
             </div>
           ) : (
             <div className="space-y-2">
-              <div className="flex items-center justify-between pb-1 border-b border-[#00FFAA]/15">
-                <span className="text-[10px] font-black uppercase tracking-wider text-[#00FFAA]">
+              <div className="flex items-center justify-between pb-1 border-b border-root-accent/15">
+                <span className="text-[10px] font-black uppercase tracking-wider text-root-accent">
                   Daftar Bonus Aktif ({bonuses.length})
                 </span>
               </div>
@@ -89,12 +89,12 @@ export default function TradePriceEffectInfoModal({
 
                   <div className="pt-1.5 border-t border-emerald-500/20 flex flex-wrap gap-1.5 text-[10px] font-black">
                     {item.sellBonusText && (
-                      <span className="inline-flex min-w-0 max-w-full items-center break-words px-2 py-0.5 rounded bg-[#0F2424] border border-emerald-500/40 text-emerald-300">
+                      <span className="inline-flex min-w-0 max-w-full items-center break-words px-2 py-0.5 rounded bg-root-surface border border-emerald-500/40 text-emerald-300">
                         • {item.sellBonusText}
                       </span>
                     )}
                     {item.buyDiscountText && (
-                      <span className="inline-flex min-w-0 max-w-full items-center break-words px-2 py-0.5 rounded bg-[#0F2424] border border-emerald-500/40 text-emerald-300">
+                      <span className="inline-flex min-w-0 max-w-full items-center break-words px-2 py-0.5 rounded bg-root-surface border border-emerald-500/40 text-emerald-300">
                         • {item.buyDiscountText}
                       </span>
                     )}

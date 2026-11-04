@@ -26,7 +26,7 @@ export default function TradeMarketBlockedModal({
         aria-labelledby="trade-market-blocked-title"
         className="overflow-hidden text-white"
       >
-        <div className="flex items-center justify-between gap-4 rounded-t-2xl border-b border-rose-500/30 bg-[#0A1A1A] px-6 py-4">
+        <div className="flex items-center justify-between gap-4 rounded-t-2xl border-b border-rose-500/30 bg-root-canvas px-6 py-4">
           <div className="flex items-center gap-3">
             <Info className="h-5 w-5 shrink-0 text-rose-400" />
             <h2 id="trade-market-blocked-title" className="text-base font-black uppercase tracking-wide text-rose-400 sm:text-lg">
@@ -36,7 +36,7 @@ export default function TradeMarketBlockedModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-rose-500/30 bg-[#0F2424] px-3 py-2 text-xs font-bold uppercase text-rose-400 transition-colors hover:border-rose-500 hover:bg-[#0F2424] hover:text-rose-400 hover:shadow-none"
+            className="flex shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-rose-500/30 bg-root-surface px-3 py-2 text-xs font-bold uppercase text-rose-400 transition-colors hover:border-rose-500 hover:bg-root-surface hover:text-rose-400 hover:shadow-none"
           >
             <span className="font-semibold tracking-wider">Tutup</span>
             <X className="h-4 w-4" />

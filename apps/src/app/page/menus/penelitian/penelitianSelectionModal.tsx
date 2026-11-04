@@ -63,10 +63,10 @@ export default function PenelitianSelectionModal({
         {/* BUTTON INFO / BONUS RISET (DISAMPING KIRI) */}
         <button
           onClick={() => setShowBonusModal(!showBonusModal)}
-          className="absolute top-4 left-4 p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm z-30"
+          className="absolute top-4 left-4 p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm z-30"
           title="Lihat Bonus & Modifier Riset"
         >
-          <Info className="h-4 w-4 text-[#00FFAA]" />
+          <Info className="h-4 w-4 text-root-accent" />
           <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pr-1">Bonus Riset</span>
         </button>
 
@@ -75,24 +75,24 @@ export default function PenelitianSelectionModal({
 
         {/* MODAL / POPOVER BONUS & MODIFIER RISET */}
         {showBonusModal && (
-          <div className="absolute inset-0 bg-[#0A1A1A]/95 z-40 p-6 sm:p-8 flex flex-col items-center justify-center text-left animate-in fade-in zoom-in duration-200">
+          <div className="absolute inset-0 bg-root-canvas/95 z-40 p-6 sm:p-8 flex flex-col items-center justify-center text-left animate-in fade-in zoom-in duration-200">
             <button
               onClick={() => setShowBonusModal(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] transition-all"
+              className="absolute top-4 right-4 p-1.5 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent transition-all"
             >
               <X className="h-5 w-5" />
             </button>
 
-            <div className="w-full max-w-md bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl p-6 shadow-2xl">
-              <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#00FFAA]/20">
-                <Info className="w-5 h-5 text-[#00FFAA]" />
-                <h3 className="text-base font-black text-[#00FFAA] uppercase tracking-wider">
+            <div className="w-full max-w-md bg-root-surface border border-root-accent/30 rounded-2xl p-6 shadow-2xl">
+              <div className="flex items-center gap-2 mb-4 pb-3 border-b border-root-accent/20">
+                <Info className="w-5 h-5 text-root-accent" />
+                <h3 className="text-base font-black text-root-accent uppercase tracking-wider">
                   Daftar Bonus & Modifier Riset
                 </h3>
               </div>
 
               <div className="space-y-2.5 text-xs">
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20">
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
                   <span className="font-semibold text-gray-300">Keanggotaan UNESCO:</span>
                   <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${isUNESCOMember ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-gray-800 text-gray-400'
                     }`}>
@@ -100,7 +100,7 @@ export default function PenelitianSelectionModal({
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20">
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
                   <span className="font-semibold text-gray-300">Keanggotaan ITU:</span>
                   <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${isITUMember ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-gray-800 text-gray-400'
                     }`}>
@@ -108,7 +108,7 @@ export default function PenelitianSelectionModal({
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20">
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
                   <span className="font-semibold text-gray-300">Efek Pendidikan ({educationPoints} Poin):</span>
                   <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${educationModifier.isPenalty
                     ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30'
@@ -118,7 +118,7 @@ export default function PenelitianSelectionModal({
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20">
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
                   <span className="font-semibold text-gray-300">Agama Ateisme:</span>
                   <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${hasAtheismResearchBonus ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30' : 'bg-gray-800 text-gray-400'
                     }`}>
@@ -126,14 +126,14 @@ export default function PenelitianSelectionModal({
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20">
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
                   <span className="font-semibold text-gray-300">Kontrak Penelitian:</span>
                   <span className="font-bold uppercase px-2 py-0.5 rounded text-[10px] bg-sky-500/10 text-sky-300 border border-sky-500/30">
                     {contractBonus.count} Negara (-{contractBonus.percentage.toFixed(1)}%)
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20">
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
                   <span className="font-semibold text-gray-300">Sains & Penelitian:</span>
                   <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${sainsPenelitianBonus > 0
                     ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
@@ -148,7 +148,7 @@ export default function PenelitianSelectionModal({
 
               <button
                 onClick={() => setShowBonusModal(false)}
-                className="w-full mt-5 py-2.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black text-xs uppercase tracking-wider hover:bg-[#00FFAA]/80 transition-all cursor-pointer"
+                className="w-full mt-5 py-2.5 rounded-xl bg-root-accent text-root-canvas font-black text-xs uppercase tracking-wider hover:bg-root-accent/80 transition-all cursor-pointer"
               >
                 Mengerti
               </button>
@@ -156,14 +156,14 @@ export default function PenelitianSelectionModal({
           </div>
         )}
 
-        <div className="w-16 h-16 rounded-2xl bg-[#0A1A1A] border-2 border-[#00FFAA]/50 flex items-center justify-center mb-4 shadow-inner">
-          <FlaskConical className="w-8 h-8 text-[#00FFAA] animate-pulse" />
+        <div className="w-16 h-16 rounded-2xl bg-root-canvas border-2 border-root-accent/50 flex items-center justify-center mb-4 shadow-inner">
+          <FlaskConical className="w-8 h-8 text-root-accent animate-pulse" />
         </div>
 
-        <h2 className="text-xl sm:text-2xl font-black text-[#00FFAA] uppercase tracking-wide mb-1">
+        <h2 className="text-xl sm:text-2xl font-black text-root-accent uppercase tracking-wide mb-1">
           Fokus Utama Penelitian
         </h2>
-        <p className="text-xs sm:text-sm text-[#6B8A8A] font-semibold mb-8 max-w-md">
+        <p className="text-xs sm:text-sm text-root-subtle font-semibold mb-8 max-w-md">
           Pilih sektor riset strategis nasional yang ingin Anda akses terlebih dahulu.
         </p>
 
@@ -189,24 +189,24 @@ export default function PenelitianSelectionModal({
             return (
               <div className="relative group h-full">
                 {formattedDate && (
-                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[10px] font-bold px-2 py-1 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
                     {formattedDate}
                   </div>
                 )}
                 <button
                   onClick={() => onSelectCategory('ekonomi')}
-                  className="w-full group flex flex-col items-center justify-between text-center p-6 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/30 hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 active:scale-[0.98] transition-all cursor-pointer shadow-md h-full min-h-[220px]"
+                  className="w-full group flex flex-col items-center justify-between text-center p-6 rounded-2xl bg-root-canvas border border-root-accent/30 hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98] transition-all cursor-pointer shadow-md h-full min-h-[220px]"
                 >
                   <div className="flex flex-col items-center w-full">
-                    <div className="p-3.5 rounded-xl bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] group-hover:bg-[#00FFAA] group-hover:text-[#0A1A1A] transition-all shrink-0 mb-4 shadow-sm">
+                    <div className="p-3.5 rounded-xl bg-root-surface border border-root-accent/40 text-root-accent group-hover:bg-root-accent group-hover:text-root-canvas transition-all shrink-0 mb-4 shadow-sm">
                       <Banknote className="w-7 h-7" />
                     </div>
 
-                    <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-[#00FFAA]/15 text-[#00FFAA] border border-[#00FFAA]/30 mb-3 tracking-wider">
+                    <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-root-accent/15 text-root-accent border border-root-accent/30 mb-3 tracking-wider">
                       Produksi & Pajak
                     </span>
 
-                    <h3 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-[#00FFAA] transition-colors leading-tight">
+                    <h3 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-root-accent transition-colors leading-tight">
                       Riset Ekonomi & Industri
                     </h3>
                   </div>
@@ -231,24 +231,24 @@ export default function PenelitianSelectionModal({
             return (
               <div className="relative group h-full">
                 {formattedDate && (
-                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[10px] font-bold px-2 py-1 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
                     {formattedDate}
                   </div>
                 )}
                 <button
                   onClick={() => onSelectCategory('militer')}
-                  className="w-full group flex flex-col items-center justify-between text-center p-6 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/30 hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 active:scale-[0.98] transition-all cursor-pointer shadow-md h-full min-h-[220px]"
+                  className="w-full group flex flex-col items-center justify-between text-center p-6 rounded-2xl bg-root-canvas border border-root-accent/30 hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98] transition-all cursor-pointer shadow-md h-full min-h-[220px]"
                 >
                   <div className="flex flex-col items-center w-full">
-                    <div className="p-3.5 rounded-xl bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] group-hover:bg-[#00FFAA] group-hover:text-[#0A1A1A] transition-all shrink-0 mb-4 shadow-sm">
+                    <div className="p-3.5 rounded-xl bg-root-surface border border-root-accent/40 text-root-accent group-hover:bg-root-accent group-hover:text-root-canvas transition-all shrink-0 mb-4 shadow-sm">
                       <Shield className="w-7 h-7" />
                     </div>
 
-                    <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-[#00FFAA]/15 text-[#00FFAA] border border-[#00FFAA]/30 mb-3 tracking-wider">
+                    <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-root-accent/15 text-root-accent border border-root-accent/30 mb-3 tracking-wider">
                       Alutsista & Siber
                     </span>
 
-                    <h3 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-[#00FFAA] transition-colors leading-tight">
+                    <h3 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-root-accent transition-colors leading-tight">
                       Riset Militer & Pertahanan
                     </h3>
                   </div>
@@ -273,24 +273,24 @@ export default function PenelitianSelectionModal({
             return (
               <div className="relative group h-full">
                 {formattedDate && (
-                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[10px] font-bold px-2 py-1 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
                     {formattedDate}
                   </div>
                 )}
                 <button
                   onClick={() => onSelectCategory('diplomasi')}
-                  className="w-full group flex flex-col items-center justify-between text-center p-6 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/30 hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 active:scale-[0.98] transition-all cursor-pointer shadow-md h-full min-h-[220px]"
+                  className="w-full group flex flex-col items-center justify-between text-center p-6 rounded-2xl bg-root-canvas border border-root-accent/30 hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98] transition-all cursor-pointer shadow-md h-full min-h-[220px]"
                 >
                   <div className="flex flex-col items-center w-full">
-                    <div className="p-3.5 rounded-xl bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] group-hover:bg-[#00FFAA] group-hover:text-[#0A1A1A] transition-all shrink-0 mb-4 shadow-sm">
+                    <div className="p-3.5 rounded-xl bg-root-surface border border-root-accent/40 text-root-accent group-hover:bg-root-accent group-hover:text-root-canvas transition-all shrink-0 mb-4 shadow-sm">
                       <Globe2 className="w-7 h-7" />
                     </div>
 
-                    <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-[#00FFAA]/15 text-[#00FFAA] border border-[#00FFAA]/30 mb-3 tracking-wider">
+                    <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-root-accent/15 text-root-accent border border-root-accent/30 mb-3 tracking-wider">
                       Geopolitik & Spionase
                     </span>
 
-                    <h3 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-[#00FFAA] transition-colors leading-tight">
+                    <h3 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-root-accent transition-colors leading-tight">
                       Riset Diplomasi & Intelijen
                     </h3>
                   </div>

@@ -36,7 +36,7 @@ export default function TempatUmumDefisitNotificationCard({ notification }: Prop
           {notification.message}
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-[#0A1A1A] border border-rose-500/20 rounded-xl p-2.5 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-root-canvas border border-rose-500/20 rounded-xl p-2.5 text-xs">
           <div className="flex flex-col">
             <span className="text-[9px] font-bold text-slate-400 uppercase">Indeks Tempat Umum</span>
             <span className="text-rose-400 font-black">{score} / 100</span>

@@ -107,16 +107,16 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
   return (
     <div className="space-y-4">
       {/* HEADER SECTION SUBSIDI */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-[#0A1A1A]/80 border border-[#00FFAA]/20 p-4 rounded-2xl">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-root-canvas/80 border border-root-accent/20 p-4 rounded-2xl">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-[#0F2424] border border-[#00FFAA]/30">
-            <HandHelping className="w-5 h-5 text-[#00FFAA]" />
+          <div className="p-2.5 rounded-xl bg-root-surface border border-root-accent/30">
+            <HandHelping className="w-5 h-5 text-root-accent" />
           </div>
           <div>
-            <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-[#00FFAA] flex items-center gap-2">
+            <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-root-accent flex items-center gap-2">
               Kebijakan Subsidi Pemerintah
             </h4>
-            <p className="text-[10px] sm:text-xs text-[#6B8A8A] font-semibold">
+            <p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
               Bantalan sosial, intervensi harga bahan pokok, energi, dan bantuan masyarakat
             </p>
           </div>
@@ -124,9 +124,9 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
 
         {/* Quick Badges */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0F2424] border border-[#00FFAA]/30 rounded-xl">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-root-surface border border-root-accent/30 rounded-xl">
             <DollarSign className="w-3.5 h-3.5 text-rose-400" />
-            <span className="text-[10px] font-bold text-[#6B8A8A] uppercase">Total Beban APBN:</span>
+            <span className="text-[10px] font-bold text-root-subtle uppercase">Total Beban APBN:</span>
             <span className="text-[11px] font-black text-rose-400">
               {formatCurrencyCompact(summary.totalCost)} / hari
             </span>
@@ -136,27 +136,27 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
 
       {/* TOP SUMMARY STATS */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-2xl shadow-sm">
+        <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">
+            <span className="text-[10px] font-black uppercase tracking-widest text-root-subtle">
               Subsidi Aktif
             </span>
-            <span className="text-xs font-bold text-[#00FFAA]">
+            <span className="text-xs font-bold text-root-accent">
               {summary.activeCount} / {summary.totalCount} Program
             </span>
           </div>
-          <p className="text-2xl font-black text-[#00FFAA]">
+          <p className="text-2xl font-black text-root-accent">
             {summary.activeCount}{" "}
-            <span className="text-sm font-bold text-[#6B8A8A]">Terbuka</span>
+            <span className="text-sm font-bold text-root-subtle">Terbuka</span>
           </p>
           <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">
             Program bantuan sosial yang didanai negara
           </p>
         </div>
 
-        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-2xl shadow-sm">
+        <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">
+            <span className="text-[10px] font-black uppercase tracking-widest text-root-subtle">
               Total Biaya Harian
             </span>
             <TrendingDown className="w-4 h-4 text-rose-400" />
@@ -168,16 +168,16 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
           <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">Pengeluaran kas APBN harian</p>
         </div>
 
-        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-2xl shadow-sm">
+        <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">
+            <span className="text-[10px] font-black uppercase tracking-widest text-root-subtle">
               Bonus Kepuasan Rakyat
             </span>
-            <Heart className="w-4 h-4 text-[#00FFAA]" />
+            <Heart className="w-4 h-4 text-root-accent" />
           </div>
-          <p className="text-2xl font-black text-[#00FFAA]">
+          <p className="text-2xl font-black text-root-accent">
             +{satisfactionBonus}{" "}
-            <span className="text-sm font-bold text-[#6B8A8A]">Poin</span>
+            <span className="text-sm font-bold text-root-subtle">Poin</span>
           </p>
           <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">
             Dampak positif terhadap persetujuan publik
@@ -186,15 +186,15 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
       </div>
 
       {/* FILTER KATEGORI & PENCARIAN */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-[#0A1A1A]/60 p-3 rounded-2xl border border-[#00FFAA]/15">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-root-canvas/60 p-3 rounded-2xl border border-root-accent/15">
         <div className="flex flex-wrap items-center gap-1.5">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               className={`px-3 py-1 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${selectedCategory === cat
-                  ? "bg-[#00FFAA] text-[#0A1A1A] font-black shadow-sm"
-                  : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] border border-[#00FFAA]/20"
+                  ? "bg-root-accent text-root-canvas font-black shadow-sm"
+                  : "bg-root-surface text-root-subtle hover:text-root-accent border border-root-accent/20"
                 }`}
             >
               {cat}
@@ -203,13 +203,13 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
         </div>
 
         <div className="relative min-w-[200px]">
-          <Search className="w-3.5 h-3.5 text-[#6B8A8A] absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-3.5 h-3.5 text-root-subtle absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari program subsidi..."
-            className="w-full pl-8 pr-3 py-1 rounded-xl bg-[#0F2424] border border-[#00FFAA]/30 text-xs text-[#E0E0E0] placeholder:text-[#6B8A8A] focus:outline-none focus:border-[#00FFAA]"
+            className="w-full pl-8 pr-3 py-1 rounded-xl bg-root-surface border border-root-accent/30 text-xs text-root-text placeholder:text-root-subtle focus:outline-none focus:border-root-accent"
           />
         </div>
       </div>
@@ -221,13 +221,13 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
             <div
               key={item.id}
               className={`rounded-2xl p-3.5 flex flex-col justify-between border transition-all shadow-sm ${item.isSubsidized
-                  ? "bg-[#0A1A1A] border-[#00FFAA]/40"
-                  : "bg-[#0A1A1A]/70 border-[#00FFAA]/15 opacity-70"
+                  ? "bg-root-canvas border-root-accent/40"
+                  : "bg-root-canvas/70 border-root-accent/15 opacity-70"
                 }`}
             >
               <div>
                 <div className="flex items-start justify-between gap-2 mb-2">
-                  <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/20 text-[#8AB0A8]">
+                  <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-root-surface border border-root-accent/20 text-[#8AB0A8]">
                     {item.category}
                   </span>
                   <span
@@ -248,20 +248,20 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
                   </span>
                 </div>
 
-                <h5 className="text-xs font-black text-[#E0E0E0] uppercase tracking-wider mb-1">
+                <h5 className="text-xs font-black text-root-text uppercase tracking-wider mb-1">
                   {item.name}
                 </h5>
-                <p className="text-[10px] text-[#6B8A8A] line-clamp-2 leading-relaxed">
+                <p className="text-[10px] text-root-subtle line-clamp-2 leading-relaxed">
                   {item.description}
                 </p>
               </div>
 
-              <div className="mt-3 pt-2.5 border-t border-[#00FFAA]/10 flex items-center justify-between text-xs">
-                <span className="text-[10px] font-bold text-[#6B8A8A] uppercase">
+              <div className="mt-3 pt-2.5 border-t border-root-accent/10 flex items-center justify-between text-xs">
+                <span className="text-[10px] font-bold text-root-subtle uppercase">
                   Alokasi Biaya:
                 </span>
                 <span
-                  className={`font-black ${item.isSubsidized ? "text-rose-400" : "text-[#6B8A8A]"
+                  className={`font-black ${item.isSubsidized ? "text-rose-400" : "text-root-subtle"
                     }`}
                 >
                   {formatNumber(item.budgetCost)} NEO/hari

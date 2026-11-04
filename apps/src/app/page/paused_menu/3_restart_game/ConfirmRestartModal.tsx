@@ -16,23 +16,23 @@ export function ConfirmRestartModal({ isOpen, onClose, onConfirm }: ConfirmResta
 
     const content = (
         <PausedMenuFrame zIndexClass="z-[999999999]">
-                <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-8 text-[#E0E0E0] custom-scrollbar">
+                <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-8 text-root-text custom-scrollbar">
                     
                     {/* Ornamen Atas */}
-                    <div className="flex items-center justify-center gap-1.5 text-[#00FFAA]/40 mb-4 shrink-0">
-                        <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-[#00FFAA]/40" />
+                    <div className="flex items-center justify-center gap-1.5 text-root-accent/40 mb-4 shrink-0">
+                        <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-root-accent/40" />
                         <span className="text-[10px] tracking-widest font-black uppercase">❖ ❖ ❖</span>
-                        <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-[#00FFAA]/40" />
+                        <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-root-accent/40" />
                     </div>
 
                     {/* Header - Menggunakan ArrowLeft seperti SaveGameModal */}
-                    <header className="mb-4 flex shrink-0 items-center justify-between border-b border-[#00FFAA]/20 pb-3 text-left">
+                    <header className="mb-4 flex shrink-0 items-center justify-between border-b border-root-accent/20 pb-3 text-left">
                         <div className="flex items-center gap-2">
                             <button
                                 type="button"
                                 onClick={onClose}
                                 aria-label="Kembali ke menu jeda"
-                                className="rounded p-1 text-[#6B8A8A] transition-all hover:bg-[#00FFAA]/10 hover:text-[#00FFAA] cursor-pointer"
+                                className="rounded p-1 text-root-subtle transition-all hover:bg-root-accent/10 hover:text-root-accent cursor-pointer"
                             >
                                 <ArrowLeft className="h-4 w-4" />
                             </button>
@@ -49,7 +49,7 @@ export function ConfirmRestartModal({ isOpen, onClose, onConfirm }: ConfirmResta
                             <div className="w-16 h-16 rounded-2xl bg-amber-500/15 border-2 border-amber-500/40 flex items-center justify-center text-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
                                 <RotateCcw className="w-8 h-8 stroke-[2.2]" />
                             </div>
-                            <div className="absolute -bottom-2 -right-2 w-6 h-6 rounded-full bg-[#0A1A1A] border border-amber-500/60 flex items-center justify-center text-amber-400">
+                            <div className="absolute -bottom-2 -right-2 w-6 h-6 rounded-full bg-root-canvas border border-amber-500/60 flex items-center justify-center text-amber-400">
                                 <AlertTriangle className="w-3.5 h-3.5" />
                             </div>
                         </div>
@@ -59,18 +59,18 @@ export function ConfirmRestartModal({ isOpen, onClose, onConfirm }: ConfirmResta
                             <h3 className="text-base font-black text-white tracking-tight">
                                 Apakah Anda yakin?
                             </h3>
-                            <p className="text-xs font-semibold text-[#6B8A8A] leading-relaxed">
+                            <p className="text-xs font-semibold text-root-subtle leading-relaxed">
                                 Seluruh kemajuan waktu, anggaran, dan data simulasi akan dikembalikan ke kondisi awal. Tindakan ini tidak dapat dibatalkan.
                             </p>
                         </div>
                     </div>
 
                     {/* Footer Tombol */}
-                    <div className="flex justify-end border-t border-[#00FFAA]/15 pt-4 shrink-0 gap-3">
+                    <div className="flex justify-end border-t border-root-accent/15 pt-4 shrink-0 gap-3">
                         <button 
                             type="button" 
                             onClick={onClose} 
-                            className="rounded border border-[#00FFAA]/30 px-5 py-2.5 text-xs font-bold text-[#E0E0E0] hover:bg-[#00FFAA]/10 transition-colors cursor-pointer"
+                            className="rounded border border-root-accent/30 px-5 py-2.5 text-xs font-bold text-root-text hover:bg-root-accent/10 transition-colors cursor-pointer"
                         >
                             Batal
                         </button>
@@ -84,10 +84,10 @@ export function ConfirmRestartModal({ isOpen, onClose, onConfirm }: ConfirmResta
                     </div>
 
                     {/* Ornamen Bawah */}
-                    <div className="flex items-center justify-center gap-1.5 text-[#00FFAA]/40 mt-4 shrink-0">
-                        <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-[#00FFAA]/40" />
+                    <div className="flex items-center justify-center gap-1.5 text-root-accent/40 mt-4 shrink-0">
+                        <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-root-accent/40" />
                         <span className="text-[10px] tracking-widest font-black uppercase">❖ ❖ ❖</span>
-                        <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-[#00FFAA]/40" />
+                        <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-root-accent/40" />
                     </div>
                 </div>
         </PausedMenuFrame>

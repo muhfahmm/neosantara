@@ -100,19 +100,19 @@ export default function ProgramNuklirModals({
           <div className="flex h-full flex-col overflow-hidden">
             
             {/* Header Modal */}
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
                   <Atom className="h-4 w-4 sm:h-5 sm:w-5 text-amber-400 animate-pulse" />
                 </div>
                 <div>
-                  <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Aktivasi Program Nuklir</h2>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">Pendanaan Riset & Pengayaan Uranium</p>
+                  <h2 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Aktivasi Program Nuklir</h2>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">Pendanaan Riset & Pengayaan Uranium</p>
                 </div>
               </div>
               <button 
                 onClick={onClose} 
-                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+                className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
               >
                 <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
@@ -120,21 +120,21 @@ export default function ProgramNuklirModals({
             </div>
 
             {/* Body Modal */}
-            <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 bg-[#0F2424] relative z-10 custom-scrollbar flex flex-col items-center justify-center">
+            <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 bg-root-surface relative z-10 custom-scrollbar flex flex-col items-center justify-center">
               <div className="w-full max-w-2xl space-y-6">
                 
                 <div className="text-center space-y-4">
-                  <div className="p-4 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/30 inline-block mx-auto shadow-md">
-                    <Atom className="w-12 h-12 sm:w-16 sm:h-16 text-[#00FFAA]" />
+                  <div className="p-4 rounded-2xl bg-root-canvas border border-root-accent/30 inline-block mx-auto shadow-md">
+                    <Atom className="w-12 h-12 sm:w-16 sm:h-16 text-root-accent" />
                   </div>
                 </div>
 
-                <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-5 sm:p-6 rounded-2xl space-y-3 shadow-inner">
-                  <div className="flex justify-between text-xs sm:text-sm font-bold text-[#E0E0E0]">
+                <div className="bg-root-canvas border border-root-accent/20 p-5 sm:p-6 rounded-2xl space-y-3 shadow-inner">
+                  <div className="flex justify-between text-xs sm:text-sm font-bold text-root-text">
                     <span>Waktu Pembangunan:</span>
-                    <span className="text-[#E0E0E0]">1 Tahun / 365 Hari</span>
+                    <span className="text-root-text">1 Tahun / 365 Hari</span>
                   </div>
-                  <div className="flex justify-between text-xs sm:text-sm font-bold text-rose-400 border-t border-[#00FFAA]/20 pt-3">
+                  <div className="flex justify-between text-xs sm:text-sm font-bold text-rose-400 border-t border-root-accent/20 pt-3">
                     <span>Biaya Riset & Pengembangan:</span>
                     <span>- {biayaProgram.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
                   </div>
@@ -145,17 +145,17 @@ export default function ProgramNuklirModals({
                   </div>
                 )}
 
-                <div className="flex gap-3 justify-end pt-4 border-t border-[#00FFAA]/20">
+                <div className="flex gap-3 justify-end pt-4 border-t border-root-accent/20">
                   <button 
                     onClick={onClose}
-                    className="px-6 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all font-bold text-xs uppercase tracking-wider cursor-pointer"
+                    className="px-6 py-2.5 rounded-xl border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-accent hover:border-root-accent transition-all font-bold text-xs uppercase tracking-wider cursor-pointer"
                   >
                     Batal
                   </button>
                   <button 
                     onClick={handleBayar}
                     disabled={isProgramBuilding}
-                    className={`px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-md transition-all ${isProgramBuilding ? 'bg-[#6B8A8A]/30 text-[#6B8A8A] cursor-not-allowed' : 'bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 active:scale-95 cursor-pointer'}`}
+                    className={`px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-md transition-all ${isProgramBuilding ? 'bg-root-subtle/30 text-root-subtle cursor-not-allowed' : 'bg-root-accent text-root-canvas hover:bg-root-accent/80 active:scale-95 cursor-pointer'}`}
                   >
                     Danai Program ({biayaProgram.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO)
                   </button>

@@ -127,19 +127,19 @@ export default function IcbmBuildStatusModal({
       <div className="flex h-full flex-col overflow-hidden">
         
         {/* Header */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+            <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
               <Rocket className="h-4 w-4 sm:h-5 sm:w-5 text-amber-400" />
             </div>
             <div>
-              <h3 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Status Pembangunan ICBM</h3>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">Pantau perkembangan produksi rudal balistik antarbenua</p>
+              <h3 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Status Pembangunan ICBM</h3>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">Pantau perkembangan produksi rudal balistik antarbenua</p>
             </div>
           </div>
           <button 
             onClick={onClose} 
-            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+            className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
           >
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
@@ -147,19 +147,19 @@ export default function IcbmBuildStatusModal({
         </div>
 
         {/* BODY MODAL */}
-        <div className="p-4 sm:p-6 bg-[#0F2424] flex-1 overflow-y-auto custom-scrollbar">
+        <div className="p-4 sm:p-6 bg-root-surface flex-1 overflow-y-auto custom-scrollbar">
           <div className="space-y-4">
 
             {/* TAB MENU */}
-            <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex shadow-sm">
+            <div className="bg-root-canvas p-1 rounded-xl border border-root-accent/20 inline-flex shadow-sm">
               {activeTabOptions.map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`px-4 sm:px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                     activeTab === tab
-                      ? 'bg-[#00FFAA] text-[#0A1A1A] font-black shadow-md'
-                      : 'text-[#E0E0E0] hover:text-[#00FFAA]'
+                      ? 'bg-root-accent text-root-canvas font-black shadow-md'
+                      : 'text-root-text hover:text-root-accent'
                   }`}
                 >
                   {tab}
@@ -173,7 +173,7 @@ export default function IcbmBuildStatusModal({
             </div>
 
             {/* WRAPPER TABEL */}
-            <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] shadow-sm overflow-hidden">
+            <div className="rounded-2xl border border-root-accent/20 bg-root-canvas shadow-sm overflow-hidden">
               <div className="overflow-x-auto custom-scrollbar">
                 {activeTab === 'Dalam Pembangunan' ? (
                   <TabelDalamPembangunan entries={pendingEntries} />

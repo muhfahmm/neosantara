@@ -50,10 +50,10 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
   <button
     onClick={onClick}
     title={title}
-    className={`w-full ${className || 'bg-[#0A1A1A] border border-[#00FFAA]/20'} ${isDimmed ? 'opacity-75' : ''} rounded-xl p-5 lg:p-3 xl:p-5 flex flex-col items-center justify-center gap-3 lg:gap-2 xl:gap-3 ${className ? 'hover:border-amber-300 hover:bg-amber-400/10' : 'hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/10'} hover:shadow-md transition-all cursor-pointer group h-32 lg:h-24 xl:h-32`}
+    className={`w-full ${className || 'bg-root-canvas border border-root-accent/20'} ${isDimmed ? 'opacity-75' : ''} rounded-xl p-5 lg:p-3 xl:p-5 flex flex-col items-center justify-center gap-3 lg:gap-2 xl:gap-3 ${className ? 'hover:border-amber-300 hover:bg-amber-400/10' : 'hover:border-root-accent/50 hover:bg-root-accent/10'} hover:shadow-md transition-all cursor-pointer group h-32 lg:h-24 xl:h-32`}
   >
-    <Icon className={`h-8 w-8 lg:h-6 lg:w-6 xl:h-8 xl:w-8 ${iconClass || 'text-[#00FFAA]'} group-hover:scale-110 transition-transform`} />
-    <span className={`text-xs lg:text-[10px] xl:text-xs font-black ${labelClass || 'text-[#00FFAA]'} uppercase tracking-wider text-center leading-tight`}>
+    <Icon className={`h-8 w-8 lg:h-6 lg:w-6 xl:h-8 xl:w-8 ${iconClass || 'text-root-accent'} group-hover:scale-110 transition-transform`} />
+    <span className={`text-xs lg:text-[10px] xl:text-xs font-black ${labelClass || 'text-root-accent'} uppercase tracking-wider text-center leading-tight`}>
       {label}
     </span>
   </button>
@@ -92,7 +92,7 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
     return `${dayPart} ${monthPart}, ${yearPart}`;
   };
   const datedActionClass = 'border border-amber-400/50 bg-amber-400/5 text-amber-300';
-  const operationDateBadgeClass = 'absolute -top-6 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-sm border border-amber-400/30 bg-[#0A1A1A] px-2 py-1 text-[10px] font-bold tracking-wider text-amber-300 shadow-md';
+  const operationDateBadgeClass = 'absolute -top-6 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-sm border border-amber-400/30 bg-root-canvas px-2 py-1 text-[10px] font-bold tracking-wider text-amber-300 shadow-md';
 
   const isAnyMiliterModalActive = isSerangOpen || isAttackInProgressModalOpen || blockedPlayerAttack !== null || isSpionaseOpen || isSabotaseOpen || isNuklirOpen || isKudetaOpen || isMintaSerangOpen || isStatusMintaSerangOpen || isHinaOpen || !!covertOperationResult;
 

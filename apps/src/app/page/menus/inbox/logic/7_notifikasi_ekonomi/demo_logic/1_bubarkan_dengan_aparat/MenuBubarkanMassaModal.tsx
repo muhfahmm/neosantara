@@ -41,7 +41,7 @@ export default function MenuBubarkanMassaModal({
   const isBudgetSufficient = currentBudget >= currentSelected.cost;
 
   return createPortal(
-    <div className="fixed inset-0 z-[2147483647] flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-md font-sans select-none animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[2147483647] flex items-center justify-center p-3 sm:p-5  font-sans select-none animate-in fade-in duration-200">
       <div
         role="dialog"
         aria-modal="true"

@@ -50,10 +50,10 @@ export default function ModalSetuju({
 
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">
-      <div className="bg-[#0F2424] border border-emerald-500/40 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl shadow-emerald-950/50">
+      <div className="bg-root-surface border border-emerald-500/40 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl shadow-emerald-950/50">
         
         {/* Header Modal Setuju */}
-        <div className="px-4 sm:px-6 py-3 border-b border-emerald-500/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+        <div className="px-4 sm:px-6 py-3 border-b border-emerald-500/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/30">
               <ThumbsUp className="h-5 w-5 text-emerald-400" />
@@ -62,14 +62,14 @@ export default function ModalSetuju({
               <h3 className="text-base sm:text-lg font-black text-emerald-400 tracking-tight leading-none uppercase flex items-center gap-2">
                 Daftar Anggota DK PBB Setuju
               </h3>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">
                 {resolutionTitle ? `Usulan: ${resolutionTitle} • ` : ''}Total {countries.length} Anggota DK
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 lg:p-2 rounded-xl border border-emerald-500/30 bg-[#0F2424] text-[#6B8A8A] hover:text-emerald-400 hover:border-emerald-500 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+            className="p-1.5 lg:p-2 rounded-xl border border-emerald-500/30 bg-root-surface text-root-subtle hover:text-emerald-400 hover:border-emerald-500 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
           >
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
@@ -77,34 +77,34 @@ export default function ModalSetuju({
         </div>
 
         {/* Input Pencarian */}
-        <div className="px-4 sm:px-6 py-2.5 bg-[#0A1A1A]/80 border-b border-emerald-500/20 flex items-center gap-2 shrink-0">
-          <Search className="w-4 h-4 text-[#6B8A8A]" />
+        <div className="px-4 sm:px-6 py-2.5 bg-root-canvas/80 border-b border-emerald-500/20 flex items-center gap-2 shrink-0">
+          <Search className="w-4 h-4 text-root-subtle" />
           <input
             type="text"
             placeholder="Cari nama negara..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-transparent text-xs text-[#E0E0E0] placeholder-[#6B8A8A] focus:outline-none w-full"
+            className="bg-transparent text-xs text-root-text placeholder-root-subtle focus:outline-none w-full"
           />
         </div>
 
         {/* Content Body */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] relative z-10 custom-scrollbar flex flex-col items-center">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-root-surface relative z-10 custom-scrollbar flex flex-col items-center">
           <div className="w-full">
             {filtered.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-[#6B8A8A] font-medium text-sm">Tidak ada negara yang ditemukan.</p>
+                <p className="text-root-subtle font-medium text-sm">Tidak ada negara yang ditemukan.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 w-full">
                 {filtered.map((country, index) => {
                   const borderStyle = country.isProposer
-                    ? "border-2 border-emerald-400 shadow-md shadow-emerald-500/20 bg-[#0A1A1A]"
+                    ? "border-2 border-emerald-400 shadow-md shadow-emerald-500/20 bg-root-canvas"
                     : country.isTarget
-                    ? "border-2 border-rose-500 shadow-md shadow-rose-500/20 bg-[#0A1A1A]"
+                    ? "border-2 border-rose-500 shadow-md shadow-rose-500/20 bg-root-canvas"
                     : country.isUser
-                    ? "border-2 border-cyan-400 shadow-md shadow-cyan-500/20 bg-[#0A1A1A]"
-                    : "border border-emerald-500/20 bg-[#0A1A1A]/60 hover:border-emerald-500/40 hover:bg-[#0A1A1A]";
+                    ? "border-2 border-cyan-400 shadow-md shadow-cyan-500/20 bg-root-canvas"
+                    : "border border-emerald-500/20 bg-root-canvas/60 hover:border-emerald-500/40 hover:bg-root-canvas";
 
                   return (
                     <div
@@ -118,7 +118,7 @@ export default function ModalSetuju({
                         {renderFlag(country.iso, country.name, "md")}
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <h4 className="text-xs font-bold text-[#E0E0E0] truncate">
+                            <h4 className="text-xs font-bold text-root-text truncate">
                               {country.name}
                             </h4>
                             {country.isProposer && (
@@ -137,7 +137,7 @@ export default function ModalSetuju({
                               </span>
                             )}
                           </div>
-                          <p className="text-[10px] text-[#6B8A8A] font-medium">
+                          <p className="text-[10px] text-root-subtle font-medium">
                             {country.continent}
                           </p>
                         </div>
@@ -161,7 +161,7 @@ export default function ModalSetuju({
         </div>
 
         {/* Footer info */}
-        <div className="px-6 py-2.5 bg-[#0A1A1A] border-t border-emerald-500/20 flex items-center justify-between text-[11px] font-bold text-[#6B8A8A] shrink-0">
+        <div className="px-6 py-2.5 bg-root-canvas border-t border-emerald-500/20 flex items-center justify-between text-[11px] font-bold text-root-subtle shrink-0">
           <span>Dewan Keamanan PBB • {countries.length} Suara Setuju</span>
           <span className="text-emerald-400 uppercase">Status: Mendukung Usulan</span>
         </div>

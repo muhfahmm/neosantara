@@ -18,18 +18,18 @@ export default function HasilPertempuran({
 	onSelectAction,
 }: HasilPertempuranProps) {
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-in fade-in duration-200">
-			<div className="w-full max-w-xl max-h-[calc(100dvh-2rem)] overflow-y-auto bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl shadow-2xl font-sans text-white relative">
-				<div className="bg-[#0A1A1A] border-b border-[#00FFAA]/20 px-5 sm:px-6 py-4 flex items-center justify-between">
+		<div className="fixed inset-0 z-50 flex items-center justify-center  p-4 animate-in fade-in duration-200">
+			<div className="w-full max-w-xl max-h-[calc(100dvh-2rem)] overflow-y-auto bg-root-surface border border-root-accent/30 rounded-2xl shadow-2xl font-sans text-white relative">
+				<div className="bg-root-canvas border-b border-root-accent/20 px-5 sm:px-6 py-4 flex items-center justify-between">
 					<div className="flex items-center gap-2.5">
-						<Swords className="w-5 h-5 text-[#00FFAA]" />
-						<h3 className="text-base font-black text-[#00FFAA] tracking-wider uppercase">
+						<Swords className="w-5 h-5 text-root-accent" />
+						<h3 className="text-base font-black text-root-accent tracking-wider uppercase">
 							LAPORAN HASIL PERTEMPURAN
 						</h3>
 					</div>
 					<button
 						onClick={onClose}
-						className="rounded-lg p-1.5 text-[#6B8A8A] hover:text-[#00FFAA] cursor-pointer transition-colors"
+						className="rounded-lg p-1.5 text-root-subtle hover:text-root-accent cursor-pointer transition-colors"
 						aria-label="Tutup laporan hasil pertempuran"
 					>
 						<X className="h-4 w-4" />
@@ -38,11 +38,11 @@ export default function HasilPertempuran({
 
 				<div className="p-5 sm:p-6 space-y-6">
 					{isVictory ? (
-						<div className="bg-gradient-to-r from-emerald-950/80 via-emerald-900/40 to-emerald-950/80 border-2 border-[#00FFAA]/60 rounded-xl p-5 text-center space-y-2 relative overflow-hidden">
+						<div className="bg-gradient-to-r from-emerald-950/80 via-emerald-900/40 to-emerald-950/80 border-2 border-root-accent/60 rounded-xl p-5 text-center space-y-2 relative overflow-hidden">
 							<div className="flex justify-center mb-1">
 								<Trophy className="w-10 h-10 text-amber-400 animate-bounce" />
 							</div>
-							<h2 className="text-xl font-black text-[#00FFAA] uppercase tracking-wider">
+							<h2 className="text-xl font-black text-root-accent uppercase tracking-wider">
 								KEMENANGAN MUTLAK!
 							</h2>
 							<p className="text-xs text-emerald-200/90 font-medium">
@@ -65,7 +65,7 @@ export default function HasilPertempuran({
 
 					{isVictory ? (
 						<div className="space-y-3">
-							<span className="text-[11px] font-black uppercase text-[#6B8A8A] tracking-wider block">
+							<span className="text-[11px] font-black uppercase text-root-subtle tracking-wider block">
 								PILIH ANEKSASI ATAU OPSI TAKTIS:
 							</span>
 
@@ -73,11 +73,11 @@ export default function HasilPertempuran({
 								<button
 									type="button"
 									onClick={() => onSelectAction('aneksasi')}
-									className="bg-gradient-to-b from-[#00FFAA]/20 to-[#00FFAA]/5 border-2 border-[#00FFAA] hover:border-amber-400 rounded-xl p-4 flex flex-col items-center justify-between text-center gap-2 hover:scale-[1.02] transition-all cursor-pointer group shadow-[0_0_15px_rgba(0,255,170,0.15)]"
+									className="bg-gradient-to-b from-root-accent/20 to-root-accent/5 border-2 border-root-accent hover:border-amber-400 rounded-xl p-4 flex flex-col items-center justify-between text-center gap-2 hover:scale-[1.02] transition-all cursor-pointer group shadow-[0_0_15px_rgba(0,255,170,0.15)]"
 								>
-									<Flag className="w-7 h-7 text-[#00FFAA] group-hover:scale-110 transition-transform" />
+									<Flag className="w-7 h-7 text-root-accent group-hover:scale-110 transition-transform" />
 									<div>
-										<span className="text-xs font-black text-[#00FFAA] block uppercase">ANEKSASI</span>
+										<span className="text-xs font-black text-root-accent block uppercase">ANEKSASI</span>
 										<span className="text-[10px] text-emerald-300/80 leading-tight block mt-1">
 											Caplok & Integrasikan seluruh luas wilayah {countryName} menjadi warna {playerName}.
 										</span>
@@ -87,7 +87,7 @@ export default function HasilPertempuran({
 								<button
 									type="button"
 									onClick={() => onSelectAction('jarah')}
-									className="bg-[#14232a] border border-[#00FFAA]/30 hover:border-[#00FFAA] rounded-xl p-4 flex flex-col items-center justify-between text-center gap-2 hover:scale-[1.02] transition-all cursor-pointer group"
+									className="bg-[#14232a] border border-root-accent/30 hover:border-root-accent rounded-xl p-4 flex flex-col items-center justify-between text-center gap-2 hover:scale-[1.02] transition-all cursor-pointer group"
 								>
 									<Trophy className="w-7 h-7 text-amber-400 group-hover:scale-110 transition-transform" />
 									<div>
@@ -101,7 +101,7 @@ export default function HasilPertempuran({
 								<button
 									type="button"
 									onClick={() => onSelectAction('mundur')}
-									className="bg-[#14232a] border border-[#00FFAA]/30 hover:border-[#00FFAA] rounded-xl p-4 flex flex-col items-center justify-between text-center gap-2 hover:scale-[1.02] transition-all cursor-pointer group"
+									className="bg-[#14232a] border border-root-accent/30 hover:border-root-accent rounded-xl p-4 flex flex-col items-center justify-between text-center gap-2 hover:scale-[1.02] transition-all cursor-pointer group"
 								>
 									<ArrowLeft className="w-7 h-7 text-slate-400 group-hover:scale-110 transition-transform" />
 									<div>

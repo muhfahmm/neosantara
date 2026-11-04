@@ -384,20 +384,20 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
         return (
           <section key={group} className="space-y-4">
             {/* 🔥 Header Grup dengan Total Kekuatan di sampingnya */}
-            <div className="flex items-center justify-between border-b border-[#00FFAA]/20 pb-3 mb-4">
+            <div className="flex items-center justify-between border-b border-root-accent/20 pb-3 mb-4">
               <div className="flex items-center gap-3">
-                <Icon className="h-6 w-6 text-[#00FFAA]" />
-                <h3 className="text-base font-black text-[#00FFAA] uppercase tracking-wider">
+                <Icon className="h-6 w-6 text-root-accent" />
+                <h3 className="text-base font-black text-root-accent uppercase tracking-wider">
                   Matra {groupMeta[group].title}
                 </h3>
               </div>
-              <div className="text-right text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">
+              <div className="text-right text-[10px] font-black uppercase tracking-wider text-root-subtle">
                 <p>
                   Kekuatan:{" "}
                   {hasPowerBonus && (
                     <span className="mr-1 text-rose-400 line-through">{formatNumber(baseGroupPower)}</span>
                   )}
-                  <span className="text-[#00FFAA]">{formatNumber(totalGroupPower)}</span>
+                  <span className="text-root-accent">{formatNumber(totalGroupPower)}</span>
                 </p>
                 <p>
                   Total HP:{" "}
@@ -409,8 +409,8 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
               </div>
             </div>
 
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 px-3 py-1.5 rounded-lg inline-flex items-center gap-2 mb-4">
-              <span className="text-xs font-black uppercase tracking-wider text-[#00FFAA]">
+            <div className="bg-root-canvas border border-root-accent/30 px-3 py-1.5 rounded-lg inline-flex items-center gap-2 mb-4">
+              <span className="text-xs font-black uppercase tracking-wider text-root-accent">
                 {getGroupCapacityDisplay(group)}
               </span>
             </div>
@@ -444,16 +444,16 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                       setSelectedForBuild({ key: item.key, label: item.label });
                       setIsConfirmBuildOpen(true);
                     }}
-                    className={`relative rounded-2xl flex flex-col justify-between transition-all bg-[#0A1A1A] border border-[#00FFAA]/20 shadow-sm hover:border-[#00FFAA]/50 hover:shadow-md cursor-pointer p-2 sm:p-2.5 min-h-[88px] sm:min-h-[96px] ${hasPending ? 'overflow-visible' : 'overflow-hidden'}`}
+                    className={`relative rounded-2xl flex flex-col justify-between transition-all bg-root-canvas border border-root-accent/20 shadow-sm hover:border-root-accent/50 hover:shadow-md cursor-pointer p-2 sm:p-2.5 min-h-[88px] sm:min-h-[96px] ${hasPending ? 'overflow-visible' : 'overflow-hidden'}`}
                   >
                     {hasPending && lastEndDate && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[9px] sm:text-[10px] font-bold px-2 py-0.5 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[9px] sm:text-[10px] font-bold px-2 py-0.5 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
                         {formatBadgeDate(lastEndDate)}
                       </div>
                     )}
 
                     <div className="flex items-start justify-between mb-1.5 sm:mb-2">
-                      <p className="text-[9px] sm:text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider flex-1 pr-1.5 leading-snug">
+                      <p className="text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1.5 leading-snug">
                         {item.label}
                       </p>
                       <button
@@ -461,7 +461,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                           e.stopPropagation();
                           handleInfoClick(item.key);
                         }}
-                        className="flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-colors cursor-pointer"
+                        className="flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-root-surface border border-root-accent/30 text-root-subtle hover:text-root-accent hover:border-root-accent transition-colors cursor-pointer"
                       >
                         <Info className="w-3 h-3" />
                       </button>
@@ -478,16 +478,16 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                       <div className="flex flex-col justify-between">
                       <div>
                         <div className="flex items-end gap-1 flex-wrap">
-                          <span className={`${item.key === "barak" ? "text-[11px] sm:text-xs" : "text-xs sm:text-sm lg:text-base"} font-black text-[#E0E0E0] leading-tight break-words`}>
+                          <span className={`${item.key === "barak" ? "text-[11px] sm:text-xs" : "text-xs sm:text-sm lg:text-base"} font-black text-root-text leading-tight break-words`}>
                             {displayText}
                           </span>
                           {hasPending && (
-                            <span className="text-[10px] sm:text-xs font-black text-[#00FFAA]">
+                            <span className="text-[10px] sm:text-xs font-black text-root-accent">
                               +{formatNumber(totalPendingQuantity)}
                             </span>
                           )}
                         </div>
-                        <p className="text-[9px] sm:text-[10px] mt-0.5 font-bold text-[#6B8A8A]">
+                        <p className="text-[9px] sm:text-[10px] mt-0.5 font-bold text-root-subtle">
                           {item.key === "barak" ? "Pasukan / Kapasitas" : "unit"}
                         </p>
                       </div>

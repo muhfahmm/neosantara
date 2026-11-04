@@ -122,7 +122,7 @@ export default function DoktrinKeterbukaanModal({
     } else {
       return {
         label: "Negara Globalis & Pasar Bebas",
-        color: "bg-teal-950/80 text-[#00FFAA] border-[#00FFAA]/50",
+        color: "bg-teal-950/80 text-root-accent border-root-accent/50",
         badge: "Tipe Amerika Serikat / Singapura",
         desc: "Jaminan penuh HAM, kebebasan pers & demonstrasi total, internet terbuka penuh, visa bebas, dan pasar bebas tanpa batas.",
       };
@@ -247,10 +247,10 @@ export default function DoktrinKeterbukaanModal({
     <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
         {/* HEADER */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30">
-              <Globe className="h-5 w-5 text-[#00FFAA]" />
+            <div className="p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/30">
+              <Globe className="h-5 w-5 text-root-accent" />
             </div>
             <h3 className={rootModalTypography.title}>
               Doktrin & Keterbukaan Negara
@@ -264,7 +264,7 @@ export default function DoktrinKeterbukaanModal({
             />
             <button
               onClick={onClose}
-              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+              className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
             >
               <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
               <X className="h-4 w-4" />
@@ -275,7 +275,7 @@ export default function DoktrinKeterbukaanModal({
         {/* BODY LAYOUT WITH LEFT SIDEBAR & RIGHT CONTENT */}
         <div className="flex-1 flex min-h-0 relative z-10">
           {/* LEFT SIDEBAR TABS */}
-          <div className="w-48 sm:w-56 lg:w-64 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2.5 sm:p-3 flex flex-col gap-2 overflow-y-auto neon-scrollbar shrink-0">
+          <div className="w-48 sm:w-56 lg:w-64 border-r border-root-accent/30 bg-root-canvas p-2.5 sm:p-3 flex flex-col gap-2 overflow-y-auto neon-scrollbar shrink-0">
             {[
               { id: "civil", label: "Kebebasan Sipil & HAM", icon: Users },
               { id: "media", label: "Media & Informasi", icon: Tv },
@@ -288,8 +288,8 @@ export default function DoktrinKeterbukaanModal({
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`flex items-center gap-2.5 w-full px-3.5 py-3 rounded-2xl border text-left transition-all cursor-pointer ${isActive
-                    ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
-                    : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
+                    ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
+                    : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent/50 hover:text-root-accent"
                     }`}
                 >
                   <Icon className="h-4 w-4 shrink-0" />
@@ -300,16 +300,16 @@ export default function DoktrinKeterbukaanModal({
           </div>
 
           {/* RIGHT CONTENT AREA */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] neon-scrollbar space-y-6">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-root-surface neon-scrollbar space-y-6">
             {/* OVERVIEW SPECTRUM BANNER */}
-            <div className="p-4 sm:p-5 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-2xl space-y-3 shadow-md">
+            <div className="p-4 sm:p-5 bg-root-canvas border border-root-accent/20 rounded-2xl space-y-3 shadow-md">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <span className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-wider block">
+                  <span className="text-[10px] font-bold text-root-subtle uppercase tracking-wider block">
                     Status Keterbukaan Nasional
                   </span>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <h3 className="text-base sm:text-lg font-bold text-[#E0E0E0]">{regime.label}</h3>
+                    <h3 className="text-base sm:text-lg font-bold text-root-text">{regime.label}</h3>
                     <span className={`text-[11px] font-bold px-2 py-0.5 rounded border ${regime.color}`}>
                       {regime.badge}
                     </span>
@@ -317,12 +317,12 @@ export default function DoktrinKeterbukaanModal({
                 </div>
 
                 <div className="text-right">
-                  <span className="text-xs font-bold text-[#6B8A8A] uppercase block">Indeks Keterbukaan</span>
-                  <span className="text-xl sm:text-2xl font-black text-[#00FFAA]">{overallScore} / 100</span>
+                  <span className="text-xs font-bold text-root-subtle uppercase block">Indeks Keterbukaan</span>
+                  <span className="text-xl sm:text-2xl font-black text-root-accent">{overallScore} / 100</span>
                 </div>
               </div>
 
-              <p className="text-xs text-[#6B8A8A] leading-relaxed">{regime.desc}</p>
+              <p className="text-xs text-root-subtle leading-relaxed">{regime.desc}</p>
 
               {/* Progress Bar Visual */}
               <div className="space-y-1 pt-1">
@@ -330,13 +330,13 @@ export default function DoktrinKeterbukaanModal({
                   <span className="flex items-center gap-1 text-rose-400">
                     <Lock className="w-3 h-3" /> Tertutup Total (0%)
                   </span>
-                  <span className="flex items-center gap-1 text-[#00FFAA]">
+                  <span className="flex items-center gap-1 text-root-accent">
                     Terbuka Bebas (100%) <Unlock className="w-3 h-3" />
                   </span>
                 </div>
-                <div className="h-2.5 sm:h-3 w-full bg-[#0F2424] rounded-full overflow-hidden border border-[#00FFAA]/20 relative">
+                <div className="h-2.5 sm:h-3 w-full bg-root-surface rounded-full overflow-hidden border border-root-accent/20 relative">
                   <div
-                    className="h-full bg-gradient-to-r from-rose-600 via-amber-500 to-[#00FFAA] transition-all duration-300"
+                    className="h-full bg-gradient-to-r from-rose-600 via-amber-500 to-root-accent transition-all duration-300"
                     style={{ width: `${overallScore}%` }}
                   />
                 </div>
@@ -346,18 +346,18 @@ export default function DoktrinKeterbukaanModal({
             {activeTab === "civil" && (
               <div className="space-y-4">
                 {/* 1. Kebebasan Berbicara */}
-                <div className="p-4 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-sm space-y-3">
+                <div className="p-4 bg-root-canvas rounded-xl border border-root-accent/20 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <div className="flex h-14 w-14 shrink-0 items-center justify-center">
                         <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/kebebasan-sipil-ham/kebebasan-sipil-ham-asset-01.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-[#E0E0E0]">Kebebasan Berbicara & Berekspresi</h4>
-                        <p className="text-xs text-[#6B8A8A]">Jaminan hak berpendapat tanpa rasa takut akan penangkapan politik.</p>
+                        <h4 className="text-sm font-bold text-root-text">Kebebasan Berbicara & Berekspresi</h4>
+                        <p className="text-xs text-root-subtle">Jaminan hak berpendapat tanpa rasa takut akan penangkapan politik.</p>
                       </div>
                     </div>
-                    <span className="text-sm font-bold text-[#00FFAA] bg-[#0F2424] px-3 py-1 rounded-lg border border-[#00FFAA]/30">
+                    <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
                       {speechScore}%
                     </span>
                   </div>
@@ -368,7 +368,7 @@ export default function DoktrinKeterbukaanModal({
                     max="100"
                     value={speechScore}
                     onChange={(e) => handleSpeechChange(Number(e.target.value))}
-                    className="w-full accent-[#00FFAA] cursor-pointer"
+                    className="w-full accent-root-accent cursor-pointer"
                   />
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
@@ -384,18 +384,18 @@ export default function DoktrinKeterbukaanModal({
                 </div>
 
                 {/* 2. Kebebasan Beragama */}
-                <div className="p-4 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-sm space-y-3">
+                <div className="p-4 bg-root-canvas rounded-xl border border-root-accent/20 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <div className="flex h-14 w-14 shrink-0 items-center justify-center">
                         <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/kebebasan-sipil-ham/kebebasan-sipil-ham-asset-02.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-[#E0E0E0]">Kebebasan Beragama & Kepercayaan</h4>
-                        <p className="text-xs text-[#6B8A8A]">Hak beribadah, pendirian tempat ibadah, dan pengakuan aliran kepercayaan.</p>
+                        <h4 className="text-sm font-bold text-root-text">Kebebasan Beragama & Kepercayaan</h4>
+                        <p className="text-xs text-root-subtle">Hak beribadah, pendirian tempat ibadah, dan pengakuan aliran kepercayaan.</p>
                       </div>
                     </div>
-                    <span className="text-sm font-bold text-[#00FFAA] bg-[#0F2424] px-3 py-1 rounded-lg border border-[#00FFAA]/30">
+                    <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
                       {religionScore}%
                     </span>
                   </div>
@@ -406,7 +406,7 @@ export default function DoktrinKeterbukaanModal({
                     max="100"
                     value={religionScore}
                     onChange={(e) => handleReligionChange(Number(e.target.value))}
-                    className="w-full accent-[#00FFAA] cursor-pointer"
+                    className="w-full accent-root-accent cursor-pointer"
                   />
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
@@ -422,18 +422,18 @@ export default function DoktrinKeterbukaanModal({
                 </div>
 
                 {/* 3. Hak Demonstrasi & Unjuk Rasa */}
-                <div className="p-4 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-sm space-y-3">
+                <div className="p-4 bg-root-canvas rounded-xl border border-root-accent/20 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <div className="flex h-14 w-14 shrink-0 items-center justify-center">
                         <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/kebebasan-sipil-ham/kebebasan-sipil-ham-asset-03.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-[#E0E0E0]">Hak Demonstrasi & Unjuk Rasa</h4>
-                        <p className="text-xs text-[#6B8A8A]">Legalitas aksi damai, pemogokan buruh, dan kumpul massa di muka umum.</p>
+                        <h4 className="text-sm font-bold text-root-text">Hak Demonstrasi & Unjuk Rasa</h4>
+                        <p className="text-xs text-root-subtle">Legalitas aksi damai, pemogokan buruh, dan kumpul massa di muka umum.</p>
                       </div>
                     </div>
-                    <span className="text-sm font-bold text-[#00FFAA] bg-[#0F2424] px-3 py-1 rounded-lg border border-[#00FFAA]/30">
+                    <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
                       {demoScore}%
                     </span>
                   </div>
@@ -444,7 +444,7 @@ export default function DoktrinKeterbukaanModal({
                     max="100"
                     value={demoScore}
                     onChange={(e) => handleDemoChange(Number(e.target.value))}
-                    className="w-full accent-[#00FFAA] cursor-pointer"
+                    className="w-full accent-root-accent cursor-pointer"
                   />
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
@@ -460,18 +460,18 @@ export default function DoktrinKeterbukaanModal({
                 </div>
 
                 {/* 4. Transparansi Pemerintah */}
-                <div className="p-4 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-sm space-y-3">
+                <div className="p-4 bg-root-canvas rounded-xl border border-root-accent/20 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <div className="flex h-14 w-14 shrink-0 items-center justify-center">
                         <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/kebebasan-sipil-ham/kebebasan-sipil-ham-asset-04.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-[#E0E0E0]">Transparansi Pemerintah & Akuntabilitas</h4>
-                        <p className="text-xs text-[#6B8A8A]">Keterbukaan informasi anggaran negara, audit publik, dan antikorupsi.</p>
+                        <h4 className="text-sm font-bold text-root-text">Transparansi Pemerintah & Akuntabilitas</h4>
+                        <p className="text-xs text-root-subtle">Keterbukaan informasi anggaran negara, audit publik, dan antikorupsi.</p>
                       </div>
                     </div>
-                    <span className="text-sm font-bold text-[#00FFAA] bg-[#0F2424] px-3 py-1 rounded-lg border border-[#00FFAA]/30">
+                    <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
                       {transparencyScore}%
                     </span>
                   </div>
@@ -482,7 +482,7 @@ export default function DoktrinKeterbukaanModal({
                     max="100"
                     value={transparencyScore}
                     onChange={(e) => handleTransparencyChange(Number(e.target.value))}
-                    className="w-full accent-[#00FFAA] cursor-pointer"
+                    className="w-full accent-root-accent cursor-pointer"
                   />
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
@@ -503,18 +503,18 @@ export default function DoktrinKeterbukaanModal({
             {activeTab === "media" && (
               <div className="space-y-4">
                 {/* Media Konvensional & Sosmed */}
-                <div className="p-4 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-sm space-y-3">
+                <div className="p-4 bg-root-canvas rounded-xl border border-root-accent/20 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <div className="flex h-14 w-14 shrink-0 items-center justify-center">
                         <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/media-informasi/media-informasi-asset-01.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-[#E0E0E0]">Kebebasan Media Konvensional & Sosmed</h4>
-                        <p className="text-xs text-[#6B8A8A]">Izin stasiun TV, radio, koran, portals berita online, dan platform media sosial.</p>
+                        <h4 className="text-sm font-bold text-root-text">Kebebasan Media Konvensional & Sosmed</h4>
+                        <p className="text-xs text-root-subtle">Izin stasiun TV, radio, koran, portals berita online, dan platform media sosial.</p>
                       </div>
                     </div>
-                    <span className="text-sm font-bold text-[#00FFAA] bg-[#0F2424] px-3 py-1 rounded-lg border border-[#00FFAA]/30">
+                    <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
                       {mediaScore}%
                     </span>
                   </div>
@@ -525,7 +525,7 @@ export default function DoktrinKeterbukaanModal({
                     max="100"
                     value={mediaScore}
                     onChange={(e) => handleMediaChange(Number(e.target.value))}
-                    className="w-full accent-[#00FFAA] cursor-pointer"
+                    className="w-full accent-root-accent cursor-pointer"
                   />
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
@@ -541,18 +541,18 @@ export default function DoktrinKeterbukaanModal({
                 </div>
 
                 {/* Internet Freedom */}
-                <div className="p-4 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-sm space-y-3">
+                <div className="p-4 bg-root-canvas rounded-xl border border-root-accent/20 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <div className="flex h-14 w-14 shrink-0 items-center justify-center">
                         <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/media-informasi/media-informasi-asset-02.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-[#E0E0E0]">Kebebasan Internet (Internet Freedom)</h4>
-                        <p className="text-xs text-[#6B8A8A]">Akses jaringan internet global tanpa firewall/blokir situs asing.</p>
+                        <h4 className="text-sm font-bold text-root-text">Kebebasan Internet (Internet Freedom)</h4>
+                        <p className="text-xs text-root-subtle">Akses jaringan internet global tanpa firewall/blokir situs asing.</p>
                       </div>
                     </div>
-                    <span className="text-sm font-bold text-[#00FFAA] bg-[#0F2424] px-3 py-1 rounded-lg border border-[#00FFAA]/30">
+                    <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
                       {internetScore}%
                     </span>
                   </div>
@@ -563,7 +563,7 @@ export default function DoktrinKeterbukaanModal({
                     max="100"
                     value={internetScore}
                     onChange={(e) => handleInternetChange(Number(e.target.value))}
-                    className="w-full accent-[#00FFAA] cursor-pointer"
+                    className="w-full accent-root-accent cursor-pointer"
                   />
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
@@ -584,18 +584,18 @@ export default function DoktrinKeterbukaanModal({
             {activeTab === "global" && (
               <div className="space-y-4">
                 {/* Akses Perbatasan */}
-                <div className="p-4 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-sm space-y-3">
+                <div className="p-4 bg-root-canvas rounded-xl border border-root-accent/20 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <div className="flex h-14 w-14 shrink-0 items-center justify-center">
                         <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/perbatasan-geopolitik/perbatasan-geopolitik-asset-01.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-[#E0E0E0]">Akses Perbatasan & Imigrasi</h4>
-                        <p className="text-xs text-[#6B8A8A]">Pengawasan perbatasan, kemudahan visa, dan aturan masuk/keluar wilayah.</p>
+                        <h4 className="text-sm font-bold text-root-text">Akses Perbatasan & Imigrasi</h4>
+                        <p className="text-xs text-root-subtle">Pengawasan perbatasan, kemudahan visa, dan aturan masuk/keluar wilayah.</p>
                       </div>
                     </div>
-                    <span className="text-sm font-bold text-[#00FFAA] bg-[#0F2424] px-3 py-1 rounded-lg border border-[#00FFAA]/30">
+                    <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
                       {borderScore}%
                     </span>
                   </div>
@@ -606,7 +606,7 @@ export default function DoktrinKeterbukaanModal({
                     max="100"
                     value={borderScore}
                     onChange={(e) => handleBorderChange(Number(e.target.value))}
-                    className="w-full accent-[#00FFAA] cursor-pointer"
+                    className="w-full accent-root-accent cursor-pointer"
                   />
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
@@ -622,18 +622,18 @@ export default function DoktrinKeterbukaanModal({
                 </div>
 
                 {/* Perdagangan & Modal Asing */}
-                <div className="p-4 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-sm space-y-3">
+                <div className="p-4 bg-root-canvas rounded-xl border border-root-accent/20 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <div className="flex h-14 w-14 shrink-0 items-center justify-center">
                         <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/perbatasan-geopolitik/perbatasan-geopolitik-asset-02.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-[#E0E0E0]">Perdagangan Bebas & Investasi Asing (PMA)</h4>
-                        <p className="text-xs text-[#6B8A8A]">Keterbukaan pasar domestik untuk barang impor, saham asing, dan perusahaan multinasional.</p>
+                        <h4 className="text-sm font-bold text-root-text">Perdagangan Bebas & Investasi Asing (PMA)</h4>
+                        <p className="text-xs text-root-subtle">Keterbukaan pasar domestik untuk barang impor, saham asing, dan perusahaan multinasional.</p>
                       </div>
                     </div>
-                    <span className="text-sm font-bold text-[#00FFAA] bg-[#0F2424] px-3 py-1 rounded-lg border border-[#00FFAA]/30">
+                    <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
                       {tradeScore}%
                     </span>
                   </div>
@@ -644,7 +644,7 @@ export default function DoktrinKeterbukaanModal({
                     max="100"
                     value={tradeScore}
                     onChange={(e) => handleTradeChange(Number(e.target.value))}
-                    className="w-full accent-[#00FFAA] cursor-pointer"
+                    className="w-full accent-root-accent cursor-pointer"
                   />
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
@@ -660,18 +660,18 @@ export default function DoktrinKeterbukaanModal({
                 </div>
 
                 {/* Multilateralisme & Aliansi */}
-                <div className="p-4 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-sm space-y-3">
+                <div className="p-4 bg-root-canvas rounded-xl border border-root-accent/20 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <div className="flex h-14 w-14 shrink-0 items-center justify-center">
                         <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/perbatasan-geopolitik/perbatasan-geopolitik-asset-03.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-[#E0E0E0]">Kerjasama Multilateral & Aliansi Global</h4>
-                        <p className="text-xs text-[#6B8A8A]">Partisipasi dalam aliansi internasional, PBB, dan pakta pertahanan bersama.</p>
+                        <h4 className="text-sm font-bold text-root-text">Kerjasama Multilateral & Aliansi Global</h4>
+                        <p className="text-xs text-root-subtle">Partisipasi dalam aliansi internasional, PBB, dan pakta pertahanan bersama.</p>
                       </div>
                     </div>
-                    <span className="text-sm font-bold text-[#00FFAA] bg-[#0F2424] px-3 py-1 rounded-lg border border-[#00FFAA]/30">
+                    <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
                       {diplomacyScore}%
                     </span>
                   </div>
@@ -682,7 +682,7 @@ export default function DoktrinKeterbukaanModal({
                     max="100"
                     value={diplomacyScore}
                     onChange={(e) => handleDiplomacyChange(Number(e.target.value))}
-                    className="w-full accent-[#00FFAA] cursor-pointer"
+                    className="w-full accent-root-accent cursor-pointer"
                   />
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
@@ -702,14 +702,14 @@ export default function DoktrinKeterbukaanModal({
         </div>
 
         {/* FOOTER ACTIONS */}
-        <div className="px-6 py-4 border-t border-[#00FFAA]/20 bg-[#0F2424] flex items-center justify-between shrink-0 relative z-10">
-          <div className="text-xs text-[#6B8A8A] font-semibold flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-[#00FFAA]" /> Perubahan doktrin terupdate secara otomatis & berdampak langsung pada negara.
+        <div className="px-6 py-4 border-t border-root-accent/20 bg-root-surface flex items-center justify-between shrink-0 relative z-10">
+          <div className="text-xs text-root-subtle font-semibold flex items-center gap-1.5">
+            <CheckCircle2 className="w-4 h-4 text-root-accent" /> Perubahan doktrin terupdate secara otomatis & berdampak langsung pada negara.
           </div>
 
           <button
             onClick={onClose}
-            className="px-5 py-2.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-bold text-xs uppercase tracking-wider hover:bg-[#00FFAA]/80 active:scale-95 transition-all cursor-pointer flex items-center gap-2 shadow-md"
+            className="px-5 py-2.5 rounded-xl bg-root-accent text-root-canvas font-bold text-xs uppercase tracking-wider hover:bg-root-accent/80 active:scale-95 transition-all cursor-pointer flex items-center gap-2 shadow-md"
           >
             Selesai
           </button>

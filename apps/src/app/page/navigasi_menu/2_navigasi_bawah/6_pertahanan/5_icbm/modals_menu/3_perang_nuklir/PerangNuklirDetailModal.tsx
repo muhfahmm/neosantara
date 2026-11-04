@@ -468,14 +468,14 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
       <div className="flex h-full flex-col overflow-hidden">
         
         {/* Header Modal */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex flex-wrap items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0 gap-3">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex flex-wrap items-center justify-between bg-root-canvas relative z-10 shrink-0 gap-3">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+            <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
               <Radiation className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
             </div>
             <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Perang Nuklir & Intelijen Strategis</h2>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">
+              <h2 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Perang Nuklir & Intelijen Strategis</h2>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">
                 {activeTab === 'ranking'
                   ? `Ranking kekuatan militer ${rankings.length} negara`
                   : `Daftar negara berkemampuan Nuklir & ICBM global (${filteredIcbmOwners.length} negara)`}
@@ -484,19 +484,19 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
           </div>
           <div className="flex items-center gap-2 sm:gap-3 flex-1 max-w-xs justify-end">
             <div className="relative w-full">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#00FFAA]/60" />
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-root-accent/60" />
               <input
                 type="text"
                 placeholder={activeTab === 'ranking' ? "Cari negara..." : "Cari negara nuklir / ICBM..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-[#0F2424] border border-[#00FFAA]/30 rounded-xl pl-8 pr-3 py-1.5 text-xs text-[#00FFAA] placeholder-[#6B8A8A] focus:outline-none focus:border-[#00FFAA] transition-all"
+                className="w-full bg-root-surface border border-root-accent/30 rounded-xl pl-8 pr-3 py-1.5 text-xs text-root-accent placeholder-root-subtle focus:outline-none focus:border-root-accent transition-all"
               />
             </div>
 
             <button 
               onClick={onClose} 
-              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
+              className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
             >
               <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
               <X className="h-4 w-4" />
@@ -505,14 +505,14 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
         </div>
 
         {/* Tab Navigation */}
-        <div className="px-4 sm:px-6 pt-3 pb-2 bg-[#0A1A1A] border-b border-[#00FFAA]/20 flex items-center justify-between">
-          <div className="bg-[#0F2424] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex shadow-sm gap-1">
+        <div className="px-4 sm:px-6 pt-3 pb-2 bg-root-canvas border-b border-root-accent/20 flex items-center justify-between">
+          <div className="bg-root-surface p-1 rounded-xl border border-root-accent/20 inline-flex shadow-sm gap-1">
             <button
               onClick={() => setActiveTab('ranking')}
               className={`px-4 sm:px-5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeTab === 'ranking'
-                  ? 'bg-[#00FFAA] text-[#0A1A1A] font-black shadow-md'
-                  : 'text-[#E0E0E0] hover:text-[#00FFAA]'
+                  ? 'bg-root-accent text-root-canvas font-black shadow-md'
+                  : 'text-root-text hover:text-root-accent'
               }`}
             >
               <Radiation className="w-3.5 h-3.5" />
@@ -522,14 +522,14 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
               onClick={() => setActiveTab('icbm_owners')}
               className={`px-4 sm:px-5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeTab === 'icbm_owners'
-                  ? 'bg-[#00FFAA] text-[#0A1A1A] font-black shadow-md'
-                  : 'text-[#E0E0E0] hover:text-[#00FFAA]'
+                  ? 'bg-root-accent text-root-canvas font-black shadow-md'
+                  : 'text-root-text hover:text-root-accent'
               }`}
             >
               <Rocket className="w-3.5 h-3.5 text-rose-500" />
               Negara Nuklir & ICBM
               <span className={`ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-black ${
-                activeTab === 'icbm_owners' ? 'bg-[#0A1A1A] text-[#00FFAA]' : 'bg-[#00FFAA]/20 text-[#00FFAA]'
+                activeTab === 'icbm_owners' ? 'bg-root-canvas text-root-accent' : 'bg-root-accent/20 text-root-accent'
               }`}>
                 {filteredIcbmOwners.length}
               </span>
@@ -538,24 +538,24 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
         </div>
 
         {/* Body Content */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] custom-scrollbar flex flex-col gap-4">
-          <div className="overflow-hidden border border-[#00FFAA]/20 rounded-2xl bg-[#0A1A1A] shadow-inner flex flex-col flex-1">
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-root-surface custom-scrollbar flex flex-col gap-4">
+          <div className="overflow-hidden border border-root-accent/20 rounded-2xl bg-root-canvas shadow-inner flex flex-col flex-1">
             <div className="overflow-y-auto custom-scrollbar flex-1">
               {activeTab === 'ranking' ? (
                 /* TAB 1: RANKING KEKUATAN MILITER */
                 <table className="w-full text-xs">
-                  <thead className="bg-[#0A1A1A] text-[#00FFAA] border-b border-[#00FFAA]/20 sticky top-0 z-10">
+                  <thead className="bg-root-canvas text-root-accent border-b border-root-accent/20 sticky top-0 z-10">
                     <tr>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Rank</th>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Negara</th>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Darat</th>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Laut</th>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Udara</th>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Total Kekuatan</th>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Aksi</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Rank</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Negara</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Darat</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Laut</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Udara</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Total Kekuatan</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Aksi</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#00FFAA]/10 text-xs font-bold text-[#E0E0E0]">
+                  <tbody className="divide-y divide-root-accent/10 text-xs font-bold text-root-text">
                     {rankings.length > 0 ? (
                       rankings.map((row, index) => {
                         const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "Negara";
@@ -566,25 +566,25 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                             key={`${row.countryName}-${index}`} 
                             className={`transition-colors ${
                               isUserCountry
-                                ? 'bg-[#00FFAA]/10 border-l-4 border-l-[#00FFAA]'
-                                : 'hover:bg-[#0F2424]'
+                                ? 'bg-root-accent/10 border-l-4 border-l-root-accent'
+                                : 'hover:bg-root-surface'
                             }`}
                           >
-                            <td className="px-3 py-2 text-[#6B8A8A]">#{index + 1}</td>
-                            <td className="px-3 py-2 font-black text-[#E0E0E0]">
-                              {row.countryName} {isUserCountry && <span className="text-[10px] text-[#00FFAA] ml-1">(Anda)</span>}
+                            <td className="px-3 py-2 text-root-subtle">#{index + 1}</td>
+                            <td className="px-3 py-2 font-black text-root-text">
+                              {row.countryName} {isUserCountry && <span className="text-[10px] text-root-accent ml-1">(Anda)</span>}
                             </td>
-                            <td className="px-3 py-2 text-right text-[#6B8A8A]">{formatNumber(row.darat)}</td>
-                            <td className="px-3 py-2 text-right text-[#6B8A8A]">{formatNumber(row.laut)}</td>
-                            <td className="px-3 py-2 text-right text-[#6B8A8A]">{formatNumber(row.udara)}</td>
-                            <td className="px-3 py-2 text-right text-[#00FFAA] font-black">{formatNumber(row.totalPower)}</td>
+                            <td className="px-3 py-2 text-right text-root-subtle">{formatNumber(row.darat)}</td>
+                            <td className="px-3 py-2 text-right text-root-subtle">{formatNumber(row.laut)}</td>
+                            <td className="px-3 py-2 text-right text-root-subtle">{formatNumber(row.udara)}</td>
+                            <td className="px-3 py-2 text-right text-root-accent font-black">{formatNumber(row.totalPower)}</td>
                             <td className="px-3 py-2 text-center">
                               <button
                                 onClick={() => onAction?.(row)}
                                 disabled={isUserCountry}
                                 className={`p-1.5 rounded-lg transition-all ${
                                   isUserCountry 
-                                    ? 'bg-[#6B8A8A]/20 text-[#6B8A8A] cursor-not-allowed' 
+                                    ? 'bg-root-subtle/20 text-root-subtle cursor-not-allowed'
                                     : 'bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white border border-rose-500/30 cursor-pointer'
                                 }`}
                                 title="Deklarasikan perang nuklir"
@@ -597,7 +597,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                       })
                     ) : (
                       <tr>
-                        <td colSpan={7} className="px-4 py-8 text-center text-[#6B8A8A]">
+                        <td colSpan={7} className="px-4 py-8 text-center text-root-subtle">
                           Data negara belum tersedia.
                         </td>
                       </tr>
@@ -607,22 +607,22 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
               ) : (
                 /* TAB 2: NEGARA PEMILIK NUKLIR & ICBM */
                 <table className="w-full text-xs">
-                  <thead className="bg-[#0A1A1A] text-[#00FFAA] border-b border-[#00FFAA]/20 sticky top-0 z-10">
+                  <thead className="bg-root-canvas text-root-accent border-b border-root-accent/20 sticky top-0 z-10">
                     <tr>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">No</th>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Negara</th>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Kode ISO</th>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Program Nuklir</th>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Status ICBM</th>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Jumlah ICBM</th>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Level Ancaman</th>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Aksi Serang</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">No</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Negara</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Kode ISO</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Program Nuklir</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Status ICBM</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Jumlah ICBM</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Level Ancaman</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Aksi Serang</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#00FFAA]/10 text-xs font-bold text-[#E0E0E0]">
+                  <tbody className="divide-y divide-root-accent/10 text-xs font-bold text-root-text">
                     {isLoadingIcbm ? (
                       <tr>
-                        <td colSpan={7} className="px-4 py-8 text-center text-[#00FFAA]">
+                        <td colSpan={7} className="px-4 py-8 text-center text-root-accent">
                           Memuat data negara berkemampuan Nuklir & ICBM...
                         </td>
                       </tr>
@@ -637,22 +637,22 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                             key={row.country_id || row.country_slug}
                             className={`transition-colors ${
                               isUserCountry
-                                ? 'bg-[#00FFAA]/10 border-l-4 border-l-[#00FFAA]'
-                                : 'hover:bg-[#0F2424]'
+                                ? 'bg-root-accent/10 border-l-4 border-l-root-accent'
+                                : 'hover:bg-root-surface'
                             }`}
                           >
-                            <td className="px-3 py-2.5 text-[#6B8A8A]">#{idx + 1}</td>
-                            <td className="px-3 py-2.5 font-black text-[#E0E0E0] flex items-center gap-2">
+                            <td className="px-3 py-2.5 text-root-subtle">#{idx + 1}</td>
+                            <td className="px-3 py-2.5 font-black text-root-text flex items-center gap-2">
                               <Rocket className="w-3.5 h-3.5 text-rose-500 shrink-0" />
                               <span>{row.country_name}</span>
-                              {isUserCountry && <span className="text-[10px] text-[#00FFAA] ml-1 font-bold">(Anda)</span>}
+                              {isUserCountry && <span className="text-[10px] text-root-accent ml-1 font-bold">(Anda)</span>}
                             </td>
-                            <td className="px-3 py-2.5 text-center uppercase tracking-widest text-[#6B8A8A] font-mono">
+                            <td className="px-3 py-2.5 text-center uppercase tracking-widest text-root-subtle font-mono">
                               {row.iso}
                             </td>
                             <td className="px-3 py-2.5 text-center">
                               {row.nuclear_program_status === 'AKTIF' || (!row.nuclear_program_status && row.has_nuclear_program) ? (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-[#00FFAA]/20 text-[#00FFAA] border border-[#00FFAA]/40">
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-root-accent/20 text-root-accent border border-root-accent/40">
                                   AKTIF
                                 </span>
                               ) : row.nuclear_program_status === 'RISET' ? (
@@ -660,7 +660,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                                   DALAM RISET
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#6B8A8A]/10 text-[#6B8A8A] border border-[#6B8A8A]/20">
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-root-subtle/10 text-root-subtle border border-root-subtle/20">
                                   BELUM AKTIF
                                 </span>
                               )}
@@ -672,22 +672,22 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                                   AKTIF
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#6B8A8A]/10 text-[#6B8A8A] border border-[#6B8A8A]/20">
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-root-subtle/10 text-root-subtle border border-root-subtle/20">
                                   BELUM ADA
                                 </span>
                               )}
                             </td>
-                            <td className="px-3 py-2.5 text-right font-black text-[#00FFAA] text-sm whitespace-nowrap">
+                            <td className="px-3 py-2.5 text-right font-black text-root-accent text-sm whitespace-nowrap">
                               {formatNumber(row.icbm_jumlah)}{" "}
                               {Boolean(row.in_progress_icbm && row.in_progress_icbm > 0) && (
                                 <span className="text-[11px] font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-1.5 py-0.5 rounded-full ml-1" title="Sedang dalam proses perakitan">
                                   +{row.in_progress_icbm}
                                 </span>
                               )}
-                              <span className="text-[10px] font-normal text-[#6B8A8A] ml-1">Unit</span>
+                              <span className="text-[10px] font-normal text-root-subtle ml-1">Unit</span>
                             </td>
                             <td className="px-3 py-2.5 text-center">
-                              <span className="px-2 py-0.5 rounded text-[10px] font-black bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA]">
+                              <span className="px-2 py-0.5 rounded text-[10px] font-black bg-root-canvas border border-root-accent/30 text-root-accent">
                                 {row.icbm_jumlah >= 300 ? 'Level V (Superpower)' : row.icbm_jumlah >= 10 ? 'Level III (Regional)' : row.icbm_jumlah > 0 ? 'Level II (Terkonfirmasi)' : 'Level I (Riset Nuklir)'}
                               </span>
                             </td>
@@ -697,7 +697,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                                 disabled={isUserCountry}
                                 className={`p-1.5 rounded-lg transition-all ${
                                   isUserCountry 
-                                    ? 'bg-[#6B8A8A]/20 text-[#6B8A8A] cursor-not-allowed' 
+                                    ? 'bg-root-subtle/20 text-root-subtle cursor-not-allowed'
                                     : 'bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white border border-rose-500/30 cursor-pointer shadow-sm'
                                 }`}
                                 title={`Luncurkan rudal ICBM terhadap ${row.country_name}`}
@@ -710,7 +710,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                       })
                     ) : (
                       <tr>
-                        <td colSpan={8} className="px-4 py-8 text-center text-[#6B8A8A]">
+                        <td colSpan={8} className="px-4 py-8 text-center text-root-subtle">
                           Tidak ditemukan negara dengan status Nuklir atau ICBM.
                         </td>
                       </tr>

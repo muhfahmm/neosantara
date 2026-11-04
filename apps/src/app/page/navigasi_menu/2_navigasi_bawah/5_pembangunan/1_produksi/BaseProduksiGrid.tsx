@@ -171,21 +171,21 @@ export default function BaseProduksiGrid({
     <div>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <Icon className="h-6 w-6 text-[#00FFAA]" />
-          <h3 className="text-lg font-black text-[#00FFAA] uppercase tracking-wider">{title}</h3>
+          <Icon className="h-6 w-6 text-root-accent" />
+          <h3 className="text-lg font-black text-root-accent uppercase tracking-wider">{title}</h3>
         </div>
 
         {showAIButton && (
           <button
             type="button"
             onClick={handleOpenAISuggestions}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#00FFAA]/10 hover:bg-[#00FFAA]/20 transition-all border border-[#00FFAA]/30 group cursor-pointer shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-root-accent/10 hover:bg-root-accent/20 transition-all border border-root-accent/30 group cursor-pointer shadow-sm"
             title={`Analisis AI untuk Sektor ${title}`}
           >
             <div className="relative">
-              <MessageSquare className="w-4 h-4 text-[#00FFAA] group-hover:scale-110 transition-transform" />
+              <MessageSquare className="w-4 h-4 text-root-accent group-hover:scale-110 transition-transform" />
             </div>
-            <span className="text-[10px] font-black uppercase tracking-wider text-[#00FFAA]">Rekomendasi AI</span>
+            <span className="text-[10px] font-black uppercase tracking-wider text-root-accent">Rekomendasi AI</span>
           </button>
         )}
       </div>
@@ -223,12 +223,12 @@ export default function BaseProduksiGrid({
           return (
             <React.Fragment key={key}>
               {isElectricityTab && key === fuelRequiredKeys[0] && (
-                <div className="col-span-full border-b border-[#00FFAA]/15 pb-2 pt-1 text-xs font-black uppercase tracking-wider text-[#8AB0A8]">
+                <div className="col-span-full border-b border-root-accent/15 pb-2 pt-1 text-xs font-black uppercase tracking-wider text-[#8AB0A8]">
                   Pembangkit Membutuhkan Bahan Bakar
                 </div>
               )}
               {isElectricityTab && key === noFuelRequiredKeys[0] && (
-                <div className="col-span-full border-b border-[#00FFAA]/15 pb-2 pt-4 text-xs font-black uppercase tracking-wider text-[#8AB0A8]">
+                <div className="col-span-full border-b border-root-accent/15 pb-2 pt-4 text-xs font-black uppercase tracking-wider text-[#8AB0A8]">
                   Pembangkit Tidak Membutuhkan Bahan Bakar
                 </div>
               )}
@@ -241,17 +241,17 @@ export default function BaseProduksiGrid({
               tabIndex={0}
               aria-disabled={!isAvailable}
               title={productionBan ? `Diblokir resolusi PBB: ${formatProductionProductName(key)}` : undefined}
-              className={`group relative rounded-2xl overflow-visible flex flex-col flex-grow justify-between transition-all bg-[#0A1A1A] border shadow-sm ${isAvailable ? 'border-[#00FFAA]/20 hover:border-[#00FFAA]/50 hover:shadow-md cursor-pointer' : 'border-rose-500/30 bg-rose-500/10 opacity-70 cursor-not-allowed'
-                } ${isHighlighted ? 'border-[#00FFAA] border-2 shadow-[0_0_12px_rgba(0,255,170,0.3)]' : ''}`}
+              className={`group relative rounded-2xl overflow-visible flex flex-col flex-grow justify-between transition-all bg-root-canvas border shadow-sm ${isAvailable ? 'border-root-accent/20 hover:border-root-accent/50 hover:shadow-md cursor-pointer' : 'border-rose-500/30 bg-rose-500/10 opacity-70 cursor-not-allowed'
+                } ${isHighlighted ? 'border-root-accent border-2 shadow-[0_0_12px_rgba(0,255,170,0.3)]' : ''}`}
             >
               {productionBan && (
-                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-[#0A1A1A]/85 p-3 text-center text-[10px] font-black uppercase tracking-wide text-rose-300 opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none">
+                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-root-canvas/85 p-3 text-center text-[10px] font-black uppercase tracking-wide text-rose-300 opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none">
                   Diblokir resolusi PBB: {formatProductionProductName(key)}
                 </div>
               )}
               {/* Badge Tanggal */}
               {isBuilding && (
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[10px] font-bold px-2 py-1 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
                   {formatBadgeDate(lastEndDate)}
                 </div>
               )}
@@ -278,10 +278,10 @@ export default function BaseProduksiGrid({
               <div className="p-2 sm:p-2.5 flex flex-col flex-grow justify-between">
                 <div>
                   <div className="flex items-start justify-between gap-1 mb-0.5">
-                    <p className="text-[9px] sm:text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider flex-1 pr-1 leading-snug">{label}</p>
+                    <p className="text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1 leading-snug">{label}</p>
                     <button
                       disabled={isProductionBanned}
-                      className="flex-shrink-0 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-colors cursor-pointer bg-[#0F2424] border border-[#00FFAA]/30 hover:border-[#00FFAA] text-[#6B8A8A] hover:text-[#00FFAA]"
+                      className="flex-shrink-0 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
                       onClick={(e) => {
                         if (isProductionBanned) return;
                         e.stopPropagation();
@@ -304,7 +304,7 @@ export default function BaseProduksiGrid({
                       />
                     )}
                     <div className="flex items-end gap-1 flex-wrap">
-                      <span className="text-xs sm:text-sm lg:text-base font-black text-[#E0E0E0] leading-none">{perCount}</span>
+                      <span className="text-xs sm:text-sm lg:text-base font-black text-root-text leading-none">{perCount}</span>
                       {isBuilding && (
                         <span className="text-[10px] sm:text-xs font-bold text-emerald-400 leading-none">
                           +{queueCount}
@@ -316,8 +316,8 @@ export default function BaseProduksiGrid({
 
                 {/* FOOTER LISTRIK */}
                 {isElectricityTab && (
-                  <div className="border-t border-[#00FFAA]/10 mt-1.5 pt-1 pb-0.5 text-center min-h-[36px] flex flex-col justify-center">
-                    <span className={`font-black text-xs sm:text-sm leading-tight break-words ${isProductionZero ? 'text-rose-400' : 'text-[#00FFAA]'}`}>
+                  <div className="border-t border-root-accent/10 mt-1.5 pt-1 pb-0.5 text-center min-h-[36px] flex flex-col justify-center">
+                    <span className={`font-black text-xs sm:text-sm leading-tight break-words ${isProductionZero ? 'text-rose-400' : 'text-root-accent'}`}>
                       {rawProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                     </span>
                     {isProductionZero && (
@@ -328,13 +328,13 @@ export default function BaseProduksiGrid({
 
                 {/* FOOTER NON-LISTRIK */}
                 {!isElectricityTab && (
-                  <div className="border-t border-[#00FFAA]/10 mt-1.5 pt-1 pb-0.5 text-center min-h-[36px] flex flex-col justify-center gap-0.5">
+                  <div className="border-t border-root-accent/10 mt-1.5 pt-1 pb-0.5 text-center min-h-[36px] flex flex-col justify-center gap-0.5">
                     {(() => {
                       // Emas: tampilkan produksi tetap (tidak berubah-ubah seperti stok)
                       if (key === 'emas') {
                         const fixedProd = Number(bMeta?.produksi || 0) * perCount * productionMultiplier;
                         return (
-                          <span className="font-black text-xs sm:text-sm text-[#00FFAA] leading-tight break-words">
+                          <span className="font-black text-xs sm:text-sm text-root-accent leading-tight break-words">
                             {fixedProd.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                           </span>
                         );
@@ -349,7 +349,7 @@ export default function BaseProduksiGrid({
 
                         return (
                           <div className="flex flex-col items-center justify-center">
-                            <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${isRedText ? 'text-rose-400' : 'text-[#00FFAA]'}`}>
+                            <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${isRedText ? 'text-rose-400' : 'text-root-accent'}`}>
                               {displayVal.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
                             </span>
                             {isDeficit && (
@@ -361,7 +361,7 @@ export default function BaseProduksiGrid({
 
                       const stock = getMaterialStock(countryDetail, key);
                       const isFuel = ELECTRICITY_FUEL_RESOURCE_KEYS.includes(key);
-                      const colorClass = (isFuel && stock > 0) ? 'text-emerald-400' : 'text-[#00FFAA]';
+                      const colorClass = (isFuel && stock > 0) ? 'text-emerald-400' : 'text-root-accent';
                       const travelOilConsumption = key === 'minyak_bumi'
                         ? getTravelOilConsumptionThisMonth(countryDetail, currentDate ?? new Date())
                         : 0;
@@ -386,7 +386,7 @@ export default function BaseProduksiGrid({
           );
         })}
         {keys.length === 0 && (
-          <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 text-sm text-[#6B8A8A]">
+          <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-4 text-sm text-root-subtle">
             Data untuk kategori ini tidak tersedia.
           </div>
         )}

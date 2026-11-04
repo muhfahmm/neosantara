@@ -24,19 +24,19 @@ export default function KonfirmasiPeluncuranSerangan({
 	onConfirm,
 }: KonfirmasiPeluncuranSeranganProps) {
 	return (
-		<div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-in fade-in duration-200">
-			<div className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl shadow-2xl font-sans text-white relative">
-				<div className="bg-[#0A1A1A] border-b border-[#00FFAA]/20 px-5 sm:px-6 py-4 flex items-center justify-between">
+		<div className="fixed inset-0 z-[70] flex items-center justify-center  p-4 animate-in fade-in duration-200">
+			<div className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto bg-root-surface border border-root-accent/30 rounded-2xl shadow-2xl font-sans text-white relative">
+				<div className="bg-root-canvas border-b border-root-accent/20 px-5 sm:px-6 py-4 flex items-center justify-between">
 					<div className="flex items-center gap-2.5">
-						<Swords className="w-5 h-5 text-[#00FFAA]" />
-						<h3 className="text-base font-black text-[#00FFAA] tracking-wider uppercase">
+						<Swords className="w-5 h-5 text-root-accent" />
+						<h3 className="text-base font-black text-root-accent tracking-wider uppercase">
 							KOMANDO OPERASI MILITER
 						</h3>
 					</div>
 					<button
 						type="button"
 						onClick={onBack}
-						className="rounded-lg p-1.5 text-[#6B8A8A] hover:text-[#00FFAA] cursor-pointer transition-colors"
+						className="rounded-lg p-1.5 text-root-subtle hover:text-root-accent cursor-pointer transition-colors"
 						aria-label="Tutup konfirmasi serangan"
 					>
 						<X className="h-4 w-4" />
@@ -44,14 +44,14 @@ export default function KonfirmasiPeluncuranSerangan({
 				</div>
 
 				<div className="p-5 sm:p-6 space-y-6">
-					<div className="flex items-center justify-between bg-[#111e24] border border-[#00FFAA]/20 rounded-xl p-5 sm:p-6">
+					<div className="flex items-center justify-between bg-[#111e24] border border-root-accent/20 rounded-xl p-5 sm:p-6">
 						<div className="flex flex-col items-center gap-2 flex-1 min-w-0">
 							<img
 								src={`https://flagcdn.com/w80/${playerIso}.png`}
 								alt={playerName}
 								className="w-16 h-10 rounded object-cover border border-black/30 shadow-md"
 							/>
-							<span className="text-sm font-black uppercase text-[#00FFAA] text-center">{playerName}</span>
+							<span className="text-sm font-black uppercase text-root-accent text-center">{playerName}</span>
 							<span className="text-xs text-emerald-400 font-mono">Skor Militer: {playerPower}</span>
 						</div>
 
@@ -73,7 +73,7 @@ export default function KonfirmasiPeluncuranSerangan({
 					<div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-5 flex items-start gap-4">
 						<ShieldAlert className="w-6 h-6 text-rose-400 shrink-0 mt-0.5" />
 						<p className="text-sm text-[#b8cbd0] font-medium leading-relaxed">
-							Menyerang <strong>{targetName}</strong> secara langsung adalah agresi militer terbuka. Jika menang, Anda dapat melakukan <strong className="text-[#00FFAA]">Aneksasi</strong> untuk memperluas peta wilayah negara Anda!
+							Menyerang <strong>{targetName}</strong> secara langsung adalah agresi militer terbuka. Jika menang, Anda dapat melakukan <strong className="text-root-accent">Aneksasi</strong> untuk memperluas peta wilayah negara Anda!
 						</p>
 					</div>
 
@@ -81,7 +81,7 @@ export default function KonfirmasiPeluncuranSerangan({
 						<button
 							type="button"
 							onClick={onBack}
-							className="flex-1 py-3.5 bg-[#17272e] hover:bg-[#1f343d] border border-[#00FFAA]/20 rounded-xl text-sm font-black uppercase tracking-wider text-[#8ab0b8] transition-all cursor-pointer"
+							className="flex-1 py-3.5 bg-[#17272e] hover:bg-[#1f343d] border border-root-accent/20 rounded-xl text-sm font-black uppercase tracking-wider text-[#8ab0b8] transition-all cursor-pointer"
 						>
 							Batal
 						</button>

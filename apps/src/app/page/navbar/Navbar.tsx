@@ -221,19 +221,19 @@ export function Navbar({
             
             {/* 1. Left Side: Circular Menu & Selected Badge */}
             <div className="flex items-center gap-2 2xl:gap-3 shrink-0 relative z-20 pointer-events-auto">
-                <div className="flex items-center gap-2 2xl:gap-3 bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
+                <div className="flex items-center gap-2 2xl:gap-3 bg-root-surface border border-root-accent/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
                 {/* Circle Power Button */}
                 <div className="relative group shrink-0">
                     <button
                         onClick={onOpenGameMenu}
                         data-tutorial="game-menu"
                         title="Game Menu"
-                        className="w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-full bg-[#0A1A1A] border-[2px] border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all flex items-center justify-center cursor-pointer z-30"
+                        className="w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-full bg-root-canvas border-[2px] border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all flex items-center justify-center cursor-pointer z-30"
                     >
                         <Power className="w-3.5 h-3.5 2xl:w-4 2xl:h-4" />
                     </button>
                     
-                    <div className="absolute top-[38px] lg:top-[42px] 2xl:top-[44px] left-1/2 -translate-x-1/2 bg-[#0F2424] border border-[#00FFAA]/30 px-2 py-1 text-[#00FFAA] text-[8px] sm:text-[10px] font-black tracking-wider uppercase rounded-md whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <div className="absolute top-[38px] lg:top-[42px] 2xl:top-[44px] left-1/2 -translate-x-1/2 bg-root-surface border border-root-accent/30 px-2 py-1 text-root-accent text-[8px] sm:text-[10px] font-black tracking-wider uppercase rounded-md whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         Game Menu
                     </div>
                 </div>
@@ -241,21 +241,21 @@ export function Navbar({
                     {selectedCountry ? (
                         <img 
                             src={`https://flagcdn.com/w80/${selectedCountry.iso.toLowerCase()}.png`} 
-                            className="w-6 h-4 lg:w-7 lg:h-4.5 2xl:w-8 2xl:h-5 rounded-sm object-cover border border-[#00FFAA]/30"
+                            className="w-6 h-4 lg:w-7 lg:h-4.5 2xl:w-8 2xl:h-5 rounded-sm object-cover border border-root-accent/30"
                             alt="flag"
                             onError={(e) => {
                                 (e.target as HTMLImageElement).src = 'https://flagcdn.com/w80/un.png';
                             }}
                         />
                     ) : (
-                        <div className="w-6 h-6 lg:w-7 lg:h-7 2xl:w-8 2xl:h-8 rounded-full bg-[#0A1A1A] border border-[#00FFAA]/30 flex items-center justify-center text-sm lg:text-base 2xl:text-xl">🌐
+                        <div className="w-6 h-6 lg:w-7 lg:h-7 2xl:w-8 2xl:h-8 rounded-full bg-root-canvas border border-root-accent/30 flex items-center justify-center text-sm lg:text-base 2xl:text-xl">🌐
                         </div>
                     )}
                     <div className="flex flex-col leading-tight">
-                        <span className="text-[10px] lg:text-[11px] 2xl:text-[12px] font-black text-[#E0E0E0] tracking-tight uppercase">
+                        <span className="text-[10px] lg:text-[11px] 2xl:text-[12px] font-black text-root-text tracking-tight uppercase">
                             {selectedCountry ? selectedCountry.country : 'Main Simulation'}
                         </span>
-                        <span className="text-[8px] lg:text-[9px] 2xl:text-[10px] font-bold text-[#6B8A8A] uppercase tracking-widest">
+                        <span className="text-[8px] lg:text-[9px] 2xl:text-[10px] font-bold text-root-subtle uppercase tracking-widest">
                             {selectedCountry ? selectedCountry.capital : 'Global Map'}
                         </span>
                     </div>
@@ -265,7 +265,7 @@ export function Navbar({
                 </div>
 
             {/* 2. Center: Live Stats Items */}
-            <div data-tutorial="navbar-ringkasan" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-6 overflow-hidden z-10 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 px-3.5 lg:px-4.5 xl:px-5.5 2xl:px-6 py-1.5 2xl:py-2 rounded-2xl shadow-2xl">
+            <div data-tutorial="navbar-ringkasan" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-6 overflow-hidden z-10 pointer-events-auto bg-root-surface border border-root-accent/30 px-3.5 lg:px-4.5 xl:px-5.5 2xl:px-6 py-1.5 2xl:py-2 rounded-2xl shadow-2xl">
                 <div className="flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-6 min-w-max">
                     
                     {/* 🔥 POPULASI DENGAN TOOLTIP DEMOGRAFI & KLIK KE KEPENDUDUKAN */}
@@ -275,37 +275,37 @@ export function Navbar({
                         title="Klik untuk membuka Ringkasan Kependudukan"
                     >
                         <StatusItem 
-                            icon={<Users className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-[#00FFAA]" />} 
+                            icon={<Users className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
                             label="POPULASI" 
                             value={
-                                <span className="flex items-center gap-1.5 2xl:gap-2 text-[#E0E0E0]">
+                                <span className="flex items-center gap-1.5 2xl:gap-2 text-root-text">
                                     <span className="inline-block w-[11ch] text-right tabular-nums">{populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
-                                    <span className={`${netDailyChange >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'} inline-block w-[9ch] text-right tabular-nums text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
+                                    <span className={`${netDailyChange >= 0 ? 'text-root-accent' : 'text-rose-400'} inline-block w-[9ch] text-right tabular-nums text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
                                         ({netPopulationLabel})
                                     </span>
                                 </span>
                             } 
                         />
                         {/* Tooltip Rincian Demografi Harian */}
-                        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max bg-[#0F2424] border border-[#00FFAA]/30 rounded-xl p-3 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none">
-                            <p className="text-[10px] font-black text-[#00FFAA] uppercase tracking-wider mb-1.5 border-b border-[#00FFAA]/20 pb-1.5 text-center">Rincian Demografi</p>
-                            <div className="grid grid-cols-2 gap-x-6 text-[11px] font-bold text-[#E0E0E0]">
-                                <span className="text-[#00FFAA] text-center">Lahir: +{dailyBirths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max bg-root-surface border border-root-accent/30 rounded-xl p-3 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none">
+                            <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-1.5 border-b border-root-accent/20 pb-1.5 text-center">Rincian Demografi</p>
+                            <div className="grid grid-cols-2 gap-x-6 text-[11px] font-bold text-root-text">
+                                <span className="text-root-accent text-center">Lahir: +{dailyBirths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                                 <span className="text-rose-400 text-center">Mati: -{dailyDeaths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                             </div>
-                            <div className="mt-1.5 pt-1.5 border-t border-[#00FFAA]/20 text-[10px] text-[#6B8A8A] text-center">
-                                Pertumbuhan Bersih: <span className={`font-bold ${netDailyChange >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'}`}>{netPopulationLabel}</span>
+                            <div className="mt-1.5 pt-1.5 border-t border-root-accent/20 text-[10px] text-root-subtle text-center">
+                                Pertumbuhan Bersih: <span className={`font-bold ${netDailyChange >= 0 ? 'text-root-accent' : 'text-rose-400'}`}>{netPopulationLabel}</span>
                             </div>
                         </div>
                     </button>
 
                     <StatusItem
-                        icon={<Landmark className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-[#00FFAA]" />}
+                        icon={<Landmark className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
                         label="KAS NEGARA"
                         value={countryDetail ? (
-                            <span className="flex items-center gap-1.5 2xl:gap-2 text-[#E0E0E0] tabular-nums">
+                            <span className="flex items-center gap-1.5 2xl:gap-2 text-root-text tabular-nums">
                                 <span className={`inline-block w-[16ch] text-right ${anggaran < 0 ? 'text-rose-400 font-black' : ''}`}>{formatCurrencyEM(anggaran)}</span>
-                                <span className={`${netBalance >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'} inline-block w-[10ch] text-right text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
+                                <span className={`${netBalance >= 0 ? 'text-root-accent' : 'text-rose-400'} inline-block w-[10ch] text-right text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
                                     ({netBalanceLabel})
                                 </span>
                             </span>
@@ -320,7 +320,7 @@ export function Navbar({
                         title="Klik untuk melihat detail kepuasan"
                     >
                         <StatusItem 
-                            icon={<Smile className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-[#00FFAA]" />} 
+                            icon={<Smile className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
                             label="KEPUASAN" 
                             value={`${Math.round(kepuasanScore)}%`}
                             color={getKepuasanColor(kepuasanScore)}
@@ -333,7 +333,7 @@ export function Navbar({
                         title="Klik untuk melihat detail peringkat"
                     >
                         <StatusItem
-                            icon={<Star className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 fill-[#00FFAA] text-[#00FFAA]" />}
+                            icon={<Star className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 fill-root-accent text-root-accent" />}
                             label="PERINGKAT"
                             value={`${presidentRating}/100`}
                             color={getPresidentRatingColor(presidentRating)}
@@ -346,7 +346,7 @@ export function Navbar({
                         title="Klik untuk melihat detail kesejahteraan"
                     >
                         <StatusItem
-                            icon={<Activity className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-[#00FFAA]" />}
+                            icon={<Activity className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
                             label="KESEJAHTERAAN"
                             value={`${kesejahteraan}/100`}
                             color={getKesejahteraanColorClass(kesejahteraan)}
@@ -356,16 +356,16 @@ export function Navbar({
             </div>
 
             {/* 3. Right Side: Save & Restart Buttons */}
-            <div className="flex items-center gap-1.5 2xl:gap-2 shrink-0 relative z-20 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
+            <div className="flex items-center gap-1.5 2xl:gap-2 shrink-0 relative z-20 pointer-events-auto bg-root-surface border border-root-accent/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
                 <AttackDebugButton selectedCountry={selectedCountry} countryDetail={countryDetail} />
                 <div
                     role="status"
                     aria-label={`Zoom peta ${mapZoom.toFixed(1)} kali`}
                     title="Tingkat zoom peta"
-                    className="flex h-8 min-w-[48px] flex-col items-center justify-center rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] px-1.5 lg:h-9 lg:min-w-[54px] 2xl:h-10"
+                    className="flex h-8 min-w-[48px] flex-col items-center justify-center rounded-lg border border-root-accent/20 bg-root-canvas px-1.5 lg:h-9 lg:min-w-[54px] 2xl:h-10"
                 >
-                    <span className="text-[7px] font-bold leading-none tracking-wider text-[#6B8A8A]">ZOOM</span>
-                    <span className="text-[10px] font-black leading-tight tabular-nums text-[#00FFAA] lg:text-[11px]">
+                    <span className="text-[7px] font-bold leading-none tracking-wider text-root-subtle">ZOOM</span>
+                    <span className="text-[10px] font-black leading-tight tabular-nums text-root-accent lg:text-[11px]">
                         {mapZoom.toFixed(1)}x
                     </span>
                 </div>
@@ -373,7 +373,7 @@ export function Navbar({
                     onClick={onOpenSaveModal}
                     data-tutorial="tombol-simpan"
                     title="Simpan Game"
-                    className="flex items-center justify-center w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
+                    className="flex items-center justify-center w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-xl border border-root-accent/30 bg-root-canvas text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer"
                 >
                     <Save className="w-3.5 h-3.5 2xl:w-4 2xl:h-4" />
                 </button>
@@ -381,7 +381,7 @@ export function Navbar({
                 <button
                     onClick={onOpenRestartConfirm}
                     title="Atur Ulang Game"
-                    className="flex items-center justify-center w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
+                    className="flex items-center justify-center w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-xl border border-root-accent/30 bg-root-canvas text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer"
                 >
                     <RotateCcw className="w-3.5 h-3.5 2xl:w-4 2xl:h-4" />
                 </button>
@@ -391,14 +391,14 @@ export function Navbar({
 }
 
 // StatusItem
-function StatusItem({ icon, label, value, color = "text-[#E0E0E0]" }: { icon: React.ReactNode, label: string, value: React.ReactNode, color?: string }) {
+function StatusItem({ icon, label, value, color = "text-root-text" }: { icon: React.ReactNode, label: string, value: React.ReactNode, color?: string }) {
     return (
         <div className="flex items-center gap-1.5 lg:gap-2 2xl:gap-4 flex-shrink-0">
-            <div className="p-1 lg:p-1.5 2xl:p-2 bg-[#0F2424] rounded-lg 2xl:rounded-xl text-[#00FFAA] border border-[#00FFAA]/20">
+            <div className="p-1 lg:p-1.5 2xl:p-2 bg-root-surface rounded-lg 2xl:rounded-xl text-root-accent border border-root-accent/20">
                 {icon}
             </div>
             <div className="flex flex-col">
-                <span className="text-[7px] lg:text-[8px] xl:text-[9px] 2xl:text-[10px] font-black text-[#6B8A8A] tracking-widest uppercase leading-none mb-0.5 2xl:mb-1.5">
+                <span className="text-[7px] lg:text-[8px] xl:text-[9px] 2xl:text-[10px] font-black text-root-subtle tracking-widest uppercase leading-none mb-0.5 2xl:mb-1.5">
                     {label}
                 </span>
                 <span className={`text-[10px] lg:text-[11px] xl:text-[12px] 2xl:text-[13px] font-black tracking-tighter uppercase leading-none whitespace-nowrap ${color}`}>

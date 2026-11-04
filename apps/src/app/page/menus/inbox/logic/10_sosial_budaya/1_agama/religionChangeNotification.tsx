@@ -49,17 +49,17 @@ export default function ReligionChangeNotificationCard({ notification }: Props) 
           {notification.message}
         </p>
 
-        <div className="bg-[#0A1A1A] border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex items-center justify-between">
-          <span>Pergantian Keyakinan Negara: <strong className="text-slate-100">{fromReligion}</strong> ➔ <strong className="text-[#00FFAA]">{toReligion}</strong></span>
+        <div className="bg-root-canvas border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex items-center justify-between">
+          <span>Pergantian Keyakinan Negara: <strong className="text-slate-100">{fromReligion}</strong> ➔ <strong className="text-root-accent">{toReligion}</strong></span>
           <span className={isPositive ? 'text-emerald-400 font-black' : 'text-rose-400 font-black'}>
             Respon: {mood.toUpperCase()}
           </span>
         </div>
 
         {eventChain && eventChain.length > 0 && (
-          <div className="bg-[#0F2424] border border-[#00FFAA]/20 rounded-xl p-2.5 space-y-1.5 mt-2">
-            <span className="text-[10px] font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-[#00FFAA]" />
+          <div className="bg-root-surface border border-root-accent/20 rounded-xl p-2.5 space-y-1.5 mt-2">
+            <span className="text-[10px] font-black text-root-accent uppercase tracking-wider flex items-center gap-1">
+              <Sparkles className="w-3 h-3 text-root-accent" />
               Prediksi Dini Event Chain (7 Hari):
             </span>
             <div className="space-y-1">

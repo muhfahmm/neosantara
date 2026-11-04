@@ -199,7 +199,7 @@ export default function TopRightNewsIcon({
         );
       default:
         return (
-          <span className="text-[10px] font-extrabold text-[#00FFAA] bg-[#00FFAA]/10 px-2.5 py-0.5 rounded-full border border-[#00FFAA]/30 uppercase tracking-wider">
+          <span className="text-[10px] font-extrabold text-root-accent bg-root-accent/10 px-2.5 py-0.5 rounded-full border border-root-accent/30 uppercase tracking-wider">
             {typeLabels[type]}
           </span>
         );
@@ -228,7 +228,7 @@ export default function TopRightNewsIcon({
         );
       default:
         return (
-          <div className="w-10 h-10 rounded-xl bg-[#00FFAA]/10 border border-[#00FFAA]/30 text-[#00FFAA] flex items-center justify-center shrink-0 shadow-inner">
+          <div className="w-10 h-10 rounded-xl bg-root-accent/10 border border-root-accent/30 text-root-accent flex items-center justify-center shrink-0 shadow-inner">
             <Newspaper className="w-5 h-5" />
           </div>
         );
@@ -251,7 +251,7 @@ export default function TopRightNewsIcon({
           className="h-14 w-14 object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]"
         />
         {newsList.length > 0 && (
-          <span className="absolute -top-1 -right-1 flex h-4 w-4 lg:h-5 lg:w-5 items-center justify-center rounded-full bg-rose-500 text-[9px] lg:text-[10px] font-black text-white shadow-md border border-[#0F2424]">
+          <span className="absolute -top-1 -right-1 flex h-4 w-4 lg:h-5 lg:w-5 items-center justify-center rounded-full bg-rose-500 text-[9px] lg:text-[10px] font-black text-white shadow-md border border-root-surface">
             {newsList.length}
           </span>
         )}
@@ -277,11 +277,11 @@ export default function TopRightNewsIcon({
               setShowToast(false);
               if (onClick) onClick();
             }}
-            className="flex h-28 w-64 flex-col rounded-xl border-2 border-[#00FFAA] bg-[#0F2424] p-2.5 shadow-[0_8px_22px_rgba(0,255,170,0.3)] animate-in fade-in slide-in-from-top-3 duration-300 cursor-pointer hover:bg-[#143030] transition-all group"
+            className="flex h-28 w-64 flex-col rounded-xl border-2 border-root-accent bg-root-surface p-2.5 shadow-[0_8px_22px_rgba(0,255,170,0.3)] animate-in fade-in slide-in-from-top-3 duration-300 cursor-pointer hover:bg-[#143030] transition-all group"
           >
-            <div className="flex items-center justify-between pb-1.5 border-b border-[#00FFAA]/30">
-              <span className="text-[10px] font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#00FFAA] animate-ping" />
+            <div className="flex items-center justify-between pb-1.5 border-b border-root-accent/30">
+              <span className="text-[10px] font-black text-root-accent uppercase tracking-wider flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-root-accent animate-ping" />
                 Berita Geopolitik Baru!
               </span>
               <button
@@ -294,15 +294,15 @@ export default function TopRightNewsIcon({
                 }}
                 className="text-slate-400 hover:text-white p-0.5 rounded"
               >
-                <X className="w-3.5 h-3.5 text-[#00FFAA]" />
+                <X className="w-3.5 h-3.5 text-root-accent" />
               </button>
             </div>
-            <h5 className="mt-1.5 line-clamp-2 whitespace-normal break-words text-[11px] font-bold leading-snug text-white group-hover:text-[#00FFAA] transition-colors">
+            <h5 className="mt-1.5 line-clamp-2 whitespace-normal break-words text-[11px] font-bold leading-snug text-white group-hover:text-root-accent transition-colors">
               {toastNews.headline}
             </h5>
-            <div className="mt-auto flex items-center justify-between border-t border-[#00FFAA]/10 pt-1 text-[9px] text-[#6B8A8A]">
+            <div className="mt-auto flex items-center justify-between border-t border-root-accent/10 pt-1 text-[9px] text-root-subtle">
               <span>{toastNews.timestamp}</span>
-              <span className="font-extrabold text-[#00FFAA] group-hover:underline">Buka Menu →</span>
+              <span className="font-extrabold text-root-accent group-hover:underline">Buka Menu →</span>
             </div>
           </div>
         </div>,
@@ -315,12 +315,12 @@ export default function TopRightNewsIcon({
           <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden font-sans">
 
             {/* 🔥 HEADER MODAL */}
-            <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0 rounded-t-2xl">
+            <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0 rounded-t-2xl">
               <div className="flex items-center gap-2.5">
-                <div className="p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] shrink-0">
-                  <Newspaper className="h-4 w-4 text-[#00FFAA]" />
+                <div className="p-1.5 rounded-lg border border-root-accent/30 bg-root-surface shrink-0">
+                  <Newspaper className="h-4 w-4 text-root-accent" />
                 </div>
-                <h2 className="text-sm sm:text-base font-black text-[#00FFAA] tracking-wider uppercase">
+                <h2 className="text-sm sm:text-base font-black text-root-accent tracking-wider uppercase">
                   Berita & Update Geopolitik
                 </h2>
               </div>
@@ -328,11 +328,11 @@ export default function TopRightNewsIcon({
             </div>
 
             {/* 🔥 FILTER BAR */}
-            <div className="px-4 sm:px-6 py-2 bg-[#051111] border-b border-[#00FFAA]/15 flex items-center justify-between gap-2 shrink-0">
+            <div className="px-4 sm:px-6 py-2 bg-[#051111] border-b border-root-accent/15 flex items-center justify-between gap-2 shrink-0">
               <div className="min-w-0 space-y-2 overflow-x-auto custom-scrollbar">
                 <div className="flex items-center gap-1.5 sm:gap-2">
-                  <Filter className="w-3.5 h-3.5 text-[#6B8A8A] shrink-0" />
-                  <span className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-wider shrink-0 mr-1">Filter:</span>
+                  <Filter className="w-3.5 h-3.5 text-root-subtle shrink-0" />
+                  <span className="text-[10px] font-bold text-root-subtle uppercase tracking-wider shrink-0 mr-1">Filter:</span>
                   {([
                     ['semua', 'Semua'],
                     ['diplomasi', 'Diplomasi'],
@@ -348,8 +348,8 @@ export default function TopRightNewsIcon({
                       }}
                       className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer whitespace-nowrap ${
                         filterCategory === category
-                          ? 'bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20'
-                          : 'bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] border border-[#00FFAA]/20'
+                          ? 'bg-root-accent text-root-canvas shadow-md shadow-root-accent/20'
+                          : 'bg-root-surface text-root-subtle hover:text-root-accent border border-root-accent/20'
                       }`}
                     >
                       {label} ({category === 'semua'
@@ -364,8 +364,8 @@ export default function TopRightNewsIcon({
                       onClick={() => setFilterType('semua')}
                       className={`px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase transition-all cursor-pointer whitespace-nowrap ${
                         filterType === 'semua'
-                          ? 'bg-[#00FFAA]/20 text-[#00FFAA]'
-                          : 'bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA]'
+                          ? 'bg-root-accent/20 text-root-accent'
+                          : 'bg-root-surface text-root-subtle hover:text-root-accent'
                       }`}
                     >
                       Semua Subkategori
@@ -376,8 +376,8 @@ export default function TopRightNewsIcon({
                         onClick={() => setFilterType(type)}
                         className={`px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase transition-all cursor-pointer whitespace-nowrap ${
                           filterType === type
-                            ? 'bg-[#00FFAA]/20 text-[#00FFAA]'
-                            : 'bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA]'
+                            ? 'bg-root-accent/20 text-root-accent'
+                            : 'bg-root-surface text-root-subtle hover:text-root-accent'
                         }`}
                       >
                         {typeLabels[type]} ({newsList.filter(item => item.type === type).length})
@@ -397,11 +397,11 @@ export default function TopRightNewsIcon({
             </div>
 
             {/* 🔥 BODY MODAL */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0A1A1A] relative z-10 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-root-canvas relative z-10 custom-scrollbar">
               {filteredNews.length === 0 ? (
                 <div className="flex flex-col items-center justify-center text-center space-y-4 max-w-md mx-auto my-auto py-16">
-                  <Newspaper className="h-16 w-16 text-[#00FFAA]/20" />
-                  <h4 className="text-lg font-bold text-[#00FFAA] uppercase">Tidak Ada Berita</h4>
+                  <Newspaper className="h-16 w-16 text-root-accent/20" />
+                  <h4 className="text-lg font-bold text-root-accent uppercase">Tidak Ada Berita</h4>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -434,7 +434,7 @@ export default function TopRightNewsIcon({
                       role={canNavigate ? 'button' : undefined}
                       tabIndex={canNavigate ? 0 : undefined}
                       title={canOpenConstruction ? `Klik untuk melihat pembangunan di ${targetCountry}` : canOpenCountry ? `Klik untuk melihat negara ${targetCountry}` : canOpenParticipants ? 'Klik untuk melihat negara peserta' : undefined}
-                      className={`bg-[#0F2424] border border-[#00FFAA]/25 p-4 sm:p-5 rounded-2xl shadow-lg relative space-y-3 hover:border-[#00FFAA]/50 transition-all ${canNavigate ? 'cursor-pointer' : ''}`}
+                      className={`bg-root-surface border border-root-accent/25 p-4 sm:p-5 rounded-2xl shadow-lg relative space-y-3 hover:border-root-accent/50 transition-all ${canNavigate ? 'cursor-pointer' : ''}`}
                     >
                       <div className="flex items-start gap-3.5">
                         {renderIcon(news.type)}
@@ -447,7 +447,7 @@ export default function TopRightNewsIcon({
                             {renderBadge(news.type)}
                           </div>
 
-                          <div className="flex flex-wrap items-center gap-3 text-[10px] font-bold text-[#6B8A8A] uppercase tracking-wider">
+                          <div className="flex flex-wrap items-center gap-3 text-[10px] font-bold text-root-subtle uppercase tracking-wider">
                             {('attackerCountry' in news) && (
                               <>
                                 <span>Penyerang: <strong className="text-white">{news.attackerCountry}</strong></span>
@@ -489,7 +489,7 @@ export default function TopRightNewsIcon({
 
                           {canNavigate && (
                             <div className="pt-2 flex items-center justify-end">
-                              <span className="text-[10px] font-black text-[#00FFAA] group-hover:underline flex items-center gap-1">
+                              <span className="text-[10px] font-black text-root-accent group-hover:underline flex items-center gap-1">
                                 {canOpenConstruction ? 'Buka Menu Pembangunan / Kebijakan →' : canOpenCountry ? 'Buka Profil Negara →' : 'Buka Detail Operasi →'}
                               </span>
                             </div>
@@ -504,17 +504,17 @@ export default function TopRightNewsIcon({
             </div>
           {selectedOperationNews && (
             <div
-              className="fixed inset-0 z-[220] flex items-center justify-center bg-black/20 p-4 pointer-events-auto"
+              className="fixed inset-0 z-[220] flex items-center justify-center p-4 pointer-events-auto"
               onClick={() => setSelectedOperationNews(null)}
             >
               <section
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="pbb-operation-title"
-                className="w-full max-w-xl max-h-[80vh] overflow-hidden rounded-2xl border border-cyan-400/40 bg-[#0F2424] shadow-2xl"
+                className="w-full max-w-xl max-h-[80vh] overflow-hidden rounded-2xl border border-cyan-400/40 bg-root-surface shadow-2xl"
                 onClick={event => event.stopPropagation()}
               >
-                <header className="flex items-center justify-between gap-3 border-b border-cyan-400/20 bg-[#0A1A1A] px-5 py-4">
+                <header className="flex items-center justify-between gap-3 border-b border-cyan-400/20 bg-root-canvas px-5 py-4">
                   <div>
                     <h3 id="pbb-operation-title" className="font-black text-cyan-300">
                       Pasukan Operasi Gabungan PBB

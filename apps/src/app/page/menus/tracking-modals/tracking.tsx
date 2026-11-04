@@ -247,19 +247,19 @@ export default function DiplomacyTracking({ onOpen, isUiHidden = false }: Diplom
           <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden font-sans">
 
             {/* HEADER */}
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0 rounded-t-2xl">
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0 rounded-t-2xl">
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1 sm:p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] shrink-0">
-                  <Route className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+                <div className="p-1 sm:p-1.5 rounded-lg border border-root-accent/30 bg-root-surface shrink-0">
+                  <Route className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
                 </div>
                 <div>
                   <h2
                     id="diplomacy-tracking-title"
-                    className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase"
+                    className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase"
                   >
                     Pelacakan Aktivitas
                   </h2>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">
                     {activePaths.length} aktivitas berlangsung
                   </p>
                 </div>
@@ -268,9 +268,9 @@ export default function DiplomacyTracking({ onOpen, isUiHidden = false }: Diplom
             </div>
 
             {/* BODY */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0A1A1A] relative z-10 custom-scrollbar flex flex-col gap-3">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-root-canvas relative z-10 custom-scrollbar flex flex-col gap-3">
               {activePaths.length === 0 && (
-                <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0F2424]/70 px-5 py-8 text-center text-sm font-bold text-[#B9D7D1]">
+                <div className="rounded-xl border border-root-accent/20 bg-root-surface/70 px-5 py-8 text-center text-sm font-bold text-[#B9D7D1]">
                   Tidak ada aktivitas yang sedang berlangsung.
                 </div>
               )}
@@ -289,7 +289,7 @@ export default function DiplomacyTracking({ onOpen, isUiHidden = false }: Diplom
                 return (
                   <div
                     key={path.id}
-                    className="w-full shrink-0 rounded-xl border bg-[#0F2424]/80 px-4 py-4 shadow-lg sm:px-5"
+                    className="w-full shrink-0 rounded-xl border bg-root-surface/80 px-4 py-4 shadow-lg sm:px-5"
                     style={{ borderColor: `${details.accent}66` }}
                   >
                     <div className="mb-3 flex items-center justify-between gap-3 text-[10px] font-black uppercase tracking-wider sm:text-xs">

@@ -39,19 +39,19 @@ export default function CountryTargetModal({
   return (
     <NotebookModalWrapper onClose={onClose} zIndexClass="z-[200]">
       <div className="flex h-full flex-col overflow-hidden">
-        <div className="px-8 py-5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+        <div className="px-8 py-5 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#00FFAA]/10 rounded-xl border border-[#00FFAA]/30">
-              <FileText className="h-6 w-6 text-[#00FFAA]" />
+            <div className="p-2 bg-root-accent/10 rounded-xl border border-root-accent/30">
+              <FileText className="h-6 w-6 text-root-accent" />
             </div>
             <div>
               <h3 className={rootModalTypography.title}>Pilih Negara Target</h3>
-              <p className="text-xs text-[#6B8A8A] font-medium mt-0.5">Pilih benua, lalu pilih negara target Anda.</p>
+              <p className="text-xs text-root-subtle font-medium mt-0.5">Pilih benua, lalu pilih negara target Anda.</p>
             </div>
           </div>
           <RootModalCloseButton onClick={onClose} />
         </div>
-        <div className="flex-1 overflow-y-auto p-8 bg-[#0F2424] relative z-10 custom-scrollbar flex flex-col items-center">
+        <div className="flex-1 overflow-y-auto p-8 bg-root-surface relative z-10 custom-scrollbar flex flex-col items-center">
           <div className="w-full max-w-4xl">
             <div className="flex flex-wrap justify-center gap-2.5 mb-8">
               {Object.keys(groupedCountries).map((continent) => (
@@ -60,8 +60,8 @@ export default function CountryTargetModal({
                   onClick={() => setActiveContinent(continent)}
                   className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                     activeContinent === continent
-                      ? "bg-[#00FFAA] text-[#0A1A1A] shadow-lg shadow-[#00FFAA]/20"
-                      : "bg-[#0A1A1A] border border-[#00FFAA]/20 text-[#6B8A8A] hover:text-[#E0E0E0] hover:border-[#00FFAA]/40"
+                      ? "bg-root-accent text-root-canvas shadow-lg shadow-root-accent/20"
+                      : "bg-root-canvas border border-root-accent/20 text-root-subtle hover:text-root-text hover:border-root-accent/40"
                   }`}
                 >
                   {continent} ({groupedCountries[continent].length})
@@ -76,10 +76,10 @@ export default function CountryTargetModal({
                     <button
                       key={c.id}
                       onClick={() => onSelectTarget(c)}
-                      className="flex flex-col items-center p-3 rounded-xl border transition-all cursor-pointer bg-[#0A1A1A] border-[#00FFAA]/20 hover:border-[#00FFAA] hover:bg-[#00FFAA]/10"
+                      className="flex flex-col items-center p-3 rounded-xl border transition-all cursor-pointer bg-root-canvas border-root-accent/20 hover:border-root-accent hover:bg-root-accent/10"
                     >
                       {renderFlag(c.iso, c.name)}
-                      <span className="text-[11px] font-semibold mt-2 text-center leading-tight text-[#E0E0E0]">
+                      <span className="text-[11px] font-semibold mt-2 text-center leading-tight text-root-text">
                         {c.name}
                       </span>
                     </button>

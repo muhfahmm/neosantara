@@ -470,10 +470,10 @@ function PajakModalContent({
     {!isTaxPolicyInfoOpen && (
     <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-              <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+            <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+              <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
             </div>
             <div className="min-w-0">
               <h2 className={rootModalTypography.title}>
@@ -488,7 +488,7 @@ function PajakModalContent({
               onClick={() => setIsTaxPolicyInfoOpen(true)}
               title="Informasi kebijakan pajak"
               aria-label="Informasi kebijakan pajak"
-              className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]"
+              className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas"
             >
               <Info className="h-3.5 w-3.5" />
             </button>
@@ -496,7 +496,7 @@ function PajakModalContent({
               <button
                 type="button"
                 onClick={() => setIsConfirmDialogOpen(true)}
-                className="rounded-xl border border-[#00FFAA]/40 bg-[#00FFAA] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#071414] transition hover:bg-[#72ffd0] sm:px-4"
+                className="rounded-xl border border-root-accent/40 bg-root-accent px-3 py-2 text-[10px] font-black uppercase tracking-wider text-root-accent-ink transition hover:bg-[#72ffd0] sm:px-4"
               >
                 Konfirmasi
               </button>
@@ -512,14 +512,14 @@ function PajakModalContent({
           </div>
         )}
 
-        <div className="flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 neon-scrollbar">
+        <div className="flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-root-canvas/80 relative z-10 neon-scrollbar">
           <div className="space-y-5">
             {/* 1. PPN - Pajak Pertambahan Nilai */}
             <div className="space-y-2">
               <div className={`flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
                 <span>Pajak Pertambahan Nilai (PPN)</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-[#E0E0E0]">{tempRates.vat}%</span>
+                  <span className="text-root-text">{tempRates.vat}%</span>
                   <span className="text-emerald-400 font-black">
                     ({vatRevenue.toLocaleString("id-ID")} NEO)
                   </span>
@@ -551,7 +551,7 @@ function PajakModalContent({
                     parseInt((e.target as HTMLInputElement).value)
                   )
                 }
-                className="w-full accent-[#00FFAA] cursor-pointer"
+                className="w-full accent-root-accent cursor-pointer"
               />
             </div>
 
@@ -560,7 +560,7 @@ function PajakModalContent({
               <div className={`flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
                 <span>Pajak Korporasi</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-[#E0E0E0]">
+                  <span className="text-root-text">
                     {tempRates.corporate_tax}%
                   </span>
                   <span className="text-emerald-400 font-black">
@@ -594,7 +594,7 @@ function PajakModalContent({
                     parseInt((e.target as HTMLInputElement).value)
                   )
                 }
-                className="w-full accent-[#00FFAA] cursor-pointer"
+                className="w-full accent-root-accent cursor-pointer"
               />
             </div>
 
@@ -603,7 +603,7 @@ function PajakModalContent({
               <div className={`flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
                 <span>Pajak Penghasilan Pribadi</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-[#E0E0E0]">{tempRates.income_tax}%</span>
+                  <span className="text-root-text">{tempRates.income_tax}%</span>
                   <span className="text-emerald-400 font-black">
                     ({personalIncomeTaxRevenue.toLocaleString("id-ID")} NEO)
                   </span>
@@ -635,7 +635,7 @@ function PajakModalContent({
                     parseInt((e.target as HTMLInputElement).value)
                   )
                 }
-                className="w-full accent-[#00FFAA] cursor-pointer"
+                className="w-full accent-root-accent cursor-pointer"
               />
               {hasOrthodoxTaxBonus && (
                 <span className="inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
@@ -650,7 +650,7 @@ function PajakModalContent({
               <div className={`flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
                 <span>Cukai</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-[#E0E0E0]">
+                  <span className="text-root-text">
                     {tempRates.cigarette_tax}%
                   </span>
                   <span className="text-emerald-400 font-black">
@@ -684,7 +684,7 @@ function PajakModalContent({
                     parseInt((e.target as HTMLInputElement).value)
                   )
                 }
-                className="w-full accent-[#00FFAA] cursor-pointer"
+                className="w-full accent-root-accent cursor-pointer"
               />
             </div>
 
@@ -693,7 +693,7 @@ function PajakModalContent({
               <div className={`flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
                 <span>Pajak Lingkungan</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-[#E0E0E0]">
+                  <span className="text-root-text">
                     {tempRates.environment_tax}%
                   </span>
                   <span className="text-emerald-400 font-black">
@@ -727,7 +727,7 @@ function PajakModalContent({
                     parseInt((e.target as HTMLInputElement).value)
                   )
                 }
-                className="w-full accent-[#00FFAA] cursor-pointer"
+                className="w-full accent-root-accent cursor-pointer"
               />
               {hasBuddhaTaxBonus && (
                 <span className="inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
@@ -741,12 +741,12 @@ function PajakModalContent({
           {!forumDialogMode && (
           <>
           {/* Total Income Summary */}
-          <div className={`mt-8 p-5 ${rootBorderRadius.card} border border-[#00FFAA]/30 bg-[#0F2424]`}>
+          <div className={`mt-8 p-5 ${rootBorderRadius.card} border border-root-accent/30 bg-root-surface`}>
             <div className="flex justify-between items-center flex-wrap gap-2">
               <span className={`${rootModalTypography.sectionTitle} uppercase tracking-widest flex items-center gap-1.5`}>
                 Total Pendapatan Pajak
                 {hasKemenkeuBonus && (
-                  <span className="text-xs font-black text-[#00FFAA] normal-case">
+                  <span className="text-xs font-black text-root-accent normal-case">
                     + bonus ({kemenkeuTaxBonusPercent}%) =
                   </span>
                 )}
@@ -813,7 +813,7 @@ function PajakModalContent({
           </div>
 
           {/* ---- INDEKS KEPUASAN RAKYAT ---- */}
-          <div className={`mt-6 p-5 ${rootBorderRadius.card} border border-[#00FFAA]/30 bg-[#0F2424]`}>
+          <div className={`mt-6 p-5 ${rootBorderRadius.card} border border-root-accent/30 bg-root-surface`}>
             <div className="flex justify-between items-center">
               <span className={`${rootModalTypography.sectionTitle} uppercase tracking-widest`}>
                 Indeks Kepuasan Rakyat (Pajak)
@@ -822,7 +822,7 @@ function PajakModalContent({
                 {satisfaction} / 100
               </span>
             </div>
-            <div className="w-full h-3 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-full mt-3 overflow-hidden">
+            <div className="w-full h-3 bg-root-canvas border border-root-accent/20 rounded-full mt-3 overflow-hidden">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-200"
                 style={{ width: `${satisfaction}%` }}
@@ -832,7 +832,7 @@ function PajakModalContent({
 
           <p
             className={`mt-3 text-center text-xs font-bold ${
-              populationTaxModifier >= 0 ? "text-[#00FFAA]" : "text-rose-400"
+              populationTaxModifier >= 0 ? "text-root-accent" : "text-rose-400"
             }`}
           >
             Dampak populasi pajak: {populationTaxModifier >= 0 ? "+" : ""}
@@ -849,8 +849,8 @@ function PajakModalContent({
       onClose={() => setIsTaxPolicyInfoOpen(false)}
     />
     {isConfirmDialogOpen && createPortal(
-      <div className="fixed inset-0 z-[2147483647] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-        <div role="dialog" aria-modal="true" aria-labelledby="tax-confirm-title" className={`w-full max-w-md ${rootBorderRadius.card} border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-2xl`}>
+      <div className="fixed inset-0 z-[2147483647] flex items-center justify-center p-4 ">
+        <div role="dialog" aria-modal="true" aria-labelledby="tax-confirm-title" className={`w-full max-w-md ${rootBorderRadius.card} border border-root-accent/30 bg-root-canvas p-6 shadow-2xl`}>
           <h3 id="tax-confirm-title" className={rootModalTypography.title}>Konfirmasi tuntutan pajak</h3>
           <p className={`mt-2 ${rootModalTypography.body} break-words`}>
             {pendingTaxChanges.length > 0
@@ -858,7 +858,7 @@ function PajakModalContent({
               : "Belum ada perubahan tarif. Konfirmasi untuk kembali ke forum dialog."}
           </p>
           {pendingTaxChanges.length > 0 && (
-            <ul className="mt-3 space-y-1 text-sm text-[#00FFAA]">
+            <ul className="mt-3 space-y-1 text-sm text-root-accent">
               {pendingTaxChanges.map(([taxId, value]) => (
                 <li key={taxId}>{TAX_NAME_LABEL[taxId] ?? taxId}: {value}%</li>
               ))}
@@ -875,7 +875,7 @@ function PajakModalContent({
             <button
               type="button"
               onClick={confirmForumTaxChanges}
-              className="rounded-lg bg-[#00FFAA] px-4 py-2 text-xs font-bold text-[#071414] transition hover:bg-[#72ffd0]"
+              className="rounded-lg bg-root-accent px-4 py-2 text-xs font-bold text-root-accent-ink transition hover:bg-[#72ffd0]"
             >
               Ya, konfirmasi
             </button>

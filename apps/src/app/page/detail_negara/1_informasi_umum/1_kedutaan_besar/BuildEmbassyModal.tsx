@@ -37,37 +37,37 @@ export default function BuildEmbassyModal({ isOpen, countryName, continent, curr
         
         {/* Area Konten */}
         <div className="flex-1">
-          <h3 className="text-xl sm:text-2xl font-black text-[#00FFAA] tracking-wide uppercase mb-6 border-b border-[#00FFAA]/20 pb-4">
+          <h3 className="text-xl sm:text-2xl font-black text-root-accent tracking-wide uppercase mb-6 border-b border-root-accent/20 pb-4">
             Konfirmasi Bangun Kedutaan
           </h3>
           
-          <p className="text-sm sm:text-base text-[#E0E0E0] mb-4 leading-relaxed">
+          <p className="text-sm sm:text-base text-root-text mb-4 leading-relaxed">
             Apakah Anda ingin membangun kedutaan di <strong className="text-white">{countryName}</strong>? Biaya pembangunan di <strong className="text-white">{continentLabel}</strong> adalah {
               embassyCostDiscountPct > 0 ? (
-                <span><span className="line-through text-rose-400 mr-1">10 NEO</span><strong className="text-[#00FFAA]">{cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</strong></span>
-              ) : <strong className="text-[#00FFAA]">{cost} NEO</strong>
+                <span><span className="line-through text-rose-400 mr-1">10 NEO</span><strong className="text-root-accent">{cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</strong></span>
+              ) : <strong className="text-root-accent">{cost} NEO</strong>
             } dengan waktu pembangunan {
               discountPct > 0 ? (
                 <span>
                   <span className="line-through text-rose-400 mr-1">{buildTimeDays} hari</span>
-                  <strong className="text-[#00FFAA]">{effectiveBuildTimeDays} hari</strong>
+                  <strong className="text-root-accent">{effectiveBuildTimeDays} hari</strong>
                 </span>
               ) : (
-                <strong className="text-[#00FFAA]">{buildTimeDays} hari</strong>
+                <strong className="text-root-accent">{buildTimeDays} hari</strong>
               )
             }.
           </p>
           
-          <p className="text-sm sm:text-base text-[#6B8A8A] leading-relaxed">
-            Kas negara saat ini: <strong className="text-[#E0E0E0]">{currentBudget >= 0 ? '+' : ''}{formattedCurrentBudget} NEO</strong>. Setelah pembangunan, kas akan menjadi <strong className="text-[#00FFAA]">{budgetAfterBuild >= 0 ? '+' : ''}{formattedBudgetAfterBuild} NEO</strong>.
+          <p className="text-sm sm:text-base text-root-subtle leading-relaxed">
+            Kas negara saat ini: <strong className="text-root-text">{currentBudget >= 0 ? '+' : ''}{formattedCurrentBudget} NEO</strong>. Setelah pembangunan, kas akan menjadi <strong className="text-root-accent">{budgetAfterBuild >= 0 ? '+' : ''}{formattedBudgetAfterBuild} NEO</strong>.
           </p>
         </div>
 
         {/* Area Tombol (Diperkecil) */}
-        <div className="flex flex-col sm:flex-row gap-3 justify-end mt-6 pt-4 border-t border-[#00FFAA]/20">
+        <div className="flex flex-col sm:flex-row gap-3 justify-end mt-6 pt-4 border-t border-root-accent/20">
           <button
             onClick={onClose}
-            className="w-full sm:w-auto px-6 bg-[#0A1A1A] hover:bg-[#142A2A] border border-[#00FFAA]/30 rounded-xl py-2 text-center text-[#E0E0E0] font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
+            className="w-full sm:w-auto px-6 bg-root-canvas hover:bg-[#142A2A] border border-root-accent/30 rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
           >
             Batal
           </button>
@@ -78,8 +78,8 @@ export default function BuildEmbassyModal({ isOpen, countryName, continent, curr
             className={
               `w-full sm:w-auto px-6 rounded-xl py-2 text-center font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 shadow hover:shadow-md active:scale-[0.98] ${
                 hasBudget
-                  ? 'bg-[#00FFAA] hover:bg-[#00e699] text-[#0A1A1A] border border-[#00FFAA] cursor-pointer'
-                  : 'bg-[#0A1A1A] text-[#6B8A8A] border border-[#00FFAA]/20 opacity-40 cursor-not-allowed'
+                  ? 'bg-root-accent hover:bg-[#00e699] text-root-canvas border border-root-accent cursor-pointer'
+                  : 'bg-root-canvas text-root-subtle border border-root-accent/20 opacity-40 cursor-not-allowed'
               }`
             }
           >

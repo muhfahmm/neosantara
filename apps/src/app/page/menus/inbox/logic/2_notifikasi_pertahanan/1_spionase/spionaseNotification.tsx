@@ -35,7 +35,7 @@ export default function SpionaseNotificationCard({ notification, onAccept, onRej
           {notification.message}
         </p>
 
-        <div className="bg-[#0A1A1A] border border-purple-500/30 rounded-xl p-2.5 text-xs text-purple-300 font-bold flex items-center justify-between">
+        <div className="bg-root-canvas border border-purple-500/30 rounded-xl p-2.5 text-xs text-purple-300 font-bold flex items-center justify-between">
           <span>Dampak: {notification.effectText}</span>
           <span className="text-amber-400 font-black">Biaya Operasi: {notification.costEM} EM</span>
         </div>
@@ -60,7 +60,7 @@ export default function SpionaseNotificationCard({ notification, onAccept, onRej
               {onAccept && (
                 <button
                   onClick={onAccept}
-                  className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-[#00FFAA] hover:bg-emerald-400 text-[#0A1A1A] rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.3)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
+                  className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-root-accent hover:bg-emerald-400 text-root-canvas rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.3)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <ShieldAlert className="w-3.5 h-3.5" />
                   Tangkap Agen ({notification.costEM} EM)

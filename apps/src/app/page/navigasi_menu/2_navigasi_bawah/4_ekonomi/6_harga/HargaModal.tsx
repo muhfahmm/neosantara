@@ -77,22 +77,22 @@ const CommodityCard = React.memo(
     });
 
     return (
-      <div className={`border border-[#00FFAA]/30 bg-[#0A1A1A] p-3 lg:p-4 ${rootBorderRadius.card}`}>
+      <div className={`border border-root-accent/30 bg-root-canvas p-3 lg:p-4 ${rootBorderRadius.card}`}>
         <div className="flex items-center justify-between mb-2.5 lg:mb-3">
           <div>
-            <p className="text-xs lg:text-sm font-black text-[#00FFAA] uppercase">
+            <p className="text-xs lg:text-sm font-black text-root-accent uppercase">
               {formattedName}
             </p>
-            <p className="text-[11px] lg:text-xs text-[#6B8A8A]">
+            <p className="text-[11px] lg:text-xs text-root-subtle">
               Nilai saat ini:{" "}
-              <span className="font-bold text-[#E0E0E0]">
+              <span className="font-bold text-root-text">
                 {formattedValue}
               </span>
             </p>
             {showImpact && (
-              <p className="text-[11px] lg:text-xs text-[#6B8A8A] mt-1">
+              <p className="text-[11px] lg:text-xs text-root-subtle mt-1">
                 Dampak populasi:{" "}
-                <span className="font-bold text-[#00FFAA]">
+                <span className="font-bold text-root-accent">
                   {impact.toFixed(2)}% / bulan
                 </span>
               </p>
@@ -107,8 +107,8 @@ const CommodityCard = React.memo(
               onClick={() => onPriceChange(itemKey, option.value)}
               className={`px-2.5 lg:px-3 py-1.5 lg:py-2 rounded-lg border text-[10px] lg:text-xs font-black uppercase transition cursor-pointer ${
                 currentValue === option.value
-                  ? "bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA] font-bold"
-                  : "bg-[#0F2424] text-[#E0E0E0] border-[#00FFAA]/30 hover:border-[#00FFAA]"
+                  ? "bg-root-accent text-root-canvas border-root-accent font-bold"
+                  : "bg-root-surface text-root-text border-root-accent/30 hover:border-root-accent"
               }`}
             >
               {option.label}
@@ -549,10 +549,10 @@ function HargaModalContent({
     <>
     {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-              <Tag className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+            <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+              <Tag className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
             </div>
             <div className="min-w-0">
               <h2 className={rootModalTypography.title}>
@@ -562,14 +562,14 @@ function HargaModalContent({
           </div>
 
           <div className="flex items-center gap-2">
-            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi kontrol harga barang pokok" aria-label="Informasi kontrol harga barang pokok" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]">
+            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi kontrol harga barang pokok" aria-label="Informasi kontrol harga barang pokok" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas">
               <Info className="h-3.5 w-3.5" />
             </button>
             {forumDialogMode && (
               <button
                 type="button"
                 onClick={() => setIsConfirmDialogOpen(true)}
-                className="rounded-xl border border-[#00FFAA]/40 bg-[#00FFAA] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#071414] transition hover:bg-[#72ffd0] sm:px-4"
+                className="rounded-xl border border-root-accent/40 bg-root-accent px-3 py-2 text-[10px] font-black uppercase tracking-wider text-root-accent-ink transition hover:bg-[#72ffd0] sm:px-4"
               >
                 Konfirmasi
               </button>
@@ -578,10 +578,10 @@ function HargaModalContent({
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 lg:p-6 bg-[#0F2424] relative z-10 neon-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 lg:p-6 bg-root-surface relative z-10 neon-scrollbar">
           {loading ? (
-            <div className="flex items-center gap-2 text-sm text-[#00FFAA] mb-6">
-              <Loader2 className="h-4 w-4 animate-spin text-[#00FFAA]" />
+            <div className="flex items-center gap-2 text-sm text-root-accent mb-6">
+              <Loader2 className="h-4 w-4 animate-spin text-root-accent" />
               Memuat data harga negara...
             </div>
           ) : null}
@@ -590,7 +590,7 @@ function HargaModalContent({
 
           <div className="space-y-3 lg:space-y-4 mb-4 lg:mb-6">
             {priceEntries.length === 0 ? (
-              <p className="text-sm text-[#6B8A8A]">
+              <p className="text-sm text-root-subtle">
                 Belum ada data harga yang tersedia untuk negara ini.
               </p>
             ) : (
@@ -615,8 +615,8 @@ function HargaModalContent({
               subsidyActive
                 ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300 cursor-not-allowed"
                 : anggaran < SUBSIDY_COST
-                  ? "bg-[#0F2424] border-[#00FFAA]/20 text-[#6B8A8A] cursor-not-allowed"
-                  : "bg-[#00FFAA]/15 border-[#00FFAA]/50 text-[#00FFAA] hover:bg-[#00FFAA]/25"
+                  ? "bg-root-surface border-root-accent/20 text-root-subtle cursor-not-allowed"
+                  : "bg-root-accent/15 border-root-accent/50 text-root-accent hover:bg-root-accent/25"
             }`}
           >
             {subsidyActive
@@ -628,18 +628,18 @@ function HargaModalContent({
 
           {/* ---- INDEKS KEPUASAN RAKYAT (HARGA) ---- */}
           {!forumDialogMode && (
-          <div className={`mt-4 border border-[#00FFAA]/30 bg-[#0A1A1A] p-4 lg:mt-6 lg:p-5 ${rootBorderRadius.card}`}>
+          <div className={`mt-4 border border-root-accent/30 bg-root-canvas p-4 lg:mt-6 lg:p-5 ${rootBorderRadius.card}`}>
             <div className="flex justify-between items-center">
-              <span className="text-[11px] lg:text-xs font-black text-[#00FFAA] uppercase tracking-widest">
+              <span className="text-[11px] lg:text-xs font-black text-root-accent uppercase tracking-widest">
                 Indeks Kepuasan Rakyat (Harga Pokok)
               </span>
-              <span className="text-xl lg:text-2xl font-black text-[#00FFAA]">
+              <span className="text-xl lg:text-2xl font-black text-root-accent">
                 {satisfaction} / 100
               </span>
             </div>
-            <div className="w-full h-2.5 lg:h-3 bg-[#0F2424] border border-[#00FFAA]/20 rounded-full mt-2.5 lg:mt-3 overflow-hidden">
+            <div className="w-full h-2.5 lg:h-3 bg-root-surface border border-root-accent/20 rounded-full mt-2.5 lg:mt-3 overflow-hidden">
               <div
-                className="h-full rounded-full bg-[#00FFAA] transition-all duration-200"
+                className="h-full rounded-full bg-root-accent transition-all duration-200"
                 style={{ width: `${satisfaction}%` }}
               />
             </div>
@@ -647,7 +647,7 @@ function HargaModalContent({
               <p
                 className={`mt-3 text-center text-xs font-bold ${
                   avgCommodityModifier >= 0
-                    ? "text-[#00FFAA]"
+                    ? "text-root-accent"
                     : "text-rose-400"
                 }`}
               >
@@ -668,8 +668,8 @@ function HargaModalContent({
       description="Atur harga nasional untuk setiap barang pokok. Harga memengaruhi kepuasan rakyat dan dampak populasi; subsidi harga dapat membantu menekan beban, dengan biaya dari anggaran negara."
     />
     {isConfirmDialogOpen && createPortal(
-      <div className="fixed inset-0 z-[2147483647] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-        <div role="dialog" aria-modal="true" aria-labelledby="price-confirm-title" className={`w-full max-w-md border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-2xl ${rootBorderRadius.card}`}>
+      <div className="fixed inset-0 z-[2147483647] flex items-center justify-center p-4 ">
+        <div role="dialog" aria-modal="true" aria-labelledby="price-confirm-title" className={`w-full max-w-md border border-root-accent/30 bg-root-canvas p-6 shadow-2xl ${rootBorderRadius.card}`}>
           <h3 id="price-confirm-title" className="text-lg font-bold text-white">Konfirmasi kebijakan harga</h3>
           <p className="mt-2 text-sm text-slate-300">
             {pendingPriceChanges.length > 0
@@ -677,7 +677,7 @@ function HargaModalContent({
               : "Belum ada perubahan harga. Konfirmasi untuk kembali ke forum dialog."}
           </p>
           {pendingPriceChanges.length > 0 && (
-            <ul className="mt-3 space-y-1 text-sm text-[#00FFAA]">
+            <ul className="mt-3 space-y-1 text-sm text-root-accent">
               {pendingPriceChanges.map(([key, value]) => (
                 <li key={key}>{key.replace("harga_", "").replace(/_/g, " ")}: {value.toLocaleString("id-ID")}</li>
               ))}
@@ -685,7 +685,7 @@ function HargaModalContent({
           )}
           <div className="mt-6 flex justify-end gap-2">
             <button type="button" onClick={() => setIsConfirmDialogOpen(false)} className="rounded-lg border border-slate-600 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:text-white">Kembali</button>
-            <button type="button" onClick={confirmForumPriceChanges} className="rounded-lg bg-[#00FFAA] px-4 py-2 text-xs font-bold text-[#071414] transition hover:bg-[#72ffd0]">Ya, konfirmasi</button>
+            <button type="button" onClick={confirmForumPriceChanges} className="rounded-lg bg-root-accent px-4 py-2 text-xs font-bold text-root-accent-ink transition hover:bg-[#72ffd0]">Ya, konfirmasi</button>
           </div>
         </div>
       </div>,

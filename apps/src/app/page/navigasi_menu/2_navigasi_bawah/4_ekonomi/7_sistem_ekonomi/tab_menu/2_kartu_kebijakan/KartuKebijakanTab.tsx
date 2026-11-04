@@ -20,10 +20,10 @@ const PolicyCard = memo(function PolicyCard({
 }) {
   return (
     <div
-      className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-3 lg:p-3.5 2xl:p-4 space-y-2"
+      className="bg-root-canvas border border-root-accent/20 rounded-xl p-3 lg:p-3.5 2xl:p-4 space-y-2"
     >
       <div>
-        <h4 className="text-xs lg:text-sm font-black text-[#E0E0E0] uppercase tracking-wider">{policy.name}</h4>
+        <h4 className="text-xs lg:text-sm font-black text-root-text uppercase tracking-wider">{policy.name}</h4>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 lg:gap-2.5 pt-0.5">
@@ -35,8 +35,8 @@ const PolicyCard = memo(function PolicyCard({
           }}
           className={`p-2.5 lg:p-3 rounded-xl border text-left cursor-pointer flex flex-col justify-between ${
             currentChoice === "A"
-              ? "bg-[#00FFAA]/15 border-[#00FFAA] text-[#00FFAA]"
-              : "bg-[#0F2424] border-[#00FFAA]/15 text-[#6B8A8A] hover:border-[#00FFAA]/40"
+              ? "bg-root-accent/15 border-root-accent text-root-accent"
+              : "bg-root-surface border-root-accent/15 text-root-subtle hover:border-root-accent/40"
           }`}
         >
           <div className="flex items-center justify-between w-full mb-1">
@@ -56,8 +56,8 @@ const PolicyCard = memo(function PolicyCard({
           }}
           className={`p-2.5 lg:p-3 rounded-xl border text-left cursor-pointer flex flex-col justify-between ${
             currentChoice === "B"
-              ? "bg-[#00FFAA]/15 border-[#00FFAA] text-[#00FFAA]"
-              : "bg-[#0F2424] border-[#00FFAA]/15 text-[#6B8A8A] hover:border-[#00FFAA]/40"
+              ? "bg-root-accent/15 border-root-accent text-root-accent"
+              : "bg-root-surface border-root-accent/15 text-root-subtle hover:border-root-accent/40"
           }`}
         >
           <div className="flex items-center justify-between w-full mb-1">

@@ -72,9 +72,9 @@ export default function DetailKonsumsiTerestimasiModal({
       <div className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
 
         {/* HEADER */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-rose-500/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-rose-500/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-rose-500/40 text-rose-400 shrink-0">
+            <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-rose-500/40 text-rose-400 shrink-0">
               <Zap className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
             <div>
@@ -86,7 +86,7 @@ export default function DetailKonsumsiTerestimasiModal({
         </div>
 
         {/* BODY */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0A1A1A]/90 relative z-10 custom-scrollbar space-y-6">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-root-canvas/90 relative z-10 custom-scrollbar space-y-6">
 
           {/* CARD SUMMARY GRID: ROW 1 (3 KARTU UTAMA) */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
@@ -99,7 +99,7 @@ export default function DetailKonsumsiTerestimasiModal({
                   <p className="text-[9px] font-black uppercase tracking-wider text-emerald-400">Total Produksi Listrik</p>
                 </div>
                 <p className="text-base sm:text-lg font-black text-emerald-400 mt-1 break-words">
-                  {totalProductionMW.toLocaleString("id-ID", { maximumFractionDigits: 2 })} <span className="text-xs font-bold text-[#6B8A8A]">MW</span>
+                  {totalProductionMW.toLocaleString("id-ID", { maximumFractionDigits: 2 })} <span className="text-xs font-bold text-root-subtle">MW</span>
                 </p>
               </div>
               <p className="text-[9px] text-emerald-300/70 mt-1.5 font-medium">Pembangkit aktif</p>
@@ -113,7 +113,7 @@ export default function DetailKonsumsiTerestimasiModal({
                   <p className="text-[9px] font-black uppercase tracking-wider text-rose-400">Total Konsumsi Terestimasi</p>
                 </div>
                 <p className="text-base sm:text-lg font-black text-rose-400 mt-1 break-words">
-                  {totalAllBreakdownConsumption.toLocaleString("id-ID", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} <span className="text-xs font-bold text-[#6B8A8A]">MW</span>
+                  {totalAllBreakdownConsumption.toLocaleString("id-ID", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} <span className="text-xs font-bold text-root-subtle">MW</span>
                 </p>
               </div>
               <p className="text-[9px] text-rose-300/70 mt-1.5 font-medium">Beban energi nasional</p>
@@ -127,7 +127,7 @@ export default function DetailKonsumsiTerestimasiModal({
                   <p className={`text-[9px] font-black uppercase tracking-wider ${nettoMW >= 0 ? 'text-cyan-400' : 'text-amber-400'}`}>Total Netto Listrik</p>
                 </div>
                 <p className={`text-base sm:text-lg font-black mt-1 break-words ${nettoMW >= 0 ? 'text-cyan-400' : 'text-rose-400'}`}>
-                  {nettoMW >= 0 ? '+' : ''}{nettoMW.toLocaleString("id-ID", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} <span className="text-xs font-bold text-[#6B8A8A]">MW</span>
+                  {nettoMW >= 0 ? '+' : ''}{nettoMW.toLocaleString("id-ID", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} <span className="text-xs font-bold text-root-subtle">MW</span>
                 </p>
               </div>
               <p className={`text-[9px] mt-1.5 font-medium ${nettoMW >= 0 ? 'text-cyan-300/70' : 'text-amber-300/70'}`}>
@@ -141,73 +141,73 @@ export default function DetailKonsumsiTerestimasiModal({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
 
             {/* Sektor Produksi */}
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3.5 rounded-xl flex flex-col justify-between">
+            <div className="bg-root-canvas border border-root-accent/20 p-3.5 rounded-xl flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-1 mb-1">
-                  <Factory className="w-3.5 h-3.5 text-[#00FFAA]" />
-                  <p className="text-[9px] font-black uppercase tracking-wider text-[#6B8A8A]">Produksi & Tambang</p>
+                  <Factory className="w-3.5 h-3.5 text-root-accent" />
+                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Produksi & Tambang</p>
                 </div>
-                <p className="text-base sm:text-lg font-black text-[#00FFAA]">
-                  {totalProduksiConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold text-[#6B8A8A]">MW</span>
+                <p className="text-base sm:text-lg font-black text-root-accent">
+                  {totalProduksiConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold text-root-subtle">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-[#6B8A8A] mt-1.5 font-medium">{produksiBreakdown.filter(p => p.count > 0).length} jenis industri</p>
+              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{produksiBreakdown.filter(p => p.count > 0).length} jenis industri</p>
             </div>
 
             {/* Sektor Tempat Umum */}
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3.5 rounded-xl flex flex-col justify-between">
+            <div className="bg-root-canvas border border-root-accent/20 p-3.5 rounded-xl flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-1 mb-1">
-                  <Building2 className="w-3.5 h-3.5 text-[#00FFAA]" />
-                  <p className="text-[9px] font-black uppercase tracking-wider text-[#6B8A8A]">Tempat Umum</p>
+                  <Building2 className="w-3.5 h-3.5 text-root-accent" />
+                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Tempat Umum</p>
                 </div>
-                <p className="text-base sm:text-lg font-black text-[#00FFAA]">
-                  {totalTempatUmumConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold text-[#6B8A8A]">MW</span>
+                <p className="text-base sm:text-lg font-black text-root-accent">
+                  {totalTempatUmumConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold text-root-subtle">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-[#6B8A8A] mt-1.5 font-medium">{tempatUmumBreakdown.filter(t => t.count > 0).length} fasilitas publik</p>
+              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{tempatUmumBreakdown.filter(t => t.count > 0).length} fasilitas publik</p>
             </div>
 
             {/* Sektor Pertahanan & Keamanan */}
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3.5 rounded-xl flex flex-col justify-between">
+            <div className="bg-root-canvas border border-root-accent/20 p-3.5 rounded-xl flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-1 mb-1">
-                  <Shield className="w-3.5 h-3.5 text-[#00FFAA]" />
-                  <p className="text-[9px] font-black uppercase tracking-wider text-[#6B8A8A]">Pertahanan & Keamanan</p>
+                  <Shield className="w-3.5 h-3.5 text-root-accent" />
+                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Pertahanan & Keamanan</p>
                 </div>
-                <p className="text-base sm:text-lg font-black text-[#00FFAA]">
-                  {totalPertahananConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold text-[#6B8A8A]">MW</span>
+                <p className="text-base sm:text-lg font-black text-root-accent">
+                  {totalPertahananConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold text-root-subtle">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-[#6B8A8A] mt-1.5 font-medium">{pertahananBreakdown.filter(p => p.count > 0).length} pangkalan & infrastruktur</p>
+              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{pertahananBreakdown.filter(p => p.count > 0).length} pangkalan & infrastruktur</p>
             </div>
 
             {/* Sektor Hunian */}
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3.5 rounded-xl flex flex-col justify-between">
+            <div className="bg-root-canvas border border-root-accent/20 p-3.5 rounded-xl flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-1 mb-1">
-                  <Home className="w-3.5 h-3.5 text-[#00FFAA]" />
-                  <p className="text-[9px] font-black uppercase tracking-wider text-[#6B8A8A]">Hunian & Permukiman</p>
+                  <Home className="w-3.5 h-3.5 text-root-accent" />
+                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Hunian & Permukiman</p>
                 </div>
-                <p className="text-base sm:text-lg font-black text-[#00FFAA]">
-                  {totalHunianConsumption.toLocaleString("id-ID", { maximumFractionDigits: 2 })} <span className="text-xs font-bold text-[#6B8A8A]">MW</span>
+                <p className="text-base sm:text-lg font-black text-root-accent">
+                  {totalHunianConsumption.toLocaleString("id-ID", { maximumFractionDigits: 2 })} <span className="text-xs font-bold text-root-subtle">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-[#6B8A8A] mt-1.5 font-medium">Beban rumah tangga</p>
+              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">Beban rumah tangga</p>
             </div>
 
           </div>
 
           {/* FILTER & SEARCH TABS */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#0A1A1A] p-2.5 rounded-xl border border-[#00FFAA]/20">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-root-canvas p-2.5 rounded-xl border border-root-accent/20">
             {/* TAB BUTTONS */}
             <div className="flex items-center gap-1 overflow-x-auto custom-scrollbar pb-1 sm:pb-0">
               <button
                 onClick={() => setActiveTab("semua")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === "semua"
-                    ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
-                    : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#0F2424]/80"
+                    ? "bg-root-accent text-root-canvas shadow-md"
+                    : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
                 }`}
               >
                 Semua Sektor
@@ -216,8 +216,8 @@ export default function DetailKonsumsiTerestimasiModal({
                 onClick={() => setActiveTab("produksi")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === "produksi"
-                    ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
-                    : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#0F2424]/80"
+                    ? "bg-root-accent text-root-canvas shadow-md"
+                    : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
                 }`}
               >
                 Produksi
@@ -226,8 +226,8 @@ export default function DetailKonsumsiTerestimasiModal({
                 onClick={() => setActiveTab("tempat_umum")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === "tempat_umum"
-                    ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
-                    : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#0F2424]/80"
+                    ? "bg-root-accent text-root-canvas shadow-md"
+                    : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
                 }`}
               >
                 Tempat Umum
@@ -236,8 +236,8 @@ export default function DetailKonsumsiTerestimasiModal({
                 onClick={() => setActiveTab("pertahanan")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === "pertahanan"
-                    ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
-                    : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#0F2424]/80"
+                    ? "bg-root-accent text-root-canvas shadow-md"
+                    : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
                 }`}
               >
                 Pertahanan & Keamanan
@@ -246,8 +246,8 @@ export default function DetailKonsumsiTerestimasiModal({
                 onClick={() => setActiveTab("hunian")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === "hunian"
-                    ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
-                    : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#0F2424]/80"
+                    ? "bg-root-accent text-root-canvas shadow-md"
+                    : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
                 }`}
               >
                 Hunian
@@ -256,13 +256,13 @@ export default function DetailKonsumsiTerestimasiModal({
 
             {/* SEARCH BOX */}
             <div className="relative min-w-[180px]">
-              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#6B8A8A]" />
+              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-root-subtle" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cari fasilitas..."
-                className="w-full bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg pl-8 pr-3 py-1.5 text-xs text-[#E0E0E0] placeholder-[#6B8A8A] focus:outline-none focus:border-[#00FFAA]"
+                className="w-full bg-root-surface border border-root-accent/30 rounded-lg pl-8 pr-3 py-1.5 text-xs text-root-text placeholder-root-subtle focus:outline-none focus:border-root-accent"
               />
             </div>
           </div>
@@ -274,26 +274,26 @@ export default function DetailKonsumsiTerestimasiModal({
                 <div
                   key={`${item.category}-${item.key}`}
                   onClick={() => onNavigateToMenu?.(item.category, item.key)}
-                  className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3.5 rounded-xl flex flex-col justify-between hover:border-[#00FFAA] hover:bg-[#0F2424]/80 transition-all cursor-pointer group shadow-sm hover:shadow-[#00FFAA]/10"
+                  className="bg-root-canvas border border-root-accent/20 p-3.5 rounded-xl flex flex-col justify-between hover:border-root-accent hover:bg-root-surface/80 transition-all cursor-pointer group shadow-sm hover:shadow-root-accent/10"
                 >
                   <div>
                     <div className="flex items-start justify-between gap-2 mb-1.5">
-                      <span className="text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider leading-tight">
+                      <span className="text-[10px] font-black uppercase text-root-subtle tracking-wider leading-tight">
                         {item.sector}
                       </span>
-                      <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-[#0F2424] border border-[#00FFAA]/20 text-[#00FFAA] shrink-0">
+                      <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-root-surface border border-root-accent/20 text-root-accent shrink-0">
                         {item.count.toLocaleString("id-ID", { maximumFractionDigits: 2 })} unit
                       </span>
                     </div>
-                    <h4 className="text-xs sm:text-sm font-black text-[#E0E0E0] uppercase tracking-wide leading-snug">
+                    <h4 className="text-xs sm:text-sm font-black text-root-text uppercase tracking-wide leading-snug">
                       {item.label}
                     </h4>
                   </div>
 
-                  <div className="border-t border-[#00FFAA]/10 mt-3 pt-2 flex items-center justify-between">
+                  <div className="border-t border-root-accent/10 mt-3 pt-2 flex items-center justify-between">
                     <div>
-                      <p className="text-[9px] text-[#6B8A8A]">Konsumsi / Unit:</p>
-                      <p className="text-xs font-bold text-[#E0E0E0]">
+                      <p className="text-[9px] text-root-subtle">Konsumsi / Unit:</p>
+                      <p className="text-xs font-bold text-root-text">
                         {item.rate.toLocaleString("id-ID", { maximumFractionDigits: 4 })} MW
                       </p>
                     </div>
@@ -307,8 +307,8 @@ export default function DetailKonsumsiTerestimasiModal({
                 </div>
               ))
             ) : (
-              <div className="col-span-full py-12 text-center bg-[#0A1A1A] border border-[#00FFAA]/10 rounded-xl">
-                <p className="text-xs text-[#6B8A8A] font-bold uppercase tracking-wider">Tidak ada fasilitas yang sesuai kriteria pencarian.</p>
+              <div className="col-span-full py-12 text-center bg-root-canvas border border-root-accent/10 rounded-xl">
+                <p className="text-xs text-root-subtle font-bold uppercase tracking-wider">Tidak ada fasilitas yang sesuai kriteria pencarian.</p>
               </div>
             )}
           </div>

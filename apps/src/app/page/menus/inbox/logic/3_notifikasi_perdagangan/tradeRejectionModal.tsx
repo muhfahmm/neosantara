@@ -68,13 +68,13 @@ export default function TradeRejectionModal({
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-sm"
+        className="fixed inset-0 z-[9998] "
         onClick={onClose}
       />
 
       {/* Modal Container */}
       <div className="fixed inset-0 z-[9999] flex items-center justify-center pt-[100px] pb-[20px] px-4 pointer-events-none">
-        <div className="relative w-full max-w-2xl bg-gradient-to-br from-[#0A1A1A] via-[#0F2424] to-[#0A1A1A] border border-red-500/30 rounded-2xl shadow-2xl overflow-hidden pointer-events-auto">
+        <div className="relative w-full max-w-2xl bg-gradient-to-br from-root-canvas via-root-surface to-root-canvas border border-red-500/30 rounded-2xl shadow-2xl overflow-hidden pointer-events-auto">
           {/* Header */}
           <div className="relative px-6 py-5 bg-gradient-to-r from-red-900/20 to-transparent border-b border-red-500/20 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -105,7 +105,7 @@ export default function TradeRejectionModal({
               </div>
 
               {/* Partner Info */}
-              <div className="p-3 rounded-lg bg-[#0F2424] border border-slate-700/40 flex items-center justify-between">
+              <div className="p-3 rounded-lg bg-root-surface border border-slate-700/40 flex items-center justify-between">
                 <div>
                   <p className="text-xs text-slate-400 uppercase tracking-wider">
                     Mitra Perdagangan
@@ -137,8 +137,8 @@ export default function TradeRejectionModal({
                       key={idx}
                       className="flex gap-3 p-3 rounded-lg bg-slate-900/30 border border-slate-700/40"
                     >
-                      <div className="flex-shrink-0 w-5 h-5 rounded-full bg-[#00FFAA]/20 border border-[#00FFAA]/40 flex items-center justify-center mt-0.5">
-                        <span className="text-[10px] font-bold text-[#00FFAA]">
+                      <div className="flex-shrink-0 w-5 h-5 rounded-full bg-root-accent/20 border border-root-accent/40 flex items-center justify-center mt-0.5">
+                        <span className="text-[10px] font-bold text-root-accent">
                           {idx + 1}
                         </span>
                       </div>

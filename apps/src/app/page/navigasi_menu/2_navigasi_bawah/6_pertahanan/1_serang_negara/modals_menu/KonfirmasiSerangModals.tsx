@@ -246,67 +246,67 @@ export default function SerangModals({
   );
 
   const content = (
-    <div className="fixed inset-0 z-[9999999] flex flex-col bg-[#0F2424] font-sans select-none overflow-hidden animate-in fade-in duration-200">
-      <div className="w-full h-full flex flex-col bg-[#0F2424] relative">
+    <div className="fixed inset-0 z-[9999999] flex flex-col bg-root-surface font-sans select-none overflow-hidden animate-in fade-in duration-200">
+      <div className="w-full h-full flex flex-col bg-root-surface relative">
         {/* HEADER HALAMAN KONFIRMASI SERANG */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
           <div className="flex items-center gap-4 lg:gap-8">
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
+              <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
                 <Swords className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
               </div>
               <div>
-                <h3 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Konfirmasi Serangan</h3>
+                <h3 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Konfirmasi Serangan</h3>
               </div>
             </div>
-            <div className="hidden sm:flex items-center gap-2 ml-4 lg:ml-8 pl-4 lg:pl-8 border-l border-[#00FFAA]/30">
-              <span className="text-[10px] lg:text-[11px] font-black uppercase tracking-wider text-[#6B8A8A]">
+            <div className="hidden sm:flex items-center gap-2 ml-4 lg:ml-8 pl-4 lg:pl-8 border-l border-root-accent/30">
+              <span className="text-[10px] lg:text-[11px] font-black uppercase tracking-wider text-root-subtle">
                 {attackerName} &rarr; {targetName}
               </span>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
+          <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* BODY MODAL */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] relative z-10 neon-scrollbar flex flex-col">
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-root-surface relative z-10 neon-scrollbar flex flex-col">
           <div className="w-full space-y-6">
 
             {/* BAGIAN 1: PERBANDINGAN TOTAL KEKUATAN */}
-            <div className="flex flex-col bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl shadow-sm gap-4">
+            <div className="flex flex-col bg-root-canvas border border-root-accent/20 p-6 rounded-2xl shadow-sm gap-4">
               
               <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
                 
                 {/* KARTU KIRI: PENYERANG */}
-                <div className="flex-1 w-full flex flex-col items-center text-center space-y-2 p-4 rounded-xl bg-[#0F2424] border border-[#00FFAA]/20">
-                  <div className="p-2.5 rounded-full bg-[#00FFAA]/10 border border-[#00FFAA]/30">
-                    <Shield className="w-6 h-6 text-[#00FFAA]" />
+                <div className="flex-1 w-full flex flex-col items-center text-center space-y-2 p-4 rounded-xl bg-root-surface border border-root-accent/20">
+                  <div className="p-2.5 rounded-full bg-root-accent/10 border border-root-accent/30">
+                    <Shield className="w-6 h-6 text-root-accent" />
                   </div>
-                  <p className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">Pasukan Penyerang</p>
-                  <p className="text-xl font-black text-[#00FFAA]">{attackerName}</p>
-                  <p className="text-xs text-[#E0E0E0]">
-                    Kekuatan: <span className="font-black text-[#00FFAA]">{formatNumber(attackerTotalPower)}</span>
+                  <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">Pasukan Penyerang</p>
+                  <p className="text-xl font-black text-root-accent">{attackerName}</p>
+                  <p className="text-xs text-root-text">
+                    Kekuatan: <span className="font-black text-root-accent">{formatNumber(attackerTotalPower)}</span>
                   </p>
                 </div>
 
                 {/* ELEMEN TENGAH: VS */}
                 <div className="flex items-center justify-center py-2 md:py-0">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#00FFAA]/30 bg-[#0F2424] text-xl font-black text-[#00FFAA] shadow-sm">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-root-accent/30 bg-root-surface text-xl font-black text-root-accent shadow-sm">
                     VS
                   </div>
                 </div>
 
                 {/* KARTU KANAN: TARGET */}
-                <div className="flex-1 w-full flex flex-col items-center text-center space-y-2 p-4 rounded-xl bg-[#0F2424] border border-rose-500/20">
+                <div className="flex-1 w-full flex flex-col items-center text-center space-y-2 p-4 rounded-xl bg-root-surface border border-rose-500/20">
                   <div className="p-2.5 rounded-full bg-rose-500/10 border border-rose-500/30">
                     <Shield className="w-6 h-6 text-rose-400" />
                   </div>
-                  <p className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">Pasukan Target</p>
+                  <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">Pasukan Target</p>
                   <p className="text-xl font-black text-rose-400">{targetName}</p>
-                  <p className="text-xs text-[#E0E0E0]">
+                  <p className="text-xs text-root-text">
                     Kekuatan: <span className="font-black text-rose-400">{formatNumber(targetTotalPower)}</span>
                   </p>
                 </div>
@@ -317,22 +317,22 @@ export default function SerangModals({
             <TravelFuelCostPanel status={travelFuelStatus} label="Bahan bakar serangan" />
 
             {/* BAGIAN 2: RINCIAN PASUKAN PER MATRA */}
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl shadow-sm space-y-4">
+            <div className="bg-root-canvas border border-root-accent/20 p-6 rounded-2xl shadow-sm space-y-4">
               {/* BUTTON OTOMATISASI GLOBAL */}
-              <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-[#0F2424] border border-[#00FFAA]/20">
-                <span className="text-xs font-black text-[#00FFAA] uppercase tracking-wider">
+              <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-root-surface border border-root-accent/20">
+                <span className="text-xs font-black text-root-accent uppercase tracking-wider">
                   ⚡ OTOMATISASI PENGERAHAN PASUKAN:
                 </span>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleSetAllGlobalPct(100)}
-                    className="px-3 py-1.5 rounded-lg bg-[#00FFAA] text-[#050B0B] hover:bg-[#00FFBB] font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer shadow-md active:scale-95"
+                    className="px-3 py-1.5 rounded-lg bg-root-accent text-[#050B0B] hover:bg-[#00FFBB] font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer shadow-md active:scale-95"
                   >
                     Kerahkan Semua (100%)
                   </button>
                   <button
                     onClick={() => handleSetAllGlobalPct(0)}
-                    className="px-3 py-1.5 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer active:scale-95"
+                    className="px-3 py-1.5 rounded-lg bg-root-surface border border-root-accent/30 text-root-subtle hover:text-root-accent font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer active:scale-95"
                   >
                     Reset Semua (0%)
                   </button>
@@ -343,23 +343,23 @@ export default function SerangModals({
                 {(['darat', 'laut', 'udara'] as ArmadaGroup[]).map((group) => {
                   const Icon = groupMeta[group].icon;
                   return (
-                    <div key={group} className="rounded-xl border border-[#00FFAA]/20 bg-[#0F2424] p-4">
+                    <div key={group} className="rounded-xl border border-root-accent/20 bg-root-surface p-4">
                       <div className="space-y-3">
-                        <div className="w-full flex items-center justify-between rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-3 text-sm font-black text-[#00FFAA]">
+                        <div className="w-full flex items-center justify-between rounded-xl border border-root-accent/20 bg-root-canvas px-4 py-3 text-sm font-black text-root-accent">
                           <div className="flex items-center gap-3">
-                            <Icon className="h-5 w-5 text-[#00FFAA]" />
+                            <Icon className="h-5 w-5 text-root-accent" />
                             <span className="uppercase tracking-wider">{group}</span>
                           </div>
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleSetAllGroupPct(group, 100)}
-                              className="px-2.5 py-1 rounded-md bg-[#00FFAA]/15 border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#050B0B] font-bold text-[10px] uppercase tracking-wider transition-all cursor-pointer"
+                              className="px-2.5 py-1 rounded-md bg-root-accent/15 border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-[#050B0B] font-bold text-[10px] uppercase tracking-wider transition-all cursor-pointer"
                             >
                               Kerahkan Matra (100%)
                             </button>
                             <button
                               onClick={() => handleSetAllGroupPct(group, 0)}
-                              className="px-2.5 py-1 rounded-md bg-[#0F2424] border border-[#00FFAA]/20 text-[#6B8A8A] hover:text-[#00FFAA] font-bold text-[10px] uppercase tracking-wider transition-all cursor-pointer"
+                              className="px-2.5 py-1 rounded-md bg-root-surface border border-root-accent/20 text-root-subtle hover:text-root-accent font-bold text-[10px] uppercase tracking-wider transition-all cursor-pointer"
                             >
                               Reset (0%)
                             </button>
@@ -368,7 +368,7 @@ export default function SerangModals({
 
                         {/* Pasukan Militer User */}
                         <div className="w-full space-y-2 pt-1">
-                          <div className="text-[10px] font-black uppercase tracking-wider text-[#00FFAA] mb-2 flex items-center justify-between">
+                          <div className="text-[10px] font-black uppercase tracking-wider text-root-accent mb-2 flex items-center justify-between">
                             <span>Jenis Alutsista / Pasukan</span>
                             <span>Jumlah Unit</span>
                           </div>
@@ -379,14 +379,14 @@ export default function SerangModals({
                             return (
                               <div
                                 key={item.key}
-                                className="flex flex-col sm:flex-row sm:items-center justify-between rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] p-3 gap-2"
+                                className="flex flex-col sm:flex-row sm:items-center justify-between rounded-lg border border-root-accent/20 bg-root-canvas p-3 gap-2"
                               >
                                 <div className="flex-1 min-w-0">
-                                  <div className="flex items-center justify-between text-xs font-semibold text-[#E0E0E0]">
+                                  <div className="flex items-center justify-between text-xs font-semibold text-root-text">
                                     <span>{item.label}</span>
-                                    <span className="font-black text-[#00FFAA] font-mono">
+                                    <span className="font-black text-root-accent font-mono">
                                       {formatNumber(deployedQty)}{" "}
-                                      <span className="text-[10px] text-[#6B8A8A] font-normal">
+                                      <span className="text-[10px] text-root-subtle font-normal">
                                         / {formatNumber(item.quantity)}
                                       </span>
                                     </span>
@@ -402,9 +402,9 @@ export default function SerangModals({
                                     onChange={(e) =>
                                       handlePctChange(item.key, Number(e.target.value))
                                     }
-                                    className="w-full accent-[#00FFAA] bg-[#0F2424] h-1.5 rounded-lg cursor-pointer"
+                                    className="w-full accent-root-accent bg-root-surface h-1.5 rounded-lg cursor-pointer"
                                   />
-                                  <span className="text-xs font-mono font-black text-[#00FFAA] w-10 text-right">
+                                  <span className="text-xs font-mono font-black text-root-accent w-10 text-right">
                                     {pct}%
                                   </span>
                                 </div>
@@ -423,8 +423,8 @@ export default function SerangModals({
         </div>
 
         {/* FOOTER MODAL */}
-        <div className="px-6 py-4 border-t border-[#00FFAA]/30 bg-[#0A1A1A] relative z-10 shrink-0 flex items-center justify-end gap-4">
-          <button onClick={onClose} className="px-6 py-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
+        <div className="px-6 py-4 border-t border-root-accent/30 bg-root-canvas relative z-10 shrink-0 flex items-center justify-end gap-4">
+          <button onClick={onClose} className="px-6 py-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
             Batal
           </button>
           <button 

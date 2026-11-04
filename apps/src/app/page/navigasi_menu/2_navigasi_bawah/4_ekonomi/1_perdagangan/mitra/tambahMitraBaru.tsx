@@ -123,14 +123,14 @@ export default function TambahMitraBaru({
           className="flex h-full min-w-0 flex-col overflow-hidden"
         >
           {/* HEADER */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
             <div className="flex-1">
-              <h2 id="add-trade-partner-title" className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Tambah Mitra Dagang Baru</h2>
+              <h2 id="add-trade-partner-title" className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Tambah Mitra Dagang Baru</h2>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+              className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
             >
               <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Batal</span>
               <X className="h-4 w-4" />
@@ -138,34 +138,34 @@ export default function TambahMitraBaru({
           </div>
 
           {/* BAR PENCARIAN */}
-          <div className="px-4 sm:px-6 py-3 bg-[#0A1A1A] border-b border-[#00FFAA]/20 relative z-10 shrink-0 flex items-center gap-3">
+          <div className="px-4 sm:px-6 py-3 bg-root-canvas border-b border-root-accent/20 relative z-10 shrink-0 flex items-center gap-3">
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B8A8A]" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-root-subtle" />
               <input
                 type="text"
                 placeholder="Cari nama negara..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-sm font-semibold text-[#E0E0E0] placeholder-[#6B8A8A] focus:outline-none focus:border-[#00FFAA] transition-colors"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-root-accent/30 bg-root-surface text-sm font-semibold text-root-text placeholder-root-subtle focus:outline-none focus:border-root-accent transition-colors"
               />
             </div>
           </div>
 
           {/* BODY LIST NEGARA */}
-          <div className="flex-1 overflow-y-auto p-8 bg-[#0F2424] relative z-10 neon-scrollbar">
+          <div className="flex-1 overflow-y-auto p-8 bg-root-surface relative z-10 neon-scrollbar">
             {Object.keys(groupedByContinent).length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center py-20 text-[#6B8A8A]">
-                <Search className="h-12 w-12 mb-3 opacity-30 text-[#00FFAA] animate-pulse" />
-                <p className="text-sm font-bold text-[#E0E0E0]">Tidak ada negara ditemukan</p>
-                <p className="text-xs text-[#6B8A8A]">Coba masukkan kata kunci pencarian yang lain.</p>
+              <div className="h-full flex flex-col items-center justify-center text-center py-20 text-root-subtle">
+                <Search className="h-12 w-12 mb-3 opacity-30 text-root-accent animate-pulse" />
+                <p className="text-sm font-bold text-root-text">Tidak ada negara ditemukan</p>
+                <p className="text-xs text-root-subtle">Coba masukkan kata kunci pencarian yang lain.</p>
               </div>
             ) : (
               <div className="space-y-10">
                 {Object.entries(groupedByContinent).sort(([a], [b]) => a.localeCompare(b)).map(([continent, countries]) => (
                   <div key={continent} className="space-y-4">
-                    <h3 className="text-sm font-black text-[#00FFAA] uppercase tracking-widest border-b border-[#00FFAA]/20 pb-2 flex items-center justify-between">
+                    <h3 className="text-sm font-black text-root-accent uppercase tracking-widest border-b border-root-accent/20 pb-2 flex items-center justify-between">
                       <span>🌍 Benua {continent}</span>
-                      <span className="text-[10px] bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30 px-2 py-0.5 rounded-full font-bold">
+                      <span className="text-[10px] bg-root-accent/10 text-root-accent border border-root-accent/30 px-2 py-0.5 rounded-full font-bold">
                         {countries.length} Negara
                       </span>
                     </h3>
@@ -178,12 +178,12 @@ export default function TambahMitraBaru({
                             key={item.id}
                             onClick={() => handleSelectCountry(item.country, item.continent || 'Internasional')}
                             className={`p-4 rounded-xl flex items-center gap-3 transition-all cursor-pointer text-left w-full group relative ${hasEmbassy
-                                ? 'bg-[#0A1A1A] hover:bg-[#00FFAA]/15 border-2 border-[#00FFAA] shadow-[0_0_10px_rgba(0,255,170,0.15)]'
-                                : 'bg-[#0A1A1A] hover:bg-[#00FFAA]/5 border border-[#00FFAA]/20 hover:border-[#00FFAA]/50 opacity-80 hover:opacity-100'
+                                ? 'bg-root-canvas hover:bg-root-accent/15 border-2 border-root-accent shadow-[0_0_10px_rgba(0,255,170,0.15)]'
+                                : 'bg-root-canvas hover:bg-root-accent/5 border border-root-accent/20 hover:border-root-accent/50 opacity-80 hover:opacity-100'
                               }`}
                           >
                             {item.iso ? (
-                              <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#00FFAA]/30 flex-shrink-0 bg-[#0F2424] relative group-hover:scale-105 transition-transform">
+                              <div className="w-8 h-5 rounded-sm overflow-hidden border border-root-accent/30 flex-shrink-0 bg-root-surface relative group-hover:scale-105 transition-transform">
                                 <img
                                   src={`https://flagcdn.com/w80/${item.iso.toLowerCase()}.png`}
                                   alt={item.country}
@@ -191,13 +191,13 @@ export default function TambahMitraBaru({
                                 />
                               </div>
                             ) : (
-                              <div className="w-8 h-5 rounded-sm bg-[#0F2424] border border-[#00FFAA]/20 flex-shrink-0" />
+                              <div className="w-8 h-5 rounded-sm bg-root-surface border border-root-accent/20 flex-shrink-0" />
                             )}
                             <div className="overflow-hidden">
-                              <h4 className={`text-xs font-bold transition-colors uppercase truncate ${hasEmbassy ? 'text-[#00FFAA]' : 'text-[#E0E0E0] group-hover:text-[#00FFAA]'}`}>
+                              <h4 className={`text-xs font-bold transition-colors uppercase truncate ${hasEmbassy ? 'text-root-accent' : 'text-root-text group-hover:text-root-accent'}`}>
                                 {item.country}
                               </h4>
-                              <p className="text-[9px] text-[#6B8A8A] font-semibold uppercase truncate">
+                              <p className="text-[9px] text-root-subtle font-semibold uppercase truncate">
                                 {item.capital}
                               </p>
                             </div>
@@ -226,7 +226,7 @@ export default function TambahMitraBaru({
             aria-labelledby="no-embassy-title"
             className="overflow-hidden"
           >
-            <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-b border-rose-500/20 flex items-center justify-between bg-[#0A1A1A] shrink-0">
+            <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-b border-rose-500/20 flex items-center justify-between bg-root-canvas shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="p-1.5 rounded-lg border border-rose-500/30 bg-rose-950/40 text-rose-400">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -257,14 +257,14 @@ export default function TambahMitraBaru({
                 <p>
                   Anda tidak dapat menjalin hubungan dagang dengan <strong className="text-white uppercase">{noEmbassyModalData.countryName}</strong> karena negara Anda belum memiliki <strong className="text-rose-400">Kedutaan Besar (Kedubes)</strong> yang aktif di sana.
                 </p>
-                <p className="text-xs text-[#6B8A8A]">
+                <p className="text-xs text-root-subtle">
                   💡 Buka kantor Kedutaan Besar terlebih dahulu di menu <strong>Geopolitik → Kedutaan Besar</strong> sebelum mengajukan perjanjian perdagangan bilateral.
                 </p>
               </div>
             </div>
 
             {/* Footer Actions */}
-            <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-t border-rose-500/20 bg-[#0A1A1A] flex justify-end shrink-0">
+            <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-t border-rose-500/20 bg-root-canvas flex justify-end shrink-0">
               <button
                 type="button"
                 onClick={() => setNoEmbassyModalData(null)}
@@ -290,14 +290,14 @@ export default function TambahMitraBaru({
             aria-labelledby="confirm-add-trade-partner-title"
             className="overflow-hidden"
           >
-            <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] shrink-0">
+            <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas shrink-0">
               <div className="flex items-center gap-2.5">
-                <div className="p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA]">
+                <div className="p-1.5 rounded-lg border border-root-accent/30 bg-root-surface text-root-accent">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h2 id="confirm-add-trade-partner-title" className="text-sm sm:text-base font-black tracking-wider uppercase text-[#00FFAA]">
+                <h2 id="confirm-add-trade-partner-title" className="text-sm sm:text-base font-black tracking-wider uppercase text-root-accent">
                   Konfirmasi Perjanjian Dagang
                 </h2>
               </div>
@@ -305,7 +305,7 @@ export default function TambahMitraBaru({
                 type="button"
                 onClick={() => setConfirmModalData(null)}
                 aria-label="Tutup modal"
-                className="p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1"
+                className="p-1.5 rounded-lg border border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1"
               >
                 <span className="text-[11px] font-bold uppercase tracking-wider pl-0.5">Tutup</span>
                 <span aria-hidden="true" className="text-base leading-none">×</span>
@@ -314,32 +314,32 @@ export default function TambahMitraBaru({
 
             {/* Body Content */}
             <div className="p-5 sm:p-6">
-              <h3 className="text-lg sm:text-xl font-black uppercase tracking-wide mb-3 text-[#E0E0E0]">
+              <h3 className="text-lg sm:text-xl font-black uppercase tracking-wide mb-3 text-root-text">
                 Konfirmasi Perjanjian Dagang
               </h3>
               <div className="space-y-2 text-sm sm:text-base text-[#A0B0B0] leading-relaxed font-medium">
                 <p>
-                  Apakah Anda yakin ingin menjalin hubungan mitra dagang resmi dengan negara <strong className="text-[#00FFAA] uppercase">{confirmModalData.countryName}</strong>?
+                  Apakah Anda yakin ingin menjalin hubungan mitra dagang resmi dengan negara <strong className="text-root-accent uppercase">{confirmModalData.countryName}</strong>?
                 </p>
-                <p className="text-xs text-[#6B8A8A]">
+                <p className="text-xs text-root-subtle">
                   🤝 Setelah bermitra, Anda dapat melakukan transaksi jual-beli komoditas strategis secara langsung dengan negara tersebut.
                 </p>
               </div>
             </div>
 
             {/* Footer Actions */}
-            <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-t border-[#00FFAA]/20 bg-[#0A1A1A] flex justify-end gap-3 shrink-0">
+            <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-t border-root-accent/20 bg-root-canvas flex justify-end gap-3 shrink-0">
               <button
                 type="button"
                 onClick={() => setConfirmModalData(null)}
-                className="min-w-24 px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider cursor-pointer transition-all bg-[#0F2424] border border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A]"
+                className="min-w-24 px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider cursor-pointer transition-all bg-root-surface border border-root-accent/30 text-root-accent hover:bg-root-accent hover:text-root-canvas"
               >
                 Batal
               </button>
               <button
                 type="button"
                 onClick={handleConfirmAddPartner}
-                className="min-w-28 px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider cursor-pointer transition-all bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 shadow-[0_0_15px_rgba(0,255,170,0.3)]"
+                className="min-w-28 px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider cursor-pointer transition-all bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-[0_0_15px_rgba(0,255,170,0.3)]"
               >
                 Setuju & Tambahkan
               </button>

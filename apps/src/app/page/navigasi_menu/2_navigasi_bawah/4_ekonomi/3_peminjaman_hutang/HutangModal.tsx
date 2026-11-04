@@ -361,10 +361,10 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
         <div className="flex flex-col h-full overflow-hidden">
 
           {/* Header */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-              <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+            <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+              <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
             </div>
             <div className="min-w-0">
               <h2 className={rootModalTypography.title}>Pinjaman & Hutang</h2>
@@ -376,7 +376,7 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
               onClick={() => setIsLoanInfoOpen(true)}
               title="Informasi pinjaman dan hutang"
               aria-label="Informasi pinjaman dan hutang"
-              className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]"
+              className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas"
             >
               <Info className="h-3.5 w-3.5" />
             </button>
@@ -385,7 +385,7 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
         </div>
 
         {/* Body Content */}
-        <div className="flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-root-canvas/80 relative z-10 custom-scrollbar">
           
           <div className="mb-3.5 space-y-3 lg:mb-5 lg:space-y-4 2xl:mb-6">
             <div className="flex flex-col items-stretch gap-3 xl:flex-row xl:items-center">
@@ -400,39 +400,39 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
               />
               {activeTab === "bilateral" && (
                 <div className={`relative min-w-0 flex-1 ${rootBorderRadius.card} xl:w-[35%] xl:flex-none`}>
-                  <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#6B8A8A]" />
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-root-subtle" />
                   <input
                     type="text"
                     aria-label="Cari nama negara peminjam"
                     placeholder="Cari nama negara peminjam..."
                     value={countrySearchQuery}
                     onChange={(event) => setCountrySearchQuery(event.target.value)}
-                    className={`h-9 w-full border border-[#00FFAA]/30 bg-[#0F2424] px-4 pl-10 text-sm font-bold text-[#E0E0E0] placeholder:text-[#6B8A8A] transition-all focus:border-[#00FFAA] focus:outline-none ${rootBorderRadius.card}`}
+                    className={`h-9 w-full border border-root-accent/30 bg-root-surface px-4 pl-10 text-sm font-bold text-root-text placeholder:text-root-subtle transition-all focus:border-root-accent focus:outline-none ${rootBorderRadius.card}`}
                   />
                 </div>
               )}
             </div>
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-              <div className={`flex min-w-0 flex-col justify-center border border-[#00FFAA]/30 bg-[#0F2424] p-3.5 lg:p-4 ${rootBorderRadius.card}`}>
+              <div className={`flex min-w-0 flex-col justify-center border border-root-accent/30 bg-root-surface p-3.5 lg:p-4 ${rootBorderRadius.card}`}>
                 <h4 className={`${rootModalTypography.label} mb-1.5`}>Rasio Hutang terhadap PDB</h4>
                 <div className="flex justify-between items-end gap-2 mb-2">
-                  <span className="text-xl lg:text-2xl font-black text-[#00FFAA]">{debtRatio}%</span>
+                  <span className="text-xl lg:text-2xl font-black text-root-accent">{debtRatio}%</span>
                   <div className="text-[10px] lg:text-xs font-bold text-right flex items-center gap-1">
-                    <span className="text-[#6B8A8A]">Batas Aman:</span>
+                    <span className="text-root-subtle">Batas Aman:</span>
                     {getBankSentralLoanSafeLimitBonusPercent(countryDetail) > 0 ? (
                       <span className="flex items-center gap-1">
                         <span className="line-through text-rose-400 opacity-80">60%</span>
-                        <span className="text-[#00FFAA] font-black">
+                        <span className="text-root-accent font-black">
                           {getSafeDebtLimitRatio(countryDetail)}%
                         </span>
                       </span>
                     ) : (
-                      <span className="text-[#6B8A8A]">60%</span>
+                      <span className="text-root-subtle">60%</span>
                     )}
                   </div>
                 </div>
-                <div className="h-2.5 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-full overflow-hidden">
+                <div className="h-2.5 bg-root-canvas border border-root-accent/20 rounded-full overflow-hidden">
                   {(() => {
                     const safeLimit = getSafeDebtLimitRatio(countryDetail);
                     const dangerLimit = safeLimit + 20;
@@ -448,7 +448,7 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
                 </div>
               </div>
 
-              <div className={`flex min-w-0 flex-col justify-center border border-[#00FFAA]/30 bg-[#0F2424] p-3.5 lg:p-4 ${rootBorderRadius.card}`}>
+              <div className={`flex min-w-0 flex-col justify-center border border-root-accent/30 bg-root-surface p-3.5 lg:p-4 ${rootBorderRadius.card}`}>
                 <span className={rootModalTypography.sectionTitle}>Total Beban Hutang</span>
                 <span className="text-base lg:text-lg font-black text-rose-400 mt-1 break-words">{totalHutang.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
               </div>

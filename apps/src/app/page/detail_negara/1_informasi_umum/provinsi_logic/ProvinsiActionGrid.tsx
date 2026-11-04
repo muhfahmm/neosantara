@@ -168,10 +168,10 @@ export default function ProvinsiActionGrid({
               if (!isActive) setSelectedAction(actions.find(action => action.id === id) || null);
             }}
             disabled={isActive}
-            className={`w-full min-w-0 h-32 rounded-xl p-5 flex flex-col items-center justify-center gap-3 text-[#00FFAA] transition-all cursor-pointer group ${
+            className={`w-full min-w-0 h-32 rounded-xl p-5 flex flex-col items-center justify-center gap-3 text-root-accent transition-all cursor-pointer group ${
               isActive
-                ? 'border-2 border-[#00FFAA] bg-[#00FFAA]/20 hover:bg-[#00FFAA]/30'
-                : 'bg-[#0A1A1A] border border-[#00FFAA]/20 hover:shadow-md hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/10'
+                ? 'border-2 border-root-accent bg-root-accent/20 hover:bg-root-accent/30'
+                : 'bg-root-canvas border border-root-accent/20 hover:shadow-md hover:border-root-accent/50 hover:bg-root-accent/10'
             }`}
             aria-pressed={isActive}
             title={missionaryActive
@@ -182,7 +182,7 @@ export default function ProvinsiActionGrid({
                   ? 'Pajak sudah diberlakukan di provinsi ini'
                   : undefined}
           >
-            <Icon className="h-8 w-8 text-[#00FFAA] group-hover:scale-110 transition-transform" />
+            <Icon className="h-8 w-8 text-root-accent group-hover:scale-110 transition-transform" />
             <span className="text-xs font-black uppercase tracking-wider text-center leading-tight">{displayLabel}</span>
           </button>
           );
@@ -205,9 +205,9 @@ export default function ProvinsiActionGrid({
             role="dialog"
             aria-modal="true"
             aria-labelledby="province-action-title"
-            className="bg-[#0F2424] border-2 sm:border-3 border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col justify-center relative font-sans pointer-events-auto shadow-2xl p-6 sm:p-10"
+            className="bg-root-surface border-2 sm:border-3 border-root-accent/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col justify-center relative font-sans pointer-events-auto shadow-2xl p-6 sm:p-10"
           >
-            <h3 id="province-action-title" className="text-lg font-black text-[#00FFAA] mb-3">
+            <h3 id="province-action-title" className="text-lg font-black text-root-accent mb-3">
               Konfirmasi {selectedAction.label}
             </h3>
             <p className="text-sm text-[#B7D5CD] mb-6">
@@ -217,14 +217,14 @@ export default function ProvinsiActionGrid({
               <button
                 type="button"
                 onClick={() => setSelectedAction(null)}
-                className="flex-1 rounded-lg border border-[#00FFAA]/30 px-4 py-2.5 text-xs font-black uppercase text-[#00FFAA] hover:bg-[#00FFAA]/10"
+                className="flex-1 rounded-lg border border-root-accent/30 px-4 py-2.5 text-xs font-black uppercase text-root-accent hover:bg-root-accent/10"
               >
                 Batal
               </button>
               <button
                 type="button"
                 onClick={() => confirmAction()}
-                className="flex-1 rounded-lg bg-[#00FFAA] px-4 py-2.5 text-xs font-black uppercase text-[#0A1A1A] hover:bg-[#00D991]"
+                className="flex-1 rounded-lg bg-root-accent px-4 py-2.5 text-xs font-black uppercase text-root-canvas hover:bg-[#00D991]"
               >
                 Konfirmasi
               </button>

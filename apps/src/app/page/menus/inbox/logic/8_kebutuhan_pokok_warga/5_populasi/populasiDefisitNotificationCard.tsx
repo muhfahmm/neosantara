@@ -32,7 +32,7 @@ export default function PopulasiDefisitNotificationCard({
           {notification.message}
         </p>
         <div className="grid grid-cols-1 gap-2 pt-1 sm:grid-cols-2">
-          <div className="rounded-lg border border-rose-500/20 bg-[#0A1A1A] p-2.5">
+          <div className="rounded-lg border border-rose-500/20 bg-root-canvas p-2.5">
             <p className="text-[9px] font-bold uppercase text-slate-400">
               Perubahan bersih harian
             </p>
@@ -40,11 +40,11 @@ export default function PopulasiDefisitNotificationCard({
               {notification.dailyChange.toLocaleString("id-ID")} jiwa
             </p>
           </div>
-          <div className="rounded-lg border border-rose-500/20 bg-[#0A1A1A] p-2.5">
+          <div className="rounded-lg border border-rose-500/20 bg-root-canvas p-2.5">
             <p className="text-[9px] font-bold uppercase text-slate-400">
               Populasi saat laporan
             </p>
-            <p className="mt-1 text-sm font-black text-[#E0E0E0]">
+            <p className="mt-1 text-sm font-black text-root-text">
               {notification.currentPopulation.toLocaleString("id-ID")} jiwa
             </p>
           </div>

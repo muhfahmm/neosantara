@@ -103,22 +103,22 @@ export default function BerikanWilayahModal({
 
 	const modalContent = (
 		<div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-			<div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+			<div className="bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
 				{/* ═══════════ HEADER ═══════════ */}
-				<div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] gap-2 shrink-0 rounded-t-2xl">
+				<div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas gap-2 shrink-0 rounded-t-2xl">
 					<div className="flex items-center gap-2 sm:gap-3">
-						<div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-							<MapPinned className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+						<div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+							<MapPinned className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
 						</div>
-						<h3 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
+						<h3 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">
 							Konfirmasi Berikan Wilayah
 						</h3>
 					</div>
 
 					<button
 						onClick={onClose}
-						className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+						className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
 					>
 						<span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
 						<X className="h-4 w-4" />
@@ -126,9 +126,9 @@ export default function BerikanWilayahModal({
 				</div>
 
 				{/* ═══════════ BODY: LIST WILAYAH ═══════════ */}
-				<div className="flex-1 min-h-0 bg-[#0F2424] relative z-10 p-6 sm:p-8 flex flex-col gap-4 overflow-y-auto custom-scrollbar">
+				<div className="flex-1 min-h-0 bg-root-surface relative z-10 p-6 sm:p-8 flex flex-col gap-4 overflow-y-auto custom-scrollbar">
 					{countryName && (
-						<p className="text-center text-xs font-black uppercase tracking-wider text-[#00FFAA]">
+						<p className="text-center text-xs font-black uppercase tracking-wider text-root-accent">
 							Penerima: {countryName}
 						</p>
 					)}
@@ -139,7 +139,7 @@ export default function BerikanWilayahModal({
 					)}
 					{annexedTerritories.length === 0 ? (
 						<div className="flex-1 flex items-center justify-center text-center">
-							<p className="text-sm font-bold text-[#6B8A8A] uppercase tracking-wider">
+							<p className="text-sm font-bold text-root-subtle uppercase tracking-wider">
 								Tidak ada wilayah aneksasi
 							</p>
 						</div>
@@ -159,8 +159,8 @@ export default function BerikanWilayahModal({
 										}}
 										className={`w-full rounded-xl border px-4 py-3 text-left text-sm font-black uppercase tracking-wide transition-all cursor-pointer flex items-center gap-3 ${
 											isSelected
-												? 'border-[#00FFAA] bg-[#00FFAA]/15 text-[#00FFAA]'
-												: 'border-[#00FFAA]/20 bg-[#0A1A1A] text-[#B9D7D1] hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/5'
+												? 'border-root-accent bg-root-accent/15 text-root-accent'
+												: 'border-root-accent/20 bg-root-canvas text-[#B9D7D1] hover:border-root-accent/50 hover:bg-root-accent/5'
 										}`}
 									>
 										{/* Bendera via flagcdn dengan fallback */}
@@ -168,7 +168,7 @@ export default function BerikanWilayahModal({
 											<img
 												src={`https://flagcdn.com/w40/${iso.toLowerCase()}.png`}
 												alt={territory}
-												className="w-7 h-5 rounded-sm object-cover border border-[#00FFAA]/20 shrink-0"
+												className="w-7 h-5 rounded-sm object-cover border border-root-accent/20 shrink-0"
 												loading="lazy"
 												decoding="async"
 												onError={(e) => {
@@ -176,7 +176,7 @@ export default function BerikanWilayahModal({
 												}}
 											/>
 										) : (
-											<div className="w-7 h-5 rounded-sm bg-[#0F2424] border border-[#00FFAA]/20 shrink-0" />
+											<div className="w-7 h-5 rounded-sm bg-root-surface border border-root-accent/20 shrink-0" />
 										)}
 
 										{/* Nama Wilayah */}
@@ -189,11 +189,11 @@ export default function BerikanWilayahModal({
 				</div>
 
 				{/* ═══════════ FOOTER ═══════════ */}
-				<div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-[#00FFAA]/20 bg-[#0A1A1A] shrink-0 rounded-b-2xl">
+				<div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-root-accent/20 bg-root-canvas shrink-0 rounded-b-2xl">
 					<div className="flex gap-3 justify-end">
 						<button
 							onClick={onClose}
-							className="px-6 py-3 bg-[#0F2424] hover:bg-[#163535] border border-[#00FFAA]/30 rounded-xl text-center text-[#E0E0E0] font-black text-xs tracking-wider uppercase transition-all cursor-pointer"
+							className="px-6 py-3 bg-root-surface hover:bg-[#163535] border border-root-accent/30 rounded-xl text-center text-root-text font-black text-xs tracking-wider uppercase transition-all cursor-pointer"
 						>
 							Batal
 						</button>
@@ -204,7 +204,7 @@ export default function BerikanWilayahModal({
 								else setTransferError('Wilayah tidak dapat diberikan. Pastikan wilayah masih dikuasai dan negara tujuan merupakan sekutu.');
 							}}
 							disabled={!selectedTerritory}
-							className="px-6 py-3 bg-amber-500 hover:bg-amber-400 border border-amber-500 rounded-xl text-center text-[#0A1A1A] font-black text-xs tracking-wider uppercase transition-all cursor-pointer shadow-md disabled:cursor-not-allowed disabled:opacity-40"
+							className="px-6 py-3 bg-amber-500 hover:bg-amber-400 border border-amber-500 rounded-xl text-center text-root-canvas font-black text-xs tracking-wider uppercase transition-all cursor-pointer shadow-md disabled:cursor-not-allowed disabled:opacity-40"
 						>
 							Berikan
 						</button>

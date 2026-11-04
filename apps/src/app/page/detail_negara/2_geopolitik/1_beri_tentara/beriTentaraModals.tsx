@@ -361,24 +361,24 @@ export default function BeriTentaraModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       {/* Modal Container: Ukuran sama persis dengan modal detail negara */}
-      <div className="bg-[#0F2424] border-2 sm:border-3 border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+      <div className="bg-root-surface border-2 sm:border-3 border-root-accent/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
         {/* Background Glow */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.05)_0%,transparent_100%)] pointer-events-none" />
 
         {/* HEADER MODAL */}
-        <div className="px-6 sm:px-8 py-4 sm:py-5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+        <div className="px-6 sm:px-8 py-4 sm:py-5 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
           <div className="flex items-center gap-3 sm:gap-4">
-            <div className="p-2 sm:p-2.5 bg-[#00FFAA]/10 rounded-xl border border-[#00FFAA]/30 shrink-0 flex items-center justify-center">
-              <Sword className="h-6 w-6 text-[#00FFAA]" />
+            <div className="p-2 sm:p-2.5 bg-root-accent/10 rounded-xl border border-root-accent/30 shrink-0 flex items-center justify-center">
+              <Sword className="h-6 w-6 text-root-accent" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
+              <h2 className="text-xl sm:text-2xl font-bold text-root-accent tracking-tight leading-none uppercase">
                 Beri Bantuan Pasukan Militer
               </h2>
               <div className="flex items-center gap-2 mt-1">
-                <p className="text-xs text-[#00FFAA]/70 font-semibold uppercase tracking-wider">
-                  Transfer Pasukan ke Sekutu: <span className="text-[#00FFAA] font-bold">{targetName}</span>
+                <p className="text-xs text-root-accent/70 font-semibold uppercase tracking-wider">
+                  Transfer Pasukan ke Sekutu: <span className="text-root-accent font-bold">{targetName}</span>
                 </p>
               </div>
             </div>
@@ -386,7 +386,7 @@ export default function BeriTentaraModal({
 
           <button
             onClick={onClose}
-            className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#00FFAA]/70 hover:text-[#00FFAA] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
+            className="p-2 sm:p-2.5 rounded-xl border border-root-accent/30 bg-root-canvas text-root-accent/70 hover:text-root-accent hover:bg-root-accent/10 active:bg-root-accent/20 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
             aria-label="Tutup modal beri tentara"
           >
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
@@ -395,18 +395,18 @@ export default function BeriTentaraModal({
         </div>
 
         {/* RINGKASAN MILITARY POWER & PERBANDINGAN KOMPARATIF */}
-        <div className="px-6 sm:px-8 py-3 bg-[#0A1A1A]/90 border-b border-[#00FFAA]/20 flex flex-col md:flex-row items-center justify-between gap-4 relative z-10 shrink-0">
+        <div className="px-6 sm:px-8 py-3 bg-root-canvas/90 border-b border-root-accent/20 flex flex-col md:flex-row items-center justify-between gap-4 relative z-10 shrink-0">
           {/* User Status */}
           <div className="flex items-center gap-3 w-full md:w-auto">
-            <div className="p-2 rounded-lg bg-[#00FFAA]/10 border border-[#00FFAA]/30">
-              <Shield className="w-5 h-5 text-[#00FFAA]" />
+            <div className="p-2 rounded-lg bg-root-accent/10 border border-root-accent/30">
+              <Shield className="w-5 h-5 text-root-accent" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">
+              <span className="text-[10px] font-black uppercase tracking-wider text-root-subtle">
                 Power Militer {playerName} (Anda)
               </span>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-black text-[#00FFAA] font-mono">
+                <span className="text-sm font-black text-root-accent font-mono">
                   {formatNumber(playerPowerAfter)}
                 </span>
                 {playerPowerDiff < 0 && (
@@ -420,15 +420,15 @@ export default function BeriTentaraModal({
           </div>
 
           {/* Indicator Panah Transfer */}
-          <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-xs font-bold text-[#00FFAA]">
+          <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-root-surface border border-root-accent/30 text-xs font-bold text-root-accent">
             <span>Transfer Bantuan</span>
-            <ArrowRight className="w-4 h-4 text-[#00FFAA]" />
+            <ArrowRight className="w-4 h-4 text-root-accent" />
           </div>
 
           {/* Target Status */}
           <div className="flex items-center gap-3 w-full md:w-auto justify-start md:justify-end">
             <div className="flex flex-col items-start md:items-end">
-              <span className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">
+              <span className="text-[10px] font-black uppercase tracking-wider text-root-subtle">
                 Power Militer {targetName} (Sekutu)
               </span>
               <div className="flex items-center gap-2">
@@ -450,7 +450,7 @@ export default function BeriTentaraModal({
         </div>
 
         {/* TAB PILIHAN MATRA: DARAT / LAUT / UDARA */}
-        <div className="px-6 sm:px-8 py-2.5 bg-[#0F2424] border-b border-[#00FFAA]/20 flex items-center gap-2 relative z-10 shrink-0">
+        <div className="px-6 sm:px-8 py-2.5 bg-root-surface border-b border-root-accent/20 flex items-center gap-2 relative z-10 shrink-0">
           {(['darat', 'laut', 'udara'] as ArmadaMatra[]).map((matra) => {
             const isActive = activeTab === matra;
             const Icon = matra === 'darat' ? Sword : matra === 'laut' ? Ship : Plane;
@@ -464,14 +464,14 @@ export default function BeriTentaraModal({
                 key={matra}
                 onClick={() => setActiveTab(matra)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl font-black text-xs uppercase tracking-wider transition-all cursor-pointer border ${isActive
-                    ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA] shadow-md shadow-[#00FFAA]/20'
-                    : 'bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#00FFAA] border-[#00FFAA]/20 hover:border-[#00FFAA]/40'
+                    ? 'bg-root-accent text-root-canvas border-root-accent shadow-md shadow-root-accent/20'
+                    : 'bg-root-canvas text-root-subtle hover:text-root-accent border-root-accent/20 hover:border-root-accent/40'
                   }`}
               >
                 <Icon className="w-4 h-4" />
                 <span>{label}</span>
                 {matraGiftCount > 0 && (
-                  <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-black ${isActive ? 'bg-[#0A1A1A] text-[#00FFAA]' : 'bg-[#00FFAA]/20 text-[#00FFAA]'
+                  <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-black ${isActive ? 'bg-root-canvas text-root-accent' : 'bg-root-accent/20 text-root-accent'
                     }`}>
                     {formatNumber(matraGiftCount)}
                   </span>
@@ -491,7 +491,7 @@ export default function BeriTentaraModal({
         </div>
 
         {/* BODY UTAMA: DAFTAR UNIT DAN PERBANDINGAN SLOT */}
-        <div className="flex-1 min-h-0 bg-[#0F2424] p-4 sm:p-6 overflow-y-auto space-y-3 relative z-10">
+        <div className="flex-1 min-h-0 bg-root-surface p-4 sm:p-6 overflow-y-auto space-y-3 relative z-10">
           {UNIT_CATALOG[activeTab].map((unit) => {
             const userStock = getUnitQuantity(playerCountryDetail, unit);
             const targetStock = getUnitQuantity(targetCountryDetail, unit);
@@ -508,17 +508,17 @@ export default function BeriTentaraModal({
             return (
               <div
                 key={unit.key}
-                className="bg-[#0A1A1A] border border-[#00FFAA]/20 hover:border-[#00FFAA]/40 rounded-xl p-4 transition-all"
+                className="bg-root-canvas border border-root-accent/20 hover:border-root-accent/40 rounded-xl p-4 transition-all"
               >
                 <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
 
                   {/* Kolom Info Unit & Perbandingan Pasukan */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-black text-[#E0E0E0] uppercase tracking-wide">
+                      <span className="text-sm font-black text-root-text uppercase tracking-wide">
                         {unit.label}
                       </span>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#0F2424] border border-[#00FFAA]/20 text-[#6B8A8A] uppercase">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-root-surface border border-root-accent/20 text-root-subtle uppercase">
                         {unit.infraLabel}
                       </span>
                     </div>
@@ -526,11 +526,11 @@ export default function BeriTentaraModal({
                     {/* Baris Statistik Perbandingan */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2.5">
                       {/* Pasukan Anda */}
-                      <div className="bg-[#0F2424] p-2.5 rounded-lg border border-[#00FFAA]/15">
-                        <span className="text-[9px] font-black uppercase text-[#6B8A8A] block">
+                      <div className="bg-root-surface p-2.5 rounded-lg border border-root-accent/15">
+                        <span className="text-[9px] font-black uppercase text-root-subtle block">
                           Stok Anda
                         </span>
-                        <span className="text-xs font-bold text-[#00FFAA] font-mono">
+                        <span className="text-xs font-bold text-root-accent font-mono">
                           {formatNumber(userStock)} unit
                         </span>
                         {currentGiftAmount > 0 && (
@@ -541,11 +541,11 @@ export default function BeriTentaraModal({
                       </div>
 
                       {/* Pasukan Sekutu */}
-                      <div className="bg-[#0F2424] p-2.5 rounded-lg border border-[#00FFAA]/15">
-                        <span className="text-[9px] font-black uppercase text-[#6B8A8A] block">
+                      <div className="bg-root-surface p-2.5 rounded-lg border border-root-accent/15">
+                        <span className="text-[9px] font-black uppercase text-root-subtle block">
                           Pasukan Sekutu Saat Ini
                         </span>
-                        <span className="text-xs font-bold text-[#E0E0E0] font-mono">
+                        <span className="text-xs font-bold text-root-text font-mono">
                           {formatNumber(targetStock)} unit
                         </span>
                         {currentGiftAmount > 0 && (
@@ -556,14 +556,14 @@ export default function BeriTentaraModal({
                       </div>
 
                       {/* Slot Tersisa di Sekutu */}
-                      <div className="col-span-2 sm:col-span-1 bg-[#0F2424] p-2.5 rounded-lg border border-[#00FFAA]/15">
-                        <span className="text-[9px] font-black uppercase text-[#6B8A8A] block">
+                      <div className="col-span-2 sm:col-span-1 bg-root-surface p-2.5 rounded-lg border border-root-accent/15">
+                        <span className="text-[9px] font-black uppercase text-root-subtle block">
                           Sisa Slot {unit.infraLabel} Sekutu
                         </span>
                         <span className={`text-xs font-bold font-mono ${effectiveRemainingSlot > 0 ? 'text-[#FFD700]' : 'text-rose-400'}`}>
                           {formatNumber(effectiveRemainingSlot)} slot tersisa
                         </span>
-                        <span className="text-[9px] text-[#6B8A8A] block">
+                        <span className="text-[9px] text-root-subtle block">
                           (Terpakai: {formatNumber(infraCap.used)} / {formatNumber(infraCap.total)})
                         </span>
                       </div>
@@ -572,11 +572,11 @@ export default function BeriTentaraModal({
 
                   {/* Kolom Kontrol Input Beri Pasukan */}
                   <div className="w-full lg:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0">
-                    <div className="flex items-center gap-1 bg-[#0F2424] p-1.5 rounded-xl border border-[#00FFAA]/30">
+                    <div className="flex items-center gap-1 bg-root-surface p-1.5 rounded-xl border border-root-accent/30">
                       <button
                         onClick={() => handleAmountChange(unit, currentGiftAmount - (unit.key === 'barak' ? 1000 : 1))}
                         disabled={currentGiftAmount <= 0}
-                        className="p-1.5 rounded-lg bg-[#0A1A1A] text-[#00FFAA] hover:bg-[#00FFAA]/20 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
+                        className="p-1.5 rounded-lg bg-root-canvas text-root-accent hover:bg-root-accent/20 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
                         title="Kurangi 1 unit"
                       >
                         <Minus className="w-3.5 h-3.5" />
@@ -592,13 +592,13 @@ export default function BeriTentaraModal({
                           const val = parseInt(e.target.value, 10);
                           handleAmountChange(unit, Number.isNaN(val) ? 0 : val);
                         }}
-                        className="w-24 sm:w-28 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-lg px-2.5 py-1 text-center font-mono font-black text-sm text-[#00FFAA] focus:outline-none focus:border-[#00FFAA]"
+                        className="w-24 sm:w-28 bg-root-canvas border border-root-accent/20 rounded-lg px-2.5 py-1 text-center font-mono font-black text-sm text-root-accent focus:outline-none focus:border-root-accent"
                       />
 
                       <button
                         onClick={() => handleAmountChange(unit, currentGiftAmount + (unit.key === 'barak' ? 1000 : 1))}
                         disabled={isNoStock || effectiveRemainingSlot <= 0 || currentGiftAmount >= userStock}
-                        className="p-1.5 rounded-lg bg-[#0A1A1A] text-[#00FFAA] hover:bg-[#00FFAA]/20 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
+                        className="p-1.5 rounded-lg bg-root-canvas text-root-accent hover:bg-root-accent/20 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
                         title="Tambah 1 unit"
                       >
                         <Plus className="w-3.5 h-3.5" />
@@ -609,7 +609,7 @@ export default function BeriTentaraModal({
                     <button
                       onClick={() => handleSetMaxForUnit(unit)}
                       disabled={isNoStock || effectiveRemainingSlot <= 0}
-                      className="px-3 py-2 bg-[#00FFAA]/10 hover:bg-[#00FFAA]/20 border border-[#00FFAA]/30 disabled:opacity-30 disabled:pointer-events-none rounded-xl text-center text-[#00FFAA] font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer shrink-0"
+                      className="px-3 py-2 bg-root-accent/10 hover:bg-root-accent/20 border border-root-accent/30 disabled:opacity-30 disabled:pointer-events-none rounded-xl text-center text-root-accent font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer shrink-0"
                     >
                       Maksimal
                     </button>
@@ -632,18 +632,18 @@ export default function BeriTentaraModal({
 
         {/* TOAST SUKSES */}
         {successToast && (
-          <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-50 bg-emerald-900/90 border border-emerald-400 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3 backdrop-blur-md animate-fade-in">
+          <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-50 bg-emerald-900/90 border border-emerald-400 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3  animate-fade-in">
             <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
             <span className="text-xs font-bold tracking-wide">{successToast}</span>
           </div>
         )}
 
         {/* FOOTER MODAL */}
-        <div className="px-6 py-4 border-t border-[#00FFAA]/20 bg-[#0A1A1A] shrink-0 flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10">
-          <div className="flex items-center gap-2 text-xs text-[#6B8A8A]">
-            <Info className="w-4 h-4 text-[#00FFAA] shrink-0" />
+        <div className="px-6 py-4 border-t border-root-accent/20 bg-root-canvas shrink-0 flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10">
+          <div className="flex items-center gap-2 text-xs text-root-subtle">
+            <Info className="w-4 h-4 text-root-accent shrink-0" />
             <span>
-              Total unit yang akan dikirim: <strong className="text-[#00FFAA]">{formatNumber(totalUnitsToGift)} unit</strong>
+              Total unit yang akan dikirim: <strong className="text-root-accent">{formatNumber(totalUnitsToGift)} unit</strong>
             </span>
           </div>
 
@@ -651,7 +651,7 @@ export default function BeriTentaraModal({
             <button
               onClick={onClose}
               disabled={isSubmitting}
-              className="flex-1 sm:flex-initial px-6 py-2.5 bg-[#0F2424] hover:bg-[#163535] border border-[#00FFAA]/30 rounded-xl text-center text-[#E0E0E0] font-black text-xs tracking-wider uppercase transition-all cursor-pointer"
+              className="flex-1 sm:flex-initial px-6 py-2.5 bg-root-surface hover:bg-[#163535] border border-root-accent/30 rounded-xl text-center text-root-text font-black text-xs tracking-wider uppercase transition-all cursor-pointer"
             >
               Batal
             </button>
@@ -659,7 +659,7 @@ export default function BeriTentaraModal({
             <button
               onClick={handleConfirmTransfer}
               disabled={totalUnitsToGift <= 0 || isSubmitting}
-              className="flex-1 sm:flex-initial px-6 py-2.5 bg-[#00FFAA] hover:bg-[#00e699] disabled:opacity-30 disabled:pointer-events-none border border-[#00FFAA] rounded-xl text-center text-[#0A1A1A] font-black text-xs tracking-wider uppercase transition-all cursor-pointer shadow-md flex items-center justify-center gap-2"
+              className="flex-1 sm:flex-initial px-6 py-2.5 bg-root-accent hover:bg-[#00e699] disabled:opacity-30 disabled:pointer-events-none border border-root-accent rounded-xl text-center text-root-canvas font-black text-xs tracking-wider uppercase transition-all cursor-pointer shadow-md flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <span>Memproses...</span>

@@ -50,7 +50,7 @@ function CandlestickChart({
 }: CandlestickChartProps) {
   if (series.length < 2) {
     return (
-      <div className="w-full h-[262px] flex items-center justify-center text-xs text-[#6B8A8A]">
+      <div className="w-full h-[262px] flex items-center justify-center text-xs text-root-subtle">
         Tidak ada data harga
       </div>
     );

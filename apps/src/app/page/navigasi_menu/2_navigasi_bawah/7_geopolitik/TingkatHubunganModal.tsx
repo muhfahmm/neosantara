@@ -158,23 +158,23 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
         <div className="flex flex-col h-full overflow-hidden">
 
           {/* HEADER */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-                <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA] animate-pulse" />
+              <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
+                <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent animate-pulse" />
               </div>
               <div>
-                <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Tingkat Hubungan Diplomatik</h2>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">{playerCountryName}</p>
+                <h2 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Tingkat Hubungan Diplomatik</h2>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">{playerCountryName}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsPilihJalurOpen(true)}
-                className="p-1.5 lg:p-2 px-2.5 lg:px-3 rounded-xl border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-[10px] lg:text-xs uppercase flex items-center gap-1.5 shadow-sm"
+                className="p-1.5 lg:p-2 px-2.5 lg:px-3 rounded-xl border border-root-accent/40 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer font-bold text-[10px] lg:text-xs uppercase flex items-center gap-1.5 shadow-sm"
                 title="Tingkatkan Hubungan Semua Negara"
               >
-                <Heart className="h-3.5 w-3.5 fill-[#00FFAA] hover:fill-[#0A1A1A]" />
+                <Heart className="h-3.5 w-3.5 fill-root-accent hover:fill-root-canvas" />
                 <span className="font-black tracking-wider whitespace-nowrap">Tingkatkan Hubungan Semua Negara</span>
               </button>
               <MenuInfoButton
@@ -183,7 +183,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
               />
               <button
                 onClick={onClose}
-                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
+                className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
               >
                 <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
@@ -192,13 +192,13 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
           </div>
 
           {/* BODY TABEL */}
-          <div className="flex-1 min-h-0 flex flex-col p-6 bg-[#0F2424] relative z-10">
+          <div className="flex-1 min-h-0 flex flex-col p-6 bg-root-surface relative z-10">
             <div className="flex justify-between items-center gap-3 mb-4 flex-shrink-0">
               <button
                 onClick={() => setIsLegendOpen(true)}
-                className="px-4 py-2 rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA] text-[10px] font-black uppercase tracking-wider hover:bg-[#00FFAA]/10 transition-all cursor-pointer flex items-center gap-2"
+                className="px-4 py-2 rounded-lg bg-root-canvas border border-root-accent/30 text-root-accent text-[10px] font-black uppercase tracking-wider hover:bg-root-accent/10 transition-all cursor-pointer flex items-center gap-2"
               >
-                <Info className="h-3.5 w-3.5 text-[#00FFAA]" />
+                <Info className="h-3.5 w-3.5 text-root-accent" />
                 Legenda Hubungan
               </button>
 
@@ -208,28 +208,28 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                   placeholder="Cari negara / benua..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-8 pr-3 py-1.5 rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 text-xs font-bold text-[#E0E0E0] outline-none focus:border-[#00FFAA] w-52 transition-all placeholder:text-[#6B8A8A]"
+                  className="pl-8 pr-3 py-1.5 rounded-lg bg-root-canvas border border-root-accent/30 text-xs font-bold text-root-text outline-none focus:border-root-accent w-52 transition-all placeholder:text-root-subtle"
                 />
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#6B8A8A]" />
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-root-subtle" />
               </div>
             </div>
 
-            <div className="flex-1 min-h-0 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl overflow-hidden shadow-sm flex flex-col">
+            <div className="flex-1 min-h-0 bg-root-canvas border border-root-accent/20 rounded-xl overflow-hidden shadow-sm flex flex-col">
               <div className="flex-1 min-h-0 overflow-y-auto neon-scrollbar">
                 <table className="min-w-full table-auto border-separate border-spacing-0 text-left">
-                  <thead className="sticky top-0 z-10 bg-[#0A1A1A]">
-                    <tr className="border-b border-[#00FFAA]/20">
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 border-b border-[#00FFAA]/20 text-center cursor-pointer hover:bg-[#00FFAA]/10 transition text-[9px] sm:text-[10px] text-[#00FFAA] font-black uppercase tracking-wider whitespace-nowrap w-14" onClick={() => handleSort('no')}>No{renderSortArrow('no')}</th>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 border-b border-[#00FFAA]/20 cursor-pointer hover:bg-[#00FFAA]/10 transition text-[9px] sm:text-[10px] text-[#00FFAA] font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('name')}>Nama Negara{renderSortArrow('name')}</th>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 border-b border-[#00FFAA]/20 cursor-pointer hover:bg-[#00FFAA]/10 transition text-[9px] sm:text-[10px] text-[#00FFAA] font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('continent')}>Benua{renderSortArrow('continent')}</th>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 border-b border-[#00FFAA]/20 text-center cursor-pointer hover:bg-[#00FFAA]/10 transition text-[9px] sm:text-[10px] text-[#00FFAA] font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('hasEmbassy')}>Kedutaan Besar{renderSortArrow('hasEmbassy')}</th>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 border-b border-[#00FFAA]/20 text-center cursor-pointer hover:bg-[#00FFAA]/10 transition text-[9px] sm:text-[10px] text-[#00FFAA] font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('relation')}>Tingkat Hubungan{renderSortArrow('relation')}</th>
+                  <thead className="sticky top-0 z-10 bg-root-canvas">
+                    <tr className="border-b border-root-accent/20">
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 border-b border-root-accent/20 text-center cursor-pointer hover:bg-root-accent/10 transition text-[9px] sm:text-[10px] text-root-accent font-black uppercase tracking-wider whitespace-nowrap w-14" onClick={() => handleSort('no')}>No{renderSortArrow('no')}</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 border-b border-root-accent/20 cursor-pointer hover:bg-root-accent/10 transition text-[9px] sm:text-[10px] text-root-accent font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('name')}>Nama Negara{renderSortArrow('name')}</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 border-b border-root-accent/20 cursor-pointer hover:bg-root-accent/10 transition text-[9px] sm:text-[10px] text-root-accent font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('continent')}>Benua{renderSortArrow('continent')}</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 border-b border-root-accent/20 text-center cursor-pointer hover:bg-root-accent/10 transition text-[9px] sm:text-[10px] text-root-accent font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('hasEmbassy')}>Kedutaan Besar{renderSortArrow('hasEmbassy')}</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 border-b border-root-accent/20 text-center cursor-pointer hover:bg-root-accent/10 transition text-[9px] sm:text-[10px] text-root-accent font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('relation')}>Tingkat Hubungan{renderSortArrow('relation')}</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#00FFAA]/10">
+                  <tbody className="divide-y divide-root-accent/10">
                     {sortedRows.length === 0 ? (
                       <tr>
-                        <td className="px-4 py-6 text-center text-sm font-bold text-[#6B8A8A]" colSpan={5}>
+                        <td className="px-4 py-6 text-center text-sm font-bold text-root-subtle" colSpan={5}>
                           Tidak ada data yang cocok dengan pencarian "{searchQuery}".
                         </td>
                       </tr>
@@ -237,22 +237,22 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                       sortedRows.map((row, index) => {
                         const { alias, className } = getRelationBadge(row.relation);
                         return (
-                          <tr key={`${row.name}-${index}`} className="hover:bg-[#00FFAA]/5 transition-colors">
-                            <td className="px-4 py-3 text-center text-xs font-bold text-[#6B8A8A]">{index + 1}</td>
-                            <td className="px-4 py-3 text-xs font-bold text-[#E0E0E0]">
+                          <tr key={`${row.name}-${index}`} className="hover:bg-root-accent/5 transition-colors">
+                            <td className="px-4 py-3 text-center text-xs font-bold text-root-subtle">{index + 1}</td>
+                            <td className="px-4 py-3 text-xs font-bold text-root-text">
                               <div className="flex items-center gap-2">
                                 {row.hasEmbassy ? (
-                                  <Building2 className="w-4 h-4 text-[#00FFAA] shrink-0" />
+                                  <Building2 className="w-4 h-4 text-root-accent shrink-0" />
                                 ) : (
                                   <Building2 className="w-4 h-4 text-gray-600 opacity-40 shrink-0" />
                                 )}
                                 <span>{row.name}</span>
                               </div>
                             </td>
-                            <td className="px-4 py-3 text-xs font-bold text-[#6B8A8A]">{row.continent}</td>
+                            <td className="px-4 py-3 text-xs font-bold text-root-subtle">{row.continent}</td>
                             <td className="px-4 py-3 text-center text-xs font-bold">
                               {row.hasEmbassy ? (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#00FFAA]/15 text-[#00FFAA] border border-[#00FFAA]/30 text-[11px] font-bold">
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-root-accent/15 text-root-accent border border-root-accent/30 text-[11px] font-bold">
                                   <ShieldCheck className="w-3.5 h-3.5" />
                                   Ada Kedutaan
                                 </span>
@@ -282,67 +282,67 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
 
       {/* MODAL LEGENDA */}
       {isLegendOpen && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/80 pointer-events-auto">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-lg shadow-2xl relative pointer-events-auto overflow-hidden">
-            <div className="px-4 sm:px-5 py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] gap-2 shrink-0">
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 pointer-events-auto">
+          <div className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-lg shadow-2xl relative pointer-events-auto overflow-hidden">
+            <div className="px-4 sm:px-5 py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas gap-2 shrink-0">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30">
-                  <Info className="h-4 w-4 text-[#00FFAA]" />
+                <div className="p-1.5 bg-root-surface rounded-lg border border-root-accent/30">
+                  <Info className="h-4 w-4 text-root-accent" />
                 </div>
-                <h3 className="text-sm font-bold text-[#00FFAA] uppercase tracking-wide">
+                <h3 className="text-sm font-bold text-root-accent uppercase tracking-wide">
                   Indikator Hubungan Diplomatik
                 </h3>
               </div>
               <button
                 onClick={() => setIsLegendOpen(false)}
-                className="p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer"
+                className="p-1.5 rounded-lg border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
             <div className="p-5 space-y-3">
-              <div className="flex items-center justify-between border-b border-[#00FFAA]/15 pb-2">
-                <span className="text-xs font-bold text-[#E0E0E0]">0 - 25</span>
+              <div className="flex items-center justify-between border-b border-root-accent/15 pb-2">
+                <span className="text-xs font-bold text-root-text">0 - 25</span>
                 <div className="flex items-center gap-3">
                   <span className="inline-block px-3 py-1 rounded-md bg-red-500/15 text-red-400 border border-red-500/30 font-bold text-xs">Sangat Buruk</span>
-                  <span className="text-xs font-semibold text-[#6B8A8A] w-20 text-right">({countByCategory.sangatBuruk} negara)</span>
+                  <span className="text-xs font-semibold text-root-subtle w-20 text-right">({countByCategory.sangatBuruk} negara)</span>
                 </div>
               </div>
-              <div className="flex items-center justify-between border-b border-[#00FFAA]/15 pb-2">
-                <span className="text-xs font-bold text-[#E0E0E0]">26 - 40</span>
+              <div className="flex items-center justify-between border-b border-root-accent/15 pb-2">
+                <span className="text-xs font-bold text-root-text">26 - 40</span>
                 <div className="flex items-center gap-3">
                   <span className="inline-block px-3 py-1 rounded-md bg-rose-500/15 text-rose-400 border border-rose-500/30 font-bold text-xs">Buruk</span>
-                  <span className="text-xs font-semibold text-[#6B8A8A] w-20 text-right">({countByCategory.buruk} negara)</span>
+                  <span className="text-xs font-semibold text-root-subtle w-20 text-right">({countByCategory.buruk} negara)</span>
                 </div>
               </div>
-              <div className="flex items-center justify-between border-b border-[#00FFAA]/15 pb-2">
-                <span className="text-xs font-bold text-[#E0E0E0]">41 - 65</span>
+              <div className="flex items-center justify-between border-b border-root-accent/15 pb-2">
+                <span className="text-xs font-bold text-root-text">41 - 65</span>
                 <div className="flex items-center gap-3">
                   <span className="inline-block px-3 py-1 rounded-md bg-yellow-500/15 text-yellow-400 border border-yellow-500/30 font-bold text-xs">Netral</span>
-                  <span className="text-xs font-semibold text-[#6B8A8A] w-20 text-right">({countByCategory.netral} negara)</span>
+                  <span className="text-xs font-semibold text-root-subtle w-20 text-right">({countByCategory.netral} negara)</span>
                 </div>
               </div>
-              <div className="flex items-center justify-between border-b border-[#00FFAA]/15 pb-2">
-                <span className="text-xs font-bold text-[#E0E0E0]">66 - 80</span>
+              <div className="flex items-center justify-between border-b border-root-accent/15 pb-2">
+                <span className="text-xs font-bold text-root-text">66 - 80</span>
                 <div className="flex items-center gap-3">
                   <span className="inline-block px-3 py-1 rounded-md bg-green-500/15 text-green-400 border border-green-500/30 font-bold text-xs">Baik</span>
-                  <span className="text-xs font-semibold text-[#6B8A8A] w-20 text-right">({countByCategory.baik} negara)</span>
+                  <span className="text-xs font-semibold text-root-subtle w-20 text-right">({countByCategory.baik} negara)</span>
                 </div>
               </div>
-              <div className="flex items-center justify-between border-b border-[#00FFAA]/15 pb-2">
-                <span className="text-xs font-bold text-[#E0E0E0]">81 - 100</span>
+              <div className="flex items-center justify-between border-b border-root-accent/15 pb-2">
+                <span className="text-xs font-bold text-root-text">81 - 100</span>
                 <div className="flex items-center gap-3">
-                  <span className="inline-block px-3 py-1 rounded-md bg-[#00FFAA]/15 text-[#00FFAA] border border-[#00FFAA]/30 font-bold text-xs">Sangat Baik</span>
-                  <span className="text-xs font-semibold text-[#6B8A8A] w-20 text-right">({countByCategory.sangatBaik} negara)</span>
+                  <span className="inline-block px-3 py-1 rounded-md bg-root-accent/15 text-root-accent border border-root-accent/30 font-bold text-xs">Sangat Baik</span>
+                  <span className="text-xs font-semibold text-root-subtle w-20 text-right">({countByCategory.sangatBaik} negara)</span>
                 </div>
               </div>
             </div>
 
-            <div className="px-5 py-3 border-t border-[#00FFAA]/20 bg-[#0A1A1A]">
+            <div className="px-5 py-3 border-t border-root-accent/20 bg-root-canvas">
               <button
                 onClick={() => setIsLegendOpen(false)}
-                className="w-full py-2.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] text-xs font-black uppercase tracking-widest hover:bg-[#00FFAA]/80 transition-all cursor-pointer"
+                className="w-full py-2.5 rounded-xl bg-root-accent text-root-canvas text-xs font-black uppercase tracking-widest hover:bg-root-accent/80 transition-all cursor-pointer"
               >
                 Tutup
               </button>
@@ -356,16 +356,16 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
         <NotebookModalWrapper onClose={() => setIsPilihJalurOpen(false)}>
           <div className="flex h-full flex-col overflow-hidden">
 
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] gap-2 shrink-0 rounded-t-2xl">
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas gap-2 shrink-0 rounded-t-2xl">
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-                  <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+                <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+                  <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
+                  <h3 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">
                     Pilih Jalur Diplomasi
                   </h3>
-                  <p className="text-[10px] sm:text-xs text-[#6B8A8A] font-semibold mt-1">
+                  <p className="text-[10px] sm:text-xs text-root-subtle font-semibold mt-1">
                     Tingkatkan Hubungan ke Seluruh Negara Dunia
                   </p>
                 </div>
@@ -373,17 +373,17 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
 
               <button
                 onClick={() => setIsPilihJalurOpen(false)}
-                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
+                className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
               >
                 <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="flex-1 min-h-0 bg-[#0F2424] relative z-10 p-6 sm:p-8 lg:p-12 flex flex-col items-center justify-center gap-6 sm:gap-8">
-              <p className="text-sm sm:text-base text-[#E0E0E0] text-center leading-relaxed max-w-2xl">
+            <div className="flex-1 min-h-0 bg-root-surface relative z-10 p-6 sm:p-8 lg:p-12 flex flex-col items-center justify-center gap-6 sm:gap-8">
+              <p className="text-sm sm:text-base text-root-text text-center leading-relaxed max-w-2xl">
                 Pilih metode bantuan yang ingin Anda salurkan untuk menaikkan tingkat hubungan bilateral dengan{" "}
-                <strong className="text-[#00FFAA]">seluruh negara dunia</strong>.
+                <strong className="text-root-accent">seluruh negara dunia</strong>.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 w-full max-w-3xl">
@@ -393,15 +393,15 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                     setIsPilihJalurOpen(false);
                     setIsTingkatkanUangOpen(true);
                   }}
-                  className="group flex flex-col items-center justify-center text-center p-6 sm:p-8 rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] hover:bg-[#00FFAA]/10 hover:border-[#00FFAA] transition-all cursor-pointer shadow-sm hover:scale-[1.02] min-h-[200px] sm:min-h-[240px]"
+                  className="group flex flex-col items-center justify-center text-center p-6 sm:p-8 rounded-2xl border border-root-accent/30 bg-root-canvas hover:bg-root-accent/10 hover:border-root-accent transition-all cursor-pointer shadow-sm hover:scale-[1.02] min-h-[200px] sm:min-h-[240px]"
                 >
-                  <div className="p-4 bg-[#00FFAA]/10 rounded-2xl border border-[#00FFAA]/30 mb-4 group-hover:bg-[#00FFAA] transition-all">
-                    <Coins className="h-8 w-8 sm:h-10 sm:w-10 text-[#00FFAA] group-hover:text-[#0A1A1A] transition-colors" />
+                  <div className="p-4 bg-root-accent/10 rounded-2xl border border-root-accent/30 mb-4 group-hover:bg-root-accent transition-all">
+                    <Coins className="h-8 w-8 sm:h-10 sm:w-10 text-root-accent group-hover:text-root-canvas transition-colors" />
                   </div>
-                  <h4 className="text-base sm:text-lg font-black text-[#00FFAA] uppercase tracking-wide mb-2">
+                  <h4 className="text-base sm:text-lg font-black text-root-accent uppercase tracking-wide mb-2">
                     Jalur Uang (NEO)
                   </h4>
-                  <p className="text-xs sm:text-sm text-[#6B8A8A] leading-relaxed max-w-xs">
+                  <p className="text-xs sm:text-sm text-root-subtle leading-relaxed max-w-xs">
                     Tingkatkan Hubungan Diplomatik dengan menyalurkan kas anggaran negara (10.000 NEO = +1 Tingkat).
                   </p>
                 </button>
@@ -412,15 +412,15 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                     setIsPilihJalurOpen(false);
                     setIsBeriHadiahBarangOpen(true);
                   }}
-                  className="group flex flex-col items-center justify-center text-center p-6 sm:p-8 rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] hover:bg-[#00FFAA]/10 hover:border-[#00FFAA] transition-all cursor-pointer shadow-sm hover:scale-[1.02] min-h-[200px] sm:min-h-[240px]"
+                  className="group flex flex-col items-center justify-center text-center p-6 sm:p-8 rounded-2xl border border-root-accent/30 bg-root-canvas hover:bg-root-accent/10 hover:border-root-accent transition-all cursor-pointer shadow-sm hover:scale-[1.02] min-h-[200px] sm:min-h-[240px]"
                 >
-                  <div className="p-4 bg-[#00FFAA]/10 rounded-2xl border border-[#00FFAA]/30 mb-4 group-hover:bg-[#00FFAA] transition-all">
-                    <Gift className="h-8 w-8 sm:h-10 sm:w-10 text-[#00FFAA] group-hover:text-[#0A1A1A] transition-colors" />
+                  <div className="p-4 bg-root-accent/10 rounded-2xl border border-root-accent/30 mb-4 group-hover:bg-root-accent transition-all">
+                    <Gift className="h-8 w-8 sm:h-10 sm:w-10 text-root-accent group-hover:text-root-canvas transition-colors" />
                   </div>
-                  <h4 className="text-base sm:text-lg font-black text-[#00FFAA] uppercase tracking-wide mb-2">
+                  <h4 className="text-base sm:text-lg font-black text-root-accent uppercase tracking-wide mb-2">
                     Jalur Hadiah Komoditas
                   </h4>
-                  <p className="text-xs sm:text-sm text-[#6B8A8A] leading-relaxed max-w-xs">
+                  <p className="text-xs sm:text-sm text-root-subtle leading-relaxed max-w-xs">
                     Beri Hadiah Komoditas berupa hasil mineral, pangan, manufaktur, agrikultur, atau perikanan.
                   </p>
                 </button>
@@ -429,12 +429,12 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
               <div className="flex-1" />
             </div>
 
-            <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-[#00FFAA]/20 bg-[#0A1A1A] shrink-0 rounded-b-2xl">
+            <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-root-accent/20 bg-root-canvas shrink-0 rounded-b-2xl">
               <div className="flex gap-3 justify-end">
                 <button
                   type="button"
                   onClick={() => setIsPilihJalurOpen(false)}
-                  className="px-6 py-3 bg-[#0F2424] hover:bg-[#163535] border border-[#00FFAA]/30 rounded-xl text-center text-[#E0E0E0] font-black text-xs tracking-wider uppercase transition-all cursor-pointer"
+                  className="px-6 py-3 bg-root-surface hover:bg-[#163535] border border-root-accent/30 rounded-xl text-center text-root-text font-black text-xs tracking-wider uppercase transition-all cursor-pointer"
                 >
                   Batal
                 </button>

@@ -1,0 +1,23 @@
+:root {
+  --root-color-canvas: #1a0a0a;
+  --root-color-surface: #0F2424;
+  --root-color-accent: #00FFAA;
+  --root-color-accent-ink: #071414;
+  --root-color-text: #E0E0E0;
+  --root-color-body: #D0D8D8;
+  --root-color-muted: #AAB6B6;
+  --root-color-subtle: #6B8A8A;
+  --root-color-danger: #FF2D55;
+}
+
+@theme inline {
+  --color-root-canvas: var(--root-color-canvas);
+  --color-root-surface: var(--root-color-surface);
+  --color-root-accent: var(--root-color-accent);
+  --color-root-accent-ink: var(--root-color-accent-ink);
+  --color-root-text: var(--root-color-text);
+  --color-root-body: var(--root-color-body);
+  --color-root-muted: var(--root-color-muted);
+  --color-root-subtle: var(--root-color-subtle);
+  --color-root-danger: var(--root-color-danger);
+}

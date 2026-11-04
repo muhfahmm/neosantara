@@ -64,7 +64,7 @@ const safeNumber = (value: any): number => {
 
 const formatColoredNumber = (value: any, isPositive: boolean = true) => {
   const parsed = safeNumber(value);
-  if (parsed === 0) return <span className="font-black text-[#6B8A8A]">0</span>;
+  if (parsed === 0) return <span className="font-black text-root-subtle">0</span>;
   const absValue = Math.abs(parsed);
   const formatted = absValue.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 });
   const mainColor = isPositive ? 'text-emerald-400' : 'text-rose-400';
@@ -293,10 +293,10 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
         >
           <div className="flex min-w-0 flex-col overflow-hidden">
             {/* HEADER */}
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-                  <Utensils className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+                <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+                  <Utensils className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
                 </div>
                 <div className="min-w-0">
                   <h2 className={rootModalTypography.title}>{selectedCommodityInfo.label}</h2>
@@ -305,7 +305,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
               <RootModalCloseButton onClick={() => setSelectedCommodityInfo(null)} />
             </div>
             {/* CONTENT */}
-            <div className="root-no-scrollbar-glow overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 neon-scrollbar space-y-3.5 lg:space-y-4.5 2xl:space-y-6">
+            <div className="root-no-scrollbar-glow overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-root-canvas/80 relative z-10 neon-scrollbar space-y-3.5 lg:space-y-4.5 2xl:space-y-6">
               <div className="grid grid-cols-2 gap-1.5 lg:gap-2">
                 <div className={`bg-emerald-950/40 p-2 lg:p-2.5 2xl:p-3.5 border border-emerald-500/30 ${rootBorderRadius.card} flex flex-col justify-between gap-1`}>
                   <span className={rootModalTypography.label}>Total Produksi</span>
@@ -321,7 +321,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                   {selectedCommodityInfo.bonusDescription}
                 </div>
               )}
-              <div className={`bg-[#0A1A1A] p-2 lg:p-2.5 2xl:p-3.5 border border-[#00FFAA]/20 ${rootBorderRadius.card}`}>
+              <div className={`bg-root-canvas p-2 lg:p-2.5 2xl:p-3.5 border border-root-accent/20 ${rootBorderRadius.card}`}>
                 <div className="flex justify-between items-center text-[10px] lg:text-xs 2xl:text-sm">
                   <span className={rootModalTypography.label}>Netto:</span>
                   {formatColoredNumber(selectedCommodityInfo.balance, selectedCommodityInfo.balance >= 0)}
@@ -336,24 +336,24 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
       <NotebookModalWrapper onClose={onClose}>
         <div className="flex h-full min-w-0 flex-col overflow-hidden">
           {/* HEADER */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-                <Utensils className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+              <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+                <Utensils className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
               </div>
               <div className="min-w-0">
                 <h2 className={rootModalTypography.title}>Industri Pangan & Konsumsi Masyarakat</h2>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button type="button" onClick={() => setIsMenuInfoOpen(true)} title="Informasi industri pangan dan konsumsi" aria-label="Informasi industri pangan dan konsumsi" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]">
+              <button type="button" onClick={() => setIsMenuInfoOpen(true)} title="Informasi industri pangan dan konsumsi" aria-label="Informasi industri pangan dan konsumsi" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas">
                 <Info className="h-3.5 w-3.5" />
               </button>
               <RootModalCloseButton onClick={onClose} />
             </div>
           </div>
           {/* CONTENT */}
-          <div className="root-no-scrollbar-glow flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 neon-scrollbar">
+          <div className="root-no-scrollbar-glow flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-root-canvas/80 relative z-10 neon-scrollbar">
             <div className="space-y-3.5 lg:space-y-4.5 2xl:space-y-6">
               {Object.entries(SECTOR_MAP).map(([sectorId, sectorData]) => {
                 const SectorIcon = sectorData.icon;
@@ -362,13 +362,13 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                 let deficitCount = 0; let surplusCount = 0;
                 sectorItems.forEach(key => { const prod = calculateProduction(key, countryDetail, metadata); const cons = calculateConsumption(population, FOOD_CONSUMPTION_PER_CAPITA[key]); if (prod - cons < 0) deficitCount++; else if (prod - cons > 0) surplusCount++; });
                 return (
-                  <div key={sectorId} className={`min-w-0 border border-[#00FFAA]/20 ${rootBorderRadius.card} overflow-hidden bg-[#0A1A1A]`}>
-                    <div className="flex items-center justify-between px-3.5 lg:px-4.5 2xl:px-6 py-2 lg:py-2.5 2xl:py-3.5 bg-[#0A1A1A] border-b border-[#00FFAA]/20 text-[#00FFAA]">
-                      <div className="flex min-w-0 items-center gap-2 lg:gap-3"><div className="p-1 lg:p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30"><SectorIcon className="w-4 h-4 lg:w-4.5 lg:w-4.5 2xl:w-5 2xl:h-5 text-[#00FFAA]" /></div><h4 className={`${rootModalTypography.sectionTitle} min-w-0 break-words`}>{sectorData.label} ({sectorItems.length} Komoditas)</h4></div>
-                      <button onClick={() => analyzeSector(sectorId)} className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 lg:py-1.5 rounded-full bg-[#00FFAA]/10 hover:bg-[#00FFAA]/20 transition-colors border border-[#00FFAA]/30 group cursor-pointer" title="Analisis AI untuk sektor ini"><div className="relative"><MessageSquare className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-[#00FFAA] group-hover:scale-110 transition-transform" /><span className={`absolute -top-1 -right-1 w-2 h-2 rounded-full ${deficitCount > 0 ? 'bg-rose-400 animate-pulse' : surplusCount > 0 ? 'bg-emerald-400' : 'bg-gray-400'}`} /></div><span className="text-[8px] lg:text-[9px] font-bold uppercase tracking-wider text-[#00FFAA]">AI</span></button>
+                  <div key={sectorId} className={`min-w-0 border border-root-accent/20 ${rootBorderRadius.card} overflow-hidden bg-root-canvas`}>
+                    <div className="flex items-center justify-between px-3.5 lg:px-4.5 2xl:px-6 py-2 lg:py-2.5 2xl:py-3.5 bg-root-canvas border-b border-root-accent/20 text-root-accent">
+                      <div className="flex min-w-0 items-center gap-2 lg:gap-3"><div className="p-1 lg:p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/30"><SectorIcon className="w-4 h-4 lg:w-4.5 lg:w-4.5 2xl:w-5 2xl:h-5 text-root-accent" /></div><h4 className={`${rootModalTypography.sectionTitle} min-w-0 break-words`}>{sectorData.label} ({sectorItems.length} Komoditas)</h4></div>
+                      <button onClick={() => analyzeSector(sectorId)} className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 lg:py-1.5 rounded-full bg-root-accent/10 hover:bg-root-accent/20 transition-colors border border-root-accent/30 group cursor-pointer" title="Analisis AI untuk sektor ini"><div className="relative"><MessageSquare className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-root-accent group-hover:scale-110 transition-transform" /><span className={`absolute -top-1 -right-1 w-2 h-2 rounded-full ${deficitCount > 0 ? 'bg-rose-400 animate-pulse' : surplusCount > 0 ? 'bg-emerald-400' : 'bg-gray-400'}`} /></div><span className="text-[8px] lg:text-[9px] font-bold uppercase tracking-wider text-root-accent">AI</span></button>
                     </div>
                     {/* Grid Items */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 lg:gap-2 p-2 lg:p-2.5 2xl:p-3 bg-[#0F2424]">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 lg:gap-2 p-2 lg:p-2.5 2xl:p-3 bg-root-surface">
                       {sectorItems.map((key) => {
                         const consumptionPerCapita = FOOD_CONSUMPTION_PER_CAPITA[key];
                         const production = calculateProduction(key, countryDetail, metadata);
@@ -376,19 +376,19 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                         const netBalance = production - consumption;
                         const label = metadata?.[key]?.label || key.replace(/_/g, ' ').replace(/\b\w/g, (ch) => ch.toUpperCase());
                         return (
-                          <div key={key} className={`min-w-0 bg-[#0A1A1A] p-2 lg:p-2.5 2xl:p-3.5 flex flex-col justify-between gap-1.5 lg:gap-2 ${rootBorderRadius.card} border border-[#00FFAA]/20`}>
-                            <div className="flex items-center justify-between pb-1 border-b border-[#00FFAA]/10 gap-1 min-h-[28px] lg:min-h-[30px] 2xl:min-h-[34px]">
+                          <div key={key} className={`min-w-0 bg-root-canvas p-2 lg:p-2.5 2xl:p-3.5 flex flex-col justify-between gap-1.5 lg:gap-2 ${rootBorderRadius.card} border border-root-accent/20`}>
+                            <div className="flex items-center justify-between pb-1 border-b border-root-accent/10 gap-1 min-h-[28px] lg:min-h-[30px] 2xl:min-h-[34px]">
                               <div className="flex items-center gap-1 lg:gap-1.5 min-w-0 flex-1 pr-0.5">
-                                <button type="button" onClick={(e) => { e.stopPropagation(); openCommodityInfo(key, label, production, consumption, netBalance); }} title={`Detail konsumsi ${label}`} className="p-0.5 lg:p-1 rounded-md lg:rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer shrink-0"><Info className="w-3 h-3 lg:w-3.5 lg:h-3.5" /></button>
+                                <button type="button" onClick={(e) => { e.stopPropagation(); openCommodityInfo(key, label, production, consumption, netBalance); }} title={`Detail konsumsi ${label}`} className="p-0.5 lg:p-1 rounded-md lg:rounded-lg border border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer shrink-0"><Info className="w-3 h-3 lg:w-3.5 lg:h-3.5" /></button>
                                 <span className={`${rootModalTypography.label} min-w-0 whitespace-normal break-words leading-tight`}>{label}</span>
                               </div>
-                              {onGotoProduction && (<button onClick={() => handleBuildClick(key)} title={`Bangun ${label}`} className="p-0.5 lg:p-1 rounded-md lg:rounded-lg bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 transition-all cursor-pointer shrink-0"><Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 font-bold" /></button>)}
+                              {onGotoProduction && (<button onClick={() => handleBuildClick(key)} title={`Bangun ${label}`} className="p-0.5 lg:p-1 rounded-md lg:rounded-lg bg-root-accent text-root-canvas hover:bg-root-accent/80 transition-all cursor-pointer shrink-0"><Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 font-bold" /></button>)}
                             </div>
                             <div className="space-y-1 text-[10px] lg:text-xs">
                               <div className={`flex justify-between items-center bg-emerald-950/40 px-1.5 lg:px-2 py-0.5 lg:py-1 ${rootBorderRadius.card} border border-emerald-500/30`}><span className={rootModalTypography.label}>Total Produksi</span>{formatColoredNumber(production, true)}</div>
                               <div className={`flex justify-between items-center bg-rose-950/40 px-1.5 lg:px-2 py-0.5 lg:py-1 ${rootBorderRadius.card} border border-rose-500/30`}><span className={rootModalTypography.label}>Total Konsumsi</span>{formatColoredNumber(consumption, false)}</div>
                             </div>
-                            <div className="flex justify-between items-center pt-1 border-t border-[#00FFAA]/10 mt-0.5"><span className={rootModalTypography.label}>Netto:</span>{formatColoredNumber(netBalance, netBalance >= 0)}</div>
+                            <div className="flex justify-between items-center pt-1 border-t border-root-accent/10 mt-0.5"><span className={rootModalTypography.label}>Netto:</span>{formatColoredNumber(netBalance, netBalance >= 0)}</div>
                           </div>
                         );
                       })}
@@ -398,18 +398,18 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
               })}
 
               {/* INDEKS KEPUASAN PANGAN */}
-              <div className={`p-3.5 lg:p-4 2xl:p-5 border border-[#00FFAA]/30 bg-[#0A1A1A] ${rootBorderRadius.card}`}>
+              <div className={`p-3.5 lg:p-4 2xl:p-5 border border-root-accent/30 bg-root-canvas ${rootBorderRadius.card}`}>
                 <div className="flex justify-between items-center">
                   <span className={rootModalTypography.sectionTitle}>
                     Indeks Kepuasan Rakyat (Pangan)
                   </span>
-                  <span className="text-xl lg:text-2xl 2xl:text-3xl font-semibold text-[#00FFAA]">
+                  <span className="text-xl lg:text-2xl 2xl:text-3xl font-semibold text-root-accent">
                     {foodSatisfaction} / 100
                   </span>
                 </div>
-                <div className="w-full h-2.5 lg:h-3 bg-[#0F2424] rounded-full mt-2 lg:mt-3 overflow-hidden border border-[#00FFAA]/20">
+                <div className="w-full h-2.5 lg:h-3 bg-root-surface rounded-full mt-2 lg:mt-3 overflow-hidden border border-root-accent/20">
                   <div
-                    className="h-full rounded-full bg-[#00FFAA] transition-all duration-200"
+                    className="h-full rounded-full bg-root-accent transition-all duration-200"
                     style={{ width: `${foodSatisfaction}%` }}
                   />
                 </div>

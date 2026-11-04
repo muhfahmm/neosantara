@@ -160,7 +160,7 @@ export default function SecurityCouncilElectionPanel({
       : "Hasil pemilu";
 
   return (
-    <section className="rounded-xl border border-cyan-500/25 bg-[#0A1A1A] p-5 space-y-4">
+    <section className="rounded-xl border border-cyan-500/25 bg-root-canvas p-5 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h4 className="text-sm font-black uppercase tracking-wide text-cyan-300">
@@ -190,13 +190,13 @@ export default function SecurityCouncilElectionPanel({
           ["Hubungan bilateral", "10%"],
         ].map(([label, weight]) => (
           <div key={label} className="rounded-lg border border-white/5 bg-[#051111] p-2">
-            <p className="text-[9px] font-bold uppercase tracking-wide text-[#6B8A8A]">{label}</p>
-            <p className="mt-1 text-xs font-black text-[#E0E0E0]">{weight}</p>
+            <p className="text-[9px] font-bold uppercase tracking-wide text-root-subtle">{label}</p>
+            <p className="mt-1 text-xs font-black text-root-text">{weight}</p>
           </div>
         ))}
         <div className="rounded-lg border border-white/5 bg-[#051111] p-2">
-          <p className="text-[9px] font-bold uppercase tracking-wide text-[#6B8A8A]">Pemilih berhak</p>
-          <p className="mt-1 text-xs font-black text-[#E0E0E0]">{voters.length} / 193</p>
+          <p className="text-[9px] font-bold uppercase tracking-wide text-root-subtle">Pemilih berhak</p>
+          <p className="mt-1 text-xs font-black text-root-text">{voters.length} / 193</p>
         </div>
       </div>
 
@@ -228,7 +228,7 @@ export default function SecurityCouncilElectionPanel({
             type="button"
             onClick={nominatePlayer}
             disabled={!canNominate || !profilesLoaded || profiledVoterCount !== 193 || !player || voters.length !== 193 || !nominationOpen}
-            className="rounded-lg bg-cyan-400 px-3 py-2 text-[10px] font-black uppercase tracking-wide text-[#071414] disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-lg bg-cyan-400 px-3 py-2 text-[10px] font-black uppercase tracking-wide text-root-accent-ink disabled:cursor-not-allowed disabled:opacity-40"
           >
             Nominasi negara saya
           </button>
@@ -242,7 +242,7 @@ export default function SecurityCouncilElectionPanel({
               type="button"
               onClick={campaign}
               disabled={playerCandidate.campaignCount >= 3}
-              className="rounded-lg bg-cyan-400 px-3 py-2 text-[10px] font-black uppercase tracking-wide text-[#071414] disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-lg bg-cyan-400 px-3 py-2 text-[10px] font-black uppercase tracking-wide text-root-accent-ink disabled:cursor-not-allowed disabled:opacity-40"
             >
               Kampanye kontribusi ({playerCandidate.campaignCount}/3)
             </button>
@@ -280,7 +280,7 @@ export default function SecurityCouncilElectionPanel({
             .map(candidate => (
               <div key={candidate.slug} className="flex items-center justify-between gap-3 rounded-lg border border-white/5 bg-[#051111] px-3 py-2">
                 <div className="min-w-0">
-                  <p className="truncate text-xs font-bold text-[#E0E0E0]">{candidate.name}</p>
+                  <p className="truncate text-xs font-bold text-root-text">{candidate.name}</p>
                   <p className="text-[9px] text-[#789090]">{candidate.region} · Skor {candidate.score.toFixed(1)}</p>
                 </div>
                 <div className="shrink-0 text-right">

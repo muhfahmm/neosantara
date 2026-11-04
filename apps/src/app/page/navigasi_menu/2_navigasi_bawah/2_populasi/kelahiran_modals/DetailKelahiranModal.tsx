@@ -82,13 +82,13 @@ export default function DetailKelahiranModal({
 
   return (
     <NotebookModalWrapper onClose={onClose}>
-      <div className="flex flex-col h-full overflow-hidden bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 ">
+      <div className="flex flex-col h-full overflow-hidden bg-root-canvas rounded-xl border border-root-accent/20 ">
 
         {/* ============ HEADER (DISAMAKAN DENGAN MODAL KEPENDUDUKAN) ============ */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0 ">
-              <Users className="h-4 w-4 sm:h-5 sm:w-5 text-[#E0E0E0]" />
+            <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0 ">
+              <Users className="h-4 w-4 sm:h-5 sm:w-5 text-root-text" />
             </div>
             <div>
               {/* Font size dinaikkan kembali ke text-base sm:text-xl */}
@@ -102,48 +102,48 @@ export default function DetailKelahiranModal({
         </div>
 
         {/* ============ BODY (TETAP COMPACT & RESPONSIF) ============ */}
-        <div className="flex-1 overflow-y-auto p-3 sm:p-4 bg-[#0A1A1A]/80 relative z-10
+        <div className="flex-1 overflow-y-auto p-3 sm:p-4 bg-root-canvas/80 relative z-10
           [&::-webkit-scrollbar]:w-1.5 
-          [&::-webkit-scrollbar-track]:bg-[#0A1A1A] 
+          [&::-webkit-scrollbar-track]:bg-root-canvas
           [&::-webkit-scrollbar-track]:rounded-full 
-          [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-[#00FFAA]/20
-          [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A]
+          [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20
+          [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A]
           [&::-webkit-scrollbar-thumb]:rounded-full 
-          [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0A1A1A]
+          [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas
 
-          hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]
+          hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent
           [&::-webkit-scrollbar-button]:hidden
         ">
           <div className="space-y-3">
 
             {/* ============ RINGKASAN UTAMA ============ */}
-            <div className={`relative bg-gradient-to-br from-[#0F2424] to-[#0A1A1A] border border-[#00FFAA]/30 p-3 sm:p-4 ${rootBorderRadius.card} overflow-hidden`}>
+            <div className={`relative bg-gradient-to-br from-root-surface to-root-canvas border border-root-accent/30 p-3 sm:p-4 ${rootBorderRadius.card} overflow-hidden`}>
               
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 relative z-10">
                 <div className="min-w-0 flex-1">
-                  <p className="text-[9px] sm:text-[10px] font-black text-[#AAB6B6] uppercase tracking-widest flex items-center gap-1.5">
-                    <TrendingUp className="h-3 w-3 text-[#E0E0E0]" />
+                  <p className="text-[9px] sm:text-[10px] font-black text-root-muted uppercase tracking-widest flex items-center gap-1.5">
+                    <TrendingUp className="h-3 w-3 text-root-text" />
                     Pertumbuhan Bersih Harian
                   </p>
                   {/* Angka Utama Tetap Kecil: text-2xl sm:text-3xl */}
                   <p className={`text-2xl sm:text-3xl font-black mt-1 tracking-tight ${netDailyChange >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                     {netDailyChange >= 0 ? '+' : ''}{formatNumber(netDailyChange)}
-                    <span className="text-xs sm:text-sm text-[#AAB6B6] font-bold ml-1 tracking-normal">/hr</span>
+                    <span className="text-xs sm:text-sm text-root-muted font-bold ml-1 tracking-normal">/hr</span>
                   </p>
                 </div>
-                <div className="p-2 bg-[#00FFAA]/10 rounded-full border border-[#00FFAA]/30  self-start sm:self-auto">
-                  <Activity className="h-6 w-6 sm:h-7 sm:w-7 text-[#E0E0E0]" />
+                <div className="p-2 bg-root-accent/10 rounded-full border border-root-accent/30  self-start sm:self-auto">
+                  <Activity className="h-6 w-6 sm:h-7 sm:w-7 text-root-text" />
                 </div>
               </div>
 
               <div className="mt-3 grid grid-cols-2 gap-2 relative z-10">
-                <div className={`bg-[#0F2424]/80 backdrop-blur-sm p-2 ${rootBorderRadius.card} border border-emerald-500/40`}>
+                <div className={`bg-root-surface/80  p-2 ${rootBorderRadius.card} border border-emerald-500/40`}>
                   <p className="text-[8px] sm:text-[9px] text-emerald-400 font-black uppercase tracking-wider">Kelahiran</p>
                   <p className="text-sm sm:text-base font-black text-emerald-400 mt-0.5 ">
                     +{formatNumber(dailyBirths)}
                   </p>
                 </div>
-                <div className={`bg-[#0F2424]/80 backdrop-blur-sm p-2 ${rootBorderRadius.card} border border-rose-500/40`}>
+                <div className={`bg-root-surface/80  p-2 ${rootBorderRadius.card} border border-rose-500/40`}>
                   <p className="text-[8px] sm:text-[9px] text-rose-400 font-black uppercase tracking-wider">Kematian</p>
                   <p className="text-sm sm:text-base font-black text-rose-400 mt-0.5 ">
                     -{formatNumber(dailyDeaths)}
@@ -155,42 +155,42 @@ export default function DetailKelahiranModal({
             {/* ============ BREAKDOWN FAKTOR ============ */}
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <div className="p-1 rounded-md bg-[#0F2424] border border-[#00FFAA]/30 ">
-                  <Sparkles className="h-3 w-3 text-[#E0E0E0]" />
+                <div className="p-1 rounded-md bg-root-surface border border-root-accent/30 ">
+                  <Sparkles className="h-3 w-3 text-root-text" />
                 </div>
-                <h3 className="text-[10px] sm:text-xs font-black text-[#E0E0E0] uppercase tracking-wider italic">
+                <h3 className="text-[10px] sm:text-xs font-black text-root-text uppercase tracking-wider italic">
                   Faktor yang Memengaruhi
                 </h3>
-                <div className="h-[1px] flex-1 bg-gradient-to-r from-[#00FFAA]/40 to-transparent ml-1" />
+                <div className="h-[1px] flex-1 bg-gradient-to-r from-root-accent/40 to-transparent ml-1" />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {/* 1. Populasi Dasar */}
-                <div                 className={`group bg-[#0F2424] border border-[#00FFAA]/20 p-2 sm:p-2.5 ${rootBorderRadius.card} space-y-1 transition-all hover:border-[#00FFAA]/40`}>
+                <div                 className={`group bg-root-surface border border-root-accent/20 p-2 sm:p-2.5 ${rootBorderRadius.card} space-y-1 transition-all hover:border-root-accent/40`}>
                   <div className="flex items-center gap-1.5">
-                    <div className="p-1 bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-md shrink-0">
-                      <Users className="h-3 w-3 text-[#E0E0E0]" />
+                    <div className="p-1 bg-root-canvas border border-root-accent/30 rounded-md shrink-0">
+                      <Users className="h-3 w-3 text-root-text" />
                     </div>
-                    <h4 className="text-[9px] sm:text-[10px] font-black text-[#E0E0E0] uppercase tracking-wider">Populasi Dasar</h4>
+                    <h4 className="text-[9px] sm:text-[10px] font-black text-root-text uppercase tracking-wider">Populasi Dasar</h4>
                   </div>
-                  <p className="text-xs sm:text-sm font-bold text-[#E0E0E0]">
-                    {formatNumber(populasi)} <span className="text-[8px] text-[#AAB6B6] font-medium">jiwa</span>
+                  <p className="text-xs sm:text-sm font-bold text-root-text">
+                    {formatNumber(populasi)} <span className="text-[8px] text-root-muted font-medium">jiwa</span>
                   </p>
                 </div>
 
                 {/* 2. Kesejahteraan */}
-                <div                 className={`group bg-[#0F2424] border border-[#00FFAA]/20 p-2 sm:p-2.5 ${rootBorderRadius.card} space-y-1 transition-all hover:border-[#00FFAA]/40`}>
+                <div                 className={`group bg-root-surface border border-root-accent/20 p-2 sm:p-2.5 ${rootBorderRadius.card} space-y-1 transition-all hover:border-root-accent/40`}>
                   <div className="flex items-center gap-1.5">
-                    <div className="p-1 bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-md shrink-0">
-                      <Banknote className="h-3 w-3 text-[#E0E0E0]" />
+                    <div className="p-1 bg-root-canvas border border-root-accent/30 rounded-md shrink-0">
+                      <Banknote className="h-3 w-3 text-root-text" />
                     </div>
-                    <h4 className="text-[9px] sm:text-[10px] font-black text-[#E0E0E0] uppercase tracking-wider">Kesejahteraan</h4>
+                    <h4 className="text-[9px] sm:text-[10px] font-black text-root-text uppercase tracking-wider">Kesejahteraan</h4>
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-xs sm:text-sm font-bold text-[#E0E0E0]">
-                      {countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : 50} <span className="text-[8px] text-[#AAB6B6] font-medium">INDX</span>
+                    <span className="text-xs sm:text-sm font-bold text-root-text">
+                      {countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : 50} <span className="text-[8px] text-root-muted font-medium">INDX</span>
                     </span>
-                    <span className="text-[8px] text-[#E0E0E0] font-bold bg-[#00FFAA]/10 px-1 py-0.5 rounded border border-[#00FFAA]/20">
+                    <span className="text-[8px] text-root-text font-bold bg-root-accent/10 px-1 py-0.5 rounded border border-root-accent/20">
                       × {welfareFactor.toFixed(2)}
                     </span>
                   </div>
@@ -198,24 +198,24 @@ export default function DetailKelahiranModal({
 
                 {/* 3. Fasilitas Kesehatan (clickable) */}
                 <div
-                  className={`group bg-[#0F2424] border border-[#00FFAA]/20 p-2 sm:p-2.5 ${rootBorderRadius.card} space-y-1 cursor-pointer transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 active:scale-[0.98]`}
+                  className={`group bg-root-surface border border-root-accent/20 p-2 sm:p-2.5 ${rootBorderRadius.card} space-y-1 cursor-pointer transition-all hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98]`}
                   onClick={() => onOpenTempatUmum?.('kesehatan')}
                 >
                   <div className="flex items-center justify-between gap-1">
                     <div className="flex items-center gap-1.5">
-                      <div className="p-1 bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-md shrink-0 group-hover:scale-110 transition-transform">
-                        <HeartPulse className="h-3 w-3 text-[#E0E0E0]" />
+                      <div className="p-1 bg-root-canvas border border-root-accent/30 rounded-md shrink-0 group-hover:scale-110 transition-transform">
+                        <HeartPulse className="h-3 w-3 text-root-text" />
                       </div>
-                      <h4 className="text-[9px] sm:text-[10px] font-black text-[#E0E0E0] uppercase tracking-wider">Fasilitas Kesehatan</h4>
+                      <h4 className="text-[9px] sm:text-[10px] font-black text-root-text uppercase tracking-wider">Fasilitas Kesehatan</h4>
                     </div>
-                    <span className="text-[8px] text-[#AAB6B6] font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity">Buka →</span>
+                    <span className="text-[8px] text-root-muted font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity">Buka →</span>
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-xs sm:text-sm font-bold text-[#E0E0E0]">
-                      {kesehatanScore} <span className="text-[8px] text-[#AAB6B6] font-medium">POIN</span>
+                    <span className="text-xs sm:text-sm font-bold text-root-text">
+                      {kesehatanScore} <span className="text-[8px] text-root-muted font-medium">POIN</span>
                     </span>
-                    <span className="text-[8px] text-[#AAB6B6]">(rasio {hospitalRatio.toFixed(2)})</span>
-                    <span className="text-[8px] text-[#E0E0E0] font-bold bg-[#00FFAA]/10 px-1 py-0.5 rounded border border-[#00FFAA]/20">
+                    <span className="text-[8px] text-root-muted">(rasio {hospitalRatio.toFixed(2)})</span>
+                    <span className="text-[8px] text-root-text font-bold bg-root-accent/10 px-1 py-0.5 rounded border border-root-accent/20">
                       × {healthFactor.toFixed(2)}
                     </span>
                   </div>
@@ -223,24 +223,24 @@ export default function DetailKelahiranModal({
 
                 {/* 4. Tingkat Pendidikan (clickable) */}
                 <div
-                  className={`group bg-[#0F2424] border border-[#00FFAA]/20 p-2 sm:p-2.5 ${rootBorderRadius.card} space-y-1 cursor-pointer transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 active:scale-[0.98]`}
+                  className={`group bg-root-surface border border-root-accent/20 p-2 sm:p-2.5 ${rootBorderRadius.card} space-y-1 cursor-pointer transition-all hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98]`}
                   onClick={() => onOpenTempatUmum?.('pendidikan')}
                 >
                   <div className="flex items-center justify-between gap-1">
                     <div className="flex items-center gap-1.5">
-                      <div className="p-1 bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-md shrink-0 group-hover:scale-110 transition-transform">
-                        <GraduationCap className="h-3 w-3 text-[#E0E0E0]" />
+                      <div className="p-1 bg-root-canvas border border-root-accent/30 rounded-md shrink-0 group-hover:scale-110 transition-transform">
+                        <GraduationCap className="h-3 w-3 text-root-text" />
                       </div>
-                      <h4 className="text-[9px] sm:text-[10px] font-black text-[#E0E0E0] uppercase tracking-wider">Tingkat Pendidikan</h4>
+                      <h4 className="text-[9px] sm:text-[10px] font-black text-root-text uppercase tracking-wider">Tingkat Pendidikan</h4>
                     </div>
-                    <span className="text-[8px] text-[#AAB6B6] font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity">Buka →</span>
+                    <span className="text-[8px] text-root-muted font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity">Buka →</span>
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-xs sm:text-sm font-bold text-[#E0E0E0]">
-                      {pendidikanScore} <span className="text-[8px] text-[#AAB6B6] font-medium">POIN</span>
+                    <span className="text-xs sm:text-sm font-bold text-root-text">
+                      {pendidikanScore} <span className="text-[8px] text-root-muted font-medium">POIN</span>
                     </span>
-                    <span className="text-[8px] text-[#AAB6B6]">(rasio {educationRatio.toFixed(2)})</span>
-                    <span className="text-[8px] text-[#E0E0E0] font-bold bg-[#00FFAA]/10 px-1 py-0.5 rounded border border-[#00FFAA]/20">
+                    <span className="text-[8px] text-root-muted">(rasio {educationRatio.toFixed(2)})</span>
+                    <span className="text-[8px] text-root-text font-bold bg-root-accent/10 px-1 py-0.5 rounded border border-root-accent/20">
                       × {educationFactor.toFixed(2)}
                     </span>
                   </div>

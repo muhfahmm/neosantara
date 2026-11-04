@@ -103,16 +103,16 @@ export default function SistemEkonomiSection({
   return (
     <div className="space-y-4">
       {/* HEADER SECTION SISTEM EKONOMI */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-[#0A1A1A]/80 border border-[#00FFAA]/20 p-4 rounded-2xl">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-root-canvas/80 border border-root-accent/20 p-4 rounded-2xl">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-[#0F2424] border border-[#00FFAA]/30">
-            <Scale className="w-5 h-5 text-[#00FFAA]" />
+          <div className="p-2.5 rounded-xl bg-root-surface border border-root-accent/30">
+            <Scale className="w-5 h-5 text-root-accent" />
           </div>
           <div>
-            <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-[#00FFAA] flex items-center gap-2">
+            <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-root-accent flex items-center gap-2">
               Sistem Ekonomi & Spektrum Kebijakan
             </h4>
-            <p className="text-[10px] sm:text-xs text-[#6B8A8A] font-semibold">
+            <p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
               Keseimbangan intervensi negara terhadap pasar bebas dan kebijakan struktural
             </p>
           </div>
@@ -135,53 +135,53 @@ export default function SistemEkonomiSection({
       </div>
 
       {/* TOP SUMMARY: SPEKTRUM SISTEM AKTIF */}
-      <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 sm:p-5 rounded-2xl shadow-sm space-y-4">
+      <div className="bg-root-canvas border border-root-accent/20 p-4 sm:p-5 rounded-2xl shadow-sm space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">
+            <p className="text-[10px] font-black uppercase tracking-widest text-root-subtle">
               Sistem yang Berlaku
             </p>
-            <h5 className="text-base sm:text-lg font-black text-[#00FFAA] uppercase">
+            <h5 className="text-base sm:text-lg font-black text-root-accent uppercase">
               {systemDetails.title}
             </h5>
           </div>
           <div className="text-right">
-            <span className="text-[10px] font-bold text-[#6B8A8A] uppercase">Posisi Spektrum:</span>
-            <span className="text-base font-black text-[#00FFAA] ml-1.5">{sliderValue} / 100</span>
+            <span className="text-[10px] font-bold text-root-subtle uppercase">Posisi Spektrum:</span>
+            <span className="text-base font-black text-root-accent ml-1.5">{sliderValue} / 100</span>
           </div>
         </div>
 
         {/* Progress Slider visual */}
         <div className="space-y-1.5">
-          <div className="w-full h-3 bg-[#0F2424] rounded-full overflow-hidden border border-[#00FFAA]/25 relative">
+          <div className="w-full h-3 bg-root-surface rounded-full overflow-hidden border border-root-accent/25 relative">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-rose-500 via-amber-400 to-[#00FFAA] transition-all"
+              className="h-full rounded-full bg-gradient-to-r from-rose-500 via-amber-400 to-root-accent transition-all"
               style={{ width: `${Math.min(100, Math.max(0, sliderValue))}%` }}
             />
           </div>
-          <div className="flex justify-between text-[9px] font-bold uppercase tracking-wider text-[#6B8A8A]">
+          <div className="flex justify-between text-[9px] font-bold uppercase tracking-wider text-root-subtle">
             <span>Komando Terpusat (0)</span>
             <span>Campuran (50)</span>
             <span>Pasar Bebas Murni (100)</span>
           </div>
         </div>
 
-        <p className="text-xs text-[#E0E0E0] bg-[#0F2424] p-3 rounded-xl border border-[#00FFAA]/15 font-medium leading-relaxed">
+        <p className="text-xs text-root-text bg-root-surface p-3 rounded-xl border border-root-accent/15 font-medium leading-relaxed">
           {systemDetails.description}
         </p>
 
         {/* Parameter Dampak Makro Ekonomi */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/15 p-2.5 rounded-xl">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-[#6B8A8A]">
+          <div className="bg-root-surface border border-root-accent/15 p-2.5 rounded-xl">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-root-subtle">
               Bonus PDB
             </span>
             <p className="text-sm font-black text-emerald-400 mt-0.5">
               +{systemDetails.gdpGrowthBonus}%
             </p>
           </div>
-          <div className="bg-[#0F2424] border border-[#00FFAA]/15 p-2.5 rounded-xl">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-[#6B8A8A]">
+          <div className="bg-root-surface border border-root-accent/15 p-2.5 rounded-xl">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-root-subtle">
               Dampak Inflasi
             </span>
             <p className="text-sm font-black text-rose-400 mt-0.5">
@@ -189,8 +189,8 @@ export default function SistemEkonomiSection({
               {systemDetails.inflationImpact}%
             </p>
           </div>
-          <div className="bg-[#0F2424] border border-[#00FFAA]/15 p-2.5 rounded-xl">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-[#6B8A8A]">
+          <div className="bg-root-surface border border-root-accent/15 p-2.5 rounded-xl">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-root-subtle">
               Kepuasan Buruh
             </span>
             <p
@@ -202,8 +202,8 @@ export default function SistemEkonomiSection({
               {systemDetails.workerSatisfactionBonus}
             </p>
           </div>
-          <div className="bg-[#0F2424] border border-[#00FFAA]/15 p-2.5 rounded-xl">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-[#6B8A8A]">
+          <div className="bg-root-surface border border-root-accent/15 p-2.5 rounded-xl">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-root-subtle">
               Kepuasan Investor
             </span>
             <p
@@ -222,7 +222,7 @@ export default function SistemEkonomiSection({
 
       {/* 7 KARTU KEBIJAKAN EKONOMI */}
       <div>
-        <h5 className="text-xs font-black uppercase tracking-wider text-[#00FFAA] flex items-center gap-2 mb-3">
+        <h5 className="text-xs font-black uppercase tracking-wider text-root-accent flex items-center gap-2 mb-3">
           <Layers className="w-4 h-4" /> Kebijakan Struktural Perekonomian (7 Kebijakan)
         </h5>
 
@@ -235,11 +235,11 @@ export default function SistemEkonomiSection({
             return (
               <div
                 key={policy.id}
-                className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-2xl p-3.5 flex flex-col justify-between shadow-sm hover:border-[#00FFAA]/40 transition-all"
+                className="bg-root-canvas border border-root-accent/20 rounded-2xl p-3.5 flex flex-col justify-between shadow-sm hover:border-root-accent/40 transition-all"
               >
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <h6 className="text-xs font-black text-[#E0E0E0] uppercase tracking-wider">
+                    <h6 className="text-xs font-black text-root-text uppercase tracking-wider">
                       {policy.name}
                     </h6>
                     <span
@@ -253,12 +253,12 @@ export default function SistemEkonomiSection({
                     </span>
                   </div>
 
-                  <div className="p-2.5 rounded-xl bg-[#0F2424] border border-[#00FFAA]/15 mt-2">
-                    <div className="flex items-center gap-1.5 text-[#00FFAA] text-xs font-bold mb-0.5">
+                  <div className="p-2.5 rounded-xl bg-root-surface border border-root-accent/15 mt-2">
+                    <div className="flex items-center gap-1.5 text-root-accent text-xs font-bold mb-0.5">
                       <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                       <span>{chosenOption.label}</span>
                     </div>
-                    <p className="text-[10px] text-[#6B8A8A] font-semibold leading-relaxed">
+                    <p className="text-[10px] text-root-subtle font-semibold leading-relaxed">
                       {chosenOption.effect}
                     </p>
                   </div>
@@ -271,7 +271,7 @@ export default function SistemEkonomiSection({
 
       {/* TINGKAT NASIONALISASI SEKTOR STRATEGIS */}
       <div>
-        <h5 className="text-xs font-black uppercase tracking-wider text-[#00FFAA] flex items-center gap-2 mb-3">
+        <h5 className="text-xs font-black uppercase tracking-wider text-root-accent flex items-center gap-2 mb-3">
           <Building2 className="w-4 h-4" /> Tingkat Penguasaan & Nasionalisasi Sektor Strategis
         </h5>
 
@@ -283,16 +283,16 @@ export default function SistemEkonomiSection({
             return (
               <div
                 key={sector.id}
-                className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-2xl p-3 flex flex-col justify-between shadow-sm"
+                className="bg-root-canvas border border-root-accent/20 rounded-2xl p-3 flex flex-col justify-between shadow-sm"
               >
                 <p className="text-[10px] font-black uppercase tracking-wider text-[#8AB0A8] truncate">
                   {sector.name}
                 </p>
                 <div className="mt-2">
-                  <span className="text-[9px] font-bold text-[#00FFAA] block leading-tight">
+                  <span className="text-[9px] font-bold text-root-accent block leading-tight">
                     {levelObj.name}
                   </span>
-                  <span className="text-[8px] text-[#6B8A8A] block mt-0.5">
+                  <span className="text-[8px] text-root-subtle block mt-0.5">
                     Negara: {levelObj.stateProfitSharePercent}%
                   </span>
                 </div>

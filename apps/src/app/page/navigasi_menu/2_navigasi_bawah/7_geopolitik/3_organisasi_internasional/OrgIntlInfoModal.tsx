@@ -157,25 +157,25 @@ export default function OrgIntlInfoModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="organization-info-title"
-        className="flex max-h-[min(80vh,640px)] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-[#00FFAA]/30 bg-[#0F2424] font-sans shadow-2xl"
+        className="flex max-h-[min(80vh,640px)] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-root-accent/30 bg-root-surface font-sans shadow-2xl"
       >
-        <header className="flex items-center justify-between border-b border-[#00FFAA]/30 bg-[#0A1A1A] px-5 py-4">
+        <header className="flex items-center justify-between border-b border-root-accent/30 bg-root-canvas px-5 py-4">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="rounded-lg border border-[#00FFAA]/30 bg-[#00FFAA]/10 p-2 text-[#00FFAA]">
+            <div className="rounded-lg border border-root-accent/30 bg-root-accent/10 p-2 text-root-accent">
               <OrgIcon className="h-5 w-5" />
             </div>
             <div className="min-w-0">
-              <div className="mb-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#00FFAA]">
+              <div className="mb-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-root-accent">
                 <Info className="h-3 w-3" />
                 Informasi Organisasi
               </div>
-              <h2 id="organization-info-title" className="text-sm font-bold leading-tight text-[#E0E0E0] sm:text-base">{orgName}</h2>
+              <h2 id="organization-info-title" className="text-sm font-bold leading-tight text-root-text sm:text-base">{orgName}</h2>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="ml-3 rounded-lg border border-[#00FFAA]/30 p-2 text-[#6B8A8A] transition-colors hover:border-[#00FFAA] hover:text-[#00FFAA]"
+            className="ml-3 rounded-lg border border-root-accent/30 p-2 text-root-subtle transition-colors hover:border-root-accent hover:text-root-accent"
             aria-label="Tutup informasi"
           >
             <X className="h-4 w-4" />
@@ -184,11 +184,11 @@ export default function OrgIntlInfoModal({
 
         <div className="space-y-5 overflow-y-auto p-5 sm:p-6">
           <section>
-            <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-[#00FFAA]">Tentang organisasi</h3>
+            <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-root-accent">Tentang organisasi</h3>
             <p className="text-sm leading-relaxed text-[#C3D5D5]">{info.description}</p>
           </section>
-          <section className="rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4">
-            <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-[#00FFAA]">Fokus kerja</h3>
+          <section className="rounded-xl border border-root-accent/20 bg-root-canvas p-4">
+            <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-root-accent">Fokus kerja</h3>
             <p className="text-sm leading-relaxed text-[#C3D5D5]">{info.focus}</p>
           </section>
           {info.benefit && (
@@ -201,7 +201,7 @@ export default function OrgIntlInfoModal({
                   </p>
                 )}
                 {!isMember && (
-                  <p className="mt-1 text-[11px] font-semibold text-[#6B8A8A]">Manfaat aktif setelah negara menjadi anggota.</p>
+                  <p className="mt-1 text-[11px] font-semibold text-root-subtle">Manfaat aktif setelah negara menjadi anggota.</p>
                 )}
               </div>
               <span className="text-right text-sm font-black text-emerald-400">{adjustedBenefit}</span>
@@ -209,11 +209,11 @@ export default function OrgIntlInfoModal({
           )}
         </div>
 
-        <footer className="flex justify-end border-t border-[#00FFAA]/20 bg-[#0A1A1A] px-5 py-3">
+        <footer className="flex justify-end border-t border-root-accent/20 bg-root-canvas px-5 py-3">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl bg-[#00FFAA] px-5 py-2 text-xs font-extrabold uppercase tracking-wider text-[#0A1A1A] transition-colors hover:bg-[#00C282]"
+            className="rounded-xl bg-root-accent px-5 py-2 text-xs font-extrabold uppercase tracking-wider text-root-canvas transition-colors hover:bg-[#00C282]"
           >
             Mengerti
           </button>

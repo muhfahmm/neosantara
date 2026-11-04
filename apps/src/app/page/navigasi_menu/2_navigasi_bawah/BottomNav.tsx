@@ -138,7 +138,7 @@ export default function BottomNav({
 
   return (
     <div className="absolute bottom-3 lg:bottom-4 xl:bottom-6 2xl:bottom-12 left-1/2 -translate-x-1/2 w-max max-w-[95vw] transition-all duration-500 cursor-not-allowed z-[200]">
-      <nav className="flex items-center gap-1 lg:gap-1.5 bg-[#0F2424]/90 backdrop-blur-md px-1.5 lg:px-2 py-1 lg:py-1.5 rounded-xl lg:rounded-2xl border border-[#00FFAA]/30 transition-all duration-500 ease-in-out overflow-visible">
+      <nav className="flex items-center gap-1 lg:gap-1.5 bg-root-surface/90  px-1.5 lg:px-2 py-1 lg:py-1.5 rounded-xl lg:rounded-2xl border border-root-accent/30 transition-all duration-500 ease-in-out overflow-visible">
         {/* Main Navigation Section */}
         <div className="flex items-center gap-0.5 lg:gap-1 2xl:gap-2">
           {(isMenuSelected
@@ -161,8 +161,8 @@ export default function BottomNav({
                   }}
                   onClick={() => isMap ? handleFullReset() : handleMainClick(item.id)}
                   className={`px-2 py-1.5 lg:px-2.5 lg:py-2 2xl:px-4 2xl:py-3 rounded-lg xl:rounded-xl cursor-pointer transition-all duration-300 flex items-center gap-1.5 lg:gap-2 2xl:gap-2.5 justify-center ${isActive
-                    ? "bg-[#00FFAA] text-[#0A1A1A] font-bold border border-[#00FFAA]"
-                    : "text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#00FFAA]/10"
+                    ? "bg-root-accent text-root-canvas font-bold border border-root-accent"
+                    : "text-root-subtle hover:text-root-accent hover:bg-root-accent/10"
                     }`}
                 >
                   {item.image ? (
@@ -177,7 +177,7 @@ export default function BottomNav({
                       />
                     </span>
                   ) : (
-                    <Icon className={`h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5 ${isActive ? "text-[#0A1A1A]" : ""}`} />
+                    <Icon className={`h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5 ${isActive ? "text-root-canvas" : ""}`} />
                   )}
                   {isActive && (
                     <span className="text-[9px] lg:text-[10px] 2xl:text-[11px] font-black uppercase tracking-widest whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300">
@@ -193,7 +193,7 @@ export default function BottomNav({
 
         {/* Vertical Divider */}
         {isMenuSelected && currentSubItems?.length > 0 && (
-          <div className="h-5 lg:h-6 2xl:h-8 w-[1px] bg-[#00FFAA]/30 mx-1 lg:mx-2 animate-in fade-in duration-500" />
+          <div className="h-5 lg:h-6 2xl:h-8 w-[1px] bg-root-accent/30 mx-1 lg:mx-2 animate-in fade-in duration-500" />
         )}
 
         {/* Sub-Menu Extension Section */}
@@ -220,12 +220,12 @@ export default function BottomNav({
                       />
                     </span>
                   ) : (
-                    <sub.icon className="h-full w-full text-[#6B8A8A]" />
+                    <sub.icon className="h-full w-full text-root-subtle" />
                   )}
                 </button>
-                <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2.5 bg-[#0F2424] border border-[#00FFAA]/30 text-[#E0E0E0] text-[13px] font-semibold rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-[9999] scale-95 group-hover:scale-100`}>
+                <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2.5 bg-root-surface border border-root-accent/30 text-root-text text-[13px] font-semibold rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-[9999] scale-95 group-hover:scale-100`}>
                   {sub.label}
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-x-4 border-x-transparent border-t-4 border-t-[#0F2424]"></div>
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-x-4 border-x-transparent border-t-4 border-t-root-surface"></div>
                 </div>
               </div>
             ))}
@@ -238,9 +238,9 @@ export default function BottomNav({
 
 function Tooltip({ label, small = false }: { label: string, small?: boolean }) {
   return (
-    <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2.5 bg-[#0F2424] border border-[#00FFAA]/30 text-[#E0E0E0] text-[13px] font-semibold rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-[9999] scale-95 group-hover:scale-100 group-hover:block`}>
+    <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2.5 bg-root-surface border border-root-accent/30 text-root-text text-[13px] font-semibold rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-[9999] scale-95 group-hover:scale-100 group-hover:block`}>
       {label}
-      <div className="absolute top-full left-1/2 -translate-x-1/2 border-x-4 border-x-transparent border-t-4 border-t-[#0F2424]"></div>
+      <div className="absolute top-full left-1/2 -translate-x-1/2 border-x-4 border-x-transparent border-t-4 border-t-root-surface"></div>
     </div>
   );
 }

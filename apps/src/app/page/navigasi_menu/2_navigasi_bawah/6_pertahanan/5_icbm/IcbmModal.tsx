@@ -286,8 +286,8 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
       id: 4,
       title: "Status Nuklir & ICBM Dunia",
       icon: Globe,
-      color: "text-[#00FFAA]",
-      bg: "bg-[#00FFAA]/10",
+      color: "text-root-accent",
+      bg: "bg-root-accent/10",
       isUnlocker: false,
       isAlwaysUnlocked: true,
     }
@@ -336,9 +336,9 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
           <div className="flex flex-col h-full overflow-hidden">
           
           {/* HEADER */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className={`shrink-0 border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 sm:p-2 ${rootBorderRadius.card}`}>
+            <div className={`shrink-0 border border-root-accent/30 bg-root-surface p-1.5 sm:p-2 ${rootBorderRadius.card}`}>
               <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
             </div>
             <div className="min-w-0">
@@ -358,13 +358,13 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
         </div>
 
         {/* BODY MODAL */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 neon-scrollbar flex flex-col items-center">
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-root-surface relative z-10 neon-scrollbar flex flex-col items-center">
           <div className="w-full space-y-6">
 
             {/* STATUS PENGEMBANGAN */}
-            <div className={`border border-[#00FFAA]/20 bg-[#0A1A1A] p-6 shadow-inner ${rootBorderRadius.card}`}>
+            <div className={`border border-root-accent/20 bg-root-canvas p-6 shadow-inner ${rootBorderRadius.card}`}>
               <div className="flex justify-center items-center gap-4">
-                <div className={`px-6 py-3 rounded-xl border ${status.isActive ? 'border-[#00FFAA]/40 bg-[#00FFAA]/10 text-[#00FFAA]' : isNuclearProgramBuilding ? 'border-amber-500/40 bg-amber-500/10 text-amber-400' : 'border-rose-500/40 bg-rose-500/10 text-rose-400'} shadow-sm min-w-[200px] text-center transition-colors duration-300`}>
+                <div className={`px-6 py-3 rounded-xl border ${status.isActive ? 'border-root-accent/40 bg-root-accent/10 text-root-accent' : isNuclearProgramBuilding ? 'border-amber-500/40 bg-amber-500/10 text-amber-400' : 'border-rose-500/40 bg-rose-500/10 text-rose-400'} shadow-sm min-w-[200px] text-center transition-colors duration-300`}>
                   <p className="text-[11px] font-black uppercase tracking-wider mb-1">
                     {status.message}
                   </p>
@@ -374,34 +374,34 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                     </p>
                   )}
                   {isNuclearProgramActive && (
-                    <p className="text-[10px] text-[#00FFAA] font-bold flex items-center justify-center gap-1">
-                      <Target className="w-3.5 h-3.5 text-[#00FFAA]" /> Sistem Siap Meluncur!
+                    <p className="text-[10px] text-root-accent font-bold flex items-center justify-center gap-1">
+                      <Target className="w-3.5 h-3.5 text-root-accent" /> Sistem Siap Meluncur!
                     </p>
                   )}
                 </div>
               </div>
               
               <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0F2424] p-4 text-center shadow-sm flex flex-col justify-center min-h-[140px]">
-                  <p className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider mb-2">Kas Negara</p>
-                  <div className="text-lg font-black text-[#00FFAA] leading-tight break-words">{currentCash.toLocaleString('id-ID', { maximumFractionDigits: 0 })} <span className="text-[10px] text-[#6B8A8A] font-bold">NEO</span></div>
+                <div className="rounded-xl border border-root-accent/20 bg-root-surface p-4 text-center shadow-sm flex flex-col justify-center min-h-[140px]">
+                  <p className="text-[10px] font-black text-root-subtle uppercase tracking-wider mb-2">Kas Negara</p>
+                  <div className="text-lg font-black text-root-accent leading-tight break-words">{currentCash.toLocaleString('id-ID', { maximumFractionDigits: 0 })} <span className="text-[10px] text-root-subtle font-bold">NEO</span></div>
                 </div>
 
-                <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0F2424] p-4 text-center shadow-sm flex flex-col justify-center min-h-[140px]">
-                  <p className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider mb-2">Stok Uranium</p>
-                  <div className="text-lg font-black text-[#00FFAA] leading-tight break-words">{uraniumStock.toLocaleString('id-ID', { maximumFractionDigits: 0 })}</div>
+                <div className="rounded-xl border border-root-accent/20 bg-root-surface p-4 text-center shadow-sm flex flex-col justify-center min-h-[140px]">
+                  <p className="text-[10px] font-black text-root-subtle uppercase tracking-wider mb-2">Stok Uranium</p>
+                  <div className="text-lg font-black text-root-accent leading-tight break-words">{uraniumStock.toLocaleString('id-ID', { maximumFractionDigits: 0 })}</div>
                 </div>
 
                 <div className="relative overflow-visible">
                   {formattedIcbmEndDate && isIcbmBuildQueued && remainingBuildQuantity > 0 ? (
-                    <div className="absolute -top-6 left-1/2 z-20 -translate-x-1/2 rounded-sm bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 shadow-md tracking-wider whitespace-nowrap flex items-center gap-1">
+                    <div className="absolute -top-6 left-1/2 z-20 -translate-x-1/2 rounded-sm bg-root-canvas text-root-accent text-[10px] font-bold px-2 py-1 border border-root-accent/30 shadow-md tracking-wider whitespace-nowrap flex items-center gap-1">
                       <Clock className="w-3 h-3" /> Selesai {formattedIcbmEndDate}
                     </div>
                   ) : null}
-                  <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0F2424] p-4 text-center shadow-sm flex flex-col justify-center min-h-[140px]">
-                    <p className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider mb-2">ICBM</p>
+                  <div className="rounded-xl border border-root-accent/20 bg-root-surface p-4 text-center shadow-sm flex flex-col justify-center min-h-[140px]">
+                    <p className="text-[10px] font-black text-root-subtle uppercase tracking-wider mb-2">ICBM</p>
                     
-                    <div className="text-lg font-black text-[#00FFAA] leading-tight break-words">
+                    <div className="text-lg font-black text-root-accent leading-tight break-words">
                       {totalReadyIcbm}
                       {isIcbmBuildQueued && remainingBuildQuantity > 0 ? (
                         <span className="text-xs text-emerald-400 font-bold"> +{remainingBuildQuantity}</span>
@@ -409,23 +409,23 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                     </div>
 
                     {isIcbmLocked ? (
-                      <p className="mt-2 text-[10px] text-[#6B8A8A] flex items-center justify-center gap-1">
-                        <Lock className="w-3 h-3 text-[#6B8A8A]" /> Terkunci. Aktifkan Program Nuklir terlebih dahulu.
+                      <p className="mt-2 text-[10px] text-root-subtle flex items-center justify-center gap-1">
+                        <Lock className="w-3 h-3 text-root-subtle" /> Terkunci. Aktifkan Program Nuklir terlebih dahulu.
                       </p>
                     ) : isIcbmBuildQueued && remainingBuildQuantity > 0 ? (
-                      <div className="mt-2 inline-flex items-center justify-center gap-1 rounded-full bg-[#00FFAA]/10 px-3 py-0.5 text-[10px] font-bold text-[#00FFAA]">
+                      <div className="mt-2 inline-flex items-center justify-center gap-1 rounded-full bg-root-accent/10 px-3 py-0.5 text-[10px] font-bold text-root-accent">
                         +{remainingBuildQuantity} sedang dibangun
                       </div>
                     ) : isIcbmBuildQueued && remainingBuildQuantity === 0 ? (
-                      <div className="mt-2 inline-flex items-center justify-center gap-1 rounded-full bg-[#00FFAA]/20 px-3 py-0.5 text-[10px] font-bold text-[#00FFAA]">
-                        <Check className="w-3.5 h-3.5 text-[#00FFAA]" /> Semua ICBM telah selesai dibangun!
+                      <div className="mt-2 inline-flex items-center justify-center gap-1 rounded-full bg-root-accent/20 px-3 py-0.5 text-[10px] font-bold text-root-accent">
+                        <Check className="w-3.5 h-3.5 text-root-accent" /> Semua ICBM telah selesai dibangun!
                       </div>
                     ) : null}
                     
                     <button
                       onClick={() => setIsIcbmBuildStatusOpen(true)}
                       disabled={isIcbmLocked}
-                      className={`mt-3 inline-flex items-center justify-center gap-2 rounded-lg px-3 py-1.5 text-xs font-black text-[#0A1A1A] shadow-sm transition-all ${isIcbmLocked ? 'bg-[#6B8A8A]/30 text-[#6B8A8A] cursor-not-allowed' : 'bg-[#00FFAA] hover:bg-[#00FFAA]/80 cursor-pointer'}`}
+                      className={`mt-3 inline-flex items-center justify-center gap-2 rounded-lg px-3 py-1.5 text-xs font-black text-root-canvas shadow-sm transition-all ${isIcbmLocked ? 'bg-root-subtle/30 text-root-subtle cursor-not-allowed' : 'bg-root-accent hover:bg-root-accent/80 cursor-pointer'}`}
                     >
                       <Clock className="h-3.5 w-3.5" />
                       Lihat Status ICBM
@@ -450,37 +450,37 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                     disabled={isLockedCard || isUnlockerCardActive || isUnlockerBuilding}
                     className={`group flex flex-col items-center text-center p-4 sm:p-5 rounded-2xl border transition-all duration-200 h-full ${
                         isLockedCard
-                          ? 'bg-[#0A1A1A] border-[#00FFAA]/10 opacity-60 cursor-not-allowed'
+                          ? 'bg-root-canvas border-root-accent/10 opacity-60 cursor-not-allowed'
                           : isUnlockerCardActive
-                          ? 'bg-[#00FFAA]/10 border-[#00FFAA]/40 cursor-default'
+                          ? 'bg-root-accent/10 border-root-accent/40 cursor-default'
                           : option.isAlwaysUnlocked
-                          ? 'bg-[#0A1A1A] border-[#00FFAA]/30 hover:border-[#00FFAA] hover:bg-[#00FFAA]/5 hover:shadow-lg cursor-pointer ring-1 ring-[#00FFAA]/20'
-                          : 'bg-[#0A1A1A] border-[#00FFAA]/20 hover:border-[#00FFAA] hover:shadow-lg cursor-pointer'
+                          ? 'bg-root-canvas border-root-accent/30 hover:border-root-accent hover:bg-root-accent/5 hover:shadow-lg cursor-pointer ring-1 ring-root-accent/20'
+                          : 'bg-root-canvas border-root-accent/20 hover:border-root-accent hover:shadow-lg cursor-pointer'
                       }`}
                   >
                     <div className={`p-3 sm:p-3.5 rounded-full ${
-                        isUnlockerCardActive ? 'bg-[#00FFAA]/20 border-[#00FFAA]/40' : 'bg-[#0F2424] border-[#00FFAA]/20'
+                        isUnlockerCardActive ? 'bg-root-accent/20 border-root-accent/40' : 'bg-root-surface border-root-accent/20'
                       } border mb-2.5 sm:mb-3 ${
                         isLockedCard || isUnlockerCardActive ? '' : 'group-hover:scale-110 transition-transform'
                       }`}
                     >
                       {isUnlockerCardActive ? (
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 text-[#00FFAA] flex items-center justify-center">
-                          <Check className="w-6 h-6 sm:w-7 sm:h-7 text-[#00FFAA]" />
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 text-root-accent flex items-center justify-center">
+                          <Check className="w-6 h-6 sm:w-7 sm:h-7 text-root-accent" />
                         </div>
                       ) : (
-                        <Icon className={`w-8 h-8 sm:w-10 sm:h-10 ${isLockedCard ? 'text-[#6B8A8A]' : 'text-[#00FFAA]'}`} />
+                        <Icon className={`w-8 h-8 sm:w-10 sm:h-10 ${isLockedCard ? 'text-root-subtle' : 'text-root-accent'}`} />
                       )}
                     </div>
                     
                     <span className={`text-xs sm:text-sm font-black uppercase tracking-wide mb-1 ${
-                      isLockedCard ? 'text-[#6B8A8A]' : isUnlockerCardActive ? 'text-[#00FFAA]' : option.isAlwaysUnlocked ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'
+                      isLockedCard ? 'text-root-subtle' : isUnlockerCardActive ? 'text-root-accent' : option.isAlwaysUnlocked ? 'text-root-accent' : 'text-root-text'
                     }`}>
                       {isUnlockerCardActive ? "Program Aktif!" : option.title}
                     </span>
                     
                     {(isLockedCard || isUnlockerBuilding) && (
-                      <p className="text-[10px] leading-relaxed text-[#6B8A8A]">
+                      <p className="text-[10px] leading-relaxed text-root-subtle">
                       {isLockedCard ? (
                         <span className="flex items-center justify-center gap-1">
                           <Lock className="w-3 h-3 inline shrink-0" /> Terkunci. Aktifkan Program Nuklir terlebih dahulu.
@@ -500,14 +500,14 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                 disabled={!isNuclearProgramActive || totalReadyIcbm <= 0}
                 className={`w-full group relative overflow-hidden rounded-2xl border p-4 sm:p-5 flex items-center justify-between transition-all duration-300 shadow-md ${
                   !isNuclearProgramActive || totalReadyIcbm <= 0
-                    ? 'bg-[#0A1A1A] border-[#00FFAA]/10 opacity-60 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-[#0F2424] via-[#0A1A1A] to-[#0F2424] border-rose-500/40 hover:border-rose-400 hover:shadow-rose-500/10 cursor-pointer active:scale-[0.99]'
+                    ? 'bg-root-canvas border-root-accent/10 opacity-60 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-root-surface via-root-canvas to-root-surface border-rose-500/40 hover:border-rose-400 hover:shadow-rose-500/10 cursor-pointer active:scale-[0.99]'
                 }`}
               >
                 <div className="flex items-center gap-3.5 sm:gap-4">
                   <div className={`p-3 sm:p-3.5 rounded-xl border flex items-center justify-center transition-transform duration-200 ${
                     !isNuclearProgramActive || totalReadyIcbm <= 0
-                      ? 'bg-[#0A1A1A] border-[#6B8A8A]/30 text-[#6B8A8A]'
+                      ? 'bg-root-canvas border-root-subtle/30 text-root-subtle'
                       : 'bg-rose-500/10 border-rose-500/40 text-rose-400 group-hover:scale-105 group-hover:bg-rose-500/20'
                   }`}>
                     <Flame className="w-6 h-6 sm:w-7 sm:h-7 animate-pulse" />
@@ -515,7 +515,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                   <div className="text-left">
                     <div className="flex items-center gap-2">
                       <span className={`text-sm sm:text-base font-black uppercase tracking-wider ${
-                        !isNuclearProgramActive || totalReadyIcbm <= 0 ? 'text-[#6B8A8A]' : 'text-rose-400 group-hover:text-rose-300'
+                        !isNuclearProgramActive || totalReadyIcbm <= 0 ? 'text-root-subtle' : 'text-rose-400 group-hover:text-rose-300'
                       }`}>
                         Uji Coba ICBM
                       </span>
@@ -525,7 +525,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                         </span>
                       )}
                     </div>
-                    <p className="text-[11px] text-[#6B8A8A] font-medium mt-0.5">
+                    <p className="text-[11px] text-root-subtle font-medium mt-0.5">
                       {!isNuclearProgramActive 
                         ? "Terkunci: Memerlukan Program Nuklir Aktif" 
                         : totalReadyIcbm <= 0 
@@ -535,7 +535,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                   </div>
                 </div>
 
-                <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-rose-500/30 bg-[#0A1A1A] text-xs font-bold text-rose-400 group-hover:border-rose-400">
+                <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-rose-500/30 bg-root-canvas text-xs font-bold text-rose-400 group-hover:border-rose-400">
                   <span>Protokol Luncur</span>
                   <Rocket className="w-3.5 h-3.5 text-rose-400" />
                 </div>

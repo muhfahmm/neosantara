@@ -77,7 +77,7 @@ export function TutorialWelcomeModal({
           />
         )}
 
-        <div className="relative flex-1 min-w-0 rounded-2xl border border-[#00FFAA]/30 bg-gradient-to-b from-[#0F2424] to-[#0A1A1A] p-4 sm:p-5 text-[#E0E0E0] shadow-[0_12px_36px_rgba(0,0,0,0.6),0_0_24px_rgba(0,255,170,0.12)]">
+        <div className="relative flex-1 min-w-0 rounded-2xl border border-root-accent/30 bg-root-surface p-4 sm:p-5 text-root-text shadow-[0_12px_36px_rgba(0,0,0,0.6),0_0_24px_rgba(0,255,170,0.12)]">
           {/* Segitiga / ekor dialog menunjuk ke kiri ke arah karakter */}
           <svg
             aria-hidden="true"
@@ -99,16 +99,16 @@ export function TutorialWelcomeModal({
 
           <p
             id={labelId}
-            className="text-sm sm:text-[15px] leading-relaxed font-medium text-[#E0E0E0]"
+            className="text-sm sm:text-[15px] leading-relaxed font-medium text-root-text"
           >
             Selamat datang, {playerName}. Hari ini adalah hari pertama Anda sebagai kepala negara.
           </p>
 
-          <div className="mt-4 pt-3 border-t border-[#00FFAA]/20 flex items-center justify-end gap-3 sm:gap-4">
+          <div className="mt-4 pt-3 border-t border-root-accent/20 flex items-center justify-end gap-3 sm:gap-4">
             <button
               type="button"
               onClick={onSkip}
-              className="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-[#6B8A8A] hover:text-[#E0E0E0] transition-colors cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00FFAA]"
+              className="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-root-subtle hover:text-root-text transition-colors cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-root-accent"
             >
               AKHIRI
             </button>
@@ -116,7 +116,7 @@ export function TutorialWelcomeModal({
               ref={continueButtonRef}
               type="button"
               onClick={onContinue}
-              className="px-4 sm:px-5 py-2 rounded-lg bg-[#00FFAA] hover:bg-[#00FFAA]/85 active:scale-[0.98] text-xs sm:text-sm font-black text-[#0A1A1A] tracking-wide transition-all cursor-pointer shadow-[0_0_16px_rgba(0,255,170,0.3)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00FFAA]"
+              className="px-4 sm:px-5 py-2 rounded-lg bg-root-accent hover:bg-root-accent/85 active:scale-[0.98] text-xs sm:text-sm font-black text-root-canvas tracking-wide transition-all cursor-pointer shadow-[0_0_16px_rgba(0,255,170,0.3)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-root-accent"
             >
               LANJUT
             </button>
@@ -129,4 +129,3 @@ export function TutorialWelcomeModal({
 }
 
 export default TutorialWelcomeModal;
-

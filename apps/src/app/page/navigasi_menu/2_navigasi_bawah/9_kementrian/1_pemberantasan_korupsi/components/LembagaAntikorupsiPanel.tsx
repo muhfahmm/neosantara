@@ -84,25 +84,25 @@ export default function LembagaAntikorupsiPanel({
   };
 
   return (
-    <section className="space-y-4 rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 sm:p-5">
+    <section className="space-y-4 rounded-2xl border border-root-accent/20 bg-root-canvas p-4 sm:p-5">
       <div className="flex items-center gap-3">
-        <div className="rounded-xl border border-[#00FFAA]/25 bg-[#00FFAA]/10 p-2 text-[#00FFAA]">
+        <div className="rounded-xl border border-root-accent/25 bg-root-accent/10 p-2 text-root-accent">
           <ShieldCheck className="h-5 w-5" />
         </div>
         <div>
-          <h3 className="font-black text-[#E0E0E0]">Lembaga Antikorupsi & Audit</h3>
+          <h3 className="font-black text-root-text">Lembaga Antikorupsi & Audit</h3>
           <p className="text-xs text-[#8BA3A3]">Biaya operasional mengikuti level dan mengurangi netto kas harian.</p>
         </div>
       </div>
 
       {tracks.map(({ id, title, description, level, icon: Icon }) => (
-        <article key={id} className="overflow-hidden rounded-xl border border-[#00FFAA]/20 bg-[#0F2424]">
-          <header className="flex items-center justify-between gap-3 border-b border-[#00FFAA]/15 px-4 py-3">
+        <article key={id} className="overflow-hidden rounded-xl border border-root-accent/20 bg-root-surface">
+          <header className="flex items-center justify-between gap-3 border-b border-root-accent/15 px-4 py-3">
             <div className="flex min-w-0 items-center gap-3">
-              <Icon className="h-5 w-5 shrink-0 text-[#00FFAA]" />
+              <Icon className="h-5 w-5 shrink-0 text-root-accent" />
               <h4 className="truncate text-sm font-bold text-white">{title}</h4>
             </div>
-            <span className="shrink-0 rounded border border-[#00FFAA]/20 bg-[#0A1A1A] px-2 py-1 text-[10px] font-bold uppercase text-[#00FFAA]">
+            <span className="shrink-0 rounded border border-root-accent/20 bg-root-canvas px-2 py-1 text-[10px] font-bold uppercase text-root-accent">
               Level {level}/{MAX_CORRUPTION_LEVEL}
             </span>
           </header>
@@ -135,11 +135,11 @@ export default function LembagaAntikorupsiPanel({
                           : 'Kas tidak cukup atau upgrade membuat netto harian negatif'}
                     className={`h-5 min-w-5 flex-1 rounded-sm transition ${
                       isCurrent
-                        ? 'bg-[#00FFAA] shadow-[0_0_8px_#00FFAA]'
+                        ? 'bg-root-accent shadow-[0_0_8px_#00FFAA]'
                         : isPrevious
-                          ? 'border border-[#00FFAA]/25 bg-[#00FFAA]/50'
+                          ? 'border border-root-accent/25 bg-root-accent/50'
                           : canUpgrade
-                            ? 'border border-[#00FFAA]/30 bg-[#0A1A1A] hover:border-[#00FFAA] hover:bg-[#00FFAA]/20'
+                            ? 'border border-root-accent/30 bg-root-canvas hover:border-root-accent hover:bg-root-accent/20'
                             : 'cursor-not-allowed border border-slate-700 bg-slate-800 opacity-50'
                     }`}
                   />
@@ -148,14 +148,14 @@ export default function LembagaAntikorupsiPanel({
             </div>
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
               <span className="text-[#8BA3A3]">
-                Biaya saat ini: <strong className="text-[#E0E0E0]">{formatCorruptionCurrency(getDailyMinistryCost(level))}/hari</strong>
+                Biaya saat ini: <strong className="text-root-text">{formatCorruptionCurrency(getDailyMinistryCost(level))}/hari</strong>
               </span>
               {level < MAX_CORRUPTION_LEVEL && (
                 <button
                   type="button"
                   disabled={busy || !canUpgradeCorruptionTrack(countryDetail, id, level + 1, currentNet)}
                   onClick={() => setConfirmation({ track: id, fromLevel: level, targetLevel: level + 1 })}
-                  className="inline-flex items-center gap-2 rounded-lg border border-[#00FFAA]/30 bg-[#00FFAA]/10 px-3 py-2 font-bold text-[#00FFAA] transition hover:bg-[#00FFAA]/20 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex items-center gap-2 rounded-lg border border-root-accent/30 bg-root-accent/10 px-3 py-2 font-bold text-root-accent transition hover:bg-root-accent/20 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <Hammer className="h-4 w-4" />
                   Tingkatkan · {formatCorruptionCurrency(
@@ -201,16 +201,16 @@ export default function LembagaAntikorupsiPanel({
               type="button"
               aria-label="Tutup konfirmasi upgrade"
               onClick={() => setConfirmation(null)}
-              className="absolute right-4 top-4 text-[#6B8A8A] transition hover:text-[#00FFAA]"
+              className="absolute right-4 top-4 text-root-subtle transition hover:text-root-accent"
             >
               <X className="h-5 w-5" />
             </button>
             <div className="mb-5 flex items-center gap-3 pr-8">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#00FFAA]">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-root-accent/30 bg-root-canvas text-root-accent">
                 <selectedTrack.icon className="h-7 w-7" />
               </div>
               <div>
-                <h3 id="corruption-upgrade-title" className="text-base font-black uppercase text-[#E0E0E0] sm:text-lg">
+                <h3 id="corruption-upgrade-title" className="text-base font-black uppercase text-root-text sm:text-lg">
                   {selectedTrack.title}
                 </h3>
                 <p className="text-xs font-semibold text-[#8BA3A3]">
@@ -221,7 +221,7 @@ export default function LembagaAntikorupsiPanel({
               </div>
             </div>
 
-            <div className="space-y-2 rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4">
+            <div className="space-y-2 rounded-xl border border-root-accent/20 bg-root-canvas p-4">
               <div className="max-h-40 space-y-2 overflow-y-auto neon-scrollbar">
                 {Array.from(
                   { length: confirmation.targetLevel - confirmation.fromLevel },
@@ -229,31 +229,31 @@ export default function LembagaAntikorupsiPanel({
                 ).map((stepLevel) => (
                   <div key={stepLevel} className="flex justify-between gap-4 text-xs font-bold text-[#8BA3A3]">
                     <span>Biaya dari level {stepLevel - 1} ke {stepLevel}:</span>
-                    <span className="shrink-0 text-[#E0E0E0]">
+                    <span className="shrink-0 text-root-text">
                       {formatCorruptionCurrency(getCorruptionUpgradeCost(countryDetail, stepLevel - 1, stepLevel))}
                     </span>
                   </div>
                 ))}
               </div>
-              <div className="flex justify-between border-t border-[#00FFAA]/20 pt-3 text-sm font-black">
+              <div className="flex justify-between border-t border-root-accent/20 pt-3 text-sm font-black">
                 <span className="text-[#8BA3A3]">Total biaya upgrade:</span>
-                <span className="text-[#00FFAA]">{formatCorruptionCurrency(upgradeCost)}</span>
+                <span className="text-root-accent">{formatCorruptionCurrency(upgradeCost)}</span>
               </div>
               <div className="flex justify-between gap-4 text-sm font-bold">
                 <span className="text-[#8BA3A3]">Kas negara sekarang:</span>
-                <span className="text-[#E0E0E0]">{formatCorruptionCurrency(budget)}</span>
+                <span className="text-root-text">{formatCorruptionCurrency(budget)}</span>
               </div>
-              <div className="flex justify-between gap-4 border-t border-[#00FFAA]/20 pt-3 text-sm font-black">
+              <div className="flex justify-between gap-4 border-t border-root-accent/20 pt-3 text-sm font-black">
                 <span className="text-[#8BA3A3]">Kas setelah upgrade:</span>
                 <span className="text-amber-400">{formatCorruptionCurrency(budget - upgradeCost)}</span>
               </div>
               <div className="flex justify-between gap-4 text-xs font-bold">
                 <span className="text-[#8BA3A3]">Netto harian setelah upgrade:</span>
-                <span className={projectedNet >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'}>
+                <span className={projectedNet >= 0 ? 'text-root-accent' : 'text-rose-400'}>
                   {formatDailyBalance(projectedNet)}
                 </span>
               </div>
-              <p className="border-t border-[#00FFAA]/20 pt-2 text-xs text-[#8BA3A3]">
+              <p className="border-t border-root-accent/20 pt-2 text-xs text-[#8BA3A3]">
                 Netto harian saat ini: {formatDailyBalance(currentNet)}. Biaya operasional level baru akan mengurangi netto setiap hari.
               </p>
             </div>
@@ -263,7 +263,7 @@ export default function LembagaAntikorupsiPanel({
               <button
                 type="button"
                 onClick={() => setConfirmation(null)}
-                className="flex-1 rounded-lg border border-[#00FFAA]/30 bg-[#0A1A1A] px-4 py-3 text-sm font-bold uppercase text-[#8BA3A3] transition hover:text-white"
+                className="flex-1 rounded-lg border border-root-accent/30 bg-root-canvas px-4 py-3 text-sm font-bold uppercase text-[#8BA3A3] transition hover:text-white"
               >
                 Batal
               </button>
@@ -271,7 +271,7 @@ export default function LembagaAntikorupsiPanel({
                 type="button"
                 disabled={busy || !canUpgradeCorruptionTrack(countryDetail, confirmation.track, confirmation.targetLevel, currentNet)}
                 onClick={confirmUpgrade}
-                className="flex-1 rounded-lg bg-[#00FFAA] px-4 py-3 text-sm font-black uppercase text-[#0A1A1A] transition hover:bg-[#00FFAA]/80 disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex-1 rounded-lg bg-root-accent px-4 py-3 text-sm font-black uppercase text-root-canvas transition hover:bg-root-accent/80 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Upgrade
               </button>

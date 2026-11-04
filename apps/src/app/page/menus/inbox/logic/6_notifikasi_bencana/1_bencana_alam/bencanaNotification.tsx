@@ -44,7 +44,7 @@ export default function BencanaNotification({ notification, onAccept, onReject }
         </p>
 
         {/* Details Grid: Korban & Kerugian */}
-        <div className="bg-[#0A1A1A] border border-rose-500/30 rounded-xl p-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs font-bold text-white shadow-inner">
+        <div className="bg-root-canvas border border-rose-500/30 rounded-xl p-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs font-bold text-white shadow-inner">
           <div className="border-r border-rose-500/20 pr-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Korban Terdampak</div>
             <div className="text-rose-400 font-extrabold mt-0.5">{notification.korban?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Jiwa</div>
@@ -63,7 +63,7 @@ export default function BencanaNotification({ notification, onAccept, onReject }
           </div>
           <div className="pl-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Alokasi Bantuan (1 NEO/Jiwa)</div>
-            <div className="text-[#00FFAA] font-extrabold mt-0.5">{responseCost?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
+            <div className="text-root-accent font-extrabold mt-0.5">{responseCost?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
           </div>
         </div>
 
@@ -88,7 +88,7 @@ export default function BencanaNotification({ notification, onAccept, onReject }
               {onAccept && (
                 <button
                   onClick={onAccept}
-                  className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-[#00FFAA] hover:bg-emerald-400 text-[#0A1A1A] rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.3)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
+                  className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-root-accent hover:bg-emerald-400 text-root-canvas rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.3)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <Check className="w-3.5 h-3.5" />
                   Bantu Korban ({responseCost?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO)

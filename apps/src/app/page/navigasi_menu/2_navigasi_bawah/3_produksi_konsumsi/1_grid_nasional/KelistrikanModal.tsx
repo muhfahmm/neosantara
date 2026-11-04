@@ -248,9 +248,9 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
       return <span className="text-[#8b7e66]/30 ml-1 text-xs">⇅</span>;
     }
     if (sortConfig.direction === 'asc') {
-      return <ChevronUp className="h-3 w-3 ml-1 inline text-[#00FFAA]" />;
+      return <ChevronUp className="h-3 w-3 ml-1 inline text-root-accent" />;
     }
-    return <ChevronDown className="h-3 w-3 ml-1 inline text-[#00FFAA]" />;
+    return <ChevronDown className="h-3 w-3 ml-1 inline text-root-accent" />;
   };
 
   return (
@@ -258,10 +258,10 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
       {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
         <div className="flex h-full min-w-0 flex-col overflow-hidden">
           {/* HEADER */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-                <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+              <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+                <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
               </div>
               <div className="min-w-0">
                 <h2 className={rootModalTypography.title}>Grid Kelistrikan Nasional</h2>
@@ -269,7 +269,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
             </div>
 
             <div className="flex items-center gap-2">
-              <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi grid kelistrikan nasional" aria-label="Informasi grid kelistrikan nasional" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]">
+              <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi grid kelistrikan nasional" aria-label="Informasi grid kelistrikan nasional" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas">
                 <Info className="h-3.5 w-3.5" />
               </button>
               <RootModalCloseButton onClick={onClose} />
@@ -277,15 +277,15 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
           </div>
 
           {/* BODY (SCROLLBAR HIJAU DITERAPKAN DI SINI) */}
-          <div className="root-no-scrollbar-glow flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10
+          <div className="root-no-scrollbar-glow flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-root-canvas/80 relative z-10
             [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 
-            [&::-webkit-scrollbar-track]:bg-[#0A1A1A] 
+            [&::-webkit-scrollbar-track]:bg-root-canvas
             [&::-webkit-scrollbar-track]:rounded-full 
-            [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-[#00FFAA]/20
-            [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A]
+            [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20
+            [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A]
             [&::-webkit-scrollbar-thumb]:rounded-full 
-            [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0A1A1A]
-            hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]
+            [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas
+            hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent
             [&::-webkit-scrollbar-button]:hidden
           ">
 
@@ -302,18 +302,18 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
               {/* Input Search (Hanya muncul di tab global) */}
               {activeTab === "global" && (
                 <div className="relative w-full sm:w-64 lg:w-80">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-[#6B8A8A] pointer-events-none" />
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-root-subtle pointer-events-none" />
                   <input
                     type="text"
                     placeholder="Cari nama negara..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-[#E0E0E0] placeholder-[#6B8A8A] focus:outline-none focus:border-[#00FFAA] transition-all font-semibold text-sm"
+                    className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-root-accent/30 bg-root-surface text-root-text placeholder-root-subtle focus:outline-none focus:border-root-accent transition-all font-semibold text-sm"
                   />
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery('')}
-                      className="absolute right-3 top-3 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors"
+                      className="absolute right-3 top-3 text-root-subtle hover:text-root-accent transition-colors"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -327,9 +327,9 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
               <div className="flex flex-col gap-4">
                 
                 {/* KOTAK 1: STATISTIK GRID (Memanjang ke kanan-kiri) */}
-                <div className={`w-full bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 lg:p-5 ${rootBorderRadius.card}`}>
+                <div className={`w-full bg-root-canvas border border-root-accent/20 p-4 lg:p-5 ${rootBorderRadius.card}`}>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2.5 rounded-xl bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30">
+                    <div className="p-2.5 rounded-xl bg-root-accent/10 text-root-accent border border-root-accent/30">
                       <BatteryCharging className="h-5 w-5" />
                     </div>
                     <div>
@@ -378,9 +378,9 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                 </div>
 
                 {/* KOTAK 2: RINGKASAN SUMBER DAYA (Di Bawah, Berbentuk Grid) */}
-                <div className={`w-full bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 lg:p-5 ${rootBorderRadius.card}`}>
+                <div className={`w-full bg-root-canvas border border-root-accent/20 p-4 lg:p-5 ${rootBorderRadius.card}`}>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2.5 rounded-xl bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30">
+                    <div className="p-2.5 rounded-xl bg-root-accent/10 text-root-accent border border-root-accent/30">
                       <MapPin className="h-5 w-5" />
                     </div>
                     <div>
@@ -391,16 +391,16 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                   {/* Card Sumber Daya dibuat Grid (2 atau 3 kolom) */}
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
                     {powerSources.length > 0 ? powerSources.map((source) => (
-                      <div key={source.key} className={`flex items-center justify-between gap-3 p-4 bg-[#0F2424] border border-[#00FFAA]/20 ${rootBorderRadius.card}`}>
+                      <div key={source.key} className={`flex items-center justify-between gap-3 p-4 bg-root-surface border border-root-accent/20 ${rootBorderRadius.card}`}>
                         <div>
                           <p className={rootModalTypography.sectionTitle}>{source.label}</p>
                           <p className={`${rootModalTypography.body} ${rootModalTypography.muted}`}>{source.desc}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm font-black text-[#00FFAA]">
+                          <p className="text-sm font-black text-root-accent">
                             {formatElectricityMW(source.actualProduction)} MW
                           </p>
-                          <p className="text-[10px] text-[#6B8A8A]">
+                          <p className="text-[10px] text-root-subtle">
                             {source.fuelShortage
                               ? "Bahan bakar kurang — tidak berproduksi"
                               : source.value > 0 ? `${source.value} unit` : 'Tidak tersedia'}
@@ -408,7 +408,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                         </div>
                       </div>
                     )) : (
-                      <div className={`col-span-full border border-[#00FFAA]/20 bg-[#0F2424] p-4 ${rootBorderRadius.card} ${rootModalTypography.body}`}>
+                      <div className={`col-span-full border border-root-accent/20 bg-root-surface p-4 ${rootBorderRadius.card} ${rootModalTypography.body}`}>
                         Data pembangkit listrik tidak tersedia.
                       </div>
                     )}
@@ -416,18 +416,18 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                 </div>
 
                 {/* KOTAK 3: INDEKS KEPUASAN LISTRIK */}
-                <div className={`w-full p-5 border border-[#00FFAA]/30 bg-[#0A1A1A] ${rootBorderRadius.card}`}>
+                <div className={`w-full p-5 border border-root-accent/30 bg-root-canvas ${rootBorderRadius.card}`}>
                   <div className="flex justify-between items-center">
                     <span className={rootModalTypography.sectionTitle}>
                       Indeks Kepuasan Rakyat (Listrik)
                     </span>
-                    <span className="text-3xl font-black text-[#00FFAA]">
+                    <span className="text-3xl font-black text-root-accent">
                       {electricitySatisfaction} / 100
                     </span>
                   </div>
-                  <div className="w-full h-3 bg-[#0F2424] rounded-full mt-3 overflow-hidden border border-[#00FFAA]/20">
+                  <div className="w-full h-3 bg-root-surface rounded-full mt-3 overflow-hidden border border-root-accent/20">
                     <div
-                      className="h-full rounded-full bg-[#00FFAA] transition-all duration-200"
+                      className="h-full rounded-full bg-root-accent transition-all duration-200"
                       style={{ width: `${electricitySatisfaction}%` }}
                     />
                   </div>
@@ -437,54 +437,54 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
             {/* TAB NERACA GLOBAL */}
             {activeTab === "global" && (
-              <div className={`w-full bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 ${rootBorderRadius.card}`}>
+              <div className={`w-full bg-root-canvas border border-root-accent/20 p-6 ${rootBorderRadius.card}`}>
                 {/* SCROLLBAR HIJAU DITERAPKAN JUGA DI TABEL (VERTIKAL & HORIZONTAL) */}
-                <div className={`root-no-scrollbar-glow overflow-x-auto border border-[#00FFAA]/20 ${rootBorderRadius.card} bg-[#0F2424] max-h-[60vh] overflow-y-auto
+                <div className={`root-no-scrollbar-glow overflow-x-auto border border-root-accent/20 ${rootBorderRadius.card} bg-root-surface max-h-[60vh] overflow-y-auto
                   [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 
                   [&::-webkit-scrollbar]:h-1.5 sm:[&::-webkit-scrollbar]:h-2
-                  [&::-webkit-scrollbar-track]:bg-[#0F2424] 
+                  [&::-webkit-scrollbar-track]:bg-root-surface
                   [&::-webkit-scrollbar-track]:rounded-full 
-                  [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-[#00FFAA]/10
-                  [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A]
+                  [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/10
+                  [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A]
                   [&::-webkit-scrollbar-thumb]:rounded-full 
-                  [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0F2424]
-                  hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]
+                  [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-surface
+                  hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent
                   [&::-webkit-scrollbar-button]:hidden
                 `}>
                   <table className="w-full text-xs">
                     <thead className="sticky top-0 text-[10px] sm:text-xs z-10">
-                      <tr className="bg-[#0A1A1A] border-b border-[#00FFAA]/20">
-                        <th className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-left font-black text-[#00FFAA] uppercase tracking-wider">No</th>
+                      <tr className="bg-root-canvas border-b border-root-accent/20">
+                        <th className="bg-root-canvas px-2.5 sm:px-3 py-2 text-left font-black text-root-accent uppercase tracking-wider">No</th>
                         <th
                           onClick={() => handleSort('name')}
-                          className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-left font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#0F2424] transition-colors"
+                          className="bg-root-canvas px-2.5 sm:px-3 py-2 text-left font-black text-root-accent uppercase tracking-wider cursor-pointer hover:bg-root-surface transition-colors"
                         >
                           Negara <SortIndicator column="name" />
                         </th>
                         <th
                           onClick={() => handleSort('production')}
-                          className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-right font-black text-emerald-400 uppercase tracking-wider cursor-pointer hover:bg-emerald-950/40 transition-colors"
+                          className="bg-root-canvas px-2.5 sm:px-3 py-2 text-right font-black text-emerald-400 uppercase tracking-wider cursor-pointer hover:bg-emerald-950/40 transition-colors"
                         >
                           Produksi (MW) <SortIndicator column="production" />
                         </th>
                         <th
                           onClick={() => handleSort('consumption')}
-                          className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-right font-black text-rose-400 uppercase tracking-wider cursor-pointer hover:bg-rose-950/40 transition-colors"
+                          className="bg-root-canvas px-2.5 sm:px-3 py-2 text-right font-black text-rose-400 uppercase tracking-wider cursor-pointer hover:bg-rose-950/40 transition-colors"
                         >
                           Konsumsi (MW) <SortIndicator column="consumption" />
                         </th>
                         <th
                           onClick={() => handleSort('balance')}
-                          className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#0F2424] transition-colors"
+                          className="bg-root-canvas px-2.5 sm:px-3 py-2 text-right font-black text-root-accent uppercase tracking-wider cursor-pointer hover:bg-root-surface transition-colors"
                         >
                           Neraca Daya <SortIndicator column="balance" />
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#00FFAA]/10 bg-[#0F2424]">
+                    <tbody className="divide-y divide-root-accent/10 bg-root-surface">
                       {allCountries.length === 0 ? (
                         <tr>
-                          <td colSpan={5} className="px-4 py-6 text-center text-xs font-bold text-[#6B8A8A]">
+                          <td colSpan={5} className="px-4 py-6 text-center text-xs font-bold text-root-subtle">
                             📡 Memuat data {globalElectricityData.length || 207} negara...
                           </td>
                         </tr>
@@ -496,17 +496,17 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                               key={`country-${country.name}-${rowIndex}`}
                               className={`transition-colors ${isUserCountry
                                   ? 'bg-emerald-950/50 font-black border-l-4 border-l-emerald-400'
-                                  : 'bg-[#0F2424]'
+                                  : 'bg-root-surface'
                                 }`}
                             >
-                              <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-400 font-black' : 'text-[#6B8A8A]'}`}>
+                              <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-400 font-black' : 'text-root-subtle'}`}>
                                 {rowIndex + 1}
                               </td>
-                              <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-400 font-black flex items-center gap-2' : 'text-[#E0E0E0]'}`}>
+                              <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-400 font-black flex items-center gap-2' : 'text-root-text'}`}>
                                 <div className="flex items-center gap-1.5 flex-wrap">
                                   <span>{country.name}</span>
                                   {isUserCountry && (
-                                    <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-[#0A1A1A] text-[9px] font-black uppercase tracking-wider">
+                                    <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-root-canvas text-[9px] font-black uppercase tracking-wider">
                                       Negara Anda
                                     </span>
                                   )}
@@ -534,7 +534,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                         })
                       ) : (
                         <tr>
-                          <td colSpan={5} className="px-4 py-6 text-center text-xs font-bold text-[#6B8A8A]">
+                          <td colSpan={5} className="px-4 py-6 text-center text-xs font-bold text-root-subtle">
                             {searchQuery ? `Tidak ada negara yang cocok dengan "${searchQuery}"` : 'Tidak ada data tersedia'}
                           </td>
                         </tr>

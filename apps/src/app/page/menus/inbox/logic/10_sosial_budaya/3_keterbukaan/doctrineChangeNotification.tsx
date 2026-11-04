@@ -39,7 +39,7 @@ export default function DoctrineChangeNotificationCard({ notification }: Props) 
         </p>
 
         {effects && effects.length > 0 && (
-          <div className="bg-[#0A1A1A] border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex flex-wrap gap-2 items-center justify-between">
+          <div className="bg-root-canvas border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex flex-wrap gap-2 items-center justify-between">
             <span className="text-[10px] font-bold text-slate-400 uppercase">Dampak Kebijakan:</span>
             <div className="flex flex-wrap gap-1.5">
               {effects.map((eff, i) => (

@@ -17,14 +17,14 @@ export default function SubsidyCardGrid({ items, toggleSubsidy, onOpenDetail }: 
       {items.map((item) => (
         <div
           key={item.id}
-          className={`bg-[#0A1A1A] border rounded-2xl p-3.5 lg:p-4 2xl:p-5 flex flex-col justify-between transition-all ${item.isSubsidized
-              ? "border-[#00FFAA]/40 shadow-lg"
+          className={`bg-root-canvas border rounded-2xl p-3.5 lg:p-4 2xl:p-5 flex flex-col justify-between transition-all ${item.isSubsidized
+              ? "border-root-accent/40 shadow-lg"
               : "border-gray-800 opacity-75"
             }`}
         >
           <div>
             <div className="flex items-center justify-between gap-2.5 mb-2">
-              <span className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest px-2 lg:px-2.5 py-0.5 rounded-full bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30">
+              <span className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest px-2 lg:px-2.5 py-0.5 rounded-full bg-root-accent/10 text-root-accent border border-root-accent/30">
                 {item.category}
               </span>
 
@@ -33,7 +33,7 @@ export default function SubsidyCardGrid({ items, toggleSubsidy, onOpenDetail }: 
                 {onOpenDetail && (
                   <button
                     onClick={() => onOpenDetail(item)}
-                    className="p-1 rounded-full border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer flex items-center justify-center shadow-sm"
+                    className="p-1 rounded-full border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer flex items-center justify-center shadow-sm"
                     title="Lihat Rincian Kebijakan"
                   >
                     <Info className="h-3.5 w-3.5" />
@@ -56,23 +56,23 @@ export default function SubsidyCardGrid({ items, toggleSubsidy, onOpenDetail }: 
               </div>
             </div>
 
-            <h4 className="text-xs lg:text-sm font-black text-[#E0E0E0] uppercase tracking-wider">{item.name}</h4>
+            <h4 className="text-xs lg:text-sm font-black text-root-text uppercase tracking-wider">{item.name}</h4>
           </div>
 
           {/* STATS FOOTER FOR ITEM */}
-          <div className="mt-3 lg:mt-4 pt-2.5 lg:pt-3 border-t border-[#00FFAA]/15 grid grid-cols-3 gap-1.5 lg:gap-2 text-center text-[9px] lg:text-[10px]">
-            <div className="bg-[#0F2424] p-1.5 lg:p-2 rounded-lg border border-[#00FFAA]/10">
-              <span className="block text-[#6B8A8A] font-bold uppercase">Biaya Anggaran</span>
-              <span className="font-black text-[#00FFAA] mt-0.5 block">{formatCurrencyCompact(item.budgetCost)}</span>
+          <div className="mt-3 lg:mt-4 pt-2.5 lg:pt-3 border-t border-root-accent/15 grid grid-cols-3 gap-1.5 lg:gap-2 text-center text-[9px] lg:text-[10px]">
+            <div className="bg-root-surface p-1.5 lg:p-2 rounded-lg border border-root-accent/10">
+              <span className="block text-root-subtle font-bold uppercase">Biaya Anggaran</span>
+              <span className="font-black text-root-accent mt-0.5 block">{formatCurrencyCompact(item.budgetCost)}</span>
             </div>
 
-            <div className="bg-[#0F2424] p-1.5 lg:p-2 rounded-lg border border-[#00FFAA]/10">
-              <span className="block text-[#6B8A8A] font-bold uppercase">Approval</span>
+            <div className="bg-root-surface p-1.5 lg:p-2 rounded-lg border border-root-accent/10">
+              <span className="block text-root-subtle font-bold uppercase">Approval</span>
               <span className="font-black text-emerald-400 mt-0.5 block">+{item.approvalImpact}%</span>
             </div>
 
-            <div className="bg-[#0F2424] p-1.5 lg:p-2 rounded-lg border border-[#00FFAA]/10">
-              <span className="block text-[#6B8A8A] font-bold uppercase">Risiko Cabut</span>
+            <div className="bg-root-surface p-1.5 lg:p-2 rounded-lg border border-root-accent/10">
+              <span className="block text-root-subtle font-bold uppercase">Risiko Cabut</span>
               <span className={`font-black mt-0.5 block ${item.demoRiskIfDisabled === 'Kritis' ? 'text-rose-500' :
                   item.demoRiskIfDisabled === 'Tinggi' ? 'text-amber-400' : 'text-emerald-400'
                 }`}>
@@ -86,4 +86,3 @@ export default function SubsidyCardGrid({ items, toggleSubsidy, onOpenDetail }: 
     </div>
   );
 }
-

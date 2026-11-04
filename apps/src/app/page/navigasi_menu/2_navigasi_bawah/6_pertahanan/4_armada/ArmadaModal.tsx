@@ -80,9 +80,9 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
         <div className="flex flex-col h-full overflow-hidden">
           
           {/* HEADER */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className={`shrink-0 border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 sm:p-2 ${rootBorderRadius.card}`}>
+            <div className={`shrink-0 border border-root-accent/30 bg-root-surface p-1.5 sm:p-2 ${rootBorderRadius.card}`}>
               <ShieldAlert className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
             </div>
             <div className="min-w-0">
@@ -96,7 +96,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
               onClick={() => setShowDefenseBonusInfo(true)}
               aria-label="Informasi armada dan bonus pertahanan"
               title="Informasi armada dan bonus pertahanan"
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FFAA] cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent transition-all hover:border-root-accent hover:bg-root-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent cursor-pointer"
             >
               <Info className="h-4 w-4" />
             </button>
@@ -107,13 +107,13 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
         {/* BODY MODAL WITH SIDEBAR */}
         <div className="flex-1 flex min-h-0 relative z-10">
           {/* SIDEBAR MENU */}
-          <div className="w-40 sm:w-44 lg:w-48 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
+          <div className="w-40 sm:w-44 lg:w-48 border-r border-root-accent/30 bg-root-canvas p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
             <button 
               onClick={() => setActiveTab("aktif")} 
               className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${
                 activeTab === "aktif" 
-                  ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md" 
-                  : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA] hover:text-[#00FFAA]"
+                  ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
+                  : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent hover:text-root-accent"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -126,8 +126,8 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
               onClick={() => setActiveTab("infrastruktur")} 
               className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${
                 activeTab === "infrastruktur" 
-                  ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md" 
-                  : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA] hover:text-[#00FFAA]"
+                  ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
+                  : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent hover:text-root-accent"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -138,7 +138,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
           </div>
 
           {/* MAIN TAB CONTENT */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-[#0F2424] neon-scrollbar space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-root-surface neon-scrollbar space-y-4">
             {activeTab === "aktif" && <ArmadaAktif countryDetail={countryDetail} setCountryDetail={setCountryDetail} onCapacityFull={handleNavigateToInfra} onGotoProduction={onGotoProduction} currentDate={currentDate} />}
             {activeTab === "infrastruktur" && <InfrastrukturMiliter countryDetail={countryDetail} setCountryDetail={setCountryDetail} highlightKey={highlightInfraKey} onGotoProduction={onGotoProduction} ongoingConstructions={countryDetail?.ongoingConstructions || []} currentDate={currentDate} />}
           </div>
@@ -151,12 +151,12 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
     {showDefenseBonusInfo && (
       <NotebookModalWrapper onClose={() => setShowDefenseBonusInfo(false)} compact maxWidthClass="max-w-2xl">
         <div className="flex flex-col" role="dialog" aria-modal="true" aria-labelledby="defense-bonus-info-title">
-            <div className="flex items-center justify-between border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-5 py-4">
+            <div className="flex items-center justify-between border-b border-root-accent/20 bg-root-canvas px-5 py-4">
               <div className="flex items-center gap-3">
-                <div className="rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-2">
-                  <Info className="h-5 w-5 text-[#00FFAA]" />
+                <div className="rounded-xl border border-root-accent/30 bg-root-surface p-2">
+                  <Info className="h-5 w-5 text-root-accent" />
                 </div>
-                <h3 id="defense-bonus-info-title" className="text-sm font-black uppercase tracking-wide text-[#00FFAA]">
+                <h3 id="defense-bonus-info-title" className="text-sm font-black uppercase tracking-wide text-root-accent">
                   Informasi Armada & Bonus Pertahanan
                 </h3>
               </div>
@@ -164,7 +164,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
                 type="button"
                 onClick={() => setShowDefenseBonusInfo(false)}
                 aria-label="Tutup informasi"
-                className="rounded-lg border border-[#00FFAA]/20 p-2 text-[#6B8A8A] transition-colors hover:border-[#00FFAA]/50 hover:text-[#00FFAA] cursor-pointer"
+                className="rounded-lg border border-root-accent/20 p-2 text-root-subtle transition-colors hover:border-root-accent/50 hover:text-root-accent cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>

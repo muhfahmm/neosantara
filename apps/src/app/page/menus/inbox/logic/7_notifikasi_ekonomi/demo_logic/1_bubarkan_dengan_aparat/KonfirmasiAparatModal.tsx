@@ -18,7 +18,7 @@ export default function KonfirmasiAparatModal({
   if (typeof window === 'undefined' || !isOpen) return null;
 
   return createPortal(
-    // bg-black/80 dan backdrop-blur-sm telah dihapus
+    // bg-black/80 dan  telah dihapus
     <div className="fixed inset-0 z-[500000] flex items-center justify-center p-4 pointer-events-auto animate-fade-in font-sans">
       <div
         role="dialog"

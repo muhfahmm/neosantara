@@ -35,7 +35,7 @@ export default function SubsidiChangeNotificationCard({ notification, onAccept, 
           {notification.message}
         </p>
 
-        <div className="bg-[#0A1A1A] border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex items-center justify-between">
+        <div className="bg-root-canvas border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex items-center justify-between">
           <span>Program: {notification.subsidyName}</span>
           <span className={isSubsidized ? 'text-emerald-400 font-black' : 'text-rose-400 font-black'}>
             Status: {isSubsidized ? 'AKTIF' : 'NONAKTIF'}

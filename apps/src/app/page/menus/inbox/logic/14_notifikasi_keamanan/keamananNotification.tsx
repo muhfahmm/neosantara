@@ -43,7 +43,7 @@ export default function KeamananNotificationCard({
           {notification.message}
         </p>
 
-        <div className="bg-[#0A1A1A] border border-rose-500/30 rounded-xl p-3 grid grid-cols-3 gap-2 text-center text-xs font-bold text-white shadow-inner">
+        <div className="bg-root-canvas border border-rose-500/30 rounded-xl p-3 grid grid-cols-3 gap-2 text-center text-xs font-bold text-white shadow-inner">
           <div className="border-r border-rose-500/20 pr-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Warga Terdampak</div>
             <div className="text-rose-400 font-extrabold mt-0.5">{notification.korban.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Orang</div>
@@ -54,7 +54,7 @@ export default function KeamananNotificationCard({
           </div>
           <div className="pl-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Biaya Operasi Kepolisian</div>
-            <div className="text-[#00FFAA] font-extrabold mt-0.5">{notification.responseCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
+            <div className="text-root-accent font-extrabold mt-0.5">{notification.responseCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
           </div>
         </div>
 
@@ -73,7 +73,7 @@ export default function KeamananNotificationCard({
                 </button>
               )}
               {onAccept && (
-                <button onClick={onAccept} className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-[#00FFAA] hover:bg-emerald-400 text-[#0A1A1A] rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.3)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]">
+                <button onClick={onAccept} className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-root-accent hover:bg-emerald-400 text-root-canvas rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.3)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]">
                   <Check className="w-3.5 h-3.5" />
                   Danai Operasi ({notification.responseCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO)
                 </button>

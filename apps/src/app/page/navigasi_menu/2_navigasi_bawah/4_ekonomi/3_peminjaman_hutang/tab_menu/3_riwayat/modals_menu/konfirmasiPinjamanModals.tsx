@@ -38,13 +38,13 @@ export default function KonfirmasiPinjamanModal({
 
   return (
     <NotebookModalWrapper zIndexClass="z-[70]">
-      <div className="relative flex h-full w-full flex-col overflow-hidden bg-[#0F2424] font-sans pointer-events-auto">
+      <div className="relative flex h-full w-full flex-col overflow-hidden bg-root-surface font-sans pointer-events-auto">
 
         {/* HEADER */}
-        <div className="relative z-10 flex items-center justify-between gap-3 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-3 sm:px-6">
+        <div className="relative z-10 flex items-center justify-between gap-3 border-b border-root-accent/20 bg-root-canvas px-4 py-3 sm:px-6">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className={`shrink-0 border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 ${rootBorderRadius.card}`}>
-              <CreditCard className="h-4 w-4 text-[#00FFAA] sm:h-5 sm:w-5" />
+            <div className={`shrink-0 border border-root-accent/30 bg-root-surface p-1.5 ${rootBorderRadius.card}`}>
+              <CreditCard className="h-4 w-4 text-root-accent sm:h-5 sm:w-5" />
             </div>
             <div className="min-w-0">
               <h3 className={rootModalTypography.title}>Konfirmasi Pinjaman</h3>
@@ -53,61 +53,61 @@ export default function KonfirmasiPinjamanModal({
           <RootModalCloseButton onClick={onClose} />
         </div>
 
-        <div className="flex-1 overflow-y-auto p-8 bg-[#0A1A1A]/80 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-8 bg-root-canvas/80 custom-scrollbar">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-            <div className={`flex flex-col justify-between border border-[#00FFAA]/30 bg-[#0F2424] p-6 ${rootBorderRadius.card}`}>
+            <div className={`flex flex-col justify-between border border-root-accent/30 bg-root-surface p-6 ${rootBorderRadius.card}`}>
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <div className={`border border-[#00FFAA]/30 bg-[#0A1A1A] p-3 ${rootBorderRadius.card}`}>
-                    <CreditCard className="h-6 w-6 text-[#00FFAA]" />
+                  <div className={`border border-root-accent/30 bg-root-canvas p-3 ${rootBorderRadius.card}`}>
+                    <CreditCard className="h-6 w-6 text-root-accent" />
                   </div>
                   <div>
-                    <h4 className="text-lg font-black text-[#00FFAA] uppercase">Sumber Pinjaman</h4>
-                    <p className="text-xs text-[#6B8A8A] font-medium">Negara atau lembaga yang memberi pinjaman.</p>
+                    <h4 className="text-lg font-black text-root-accent uppercase">Sumber Pinjaman</h4>
+                    <p className="text-xs text-root-subtle font-medium">Negara atau lembaga yang memberi pinjaman.</p>
                   </div>
                 </div>
 
-                <div className={`border border-[#00FFAA]/20 bg-[#0A1A1A] p-5 ${rootBorderRadius.card}`}>
-                  <div className="flex items-center gap-3 mb-4 text-[#00FFAA] font-black">
+                <div className={`border border-root-accent/20 bg-root-canvas p-5 ${rootBorderRadius.card}`}>
+                  <div className="flex items-center gap-3 mb-4 text-root-accent font-black">
                     {renderFlag(iso, loanSource)}
                     <span>{loanSource}</span>
                   </div>
-                  <div className="text-sm text-[#E0E0E0] space-y-3 font-semibold">
+                  <div className="text-sm text-root-text space-y-3 font-semibold">
                     <div className="flex justify-between">
-                      <span className="text-[#6B8A8A]">Jumlah Pinjaman</span>
-                      <span className="font-black text-[#00FFAA]">{maxLoan.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
+                      <span className="text-root-subtle">Jumlah Pinjaman</span>
+                      <span className="font-black text-root-accent">{maxLoan.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#6B8A8A]">Bunga</span>
-                      <span className="font-black text-[#00FFAA]">{interest}%</span>
+                      <span className="text-root-subtle">Bunga</span>
+                      <span className="font-black text-root-accent">{interest}%</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#6B8A8A]">Masa Tenggang</span>
-                      <span className="font-black text-[#00FFAA]">{term} Hari</span>
+                      <span className="text-root-subtle">Masa Tenggang</span>
+                      <span className="font-black text-root-accent">{term} Hari</span>
                     </div>
-                    <div className="flex justify-between pt-3 border-t border-[#00FFAA]/20">
+                    <div className="flex justify-between pt-3 border-t border-root-accent/20">
                       <span className="font-black">Total Pembayaran</span>
-                      <span className="font-black text-[#00FFAA]">{totalPayment.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
+                      <span className="font-black text-root-accent">{totalPayment.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className={`flex flex-col justify-between border border-[#00FFAA]/30 bg-[#0F2424] p-6 ${rootBorderRadius.card}`}>
-              <div className="space-y-6 text-[#E0E0E0]">
+            <div className={`flex flex-col justify-between border border-root-accent/30 bg-root-surface p-6 ${rootBorderRadius.card}`}>
+              <div className="space-y-6 text-root-text">
                 <div>
-                  <h4 className="text-lg font-black text-[#00FFAA] uppercase tracking-wider">Ringkasan Pinjaman</h4>
-                  <p className="text-xs text-[#6B8A8A] font-medium mt-2">Pinjaman ini akan menambah kas negara saat dikonfirmasi.</p>
+                  <h4 className="text-lg font-black text-root-accent uppercase tracking-wider">Ringkasan Pinjaman</h4>
+                  <p className="text-xs text-root-subtle font-medium mt-2">Pinjaman ini akan menambah kas negara saat dikonfirmasi.</p>
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 text-sm">
-                  <div className={`border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 ${rootBorderRadius.card}`}>
-                    <p className="text-[#6B8A8A] text-xs font-bold uppercase">Saldo Kas Negara</p>
-                    <p className="mt-2 text-2xl font-black text-[#00FFAA]">{currentMoney.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</p>
+                  <div className={`border border-root-accent/20 bg-root-canvas p-4 ${rootBorderRadius.card}`}>
+                    <p className="text-root-subtle text-xs font-bold uppercase">Saldo Kas Negara</p>
+                    <p className="mt-2 text-2xl font-black text-root-accent">{currentMoney.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</p>
                   </div>
-                  <div className={`border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 ${rootBorderRadius.card}`}>
-                    <p className="text-[#6B8A8A] text-xs font-bold uppercase">Total Outstanding</p>
+                  <div className={`border border-root-accent/20 bg-root-canvas p-4 ${rootBorderRadius.card}`}>
+                    <p className="text-root-subtle text-xs font-bold uppercase">Total Outstanding</p>
                     <p className="mt-2 text-2xl font-black text-rose-400">{totalPayment.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</p>
                   </div>
                   <div className={`border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-400 ${rootBorderRadius.card}`}>
@@ -119,20 +119,20 @@ export default function KonfirmasiPinjamanModal({
           </div>
         </div>
 
-        <div className="flex flex-col gap-4 px-8 pb-8 pt-4 lg:flex-row lg:items-center lg:justify-end bg-[#0A1A1A] border-t border-[#00FFAA]/20">
+        <div className="flex flex-col gap-4 px-8 pb-8 pt-4 lg:flex-row lg:items-center lg:justify-end bg-root-canvas border-t border-root-accent/20">
           <div className={`border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs font-bold text-emerald-400 lg:flex-1 ${rootBorderRadius.card}`}>
             Pinjaman akan langsung ditambahkan ke kas negara saat disetujui.
           </div>
 
           <button
             onClick={onClose}
-            className={`w-full cursor-pointer border border-[#00FFAA]/30 bg-[#0F2424] px-5 py-3 text-xs font-bold uppercase text-[#E0E0E0] transition-all hover:border-[#00FFAA] lg:w-auto ${rootBorderRadius.card}`}
+            className={`w-full cursor-pointer border border-root-accent/30 bg-root-surface px-5 py-3 text-xs font-bold uppercase text-root-text transition-all hover:border-root-accent lg:w-auto ${rootBorderRadius.card}`}
           >
             Batal
           </button>
           <button
             onClick={onConfirm}
-            className={`w-full cursor-pointer bg-[#00FFAA] px-5 py-3 text-xs font-bold uppercase text-[#0A1A1A] transition-all hover:bg-[#00FFAA]/80 lg:w-auto ${rootBorderRadius.card}`}
+            className={`w-full cursor-pointer bg-root-accent px-5 py-3 text-xs font-bold uppercase text-root-canvas transition-all hover:bg-root-accent/80 lg:w-auto ${rootBorderRadius.card}`}
           >
             Konfirmasi Pinjaman
           </button>

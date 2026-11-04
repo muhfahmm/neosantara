@@ -93,25 +93,25 @@ export default function IdeologiInfoModal({
 
   return createPortal(
     <div className="fixed inset-0 z-[250] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
+      <div className="bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
         
         {/* HEADER */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30 text-[#00FFAA]">
+            <div className="p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/30 text-root-accent">
               {icon || <Info className="h-5 w-5" />}
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <Info className="w-3 h-3 text-[#00FFAA]" />
-                <span className="text-[10px] font-bold text-[#00FFAA] uppercase tracking-wider">Informasi Ideologi</span>
+                <Info className="w-3 h-3 text-root-accent" />
+                <span className="text-[10px] font-bold text-root-accent uppercase tracking-wider">Informasi Ideologi</span>
               </div>
-              <h3 className="text-sm sm:text-base font-bold text-[#E0E0E0] tracking-wide uppercase">{title}</h3>
+              <h3 className="text-sm sm:text-base font-bold text-root-text tracking-wide uppercase">{title}</h3>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1"
+            className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1"
           >
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
@@ -119,23 +119,23 @@ export default function IdeologiInfoModal({
         </div>
 
         {/* CONTENT */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 bg-[#0F2424] relative z-10 custom-scrollbar flex flex-col justify-center">
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 bg-root-surface relative z-10 custom-scrollbar flex flex-col justify-center">
           {/* Bonus / Efek Utama */}
-          <div className="bg-[#00FFAA]/10 border border-[#00FFAA]/30 p-6 rounded-2xl text-center">
-            <span className="text-xs font-bold text-[#00FFAA] uppercase tracking-widest block mb-2">
+          <div className="bg-root-accent/10 border border-root-accent/30 p-6 rounded-2xl text-center">
+            <span className="text-xs font-bold text-root-accent uppercase tracking-widest block mb-2">
               Bonus & Efek Utama Negara
             </span>
-            <p className="text-lg sm:text-xl font-extrabold text-[#E0E0E0]">
+            <p className="text-lg sm:text-xl font-extrabold text-root-text">
               {bonusText || 'Tidak ada bonus spesifik'}
             </p>
           </div>
         </div>
 
         {/* FOOTER ACTION */}
-        <div className="px-6 py-3 border-t border-[#00FFAA]/20 bg-[#0A1A1A] flex justify-end shrink-0">
+        <div className="px-6 py-3 border-t border-root-accent/20 bg-root-canvas flex justify-end shrink-0">
           <button
             onClick={onClose}
-            className="px-6 py-2.5 rounded-xl bg-[#00FFAA] hover:bg-[#00C282] text-[#0A1A1A] font-extrabold text-xs uppercase tracking-wider active:scale-95 transition-all cursor-pointer"
+            className="px-6 py-2.5 rounded-xl bg-root-accent hover:bg-[#00C282] text-root-canvas font-extrabold text-xs uppercase tracking-wider active:scale-95 transition-all cursor-pointer"
           >
             Mengerti
           </button>

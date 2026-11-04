@@ -252,13 +252,13 @@ export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps)
     });
 
     return sortedRows.map((row, index) => (
-      <tr key={`${row.name}-${index}`} className={index % 2 === 0 ? 'bg-[#0F2424]' : 'bg-[#0A1A1A]'}>
-        <td className="px-4 py-3 text-sm text-[#E0E0E0] font-semibold">{row.name}</td>
-        <td className="px-4 py-3 text-sm text-[#6B8A8A]">{row.continent}</td>
-        <td className="px-4 py-3 text-right text-[#E0E0E0] font-semibold">{formatNumber(row.tax)}</td>
-        <td className="px-4 py-3 text-right text-[#E0E0E0] font-semibold">{row.buildingCount > 0 ? row.buildingCount : '-'}</td>
-        <td className="px-4 py-3 text-right text-[#E0E0E0] font-semibold">{formatNumber(row.gold)}</td>
-        <td className="px-4 py-3 text-right text-[#E0E0E0] font-semibold">{formatNumber(row.ministry)}</td>
+      <tr key={`${row.name}-${index}`} className={index % 2 === 0 ? 'bg-root-surface' : 'bg-root-canvas'}>
+        <td className="px-4 py-3 text-sm text-root-text font-semibold">{row.name}</td>
+        <td className="px-4 py-3 text-sm text-root-subtle">{row.continent}</td>
+        <td className="px-4 py-3 text-right text-root-text font-semibold">{formatNumber(row.tax)}</td>
+        <td className="px-4 py-3 text-right text-root-text font-semibold">{row.buildingCount > 0 ? row.buildingCount : '-'}</td>
+        <td className="px-4 py-3 text-right text-root-text font-semibold">{formatNumber(row.gold)}</td>
+        <td className="px-4 py-3 text-right text-root-text font-semibold">{formatNumber(row.ministry)}</td>
         <td className={`px-4 py-3 text-right font-black ${row.net >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
           {row.net >= 0 ? '+' : ''}{formatNumber(row.net)}
         </td>
@@ -269,65 +269,65 @@ export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps)
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <div className="text-[10px] text-[#00FFAA] font-black uppercase tracking-wider">APBN Semua Negara</div>
+        <div className="text-[10px] text-root-accent font-black uppercase tracking-wider">APBN Semua Negara</div>
         <div className="relative">
           <input
             type="text"
             placeholder="Cari negara / benua..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-8 pr-3 py-1.5 rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 text-sm font-bold text-[#E0E0E0] outline-none focus:border-[#00FFAA] w-48 transition-all placeholder:text-[#6B8A8A]"
+            className="pl-8 pr-3 py-1.5 rounded-lg bg-root-canvas border border-root-accent/30 text-sm font-bold text-root-text outline-none focus:border-root-accent w-48 transition-all placeholder:text-root-subtle"
           />
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#6B8A8A]" />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-root-subtle" />
         </div>
       </div>
 
       {loading ? (
-        <div className="py-8 text-center text-[#6B8A8A]">Loading data semua negara...</div>
+        <div className="py-8 text-center text-root-subtle">Loading data semua negara...</div>
       ) : (
-        <div className="overflow-hidden rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/30">
+        <div className="overflow-hidden rounded-2xl bg-root-canvas border border-root-accent/30">
           <div className="overflow-auto max-h-[60vh] custom-scrollbar">
-            <table className="min-w-full table-auto border-separate border-spacing-0 text-left text-[#E0E0E0]">
+            <table className="min-w-full table-auto border-separate border-spacing-0 text-left text-root-text">
               <thead>
-                <tr className="bg-[#0A1A1A] text-[#00FFAA]">
+                <tr className="bg-root-canvas text-root-accent">
                   <th
-                    className="px-4 py-3 border-b border-[#00FFAA]/30 cursor-pointer hover:bg-[#0F2424] transition font-black uppercase text-xs"
+                    className="px-4 py-3 border-b border-root-accent/30 cursor-pointer hover:bg-root-surface transition font-black uppercase text-xs"
                     onClick={() => handleSort('name')}
                   >
                     Nama Negara{renderSortArrow('name')}
                   </th>
                   <th
-                    className="px-4 py-3 border-b border-[#00FFAA]/30 cursor-pointer hover:bg-[#0F2424] transition font-black uppercase text-xs"
+                    className="px-4 py-3 border-b border-root-accent/30 cursor-pointer hover:bg-root-surface transition font-black uppercase text-xs"
                     onClick={() => handleSort('continent')}
                   >
                     Benua{renderSortArrow('continent')}
                   </th>
                   <th
-                    className="px-4 py-3 border-b border-[#00FFAA]/30 text-right cursor-pointer hover:bg-[#0F2424] transition font-black uppercase text-xs"
+                    className="px-4 py-3 border-b border-root-accent/30 text-right cursor-pointer hover:bg-root-surface transition font-black uppercase text-xs"
                     onClick={() => handleSort('tax')}
                   >
                     Total Pajak{renderSortArrow('tax')}
                   </th>
                   <th
-                    className="px-4 py-3 border-b border-[#00FFAA]/30 text-right cursor-pointer hover:bg-[#0F2424] transition font-black uppercase text-xs"
+                    className="px-4 py-3 border-b border-root-accent/30 text-right cursor-pointer hover:bg-root-surface transition font-black uppercase text-xs"
                     onClick={() => handleSort('buildingCount')}
                   >
                     Bangunan Emas{renderSortArrow('buildingCount')}
                   </th>
                   <th
-                    className="px-4 py-3 border-b border-[#00FFAA]/30 text-right cursor-pointer hover:bg-[#0F2424] transition font-black uppercase text-xs"
+                    className="px-4 py-3 border-b border-root-accent/30 text-right cursor-pointer hover:bg-root-surface transition font-black uppercase text-xs"
                     onClick={() => handleSort('gold')}
                   >
                     Produksi Emas{renderSortArrow('gold')}
                   </th>
                   <th
-                    className="px-4 py-3 border-b border-[#00FFAA]/30 text-right cursor-pointer hover:bg-[#0F2424] transition font-black uppercase text-xs"
+                    className="px-4 py-3 border-b border-root-accent/30 text-right cursor-pointer hover:bg-root-surface transition font-black uppercase text-xs"
                     onClick={() => handleSort('ministry')}
                   >
                     Pengeluaran{renderSortArrow('ministry')}
                   </th>
                   <th
-                    className="px-4 py-3 border-b border-[#00FFAA]/30 text-right cursor-pointer hover:bg-[#0F2424] transition font-black uppercase text-xs"
+                    className="px-4 py-3 border-b border-root-accent/30 text-right cursor-pointer hover:bg-root-surface transition font-black uppercase text-xs"
                     onClick={() => handleSort('net')}
                   >
                     Net Balance Harian{renderSortArrow('net')}

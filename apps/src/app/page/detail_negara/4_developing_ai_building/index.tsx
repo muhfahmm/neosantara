@@ -185,9 +185,9 @@ export default function DevelopingAIBuilding({
     "Negara";
 
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden rounded-2xl border border-[#00FFAA]/20 bg-[#0F2424] text-[#E0E0E0] shadow-2xl md:flex-row">
-      <aside className="shrink-0 border-b border-[#00FFAA]/20 bg-[#0A1A1A] md:flex md:min-h-0 md:w-64 md:flex-col md:border-b-0 md:border-r xl:w-72">
-        <div className="hidden items-center gap-1.5 border-b border-[#00FFAA]/15 px-4 py-3 text-xs font-bold text-[#00FFAA] md:flex">
+    <div className="flex h-full w-full flex-col overflow-hidden rounded-2xl border border-root-accent/20 bg-root-surface text-root-text shadow-2xl md:flex-row">
+      <aside className="shrink-0 border-b border-root-accent/20 bg-root-canvas md:flex md:min-h-0 md:w-64 md:flex-col md:border-b-0 md:border-r xl:w-72">
+        <div className="hidden items-center gap-1.5 border-b border-root-accent/15 px-4 py-3 text-xs font-bold text-root-accent md:flex">
           <Globe className="h-3.5 w-3.5 shrink-0" />
           <span className="truncate">{countryName}</span>
         </div>
@@ -202,11 +202,11 @@ export default function DevelopingAIBuilding({
                 aria-current={isActive ? "page" : undefined}
                 className={`flex shrink-0 cursor-pointer items-center gap-2.5 whitespace-nowrap rounded-xl border px-3 py-2.5 text-left text-[10px] font-black uppercase tracking-wider transition-all md:w-full md:whitespace-normal md:px-3.5 md:py-3 md:text-xs ${
                   isActive
-                    ? "border-[#00FFAA]/40 bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20"
-                    : "border-[#00FFAA]/15 bg-[#0F2424]/70 text-[#6B8A8A] hover:border-[#00FFAA]/40 hover:bg-[#0F2424] hover:text-[#00FFAA]"
+                    ? "border-root-accent/40 bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
+                    : "border-root-accent/15 bg-root-surface/70 text-root-subtle hover:border-root-accent/40 hover:bg-root-surface hover:text-root-accent"
                 }`}
               >
-                <Icon className={`h-4 w-4 shrink-0 ${isActive ? "text-[#0A1A1A]" : "text-[#00FFAA]"}`} />
+                <Icon className={`h-4 w-4 shrink-0 ${isActive ? "text-root-canvas" : "text-root-accent"}`} />
                 <span>{tab.label}</span>
               </button>
             );
@@ -215,7 +215,7 @@ export default function DevelopingAIBuilding({
       </aside>
 
       {/* BODY KONTEN TAB SPESIFIK */}
-      <div className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-[#0F2424] p-4 sm:p-6 custom-scrollbar">
+      <div className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-root-surface p-4 sm:p-6 custom-scrollbar">
         {activeTab === "kepuasan_rakyat" && (
           <SpektrumKepuasanSection
             countryDetail={liveCountryDetail}
@@ -252,8 +252,8 @@ export default function DevelopingAIBuilding({
         )}
 
         {activeTab === "pembangunan" && (
-          <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-[#00FFAA]/20 bg-[#0F2424]">
-            <div className="flex shrink-0 gap-1.5 overflow-x-auto border-b border-[#00FFAA]/20 bg-[#0A1A1A] p-3 no-scrollbar">
+          <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-root-accent/20 bg-root-surface">
+            <div className="flex shrink-0 gap-1.5 overflow-x-auto border-b border-root-accent/20 bg-root-canvas p-3 no-scrollbar">
               {([
                 { id: "fasilitas_militer", label: "Fasilitas & Militer", icon: Building2 },
                 { id: "produksi_pangan", label: "Produksi Pangan", icon: Wheat },
@@ -268,8 +268,8 @@ export default function DevelopingAIBuilding({
                     aria-current={isActive ? "page" : undefined}
                     className={`flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2 text-[10px] font-black uppercase tracking-wider transition-all ${
                       isActive
-                        ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20"
-                        : "text-[#6B8A8A] hover:bg-[#0F2424] hover:text-[#00FFAA]"
+                        ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
+                        : "text-root-subtle hover:bg-root-surface hover:text-root-accent"
                     }`}
                   >
                     <Icon className="h-3.5 w-3.5" />

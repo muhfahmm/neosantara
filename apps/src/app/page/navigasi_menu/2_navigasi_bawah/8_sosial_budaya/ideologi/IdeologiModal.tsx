@@ -234,10 +234,10 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
 
       <NotebookModalWrapper onClose={onClose}>
         <div className="flex flex-col h-full overflow-hidden">
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
             <div className="flex items-center gap-2.5">
-              <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30">
-                <Shield className="h-5 w-5 text-[#00FFAA]" />
+              <div className="p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/30">
+                <Shield className="h-5 w-5 text-root-accent" />
               </div>
               <h3 className={rootModalTypography.title}>Ideologi Dasar Kedaulatan</h3>
             </div>
@@ -248,7 +248,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
               />
               <button
                 onClick={onClose}
-                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+                className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
               >
                 <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
@@ -256,32 +256,32 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
             </div>
           </div>
 
-          <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-[#0F2424] relative z-10 neon-scrollbar">
-            <div className="bg-[#051111] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex mb-6 shadow-sm">
+          <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-root-surface relative z-10 neon-scrollbar">
+            <div className="bg-[#051111] p-1 rounded-xl border border-root-accent/20 inline-flex mb-6 shadow-sm">
               <button onClick={() => setActiveTab("ideologi")}
-                className={`px-5 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${activeTab === "ideologi" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-lg shadow-[#00FFAA]/20" : "text-[#6B8A8A] hover:text-[#E0E0E0]"}`}>
+                className={`px-5 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${activeTab === "ideologi" ? "bg-root-accent text-root-canvas shadow-lg shadow-root-accent/20" : "text-root-subtle hover:text-root-text"}`}>
                 Ideologi & Kedaulatan
               </button>
               <button onClick={() => setActiveTab("dunia")}
-                className={`px-5 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${activeTab === "dunia" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-lg shadow-[#00FFAA]/20" : "text-[#6B8A8A] hover:text-[#E0E0E0]"}`}>
+                className={`px-5 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${activeTab === "dunia" ? "bg-root-accent text-root-canvas shadow-lg shadow-root-accent/20" : "text-root-subtle hover:text-root-text"}`}>
                 Ideologi Dunia
               </button>
             </div>
 
             {activeTab === "ideologi" && (
               <div className="space-y-6">
-                <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl flex justify-between items-center">
-                  <div className="text-xs font-bold text-[#E0E0E0]">
+                <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-xl flex justify-between items-center">
+                  <div className="text-xs font-bold text-root-text">
                     <span>Ideologi Utama:</span>
-                    <span className="ml-1.5 text-[#00FFAA]">{ideology}</span>
+                    <span className="ml-1.5 text-root-accent">{ideology}</span>
                   </div>
-                  <div className="text-xs font-bold text-[#E0E0E0]">
+                  <div className="text-xs font-bold text-root-text">
                     <span>Anggaran:</span>
-                    <span className="ml-1.5 text-[#00FFAA]">{anggaran.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
+                    <span className="ml-1.5 text-root-accent">{anggaran.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
                   </div>
                 </div>
 
-                <h3 className="text-sm font-bold text-[#00FFAA] uppercase tracking-wider mb-4">Pilih Ideologi Negara</h3>
+                <h3 className="text-sm font-bold text-root-accent uppercase tracking-wider mb-4">Pilih Ideologi Negara</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {IDEOLOGY_OPTIONS.map((option) => {
                     const isActive = String(countryDetail?.ideology || '').toLowerCase() === String(option).toLowerCase();
@@ -292,8 +292,8 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                         key={option}
                         onClick={() => handleSelectIdeology(option)}
                         className={`group relative flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer text-left ${isActive
-                            ? 'border-[#00FFAA] bg-[#00FFAA]/15 shadow-md'
-                            : 'border-[#00FFAA]/20 bg-[#0A1A1A] hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/5'
+                            ? 'border-root-accent bg-root-accent/15 shadow-md'
+                            : 'border-root-accent/20 bg-root-canvas hover:border-root-accent/50 hover:bg-root-accent/5'
                           }`}
                       >
                         {/* TOMBOL (i) INFORMASI */}
@@ -303,28 +303,28 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                             e.stopPropagation();
                             setInfoTarget(option);
                           }}
-                          className="absolute top-2.5 right-2.5 p-1 rounded-lg border border-[#00FFAA]/20 bg-[#051111] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 transition-all cursor-pointer z-10"
+                          className="absolute top-2.5 right-2.5 p-1 rounded-lg border border-root-accent/20 bg-[#051111] text-root-subtle hover:text-root-accent hover:border-root-accent hover:bg-root-accent/10 transition-all cursor-pointer z-10"
                           title={`Informasi ${option}`}
                         >
                           <Info className="w-3.5 h-3.5" />
                         </button>
 
-                        <div className={`relative w-14 h-16 flex-shrink-0 rounded-md flex items-center justify-center shadow-lg border-b-[4px] bg-[#051111] border-[#00FFAA]/40`}>
+                        <div className={`relative w-14 h-16 flex-shrink-0 rounded-md flex items-center justify-center shadow-lg border-b-[4px] bg-[#051111] border-root-accent/40`}>
                           {getIdeologyImage(option) ? (
                             <Image src={getIdeologyImage(option)!} alt="" aria-hidden="true" width={56} height={64} className="h-full w-full object-contain p-1" />
                           ) : (
-                            <div className="text-[#00FFAA]">{IDEOLOGY_ICONS[option] || <Shield className="w-5 h-5" />}</div>
+                            <div className="text-root-accent">{IDEOLOGY_ICONS[option] || <Shield className="w-5 h-5" />}</div>
                           )}
                         </div>
 
                         <div className="flex-1 flex flex-col min-w-0 pr-6">
                           <div className="flex items-center gap-2">
-                            {isActive && <Check className="w-4 h-4 text-[#00FFAA] font-bold" />}
-                            <span className={`text-sm font-bold ${isActive ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>
+                            {isActive && <Check className="w-4 h-4 text-root-accent font-bold" />}
+                            <span className={`text-sm font-bold ${isActive ? 'text-root-accent' : 'text-root-text'}`}>
                               {option}
                             </span>
                           </div>
-                          <p className="text-xs text-[#6B8A8A] mt-1 leading-tight">
+                          <p className="text-xs text-root-subtle mt-1 leading-tight">
                             {IDEOLOGY_BONUSES[option] || 'Tidak ada bonus spesifik'}
                           </p>
                         </div>
@@ -336,7 +336,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                 {feedback && (
                   <div role={feedback.type === 'error' ? 'alert' : 'status'} className={`mt-6 p-4 rounded-xl border ${
                     feedback.type === 'success'
-                      ? 'border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA]'
+                      ? 'border-root-accent/30 bg-root-accent/10 text-root-accent'
                       : 'border-rose-500/30 bg-rose-500/10 text-rose-300'
                   }`}>{feedback.message}</div>
                 )}
@@ -345,26 +345,26 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
 
             {activeTab === "dunia" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-[#00FFAA]/15 mb-4">
+                <div className="flex items-center justify-between pb-3 border-b border-root-accent/15 mb-4">
                   <div className="flex items-center gap-2">
-                    <Globe className="h-5 w-5 text-[#00FFAA]" />
-                    <h4 className="text-sm font-bold text-[#E0E0E0] uppercase tracking-wider">Daftar Ideologi Seluruh Negara ({worldIdeologies.length} Negara)</h4>
+                    <Globe className="h-5 w-5 text-root-accent" />
+                    <h4 className="text-sm font-bold text-root-text uppercase tracking-wider">Daftar Ideologi Seluruh Negara ({worldIdeologies.length} Negara)</h4>
                     {sameIdeologyCount !== null && (
-                      <span className="text-xs font-bold text-[#00FFAA] bg-[#00FFAA]/10 rounded-full px-2.5 py-1 whitespace-nowrap">
+                      <span className="text-xs font-bold text-root-accent bg-root-accent/10 rounded-full px-2.5 py-1 whitespace-nowrap">
                         {sameIdeologyCount}/212 seideologi
                       </span>
                     )}
                   </div>
                 </div>
-                <div className="overflow-x-auto border border-[#00FFAA]/20 rounded-xl bg-[#0A1A1A] shadow-sm max-h-[400px] custom-scrollbar">
+                <div className="overflow-x-auto border border-root-accent/20 rounded-xl bg-root-canvas shadow-sm max-h-[400px] custom-scrollbar">
                   <table className="w-full text-xs text-left border-collapse">
-                    <thead className="bg-[#051111] border-b border-[#00FFAA]/20 sticky top-0 z-10">
+                    <thead className="bg-[#051111] border-b border-root-accent/20 sticky top-0 z-10">
                       <tr>
-                        <th className="px-4 py-3 font-bold text-[#00FFAA] uppercase tracking-wider w-12 text-center">No</th>
-                        <th className="px-4 py-3 font-bold text-[#00FFAA] uppercase tracking-wider">Negara</th>
-                        <th onClick={cycleSortMode} className="px-4 py-3 font-bold text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors">
+                        <th className="px-4 py-3 font-bold text-root-accent uppercase tracking-wider w-12 text-center">No</th>
+                        <th className="px-4 py-3 font-bold text-root-accent uppercase tracking-wider">Negara</th>
+                        <th onClick={cycleSortMode} className="px-4 py-3 font-bold text-root-accent uppercase tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors">
                           Ideologi
-                          <span className="ml-2 text-[10px] text-[#6B8A8A]">
+                          <span className="ml-2 text-[10px] text-root-subtle">
                             {sortMode === "default" && "↕"}
                             {sortMode === "unavailable-last" && "↑↓"}
                             {sortMode === "az" && "↑"}
@@ -373,25 +373,25 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#00FFAA]/10">
+                    <tbody className="divide-y divide-root-accent/10">
                       {sortedWorldIdeologies.map((item, idx) => {
                         const isUserCountry = countryDetail?.country &&
                           item.country.toLowerCase().trim() === countryDetail.country.toLowerCase().trim();
                         return (
-                          <tr key={idx} className={`transition-colors ${isUserCountry ? 'bg-[#00FFAA]/15 hover:bg-[#00FFAA]/25 border-l-4 border-l-[#00FFAA]' : 'hover:bg-[#00FFAA]/5'}`}>
-                            <td className={`px-4 py-2.5 text-center font-bold ${isUserCountry ? 'text-[#00FFAA]' : 'text-[#6B8A8A]'}`}>{idx + 1}</td>
-                            <td className={`px-4 py-2.5 font-bold ${isUserCountry ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>
+                          <tr key={idx} className={`transition-colors ${isUserCountry ? 'bg-root-accent/15 hover:bg-root-accent/25 border-l-4 border-l-root-accent' : 'hover:bg-root-accent/5'}`}>
+                            <td className={`px-4 py-2.5 text-center font-bold ${isUserCountry ? 'text-root-accent' : 'text-root-subtle'}`}>{idx + 1}</td>
+                            <td className={`px-4 py-2.5 font-bold ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>
                               {item.country}
                             </td>
-                            <td className={`px-4 py-2.5 ${isUserCountry ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>
+                            <td className={`px-4 py-2.5 ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>
                               {item.ideology === 'Belum tersedia' ? (
-                                <span className="text-[#6B8A8A] italic font-medium">Belum tersedia</span>
+                                <span className="text-root-subtle italic font-medium">Belum tersedia</span>
                               ) : (
                                 <div className="flex items-center gap-2 font-bold">
                                   {getIdeologyImage(item.ideology) ? (
                                     <Image src={getIdeologyImage(item.ideology)!} alt="" aria-hidden="true" width={24} height={24} className="h-6 w-6 object-contain" />
                                   ) : (
-                                    IDEOLOGY_ICONS[item.ideology] || <Shield className="w-4 h-4 text-[#00FFAA]" />
+                                    IDEOLOGY_ICONS[item.ideology] || <Shield className="w-4 h-4 text-root-accent" />
                                   )}
                                   {item.ideology}
                                 </div>

@@ -184,9 +184,9 @@ export function FpsMonitoring({
                 onClick={() => setIsExpanded(value => !value)}
                 aria-expanded={isExpanded}
                 aria-label="Buka detail monitor FPS"
-                className="flex h-[72px] w-[150px] flex-col justify-center gap-1 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424]/90 px-2.5 text-left shadow-2xl backdrop-blur-md transition-colors hover:border-[#00FFAA]/70 lg:h-[78px] lg:w-[160px]"
+                className="flex h-[72px] w-[150px] flex-col justify-center gap-1 rounded-xl border border-root-accent/30 bg-root-surface/90 px-2.5 text-left shadow-2xl  transition-colors hover:border-root-accent/70 lg:h-[78px] lg:w-[160px]"
             >
-                <span className="flex items-center gap-1.5 text-[9px] font-black tracking-wide text-[#00FFAA]">
+                <span className="flex items-center gap-1.5 text-[9px] font-black tracking-wide text-root-accent">
                     <Activity className="h-3 w-3" />
                     FPS MONITOR
                 </span>
@@ -194,14 +194,14 @@ export function FpsMonitoring({
                     {stats.fps} <span className="text-[10px] font-bold text-gray-300">FPS</span>
                 </span>
                 <span className="text-[9px] font-semibold text-gray-400">
-                    MIN {stats.minFps} <span className="px-1 text-[#00FFAA]/50">/</span> AVG {stats.avgFps}
+                    MIN {stats.minFps} <span className="px-1 text-root-accent/50">/</span> AVG {stats.avgFps}
                 </span>
             </button>
 
             {isExpanded && (
-                <div className="absolute left-0 top-full mt-2 w-64 rounded-xl border border-[#00FFAA]/40 bg-[#0A1A1A]/[.97] p-3 text-white shadow-2xl backdrop-blur-md">
-                    <div className="mb-2 flex items-center justify-between border-b border-[#00FFAA]/25 pb-1.5">
-                        <span className="text-[10px] font-bold text-[#00FFAA]">DETAIL PERFORMA PETA</span>
+                <div className="absolute left-0 top-full mt-2 w-64 rounded-xl border border-root-accent/40 bg-root-canvas/[.97] p-3 text-white shadow-2xl ">
+                    <div className="mb-2 flex items-center justify-between border-b border-root-accent/25 pb-1.5">
+                        <span className="text-[10px] font-bold text-root-accent">DETAIL PERFORMA PETA</span>
                         <button
                             type="button"
                             onClick={() => {
@@ -209,7 +209,7 @@ export function FpsMonitoring({
                                     console.error('Gagal menyalin log monitor FPS:', error);
                                 });
                             }}
-                            className="flex cursor-pointer items-center gap-1 rounded bg-[#00FFAA]/15 px-1.5 py-1 text-[9px] text-[#00FFAA] hover:bg-[#00FFAA]/25"
+                            className="flex cursor-pointer items-center gap-1 rounded bg-root-accent/15 px-1.5 py-1 text-[9px] text-root-accent hover:bg-root-accent/25"
                         >
                             <Copy className="h-3 w-3" />
                             Salin Log
@@ -244,13 +244,13 @@ export function FpsMonitoringSettings() {
             role="switch"
             aria-checked={isEnabled}
             onClick={toggleMonitor}
-            className="flex w-full cursor-pointer items-center justify-between rounded border border-[#00FFAA]/20 bg-[#0A1A1A]/80 p-2 text-left transition-colors hover:border-[#00FFAA]/40"
+            className="flex w-full cursor-pointer items-center justify-between rounded border border-root-accent/20 bg-root-canvas/80 p-2 text-left transition-colors hover:border-root-accent/40"
         >
             <span className="flex items-center gap-2 text-[11px] font-semibold text-gray-200">
-                <Activity className="h-3.5 w-3.5 text-[#00FFAA]" />
+                <Activity className="h-3.5 w-3.5 text-root-accent" />
                 Monitor FPS di layar
             </span>
-            <span className={`flex h-[18px] w-8 items-center rounded-full p-0.5 transition-colors ${isEnabled ? 'bg-[#00FFAA]' : 'bg-gray-700'}`}>
+            <span className={`flex h-[18px] w-8 items-center rounded-full p-0.5 transition-colors ${isEnabled ? 'bg-root-accent' : 'bg-gray-700'}`}>
                 <span className={`h-3.5 w-3.5 rounded-full bg-black shadow-sm transition-transform ${isEnabled ? 'translate-x-3.5' : 'translate-x-0'}`} />
             </span>
         </button>
@@ -261,7 +261,7 @@ function Stat({ label, value }: { label: string; value: React.ReactNode }) {
     return (
         <div className="flex justify-between gap-3">
             <span>{label}:</span>
-            <span className="text-right text-[#00FFAA]">{value}</span>
+            <span className="text-right text-root-accent">{value}</span>
         </div>
     );
 }

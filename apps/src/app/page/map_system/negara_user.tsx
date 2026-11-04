@@ -48,18 +48,18 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+      <div className="bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
         {/* Background Texture */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
         {/* HEADER */}
-        <div className="px-6 sm:px-8 py-4 sm:py-5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+        <div className="px-6 sm:px-8 py-4 sm:py-5 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="flex items-center gap-3">
               {/* Flag */}
               {iso && (
-                <div className="w-10 h-7 rounded overflow-hidden border border-[#00FFAA]/30 shadow-md flex-shrink-0 bg-[#0A1A1A]">
+                <div className="w-10 h-7 rounded overflow-hidden border border-root-accent/30 shadow-md flex-shrink-0 bg-root-canvas">
                   <img
                     src={`https://flagcdn.com/w80/${iso}.png`}
                     alt={countryName}
@@ -70,7 +70,7 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
               )}
               <div>
                 <div className="flex items-center gap-3">
-                  <h2 className="text-xl sm:text-2xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
+                  <h2 className="text-xl sm:text-2xl font-bold text-root-accent tracking-tight leading-none uppercase">
                     {countryName}
                   </h2>
                   <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px] font-black uppercase tracking-wider shadow-sm">
@@ -78,14 +78,14 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
                     NEGARA ANDA
                   </span>
                 </div>
-                <p className="text-xs text-[#6B8A8A] font-semibold mt-1">Detail Negara Anda Sendiri</p>
+                <p className="text-xs text-root-subtle font-semibold mt-1">Detail Negara Anda Sendiri</p>
               </div>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
+            className="p-2 sm:p-2.5 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
           >
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
@@ -93,30 +93,30 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
         </div>
 
         {/* BODY CONTENT */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 bg-[#0F2424] relative z-10 no-scrollbar">
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 bg-root-surface relative z-10 no-scrollbar">
           <div className="max-w-4xl mx-auto space-y-6">
 
             {/* STATS GRID */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Ibukota */}
-              <div className="flex items-center gap-3 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-4 shadow-sm">
-                <div className="p-2 rounded-lg bg-[#00FFAA]/10 border border-[#00FFAA]/20">
-                  <Landmark className="w-5 h-5 text-[#00FFAA]" />
+              <div className="flex items-center gap-3 bg-root-canvas border border-root-accent/20 rounded-xl p-4 shadow-sm">
+                <div className="p-2 rounded-lg bg-root-accent/10 border border-root-accent/20">
+                  <Landmark className="w-5 h-5 text-root-accent" />
                 </div>
                 <div>
-                  <p className="text-[9px] font-black text-[#6B8A8A] uppercase tracking-widest">Ibukota</p>
-                  <p className="text-base font-black text-[#E0E0E0] mt-0.5">{capital}</p>
+                  <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">Ibukota</p>
+                  <p className="text-base font-black text-root-text mt-0.5">{capital}</p>
                 </div>
               </div>
 
               {/* Populasi */}
-              <div className="flex items-center gap-3 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-4 shadow-sm">
+              <div className="flex items-center gap-3 bg-root-canvas border border-root-accent/20 rounded-xl p-4 shadow-sm">
                 <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
                   <Users className="w-5 h-5 text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-[9px] font-black text-[#6B8A8A] uppercase tracking-widest">Populasi</p>
-                  <p className="text-base font-black text-[#E0E0E0] mt-0.5 flex items-center gap-2">
+                  <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">Populasi</p>
+                  <p className="text-base font-black text-root-text mt-0.5 flex items-center gap-2">
                     <span>{formatNumber(population)}</span>
                     <span className={`${netPopulationChange >= 0 ? 'text-emerald-400' : 'text-rose-400'} text-xs font-black`}>
                       ({netPopulationChange >= 0 ? `+${netPopulationChange.toLocaleString('id-ID', { maximumFractionDigits: 2 })}` : netPopulationChange.toLocaleString('id-ID', { maximumFractionDigits: 2 })})
@@ -126,15 +126,15 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
               </div>
 
               {/* Kas Negara */}
-              <div className="flex items-center gap-3 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-4 shadow-sm">
+              <div className="flex items-center gap-3 bg-root-canvas border border-root-accent/20 rounded-xl p-4 shadow-sm">
                 <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
                   <Building2 className="w-5 h-5 text-emerald-400" />
                 </div>
                 <div>
-                  <p className="text-[9px] font-black text-[#6B8A8A] uppercase tracking-widest">Kas Negara</p>
-                  <p className="text-base font-black text-[#E0E0E0] mt-0.5 flex items-center gap-2">
+                  <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">Kas Negara</p>
+                  <p className="text-base font-black text-root-text mt-0.5 flex items-center gap-2">
                     <span className={anggaran < 0 ? 'text-rose-400 font-black' : ''}>{formatCurrencyEM(anggaran)}</span>
-                    <span className={`${netBalance >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'} text-xs font-black`}>
+                    <span className={`${netBalance >= 0 ? 'text-root-accent' : 'text-rose-400'} text-xs font-black`}>
                       ({netBalanceLabel})
                     </span>
                   </p>
@@ -142,30 +142,30 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
               </div>
 
               {/* Ideologi */}
-              <div className="flex items-center gap-3 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-4 shadow-sm">
+              <div className="flex items-center gap-3 bg-root-canvas border border-root-accent/20 rounded-xl p-4 shadow-sm">
                 <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20">
                   <Globe className="w-5 h-5 text-purple-400" />
                 </div>
                 <div>
-                  <p className="text-[9px] font-black text-[#6B8A8A] uppercase tracking-widest">Ideologi</p>
-                  <p className="text-base font-black text-[#E0E0E0] mt-0.5">{ideology}</p>
+                  <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">Ideologi</p>
+                  <p className="text-base font-black text-root-text mt-0.5">{ideology}</p>
                 </div>
               </div>
 
               {/* Agama - Mengambil lebar penuh */}
-              <div className="col-span-1 md:col-span-2 flex items-center gap-3 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-4 shadow-sm">
+              <div className="col-span-1 md:col-span-2 flex items-center gap-3 bg-root-canvas border border-root-accent/20 rounded-xl p-4 shadow-sm">
                 <div className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20">
                   <ShieldCheck className="w-5 h-5 text-rose-400" />
                 </div>
                 <div>
-                  <p className="text-[9px] font-black text-[#6B8A8A] uppercase tracking-widest">Agama Utama</p>
-                  <p className="text-base font-black text-[#E0E0E0] mt-0.5">{religion}</p>
+                  <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">Agama Utama</p>
+                  <p className="text-base font-black text-root-text mt-0.5">{religion}</p>
                 </div>
               </div>
             </div>
 
             {/* FOOTER NOTE */}
-            <div className="text-center text-[10px] text-[#6B8A8A] font-semibold tracking-wider uppercase pt-2 border-t border-[#00FFAA]/20">
+            <div className="text-center text-[10px] text-root-subtle font-semibold tracking-wider uppercase pt-2 border-t border-root-accent/20">
               Ini adalah negara yang sedang Anda pimpin
             </div>
 

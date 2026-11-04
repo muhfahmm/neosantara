@@ -11,16 +11,16 @@ export default function DampakSektorCard({ countryDetail }: { countryDetail: Cor
   ];
 
   return (
-    <section className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-5">
+    <section className="rounded-2xl border border-root-accent/20 bg-root-canvas p-5">
       <div className="mb-4 flex items-center gap-3">
-        <Building2 className="h-5 w-5 text-[#00FFAA]" />
+        <Building2 className="h-5 w-5 text-root-accent" />
         <div>
-          <h3 className="font-black text-[#E0E0E0]">Dampak Skandal per Sektor</h3>
+          <h3 className="font-black text-root-text">Dampak Skandal per Sektor</h3>
         </div>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         {sectors.map(({ title, value, detail, icon: Icon, color }) => (
-          <div key={title} className="flex items-start gap-3 rounded-xl border border-[#00FFAA]/10 bg-[#0F2424] p-4">
+          <div key={title} className="flex items-start gap-3 rounded-xl border border-root-accent/10 bg-root-surface p-4">
             <Icon className={`mt-0.5 h-5 w-5 shrink-0 ${color}`} />
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">

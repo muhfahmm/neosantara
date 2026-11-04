@@ -140,14 +140,14 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
         />
         
         {/* HEADER */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-              <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA] animate-pulse" />
+            <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
+              <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent animate-pulse" />
             </div>
             <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Keanggotaan Blok Internasional</h2>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">{playerCountryName}</p>
+              <h2 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Keanggotaan Blok Internasional</h2>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">{playerCountryName}</p>
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
@@ -157,7 +157,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
             />
             <button
               onClick={handleClose}
-              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+              className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
             >
               <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
               <X className="h-4 w-4" />
@@ -166,14 +166,14 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
         </div>
 
         {/* BODY */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 neon-scrollbar">
-          <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex mb-6 shadow-sm">
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-root-surface relative z-10 neon-scrollbar">
+          <div className="bg-root-canvas p-1 rounded-xl border border-root-accent/20 inline-flex mb-6 shadow-sm">
             <button
               onClick={() => setActiveTab("pbb")}
               className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
                 activeTab === "pbb"
-                  ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20"
-                  : "text-[#6B8A8A] hover:text-[#00FFAA]"
+                  ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
+                  : "text-root-subtle hover:text-root-accent"
               }`}
             >
               Organisasi PBB & Badan Khusus
@@ -182,8 +182,8 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
               onClick={() => setActiveTab("regional")}
               className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
                 activeTab === "regional"
-                  ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20"
-                  : "text-[#6B8A8A] hover:text-[#00FFAA]"
+                  ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
+                  : "text-root-subtle hover:text-root-accent"
               }`}
             >
               Organisasi Regional & Blok Ekonomi
@@ -198,7 +198,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                 return (
                   <div
                     key={org}
-                    className={`group relative rounded-xl p-3 shadow-md transition-all ${isMember ? 'bg-[#00FFAA]/15 border-2 border-[#00FFAA]' : 'bg-[#0A1A1A] border border-[#00FFAA]/20'} hover:border-[#00FFAA]/60 hover:bg-[#00FFAA]/10`}
+                    className={`group relative rounded-xl p-3 shadow-md transition-all ${isMember ? 'bg-root-accent/15 border-2 border-root-accent' : 'bg-root-canvas border border-root-accent/20'} hover:border-root-accent/60 hover:bg-root-accent/10`}
                   >
                     <button
                       type="button"
@@ -209,14 +209,14 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                       {orgImageMap[org] ? (
                         <Image src={orgImageMap[org]} alt="" aria-hidden="true" width={48} height={48} className="h-12 w-12 flex-shrink-0 object-contain" />
                       ) : (
-                        <Icon className="h-6 w-6 flex-shrink-0 text-[#00FFAA]" />
+                        <Icon className="h-6 w-6 flex-shrink-0 text-root-accent" />
                       )}
-                      <span className="text-[10px] font-bold text-[#E0E0E0] uppercase tracking-tight leading-tight">{org}</span>
+                      <span className="text-[10px] font-bold text-root-text uppercase tracking-tight leading-tight">{org}</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setInfoOrgName(org)}
-                      className="absolute right-2 top-2 rounded-lg border border-[#00FFAA]/20 bg-[#051111] p-1 text-[#6B8A8A] transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 hover:text-[#00FFAA] cursor-pointer"
+                      className="absolute right-2 top-2 rounded-lg border border-root-accent/20 bg-[#051111] p-1 text-root-subtle transition-all hover:border-root-accent hover:bg-root-accent/10 hover:text-root-accent cursor-pointer"
                       aria-label={`Informasi ${org}`}
                       title={`Informasi ${org}`}
                     >
@@ -236,7 +236,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                 return (
                   <div
                     key={org}
-                    className={`group relative rounded-xl p-3 shadow-md transition-all ${isMember ? 'bg-[#00FFAA]/15 border-2 border-[#00FFAA]' : 'bg-[#0A1A1A] border border-[#00FFAA]/20'} hover:border-[#00FFAA]/60 hover:bg-[#00FFAA]/10`}
+                    className={`group relative rounded-xl p-3 shadow-md transition-all ${isMember ? 'bg-root-accent/15 border-2 border-root-accent' : 'bg-root-canvas border border-root-accent/20'} hover:border-root-accent/60 hover:bg-root-accent/10`}
                   >
                     <button
                       type="button"
@@ -247,14 +247,14 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                       {orgImageMap[org] ? (
                         <Image src={orgImageMap[org]} alt="" aria-hidden="true" width={48} height={48} className="h-12 w-12 flex-shrink-0 object-contain" />
                       ) : (
-                        <Icon className="h-6 w-6 flex-shrink-0 text-[#00FFAA]" />
+                        <Icon className="h-6 w-6 flex-shrink-0 text-root-accent" />
                       )}
-                      <span className="text-[10px] font-bold text-[#E0E0E0] uppercase tracking-tight leading-tight">{org}</span>
+                      <span className="text-[10px] font-bold text-root-text uppercase tracking-tight leading-tight">{org}</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setInfoOrgName(org)}
-                      className="absolute right-2 top-2 rounded-lg border border-[#00FFAA]/20 bg-[#051111] p-1 text-[#6B8A8A] transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 hover:text-[#00FFAA] cursor-pointer"
+                      className="absolute right-2 top-2 rounded-lg border border-root-accent/20 bg-[#051111] p-1 text-root-subtle transition-all hover:border-root-accent hover:bg-root-accent/10 hover:text-root-accent cursor-pointer"
                       aria-label={`Informasi ${org}`}
                       title={`Informasi ${org}`}
                     >
@@ -269,7 +269,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
 
         {/* MODAL ANAK */}
         {isChildModalOpen && selectedOrgName && selectedOrgIcon && (
-          <div className="absolute inset-0 z-30 bg-[#0F2424] flex flex-col rounded-2xl overflow-hidden pointer-events-auto">
+          <div className="absolute inset-0 z-30 bg-root-surface flex flex-col rounded-2xl overflow-hidden pointer-events-auto">
             {activeTab === "pbb" ? (
               <OrganisasiPBBModal
                 orgName={selectedOrgName}

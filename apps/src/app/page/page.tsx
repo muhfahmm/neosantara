@@ -118,17 +118,11 @@ const HolographicMap = () => {
                         <pattern id="mapDots" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
                             <circle cx="3" cy="3" r="0.9" fill="currentColor" />
                         </pattern>
-                        <filter id="mapGlow">
-                            <feGaussianBlur stdDeviation="1.2" result="blur" />
-                            <feMerge>
-                                <feMergeNode in="blur" />
-                                <feMergeNode in="SourceGraphic" />
-                            </feMerge>
-                        </filter>
+
                     </defs>
 
                     {/* Accurate country outlines using the same GeoJSON and projection as the game map. */}
-                    <g filter="url(#mapGlow)" stroke="currentColor" strokeWidth="0.8" strokeOpacity="0.55">
+                    <g stroke="currentColor" strokeWidth="0.8" strokeOpacity="0.55">
                         {landPaths.map((path, index) => (
                             <path key={index} d={path} fill="url(#mapDots)" />
                         ))}
@@ -193,7 +187,7 @@ const HolographicMap = () => {
    RADAR SWEEP
    ============================================================ */
 const RadarSweep = () => (
-    <div className="hidden md:block absolute bottom-24 right-12 lg:bottom-32 lg:right-24 w-28 h-28 lg:w-40 lg:h-40 rounded-full border border-emerald-500/30 bg-emerald-500/[0.03] backdrop-blur-sm z-0 pointer-events-none">
+    <div className="hidden md:block absolute bottom-24 right-12 lg:bottom-32 lg:right-24 w-28 h-28 lg:w-40 lg:h-40 rounded-full border border-emerald-500/30 bg-emerald-500/[0.03]  z-0 pointer-events-none">
         <div className="absolute inset-[18%] rounded-full border border-emerald-500/20" />
         <div className="absolute inset-[38%] rounded-full border border-emerald-500/15" />
         <div className="absolute inset-[58%] rounded-full border border-emerald-500/10" />
@@ -395,7 +389,7 @@ const GameClock = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1, duration: 0.6 }}
-            className="hidden sm:flex absolute top-6 right-6 md:top-8 md:right-8 z-20 items-center gap-2 px-3 py-1.5 rounded-md border border-emerald-500/20 bg-slate-950/60 backdrop-blur-md text-[9px] md:text-[10px] font-mono text-emerald-400 tracking-widest"
+            className="hidden sm:flex absolute top-6 right-6 md:top-8 md:right-8 z-20 items-center gap-2 px-3 py-1.5 rounded-md border border-emerald-500/20 bg-slate-950/60  text-[9px] md:text-[10px] font-mono text-emerald-400 tracking-widest"
         >
             <Radio className="w-3 h-3 animate-pulse" />
             {time}
@@ -411,7 +405,7 @@ const AlertBeacon = () => (
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 2.2, duration: 0.5 }}
-        className="hidden sm:flex absolute top-20 right-6 md:top-24 md:right-8 z-20 items-center gap-2 px-3 py-1.5 rounded-md border border-red-500/30 bg-red-500/[0.08] backdrop-blur-md"
+        className="hidden sm:flex absolute top-20 right-6 md:top-24 md:right-8 z-20 items-center gap-2 px-3 py-1.5 rounded-md border border-red-500/30 bg-red-500/[0.08] "
     >
         <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
@@ -539,7 +533,7 @@ const GlobalStatsPanel = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 1.2 + i * 0.15 }}
-                    className="border border-white/5 bg-white/[0.02] backdrop-blur-sm rounded-lg px-3 py-2"
+                    className="border border-white/5 bg-white/[0.02]  rounded-lg px-3 py-2"
                 >
                     <div className="flex items-center justify-between mb-1">
                         <div className="flex items-center gap-1.5 text-[9px] text-slate-400 tracking-widest font-bold">
@@ -578,7 +572,7 @@ const PlayerRankCard = () => (
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 2.8, duration: 0.6 }}
-        className="hidden 2xl:flex absolute top-[13.5rem] right-8 z-20 flex-col gap-2 w-[240px] px-3 py-2.5 rounded-lg border border-emerald-500/15 bg-slate-950/50 backdrop-blur-md pointer-events-none"
+        className="hidden 2xl:flex absolute top-[13.5rem] right-8 z-20 flex-col gap-2 w-[240px] px-3 py-2.5 rounded-lg border border-emerald-500/15 bg-slate-950/50  pointer-events-none"
     >
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -622,7 +616,7 @@ const ThreatLevelMeter = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 2.4, duration: 0.6 }}
-            className="hidden 2xl:flex absolute top-[17.5rem] right-8 z-20 flex-col gap-2 w-[240px] px-3 py-2.5 rounded-lg border border-emerald-500/15 bg-slate-950/50 backdrop-blur-md pointer-events-none"
+            className="hidden 2xl:flex absolute top-[17.5rem] right-8 z-20 flex-col gap-2 w-[240px] px-3 py-2.5 rounded-lg border border-emerald-500/15 bg-slate-950/50  pointer-events-none"
         >
             <div className="flex items-center justify-between">
                 <span className="text-[8px] tracking-[0.25em] text-slate-400 font-bold flex items-center gap-1.5">
@@ -689,7 +683,7 @@ const TelemetryReadout = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 2.8, duration: 0.6 }}
-            className="hidden 2xl:flex absolute top-[21.5rem] right-8 z-20 flex-col gap-1.5 w-[240px] px-3 py-2.5 rounded-lg border border-emerald-500/15 bg-slate-950/50 backdrop-blur-md pointer-events-none"
+            className="hidden 2xl:flex absolute top-[21.5rem] right-8 z-20 flex-col gap-1.5 w-[240px] px-3 py-2.5 rounded-lg border border-emerald-500/15 bg-slate-950/50  pointer-events-none"
         >
             <div className="flex items-center gap-2 mb-0.5">
                 <Cpu className="w-3 h-3 text-emerald-500/80" />
@@ -748,7 +742,7 @@ const AdvisorCard = () => (
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 2.0, duration: 0.6 }}
-        className="hidden lg:flex absolute bottom-32 left-14 z-20 items-center gap-3 pr-4 pl-1.5 py-1.5 rounded-full border border-emerald-500/15 bg-slate-950/60 backdrop-blur-md pointer-events-none"
+        className="hidden lg:flex absolute bottom-32 left-14 z-20 items-center gap-3 pr-4 pl-1.5 py-1.5 rounded-full border border-emerald-500/15 bg-slate-950/60  pointer-events-none"
     >
         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500/30 to-emerald-700/20 border border-emerald-500/30 flex items-center justify-center">
             <User className="w-4 h-4 text-emerald-400" />
@@ -780,7 +774,7 @@ const HeartbeatMonitor = () => {
                 <Activity className="w-3 h-3 text-emerald-500/80" />
                 <span className="text-[8px] text-emerald-500/70 tracking-[0.25em] font-bold">VITALS • STABLE</span>
             </div>
-            <div className="relative w-[280px] h-10 border border-emerald-500/15 rounded-md bg-slate-950/40 backdrop-blur-sm overflow-hidden">
+            <div className="relative w-[280px] h-10 border border-emerald-500/15 rounded-md bg-slate-950/40  overflow-hidden">
                 <div
                     className="absolute inset-0 opacity-[0.08]"
                     style={{
@@ -896,7 +890,7 @@ const NewsTicker = () => {
     return (
         <div className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none">
             <div className="h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
-            <div className="bg-slate-950/80 backdrop-blur-md border-t border-emerald-500/10 flex items-center overflow-hidden h-9">
+            <div className="bg-slate-950/80  border-t border-emerald-500/10 flex items-center overflow-hidden h-9">
                 <div className="flex items-center gap-1.5 px-3 h-full bg-emerald-500/10 border-r border-emerald-500/20 shrink-0">
                     <span className="relative flex h-1.5 w-1.5">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
@@ -936,7 +930,7 @@ const ClassificationBanner = () => (
         transition={{ delay: 0.8, duration: 0.6 }}
         className="hidden md:flex absolute top-0 left-0 right-0 z-20 justify-center pointer-events-none"
     >
-        <div className="px-6 py-1 bg-emerald-500/5 border-x border-b border-emerald-500/20 backdrop-blur-sm">
+        <div className="px-6 py-1 bg-emerald-500/5 border-x border-b border-emerald-500/20 ">
             <span className="text-[8px] tracking-[0.5em] font-black text-emerald-500/70">
                 ◆ CLASSIFIED — LEVEL 4 CLEARANCE ◆
             </span>
@@ -1059,17 +1053,14 @@ export default function PlayMenuPage() {
                     <motion.div
                         animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3], x: [0, 50, 0], y: [0, -50, 0] }}
                         transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-                        className="absolute top-1/4 left-1/4 w-32 sm:w-40 lg:w-48 h-32 sm:h-40 lg:h-48 bg-emerald-500/10 rounded-full blur-[100px]"
+                        className="absolute top-1/4 left-1/4 w-32 sm:w-40 lg:w-48 h-32 sm:h-40 lg:h-48 bg-emerald-500/10 rounded-full "
                     />
                     <motion.div
                         animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2], x: [0, -70, 0], y: [0, 60, 0] }}
                         transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
-                        className="absolute bottom-1/4 right-1/4 w-36 sm:w-48 lg:w-60 h-36 sm:h-48 lg:h-60 bg-blue-500/10 rounded-full blur-[120px]"
+                        className="absolute bottom-1/4 right-1/4 w-36 sm:w-48 lg:w-60 h-36 sm:h-48 lg:h-60 bg-blue-500/10 rounded-full "
                     />
                 </div>
-
-                {/* Vignette */}
-                <div className="absolute inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.6)_100%)]" />
 
                 {/* ============================================
                     FX Layers

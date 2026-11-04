@@ -35,7 +35,7 @@ export default function PajakChangeNotificationCard({ notification, onAccept, on
           {notification.message}
         </p>
 
-        <div className="bg-[#0A1A1A] border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex items-center justify-between">
+        <div className="bg-root-canvas border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex items-center justify-between">
           <span>Komoditas: {notification.taxName}</span>
           <span className={isIncrease ? 'text-amber-400 font-black' : 'text-emerald-400 font-black'}>
             Perubahan: {notification.oldRate}% ➔ {notification.newRate}%

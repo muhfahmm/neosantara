@@ -231,10 +231,10 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
         <div className="flex flex-col h-full overflow-hidden">
 
           {/* HEADER */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-              <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-                <HandHelping className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+              <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
+                <HandHelping className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
               </div>
               <div className="min-w-0">
                 <h2 className={rootModalTypography.title}>Alokasi & Kebijakan Subsidi</h2>
@@ -242,14 +242,14 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
             </div>
 
             <div className="flex items-center gap-2 lg:gap-3">
-              <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi alokasi dan kebijakan subsidi" aria-label="Informasi alokasi dan kebijakan subsidi" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/50 bg-[#0A1A1A] p-1 text-[#00FFAA] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A]">
+              <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi alokasi dan kebijakan subsidi" aria-label="Informasi alokasi dan kebijakan subsidi" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas">
                 <Info className="h-3.5 w-3.5" />
               </button>
               {forumDialogMode && (
                 <button
                   type="button"
                   onClick={() => setIsConfirmDialogOpen(true)}
-                  className="rounded-xl border border-[#00FFAA]/40 bg-[#00FFAA] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#071414] transition hover:bg-[#72ffd0] sm:px-4"
+                  className="rounded-xl border border-root-accent/40 bg-root-accent px-3 py-2 text-[10px] font-black uppercase tracking-wider text-root-accent-ink transition hover:bg-[#72ffd0] sm:px-4"
                 >
                   Konfirmasi
                 </button>
@@ -259,25 +259,25 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
           </div>
 
           {/* TOP STATS SUMMARY BANNER */}
-          {!forumDialogMode && <div className="px-4 lg:px-6 py-2 lg:py-3 bg-[#0A1A1A]/80 border-b border-[#00FFAA]/15 grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-2.5 shrink-0">
-            <div className={`border border-[#00FFAA]/20 bg-[#0F2424] p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
-              <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Total Beban Anggaran Subsidi</p>
-              <p className="text-xs lg:text-sm font-black text-[#00FFAA] mt-0.5">{formatCurrencyCompact(summary.totalCost)}</p>
+          {!forumDialogMode && <div className="px-4 lg:px-6 py-2 lg:py-3 bg-root-canvas/80 border-b border-root-accent/15 grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-2.5 shrink-0">
+            <div className={`border border-root-accent/20 bg-root-surface p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
+              <p className="text-[9px] lg:text-[10px] font-black text-root-subtle uppercase tracking-wider">Total Beban Anggaran Subsidi</p>
+              <p className="text-xs lg:text-sm font-black text-root-accent mt-0.5">{formatCurrencyCompact(summary.totalCost)}</p>
             </div>
 
-            <div className={`border border-[#00FFAA]/20 bg-[#0F2424] p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
-              <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Sektor Aktif / Total</p>
-              <p className="text-xs lg:text-sm font-black text-[#E0E0E0] mt-0.5">{summary.activeCount} dari {summary.totalCount} Sektor</p>
+            <div className={`border border-root-accent/20 bg-root-surface p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
+              <p className="text-[9px] lg:text-[10px] font-black text-root-subtle uppercase tracking-wider">Sektor Aktif / Total</p>
+              <p className="text-xs lg:text-sm font-black text-root-text mt-0.5">{summary.activeCount} dari {summary.totalCount} Sektor</p>
             </div>
 
-            <div className={`border border-[#00FFAA]/20 bg-[#0F2424] p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
-              <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Dukungan Kepuasan Rakyat</p>
+            <div className={`border border-root-accent/20 bg-root-surface p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
+              <p className="text-[9px] lg:text-[10px] font-black text-root-subtle uppercase tracking-wider">Dukungan Kepuasan Rakyat</p>
               <p className="text-xs lg:text-sm font-black text-emerald-400 mt-0.5">+{summary.totalApprovalBonus}% Approval</p>
             </div>
 
-            <div className={`border border-[#00FFAA]/20 bg-[#0F2424] p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
-              <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Dampak Netto Populasi</p>
-              <p className={`text-xs lg:text-sm font-black mt-0.5 ${subsidyMonthlyPopModifier >= 0 ? "text-[#00FFAA]" : "text-rose-400"
+            <div className={`border border-root-accent/20 bg-root-surface p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
+              <p className="text-[9px] lg:text-[10px] font-black text-root-subtle uppercase tracking-wider">Dampak Netto Populasi</p>
+              <p className={`text-xs lg:text-sm font-black mt-0.5 ${subsidyMonthlyPopModifier >= 0 ? "text-root-accent" : "text-rose-400"
                 }`}>
                 {subsidyMonthlyPopModifier >= 0 ? "+" : ""}{subsidyMonthlyPopModifier.toFixed(2)}% / bln
               </p>
@@ -286,7 +286,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
 
           {/* FEEDBACK SUCCESS TOAST */}
           {isSavedSuccess && (
-            <div className={`absolute top-24 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 bg-emerald-500 px-6 py-2.5 text-xs font-black uppercase tracking-widest text-[#0A1A1A] shadow-2xl animate-in fade-in zoom-in-95 ${rootBorderRadius.card}`}>
+            <div className={`absolute top-24 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 bg-emerald-500 px-6 py-2.5 text-xs font-black uppercase tracking-widest text-root-canvas shadow-2xl animate-in fade-in zoom-in-95 ${rootBorderRadius.card}`}>
               <Check className="w-4 h-4" /> Alokasi Subsidi Berhasil Diperbarui!
             </div>
           )}
@@ -295,7 +295,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
           <div className="flex-1 flex min-h-0 relative z-10">
 
             {/* SIDEBAR TABS */}
-            <div className="w-44 lg:w-48 2xl:w-52 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 lg:p-3 flex flex-col gap-1.5 lg:gap-2 overflow-y-auto neon-scrollbar shrink-0">
+            <div className="w-44 lg:w-48 2xl:w-52 border-r border-root-accent/30 bg-root-canvas p-2 lg:p-3 flex flex-col gap-1.5 lg:gap-2 overflow-y-auto neon-scrollbar shrink-0">
               {categories.map((cat) => {
                 const activeCountInCat = subsidyItems.filter(
                   (i) => (cat.id === "Semua" || i.category === cat.id) && i.isSubsidized
@@ -309,12 +309,12 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.id)}
                     className={`flex w-full items-center justify-between border p-2 text-left transition-all cursor-pointer lg:p-2.5 ${rootBorderRadius.card} ${selectedCategory === cat.id
-                      ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
-                      : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA] hover:text-[#00FFAA]"
+                      ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
+                      : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent hover:text-root-accent"
                       }`}
                   >
                     <span className="text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{cat.label}</span>
-                    <span className={`text-[9px] lg:text-[10px] font-black px-1.5 py-0.5 rounded-full ${selectedCategory === cat.id ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
+                    <span className={`text-[9px] lg:text-[10px] font-black px-1.5 py-0.5 rounded-full ${selectedCategory === cat.id ? "bg-root-canvas text-root-accent" : "bg-root-canvas text-root-subtle"
                       }`}>
                       {activeCountInCat}/{totalCountInCat}
                     </span>
@@ -324,7 +324,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
             </div>
 
             {/* RIGHT CONTENT AREA - SECTOR GRID FROM SEPARATE TAB COMPONENTS */}
-            <div className="flex-1 overflow-y-auto p-4 lg:p-6 2xl:p-8 bg-[#0F2424] neon-scrollbar">
+            <div className="flex-1 overflow-y-auto p-4 lg:p-6 2xl:p-8 bg-root-surface neon-scrollbar">
               {selectedCategory === "Semua" && (
                 <SemuaSektorTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
               )}
@@ -353,16 +353,16 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
                 <PerlindunganSosialTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
               )}
 
-              {!forumDialogMode && <div className={`mt-6 border border-[#00FFAA]/30 bg-[#0F2424] p-5 ${rootBorderRadius.card}`}>
+              {!forumDialogMode && <div className={`mt-6 border border-root-accent/30 bg-root-surface p-5 ${rootBorderRadius.card}`}>
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm font-black uppercase tracking-widest text-[#00FFAA]">
+                  <span className="text-sm font-black uppercase tracking-widest text-root-accent">
                     Indeks Kepuasan Rakyat (Subsidi)
                   </span>
                   <span className="shrink-0 text-2xl font-black text-amber-400 sm:text-3xl">
                     {subsidySatisfaction} / 100
                   </span>
                 </div>
-                <div className="mt-3 h-3 w-full overflow-hidden rounded-full border border-[#00FFAA]/20 bg-[#0A1A1A]">
+                <div className="mt-3 h-3 w-full overflow-hidden rounded-full border border-root-accent/20 bg-root-canvas">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-200"
                     style={{ width: `${subsidySatisfaction}%` }}
@@ -389,15 +389,15 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
         toggleSubsidy={toggleSubsidy}
       />
       {isConfirmDialogOpen && createPortal(
-        <div className="fixed inset-0 z-[2147483647] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-          <div role="dialog" aria-modal="true" aria-labelledby="subsidy-confirm-title" className={`w-full max-w-md border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-2xl ${rootBorderRadius.card}`}>
+        <div className="fixed inset-0 z-[2147483647] flex items-center justify-center p-4 ">
+          <div role="dialog" aria-modal="true" aria-labelledby="subsidy-confirm-title" className={`w-full max-w-md border border-root-accent/30 bg-root-canvas p-6 shadow-2xl ${rootBorderRadius.card}`}>
             <h3 id="subsidy-confirm-title" className="text-lg font-bold text-white">Konfirmasi kebijakan subsidi</h3>
             <p className="mt-2 text-sm text-slate-300">
               Perubahan alokasi subsidi akan diterapkan. Lanjutkan?
             </p>
             <div className="mt-6 flex justify-end gap-2">
               <button type="button" onClick={() => setIsConfirmDialogOpen(false)} className="rounded-lg border border-slate-600 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:text-white">Kembali</button>
-              <button type="button" onClick={confirmForumSubsidies} className="rounded-lg bg-[#00FFAA] px-4 py-2 text-xs font-bold text-[#071414] transition hover:bg-[#72ffd0]">Ya, konfirmasi</button>
+              <button type="button" onClick={confirmForumSubsidies} className="rounded-lg bg-root-accent px-4 py-2 text-xs font-bold text-root-accent-ink transition hover:bg-[#72ffd0]">Ya, konfirmasi</button>
             </div>
           </div>
         </div>,
