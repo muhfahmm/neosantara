@@ -16,7 +16,7 @@ export function ConfirmRestartModal({ isOpen, onClose, onConfirm }: ConfirmResta
     if (!isOpen) return null;
 
     const content = (
-        <PausedMenuFrame zIndexClass="z-[999999999]">
+        <PausedMenuFrame zIndexClass="z-[999999999]" ornamentCount={7}>
                 <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-4 text-root-text custom-scrollbar sm:p-8">
 
                     <PausedMenuHeader title="Atur Ulang Progres?" onBack={onClose} backLabel="Kembali ke menu jeda" />

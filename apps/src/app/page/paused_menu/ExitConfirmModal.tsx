@@ -39,7 +39,7 @@ export function ExitConfirmModal({
     const isExitWindow = confirmText?.toLowerCase().includes('keluar') ?? false;
 
     const content = (
-        <PausedMenuFrame zIndexClass="z-[9999999999]">
+        <PausedMenuFrame zIndexClass="z-[9999999999]" ornamentCount={7}>
                 <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-4 text-root-text custom-scrollbar sm:p-8">
 
                     <PausedMenuHeader title={title} onBack={onClose} backLabel="Kembali ke menu jeda" />
