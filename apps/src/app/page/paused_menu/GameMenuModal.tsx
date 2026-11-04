@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { KeywordModal } from './5_keyword/keyword';
 import { MapSettingsSection } from './4_settings/MapSettingsSection';
+import { ThemeSettingsSection } from './4_settings/ThemeSettingsSection';
 import { ExitConfirmModal } from './ExitConfirmModal';
 import { LoadGameView } from './2_load_game/LoadGameView';
 import { deleteGameSave, fetchLoadableGameSaves, loadGameSave, type LoadGameSave } from './2_load_game/loadGameLogic';
@@ -266,6 +267,8 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                             <option value="1280x720">1280 x 720 (16:9)</option>
                                         </select>
                                     </div>
+
+                                    <ThemeSettingsSection />
 
                                     {/* Pengaturan Peta (Batas Negara vs Kota) */}
                                     <MapSettingsSection />

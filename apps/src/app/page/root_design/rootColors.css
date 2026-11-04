@@ -10,6 +10,18 @@
   --root-color-danger: #FF2D55;
 }
 
+:root[data-theme='light'] {
+  --root-color-canvas: #F5EFE4;
+  --root-color-surface: #FFF9EE;
+  --root-color-accent: #8C5F2E;
+  --root-color-accent-ink: #FFF8EC;
+  --root-color-text: #201A12;
+  --root-color-body: #3D3428;
+  --root-color-muted: #6F6353;
+  --root-color-subtle: #9A8C78;
+  --root-color-danger: #A83A32;
+}
+
 @theme inline {
   --color-root-canvas: var(--root-color-canvas);
   --color-root-surface: var(--root-color-surface);

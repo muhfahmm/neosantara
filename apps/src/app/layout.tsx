@@ -6,6 +6,7 @@ import ClientErrorCatcher from './ClientErrorCatcher';
 import RelationsDataLoader from './RelationsDataLoader';
 import SecurityProtector from './SecurityProtector';
 import SoundProvider from './SoundProvider';
+import { ThemeInitializer } from './page/paused_menu/4_settings/ThemeSettingsSection';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <ThemeInitializer />
         <RelationsDataLoader>
           {children}
         </RelationsDataLoader>
