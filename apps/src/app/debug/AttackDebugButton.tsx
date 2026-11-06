@@ -258,7 +258,7 @@ export function AttackDebugButton({ selectedCountry, countryDetail }: AttackDebu
               country.iso !== selectedCountry?.iso &&
               normalizeCountryName(country.country) !== normalizeCountryName(countryName)
             ).map(country => (
-              <option key={country.iso} value={country.country}>{country.country}</option>
+              <option key={`${country.iso}-${normalizeCountryName(country.country)}`} value={country.country}>{country.country}</option>
             ))}
           </select>
         </label>
@@ -381,7 +381,7 @@ export function AttackDebugButton({ selectedCountry, countryDetail }: AttackDebu
         onClick={() => setIsOpen(value => !value)}
         aria-label="Buka debug serangan"
         aria-expanded={isOpen}
-        className="rounded-lg border border-[#FF2D55]/60 bg-[#0F2424] px-2.5 py-2 text-[9px] font-black tracking-wide text-[#FF647F] transition-colors hover:bg-[#FF2D55]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00FFAA]"
+        className="rounded-lg border border-[#FF2D55]/60 bg-[#0F2424] px-1.5 py-1.5 text-[8px] font-black tracking-wide text-[#FF647F] transition-colors hover:bg-[#FF2D55]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00FFAA] min-[1920px]:px-2.5 min-[1920px]:py-2 min-[1920px]:text-[9px]"
       >
         DEBUG SERANG
       </button>

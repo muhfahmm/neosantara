@@ -184,7 +184,7 @@ export function FpsMonitoring({
                 onClick={() => setIsExpanded(value => !value)}
                 aria-expanded={isExpanded}
                 aria-label="Buka detail monitor FPS"
-                className="flex h-full w-[150px] flex-col justify-center gap-0 rounded-xl border border-root-accent/30 bg-root-surface/90 px-2 text-left shadow-2xl transition-colors hover:border-root-accent/70 lg:w-[160px] lg:gap-0.5"
+                className="flex h-full w-[112px] flex-col justify-center gap-0 rounded-xl border border-root-accent/30 bg-root-surface/90 px-1.5 text-left shadow-2xl transition-colors hover:border-root-accent/70"
             >
                 <span className="flex items-center gap-1.5 text-[8px] font-black tracking-wide text-root-accent lg:text-[9px]">
                     <Activity className="h-3 w-3" />

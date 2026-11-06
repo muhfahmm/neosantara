@@ -209,7 +209,7 @@ export function Navbar({
         <nav className="fixed top-2.5 sm:top-3 left-0 right-0 z-[201] pointer-events-none px-3 sm:px-5 xl:px-6 2xl:px-8 flex items-center justify-between select-none bg-transparent border-none shadow-none">
             
             {/* 1. Left Side: Circular Menu & Selected Badge */}
-            <div className="flex items-stretch gap-2 2xl:gap-3 shrink-0 relative z-20 pointer-events-auto">
+            <div className="flex items-stretch gap-2 2xl:gap-2 shrink-0 relative z-20 pointer-events-auto">
                 <div className="flex items-center gap-2 2xl:gap-3 bg-root-surface border border-root-accent/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
                 {/* Circle Power Button */}
                 <div className="relative group shrink-0">
@@ -254,8 +254,8 @@ export function Navbar({
                 </div>
 
             {/* 2. Center: Live Stats Items */}
-            <div data-tutorial="navbar-ringkasan" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-6 overflow-hidden z-10 pointer-events-auto bg-root-surface border border-root-accent/30 px-3.5 lg:px-4.5 xl:px-5.5 2xl:px-6 py-1.5 2xl:py-2 rounded-2xl shadow-2xl">
-                <div className="flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-6 min-w-max">
+            <div data-tutorial="navbar-ringkasan" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-3 overflow-hidden z-10 pointer-events-auto bg-root-surface border border-root-accent/30 px-3.5 lg:px-4.5 xl:px-5.5 2xl:px-4 py-1.5 2xl:py-2 rounded-2xl shadow-2xl">
+                <div className="flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-3 min-w-max">
                     
                     {/* 🔥 POPULASI DENGAN TOOLTIP DEMOGRAFI & KLIK KE KEPENDUDUKAN */}
                     <button
@@ -345,7 +345,7 @@ export function Navbar({
             </div>
 
             {/* 3. Right Side: Save & Restart Buttons */}
-            <div className="flex items-center gap-1.5 2xl:gap-2 shrink-0 relative z-20 pointer-events-auto bg-root-surface border border-root-accent/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
+            <div className="flex items-center gap-1.5 2xl:gap-1.5 shrink-0 relative z-20 pointer-events-auto bg-root-surface border border-root-accent/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
                 <AttackDebugButton selectedCountry={selectedCountry} countryDetail={countryDetail} />
                 <div
                     role="status"
