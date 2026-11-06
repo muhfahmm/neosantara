@@ -14,6 +14,7 @@ export async function POST(req: Request) {
       targetTech = 1.0,
       damageRate = 0.15,
       maxRounds = 1000,
+      seed,
     } = body;
 
     // Coba jalankan skrip Python AI
@@ -38,6 +39,7 @@ export async function POST(req: Request) {
         targetTech,
         damageRate,
         maxRounds,
+        seed,
       });
 
       execFile('python', [pythonScriptPath, payload], (error, stdout) => {
@@ -66,6 +68,7 @@ export async function POST(req: Request) {
         targetTech,
         damageRate,
         maxRounds,
+        seed,
       });
       return NextResponse.json(tsResult);
     }

@@ -79,10 +79,7 @@ export function Navbar({
     const netBalanceLabel = `${netBalance >= 0 ? '+ ' : '- '}${Math.abs(netBalance).toLocaleString('id-ID', { maximumFractionDigits: 0 })}`;
     
     const [populationMetricsResult, setPopulationMetricsResult] = useState<{
-        countryDetail: typeof countryDetail;
         countryName: typeof countryName;
-        metadata: typeof metadata;
-        currentDate: typeof currentDate;
         metrics: PopulationDailyMetrics;
     } | null>(null);
 
@@ -94,10 +91,7 @@ export function Navbar({
             .then(metrics => {
                 if (isCurrentRequest) {
                     setPopulationMetricsResult({
-                        countryDetail,
                         countryName,
-                        metadata,
-                        currentDate,
                         metrics,
                     });
                 }
@@ -107,10 +101,7 @@ export function Navbar({
                 if (isCurrentRequest) {
                     try {
                         setPopulationMetricsResult({
-                            countryDetail,
                             countryName,
-                            metadata,
-                            currentDate,
                             metrics: calculateDailyPopulationChange(
                                 countryDetail,
                                 countryName,
@@ -130,11 +121,9 @@ export function Navbar({
     }, [countryDetail, countryName, metadata, currentDate]);
 
     const populationMetrics =
-        populationMetricsResult !== null &&
-        populationMetricsResult.countryDetail === countryDetail &&
-        populationMetricsResult.countryName === countryName &&
-        populationMetricsResult.metadata === metadata &&
-        populationMetricsResult.currentDate === currentDate
+        populationMetricsResult &&
+        countryDetail &&
+        populationMetricsResult.countryName === countryName
             ? populationMetricsResult.metrics
             : null;
 

@@ -593,6 +593,7 @@ export interface WarResultInput {
   roll?: number;
   requestedInvasion?: boolean;
   attackerWinRoll?: number;
+  seed?: number;
   attackerBonus?: number;
   defenderBonus?: number;
   isUserDefender?: boolean;
@@ -709,6 +710,7 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
   const battle = simulateBattleTs({
     attackerPower: actualAttackerPower,
     targetPower: actualTargetPower,
+    seed: input.seed,
   });
 
   const winner = requestedInvasionOutcome

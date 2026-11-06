@@ -11,6 +11,7 @@ export interface BattleInput {
   targetTech?: number;
   damageRate?: number;
   maxRounds?: number;
+  seed?: number;
 }
 
 export interface BattleResult {
@@ -27,10 +28,64 @@ export interface BattleResult {
   message: string;
 }
 
+function validateBattleInput(input: BattleInput): void {
+  const { attackerPower, targetPower } = input;
+  if (!Number.isFinite(attackerPower) || attackerPower < 0) {
+    throw new RangeError('attackerPower harus berupa angka terbatas yang tidak negatif.');
+  }
+  if (!Number.isFinite(targetPower) || targetPower < 0) {
+    throw new RangeError('targetPower harus berupa angka terbatas yang tidak negatif.');
+  }
+  if (!Number.isFinite(attackerPower + targetPower)) {
+    throw new RangeError('Total kekuatan pasukan harus berupa angka terbatas.');
+  }
+
+  for (const [name, value] of [
+    ['attackerTech', input.attackerTech ?? 1],
+    ['targetTech', input.targetTech ?? 1],
+  ] as const) {
+    if (!Number.isFinite(value) || value < 0) {
+      throw new RangeError(`${name} harus berupa angka terbatas yang tidak negatif.`);
+    }
+  }
+
+  const terrain = input.terrain ?? 'normal';
+  if (!['normal', 'mountain', 'pegunungan', 'fortress', 'benteng'].includes(terrain)) {
+    throw new RangeError('terrain bukan jenis medan yang didukung.');
+  }
+
+  const damageRate = input.damageRate ?? 0.15;
+  if (!Number.isFinite(damageRate) || damageRate < 0 || damageRate > 1) {
+    throw new RangeError('damageRate harus berada di antara 0 dan 1.');
+  }
+
+  const maxRounds = input.maxRounds ?? 1000;
+  if (!Number.isSafeInteger(maxRounds) || maxRounds < 1 || maxRounds > 10000) {
+    throw new RangeError('maxRounds harus berupa bilangan bulat antara 1 dan 10000.');
+  }
+
+  if (input.seed !== undefined && !Number.isSafeInteger(input.seed)) {
+    throw new RangeError('seed harus berupa bilangan bulat yang aman.');
+  }
+}
+
+function createSeededRandom(seed: number): () => number {
+  let state = seed >>> 0;
+  return () => {
+    state = (state + 0x6d2b79f5) >>> 0;
+    let value = state;
+    value = Math.imul(value ^ (value >>> 15), value | 1);
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
 /**
  * Algoritma Utama Simulasi Perang Multi-Ronde Berbasis DeepSeek AI Recommendation
  */
 export function simulateBattleTs(input: BattleInput): BattleResult {
+  validateBattleInput(input);
+
   const {
     attackerPower,
     targetPower,
@@ -39,7 +94,9 @@ export function simulateBattleTs(input: BattleInput): BattleResult {
     targetTech = 1.0,
     damageRate = 0.15,
     maxRounds = 1000,
+    seed,
   } = input;
+  const random = seed === undefined ? Math.random : createSeededRandom(seed);
 
   const total = attackerPower + targetPower;
   if (total <= 0) {
@@ -111,8 +168,8 @@ export function simulateBattleTs(input: BattleInput): BattleResult {
 
   while (curAtk > 0 && curTgt > 0 && round <= maxRounds) {
     // Random Number Generator (0.8 hingga 1.2 per ronde)
-    const rngAtk = 0.8 + Math.random() * 0.4;
-    const rngTgt = 0.8 + Math.random() * 0.4;
+    const rngAtk = 0.8 + random() * 0.4;
+    const rngTgt = 0.8 + random() * 0.4;
 
     const dmgToTarget = (curAtk * damageRate * rngAtk * attackerTech * atkMorale) * terrainDefBuff;
     const dmgToAttacker = curTgt * damageRate * rngTgt * targetTech * tgtMorale;
@@ -130,12 +187,6 @@ export function simulateBattleTs(input: BattleInput): BattleResult {
     } else if (dmgToTarget > dmgToAttacker) {
       tgtMorale = Math.max(0.4, tgtMorale - 0.02);
       atkMorale = Math.min(1.2, atkMorale + 0.01);
-    }
-
-    // Logistics Support & Regeneration after 50 rounds
-    if (round > 50) {
-      if (curAtk > 0) curAtk *= 1.002;
-      if (curTgt > 0) curTgt *= 1.002;
     }
 
     if (round <= 15) {
@@ -157,10 +208,20 @@ export function simulateBattleTs(input: BattleInput): BattleResult {
     winner = 'target';
     isVictory = false;
     message = 'TARGET MENANG';
-  } else {
+  } else if (curTgt <= 0) {
     winner = 'attacker';
     isVictory = true;
     message = 'PENYERANG MENANG';
+  } else if (curAtk > curTgt) {
+    winner = 'attacker';
+    isVictory = true;
+    message = 'PENYERANG MENANG (SISA KEKUATAN LEBIH BESAR)';
+  } else {
+    winner = 'target';
+    isVictory = false;
+    message = curAtk === curTgt
+      ? 'TARGET MENANG (KEKUATAN SAMA, PERTAHANAN BERTAHAN)'
+      : 'TARGET MENANG (SISA KEKUATAN LEBIH BESAR)';
   }
 
   return {
