@@ -178,22 +178,22 @@ export function FpsMonitoring({
     if (!isEnabled) return null;
 
     return (
-        <div className="relative z-20 shrink-0 font-mono pointer-events-auto">
+        <div className="relative z-20 flex shrink-0 self-stretch font-mono pointer-events-auto">
             <button
                 type="button"
                 onClick={() => setIsExpanded(value => !value)}
                 aria-expanded={isExpanded}
                 aria-label="Buka detail monitor FPS"
-                className="flex h-[72px] w-[150px] flex-col justify-center gap-1 rounded-xl border border-root-accent/30 bg-root-surface/90 px-2.5 text-left shadow-2xl  transition-colors hover:border-root-accent/70 lg:h-[78px] lg:w-[160px]"
+                className="flex h-full w-[150px] flex-col justify-center gap-0 rounded-xl border border-root-accent/30 bg-root-surface/90 px-2 text-left shadow-2xl transition-colors hover:border-root-accent/70 lg:w-[160px] lg:gap-0.5"
             >
-                <span className="flex items-center gap-1.5 text-[9px] font-black tracking-wide text-root-accent">
+                <span className="flex items-center gap-1.5 text-[8px] font-black tracking-wide text-root-accent lg:text-[9px]">
                     <Activity className="h-3 w-3" />
                     FPS MONITOR
                 </span>
-                <span className={`text-xl font-black leading-none tabular-nums ${stats.fps < 40 ? 'text-rose-400' : stats.fps < 55 ? 'text-amber-400' : 'text-emerald-300'}`}>
+                <span className={`text-lg font-black leading-none tabular-nums lg:text-xl ${stats.fps < 40 ? 'text-rose-400' : stats.fps < 55 ? 'text-amber-400' : 'text-emerald-300'}`}>
                     {stats.fps} <span className="text-[10px] font-bold text-gray-300">FPS</span>
                 </span>
-                <span className="text-[9px] font-semibold text-gray-400">
+                <span className="text-[8px] font-semibold text-gray-400 lg:text-[9px]">
                     MIN {stats.minFps} <span className="px-1 text-root-accent/50">/</span> AVG {stats.avgFps}
                 </span>
             </button>

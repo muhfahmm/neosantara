@@ -8313,12 +8313,35 @@ export default function MapPage() {
             // ⏳ Hitung mundur durasi notifikasi wabah (pandemi/epidemi), bencana alam, serta demonstrasi rakyat setiap pergantian hari
             let demoKepuasanDelta = 0;
             let demoRatingDelta = 0;
+            const activeEspionageEffects = parseActiveEspionageEffects(countryDetail.active_disaster_effects);
 
             setNotifications((prevNotifications) => {
                 let hasChanges = false;
                 let ignoredCount = 0;
 
                 const nextNotifications = prevNotifications.map((notif: any) => {
+                    if (String(notif.id).startsWith('notif-covert-espionage-active-')) {
+                        const activeEffect = activeEspionageEffects.find(effect =>
+                            effect.sourceNotificationIds.some(sourceNotificationId =>
+                                notif.id === `notif-covert-espionage-active-${encodeURIComponent(sourceNotificationId)}`
+                            )
+                        );
+                        const elapsedDays = activeEffect
+                            ? getElapsedGameDays(activeEffect.startDate, currentDateStr)
+                            : null;
+                        if (activeEffect && elapsedDays !== null) {
+                            const remainingDays = Math.max(0, activeEffect.durationDays - elapsedDays);
+                            const nextMessage = String(notif.message).replace(
+                                /(\d+)(?= hari (?:tersisa|game))/,
+                                String(remainingDays),
+                            );
+                            if (nextMessage !== notif.message) {
+                                hasChanges = true;
+                                return { ...notif, message: nextMessage };
+                            }
+                        }
+                    }
+
                     // 1. Evaluasi demonstrasi rakyat
                     if (notif.tradeType === 'demonstrasi_rakyat') {
                         if (notif.demo_status === 'ignored' || notif.demo_status === 'aktif' || !notif.demo_status) {

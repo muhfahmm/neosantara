@@ -209,7 +209,7 @@ export function Navbar({
         <nav className="fixed top-2.5 sm:top-3 left-0 right-0 z-[201] pointer-events-none px-3 sm:px-5 xl:px-6 2xl:px-8 flex items-center justify-between select-none bg-transparent border-none shadow-none">
             
             {/* 1. Left Side: Circular Menu & Selected Badge */}
-            <div className="flex items-center gap-2 2xl:gap-3 shrink-0 relative z-20 pointer-events-auto">
+            <div className="flex items-stretch gap-2 2xl:gap-3 shrink-0 relative z-20 pointer-events-auto">
                 <div className="flex items-center gap-2 2xl:gap-3 bg-root-surface border border-root-accent/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
                 {/* Circle Power Button */}
                 <div className="relative group shrink-0">

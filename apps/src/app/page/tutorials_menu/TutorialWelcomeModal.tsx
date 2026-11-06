@@ -16,7 +16,7 @@ export function TutorialWelcomeModal({
   onContinue,
   onSkip,
   playerName = 'Presiden',
-  advisorImageSrc = '/tutorial/advisor.png',
+  advisorImageSrc = '/images/game/buildings/introduction/introduction.svg',
 }: TutorialWelcomeModalProps) {
   const [mounted, setMounted] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
@@ -66,14 +66,14 @@ export function TutorialWelcomeModal({
         role="dialog"
         aria-modal="false"
         aria-labelledby={labelId}
-        className="pointer-events-auto relative flex items-end justify-center w-full max-w-[560px] animate-in fade-in slide-in-from-bottom-3 duration-300"
+        className="pointer-events-auto relative flex items-end justify-center gap-2 sm:gap-4 w-full max-w-5xl animate-in fade-in slide-in-from-bottom-3 duration-300"
       >
         {!imageFailed && (
           <img
             src={advisorImageSrc}
             alt="Penasihat Negara"
             onError={() => setImageFailed(true)}
-            className="w-24 sm:w-32 md:w-40 max-h-48 sm:max-h-56 object-contain object-bottom shrink-0 select-none pointer-events-none drop-shadow-[0_8px_20px_rgba(0,0,0,0.65)] mr-2 sm:mr-3"
+            className="w-24 sm:w-36 md:w-56 lg:w-72 max-h-[35vh] sm:max-h-[50vh] object-contain object-bottom shrink-0 select-none pointer-events-none drop-shadow-[0_8px_20px_rgba(0,0,0,0.65)]"
           />
         )}
 
