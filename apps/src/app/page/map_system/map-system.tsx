@@ -3379,6 +3379,37 @@ export default function MapPage() {
         if (isWarAnalysisActiveRef.current !== isVisible) {
             isWarAnalysisActiveRef.current = isVisible;
             setIsWarAnalysisActive(isVisible);
+            if (isVisible) {
+                setActiveMenu('Peta Taktis');
+                setIsPresidentMenuOpen(false);
+                setIsSaveModalOpen(false);
+                setIsMapSettingsModalOpen(false);
+                setIsRestartConfirmOpen(false);
+                setCountryDetailModalOpen(false);
+                setCountryDetailModalName(null);
+                setCountryDetailModalCity(null);
+                setCountryDetailModalCityId(null);
+                setAiConstructionNavigation(null);
+                setAutoBuildEmbassyState(false);
+                setRequireEmbassyModalOpen(false);
+                setRequireEmbassyPartner(null);
+                setPlayerDetailModalOpen(false);
+                setInboxModalOpen(false);
+                setGiftModalOpen(false);
+                setNewsModalOpen(false);
+                setPenelitianModalOpen(false);
+                setMissionModalOpen(false);
+                setAparatConfirmState({ isOpen: false, notification: null });
+                setHasilBubarkanState(previous => ({ ...previous, isOpen: false }));
+                setTradeRejectionState(previous => ({ ...previous, isOpen: false }));
+                setClosedTradeRejectionState(previous => ({ ...previous, isOpen: false }));
+                setIsRatingWarningOpen(false);
+                setIsKudetaOpen(false);
+                setAnnexedModalData(previous => ({ ...previous, isOpen: false }));
+                setResultModal(previous => ({ ...previous, isOpen: false }));
+                setIsTutorialWelcomeOpen(false);
+                setIsDialogTerbukaOpen(false);
+            }
         }
     }, []);
     const handleWarBattlePhaseChange = useCallback((phase: 'travel' | 'impact' | 'comparison' | 'result') => {
@@ -10267,7 +10298,7 @@ export default function MapPage() {
             />
 
             {/* Top Right Icons - Gift and News */}
-            <TopRightGiftIcon
+            {!isWarAnalysisActive && <TopRightGiftIcon
                 onClick={() => {
                     setCountryDetailModalOpen(false);
                     setGiftModalOpen(true);
@@ -10290,8 +10321,8 @@ export default function MapPage() {
                         : previous
                     );
                 }}
-            />
-            <TopRightNewsIcon
+            />}
+            {!isWarAnalysisActive && <TopRightNewsIcon
                 onClick={() => {
                     setCountryDetailModalOpen(false);
                     setNewsModalOpen(true);
@@ -10335,8 +10366,8 @@ export default function MapPage() {
                     setMissionModalOpen(false);
                     setActiveMenu("");
                 }}
-            />
-            <BottomLeftPenelitianIcon
+            />}
+            {!isWarAnalysisActive && <BottomLeftPenelitianIcon
                 onClick={() => {
                     setCountryDetailModalOpen(false);
                     setPenelitianModalOpen(true);
@@ -10354,8 +10385,8 @@ export default function MapPage() {
                 countryDetail={countryDetail}
                 setCountryDetail={setCountryDetail}
                 currentDate={currentDate}
-            />
-            <BottomLeftMissionIcon
+            />}
+            {!isWarAnalysisActive && <BottomLeftMissionIcon
                 onClick={() => {
                     setCountryDetailModalOpen(false);
                     setMissionModalOpen(true);
@@ -10403,16 +10434,16 @@ export default function MapPage() {
 
                     setActiveMenu(destination.menuId);
                 }}
-            />
+            />}
 
                     {/* Tombol Pintas Fokus ke Negara Sendiri (F) */}
-                    <button
+                    {!isWarAnalysisActive && <button
                         onClick={handleFocusHome}
                         title="🎯 Fokus & Zoom ke Negara Sendiri (F)"
                         className="fixed bottom-3 lg:bottom-4 xl:bottom-6 2xl:bottom-12 left-18 lg:left-20 xl:left-22 2xl:left-26 z-[100] w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all group"
                     >
                         <Crosshair className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 transition-transform group-hover:scale-110" />
-                    </button>
+                    </button>}
                 </>
             )}
 
@@ -11093,14 +11124,14 @@ export default function MapPage() {
                 </div>
             )}
 
-            {!isDialogTerbukaOpen && (
+            {!isWarAnalysisActive && !isDialogTerbukaOpen && (
                 <DiplomacyTracking
-                    isUiHidden={isMenuModalOpen}
+                    isUiHidden={isMenuModalOpen || isWarAnalysisActive}
                     onOpen={() => setCountryDetailModalOpen(false)}
                 />
             )}
 
-            {!isDialogTerbukaOpen && !isMenuModalOpen && !(countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen) && (
+            {!isWarAnalysisActive && !isDialogTerbukaOpen && !isMenuModalOpen && !(countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen) && (
                 <>
                     {!Object.values(subMenuItems).flat().some((item: { id: string }) => activeMenu.startsWith(item.id)) && (
                         !isAttackerForcesModalOpen && (
@@ -11121,7 +11152,7 @@ export default function MapPage() {
             )}
 
             <ModalsManager
-                activeMenu={activeMenu}
+                activeMenu={isWarAnalysisActive ? 'Peta Taktis' : activeMenu}
                 setActiveMenu={setActiveMenu}
                 countryDetail={countryDetail}
                 metadata={metadata}
@@ -11281,7 +11312,7 @@ export default function MapPage() {
             </div>
 
             <CountryDetailModal
-                isOpen={countryDetailModalOpen}
+                isOpen={countryDetailModalOpen && !isWarAnalysisActive}
                 countryName={countryDetailModalName}
                 countryDetail={countryDetail}
                 metadata={metadata}
@@ -11326,7 +11357,7 @@ export default function MapPage() {
 
             {/* Modal Informasi Kedutaan Besar Diperlukan */}
             <RequireEmbassyModal
-                isOpen={requireEmbassyModalOpen}
+                isOpen={requireEmbassyModalOpen && !isWarAnalysisActive}
                 partnerName={requireEmbassyPartner}
                 onClose={() => {
                     setRequireEmbassyModalOpen(false);
@@ -11342,7 +11373,7 @@ export default function MapPage() {
 
             {/* Modal DETAIL NEGARA USER (Prototipe) */}
             <NegaraUserModal
-                isOpen={playerDetailModalOpen}
+                isOpen={playerDetailModalOpen && !isWarAnalysisActive}
                 onClose={() => setPlayerDetailModalOpen(false)}
                 selectedCountry={selectedCountry}
                 countryDetail={countryDetail}
@@ -11370,14 +11401,14 @@ export default function MapPage() {
 
             {/* Tropico Game Menu Modal */}
             <GameMenuModal
-                isOpen={isPresidentMenuOpen}
+                isOpen={isPresidentMenuOpen && !isWarAnalysisActive}
                 onClose={() => setIsPresidentMenuOpen(false)}
                 onSaveGameClick={openSaveModal}
                 onRestartClick={() => setIsRestartConfirmOpen(true)}
             />
 
             <TutorialWelcomeModal
-                isOpen={isTutorialWelcomeOpen && Boolean(selectedCountry)}
+                isOpen={isTutorialWelcomeOpen && !isWarAnalysisActive && Boolean(selectedCountry)}
                 onContinue={() => {
                     setIsTutorialWelcomeOpen(false);
                     startTutorial();
@@ -11396,7 +11427,7 @@ export default function MapPage() {
 
             {/* Confirm Restart Modal */}
             <ConfirmRestartModal
-                isOpen={isRestartConfirmOpen}
+                isOpen={isRestartConfirmOpen && !isWarAnalysisActive}
                 onClose={() => {
                     setIsRestartConfirmOpen(false);
                     setIsPresidentMenuOpen(true);
@@ -11406,7 +11437,7 @@ export default function MapPage() {
 
             {/* Peringatan Peringkat Kritis Modal */}
             <ModalsPeringatanPeringkat
-                isOpen={isRatingWarningOpen}
+                isOpen={isRatingWarningOpen && !isWarAnalysisActive}
                 onClose={() => setIsRatingWarningOpen(false)}
                 currentRating={presidentRating}
                 warningType={warningType}
@@ -11415,7 +11446,7 @@ export default function MapPage() {
 
             {/* Modals Kudeta (Game Over) */}
             <ModalsKudeta
-                isOpen={isKudetaOpen}
+                isOpen={isKudetaOpen && !isWarAnalysisActive}
                 kudetaType={kudetaType}
                 currentValue={kudetaValue}
                 countryName={selectedCountry?.country}
@@ -11427,7 +11458,7 @@ export default function MapPage() {
 
             {/* Modals Annexed Game Over */}
             <ModalsAnnexedGameOver
-                isOpen={annexedModalData.isOpen}
+                isOpen={annexedModalData.isOpen && !isWarAnalysisActive}
                 countryName={annexedModalData.countryName || selectedCountry?.country || countryDetail?.country}
                 attackerCountry={annexedModalData.attackerCountry}
                 onRestart={() => {
@@ -11438,7 +11469,7 @@ export default function MapPage() {
 
             {/* Modal Hasil Perang & Pertempuran Militer */}
             <ResultModal
-                isOpen={resultModal.isOpen}
+                isOpen={resultModal.isOpen && !isWarAnalysisActive}
                 title={resultModal.title}
                 message={resultModal.message}
                 losses={resultModal.losses}
@@ -11451,7 +11482,7 @@ export default function MapPage() {
 
             {/* Modal Khusus Hasil Pembubaran Massa Demo (Hard Power / Aparat) */}
             <HasilBubarkanMassaModal
-                isOpen={hasilBubarkanState.isOpen}
+                isOpen={hasilBubarkanState.isOpen && !isWarAnalysisActive}
                 title={hasilBubarkanState.title}
                 message={hasilBubarkanState.message}
                 type={hasilBubarkanState.type}
@@ -11466,7 +11497,7 @@ export default function MapPage() {
             />
 
             <TradeRejectionModal
-                isOpen={tradeRejectionState.isOpen}
+                isOpen={tradeRejectionState.isOpen && !isWarAnalysisActive}
                 onClose={() => {
                     setTradeRejectionState(prev => ({ ...prev, isOpen: false }));
                 }}
@@ -11477,7 +11508,7 @@ export default function MapPage() {
             />
 
             <ClosedTradeRejectionModal
-                isOpen={closedTradeRejectionState.isOpen}
+                isOpen={closedTradeRejectionState.isOpen && !isWarAnalysisActive}
                 onClose={() => {
                     setClosedTradeRejectionState(prev => ({ ...prev, isOpen: false }));
                 }}
@@ -11491,7 +11522,7 @@ export default function MapPage() {
 
             {/* Modal Menu Pilihan Bubarkan Massa */}
             <MenuBubarkanMassaModal
-                isOpen={aparatConfirmState.isOpen}
+                isOpen={aparatConfirmState.isOpen && !isWarAnalysisActive}
                 currentBudget={Number(countryDetail?.anggaran || 0)}
                 onClose={() => {
                     setAparatConfirmState({ isOpen: false, notification: null });
@@ -11507,7 +11538,7 @@ export default function MapPage() {
             />
 
             {/* Overlay Forum Dialog Terbuka (Paling depan dari seluruh UI: Navbar, BottomNav, dll.) */}
-            {isDialogTerbukaOpen && (
+            {isDialogTerbukaOpen && !isWarAnalysisActive && (
                 <div className="fixed inset-0 z-[99999999] overflow-hidden bg-[#081014]">
                     <DialogTerbukaMenu
                         currentBudget={Number(countryDetail?.anggaran || 0)}

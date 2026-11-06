@@ -823,6 +823,12 @@ export default function WarMap({
     }
   }, [phase, onAnalysisVisibilityChange]);
 
+  useEffect(() => () => {
+    if (!lastAnalysisVisibilityRef.current) return;
+    lastAnalysisVisibilityRef.current = false;
+    onAnalysisVisibilityChange?.(false);
+  }, [onAnalysisVisibilityChange]);
+
   useEffect(() => {
     onBattlePhaseChange?.(phase);
   }, [phase, onBattlePhaseChange]);
