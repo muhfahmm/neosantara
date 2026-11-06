@@ -54,46 +54,6 @@ const ResultModal = dynamic(() => import('./warResultModal'), { ssr: false });
 const TradeRejectionModal = dynamic(() => import('../menus/inbox/logic/3_notifikasi_perdagangan/tradeRejectionModal'), { ssr: false });
 const ClosedTradeRejectionModal = dynamic(() => import('../menus/inbox/logic/3_notifikasi_perdagangan/ClosedTradeRejectionModal'), { ssr: false });
 
-export function lootUserProductionInventory(countryDetail: any, currentDateStr: string): { updatedDetail: any; lootedSummaryText: string } {
-    if (!countryDetail) return { updatedDetail: countryDetail, lootedSummaryText: '' };
-
-    const nextDetail = JSON.parse(JSON.stringify(countryDetail));
-
-    const PRODUCTION_KEYS = [
-        // Mineral & Energi
-        "emas", "uranium", "batu_bara", "minyak_bumi", "gas_alam", "garam", "litium", "logam_tanah_jarang", "bijih_besi",
-        // Manufaktur
-        "pabrik_semikonduktor", "pabrik_mesin", "pabrik_besi", "semen_beton", "kayu",
-        // Peternakan
-        "ayam_unggas", "sapi_perah", "sapi_potong", "domba_kambing",
-        // Agrikultur
-        "padi", "gandum", "jagung", "sayur", "umbi", "kedelai", "kelapa_sawit", "kopi", "teh", "kakao", "tebu", "karet",
-        // Perikanan
-        "udang", "mutiara", "ikan",
-        // Olahan Pangan
-        "air_mineral", "gula", "roti", "pengolahan_daging", "mie_instan", "minyak_goreng", "susu", "beras"
-    ];
-
-    PRODUCTION_KEYS.forEach((key) => {
-        // Reset build date ke tanggal hari ini agar akumulasi stok produksi harian kembali ke 0
-        nextDetail[`build_date_${key}`] = currentDateStr;
-
-        if (typeof nextDetail[`stok_${key}`] === 'number') nextDetail[`stok_${key}`] = 0;
-        if (typeof nextDetail[`stock_${key}`] === 'number') nextDetail[`stock_${key}`] = 0;
-        if (typeof nextDetail[`${key}_stok`] === 'number') nextDetail[`${key}_stok`] = 0;
-        if (typeof nextDetail[`${key}_stock`] === 'number') nextDetail[`${key}_stock`] = 0;
-        if (typeof nextDetail[`${key}_amount`] === 'number') nextDetail[`${key}_amount`] = 0;
-        if (nextDetail.stok && typeof nextDetail.stok === 'object') nextDetail.stok[key] = 0;
-        if (nextDetail.stock && typeof nextDetail.stock === 'object') nextDetail.stock[key] = 0;
-        if (nextDetail.produksi && typeof nextDetail.produksi === 'object') nextDetail.produksi[key] = 0;
-    });
-
-    return {
-        updatedDetail: nextDetail,
-        lootedSummaryText: "Seluruh stok hasil produksi (Mineral & Energi, Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan) telah habis dirampas oleh musuh."
-    };
-}
-
 const RequireEmbassyModal = dynamic(() => import('./RequireEmbassyModal').then(m => m.RequireEmbassyModal), { ssr: false });
 import { Navbar } from '../navbar/Navbar';
 const BottomNav = dynamic(() => import('../navigasi_menu/2_navigasi_bawah/BottomNav'), { ssr: false });
@@ -107,6 +67,10 @@ const DialogTerbukaMenu = dynamic(() => import('../menus/inbox/logic/7_notifikas
 import { buildCapitalPoint } from '../path_logic/path-war';
 import { estimateTravelTime } from '../path_logic/time_logic';
 import { applyWarLossesToUserArmada } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
+import {
+    lootUserProductionInventory,
+    resolvePlayerLootOperation,
+} from '../detail_negara/3_operasi_militer/1_serang_negara/penjarahan/penjarahanLogic';
 import { mergeAnnexedForces, resolveCountryPoolOwner } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/annexedForcePool';
 import { getArmadaPowerSummary, getArmadaUnitBreakdown } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
 import {
@@ -2963,39 +2927,24 @@ export default function MapPage() {
                 setNotifications(prev => [notifMsg, ...prev]);
 
             } else if (actionType === 'jarah') {
-                // Potong armada pemain sebesar 25% (kemenangan operasi penjarahan)
-                let userLossText = '';
-                userLossText = applyAttackerArmyLosses(0.25, true);
-
-                const invNews = generateInvasionNews(attackerCountry, attackerIso, targetCountry, targetIso, dateStr);
-                const lootNews = generateResourceLootNews(
+                const lootResult = resolvePlayerLootOperation({
                     attackerCountry,
                     attackerIso,
                     targetCountry,
                     targetIso,
-                    25000000,
-                    { emas: 500, minyak_bumi: 1000, beras: 2000 },
-                    dateStr
-                );
-                newNewsItems.push(invNews, lootNews);
-
-                const lossPercent = detail.troopsCommitted === true && Number.isFinite(Number(detail.attackerLossRatio))
-                    ? Math.round(Number(detail.attackerLossRatio) * 100)
-                    : 25;
-                const lossNote = (userLossText && userLossText !== 'Tidak ada kerugian unit')
-                    ? ` Kerugian tempur armada Anda (${lossPercent}%): ${userLossText}.`
-                    : '';
-                const notifMsg: NotificationMessage = {
-                    id: `notif-player-loot-${Date.now()}`,
-                    title: `💰 OPERASI PENJARAHAN BERHASIL`,
-                    sender: `Markas Besar Angkatan Bersenjata (${attackerCountry})`,
-                    message: `Operasi penjarahan atas ${targetCountry} berhasil dilancarkan! Sumber daya alam dan rampasan perang senilai 25.000.000 NEO telah diamankan.${lossNote}`,
-                    timestamp: dateStr,
-                    type: 'peringkat',
-                    value: 80,
-                    isRead: false
-                };
-                setNotifications(prev => [notifMsg, ...prev]);
+                    dateStr,
+                    attackerDetail: countryDetail,
+                    targetCountryDetail: detail.targetCountryDetail,
+                    committedArmySnapshot: detail.committedArmySnapshot,
+                    troopsCommitted: detail.troopsCommitted,
+                    attackerLossRatio: detail.attackerLossRatio,
+                    deployedUnitsConfig: detail.deployedUnitsConfig,
+                });
+                if (lootResult.updatedAttackerDetail !== undefined) {
+                    setCountryDetail(lootResult.updatedAttackerDetail);
+                }
+                newNewsItems.push(...lootResult.newsItems);
+                setNotifications(prev => [lootResult.notification, ...prev]);
 
             } else if (actionType === 'mundur') {
                 // Cek apakah mundur dalam keadaan menang atau kalah terpukul mundur
