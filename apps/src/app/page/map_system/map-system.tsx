@@ -158,6 +158,12 @@ import { executeAbaikanDemo, calculateDailyIgnoredDemoPenalties } from '../menus
 import { generateBencanaAlamNotification } from '../menus/inbox/logic/6_notifikasi_bencana/1_bencana_alam/bencanaLogic';
 import { generateKeamananNotification } from '../menus/inbox/logic/14_notifikasi_keamanan/keamananLogic';
 import {
+    createAllyHelpRequest,
+    expireAllyHelpRequest,
+    BANTUAN_SEKUTU_CONFIG,
+    BantuanSekutuNotification,
+} from '../menus/inbox/logic/15_notifikasi_bantuan_sekutu/bantuanSekutuLogic';
+import {
     EPIDEMIC_BASE_CHANCE_PERCENT,
     generateWabahPenyakitNotification,
     canPandemicOccur,
@@ -1038,7 +1044,7 @@ function applyInvasionRelationPenalty(attackerCountry: string, targetCountry: st
 function setMilitaryAttackRelation(
     attackerCountry: string,
     targetCountry: string,
-    relationValue: 1 | 25
+    relationValue: 1 | 20
 ): void {
     const canonicalCountryName = (name: string) => {
         const identity = getWarCountryIdentity(name);
@@ -2730,7 +2736,14 @@ export default function MapPage() {
                     pbbLiberationCountry
                 );
                 if (!countryCollapsed) {
-                    applyNpcWarLosses(detail.targetCountryDetail, Number(detail.targetLossRatio));
+                    // Jika belum aneksasi ke ibukota dan negara belum runtuh,
+                    // pasukan target hanya berkurang 10-15% saja
+                    const rawLossRatio = Number(detail.targetLossRatio);
+                    const effectiveLossRatio = Number.isFinite(rawLossRatio) && rawLossRatio > 0
+                        ? Math.min(rawLossRatio, 0.15)
+                        : (0.10 + Math.random() * 0.05);
+                    const safeLossRatio = Math.max(0.10, Math.min(0.15, effectiveLossRatio));
+                    applyNpcWarLosses(detail.targetCountryDetail, safeLossRatio);
                 }
 
                 // 4. Gabungkan statistik (populasi, kas negara, kepuasan, kesejahteraan, seluruh bangunan & sisa militer target setelah kalah >50%)
@@ -3681,6 +3694,8 @@ export default function MapPage() {
                 const activePlayerAttack = getActivePlayerAttack();
                 if (activePlayerAttack && detail.fromQueue !== true) return;
 
+                setMilitaryAttackRelation(detail.attacker, detail.target, 1);
+
                 setActivePlayerAttack({
                     targetCountry: detail.target,
                     targetCityName: typeof detail.targetCityName === 'string'
@@ -4325,6 +4340,7 @@ export default function MapPage() {
                     'penawaran_kedutaan_besar',
                 ].includes(String(tradeType)) ||
                 tradeType === 'diserang' ||
+                tradeType === 'bantuan_sekutu' ||
                 tradeType === 'demonstrasi_rakyat' ||
                 tradeType === 'kebijakan_subsidi' ||
                 tradeType === 'harga_barang_pokok' ||
@@ -6133,6 +6149,30 @@ export default function MapPage() {
 
                         generatedNewsItems.push(inv);
 
+                        // Evaluasi Permintaan Bantuan Sekutu jika target memiliki aliansi pertahanan aktif dengan pemain
+                        const defenseAlliances = Array.isArray(countryDetail?.defenseAlliances)
+                            ? countryDetail.defenseAlliances
+                            : [];
+                        const existingAllRequests = [
+                            ...(notifications as unknown as BantuanSekutuNotification[]),
+                            ...(newNotifsToAdd as unknown as BantuanSekutuNotification[]),
+                        ];
+                        const allyHelpRequest = createAllyHelpRequest({
+                            playerCountry: userCountryName,
+                            playerIso: countryDetail?.iso,
+                            defenseAlliances,
+                            attackerCountry: inv.attackerCountry,
+                            attackerIso: inv.attackerIso,
+                            targetCountry: inv.targetCountry,
+                            targetIso: inv.targetIso,
+                            currentDateStr,
+                            existingRequests: existingAllRequests,
+                        });
+
+                        if (allyHelpRequest) {
+                            newNotifsToAdd.push(allyHelpRequest);
+                        }
+
                         // CATATAN: Hasil perang (aneksasi wilayah atau penjarahan SDA) TIDAK BOLEH dieksekusi secara instan di sini!
                         // Operasi militer harus mengalir melalui antrean animasi/pertempuran (npcWarQueue -> onAutoResolve)
                         // agar tidak terjadi aneksasi siluman tanpa visual tank di peta.
@@ -6245,6 +6285,14 @@ export default function MapPage() {
                 ));
             }
 
+            // Pisahkan notifikasi critical (bantuan sekutu, diserang, sanksi) agar tidak tersaring generator cap
+            const criticalNotifs = newNotifsToAdd.filter(n =>
+                n && (n.priority === 'critical' || n.tradeType === 'bantuan_sekutu' || n.tradeType === 'diserang')
+            );
+            const nonCriticalNotifs = newNotifsToAdd.filter(n =>
+                !n || (n.priority !== 'critical' && n.tradeType !== 'bantuan_sekutu' && n.tradeType !== 'diserang')
+            );
+
             // Pisahkan notifikasi diplomasi & perdagangan agar tidak selalu tersingkir oleh krisis domestik
             const DIPLOMATIC_TRADE_TYPES = new Set([
                 'jual',
@@ -6255,11 +6303,11 @@ export default function MapPage() {
                 'penawaran_hubungan_dagang',
                 'penawaran_kedutaan_besar'
             ]);
-            const diplomaticCandidates = newNotifsToAdd.filter(n => n && DIPLOMATIC_TRADE_TYPES.has(String(n.tradeType)));
-            const generalCandidates = newNotifsToAdd.filter(n => !n || !DIPLOMATIC_TRADE_TYPES.has(String(n.tradeType)));
+            const diplomaticCandidates = nonCriticalNotifs.filter(n => n && DIPLOMATIC_TRADE_TYPES.has(String(n.tradeType)));
+            const generalCandidates = nonCriticalNotifs.filter(n => !n || !DIPLOMATIC_TRADE_TYPES.has(String(n.tradeType)));
 
             const MAX_GENERATOR_CAP = 3;
-            const cappedNotifs: Array<NotificationMessage & { tradeType?: string }> = [];
+            const cappedNotifs: Array<NotificationMessage & { tradeType?: string }> = [...criticalNotifs];
 
             // Pastikan jika ada penawaran diplomasi/dagang yang lolos undian harian, berikan 1 slot prioritas
             if (diplomaticCandidates.length > 0) {
@@ -6315,10 +6363,47 @@ export default function MapPage() {
                                 existing.timestamp === notif.timestamp
                             )
                         ) continue;
+                        if (
+                            (notif as any).tradeType === 'bantuan_sekutu' &&
+                            prev.some(existing =>
+                                (existing as any).tradeType === 'bantuan_sekutu' &&
+                                areSameWarCountry((existing as any).allyCountry, (notif as any).allyCountry) &&
+                                areSameWarCountry((existing as any).attackerCountry, (notif as any).attackerCountry) &&
+                                (existing as any).status === 'pending'
+                            )
+                        ) continue;
                         existingIds.add(notif.id);
                         uniqueNew.push(notif);
                     }
-                    return uniqueNew.length > 0 ? [...uniqueNew, ...prev] : prev;
+
+                    // Cek kedaluwarsa otomatis notifikasi bantuan sekutu yang masih pending
+                    const playerCountryName = userCountryName;
+                    const defenseAlliances: string[] = Array.isArray(countryDetail?.defenseAlliances) ? countryDetail.defenseAlliances : [];
+                    
+                    const updatedPrev = prev.map(notif => {
+                        if ((notif as any).tradeType === 'bantuan_sekutu' && (notif as any).status === 'pending') {
+                            const allyNotif = notif as unknown as BantuanSekutuNotification;
+                            const hasActiveAlly = defenseAlliances.some((ally: string) =>
+                                areSameWarCountry(ally, allyNotif.allyCountry, undefined, allyNotif.allyIso)
+                            );
+                            const expired = expireAllyHelpRequest(allyNotif, {
+                                currentDateStr,
+                                isWarEnded: false,
+                                hasActiveAlliance: hasActiveAlly,
+                            });
+                            if (expired.status === 'expired' && !allyNotif.isHandled) {
+                                setRelationModifier(
+                                    playerCountryName,
+                                    allyNotif.allyCountry,
+                                    BANTUAN_SEKUTU_CONFIG.relationPenaltyReject
+                                );
+                            }
+                            return expired as unknown as NotificationMessage;
+                        }
+                        return notif;
+                    });
+
+                    return uniqueNew.length > 0 ? [...uniqueNew, ...updatedPrev] : updatedPrev;
                 });
             }
 
@@ -10069,6 +10154,41 @@ export default function MapPage() {
                         return;
                     }
 
+                    // ── LOGIKA PERMINTAAN BANTUAN SEKUTU (TERIMA) ──
+                    if (tNotif.tradeType === 'bantuan_sekutu') {
+                        const allyCountry = tNotif.allyCountry;
+                        const attackerCountry = tNotif.attackerCountry;
+                        const playerCountryName = getPlayerCountryIdentity(countryDetail);
+
+                        // Tandai notifikasi diterima
+                        setNotifications(prev => prev.map(n => n.id === notif.id
+                            ? { ...n, isHandled: true, status: 'accepted' }
+                            : n));
+
+                        // Dampak diplomatik terhadap agresor
+                        if (attackerCountry) {
+                            setRelationModifier(
+                                playerCountryName,
+                                attackerCountry,
+                                BANTUAN_SEKUTU_CONFIG.relationPenaltyWithAttackerOnAccept
+                            );
+                        }
+
+                        setInboxModalOpen(false);
+
+                        // Buka alur pengerahan pasukan resmi (Serang Negara terhadap agresor)
+                        setActiveMenu('Menu:SerangNegara');
+
+                        setResultModal({
+                            isOpen: true,
+                            title: 'Bantuan Militer Sekutu Diterima',
+                            message: `Pemerintah telah berkomitmen membantu ${allyCountry} melawan agresi militer ${attackerCountry}. Silakan atur dan kerahkan kontingen pasukan Anda melalui menu Operasi Militer. Hubungan diplomatik dengan ${attackerCountry} menurun sebesar ${Math.abs(BANTUAN_SEKUTU_CONFIG.relationPenaltyWithAttackerOnAccept)} poin.`,
+                            type: 'success',
+                            persistent: true,
+                        });
+                        return;
+                    }
+
                     // ── LOGIKA NOTIFIKASI PERTAHANAN LAINNYA (Diserang, ICBM) ──
                     if (tNotif.tradeType === 'diserang' || tNotif.tradeType === 'icbm') {
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true } : n));
@@ -10217,6 +10337,33 @@ export default function MapPage() {
                     const tNotif = notif as any;
                     const playerCountryName = getPlayerCountryIdentity(countryDetail);
                     const offerPartner = tNotif.partnerCountry || tNotif.partnerName;
+
+                    // ── LOGIKA PENOLAKAN PERMINTAAN BANTUAN SEKUTU (TOLAK) ──
+                    if (tNotif.tradeType === 'bantuan_sekutu') {
+                        if (tNotif.isHandled) {
+                            return;
+                        }
+                        const allyCountry = tNotif.allyCountry;
+                        if (allyCountry) {
+                            setRelationModifier(
+                                playerCountryName,
+                                allyCountry,
+                                BANTUAN_SEKUTU_CONFIG.relationPenaltyReject
+                            );
+                        }
+                        setNotifications(prev => prev.map(n => n.id === notif.id
+                            ? { ...n, isHandled: true, status: 'rejected' }
+                            : n));
+                        setInboxModalOpen(false);
+                        setResultModal({
+                            isOpen: true,
+                            title: 'Permintaan Bantuan Ditolak',
+                            message: `Pemerintah menolak permintaan bantuan militer dari ${allyCountry}. Aliansi pertahanan tetap berjalan, namun hubungan bilateral menurun sebesar ${Math.abs(BANTUAN_SEKUTU_CONFIG.relationPenaltyReject)} poin.`,
+                            type: 'info',
+                            persistent: true,
+                        });
+                        return;
+                    }
 
                     if (tNotif.tradeType === 'penawaran_pakta_non_agresi' || tNotif.tradeType === 'penawaran_aliansi_pertahanan' || tNotif.tradeType === 'penawaran_kontrak_penelitian') {
                         if (tNotif.isHandled) {
@@ -11044,7 +11191,7 @@ export default function MapPage() {
                                 },
                             }));
 
-                            setMilitaryAttackRelation(activeWarAnimation.attacker, activeWarAnimation.target, 25);
+                            setMilitaryAttackRelation(activeWarAnimation.attacker, activeWarAnimation.target, 20);
 
                             window.dispatchEvent(
                                 new CustomEvent('trigger_player_attack', {

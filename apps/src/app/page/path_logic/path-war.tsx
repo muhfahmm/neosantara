@@ -598,6 +598,7 @@ export interface WarResultInput {
   defenderBonus?: number;
   isUserDefender?: boolean;
   isNpcWar?: boolean;
+  targetCityIsCapital?: boolean;
 }
 
 export interface WarResultOutput {
@@ -720,16 +721,32 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
     ? winner === 'target'
     : winner === 'attacker';
 
+  let attackerScore = battle.attackerFinalPower;
+  let targetScore = battle.targetFinalPower;
+  let attackerLossRatio = actualAttackerPower > 0
+    ? Math.min(1, Math.max(0, 1 - battle.attackerFinalPower / actualAttackerPower))
+    : 0;
+  let targetLossRatio = actualTargetPower > 0
+    ? Math.min(1, Math.max(0, 1 - battle.targetFinalPower / actualTargetPower))
+    : 0;
+
+  // Jika penyerang menang dalam aneksasi wilayah yang belum ke ibukota,
+  // pasukan target/bertahan hanya berkurang 10-15% (bukan musnah total).
+  if (winner === 'attacker' && input.targetCityIsCapital === false) {
+    const seedVal = typeof input.seed === 'number' && Number.isFinite(input.seed)
+      ? Math.abs(Math.sin(input.seed))
+      : (typeof input.attackerWinRoll === 'number' && Number.isFinite(input.attackerWinRoll) ? input.attackerWinRoll : Math.random());
+    const nonCapitalLossRatio = 0.10 + (seedVal % 1) * 0.05; // rentang 10% - 15% (0.10 - 0.15)
+    targetLossRatio = Math.min(targetLossRatio, nonCapitalLossRatio);
+    targetScore = Math.round(actualTargetPower * (1 - targetLossRatio));
+  }
+
   return {
     result: isUserWin ? 'win' : 'lose',
-    attackerScore: battle.attackerFinalPower,
-    targetScore: battle.targetFinalPower,
-    attackerLossRatio: actualAttackerPower > 0
-      ? Math.min(1, Math.max(0, 1 - battle.attackerFinalPower / actualAttackerPower))
-      : 0,
-    targetLossRatio: actualTargetPower > 0
-      ? Math.min(1, Math.max(0, 1 - battle.targetFinalPower / actualTargetPower))
-      : 0,
+    attackerScore,
+    targetScore,
+    attackerLossRatio,
+    targetLossRatio,
     totalRounds: battle.totalRounds,
     message: requestedInvasionOutcome
       ? requestedInvasionOutcome.message
@@ -949,6 +966,7 @@ export default function WarMap({
       defenderBonus,
       isUserDefender,
       isNpcWar: isNpcWar && !isPbbCoalition,
+      targetCityIsCapital: target.cityIsCapital,
       requestedInvasion,
       attackerWinRoll: requestedInvasionRollRef.current,
     });
@@ -956,6 +974,7 @@ export default function WarMap({
   }, [
     isOpen,
     attacker,
+    target,
     attackerPower,
     targetPower,
     effectiveAttackerDeploymentPercent,
