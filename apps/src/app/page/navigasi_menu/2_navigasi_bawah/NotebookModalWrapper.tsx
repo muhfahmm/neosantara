@@ -43,7 +43,13 @@ export function NotebookModalWrapper({
 
   return (
     <div
-      className={`notebook-modal-frame ${isHidden || (hideWhenInfoModalOpen && isInfoModalOpen) ? 'hidden' : ''} fixed inset-0 ${zIndexClass} flex items-center justify-center pt-[88px] sm:pt-[100px] lg:pt-[clamp(92px,10dvh,115px)] pb-3 sm:pb-4 lg:pb-5 px-3 sm:px-6 lg:px-10 font-sans pointer-events-none`}
+      style={{
+        paddingTop: 'var(--modal-top-offset)',
+        paddingBottom: 'var(--modal-bottom-offset)',
+        paddingLeft: 'var(--modal-side-offset)',
+        paddingRight: 'var(--modal-side-offset)',
+      }}
+      className={`notebook-modal-frame ${isHidden || (hideWhenInfoModalOpen && isInfoModalOpen) ? 'hidden' : ''} fixed inset-0 ${zIndexClass} flex items-center justify-center font-sans pointer-events-none`}
     >
       {/* Notebook Outer Frame */}
       <div

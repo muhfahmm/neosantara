@@ -1637,7 +1637,15 @@ export default function WarMap({
       {/* ══════════ LAYAR HASIL PERTEMPURAN (Fase 'result') ══════════ */}
       {/* Container utama transparan dan tidak menghalangi interaksi. */}
       {phase === 'result' && result && (
-        <div className="fixed inset-0 z-[300] flex items-center justify-center pt-[88px] sm:pt-[100px] lg:pt-[clamp(92px,10dvh,115px)] pb-3 sm:pb-4 lg:pb-5 px-3 sm:px-6 lg:px-10 pointer-events-none animate-[warFadeIn_0.4s_ease-out]">
+        <div
+          style={{
+            paddingTop: 'var(--modal-top-offset)',
+            paddingBottom: 'var(--modal-bottom-offset)',
+            paddingLeft: 'var(--modal-side-offset)',
+            paddingRight: 'var(--modal-side-offset)',
+          }}
+          className="fixed inset-0 z-[300] flex items-center justify-center pointer-events-none animate-[warFadeIn_0.4s_ease-out]"
+        >
           {/* FIX: pointer-events-auto ditambahkan di sini agar kotak modal bisa diklik */}
           <div className="modal-responsive-shell overflow-y-auto bg-root-canvas border border-root-accent/30 rounded-3xl shadow-[0_0_80px_rgba(0,255,170,0.2)] font-sans select-none pointer-events-auto">
             <div

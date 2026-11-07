@@ -87,9 +87,27 @@ export function FpsMonitoring({
     const [history, setHistory] = useState<string[]>([]);
     const [isExpanded, setIsExpanded] = useState(false);
     const isEnabled = useFpsMonitorEnabled();
+    const [isMobileDevice, setIsMobileDevice] = useState(false);
 
     useEffect(() => {
-        if (!isEnabled) return;
+        const checkMobile = () => {
+            const isLandscapePhone = window.matchMedia('(orientation: landscape) and (max-height: 500px)').matches;
+            const isPortraitPhone = window.matchMedia('(orientation: portrait) and (max-width: 640px)').matches;
+            setIsMobileDevice(isLandscapePhone || isPortraitPhone);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        window.addEventListener('orientationchange', checkMobile);
+        return () => {
+            window.removeEventListener('resize', checkMobile);
+            window.removeEventListener('orientationchange', checkMobile);
+        };
+    }, []);
+
+    const isDevelopment = process.env.NODE_ENV !== 'production';
+
+    useEffect(() => {
+        if (!isEnabled || !isDevelopment || isMobileDevice) return;
 
         let frameCount = 0;
         let lastTime = performance.now();
@@ -173,9 +191,9 @@ export function FpsMonitoring({
             cancelAnimationFrame(animationFrameId);
             window.removeEventListener('neosantara_map_camera', onCameraMove);
         };
-    }, [isEnabled, wasmModuleRef]);
+    }, [isEnabled, isDevelopment, isMobileDevice, wasmModuleRef]);
 
-    if (!isEnabled) return null;
+    if (!isEnabled || !isDevelopment || isMobileDevice) return null;
 
     return (
         <div className="relative z-20 flex shrink-0 self-stretch font-mono pointer-events-auto">

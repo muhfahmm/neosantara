@@ -1,4 +1,16 @@
 const { app, BrowserWindow, screen } = require("electron");
+const fs = require("node:fs");
+const path = require("node:path");
+
+const appDataBase = process.env.LOCALAPPDATA || process.env.APPDATA || path.join(process.env.USERPROFILE || "", "AppData", "Roaming");
+const writableAppData = path.join(appDataBase, "PresidenSimulator");
+fs.mkdirSync(writableAppData, { recursive: true });
+app.setPath("userData", writableAppData);
+
+const cacheDir = path.join(writableAppData, "Cache");
+fs.mkdirSync(cacheDir, { recursive: true });
+app.setPath("cache", cacheDir);
+app.commandLine.appendSwitch("disk-cache-dir", cacheDir);
 
 // Izinkan autoplay musik segera saat aplikasi Electron terbuka tanpa perlu klik pertama dari user
 app.commandLine.appendSwitch("autoplay-policy", "no-user-gesture-required");

@@ -48,7 +48,15 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
+    <div
+      style={{
+        paddingTop: 'var(--modal-top-offset)',
+        paddingBottom: 'var(--modal-bottom-offset)',
+        paddingLeft: 'var(--modal-side-offset)',
+        paddingRight: 'var(--modal-side-offset)',
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-transparent pointer-events-none"
+    >
       <div className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
         {/* Background Texture */}

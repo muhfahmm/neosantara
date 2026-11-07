@@ -224,7 +224,24 @@ export function AttackDebugButton({ selectedCountry, countryDetail }: AttackDebu
     }
   };
 
-  if (!isDevelopment) return null;
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const isLandscapePhone = window.matchMedia('(orientation: landscape) and (max-height: 500px)').matches;
+      const isPortraitPhone = window.matchMedia('(orientation: portrait) and (max-width: 640px)').matches;
+      setIsMobileDevice(isLandscapePhone || isPortraitPhone);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    window.addEventListener('orientationchange', checkMobile);
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      window.removeEventListener('orientationchange', checkMobile);
+    };
+  }, []);
+
+  if (!isDevelopment || isMobileDevice) return null;
 
   const panel = isOpen && portalReady ? createPortal(
     <div

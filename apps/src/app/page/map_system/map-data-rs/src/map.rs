@@ -764,9 +764,19 @@ impl MapEngine {
             );
             return;
         };
-        const RASTER_SCALE: f64 = 3.0;
-        canvas.set_width((self.width * RASTER_SCALE) as u32);
-        canvas.set_height((self.height * RASTER_SCALE) as u32);
+        let is_mobile = web_sys::window()
+            .and_then(|window| window.navigator().user_agent().ok())
+            .map(|user_agent| {
+                let user_agent = user_agent.to_ascii_lowercase();
+                user_agent.contains("android")
+                    || user_agent.contains("iphone")
+                    || user_agent.contains("ipad")
+                    || user_agent.contains("ipod")
+            })
+            .unwrap_or(false);
+        let raster_scale = if is_mobile { 1.0 } else { 3.0 };
+        canvas.set_width((self.width * raster_scale) as u32);
+        canvas.set_height((self.height * raster_scale) as u32);
         let cached_context = canvas
             .get_context("2d")
             .ok()
@@ -778,7 +788,7 @@ impl MapEngine {
             );
             return;
         };
-        let _ = context.set_transform(RASTER_SCALE, 0.0, 0.0, RASTER_SCALE, 0.0, 0.0);
+        let _ = context.set_transform(raster_scale, 0.0, 0.0, raster_scale, 0.0, 0.0);
 
         for batch in &self.cached_fill_batches {
             context.set_fill_style(&batch.style);

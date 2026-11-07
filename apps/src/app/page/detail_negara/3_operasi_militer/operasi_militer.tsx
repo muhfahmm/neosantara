@@ -219,8 +219,8 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
 
   return (
     <div className="space-y-6 lg:space-y-4 xl:space-y-6">
-      {/* Grid Layout 4-4 (2 baris x 4 kolom pada desktop) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 items-stretch gap-4 lg:gap-3 xl:gap-4 pt-6 lg:pt-4 xl:pt-6">
+      {/* Grid Layout (1-2 kolom di ponsel portrait, 2-3 di landscape, 4 pada desktop) */}
+      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-stretch gap-2.5 sm:gap-3 lg:gap-3 xl:gap-4 pt-3 sm:pt-4 lg:pt-4 xl:pt-6">
         <div className="relative w-full min-w-0">
           {actionDates?.serang && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.serang)}</div>}
           <ActionButton icon={Crosshair} label="Serang Negara" className={actionDates?.serang ? datedActionClass : undefined} iconClass={actionDates?.serang ? 'text-amber-300' : undefined} labelClass={actionDates?.serang ? 'text-amber-300' : undefined} onClick={() => {

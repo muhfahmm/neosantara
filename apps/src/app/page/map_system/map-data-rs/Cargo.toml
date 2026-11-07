@@ -25,6 +25,7 @@ features = [
   "HtmlImageElement",
   "HtmlCanvasElement",
   "Window",
+  "Navigator",
   "Document",
   "Element",
   "Node",

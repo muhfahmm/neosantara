@@ -29,35 +29,18 @@ let tradeAgreementMap: Record<string, TradeAgreement[]> = {};
 export function setTradeAgreementData(rows: TradeAgreementDataRow[]): void {
   const nextTradeAgreementMap: Record<string, TradeAgreement[]> = {};
 
-  rows.forEach(({ country_slug, mitra_no, mitra_country, trade_type, status }) => {
-    if (
-      typeof country_slug !== 'string' ||
-      !country_slug.trim() ||
-      !Number.isInteger(mitra_no) ||
-      mitra_no < 1 ||
-      typeof mitra_country !== 'string' ||
-      !mitra_country.trim() ||
-      typeof trade_type !== 'string' ||
-      !trade_type.trim() ||
-      typeof status !== 'string' ||
-      !status.trim()
-    ) {
-      throw new Error('Invalid row in database_mitra_perdagangan');
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    if (row && row.country_slug && row.mitra_country) {
+      const slug = row.country_slug;
+      (nextTradeAgreementMap[slug] ??= []).push({
+        no: row.mitra_no || 1,
+        mitra: row.mitra_country,
+        type: row.trade_type || 'Perdagangan',
+        status: row.status || 'Aktif',
+      });
     }
-
-    const slug = normalizeSlug(country_slug);
-    if (!slug) {
-      throw new Error('Invalid country slug in database_mitra_perdagangan');
-    }
-
-    nextTradeAgreementMap[slug] ??= [];
-    nextTradeAgreementMap[slug].push({
-      no: mitra_no,
-      mitra: mitra_country,
-      type: trade_type,
-      status,
-    });
-  });
+  }
 
   if (rows.length === 0) {
     throw new Error('database_mitra_perdagangan returned no rows');

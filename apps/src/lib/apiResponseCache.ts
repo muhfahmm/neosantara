@@ -96,7 +96,7 @@ export function buildCachedApiResponse(
 
   headers.set('Content-Length', body.byteLength.toString());
 
-  return new Response(body, {
+  return new Response(body as unknown as BodyInit, {
     status: 200,
     headers,
   });

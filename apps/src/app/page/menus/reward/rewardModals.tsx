@@ -4,6 +4,7 @@ import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalClos
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
+import { useViewportMode } from '@/app/hooks/useViewportMode';
 import Image from 'next/image';
 import { Gift, X, Check, Lock, Zap, AlertTriangle } from 'lucide-react';
 import {
@@ -177,6 +178,10 @@ export default function TopRightGiftIcon({
   const [weeklyRewards, setWeeklyRewards] = useState<DailySdaReward[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [mounted, setMounted] = useState(false);
+  const viewportMode = useViewportMode();
+  const isLandscapePhone = viewportMode === 'landscapePhone';
+  const isPortraitPhone = viewportMode === 'portraitPhone';
+  const isMobile = isLandscapePhone || isPortraitPhone;
 
   // Tanggal terakhir status disinkronkan (untuk cek pergantian hari)
   const syncedDateRef = useRef<string>(getToday());
@@ -344,7 +349,17 @@ export default function TopRightGiftIcon({
       <button
         onClick={onClick}
         title="Hadiah - Bonus dan Reward"
-        className="fixed top-24 right-7 z-[100] flex h-12 w-12 cursor-default items-center justify-center opacity-70 lg:h-14 lg:w-14 xl:h-16 xl:w-16"
+        style={{
+          top: isLandscapePhone ? 'calc(var(--safe-top) + 2.75rem)' : isPortraitPhone ? 'calc(var(--safe-top) + 4.75rem)' : undefined,
+          right: isMobile ? 'calc(var(--safe-right) + 0.5rem)' : undefined,
+        }}
+        className={`fixed z-[100] flex cursor-default items-center justify-center opacity-70 ${
+          isLandscapePhone
+            ? 'h-8 w-8'
+            : isPortraitPhone
+            ? 'h-10 w-10'
+            : 'top-24 right-7 h-12 w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16'
+        }`}
       >
         <Image
           src="/images/game/interface/menu/reward.svg"
@@ -352,7 +367,13 @@ export default function TopRightGiftIcon({
           aria-hidden="true"
           width={72}
           height={72}
-          className="h-14 w-14 object-contain animate-pulse brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]"
+          className={`object-contain animate-pulse brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
+            isLandscapePhone
+              ? 'h-9 w-9'
+              : isPortraitPhone
+              ? 'h-11 w-11'
+              : 'h-14 w-14 lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]'
+          }`}
         />
       </button>
     );
@@ -367,7 +388,17 @@ export default function TopRightGiftIcon({
       <button
         onClick={onClick}
         title="Hadiah - Bonus dan Reward"
-        className="fixed top-24 right-7 z-[100] flex h-12 w-12 cursor-pointer items-center justify-center transition-transform group hover:scale-110 lg:h-14 lg:w-14 xl:h-16 xl:w-16"
+        style={{
+          top: isLandscapePhone ? 'calc(var(--safe-top) + 2.75rem)' : isPortraitPhone ? 'calc(var(--safe-top) + 4.75rem)' : undefined,
+          right: isMobile ? 'calc(var(--safe-right) + 0.5rem)' : undefined,
+        }}
+        className={`fixed z-[100] flex cursor-pointer items-center justify-center transition-transform group hover:scale-110 active:scale-95 ${
+          isLandscapePhone
+            ? 'h-8 w-8'
+            : isPortraitPhone
+            ? 'h-10 w-10'
+            : 'top-24 right-7 h-12 w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16'
+        }`}
       >
         <Image
           src="/images/game/interface/menu/reward.svg"
@@ -375,10 +406,18 @@ export default function TopRightGiftIcon({
           aria-hidden="true"
           width={72}
           height={72}
-          className="h-14 w-14 object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]"
+          className={`object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
+            isLandscapePhone
+              ? 'h-9 w-9'
+              : isPortraitPhone
+              ? 'h-11 w-11'
+              : 'h-14 w-14 lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]'
+          }`}
         />
         {!claimedToday && (
-          <span className="absolute -top-1 -right-1 bg-red-500 border border-root-canvas text-white text-[9px] font-bold rounded-full w-4 h-4 lg:w-5 lg:h-5 flex items-center justify-center animate-pulse">
+          <span className={`absolute -top-1 -right-1 bg-red-500 border border-root-canvas text-white font-bold rounded-full flex items-center justify-center animate-pulse ${
+            isLandscapePhone ? 'w-3.5 h-3.5 text-[8px]' : 'w-4 h-4 lg:w-5 lg:h-5 text-[9px]'
+          }`}>
             !
           </span>
         )}

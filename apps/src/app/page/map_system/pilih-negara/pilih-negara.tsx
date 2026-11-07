@@ -8,7 +8,7 @@ import {
   ChevronRight,
   Search,
   Shield,
-  Globe,
+  Globe, 
   Play,
   ArrowLeft,
   User,
@@ -39,7 +39,7 @@ import {
 import Link from 'next/link';
 import { COUNTRIES_DATA, CAPITALS_DATA } from '../map-data';
 import { countryPaths } from '../mapDataAssets';
-import { mergeClaimedTerritories } from '../world-map-geometry';
+import { loadMapEngineWasm, loadWorldGeojson } from '../mapLoader';
 
 // Import logika ekonomi dari folder logic agar kalkulasi sama persis
 import { calculateCountryNetBalance, calculateGoldIncome, calculateTotalTaxIncome, calculateTotalMinistryCostPerDay } from '@/app/logic/economic_logic/treasuryUpdater';
@@ -160,23 +160,11 @@ export default function PilihNegaraPage() {
       hasInitRef.current = true;
 
       try {
-        const [mod, geojsonResponse] = await Promise.all([
-          import('../../../../wasm/map-engine-rs/map_engine_rs'),
-          fetch('/world.geojson', { cache: 'force-cache' }),
+        const [mod, geojsonStr] = await Promise.all([
+          loadMapEngineWasm(),
+          loadWorldGeojson(),
         ]);
-        await mod.default();
-        if (!geojsonResponse.ok) {
-          throw new Error(`Failed to load world map data: HTTP ${geojsonResponse.status}`);
-        }
-        let geojsonStr = await geojsonResponse.text();
-        const geojson = JSON.parse(geojsonStr);
-        if (!Array.isArray(geojson.features)) {
-          throw new Error('Invalid world map GeoJSON payload.');
-        }
-        geojson.features = mergeClaimedTerritories(
-          geojson.features.filter((feature: { geometry?: unknown }) => feature.geometry)
-        );
-        geojsonStr = JSON.stringify(geojson);
+
         const { start_map_engine, set_selected_country_on_map, get_country_at_on_map } = mod;
 
         start_map_engine('map-canvas-bg', geojsonStr, COUNTRIES_DATA, CAPITALS_DATA);

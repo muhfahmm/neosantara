@@ -13,11 +13,12 @@
     "tauri": "npm run tauri:dev -w frontend",
     "tauri:dev": "npm run tauri:dev -w frontend",
     "tauri:build": "npm run tauri:build -w frontend",
-    "tauri:android:dev": "npm run tauri:android:dev -w frontend",
+    "tauri:android:prepare": "npm run tauri:android:prepare -w frontend --",
+    "tauri:android:dev": "npm run tauri:android:dev -w frontend --",
     "tauri:android:build": "npm run tauri:android:build -w frontend",
     "tauri:serve": "npm run tauri:serve -w frontend",
     "tauri:serve-mobile": "npm run tauri:serve-mobile -w frontend",
-    "electron:dev": "node scripts/electron-dev.js",
+    "electron:dev": "node scripts/electron-dev.mjs",
     "electron:start": "npm run electron:dev"
   },
   "devDependencies": {

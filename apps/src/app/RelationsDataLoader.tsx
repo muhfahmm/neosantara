@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { setBaseRelationData, type BaseRelationRow } from '../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 import { setEmbassyData, type EmbassyDataRow } from '../../../json/6_database_kedutaan_besar/embassyRegistry';
 import { setTradeAgreementData, type TradeAgreementDataRow } from '../../../json/9_database_mitra_perdagangan/tradeAgreementRegistry';
@@ -20,6 +20,7 @@ interface BootstrapBundle {
 }
 
 const BOOTSTRAP_CACHE_KEY = 'game_bootstrap_bundle';
+const CLIENT_CACHE_TIMEOUT_MS = 300;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -102,31 +103,33 @@ async function fetchBootstrapBundle(cachedEtag: string | null = null): Promise<{
   return { bundle: payload, etag };
 }
 
-export default function RelationsDataLoader({ children }: { children: React.ReactNode }) {
-  const [attempt, setAttempt] = useState(0);
-  const [statusMessage, setStatusMessage] = useState<string>('Menghubungkan ke database...');
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+async function getClientCacheQuickly<T>(key: string): Promise<{ data: T; etag: string | null } | null> {
+  let timeoutId: number | undefined;
+  try {
+    return await Promise.race([
+      getClientCache<T>(key),
+      new Promise<null>(resolve => {
+        timeoutId = window.setTimeout(() => resolve(null), CLIENT_CACHE_TIMEOUT_MS);
+      }),
+    ]);
+  } finally {
+    if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+  }
+}
 
+export default function RelationsDataLoader({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let isMounted = true;
 
     async function loadRelationData() {
       try {
-        if (isMounted) setStatusMessage('Memeriksa cache data lokal...');
-        
-        // 1. Check client-side persistent cache (IndexedDB) for instant load
-        const cached = await getClientCache<BootstrapBundle>(BOOTSTRAP_CACHE_KEY);
+        const cached = await getClientCacheQuickly<BootstrapBundle>(BOOTSTRAP_CACHE_KEY);
+        if (!isMounted) return;
         if (cached && cached.data) {
           applyBundleData(cached.data);
-          if (isMounted) {
-            setLoadError(null);
-            setIsLoaded(true);
-          }
-          // Revalidate in background with 304 Not Modified
           void fetchBootstrapBundle(cached.etag).then(result => {
             if (result.bundle) {
-              applyBundleData(result.bundle);
+              if (isMounted) applyBundleData(result.bundle);
               void setClientCache(BOOTSTRAP_CACHE_KEY, result.bundle, result.etag);
             }
           }).catch(err => {
@@ -135,24 +138,13 @@ export default function RelationsDataLoader({ children }: { children: React.Reac
           return;
         }
 
-        // 2. Cold start (no cache): fetch bundled bootstrap endpoint
-        if (isMounted) setStatusMessage('Mengunduh paket data permainan...');
         const { bundle, etag } = await fetchBootstrapBundle(null);
         if (bundle) {
-          applyBundleData(bundle);
+          if (isMounted) applyBundleData(bundle);
           void setClientCache(BOOTSTRAP_CACHE_KEY, bundle, etag);
-        }
-
-        if (isMounted) {
-          setLoadError(null);
-          setIsLoaded(true);
         }
       } catch (error) {
         console.error('Failed to load database-backed game metadata:', error);
-        if (isMounted) {
-          const detail = (error as Error)?.message || String(error);
-          setLoadError(`Gagal memuat data permainan: ${detail}`);
-        }
       }
     }
 
@@ -160,30 +152,7 @@ export default function RelationsDataLoader({ children }: { children: React.Reac
     return () => {
       isMounted = false;
     };
-  }, [attempt]);
+  }, []);
 
-  if (isLoaded) {
-    return children;
-  }
-
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-950 px-6 text-center text-emerald-100">
-      <div className="flex flex-col items-center gap-2">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent" />
-        <p className="font-mono text-sm tracking-wide">{loadError ?? statusMessage}</p>
-      </div>
-      {loadError && (
-        <button
-          type="button"
-          onClick={() => {
-            setLoadError(null);
-            setAttempt(current => current + 1);
-          }}
-          className="mt-2 rounded border border-emerald-500/40 px-4 py-2 text-sm hover:bg-emerald-500/10 active:scale-95"
-        >
-          Coba Lagi
-        </button>
-      )}
-    </main>
-  );
+  return children;
 }

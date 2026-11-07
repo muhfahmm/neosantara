@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import PausedMenuFrame from '@/app/page/root_modals_design_menu/rootFrameMenu';
 import RootModalCloseButton from '@/app/page/root_modals_design_menu/RootModalCloseButton';
+import { useViewportMode } from '@/app/hooks/useViewportMode';
 import {
   Target, Compass, Award, Rocket,
   Music, Trophy, PartyPopper, Coins, Landmark, TrendingUp, TrendingDown, Zap,
@@ -1148,6 +1149,10 @@ export default function MissionModals({
   countryDetail,
   setCountryDetail,
 }: MissionModalsProps) {
+  const viewportMode = useViewportMode();
+  const isLandscapePhone = viewportMode === 'landscapePhone';
+  const isPortraitPhone = viewportMode === 'portraitPhone';
+  const isMobile = isLandscapePhone || isPortraitPhone;
   const [mounted, setMounted] = useState(false);
   const [activePoolIds, setActivePoolIds] = useState<string[]>([]);
   const [completionsMap, setCompletionsMap] = useState<Record<string, number>>({});
@@ -1239,7 +1244,17 @@ export default function MissionModals({
       <button
         onClick={onClick}
         title="Misi & Sasaran Strategis"
-        className="fixed bottom-20 left-7 z-[100] flex h-12 w-12 cursor-pointer items-center justify-center transition-transform group hover:scale-110 lg:bottom-20 lg:h-14 lg:w-14 xl:bottom-24 xl:h-16 xl:w-16 2xl:bottom-32"
+        style={{
+          bottom: isLandscapePhone ? 'calc(var(--safe-bottom) + 0.5rem)' : isPortraitPhone ? 'calc(var(--safe-bottom) + 7.25rem)' : undefined,
+          left: isLandscapePhone ? 'calc(var(--safe-left) + 5rem)' : isPortraitPhone ? 'calc(var(--safe-left) + 0.5rem)' : undefined,
+        }}
+        className={`fixed z-[100] flex cursor-pointer items-center justify-center transition-transform group hover:scale-110 active:scale-95 ${
+          isLandscapePhone
+            ? 'h-8 w-8'
+            : isPortraitPhone
+            ? 'h-10 w-10'
+            : 'bottom-20 left-7 h-12 w-12 lg:bottom-20 lg:h-14 lg:w-14 xl:bottom-24 xl:h-16 xl:w-16 2xl:bottom-32'
+        }`}
       >
         <Image
           src="/images/game/interface/menu/mission.svg"
@@ -1247,10 +1262,18 @@ export default function MissionModals({
           aria-hidden="true"
           width={72}
           height={72}
-          className="h-14 w-14 object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]"
+          className={`object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
+            isLandscapePhone
+              ? 'h-9 w-9'
+              : isPortraitPhone
+              ? 'h-11 w-11'
+              : 'h-14 w-14 lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]'
+          }`}
         />
         {totalClaimable > 0 && (
-          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-black text-white shadow-lg animate-pulse">
+          <span className={`absolute -top-1 -right-1 flex items-center justify-center rounded-full bg-red-500 font-black text-white shadow-lg animate-pulse ${
+            isLandscapePhone ? 'h-3.5 w-3.5 text-[8px]' : 'h-4 w-4 text-[9px]'
+          }`}>
             {totalClaimable}
           </span>
         )}

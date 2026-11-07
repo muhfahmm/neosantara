@@ -16,7 +16,15 @@ export function PausedMenuFrame({
     ornamentCount = 11,
 }: PausedMenuFrameProps) {
     return (
-        <div className={`paused-menu-frame fixed inset-0 ${zIndexClass} flex items-center justify-center pt-[88px] sm:pt-[100px] lg:pt-[clamp(92px,10dvh,115px)] pb-3 sm:pb-4 lg:pb-5 px-3 sm:px-6 lg:px-10  font-sans pointer-events-none select-none`}>
+        <div
+            style={{
+                paddingTop: 'var(--modal-top-offset)',
+                paddingBottom: 'var(--modal-bottom-offset)',
+                paddingLeft: 'var(--modal-side-offset)',
+                paddingRight: 'var(--modal-side-offset)',
+            }}
+            className={`paused-menu-frame fixed inset-0 ${zIndexClass} flex items-center justify-center font-sans pointer-events-none select-none`}
+        >
             <section className={`modal-responsive-shell relative flex min-w-0 flex-col overflow-hidden ${rootBorderRadius.frame} border-[6px] border-root-surface bg-root-canvas p-3 pl-10 shadow-2xl pointer-events-auto sm:p-4 sm:pl-12`}>
                 <RootNotebookDecorations count={ornamentCount} />
                 <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-r-xl border-[3px] border-root-accent/20 bg-root-surface shadow-inner">

@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { Route } from 'lucide-react';
 import PausedMenuFrame from '@/app/page/root_modals_design_menu/rootFrameMenu';
 import RootModalCloseButton from '@/app/page/root_modals_design_menu/RootModalCloseButton';
+import { useViewportMode } from '@/app/hooks/useViewportMode';
 import { estimateTravelTime } from '../../path_logic/time_logic';
 import {
   type DiplomacyPathKind,
@@ -63,6 +64,10 @@ const normalizeCountryName = (name: unknown) => String(name || '')
 export default function DiplomacyTracking({ onOpen, isUiHidden = false }: DiplomacyTrackingProps) {
   const [activePaths, setActivePaths] = useState<ActiveDiplomacyPath[]>([]);
   const [isTrackingOpen, setIsTrackingOpen] = useState(false);
+  const viewportMode = useViewportMode();
+  const isLandscapePhone = viewportMode === 'landscapePhone';
+  const isPortraitPhone = viewportMode === 'portraitPhone';
+  const isMobile = isLandscapePhone || isPortraitPhone;
 
   useEffect(() => {
     const allowedKinds = Object.keys(PATH_REGISTRY) as DiplomacyPathKind[];
@@ -225,7 +230,17 @@ export default function DiplomacyTracking({ onOpen, isUiHidden = false }: Diplom
         title="Pelacakan aktivitas diplomasi"
         aria-label={isTrackingOpen ? 'Tutup pelacakan aktivitas' : 'Buka pelacakan aktivitas'}
         aria-expanded={isTrackingOpen}
-        className="fixed bottom-3 left-[7.25rem] z-[100] flex h-12 w-12 cursor-pointer items-center justify-center transition-transform hover:scale-110 group lg:bottom-4 lg:left-[8rem] lg:h-14 lg:w-14 xl:bottom-6 xl:left-[9rem] xl:h-16 xl:w-16 2xl:bottom-12 2xl:left-[10.5rem]"
+        style={{
+          bottom: isLandscapePhone ? 'calc(var(--safe-bottom) + 0.5rem)' : isPortraitPhone ? 'calc(var(--safe-bottom) + 10rem)' : undefined,
+          left: isLandscapePhone ? 'calc(var(--safe-left) + 7.25rem)' : isPortraitPhone ? 'calc(var(--safe-left) + 0.5rem)' : undefined,
+        }}
+        className={`fixed z-[100] flex cursor-pointer items-center justify-center transition-transform hover:scale-110 active:scale-95 group ${
+          isLandscapePhone
+            ? 'h-8 w-8'
+            : isPortraitPhone
+            ? 'h-10 w-10'
+            : 'bottom-3 left-[7.25rem] h-12 w-12 lg:bottom-4 lg:left-[8rem] lg:h-14 lg:w-14 xl:bottom-6 xl:left-[9rem] xl:h-16 xl:w-16 2xl:bottom-12 2xl:left-[10.5rem]'
+        }`}
       >
         <Image
           src="/images/game/interface/menu/diplomacy-activity.svg"
@@ -233,10 +248,18 @@ export default function DiplomacyTracking({ onOpen, isUiHidden = false }: Diplom
           aria-hidden="true"
           width={72}
           height={72}
-          className="h-14 w-14 object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]"
+          className={`object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
+            isLandscapePhone
+              ? 'h-9 w-9'
+              : isPortraitPhone
+              ? 'h-11 w-11'
+              : 'h-14 w-14 lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]'
+          }`}
         />
         {activePaths.length > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-black text-white">
+          <span className={`absolute -right-1 -top-1 flex min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 font-black text-white ${
+            isLandscapePhone ? 'h-3.5 min-w-3.5 text-[8px]' : 'h-4 text-[9px]'
+          }`}>
             {activePaths.length}
           </span>
         )}

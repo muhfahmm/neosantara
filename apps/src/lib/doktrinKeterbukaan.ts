@@ -57,3 +57,4 @@ export async function fetchDoktrin(
   const all = (await query('SELECT * FROM database_doktrin_keterbukaan')) as Row[];
   return all.map(mapDoktrinRow);
 }
+

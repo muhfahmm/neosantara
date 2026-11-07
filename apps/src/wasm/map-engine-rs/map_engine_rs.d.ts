@@ -87,9 +87,9 @@ export interface InitOutput {
     readonly set_show_province_borders_on_map: (a: number) => void;
     readonly start_map_engine: (a: number, b: number, c: number, d: number, e: any, f: any) => [number, number];
     readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___f64______true_: (a: number, b: number, c: number) => void;
-    readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_3713499aaf1b2e10___features__gen_MouseEvent__MouseEvent______true_: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_3713499aaf1b2e10___features__gen_MouseEvent__MouseEvent______true__31: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_3713499aaf1b2e10___features__gen_MouseEvent__MouseEvent______true__32: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_986b12a1bf3d7301___features__gen_MouseEvent__MouseEvent______true_: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_986b12a1bf3d7301___features__gen_MouseEvent__MouseEvent______true__31: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_986b12a1bf3d7301___features__gen_MouseEvent__MouseEvent______true__32: (a: number, b: number, c: any) => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_free: (a: number, b: number, c: number) => void;

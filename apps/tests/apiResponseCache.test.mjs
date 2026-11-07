@@ -57,3 +57,4 @@ test('apiResponseCache: serves Brotli or Gzip based on Accept-Encoding', async (
   const bufGz = Buffer.from(await resGz.arrayBuffer());
   assert.equal(gunzipSync(bufGz).toString('utf8'), JSON.stringify({ data: 'compressed-test-data' }));
 });
+

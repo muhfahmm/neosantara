@@ -17,6 +17,7 @@ import { calculateKepuasan } from '@/app/logic/kepuasanCalculator';
 import { menuItems, subMenuItems } from '../navigasi_menu/navigationData';
 import { FpsMonitoring, type FpsMonitorWasmModule } from '../paused_menu/4_settings/fpsMonitoring';
 import { AttackDebugButton } from '@/app/debug/AttackDebugButton';
+import { useViewportMode } from '@/app/hooks/useViewportMode';
 
 interface Country {
     id: number;
@@ -205,176 +206,317 @@ export function Navbar({
         return () => window.removeEventListener('neosantara_map_camera', updateMapZoom);
     }, []);
 
+    const viewportMode = useViewportMode();
+    const isLandscapePhone = viewportMode === 'landscapePhone';
+    const isPortraitPhone = viewportMode === 'portraitPhone';
+    const isMobile = isLandscapePhone || isPortraitPhone;
+
     return (
-        <nav className="fixed top-2.5 sm:top-3 left-0 right-0 z-[201] pointer-events-none px-3 sm:px-5 xl:px-6 2xl:px-8 flex items-center justify-between select-none bg-transparent border-none shadow-none">
-            
-            {/* 1. Left Side: Circular Menu & Selected Badge */}
-            <div className="flex items-stretch gap-2 2xl:gap-2 shrink-0 relative z-20 pointer-events-auto">
-                <div className="flex items-center gap-2 2xl:gap-3 bg-root-surface border border-root-accent/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
-                {/* Circle Power Button */}
-                <div className="relative group shrink-0">
-                    <button
-                        onClick={onOpenGameMenu}
-                        data-tutorial="game-menu"
-                        title="Game Menu"
-                        className="w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-full bg-root-canvas border-[2px] border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all flex items-center justify-center cursor-pointer z-30"
-                    >
-                        <Power className="w-3.5 h-3.5 2xl:w-4 2xl:h-4" />
-                    </button>
-                    
-                    <div className="absolute top-[38px] lg:top-[42px] 2xl:top-[44px] left-1/2 -translate-x-1/2 bg-root-surface border border-root-accent/30 px-2 py-1 text-root-accent text-[8px] sm:text-[10px] font-black tracking-wider uppercase rounded-md whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        Game Menu
-                    </div>
-                </div>
-                <div data-tutorial="negara-terpilih" className="flex items-center gap-2 2xl:gap-3 px-2 2xl:px-3 py-0.5 sm:py-1 rounded-xl min-w-[110px] lg:min-w-[130px] 2xl:min-w-[160px]">
-                    {selectedCountry ? (
-                        <img 
-                            src={`https://flagcdn.com/w80/${selectedCountry.iso.toLowerCase()}.png`} 
-                            className="w-6 h-4 lg:w-7 lg:h-4.5 2xl:w-8 2xl:h-5 rounded-sm object-cover border border-root-accent/30"
-                            alt="flag"
-                            onError={(e) => {
-                                (e.target as HTMLImageElement).src = 'https://flagcdn.com/w80/un.png';
-                            }}
-                        />
-                    ) : (
-                        <div className="w-6 h-6 lg:w-7 lg:h-7 2xl:w-8 2xl:h-8 rounded-full bg-root-canvas border border-root-accent/30 flex items-center justify-center text-sm lg:text-base 2xl:text-xl">🌐
-                        </div>
-                    )}
-                    <div className="flex flex-col leading-tight">
-                        <span className="text-[10px] lg:text-[11px] 2xl:text-[12px] font-black text-root-text tracking-tight uppercase">
-                            {selectedCountry ? selectedCountry.country : 'Main Simulation'}
-                        </span>
-                        <span className="text-[8px] lg:text-[9px] 2xl:text-[10px] font-bold text-root-subtle uppercase tracking-widest">
-                            {selectedCountry ? selectedCountry.capital : 'Global Map'}
-                        </span>
-                    </div>
-                </div>
-                    </div>
-                    <FpsMonitoring wasmModuleRef={wasmModuleRef} />
-                </div>
-
-            {/* 2. Center: Live Stats Items */}
-            <div data-tutorial="navbar-ringkasan" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-3 overflow-hidden z-10 pointer-events-auto bg-root-surface border border-root-accent/30 px-3.5 lg:px-4.5 xl:px-5.5 2xl:px-4 py-1.5 2xl:py-2 rounded-2xl shadow-2xl">
-                <div className="flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-3 min-w-max">
-                    
-                    {/* 🔥 POPULASI DENGAN TOOLTIP DEMOGRAFI & KLIK KE KEPENDUDUKAN */}
-                    <button
-                        onClick={onOpenPopulasi}
-                        className="group relative flex-shrink-0 cursor-pointer text-left hover:opacity-85 transition-opacity"
-                        title="Klik untuk membuka Ringkasan Kependudukan"
-                    >
-                        <StatusItem 
-                            icon={<Users className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
-                            label="POPULASI" 
-                            value={
-                                <span className="flex items-center gap-1.5 2xl:gap-2 text-root-text">
-                                    <span className="inline-block w-[11ch] text-right tabular-nums">{populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
-                                    <span className={`${netDailyChange >= 0 ? 'text-root-accent' : 'text-rose-400'} inline-block w-[9ch] text-right tabular-nums text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
-                                        ({netPopulationLabel})
-                                    </span>
-                                </span>
-                            } 
-                        />
-                        {/* Tooltip Rincian Demografi Harian */}
-                        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max bg-root-surface border border-root-accent/30 rounded-xl p-3 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none">
-                            <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-1.5 border-b border-root-accent/20 pb-1.5 text-center">Rincian Demografi</p>
-                            <div className="grid grid-cols-2 gap-x-6 text-[11px] font-bold text-root-text">
-                                <span className="text-root-accent text-center">Lahir: +{dailyBirths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
-                                <span className="text-rose-400 text-center">Mati: -{dailyDeaths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
-                            </div>
-                            <div className="mt-1.5 pt-1.5 border-t border-root-accent/20 text-[10px] text-root-subtle text-center">
-                                Pertumbuhan Bersih: <span className={`font-bold ${netDailyChange >= 0 ? 'text-root-accent' : 'text-rose-400'}`}>{netPopulationLabel}</span>
-                            </div>
-                        </div>
-                    </button>
-
-                    <StatusItem
-                        icon={<Landmark className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
-                        label="KAS NEGARA"
-                        value={countryDetail ? (
-                            <span className="flex items-center gap-1.5 2xl:gap-2 text-root-text tabular-nums">
-                                <span className={`inline-block w-[16ch] text-right ${anggaran < 0 ? 'text-rose-400 font-black' : ''}`}>{formatCurrencyEM(anggaran)}</span>
-                                <span className={`${netBalance >= 0 ? 'text-root-accent' : 'text-rose-400'} inline-block w-[10ch] text-right text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
-                                    ({netBalanceLabel})
-                                </span>
-                            </span>
+        <nav
+            style={{
+                paddingTop: 'calc(var(--safe-top) + 0.35rem)',
+                paddingLeft: 'calc(var(--safe-left) + 0.5rem)',
+                paddingRight: 'calc(var(--safe-right) + 0.5rem)',
+            }}
+            className="fixed top-0 left-0 right-0 z-[201] pointer-events-none flex flex-col md:flex-row items-center justify-between select-none bg-transparent border-none shadow-none gap-1 sm:gap-2"
+        >
+            {/* Mode Landscape Phone: Tata letak kompak 1 baris, max-height ~38px, tanpa tombol Save/Restart/Zoom */}
+            {isLandscapePhone ? (
+                <div className="w-full flex items-center justify-between pointer-events-auto bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg h-[38px]">
+                    {/* Sisi Kiri: Power + Bendera Negara */}
+                    <div className="flex items-center gap-1.5 shrink-0">
+                        <button
+                            onClick={onOpenGameMenu}
+                            data-tutorial="game-menu"
+                            title="Game Menu"
+                            className="w-7 h-7 rounded-full bg-root-canvas border border-root-accent/40 text-root-accent flex items-center justify-center cursor-pointer active:scale-95"
+                        >
+                            <Power className="w-3.5 h-3.5" />
+                        </button>
+                        {selectedCountry ? (
+                            <img
+                                src={`https://flagcdn.com/w80/${selectedCountry.iso.toLowerCase()}.png`}
+                                className="w-5 h-3.5 rounded-sm object-cover border border-root-accent/30"
+                                alt={selectedCountry.country}
+                                onError={(e) => {
+                                    (e.target as HTMLImageElement).src = 'https://flagcdn.com/w80/un.png';
+                                }}
+                            />
                         ) : (
-                            '-'
+                            <span className="text-xs">🌐</span>
                         )}
-                    />
+                        <span className="text-[10px] font-black text-root-text uppercase tracking-tight max-w-[85px] truncate">
+                            {selectedCountry ? selectedCountry.country : 'Main'}
+                        </span>
+                    </div>
 
-                    <button 
-                        onClick={onOpenKepuasan}
-                        className="cursor-pointer hover:opacity-80 transition-opacity"
-                        title="Klik untuk melihat detail kepuasan"
-                    >
-                        <StatusItem 
-                            icon={<Smile className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
-                            label="KEPUASAN" 
-                            value={`${Math.round(kepuasanScore)}%`}
-                            color={getKepuasanColor(kepuasanScore)}
-                        />
-                    </button>
+                    {/* Tengah: Hanya Ikon + Angka (Populasi, Kas, Kepuasan, Rating, Kesejahteraan) */}
+                    <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar shrink min-w-0 text-[10px] font-black">
+                        <button onClick={onOpenPopulasi} className="flex items-center gap-1 text-root-text shrink-0 active:opacity-75">
+                            <Users className="w-3 h-3 text-root-accent" />
+                            <span>{(populasi >= 1e6 ? `${(populasi / 1e6).toFixed(1)}M` : populasi >= 1e3 ? `${(populasi / 1e3).toFixed(0)}k` : populasi.toString())}</span>
+                        </button>
 
-                    <button
-                        onClick={onOpenPeringkat}
-                        className="cursor-pointer transition-opacity hover:opacity-80"
-                        title="Klik untuk melihat detail peringkat"
-                    >
-                        <StatusItem
-                            icon={<Star className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 fill-root-accent text-root-accent" />}
-                            label="PERINGKAT"
-                            value={`${presidentRating}/100`}
-                            color={getPresidentRatingColor(presidentRating)}
-                        />
-                    </button>
+                        <div className="flex items-center gap-1 text-root-text shrink-0">
+                            <Landmark className="w-3 h-3 text-root-accent" />
+                            <span className={anggaran < 0 ? 'text-rose-400' : ''}>
+                                {Math.abs(anggaran) >= 1e9
+                                    ? `${(anggaran / 1e9).toFixed(1)}B`
+                                    : Math.abs(anggaran) >= 1e6
+                                    ? `${(anggaran / 1e6).toFixed(1)}M`
+                                    : Math.abs(anggaran) >= 1e3
+                                    ? `${(anggaran / 1e3).toFixed(0)}k`
+                                    : anggaran.toFixed(0)}
+                            </span>
+                        </div>
 
-                    <button 
-                        onClick={onOpenKesejahteraan}
-                        className="cursor-pointer hover:opacity-80 transition-opacity"
-                        title="Klik untuk melihat detail kesejahteraan"
-                    >
-                        <StatusItem
-                            icon={<Activity className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
-                            label="KESEJAHTERAAN"
-                            value={`${kesejahteraan}/100`}
-                            color={getKesejahteraanColorClass(kesejahteraan)}
-                        />
-                    </button>
-                </div>
-            </div>
+                        <button onClick={onOpenKepuasan} className="flex items-center gap-1 shrink-0 active:opacity-75">
+                            <Smile className="w-3 h-3 text-root-accent" />
+                            <span className={getKepuasanColor(kepuasanScore)}>{Math.round(kepuasanScore)}%</span>
+                        </button>
 
-            {/* 3. Right Side: Save & Restart Buttons */}
-            <div className="flex items-center gap-1.5 2xl:gap-1.5 shrink-0 relative z-20 pointer-events-auto bg-root-surface border border-root-accent/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
-                <AttackDebugButton selectedCountry={selectedCountry} countryDetail={countryDetail} />
-                <div
-                    role="status"
-                    aria-label={`Zoom peta ${mapZoom.toFixed(1)} kali`}
-                    title="Tingkat zoom peta"
-                    className="flex h-8 min-w-[48px] flex-col items-center justify-center rounded-lg border border-root-accent/20 bg-root-canvas px-1.5 lg:h-9 lg:min-w-[54px] 2xl:h-10"
-                >
-                    <span className="text-[7px] font-bold leading-none tracking-wider text-root-subtle">ZOOM</span>
-                    <span className="text-[10px] font-black leading-tight tabular-nums text-root-accent lg:text-[11px]">
+                        <button onClick={onOpenPeringkat} className="flex items-center gap-1 shrink-0 active:opacity-75">
+                            <Star className="w-3 h-3 fill-root-accent text-root-accent" />
+                            <span className={getPresidentRatingColor(presidentRating)}>{presidentRating}</span>
+                        </button>
+
+                        <button onClick={onOpenKesejahteraan} className="flex items-center gap-1 shrink-0 active:opacity-75">
+                            <Activity className="w-3 h-3 text-root-accent" />
+                            <span className={getKesejahteraanColorClass(kesejahteraan)}>{kesejahteraan}</span>
+                        </button>
+                    </div>
+
+                    {/* Sisi Kanan: Status ringkas zoom */}
+                    <div className="shrink-0 text-[9px] font-black text-root-accent bg-root-canvas border border-root-accent/30 rounded px-1.5 py-0.5">
                         {mapZoom.toFixed(1)}x
-                    </span>
+                    </div>
                 </div>
-                <button
-                    onClick={onOpenSaveModal}
-                    data-tutorial="tombol-simpan"
-                    title="Simpan Game"
-                    className="flex items-center justify-center w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-xl border border-root-accent/30 bg-root-canvas text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer"
-                >
-                    <Save className="w-3.5 h-3.5 2xl:w-4 2xl:h-4" />
-                </button>
-                
-                <button
-                    onClick={onOpenRestartConfirm}
-                    title="Atur Ulang Game"
-                    className="flex items-center justify-center w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-xl border border-root-accent/30 bg-root-canvas text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer"
-                >
-                    <RotateCcw className="w-3.5 h-3.5 2xl:w-4 2xl:h-4" />
-                </button>
-            </div>
+            ) : isPortraitPhone ? (
+                /* Mode Portrait Phone: Dua baris ringkas */
+                <div className="w-full flex flex-col gap-1 pointer-events-auto">
+                    {/* Baris 1: Menu + Negara + Zoom */}
+                    <div className="flex items-center justify-between bg-root-surface/95 border border-root-accent/30 rounded-xl px-2.5 py-1 shadow-lg h-[36px]">
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={onOpenGameMenu}
+                                title="Game Menu"
+                                className="w-7 h-7 rounded-full bg-root-canvas border border-root-accent/40 text-root-accent flex items-center justify-center cursor-pointer active:scale-95"
+                            >
+                                <Power className="w-3.5 h-3.5" />
+                            </button>
+                            {selectedCountry && (
+                                <img
+                                    src={`https://flagcdn.com/w80/${selectedCountry.iso.toLowerCase()}.png`}
+                                    className="w-5 h-3.5 rounded-sm object-cover border border-root-accent/30"
+                                    alt={selectedCountry.country}
+                                />
+                            )}
+                            <span className="text-xs font-black text-root-text uppercase tracking-tight truncate max-w-[140px]">
+                                {selectedCountry ? selectedCountry.country : 'Main Simulation'}
+                            </span>
+                        </div>
+                        <div className="text-[10px] font-black text-root-accent bg-root-canvas border border-root-accent/30 rounded px-2 py-0.5">
+                            {mapZoom.toFixed(1)}x
+                        </div>
+                    </div>
+
+                    {/* Baris 2: Metrik Ikon + Angka */}
+                    <div className="flex items-center justify-around bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg h-[32px] text-[10px] font-black">
+                        <button onClick={onOpenPopulasi} className="flex items-center gap-1 text-root-text active:opacity-75">
+                            <Users className="w-3 h-3 text-root-accent" />
+                            <span>{(populasi >= 1e6 ? `${(populasi / 1e6).toFixed(1)}M` : populasi.toLocaleString('id-ID', { maximumFractionDigits: 0 }))}</span>
+                        </button>
+                        <div className="flex items-center gap-1 text-root-text">
+                            <Landmark className="w-3 h-3 text-root-accent" />
+                            <span className={anggaran < 0 ? 'text-rose-400' : ''}>
+                                {Math.abs(anggaran) >= 1e9 ? `${(anggaran / 1e9).toFixed(1)}B` : Math.abs(anggaran) >= 1e6 ? `${(anggaran / 1e6).toFixed(1)}M` : formatCurrencyEM(anggaran)}
+                            </span>
+                        </div>
+                        <button onClick={onOpenKepuasan} className="flex items-center gap-1 active:opacity-75">
+                            <Smile className="w-3 h-3 text-root-accent" />
+                            <span className={getKepuasanColor(kepuasanScore)}>{Math.round(kepuasanScore)}%</span>
+                        </button>
+                        <button onClick={onOpenPeringkat} className="flex items-center gap-1 active:opacity-75">
+                            <Star className="w-3 h-3 fill-root-accent text-root-accent" />
+                            <span className={getPresidentRatingColor(presidentRating)}>{presidentRating}</span>
+                        </button>
+                        <button onClick={onOpenKesejahteraan} className="flex items-center gap-1 active:opacity-75">
+                            <Activity className="w-3 h-3 text-root-accent" />
+                            <span className={getKesejahteraanColorClass(kesejahteraan)}>{kesejahteraan}</span>
+                        </button>
+                    </div>
+                </div>
+            ) : (
+                /* Mode Desktop / Default: Tampilan asli tidak berubah sama sekali */
+                <>
+                    {/* 1. Left Side: Circular Menu & Selected Badge */}
+                    <div className="flex items-stretch gap-2 2xl:gap-2 shrink-0 relative z-20 pointer-events-auto">
+                        <div className="flex items-center gap-2 2xl:gap-3 bg-root-surface border border-root-accent/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
+                            {/* Circle Power Button */}
+                            <div className="relative group shrink-0">
+                                <button
+                                    onClick={onOpenGameMenu}
+                                    data-tutorial="game-menu"
+                                    title="Game Menu"
+                                    className="w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-full bg-root-canvas border-[2px] border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all flex items-center justify-center cursor-pointer z-30"
+                                >
+                                    <Power className="w-3.5 h-3.5 2xl:w-4 2xl:h-4" />
+                                </button>
+                                
+                                <div className="absolute top-[38px] lg:top-[42px] 2xl:top-[44px] left-1/2 -translate-x-1/2 bg-root-surface border border-root-accent/30 px-2 py-1 text-root-accent text-[8px] sm:text-[10px] font-black tracking-wider uppercase rounded-md whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                    Game Menu
+                                </div>
+                            </div>
+                            <div data-tutorial="negara-terpilih" className="flex items-center gap-2 2xl:gap-3 px-2 2xl:px-3 py-0.5 sm:py-1 rounded-xl min-w-[110px] lg:min-w-[130px] 2xl:min-w-[160px]">
+                                {selectedCountry ? (
+                                    <img 
+                                        src={`https://flagcdn.com/w80/${selectedCountry.iso.toLowerCase()}.png`} 
+                                        className="w-6 h-4 lg:w-7 lg:h-4.5 2xl:w-8 2xl:h-5 rounded-sm object-cover border border-root-accent/30"
+                                        alt="flag"
+                                        onError={(e) => {
+                                            (e.target as HTMLImageElement).src = 'https://flagcdn.com/w80/un.png';
+                                        }}
+                                    />
+                                ) : (
+                                    <div className="w-6 h-6 lg:w-7 lg:h-7 2xl:w-8 2xl:h-8 rounded-full bg-root-canvas border border-root-accent/30 flex items-center justify-center text-sm lg:text-base 2xl:text-xl">🌐
+                                    </div>
+                                )}
+                                <div className="flex flex-col leading-tight">
+                                    <span className="text-[10px] lg:text-[11px] 2xl:text-[12px] font-black text-root-text tracking-tight uppercase">
+                                        {selectedCountry ? selectedCountry.country : 'Main Simulation'}
+                                    </span>
+                                    <span className="text-[8px] lg:text-[9px] 2xl:text-[10px] font-bold text-root-subtle uppercase tracking-widest">
+                                        {selectedCountry ? selectedCountry.capital : 'Global Map'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <FpsMonitoring wasmModuleRef={wasmModuleRef} />
+                    </div>
+
+                    {/* 2. Center: Live Stats Items */}
+                    <div data-tutorial="navbar-ringkasan" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-3 overflow-hidden z-10 pointer-events-auto bg-root-surface border border-root-accent/30 px-3.5 lg:px-4.5 xl:px-5.5 2xl:px-4 py-1.5 2xl:py-2 rounded-2xl shadow-2xl">
+                        <div className="flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-3 min-w-max">
+                            
+                            {/* POPULASI */}
+                            <button
+                                onClick={onOpenPopulasi}
+                                className="group relative flex-shrink-0 cursor-pointer text-left hover:opacity-85 transition-opacity"
+                                title="Klik untuk membuka Ringkasan Kependudukan"
+                            >
+                                <StatusItem 
+                                    icon={<Users className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
+                                    label="POPULASI" 
+                                    value={
+                                        <span className="flex items-center gap-1.5 2xl:gap-2 text-root-text">
+                                            <span className="inline-block w-[11ch] text-right tabular-nums">{populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
+                                            <span className={`${netDailyChange >= 0 ? 'text-root-accent' : 'text-rose-400'} inline-block w-[9ch] text-right tabular-nums text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
+                                                ({netPopulationLabel})
+                                            </span>
+                                        </span>
+                                    } 
+                                />
+                                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max bg-root-surface border border-root-accent/30 rounded-xl p-3 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none">
+                                    <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-1.5 border-b border-root-accent/20 pb-1.5 text-center">Rincian Demografi</p>
+                                    <div className="grid grid-cols-2 gap-x-6 text-[11px] font-bold text-root-text">
+                                        <span className="text-root-accent text-center">Lahir: +{dailyBirths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
+                                        <span className="text-rose-400 text-center">Mati: -{dailyDeaths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
+                                    </div>
+                                    <div className="mt-1.5 pt-1.5 border-t border-root-accent/20 text-[10px] text-root-subtle text-center">
+                                        Pertumbuhan Bersih: <span className={`font-bold ${netDailyChange >= 0 ? 'text-root-accent' : 'text-rose-400'}`}>{netPopulationLabel}</span>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <StatusItem
+                                icon={<Landmark className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
+                                label="KAS NEGARA"
+                                value={countryDetail ? (
+                                    <span className="flex items-center gap-1.5 2xl:gap-2 text-root-text tabular-nums">
+                                        <span className={`inline-block w-[16ch] text-right ${anggaran < 0 ? 'text-rose-400 font-black' : ''}`}>{formatCurrencyEM(anggaran)}</span>
+                                        <span className={`${netBalance >= 0 ? 'text-root-accent' : 'text-rose-400'} inline-block w-[10ch] text-right text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
+                                            ({netBalanceLabel})
+                                        </span>
+                                    </span>
+                                ) : (
+                                    '-'
+                                )}
+                            />
+
+                            <button 
+                                onClick={onOpenKepuasan}
+                                className="cursor-pointer hover:opacity-80 transition-opacity"
+                                title="Klik untuk melihat detail kepuasan"
+                            >
+                                <StatusItem 
+                                    icon={<Smile className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
+                                    label="KEPUASAN" 
+                                    value={`${Math.round(kepuasanScore)}%`}
+                                    color={getKepuasanColor(kepuasanScore)}
+                                />
+                            </button>
+
+                            <button
+                                onClick={onOpenPeringkat}
+                                className="cursor-pointer transition-opacity hover:opacity-80"
+                                title="Klik untuk melihat detail peringkat"
+                            >
+                                <StatusItem
+                                    icon={<Star className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 fill-root-accent text-root-accent" />}
+                                    label="PERINGKAT"
+                                    value={`${presidentRating}/100`}
+                                    color={getPresidentRatingColor(presidentRating)}
+                                />
+                            </button>
+
+                            <button 
+                                onClick={onOpenKesejahteraan}
+                                className="cursor-pointer hover:opacity-80 transition-opacity"
+                                title="Klik untuk melihat detail kesejahteraan"
+                            >
+                                <StatusItem
+                                    icon={<Activity className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
+                                    label="KESEJAHTERAAN"
+                                    value={`${kesejahteraan}/100`}
+                                    color={getKesejahteraanColorClass(kesejahteraan)}
+                                />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* 3. Right Side: Save & Restart Buttons */}
+                    <div className="flex items-center gap-1.5 2xl:gap-1.5 shrink-0 relative z-20 pointer-events-auto bg-root-surface border border-root-accent/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
+                        <AttackDebugButton selectedCountry={selectedCountry} countryDetail={countryDetail} />
+                        <div
+                            role="status"
+                            aria-label={`Zoom peta ${mapZoom.toFixed(1)} kali`}
+                            title="Tingkat zoom peta"
+                            className="flex h-8 min-w-[48px] flex-col items-center justify-center rounded-lg border border-root-accent/20 bg-root-canvas px-1.5 lg:h-9 lg:min-w-[54px] 2xl:h-10"
+                        >
+                            <span className="text-[7px] font-bold leading-none tracking-wider text-root-subtle">ZOOM</span>
+                            <span className="text-[10px] font-black leading-tight tabular-nums text-root-accent lg:text-[11px]">
+                                {mapZoom.toFixed(1)}x
+                            </span>
+                        </div>
+                        <button
+                            onClick={onOpenSaveModal}
+                            data-tutorial="tombol-simpan"
+                            title="Simpan Game"
+                            className="flex items-center justify-center w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-xl border border-root-accent/30 bg-root-canvas text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer"
+                        >
+                            <Save className="w-3.5 h-3.5 2xl:w-4 2xl:h-4" />
+                        </button>
+                        
+                        <button
+                            onClick={onOpenRestartConfirm}
+                            title="Atur Ulang Game"
+                            className="flex items-center justify-center w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-xl border border-root-accent/30 bg-root-canvas text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer"
+                        >
+                            <RotateCcw className="w-3.5 h-3.5 2xl:w-4 2xl:h-4" />
+                        </button>
+                    </div>
+                </>
+            )}
         </nav>
     );
 }

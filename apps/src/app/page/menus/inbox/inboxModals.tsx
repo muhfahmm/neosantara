@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { Inbox, X, Trash2, Clock, CheckCircle2, AlertTriangle, ShieldAlert, ChevronRight, User } from 'lucide-react';
 import PausedMenuFrame from '@/app/page/root_modals_design_menu/rootFrameMenu';
 import RootModalCloseButton from '@/app/page/root_modals_design_menu/RootModalCloseButton';
+import { useViewportMode } from '@/app/hooks/useViewportMode';
 import { getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 import { NotificationMessage } from './logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import KepuasanNotification from './logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanNotification';
@@ -90,6 +91,10 @@ export default function TopLeftIcon({
     });
   }, [notifications]);
   const unreadCount = visibleNotifications.filter(n => !n.isRead).length;
+  const viewportMode = useViewportMode();
+  const isLandscapePhone = viewportMode === 'landscapePhone';
+  const isPortraitPhone = viewportMode === 'portraitPhone';
+  const isMobile = isLandscapePhone || isPortraitPhone;
   const orderedNotifications = useMemo(() => {
     return [...visibleNotifications].sort((first, second) => {
       const firstArrivalDate = first.diplomacyArrivalDate;
@@ -532,7 +537,19 @@ export default function TopLeftIcon({
   return (
     <>
       {mounted && !isWarAnalysisActive && createPortal(
-        <div className="fixed top-24 left-7 z-[100] flex flex-col items-start gap-2 pointer-events-auto">
+        <div
+          style={{
+            top: isLandscapePhone ? 'calc(var(--safe-top) + 2.75rem)' : isPortraitPhone ? 'calc(var(--safe-top) + 4.75rem)' : undefined,
+            left: isMobile ? 'calc(var(--safe-left) + 0.5rem)' : undefined,
+          }}
+          className={`fixed z-[100] flex flex-col items-start gap-2 pointer-events-auto ${
+            isLandscapePhone
+              ? ''
+              : isPortraitPhone
+              ? ''
+              : 'top-24 left-7'
+          }`}
+        >
           <button
             onClick={() => {
               if (toastNotification) {
@@ -542,7 +559,13 @@ export default function TopLeftIcon({
               if (onClick) onClick();
             }}
             title="Inbox - Pesan dan Notifikasi"
-            className="relative flex h-12 w-12 cursor-pointer items-center justify-center transition-transform group hover:scale-110 lg:h-14 lg:w-14 xl:h-16 xl:w-16"
+            className={`relative flex cursor-pointer items-center justify-center transition-transform group hover:scale-110 active:scale-95 ${
+              isLandscapePhone
+                ? 'h-8 w-8'
+                : isPortraitPhone
+                ? 'h-10 w-10'
+                : 'h-12 w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16'
+            }`}
           >
             <div className="relative flex h-full w-full items-center justify-center">
               <Image
@@ -551,10 +574,18 @@ export default function TopLeftIcon({
                 width={72}
                 height={72}
                 priority
-                className="h-14 w-14 object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]"
+                className={`object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
+                  isLandscapePhone
+                    ? 'h-9 w-9'
+                    : isPortraitPhone
+                    ? 'h-11 w-11'
+                    : 'h-14 w-14 lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]'
+                }`}
               />
               {unreadCount > 0 && (
-                <div className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-600 px-1 text-[10px] font-black text-white shadow-lg border-2 border-root-canvas animate-pulse">
+                <div className={`absolute -top-1 -right-1 flex items-center justify-center rounded-full bg-rose-600 px-1 font-black text-white shadow-lg border-2 border-root-canvas animate-pulse ${
+                  isLandscapePhone ? 'h-4 min-w-[16px] text-[8px]' : 'h-5 min-w-[20px] text-[10px]'
+                }`}>
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </div>
               )}
@@ -566,7 +597,7 @@ export default function TopLeftIcon({
             className={`transition-[opacity,transform] duration-300 ease-out origin-top-left will-change-[opacity,transform] ${showToast && toastNotification
                 ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
                 : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
-              } flex h-28 w-64 flex-col rounded-xl border-2 border-root-accent bg-root-surface p-2.5 shadow-lg cursor-pointer group`}
+              } flex ${isLandscapePhone ? 'h-24 w-52' : 'h-28 w-64'} flex-col rounded-xl border-2 border-root-accent bg-root-surface p-2.5 shadow-lg cursor-pointer group`}
             onClick={() => {
               if (toastNotification) {
                 dismissedToastIdRef.current = toastNotification.id;

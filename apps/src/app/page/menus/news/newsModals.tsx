@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { Newspaper, X, Swords, Flag, Coins, ShieldAlert, Sparkles, Filter } from 'lucide-react';
 import PausedMenuFrame from '@/app/page/root_modals_design_menu/rootFrameMenu';
 import RootModalCloseButton from '@/app/page/root_modals_design_menu/RootModalCloseButton';
+import { useViewportMode } from '@/app/hooks/useViewportMode';
 import { InvasionNewsData } from './logic/1_berita_invasi/beritaInvasiLogic';
 import { AnnexationNewsData } from './logic/2_berita_aneksasi/beritaAneksasiLogic';
 import { ResourceLootNewsData } from './logic/3_berita_pengambilan_sda/beritaPengambilanSDALogic';
@@ -83,6 +84,10 @@ export default function TopRightNewsIcon({
   onOpenNewsCountry,
 }: TopRightNewsIconProps) {
   const [mounted, setMounted] = useState(false);
+  const viewportMode = useViewportMode();
+  const isLandscapePhone = viewportMode === 'landscapePhone';
+  const isPortraitPhone = viewportMode === 'portraitPhone';
+  const isMobile = isLandscapePhone || isPortraitPhone;
   const [filterCategory, setFilterCategory] = useState<NewsCategory>('semua');
   const [filterType, setFilterType] = useState<'semua' | NewsType>('semua');
 
@@ -241,7 +246,17 @@ export default function TopRightNewsIcon({
       <button
         onClick={onClick}
         title="Berita - Berita dan Update Negara"
-        className="fixed top-40 right-7 z-[100] flex h-12 w-12 cursor-pointer items-center justify-center transition-transform group hover:scale-110 lg:top-40 lg:h-14 lg:w-14 xl:top-48 xl:h-16 xl:w-16"
+        style={{
+          top: isLandscapePhone ? 'calc(var(--safe-top) + 5.25rem)' : isPortraitPhone ? 'calc(var(--safe-top) + 7.75rem)' : undefined,
+          right: isMobile ? 'calc(var(--safe-right) + 0.5rem)' : undefined,
+        }}
+        className={`fixed z-[100] flex cursor-pointer items-center justify-center transition-transform group hover:scale-110 active:scale-95 ${
+          isLandscapePhone
+            ? 'h-8 w-8'
+            : isPortraitPhone
+            ? 'h-10 w-10'
+            : 'top-40 right-7 h-12 w-12 lg:top-40 lg:h-14 lg:w-14 xl:top-48 xl:h-16 xl:w-16'
+        }`}
       >
         <Image
           src="/images/game/interface/menu/news.svg"
@@ -249,10 +264,18 @@ export default function TopRightNewsIcon({
           aria-hidden="true"
           width={72}
           height={72}
-          className="h-14 w-14 object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]"
+          className={`object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
+            isLandscapePhone
+              ? 'h-9 w-9'
+              : isPortraitPhone
+              ? 'h-11 w-11'
+              : 'h-14 w-14 lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]'
+          }`}
         />
         {newsList.length > 0 && (
-          <span className="absolute -top-1 -right-1 flex h-4 w-4 lg:h-5 lg:w-5 items-center justify-center rounded-full bg-rose-500 text-[9px] lg:text-[10px] font-black text-white shadow-md border border-root-surface">
+          <span className={`absolute -top-1 -right-1 flex items-center justify-center rounded-full bg-rose-500 font-black text-white shadow-md border border-root-surface ${
+            isLandscapePhone ? 'h-3.5 w-3.5 text-[8px]' : 'h-4 w-4 lg:h-5 lg:w-5 text-[9px] lg:text-[10px]'
+          }`}>
             {newsList.length}
           </span>
         )}
@@ -260,7 +283,15 @@ export default function TopRightNewsIcon({
 
       {/* 🔥 POPUP TOAST NOTIFIKASI BERITA DI SEBELAH KIRI */}
       {mounted && showToast && toastNews && createPortal(
-        <div className="fixed top-[19rem] left-7 z-[100100] pointer-events-auto">
+        <div
+          style={{
+            top: isLandscapePhone ? 'calc(var(--safe-top) + 5.5rem)' : isPortraitPhone ? 'calc(var(--safe-top) + 12rem)' : undefined,
+            left: isMobile ? 'calc(var(--safe-left) + 0.5rem)' : undefined,
+          }}
+          className={`fixed z-[100100] pointer-events-auto ${
+            isLandscapePhone || isPortraitPhone ? '' : 'top-[19rem] left-7'
+          }`}
+        >
           <div
             onClick={() => {
               if (toastNews) {

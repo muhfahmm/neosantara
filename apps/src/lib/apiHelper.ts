@@ -22,8 +22,15 @@ export function resolveApiUrl(path: string): string {
     if (!isTauriLocalhost && (origin.startsWith('http://') || origin.startsWith('https://'))) {
       return `${origin}${cleanPath}`;
     }
-    const apiHost = process.env.NEXT_PUBLIC_API_HOST || 'http://127.0.0.1:3000';
-    return `${apiHost}${cleanPath}`;
+    const configuredHost = process.env.NEXT_PUBLIC_API_HOST;
+    if (configuredHost) {
+      return `${configuredHost}${cleanPath}`;
+    }
+    const tauriDevHost = process.env.NEXT_PUBLIC_TAURI_DEV_HOST;
+    if (tauriDevHost) {
+      return `http://${tauriDevHost}:3000${cleanPath}`;
+    }
+    return `http://192.168.66.5:3000${cleanPath}`;
   }
 
   return cleanPath;

@@ -51,3 +51,4 @@ test('unknown country falls back to the full list (previous behaviour)', async (
   assert.equal(Array.isArray(res), true);
   assert.equal(n, 2);
 });
+

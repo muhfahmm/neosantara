@@ -1,9 +1,9 @@
-@media (min-width: 640px) and (max-width: 1023px) {
-  .fixed.inset-0:has(> .modal-responsive-shell) {
-    padding: 100px 24px 16px !important;
-  }
-
-  .modal-responsive-shell {
-    max-height: calc(100dvh - 116px) !important;
+@media (min-width: 640px) and (max-width: 1023px) and (min-height: 501px) {
+  :root {
+    --modal-top-offset: 100px;
+    --modal-bottom-offset: 16px;
+    --modal-side-offset: 24px;
+    --modal-max-height: calc(100dvh - 116px);
+    --modal-max-width: 768px;
   }
 }

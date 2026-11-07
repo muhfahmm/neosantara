@@ -27,32 +27,17 @@ let embassyMap: Record<string, EmbassyRecordItem[]> = {};
 export function setEmbassyData(rows: EmbassyDataRow[]): void {
   const nextEmbassyMap: Record<string, EmbassyRecordItem[]> = {};
 
-  rows.forEach(({ country_slug, mitra_country, embassy_type, status }) => {
-    if (
-      typeof country_slug !== 'string' ||
-      !country_slug.trim() ||
-      typeof mitra_country !== 'string' ||
-      !mitra_country.trim() ||
-      typeof embassy_type !== 'string' ||
-      !embassy_type.trim() ||
-      typeof status !== 'string' ||
-      !status.trim()
-    ) {
-      throw new Error('Invalid row in database_kedutaan_besar');
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    if (row && row.country_slug && row.mitra_country) {
+      const slug = row.country_slug;
+      (nextEmbassyMap[slug] ??= []).push({
+        mitra: row.mitra_country,
+        type: row.embassy_type || 'Kedutaan Besar',
+        status: row.status || 'Aktif',
+      });
     }
-
-    const slug = normalizeSlug(country_slug);
-    if (!slug) {
-      throw new Error('Invalid country slug in database_kedutaan_besar');
-    }
-
-    nextEmbassyMap[slug] ??= [];
-    nextEmbassyMap[slug].push({
-      mitra: mitra_country,
-      type: embassy_type,
-      status,
-    });
-  });
+  }
 
   if (rows.length === 0) {
     throw new Error('database_kedutaan_besar returned no rows');

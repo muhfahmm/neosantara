@@ -121,28 +121,14 @@ const normalizeSlug = (name?: string): string => {
 export function setBaseRelationData(rows: BaseRelationRow[]): void {
   const nextRelationsDb: Record<string, Record<string, number>> = {};
 
-  rows.forEach(({ country_slug, target_country, relation }) => {
-    if (
-      typeof country_slug !== 'string' ||
-      !country_slug.trim() ||
-      typeof target_country !== 'string' ||
-      !target_country.trim() ||
-      !Number.isInteger(relation) ||
-      relation < 0 ||
-      relation > 100
-    ) {
-      throw new Error('Invalid row in database_hubungan_antar_negara');
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    if (row && row.country_slug && row.target_country) {
+      const sourceSlug = row.country_slug;
+      const targetName = row.target_country.toLowerCase();
+      (nextRelationsDb[sourceSlug] ??= {})[targetName] = row.relation;
     }
-
-    const sourceSlug = normalizeSlug(country_slug);
-    const targetName = target_country.trim().toLowerCase();
-    if (!sourceSlug) {
-      throw new Error('Invalid country slug in database_hubungan_antar_negara');
-    }
-
-    nextRelationsDb[sourceSlug] ??= {};
-    nextRelationsDb[sourceSlug][targetName] = relation;
-  });
+  }
 
   if (rows.length === 0) {
     throw new Error('database_hubungan_antar_negara returned no rows');

@@ -1,9 +1,7 @@
 {
   "$schema": "../../node_modules/@tauri-apps/cli/config.schema.json",
   "build": {
-    "devUrl": "http://localhost:3002",
-    "beforeDevCommand": "npm --prefix .. run tauri:serve-mobile",
-    "beforeBuildCommand": "npm run build -w frontend",
-    "frontendDist": "../dist"
+    "devUrl": "http://localhost:3000",
+    "beforeDevCommand": "npm --prefix .. run dev"
   }
 }

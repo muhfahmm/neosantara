@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { useViewportMode } from '@/app/hooks/useViewportMode';
 import PenelitianSelectionModal, { SelectionCategoryKey } from './penelitianSelectionModal';
 import PenelitianPageModal, { CategoryKey } from './penelitianPageMenu';
 
@@ -25,6 +26,10 @@ export default function BottomLeftPenelitianIcon({
   currentDate,
 }: BottomLeftPenelitianIconProps) {
   const [selectedFocus, setSelectedFocus] = useState<SelectionCategoryKey | null>(null);
+  const viewportMode = useViewportMode();
+  const isLandscapePhone = viewportMode === 'landscapePhone';
+  const isPortraitPhone = viewportMode === 'portraitPhone';
+  const isMobile = isLandscapePhone || isPortraitPhone;
 
   useEffect(() => {
     if (!isOpen) {
@@ -59,7 +64,17 @@ export default function BottomLeftPenelitianIcon({
       <button
         onClick={onClick}
         title="Penelitian - Riset dan Teknologi"
-        className="fixed bottom-3 left-7 z-[100] flex h-12 w-12 cursor-pointer items-center justify-center transition-transform group hover:scale-110 lg:bottom-4 lg:h-14 lg:w-14 xl:bottom-6 xl:h-16 xl:w-16 2xl:bottom-12"
+        style={{
+          bottom: isLandscapePhone ? 'calc(var(--safe-bottom) + 0.5rem)' : isPortraitPhone ? 'calc(var(--safe-bottom) + 4.5rem)' : undefined,
+          left: isLandscapePhone ? 'calc(var(--safe-left) + 2.75rem)' : isPortraitPhone ? 'calc(var(--safe-left) + 0.5rem)' : undefined,
+        }}
+        className={`fixed z-[100] flex cursor-pointer items-center justify-center transition-transform group hover:scale-110 active:scale-95 ${
+          isLandscapePhone
+            ? 'h-8 w-8'
+            : isPortraitPhone
+            ? 'h-10 w-10'
+            : 'bottom-3 left-7 h-12 w-12 lg:bottom-4 lg:h-14 lg:w-14 xl:bottom-6 xl:h-16 xl:w-16 2xl:bottom-12'
+        }`}
       >
         <Image
           src="/images/game/interface/menu/research.svg"
@@ -67,7 +82,13 @@ export default function BottomLeftPenelitianIcon({
           aria-hidden="true"
           width={72}
           height={72}
-          className="h-14 w-14 object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]"
+          className={`object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
+            isLandscapePhone
+              ? 'h-9 w-9'
+              : isPortraitPhone
+              ? 'h-11 w-11'
+              : 'h-14 w-14 lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]'
+          }`}
         />
       </button>
 
