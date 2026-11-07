@@ -106,6 +106,7 @@ import { setCurrentGameDateString } from '@/app/logic/gameSessionState';
 import { TutorialOverlay } from '../tutorials_menu/TutorialOverlay';
 import { TutorialWelcomeModal } from '../tutorials_menu/TutorialWelcomeModal';
 import { getTutorialProgress, resetTutorial, setTutorialProgress, startTutorial } from '../tutorials_menu/tutorialProgress';
+import { useViewportMode } from '@/app/hooks/useViewportMode';
 import {
     calculateKepuasan,
     calculateKeterbukaanScore,
@@ -705,7 +706,16 @@ function loadCityBoundaryCells(path: string) {
         .catch(err => console.error(`Failed to load official city boundary data from ${path}:`, err));
 }
 if (typeof window !== 'undefined') {
-    loadCityBoundaryCells('/city_province_cells.json');
+    // Tunda pemuatan data boundary 18.5 MB ke idle period agar rendering peta awal instan
+    if ('requestIdleCallback' in window) {
+        (window as Window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => void }).requestIdleCallback(() => {
+            loadCityBoundaryCells('/city_province_cells.json');
+        }, { timeout: 3000 });
+    } else {
+        setTimeout(() => {
+            loadCityBoundaryCells('/city_province_cells.json');
+        }, 1500);
+    }
 }
 
 // Only use a supplied administrative boundary; never invent city borders.
@@ -742,11 +752,16 @@ function getCapitalFlagsForCurrentTerritories(settingsOverride?: MapDisplaySetti
         String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
     const settings = settingsOverride || getMapDisplaySettings();
+    const isMobileDevice = typeof window !== 'undefined' &&
+        (window.matchMedia('(orientation: landscape) and (max-height: 500px)').matches ||
+         window.matchMedia('(orientation: portrait) and (max-width: 640px)').matches);
+
     let citiesPool: MapCity[] = [];
     if (settings.showCapitals) {
         citiesPool = citiesPool.concat(CAPITALS_DATA as MapCity[]);
     }
-    if (settings.showMajorCities) {
+    // Di mobile, kota sekunder/major cities hanya ditampilkan jika bukan mobile atau user secara eksplisit mengaktifkannya dan tidak sedang mode mobile
+    if (settings.showMajorCities && !isMobileDevice) {
         citiesPool = citiesPool.concat(MAJOR_CITIES_DATA as MapCity[]);
     }
 
@@ -1088,6 +1103,10 @@ function getMarketProducers(
 
 export default function MapPage() {
     const router = useRouter();
+    const viewportMode = useViewportMode();
+    const isLandscapePhone = viewportMode === 'landscapePhone';
+    const isPortraitPhone = viewportMode === 'portraitPhone';
+    const isMobileViewport = isLandscapePhone || isPortraitPhone;
     const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
     const [countryDetail, setCountryDetail] = useState<any>(null);
     const [metadata, setMetadata] = useState<Record<string, any>>({});
@@ -8892,8 +8911,8 @@ export default function MapPage() {
                 }).neosantara_city_owner || {};
                 wasmModule.set_city_ownership_on_map(getCanvasCityOwners(initialCityOwners));
 
-                // Muat batas provinsi putus-putus ke dalam map engine secara asynchronous
-                fetch(`/provinces_lines.geojson?v=${Date.now()}`)
+                // Muat batas provinsi putus-putus ke dalam map engine secara asynchronous (cacheable)
+                fetch('/provinces_lines.geojson')
                     .then(res => res.ok ? res.text() : null)
                     .then(provText => {
                         if (provText && wasmModule.set_provinces_on_map) {
@@ -9103,11 +9122,13 @@ export default function MapPage() {
         const dx = Math.abs(event.clientX - dragStartRef.current.x);
         const dy = Math.abs(event.clientY - dragStartRef.current.y);
         // Ignore click handling once the pointer has moved far enough to pan.
-        if (dx > 5 || dy > 5) {
+        // Toleransi geser sentuhan 9px di mobile, 5px di desktop
+        const threshold = isMobileViewport ? 9 : 5;
+        if (dx > threshold || dy > threshold) {
             isDraggingRef.current = true;
             isMapFocusedRef.current = false;
         }
-    }, []);
+    }, [isMobileViewport]);
 
     const finishMapPointerInteraction = useCallback(() => {
         if (!isMapPointerDownRef.current) return;
@@ -10610,9 +10631,17 @@ export default function MapPage() {
                     {!isWarAnalysisActive && <button
                         onClick={handleFocusHome}
                         title="🎯 Fokus & Zoom ke Negara Sendiri (F)"
-                        className="fixed bottom-3 lg:bottom-4 xl:bottom-6 2xl:bottom-12 left-18 lg:left-20 xl:left-22 2xl:left-26 z-[100] w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all group"
+                        style={{
+                            bottom: 'calc(var(--safe-bottom) + 0.5rem)',
+                            left: isLandscapePhone ? 'calc(var(--safe-left) + 0.5rem)' : undefined,
+                        }}
+                        className={`fixed z-[100] rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all active:scale-95 group ${
+                            isLandscapePhone
+                                ? 'w-8 h-8'
+                                : 'bottom-3 lg:bottom-4 xl:bottom-6 2xl:bottom-12 left-18 lg:left-20 xl:left-22 2xl:left-26 w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12'
+                        }`}
                     >
-                        <Crosshair className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 transition-transform group-hover:scale-110" />
+                        <Crosshair className={`${isLandscapePhone ? 'w-3.5 h-3.5' : 'w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6'} transition-transform group-hover:scale-110`} />
                     </button>}
                 </>
             )}
@@ -11355,7 +11384,17 @@ export default function MapPage() {
             {/* Premium Floating Time Controller Widget */}
             <div
                 data-tutorial="time-controller"
-                className={`fixed bottom-3 right-3 lg:bottom-5 lg:right-5 xl:bottom-8 xl:right-8 z-40 flex flex-col w-[220px] lg:w-[250px] xl:w-[320px] transition-all ${isDialogTerbukaOpen ? 'hidden pointer-events-none' : ''}`}
+                style={{
+                    bottom: 'calc(var(--safe-bottom) + 0.5rem)',
+                    right: 'calc(var(--safe-right) + 0.5rem)',
+                }}
+                className={`fixed z-40 transition-all ${isDialogTerbukaOpen ? 'hidden pointer-events-none' : ''} ${
+                    isLandscapePhone
+                        ? 'flex flex-row items-center gap-1.5 bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg max-w-[210px] h-[36px]'
+                        : isPortraitPhone
+                        ? 'flex flex-col w-[170px]'
+                        : 'flex flex-col w-[220px] lg:w-[250px] xl:w-[320px]'
+                }`}
                 onPointerEnter={() => {
                     isTimeControllerHoveredRef.current = true;
                     window.dispatchEvent(new Event('neosantara:time-controller-hovered'));
@@ -11371,32 +11410,9 @@ export default function MapPage() {
                     schedulePendingDateCommit();
                 }}
             >
-                {/* Upper Card */}
-                <div className="bg-root-surface rounded-t-xl xl:rounded-t-2xl px-3.5 lg:px-4 xl:px-6 pt-3 lg:pt-4 xl:pt-5 pb-7 lg:pb-8 xl:pb-10 border-t border-x border-root-accent/30 flex flex-col relative overflow-hidden">
-                    <div className="flex items-center justify-end mb-2 xl:mb-3.5">
-                        {/* Calendar date label */}
-                        <div className="flex flex-col items-end leading-none">
-                            <span className="text-[8px] xl:text-[9px] font-black text-root-subtle tracking-wider xl:tracking-widest uppercase mb-0.5 xl:mb-1">SIMULATION CALENDAR</span>
-                            <span ref={dateTextRef} className="text-xs lg:text-sm xl:text-lg font-black text-root-text tracking-tight">
-                                {timeManagerRef.current?.getFormattedDate() || calendarRef.current?.display.getDisplayDate() || '-'}
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Progress Bar Hijau */}
-                    <div className="w-full bg-root-canvas h-1.5 rounded-full overflow-hidden border border-root-accent/20">
-                        <div
-                            ref={progressBarRef}
-                            className="bg-root-accent h-full w-full origin-left scale-x-0 transition-none rounded-full shadow-[0_0_8px_#00FFAA] will-change-transform"
-                        />
-                    </div>
-
-                </div>
-
-                {/* Lower Dark Card with buttons */}
-                <div className="bg-root-canvas rounded-b-xl xl:rounded-b-2xl border-b border-x border-root-accent/30 h-10 lg:h-11 xl:h-14 relative flex items-center justify-between">
-                    <div className="absolute inset-x-3 lg:inset-x-4 xl:inset-x-6 -top-4.5 lg:-top-5 xl:-top-7 flex items-center justify-between">
-                        {/* 1. Play/Pause button */}
+                {isLandscapePhone ? (
+                    // Varian Ringkas 1 Baris Khusus Landscape Phone
+                    <>
                         <button
                             data-tutorial="time-controller-play"
                             onClick={() => {
@@ -11420,16 +11436,15 @@ export default function MapPage() {
                                 setIsPaused(nextPaused);
                             }}
                             title={calendarRef.current?.calendar.getPauseButtonTitle(isPaused) || (isPaused ? "Mulai Waktu" : "Jeda Waktu")}
-                            className="w-9 h-9 lg:w-10 lg:h-10 xl:w-14 xl:h-14 rounded-full bg-root-accent text-root-canvas border-2 xl:border-4 border-root-canvas flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition-all z-20 group"
+                            className="w-7 h-7 rounded-full bg-root-accent text-root-canvas flex items-center justify-center cursor-pointer active:scale-95 shrink-0"
                         >
                             {isPaused ? (
-                                <Play className="w-3.5 h-3.5 lg:w-4 lg:h-4 xl:w-5 xl:h-5 fill-root-canvas text-root-canvas translate-x-0.5 transition-transform group-hover:scale-110" />
+                                <Play className="w-3.5 h-3.5 fill-root-canvas text-root-canvas translate-x-0.5" />
                             ) : (
-                                <Pause className="w-3.5 h-3.5 lg:w-4 lg:h-4 xl:w-5 xl:h-5 fill-root-canvas text-root-canvas transition-transform group-hover:scale-110" />
+                                <Pause className="w-3.5 h-3.5 fill-root-canvas text-root-canvas" />
                             )}
                         </button>
 
-                        {/* 2. Speed Selector button */}
                         <button
                             data-tutorial="time-controller-speed"
                             onClick={() => {
@@ -11441,42 +11456,133 @@ export default function MapPage() {
                                 }
                             }}
                             title={calendarRef.current?.calendar.getSpeedButtonTitle() || `Ubah Kecepatan: ${speed}x`}
-                            className="w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas flex items-center justify-center cursor-pointer transition-all z-20 text-[10px] xl:text-[12px] font-black uppercase tracking-tighter"
+                            className="w-6 h-6 rounded-full bg-root-canvas border border-root-accent/40 text-root-accent flex items-center justify-center cursor-pointer active:scale-95 text-[9px] font-black shrink-0"
                         >
                             {calendarRef.current?.display.getSpeedLabel() || `×${speed}`}
                         </button>
 
-                        {/* 3. Holiday button */}
-                        <button
-                            onClick={() => {
-                                if (calendarRef.current) {
-                                    calendarRef.current.controls.handleHolidayClick();
-                                } else {
-                                    alert("Mode Liburan Presiden diaktifkan! Rakyat menikmati waktu istirahat.");
-                                }
-                            }}
-                            title="Liburan Negara"
-                            className="w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas flex items-center justify-center cursor-pointer transition-all z-20"
-                        >
-                            <Palmtree className="w-3.5 h-3.5 xl:w-4.5 xl:h-4.5" />
-                        </button>
+                        <div className="flex flex-col items-end leading-none min-w-0 flex-1 overflow-hidden">
+                            <span ref={dateTextRef} className="text-[10px] font-black text-root-text tracking-tight truncate">
+                                {timeManagerRef.current?.getFormattedDate() || calendarRef.current?.display.getDisplayDate() || '-'}
+                            </span>
+                            <div className="w-full bg-root-canvas h-1 rounded-full overflow-hidden border border-root-accent/20 mt-0.5">
+                                <div
+                                    ref={progressBarRef}
+                                    className="bg-root-accent h-full w-full origin-left scale-x-0 transition-none rounded-full shadow-[0_0_6px_#00FFAA] will-change-transform"
+                                />
+                            </div>
+                        </div>
+                    </>
+                ) : (
+                    // Varian Normal / Portrait
+                    <>
+                        {/* Upper Card */}
+                        <div className="bg-root-surface rounded-t-xl xl:rounded-t-2xl px-3.5 lg:px-4 xl:px-6 pt-2.5 sm:pt-3 lg:pt-4 xl:pt-5 pb-6 sm:pb-7 lg:pb-8 xl:pb-10 border-t border-x border-root-accent/30 flex flex-col relative overflow-hidden">
+                            <div className="flex items-center justify-end mb-1 sm:mb-2 xl:mb-3.5">
+                                {/* Calendar date label */}
+                                <div className="flex flex-col items-end leading-none">
+                                    <span className="text-[7px] sm:text-[8px] xl:text-[9px] font-black text-root-subtle tracking-wider xl:tracking-widest uppercase mb-0.5 xl:mb-1">SIMULATION CALENDAR</span>
+                                    <span ref={dateTextRef} className="text-xs sm:text-xs lg:text-sm xl:text-lg font-black text-root-text tracking-tight">
+                                        {timeManagerRef.current?.getFormattedDate() || calendarRef.current?.display.getDisplayDate() || '-'}
+                                    </span>
+                                </div>
+                            </div>
 
-                        {/* 4. Military/General button */}
-                        <button
-                            onClick={() => {
-                                if (calendarRef.current) {
-                                    calendarRef.current.controls.handleMilitaryClick();
-                                } else {
-                                    alert("Informasi Kepresidenan & Hubungan Militer Aktif.");
-                                }
-                            }}
-                            title="Militer & Keamanan Negara"
-                            className="w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas flex items-center justify-center cursor-pointer transition-all z-20"
-                        >
-                            <Shield className="w-3.5 h-3.5 xl:w-4.5 xl:h-4.5" />
-                        </button>
-                    </div>
-                </div>
+                            {/* Progress Bar Hijau */}
+                            <div className="w-full bg-root-canvas h-1 sm:h-1.5 rounded-full overflow-hidden border border-root-accent/20">
+                                <div
+                                    ref={progressBarRef}
+                                    className="bg-root-accent h-full w-full origin-left scale-x-0 transition-none rounded-full shadow-[0_0_8px_#00FFAA] will-change-transform"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Lower Dark Card with buttons */}
+                        <div className="bg-root-canvas rounded-b-xl xl:rounded-b-2xl border-b border-x border-root-accent/30 h-9 sm:h-10 lg:h-11 xl:h-14 relative flex items-center justify-between">
+                            <div className="absolute inset-x-2 sm:inset-x-3 lg:inset-x-4 xl:inset-x-6 -top-4 sm:-top-4.5 lg:-top-5 xl:-top-7 flex items-center justify-between">
+                                {/* 1. Play/Pause button */}
+                                <button
+                                    data-tutorial="time-controller-play"
+                                    onClick={() => {
+                                        const nextPaused = !isPausedRef.current;
+                                        isPausedRef.current = nextPaused;
+                                        if (typeof window !== 'undefined') {
+                                            (window as any).neosantara_is_paused = nextPaused;
+                                        }
+                                        if (calendarRef.current) {
+                                            calendarRef.current.controls.handlePlayPauseClick(!nextPaused);
+                                        }
+                                        if (timeManagerRef.current) {
+                                            timeManagerRef.current.setPaused(nextPaused);
+                                            if (pendingDateRef.current) {
+                                                schedulePendingDateCommit(true);
+                                            } else {
+                                                const cur = timeManagerRef.current.getCurrentDate();
+                                                setCurrentDate(cur);
+                                            }
+                                        }
+                                        setIsPaused(nextPaused);
+                                    }}
+                                    title={calendarRef.current?.calendar.getPauseButtonTitle(isPaused) || (isPaused ? "Mulai Waktu" : "Jeda Waktu")}
+                                    className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 xl:w-14 xl:h-14 rounded-full bg-root-accent text-root-canvas border-2 xl:border-4 border-root-canvas flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition-all z-20 group"
+                                >
+                                    {isPaused ? (
+                                        <Play className="w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 xl:w-5 xl:h-5 fill-root-canvas text-root-canvas translate-x-0.5 transition-transform group-hover:scale-110" />
+                                    ) : (
+                                        <Pause className="w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 xl:w-5 xl:h-5 fill-root-canvas text-root-canvas transition-transform group-hover:scale-110" />
+                                    )}
+                                </button>
+
+                                {/* 2. Speed Selector button */}
+                                <button
+                                    data-tutorial="time-controller-speed"
+                                    onClick={() => {
+                                        if (!calendarRef.current) return;
+                                        const newSpeed = calendarRef.current.controls.handleSpeedClick();
+                                        setSpeed(newSpeed);
+                                        if (timeManagerRef.current) {
+                                            timeManagerRef.current.setSpeed(newSpeed);
+                                        }
+                                    }}
+                                    title={calendarRef.current?.calendar.getSpeedButtonTitle() || `Ubah Kecepatan: ${speed}x`}
+                                    className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas flex items-center justify-center cursor-pointer transition-all z-20 text-[9px] sm:text-[10px] xl:text-[12px] font-black uppercase tracking-tighter"
+                                >
+                                    {calendarRef.current?.display.getSpeedLabel() || `×${speed}`}
+                                </button>
+
+                                {/* 3. Holiday button */}
+                                <button
+                                    onClick={() => {
+                                        if (calendarRef.current) {
+                                            calendarRef.current.controls.handleHolidayClick();
+                                        } else {
+                                            alert("Mode Liburan Presiden diaktifkan! Rakyat menikmati waktu istirahat.");
+                                        }
+                                    }}
+                                    title="Liburan Negara"
+                                    className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas flex items-center justify-center cursor-pointer transition-all z-20"
+                                >
+                                    <Palmtree className="w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4.5 xl:h-4.5" />
+                                </button>
+
+                                {/* 4. Military/General button */}
+                                <button
+                                    onClick={() => {
+                                        if (calendarRef.current) {
+                                            calendarRef.current.controls.handleMilitaryClick();
+                                        } else {
+                                            alert("Informasi Kepresidenan & Hubungan Militer Aktif.");
+                                        }
+                                    }}
+                                    title="Militer & Keamanan Negara"
+                                    className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas flex items-center justify-center cursor-pointer transition-all z-20"
+                                >
+                                    <Shield className="w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4.5 xl:h-4.5" />
+                                </button>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
 
             <CountryDetailModal
