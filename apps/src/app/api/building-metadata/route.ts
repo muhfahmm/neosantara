@@ -2,9 +2,14 @@ import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
 import { queryDb } from '@/lib/db';
+import {
+  getCachedResponse,
+  setCachedResponse,
+  buildCachedApiResponse,
+} from '@/lib/apiResponseCache';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+const CACHE_KEY = 'api_building_metadata';
+const CACHE_TTL = 120 * 1000;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -143,8 +148,13 @@ async function loadCategoryMetadata(baseDir: string): Promise<Record<string, unk
   return metadata;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const cached = getCachedResponse(CACHE_KEY, CACHE_TTL);
+    if (cached) {
+      return buildCachedApiResponse(request, cached);
+    }
+
     let base = path.join(process.cwd(), 'json', 'semua_fitur_negara');
     // In dev server process.cwd() may be apps/; try parent folder as fallback
     try {
@@ -164,9 +174,8 @@ export async function GET() {
     const metadata = await loadCategoryMetadata(base);
     if (Object.keys(metadata).length > 0) {
       console.log('[building-metadata] loaded category metadata:', Object.keys(metadata).length, 'items');
-      return NextResponse.json(metadata, {
-        headers: { 'Cache-Control': 'no-store, max-age=0' },
-      });
+      const payload = setCachedResponse(CACHE_KEY, metadata);
+      return buildCachedApiResponse(request, payload);
     }
     
     // Fallback: parse TS files if category JSON not available
@@ -209,9 +218,8 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json(fallbackMetadata, {
-      headers: { 'Cache-Control': 'no-store, max-age=0' },
-    });
+    const payload = setCachedResponse(CACHE_KEY, fallbackMetadata);
+    return buildCachedApiResponse(request, payload);
   } catch (err) {
     console.error('[building-metadata] error', err);
     return NextResponse.json(

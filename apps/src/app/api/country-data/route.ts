@@ -2,6 +2,15 @@ import { NextResponse } from 'next/server';
 import { queryDb } from '@/lib/db';
 import { getTempatWisataFallback } from '@/lib/tempatWisataFallback';
 import path from 'path';
+import {
+  getCachedResponse,
+  setCachedResponse,
+  buildCachedApiResponse,
+} from '@/lib/apiResponseCache';
+
+const CACHE_KEY_ALL = 'api_country_data_all';
+const CACHE_KEY_SUMMARY = 'api_country_data_summary';
+const CACHE_TTL = 120 * 1000;
 // Data level kabinet dibaca dari MySQL (database_level_kabinet table) via kabinetMap
 
 const extractFileOrder = (fileName: string): number => {
@@ -25,9 +34,6 @@ let cachedAllCountries: any[] | null = null;
 const cachedCountryMap = new Map<string, any>();
 
 async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
-  if (process.env.NODE_ENV === 'development') {
-    forceRefresh = true;
-  }
   if (!forceRefresh && cachedAllCountries && cachedAllCountries.length > 0) {
     return cachedAllCountries;
   }
@@ -453,6 +459,13 @@ export async function GET(request: Request) {
 
   try {
     if (requestSummary) {
+      if (!forceRefresh) {
+        const cached = getCachedResponse(CACHE_KEY_SUMMARY, CACHE_TTL);
+        if (cached) {
+          return buildCachedApiResponse(request, cached);
+        }
+      }
+
       const rows = await queryDb<Array<{
         id: number;
         country_slug: string;
@@ -473,14 +486,25 @@ export async function GET(request: Request) {
         jumlah_penduduk: Number(row.jumlah_penduduk),
         anggaran: Number(row.anggaran),
       }));
-      return NextResponse.json(summaries);
+
+      const payload = setCachedResponse(CACHE_KEY_SUMMARY, summaries);
+      return buildCachedApiResponse(request, payload);
+    }
+
+    if (requestAll || !countryPath) {
+      if (!forceRefresh) {
+        const cached = getCachedResponse(CACHE_KEY_ALL, CACHE_TTL);
+        if (cached) {
+          return buildCachedApiResponse(request, cached);
+        }
+      }
+
+      const allData = await loadAllCountriesFromMySQL(forceRefresh);
+      const payload = setCachedResponse(CACHE_KEY_ALL, allData);
+      return buildCachedApiResponse(request, payload);
     }
 
     const allData = await loadAllCountriesFromMySQL(forceRefresh);
-
-    if (requestAll || !countryPath) {
-      return NextResponse.json(allData);
-    }
 
     const baseName = path.basename(countryPath).replace(/\.ts$/, '');
     const normInput = normalizeKey(baseName);
