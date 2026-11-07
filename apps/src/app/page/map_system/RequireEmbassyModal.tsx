@@ -27,7 +27,7 @@ export function RequireEmbassyModal({
   const iso = foundCountry?.iso?.toLowerCase() || '';
 
   return (
-    <NotebookModalWrapper compact maxWidthClass="max-w-md" zIndexClass="z-[300]">
+    <NotebookModalWrapper compact zIndexClass="z-[300]">
       <div className="relative w-full overflow-hidden flex flex-col font-sans pointer-events-auto">
         
         {/* Glow Accent Header */}

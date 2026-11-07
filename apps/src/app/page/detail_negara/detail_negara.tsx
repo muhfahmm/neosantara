@@ -1087,7 +1087,6 @@ export function CountryDetailModal({
       <NotebookModalWrapper
         onClose={onClose}
         isHidden={isActionModalOpen}
-        maxWidthClass="max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl"
         zIndexClass="z-[100000000]"
       >
         {detailModalContent}

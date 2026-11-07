@@ -103,7 +103,7 @@ export default function ProvinceAidModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="province-aid-title"
-        className="bg-root-surface border-2 sm:border-3 border-root-accent/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl"
+        className="modal-responsive-shell bg-root-surface border-2 sm:border-3 border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl"
       >
         <div className="shrink-0 border-b border-root-accent/20 bg-root-canvas px-6 py-4 sm:px-8 sm:py-5">
           <div className="flex items-center gap-3">

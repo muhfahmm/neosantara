@@ -20,7 +20,7 @@ export default function EmbassyRelationRequirementModal({
   if (!isOpen) return null;
 
   const modalContent = (
-    <NotebookModalWrapper compact maxWidthClass="max-w-xl" zIndexClass="z-[100000001]">
+    <NotebookModalWrapper compact zIndexClass="z-[100000001]">
       {/* Container Modal Lebih Lebar dan Panjang */}
       <div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
         

@@ -16,7 +16,6 @@ export default function LoanInfoModal({ isOpen, onClose }: LoanInfoModalProps) {
   return (
     <NotebookModalWrapper
       compact
-      maxWidthClass="max-w-2xl"
       onClose={onClose}
       zIndexClass="z-[200]"
     >

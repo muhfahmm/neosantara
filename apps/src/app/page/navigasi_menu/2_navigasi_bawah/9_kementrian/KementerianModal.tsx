@@ -738,7 +738,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative font-sans"
+            className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl p-6 shadow-2xl relative font-sans"
           >
             <SharedModalCloseButton
               onClick={() => setShowGeneralInfo(false)}
@@ -773,7 +773,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative font-sans"
+            className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl p-6 shadow-2xl relative font-sans"
           >
             <SharedModalCloseButton
               onClick={() => setInfoTarget(null)}
@@ -900,7 +900,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative font-sans"
+            className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl p-6 shadow-2xl relative font-sans"
           >
             <SharedModalCloseButton
               onClick={() => setConfirmDowngrade(null)}

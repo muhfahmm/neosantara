@@ -46,7 +46,7 @@ export function ModalsPeringatanPeringkat({ isOpen, onClose, currentRating, warn
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-4  font-sans select-none animate-fade-in">
 
             {/* Skeuomorphic Confirmation Frame */}
-            <div className="bg-[#181111] border-[4px] border-red-950 rounded-2xl w-full max-w-[430px] shadow-2xl relative flex flex-col p-3.5 pl-[52px] min-h-[360px] animate-scale-up animate-in fade-in duration-300">
+            <div className="modal-responsive-shell bg-[#181111] border-[4px] border-red-950 rounded-2xl shadow-2xl relative flex flex-col p-3.5 pl-[52px] animate-scale-up animate-in fade-in duration-300">
                 <RootNotebookDecorations count={7} />
 
                 {/* Parchment Sheet Card */}

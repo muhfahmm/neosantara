@@ -1,0 +1,9 @@
+@media (max-width: 639px) {
+  .modal-responsive-shell {
+    max-height: calc(100dvh - 100px) !important;
+  }
+
+  .fixed.inset-0:has(> .modal-responsive-shell) {
+    padding: 88px 12px 12px !important;
+  }
+}

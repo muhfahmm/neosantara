@@ -1639,7 +1639,7 @@ export default function WarMap({
       {phase === 'result' && result && (
         <div className="fixed inset-0 z-[300] flex items-center justify-center pt-[88px] sm:pt-[100px] lg:pt-[clamp(92px,10dvh,115px)] pb-3 sm:pb-4 lg:pb-5 px-3 sm:px-6 lg:px-10 pointer-events-none animate-[warFadeIn_0.4s_ease-out]">
           {/* FIX: pointer-events-auto ditambahkan di sini agar kotak modal bisa diklik */}
-          <div className="w-full max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl h-full max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)] overflow-y-auto bg-root-canvas border border-root-accent/30 rounded-3xl shadow-[0_0_80px_rgba(0,255,170,0.2)] font-sans select-none pointer-events-auto">
+          <div className="modal-responsive-shell overflow-y-auto bg-root-canvas border border-root-accent/30 rounded-3xl shadow-[0_0_80px_rgba(0,255,170,0.2)] font-sans select-none pointer-events-auto">
             <div
               className={`p-6 text-center border-b ${result === 'win'
                 ? 'bg-root-accent/10 border-root-accent/30'

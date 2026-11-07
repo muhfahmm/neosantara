@@ -84,7 +84,7 @@ export default function InfoInfrastrukturModal({
   const effectiveWaktu = discountPct > 0 ? Math.max(1, Math.floor(rawWaktu * (1 - discountPct / 100))) : rawWaktu;
 
   return (
-    <NotebookModalWrapper onClose={onClose} compact maxWidthClass="max-w-4xl">
+    <NotebookModalWrapper onClose={onClose} compact>
       <div className="flex flex-col">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 

@@ -386,7 +386,7 @@ export default function TopRightGiftIcon({
 
       {/* Modal Hadiah */}
       {isOpen && mounted && createPortal(
-        <NotebookModalWrapper compact maxWidthClass="max-w-md" zIndexClass="z-[200]">
+        <NotebookModalWrapper compact zIndexClass="z-[200]">
           <div className="w-full min-w-0 overflow-hidden flex flex-col relative font-sans pointer-events-auto">
 
             {/* ---- HEADER ---- */}
@@ -504,7 +504,7 @@ export default function TopRightGiftIcon({
 
       {/* ---- MODAL FEEDBACK ---- */}
       {mounted && feedbackModal && createPortal(
-        <NotebookModalWrapper compact maxWidthClass="max-w-md" zIndexClass="z-[300]">
+        <NotebookModalWrapper compact zIndexClass="z-[300]">
           <div className="w-full min-w-0 overflow-hidden flex flex-col relative font-sans pointer-events-auto">
 
             {/* Header */}

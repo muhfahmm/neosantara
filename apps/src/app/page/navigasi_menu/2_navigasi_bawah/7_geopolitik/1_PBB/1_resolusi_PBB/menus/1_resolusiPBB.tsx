@@ -744,7 +744,6 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
         <NotebookModalWrapper
           onClose={() => setShowCreateModal(false)}
           zIndexClass="z-[200]"
-          maxWidthClass="max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl"
         >
           <div className="flex h-full flex-col overflow-hidden">
             

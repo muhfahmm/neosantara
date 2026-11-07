@@ -27,7 +27,7 @@ export default function DanaTidakCukupModal({
   const shortage = Math.max(0, requiredCost - currentBudget);
 
   const modalContent = (
-    <NotebookModalWrapper compact maxWidthClass="max-w-2xl" zIndexClass="z-[100000001]">
+    <NotebookModalWrapper compact zIndexClass="z-[100000001]">
       <div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
         <div className="flex-1">
           <div className="mb-6 flex items-center justify-between gap-4 border-b border-rose-500/20 pb-4">

@@ -45,7 +45,7 @@ export default function KonfirmasiGantiIbukotaModal({
   };
 
   return (
-    <NotebookModalWrapper compact maxWidthClass="max-w-xl" zIndexClass="z-[100000050]">
+    <NotebookModalWrapper compact zIndexClass="z-[100000050]">
       {/* Container Modal Mengikuti Ukuran & Style Modal Konfirmasi Kedutaan */}
       <div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
         {/* Header Modal */}

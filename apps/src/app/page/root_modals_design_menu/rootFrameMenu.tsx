@@ -17,7 +17,7 @@ export function PausedMenuFrame({
 }: PausedMenuFrameProps) {
     return (
         <div className={`paused-menu-frame fixed inset-0 ${zIndexClass} flex items-center justify-center pt-[88px] sm:pt-[100px] lg:pt-[clamp(92px,10dvh,115px)] pb-3 sm:pb-4 lg:pb-5 px-3 sm:px-6 lg:px-10  font-sans pointer-events-none select-none`}>
-            <section className={`relative flex h-full max-h-[calc(100dvh-100px)] w-full min-w-0 flex-col overflow-hidden ${rootBorderRadius.frame} border-[6px] border-root-surface bg-root-canvas p-3 pl-10 shadow-2xl pointer-events-auto sm:max-h-[calc(100dvh-116px)] sm:p-4 sm:pl-12 lg:max-h-[calc(100dvh-112px)] max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl`}>
+            <section className={`modal-responsive-shell relative flex min-w-0 flex-col overflow-hidden ${rootBorderRadius.frame} border-[6px] border-root-surface bg-root-canvas p-3 pl-10 shadow-2xl pointer-events-auto sm:p-4 sm:pl-12`}>
                 <RootNotebookDecorations count={ornamentCount} />
                 <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-r-xl border-[3px] border-root-accent/20 bg-root-surface shadow-inner">
                     <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,170,0.03)_0%,transparent_100%)]" />

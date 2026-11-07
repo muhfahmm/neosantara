@@ -148,7 +148,7 @@ export default function OrgIntlInfoModal({
   );
 
   return (
-    <NotebookModalWrapper onClose={onClose} compact maxWidthClass="max-w-3xl" zIndexClass="z-[250]">
+    <NotebookModalWrapper onClose={onClose} compact zIndexClass="z-[250]">
       <section
         role="dialog"
         aria-modal="true"

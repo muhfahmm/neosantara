@@ -26,7 +26,7 @@ export default function KonfirmasiPeluncuranSerangan({
 }: KonfirmasiPeluncuranSeranganProps) {
 	return (
 		<div className="fixed inset-0 z-[70] flex items-center justify-center  p-4 animate-in fade-in duration-200">
-			<div className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto bg-root-surface border border-root-accent/30 rounded-2xl shadow-2xl font-sans text-white relative">
+			<div className="modal-responsive-shell overflow-y-auto bg-root-surface border border-root-accent/30 rounded-2xl shadow-2xl font-sans text-white relative">
 				<div className="bg-root-canvas border-b border-root-accent/20 px-5 sm:px-6 py-4 flex items-center justify-between">
 					<div className="flex items-center gap-2.5">
 						<Swords className="w-5 h-5 text-root-accent" />

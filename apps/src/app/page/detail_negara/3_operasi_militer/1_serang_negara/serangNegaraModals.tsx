@@ -89,7 +89,7 @@ export default function SerangNegaraModal({
 		const isSelfAttack = blockedAttackReason === 'self';
 		return (
 			<div className="fixed inset-0 z-[100] flex items-center justify-center  p-4" role="alertdialog" aria-modal="true" aria-labelledby="attack-block-title">
-				<div className="w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-2xl border border-root-accent/30 bg-root-surface text-white shadow-2xl">
+				<div className="modal-responsive-shell overflow-y-auto rounded-2xl border border-root-accent/30 bg-root-surface text-white shadow-2xl">
 					<div className="flex items-center justify-between border-b border-amber-400/20 bg-root-canvas px-5 sm:px-6 py-4">
 						<div className="flex items-center gap-3">
 							<ShieldAlert className="h-5 w-5 text-amber-400" />

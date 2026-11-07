@@ -223,7 +223,7 @@ export default function UjicobaIcbmModal({
   }
 
   return (
-    <NotebookModalWrapper onClose={handleCloseModal} compact maxWidthClass="max-w-lg" zIndexClass="z-[95]">
+    <NotebookModalWrapper onClose={handleCloseModal} compact zIndexClass="z-[95]">
       <div className="flex flex-col relative font-sans">
         
         {/* Header Modal */}

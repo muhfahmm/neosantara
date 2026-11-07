@@ -42,7 +42,6 @@ export default function SerangBelumSelesaiModals({
     <NotebookModalWrapper
       onClose={onClose}
       compact
-      maxWidthClass="max-w-xl"
       zIndexClass="z-[100000001]"
     >
       <div

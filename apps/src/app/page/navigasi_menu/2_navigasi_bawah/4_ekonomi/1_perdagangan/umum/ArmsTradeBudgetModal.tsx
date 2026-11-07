@@ -23,7 +23,6 @@ export default function ArmsTradeBudgetModal({
   return (
     <NotebookModalWrapper
       zIndexClass="z-[80]"
-      maxWidthClass="max-w-md"
       compact
     >
       <section

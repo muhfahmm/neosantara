@@ -15,7 +15,7 @@ export default function MintaBantuanModal({ isOpen, countryName, onClose, onConf
 	if (!isOpen) return null;
 
 	const modalContent = (
-		<NotebookModalWrapper compact maxWidthClass="max-w-xl" zIndexClass="z-[9999]">
+		<NotebookModalWrapper compact zIndexClass="z-[9999]">
 			{/* Container Modal Lebih Lebar dan Panjang */}
 			<div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
 				

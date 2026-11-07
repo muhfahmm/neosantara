@@ -19,7 +19,6 @@ export default function TaxPolicyInfoModal({
   return (
     <NotebookModalWrapper
       compact
-      maxWidthClass="max-w-2xl"
       onClose={onClose}
       zIndexClass="z-[200]"
     >

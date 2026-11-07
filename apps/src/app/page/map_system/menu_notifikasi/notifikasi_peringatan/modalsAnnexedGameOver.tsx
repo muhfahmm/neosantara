@@ -44,7 +44,7 @@ export default function ModalsAnnexedGameOver({
             {/* Dramatic Background Atmosphere */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-rose-950 via-red-950 to-slate-950 opacity-40 animate-pulse" />
-                <div className="absolute top-0 left-1/4 w-[2px] h-full bg-red-600/30 rotate-12" />
+                <div className="modal-responsive-shell absolute top-0 left-1/4 bg-red-600/30 rotate-12" />
                 <div className="absolute top-0 right-1/3 w-[2px] h-full bg-rose-600/25 -rotate-12" />
             </div>
 

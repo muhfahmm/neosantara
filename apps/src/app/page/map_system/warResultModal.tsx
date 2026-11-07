@@ -37,7 +37,7 @@ export default function ResultModal({
 
     if (compact) {
         return (
-            <NotebookModalWrapper compact maxWidthClass="max-w-xl" zIndexClass="z-[500000]">
+            <NotebookModalWrapper compact zIndexClass="z-[500000]">
                 <div
                     role="dialog"
                     aria-modal="true"

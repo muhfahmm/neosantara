@@ -30,7 +30,6 @@ export default function TradePriceEffectInfoModal({
   return (
     <NotebookModalWrapper
       compact
-      maxWidthClass="max-w-2xl"
       onClose={onClose}
       zIndexClass="z-[200]"
     >

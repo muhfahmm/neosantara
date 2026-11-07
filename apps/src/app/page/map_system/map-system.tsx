@@ -11294,12 +11294,10 @@ export default function MapPage() {
                 </div>
             )}
 
-            {!isWarAnalysisActive && !isDialogTerbukaOpen && (
-                <DiplomacyTracking
-                    isUiHidden={isMenuModalOpen || isWarAnalysisActive}
-                    onOpen={() => setCountryDetailModalOpen(false)}
-                />
-            )}
+            <DiplomacyTracking
+                isUiHidden={isWarAnalysisActive || isDialogTerbukaOpen}
+                onOpen={() => setCountryDetailModalOpen(false)}
+            />
 
             {!isWarAnalysisActive && !isDialogTerbukaOpen && !isMenuModalOpen && !(countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen) && (
                 <>

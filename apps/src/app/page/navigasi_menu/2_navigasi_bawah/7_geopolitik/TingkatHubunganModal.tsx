@@ -284,7 +284,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
 
       {/* MODAL LEGENDA */}
       {isLegendOpen && (
-        <NotebookModalWrapper onClose={() => setIsLegendOpen(false)} compact maxWidthClass="max-w-2xl" zIndexClass="z-[70]">
+        <NotebookModalWrapper onClose={() => setIsLegendOpen(false)} compact zIndexClass="z-[70]">
           <div role="dialog" aria-modal="true" aria-labelledby="relation-legend-title" className="flex max-h-[calc(100dvh-160px)] min-w-0 flex-col overflow-hidden">
             <div className="px-4 sm:px-5 py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas gap-2 shrink-0">
               <div className="flex items-center gap-2">

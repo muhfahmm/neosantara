@@ -199,7 +199,7 @@ export default function RingkasanPopulasiModal({
   if (!metrics) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-        <div className="flex h-full max-h-[calc(100vh-125px)] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-root-accent/30 bg-root-surface pointer-events-auto lg:max-h-[calc(100vh-145px)] lg:max-w-[920px]">
+        <div className="modal-responsive-shell flex flex-col overflow-hidden rounded-2xl border border-root-accent/30 bg-root-surface pointer-events-auto">
           <div className="flex shrink-0 items-center justify-between border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
             <h2 className={rootModalTypography.title}>Kependudukan</h2>
             <RootModalCloseButton onClick={onClose} />

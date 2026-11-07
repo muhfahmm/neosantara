@@ -24,7 +24,7 @@ export default function KonfirmasiAparatModal({
       <div
         role="dialog"
         aria-modal="true"
-        className="relative w-full max-w-md overflow-hidden rounded-2xl bg-gradient-to-b from-[#1A0A0E] via-[#120508] to-[#0A0304] border border-rose-500/50 shadow-[0_0_50px_rgba(244,63,94,0.25)] flex flex-col"
+        className="modal-responsive-shell relative overflow-hidden rounded-2xl bg-gradient-to-b from-[#1A0A0E] via-[#120508] to-[#0A0304] border border-rose-500/50 shadow-[0_0_50px_rgba(244,63,94,0.25)] flex flex-col"
       >
         {/* Header */}
         <div className="px-5 py-3.5 border-b border-rose-500/30 flex items-center justify-between bg-rose-950/60 shrink-0">

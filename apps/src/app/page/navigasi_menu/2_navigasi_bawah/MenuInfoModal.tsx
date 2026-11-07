@@ -29,7 +29,6 @@ export default function MenuInfoModal({
   return (
     <NotebookModalWrapper
       compact
-      maxWidthClass="max-w-2xl"
       onClose={onClose}
       zIndexClass="z-[200]"
       hideWhenInfoModalOpen={false}

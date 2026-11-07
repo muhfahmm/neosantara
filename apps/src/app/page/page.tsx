@@ -1227,7 +1227,7 @@ export default function PlayMenuPage() {
                                 animate={{ scale: 1, opacity: 1 }}
                                 exit={{ scale: 0.95, opacity: 0 }}
                                 transition={{ duration: 0.3 }}
-                                className="bg-slate-950/95 border-2 border-emerald-500/20 rounded-2xl p-4 sm:p-6 md:p-8 max-w-2xl w-[95vw] sm:w-full shadow-[0_0_50px_rgba(16,185,129,0.1)] relative overflow-hidden flex flex-col font-sans max-h-[85vh] text-left"
+                                className="modal-responsive-shell bg-slate-950/95 border-2 border-emerald-500/20 rounded-2xl p-4 sm:p-6 md:p-8 shadow-[0_0_50px_rgba(16,185,129,0.1)] relative overflow-hidden flex flex-col font-sans text-left"
                             >
                                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.05)_0%,transparent_60%)] pointer-events-none" />
 

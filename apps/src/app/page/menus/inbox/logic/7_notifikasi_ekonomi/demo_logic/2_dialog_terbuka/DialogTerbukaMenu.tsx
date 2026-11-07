@@ -562,7 +562,7 @@ export default function DialogTerbukaMenu({
       )}
       {policyMenu && (!countryDetail || !setCountryDetail) && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-          <div role="dialog" aria-modal="true" className="w-full max-w-md rounded-2xl border border-root-accent/30 bg-root-canvas p-6 shadow-2xl">
+          <div role="dialog" aria-modal="true" className="modal-responsive-shell rounded-2xl border border-root-accent/30 bg-root-canvas p-6 shadow-2xl">
             <h3 className="text-lg font-bold text-white">Menu ekonomi tidak tersedia</h3>
             <p className="mt-2 text-sm text-slate-400">Buka dialog ini dari sesi permainan aktif untuk mengubah kebijakan.</p>
             <SharedModalCloseButton type="button" onClick={() => setPolicyMenu(null)} className="mt-5 rounded-lg bg-root-accent px-3 py-2 text-xs font-bold text-root-accent-ink" appearance="custom">Tutup</SharedModalCloseButton>

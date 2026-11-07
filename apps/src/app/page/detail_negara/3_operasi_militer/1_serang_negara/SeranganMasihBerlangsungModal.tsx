@@ -25,7 +25,7 @@ export default function SeranganMasihBerlangsungModal({
       aria-modal="true"
       aria-labelledby="attack-in-progress-title"
     >
-      <div className="w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto flex flex-col bg-root-surface border border-root-accent/30 rounded-2xl shadow-2xl relative pointer-events-auto">
+      <div className="modal-responsive-shell overflow-y-auto flex flex-col bg-root-surface border border-root-accent/30 rounded-2xl shadow-2xl relative pointer-events-auto">
         
         <div className="flex items-center justify-between border-b border-amber-400/20 bg-root-canvas px-5 sm:px-6 py-4">
           <div className="flex items-center gap-3">

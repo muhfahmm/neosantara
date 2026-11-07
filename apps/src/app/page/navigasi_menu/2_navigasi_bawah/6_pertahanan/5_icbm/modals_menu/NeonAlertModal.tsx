@@ -36,7 +36,6 @@ export default function NeonAlertModal({
     <NotebookModalWrapper
       onClose={onClose}
       compact
-      maxWidthClass="max-w-md"
       zIndexClass="z-[120]"
     >
       <div

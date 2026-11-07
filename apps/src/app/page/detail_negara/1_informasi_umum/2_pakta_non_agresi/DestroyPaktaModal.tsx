@@ -14,7 +14,7 @@ export default function DestroyPaktaModal({ isOpen, countryName, onClose, onConf
   if (!isOpen) return null;
 
   const modalContent = (
-    <NotebookModalWrapper compact maxWidthClass="max-w-sm" zIndexClass="z-[100000001]">
+    <NotebookModalWrapper compact zIndexClass="z-[100000001]">
       <div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
         <h3 className="text-lg font-black text-rose-400 tracking-wide uppercase mb-3">Konfirmasi Putus Pakta Non-Agresi</h3>
         <p className="text-xs sm:text-sm text-root-text mb-6 leading-relaxed">Apakah Anda yakin ingin memutus pakta non-agresi dengan <strong className="text-white">{countryName}</strong>? Tindakan ini dapat memengaruhi hubungan diplomatik.</p>

@@ -18,7 +18,6 @@ export default function TradeMarketBlockedModal({
   return (
     <NotebookModalWrapper
       zIndexClass="z-[300]"
-      maxWidthClass="max-w-2xl"
       compact
     >
       <section

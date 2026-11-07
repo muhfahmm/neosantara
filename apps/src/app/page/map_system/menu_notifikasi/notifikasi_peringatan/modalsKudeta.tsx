@@ -88,7 +88,7 @@ export default function ModalsKudeta({ isOpen, kudetaType, currentValue, country
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <div className={`absolute inset-0 bg-gradient-to-b ${content.bgColor} opacity-30`} />
                 {/* Diagonal crack lines effect */}
-                <div className="absolute top-0 left-1/3 w-[1px] h-full bg-red-800/20 rotate-12" />
+                <div className="modal-responsive-shell absolute top-0 left-1/3 bg-red-800/20 rotate-12" />
                 <div className="absolute top-0 right-1/4 w-[1px] h-full bg-red-800/15 -rotate-6" />
             </div>
 

@@ -33,7 +33,6 @@ export default function KonfirmasiSpionaseModals({
     <NotebookModalWrapper
       onClose={onClose}
       compact
-      maxWidthClass="max-w-xl"
       zIndexClass="z-[60]"
     >
       <div className="flex flex-col font-sans animate-in fade-in zoom-in-95 duration-150">

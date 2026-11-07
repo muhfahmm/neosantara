@@ -370,7 +370,7 @@ function ModalsManager({
           role="alertdialog"
           aria-modal="true"
           aria-labelledby="economic-embargo-access-title"
-          className="w-full max-w-lg overflow-hidden rounded-2xl border border-rose-500/40 bg-root-surface font-sans shadow-2xl"
+          className="modal-responsive-shell overflow-hidden rounded-2xl border border-rose-500/40 bg-root-surface font-sans shadow-2xl"
         >
           <div className="border-b border-rose-500/20 bg-root-canvas px-6 py-4">
             <h2 id="economic-embargo-access-title" className="text-base font-black uppercase tracking-wide text-rose-400">

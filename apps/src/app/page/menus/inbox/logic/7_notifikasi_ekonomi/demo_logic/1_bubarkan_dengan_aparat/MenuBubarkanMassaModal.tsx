@@ -46,7 +46,7 @@ export default function MenuBubarkanMassaModal({
       <div
         role="dialog"
         aria-modal="true"
-        className="relative w-full max-w-4xl max-h-[92vh] overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-b from-[#14080B] via-[#0E0406] to-[#070203] border-2 border-rose-500/50 shadow-[0_0_80px_rgba(244,63,94,0.35)] flex flex-col"
+        className="modal-responsive-shell relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-b from-[#14080B] via-[#0E0406] to-[#070203] border-2 border-rose-500/50 shadow-[0_0_80px_rgba(244,63,94,0.35)] flex flex-col"
       >
         {/* HEADER MODAL */}
         <div className="px-5 py-4 border-b border-rose-500/30 flex items-center justify-between bg-gradient-to-r from-rose-950/80 via-[#1A0A0E] to-[#0E0406] shrink-0">

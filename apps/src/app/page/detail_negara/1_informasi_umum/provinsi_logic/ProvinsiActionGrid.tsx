@@ -205,7 +205,7 @@ export default function ProvinsiActionGrid({
             role="dialog"
             aria-modal="true"
             aria-labelledby="province-action-title"
-            className="bg-root-surface border-2 sm:border-3 border-root-accent/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col justify-center relative font-sans pointer-events-auto shadow-2xl p-6 sm:p-10"
+            className="modal-responsive-shell bg-root-surface border-2 sm:border-3 border-root-accent/30 rounded-2xl overflow-hidden flex flex-col justify-center relative font-sans pointer-events-auto shadow-2xl p-6 sm:p-10"
           >
             <h3 id="province-action-title" className="text-lg font-black text-root-accent mb-3">
               Konfirmasi {selectedAction.label}

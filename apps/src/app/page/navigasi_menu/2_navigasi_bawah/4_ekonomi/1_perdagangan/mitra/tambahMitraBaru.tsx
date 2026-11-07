@@ -115,7 +115,6 @@ export default function TambahMitraBaru({
     <>
       <NotebookModalWrapper
         zIndexClass="z-[70]"
-        maxWidthClass="max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl"
       >
         <div
           role="dialog"
@@ -218,7 +217,6 @@ export default function TambahMitraBaru({
       {noEmbassyModalData && (
         <NotebookModalWrapper
           zIndexClass="z-[100]"
-          maxWidthClass="max-w-xl"
           compact
         >
           <section
@@ -282,7 +280,6 @@ export default function TambahMitraBaru({
       {confirmModalData && (
         <NotebookModalWrapper
           zIndexClass="z-[100]"
-          maxWidthClass="max-w-xl"
           compact
         >
           <section

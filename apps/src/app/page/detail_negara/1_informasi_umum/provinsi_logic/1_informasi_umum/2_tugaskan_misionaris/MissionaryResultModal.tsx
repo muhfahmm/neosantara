@@ -29,7 +29,7 @@ export default function MissionaryResultModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="missionary-result-title"
-        className="bg-root-surface border-2 sm:border-3 border-root-accent/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col items-center justify-center relative font-sans pointer-events-auto shadow-2xl p-6 sm:p-10 text-center"
+        className="modal-responsive-shell bg-root-surface border-2 sm:border-3 border-root-accent/30 rounded-2xl overflow-hidden flex flex-col items-center justify-center relative font-sans pointer-events-auto shadow-2xl p-6 sm:p-10 text-center"
       >
         <ResultIcon className={`mx-auto mb-3 h-12 w-12 ${resultColor}`} aria-hidden="true" />
         <h3 id="missionary-result-title" className={`mb-2 text-lg font-black uppercase ${resultColor}`}>

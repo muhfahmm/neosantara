@@ -20,7 +20,7 @@ export default function ProgramNuklirTimeDetail({
   if (!isOpen) return null;
 
   return (
-    <NotebookModalWrapper onClose={onClose} compact maxWidthClass="max-w-xl" zIndexClass="z-[100]">
+    <NotebookModalWrapper onClose={onClose} compact zIndexClass="z-[100]">
       <div className="flex flex-col font-sans">
         <div className="px-4 sm:px-5 py-3 border-b border-[#FBBF24]/25 bg-root-canvas flex items-center justify-between">
           <div className="flex items-center gap-3">

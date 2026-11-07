@@ -95,7 +95,7 @@ export default function SpionaseModal({ isOpen, countryName, playerCountryDetail
 		// 🔥 PERBAIKAN: Menghapus bg-black/60 agar tidak ada backdrop
 		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
 			{/* Container Modal Lebih Lebar dan Panjang */}
-			<div className="w-full max-w-2xl min-h-[450px] flex flex-col bg-root-surface border border-root-accent/30 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(0,255,170,0.15)] relative pointer-events-auto">
+			<div className="modal-responsive-shell flex flex-col bg-root-surface border border-root-accent/30 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(0,255,170,0.15)] relative pointer-events-auto">
 				
 				{/* HEADER */}
 				<div className="flex items-center justify-between mb-6 border-b border-root-accent/20 pb-4">

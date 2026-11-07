@@ -38,7 +38,7 @@ export default function BayarHutangModal({
 
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-transparent pointer-events-none">
-      <div className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-[480px] min-h-[440px] overflow-hidden relative font-sans pointer-events-auto animate-in fade-in zoom-in-95 duration-150 flex flex-col">
+      <div className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden relative font-sans pointer-events-auto animate-in fade-in zoom-in-95 duration-150 flex flex-col">
         <div className="flex justify-end px-6 py-4 shrink-0 border-b border-root-accent/20">
           <SharedModalCloseButton onClick={onClose} className="text-root-subtle hover:text-root-accent transition-colors cursor-pointer" appearance="custom">
             <X className="w-5 h-5" />

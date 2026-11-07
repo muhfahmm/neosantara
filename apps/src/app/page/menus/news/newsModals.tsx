@@ -512,7 +512,7 @@ export default function TopRightNewsIcon({
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="pbb-operation-title"
-                className="w-full max-w-xl max-h-[80vh] overflow-hidden rounded-2xl border border-cyan-400/40 bg-root-surface shadow-2xl"
+                className="modal-responsive-shell overflow-hidden rounded-2xl border border-cyan-400/40 bg-root-surface shadow-2xl"
                 onClick={event => event.stopPropagation()}
               >
                 <header className="flex items-center justify-between gap-3 border-b border-cyan-400/20 bg-root-canvas px-5 py-4">

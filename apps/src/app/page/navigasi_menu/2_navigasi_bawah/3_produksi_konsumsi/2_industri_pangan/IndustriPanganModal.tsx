@@ -288,7 +288,6 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
       {selectedCommodityInfo && (
         <NotebookModalWrapper
           compact
-          maxWidthClass="max-w-2xl"
           onClose={() => setSelectedCommodityInfo(null)}
         >
           <div className="flex min-w-0 flex-col overflow-hidden">

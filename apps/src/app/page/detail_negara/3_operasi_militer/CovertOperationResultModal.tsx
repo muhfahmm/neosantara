@@ -28,7 +28,7 @@ export default function CovertOperationResultModal({
       aria-modal="true"
       aria-labelledby="covert-operation-result-title"
     >
-      <div className="w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-2xl border border-root-accent/30 bg-root-surface text-white shadow-2xl">
+      <div className="modal-responsive-shell overflow-y-auto rounded-2xl border border-root-accent/30 bg-root-surface text-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-root-accent/20 bg-root-canvas px-5 py-4">
           <div className="flex items-center gap-3">
             <OperationIcon className="h-5 w-5 text-root-accent" />

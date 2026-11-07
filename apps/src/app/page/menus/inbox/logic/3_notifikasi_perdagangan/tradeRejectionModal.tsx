@@ -75,7 +75,7 @@ export default function TradeRejectionModal({
 
       {/* Modal Container */}
       <div className="fixed inset-0 z-[9999] flex items-center justify-center pt-[100px] pb-[20px] px-4 pointer-events-none">
-        <div className="relative w-full max-w-2xl bg-gradient-to-br from-root-canvas via-root-surface to-root-canvas border border-red-500/30 rounded-2xl shadow-2xl overflow-hidden pointer-events-auto">
+        <div className="modal-responsive-shell relative bg-gradient-to-br from-root-canvas via-root-surface to-root-canvas border border-red-500/30 rounded-2xl shadow-2xl overflow-hidden pointer-events-auto">
           {/* Header */}
           <div className="relative px-6 py-5 bg-gradient-to-r from-red-900/20 to-transparent border-b border-red-500/20 flex items-center justify-between">
             <div className="flex items-center gap-3">

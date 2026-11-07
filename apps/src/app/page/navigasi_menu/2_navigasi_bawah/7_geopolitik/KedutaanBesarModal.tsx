@@ -256,7 +256,7 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
       {/* Modal Konfirmasi Hancurkan Kedutaan */}
       {confirmModal.isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-8 pointer-events-auto rounded-2xl">
-          <div className="bg-root-surface border border-rose-500/40 rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
+          <div className="modal-responsive-shell bg-root-surface border border-rose-500/40 rounded-2xl p-8 shadow-2xl relative">
             <SharedModalCloseButton
               onClick={() => setConfirmModal({ isOpen: false, partnerName: null })}
               className="absolute top-4 right-4 p-1.5 rounded-lg text-root-subtle hover:text-root-accent transition-colors cursor-pointer"
@@ -288,7 +288,7 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
       {/* Modal Notifikasi Sukses */}
       {successModal.isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-8 pointer-events-auto rounded-2xl">
-          <div className="bg-root-surface border border-root-accent/40 rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
+          <div className="modal-responsive-shell bg-root-surface border border-root-accent/40 rounded-2xl p-8 shadow-2xl relative">
             <h3 className="text-lg font-bold text-root-accent uppercase tracking-wide mb-3">Berhasil</h3>
             <p className="text-sm text-root-subtle font-medium leading-relaxed mb-6">
               {successModal.message}

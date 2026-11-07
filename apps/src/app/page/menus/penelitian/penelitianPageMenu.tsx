@@ -1123,7 +1123,7 @@ export default function PenelitianPageModal({
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative"
+            className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl p-6 shadow-2xl relative"
           >
             <SharedModalCloseButton onClick={() => setConfirmTarget(null)} className="absolute top-3 right-3 text-root-subtle hover:text-root-accent cursor-pointer" appearance="custom">
               <X className="h-5 w-5" />
@@ -1231,7 +1231,7 @@ export default function PenelitianPageModal({
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative"
+            className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl p-6 shadow-2xl relative"
           >
             <SharedModalCloseButton onClick={() => setConfirmUpgrade(null)} className="absolute top-3 right-3 text-root-subtle hover:text-root-accent cursor-pointer" appearance="custom">
               <X className="h-5 w-5" />

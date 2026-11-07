@@ -1,0 +1,22 @@
+@media (min-width: 1024px) {
+  .fixed.inset-0:has(> .modal-responsive-shell) {
+    padding: clamp(92px, 10dvh, 115px) 40px 20px !important;
+  }
+
+  .modal-responsive-shell {
+    max-width: 940px !important;
+    max-height: calc(100dvh - 112px) !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .modal-responsive-shell {
+    max-width: 1040px !important;
+  }
+}
+
+@media (min-width: 1536px) {
+  .modal-responsive-shell {
+    max-width: 1024px !important;
+  }
+}

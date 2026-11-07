@@ -17,7 +17,7 @@ export default function HinaModal({ isOpen, countryName, onClose, onConfirm }: H
 	const modalContent = (
 		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
 			<div
-				className="w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto flex flex-col bg-root-surface border border-root-accent/30 rounded-2xl shadow-2xl relative pointer-events-auto"
+				className="modal-responsive-shell overflow-y-auto flex flex-col bg-root-surface border border-root-accent/30 rounded-2xl shadow-2xl relative pointer-events-auto"
 				role="dialog"
 				aria-modal="true"
 				aria-labelledby="hina-confirm-title"

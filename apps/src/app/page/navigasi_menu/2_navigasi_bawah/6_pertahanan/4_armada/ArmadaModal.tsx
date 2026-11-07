@@ -149,7 +149,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
 
     {/* POPUP MODAL INFO BONUS PERTAHANAN */}
     {showDefenseBonusInfo && (
-      <NotebookModalWrapper onClose={() => setShowDefenseBonusInfo(false)} compact maxWidthClass="max-w-3xl">
+      <NotebookModalWrapper onClose={() => setShowDefenseBonusInfo(false)} compact>
         <div className="flex flex-col" role="dialog" aria-modal="true" aria-labelledby="defense-bonus-info-title">
             <div className="flex items-center justify-between border-b border-root-accent/20 bg-root-canvas px-5 py-4">
               <div className="flex items-center gap-3">
