@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { queryDb } from '@/lib/db';
+import { getTempatWisataFallback } from '@/lib/tempatWisataFallback';
 import path from 'path';
 // Data level kabinet dibaca dari MySQL (database_level_kabinet table) via kabinetMap
 
@@ -98,25 +99,7 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
     ]);
     let tempatWisata = databaseTempatWisata;
     if (!tempatWisata || tempatWisata.length === 0) {
-      try {
-        const fs = require('fs');
-        const sqlPath = path.join(process.cwd(), '../json/database_tempat_wisata/database_tempat_wisata.pg.sql');
-        const sqlContent = fs.readFileSync(sqlPath, 'utf8');
-        const rows: any[] = [];
-        const regex = /\(\s*(\d+)\s*,\s*'([^']+)'\s*,\s*'([^']*(?:''[^']*)*)'\s*,\s*(\d+)\s*\)/g;
-        let match;
-        while ((match = regex.exec(sqlContent)) !== null) {
-          rows.push({
-            id: Number(match[1]),
-            country_slug: match[2],
-            nama_wisata: match[3].replace(/''/g, "'"),
-            penghasilan: Number(match[4]),
-          });
-        }
-        tempatWisata = rows;
-      } catch (err) {
-        tempatWisata = [];
-      }
+      tempatWisata = await getTempatWisataFallback();
     }
 
     // Helper map build function
