@@ -5,7 +5,8 @@ let pool: Pool | null = null;
 export const dbConfig = {
     host: String(process.env.DB_HOST || process.env.PGHOST || '127.0.0.1'),
     user: String(process.env.DB_USER || process.env.PGUSER || 'postgres'),
-    password: String(process.env.DB_PASSWORD ?? process.env.PGPASSWORD ?? 'Hiim_110407'),
+    // Secret: never hardcode. Provide via DB_PASSWORD / PGPASSWORD (see apps/.env.example).
+    password: process.env.DB_PASSWORD ?? process.env.PGPASSWORD,
     database: String(process.env.DB_NAME || process.env.PGDATABASE || 'db_presiden_simulator'),
     port: parseInt(process.env.DB_PORT || process.env.PGPORT || '5432'),
 };
@@ -16,6 +17,12 @@ export const dbConfig = {
 export async function getDbPool(): Promise<Pool> {
     if (pool) {
         return pool;
+    }
+
+    if (!dbConfig.password) {
+        throw new Error(
+            'Database password is not configured. Set DB_PASSWORD (or PGPASSWORD) in apps/.env.local; see apps/.env.example.'
+        );
     }
 
     try {

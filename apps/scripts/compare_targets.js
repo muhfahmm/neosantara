@@ -9,7 +9,7 @@ const { Pool } = require('pg');
 const pool = new Pool({
   host: '127.0.0.1',
   user: 'postgres',
-  password: 'Hiim_110407',
+  password: process.env.DB_PASSWORD ?? process.env.PGPASSWORD,
   database: 'db_presiden_simulator',
   port: 5432,
 });
