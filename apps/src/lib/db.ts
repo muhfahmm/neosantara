@@ -45,12 +45,31 @@ export async function getDbPool(): Promise<Pool> {
     }
 }
 
+// PERF-TEMP: Development-only query counter/timer (zero-op in production)
+let perfTrackerLogged = false;
+function trackDevQuery(sql: string, durationMs: number) {
+    if (process.env.NODE_ENV !== 'development') return;
+    if (!perfTrackerLogged) {
+        perfTrackerLogged = true;
+    }
+    const g = globalThis as unknown as { __PERF_TEMP_DB_COUNT__?: number; __PERF_TEMP_DB_MS__?: number };
+    g.__PERF_TEMP_DB_COUNT__ = (g.__PERF_TEMP_DB_COUNT__ ?? 0) + 1;
+    g.__PERF_TEMP_DB_MS__ = (g.__PERF_TEMP_DB_MS__ ?? 0) + durationMs;
+    if (durationMs > 50) {
+        console.log(`[PERF-TEMP:DB] ${durationMs.toFixed(1)}ms | ${sql.slice(0, 90).replace(/\s+/g, ' ')}`);
+    }
+}
+
 /**
  * Helper to query PostgreSQL database.
  * Returns array of rows for SELECT queries.
  */
 export async function queryDb<T = any>(sql: string, params: any[] = []): Promise<T> {
     const dbPool = await getDbPool();
+    const t0 = process.env.NODE_ENV === 'development' ? performance.now() : 0;
     const res = await dbPool.query(sql, params);
+    if (process.env.NODE_ENV === 'development') {
+        trackDevQuery(sql, performance.now() - t0);
+    }
     return res.rows as T;
 }
