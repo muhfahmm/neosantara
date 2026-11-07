@@ -1,4 +1,5 @@
 "use client"
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState } from "react";
 import { X, MessageSquare, AlertCircle, CheckCircle, ArrowRight } from "lucide-react";
 import { ProductionSectorAnalysisResult, calculateDeficitDetailData } from "./productionAISuggestionsLogic";
@@ -46,14 +47,14 @@ export default function ProductionAISuggestionsModal({
               <h3 className="text-base font-black uppercase tracking-[0.2em] text-root-accent">Rekomendasi & Analisis AI Sektor {analysis.sectorLabel}</h3>
               <p className="text-[11px] font-bold text-root-subtle uppercase tracking-wider">Evaluasi Kebutuhan & Pasokan Komoditas</p>
             </div>
-            <button
+            <SharedModalCloseButton
               onClick={onClose}
               className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
               aria-label="Tutup rekomendasi AI"
-            >
+             appearance="custom">
               <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
               <X className="h-4 w-4" />
-            </button>
+            </SharedModalCloseButton>
           </div>
 
           {/* BODY */}

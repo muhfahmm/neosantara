@@ -1,5 +1,6 @@
 "use client";
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useMemo } from "react";
 import {
   X,
@@ -239,13 +240,13 @@ export default function GantiIbukotaModal({
               )}
             </div>
 
-            <button
+            <SharedModalCloseButton
               onClick={onClose}
               className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
-            >
+             appearance="custom">
               <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
               <X className="h-4 w-4" />
-            </button>
+            </SharedModalCloseButton>
           </div>
 
           {/* Search Bar */}
@@ -346,12 +347,12 @@ export default function GantiIbukotaModal({
               </span>
             </div>
 
-            <button
+            <SharedModalCloseButton
               onClick={onClose}
               className="px-4 py-1.5 rounded-xl border border-root-accent/30 bg-root-surface text-root-text hover:text-root-accent transition-colors font-semibold cursor-pointer"
-            >
+             appearance="custom">
               Tutup
-            </button>
+            </SharedModalCloseButton>
           </div>
         </div>
       </NotebookModalWrapper>

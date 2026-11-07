@@ -1,5 +1,6 @@
 "use client";
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { MapPinned, X } from "lucide-react";
@@ -116,13 +117,13 @@ export default function BerikanWilayahModal({
 						</h3>
 					</div>
 
-					<button
+					<SharedModalCloseButton
 						onClick={onClose}
 						className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-					>
+					 appearance="custom">
 						<span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
 						<X className="h-4 w-4" />
-					</button>
+					</SharedModalCloseButton>
 				</div>
 
 				{/* ═══════════ BODY: LIST WILAYAH ═══════════ */}

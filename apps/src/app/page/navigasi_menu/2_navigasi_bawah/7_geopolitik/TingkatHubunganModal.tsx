@@ -1,5 +1,6 @@
 "use client"
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import { getRelationBadge, RELATION_TIERS } from '@/app/logic/relationTiers';
 import React, { useEffect, useState } from "react";
 import { X, Globe, Search, Info, Building2, ShieldCheck, ShieldAlert, Heart, Gift, Coins, Sparkles, ArrowRight } from "lucide-react";
@@ -182,13 +183,13 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                 title="Tingkat Hubungan"
                 description="Lihat tingkat hubungan diplomatik dengan negara lain, telusuri negara berdasarkan hubungan, dan gunakan aksi diplomasi yang tersedia untuk memperbaikinya. Hubungan dapat memengaruhi kerja sama bilateral serta respons negara lain."
               />
-              <button
+              <SharedModalCloseButton
                 onClick={onClose}
                 className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
-              >
+               appearance="custom">
                 <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
-              </button>
+              </SharedModalCloseButton>
             </div>
           </div>
 
@@ -336,12 +337,12 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
             </div>
 
             <div className="px-5 py-3 border-t border-root-accent/20 bg-root-canvas">
-              <button
+              <SharedModalCloseButton
                 onClick={() => setIsLegendOpen(false)}
                 className="w-full py-2.5 rounded-xl bg-root-accent text-root-canvas text-xs font-black uppercase tracking-widest hover:bg-root-accent/80 transition-all cursor-pointer"
-              >
+               appearance="custom">
                 Tutup
-              </button>
+              </SharedModalCloseButton>
             </div>
           </div>
         </NotebookModalWrapper>
@@ -367,13 +368,13 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                 </div>
               </div>
 
-              <button
+              <SharedModalCloseButton
                 onClick={() => setIsPilihJalurOpen(false)}
                 className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
-              >
+               appearance="custom">
                 <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
-              </button>
+              </SharedModalCloseButton>
             </div>
 
             <div className="flex-1 min-h-0 bg-root-surface relative z-10 p-6 sm:p-8 lg:p-12 flex flex-col items-center justify-center gap-6 sm:gap-8">

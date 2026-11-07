@@ -1,5 +1,6 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -1316,12 +1317,12 @@ export default function PlayMenuPage() {
                                 </div>
 
                                 <div className="mt-6 border-t border-white/10 pt-4 flex justify-end z-10 font-sans">
-                                    <button
+                                    <SharedModalCloseButton
                                         onClick={() => setIsContinueModalOpen(false)}
                                         className="py-2.5 px-6 rounded-xl border border-white/10 hover:bg-white/5 active:bg-white/10 text-slate-300 font-bold text-xs uppercase transition-all cursor-pointer"
-                                    >
+                                     appearance="custom">
                                         Tutup
-                                    </button>
+                                    </SharedModalCloseButton>
                                 </div>
                             </motion.div>
                         </div>

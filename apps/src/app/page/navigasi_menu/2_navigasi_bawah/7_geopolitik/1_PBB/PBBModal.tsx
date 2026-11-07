@@ -1,4 +1,5 @@
 "use client"
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState } from "react";
 import { X, Award, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
@@ -44,13 +45,13 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
               title="PBB"
               description="Pantau agenda Perserikatan Bangsa-Bangsa melalui resolusi, Dewan Keamanan, dan suara negara. Partisipasi serta keputusan di setiap bagian dapat memengaruhi kebijakan global dan posisi diplomatik negara."
             />
-            <button
+            <SharedModalCloseButton
               onClick={onClose}
               className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-            >
+             appearance="custom">
               <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
               <X className="h-4 w-4" />
-            </button>
+            </SharedModalCloseButton>
           </div>
         </div>
 

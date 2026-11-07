@@ -1,4 +1,5 @@
 "use client";
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
 import { Info } from "lucide-react";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
@@ -108,15 +109,15 @@ export default function InfoBangunanModal({
         </div>
 
         <div className="p-4 bg-root-canvas border-t border-root-accent/20 flex justify-end relative z-10 shrink-0">
-          <button
+          <SharedModalCloseButton
             onClick={(e) => {
               e.stopPropagation();
               onClose();
             }}
             className="py-2.5 px-6 rounded-xl text-xs font-black uppercase tracking-wider transition-all text-center cursor-pointer bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-md"
-          >
+           appearance="custom">
             Tutup Info
-          </button>
+          </SharedModalCloseButton>
         </div>
       </div>
     </NotebookModalWrapper>

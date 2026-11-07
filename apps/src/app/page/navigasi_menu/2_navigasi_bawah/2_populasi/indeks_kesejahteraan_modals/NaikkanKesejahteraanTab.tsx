@@ -1,3 +1,4 @@
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import { useState, useEffect } from "react";
 import { X, Heart, Coins, Sparkles, AlertCircle, CheckCircle2, Clock } from "lucide-react";
 import DanaTidakCukupModal from "../../1_kepuasan/2_naikkan_kepuasan/DanaTidakCukupModal";
@@ -294,9 +295,9 @@ export default function NaikkanKesejahteraanTab({
         }`}>
           {feedback.type === "success" ? <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5" /> : <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />}
           <div className="flex-1 text-xs font-bold leading-relaxed">{feedback.message}</div>
-          <button onClick={() => setFeedback(null)} className="text-inherit hover:opacity-75 absolute right-3 top-3">
+          <SharedModalCloseButton onClick={() => setFeedback(null)} className="text-inherit hover:opacity-75 absolute right-3 top-3" appearance="custom">
             <X className="h-3.5 w-3.5" />
-          </button>
+          </SharedModalCloseButton>
         </div>
       )}
 

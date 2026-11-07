@@ -1,5 +1,6 @@
 "use client";
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import { Info, X } from "lucide-react";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
 
@@ -33,14 +34,14 @@ export default function TradeMarketBlockedModal({
               Informasi Blokir
             </h2>
           </div>
-          <button
+          <SharedModalCloseButton
             type="button"
             onClick={onClose}
             className="flex shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-rose-500/30 bg-root-surface px-3 py-2 text-xs font-bold uppercase text-rose-400 transition-colors hover:border-rose-500 hover:bg-root-surface hover:text-rose-400 hover:shadow-none"
-          >
+           appearance="custom">
             <span className="font-semibold tracking-wider">Tutup</span>
             <X className="h-4 w-4" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         <div className="space-y-4 px-5 py-5 sm:px-8">

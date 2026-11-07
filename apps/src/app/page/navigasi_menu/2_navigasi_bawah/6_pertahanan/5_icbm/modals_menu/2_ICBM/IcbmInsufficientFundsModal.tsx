@@ -1,4 +1,5 @@
 "use client"
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
 import { X, AlertCircle, Banknote } from "lucide-react";
 import NotebookModalWrapper from "../../../../NotebookModalWrapper";
@@ -34,10 +35,10 @@ export default function IcbmInsufficientFundsModal({
               <p className="text-[11px] text-root-subtle mt-1">Kas negara Anda tidak mencukupi untuk membangun ICBM.</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2.5 rounded-xl border border-root-danger/40 text-root-subtle hover:text-root-danger hover:bg-root-danger/10 transition-all cursor-pointer flex items-center gap-1.5">
+          <SharedModalCloseButton onClick={onClose} className="p-2.5 rounded-xl border border-root-danger/40 text-root-subtle hover:text-root-danger hover:bg-root-danger/10 transition-all cursor-pointer flex items-center gap-1.5" appearance="custom">
             <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         <div className="p-4 sm:p-5 bg-root-surface">
@@ -64,16 +65,16 @@ export default function IcbmInsufficientFundsModal({
         </div>
 
         <div className="px-4 sm:px-5 py-3 border-t border-root-danger/25 bg-root-canvas flex w-full gap-3">
-          <button
+          <SharedModalCloseButton
             onClick={() => {
               onOpenDebt?.(); // Buka modal Pinjaman & Hutang
               onClose();      // Tutup modal kekurangan dana ini
             }}
             className="flex-1 flex items-center justify-center gap-2 py-3 rounded-lg bg-root-accent text-[#04100F] font-black text-xs uppercase tracking-wider shadow-[0_0_16px_rgba(0,255,170,0.45)] hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer"
-          >
+           appearance="custom">
             <Banknote className="h-4 w-4" />
             Pinjam Dana
-          </button>
+          </SharedModalCloseButton>
 
           <button 
             onClick={onClose} 

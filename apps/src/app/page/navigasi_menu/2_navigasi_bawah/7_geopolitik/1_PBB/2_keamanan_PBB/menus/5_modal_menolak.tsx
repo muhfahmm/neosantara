@@ -1,4 +1,5 @@
 "use client"
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { X, ThumbsDown, Search } from "lucide-react";
@@ -67,13 +68,13 @@ export default function ModalMenolak({
               </p>
             </div>
           </div>
-          <button
+          <SharedModalCloseButton
             onClick={onClose}
             className="p-1.5 lg:p-2 rounded-xl border border-rose-500/30 bg-[#1A0F0F] text-[#8A6B6B] hover:text-rose-400 hover:border-rose-500 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-          >
+           appearance="custom">
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         {/* Input Pencarian */}

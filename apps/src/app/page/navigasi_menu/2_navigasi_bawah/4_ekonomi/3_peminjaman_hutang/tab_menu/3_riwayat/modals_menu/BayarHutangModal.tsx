@@ -1,4 +1,5 @@
 "use client"
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
 import { X, CreditCard } from "lucide-react";
 import { renderFlag } from "../../utils";
@@ -39,9 +40,9 @@ export default function BayarHutangModal({
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-transparent pointer-events-none">
       <div className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-[480px] min-h-[440px] overflow-hidden relative font-sans pointer-events-auto animate-in fade-in zoom-in-95 duration-150 flex flex-col">
         <div className="flex justify-end px-6 py-4 shrink-0 border-b border-root-accent/20">
-          <button onClick={onClose} className="text-root-subtle hover:text-root-accent transition-colors cursor-pointer">
+          <SharedModalCloseButton onClick={onClose} className="text-root-subtle hover:text-root-accent transition-colors cursor-pointer" appearance="custom">
             <X className="w-5 h-5" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">

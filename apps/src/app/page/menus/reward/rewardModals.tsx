@@ -1,5 +1,6 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
@@ -398,13 +399,13 @@ export default function TopRightGiftIcon({
                   Hadiah Harian
                 </h2>
               </div>
-              <button
+              <SharedModalCloseButton
                 onClick={onClose}
                 className="p-1.5 sm:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
-              >
+               appearance="custom">
                 <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
-              </button>
+              </SharedModalCloseButton>
             </div>
 
             {/* ---- BODY (GRID HARIAN) ---- */}
@@ -526,7 +527,7 @@ export default function TopRightGiftIcon({
                   {feedbackModal.title}
                 </h3>
               </div>
-              <button
+              <SharedModalCloseButton
                 onClick={() => setFeedbackModal(null)}
                 type="button"
                 aria-label="Tutup feedback"
@@ -535,9 +536,9 @@ export default function TopRightGiftIcon({
                     ? 'border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas'
                     : 'border-rose-500/30 bg-rose-950/30 text-rose-400 hover:bg-rose-500 hover:text-white'
                 }`}
-              >
+               appearance="custom">
                 <span aria-hidden="true" className="text-lg leading-none">×</span>
-              </button>
+              </SharedModalCloseButton>
             </div>
 
             {/* Body */}

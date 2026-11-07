@@ -1,8 +1,10 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import Image from 'next/image';
 import { DEFENSE_UNIT_LABELS, getDefenseUnitCardImage } from '../navigasi_menu/2_navigasi_bawah/buildingCardImages';
 import NotebookModalWrapper from '../navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
+import ModalCloseButton from '../root_modals_design_menu/ModalCloseButton';
 
 export interface WarUnitLoss {
     unitKey: string;
@@ -82,13 +84,11 @@ export default function ResultModal({
                         )}
                     </div>
                     <div className="mt-6 flex flex-col justify-end gap-3 border-t border-root-accent/20 pt-4 sm:flex-row">
-                        <button
-                            type="button"
+                        <ModalCloseButton
                             onClick={onClose}
+                            appearance="custom"
                             className={`w-full rounded-xl border px-6 py-2 text-center text-[11px] font-black uppercase tracking-widest transition-all sm:w-auto sm:text-xs ${isError ? 'border-rose-500/50 bg-rose-500/20 text-rose-400 hover:bg-rose-500/30' : 'border-root-accent/30 bg-root-canvas text-root-text hover:bg-[#142A2A]'}`}
-                        >
-                            Tutup
-                        </button>
+                        >Tutup</ModalCloseButton>
                     </div>
                 </div>
             </NotebookModalWrapper>
@@ -120,14 +120,14 @@ export default function ResultModal({
                             {isError ? 'Laporan Kekalahan Pertempuran' : '⚔️ Laporan Hasil Pertempuran & Perang'}
                         </h2>
                     </div>
-                    <button
-                        type="button"
+                    <ModalCloseButton
                         onClick={onClose}
-                        aria-label="Tutup modal"
+                        ariaLabel="Tutup modal"
+                        appearance="custom"
                         className={`p-1.5 lg:p-2 rounded-lg border ${isError ? 'border-rose-500/30 bg-rose-950/30 text-rose-400 hover:bg-rose-500 hover:text-white' : 'border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas'} transition-all cursor-pointer font-bold text-xs uppercase flex items-center justify-center w-7 h-7 lg:w-8 lg:h-8`}
                     >
                         <span aria-hidden="true" className="text-lg lg:text-xl leading-none">×</span>
-                    </button>
+                    </ModalCloseButton>
                 </div>
 
                 {/* Body Content */}
@@ -182,16 +182,16 @@ export default function ResultModal({
 
                 {/* Footer Actions */}
                 <div className="px-4 sm:px-5 lg:px-6 py-2.5 sm:py-3 lg:py-4 border-t border-root-accent/20 bg-root-canvas flex justify-end shrink-0">
-                    <button
+                    <SharedModalCloseButton
                         type="button"
                         onClick={onClose}
                         className={`px-5 lg:px-6 py-1.5 lg:py-2 rounded-lg font-black text-xs lg:text-sm uppercase tracking-wider cursor-pointer transition-all ${isError
                             ? 'bg-rose-500/20 border border-rose-500/50 text-rose-400 hover:bg-rose-500/30'
                             : 'bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-[0_0_10px_rgba(0,255,170,0.2)]'
                         }`}
-                    >
+                     appearance="custom">
                         Tutup
-                    </button>
+                    </SharedModalCloseButton>
                 </div>
             </div>
     );

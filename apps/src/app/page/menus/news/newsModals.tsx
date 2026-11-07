@@ -1,5 +1,6 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
@@ -284,7 +285,7 @@ export default function TopRightNewsIcon({
                 <span className="w-2 h-2 rounded-full bg-root-accent animate-ping" />
                 Berita Geopolitik Baru!
               </span>
-              <button
+              <SharedModalCloseButton
                 onClick={(e) => {
                   e.stopPropagation();
                   if (toastNews) {
@@ -293,9 +294,9 @@ export default function TopRightNewsIcon({
                   setShowToast(false);
                 }}
                 className="text-slate-400 hover:text-white p-0.5 rounded"
-              >
+               appearance="custom">
                 <X className="w-3.5 h-3.5 text-root-accent" />
-              </button>
+              </SharedModalCloseButton>
             </div>
             <h5 className="mt-1.5 line-clamp-2 whitespace-normal break-words text-[11px] font-bold leading-snug text-white group-hover:text-root-accent transition-colors">
               {toastNews.headline}
@@ -523,13 +524,13 @@ export default function TopRightNewsIcon({
                       Target: <strong className="text-white">{selectedOperationNews.target.name}</strong>
                     </p>
                   </div>
-                  <button
+                  <SharedModalCloseButton
                     onClick={() => setSelectedOperationNews(null)}
                     aria-label="Tutup daftar negara peserta"
                     className="rounded-lg border border-cyan-400/30 p-2 text-cyan-300 hover:bg-cyan-400/10"
-                  >
+                   appearance="custom">
                     <X className="h-4 w-4" />
-                  </button>
+                  </SharedModalCloseButton>
                 </header>
                 <div className="max-h-[60vh] space-y-2 overflow-y-auto p-4">
                   {selectedOperationNews.participants.map(participant => (

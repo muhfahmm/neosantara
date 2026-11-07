@@ -1,5 +1,6 @@
 "use client";
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import { AlertTriangle, X } from "lucide-react";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
 
@@ -38,14 +39,14 @@ export default function ArmsTradeBudgetModal({
               Kas Mitra Tidak Mencukupi
             </h2>
           </div>
-          <button
+          <SharedModalCloseButton
             type="button"
             onClick={onClose}
             aria-label="Tutup informasi kas mitra"
             className="rounded-lg p-1.5 text-root-subtle transition hover:bg-white/5 hover:text-white"
-          >
+           appearance="custom">
             <X className="h-4 w-4" />
-          </button>
+          </SharedModalCloseButton>
         </header>
         <div className="space-y-3 p-5 text-sm">
           <p className="text-[#A7C4C4]">

@@ -1,4 +1,5 @@
 "use client";
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { fetchBuildingMetadata } from '../../../../../../lib/buildingMetadata';
@@ -784,9 +785,9 @@ export default function HunianPermukimanModal({
                 <AlertCircle className="h-5 w-5" />
                 <h3 className="text-base font-black uppercase tracking-wider">⚠️ Stok Material Kosong</h3>
               </div>
-              <button onClick={() => setShowMaterialWarningModal(false)} className="text-root-subtle hover:text-root-accent">
+              <SharedModalCloseButton onClick={() => setShowMaterialWarningModal(false)} className="text-root-subtle hover:text-root-accent" appearance="custom">
                 <X className="h-5 w-5" />
-              </button>
+              </SharedModalCloseButton>
             </div>
             <div className="p-6 relative z-10 flex-1 space-y-4">
               <p className="text-sm text-root-text">
@@ -805,7 +806,7 @@ export default function HunianPermukimanModal({
               </p>
             </div>
             <div className="p-4 bg-root-canvas border-t border-root-accent/20 flex justify-end relative z-10">
-              <button onClick={() => setShowMaterialWarningModal(false)} className="py-2.5 px-6 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-md">Tutup & Lengkapi Stok</button>
+              <SharedModalCloseButton onClick={() => setShowMaterialWarningModal(false)} className="py-2.5 px-6 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-md" appearance="custom">Tutup & Lengkapi Stok</SharedModalCloseButton>
             </div>
           </div>
         </div>

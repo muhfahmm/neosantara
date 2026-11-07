@@ -1,4 +1,5 @@
 "use client";
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
 import { AlertTriangle, CheckCircle2, Info, X } from "lucide-react";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
@@ -49,14 +50,14 @@ export default function NeonAlertModal({
               {title || defaultTitle}
             </h3>
           </div>
-          <button
+          <SharedModalCloseButton
             onClick={onClose}
             aria-label="Tutup"
             className="p-2 rounded-lg border text-root-subtle hover:text-root-text hover:border-root-accent transition-all cursor-pointer"
             style={{ borderColor: `${color}55` }}
-          >
+           appearance="custom">
             <X className="h-4 w-4" />
-          </button>
+          </SharedModalCloseButton>
         </div>
         <div className="px-4 sm:px-5 py-4 bg-root-surface">
           <p className="text-sm leading-relaxed text-root-body">{message}</p>

@@ -1,4 +1,5 @@
 "use client"
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
@@ -528,13 +529,13 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                 title="Kementerian"
                 description="Kelola kementerian, keamanan, dan layanan negara melalui penempatan menteri serta peningkatan level departemen. Susunan kabinet memengaruhi anggaran harian dan bonus atau layanan yang diberikan."
               />
-              <button
+              <SharedModalCloseButton
                 onClick={onClose}
                 className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
-              >
+               appearance="custom">
                 <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
-              </button>
+              </SharedModalCloseButton>
             </div>
           </div>
 
@@ -739,12 +740,12 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
             onClick={(e) => e.stopPropagation()}
             className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative font-sans"
           >
-            <button
+            <SharedModalCloseButton
               onClick={() => setShowGeneralInfo(false)}
               className="absolute top-3 right-3 text-root-subtle hover:text-root-accent cursor-pointer"
-            >
+             appearance="custom">
               <X className="h-5 w-5" />
-            </button>
+            </SharedModalCloseButton>
             <div className="flex items-center gap-2.5 mb-3">
               <div className="p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/30">
                 <Info className="h-5 w-5 text-root-accent" />
@@ -774,12 +775,12 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
             onClick={(e) => e.stopPropagation()}
             className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative font-sans"
           >
-            <button
+            <SharedModalCloseButton
               onClick={() => setInfoTarget(null)}
               className="absolute top-3 right-3 text-root-subtle hover:text-root-accent cursor-pointer"
-            >
+             appearance="custom">
               <X className="h-5 w-5" />
-            </button>
+            </SharedModalCloseButton>
             <h3 className="text-lg font-bold text-root-text mb-2 uppercase">{infoTarget.name}</h3>
             <p className="text-xs text-root-subtle font-semibold mb-4">{infoTarget.description}</p>
             <div className="space-y-2">
@@ -806,14 +807,14 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
           zIndexClass="z-[210]"
         >
           <div className="relative flex-1 w-full overflow-y-auto p-4 font-sans sm:p-5">
-            <button
+            <SharedModalCloseButton
               type="button"
               aria-label="Tutup konfirmasi upgrade"
               onClick={() => setConfirmUpgrade(null)}
               className="absolute right-4 top-4 text-root-subtle transition hover:text-root-accent cursor-pointer"
-            >
+             appearance="custom">
               <X className="h-5 w-5" />
-            </button>
+            </SharedModalCloseButton>
 
             <div className="flex items-center gap-3 mb-4">
               <div className="h-12 w-12 rounded-lg bg-root-canvas border border-root-accent/30 flex items-center justify-center shrink-0">
@@ -901,12 +902,12 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
             onClick={(e) => e.stopPropagation()}
             className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative font-sans"
           >
-            <button
+            <SharedModalCloseButton
               onClick={() => setConfirmDowngrade(null)}
               className="absolute top-3 right-3 text-root-subtle hover:text-root-accent cursor-pointer"
-            >
+             appearance="custom">
               <X className="h-5 w-5" />
-            </button>
+            </SharedModalCloseButton>
 
             <div className="flex items-center gap-3 mb-4">
               <div className="h-12 w-12 rounded-lg bg-root-canvas border border-root-accent/30 flex items-center justify-center shrink-0">

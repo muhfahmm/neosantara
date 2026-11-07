@@ -1,4 +1,5 @@
 "use client";
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect } from "react";
 import { X, Flame, ShieldAlert, CheckCircle2, AlertTriangle, Crosshair, MapPin } from "lucide-react";
 import { executeIcbmTestLaunch, getRealisticTargetLocationName, type NeighborImpact } from "./ujicobaIcbmLogic";
@@ -240,13 +241,13 @@ export default function UjicobaIcbmModal({
               </p>
             </div>
           </div>
-          <button
+          <SharedModalCloseButton
             onClick={handleCloseModal}
             className="p-1.5 sm:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1"
-          >
+           appearance="custom">
             <span className="text-[10px] font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         {/* Content */}
@@ -279,12 +280,12 @@ export default function UjicobaIcbmModal({
                 )}
 
               </div>
-              <button
+              <SharedModalCloseButton
                 onClick={handleCloseModal}
                 className="mt-2 px-6 py-2 rounded-xl bg-root-accent text-root-canvas font-black uppercase text-xs hover:bg-root-accent/80 transition-all cursor-pointer"
-              >
+               appearance="custom">
                 Tutup Laporan
-              </button>
+              </SharedModalCloseButton>
             </div>
           ) : isConfirming ? (
             <div className="rounded-xl border border-rose-500/30 bg-root-canvas p-4 flex flex-col gap-3">

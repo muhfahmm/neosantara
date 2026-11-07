@@ -1,5 +1,6 @@
 "use client";
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import { createPortal } from "react-dom";
 import { CheckCircle2, Eye, Bomb, XCircle, X } from "lucide-react";
 import type { CovertOperationResult } from "./covertOperationLogic";
@@ -35,14 +36,14 @@ export default function CovertOperationResultModal({
               Hasil Operasi {operationName}
             </h2>
           </div>
-          <button
+          <SharedModalCloseButton
             type="button"
             onClick={onClose}
             aria-label="Tutup hasil operasi"
             className="rounded-lg p-1.5 text-root-subtle transition-colors hover:text-root-accent"
-          >
+           appearance="custom">
             <X className="h-4 w-4" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         <div className="space-y-4 p-6 text-center">
@@ -67,13 +68,13 @@ export default function CovertOperationResultModal({
         </div>
 
         <div className="border-t border-root-accent/20 bg-root-canvas p-4">
-          <button
+          <SharedModalCloseButton
             type="button"
             onClick={onClose}
             className="w-full rounded-xl bg-root-accent px-4 py-2.5 text-xs font-black uppercase tracking-widest text-root-canvas transition-colors hover:bg-[#00e699]"
-          >
+           appearance="custom">
             Tutup
-          </button>
+          </SharedModalCloseButton>
         </div>
       </div>
     </div>

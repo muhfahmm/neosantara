@@ -1,5 +1,6 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { CheckCircle2, AlertTriangle, Users, HeartCrack, Activity, X } from 'lucide-react';
@@ -80,13 +81,13 @@ export default function HasilBubarkanMassaModal({
                                 </h2>
                             </div>
                         </div>
-                        <button
+                        <SharedModalCloseButton
                             type="button"
                             onClick={onClose}
                             className="p-2 rounded-xl border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer shadow-sm shrink-0"
-                        >
+                         appearance="custom">
                             <X className="h-4 w-4" />
-                        </button>
+                        </SharedModalCloseButton>
                     </div>
 
                     {/* Ringkasan Status Tindakan Opsi */}

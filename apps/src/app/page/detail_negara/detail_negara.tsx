@@ -1,5 +1,6 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import { getRelationTextColor, getRelationTier } from '@/app/logic/relationTiers';
 import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
@@ -804,13 +805,13 @@ export function CountryDetailModal({
 
           </div>
 
-          <button
+          <SharedModalCloseButton
             onClick={onClose}
             className="p-1.5 sm:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
-          >
+           appearance="custom">
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         {/* DATA RINGKASAN */}

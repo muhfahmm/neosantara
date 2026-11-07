@@ -1,3 +1,4 @@
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { ChevronDown, Eye, Search, X } from "lucide-react";
@@ -106,12 +107,12 @@ export default function SpionaseModal({ isOpen, countryName, playerCountryDetail
 							Spionase Intelijen Negara
 						</h3>
 					</div>
-					<button
+					<SharedModalCloseButton
 						onClick={onClose}
 						className="p-1.5 rounded-lg text-root-subtle hover:text-root-accent hover:bg-root-accent/10 transition-colors cursor-pointer"
-					>
+					 appearance="custom">
 						<X className="h-5 w-5" />
-					</button>
+					</SharedModalCloseButton>
 				</div>
 
 				{/* BODY CONTENT */}

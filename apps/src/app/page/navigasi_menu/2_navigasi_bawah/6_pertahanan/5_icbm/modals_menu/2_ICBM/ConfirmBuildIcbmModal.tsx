@@ -1,4 +1,5 @@
 "use client";
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
 import { X } from "lucide-react";
 import NotebookModalWrapper from "../../../../NotebookModalWrapper";
@@ -34,10 +35,10 @@ export default function ConfirmBuildIcbmModal({
             <h3 className="text-xl font-black text-root-accent uppercase tracking-wide">Konfirmasi Pembangunan ICBM</h3>
             <p className="text-[11px] text-root-subtle mt-1">Pastikan sumber daya mencukupi sebelum melanjutkan.</p>
           </div>
-          <button onClick={onClose} className="p-2.5 rounded-xl border border-root-accent/40 text-root-subtle hover:text-root-accent hover:bg-root-accent/10 transition-all cursor-pointer flex items-center gap-1.5">
+          <SharedModalCloseButton onClick={onClose} className="p-2.5 rounded-xl border border-root-accent/40 text-root-subtle hover:text-root-accent hover:bg-root-accent/10 transition-all cursor-pointer flex items-center gap-1.5" appearance="custom">
             <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         <div className="p-4 sm:p-5 bg-root-surface">

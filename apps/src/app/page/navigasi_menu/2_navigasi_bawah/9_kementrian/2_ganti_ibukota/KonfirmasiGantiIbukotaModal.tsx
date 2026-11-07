@@ -1,5 +1,6 @@
 "use client";
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
 import { AlertTriangle, Landmark, Coins, CheckCircle2, X } from "lucide-react";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
@@ -60,12 +61,12 @@ export default function KonfirmasiGantiIbukotaModal({
               <p className="text-xs text-root-subtle">Keputusan Strategis Kenegaraan</p>
             </div>
           </div>
-          <button
+          <SharedModalCloseButton
             onClick={onClose}
             className="p-1.5 text-root-subtle hover:text-amber-300 hover:bg-amber-400/10 rounded-xl transition-colors cursor-pointer"
-          >
+           appearance="custom">
             <X className="h-5 w-5" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         {/* Area Konten Utama */}

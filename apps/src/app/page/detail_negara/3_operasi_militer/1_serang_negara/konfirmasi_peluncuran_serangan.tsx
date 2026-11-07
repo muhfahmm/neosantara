@@ -1,5 +1,6 @@
 "use client";
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import { ShieldAlert, Swords, X } from "lucide-react";
 
 interface KonfirmasiPeluncuranSeranganProps {
@@ -33,14 +34,14 @@ export default function KonfirmasiPeluncuranSerangan({
 							KOMANDO OPERASI MILITER
 						</h3>
 					</div>
-					<button
+					<SharedModalCloseButton
 						type="button"
 						onClick={onBack}
 						className="rounded-lg p-1.5 text-root-subtle hover:text-root-accent cursor-pointer transition-colors"
 						aria-label="Tutup konfirmasi serangan"
-					>
+					 appearance="custom">
 						<X className="h-4 w-4" />
-					</button>
+					</SharedModalCloseButton>
 				</div>
 
 				<div className="p-5 sm:p-6 space-y-6">

@@ -1,4 +1,5 @@
 "use client"
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { 
   X, Shield, ShieldAlert,
@@ -543,13 +544,13 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                 </p>
               </div>
             </div>
-            <button 
+            <SharedModalCloseButton
               onClick={onClose} 
               className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-            >
+              appearance="custom">
               <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
               <X className="h-4 w-4" />
-            </button>
+            </SharedModalCloseButton>
           </div>
           <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-root-surface relative z-10 custom-scrollbar flex flex-col items-center">
             <div className="w-full">
@@ -1114,13 +1115,13 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                   <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">Pilih benua, lalu pilih negara target Anda.</p>
                 </div>
               </div>
-              <button
+              <SharedModalCloseButton
                 onClick={() => setIsCountryModalOpen(false)}
                 className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-              >
+               appearance="custom">
                 <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
-              </button>
+              </SharedModalCloseButton>
             </div>
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-root-surface relative z-10 custom-scrollbar flex flex-col items-center">
               <div className="w-full max-w-4xl">

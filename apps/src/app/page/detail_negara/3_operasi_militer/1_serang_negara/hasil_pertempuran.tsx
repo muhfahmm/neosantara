@@ -1,5 +1,6 @@
 "use client";
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import { ArrowLeft, Flag, Skull, Swords, Trophy, X } from "lucide-react";
 
 interface HasilPertempuranProps {
@@ -27,13 +28,13 @@ export default function HasilPertempuran({
 							LAPORAN HASIL PERTEMPURAN
 						</h3>
 					</div>
-					<button
+					<SharedModalCloseButton
 						onClick={onClose}
 						className="rounded-lg p-1.5 text-root-subtle hover:text-root-accent cursor-pointer transition-colors"
 						aria-label="Tutup laporan hasil pertempuran"
-					>
+					 appearance="custom">
 						<X className="h-4 w-4" />
-					</button>
+					</SharedModalCloseButton>
 				</div>
 
 				<div className="p-5 sm:p-6 space-y-6">

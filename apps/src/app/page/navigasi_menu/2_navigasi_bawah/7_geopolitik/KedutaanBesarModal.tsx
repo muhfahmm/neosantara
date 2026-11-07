@@ -1,4 +1,5 @@
 "use client"
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState } from "react";
 import { X, Globe } from "lucide-react";
 import NotebookModalWrapper from "../NotebookModalWrapper";
@@ -183,13 +184,13 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
                 title="Kedutaan Besar"
                 description="Kelola perwakilan diplomatik dan lihat kedutaan atau mitra yang tercatat untuk negara Anda. Hubungan kedutaan mendukung komunikasi antarnegara; tindakan terhadap kedutaan dapat memengaruhi hubungan dan kerja sama."
               />
-              <button
+              <SharedModalCloseButton
                 onClick={onClose}
                 className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-              >
+               appearance="custom">
                 <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
-              </button>
+              </SharedModalCloseButton>
             </div>
           </div>
 
@@ -256,12 +257,12 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
       {confirmModal.isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-8 pointer-events-auto rounded-2xl">
           <div className="bg-root-surface border border-rose-500/40 rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
-            <button
+            <SharedModalCloseButton
               onClick={() => setConfirmModal({ isOpen: false, partnerName: null })}
               className="absolute top-4 right-4 p-1.5 rounded-lg text-root-subtle hover:text-root-accent transition-colors cursor-pointer"
-            >
+             appearance="custom">
               <X className="h-5 w-5" />
-            </button>
+            </SharedModalCloseButton>
             <h3 className="text-lg font-bold text-rose-400 uppercase tracking-wide mb-3">Konfirmasi Hancurkan Kedutaan</h3>
             <p className="text-sm text-root-subtle font-medium leading-relaxed mb-6">
               Apakah Anda yakin ingin menghancurkan Kedutaan Besar di <strong className="text-root-text">{confirmModal.partnerName}</strong>? Tindakan ini tidak dapat dibatalkan dan akan memutuskan hubungan diplomatik.
@@ -292,12 +293,12 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
             <p className="text-sm text-root-subtle font-medium leading-relaxed mb-6">
               {successModal.message}
             </p>
-            <button
+            <SharedModalCloseButton
               onClick={() => setSuccessModal({ isOpen: false, message: null })}
               className="w-full py-2.5 rounded-xl bg-root-accent text-root-canvas hover:bg-root-accent/80 transition-all font-black text-xs uppercase cursor-pointer"
-            >
+             appearance="custom">
               Tutup
-            </button>
+            </SharedModalCloseButton>
           </div>
         </div>
       )}

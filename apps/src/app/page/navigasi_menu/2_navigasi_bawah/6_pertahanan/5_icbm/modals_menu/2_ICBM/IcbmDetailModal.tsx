@@ -1,4 +1,5 @@
 "use client"
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useEffect, useState } from "react";
 import { X, Rocket, ArrowUp, Plus, Clock } from "lucide-react";
 import NotebookModalWrapper from "../../../../NotebookModalWrapper";
@@ -168,13 +169,13 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
                   <h2 className="text-sm sm:text-lg font-bold text-root-accent tracking-tight leading-none uppercase">ICBM Strategis</h2>
                 </div>
               </div>
-              <button
+              <SharedModalCloseButton
                 onClick={onClose} 
                 className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-              >
+               appearance="custom">
                 <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
-              </button>
+              </SharedModalCloseButton>
             </div>
 
             <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-root-surface relative z-10 custom-scrollbar">

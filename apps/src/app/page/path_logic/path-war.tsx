@@ -14,9 +14,9 @@ import {
   ArrowLeft,
   AlertTriangle,
   Skull,
-  X,
 } from 'lucide-react';
 import { COUNTRIES_DATA, CAPITALS_DATA } from '@/app/page/map_system/map-data';
+import ModalCloseButton from '../root_modals_design_menu/ModalCloseButton';
 import { getArmadaPowerSummary } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
 import NotebookModalWrapper from '../navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 import { resolveRequestedInvasionOutcome } from '../detail_negara/3_operasi_militer/6_minta_serang_negara/requestedInvasionLogic';
@@ -1566,16 +1566,10 @@ export default function WarMap({
                   Jumlah unit yang dibawa dalam serangan ini
                 </p>
               </div>
-              <button
-                type="button"
+              <ModalCloseButton
                 onClick={() => setShowAttackerForces(false)}
-                className="flex shrink-0 cursor-pointer items-center gap-1 rounded-xl border border-root-accent/30 bg-root-surface p-1.5 text-xs font-bold uppercase text-root-subtle shadow-sm transition-all hover:border-root-accent hover:text-root-accent lg:p-2"
-              >
-                <span className="pl-1 text-[10px] font-semibold uppercase tracking-widest lg:text-xs">
-                  Tutup
-                </span>
-                <X className="h-4 w-4" />
-              </button>
+                className="shadow-sm lg:p-2"
+              />
             </header>
 
             <div className="relative z-10 flex-1 overflow-y-auto bg-root-canvas/80 p-3 sm:p-5 [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-root-canvas [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A] [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)] hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent">

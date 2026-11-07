@@ -1,5 +1,6 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { FlaskConical, X, Banknote, Shield, Globe2, Info } from 'lucide-react';
@@ -76,12 +77,12 @@ export default function PenelitianSelectionModal({
         {/* MODAL / POPOVER BONUS & MODIFIER RISET */}
         {showBonusModal && (
           <div className="absolute inset-0 bg-root-canvas/95 z-40 p-6 sm:p-8 flex flex-col items-center justify-center text-left animate-in fade-in zoom-in duration-200">
-            <button
+            <SharedModalCloseButton
               onClick={() => setShowBonusModal(false)}
               className="absolute top-4 right-4 p-1.5 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent transition-all"
-            >
+             appearance="custom">
               <X className="h-5 w-5" />
-            </button>
+            </SharedModalCloseButton>
 
             <div className="w-full max-w-md bg-root-surface border border-root-accent/30 rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center gap-2 mb-4 pb-3 border-b border-root-accent/20">

@@ -1,4 +1,5 @@
 "use client";
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useEffect, useRef, useState } from "react";
 import { ShieldAlert, X } from "lucide-react";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
@@ -96,9 +97,9 @@ export default function SerangNegaraModal({
 								Serangan Tidak Dapat Dilakukan
 							</h3>
 						</div>
-						<button type="button" onClick={() => setBlockedAttackReason(null)} className="rounded-lg p-1.5 text-root-subtle transition-colors hover:text-amber-400" aria-label="Tutup">
+						<SharedModalCloseButton type="button" onClick={() => setBlockedAttackReason(null)} className="rounded-lg p-1.5 text-root-subtle transition-colors hover:text-amber-400" aria-label="Tutup" appearance="custom">
 							<X className="h-4 w-4" />
-						</button>
+						</SharedModalCloseButton>
 					</div>
 					<div className="space-y-5 p-5 sm:p-6">
 						<p className="text-sm leading-relaxed text-root-text">

@@ -1,3 +1,4 @@
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { ShieldAlert, AlertTriangle, X } from 'lucide-react';
@@ -38,13 +39,13 @@ export default function KonfirmasiAparatModal({
               <p className="text-[10px] text-rose-400/80 uppercase font-semibold">Tindakan Keamanan & Penertiban Massa</p>
             </div>
           </div>
-          <button
+          <SharedModalCloseButton
             type="button"
             onClick={onClose}
             className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-          >
+           appearance="custom">
             <X className="w-4 h-4" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         {/* Content */}

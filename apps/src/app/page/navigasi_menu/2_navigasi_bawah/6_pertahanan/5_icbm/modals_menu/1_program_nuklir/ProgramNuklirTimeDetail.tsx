@@ -1,4 +1,5 @@
 "use client"
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
 import { X, Clock3 } from "lucide-react";
 import NotebookModalWrapper from "../../../../NotebookModalWrapper";
@@ -29,13 +30,13 @@ export default function ProgramNuklirTimeDetail({
               <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-root-subtle mt-1">Estimasi pembangunan selama program nuklir aktif</p>
             </div>
           </div>
-          <button
+          <SharedModalCloseButton
             onClick={onClose}
             className="p-2.5 rounded-xl border border-[#FBBF24]/40 text-root-subtle hover:text-[#FBBF24] hover:bg-[#FBBF24]/10 transition-all cursor-pointer flex items-center gap-1.5"
-          >
+           appearance="custom">
             <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         <div className="p-4 sm:p-5 bg-root-surface">

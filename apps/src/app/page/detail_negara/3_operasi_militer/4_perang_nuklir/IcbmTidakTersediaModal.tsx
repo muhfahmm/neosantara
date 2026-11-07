@@ -1,5 +1,6 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import { AlertTriangle, X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 
@@ -34,14 +35,14 @@ export default function IcbmTidakTersediaModal({
               ICBM Tidak Tersedia
             </h2>
           </div>
-          <button
+          <SharedModalCloseButton
             type="button"
             onClick={onClose}
             className="rounded-lg p-1.5 text-root-subtle transition-colors hover:text-rose-400"
             aria-label="Tutup pemberitahuan ICBM"
-          >
+           appearance="custom">
             <X className="h-4 w-4" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         <div className="p-5 sm:p-6">

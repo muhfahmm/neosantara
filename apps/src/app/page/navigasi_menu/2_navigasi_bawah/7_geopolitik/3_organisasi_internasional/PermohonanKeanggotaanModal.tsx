@@ -1,5 +1,6 @@
 "use client";
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Send, X, CheckCircle, ShieldCheck, FileText, Globe, Loader2, Clock, AlertTriangle } from "lucide-react";
@@ -82,12 +83,12 @@ export default function PermohonanKeanggotaanModal({
               </p>
             </div>
           </div>
-          <button
+          <SharedModalCloseButton
             onClick={onClose}
             className="rounded-lg p-2 text-root-subtle hover:bg-root-surface hover:text-root-accent transition-colors cursor-pointer"
-          >
+           appearance="custom">
             <X className="h-5 w-5" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         {/* BODY */}
@@ -184,12 +185,12 @@ export default function PermohonanKeanggotaanModal({
 
         {/* FOOTER */}
         <div className="flex items-center justify-end gap-3 border-t border-root-accent/20 bg-root-canvas px-6 py-4">
-          <button
+          <SharedModalCloseButton
             onClick={onClose}
             className="rounded-xl border border-root-accent/30 bg-root-surface px-5 py-2 text-xs font-bold text-root-subtle hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer uppercase tracking-wider"
-          >
+           appearance="custom">
             {currentApp?.status === "pending" || currentApp?.status === "accepted" ? "Tutup" : "Batal"}
-          </button>
+          </SharedModalCloseButton>
           {(!currentApp || currentApp.status === "rejected") && (
             <button
               onClick={handleSubmit}

@@ -1,5 +1,6 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import { useState } from 'react';
 import { Eye, Hammer, ShieldCheck, UserRoundSearch, X } from 'lucide-react';
 import { calculateCountryNetBalance } from '@/app/logic/economic_logic/treasuryUpdater';
@@ -197,14 +198,14 @@ export default function LembagaAntikorupsiPanel({
             aria-labelledby="corruption-upgrade-title"
             className="relative flex-1 w-full overflow-y-auto p-4 sm:p-5"
           >
-            <button
+            <SharedModalCloseButton
               type="button"
               aria-label="Tutup konfirmasi upgrade"
               onClick={() => setConfirmation(null)}
               className="absolute right-4 top-4 text-root-subtle transition hover:text-root-accent"
-            >
+             appearance="custom">
               <X className="h-5 w-5" />
-            </button>
+            </SharedModalCloseButton>
             <div className="mb-5 flex items-center gap-3 pr-8">
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-root-accent/30 bg-root-canvas text-root-accent">
                 <selectedTrack.icon className="h-7 w-7" />

@@ -1,5 +1,6 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
@@ -579,16 +580,16 @@ export default function TopLeftIcon({
                 <span className={`h-2 w-2 rounded-full bg-root-accent ${showToast ? 'animate-ping' : ''}`} />
                 Pesan Baru Masuk
               </span>
-              <button
+              <SharedModalCloseButton
                 onClick={(e) => {
                   e.stopPropagation();
                   dismissedToastIdRef.current = toastNotification?.id || null;
                   setShowToast(false);
                 }}
                 className="rounded p-0.5 text-slate-400 hover:text-white"
-              >
+               appearance="custom">
                 <X className="h-3.5 w-3.5 text-root-accent" />
-              </button>
+              </SharedModalCloseButton>
             </div>
             <h5 className="mt-1.5 line-clamp-2 whitespace-normal break-words text-[11px] font-bold leading-snug text-white group-hover:text-root-accent">
               {toastNotification?.title}

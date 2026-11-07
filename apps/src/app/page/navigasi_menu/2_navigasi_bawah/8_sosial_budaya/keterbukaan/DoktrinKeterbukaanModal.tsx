@@ -1,3 +1,4 @@
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
@@ -262,13 +263,13 @@ export default function DoktrinKeterbukaanModal({
               title="Doktrin & Keterbukaan"
               description="Atur kebijakan keterbukaan negara pada kebebasan sipil dan HAM, media dan informasi, serta perbatasan dan geopolitik. Perubahan indikator memengaruhi karakter kebijakan dalam negeri dan hubungan dengan dunia."
             />
-            <button
+            <SharedModalCloseButton
               onClick={onClose}
               className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-            >
+             appearance="custom">
               <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
               <X className="h-4 w-4" />
-            </button>
+            </SharedModalCloseButton>
           </div>
         </div>
 

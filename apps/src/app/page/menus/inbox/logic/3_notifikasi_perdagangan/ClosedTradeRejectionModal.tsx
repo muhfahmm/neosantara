@@ -1,5 +1,6 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 import { NotebookModalWrapper } from '@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper'; 
@@ -47,13 +48,13 @@ export default function ClosedTradeRejectionModal({
           </div>
           
           {/* 🔥 PERBAIKAN: Tombol Tutup disamakan ukurannya dengan modal sebelumnya */}
-          <button 
+          <SharedModalCloseButton
             onClick={onClose} 
             className="p-1.5 lg:p-2 rounded-xl border border-rose-500/30 bg-root-surface text-rose-400 hover:bg-rose-500 hover:text-white transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
-          >
+            appearance="custom">
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         {/* BODY CONTENT */}

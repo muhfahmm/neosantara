@@ -1,4 +1,5 @@
 "use client";
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
@@ -25,14 +26,14 @@ export default function KudetaModal({ isOpen, countryName, onClose, onConfirm }:
 					<h3 id="coup-confirm-title" className="text-lg sm:text-xl font-black text-rose-400 tracking-wide uppercase">
 						Konfirmasi Lakukan Kudeta
 					</h3>
-					<button
+					<SharedModalCloseButton
 						type="button"
 						onClick={onClose}
 						className="rounded-lg p-1.5 text-root-subtle transition-colors hover:text-rose-400"
 						aria-label="Tutup konfirmasi kudeta"
-					>
+					 appearance="custom">
 						<X className="h-4 w-4" />
-					</button>
+					</SharedModalCloseButton>
 				</div>
 
 				<div className="p-5 sm:p-6">

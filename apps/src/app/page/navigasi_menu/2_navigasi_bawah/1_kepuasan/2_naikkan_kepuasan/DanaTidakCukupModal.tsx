@@ -1,5 +1,6 @@
 "use client";
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import { AlertCircle, X } from "lucide-react";
 import { createPortal } from "react-dom";
 
@@ -33,14 +34,14 @@ export default function DanaTidakCukupModal({
             <h3 className="text-xl sm:text-2xl font-black text-rose-400 tracking-wide uppercase">
               Dana Tidak Mencukupi
             </h3>
-            <button
+            <SharedModalCloseButton
               type="button"
               onClick={onClose}
               className="flex shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-rose-500/30 bg-root-surface px-3 py-2 text-xs font-bold uppercase text-rose-400 transition-colors hover:border-rose-500"
-            >
+             appearance="custom">
               <span className="font-semibold tracking-wider">Tutup</span>
               <X className="h-4 w-4" />
-            </button>
+            </SharedModalCloseButton>
           </div>
 
           <div className="rounded-2xl border border-rose-500/30 bg-root-canvas/60 p-5 text-center">

@@ -1,4 +1,5 @@
 "use client";
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
 import { createPortal } from "react-dom";
 import { PhoneForwarded, X, Clock, AlertTriangle } from "lucide-react";
@@ -45,14 +46,14 @@ export default function StatusMintaSerangModal({
 							Mandat Serangan Sedang Berjalan
 						</h3>
 					</div>
-					<button
+					<SharedModalCloseButton
 						type="button"
 						onClick={onClose}
 						className="rounded-lg p-1.5 text-root-subtle transition-colors hover:text-amber-400 cursor-pointer"
 						aria-label="Tutup"
-					>
+					 appearance="custom">
 						<X className="h-4 w-4" />
-					</button>
+					</SharedModalCloseButton>
 				</div>
 
 				{/* Body Content */}
@@ -85,13 +86,13 @@ export default function StatusMintaSerangModal({
 
 					{/* Action Button */}
 					<div className="pt-2">
-						<button
+						<SharedModalCloseButton
 							type="button"
 							onClick={onClose}
 							className="w-full rounded-xl bg-amber-500 hover:bg-amber-400 py-3 text-sm font-black uppercase tracking-wider text-[#0d161a] transition-all cursor-pointer shadow-md active:scale-[0.99]"
-						>
+						 appearance="custom">
 							Tutup
-						</button>
+						</SharedModalCloseButton>
 					</div>
 				</div>
 			</div>

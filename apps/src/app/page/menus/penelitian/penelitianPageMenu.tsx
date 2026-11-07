@@ -1,5 +1,6 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
@@ -636,10 +637,10 @@ export default function PenelitianPageModal({
             </div>
           </div>
 
-          <button onClick={onClose} className="xl:hidden p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0">
+          <SharedModalCloseButton onClick={onClose} className="xl:hidden p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0" appearance="custom">
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
@@ -670,10 +671,10 @@ export default function PenelitianPageModal({
             </button>
           )}
 
-          <button onClick={onClose} className="hidden xl:flex p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase items-center gap-1 shadow-sm shrink-0 ml-auto">
+          <SharedModalCloseButton onClick={onClose} className="hidden xl:flex p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase items-center gap-1 shadow-sm shrink-0 ml-auto" appearance="custom">
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
-          </button>
+          </SharedModalCloseButton>
         </div>
       </div>
 
@@ -1124,9 +1125,9 @@ export default function PenelitianPageModal({
             onClick={(e) => e.stopPropagation()}
             className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative"
           >
-            <button onClick={() => setConfirmTarget(null)} className="absolute top-3 right-3 text-root-subtle hover:text-root-accent cursor-pointer">
+            <SharedModalCloseButton onClick={() => setConfirmTarget(null)} className="absolute top-3 right-3 text-root-subtle hover:text-root-accent cursor-pointer" appearance="custom">
               <X className="h-5 w-5" />
-            </button>
+            </SharedModalCloseButton>
 
             <div className="flex items-center gap-3 mb-4">
               <div className="h-12 w-12 rounded-lg bg-root-canvas border border-root-accent/30 flex items-center justify-center shrink-0">
@@ -1232,9 +1233,9 @@ export default function PenelitianPageModal({
             onClick={(e) => e.stopPropagation()}
             className="bg-root-surface border border-root-accent/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative"
           >
-            <button onClick={() => setConfirmUpgrade(null)} className="absolute top-3 right-3 text-root-subtle hover:text-root-accent cursor-pointer">
+            <SharedModalCloseButton onClick={() => setConfirmUpgrade(null)} className="absolute top-3 right-3 text-root-subtle hover:text-root-accent cursor-pointer" appearance="custom">
               <X className="h-5 w-5" />
-            </button>
+            </SharedModalCloseButton>
 
             <div className="flex items-center gap-3 mb-4">
               <div className="h-12 w-12 rounded-lg bg-root-canvas border border-root-accent/30 flex items-center justify-center shrink-0">

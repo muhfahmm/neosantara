@@ -1,4 +1,5 @@
 "use client"
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState } from "react";
 import { X, AlertCircle, Coins, Banknote } from "lucide-react";
 import NeonAlertModal from "../NeonAlertModal";
@@ -48,10 +49,10 @@ export default function DanaTidakCukupModals({
               <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-root-subtle mt-1">Gagal melakukan pendanaan program nuklir</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2.5 rounded-xl border border-root-danger/40 text-root-subtle hover:text-root-danger hover:bg-root-danger/10 transition-all cursor-pointer flex items-center gap-1.5">
+          <SharedModalCloseButton onClick={onClose} className="p-2.5 rounded-xl border border-root-danger/40 text-root-subtle hover:text-root-danger hover:bg-root-danger/10 transition-all cursor-pointer flex items-center gap-1.5" appearance="custom">
             <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         {/* Body Modal */}

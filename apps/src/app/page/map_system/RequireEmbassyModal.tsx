@@ -1,5 +1,6 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from 'react';
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import { Building2, X, ArrowRight } from 'lucide-react';
@@ -47,12 +48,12 @@ export function RequireEmbassyModal({
               </h3>
             </div>
           </div>
-          <button
+          <SharedModalCloseButton
             onClick={onClose}
             className="p-1.5 rounded-lg border border-root-accent/20 bg-root-canvas text-root-accent/70 hover:text-root-accent hover:bg-root-accent/10 transition-all cursor-pointer"
-          >
+           appearance="custom">
             <X className="w-4 h-4" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         {/* Body Content */}

@@ -1,4 +1,5 @@
 "use client"
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useEffect, useState } from "react";
 import { X, Loader2, User, ChevronRight, Send, Clock, Check } from "lucide-react";
 import { getOrgMembers } from "@/../../json/14_database_organisasi_internasional";
@@ -109,13 +110,13 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
             </p>
           </div>
         </div>
-        <button
+        <SharedModalCloseButton
           onClick={onClose}
           className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-        >
+         appearance="custom">
           <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
           <X className="h-4 w-4" />
-        </button>
+        </SharedModalCloseButton>
       </div>
 
       {/* BODY - Daftar Negara Anggota */}

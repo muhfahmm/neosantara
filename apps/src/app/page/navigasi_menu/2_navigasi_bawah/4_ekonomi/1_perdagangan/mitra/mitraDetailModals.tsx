@@ -2,6 +2,7 @@
 
 "use client"
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
 import { X, Building2, Globe, FileText, Handshake, ArrowRightLeft } from "lucide-react";
 import { TradePartner } from "./mitraModalsMenu";
@@ -49,14 +50,14 @@ export default function MitraDetailModals({
               </h2>
             </div>
           </div>
-          <button
+          <SharedModalCloseButton
             type="button"
             onClick={onClose} 
             className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-          >
+           appearance="custom">
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         {/* Body Content */}
@@ -152,13 +153,13 @@ export default function MitraDetailModals({
 
         {/* Footer */}
         <div className="px-8 py-4 border-t border-root-accent/20 flex justify-end bg-root-canvas relative z-10">
-          <button
+          <SharedModalCloseButton
             type="button"
             onClick={onClose} 
             className="px-6 py-2.5 rounded-xl border border-root-accent/30 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer text-xs font-black uppercase tracking-wider"
-          >
+           appearance="custom">
             Tutup
-          </button>
+          </SharedModalCloseButton>
         </div>
       </div>
     </NotebookModalWrapper>

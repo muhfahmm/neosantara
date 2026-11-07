@@ -1,5 +1,6 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 
@@ -85,12 +86,12 @@ export default function TradeRejectionModal({
                 {details.title}
               </h2>
             </div>
-            <button
+            <SharedModalCloseButton
               onClick={onClose}
               className="p-1.5 sm:p-2 rounded-xl border border-red-500/30 bg-red-900/20 text-red-400 hover:bg-red-900/40 transition-all cursor-pointer"
-            >
+             appearance="custom">
               <X className="w-4 h-4" />
-            </button>
+            </SharedModalCloseButton>
           </div>
 
           {/* Content */}
@@ -174,13 +175,13 @@ export default function TradeRejectionModal({
 
           {/* Footer */}
           <div className="px-6 py-4 bg-gradient-to-r from-red-900/10 to-transparent border-t border-red-500/20 flex justify-end gap-3">
-            <button
+            <SharedModalCloseButton
               onClick={onClose}
               className="px-6 py-2 text-xs font-black uppercase tracking-wider rounded-xl border border-red-500/40 bg-red-950/40 text-red-300 hover:bg-red-950/60 transition-all cursor-pointer flex items-center gap-2"
-            >
+             appearance="custom">
               <X className="w-3 h-3" />
               Mengerti
-            </button>
+            </SharedModalCloseButton>
           </div>
         </div>
       </div>

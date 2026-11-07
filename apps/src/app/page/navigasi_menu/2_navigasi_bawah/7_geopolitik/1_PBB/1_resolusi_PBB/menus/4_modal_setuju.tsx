@@ -1,4 +1,5 @@
 "use client"
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { X, ThumbsUp, Search } from "lucide-react";
@@ -67,13 +68,13 @@ export default function ModalSetuju({
               </p>
             </div>
           </div>
-          <button
+          <SharedModalCloseButton
             onClick={onClose}
             className="p-1.5 lg:p-2 rounded-xl border border-emerald-500/30 bg-root-surface text-root-subtle hover:text-emerald-400 hover:border-emerald-500 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-          >
+           appearance="custom">
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         {/* Input Pencarian */}

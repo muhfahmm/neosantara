@@ -1,5 +1,6 @@
 // ProduksiModal.tsx
 "use client";
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { X, Hammer, TrendingUp, TrendingDown, AlertCircle, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
@@ -910,7 +911,7 @@ export default function ProduksiModal({
                 <AlertCircle className="h-5 w-5" />
                 <h3 className="text-base font-black uppercase tracking-wider">⚠️ Stok Material Kosong</h3>
               </div>
-              <button onClick={() => setShowMaterialWarningModal(false)} className="text-root-subtle hover:text-root-accent"><X className="h-5 w-5" /></button>
+              <SharedModalCloseButton onClick={() => setShowMaterialWarningModal(false)} className="text-root-subtle hover:text-root-accent" appearance="custom"><X className="h-5 w-5" /></SharedModalCloseButton>
             </div>
             <div className="p-6 relative z-10 flex-1 space-y-4">
               <p className="text-sm text-root-text">Pembangunan <strong className="font-black text-root-accent">{selectedBuilding?.label}</strong> tidak dapat dilanjutkan karena material berikut ini stoknya kosong (0):</p>
@@ -925,9 +926,9 @@ export default function ProduksiModal({
               <p className="text-[10px] text-root-subtle italic">Klik nama material pada daftar di atas untuk menambah stok (kembali ke tab terkait).</p>
             </div>
             <div className="p-4 bg-root-canvas border-t border-root-accent/20 flex justify-end relative z-10">
-              <button onClick={() => setShowMaterialWarningModal(false)} className="py-2.5 px-6 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-md">
+              <SharedModalCloseButton onClick={() => setShowMaterialWarningModal(false)} className="py-2.5 px-6 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-md" appearance="custom">
                 Tutup & Lengkapi Stok
-              </button>
+              </SharedModalCloseButton>
             </div>
           </div>
         </div>

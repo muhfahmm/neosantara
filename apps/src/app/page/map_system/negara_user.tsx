@@ -1,7 +1,8 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from 'react';
-import { X, User, Globe, Building2, Users, Landmark, ShieldCheck } from 'lucide-react';
+import { User, Globe, Building2, Users, Landmark, ShieldCheck } from 'lucide-react';
 
 import { calculateCountryGDP, formatCurrencyEM } from '@/app/logic/economic_logic/treasuryUpdater';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
@@ -83,13 +84,9 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
             </div>
           </div>
 
-          <button
+          <SharedModalCloseButton
             onClick={onClose}
-            className="p-2 sm:p-2.5 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
-          >
-            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
-          </button>
+          />
         </div>
 
         {/* BODY CONTENT */}

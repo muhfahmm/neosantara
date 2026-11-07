@@ -1,5 +1,6 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { 
@@ -67,13 +68,13 @@ export default function MenuBubarkanMassaModal({
               </h2>
             </div>
           </div>
-          <button
+          <SharedModalCloseButton
             type="button"
             onClick={onClose}
             className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-rose-500/20 border border-transparent hover:border-rose-500/30 transition-all cursor-pointer"
-          >
+           appearance="custom">
             <X className="w-5 h-5" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         {/* BODY (LIST & DETAIL GRID) */}

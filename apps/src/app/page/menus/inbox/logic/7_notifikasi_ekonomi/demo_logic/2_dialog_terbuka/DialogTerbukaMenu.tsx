@@ -1,5 +1,6 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import dynamic from 'next/dynamic';
@@ -564,7 +565,7 @@ export default function DialogTerbukaMenu({
           <div role="dialog" aria-modal="true" className="w-full max-w-md rounded-2xl border border-root-accent/30 bg-root-canvas p-6 shadow-2xl">
             <h3 className="text-lg font-bold text-white">Menu ekonomi tidak tersedia</h3>
             <p className="mt-2 text-sm text-slate-400">Buka dialog ini dari sesi permainan aktif untuk mengubah kebijakan.</p>
-            <button type="button" onClick={() => setPolicyMenu(null)} className="mt-5 rounded-lg bg-root-accent px-3 py-2 text-xs font-bold text-root-accent-ink">Tutup</button>
+            <SharedModalCloseButton type="button" onClick={() => setPolicyMenu(null)} className="mt-5 rounded-lg bg-root-accent px-3 py-2 text-xs font-bold text-root-accent-ink" appearance="custom">Tutup</SharedModalCloseButton>
           </div>
         </div>
       )}

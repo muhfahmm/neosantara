@@ -1,5 +1,6 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useMemo } from 'react';
 import {
   X,
@@ -384,14 +385,14 @@ export default function BeriTentaraModal({
             </div>
           </div>
 
-          <button
+          <SharedModalCloseButton
             onClick={onClose}
             className="p-2 sm:p-2.5 rounded-xl border border-root-accent/30 bg-root-canvas text-root-accent/70 hover:text-root-accent hover:bg-root-accent/10 active:bg-root-accent/20 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
             aria-label="Tutup modal beri tentara"
-          >
+           appearance="custom">
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         {/* RINGKASAN MILITARY POWER & PERBANDINGAN KOMPARATIF */}

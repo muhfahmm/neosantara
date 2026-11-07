@@ -1,4 +1,5 @@
 "use client"
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { X, Info, Globe, Shield, HeartPulse, BookOpen, ArrowRightLeft, Users, Sprout, Ship, Wifi, Cloud, Landmark, Flag, Star, Handshake, BarChart, Crown, TrendingUp } from "lucide-react";
@@ -158,13 +159,13 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
               title="Organisasi Internasional"
               description="Jelajahi organisasi PBB dan badan khusus serta organisasi regional. Buka tiap organisasi untuk melihat keanggotaan, informasi, dan peluang kerja sama yang tersedia bagi negara Anda."
             />
-            <button
+            <SharedModalCloseButton
               onClick={handleClose}
               className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-            >
+             appearance="custom">
               <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
               <X className="h-4 w-4" />
-            </button>
+            </SharedModalCloseButton>
           </div>
         </div>
 

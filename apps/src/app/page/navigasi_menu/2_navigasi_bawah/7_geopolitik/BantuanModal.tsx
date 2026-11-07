@@ -1,4 +1,5 @@
 "use client"
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
 import { X, Globe, Construction } from "lucide-react";
 
@@ -26,10 +27,10 @@ export default function BantuanModal({ isOpen, onClose, countryDetail, setCountr
               </div>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-root-accent/30 bg-root-accent/10 text-root-accent hover:bg-root-accent/20 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
+          <SharedModalCloseButton onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-root-accent/30 bg-root-accent/10 text-root-accent hover:bg-root-accent/20 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm" appearance="custom">
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
-          </button>
+          </SharedModalCloseButton>
         </div>
 
         {/* BODY MODAL */}

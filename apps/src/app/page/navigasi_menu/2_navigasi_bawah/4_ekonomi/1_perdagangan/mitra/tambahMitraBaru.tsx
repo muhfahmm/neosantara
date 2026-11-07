@@ -1,5 +1,6 @@
 'use client';
 
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useMemo, useState } from 'react';
 import { X, Search } from 'lucide-react';
 import NotebookModalWrapper from '../../../NotebookModalWrapper';
@@ -127,14 +128,14 @@ export default function TambahMitraBaru({
             <div className="flex-1">
               <h2 id="add-trade-partner-title" className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Tambah Mitra Dagang Baru</h2>
             </div>
-            <button
+            <SharedModalCloseButton
               type="button"
               onClick={onClose}
               className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-            >
+             appearance="custom">
               <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Batal</span>
               <X className="h-4 w-4" />
-            </button>
+            </SharedModalCloseButton>
           </div>
 
           {/* BAR PENCARIAN */}
@@ -237,15 +238,15 @@ export default function TambahMitraBaru({
                   Pemberitahuan / Peringatan
                 </h2>
               </div>
-              <button
+              <SharedModalCloseButton
                 type="button"
                 onClick={() => setNoEmbassyModalData(null)}
                 aria-label="Tutup modal"
                 className="p-1.5 rounded-lg border border-rose-500/30 bg-rose-950/30 text-rose-400 hover:bg-rose-500 hover:text-white transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1"
-              >
+               appearance="custom">
                 <span className="text-[11px] font-bold uppercase tracking-wider pl-0.5">Tutup</span>
                 <span aria-hidden="true" className="text-base leading-none">×</span>
-              </button>
+              </SharedModalCloseButton>
             </div>
 
             {/* Body Content */}
@@ -301,15 +302,15 @@ export default function TambahMitraBaru({
                   Konfirmasi Perjanjian Dagang
                 </h2>
               </div>
-              <button
+              <SharedModalCloseButton
                 type="button"
                 onClick={() => setConfirmModalData(null)}
                 aria-label="Tutup modal"
                 className="p-1.5 rounded-lg border border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1"
-              >
+               appearance="custom">
                 <span className="text-[11px] font-bold uppercase tracking-wider pl-0.5">Tutup</span>
                 <span aria-hidden="true" className="text-base leading-none">×</span>
-              </button>
+              </SharedModalCloseButton>
             </div>
 
             {/* Body Content */}
