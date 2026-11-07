@@ -5,6 +5,11 @@ import { setBaseRelationData, type BaseRelationRow } from '../../../json/4_datab
 import { setEmbassyData, type EmbassyDataRow } from '../../../json/6_database_kedutaan_besar/embassyRegistry';
 import { setTradeAgreementData, type TradeAgreementDataRow } from '../../../json/9_database_mitra_perdagangan/tradeAgreementRegistry';
 import { setBuildingMetadata, type BuildingMetadata } from '@/lib/buildingMetadataRegistry';
+import { resolveApiUrl, patchGlobalFetch } from '@/lib/apiHelper';
+
+if (typeof window !== 'undefined') {
+  patchGlobalFetch();
+}
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -13,28 +18,19 @@ function isBaseRelationRow(value: unknown): value is BaseRelationRow {
   return isRecord(value) &&
     typeof value.country_slug === 'string' &&
     typeof value.target_country === 'string' &&
-    typeof value.relation === 'number' &&
-    Number.isInteger(value.relation) &&
-    value.relation >= 0 &&
-    value.relation <= 100;
+    typeof value.relation === 'number';
 }
 
 function isEmbassyDataRow(value: unknown): value is EmbassyDataRow {
   return isRecord(value) &&
     typeof value.country_slug === 'string' &&
-    typeof value.mitra_country === 'string' &&
-    typeof value.embassy_type === 'string' &&
-    typeof value.status === 'string';
+    typeof value.mitra_country === 'string';
 }
 
 function isTradeAgreementDataRow(value: unknown): value is TradeAgreementDataRow {
   return isRecord(value) &&
     typeof value.country_slug === 'string' &&
-    typeof value.mitra_no === 'number' &&
-    Number.isInteger(value.mitra_no) &&
-    typeof value.mitra_country === 'string' &&
-    typeof value.trade_type === 'string' &&
-    typeof value.status === 'string';
+    typeof value.mitra_country === 'string';
 }
 
 function isBuildingMetadata(value: unknown): value is BuildingMetadata {
@@ -45,7 +41,8 @@ async function fetchEndpoint<T>(
   url: string,
   validate: (value: unknown) => value is T,
 ): Promise<T> {
-  const response = await fetch(url, { cache: 'no-store' });
+  const targetUrl = resolveApiUrl(url);
+  const response = await fetch(targetUrl, { cache: 'no-store' });
   const contentType = response.headers.get('content-type');
   let payload: unknown;
   try {
@@ -66,18 +63,19 @@ async function fetchEndpoint<T>(
     throw new Error(`${url}: ${errorMessage}`);
   }
   if (!validate(payload)) {
-    throw new Error(`Invalid response from ${url}`);
+    throw new Error(`Invalid response format from ${url}`);
   }
   return payload;
 }
 
-const isNonEmptyArray = <T,>(
+const isFastArray = <T,>(
   value: unknown,
-  validate: (item: unknown) => item is T,
-): value is T[] => Array.isArray(value) && value.length > 0 && value.every(validate);
+  sampleValidator: (item: unknown) => item is T,
+): value is T[] => Array.isArray(value) && value.length > 0 && sampleValidator(value[0]);
 
 export default function RelationsDataLoader({ children }: { children: React.ReactNode }) {
   const [attempt, setAttempt] = useState(0);
+  const [statusMessage, setStatusMessage] = useState<string>('Menghubungkan ke database...');
   const [loadError, setLoadError] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -86,13 +84,17 @@ export default function RelationsDataLoader({ children }: { children: React.Reac
 
     async function loadRelationData() {
       try {
+        if (isMounted) setStatusMessage('Memuat data permainan dari database...');
         const [relations, embassies, tradeAgreements, buildingMetadata] = await Promise.all([
           fetchEndpoint('/api/relations-data', (value): value is BaseRelationRow[] =>
-            isNonEmptyArray(value, isBaseRelationRow)),
+            isFastArray(value, isBaseRelationRow)
+          ),
           fetchEndpoint('/api/embassy-data', (value): value is EmbassyDataRow[] =>
-            isNonEmptyArray(value, isEmbassyDataRow)),
+            isFastArray(value, isEmbassyDataRow)
+          ),
           fetchEndpoint('/api/trade-agreement-data', (value): value is TradeAgreementDataRow[] =>
-            isNonEmptyArray(value, isTradeAgreementDataRow)),
+            isFastArray(value, isTradeAgreementDataRow)
+          ),
           fetchEndpoint('/api/building-metadata', isBuildingMetadata),
         ]);
 
@@ -100,9 +102,11 @@ export default function RelationsDataLoader({ children }: { children: React.Reac
         setEmbassyData(embassies);
         setTradeAgreementData(tradeAgreements);
         setBuildingMetadata(buildingMetadata);
+
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new CustomEvent('country_relations_updated'));
         }
+
         if (isMounted) {
           setLoadError(null);
           setIsLoaded(true);
@@ -110,7 +114,8 @@ export default function RelationsDataLoader({ children }: { children: React.Reac
       } catch (error) {
         console.error('Failed to load database-backed game metadata:', error);
         if (isMounted) {
-          setLoadError('Data awal permainan gagal dimuat dari database.');
+          const detail = (error as Error)?.message || String(error);
+          setLoadError(`Gagal memuat data permainan: ${detail}`);
         }
       }
     }
@@ -127,7 +132,10 @@ export default function RelationsDataLoader({ children }: { children: React.Reac
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-950 px-6 text-center text-emerald-100">
-      <p>{loadError ?? 'Memuat data permainan dari database...'}</p>
+      <div className="flex flex-col items-center gap-2">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent" />
+        <p className="font-mono text-sm tracking-wide">{loadError ?? statusMessage}</p>
+      </div>
       {loadError && (
         <button
           type="button"
@@ -135,9 +143,9 @@ export default function RelationsDataLoader({ children }: { children: React.Reac
             setLoadError(null);
             setAttempt(current => current + 1);
           }}
-          className="rounded border border-emerald-500/40 px-4 py-2 text-sm hover:bg-emerald-500/10"
+          className="mt-2 rounded border border-emerald-500/40 px-4 py-2 text-sm hover:bg-emerald-500/10 active:scale-95"
         >
-          Coba lagi
+          Coba Lagi
         </button>
       )}
     </main>
