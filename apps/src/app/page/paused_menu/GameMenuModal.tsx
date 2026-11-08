@@ -118,20 +118,20 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
         <React.Fragment>
             <div className={isConfirming ? 'pointer-events-none' : 'pointer-events-auto'}>
                 <PausedMenuFrame zIndexClass="z-[99999999]">
-                    <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-4 custom-scrollbar sm:p-8">
+                    <div className="paused-menu-content relative flex min-h-0 flex-1 flex-col overflow-y-auto p-4 custom-scrollbar sm:p-8">
                         {/* View: MAIN LIST MENU */}
                         {subview === 'menu' && (
-                            <div className="flex-1 flex flex-col justify-between">
+                            <div className="paused-main-menu flex-1 flex flex-col justify-between">
                                 <div>
-                                    <div className="flex items-center justify-center gap-1.5 text-root-accent/40 mb-6 shrink-0">
+                                    <div className="paused-menu-divider flex items-center justify-center gap-1.5 text-root-accent/40 mb-6 shrink-0">
                                         <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-root-accent/40" />
                                         <span className="text-[10px] tracking-widest font-black uppercase">❖ ❖ ❖</span>
                                         <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-root-accent/40" />
                                     </div>
-                                    <div className="space-y-3">
+                                    <div className="paused-menu-actions flex flex-col gap-3">
                                     <button
                                         onClick={onClose}
-                                        className="w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
+                                        className="paused-menu-action w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
                                         Lanjutkan
                                     </button>
@@ -141,13 +141,13 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                             onSaveGameClick();
                                         }}
                                         data-tutorial="tombol-simpan"
-                                        className="w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
+                                        className="paused-menu-action w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
                                         Simpan Permainan
                                     </button>
                                     <button
                                         onClick={handleOpenLoad}
-                                        className="w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
+                                        className="paused-menu-action w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
                                         Muat Permainan
                                     </button>
@@ -156,19 +156,19 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                             onClose();
                                             onRestartClick();
                                         }}
-                                        className="w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
+                                        className="paused-menu-action w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
                                         Mulai Ulang
                                     </button>
                                     <button
                                         onClick={() => setSubview('options')}
-                                        className="w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
+                                        className="paused-menu-action w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
                                         Pengaturan
                                     </button>
                                     <button
                                         onClick={() => setShowKeywordModal(true)}
-                                        className="w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99] flex items-center justify-center gap-2"
+                                        className="paused-menu-action w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99] flex items-center justify-center gap-2"
                                     >
                                         <Keyboard className="w-4 h-4 text-root-accent" />
                                         <span>Pintasan Keyboard</span>
@@ -176,10 +176,10 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                     </div>
                                 </div>
 
-                                <div className="pt-12">
+                                <div className="paused-menu-exit pt-12">
                                     <button
                                         onClick={handleExitGame}
-                                        className="w-full bg-root-canvas hover:bg-rose-500/10 active:bg-rose-500/20 border border-rose-500/30 hover:border-rose-500/60 rounded py-3.5 text-center text-root-text hover:text-rose-300 font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(244,63,94,0.15)] active:scale-[0.99]"
+                                        className="paused-menu-action w-full bg-root-canvas hover:bg-rose-500/10 active:bg-rose-500/20 border border-rose-500/30 hover:border-rose-500/60 rounded py-3.5 text-center text-root-text hover:text-rose-300 font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(244,63,94,0.15)] active:scale-[0.99]"
                                     >
                                         Keluar Permainan
                                     </button>
@@ -270,12 +270,12 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                         )}
 
                         {/* Ink Stamp at the Bottom Right — Green Theme */}
-                        <div className="absolute bottom-6 right-6 border-2 border-dashed border-root-accent/30 text-root-accent/40 px-3 py-1 font-mono text-[9px] font-black uppercase tracking-wider rounded rotate-[-4deg] pointer-events-none select-none">
+                        <div className="paused-menu-stamp absolute bottom-6 right-6 border-2 border-dashed border-root-accent/30 text-root-accent/40 px-3 py-1 font-mono text-[9px] font-black uppercase tracking-wider rounded rotate-[-4deg] pointer-events-none select-none">
                             PRESIDEN EXEC. 16FA-923
                         </div>
 
                         {/* Decorative Elegant Divider at the Bottom */}
-                        <div className="flex items-center justify-center gap-1.5 text-root-accent/40 mt-6 shrink-0">
+                        <div className="paused-menu-footer-divider flex items-center justify-center gap-1.5 text-root-accent/40 mt-6 shrink-0">
                             <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-root-accent/40" />
                             <span className="text-[10px] tracking-widest font-black uppercase">❖ ❖ ❖</span>
                             <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-root-accent/40" />

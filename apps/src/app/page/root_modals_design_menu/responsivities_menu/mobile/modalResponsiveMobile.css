@@ -464,10 +464,52 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.paused-menu-frame[data-viewport-mode] .paused-menu-content:has(.paused-main-menu) {
+  overflow: hidden;
+  padding: 8px;
+}
+
+.paused-menu-frame[data-viewport-mode] .paused-main-menu {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: center;
+  gap: 8px;
+}
+
+.paused-menu-frame[data-viewport-mode] .paused-main-menu > div:first-child,
+.paused-menu-frame[data-viewport-mode] .paused-menu-actions,
+.paused-menu-frame[data-viewport-mode] .paused-menu-exit {
+  display: contents;
+}
+
+.paused-menu-frame[data-viewport-mode] .paused-menu-divider,
+.paused-menu-frame[data-viewport-mode] .paused-menu-stamp,
+.paused-menu-frame[data-viewport-mode] .paused-menu-footer-divider {
+  display: none;
+}
+
+.paused-menu-frame[data-viewport-mode] .paused-menu-action {
+  min-width: 0;
+  min-height: 40px;
+  padding: 6px 4px;
+  font-size: clamp(10px, 2.8vw, 12px);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  white-space: normal;
+}
+
 @media (max-width: 360px) {
   .notebook-modal-frame[data-viewport-mode='portraitPhone'] > .modal-responsive-shell {
     padding: 3px;
     padding-left: 8px;
+  }
+
+  .paused-menu-frame[data-viewport-mode='portraitPhone'] .paused-menu-content:has(.paused-main-menu) {
+    padding: 6px;
+  }
+
+  .paused-menu-frame[data-viewport-mode='portraitPhone'] .paused-menu-action {
+    font-size: 10px;
   }
 
   .notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-header > div:first-child > div:first-child {

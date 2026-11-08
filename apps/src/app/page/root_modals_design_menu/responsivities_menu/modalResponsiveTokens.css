@@ -28,7 +28,7 @@
 
 @media (orientation: portrait) and (max-width: 640px) {
   :root {
-    --navbar-h: 72px;
+    --navbar-h: 97px;
     --modal-top-offset: calc(var(--navbar-h) + var(--safe-top) + 8px);
     --modal-bottom-offset: var(--safe-bottom);
     --modal-side-offset: max(8px, var(--safe-left));

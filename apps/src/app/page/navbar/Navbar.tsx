@@ -250,40 +250,43 @@ export function Navbar({
                         </span>
                     </div>
 
-                    {/* Tengah: Hanya Ikon + Angka (Populasi, Kas, Kepuasan, Rating, Kesejahteraan) */}
-                    <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar shrink min-w-0 text-[10px] font-black">
-                        <button onClick={onOpenPopulasi} className="flex items-center gap-1 text-root-text shrink-0 active:opacity-75">
-                            <Users className="w-3 h-3 text-root-accent" />
-                            <span>{(populasi >= 1e6 ? `${(populasi / 1e6).toFixed(1)}M` : populasi >= 1e3 ? `${(populasi / 1e3).toFixed(0)}k` : populasi.toString())}</span>
-                        </button>
-
-                        <div className="flex items-center gap-1 text-root-text shrink-0">
-                            <Landmark className="w-3 h-3 text-root-accent" />
-                            <span className={anggaran < 0 ? 'text-rose-400' : ''}>
-                                {Math.abs(anggaran) >= 1e9
-                                    ? `${(anggaran / 1e9).toFixed(1)}B`
-                                    : Math.abs(anggaran) >= 1e6
-                                    ? `${(anggaran / 1e6).toFixed(1)}M`
-                                    : Math.abs(anggaran) >= 1e3
-                                    ? `${(anggaran / 1e3).toFixed(0)}k`
-                                    : anggaran.toFixed(0)}
-                            </span>
-                        </div>
-
-                        <button onClick={onOpenKepuasan} className="flex items-center gap-1 shrink-0 active:opacity-75">
-                            <Smile className="w-3 h-3 text-root-accent" />
-                            <span className={getKepuasanColor(kepuasanScore)}>{Math.round(kepuasanScore)}%</span>
-                        </button>
-
-                        <button onClick={onOpenPeringkat} className="flex items-center gap-1 shrink-0 active:opacity-75">
-                            <Star className="w-3 h-3 fill-root-accent text-root-accent" />
-                            <span className={getPresidentRatingColor(presidentRating)}>{presidentRating}</span>
-                        </button>
-
-                        <button onClick={onOpenKesejahteraan} className="flex items-center gap-1 shrink-0 active:opacity-75">
-                            <Activity className="w-3 h-3 text-root-accent" />
-                            <span className={getKesejahteraanColorClass(kesejahteraan)}>{kesejahteraan}</span>
-                        </button>
+                    {/* Ringkasan angka lengkap seperti versi desktop */}
+                    <div className="grid min-w-0 flex-1 grid-cols-[1.35fr_1.2fr_repeat(3,minmax(0,0.65fr))] items-center gap-x-1 overflow-hidden px-1">
+                        <MobileStatusItem
+                            icon={<Users className="h-2.5 w-2.5" />}
+                            label="POPULASI"
+                            value={populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
+                            change={netPopulationLabel}
+                            onClick={onOpenPopulasi}
+                        />
+                        <MobileStatusItem
+                            icon={<Landmark className="h-2.5 w-2.5" />}
+                            label="KAS NEGARA"
+                            value={countryDetail ? formatCurrencyEM(anggaran) : '-'}
+                            change={countryDetail ? netBalanceLabel : undefined}
+                            valueColor={anggaran < 0 ? 'text-rose-400' : undefined}
+                        />
+                        <MobileStatusItem
+                            icon={<Smile className="h-2.5 w-2.5" />}
+                            label="KEPUASAN"
+                            value={`${Math.round(kepuasanScore)}%`}
+                            valueColor={getKepuasanColor(kepuasanScore)}
+                            onClick={onOpenKepuasan}
+                        />
+                        <MobileStatusItem
+                            icon={<Star className="h-2.5 w-2.5 fill-root-accent" />}
+                            label="PERINGKAT"
+                            value={`${presidentRating}/100`}
+                            valueColor={getPresidentRatingColor(presidentRating)}
+                            onClick={onOpenPeringkat}
+                        />
+                        <MobileStatusItem
+                            icon={<Activity className="h-2.5 w-2.5" />}
+                            label="SEJAHTERA"
+                            value={`${kesejahteraan}/100`}
+                            valueColor={getKesejahteraanColorClass(kesejahteraan)}
+                            onClick={onOpenKesejahteraan}
+                        />
                     </div>
 
                     {/* Sisi Kanan: Status ringkas zoom */}
@@ -320,30 +323,48 @@ export function Navbar({
                         </div>
                     </div>
 
-                    {/* Baris 2: Metrik Ikon + Angka */}
-                    <div className="flex items-center justify-around bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg h-[32px] text-[10px] font-black">
-                        <button onClick={onOpenPopulasi} className="flex items-center gap-1 text-root-text active:opacity-75">
-                            <Users className="w-3 h-3 text-root-accent" />
-                            <span>{(populasi >= 1e6 ? `${(populasi / 1e6).toFixed(1)}M` : populasi.toLocaleString('id-ID', { maximumFractionDigits: 0 }))}</span>
-                        </button>
-                        <div className="flex items-center gap-1 text-root-text">
-                            <Landmark className="w-3 h-3 text-root-accent" />
-                            <span className={anggaran < 0 ? 'text-rose-400' : ''}>
-                                {Math.abs(anggaran) >= 1e9 ? `${(anggaran / 1e9).toFixed(1)}B` : Math.abs(anggaran) >= 1e6 ? `${(anggaran / 1e6).toFixed(1)}M` : formatCurrencyEM(anggaran)}
-                            </span>
-                        </div>
-                        <button onClick={onOpenKepuasan} className="flex items-center gap-1 active:opacity-75">
-                            <Smile className="w-3 h-3 text-root-accent" />
-                            <span className={getKepuasanColor(kepuasanScore)}>{Math.round(kepuasanScore)}%</span>
-                        </button>
-                        <button onClick={onOpenPeringkat} className="flex items-center gap-1 active:opacity-75">
-                            <Star className="w-3 h-3 fill-root-accent text-root-accent" />
-                            <span className={getPresidentRatingColor(presidentRating)}>{presidentRating}</span>
-                        </button>
-                        <button onClick={onOpenKesejahteraan} className="flex items-center gap-1 active:opacity-75">
-                            <Activity className="w-3 h-3 text-root-accent" />
-                            <span className={getKesejahteraanColorClass(kesejahteraan)}>{kesejahteraan}</span>
-                        </button>
+                    {/* Baris 2: Angka lengkap dengan label dan perubahan harian */}
+                    <div className="grid grid-cols-6 items-center gap-x-1 gap-y-1 bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg">
+                        <MobileStatusItem
+                            className="col-span-3"
+                            icon={<Users className="h-2.5 w-2.5" />}
+                            label="POPULASI"
+                            value={populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
+                            change={netPopulationLabel}
+                            onClick={onOpenPopulasi}
+                        />
+                        <MobileStatusItem
+                            className="col-span-3"
+                            icon={<Landmark className="h-2.5 w-2.5" />}
+                            label="KAS NEGARA"
+                            value={countryDetail ? formatCurrencyEM(anggaran) : '-'}
+                            change={countryDetail ? netBalanceLabel : undefined}
+                            valueColor={anggaran < 0 ? 'text-rose-400' : undefined}
+                        />
+                        <MobileStatusItem
+                            className="col-span-2"
+                            icon={<Smile className="h-2.5 w-2.5" />}
+                            label="KEPUASAN"
+                            value={`${Math.round(kepuasanScore)}%`}
+                            valueColor={getKepuasanColor(kepuasanScore)}
+                            onClick={onOpenKepuasan}
+                        />
+                        <MobileStatusItem
+                            className="col-span-2"
+                            icon={<Star className="h-2.5 w-2.5 fill-root-accent" />}
+                            label="PERINGKAT"
+                            value={`${presidentRating}/100`}
+                            valueColor={getPresidentRatingColor(presidentRating)}
+                            onClick={onOpenPeringkat}
+                        />
+                        <MobileStatusItem
+                            className="col-span-2"
+                            icon={<Activity className="h-2.5 w-2.5" />}
+                            label="SEJAHTERA"
+                            value={`${kesejahteraan}/100`}
+                            valueColor={getKesejahteraanColorClass(kesejahteraan)}
+                            onClick={onOpenKesejahteraan}
+                        />
                     </div>
                 </div>
             ) : (
@@ -518,6 +539,50 @@ export function Navbar({
                 </>
             )}
         </nav>
+    );
+}
+
+function MobileStatusItem({
+    icon,
+    label,
+    value,
+    change,
+    valueColor = 'text-root-text',
+    className = '',
+    onClick,
+}: {
+    icon: React.ReactNode;
+    label: string;
+    value: string;
+    change?: string;
+    valueColor?: string;
+    className?: string;
+    onClick?: () => void;
+}) {
+    const content = (
+        <>
+            <span className="flex min-w-0 items-center gap-1 text-[8px] font-black uppercase tracking-wide text-root-subtle">
+                <span className="shrink-0 text-root-accent">{icon}</span>
+                <span className="truncate">{label}</span>
+            </span>
+            <span className="flex min-w-0 items-center gap-1 whitespace-nowrap text-[10px] font-black tabular-nums leading-none">
+                <span className={valueColor}>{value}</span>
+                {change && (
+                    <span className={change.startsWith('-') ? 'text-rose-400' : 'text-root-accent'}>
+                        ({change})
+                    </span>
+                )}
+            </span>
+        </>
+    );
+    const classNames = `flex min-w-0 flex-col items-start justify-center gap-0.5 text-left leading-none ${className}`;
+
+    return onClick ? (
+        <button type="button" onClick={onClick} className={`${classNames} active:opacity-75`}>
+            {content}
+        </button>
+    ) : (
+        <div className={classNames}>{content}</div>
     );
 }
 
