@@ -168,7 +168,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                     </button>
                                     <button
                                         onClick={() => setShowKeywordModal(true)}
-                                        className="paused-menu-action w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99] flex items-center justify-center gap-2"
+                                        className="paused-menu-action paused-menu-keyboard-action w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99] flex items-center justify-center gap-2"
                                     >
                                         <Keyboard className="w-4 h-4 text-root-accent" />
                                         <span>Pintasan Keyboard</span>

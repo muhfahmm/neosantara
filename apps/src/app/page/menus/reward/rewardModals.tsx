@@ -350,14 +350,14 @@ export default function TopRightGiftIcon({
         onClick={onClick}
         title="Hadiah - Bonus dan Reward"
         style={{
-          top: isLandscapePhone ? 'calc(var(--safe-top) + 2.75rem)' : isPortraitPhone ? 'calc(var(--safe-top) + 4.75rem)' : undefined,
+          top: isMobile ? 'calc(var(--safe-top) + var(--navbar-h) + 0.5rem)' : undefined,
           right: isMobile ? 'calc(var(--safe-right) + 0.5rem)' : undefined,
         }}
         className={`fixed z-[100] flex cursor-default items-center justify-center opacity-70 ${
           isLandscapePhone
-            ? 'h-8 w-8'
+            ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
             : isPortraitPhone
-            ? 'h-10 w-10'
+            ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
             : 'top-24 right-7 h-12 w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16'
         }`}
       >
@@ -370,7 +370,7 @@ export default function TopRightGiftIcon({
           height={72}
           className={`object-contain animate-pulse brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
             isLandscapePhone
-              ? 'h-9 w-9'
+              ? 'h-11 w-11'
               : isPortraitPhone
               ? 'h-11 w-11'
               : 'h-14 w-14 lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]'
@@ -390,14 +390,14 @@ export default function TopRightGiftIcon({
         onClick={onClick}
         title="Hadiah - Bonus dan Reward"
         style={{
-          top: isLandscapePhone ? 'calc(var(--safe-top) + 2.75rem)' : isPortraitPhone ? 'calc(var(--safe-top) + 4.75rem)' : undefined,
+          top: isMobile ? 'calc(var(--safe-top) + var(--navbar-h) + 0.5rem)' : undefined,
           right: isMobile ? 'calc(var(--safe-right) + 0.5rem)' : undefined,
         }}
         className={`fixed z-[100] flex cursor-pointer items-center justify-center transition-transform group hover:scale-110 active:scale-95 ${
           isLandscapePhone
-            ? 'h-8 w-8'
+            ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
             : isPortraitPhone
-            ? 'h-10 w-10'
+            ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
             : 'top-24 right-7 h-12 w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16'
         }`}
       >
@@ -410,7 +410,7 @@ export default function TopRightGiftIcon({
           height={72}
           className={`object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
             isLandscapePhone
-              ? 'h-9 w-9'
+              ? 'h-11 w-11'
               : isPortraitPhone
               ? 'h-11 w-11'
               : 'h-14 w-14 lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]'

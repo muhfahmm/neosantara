@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
 import PenelitianSelectionModal, { SelectionCategoryKey } from './penelitianSelectionModal';
 import PenelitianPageModal, { CategoryKey } from './penelitianPageMenu';
@@ -66,17 +65,17 @@ export default function BottomLeftPenelitianIcon({
         title="Penelitian - Riset dan Teknologi"
         style={{
           bottom: isLandscapePhone ? 'calc(var(--safe-bottom) + 0.5rem)' : isPortraitPhone ? 'calc(var(--safe-bottom) + 4.5rem)' : undefined,
-          left: isLandscapePhone ? 'calc(var(--safe-left) + 2.75rem)' : isPortraitPhone ? 'calc(var(--safe-left) + 0.5rem)' : undefined,
+          left: isLandscapePhone ? 'calc(var(--safe-left) + 3.5rem)' : isPortraitPhone ? 'calc(var(--safe-left) + 0.5rem)' : undefined,
         }}
-        className={`fixed z-[100] flex cursor-pointer items-center justify-center transition-transform group hover:scale-110 active:scale-95 ${
+        className={`fixed z-[100] flex cursor-pointer items-center justify-center rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg transition-transform group hover:scale-110 active:scale-95 ${
           isLandscapePhone
-            ? 'h-8 w-8'
+            ? 'h-11 w-11'
             : isPortraitPhone
-            ? 'h-10 w-10'
+            ? 'h-11 w-11'
             : 'bottom-3 left-7 h-12 w-12 lg:bottom-4 lg:h-14 lg:w-14 xl:bottom-6 xl:h-16 xl:w-16 2xl:bottom-12'
         }`}
       >
-        <Image
+        <img
           src="/images/game/interface/menu/research.svg"
           alt=""
           aria-hidden="true"
@@ -85,7 +84,7 @@ export default function BottomLeftPenelitianIcon({
           height={72}
           className={`object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
             isLandscapePhone
-              ? 'h-9 w-9'
+              ? 'h-11 w-11'
               : isPortraitPhone
               ? 'h-11 w-11'
               : 'h-14 w-14 lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]'

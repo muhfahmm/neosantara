@@ -539,7 +539,7 @@ export default function TopLeftIcon({
       {mounted && !isWarAnalysisActive && createPortal(
         <div
           style={{
-            top: isLandscapePhone ? 'calc(var(--safe-top) + 2.75rem)' : isPortraitPhone ? 'calc(var(--safe-top) + 4.75rem)' : undefined,
+            top: isMobile ? 'calc(var(--safe-top) + var(--navbar-h) + 0.5rem)' : undefined,
             left: isMobile ? 'calc(var(--safe-left) + 0.5rem)' : undefined,
           }}
           className={`fixed z-[100] flex flex-col items-start gap-2 pointer-events-auto ${
@@ -561,9 +561,9 @@ export default function TopLeftIcon({
             title="Inbox - Pesan dan Notifikasi"
             className={`relative flex cursor-pointer items-center justify-center transition-transform group hover:scale-110 active:scale-95 ${
               isLandscapePhone
-                ? 'h-8 w-8'
+                ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
                 : isPortraitPhone
-                ? 'h-10 w-10'
+                ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
                 : 'h-12 w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16'
             }`}
           >
@@ -577,7 +577,7 @@ export default function TopLeftIcon({
                 onError={(event) => { event.currentTarget.style.display = 'none'; }}
                 className={`object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
                   isLandscapePhone
-                    ? 'h-9 w-9'
+                    ? 'h-11 w-11'
                     : isPortraitPhone
                     ? 'h-11 w-11'
                     : 'h-14 w-14 lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]'

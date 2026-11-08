@@ -498,6 +498,10 @@
   white-space: normal;
 }
 
+.paused-menu-frame[data-viewport-mode] .paused-menu-keyboard-action {
+  display: none;
+}
+
 @media (max-width: 360px) {
   .notebook-modal-frame[data-viewport-mode='portraitPhone'] > .modal-responsive-shell {
     padding: 3px;

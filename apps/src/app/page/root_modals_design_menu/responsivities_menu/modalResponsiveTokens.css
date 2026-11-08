@@ -8,6 +8,7 @@
   --modal-max-width: 940px;
   --map-content-top: 80px;
   --navbar-h: 0px;
+  --bottom-nav-height: 44px;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
@@ -17,6 +18,7 @@
 @media (orientation: landscape) and (max-height: 500px) {
   :root {
     --navbar-h: 38px;
+    --bottom-nav-height: 44px;
     --modal-top-offset: calc(var(--navbar-h) + var(--safe-top) + 8px);
     --modal-bottom-offset: var(--safe-bottom);
     --modal-side-offset: max(8px, var(--safe-left));
@@ -29,6 +31,7 @@
 @media (orientation: portrait) and (max-width: 640px) {
   :root {
     --navbar-h: 97px;
+    --bottom-nav-height: 44px;
     --modal-top-offset: calc(var(--navbar-h) + var(--safe-top) + 8px);
     --modal-bottom-offset: var(--safe-bottom);
     --modal-side-offset: max(8px, var(--safe-left));

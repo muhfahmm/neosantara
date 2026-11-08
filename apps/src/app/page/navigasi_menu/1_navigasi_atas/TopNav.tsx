@@ -14,6 +14,7 @@ export default function TopNav({ activeView, onSelect }: TopNavProps) {
   const viewportMode = useViewportMode();
   const isLandscapePhone = viewportMode === 'landscapePhone';
   const isPortraitPhone = viewportMode === 'portraitPhone';
+  const isMobile = isLandscapePhone || isPortraitPhone;
 
   useEffect(() => {
     setLocalActiveView(activeView);
@@ -24,15 +25,17 @@ export default function TopNav({ activeView, onSelect }: TopNavProps) {
     onSelect(nextView);
   };
 
-  // Di mode landscapePhone: posisikan di kiri atas di bawah navbar agar tidak menumpuk BottomNav di bawah tengah
   const containerClasses = isLandscapePhone
-    ? 'fixed top-12 left-3 z-[200] flex items-center gap-0.5 rounded-lg border border-root-accent/30 bg-root-surface/90 px-1 py-0.5 shadow-md'
+    ? 'fixed left-1/2 z-[200] flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-root-accent/30 bg-root-surface/90 px-1 py-0.5 shadow-md'
     : isPortraitPhone
-    ? 'fixed bottom-[4.25rem] left-1/2 z-[200] flex -translate-x-1/2 items-center gap-0.5 rounded-xl border border-root-accent/30 bg-root-surface/90 px-1.5 py-1 shadow-lg'
+    ? 'fixed left-1/2 z-[200] flex -translate-x-1/2 items-center gap-0.5 rounded-xl border border-root-accent/30 bg-root-surface/90 px-1.5 py-1 shadow-lg'
     : 'fixed bottom-[4.25rem] left-1/2 z-[200] flex -translate-x-1/2 items-center gap-0.5 rounded-xl border border-root-accent/30 bg-root-surface/90 px-1.5 py-1 shadow-lg lg:bottom-[4.5rem] lg:gap-1 lg:rounded-2xl lg:px-2 lg:py-1.5 xl:bottom-[5.25rem] 2xl:bottom-[7rem]';
 
   return (
     <div
+      style={isMobile ? {
+        bottom: 'calc(var(--safe-bottom) + var(--bottom-nav-height) + 1rem)',
+      } : undefined}
       className={containerClasses}
       role="group"
       aria-label="Navigasi tampilan peta"
