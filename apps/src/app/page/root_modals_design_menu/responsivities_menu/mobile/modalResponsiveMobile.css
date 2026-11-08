@@ -1,6 +1,173 @@
-/* Portrait phone rules - overrides dikontrol via var CSS di modalResponsiveTokens.css */
 @media (orientation: portrait) and (max-width: 640px) {
   .modal-responsive-shell {
     border-radius: 12px;
+  }
+
+  .fixed.inset-0:has(> [role="dialog"] > img[alt="Penasihat Negara"]) {
+    padding-left: max(8px, env(safe-area-inset-left));
+    padding-right: max(8px, env(safe-area-inset-right));
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  }
+
+  .fixed.inset-0:has(> [role="dialog"] > img[alt="Penasihat Negara"]) > [role="dialog"] {
+    gap: 6px;
+    max-width: 100%;
+  }
+
+  .fixed.inset-0:has(> [role="dialog"] > img[alt="Penasihat Negara"]) > [role="dialog"] > img {
+    width: 56px;
+    max-height: 20dvh;
+  }
+
+  .fixed.inset-0:has(> [role="dialog"] > img[alt="Penasihat Negara"]) > [role="dialog"] > div {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .fixed.inset-0:has(> [role="dialog"] > img[alt="Penasihat Negara"]) > [role="dialog"] > div > svg {
+    width: 10px;
+    height: 16px;
+    left: -9px;
+  }
+
+  .fixed.inset-0:has(> [role="dialog"] > img[alt="Penasihat Negara"]) > [role="dialog"] > div > p {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .fixed.inset-0:has(> [role="dialog"] > img[alt="Penasihat Negara"]) > [role="dialog"] > div > div:last-child {
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 10px;
+  }
+
+  .fixed.inset-0:has(> [role="dialog"] > img[alt="Penasihat Negara"]) > [role="dialog"] > div > div:last-child button {
+    min-height: 32px;
+    padding: 7px 10px;
+    font-size: 11px;
+  }
+
+  [data-tutorial-overlay] > section[role="dialog"] {
+    width: min(340px, calc(100vw - 24px));
+    max-height: calc(100dvh - 24px);
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  [data-tutorial-overlay] > section[role="dialog"] > div:first-child {
+    margin-bottom: 8px;
+    gap: 8px;
+  }
+
+  [data-tutorial-overlay] > section[role="dialog"] h2 {
+    margin-bottom: 6px;
+    font-size: 16px;
+  }
+
+  [data-tutorial-overlay] > section[role="dialog"] #tutorial-body {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  [data-tutorial-overlay] > section[role="dialog"] > div:last-child {
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  [data-tutorial-overlay] > section[role="dialog"] button {
+    min-height: 32px;
+    padding: 7px 10px;
+    font-size: 11px;
+  }
+
+  [data-tutorial-overlay] > svg rect {
+    stroke-width: 1.5px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .modal-responsive-shell {
+    border-radius: 10px;
+  }
+
+  .fixed.inset-0:has(> [role="dialog"] > img[alt="Penasihat Negara"]) {
+    padding-left: max(8px, env(safe-area-inset-left));
+    padding-right: max(8px, env(safe-area-inset-right));
+    padding-bottom: calc(6px + env(safe-area-inset-bottom));
+  }
+
+  .fixed.inset-0:has(> [role="dialog"] > img[alt="Penasihat Negara"]) > [role="dialog"] {
+    gap: 4px;
+    max-width: 100%;
+  }
+
+  .fixed.inset-0:has(> [role="dialog"] > img[alt="Penasihat Negara"]) > [role="dialog"] > img {
+    width: 44px;
+    max-height: 24dvh;
+  }
+
+  .fixed.inset-0:has(> [role="dialog"] > img[alt="Penasihat Negara"]) > [role="dialog"] > div {
+    padding: 9px;
+    border-radius: 12px;
+  }
+
+  .fixed.inset-0:has(> [role="dialog"] > img[alt="Penasihat Negara"]) > [role="dialog"] > div > p {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .fixed.inset-0:has(> [role="dialog"] > img[alt="Penasihat Negara"]) > [role="dialog"] > div > svg {
+    width: 9px;
+    height: 14px;
+    left: -8px;
+  }
+
+  .fixed.inset-0:has(> [role="dialog"] > img[alt="Penasihat Negara"]) > [role="dialog"] > div > div:last-child {
+    gap: 6px;
+    margin-top: 8px;
+    padding-top: 6px;
+  }
+
+  .fixed.inset-0:has(> [role="dialog"] > img[alt="Penasihat Negara"]) > [role="dialog"] > div > div:last-child button {
+    min-height: 28px;
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  [data-tutorial-overlay] > section[role="dialog"] {
+    width: min(320px, calc(100vw - 24px));
+    max-height: calc(100dvh - 16px);
+    padding: 10px;
+    border-radius: 14px;
+  }
+
+  [data-tutorial-overlay] > section[role="dialog"] > div:first-child {
+    margin-bottom: 6px;
+    gap: 6px;
+  }
+
+  [data-tutorial-overlay] > section[role="dialog"] h2 {
+    margin-bottom: 4px;
+    font-size: 15px;
+  }
+
+  [data-tutorial-overlay] > section[role="dialog"] #tutorial-body {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  [data-tutorial-overlay] > section[role="dialog"] > div:last-child {
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  [data-tutorial-overlay] > section[role="dialog"] button {
+    min-height: 28px;
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  [data-tutorial-overlay] > svg rect {
+    stroke-width: 1.25px;
   }
 }
