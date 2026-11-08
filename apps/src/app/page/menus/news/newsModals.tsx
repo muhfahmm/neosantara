@@ -347,7 +347,7 @@ export default function TopRightNewsIcon({
       {/* 🔥 News Modal - Render via Portal */}
       {isOpen && mounted && createPortal(
         <PausedMenuFrame zIndexClass="z-[200]">
-          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden font-sans">
+          <div className="news-modal-typography relative flex min-h-0 flex-1 flex-col overflow-hidden font-sans">
 
             {/* 🔥 HEADER MODAL */}
             <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0 rounded-t-2xl">

@@ -428,7 +428,7 @@ export default function TopRightGiftIcon({
       {/* Modal Hadiah */}
       {isOpen && mounted && createPortal(
         <NotebookModalWrapper compact zIndexClass="z-[200]">
-          <div className="w-full min-w-0 overflow-hidden flex flex-col relative font-sans pointer-events-auto">
+          <div className="reward-modal-typography w-full min-w-0 overflow-hidden flex flex-col relative font-sans pointer-events-auto">
 
             {/* ---- HEADER ---- */}
             <div className="px-5 sm:px-6 py-3 sm:py-3.5 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
@@ -546,7 +546,7 @@ export default function TopRightGiftIcon({
       {/* ---- MODAL FEEDBACK ---- */}
       {mounted && feedbackModal && createPortal(
         <NotebookModalWrapper compact zIndexClass="z-[300]">
-          <div className="w-full min-w-0 overflow-hidden flex flex-col relative font-sans pointer-events-auto">
+          <div className="reward-modal-typography w-full min-w-0 overflow-hidden flex flex-col relative font-sans pointer-events-auto">
 
             {/* Header */}
             <div className="px-5 sm:px-6 py-3 sm:py-3.5 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas gap-2 shrink-0">

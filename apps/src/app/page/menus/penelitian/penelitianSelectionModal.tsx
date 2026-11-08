@@ -60,7 +60,7 @@ export default function PenelitianSelectionModal({
 
   return createPortal(
     <PausedMenuFrame zIndexClass="z-[10000]">
-      <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto p-6 text-center font-sans custom-scrollbar sm:p-8">
+      <div className="research-selection-typography relative flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto p-6 text-center font-sans custom-scrollbar sm:p-8">
         {/* BUTTON INFO / BONUS RISET (DISAMPING KIRI) */}
         <button
           onClick={() => setShowBonusModal(!showBonusModal)}

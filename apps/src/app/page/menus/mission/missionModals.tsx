@@ -1247,11 +1247,11 @@ export default function MissionModals({
           bottom: isLandscapePhone ? 'calc(var(--safe-bottom) + 0.5rem)' : isPortraitPhone ? 'calc(var(--safe-bottom) + 7.25rem)' : undefined,
           left: isLandscapePhone ? 'calc(var(--safe-left) + 6.5rem)' : isPortraitPhone ? 'calc(var(--safe-left) + 0.5rem)' : undefined,
         }}
-        className={`fixed z-[100] flex cursor-pointer items-center justify-center rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg transition-transform group hover:scale-110 active:scale-95 ${
+        className={`fixed z-[100] flex cursor-pointer items-center justify-center transition-transform group hover:scale-110 active:scale-95 ${
           isLandscapePhone
-            ? 'h-11 w-11'
+            ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
             : isPortraitPhone
-            ? 'h-11 w-11'
+            ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
             : 'bottom-20 left-7 h-12 w-12 lg:bottom-20 lg:h-14 lg:w-14 xl:bottom-24 xl:h-16 xl:w-16 2xl:bottom-32'
         }`}
       >
@@ -1282,7 +1282,7 @@ export default function MissionModals({
       {/* Modal Misi */}
       {isOpen && mounted && createPortal(
         <PausedMenuFrame zIndexClass="z-[100000]">
-          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden font-sans">
+          <div className="mission-modal-typography relative flex min-h-0 flex-1 flex-col overflow-hidden font-sans">
             {/* HEADER */}
             <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0 rounded-t-2xl">
               <div className="flex items-center gap-2">

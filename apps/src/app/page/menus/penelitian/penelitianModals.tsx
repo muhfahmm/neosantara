@@ -67,11 +67,11 @@ export default function BottomLeftPenelitianIcon({
           bottom: isLandscapePhone ? 'calc(var(--safe-bottom) + 0.5rem)' : isPortraitPhone ? 'calc(var(--safe-bottom) + 4.5rem)' : undefined,
           left: isLandscapePhone ? 'calc(var(--safe-left) + 3.5rem)' : isPortraitPhone ? 'calc(var(--safe-left) + 0.5rem)' : undefined,
         }}
-        className={`fixed z-[100] flex cursor-pointer items-center justify-center rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg transition-transform group hover:scale-110 active:scale-95 ${
+        className={`fixed z-[100] flex cursor-pointer items-center justify-center transition-transform group hover:scale-110 active:scale-95 ${
           isLandscapePhone
-            ? 'h-11 w-11'
+            ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
             : isPortraitPhone
-            ? 'h-11 w-11'
+            ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
             : 'bottom-3 left-7 h-12 w-12 lg:bottom-4 lg:h-14 lg:w-14 xl:bottom-6 xl:h-16 xl:w-16 2xl:bottom-12'
         }`}
       >

@@ -618,7 +618,7 @@ export default function PenelitianPageModal({
   };
 
   return createPortal(
-    <div className="fixed top-16 sm:top-20 inset-x-0 bottom-0 z-[200] bg-root-canvas flex flex-col font-sans animate-in fade-in duration-300">
+    <div className="research-page-modal research-modal-typography fixed top-16 sm:top-20 inset-x-0 bottom-0 z-[200] bg-root-canvas flex flex-col font-sans animate-in fade-in duration-300">
 
       {/* HEADER */}
       <div className="px-4 sm:px-8 py-3 bg-root-surface border-b border-root-accent/30 flex flex-col xl:flex-row xl:items-center justify-between shadow-lg relative z-20 shrink-0 gap-3">
