@@ -46,7 +46,7 @@ export default function SecurityProtector() {
     // 3. Disable Dragging of Images / Elements
     const handleDragStart = (e: DragEvent) => {
       const target = e.target as HTMLElement | null;
-      if (target?.tagName === "IMG" || target?.tagName === "A") {
+      if (target?.tagName === "IMG") {
         e.preventDefault();
         return false;
       }

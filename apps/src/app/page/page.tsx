@@ -12,7 +12,8 @@ import Link from 'next/link';
 import { GameMenuModal } from './paused_menu/GameMenuModal';
 import { ExitConfirmModal } from './paused_menu/ExitConfirmModal';
 import { soundManager } from '@/lib/soundManager';
-import { preloadMapAssets } from './map_system/mapLoader';
+import { MOBILE_PREBAKED_LAND_PATHS } from './map_system/rust_map_mobile/mobilePrebakedPaths';
+import { isMobileDevice } from './map_system/rust_map_mobile';
 
 /* ============================================================
    HOLOGRAPHIC WORLD MAP  —  wireframe + network nodes + pings
@@ -61,8 +62,12 @@ function worldGeometryToPath(geometry: unknown): string {
 }
 
 const HolographicMap = () => {
-    const [landPaths, setLandPaths] = useState<string[]>([]);
+    const [landPaths, setLandPaths] = useState<string[]>(() => [...MOBILE_PREBAKED_LAND_PATHS]);
     useEffect(() => {
+        // Di perangkat mobile, HolographicMap tidak perlu mengunduh 10.33 MB /world.geojson
+        // karena sudah menggunakan MOBILE_PREBAKED_LAND_PATHS secara instan (0ms).
+        if (isMobileDevice()) return;
+
         let isMounted = true;
 
         async function loadWorldMap() {
@@ -81,7 +86,7 @@ const HolographicMap = () => {
                     .filter(isRecord)
                     .map(feature => worldGeometryToPath(feature.geometry))
                     .filter(Boolean);
-                if (isMounted) setLandPaths(paths);
+                if (isMounted && paths.length > 0) setLandPaths(paths);
             } catch (error) {
                 console.error('Failed to load world map for main menu:', error);
             }
@@ -1015,7 +1020,6 @@ export default function PlayMenuPage() {
         if (soundManager) {
             soundManager.playMusic();
         }
-        preloadMapAssets();
     }, []);
 
     const fetchSaveFiles = async () => {
@@ -1212,8 +1216,8 @@ export default function PlayMenuPage() {
                                 const btnClass = `
                                     group relative w-full min-h-[46px] flex items-center gap-2.5 lg:gap-3 pl-3 pr-2 py-2 sm:py-2.5 lg:py-3 rounded-lg sm:rounded-xl
                                     bg-white/5 border border-white/10 transition-all duration-300
-                                    hover:bg-white/10 hover:border-white/20 hover:scale-[1.01] active:scale-[0.99]
-                                    overflow-hidden cursor-pointer text-left
+                                    hover:bg-white/10 hover:border-white/20 active:bg-white/15 active:scale-[0.98]
+                                    overflow-hidden cursor-pointer text-left select-none touch-manipulation
                                 `;
 
                                 return (
@@ -1224,9 +1228,10 @@ export default function PlayMenuPage() {
                                         className="w-full opacity-100"
                                     >
                                         {item.id === 'continue' ? (
-                                            <button onClick={openContinueModal} className={btnClass}>{inner}</button>
+                                            <button type="button" onClick={openContinueModal} className={btnClass}>{inner}</button>
                                         ) : item.path === '#' ? (
                                             <button
+                                                type="button"
                                                 onClick={() => {
                                                     if (item.id === 'exit') {
                                                         setIsExitModalOpen(true);
@@ -1239,8 +1244,8 @@ export default function PlayMenuPage() {
                                                 className={btnClass}
                                             >{inner}</button>
                                         ) : (
-                                            <Link href={item.path} className="w-full block">
-                                                <button className={btnClass}>{inner}</button>
+                                            <Link href={item.path} className="w-full block select-none touch-manipulation">
+                                                <div className={btnClass}>{inner}</div>
                                             </Link>
                                         )}
                                     </div>

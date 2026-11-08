@@ -12,6 +12,19 @@
   --foreground: var(--root-color-text);
 }
 
+html, body {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button, a, [role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

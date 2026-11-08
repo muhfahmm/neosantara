@@ -72,6 +72,7 @@ export function buildCachedApiResponse(
         'ETag': payload.etag,
         'Cache-Control': cacheControl,
         'Access-Control-Allow-Origin': '*',
+        'Access-Control-Expose-Headers': 'ETag',
       },
     });
   }
@@ -83,6 +84,7 @@ export function buildCachedApiResponse(
     'ETag': payload.etag,
     'Cache-Control': cacheControl,
     'Access-Control-Allow-Origin': '*',
+    'Access-Control-Expose-Headers': 'ETag',
     'Vary': 'Accept-Encoding',
   });
 
@@ -101,4 +103,3 @@ export function buildCachedApiResponse(
     headers,
   });
 }
-

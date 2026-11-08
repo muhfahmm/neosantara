@@ -665,10 +665,10 @@ impl MapEngine {
                     _ => {}
                 }
             }
-            // Bangun level 1 untuk batch fill awal; level 0 dan 2 dibuat secara lazy saat dibutuhkan
-            let path1 = build_cached_path(&polys, 0.02);
-            path_cache_failed |= path1.is_none();
-            let paths = RefCell::new([None, path1, None]);
+            // Bangun geometri overview yang ringan; detail lebih tinggi dibuat saat peta diperbesar.
+            let overview_path = build_cached_path(&polys, 0.18);
+            path_cache_failed |= overview_path.is_none();
+            let paths = RefCell::new([overview_path, None, None]);
             out.push(CachedFeature {
                 polys,
                 bbox: fbox,
@@ -713,7 +713,7 @@ impl MapEngine {
 
         for feature in &self.features {
             let style = feature.override_fill.as_ref().unwrap_or(&feature.fill);
-            let Some(path) = feature.get_path(1) else {
+            let Some(path) = feature.get_path(0) else {
                 cache_complete = false;
                 continue;
             };

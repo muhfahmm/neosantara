@@ -14,3 +14,5 @@ npm run electron:start
 npm run electron:dev
 
 cd /d D:\project-sendiri\neosantara && npm run dev
+
+npm run tauri:android:dev -- --host 192.168.137.1

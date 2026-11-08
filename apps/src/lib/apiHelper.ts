@@ -30,7 +30,10 @@ export function resolveApiUrl(path: string): string {
     if (tauriDevHost) {
       return `http://${tauriDevHost}:3000${cleanPath}`;
     }
-    return `http://192.168.66.5:3000${cleanPath}`;
+    if (process.env.NODE_ENV === 'development' && origin.startsWith('http')) {
+      return `${origin}${cleanPath}`;
+    }
+    return `http://192.168.137.1:3000${cleanPath}`;
   }
 
   return cleanPath;

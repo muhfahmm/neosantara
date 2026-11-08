@@ -23,7 +23,6 @@ import {
   Home,
   Scale,
   Bug,
-  Table,
   Banknote,
   Gem,
   Plane,
@@ -37,16 +36,20 @@ import {
   Sparkles,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { COUNTRIES_DATA, CAPITALS_DATA } from '../map-data';
 import { countryPaths } from '../mapDataAssets';
-import { loadMapEngineWasm, loadWorldGeojson } from '../mapLoader';
+import {
+  ensureSharedMapEngineInitialized,
+  mountSharedMapCanvas,
+  parkSharedMapCanvas,
+} from '../mapLoader';
+import { renderInstantMobileCanvasPreview } from '../rust_map_mobile';
 
 // Import logika ekonomi dari folder logic agar kalkulasi sama persis
 import { calculateCountryNetBalance, calculateGoldIncome, calculateTotalTaxIncome, calculateTotalMinistryCostPerDay } from '@/app/logic/economic_logic/treasuryUpdater';
 import { KEMENTERIAN, KEAMANAN, LAYANAN } from '@/app/logic/economic_logic/departments';
 import { clearActiveNpcCountrySimulationState } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
-
-
 
 // Type untuk SDA data per negara
 interface SDAData {
@@ -83,24 +86,42 @@ const calculateGoldMiningIncome = (detail: any) => {
   return calculateGoldIncome(detail);
 };
 
+const getFlagEmoji = (iso: string) => {
+  if (!iso || iso.length !== 2) return '🌐';
+  const codePoints = iso
+    .toUpperCase()
+    .split('')
+    .map((c) => 127397 + c.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+};
+
 // --- LOGIKA PARIWISATA DIHAPUS ---
 // =================================================
 
 export default function PilihNegaraPage() {
-  const [countries, setCountries] = useState<Country[]>([]);
+  const router = useRouter();
+  const countries = useMemo(
+    () =>
+      COUNTRIES_DATA.map((c) => ({
+        ...c,
+        flag: getFlagEmoji(c.iso),
+        name_id: c.country.charAt(0).toUpperCase() + c.country.slice(1),
+      })),
+    []
+  );
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [mapLoadError, setMapLoadError] = useState<string | null>(null);
+  const [mapLoadAttempt, setMapLoadAttempt] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('utama');
-  const hasInitRef = useRef(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [wasmModule, setWasmModule] = useState<any>(null);
   const [countryDetail, setCountryDetail] = useState<any>(null);
   const dragStartPosRef = useRef<{ x: number; y: number } | null>(null);
+  const canvasHostRef = useRef<HTMLDivElement | null>(null);
   // Ref untuk menyimpan ISO negara yang diklik dari peta (fix bug klik pertama)
   const pendingIsoRef = useRef<string | null>(null);
-
-
 
   // State SDA - data boolean sumber daya alam dari database_SDA
   const [sdaData, setSdaData] = useState<SDAData | null>(null);
@@ -120,15 +141,6 @@ export default function PilihNegaraPage() {
 
   // Gunakan sdaData sebagai sumber ketersediaan SDA
   const getCurrentSDA = sdaData;
-
-  const getFlagEmoji = (iso: string) => {
-    if (!iso || iso.length !== 2) return '🌐';
-    const codePoints = iso
-      .toUpperCase()
-      .split('')
-      .map((c) => 127397 + c.charCodeAt(0));
-    return String.fromCodePoint(...codePoints);
-  };
 
   const loadDefaultPrices = async (countryName: string) => {
     try {
@@ -155,20 +167,26 @@ export default function PilihNegaraPage() {
       } catch (e) {}
     }
 
-    const initMap = async () => {
-      if (hasInitRef.current) return;
-      hasInitRef.current = true;
+    let cancelled = false;
+    const sharedCanvas = mountSharedMapCanvas(
+      canvasHostRef.current,
+      'map-canvas-bg',
+      'w-full h-full block cursor-pointer'
+    );
 
+    const initMap = async () => {
+      setMapLoadError(null);
       try {
-        const [mod, geojsonStr] = await Promise.all([
-          loadMapEngineWasm(),
-          loadWorldGeojson(),
-        ]);
+        const { mod, reused } = await ensureSharedMapEngineInitialized('map-canvas-bg');
+        if (cancelled) return;
+
+        if (reused) {
+          mod.set_show_province_borders_on_map?.(false);
+          mod.set_feature_colors_on_map?.([], false);
+          mod.set_capitals_on_map?.(CAPITALS_DATA);
+        }
 
         const { start_map_engine, set_selected_country_on_map, get_country_at_on_map } = mod;
-
-        start_map_engine('map-canvas-bg', geojsonStr, COUNTRIES_DATA, CAPITALS_DATA);
-
         setWasmModule({
           start_map_engine,
           set_selected_country_on_map,
@@ -176,20 +194,21 @@ export default function PilihNegaraPage() {
         });
       } catch (e) {
         console.error('Failed to start map engine bg:', e);
+        if (!cancelled) {
+          setMapLoadError(e instanceof Error ? e.message : String(e));
+        }
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     };
 
-    const enhancedData = COUNTRIES_DATA.map((c) => ({
-      ...c,
-      flag: getFlagEmoji(c.iso),
-      name_id: c.country.charAt(0).toUpperCase() + c.country.slice(1),
-    }));
-    setCountries(enhancedData);
+    void initMap();
 
-    initMap();
-  }, []);
+    return () => {
+      cancelled = true;
+      parkSharedMapCanvas(sharedCanvas);
+    };
+  }, [mapLoadAttempt]);
 
   const filteredCountries = useMemo(
     () =>
@@ -277,7 +296,7 @@ export default function PilihNegaraPage() {
     setHasInteracted(true);
   };
 
-  const handleCanvasPointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
+  const handleCanvasPointerUp = (e: React.PointerEvent<HTMLElement>) => {
     const dragStart = dragStartPosRef.current;
     dragStartPosRef.current = null;
     if (e.button !== 0 || !dragStart) return;
@@ -289,7 +308,10 @@ export default function PilihNegaraPage() {
     );
     if (dragDistance > 5) return;
 
-    const canvas = e.currentTarget;
+    const canvas =
+      (document.getElementById('map-canvas-bg') as HTMLCanvasElement | null) ||
+      (e.target instanceof HTMLCanvasElement ? e.target : null);
+    if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
     const x = (e.clientX - rect.left) * (canvas.width / rect.width);
     const y = (e.clientY - rect.top) * (canvas.height / rect.height);
@@ -368,15 +390,6 @@ export default function PilihNegaraPage() {
       {/* Status Bar / Top Bar (Header) */}
       <nav className="fixed top-0 left-0 right-0 z-40 bg-root-canvas border-b border-root-accent/20 px-2 sm:px-3 lg:px-4 xl:px-8 py-1 sm:py-1.5 xl:py-3.5 flex items-center justify-between min-h-[48px] lg:h-14 xl:h-20 overflow-hidden">
         <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3 xl:gap-6 overflow-hidden">
-          {/* Tabel 207 Negara Icon */}
-          <Link
-            href="/page/map_system/tabel_negara"
-            className="flex items-center justify-center w-6 h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8 rounded-full border border-root-accent/30 text-root-accent hover:bg-root-accent/10 transition-all cursor-pointer shrink-0"
-            title="Tabel 207 Negara"
-          >
-            <Table className="w-3 h-3 lg:w-3.5 lg:h-3.5 xl:w-4 xl:h-4" />
-          </Link>
-
           <div className="flex items-center gap-1.5 lg:gap-3 xl:gap-6 shrink-0">
             <StatusItem
               icon={<MapPin className="w-3 h-3 xl:w-3.5 xl:h-3.5 text-root-accent" />}
@@ -494,31 +507,53 @@ export default function PilihNegaraPage() {
         </div>
       </nav>
 
-      <AnimatePresence>
-        {isLoading && (
-          <motion.div
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-root-canvas flex items-center justify-center"
+      {isLoading && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-3 right-3 z-30 flex items-center gap-2 rounded-lg border border-root-accent/30 bg-root-canvas/90 px-3 py-2 text-[10px] font-bold tracking-wider text-root-subtle pointer-events-none"
+        >
+          <div className="h-3 w-3 rounded-full border-2 border-root-accent/20 border-t-root-accent animate-spin" />
+          PETA SEDANG DISIAPKAN
+        </div>
+      )}
+      {mapLoadError && (
+        <div
+          role="alert"
+          className="fixed bottom-3 right-3 z-30 flex max-w-[min(90vw,28rem)] items-center gap-3 rounded-lg border border-rose-500/40 bg-root-canvas/95 px-3 py-2 text-[10px] font-bold text-rose-300"
+        >
+          <span className="min-w-0 break-words">Peta gagal dimuat: {mapLoadError}</span>
+          <button
+            type="button"
+            onClick={() => setMapLoadAttempt((attempt) => attempt + 1)}
+            className="shrink-0 rounded border border-rose-400/40 px-2 py-1 text-white"
           >
-            <div className="w-12 h-12 border-4 border-root-accent/20 border-t-root-accent rounded-full animate-spin" />
-          </motion.div>
-        )}
-      </AnimatePresence>
+            COBA LAGI
+          </button>
+        </div>
+      )}
 
-      <div className="fixed top-0 inset-x-0 bottom-0 z-0 pt-[48px] lg:pt-[56px] xl:pt-[80px]">
+      <div
+        ref={(node) => {
+          canvasHostRef.current = node;
+          if (node) {
+            mountSharedMapCanvas(node, 'map-canvas-bg', 'w-full h-full block cursor-pointer');
+          }
+        }}
+        className="fixed top-0 inset-x-0 bottom-0 z-0 pt-[48px] lg:pt-[56px] xl:pt-[80px] bg-[#06101a]"
+        onPointerDown={(e) => {
+          dragStartPosRef.current = e.button === 0
+            ? { x: e.clientX, y: e.clientY }
+            : null;
+        }}
+        onPointerUp={handleCanvasPointerUp}
+        onPointerCancel={() => {
+          dragStartPosRef.current = null;
+        }}
+      >
         <canvas
           id="map-canvas-bg"
           className="w-full h-full block cursor-pointer"
-          onPointerDown={(e) => {
-            dragStartPosRef.current = e.button === 0
-              ? { x: e.clientX, y: e.clientY }
-              : null;
-          }}
-          onPointerUp={handleCanvasPointerUp}
-          onPointerCancel={() => {
-            dragStartPosRef.current = null;
-          }}
         />
       </div>
 
@@ -718,7 +753,7 @@ export default function PilihNegaraPage() {
         <div className="w-full px-4 sm:px-8 flex items-center justify-between pointer-events-auto">
           <Link
             href="/page"
-            className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-root-surface hover:bg-root-accent hover:text-root-canvas border border-root-accent/30 rounded-lg sm:rounded-xl text-root-accent font-bold tracking-widest text-[9px] sm:text-[10px] transition-all group cursor-pointer"
+            className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-root-surface hover:bg-root-accent hover:text-root-canvas active:scale-95 border border-root-accent/30 rounded-lg sm:rounded-xl text-root-accent font-bold tracking-widest text-[9px] sm:text-[10px] transition-all group cursor-pointer select-none touch-manipulation"
           >
             <div className="p-0.5 sm:p-1 bg-root-accent/10 group-hover:bg-root-canvas/20 rounded-md sm:rounded-lg">
               <ArrowLeft className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-root-accent group-hover:text-root-canvas" />
@@ -726,17 +761,13 @@ export default function PilihNegaraPage() {
             KEMBALI
           </Link>
 
-          <Link
-            href={
-              hasInteracted && filteredCountries[currentIndex]
-                ? `/page/map_system?country=${filteredCountries[currentIndex]?.country}`
-                : '#'
-            }
-            onClick={(e) => {
-              if (!hasInteracted || !filteredCountries[currentIndex]) {
-                e.preventDefault();
-                return;
-              }
+          <button
+            type="button"
+            disabled={!hasInteracted || !filteredCountries[currentIndex]}
+            onClick={() => {
+              const currentCountry = filteredCountries[currentIndex];
+              if (!hasInteracted || !currentCountry) return;
+
               if (typeof window !== 'undefined') {
                 window.localStorage.removeItem('dailyRewardData');
                 window.localStorage.removeItem('presiden_simulator_mission_completions');
@@ -757,17 +788,19 @@ export default function PilihNegaraPage() {
                 window.localStorage.setItem('player_diamonds', '150');
                 window.localStorage.setItem('presiden_simulator_new_game', '1');
               }
+
+              router.push(`/page/map_system?country=${encodeURIComponent(currentCountry.country)}`);
             }}
             className={`flex items-center gap-2 sm:gap-3 px-5 sm:px-8 py-2 sm:py-2.5 ${
               hasInteracted && filteredCountries[currentIndex]
-                ? 'bg-root-accent text-root-canvas hover:scale-105 border border-root-accent'
+                ? 'bg-root-accent text-root-canvas hover:scale-105 active:scale-95 border border-root-accent'
                 : 'bg-root-surface text-root-subtle opacity-50 border border-root-accent/10 cursor-not-allowed'
-            } font-black tracking-widest rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] transition-all cursor-pointer`}
+            } font-black tracking-widest rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] transition-all cursor-pointer select-none touch-manipulation`}
             aria-disabled={!hasInteracted || !filteredCountries[currentIndex]}
           >
             MULAI SIMULASI
             <Play className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${hasInteracted && filteredCountries[currentIndex] ? 'fill-root-canvas' : 'fill-root-subtle'}`} />
-          </Link>
+          </button>
         </div>
       </div>
 

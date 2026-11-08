@@ -13,6 +13,13 @@ import { restartGame } from '../paused_menu/3_restart_game/restartGameLogic';
 import { SaveGameModal } from '../paused_menu/1_savegame/SaveGameModal';
 import { fetchGameSaves, saveGameToDatabase, type GameSaveRecord } from '../paused_menu/1_savegame/saveGameLogic';
 import { mergeClaimedTerritories } from './world-map-geometry';
+import {
+    ensureSharedMapEngineInitialized,
+    loadMapEngineWasm,
+    loadWorldGeojson,
+    mountSharedMapCanvas,
+    parkSharedMapCanvas,
+} from './mapLoader';
 import { initializeSimulationClock, SimulationTimeManager, createSimulationCalendar } from '../time_controllers';
 import dynamic from 'next/dynamic';
 import useKeyboardShortcuts from '../paused_menu/5_keyword';
@@ -706,16 +713,17 @@ function loadCityBoundaryCells(path: string) {
         .catch(err => console.error(`Failed to load official city boundary data from ${path}:`, err));
 }
 if (typeof window !== 'undefined') {
-    // Tunda pemuatan data boundary 18.5 MB ke idle period agar rendering peta awal instan
-    if ('requestIdleCallback' in window) {
-        (window as Window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => void }).requestIdleCallback(() => {
+    // Tunda pemuatan data boundary 18.9 MB ke idle period (dan lebih longgar di mobile) agar rendering peta awal instan
+    const delayMs = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '') || window.location.origin.includes('tauri.localhost') ? 8000 : 1500;
+    setTimeout(() => {
+        if ('requestIdleCallback' in window) {
+            (window as Window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => void }).requestIdleCallback(() => {
+                loadCityBoundaryCells('/city_province_cells.json');
+            }, { timeout: 5000 });
+        } else {
             loadCityBoundaryCells('/city_province_cells.json');
-        }, { timeout: 3000 });
-    } else {
-        setTimeout(() => {
-            loadCityBoundaryCells('/city_province_cells.json');
-        }, 1500);
-    }
+        }
+    }, delayMs);
 }
 
 // Only use a supplied administrative boundary; never invent city borders.
@@ -962,10 +970,63 @@ const MapCanvasView = memo(function MapCanvasView({
     );
     const targetCursorStyle = `url("data:image/svg+xml,${targetCursorSvg}") 18 18, crosshair`;
 
+    useEffect(() => {
+        const shared = mountSharedMapCanvas(
+            containerRef.current,
+            'map-canvas',
+            `w-full h-full block select-none touch-none bg-[#0f244a] ${isSelectingTarget ? '' : 'cursor-grab'}`
+        );
+        if (shared) {
+            shared.setAttribute('data-tutorial', 'map-view');
+            shared.style.cursor = isSelectingTarget ? targetCursorStyle : '';
+            shared.style.visibility = isWarActive ? 'visible' : '';
+            shared.style.userSelect = 'none';
+        }
+        return () => {
+            parkSharedMapCanvas(shared);
+        };
+    }, [containerRef, isSelectingTarget, isWarActive, targetCursorStyle]);
+
     return (
         <div
-            ref={containerRef}
+            ref={(node) => {
+                (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+                if (node) {
+                    const shared = mountSharedMapCanvas(
+                        node,
+                        'map-canvas',
+                        `w-full h-full block select-none touch-none bg-[#0f244a] ${isSelectingTarget ? '' : 'cursor-grab'}`
+                    );
+                    if (shared) {
+                        shared.setAttribute('data-tutorial', 'map-view');
+                    }
+                }
+            }}
             className={`fixed top-20 inset-x-0 bottom-0 z-0 select-none touch-none bg-[#0f244a] ${interactionDisabled && !isSelectingTarget ? 'pointer-events-none' : ''}`}
+            onClick={event => onClick(event as unknown as React.MouseEvent<HTMLCanvasElement>)}
+            onPointerDown={event => {
+                if (event.cancelable && event.button === 0) {
+                    event.preventDefault();
+                }
+                onPointerDown(event as unknown as React.PointerEvent<HTMLCanvasElement>);
+            }}
+            onPointerMove={event => onPointerMove(event as unknown as React.PointerEvent<HTMLCanvasElement>)}
+            onPointerUp={onPointerUp}
+            onPointerCancel={onPointerUp}
+            onPointerLeave={event => onPointerLeave(event as unknown as React.PointerEvent<HTMLCanvasElement>)}
+            onWheel={onWheel}
+            onContextMenu={event => onContextMenu(event as unknown as React.MouseEvent<HTMLCanvasElement>)}
+            onMouseLeave={() => {
+                const canvasEl = document.getElementById('map-canvas');
+                if (canvasEl) {
+                    const mouseUp = new MouseEvent('mouseup', {
+                        bubbles: true,
+                        cancelable: true,
+                        view: window,
+                    });
+                    canvasEl.dispatchEvent(mouseUp);
+                }
+            }}
         >
             <canvas
                 id="map-canvas"
@@ -977,27 +1038,6 @@ const MapCanvasView = memo(function MapCanvasView({
                     WebkitUserSelect: 'none',
                 }}
                 className={`w-full h-full block select-none touch-none bg-[#0f244a] ${isSelectingTarget ? '' : 'cursor-grab'}`}
-                onClick={onClick}
-                onPointerDown={event => {
-                    if (event.cancelable && event.button === 0) {
-                        event.preventDefault();
-                    }
-                    onPointerDown(event);
-                }}
-                onPointerMove={onPointerMove}
-                onPointerUp={onPointerUp}
-                onPointerCancel={onPointerUp}
-                onPointerLeave={onPointerLeave}
-                onWheel={onWheel}
-                onContextMenu={onContextMenu}
-                onMouseLeave={event => {
-                    const mouseUp = new MouseEvent('mouseup', {
-                        bubbles: true,
-                        cancelable: true,
-                        view: window,
-                    });
-                    event.currentTarget.dispatchEvent(mouseUp);
-                }}
             />
         </div>
     );
@@ -8695,33 +8735,21 @@ export default function MapPage() {
             hasInitRef.current = true;
 
             try {
-                const [wasmModule, geojsonResponse] = await Promise.all([
-                    import('../../../wasm/map-engine-rs/map_engine_rs'),
-                    fetch('/world.geojson', { cache: 'force-cache' })
+                // Gunakan cache mapLoader singleton yang sudah di-preload di menu awal & pilih-negara
+                const [wasmModule, rawGeojsonStr] = await Promise.all([
+                    loadMapEngineWasm(),
+                    loadWorldGeojson()
                 ]);
-                await wasmModule.default();
-                if (!geojsonResponse.ok) {
-                    throw new Error(`Gagal memuat data peta: HTTP ${geojsonResponse.status}`);
-                }
-                let rawGeojsonStr = await geojsonResponse.text();
-                const geojsonObj = JSON.parse(rawGeojsonStr);
-                if (!Array.isArray(geojsonObj.features)) {
-                    throw new Error('Format GeoJSON peta tidak valid.');
-                }
-                const drawableFeatures = mergeClaimedTerritories(
-                    geojsonObj.features.filter((feature: { geometry?: unknown }) => feature.geometry)
-                );
-                geojsonObj.features = drawableFeatures;
-                rawGeojsonStr = JSON.stringify(geojsonObj);
 
                 if (typeof window !== 'undefined') {
-                    (window as any).neosantara_world_geojson_features = drawableFeatures;
-                    buildFeatureCountryCache(drawableFeatures);
-                    window.dispatchEvent(new Event('world_map_features_ready'));
+                    const features = (window as any).neosantara_world_geojson_features;
+                    if (Array.isArray(features)) {
+                        buildFeatureCountryCache(features);
+                    }
                 }
 
                 wasmModuleRef.current = wasmModule;
-                (window as any).__neosantara_wasm = wasmModule;
+
 
                 // After init, the exported functions are available on the module
                 const { start_map_engine, set_selected_country_on_map, set_map_horizontal_wrap } = wasmModule;
@@ -8850,7 +8878,7 @@ export default function MapPage() {
                 if (canvasEl) {
                     const originalGetContext = canvasEl.getContext.bind(canvasEl);
                     const ctx2d = originalGetContext('2d') as CanvasRenderingContext2D | null;
-                    if (ctx2d) {
+                    if (ctx2d && !(ctx2d as any).__origSetTransform) {
                         const origSetTransform = ctx2d.setTransform.bind(ctx2d);
                         (ctx2d as any).__origSetTransform = origSetTransform;
                         ctx2d.setTransform = function (a: any, b?: any, c?: any, d?: any, e?: any, f?: any) {
@@ -8898,40 +8926,46 @@ export default function MapPage() {
                             iso: territoryOverride?.sovereignIso || city.iso,
                         };
                     });
-                await start_map_engine(
-                    "map-canvas",
-                    rawGeojsonStr,
-                    COUNTRIES_DATA,
-                    allMapCities
-                );
-                set_map_horizontal_wrap(true);
+                await ensureSharedMapEngineInitialized("map-canvas", allMapCities);
+                set_map_horizontal_wrap?.(true);
                 wasmModule.set_capitals_on_map(getCapitalFlagsForCurrentTerritories());
                 const initialCityOwners = (window as Window & {
                     neosantara_city_owner?: CityOwnerStore;
                 }).neosantara_city_owner || {};
                 wasmModule.set_city_ownership_on_map(getCanvasCityOwners(initialCityOwners));
 
-                // Muat batas provinsi putus-putus ke dalam map engine secara asynchronous (cacheable)
-                fetch('/provinces_lines.geojson')
-                    .then(res => res.ok ? res.text() : null)
-                    .then(provText => {
-                        if (provText && wasmModule.set_provinces_on_map) {
-                            wasmModule.set_provinces_on_map(provText);
-                        }
-                    })
-                    .catch(err => console.warn('Pemuatan garis provinsi notice:', err));
-
-                syncFeatureColors();
-                
                 // Sinkronkan setting tampilan peta awal ke engine
                 const initialMapSettings = getMapDisplaySettings();
                 wasmModule.set_show_province_borders_on_map?.(initialMapSettings.showProvinceBorders);
                 wasmModule.set_capitals_on_map(getCapitalFlagsForCurrentTerritories(initialMapSettings));
 
+                let provincesLoaded = false;
+                const ensureProvincesLoaded = () => {
+                    if (provincesLoaded) return;
+                    provincesLoaded = true;
+                    fetch('/provinces_lines.geojson', { cache: 'force-cache' })
+                        .then(res => res.ok ? res.text() : null)
+                        .then(provText => {
+                            if (provText && wasmModule.set_provinces_on_map) {
+                                wasmModule.set_provinces_on_map(provText);
+                            }
+                        })
+                        .catch(err => console.warn('Pemuatan garis provinsi notice:', err));
+                };
+
+                if (initialMapSettings.showProvinceBorders) {
+                    ensureProvincesLoaded();
+                }
+
+                syncFeatureColors();
+
                 // Listener ketika user mengubah preferensi tampilan peta
                 const handleMapSettingsChange = (e: Event) => {
                     const nextSettings = (e as CustomEvent)?.detail as MapDisplaySettings;
                     if (!nextSettings) return;
+                    if (nextSettings.showProvinceBorders) {
+                        ensureProvincesLoaded();
+                    }
                     wasmModule.set_show_province_borders_on_map?.(nextSettings.showProvinceBorders);
                     wasmModule.set_capitals_on_map(getCapitalFlagsForCurrentTerritories(nextSettings));
                 };
@@ -8994,7 +9028,7 @@ export default function MapPage() {
             return;
         }
 
-        const canvas = event.currentTarget;
+        const canvas = (document.getElementById('map-canvas') as HTMLCanvasElement | null) || event.currentTarget;
         const rect = canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;

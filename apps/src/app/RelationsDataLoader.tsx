@@ -7,6 +7,7 @@ import { setTradeAgreementData, type TradeAgreementDataRow } from '../../../json
 import { setBuildingMetadata, type BuildingMetadata } from '@/lib/buildingMetadataRegistry';
 import { resolveApiUrl, patchGlobalFetch } from '@/lib/apiHelper';
 import { getClientCache, setClientCache } from '@/lib/clientDataCache';
+import { preloadMapAssets } from '@/app/page/map_system/mapLoader';
 
 if (typeof window !== 'undefined') {
   patchGlobalFetch();
@@ -120,6 +121,7 @@ async function getClientCacheQuickly<T>(key: string): Promise<{ data: T; etag: s
 export default function RelationsDataLoader({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let isMounted = true;
+    preloadMapAssets();
 
     async function loadRelationData() {
       try {
