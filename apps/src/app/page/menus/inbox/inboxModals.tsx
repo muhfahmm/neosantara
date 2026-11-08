@@ -570,10 +570,11 @@ export default function TopLeftIcon({
             <div className="relative flex h-full w-full items-center justify-center">
               <Image
                 src="/images/game/interface/menu/inbox.svg"
-                alt="Inbox"
+                alt=""
                 width={72}
                 height={72}
                 priority
+                onError={(event) => { event.currentTarget.style.display = 'none'; }}
                 className={`object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
                   isLandscapePhone
                     ? 'h-9 w-9'

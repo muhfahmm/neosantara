@@ -1,12 +1,52 @@
-import { MOBILE_PREBAKED_LAND_PATHS } from './mobilePrebakedPaths';
+interface PreviewFeature {
+  properties?: { CONTINENT?: string };
+  geometry?: {
+    type?: string;
+    coordinates?: unknown;
+  };
+}
 
-let cachedPrebakedPath2D: Path2D[] | null = null;
+interface PreviewFeatureCollection {
+  features?: PreviewFeature[];
+}
 
-function getPrebakedPath2DList(): Path2D[] {
-  if (cachedPrebakedPath2D) return cachedPrebakedPath2D;
-  if (typeof Path2D === 'undefined') return [];
-  cachedPrebakedPath2D = MOBILE_PREBAKED_LAND_PATHS.map((d) => new Path2D(d));
-  return cachedPrebakedPath2D;
+let previewFeaturesPromise: Promise<PreviewFeature[]> | null = null;
+
+function getPreviewFeatures(): Promise<PreviewFeature[]> {
+  if (!previewFeaturesPromise) {
+    const url = isMobileDevice() ? '/world_mobile.geojson' : '/world.geojson';
+    previewFeaturesPromise = fetch(url, { cache: 'force-cache' })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status} while loading ${url}`);
+        }
+        return response.json() as Promise<PreviewFeatureCollection>;
+      })
+      .then((collection) => {
+        if (!Array.isArray(collection.features)) {
+          throw new Error(`Invalid GeoJSON preview payload from ${url}`);
+        }
+        return collection.features;
+      })
+      .catch((error: unknown) => {
+        previewFeaturesPromise = null;
+        throw error;
+      });
+  }
+  return previewFeaturesPromise;
+}
+
+function continentColor(continent: string | undefined): string {
+  switch (continent) {
+    case 'Asia': return '#2e7d32';
+    case 'Africa': return '#d97706';
+    case 'Europe': return '#2563eb';
+    case 'North America': return '#0d9488';
+    case 'South America': return '#ea580c';
+    case 'Oceania': return '#0284c7';
+    case 'Antarctica': return '#e2e8f0';
+    default: return '#475569';
+  }
 }
 
 export function isMobileDevice(): boolean {
@@ -20,60 +60,78 @@ export function isMobileDevice(): boolean {
 }
 
 /**
- * Merender pratinjau peta dunia taktis secara instan (0ms) ke elemen canvas
- * menggunakan Path2D terkompilasi sebelum engine WASM Rust selesai menginisialisasi data penuh.
+ * Merender peta dari GeoJSON sebelum engine WASM selesai, dengan warna benua dan batas negara.
  */
 export function renderInstantMobileCanvasPreview(canvasId: string): boolean {
   if (typeof document === 'undefined') return false;
   const el = document.getElementById(canvasId);
   if (!(el instanceof HTMLCanvasElement)) return false;
 
-  const rect = el.getBoundingClientRect();
-  const width = Math.max(rect.width || window.innerWidth, 320);
-  const height = Math.max(rect.height || window.innerHeight, 240);
-
-  if (el.width !== width || el.height !== height) {
-    el.width = width;
-    el.height = height;
-  }
-
   const ctx = el.getContext('2d');
   if (!ctx) return false;
 
-  // Background samudra gelap sesuai warna engine Rust
-  ctx.fillStyle = '#06101a';
-  ctx.fillRect(0, 0, width, height);
+  void getPreviewFeatures()
+    .then((features) => {
+      const mapWindow = window as Window & { __neosantara_map_engine_ready?: boolean };
+      if (mapWindow.__neosantara_map_engine_ready || !el.isConnected) return;
 
-  // Grid taktis tipis
-  ctx.strokeStyle = 'rgba(20, 184, 166, 0.08)';
-  ctx.lineWidth = 1;
-  const stepX = width / 12;
-  const stepY = height / 6;
-  ctx.beginPath();
-  for (let x = stepX; x < width; x += stepX) {
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, height);
-  }
-  for (let y = stepY; y < height; y += stepY) {
-    ctx.moveTo(0, y);
-    ctx.lineTo(width, y);
-  }
-  ctx.stroke();
+      const rect = el.getBoundingClientRect();
+      const width = Math.max(rect.width || window.innerWidth, 320);
+      const height = Math.max(rect.height || window.innerHeight, 240);
+      if (el.width !== width || el.height !== height) {
+        el.width = width;
+        el.height = height;
+      }
 
-  // Render siluet daratan dunia nyata instan dari MOBILE_PREBAKED_LAND_PATHS (viewBox 1000 x 500)
-  const paths = getPrebakedPath2DList();
-  if (paths.length > 0) {
-    ctx.save();
-    ctx.scale(width / 1000, height / 500);
-    ctx.fillStyle = '#153e35';
-    ctx.strokeStyle = 'rgba(45, 212, 191, 0.55)';
-    ctx.lineWidth = 0.7;
-    for (let i = 0; i < paths.length; i++) {
-      ctx.fill(paths[i]);
-      ctx.stroke(paths[i]);
-    }
-    ctx.restore();
-  }
+      const previewContext = el.getContext('2d');
+      if (!previewContext) return;
+      previewContext.fillStyle = '#0f244a';
+      previewContext.fillRect(0, 0, width, height);
+      previewContext.lineJoin = 'round';
+      previewContext.lineCap = 'round';
+
+      const traceRing = (ring: unknown, context: CanvasRenderingContext2D) => {
+        if (!Array.isArray(ring) || ring.length < 2) return;
+        let started = false;
+        for (const point of ring) {
+          if (!Array.isArray(point) || typeof point[0] !== 'number' || typeof point[1] !== 'number') continue;
+          const x = ((point[0] + 180) / 360) * width;
+          const y = ((90 - point[1]) / 180) * height;
+          if (!started) {
+            context.moveTo(x, y);
+            started = true;
+          } else {
+            context.lineTo(x, y);
+          }
+        }
+        if (started) context.closePath();
+      };
+
+      for (const feature of features) {
+        const geometry = feature.geometry;
+        if (!geometry?.coordinates) continue;
+        const polygons = geometry.type === 'Polygon'
+          ? [geometry.coordinates]
+          : geometry.type === 'MultiPolygon' && Array.isArray(geometry.coordinates)
+            ? geometry.coordinates
+            : [];
+        if (polygons.length === 0) continue;
+
+        previewContext.beginPath();
+        for (const polygon of polygons) {
+          if (!Array.isArray(polygon)) continue;
+          for (const ring of polygon) traceRing(ring, previewContext);
+        }
+        previewContext.fillStyle = continentColor(feature.properties?.CONTINENT);
+        previewContext.fill('evenodd');
+        previewContext.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+        previewContext.lineWidth = 0.85;
+        previewContext.stroke();
+      }
+    })
+    .catch((error: unknown) => {
+      console.error('Failed to render GeoJSON map preview:', error);
+    });
 
   return true;
 }

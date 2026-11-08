@@ -99,7 +99,13 @@ export function logElectricityProductionCalculation(
   calculation: ElectricityProductionCalculation,
   caller: string,
 ): void {
-  if (process.env.NODE_ENV !== "production") {
+  if (
+    process.env.NODE_ENV !== "production" &&
+    typeof window !== "undefined" &&
+    window.innerWidth > 1024 &&
+    !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) &&
+    !window.location.origin.includes("tauri.localhost")
+  ) {
     console.debug("[ElectricityProduction]", { caller, ...calculation });
   }
 }

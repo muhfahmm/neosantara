@@ -114,6 +114,7 @@ import { TutorialOverlay } from '../tutorials_menu/TutorialOverlay';
 import { TutorialWelcomeModal } from '../tutorials_menu/TutorialWelcomeModal';
 import { getTutorialProgress, resetTutorial, setTutorialProgress, startTutorial } from '../tutorials_menu/tutorialProgress';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
+import { isMobileDevice } from './rust_map_mobile';
 import {
     calculateKepuasan,
     calculateKeterbukaanScore,
@@ -650,78 +651,88 @@ let cachedCityProvinceCells: Record<string, CityBoundaryCell> = {};
 let cachedRegionalCityCells: Record<string, CityBoundaryCell> = {};
 let cachedCityRegions: Record<string, string[]> = {};
 let cachedRegionCities: Record<string, string[]> = {};
+let cityBoundaryCellsPromise: Promise<void> | null = null;
 
-function loadCityBoundaryCells(path: string) {
-    fetch(path)
-        .then(res => {
-            if (!res.ok) {
-                throw new Error(`Failed to load city boundary data from ${path}: HTTP ${res.status}`);
-            }
-            return res.json();
-        })
-        .then(data => {
-            if (data && typeof data === 'object') {
-                const boundaryData = data as {
-                    cityCells?: Record<string, unknown>;
-                    regions?: Record<string, unknown>;
-                    cityRegions?: Record<string, unknown>;
-                };
-                const cityCells = boundaryData.cityCells || data as Record<string, unknown>;
-                const normalizedCells: Record<string, CityBoundaryCell> = {};
-                Object.entries(cityCells).forEach(([cityId, rawCell]) => {
-                    const rings = parseCityBoundaryCell(rawCell);
-                    if (rings.length > 0) normalizedCells[normalizeMapKey(cityId)] = rings;
-                });
-                cachedCityProvinceCells = { ...cachedCityProvinceCells, ...normalizedCells };
+function loadCityBoundaryCells(path: string): Promise<void> {
+    if (!cityBoundaryCellsPromise) {
+        const pending = fetch(path)
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`Failed to load city boundary data from ${path}: HTTP ${res.status}`);
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data && typeof data === 'object') {
+                    const boundaryData = data as {
+                        cityCells?: Record<string, unknown>;
+                        regions?: Record<string, unknown>;
+                        cityRegions?: Record<string, unknown>;
+                    };
+                    const cityCells = boundaryData.cityCells || data as Record<string, unknown>;
+                    const normalizedCells: Record<string, CityBoundaryCell> = {};
+                    Object.entries(cityCells).forEach(([cityId, rawCell]) => {
+                        const rings = parseCityBoundaryCell(rawCell);
+                        if (rings.length > 0) normalizedCells[normalizeMapKey(cityId)] = rings;
+                    });
+                    cachedCityProvinceCells = { ...cachedCityProvinceCells, ...normalizedCells };
 
-                const regionCells = new Map<string, CityBoundaryCell>();
-                Object.entries(boundaryData.regions || {}).forEach(([regionId, rawCell]) => {
-                    const rings = parseCityBoundaryCell(rawCell);
-                    if (rings.length > 0) regionCells.set(normalizeMapKey(regionId), rings);
-                });
-                const normalizedRegionCells: Record<string, CityBoundaryCell> = {};
-                regionCells.forEach((rings, regionKey) => {
-                    normalizedRegionCells[regionKey] = rings;
-                });
-                const cityRegions: Record<string, string[]> = {};
-                const regionCities: Record<string, string[]> = {};
-                Object.entries(boundaryData.cityRegions || {}).forEach(([cityId, rawRegionIds]) => {
-                    if (!Array.isArray(rawRegionIds)) return;
-                    const cityKey = normalizeMapKey(cityId);
-                    const regionIds = rawRegionIds.filter(
-                        (regionId): regionId is string =>
-                            typeof regionId === 'string' &&
-                            regionCells.has(normalizeMapKey(regionId))
-                    );
-                    if (regionIds.length > 0) {
-                        cityRegions[cityKey] = regionIds.map(normalizeMapKey);
-                        regionIds.forEach(regionId => {
-                            const regionKey = normalizeMapKey(regionId);
-                            regionCities[regionKey] = [
-                                ...(regionCities[regionKey] || []),
-                                cityKey,
-                            ].filter((value, index, values) => values.indexOf(value) === index).sort();
-                        });
-                    }
-                });
-                cachedRegionalCityCells = { ...cachedRegionalCityCells, ...normalizedRegionCells };
-                cachedCityRegions = { ...cachedCityRegions, ...cityRegions };
-                cachedRegionCities = { ...cachedRegionCities, ...regionCities };
-                window.dispatchEvent(new Event('neosantara_city_boundaries_ready'));
-            }
-        })
-        .catch(err => console.error(`Failed to load official city boundary data from ${path}:`, err));
+                    const regionCells = new Map<string, CityBoundaryCell>();
+                    Object.entries(boundaryData.regions || {}).forEach(([regionId, rawCell]) => {
+                        const rings = parseCityBoundaryCell(rawCell);
+                        if (rings.length > 0) regionCells.set(normalizeMapKey(regionId), rings);
+                    });
+                    const normalizedRegionCells: Record<string, CityBoundaryCell> = {};
+                    regionCells.forEach((rings, regionKey) => {
+                        normalizedRegionCells[regionKey] = rings;
+                    });
+                    const cityRegions: Record<string, string[]> = {};
+                    const regionCities: Record<string, string[]> = {};
+                    Object.entries(boundaryData.cityRegions || {}).forEach(([cityId, rawRegionIds]) => {
+                        if (!Array.isArray(rawRegionIds)) return;
+                        const cityKey = normalizeMapKey(cityId);
+                        const regionIds = rawRegionIds.filter(
+                            (regionId): regionId is string =>
+                                typeof regionId === 'string' &&
+                                regionCells.has(normalizeMapKey(regionId))
+                        );
+                        if (regionIds.length > 0) {
+                            cityRegions[cityKey] = regionIds.map(normalizeMapKey);
+                            regionIds.forEach(regionId => {
+                                const regionKey = normalizeMapKey(regionId);
+                                regionCities[regionKey] = [
+                                    ...(regionCities[regionKey] || []),
+                                    cityKey,
+                                ].filter((value, index, values) => values.indexOf(value) === index).sort();
+                            });
+                        }
+                    });
+                    cachedRegionalCityCells = { ...cachedRegionalCityCells, ...normalizedRegionCells };
+                    cachedCityRegions = { ...cachedCityRegions, ...cityRegions };
+                    cachedRegionCities = { ...cachedRegionCities, ...regionCities };
+                    window.dispatchEvent(new Event('neosantara_city_boundaries_ready'));
+                } else {
+                    throw new Error(`Invalid city boundary data from ${path}`);
+                }
+            })
+            .catch((error: unknown) => {
+                cityBoundaryCellsPromise = null;
+                console.error(`Failed to load official city boundary data from ${path}:`, error);
+            });
+        cityBoundaryCellsPromise = pending;
+    }
+    return cityBoundaryCellsPromise;
 }
-if (typeof window !== 'undefined') {
-    // Tunda pemuatan data boundary 18.9 MB ke idle period (dan lebih longgar di mobile) agar rendering peta awal instan
-    const delayMs = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '') || window.location.origin.includes('tauri.localhost') ? 8000 : 1500;
+if (typeof window !== 'undefined' && !isMobileDevice()) {
+    // Mobile loads this large dataset only when city ownership features need it.
+    const delayMs = 1500;
     setTimeout(() => {
         if ('requestIdleCallback' in window) {
             (window as Window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => void }).requestIdleCallback(() => {
-                loadCityBoundaryCells('/city_province_cells.json');
+                void loadCityBoundaryCells('/city_province_cells.json');
             }, { timeout: 5000 });
         } else {
-            loadCityBoundaryCells('/city_province_cells.json');
+            void loadCityBoundaryCells('/city_province_cells.json');
         }
     }, delayMs);
 }
@@ -760,16 +771,12 @@ function getCapitalFlagsForCurrentTerritories(settingsOverride?: MapDisplaySetti
         String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
     const settings = settingsOverride || getMapDisplaySettings();
-    const isMobileDevice = typeof window !== 'undefined' &&
-        (window.matchMedia('(orientation: landscape) and (max-height: 500px)').matches ||
-         window.matchMedia('(orientation: portrait) and (max-width: 640px)').matches);
 
     let citiesPool: MapCity[] = [];
     if (settings.showCapitals) {
         citiesPool = citiesPool.concat(CAPITALS_DATA as MapCity[]);
     }
-    // Di mobile, kota sekunder/major cities hanya ditampilkan jika bukan mobile atau user secara eksplisit mengaktifkannya dan tidak sedang mode mobile
-    if (settings.showMajorCities && !isMobileDevice) {
+    if (settings.showMajorCities) {
         citiesPool = citiesPool.concat(MAJOR_CITIES_DATA as MapCity[]);
     }
 
@@ -2133,6 +2140,9 @@ export default function MapPage() {
         if (typeof window === 'undefined' || !city.cityId) {
             console.error('[CityAnnexation] Cannot record city ownership without a browser and city ID.', city);
             return false;
+        }
+        if (isMobileDevice() && !cityBoundaryCellsPromise) {
+            void loadCityBoundaryCells('/city_province_cells.json');
         }
 
         const territoryOwnerCountry = isPbbOccupied ? 'Perserikatan Bangsa-Bangsa' : attackerCountry;
@@ -7258,6 +7268,9 @@ export default function MapPage() {
                         (window as any).neosantara_country_color_overrides = restoredOverrides;
                         (window as any).neosantara_annexed_countries = restoredAnnexed;
                         (window as any).neosantara_city_owner = restoredCityOwners;
+                        if (isMobileDevice() && Object.keys(restoredCityOwners).length > 0) {
+                            void loadCityBoundaryCells('/city_province_cells.json');
+                        }
                         window.dispatchEvent(new CustomEvent('map_territory_color_updated'));
                         let databaseReligion = '';
                         let databaseSlug = '';

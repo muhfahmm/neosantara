@@ -262,6 +262,7 @@ export default function TopRightNewsIcon({
           src="/images/game/interface/menu/news.svg"
           alt=""
           aria-hidden="true"
+          onError={(event) => { event.currentTarget.style.display = 'none'; }}
           width={72}
           height={72}
           className={`object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${

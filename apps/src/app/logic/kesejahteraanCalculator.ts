@@ -439,23 +439,31 @@ export function calculateKesejahteraan(
   const bonus = Number(countryDetail?.kesejahteraan_bonus) || 0;
   const decayAccumulated = Number(countryDetail?.kesejahteraan_decay) || 0;
   const overallScore = Math.min(100, Math.max(1, baseScore + bonus - decayAccumulated));
-  console.log('[calculateKesejahteraan] Calc results:', {
-    country: countryDetail?.country,
-    pendidikanScore: educationScoreAfterCorruption,
-    kesehatanScore: healthScoreAfterCorruption,
-    tempatUmumScore,
-    penegakanHukumScore: penegakanHukum.score,
-    panganScore,
-    hunianScore,
-    listrikScore,
-    keterbukaanScore,
-    baseScore,
-    kesejahteraan_bonus: countryDetail?.kesejahteraan_bonus,
-    kesejahteraan_decay: countryDetail?.kesejahteraan_decay,
-    bonus,
-    decayAccumulated,
-    overallScore
-  });
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    typeof window !== 'undefined' &&
+    window.innerWidth > 1024 &&
+    !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) &&
+    !window.location.origin.includes('tauri.localhost')
+  ) {
+    console.debug('[calculateKesejahteraan] Calc results:', {
+      country: countryDetail?.country,
+      pendidikanScore: educationScoreAfterCorruption,
+      kesehatanScore: healthScoreAfterCorruption,
+      tempatUmumScore,
+      penegakanHukumScore: penegakanHukum.score,
+      panganScore,
+      hunianScore,
+      listrikScore,
+      keterbukaanScore,
+      baseScore,
+      kesejahteraan_bonus: countryDetail?.kesejahteraan_bonus,
+      kesejahteraan_decay: countryDetail?.kesejahteraan_decay,
+      bonus,
+      decayAccumulated,
+      overallScore
+    });
+  }
 
   // Tentukan trend
   let trend: 'naik' | 'turun' | 'stabil' = 'stabil';

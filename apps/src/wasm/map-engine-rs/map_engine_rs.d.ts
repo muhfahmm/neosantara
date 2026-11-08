@@ -11,6 +11,9 @@ export class MapEngine {
     handle_mouse_down(x: number, y: number, pointer_id: number): void;
     handle_mouse_move(x: number, y: number, buttons: number, pointer_id: number): void;
     handle_mouse_up(): void;
+    handle_touch_down(pointer_id: number, x: number, y: number): void;
+    handle_touch_move(pointer_id: number, x: number, y: number): void;
+    handle_touch_up(pointer_id: number): void;
     handle_wheel(delta_y: number, mouse_x: number, mouse_y: number): void;
     static new(ctx: CanvasRenderingContext2D, width: number, height: number): MapEngine;
     render(): void;
@@ -65,6 +68,9 @@ export interface InitOutput {
     readonly mapengine_handle_mouse_down: (a: number, b: number, c: number, d: number) => void;
     readonly mapengine_handle_mouse_move: (a: number, b: number, c: number, d: number, e: number) => void;
     readonly mapengine_handle_mouse_up: (a: number) => void;
+    readonly mapengine_handle_touch_down: (a: number, b: number, c: number, d: number) => void;
+    readonly mapengine_handle_touch_move: (a: number, b: number, c: number, d: number) => void;
+    readonly mapengine_handle_touch_up: (a: number, b: number) => void;
     readonly mapengine_handle_wheel: (a: number, b: number, c: number, d: number) => void;
     readonly mapengine_new: (a: any, b: number, c: number) => number;
     readonly mapengine_render: (a: number) => void;
@@ -88,8 +94,8 @@ export interface InitOutput {
     readonly start_map_engine: (a: number, b: number, c: number, d: number, e: any, f: any) => [number, number];
     readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___f64______true_: (a: number, b: number, c: number) => void;
     readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_986b12a1bf3d7301___features__gen_MouseEvent__MouseEvent______true_: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_986b12a1bf3d7301___features__gen_MouseEvent__MouseEvent______true__31: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_986b12a1bf3d7301___features__gen_MouseEvent__MouseEvent______true__32: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_986b12a1bf3d7301___features__gen_MouseEvent__MouseEvent______true__34: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_986b12a1bf3d7301___features__gen_MouseEvent__MouseEvent______true__35: (a: number, b: number, c: any) => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_free: (a: number, b: number, c: number) => void;

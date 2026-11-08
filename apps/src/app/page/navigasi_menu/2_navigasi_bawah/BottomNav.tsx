@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import {
   Star, Wallet, Wrench, Shield, Globe, Landmark, LayoutGrid,
   Hammer, Swords as MilitaryIcon, Users2, BarChart3, TrendingUp,
@@ -193,24 +192,7 @@ export default function BottomNav({
                     : "text-root-subtle hover:text-root-accent hover:bg-root-accent/10"
                     }`}
                 >
-                  {item.image ? (
-                    <span className={`relative shrink-0 ${isLandscapePhone ? 'h-3 w-3' : 'h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5'}`}>
-                      <Image
-                        src={item.image}
-                        alt=""
-                        aria-hidden="true"
-                        width={56}
-                        height={56}
-                        className={`absolute left-1/2 top-1/2 max-w-none -translate-x-1/2 -translate-y-1/2 object-contain ${
-                          isLandscapePhone
-                            ? 'h-6 w-6'
-                            : 'h-8 w-8 lg:h-10 lg:w-10 2xl:h-12 2xl:w-12'
-                        }`}
-                      />
-                    </span>
-                  ) : (
-                    <Icon className={`${isLandscapePhone ? 'h-3 w-3' : 'h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5'} ${isActive ? "text-root-canvas" : ""}`} />
-                  )}
+                  <Icon className={`${isLandscapePhone ? 'h-3 w-3' : 'h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5'} ${isActive ? "text-root-canvas" : ""}`} />
                   {isActive && (
                     <span className="text-[8px] sm:text-[9px] lg:text-[10px] 2xl:text-[11px] font-black uppercase tracking-widest whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300">
                       {item.label}
@@ -246,20 +228,7 @@ export default function BottomNav({
                       : 'h-7 w-7 lg:h-[34px] lg:w-[34px] 2xl:h-[46px] 2xl:w-[46px]'
                   }`}
                 >
-                  {sub.image ? (
-                    <span className="relative h-full w-full shrink-0">
-                      <Image
-                        src={sub.image}
-                        alt=""
-                        aria-hidden="true"
-                        width={46}
-                        height={46}
-                        className="h-full w-full object-contain"
-                      />
-                    </span>
-                  ) : (
-                    <sub.icon className="h-full w-full text-root-subtle" />
-                  )}
+                  <sub.icon className="h-full w-full text-root-subtle" />
                 </button>
                 {!isMobile && (
                   <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2.5 bg-root-surface border border-root-accent/30 text-root-text text-[13px] font-semibold rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-[9999] scale-95 group-hover:scale-100`}>

@@ -301,13 +301,13 @@ struct Styles {
 fn continent_color(continent: &str) -> &'static str {
     match continent {
         // Palet benua diselaraskan dengan estetika geopolitik nyata:
-        "Asia" => "#2e7d32",           // Hijau zamrud teritorial Asia
-        "Africa" => "#d97706",         // Amber / terracotta khas benua Afrika
-        "Europe" => "#2563eb",         // Biru kobalt diplomatik Eropa
-        "North America" => "#0d9488",  // Teal / Cyan kehijauan Amerika Utara
-        "South America" => "#ea580c",  // Oranye hangat Amerika Selatan
-        "Oceania" => "#0284c7",        // Sky cyan maritim Oceania
-        "Antarctica" => "#e2e8f0",     // Putih es / glacier Antartika
+        "Asia" => "#2e7d32",          // Hijau zamrud teritorial Asia
+        "Africa" => "#d97706",        // Amber / terracotta khas benua Afrika
+        "Europe" => "#2563eb",        // Biru kobalt diplomatik Eropa
+        "North America" => "#0d9488", // Teal / Cyan kehijauan Amerika Utara
+        "South America" => "#ea580c", // Oranye hangat Amerika Selatan
+        "Oceania" => "#0284c7",       // Sky cyan maritim Oceania
+        "Antarctica" => "#e2e8f0",    // Putih es / glacier Antartika
         _ => "#475569",
     }
 }
@@ -403,6 +403,8 @@ pub struct MapEngine {
     horizontal_wrap: bool,
     is_panning: bool,
     active_pointer_id: Option<i32>,
+    touch_points: HashMap<i32, (f64, f64)>,
+    pinch_distance: Option<f64>,
     last_mouse_x: f64,
     last_mouse_y: f64,
     target_offset_x: f64,
@@ -472,6 +474,8 @@ impl MapEngine {
             horizontal_wrap: false,
             is_panning: false,
             active_pointer_id: None,
+            touch_points: HashMap::new(),
+            pinch_distance: None,
             last_mouse_x: 0.0,
             last_mouse_y: 0.0,
             target_offset_x: 0.0,
@@ -501,7 +505,11 @@ impl MapEngine {
         };
         let mut lines: Vec<ProvLine> = Vec::new();
         let mut push_line = |raw: &[Vec<f64>]| {
-            let pts: Vec<(f64, f64)> = raw.iter().filter(|p| p.len() >= 2).map(|p| proj(p)).collect();
+            let pts: Vec<(f64, f64)> = raw
+                .iter()
+                .filter(|p| p.len() >= 2)
+                .map(|p| proj(p))
+                .collect();
             if pts.len() < 2 {
                 return;
             }
@@ -513,10 +521,17 @@ impl MapEngine {
                 bbox[3] = bbox[3].max(y);
             }
             let coarse = build_line_path(&pts, 0.25);
-            lines.push(ProvLine { pts, bbox, coarse, fine: RefCell::new(None) });
+            lines.push(ProvLine {
+                pts,
+                bbox,
+                coarse,
+                fine: RefCell::new(None),
+            });
         };
         for feat in fc.features {
-            let Some(geom) = feat.geometry else { continue; };
+            let Some(geom) = feat.geometry else {
+                continue;
+            };
             match geom.value {
                 Value::LineString(line) => push_line(&line),
                 Value::MultiLineString(ls) => {
@@ -571,7 +586,8 @@ impl MapEngine {
                     }
                 } else {
                     web_sys::console::error_1(
-                        &"Could not create cached province-boundary path; using individual paths.".into(),
+                        &"Could not create cached province-boundary path; using individual paths."
+                            .into(),
                     );
                 }
 
@@ -697,7 +713,9 @@ impl MapEngine {
             let b = &out[j];
             let area_a = (a.bbox[2] - a.bbox[0]) * (a.bbox[3] - a.bbox[1]);
             let area_b = (b.bbox[2] - b.bbox[0]) * (b.bbox[3] - b.bbox[1]);
-            area_a.partial_cmp(&area_b).unwrap_or(std::cmp::Ordering::Equal)
+            area_a
+                .partial_cmp(&area_b)
+                .unwrap_or(std::cmp::Ordering::Equal)
         });
         self.feature_click_order = click_order;
         self.features = out;
@@ -993,7 +1011,9 @@ impl MapEngine {
                     .capital_flags
                     .iter()
                     .position(|(i, _)| i == &flag_iso.to_lowercase());
-                let is_capital = c.is_capital.unwrap_or_else(|| !c.is_major_city.unwrap_or(false));
+                let is_capital = c
+                    .is_capital
+                    .unwrap_or_else(|| !c.is_major_city.unwrap_or(false));
                 let country_iso = c
                     .country_iso
                     .as_deref()
@@ -1172,6 +1192,13 @@ impl MapEngine {
     pub fn handle_wheel(&mut self, delta_y: f64, mouse_x: f64, mouse_y: f64) {
         let zoom_speed = 0.001;
         let factor = 1.0 - delta_y * zoom_speed;
+        self.zoom_at(factor, mouse_x, mouse_y);
+    }
+
+    fn zoom_at(&mut self, factor: f64, mouse_x: f64, mouse_y: f64) {
+        if !factor.is_finite() || factor <= 0.0 {
+            return;
+        }
         let new_scale = (self.scale * factor).clamp(1.0, 50.0);
         let actual_factor = new_scale / self.scale;
         self.offset_x = mouse_x - (mouse_x - self.offset_x) * actual_factor;
@@ -1187,6 +1214,64 @@ impl MapEngine {
             .unwrap_or(0.0);
         self.zoom_preview_until_ms = now_ms + 150.0;
         self.dirty = true;
+    }
+
+    pub fn handle_touch_down(&mut self, pointer_id: i32, x: f64, y: f64) {
+        self.touch_points.insert(pointer_id, (x, y));
+        if self.touch_points.len() == 1 {
+            self.handle_mouse_down(x, y, pointer_id);
+        } else if self.touch_points.len() == 2 {
+            self.is_panning = false;
+            self.active_pointer_id = None;
+            self.pinch_distance = Self::touch_distance(&self.touch_points);
+        }
+    }
+
+    pub fn handle_touch_move(&mut self, pointer_id: i32, x: f64, y: f64) {
+        if !self.touch_points.contains_key(&pointer_id) {
+            return;
+        }
+        self.touch_points.insert(pointer_id, (x, y));
+        if self.touch_points.len() == 1 {
+            self.handle_mouse_move(x, y, 1, pointer_id);
+            return;
+        }
+        let Some(distance) = Self::touch_distance(&self.touch_points) else {
+            return;
+        };
+        if let Some(previous) = self.pinch_distance.replace(distance) {
+            let center = Self::touch_center(&self.touch_points);
+            self.zoom_at(distance / previous, center.0, center.1);
+        }
+    }
+
+    pub fn handle_touch_up(&mut self, pointer_id: i32) {
+        self.touch_points.remove(&pointer_id);
+        self.pinch_distance = Self::touch_distance(&self.touch_points);
+        if self.touch_points.is_empty() {
+            self.handle_mouse_up();
+        } else if self.touch_points.len() == 1 {
+            let (&remaining_id, &(x, y)) = self.touch_points.iter().next().unwrap();
+            self.handle_mouse_down(x, y, remaining_id);
+        }
+    }
+
+    fn touch_distance(points: &HashMap<i32, (f64, f64)>) -> Option<f64> {
+        let mut points = points.values();
+        let first = points.next()?;
+        let second = points.next()?;
+        Some(
+            ((first.0 - second.0).powi(2) + (first.1 - second.1).powi(2))
+                .sqrt()
+                .max(1.0),
+        )
+    }
+
+    fn touch_center(points: &HashMap<i32, (f64, f64)>) -> (f64, f64) {
+        let mut points = points.values();
+        let first = points.next().unwrap();
+        let second = points.next().unwrap();
+        ((first.0 + second.0) * 0.5, (first.1 + second.1) * 0.5)
     }
 
     pub fn handle_mouse_down(&mut self, x: f64, y: f64, pointer_id: i32) {
@@ -1360,11 +1445,19 @@ impl MapEngine {
 
     fn render_at(&mut self, frame_delta_ms: f64, zooming: bool) {
         // MAPPERF-TEMP
-        let t0 = web_sys::window().and_then(|w| w.performance()).map(|p| p.now()).unwrap_or(0.0);
+        let t0 = web_sys::window()
+            .and_then(|w| w.performance())
+            .map(|p| p.now())
+            .unwrap_or(0.0);
         self.perf_labels_drawn = 0;
         self.perf_polys_drawn = 0;
         let animating = self.update_camera(frame_delta_ms);
-        let detail_level = map_detail_level(self.scale);
+        // Pinch memakai path paling kasar; detail dipulihkan 150ms setelah jari berhenti.
+        let detail_level = if zooming {
+            0
+        } else {
+            map_detail_level(self.scale)
+        };
 
         // Rebuild cache bendera sekali setelah semua image selesai, bukan untuk
         // setiap batch image yang selesai dimuat.
@@ -1549,7 +1642,8 @@ impl MapEngine {
                     };
                     if let Some(path) = feature.get_path(detail_level) {
                         self.ctx.set_fill_style(style);
-                        self.perf_polys_drawn += 1; self.ctx.fill_with_path_2d(&path);
+                        self.perf_polys_drawn += 1;
+                        self.ctx.fill_with_path_2d(&path);
                         if selected_feature {
                             selected_path_to_draw = Some(path);
                         } else {
@@ -1593,55 +1687,63 @@ impl MapEngine {
                 }
             }
 
-            for &feature_index in &visible {
-                let feature = &self.features[feature_index];
-                let Some(city_indices) = self.city_ownership_by_iso.get(&feature.iso) else {
-                    continue;
-                };
-                for &city_index in city_indices {
-                    let city = &self.city_ownership[city_index];
-                    if city.cells.is_empty()
-                        || city.x + city.radius_x < vx0
-                        || city.x - city.radius_x > vx1
-                        || city.y + city.radius_y < vy0
-                        || city.y - city.radius_y > vy1
-                    {
-                        continue;
-                    }
-                    let Some(country_path) = feature.get_path(detail_level) else {
+            if !zooming {
+                for &feature_index in &visible {
+                    let feature = &self.features[feature_index];
+                    let Some(city_indices) = self.city_ownership_by_iso.get(&feature.iso) else {
                         continue;
                     };
-                    let is_transparent = city.color.as_string().map_or(false, |c| c == "transparent" || c == "rgba(0, 0, 0, 0)" || c == "none");
-                    if !is_transparent {
-                        self.ctx.save();
-                        self.ctx.clip_with_path_2d(&country_path);
-                        self.ctx.set_fill_style(&city.color);
-                        self.ctx.begin_path();
-                        for ring in &city.cells {
-                            self.ctx.move_to(ring[0].0, ring[0].1);
-                            for p in &ring[1..] {
-                                self.ctx.line_to(p.0, p.1);
-                            }
-                            self.ctx.close_path();
+                    for &city_index in city_indices {
+                        let city = &self.city_ownership[city_index];
+                        if city.cells.is_empty()
+                            || city.x + city.radius_x < vx0
+                            || city.x - city.radius_x > vx1
+                            || city.y + city.radius_y < vy0
+                            || city.y - city.radius_y > vy1
+                        {
+                            continue;
                         }
-                        self.ctx.fill();
-                        self.ctx.restore();
+                        let Some(country_path) = feature.get_path(detail_level) else {
+                            continue;
+                        };
+                        let is_transparent = city.color.as_string().map_or(false, |c| {
+                            c == "transparent" || c == "rgba(0, 0, 0, 0)" || c == "none"
+                        });
+                        if !is_transparent {
+                            self.ctx.save();
+                            self.ctx.clip_with_path_2d(&country_path);
+                            self.ctx.set_fill_style(&city.color);
+                            self.ctx.begin_path();
+                            for ring in &city.cells {
+                                self.ctx.move_to(ring[0].0, ring[0].1);
+                                for p in &ring[1..] {
+                                    self.ctx.line_to(p.0, p.1);
+                                }
+                                self.ctx.close_path();
+                            }
+                            self.ctx.fill();
+                            self.ctx.restore();
+                        }
                     }
                 }
             }
 
             // Garis batas provinsi solid (tidak putus-putus) langsung tersambung mulus
-            if self.show_province_borders && self.scale >= 1.15 && !self.province_lines.is_empty() {
+            if !zooming
+                && self.show_province_borders
+                && self.scale >= 1.15
+                && !self.province_lines.is_empty()
+            {
                 let coarse = province_lines_use_coarse_detail(self.scale, self.is_panning);
                 let min_screen = 1.0 / self.scale;
                 self.ctx.set_stroke_style(&self.styles.province_stroke);
-                self.ctx.set_line_width((0.65 / self.scale).clamp(0.25, 0.9));
+                self.ctx
+                    .set_line_width((0.65 / self.scale).clamp(0.25, 0.9));
                 for batch in &self.province_line_batches {
                     if !bbox_hits(&batch.bbox, vx0, vy0, vx1, vy1) {
                         continue;
                     }
-                    if (batch.bbox[2] - batch.bbox[0])
-                        .max(batch.bbox[3] - batch.bbox[1])
+                    if (batch.bbox[2] - batch.bbox[0]).max(batch.bbox[3] - batch.bbox[1])
                         < min_screen
                     {
                         continue;
@@ -1660,11 +1762,14 @@ impl MapEngine {
                     }
                 }
             }
-            self.draw_capitals(vx0, vy0, vx1, vy1, true, animating, zooming);
+            self.draw_capitals(vx0, vy0, vx1, vy1, !zooming, animating, zooming);
         }
         self.visible_features = visible;
         // MAPPERF-TEMP
-        let t1 = web_sys::window().and_then(|w| w.performance()).map(|p| p.now()).unwrap_or(0.0);
+        let t1 = web_sys::window()
+            .and_then(|w| w.performance())
+            .map(|p| p.now())
+            .unwrap_or(0.0);
         self.perf_render_time_ms = t1 - t0;
     }
 
@@ -1724,13 +1829,24 @@ impl MapEngine {
         }
         let margin = 40.0 / self.scale;
         let is_panning = self.is_panning;
-        let visible_capitals: Vec<_> = self.capitals.iter().filter(|c| {
-            // Saat panning, batasi gambar bendera non-capital agar tidak membebani canvas
-            if is_panning && !c.is_capital && self.scale < 3.5 {
-                return false;
-            }
-            c.x >= vx0 - margin && c.x <= vx1 + margin && c.y >= vy0 - margin && c.y <= vy1 + margin
-        }).collect();
+        let visible_capitals: Vec<_> = self
+            .capitals
+            .iter()
+            .filter(|c| {
+                // Saat pinch, hindari ratusan marker kota; ibukota tetap memberi orientasi.
+                if zooming && !c.is_capital {
+                    return false;
+                }
+                // Saat panning, batasi gambar bendera non-capital agar tidak membebani canvas
+                if is_panning && !c.is_capital && self.scale < 3.5 {
+                    return false;
+                }
+                c.x >= vx0 - margin
+                    && c.x <= vx1 + margin
+                    && c.y >= vy0 - margin
+                    && c.y <= vy1 + margin
+            })
+            .collect();
 
         for cap in &visible_capitals {
             let image = cap
@@ -1746,7 +1862,9 @@ impl MapEngine {
         }
 
         // Jangan hitung ulang layout jika perbedaan skala kecil (< 30%)
-        let scale_diff_ratio = if self.cached_capital_labels_scale.is_nan() || self.cached_capital_labels_scale <= 0.0 {
+        let scale_diff_ratio = if self.cached_capital_labels_scale.is_nan()
+            || self.cached_capital_labels_scale <= 0.0
+        {
             1.0
         } else {
             (self.scale - self.cached_capital_labels_scale).abs() / self.cached_capital_labels_scale
@@ -1780,10 +1898,12 @@ impl MapEngine {
             }
 
             if pass_capital {
-                self.ctx.set_font(&format!("bold {}px sans-serif", capital_font_size));
+                self.ctx
+                    .set_font(&format!("bold {}px sans-serif", capital_font_size));
                 self.ctx.set_fill_style(&self.styles.capital_text);
             } else {
-                self.ctx.set_font(&format!("500 {}px sans-serif", font_size));
+                self.ctx
+                    .set_font(&format!("500 {}px sans-serif", font_size));
                 self.ctx.set_fill_style(&self.styles.city_text);
             }
 
@@ -1874,8 +1994,24 @@ impl MapEngine {
         self.cached_capital_labels_scale = scale;
     }
 
-    fn draw_capital_flag(&self, image: Option<&HtmlImageElement>, iso: &str, x: f64, y: f64, animating: bool) {
-        Self::draw_capital_flag_on_context(&self.ctx, &self.styles, image, iso, x, y, self.scale, animating);
+    fn draw_capital_flag(
+        &self,
+        image: Option<&HtmlImageElement>,
+        iso: &str,
+        x: f64,
+        y: f64,
+        animating: bool,
+    ) {
+        Self::draw_capital_flag_on_context(
+            &self.ctx,
+            &self.styles,
+            image,
+            iso,
+            x,
+            y,
+            self.scale,
+            animating,
+        );
     }
 
     fn draw_capital_flag_on_context(
@@ -2015,9 +2151,11 @@ impl MapEngine {
                     f64::INFINITY
                 };
                 if normalized_distance <= 1.0
-                    && nearest_captured_city.as_ref().map_or(true, |(_, nearest_distance)| {
-                        normalized_distance < *nearest_distance
-                    })
+                    && nearest_captured_city
+                        .as_ref()
+                        .map_or(true, |(_, nearest_distance)| {
+                            normalized_distance < *nearest_distance
+                        })
                 {
                     nearest_captured_city = Some((city, normalized_distance));
                 }
@@ -2042,7 +2180,11 @@ impl MapEngine {
             }
             if captured_city.is_none() {
                 if let Some((cap, distance_sq)) = nearest_city {
-                    let _ = js_sys::Reflect::set(&target, &JsValue::from_str("selected_city"), &JsValue::from_str(&cap.name));
+                    let _ = js_sys::Reflect::set(
+                        &target,
+                        &JsValue::from_str("selected_city"),
+                        &JsValue::from_str(&cap.name),
+                    );
                     if !cap.city_id.is_empty() {
                         let _ = js_sys::Reflect::set(
                             &target,
@@ -2050,7 +2192,11 @@ impl MapEngine {
                             &JsValue::from_str(&cap.city_id),
                         );
                     }
-                    let _ = js_sys::Reflect::set(&target, &JsValue::from_str("is_capital"), &JsValue::from_bool(cap.is_capital));
+                    let _ = js_sys::Reflect::set(
+                        &target,
+                        &JsValue::from_str("is_capital"),
+                        &JsValue::from_bool(cap.is_capital),
+                    );
                     if let Some(owner_country) = cap.owner_country.as_deref() {
                         let latitude = 90.0 - (cap.y / self.height) * 180.0;
                         let longitude_scale = latitude.to_radians().cos().abs().max(0.25);
@@ -2117,7 +2263,9 @@ impl MapEngine {
                 continue;
             }
             let hit = f.polys.iter().any(|poly| {
-                let Some(outer) = poly.first() else { return false; };
+                let Some(outer) = poly.first() else {
+                    return false;
+                };
                 if !bbox_hits(&outer.bbox, wx, wy, wx, wy) || !point_in_ring(&outer.pts, wx, wy) {
                     return false;
                 }
@@ -2143,7 +2291,11 @@ impl MapEngine {
         let world_width = self.width * self.scale;
         let mut best_small_feature: Option<(&CachedCountry, f64)> = None;
         for feature in &self.features {
-            let Some(country) = self.countries.iter().find(|country| country.iso == feature.iso) else {
+            let Some(country) = self
+                .countries
+                .iter()
+                .find(|country| country.iso == feature.iso)
+            else {
                 continue;
             };
             for polygon in &feature.polys {
@@ -2164,7 +2316,8 @@ impl MapEngine {
                     world_width,
                 );
                 if distance <= micro_threshold
-                    && best_small_feature.map_or(true, |(_, best_distance)| distance < best_distance)
+                    && best_small_feature
+                        .map_or(true, |(_, best_distance)| distance < best_distance)
                 {
                     best_small_feature = Some((country, distance));
                 }
@@ -2350,6 +2503,16 @@ pub fn start_map_engine(
         let engine = engine.clone();
         let canvas_for_pointer_capture = canvas.clone();
         let closure = Closure::wrap(Box::new(move |e: PointerEvent| {
+            if e.pointer_type() == "touch" {
+                e.prevent_default();
+                let _ = canvas_for_pointer_capture.set_pointer_capture(e.pointer_id());
+                engine.borrow_mut().handle_touch_down(
+                    e.pointer_id(),
+                    e.offset_x() as f64,
+                    e.offset_y() as f64,
+                );
+                return;
+            }
             if e.is_primary() && (e.button() == 0 || e.button() == 2) {
                 e.prevent_default();
                 if let Err(error) = canvas_for_pointer_capture.set_pointer_capture(e.pointer_id()) {
@@ -2377,6 +2540,15 @@ pub fn start_map_engine(
     {
         let engine = engine.clone();
         let closure = Closure::wrap(Box::new(move |e: PointerEvent| {
+            if e.pointer_type() == "touch" {
+                e.prevent_default();
+                engine.borrow_mut().handle_touch_move(
+                    e.pointer_id(),
+                    e.offset_x() as f64,
+                    e.offset_y() as f64,
+                );
+                return;
+            }
             if e.is_primary() {
                 if e.buttons() == 0 {
                     engine.borrow_mut().handle_mouse_up();
@@ -2397,6 +2569,10 @@ pub fn start_map_engine(
     {
         let engine = engine.clone();
         let closure = Closure::wrap(Box::new(move |e: PointerEvent| {
+            if e.pointer_type() == "touch" {
+                engine.borrow_mut().handle_touch_up(e.pointer_id());
+                return;
+            }
             if e.is_primary() {
                 engine.borrow_mut().handle_mouse_up();
             }
@@ -2408,6 +2584,10 @@ pub fn start_map_engine(
     {
         let engine = engine.clone();
         let closure = Closure::wrap(Box::new(move |e: PointerEvent| {
+            if e.pointer_type() == "touch" {
+                engine.borrow_mut().handle_touch_up(e.pointer_id());
+                return;
+            }
             if e.is_primary() {
                 engine.borrow_mut().handle_mouse_up();
             }
@@ -2419,6 +2599,10 @@ pub fn start_map_engine(
     {
         let engine = engine.clone();
         let closure = Closure::wrap(Box::new(move |e: PointerEvent| {
+            if e.pointer_type() == "touch" {
+                engine.borrow_mut().handle_touch_up(e.pointer_id());
+                return;
+            }
             if e.is_primary() {
                 engine.borrow_mut().handle_mouse_up();
             }
