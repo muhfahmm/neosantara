@@ -429,9 +429,9 @@ export function Navbar({
                                     icon={<Users className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
                                     label="POPULASI" 
                                     value={
-                                        <span className="flex items-center gap-1.5 2xl:gap-2 text-root-text">
-                                            <span className="inline-block w-[11ch] text-right tabular-nums">{populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
-                                            <span className={`${netDailyChange >= 0 ? 'text-root-accent' : 'text-rose-400'} inline-block w-[9ch] text-right tabular-nums text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
+                                        <span className="flex items-center gap-1 text-root-text">
+                                            <span className="tabular-nums">{populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
+                                            <span className={`${netDailyChange >= 0 ? 'text-root-accent' : 'text-rose-400'} tabular-nums text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
                                                 ({netPopulationLabel})
                                             </span>
                                         </span>
@@ -453,9 +453,9 @@ export function Navbar({
                                 icon={<Landmark className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
                                 label="KAS NEGARA"
                                 value={countryDetail ? (
-                                    <span className="flex items-center gap-1.5 2xl:gap-2 text-root-text tabular-nums">
-                                        <span className={`inline-block w-[16ch] text-right ${anggaran < 0 ? 'text-rose-400 font-black' : ''}`}>{formatCurrencyEM(anggaran)}</span>
-                                        <span className={`${netBalance >= 0 ? 'text-root-accent' : 'text-rose-400'} inline-block w-[10ch] text-right text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
+                                    <span className="flex items-center gap-1 text-root-text tabular-nums">
+                                        <span className={anggaran < 0 ? 'text-rose-400 font-black' : ''}>{formatCurrencyEM(anggaran)}</span>
+                                        <span className={`${netBalance >= 0 ? 'text-root-accent' : 'text-rose-400'} text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
                                             ({netBalanceLabel})
                                         </span>
                                     </span>
