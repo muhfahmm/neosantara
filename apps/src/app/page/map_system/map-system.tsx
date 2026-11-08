@@ -1009,7 +1009,8 @@ const MapCanvasView = memo(function MapCanvasView({
                     }
                 }
             }}
-            className={`fixed top-20 inset-x-0 bottom-0 z-0 select-none touch-none bg-[#0f244a] ${interactionDisabled && !isSelectingTarget ? 'pointer-events-none' : ''}`}
+            style={{ top: 'var(--map-content-top)' }}
+            className={`fixed inset-x-0 bottom-0 z-0 select-none touch-none bg-[#0f244a] ${interactionDisabled && !isSelectingTarget ? 'pointer-events-none' : ''}`}
             onClick={event => onClick(event as unknown as React.MouseEvent<HTMLCanvasElement>)}
             onPointerDown={event => {
                 if (event.cancelable && event.button === 0) {
@@ -9340,7 +9341,10 @@ export default function MapPage() {
     };
 
     return (
-        <main className="fixed inset-0 bg-[#070b14] overflow-hidden font-sans">
+        <main
+            data-viewport-mode={viewportMode === 'desktop' ? undefined : viewportMode}
+            className="map-system-root fixed inset-0 bg-[#070b14] overflow-hidden font-sans"
+        >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.02)_0%,transparent_100%)] pointer-events-none" />
 
             {/* Status Bar / Navbar */}
@@ -11335,7 +11339,10 @@ export default function MapPage() {
 
             {/* Efek Keclap Putih Uji Coba ICBM di Koordinat Sasaran */}
             {icbmFlashEffect && (
-                <div className="fixed top-20 inset-x-0 bottom-0 pointer-events-none z-30 overflow-hidden">
+                <div
+                    className="fixed inset-x-0 bottom-0 pointer-events-none z-30 overflow-hidden"
+                    style={{ top: 'var(--map-content-top)' }}
+                >
                     {/* Flash cahaya putih terang global sekilas */}
                     <div
                         className={`absolute inset-0 bg-white transition-opacity duration-700 ${icbmFlashEffect.visible ? 'opacity-85' : 'opacity-0'

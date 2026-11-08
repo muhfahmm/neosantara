@@ -6,6 +6,7 @@
   --modal-side-offset-right: 40px;
   --modal-max-height: calc(100dvh - 112px);
   --modal-max-width: 940px;
+  --map-content-top: 80px;
   --navbar-h: 0px;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -35,6 +36,11 @@
     --modal-max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - var(--safe-bottom) - 8px);
     --modal-max-width: 96vw;
   }
+}
+
+.map-system-root[data-viewport-mode='landscapePhone'],
+.map-system-root[data-viewport-mode='portraitPhone'] {
+  --map-content-top: calc(var(--navbar-h) + var(--safe-top) + 0.35rem);
 }
 
 .modal-responsive-shell {
