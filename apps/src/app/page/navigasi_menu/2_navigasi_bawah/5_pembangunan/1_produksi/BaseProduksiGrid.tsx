@@ -2,7 +2,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { Info, MessageSquare } from "lucide-react";
+import { Building2, Info, MessageSquare } from "lucide-react";
 import { getBuildingCardImage } from "../../buildingCardImages";
 import { getKelistrikanFuelRequirements } from "./construction_support/1_produksi/1_kelistrikan/fuelLogic";
 import { getDaysElapsed, formatDate } from '@/app/logic/production_logic';
@@ -139,6 +139,7 @@ export default function BaseProduksiGrid({
 
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const [aiAnalysisResult, setAiAnalysisResult] = useState<any>(null);
+  const [failedBuildingImages, setFailedBuildingImages] = useState<Record<string, boolean>>({});
   const [, setResolutionRevision] = useState(0);
 
   useEffect(() => {
@@ -169,10 +170,10 @@ export default function BaseProduksiGrid({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="production-section-header flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <Icon className="h-6 w-6 text-root-accent" />
-          <h3 className="text-lg font-black text-root-accent uppercase tracking-wider">{title}</h3>
+          <h3 className="production-section-title text-lg font-black text-root-accent uppercase tracking-wider">{title}</h3>
         </div>
 
         {showAIButton && (
@@ -190,7 +191,7 @@ export default function BaseProduksiGrid({
         )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="production-building-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
         {displayedKeys.map((key) => {
           const bMeta = findMeta(key) || {};
           const perCount = Number(countryDetail?.[key]) || 0;
@@ -216,6 +217,7 @@ export default function BaseProduksiGrid({
           );
           const queueCount = buildingConstructions.length;
           const isBuilding = queueCount > 0;
+          const buildingImage = getBuildingCardImage(key);
 
           // Tampilkan tanggal selesai dari unit PALING AKHIR
           const lastEndDate = isBuilding ? buildingConstructions[buildingConstructions.length - 1].endDate : null;
@@ -223,12 +225,12 @@ export default function BaseProduksiGrid({
           return (
             <React.Fragment key={key}>
               {isElectricityTab && key === fuelRequiredKeys[0] && (
-                <div className="col-span-full border-b border-root-accent/15 pb-2 pt-1 text-xs font-black uppercase tracking-wider text-root-muted">
+                <div className="production-grid-section-label col-span-full border-b border-root-accent/15 pb-2 pt-1 text-xs font-black uppercase tracking-wider text-root-muted">
                   Pembangkit Membutuhkan Bahan Bakar
                 </div>
               )}
               {isElectricityTab && key === noFuelRequiredKeys[0] && (
-                <div className="col-span-full border-b border-root-accent/15 pb-2 pt-4 text-xs font-black uppercase tracking-wider text-root-muted">
+                <div className="production-grid-section-label col-span-full border-b border-root-accent/15 pb-2 pt-4 text-xs font-black uppercase tracking-wider text-root-muted">
                   Pembangkit Tidak Membutuhkan Bahan Bakar
                 </div>
               )}
@@ -241,7 +243,7 @@ export default function BaseProduksiGrid({
               tabIndex={0}
               aria-disabled={!isAvailable}
               title={productionBan ? `Diblokir resolusi PBB: ${formatProductionProductName(key)}` : undefined}
-              className={`group relative rounded-2xl overflow-visible flex flex-col flex-grow justify-between transition-all bg-root-canvas border shadow-sm ${isAvailable ? 'border-root-accent/20 hover:border-root-accent/50 hover:shadow-md cursor-pointer' : 'border-rose-500/30 bg-rose-500/10 opacity-70 cursor-not-allowed'
+              className={`production-building-card group relative rounded-2xl overflow-visible flex flex-col flex-grow justify-between transition-all bg-root-canvas border shadow-sm ${isAvailable ? 'border-root-accent/20 hover:border-root-accent/50 hover:shadow-md cursor-pointer' : 'border-rose-500/30 bg-rose-500/10 opacity-70 cursor-not-allowed'
                 } ${isHighlighted ? 'border-root-accent border-2 shadow-[0_0_12px_rgba(0,255,170,0.3)]' : ''}`}
             >
               {productionBan && (
@@ -275,13 +277,13 @@ export default function BaseProduksiGrid({
                 />
               )}
 
-              <div className="p-2 sm:p-2.5 flex flex-col flex-grow justify-between">
+              <div className="production-building-card-body p-2 sm:p-2.5 flex flex-col flex-grow justify-between">
                 <div>
                   <div className="flex items-start justify-between gap-1 mb-0.5">
-                    <p className="text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1 leading-snug">{label}</p>
+                    <p className="production-building-label text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1 leading-snug">{label}</p>
                     <button
                       disabled={isProductionBanned}
-                      className="flex-shrink-0 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
+                      className="production-building-info flex-shrink-0 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
                       onClick={(e) => {
                         if (isProductionBanned) return;
                         e.stopPropagation();
@@ -294,17 +296,20 @@ export default function BaseProduksiGrid({
                   </div>
 
                   <div className="flex items-center gap-2 mt-1.5">
-                    {getBuildingCardImage(key) && (
+                    {buildingImage && !failedBuildingImages[key] ? (
                       <Image
-                        src={getBuildingCardImage(key)!}
+                        src={buildingImage}
                         alt=""
                         width={88}
                         height={88}
-                        className="h-16 w-16 sm:h-20 sm:w-20 object-contain shrink-0"
+                        className="production-building-image h-16 w-16 sm:h-20 sm:w-20 object-contain shrink-0"
+                        onError={() => setFailedBuildingImages((images) => ({ ...images, [key]: true }))}
                       />
+                    ) : (
+                      <Building2 aria-hidden="true" className="production-building-image h-16 w-16 sm:h-20 sm:w-20 shrink-0 text-root-subtle" />
                     )}
                     <div className="flex items-end gap-1 flex-wrap">
-                      <span className="text-xs sm:text-sm lg:text-base font-black text-root-text leading-none">{perCount}</span>
+                      <span className="production-building-count text-xs sm:text-sm lg:text-base font-black text-root-text leading-none">{perCount}</span>
                       {isBuilding && (
                         <span className="text-[10px] sm:text-xs font-bold text-emerald-400 leading-none">
                           +{queueCount}
@@ -316,7 +321,7 @@ export default function BaseProduksiGrid({
 
                 {/* FOOTER LISTRIK */}
                 {isElectricityTab && (
-                  <div className="border-t border-root-accent/10 mt-1.5 pt-1 pb-0.5 text-center min-h-[36px] flex flex-col justify-center">
+                  <div className="production-building-footer border-t border-root-accent/10 mt-1.5 pt-1 pb-0.5 text-center min-h-[36px] flex flex-col justify-center">
                     <span className={`font-black text-xs sm:text-sm leading-tight break-words ${isProductionZero ? 'text-rose-400' : 'text-root-accent'}`}>
                       {rawProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                     </span>
@@ -328,7 +333,7 @@ export default function BaseProduksiGrid({
 
                 {/* FOOTER NON-LISTRIK */}
                 {!isElectricityTab && (
-                  <div className="border-t border-root-accent/10 mt-1.5 pt-1 pb-0.5 text-center min-h-[36px] flex flex-col justify-center gap-0.5">
+                  <div className="production-building-footer border-t border-root-accent/10 mt-1.5 pt-1 pb-0.5 text-center min-h-[36px] flex flex-col justify-center gap-0.5">
                     {(() => {
                       // Emas: tampilkan produksi tetap (tidak berubah-ubah seperti stok)
                       if (key === 'emas') {

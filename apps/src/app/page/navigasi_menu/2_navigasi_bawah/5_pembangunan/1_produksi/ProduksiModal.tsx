@@ -8,6 +8,7 @@ import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCl
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
+import { useViewportMode } from "@/app/hooks/useViewportMode";
 import { fetchBuildingMetadata } from '../../../../../../lib/buildingMetadata';
 import { isBuildingAvailable } from '../../../../../logic';
 import { calculateProductionIncrement, formatDate, getDaysElapsed } from '../../../../../logic/production_logic';
@@ -128,6 +129,16 @@ export default function ProduksiModal({
   onProductionDeepLinkHandled,
 }: ModalProps) {
   const [activeTab, setActiveTab] = useState<string>(targetTab || "kelistrikan");
+  const tabButtonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const viewportMode = useViewportMode();
+
+  useEffect(() => {
+    tabButtonRefs.current.get(activeTab)?.scrollIntoView({
+      block: "nearest",
+      inline: "nearest",
+      behavior: "smooth",
+    });
+  }, [activeTab, viewportMode]);
 
   // Update tab when targetTab prop changes
   useEffect(() => {
@@ -651,18 +662,18 @@ export default function ProduksiModal({
     <>
       {isOpen && !selectedTabInfo && !showSanctionInfo && (
         <NotebookModalWrapper onClose={onClose}>
-          <div className="flex flex-col h-full overflow-hidden">
+          <div className="production-modal-layout flex flex-col h-full overflow-hidden">
 
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
+            <div className="production-modal-header px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
               <div className="flex min-w-0 items-center gap-2 sm:gap-3">
                 <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
                   <Hammer className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
                 </div>
                 <div className="min-w-0">
-                  <h2 className={rootModalTypography.title}>Produksi & Pembangunan</h2>
+                  <h2 className={`production-modal-title ${rootModalTypography.title}`}>Produksi & Pembangunan</h2>
                 </div>
               </div>
-              <div className="flex shrink-0 items-center gap-2">
+              <div className="production-modal-header-actions flex shrink-0 items-center gap-2">
                 <button
                   type="button"
                   onClick={() => setSelectedTabInfo({
@@ -671,21 +682,25 @@ export default function ProduksiModal({
                   })}
                   aria-label={`Informasi ${activeSection.label}`}
                   title={`Informasi ${activeSection.label}`}
-                  className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent transition-colors hover:border-root-accent hover:bg-root-accent/10"
+                  className="production-info-button flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent transition-colors hover:border-root-accent hover:bg-root-accent/10"
                 >
                   <Info className="h-4 w-4" />
                 </button>
-                <RootModalCloseButton onClick={onClose} />
+                <RootModalCloseButton onClick={onClose} className="production-modal-close" />
               </div>
             </div>
 
-            <div className="flex-1 flex min-h-0 relative z-10">
-              <div className="w-40 sm:w-44 lg:w-48 border-r border-root-accent/30 bg-root-canvas p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
+            <div className="production-modal-body flex-1 flex min-h-0 relative z-10">
+              <div className="production-modal-tabs w-40 sm:w-44 lg:w-48 border-r border-root-accent/30 bg-root-canvas p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
                 {TABS.map((tab) => (
                     <button
                       key={tab.id}
+                      ref={(element) => {
+                        if (element) tabButtonRefs.current.set(tab.id, element);
+                        else tabButtonRefs.current.delete(tab.id);
+                      }}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${activeTab === tab.id
+                      className={`production-modal-tab flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${activeTab === tab.id
                           ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
                           : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent hover:text-root-accent"
                         }`}
@@ -694,7 +709,7 @@ export default function ProduksiModal({
                     </button>
                 ))}
               </div>
-              <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-root-surface neon-scrollbar">
+              <div className="production-modal-content flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-root-surface neon-scrollbar">
                 <ComponentToRender
                   countryDetail={countryDetail}
                   setCountryDetail={setCountryDetail}
@@ -720,13 +735,13 @@ export default function ProduksiModal({
               </div>
             </div>
 
-            <div className="flex shrink-0 justify-center border-t border-root-accent/15 bg-root-canvas py-2">
+            <div className="production-modal-footer flex shrink-0 justify-center border-t border-root-accent/15 bg-root-canvas py-2">
               <button
                 type="button"
                 onClick={() => setShowSanctionInfo(true)}
                 aria-label="Informasi bonus agama, ideologi, kementerian, sanksi, dan embargo"
                 title="Lihat informasi bonus agama, ideologi, kementerian, sanksi, dan embargo"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent transition-all hover:border-root-accent hover:bg-root-accent/10 hover:shadow-md hover:shadow-root-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent cursor-pointer"
+                className="production-bonus-info flex h-8 w-8 items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent transition-all hover:border-root-accent hover:bg-root-accent/10 hover:shadow-md hover:shadow-root-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent cursor-pointer"
               >
                 <Info className="h-4 w-4" />
               </button>

@@ -171,3 +171,337 @@
     stroke-width: 1.25px;
   }
 }
+
+.notebook-modal-frame[data-viewport-mode] .modal-responsive-shell,
+.paused-menu-frame[data-viewport-mode] .modal-responsive-shell {
+  min-width: 0;
+  min-height: 0;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.production-modal-layout) .notebook-modal-content {
+  overflow: hidden;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-layout {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-header {
+  min-height: 40px;
+  height: 40px;
+  padding: 2px 6px;
+  gap: 4px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-header > div:first-child {
+  gap: 6px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-title {
+  overflow: hidden;
+  font-size: clamp(14px, 2.8vw, 16px);
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-header-actions {
+  gap: 4px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-info-button,
+.notebook-modal-frame[data-viewport-mode] .production-modal-close {
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-close > span {
+  display: none;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-close > svg {
+  width: 18px;
+  height: 18px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-modal-body {
+  min-width: 0;
+  min-height: 0;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-modal-tabs {
+  overflow: hidden;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-tab {
+  min-height: 34px;
+  padding: 4px 8px;
+  font-size: 11px;
+  line-height: 1.15;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-content {
+  min-width: 0;
+  padding: 8px 8px 48px;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-bonus-info {
+  position: absolute;
+  z-index: 20;
+  right: 6px;
+  bottom: 6px;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 35%);
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-footer {
+  display: contents;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-section-header {
+  min-height: 24px;
+  margin-bottom: 8px;
+  gap: 6px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-section-header > div {
+  min-width: 0;
+  gap: 6px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-section-header > div > svg {
+  width: 18px;
+  height: 18px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-section-title {
+  font-size: clamp(14px, 2.8vw, 16px);
+  line-height: 1.1;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-grid {
+  gap: 6px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-card {
+  min-width: 0;
+  min-height: 76px;
+  border-radius: 10px;
+  transition-duration: 120ms;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-card-body {
+  min-width: 0;
+  padding: 8px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-label {
+  font-size: 10px;
+  line-height: 1.15;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-info {
+  width: 28px;
+  height: 28px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-info svg {
+  width: 14px;
+  height: 14px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-image {
+  width: 40px;
+  height: 40px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-count {
+  font-size: 12px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-footer {
+  min-height: 22px;
+  margin-top: 4px;
+  padding-top: 3px;
+  padding-bottom: 2px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-footer span {
+  font-size: 11px;
+  line-height: 1.1;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-body {
+  flex-direction: row;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-tabs {
+  width: 130px;
+  min-width: 130px;
+  max-width: 130px;
+  gap: 2px;
+  padding: 4px;
+  border-right-width: 1px;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-content {
+  padding: 6px;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-tab {
+  min-height: 34px;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-building-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-building-card {
+  min-height: 54px;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-building-card-body {
+  padding: 2px;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-building-image {
+  width: 36px;
+  height: 36px;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-building-info {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-building-card-body > div > div:first-child {
+  margin-bottom: 0;
+  min-height: 12px;
+  padding-right: 20px;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-building-card-body > div > div:nth-child(2) {
+  gap: 3px;
+  margin-top: 2px;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-building-footer {
+  position: absolute;
+  right: 6px;
+  bottom: 4px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-building-footer span {
+  font-size: 10px;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-grid-section-label {
+  padding-top: 0;
+  padding-bottom: 2px;
+  font-size: 12px;
+  line-height: 1.15;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-section-header {
+  min-height: 20px;
+  margin-bottom: 4px;
+}
+
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-body {
+  flex-direction: column;
+}
+
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-tabs {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 44px;
+  flex-direction: row;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px;
+  border-right: 0;
+  border-bottom: 1px solid rgb(0 255 170 / 20%);
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-tab {
+  width: max-content;
+  min-width: max-content;
+  min-height: 40px;
+  scroll-snap-align: start;
+}
+
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-content {
+  flex: 1 1 0%;
+}
+
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-layout .production-building-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 360px) {
+  .notebook-modal-frame[data-viewport-mode='portraitPhone'] > .modal-responsive-shell {
+    padding: 3px;
+    padding-left: 8px;
+  }
+
+  .notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-header > div:first-child > div:first-child {
+    display: none;
+  }
+
+  .notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-layout .production-building-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-title {
+    font-size: 12px;
+  }
+
+  .notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-layout .production-building-card-body {
+    padding: 8px;
+  }
+}
+
+@media (hover: none) {
+  .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-card,
+  .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-info-button,
+  .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-modal-tab {
+    transition: none;
+  }
+
+  .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-card:hover {
+    box-shadow: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notebook-modal-frame[data-viewport-mode] *,
+  .paused-menu-frame[data-viewport-mode] * {
+    scroll-behavior: auto;
+  }
+}

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { RootNotebookDecorations } from '@/app/page/root_modals_design_menu/RootNotebookDecorations';
+import { useViewportMode } from '@/app/hooks/useViewportMode';
 
 export const MENU_INFO_MODAL_VISIBILITY_EVENT = 'neosantara_menu_info_modal_visibility';
 
@@ -28,6 +29,7 @@ export function NotebookModalWrapper({
 }: NotebookModalWrapperProps) {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const decorationsCount = ringCount ?? (compact ? 5 : 11);
+  const viewportMode = useViewportMode();
 
   useEffect(() => {
     if (!hideWhenInfoModalOpen) return;
@@ -49,6 +51,7 @@ export function NotebookModalWrapper({
         paddingLeft: 'var(--modal-side-offset)',
         paddingRight: 'var(--modal-side-offset)',
       }}
+      data-viewport-mode={viewportMode === 'desktop' ? undefined : viewportMode}
       className={`notebook-modal-frame ${isHidden || (hideWhenInfoModalOpen && isInfoModalOpen) ? 'hidden' : ''} fixed inset-0 ${zIndexClass} flex items-center justify-center font-sans pointer-events-none`}
     >
       {/* Notebook Outer Frame */}
@@ -59,12 +62,12 @@ export function NotebookModalWrapper({
         <RootNotebookDecorations count={decorationsCount} />
 
         {/* Main Panel Sheet — Green Theme */}
-        <div className={`flex-1 min-h-0 min-w-0 bg-root-surface border-[3px] border-root-accent/20 ${squareCorners ? 'rounded-none' : 'rounded-r-xl'} shadow-inner relative flex flex-col overflow-hidden`}>
+        <div className={`notebook-modal-sheet flex-1 min-h-0 min-w-0 bg-root-surface border-[3px] border-root-accent/20 ${squareCorners ? 'rounded-none' : 'rounded-r-xl'} shadow-inner relative flex flex-col overflow-hidden`}>
           {/* Subtle radial glow */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
           {/* Render Actual Modal Children */}
-          <div className="flex-1 min-h-0 overflow-y-auto flex flex-col min-w-0 relative z-10">
+          <div className="notebook-modal-content flex-1 min-h-0 overflow-y-auto flex flex-col min-w-0 relative z-10">
             {children}
           </div>
         </div>
