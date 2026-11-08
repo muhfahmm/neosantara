@@ -1,12 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import {
-  Star, Wallet, Wrench, Shield, Globe, Landmark, LayoutGrid,
-  Hammer, Swords as MilitaryIcon, Users2, BarChart3, TrendingUp,
-  ArrowRightLeft, FileText, CreditCard, Zap, Package, Home, ShieldAlert, Gem, Tag, Smile, Eye, HeartHandshake, HandHelping, Handshake,
-  Droplet, Activity, Bolt, Radiation, Info, Bug
-} from "lucide-react";
+import { LayoutGrid } from "lucide-react";
 import { menuItems, subMenuItems } from "../navigationData";
 import { preloadModalForMenu } from "./modalPreloaders";
 import { useViewportMode } from "@/app/hooks/useViewportMode";
@@ -154,9 +149,9 @@ export default function BottomNav({
       <nav
         className={`flex items-center bg-root-surface/90 border border-root-accent/30 transition-all duration-500 ease-in-out ${
           isLandscapePhone
-            ? 'gap-0.5 px-1 py-0.5 rounded-lg max-h-[38px] overflow-x-auto no-scrollbar'
+            ? 'gap-0.5 px-1 py-0.5 rounded-lg max-h-[38px] overflow-visible'
             : isPortraitPhone
-            ? 'gap-1 px-1.5 py-1 rounded-xl max-h-[44px] overflow-x-auto no-scrollbar'
+            ? 'gap-1 px-1.5 py-1 rounded-xl max-h-[44px] overflow-visible'
             : 'gap-1 lg:gap-1.5 px-1.5 lg:px-2 py-1 lg:py-1.5 rounded-xl lg:rounded-2xl overflow-visible'
         }`}
       >
@@ -220,22 +215,18 @@ export default function BottomNav({
                   onFocus={() => prefetchMenuModal(sub.id)}
                   onPointerDown={() => prefetchMenuModal(sub.id)}
                   onClick={() => setActiveMenu(sub.id)}
-                  className={`flex cursor-pointer items-center justify-center bg-transparent p-0 ${
+                  className={`flex shrink-0 cursor-pointer items-center justify-center rounded-lg text-root-subtle transition-colors hover:bg-root-accent/10 hover:text-root-accent ${
                     isLandscapePhone
-                      ? 'h-6 w-6'
+                      ? 'h-6 px-1'
                       : isPortraitPhone
-                      ? 'h-7 w-7'
-                      : 'h-7 w-7 lg:h-[34px] lg:w-[34px] 2xl:h-[46px] 2xl:w-[46px]'
+                      ? 'h-7 px-1.5'
+                      : 'h-7 px-1.5 lg:h-[34px] lg:px-2 2xl:h-9 2xl:px-2.5'
                   }`}
                 >
-                  <sub.icon className="h-full w-full text-root-subtle" />
-                </button>
-                {!isMobile && (
-                  <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2.5 bg-root-surface border border-root-accent/30 text-root-text text-[13px] font-semibold rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-[9999] scale-95 group-hover:scale-100`}>
+                  <span className="whitespace-nowrap text-[8px] sm:text-[9px] lg:text-[10px] 2xl:text-[11px] font-black uppercase tracking-widest">
                     {sub.label}
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-x-4 border-x-transparent border-t-4 border-t-root-surface"></div>
-                  </div>
-                )}
+                  </span>
+                </button>
               </div>
             ))}
           </div>
