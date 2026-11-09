@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useSyncExternalStore } from 'react';
 import { Activity, Copy } from 'lucide-react';
+import { useViewportMode } from '@/app/hooks/useViewportMode';
 
 const FPS_MONITOR_STORAGE_KEY = 'neosantara_fps_monitor_enabled';
 const FPS_MONITOR_CHANGE_EVENT = 'neosantara_fps_monitor_settings_changed';
@@ -87,27 +88,12 @@ export function FpsMonitoring({
     const [history, setHistory] = useState<string[]>([]);
     const [isExpanded, setIsExpanded] = useState(false);
     const isEnabled = useFpsMonitorEnabled();
-    const [isMobileDevice, setIsMobileDevice] = useState(false);
-
-    useEffect(() => {
-        const checkMobile = () => {
-            const isLandscapePhone = window.matchMedia('(orientation: landscape) and (max-height: 500px)').matches;
-            const isPortraitPhone = window.matchMedia('(orientation: portrait) and (max-width: 640px)').matches;
-            setIsMobileDevice(isLandscapePhone || isPortraitPhone);
-        };
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        window.addEventListener('orientationchange', checkMobile);
-        return () => {
-            window.removeEventListener('resize', checkMobile);
-            window.removeEventListener('orientationchange', checkMobile);
-        };
-    }, []);
+    const isMobileDevice = useViewportMode() !== 'desktop';
 
     const isDevelopment = process.env.NODE_ENV !== 'production';
 
     useEffect(() => {
-        if (!isEnabled || !isDevelopment || isMobileDevice) return;
+        if (!isEnabled || !isDevelopment) return;
 
         let frameCount = 0;
         let lastTime = performance.now();
@@ -191,9 +177,9 @@ export function FpsMonitoring({
             cancelAnimationFrame(animationFrameId);
             window.removeEventListener('neosantara_map_camera', onCameraMove);
         };
-    }, [isEnabled, isDevelopment, isMobileDevice, wasmModuleRef]);
+    }, [isEnabled, isDevelopment, wasmModuleRef]);
 
-    if (!isEnabled || !isDevelopment || isMobileDevice) return null;
+    if (!isEnabled || !isDevelopment) return null;
 
     return (
         <div className="relative z-20 flex shrink-0 self-stretch font-mono pointer-events-auto">
@@ -202,22 +188,38 @@ export function FpsMonitoring({
                 onClick={() => setIsExpanded(value => !value)}
                 aria-expanded={isExpanded}
                 aria-label="Buka detail monitor FPS"
-                className="flex h-full w-[112px] flex-col justify-center gap-0 rounded-xl border border-root-accent/30 bg-root-surface/90 px-1.5 text-left shadow-2xl transition-colors hover:border-root-accent/70"
+                className={`flex h-full ${
+                    isMobileDevice
+                        ? 'w-[60px] flex-row items-center justify-center gap-1 rounded-lg px-1'
+                        : 'w-[112px] flex-col justify-center gap-0 rounded-xl px-1.5'
+                } border border-root-accent/30 bg-root-surface/90 text-left shadow-2xl transition-colors hover:border-root-accent/70`}
             >
-                <span className="flex items-center gap-1.5 text-[8px] font-black tracking-wide text-root-accent lg:text-[9px]">
-                    <Activity className="h-3 w-3" />
-                    FPS MONITOR
-                </span>
-                <span className={`text-lg font-black leading-none tabular-nums lg:text-xl ${stats.fps < 40 ? 'text-rose-400' : stats.fps < 55 ? 'text-amber-400' : 'text-emerald-300'}`}>
-                    {stats.fps} <span className="text-[10px] font-bold text-gray-300">FPS</span>
-                </span>
-                <span className="text-[8px] font-semibold text-gray-400 lg:text-[9px]">
-                    MIN {stats.minFps} <span className="px-1 text-root-accent/50">/</span> AVG {stats.avgFps}
-                </span>
+                {isMobileDevice ? (
+                    <>
+                        <Activity className="h-3 w-3 shrink-0 text-root-accent" />
+                        <span className={`text-sm font-black leading-none tabular-nums ${stats.fps < 40 ? 'text-rose-400' : stats.fps < 55 ? 'text-amber-400' : 'text-emerald-300'}`}>
+                            {stats.fps}
+                        </span>
+                        <span className="text-[7px] font-bold text-gray-300">FPS</span>
+                    </>
+                ) : (
+                    <>
+                        <span className="flex items-center gap-1.5 text-[8px] font-black tracking-wide text-root-accent lg:text-[9px]">
+                            <Activity className="h-3 w-3" />
+                            FPS MONITOR
+                        </span>
+                        <span className={`text-lg font-black leading-none tabular-nums lg:text-xl ${stats.fps < 40 ? 'text-rose-400' : stats.fps < 55 ? 'text-amber-400' : 'text-emerald-300'}`}>
+                            {stats.fps} <span className="text-[10px] font-bold text-gray-300">FPS</span>
+                        </span>
+                        <span className="text-[8px] font-semibold text-gray-400 lg:text-[9px]">
+                            MIN {stats.minFps} <span className="px-1 text-root-accent/50">/</span> AVG {stats.avgFps}
+                        </span>
+                    </>
+                )}
             </button>
 
             {isExpanded && (
-                <div className="absolute left-0 top-full mt-2 w-64 rounded-xl border border-root-accent/40 bg-root-canvas/[.97] p-3 text-white shadow-2xl ">
+                <div className={`absolute top-full z-[240] mt-2 w-64 max-w-[calc(100vw-1rem)] rounded-xl border border-root-accent/40 bg-root-canvas/[.97] p-3 text-white shadow-2xl ${isMobileDevice ? 'right-0' : 'left-0'}`}>
                     <div className="mb-2 flex items-center justify-between border-b border-root-accent/25 pb-1.5">
                         <span className="text-[10px] font-bold text-root-accent">DETAIL PERFORMA PETA</span>
                         <button

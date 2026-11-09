@@ -487,7 +487,7 @@ export async function GET(request: Request) {
         anggaran: Number(row.anggaran),
       }));
 
-      const payload = setCachedResponse(CACHE_KEY_SUMMARY, summaries);
+      const payload = await setCachedResponse(CACHE_KEY_SUMMARY, summaries);
       return buildCachedApiResponse(request, payload);
     }
 
@@ -500,7 +500,7 @@ export async function GET(request: Request) {
       }
 
       const allData = await loadAllCountriesFromMySQL(forceRefresh);
-      const payload = setCachedResponse(CACHE_KEY_ALL, allData);
+      const payload = await setCachedResponse(CACHE_KEY_ALL, allData);
       return buildCachedApiResponse(request, payload);
     }
 

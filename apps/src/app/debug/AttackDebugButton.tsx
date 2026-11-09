@@ -224,30 +224,13 @@ export function AttackDebugButton({ selectedCountry, countryDetail }: AttackDebu
     }
   };
 
-  const [isMobileDevice, setIsMobileDevice] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      const isLandscapePhone = window.matchMedia('(orientation: landscape) and (max-height: 500px)').matches;
-      const isPortraitPhone = window.matchMedia('(orientation: portrait) and (max-width: 640px)').matches;
-      setIsMobileDevice(isLandscapePhone || isPortraitPhone);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    window.addEventListener('orientationchange', checkMobile);
-    return () => {
-      window.removeEventListener('resize', checkMobile);
-      window.removeEventListener('orientationchange', checkMobile);
-    };
-  }, []);
-
-  if (!isDevelopment || isMobileDevice) return null;
+  if (!isDevelopment) return null;
 
   const panel = isOpen && portalReady ? createPortal(
     <div
       role="dialog"
       aria-label="Panel debug serangan"
-      className="fixed right-3 top-16 z-[230] max-h-[calc(100vh-5rem)] w-[min(94vw,440px)] overflow-y-auto rounded-xl border border-[#00FFAA]/50 bg-[#0F2424] p-4 text-[#E0E0E0] shadow-2xl"
+      className="fixed right-3 top-16 z-[230] max-h-[calc(100dvh-5rem)] w-[min(94vw,440px)] overflow-y-auto rounded-xl border border-[#00FFAA]/50 bg-[#0F2424] p-4 text-[#E0E0E0] shadow-2xl"
     >
       <div className="mb-3 flex items-center justify-between gap-2">
         <h2 className="text-sm font-black tracking-wide text-[#00FFAA]">DEBUG SERANGAN AI</h2>
@@ -396,9 +379,9 @@ export function AttackDebugButton({ selectedCountry, countryDetail }: AttackDebu
       <button
         type="button"
         onClick={() => setIsOpen(value => !value)}
-        aria-label="Buka debug serangan"
+        aria-label="Buka debug perang"
         aria-expanded={isOpen}
-        className="rounded-lg border border-[#FF2D55]/60 bg-[#0F2424] px-1.5 py-1.5 text-[8px] font-black tracking-wide text-[#FF647F] transition-colors hover:bg-[#FF2D55]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00FFAA] min-[1920px]:px-2.5 min-[1920px]:py-2 min-[1920px]:text-[9px]"
+        className="min-h-7 whitespace-nowrap rounded-lg border border-[#FF2D55]/60 bg-[#0F2424] px-1.5 py-1 text-[7px] font-black tracking-wide text-[#FF647F] transition-colors hover:bg-[#FF2D55]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00FFAA] min-[1920px]:px-2.5 min-[1920px]:py-2 min-[1920px]:text-[9px]"
       >
         DEBUG SERANG
       </button>

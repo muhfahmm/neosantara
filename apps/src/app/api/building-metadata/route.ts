@@ -174,7 +174,7 @@ export async function GET(request: Request) {
     const metadata = await loadCategoryMetadata(base);
     if (Object.keys(metadata).length > 0) {
       console.log('[building-metadata] loaded category metadata:', Object.keys(metadata).length, 'items');
-      const payload = setCachedResponse(CACHE_KEY, metadata);
+      const payload = await setCachedResponse(CACHE_KEY, metadata);
       return buildCachedApiResponse(request, payload);
     }
     
@@ -218,7 +218,7 @@ export async function GET(request: Request) {
       }
     }
 
-    const payload = setCachedResponse(CACHE_KEY, fallbackMetadata);
+    const payload = await setCachedResponse(CACHE_KEY, fallbackMetadata);
     return buildCachedApiResponse(request, payload);
   } catch (err) {
     console.error('[building-metadata] error', err);

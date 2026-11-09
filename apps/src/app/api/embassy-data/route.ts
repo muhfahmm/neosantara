@@ -31,7 +31,7 @@ export async function GET(request: Request) {
       throw new Error('database_kedutaan_besar returned no rows');
     }
 
-    const payload = setCachedResponse(CACHE_KEY, rows);
+    const payload = await setCachedResponse(CACHE_KEY, rows);
     return buildCachedApiResponse(request, payload);
   } catch (error) {
     console.error('Error querying database_kedutaan_besar:', error);

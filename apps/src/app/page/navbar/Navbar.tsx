@@ -193,23 +193,46 @@ export function Navbar({
 
     useEffect(() => {
         const updateMapZoom = () => {
+            const wasmModule = wasmModuleRef.current ||
+                (window as Window & {
+                    __neosantara_wasm?: FpsMonitorWasmModule;
+                }).__neosantara_wasm;
+            if (wasmModule?.get_perf_stats_on_map) {
+                try {
+                    const stats = wasmModule.get_perf_stats_on_map();
+                    if (stats && typeof stats === 'object' && 'scale' in stats) {
+                        const scale = stats.scale;
+                        if (typeof scale === 'number' && Number.isFinite(scale)) {
+                            setMapZoom(previous => Math.abs(previous - scale) < 0.01 ? previous : scale);
+                            return;
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Gagal membaca skala zoom peta dari WASM:', error);
+                }
+            }
+
             const camera = (window as Window & {
                 __neosantara_map_camera?: { scale?: number };
             }).__neosantara_map_camera;
-            if (typeof camera?.scale === 'number' && Number.isFinite(camera.scale)) {
-                setMapZoom(camera.scale);
+            const cameraScale = camera?.scale;
+            if (typeof cameraScale === 'number' && Number.isFinite(cameraScale)) {
+                setMapZoom(previous => Math.abs(previous - cameraScale) < 0.01 ? previous : cameraScale);
             }
         };
 
         updateMapZoom();
+        const pollId = window.setInterval(updateMapZoom, 150);
         window.addEventListener('neosantara_map_camera', updateMapZoom);
-        return () => window.removeEventListener('neosantara_map_camera', updateMapZoom);
+        return () => {
+            window.clearInterval(pollId);
+            window.removeEventListener('neosantara_map_camera', updateMapZoom);
+        };
     }, []);
 
     const viewportMode = useViewportMode();
     const isLandscapePhone = viewportMode === 'landscapePhone';
     const isPortraitPhone = viewportMode === 'portraitPhone';
-    const isMobile = isLandscapePhone || isPortraitPhone;
 
     return (
         <nav
@@ -220,11 +243,11 @@ export function Navbar({
             }}
             className="fixed top-0 left-0 right-0 z-[201] pointer-events-none flex flex-col md:flex-row items-center justify-between select-none bg-transparent border-none shadow-none gap-1 sm:gap-2"
         >
-            {/* Mode Landscape Phone: Tata letak kompak 1 baris, max-height ~38px, tanpa tombol Save/Restart/Zoom */}
+            {/* Mode Landscape Phone: Tata letak kompak 1 baris */}
             {isLandscapePhone ? (
                 <div className="w-full flex items-center justify-between pointer-events-auto bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg h-[38px]">
                     {/* Sisi Kiri: Power + Bendera Negara */}
-                    <div className="flex items-center gap-1.5 shrink-0">
+                    <div className="flex items-center gap-1 shrink-0">
                         <button
                             onClick={onOpenGameMenu}
                             data-tutorial="game-menu"
@@ -251,7 +274,7 @@ export function Navbar({
                     </div>
 
                     {/* Ringkasan angka lengkap seperti versi desktop */}
-                    <div className="grid min-w-0 flex-1 grid-cols-[1.35fr_1.2fr_repeat(3,minmax(0,0.65fr))] items-center gap-x-1 overflow-hidden px-1">
+                    <div className="flex min-w-0 flex-1 items-center justify-center gap-x-2 overflow-hidden px-2">
                         <MobileStatusItem
                             icon={<Users className="h-2.5 w-2.5" />}
                             label="POPULASI"
@@ -289,17 +312,35 @@ export function Navbar({
                         />
                     </div>
 
-                    {/* Sisi Kanan: Status ringkas zoom */}
-                    <div className="shrink-0 text-[9px] font-black text-root-accent bg-root-canvas border border-root-accent/30 rounded px-1.5 py-0.5">
-                        {mapZoom.toFixed(1)}x
+                    <div className="flex shrink-0 items-center gap-1">
+                        <FpsMonitoring wasmModuleRef={wasmModuleRef} />
+                        <AttackDebugButton selectedCountry={selectedCountry} countryDetail={countryDetail} />
+                        <ZoomIndicator mapZoom={mapZoom} compact />
+                        <button
+                            onClick={onOpenSaveModal}
+                            data-tutorial="tombol-simpan"
+                            aria-label="Simpan Game"
+                            title="Simpan Game"
+                            className="flex h-6 w-6 items-center justify-center rounded-md border border-root-accent/30 bg-root-canvas text-root-accent cursor-pointer active:scale-95"
+                        >
+                            <Save className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                            onClick={onOpenRestartConfirm}
+                            aria-label="Restart Game"
+                            title="Restart Game"
+                            className="flex h-6 w-6 items-center justify-center rounded-md border border-root-accent/30 bg-root-canvas text-root-accent cursor-pointer active:scale-95"
+                        >
+                            <RotateCcw className="h-3.5 w-3.5" />
+                        </button>
                     </div>
                 </div>
             ) : isPortraitPhone ? (
                 /* Mode Portrait Phone: Dua baris ringkas */
                 <div className="w-full flex flex-col gap-1 pointer-events-auto">
-                    {/* Baris 1: Menu + Negara + Zoom */}
+                    {/* Baris 1: Menu + Negara + Aksi Game */}
                     <div className="flex items-center justify-between bg-root-surface/95 border border-root-accent/30 rounded-xl px-2.5 py-1 shadow-lg h-[36px]">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5">
                             <button
                                 onClick={onOpenGameMenu}
                                 title="Game Menu"
@@ -318,9 +359,31 @@ export function Navbar({
                                 {selectedCountry ? selectedCountry.country : 'Main Simulation'}
                             </span>
                         </div>
-                        <div className="text-[10px] font-black text-root-accent bg-root-canvas border border-root-accent/30 rounded px-2 py-0.5">
-                            {mapZoom.toFixed(1)}x
+                        <div className="flex shrink-0 items-center gap-1.5">
+                            <button
+                                onClick={onOpenSaveModal}
+                                data-tutorial="tombol-simpan"
+                                aria-label="Simpan Game"
+                                title="Simpan Game"
+                                className="flex h-7 w-7 items-center justify-center rounded-md border border-root-accent/30 bg-root-canvas text-root-accent cursor-pointer active:scale-95"
+                            >
+                                <Save className="h-4 w-4" />
+                            </button>
+                            <button
+                                onClick={onOpenRestartConfirm}
+                                aria-label="Restart Game"
+                                title="Restart Game"
+                                className="flex h-7 w-7 items-center justify-center rounded-md border border-root-accent/30 bg-root-canvas text-root-accent cursor-pointer active:scale-95"
+                            >
+                                <RotateCcw className="h-4 w-4" />
+                            </button>
                         </div>
+                    </div>
+
+                    <div className="flex items-center justify-center gap-1.5 pointer-events-auto bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg">
+                        <FpsMonitoring wasmModuleRef={wasmModuleRef} />
+                        <AttackDebugButton selectedCountry={selectedCountry} countryDetail={countryDetail} />
+                        <ZoomIndicator mapZoom={mapZoom} compact />
                     </div>
 
                     {/* Baris 2: Angka lengkap dengan label dan perubahan harian */}
@@ -508,17 +571,7 @@ export function Navbar({
                     {/* 3. Right Side: Save & Restart Buttons */}
                     <div className="flex items-center gap-1.5 2xl:gap-1.5 shrink-0 relative z-20 pointer-events-auto bg-root-surface border border-root-accent/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
                         <AttackDebugButton selectedCountry={selectedCountry} countryDetail={countryDetail} />
-                        <div
-                            role="status"
-                            aria-label={`Zoom peta ${mapZoom.toFixed(1)} kali`}
-                            title="Tingkat zoom peta"
-                            className="flex h-8 min-w-[48px] flex-col items-center justify-center rounded-lg border border-root-accent/20 bg-root-canvas px-1.5 lg:h-9 lg:min-w-[54px] 2xl:h-10"
-                        >
-                            <span className="text-[7px] font-bold leading-none tracking-wider text-root-subtle">ZOOM</span>
-                            <span className="text-[10px] font-black leading-tight tabular-nums text-root-accent lg:text-[11px]">
-                                {mapZoom.toFixed(1)}x
-                            </span>
-                        </div>
+                        <ZoomIndicator mapZoom={mapZoom} />
                         <button
                             onClick={onOpenSaveModal}
                             data-tutorial="tombol-simpan"
@@ -561,11 +614,11 @@ function MobileStatusItem({
 }) {
     const content = (
         <>
-            <span className="flex min-w-0 items-center gap-1 text-[8px] font-black uppercase tracking-wide text-root-subtle">
+            <span className="flex min-w-0 items-center gap-0.5 text-[8px] font-black uppercase tracking-wide text-root-subtle">
                 <span className="shrink-0 text-root-accent">{icon}</span>
                 <span className="truncate">{label}</span>
             </span>
-            <span className="flex min-w-0 items-center gap-1 whitespace-nowrap text-[10px] font-black tabular-nums leading-none">
+            <span className="flex min-w-0 items-center gap-0.5 whitespace-nowrap text-[10px] font-black tabular-nums leading-none">
                 <span className={valueColor}>{value}</span>
                 {change && (
                     <span className={change.startsWith('-') ? 'text-rose-400' : 'text-root-accent'}>
@@ -583,6 +636,24 @@ function MobileStatusItem({
         </button>
     ) : (
         <div className={classNames}>{content}</div>
+    );
+}
+
+function ZoomIndicator({ mapZoom, compact = false }: { mapZoom: number; compact?: boolean }) {
+    return (
+        <div
+            role="status"
+            aria-label={`Zoom peta ${mapZoom.toFixed(1)} kali`}
+            title="Tingkat zoom peta"
+            className={`flex flex-col items-center justify-center rounded-lg border border-root-accent/20 bg-root-canvas px-1.5 ${
+                compact ? 'h-7 min-w-[42px]' : 'h-8 min-w-[48px] lg:h-9 lg:min-w-[54px] 2xl:h-10'
+            }`}
+        >
+            <span className="text-[7px] font-bold leading-none tracking-wider text-root-subtle">ZOOM</span>
+            <span className="text-[10px] font-black leading-tight tabular-nums text-root-accent lg:text-[11px]">
+                {mapZoom.toFixed(1)}x
+            </span>
+        </div>
     );
 }
 

@@ -32,7 +32,7 @@ export async function GET(request: Request) {
       throw new Error('database_mitra_perdagangan returned no rows');
     }
 
-    const payload = setCachedResponse(CACHE_KEY, rows);
+    const payload = await setCachedResponse(CACHE_KEY, rows);
     return buildCachedApiResponse(request, payload);
   } catch (error) {
     console.error('Error querying database_mitra_perdagangan:', error);

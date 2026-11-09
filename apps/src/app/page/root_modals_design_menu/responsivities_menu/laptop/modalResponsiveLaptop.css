@@ -7,3 +7,23 @@
     --modal-max-width: 768px;
   }
 }
+
+@media (min-width: 1024px) and (max-width: 1599px) and (min-height: 501px) {
+  .tutorial-welcome-overlay {
+    padding-bottom: 180px !important;
+  }
+
+  .tutorial-welcome-dialog {
+    max-width: min(720px, calc(100vw - 48px)) !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1023px) and (min-height: 501px) {
+  .tutorial-welcome-overlay {
+    padding-bottom: 190px !important;
+  }
+
+  .tutorial-welcome-dialog {
+    max-width: min(620px, calc(100vw - 32px)) !important;
+  }
+}

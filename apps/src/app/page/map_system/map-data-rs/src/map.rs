@@ -10,6 +10,38 @@ use web_sys::{
     PointerEvent, WheelEvent,
 };
 
+const MAX_MAP_SCALE: f64 = 50.0;
+const OVERVIEW_MAP_SCALE_MAX: f64 = 1.25;
+
+fn is_mobile_device() -> bool {
+    let Some(window) = web_sys::window() else {
+        return false;
+    };
+    let is_mobile_user_agent = window
+        .navigator()
+        .user_agent()
+        .map(|user_agent| {
+            let user_agent = user_agent.to_ascii_lowercase();
+            user_agent.contains("android")
+                || user_agent.contains("iphone")
+                || user_agent.contains("ipad")
+                || user_agent.contains("ipod")
+        })
+        .unwrap_or(false);
+    let is_narrow_viewport = window
+        .inner_width()
+        .ok()
+        .and_then(|width| width.as_f64())
+        .map(|width| width <= 1024.0)
+        .unwrap_or(false);
+
+    is_mobile_user_agent || is_narrow_viewport
+}
+
+fn should_show_only_capital_flags(is_mobile: bool, scale: f64) -> bool {
+    is_mobile && scale <= OVERVIEW_MAP_SCALE_MAX
+}
+
 #[derive(Deserialize)]
 struct CountryData {
     iso: String,
@@ -371,6 +403,7 @@ pub struct MapEngine {
     ctx: CanvasRenderingContext2d,
     width: f64,
     height: f64,
+    is_mobile: bool,
     scale: f64,
     offset_x: f64,
     offset_y: f64,
@@ -430,6 +463,7 @@ impl MapEngine {
             ctx,
             width,
             height,
+            is_mobile: is_mobile_device(),
             scale: 1.0,
             offset_x: 0.0,
             offset_y: 0.0,
@@ -782,17 +816,7 @@ impl MapEngine {
             );
             return;
         };
-        let is_mobile = web_sys::window()
-            .and_then(|window| window.navigator().user_agent().ok())
-            .map(|user_agent| {
-                let user_agent = user_agent.to_ascii_lowercase();
-                user_agent.contains("android")
-                    || user_agent.contains("iphone")
-                    || user_agent.contains("ipad")
-                    || user_agent.contains("ipod")
-            })
-            .unwrap_or(false);
-        let raster_scale = if is_mobile { 1.0 } else { 3.0 };
+        let raster_scale = if self.is_mobile { 1.0 } else { 3.0 };
         canvas.set_width((self.width * raster_scale) as u32);
         canvas.set_height((self.height * raster_scale) as u32);
         let cached_context = canvas
@@ -1171,6 +1195,9 @@ impl MapEngine {
         };
         let _ = context.set_transform(1.0, 0.0, 0.0, 1.0, BLEED, BLEED);
         for capital in &self.capitals {
+            if self.is_mobile && !capital.is_capital {
+                continue;
+            }
             let image = capital
                 .flag_idx
                 .and_then(|index| self.capital_flags.get(index))
@@ -1199,7 +1226,7 @@ impl MapEngine {
         if !factor.is_finite() || factor <= 0.0 {
             return;
         }
-        let new_scale = (self.scale * factor).clamp(1.0, 50.0);
+        let new_scale = (self.scale * factor).clamp(1.0, MAX_MAP_SCALE);
         let actual_factor = new_scale / self.scale;
         self.offset_x = mouse_x - (mouse_x - self.offset_x) * actual_factor;
         self.offset_y = mouse_y - (mouse_y - self.offset_y) * actual_factor;
@@ -1833,6 +1860,10 @@ impl MapEngine {
             .capitals
             .iter()
             .filter(|c| {
+                // Pada overview mobile, tampilkan bendera ibu kota saja.
+                if should_show_only_capital_flags(self.is_mobile, self.scale) && !c.is_capital {
+                    return false;
+                }
                 // Saat pinch, hindari ratusan marker kota; ibukota tetap memberi orientasi.
                 if zooming && !c.is_capital {
                     return false;
@@ -2634,7 +2665,16 @@ mod tests {
     use super::{
         is_small_feature, is_zoom_interaction_active, map_detail_level, normalize_feature_iso,
         province_lines_use_coarse_detail, screen_distance_to_bbox,
+        should_show_only_capital_flags, OVERVIEW_MAP_SCALE_MAX,
     };
+
+    #[test]
+    fn shows_only_capital_flags_on_mobile_at_full_zoom_out() {
+        assert!(should_show_only_capital_flags(true, 1.0));
+        assert!(should_show_only_capital_flags(true, OVERVIEW_MAP_SCALE_MAX));
+        assert!(!should_show_only_capital_flags(true, OVERVIEW_MAP_SCALE_MAX + 0.1));
+        assert!(!should_show_only_capital_flags(false, 1.0));
+    }
 
     #[test]
     fn normalizes_prefixed_taiwan_iso_code() {

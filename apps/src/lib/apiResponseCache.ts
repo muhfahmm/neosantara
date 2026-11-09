@@ -1,4 +1,4 @@
-import { gzipSync, brotliCompressSync } from 'node:zlib';
+import { brotliCompress, constants as zlibConstants, gzip } from 'node:zlib';
 import { createHash } from 'node:crypto';
 
 export interface CachedPayload {
@@ -11,32 +11,80 @@ export interface CachedPayload {
 }
 
 const memoryStore = new Map<string, CachedPayload>();
+const pendingPayloads = new Map<string, Promise<CachedPayload>>();
+
+function compressGzip(buffer: Buffer): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    gzip(buffer, { level: 6 }, (error, compressed) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve(compressed);
+    });
+  });
+}
+
+function compressBrotli(buffer: Buffer): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    brotliCompress(
+      buffer,
+      { params: { [zlibConstants.BROTLI_PARAM_QUALITY]: 4 } },
+      (error, compressed) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(compressed);
+      }
+    );
+  });
+}
 
 /**
  * Creates pre-serialized, pre-compressed buffers and generates ETag.
  */
-export function setCachedResponse<T>(key: string, data: T, contentType = 'application/json'): CachedPayload {
-  const jsonStr = typeof data === 'string' ? data : JSON.stringify(data);
-  const rawBuffer = Buffer.from(jsonStr, 'utf8');
-  
-  // Fast md5/sha1 hash for ETag
-  const hash = createHash('md5').update(rawBuffer).digest('base64url').slice(0, 16);
-  const etag = `W/"${hash}-${rawBuffer.length}"`;
+export async function setCachedResponse<T>(
+  key: string,
+  data: T,
+  contentType = 'application/json'
+): Promise<CachedPayload> {
+  const pending = pendingPayloads.get(key);
+  if (pending) return pending;
 
-  const gzipBuffer = gzipSync(rawBuffer, { level: 6 });
-  const brBuffer = brotliCompressSync(rawBuffer);
+  const pendingPayload = (async () => {
+    const jsonStr = typeof data === 'string' ? data : JSON.stringify(data);
+    const rawBuffer = Buffer.from(jsonStr, 'utf8');
 
-  const payload: CachedPayload = {
-    rawBuffer,
-    gzipBuffer,
-    brBuffer,
-    etag,
-    contentType,
-    timestamp: Date.now(),
-  };
+    const hash = createHash('md5').update(rawBuffer).digest('base64url').slice(0, 16);
+    const etag = `W/"${hash}-${rawBuffer.length}"`;
 
-  memoryStore.set(key, payload);
-  return payload;
+    const [gzipBuffer, brBuffer] = await Promise.all([
+      compressGzip(rawBuffer),
+      compressBrotli(rawBuffer),
+    ]);
+
+    const payload: CachedPayload = {
+      rawBuffer,
+      gzipBuffer,
+      brBuffer,
+      etag,
+      contentType,
+      timestamp: Date.now(),
+    };
+
+    memoryStore.set(key, payload);
+    return payload;
+  })();
+  pendingPayloads.set(key, pendingPayload);
+
+  try {
+    return await pendingPayload;
+  } finally {
+    if (pendingPayloads.get(key) === pendingPayload) {
+      pendingPayloads.delete(key);
+    }
+  }
 }
 
 export function getCachedResponse(key: string, maxAgeMs = 60000): CachedPayload | null {

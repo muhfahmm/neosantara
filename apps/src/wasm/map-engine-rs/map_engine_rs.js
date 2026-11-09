@@ -477,6 +477,10 @@ function __wbg_get_imports() {
             const ret = arg0[arg1];
             return ret;
         },
+        __wbg_innerWidth_3bc249efddc56481: function() { return handleError(function (arg0) {
+            const ret = arg0.innerWidth;
+            return ret;
+        }, arguments); },
         __wbg_instanceof_ArrayBuffer_12cdaa4161423e6b: function(arg0) {
             let result;
             try {

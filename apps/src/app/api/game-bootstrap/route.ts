@@ -72,7 +72,7 @@ export async function GET(request: Request) {
       buildingMetadata,
     };
 
-    const payload = setCachedResponse(CACHE_KEY, bundle);
+    const payload = await setCachedResponse(CACHE_KEY, bundle);
     return buildCachedApiResponse(request, payload);
   } catch (error) {
     console.error('Error in /api/game-bootstrap:', error);

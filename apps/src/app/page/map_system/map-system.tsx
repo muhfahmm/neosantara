@@ -981,34 +981,29 @@ const MapCanvasView = memo(function MapCanvasView({
         const shared = mountSharedMapCanvas(
             containerRef.current,
             'map-canvas',
-            `w-full h-full block select-none touch-none bg-[#0f244a] ${isSelectingTarget ? '' : 'cursor-grab'}`
+            'w-full h-full block select-none touch-none bg-[#0f244a] cursor-grab'
         );
         if (shared) {
             shared.setAttribute('data-tutorial', 'map-view');
-            shared.style.cursor = isSelectingTarget ? targetCursorStyle : '';
-            shared.style.visibility = isWarActive ? 'visible' : '';
             shared.style.userSelect = 'none';
         }
         return () => {
             parkSharedMapCanvas(shared);
         };
-    }, [containerRef, isSelectingTarget, isWarActive, targetCursorStyle]);
+    }, [containerRef]);
+
+    useEffect(() => {
+        const shared = document.getElementById('map-canvas');
+        if (!shared) return;
+        shared.className = `w-full h-full block select-none touch-none bg-[#0f244a] ${isSelectingTarget ? '' : 'cursor-grab'}`;
+        shared.style.cursor = isSelectingTarget ? targetCursorStyle : '';
+        shared.style.visibility = isWarActive ? 'visible' : '';
+        shared.style.userSelect = 'none';
+    }, [isSelectingTarget, isWarActive, targetCursorStyle]);
 
     return (
         <div
-            ref={(node) => {
-                (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
-                if (node) {
-                    const shared = mountSharedMapCanvas(
-                        node,
-                        'map-canvas',
-                        `w-full h-full block select-none touch-none bg-[#0f244a] ${isSelectingTarget ? '' : 'cursor-grab'}`
-                    );
-                    if (shared) {
-                        shared.setAttribute('data-tutorial', 'map-view');
-                    }
-                }
-            }}
+            ref={containerRef}
             style={{ top: 'var(--map-content-top)' }}
             className={`fixed inset-x-0 bottom-0 z-0 select-none touch-none bg-[#0f244a] ${interactionDisabled && !isSelectingTarget ? 'pointer-events-none' : ''}`}
             onClick={event => onClick(event as unknown as React.MouseEvent<HTMLCanvasElement>)}
@@ -7080,9 +7075,9 @@ export default function MapPage() {
                 cacheDatabaseReligion(mergedData.country_slug, mergedData.religion);
             }
 
-            const defaultPrices = await loadDefaultPrices(countryName);
+            const defaultPricesPromise = loadDefaultPrices(countryName);
 
-            setCountryDetail({
+            const loadedCountryDetail = {
                 ...countryData,
                 country: countryName,
                 capital: mergedData.capital || capitalName,
@@ -7092,9 +7087,9 @@ export default function MapPage() {
                 ideology: mergedData.ideology || '-',
                 un_vote: mergedData.un_vote || 0,
                 kepuasan: mergedData.kepuasan ?? 50,
-                harga: defaultPrices || mergedData?.harga || {},
-                price_rice: defaultPrices?.harga_beras ?? mergedData?.harga?.harga_beras,
-                price_fuel: defaultPrices?.harga_minyak_goreng ?? mergedData?.harga?.harga_bbm,
+                harga: mergedData?.harga || {},
+                price_rice: mergedData?.harga?.harga_beras,
+                price_fuel: mergedData?.harga?.harga_bbm,
                 // Preserve satisfaction field if it exists
                 satisfaction: mergedData.satisfaction || {},
                 // Tax fields
@@ -7157,6 +7152,23 @@ export default function MapPage() {
                 ongoingConstructions: mergedData.ongoingConstructions || [],
                 kesejahteraan_bonus: mergedData.kesejahteraan_bonus ?? 0,
                 kesejahteraan_decay: mergedData.kesejahteraan_decay ?? 0,
+            };
+            setCountryDetail(loadedCountryDetail);
+
+            void defaultPricesPromise.then(defaultPrices => {
+                if (!defaultPrices) return;
+                setCountryDetail((previous: Record<string, unknown> | null) => {
+                    const activeCountry = String(
+                        previous?.country || previous?.nama_negara || ''
+                    ).trim().toLowerCase();
+                    if (!previous || activeCountry !== countryName.trim().toLowerCase()) return previous;
+                    return {
+                        ...previous,
+                        harga: defaultPrices,
+                        price_rice: defaultPrices.harga_beras ?? previous.price_rice,
+                        price_fuel: defaultPrices.harga_minyak_goreng ?? previous.price_fuel,
+                    };
+                });
             });
         } catch (e) {
             console.error("Failed to load country data:", e);
