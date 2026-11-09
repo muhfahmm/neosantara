@@ -38,7 +38,7 @@ interface WindowWithMapCache extends Window {
 
 let wasmInitPromise: Promise<MapEngineModule> | null = null;
 let geojsonPromise: Promise<string> | null = null;
-const MAP_ENGINE_WASM_URL = '/map_engine_rs_bg.wasm?v=mobile-city-lod-20261109';
+const MAP_ENGINE_WASM_URL = '/map_engine_rs_bg.wasm?v=city-flags-zoom3-tablet-20261110';
 
 function getMapWindow(): WindowWithMapCache | undefined {
   return typeof window !== 'undefined' ? (window as WindowWithMapCache) : undefined;

@@ -11,7 +11,8 @@ use web_sys::{
 };
 
 const MAX_MAP_SCALE: f64 = 50.0;
-const OVERVIEW_MAP_SCALE_MAX: f64 = 1.0;
+const NON_PHONE_NON_CAPITAL_FLAGS_MIN_SCALE: f64 = 3.0;
+const PHONE_NON_CAPITAL_FLAGS_MIN_SCALE: f64 = 4.0;
 
 fn is_mobile_device() -> bool {
     let Some(window) = web_sys::window() else {
@@ -38,18 +39,46 @@ fn is_mobile_device() -> bool {
     is_mobile_user_agent || is_narrow_viewport
 }
 
-fn should_show_only_capital_flags(is_mobile: bool, scale: f64) -> bool {
-    is_mobile && scale <= OVERVIEW_MAP_SCALE_MAX
+fn is_phone_device() -> bool {
+    let Some(window) = web_sys::window() else {
+        return false;
+    };
+    let user_agent = window
+        .navigator()
+        .user_agent()
+        .unwrap_or_default()
+        .to_ascii_lowercase();
+    let is_phone_user_agent = user_agent.contains("iphone")
+        || user_agent.contains("ipod")
+        || (user_agent.contains("android") && user_agent.contains("mobile"));
+    let is_tablet_user_agent = user_agent.contains("ipad") || user_agent.contains("tablet");
+    let is_narrow_viewport = window
+        .inner_width()
+        .ok()
+        .and_then(|width| width.as_f64())
+        .map(|width| width <= 600.0)
+        .unwrap_or(false);
+
+    is_phone_user_agent || (is_narrow_viewport && !is_tablet_user_agent)
 }
 
 fn should_show_non_capital_flags(
-    is_mobile: bool,
+    is_phone: bool,
     scale: f64,
     is_panning: bool,
     zooming: bool,
 ) -> bool {
-    if is_mobile {
-        return scale > OVERVIEW_MAP_SCALE_MAX && !is_panning && !zooming;
+    let min_scale = if is_phone {
+        PHONE_NON_CAPITAL_FLAGS_MIN_SCALE
+    } else {
+        NON_PHONE_NON_CAPITAL_FLAGS_MIN_SCALE
+    };
+    if scale < min_scale {
+        return false;
+    }
+
+    if is_phone {
+        return !is_panning && !zooming;
     }
 
     !zooming && (!is_panning || scale >= 3.5)
@@ -1221,7 +1250,7 @@ impl MapEngine {
         };
         let _ = context.set_transform(1.0, 0.0, 0.0, 1.0, BLEED, BLEED);
         for capital in &self.capitals {
-            if self.is_mobile && !capital.is_capital {
+            if !capital.is_capital {
                 continue;
             }
             let image = capital
@@ -1884,17 +1913,14 @@ impl MapEngine {
         }
         let margin = 40.0 / self.scale;
         let is_panning = self.is_panning;
+        let is_phone = is_phone_device();
         let visible_capitals: Vec<_> = self
             .capitals
             .iter()
             .filter(|c| {
-                // Pada overview mobile, tampilkan bendera ibu kota saja.
-                if should_show_only_capital_flags(self.is_mobile, self.scale) && !c.is_capital {
-                    return false;
-                }
                 if !c.is_capital
                     && !should_show_non_capital_flags(
-                        self.is_mobile,
+                        is_phone,
                         self.scale,
                         is_panning,
                         zooming,
@@ -2695,29 +2721,25 @@ mod tests {
     use super::{
         is_small_feature, is_zoom_interaction_active, map_detail_level, normalize_feature_iso,
         province_lines_use_coarse_detail, screen_distance_to_bbox, should_draw_province_lines,
-        should_show_non_capital_flags, should_show_only_capital_flags, OVERVIEW_MAP_SCALE_MAX,
+        should_show_non_capital_flags,
     };
 
     #[test]
-    fn shows_only_capital_flags_on_mobile_at_overview_scale() {
-        assert!(should_show_only_capital_flags(true, 1.0));
-        assert!(should_show_only_capital_flags(true, OVERVIEW_MAP_SCALE_MAX));
-        assert!(!should_show_only_capital_flags(
-            true,
-            OVERVIEW_MAP_SCALE_MAX + 0.1
-        ));
-        assert!(!should_show_only_capital_flags(false, 1.0));
+    fn shows_non_capital_flags_only_at_zoom_four_or_higher_on_mobile() {
+        assert!(!should_show_non_capital_flags(true, 1.0, false, false));
+        assert!(!should_show_non_capital_flags(true, 3.9, false, false));
+        assert!(should_show_non_capital_flags(true, 4.0, false, false));
+        assert!(!should_show_non_capital_flags(true, 1.5, true, true));
+        assert!(!should_show_non_capital_flags(true, 1.5, true, false));
+        assert!(!should_show_non_capital_flags(true, 4.0, false, true));
     }
 
     #[test]
-    fn shows_major_city_flags_on_mobile_after_zoom_or_pan_finishes() {
-        assert!(!should_show_non_capital_flags(true, 1.0, false, false));
-        assert!(should_show_non_capital_flags(true, 1.01, false, false));
-        assert!(!should_show_non_capital_flags(true, 1.5, true, true));
-        assert!(!should_show_non_capital_flags(true, 1.5, true, false));
-        assert!(!should_show_non_capital_flags(true, 1.5, false, true));
-        assert!(!should_show_non_capital_flags(false, 1.5, false, true));
-        assert!(!should_show_non_capital_flags(false, 1.5, true, false));
+    fn shows_non_capital_flags_at_zoom_three_on_desktop_and_tablet() {
+        assert!(!should_show_non_capital_flags(false, 2.9, false, false));
+        assert!(should_show_non_capital_flags(false, 3.0, false, false));
+        assert!(!should_show_non_capital_flags(false, 3.0, false, true));
+        assert!(!should_show_non_capital_flags(false, 3.0, true, false));
         assert!(should_show_non_capital_flags(false, 4.0, true, false));
     }
 
