@@ -11,7 +11,7 @@ use web_sys::{
 };
 
 const MAX_MAP_SCALE: f64 = 50.0;
-const OVERVIEW_MAP_SCALE_MAX: f64 = 1.25;
+const OVERVIEW_MAP_SCALE_MAX: f64 = 1.0;
 
 fn is_mobile_device() -> bool {
     let Some(window) = web_sys::window() else {
@@ -40,6 +40,32 @@ fn is_mobile_device() -> bool {
 
 fn should_show_only_capital_flags(is_mobile: bool, scale: f64) -> bool {
     is_mobile && scale <= OVERVIEW_MAP_SCALE_MAX
+}
+
+fn should_show_non_capital_flags(
+    is_mobile: bool,
+    scale: f64,
+    is_panning: bool,
+    zooming: bool,
+) -> bool {
+    if is_mobile {
+        return scale > OVERVIEW_MAP_SCALE_MAX && !is_panning && !zooming;
+    }
+
+    !zooming && (!is_panning || scale >= 3.5)
+}
+
+fn should_draw_province_lines(
+    is_mobile: bool,
+    show_borders: bool,
+    scale: f64,
+    zooming: bool,
+) -> bool {
+    if is_mobile {
+        show_borders && scale >= 1.0
+    } else {
+        show_borders && !zooming && scale >= 1.15
+    }
 }
 
 #[derive(Deserialize)]
@@ -1756,10 +1782,12 @@ impl MapEngine {
             }
 
             // Garis batas provinsi solid (tidak putus-putus) langsung tersambung mulus
-            if !zooming
-                && self.show_province_borders
-                && self.scale >= 1.15
-                && !self.province_lines.is_empty()
+            if should_draw_province_lines(
+                self.is_mobile,
+                self.show_province_borders,
+                self.scale,
+                zooming,
+            ) && !self.province_lines.is_empty()
             {
                 let coarse = province_lines_use_coarse_detail(self.scale, self.is_panning);
                 let min_screen = 1.0 / self.scale;
@@ -1864,12 +1892,14 @@ impl MapEngine {
                 if should_show_only_capital_flags(self.is_mobile, self.scale) && !c.is_capital {
                     return false;
                 }
-                // Saat pinch, hindari ratusan marker kota; ibukota tetap memberi orientasi.
-                if zooming && !c.is_capital {
-                    return false;
-                }
-                // Saat panning, batasi gambar bendera non-capital agar tidak membebani canvas
-                if is_panning && !c.is_capital && self.scale < 3.5 {
+                if !c.is_capital
+                    && !should_show_non_capital_flags(
+                        self.is_mobile,
+                        self.scale,
+                        is_panning,
+                        zooming,
+                    )
+                {
                     return false;
                 }
                 c.x >= vx0 - margin
@@ -2664,16 +2694,41 @@ pub fn start_map_engine(
 mod tests {
     use super::{
         is_small_feature, is_zoom_interaction_active, map_detail_level, normalize_feature_iso,
-        province_lines_use_coarse_detail, screen_distance_to_bbox,
-        should_show_only_capital_flags, OVERVIEW_MAP_SCALE_MAX,
+        province_lines_use_coarse_detail, screen_distance_to_bbox, should_draw_province_lines,
+        should_show_non_capital_flags, should_show_only_capital_flags, OVERVIEW_MAP_SCALE_MAX,
     };
 
     #[test]
-    fn shows_only_capital_flags_on_mobile_at_full_zoom_out() {
+    fn shows_only_capital_flags_on_mobile_at_overview_scale() {
         assert!(should_show_only_capital_flags(true, 1.0));
         assert!(should_show_only_capital_flags(true, OVERVIEW_MAP_SCALE_MAX));
-        assert!(!should_show_only_capital_flags(true, OVERVIEW_MAP_SCALE_MAX + 0.1));
+        assert!(!should_show_only_capital_flags(
+            true,
+            OVERVIEW_MAP_SCALE_MAX + 0.1
+        ));
         assert!(!should_show_only_capital_flags(false, 1.0));
+    }
+
+    #[test]
+    fn shows_major_city_flags_on_mobile_after_zoom_or_pan_finishes() {
+        assert!(!should_show_non_capital_flags(true, 1.0, false, false));
+        assert!(should_show_non_capital_flags(true, 1.01, false, false));
+        assert!(!should_show_non_capital_flags(true, 1.5, true, true));
+        assert!(!should_show_non_capital_flags(true, 1.5, true, false));
+        assert!(!should_show_non_capital_flags(true, 1.5, false, true));
+        assert!(!should_show_non_capital_flags(false, 1.5, false, true));
+        assert!(!should_show_non_capital_flags(false, 1.5, true, false));
+        assert!(should_show_non_capital_flags(false, 4.0, true, false));
+    }
+
+    #[test]
+    fn draws_coarse_mobile_province_lines_from_overview_scale_during_zoom() {
+        assert!(should_draw_province_lines(true, true, 1.0, true));
+        assert!(should_draw_province_lines(true, true, 1.5, true));
+        assert!(!should_draw_province_lines(true, false, 1.5, false));
+        assert!(!should_draw_province_lines(true, true, 0.99, false));
+        assert!(!should_draw_province_lines(false, true, 1.5, true));
+        assert!(should_draw_province_lines(false, true, 1.5, false));
     }
 
     #[test]
