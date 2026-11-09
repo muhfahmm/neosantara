@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { fetchAllCountriesData } from "@/lib/allCountriesCache";
 import {
   calculateNetBalanceWithEconomicEmbargo,
   getEconomicEmbargoProductionMultiplier,
@@ -715,15 +716,13 @@ export function useNpcCountrySimulation(
       return;
     }
 
-    setCountries([]);
-    setLoadedForPlayerSlug("");
+    if (loadedForPlayerSlug === normalizedPlayerSlug && countries.length > 0) {
+      return;
+    }
+
     let isCurrent = true;
-    fetch("/api/country-data?all=true", { cache: "no-store" })
-      .then(async response => {
-        if (!response.ok) {
-          throw new Error(`Gagal memuat negara untuk simulasi NPC: HTTP ${response.status}`);
-        }
-        const data = await response.json();
+    fetchAllCountriesData()
+      .then(data => {
         if (!Array.isArray(data)) {
           throw new Error("Data negara NPC dari API bukan berupa daftar.");
         }
@@ -739,7 +738,7 @@ export function useNpcCountrySimulation(
     return () => {
       isCurrent = false;
     };
-  }, [normalizedPlayerSlug]);
+  }, [normalizedPlayerSlug, loadedForPlayerSlug, countries.length]);
 
   useEffect(() => {
     // Jika game dalam keadaan PAUSED, jangan jadwalkan atau jalankan simulasi AI NPC!

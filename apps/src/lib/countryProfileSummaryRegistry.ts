@@ -12,6 +12,10 @@ export interface CountryProfileSummary {
 
 let countryProfileSummaries: CountryProfileSummary[] = [];
 
+export function getCountryProfileSummaries(): CountryProfileSummary[] {
+  return countryProfileSummaries;
+}
+
 export function setCountryProfileSummaries(summaries: CountryProfileSummary[]) {
   countryProfileSummaries = summaries;
   if (typeof window !== 'undefined') {

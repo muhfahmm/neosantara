@@ -13,7 +13,8 @@
 }
 
 html, body {
-  touch-action: manipulation;
+  touch-action: pan-x pan-y;
+  overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;

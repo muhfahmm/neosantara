@@ -134,8 +134,16 @@ export function mountSharedMapCanvas(
   if (!win?.__neosantara_map_engine_ready) {
     renderInstantMobileCanvasPreview(targetId);
   } else {
-    // Sinkronkan ukuran viewport tanpa menyiapkan ulang data peta
+    // Sinkronkan ukuran viewport segera dan minta engine WASM merender 1 frame instan
     window.dispatchEvent(new Event('resize'));
+    requestAnimationFrame(() => {
+      window.dispatchEvent(new Event('resize'));
+      if (win?.__neosantara_wasm && typeof (win.__neosantara_wasm as any).render === 'function') {
+        try {
+          (win.__neosantara_wasm as any).render();
+        } catch {}
+      }
+    });
   }
 
   return shared;

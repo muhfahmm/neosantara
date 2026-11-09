@@ -1,4 +1,5 @@
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
+import { fetchAllCountriesData } from '@/lib/allCountriesCache';
 
 // Cache in-memory untuk menyimpan data ISO dari API MySQL / Database
 let databaseCountryIsoCache: Record<string, string> | null = null;
@@ -43,23 +44,20 @@ export async function initCountryIsoFromDatabase(): Promise<Record<string, strin
 
   isFetchingDatabase = true;
   try {
-    const res = await fetch('/api/country-data?all=true');
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        const isoMap: Record<string, string> = {};
-        data.forEach((c: any) => {
-          const iso = normalizeIsoCode(c.iso);
-          if (!iso) return;
-          [c.name_id, c.name_en, c.country, c.country_slug].forEach(name => {
-            const key = normalizeCountryName(name);
-            if (key) isoMap[key] = iso;
-          });
+    const data = await fetchAllCountriesData();
+    if (Array.isArray(data) && data.length > 0) {
+      const isoMap: Record<string, string> = {};
+      data.forEach((c: any) => {
+        const iso = normalizeIsoCode(c.iso);
+        if (!iso) return;
+        [c.name_id, c.name_en, c.country, c.country_slug].forEach(name => {
+          const key = normalizeCountryName(name);
+          if (key) isoMap[key] = iso;
         });
-        databaseCountryIsoCache = isoMap;
-        isFetchingDatabase = false;
-        return isoMap;
-      }
+      });
+      databaseCountryIsoCache = isoMap;
+      isFetchingDatabase = false;
+      return isoMap;
     }
   } catch (e) {
     console.error('Failed fetching ISO from /api/country-data:', e);

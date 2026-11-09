@@ -3,6 +3,7 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { fetchBuildingMetadata } from '../../../../lib/buildingMetadata';
+import { fetchAllCountriesWithNpcState, clearAllCountriesCache } from '@/lib/allCountriesCache';
 import { processDueLoans } from './4_ekonomi/3_peminjaman_hutang/tab_menu/logic/loanRepaymentLogic';
 import { processActiveResearch } from '@/app/page/menus/penelitian/penelitianPageMenu';
 import { isCountryUnderEconomicEmbargo } from './7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
@@ -187,6 +188,7 @@ function ModalsManager({
   // Tanggapi resetTrigger dari restart simulasi: bersihkan data negara dan re-fetch baseline
   useEffect(() => {
     if (resetTrigger !== undefined) {
+      clearAllCountriesCache();
       setPrefetchedAllCountries(null);
     }
   }, [resetTrigger]);
@@ -201,10 +203,9 @@ function ModalsManager({
     if (prefetchedAllCountries === null && (menusNeedingAllCountries.includes(activeMenu) || activeMenu?.includes('Serang') || activeMenu?.includes('Intelijen'))) {
       (async () => {
         try {
-          const res = await fetch('/api/country-data?all=true');
-          const data = await res.json();
+          const data = await fetchAllCountriesWithNpcState();
           if (Array.isArray(data) && data.length > 0) {
-            setPrefetchedAllCountries(applyNpcCountrySimulationStates(data));
+            setPrefetchedAllCountries(data);
           }
         } catch (e) {
           console.warn('ModalsManager: failed to fetch all countries', e);
