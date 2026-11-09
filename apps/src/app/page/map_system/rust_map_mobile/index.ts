@@ -1,3 +1,5 @@
+import { MOBILE_PREBAKED_LAND_PATHS } from './mobilePrebakedPaths';
+
 interface PreviewFeature {
   properties?: { CONTINENT?: string };
   geometry?: {
@@ -11,6 +13,14 @@ interface PreviewFeatureCollection {
 }
 
 let previewFeaturesPromise: Promise<PreviewFeature[]> | null = null;
+let cachedPrebakedPath2Ds: Path2D[] | null = null;
+
+function getPrebakedPath2Ds(): Path2D[] {
+  if (!cachedPrebakedPath2Ds && typeof Path2D !== 'undefined') {
+    cachedPrebakedPath2Ds = MOBILE_PREBAKED_LAND_PATHS.map((d) => new Path2D(d));
+  }
+  return cachedPrebakedPath2Ds || [];
+}
 
 function getPreviewFeatures(): Promise<PreviewFeature[]> {
   if (!previewFeaturesPromise) {
@@ -60,28 +70,57 @@ export function isMobileDevice(): boolean {
 }
 
 /**
- * Merender peta dari GeoJSON sebelum engine WASM selesai, dengan warna benua dan batas negara.
+ * Merender peta dari path SVG pre-baked secara instan (0ms sinkron)
+ * sebelum engine WASM selesai memproses, sehingga layar tidak pernah kosong atau biru polos.
  */
 export function renderInstantMobileCanvasPreview(canvasId: string): boolean {
   if (typeof document === 'undefined') return false;
   const el = document.getElementById(canvasId);
   if (!(el instanceof HTMLCanvasElement)) return false;
 
+  const rect = el.getBoundingClientRect();
+  const width = Math.max(rect.width || window.innerWidth, 320);
+  const height = Math.max(rect.height || window.innerHeight, 240);
+  if (el.width !== width || el.height !== height) {
+    el.width = width;
+    el.height = height;
+  }
+
   const ctx = el.getContext('2d');
   if (!ctx) return false;
 
+  // Latar belakang laut/samudra
+  ctx.fillStyle = '#0f244a';
+  ctx.fillRect(0, 0, width, height);
+
+  // 1. Coba gambar secara INSTAN (0ms) menggunakan prebaked Path2D daratan dunia
+  try {
+    const paths = getPrebakedPath2Ds();
+    if (paths.length > 0) {
+      ctx.save();
+      // viewBox prebaked paths adalah 1000 x 500
+      ctx.scale(width / 1000, height / 500);
+      ctx.fillStyle = '#1e3a5f';
+      ctx.strokeStyle = 'rgba(74, 222, 128, 0.4)';
+      ctx.lineWidth = 1;
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+
+      for (const p of paths) {
+        ctx.fill(p);
+        ctx.stroke(p);
+      }
+      ctx.restore();
+    }
+  } catch {
+    // Fallback jika Path2D tidak didukung
+  }
+
+  // 2. Jika ada GeoJSON features, detail warna benua akan ditimpa secara asinkron
   void getPreviewFeatures()
     .then((features) => {
       const mapWindow = window as Window & { __neosantara_map_engine_ready?: boolean };
       if (mapWindow.__neosantara_map_engine_ready || !el.isConnected) return;
-
-      const rect = el.getBoundingClientRect();
-      const width = Math.max(rect.width || window.innerWidth, 320);
-      const height = Math.max(rect.height || window.innerHeight, 240);
-      if (el.width !== width || el.height !== height) {
-        el.width = width;
-        el.height = height;
-      }
 
       const previewContext = el.getContext('2d');
       if (!previewContext) return;

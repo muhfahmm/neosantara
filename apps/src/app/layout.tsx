@@ -2,6 +2,7 @@ import React from "react";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import HmrShield from './HmrShield';
 import ClientErrorCatcher from './ClientErrorCatcher';
 import RelationsDataLoader from './RelationsDataLoader';
 import SecurityProtector from './SecurityProtector';
@@ -45,6 +46,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <HmrShield />
         <ThemeInitializer />
         <RelationsDataLoader>
           {children}

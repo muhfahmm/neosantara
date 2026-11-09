@@ -54,6 +54,8 @@ async function main() {
     ["-m", "uvicorn", "python.main:app", "--host", "0.0.0.0", "--port", String(apiPort)],
     { cwd: apiDir, stdio: "inherit" },
   );
+
+  // Set NEXT_DEV_HOST atau assetPrefix agar dev server dan client HMR rute tepat
   const nextProcess = spawn(
     process.execPath,
     [nextCli, "dev", "--turbopack", "--hostname", "0.0.0.0", "--port", String(frontendPort)],

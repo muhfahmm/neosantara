@@ -170,14 +170,14 @@ export default function PilihNegaraPage() {
     let cancelled = false;
     const sharedCanvas = mountSharedMapCanvas(
       canvasHostRef.current,
-      'map-canvas-bg',
+      'map-canvas',
       'w-full h-full block cursor-pointer'
     );
 
     const initMap = async () => {
       setMapLoadError(null);
       try {
-        const { mod, reused } = await ensureSharedMapEngineInitialized('map-canvas-bg');
+        const { mod, reused } = await ensureSharedMapEngineInitialized('map-canvas');
         if (cancelled) return;
 
         if (reused) {
@@ -309,7 +309,7 @@ export default function PilihNegaraPage() {
     if (dragDistance > 5) return;
 
     const canvas =
-      (document.getElementById('map-canvas-bg') as HTMLCanvasElement | null) ||
+      (document.getElementById('map-canvas') as HTMLCanvasElement | null) ||
       (e.target instanceof HTMLCanvasElement ? e.target : null);
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
@@ -537,7 +537,7 @@ export default function PilihNegaraPage() {
         ref={(node) => {
           canvasHostRef.current = node;
           if (node) {
-            mountSharedMapCanvas(node, 'map-canvas-bg', 'w-full h-full block cursor-pointer');
+            mountSharedMapCanvas(node, 'map-canvas', 'w-full h-full block cursor-pointer');
           }
         }}
         className="fixed top-0 inset-x-0 bottom-0 z-0 pt-[48px] lg:pt-[56px] xl:pt-[80px] bg-[#06101a]"
@@ -552,7 +552,7 @@ export default function PilihNegaraPage() {
         }}
       >
         <canvas
-          id="map-canvas-bg"
+          id="map-canvas"
           className="w-full h-full block cursor-pointer"
         />
       </div>

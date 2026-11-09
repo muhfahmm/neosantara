@@ -80,24 +80,24 @@ function getOrCreateParkingHost(): HTMLDivElement | null {
  * Mengambil atau membuat singleton elemen <canvas> peta yang dipakai bersama
  * sehingga tidak pernah dihancurkan atau dibuat ulang antar halaman.
  */
-export function getOrCreateSharedMapCanvas(targetId = 'map-canvas-bg'): HTMLCanvasElement | null {
+export function getOrCreateSharedMapCanvas(targetId = 'map-canvas'): HTMLCanvasElement | null {
   const win = getMapWindow();
   if (!win || typeof document === 'undefined') return null;
 
   if (win.__neosantara_shared_map_canvas) {
-    win.__neosantara_shared_map_canvas.id = targetId;
+    win.__neosantara_shared_map_canvas.id = 'map-canvas';
     return win.__neosantara_shared_map_canvas;
   }
 
   const canvas = document.createElement('canvas');
-  canvas.id = targetId;
+  canvas.id = 'map-canvas';
   canvas.className = 'w-full h-full block cursor-pointer';
   win.__neosantara_shared_map_canvas = canvas;
 
   const parking = getOrCreateParkingHost();
   if (parking && !canvas.parentElement) {
     parking.appendChild(canvas);
-    renderInstantMobileCanvasPreview(targetId);
+    renderInstantMobileCanvasPreview('map-canvas');
   }
 
   return canvas;
@@ -312,14 +312,14 @@ export async function loadWorldGeojson(): Promise<string> {
  * tanpa menyiapkan ulang atau merender ulang dari awal.
  */
 export async function ensureSharedMapEngineInitialized(
-  targetCanvasId = 'map-canvas-bg',
+  targetCanvasId = 'map-canvas',
   customCapitals?: unknown[]
 ): Promise<{ mod: MapEngineModule; reused: boolean }> {
   const win = getMapWindow();
-  const sharedCanvas = getOrCreateSharedMapCanvas(targetCanvasId);
+  const sharedCanvas = getOrCreateSharedMapCanvas('map-canvas');
 
   if (win?.__neosantara_map_engine_ready && win.__neosantara_wasm && sharedCanvas) {
-    sharedCanvas.id = targetCanvasId;
+    sharedCanvas.id = 'map-canvas';
     if (customCapitals) {
       win.__neosantara_wasm.set_capitals_on_map(customCapitals);
     }
@@ -329,7 +329,7 @@ export async function ensureSharedMapEngineInitialized(
 
   if (win?.__neosantara_map_engine_starting) {
     const mod = await win.__neosantara_map_engine_starting;
-    if (sharedCanvas) sharedCanvas.id = targetCanvasId;
+    if (sharedCanvas) sharedCanvas.id = 'map-canvas';
     if (customCapitals) {
       mod.set_capitals_on_map(customCapitals);
     }
@@ -343,16 +343,16 @@ export async function ensureSharedMapEngineInitialized(
       loadWorldGeojson(),
     ]);
 
-    const canvas = getOrCreateSharedMapCanvas(targetCanvasId);
+    const canvas = getOrCreateSharedMapCanvas('map-canvas');
     if (canvas) {
-      canvas.id = targetCanvasId;
+      canvas.id = 'map-canvas';
     }
 
     await mapTracker.runStage('start_map_engine', async () => {
-      const el = document.getElementById(targetCanvasId);
+      const el = document.getElementById('map-canvas');
       mapTracker.setStageInfo('start_map_engine', `canvasInDom: ${Boolean(el)} | reused: false`);
       mod.start_map_engine(
-        targetCanvasId,
+        'map-canvas',
         geojsonStr,
         COUNTRIES_DATA,
         customCapitals ?? CAPITALS_DATA
@@ -386,9 +386,9 @@ export async function ensureSharedMapEngineInitialized(
 export function preloadMapAssets(): void {
   if (typeof window === 'undefined') return;
   // Buat shared canvas dan gambar preview daratan 0ms segera
-  getOrCreateSharedMapCanvas('map-canvas-bg');
+  getOrCreateSharedMapCanvas('map-canvas');
   // Mulai inisialisasi WASM + GeoJSON setelah jeda singkat agar tidak berebut bandwidth dengan hidrasi awal
   setTimeout(() => {
-    void ensureSharedMapEngineInitialized('map-canvas-bg').catch(() => {});
+    void ensureSharedMapEngineInitialized('map-canvas').catch(() => {});
   }, 120);
 }
