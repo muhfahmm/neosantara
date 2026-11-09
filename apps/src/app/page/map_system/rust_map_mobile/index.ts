@@ -1,4 +1,4 @@
-import { MOBILE_PREBAKED_LAND_PATHS } from './mobilePrebakedPaths';
+import { MOBILE_PREBAKED_CONTINENTS } from './mobilePrebakedPaths';
 
 interface PreviewFeature {
   properties?: { CONTINENT?: string };
@@ -13,38 +13,7 @@ interface PreviewFeatureCollection {
 }
 
 let previewFeaturesPromise: Promise<PreviewFeature[]> | null = null;
-let cachedPrebakedPath2Ds: Path2D[] | null = null;
-
-function getPrebakedPath2Ds(): Path2D[] {
-  if (!cachedPrebakedPath2Ds && typeof Path2D !== 'undefined') {
-    cachedPrebakedPath2Ds = MOBILE_PREBAKED_LAND_PATHS.map((d) => new Path2D(d));
-  }
-  return cachedPrebakedPath2Ds || [];
-}
-
-function getPreviewFeatures(): Promise<PreviewFeature[]> {
-  if (!previewFeaturesPromise) {
-    const url = isMobileDevice() ? '/world_mobile.geojson' : '/world.geojson';
-    previewFeaturesPromise = fetch(url, { cache: 'force-cache' })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status} while loading ${url}`);
-        }
-        return response.json() as Promise<PreviewFeatureCollection>;
-      })
-      .then((collection) => {
-        if (!Array.isArray(collection.features)) {
-          throw new Error(`Invalid GeoJSON preview payload from ${url}`);
-        }
-        return collection.features;
-      })
-      .catch((error: unknown) => {
-        previewFeaturesPromise = null;
-        throw error;
-      });
-  }
-  return previewFeaturesPromise;
-}
+let cachedContinentPath2Ds: Array<{ color: string; path: Path2D }> | null = null;
 
 function continentColor(continent: string | undefined): string {
   switch (continent) {
@@ -57,6 +26,18 @@ function continentColor(continent: string | undefined): string {
     case 'Antarctica': return '#e2e8f0';
     default: return '#475569';
   }
+}
+
+function getContinentPath2Ds(): Array<{ color: string; path: Path2D }> {
+  if (!cachedContinentPath2Ds && typeof Path2D !== 'undefined') {
+    cachedContinentPath2Ds = Object.entries(MOBILE_PREBAKED_CONTINENTS)
+      .filter(([, d]) => Boolean(d))
+      .map(([cont, d]) => ({
+        color: continentColor(cont),
+        path: new Path2D(d),
+      }));
+  }
+  return cachedContinentPath2Ds || [];
 }
 
 export function isMobileDevice(): boolean {
@@ -93,84 +74,28 @@ export function renderInstantMobileCanvasPreview(canvasId: string): boolean {
   ctx.fillStyle = '#0f244a';
   ctx.fillRect(0, 0, width, height);
 
-  // 1. Coba gambar secara INSTAN (0ms) menggunakan prebaked Path2D daratan dunia
+  // Gambar daratan benua secara INSTAN (0ms sinkron)
   try {
-    const paths = getPrebakedPath2Ds();
-    if (paths.length > 0) {
+    const continents = getContinentPath2Ds();
+    if (continents.length > 0) {
       ctx.save();
       // viewBox prebaked paths adalah 1000 x 500
       ctx.scale(width / 1000, height / 500);
-      ctx.fillStyle = '#1e3a5f';
-      ctx.strokeStyle = 'rgba(74, 222, 128, 0.4)';
-      ctx.lineWidth = 1;
       ctx.lineJoin = 'round';
       ctx.lineCap = 'round';
 
-      for (const p of paths) {
-        ctx.fill(p);
-        ctx.stroke(p);
+      for (const { color, path } of continents) {
+        ctx.fillStyle = color;
+        ctx.fill(path, 'evenodd');
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.lineWidth = 0.8;
+        ctx.stroke(path);
       }
       ctx.restore();
     }
   } catch {
     // Fallback jika Path2D tidak didukung
   }
-
-  // 2. Jika ada GeoJSON features, detail warna benua akan ditimpa secara asinkron
-  void getPreviewFeatures()
-    .then((features) => {
-      const mapWindow = window as Window & { __neosantara_map_engine_ready?: boolean };
-      if (mapWindow.__neosantara_map_engine_ready || !el.isConnected) return;
-
-      const previewContext = el.getContext('2d');
-      if (!previewContext) return;
-      previewContext.fillStyle = '#0f244a';
-      previewContext.fillRect(0, 0, width, height);
-      previewContext.lineJoin = 'round';
-      previewContext.lineCap = 'round';
-
-      const traceRing = (ring: unknown, context: CanvasRenderingContext2D) => {
-        if (!Array.isArray(ring) || ring.length < 2) return;
-        let started = false;
-        for (const point of ring) {
-          if (!Array.isArray(point) || typeof point[0] !== 'number' || typeof point[1] !== 'number') continue;
-          const x = ((point[0] + 180) / 360) * width;
-          const y = ((90 - point[1]) / 180) * height;
-          if (!started) {
-            context.moveTo(x, y);
-            started = true;
-          } else {
-            context.lineTo(x, y);
-          }
-        }
-        if (started) context.closePath();
-      };
-
-      for (const feature of features) {
-        const geometry = feature.geometry;
-        if (!geometry?.coordinates) continue;
-        const polygons = geometry.type === 'Polygon'
-          ? [geometry.coordinates]
-          : geometry.type === 'MultiPolygon' && Array.isArray(geometry.coordinates)
-            ? geometry.coordinates
-            : [];
-        if (polygons.length === 0) continue;
-
-        previewContext.beginPath();
-        for (const polygon of polygons) {
-          if (!Array.isArray(polygon)) continue;
-          for (const ring of polygon) traceRing(ring, previewContext);
-        }
-        previewContext.fillStyle = continentColor(feature.properties?.CONTINENT);
-        previewContext.fill('evenodd');
-        previewContext.strokeStyle = 'rgba(255, 255, 255, 0.75)';
-        previewContext.lineWidth = 0.85;
-        previewContext.stroke();
-      }
-    })
-    .catch((error: unknown) => {
-      console.error('Failed to render GeoJSON map preview:', error);
-    });
 
   return true;
 }

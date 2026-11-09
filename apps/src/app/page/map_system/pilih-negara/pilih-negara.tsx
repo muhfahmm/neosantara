@@ -534,12 +534,7 @@ export default function PilihNegaraPage() {
       )}
 
       <div
-        ref={(node) => {
-          canvasHostRef.current = node;
-          if (node) {
-            mountSharedMapCanvas(node, 'map-canvas', 'w-full h-full block cursor-pointer');
-          }
-        }}
+        ref={canvasHostRef}
         className="fixed top-0 inset-x-0 bottom-0 z-0 pt-[48px] lg:pt-[56px] xl:pt-[80px] bg-[#06101a]"
         onPointerDown={(e) => {
           dragStartPosRef.current = e.button === 0
@@ -550,12 +545,7 @@ export default function PilihNegaraPage() {
         onPointerCancel={() => {
           dragStartPosRef.current = null;
         }}
-      >
-        <canvas
-          id="map-canvas"
-          className="w-full h-full block cursor-pointer"
-        />
-      </div>
+      />
 
       <div className="relative z-10 flex flex-col items-center justify-end min-h-screen pb-4 sm:pb-8 lg:pb-12 pointer-events-none px-4 sm:px-6">
 

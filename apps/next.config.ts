@@ -4,6 +4,9 @@ const dialogApiUrl = process.env.DIALOG_API_URL ?? "http://127.0.0.1:8000";
 
 const nextConfig: NextConfig = {
   distDir: process.env.NEXT_DIST_DIR ?? ".next",
+  env: {
+    NEXT_PUBLIC_TAURI_ANDROID_HMR_PORT: process.env.TAURI_ANDROID_HMR_PORT ?? "",
+  },
   images: {
     // Tauri tidak menjalankan Next image optimizer (`/_next/image`).
     unoptimized: true,

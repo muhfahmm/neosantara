@@ -1030,19 +1030,7 @@ const MapCanvasView = memo(function MapCanvasView({
                     canvasEl.dispatchEvent(mouseUp);
                 }
             }}
-        >
-            <canvas
-                id="map-canvas"
-                data-tutorial="map-view"
-                style={{
-                    ...(isSelectingTarget ? { cursor: targetCursorStyle } : {}),
-                    ...(isWarActive ? { visibility: 'visible' } : {}),
-                    userSelect: 'none',
-                    WebkitUserSelect: 'none',
-                }}
-                className={`w-full h-full block select-none touch-none bg-[#0f244a] ${isSelectingTarget ? '' : 'cursor-grab'}`}
-            />
-        </div>
+        />
     );
 });
 

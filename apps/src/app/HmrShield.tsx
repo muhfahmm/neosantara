@@ -9,21 +9,28 @@ if (typeof window !== 'undefined') {
 
   if (isTauriEnv) {
     const OrigWebSocket = window.WebSocket;
+    const hmrPort = process.env.NEXT_PUBLIC_TAURI_ANDROID_HMR_PORT;
     if (OrigWebSocket) {
-      window.WebSocket = function (...args: any[]) {
-        const url = args[0];
-        // Jika request WebSocket ditujukan ke HMR (webpack-hmr atau turbopack-hmr) pada origin tauri.localhost
-        if (typeof url === 'string' && (url.includes('webpack-hmr') || url.includes('turbopack-hmr'))) {
-          if (url.includes('tauri.localhost')) {
-            // Arahkan ke 127.0.0.1:3000 (port dev server Next.js yang di-reverse oleh adb)
-            const correctedUrl = url.replace('tauri.localhost', '127.0.0.1:3000');
-            console.log('[HMR Shield] Rerouting HMR WebSocket to:', correctedUrl);
-            return new OrigWebSocket(correctedUrl, ...args.slice(1));
+      window.WebSocket = class extends OrigWebSocket {
+        constructor(url: string | URL, protocols?: string | string[]) {
+          const urlString = url.toString();
+          if (
+            hmrPort &&
+            (urlString.includes('webpack-hmr') || urlString.includes('turbopack-hmr'))
+          ) {
+            const parsedUrl = new URL(urlString, window.location.href);
+            if (parsedUrl.hostname === 'tauri.localhost') {
+              parsedUrl.hostname = '127.0.0.1';
+              parsedUrl.port = hmrPort;
+              console.log('[HMR Shield] Rerouting HMR WebSocket to:', parsedUrl.toString());
+              super(parsedUrl.toString(), protocols);
+              return;
+            }
           }
+
+          super(urlString, protocols);
         }
-        return new OrigWebSocket(...(args as [any]));
-      } as any;
-      window.WebSocket.prototype = OrigWebSocket.prototype;
+      };
     }
   }
 }

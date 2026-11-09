@@ -16,7 +16,9 @@
 # next.js
 /.next/
 /.next-dev-*/
+/.next-android-*/
 /.tsconfig-dev-*.json
+/.tsconfig-android-*.json
 /out/
 
 # production

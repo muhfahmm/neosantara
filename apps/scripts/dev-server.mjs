@@ -1,6 +1,7 @@
 import { rmSync, writeFileSync } from "node:fs";
 import { spawn } from "node:child_process";
 import path from "node:path";
+import { StringDecoder } from "node:string_decoder";
 import { fileURLToPath } from "node:url";
 import { findFreePort, isPortAvailable } from "./dev-ports.mjs";
 
@@ -36,6 +37,48 @@ function stopChild(child) {
   }
 }
 
+function pipeNextOutput(nextProcess) {
+  const reset = "\u001b[0m";
+  const red = "\u001b[31m";
+  const ansiPattern = /\u001b\[[0-?]*[ -/]*[@-~]/g;
+  let hasServedMapPage = false;
+  let highlightRefreshRequestsUntil = 0;
+
+  const writeLine = (line, destination) => {
+    const plainLine = line.replace(ansiPattern, "");
+    const isMapPageRequest = /\b(?:GET|HEAD)\s+\/page\/map_system(?:[?\s]|$)/.test(plainLine);
+    const isRefreshSignal = /(?:Compiled in \d+(?:\.\d+)?(?:ms|s)|Fast Refresh.*(?:reload|rebuilding)|performing full reload)/i.test(plainLine);
+    const isFollowupRequest = /\b(?:GET|HEAD)\s+\/(?:$|\s)|\b(?:GET|HEAD)\s+\/(?:api\/(?:game-bootstrap|country-data|building-metadata|price-data)|page\/map_system)(?:[?\s]|$)/.test(plainLine);
+    const highlight = (hasServedMapPage && isRefreshSignal) ||
+      (Date.now() < highlightRefreshRequestsUntil && isFollowupRequest);
+
+    if (hasServedMapPage && isRefreshSignal) {
+      highlightRefreshRequestsUntil = Date.now() + 10_000;
+    }
+    if (isMapPageRequest) hasServedMapPage = true;
+
+    destination.write(highlight ? `${red}${plainLine}${reset}\n` : `${line}\n`);
+  };
+
+  for (const [stream, destination] of [
+    [nextProcess.stdout, process.stdout],
+    [nextProcess.stderr, process.stderr],
+  ]) {
+    const decoder = new StringDecoder("utf8");
+    let pending = "";
+    stream.on("data", chunk => {
+      pending += decoder.write(chunk);
+      const lines = pending.split("\n");
+      pending = lines.pop() ?? "";
+      for (const line of lines) writeLine(line.replace(/\r$/, ""), destination);
+    });
+    stream.on("end", () => {
+      pending += decoder.end();
+      if (pending) writeLine(pending.replace(/\r$/, ""), destination);
+    });
+  }
+}
+
 async function main() {
   const requestedPort = readPortArgument();
   const frontendPort = requestedPort ?? (await findFreePort(3000, 3999));
@@ -43,8 +86,15 @@ async function main() {
     throw new Error(`Port ${frontendPort} sedang digunakan.`);
   }
   const apiPort = await findFreePort(8000);
-  const tsconfigPath = path.join(appDir, `.tsconfig-dev-${frontendPort}.json`);
-  writeFileSync(tsconfigPath, JSON.stringify({ extends: "./tsconfig.json" }, null, 2));
+  const productionMode = process.env.TAURI_ANDROID_PRODUCTION === "1";
+  const distDir = process.env.NEXT_DIST_DIR
+    ?? (productionMode ? `.next-android-${frontendPort}` : `.next-dev-${frontendPort}`);
+  const tsconfigPath = productionMode
+    ? null
+    : path.join(appDir, `.tsconfig-dev-${frontendPort}.json`);
+  if (tsconfigPath) {
+    writeFileSync(tsconfigPath, JSON.stringify({ extends: "./tsconfig.json" }, null, 2));
+  }
 
   console.log(`Next.js: http://localhost:${frontendPort}`);
   console.log(`Dialog API: http://localhost:${apiPort}`);
@@ -56,21 +106,25 @@ async function main() {
   );
 
   // Set NEXT_DEV_HOST atau assetPrefix agar dev server dan client HMR rute tepat
+  const nextArgs = productionMode
+    ? [nextCli, "start", "--hostname", "0.0.0.0", "--port", String(frontendPort)]
+    : [nextCli, "dev", "--turbopack", "--hostname", "0.0.0.0", "--port", String(frontendPort)];
   const nextProcess = spawn(
     process.execPath,
-    [nextCli, "dev", "--turbopack", "--hostname", "0.0.0.0", "--port", String(frontendPort)],
+    nextArgs,
     {
       cwd: appDir,
       env: {
         ...process.env,
         DIALOG_API_URL: `http://127.0.0.1:${apiPort}`,
-        NEXT_DIST_DIR: `.next-dev-${frontendPort}`,
-        NEXT_TSCONFIG_PATH: path.basename(tsconfigPath),
+        NEXT_DIST_DIR: distDir,
+        ...(tsconfigPath ? { NEXT_TSCONFIG_PATH: path.basename(tsconfigPath) } : {}),
         PORT: String(frontendPort),
       },
-      stdio: "inherit",
+      stdio: ["inherit", "pipe", "pipe"],
     },
   );
+  pipeNextOutput(nextProcess);
   const children = [apiProcess, nextProcess];
   let stopping = false;
 
@@ -113,7 +167,7 @@ async function main() {
       ),
     );
   } finally {
-    rmSync(tsconfigPath, { force: true });
+    if (tsconfigPath) rmSync(tsconfigPath, { force: true });
   }
 }
 

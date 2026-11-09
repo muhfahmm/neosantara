@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { GameMenuModal } from './paused_menu/GameMenuModal';
 import { ExitConfirmModal } from './paused_menu/ExitConfirmModal';
 import { soundManager } from '@/lib/soundManager';
-import { MOBILE_PREBAKED_LAND_PATHS } from './map_system/rust_map_mobile/mobilePrebakedPaths';
+import { MOBILE_PREBAKED_CONTINENTS } from './map_system/rust_map_mobile/mobilePrebakedPaths';
 import { isMobileDevice } from './map_system/rust_map_mobile';
 
 /* ============================================================
@@ -62,10 +62,10 @@ function worldGeometryToPath(geometry: unknown): string {
 }
 
 const HolographicMap = () => {
-    const [landPaths, setLandPaths] = useState<string[]>(() => [...MOBILE_PREBAKED_LAND_PATHS]);
+    const [landPaths, setLandPaths] = useState<string[]>(() => Object.values(MOBILE_PREBAKED_CONTINENTS));
     useEffect(() => {
         // Di perangkat mobile, HolographicMap tidak perlu mengunduh 10.33 MB /world.geojson
-        // karena sudah menggunakan MOBILE_PREBAKED_LAND_PATHS secara instan (0ms).
+        // karena sudah menggunakan MOBILE_PREBAKED_CONTINENTS secara instan (0ms).
         if (isMobileDevice()) return;
 
         let isMounted = true;
