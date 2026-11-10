@@ -23,6 +23,9 @@ export interface MapEngineModule {
   set_feature_colors_on_map: (colors: Array<string | null>, beatSelected: boolean) => void;
   set_provinces_on_map?: (provincesGeojson: string) => void;
   set_show_province_borders_on_map?: (show: boolean) => void;
+  end_map_pan_on_map: () => void;
+  pan_map_by_on_map: (deltaX: number, deltaY: number) => void;
+  zoom_map_at_on_map: (factor: number, x: number, y: number) => void;
   [key: string]: unknown;
 }
 
@@ -38,7 +41,7 @@ interface WindowWithMapCache extends Window {
 
 let wasmInitPromise: Promise<MapEngineModule> | null = null;
 let geojsonPromise: Promise<string> | null = null;
-const MAP_ENGINE_WASM_URL = '/map_engine_rs_bg.wasm?v=city-flags-zoom3-tablet-20261110';
+const MAP_ENGINE_WASM_URL = '/map_engine_rs_bg.wasm?v=map-gesture-controller-20261110';
 
 function getMapWindow(): WindowWithMapCache | undefined {
   return typeof window !== 'undefined' ? (window as WindowWithMapCache) : undefined;
@@ -178,7 +181,7 @@ export async function loadMapEngineWasm(): Promise<MapEngineModule> {
 
       await mapTracker.runStage('instantiate_wasm', async () => {
         try {
-          await mod.default(MAP_ENGINE_WASM_URL);
+          await mod.default({ module_or_path: MAP_ENGINE_WASM_URL });
           mapTracker.setStageInfo('instantiate_wasm', `url: ${MAP_ENGINE_WASM_URL}`);
         } catch {
           await mod.default();

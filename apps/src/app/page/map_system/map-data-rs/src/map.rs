@@ -6,8 +6,7 @@ use std::rc::Rc;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{
-    CanvasRenderingContext2d, HtmlCanvasElement, HtmlImageElement, MouseEvent, Path2d,
-    PointerEvent, WheelEvent,
+    CanvasRenderingContext2d, HtmlCanvasElement, HtmlImageElement, MouseEvent, Path2d, WheelEvent,
 };
 
 const MAX_MAP_SCALE: f64 = 50.0;
@@ -37,6 +36,15 @@ fn is_mobile_device() -> bool {
         .unwrap_or(false);
 
     is_mobile_user_agent || is_narrow_viewport
+}
+
+fn wheel_zoom_factor(delta_y: f64, is_mobile: bool) -> f64 {
+    let zoom_delta = delta_y * 0.001;
+    if is_mobile {
+        1.0 + zoom_delta
+    } else {
+        1.0 - zoom_delta
+    }
 }
 
 fn is_phone_device() -> bool {
@@ -1272,8 +1280,7 @@ impl MapEngine {
     }
 
     pub fn handle_wheel(&mut self, delta_y: f64, mouse_x: f64, mouse_y: f64) {
-        let zoom_speed = 0.001;
-        let factor = 1.0 - delta_y * zoom_speed;
+        let factor = wheel_zoom_factor(delta_y, self.is_mobile);
         self.zoom_at(factor, mouse_x, mouse_y);
     }
 
@@ -1295,6 +1302,20 @@ impl MapEngine {
             .map(|performance| performance.now())
             .unwrap_or(0.0);
         self.zoom_preview_until_ms = now_ms + 150.0;
+        self.dirty = true;
+    }
+
+    pub fn pan_by(&mut self, delta_x: f64, delta_y: f64) {
+        if !delta_x.is_finite() || !delta_y.is_finite() {
+            return;
+        }
+        self.is_panning = true;
+        self.offset_x += delta_x;
+        self.offset_y += delta_y;
+        self.target_offset_x = self.offset_x;
+        self.target_offset_y = self.offset_y;
+        self.target_scale = self.scale;
+        self.apply_clamping();
         self.dirty = true;
     }
 
@@ -2484,6 +2505,33 @@ pub fn set_map_horizontal_wrap(enabled: bool) {
 }
 
 #[wasm_bindgen]
+pub fn zoom_map_at_on_map(factor: f64, x: f64, y: f64) {
+    ACTIVE_ENGINE.with(|global_engine| {
+        if let Some(engine) = global_engine.borrow().as_ref() {
+            engine.borrow_mut().zoom_at(factor, x, y);
+        }
+    });
+}
+
+#[wasm_bindgen]
+pub fn pan_map_by_on_map(delta_x: f64, delta_y: f64) {
+    ACTIVE_ENGINE.with(|global_engine| {
+        if let Some(engine) = global_engine.borrow().as_ref() {
+            engine.borrow_mut().pan_by(delta_x, delta_y);
+        }
+    });
+}
+
+#[wasm_bindgen]
+pub fn end_map_pan_on_map() {
+    ACTIVE_ENGINE.with(|global_engine| {
+        if let Some(engine) = global_engine.borrow().as_ref() {
+            engine.borrow_mut().handle_mouse_up();
+        }
+    });
+}
+
+#[wasm_bindgen]
 pub fn set_feature_colors_on_map(colors: Vec<JsValue>, beat_selected: bool) {
     ACTIVE_ENGINE.with(|global_engine| {
         if let Some(engine) = global_engine.borrow().as_ref() {
@@ -2587,115 +2635,10 @@ pub fn start_map_engine(
     }
 
     {
-        let engine = engine.clone();
-        let canvas_for_pointer_capture = canvas.clone();
-        let closure = Closure::wrap(Box::new(move |e: PointerEvent| {
-            if e.pointer_type() == "touch" {
-                e.prevent_default();
-                let _ = canvas_for_pointer_capture.set_pointer_capture(e.pointer_id());
-                engine.borrow_mut().handle_touch_down(
-                    e.pointer_id(),
-                    e.offset_x() as f64,
-                    e.offset_y() as f64,
-                );
-                return;
-            }
-            if e.is_primary() && (e.button() == 0 || e.button() == 2) {
-                e.prevent_default();
-                if let Err(error) = canvas_for_pointer_capture.set_pointer_capture(e.pointer_id()) {
-                    web_sys::console::error_2(&"Failed to capture the map pointer.".into(), &error);
-                }
-                engine.borrow_mut().handle_mouse_down(
-                    e.offset_x() as f64,
-                    e.offset_y() as f64,
-                    e.pointer_id(),
-                );
-            }
-        }) as Box<dyn FnMut(_)>);
-        canvas.add_event_listener_with_callback("pointerdown", closure.as_ref().unchecked_ref())?;
-        closure.forget();
-    }
-
-    {
         let closure = Closure::wrap(Box::new(move |e: MouseEvent| {
             e.prevent_default();
         }) as Box<dyn FnMut(_)>);
         canvas.add_event_listener_with_callback("contextmenu", closure.as_ref().unchecked_ref())?;
-        closure.forget();
-    }
-
-    {
-        let engine = engine.clone();
-        let closure = Closure::wrap(Box::new(move |e: PointerEvent| {
-            if e.pointer_type() == "touch" {
-                e.prevent_default();
-                engine.borrow_mut().handle_touch_move(
-                    e.pointer_id(),
-                    e.offset_x() as f64,
-                    e.offset_y() as f64,
-                );
-                return;
-            }
-            if e.is_primary() {
-                if e.buttons() == 0 {
-                    engine.borrow_mut().handle_mouse_up();
-                    return;
-                }
-                engine.borrow_mut().handle_mouse_move(
-                    e.offset_x() as f64,
-                    e.offset_y() as f64,
-                    e.buttons(),
-                    e.pointer_id(),
-                );
-            }
-        }) as Box<dyn FnMut(_)>);
-        canvas.add_event_listener_with_callback("pointermove", closure.as_ref().unchecked_ref())?;
-        closure.forget();
-    }
-
-    {
-        let engine = engine.clone();
-        let closure = Closure::wrap(Box::new(move |e: PointerEvent| {
-            if e.pointer_type() == "touch" {
-                engine.borrow_mut().handle_touch_up(e.pointer_id());
-                return;
-            }
-            if e.is_primary() {
-                engine.borrow_mut().handle_mouse_up();
-            }
-        }) as Box<dyn FnMut(_)>);
-        canvas.add_event_listener_with_callback("pointerup", closure.as_ref().unchecked_ref())?;
-        closure.forget();
-    }
-
-    {
-        let engine = engine.clone();
-        let closure = Closure::wrap(Box::new(move |e: PointerEvent| {
-            if e.pointer_type() == "touch" {
-                engine.borrow_mut().handle_touch_up(e.pointer_id());
-                return;
-            }
-            if e.is_primary() {
-                engine.borrow_mut().handle_mouse_up();
-            }
-        }) as Box<dyn FnMut(_)>);
-        window.add_event_listener_with_callback("pointerup", closure.as_ref().unchecked_ref())?;
-        closure.forget();
-    }
-
-    {
-        let engine = engine.clone();
-        let closure = Closure::wrap(Box::new(move |e: PointerEvent| {
-            if e.pointer_type() == "touch" {
-                engine.borrow_mut().handle_touch_up(e.pointer_id());
-                return;
-            }
-            if e.is_primary() {
-                engine.borrow_mut().handle_mouse_up();
-            }
-        }) as Box<dyn FnMut(_)>);
-        window
-            .add_event_listener_with_callback("pointercancel", closure.as_ref().unchecked_ref())?;
         closure.forget();
     }
 
@@ -2721,7 +2664,7 @@ mod tests {
     use super::{
         is_small_feature, is_zoom_interaction_active, map_detail_level, normalize_feature_iso,
         province_lines_use_coarse_detail, screen_distance_to_bbox, should_draw_province_lines,
-        should_show_non_capital_flags,
+        should_show_non_capital_flags, wheel_zoom_factor,
     };
 
     #[test]
@@ -2732,6 +2675,14 @@ mod tests {
         assert!(!should_show_non_capital_flags(true, 1.5, true, true));
         assert!(!should_show_non_capital_flags(true, 1.5, true, false));
         assert!(!should_show_non_capital_flags(true, 4.0, false, true));
+    }
+
+    #[test]
+    fn wheel_down_zooms_in_on_mobile_without_changing_desktop_direction() {
+        assert!(wheel_zoom_factor(100.0, true) > 1.0);
+        assert!(wheel_zoom_factor(-100.0, true) < 1.0);
+        assert!(wheel_zoom_factor(100.0, false) < 1.0);
+        assert!(wheel_zoom_factor(-100.0, false) > 1.0);
     }
 
     #[test]

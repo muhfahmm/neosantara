@@ -92,7 +92,9 @@ async function fetchBootstrapBundle(cachedEtag: string | null = null): Promise<{
   }
 
   if (!response.ok) {
-    throw new Error(`Bootstrap failed with status ${response.status}`);
+    const errorBody = (await response.text()).trim();
+    const detail = errorBody ? `: ${errorBody.slice(0, 500)}` : '';
+    throw new Error(`Bootstrap failed with status ${response.status}${detail}`);
   }
 
   const etag = response.headers.get('ETag');

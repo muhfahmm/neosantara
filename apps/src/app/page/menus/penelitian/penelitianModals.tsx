@@ -64,8 +64,14 @@ export default function BottomLeftPenelitianIcon({
         onClick={onClick}
         title="Penelitian - Riset dan Teknologi"
         style={{
-          bottom: isLandscapePhone ? 'calc(var(--safe-bottom) + 0.5rem)' : isPortraitPhone ? 'calc(var(--safe-bottom) + 4.5rem)' : undefined,
-          left: isLandscapePhone ? 'calc(var(--safe-left) + 3.5rem)' : isPortraitPhone ? 'calc(var(--safe-left) + 0.5rem)' : undefined,
+          bottom: isLandscapePhone
+            ? 'calc(var(--safe-bottom) + 3.5rem)'
+            : isPortraitPhone
+              ? 'calc(var(--safe-bottom) + 7.5rem)'
+              : undefined,
+          left: isLandscapePhone || isPortraitPhone
+            ? 'calc(var(--safe-left) + 0.5rem)'
+            : undefined,
         }}
         className={`fixed z-[100] flex cursor-pointer items-center justify-center transition-transform group hover:scale-110 active:scale-95 ${
           isLandscapePhone

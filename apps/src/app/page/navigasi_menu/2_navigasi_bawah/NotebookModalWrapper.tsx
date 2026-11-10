@@ -46,7 +46,7 @@ export function NotebookModalWrapper({
   return (
     <div
       data-viewport-mode={viewportMode === 'desktop' ? undefined : viewportMode}
-      className={`responsive-modal-frame notebook-modal-frame ${isHidden || (hideWhenInfoModalOpen && isInfoModalOpen) ? 'hidden' : ''} fixed inset-0 ${zIndexClass} flex items-center justify-center font-sans pointer-events-none`}
+      className={`responsive-modal-frame notebook-modal-frame ${isHidden || (hideWhenInfoModalOpen && isInfoModalOpen) ? 'hidden' : ''} fixed inset-0 ${zIndexClass} flex items-center justify-center font-sans pointer-events-auto`}
     >
       {/* Notebook Outer Frame */}
       <div

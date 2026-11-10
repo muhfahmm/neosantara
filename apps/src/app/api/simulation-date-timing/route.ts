@@ -42,6 +42,31 @@ function isSimulationDateTiming(value: unknown): value is SimulationDateTiming {
         Number(timing.longTaskMs) >= 0;
 }
 
+function isLocalDevelopmentHostname(hostname: string): boolean {
+    const normalized = hostname.toLowerCase().replace(/^\[|\]$/g, '');
+    if (
+        normalized === 'localhost' ||
+        normalized.endsWith('.localhost') ||
+        normalized === '::1'
+    ) {
+        return true;
+    }
+
+    const octets = normalized.split('.').map(Number);
+    if (
+        octets.length !== 4 ||
+        octets.some(octet => !Number.isInteger(octet) || octet < 0 || octet > 255)
+    ) {
+        return false;
+    }
+
+    return octets[0] === 10 ||
+        octets[0] === 127 ||
+        (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31) ||
+        (octets[0] === 192 && octets[1] === 168) ||
+        (octets[0] === 169 && octets[1] === 254);
+}
+
 export async function POST(request: Request) {
     const origin = request.headers.get('origin');
     const requestHost = request.headers.get('x-forwarded-host') || request.headers.get('host');
@@ -56,7 +81,20 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Origin tidak valid.' }, { status: 403 });
     }
     const requestProtocol = forwardedProtocol || new URL(request.url).protocol.slice(0, -1);
-    if (originUrl.host !== requestHost || originUrl.protocol !== `${requestProtocol}:`) {
+    let requestHostname: string;
+    try {
+        requestHostname = new URL(`${requestProtocol}://${requestHost}`).hostname;
+    } catch {
+        return NextResponse.json({ error: 'Origin tidak valid.' }, { status: 403 });
+    }
+
+    const isSameOrigin = originUrl.host === requestHost &&
+        originUrl.protocol === `${requestProtocol}:`;
+    const isLocalDevelopmentAlias = process.env.NODE_ENV === 'development' &&
+        (originUrl.protocol === 'http:' || originUrl.protocol === 'tauri:') &&
+        isLocalDevelopmentHostname(originUrl.hostname) &&
+        isLocalDevelopmentHostname(requestHostname);
+    if (!isSameOrigin && !isLocalDevelopmentAlias) {
         return NextResponse.json({ error: 'Origin tidak valid.' }, { status: 403 });
     }
 

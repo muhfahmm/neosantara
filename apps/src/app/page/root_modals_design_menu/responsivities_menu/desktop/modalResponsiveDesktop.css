@@ -4,18 +4,5 @@
     --modal-bottom-offset: 20px;
     --modal-side-offset: 40px;
     --modal-max-height: calc(100dvh - 112px);
-    --modal-max-width: 940px;
-  }
-}
-
-@media (min-width: 1280px) and (min-height: 501px) {
-  :root {
-    --modal-max-width: 1040px;
-  }
-}
-
-@media (min-width: 1536px) and (min-height: 501px) {
-  :root {
-    --modal-max-width: 1024px;
   }
 }

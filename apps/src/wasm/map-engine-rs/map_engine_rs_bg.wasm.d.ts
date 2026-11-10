@@ -2,6 +2,7 @@
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
 export const __wbg_mapengine_free: (a: number, b: number) => void;
+export const end_map_pan_on_map: () => void;
 export const get_country_at_on_map: (a: number, b: number) => any;
 export const get_perf_stats_on_map: () => any;
 export const mapengine_get_country_at: (a: number, b: number, c: number) => any;
@@ -15,6 +16,7 @@ export const mapengine_handle_touch_move: (a: number, b: number, c: number, d: n
 export const mapengine_handle_touch_up: (a: number, b: number) => void;
 export const mapengine_handle_wheel: (a: number, b: number, c: number, d: number) => void;
 export const mapengine_new: (a: any, b: number, c: number) => number;
+export const mapengine_pan_by: (a: number, b: number, c: number) => void;
 export const mapengine_render: (a: number) => void;
 export const mapengine_set_capitals: (a: number, b: number, c: number) => void;
 export const mapengine_set_city_ownership: (a: number, b: number, c: number) => void;
@@ -26,6 +28,7 @@ export const mapengine_set_provinces_data: (a: number, b: number, c: number) => 
 export const mapengine_set_selected_country: (a: number, b: number, c: number, d: number) => void;
 export const mapengine_set_show_province_borders: (a: number, b: number) => void;
 export const mapengine_tick: (a: number, b: number) => void;
+export const pan_map_by_on_map: (a: number, b: number) => void;
 export const set_capitals_on_map: (a: number, b: number) => void;
 export const set_city_ownership_on_map: (a: number, b: number) => void;
 export const set_feature_colors_on_map: (a: number, b: number, c: number) => void;
@@ -34,10 +37,10 @@ export const set_provinces_on_map: (a: number, b: number) => void;
 export const set_selected_country_on_map: (a: number, b: number, c: number) => void;
 export const set_show_province_borders_on_map: (a: number) => void;
 export const start_map_engine: (a: number, b: number, c: number, d: number, e: any, f: any) => [number, number];
+export const zoom_map_at_on_map: (a: number, b: number, c: number) => void;
 export const wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___f64______true_: (a: number, b: number, c: number) => void;
 export const wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_986b12a1bf3d7301___features__gen_MouseEvent__MouseEvent______true_: (a: number, b: number, c: any) => void;
-export const wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_986b12a1bf3d7301___features__gen_MouseEvent__MouseEvent______true__34: (a: number, b: number, c: any) => void;
-export const wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_986b12a1bf3d7301___features__gen_MouseEvent__MouseEvent______true__35: (a: number, b: number, c: any) => void;
+export const wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_986b12a1bf3d7301___features__gen_MouseEvent__MouseEvent______true__38: (a: number, b: number, c: any) => void;
 export const __wbindgen_malloc: (a: number, b: number) => number;
 export const __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
 export const __wbindgen_free: (a: number, b: number, c: number) => void;

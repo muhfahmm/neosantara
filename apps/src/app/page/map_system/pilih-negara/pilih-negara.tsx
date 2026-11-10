@@ -590,7 +590,7 @@ export default function PilihNegaraPage() {
         </div>
 
         {/* RESOURCE MENU DENGAN BORDER BERDASARKAN DATABASE_SDA */}
-        <div className="static lg:absolute lg:right-4 xl:right-6 lg:top-[64px] xl:top-[92px] z-30 flex flex-wrap items-center justify-center lg:justify-end gap-1 lg:gap-1.5 xl:gap-2 max-w-full sm:max-w-xl lg:max-w-[440px] xl:max-w-2xl pointer-events-auto p-2 lg:p-2.5 xl:p-3.5 bg-root-surface border border-root-accent/30 rounded-xl xl:rounded-2xl mb-2 lg:mb-0">
+        <div className="sda-responsive-width static lg:absolute lg:right-4 xl:right-6 lg:top-[64px] xl:top-[92px] z-30 flex flex-wrap items-center justify-center lg:justify-end gap-1 lg:gap-1.5 xl:gap-2 pointer-events-auto p-2 lg:p-2.5 xl:p-3.5 bg-root-surface border border-root-accent/30 rounded-xl xl:rounded-2xl mb-2 lg:mb-0">
           
           {/* MODERN HEADER */}
           <div className="flex items-center justify-between w-full mb-1 lg:mb-2 xl:mb-3 pb-1 lg:pb-2 xl:pb-3 border-b border-root-accent/20">

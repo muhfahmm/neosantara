@@ -16,6 +16,7 @@ export class MapEngine {
     handle_touch_up(pointer_id: number): void;
     handle_wheel(delta_y: number, mouse_x: number, mouse_y: number): void;
     static new(ctx: CanvasRenderingContext2D, width: number, height: number): MapEngine;
+    pan_by(delta_x: number, delta_y: number): void;
     render(): void;
     set_capitals(capitals: any[]): void;
     set_city_ownership(cities: any[]): void;
@@ -35,9 +36,13 @@ export class MapEngine {
     tick(now_ms: number): void;
 }
 
+export function end_map_pan_on_map(): void;
+
 export function get_country_at_on_map(mouse_x: number, mouse_y: number): any;
 
 export function get_perf_stats_on_map(): any;
+
+export function pan_map_by_on_map(delta_x: number, delta_y: number): void;
 
 export function set_capitals_on_map(capitals: any[]): void;
 
@@ -55,11 +60,14 @@ export function set_show_province_borders_on_map(show: boolean): void;
 
 export function start_map_engine(canvas_id: string, world_text: string, countries_json: any, capitals_json: any): void;
 
+export function zoom_map_at_on_map(factor: number, x: number, y: number): void;
+
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
     readonly memory: WebAssembly.Memory;
     readonly __wbg_mapengine_free: (a: number, b: number) => void;
+    readonly end_map_pan_on_map: () => void;
     readonly get_country_at_on_map: (a: number, b: number) => any;
     readonly get_perf_stats_on_map: () => any;
     readonly mapengine_get_country_at: (a: number, b: number, c: number) => any;
@@ -73,6 +81,7 @@ export interface InitOutput {
     readonly mapengine_handle_touch_up: (a: number, b: number) => void;
     readonly mapengine_handle_wheel: (a: number, b: number, c: number, d: number) => void;
     readonly mapengine_new: (a: any, b: number, c: number) => number;
+    readonly mapengine_pan_by: (a: number, b: number, c: number) => void;
     readonly mapengine_render: (a: number) => void;
     readonly mapengine_set_capitals: (a: number, b: number, c: number) => void;
     readonly mapengine_set_city_ownership: (a: number, b: number, c: number) => void;
@@ -84,6 +93,7 @@ export interface InitOutput {
     readonly mapengine_set_selected_country: (a: number, b: number, c: number, d: number) => void;
     readonly mapengine_set_show_province_borders: (a: number, b: number) => void;
     readonly mapengine_tick: (a: number, b: number) => void;
+    readonly pan_map_by_on_map: (a: number, b: number) => void;
     readonly set_capitals_on_map: (a: number, b: number) => void;
     readonly set_city_ownership_on_map: (a: number, b: number) => void;
     readonly set_feature_colors_on_map: (a: number, b: number, c: number) => void;
@@ -92,10 +102,10 @@ export interface InitOutput {
     readonly set_selected_country_on_map: (a: number, b: number, c: number) => void;
     readonly set_show_province_borders_on_map: (a: number) => void;
     readonly start_map_engine: (a: number, b: number, c: number, d: number, e: any, f: any) => [number, number];
+    readonly zoom_map_at_on_map: (a: number, b: number, c: number) => void;
     readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___f64______true_: (a: number, b: number, c: number) => void;
     readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_986b12a1bf3d7301___features__gen_MouseEvent__MouseEvent______true_: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_986b12a1bf3d7301___features__gen_MouseEvent__MouseEvent______true__34: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_986b12a1bf3d7301___features__gen_MouseEvent__MouseEvent______true__35: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen_699c000e861a08bf___convert__closures_____invoke___web_sys_986b12a1bf3d7301___features__gen_MouseEvent__MouseEvent______true__38: (a: number, b: number, c: any) => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_free: (a: number, b: number, c: number) => void;

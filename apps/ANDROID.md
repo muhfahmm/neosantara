@@ -23,13 +23,28 @@ Run on an Android device or emulator:
 npm run tauri:android:dev -- --host 192.168.137.1
 ```
 
-Android now defaults to a production frontend build, so Next.js compilation and
-Fast Refresh cannot reload the running simulation. Restart this command after
-changing frontend code. To opt into development mode with Fast Refresh (which
-can reload the simulation when files change), pass `--hot`:
+If no Android device is connected and exactly one emulator profile is installed,
+the command starts that emulator, waits until Android finishes booting, then
+installs and opens the app. For emulators, an invalid `--host` override is
+removed so Tauri can choose an active LAN address. If multiple profiles are
+installed, select one:
 
 ```powershell
-npm run tauri:android:dev -- --hot --host 192.168.137.1
+npm run tauri:android:dev -- --emulator Medium_Phone_API_37.0 --host 192.168.137.1
+```
+
+An already connected phone or emulator is used as-is. The `--emulator` option
+selects an already running emulator or starts the named profile when no device
+is connected.
+
+Android defaults to the development frontend with Fast Refresh, so layout and
+code changes use the same live source without rebuilding the APK. Fast Refresh
+can reload the running simulation when files change. To opt into a production
+frontend build without HMR, pass `--production` and restart the command after
+changing frontend code:
+
+```powershell
+npm run tauri:android:dev -- --production --host 192.168.137.1
 ```
 
 On Windows, Tauri automatically selects a network address for the development

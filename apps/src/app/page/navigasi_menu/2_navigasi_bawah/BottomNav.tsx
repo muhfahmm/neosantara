@@ -140,14 +140,14 @@ export default function BottomNav({
       style={{
         bottom: 'calc(var(--safe-bottom) + 0.35rem)',
       }}
-      className={`fixed left-1/2 -translate-x-1/2 transition-all duration-500 z-[200] ${
+      className={`fixed left-1/2 -translate-x-1/2 transition-all duration-500 z-[200] pointer-events-none ${
         isLandscapePhone
           ? 'max-w-[calc(100vw-1rem)]'
           : 'w-max max-w-[95vw]'
       }`}
     >
       <nav
-        className={`flex items-center bg-root-surface/90 border border-root-accent/30 transition-all duration-500 ease-in-out ${
+        className={`pointer-events-auto flex items-center bg-root-surface/90 border border-root-accent/30 transition-all duration-500 ease-in-out ${
           isLandscapePhone
             ? 'gap-0.5 px-1 py-0.5 rounded-lg max-h-[38px] overflow-visible'
             : isPortraitPhone

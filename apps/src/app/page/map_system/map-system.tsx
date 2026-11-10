@@ -3,7 +3,7 @@
 import { getRelationColor } from '@/app/logic/relationTiers';
 import React, { memo, startTransition, useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Crosshair, Pause, Palmtree, Play, Shield } from 'lucide-react';
+import { Pause, Palmtree, Play, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { COUNTRIES_DATA, CAPITALS_DATA } from './map-data';
 import { majorCities as MAJOR_CITIES_DATA, countryPaths } from './mapDataAssets';
@@ -115,6 +115,7 @@ import { TutorialWelcomeModal } from '../tutorials_menu/TutorialWelcomeModal';
 import { getTutorialProgress, resetTutorial, setTutorialProgress, startTutorial } from '../tutorials_menu/tutorialProgress';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
 import { isMobileDevice } from './rust_map_mobile';
+import { attachMapGestureController, type MapCameraApi } from './mapGestureController';
 import {
     calculateKepuasan,
     calculateKeterbukaanScore,
@@ -944,10 +945,9 @@ const MapCanvasView = memo(function MapCanvasView({
     isSelectingTarget,
     isWarActive,
     onClick,
-    onPointerDown,
-    onPointerMove,
-    onPointerUp,
-    onPointerLeave,
+    camera,
+    onGestureStart,
+    onGestureEnd,
     onWheel,
     onContextMenu,
 }: {
@@ -956,10 +956,9 @@ const MapCanvasView = memo(function MapCanvasView({
     isSelectingTarget?: boolean;
     isWarActive: boolean;
     onClick: (event: React.MouseEvent<HTMLCanvasElement>) => void;
-    onPointerDown: (event: React.PointerEvent<HTMLCanvasElement>) => void;
-    onPointerMove: (event: React.PointerEvent<HTMLCanvasElement>) => void;
-    onPointerUp: () => void;
-    onPointerLeave: (event: React.PointerEvent<HTMLCanvasElement>) => void;
+    camera: () => MapCameraApi | null;
+    onGestureStart: () => void;
+    onGestureEnd: () => void;
     onWheel: () => void;
     onContextMenu: (event: React.MouseEvent<HTMLCanvasElement>) => void;
 }) {
@@ -986,6 +985,8 @@ const MapCanvasView = memo(function MapCanvasView({
         if (shared) {
             shared.setAttribute('data-tutorial', 'map-view');
             shared.style.userSelect = 'none';
+            shared.style.touchAction = 'none';
+            shared.style.overscrollBehavior = 'none';
         }
         return () => {
             parkSharedMapCanvas(shared);
@@ -999,37 +1000,33 @@ const MapCanvasView = memo(function MapCanvasView({
         shared.style.cursor = isSelectingTarget ? targetCursorStyle : '';
         shared.style.visibility = isWarActive ? 'visible' : '';
         shared.style.userSelect = 'none';
+        shared.style.touchAction = 'none';
+        shared.style.overscrollBehavior = 'none';
     }, [isSelectingTarget, isWarActive, targetCursorStyle]);
+
+    useEffect(() => {
+        const canvas = document.getElementById('map-canvas');
+        if (!(canvas instanceof HTMLCanvasElement)) return;
+        return attachMapGestureController(canvas, {
+            camera,
+            onGestureStart,
+            onGestureEnd,
+            onWheel,
+        });
+    }, [camera, onGestureEnd, onGestureStart, onWheel]);
 
     return (
         <div
             ref={containerRef}
-            style={{ top: 'var(--map-content-top)' }}
+            style={{
+                top: 'var(--map-content-top)',
+                touchAction: 'none',
+                overscrollBehavior: 'none',
+                userSelect: 'none',
+            }}
             className={`fixed inset-x-0 bottom-0 z-0 select-none touch-none bg-[#0f244a] ${interactionDisabled && !isSelectingTarget ? 'pointer-events-none' : ''}`}
             onClick={event => onClick(event as unknown as React.MouseEvent<HTMLCanvasElement>)}
-            onPointerDown={event => {
-                if (event.cancelable && event.button === 0) {
-                    event.preventDefault();
-                }
-                onPointerDown(event as unknown as React.PointerEvent<HTMLCanvasElement>);
-            }}
-            onPointerMove={event => onPointerMove(event as unknown as React.PointerEvent<HTMLCanvasElement>)}
-            onPointerUp={onPointerUp}
-            onPointerCancel={onPointerUp}
-            onPointerLeave={event => onPointerLeave(event as unknown as React.PointerEvent<HTMLCanvasElement>)}
-            onWheel={onWheel}
             onContextMenu={event => onContextMenu(event as unknown as React.MouseEvent<HTMLCanvasElement>)}
-            onMouseLeave={() => {
-                const canvasEl = document.getElementById('map-canvas');
-                if (canvasEl) {
-                    const mouseUp = new MouseEvent('mouseup', {
-                        bubbles: true,
-                        cancelable: true,
-                        view: window,
-                    });
-                    canvasEl.dispatchEvent(mouseUp);
-                }
-            }}
         />
     );
 });
@@ -1137,7 +1134,6 @@ export default function MapPage() {
     const viewportMode = useViewportMode();
     const isLandscapePhone = viewportMode === 'landscapePhone';
     const isPortraitPhone = viewportMode === 'portraitPhone';
-    const isMobileViewport = isLandscapePhone || isPortraitPhone;
     const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
     const [countryDetail, setCountryDetail] = useState<any>(null);
     const [metadata, setMetadata] = useState<Record<string, any>>({});
@@ -6631,9 +6627,6 @@ export default function MapPage() {
     const wasmModuleRef = useRef<any>(null);
     const mapFeatureColorSyncRef = useRef<() => void>(() => {});
     const hasInitRef = useRef(false);
-    const dragStartRef = useRef({ x: 0, y: 0 });
-    const isDraggingRef = useRef(false);
-    const isMapPointerDownRef = useRef(false);
     const wheelIdleTimerRef = useRef<NodeJS.Timeout | null>(null);
     const isTimeControllerHoveredRef = useRef(false);
     const playerDailyTickInFlightRef = useRef(false);
@@ -9028,12 +9021,6 @@ export default function MapPage() {
     const handleCanvasCountryClick = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
         if (mapClickContextRef.current.interactionDisabled) return;
 
-        // Only open modal if it was a click (not a drag)
-        if (isDraggingRef.current) {
-            isDraggingRef.current = false;
-            return;
-        }
-
         const canvas = (document.getElementById('map-canvas') as HTMLCanvasElement | null) || event.currentTarget;
         const rect = canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
@@ -9138,66 +9125,37 @@ export default function MapPage() {
         window.dispatchEvent(new Event('neosantara:map-pan-ended'));
     }, []);
 
-    const handleCanvasPointerDown = useCallback((event: React.PointerEvent<HTMLCanvasElement>) => {
+    const getMapCameraApi = useCallback((): MapCameraApi | null => {
+        const wasmModule = wasmModuleRef.current as Partial<MapCameraApi> | null;
         if (
-            mapClickContextRef.current.interactionDisabled ||
-            !event.isPrimary ||
-            (event.button !== 0 && event.button !== 2)
-        ) return;
-        isMapPointerDownRef.current = true;
-        window.dispatchEvent(new Event('neosantara:map-pan-started'));
-        if (dateCommitTimerRef.current !== null) {
-            clearTimeout(dateCommitTimerRef.current);
-            dateCommitTimerRef.current = null;
+            typeof wasmModule?.end_map_pan_on_map !== 'function' ||
+            typeof wasmModule?.pan_map_by_on_map !== 'function' ||
+            typeof wasmModule.zoom_map_at_on_map !== 'function'
+        ) {
+            return null;
         }
+        return {
+            end_map_pan_on_map: wasmModule.end_map_pan_on_map,
+            pan_map_by_on_map: wasmModule.pan_map_by_on_map,
+            zoom_map_at_on_map: wasmModule.zoom_map_at_on_map,
+        };
+    }, []);
+
+    const handleMapGestureStart = useCallback(() => {
+        window.dispatchEvent(new Event('neosantara:map-pan-started'));
         (window as Window & { neosantara_map_pan_active?: boolean }).neosantara_map_pan_active = true;
         markMapInteraction();
-        dragStartRef.current = { x: event.clientX, y: event.clientY };
-        isDraggingRef.current = false;
+        isMapFocusedRef.current = false;
     }, [markMapInteraction]);
 
-    const handleCanvasPointerMove = useCallback((event: React.PointerEvent<HTMLCanvasElement>) => {
-        if (mapClickContextRef.current.interactionDisabled) return;
-        if (!isMapPointerDownRef.current || event.buttons === 0 || isDraggingRef.current) return;
-        const dx = Math.abs(event.clientX - dragStartRef.current.x);
-        const dy = Math.abs(event.clientY - dragStartRef.current.y);
-        // Ignore click handling once the pointer has moved far enough to pan.
-        // Toleransi geser sentuhan 9px di mobile, 5px di desktop
-        const threshold = isMobileViewport ? 9 : 5;
-        if (dx > threshold || dy > threshold) {
-            isDraggingRef.current = true;
-            isMapFocusedRef.current = false;
-        }
-    }, [isMobileViewport]);
-
-    const finishMapPointerInteraction = useCallback(() => {
-        if (!isMapPointerDownRef.current) return;
-        isMapPointerDownRef.current = false;
+    const handleMapGestureEnd = useCallback(() => {
         signalMapPanEnded();
         lastMapInteractionAtRef.current = Date.now();
         schedulePendingDateCommit();
     }, [schedulePendingDateCommit, signalMapPanEnded]);
 
-    useEffect(() => {
-        window.addEventListener('pointerup', finishMapPointerInteraction);
-        window.addEventListener('pointercancel', finishMapPointerInteraction);
-        return () => {
-            window.removeEventListener('pointerup', finishMapPointerInteraction);
-            window.removeEventListener('pointercancel', finishMapPointerInteraction);
-        };
-    }, [finishMapPointerInteraction]);
-
-    const handleCanvasPointerUp = useCallback(() => {
-        finishMapPointerInteraction();
-    }, [finishMapPointerInteraction]);
-
-    const handleCanvasPointerLeave = useCallback((event: React.PointerEvent<HTMLCanvasElement>) => {
-        if (!isMapPointerDownRef.current) return;
-        if (event.buttons !== 0) return;
-        finishMapPointerInteraction();
-    }, [finishMapPointerInteraction]);
-
     const handleCanvasWheel = useCallback(() => {
+        window.dispatchEvent(new Event('neosantara:map-pan-started'));
         markMapInteraction();
         (window as Window & { neosantara_map_pan_active?: boolean }).neosantara_map_pan_active = true;
         if (wheelIdleTimerRef.current !== null) {
@@ -10670,22 +10628,6 @@ export default function MapPage() {
                 }}
             />}
 
-                    {/* Tombol Pintas Fokus ke Negara Sendiri (F) */}
-                    {!isWarAnalysisActive && <button
-                        onClick={handleFocusHome}
-                        title="🎯 Fokus & Zoom ke Negara Sendiri (F)"
-                        style={{
-                            bottom: 'calc(var(--safe-bottom) + 0.5rem)',
-                            left: isLandscapePhone ? 'calc(var(--safe-left) + 0.5rem)' : undefined,
-                        }}
-                        className={`fixed z-[100] rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all active:scale-95 group ${
-                            isLandscapePhone
-                                ? 'w-8 h-8'
-                                : 'bottom-3 lg:bottom-4 xl:bottom-6 2xl:bottom-12 left-18 lg:left-20 xl:left-22 2xl:left-26 w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12'
-                        }`}
-                    >
-                        <Crosshair className={`${isLandscapePhone ? 'w-3.5 h-3.5' : 'w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6'} transition-transform group-hover:scale-110`} />
-                    </button>}
                 </>
             )}
 
@@ -11321,10 +11263,9 @@ export default function MapPage() {
                 isSelectingTarget={isSelectingIcbmTarget}
                 isWarActive={!!activeWarAnimation}
                 onClick={handleCanvasCountryClick}
-                onPointerDown={handleCanvasPointerDown}
-                onPointerMove={handleCanvasPointerMove}
-                onPointerUp={handleCanvasPointerUp}
-                onPointerLeave={handleCanvasPointerLeave}
+                camera={getMapCameraApi}
+                onGestureStart={handleMapGestureStart}
+                onGestureEnd={handleMapGestureEnd}
                 onWheel={handleCanvasWheel}
                 onContextMenu={handleCanvasContextMenu}
             />
@@ -11381,6 +11322,7 @@ export default function MapPage() {
                             <TopNav
                                 activeView={isDiplomacyMapActive ? 'diplomacy' : 'map'}
                                 onSelect={handleTopNavSelect}
+                                onFocusHome={handleFocusHome}
                             />
                         )
                     )}

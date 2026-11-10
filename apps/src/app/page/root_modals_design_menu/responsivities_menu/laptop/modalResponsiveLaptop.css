@@ -4,7 +4,6 @@
     --modal-bottom-offset: 16px;
     --modal-side-offset: 24px;
     --modal-max-height: calc(100dvh - 116px);
-    --modal-max-width: 768px;
   }
 }
 
