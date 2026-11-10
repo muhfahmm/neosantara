@@ -79,21 +79,37 @@ async function ensureAndroidDevice(tauriArgs) {
   if (connectedDevices.length > 0) {
     const connectedEmulators = connectedDevices
       .filter(serial => serial.startsWith("emulator-"))
-      .map(serial => getRunningEmulatorName(adbPath, serial))
-      .filter(Boolean);
+      .map(serial => ({ serial, avd: getRunningEmulatorName(adbPath, serial) }))
+      .filter(({ avd }) => avd);
+    const connectedPhones = connectedDevices.filter(serial => !serial.startsWith("emulator-"));
     if (requestedAvd) {
-      if (connectedEmulators.includes(requestedAvd)) return requestedAvd;
+      const selectedEmulator = connectedEmulators.find(({ avd }) => avd === requestedAvd);
+      if (selectedEmulator) {
+        return { tauriDevice: selectedEmulator.avd, adbSerial: selectedEmulator.serial };
+      }
+      if (connectedPhones.length > 0) {
+        throw new Error(
+          `Emulator "${requestedAvd}" belum berjalan. HP fisik terhubung: ${connectedPhones.join(", ")}.`,
+        );
+      }
+    } else if (connectedPhones.length === 1) {
+      return { tauriDevice: null, adbSerial: connectedPhones[0] };
+    } else if (connectedPhones.length > 1) {
       throw new Error(
-        `Emulator "${requestedAvd}" belum berjalan. Perangkat ADB yang terhubung: ${connectedDevices.join(", ")}. ` +
-        "Tutup atau putuskan perangkat tersebut, lalu jalankan lagi.",
+        `Lebih dari satu HP fisik terhubung (${connectedPhones.join(", ")}). Sisakan satu HP melalui USB, lalu jalankan lagi.`,
+      );
+    } else {
+      throw new Error(
+        `Tidak ada HP fisik terhubung. Emulator yang terdeteksi: ${connectedEmulators.map(({ avd }) => avd).join(", ")}. ` +
+        "Hubungkan HP melalui USB, aktifkan USB debugging, lalu jalankan lagi. " +
+        "Untuk memakai emulator secara eksplisit, gunakan --emulator <nama-profil>.",
       );
     }
-    return connectedEmulators.length === 1 ? connectedEmulators[0] : null;
   }
 
   const sdkPath = getAndroidSdkPath();
   if (!sdkPath) {
-    throw new Error("Android SDK tidak ditemukan. Setel ANDROID_HOME atau ANDROID_SDK_ROOT terlebih dahulu.");
+    throw new Error("Tidak ada HP Android terhubung dan Android SDK tidak ditemukan. Hubungkan HP dengan USB debugging aktif.");
   }
 
   let emulatorPath;
@@ -105,15 +121,10 @@ async function ensureAndroidDevice(tauriArgs) {
   }
 
   if (!requestedAvd) {
-    if (availableAvds.length === 0) {
-      throw new Error("Tidak ada perangkat Android terhubung atau profil emulator tersedia. Jalankan emulator dari Android Studio.");
-    }
-    if (availableAvds.length > 1) {
-      throw new Error(
-        `Ada beberapa profil emulator (${availableAvds.join(", ")}). Pilih salah satu dengan --emulator <nama-profil>.`,
-      );
-    }
-    [requestedAvd] = availableAvds;
+    throw new Error(
+      "Tidak ada HP fisik terhubung melalui ADB. Hubungkan HP dengan USB debugging aktif; " +
+      "emulator tidak dijalankan otomatis. Untuk memilih emulator secara eksplisit, gunakan --emulator <nama-profil>.",
+    );
   } else if (!availableAvds.includes(requestedAvd)) {
     throw new Error(`Profil emulator "${requestedAvd}" tidak ditemukan. Profil tersedia: ${availableAvds.join(", ") || "(tidak ada)"}.`);
   }
@@ -148,7 +159,7 @@ async function ensureAndroidDevice(tauriArgs) {
         }).trim();
         if (bootCompleted === "1") {
           console.log(`[Android] Emulator "${requestedAvd}" siap; melanjutkan ke Tauri.`);
-          return requestedAvd;
+          return { tauriDevice: requestedAvd, adbSerial: emulatorSerial };
         }
       }
     } catch {
@@ -163,19 +174,19 @@ async function ensureAndroidDevice(tauriArgs) {
   );
 }
 
-function setupAdbReverse(port, apiPort = 8000) {
+function setupAdbReverse(deviceSerial, port, apiPort = 8000) {
   const adbPath = getAdbPath();
   try {
-    execFileSync(adbPath, ["reverse", `tcp:${port}`, `tcp:${port}`], { stdio: "ignore" });
-    execFileSync(adbPath, ["reverse", `tcp:${apiPort}`, `tcp:${apiPort}`], { stdio: "ignore" });
-    console.log(`[ADB Reverse] Port ${port} dan ${apiPort} berhasil diarahkan ke perangkat Android.`);
+    execFileSync(adbPath, ["-s", deviceSerial, "reverse", `tcp:${port}`, `tcp:${port}`], { stdio: "ignore" });
+    execFileSync(adbPath, ["-s", deviceSerial, "reverse", `tcp:${apiPort}`, `tcp:${apiPort}`], { stdio: "ignore" });
+    console.log(`[ADB Reverse] Port ${port} dan ${apiPort} berhasil diarahkan ke ${deviceSerial}.`);
     return true;
   } catch {
     return false;
   }
 }
 
-function validateAndroidEmulatorHost(tauriArgs) {
+function validateAndroidDeviceHost(tauriArgs) {
   const hostOptionIndex = tauriArgs.findIndex(argument => argument === "--host" || argument.startsWith("--host="));
   if (hostOptionIndex === -1) {
     return;
@@ -196,7 +207,7 @@ function validateAndroidEmulatorHost(tauriArgs) {
   tauriArgs.splice(hostOptionIndex, option.startsWith("--host=") || !host ? 1 : 2);
   console.warn(
     `[Android] Host "${host ?? "(kosong)"}" bukan alamat komputer yang aktif; ` +
-    "menghapus override agar Tauri memilih alamat LAN yang benar untuk emulator.",
+    "menghapus override agar Tauri memilih alamat LAN yang benar.",
   );
 }
 
@@ -216,7 +227,7 @@ async function main() {
   if (productionIndex !== -1 && hotReloadIndex !== -1) {
     throw new Error("Pilih satu mode: gunakan --hot atau --production, jangan keduanya.");
   }
-  const useHotReload = productionIndex === -1;
+  const useHotReload = hotReloadIndex !== -1;
   const modeFlagIndexes = [productionIndex, hotReloadIndex]
     .filter((value) => value !== -1)
     .sort((a, b) => b - a);
@@ -224,12 +235,16 @@ async function main() {
     tauriArgs.splice(index, 1);
   }
 
-  const selectedEmulator = tauriArgs.includes("--open")
+  const selectedDevice = tauriArgs.includes("--open")
     ? null
     : await ensureAndroidDevice(tauriArgs);
-  if (selectedEmulator) {
-    validateAndroidEmulatorHost(tauriArgs);
-    tauriArgs.unshift(selectedEmulator);
+  if (selectedDevice) {
+    validateAndroidDeviceHost(tauriArgs);
+    if (selectedDevice.tauriDevice) {
+      tauriArgs.unshift(selectedDevice.tauriDevice);
+    } else {
+      console.log(`[Android] Menargetkan HP fisik ${selectedDevice.adbSerial}; emulator tidak digunakan.`);
+    }
   }
 
   const port = await findFreePort(3000, 3999);
@@ -239,6 +254,7 @@ async function main() {
     NEXT_DIST_DIR: distDir,
     TAURI_ANDROID_PRODUCTION: useHotReload ? "0" : "1",
     TAURI_ANDROID_HMR_PORT: String(port),
+    ...(selectedDevice ? { ANDROID_SERIAL: selectedDevice.adbSerial } : {}),
   };
 
   console.log(`Mode Android: ${useHotReload ? "development dengan Fast Refresh aktif" : "production tanpa HMR"}.`);
@@ -253,6 +269,7 @@ async function main() {
         env: {
           ...frontendEnv,
           NEXT_TSCONFIG_PATH: path.basename(tsconfigPath),
+          NODE_OPTIONS: [process.env.NODE_OPTIONS, "--max-old-space-size=4096"].filter(Boolean).join(" "),
         },
         stdio: "inherit",
       });
@@ -262,9 +279,11 @@ async function main() {
   }
 
   console.log(`Tauri Android akan menggunakan port Next.js ${port}.`);
-  const adbReverseReady = setupAdbReverse(port, 8000);
-  if (!adbReverseReady) {
-    console.log("[ADB Reverse] Perangkat belum siap; akan mencoba ulang setelah emulator/HP terhubung.");
+  const adbReverseReady = selectedDevice
+    ? setupAdbReverse(selectedDevice.adbSerial, port, 8000)
+    : true;
+  if (selectedDevice && !adbReverseReady) {
+    console.log("[ADB Reverse] HP belum siap; akan mencoba ulang setelah perangkat tersambung.");
   }
 
   if (useHotReload) {
@@ -297,11 +316,9 @@ async function main() {
 
       const adbPath = getAdbPath();
       try {
-        const devices = execFileSync(adbPath, ["devices"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
-        const hasConnectedDevice = devices
-          .split(/\r?\n/)
-          .some(line => /^\S+\s+device$/.test(line));
-        if (hasConnectedDevice && setupAdbReverse(port, 8000)) {
+        const connectedDevices = getConnectedAndroidDevices(adbPath);
+        if (selectedDevice && connectedDevices.includes(selectedDevice.adbSerial) &&
+          setupAdbReverse(selectedDevice.adbSerial, port, 8000)) {
           clearInterval(adbRetryTimer);
         }
       } catch {
