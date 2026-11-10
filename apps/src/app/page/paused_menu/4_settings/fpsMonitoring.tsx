@@ -1,12 +1,8 @@
 'use client';
 
-import React, { useEffect, useState, useSyncExternalStore } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Activity, Copy } from 'lucide-react';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
-
-const FPS_MONITOR_STORAGE_KEY = 'neosantara_fps_monitor_enabled';
-const FPS_MONITOR_CHANGE_EVENT = 'neosantara_fps_monitor_settings_changed';
-let fallbackMonitorEnabled = true;
 
 export type FpsMonitorWasmModule = {
     get_perf_stats_on_map?: () => unknown;
@@ -44,41 +40,6 @@ const INITIAL_STATS: FpsMonitorStats = {
     jsTaskTimeMs: 0,
 };
 
-export function getFpsMonitorEnabled(): boolean {
-    if (typeof window === 'undefined') return true;
-
-    try {
-        const savedSetting = window.localStorage.getItem(FPS_MONITOR_STORAGE_KEY);
-        fallbackMonitorEnabled = savedSetting === null ? true : savedSetting === 'true';
-        return fallbackMonitorEnabled;
-    } catch (error) {
-        console.error('Gagal membaca pengaturan monitor FPS:', error);
-        return fallbackMonitorEnabled;
-    }
-}
-
-export function setFpsMonitorEnabled(enabled: boolean): void {
-    if (typeof window === 'undefined') return;
-
-    fallbackMonitorEnabled = enabled;
-    try {
-        window.localStorage.setItem(FPS_MONITOR_STORAGE_KEY, String(enabled));
-    } catch (error) {
-        console.error('Gagal menyimpan pengaturan monitor FPS:', error);
-    }
-    window.dispatchEvent(new CustomEvent(FPS_MONITOR_CHANGE_EVENT, { detail: enabled }));
-}
-
-function subscribeFpsMonitor(onChange: () => void): () => void {
-    if (typeof window === 'undefined') return () => {};
-    window.addEventListener(FPS_MONITOR_CHANGE_EVENT, onChange);
-    return () => window.removeEventListener(FPS_MONITOR_CHANGE_EVENT, onChange);
-}
-
-function useFpsMonitorEnabled(): boolean {
-    return useSyncExternalStore(subscribeFpsMonitor, getFpsMonitorEnabled, () => true);
-}
-
 export function FpsMonitoring({
     wasmModuleRef,
 }: {
@@ -87,14 +48,9 @@ export function FpsMonitoring({
     const [stats, setStats] = useState(INITIAL_STATS);
     const [history, setHistory] = useState<string[]>([]);
     const [isExpanded, setIsExpanded] = useState(false);
-    const isEnabled = useFpsMonitorEnabled();
     const isMobileDevice = useViewportMode() !== 'desktop';
 
-    const isDevelopment = process.env.NODE_ENV !== 'production';
-
     useEffect(() => {
-        if (!isEnabled || !isDevelopment) return;
-
         let frameCount = 0;
         let lastTime = performance.now();
         const fpsSamples: number[] = [];
@@ -177,9 +133,7 @@ export function FpsMonitoring({
             cancelAnimationFrame(animationFrameId);
             window.removeEventListener('neosantara_map_camera', onCameraMove);
         };
-    }, [isEnabled, isDevelopment, wasmModuleRef]);
-
-    if (!isEnabled || !isDevelopment) return null;
+    }, [wasmModuleRef]);
 
     return (
         <div className="relative z-20 flex shrink-0 self-stretch font-mono pointer-events-auto">
@@ -247,33 +201,6 @@ export function FpsMonitoring({
                 </div>
             )}
         </div>
-    );
-}
-
-export function FpsMonitoringSettings() {
-    const isEnabled = useFpsMonitorEnabled();
-
-    const toggleMonitor = () => {
-        const nextEnabled = !isEnabled;
-        setFpsMonitorEnabled(nextEnabled);
-    };
-
-    return (
-        <button
-            type="button"
-            role="switch"
-            aria-checked={isEnabled}
-            onClick={toggleMonitor}
-            className="flex w-full cursor-pointer items-center justify-between rounded border border-root-accent/20 bg-root-canvas/80 p-2 text-left transition-colors hover:border-root-accent/40"
-        >
-            <span className="flex items-center gap-2 text-[11px] font-semibold text-gray-200">
-                <Activity className="h-3.5 w-3.5 text-root-accent" />
-                Monitor FPS di layar
-            </span>
-            <span className={`flex h-[18px] w-8 items-center rounded-full p-0.5 transition-colors ${isEnabled ? 'bg-root-accent' : 'bg-root-subtle/50'}`}>
-                <span className={`h-3.5 w-3.5 rounded-full bg-root-accent-ink shadow-sm transition-transform ${isEnabled ? 'translate-x-3.5' : 'translate-x-0'}`} />
-            </span>
-        </button>
     );
 }
 

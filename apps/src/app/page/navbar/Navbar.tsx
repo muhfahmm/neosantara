@@ -245,9 +245,9 @@ export function Navbar({
         >
             {/* Mode Landscape Phone: Tata letak kompak 1 baris */}
             {isLandscapePhone ? (
-                <div className="w-full flex items-center justify-between pointer-events-auto bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg h-[38px]">
+                <div className="w-full flex items-center justify-between gap-1 pointer-events-auto bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg min-h-[38px]">
                     {/* Sisi Kiri: Power + Bendera Negara */}
-                    <div className="flex items-center gap-1 shrink-0">
+                    <div className="flex min-w-0 items-center gap-1">
                         <button
                             onClick={onOpenGameMenu}
                             data-tutorial="game-menu"
@@ -268,9 +268,10 @@ export function Navbar({
                         ) : (
                             <span className="text-xs">🌐</span>
                         )}
-                        <span className="text-[10px] font-black text-root-text uppercase tracking-tight max-w-[85px] truncate">
+                        <span className="w-[28vw] shrink-0 whitespace-normal [overflow-wrap:anywhere] text-[10px] font-black leading-tight text-root-text uppercase tracking-tight">
                             {selectedCountry ? selectedCountry.country : 'Main'}
                         </span>
+                        <FpsMonitoring wasmModuleRef={wasmModuleRef} />
                     </div>
 
                     {/* Ringkasan angka lengkap seperti versi desktop */}
@@ -313,7 +314,6 @@ export function Navbar({
                     </div>
 
                     <div className="flex shrink-0 items-center gap-1">
-                        <FpsMonitoring wasmModuleRef={wasmModuleRef} />
                         <AttackDebugButton selectedCountry={selectedCountry} countryDetail={countryDetail} />
                         <ZoomIndicator mapZoom={mapZoom} compact />
                         <button
@@ -339,8 +339,8 @@ export function Navbar({
                 /* Mode Portrait Phone: Dua baris ringkas */
                 <div className="w-full flex flex-col gap-1 pointer-events-auto">
                     {/* Baris 1: Menu + Negara + Aksi Game */}
-                    <div className="flex items-center justify-between bg-root-surface/95 border border-root-accent/30 rounded-xl px-2.5 py-1 shadow-lg h-[36px]">
-                        <div className="flex items-center gap-1.5">
+                    <div className="flex min-h-[36px] items-center justify-between gap-1 bg-root-surface/95 border border-root-accent/30 rounded-xl px-2.5 py-1 shadow-lg">
+                        <div className="flex min-w-0 flex-1 items-center gap-1.5">
                             <button
                                 onClick={onOpenGameMenu}
                                 title="Game Menu"
@@ -355,9 +355,10 @@ export function Navbar({
                                     alt={selectedCountry.country}
                                 />
                             )}
-                            <span className="text-xs font-black text-root-text uppercase tracking-tight truncate max-w-[140px]">
+                            <span className="w-[30vw] shrink-0 whitespace-normal [overflow-wrap:anywhere] text-xs font-black leading-tight text-root-text uppercase tracking-tight">
                                 {selectedCountry ? selectedCountry.country : 'Main Simulation'}
                             </span>
+                            <FpsMonitoring wasmModuleRef={wasmModuleRef} />
                         </div>
                         <div className="flex shrink-0 items-center gap-1.5">
                             <button
@@ -381,7 +382,6 @@ export function Navbar({
                     </div>
 
                     <div className="flex items-center justify-center gap-1.5 pointer-events-auto bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg">
-                        <FpsMonitoring wasmModuleRef={wasmModuleRef} />
                         <AttackDebugButton selectedCountry={selectedCountry} countryDetail={countryDetail} />
                         <ZoomIndicator mapZoom={mapZoom} compact />
                     </div>
@@ -473,9 +473,9 @@ export function Navbar({
                                         {selectedCountry ? selectedCountry.capital : 'Global Map'}
                                     </span>
                                 </div>
+                                <FpsMonitoring wasmModuleRef={wasmModuleRef} />
                             </div>
                         </div>
-                        <FpsMonitoring wasmModuleRef={wasmModuleRef} />
                     </div>
 
                     {/* 2. Center: Live Stats Items */}
