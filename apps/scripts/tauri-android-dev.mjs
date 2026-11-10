@@ -22,10 +22,17 @@ function setupAdbReverse(port, apiPort = 8000) {
 
 async function main() {
   const tauriArgs = process.argv.slice(2);
+  const productionIndex = tauriArgs.indexOf("--production");
   const hotReloadIndex = tauriArgs.indexOf("--hot");
+  if (productionIndex !== -1 && hotReloadIndex !== -1) {
+    throw new Error("Pilih satu mode: gunakan --hot atau --production, jangan keduanya.");
+  }
   const useHotReload = hotReloadIndex !== -1;
-  if (useHotReload) {
-    tauriArgs.splice(hotReloadIndex, 1);
+  const modeFlagIndexes = [productionIndex, hotReloadIndex]
+    .filter((value) => value !== -1)
+    .sort((a, b) => b - a);
+  for (const index of modeFlagIndexes) {
+    tauriArgs.splice(index, 1);
   }
 
   const port = await findFreePort(3000, 3999);
@@ -37,8 +44,9 @@ async function main() {
     TAURI_ANDROID_HMR_PORT: String(port),
   };
 
+  console.log(`Mode Android: ${useHotReload ? "development dengan Fast Refresh aktif" : "production tanpa HMR"}.`);
   if (!useHotReload) {
-    console.log("Membangun frontend production agar kompilasi/HMR tidak me-reload simulasi Android...");
+    console.log("Membangun frontend production tanpa HMR agar kompilasi tidak me-reload simulasi Android...");
     const nextCli = fileURLToPath(import.meta.resolve("next/dist/bin/next"));
     const tsconfigPath = path.join(appDir, `.tsconfig-android-${port}.json`);
     writeFileSync(tsconfigPath, JSON.stringify({ extends: "./tsconfig.json" }, null, 2));

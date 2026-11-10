@@ -20,7 +20,16 @@ npm run tauri:android:prepare
 Run on an Android device or emulator:
 
 ```powershell
-npm run tauri:android:dev
+npm run tauri:android:dev -- --host 192.168.137.1
+```
+
+Android now defaults to a production frontend build, so Next.js compilation and
+Fast Refresh cannot reload the running simulation. Restart this command after
+changing frontend code. To opt into development mode with Fast Refresh (which
+can reload the simulation when files change), pass `--hot`:
+
+```powershell
+npm run tauri:android:dev -- --hot --host 192.168.137.1
 ```
 
 On Windows, Tauri automatically selects a network address for the development
@@ -31,7 +40,7 @@ argument:
 
 ```powershell
 adb devices -l
-npm run tauri:android:dev
+npm run tauri:android:dev -- --host 192.168.137.1
 ```
 
 The command starts the Next.js and Python servers on the computer. Traffic
