@@ -241,7 +241,7 @@ export function Navbar({
                 paddingLeft: 'calc(var(--safe-left) + 0.5rem)',
                 paddingRight: 'calc(var(--safe-right) + 0.5rem)',
             }}
-            className="fixed top-0 left-0 right-0 z-[201] pointer-events-none flex flex-col md:flex-row items-center justify-between select-none bg-transparent border-none shadow-none gap-1 sm:gap-2"
+            className="map-status-navbar fixed top-0 left-0 right-0 z-[201] pointer-events-none flex flex-col md:flex-row items-center justify-between select-none bg-transparent border-none shadow-none gap-1 sm:gap-2"
         >
             {/* Mode Landscape Phone: Tata letak kompak 1 baris */}
             {isLandscapePhone ? (

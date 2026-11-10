@@ -24,7 +24,7 @@
     --modal-side-offset: max(8px, var(--safe-left));
     --modal-side-offset-right: max(8px, var(--safe-right));
     --modal-max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - var(--safe-bottom) - 8px);
-    --modal-max-width: 92vw;
+    --modal-max-width: 64vw;
   }
 }
 
@@ -37,7 +37,7 @@
     --modal-side-offset: max(8px, var(--safe-left));
     --modal-side-offset-right: max(8px, var(--safe-right));
     --modal-max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - var(--safe-bottom) - 8px);
-    --modal-max-width: 96vw;
+    --modal-max-width: calc(100vw - 32px);
   }
 }
 
@@ -46,10 +46,23 @@
   --map-content-top: calc(var(--navbar-h) + var(--safe-top) + 0.35rem);
 }
 
+.responsive-modal-frame {
+  box-sizing: border-box;
+  padding-top: var(--modal-top-offset);
+  padding-bottom: var(--modal-bottom-offset);
+  padding-left: var(--modal-side-offset);
+  padding-right: var(--modal-side-offset-right, var(--modal-side-offset));
+}
+
+.responsive-modal-frame[data-viewport-mode] {
+  align-items: flex-start;
+  justify-content: center;
+}
+
 .modal-responsive-shell {
   box-sizing: border-box;
   width: 100% !important;
-  max-width: var(--modal-max-width) !important;
+  max-width: var(--modal-max-width);
   max-height: var(--modal-max-height) !important;
   height: 100% !important;
 }

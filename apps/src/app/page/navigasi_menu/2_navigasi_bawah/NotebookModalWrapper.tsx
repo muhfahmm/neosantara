@@ -45,14 +45,8 @@ export function NotebookModalWrapper({
 
   return (
     <div
-      style={{
-        paddingTop: 'var(--modal-top-offset)',
-        paddingBottom: 'var(--modal-bottom-offset)',
-        paddingLeft: 'var(--modal-side-offset)',
-        paddingRight: 'var(--modal-side-offset)',
-      }}
       data-viewport-mode={viewportMode === 'desktop' ? undefined : viewportMode}
-      className={`notebook-modal-frame ${isHidden || (hideWhenInfoModalOpen && isInfoModalOpen) ? 'hidden' : ''} fixed inset-0 ${zIndexClass} flex items-center justify-center font-sans pointer-events-none`}
+      className={`responsive-modal-frame notebook-modal-frame ${isHidden || (hideWhenInfoModalOpen && isInfoModalOpen) ? 'hidden' : ''} fixed inset-0 ${zIndexClass} flex items-center justify-center font-sans pointer-events-none`}
     >
       {/* Notebook Outer Frame */}
       <div

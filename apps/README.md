@@ -14,7 +14,12 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open the `Next.js (komputer ini)` URL printed by the development server. To preview
+changes on a phone or another device, connect it to the same Wi-Fi/LAN and open one
+of the printed `URL untuk perangkat lain` addresses. Keep the development server
+running; code and layout changes are sent to connected browsers with Fast Refresh.
+If the LAN address cannot be reached, allow Node.js through the computer's private
+network firewall and retry.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

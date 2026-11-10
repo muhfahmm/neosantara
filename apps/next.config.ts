@@ -1,8 +1,13 @@
 import type { NextConfig } from "next";
 
 const dialogApiUrl = process.env.DIALOG_API_URL ?? "http://127.0.0.1:8000";
+const allowedDevOrigins = process.env.NEXT_ALLOWED_DEV_ORIGINS
+  ?.split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean) ?? [];
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins,
   distDir: process.env.NEXT_DIST_DIR ?? ".next",
   env: {
     NEXT_PUBLIC_TAURI_ANDROID_HMR_PORT: process.env.TAURI_ANDROID_HMR_PORT ?? "",

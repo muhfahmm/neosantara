@@ -20,14 +20,8 @@ export function PausedMenuFrame({
 
     return (
         <div
-            style={{
-                paddingTop: 'var(--modal-top-offset)',
-                paddingBottom: 'var(--modal-bottom-offset)',
-                paddingLeft: 'var(--modal-side-offset)',
-                paddingRight: 'var(--modal-side-offset)',
-            }}
             data-viewport-mode={viewportMode === 'desktop' ? undefined : viewportMode}
-            className={`paused-menu-frame fixed inset-0 ${zIndexClass} flex items-center justify-center font-sans pointer-events-none select-none`}
+            className={`responsive-modal-frame paused-menu-frame fixed inset-0 ${zIndexClass} flex items-center justify-center font-sans pointer-events-none select-none`}
         >
             <section className={`modal-responsive-shell relative flex min-w-0 flex-col overflow-hidden ${rootBorderRadius.frame} border-[6px] border-root-surface bg-root-canvas p-3 pl-10 shadow-2xl pointer-events-auto sm:p-4 sm:pl-12`}>
                 <RootNotebookDecorations count={ornamentCount} />

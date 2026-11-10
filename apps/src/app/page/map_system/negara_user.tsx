@@ -8,6 +8,7 @@ import { calculateCountryGDP, formatCurrencyEM } from '@/app/logic/economic_logi
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { calculateCountryNetPopulation } from '@/app/logic/populations_logic/population_logic';
 import { getArmadaPowerSummary } from '@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
+import { useViewportMode } from '@/app/hooks/useViewportMode';
 import {
   getCountryProfileSummaries,
   loadCountryProfileSummaries,
@@ -50,6 +51,7 @@ function getDetailString(value: unknown): string {
 }
 
 export default function NegaraUserModal({ isOpen, onClose, selectedCountry, countryDetail }: NegaraUserModalProps) {
+  const viewportMode = useViewportMode();
   const countrySummaries = useSyncExternalStore(
     subscribeToCountryProfileSummaries,
     getCountryProfileSummaries,
@@ -141,7 +143,6 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
     () => getMilitaryPowerCardTotals(getArmadaPowerSummary(countryDetail)),
     [countryDetail]
   );
-
   const formatNumber = (n: number | undefined) => {
     if (n == null || n === 0) return '—';
     return n.toLocaleString('id-ID', { maximumFractionDigits: 2 });
@@ -189,15 +190,12 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
 
   return (
     <div
-      style={{
-        paddingTop: 'var(--modal-top-offset)',
-        paddingBottom: 'var(--modal-bottom-offset)',
-        paddingLeft: 'var(--modal-side-offset)',
-        paddingRight: 'var(--modal-side-offset)',
-      }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-transparent pointer-events-none"
+      data-viewport-mode={viewportMode === 'desktop' ? undefined : viewportMode}
+      className="responsive-modal-frame fixed inset-0 z-50 flex items-center justify-center bg-transparent pointer-events-none"
     >
-      <div className="modal-responsive-shell country-user-modal-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+      <div
+        className="modal-responsive-shell country-user-modal-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl"
+      >
 
         {/* Background Texture */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />

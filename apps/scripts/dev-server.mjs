@@ -1,5 +1,6 @@
 import { rmSync, writeFileSync } from "node:fs";
 import { spawn } from "node:child_process";
+import { networkInterfaces } from "node:os";
 import path from "node:path";
 import { StringDecoder } from "node:string_decoder";
 import { fileURLToPath } from "node:url";
@@ -29,6 +30,23 @@ function readPortArgument() {
     throw new Error("Nilai --port harus berupa nomor port antara 1 dan 65535.");
   }
   return port;
+}
+
+function getLanIPv4Addresses() {
+  const addresses = [];
+  for (const [interfaceName, entries] of Object.entries(networkInterfaces())) {
+    for (const entry of entries ?? []) {
+      if (
+        entry.internal ||
+        (entry.family !== "IPv4" && entry.family !== 4) ||
+        !/^(?:10\.|192\.168\.|172\.(?:1[6-9]|2\d|3[01])\.)/.test(entry.address)
+      ) {
+        continue;
+      }
+      addresses.push({ interfaceName, address: entry.address });
+    }
+  }
+  return addresses;
 }
 
 function stopChild(child) {
@@ -92,11 +110,23 @@ async function main() {
   const tsconfigPath = productionMode
     ? null
     : path.join(appDir, `.tsconfig-dev-${frontendPort}.json`);
+  const lanAddresses = getLanIPv4Addresses();
   if (tsconfigPath) {
     writeFileSync(tsconfigPath, JSON.stringify({ extends: "./tsconfig.json" }, null, 2));
   }
 
-  console.log(`Next.js: http://localhost:${frontendPort}`);
+  console.log(`Next.js (komputer ini): http://localhost:${frontendPort}`);
+  if (lanAddresses.length > 0) {
+    console.log("URL untuk perangkat lain di jaringan yang sama:");
+    lanAddresses.forEach(({ interfaceName, address }) => {
+      console.log(`  ${interfaceName}: http://${address}:${frontendPort}`);
+    });
+    if (!productionMode) {
+      console.log("Buka salah satu URL LAN di HP/perangkat lain; perubahan kode akan tersinkron lewat Fast Refresh.");
+    }
+  } else {
+    console.log("Tidak ada alamat IPv4 LAN yang terdeteksi; perangkat lain belum bisa terhubung.");
+  }
   console.log(`Dialog API: http://localhost:${apiPort}`);
 
   const apiProcess = spawn(
@@ -118,6 +148,9 @@ async function main() {
         ...process.env,
         DIALOG_API_URL: `http://127.0.0.1:${apiPort}`,
         NEXT_DIST_DIR: distDir,
+        NEXT_ALLOWED_DEV_ORIGINS: productionMode
+          ? ""
+          : lanAddresses.map(({ address }) => address).join(","),
         ...(tsconfigPath ? { NEXT_TSCONFIG_PATH: path.basename(tsconfigPath) } : {}),
         PORT: String(frontendPort),
       },
