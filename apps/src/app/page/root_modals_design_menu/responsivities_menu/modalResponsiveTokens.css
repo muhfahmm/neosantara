@@ -54,6 +54,18 @@
   height: 100% !important;
 }
 
+.country-user-modal-shell {
+  height: auto !important;
+}
+
+.modal-responsive-shell.country-user-modal-shell > .bg-root-surface {
+  flex: 0 1 auto !important;
+}
+
+.modal-responsive-shell.country-user-modal-shell > .bg-root-surface > :last-child {
+  flex: 0 1 auto !important;
+}
+
 .fixed.inset-0:has(> .modal-responsive-shell) {
   padding-top: var(--modal-top-offset) !important;
   padding-bottom: var(--modal-bottom-offset) !important;

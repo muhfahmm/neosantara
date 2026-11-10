@@ -91,7 +91,7 @@ import {
 } from '../detail_negara/3_operasi_militer/covertEffectsLogic';
 import { convertBarakToSoldiers } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/1_barak_logic';
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
-import { setCountryProfileSummaries, type CountryProfileSummary } from '@/lib/countryProfileSummaryRegistry';
+import { loadCountryProfileSummaries } from '@/lib/countryProfileSummaryRegistry';
 import {
     hasActiveNationalization,
     syncNationalizationDiplomacyRelations,
@@ -1208,15 +1208,7 @@ export default function MapPage() {
         fetchBuildingMetadata()
             .then(data => setMetadata(data || {}))
             .catch(err => console.error("Failed to load metadata in MapPage:", err));
-        fetch('/api/country-data?summary=true')
-            .then(response => {
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                return response.json();
-            })
-            .then((summaries: CountryProfileSummary[]) => {
-                if (!Array.isArray(summaries)) throw new Error('Country summary response is not an array');
-                setCountryProfileSummaries(summaries);
-            })
+        loadCountryProfileSummaries()
             .catch(error => console.error('Failed to preload country profile summaries:', error));
     }, []);
     const [playerNetBalanceAdjustment, setPlayerNetBalanceAdjustment] = useState<number>(0);
