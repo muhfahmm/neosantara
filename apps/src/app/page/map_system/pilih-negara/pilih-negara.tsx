@@ -44,6 +44,7 @@ import {
   mountSharedMapCanvas,
   parkSharedMapCanvas,
 } from '../mapLoader';
+import { attachMapGestureController, type MapCameraApi } from '../mapGestureController';
 import { renderInstantMobileCanvasPreview } from '../rust_map_mobile';
 
 // Import logika ekonomi dari folder logic agar kalkulasi sama persis
@@ -117,6 +118,7 @@ export default function PilihNegaraPage() {
   const [activeTab, setActiveTab] = useState('utama');
   const [hasInteracted, setHasInteracted] = useState(false);
   const [wasmModule, setWasmModule] = useState<any>(null);
+  const wasmModuleRef = useRef<any>(null);
   const [countryDetail, setCountryDetail] = useState<any>(null);
   const dragStartPosRef = useRef<{ x: number; y: number } | null>(null);
   const canvasHostRef = useRef<HTMLDivElement | null>(null);
@@ -186,11 +188,14 @@ export default function PilihNegaraPage() {
           mod.set_capitals_on_map?.(CAPITALS_DATA);
         }
 
-        const { start_map_engine, set_selected_country_on_map, get_country_at_on_map } = mod;
+        wasmModuleRef.current = mod;
         setWasmModule({
-          start_map_engine,
-          set_selected_country_on_map,
-          get_country_at_on_map,
+          start_map_engine: mod.start_map_engine,
+          set_selected_country_on_map: mod.set_selected_country_on_map,
+          get_country_at_on_map: mod.get_country_at_on_map,
+          pan_map_by_on_map: mod.pan_map_by_on_map,
+          zoom_map_at_on_map: mod.zoom_map_at_on_map,
+          end_map_pan_on_map: mod.end_map_pan_on_map,
         });
       } catch (e) {
         console.error('Failed to start map engine bg:', e);
@@ -207,8 +212,39 @@ export default function PilihNegaraPage() {
     return () => {
       cancelled = true;
       parkSharedMapCanvas(sharedCanvas);
+      wasmModuleRef.current = null;
     };
   }, [mapLoadAttempt]);
+
+  useEffect(() => {
+    const canvas = document.getElementById('map-canvas');
+    if (!(canvas instanceof HTMLCanvasElement)) return;
+
+    canvas.style.userSelect = 'none';
+    canvas.style.touchAction = 'none';
+    canvas.style.overscrollBehavior = 'none';
+
+    return attachMapGestureController(canvas, {
+      camera: () => {
+        const mod = wasmModuleRef.current as Partial<MapCameraApi> | null;
+        if (
+          typeof mod?.end_map_pan_on_map !== 'function' ||
+          typeof mod?.pan_map_by_on_map !== 'function' ||
+          typeof mod?.zoom_map_at_on_map !== 'function'
+        ) {
+          return null;
+        }
+        return {
+          end_map_pan_on_map: mod.end_map_pan_on_map,
+          pan_map_by_on_map: mod.pan_map_by_on_map,
+          zoom_map_at_on_map: mod.zoom_map_at_on_map,
+        };
+      },
+      onGestureStart: () => {},
+      onGestureEnd: () => {},
+      onWheel: () => {},
+    });
+  }, [wasmModule]);
 
   const filteredCountries = useMemo(
     () =>
@@ -296,45 +332,27 @@ export default function PilihNegaraPage() {
     setHasInteracted(true);
   };
 
-  const handleCanvasPointerUp = (e: React.PointerEvent<HTMLElement>) => {
-    const dragStart = dragStartPosRef.current;
-    dragStartPosRef.current = null;
-    if (e.button !== 0 || !dragStart) return;
+  const handleCountrySelectionAt = (clientX: number, clientY: number) => {
     if (!wasmModule || !wasmModule.get_country_at_on_map) return;
-
-    const dragDistance = Math.sqrt(
-      Math.pow(e.clientX - dragStart.x, 2) +
-      Math.pow(e.clientY - dragStart.y, 2)
-    );
-    if (dragDistance > 5) return;
-
-    const canvas =
-      (document.getElementById('map-canvas') as HTMLCanvasElement | null) ||
-      (e.target instanceof HTMLCanvasElement ? e.target : null);
+    const canvas = document.getElementById('map-canvas') as HTMLCanvasElement | null;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-    const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+    const x = (clientX - rect.left) * (canvas.width / rect.width);
+    const y = (clientY - rect.top) * (canvas.height / rect.height);
 
     const clickedCountry = wasmModule.get_country_at_on_map(x, y);
     if (clickedCountry && clickedCountry.iso) {
       const iso = clickedCountry.iso;
-
-      // Simpan ISO di ref terlebih dahulu
       pendingIsoRef.current = iso;
-
-      // Cari di filteredCountries dulu
       const filteredIndex = filteredCountries.findIndex(
         (c) => c.iso.toLowerCase() === iso.toLowerCase()
       );
 
       if (filteredIndex !== -1) {
-        // Sudah ada di filtered list, langsung set
         pendingIsoRef.current = null;
         setCurrentIndex(filteredIndex);
         setHasInteracted(true);
       } else {
-        // Perlu clear search dulu, biarkan useEffect handle pencarian via pendingIsoRef
         setSearchQuery('');
         setHasInteracted(true);
       }
@@ -535,15 +553,14 @@ export default function PilihNegaraPage() {
 
       <div
         ref={canvasHostRef}
-        className="fixed top-0 inset-x-0 bottom-0 z-0 pt-[48px] lg:pt-[56px] xl:pt-[80px] bg-[#06101a]"
-        onPointerDown={(e) => {
-          dragStartPosRef.current = e.button === 0
-            ? { x: e.clientX, y: e.clientY }
-            : null;
+        style={{
+          touchAction: 'none',
+          overscrollBehavior: 'none',
+          userSelect: 'none',
         }}
-        onPointerUp={handleCanvasPointerUp}
-        onPointerCancel={() => {
-          dragStartPosRef.current = null;
+        className="fixed top-0 inset-x-0 bottom-0 z-0 pt-[48px] lg:pt-[56px] xl:pt-[80px] bg-[#06101a] select-none touch-none"
+        onClick={(e) => {
+          handleCountrySelectionAt(e.clientX, e.clientY);
         }}
       />
 
