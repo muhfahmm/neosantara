@@ -59,9 +59,11 @@ async function main() {
     await waitForServer(devServerProcess, startUrl);
 
     console.log(`Membuka Electron dengan server ${startUrl}.`);
+    const electronEnv = { ...process.env, ELECTRON_START_URL: startUrl };
+    delete electronEnv.ELECTRON_RUN_AS_NODE;
     electronProcess = spawn(process.execPath, [electronCli, "."], {
       cwd: path.resolve(scriptDir, ".."),
-      env: { ...process.env, ELECTRON_START_URL: startUrl },
+      env: electronEnv,
       stdio: "inherit",
     });
 

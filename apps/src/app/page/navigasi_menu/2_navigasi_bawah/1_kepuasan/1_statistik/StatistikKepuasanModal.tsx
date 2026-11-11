@@ -127,9 +127,9 @@ export default function StatistikKepuasanModal({
     {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
       <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-root-accent/20 bg-root-canvas">
         {/* Header */}
-        <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
-          <div className="flex flex-wrap items-center gap-3 sm:gap-6">
-            <div className="flex items-center gap-2">
+        <div className="satisfaction-modal-header relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
+          <div className="satisfaction-modal-header-main flex min-w-0 flex-1 flex-nowrap items-center gap-2 overflow-x-auto whitespace-nowrap no-scrollbar sm:gap-4">
+            <div className="flex shrink-0 items-center gap-2 whitespace-nowrap">
               <div className="shrink-0 rounded-lg border border-root-accent/30 bg-root-surface p-1 sm:p-1.5">
                 <Smile className="h-4 w-4 text-root-text sm:h-5 sm:w-5" />
               </div>

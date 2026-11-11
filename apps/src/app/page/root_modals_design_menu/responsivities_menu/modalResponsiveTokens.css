@@ -56,15 +56,35 @@
   }
 }
 
+@media (min-width: 640px) and (max-width: 1023px) and (min-height: 501px) {
+  :root {
+    --modal-top-offset: 100px;
+    --modal-bottom-offset: 16px;
+    --modal-side-offset: 24px;
+    --modal-side-offset-right: 24px;
+    --modal-max-height: calc(100dvh - 116px);
+  }
+}
+
+@media (min-width: 1024px) and (min-height: 501px) {
+  :root {
+    --modal-top-offset: clamp(92px, 10dvh, 115px);
+    --modal-bottom-offset: 20px;
+    --modal-side-offset: 40px;
+    --modal-side-offset-right: 40px;
+    --modal-max-height: calc(100dvh - 112px);
+  }
+}
+
 @media (orientation: landscape) and (max-height: 500px) {
   :root {
-    --navbar-h: 38px;
+    --navbar-h: 52px;
     --bottom-nav-height: 44px;
-    --modal-top-offset: calc(var(--navbar-h) + var(--safe-top) + 8px);
+    --modal-top-offset: calc(var(--navbar-h) + var(--safe-top) + 12px);
     --modal-bottom-offset: var(--safe-bottom);
     --modal-side-offset: max(8px, var(--safe-left));
     --modal-side-offset-right: max(8px, var(--safe-right));
-    --modal-max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - var(--safe-bottom) - 8px);
+    --modal-max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - var(--safe-bottom) - 16px);
     --modal-max-width: min(76vw, 840px);
 
     /* Mobile Landscape Typography - proporsional sesuai rekomendasi lebar 600px - 690px */
@@ -81,11 +101,11 @@
   :root {
     --navbar-h: 97px;
     --bottom-nav-height: 44px;
-    --modal-top-offset: calc(var(--navbar-h) + var(--safe-top) + 8px);
+    --modal-top-offset: calc(var(--navbar-h) + var(--safe-top) + 16px);
     --modal-bottom-offset: var(--safe-bottom);
     --modal-side-offset: max(8px, var(--safe-left));
     --modal-side-offset-right: max(8px, var(--safe-right));
-    --modal-max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - var(--safe-bottom) - 8px);
+    --modal-max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - var(--safe-bottom) - 16px);
     --modal-max-width: calc(100vw - 24px);
 
     /* Mobile Portrait Typography - readable fluid scaling */
@@ -113,6 +133,23 @@
 .responsive-modal-frame[data-viewport-mode] {
   align-items: flex-start;
   justify-content: center;
+}
+
+.responsive-modal-frame .satisfaction-modal-header-main {
+  flex-wrap: nowrap;
+}
+
+.responsive-modal-frame .satisfaction-modal-tabs {
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  width: max-content;
+  max-width: none;
+  white-space: nowrap;
+}
+
+.responsive-modal-frame .satisfaction-modal-tabs > button {
+  flex-shrink: 0;
 }
 
 .modal-responsive-shell,
