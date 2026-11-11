@@ -86,6 +86,8 @@
     --modal-side-offset-right: max(8px, var(--safe-right));
     --modal-max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - var(--safe-bottom) - 16px);
     --modal-max-width: min(76vw, 840px);
+    --modal-menu-frame-width: min(74vw, 820px);
+    --modal-menu-frame-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - 62px);
 
     /* Mobile Landscape Typography - proporsional sesuai rekomendasi lebar 600px - 690px */
     --modal-font-title: clamp(13px, 2.2vw, 15px);
@@ -107,6 +109,8 @@
     --modal-side-offset-right: max(8px, var(--safe-right));
     --modal-max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - var(--safe-bottom) - 16px);
     --modal-max-width: calc(100vw - 24px);
+    --modal-menu-frame-width: calc(100vw - 24px);
+    --modal-menu-frame-height: var(--modal-max-height);
 
     /* Mobile Portrait Typography - readable fluid scaling */
     --modal-font-title: clamp(14px, 4vw, 18px);
@@ -114,6 +118,31 @@
     --modal-font-body: clamp(11px, 2.8vw, 13px);
     --modal-font-label: clamp(8px, 2.2vw, 10px);
     --modal-font-value: clamp(12px, 3vw, 14px);
+  }
+}
+
+@media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
+  .notebook-modal-frame[data-viewport-mode] .notebook-modal-content :is(
+    header,
+    [class~="border-b"][class~="items-center"][class~="shrink-0"],
+    [class~="border-b"][class~="items-center"][class~="justify-between"]
+  ) {
+    box-sizing: border-box;
+    height: 48px;
+    min-height: 48px;
+    max-height: 48px;
+    padding-block: 4px !important;
+  }
+
+  .country-detail-modal-frame[data-viewport-mode] .country-detail-modal-header > div:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .country-detail-modal-frame[data-viewport-mode] .country-detail-modal-header p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
@@ -236,6 +265,17 @@
 .modal-responsive-shell {
   max-height: var(--modal-max-height) !important;
   height: 100% !important;
+}
+
+@media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
+  .notebook-modal-frame[data-viewport-mode]:not(.country-detail-modal-frame) > .modal-responsive-shell {
+    box-sizing: border-box;
+    width: min(100%, var(--modal-menu-frame-width, var(--modal-max-width))) !important;
+    max-width: var(--modal-menu-frame-width, var(--modal-max-width)) !important;
+    height: var(--modal-menu-frame-height, var(--modal-max-height)) !important;
+    max-height: var(--modal-menu-frame-height, var(--modal-max-height)) !important;
+    min-height: 0;
+  }
 }
 
 .country-user-modal-shell {

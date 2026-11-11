@@ -238,10 +238,6 @@
   letter-spacing: 0.08em !important;
 }
 
-.country-detail-modal-frame[data-viewport-mode] .country-detail-modal-header {
-  padding-block: 4px !important;
-}
-
 .country-detail-modal-frame[data-viewport-mode] .country-detail-summary {
   box-sizing: border-box;
   min-height: 48px;
@@ -858,13 +854,6 @@
 
 @media (orientation: landscape) and (max-height: 500px) {
   /* Every notebook modal must leave the mobile side menus and time controller exposed. */
-  .notebook-modal-frame > .modal-responsive-shell {
-    width: min(74vw, 820px) !important;
-    max-width: min(74vw, 820px) !important;
-    height: calc(100dvh - var(--navbar-h) - var(--safe-top) - 62px) !important;
-    max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - 62px) !important;
-  }
-
   .country-detail-modal-frame > .modal-responsive-shell {
     width: min(86vw, 1000px) !important;
     max-width: min(86vw, 1000px) !important;
