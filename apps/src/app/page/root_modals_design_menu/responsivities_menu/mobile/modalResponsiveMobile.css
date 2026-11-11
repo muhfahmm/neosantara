@@ -911,6 +911,12 @@
     max-width: min(86vw, 1000px) !important;
   }
 
+  .country-detail-modal-frame[data-viewport-mode] {
+    --navbar-h: 52px;
+    --modal-top-offset: calc(var(--navbar-h) + var(--safe-top) + 4px);
+    --modal-max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - var(--safe-bottom) - 4px);
+  }
+
   /* Keep mission, tracking, and research dialogs clear of side menus and time controls. */
   .paused-menu-frame[data-viewport-mode='landscapePhone']:has(:is(.research-selection-typography, .tracking-modal-typography, .mission-modal-typography)) > .modal-responsive-shell {
     width: min(72vw, 680px) !important;
