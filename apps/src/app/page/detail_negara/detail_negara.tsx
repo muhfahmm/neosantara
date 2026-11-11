@@ -1,6 +1,7 @@
 'use client';
 
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import { rootModalTypography } from '@/app/page/root_modals_design_menu/rootModalTypography';
 import { getRelationTextColor, getRelationTier } from '@/app/logic/relationTiers';
 import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
@@ -782,7 +783,7 @@ export function CountryDetailModal({
             {/* 2. Judul & Subjudul */}
             <div>
               {/* Judul Utama */}
-              <h2 className="text-xl sm:text-2xl lg:text-xl xl:text-2xl font-bold text-root-accent tracking-tight leading-none uppercase">
+              <h2 className={`${rootModalTypography.title} text-root-accent leading-none`}>
                 DETAIL NEGARA
               </h2>
 

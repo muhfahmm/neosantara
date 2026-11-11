@@ -13,23 +13,45 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
+
+  /* Root Typography Tokens (Base Desktop) */
+  --modal-font-title: 1.25rem;
+  --modal-font-section-title: 0.875rem;
+  --modal-font-body: 0.875rem;
+  --modal-font-label: 0.625rem;
+  --modal-font-value: 0.875rem;
 }
 
 @media (min-width: 640px) {
   :root {
     --modal-max-width: min(720px, calc(100vw - 40px));
+    --modal-font-title: 1.25rem;
+    --modal-font-section-title: 0.875rem;
+    --modal-font-body: 0.875rem;
+    --modal-font-label: 0.625rem;
+    --modal-font-value: 0.875rem;
   }
 }
 
 @media (min-width: 1024px) {
   :root {
     --modal-max-width: min(860px, calc(100vw - 48px));
+    --modal-font-title: 1.375rem;
+    --modal-font-section-title: 0.9375rem;
+    --modal-font-body: 0.875rem;
+    --modal-font-label: 0.6875rem;
+    --modal-font-value: 0.9375rem;
   }
 }
 
 @media (min-width: 1280px) {
   :root {
     --modal-max-width: min(940px, calc(100vw - 64px));
+    --modal-font-title: 1.5rem;
+    --modal-font-section-title: 1rem;
+    --modal-font-body: 0.875rem;
+    --modal-font-label: 0.75rem;
+    --modal-font-value: 1rem;
   }
 }
 
@@ -43,6 +65,13 @@
     --modal-side-offset-right: max(8px, var(--safe-right));
     --modal-max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - var(--safe-bottom) - 8px);
     --modal-max-width: min(76vw, 840px);
+
+    /* Mobile Landscape Typography - compact fluid scaling */
+    --modal-font-title: clamp(13px, 2.8vw, 16px);
+    --modal-font-section-title: clamp(11px, 2.2vw, 13px);
+    --modal-font-body: clamp(10.5px, 2vw, 12px);
+    --modal-font-label: clamp(8px, 1.6vw, 9.5px);
+    --modal-font-value: clamp(11px, 2vw, 12.5px);
   }
 }
 
@@ -56,6 +85,13 @@
     --modal-side-offset-right: max(8px, var(--safe-right));
     --modal-max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - var(--safe-bottom) - 8px);
     --modal-max-width: calc(100vw - 24px);
+
+    /* Mobile Portrait Typography - readable fluid scaling */
+    --modal-font-title: clamp(14px, 4vw, 18px);
+    --modal-font-section-title: clamp(12px, 3.2vw, 14px);
+    --modal-font-body: clamp(11px, 2.8vw, 13px);
+    --modal-font-label: clamp(8px, 2.2vw, 10px);
+    --modal-font-value: clamp(12px, 3vw, 14px);
   }
 }
 
