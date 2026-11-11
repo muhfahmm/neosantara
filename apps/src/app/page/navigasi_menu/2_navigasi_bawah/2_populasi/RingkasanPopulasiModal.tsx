@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useState, useEffect, useMemo } from "react";
-import { Users, Info, TrendingUp, ShieldAlert, BadgeDollarSign, Users2, ChevronRight, Clock } from "lucide-react";
+import { Users, Info, ShieldAlert, BadgeDollarSign, Users2, ChevronRight, Clock } from "lucide-react";
 import NotebookModalWrapper from "../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import {
@@ -29,7 +29,6 @@ import { SOCIALISM_BIRTH_RATE_BONUS } from "@/app/page/bonus_logic/ideologi_bonu
 import { calculateTaxPopulationImpact } from "@/app/logic/economic_logic/2_tax_logic/taxPopulationImpact";
 import { calculateEconomicPopulationImpact } from "@/app/logic/economic_logic/economicPopulationImpact";
 import { calculatePopulationPolicyImpact } from "@/app/logic/populations_logic/populationPolicyImpact";
-import TabelPopulasiNegara from "./TabelPopulasiNegara";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
@@ -148,7 +147,6 @@ export default function RingkasanPopulasiModal({
   const [isKesejahteraanOpen, setIsKesejahteraanOpen] = useState(Boolean(initialOpenKesejahteraan));
   const [isTunawismaOpen, setIsTunawismaOpen] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
-  const [activePopulationTab, setActivePopulationTab] = useState<"ringkasan" | "negara">("ringkasan");
 
   // Hitung metrik demografi secara sinkron
   const countryName = selectedCountry?.country;
@@ -304,6 +302,64 @@ export default function RingkasanPopulasiModal({
   };
 
   const activeCountryName = countryName || "Indonesia";
+  const populationPolicyImpactContent = (
+    <section
+      aria-label="Perhitungan dampak kebijakan ekonomi terhadap populasi"
+      className={`${rootBorderRadius.card} border border-root-accent/30 bg-root-surface p-3.5 lg:p-4.5 2xl:p-6`}
+    >
+      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-root-accent/15 pb-3">
+        <h3 className={rootModalTypography.sectionTitle}>
+          Perhitungan Dampak Kebijakan ke Populasi
+        </h3>
+        <div className="text-right">
+          <p className={`${policyImpactColor} text-lg lg:text-xl`}>
+            {formatModifier(totalPolicyMonthlyModifier)}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-3 grid grid-cols-2 gap-2 lg:grid-cols-4">
+        {[
+          { label: "Pajak", detail: `Beban ${taxImpact.burden.toFixed(1)}%`, modifier: populationPolicyImpact.taxMonthlyModifierPercent },
+          { label: "Harga pokok", detail: `Kepuasan ${economicImpact.priceScore.toFixed(0)}/100`, modifier: economicImpact.priceMonthlyModifierPercent * populationPolicyImpact.scaleFactor },
+          { label: "Sistem ekonomi", detail: `Skor ${economicImpact.policyScore.toFixed(0)}/100`, modifier: economicImpact.systemMonthlyModifierPercent * populationPolicyImpact.scaleFactor },
+          { label: "Subsidi", detail: `Dukungan ${economicImpact.subsidyScore.toFixed(0)}/100`, modifier: economicImpact.subsidyMonthlyModifierPercent * populationPolicyImpact.scaleFactor },
+        ].map((item) => (
+          <div
+            key={item.label}
+            className={`${rootBorderRadius.card} border border-root-accent/15 bg-root-canvas p-2.5`}
+          >
+            <p className={rootModalTypography.label}>{item.label}</p>
+            <p className={`${rootModalTypography.value} mt-1 text-[10px]`}>{item.detail}</p>
+            <p className={`${rootModalTypography.value} mt-1 text-xs lg:text-sm`}>
+              {formatModifier(item.modifier)} / bln
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {populationPolicyImpact.wasCapped && (
+        <p className="mt-2 text-[9px] font-semibold text-root-body">
+          Modifier gabungan dibatasi maksimal ±0,75% per bulan.
+        </p>
+      )}
+
+      <div className="mt-2 grid grid-cols-2 gap-2">
+        <div className={`${rootBorderRadius.card} border border-root-accent/15 bg-root-canvas p-2.5`}>
+          <p className={rootModalTypography.label}>Estimasi dampak harian</p>
+          <p className={`${policyImpactColor} mt-1 text-sm`}>
+            {formatPeople(estimatedPolicyDailyChange)}
+          </p>
+        </div>
+        <div className={`${rootBorderRadius.card} border border-root-accent/15 bg-root-canvas p-2.5`}>
+          <p className={rootModalTypography.label}>Estimasi dampak bulanan</p>
+          <p className={`${policyImpactColor} mt-1 text-sm`}>
+            {formatPeople(estimatedPolicyMonthlyChange)}
+          </p>
+        </div>
+      </div>
+    </section>
+  );
 
   return (
     <>
@@ -330,72 +386,59 @@ export default function RingkasanPopulasiModal({
 
         {/* ============ SUMMARY CARDS ============ */}
         <div className="px-3 sm:px-5 lg:px-6 2xl:px-8 py-2 sm:py-2.5 2xl:py-3 bg-root-canvas border-b border-root-accent/20 relative z-10 shrink-0">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-2.5 2xl:gap-4">
+          <div className="population-summary-grid grid grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-2.5 2xl:gap-4">
             {/* Total Populasi */}
-            <div className={`bg-root-surface border border-root-accent/20 p-2 lg:p-2.5 2xl:p-4 ${rootBorderRadius.card} flex items-center gap-2 lg:gap-2.5 2xl:gap-3.5 transition-all hover:border-root-accent/40`}>
+            <div className={`population-summary-card bg-root-surface border border-root-accent/20 p-2 lg:p-2.5 2xl:p-4 ${rootBorderRadius.card} flex items-center gap-2 lg:gap-2.5 2xl:gap-3.5 transition-all hover:border-root-accent/40`}>
               <div className="p-1.5 lg:p-2 2xl:p-2.5 bg-root-canvas border border-root-accent/30 rounded-md lg:rounded-lg 2xl:rounded-xl shrink-0">
                 <Users className="h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5 text-root-accent" />
               </div>
-              <div className="min-w-0">
+              <div className="population-summary-text min-w-0 flex-1">
                 <p className={`${rootModalTypography.label} whitespace-nowrap`}>Total Populasi</p>
-                <p className={`${rootModalTypography.value} text-[11px] leading-tight whitespace-nowrap lg:text-xs 2xl:text-base`}>{populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[7px] text-root-muted lg:text-[8px] 2xl:text-[9px]">JIWA</span></p>
+                <p className={`population-summary-value ${rootModalTypography.value} min-w-0 leading-tight`}>
+                  <span className="population-summary-number">{populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
+                  <span className="shrink-0 whitespace-nowrap text-[7px] text-root-muted lg:text-[8px] 2xl:text-[9px]">JIWA</span>
+                </p>
               </div>
-            </div>
-
-            {/* Laju Pertumbuhan */}
-            <div
-              className={`group bg-root-surface border border-root-accent/20 p-2 lg:p-2.5 2xl:p-4 ${rootBorderRadius.card} flex items-center justify-between gap-1.5 lg:gap-2 2xl:gap-3 transition-all cursor-pointer hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98]`}
-              onClick={() => setIsDetailBirthOpen(true)}
-            >
-              <div className="flex items-center gap-2 lg:gap-2.5 2xl:gap-3.5 min-w-0">
-                <div className="p-1.5 lg:p-2 2xl:p-2.5 bg-root-canvas border border-root-accent/30 rounded-md lg:rounded-lg 2xl:rounded-xl shrink-0 group-hover:scale-110 transition-transform">
-                  <TrendingUp className="h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5 text-root-accent" />
-                </div>
-                <div className="min-w-0">
-                  <p className={`${rootModalTypography.label} whitespace-nowrap`}>Laju Pertumbuhan</p>
-                  <p className={`${rootModalTypography.value} text-[11px] leading-tight whitespace-nowrap lg:text-xs 2xl:text-base`}>
-                    {totalDailyDelta >= 0 ? '+' : ''}{totalDailyDelta.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[7px] text-root-muted lg:text-[8px] 2xl:text-[9px]">/hr</span>
-                  </p>
-                </div>
-              </div>
-              <ChevronRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-root-subtle group-hover:text-root-accent group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5" />
             </div>
 
             {/* Tunawisma */}
             <div
-              className={`group bg-root-surface border border-root-accent/20 p-2 lg:p-2.5 2xl:p-4 ${rootBorderRadius.card} flex items-center justify-between gap-1.5 lg:gap-2 2xl:gap-3 transition-all cursor-pointer hover:border-rose-400 hover:bg-rose-500/10 active:scale-[0.98]`}
+              className={`population-summary-card group bg-root-surface border border-root-accent/20 p-2 lg:p-2.5 2xl:p-4 ${rootBorderRadius.card} flex items-center justify-between gap-1.5 lg:gap-2 2xl:gap-3 transition-all cursor-pointer hover:border-rose-400 hover:bg-rose-500/10 active:scale-[0.98]`}
               onClick={() => setIsTunawismaOpen(true)}
             >
-              <div className="flex items-center gap-2 lg:gap-2.5 2xl:gap-3.5 min-w-0">
+              <div className="flex min-w-0 flex-1 items-center gap-2 lg:gap-2.5 2xl:gap-3.5">
                 <div className="p-1.5 lg:p-2 2xl:p-2.5 bg-root-canvas border border-rose-500/30 rounded-md lg:rounded-lg 2xl:rounded-xl shrink-0 group-hover:scale-110 transition-transform">
                   <ShieldAlert className="h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5 text-rose-400" />
                 </div>
-                <div className="min-w-0">
+                <div className="population-summary-text min-w-0 flex-1">
                   <p className={`${rootModalTypography.label} whitespace-nowrap`}>Tunawisma</p>
-                  <p className={`${rootModalTypography.value} text-[11px] leading-tight whitespace-nowrap lg:text-xs 2xl:text-base`}>{homelessCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[7px] text-root-muted lg:text-[8px] 2xl:text-[9px]">JIWA</span></p>
+                  <p className={`population-summary-value ${rootModalTypography.value} min-w-0 leading-tight`}>
+                    <span className="population-summary-number">{homelessCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
+                    <span className="shrink-0 whitespace-nowrap text-[7px] text-root-muted lg:text-[8px] 2xl:text-[9px]">JIWA</span>
+                  </p>
                 </div>
               </div>
-              <ChevronRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-root-subtle group-hover:text-rose-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5" />
+              <ChevronRight className="population-summary-chevron h-3.5 w-3.5 lg:h-4 lg:w-4 text-root-subtle group-hover:text-rose-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5" />
             </div>
 
             {/* Kesejahteraan */}
             <div
-              className={`group bg-root-surface border border-root-accent/20 p-2 lg:p-2.5 2xl:p-4 ${rootBorderRadius.card} flex items-center justify-between gap-1.5 lg:gap-2 2xl:gap-3 transition-all cursor-pointer hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98]`}
+              className={`population-summary-card group bg-root-surface border border-root-accent/20 p-2 lg:p-2.5 2xl:p-4 ${rootBorderRadius.card} flex items-center justify-between gap-1.5 lg:gap-2 2xl:gap-3 transition-all cursor-pointer hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98]`}
               onClick={() => setIsKesejahteraanOpen(true)}
             >
-              <div className="flex items-center gap-2 lg:gap-2.5 2xl:gap-3.5 min-w-0">
+              <div className="flex min-w-0 flex-1 items-center gap-2 lg:gap-2.5 2xl:gap-3.5">
                 <div className="p-1.5 lg:p-2 2xl:p-2.5 bg-root-canvas border border-root-accent/30 rounded-md lg:rounded-lg 2xl:rounded-xl shrink-0 group-hover:scale-110 transition-transform">
                   <BadgeDollarSign className="h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5 text-root-accent" />
                 </div>
-                <div className="min-w-0">
+                <div className="population-summary-text min-w-0 flex-1">
                   <p className={`${rootModalTypography.label} whitespace-nowrap`}>Kesejahteraan</p>
-                  <p className={`${rootModalTypography.value} text-[11px] leading-tight whitespace-nowrap lg:text-xs 2xl:text-base`}>
-                    {countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : 50}{" "}
-                    <span className="text-[7px] text-root-muted lg:text-[8px] 2xl:text-[9px]">INDX</span>
+                  <p className={`population-summary-value ${rootModalTypography.value} min-w-0 leading-tight`}>
+                    <span className="population-summary-number">{countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : 50}</span>
+                    <span className="whitespace-nowrap text-[7px] text-root-muted lg:text-[8px] 2xl:text-[9px]">INDX</span>
                   </p>
                 </div>
               </div>
-              <ChevronRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-root-subtle group-hover:text-root-accent group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5" />
+              <ChevronRight className="population-summary-chevron h-3.5 w-3.5 lg:h-4 lg:w-4 text-root-subtle group-hover:text-root-accent group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5" />
             </div>
           </div>
         </div>
@@ -412,40 +455,6 @@ export default function RingkasanPopulasiModal({
           hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent
           [&::-webkit-scrollbar-button]:hidden
         ">
-          {/* Tab Navigation */}
-          <div className="mb-3 flex gap-2 border-b border-root-accent/15 pb-2">
-            <button
-              type="button"
-              onClick={() => setActivePopulationTab("ringkasan")}
-              aria-pressed={activePopulationTab === "ringkasan"}
-              className={`rounded-lg border px-3 py-2 text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${
-                activePopulationTab === "ringkasan"
-                  ? "border-root-accent/40 bg-white/5 text-root-text"
-                  : "border-root-accent/15 text-root-muted hover:text-root-text hover:border-root-accent/50"
-              }`}
-            >
-              Ringkasan
-            </button>
-            <button
-              type="button"
-              onClick={() => setActivePopulationTab("negara")}
-              aria-pressed={activePopulationTab === "negara"}
-              className={`rounded-lg border px-3 py-2 text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${
-                activePopulationTab === "negara"
-                  ? "border-root-accent/40 bg-white/5 text-root-text"
-                  : "border-root-accent/15 text-root-muted hover:text-root-text hover:border-root-accent/50"
-              }`}
-            >
-              Tabel Populasi Negara
-            </button>
-          </div>
-
-          {activePopulationTab === "negara" ? (
-            <TabelPopulasiNegara
-              userCountryDetail={countryDetail}
-              currentDate={currentDate}
-            />
-          ) : (
           <div className="space-y-3.5 lg:space-y-4.5 2xl:space-y-6 animate-in fade-in duration-500">
 
             {/* Informasi Demografi */}
@@ -572,76 +581,7 @@ export default function RingkasanPopulasiModal({
               </section>
             )}
 
-            {/* Dampak Kebijakan */}
-            <section
-              aria-label="Perhitungan dampak kebijakan ekonomi terhadap populasi"
-              className={`${rootBorderRadius.card} border border-root-accent/30 bg-root-surface p-3.5 lg:p-4.5 2xl:p-6`}
-            >
-              <div className="flex flex-wrap items-start justify-between gap-3 border-b border-root-accent/15 pb-3">
-                <div>
-                  <h3 className={rootModalTypography.sectionTitle}>
-                    Perhitungan Dampak Kebijakan ke Populasi
-                  </h3>
-                </div>
-                <div className="text-right">
-                  <p className={`${policyImpactColor} text-lg lg:text-xl`}>
-                    {formatModifier(totalPolicyMonthlyModifier)}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-3 grid grid-cols-2 lg:grid-cols-4 gap-2">
-                {[
-                  { label: "Pajak", detail: `Beban ${taxImpact.burden.toFixed(1)}%`, modifier: populationPolicyImpact.taxMonthlyModifierPercent },
-                  { label: "Harga pokok", detail: `Kepuasan ${economicImpact.priceScore.toFixed(0)}/100`, modifier: economicImpact.priceMonthlyModifierPercent * populationPolicyImpact.scaleFactor },
-                  { label: "Sistem ekonomi", detail: `Skor ${economicImpact.policyScore.toFixed(0)}/100`, modifier: economicImpact.systemMonthlyModifierPercent * populationPolicyImpact.scaleFactor },
-                  { label: "Subsidi", detail: `Dukungan ${economicImpact.subsidyScore.toFixed(0)}/100`, modifier: economicImpact.subsidyMonthlyModifierPercent * populationPolicyImpact.scaleFactor },
-                ].map((item) => (
-                  <div
-                    key={item.label}
-                    className={`${rootBorderRadius.card} border border-root-accent/15 bg-root-canvas p-2.5 hover:border-root-accent/40 transition-colors duration-300`}
-                  >
-                    <p className={rootModalTypography.label}>
-                      {item.label}
-                    </p>
-                    <p className={`${rootModalTypography.value} mt-1 text-[10px]`}>
-                      {item.detail}
-                    </p>
-                    <p className={`${rootModalTypography.value} mt-1 text-xs lg:text-sm`}>
-                      {formatModifier(item.modifier)} / bln
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              {populationPolicyImpact.wasCapped && (
-                <p className="mt-2 text-[9px] font-semibold text-root-body">
-                  Modifier gabungan dibatasi maksimal ±0,75% per bulan.
-                </p>
-              )}
-
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                <div className={`${rootBorderRadius.card} border border-root-accent/15 bg-root-canvas p-2.5 hover:border-root-accent/40 transition-colors duration-300`}>
-                  <p className={rootModalTypography.label}>
-                    Estimasi dampak harian
-                  </p>
-                  <p className={`${policyImpactColor} mt-1 text-sm`}>
-                    {formatPeople(estimatedPolicyDailyChange)}
-                  </p>
-                </div>
-                <div className={`${rootBorderRadius.card} border border-root-accent/15 bg-root-canvas p-2.5 hover:border-root-accent/40 transition-colors duration-300`}>
-                  <p className={rootModalTypography.label}>
-                    Estimasi dampak bulanan
-                  </p>
-                  <p className={`${policyImpactColor} mt-1 text-sm`}>
-                    {formatPeople(estimatedPolicyMonthlyChange)}
-                  </p>
-                </div>
-              </div>
-            </section>
-
           </div>
-          )}
         </div>
       </div>
     </NotebookModalWrapper>}
@@ -650,8 +590,9 @@ export default function RingkasanPopulasiModal({
       isOpen={isInfoOpen}
       onClose={() => setIsInfoOpen(false)}
       title="Informasi Kependudukan"
-      description="Ringkasan ini menampilkan jumlah penduduk, pertumbuhan, kelahiran dan kematian, serta indikator kesejahteraan dan dampak kebijakan. Pilih kartu atau bagian terkait untuk membuka rincian lebih lanjut."
-    />
+    >
+      {populationPolicyImpactContent}
+    </MenuInfoModal>
 
       {/* ============ RENDER MODAL DETAIL ============ */}
       {isDetailBirthOpen && <DetailKelahiranModal

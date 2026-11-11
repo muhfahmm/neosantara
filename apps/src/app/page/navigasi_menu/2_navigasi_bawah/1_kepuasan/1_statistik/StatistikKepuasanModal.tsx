@@ -175,10 +175,10 @@ export default function StatistikKepuasanModal({
         ">
           <div className="animate-in fade-in space-y-4 duration-300 sm:space-y-5">
             {/* Kartu skor umum */}
-            <div className={`flex flex-row items-center justify-between gap-2.5 ${rootBorderRadius.card} border border-root-accent/30 bg-root-surface p-2.5 lg:gap-3 lg:p-3 2xl:p-4`}>
+            <div className={`flex flex-row items-center justify-between gap-2.5 ${rootBorderRadius.card} border border-root-accent/30 bg-root-surface px-2.5 py-1.5 lg:gap-3 lg:py-2 2xl:py-2.5`}>
               <div className="flex items-center gap-2.5 lg:gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-root-accent/40 bg-root-canvas lg:h-11 lg:w-11 2xl:h-14 2xl:w-14">
-                  <Smile className="h-4 w-4 text-root-text lg:h-5 lg:w-5 2xl:h-7 2xl:w-7" />
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-root-accent/40 bg-root-canvas lg:h-10 lg:w-10 2xl:h-12 2xl:w-12">
+                  <Smile className="h-4 w-4 text-root-text lg:h-5 lg:w-5 2xl:h-6 2xl:w-6" />
                 </div>
                 <div>
                   <h3 className="mb-0.5 text-xs font-black uppercase leading-none tracking-wide text-root-text lg:mb-1 lg:text-sm 2xl:text-base">
@@ -187,7 +187,7 @@ export default function StatistikKepuasanModal({
                 </div>
               </div>
 
-              <div className="min-w-[75px] shrink-0 rounded-lg border border-root-accent/30 bg-root-canvas px-2.5 py-1 text-right lg:min-w-[95px] lg:px-3.5 lg:py-1.5 2xl:min-w-[110px] 2xl:px-4 2xl:py-2">
+              <div className="min-w-[75px] shrink-0 rounded-lg border border-root-accent/30 bg-root-canvas px-2.5 py-0.5 text-right lg:min-w-[95px] lg:px-3.5 lg:py-1 2xl:min-w-[110px] 2xl:px-4 2xl:py-1.5">
                 <p className={`${rootModalTypography.value} text-base leading-none tracking-tight lg:text-xl 2xl:text-2xl`}>
                   {Math.round(generalSatisfaction)}%
                 </p>
@@ -208,7 +208,7 @@ export default function StatistikKepuasanModal({
                 <div className="ml-2 h-[1px] flex-1 bg-gradient-to-r from-root-accent/30 to-transparent lg:ml-4"></div>
               </div>
 
-              <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2 lg:gap-3 2xl:gap-4">
+              <div className="satisfaction-sector-list flex flex-wrap gap-2 lg:grid lg:grid-cols-2 lg:gap-3 2xl:gap-4">
                 {sectors.map((sector) => {
                   return (
                     <button
@@ -216,19 +216,19 @@ export default function StatistikKepuasanModal({
                       onClick={() => {
                         setActiveMenu?.(sector.menuId);
                       }}
-                      className={`group relative flex cursor-pointer items-center gap-2.5 overflow-hidden ${rootBorderRadius.card} border border-root-accent/20 bg-root-surface p-2.5 text-left transition-all hover:border-root-accent hover:bg-root-accent/10 lg:gap-3.5 lg:p-3.5 2xl:gap-4 2xl:p-5`}
+                      className={`satisfaction-sector-card group relative flex cursor-pointer items-center gap-2 overflow-hidden ${rootBorderRadius.card} border border-root-accent/20 bg-root-surface p-1.5 text-left transition-all hover:border-root-accent hover:bg-root-accent/10 lg:gap-3.5 lg:p-3.5 2xl:gap-4 2xl:p-5`}
                     >
-                      <div className="shrink-0">
+                      <div className="satisfaction-sector-icon shrink-0">
                         <Image
                           src={sector.image}
                           alt=""
                           width={56}
                           height={56}
-                          className="h-10 w-10 object-contain lg:h-12 lg:w-12 2xl:h-14 2xl:w-14"
+                          className="h-8 w-8 object-contain lg:h-12 lg:w-12 2xl:h-14 2xl:w-14"
                         />
                       </div>
-                      <div className="min-w-0 flex-1 space-y-1 lg:space-y-1.5">
-                        <div className="flex items-center justify-between text-[11px] font-semibold uppercase text-root-text lg:text-xs">
+                      <div className="min-w-0 flex-1 space-y-0.5 lg:space-y-1.5">
+                        <div className="flex items-center justify-between text-[10px] font-semibold uppercase text-root-text lg:text-xs">
                           <span className="whitespace-normal pr-1 leading-tight">
                             {sector.name}
                           </span>
@@ -236,7 +236,7 @@ export default function StatistikKepuasanModal({
                             {sector.score}%
                           </span>
                         </div>
-                        <div className="h-1.5 w-full overflow-hidden rounded-full border border-root-accent/20 bg-root-canvas lg:h-2 2xl:h-2.5">
+                        <div className="satisfaction-sector-progress h-1 w-full overflow-hidden rounded-full border border-root-accent/20 bg-root-canvas lg:h-2 2xl:h-2.5">
                           <div
                             className="h-full rounded-full bg-root-accent"
                             style={{ width: `${sector.score}%` }}
