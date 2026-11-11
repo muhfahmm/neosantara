@@ -596,29 +596,6 @@
   }
 }
 
-@media (hover: none) and (pointer: coarse) and (max-width: 639px) {
-  :root {
-    --modal-max-width: calc(37vw - 11.84px);
-  }
-}
-
-@media (hover: none) and (pointer: coarse) and (min-width: 640px) and (max-width: 1023px) {
-  :root {
-    --modal-max-width: 13.32rem;
-  }
-}
-
-@media (hover: none) and (pointer: coarse) and (min-width: 1024px) and (max-width: 1279px) {
-  :root {
-    --modal-max-width: 162.8px;
-  }
-}
-
-@media (hover: none) and (pointer: coarse) and (min-width: 1280px) {
-  :root {
-    --modal-max-width: 15.54rem;
-  }
-}
 
 @media (orientation: portrait) and (max-width: 640px) {
   .map-status-navbar {

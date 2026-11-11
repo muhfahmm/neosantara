@@ -3,10 +3,12 @@ import { execFileSync, spawn } from "node:child_process";
 import { networkInterfaces } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { ensureGradleWrapper } from "./ensure-gradle-wrapper.mjs";
 import { findFreePort } from "./dev-ports.mjs";
 import { waitForServerReady, warmupDevServer } from "./warmup.mjs";
 
 const appDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const androidProjectDir = path.join(appDir, "src-tauri", "gen", "android");
 
 function getAndroidSdkPath() {
   return process.env.ANDROID_HOME ||
@@ -212,6 +214,8 @@ function validateAndroidDeviceHost(tauriArgs) {
 }
 
 async function main() {
+  await ensureGradleWrapper(androidProjectDir);
+
   const tauriArgs = process.argv.slice(2);
   const tauriCli = fileURLToPath(import.meta.resolve("@tauri-apps/cli/tauri.js"));
   if (tauriArgs.includes("--help") || tauriArgs.includes("-h")) {

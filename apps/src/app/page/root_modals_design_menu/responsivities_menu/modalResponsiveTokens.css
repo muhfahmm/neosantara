@@ -5,7 +5,7 @@
   --modal-side-offset: 40px;
   --modal-side-offset-right: 40px;
   --modal-max-height: calc(100dvh - 112px);
-  --modal-max-width: calc(100vw - 32px);
+  --modal-max-width: min(940px, calc(100vw - 32px));
   --map-content-top: 80px;
   --navbar-h: 0px;
   --bottom-nav-height: 44px;
@@ -17,19 +17,19 @@
 
 @media (min-width: 640px) {
   :root {
-    --modal-max-width: 36rem;
+    --modal-max-width: min(720px, calc(100vw - 40px));
   }
 }
 
 @media (min-width: 1024px) {
   :root {
-    --modal-max-width: 440px;
+    --modal-max-width: min(860px, calc(100vw - 48px));
   }
 }
 
 @media (min-width: 1280px) {
   :root {
-    --modal-max-width: 42rem;
+    --modal-max-width: min(940px, calc(100vw - 64px));
   }
 }
 
@@ -42,6 +42,7 @@
     --modal-side-offset: max(8px, var(--safe-left));
     --modal-side-offset-right: max(8px, var(--safe-right));
     --modal-max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - var(--safe-bottom) - 8px);
+    --modal-max-width: min(76vw, 840px);
   }
 }
 
@@ -54,6 +55,7 @@
     --modal-side-offset: max(8px, var(--safe-left));
     --modal-side-offset-right: max(8px, var(--safe-right));
     --modal-max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - var(--safe-bottom) - 8px);
+    --modal-max-width: calc(100vw - 24px);
   }
 }
 
