@@ -453,6 +453,11 @@ function finishCountryDay(
     sector_deficit_month_counter: metrics.sector_deficit_month_counter,
     sector_deficit_kepuasan_penalty: metrics.sector_deficit_kepuasan_penalty,
   };
+  const currentTreasury = Number(withSatisfaction.anggaran) || 0;
+  const dailyNetBalance = calculateNetBalanceWithEconomicEmbargo(
+    withSatisfaction,
+    prepared.countryName,
+  );
   const withSimulation: CountryRecord = {
     ...withSatisfaction,
     presidentRating: metrics.presidentRating,
@@ -463,14 +468,14 @@ function finishCountryDay(
     kesejahteraan_decay: metrics.kesejahteraan_decay,
     kesejahteraan_month_counter: metrics.kesejahteraan_month_counter,
     last_kesejahteraan_threshold: metrics.last_kesejahteraan_threshold,
-    anggaran:
-      (Number(withSatisfaction.anggaran) || 0) +
-      calculateNetBalanceWithEconomicEmbargo(withSatisfaction, prepared.countryName),
+    anggaran: currentTreasury,
   };
 
   // Eksekusi Otak AI Negara NPC (9 Indikator & Pembangunan Sektor)
   const brainExecution = runNpcCountryBrain(withSimulation, metadata, date);
   const updatedNpcCountry = brainExecution.updatedCountry as CountryRecord;
+  updatedNpcCountry.anggaran =
+    (Number(updatedNpcCountry.anggaran) || 0) + dailyNetBalance;
 
   // Evaluasi dan Kontrol Demografi Cerdas oleh AI (Pajak, Harga, Sistem Ekonomi, Subsidi)
   // Memastikan laju pertumbuhan tidak boleh minus, menjaga rentang minimal +1 s/d +500 jiwa/hari

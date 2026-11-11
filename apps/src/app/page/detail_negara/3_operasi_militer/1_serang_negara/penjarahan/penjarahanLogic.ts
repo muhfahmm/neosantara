@@ -2,9 +2,11 @@ import { applyWarLossesToUserArmada } from '../war_algoritm/battleEngine';
 import { generateInvasionNews } from '@/app/page/menus/news/logic/1_berita_invasi/beritaInvasiLogic';
 import { generateResourceLootNews } from '@/app/page/menus/news/logic/3_berita_pengambilan_sda/beritaPengambilanSDALogic';
 import type { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
-import { updateNpcCountrySimulationState } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
+import {
+  getNpcCountrySimulationSnapshot,
+  updateNpcCountrySimulationState,
+} from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 
-const LOOTED_CASH = 25_000_000;
 const LOOTED_RESOURCES = { emas: 500, minyak_bumi: 1000, beras: 2000 };
 
 export function lootUserProductionInventory(
@@ -60,37 +62,64 @@ export interface ResolvePlayerLootOperationInput {
 export interface PlayerLootOperationResult {
   updatedAttackerDetail?: unknown;
   targetTreasuryCleared: boolean;
+  transferredCash: number;
   newsItems: ReturnType<typeof generateInvasionNews | typeof generateResourceLootNews>[];
   notification: NotificationMessage;
 }
 
-function clearTargetTreasury(targetCountryDetail: unknown): boolean {
+function clearTargetTreasury(targetCountryDetail: unknown): { transferredCash: number } | null {
   if (!targetCountryDetail || typeof targetCountryDetail !== 'object' || Array.isArray(targetCountryDetail)) {
     console.error('[WarLoot] Cannot clear target treasury: target country detail is unavailable.');
-    return false;
+    return null;
   }
 
   const country = targetCountryDetail as Record<string, unknown>;
   const countrySlug = typeof country.country_slug === 'string' ? country.country_slug : '';
   if (!countrySlug) {
     console.error('[WarLoot] Cannot clear target treasury: target country profile has no country_slug.', country);
-    return false;
+    return null;
+  }
+
+  const simulationCountry = getNpcCountrySimulationSnapshot()?.countries[countrySlug.trim().toLowerCase()];
+  const treasuryValue = simulationCountry?.anggaran ?? country.anggaran ?? 0;
+  const targetTreasury = Number(treasuryValue);
+  if (!Number.isFinite(targetTreasury)) {
+    console.error('[WarLoot] Cannot clear target treasury: target country budget is invalid.', {
+      countrySlug,
+      treasuryValue,
+    });
+    return null;
   }
 
   if (!updateNpcCountrySimulationState(countrySlug, { anggaran: 0 })) {
     console.error('[WarLoot] Target treasury could not be cleared in the active NPC simulation.', {
       countrySlug,
     });
-    return false;
+    return null;
   }
 
-  return true;
+  return { transferredCash: Math.max(0, targetTreasury) };
 }
 
 export function resolvePlayerLootOperation(
   input: ResolvePlayerLootOperationInput,
 ): PlayerLootOperationResult {
-  const targetTreasuryCleared = clearTargetTreasury(input.targetCountryDetail);
+  const attackerDetail = input.attackerDetail &&
+    typeof input.attackerDetail === 'object' &&
+    !Array.isArray(input.attackerDetail)
+    ? input.attackerDetail as Record<string, unknown>
+    : null;
+  const attackerBudgetValue = attackerDetail?.anggaran ?? 0;
+  const attackerBudget = Number(attackerBudgetValue);
+  const canReceiveLoot = attackerDetail !== null && Number.isFinite(attackerBudget);
+  if (!canReceiveLoot) {
+    console.error('[WarLoot] Cannot transfer target treasury: attacker country budget is unavailable or invalid.', {
+      attackerBudgetValue,
+    });
+  }
+  const treasuryLoot = canReceiveLoot ? clearTargetTreasury(input.targetCountryDetail) : null;
+  const transferredCash = treasuryLoot?.transferredCash ?? 0;
+  const targetTreasuryCleared = treasuryLoot !== null;
   const hasCommittedTroops = input.troopsCommitted === true;
   const armySource = hasCommittedTroops && input.committedArmySnapshot
     ? input.committedArmySnapshot
@@ -127,7 +156,7 @@ export function resolvePlayerLootOperation(
       input.attackerIso,
       input.targetCountry,
       input.targetIso,
-      LOOTED_CASH,
+      transferredCash,
       LOOTED_RESOURCES,
       input.dateStr,
     ),
@@ -138,18 +167,27 @@ export function resolvePlayerLootOperation(
   const lossNote = userLossText && userLossText !== 'Tidak ada kerugian unit'
     ? ` Kerugian tempur armada Anda (${lossPercent}%): ${userLossText}.`
     : '';
+  const updatedArmyDetail = attackerLossResult?.updatedDetail &&
+    typeof attackerLossResult.updatedDetail === 'object' &&
+    !Array.isArray(attackerLossResult.updatedDetail)
+    ? attackerLossResult.updatedDetail as Record<string, unknown>
+    : attackerDetail;
 
   return {
-    ...(armySource ? {
-      updatedAttackerDetail: attackerLossResult?.updatedDetail,
+    ...(updatedArmyDetail ? {
+      updatedAttackerDetail: {
+        ...updatedArmyDetail,
+        ...(canReceiveLoot ? { anggaran: attackerBudget + transferredCash } : {}),
+      },
     } : {}),
     targetTreasuryCleared,
+    transferredCash,
     newsItems,
     notification: {
       id: `notif-player-loot-${Date.now()}`,
       title: '💰 OPERASI PENJARAHAN BERHASIL',
       sender: `Markas Besar Angkatan Bersenjata (${input.attackerCountry})`,
-      message: `Operasi penjarahan atas ${input.targetCountry} berhasil dilancarkan! Sumber daya alam dan rampasan perang senilai ${LOOTED_CASH.toLocaleString('id-ID')} NEO telah diamankan.${lossNote}`,
+      message: `Operasi penjarahan atas ${input.targetCountry} berhasil dilancarkan! Kas negara sebesar ${transferredCash.toLocaleString('id-ID')} NEO dan sumber daya alam telah diamankan.${lossNote}`,
       timestamp: input.dateStr,
       type: 'peringkat',
       value: 80,
