@@ -1,5 +1,5 @@
 "use client"
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import RootModalCloseButton from '@/app/page/root_modals_design_menu/RootModalCloseButton';
 import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
@@ -247,13 +247,13 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                 title="Ideologi Negara"
                 description="Tentukan ideologi yang menjadi dasar kebijakan dan kedaulatan negara. Tiap ideologi memberikan efek berbeda; tinjau bonusnya sebelum melakukan perubahan yang membutuhkan anggaran dan konfirmasi."
               />
-              <SharedModalCloseButton
+              <RootModalCloseButton
                 onClick={onClose}
                 className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
                appearance="custom">
                 <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
-              </SharedModalCloseButton>
+              </RootModalCloseButton>
             </div>
           </div>
 

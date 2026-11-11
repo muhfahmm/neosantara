@@ -1,5 +1,5 @@
 "use client"
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import RootModalCloseButton from '@/app/page/root_modals_design_menu/RootModalCloseButton';
 import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
@@ -233,13 +233,13 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                 title="Agama & Kepercayaan"
                 description="Pilih dan kelola agama atau kepercayaan negara, lalu tinjau persebarannya di dunia. Setiap pilihan memiliki bonus tersendiri dan perubahan agama memerlukan biaya serta konfirmasi."
               />
-              <SharedModalCloseButton
+              <RootModalCloseButton
                 onClick={onClose}
                 className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
                appearance="custom">
                 <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
-              </SharedModalCloseButton>
+              </RootModalCloseButton>
             </div>
           </div>
 

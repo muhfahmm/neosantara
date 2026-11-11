@@ -25,6 +25,8 @@ export function ModalCloseButton({
     ...buttonProps
 }: ModalCloseButtonProps) {
     const closeButtonClassName = getBorderOnlyHoverClasses(className);
+    const sharedModalCloseClasses =
+        'inline-flex shrink-0 cursor-pointer items-center justify-center gap-1 rounded-xl border border-root-accent/30 bg-root-surface p-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-root-subtle shadow-sm transition-all hover:text-root-accent hover:border-root-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent focus-visible:ring-offset-2 focus-visible:ring-offset-root-canvas lg:p-2 lg:text-xs';
 
     if (appearance === 'custom') {
         return (
@@ -33,7 +35,7 @@ export function ModalCloseButton({
                 type={buttonProps.type ?? 'button'}
                 onClick={onClick}
                 aria-label={buttonProps['aria-label'] ?? ariaLabel}
-                className={`${closeButtonClassName} !rounded-lg`}
+                className={`${sharedModalCloseClasses} ${closeButtonClassName} !rounded-lg`}
             >
                 {children}
             </button>
@@ -46,7 +48,7 @@ export function ModalCloseButton({
                 type="button"
                 onClick={onClick}
                 aria-label={ariaLabel}
-                className={`inline-flex shrink-0 cursor-pointer items-center justify-center rounded-lg border border-root-accent/30 bg-root-surface p-1.5 text-root-accent transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent focus-visible:ring-offset-2 focus-visible:ring-offset-root-canvas ${closeButtonClassName} !rounded-lg`}
+                className={`${sharedModalCloseClasses} p-1.5 text-root-accent ${closeButtonClassName} !rounded-lg`}
             >
                 <X aria-hidden="true" className="h-4 w-4" />
             </button>
@@ -58,9 +60,9 @@ export function ModalCloseButton({
             type="button"
             onClick={onClick}
             aria-label={ariaLabel}
-            className={`inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-root-accent/30 bg-root-surface p-1.5 text-xs font-bold uppercase text-root-subtle transition-all sm:p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent focus-visible:ring-offset-2 focus-visible:ring-offset-root-canvas ${closeButtonClassName} !rounded-lg`}
+            className={`${sharedModalCloseClasses} ${closeButtonClassName} !rounded-lg`}
         >
-            <span className="pl-1 text-xs font-semibold uppercase tracking-widest">{children ?? 'Tutup'}</span>
+            <span className="pl-1 text-[10px] font-semibold uppercase tracking-[0.2em] lg:text-xs">{children ?? 'Tutup'}</span>
             <X aria-hidden="true" className="h-4 w-4" />
         </button>
     );
