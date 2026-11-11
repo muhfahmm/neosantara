@@ -236,6 +236,7 @@ export function Navbar({
 
     return (
         <nav
+            data-viewport-mode={viewportMode === 'desktop' ? undefined : viewportMode}
             style={{
                 paddingTop: 'calc(var(--safe-top) + 0.35rem)',
                 paddingLeft: 'calc(var(--safe-left) + 0.5rem)',
@@ -245,7 +246,7 @@ export function Navbar({
         >
             {/* Mode Landscape Phone: Tata letak kompak 1 baris */}
             {isLandscapePhone ? (
-                <div className="w-full flex items-center justify-between gap-1 pointer-events-auto bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg min-h-[38px]">
+                <div className="map-status-navbar-panel w-full flex items-center justify-between gap-1 pointer-events-auto bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg min-h-[38px]">
                     {/* Sisi Kiri: Power + Bendera Negara */}
                     <div className="flex shrink-0 items-center gap-1">
                         <button
@@ -340,9 +341,9 @@ export function Navbar({
                 </div>
             ) : isPortraitPhone ? (
                 /* Mode Portrait Phone: Dua baris ringkas */
-                <div className="w-full flex flex-col gap-1 pointer-events-auto">
+                <div className="map-status-navbar-portrait-content w-full flex flex-col gap-1 pointer-events-auto">
                     {/* Baris 1: Menu + Negara + Aksi Game */}
-                    <div className="flex min-h-[36px] items-center justify-between gap-1 bg-root-surface/95 border border-root-accent/30 rounded-xl px-2.5 py-1 shadow-lg">
+                    <div className="map-status-navbar-panel flex min-h-[36px] items-center justify-between gap-1 bg-root-surface/95 border border-root-accent/30 rounded-xl px-2.5 py-1 shadow-lg">
                         <div className="flex min-w-0 flex-1 items-center gap-1.5">
                             <button
                                 onClick={onOpenGameMenu}
@@ -387,13 +388,13 @@ export function Navbar({
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-center gap-1.5 pointer-events-auto bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg">
+                    <div className="map-status-navbar-panel flex items-center justify-center gap-1.5 pointer-events-auto bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg">
                         <AttackDebugButton selectedCountry={selectedCountry} countryDetail={countryDetail} />
                         <ZoomIndicator mapZoom={mapZoom} compact />
                     </div>
 
                     {/* Baris 2: Angka lengkap dengan label dan perubahan harian */}
-                    <div className="grid grid-cols-6 items-center gap-x-1 gap-y-1 bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg">
+                    <div className="map-status-navbar-panel grid grid-cols-6 items-center gap-x-1 gap-y-1 bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg">
                         <MobileStatusItem
                             className="col-span-3"
                             icon={<Users className="h-2.5 w-2.5" />}
