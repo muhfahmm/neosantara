@@ -273,7 +273,7 @@ export default function DiplomacyTracking({ onOpen, isUiHidden = false }: Diplom
 
       {isTrackingOpen && (
         <PausedMenuFrame zIndexClass="z-[200]">
-          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden font-sans">
+          <div className="tracking-modal-typography relative flex min-h-0 flex-1 flex-col overflow-hidden font-sans">
 
             {/* HEADER */}
             <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0 rounded-t-2xl">

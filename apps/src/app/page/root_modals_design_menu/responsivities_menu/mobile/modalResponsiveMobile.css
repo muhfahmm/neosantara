@@ -634,6 +634,23 @@
     bottom: var(--safe-bottom) !important;
   }
 
+  /* Reserve space for the floating mobile controls instead of covering them. */
+  .paused-menu-frame[data-viewport-mode='portraitPhone']:has(:is(.research-selection-typography, .tracking-modal-typography, .mission-modal-typography)) > .modal-responsive-shell {
+    width: min(calc(100vw - 24px), 420px) !important;
+    max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - 76px) !important;
+    height: auto !important;
+    min-height: 0;
+  }
+
+  .research-page-modal.research-modal-typography {
+    left: 12px;
+    right: 12px;
+    bottom: calc(var(--safe-bottom) + 76px) !important;
+    border: 1px solid rgb(0 255 170 / 30%);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
   .research-page-modal > .flex-1.flex.min-h-0 {
     flex-direction: column;
   }
@@ -669,6 +686,34 @@
     max-height: 34dvh;
     border-right: 0;
     border-bottom: 1px solid rgb(0 255 170 / 20%);
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  /* Every notebook modal must leave the mobile side menus and time controller exposed. */
+  .notebook-modal-frame > .modal-responsive-shell {
+    width: min(74vw, 820px) !important;
+    max-width: min(74vw, 820px) !important;
+    height: calc(100dvh - var(--navbar-h) - var(--safe-top) - 62px) !important;
+    max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - 62px) !important;
+  }
+
+  /* Keep mission, tracking, and research dialogs clear of side menus and time controls. */
+  .paused-menu-frame[data-viewport-mode='landscapePhone']:has(:is(.research-selection-typography, .tracking-modal-typography, .mission-modal-typography)) > .modal-responsive-shell {
+    width: min(72vw, 680px) !important;
+    max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - 56px) !important;
+    height: auto !important;
+    min-height: 0;
+  }
+
+  .research-page-modal.research-modal-typography {
+    top: calc(var(--navbar-h) + var(--safe-top) + 6px) !important;
+    right: 13vw;
+    bottom: calc(var(--safe-bottom) + 52px) !important;
+    left: 13vw;
+    border: 1px solid rgb(0 255 170 / 30%);
+    border-radius: 10px;
+    overflow: hidden;
   }
 }
 
