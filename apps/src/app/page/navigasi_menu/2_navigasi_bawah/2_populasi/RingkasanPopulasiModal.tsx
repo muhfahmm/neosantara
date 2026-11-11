@@ -145,6 +145,9 @@ export default function RingkasanPopulasiModal({
   const [isTempatUmumOpen, setIsTempatUmumOpen] = useState(false);
   const [tempatUmumActiveTab, setTempatUmumActiveTab] = useState<string>("infrastruktur");
   const [isKesejahteraanOpen, setIsKesejahteraanOpen] = useState(Boolean(initialOpenKesejahteraan));
+  const [kesejahteraanTab, setKesejahteraanTab] = useState<"statistik" | "naikkan">(
+    initialKesejahteraanTab ?? "statistik",
+  );
   const [isTunawismaOpen, setIsTunawismaOpen] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
 
@@ -165,6 +168,7 @@ export default function RingkasanPopulasiModal({
           onClose();
           return;
         }
+        setKesejahteraanTab("statistik");
         setIsKesejahteraanOpen(false);
       }}
       countryDetail={countryDetail}
@@ -173,7 +177,8 @@ export default function RingkasanPopulasiModal({
       metrics={metrics}
       setActiveMenu={setActiveMenu}
       currentDate={currentDate}
-      initialTab={initialKesejahteraanTab}
+      activeTab={kesejahteraanTab}
+      onActiveTabChange={setKesejahteraanTab}
       onOpenTempatUmum={(tabId: string) => {
         if (onOpenTempatUmum) {
           onOpenTempatUmum(tabId);
@@ -424,7 +429,10 @@ export default function RingkasanPopulasiModal({
             {/* Kesejahteraan */}
             <div
               className={`population-summary-card group bg-root-surface border border-root-accent/20 p-2 lg:p-2.5 2xl:p-4 ${rootBorderRadius.card} flex items-center justify-between gap-1.5 lg:gap-2 2xl:gap-3 transition-all cursor-pointer hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98]`}
-              onClick={() => setIsKesejahteraanOpen(true)}
+              onClick={() => {
+                setKesejahteraanTab("statistik");
+                setIsKesejahteraanOpen(true);
+              }}
             >
               <div className="flex min-w-0 flex-1 items-center gap-2 lg:gap-2.5 2xl:gap-3.5">
                 <div className="p-1.5 lg:p-2 2xl:p-2.5 bg-root-canvas border border-root-accent/30 rounded-md lg:rounded-lg 2xl:rounded-xl shrink-0 group-hover:scale-110 transition-transform">

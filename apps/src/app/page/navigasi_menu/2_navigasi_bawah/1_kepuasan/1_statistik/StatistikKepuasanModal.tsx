@@ -148,6 +148,7 @@ export default function StatistikKepuasanModal({
                   label: "Naikkan Peringkat",
                   isActive: false,
                   onClick: () => setActiveMenu?.("Action:NaikkanKepuasan"),
+                  onPointerDown: () => setActiveMenu?.("Action:NaikkanKepuasan"),
                 },
               ]}
             />

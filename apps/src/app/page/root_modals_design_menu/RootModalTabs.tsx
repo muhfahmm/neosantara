@@ -6,6 +6,8 @@ export interface RootModalTabItem {
   label: string;
   isActive: boolean;
   onClick?: () => void;
+  onPointerDown?: () => void;
+  className?: string;
   icon?: React.ReactNode;
 }
 
@@ -23,12 +25,19 @@ export function RootModalTabs({ items, className = '', compact = false }: RootMo
           key={item.label}
           type="button"
           onClick={item.onClick}
+          onPointerDown={item.onPointerDown}
+          onTouchEnd={(e) => {
+            if (item.onClick) {
+              e.preventDefault();
+              item.onClick();
+            }
+          }}
           aria-pressed={item.isActive}
           className={`inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-3.5 ${compact ? 'py-1' : 'py-2'} text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
             item.isActive
               ? 'bg-root-accent text-root-canvas'
               : 'text-root-subtle hover:text-root-text hover:ring-1 hover:ring-inset hover:ring-root-accent/40'
-          }`}
+          } ${item.className ?? ''}`}
         >
           {item.icon}
           {item.label}

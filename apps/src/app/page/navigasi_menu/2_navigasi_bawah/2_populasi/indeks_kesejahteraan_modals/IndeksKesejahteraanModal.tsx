@@ -29,6 +29,7 @@ import {
 } from "@/app/page/menus/inbox/logic/6_notifikasi_bencana/2_wabah_penyakit/wabahLogic";
 import NaikkanKesejahteraanTab from "./NaikkanKesejahteraanTab";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { RootModalTabs } from "@/app/page/root_modals_design_menu/RootModalTabs";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
@@ -49,7 +50,8 @@ interface IndeksKesejahteraanModalProps {
   onOpenTempatUmum?: (tab: string) => void;
   onOpenIndustriPangan?: () => void;
   currentDate?: Date | string;
-  initialTab?: "statistik" | "naikkan";
+  activeTab: "statistik" | "naikkan";
+  onActiveTabChange: (tab: "statistik" | "naikkan") => void;
 }
 
 export default function IndeksKesejahteraanModal({
@@ -63,9 +65,9 @@ export default function IndeksKesejahteraanModal({
   onOpenTempatUmum,
   onOpenIndustriPangan,
   currentDate,
-  initialTab,
+  activeTab,
+  onActiveTabChange,
 }: IndeksKesejahteraanModalProps) {
-  const [activeTab, setActiveTab] = useState<"statistik" | "naikkan">("statistik");
   const [showPendidikanInfoModal, setShowPendidikanInfoModal] = useState(false);
   const [showKesehatanInfoModal, setShowKesehatanInfoModal] = useState(false);
   const [showPenegakanHukumInfoModal, setShowPenegakanHukumInfoModal] = useState(false);
@@ -75,14 +77,6 @@ export default function IndeksKesejahteraanModal({
     if (!isOpen) return;
     fetchBuildingMetadata().then((data) => setMetadata(data || {}));
   }, [isOpen]);
-
-  useEffect(() => {
-    if (isOpen) {
-      setActiveTab(initialTab ?? "statistik");
-    } else {
-      setActiveTab("statistik");
-    }
-  }, [isOpen, initialTab]);
 
   const kesejahteraan = useMemo(() => {
     if (!countryDetail) return null;
@@ -193,29 +187,26 @@ export default function IndeksKesejahteraanModal({
           </div>
 
           {/* Sub-Header Tab Bar */}
-          <div className="px-4 lg:px-6 py-2 lg:py-2.5 bg-root-canvas border-b border-root-accent/20 flex items-center justify-start shrink-0 relative z-10">
-            <div className="flex items-center bg-root-surface p-1 rounded-xl border border-root-accent/30">
-              <button
-                onClick={() => setActiveTab("statistik")}
-                className={`px-3 lg:px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
-                  activeTab === "statistik"
-                    ? "bg-root-accent text-root-canvas "
-                    : "text-root-muted hover:text-root-text"
-                }`}
-              >
-                Statistik
-              </button>
-              <button
-                onClick={() => setActiveTab("naikkan")}
-                className={`px-3 lg:px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
-                  activeTab === "naikkan"
-                    ? "bg-root-accent text-root-canvas "
-                    : "text-root-muted hover:text-root-text"
-                }`}
-              >
-                Naikkan Kesejahteraan
-              </button>
-            </div>
+          <div className="welfare-modal-tab-bar px-4 lg:px-6 py-2 lg:py-2.5 bg-root-canvas border-b border-root-accent/20 flex items-center justify-start shrink-0 relative z-20">
+            <RootModalTabs
+              className="welfare-modal-tabs"
+              items={[
+                {
+                  label: "Statistik",
+                  isActive: activeTab === "statistik",
+                  onClick: () => onActiveTabChange("statistik"),
+                  onPointerDown: () => onActiveTabChange("statistik"),
+                  className: "welfare-modal-tab-button",
+                },
+                {
+                  label: "Naikkan Kesejahteraan",
+                  isActive: activeTab === "naikkan",
+                  onClick: () => onActiveTabChange("naikkan"),
+                  onPointerDown: () => onActiveTabChange("naikkan"),
+                  className: "welfare-modal-tab-button",
+                },
+              ]}
+            />
           </div>
 
           {/* Content (Scrollable) */}

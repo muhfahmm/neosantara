@@ -223,13 +223,34 @@
   min-height: 0;
 }
 
+.responsive-modal-frame[data-viewport-mode] .satisfaction-modal-header {
+  position: relative;
+  z-index: 50 !important;
+  isolation: isolate;
+  pointer-events: auto !important;
+}
+
+.responsive-modal-frame[data-viewport-mode] .satisfaction-modal-header-main {
+  position: relative;
+  z-index: 50 !important;
+  pointer-events: auto !important;
+  touch-action: pan-x;
+}
+
 .responsive-modal-frame[data-viewport-mode] .satisfaction-modal-tabs {
+  position: relative;
+  z-index: 50 !important;
+  pointer-events: auto !important;
   gap: 2px !important;
   padding: 2px !important;
   border-radius: 7px !important;
 }
 
 .responsive-modal-frame[data-viewport-mode] .satisfaction-modal-tabs > button {
+  position: relative;
+  z-index: 50 !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
   min-height: 28px !important;
   padding: 4px 10px !important;
   border-radius: 5px !important;

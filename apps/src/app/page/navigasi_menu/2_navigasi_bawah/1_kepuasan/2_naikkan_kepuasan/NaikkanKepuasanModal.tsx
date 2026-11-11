@@ -400,6 +400,7 @@ export default function NaikkanKepuasanModal({
                     label: "Statistik",
                     isActive: false,
                     onClick: () => setActiveMenu?.("Dashboard:Kepuasan"),
+                    onPointerDown: () => setActiveMenu?.("Dashboard:Kepuasan"),
                   },
                   { label: "Naikkan Peringkat", isActive: true },
                 ]}
