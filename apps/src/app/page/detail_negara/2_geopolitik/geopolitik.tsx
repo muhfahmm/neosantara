@@ -31,7 +31,7 @@ const ActionButton = ({ icon: Icon, label, onClick, disabled }: { icon: any, lab
     <button
       onClick={disabled ? undefined : onClick}
       aria-disabled={disabled}
-      className={`${base} ${interactive}`}
+      className={`country-detail-action-card ${base} ${interactive}`}
     >
       <Icon className={`h-8 w-8 lg:h-6 lg:w-6 xl:h-8 xl:w-8 text-root-accent ${disabled ? '' : 'group-hover:scale-110'} transition-transform`} />
       <span className="text-xs lg:text-[10px] xl:text-xs font-black text-root-accent uppercase tracking-wider text-center leading-tight">
@@ -197,7 +197,7 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
   return (
     <div className="space-y-6 lg:space-y-4 xl:space-y-6">
       {/* Grid Layout 5 Tombol Aksi */}
-      <div className="grid grid-cols-2 md:grid-cols-4 items-stretch gap-4 lg:gap-3 xl:gap-4 pt-6 lg:pt-4 xl:pt-6">
+      <div className="country-detail-action-grid grid grid-cols-2 md:grid-cols-4 items-stretch gap-4 lg:gap-3 xl:gap-4 pt-6 lg:pt-4 xl:pt-6">
         <ActionButton icon={Sword} label="Beri Tentara" onClick={() => setIsBeriTentaraOpen(true)} disabled={!hasDefenseAlliance} />
         <ActionButton icon={Gift} label="Beri Hadiah" onClick={() => setIsBeriHadiahOpen(true)} />
         <ActionButton icon={Heart} label="Tingkatkan Hubungan" onClick={() => setIsTingkatkanOpen(true)} />

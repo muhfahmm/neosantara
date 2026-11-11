@@ -775,12 +775,10 @@ export function useNpcCountrySimulation(
       metadata,
     };
     if (pendingSimulationTimer !== null) window.clearTimeout(pendingSimulationTimer);
-    pendingSimulationTimer = window.setTimeout(() => {
-      pendingSimulationTimer = null;
-      void flushNpcCountrySimulation().catch(error => {
-        console.error("Gagal menjalankan simulasi NPC:", error);
-      });
-    }, 250);
+    pendingSimulationTimer = null;
+    void flushNpcCountrySimulation().catch(error => {
+      console.error("Gagal menjalankan simulasi NPC:", error);
+    });
   }, [normalizedPlayerSlug, loadedForPlayerSlug, currentDateString, countries, metadata, isPaused]);
 }
 

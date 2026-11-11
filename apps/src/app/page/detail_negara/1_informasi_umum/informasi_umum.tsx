@@ -101,7 +101,7 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
       onClick={disabled ? undefined : onClick}
       aria-disabled={disabled}
       title={title}
-      className={`${base} ${interactive}`}
+      className={`country-detail-action-card ${base} ${interactive}`}
     >
       <Icon className={`h-8 w-8 lg:h-6 lg:w-6 xl:h-8 xl:w-8 ${iconClass ?? 'text-root-accent'} ${disabled && !keepOpacity ? '' : 'group-hover:scale-110'} transition-transform`} />
       <span className={`text-xs lg:text-[10px] xl:text-xs font-black ${labelClass ?? 'text-root-accent'} uppercase tracking-wider text-center leading-tight`}>
@@ -529,7 +529,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           adjustPlayerNetBalance={adjustNetBalance}
         />
 
-      ) : <div className="grid grid-cols-2 md:grid-cols-4 items-stretch gap-4 lg:gap-3 xl:gap-4 pt-6 lg:pt-4 xl:pt-6">
+      ) : <div className="country-detail-action-grid grid grid-cols-2 md:grid-cols-4 items-stretch gap-4 lg:gap-3 xl:gap-4 pt-6 lg:pt-4 xl:pt-6">
 
         {/* Tombol Kedutaan dengan Badge Tanggal Selesai */}
         {!isAnnexedTerritory && <div className="relative min-w-0">

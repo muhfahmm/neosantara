@@ -510,6 +510,80 @@ function mergeNpcAnnexedForces(
     }
 }
 
+function resolveCountrySlug(country: Record<string, unknown> | null | undefined, countryNameFallback?: string): string {
+    if (country) {
+        if (typeof country.country_slug === 'string' && country.country_slug.trim()) {
+            return country.country_slug.trim().toLowerCase();
+        }
+        if (typeof country.slug === 'string' && country.slug.trim()) {
+            return country.slug.trim().toLowerCase();
+        }
+    }
+    const nameToLookup = String(
+        country?.country ||
+        country?.nama_negara ||
+        country?.name_id ||
+        country?.name_en ||
+        countryNameFallback ||
+        ''
+    ).trim();
+    if (!nameToLookup) return '';
+
+    const normName = normalizeMapKey(nameToLookup);
+    const matchedPath = Object.entries(countryPaths as Record<string, string>).find(
+        ([k]) => normalizeMapKey(k) === normName
+    )?.[1];
+    if (matchedPath) {
+        const filename = matchedPath.split(/[\\/]/).pop() || '';
+        return filename.replace(/\.ts$/i, '').replace(/^\d+_/, '').trim().toLowerCase();
+    }
+    return normName;
+}
+
+function applyNpcWarLoot(
+    attacker: Record<string, unknown> | null | undefined,
+    attackerName: string,
+    target: Record<string, unknown> | null | undefined,
+    targetName: string,
+    isPlayerAttacker: boolean,
+    onPlayerTreasuryLooted?: (amount: number) => void,
+): number {
+    const targetSlug = resolveCountrySlug(target, targetName);
+    const attackerSlug = resolveCountrySlug(attacker, attackerName);
+
+    const simSnapshot = getNpcCountrySimulationSnapshot();
+    const targetSim = targetSlug ? simSnapshot?.countries[targetSlug] : null;
+    const targetCash = Math.max(
+        0,
+        Number(targetSim?.anggaran ?? target?.anggaran ?? 0)
+    );
+
+    // Kuras kas negara target ke 0 di simulasi NPC
+    if (targetSlug) {
+        updateNpcCountrySimulationState(targetSlug, { anggaran: 0 });
+    }
+    if (target) {
+        target.anggaran = 0;
+    }
+
+    // Transfer uang hasil jarahan ke kas negara penyerang
+    if (isPlayerAttacker) {
+        if (onPlayerTreasuryLooted && targetCash > 0) {
+            onPlayerTreasuryLooted(targetCash);
+        }
+    } else if (attackerSlug) {
+        const attackerSim = simSnapshot?.countries[attackerSlug];
+        const currentAttackerCash = Number(attackerSim?.anggaran ?? attacker?.anggaran ?? 0);
+        const nextAttackerCash = currentAttackerCash + targetCash;
+        updateNpcCountrySimulationState(attackerSlug, { anggaran: nextAttackerCash });
+        if (attacker) {
+            attacker.anggaran = nextAttackerCash;
+        }
+    }
+
+    return targetCash;
+}
+
 const getCityOwnerId = (countryIso: string, cityName: string) =>
     `${countryIso.toLowerCase()}:${normalizeMapKey(cityName)}`;
 
@@ -10828,7 +10902,19 @@ export default function MapPage() {
                                     });
                                 } else {
                                     // JARAH SDA (40%): Menjarah SDA dan kas tanpa menganeksasi wilayah
-                                    const lootedCash = 15000000;
+                                    const lootedCash = applyNpcWarLoot(
+                                        activeWarAnimation.attackerCountryDetail,
+                                        activeWarAnimation.attacker,
+                                        activeWarAnimation.targetCountryDetail,
+                                        activeWarAnimation.target,
+                                        Boolean(activeWarAnimation.isPlayerAttacker),
+                                        (amount) => {
+                                            setCountryDetail((prev: any) => prev ? {
+                                                ...prev,
+                                                anggaran: (Number(prev.anggaran) || 0) + amount,
+                                            } : prev);
+                                        }
+                                    );
                                     const lootedResources = { emas: 350, minyak_bumi: 800, beras: 1500 };
 
                                     const lootNews = generateResourceLootNews(
@@ -10927,7 +11013,19 @@ export default function MapPage() {
                                         compact: true,
                                     });
                                 } else {
-                                    const lootedCash = 15000000;
+                                    const lootedCash = applyNpcWarLoot(
+                                        activeWarAnimation.attackerCountryDetail,
+                                        activeWarAnimation.attacker,
+                                        activeWarAnimation.targetCountryDetail,
+                                        activeWarAnimation.target,
+                                        Boolean(activeWarAnimation.isPlayerAttacker),
+                                        (amount) => {
+                                            setCountryDetail((prev: any) => prev ? {
+                                                ...prev,
+                                                anggaran: (Number(prev.anggaran) || 0) + amount,
+                                            } : prev);
+                                        }
+                                    );
                                     const lootedResources = { emas: 350, minyak_bumi: 800, beras: 1500 };
                                     const lootNews = generateResourceLootNews(
                                         activeWarAnimation.attacker,
@@ -10943,7 +11041,7 @@ export default function MapPage() {
                                         id: `notif-ai-war-loot-${Date.now()}`,
                                         title: '💰 PERANG AI: NEGARA DIJARAH',
                                         sender: `Laporan Perang ${activeWarAnimation.attacker}`,
-                                        message: `${activeWarAnimation.attacker} memenangkan perang dan menjarah sumber daya ${activeWarAnimation.target}. Kepemilikan wilayah negara tersebut tidak berubah.`,
+                                        message: `${activeWarAnimation.attacker} memenangkan perang dan menjarah kas negara (${new Intl.NumberFormat('id-ID').format(lootedCash)} NEO) serta sumber daya ${activeWarAnimation.target}. Kepemilikan wilayah negara tersebut tidak berubah.`,
                                         timestamp: currentDateStr,
                                         type: 'peringkat',
                                         value: 80,

@@ -223,6 +223,109 @@
   min-height: 0;
 }
 
+.country-detail-modal-frame[data-viewport-mode] .country-detail-close-button {
+  box-sizing: border-box !important;
+  width: 64px !important;
+  min-width: 64px !important;
+  height: 26px !important;
+  min-height: 26px !important;
+  gap: 3px !important;
+  padding: 0 !important;
+}
+
+.country-detail-modal-frame[data-viewport-mode] .country-detail-close-button > span {
+  padding: 0 !important;
+  font-size: 10px !important;
+  letter-spacing: normal !important;
+  line-height: 1 !important;
+}
+
+.country-detail-modal-frame[data-viewport-mode] .country-detail-close-button > svg {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.country-detail-modal-frame[data-viewport-mode] .country-detail-modal-header {
+  padding-block: 4px !important;
+}
+
+.country-detail-modal-frame[data-viewport-mode] .country-detail-summary {
+  box-sizing: border-box;
+  min-height: 48px;
+  padding-block: 4px !important;
+}
+
+.country-detail-modal-frame[data-viewport-mode] .country-detail-summary > div > div > div:first-child {
+  padding: 3px !important;
+}
+
+.country-detail-modal-frame[data-viewport-mode] .country-detail-summary span {
+  line-height: 1.1 !important;
+}
+
+.country-detail-modal-frame[data-viewport-mode] .country-detail-modal-globe {
+  padding: 4px !important;
+  border-radius: 8px !important;
+}
+
+.country-detail-modal-frame[data-viewport-mode] .country-detail-modal-globe-icon {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.country-detail-modal-frame[data-viewport-mode] .country-detail-tabs {
+  gap: 2px !important;
+  margin-bottom: 8px !important;
+  padding-block: 0 !important;
+  padding-inline: 2px !important;
+}
+
+.country-detail-modal-frame[data-viewport-mode] .country-detail-tab-button {
+  gap: 5px !important;
+  padding-block: 3px !important;
+  padding-inline: 8px !important;
+  font-size: 10px !important;
+  letter-spacing: 0.06em !important;
+  line-height: 1.15 !important;
+}
+
+.country-detail-modal-frame[data-viewport-mode] .country-detail-modal-body {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
+
+.country-detail-modal-frame[data-viewport-mode] .country-detail-tab-icon {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.country-detail-modal-frame[data-viewport-mode] .country-detail-action-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  padding-top: 10px !important;
+}
+
+.country-detail-modal-frame[data-viewport-mode] .country-detail-action-card {
+  box-sizing: border-box !important;
+  height: 82px !important;
+  min-height: 82px !important;
+  gap: 6px !important;
+  padding: 8px !important;
+  border-radius: 10px !important;
+}
+
+.country-detail-modal-frame[data-viewport-mode] .country-detail-action-card > svg {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+.country-detail-modal-frame[data-viewport-mode] .country-detail-action-card > span {
+  font-size: 10px !important;
+  line-height: 1.15 !important;
+  letter-spacing: 0.04em !important;
+}
+
 .notebook-modal-frame[data-viewport-mode]:has(.production-modal-layout) .notebook-modal-content {
   overflow: hidden;
 }
@@ -675,6 +778,11 @@
     max-width: min(74vw, 820px) !important;
     height: calc(100dvh - var(--navbar-h) - var(--safe-top) - 62px) !important;
     max-height: calc(100dvh - var(--navbar-h) - var(--safe-top) - 62px) !important;
+  }
+
+  .country-detail-modal-frame > .modal-responsive-shell {
+    width: min(86vw, 1000px) !important;
+    max-width: min(86vw, 1000px) !important;
   }
 
   /* Keep mission, tracking, and research dialogs clear of side menus and time controls. */

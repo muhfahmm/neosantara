@@ -15,6 +15,7 @@ interface NotebookModalWrapperProps {
   compact?: boolean;
   squareCorners?: boolean;
   hideWhenInfoModalOpen?: boolean;
+  frameClassName?: string;
 }
 
 export function NotebookModalWrapper({
@@ -26,6 +27,7 @@ export function NotebookModalWrapper({
   compact = false,
   squareCorners = false,
   hideWhenInfoModalOpen = true,
+  frameClassName = '',
 }: NotebookModalWrapperProps) {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const decorationsCount = ringCount ?? (compact ? 5 : 11);
@@ -46,7 +48,7 @@ export function NotebookModalWrapper({
   return (
     <div
       data-viewport-mode={viewportMode === 'desktop' ? undefined : viewportMode}
-      className={`responsive-modal-frame notebook-modal-frame ${isHidden || (hideWhenInfoModalOpen && isInfoModalOpen) ? 'hidden' : ''} fixed inset-0 ${zIndexClass} flex items-center justify-center font-sans pointer-events-auto`}
+      className={`responsive-modal-frame notebook-modal-frame ${frameClassName} ${isHidden || (hideWhenInfoModalOpen && isInfoModalOpen) ? 'hidden' : ''} fixed inset-0 ${zIndexClass} flex items-center justify-center font-sans pointer-events-auto`}
     >
       {/* Notebook Outer Frame */}
       <div

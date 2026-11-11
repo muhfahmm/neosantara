@@ -57,6 +57,7 @@ interface CountryDetailModalProps {
 }
 
 const normalizeCountryKey = (value: unknown) => String(value || '').toLowerCase().trim();
+const COUNTRY_SUMMARY_FONT_SIZE = 'text-[8px] lg:text-[9px] xl:text-[11px]';
 
 interface AnnexationInfo {
   attackerCountry?: string;
@@ -572,13 +573,25 @@ export function CountryDetailModal({
       } : prev));
     } else if (fetchedDetail?.country_slug) {
       const liveNpc = applyNpcCountrySimulationState(fetchedDetail);
-      if (liveNpc) {
-        setFetchedDetail((prev: any) => (prev ? {
-          ...prev,
-          anggaran: liveNpc.anggaran,
-          jumlah_penduduk: liveNpc.jumlah_penduduk,
-        } : prev));
-      }
+      const targetNetBalance = calculateNetBalanceWithEconomicEmbargo(liveNpc, countryName || undefined);
+      const targetNetPopulation = calculateCountryNetPopulation(liveNpc);
+      const currentAnggaran = Number(liveNpc.anggaran ?? fetchedDetail.anggaran ?? 0);
+      const currentPopulasi = Number(liveNpc.jumlah_penduduk ?? fetchedDetail.jumlah_penduduk ?? 0);
+
+      // Jika simulasi NPC belum selesai menghasilkan angka hari baru (anggaran masih persis sama dengan kemarin),
+      // prediksikan secara instan (optimistic instant update) agar UI langsung terupdate tanpa jeda/delay
+      const nextAnggaran = liveNpc.anggaran !== undefined && liveNpc.anggaran !== fetchedDetail.anggaran
+        ? liveNpc.anggaran
+        : currentAnggaran + targetNetBalance;
+      const nextPopulasi = liveNpc.jumlah_penduduk !== undefined && liveNpc.jumlah_penduduk !== fetchedDetail.jumlah_penduduk
+        ? liveNpc.jumlah_penduduk
+        : currentPopulasi + targetNetPopulation;
+
+      setFetchedDetail((prev: any) => (prev ? {
+        ...prev,
+        anggaran: nextAnggaran,
+        jumlah_penduduk: nextPopulasi,
+      } : prev));
     }
   }, [currentDate, fetchedDetail, isOpen, countryName, countryDetail]);
 
@@ -772,12 +785,12 @@ export function CountryDetailModal({
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.05)_0%,transparent_100%)] pointer-events-none" />
 
         {/* HEADER Modal */}
-        <div className="px-3 sm:px-8 py-2 sm:py-4 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0 rounded-none">
+        <div className="country-detail-modal-header px-3 sm:px-8 py-2 sm:py-4 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0 rounded-none">
           <div className="flex items-center gap-2 sm:gap-4">
 
             {/* 1. Icon Globe */}
-            <div className="p-1 sm:p-2.5 lg:p-2 bg-root-accent/10 rounded-lg sm:rounded-xl border border-root-accent/30 shrink-0 flex items-center justify-center">
-              <Globe className="h-3.5 w-3.5 sm:h-6 sm:w-6 lg:h-5 lg:w-5 xl:h-6 xl:w-6 text-root-accent" />
+            <div className="country-detail-modal-globe p-1 sm:p-2.5 lg:p-2 bg-root-accent/10 rounded-lg sm:rounded-xl border border-root-accent/30 shrink-0 flex items-center justify-center">
+              <Globe className="country-detail-modal-globe-icon h-3.5 w-3.5 sm:h-6 sm:w-6 lg:h-5 lg:w-5 xl:h-6 xl:w-6 text-root-accent" />
             </div>
 
             {/* 2. Judul & Subjudul */}
@@ -803,44 +816,44 @@ export function CountryDetailModal({
 
           <SharedModalCloseButton
             onClick={onClose}
-            className="p-1 sm:p-2 rounded-lg sm:rounded-xl border border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer font-bold text-[10px] sm:text-xs uppercase flex items-center gap-1 sm:gap-1.5"
+           className="country-detail-close-button p-1 sm:p-2 rounded-lg sm:rounded-xl border border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer font-bold text-[10px] sm:text-xs uppercase flex items-center gap-1 sm:gap-1.5"
            appearance="custom">
-            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest pl-0.5 sm:pl-1">Tutup</span>
-            <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+           <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest pl-0.5 sm:pl-1">Tutup</span>
+           <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </SharedModalCloseButton>
         </div>
 
         {/* DATA RINGKASAN */}
-        <div className="px-3 sm:px-8 py-1.5 sm:py-3 lg:px-3 lg:py-1.5 xl:px-8 xl:py-3 bg-root-canvas/80 border-b border-root-accent/20 flex items-center gap-3 sm:gap-8 lg:gap-3 xl:gap-8 relative z-10 overflow-x-auto lg:overflow-x-hidden shrink-0 no-scrollbar">
+        <div className="country-detail-summary px-3 sm:px-8 py-1.5 sm:py-3 lg:px-3 lg:py-1.5 xl:px-8 xl:py-3 bg-root-canvas/80 border-b border-root-accent/20 flex items-center gap-3 sm:gap-8 lg:gap-3 xl:gap-8 relative z-10 overflow-x-auto lg:overflow-x-hidden shrink-0 no-scrollbar">
           <div className="flex items-center gap-3 sm:gap-6 lg:grid lg:w-full lg:min-w-0 lg:grid-cols-[repeat(6,minmax(0,1fr))] lg:gap-3 xl:gap-6">
             {/* Hubungan */}
             <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 lg:gap-1.5">
               <div className="p-1 sm:p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-md sm:rounded-lg border border-root-accent/20 text-root-accent shrink-0 flex items-center justify-center">
                 {isPlayerOccupiedProvince
-                  ? <Flame className="h-3 w-3 sm:h-4 sm:w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-orange-400" />
-                  : <Handshake className="h-3 w-3 sm:h-4 sm:w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />}
+                  ? <Flame className="h-2 w-2 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-orange-400" />
+                  : <Handshake className="h-2 w-2 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />}
               </div>
               <div className="flex min-w-0 flex-col">
-                <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-root-accent/60 uppercase tracking-wider">
+                <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-black text-root-accent/60 uppercase tracking-wider`}>
                   {isPlayerOccupiedProvince ? 'Ketegangan' : 'Hubungan'}
                 </span>
-                <span className={`text-[11px] lg:text-[9px] xl:text-[11px] font-extrabold uppercase ${isPlayerOccupiedProvince ? 'text-emerald-400' : getRelationTextColor(relationValue)}`}>
+                <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-extrabold uppercase ${isPlayerOccupiedProvince ? 'text-emerald-400' : getRelationTextColor(relationValue)}`}>
                   {isPlayerOccupiedProvince
                     ? `${provinceTensionValue} · ${provinceTensionStatus}`
                     : relationValue}
                 </span>
                 {isPlayerOccupiedProvince && (
-                  <span className="text-[8px] font-semibold normal-case text-[#B7D5CD]/75">
+                  <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-semibold normal-case text-[#B7D5CD]/75`}>
                     Demo {getProvinceDemonstrationChance(provinceTensionValue)}% · Pemberontakan {getProvinceRebellionChance(provinceTensionValue)}%
                   </span>
                 )}
                 {isPlayerOccupiedProvince && provinceReferendum?.status === 'pending' && (
-                  <span className="text-[8px] font-bold normal-case text-amber-300">
+                  <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-bold normal-case text-amber-300`}>
                     Referendum berlangsung hingga {provinceReferendum.votingEndsAt}
                   </span>
                 )}
                 {isPlayerOccupiedProvince && provinceReferendum?.status === 'failed' && (
-                  <span className="text-[8px] font-bold normal-case text-rose-300">
+                  <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-bold normal-case text-rose-300`}>
                     Hasil referendum gagal diproses
                   </span>
                 )}
@@ -850,11 +863,11 @@ export function CountryDetailModal({
             {/* Ibukota / Kota */}
             <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 lg:gap-1.5">
               <div className="p-1 sm:p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-md sm:rounded-lg border border-root-accent/20 text-root-accent shrink-0 flex items-center justify-center">
-                <Landmark className="h-3 w-3 sm:h-4 sm:w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
+                <Landmark className="h-2 w-2 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
               </div>
               <div className="flex min-w-0 flex-col">
-                <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-root-accent/60 uppercase tracking-wider">{capitalCardLabel}</span>
-                <span className="text-[11px] lg:text-[9px] xl:text-[11px] font-bold text-root-accent uppercase">
+                <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-black text-root-accent/60 uppercase tracking-wider`}>{capitalCardLabel}</span>
+                <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-bold text-root-accent uppercase`}>
                   {displayCapital}
                 </span>
               </div>
@@ -863,12 +876,12 @@ export function CountryDetailModal({
             {/* Populasi */}
             <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 lg:gap-1.5">
               <div className="p-1 sm:p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-md sm:rounded-lg border border-root-accent/20 text-root-accent shrink-0 flex items-center justify-center">
-                <Users className="h-3 w-3 sm:h-4 sm:w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
+                <Users className="h-2 w-2 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
               </div>
               <div className="flex min-w-0 flex-col">
-                <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-root-accent/60 uppercase tracking-wider">Populasi</span>
+                <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-black text-root-accent/60 uppercase tracking-wider`}>Populasi</span>
                 <div className="flex min-w-0 flex-wrap items-center gap-x-1 lg:gap-x-0.5">
-                  <span className="min-w-0 break-words text-[11px] lg:text-[9px] xl:text-[11px] font-bold text-root-accent uppercase">
+                  <span className={`min-w-0 break-words ${COUNTRY_SUMMARY_FONT_SIZE} font-bold text-root-accent uppercase`}>
                     {headerDetailData?.jumlah_penduduk
                       ? Number(headerDetailData.jumlah_penduduk).toLocaleString('id-ID', { maximumFractionDigits: 2 })
                       : isLoadingDetail
@@ -877,7 +890,7 @@ export function CountryDetailModal({
                     }
                   </span>
                   {!isLoadingDetail && detailData && (
-                    <span className={`break-words text-[10px] lg:text-[8px] xl:text-[10px] font-black ${dailyNetPopulation >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    <span className={`break-words ${COUNTRY_SUMMARY_FONT_SIZE} font-black ${dailyNetPopulation >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                       ({dailyNetPopulation >= 0 ? `+${dailyNetPopulation.toLocaleString('id-ID', { maximumFractionDigits: 2 })}` : dailyNetPopulation.toLocaleString('id-ID', { maximumFractionDigits: 2 })})
                     </span>
                   )}
@@ -888,12 +901,12 @@ export function CountryDetailModal({
             {/* Anggaran Negara */}
             <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 lg:gap-1.5">
               <div className="p-1 sm:p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-md sm:rounded-lg border border-root-accent/20 text-root-accent shrink-0 flex items-center justify-center">
-                <Banknote className="h-3 w-3 sm:h-4 sm:w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
+                <Banknote className="h-2 w-2 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
               </div>
               <div className="flex min-w-0 flex-col">
-                <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-root-accent/60 uppercase tracking-wider">Anggaran</span>
+                <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-black text-root-accent/60 uppercase tracking-wider`}>Anggaran</span>
                 <div className="flex min-w-0 flex-wrap items-center gap-x-1 lg:gap-x-0.5">
-                  <span className="min-w-0 break-words text-[11px] lg:text-[9px] xl:text-[11px] font-bold text-root-accent uppercase">
+                  <span className={`min-w-0 break-words ${COUNTRY_SUMMARY_FONT_SIZE} font-bold text-root-accent uppercase`}>
                     {headerDetailData?.anggaran !== undefined
                       ? `${Number(headerDetailData.anggaran).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`
                       : isLoadingDetail
@@ -902,7 +915,7 @@ export function CountryDetailModal({
                     }
                   </span>
                   {!isLoadingDetail && detailData && (
-                    <span className={`break-words text-[10px] lg:text-[8px] xl:text-[10px] font-black ${targetEffectiveNetBalance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    <span className={`break-words ${COUNTRY_SUMMARY_FONT_SIZE} font-black ${targetEffectiveNetBalance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                       ({targetEffectiveNetBalance >= 0 ? `+${targetEffectiveNetBalance.toLocaleString('id-ID', { maximumFractionDigits: 2 })}` : targetEffectiveNetBalance.toLocaleString('id-ID', { maximumFractionDigits: 2 })})
                     </span>
                   )}
@@ -913,11 +926,11 @@ export function CountryDetailModal({
             {/* Ideologi */}
             <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 lg:gap-1.5">
               <div className="p-1 sm:p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-md sm:rounded-lg border border-root-accent/20 text-root-accent shrink-0 flex items-center justify-center">
-                <Scale className="h-3 w-3 sm:h-4 sm:w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
+                <Scale className="h-2 w-2 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
               </div>
               <div className="flex min-w-0 flex-col">
-                <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-root-accent/60 uppercase tracking-wider">Ideologi</span>
-                <span className="text-[11px] lg:text-[9px] xl:text-[11px] font-bold text-root-accent uppercase">
+                <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-black text-root-accent/60 uppercase tracking-wider`}>Ideologi</span>
+                <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-bold text-root-accent uppercase`}>
                   {headerDetailData?.ideology
                     ? headerDetailData.ideology
                     : isLoadingDetail
@@ -931,11 +944,11 @@ export function CountryDetailModal({
             {/* Agama */}
             <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 lg:gap-1.5">
               <div className="p-1 sm:p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-md sm:rounded-lg border border-root-accent/20 text-root-accent shrink-0 flex items-center justify-center">
-                <Home className="h-3 w-3 sm:h-4 sm:w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
+                <Home className="h-2 w-2 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
               </div>
               <div className="flex min-w-0 flex-col">
-                <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-root-accent/60 uppercase tracking-wider">Agama</span>
-                <span className="text-[11px] lg:text-[9px] xl:text-[11px] font-bold text-root-accent uppercase">
+                <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-black text-root-accent/60 uppercase tracking-wider`}>Agama</span>
+                <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-bold text-root-accent uppercase`}>
                   {headerDetailData?.religion
                     ? headerDetailData.religion
                     : isLoadingDetail
@@ -949,40 +962,40 @@ export function CountryDetailModal({
         </div>
 
         {/* BODY CONTENT */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 lg:p-4 xl:p-8 bg-root-surface relative z-10 no-scrollbar">
+        <div className="country-detail-modal-body flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 lg:p-4 xl:p-8 bg-root-surface relative z-10 no-scrollbar">
           <div className={`${isDevelopingAIBuildingTab ? 'w-full max-w-none' : 'max-w-4xl lg:max-w-[780px] xl:max-w-4xl mx-auto'}`}>
 
             {/* Menu 3 Tab Navigasi */}
-            <div className="bg-root-canvas p-1 rounded-xl border border-root-accent/20 inline-flex mb-6 lg:mb-4 shadow-sm flex-wrap gap-1">
+            <div className="country-detail-tabs bg-root-canvas p-1 rounded-xl border border-root-accent/20 inline-flex mb-6 lg:mb-4 shadow-sm flex-wrap gap-1">
               <button
                 onClick={() => setActiveTab("informasi")}
-                className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg ${rootModalTypography.tab} transition-all cursor-pointer flex items-center gap-2 ${activeTab === "informasi" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
+                className={`country-detail-tab-button px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg ${rootModalTypography.tab} transition-all cursor-pointer flex items-center gap-2 ${activeTab === "informasi" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
                   }`}
               >
-                <Globe className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Informasi Umum
+                <Globe className="country-detail-tab-icon h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Informasi Umum
               </button>
               {!isPlayerOccupiedProvince && (
                 <button
                   onClick={() => setActiveTab("geopolitik")}
-                  className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg ${rootModalTypography.tab} transition-all cursor-pointer flex items-center gap-2 ${activeTab === "geopolitik" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
+                  className={`country-detail-tab-button px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg ${rootModalTypography.tab} transition-all cursor-pointer flex items-center gap-2 ${activeTab === "geopolitik" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
                     }`}
                 >
-                  <Landmark className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Geopolitik
+                  <Landmark className="country-detail-tab-icon h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Geopolitik
                 </button>
               )}
               <button
                 onClick={() => setActiveTab("militer")}
-                className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg ${rootModalTypography.tab} transition-all cursor-pointer flex items-center gap-2 ${activeTab === "militer" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
+                className={`country-detail-tab-button px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg ${rootModalTypography.tab} transition-all cursor-pointer flex items-center gap-2 ${activeTab === "militer" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
                   }`}
               >
-                <Shield className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Operasi Militer
+                <Shield className="country-detail-tab-icon h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Operasi Militer
               </button>
               <button
                 onClick={() => setActiveTab("developing_ai_building")}
-                className={`hidden px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg ${rootModalTypography.tab} transition-all cursor-pointer items-center gap-2 ${activeTab === "developing_ai_building" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
+                className={`country-detail-tab-button hidden px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg ${rootModalTypography.tab} transition-all cursor-pointer items-center gap-2 ${activeTab === "developing_ai_building" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
                   }`}
               >
-                <Hammer className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Progress Pembangunan
+                <Hammer className="country-detail-tab-icon h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Progress Pembangunan
               </button>
             </div>
 
@@ -1084,6 +1097,7 @@ export function CountryDetailModal({
         onClose={onClose}
         isHidden={isActionModalOpen}
         zIndexClass="z-[100000000]"
+        frameClassName="country-detail-modal-frame"
       >
         {detailModalContent}
       </NotebookModalWrapper>

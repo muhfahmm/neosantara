@@ -7,7 +7,45 @@ import {
   updateNpcCountrySimulationState,
 } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 
+import { countryPaths } from '@/app/page/map_system/mapDataAssets';
+
 const LOOTED_RESOURCES = { emas: 500, minyak_bumi: 1000, beras: 2000 };
+
+function normalizeCountryLookup(value: unknown): string {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
+}
+
+function resolveTargetSlug(country: Record<string, unknown>, fallbackName?: string): string {
+  if (typeof country.country_slug === 'string' && country.country_slug.trim()) {
+    return country.country_slug.trim().toLowerCase();
+  }
+  if (typeof country.slug === 'string' && country.slug.trim()) {
+    return country.slug.trim().toLowerCase();
+  }
+  const nameToLookup = String(
+    country.country ||
+    country.nama_negara ||
+    country.name_id ||
+    country.name_en ||
+    fallbackName ||
+    ''
+  ).trim();
+  if (!nameToLookup) return '';
+
+  const norm = normalizeCountryLookup(nameToLookup);
+  const matchedPath = Object.entries(countryPaths as Record<string, string>).find(
+    ([k]) => normalizeCountryLookup(k) === norm
+  )?.[1];
+  if (matchedPath) {
+    const filename = matchedPath.split(/[\\/]/).pop() || '';
+    return filename.replace(/\.ts$/i, '').replace(/^\d+_/, '').trim().toLowerCase();
+  }
+  return norm;
+}
 
 export function lootUserProductionInventory(
   countryDetail: Record<string, unknown>,
@@ -67,14 +105,14 @@ export interface PlayerLootOperationResult {
   notification: NotificationMessage;
 }
 
-function clearTargetTreasury(targetCountryDetail: unknown): { transferredCash: number } | null {
+function clearTargetTreasury(targetCountryDetail: unknown, fallbackTargetName?: string): { transferredCash: number } | null {
   if (!targetCountryDetail || typeof targetCountryDetail !== 'object' || Array.isArray(targetCountryDetail)) {
     console.error('[WarLoot] Cannot clear target treasury: target country detail is unavailable.');
     return null;
   }
 
   const country = targetCountryDetail as Record<string, unknown>;
-  const countrySlug = typeof country.country_slug === 'string' ? country.country_slug : '';
+  const countrySlug = resolveTargetSlug(country, fallbackTargetName);
   if (!countrySlug) {
     console.error('[WarLoot] Cannot clear target treasury: target country profile has no country_slug.', country);
     return null;
@@ -91,6 +129,7 @@ function clearTargetTreasury(targetCountryDetail: unknown): { transferredCash: n
     return null;
   }
 
+  country.anggaran = 0;
   if (!updateNpcCountrySimulationState(countrySlug, { anggaran: 0 })) {
     console.error('[WarLoot] Target treasury could not be cleared in the active NPC simulation.', {
       countrySlug,
@@ -117,7 +156,7 @@ export function resolvePlayerLootOperation(
       attackerBudgetValue,
     });
   }
-  const treasuryLoot = canReceiveLoot ? clearTargetTreasury(input.targetCountryDetail) : null;
+  const treasuryLoot = canReceiveLoot ? clearTargetTreasury(input.targetCountryDetail, input.targetCountry) : null;
   const transferredCash = treasuryLoot?.transferredCash ?? 0;
   const targetTreasuryCleared = treasuryLoot !== null;
   const hasCommittedTroops = input.troopsCommitted === true;
