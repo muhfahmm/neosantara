@@ -2,13 +2,13 @@
 
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
-import { User, Globe, Building2, Users, Landmark, ShieldCheck, TrendingUp, Star, Flag, Swords } from 'lucide-react';
+import { User, Globe, Building2, Users, Landmark, ShieldCheck, TrendingUp, Star, Flag, Swords, X } from 'lucide-react';
 
 import { calculateCountryGDP, formatCurrencyEM } from '@/app/logic/economic_logic/treasuryUpdater';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { calculateCountryNetPopulation } from '@/app/logic/populations_logic/population_logic';
 import { getArmadaPowerSummary } from '@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
-import { useViewportMode } from '@/app/hooks/useViewportMode';
+import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 import {
   getCountryProfileSummaries,
   loadCountryProfileSummaries,
@@ -51,7 +51,6 @@ function getDetailString(value: unknown): string {
 }
 
 export default function NegaraUserModal({ isOpen, onClose, selectedCountry, countryDetail }: NegaraUserModalProps) {
-  const viewportMode = useViewportMode();
   const countrySummaries = useSyncExternalStore(
     subscribeToCountryProfileSummaries,
     getCountryProfileSummaries,
@@ -189,54 +188,57 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
   if (!isOpen) return null;
 
   return (
-    <div
-      data-viewport-mode={viewportMode === 'desktop' ? undefined : viewportMode}
-      className="responsive-modal-frame fixed inset-0 z-50 flex items-center justify-center bg-transparent pointer-events-none"
+    <NotebookModalWrapper
+      onClose={onClose}
+      zIndexClass="z-50"
+      frameClassName="country-detail-modal-frame"
     >
       <div
-        className="modal-responsive-shell country-user-modal-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl"
+        className="country-user-modal-panel bg-root-surface border-none rounded-none overflow-hidden w-full h-full max-h-full flex flex-col relative font-sans pointer-events-auto shadow-none"
       >
 
         {/* Background Texture */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
         {/* HEADER */}
-        <div className="country-user-modal-header px-3 sm:px-6 py-3 sm:py-5 border-b border-root-accent/20 flex items-center justify-between gap-2 bg-root-canvas relative z-10 shrink-0">
+        <div className="country-detail-modal-header px-3 sm:px-8 py-2 sm:py-4 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
           <div className="flex min-w-0 items-center gap-2 sm:gap-4">
-            <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-              {/* Flag */}
-              {iso && (
-                <div className="w-8 sm:w-10 h-6 sm:h-7 rounded overflow-hidden border border-root-accent/30 shadow-md flex-shrink-0 bg-root-canvas">
+            {iso && iso.length === 2 && (
+                <div className="relative flex h-3.5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-sm border border-root-accent/30 bg-root-canvas shadow-sm sm:h-5 sm:w-8">
                   <img
                     src={`https://flagcdn.com/w80/${iso}.png`}
                     alt={countryName}
-                    className="w-full h-full object-cover"
+                    className="absolute inset-0 h-full w-full object-cover"
                     onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                   />
                 </div>
               )}
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-1.5 sm:gap-3">
-                  <h2 className="text-base sm:text-2xl font-bold text-root-accent tracking-tight leading-tight uppercase break-words">
+            <div className="min-w-0">
+                <div className="mt-0.5 flex flex-wrap items-center gap-1 sm:mt-1 sm:gap-2">
+                  <p className="text-[10px] font-black uppercase tracking-tight text-root-accent sm:text-xs">
                     {countryName}
-                  </h2>
+                  </p>
                   <span className="flex shrink-0 items-center gap-1 px-2 sm:px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[8px] sm:text-[9px] font-black uppercase tracking-wider shadow-sm">
                     <User className="w-2.5 h-2.5" />
                     NEGARA ANDA
                   </span>
                 </div>
-                <p className="text-[10px] sm:text-xs text-root-subtle font-semibold mt-1">Detail Negara Anda Sendiri</p>
+                <p className="text-[10px] font-semibold text-root-subtle sm:text-xs">Detail Negara Anda Sendiri</p>
               </div>
-            </div>
           </div>
 
           <SharedModalCloseButton
             onClick={onClose}
-          />
+            className="country-detail-close-button p-1 sm:p-2 rounded-lg sm:rounded-xl border border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer font-bold text-[10px] sm:text-xs uppercase flex items-center gap-1 sm:gap-1.5"
+            appearance="custom"
+          >
+            <span className="text-[10px] font-semibold uppercase tracking-widest pl-0.5 sm:pl-1 sm:text-xs">Tutup</span>
+            <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          </SharedModalCloseButton>
         </div>
 
         {/* BODY CONTENT */}
-        <div className="country-user-modal-body flex-1 min-h-0 overflow-y-auto p-3 sm:p-5 md:p-8 bg-root-surface relative z-10 no-scrollbar">
+        <div className="country-detail-modal-body flex-1 min-h-0 overflow-y-auto p-3 sm:p-5 md:p-8 bg-root-surface relative z-10 no-scrollbar">
           <div className="country-user-modal-content w-full max-w-4xl mx-auto space-y-4 sm:space-y-6">
 
             {/* STATS GRID */}
@@ -348,6 +350,6 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
           </div>
         </div>
       </div>
-    </div>
+    </NotebookModalWrapper>
   );
 }
