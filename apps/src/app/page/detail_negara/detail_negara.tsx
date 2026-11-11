@@ -752,7 +752,7 @@ export function CountryDetailModal({
   const renderFlagHeader = (iso: string | undefined, altName: string) => {
     if (!iso || iso.length !== 2) return null;
     return (
-      <div className="w-8 h-5 rounded-sm overflow-hidden border border-root-accent/30 flex-shrink-0 shadow-sm bg-root-canvas relative flex items-center justify-center">
+      <div className="w-5 sm:w-8 h-3.5 sm:h-5 rounded-sm overflow-hidden border border-root-accent/30 flex-shrink-0 shadow-sm bg-root-canvas relative flex items-center justify-center">
         <img
           src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
           alt={altName}
@@ -772,22 +772,17 @@ export function CountryDetailModal({
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.05)_0%,transparent_100%)] pointer-events-none" />
 
         {/* HEADER Modal */}
-        <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0 rounded-none">
-          <div className="flex items-center gap-3 sm:gap-4">
+        <div className="px-3 sm:px-8 py-2 sm:py-4 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0 rounded-none">
+          <div className="flex items-center gap-2 sm:gap-4">
 
             {/* 1. Icon Globe */}
-            <div className="p-2 sm:p-2.5 lg:p-2 bg-root-accent/10 rounded-xl border border-root-accent/30 shrink-0 flex items-center justify-center">
-              <Globe className="h-6 w-6 lg:h-5 lg:w-5 xl:h-6 xl:w-6 text-root-accent" />
+            <div className="p-1 sm:p-2.5 lg:p-2 bg-root-accent/10 rounded-lg sm:rounded-xl border border-root-accent/30 shrink-0 flex items-center justify-center">
+              <Globe className="h-3.5 w-3.5 sm:h-6 sm:w-6 lg:h-5 lg:w-5 xl:h-6 xl:w-6 text-root-accent" />
             </div>
 
             {/* 2. Judul & Subjudul */}
             <div>
-              {/* Judul Utama */}
-              <h2 className={`${rootModalTypography.title} text-root-accent leading-none`}>
-                DETAIL NEGARA
-              </h2>
-
-              <div className="flex items-center gap-2 mt-1">
+              <div className="flex items-center gap-1 sm:gap-2 mt-0.5 sm:mt-1">
                 {/* Tampilkan 2 bendera jika wilayah dianeksasi (Bendera Penakluk & Bendera Wilayah Asli) */}
                 {rulerIso && originalIso && rulerIso.toLowerCase() !== originalIso.toLowerCase() ? (
                   <>
@@ -798,7 +793,7 @@ export function CountryDetailModal({
                   renderFlagHeader(displayIso, displayCountryName)
                 )}
 
-                <p className="text-xs text-root-accent/70 font-semibold uppercase tracking-wider">
+                <p className="text-[10px] sm:text-xs text-root-accent font-black uppercase tracking-tight">
                   {displayCountryName}, {displayCapital}
                 </p>
               </div>
@@ -808,22 +803,22 @@ export function CountryDetailModal({
 
           <SharedModalCloseButton
             onClick={onClose}
-            className="p-1.5 sm:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
+            className="p-1 sm:p-2 rounded-lg sm:rounded-xl border border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer font-bold text-[10px] sm:text-xs uppercase flex items-center gap-1 sm:gap-1.5"
            appearance="custom">
-            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
+            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest pl-0.5 sm:pl-1">Tutup</span>
+            <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </SharedModalCloseButton>
         </div>
 
         {/* DATA RINGKASAN */}
-        <div className="px-6 sm:px-8 py-3 lg:px-3 lg:py-1.5 xl:px-8 xl:py-3 bg-root-canvas/80 border-b border-root-accent/20 flex items-center gap-6 sm:gap-8 lg:gap-3 xl:gap-8 relative z-10 overflow-x-auto lg:overflow-x-hidden shrink-0 no-scrollbar">
-          <div className="flex items-center gap-6 lg:grid lg:w-full lg:min-w-0 lg:grid-cols-[repeat(6,minmax(0,1fr))] lg:gap-3 xl:gap-6">
+        <div className="px-3 sm:px-8 py-1.5 sm:py-3 lg:px-3 lg:py-1.5 xl:px-8 xl:py-3 bg-root-canvas/80 border-b border-root-accent/20 flex items-center gap-3 sm:gap-8 lg:gap-3 xl:gap-8 relative z-10 overflow-x-auto lg:overflow-x-hidden shrink-0 no-scrollbar">
+          <div className="flex items-center gap-3 sm:gap-6 lg:grid lg:w-full lg:min-w-0 lg:grid-cols-[repeat(6,minmax(0,1fr))] lg:gap-3 xl:gap-6">
             {/* Hubungan */}
-            <div className="flex min-w-0 items-center gap-2 lg:gap-1.5">
-              <div className="p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/20 text-root-accent">
+            <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 lg:gap-1.5">
+              <div className="p-1 sm:p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-md sm:rounded-lg border border-root-accent/20 text-root-accent shrink-0 flex items-center justify-center">
                 {isPlayerOccupiedProvince
-                  ? <Flame className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-orange-400" />
-                  : <Handshake className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />}
+                  ? <Flame className="h-3 w-3 sm:h-4 sm:w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-orange-400" />
+                  : <Handshake className="h-3 w-3 sm:h-4 sm:w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />}
               </div>
               <div className="flex min-w-0 flex-col">
                 <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-root-accent/60 uppercase tracking-wider">
@@ -853,9 +848,9 @@ export function CountryDetailModal({
             </div>
 
             {/* Ibukota / Kota */}
-            <div className="flex min-w-0 items-center gap-2 lg:gap-1.5">
-              <div className="p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/20 text-root-accent">
-                <Landmark className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
+            <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 lg:gap-1.5">
+              <div className="p-1 sm:p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-md sm:rounded-lg border border-root-accent/20 text-root-accent shrink-0 flex items-center justify-center">
+                <Landmark className="h-3 w-3 sm:h-4 sm:w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
               </div>
               <div className="flex min-w-0 flex-col">
                 <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-root-accent/60 uppercase tracking-wider">{capitalCardLabel}</span>
@@ -866,9 +861,9 @@ export function CountryDetailModal({
             </div>
 
             {/* Populasi */}
-            <div className="flex min-w-0 items-center gap-2 lg:gap-1.5">
-              <div className="p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/20 text-root-accent">
-                <Users className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
+            <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 lg:gap-1.5">
+              <div className="p-1 sm:p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-md sm:rounded-lg border border-root-accent/20 text-root-accent shrink-0 flex items-center justify-center">
+                <Users className="h-3 w-3 sm:h-4 sm:w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
               </div>
               <div className="flex min-w-0 flex-col">
                 <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-root-accent/60 uppercase tracking-wider">Populasi</span>
@@ -891,9 +886,9 @@ export function CountryDetailModal({
             </div>
 
             {/* Anggaran Negara */}
-            <div className="flex min-w-0 items-center gap-2 lg:gap-1.5">
-              <div className="p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/20 text-root-accent">
-                <Banknote className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
+            <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 lg:gap-1.5">
+              <div className="p-1 sm:p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-md sm:rounded-lg border border-root-accent/20 text-root-accent shrink-0 flex items-center justify-center">
+                <Banknote className="h-3 w-3 sm:h-4 sm:w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
               </div>
               <div className="flex min-w-0 flex-col">
                 <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-root-accent/60 uppercase tracking-wider">Anggaran</span>
@@ -916,9 +911,9 @@ export function CountryDetailModal({
             </div>
 
             {/* Ideologi */}
-            <div className="flex min-w-0 items-center gap-2 lg:gap-1.5">
-              <div className="p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/20 text-root-accent">
-                <Scale className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
+            <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 lg:gap-1.5">
+              <div className="p-1 sm:p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-md sm:rounded-lg border border-root-accent/20 text-root-accent shrink-0 flex items-center justify-center">
+                <Scale className="h-3 w-3 sm:h-4 sm:w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
               </div>
               <div className="flex min-w-0 flex-col">
                 <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-root-accent/60 uppercase tracking-wider">Ideologi</span>
@@ -934,9 +929,9 @@ export function CountryDetailModal({
             </div>
 
             {/* Agama */}
-            <div className="flex min-w-0 items-center gap-2 lg:gap-1.5">
-              <div className="p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/20 text-root-accent">
-                <Home className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
+            <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 lg:gap-1.5">
+              <div className="p-1 sm:p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-md sm:rounded-lg border border-root-accent/20 text-root-accent shrink-0 flex items-center justify-center">
+                <Home className="h-3 w-3 sm:h-4 sm:w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
               </div>
               <div className="flex min-w-0 flex-col">
                 <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-root-accent/60 uppercase tracking-wider">Agama</span>
@@ -961,7 +956,7 @@ export function CountryDetailModal({
             <div className="bg-root-canvas p-1 rounded-xl border border-root-accent/20 inline-flex mb-6 lg:mb-4 shadow-sm flex-wrap gap-1">
               <button
                 onClick={() => setActiveTab("informasi")}
-                className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg text-xs lg:text-[10px] xl:text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${activeTab === "informasi" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
+                className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg ${rootModalTypography.tab} transition-all cursor-pointer flex items-center gap-2 ${activeTab === "informasi" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
                   }`}
               >
                 <Globe className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Informasi Umum
@@ -969,7 +964,7 @@ export function CountryDetailModal({
               {!isPlayerOccupiedProvince && (
                 <button
                   onClick={() => setActiveTab("geopolitik")}
-                  className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg text-xs lg:text-[10px] xl:text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${activeTab === "geopolitik" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
+                  className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg ${rootModalTypography.tab} transition-all cursor-pointer flex items-center gap-2 ${activeTab === "geopolitik" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
                     }`}
                 >
                   <Landmark className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Geopolitik
@@ -977,14 +972,14 @@ export function CountryDetailModal({
               )}
               <button
                 onClick={() => setActiveTab("militer")}
-                className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg text-xs lg:text-[10px] xl:text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${activeTab === "militer" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
+                className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg ${rootModalTypography.tab} transition-all cursor-pointer flex items-center gap-2 ${activeTab === "militer" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
                   }`}
               >
                 <Shield className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Operasi Militer
               </button>
               <button
                 onClick={() => setActiveTab("developing_ai_building")}
-                className={`hidden px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg text-xs lg:text-[10px] xl:text-xs font-black uppercase tracking-widest transition-all cursor-pointer items-center gap-2 ${activeTab === "developing_ai_building" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
+                className={`hidden px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg ${rootModalTypography.tab} transition-all cursor-pointer items-center gap-2 ${activeTab === "developing_ai_building" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
                   }`}
               >
                 <Hammer className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Progress Pembangunan
