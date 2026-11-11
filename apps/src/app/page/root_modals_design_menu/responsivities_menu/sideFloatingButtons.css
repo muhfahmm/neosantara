@@ -71,14 +71,14 @@
     --side-btn-badge-font: 7.5px;
 
     /* Posisi Kiri Atas */
-    --side-btn-inbox-top: calc(var(--safe-top) + var(--navbar-h) + 0.45rem);
+    --side-btn-inbox-top: calc(var(--safe-top) + var(--navbar-h) + 1.45rem);
     --side-btn-inbox-left: calc(var(--safe-left) + 0.5rem);
 
     /* Posisi Kanan Atas */
-    --side-btn-reward-top: calc(var(--safe-top) + var(--navbar-h) + 0.45rem);
+    --side-btn-reward-top: calc(var(--safe-top) + var(--navbar-h) + 1.45rem);
     --side-btn-reward-right: calc(var(--safe-right) + 0.5rem);
 
-    --side-btn-news-top: calc(var(--safe-top) + var(--navbar-h) + 2.85rem);
+    --side-btn-news-top: calc(var(--safe-top) + var(--navbar-h) + 3.85rem);
     --side-btn-news-right: calc(var(--safe-right) + 0.5rem);
 
     /* Posisi 3 Menu Kiri Bawah (1 Baris Sejajar / Flex Row) */
@@ -105,14 +105,14 @@
     --side-btn-badge-font: 8.5px;
 
     /* Posisi Kiri Atas */
-    --side-btn-inbox-top: calc(var(--safe-top) + var(--navbar-h) + 0.5rem);
+    --side-btn-inbox-top: calc(var(--safe-top) + var(--navbar-h) + 1.5rem);
     --side-btn-inbox-left: calc(var(--safe-left) + 0.5rem);
 
     /* Posisi Kanan Atas */
-    --side-btn-reward-top: calc(var(--safe-top) + var(--navbar-h) + 0.5rem);
+    --side-btn-reward-top: calc(var(--safe-top) + var(--navbar-h) + 1.5rem);
     --side-btn-reward-right: calc(var(--safe-right) + 0.5rem);
 
-    --side-btn-news-top: calc(var(--safe-top) + var(--navbar-h) + 3.1rem);
+    --side-btn-news-top: calc(var(--safe-top) + var(--navbar-h) + 4.1rem);
     --side-btn-news-right: calc(var(--safe-right) + 0.5rem);
 
     /* Posisi 3 Menu Kiri Bawah (Sejajar di atas BottomNav) */
@@ -217,4 +217,3 @@
   bottom: var(--side-btn-tracking-bottom);
   left: var(--side-btn-tracking-left);
 }
-
