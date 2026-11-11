@@ -472,7 +472,7 @@ export default function NaikkanKepuasanModal({
                 </div>
               )}
 
-              <div className="grid grid-cols-1 gap-2.5 lg:gap-3">
+              <div className="satisfaction-initiative-grid grid grid-cols-3 gap-2">
                 {initiatives.map((item) => {
                   const ongoingEvents = (
                     countryDetail?.ongoingConstructions || []
@@ -510,7 +510,7 @@ export default function NaikkanKepuasanModal({
                     <div
                       key={item.id}
                       id={`event-card-${item.id}`}
-                      className={`relative flex flex-col items-center justify-between gap-2.5 ${rootBorderRadius.card} bg-root-surface p-2.5 transition-all duration-500 md:flex-row lg:gap-3 lg:p-3 ${
+                      className={`satisfaction-initiative-card relative flex min-w-0 flex-col items-center justify-between gap-2 ${rootBorderRadius.card} bg-root-surface p-2 transition-all duration-500 ${
                         isHighlighted
                           ? "border-2 border-root-accent bg-[#122A26] ring-2 ring-root-accent/50"
                           : "border border-root-accent/20 hover:border-root-accent/50"
@@ -529,23 +529,23 @@ export default function NaikkanKepuasanModal({
                         </div>
                       )}
 
-                      <div className="flex items-start gap-2 lg:gap-2.5">
+                      <div className="flex w-full min-w-0 items-start gap-1.5">
                         <div className="shrink-0">
                           <Image
                             src={item.image}
                             alt=""
                             width={56}
                             height={56}
-                            className="h-12 w-12 object-contain lg:h-14 lg:w-14"
+                            className="h-8 w-8 object-contain lg:h-10 lg:w-10"
                           />
                         </div>
-                        <div className="space-y-0.5 lg:space-y-1">
-                          <div className="flex flex-wrap items-center gap-2 lg:gap-3">
-                            <h4 className="text-xs font-black uppercase leading-none tracking-wide text-root-text lg:text-sm 2xl:text-base">
+                        <div className="min-w-0 flex-1 space-y-1">
+                          <div className="flex min-w-0 flex-wrap items-center gap-1">
+                            <h4 className="min-w-0 break-words text-[10px] font-black uppercase leading-tight tracking-wide text-root-text lg:text-xs">
                               {item.title}
                             </h4>
                             {hasAcaraBonus ? (
-                              <span className="flex items-center gap-1.5 rounded-full border border-root-accent/30 bg-root-accent/10 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider lg:px-2 lg:text-[9px]">
+                              <span className="flex flex-wrap items-center gap-1 rounded-full border border-root-accent/30 bg-root-accent/10 px-1 py-0.5 text-[9px] font-black uppercase tracking-wider">
                                 <span className="text-root-muted line-through">
                                   +{baseBoost}%
                                 </span>
@@ -554,35 +554,25 @@ export default function NaikkanKepuasanModal({
                                 </span>
                               </span>
                             ) : (
-                              <span className="rounded-full border border-root-accent/30 bg-root-accent/10 px-1.5 py-0.5 text-[8px] font-semibold uppercase tracking-wider text-root-text lg:px-2 lg:text-[9px]">
+                              <span className="rounded-full border border-root-accent/30 bg-root-accent/10 px-1 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-root-text">
                                 +{baseBoost}% Kepuasan
                               </span>
                             )}
                             {isSport && olahragaBonusPercent > 0 && (
-                              <span className="rounded-md border border-sky-500/30 bg-sky-500/10 px-1.5 py-0.5 text-[7px] font-semibold uppercase tracking-wider text-root-text lg:text-[8px]">
+                              <span className="rounded-md border border-sky-500/30 bg-sky-500/10 px-1 py-0.5 text-[7px] font-semibold uppercase tracking-wider text-root-text">
                                 +Kem. Olahraga (
                                 {olahragaBonusPercent.toFixed(0)}%)
                               </span>
                             )}
                           </div>
-                          <div className={`${rootModalTypography.muted} mt-0.5 flex items-center gap-1.5 text-[9px] font-medium lg:mt-1 lg:text-[10px]`}>
-                            <Clock className="h-3 w-3 text-root-text lg:h-3.5 lg:w-3.5" />
-                            <span>Durasi: {item.duration} hari</span>
+                          <div className={`${rootModalTypography.muted} flex items-center gap-1 text-[8px] font-medium`}>
+                            <Clock className="h-3 w-3 shrink-0 text-root-text" />
+                            <span className="min-w-0 break-words">Durasi: {item.duration} hari</span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex shrink-0 flex-col items-center gap-1 md:items-end lg:gap-1.5">
-                        <div className="text-right">
-                          <p className={`${rootModalTypography.label} text-center leading-none md:text-right`}>
-                            Biaya Alokasi
-                          </p>
-                          <p className={`${rootModalTypography.value} mt-0.5 text-xs lg:mt-1 lg:text-sm`}>
-                            {item.cost.toLocaleString("id-ID", {
-                              maximumFractionDigits: 2,
-                            })}
-                          </p>
-                        </div>
+                      <div className="flex w-full min-w-0 flex-col items-center">
                         <button
                           onClick={() =>
                             handleInitiative(
@@ -594,7 +584,7 @@ export default function NaikkanKepuasanModal({
                             )
                           }
                           disabled={isEventOngoing}
-                          className={`rounded-lg px-3.5 py-1.5 text-[10px] font-black uppercase transition-all lg:px-4 lg:py-1.5 lg:text-xs ${
+                          className={`w-full min-w-0 rounded-lg px-1.5 py-1 text-[8px] font-black uppercase leading-tight transition-all ${
                             isEventOngoing
                               ? "cursor-not-allowed border border-root-subtle/30 bg-root-canvas text-root-muted opacity-60"
                               : "cursor-pointer border border-root-accent bg-root-accent text-root-canvas hover:brightness-110 active:scale-95"
