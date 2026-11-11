@@ -201,7 +201,7 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
         {/* HEADER */}
-        <div className="px-3 sm:px-6 py-3 sm:py-5 border-b border-root-accent/20 flex items-center justify-between gap-2 bg-root-canvas relative z-10 shrink-0">
+        <div className="country-user-modal-header px-3 sm:px-6 py-3 sm:py-5 border-b border-root-accent/20 flex items-center justify-between gap-2 bg-root-canvas relative z-10 shrink-0">
           <div className="flex min-w-0 items-center gap-2 sm:gap-4">
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               {/* Flag */}
@@ -236,11 +236,11 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
         </div>
 
         {/* BODY CONTENT */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-5 md:p-8 bg-root-surface relative z-10 no-scrollbar">
-          <div className="w-full max-w-4xl mx-auto space-y-4 sm:space-y-6">
+        <div className="country-user-modal-body flex-1 min-h-0 overflow-y-auto p-3 sm:p-5 md:p-8 bg-root-surface relative z-10 no-scrollbar">
+          <div className="country-user-modal-content w-full max-w-4xl mx-auto space-y-4 sm:space-y-6">
 
             {/* STATS GRID */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-4">
+            <div className="country-user-stats-grid grid grid-cols-3 gap-2 sm:gap-4">
               {/* Ibukota */}
               <div className="flex min-w-0 flex-col items-start gap-1.5 md:flex-row md:items-center md:gap-2 sm:gap-3 bg-root-canvas border border-root-accent/20 rounded-xl p-2 md:p-3 sm:p-4 shadow-sm">
                 <div className="shrink-0 p-1 md:p-1.5 sm:p-2 rounded-lg bg-root-accent/10 border border-root-accent/20">
