@@ -117,6 +117,80 @@
   }
 }
 
+.root-modal-close-button {
+  box-sizing: border-box !important;
+  width: max-content !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  gap: 4px !important;
+  padding: 6px !important;
+  border: 1px solid color-mix(in srgb, var(--root-color-accent) 30%, transparent) !important;
+  border-radius: 8px !important;
+  background-color: var(--root-color-surface) !important;
+  color: var(--root-color-subtle) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 5%) !important;
+  transition: all 150ms ease !important;
+}
+
+.root-modal-close-button:hover {
+  border-color: var(--root-color-accent) !important;
+  background-color: var(--root-color-surface) !important;
+  color: var(--root-color-accent) !important;
+}
+
+.root-modal-close-button > span {
+  padding-left: 4px !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+}
+
+.root-modal-close-button > svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+@media (min-width: 1024px) {
+  .root-modal-close-button {
+    padding: 8px !important;
+    font-size: 12px !important;
+  }
+
+  .root-modal-close-button > span {
+    font-size: 12px !important;
+  }
+}
+
+@media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
+  .root-modal-close-button {
+    box-sizing: border-box !important;
+    width: 64px !important;
+    min-width: 64px !important;
+    height: 26px !important;
+    min-height: 26px !important;
+    gap: 3px !important;
+    padding: 0 !important;
+  }
+
+  .root-modal-close-button > span {
+    padding: 0 !important;
+    font-size: 10px !important;
+    letter-spacing: normal !important;
+    line-height: 1 !important;
+  }
+
+  .root-modal-close-button > svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+}
+
 .map-system-root[data-viewport-mode='landscapePhone'],
 .map-system-root[data-viewport-mode='portraitPhone'] {
   --map-content-top: calc(var(--navbar-h) + var(--safe-top) + 0.35rem);

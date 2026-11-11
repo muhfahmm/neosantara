@@ -26,7 +26,7 @@ export function ModalCloseButton({
 }: ModalCloseButtonProps) {
     const closeButtonClassName = getBorderOnlyHoverClasses(className);
     const sharedModalCloseClasses =
-        'inline-flex shrink-0 cursor-pointer items-center justify-center gap-1 rounded-xl border border-root-accent/30 bg-root-surface p-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-root-subtle shadow-sm transition-all hover:text-root-accent hover:border-root-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent focus-visible:ring-offset-2 focus-visible:ring-offset-root-canvas lg:p-2 lg:text-xs';
+        'root-modal-close-button inline-flex shrink-0 cursor-pointer items-center justify-center gap-1 rounded-xl border border-root-accent/30 bg-root-surface p-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-root-subtle shadow-sm transition-all hover:text-root-accent hover:border-root-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent focus-visible:ring-offset-2 focus-visible:ring-offset-root-canvas lg:p-2 lg:text-xs';
 
     if (appearance === 'custom') {
         return (

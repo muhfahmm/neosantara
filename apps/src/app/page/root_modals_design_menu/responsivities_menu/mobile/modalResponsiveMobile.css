@@ -223,31 +223,6 @@
   min-height: 0;
 }
 
-.country-detail-modal-frame[data-viewport-mode] .country-detail-close-button,
-.responsive-modal-frame[data-viewport-mode] .root-modal-mobile-close-button {
-  box-sizing: border-box !important;
-  width: 64px !important;
-  min-width: 64px !important;
-  height: 26px !important;
-  min-height: 26px !important;
-  gap: 3px !important;
-  padding: 0 !important;
-}
-
-.country-detail-modal-frame[data-viewport-mode] .country-detail-close-button > span,
-.responsive-modal-frame[data-viewport-mode] .root-modal-mobile-close-button > span {
-  padding: 0 !important;
-  font-size: 10px !important;
-  letter-spacing: normal !important;
-  line-height: 1 !important;
-}
-
-.country-detail-modal-frame[data-viewport-mode] .country-detail-close-button > svg,
-.responsive-modal-frame[data-viewport-mode] .root-modal-mobile-close-button > svg {
-  width: 12px !important;
-  height: 12px !important;
-}
-
 .responsive-modal-frame[data-viewport-mode] .satisfaction-modal-tabs {
   gap: 2px !important;
   padding: 2px !important;

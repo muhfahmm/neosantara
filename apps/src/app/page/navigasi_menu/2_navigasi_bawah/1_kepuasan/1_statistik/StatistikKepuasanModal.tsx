@@ -157,10 +157,7 @@ export default function StatistikKepuasanModal({
             <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi statistik kepuasan rakyat" aria-label="Informasi statistik kepuasan rakyat" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas">
               <Info className="h-3.5 w-3.5" />
             </button>
-            <RootModalCloseButton
-              onClick={onClose}
-              className="root-modal-mobile-close-button"
-            />
+            <RootModalCloseButton onClick={onClose} />
           </div>
         </div>
 

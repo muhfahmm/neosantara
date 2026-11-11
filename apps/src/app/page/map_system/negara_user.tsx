@@ -227,14 +227,7 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
               </div>
           </div>
 
-          <SharedModalCloseButton
-            onClick={onClose}
-            className="country-detail-close-button p-1 sm:p-2 rounded-lg sm:rounded-xl border border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer font-bold text-[10px] sm:text-xs uppercase flex items-center gap-1 sm:gap-1.5"
-            appearance="custom"
-          >
-            <span className="text-[10px] font-semibold uppercase tracking-widest pl-0.5 sm:pl-1 sm:text-xs">Tutup</span>
-            <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-          </SharedModalCloseButton>
+          <SharedModalCloseButton onClick={onClose} />
         </div>
 
         {/* BODY CONTENT */}

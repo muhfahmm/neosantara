@@ -413,7 +413,6 @@ export default function NaikkanKepuasanModal({
               </button>
               <RootModalCloseButton
                 onClick={onClose}
-                className="root-modal-mobile-close-button"
               />
             </div>
           </div>
