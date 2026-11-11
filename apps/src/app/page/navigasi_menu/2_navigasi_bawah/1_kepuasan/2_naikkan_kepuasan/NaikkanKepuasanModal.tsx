@@ -394,6 +394,7 @@ export default function NaikkanKepuasanModal({
 
               {/* Tabs */}
               <RootModalTabs
+                className="satisfaction-modal-tabs"
                 items={[
                   {
                     label: "Statistik",
@@ -410,7 +411,10 @@ export default function NaikkanKepuasanModal({
               <button type="button" onClick={() => setIsMenuInfoOpen(true)} title="Informasi peningkatan kepuasan rakyat" aria-label="Informasi peningkatan kepuasan rakyat" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas">
                 <Info className="h-3.5 w-3.5" />
               </button>
-              <RootModalCloseButton onClick={onClose} />
+              <RootModalCloseButton
+                onClick={onClose}
+                className="root-modal-mobile-close-button"
+              />
             </div>
           </div>
 

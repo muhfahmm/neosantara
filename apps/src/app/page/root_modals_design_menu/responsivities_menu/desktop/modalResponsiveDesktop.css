@@ -1,4 +1,19 @@
 @media (min-width: 1024px) and (min-height: 501px) {
+  .responsive-modal-frame .satisfaction-modal-tabs {
+    gap: 2px;
+    padding: 3px;
+  }
+
+  .responsive-modal-frame .satisfaction-modal-tabs > button {
+    min-height: 32px;
+    padding: 6px 14px;
+    font-size: 10px;
+    line-height: 1.1;
+    letter-spacing: 0.1em;
+  }
+}
+
+@media (min-width: 1024px) and (min-height: 501px) {
   :root {
     --modal-top-offset: clamp(92px, 10dvh, 115px);
     --modal-bottom-offset: 20px;
