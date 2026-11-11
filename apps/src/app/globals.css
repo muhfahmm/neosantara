@@ -1,6 +1,7 @@
 @import "./page/root_design/rootColors.css";
 @import "tailwindcss";
 @import "./page/root_modals_design_menu/responsivities_menu/modalResponsiveTokens.css";
+@import "./page/root_modals_design_menu/responsivities_menu/sideFloatingButtons.css";
 @import "./page/root_modals_design_menu/responsivities_menu/laptop/modalResponsiveLaptop.css";
 @import "./page/root_modals_design_menu/responsivities_menu/desktop/modalResponsiveDesktop.css";
 @import "./page/root_modals_design_menu/responsivities_menu/mobile/modalResponsiveMobile.css";

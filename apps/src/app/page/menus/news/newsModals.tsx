@@ -246,19 +246,7 @@ export default function TopRightNewsIcon({
       <button
         onClick={onClick}
         title="Berita - Berita dan Update Negara"
-        style={{
-          top: isMobile
-            ? 'calc(var(--safe-top) + var(--navbar-h) + 3.5rem)'
-            : undefined,
-          right: isMobile ? 'calc(var(--safe-right) + 0.5rem)' : undefined,
-        }}
-        className={`fixed z-[100] flex cursor-pointer items-center justify-center transition-transform group hover:scale-110 active:scale-95 ${
-          isLandscapePhone
-            ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
-            : isPortraitPhone
-            ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
-            : 'top-40 right-7 h-12 w-12 lg:top-40 lg:h-14 lg:w-14 xl:top-48 xl:h-16 xl:w-16'
-        }`}
+        className="side-floating-btn side-btn-news"
       >
         <Image
           src="/images/game/interface/menu/news.svg"
@@ -267,18 +255,9 @@ export default function TopRightNewsIcon({
           onError={(event) => { event.currentTarget.style.display = 'none'; }}
           width={72}
           height={72}
-          className={`object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
-            isLandscapePhone
-              ? 'h-11 w-11'
-              : isPortraitPhone
-              ? 'h-11 w-11'
-              : 'h-14 w-14 lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]'
-          }`}
         />
         {newsList.length > 0 && (
-          <span className={`absolute -top-1 -right-1 flex items-center justify-center rounded-full bg-rose-500 font-black text-white shadow-md border border-root-surface ${
-            isLandscapePhone ? 'h-3.5 w-3.5 text-[8px]' : 'h-4 w-4 lg:h-5 lg:w-5 text-[9px] lg:text-[10px]'
-          }`}>
+          <span className="side-floating-badge">
             {newsList.length}
           </span>
         )}

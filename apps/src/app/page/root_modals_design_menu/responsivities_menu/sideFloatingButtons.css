@@ -1,0 +1,220 @@
+/* Centralized Root CSS untuk 6 Tombol Menu Samping Mengambang (Inbox, Penelitian, Misi, Tracking, Hadiah, Berita) */
+
+:root {
+  /* Default Desktop Dimensions */
+  --side-btn-size: 3rem;              /* 48px pada desktop standar */
+  --side-btn-icon-size: 2.75rem;       /* 44px */
+  --side-btn-radius: 0.75rem;         /* rounded-xl */
+  --side-btn-border: 1px solid rgba(0, 255, 170, 0.35);
+  --side-btn-bg: rgba(15, 36, 36, 0.9);
+  --side-btn-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  --side-btn-badge-size: 1.25rem;
+  --side-btn-badge-font: 10px;
+
+  /* Posisi Desktop */
+  --side-btn-inbox-top: 6rem;
+  --side-btn-inbox-left: 1.75rem;
+
+  --side-btn-reward-top: 6rem;
+  --side-btn-reward-right: 1.75rem;
+
+  --side-btn-news-top: 10rem;
+  --side-btn-news-right: 1.75rem;
+
+  --side-btn-misi-bottom: 5rem;
+  --side-btn-misi-left: 1.75rem;
+
+  --side-btn-penelitian-bottom: 0.75rem;
+  --side-btn-penelitian-left: 1.75rem;
+
+  --side-btn-tracking-bottom: 0.75rem;
+  --side-btn-tracking-left: 5.25rem;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --side-btn-size: 3.5rem;          /* 56px */
+    --side-btn-icon-size: 3.25rem;
+    --side-btn-radius: 1rem;
+    --side-btn-inbox-top: 6rem;
+    --side-btn-reward-top: 6rem;
+    --side-btn-news-top: 10.5rem;
+    --side-btn-misi-bottom: 5.5rem;
+    --side-btn-penelitian-bottom: 1rem;
+    --side-btn-tracking-bottom: 1rem;
+    --side-btn-tracking-left: 5.75rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --side-btn-size: 4rem;            /* 64px */
+    --side-btn-icon-size: 3.75rem;
+    --side-btn-radius: 1.25rem;
+    --side-btn-news-top: 11.5rem;
+    --side-btn-misi-bottom: 6.5rem;
+    --side-btn-penelitian-bottom: 1.25rem;
+    --side-btn-tracking-bottom: 1.25rem;
+    --side-btn-tracking-left: 6.25rem;
+  }
+}
+
+/* Mode Mobile Landscape (HP diputar mendatar) */
+@media (orientation: landscape) and (max-height: 500px) {
+  :root {
+    --side-btn-size: 2rem;            /* 32px - proporsional dengan BottomNav */
+    --side-btn-icon-size: 1.375rem;   /* 22px */
+    --side-btn-radius: 0.5rem;        /* rounded-lg */
+    --side-btn-border: 1px solid rgba(0, 255, 170, 0.3);
+    --side-btn-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --side-btn-badge-size: 0.875rem;  /* 14px */
+    --side-btn-badge-font: 7.5px;
+
+    /* Posisi Kiri Atas */
+    --side-btn-inbox-top: calc(var(--safe-top) + var(--navbar-h) + 0.45rem);
+    --side-btn-inbox-left: calc(var(--safe-left) + 0.5rem);
+
+    /* Posisi Kanan Atas */
+    --side-btn-reward-top: calc(var(--safe-top) + var(--navbar-h) + 0.45rem);
+    --side-btn-reward-right: calc(var(--safe-right) + 0.5rem);
+
+    --side-btn-news-top: calc(var(--safe-top) + var(--navbar-h) + 2.85rem);
+    --side-btn-news-right: calc(var(--safe-right) + 0.5rem);
+
+    /* Posisi 3 Menu Kiri Bawah (1 Baris Sejajar / Flex Row) */
+    --side-btn-penelitian-bottom: calc(var(--safe-bottom) + 0.45rem);
+    --side-btn-penelitian-left: calc(var(--safe-left) + 0.5rem);
+
+    --side-btn-misi-bottom: calc(var(--safe-bottom) + 0.45rem);
+    --side-btn-misi-left: calc(var(--safe-left) + 2.85rem);
+
+    --side-btn-tracking-bottom: calc(var(--safe-bottom) + 0.45rem);
+    --side-btn-tracking-left: calc(var(--safe-left) + 5.2rem);
+  }
+}
+
+/* Mode Mobile Portrait (HP tegak) */
+@media (orientation: portrait) and (max-width: 640px) {
+  :root {
+    --side-btn-size: 2.25rem;         /* 36px */
+    --side-btn-icon-size: 1.5rem;     /* 24px */
+    --side-btn-radius: 0.65rem;       /* rounded-xl */
+    --side-btn-border: 1px solid rgba(0, 255, 170, 0.3);
+    --side-btn-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --side-btn-badge-size: 1rem;      /* 16px */
+    --side-btn-badge-font: 8.5px;
+
+    /* Posisi Kiri Atas */
+    --side-btn-inbox-top: calc(var(--safe-top) + var(--navbar-h) + 0.5rem);
+    --side-btn-inbox-left: calc(var(--safe-left) + 0.5rem);
+
+    /* Posisi Kanan Atas */
+    --side-btn-reward-top: calc(var(--safe-top) + var(--navbar-h) + 0.5rem);
+    --side-btn-reward-right: calc(var(--safe-right) + 0.5rem);
+
+    --side-btn-news-top: calc(var(--safe-top) + var(--navbar-h) + 3.1rem);
+    --side-btn-news-right: calc(var(--safe-right) + 0.5rem);
+
+    /* Posisi 3 Menu Kiri Bawah (Sejajar di atas BottomNav) */
+    --side-btn-penelitian-bottom: calc(var(--safe-bottom) + 4rem);
+    --side-btn-penelitian-left: calc(var(--safe-left) + 0.5rem);
+
+    --side-btn-misi-bottom: calc(var(--safe-bottom) + 4rem);
+    --side-btn-misi-left: calc(var(--safe-left) + 3.1rem);
+
+    --side-btn-tracking-bottom: calc(var(--safe-bottom) + 4rem);
+    --side-btn-tracking-left: calc(var(--safe-left) + 5.7rem);
+  }
+}
+
+/* Class Tombol Utama */
+.side-floating-btn {
+  position: fixed;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--side-btn-size);
+  height: var(--side-btn-size);
+  border-radius: var(--side-btn-radius);
+  border: var(--side-btn-border);
+  background-color: var(--side-btn-bg);
+  box-shadow: var(--side-btn-shadow);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.2s ease, filter 0.2s ease, border-color 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  box-sizing: border-box;
+}
+
+.side-floating-btn:hover {
+  transform: scale(1.08);
+}
+
+.side-floating-btn:active {
+  transform: scale(0.95);
+}
+
+.side-floating-btn img,
+.side-floating-btn svg {
+  width: var(--side-btn-icon-size);
+  height: var(--side-btn-icon-size);
+  object-fit: contain;
+  filter: brightness(1.25) saturate(1.5) drop-shadow(0 0 6px rgba(0, 255, 170, 0.55));
+  pointer-events: none;
+}
+
+/* Badge Notifikasi / Counter */
+.side-floating-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--side-btn-badge-size);
+  height: var(--side-btn-badge-size);
+  padding: 0 3px;
+  border-radius: 9999px;
+  background-color: #e11d48;
+  color: #ffffff;
+  font-weight: 900;
+  font-size: var(--side-btn-badge-font);
+  line-height: 1;
+  border: 1.5px solid rgba(15, 36, 36, 0.95);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+
+/* Posisi Masing-masing Tombol */
+.side-btn-inbox {
+  top: var(--side-btn-inbox-top);
+  left: var(--side-btn-inbox-left);
+}
+
+.side-btn-reward {
+  top: var(--side-btn-reward-top);
+  right: var(--side-btn-reward-right);
+}
+
+.side-btn-news {
+  top: var(--side-btn-news-top);
+  right: var(--side-btn-news-right);
+}
+
+.side-btn-penelitian {
+  bottom: var(--side-btn-penelitian-bottom);
+  left: var(--side-btn-penelitian-left);
+}
+
+.side-btn-misi {
+  bottom: var(--side-btn-misi-bottom);
+  left: var(--side-btn-misi-left);
+}
+
+.side-btn-tracking {
+  bottom: var(--side-btn-tracking-bottom);
+  left: var(--side-btn-tracking-left);
+}
+

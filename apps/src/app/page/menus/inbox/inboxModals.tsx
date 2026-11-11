@@ -537,19 +537,7 @@ export default function TopLeftIcon({
   return (
     <>
       {mounted && !isWarAnalysisActive && createPortal(
-        <div
-          style={{
-            top: isMobile ? 'calc(var(--safe-top) + var(--navbar-h) + 0.5rem)' : undefined,
-            left: isMobile ? 'calc(var(--safe-left) + 0.5rem)' : undefined,
-          }}
-          className={`fixed z-[100] flex flex-col items-start gap-2 pointer-events-auto ${
-            isLandscapePhone
-              ? ''
-              : isPortraitPhone
-              ? ''
-              : 'top-24 left-7'
-          }`}
-        >
+        <div className="side-btn-inbox fixed z-[100] flex flex-col items-start gap-2 pointer-events-auto">
           <button
             onClick={() => {
               if (toastNotification) {
@@ -559,13 +547,7 @@ export default function TopLeftIcon({
               if (onClick) onClick();
             }}
             title="Inbox - Pesan dan Notifikasi"
-            className={`relative flex cursor-pointer items-center justify-center transition-transform group hover:scale-110 active:scale-95 ${
-              isLandscapePhone
-                ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
-                : isPortraitPhone
-                ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
-                : 'h-12 w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16'
-            }`}
+            className="side-floating-btn !static"
           >
             <div className="relative flex h-full w-full items-center justify-center">
               <Image
@@ -575,18 +557,9 @@ export default function TopLeftIcon({
                 height={72}
                 priority
                 onError={(event) => { event.currentTarget.style.display = 'none'; }}
-                className={`object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
-                  isLandscapePhone
-                    ? 'h-11 w-11'
-                    : isPortraitPhone
-                    ? 'h-11 w-11'
-                    : 'h-14 w-14 lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]'
-                }`}
               />
               {unreadCount > 0 && (
-                <div className={`absolute -top-1 -right-1 flex items-center justify-center rounded-full bg-rose-600 px-1 font-black text-white shadow-lg border-2 border-root-canvas animate-pulse ${
-                  isLandscapePhone ? 'h-4 min-w-[16px] text-[8px]' : 'h-5 min-w-[20px] text-[10px]'
-                }`}>
+                <div className="side-floating-badge animate-pulse">
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </div>
               )}

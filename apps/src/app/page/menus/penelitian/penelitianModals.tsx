@@ -63,23 +63,7 @@ export default function BottomLeftPenelitianIcon({
       <button
         onClick={onClick}
         title="Penelitian - Riset dan Teknologi"
-        style={{
-          bottom: isLandscapePhone
-            ? 'calc(var(--safe-bottom) + 3.5rem)'
-            : isPortraitPhone
-              ? 'calc(var(--safe-bottom) + 7.5rem)'
-              : undefined,
-          left: isLandscapePhone || isPortraitPhone
-            ? 'calc(var(--safe-left) + 0.5rem)'
-            : undefined,
-        }}
-        className={`fixed z-[100] flex cursor-pointer items-center justify-center transition-transform group hover:scale-110 active:scale-95 ${
-          isLandscapePhone
-            ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
-            : isPortraitPhone
-            ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
-            : 'bottom-3 left-7 h-12 w-12 lg:bottom-4 lg:h-14 lg:w-14 xl:bottom-6 xl:h-16 xl:w-16 2xl:bottom-12'
-        }`}
+        className="side-floating-btn side-btn-penelitian"
       >
         <img
           src="/images/game/interface/menu/research.svg"
@@ -88,13 +72,6 @@ export default function BottomLeftPenelitianIcon({
           onError={(event) => { event.currentTarget.style.display = 'none'; }}
           width={72}
           height={72}
-          className={`object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
-            isLandscapePhone
-              ? 'h-11 w-11'
-              : isPortraitPhone
-              ? 'h-11 w-11'
-              : 'h-14 w-14 lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]'
-          }`}
         />
       </button>
 

@@ -1243,23 +1243,7 @@ export default function MissionModals({
       <button
         onClick={onClick}
         title="Misi & Sasaran Strategis"
-        style={{
-          bottom: isLandscapePhone
-            ? 'calc(var(--safe-bottom) + 0.5rem)'
-            : isPortraitPhone
-              ? 'calc(var(--safe-bottom) + 4.5rem)'
-              : undefined,
-          left: isLandscapePhone || isPortraitPhone
-            ? 'calc(var(--safe-left) + 0.5rem)'
-            : undefined,
-        }}
-        className={`fixed z-[100] flex cursor-pointer items-center justify-center transition-transform group hover:scale-110 active:scale-95 ${
-          isLandscapePhone
-            ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
-            : isPortraitPhone
-            ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
-            : 'bottom-20 left-7 h-12 w-12 lg:bottom-20 lg:h-14 lg:w-14 xl:bottom-24 xl:h-16 xl:w-16 2xl:bottom-32'
-        }`}
+        className="side-floating-btn side-btn-misi"
       >
         <img
           src="/images/game/interface/menu/mission.svg"
@@ -1268,18 +1252,9 @@ export default function MissionModals({
           onError={(event) => { event.currentTarget.style.display = 'none'; }}
           width={72}
           height={72}
-          className={`object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
-            isLandscapePhone
-              ? 'h-11 w-11'
-              : isPortraitPhone
-              ? 'h-11 w-11'
-              : 'h-14 w-14 lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]'
-          }`}
         />
         {totalClaimable > 0 && (
-          <span className={`absolute -top-1 -right-1 flex items-center justify-center rounded-full bg-red-500 font-black text-white shadow-lg animate-pulse ${
-            isLandscapePhone ? 'h-3.5 w-3.5 text-[8px]' : 'h-4 w-4 text-[9px]'
-          }`}>
+          <span className="side-floating-badge animate-pulse">
             {totalClaimable}
           </span>
         )}

@@ -105,6 +105,7 @@
 
 @media (orientation: landscape) and (max-height: 500px) {
   .map-status-navbar {
+    box-sizing: border-box;
     left: 50%;
     right: auto;
     width: calc(100% - 24px);
@@ -599,6 +600,7 @@
 
 @media (orientation: portrait) and (max-width: 640px) {
   .map-status-navbar {
+    box-sizing: border-box;
     left: 50%;
     right: auto;
     width: calc(100% - 20px);

@@ -230,23 +230,7 @@ export default function DiplomacyTracking({ onOpen, isUiHidden = false }: Diplom
         title="Pelacakan aktivitas diplomasi"
         aria-label={isTrackingOpen ? 'Tutup pelacakan aktivitas' : 'Buka pelacakan aktivitas'}
         aria-expanded={isTrackingOpen}
-        style={{
-          bottom: isLandscapePhone
-            ? 'calc(var(--safe-bottom) + 3.5rem)'
-            : isPortraitPhone
-              ? 'calc(var(--safe-bottom) + 7.5rem)'
-              : undefined,
-          left: isLandscapePhone || isPortraitPhone
-            ? 'calc(var(--safe-left) + 3.5rem)'
-            : undefined,
-        }}
-        className={`fixed z-[100] flex cursor-pointer items-center justify-center transition-transform hover:scale-110 active:scale-95 group ${
-          isLandscapePhone
-            ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
-            : isPortraitPhone
-            ? 'h-11 w-11 rounded-xl border border-root-accent/40 bg-root-surface/90 shadow-lg'
-            : 'bottom-3 left-[5.25rem] h-12 w-12 lg:bottom-4 lg:left-[5.75rem] lg:h-14 lg:w-14 xl:bottom-6 xl:left-[6.25rem] xl:h-16 xl:w-16 2xl:bottom-12'
-        }`}
+        className="side-floating-btn side-btn-tracking"
       >
         <Image
           src="/images/game/interface/menu/diplomacy-activity.svg"
@@ -254,18 +238,9 @@ export default function DiplomacyTracking({ onOpen, isUiHidden = false }: Diplom
           aria-hidden="true"
           width={72}
           height={72}
-          className={`object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
-            isLandscapePhone
-              ? 'h-11 w-11'
-              : isPortraitPhone
-              ? 'h-11 w-11'
-              : 'h-14 w-14 lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]'
-          }`}
         />
         {activePaths.length > 0 && (
-          <span className={`absolute -right-1 -top-1 flex min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 font-black text-white ${
-            isLandscapePhone ? 'h-3.5 min-w-3.5 text-[8px]' : 'h-4 text-[9px]'
-          }`}>
+          <span className="side-floating-badge">
             {activePaths.length}
           </span>
         )}

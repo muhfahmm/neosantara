@@ -247,35 +247,38 @@ export function Navbar({
             {isLandscapePhone ? (
                 <div className="w-full flex items-center justify-between gap-1 pointer-events-auto bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg min-h-[38px]">
                     {/* Sisi Kiri: Power + Bendera Negara */}
-                    <div className="flex min-w-0 items-center gap-1">
+                    <div className="flex shrink-0 items-center gap-1">
                         <button
                             onClick={onOpenGameMenu}
                             data-tutorial="game-menu"
                             title="Game Menu"
-                            className="w-7 h-7 rounded-full bg-root-canvas border border-root-accent/40 text-root-accent flex items-center justify-center cursor-pointer active:scale-95"
+                            className="w-7 h-7 rounded-full bg-root-canvas border border-root-accent/40 text-root-accent flex items-center justify-center cursor-pointer active:scale-95 shrink-0"
                         >
                             <Power className="w-3.5 h-3.5" />
                         </button>
                         {selectedCountry ? (
                             <img
                                 src={`https://flagcdn.com/w80/${selectedCountry.iso.toLowerCase()}.png`}
-                                className="w-5 h-3.5 rounded-sm object-cover border border-root-accent/30"
+                                className="w-5 h-3.5 rounded-sm object-cover border border-root-accent/30 shrink-0"
                                 alt={selectedCountry.country}
                                 onError={(e) => {
                                     (e.target as HTMLImageElement).src = 'https://flagcdn.com/w80/un.png';
                                 }}
                             />
                         ) : (
-                            <span className="text-xs">🌐</span>
+                            <span className="text-xs shrink-0">🌐</span>
                         )}
-                        <span className="w-[28vw] shrink-0 whitespace-normal [overflow-wrap:anywhere] text-[10px] font-black leading-tight text-root-text uppercase tracking-tight">
+                        <span 
+                            title={selectedCountry ? selectedCountry.country : 'Main'}
+                            className="max-w-[70px] min-[800px]:max-w-[100px] truncate text-[10px] font-black leading-tight text-root-text uppercase tracking-tight"
+                        >
                             {selectedCountry ? selectedCountry.country : 'Main'}
                         </span>
                         <FpsMonitoring wasmModuleRef={wasmModuleRef} />
                     </div>
 
                     {/* Ringkasan angka lengkap seperti versi desktop */}
-                    <div className="flex min-w-0 flex-1 items-center justify-center gap-x-2 overflow-hidden px-2">
+                    <div className="flex min-w-0 flex-1 items-center justify-start min-[840px]:justify-center gap-x-2 sm:gap-x-3 overflow-x-auto no-scrollbar px-1.5">
                         <MobileStatusItem
                             icon={<Users className="h-2.5 w-2.5" />}
                             label="POPULASI"
@@ -321,7 +324,7 @@ export function Navbar({
                             data-tutorial="tombol-simpan"
                             aria-label="Simpan Game"
                             title="Simpan Game"
-                            className="flex h-6 w-6 items-center justify-center rounded-md border border-root-accent/30 bg-root-canvas text-root-accent cursor-pointer active:scale-95"
+                            className="flex h-6 w-6 items-center justify-center rounded-md border border-root-accent/30 bg-root-canvas text-root-accent cursor-pointer active:scale-95 shrink-0"
                         >
                             <Save className="h-3.5 w-3.5" />
                         </button>
@@ -329,7 +332,7 @@ export function Navbar({
                             onClick={onOpenRestartConfirm}
                             aria-label="Restart Game"
                             title="Restart Game"
-                            className="flex h-6 w-6 items-center justify-center rounded-md border border-root-accent/30 bg-root-canvas text-root-accent cursor-pointer active:scale-95"
+                            className="flex h-6 w-6 items-center justify-center rounded-md border border-root-accent/30 bg-root-canvas text-root-accent cursor-pointer active:scale-95 shrink-0"
                         >
                             <RotateCcw className="h-3.5 w-3.5" />
                         </button>
@@ -344,18 +347,21 @@ export function Navbar({
                             <button
                                 onClick={onOpenGameMenu}
                                 title="Game Menu"
-                                className="w-7 h-7 rounded-full bg-root-canvas border border-root-accent/40 text-root-accent flex items-center justify-center cursor-pointer active:scale-95"
+                                className="w-7 h-7 rounded-full bg-root-canvas border border-root-accent/40 text-root-accent flex items-center justify-center cursor-pointer active:scale-95 shrink-0"
                             >
                                 <Power className="w-3.5 h-3.5" />
                             </button>
                             {selectedCountry && (
                                 <img
                                     src={`https://flagcdn.com/w80/${selectedCountry.iso.toLowerCase()}.png`}
-                                    className="w-5 h-3.5 rounded-sm object-cover border border-root-accent/30"
+                                    className="w-5 h-3.5 rounded-sm object-cover border border-root-accent/30 shrink-0"
                                     alt={selectedCountry.country}
                                 />
                             )}
-                            <span className="w-[30vw] shrink-0 whitespace-normal [overflow-wrap:anywhere] text-xs font-black leading-tight text-root-text uppercase tracking-tight">
+                            <span 
+                                title={selectedCountry ? selectedCountry.country : 'Main Simulation'}
+                                className="max-w-[120px] truncate text-xs font-black leading-tight text-root-text uppercase tracking-tight"
+                            >
                                 {selectedCountry ? selectedCountry.country : 'Main Simulation'}
                             </span>
                             <FpsMonitoring wasmModuleRef={wasmModuleRef} />
@@ -614,24 +620,24 @@ function MobileStatusItem({
 }) {
     const content = (
         <>
-            <span className="flex min-w-0 items-center gap-0.5 text-[8px] font-black uppercase tracking-wide text-root-subtle">
+            <span className="flex items-center gap-0.5 text-[7.5px] sm:text-[8px] font-black uppercase tracking-wide text-root-subtle">
                 <span className="shrink-0 text-root-accent">{icon}</span>
                 <span className="truncate">{label}</span>
             </span>
-            <span className="flex min-w-0 items-center gap-0.5 whitespace-nowrap text-[10px] font-black tabular-nums leading-none">
+            <span className="flex items-center gap-0.5 whitespace-nowrap text-[9px] sm:text-[10px] font-black tabular-nums leading-none">
                 <span className={valueColor}>{value}</span>
                 {change && (
-                    <span className={change.startsWith('-') ? 'text-rose-400' : 'text-root-accent'}>
+                    <span className={`hidden min-[860px]:inline text-[7.5px] font-bold ${change.startsWith('-') ? 'text-rose-400' : 'text-root-accent'}`}>
                         ({change})
                     </span>
                 )}
             </span>
         </>
     );
-    const classNames = `flex min-w-0 flex-col items-start justify-center gap-0.5 text-left leading-none ${className}`;
+    const classNames = `flex shrink-0 flex-col items-start justify-center gap-0.5 text-left leading-none ${className}`;
 
     return onClick ? (
-        <button type="button" onClick={onClick} className={`${classNames} active:opacity-75`}>
+        <button type="button" onClick={onClick} className={`${classNames} active:opacity-75 cursor-pointer`}>
             {content}
         </button>
     ) : (
