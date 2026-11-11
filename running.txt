@@ -21,6 +21,6 @@ npm run tauri:android:dev -- --host 192.168.137.1
 
 npm run tauri:android:dev -- --host 10.204.202.62
 
-Mode Android default membangun frontend production agar kompilasi dev tidak me-reload simulasi.
-Untuk mengaktifkan hot reload saat pengembangan UI, tambahkan --hot:
-npm run tauri:android:dev -- --hot --host 192.168.137.1
+Mode Android default menggunakan Next.js development dengan Fast Refresh seperti npm run dev.
+Untuk menghindari reload saat simulasi, pilih production secara eksplisit:
+npm run tauri:android:dev -- --production --host 192.168.137.1

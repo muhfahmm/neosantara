@@ -64,18 +64,20 @@ An already running emulator is used only when explicitly selected with
 `--emulator`. If no phone is connected and no emulator is explicitly selected,
 the command exits with instructions instead of opening an emulator.
 
-Android defaults to a production frontend without HMR, preventing code changes
-from reloading a running simulation. The frontend is built when the command
-starts, so restart the command after changing frontend code. To opt into
-development with Fast Refresh, pass `--hot`:
+Android uses the Next.js development frontend with Fast Refresh by default,
+matching `npm run dev`. CSS and UI changes are served by the same development
+server while the app is running. To avoid reloads during a simulation, choose
+the production frontend explicitly with `--production`:
 
 ```powershell
-npm run tauri:android:dev -- --hot --host 192.168.137.1
+npm run tauri:android:dev -- --production --host 192.168.137.1
 ```
 
-Fast Refresh may reload the running simulation when files change. Successful
-`GET /api/... 200` lines are normal data requests and can still appear in the
-terminal; they do not mean the page reloaded.
+Production mode builds the frontend when the command starts, so restart the
+command after changing frontend code. Fast Refresh in development may reload
+the running simulation when files change. Successful `GET /api/... 200` lines
+are normal data requests and can still appear in the terminal; they do not
+mean the page reloaded.
 
 For a physical phone, keep it on the same Wi-Fi network as the computer, or use
 USB debugging with ADB reverse. Check the connected device before running:

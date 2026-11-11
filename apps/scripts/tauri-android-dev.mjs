@@ -231,7 +231,7 @@ async function main() {
   if (productionIndex !== -1 && hotReloadIndex !== -1) {
     throw new Error("Pilih satu mode: gunakan --hot atau --production, jangan keduanya.");
   }
-  const useHotReload = hotReloadIndex !== -1;
+  const useHotReload = productionIndex === -1;
   const modeFlagIndexes = [productionIndex, hotReloadIndex]
     .filter((value) => value !== -1)
     .sort((a, b) => b - a);
