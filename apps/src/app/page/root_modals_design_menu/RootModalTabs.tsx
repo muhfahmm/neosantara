@@ -6,6 +6,7 @@ export interface RootModalTabItem {
   label: string;
   isActive: boolean;
   onClick?: () => void;
+  onMouseDown?: () => void;
   onPointerDown?: () => void;
   className?: string;
   icon?: React.ReactNode;
@@ -25,6 +26,7 @@ export function RootModalTabs({ items, className = '', compact = false }: RootMo
           key={item.label}
           type="button"
           onClick={item.onClick}
+          onMouseDown={item.onMouseDown}
           onPointerDown={item.onPointerDown}
           onTouchEnd={(e) => {
             if (item.onClick) {

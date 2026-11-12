@@ -20,17 +20,17 @@ export function RootNotebookDecorations({ count = 11 }: RootNotebookDecorationsP
         <>
             <div
                 aria-hidden="true"
-                className="absolute left-3 top-6 bottom-6 z-20 w-2.5 rounded-full shadow-md"
+                className="pointer-events-none absolute left-3 top-6 bottom-6 z-20 w-2.5 rounded-full shadow-md"
                 style={railStyle}
             />
             <div
                 aria-hidden="true"
-                className="absolute left-[9px] top-[24px] z-[21] h-3.5 w-[18px] rounded-sm shadow"
+                className="pointer-events-none absolute left-[9px] top-[24px] z-[21] h-3.5 w-[18px] rounded-sm shadow"
                 style={capStyle}
             />
             <div
                 aria-hidden="true"
-                className="absolute left-[9px] bottom-[24px] z-[21] h-3.5 w-[18px] rounded-sm shadow"
+                className="pointer-events-none absolute left-[9px] bottom-[24px] z-[21] h-3.5 w-[18px] rounded-sm shadow"
                 style={capStyle}
             />
             <div

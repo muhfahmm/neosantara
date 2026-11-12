@@ -50,8 +50,7 @@ interface IndeksKesejahteraanModalProps {
   onOpenTempatUmum?: (tab: string) => void;
   onOpenIndustriPangan?: () => void;
   currentDate?: Date | string;
-  activeTab: "statistik" | "naikkan";
-  onActiveTabChange: (tab: "statistik" | "naikkan") => void;
+  initialTab?: "statistik" | "naikkan";
 }
 
 export default function IndeksKesejahteraanModal({
@@ -65,9 +64,11 @@ export default function IndeksKesejahteraanModal({
   onOpenTempatUmum,
   onOpenIndustriPangan,
   currentDate,
-  activeTab,
-  onActiveTabChange,
+  initialTab,
 }: IndeksKesejahteraanModalProps) {
+  const [activeTab, setActiveTab] = useState<"statistik" | "naikkan">(
+    initialTab ?? "statistik",
+  );
   const [showPendidikanInfoModal, setShowPendidikanInfoModal] = useState(false);
   const [showKesehatanInfoModal, setShowKesehatanInfoModal] = useState(false);
   const [showPenegakanHukumInfoModal, setShowPenegakanHukumInfoModal] = useState(false);
@@ -168,45 +169,40 @@ export default function IndeksKesejahteraanModal({
 
   return (
     <>
-      <NotebookModalWrapper onClose={onClose}>
+      <NotebookModalWrapper onClose={onClose} zIndexClass="z-[70]">
         <div className="flex flex-col h-full overflow-hidden bg-root-canvas rounded-xl border border-root-accent/20 ">
           {/* Header */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="p-1 sm:p-1.5 rounded-lg border border-root-accent/30 bg-root-surface shrink-0 ">
-                <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-root-text" />
-              </div>
-              <div>
+          <div className="satisfaction-modal-header px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
+            <div className="satisfaction-modal-header-main flex min-w-0 flex-1 items-center gap-2 sm:gap-4 overflow-x-auto no-scrollbar whitespace-nowrap">
+              <div className="flex shrink-0 items-center gap-2">
+                <div className="p-1 sm:p-1.5 rounded-lg border border-root-accent/30 bg-root-surface shrink-0">
+                  <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-root-text" />
+                </div>
                 <h2 className={`${rootModalTypography.title} leading-none`}>
-                  Indeks Kesejahteraan
+                  Kesejahteraan
                 </h2>
               </div>
+
+              <RootModalTabs
+                className="satisfaction-modal-tabs"
+                items={[
+                  {
+                    label: "Statistik",
+                    isActive: activeTab === "statistik",
+                    onClick: () => setActiveTab("statistik"),
+                    onPointerDown: () => setActiveTab("statistik"),
+                  },
+                  {
+                    label: "Naikkan Kesejahteraan",
+                    isActive: activeTab === "naikkan",
+                    onClick: () => setActiveTab("naikkan"),
+                    onPointerDown: () => setActiveTab("naikkan"),
+                  },
+                ]}
+              />
             </div>
 
             <RootModalCloseButton onClick={onClose} />
-          </div>
-
-          {/* Sub-Header Tab Bar */}
-          <div className="welfare-modal-tab-bar px-4 lg:px-6 py-2 lg:py-2.5 bg-root-canvas border-b border-root-accent/20 flex items-center justify-start shrink-0 relative z-20">
-            <RootModalTabs
-              className="welfare-modal-tabs"
-              items={[
-                {
-                  label: "Statistik",
-                  isActive: activeTab === "statistik",
-                  onClick: () => onActiveTabChange("statistik"),
-                  onPointerDown: () => onActiveTabChange("statistik"),
-                  className: "welfare-modal-tab-button",
-                },
-                {
-                  label: "Naikkan Kesejahteraan",
-                  isActive: activeTab === "naikkan",
-                  onClick: () => onActiveTabChange("naikkan"),
-                  onPointerDown: () => onActiveTabChange("naikkan"),
-                  className: "welfare-modal-tab-button",
-                },
-              ]}
-            />
           </div>
 
           {/* Content (Scrollable) */}

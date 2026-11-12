@@ -254,41 +254,6 @@
     touch-action: manipulation !important;
   }
 
-  .notebook-modal-frame[data-viewport-mode] .welfare-modal-tab-bar {
-    position: relative;
-    z-index: 50 !important;
-    isolation: isolate;
-    height: auto !important;
-    min-height: 48px;
-    max-height: none !important;
-    pointer-events: auto;
-  }
-
-  .notebook-modal-frame[data-viewport-mode] .welfare-modal-tabs {
-    display: inline-flex;
-    width: max-content;
-    max-width: none;
-    flex-wrap: nowrap;
-    position: relative;
-    z-index: 50 !important;
-    pointer-events: auto;
-  }
-
-  .notebook-modal-frame[data-viewport-mode] .welfare-modal-tabs > button {
-    min-height: 32px;
-    flex: 0 0 auto;
-    position: relative;
-    z-index: 50 !important;
-    pointer-events: auto;
-    touch-action: manipulation;
-  }
-
-  .notebook-modal-frame[data-viewport-mode] .welfare-modal-tab-button {
-    position: relative;
-    z-index: 50 !important;
-    min-height: 32px;
-  }
-
   .country-detail-modal-frame[data-viewport-mode] .country-detail-modal-header > div:first-child {
     flex: 1 1 auto;
     min-width: 0;
@@ -335,16 +300,6 @@
 .population-summary-number {
   min-width: 0;
   overflow-wrap: anywhere;
-}
-
-.welfare-modal-tabs > .welfare-modal-tab-button {
-  position: relative;
-  z-index: 50;
-  touch-action: manipulation;
-}
-
-.welfare-modal-tabs > .welfare-modal-tab-button:not([aria-pressed='true']):hover {
-  background-color: color-mix(in srgb, var(--root-color-accent) 10%, transparent);
 }
 
 .root-modal-close-button {

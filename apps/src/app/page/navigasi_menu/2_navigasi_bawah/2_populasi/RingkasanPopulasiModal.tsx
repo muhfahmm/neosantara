@@ -145,9 +145,6 @@ export default function RingkasanPopulasiModal({
   const [isTempatUmumOpen, setIsTempatUmumOpen] = useState(false);
   const [tempatUmumActiveTab, setTempatUmumActiveTab] = useState<string>("infrastruktur");
   const [isKesejahteraanOpen, setIsKesejahteraanOpen] = useState(Boolean(initialOpenKesejahteraan));
-  const [kesejahteraanTab, setKesejahteraanTab] = useState<"statistik" | "naikkan">(
-    initialKesejahteraanTab ?? "statistik",
-  );
   const [isTunawismaOpen, setIsTunawismaOpen] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
 
@@ -168,7 +165,6 @@ export default function RingkasanPopulasiModal({
           onClose();
           return;
         }
-        setKesejahteraanTab("statistik");
         setIsKesejahteraanOpen(false);
       }}
       countryDetail={countryDetail}
@@ -177,8 +173,7 @@ export default function RingkasanPopulasiModal({
       metrics={metrics}
       setActiveMenu={setActiveMenu}
       currentDate={currentDate}
-      activeTab={kesejahteraanTab}
-      onActiveTabChange={setKesejahteraanTab}
+      initialTab={initialKesejahteraanTab}
       onOpenTempatUmum={(tabId: string) => {
         if (onOpenTempatUmum) {
           onOpenTempatUmum(tabId);
@@ -368,7 +363,7 @@ export default function RingkasanPopulasiModal({
 
   return (
     <>
-      {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
+      {!isInfoOpen && <NotebookModalWrapper onClose={onClose} isHidden={isKesejahteraanOpen}>
         <div className="flex flex-col h-full overflow-hidden bg-root-canvas rounded-xl border border-root-accent/20 relative">
         {/* ============ HEADER ============ */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
@@ -430,7 +425,6 @@ export default function RingkasanPopulasiModal({
             <div
               className={`population-summary-card group bg-root-surface border border-root-accent/20 p-2 lg:p-2.5 2xl:p-4 ${rootBorderRadius.card} flex items-center justify-between gap-1.5 lg:gap-2 2xl:gap-3 transition-all cursor-pointer hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98]`}
               onClick={() => {
-                setKesejahteraanTab("statistik");
                 setIsKesejahteraanOpen(true);
               }}
             >
