@@ -1949,14 +1949,21 @@
   }
 
   .harga-modal-frame .commodity-price-card {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: center;
+    gap: 8px;
     padding: 8px;
   }
 
   .harga-modal-frame .commodity-price-card-header {
+    display: block;
     margin-bottom: 6px;
   }
 
   .harga-modal-frame .commodity-price-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 4px;
   }
 
@@ -1964,15 +1971,6 @@
     min-height: 32px;
     padding: 6px 8px;
     font-size: 9px;
-  }
-
-  .harga-modal-frame .harga-subsidy-button {
-    min-height: 34px;
-    margin-top: 4px;
-    margin-bottom: 8px;
-    padding: 7px 8px;
-    font-size: 10px;
-    line-height: 1.2;
   }
 
   .harga-modal-frame .harga-satisfaction-card {
@@ -1983,13 +1981,18 @@
 
 @media (orientation: portrait) and (max-width: 640px) {
   .harga-modal-frame .commodity-price-options {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .harga-modal-frame .commodity-price-option {
     width: 100%;
     padding-inline: 4px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .harga-modal-frame .commodity-price-options {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
 

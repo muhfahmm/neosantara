@@ -168,7 +168,6 @@ function HargaModalContent({
   const deferredPrices = useDeferredValue(prices);
 
   const countryName = String(countryDetail?.country || "");
-  const anggaran = Number(countryDetail?.anggaran || 0);
 
   // ── Refs ──────────────────────────────────────────────────────────────
   const pricesInitializedRef = useRef<string>("");
@@ -464,44 +463,6 @@ function HargaModalContent({
     [flushPending, forumDialogMode]
   );
 
-  const handleSubsidize = useCallback(() => {
-    if (!setCountryDetail) return;
-    if (Number(countryDetailRef.current?.anggaran || 0) < SUBSIDY_COST) return;
-
-    if (forumDialogMode) {
-      setSubsidyActive(true);
-      return;
-    }
-
-    flushPending();
-    setSubsidyActive(true);
-
-    const newSat = calculateSatisfactionFromPrices(
-      committedPricesRef.current,
-      true
-    );
-
-    startTransition(() => {
-      setCountryDetail((prev: typeof countryDetail) => {
-        if (!prev) return prev;
-        const prevAnggaran = Number(prev.anggaran || 0);
-        if (prevAnggaran < SUBSIDY_COST) return prev;
-        const prevKepuasan = Number(prev.kepuasan || 65);
-        const newKepuasan = Math.min(100, prevKepuasan + 5.0);
-        return {
-          ...prev,
-          anggaran: prevAnggaran - SUBSIDY_COST,
-          kepuasan: newKepuasan,
-          subsidyActive: true,
-          satisfaction: {
-            ...(prev.satisfaction || {}),
-            price: newSat,
-          },
-        };
-      });
-    });
-  }, [flushPending, forumDialogMode, setCountryDetail]);
-
   const pendingPriceChanges = Object.entries(prices).filter(
     ([key, value]) => key.startsWith("harga_") && committedPriceSnapshot[key] !== value
   );
@@ -607,25 +568,6 @@ function HargaModalContent({
             )}
           </div>
 
-          {/* Tombol Subsidi */}
-          <button
-            onClick={handleSubsidize}
-            disabled={anggaran < SUBSIDY_COST || subsidyActive}
-            className={`harga-subsidy-button w-full mt-2 mb-4 py-2.5 rounded-xl border font-black text-xs uppercase tracking-wider transition cursor-pointer ${
-              subsidyActive
-                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300 cursor-not-allowed"
-                : anggaran < SUBSIDY_COST
-                  ? "bg-root-surface border-root-accent/20 text-root-subtle cursor-not-allowed"
-                  : "bg-root-accent/15 border-root-accent/50 text-root-accent hover:bg-root-accent/25"
-            }`}
-          >
-            {subsidyActive
-              ? "Subsidi Harga Aktif"
-              : `Aktifkan Subsidi Harga (-${SUBSIDY_COST.toLocaleString(
-                  "id-ID"
-                )} NEO)`}
-          </button>
-
           {/* ---- INDEKS KEPUASAN RAKYAT (HARGA) ---- */}
           {!forumDialogMode && (
           <div className={`harga-satisfaction-card mt-4 border border-root-accent/30 bg-root-canvas p-4 lg:mt-6 lg:p-5 ${rootBorderRadius.card}`}>
@@ -665,7 +607,7 @@ function HargaModalContent({
       isOpen={isInfoOpen}
       onClose={() => setIsInfoOpen(false)}
       title="Informasi Kontrol Harga Barang Pokok"
-      description="Atur harga nasional untuk setiap barang pokok. Harga memengaruhi kepuasan rakyat dan dampak populasi; subsidi harga dapat membantu menekan beban, dengan biaya dari anggaran negara."
+      description="Atur harga nasional untuk setiap barang pokok. Harga memengaruhi kepuasan rakyat dan dampak populasi."
     />
     {isConfirmDialogOpen && createPortal(
       <div className="fixed inset-0 z-[2147483647] flex items-center justify-center p-4 ">
