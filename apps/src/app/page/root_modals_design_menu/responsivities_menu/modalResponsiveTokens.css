@@ -483,6 +483,34 @@
   height: 100% !important;
 }
 
+.responsive-modal-frame.subsidy-detail-modal-frame > .subsidy-detail-modal-shell {
+  box-sizing: border-box;
+  width: min(100%, var(--modal-max-width)) !important;
+  max-width: var(--modal-max-width) !important;
+  height: 100% !important;
+  min-height: 0;
+  max-height: var(--modal-max-height) !important;
+}
+
+.subsidy-detail-modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.subsidy-item-toggle-knob {
+  transform: translateX(4px);
+}
+
+.subsidy-item-toggle[aria-pressed='true'] .subsidy-item-toggle-knob {
+  transform: translateX(18px);
+}
+
+@media (min-width: 1024px) {
+  .subsidy-item-toggle[aria-pressed='true'] .subsidy-item-toggle-knob {
+    transform: translateX(24px);
+  }
+}
+
 .modal-responsive-shell.loan-payment-confirmation-shell {
   box-sizing: border-box;
   width: min(560px, calc(100vw - 32px)) !important;
@@ -625,6 +653,11 @@
 }
 
 @media (min-width: 1024px) and (min-height: 501px) {
+  .subsidy-item-title {
+    font-size: clamp(16px, 1.25vw, 19px);
+    line-height: 1.25;
+  }
+
   .economic-system-modal-frame .economic-impact-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 12px;

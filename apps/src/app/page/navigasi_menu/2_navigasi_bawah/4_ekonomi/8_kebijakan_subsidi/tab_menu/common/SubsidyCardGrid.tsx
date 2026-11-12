@@ -4,7 +4,7 @@
 import React from "react";
 import { Info } from "lucide-react";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
-import { SubsidyItem, formatCurrencyCompact } from "../../../../../../../../../../json/5_database_kebijakan_subsidi/index";
+import { SubsidyItem } from "../../../../../../../../../../json/5_database_kebijakan_subsidi/index";
 
 interface Props {
   items: SubsidyItem[];
@@ -18,7 +18,7 @@ export default function SubsidyCardGrid({ items, toggleSubsidy, onOpenDetail }: 
       {items.map((item) => (
         <div
           key={item.id}
-          className={`subsidy-item-card bg-root-canvas border ${rootBorderRadius.card} p-3.5 lg:p-4 2xl:p-5 flex flex-col justify-between transition-all ${item.isSubsidized
+          className={`subsidy-item-card bg-root-canvas border ${rootBorderRadius.card} p-3.5 lg:p-4 2xl:p-5 flex flex-col transition-all ${item.isSubsidized
               ? "border-root-accent/40 shadow-lg"
               : "border-gray-800 opacity-75"
             }`}
@@ -54,37 +54,12 @@ export default function SubsidyCardGrid({ items, toggleSubsidy, onOpenDetail }: 
                       : "bg-gray-700 border-gray-600"
                     }`}
                 >
-                  <span
-                    className={`inline-block h-3.5 lg:h-4 w-3.5 lg:w-4 transform rounded-full bg-white transition-transform ${item.isSubsidized ? "translate-x-4 lg:translate-x-6" : "translate-x-1"
-                      }`}
-                  />
+                  <span className="subsidy-item-toggle-knob inline-block h-3.5 lg:h-4 w-3.5 lg:w-4 rounded-full bg-white transition-transform" />
                 </button>
               </div>
             </div>
 
             <h4 className="subsidy-item-title text-xs lg:text-sm font-black text-root-text uppercase tracking-wider">{item.name}</h4>
-          </div>
-
-          {/* STATS FOOTER FOR ITEM */}
-          <div className="subsidy-item-stats mt-3 lg:mt-4 pt-2.5 lg:pt-3 border-t border-root-accent/15 grid grid-cols-3 gap-1.5 lg:gap-2 text-center text-[9px] lg:text-[10px]">
-            <div className={`subsidy-item-stat bg-root-surface p-1.5 lg:p-2 ${rootBorderRadius.card} border border-root-accent/10`}>
-              <span className="subsidy-item-stat-label block text-root-subtle font-bold uppercase">Biaya Anggaran</span>
-              <span className="subsidy-item-stat-value font-black text-root-accent mt-0.5 block">{formatCurrencyCompact(item.budgetCost)}</span>
-            </div>
-
-            <div className={`subsidy-item-stat bg-root-surface p-1.5 lg:p-2 ${rootBorderRadius.card} border border-root-accent/10`}>
-              <span className="subsidy-item-stat-label block text-root-subtle font-bold uppercase">Approval</span>
-              <span className="subsidy-item-stat-value font-black text-emerald-400 mt-0.5 block">+{item.approvalImpact}%</span>
-            </div>
-
-            <div className={`subsidy-item-stat bg-root-surface p-1.5 lg:p-2 ${rootBorderRadius.card} border border-root-accent/10`}>
-              <span className="subsidy-item-stat-label block text-root-subtle font-bold uppercase">Risiko Cabut</span>
-              <span className={`subsidy-item-stat-value font-black mt-0.5 block ${item.demoRiskIfDisabled === 'Kritis' ? 'text-rose-500' :
-                  item.demoRiskIfDisabled === 'Tinggi' ? 'text-amber-400' : 'text-emerald-400'
-                }`}>
-                {item.demoRiskIfDisabled}
-              </span>
-            </div>
           </div>
 
         </div>

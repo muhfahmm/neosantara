@@ -1977,13 +1977,65 @@
   }
 
   .subsidy-item-info-button {
-    min-width: 30px;
-    min-height: 30px;
+    width: 26px;
+    min-width: 26px;
+    height: 26px;
+    min-height: 26px;
   }
 
   .subsidy-item-toggle {
-    min-width: 40px;
-    min-height: 24px;
+    width: 32px;
+    min-width: 32px;
+    height: 18px;
+    min-height: 18px;
+  }
+
+  .subsidy-item-toggle-knob {
+    width: 12px;
+    height: 12px;
+  }
+
+  .subsidy-item-toggle[aria-pressed='true'] .subsidy-item-toggle-knob {
+    transform: translateX(16px);
+  }
+
+  .responsive-modal-frame.subsidy-detail-modal-frame {
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .responsive-modal-frame.subsidy-detail-modal-frame > .subsidy-detail-modal-shell {
+    width: min(100%, var(--modal-menu-frame-width, var(--modal-max-width))) !important;
+    max-width: var(--modal-menu-frame-width, var(--modal-max-width)) !important;
+    height: var(--modal-menu-frame-height, var(--modal-max-height)) !important;
+    max-height: var(--modal-menu-frame-height, var(--modal-max-height)) !important;
+    min-height: 0;
+  }
+
+  .subsidy-detail-modal-body {
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .subsidy-detail-modal-body > :first-child > h3 {
+    font-size: 13px;
+  }
+
+  .subsidy-detail-modal-body > :nth-child(2) {
+    padding: 8px;
+  }
+
+  .subsidy-detail-modal-body > :nth-child(3) > div {
+    padding: 7px;
+  }
+
+  .subsidy-detail-modal-body > :nth-child(3) > div > span:last-child {
+    font-size: 13px;
+    line-height: 1.2;
+  }
+
+  .subsidy-detail-modal-body > :last-child {
+    padding: 8px;
   }
 
   .subsidy-item-title {
@@ -1992,29 +2044,6 @@
     overflow-wrap: anywhere;
   }
 
-  .subsidy-item-stats {
-    gap: 4px;
-    margin-top: 8px;
-    padding-top: 6px;
-    font-size: 8px;
-  }
-
-  .subsidy-item-stat {
-    min-width: 0;
-    padding: 5px 3px;
-  }
-
-  .subsidy-item-stat-label {
-    font-size: clamp(6px, 1.8vw, 8px);
-    line-height: 1.15;
-    overflow-wrap: anywhere;
-  }
-
-  .subsidy-item-stat-value {
-    font-size: clamp(8px, 2.2vw, 10px);
-    line-height: 1.2;
-    overflow-wrap: anywhere;
-  }
 }
 
 @media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
