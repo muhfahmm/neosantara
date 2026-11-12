@@ -352,8 +352,8 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
             </div>
           </div>
           {/* CONTENT */}
-          <div className="root-no-scrollbar-glow flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-root-canvas/80 relative z-10 neon-scrollbar">
-            <div className="space-y-3.5 lg:space-y-4.5 2xl:space-y-6">
+          <div className="root-no-scrollbar-glow flex-1 min-h-0 overflow-y-auto p-2 lg:p-5 2xl:p-8 bg-root-canvas/80 relative z-10 neon-scrollbar">
+            <div className="space-y-2 lg:space-y-4.5 2xl:space-y-6">
               {Object.entries(SECTOR_MAP).map(([sectorId, sectorData]) => {
                 const SectorIcon = sectorData.icon;
                 const sectorItems = sectorData.items.filter(key => FOOD_CONSUMPTION_PER_CAPITA[key] !== undefined);
@@ -367,7 +367,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                       <button onClick={() => analyzeSector(sectorId)} className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 lg:py-1.5 rounded-full bg-root-accent/10 hover:bg-root-accent/20 transition-colors border border-root-accent/30 group cursor-pointer" title="Analisis AI untuk sektor ini"><div className="relative"><MessageSquare className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-root-accent group-hover:scale-110 transition-transform" /><span className={`absolute -top-1 -right-1 w-2 h-2 rounded-full ${deficitCount > 0 ? 'bg-rose-400 animate-pulse' : surplusCount > 0 ? 'bg-emerald-400' : 'bg-gray-400'}`} /></div><span className="text-[8px] lg:text-[9px] font-bold uppercase tracking-wider text-root-accent">AI</span></button>
                     </div>
                     {/* Grid Items */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 lg:gap-2 p-2 lg:p-2.5 2xl:p-3 bg-root-surface">
+                    <div className="grid grid-cols-4 gap-1 p-1.5 lg:gap-2 lg:p-2.5 2xl:p-3 bg-root-surface">
                       {sectorItems.map((key) => {
                         const consumptionPerCapita = FOOD_CONSUMPTION_PER_CAPITA[key];
                         const production = calculateProduction(key, countryDetail, metadata);
@@ -375,19 +375,19 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                         const netBalance = production - consumption;
                         const label = metadata?.[key]?.label || key.replace(/_/g, ' ').replace(/\b\w/g, (ch) => ch.toUpperCase());
                         return (
-                          <div key={key} className={`min-w-0 bg-root-canvas p-2 lg:p-2.5 2xl:p-3.5 flex flex-col justify-between gap-1.5 lg:gap-2 ${rootBorderRadius.card} border border-root-accent/20`}>
-                            <div className="flex items-center justify-between pb-1 border-b border-root-accent/10 gap-1 min-h-[28px] lg:min-h-[30px] 2xl:min-h-[34px]">
-                              <div className="flex items-center gap-1 lg:gap-1.5 min-w-0 flex-1 pr-0.5">
+                          <div key={key} className={`min-w-0 bg-root-canvas p-1.5 lg:p-2.5 2xl:p-3.5 flex flex-col justify-between gap-1 lg:gap-2 ${rootBorderRadius.card} border border-root-accent/20`}>
+                            <div className="flex items-start justify-between pb-1 border-b border-root-accent/10 gap-1 min-h-[24px] lg:min-h-[30px] 2xl:min-h-[34px]">
+                              <div className="flex min-w-0 flex-1 items-start gap-1 pr-0.5 lg:gap-1.5">
                                 <button type="button" onClick={(e) => { e.stopPropagation(); openCommodityInfo(key, label, production, consumption, netBalance); }} title={`Detail konsumsi ${label}`} className="p-0.5 lg:p-1 rounded-md lg:rounded-lg border border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer shrink-0"><Info className="w-3 h-3 lg:w-3.5 lg:h-3.5" /></button>
-                                <span className={`${rootModalTypography.label} min-w-0 whitespace-normal break-words leading-tight`}>{label}</span>
+                                <span className={`${rootModalTypography.label} food-commodity-mobile-title min-w-0 whitespace-normal break-words leading-tight`}>{label}</span>
                               </div>
-                              {onGotoProduction && (<button onClick={() => handleBuildClick(key)} title={`Bangun ${label}`} className="p-0.5 lg:p-1 rounded-md lg:rounded-lg bg-root-accent text-root-canvas hover:bg-root-accent/80 transition-all cursor-pointer shrink-0"><Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 font-bold" /></button>)}
+                              {onGotoProduction && (<button onClick={() => handleBuildClick(key)} title={`Bangun ${label}`} className="self-start p-0.5 lg:p-1 rounded-md lg:rounded-lg bg-root-accent text-root-canvas hover:bg-root-accent/80 transition-all cursor-pointer shrink-0"><Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 font-bold" /></button>)}
                             </div>
-                            <div className="space-y-1 text-[10px] lg:text-[11px] 2xl:text-xs">
-                              <div className={`flex justify-between items-center bg-emerald-950/40 px-1.5 lg:px-2 py-0.5 lg:py-1 ${rootBorderRadius.card} border border-emerald-500/30`}><span className={rootModalTypography.label}>Total Produksi</span>{formatColoredNumber(production, true)}</div>
-                              <div className={`flex justify-between items-center bg-rose-950/40 px-1.5 lg:px-2 py-0.5 lg:py-1 ${rootBorderRadius.card} border border-rose-500/30`}><span className={rootModalTypography.label}>Total Konsumsi</span>{formatColoredNumber(consumption, false)}</div>
+                            <div className="food-commodity-mobile-value space-y-1 text-[10px] lg:text-[11px] 2xl:text-xs">
+                              <div className={`flex flex-col items-start lg:flex-row lg:items-center lg:justify-between bg-emerald-950/40 px-1 lg:px-2 py-0.5 lg:py-1 ${rootBorderRadius.card} border border-emerald-500/30`}><span className={`${rootModalTypography.label} food-commodity-mobile-label`}>Total Produksi</span>{formatColoredNumber(production, true)}</div>
+                              <div className={`flex flex-col items-start lg:flex-row lg:items-center lg:justify-between bg-rose-950/40 px-1 lg:px-2 py-0.5 lg:py-1 ${rootBorderRadius.card} border border-rose-500/30`}><span className={`${rootModalTypography.label} food-commodity-mobile-label`}>Total Konsumsi</span>{formatColoredNumber(consumption, false)}</div>
                             </div>
-                            <div className="flex justify-between items-center pt-1 border-t border-root-accent/10 mt-0.5 text-[10px] lg:text-[11px] 2xl:text-xs"><span className={rootModalTypography.label}>Netto:</span>{formatColoredNumber(netBalance, netBalance >= 0)}</div>
+                            <div className="food-commodity-mobile-value flex flex-col items-start lg:flex-row lg:items-center lg:justify-between pt-1 border-t border-root-accent/10 mt-0.5 text-[10px] lg:text-[11px] 2xl:text-xs"><span className={`${rootModalTypography.label} food-commodity-mobile-label`}>Netto:</span>{formatColoredNumber(netBalance, netBalance >= 0)}</div>
                           </div>
                         );
                       })}

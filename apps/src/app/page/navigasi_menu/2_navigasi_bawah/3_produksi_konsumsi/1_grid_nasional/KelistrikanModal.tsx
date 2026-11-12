@@ -251,20 +251,19 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
             <div className="min-w-0 flex justify-center">
               <RootModalTabs
-                compact
-                className="!flex-nowrap gap-0.5 whitespace-nowrap p-0.5"
+                className="satisfaction-modal-tabs !flex-nowrap gap-0.5 whitespace-nowrap p-0.5"
                 items={[
                   {
                     label: "Neraca User",
                     isActive: activeTab === "user",
                     onClick: () => setActiveTab("user"),
-                    className: "!px-1.5 !text-[8px] !tracking-normal sm:!px-2.5 sm:!text-[9px]",
+                    className: "!px-1 !py-1 !text-[8px] !tracking-normal sm:!px-2 sm:!text-[9px]",
                   },
                   {
                     label: `Neraca ${allCountries.length || 212} Negara`,
                     isActive: activeTab === "global",
                     onClick: () => setActiveTab("global"),
-                    className: "!px-1.5 !text-[8px] !tracking-normal sm:!px-2.5 sm:!text-[9px]",
+                    className: "!px-1 !py-1 !text-[8px] !tracking-normal sm:!px-2 sm:!text-[9px]",
                   },
                 ]}
               />

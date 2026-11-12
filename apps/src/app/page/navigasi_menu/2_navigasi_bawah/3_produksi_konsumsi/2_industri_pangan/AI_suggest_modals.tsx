@@ -61,15 +61,15 @@ export default function AISuggestModal({
         </div>
 
         {/* BODY */}
-        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto bg-root-surface p-6 text-sm text-root-text neon-scrollbar">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="rounded-xl bg-rose-950/40 p-4 border border-rose-500/30">
-              <div className="text-[10px] font-bold text-rose-400 uppercase tracking-tight">Total Defisit</div>
-              <div className="mt-1 font-black text-rose-400 text-lg">-{formatNumber(totalDeficit)}</div>
+        <div className="min-h-0 flex-1 space-y-3 lg:space-y-5 overflow-y-auto bg-root-surface p-3 sm:p-4 lg:p-6 text-sm text-root-text neon-scrollbar">
+          <div className="grid grid-cols-2 gap-2 lg:gap-3">
+            <div className="rounded-lg bg-rose-950/40 p-2 lg:p-3 border border-rose-500/30">
+              <div className="text-[8px] sm:text-[9px] lg:text-[10px] font-bold text-rose-400 uppercase tracking-tight">Total Defisit</div>
+              <div className="mt-0.5 sm:mt-1 font-black text-rose-400 text-xs sm:text-sm lg:text-base">-{formatNumber(totalDeficit)}</div>
             </div>
-            <div className="rounded-xl bg-emerald-950/40 p-4 border border-emerald-500/30">
-              <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-tight">Total Surplus</div>
-              <div className="mt-1 font-black text-emerald-400 text-lg">+{formatNumber(totalSurplus)}</div>
+            <div className="rounded-lg bg-emerald-950/40 p-2 lg:p-3 border border-emerald-500/30">
+              <div className="text-[8px] sm:text-[9px] lg:text-[10px] font-bold text-emerald-400 uppercase tracking-tight">Total Surplus</div>
+              <div className="mt-0.5 sm:mt-1 font-black text-emerald-400 text-xs sm:text-sm lg:text-base">+{formatNumber(totalSurplus)}</div>
             </div>
           </div>
 

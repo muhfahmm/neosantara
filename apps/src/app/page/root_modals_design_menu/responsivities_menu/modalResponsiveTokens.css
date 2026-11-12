@@ -563,3 +563,14 @@
     --modal-font-tab: 0.6875rem;
   }
 }
+
+@media (max-width: 1023px), (orientation: landscape) and (max-height: 500px) {
+  .food-industry-modal .food-commodity-mobile-title,
+  .food-industry-modal .food-commodity-mobile-value {
+    font-size: clamp(7px, 2vw, 8px) !important;
+  }
+
+  .food-industry-modal .food-commodity-mobile-label {
+    font-size: 7px !important;
+  }
+}
