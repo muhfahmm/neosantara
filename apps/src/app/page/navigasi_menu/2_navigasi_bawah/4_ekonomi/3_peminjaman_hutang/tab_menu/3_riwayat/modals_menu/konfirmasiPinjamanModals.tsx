@@ -37,11 +37,11 @@ export default function KonfirmasiPinjamanModal({
   const isFundsSufficient = true;
 
   return (
-    <NotebookModalWrapper zIndexClass="z-[70]">
+    <NotebookModalWrapper zIndexClass="z-[70]" frameClassName="loan-confirm-modal-frame loan-confirm-history-modal-frame">
       <div className="relative flex h-full w-full flex-col overflow-hidden bg-root-surface font-sans pointer-events-auto">
 
         {/* HEADER */}
-        <div className="relative z-10 flex items-center justify-between gap-3 border-b border-root-accent/20 bg-root-canvas px-4 py-3 sm:px-6">
+        <div className="loan-confirm-header relative z-10 flex items-center justify-between gap-3 border-b border-root-accent/20 bg-root-canvas px-4 py-3 sm:px-6">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <div className={`shrink-0 border border-root-accent/30 bg-root-surface p-1.5 ${rootBorderRadius.card}`}>
               <CreditCard className="h-4 w-4 text-root-accent sm:h-5 sm:w-5" />
@@ -53,21 +53,20 @@ export default function KonfirmasiPinjamanModal({
           <RootModalCloseButton onClick={onClose} />
         </div>
 
-        <div className="flex-1 overflow-y-auto p-8 bg-root-canvas/80 custom-scrollbar">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-            <div className={`flex flex-col justify-between border border-root-accent/30 bg-root-surface p-6 ${rootBorderRadius.card}`}>
-              <div className="space-y-4">
+        <div className="loan-confirm-content min-h-0 flex-1 overflow-y-auto p-8 bg-root-canvas/80 custom-scrollbar">
+          <div className="loan-confirm-columns grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+            <div className={`loan-confirm-panel flex flex-col justify-between border border-root-accent/30 bg-root-surface p-6 ${rootBorderRadius.card}`}>
+              <div className="loan-confirm-panel-content space-y-4">
                 <div className="flex items-center gap-4">
                   <div className={`border border-root-accent/30 bg-root-canvas p-3 ${rootBorderRadius.card}`}>
                     <CreditCard className="h-6 w-6 text-root-accent" />
                   </div>
                   <div>
                     <h4 className="text-lg font-black text-root-accent uppercase">Sumber Pinjaman</h4>
-                    <p className="text-xs text-root-subtle font-medium">Negara atau lembaga yang memberi pinjaman.</p>
                   </div>
                 </div>
 
-                <div className={`border border-root-accent/20 bg-root-canvas p-5 ${rootBorderRadius.card}`}>
+                <div className={`loan-confirm-details border border-root-accent/20 bg-root-canvas p-5 ${rootBorderRadius.card}`}>
                   <div className="flex items-center gap-3 mb-4 text-root-accent font-black">
                     {renderFlag(iso, loanSource)}
                     <span>{loanSource}</span>
@@ -94,21 +93,20 @@ export default function KonfirmasiPinjamanModal({
               </div>
             </div>
 
-            <div className={`flex flex-col justify-between border border-root-accent/30 bg-root-surface p-6 ${rootBorderRadius.card}`}>
-              <div className="space-y-6 text-root-text">
+            <div className={`loan-confirm-panel flex flex-col justify-between border border-root-accent/30 bg-root-surface p-6 ${rootBorderRadius.card}`}>
+              <div className="loan-confirm-panel-content space-y-6 text-root-text">
                 <div>
                   <h4 className="text-lg font-black text-root-accent uppercase tracking-wider">Ringkasan Pinjaman</h4>
-                  <p className="text-xs text-root-subtle font-medium mt-2">Pinjaman ini akan menambah kas negara saat dikonfirmasi.</p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 text-sm">
+                <div className="loan-confirm-summary-grid grid grid-cols-1 gap-4 text-sm">
                   <div className={`border border-root-accent/20 bg-root-canvas p-4 ${rootBorderRadius.card}`}>
                     <p className="text-root-subtle text-xs font-bold uppercase">Saldo Kas Negara</p>
-                    <p className="mt-2 text-2xl font-black text-root-accent">{currentMoney.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</p>
+                    <p className="mt-2 text-[15px] font-black text-root-accent">{currentMoney.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</p>
                   </div>
                   <div className={`border border-root-accent/20 bg-root-canvas p-4 ${rootBorderRadius.card}`}>
                     <p className="text-root-subtle text-xs font-bold uppercase">Total Outstanding</p>
-                    <p className="mt-2 text-2xl font-black text-rose-400">{totalPayment.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</p>
+                    <p className="mt-2 text-[15px] font-black text-rose-400">{totalPayment.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</p>
                   </div>
                   <div className={`border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-400 ${rootBorderRadius.card}`}>
                     <p className="font-black uppercase text-[10px] tracking-wider">Pinjaman siap dikonfirmasi</p>
@@ -119,7 +117,7 @@ export default function KonfirmasiPinjamanModal({
           </div>
         </div>
 
-        <div className="flex flex-col gap-4 px-8 pb-8 pt-4 lg:flex-row lg:items-center lg:justify-end bg-root-canvas border-t border-root-accent/20">
+        <div className="loan-confirm-footer flex flex-col gap-4 px-8 pb-8 pt-4 lg:flex-row lg:items-center lg:justify-end bg-root-canvas border-t border-root-accent/20">
           <div className={`border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs font-bold text-emerald-400 lg:flex-1 ${rootBorderRadius.card}`}>
             Pinjaman akan langsung ditambahkan ke kas negara saat disetujui.
           </div>

@@ -1049,3 +1049,672 @@
     flex-wrap: wrap;
   }
 }
+
+@media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
+  .tax-policy-modal-frame .tax-policy-header {
+    min-height: 44px;
+    padding: 4px 10px !important;
+  }
+
+  .tax-policy-modal-frame .tax-policy-content {
+    min-height: 0;
+    padding: 8px !important;
+  }
+
+  .tax-policy-modal-frame .tax-policy-alert {
+    margin: 8px 10px 0 !important;
+    padding: 8px !important;
+    font-size: 10px !important;
+    line-height: 1.3;
+  }
+
+  .tax-policy-rate-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .tax-policy-rate-card {
+    min-width: 0;
+    margin-top: 0 !important;
+    padding: 8px;
+    border: 1px solid color-mix(in srgb, var(--root-color-accent) 22%, transparent);
+    border-radius: 10px;
+    background: var(--root-color-surface);
+  }
+
+  .tax-policy-rate-card > :not(:first-child) {
+    margin-top: 4px !important;
+  }
+
+  .tax-policy-rate-heading {
+    align-items: flex-start;
+    gap: 4px;
+    font-size: clamp(10px, 2.7vw, 12px) !important;
+    line-height: 1.2;
+  }
+
+  .tax-policy-rate-heading > span {
+    min-width: 0;
+    flex: 1 1 50%;
+    overflow-wrap: anywhere;
+  }
+
+  .tax-policy-rate-values {
+    min-width: 0;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 2px 6px !important;
+  }
+
+  .tax-policy-rate-values > span {
+    max-width: 100%;
+    font-size: clamp(9px, 2.4vw, 11px) !important;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+    text-align: right;
+  }
+
+  .tax-policy-rate-card input[type='range'] {
+    display: block;
+    width: 100%;
+    height: 24px;
+    margin: 0;
+    touch-action: pan-x;
+  }
+
+  .tax-policy-modal-frame .tax-policy-revenue-card,
+  .tax-policy-modal-frame .tax-policy-satisfaction-card {
+    margin-top: 8px !important;
+    padding: 8px !important;
+  }
+
+  .tax-policy-revenue-card > div:first-child {
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 4px;
+  }
+
+  .tax-policy-revenue-card > div:first-child > span:first-child {
+    min-width: 0;
+    flex: 1 1 auto;
+    font-size: 9px !important;
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+  }
+
+  .tax-policy-revenue-card > div:first-child > div:last-child {
+    flex: 0 0 auto;
+    min-width: max-content;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    gap: 4px !important;
+  }
+
+  .tax-policy-revenue-card > div:first-child > div:last-child > span:first-child {
+    font-size: 10px !important;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .tax-policy-revenue-card > div:first-child > div:last-child > span:last-child {
+    font-size: clamp(12px, 3.8vw, 15px) !important;
+    line-height: 1.1;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .tax-policy-revenue-card > div:last-child {
+    gap: 4px !important;
+    margin-top: 6px !important;
+  }
+
+  .tax-policy-revenue-card > div:last-child > span {
+    padding: 3px 5px !important;
+    font-size: 7px !important;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+
+  .tax-policy-satisfaction-card > div:first-child {
+    align-items: center;
+    gap: 4px;
+  }
+
+  .tax-policy-satisfaction-card > div:first-child > span:first-child {
+    min-width: 0;
+    font-size: 9px !important;
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+  }
+
+  .tax-policy-satisfaction-card > div:first-child > span:last-child {
+    flex-shrink: 0;
+    font-size: 16px !important;
+    line-height: 1.1;
+  }
+
+  .tax-policy-satisfaction-card > div:nth-child(2) {
+    height: 6px;
+    margin-top: 6px !important;
+  }
+
+  .tax-policy-modal-frame .tax-policy-content > p:last-child {
+    margin-top: 8px !important;
+    font-size: 10px !important;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .tax-policy-rate-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .tax-policy-rate-heading {
+    font-size: 10px !important;
+  }
+}
+
+@media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
+  .loan-modal-frame .loan-modal-header {
+    min-height: 44px;
+    padding: 4px 10px !important;
+  }
+
+  .loan-modal-frame .loan-modal-content {
+    min-height: 0;
+    padding: 8px !important;
+  }
+
+  .loan-modal-summary {
+    margin-bottom: 8px !important;
+  }
+
+  .loan-modal-controls {
+    gap: 6px !important;
+  }
+
+  .responsive-modal-frame[data-viewport-mode] .loan-modal-tabs {
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    height: auto !important;
+    gap: 2px !important;
+    padding: 2px !important;
+    border-radius: 7px !important;
+  }
+
+  .responsive-modal-frame[data-viewport-mode] .loan-modal-tabs > button {
+    min-width: 0 !important;
+    min-height: 28px;
+    flex: 1 1 0%;
+    padding: 4px 10px !important;
+    border-radius: 5px !important;
+    font-size: 9px !important;
+    line-height: 1.1 !important;
+    letter-spacing: 0.08em !important;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .loan-modal-search > svg {
+    left: 8px;
+    width: 14px;
+    height: 14px;
+  }
+
+  .loan-modal-search > input {
+    height: 32px;
+    padding: 4px 8px 4px 28px !important;
+    font-size: 10px !important;
+  }
+
+  .loan-modal-stat-grid {
+    gap: 6px !important;
+  }
+
+  .loan-modal-stat-card {
+    min-width: 0;
+    padding: 8px !important;
+    border-radius: 9px;
+  }
+
+  .loan-modal-stat-label {
+    margin-bottom: 3px !important;
+    font-size: 8px !important;
+    line-height: 1.2;
+  }
+
+  .loan-modal-debt-ratio {
+    align-items: center;
+    margin-bottom: 5px !important;
+    gap: 4px;
+  }
+
+  .loan-modal-debt-ratio > span {
+    font-size: 18px !important;
+    line-height: 1;
+  }
+
+  .loan-modal-debt-ratio > div {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    font-size: 8px !important;
+    line-height: 1.2;
+  }
+
+  .loan-modal-stat-card > div:last-child {
+    height: 7px;
+  }
+
+  .loan-modal-total-card > span:first-child {
+    font-size: 10px !important;
+    line-height: 1.2;
+  }
+
+  .loan-modal-total-card > span:last-child {
+    margin-top: 4px !important;
+    font-size: clamp(12px, 3.4vw, 15px) !important;
+    line-height: 1.15;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .loan-modal-stat-grid {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  }
+}
+
+@media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
+  .loan-institution-list {
+    padding-right: 2px !important;
+  }
+
+  .loan-institution-card {
+    gap: 8px !important;
+    padding: 8px !important;
+  }
+
+  .loan-institution-header {
+    gap: 6px !important;
+  }
+
+  .loan-institution-header > div:first-child {
+    gap: 6px !important;
+  }
+
+  .loan-institution-icon {
+    padding: 5px !important;
+  }
+
+  .loan-institution-icon svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .loan-institution-name {
+    font-size: 11px !important;
+    line-height: 1.2;
+  }
+
+  .loan-institution-description {
+    margin-top: 3px !important;
+    font-size: 8px !important;
+    line-height: 1.25;
+  }
+
+  .loan-institution-status {
+    gap: 4px !important;
+    font-size: 11px !important;
+    line-height: 1.2;
+  }
+
+  .loan-institution-status > span {
+    font-size: 11px !important;
+  }
+
+  .loan-institution-fields {
+    gap: 7px !important;
+  }
+
+  .loan-institution-field {
+    font-size: 8px !important;
+    line-height: 1.2;
+    letter-spacing: 0.04em !important;
+  }
+
+  .loan-institution-field > div:first-child {
+    margin-bottom: 4px;
+  }
+
+  .loan-institution-input,
+  .loan-institution-term-button {
+    height: 32px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    font-size: 11px !important;
+  }
+
+  .loan-institution-input {
+    padding-right: 58px !important;
+  }
+
+  .loan-institution-amount-controls {
+    right: 4px !important;
+    gap: 3px !important;
+  }
+
+  .loan-institution-stepper {
+    width: 22px;
+    height: 22px;
+  }
+
+  .loan-institution-stepper svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .loan-institution-error {
+    padding: 7px 8px !important;
+    font-size: 10px !important;
+    line-height: 1.25;
+  }
+
+  .loan-institution-submit {
+    padding: 7px 8px !important;
+    font-size: 9px !important;
+    line-height: 1.2;
+  }
+
+  .loan-country-grid {
+    gap: 4px !important;
+    padding-right: 2px !important;
+  }
+
+  .loan-country-card {
+    padding: 6px !important;
+    border-radius: 8px;
+  }
+
+  .loan-country-card-header {
+    gap: 4px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .loan-country-card-header img,
+  .loan-country-card-header > div > div:first-child {
+    width: 24px;
+    height: 15px;
+  }
+
+  .loan-country-card-header > div > span {
+    font-size: 8px !important;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
+
+  .loan-country-card-header > span {
+    padding: 2px 4px !important;
+    font-size: 8px !important;
+    line-height: 1.1;
+  }
+
+  .loan-country-card-details {
+    font-size: 7px !important;
+    line-height: 1.2;
+  }
+
+  .loan-country-card-details > p {
+    gap: 2px !important;
+  }
+
+  .loan-country-card-details > p > span:last-child {
+    font-size: 7px !important;
+    overflow-wrap: anywhere;
+  }
+
+  .loan-country-card-action {
+    min-height: 22px;
+    margin-top: 6px !important;
+    gap: 2px !important;
+    padding: 3px 2px !important;
+    font-size: 7px !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  .loan-country-card-action > svg {
+    width: 9px;
+    height: 9px;
+  }
+}
+
+@media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
+  .loan-confirm-modal-frame > .modal-responsive-shell {
+    width: calc(100vw - 20px);
+    max-width: 900px;
+    max-height: calc(100dvh - 20px);
+    padding: 6px 6px 6px 24px !important;
+    border-width: 3px;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-header {
+    gap: 6px;
+    padding: 6px 8px;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-header h3 {
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-content {
+    padding: 8px;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-columns {
+    height: auto;
+    gap: 8px;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-panel {
+    justify-content: flex-start;
+    padding: 8px;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-panel-content {
+    gap: 8px;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-panel-content > div:first-child {
+    gap: 8px;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-panel-content > div:first-child > div:first-child {
+    padding: 6px;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-panel-content > div:first-child > div:first-child svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-panel h4 {
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-details {
+    padding: 8px;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-details > div:first-child {
+    gap: 6px;
+    margin-bottom: 8px;
+    font-size: 11px;
+    overflow-wrap: anywhere;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-details > div:last-child {
+    display: grid;
+    gap: 7px;
+    font-size: 10px;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-details > div:last-child > div {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-details > div:last-child > div > span:last-child {
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    font-size: 10px;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-summary-grid > div {
+    min-width: 0;
+    padding: 8px;
+    overflow-wrap: anywhere;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-summary-grid > div:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-summary-grid > div > p:last-child {
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-footer {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-footer > div {
+    grid-column: 1 / -1;
+    padding: 7px;
+    font-size: 10px;
+    line-height: 1.3;
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-footer > button {
+    width: 100%;
+    min-width: 0;
+    min-height: 34px;
+    padding: 7px 5px;
+    font-size: 10px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .loan-institution-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .loan-confirm-modal-frame .loan-confirm-panel-content {
+    gap: 6px;
+  }
+}
+
+@media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
+  .loan-confirm-history-modal-frame .loan-confirm-panel:first-child {
+    padding: 6px;
+  }
+
+  .loan-confirm-history-modal-frame .loan-confirm-panel:first-child .loan-confirm-panel-content {
+    gap: 5px;
+  }
+
+  .loan-confirm-history-modal-frame .loan-confirm-panel:first-child .loan-confirm-panel-content > div:first-child {
+    gap: 6px;
+  }
+
+  .loan-confirm-history-modal-frame .loan-confirm-panel:first-child .loan-confirm-panel-content > div:first-child > div:first-child {
+    padding: 5px;
+  }
+
+  .loan-confirm-history-modal-frame .loan-confirm-panel:first-child .loan-confirm-panel-content > div:first-child > div:first-child svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .loan-confirm-history-modal-frame .loan-confirm-panel:first-child h4 {
+    font-size: 11px;
+  }
+
+  .loan-confirm-history-modal-frame .loan-confirm-details {
+    padding: 6px;
+  }
+
+  .loan-confirm-history-modal-frame .loan-confirm-details > div:first-child {
+    gap: 5px;
+    margin-bottom: 5px;
+    font-size: 10px;
+  }
+
+  .loan-confirm-history-modal-frame .loan-confirm-details > div:last-child {
+    gap: 5px;
+    font-size: 9px;
+    line-height: 1.2;
+  }
+
+  .loan-confirm-history-modal-frame .loan-confirm-details > div:last-child > div {
+    gap: 5px;
+  }
+
+  .loan-confirm-history-modal-frame .loan-confirm-details > div:last-child > div:last-child {
+    padding-top: 6px;
+  }
+
+  .loan-confirm-history-modal-frame .loan-confirm-details > div:last-child > div > span:last-child {
+    font-size: 9px;
+  }
+
+  .loan-confirm-history-modal-frame .loan-confirm-summary-grid > div {
+    padding: 6px;
+  }
+
+  .loan-confirm-history-modal-frame .loan-confirm-summary-grid > div > p:last-child {
+    font-size: clamp(10px, 2.8vw, 12px);
+  }
+
+  .loan-confirm-history-modal-frame[data-viewport-mode] .notebook-modal-sheet .loan-confirm-panel h4 {
+    font-size: 10px !important;
+    line-height: 1.15;
+  }
+
+  .loan-confirm-history-modal-frame[data-viewport-mode] .notebook-modal-sheet .loan-confirm-summary-grid > div {
+    padding: 5px;
+  }
+
+  .loan-confirm-history-modal-frame[data-viewport-mode] .notebook-modal-sheet .loan-confirm-summary-grid > div > p:first-child {
+    font-size: 7px !important;
+    line-height: 1.15;
+  }
+
+  .loan-confirm-history-modal-frame .loan-confirm-summary-grid > div > p:last-child {
+    font-size: 15px !important;
+    line-height: 1.2;
+    margin-top: 3px;
+  }
+
+  .loan-confirm-history-modal-frame[data-viewport-mode] .notebook-modal-sheet .loan-confirm-details,
+  .loan-confirm-history-modal-frame[data-viewport-mode] .notebook-modal-sheet .loan-confirm-details > div:last-child > div > span {
+    font-size: 8px !important;
+  }
+}

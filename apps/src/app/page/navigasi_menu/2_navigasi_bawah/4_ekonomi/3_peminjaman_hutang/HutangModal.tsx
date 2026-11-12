@@ -357,11 +357,11 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
   return (
     <>
       {!isLoanInfoOpen && (
-      <NotebookModalWrapper onClose={onClose}>
+      <NotebookModalWrapper onClose={onClose} frameClassName="loan-modal-frame">
         <div className="flex flex-col h-full overflow-hidden">
 
           {/* Header */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
+          <div className="loan-modal-header px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
               <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
@@ -385,13 +385,13 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
         </div>
 
         {/* Body Content */}
-        <div className="flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-root-canvas/80 relative z-10 custom-scrollbar">
+        <div className="loan-modal-content min-h-0 flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-root-canvas/80 relative z-10 custom-scrollbar">
           
-          <div className="mb-3.5 space-y-3 lg:mb-5 lg:space-y-4 2xl:mb-6">
-            <div className="flex flex-col items-stretch gap-3 xl:flex-row xl:items-center">
+          <div className="loan-modal-summary mb-3.5 space-y-3 lg:mb-5 lg:space-y-4 2xl:mb-6">
+            <div className="loan-modal-controls flex flex-col items-stretch gap-3 xl:flex-row xl:items-center">
               <RootModalTabs
                 compact
-                className="w-full xl:w-3/5 xl:flex-none [&>button]:min-w-0 [&>button]:flex-1"
+                className="loan-modal-tabs w-full xl:w-3/5 xl:flex-none [&>button]:min-w-0 [&>button]:flex-1"
                 items={[
                   { label: "Negara Lain", isActive: activeTab === "bilateral", onClick: () => setActiveTab("bilateral") },
                   { label: "Lembaga Dunia", isActive: activeTab === "multilateral", onClick: () => setActiveTab("multilateral") },
@@ -399,7 +399,7 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
                 ]}
               />
               {activeTab === "bilateral" && (
-                <div className={`relative min-w-0 flex-1 ${rootBorderRadius.card} xl:w-[35%] xl:flex-none`}>
+                <div className={`loan-modal-search relative min-w-0 flex-1 ${rootBorderRadius.card} xl:w-[35%] xl:flex-none`}>
                   <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-root-subtle" />
                   <input
                     type="text"
@@ -413,10 +413,10 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
               )}
             </div>
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-              <div className={`flex min-w-0 flex-col justify-center border border-root-accent/30 bg-root-surface p-3.5 lg:p-4 ${rootBorderRadius.card}`}>
-                <h4 className={`${rootModalTypography.label} mb-1.5`}>Rasio Hutang terhadap PDB</h4>
-                <div className="flex justify-between items-end gap-2 mb-2">
+            <div className="loan-modal-stat-grid grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+              <div className={`loan-modal-stat-card flex min-w-0 flex-col justify-center border border-root-accent/30 bg-root-surface p-3.5 lg:p-4 ${rootBorderRadius.card}`}>
+                <h4 className={`${rootModalTypography.label} loan-modal-stat-label mb-1.5`}>Rasio Hutang terhadap PDB</h4>
+                <div className="loan-modal-debt-ratio flex justify-between items-end gap-2 mb-2">
                   <span className="text-xl lg:text-2xl font-black text-root-accent">{debtRatio}%</span>
                   <div className="text-[10px] lg:text-xs font-bold text-right flex items-center gap-1">
                     <span className="text-root-subtle">Batas Aman:</span>
@@ -448,7 +448,7 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
                 </div>
               </div>
 
-              <div className={`flex min-w-0 flex-col justify-center border border-root-accent/30 bg-root-surface p-3.5 lg:p-4 ${rootBorderRadius.card}`}>
+              <div className={`loan-modal-stat-card loan-modal-total-card flex min-w-0 flex-col justify-center border border-root-accent/30 bg-root-surface p-3.5 lg:p-4 ${rootBorderRadius.card}`}>
                 <span className={rootModalTypography.sectionTitle}>Total Beban Hutang</span>
                 <span className="text-base lg:text-lg font-black text-rose-400 mt-1 break-words">{totalHutang.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
               </div>
