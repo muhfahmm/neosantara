@@ -366,7 +366,7 @@ export default function RingkasanPopulasiModal({
       {!isInfoOpen && <NotebookModalWrapper onClose={onClose} isHidden={isKesejahteraanOpen}>
         <div className="flex flex-col h-full overflow-hidden bg-root-canvas rounded-xl border border-root-accent/20 relative">
         {/* ============ HEADER ============ */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
+        <div className="px-4 sm:px-6 py-2 sm:py-3 border-b-0 lg:border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
               <Users2 className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
@@ -384,8 +384,20 @@ export default function RingkasanPopulasiModal({
           </div>
         </div>
 
+        <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar relative z-10
+          [&::-webkit-scrollbar]:w-2
+          [&::-webkit-scrollbar-track]:bg-root-canvas
+          [&::-webkit-scrollbar-track]:rounded-full
+          [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20
+          [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A]
+          [&::-webkit-scrollbar-thumb]:rounded-full
+          [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas
+          hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent
+          [&::-webkit-scrollbar-button]:hidden
+        ">
+
         {/* ============ SUMMARY CARDS ============ */}
-        <div className="px-3 sm:px-5 lg:px-6 2xl:px-8 py-2 sm:py-2.5 2xl:py-3 bg-root-canvas border-b border-root-accent/20 relative z-10 shrink-0">
+        <div className="px-3 sm:px-5 lg:px-6 2xl:px-8 py-1 sm:py-2.5 2xl:py-3 bg-root-canvas border-b-0 lg:border-b border-root-accent/20 relative z-10">
           <div className="population-summary-grid grid grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-2.5 2xl:gap-4">
             {/* Total Populasi */}
             <div className={`population-summary-card bg-root-surface border border-root-accent/20 p-2 lg:p-2.5 2xl:p-4 ${rootBorderRadius.card} flex items-center gap-2 lg:gap-2.5 2xl:gap-3.5 transition-all hover:border-root-accent/40`}>
@@ -445,29 +457,19 @@ export default function RingkasanPopulasiModal({
           </div>
         </div>
 
-        {/* ============ CONTENT AREA dengan Modern Tailwind Scrollbar ============ */}
-        <div className="flex-1 overflow-y-auto p-3 lg:p-4.5 2xl:p-8 bg-root-canvas/80 relative z-10
-          [&::-webkit-scrollbar]:w-2 
-          [&::-webkit-scrollbar-track]:bg-root-canvas
-          [&::-webkit-scrollbar-track]:rounded-full 
-          [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20
-          [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A]
-          [&::-webkit-scrollbar-thumb]:rounded-full 
-          [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas
-          hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent
-          [&::-webkit-scrollbar-button]:hidden
-        ">
-          <div className="space-y-3.5 lg:space-y-4.5 2xl:space-y-6 animate-in fade-in duration-500">
+        {/* ============ CONTENT AREA ============ */}
+        <div className="px-3 pt-1.5 pb-2 lg:p-4.5 2xl:p-8 bg-root-canvas/80 relative z-10">
+          <div className="space-y-2 lg:space-y-4.5 2xl:space-y-6 animate-in fade-in duration-500">
 
             {/* Informasi Demografi */}
-            <div className={`bg-root-surface border border-root-accent/20 p-3.5 lg:p-4.5 2xl:p-6 ${rootBorderRadius.card} space-y-2.5 lg:space-y-3 2xl:space-y-4`}>
+            <div className={`bg-root-surface border border-root-accent/20 p-2.5 lg:p-4.5 2xl:p-6 ${rootBorderRadius.card} space-y-2 lg:space-y-3 2xl:space-y-4`}>
               <h3 className={`${rootModalTypography.sectionTitle} flex items-center gap-2`}>
                 <Info className="h-4 w-4 lg:h-4.5 lg:w-4.5 2xl:h-5 2xl:w-5 text-root-accent" />
                 Informasi Demografi
               </h3>
               <div className={`${rootModalTypography.body} space-y-2.5 font-sans lg:space-y-3 2xl:space-y-4`}>
                 {/* 3 Card Sejajar: Kelahiran, Kematian, Pertumbuhan */}
-                <div className="pt-2.5 lg:pt-3 2xl:pt-4 border-t border-root-accent/20 grid grid-cols-1 sm:grid-cols-3 gap-2.5 lg:gap-3 2xl:gap-4">
+                <div className="pt-0 lg:pt-3 2xl:pt-4 border-t-0 lg:border-t border-root-accent/20 grid grid-cols-1 sm:grid-cols-3 gap-2 lg:gap-3 2xl:gap-4">
                   <div
                     className={`group cursor-pointer ${rootBorderRadius.card} p-2.5 lg:p-3 2xl:p-4 border border-root-accent/30 bg-root-canvas hover:bg-root-accent/10 hover:border-root-accent active:scale-[0.98] transition-all duration-200 flex items-center justify-between`}
                     onClick={() => setIsDetailBirthOpen(true)}
@@ -584,6 +586,7 @@ export default function RingkasanPopulasiModal({
             )}
 
           </div>
+        </div>
         </div>
       </div>
     </NotebookModalWrapper>}

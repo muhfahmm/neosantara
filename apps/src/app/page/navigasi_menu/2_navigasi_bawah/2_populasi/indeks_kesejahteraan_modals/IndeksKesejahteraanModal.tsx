@@ -159,11 +159,11 @@ export default function IndeksKesejahteraanModal({
   const getTrendIcon = (trend: 'naik' | 'turun' | 'stabil') => {
     switch (trend) {
       case 'naik':
-        return <TrendingUp className="h-5 w-5 text-emerald-600" />;
+        return <TrendingUp className="h-4 w-4 text-emerald-600" />;
       case 'turun':
-        return <TrendingDown className="h-5 w-5 text-rose-600" />;
+        return <TrendingDown className="h-4 w-4 text-rose-600" />;
       default:
-        return <Minus className="h-5 w-5 text-gray-600" />;
+        return <Minus className="h-4 w-4 text-gray-600" />;
     }
   };
 
@@ -209,34 +209,33 @@ export default function IndeksKesejahteraanModal({
           <div className={`flex-1 overflow-y-auto p-3 sm:p-5 bg-root-canvas/80 relative z-10 ${scrollbarDark}`}>
             <div className="animate-in fade-in duration-500">
               {activeTab === "statistik" ? (
-                <div className="space-y-4 sm:space-y-5">
+                <div className="space-y-3 sm:space-y-4">
                   {/* Main Score Card */}
-                  <div className={`${rootBorderRadius.card} p-4 sm:p-5 border border-root-accent/30 bg-root-surface relative overflow-hidden`}>
+                  <div className={`${rootBorderRadius.card} p-2 sm:p-2.5 border border-root-accent/30 bg-root-surface relative overflow-hidden`}>
                     <div className="flex items-center justify-between relative z-10">
                       <div>
-                        <p className="text-[10px] sm:text-xs text-root-muted font-black uppercase tracking-wider mb-1">Indeks Kesejahteraan Keseluruhan</p>
-                        <div className="flex items-baseline gap-2">
-                          {/* Ukuran font diperkecil */}
-                          <span className="text-3xl sm:text-4xl font-black text-root-text tracking-tight ">{overallScore}</span>
-                          <span className="text-sm font-bold text-root-muted">/100</span>
+                        <p className="text-[8px] sm:text-[10px] text-root-muted font-black uppercase tracking-wider leading-none mb-0">Indeks Kesejahteraan Keseluruhan</p>
+                        <div className="flex items-baseline gap-1 leading-none">
+                          <span className="text-lg sm:text-xl font-black text-root-text tracking-tight leading-none">{overallScore}</span>
+                          <span className="text-[10px] sm:text-xs font-bold text-root-muted leading-none">/100</span>
                         </div>
-                        <p className="text-xs font-black mt-1 text-root-text uppercase">{status}</p>
+                        <p className="text-[9px] sm:text-[10px] font-black mt-0 text-root-text uppercase leading-none">{status}</p>
                       </div>
-                      <div className="flex items-center gap-2 bg-root-canvas px-2.5 py-1.5 rounded-lg border border-root-accent/20">
+                      <div className="flex items-center gap-1 bg-root-canvas px-1 py-0.5 rounded-lg border border-root-accent/20">
                         {getTrendIcon(kesejahteraan.trend)}
-                        <span className="text-[10px] font-bold text-root-text uppercase">{kesejahteraan.trend}</span>
+                        <span className="text-[8px] sm:text-[9px] font-bold text-root-text uppercase">{kesejahteraan.trend}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Breakdown Komponen */}
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <h3 className="text-xs sm:text-sm font-black text-root-text uppercase tracking-wider flex items-center gap-2">
                       <span className="w-1 h-3 bg-root-accent rounded-full inline-block"></span>
                       Breakdown Sektor & Layanan Dasar
                     </h3>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
+                    <div className="welfare-breakdown-grid grid grid-cols-1 md:grid-cols-2 gap-2">
                       {/* Kelistrikan */}
                       <div
                         onClick={() => { setActiveMenu?.("Menu:Kelistrikan"); onClose(); }}

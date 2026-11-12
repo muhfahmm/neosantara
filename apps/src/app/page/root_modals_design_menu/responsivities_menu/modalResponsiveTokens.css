@@ -215,6 +215,45 @@
     margin-left: 0 !important;
   }
 
+  .welfare-breakdown-grid > * {
+    min-width: 0;
+    padding: 8px !important;
+  }
+
+  .welfare-breakdown-grid > * > :first-child {
+    margin-bottom: 4px !important;
+  }
+
+  .welfare-breakdown-grid > * > :first-child > :first-child > :first-child {
+    padding: 4px !important;
+  }
+
+  .welfare-breakdown-grid > * > :first-child > :first-child > :first-child svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .welfare-breakdown-grid > * > :first-child p:first-child {
+    font-size: 11px !important;
+    line-height: 1.2;
+  }
+
+  .welfare-breakdown-grid > * > :first-child p:last-child {
+    font-size: 9px !important;
+    line-height: 1.2;
+  }
+
+  .welfare-breakdown-grid > * > :first-child span {
+    font-size: 17px !important;
+    line-height: 1;
+  }
+
+  .welfare-breakdown-grid > * > :last-child {
+    box-sizing: border-box;
+    padding: 4px !important;
+    line-height: 1.2;
+  }
+
   .notebook-modal-frame[data-viewport-mode] .notebook-modal-content :is(
     header,
     [class~="border-b"][class~="items-center"][class~="shrink-0"],

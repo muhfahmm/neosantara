@@ -114,38 +114,37 @@ export default function DetailKelahiranModal({
           hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent
           [&::-webkit-scrollbar-button]:hidden
         ">
-          <div className="space-y-3">
+          <div className="space-y-2">
 
             {/* ============ RINGKASAN UTAMA ============ */}
-            <div className={`relative bg-gradient-to-br from-root-surface to-root-canvas border border-root-accent/30 p-3 sm:p-4 ${rootBorderRadius.card} overflow-hidden`}>
+            <div className={`relative bg-gradient-to-br from-root-surface to-root-canvas border border-root-accent/30 p-2 sm:p-3 ${rootBorderRadius.card} overflow-hidden`}>
               
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 relative z-10">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 relative z-10">
                 <div className="min-w-0 flex-1">
-                  <p className="text-[9px] sm:text-[10px] font-black text-root-muted uppercase tracking-widest flex items-center gap-1.5">
-                    <TrendingUp className="h-3 w-3 text-root-text" />
+                  <p className="text-[8px] sm:text-[9px] font-black text-root-muted uppercase tracking-widest flex items-center gap-1">
+                    <TrendingUp className="h-2.5 w-2.5 text-root-text" />
                     Pertumbuhan Bersih Harian
                   </p>
-                  {/* Angka Utama Tetap Kecil: text-2xl sm:text-3xl */}
-                  <p className={`text-2xl sm:text-3xl font-black mt-1 tracking-tight ${netDailyChange >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                  <p className={`text-xl sm:text-2xl font-black mt-0.5 tracking-tight ${netDailyChange >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                     {netDailyChange >= 0 ? '+' : ''}{formatNumber(netDailyChange)}
-                    <span className="text-xs sm:text-sm text-root-muted font-bold ml-1 tracking-normal">/hr</span>
+                    <span className="text-[10px] sm:text-xs text-root-muted font-bold ml-1 tracking-normal">/hr</span>
                   </p>
                 </div>
-                <div className="p-2 bg-root-accent/10 rounded-full border border-root-accent/30  self-start sm:self-auto">
-                  <Activity className="h-6 w-6 sm:h-7 sm:w-7 text-root-text" />
+                <div className="p-1.5 bg-root-accent/10 rounded-full border border-root-accent/30 self-start sm:self-auto">
+                  <Activity className="h-5 w-5 sm:h-6 sm:w-6 text-root-text" />
                 </div>
               </div>
 
-              <div className="mt-3 grid grid-cols-2 gap-2 relative z-10">
-                <div className={`bg-root-surface/80  p-2 ${rootBorderRadius.card} border border-emerald-500/40`}>
-                  <p className="text-[8px] sm:text-[9px] text-emerald-400 font-black uppercase tracking-wider">Kelahiran</p>
-                  <p className="text-sm sm:text-base font-black text-emerald-400 mt-0.5 ">
+              <div className="mt-2 grid grid-cols-2 gap-1.5 relative z-10">
+                <div className={`bg-root-surface/80 p-1.5 ${rootBorderRadius.card} border border-emerald-500/40`}>
+                  <p className="text-[7px] sm:text-[8px] text-emerald-400 font-black uppercase tracking-wider">Kelahiran</p>
+                  <p className="text-xs sm:text-sm font-black text-emerald-400 mt-0.5">
                     +{formatNumber(dailyBirths)}
                   </p>
                 </div>
-                <div className={`bg-root-surface/80  p-2 ${rootBorderRadius.card} border border-rose-500/40`}>
-                  <p className="text-[8px] sm:text-[9px] text-rose-400 font-black uppercase tracking-wider">Kematian</p>
-                  <p className="text-sm sm:text-base font-black text-rose-400 mt-0.5 ">
+                <div className={`bg-root-surface/80 p-1.5 ${rootBorderRadius.card} border border-rose-500/40`}>
+                  <p className="text-[7px] sm:text-[8px] text-rose-400 font-black uppercase tracking-wider">Kematian</p>
+                  <p className="text-xs sm:text-sm font-black text-rose-400 mt-0.5">
                     -{formatNumber(dailyDeaths)}
                   </p>
                 </div>
@@ -164,30 +163,30 @@ export default function DetailKelahiranModal({
                 <div className="h-[1px] flex-1 bg-gradient-to-r from-root-accent/40 to-transparent ml-1" />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                 {/* 1. Populasi Dasar */}
-                <div                 className={`group bg-root-surface border border-root-accent/20 p-2 sm:p-2.5 ${rootBorderRadius.card} space-y-1 transition-all hover:border-root-accent/40`}>
-                  <div className="flex items-center gap-1.5">
-                    <div className="p-1 bg-root-canvas border border-root-accent/30 rounded-md shrink-0">
-                      <Users className="h-3 w-3 text-root-text" />
+                <div className={`group bg-root-surface border border-root-accent/20 p-1.5 sm:p-2 ${rootBorderRadius.card} space-y-0.5 transition-all hover:border-root-accent/40`}>
+                  <div className="flex items-center gap-1">
+                    <div className="p-0.5 bg-root-canvas border border-root-accent/30 rounded-md shrink-0">
+                      <Users className="h-2.5 w-2.5 text-root-text" />
                     </div>
-                    <h4 className="text-[9px] sm:text-[10px] font-black text-root-text uppercase tracking-wider">Populasi Dasar</h4>
+                    <h4 className="text-[8px] sm:text-[9px] font-black text-root-text uppercase tracking-wider">Populasi Dasar</h4>
                   </div>
-                  <p className="text-xs sm:text-sm font-bold text-root-text">
+                  <p className="text-[11px] sm:text-xs font-bold text-root-text">
                     {formatNumber(populasi)} <span className="text-[8px] text-root-muted font-medium">jiwa</span>
                   </p>
                 </div>
 
                 {/* 2. Kesejahteraan */}
-                <div                 className={`group bg-root-surface border border-root-accent/20 p-2 sm:p-2.5 ${rootBorderRadius.card} space-y-1 transition-all hover:border-root-accent/40`}>
-                  <div className="flex items-center gap-1.5">
-                    <div className="p-1 bg-root-canvas border border-root-accent/30 rounded-md shrink-0">
-                      <Banknote className="h-3 w-3 text-root-text" />
+                <div className={`group bg-root-surface border border-root-accent/20 p-1.5 sm:p-2 ${rootBorderRadius.card} space-y-0.5 transition-all hover:border-root-accent/40`}>
+                  <div className="flex items-center gap-1">
+                    <div className="p-0.5 bg-root-canvas border border-root-accent/30 rounded-md shrink-0">
+                      <Banknote className="h-2.5 w-2.5 text-root-text" />
                     </div>
-                    <h4 className="text-[9px] sm:text-[10px] font-black text-root-text uppercase tracking-wider">Kesejahteraan</h4>
+                    <h4 className="text-[8px] sm:text-[9px] font-black text-root-text uppercase tracking-wider">Kesejahteraan</h4>
                   </div>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-xs sm:text-sm font-bold text-root-text">
+                  <div className="flex flex-wrap items-center gap-1">
+                    <span className="text-[11px] sm:text-xs font-bold text-root-text">
                       {countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : 50} <span className="text-[8px] text-root-muted font-medium">INDX</span>
                     </span>
                     <span className="text-[8px] text-root-text font-bold bg-root-accent/10 px-1 py-0.5 rounded border border-root-accent/20">
@@ -198,20 +197,20 @@ export default function DetailKelahiranModal({
 
                 {/* 3. Fasilitas Kesehatan (clickable) */}
                 <div
-                  className={`group bg-root-surface border border-root-accent/20 p-2 sm:p-2.5 ${rootBorderRadius.card} space-y-1 cursor-pointer transition-all hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98]`}
+                  className={`group bg-root-surface border border-root-accent/20 p-1.5 sm:p-2 ${rootBorderRadius.card} space-y-0.5 cursor-pointer transition-all hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98]`}
                   onClick={() => onOpenTempatUmum?.('kesehatan')}
                 >
                   <div className="flex items-center justify-between gap-1">
-                    <div className="flex items-center gap-1.5">
-                      <div className="p-1 bg-root-canvas border border-root-accent/30 rounded-md shrink-0 group-hover:scale-110 transition-transform">
-                        <HeartPulse className="h-3 w-3 text-root-text" />
+                    <div className="flex items-center gap-1">
+                      <div className="p-0.5 bg-root-canvas border border-root-accent/30 rounded-md shrink-0 group-hover:scale-110 transition-transform">
+                        <HeartPulse className="h-2.5 w-2.5 text-root-text" />
                       </div>
-                      <h4 className="text-[9px] sm:text-[10px] font-black text-root-text uppercase tracking-wider">Fasilitas Kesehatan</h4>
+                      <h4 className="text-[8px] sm:text-[9px] font-black text-root-text uppercase tracking-wider">Fasilitas Kesehatan</h4>
                     </div>
                     <span className="text-[8px] text-root-muted font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity">Buka →</span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-xs sm:text-sm font-bold text-root-text">
+                  <div className="flex flex-wrap items-center gap-1">
+                    <span className="text-[11px] sm:text-xs font-bold text-root-text">
                       {kesehatanScore} <span className="text-[8px] text-root-muted font-medium">POIN</span>
                     </span>
                     <span className="text-[8px] text-root-muted">(rasio {hospitalRatio.toFixed(2)})</span>
@@ -223,20 +222,20 @@ export default function DetailKelahiranModal({
 
                 {/* 4. Tingkat Pendidikan (clickable) */}
                 <div
-                  className={`group bg-root-surface border border-root-accent/20 p-2 sm:p-2.5 ${rootBorderRadius.card} space-y-1 cursor-pointer transition-all hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98]`}
+                  className={`group bg-root-surface border border-root-accent/20 p-1.5 sm:p-2 ${rootBorderRadius.card} space-y-0.5 cursor-pointer transition-all hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98]`}
                   onClick={() => onOpenTempatUmum?.('pendidikan')}
                 >
                   <div className="flex items-center justify-between gap-1">
-                    <div className="flex items-center gap-1.5">
-                      <div className="p-1 bg-root-canvas border border-root-accent/30 rounded-md shrink-0 group-hover:scale-110 transition-transform">
-                        <GraduationCap className="h-3 w-3 text-root-text" />
+                    <div className="flex items-center gap-1">
+                      <div className="p-0.5 bg-root-canvas border border-root-accent/30 rounded-md shrink-0 group-hover:scale-110 transition-transform">
+                        <GraduationCap className="h-2.5 w-2.5 text-root-text" />
                       </div>
-                      <h4 className="text-[9px] sm:text-[10px] font-black text-root-text uppercase tracking-wider">Tingkat Pendidikan</h4>
+                      <h4 className="text-[8px] sm:text-[9px] font-black text-root-text uppercase tracking-wider">Tingkat Pendidikan</h4>
                     </div>
                     <span className="text-[8px] text-root-muted font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity">Buka →</span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-xs sm:text-sm font-bold text-root-text">
+                  <div className="flex flex-wrap items-center gap-1">
+                    <span className="text-[11px] sm:text-xs font-bold text-root-text">
                       {pendidikanScore} <span className="text-[8px] text-root-muted font-medium">POIN</span>
                     </span>
                     <span className="text-[8px] text-root-muted">(rasio {educationRatio.toFixed(2)})</span>

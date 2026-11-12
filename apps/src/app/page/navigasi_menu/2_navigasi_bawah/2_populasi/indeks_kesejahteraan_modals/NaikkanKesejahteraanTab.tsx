@@ -287,10 +287,10 @@ export default function NaikkanKesejahteraanTab({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
 
       {feedback && (
-        <div className={`p-4 ${rootBorderRadius.card} border flex items-start gap-3 relative ${
+        <div className={`p-3 ${rootBorderRadius.card} border flex items-start gap-2.5 relative ${
           feedback.type === "success" ? "bg-root-surface border-emerald-500/40 text-emerald-400" : "bg-root-surface border-rose-500/40 text-rose-400"
         }`}>
           {feedback.type === "success" ? <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5" /> : <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />}
@@ -302,7 +302,7 @@ export default function NaikkanKesejahteraanTab({
       )}
 
       {/* Daftar Program Bantuan */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {initiatives.map((init) => {
           const isLaunched = ongoingEvents.some((c: any) => c.buildingKey === init.id);
           const Icon = init.icon;
@@ -312,7 +312,7 @@ export default function NaikkanKesejahteraanTab({
             <div
               key={init.id}
               id={`initiative-card-${init.id}`}
-              className={`${rootBorderRadius.card} p-5 border bg-root-canvas flex flex-col justify-between space-y-4 relative overflow-hidden transition-all duration-500 ${
+              className={`${rootBorderRadius.card} p-3 sm:p-4 border bg-root-canvas flex flex-col justify-between space-y-3 relative overflow-hidden transition-all duration-500 ${
                 isHighlighted
                   ? "border-2 border-root-accent shadow-[0_0_25px_rgba(0,255,170,0.6)] ring-2 ring-root-accent/50 bg-[#0d2621] scale-[1.01]"
                   : isLaunched
@@ -334,18 +334,18 @@ export default function NaikkanKesejahteraanTab({
                 </div>
               )}
 
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-lg bg-root-accent/10 border border-root-accent/30">
-                  <Icon className="h-5 w-5 text-root-accent" />
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-lg bg-root-accent/10 border border-root-accent/30">
+                  <Icon className="h-4 w-4 text-root-accent" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-black text-root-text leading-none">{init.title}</h4>
-                  <p className="text-[10px] text-emerald-400 font-bold mt-1">Boost Kesejahteraan: +{init.boost}%</p>
+                  <h4 className="text-xs sm:text-sm font-black text-root-text leading-tight">{init.title}</h4>
+                  <p className="text-[9px] text-emerald-400 font-bold mt-0.5">Boost Kesejahteraan: +{init.boost}%</p>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-root-accent/10">
-                <div className="text-[11px] text-root-subtle font-bold space-y-0.5">
+              <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-root-accent/10">
+                <div className="text-[10px] text-root-subtle font-bold space-y-0.5">
                   <p>Biaya: <span className="font-black text-root-accent">{init.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span></p>
                   <p>Durasi: <span className="font-black text-root-text">{init.duration} hari</span></p>
                 </div>
@@ -353,7 +353,7 @@ export default function NaikkanKesejahteraanTab({
                 <button
                   onClick={() => handleLaunchInitiative(init)}
                   disabled={isLaunched}
-                  className={`px-4 py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all duration-150 ${
+                  className={`shrink-0 px-3 py-1.5 rounded-lg font-black text-[9px] uppercase tracking-wider transition-all duration-150 ${
                     isLaunched
                       ? "bg-root-surface text-root-subtle cursor-not-allowed border border-root-accent/10"
                       : "bg-root-accent text-root-canvas hover:bg-root-accent/80 cursor-pointer"

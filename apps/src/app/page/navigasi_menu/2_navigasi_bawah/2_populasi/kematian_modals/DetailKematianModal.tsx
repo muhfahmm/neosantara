@@ -101,7 +101,7 @@ export default function DetailKematianModal({
       <NotebookModalWrapper onClose={onClose}>
 
         {/* Header */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
+        <div className="px-4 sm:px-6 md:px-4 py-2.5 sm:py-3 border-b-0 md:border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-rose-500/30 shrink-0">
               <Users className="h-4 w-4 sm:h-5 sm:w-5 text-rose-400" />
@@ -114,26 +114,26 @@ export default function DetailKematianModal({
         </div>
 
         {/* Body */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 bg-root-canvas/80 relative z-10 custom-scrollbar">
-          <div className="space-y-6">
+        <div className="flex-1 min-h-0 overflow-y-auto p-3 pt-2 pb-3 sm:p-4 sm:pt-3 sm:pb-3 md:p-5 bg-root-canvas/80 relative z-10 custom-scrollbar">
+          <div className="space-y-4">
             
             {/* Ringkasan Utama */}
-            <div className={`bg-root-canvas border border-root-accent/20 p-6 ${rootBorderRadius.card}`}>
+            <div className={`bg-root-canvas border border-root-accent/20 p-3 ${rootBorderRadius.card}`}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-black text-root-muted uppercase tracking-wider">Kematian Harian</p>
-                  <p className="text-4xl font-black text-rose-400 mt-1">-{formatNumber(dailyDeaths)}</p>
+                  <p className="text-xs sm:text-sm font-black text-root-muted uppercase tracking-wider">Kematian Harian</p>
+                  <p className="text-2xl sm:text-3xl font-black text-rose-400 mt-0.5">-{formatNumber(dailyDeaths)}</p>
                 </div>
-                <div className="p-4 bg-rose-500/10 rounded-full border border-rose-500/30">
-                  <Skull className="h-10 w-10 text-rose-400" />
+                <div className="p-2.5 sm:p-3 bg-rose-500/10 rounded-full border border-rose-500/30">
+                  <Skull className="h-8 w-8 sm:h-9 sm:w-9 text-rose-400" />
                 </div>
               </div>
             </div>
 
             {/* Breakdown Faktor */}
-            <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
               {/* 1. Harapan Hidup */}
-              <div className={`min-w-0 bg-root-canvas border border-root-accent/20 p-4 ${rootBorderRadius.card} space-y-2 relative`}>
+              <div className={`min-w-0 bg-root-canvas border border-root-accent/20 p-3 ${rootBorderRadius.card} space-y-1.5 relative`}>
                 <div className="flex min-w-0 items-center gap-2">
                   <div className="p-1.5 bg-root-accent/10 rounded-lg">
                     <Heart className="h-4 w-4 text-root-text" />
@@ -148,7 +148,7 @@ export default function DetailKematianModal({
               </div>
 
               {/* 2. Keamanan */}
-              <div className={`min-w-0 bg-root-canvas border border-root-accent/20 p-4 ${rootBorderRadius.card} space-y-2 relative`}>
+              <div className={`min-w-0 bg-root-canvas border border-root-accent/20 p-3 ${rootBorderRadius.card} space-y-1.5 relative`}>
                 <div className="flex min-w-0 items-center gap-2">
                   <div className="p-1.5 bg-root-accent/10 rounded-lg">
                     <Shield className="h-4 w-4 text-root-text" />
@@ -163,7 +163,7 @@ export default function DetailKematianModal({
               </div>
 
               {/* 3. Tunawisma */}
-              <div className={`min-w-0 bg-root-canvas border border-root-accent/20 p-4 ${rootBorderRadius.card} space-y-2 relative`}>
+              <div className={`min-w-0 bg-root-canvas border border-root-accent/20 p-3 ${rootBorderRadius.card} space-y-1.5 relative`}>
                 <div className="flex min-w-0 items-center gap-2">
                   <div className="p-1.5 bg-root-accent/10 rounded-lg">
                     <Home className="h-4 w-4 text-root-text" />
@@ -179,7 +179,7 @@ export default function DetailKematianModal({
 
               {/* 4. Kesehatan */}
               <div 
-                className={`min-w-0 bg-root-canvas border border-root-accent/20 p-4 ${rootBorderRadius.card} space-y-2 relative cursor-pointer hover:border-root-accent/60 hover:bg-root-accent/5 transition-all duration-200`}
+                className={`min-w-0 bg-root-canvas border border-root-accent/20 p-3 ${rootBorderRadius.card} space-y-1.5 relative cursor-pointer hover:border-root-accent/60 hover:bg-root-accent/5 transition-all duration-200`}
                 onClick={() => onOpenTempatUmum?.('kesehatan')}
               >
                 <div className="flex min-w-0 items-center gap-2">
@@ -197,7 +197,7 @@ export default function DetailKematianModal({
 
               {/* 5. Ketahanan Pangan */}
               <div 
-                className={`min-w-0 bg-root-canvas border border-root-accent/20 p-4 ${rootBorderRadius.card} space-y-2 relative cursor-pointer hover:border-root-accent/60 hover:bg-root-accent/5 transition-all duration-200`}
+                className={`min-w-0 bg-root-canvas border border-root-accent/20 p-3 ${rootBorderRadius.card} space-y-1.5 relative cursor-pointer hover:border-root-accent/60 hover:bg-root-accent/5 transition-all duration-200`}
                 onClick={() => onOpenIndustriPangan?.()}
               >
                 <div className="flex min-w-0 items-center gap-2">
@@ -215,7 +215,7 @@ export default function DetailKematianModal({
 
               {/* 6. Kriminalitas */}
               <div 
-                className={`min-w-0 bg-root-canvas border border-root-accent/20 p-4 ${rootBorderRadius.card} space-y-2 relative cursor-pointer hover:border-root-accent/60 hover:bg-root-accent/5 transition-all duration-200`}
+                className={`min-w-0 bg-root-canvas border border-root-accent/20 p-3 ${rootBorderRadius.card} space-y-1.5 relative cursor-pointer hover:border-root-accent/60 hover:bg-root-accent/5 transition-all duration-200`}
                 onClick={() => onOpenArmada?.('polisi')}
               >
                 <div className="flex min-w-0 items-center gap-2">

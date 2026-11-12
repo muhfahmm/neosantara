@@ -94,42 +94,42 @@ export default function TunawismaDetailModal({
           <div className="space-y-3 animate-in fade-in duration-500">
 
             {/* ============ MAIN STATS CARD ============ */}
-            <div className={`${rootBorderRadius.card} p-3 sm:p-4 border border-root-accent/30 bg-root-surface`}>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <div className={`${rootBorderRadius.card} p-2 sm:p-2.5 border border-root-accent/30 bg-root-surface`}>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
                 
                 {/* Jumlah Tunawisma */}
-                <div className="flex flex-col items-start justify-center border-b sm:border-b-0 sm:border-r border-root-accent/10 pb-2 sm:pb-0 sm:pr-2">
-                  <p className="text-[10px] text-root-muted font-bold uppercase tracking-wider mb-1">
+                <div className="flex flex-col items-start justify-center border-b sm:border-b-0 sm:border-r border-root-accent/10 pb-1 sm:pb-0 sm:pr-1">
+                  <p className="text-[9px] text-root-muted font-bold uppercase tracking-wider mb-0.5">
                     Jumlah Tunawisma
                   </p>
-                  <div className="flex items-baseline gap-1.5">
+                  <div className="flex items-baseline gap-1">
                     {/* Angka lebih kecil dan warna netral */}
-                    <span className="text-lg sm:text-xl font-bold text-root-text tracking-tight">
+                    <span className="text-base sm:text-lg font-bold text-root-text tracking-tight">
                       {homelessCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                     </span>
-                    <span className="text-[10px] font-bold text-root-muted">JIWA</span>
+                    <span className="text-[9px] font-bold text-root-muted">JIWA</span>
                   </div>
                 </div>
 
                 {/* Persentase */}
-                <div className="flex flex-col items-start justify-center border-b sm:border-b-0 sm:border-r border-root-accent/10 pb-2 sm:pb-0 sm:pr-2">
-                  <p className="text-[10px] text-root-muted font-bold uppercase tracking-wider mb-1">
+                <div className="flex flex-col items-start justify-center border-b sm:border-b-0 sm:border-r border-root-accent/10 pb-1 sm:pb-0 sm:pr-1">
+                  <p className="text-[9px] text-root-muted font-bold uppercase tracking-wider mb-0.5">
                     Persentase Populasi
                   </p>
-                  <div className="flex items-baseline gap-1.5">
+                  <div className="flex items-baseline gap-1">
                     {/* Persentase dibuat netral (putih/silver) tanpa efek glow hijau */}
-                    <span className="text-lg sm:text-xl font-bold text-root-text tracking-tight">
+                    <span className="text-base sm:text-lg font-bold text-root-text tracking-tight">
                       {homelessPercentage.toFixed(2)}%
                     </span>
                   </div>
                 </div>
 
                 {/* Status */}
-                <div className="flex flex-col items-start justify-center pt-1 sm:pt-0">
-                  <p className="text-[10px] text-root-muted font-bold uppercase tracking-wider mb-1">
+                <div className="flex flex-col items-start justify-center">
+                  <p className="text-[9px] text-root-muted font-bold uppercase tracking-wider mb-0.5">
                     Status Keparahan
                   </p>
-                  <p className={`text-sm sm:text-base font-black uppercase tracking-wide ${severity.color}`}>
+                  <p className={`text-sm font-black uppercase tracking-wide ${severity.color}`}>
                     {severity.level}
                   </p>
                 </div>
