@@ -81,7 +81,7 @@ const SektorTab = React.memo(({
   diplomacyMonthsToNextPoint
 }: any) => {
   return (
-    <div className="space-y-4">
+    <div className="economic-ownership-tab space-y-4">
       <div className="grid gap-3">
         {NATIONALIZATION_SECTORS.map((sector) => {
           const level = getNationalizationLevel(sectorLevels, sector.id);
@@ -89,20 +89,20 @@ const SektorTab = React.memo(({
           return (
             <section
               key={sector.id}
-              className={`border border-root-accent/20 bg-root-canvas p-4 ${rootBorderRadius.card}`}
+              className={`economic-ownership-card border border-root-accent/20 bg-root-canvas p-4 ${rootBorderRadius.card}`}
               style={{ contentVisibility: "auto", containIntrinsicSize: "170px" }}
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h4 className="text-sm font-black text-root-text">{sector.name}</h4>
-                  <p className="mt-1 text-[11px] text-root-body">{levelDetails.description}</p>
+                  <h4 className="economic-ownership-title text-sm font-black text-root-text">{sector.name}</h4>
+                  <p className="economic-ownership-description mt-1 text-[11px] text-root-body">{levelDetails.description}</p>
                 </div>
-                <label className="flex items-center gap-2 text-[10px] font-bold uppercase text-root-subtle">
+                <label className="economic-ownership-level-label flex items-center gap-2 text-[10px] font-bold uppercase text-root-subtle">
                   Level
                   <select
                     value={level}
                     onChange={(event) => handleSectorLevelChange(sector.id, Number(event.target.value))}
-                    className="rounded-lg border border-root-accent/30 bg-root-surface px-3 py-2 text-xs font-bold text-root-accent outline-none"
+                    className="economic-ownership-level-select rounded-lg border border-root-accent/30 bg-root-surface px-3 py-2 text-xs font-bold text-root-accent outline-none"
                   >
                     {NATIONALIZATION_LEVELS.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -112,11 +112,11 @@ const SektorTab = React.memo(({
                   </select>
                 </label>
               </div>
-              <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 border-t border-root-accent/10 pt-3 text-[11px]">
-                <span className="text-emerald-300">Bagian negara: {levelDetails.stateProfitSharePercent}%</span>
+              <div className="economic-ownership-profit mt-3 flex flex-wrap gap-x-5 gap-y-1 border-t border-root-accent/10 pt-3 text-[11px]">
+                <span className="economic-ownership-profit-value text-emerald-300">Bagian negara: {levelDetails.stateProfitSharePercent}%</span>
               </div>
               {sector.id === "kelistrikan" && (
-                <div className="mt-3 rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 text-[11px] text-amber-200">
+                <div className="economic-ownership-electricity-note mt-3 rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 text-[11px] text-amber-200">
                   {isElectricityMetadataLoading ? (
                     <p>Menghitung estimasi surplus listrik...</p>
                   ) : electricityMetadataError ? (

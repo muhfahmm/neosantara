@@ -2028,3 +2028,174 @@
     font-size: 9px;
   }
 }
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .root-modal-sidebar-layout {
+  flex-direction: row;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .root-modal-sidebar-layout .root-modal-sidebar-nav {
+  box-sizing: border-box;
+  width: 180px;
+  min-width: 180px;
+  max-width: 180px;
+  flex-direction: column;
+  gap: 4px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 4px;
+  border-right: 1px solid rgb(0 255 170 / 20%);
+  border-bottom: 0;
+  overscroll-behavior: contain;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .root-modal-sidebar-button {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  min-height: 34px;
+  flex: 0 0 auto;
+  padding: 4px 6px;
+}
+
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .root-modal-sidebar-layout {
+  flex-direction: column;
+}
+
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .root-modal-sidebar-layout .root-modal-sidebar-nav {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  flex-direction: row;
+  gap: 6px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px;
+  border-right: 0;
+  border-bottom: 1px solid rgb(0 255 170 / 20%);
+  overscroll-behavior-x: contain;
+  scroll-padding-inline: 8px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  touch-action: pan-x;
+}
+
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .root-modal-sidebar-layout .root-modal-sidebar-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .root-modal-sidebar-button {
+  box-sizing: border-box;
+  width: max-content;
+  min-width: 0;
+  max-width: 80vw;
+  min-height: 38px;
+  flex: 0 0 auto;
+  align-items: center;
+  padding: 6px 10px;
+  scroll-snap-align: start;
+}
+
+.notebook-modal-frame[data-viewport-mode] .root-modal-sidebar-label,
+.notebook-modal-frame[data-viewport-mode] .root-modal-sidebar-label > span:first-child {
+  overflow: visible;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .root-modal-sidebar-label,
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .root-modal-sidebar-label > span:first-child {
+  overflow: hidden;
+  overflow-wrap: normal;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .root-modal-sidebar-content {
+  width: 100%;
+  flex: 1 1 0%;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .root-modal-sidebar-label > span:first-child {
+  font-size: 8px;
+  line-height: 1.1;
+}
+
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .root-modal-sidebar-label > span:first-child {
+  font-size: 8px;
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+}
+
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .root-modal-sidebar-button > :last-child:not(.root-modal-sidebar-label),
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .root-modal-sidebar-button > :last-child:not(.root-modal-sidebar-label) *:not(svg) {
+  font-size: 8px;
+}
+
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .root-modal-sidebar-button > :last-child:not(.root-modal-sidebar-label),
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .root-modal-sidebar-button > :last-child:not(.root-modal-sidebar-label) *:not(svg) {
+  font-size: 8px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .root-modal-sidebar-description {
+  display: none;
+}
+
+.notebook-modal-frame[data-viewport-mode] .economic-system-modal-content .economic-impact-value {
+  font-size: 11px;
+  line-height: 1.15;
+}
+
+.notebook-modal-frame[data-viewport-mode] .economic-system-modal-content .economic-ownership-tab > div {
+  gap: 8px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .economic-system-modal-content .economic-ownership-card {
+  padding: 8px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .economic-system-modal-content .economic-ownership-card > div:first-child {
+  gap: 8px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .economic-system-modal-content .economic-ownership-title {
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.notebook-modal-frame[data-viewport-mode] .economic-system-modal-content .economic-ownership-description {
+  font-size: 9px;
+  line-height: 1.3;
+}
+
+.notebook-modal-frame[data-viewport-mode] .economic-system-modal-content .economic-ownership-level-label {
+  gap: 6px;
+  font-size: 8px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .economic-system-modal-content .economic-ownership-level-select {
+  max-width: 100%;
+  min-height: 28px;
+  padding: 4px 8px;
+  font-size: 9px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .economic-system-modal-content .economic-ownership-profit {
+  margin-top: 8px;
+  padding-top: 8px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .economic-system-modal-content .economic-ownership-profit-value {
+  font-size: 9px;
+  line-height: 1.3;
+}
+
+.notebook-modal-frame[data-viewport-mode] .economic-system-modal-content .economic-ownership-electricity-note {
+  margin-top: 8px;
+  padding: 8px;
+  font-size: 9px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
