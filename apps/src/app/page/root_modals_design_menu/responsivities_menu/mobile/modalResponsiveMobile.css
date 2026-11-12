@@ -1928,3 +1928,36 @@
     margin-top: 12px !important;
   }
 }
+
+@media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
+  .notebook-modal-frame.pdb-modal-frame[data-viewport-mode] > .modal-responsive-shell {
+    height: calc(100dvh - var(--modal-top-offset) - var(--modal-bottom-offset) - 8px) !important;
+    max-height: calc(100dvh - var(--modal-top-offset) - var(--modal-bottom-offset) - 8px) !important;
+  }
+
+  .pdb-modal-frame .pdb-search-row {
+    gap: 6px;
+  }
+
+  .pdb-modal-frame .pdb-modal-body {
+    padding-top: 8px !important;
+  }
+
+  .pdb-modal-frame .pdb-table-header th {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  .pdb-modal-frame .pdb-table-row > td {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    line-height: 1.15;
+  }
+
+  .pdb-modal-frame .pdb-rank-badge {
+    min-width: 22px;
+    height: 17px;
+    padding-inline: 4px;
+    font-size: 9px;
+  }
+}

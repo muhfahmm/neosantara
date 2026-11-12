@@ -10,6 +10,7 @@ interface MenuInfoModalBaseProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
+  fillContent?: boolean;
 }
 
 type MenuInfoModalProps = MenuInfoModalBaseProps & (
@@ -23,6 +24,7 @@ export default function MenuInfoModal({
   title,
   description,
   children,
+  fillContent = false,
 }: MenuInfoModalProps) {
   if (!isOpen) return null;
 
@@ -37,7 +39,7 @@ export default function MenuInfoModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="menu-info-modal-title"
-        className="flex min-w-0 flex-col overflow-hidden max-h-[calc(100dvh-160px)] sm:max-h-[calc(100dvh-176px)] lg:max-h-[calc(100dvh-172px)]"
+        className={`flex min-w-0 flex-col overflow-hidden max-h-[calc(100dvh-160px)] sm:max-h-[calc(100dvh-176px)] lg:max-h-[calc(100dvh-172px)] ${fillContent ? "h-full min-h-0 flex-1" : ""}`}
       >
         <div className="flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
@@ -49,7 +51,7 @@ export default function MenuInfoModal({
           <RootModalCloseButton onClick={onClose} />
         </div>
         {children !== undefined ? (
-          <div className="min-h-0 flex-1 overflow-y-auto bg-root-surface p-4 sm:p-5">
+          <div className={`min-h-0 flex-1 overflow-y-auto bg-root-surface p-4 sm:p-5 ${fillContent ? "flex" : ""}`}>
             {children}
           </div>
         ) : (

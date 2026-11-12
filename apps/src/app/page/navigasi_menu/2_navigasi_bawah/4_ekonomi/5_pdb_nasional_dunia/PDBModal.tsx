@@ -313,7 +313,7 @@ function AllCountriesGDP({
     if (rows.length === 0) {
       return (
         <tr>
-          <td className="px-4 py-6 text-center text-sm font-bold text-root-subtle" colSpan={9}>
+          <td className="px-4 py-6 text-center text-sm font-bold text-root-subtle" colSpan={3}>
             Tidak ada data yang cocok dengan pencarian "{searchQuery}".
           </td>
         </tr>
@@ -339,21 +339,21 @@ function AllCountriesGDP({
       return (
         <tr
           key={`${row.name}-${index}`}
-          className={`transition-colors ${isPlayer
+          className={`pdb-table-row transition-colors ${isPlayer
               ? 'bg-root-accent/20 border-l-4 border-l-root-accent font-bold'
               : `${rankStyle.rowBg} ${rankStyle.rowBorder}`
             }`}
         >
           {/* ✅ KOLOM NOMOR DENGAN BADGE BERWARNA */}
-          <td className="px-1 sm:px-1.5 py-1.5 lg:py-2 text-center border-b border-root-accent/10 whitespace-nowrap">
+          <td className="w-[15%] px-1 sm:px-1.5 py-1.5 lg:py-2 text-center border-b border-root-accent/10 whitespace-nowrap">
             <span
-              className={`inline-flex items-center justify-center min-w-[24px] h-[20px] px-1.5 rounded-md font-black text-[10px] sm:text-[11px] ${isPlayer ? 'bg-root-accent text-root-canvas' : rankStyle.noBadge
+              className={`pdb-rank-badge inline-flex items-center justify-center min-w-[24px] h-[20px] px-1.5 rounded-md font-black text-[10px] sm:text-[11px] ${isPlayer ? 'bg-root-accent text-root-canvas' : rankStyle.noBadge
                 }`}
             >
               {rank}
             </span>
           </td>
-          <td className="px-1.5 sm:px-2 lg:px-2 py-1.5 lg:py-2 text-[10px] sm:text-[11px] lg:text-xs font-bold text-root-text border-b border-root-accent/10 truncate">
+          <td className="w-[45%] px-1.5 sm:px-2 lg:px-2 py-1.5 lg:py-2 text-[10px] sm:text-[11px] lg:text-xs font-bold text-root-text border-b border-root-accent/10 truncate">
             {isPlayer ? (
               <div className="flex items-center gap-1 text-root-accent font-black truncate">
                 <User className="w-3.5 h-3.5 text-root-accent flex-shrink-0" />
@@ -366,25 +366,7 @@ function AllCountriesGDP({
               <span className="truncate block">{row.name}</span>
             )}
           </td>
-          <td className="px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-root-text border-b border-root-accent/10 whitespace-nowrap">
-            {row.isLoaded ? formatNumber(row.tax) : renderSkeleton("w-12")}
-          </td>
-          <td className="px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-amber-300 border-b border-root-accent/10 whitespace-nowrap">
-            {row.isLoaded ? (row.buildingCount > 0 ? `${row.buildingCount} (${formatNumber(row.gold)} NEO)` : '0') : renderSkeleton("w-16")}
-          </td>
-          <td className="px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-emerald-300 border-b border-root-accent/10 whitespace-nowrap" title={`Penghasilan Komersial (${row.commercialCount} unit): ${formatNumber(row.commercial)} NEO`}>
-            {row.isLoaded ? (row.commercialCount > 0 ? `${row.commercialCount} (${formatNumber(row.commercial)} NEO)` : '0') : renderSkeleton("w-14")}
-          </td>
-          <td className="px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-sky-300 border-b border-root-accent/10 whitespace-nowrap" title={`Penghasilan Wisata (${row.tourismCount} lokasi): ${formatNumber(row.tourism)} NEO`}>
-            {row.isLoaded ? (row.tourismCount > 0 ? `${row.tourismCount} (${formatNumber(row.tourism)} NEO)` : '0') : renderSkeleton("w-14")}
-          </td>
-          <td className="px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-rose-400 border-b border-root-accent/10 whitespace-nowrap" title={`Pengeluaran Subsidi: ${formatNumber(row.subsidyCost)} NEO`}>
-            {row.isLoaded ? formatNumber(row.subsidyCost) : renderSkeleton("w-12")}
-          </td>
-          <td className="px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-rose-400 border-b border-root-accent/10 whitespace-nowrap" title={`Pengeluaran Kabinet: ${formatNumber(row.governmentCost)} NEO`}>
-            {row.isLoaded ? formatNumber(row.governmentCost) : renderSkeleton("w-12")}
-          </td>
-          <td className={`px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-black text-[10px] sm:text-[11px] lg:text-xs border-b border-root-accent/10 whitespace-nowrap ${row.isLoaded ? (row.net >= 0 ? 'text-emerald-400' : 'text-rose-400') : ''}`} title={`Total Pemasukan: ${formatNumber(row.pdb)} NEO (Pajak: ${formatNumber(row.tax)} + Emas: ${formatNumber(row.gold)} + Komersial: ${formatNumber(row.commercial)} + Wisata: ${formatNumber(row.tourism)}) - Total Pengeluaran: ${formatNumber(row.totalPengeluaran)} NEO = Netto: ${formatNumber(row.net)} NEO`}>
+          <td className={`w-[40%] px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-black text-[10px] sm:text-[11px] lg:text-xs border-b border-root-accent/10 whitespace-nowrap ${row.isLoaded ? (row.net >= 0 ? 'text-emerald-400' : 'text-rose-400') : ''}`} title={`Total Pemasukan: ${formatNumber(row.pdb)} NEO (Pajak: ${formatNumber(row.tax)} + Emas: ${formatNumber(row.gold)} + Komersial: ${formatNumber(row.commercial)} + Wisata: ${formatNumber(row.tourism)}) - Total Pengeluaran: ${formatNumber(row.totalPengeluaran)} NEO = Netto: ${formatNumber(row.net)} NEO`}>
             {row.isLoaded ? `${row.net >= 0 ? '+' : ''}${formatNumber(row.net)}` : renderSkeleton("w-14")}
           </td>
         </tr>
@@ -393,14 +375,8 @@ function AllCountriesGDP({
   };
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col space-y-3">
-      <div className="flex justify-between items-center gap-3 flex-shrink-0 flex-wrap">
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] text-root-subtle font-black uppercase tracking-wider">
-            Data PDB Instan (207 Negara)
-          </span>
-          <span className="inline-block w-2 h-2 rounded-full bg-emerald-400" />
-        </div>
+    <div className="flex-1 min-h-0 flex flex-col space-y-1 sm:space-y-2">
+      <div className="pdb-search-row flex justify-between items-center gap-3 flex-shrink-0 flex-wrap">
         <div className="relative">
           <input
             type="text"
@@ -413,36 +389,14 @@ function AllCountriesGDP({
         </div>
       </div>
 
-      {/* ✅ LEGENDA WARNA */}
-      <div className="flex items-center gap-3 flex-shrink-0 flex-wrap text-[9px] sm:text-[10px] font-black uppercase tracking-wider">
-        <div className="flex items-center gap-1.5">
-          <span className="inline-block w-3 h-3 rounded-sm bg-emerald-500/30 border border-emerald-500/60" />
-          <span className="text-emerald-300">Kaya (1–30)</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="inline-block w-3 h-3 rounded-sm bg-amber-500/30 border border-amber-500/60" />
-          <span className="text-amber-300">Berkembang (31–130)</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="inline-block w-3 h-3 rounded-sm bg-rose-500/30 border border-rose-500/60" />
-          <span className="text-rose-300">Miskin (131–207)</span>
-        </div>
-      </div>
-
       <div className={`flex min-h-0 flex-1 flex-col overflow-hidden border border-root-accent/30 bg-root-canvas ${rootBorderRadius.card}`}>
         <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden neon-scrollbar">
           <table className="w-full table-fixed text-xs text-left">
-            <thead className="bg-root-canvas border-b border-root-accent/30 sticky top-0 z-10">
+            <thead className="pdb-table-header bg-root-canvas border-b border-root-accent/30 sticky top-0 z-10">
               <tr>
-                <th className="w-[3%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-root-accent uppercase tracking-wider text-center leading-tight">No</th>
-                <th className="w-[15%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-root-accent uppercase tracking-wider cursor-pointer hover:bg-root-surface transition-colors leading-tight" onClick={() => handleSort('name')}>Nama Negara{renderSortArrow('name')}</th>
-                <th className="w-[11%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-root-accent uppercase tracking-wider text-right cursor-pointer hover:bg-root-surface transition-colors leading-tight" onClick={() => handleSort('tax')}>Total Pajak{renderSortArrow('tax')}</th>
-                <th className="w-[11%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-amber-300 uppercase tracking-wider text-right cursor-pointer hover:bg-root-surface transition-colors leading-tight" onClick={() => handleSort('gold')}>Emas{renderSortArrow('gold')}</th>
-                <th className="w-[12%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-emerald-300 uppercase tracking-wider text-right cursor-pointer hover:bg-root-surface transition-colors leading-tight" onClick={() => handleSort('commercial')}>Komersial{renderSortArrow('commercial')}</th>
-                <th className="w-[12%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-sky-300 uppercase tracking-wider text-right cursor-pointer hover:bg-root-surface transition-colors leading-tight" onClick={() => handleSort('tourism')}>Wisata{renderSortArrow('tourism')}</th>
-                <th className="w-[12%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider text-right cursor-pointer hover:bg-root-surface transition-colors leading-tight" onClick={() => handleSort('subsidyCost')}>Pengeluaran Subsidi{renderSortArrow('subsidyCost')}</th>
-                <th className="w-[12%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider text-right cursor-pointer hover:bg-root-surface transition-colors leading-tight" onClick={() => handleSort('governmentCost')}>Pengeluaran Kabinet{renderSortArrow('governmentCost')}</th>
-                <th className="w-[12%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-root-accent uppercase tracking-wider text-right cursor-pointer hover:bg-root-surface transition-colors leading-tight" onClick={() => handleSort('net')}>Netto PDB{renderSortArrow('net')}</th>
+                <th className="w-[15%] px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-root-accent uppercase tracking-wider text-center leading-tight">No</th>
+                <th className="w-[45%] px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-root-accent uppercase tracking-wider cursor-pointer hover:bg-root-surface transition-colors leading-tight" onClick={() => handleSort('name')}>Nama Negara{renderSortArrow('name')}</th>
+                <th className="w-[40%] px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-root-accent uppercase tracking-wider text-right cursor-pointer hover:bg-root-surface transition-colors leading-tight" onClick={() => handleSort('net')}>Netto PDB{renderSortArrow('net')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-root-accent/10">{renderAllRows()}</tbody>
@@ -461,7 +415,7 @@ export default function PDBModal({ isOpen, onClose, countryDetail, selectedCount
 
   return (
     <>
-    {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
+    {!isInfoOpen && <NotebookModalWrapper onClose={onClose} frameClassName="pdb-modal-frame">
       <div className="flex flex-col h-full overflow-hidden">
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
@@ -481,11 +435,7 @@ export default function PDBModal({ isOpen, onClose, countryDetail, selectedCount
           </div>
         </div>
 
-        <div className="flex-1 min-h-0 flex flex-col p-4 lg:p-6 bg-root-surface relative z-10">
-          <p className="text-[11px] lg:text-xs text-root-subtle font-semibold leading-relaxed mb-3 lg:mb-4 flex-shrink-0">
-            Data PDB seluruh negara tersedia dalam daftar di bawah ini.
-          </p>
-
+        <div className="pdb-modal-body flex-1 min-h-0 flex flex-col p-4 lg:p-6 bg-root-surface relative z-10">
           <AllCountriesGDP playerCountryName={countryName} playerCountryDetail={countryDetail} prefetchedAllCountries={prefetchedAllCountries} />
         </div>
       </div>
@@ -494,8 +444,55 @@ export default function PDBModal({ isOpen, onClose, countryDetail, selectedCount
       isOpen={isInfoOpen}
       onClose={() => setIsInfoOpen(false)}
       title="Informasi Produk Domestik Bruto"
-      description={`PDB mengukur kekuatan ekonomi makro kedaulatan ${countryName}. Pertumbuhan positif meningkatkan daya tawar diplomasi Anda. Data PDB negara Anda dan negara lain dapat dibandingkan pada daftar.`}
-    />
+      fillContent
+    >
+      <div className={`flex min-h-full flex-col justify-between gap-3 ${rootModalTypography.body}`}>
+        <p className={`${rootModalTypography.body} ${rootModalTypography.muted}`}>
+          PDB mengukur kekuatan ekonomi makro kedaulatan {countryName}. Daftar merangking negara berdasarkan netto PDB.
+        </p>
+
+        <section className={`space-y-2 border border-root-accent/20 bg-root-canvas p-3 ${rootBorderRadius.card}`}>
+          <h3 className="font-black uppercase tracking-wide text-root-accent">Kategori Peringkat Negara</h3>
+          <div className="grid gap-2 sm:grid-cols-3">
+            <div className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-2">
+              <span className="h-3 w-3 shrink-0 rounded-sm border border-emerald-500/60 bg-emerald-500/30" />
+              <span className="font-bold text-emerald-300">Kaya (1–30)</span>
+            </div>
+            <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 p-2">
+              <span className="h-3 w-3 shrink-0 rounded-sm border border-amber-500/60 bg-amber-500/30" />
+              <span className="font-bold text-amber-300">Berkembang (31–130)</span>
+            </div>
+            <div className="flex items-center gap-2 rounded-lg border border-rose-500/30 bg-rose-500/10 p-2">
+              <span className="h-3 w-3 shrink-0 rounded-sm border border-rose-500/60 bg-rose-500/30" />
+              <span className="font-bold text-rose-300">Miskin (131–207)</span>
+            </div>
+          </div>
+        </section>
+
+        <section className={`space-y-2 border border-emerald-500/25 bg-emerald-500/5 p-3 ${rootBorderRadius.card}`}>
+          <h3 className="font-black uppercase tracking-wide text-emerald-300">Income (Pemasukan)</h3>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <div><strong className="text-root-accent">Total Pajak:</strong> pemasukan dari pajak negara.</div>
+            <div><strong className="text-amber-300">Emas:</strong> pemasukan dari produksi emas.</div>
+            <div><strong className="text-emerald-300">Komersial:</strong> pemasukan dari pusat belanja, hotel, dan grosir tekstil.</div>
+            <div><strong className="text-sky-300">Wisata:</strong> pemasukan dari tempat wisata.</div>
+          </div>
+        </section>
+
+        <section className={`space-y-2 border border-rose-500/25 bg-rose-500/5 p-3 ${rootBorderRadius.card}`}>
+          <h3 className="font-black uppercase tracking-wide text-rose-300">Outcome (Pengeluaran)</h3>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <div><strong className="text-rose-300">Pengeluaran Subsidi:</strong> biaya seluruh subsidi aktif.</div>
+            <div><strong className="text-rose-300">Pengeluaran Kabinet:</strong> biaya kementerian dan kabinet.</div>
+          </div>
+        </section>
+
+        <section className={`border border-root-accent/30 bg-root-accent/5 p-3 ${rootBorderRadius.card}`}>
+          <h3 className="font-black uppercase tracking-wide text-root-accent">Netto PDB</h3>
+          <p className="mt-1">Netto PDB = total pemasukan (pajak + emas + komersial + wisata) − total pengeluaran (subsidi + kabinet). Nilai positif ditampilkan hijau, sedangkan nilai negatif ditampilkan merah.</p>
+        </section>
+      </div>
+    </MenuInfoModal>
     </>
   );
 }
