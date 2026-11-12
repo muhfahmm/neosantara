@@ -462,6 +462,16 @@
   height: 100% !important;
 }
 
+.modal-responsive-shell.loan-payment-confirmation-shell {
+  box-sizing: border-box;
+  width: min(560px, calc(100vw - 32px)) !important;
+  max-width: 560px !important;
+  height: auto !important;
+  min-height: 0;
+  max-height: calc(100dvh - 32px) !important;
+  flex: 0 1 auto !important;
+}
+
 @media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
   .notebook-modal-frame[data-viewport-mode]:not(.country-detail-modal-frame) > .modal-responsive-shell {
     box-sizing: border-box;

@@ -1,8 +1,8 @@
 "use client"
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
-import { X, CreditCard } from "lucide-react";
+import { CreditCard } from "lucide-react";
 import { formatLoanSourceName, getLoanSourceFlagIso, renderFlag } from "../../utils";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 
 interface BayarHutangModalProps {
   isOpen: boolean;
@@ -37,55 +37,59 @@ export default function BayarHutangModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-transparent pointer-events-none">
-      <div className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden relative font-sans pointer-events-auto animate-in fade-in zoom-in-95 duration-150 flex flex-col">
-        <div className="flex justify-end px-6 py-4 shrink-0 border-b border-root-accent/20">
-          <SharedModalCloseButton onClick={onClose} className="text-root-subtle hover:text-root-accent transition-colors cursor-pointer" appearance="custom">
-            <X className="w-5 h-5" />
-          </SharedModalCloseButton>
+    <div className="loan-payment-confirmation-overlay fixed inset-0 z-[70] flex items-center justify-center bg-transparent pointer-events-none">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="loan-payment-confirmation-title"
+        className={`modal-responsive-shell loan-payment-confirmation-shell bg-root-surface border border-root-accent/30 ${rootBorderRadius.frame} overflow-hidden relative font-sans pointer-events-auto animate-in fade-in zoom-in-95 duration-150 flex flex-col`}
+      >
+        <div className="loan-payment-confirmation-header flex shrink-0 items-center justify-start gap-3 border-b border-root-accent/20 bg-root-canvas px-4 py-3 sm:px-6">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className={`shrink-0 border border-root-accent/30 bg-root-surface p-2 text-root-accent ${rootBorderRadius.card}`}>
+              <CreditCard className="h-5 w-5" />
+            </div>
+            <h2 id="loan-payment-confirmation-title" className="min-w-0 text-sm font-black uppercase tracking-wide text-root-text sm:text-base">
+              Konfirmasi Pembayaran
+            </h2>
+          </div>
         </div>
 
-        <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-          <div className="w-20 h-20 rounded-full bg-root-canvas border border-root-accent/30 flex items-center justify-center mb-4">
-            <CreditCard className="w-10 h-10 text-root-accent" />
-          </div>
-
-          <h3 className="text-xl font-black text-root-accent mb-2 uppercase tracking-wide">Konfirmasi Pembayaran</h3>
-
-          <div className="flex flex-col items-center text-sm text-root-text mb-2 leading-relaxed max-w-sm font-medium">
+        <div className="loan-payment-confirmation-content flex min-h-0 flex-1 flex-col items-center justify-start overflow-hidden px-5 py-5 text-center sm:px-8 sm:py-7">
+          <div className="loan-payment-confirmation-summary mb-2 flex max-w-sm flex-col items-center text-sm font-medium leading-relaxed text-root-text">
             <span className="mb-1">
               Anda akan membayar <span className="font-black text-root-accent">{paymentAmount.toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</span>
             </span>
-            <div className="flex items-center gap-2 font-black text-root-accent">
+            <div className="flex flex-wrap items-center justify-center gap-2 font-black text-root-accent">
               <span className="text-root-subtle font-normal">untuk pinjaman dari</span>
               {renderFlag(getLoanSourceFlagIso(loanSource, iso), formatLoanSourceName(loanSource))}
               <span>{formatLoanSourceName(loanSource)}</span>
             </div>
           </div>
 
-          <div className="mt-2 text-xs font-bold text-root-subtle flex flex-col items-center gap-1">
+          <div className="loan-payment-confirmation-balance mt-2 text-xs font-bold text-root-subtle flex flex-col items-center gap-1">
             <span>Kas Negara Saat Ini:</span>
             <span className={`text-base font-black ${isFundsSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
               {currentMoney.toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO
             </span>
             {!isFundsSufficient && (
-              <span className="text-[10px] text-rose-400 bg-rose-500/10 border border-rose-500/30 px-3 py-1 rounded-full mt-1">
-                ⚠️ Uang tidak cukup untuk membayar penuh pinjaman ini
+              <span className="loan-payment-confirmation-warning text-[10px] text-rose-400 bg-rose-500/10 border border-rose-500/30 px-3 py-1 rounded-full mt-1">
+                Uang tidak cukup untuk membayar penuh pinjaman ini
               </span>
             )}
           </div>
         </div>
 
-        <div className="flex gap-3 px-8 pb-6 shrink-0">
+        <div className="loan-payment-confirmation-actions flex shrink-0 gap-3 border-t border-root-accent/20 bg-root-canvas/60 px-4 py-4 sm:px-6">
           <button
             onClick={onClose}
-            className="flex-1 py-3 rounded-xl border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-text transition-all font-black text-xs uppercase tracking-wider cursor-pointer"
+            className={`flex-1 border border-root-accent/30 bg-root-canvas px-3 py-2.5 text-[10px] font-black uppercase tracking-wider text-root-subtle transition-all hover:text-root-text cursor-pointer sm:py-3 sm:text-xs ${rootBorderRadius.card}`}
           >
             Batal
           </button>
           <button
             onClick={handlePayClick}
-            className="flex-1 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all cursor-pointer bg-root-accent text-root-canvas hover:bg-root-accent/80 active:scale-95"
+            className={`flex-1 bg-root-accent px-3 py-2.5 text-[10px] font-black uppercase tracking-wider text-root-canvas transition-all hover:bg-root-accent/80 active:scale-95 cursor-pointer sm:py-3 sm:text-xs ${rootBorderRadius.card}`}
           >
             Bayar Sekarang
           </button>

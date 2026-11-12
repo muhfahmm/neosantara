@@ -30,8 +30,6 @@ export default function GeneralPenaltyModal({ isOpen, onClose }: Props) {
           <div className="loan-penalty-modal-copy space-y-3 text-sm font-semibold leading-relaxed text-root-text">
             <p>Jika sebuah pinjaman jatuh tempo dan tidak bisa dibayar penuh, sistem akan mencoba membayar sebanyak mungkin dari kas negara.</p>
             <p>Jika masih ada sisa, sistem menandainya sebagai <strong className="text-rose-400">terlewat</strong> dan menambahkan denda setiap bulannya.</p>
-            <p>Rumus denda yang digunakan: <strong className="text-root-accent">denda = outstanding × (0.015 × jumlah_bulan_terlewat)</strong>.</p>
-            <p>Contoh: jika outstanding = 10.000 NEO dan bulan terlewat = 1, maka denda = 10.000 × (0.015 × 1) = 150 NEO.</p>
             <p>Perhitungan ini sama untuk pinjaman bilateral dan multilateral di game saat ini.</p>
           </div>
         </div>

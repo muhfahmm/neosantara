@@ -7,13 +7,12 @@ import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 
 interface RiwayatProps {
   loanHistory: LoanRecord[];
-  kasNegara: number;
   setPendingPaymentLoan: (loan: LoanRecord) => void;
   setPenaltyInfoLoan?: (loan: LoanRecord | null) => void;
   setGeneralPenaltyOpen?: (v: boolean) => void;
 }
 
-export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan, setPenaltyInfoLoan, setGeneralPenaltyOpen }: RiwayatProps) {
+export default function Riwayat({ loanHistory, setPendingPaymentLoan, setPenaltyInfoLoan, setGeneralPenaltyOpen }: RiwayatProps) {
   const [historySubTab, setHistorySubTab] = useState<"active" | "paid">("active");
   const activeLoans = loanHistory.filter((loan) => loan.status !== "Lunas");
   const paidLoans = loanHistory.filter((loan) => loan.status === "Lunas");
@@ -69,24 +68,35 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
               </th>
               <th className="whitespace-nowrap px-4 py-3 text-left text-[10px] font-black text-root-accent uppercase tracking-wider">Total Saat Ini</th>
               <th className="whitespace-nowrap px-4 py-3 text-left text-[10px] font-black text-root-accent uppercase tracking-wider">Jatuh Tempo</th>
-              <th className="whitespace-nowrap px-4 py-3 text-left text-[10px] font-black text-root-accent uppercase tracking-wider">Aksi</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-root-accent/10">
             {historySubTab === "active" ? (
               activeLoans.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-5 py-10 text-center text-sm font-bold text-root-subtle">
+                  <td colSpan={7} className="px-5 py-10 text-center text-sm font-bold text-root-subtle">
                     Tidak ada hutang aktif.
                   </td>
                 </tr>
               ) : (
                 activeLoans.map((pinjam) => (
-                  <tr key={pinjam.id} className="hover:bg-root-canvas/50 transition-colors">
+                  <tr
+                    key={pinjam.id}
+                    onClick={() => setPendingPaymentLoan(pinjam)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        setPendingPaymentLoan(pinjam);
+                      }
+                    }}
+                    tabIndex={0}
+                    aria-label={`Konfirmasi pembayaran pinjaman ${formatLoanSourceName(pinjam.source)}`}
+                    className="cursor-pointer hover:bg-root-canvas/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-root-accent transition-colors"
+                  >
                     <td className="px-4 py-3 font-bold text-root-text">
-                      <div className="flex items-center gap-2">
+                      <div className="flex min-w-0 items-center gap-2">
                         {renderFlag(getLoanSourceFlagIso(pinjam.source, pinjam.iso, pinjam.type), formatLoanSourceName(pinjam.source))}
-                        <span>{formatLoanSourceName(pinjam.source)}</span>
+                        <span className="min-w-0 truncate" title={formatLoanSourceName(pinjam.source)}>{formatLoanSourceName(pinjam.source)}</span>
                       </div>
                     </td>
                     <td className="px-4 py-3 font-bold text-root-text">{pinjam.amount?.toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</td>
@@ -95,7 +105,11 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
                     <td className="px-4 py-3 font-bold text-rose-400 flex items-center gap-3">
                       <span>+{(pinjam.accumulatedPenalty || 0).toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</span>
                       <button
-                        onClick={() => setPenaltyInfoLoan?.(pinjam)}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setPenaltyInfoLoan?.(pinjam);
+                        }}
+                        onKeyDown={(event) => event.stopPropagation()}
                         className="p-1 rounded-full bg-root-canvas border border-root-accent/30 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer"
                         title="Detail Denda"
                         aria-label="Detail Denda"
@@ -108,25 +122,12 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
                       {formatReturnDate(pinjam.returnDate)}
                     </td>
 
-                    <td className="px-4 py-3">
-                      <button
-                        onClick={() => setPendingPaymentLoan(pinjam)}
-                        disabled={pinjam.totalRepayment <= 0 || kasNegara <= 0}
-                        className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
-                          pinjam.totalRepayment <= 0 || kasNegara <= 0
-                            ? 'bg-root-canvas text-root-subtle border border-gray-800 cursor-not-allowed'
-                            : 'bg-root-accent text-root-canvas hover:bg-root-accent/80 font-bold'
-                        }`}
-                      >
-                        Bayar
-                      </button>
-                    </td>
                   </tr>
                 ))
               )
             ) : paidLoans.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-5 py-10 text-center text-sm font-bold text-root-subtle">
+                <td colSpan={7} className="px-5 py-10 text-center text-sm font-bold text-root-subtle">
                   Belum ada pinjaman yang dilunasi.
                 </td>
               </tr>
@@ -134,10 +135,9 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
               paidLoans.map((pinjam) => (
                 <tr key={pinjam.id} className="bg-emerald-500/5 hover:bg-emerald-500/10 transition-colors">
                   <td className="px-4 py-3 font-bold text-root-text">
-                    <div className="flex items-center gap-2">
+                    <div className="flex min-w-0 items-center gap-2">
                       {renderFlag(getLoanSourceFlagIso(pinjam.source, pinjam.iso, pinjam.type), formatLoanSourceName(pinjam.source))}
-                      <span>{formatLoanSourceName(pinjam.source)}</span>
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[8px] font-black uppercase">Lunas</span>
+                      <span className="min-w-0 truncate" title={formatLoanSourceName(pinjam.source)}>{formatLoanSourceName(pinjam.source)}</span>
                     </div>
                   </td>
                   <td className="px-4 py-3 font-bold text-root-text">{pinjam.amount?.toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</td>
@@ -150,9 +150,6 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
                     {formatReturnDate(pinjam.returnDate)}
                   </td>
 
-                  <td className="px-4 py-3">
-                    <span className="text-[8px] font-bold text-emerald-400 uppercase">Selesai</span>
-                  </td>
                 </tr>
               ))
             )}

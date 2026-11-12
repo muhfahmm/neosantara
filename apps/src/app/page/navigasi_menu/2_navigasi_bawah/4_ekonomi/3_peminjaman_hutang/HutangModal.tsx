@@ -476,7 +476,6 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
           {activeTab === "history" && (
             <Riwayat
               loanHistory={riwayatPinjaman}
-              kasNegara={kasNegara}
               setPendingPaymentLoan={setPendingPaymentLoan}
               // supply setter so Riwayat can open penalty info modal
               setPenaltyInfoLoan={setPenaltyInfoLoan}
