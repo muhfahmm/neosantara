@@ -77,8 +77,8 @@ const CommodityCard = React.memo(
     });
 
     return (
-      <div className={`border border-root-accent/30 bg-root-canvas p-3 lg:p-4 ${rootBorderRadius.card}`}>
-        <div className="flex items-center justify-between mb-2.5 lg:mb-3">
+      <div className={`commodity-price-card border border-root-accent/30 bg-root-canvas p-3 lg:p-4 ${rootBorderRadius.card}`}>
+        <div className="commodity-price-card-header flex items-center justify-between mb-2.5 lg:mb-3">
           <div>
             <p className="text-xs lg:text-sm font-black text-root-accent uppercase">
               {formattedName}
@@ -100,12 +100,12 @@ const CommodityCard = React.memo(
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-1.5 lg:gap-2">
+        <div className="commodity-price-options flex flex-wrap gap-1.5 lg:gap-2">
           {PRICE_OPTIONS.map((option) => (
             <button
               key={option.value}
               onClick={() => onPriceChange(itemKey, option.value)}
-              className={`px-2.5 lg:px-3 py-1.5 lg:py-2 rounded-lg border text-[10px] lg:text-xs font-black uppercase transition cursor-pointer ${
+              className={`commodity-price-option px-2.5 lg:px-3 py-1.5 lg:py-2 rounded-lg border text-[10px] lg:text-xs font-black uppercase transition cursor-pointer ${
                 currentValue === option.value
                   ? "bg-root-accent text-root-canvas border-root-accent font-bold"
                   : "bg-root-surface text-root-text border-root-accent/30 hover:border-root-accent"
@@ -547,9 +547,9 @@ function HargaModalContent({
   // ─────────────────────────────────────────────────────────────────────
   return (
     <>
-    {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
+    {!isInfoOpen && <NotebookModalWrapper onClose={onClose} frameClassName="harga-modal-frame">
       <div className="flex flex-col h-full overflow-hidden">
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
+        <div className="harga-modal-header px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
               <Tag className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
@@ -578,7 +578,7 @@ function HargaModalContent({
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 lg:p-6 bg-root-surface relative z-10 neon-scrollbar">
+        <div className="harga-modal-body min-h-0 flex-1 overflow-y-auto p-4 lg:p-6 bg-root-surface relative z-10 neon-scrollbar">
           {loading ? (
             <div className="flex items-center gap-2 text-sm text-root-accent mb-6">
               <Loader2 className="h-4 w-4 animate-spin text-root-accent" />
@@ -588,7 +588,7 @@ function HargaModalContent({
 
           {error ? <p className="text-sm text-rose-400 mb-4">{error}</p> : null}
 
-          <div className="space-y-3 lg:space-y-4 mb-4 lg:mb-6">
+          <div className="harga-modal-list space-y-3 lg:space-y-4 mb-4 lg:mb-6">
             {priceEntries.length === 0 ? (
               <p className="text-sm text-root-subtle">
                 Belum ada data harga yang tersedia untuk negara ini.
@@ -611,7 +611,7 @@ function HargaModalContent({
           <button
             onClick={handleSubsidize}
             disabled={anggaran < SUBSIDY_COST || subsidyActive}
-            className={`w-full mt-2 mb-4 py-2.5 rounded-xl border font-black text-xs uppercase tracking-wider transition cursor-pointer ${
+            className={`harga-subsidy-button w-full mt-2 mb-4 py-2.5 rounded-xl border font-black text-xs uppercase tracking-wider transition cursor-pointer ${
               subsidyActive
                 ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300 cursor-not-allowed"
                 : anggaran < SUBSIDY_COST
@@ -628,7 +628,7 @@ function HargaModalContent({
 
           {/* ---- INDEKS KEPUASAN RAKYAT (HARGA) ---- */}
           {!forumDialogMode && (
-          <div className={`mt-4 border border-root-accent/30 bg-root-canvas p-4 lg:mt-6 lg:p-5 ${rootBorderRadius.card}`}>
+          <div className={`harga-satisfaction-card mt-4 border border-root-accent/30 bg-root-canvas p-4 lg:mt-6 lg:p-5 ${rootBorderRadius.card}`}>
             <div className="flex justify-between items-center">
               <span className="text-[11px] lg:text-xs font-black text-root-accent uppercase tracking-widest">
                 Indeks Kepuasan Rakyat (Harga Pokok)

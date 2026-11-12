@@ -1930,6 +1930,70 @@
 }
 
 @media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
+  .harga-modal-frame .harga-modal-header {
+    gap: 6px;
+    padding: 6px 8px;
+  }
+
+  .harga-modal-frame .harga-modal-body {
+    padding: 8px !important;
+  }
+
+  .harga-modal-frame .harga-modal-list {
+    margin-bottom: 8px;
+  }
+
+  .harga-modal-frame .harga-modal-list > :not(:last-child) {
+    margin-top: 8px;
+    margin-bottom: 0;
+  }
+
+  .harga-modal-frame .commodity-price-card {
+    padding: 8px;
+  }
+
+  .harga-modal-frame .commodity-price-card-header {
+    margin-bottom: 6px;
+  }
+
+  .harga-modal-frame .commodity-price-options {
+    gap: 4px;
+  }
+
+  .harga-modal-frame .commodity-price-option {
+    min-height: 32px;
+    padding: 6px 8px;
+    font-size: 9px;
+  }
+
+  .harga-modal-frame .harga-subsidy-button {
+    min-height: 34px;
+    margin-top: 4px;
+    margin-bottom: 8px;
+    padding: 7px 8px;
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+  .harga-modal-frame .harga-satisfaction-card {
+    margin-top: 8px;
+    padding: 8px;
+  }
+}
+
+@media (orientation: portrait) and (max-width: 640px) {
+  .harga-modal-frame .commodity-price-options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .harga-modal-frame .commodity-price-option {
+    width: 100%;
+    padding-inline: 4px;
+  }
+}
+
+@media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
   .notebook-modal-frame.pdb-modal-frame[data-viewport-mode] > .modal-responsive-shell {
     height: calc(100dvh - var(--modal-top-offset) - var(--modal-bottom-offset) - 8px) !important;
     max-height: calc(100dvh - var(--modal-top-offset) - var(--modal-bottom-offset) - 8px) !important;
