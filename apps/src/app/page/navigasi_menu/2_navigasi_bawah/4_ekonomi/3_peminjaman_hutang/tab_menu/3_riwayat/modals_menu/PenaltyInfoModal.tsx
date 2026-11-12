@@ -30,10 +30,10 @@ export default function PenaltyInfoModal({ isOpen, onClose, loan }: Props) {
   const ratePercent = (0.015 * nextMissed * 100).toFixed(2);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto">
+    <div className="penalty-info-modal-overlay fixed inset-0 z-[80] flex items-center justify-center p-3 sm:p-6 bg-black/50 pointer-events-none">
+      <div className="penalty-info-modal-shell modal-responsive-shell w-full max-w-2xl min-h-0 max-h-[calc(100dvh-24px)] bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto">
 
-        <div className="px-8 py-6 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10">
+        <div className="penalty-info-modal-header px-8 py-6 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10">
           <div>
             <h3 className="text-2xl font-black text-root-accent tracking-tight leading-none uppercase">Detail Denda Telat Bayar</h3>
             <p className="text-xs text-root-subtle font-semibold mt-1">Penjelasan lengkap denda yang akan dikenakan jika pembayaran terlewat.</p>
@@ -44,8 +44,8 @@ export default function PenaltyInfoModal({ isOpen, onClose, loan }: Props) {
           </SharedModalCloseButton>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-8 bg-root-canvas/80 relative z-10 custom-scrollbar">
-          <div className="space-y-3 text-root-text font-semibold">
+        <div className="penalty-info-modal-content min-h-0 flex-1 overflow-y-auto p-8 bg-root-canvas/80 relative z-10 custom-scrollbar">
+          <div className="penalty-info-modal-copy space-y-3 text-root-text font-semibold">
             <div className="text-sm font-black text-root-accent">Sumber Pinjaman</div>
             <div className="text-sm">{loan.source} {loan.iso ? `(${loan.iso.toUpperCase()})` : ''}</div>
 

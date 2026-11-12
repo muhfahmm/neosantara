@@ -12,10 +12,10 @@ export default function GeneralPenaltyModal({ isOpen, onClose }: Props) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto">
+    <div className="general-penalty-modal-overlay fixed inset-0 z-[80] flex items-center justify-center p-3 sm:p-6 bg-black/50 pointer-events-none">
+      <div className="general-penalty-modal-shell modal-responsive-shell w-full max-w-2xl min-h-0 max-h-[calc(100dvh-24px)] bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto">
 
-        <div className="px-8 py-6 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10">
+        <div className="general-penalty-modal-header px-8 py-6 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10">
           <div>
             <h3 className="text-2xl font-black text-root-accent tracking-tight leading-none uppercase">Penjelasan Denda Telat Bayar</h3>
             <p className="text-xs text-root-subtle font-semibold mt-1">Rincian aturan denda bila pembayaran pinjaman terlewat.</p>
@@ -26,8 +26,8 @@ export default function GeneralPenaltyModal({ isOpen, onClose }: Props) {
           </SharedModalCloseButton>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-8 bg-root-canvas/80 relative z-10 custom-scrollbar">
-          <div className="space-y-3 text-sm text-root-text font-semibold leading-relaxed">
+        <div className="general-penalty-modal-content min-h-0 flex-1 overflow-y-auto p-8 bg-root-canvas/80 relative z-10 custom-scrollbar">
+          <div className="general-penalty-modal-copy space-y-3 text-sm text-root-text font-semibold leading-relaxed">
             <p>Jika sebuah pinjaman jatuh tempo dan tidak bisa dibayar penuh, sistem akan mencoba membayar sebanyak mungkin dari kas negara.</p>
             <p>Jika masih ada sisa, sistem menandainya sebagai <strong className="text-rose-400">terlewat</strong> dan menambahkan denda setiap bulannya.</p>
             <p>Rumus denda yang digunakan: <strong className="text-root-accent">denda = outstanding × (0.015 × jumlah_bulan_terlewat)</strong>.</p>
