@@ -961,7 +961,7 @@ export default function PerdaganganModal({
               </div>
             </div>
 
-            <div className={`flex-1 bg-root-canvas/80 relative z-10 neon-scrollbar [overflow-anchor:none] ${isTradeMarketBlocked ? "overflow-hidden p-2 sm:p-3" : "overflow-y-auto p-3 sm:p-4"}`}>
+            <div className={`min-h-0 flex-1 bg-root-canvas/80 relative z-10 neon-scrollbar [overflow-anchor:none] ${isTradeMarketBlocked ? "overflow-hidden p-2 sm:p-3" : "overflow-y-auto p-3.5 lg:p-5 2xl:p-8"}`}>
               {isTradeMarketBlocked ? (
                 <div className="flex h-full flex-col items-center justify-center rounded-xl border border-rose-500/30 bg-rose-950/20 p-1.5 text-center sm:p-2">
                   <AlertTriangle className="mb-1 h-6 w-6 text-rose-400 sm:h-7 sm:w-7" />
