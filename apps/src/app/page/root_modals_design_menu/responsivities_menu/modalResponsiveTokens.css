@@ -483,15 +483,6 @@
   height: 100% !important;
 }
 
-.responsive-modal-frame.subsidy-detail-modal-frame > .subsidy-detail-modal-shell {
-  box-sizing: border-box;
-  width: min(100%, var(--modal-max-width)) !important;
-  max-width: var(--modal-max-width) !important;
-  height: 100% !important;
-  min-height: 0;
-  max-height: var(--modal-max-height) !important;
-}
-
 .subsidy-detail-modal-body {
   flex: 1 1 auto;
   min-height: 0;
