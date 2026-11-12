@@ -7,7 +7,7 @@ import { getBuildingCardImage } from "../../buildingCardImages";
 import { X, Home, TrendingUp, TrendingDown, Hammer, AlertCircle, Info, Sparkles, Users } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
-import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import ServiceAISuggestionsModal from "../ai_suggestions/ServiceAISuggestionsModal";
@@ -425,32 +425,16 @@ export default function HunianPermukimanModal({
             </div>
           </div>
 
-          {/* BODY */}
-          <div className="flex-1 flex min-h-0 relative z-10">
-            {/* SIDEBAR TABS */}
-            <div className="w-40 sm:w-44 lg:w-48 border-r border-root-accent/30 bg-root-canvas p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
-              {items.map((it) => (
-                  <button
-                    key={it.key}
-                    onClick={() => setActiveTab(it.key)}
-                    className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${
-                      activeTab === it.key
-                        ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
-                        : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent hover:text-root-accent"
-                    }`}
-                  >
-                    <span className="truncate text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{it.label}</span>
-                    <span className={`shrink-0 text-[9px] lg:text-[10px] font-black px-1.5 py-0.5 rounded-full ${
-                      activeTab === it.key ? "bg-root-canvas text-root-accent" : "bg-root-canvas text-root-subtle"
-                    }`}>
-                      {it.value > 0 ? "Tersedia" : "Kosong"}
-                    </span>
-                  </button>
-              ))}
-            </div>
-
-            {/* KONTEN UTAMA */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-root-surface flex flex-col justify-between neon-scrollbar">
+          <RootModalSidebarLayout
+            ariaLabel="Kategori hunian dan permukiman"
+            contentClassName="flex flex-col justify-between p-4 sm:p-5 lg:p-6"
+            items={items.map((it) => ({
+              id: it.key,
+              isActive: activeTab === it.key,
+              onSelect: () => setActiveTab(it.key),
+              label: it.label,
+            }))}
+          >
               <div>
                 {activeItem && (
                   <div className="max-w-3xl">
@@ -722,8 +706,7 @@ export default function HunianPermukimanModal({
 
 
               </div>
-            </div>
-          </div>
+            </RootModalSidebarLayout>
         </div>
       </NotebookModalWrapper>}
 

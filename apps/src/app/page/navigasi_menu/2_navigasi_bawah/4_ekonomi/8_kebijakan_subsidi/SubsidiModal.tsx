@@ -6,6 +6,7 @@ import { HandHelping, Check, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import {
@@ -291,40 +292,32 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
             </div>
           )}
 
-          {/* MAIN BODY WITH SIDEBAR TAB MENU */}
-          <div className="flex-1 flex min-h-0 relative z-10">
+          <RootModalSidebarLayout
+            ariaLabel="Kategori kebijakan subsidi"
+            contentClassName="p-4 lg:p-6 2xl:p-8"
+            items={categories.map((cat) => {
+              const activeCountInCat = subsidyItems.filter(
+                (i) => (cat.id === "Semua" || i.category === cat.id) && i.isSubsidized
+              ).length;
+              const totalCountInCat = subsidyItems.filter(
+                (i) => cat.id === "Semua" || i.category === cat.id
+              ).length;
 
-            {/* SIDEBAR TABS */}
-            <div className="w-44 lg:w-48 2xl:w-52 border-r border-root-accent/30 bg-root-canvas p-2 lg:p-3 flex flex-col gap-1.5 lg:gap-2 overflow-y-auto neon-scrollbar shrink-0">
-              {categories.map((cat) => {
-                const activeCountInCat = subsidyItems.filter(
-                  (i) => (cat.id === "Semua" || i.category === cat.id) && i.isSubsidized
-                ).length;
-                const totalCountInCat = subsidyItems.filter(
-                  (i) => cat.id === "Semua" || i.category === cat.id
-                ).length;
-
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => setSelectedCategory(cat.id)}
-                    className={`flex w-full items-center justify-between border p-2 text-left transition-all cursor-pointer lg:p-2.5 ${rootBorderRadius.card} ${selectedCategory === cat.id
-                      ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
-                      : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent hover:text-root-accent"
-                      }`}
-                  >
-                    <span className="text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{cat.label}</span>
-                    <span className={`text-[9px] lg:text-[10px] font-black px-1.5 py-0.5 rounded-full ${selectedCategory === cat.id ? "bg-root-canvas text-root-accent" : "bg-root-canvas text-root-subtle"
-                      }`}>
-                      {activeCountInCat}/{totalCountInCat}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* RIGHT CONTENT AREA - SECTOR GRID FROM SEPARATE TAB COMPONENTS */}
-            <div className="flex-1 overflow-y-auto p-4 lg:p-6 2xl:p-8 bg-root-surface neon-scrollbar">
+              return {
+                id: cat.id,
+                isActive: selectedCategory === cat.id,
+                onSelect: () => setSelectedCategory(cat.id),
+                label: cat.label,
+                trailing: (
+                  <span className={`shrink-0 rounded-full bg-root-canvas px-1.5 py-0.5 text-[9px] lg:text-[10px] font-black ${
+                    selectedCategory === cat.id ? "text-root-accent" : "text-root-subtle"
+                  }`}>
+                    {activeCountInCat}/{totalCountInCat}
+                  </span>
+                ),
+              };
+            })}
+          >
               {selectedCategory === "Semua" && (
                 <SemuaSektorTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
               )}
@@ -369,9 +362,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
                   />
                 </div>
               </div>}
-            </div>
-
-          </div>
+          </RootModalSidebarLayout>
         </div>
       </NotebookModalWrapper>}
 

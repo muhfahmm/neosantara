@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { ShieldAlert, Swords, Building2, TrendingUp, TrendingDown, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import ArmadaAktif from "./1_tab_menu/1_armada_aktif";
@@ -104,45 +105,21 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
           </div>
         </div>
 
-        {/* BODY MODAL WITH SIDEBAR */}
-        <div className="flex-1 flex min-h-0 relative z-10">
-          {/* SIDEBAR MENU */}
-          <div className="w-40 sm:w-44 lg:w-48 border-r border-root-accent/30 bg-root-canvas p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
-            <button 
-              onClick={() => setActiveTab("aktif")} 
-              className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${
-                activeTab === "aktif" 
-                  ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
-                  : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent hover:text-root-accent"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <Swords className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                <span className="text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">Armada Aktif</span>
-              </div>
-            </button>
-
-            <button 
-              onClick={() => setActiveTab("infrastruktur")} 
-              className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${
-                activeTab === "infrastruktur" 
-                  ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
-                  : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent hover:text-root-accent"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                <span className="text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">Infrastruktur</span>
-              </div>
-            </button>
-          </div>
-
-          {/* MAIN TAB CONTENT */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-root-surface neon-scrollbar space-y-4">
+        <RootModalSidebarLayout
+          ariaLabel="Bagian armada dan infrastruktur militer"
+          contentClassName="space-y-4 p-4 sm:p-5 lg:p-6"
+          items={[
+            { id: "aktif", label: "Armada Aktif", icon: <Swords className="h-4 w-4 shrink-0" /> },
+            { id: "infrastruktur", label: "Infrastruktur", icon: <Building2 className="h-4 w-4 shrink-0" /> },
+          ].map((item) => ({
+            ...item,
+            isActive: activeTab === item.id,
+            onSelect: () => setActiveTab(item.id as "aktif" | "infrastruktur"),
+          }))}
+        >
             {activeTab === "aktif" && <ArmadaAktif countryDetail={countryDetail} setCountryDetail={setCountryDetail} onCapacityFull={handleNavigateToInfra} onGotoProduction={onGotoProduction} currentDate={currentDate} />}
             {activeTab === "infrastruktur" && <InfrastrukturMiliter countryDetail={countryDetail} setCountryDetail={setCountryDetail} highlightKey={highlightInfraKey} onGotoProduction={onGotoProduction} ongoingConstructions={countryDetail?.ongoingConstructions || []} currentDate={currentDate} />}
-          </div>
-        </div>
+        </RootModalSidebarLayout>
 
       </div>
     </NotebookModalWrapper>}

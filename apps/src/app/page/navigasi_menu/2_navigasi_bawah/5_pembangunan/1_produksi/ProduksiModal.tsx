@@ -5,7 +5,7 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { X, Hammer, TrendingUp, TrendingDown, AlertCircle, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
-import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import { useViewportMode } from "@/app/hooks/useViewportMode";
@@ -129,16 +129,7 @@ export default function ProduksiModal({
   onProductionDeepLinkHandled,
 }: ModalProps) {
   const [activeTab, setActiveTab] = useState<string>(targetTab || "kelistrikan");
-  const tabButtonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const viewportMode = useViewportMode();
-
-  useEffect(() => {
-    tabButtonRefs.current.get(activeTab)?.scrollIntoView({
-      block: "nearest",
-      inline: "nearest",
-      behavior: "smooth",
-    });
-  }, [activeTab, viewportMode]);
 
   // Update tab when targetTab prop changes
   useEffect(() => {
@@ -690,26 +681,20 @@ export default function ProduksiModal({
               </div>
             </div>
 
-            <div className="production-modal-body flex-1 flex min-h-0 relative z-10">
-              <div className="production-modal-tabs w-40 sm:w-44 lg:w-48 border-r border-root-accent/30 bg-root-canvas p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
-                {TABS.map((tab) => (
-                    <button
-                      key={tab.id}
-                      ref={(element) => {
-                        if (element) tabButtonRefs.current.set(tab.id, element);
-                        else tabButtonRefs.current.delete(tab.id);
-                      }}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`production-modal-tab flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${activeTab === tab.id
-                          ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
-                          : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent hover:text-root-accent"
-                        }`}
-                    >
-                      <span className="truncate text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{tab.label}</span>
-                    </button>
-                ))}
-              </div>
-              <div className="production-modal-content flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-root-surface neon-scrollbar">
+            <RootModalSidebarLayout
+              ariaLabel="Kategori produksi dan pembangunan"
+              activeItemId={activeTab}
+              scrollKey={viewportMode}
+              className="production-modal-body"
+              sidebarClassName="production-modal-tabs"
+              contentClassName="production-modal-content p-4 sm:p-5 lg:p-6"
+              items={TABS.map((tab) => ({
+                id: tab.id,
+                isActive: activeTab === tab.id,
+                onSelect: () => setActiveTab(tab.id),
+                label: tab.label,
+              }))}
+            >
                 <ComponentToRender
                   countryDetail={countryDetail}
                   setCountryDetail={setCountryDetail}
@@ -732,8 +717,7 @@ export default function ProduksiModal({
                     }
                   }}
                 />
-              </div>
-            </div>
+            </RootModalSidebarLayout>
 
             <div className="production-modal-footer flex shrink-0 justify-center border-t border-root-accent/15 bg-root-canvas py-2">
               <button

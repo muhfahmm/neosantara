@@ -8,7 +8,7 @@ import { getBuildingCardImage } from "../../buildingCardImages";
 import { X, Landmark, AlertTriangle, TrendingUp, TrendingDown, Hammer, Info, MapPin, DollarSign, BarChart3, Sparkles, Users } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
-import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import ServiceAISuggestionsModal from "../ai_suggestions/ServiceAISuggestionsModal";
@@ -369,7 +369,7 @@ export default function TempatUmumModal({
         }))
         .filter((item) => item.value !== null);
 
-      return { ...group, items, activeCount: items.length };
+      return { ...group, items };
     }).filter((group) => group.items.length > 0);
   }, [data]);
 
@@ -461,39 +461,24 @@ export default function TempatUmumModal({
             </div>
           </div>
 
-          <div className="flex-1 flex min-h-0 relative z-10">
-            <div className="w-40 sm:w-44 lg:w-48 border-r border-root-accent/30 bg-root-canvas p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
-              {groups.map((group) => {
-                const hasConstruction = group.keys.some((key) => 
-                  ongoingConstructions.some((c: any) => c.buildingKey === key)
-                );
-                return (
-                    <button
-                      key={group.id}
-                      onClick={() => setActiveTabId(group.id)}
-                      className={`flex w-full items-center justify-between border px-2 py-1.5 text-left transition-all cursor-pointer sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${
-                        activeTabId === group.id
-                          ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
-                          : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent hover:text-root-accent"
-                      }`}
-                    >
-                      <span className="truncate text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{group.label}</span>
-                      <div className="flex shrink-0 items-center gap-1">
-                         {hasConstruction && (
-                           <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                         )}
-                         <span className={`text-[9px] lg:text-[10px] font-black px-1.5 py-0.5 rounded-full ${
-                           activeTabId === group.id ? "bg-root-canvas text-root-accent" : "bg-root-canvas text-root-subtle"
-                         }`                         }>
-                           {group.activeCount}
-                         </span>
-                      </div>
-                    </button>
-                );
-              })}
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-root-surface flex flex-col justify-between neon-scrollbar">
+          <RootModalSidebarLayout
+            ariaLabel="Kategori tempat umum dan layanan publik"
+            contentClassName="flex flex-col justify-between p-4 sm:p-5 lg:p-6"
+            items={groups.map((group) => {
+              const hasConstruction = group.keys.some((key) =>
+                ongoingConstructions.some((c: any) => c.buildingKey === key)
+              );
+              return {
+                id: group.id,
+                isActive: activeTabId === group.id,
+                onSelect: () => setActiveTabId(group.id),
+                label: group.label,
+                trailing: hasConstruction
+                  ? <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-amber-400" />
+                  : undefined,
+              };
+            })}
+          >
               <div>
                 {activeGroup && (
                   <>
@@ -697,8 +682,7 @@ export default function TempatUmumModal({
                   })()}
                 </div>
               </div>
-            </div>
-          </div>
+            </RootModalSidebarLayout>
         </div>
       </NotebookModalWrapper>}
 

@@ -5,6 +5,7 @@ import { Scale, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { 
@@ -328,10 +329,10 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
     });
   }, [countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name_id, countryDetail?.nationalization_diplomacy_month_counter, setCountryDetail]);
 
-  const tabs: { id: typeof activeTab; label: string; desc: string }[] = [
-    { id: "sistem", label: "Spektrum Sistem", desc: "Kontrol Skala Terpusat vs Pasar" },
-    { id: "kebijakan", label: "Kartu Kebijakan", desc: "Regulasi Sektoral Spesifik" },
-    { id: "sektor", label: "Kepemilikan Produksi", desc: "Nasionalisasi per sektor" },
+  const tabs: { id: typeof activeTab; label: string }[] = [
+    { id: "sistem", label: "Spektrum Sistem" },
+    { id: "kebijakan", label: "Kartu Kebijakan" },
+    { id: "sektor", label: "Kepemilikan Produksi" },
   ];
   const electricityLevel = getNationalizationLevel(sectorLevels, "kelistrikan");
   const diplomacyMonthCounter = Math.max(
@@ -374,31 +375,16 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
           </div>
         </div>
 
-        {/* MAIN BODY WITH SIDEBAR TAB MENU */}
-        <div className="flex-1 flex min-h-0 relative z-10">
-          
-          {/* SIDEBAR TABS */}
-          <div className="w-44 lg:w-52 2xl:w-64 border-r border-root-accent/30 bg-root-canvas p-2 lg:p-3 flex flex-col gap-1.5 lg:gap-2 overflow-y-auto neon-scrollbar shrink-0">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex w-full flex-col border p-2 text-left transition-all cursor-pointer lg:p-2.5 ${rootBorderRadius.card} ${
-                  activeTab === tab.id
-                    ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
-                    : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent hover:text-root-accent"
-                }`}
-              >
-                <span className="text-[10px] lg:text-xs font-bold uppercase tracking-wider">{tab.label}</span>
-                <span className={`text-[8px] lg:text-[10px] mt-0.5 ${activeTab === tab.id ? "text-root-canvas/80 font-semibold" : "text-root-subtle"}`}>
-                  {tab.desc}
-                </span>
-              </button>
-            ))}
-          </div>
-
-          {/* RIGHT CONTENT AREA */}
-          <div className="flex-1 overflow-y-auto p-3 lg:p-5 2xl:p-8 bg-root-surface neon-scrollbar">
+        <RootModalSidebarLayout
+          ariaLabel="Bagian kebijakan dan sistem ekonomi"
+          contentClassName="p-3 lg:p-5 2xl:p-8"
+          items={tabs.map((tab) => ({
+            id: tab.id,
+            isActive: activeTab === tab.id,
+            onSelect: () => setActiveTab(tab.id),
+            label: tab.label,
+          }))}
+        >
             {activeTab === "sistem" && (
               <SpektrumSistemTab
                 sliderValue={sliderValue}
@@ -431,9 +417,7 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
             )}
 
             <SatisfactionBar average={economicPolicyAverage} />
-          </div>
-
-        </div>
+        </RootModalSidebarLayout>
 
       </div>
     </NotebookModalWrapper>}

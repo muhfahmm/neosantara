@@ -16,6 +16,7 @@ import {
 import { fetchDoktrinKeterbukaanFromDb } from "../../../../../../../../json/2_database_doktrin_keterbukaan/index";
 import { generateDoctrineChangeNotification } from "@/app/page/menus/inbox/logic/10_sosial_budaya/3_keterbukaan/doctrineChangeLogic";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import MenuInfoButton from "../../MenuInfoButton";
 
@@ -26,6 +27,12 @@ interface DoktrinKeterbukaanModalProps {
   setCountryDetail?: (detail: any) => void;
   selectedCountry?: any;
 }
+
+const DOCTRINE_TABS = [
+  { id: "civil", label: "Kebebasan Sipil & HAM", icon: Users },
+  { id: "media", label: "Media & Informasi", icon: Tv },
+  { id: "global", label: "Perbatasan & Geopolitik", icon: Plane },
+] as const;
 
 export default function DoktrinKeterbukaanModal({
   isOpen,
@@ -273,35 +280,18 @@ export default function DoktrinKeterbukaanModal({
           </div>
         </div>
 
-        {/* BODY LAYOUT WITH LEFT SIDEBAR & RIGHT CONTENT */}
-        <div className="flex-1 flex min-h-0 relative z-10">
-          {/* LEFT SIDEBAR TABS */}
-          <div className="w-48 sm:w-56 lg:w-64 border-r border-root-accent/30 bg-root-canvas p-2.5 sm:p-3 flex flex-col gap-2 overflow-y-auto neon-scrollbar shrink-0">
-            {[
-              { id: "civil", label: "Kebebasan Sipil & HAM", icon: Users },
-              { id: "media", label: "Media & Informasi", icon: Tv },
-              { id: "global", label: "Perbatasan & Geopolitik", icon: Plane },
-            ].map((tab) => {
-              const isActive = activeTab === tab.id;
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center gap-2.5 w-full px-3.5 py-3 rounded-2xl border text-left transition-all cursor-pointer ${isActive
-                    ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
-                    : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent/50 hover:text-root-accent"
-                    }`}
-                >
-                  <Icon className="h-4 w-4 shrink-0" />
-                  <span className="text-xs font-bold uppercase tracking-wider">{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* RIGHT CONTENT AREA */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-root-surface neon-scrollbar space-y-6">
+        <RootModalSidebarLayout
+          ariaLabel="Bagian doktrin dan keterbukaan"
+          activeItemId={activeTab}
+          contentClassName="space-y-6 p-4 sm:p-6"
+          items={DOCTRINE_TABS.map((tab) => ({
+            id: tab.id,
+            isActive: activeTab === tab.id,
+            onSelect: () => setActiveTab(tab.id),
+            label: tab.label,
+            icon: <tab.icon className="h-4 w-4 shrink-0" />,
+          }))}
+        >
             {/* OVERVIEW SPECTRUM BANNER */}
             <div className="p-4 sm:p-5 bg-root-canvas border border-root-accent/20 rounded-2xl space-y-3 shadow-md">
               <div className="flex flex-wrap items-center justify-between gap-3">
@@ -699,8 +689,7 @@ export default function DoktrinKeterbukaanModal({
                 </div>
               </div>
             )}
-          </div>
-        </div>
+        </RootModalSidebarLayout>
 
         {/* FOOTER ACTIONS */}
         <div className="px-6 py-4 border-t border-root-accent/20 bg-root-surface flex items-center justify-between shrink-0 relative z-10">

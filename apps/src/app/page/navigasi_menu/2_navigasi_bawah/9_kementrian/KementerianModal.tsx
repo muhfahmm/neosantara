@@ -30,6 +30,7 @@ import {
   Ship,
 } from "lucide-react";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import { calculateCountryNetBalance, getDepartmentLevel } from "@/app/logic/economic_logic/treasuryUpdater";
 import { CABINET_DEPARTMENT_IMAGES, LEVEL_UP_COST, MAX_CABINET_LEVEL } from "@/app/logic/economic_logic/departments";
 import { generateKabinetChangeNotification } from "@/app/page/menus/inbox/logic/13_notifikasi_kabinet/kabinetChangeLogic";
@@ -539,30 +540,16 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
             </div>
           </div>
 
-          {/* BODY LAYOUT WITH LEFT SIDEBAR & RIGHT CONTENT */}
-          <div className="flex-1 flex min-h-0 relative z-10">
-            {/* LEFT SIDEBAR TABS */}
-            <div className="w-44 sm:w-52 lg:w-56 border-r border-root-accent/30 bg-root-canvas p-2.5 sm:p-3 flex flex-col gap-2 overflow-y-auto neon-scrollbar shrink-0">
-              {TABS.map((tab) => {
-                const isActive = activeTab === tab.key;
-                return (
-                  <button
-                    key={tab.key}
-                    onClick={() => setActiveTab(tab.key)}
-                    className={`flex items-center justify-between w-full px-3.5 py-3 rounded-2xl border text-left transition-all cursor-pointer ${
-                      isActive
-                        ? "bg-root-accent border-root-accent text-root-canvas font-black shadow-md"
-                        : "bg-root-surface border-root-accent/20 text-root-text hover:border-root-accent/50 hover:text-root-accent"
-                    }`}
-                  >
-                    <span className="text-xs font-bold uppercase tracking-wider">{tab.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* RIGHT CONTENT AREA */}
-            <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-root-surface relative z-10 neon-scrollbar">
+          <RootModalSidebarLayout
+            ariaLabel="Bagian dewan kabinet menteri"
+            contentClassName="p-4 sm:p-6 lg:p-8"
+            items={TABS.map((tab) => ({
+              id: tab.key,
+              isActive: activeTab === tab.key,
+              onSelect: () => setActiveTab(tab.key),
+              label: tab.label,
+            }))}
+          >
               <div className="space-y-4">
                 {activeData.map((dept) => {
                   const level = getLevel(dept.id);
@@ -705,8 +692,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                   );
                 })}
               </div>
-            </div>
-          </div>
+          </RootModalSidebarLayout>
         </div>
       </NotebookModalWrapper>
       )}
