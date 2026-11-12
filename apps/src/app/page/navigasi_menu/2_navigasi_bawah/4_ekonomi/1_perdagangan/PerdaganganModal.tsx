@@ -961,33 +961,35 @@ export default function PerdaganganModal({
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-3 sm:p-4 bg-root-canvas/80 relative z-10 neon-scrollbar [overflow-anchor:none]">
+            <div className={`flex-1 bg-root-canvas/80 relative z-10 neon-scrollbar [overflow-anchor:none] ${isTradeMarketBlocked ? "overflow-hidden p-2 sm:p-3" : "overflow-y-auto p-3 sm:p-4"}`}>
               {isTradeMarketBlocked ? (
-                <div className="flex min-h-full flex-col items-center justify-center rounded-xl border border-rose-500/30 bg-rose-950/20 p-5 text-center">
-                  <AlertTriangle className="mb-3 h-12 w-12 text-rose-400 animate-pulse" />
-                  <h3 className="mb-5 text-lg font-black uppercase text-rose-400">
-                    Akses Pasar Global Ditolak
+                <div className="flex h-full flex-col items-center justify-center rounded-xl border border-rose-500/30 bg-rose-950/20 p-1.5 text-center sm:p-2">
+                  <AlertTriangle className="mb-1 h-6 w-6 text-rose-400 sm:h-7 sm:w-7" />
+                  <h3 className="mb-1.5 text-sm font-black uppercase text-rose-400 sm:text-base">
+                    Perdagangan Diblokir
                   </h3>
                   
-                  <div className="mb-4 grid w-full max-w-lg grid-cols-2 gap-2 rounded-lg border border-rose-500/20 bg-root-canvas p-3 text-left text-[11px]">
-                    <span className="text-root-subtle">Skor sentralisasi</span>
-                    <strong className="text-right text-rose-300">{tradeAccess.centralizationScore.toFixed(1)}</strong>
-                    <span className="text-root-subtle">Rata-rata nasionalisasi</span>
-                    <strong className="text-right text-root-text">{tradeAccess.averageNationalization.toFixed(1)}%</strong>
-                    <span className="text-root-subtle">Modifier ideologi</span>
-                    <strong className="text-right text-root-text">×{tradeAccess.ideologyModifier.toFixed(2)}</strong>
-                    <span className="text-root-subtle">Modifier agama</span>
-                    <strong className="text-right text-root-text">×{tradeAccess.religionModifier.toFixed(2)}</strong>
+                  <div className="mb-1.5 grid w-full max-w-lg grid-cols-2 gap-1">
+                    <div className="flex min-w-0 items-center justify-between gap-1 rounded-md border border-rose-500/20 bg-root-canvas px-1.5 py-1 text-left">
+                      <span className="text-[7px] font-semibold text-[#DCEAEA] sm:text-[8px]">Sentralisasi</span>
+                      <strong className="shrink-0 text-[9px] text-rose-300 sm:text-[10px]">{tradeAccess.centralizationScore.toFixed(1)}</strong>
+                    </div>
+                    <div className="flex min-w-0 items-center justify-between gap-1 rounded-md border border-rose-500/20 bg-root-canvas px-1.5 py-1 text-left">
+                      <span className="text-[7px] font-semibold text-[#DCEAEA] sm:text-[8px]">Nasionalisasi</span>
+                      <strong className="shrink-0 text-[9px] text-[#F3F7F7] sm:text-[10px]">{tradeAccess.averageNationalization.toFixed(1)}%</strong>
+                    </div>
+                    <div className="flex min-w-0 items-center justify-between gap-1 rounded-md border border-rose-500/20 bg-root-canvas px-1.5 py-1 text-left">
+                      <span className="text-[7px] font-semibold text-[#DCEAEA] sm:text-[8px]">Ideologi</span>
+                      <strong className="shrink-0 text-[9px] text-[#F3F7F7] sm:text-[10px]">×{tradeAccess.ideologyModifier.toFixed(2)}</strong>
+                    </div>
+                    <div className="flex min-w-0 items-center justify-between gap-1 rounded-md border border-rose-500/20 bg-root-canvas px-1.5 py-1 text-left">
+                      <span className="text-[7px] font-semibold text-[#DCEAEA] sm:text-[8px]">Agama</span>
+                      <strong className="shrink-0 text-[9px] text-[#F3F7F7] sm:text-[10px]">×{tradeAccess.religionModifier.toFixed(2)}</strong>
+                    </div>
                   </div>
-                  <ul className="w-full max-w-lg space-y-1.5 text-left text-[11px] text-root-text">
-                    {tradeAccess.reason.map((reason) => (
-                      <li key={reason} className="flex gap-2">
-                        <span className="text-rose-400 font-bold">✕</span>
-                        <span>{reason}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  {/* Tombol "Mengerti" telah dihapus */}
+                  <p className="text-[9px] font-medium text-[#DCEAEA] sm:text-[10px]">
+                    Batas akses: skor sentralisasi di bawah 85.
+                  </p>
                 </div>
               ) : (
                 <>

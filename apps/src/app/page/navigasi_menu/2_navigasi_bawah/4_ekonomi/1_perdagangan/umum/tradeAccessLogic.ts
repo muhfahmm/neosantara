@@ -94,13 +94,13 @@ export function calculateTradeAccess(
     };
   }
 
-  reason.push("Sentralisasi ekonomi tinggi membatasi akses impor.");
-  if (ideologyModifier > 1) reason.push(`Ideologi ${ideology} meningkatkan skor sentralisasi.`);
+  reason.push("Sentralisasi tinggi membatasi impor.");
+  if (ideologyModifier > 1) reason.push(`Ideologi ${ideology} menaikkan sentralisasi.`);
   if (religionModifier > 1) {
-    reason.push(`Agama ${religion} meningkatkan friksi dengan blok dagang internasional.`);
+    reason.push(`Agama ${religion} menghambat perdagangan global.`);
   }
   if (centralizationScore >= 85) {
-    reason[0] = `Sentralisasi ekonomi ekstrem (skor ${Math.round(centralizationScore)}).`;
+    reason[0] = `Sentralisasi ekstrem (skor ${Math.round(centralizationScore)}).`;
     return {
       averageNationalization: safeAverage,
       centralizationScore,

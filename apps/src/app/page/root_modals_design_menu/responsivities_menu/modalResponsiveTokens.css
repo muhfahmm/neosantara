@@ -574,3 +574,21 @@
     font-size: 7px !important;
   }
 }
+
+.notebook-modal-frame.trade-market-blocked-info-frame > .modal-responsive-shell {
+  width: min(600px, var(--modal-menu-frame-width, calc(100vw - 32px))) !important;
+  max-width: min(600px, var(--modal-menu-frame-width, calc(100vw - 32px))) !important;
+  height: auto !important;
+}
+
+.notebook-modal-frame.trade-market-blocked-info-frame > .modal-responsive-shell > .notebook-modal-sheet,
+.notebook-modal-frame.trade-market-blocked-info-frame > .modal-responsive-shell > .notebook-modal-sheet > .notebook-modal-content {
+  flex: 0 1 auto !important;
+}
+
+.notebook-modal-frame.trade-market-blocked-info-frame[data-viewport-mode]:not(.country-detail-modal-frame) > .modal-responsive-shell {
+  width: min(600px, var(--modal-menu-frame-width, calc(100vw - 32px))) !important;
+  max-width: min(600px, var(--modal-menu-frame-width, calc(100vw - 32px))) !important;
+  height: auto !important;
+  max-height: var(--modal-menu-frame-height, var(--modal-max-height)) !important;
+}
