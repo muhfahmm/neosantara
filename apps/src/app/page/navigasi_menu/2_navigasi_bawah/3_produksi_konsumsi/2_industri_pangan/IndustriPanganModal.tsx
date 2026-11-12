@@ -290,7 +290,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
           compact
           onClose={() => setSelectedCommodityInfo(null)}
         >
-          <div className="flex min-w-0 flex-col overflow-hidden">
+          <div className="food-industry-modal flex min-w-0 flex-col overflow-hidden">
             {/* HEADER */}
             <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
               <div className="flex items-center gap-2 sm:gap-3">
@@ -308,11 +308,11 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
               <div className="grid grid-cols-2 gap-1.5 lg:gap-2">
                 <div className={`bg-emerald-950/40 p-2 lg:p-2.5 2xl:p-3.5 border border-emerald-500/30 ${rootBorderRadius.card} flex flex-col justify-between gap-1`}>
                   <span className={rootModalTypography.label}>Total Produksi</span>
-                  <div className="text-[10px] lg:text-xs 2xl:text-sm font-black">{formatColoredNumber(selectedCommodityInfo.production, true)}</div>
+                  <div className="text-[10px] lg:text-[11px] 2xl:text-xs font-black">{formatColoredNumber(selectedCommodityInfo.production, true)}</div>
                 </div>
                 <div className={`bg-rose-950/40 p-2 lg:p-2.5 2xl:p-3.5 border border-rose-500/30 ${rootBorderRadius.card} flex flex-col justify-between gap-1`}>
                   <span className={rootModalTypography.label}>Total Konsumsi</span>
-                  <div className="text-[10px] lg:text-xs 2xl:text-sm font-black">{formatColoredNumber(selectedCommodityInfo.consumption, false)}</div>
+                  <div className="text-[10px] lg:text-[11px] 2xl:text-xs font-black">{formatColoredNumber(selectedCommodityInfo.consumption, false)}</div>
                 </div>
               </div>
               {selectedCommodityInfo.bonusDescription && (
@@ -321,7 +321,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                 </div>
               )}
               <div className={`bg-root-canvas p-2 lg:p-2.5 2xl:p-3.5 border border-root-accent/20 ${rootBorderRadius.card}`}>
-                <div className="flex justify-between items-center text-[10px] lg:text-xs 2xl:text-sm">
+                <div className="flex justify-between items-center text-[10px] lg:text-[11px] 2xl:text-xs">
                   <span className={rootModalTypography.label}>Netto:</span>
                   {formatColoredNumber(selectedCommodityInfo.balance, selectedCommodityInfo.balance >= 0)}
                 </div>
@@ -333,7 +333,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
 
       {!selectedCommodityInfo && !isMenuInfoOpen && (
       <NotebookModalWrapper onClose={onClose}>
-        <div className="flex h-full min-w-0 flex-col overflow-hidden">
+        <div className="food-industry-modal flex h-full min-w-0 flex-col overflow-hidden">
           {/* HEADER */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
             <div className="flex items-center gap-2 sm:gap-3">
@@ -341,7 +341,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                 <Utensils className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
               </div>
               <div className="min-w-0">
-                <h2 className={rootModalTypography.title}>Industri Pangan & Konsumsi Masyarakat</h2>
+                <h2 className={rootModalTypography.title}>Industri Pangan</h2>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -383,11 +383,11 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                               </div>
                               {onGotoProduction && (<button onClick={() => handleBuildClick(key)} title={`Bangun ${label}`} className="p-0.5 lg:p-1 rounded-md lg:rounded-lg bg-root-accent text-root-canvas hover:bg-root-accent/80 transition-all cursor-pointer shrink-0"><Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 font-bold" /></button>)}
                             </div>
-                            <div className="space-y-1 text-[10px] lg:text-xs">
+                            <div className="space-y-1 text-[10px] lg:text-[11px] 2xl:text-xs">
                               <div className={`flex justify-between items-center bg-emerald-950/40 px-1.5 lg:px-2 py-0.5 lg:py-1 ${rootBorderRadius.card} border border-emerald-500/30`}><span className={rootModalTypography.label}>Total Produksi</span>{formatColoredNumber(production, true)}</div>
                               <div className={`flex justify-between items-center bg-rose-950/40 px-1.5 lg:px-2 py-0.5 lg:py-1 ${rootBorderRadius.card} border border-rose-500/30`}><span className={rootModalTypography.label}>Total Konsumsi</span>{formatColoredNumber(consumption, false)}</div>
                             </div>
-                            <div className="flex justify-between items-center pt-1 border-t border-root-accent/10 mt-0.5"><span className={rootModalTypography.label}>Netto:</span>{formatColoredNumber(netBalance, netBalance >= 0)}</div>
+                            <div className="flex justify-between items-center pt-1 border-t border-root-accent/10 mt-0.5 text-[10px] lg:text-[11px] 2xl:text-xs"><span className={rootModalTypography.label}>Netto:</span>{formatColoredNumber(netBalance, netBalance >= 0)}</div>
                           </div>
                         );
                       })}
@@ -402,7 +402,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                   <span className={rootModalTypography.sectionTitle}>
                     Indeks Kepuasan Rakyat (Pangan)
                   </span>
-                  <span className="text-xl lg:text-2xl 2xl:text-3xl font-semibold text-root-accent">
+                  <span className="text-lg lg:text-xl 2xl:text-2xl font-semibold text-root-accent">
                     {foodSatisfaction} / 100
                   </span>
                 </div>

@@ -552,3 +552,14 @@
     scroll-behavior: auto !important;
   }
 }
+
+@media (min-width: 1024px) {
+  .food-industry-modal {
+    --modal-font-title: 1.125rem;
+    --modal-font-section-title: 0.8125rem;
+    --modal-font-body: 0.75rem;
+    --modal-font-label: 0.5625rem;
+    --modal-font-value: 0.8125rem;
+    --modal-font-tab: 0.6875rem;
+  }
+}

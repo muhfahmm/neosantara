@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import {
-  X,
   Zap,
   BatteryCharging,
   MapPin,
@@ -9,6 +8,7 @@ import {
   ChevronUp,
   ChevronDown,
   Info,
+  X,
 } from "lucide-react";
 
 import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
@@ -139,6 +139,88 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
     return Math.round(coverage * 100);
   })();
 
+  const globalElectricityData = activeTab === "global"
+    ? allCountries.map((country, index) => {
+      const calculation = calculateActualElectricityProduction(country, metadata);
+      const totalProduction = calculation.actualTotal;
+      const buildingConsumption = calculateBuildingElectricityConsumption(country);
+      const totalConsumption = buildingConsumption > 0
+        ? buildingConsumption
+        : totalProduction * 0.7;
+      const consumption = Math.max(0, totalConsumption);
+      const balance = totalProduction - consumption;
+      const userCountryName = (countryDetail?.name_id || countryDetail?.nama || countryDetail?.country || countryDetail?.name_en || '').toLowerCase().trim();
+      let rawName = country?.name_id || country?.name_en || country?.nama || country?.country;
+      if (!rawName && country?.__fileName) {
+        rawName = country.__fileName
+          .replace(/^\d+_/, '')
+          .replace(/\.(ts|js|json)$/i, '')
+          .replace(/_/g, ' ')
+          .replace(/\b\w/g, (char: string) => char.toUpperCase());
+      }
+      const name = rawName || 'Unknown';
+      const isUser = Boolean(
+        userCountryName && (
+          name.toLowerCase().trim() === userCountryName ||
+          country?.name_id?.toLowerCase().trim() === userCountryName ||
+          country?.name_en?.toLowerCase().trim() === userCountryName ||
+          country?.country?.toLowerCase().trim() === userCountryName
+        )
+      );
+      return {
+        index: index + 1,
+        name,
+        production: Number.isFinite(totalProduction) ? totalProduction : 0,
+        consumption: Number.isFinite(consumption) ? consumption : 0,
+        balance: Math.abs(balance) < 0.01 || !Number.isFinite(balance) ? 0 : balance,
+        isUser,
+      };
+    }).sort((a, b) => b.production - a.production)
+    : [];
+
+  const sortedData = [...globalElectricityData].sort((a, b) => {
+    let aValue: string | number;
+    let bValue: string | number;
+    switch (sortConfig.key) {
+      case 'name':
+        aValue = a.name.toLowerCase();
+        bValue = b.name.toLowerCase();
+        break;
+      case 'consumption':
+        aValue = a.consumption;
+        bValue = b.consumption;
+        break;
+      case 'balance':
+        aValue = a.balance;
+        bValue = b.balance;
+        break;
+      default:
+        aValue = a.production;
+        bValue = b.production;
+    }
+    if (sortConfig.direction === 'asc') return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+    return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+  });
+
+  const filteredData = searchQuery.trim() === ''
+    ? sortedData
+    : sortedData.filter(country => country.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  const handleSort = (column: SortConfig['key']) => {
+    setSortConfig(current => ({
+      key: column,
+      direction: current.key === column && current.direction === 'desc' ? 'asc' : 'desc',
+    }));
+  };
+
+  const SortIndicator = ({ column }: { column: SortConfig['key'] }) => (
+    sortConfig.key === column
+      ? sortConfig.direction === 'asc'
+        ? <ChevronUp className="h-3 w-3 ml-1 inline text-root-accent" />
+        : <ChevronDown className="h-3 w-3 ml-1 inline text-root-accent" />
+      : <span className="text-[#8b7e66]/30 ml-1 text-xs">⇅</span>
+  );
+
   // Simpan indeks ke countryDetail
   useEffect(() => {
     if (setCountryDetail && countryDetail) {
@@ -152,123 +234,43 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
     }
   }, [electricitySatisfaction]);
 
-  // --- Logika global (sama) ---
-  const calculateCountryElectricity = (country: any) => {
-    const calculation = calculateActualElectricityProduction(country, metadata);
-    logElectricityProductionCalculation(calculation, "modal-global");
-    const totalProduction = calculation.actualTotal;
-
-    const buildingConsumption = calculateBuildingElectricityConsumption(country);
-    const population = Number(country?.jumlah_penduduk) || 0;
-    const populationDemand = 0;
-    const totalConsumptionCalc = buildingConsumption > 0
-      ? buildingConsumption + populationDemand
-      : (totalProduction * 0.7) + populationDemand;
-    const consumption = Math.max(0, totalConsumptionCalc);
-    const balance = totalProduction - consumption;
-
-    return {
-      totalProduction: isNaN(totalProduction) ? 0 : totalProduction,
-      consumption: isNaN(consumption) ? 0 : consumption,
-      balance: isNaN(balance) ? 0 : balance,
-    };
-  };
-
-  const userCountryName = (countryDetail?.name_id || countryDetail?.nama || countryDetail?.country || countryDetail?.name_en || '').toLowerCase().trim();
-
-  const globalElectricityData = allCountries
-    .map((country, index) => {
-      const { totalProduction, consumption, balance } = calculateCountryElectricity(country);
-      // Normalize balance: jika sangat kecil (floating-point error), set ke 0
-      const normalizedBalance = Math.abs(balance) < 0.01 ? 0 : balance;
-      let rawName = country?.name_id || country?.name_en || country?.nama || country?.country;
-      if (!rawName && country?.__fileName) {
-        rawName = country.__fileName
-          .replace(/^\d+_/, '')
-          .replace(/\.(ts|js|json)$/i, '')
-          .replace(/_/g, ' ')
-          .replace(/\b\w/g, (char: string) => char.toUpperCase());
-      }
-      const countryName = rawName || 'Unknown';
-      const isUser = Boolean(
-        userCountryName && (
-          countryName.toLowerCase().trim() === userCountryName ||
-          (country?.name_id && country.name_id.toLowerCase().trim() === userCountryName) ||
-          (country?.name_en && country.name_en.toLowerCase().trim() === userCountryName) ||
-          (country?.country && country.country.toLowerCase().trim() === userCountryName)
-        )
-      );
-      return {
-        index: index + 1,
-        name: countryName,
-        production: totalProduction,
-        consumption,
-        balance: normalizedBalance,
-        isUser,
-        rawData: country,
-      };
-    })
-    .sort((a, b) => b.production - a.production);
-
-  let sortedData = [...globalElectricityData].sort((a, b) => {
-    let aVal: any, bVal: any;
-    switch (sortConfig.key) {
-      case 'name': aVal = a.name.toLowerCase(); bVal = b.name.toLowerCase(); break;
-      case 'production': aVal = a.production; bVal = b.production; break;
-      case 'consumption': aVal = a.consumption; bVal = b.consumption; break;
-      case 'balance': aVal = a.balance; bVal = b.balance; break;
-      default: return 0;
-    }
-    if (sortConfig.direction === 'asc') return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
-    else return aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
-  });
-
-  const filteredData = searchQuery.trim() === ''
-    ? sortedData
-    : sortedData.filter(country =>
-      country.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-  const handleSort = (column: SortConfig['key']) => {
-    if (sortConfig.key === column) {
-      setSortConfig({
-        key: column,
-        direction: sortConfig.direction === 'asc' ? 'desc' : 'asc'
-      });
-    } else {
-      setSortConfig({
-        key: column,
-        direction: 'desc'
-      });
-    }
-  };
-
-  const SortIndicator = ({ column }: { column: SortConfig['key'] }) => {
-    if (sortConfig.key !== column) {
-      return <span className="text-[#8b7e66]/30 ml-1 text-xs">⇅</span>;
-    }
-    if (sortConfig.direction === 'asc') {
-      return <ChevronUp className="h-3 w-3 ml-1 inline text-root-accent" />;
-    }
-    return <ChevronDown className="h-3 w-3 ml-1 inline text-root-accent" />;
-  };
-
   return (
     <>
       {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
         <div className="flex h-full min-w-0 flex-col overflow-hidden">
           {/* HEADER */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
-            <div className="flex items-center gap-2 sm:gap-3">
+          <div className="px-3 sm:px-5 py-2.5 sm:py-3 border-b border-root-accent/20 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-1.5 sm:gap-3 bg-root-canvas relative z-10 shrink-0">
+            <div className="flex min-w-0 items-center gap-1.5 sm:gap-3">
               <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
                 <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
               </div>
               <div className="min-w-0">
-                <h2 className={rootModalTypography.title}>Grid Kelistrikan Nasional</h2>
+                <h2 className={rootModalTypography.title}>Grid Nasional</h2>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="min-w-0 flex justify-center">
+              <RootModalTabs
+                compact
+                className="!flex-nowrap gap-0.5 whitespace-nowrap p-0.5"
+                items={[
+                  {
+                    label: "Neraca User",
+                    isActive: activeTab === "user",
+                    onClick: () => setActiveTab("user"),
+                    className: "!px-1.5 !text-[8px] !tracking-normal sm:!px-2.5 sm:!text-[9px]",
+                  },
+                  {
+                    label: `Neraca ${allCountries.length || 212} Negara`,
+                    isActive: activeTab === "global",
+                    onClick: () => setActiveTab("global"),
+                    className: "!px-1.5 !text-[8px] !tracking-normal sm:!px-2.5 sm:!text-[9px]",
+                  },
+                ]}
+              />
+            </div>
+
+            <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
               <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi grid kelistrikan nasional" aria-label="Informasi grid kelistrikan nasional" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas">
                 <Info className="h-3.5 w-3.5" />
               </button>
@@ -277,7 +279,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
           </div>
 
           {/* BODY (SCROLLBAR HIJAU DITERAPKAN DI SINI) */}
-          <div className="root-no-scrollbar-glow flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-root-canvas/80 relative z-10
+          <div className="root-no-scrollbar-glow flex-1 min-h-0 overflow-y-auto p-2.5 sm:p-3 lg:p-4 2xl:p-6 bg-root-canvas/80 relative z-10
             [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 
             [&::-webkit-scrollbar-track]:bg-root-canvas
             [&::-webkit-scrollbar-track]:rounded-full 
@@ -289,77 +291,42 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
             [&::-webkit-scrollbar-button]:hidden
           ">
 
-            {/* TAB NAVIGASI & SEARCH BAR */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 lg:gap-4 mb-3.5 lg:mb-5 2xl:mb-6">
-              {/* Tab Menu */}
-              <RootModalTabs
-                items={[
-                  { label: "Neraca User", isActive: activeTab === "user", onClick: () => setActiveTab("user") },
-                  { label: `Neraca ${allCountries.length || 207} Negara`, isActive: activeTab === "global", onClick: () => setActiveTab("global") },
-                ]}
-              />
-
-              {/* Input Search (Hanya muncul di tab global) */}
-              {activeTab === "global" && (
-                <div className="relative w-full sm:w-64 lg:w-80">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-root-subtle pointer-events-none" />
-                  <input
-                    type="text"
-                    placeholder="Cari nama negara..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-root-accent/30 bg-root-surface text-root-text placeholder-root-subtle focus:outline-none focus:border-root-accent transition-all font-semibold text-sm"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-3 top-3 text-root-subtle hover:text-root-accent transition-colors"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* TAB NERACA USER */}
-            {activeTab === "user" && (
-              <div className="flex flex-col gap-4">
+            {activeTab === "user" ? (
+              <div className="flex flex-col gap-3">
                 
                 {/* KOTAK 1: STATISTIK GRID (Memanjang ke kanan-kiri) */}
-                <div className={`w-full bg-root-canvas border border-root-accent/20 p-4 lg:p-5 ${rootBorderRadius.card}`}>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2.5 rounded-xl bg-root-accent/10 text-root-accent border border-root-accent/30">
-                      <BatteryCharging className="h-5 w-5" />
+                <div className={`w-full bg-root-canvas border border-root-accent/20 p-3 lg:p-4 ${rootBorderRadius.card}`}>
+                  <div className="flex items-center gap-2.5 mb-3 lg:mb-3.5">
+                    <div className="p-2 rounded-lg bg-root-accent/10 text-root-accent border border-root-accent/30">
+                      <BatteryCharging className="h-4 w-4 lg:h-5 lg:w-5" />
                     </div>
                     <div>
                       <h3 className={rootModalTypography.sectionTitle}>Statistik Grid</h3>
                     </div>
-                  </div>
-
+                    </div>
                   {/* Grid Card di dalamnya memanjang ke samping (3 kolom) */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div className={`bg-emerald-950/40 border border-emerald-500/30 p-3 lg:p-4 ${rootBorderRadius.card}`}>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+                    <div className={`bg-emerald-950/40 border border-emerald-500/30 p-2.5 lg:p-3 ${rootBorderRadius.card}`}>
                       <p className={rootModalTypography.label}>✓ Total Produksi Listrik</p>
-                      <p className="text-lg lg:text-xl font-black text-emerald-400 mt-2">
+                      <p className="text-base lg:text-lg font-black text-emerald-400 mt-1.5">
                         {formatElectricityMW(totalCapacityMW)} MW
                       </p>
                     </div>
                     
                     <div
                       onClick={() => setIsDetailKonsumsiOpen(true)}
-                      className={`bg-rose-950/40 border border-rose-500/30 hover:border-rose-400 hover:scale-[1.01] p-3 lg:p-4 ${rootBorderRadius.card} transition-all cursor-pointer group`}
+                      className={`bg-rose-950/40 border border-rose-500/30 hover:border-rose-400 hover:scale-[1.01] p-2.5 lg:p-3 ${rootBorderRadius.card} transition-all cursor-pointer group`}
                     >
                       <div className="flex items-center justify-between">
                         <p className={rootModalTypography.label}>✗ Konsumsi Terestimasi</p>
                         <span className="text-[10px] text-rose-300 font-bold opacity-80 group-hover:opacity-100 transition-opacity">Detail →</span>
                       </div>
-                      <p className="text-lg lg:text-xl font-black text-rose-400 mt-2">
+                      <p className="text-base lg:text-lg font-black text-rose-400 mt-1.5">
                         {formatElectricityMW(estimatedConsumptionMW)} MW
                       </p>
                     </div>
 
-                    <div className={`p-3 lg:p-4 ${rootBorderRadius.card} border ${balanceMW > 0 ? 'bg-emerald-950/40 border-emerald-500/30' :
+                    <div className={`p-2.5 lg:p-3 ${rootBorderRadius.card} border ${balanceMW > 0 ? 'bg-emerald-950/40 border-emerald-500/30' :
                         balanceMW < 0 ? 'bg-rose-950/40 border-rose-500/30' :
                           'bg-slate-900/40 border-slate-500/30'
                       }`}>
@@ -367,7 +334,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                           balanceMW < 0 ? 'text-rose-400' :
                             'text-slate-400'
                         }`}>Neraca Daya</p>
-                      <p className={`text-lg lg:text-xl font-black mt-2 ${balanceMW > 0 ? 'text-emerald-400' :
+                      <p className={`text-base lg:text-lg font-black mt-1.5 ${balanceMW > 0 ? 'text-emerald-400' :
                           balanceMW < 0 ? 'text-rose-400' :
                             'text-slate-400'
                         }`}>
@@ -378,10 +345,10 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                 </div>
 
                 {/* KOTAK 2: RINGKASAN SUMBER DAYA (Di Bawah, Berbentuk Grid) */}
-                <div className={`w-full bg-root-canvas border border-root-accent/20 p-4 lg:p-5 ${rootBorderRadius.card}`}>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2.5 rounded-xl bg-root-accent/10 text-root-accent border border-root-accent/30">
-                      <MapPin className="h-5 w-5" />
+                <div className={`w-full bg-root-canvas border border-root-accent/20 p-3 lg:p-4 ${rootBorderRadius.card}`}>
+                  <div className="flex items-center gap-2.5 mb-3 lg:mb-3.5">
+                    <div className="p-2 rounded-lg bg-root-accent/10 text-root-accent border border-root-accent/30">
+                      <MapPin className="h-4 w-4 lg:h-5 lg:w-5" />
                     </div>
                     <div>
                       <h3 className={rootModalTypography.sectionTitle}>Ringkasan Sumber Daya</h3>
@@ -389,18 +356,18 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                   </div>
 
                   {/* Card Sumber Daya dibuat Grid (2 atau 3 kolom) */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2.5">
                     {powerSources.length > 0 ? powerSources.map((source) => (
-                      <div key={source.key} className={`flex items-center justify-between gap-3 p-4 bg-root-surface border border-root-accent/20 ${rootBorderRadius.card}`}>
-                        <div>
-                          <p className={rootModalTypography.sectionTitle}>{source.label}</p>
-                          <p className={`${rootModalTypography.body} ${rootModalTypography.muted}`}>{source.desc}</p>
+                      <div key={source.key} className={`flex items-center justify-between gap-2 p-2.5 lg:p-3 bg-root-surface border border-root-accent/20 ${rootBorderRadius.card}`}>
+                        <div className="min-w-0">
+                          <p className="text-[10px] lg:text-xs font-bold uppercase tracking-wide text-root-text">{source.label}</p>
+                          <p className="text-[9px] lg:text-[10px] leading-snug text-root-muted">{source.desc}</p>
                         </div>
-                        <div className="text-right">
-                          <p className="text-sm font-black text-root-accent">
+                        <div className="shrink-0 text-right">
+                          <p className="text-xs lg:text-sm font-black text-root-accent">
                             {formatElectricityMW(source.actualProduction)} MW
                           </p>
-                          <p className="text-[10px] text-root-subtle">
+                          <p className="text-[9px] lg:text-[10px] text-root-subtle">
                             {source.fuelShortage
                               ? "Bahan bakar kurang — tidak berproduksi"
                               : source.value > 0 ? `${source.value} unit` : 'Tidak tersedia'}
@@ -408,7 +375,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                         </div>
                       </div>
                     )) : (
-                      <div className={`col-span-full border border-root-accent/20 bg-root-surface p-4 ${rootBorderRadius.card} ${rootModalTypography.body}`}>
+                      <div className={`col-span-full border border-root-accent/20 bg-root-surface p-3 ${rootBorderRadius.card} ${rootModalTypography.body}`}>
                         Data pembangkit listrik tidak tersedia.
                       </div>
                     )}
@@ -416,16 +383,16 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                 </div>
 
                 {/* KOTAK 3: INDEKS KEPUASAN LISTRIK */}
-                <div className={`w-full p-5 border border-root-accent/30 bg-root-canvas ${rootBorderRadius.card}`}>
+                <div className={`w-full p-3 lg:p-4 border border-root-accent/30 bg-root-canvas ${rootBorderRadius.card}`}>
                   <div className="flex justify-between items-center">
                     <span className={rootModalTypography.sectionTitle}>
                       Indeks Kepuasan Rakyat (Listrik)
                     </span>
-                    <span className="text-3xl font-black text-root-accent">
+                    <span className="text-2xl lg:text-3xl font-black text-root-accent">
                       {electricitySatisfaction} / 100
                     </span>
                   </div>
-                  <div className="w-full h-3 bg-root-surface rounded-full mt-3 overflow-hidden border border-root-accent/20">
+                  <div className="w-full h-2.5 bg-root-surface rounded-full mt-2 overflow-hidden border border-root-accent/20">
                     <div
                       className="h-full rounded-full bg-root-accent transition-all duration-200"
                       style={{ width: `${electricitySatisfaction}%` }}
@@ -433,49 +400,55 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                   </div>
                 </div>
               </div>
-            )}
-
-            {/* TAB NERACA GLOBAL */}
-            {activeTab === "global" && (
-              <div className={`w-full bg-root-canvas border border-root-accent/20 p-6 ${rootBorderRadius.card}`}>
-                {/* SCROLLBAR HIJAU DITERAPKAN JUGA DI TABEL (VERTIKAL & HORIZONTAL) */}
-                <div className={`root-no-scrollbar-glow overflow-x-auto border border-root-accent/20 ${rootBorderRadius.card} bg-root-surface max-h-[60vh] overflow-y-auto
-                  [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 
+            ) : (
+              <div className={`w-full bg-root-canvas border border-root-accent/20 p-3 lg:p-4 ${rootBorderRadius.card}`}>
+                <div className="relative mb-3 w-full sm:max-w-xs">
+                  <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-root-subtle" />
+                  <input
+                    type="text"
+                    placeholder="Cari nama negara..."
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    className="w-full rounded-lg border border-root-accent/30 bg-root-surface py-2 pl-10 pr-3 text-xs font-semibold text-root-text placeholder-root-subtle transition-all focus:border-root-accent focus:outline-none sm:text-sm"
+                  />
+                </div>
+                <div className={`root-no-scrollbar-glow max-h-[60vh] overflow-x-auto overflow-y-auto border border-root-accent/20 bg-root-surface ${rootBorderRadius.card}
+                  [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2
                   [&::-webkit-scrollbar]:h-1.5 sm:[&::-webkit-scrollbar]:h-2
                   [&::-webkit-scrollbar-track]:bg-root-surface
-                  [&::-webkit-scrollbar-track]:rounded-full 
+                  [&::-webkit-scrollbar-track]:rounded-full
                   [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/10
                   [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A]
-                  [&::-webkit-scrollbar-thumb]:rounded-full 
+                  [&::-webkit-scrollbar-thumb]:rounded-full
                   [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-surface
                   hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent
                   [&::-webkit-scrollbar-button]:hidden
                 `}>
-                  <table className="w-full text-xs">
-                    <thead className="sticky top-0 text-[10px] sm:text-xs z-10">
-                      <tr className="bg-root-canvas border-b border-root-accent/20">
-                        <th className="bg-root-canvas px-2.5 sm:px-3 py-2 text-left font-black text-root-accent uppercase tracking-wider">No</th>
+                  <table className="w-full min-w-[560px] text-[10px] sm:text-xs">
+                    <thead className="sticky top-0 z-10 text-[9px] sm:text-xs">
+                      <tr className="border-b border-root-accent/20 bg-root-canvas">
+                        <th className="px-2.5 py-2 text-left font-black uppercase tracking-wider text-root-accent">No</th>
                         <th
                           onClick={() => handleSort('name')}
-                          className="bg-root-canvas px-2.5 sm:px-3 py-2 text-left font-black text-root-accent uppercase tracking-wider cursor-pointer hover:bg-root-surface transition-colors"
+                          className="cursor-pointer px-2.5 py-2 text-left font-black uppercase tracking-wider text-root-accent hover:bg-root-surface"
                         >
                           Negara <SortIndicator column="name" />
                         </th>
                         <th
                           onClick={() => handleSort('production')}
-                          className="bg-root-canvas px-2.5 sm:px-3 py-2 text-right font-black text-emerald-400 uppercase tracking-wider cursor-pointer hover:bg-emerald-950/40 transition-colors"
+                          className="cursor-pointer px-2.5 py-2 text-right font-black uppercase tracking-wider text-emerald-400 hover:bg-emerald-950/40"
                         >
                           Produksi (MW) <SortIndicator column="production" />
                         </th>
                         <th
                           onClick={() => handleSort('consumption')}
-                          className="bg-root-canvas px-2.5 sm:px-3 py-2 text-right font-black text-rose-400 uppercase tracking-wider cursor-pointer hover:bg-rose-950/40 transition-colors"
+                          className="cursor-pointer px-2.5 py-2 text-right font-black uppercase tracking-wider text-rose-400 hover:bg-rose-950/40"
                         >
                           Konsumsi (MW) <SortIndicator column="consumption" />
                         </th>
                         <th
                           onClick={() => handleSort('balance')}
-                          className="bg-root-canvas px-2.5 sm:px-3 py-2 text-right font-black text-root-accent uppercase tracking-wider cursor-pointer hover:bg-root-surface transition-colors"
+                          className="cursor-pointer px-2.5 py-2 text-right font-black uppercase tracking-wider text-root-accent hover:bg-root-surface"
                         >
                           Neraca Daya <SortIndicator column="balance" />
                         </th>
@@ -484,58 +457,38 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                     <tbody className="divide-y divide-root-accent/10 bg-root-surface">
                       {allCountries.length === 0 ? (
                         <tr>
-                          <td colSpan={5} className="px-4 py-6 text-center text-xs font-bold text-root-subtle">
-                            📡 Memuat data {globalElectricityData.length || 207} negara...
+                          <td colSpan={5} className="px-4 py-6 text-center font-bold text-root-subtle">
+                            Memuat data negara...
                           </td>
                         </tr>
                       ) : filteredData.length > 0 ? (
-                        filteredData.map((country, rowIndex) => {
-                          const isUserCountry = country.isUser;
-                          return (
-                            <tr
-                              key={`country-${country.name}-${rowIndex}`}
-                              className={`transition-colors ${isUserCountry
-                                  ? 'bg-emerald-950/50 font-black border-l-4 border-l-emerald-400'
-                                  : 'bg-root-surface'
-                                }`}
-                            >
-                              <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-400 font-black' : 'text-root-subtle'}`}>
-                                {rowIndex + 1}
-                              </td>
-                              <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-400 font-black flex items-center gap-2' : 'text-root-text'}`}>
-                                <div className="flex items-center gap-1.5 flex-wrap">
-                                  <span>{country.name}</span>
-                                  {isUserCountry && (
-                                    <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-root-canvas text-[9px] font-black uppercase tracking-wider">
-                                      Negara Anda
-                                    </span>
-                                  )}
-                                </div>
-                              </td>
-                              <td className="px-4 py-3 font-bold text-emerald-400 text-right">
-                                {isNaN(country.production) || country.production <= 0 ? '0' : country.production.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
-                              </td>
-                              <td className="px-4 py-3 font-bold text-rose-400 text-right">
-                                {isNaN(country.consumption) || country.consumption <= 0 ? '0' : country.consumption.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
-                              </td>
-
-                              <td className={`px-4 py-3 font-black text-right ${country.balance > 0.01 ? 'text-emerald-400' :
-                                  country.balance < -0.01 ? 'text-rose-400' :
-                                    'text-slate-400'
-                                }`}>
-                                <div className="flex items-center justify-end gap-1">
-                                  <span>
-                                    {isNaN(country.balance) || country.balance === 0 ? '0' : (country.balance > 0 ? '+' : '-') + Math.abs(country.balance).toLocaleString('id-ID', { maximumFractionDigits: 2 })}
-                                  </span>
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })
+                        filteredData.map((country, rowIndex) => (
+                          <tr
+                            key={`${country.name}-${rowIndex}`}
+                            className={country.isUser ? "border-l-4 border-l-emerald-400 bg-emerald-950/50 font-black" : "bg-root-surface"}
+                          >
+                            <td className={`px-2.5 py-2 font-bold ${country.isUser ? "text-emerald-400" : "text-root-subtle"}`}>
+                              {rowIndex + 1}
+                            </td>
+                            <td className={`px-2.5 py-2 font-bold ${country.isUser ? "text-emerald-400" : "text-root-text"}`}>
+                              <span>{country.name}</span>
+                              {country.isUser && <span className="ml-1 rounded-full bg-emerald-500 px-1.5 py-0.5 text-[8px] font-black uppercase text-root-canvas">Negara Anda</span>}
+                            </td>
+                            <td className="px-2.5 py-2 text-right font-bold text-emerald-400">
+                              {country.production <= 0 ? "0" : country.production.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
+                            </td>
+                            <td className="px-2.5 py-2 text-right font-bold text-rose-400">
+                              {country.consumption <= 0 ? "0" : country.consumption.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
+                            </td>
+                            <td className={`px-2.5 py-2 text-right font-black ${country.balance > 0.01 ? "text-emerald-400" : country.balance < -0.01 ? "text-rose-400" : "text-slate-400"}`}>
+                              {country.balance === 0 ? "0" : `${country.balance > 0 ? "+" : "-"}${Math.abs(country.balance).toLocaleString("id-ID", { maximumFractionDigits: 2 })}`}
+                            </td>
+                          </tr>
+                        ))
                       ) : (
                         <tr>
-                          <td colSpan={5} className="px-4 py-6 text-center text-xs font-bold text-root-subtle">
-                            {searchQuery ? `Tidak ada negara yang cocok dengan "${searchQuery}"` : 'Tidak ada data tersedia'}
+                          <td colSpan={5} className="px-4 py-6 text-center font-bold text-root-subtle">
+                            Tidak ada negara yang cocok dengan pencarian.
                           </td>
                         </tr>
                       )}
@@ -553,7 +506,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
         isOpen={isInfoOpen}
         onClose={() => setIsInfoOpen(false)}
         title="Informasi Grid Kelistrikan Nasional"
-        description="Pantau produksi listrik, estimasi konsumsi, dan neraca listrik negara melalui tab Neraca User. Tab negara lain memungkinkan perbandingan global; gunakan rincian sumber pembangkit untuk meninjau produksinya."
+        description="Pantau neraca daya negara Anda atau bandingkan produksi, konsumsi, dan neraca listrik dengan negara lain."
       />
 
       <DetailKonsumsiTerestimasiModal
