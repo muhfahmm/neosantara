@@ -15,6 +15,20 @@ export interface LoanRecord {
   returnDate: string;
 }
 
+export const formatLoanSourceName = (source: string) => {
+  const normalizedSource = source.trim();
+  if (/^imf\b/i.test(normalizedSource)) return "IMF";
+  if (/^(bank dunia|world bank)\b/i.test(normalizedSource)) return "Bank Dunia";
+  return source;
+};
+
+export const getLoanSourceFlagIso = (source: string, iso?: string | null, type?: LoanRecord["type"]) => {
+  if (iso) return iso;
+
+  const displayName = formatLoanSourceName(source);
+  return type === "multilateral" || displayName === "IMF" || displayName === "Bank Dunia" ? "un" : null;
+};
+
 export const renderFlag = (iso: string | undefined | null, altName: string) => {
   if (!iso || iso.length !== 2) {
     return (

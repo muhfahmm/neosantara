@@ -1,7 +1,9 @@
 "use client";
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
-import { X } from "lucide-react";
+import { Info } from "lucide-react";
+import NotebookModalWrapper from "../../../../../NotebookModalWrapper";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 
 interface Props {
   isOpen: boolean;
@@ -12,22 +14,20 @@ export default function GeneralPenaltyModal({ isOpen, onClose }: Props) {
   if (!isOpen) return null;
 
   return (
-    <div className="general-penalty-modal-overlay fixed inset-0 z-[80] flex items-center justify-center p-3 sm:p-6 bg-black/50 pointer-events-none">
-      <div className="general-penalty-modal-shell modal-responsive-shell w-full max-w-2xl min-h-0 max-h-[calc(100dvh-24px)] bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto">
-
-        <div className="general-penalty-modal-header px-8 py-6 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10">
-          <div>
-            <h3 className="text-2xl font-black text-root-accent tracking-tight leading-none uppercase">Penjelasan Denda Telat Bayar</h3>
-            <p className="text-xs text-root-subtle font-semibold mt-1">Rincian aturan denda bila pembayaran pinjaman terlewat.</p>
+    <NotebookModalWrapper onClose={onClose} zIndexClass="z-[80]" frameClassName="loan-modal-frame">
+      <div className="flex h-full min-w-0 w-full flex-col overflow-hidden bg-root-surface font-sans">
+        <div className="loan-modal-header flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <div className="shrink-0 rounded-lg border border-root-accent/30 bg-root-surface p-1 sm:p-1.5">
+              <Info className="h-4 w-4 text-root-accent sm:h-5 sm:w-5" />
+            </div>
+            <h2 className={rootModalTypography.title}>Penjelasan Denda Telat Bayar</h2>
           </div>
-          <SharedModalCloseButton onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5" appearance="custom">
-            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
-          </SharedModalCloseButton>
+          <RootModalCloseButton onClick={onClose} />
         </div>
 
-        <div className="general-penalty-modal-content min-h-0 flex-1 overflow-y-auto p-8 bg-root-canvas/80 relative z-10 custom-scrollbar">
-          <div className="general-penalty-modal-copy space-y-3 text-sm text-root-text font-semibold leading-relaxed">
+        <div className="loan-modal-content min-h-0 flex-1 overflow-y-auto bg-root-canvas/80 p-4 custom-scrollbar sm:p-5">
+          <div className="loan-penalty-modal-copy space-y-3 text-sm font-semibold leading-relaxed text-root-text">
             <p>Jika sebuah pinjaman jatuh tempo dan tidak bisa dibayar penuh, sistem akan mencoba membayar sebanyak mungkin dari kas negara.</p>
             <p>Jika masih ada sisa, sistem menandainya sebagai <strong className="text-rose-400">terlewat</strong> dan menambahkan denda setiap bulannya.</p>
             <p>Rumus denda yang digunakan: <strong className="text-root-accent">denda = outstanding × (0.015 × jumlah_bulan_terlewat)</strong>.</p>
@@ -35,8 +35,7 @@ export default function GeneralPenaltyModal({ isOpen, onClose }: Props) {
             <p>Perhitungan ini sama untuk pinjaman bilateral dan multilateral di game saat ini.</p>
           </div>
         </div>
-
       </div>
-    </div>
+    </NotebookModalWrapper>
   );
 }

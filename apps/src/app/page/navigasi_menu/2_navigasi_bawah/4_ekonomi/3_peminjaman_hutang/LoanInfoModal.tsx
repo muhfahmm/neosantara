@@ -15,12 +15,12 @@ export default function LoanInfoModal({ isOpen, onClose }: LoanInfoModalProps) {
 
   return (
     <NotebookModalWrapper
-      compact
       onClose={onClose}
       zIndexClass="z-[200]"
+      frameClassName="loan-modal-frame"
     >
-      <div className="flex min-w-0 flex-col overflow-hidden">
-        <div className="flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
+      <div className="flex h-full min-w-0 w-full flex-col overflow-hidden bg-root-surface font-sans">
+        <div className="loan-modal-header flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <div className="shrink-0 rounded-lg border border-root-accent/30 bg-root-surface p-1 sm:p-1.5">
               <Info className="h-4 w-4 text-root-accent sm:h-5 sm:w-5" />
@@ -30,7 +30,7 @@ export default function LoanInfoModal({ isOpen, onClose }: LoanInfoModalProps) {
           <RootModalCloseButton onClick={onClose} />
         </div>
 
-        <div className="space-y-3 bg-root-surface p-4 sm:p-5">
+        <div className="loan-modal-content min-h-0 flex-1 overflow-y-auto space-y-3 bg-root-surface p-4 sm:p-5 custom-scrollbar">
           <p className={`${rootModalTypography.body} ${rootModalTypography.muted} break-words`}>
             Pinjaman dari negara lain atau lembaga dunia menambah kas sekaligus
             total hutang negara. Setiap pinjaman memiliki bunga dan tanggal jatuh

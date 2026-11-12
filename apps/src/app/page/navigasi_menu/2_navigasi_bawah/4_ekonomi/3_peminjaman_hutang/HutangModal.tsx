@@ -501,7 +501,7 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
           loanSource={pendingPaymentLoan.source}
           paymentAmount={Math.min(kasNegara, pendingPaymentLoan.totalRepayment)}
           currentMoney={kasNegara}
-          iso={pendingPaymentLoan.iso} 
+          iso={pendingPaymentLoan.iso ?? (pendingPaymentLoan.type === "multilateral" ? "un" : null)}
         />
       )}
 

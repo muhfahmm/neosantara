@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { renderFlag, LoanRecord } from "../utils";
+import { formatLoanSourceName, getLoanSourceFlagIso, renderFlag, LoanRecord } from "../utils";
 import { Info } from "lucide-react";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
@@ -85,8 +85,8 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
                   <tr key={pinjam.id} className="hover:bg-root-canvas/50 transition-colors">
                     <td className="px-4 py-3 font-bold text-root-text">
                       <div className="flex items-center gap-2">
-                        {renderFlag(pinjam.iso, pinjam.source)}
-                        <span>{pinjam.source}</span>
+                        {renderFlag(getLoanSourceFlagIso(pinjam.source, pinjam.iso, pinjam.type), formatLoanSourceName(pinjam.source))}
+                        <span>{formatLoanSourceName(pinjam.source)}</span>
                       </div>
                     </td>
                     <td className="px-4 py-3 font-bold text-root-text">{pinjam.amount?.toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</td>
@@ -135,8 +135,8 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
                 <tr key={pinjam.id} className="bg-emerald-500/5 hover:bg-emerald-500/10 transition-colors">
                   <td className="px-4 py-3 font-bold text-root-text">
                     <div className="flex items-center gap-2">
-                      {renderFlag(pinjam.iso, pinjam.source)}
-                      <span>{pinjam.source}</span>
+                      {renderFlag(getLoanSourceFlagIso(pinjam.source, pinjam.iso, pinjam.type), formatLoanSourceName(pinjam.source))}
+                      <span>{formatLoanSourceName(pinjam.source)}</span>
                       <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[8px] font-black uppercase">Lunas</span>
                     </div>
                   </td>

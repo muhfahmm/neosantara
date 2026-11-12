@@ -2,7 +2,7 @@
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
 import { X, CreditCard } from "lucide-react";
-import { renderFlag } from "../../utils";
+import { formatLoanSourceName, getLoanSourceFlagIso, renderFlag } from "../../utils";
 
 interface BayarHutangModalProps {
   isOpen: boolean;
@@ -58,8 +58,8 @@ export default function BayarHutangModal({
             </span>
             <div className="flex items-center gap-2 font-black text-root-accent">
               <span className="text-root-subtle font-normal">untuk pinjaman dari</span>
-              {renderFlag(iso, loanSource)}
-              <span>{loanSource}</span>
+              {renderFlag(getLoanSourceFlagIso(loanSource, iso), formatLoanSourceName(loanSource))}
+              <span>{formatLoanSourceName(loanSource)}</span>
             </div>
           </div>
 
