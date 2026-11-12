@@ -20,10 +20,10 @@ const PolicyCard = memo(function PolicyCard({
 }) {
   return (
     <div
-      className="bg-root-canvas border border-root-accent/20 rounded-xl p-3 lg:p-3.5 2xl:p-4 space-y-2"
+      className="economic-policy-card bg-root-canvas border border-root-accent/20 rounded-xl p-3 lg:p-3.5 2xl:p-4 space-y-2"
     >
       <div>
-        <h4 className="text-xs lg:text-sm font-black text-root-text uppercase tracking-wider">{policy.name}</h4>
+        <h4 className="economic-policy-title text-xs lg:text-sm font-black text-root-text uppercase tracking-wider">{policy.name}</h4>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 lg:gap-2.5 pt-0.5">
@@ -40,12 +40,12 @@ const PolicyCard = memo(function PolicyCard({
           }`}
         >
           <div className="flex items-center justify-between w-full mb-1">
-            <span className="text-[10px] lg:text-xs font-black uppercase tracking-wider">{policy.optionA.label}</span>
-            <span className="text-[8px] lg:text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30">
+            <span className="economic-policy-option-label text-[10px] lg:text-xs font-black uppercase tracking-wider">{policy.optionA.label}</span>
+            <span className="economic-policy-option-type text-[8px] lg:text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30">
               {policy.optionA.type}
             </span>
           </div>
-          <p className="text-[9px] lg:text-[10px] font-semibold opacity-90 leading-tight">{policy.optionA.effect}</p>
+          <p className="economic-policy-option-effect text-[9px] lg:text-[10px] font-semibold opacity-90 leading-tight">{policy.optionA.effect}</p>
         </button>
 
         {/* OPSI B (Pasar Bebas) */}
@@ -61,12 +61,12 @@ const PolicyCard = memo(function PolicyCard({
           }`}
         >
           <div className="flex items-center justify-between w-full mb-1">
-            <span className="text-[10px] lg:text-xs font-black uppercase tracking-wider">{policy.optionB.label}</span>
-            <span className="text-[8px] lg:text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            <span className="economic-policy-option-label text-[10px] lg:text-xs font-black uppercase tracking-wider">{policy.optionB.label}</span>
+            <span className="economic-policy-option-type text-[8px] lg:text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
               {policy.optionB.type}
             </span>
           </div>
-          <p className="text-[9px] lg:text-[10px] font-semibold opacity-90 leading-tight">{policy.optionB.effect}</p>
+          <p className="economic-policy-option-effect text-[9px] lg:text-[10px] font-semibold opacity-90 leading-tight">{policy.optionB.effect}</p>
         </button>
       </div>
     </div>
@@ -75,7 +75,7 @@ const PolicyCard = memo(function PolicyCard({
 
 function KartuKebijakanTabComponent({ policyChoices, handlePolicyChange }: Props) {
   return (
-    <div className="space-y-2.5 lg:space-y-3.5 max-w-full">
+    <div className="economic-policy-list space-y-2.5 lg:space-y-3.5 max-w-full">
       {ECONOMIC_POLICIES.map((policy) => {
         const currentChoice = policyChoices[policy.id] || "A";
         return (

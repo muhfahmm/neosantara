@@ -76,6 +76,27 @@
   }
 }
 
+@media (max-width: 640px) {
+  .economic-system-modal-frame .economic-spectrum-presets {
+    gap: 4px;
+  }
+
+  .economic-system-modal-frame .economic-spectrum-preset {
+    min-height: 44px;
+    padding-inline: 2px;
+  }
+
+  .economic-system-modal-frame .economic-spectrum-preset-label {
+    font-size: clamp(7px, 2.2vw, 9px);
+    line-height: 1.05;
+    overflow-wrap: anywhere;
+  }
+
+  .economic-system-modal-frame .economic-spectrum-preset-value {
+    font-size: 7px;
+  }
+}
+
 @media (orientation: landscape) and (max-height: 500px) {
   :root {
     --navbar-h: 52px;
@@ -601,4 +622,52 @@
   max-width: min(600px, var(--modal-menu-frame-width, calc(100vw - 32px))) !important;
   height: auto !important;
   max-height: var(--modal-menu-frame-height, var(--modal-max-height)) !important;
+}
+
+@media (min-width: 1024px) and (min-height: 501px) {
+  .economic-system-modal-frame .economic-impact-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px;
+  }
+
+  .economic-system-modal-frame .economic-impact-card {
+    min-height: 76px;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .economic-system-modal-frame .economic-impact-label {
+    font-size: 10px;
+    line-height: 1.35;
+  }
+
+  .economic-system-modal-frame .economic-impact-value {
+    font-size: 16px;
+    line-height: 1.25;
+  }
+
+  .economic-system-modal-frame .economic-policy-list {
+    gap: 12px;
+  }
+
+  .economic-system-modal-frame .economic-policy-card {
+    padding: 14px;
+  }
+
+  .economic-system-modal-frame .economic-policy-title {
+    font-size: 15px;
+  }
+
+  .economic-system-modal-frame .economic-policy-option-label {
+    font-size: 13px;
+  }
+
+  .economic-system-modal-frame .economic-policy-option-type {
+    font-size: 10px;
+  }
+
+  .economic-system-modal-frame .economic-policy-option-effect {
+    font-size: 11px;
+    line-height: 1.4;
+  }
 }

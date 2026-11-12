@@ -82,25 +82,6 @@ const SektorTab = React.memo(({
 }: any) => {
   return (
     <div className="space-y-4">
-      <div className={`border border-root-accent/20 bg-root-canvas p-4 ${rootBorderRadius.card}`}>
-        <h3 className="text-sm font-black uppercase tracking-wide text-root-accent">Nasionalisasi & Ekonomi Terpusat</h3>
-        <p className="mt-2 text-xs leading-relaxed text-root-body">
-          Atur kepemilikan setiap sektor. Bagian negara berlaku saat komoditas dijual melalui Perdagangan;
-          emas mengikuti porsi Mineral & Energi pada pemasukan tambang yang sudah ada. Nasionalisasi aktif
-          secara bertahap menurunkan hubungan dengan negara berideologi Kapitalisme.
-        </p>
-        <p className="mt-2 text-xs font-bold text-amber-300">
-          Hubungan dengan negara terbuka turun 1 poin setiap 6 bulan selama ada sektor yang dinasionalisasi.
-          Penurunan berjalan untuk negara berideologi Kapitalisme.
-        </p>
-        <p className="mt-1 text-[10px] text-root-subtle">
-          Progres periode berjalan: {diplomacyMonthsToNextPoint}/
-          {NATIONALIZATION_DIPLOMACY_INTERVAL_MONTHS} bulan menuju penurunan 1 poin berikutnya.
-        </p>
-        <p className="mt-1 text-[10px] text-root-subtle">
-          Tahun acuan estimasi: {NATIONALIZATION_ESTIMATE_YEAR}
-        </p>
-      </div>
       <div className="grid gap-3">
         {NATIONALIZATION_SECTORS.map((sector) => {
           const level = getNationalizationLevel(sectorLevels, sector.id);
@@ -353,7 +334,7 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
 
   return (
     <>
-    {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
+    {!isInfoOpen && <NotebookModalWrapper onClose={onClose} frameClassName="economic-system-modal-frame">
       <div className="flex flex-col h-full overflow-hidden">
         
         {/* HEADER */}
@@ -377,7 +358,7 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
 
         <RootModalSidebarLayout
           ariaLabel="Bagian kebijakan dan sistem ekonomi"
-          contentClassName="p-3 lg:p-5 2xl:p-8"
+          contentClassName="economic-system-modal-content p-3 lg:p-4 2xl:p-5"
           items={tabs.map((tab) => ({
             id: tab.id,
             isActive: activeTab === tab.id,
