@@ -260,23 +260,23 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
           </div>
 
           {/* TOP STATS SUMMARY BANNER */}
-          {!forumDialogMode && <div className="px-4 lg:px-6 py-2 lg:py-3 bg-root-canvas/80 border-b border-root-accent/15 grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-2.5 shrink-0">
-            <div className={`border border-root-accent/20 bg-root-surface p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
+          {!forumDialogMode && <div className="subsidy-summary-cards px-4 lg:px-6 py-2 lg:py-3 bg-root-canvas/80 border-b border-root-accent/15 grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-2.5 shrink-0">
+            <div className={`subsidy-summary-card border border-root-accent/20 bg-root-surface p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
               <p className="text-[9px] lg:text-[10px] font-black text-root-subtle uppercase tracking-wider">Total Beban Anggaran Subsidi</p>
               <p className="text-xs lg:text-sm font-black text-root-accent mt-0.5">{formatCurrencyCompact(summary.totalCost)}</p>
             </div>
 
-            <div className={`border border-root-accent/20 bg-root-surface p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
+            <div className={`subsidy-summary-card border border-root-accent/20 bg-root-surface p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
               <p className="text-[9px] lg:text-[10px] font-black text-root-subtle uppercase tracking-wider">Sektor Aktif / Total</p>
               <p className="text-xs lg:text-sm font-black text-root-text mt-0.5">{summary.activeCount} dari {summary.totalCount} Sektor</p>
             </div>
 
-            <div className={`border border-root-accent/20 bg-root-surface p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
+            <div className={`subsidy-summary-card border border-root-accent/20 bg-root-surface p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
               <p className="text-[9px] lg:text-[10px] font-black text-root-subtle uppercase tracking-wider">Dukungan Kepuasan Rakyat</p>
               <p className="text-xs lg:text-sm font-black text-emerald-400 mt-0.5">+{summary.totalApprovalBonus}% Approval</p>
             </div>
 
-            <div className={`border border-root-accent/20 bg-root-surface p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
+            <div className={`subsidy-summary-card border border-root-accent/20 bg-root-surface p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
               <p className="text-[9px] lg:text-[10px] font-black text-root-subtle uppercase tracking-wider">Dampak Netto Populasi</p>
               <p className={`text-xs lg:text-sm font-black mt-0.5 ${subsidyMonthlyPopModifier >= 0 ? "text-root-accent" : "text-rose-400"
                 }`}>
@@ -294,29 +294,14 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
 
           <RootModalSidebarLayout
             ariaLabel="Kategori kebijakan subsidi"
+            activeItemId={selectedCategory}
             contentClassName="p-4 lg:p-6 2xl:p-8"
-            items={categories.map((cat) => {
-              const activeCountInCat = subsidyItems.filter(
-                (i) => (cat.id === "Semua" || i.category === cat.id) && i.isSubsidized
-              ).length;
-              const totalCountInCat = subsidyItems.filter(
-                (i) => cat.id === "Semua" || i.category === cat.id
-              ).length;
-
-              return {
-                id: cat.id,
-                isActive: selectedCategory === cat.id,
-                onSelect: () => setSelectedCategory(cat.id),
-                label: cat.label,
-                trailing: (
-                  <span className={`shrink-0 rounded-full bg-root-canvas px-1.5 py-0.5 text-[9px] lg:text-[10px] font-black ${
-                    selectedCategory === cat.id ? "text-root-accent" : "text-root-subtle"
-                  }`}>
-                    {activeCountInCat}/{totalCountInCat}
-                  </span>
-                ),
-              };
-            })}
+            items={categories.map((cat) => ({
+              id: cat.id,
+              isActive: selectedCategory === cat.id,
+              onSelect: () => setSelectedCategory(cat.id),
+              label: cat.label,
+            }))}
           >
               {selectedCategory === "Semua" && (
                 <SemuaSektorTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />

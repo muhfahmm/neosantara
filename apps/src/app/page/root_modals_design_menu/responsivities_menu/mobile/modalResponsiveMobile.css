@@ -1930,6 +1930,94 @@
 }
 
 @media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
+  .subsidy-summary-cards {
+    display: flex !important;
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .subsidy-summary-cards > .subsidy-summary-card {
+    box-sizing: border-box;
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 6px;
+  }
+
+  .subsidy-summary-card > p:first-child {
+    font-size: clamp(6px, 1.8vw, 9px) !important;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+    overflow-wrap: anywhere;
+  }
+
+  .subsidy-summary-card > p:last-child {
+    font-size: clamp(8px, 2.4vw, 12px) !important;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+
+  .subsidy-item-card {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .subsidy-item-header {
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .subsidy-item-category {
+    padding: 3px 7px;
+    font-size: 8px;
+    letter-spacing: 0.06em;
+  }
+
+  .subsidy-item-actions {
+    gap: 6px;
+  }
+
+  .subsidy-item-info-button {
+    min-width: 30px;
+    min-height: 30px;
+  }
+
+  .subsidy-item-toggle {
+    min-width: 40px;
+    min-height: 24px;
+  }
+
+  .subsidy-item-title {
+    font-size: clamp(10px, 2.7vw, 12px);
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  .subsidy-item-stats {
+    gap: 4px;
+    margin-top: 8px;
+    padding-top: 6px;
+    font-size: 8px;
+  }
+
+  .subsidy-item-stat {
+    min-width: 0;
+    padding: 5px 3px;
+  }
+
+  .subsidy-item-stat-label {
+    font-size: clamp(6px, 1.8vw, 8px);
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
+
+  .subsidy-item-stat-value {
+    font-size: clamp(8px, 2.2vw, 10px);
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
   .harga-modal-frame .harga-modal-header {
     gap: 6px;
     padding: 6px 8px;
