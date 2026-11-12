@@ -1009,43 +1009,44 @@ export default function PerdaganganModal({
                     </p>
                   )}
 
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 mb-3">
+                  <div className="mb-3 flex w-full flex-nowrap items-stretch justify-between gap-1 px-[5px]">
                     <button
+                      type="button"
                       onClick={() => setIsMitraOpen(true)}
-                      className="px-2 py-1.5 rounded-lg border text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center bg-root-surface border-root-accent/30 hover:bg-root-accent hover:text-root-canvas text-root-accent cursor-pointer"
+                      className="min-h-0 w-[48px] flex-none whitespace-nowrap rounded-md border px-1 py-1 text-center text-[8px] font-bold uppercase leading-tight tracking-normal transition-all flex items-center justify-center text-root-accent bg-root-surface border-root-accent/30 hover:bg-root-accent hover:text-root-canvas cursor-pointer sm:w-[80px] sm:text-[11px] lg:w-[110px]"
                     >
                       Mitra
                     </button>
                     <button
                       onClick={() => openJualModals()}
                       disabled={!tradeAccess.canSell}
-                      className={`px-2 py-1.5 rounded-lg border text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center ${tradeAccess.canSell ? "bg-root-surface border-root-accent/30 hover:bg-root-accent hover:text-root-canvas text-root-accent cursor-pointer" : "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed"}`}
+                      className={`min-h-0 w-[48px] flex-none whitespace-nowrap rounded-md border px-1 py-1 text-center text-[8px] font-bold uppercase leading-tight tracking-normal transition-all flex items-center justify-center sm:w-[80px] sm:text-[11px] lg:w-[110px] ${tradeAccess.canSell ? "bg-root-surface border-root-accent/30 hover:bg-root-accent hover:text-root-canvas text-root-accent cursor-pointer" : "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed"}`}
                     >
                       Jual
                     </button>
                     <button
                       onClick={handleOpenGlobalBuy}
                       disabled={!tradeAccess.canBuy}
-                      className={`px-2 py-1.5 rounded-lg border text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center ${tradeAccess.canBuy ? "bg-root-surface border-root-accent/30 hover:bg-root-accent hover:text-root-canvas text-root-accent cursor-pointer" : "bg-orange-950/30 border-orange-500/30 text-orange-300 cursor-not-allowed"}`}
+                      className={`min-h-0 w-[48px] flex-none whitespace-nowrap rounded-md border px-1 py-1 text-center text-[8px] font-bold uppercase leading-tight tracking-normal transition-all flex items-center justify-center sm:w-[80px] sm:text-[11px] lg:w-[110px] ${tradeAccess.canBuy ? "bg-root-surface border-root-accent/30 hover:bg-root-accent hover:text-root-canvas text-root-accent cursor-pointer" : "bg-orange-950/30 border-orange-500/30 text-orange-300 cursor-not-allowed"}`}
                     >
                       Beli
                     </button>
                     <button
                       onClick={() => openJualModals()}
                       disabled={!tradeAccess.canSell}
-                      className={`px-2 py-1.5 rounded-lg border text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center ${tradeAccess.canSell ? "bg-root-surface border-root-accent/30 hover:bg-root-accent hover:text-root-canvas text-root-accent cursor-pointer" : "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed"}`}
+                      className={`min-h-0 w-[48px] flex-none whitespace-nowrap rounded-md border px-1 py-1 text-center text-[8px] font-bold uppercase leading-tight tracking-normal transition-all flex items-center justify-center sm:w-[80px] sm:text-[11px] lg:w-[110px] ${tradeAccess.canSell ? "bg-root-surface border-root-accent/30 hover:bg-root-accent hover:text-root-canvas text-root-accent cursor-pointer" : "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed"}`}
                     >
                       Jual Semua
                     </button>
                     <button
                       onClick={() => { setIsOfferOpen(!isOfferOpen); setIsArmsOfferOpen(false); }}
-                      className={`px-2 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wider cursor-pointer transition-all border flex items-center justify-center ${isOfferOpen ? 'bg-root-accent text-root-canvas border-root-accent' : 'bg-root-surface border-root-accent/30 text-root-accent hover:bg-root-accent hover:text-root-canvas'}`}
+                      className={`min-h-0 w-[48px] flex-none whitespace-nowrap rounded-md border px-1 py-1 text-center text-[8px] font-bold uppercase leading-tight tracking-normal transition-all flex items-center justify-center sm:w-[80px] sm:text-[11px] lg:w-[110px] cursor-pointer ${isOfferOpen ? 'bg-root-accent text-root-canvas border-root-accent' : 'bg-root-surface border-root-accent/30 text-root-accent hover:bg-root-accent hover:text-root-canvas'}`}
                     >
                       Tawaran
                     </button>
                     <button
                       onClick={() => { setIsArmsOfferOpen(!isArmsOfferOpen); setIsOfferOpen(false); }}
-                      className={`px-2 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wider cursor-pointer transition-all border flex items-center justify-center ${isArmsOfferOpen ? 'bg-root-accent text-root-canvas border-root-accent' : 'bg-root-surface border-root-accent/30 text-root-accent hover:bg-root-accent hover:text-root-canvas'}`}
+                      className={`min-h-0 w-[48px] flex-none whitespace-nowrap rounded-md border px-1 py-1 text-center text-[8px] font-bold uppercase leading-tight tracking-normal transition-all flex items-center justify-center sm:w-[80px] sm:text-[11px] lg:w-[110px] cursor-pointer ${isArmsOfferOpen ? 'bg-root-accent text-root-canvas border-root-accent' : 'bg-root-surface border-root-accent/30 text-root-accent hover:bg-root-accent hover:text-root-canvas'}`}
                     >
                       Alutsista
                     </button>

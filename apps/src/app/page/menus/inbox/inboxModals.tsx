@@ -62,6 +62,7 @@ interface TopLeftIconProps {
   onRedirectClick?: (notification: NotificationMessage) => void;
   userCountryName?: string;
   isWarAnalysisActive?: boolean;
+  isMenuModalOpen?: boolean;
 }
 
 export default function TopLeftIcon({
@@ -75,6 +76,7 @@ export default function TopLeftIcon({
   onRedirectClick,
   userCountryName,
   isWarAnalysisActive = false,
+  isMenuModalOpen = false,
 }: TopLeftIconProps) {
   const [mounted, setMounted] = useState(false);
   const [toastNotification, setToastNotification] = useState<NotificationMessage | null>(null);
@@ -537,7 +539,7 @@ export default function TopLeftIcon({
   return (
     <>
       {mounted && !isWarAnalysisActive && createPortal(
-        <div className="side-btn-inbox fixed z-[100] flex flex-col items-start gap-2 pointer-events-auto">
+        <div className="side-btn-inbox fixed z-[50] flex flex-col items-start gap-2 pointer-events-none">
           <button
             onClick={() => {
               if (toastNotification) {
@@ -547,7 +549,7 @@ export default function TopLeftIcon({
               if (onClick) onClick();
             }}
             title="Inbox - Pesan dan Notifikasi"
-            className="side-floating-btn !static"
+            className="side-floating-btn pointer-events-auto !static"
           >
             <div className="relative flex h-full w-full items-center justify-center">
               <Image
@@ -568,7 +570,7 @@ export default function TopLeftIcon({
 
           {/* Toast Notification Box */}
           <div
-            className={`transition-[opacity,transform] duration-300 ease-out origin-top-left will-change-[opacity,transform] ${showToast && toastNotification
+            className={`transition-[opacity,transform] duration-300 ease-out origin-top-left will-change-[opacity,transform] ${showToast && toastNotification && !isMenuModalOpen
                 ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
                 : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
               } flex ${isLandscapePhone ? 'h-24 w-52' : 'h-28 w-64'} flex-col rounded-xl border-2 border-root-accent bg-root-surface p-2.5 shadow-lg cursor-pointer group`}

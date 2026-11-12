@@ -9420,6 +9420,7 @@ export default function MapPage() {
                 }}
                 isOpen={inboxModalOpen}
                 isWarAnalysisActive={isWarAnalysisActive}
+                isMenuModalOpen={isMenuModalOpen}
                 onClose={() => setInboxModalOpen(false)}
                 notifications={notifications}
                 onClearAll={() => setNotifications([])}
