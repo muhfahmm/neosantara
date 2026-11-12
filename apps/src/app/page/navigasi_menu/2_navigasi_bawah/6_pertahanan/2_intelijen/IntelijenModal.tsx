@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Eye, Bomb } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
-import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
+import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import MenuInfoButton from "../../MenuInfoButton";
 import Spionase from "./table_menu/1_tabel_spionase";
@@ -131,21 +131,11 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
               </div>
               <div className="min-w-0">
                 <h2 className={rootModalTypography.title}>
-                  {activeTab === 'spionase' ? 'Badan Intelijen & Sandi Negara' : 'Divisi Operasi Khusus'}
+                  {activeTab === 'spionase' ? 'Spionase' : 'Sabotase'}
                 </h2>
               </div>
             </div>
 
-            {/* 2 TAB MENU - dipindah ke header */}
-            <div className="hidden sm:block">
-              <RootModalTabs
-                compact
-                items={[
-                  { label: "Spionase", isActive: activeTab === "spionase", onClick: () => setActiveTab("spionase") },
-                  { label: "Sabotase", isActive: activeTab === "sabotase", onClick: () => setActiveTab("sabotase") },
-                ]}
-              />
-            </div>
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
@@ -157,22 +147,20 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
           </div>
         </div>
 
-        {/* BODY MODAL */}
-        <div className="flex-1 min-h-0 overflow-hidden p-6 bg-root-surface relative z-10 no-scrollbar flex flex-col">
+        <RootModalSidebarLayout
+          ariaLabel="Bagian intelijen"
+          activeItemId={activeTab}
+          contentClassName="flex flex-col p-4 sm:p-6"
+          items={([
+            { id: "spionase", label: "Spionase", icon: <Eye className="h-4 w-4 shrink-0" /> },
+            { id: "sabotase", label: "Sabotase", icon: <Bomb className="h-4 w-4 shrink-0" /> },
+          ] as const).map((tab) => ({
+            ...tab,
+            isActive: activeTab === tab.id,
+            onSelect: () => setActiveTab(tab.id),
+          }))}
+        >
           <div className="w-full flex-1 min-h-0 flex flex-col gap-4">
-
-            {/* 2 TAB MENU - tampilan mobile */}
-            <div className="sm:hidden">
-              <RootModalTabs
-                className="w-full [&>button]:flex-1"
-                items={[
-                  { label: "Spionase", isActive: activeTab === "spionase", onClick: () => setActiveTab("spionase") },
-                  { label: "Sabotase", isActive: activeTab === "sabotase", onClick: () => setActiveTab("sabotase") },
-                ]}
-              />
-            </div>
-
-            {/* RENDER KOMPONEN TABEL TERPISAH */}
             <div className="w-full flex-1 min-h-0 overflow-hidden border border-root-accent/20 rounded-xl bg-root-canvas shadow-sm">
               <div className="h-full min-h-0 overflow-hidden">
                 {activeTab === 'spionase' && (
@@ -191,9 +179,8 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
                 )}
               </div>
             </div>
-
           </div>
-        </div>
+        </RootModalSidebarLayout>
         </div>
       </NotebookModalWrapper>
 

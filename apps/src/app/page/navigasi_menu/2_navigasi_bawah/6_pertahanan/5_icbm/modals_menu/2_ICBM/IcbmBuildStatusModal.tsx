@@ -1,7 +1,8 @@
 "use client"
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import RootModalSidebarLayout from '@/app/page/root_modals_design_menu/RootModalSidebarLayout';
 import React, { useState } from "react";
-import { X, Clock, ShieldCheck, Rocket } from "lucide-react";
+import { X, Rocket } from "lucide-react";
 import NotebookModalWrapper from "../../../../NotebookModalWrapper";
 import TabelDalamPembangunan from "./tab_menu/tabelDalamPembangunan";
 import TabelSelesai from "./tab_menu/tabelSelesai";
@@ -147,33 +148,26 @@ export default function IcbmBuildStatusModal({
           </SharedModalCloseButton>
         </div>
 
-        {/* BODY MODAL */}
-        <div className="p-4 sm:p-6 bg-root-surface flex-1 overflow-y-auto custom-scrollbar">
-          <div className="space-y-4">
-
-            {/* TAB MENU */}
-            <div className="bg-root-canvas p-1 rounded-xl border border-root-accent/20 inline-flex shadow-sm">
-              {activeTabOptions.map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-4 sm:px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                    activeTab === tab
-                      ? 'bg-root-accent text-root-canvas font-black shadow-md'
-                      : 'text-root-text hover:text-root-accent'
-                  }`}
-                >
-                  {tab}
-                  {tab === 'Stok ICBM' && (
-                    <span className="ml-1.5 px-1.5 py-0.2 rounded-full text-[10px] bg-rose-500/20 text-rose-400 font-bold border border-rose-500/30">
-                      {resolvedTotalReady}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
-
-            {/* WRAPPER TABEL */}
+        <RootModalSidebarLayout
+          ariaLabel="Status pembangunan ICBM"
+          activeItemId={activeTab}
+          contentClassName="p-4 sm:p-6"
+          items={activeTabOptions.map((tab) => ({
+            id: tab,
+            isActive: activeTab === tab,
+            onSelect: () => setActiveTab(tab),
+            label: tab,
+            trailing: tab === 'Stok ICBM' ? (
+              <span className={`ml-1 shrink-0 rounded-full border px-1.5 py-0.5 text-[10px] font-bold ${
+                activeTab === tab
+                  ? 'border-root-accent/30 bg-root-canvas text-root-accent'
+                  : 'border-rose-500/30 bg-rose-500/20 text-rose-400'
+              }`}>
+                {resolvedTotalReady}
+              </span>
+            ) : undefined,
+          }))}
+        >
             <div className="rounded-2xl border border-root-accent/20 bg-root-canvas shadow-sm overflow-hidden">
               <div className="overflow-x-auto custom-scrollbar">
                 {activeTab === 'Dalam Pembangunan' ? (
@@ -189,8 +183,7 @@ export default function IcbmBuildStatusModal({
                 )}
               </div>
             </div>
-          </div>
-        </div>
+        </RootModalSidebarLayout>
       </div>
     </NotebookModalWrapper>
   );

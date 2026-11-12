@@ -107,6 +107,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
 
         <RootModalSidebarLayout
           ariaLabel="Bagian armada dan infrastruktur militer"
+          activeItemId={activeTab}
           contentClassName="space-y-4 p-4 sm:p-5 lg:p-6"
           items={[
             { id: "aktif", label: "Armada Aktif", icon: <Swords className="h-4 w-4 shrink-0" /> },

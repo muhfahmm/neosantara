@@ -1,5 +1,6 @@
 "use client"
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import RootModalSidebarLayout from '@/app/page/root_modals_design_menu/RootModalSidebarLayout';
 import React, { useMemo, useState, useEffect } from "react";
 import { X, Radiation, Search, Rocket, ShieldAlert } from "lucide-react";
 import NotebookModalWrapper from "../../../../NotebookModalWrapper";
@@ -505,43 +506,38 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
           </div>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="px-4 sm:px-6 pt-3 pb-2 bg-root-canvas border-b border-root-accent/20 flex items-center justify-between">
-          <div className="bg-root-surface p-1 rounded-xl border border-root-accent/20 inline-flex shadow-sm gap-1">
-            <button
-              onClick={() => setActiveTab('ranking')}
-              className={`px-4 sm:px-5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
-                activeTab === 'ranking'
-                  ? 'bg-root-accent text-root-canvas font-black shadow-md'
-                  : 'text-root-text hover:text-root-accent'
-              }`}
-            >
-              <Radiation className="w-3.5 h-3.5" />
-              Ranking Kekuatan Militer
-            </button>
-            <button
-              onClick={() => setActiveTab('icbm_owners')}
-              className={`px-4 sm:px-5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
-                activeTab === 'icbm_owners'
-                  ? 'bg-root-accent text-root-canvas font-black shadow-md'
-                  : 'text-root-text hover:text-root-accent'
-              }`}
-            >
-              <Rocket className="w-3.5 h-3.5 text-rose-500" />
-              Negara Nuklir & ICBM
-              <span className={`ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-black ${
-                activeTab === 'icbm_owners' ? 'bg-root-canvas text-root-accent' : 'bg-root-accent/20 text-root-accent'
-              }`}>
-                {filteredIcbmOwners.length}
-              </span>
-            </button>
-          </div>
-        </div>
-
-        {/* Body Content */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-root-surface custom-scrollbar flex flex-col gap-4">
-          <div className="overflow-hidden border border-root-accent/20 rounded-2xl bg-root-canvas shadow-inner flex flex-col flex-1">
-            <div className="overflow-y-auto custom-scrollbar flex-1">
+        <RootModalSidebarLayout
+          ariaLabel="Bagian statistik militer dan nuklir"
+          activeItemId={activeTab}
+          contentClassName="flex flex-col gap-4 p-4 sm:p-6"
+          items={[
+            {
+              id: 'ranking',
+              label: 'Ranking Kekuatan Militer',
+              icon: <Radiation className="h-4 w-4 shrink-0" />,
+              isActive: activeTab === 'ranking',
+              onSelect: () => setActiveTab('ranking'),
+            },
+            {
+              id: 'icbm_owners',
+              label: 'Negara Nuklir & ICBM',
+              icon: <Rocket className="h-4 w-4 shrink-0 text-rose-500" />,
+              isActive: activeTab === 'icbm_owners',
+              onSelect: () => setActiveTab('icbm_owners'),
+              trailing: (
+                <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-black ${
+                  activeTab === 'icbm_owners'
+                    ? 'bg-root-canvas text-root-accent'
+                    : 'bg-root-accent/20 text-root-accent'
+                }`}>
+                  {filteredIcbmOwners.length}
+                </span>
+              ),
+            },
+          ]}
+        >
+          <div className="min-h-0 flex-1 overflow-hidden rounded-2xl border border-root-accent/20 bg-root-canvas shadow-inner">
+            <div className="h-full min-h-0 overflow-y-auto custom-scrollbar">
               {activeTab === 'ranking' ? (
                 /* TAB 1: RANKING KEKUATAN MILITER */
                 <table className="w-full text-xs">
@@ -721,7 +717,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
               )}
             </div>
           </div>
-        </div>
+        </RootModalSidebarLayout>
 
       </div>
     </NotebookModalWrapper>
