@@ -43,7 +43,7 @@ export default function NegaraLain({ loanSources, renderFlag, setPendingLoan, se
               <span className={`shrink-0 border border-rose-500/30 bg-rose-500/10 px-1.5 py-0.5 text-[9px] font-black text-rose-400 ${rootBorderRadius.card}`}>{negara.interest}%</span>
             </div>
             <div className="loan-country-card-details min-w-0 flex-1 space-y-1.5 text-[9px] font-bold text-root-subtle">
-              <p className="flex min-w-0 flex-col gap-0.5"><span>Plafon</span><span className="break-words font-black text-root-text">{negara.maxLoan.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span></p>
+              <p className="flex min-w-0 flex-col gap-0.5"><span>Plafon</span><span className="break-words font-black text-root-text">{negara.maxLoan.toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</span></p>
               <p className="flex min-w-0 flex-col gap-0.5"><span>Masa Tenggang</span><span className="font-black text-root-accent">{negara.term} Hari</span></p>
             </div>
             <button

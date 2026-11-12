@@ -1236,7 +1236,8 @@
     gap: 6px !important;
   }
 
-  .responsive-modal-frame[data-viewport-mode] .loan-modal-tabs {
+  .responsive-modal-frame[data-viewport-mode] .loan-modal-tabs,
+  .responsive-modal-frame[data-viewport-mode] .loan-history-tabs {
     box-sizing: border-box;
     display: flex;
     flex-wrap: nowrap;
@@ -1247,7 +1248,12 @@
     border-radius: 7px !important;
   }
 
-  .responsive-modal-frame[data-viewport-mode] .loan-modal-tabs > button {
+  .responsive-modal-frame[data-viewport-mode] .loan-history-tabs {
+    width: 66.6667% !important;
+  }
+
+  .responsive-modal-frame[data-viewport-mode] .loan-modal-tabs > button,
+  .responsive-modal-frame[data-viewport-mode] .loan-history-tabs > button {
     min-width: 0 !important;
     min-height: 28px;
     flex: 1 1 0%;
@@ -1258,6 +1264,35 @@
     letter-spacing: 0.08em !important;
     white-space: normal;
     text-align: center;
+  }
+
+  .loan-history-table {
+    min-width: 720px !important;
+    font-size: 9px !important;
+  }
+
+  .loan-history-table th,
+  .loan-history-table td {
+    padding: 6px 5px !important;
+    font-size: 8px !important;
+    line-height: 1.2;
+  }
+
+  .loan-history-table td:first-child > div {
+    gap: 4px !important;
+  }
+
+  .loan-history-table td button,
+  .loan-history-table th button {
+    min-width: 20px;
+    min-height: 20px;
+    padding: 3px !important;
+  }
+
+  .loan-history-table td button svg,
+  .loan-history-table th button svg {
+    width: 12px;
+    height: 12px;
   }
 
   .loan-modal-search > svg {
@@ -1716,5 +1751,13 @@
   .loan-confirm-history-modal-frame[data-viewport-mode] .notebook-modal-sheet .loan-confirm-details,
   .loan-confirm-history-modal-frame[data-viewport-mode] .notebook-modal-sheet .loan-confirm-details > div:last-child > div > span {
     font-size: 8px !important;
+  }
+}
+
+@media (min-width: 641px) and (min-height: 501px) {
+  .loan-history-table td {
+    padding: 8px 7px;
+    font-size: 10px !important;
+    line-height: 1.25;
   }
 }

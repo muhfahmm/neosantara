@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { renderFlag, LoanRecord } from "../utils";
 import { Info } from "lucide-react";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 
 interface RiwayatProps {
   loanHistory: LoanRecord[];
@@ -36,27 +37,17 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
 
   return (
     <div>
-      <div className={`mb-4 inline-flex max-w-full flex-wrap gap-1 border border-root-accent/30 bg-root-canvas p-1 ${rootBorderRadius.card}`}>
-        <button
-          onClick={() => setHistorySubTab("active")}
-          className={`px-4 py-2 ${rootBorderRadius.card} text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
-            historySubTab === "active" ? "bg-root-accent text-root-canvas" : "text-root-subtle hover:text-root-text"
-          }`}
-        >
-          Hutang Aktif ({activeLoans.length})
-        </button>
-        <button
-          onClick={() => setHistorySubTab("paid")}
-          className={`px-4 py-2 ${rootBorderRadius.card} text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
-            historySubTab === "paid" ? "bg-root-accent text-root-canvas" : "text-root-subtle hover:text-root-text"
-          }`}
-        >
-          Sudah Lunas ({paidLoans.length})
-        </button>
-      </div>
+      <RootModalTabs
+        compact
+        className="loan-history-tabs mb-3 w-2/3 xl:w-2/5 [&>button]:min-w-0 [&>button]:flex-1"
+        items={[
+          { label: `Hutang Aktif (${activeLoans.length})`, isActive: historySubTab === "active", onClick: () => setHistorySubTab("active") },
+          { label: `Sudah Lunas (${paidLoans.length})`, isActive: historySubTab === "paid", onClick: () => setHistorySubTab("paid") },
+        ]}
+      />
 
-      <div className={`overflow-x-auto border border-root-accent/30 bg-root-surface ${rootBorderRadius.card}`}>
-        <table className="w-full min-w-[960px] table-fixed text-xs">
+      <div className={`loan-history-table-scroll overflow-x-auto border border-root-accent/30 bg-root-surface ${rootBorderRadius.card}`}>
+        <table className="loan-history-table w-full min-w-[720px] table-fixed text-xs">
           <thead className="bg-root-canvas border-b border-root-accent/30 sticky top-0 z-10">
             <tr>
               <th className="whitespace-nowrap px-4 py-3 text-left text-[10px] font-black text-root-accent uppercase tracking-wider">Negara</th>
@@ -98,11 +89,11 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
                         <span>{pinjam.source}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 font-bold text-root-text">{pinjam.amount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</td>
+                    <td className="px-4 py-3 font-bold text-root-text">{pinjam.amount?.toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</td>
                     <td className="px-4 py-3 font-bold text-rose-400">{pinjam.interest}%</td>
-                    <td className="px-4 py-3 font-bold text-emerald-400">+{(pinjam.paidAmount || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</td>
+                    <td className="px-4 py-3 font-bold text-emerald-400">+{(pinjam.paidAmount || 0).toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</td>
                     <td className="px-4 py-3 font-bold text-rose-400 flex items-center gap-3">
-                      <span>+{(pinjam.accumulatedPenalty || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
+                      <span>+{(pinjam.accumulatedPenalty || 0).toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</span>
                       <button
                         onClick={() => setPenaltyInfoLoan?.(pinjam)}
                         className="p-1 rounded-full bg-root-canvas border border-root-accent/30 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer"
@@ -112,7 +103,7 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
                         <Info className="w-4 h-4" />
                       </button>
                     </td>
-                    <td className="px-4 py-3 font-bold text-root-accent">{(pinjam.totalRepayment || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</td>
+                    <td className="px-4 py-3 font-bold text-root-accent">{(pinjam.totalRepayment || 0).toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</td>
                     <td className="px-4 py-3 font-bold text-root-text">
                       {formatReturnDate(pinjam.returnDate)}
                     </td>
@@ -149,11 +140,11 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
                       <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[8px] font-black uppercase">Lunas</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 font-bold text-root-text">{pinjam.amount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</td>
+                  <td className="px-4 py-3 font-bold text-root-text">{pinjam.amount?.toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</td>
                   <td className="px-4 py-3 font-bold text-root-text">{pinjam.interest}%</td>
-                  <td className="px-4 py-3 font-bold text-emerald-400">+{(pinjam.paidAmount || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</td>
-                  <td className="px-4 py-3 font-bold text-root-text">+{(pinjam.accumulatedPenalty || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</td>
-                  <td className="px-4 py-3 font-bold text-emerald-400">{(pinjam.totalRepayment || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</td>
+                  <td className="px-4 py-3 font-bold text-emerald-400">+{(pinjam.paidAmount || 0).toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</td>
+                  <td className="px-4 py-3 font-bold text-root-text">+{(pinjam.accumulatedPenalty || 0).toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</td>
+                  <td className="px-4 py-3 font-bold text-emerald-400">{(pinjam.totalRepayment || 0).toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</td>
 
                   <td className="px-4 py-3 font-bold text-root-text">
                     {formatReturnDate(pinjam.returnDate)}

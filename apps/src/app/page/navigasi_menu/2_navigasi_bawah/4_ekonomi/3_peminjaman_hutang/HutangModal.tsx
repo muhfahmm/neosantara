@@ -450,7 +450,7 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
 
               <div className={`loan-modal-stat-card loan-modal-total-card flex min-w-0 flex-col justify-center border border-root-accent/30 bg-root-surface p-3.5 lg:p-4 ${rootBorderRadius.card}`}>
                 <span className={rootModalTypography.sectionTitle}>Total Beban Hutang</span>
-                <span className="text-base lg:text-lg font-black text-rose-400 mt-1 break-words">{totalHutang.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
+                <span className="text-base lg:text-lg font-black text-rose-400 mt-1 break-words">{totalHutang.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
               </div>
             </div>
           </div>

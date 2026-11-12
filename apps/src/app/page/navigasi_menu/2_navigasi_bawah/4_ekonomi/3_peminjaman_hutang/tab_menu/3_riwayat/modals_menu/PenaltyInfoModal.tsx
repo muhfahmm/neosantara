@@ -50,18 +50,18 @@ export default function PenaltyInfoModal({ isOpen, onClose, loan }: Props) {
             <div className="text-sm">{loan.source} {loan.iso ? `(${loan.iso.toUpperCase()})` : ''}</div>
 
             <div className="text-sm font-black text-root-accent mt-3">Data Pinjaman</div>
-            <div className="text-sm">Pokok: <span className="text-root-accent font-bold">{Number(loan.amount || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span></div>
+            <div className="text-sm">Pokok: <span className="text-root-accent font-bold">{Number(loan.amount || 0).toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</span></div>
             <div className="text-sm">Bunga awal: <span className="text-root-accent font-bold">{Number(loan.interest || 0)}%</span></div>
-            <div className="text-sm">Total saat ini: <span className="text-root-accent font-bold">{outstanding.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span></div>
-            <div className="text-sm">Sudah dibayar: <span className="text-emerald-400 font-bold">{(Number(loan.paidAmount) || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span></div>
-            <div className="text-sm">Denda terakumulasi: <span className="text-rose-400 font-bold">{(Number(loan.accumulatedPenalty) || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span></div>
+            <div className="text-sm">Total saat ini: <span className="text-root-accent font-bold">{outstanding.toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</span></div>
+            <div className="text-sm">Sudah dibayar: <span className="text-emerald-400 font-bold">{(Number(loan.paidAmount) || 0).toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</span></div>
+            <div className="text-sm">Denda terakumulasi: <span className="text-rose-400 font-bold">{(Number(loan.accumulatedPenalty) || 0).toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</span></div>
             <div className="text-sm">Telah terlewat: <span className="text-rose-400 font-bold">{missed} bulan</span></div>
 
             <div className="text-sm font-black text-root-accent mt-4 pt-4 border-t border-root-accent/20">Estimasi Denda Jika Terlambat Sekali Lagi</div>
             <div className="text-xs text-root-subtle">Rumus: denda = outstanding × (0.015 × jumlah_bulan_terlewat)</div>
             <div className="text-sm">Jika melewatkan pembayaran lagi (bulan terlewat menjadi <span className="text-rose-400 font-bold">{nextMissed}</span>):</div>
             <div className="text-sm">Tarif denda terpakai: <span className="text-amber-400 font-bold">{ratePercent}%</span></div>
-            <div className="text-sm font-black text-rose-400">Perkiraan denda tambahan: {nextPenalty.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
+            <div className="text-sm font-black text-rose-400">Perkiraan denda tambahan: {nextPenalty.toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</div>
           </div>
         </div>
 

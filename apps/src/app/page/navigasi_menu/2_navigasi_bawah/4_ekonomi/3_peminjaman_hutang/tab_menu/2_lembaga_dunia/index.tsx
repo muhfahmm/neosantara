@@ -112,7 +112,7 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
     }
 
     if (requestedAmount > lembaga.maxCap) {
-      setErrors((prev: Record<number, string>) => ({ ...prev, [lembaga.id]: `Maksimal pinjaman untuk ${lembaga.name} adalah ${lembaga.maxCap.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO.` }));
+      setErrors((prev: Record<number, string>) => ({ ...prev, [lembaga.id]: `Maksimal pinjaman untuk ${lembaga.name} adalah ${lembaga.maxCap.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO.` }));
       return;
     }
 
@@ -177,8 +177,8 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
                   <input
                     type="text"
                     inputMode="numeric"
-                    placeholder={lembaga.maxCap.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
-                    value={amounts[lembaga.id] && amounts[lembaga.id] !== "" ? Number(amounts[lembaga.id]).toLocaleString('id-ID', { maximumFractionDigits: 2 }) : ""}
+                    placeholder={lembaga.maxCap.toLocaleString("id-ID", { maximumFractionDigits: 0 })}
+                    value={amounts[lembaga.id] && amounts[lembaga.id] !== "" ? Number(amounts[lembaga.id]).toLocaleString('id-ID', { maximumFractionDigits: 0 }) : ""}
                     onChange={(e) => handleAmountChange(lembaga.id, e.target.value)}
                     className={`loan-institution-input h-10 w-full border border-root-accent/30 bg-root-canvas px-3 pr-20 text-sm font-bold text-root-text outline-none transition focus:border-root-accent ${rootBorderRadius.card}`}
                   />

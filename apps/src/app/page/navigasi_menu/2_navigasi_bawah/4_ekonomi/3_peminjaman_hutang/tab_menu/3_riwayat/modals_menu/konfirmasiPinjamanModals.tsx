@@ -74,7 +74,7 @@ export default function KonfirmasiPinjamanModal({
                   <div className="text-sm text-root-text space-y-3 font-semibold">
                     <div className="flex justify-between">
                       <span className="text-root-subtle">Jumlah Pinjaman</span>
-                      <span className="font-black text-root-accent">{maxLoan.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
+                      <span className="font-black text-root-accent">{maxLoan.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-root-subtle">Bunga</span>
@@ -86,7 +86,7 @@ export default function KonfirmasiPinjamanModal({
                     </div>
                     <div className="flex justify-between pt-3 border-t border-root-accent/20">
                       <span className="font-black">Total Pembayaran</span>
-                      <span className="font-black text-root-accent">{totalPayment.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
+                      <span className="font-black text-root-accent">{totalPayment.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
                     </div>
                   </div>
                 </div>
@@ -102,11 +102,11 @@ export default function KonfirmasiPinjamanModal({
                 <div className="loan-confirm-summary-grid grid grid-cols-1 gap-4 text-sm">
                   <div className={`border border-root-accent/20 bg-root-canvas p-4 ${rootBorderRadius.card}`}>
                     <p className="text-root-subtle text-xs font-bold uppercase">Saldo Kas Negara</p>
-                    <p className="mt-2 text-[15px] font-black text-root-accent">{currentMoney.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</p>
+                    <p className="mt-2 text-[15px] font-black text-root-accent">{currentMoney.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</p>
                   </div>
                   <div className={`border border-root-accent/20 bg-root-canvas p-4 ${rootBorderRadius.card}`}>
                     <p className="text-root-subtle text-xs font-bold uppercase">Total Outstanding</p>
-                    <p className="mt-2 text-[15px] font-black text-rose-400">{totalPayment.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</p>
+                    <p className="mt-2 text-[15px] font-black text-rose-400">{totalPayment.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</p>
                   </div>
                   <div className={`border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-400 ${rootBorderRadius.card}`}>
                     <p className="font-black uppercase text-[10px] tracking-wider">Pinjaman siap dikonfirmasi</p>
