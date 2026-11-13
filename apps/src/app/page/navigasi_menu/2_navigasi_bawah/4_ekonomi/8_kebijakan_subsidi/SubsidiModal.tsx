@@ -331,12 +331,12 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
                 <PerlindunganSosialTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
               )}
 
-              {!forumDialogMode && <div className={`mt-6 border border-root-accent/30 bg-root-surface p-5 ${rootBorderRadius.card}`}>
+              {!forumDialogMode && <div className={`root-satisfaction-index mt-6 border border-root-accent/30 bg-root-surface p-5 ${rootBorderRadius.card}`}>
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm font-black uppercase tracking-widest text-root-accent">
+                  <span className="root-satisfaction-index-title font-black uppercase tracking-widest text-root-accent">
                     Indeks Kepuasan Rakyat (Subsidi)
                   </span>
-                  <span className="shrink-0 text-2xl font-black text-amber-400 sm:text-3xl">
+                  <span className="root-satisfaction-index-value shrink-0 font-black text-amber-400">
                     {subsidySatisfaction} / 100
                   </span>
                 </div>

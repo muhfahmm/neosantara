@@ -145,7 +145,7 @@ export function FpsMonitoring({
                 className={`flex h-full ${
                     isMobileDevice
                         ? 'w-[60px] flex-row items-center justify-center gap-1 rounded-lg px-1'
-                        : 'w-[112px] flex-col justify-center gap-0 rounded-xl px-1.5'
+                        : 'w-[96px] flex-col justify-center gap-0 rounded-xl px-1'
                 } border border-root-accent/30 bg-root-surface/90 text-left shadow-2xl transition-colors hover:border-root-accent/70`}
             >
                 {isMobileDevice ? (
@@ -158,14 +158,14 @@ export function FpsMonitoring({
                     </>
                 ) : (
                     <>
-                        <span className="flex items-center gap-1.5 text-[8px] font-black tracking-wide text-root-accent lg:text-[9px]">
-                            <Activity className="h-3 w-3" />
+                        <span className="flex items-center gap-1 text-[7px] font-black tracking-wide text-root-accent lg:text-[8px]">
+                            <Activity className="h-2.5 w-2.5" />
                             FPS MONITOR
                         </span>
-                        <span className={`text-lg font-black leading-none tabular-nums lg:text-xl ${stats.fps < 40 ? 'text-rose-400' : stats.fps < 55 ? 'text-amber-400' : 'text-emerald-300'}`}>
-                            {stats.fps} <span className="text-[10px] font-bold text-gray-300">FPS</span>
+                        <span className={`text-base font-black leading-none tabular-nums lg:text-lg ${stats.fps < 40 ? 'text-rose-400' : stats.fps < 55 ? 'text-amber-400' : 'text-emerald-300'}`}>
+                            {stats.fps} <span className="text-[9px] font-bold text-gray-300">FPS</span>
                         </span>
-                        <span className="text-[8px] font-semibold text-gray-400 lg:text-[9px]">
+                        <span className="text-[7px] font-semibold text-gray-400 lg:text-[8px]">
                             MIN {stats.minFps} <span className="px-1 text-root-accent/50">/</span> AVG {stats.avgFps}
                         </span>
                     </>

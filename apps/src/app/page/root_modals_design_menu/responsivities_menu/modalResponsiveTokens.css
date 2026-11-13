@@ -21,6 +21,11 @@
   --modal-font-label: 0.625rem;
   --modal-font-value: 0.875rem;
   --modal-font-tab: 0.75rem;
+
+  --satisfaction-font-family: Arial, Helvetica, sans-serif;
+  --satisfaction-title-font-size: 12px;
+  --satisfaction-value-font-size: 20px;
+  --satisfaction-description-font-size: 10px;
 }
 
 @media (min-width: 640px) {
@@ -143,6 +148,11 @@
 }
 
 @media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
+  :root {
+    --satisfaction-title-font-size: 10px;
+    --satisfaction-value-font-size: 10px;
+  }
+
   .satisfaction-sector-list {
     display: flex !important;
     flex-wrap: wrap;
@@ -169,9 +179,15 @@
     outline-offset: 2px;
   }
 
-  .satisfaction-sector-icon,
-  .satisfaction-sector-progress {
+  .satisfaction-sector-icon {
     display: none !important;
+  }
+
+  .satisfaction-sector-progress {
+    display: block !important;
+    width: 100%;
+    height: 3px !important;
+    margin-top: 3px;
   }
 
   .satisfaction-sector-card > div:last-child {
@@ -179,11 +195,23 @@
   }
 
   .satisfaction-sector-card > div:last-child > div:first-child {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1px;
+    display: grid !important;
+    grid-template-rows: 38px 11px;
+    align-items: start;
+    gap: 0;
     font-size: 8px;
     line-height: 1.2;
+  }
+
+  .satisfaction-sector-card > div:last-child > div:first-child > span:first-child {
+    display: block;
+    min-height: 38px;
+  }
+
+  .satisfaction-sector-card > div:last-child > div:first-child > span:last-child {
+    align-self: end;
+    justify-self: start;
+    line-height: 1;
   }
 
   .population-summary-grid {
@@ -439,6 +467,72 @@
 
 .root-info-modal-summary > .border-t {
   margin-top: 0 !important;
+}
+
+.root-satisfaction-index {
+  font-family: var(--satisfaction-font-family);
+}
+
+.root-satisfaction-index-title {
+  font-family: var(--satisfaction-font-family) !important;
+  font-size: var(--satisfaction-title-font-size) !important;
+  line-height: 1.25;
+}
+
+.root-satisfaction-index-value {
+  font-family: var(--satisfaction-font-family) !important;
+  font-size: var(--satisfaction-value-font-size) !important;
+  line-height: 1.1;
+}
+
+.root-satisfaction-index-description {
+  font-family: var(--satisfaction-font-family) !important;
+  font-size: var(--satisfaction-description-font-size) !important;
+  line-height: 1.4;
+}
+
+.root-housing-capacity-value {
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+@media (min-width: 640px) {
+  .root-housing-capacity-value {
+    font-size: 12px;
+  }
+}
+
+.root-housing-breakdown-title {
+  font-size: 12px;
+}
+
+.root-housing-breakdown-badge {
+  font-size: 9px;
+}
+
+.root-housing-breakdown-label {
+  font-size: 10px;
+}
+
+.root-housing-breakdown-value {
+  font-size: 14px;
+}
+
+.root-housing-breakdown-previous-value {
+  font-size: 12px;
+}
+
+.root-housing-breakdown-note {
+  font-size: 10px;
+}
+
+@media (min-width: 640px) {
+  .root-housing-breakdown-title {
+    font-size: 14px;
+  }
 }
 
 .root-modal-info-button {

@@ -438,45 +438,45 @@ export function Navbar({
                     </div>
                 </div>
             ) : (
-                /* Mode Desktop / Default: Tampilan asli tidak berubah sama sekali */
+                /* Mode Desktop / Default */
                 <>
                     {/* 1. Left Side: Circular Menu & Selected Badge */}
-                    <div className="flex items-stretch gap-2 2xl:gap-2 shrink-0 relative z-20 pointer-events-auto">
-                        <div className="flex items-center gap-2 2xl:gap-3 bg-root-surface border border-root-accent/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
+                    <div className="flex items-stretch gap-1.5 shrink-0 relative z-20 pointer-events-auto">
+                        <div className="flex items-center gap-1.5 lg:gap-2 bg-root-surface border border-root-accent/30 p-0.5 lg:p-1 rounded-xl shadow-2xl">
                             {/* Circle Power Button */}
                             <div className="relative group shrink-0">
                                 <button
                                     onClick={onOpenGameMenu}
                                     data-tutorial="game-menu"
                                     title="Game Menu"
-                                    className="w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-full bg-root-canvas border-[2px] border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all flex items-center justify-center cursor-pointer z-30"
+                                    className="w-7 h-7 lg:w-8 lg:h-8 2xl:w-9 2xl:h-9 rounded-full bg-root-canvas border-[2px] border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all flex items-center justify-center cursor-pointer z-30"
                                 >
-                                    <Power className="w-3.5 h-3.5 2xl:w-4 2xl:h-4" />
+                                    <Power className="w-3 h-3 2xl:w-3.5 2xl:h-3.5" />
                                 </button>
                                 
-                                <div className="absolute top-[38px] lg:top-[42px] 2xl:top-[44px] left-1/2 -translate-x-1/2 bg-root-surface border border-root-accent/30 px-2 py-1 text-root-accent text-[8px] sm:text-[10px] font-black tracking-wider uppercase rounded-md whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <div className="absolute top-[34px] lg:top-[38px] 2xl:top-[42px] left-1/2 -translate-x-1/2 bg-root-surface border border-root-accent/30 px-2 py-1 text-root-accent text-[8px] sm:text-[10px] font-black tracking-wider uppercase rounded-md whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                     Game Menu
                                 </div>
                             </div>
-                            <div data-tutorial="negara-terpilih" className="flex items-center gap-2 2xl:gap-3 px-2 2xl:px-3 py-0.5 sm:py-1 rounded-xl min-w-[110px] lg:min-w-[130px] 2xl:min-w-[160px]">
+                            <div data-tutorial="negara-terpilih" className="flex items-center gap-1.5 2xl:gap-2 px-1 2xl:px-2 py-0.5 rounded-xl min-w-[100px] lg:min-w-[115px] 2xl:min-w-[140px]">
                                 {selectedCountry ? (
                                     <img 
                                         src={`https://flagcdn.com/w80/${selectedCountry.iso.toLowerCase()}.png`} 
-                                        className="w-6 h-4 lg:w-7 lg:h-4.5 2xl:w-8 2xl:h-5 rounded-sm object-cover border border-root-accent/30"
+                                        className="w-5 h-3.5 lg:w-6 lg:h-4 2xl:w-7 2xl:h-4.5 rounded-sm object-cover border border-root-accent/30"
                                         alt="flag"
                                         onError={(e) => {
                                             (e.target as HTMLImageElement).src = 'https://flagcdn.com/w80/un.png';
                                         }}
                                     />
                                 ) : (
-                                    <div className="w-6 h-6 lg:w-7 lg:h-7 2xl:w-8 2xl:h-8 rounded-full bg-root-canvas border border-root-accent/30 flex items-center justify-center text-sm lg:text-base 2xl:text-xl">🌐
+                                    <div className="w-5 h-5 lg:w-6 lg:h-6 2xl:w-7 2xl:h-7 rounded-full bg-root-canvas border border-root-accent/30 flex items-center justify-center text-xs lg:text-sm 2xl:text-base">🌐
                                     </div>
                                 )}
                                 <div className="flex flex-col leading-tight">
-                                    <span className="text-[10px] lg:text-[11px] 2xl:text-[12px] font-black text-root-text tracking-tight uppercase">
+                                    <span className="text-[9px] lg:text-[10px] 2xl:text-[11px] font-black text-root-text tracking-tight uppercase">
                                         {selectedCountry ? selectedCountry.country : 'Main Simulation'}
                                     </span>
-                                    <span className="text-[8px] lg:text-[9px] 2xl:text-[10px] font-bold text-root-subtle uppercase tracking-widest">
+                                    <span className="text-[7px] lg:text-[8px] 2xl:text-[9px] font-bold text-root-subtle uppercase tracking-widest">
                                         {selectedCountry ? selectedCountry.capital : 'Global Map'}
                                     </span>
                                 </div>

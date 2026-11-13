@@ -397,12 +397,12 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
               })}
 
               {/* INDEKS KEPUASAN PANGAN */}
-              <div className={`p-3.5 lg:p-4 2xl:p-5 border border-root-accent/30 bg-root-canvas ${rootBorderRadius.card}`}>
+              <div className={`root-satisfaction-index p-3.5 lg:p-4 2xl:p-5 border border-root-accent/30 bg-root-canvas ${rootBorderRadius.card}`}>
                 <div className="flex justify-between items-center">
-                  <span className={rootModalTypography.sectionTitle}>
+                  <span className="root-satisfaction-index-title font-bold uppercase tracking-wider text-root-text">
                     Indeks Kepuasan Rakyat (Pangan)
                   </span>
-                  <span className="text-lg lg:text-xl 2xl:text-2xl font-semibold text-root-accent">
+                  <span className="root-satisfaction-index-value font-semibold text-root-accent">
                     {foodSatisfaction} / 100
                   </span>
                 </div>

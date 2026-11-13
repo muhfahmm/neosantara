@@ -52,13 +52,13 @@ export default function ServiceAISuggestionsModal({
           {tempatUmumAnalysis && (
             <>
               {/* CARD INDEKS KEPUASAN RAKYAT (SEPERTI GAMBAR 1) */}
-              <div className="bg-root-canvas p-5 rounded-2xl border border-root-accent/30 flex flex-col gap-4 shadow-inner">
+              <div className="root-satisfaction-index bg-root-canvas p-5 rounded-2xl border border-root-accent/30 flex flex-col gap-4 shadow-inner">
                 <div className="flex justify-between items-start">
-                  <span className="text-xs font-black text-root-subtle uppercase tracking-wider max-w-[70%]">
+                  <span className="root-satisfaction-index-title font-black text-root-subtle uppercase tracking-wider max-w-[70%]">
                     INDEKS KEPUASAN RAKYAT ({tempatUmumAnalysis.tabLabel.toUpperCase()})
                   </span>
                   <div className="text-right">
-                    <span className="text-3xl sm:text-4xl font-black text-root-accent tracking-tight">
+                    <span className="root-satisfaction-index-value font-black text-root-accent tracking-tight">
                       {tempatUmumAnalysis.satisfactionScore} / 100
                     </span>
                   </div>
@@ -79,7 +79,7 @@ export default function ServiceAISuggestionsModal({
                 </div>
 
                 {/* STATUS MESSAGE & DOT INDICATOR */}
-                <div className="flex items-center gap-2 text-xs font-bold text-root-text">
+                <div className="root-satisfaction-index-description flex items-center gap-2 font-bold text-root-text">
                   <span>
                     {tempatUmumAnalysis.satisfactionScore <= 40
                       ? `🔴 Krisis fasilitas ${tempatUmumAnalysis.tabLabel.toLowerCase()}, tingkat keterpenuhan sangat rendah.`

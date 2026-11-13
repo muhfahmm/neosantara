@@ -382,12 +382,12 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                 </div>
 
                 {/* KOTAK 3: INDEKS KEPUASAN LISTRIK */}
-                <div className={`w-full p-3 lg:p-4 border border-root-accent/30 bg-root-canvas ${rootBorderRadius.card}`}>
+                <div className={`root-satisfaction-index w-full p-3 lg:p-4 border border-root-accent/30 bg-root-canvas ${rootBorderRadius.card}`}>
                   <div className="flex justify-between items-center">
-                    <span className={rootModalTypography.sectionTitle}>
+                    <span className="root-satisfaction-index-title font-bold uppercase tracking-wider text-root-text">
                       Indeks Kepuasan Rakyat (Listrik)
                     </span>
-                    <span className="text-2xl lg:text-3xl font-black text-root-accent">
+                    <span className="root-satisfaction-index-value font-black text-root-accent">
                       {electricitySatisfaction} / 100
                     </span>
                   </div>

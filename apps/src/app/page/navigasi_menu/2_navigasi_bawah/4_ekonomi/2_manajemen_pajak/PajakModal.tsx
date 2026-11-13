@@ -813,12 +813,12 @@ function PajakModalContent({
           </div>
 
           {/* ---- INDEKS KEPUASAN RAKYAT ---- */}
-          <div className={`tax-policy-satisfaction-card mt-6 p-5 ${rootBorderRadius.card} border border-root-accent/30 bg-root-surface`}>
+          <div className={`root-satisfaction-index tax-policy-satisfaction-card mt-6 p-5 ${rootBorderRadius.card} border border-root-accent/30 bg-root-surface`}>
             <div className="flex justify-between items-center">
-              <span className={`${rootModalTypography.sectionTitle} uppercase tracking-widest`}>
+              <span className="root-satisfaction-index-title font-black uppercase tracking-widest text-root-text">
                 Indeks Kepuasan Rakyat (Pajak)
               </span>
-              <span className="text-3xl font-black text-amber-400">
+              <span className="root-satisfaction-index-value font-black text-amber-400">
                 {satisfaction} / 100
               </span>
             </div>

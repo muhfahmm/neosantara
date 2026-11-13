@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { fetchBuildingMetadata } from '../../../../../../lib/buildingMetadata';
 import { getBuildingCardImage } from "../../buildingCardImages";
-import { X, Home, TrendingUp, TrendingDown, Hammer, AlertCircle, Info, Sparkles, Users } from "lucide-react";
+import { X, Home, TrendingUp, TrendingDown, Hammer, AlertCircle, Info, Sparkles } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
@@ -131,7 +131,6 @@ export default function HunianPermukimanModal({
   const [activeTab, setActiveTab] = useState(initialTab || "rumah_subsidi");
   const [selectedItemInfo, setSelectedItemInfo] = useState<{
     title: string;
-    description: string;
     baseCapacity: number;
     effectiveCapacity: number;
     bonusPercent: number;
@@ -430,7 +429,6 @@ export default function HunianPermukimanModal({
                   const baseCapacity = Number(activeMeta?.kapasitas) || DEFAULT_CAPACITIES[activeItem.key] || 0;
                   setSelectedItemInfo({
                     title: `Informasi ${HOUSING_INFO_TITLES[activeItem.key] || activeItem.label}`,
-                    description: activeItem.detailDesc,
                     baseCapacity,
                     effectiveCapacity: applyTotalHousingCapacityBonus(baseCapacity, countryDetail),
                     bonusPercent: housingBonusPercent,
@@ -464,7 +462,7 @@ export default function HunianPermukimanModal({
                     <div className="mb-4 sm:mb-6 bg-root-canvas/60 p-3 sm:p-4 rounded-2xl border border-root-accent/20">
                       <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-4">
                         <div className="flex-1 min-w-[180px]">
-                          <h3 className="text-base sm:text-lg lg:text-xl font-black text-root-accent uppercase tracking-wider">{activeItem.label}</h3>
+                          <h3 className={`${rootModalTypography.sectionTitle} !text-root-accent font-black uppercase tracking-wider`}>{activeItem.label}</h3>
                         </div>
 
                         <button
@@ -541,124 +539,13 @@ export default function HunianPermukimanModal({
 
               {/* FOOTER STATISTIK */}
               <div className="mt-8 border-t border-root-accent/20 pt-6 space-y-4">
-                {/* Ringkasan total unit & populasi */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="rounded-2xl border border-root-accent/20 bg-root-canvas p-4">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-root-subtle">Total Keseluruhan Unit Hunian</p>
-                    <p className="text-lg sm:text-xl font-black text-root-accent mt-1 break-words">{totalValue.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</p>
-                  </div>
-                  <div className="rounded-2xl border border-root-accent/20 bg-root-canvas p-4">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-root-subtle">Populasi</p>
-                    <p className="text-lg sm:text-xl font-black text-root-text mt-1 break-words">{formatNumber(population)} Jiwa</p>
-                  </div>
-                </div>
-
-                {/* 🏠 CARD KAPASITAS HUNIAN */}
-                <div className="rounded-2xl border border-root-accent/30 bg-root-canvas p-4 shadow-sm">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Home className="h-5 w-5 text-root-accent" />
-                    <h4 className="text-sm font-black uppercase tracking-wider text-root-accent">Kapasitas Hunian vs Kebutuhan</h4>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-root-surface rounded-xl p-3 border border-root-accent/20 flex flex-col justify-between">
-                      <p className="text-[9px] font-bold uppercase text-root-subtle">Total Kapasitas</p>
-                      <p className="text-xs sm:text-sm lg:text-base font-black text-emerald-400 leading-tight mt-1 break-words">
-                        {totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[9px] font-bold text-root-subtle">orang</span>
-                      </p>
-                    </div>
-                    <div className="bg-root-surface rounded-xl p-3 border border-root-accent/20 flex flex-col justify-between">
-                      <p className="text-[9px] font-bold uppercase text-root-subtle">Kebutuhan (Populasi)</p>
-                      <p className={`text-xs sm:text-sm lg:text-base font-black leading-tight mt-1 break-words ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
-                        {population.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className={`text-[9px] font-bold ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>orang</span>
-                      </p>
-                    </div>
-                    <div className={`bg-root-surface rounded-xl p-3 border ${isSufficient ? 'border-emerald-500/30' : 'border-rose-500/30'} flex flex-col justify-between`}>
-                      <p className="text-[9px] font-bold uppercase text-root-subtle">
-                        {isSufficient ? 'Surplus Hunian' : 'Kekurangan / Tunawisma'}
-                      </p>
-                      <p className={`text-xs sm:text-sm lg:text-base font-black leading-tight mt-1 break-words ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
-                        {isSufficient 
-                          ? `+${(totalCapacity - population).toLocaleString('id-ID', { maximumFractionDigits: 2 })}`
-                          : `-${shortage.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`}
-                        <span className={`text-[9px] font-bold block sm:inline ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
-                          {isSufficient ? ' (surplus)' : ' (tunawisma)'}
-                        </span>
-                      </p>
-                    </div>
-                    <div className="bg-root-surface rounded-xl p-3 border border-root-accent/20 flex flex-col justify-between">
-                      <p className="text-[9px] font-bold uppercase text-root-subtle">Keterpenuhan</p>
-                      <p className={`text-xs sm:text-sm lg:text-base font-black leading-tight mt-1 ${percentageMet >= 100 ? 'text-emerald-400' : 'text-amber-400'}`}>
-                        {percentageMet.toFixed(1)}%
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Breakdown per tipe (Hanya kategori aktif) */}
-                  <div className="mt-4">
-                    {capacityBreakdown.filter((item) => item.key === activeTab).map((item) => (
-                      <div
-                        key={item.key}
-                        className="bg-root-accent/10 border border-root-accent shadow-[0_0_15px_rgba(0,255,170,0.15)] ring-1 ring-root-accent rounded-xl p-3.5 sm:p-4"
-                      >
-                        <div className="flex items-center justify-between gap-1 mb-2">
-                          <p className="text-xs sm:text-sm font-black uppercase tracking-wider text-root-accent">
-                            {item.label}
-                          </p>
-                          <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-root-accent text-root-canvas shrink-0">
-                            Kategori Aktif
-                          </span>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                          <div className="bg-root-surface p-2.5 rounded-lg border border-root-accent/20 flex flex-col justify-between">
-                            <span className="text-[10px] text-root-subtle font-bold uppercase">Jumlah Unit Terdaftar</span>
-                            <span className="font-black text-sm text-root-text mt-1">{item.count.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span>
-                          </div>
-                          <div className="bg-root-surface p-2.5 rounded-lg border border-root-accent/20 flex flex-col justify-between">
-                            <span className="text-[10px] text-root-subtle font-bold uppercase">Kapasitas / Unit</span>
-                            <div className="flex items-center gap-1.5 mt-1">
-                              {housingBonusPercent > 0 && item.capacityPerUnit !== item.baseCapacityPerUnit && (
-                                <span className="line-through text-rose-400 font-bold text-xs opacity-80">
-                                  {item.baseCapacityPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
-                                </span>
-                              )}
-                              <span className="font-black text-sm text-root-text">
-                                {item.capacityPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa/unit
-                              </span>
-                            </div>
-                          </div>
-                          <div className="bg-root-surface p-2.5 rounded-lg border border-root-accent/20 flex flex-col justify-between">
-                            <span className="text-[10px] text-root-subtle font-bold uppercase">Total Kapasitas Kategori</span>
-                            <span className="font-black text-sm text-root-accent mt-1">{item.totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa</span>
-                          </div>
-                        </div>
-
-                        <div className="w-full bg-root-canvas rounded-full h-2 mt-3 border border-root-accent/10 overflow-hidden">
-                          <div
-                            className="h-full rounded-full transition-all duration-300 bg-root-accent"
-                            style={{ width: `${Math.min(100, item.percentage)}%` }}
-                          />
-                        </div>
-                        <p className="text-[10px] text-root-subtle mt-1.5 font-semibold">Mengakomodasi {item.percentage.toFixed(1)}% dari total populasi negara.</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className={`mt-4 p-3 rounded-xl text-xs font-bold ${isSufficient ? 'bg-root-surface border border-emerald-500/30 text-emerald-400' : 'bg-root-surface border border-rose-500/30 text-rose-400'}`}>
-                    {isSufficient 
-                      ? `✅ Kapasitas hunian mencukupi untuk seluruh populasi. Tersedia kelebihan ${(totalCapacity - population).toLocaleString('id-ID', { maximumFractionDigits: 2 })} tempat.`
-                      : `⚠️ Masih terdapat ${shortage.toLocaleString('id-ID', { maximumFractionDigits: 2 })} tunawisma (kekurangan tempat hunian). ${Math.round(100 - percentageMet)}% populasi belum terakomodasi.`}
-                  </div>
-                </div>
-
                 {/* 🔥 INDEKS KEPUASAN PERUMAHAN */}
-                <div className="p-5 rounded-xl border border-root-accent/30 bg-root-canvas shadow-md">
+                <div className="root-satisfaction-index p-5 rounded-xl border border-root-accent/30 bg-root-canvas shadow-md">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-black text-root-subtle uppercase tracking-wider">
+                    <span className="root-satisfaction-index-title font-black text-root-subtle uppercase tracking-wider">
                       Indeks Kepuasan Rakyat (Perumahan)
                     </span>
-                    <span className="text-3xl font-black text-root-accent">
+                    <span className="root-satisfaction-index-value font-black text-root-accent">
                       {housingSatisfaction} / 100
                     </span>
                   </div>
@@ -674,19 +561,6 @@ export default function HunianPermukimanModal({
                       style={{ width: `${housingSatisfaction}%` }}
                     />
                   </div>
-                  <p className="text-[10px] text-root-text font-bold mt-3">
-                    {housingSatisfaction <= 40
-                      ? "🔴 Krisis fasilitas perumahan, tingkat keterpenuhan sangat rendah."
-                      : housingSatisfaction <= 75
-                      ? "⚠️ Fasilitas perumahan masih terbatas, perlu pembangunan lebih lanjut."
-                      : "✅ Ketersediaan fasilitas perumahan sangat mencukupi bagi seluruh rakyat."}
-                  </p>
-                  <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-root-subtle">
-                    <div>Kapasitas per kapita: <span className="font-bold text-root-text">
-                      {population > 0 ? (totalCapacity / population).toFixed(2) : 'N/A'}
-                    </span></div>
-                    <div>Persentase keterpenuhan: <span className="font-bold text-root-text">{percentageMet.toFixed(1)}%</span></div>
-                  </div>
                 </div>
 
 
@@ -699,32 +573,139 @@ export default function HunianPermukimanModal({
         isOpen={selectedItemInfo !== null}
         onClose={() => setSelectedItemInfo(null)}
         title={selectedItemInfo?.title ?? ""}
-        description={selectedItemInfo?.description}
       >
         {selectedItemInfo && (
-          <div className="mt-3 flex items-center gap-2 rounded-xl border border-root-accent/30 bg-root-canvas px-3 py-2">
-            <Users aria-hidden="true" className="h-4 w-4 shrink-0 text-root-accent" />
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-1.5">
-                <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Kapasitas Standar AI</p>
-                {selectedItemInfo.bonusPercent > 0 && (
-                  <span className="rounded border border-root-accent/40 bg-root-accent/20 px-1.5 py-0.5 text-[8px] font-black text-root-accent">
-                    +{selectedItemInfo.bonusPercent}% Bonus
-                  </span>
-                )}
+          <div className="-mt-2 space-y-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-3">
+                <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">Total Keseluruhan Unit Hunian</p>
+                <p className="root-housing-capacity-value text-root-accent">{totalValue.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</p>
               </div>
-              <p className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs font-black">
-                <span>1 Unit:</span>
-                {selectedItemInfo.effectiveCapacity !== selectedItemInfo.baseCapacity && (
-                  <span className="font-bold text-rose-400 line-through">
-                    {selectedItemInfo.baseCapacity.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
+              <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-3">
+                <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">Populasi</p>
+                <p className="root-housing-capacity-value text-root-text">{formatNumber(population)} Jiwa</p>
+              </div>
+              <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-3">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">Kapasitas Standar AI</p>
+                  {selectedItemInfo.bonusPercent > 0 && (
+                    <span className="rounded border border-root-accent/40 bg-root-accent/20 px-1.5 py-0.5 text-[8px] font-black text-root-accent">
+                      +{selectedItemInfo.bonusPercent}% Bonus
+                    </span>
+                  )}
+                </div>
+                <p className="root-housing-capacity-value mt-1 flex flex-wrap items-center gap-1.5 text-root-text">
+                  <span>1 Unit:</span>
+                  {selectedItemInfo.effectiveCapacity !== selectedItemInfo.baseCapacity && (
+                    <span className="font-bold text-rose-400 line-through">
+                      {selectedItemInfo.baseCapacity.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
+                    </span>
+                  )}
+                  <span className="text-root-accent">
+                    {selectedItemInfo.effectiveCapacity.toLocaleString("id-ID", { maximumFractionDigits: 2 })} Jiwa
                   </span>
-                )}
-                <span className="text-root-accent">
-                  {selectedItemInfo.effectiveCapacity.toLocaleString("id-ID", { maximumFractionDigits: 2 })} Jiwa
-                </span>
-              </p>
+                </p>
+              </div>
             </div>
+
+            <section className="rounded-xl border border-root-accent/30 bg-root-canvas p-3 sm:p-4">
+              <h3 className={`${rootModalTypography.sectionTitle} !text-root-accent flex items-center gap-2`}>
+                <Home aria-hidden="true" className="h-4 w-4 shrink-0 text-root-accent" />
+                Kapasitas Hunian vs Kebutuhan
+              </h3>
+
+              <div className="mt-3 grid grid-cols-2 gap-2 lg:grid-cols-4">
+                <div className="flex flex-col justify-between rounded-lg border border-root-accent/20 bg-root-surface p-2.5">
+                  <p className="text-[8px] font-bold uppercase text-root-subtle">Total Kapasitas</p>
+                  <p className="root-housing-capacity-value text-emerald-400">
+                    {totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[8px] font-bold text-root-subtle">orang</span>
+                  </p>
+                </div>
+                <div className="flex flex-col justify-between rounded-lg border border-root-accent/20 bg-root-surface p-2.5">
+                  <p className="text-[8px] font-bold uppercase text-root-subtle">Kebutuhan (Populasi)</p>
+                  <p className={`root-housing-capacity-value ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    {population.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className={`text-[8px] font-bold ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>orang</span>
+                  </p>
+                </div>
+                <div className={`flex flex-col justify-between rounded-lg border p-2.5 ${isSufficient ? 'border-emerald-500/30 bg-root-surface' : 'border-rose-500/30 bg-root-surface'}`}>
+                  <p className="text-[8px] font-bold uppercase text-root-subtle">
+                    {isSufficient ? 'Surplus Hunian' : 'Kekurangan / Tunawisma'}
+                  </p>
+                  <p className={`root-housing-capacity-value ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    {isSufficient
+                      ? `+${(totalCapacity - population).toLocaleString('id-ID', { maximumFractionDigits: 2 })}`
+                      : `-${shortage.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`}
+                    <span className={`text-[8px] font-bold block ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
+                      {isSufficient ? ' (surplus)' : ' (tunawisma)'}
+                    </span>
+                  </p>
+                </div>
+                <div className="flex flex-col justify-between rounded-lg border border-root-accent/20 bg-root-surface p-2.5">
+                  <p className="text-[8px] font-bold uppercase text-root-subtle">Keterpenuhan</p>
+                  <p className={`root-housing-capacity-value ${percentageMet >= 100 ? 'text-emerald-400' : 'text-amber-400'}`}>
+                    {percentageMet.toFixed(1)}%
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-3">
+                {capacityBreakdown.filter((item) => item.key === activeTab).map((item) => (
+                  <div
+                    key={item.key}
+                    className="root-housing-capacity-breakdown rounded-xl border border-root-accent bg-root-accent/10 p-3 sm:p-4"
+                  >
+                    <div className="mb-2 flex items-center justify-between gap-1">
+                      <p className="root-housing-breakdown-title font-black uppercase tracking-wider text-root-accent">
+                        {item.label}
+                      </p>
+                      <span className="root-housing-breakdown-badge shrink-0 rounded-md bg-root-accent px-2 py-0.5 font-black uppercase text-root-canvas">
+                        Kategori Aktif
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                      <div className="flex flex-col justify-between rounded-lg border border-root-accent/20 bg-root-surface p-2.5">
+                        <span className="root-housing-breakdown-label font-bold uppercase text-root-subtle">Jumlah Unit Terdaftar</span>
+                        <span className="root-housing-breakdown-value mt-1 font-black text-root-text">{item.count.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span>
+                      </div>
+                      <div className="flex flex-col justify-between rounded-lg border border-root-accent/20 bg-root-surface p-2.5">
+                        <span className="root-housing-breakdown-label font-bold uppercase text-root-subtle">Kapasitas / Unit</span>
+                        <div className="mt-1 flex items-center gap-1.5">
+                          {housingBonusPercent > 0 && item.capacityPerUnit !== item.baseCapacityPerUnit && (
+                            <span className="root-housing-breakdown-previous-value font-bold text-rose-400 line-through opacity-80">
+                              {item.baseCapacityPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
+                            </span>
+                          )}
+                          <span className="root-housing-breakdown-value font-black text-root-text">
+                            {item.capacityPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa/unit
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex flex-col justify-between rounded-lg border border-root-accent/20 bg-root-surface p-2.5">
+                        <span className="root-housing-breakdown-label font-bold uppercase text-root-subtle">Total Kapasitas Kategori</span>
+                        <span className="root-housing-breakdown-value mt-1 font-black text-root-accent">{item.totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa</span>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 h-2 w-full overflow-hidden rounded-full border border-root-accent/10 bg-root-canvas">
+                      <div
+                        className="h-full rounded-full bg-root-accent transition-all duration-300"
+                        style={{ width: `${Math.min(100, item.percentage)}%` }}
+                      />
+                    </div>
+                    <p className="root-housing-breakdown-note mt-1.5 font-semibold text-root-subtle">
+                      Mengakomodasi {item.percentage.toFixed(1)}% dari total populasi negara.
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              {!isSufficient && (
+                <div className="mt-3 rounded-xl border border-rose-500/30 bg-root-surface p-3 text-xs font-bold text-rose-400">
+                  ⚠️ Masih terdapat {shortage.toLocaleString('id-ID', { maximumFractionDigits: 2 })} tunawisma (kekurangan tempat hunian). {Math.round(100 - percentageMet)}% populasi belum terakomodasi.
+                </div>
+              )}
+            </section>
           </div>
         )}
       </MenuInfoModal>

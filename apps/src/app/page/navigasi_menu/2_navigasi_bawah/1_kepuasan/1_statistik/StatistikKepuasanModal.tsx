@@ -176,23 +176,23 @@ export default function StatistikKepuasanModal({
         ">
           <div className="animate-in fade-in space-y-4 duration-300 sm:space-y-5">
             {/* Kartu skor umum */}
-            <div className={`flex flex-row items-center justify-between gap-2.5 ${rootBorderRadius.card} border border-root-accent/30 bg-root-surface px-2.5 py-1.5 lg:gap-3 lg:py-2 2xl:py-2.5`}>
+            <div className={`root-satisfaction-index flex flex-row items-center justify-between gap-2.5 ${rootBorderRadius.card} border border-root-accent/30 bg-root-surface px-2.5 py-1.5 lg:gap-3 lg:py-2 2xl:py-2.5`}>
               <div className="flex items-center gap-2.5 lg:gap-3">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-root-accent/40 bg-root-canvas lg:h-10 lg:w-10 2xl:h-12 2xl:w-12">
                   <Smile className="h-4 w-4 text-root-text lg:h-5 lg:w-5 2xl:h-6 2xl:w-6" />
                 </div>
                 <div>
-                  <h3 className="mb-0.5 text-xs font-black uppercase leading-none tracking-wide text-root-text lg:mb-1 lg:text-sm 2xl:text-base">
+                  <h3 className="root-satisfaction-index-title mb-0.5 font-black uppercase leading-none tracking-wide text-root-text lg:mb-1">
                     Persetujuan Umum Rakyat
                   </h3>
                 </div>
               </div>
 
               <div className="min-w-[75px] shrink-0 rounded-lg border border-root-accent/30 bg-root-canvas px-2.5 py-0.5 text-right lg:min-w-[95px] lg:px-3.5 lg:py-1 2xl:min-w-[110px] 2xl:px-4 2xl:py-1.5">
-                <p className={`${rootModalTypography.value} text-base leading-none tracking-tight lg:text-xl 2xl:text-2xl`}>
+                <p className="root-satisfaction-index-value font-black tracking-tight text-root-text">
                   {Math.round(generalSatisfaction)}%
                 </p>
-                <p className={`${rootModalTypography.label} mt-0.5 flex items-center justify-end gap-0.5`}>
+                <p className="root-satisfaction-index-description mt-0.5 flex items-center justify-end gap-0.5 font-semibold text-root-muted">
                   <TrendingUp className="h-2 w-2 lg:h-2.5 lg:w-2.5" /> Stabil
                 </p>
               </div>
@@ -217,7 +217,7 @@ export default function StatistikKepuasanModal({
                       onClick={() => {
                         setActiveMenu?.(sector.menuId);
                       }}
-                      className={`satisfaction-sector-card group relative flex cursor-pointer items-center gap-2 overflow-hidden ${rootBorderRadius.card} border border-root-accent/20 bg-root-surface p-1.5 text-left transition-all hover:border-root-accent hover:bg-root-accent/10 lg:gap-3.5 lg:p-3.5 2xl:gap-4 2xl:p-5`}
+                      className={`root-satisfaction-index satisfaction-sector-card group relative flex cursor-pointer items-center gap-2 overflow-hidden ${rootBorderRadius.card} border border-root-accent/20 bg-root-surface p-1.5 text-left transition-all hover:border-root-accent hover:bg-root-accent/10 lg:gap-3.5 lg:p-3.5 2xl:gap-4 2xl:p-5`}
                     >
                       <div className="satisfaction-sector-icon shrink-0">
                         <Image
@@ -229,11 +229,11 @@ export default function StatistikKepuasanModal({
                         />
                       </div>
                       <div className="min-w-0 flex-1 space-y-0.5 lg:space-y-1.5">
-                        <div className="flex items-center justify-between text-[10px] font-semibold uppercase text-root-text lg:text-xs">
-                          <span className="whitespace-normal pr-1 leading-tight">
+                        <div className="flex items-center justify-between font-semibold uppercase text-root-text">
+                          <span className="root-satisfaction-index-title whitespace-normal pr-1 leading-tight">
                             {sector.name}
                           </span>
-                          <span className="shrink-0 text-root-text">
+                          <span className="root-satisfaction-index-value shrink-0 font-black text-root-text">
                             {sector.score}%
                           </span>
                         </div>

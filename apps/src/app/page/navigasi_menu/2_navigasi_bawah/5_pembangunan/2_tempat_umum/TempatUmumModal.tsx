@@ -623,15 +623,15 @@ export default function TempatUmumModal({
                     const satisfactionScore = publicServiceCategoryScores[activeCategory.id];
 
                     return (
-                      <div className="rounded-2xl border border-root-accent/30 bg-root-canvas p-4 shadow-md flex flex-col justify-between">
+                      <div className="root-satisfaction-index rounded-2xl border border-root-accent/30 bg-root-canvas p-4 shadow-md flex flex-col justify-between">
                         <div>
                           <div className="flex justify-between items-center gap-2">
-                            <span className="text-[10px] font-black text-root-subtle uppercase tracking-wider">
+                            <span className="root-satisfaction-index-title font-black text-root-subtle uppercase tracking-wider">
                               {activeCategory.id === "kesehatan" || activeCategory.id === "penegakan_hukum"
                                 ? `Kepuasan Rakyat (${activeCategory.label})`
                                 : `Indeks Kepuasan (${activeCategory.label})`}
                             </span>
-                            <span className="text-xl font-black text-root-accent">
+                            <span className="root-satisfaction-index-value font-black text-root-accent">
                               {satisfactionScore} / 100
                             </span>
                           </div>
@@ -649,18 +649,6 @@ export default function TempatUmumModal({
                             />
                           </div>
 
-                          <p className="text-[10px] text-root-text font-bold mt-2">
-                            {satisfactionScore <= 40
-                              ? `🔴 Krisis fasilitas ${activeCategory.label.toLowerCase()}, keterpenuhan sangat rendah.`
-                              : satisfactionScore <= 75
-                              ? `⚠️ Fasilitas ${activeCategory.label.toLowerCase()} masih terbatas.`
-                              : `✅ Ketersediaan fasilitas ${activeCategory.label.toLowerCase()} sangat mencukupi.`}
-                          </p>
-                        </div>
-
-                        <div className="mt-2 grid grid-cols-2 gap-2 text-[9px] text-root-subtle border-t border-root-accent/10 pt-1.5">
-                          <div>Rasio: <span className="font-bold text-root-text">{activeCategory.index.toFixed(2)}</span></div>
-                          <div>Keterpenuhan fasilitas: <span className="font-bold text-root-text">{percentageMet.toFixed(1)}%</span></div>
                         </div>
                       </div>
                     );

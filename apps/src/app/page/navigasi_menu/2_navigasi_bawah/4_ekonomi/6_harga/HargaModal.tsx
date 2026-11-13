@@ -570,12 +570,12 @@ function HargaModalContent({
 
           {/* ---- INDEKS KEPUASAN RAKYAT (HARGA) ---- */}
           {!forumDialogMode && (
-          <div className={`harga-satisfaction-card mt-4 border border-root-accent/30 bg-root-canvas p-4 lg:mt-6 lg:p-5 ${rootBorderRadius.card}`}>
+          <div className={`root-satisfaction-index harga-satisfaction-card mt-4 border border-root-accent/30 bg-root-canvas p-4 lg:mt-6 lg:p-5 ${rootBorderRadius.card}`}>
             <div className="flex justify-between items-center">
-              <span className="text-[11px] lg:text-xs font-black text-root-accent uppercase tracking-widest">
+              <span className="root-satisfaction-index-title font-black text-root-accent uppercase tracking-widest">
                 Indeks Kepuasan Rakyat (Harga Pokok)
               </span>
-              <span className="text-xl lg:text-2xl font-black text-root-accent">
+              <span className="root-satisfaction-index-value font-black text-root-accent">
                 {satisfaction} / 100
               </span>
             </div>
