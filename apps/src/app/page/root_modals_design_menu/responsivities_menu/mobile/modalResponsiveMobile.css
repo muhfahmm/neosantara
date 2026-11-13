@@ -2899,30 +2899,11 @@
   }
 }
 
-.notebook-modal-frame[data-viewport-mode]:has(.defense-confirm-modal) .defense-confirm-header {
-  gap: 8px;
-  padding: 6px 8px !important;
-}
-
-.notebook-modal-frame[data-viewport-mode]:has(.defense-confirm-modal) .defense-confirm-header > div:first-child {
-  gap: 6px;
-}
-
-.notebook-modal-frame[data-viewport-mode]:has(.defense-confirm-modal) .defense-confirm-header > div:first-child > div:first-child {
-  padding: 5px !important;
-}
-
-.notebook-modal-frame[data-viewport-mode]:has(.defense-confirm-modal) .defense-confirm-header > div:first-child > div:first-child svg {
-  width: 16px;
-  height: 16px;
-}
-
-.notebook-modal-frame[data-viewport-mode]:has(.defense-confirm-modal) .defense-confirm-title {
-  font-size: clamp(12px, 2.8vw, 16px) !important;
-  line-height: 1.15;
-}
-
 .notebook-modal-frame[data-viewport-mode]:has(.defense-confirm-modal) .defense-confirm-content {
+  padding: 6px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-confirm-modal) .defense-confirm-content .p-4 {
   padding: 8px !important;
 }
 
@@ -2931,11 +2912,146 @@
 }
 
 .notebook-modal-frame[data-viewport-mode]:has(.defense-confirm-modal) .defense-confirm-footer {
-  gap: 8px !important;
-  padding: 8px !important;
+  gap: 6px !important;
+  padding: 6px !important;
 }
 
 .notebook-modal-frame[data-viewport-mode]:has(.defense-confirm-modal) .defense-confirm-footer > button {
+  min-height: 32px;
+  padding: 7px 8px !important;
+  font-size: 9px !important;
+  line-height: 1.15;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-content {
+  padding: 6px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-intro > div:first-child {
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 4px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-capacity {
+  flex-shrink: 0;
+  padding: 3px 6px !important;
+  font-size: 9px !important;
+  line-height: 1.2;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-warning {
+  padding: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-warning p {
+  font-size: 9px !important;
+  line-height: 1.25;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-warning p.font-black {
+  font-size: 10px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-warning button {
+  padding: 7px 8px !important;
+  font-size: 9px !important;
+  line-height: 1.2;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-input-card {
+  padding: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-input-card label {
+  gap: 6px;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-input-label {
+  font-size: 9px;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-input-card label > div:first-child {
+  gap: 6px;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-input-card label button {
+  padding: 4px 7px !important;
+  font-size: 9px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-amount-input {
+  height: 34px;
+  padding: 6px 9px !important;
+  font-size: 12px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-amount-hint,
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-input-card > p {
+  font-size: 9px !important;
+  line-height: 1.2;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-estimate {
+  margin-top: 6px !important;
+  padding: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-estimate > div:first-child {
+  gap: 5px;
+  font-size: 9px !important;
+  line-height: 1.2;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-estimate > div:first-child svg {
+  width: 13px;
+  height: 13px;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-estimate > div:last-child {
+  font-size: 9px;
+  line-height: 1.2;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-cost-card {
+  padding: 8px !important;
+  font-size: 9px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-cost-card > div {
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-cost-card > div > span {
+  font-size: 9px !important;
+  line-height: 1.2;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-footer > button {
+  font-size: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-content {
+  padding: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-cost-card {
+  padding: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-quantity-card {
+  padding: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-footer {
+  gap: 6px !important;
+  padding: 6px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-footer > button {
   min-height: 32px;
   padding: 7px 8px !important;
   font-size: 9px !important;
