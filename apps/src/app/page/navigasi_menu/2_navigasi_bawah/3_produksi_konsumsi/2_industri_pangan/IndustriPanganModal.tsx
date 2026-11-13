@@ -20,7 +20,6 @@ import { getCommunismProductionMultiplier, COMMUNISM_PRODUCTION_BONUS } from "..
 import { isMemberOfFAO, FAO_BONUS_RESOURCES } from "../../../../bonus_logic/organisasi_bonus_logic/organisasi_pbb/fao";
 import { applyNpcCountrySimulationState } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
 import { calculatePanganScore } from "@/app/logic/kepuasanCalculator";
-import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 
@@ -332,21 +331,34 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
 
       {!selectedCommodityInfo && !isMenuInfoOpen && (
       <NotebookModalWrapper onClose={onClose}>
-        <div className={"food-industry-modal root-modal-util-35cc3749b1"}>
+        <div className={"root-modal-util-35cc3749b1"}>
           {/* HEADER */}
-          <RootInfoModalHeader
-            title="Industri Pangan"
-            onClose={onClose}
-            size="standard"
-            icon={<Utensils aria-hidden="true" className={"root-modal-util-08cc358851"} />}
-            actions={
-              <button type="button" onClick={() => setIsMenuInfoOpen(true)} title="Informasi industri pangan dan konsumsi" aria-label="Informasi industri pangan dan konsumsi" className={"root-modal-info-button root-modal-util-be617bb95e"}>
-                <Info className={"root-modal-util-ce72f65c94"} />
+          <div className={"satisfaction-modal-header root-modal-util-9462ce2345"}>
+            <div className={"satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar"}>
+              <div className={"root-modal-util-08dfbca033"}>
+                <div className={"root-modal-util-739d92b232"}>
+                  <Utensils aria-hidden="true" className={"root-modal-util-d252947d10"} />
+                </div>
+                <h2 className={"root-modal-util-6b4648c53a root-modal-util-c2385a463d"}>
+                  Industri Pangan
+                </h2>
+              </div>
+            </div>
+            <div className={"root-modal-util-08dfbca033"}>
+              <button
+                type="button"
+                onClick={() => setIsMenuInfoOpen(true)}
+                title="Informasi industri pangan dan konsumsi"
+                aria-label="Informasi industri pangan dan konsumsi"
+                className={"root-modal-info-button root-modal-util-1697100c43"}
+              >
+                <Info aria-hidden="true" />
               </button>
-            }
-          />
+              <RootModalCloseButton onClick={onClose} />
+            </div>
+          </div>
           {/* CONTENT */}
-          <div className={"root-no-scrollbar-glow root-modal-util-9dc0c98e81 neon-scrollbar"}>
+          <div className={"food-industry-modal root-no-scrollbar-glow root-modal-util-9dc0c98e81 neon-scrollbar"}>
             <div className={"root-modal-util-ffeb68166b"}>
               {Object.entries(SECTOR_MAP).map(([sectorId, sectorData]) => {
                 const SectorIcon = sectorData.icon;

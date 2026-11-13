@@ -699,6 +699,28 @@
   flex-wrap: nowrap;
 }
 
+.grid-national-statistics-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.grid-national-search-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.grid-national-search-toolbar .root-modal-util-46b5b1836b {
+  flex: 0 1 320px;
+  min-width: min(100%, 240px);
+  margin-bottom: 0;
+}
+
 .responsive-modal-frame .satisfaction-modal-tabs {
   display: inline-flex;
   flex: 0 0 auto;

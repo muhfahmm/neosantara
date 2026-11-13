@@ -13,7 +13,7 @@ import {
 
 import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
-import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 import {
   calculateActualElectricityProduction,
@@ -232,41 +232,49 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
     }
   }, [electricitySatisfaction]);
 
+  const gridTabs = (
+    <RootModalTabs
+      className={"satisfaction-modal-tabs root-modal-util-3f7356eee3"}
+      items={[
+        {
+          label: "Neraca User",
+          isActive: activeTab === "user",
+          onClick: () => setActiveTab("user"),
+          className: "!px-1 !py-1 !text-[8px] !tracking-normal sm:!px-2 sm:!text-[9px]",
+        },
+        {
+          label: `Neraca ${allCountries.length || 212} Negara`,
+          isActive: activeTab === "global",
+          onClick: () => setActiveTab("global"),
+          className: "!px-1 !py-1 !text-[8px] !tracking-normal sm:!px-2 sm:!text-[9px]",
+        },
+      ]}
+    />
+  );
+
   return (
     <>
       {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
         <div className={"root-modal-util-35cc3749b1"}>
           {/* HEADER */}
-          <RootInfoModalHeader
-            title="Grid Nasional"
-            onClose={onClose}
-            size="standard"
-            icon={<Zap aria-hidden="true" className={"root-modal-util-08cc358851"} />}
-            centerContent={
-              <RootModalTabs
-                className={"satisfaction-modal-tabs root-modal-util-3f7356eee3"}
-                items={[
-                  {
-                    label: "Neraca User",
-                    isActive: activeTab === "user",
-                    onClick: () => setActiveTab("user"),
-                    className: "!px-1 !py-1 !text-[8px] !tracking-normal sm:!px-2 sm:!text-[9px]",
-                  },
-                  {
-                    label: `Neraca ${allCountries.length || 212} Negara`,
-                    isActive: activeTab === "global",
-                    onClick: () => setActiveTab("global"),
-                    className: "!px-1 !py-1 !text-[8px] !tracking-normal sm:!px-2 sm:!text-[9px]",
-                  },
-                ]}
-              />
-            }
-            actions={
-              <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi grid kelistrikan nasional" aria-label="Informasi grid kelistrikan nasional" className={"root-modal-info-button root-modal-util-be617bb95e"}>
-                <Info className={"root-modal-util-ce72f65c94"} />
+          <div className={"satisfaction-modal-header root-modal-util-9462ce2345"}>
+            <div className={"satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar"}>
+              <div className={"root-modal-util-08dfbca033"}>
+                <div className={"root-modal-util-739d92b232"}>
+                  <Zap aria-hidden="true" className={"root-modal-util-d252947d10"} />
+                </div>
+                <h2 className={"root-modal-util-6b4648c53a root-modal-util-c2385a463d"}>
+                  Grid Nasional
+                </h2>
+              </div>
+            </div>
+            <div className={"root-modal-util-08dfbca033"}>
+              <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi grid kelistrikan nasional" aria-label="Informasi grid kelistrikan nasional" className={"root-modal-info-button root-modal-util-1697100c43"}>
+                <Info aria-hidden="true" />
               </button>
-            }
-          />
+              <RootModalCloseButton onClick={onClose} />
+            </div>
+          </div>
 
           {/* BODY (SCROLLBAR HIJAU DITERAPKAN DI SINI) */}
           <div className={"root-no-scrollbar-glow root-modal-util-e7871a31f6"}>
@@ -276,14 +284,15 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                 
                 {/* KOTAK 1: STATISTIK GRID (Memanjang ke kanan-kiri) */}
                 <div className={`root-modal-util-d5020ca04d root-modal-util-5f22e64f22`}>
-                  <div className={"root-modal-util-663523d1b1"}>
-                    <div className={"root-modal-util-63608157d8"}>
-                      <BatteryCharging className={"root-modal-util-dca7f530c4"} />
-                    </div>
-                    <div>
+                  <div className={"grid-national-statistics-heading root-modal-util-663523d1b1"}>
+                    <div className={"root-modal-util-08dfbca033"}>
+                      <div className={"root-modal-util-63608157d8"}>
+                        <BatteryCharging className={"root-modal-util-dca7f530c4"} />
+                      </div>
                       <h3 className={"root-modal-util-9361ef65fc"}>Statistik Grid</h3>
                     </div>
-                    </div>
+                    {gridTabs}
+                  </div>
                   {/* Grid Card di dalamnya memanjang ke samping (3 kolom) */}
                   <div className={"root-modal-util-4d7d412dd7"}>
                     <div className={`root-modal-util-aa624b5175 root-modal-util-5f22e64f22`}>
@@ -382,15 +391,18 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
               </div>
             ) : (
               <div className={`root-modal-util-d5020ca04d root-modal-util-5f22e64f22`}>
-                <div className={"root-modal-util-46b5b1836b"}>
-                  <Search className={"root-modal-util-91f313a187"} />
-                  <input
-                    type="text"
-                    placeholder="Cari nama negara..."
-                    value={searchQuery}
-                    onChange={(event) => setSearchQuery(event.target.value)}
-                    className={"root-modal-util-7e81aff836"}
-                  />
+                <div className={"grid-national-search-toolbar"}>
+                  <div className={"root-modal-util-46b5b1836b"}>
+                    <Search className={"root-modal-util-91f313a187"} />
+                    <input
+                      type="text"
+                      placeholder="Cari nama negara..."
+                      value={searchQuery}
+                      onChange={(event) => setSearchQuery(event.target.value)}
+                      className={"root-modal-util-7e81aff836"}
+                    />
+                  </div>
+                  {gridTabs}
                 </div>
                 <div className={`root-no-scrollbar-glow root-modal-util-21ad3142af root-modal-util-5f22e64f22 root-modal-util-4e8f3fa2d1 `}>
                   <table className={"root-modal-util-a1e9cf0ef6"}>
