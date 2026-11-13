@@ -1,9 +1,9 @@
 "use client"
 import React, { useEffect, useRef, useState } from "react";
-import { Eye, Bomb } from "lucide-react";
+import { Eye, Bomb, Search } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
-import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
+import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import MenuInfoButton from "../../MenuInfoButton";
 import Spionase from "./table_menu/1_tabel_spionase";
@@ -29,6 +29,7 @@ interface ModalProps {
 
 export default function IntelijenModal({ isOpen, onClose, countryDetail, setCountryDetail, prefetchedAllCountries }: ModalProps) {
   const [activeTab, setActiveTab] = useState<'spionase' | 'sabotase'>('spionase');
+  const [searchQuery, setSearchQuery] = useState("");
   const [covertOperationResult, setCovertOperationResult] = useState<CovertOperationResult | null>(null);
   const pendingCovertOperationsRef = useRef(new Map<string, CovertOperationType>());
   const launchedTravelFuelIdsRef = useRef(new Set<string>());
@@ -116,7 +117,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
   return (
     <>
       <NotebookModalWrapper onClose={onClose}>
-        <div className="flex flex-col h-full overflow-hidden">
+        <div className="intelijen-modal flex flex-col h-full overflow-hidden">
 
           {/* HEADER MODAL */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
@@ -147,40 +148,59 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
           </div>
         </div>
 
-        <RootModalSidebarLayout
-          ariaLabel="Bagian intelijen"
-          activeItemId={activeTab}
-          contentClassName="flex flex-col p-4 sm:p-6"
-          items={([
-            { id: "spionase", label: "Spionase", icon: <Eye className="h-4 w-4 shrink-0" /> },
-            { id: "sabotase", label: "Sabotase", icon: <Bomb className="h-4 w-4 shrink-0" /> },
-          ] as const).map((tab) => ({
-            ...tab,
-            isActive: activeTab === tab.id,
-            onSelect: () => setActiveTab(tab.id),
-          }))}
-        >
-          <div className="w-full flex-1 min-h-0 flex flex-col gap-4">
-            <div className="w-full flex-1 min-h-0 overflow-hidden border border-root-accent/20 rounded-xl bg-root-canvas shadow-sm">
-              <div className="h-full min-h-0 overflow-hidden">
-                {activeTab === 'spionase' && (
-                  <Spionase
-                    prefetchedAllCountries={prefetchedAllCountries}
-                    countryDetail={countryDetail}
-                    onAction={handleSpionaseAction}
-                  />
-                )}
-                {activeTab === 'sabotase' && (
-                  <Sabotase
-                    prefetchedAllCountries={prefetchedAllCountries}
-                    countryDetail={countryDetail}
-                    onAction={handleSabotaseAction}
-                  />
-                )}
-              </div>
+        <div className="relative z-10 flex min-h-0 min-w-0 flex-1 flex-col bg-root-surface">
+          <div className="intelijen-toolbar flex shrink-0 flex-col gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <RootModalTabs
+              compact
+              className="intelijen-tabs w-fit"
+              items={[
+                {
+                  label: "Spionase",
+                  icon: <Eye className="h-3.5 w-3.5" />,
+                  isActive: activeTab === "spionase",
+                  onClick: () => setActiveTab("spionase"),
+                },
+                {
+                  label: "Sabotase",
+                  icon: <Bomb className="h-3.5 w-3.5" />,
+                  isActive: activeTab === "sabotase",
+                  onClick: () => setActiveTab("sabotase"),
+                },
+              ]}
+            />
+            <div className="intelijen-search relative w-full sm:max-w-64">
+              <Search aria-hidden="true" className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-root-accent/60" />
+              <input
+                type="search"
+                aria-label="Cari negara target"
+                placeholder="Cari negara target..."
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                className="intelijen-search-input h-9 w-full rounded-lg border border-root-accent/30 bg-[#051111] py-1 pl-8 pr-3 text-xs text-root-text placeholder-root-subtle transition-colors focus:border-root-accent focus:outline-none"
+              />
             </div>
           </div>
-        </RootModalSidebarLayout>
+          <div className="intelijen-results min-h-0 min-w-0 flex-1 overflow-y-auto p-4 sm:p-6">
+            <div className="h-full min-h-0 w-full">
+              {activeTab === 'spionase' && (
+                <Spionase
+                  prefetchedAllCountries={prefetchedAllCountries}
+                  countryDetail={countryDetail}
+                  onAction={handleSpionaseAction}
+                  searchQuery={searchQuery}
+                />
+              )}
+              {activeTab === 'sabotase' && (
+                <Sabotase
+                  prefetchedAllCountries={prefetchedAllCountries}
+                  countryDetail={countryDetail}
+                  onAction={handleSabotaseAction}
+                  searchQuery={searchQuery}
+                />
+              )}
+            </div>
+          </div>
+        </div>
         </div>
       </NotebookModalWrapper>
 

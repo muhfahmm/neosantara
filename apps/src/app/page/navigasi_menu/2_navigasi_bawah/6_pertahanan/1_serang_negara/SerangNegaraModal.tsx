@@ -420,9 +420,9 @@ export default function SerangNegaraModal({
   return (
     <>
       <NotebookModalWrapper onClose={onClose}>
-        <div className="flex flex-col h-full overflow-hidden">
+        <div className="attack-country-modal flex flex-col h-full overflow-hidden">
           
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
+          <div className="attack-country-header px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
             <div className="flex min-w-0 items-center gap-4 lg:gap-8">
               <div className="flex min-w-0 items-center gap-2 sm:gap-3">
                 <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
@@ -436,14 +436,14 @@ export default function SerangNegaraModal({
 
             <div className="flex items-center gap-3">
               {/* Input Search Bar */}
-              <div className={`relative w-40 sm:w-52 ${rootBorderRadius.card}`}>
+              <div className={`attack-country-search relative w-40 sm:w-52 ${rootBorderRadius.card}`}>
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-root-accent/60" />
                 <input
                   type="text"
                   placeholder="Cari negara..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className={`h-9 w-full border border-root-accent/30 bg-root-canvas py-1 pl-8 pr-3 text-xs text-root-text placeholder-root-subtle transition-colors focus:border-root-accent focus:outline-none ${rootBorderRadius.card}`}
+                  className={`attack-country-search-input h-9 w-full border border-root-accent/30 bg-root-canvas py-1 pl-8 pr-3 text-xs text-root-text placeholder-root-subtle transition-colors focus:border-root-accent focus:outline-none ${rootBorderRadius.card}`}
                 />
               </div>
 
@@ -455,11 +455,11 @@ export default function SerangNegaraModal({
             </div>
           </div>
 
-          <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-root-surface relative z-10 neon-scrollbar flex flex-col items-center">
-            <div className="w-full space-y-4">
-              <div className="w-full overflow-hidden border border-root-accent/20 rounded-xl bg-root-canvas shadow-sm">
-                <div className="max-h-[52vh] overflow-auto">
-                  <table className="w-full text-xs">
+          <div className="attack-country-content flex-1 min-h-0 overflow-y-auto p-6 bg-root-surface relative z-10 neon-scrollbar flex flex-col items-center md:overflow-hidden">
+            <div className="w-full space-y-4 md:flex md:min-h-0 md:flex-1 md:flex-col md:space-y-0">
+              <div className="w-full overflow-hidden border border-root-accent/20 rounded-xl bg-root-canvas shadow-sm md:flex md:min-h-0 md:flex-1 md:flex-col">
+                <div className="attack-country-table-viewport max-h-[52vh] overflow-auto md:max-h-none md:min-h-0 md:flex-1">
+                  <table className="attack-country-table w-full text-xs md:h-full">
                     <thead className="bg-root-canvas border-b border-root-accent/20 sticky top-0 z-10 text-[9px] sm:text-[10px] lg:text-xs whitespace-nowrap">
                       <tr>
                         <th className="px-2 py-1.5 text-left font-black text-root-accent uppercase tracking-normal sm:tracking-wider w-10 bg-root-canvas">Rank</th>

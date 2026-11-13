@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Binoculars, ChevronUp, ChevronDown, Search } from "lucide-react";
+import { Binoculars, ChevronUp, ChevronDown } from "lucide-react";
 import { getArmadaPowerSummary } from "../../4_armada/logic/armadaLogic";
 import KonfirmasiSpionaseModals from "../modals_konfirmasi/konfirmasiSpionaseModals";
 import { getTravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
@@ -48,9 +48,10 @@ interface SpionaseProps {
   prefetchedAllCountries?: any[];
   countryDetail?: any; // 🔥 Tambahkan prop untuk negara user
   onAction: (targetCountry: RankingRow, cost: number, tripId: string) => void;
+  searchQuery: string;
 }
 
-export default function Spionase({ prefetchedAllCountries, countryDetail, onAction }: SpionaseProps) {
+export default function Spionase({ prefetchedAllCountries, countryDetail, onAction, searchQuery }: SpionaseProps) {
   const [sortConfig, setSortConfig] = useState<{ key: keyof RankingRow; direction: 'asc' | 'desc' } | null>({
     key: 'totalPower',
     direction: 'desc'
@@ -58,7 +59,6 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, onActi
 
   const [selectedTarget, setSelectedTarget] = useState<RankingRow | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState<string>("");
   const tripIdRef = useRef<string | null>(null);
   const playerCountryName = String(
     countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || "",
@@ -175,24 +175,10 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, onActi
   };
 
   return (
-    <div className="w-full h-full min-h-0 flex flex-col gap-3">
-      {/* Search Input Bar */}
-      <div className="flex items-center justify-end shrink-0 pt-3">
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-root-accent/60" />
-          <input
-            type="text"
-            placeholder="Cari negara target..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#051111] border border-root-accent/30 rounded-lg pl-8 pr-3 py-1.5 text-xs text-root-text placeholder-root-subtle focus:outline-none focus:border-root-accent transition-colors"
-          />
-        </div>
-      </div>
-
-      <div className="flex-1 min-h-0 overflow-hidden border border-root-accent/20 rounded-xl bg-root-canvas shadow-sm">
-        <div className="h-full min-h-0 overflow-auto">
-          <table className="w-full text-xs">
+    <div className="flex h-full min-h-0 w-full flex-col">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-root-accent/20 bg-root-canvas shadow-sm">
+        <div className="intelijen-table-viewport min-h-0 flex-1 overflow-auto">
+          <table className="intelijen-table w-full text-xs md:text-[10px] lg:text-[11px] 2xl:text-xs">
             <thead className="bg-root-canvas border-b border-root-accent/20 sticky top-0 z-10 text-[9px] sm:text-[10px] lg:text-xs whitespace-nowrap">
               <tr>
                 <th className="px-2 py-1.5 text-left font-black text-root-accent uppercase tracking-normal sm:tracking-wider w-10 bg-root-canvas">Rank</th>
@@ -228,9 +214,9 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, onActi
                         : 'hover:bg-root-accent/5'
                     }`}
                   >
-                    <td className={`px-3 py-2.5 font-black ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>{index + 1}</td>
+                    <td className={`px-3 py-2.5 md:px-2 md:py-1 lg:px-2.5 lg:py-1.5 2xl:px-3 2xl:py-2 font-black ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>{index + 1}</td>
                     
-                    <td className={`px-3 py-2.5 font-bold ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>
+                    <td className={`px-3 py-2.5 md:px-2 md:py-1 lg:px-2.5 lg:py-1.5 2xl:px-3 2xl:py-2 font-bold ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>
                       <div className="flex items-center gap-2 min-h-[20px]">
                         {row.iso && row.iso.length === 2 ? (
                           <img
@@ -246,11 +232,11 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, onActi
                       </div>
                     </td>
 
-                    <td className="px-3 py-2.5 text-root-text">{formatNumber(row.darat)}</td>
-                    <td className="px-3 py-2.5 text-root-text">{formatNumber(row.laut)}</td>
-                    <td className="px-3 py-2.5 text-root-text">{formatNumber(row.udara)}</td>
-                    <td className={`px-3 py-2.5 font-black ${isUserCountry ? 'text-root-accent' : 'text-rose-400'}`}>{formatNumber(row.totalPower)}</td>
-                    <td className="px-3 py-2.5 text-center">
+                    <td className="px-3 py-2.5 text-root-text md:px-2 md:py-1 lg:px-2.5 lg:py-1.5 2xl:px-3 2xl:py-2">{formatNumber(row.darat)}</td>
+                    <td className="px-3 py-2.5 text-root-text md:px-2 md:py-1 lg:px-2.5 lg:py-1.5 2xl:px-3 2xl:py-2">{formatNumber(row.laut)}</td>
+                    <td className="px-3 py-2.5 text-root-text md:px-2 md:py-1 lg:px-2.5 lg:py-1.5 2xl:px-3 2xl:py-2">{formatNumber(row.udara)}</td>
+                    <td className={`px-3 py-2.5 font-black md:px-2 md:py-1 lg:px-2.5 lg:py-1.5 2xl:px-3 2xl:py-2 ${isUserCountry ? 'text-root-accent' : 'text-rose-400'}`}>{formatNumber(row.totalPower)}</td>
+                    <td className="px-3 py-2.5 text-center md:px-2 md:py-1 lg:px-2.5 lg:py-1.5 2xl:px-3 2xl:py-2">
                       <button
                         type="button"
                         disabled={isUserCountry}
