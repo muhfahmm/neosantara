@@ -5,17 +5,14 @@ import NotebookModalWrapper from "./NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 
-interface MenuInfoModalBaseProps {
+interface MenuInfoModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
+  description?: string;
+  children?: ReactNode;
   fillContent?: boolean;
 }
-
-type MenuInfoModalProps = MenuInfoModalBaseProps & (
-  | { description: string; children?: never }
-  | { description?: never; children: ReactNode }
-);
 
 export default function MenuInfoModal({
   isOpen,
@@ -45,17 +42,14 @@ export default function MenuInfoModal({
           titleId="menu-info-modal-title"
           onClose={onClose}
         />
-        {children !== undefined ? (
-          <div className={`root-info-modal-content min-h-0 flex-1 overflow-y-auto bg-root-surface p-4 sm:p-5 ${fillContent ? "flex" : ""}`}>
-            {children}
-          </div>
-        ) : (
-          <div className="root-info-modal-content bg-root-surface p-4 sm:p-5">
+        <div className={`root-info-modal-content min-h-0 overflow-y-auto bg-root-surface p-4 sm:p-5 ${fillContent ? "flex flex-1" : ""}`}>
+          {description && (
             <p className={`${rootModalTypography.body} ${rootModalTypography.muted} break-words`}>
               {description}
             </p>
-          </div>
-        )}
+          )}
+          {children}
+        </div>
       </div>
     </NotebookModalWrapper>
   );

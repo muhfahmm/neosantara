@@ -129,7 +129,13 @@ export default function HunianPermukimanModal({
   initialTab,
 }: ModalProps) {
   const [activeTab, setActiveTab] = useState(initialTab || "rumah_subsidi");
-  const [selectedItemInfo, setSelectedItemInfo] = useState<{ title: string; description: string } | null>(null);
+  const [selectedItemInfo, setSelectedItemInfo] = useState<{
+    title: string;
+    description: string;
+    baseCapacity: number;
+    effectiveCapacity: number;
+    bonusPercent: number;
+  } | null>(null);
 
   useEffect(() => {
     if (initialTab) {
@@ -418,10 +424,18 @@ export default function HunianPermukimanModal({
             <div className="building-modal-header-actions flex shrink-0 items-center gap-2">
               <button
                 type="button"
-                onClick={() => activeItem && setSelectedItemInfo({
-                  title: `Informasi ${HOUSING_INFO_TITLES[activeItem.key] || activeItem.label}`,
-                  description: activeItem.detailDesc,
-                })}
+                onClick={() => {
+                  if (!activeItem) return;
+                  const activeMeta = findMeta(activeItem.key);
+                  const baseCapacity = Number(activeMeta?.kapasitas) || DEFAULT_CAPACITIES[activeItem.key] || 0;
+                  setSelectedItemInfo({
+                    title: `Informasi ${HOUSING_INFO_TITLES[activeItem.key] || activeItem.label}`,
+                    description: activeItem.detailDesc,
+                    baseCapacity,
+                    effectiveCapacity: applyTotalHousingCapacityBonus(baseCapacity, countryDetail),
+                    bonusPercent: housingBonusPercent,
+                  });
+                }}
                 aria-label={`Informasi ${activeItem?.label ?? "hunian aktif"}`}
                 title={`Informasi ${activeItem?.label ?? "hunian aktif"}`}
                 className="root-modal-info-button building-modal-info-button flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent"
@@ -451,45 +465,6 @@ export default function HunianPermukimanModal({
                       <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-4">
                         <div className="flex-1 min-w-[180px]">
                           <h3 className="text-base sm:text-lg lg:text-xl font-black text-root-accent uppercase tracking-wider">{activeItem.label}</h3>
-                        </div>
-
-                        {/* Card Rasio Kapasitas Unit Hunian */}
-                        <div className="flex items-center gap-2 px-3 py-1.5 sm:py-2 rounded-xl bg-root-canvas border border-root-accent/30 shrink-0 shadow-inner">
-                          <div className="p-1.5 bg-root-surface rounded-lg border border-root-accent/20">
-                            <Users className="w-3.5 h-3.5 text-root-accent" />
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-1.5">
-                              <p className="text-[9px] font-black uppercase text-root-subtle tracking-wider">Kapasitas Standar AI</p>
-                              {housingBonusPercent > 0 && (
-                                <span className="text-[8px] font-black px-1.5 py-0.2 rounded bg-root-accent/20 text-root-accent border border-root-accent/40">
-                                  +{housingBonusPercent}% Bonus
-                                </span>
-                              )}
-                            </div>
-                            <div className="text-[10px] sm:text-xs font-black flex items-center gap-1.5 mt-0.5">
-                              <span>1 Unit :</span>
-                              {(() => {
-                                const activeMeta = findMeta(activeItem.key);
-                                const baseCap = Number(activeMeta?.kapasitas) || DEFAULT_CAPACITIES[activeItem.key] || 0;
-                                const effectiveCap = applyTotalHousingCapacityBonus(baseCap, countryDetail);
-                                const hasBonus = housingBonusPercent > 0 && effectiveCap !== baseCap;
-
-                                return (
-                                  <span className="flex items-center gap-1.5">
-                                    {hasBonus && (
-                                      <span className="line-through text-rose-400 font-bold opacity-80">
-                                        {baseCap.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
-                                      </span>
-                                    )}
-                                    <span className="text-root-accent font-black">
-                                      {effectiveCap.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Jiwa
-                                    </span>
-                                  </span>
-                                );
-                              })()}
-                            </div>
-                          </div>
                         </div>
 
                         <button
@@ -724,8 +699,35 @@ export default function HunianPermukimanModal({
         isOpen={selectedItemInfo !== null}
         onClose={() => setSelectedItemInfo(null)}
         title={selectedItemInfo?.title ?? ""}
-        description={selectedItemInfo?.description ?? ""}
-      />
+        description={selectedItemInfo?.description}
+      >
+        {selectedItemInfo && (
+          <div className="mt-3 flex items-center gap-2 rounded-xl border border-root-accent/30 bg-root-canvas px-3 py-2">
+            <Users aria-hidden="true" className="h-4 w-4 shrink-0 text-root-accent" />
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Kapasitas Standar AI</p>
+                {selectedItemInfo.bonusPercent > 0 && (
+                  <span className="rounded border border-root-accent/40 bg-root-accent/20 px-1.5 py-0.5 text-[8px] font-black text-root-accent">
+                    +{selectedItemInfo.bonusPercent}% Bonus
+                  </span>
+                )}
+              </div>
+              <p className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs font-black">
+                <span>1 Unit:</span>
+                {selectedItemInfo.effectiveCapacity !== selectedItemInfo.baseCapacity && (
+                  <span className="font-bold text-rose-400 line-through">
+                    {selectedItemInfo.baseCapacity.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
+                  </span>
+                )}
+                <span className="text-root-accent">
+                  {selectedItemInfo.effectiveCapacity.toLocaleString("id-ID", { maximumFractionDigits: 2 })} Jiwa
+                </span>
+              </p>
+            </div>
+          </div>
+        )}
+      </MenuInfoModal>
 
       {/* TOAST */}
       {toast && <div className="fixed bottom-6 right-6 z-[80] bg-root-accent text-root-canvas font-black px-4 py-2 rounded-lg shadow-lg border border-root-accent">{toast}</div>}

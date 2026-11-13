@@ -104,7 +104,7 @@ export default function TempatUmumModal({
 }: ModalProps) {
   // 🔥 FIX 3: Pastikan nama state adalah activeTabId dan setActiveTabId
   const [activeTabId, setActiveTabId] = useState<string>(initialTab);
-  const [selectedGroupInfo, setSelectedGroupInfo] = useState<{ title: string; description: string } | null>(null);
+  const [selectedGroupInfo, setSelectedGroupInfo] = useState<{ title: string; description: string; capacity: string } | null>(null);
 
   useEffect(() => {
     if (isOpen && initialTab) {
@@ -449,6 +449,13 @@ export default function TempatUmumModal({
                 onClick={() => activeGroup && setSelectedGroupInfo({
                   title: `Informasi ${activeGroup.label}`,
                   description: activeGroup.description,
+                  capacity: `${
+                    activeGroup.id === "infrastruktur" ? "20.000" :
+                    activeGroup.id === "pendidikan" ? "10.000" :
+                    activeGroup.id === "kesehatan" ? "25.000" :
+                    activeGroup.id === "penegakan_hukum" ? "7.000" :
+                    activeGroup.id === "olahraga_hiburan" ? "12.500" : "50.000"
+                  } Jiwa`,
                 })}
                 aria-label={`Informasi ${activeGroup?.label ?? "kategori aktif"}`}
                 title={`Informasi ${activeGroup?.label ?? "kategori aktif"}`}
@@ -489,25 +496,6 @@ export default function TempatUmumModal({
                           {activeGroup.label}
                         </h3>
                         <p className="text-[10px] sm:text-xs text-root-subtle mt-0.5">{activeGroup.description}</p>
-                      </div>
-
-                      {/* Card Rasio Kapasitas Bangunan */}
-                      <div className="flex items-center gap-2 px-3 py-1.5 sm:py-2 rounded-xl bg-root-canvas border border-root-accent/30 shrink-0 shadow-inner">
-                        <div className="p-1.5 bg-root-surface rounded-lg border border-root-accent/20">
-                          <Users className="w-3.5 h-3.5 text-root-accent" />
-                        </div>
-                        <div>
-                          <p className="text-[9px] font-black uppercase text-root-subtle tracking-wider">Kapasitas Standar AI</p>
-                          <p className="text-[10px] sm:text-xs font-black text-root-accent">
-                            1 Bangunan : {
-                              activeGroup.id === 'infrastruktur' ? '20.000 Jiwa' :
-                              activeGroup.id === 'pendidikan' ? '10.000 Jiwa' :
-                              activeGroup.id === 'kesehatan' ? '25.000 Jiwa' :
-                              activeGroup.id === 'penegakan_hukum' ? '7.000 Jiwa' :
-                              activeGroup.id === 'olahraga_hiburan' ? '12.500 Jiwa' : '50.000 Jiwa'
-                            }
-                          </p>
-                        </div>
                       </div>
 
                       <button
@@ -687,8 +675,18 @@ export default function TempatUmumModal({
         isOpen={selectedGroupInfo !== null}
         onClose={() => setSelectedGroupInfo(null)}
         title={selectedGroupInfo?.title ?? ""}
-        description={selectedGroupInfo?.description ?? ""}
-      />
+        description={selectedGroupInfo?.description}
+      >
+        {selectedGroupInfo && (
+          <div className="mt-3 flex items-center gap-2 rounded-xl border border-root-accent/30 bg-root-canvas px-3 py-2">
+            <Users aria-hidden="true" className="h-4 w-4 shrink-0 text-root-accent" />
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Kapasitas Standar AI</p>
+              <p className="text-xs font-black text-root-accent">1 Bangunan: {selectedGroupInfo.capacity}</p>
+            </div>
+          </div>
+        )}
+      </MenuInfoModal>
 
       {toast && <div className="fixed bottom-6 right-6 z-[80] bg-root-accent text-root-canvas font-black px-4 py-2 rounded-lg shadow-lg border border-root-accent">{toast}</div>}
 
