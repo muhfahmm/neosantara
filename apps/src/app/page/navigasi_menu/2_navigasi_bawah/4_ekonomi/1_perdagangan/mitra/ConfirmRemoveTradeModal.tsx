@@ -25,12 +25,12 @@ export default function ConfirmRemoveTradeModal({ isOpen, partnerName, onClose, 
         aria-labelledby="remove-trade-title"
         className="overflow-hidden"
       >
-        <header className="border-b border-rose-500/20 bg-root-canvas px-5 py-4">
+        <header className="border-b border-rose-500/20 bg-root-canvas px-3 py-2 sm:px-5 sm:py-2.5">
           <h2 id="remove-trade-title" className="text-sm font-black uppercase tracking-wide text-rose-400">
             Putus Hubungan Dagang
           </h2>
         </header>
-        <div className="space-y-5 p-5">
+        <div className="space-y-5 p-4 sm:p-5">
           <p className="text-sm text-root-text">
             Apakah Anda yakin ingin memutus hubungan dagang dengan{" "}
             <strong className="text-rose-400">{partnerName}</strong>? Anda dapat menjalin kembali melalui menu Mitra.

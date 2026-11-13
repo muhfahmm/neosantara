@@ -31,7 +31,7 @@ export default function ArmsTradeBudgetModal({
         aria-labelledby="arms-trade-budget-title"
         className="overflow-hidden"
       >
-        <header className="flex items-center justify-between border-b border-amber-500/20 bg-root-canvas px-5 py-4">
+        <header className="flex items-center justify-between border-b border-amber-500/20 bg-root-canvas px-3 py-2 sm:px-5 sm:py-2.5">
           <div className="flex items-center gap-3 text-amber-300">
             <AlertTriangle className="h-5 w-5 shrink-0" />
             <h2 id="arms-trade-budget-title" className="text-sm font-black uppercase tracking-wide">
@@ -47,7 +47,7 @@ export default function ArmsTradeBudgetModal({
             <X className="h-4 w-4" />
           </SharedModalCloseButton>
         </header>
-        <div className="space-y-3 p-5 text-sm">
+        <div className="space-y-3 p-4 text-sm sm:p-5">
           <p className="text-[#A7C4C4]">
             Mitra belum memiliki anggaran yang cukup untuk membeli alutsista ini. Transaksi tidak dilakukan.
           </p>

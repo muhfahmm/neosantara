@@ -177,7 +177,7 @@ export default function KorupsiMenu({
   return (
     <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
-        <header className="relative z-10 flex shrink-0 items-center justify-between border-b border-root-accent/30 bg-root-canvas px-4 py-3 sm:px-6">
+        <header className="relative z-10 flex shrink-0 items-center justify-between border-b border-root-accent/30 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
           <div className="flex items-center gap-3">
             <div className="rounded-lg border border-root-accent/30 bg-root-accent/10 p-2 text-root-accent">
               <Landmark className="h-5 w-5" />

@@ -54,7 +54,7 @@ export default function ModalAbstain({
       <div className="modal-responsive-shell bg-[#141A24] border border-slate-400/40 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl shadow-slate-950/50">
         
         {/* Header Modal Abstain */}
-        <div className="px-4 sm:px-6 py-3 border-b border-slate-500/30 flex items-center justify-between bg-[#0F141C] relative z-10 shrink-0">
+        <div className="px-4 py-2.5 sm:px-6 sm:py-3 border-b border-slate-500/30 flex items-center justify-between bg-[#0F141C] relative z-10 shrink-0">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-slate-500/10 rounded-xl border border-slate-500/30">
               <MinusCircle className="h-5 w-5 text-slate-300" />

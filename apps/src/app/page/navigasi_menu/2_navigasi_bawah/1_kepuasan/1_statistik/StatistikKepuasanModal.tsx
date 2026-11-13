@@ -1,13 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import Image from "next/image";
 import { Smile, TrendingUp, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
-import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
-import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import {
   calculateKepuasan,
@@ -125,23 +123,46 @@ export default function StatistikKepuasanModal({
   return (
     <>
     {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
-      <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-root-accent/20 bg-root-canvas">
+      <div className={"root-modal-util-52b6b298fe"}>
         {/* Header */}
-        <div className="satisfaction-modal-header relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
-          <div className="satisfaction-modal-header-main flex min-w-0 flex-1 flex-nowrap items-center gap-2 overflow-x-auto whitespace-nowrap no-scrollbar sm:gap-4">
-            <div className="flex shrink-0 items-center gap-2 whitespace-nowrap">
-              <div className="shrink-0 rounded-lg border border-root-accent/30 bg-root-surface p-1 sm:p-1.5">
-                <Smile className="h-4 w-4 text-root-text sm:h-5 sm:w-5" />
+        <div className={"satisfaction-modal-header root-modal-util-4450f1d9ee"}>
+          <div className={"satisfaction-modal-header-main root-modal-util-935108d13c no-scrollbar"}>
+            <div className={"root-modal-util-c7c918256f"}>
+              <div className={"root-modal-util-acd42b9a36"}>
+                <Smile className={"root-modal-util-ea2c28151c"} />
               </div>
               <div>
-                <h2 className={`${rootModalTypography.title} leading-none`}>
+                <h2 className={`root-modal-util-6b4648c53a root-modal-util-c2385a463d`}>
                   Kepuasan Rakyat
                 </h2>
               </div>
             </div>
 
+          </div>
+
+          <div className={"root-modal-util-6cfc7e6ab3"}>
+            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi statistik kepuasan rakyat" aria-label="Informasi statistik kepuasan rakyat" className={"root-modal-info-button root-modal-util-1697100c43"}>
+              <Info aria-hidden="true" />
+            </button>
+            <RootModalCloseButton onClick={onClose} />
+          </div>
+        </div>
+
+        <div className={"satisfaction-modal-summary root-modal-util-6614545ce3"}>
+          <div className={"root-modal-util-6cfc7e6ab3"}>
+            <Smile className={"root-modal-util-00f4ec4a9a"} />
+            <span className={"root-modal-util-14d6efe9ef root-modal-util-614c0c7dff"}>
+              Kepuasan Sipil:
+            </span>
+            <span className={"root-modal-util-04f32edb66 root-modal-util-4457a4d3a8"}>
+              {Math.round(generalSatisfaction)}%
+            </span>
+          </div>
+
+          <div className={"satisfaction-modal-summary-controls"}>
             <RootModalTabs
-              className="satisfaction-modal-tabs"
+              className={"satisfaction-modal-tabs"}
+              compact
               items={[
                 { label: "Statistik", isActive: true },
                 {
@@ -153,63 +174,23 @@ export default function StatistikKepuasanModal({
               ]}
             />
           </div>
-
-          <div className="flex items-center gap-2">
-            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi statistik kepuasan rakyat" aria-label="Informasi statistik kepuasan rakyat" className="root-modal-info-button flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas text-root-accent transition-all">
-              <Info aria-hidden="true" />
-            </button>
-            <RootModalCloseButton onClick={onClose} />
-          </div>
         </div>
 
         {/* Content Area: HANYA MENGGANTI custom-scrollbar DENGAN TAILWIND SCROLLBAR */}
-        <div className="relative z-10 flex-1 overflow-y-auto bg-root-canvas/80 p-3 sm:p-5
-          [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 
-          [&::-webkit-scrollbar-track]:bg-root-canvas
-          [&::-webkit-scrollbar-track]:rounded-full 
-          [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20
-          [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A]
-          [&::-webkit-scrollbar-thumb]:rounded-full 
-          [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas
-          hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent
-          [&::-webkit-scrollbar-button]:hidden
-        ">
-          <div className="animate-in fade-in space-y-4 duration-300 sm:space-y-5">
-            {/* Kartu skor umum */}
-            <div className={`root-satisfaction-index flex flex-row items-center justify-between gap-2.5 ${rootBorderRadius.card} border border-root-accent/30 bg-root-surface px-2.5 py-1.5 lg:gap-3 lg:py-2 2xl:py-2.5`}>
-              <div className="flex items-center gap-2.5 lg:gap-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-root-accent/40 bg-root-canvas lg:h-10 lg:w-10 2xl:h-12 2xl:w-12">
-                  <Smile className="h-4 w-4 text-root-text lg:h-5 lg:w-5 2xl:h-6 2xl:w-6" />
-                </div>
-                <div>
-                  <h3 className="root-satisfaction-index-title mb-0.5 font-black uppercase leading-none tracking-wide text-root-text lg:mb-1">
-                    Persetujuan Umum Rakyat
-                  </h3>
-                </div>
-              </div>
-
-              <div className="min-w-[75px] shrink-0 rounded-lg border border-root-accent/30 bg-root-canvas px-2.5 py-0.5 text-right lg:min-w-[95px] lg:px-3.5 lg:py-1 2xl:min-w-[110px] 2xl:px-4 2xl:py-1.5">
-                <p className="root-satisfaction-index-value font-black tracking-tight text-root-text">
-                  {Math.round(generalSatisfaction)}%
-                </p>
-                <p className="root-satisfaction-index-description mt-0.5 flex items-center justify-end gap-0.5 font-semibold text-root-muted">
-                  <TrendingUp className="h-2 w-2 lg:h-2.5 lg:w-2.5" /> Stabil
-                </p>
-              </div>
-            </div>
-
+        <div className={"satisfaction-modal-content root-modal-util-9c12d57a09"}>
+          <div className={"satisfaction-modal-content-body root-modal-enter root-modal-fade-in root-modal-util-90f9f3a7db"}>
             <section>
-              <div className="mb-3 flex items-center gap-2.5 px-1 lg:mb-4 lg:gap-3 2xl:mb-5">
-                <div className="rounded-lg border border-root-accent/30 bg-root-surface p-1 lg:p-1.5">
-                  <TrendingUp className="h-3.5 w-3.5 text-root-text lg:h-4 lg:w-4" />
+              <div className={"root-modal-util-8230f2ccb3"}>
+                <div className={"root-modal-util-7ccf491d2f"}>
+                  <TrendingUp className={"root-modal-util-79b40bc7fa"} />
                 </div>
-                <h3 className={`${rootModalTypography.sectionTitle} italic lg:text-base 2xl:text-lg`}>
+                <h3 className={`root-modal-util-9361ef65fc root-modal-util-cdb3e20c19 `}>
                   Sektor Utama
                 </h3>
-                <div className="ml-2 h-[1px] flex-1 bg-gradient-to-r from-root-accent/30 to-transparent lg:ml-4"></div>
+                <div className={"root-modal-util-d43b1ea5a7"}></div>
               </div>
 
-              <div className="satisfaction-sector-list flex flex-wrap gap-2 lg:grid lg:grid-cols-2 lg:gap-3 2xl:gap-4">
+              <div className={"satisfaction-sector-list root-modal-util-11abdabb16"}>
                 {sectors.map((sector) => {
                   return (
                     <button
@@ -217,30 +198,30 @@ export default function StatistikKepuasanModal({
                       onClick={() => {
                         setActiveMenu?.(sector.menuId);
                       }}
-                      className={`root-satisfaction-index satisfaction-sector-card group relative flex cursor-pointer items-center gap-2 overflow-hidden ${rootBorderRadius.card} border border-root-accent/20 bg-root-surface p-1.5 text-left transition-all hover:border-root-accent hover:bg-root-accent/10 lg:gap-3.5 lg:p-3.5 2xl:gap-4 2xl:p-5`}
+                      className={`root-satisfaction-index satisfaction-sector-card group root-modal-util-9cb3716085 root-modal-util-5f22e64f22 root-modal-util-58e2ece8b7 `}
                     >
-                      <div className="satisfaction-sector-icon shrink-0">
+                      <div className={"satisfaction-sector-icon root-modal-util-012fbd121f"}>
                         <Image
                           src={sector.image}
                           alt=""
                           width={56}
                           height={56}
-                          className="h-8 w-8 object-contain lg:h-12 lg:w-12 2xl:h-14 2xl:w-14"
+                          className={"root-modal-util-da8e04fbee"}
                         />
                       </div>
-                      <div className="min-w-0 flex-1 space-y-0.5 lg:space-y-1.5">
-                        <div className="flex items-center justify-between font-semibold uppercase text-root-text">
-                          <span className="root-satisfaction-index-title whitespace-normal pr-1 leading-tight">
+                      <div className={"root-modal-util-7d3b745d3f"}>
+                        <div className={"root-modal-util-a09a9a725b"}>
+                          <span className={"root-satisfaction-index-title root-modal-util-56db152630"}>
                             {sector.name}
                           </span>
-                          <span className="root-satisfaction-index-value shrink-0 font-black text-root-text">
+                          <span className={"root-satisfaction-index-value root-modal-util-4711eb3412"}>
                             {sector.score}%
                           </span>
                         </div>
-                        <div className="satisfaction-sector-progress h-1 w-full overflow-hidden rounded-full border border-root-accent/20 bg-root-canvas lg:h-2 2xl:h-2.5">
+                        <div className={"satisfaction-sector-progress root-modal-util-f51324f898"}>
                           <div
-                            className="h-full rounded-full bg-root-accent"
-                            style={{ width: `${sector.score}%` }}
+                            className={"root-modal-progress-fill root-modal-util-42e4dc2b79"}
+                            style={{ "--root-modal-progress-value": `${sector.score}%` } as CSSProperties}
                           />
                         </div>
                       </div>

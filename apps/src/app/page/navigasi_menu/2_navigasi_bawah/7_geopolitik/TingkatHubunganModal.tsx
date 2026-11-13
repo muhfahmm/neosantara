@@ -286,7 +286,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
       {isLegendOpen && (
         <NotebookModalWrapper onClose={() => setIsLegendOpen(false)} compact zIndexClass="z-[70]">
           <div role="dialog" aria-modal="true" aria-labelledby="relation-legend-title" className="flex max-h-[calc(100dvh-160px)] min-w-0 flex-col overflow-hidden">
-            <div className="px-4 sm:px-5 py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas gap-2 shrink-0">
+            <div className="flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-3 py-2 sm:px-5 sm:py-2.5">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 bg-root-surface rounded-lg border border-root-accent/30">
                   <Info className="h-4 w-4 text-root-accent" />
@@ -298,7 +298,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
               <RootModalCloseButton onClick={() => setIsLegendOpen(false)} />
             </div>
 
-            <div className="min-h-0 overflow-y-auto bg-root-surface p-5 space-y-3">
+            <div className="min-h-0 space-y-3 overflow-y-auto bg-root-surface p-4 sm:p-5">
               <div className="flex items-center justify-between border-b border-root-accent/15 pb-2">
                 <span className="text-xs font-bold text-root-text">0 - 25</span>
                 <div className="flex items-center gap-3">

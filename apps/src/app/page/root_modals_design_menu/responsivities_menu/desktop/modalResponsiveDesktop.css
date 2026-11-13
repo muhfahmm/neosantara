@@ -1,0 +1,9 @@
+@media (min-width: 1600px) {
+  .root-info-modal-header[data-size="compact"] {
+    padding: 10px 20px;
+  }
+
+  .root-info-modal-header[data-size="standard"] {
+    padding: 12px 24px;
+  }
+}

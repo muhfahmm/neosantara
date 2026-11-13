@@ -227,7 +227,7 @@ export default function UjicobaIcbmModal({
       <div className="flex flex-col relative font-sans">
         
         {/* Header Modal */}
-        <div className="px-6 py-4 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas">
+        <div className="flex items-center justify-between border-b border-root-accent/20 bg-root-canvas px-3 py-2 sm:px-5 sm:py-2.5">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400">
               <Flame className="h-5 w-5 animate-pulse" />

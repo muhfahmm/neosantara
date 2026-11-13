@@ -2531,6 +2531,31 @@
 }
 
 @media (max-width: 640px) {
+  .root-info-modal-header {
+    gap: 6px;
+    padding: 8px 12px;
+  }
+
+  .root-info-modal-header[data-size="standard"] {
+    padding: 10px 16px;
+  }
+
+  .root-info-modal-header-main,
+  .root-info-modal-actions {
+    gap: 6px;
+  }
+
+  .root-info-modal-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+  }
+
+  .root-info-modal-icon > svg {
+    width: 13px !important;
+    height: 13px !important;
+  }
+
   .building-card-grid-root {
     gap: 6px;
   }
@@ -3034,26 +3059,171 @@
   font-size: 8px !important;
 }
 
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-header {
+  gap: 8px !important;
+  padding: 8px 10px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-title {
+  font-size: var(--modal-font-title) !important;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-header .root-modal-close-button {
+  min-height: 36px;
+  padding: 6px 8px !important;
+  font-size: max(10px, var(--modal-font-label)) !important;
+}
+
 .notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-content {
-  padding: 8px !important;
+  padding: 10px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-content > :not(:first-child) {
+  margin-top: 8px !important;
 }
 
 .notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-cost-card {
-  padding: 8px !important;
+  padding: 10px !important;
+  font-size: var(--modal-font-body);
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-cost-card > :not(:first-child) {
+  margin-top: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-cost-row,
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-details > .flex.justify-between {
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 6px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-details > :not(:first-child) {
+  margin-top: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-cost-row > :first-child,
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-details > .flex.justify-between > :first-child {
+  min-width: 0;
+  flex: 1 1 calc(52% - 6px);
+  font-size: max(10px, var(--modal-font-label)) !important;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-cost-row > :last-child,
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-details > .flex.justify-between > :last-child {
+  min-width: 0;
+  max-width: 48%;
+  flex: 0 1 48%;
+  font-size: max(11px, var(--modal-font-value)) !important;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-details > .flex.flex-wrap.justify-end {
+  justify-content: flex-start !important;
+  gap: 6px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-details [class*='text-[9px]'] {
+  font-size: max(10px, var(--modal-font-label)) !important;
+  line-height: 1.25;
 }
 
 .notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-quantity-card {
+  padding: 10px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-quantity-card label {
+  gap: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-quantity-card label > span {
+  font-size: var(--modal-font-section-title) !important;
+  line-height: 1.25;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-quantity-controls {
+  flex-wrap: wrap;
+  gap: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-quantity-input {
+  min-width: 72px;
+  height: 40px !important;
+  flex: 1 1 72px;
+  padding: 8px 10px !important;
+  font-size: max(12px, var(--modal-font-value)) !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-quantity-controls > button {
+  min-height: 40px;
+  max-width: 100%;
+  flex: 0 1 auto;
+  padding: 8px 10px !important;
+  font-size: max(10px, var(--modal-font-label)) !important;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-material-section > .flex.items-center.justify-between {
+  flex-wrap: wrap;
+  gap: 6px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-material-toggle {
+  min-height: 36px;
+  padding: 6px 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-material-toggle span {
+  font-size: max(10px, var(--modal-font-label)) !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-material-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 112px), 1fr)) !important;
+  gap: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-material-card {
+  min-width: 0;
+  min-height: 48px;
   padding: 8px !important;
+  overflow-wrap: anywhere;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-material-label {
+  font-size: max(10px, var(--modal-font-label)) !important;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-material-required {
+  font-size: max(10px, var(--modal-font-label)) !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-material-stock {
+  font-size: max(11px, var(--modal-font-value)) !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-no-material {
+  font-size: var(--modal-font-body) !important;
 }
 
 .notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-footer {
-  gap: 6px !important;
-  padding: 6px !important;
+  gap: 8px !important;
+  padding: 8px !important;
 }
 
 .notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-footer > button {
-  min-height: 32px;
-  padding: 7px 8px !important;
-  font-size: 9px !important;
-  line-height: 1.15;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 6px !important;
+  font-size: max(10px, var(--modal-font-label)) !important;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
 }

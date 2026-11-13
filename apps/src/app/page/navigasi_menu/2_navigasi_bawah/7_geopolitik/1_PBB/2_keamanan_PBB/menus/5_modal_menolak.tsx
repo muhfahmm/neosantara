@@ -54,7 +54,7 @@ export default function ModalMenolak({
       <div className="modal-responsive-shell bg-[#1A0F0F] border border-rose-500/40 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl shadow-rose-950/50">
         
         {/* Header Modal Menolak */}
-        <div className="px-4 sm:px-6 py-3 border-b border-rose-500/30 flex items-center justify-between bg-[#140A0A] relative z-10 shrink-0">
+        <div className="px-4 py-2.5 sm:px-6 sm:py-3 border-b border-rose-500/30 flex items-center justify-between bg-[#140A0A] relative z-10 shrink-0">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-rose-500/10 rounded-xl border border-rose-500/30">
               <ThumbsDown className="h-5 w-5 text-rose-400" />

@@ -2,7 +2,9 @@
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 
 interface AgamaGagalModalProps {
   isOpen: boolean;
@@ -28,31 +30,18 @@ export default function AgamaGagalModal({
   if (!isOpen || !mounted) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">
-      <div className="modal-responsive-shell bg-root-surface border border-rose-500/40 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        
-        {/* HEADER */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="p-1.5 bg-rose-500/10 rounded-lg border border-rose-500/30">
-              <AlertCircle className="h-5 w-5 text-rose-400" />
-            </div>
-            <h3 className="text-sm sm:text-base font-bold text-root-text tracking-wide uppercase">
-              Dana Tidak Cukup
-            </h3>
-          </div>
-          <SharedModalCloseButton
-            onClick={onClose}
-            className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-           appearance="custom">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </SharedModalCloseButton>
-        </div>
+    <NotebookModalWrapper compact onClose={onClose} zIndexClass="z-[200]">
+      <div className="flex h-full min-h-0 flex-col overflow-hidden">
+        <RootInfoModalHeader
+          title="Dana Tidak Cukup"
+          onClose={onClose}
+          size="standard"
+          icon={<AlertCircle aria-hidden="true" className="text-rose-400" />}
+        />
 
         {/* CONTENT */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 bg-root-surface relative z-10 custom-scrollbar flex flex-col items-center justify-center">
-          <div className="max-w-md w-full flex flex-col items-center bg-root-canvas border border-rose-500/30 p-8 rounded-2xl shadow-xl">
+        <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto bg-root-surface p-4 custom-scrollbar sm:p-6">
+          <div className="flex w-full max-w-md flex-col items-center rounded-2xl border border-rose-500/30 bg-root-canvas p-5 shadow-xl sm:p-8">
             <div className="w-16 h-16 rounded-full bg-rose-500/15 border border-rose-500/30 flex items-center justify-center mb-4">
               <AlertCircle className="w-8 h-8 text-rose-400" />
             </div>
@@ -87,7 +76,7 @@ export default function AgamaGagalModal({
           </div>
         </div>
       </div>
-    </div>,
+    </NotebookModalWrapper>,
     document.body
   );
 }

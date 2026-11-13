@@ -13,7 +13,7 @@ import {
 
 import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
-import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 import {
   calculateActualElectricityProduction,
@@ -23,8 +23,6 @@ import {
   logElectricityProductionCalculation,
 } from "./consumptionLogic";
 import { applyNpcCountrySimulationState } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
-import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
-import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 
 interface ModalProps {
@@ -216,9 +214,9 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
   const SortIndicator = ({ column }: { column: SortConfig['key'] }) => (
     sortConfig.key === column
       ? sortConfig.direction === 'asc'
-        ? <ChevronUp className="h-3 w-3 ml-1 inline text-root-accent" />
-        : <ChevronDown className="h-3 w-3 ml-1 inline text-root-accent" />
-      : <span className="text-[#8b7e66]/30 ml-1 text-xs">⇅</span>
+        ? <ChevronUp className={"root-modal-util-53f28dd949"} />
+        : <ChevronDown className={"root-modal-util-53f28dd949"} />
+      : <span className={"root-modal-util-b5b1d5164b"}>⇅</span>
   );
 
   // Simpan indeks ke countryDetail
@@ -237,21 +235,16 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
   return (
     <>
       {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
-        <div className="flex h-full min-w-0 flex-col overflow-hidden">
+        <div className={"root-modal-util-35cc3749b1"}>
           {/* HEADER */}
-          <div className="px-3 sm:px-5 py-2.5 sm:py-3 border-b border-root-accent/20 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-1.5 sm:gap-3 bg-root-canvas relative z-10 shrink-0">
-            <div className="flex min-w-0 items-center gap-1.5 sm:gap-3">
-              <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
-                <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-              </div>
-              <div className="min-w-0">
-                <h2 className={rootModalTypography.title}>Grid Nasional</h2>
-              </div>
-            </div>
-
-            <div className="min-w-0 flex justify-center">
+          <RootInfoModalHeader
+            title="Grid Nasional"
+            onClose={onClose}
+            size="standard"
+            icon={<Zap aria-hidden="true" className={"root-modal-util-08cc358851"} />}
+            centerContent={
               <RootModalTabs
-                className="satisfaction-modal-tabs !flex-nowrap gap-0.5 whitespace-nowrap p-0.5"
+                className={"satisfaction-modal-tabs root-modal-util-3f7356eee3"}
                 items={[
                   {
                     label: "Neraca User",
@@ -267,75 +260,63 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                   },
                 ]}
               />
-            </div>
-
-            <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-              <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi grid kelistrikan nasional" aria-label="Informasi grid kelistrikan nasional" className="root-modal-info-button flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas">
-                <Info className="h-3.5 w-3.5" />
+            }
+            actions={
+              <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi grid kelistrikan nasional" aria-label="Informasi grid kelistrikan nasional" className={"root-modal-info-button root-modal-util-be617bb95e"}>
+                <Info className={"root-modal-util-ce72f65c94"} />
               </button>
-              <RootModalCloseButton onClick={onClose} />
-            </div>
-          </div>
+            }
+          />
 
           {/* BODY (SCROLLBAR HIJAU DITERAPKAN DI SINI) */}
-          <div className="root-no-scrollbar-glow flex-1 min-h-0 overflow-y-auto p-2.5 sm:p-3 lg:p-4 2xl:p-6 bg-root-canvas/80 relative z-10
-            [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 
-            [&::-webkit-scrollbar-track]:bg-root-canvas
-            [&::-webkit-scrollbar-track]:rounded-full 
-            [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20
-            [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A]
-            [&::-webkit-scrollbar-thumb]:rounded-full 
-            [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas
-            hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent
-            [&::-webkit-scrollbar-button]:hidden
-          ">
+          <div className={"root-no-scrollbar-glow root-modal-util-e7871a31f6"}>
 
             {activeTab === "user" ? (
-              <div className="flex flex-col gap-3">
+              <div className={"root-modal-util-b392992219"}>
                 
                 {/* KOTAK 1: STATISTIK GRID (Memanjang ke kanan-kiri) */}
-                <div className={`w-full bg-root-canvas border border-root-accent/20 p-3 lg:p-4 ${rootBorderRadius.card}`}>
-                  <div className="flex items-center gap-2.5 mb-3 lg:mb-3.5">
-                    <div className="p-2 rounded-lg bg-root-accent/10 text-root-accent border border-root-accent/30">
-                      <BatteryCharging className="h-4 w-4 lg:h-5 lg:w-5" />
+                <div className={`root-modal-util-d5020ca04d root-modal-util-5f22e64f22`}>
+                  <div className={"root-modal-util-663523d1b1"}>
+                    <div className={"root-modal-util-63608157d8"}>
+                      <BatteryCharging className={"root-modal-util-dca7f530c4"} />
                     </div>
                     <div>
-                      <h3 className={rootModalTypography.sectionTitle}>Statistik Grid</h3>
+                      <h3 className={"root-modal-util-9361ef65fc"}>Statistik Grid</h3>
                     </div>
                     </div>
                   {/* Grid Card di dalamnya memanjang ke samping (3 kolom) */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
-                    <div className={`bg-emerald-950/40 border border-emerald-500/30 p-2.5 lg:p-3 ${rootBorderRadius.card}`}>
-                      <p className={rootModalTypography.label}>✓ Total Produksi Listrik</p>
-                      <p className="text-base lg:text-lg font-black text-emerald-400 mt-1.5">
+                  <div className={"root-modal-util-4d7d412dd7"}>
+                    <div className={`root-modal-util-aa624b5175 root-modal-util-5f22e64f22`}>
+                      <p className={"root-modal-util-14d6efe9ef"}>✓ Total Produksi Listrik</p>
+                      <p className={"root-modal-util-2db284c577"}>
                         {formatElectricityMW(totalCapacityMW)} MW
                       </p>
                     </div>
                     
                     <div
                       onClick={() => setIsDetailKonsumsiOpen(true)}
-                      className={`bg-rose-950/40 border border-rose-500/30 hover:border-rose-400 hover:scale-[1.01] p-2.5 lg:p-3 ${rootBorderRadius.card} transition-all cursor-pointer group`}
+                      className={`root-modal-util-3131d60355 root-modal-util-5f22e64f22 root-modal-util-1421381c23 group`}
                     >
-                      <div className="flex items-center justify-between">
-                        <p className={rootModalTypography.label}>✗ Konsumsi Terestimasi</p>
-                        <span className="text-[10px] text-rose-300 font-bold opacity-80 group-hover:opacity-100 transition-opacity">Detail →</span>
+                      <div className={"root-modal-util-d27e953630"}>
+                        <p className={"root-modal-util-14d6efe9ef"}>✗ Konsumsi Terestimasi</p>
+                        <span className={"root-modal-util-cd303386bb"}>Detail →</span>
                       </div>
-                      <p className="text-base lg:text-lg font-black text-rose-400 mt-1.5">
+                      <p className={"root-modal-util-7a65e083b3"}>
                         {formatElectricityMW(estimatedConsumptionMW)} MW
                       </p>
                     </div>
 
-                    <div className={`p-2.5 lg:p-3 ${rootBorderRadius.card} border ${balanceMW > 0 ? 'bg-emerald-950/40 border-emerald-500/30' :
-                        balanceMW < 0 ? 'bg-rose-950/40 border-rose-500/30' :
-                          'bg-slate-900/40 border-slate-500/30'
+                    <div className={`root-modal-util-024d155129 root-modal-util-5f22e64f22 root-modal-util-ca6bcd4b6f ${balanceMW > 0 ? "root-modal-util-cd2557c9de" :
+                        balanceMW < 0 ? "root-modal-util-dd75883325" :
+                          "root-modal-util-75a5b41106"
                       }`}>
-                      <p className={`text-[10px] font-black uppercase tracking-widest ${balanceMW > 0 ? 'text-emerald-400' :
-                          balanceMW < 0 ? 'text-rose-400' :
-                            'text-slate-400'
+                      <p className={`root-modal-util-67abd46500 ${balanceMW > 0 ? "root-modal-util-edbfd1c508" :
+                          balanceMW < 0 ? "root-modal-util-35f302741d" :
+                            "root-modal-util-8d44cef396"
                         }`}>Neraca Daya</p>
-                      <p className={`text-base lg:text-lg font-black mt-1.5 ${balanceMW > 0 ? 'text-emerald-400' :
-                          balanceMW < 0 ? 'text-rose-400' :
-                            'text-slate-400'
+                      <p className={`root-modal-util-b71689d5a3 ${balanceMW > 0 ? "root-modal-util-edbfd1c508" :
+                          balanceMW < 0 ? "root-modal-util-35f302741d" :
+                            "root-modal-util-8d44cef396"
                         }`}>
                         {balanceMW > 0 ? '+' : balanceMW < 0 ? '-' : ''}{formatElectricityMW(Math.abs(balanceMW))} MW
                       </p>
@@ -344,29 +325,29 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                 </div>
 
                 {/* KOTAK 2: RINGKASAN SUMBER DAYA (Di Bawah, Berbentuk Grid) */}
-                <div className={`w-full bg-root-canvas border border-root-accent/20 p-3 lg:p-4 ${rootBorderRadius.card}`}>
-                  <div className="flex items-center gap-2.5 mb-3 lg:mb-3.5">
-                    <div className="p-2 rounded-lg bg-root-accent/10 text-root-accent border border-root-accent/30">
-                      <MapPin className="h-4 w-4 lg:h-5 lg:w-5" />
+                <div className={`root-modal-util-d5020ca04d root-modal-util-5f22e64f22`}>
+                  <div className={"root-modal-util-663523d1b1"}>
+                    <div className={"root-modal-util-63608157d8"}>
+                      <MapPin className={"root-modal-util-dca7f530c4"} />
                     </div>
                     <div>
-                      <h3 className={rootModalTypography.sectionTitle}>Ringkasan Sumber Daya</h3>
+                      <h3 className={"root-modal-util-9361ef65fc"}>Ringkasan Sumber Daya</h3>
                     </div>
                   </div>
 
                   {/* Card Sumber Daya dibuat Grid (2 atau 3 kolom) */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2.5">
+                  <div className={"root-modal-util-8c2b246bdb"}>
                     {powerSources.length > 0 ? powerSources.map((source) => (
-                      <div key={source.key} className={`flex items-center justify-between gap-2 p-2.5 lg:p-3 bg-root-surface border border-root-accent/20 ${rootBorderRadius.card}`}>
-                        <div className="min-w-0">
-                          <p className="text-[10px] lg:text-xs font-bold uppercase tracking-wide text-root-text">{source.label}</p>
-                          <p className="text-[9px] lg:text-[10px] leading-snug text-root-muted">{source.desc}</p>
+                      <div key={source.key} className={`root-modal-util-cec1a1bbae root-modal-util-5f22e64f22`}>
+                        <div className={"root-modal-util-7e0b7cdf1a"}>
+                          <p className={"root-modal-util-6d83314579"}>{source.label}</p>
+                          <p className={"root-modal-util-aec36fe708"}>{source.desc}</p>
                         </div>
-                        <div className="shrink-0 text-right">
-                          <p className="text-xs lg:text-sm font-black text-root-accent">
+                        <div className={"root-modal-util-4a90ed8d74"}>
+                          <p className={"root-modal-util-8b089e3b8c"}>
                             {formatElectricityMW(source.actualProduction)} MW
                           </p>
-                          <p className="text-[9px] lg:text-[10px] text-root-subtle">
+                          <p className={"root-modal-util-d8fb0b4a8a"}>
                             {source.fuelShortage
                               ? "Bahan bakar kurang — tidak berproduksi"
                               : source.value > 0 ? `${source.value} unit` : 'Tidak tersedia'}
@@ -374,7 +355,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                         </div>
                       </div>
                     )) : (
-                      <div className={`col-span-full border border-root-accent/20 bg-root-surface p-3 ${rootBorderRadius.card} ${rootModalTypography.body}`}>
+                      <div className={`root-modal-util-a6e25069d7 root-modal-util-5f22e64f22 root-modal-util-8ff7188727`}>
                         Data pembangkit listrik tidak tersedia.
                       </div>
                     )}
@@ -382,81 +363,70 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                 </div>
 
                 {/* KOTAK 3: INDEKS KEPUASAN LISTRIK */}
-                <div className={`root-satisfaction-index w-full p-3 lg:p-4 border border-root-accent/30 bg-root-canvas ${rootBorderRadius.card}`}>
-                  <div className="flex justify-between items-center">
-                    <span className="root-satisfaction-index-title font-bold uppercase tracking-wider text-root-text">
+                <div className={`root-satisfaction-index root-modal-util-c624fd55b4 root-modal-util-5f22e64f22`}>
+                  <div className={"root-modal-util-56e6b92b69"}>
+                    <span className={"root-satisfaction-index-title root-modal-util-84cf691742"}>
                       Indeks Kepuasan Rakyat (Listrik)
                     </span>
-                    <span className="root-satisfaction-index-value font-black text-root-accent">
+                    <span className={"root-satisfaction-index-value root-modal-util-ca525b9094"}>
                       {electricitySatisfaction} / 100
                     </span>
                   </div>
-                  <div className="w-full h-2.5 bg-root-surface rounded-full mt-2 overflow-hidden border border-root-accent/20">
+                  <div className={"root-modal-util-b0f44f38ef"}>
                     <div
-                      className="h-full rounded-full bg-root-accent transition-all duration-200"
-                      style={{ width: `${electricitySatisfaction}%` }}
+                      className={"root-modal-progress-fill root-modal-util-0131747055"}
+                      style={{ "--root-modal-progress-value": `${electricitySatisfaction}%` } as React.CSSProperties}
                     />
                   </div>
                 </div>
               </div>
             ) : (
-              <div className={`w-full bg-root-canvas border border-root-accent/20 p-3 lg:p-4 ${rootBorderRadius.card}`}>
-                <div className="relative mb-3 w-full sm:max-w-xs">
-                  <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-root-subtle" />
+              <div className={`root-modal-util-d5020ca04d root-modal-util-5f22e64f22`}>
+                <div className={"root-modal-util-46b5b1836b"}>
+                  <Search className={"root-modal-util-91f313a187"} />
                   <input
                     type="text"
                     placeholder="Cari nama negara..."
                     value={searchQuery}
                     onChange={(event) => setSearchQuery(event.target.value)}
-                    className="w-full rounded-lg border border-root-accent/30 bg-root-surface py-2 pl-10 pr-3 text-xs font-semibold text-root-text placeholder-root-subtle transition-all focus:border-root-accent focus:outline-none sm:text-sm"
+                    className={"root-modal-util-7e81aff836"}
                   />
                 </div>
-                <div className={`root-no-scrollbar-glow max-h-[60vh] overflow-x-auto overflow-y-auto border border-root-accent/20 bg-root-surface ${rootBorderRadius.card}
-                  [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2
-                  [&::-webkit-scrollbar]:h-1.5 sm:[&::-webkit-scrollbar]:h-2
-                  [&::-webkit-scrollbar-track]:bg-root-surface
-                  [&::-webkit-scrollbar-track]:rounded-full
-                  [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/10
-                  [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A]
-                  [&::-webkit-scrollbar-thumb]:rounded-full
-                  [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-surface
-                  hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent
-                  [&::-webkit-scrollbar-button]:hidden
-                `}>
-                  <table className="w-full min-w-[560px] text-[10px] sm:text-xs">
-                    <thead className="sticky top-0 z-10 text-[9px] sm:text-xs">
-                      <tr className="border-b border-root-accent/20 bg-root-canvas">
-                        <th className="px-2.5 py-2 text-left font-black uppercase tracking-wider text-root-accent">No</th>
+                <div className={`root-no-scrollbar-glow root-modal-util-21ad3142af root-modal-util-5f22e64f22 root-modal-util-4e8f3fa2d1 `}>
+                  <table className={"root-modal-util-a1e9cf0ef6"}>
+                    <thead className={"root-modal-util-ecea3fcb79"}>
+                      <tr className={"root-modal-util-48bed30924"}>
+                        <th className={"root-modal-util-503f70b539"}>No</th>
                         <th
                           onClick={() => handleSort('name')}
-                          className="cursor-pointer px-2.5 py-2 text-left font-black uppercase tracking-wider text-root-accent hover:bg-root-surface"
+                          className={"root-modal-util-3a1e0e892a"}
                         >
                           Negara <SortIndicator column="name" />
                         </th>
                         <th
                           onClick={() => handleSort('production')}
-                          className="cursor-pointer px-2.5 py-2 text-right font-black uppercase tracking-wider text-emerald-400 hover:bg-emerald-950/40"
+                          className={"root-modal-util-927b9c2a7f"}
                         >
                           Produksi (MW) <SortIndicator column="production" />
                         </th>
                         <th
                           onClick={() => handleSort('consumption')}
-                          className="cursor-pointer px-2.5 py-2 text-right font-black uppercase tracking-wider text-rose-400 hover:bg-rose-950/40"
+                          className={"root-modal-util-5a4276aa31"}
                         >
                           Konsumsi (MW) <SortIndicator column="consumption" />
                         </th>
                         <th
                           onClick={() => handleSort('balance')}
-                          className="cursor-pointer px-2.5 py-2 text-right font-black uppercase tracking-wider text-root-accent hover:bg-root-surface"
+                          className={"root-modal-util-913d8c7381"}
                         >
                           Neraca Daya <SortIndicator column="balance" />
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-root-accent/10 bg-root-surface">
+                    <tbody className={"root-modal-util-67ebe98090"}>
                       {allCountries.length === 0 ? (
                         <tr>
-                          <td colSpan={5} className="px-4 py-6 text-center font-bold text-root-subtle">
+                          <td colSpan={5} className={"root-modal-util-fe9e2d64f9"}>
                             Memuat data negara...
                           </td>
                         </tr>
@@ -464,29 +434,29 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                         filteredData.map((country, rowIndex) => (
                           <tr
                             key={`${country.name}-${rowIndex}`}
-                            className={country.isUser ? "border-l-4 border-l-emerald-400 bg-emerald-950/50 font-black" : "bg-root-surface"}
+                            className={country.isUser ? "root-modal-util-73b452f399" : "root-modal-util-4ecd8bae5f"}
                           >
-                            <td className={`px-2.5 py-2 font-bold ${country.isUser ? "text-emerald-400" : "text-root-subtle"}`}>
+                            <td className={`root-modal-util-3b24a321dd ${country.isUser ? "root-modal-util-edbfd1c508" : "root-modal-util-2717107f89"}`}>
                               {rowIndex + 1}
                             </td>
-                            <td className={`px-2.5 py-2 font-bold ${country.isUser ? "text-emerald-400" : "text-root-text"}`}>
+                            <td className={`root-modal-util-3b24a321dd ${country.isUser ? "root-modal-util-edbfd1c508" : "root-modal-util-070a7f2c69"}`}>
                               <span>{country.name}</span>
-                              {country.isUser && <span className="ml-1 rounded-full bg-emerald-500 px-1.5 py-0.5 text-[8px] font-black uppercase text-root-canvas">Negara Anda</span>}
+                              {country.isUser && <span className={"root-modal-util-13dc0814cd"}>Negara Anda</span>}
                             </td>
-                            <td className="px-2.5 py-2 text-right font-bold text-emerald-400">
+                            <td className={"root-modal-util-f444102e27"}>
                               {country.production <= 0 ? "0" : country.production.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                             </td>
-                            <td className="px-2.5 py-2 text-right font-bold text-rose-400">
+                            <td className={"root-modal-util-05ad91ba15"}>
                               {country.consumption <= 0 ? "0" : country.consumption.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                             </td>
-                            <td className={`px-2.5 py-2 text-right font-black ${country.balance > 0.01 ? "text-emerald-400" : country.balance < -0.01 ? "text-rose-400" : "text-slate-400"}`}>
+                            <td className={`root-modal-util-ee36968489 ${country.balance > 0.01 ? "root-modal-util-edbfd1c508" : country.balance < -0.01 ? "root-modal-util-35f302741d" : "root-modal-util-8d44cef396"}`}>
                               {country.balance === 0 ? "0" : `${country.balance > 0 ? "+" : "-"}${Math.abs(country.balance).toLocaleString("id-ID", { maximumFractionDigits: 2 })}`}
                             </td>
                           </tr>
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={5} className="px-4 py-6 text-center font-bold text-root-subtle">
+                          <td colSpan={5} className={"root-modal-util-fe9e2d64f9"}>
                             Tidak ada negara yang cocok dengan pencarian.
                           </td>
                         </tr>

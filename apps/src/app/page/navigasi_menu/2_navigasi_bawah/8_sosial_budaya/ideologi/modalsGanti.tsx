@@ -1,8 +1,9 @@
 "use client"
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, Coins, Shield } from "lucide-react";
+import { Coins, Shield } from "lucide-react";
+import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 
 interface IdeologiConfirmModalProps {
   isOpen: boolean;
@@ -32,27 +33,14 @@ export default function IdeologiConfirmModal({
   if (!isOpen || !mounted) return null;
 
   return createPortal(
-    <div className="notebook-modal-frame fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">
-      <div className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        
-        {/* HEADER */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/30">
-              <Shield className="h-5 w-5 text-root-accent" />
-            </div>
-            <h3 className="text-sm sm:text-base font-bold text-root-text tracking-wide uppercase">
-              Konfirmasi Perubahan Ideologi
-            </h3>
-          </div>
-          <SharedModalCloseButton
-            onClick={onClose}
-            className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-           appearance="custom">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </SharedModalCloseButton>
-        </div>
+    <NotebookModalWrapper compact onClose={onClose} zIndexClass="z-[200]">
+      <div className="flex h-full min-h-0 flex-col overflow-hidden">
+        <RootInfoModalHeader
+          title="Konfirmasi Perubahan Ideologi"
+          onClose={onClose}
+          size="standard"
+          icon={<Shield aria-hidden="true" className="text-root-accent" />}
+        />
 
         {/* CONTENT */}
         <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-root-surface relative z-10 custom-scrollbar flex flex-col items-center justify-center">
@@ -92,7 +80,7 @@ export default function IdeologiConfirmModal({
           </div>
         </div>
       </div>
-    </div>,
+    </NotebookModalWrapper>,
     document.body
   );
 }

@@ -44,7 +44,7 @@ export default function BayarHutangModal({
         aria-labelledby="loan-payment-confirmation-title"
         className={`modal-responsive-shell loan-payment-confirmation-shell bg-root-surface border border-root-accent/30 ${rootBorderRadius.frame} overflow-hidden relative font-sans pointer-events-auto animate-in fade-in zoom-in-95 duration-150 flex flex-col`}
       >
-        <div className="loan-payment-confirmation-header flex shrink-0 items-center justify-start gap-3 border-b border-root-accent/20 bg-root-canvas px-4 py-3 sm:px-6">
+        <div className="loan-payment-confirmation-header flex shrink-0 items-center justify-start gap-3 border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
           <div className="flex min-w-0 items-center gap-3">
             <div className={`shrink-0 border border-root-accent/30 bg-root-surface p-2 text-root-accent ${rootBorderRadius.card}`}>
               <CreditCard className="h-5 w-5" />

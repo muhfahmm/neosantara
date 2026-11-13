@@ -27,7 +27,7 @@ export default function TradeMarketBlockedModal({
         aria-labelledby="trade-market-blocked-title"
         className="overflow-hidden text-white"
       >
-        <div className="flex items-center justify-between gap-2 rounded-t-2xl border-b border-rose-500/30 bg-root-canvas px-3 py-2 sm:px-4 sm:py-2.5">
+        <div className="flex items-center justify-between gap-2 rounded-t-2xl border-b border-rose-500/30 bg-root-canvas px-3 py-2 sm:px-5 sm:py-2.5">
           <div className="flex items-center gap-2">
             <Info className="h-4 w-4 shrink-0 text-rose-400" />
             <h2 id="trade-market-blocked-title" className="text-xs font-black uppercase tracking-wide text-rose-400 sm:text-sm">

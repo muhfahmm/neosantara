@@ -2,7 +2,6 @@ import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalClos
 import { useState, useEffect } from "react";
 import { X, Heart, Coins, Sparkles, AlertCircle, CheckCircle2, Clock } from "lucide-react";
 import DanaTidakCukupModal from "../../1_kepuasan/2_naikkan_kepuasan/DanaTidakCukupModal";
-import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 
 interface NaikkanKesejahteraanTabProps {
   countryDetail: any;
@@ -287,22 +286,22 @@ export default function NaikkanKesejahteraanTab({
   );
 
   return (
-    <div className="space-y-4">
+    <div className={"root-modal-util-3e7ce58d64"}>
 
       {feedback && (
-        <div className={`p-3 ${rootBorderRadius.card} border flex items-start gap-2.5 relative ${
-          feedback.type === "success" ? "bg-root-surface border-emerald-500/40 text-emerald-400" : "bg-root-surface border-rose-500/40 text-rose-400"
+        <div className={`root-modal-util-eb6e8b881a root-modal-util-5f22e64f22 root-modal-util-b9d93c341b ${
+          feedback.type === "success" ? "root-modal-util-f0540b9655" : "root-modal-util-659ef898cf"
         }`}>
-          {feedback.type === "success" ? <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5" /> : <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />}
-          <div className="flex-1 text-xs font-bold leading-relaxed">{feedback.message}</div>
-          <SharedModalCloseButton onClick={() => setFeedback(null)} className="text-inherit hover:opacity-75 absolute right-3 top-3" appearance="custom">
-            <X className="h-3.5 w-3.5" />
+          {feedback.type === "success" ? <CheckCircle2 className={"root-modal-util-bc643f29b2"} /> : <AlertCircle className={"root-modal-util-bc643f29b2"} />}
+          <div className={"root-modal-util-d7f9f80dec"}>{feedback.message}</div>
+          <SharedModalCloseButton onClick={() => setFeedback(null)} className={"root-modal-util-5a1139abf9"} appearance="custom">
+            <X className={"root-modal-util-ce72f65c94"} />
           </SharedModalCloseButton>
         </div>
       )}
 
       {/* Daftar Program Bantuan */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className={"root-modal-util-d3a5be7eaf"}>
         {initiatives.map((init) => {
           const isLaunched = ongoingEvents.some((c: any) => c.buildingKey === init.id);
           const Icon = init.icon;
@@ -312,51 +311,51 @@ export default function NaikkanKesejahteraanTab({
             <div
               key={init.id}
               id={`initiative-card-${init.id}`}
-              className={`${rootBorderRadius.card} p-3 sm:p-4 border bg-root-canvas flex flex-col justify-between space-y-3 relative overflow-hidden transition-all duration-500 ${
+              className={`root-modal-util-5f22e64f22 root-modal-util-ebef822ec6 ${
                 isHighlighted
-                  ? "border-2 border-root-accent shadow-[0_0_25px_rgba(0,255,170,0.6)] ring-2 ring-root-accent/50 bg-[#0d2621] scale-[1.01]"
+                  ? "root-modal-util-9a76816029"
                   : isLaunched
-                  ? "border-amber-500/60"
-                  : "border-root-accent/20 hover:border-root-accent/50"
+                  ? "root-modal-util-cfc6f10857"
+                  : "root-modal-util-004a18b3e0"
               }`}
             >
               {isHighlighted && (
-                <div className="absolute top-0 left-0 bg-root-accent text-root-canvas px-2.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-br-lg shadow-sm flex items-center gap-1 animate-pulse">
-                  <Sparkles className="h-2.5 w-2.5" />
+                <div className={"root-modal-util-9c7b827dd0"}>
+                  <Sparkles className={"root-modal-util-315860d6d0"} />
                   Target Misi Aktif
                 </div>
               )}
 
               {isLaunched && (
-                <div className="absolute top-0 right-0 bg-amber-500/10 text-amber-400 px-3 py-1 text-[9px] font-black uppercase tracking-wider rounded-bl-lg border-l border-b border-amber-500/40 flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
+                <div className={"root-modal-util-65ecbf5d72"}>
+                  <Clock className={"root-modal-util-a9546f0c0b"} />
                   Berjalan
                 </div>
               )}
 
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-lg bg-root-accent/10 border border-root-accent/30">
-                  <Icon className="h-4 w-4 text-root-accent" />
+              <div className={"root-modal-util-9249627d1f"}>
+                <div className={"root-modal-util-b547447a18"}>
+                  <Icon className={"root-modal-util-b3763eee6f"} />
                 </div>
                 <div>
-                  <h4 className="text-xs sm:text-sm font-black text-root-text leading-tight">{init.title}</h4>
-                  <p className="text-[9px] text-emerald-400 font-bold mt-0.5">Boost Kesejahteraan: +{init.boost}%</p>
+                  <h4 className={"root-modal-util-40903f9bc1"}>{init.title}</h4>
+                  <p className={"root-modal-util-aaa3ba0056"}>Boost Kesejahteraan: +{init.boost}%</p>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-root-accent/10">
-                <div className="text-[10px] text-root-subtle font-bold space-y-0.5">
-                  <p>Biaya: <span className="font-black text-root-accent">{init.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span></p>
-                  <p>Durasi: <span className="font-black text-root-text">{init.duration} hari</span></p>
+              <div className={"root-modal-util-218307b888"}>
+                <div className={"root-modal-util-38d6c4f454"}>
+                  <p>Biaya: <span className={"root-modal-util-ca525b9094"}>{init.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span></p>
+                  <p>Durasi: <span className={"root-modal-util-da18d116be"}>{init.duration} hari</span></p>
                 </div>
 
                 <button
                   onClick={() => handleLaunchInitiative(init)}
                   disabled={isLaunched}
-                  className={`shrink-0 px-3 py-1.5 rounded-lg font-black text-[9px] uppercase tracking-wider transition-all duration-150 ${
+                  className={`root-modal-util-972d6c7553 ${
                     isLaunched
-                      ? "bg-root-surface text-root-subtle cursor-not-allowed border border-root-accent/10"
-                      : "bg-root-accent text-root-canvas hover:bg-root-accent/80 cursor-pointer"
+                      ? "root-modal-util-559336f723"
+                      : "root-modal-util-ec7258ed63"
                   }`}
                 >
                   {isLaunched ? "Aktif" : "Luncurkan"}

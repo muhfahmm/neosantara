@@ -373,12 +373,12 @@ function ModalsManager({
           aria-labelledby="economic-embargo-access-title"
           className="modal-responsive-shell overflow-hidden rounded-2xl border border-rose-500/40 bg-root-surface font-sans shadow-2xl"
         >
-          <div className="border-b border-rose-500/20 bg-root-canvas px-6 py-4">
+          <div className="border-b border-rose-500/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
             <h2 id="economic-embargo-access-title" className="text-base font-black uppercase tracking-wide text-rose-400">
               Akses dibatasi oleh embargo ekonomi
             </h2>
           </div>
-          <div className="space-y-4 px-6 py-5 text-sm leading-relaxed text-slate-300">
+          <div className="space-y-4 px-4 py-4 text-sm leading-relaxed text-slate-300 sm:px-6 sm:py-5">
             <p>
               Negara {selectedCountry.country} tidak dapat mengakses Pasar Perdagangan Global atau Pinjaman & Hutang selama embargo ekonomi aktif.
             </p>
@@ -386,7 +386,7 @@ function ModalsManager({
               Pembatasan berakhir ketika resolusi embargo tidak lagi aktif. Embargo dan sanksi yang berlaku saat ini akan hilang setelah halaman dimuat ulang.
             </p>
           </div>
-          <div className="flex justify-end border-t border-root-accent/15 bg-root-canvas px-6 py-4">
+          <div className="flex justify-end border-t border-root-accent/15 bg-root-canvas px-4 py-3 sm:px-6 sm:py-4">
             <button
               type="button"
               onClick={onClose}

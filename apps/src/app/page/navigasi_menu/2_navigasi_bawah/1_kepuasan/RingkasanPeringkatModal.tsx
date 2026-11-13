@@ -8,7 +8,6 @@ import {
 import { getDecayMultiplierFromSatisfaction } from "@/app/logic/peringkatCalculator";
 import { applyKementerianKebudayaanDecayMultiplierBonus } from "@/app/page/bonus_logic";
 import NotebookModalWrapper from "../NotebookModalWrapper";
-import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 
 interface RingkasanPeringkatModalProps {
@@ -81,24 +80,24 @@ export default function RingkasanPeringkatModal({
     countryDetail,
   );
   const ratingColor = presidentRating >= 60
-    ? "text-emerald-400"
+    ? "root-modal-util-edbfd1c508"
     : presidentRating >= 40
-      ? "text-yellow-400"
-      : "text-rose-400";
+      ? "root-modal-util-ce4daf63b9"
+      : "root-modal-util-35f302741d";
 
   return (
     <NotebookModalWrapper onClose={onClose}>
-      <div className="flex h-full flex-col overflow-hidden rounded-xl border border-root-accent/20 bg-root-canvas shadow-[0_0_30px_rgba(0,255,170,0.15)]">
-        <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 rounded-t-2xl border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="shrink-0 rounded-lg border border-root-accent/30 bg-root-surface p-1.5 shadow-[0_0_10px_rgba(0,255,170,0.2)]">
-              <Star className="h-4 w-4 fill-root-accent text-root-accent sm:h-5 sm:w-5" />
+      <div className={"root-modal-util-d3c57b9316"}>
+        <div className={"root-modal-util-c5a2828bc0"}>
+          <div className={"root-modal-util-1117664efc"}>
+            <div className={"root-modal-util-7ed7897617"}>
+              <Star className={"root-modal-util-5f45eb7841"} />
             </div>
             <div>
-              <h2 className="text-base font-bold uppercase leading-none tracking-tight text-root-accent drop-shadow-[0_0_8px_rgba(0,255,170,0.5)] sm:text-xl">
+              <h2 className={"root-modal-util-db32311dd9"}>
                 Peringkat Presiden
               </h2>
-              <p className="mt-1 text-[9px] font-semibold text-root-subtle sm:text-[10px]">
+              <p className={"root-modal-util-738a0e9e27"}>
                 Rincian penyebab perubahan nilai peringkat
               </p>
             </div>
@@ -106,94 +105,94 @@ export default function RingkasanPeringkatModal({
           <RootModalCloseButton onClick={onClose} />
         </div>
 
-        <div className="relative z-10 flex-1 space-y-4 overflow-y-auto bg-root-canvas/80 p-3 sm:space-y-5 sm:p-5 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas [&::-webkit-scrollbar-thumb]:bg-root-accent [&::-webkit-scrollbar-track]:bg-root-canvas">
-          <section className={`relative overflow-hidden ${rootBorderRadius.card} border border-root-accent/30 bg-root-surface p-4 shadow-[inset_0_0_20px_rgba(0,255,170,0.03)] sm:p-5`}>
+        <div className={"root-modal-util-496f68e303"}>
+          <section className={`root-modal-util-c2f11b060e root-modal-util-5f22e64f22 root-modal-util-6ae984d4c0 `}>
 
-            <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
+            <div className={"root-modal-util-e20f2b9b36"}>
               <div>
-                <p className="mb-1 text-[10px] font-black uppercase tracking-wider text-root-subtle sm:text-xs">
+                <p className={"root-modal-util-149d168639"}>
                   Nilai saat ini
                 </p>
-                <p className={`text-3xl font-black tracking-tight sm:text-4xl ${ratingColor}`}>
+                <p className={`root-modal-util-bf9b09e569 ${ratingColor}`}>
                   {Math.round(presidentRating)}
-                  <span className="ml-1 text-sm font-bold text-root-subtle">/100</span>
+                  <span className={"root-modal-util-be8f7b97d6"}>/100</span>
                 </p>
               </div>
-              <div className="rounded-lg border border-root-accent/20 bg-root-canvas px-3 py-2 text-right">
-                <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Decay terhitung</p>
-                <p className="mt-1 text-sm font-black text-root-accent">
+              <div className={"root-modal-util-440d1dcd57"}>
+                <p className={"root-modal-util-79f0d0bec1"}>Decay terhitung</p>
+                <p className={"root-modal-util-a9ce546982"}>
                   {finalMultiplier.toFixed(2)} counter/bulan
                 </p>
               </div>
             </div>
-            <p className="relative z-10 mt-3 text-[10px] leading-relaxed text-[#A7C2C2] sm:text-xs">
+            <p className={"root-modal-util-671b937750"}>
               Estimasi normal: kepuasan {Math.round(satisfaction)}, keterbukaan {opennessScore}, {lowSectorCount} sektor rendah,
               dan bonus Kebudayaan. Belum termasuk counter, krisis aktif, atau tekanan defisit layanan.
             </p>
           </section>
 
-          <section className="space-y-3">
-            <h3 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-root-accent sm:text-sm">
-              <span className="inline-block h-3 w-1 rounded-full bg-root-accent" />
+          <section className={"root-modal-util-6ed543e2fb"}>
+            <h3 className={"root-modal-util-4cf7f34e06"}>
+              <span className={"root-modal-util-ec6ebdb191"} />
               Semua sumber penurunan langsung
             </h3>
-            <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2 sm:gap-3">
+            <div className={"root-modal-util-0166cc080d"}>
               {PENALTY_SECTIONS.map((section) => (
                 <article
                   key={section.title}
-                  className={`${rootBorderRadius.card} border border-root-accent/20 bg-root-surface p-3 sm:p-4`}
+                  className={`root-modal-util-5f22e64f22 root-modal-util-d01275d2de `}
                 >
-                  <div className="mb-2 flex items-start gap-2">
-                    <TrendingDown className="mt-0.5 h-4 w-4 shrink-0 text-rose-400" />
+                  <div className={"root-modal-util-b2a6b67335"}>
+                    <TrendingDown className={"root-modal-util-2a8e7abc3f"} />
                     <div>
-                      <h4 className="text-[10px] font-black uppercase leading-relaxed text-root-text sm:text-xs">
+                      <h4 className={"root-modal-util-7dd2565582"}>
                         {section.title}
                       </h4>
-                      <p className="mt-0.5 text-[10px] font-black text-rose-300 sm:text-xs">{section.amount}</p>
+                      <p className={"root-modal-util-cda0a4a71d"}>{section.amount}</p>
                     </div>
                   </div>
-                  <p className="text-[10px] leading-relaxed text-[#A7C2C2] sm:text-xs">{section.detail}</p>
+                  <p className={"root-modal-util-6b81033f61"}>{section.detail}</p>
                 </article>
               ))}
             </div>
           </section>
 
-          <section className={`${rootBorderRadius.card} border border-amber-400/30 bg-amber-400/5 p-3 sm:p-4`}>
-            <h3 className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-amber-300 sm:text-xs">
-              <AlertTriangle className="h-4 w-4" />
+          <section className={`root-modal-util-5f22e64f22 root-modal-util-72b4ea9f47 `}>
+            <h3 className={"root-modal-util-b499deba0a"}>
+              <AlertTriangle className={"root-modal-util-a7e4e66fa3"} />
               Faktor decay dan catatan implementasi
             </h3>
-            <ul className="space-y-2 text-[10px] leading-relaxed text-[#D2DADA] sm:text-xs">
-              <li><strong className="text-amber-200">Multiplier kepuasan:</strong> ≤25: 0,10 · ≤40: 0,30 · ≤65: 0,60 · ≤80: 0,85 · &gt;80: 1,00.</li>
+            <ul className={"root-modal-util-220919c901"}>
+              <li><strong className={"root-modal-util-ac56fca21e"}>Multiplier kepuasan:</strong> ≤25: 0,10 · ≤40: 0,30 · ≤65: 0,60 · ≤80: 0,85 · &gt;80: 1,00.</li>
               <li>
-                <strong className="text-amber-200">Arah saat ini:</strong> kepuasan/sektor/keterbukaan rendah dan bonus
+                <strong className={"root-modal-util-ac56fca21e"}>Arah saat ini:</strong> kepuasan/sektor/keterbukaan rendah dan bonus
                 Kebudayaan mengecilkan multiplier, sehingga memperlambat decay. Penalti sektor tetap berlaku.
               </li>
               <li>
-                <strong className="text-amber-200">Krisis ≥30 hari:</strong> bencana/wabah aktif memaksa multiplier 1,00,
+                <strong className={"root-modal-util-ac56fca21e"}>Krisis ≥30 hari:</strong> bencana/wabah aktif memaksa multiplier 1,00,
                 termasuk event yang sudah ditolak.
               </li>
               <li>
-                <strong className="text-amber-200">Save lama:</strong> threshold lama bisa terbaca sebagai multiplier dan
+                <strong className={"root-modal-util-ac56fca21e"}>Save lama:</strong> threshold lama bisa terbaca sebagai multiplier dan
                 mengubah progres counter.
               </li>
             </ul>
           </section>
 
-          <section className={`${rootBorderRadius.card} border border-sky-400/25 bg-sky-400/5 p-3 sm:p-4`}>
-            <h3 className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-sky-300 sm:text-xs">
-              <Info className="h-4 w-4" />
+          <section className={`root-modal-util-5f22e64f22 root-modal-util-d36a8a639f `}>
+            <h3 className={"root-modal-util-1a38f80d7a"}>
+              <Info className={"root-modal-util-a7e4e66fa3"} />
               Dampak yang perlu dibedakan
             </h3>
-            <div className="space-y-2 text-[10px] leading-relaxed text-[#D2DADA] sm:text-xs">
+            <div className={"root-modal-util-220919c901"}>
               <p>Penalti listrik 1–3 poin tertulis di notifikasi, tetapi helper penerapannya belum tersambung. Dampak tidak langsung lewat kepuasan/sektor masih mungkin.</p>
               <p>Reputasi diplomatik berbeda dari peringkat. Kepuasan turun tidak langsung memotong peringkat.</p>
             </div>
           </section>
 
-          <section className={`${rootBorderRadius.card} border border-root-accent/15 bg-root-surface/70 p-3 text-[10px] leading-relaxed text-[#8FAAAA] sm:p-4 sm:text-xs`}>
-            <div className="flex items-start gap-2">
-              <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-root-accent" />
+          <section className={`root-modal-util-5f22e64f22 root-modal-util-e61ab2a7d6 `}>
+            <div className={"root-modal-util-7b6566b31a"}>
+              <ShieldAlert className={"root-modal-util-16249c4e4c"} />
               <p>Rentang nilai 0–100; nilai ≤1 dapat memicu kudeta. Bonus: penuhi tuntutan demo +10, tangani bencana/wabah +5, respons polisi +2.</p>
             </div>
           </section>

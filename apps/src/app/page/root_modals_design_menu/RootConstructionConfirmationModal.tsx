@@ -124,13 +124,13 @@ export default function RootConstructionConfirmationModal({
           {beforeCostContent}
 
           <div className="root-construction-confirm-cost-card space-y-2.5 rounded-xl border border-root-accent/20 bg-root-canvas p-4 text-xs text-root-text">
-            <div className="flex justify-between gap-3 font-bold">
+            <div className="root-construction-confirm-cost-row flex justify-between gap-3 font-bold">
               <span className="text-root-muted">Biaya Pembangunan (Total):</span>
               <span className="shrink-0 font-black text-root-accent">
                 {loading ? "Memuat..." : `${totalCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO`}
               </span>
             </div>
-            <div className="flex justify-between gap-3 text-xs text-root-muted">
+            <div className="root-construction-confirm-cost-row flex justify-between gap-3 text-xs text-root-muted">
               <span>Biaya per bangunan:</span>
               <span className="shrink-0 text-root-text">
                 {cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
@@ -140,7 +140,7 @@ export default function RootConstructionConfirmationModal({
             <div className="root-construction-confirm-quantity-card rounded-xl border border-root-accent/30 bg-root-surface p-4">
               <label className="flex flex-col gap-2">
                 <span className={rootModalTypography.sectionTitle}>{quantityLabel}</span>
-                <div className="flex items-center gap-2">
+                <div className="root-construction-confirm-quantity-controls flex items-center gap-2">
                   <input
                     type="number"
                     min={1}
@@ -156,13 +156,13 @@ export default function RootConstructionConfirmationModal({
                           : 1
                       );
                     }}
-                    className="h-9 min-w-0 flex-1 rounded-xl border border-root-accent/30 bg-root-canvas px-3 py-2 text-xs font-bold text-root-text focus:border-root-accent focus:outline-none"
+                    className="root-construction-confirm-quantity-input h-9 min-w-0 flex-1 rounded-xl border border-root-accent/30 bg-root-canvas px-3 py-2 text-xs font-bold text-root-text focus:border-root-accent focus:outline-none"
                   />
                   <button
                     type="button"
                     onClick={() => setQuantity(maxQuantity)}
                     disabled={maxQuantity < 1}
-                    className="shrink-0 cursor-pointer rounded-xl bg-root-accent px-4 py-2 text-xs font-black uppercase text-root-canvas shadow-sm transition-all hover:bg-root-accent/80 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="root-construction-confirm-quantity-max shrink-0 cursor-pointer rounded-xl bg-root-accent px-4 py-2 text-xs font-black uppercase text-root-canvas shadow-sm transition-all hover:bg-root-accent/80 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Maks ({maxQuantity})
                   </button>
@@ -171,17 +171,21 @@ export default function RootConstructionConfirmationModal({
               </label>
             </div>
 
-            {detailContent?.(quantity)}
+            {detailContent && (
+              <div className="root-construction-confirm-details space-y-2">
+                {detailContent(quantity)}
+              </div>
+            )}
 
             {requirements.length > 0 ? (
-              <div className="space-y-3 text-xs">
+              <div className="root-construction-confirm-material-section space-y-3 text-xs">
                 <div className="flex items-center justify-between">
                   <div className={rootModalTypography.sectionTitle}>Material Dibutuhkan</div>
                   <button
                     type="button"
                     aria-expanded={showMaterialGrid}
                     onClick={() => setShowMaterialGrid((shown) => !shown)}
-                    className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-root-accent/30 bg-root-surface px-2 py-1 text-root-muted transition-all hover:text-root-accent"
+                    className="root-construction-confirm-material-toggle flex cursor-pointer items-center gap-1.5 rounded-lg border border-root-accent/30 bg-root-surface px-2 py-1 text-root-muted transition-all hover:text-root-accent"
                   >
                     {showMaterialGrid ? (
                       <>
@@ -198,7 +202,7 @@ export default function RootConstructionConfirmationModal({
                 </div>
 
                 <div
-                  className={`grid grid-cols-4 gap-2 overflow-hidden transition-all duration-500 ease-in-out ${
+                  className={`root-construction-confirm-material-grid grid grid-cols-4 gap-2 overflow-hidden transition-all duration-500 ease-in-out ${
                     showMaterialGrid ? "mt-2 max-h-[1500px] opacity-100" : "mt-0 max-h-0 opacity-0"
                   }`}
                 >
@@ -217,7 +221,7 @@ export default function RootConstructionConfirmationModal({
                           setSelectedMaterialKey(materialKey);
                           onMaterialClick(material.resourceKey, material.label);
                         }}
-                        className={`flex min-h-[50px] cursor-pointer flex-col items-center justify-center rounded-xl border p-2.5 transition-all ${
+                        className={`root-construction-confirm-material-card flex min-h-[50px] cursor-pointer flex-col items-center justify-center rounded-xl border p-2.5 transition-all ${
                           selected
                             ? "border-root-accent bg-root-accent/15 text-root-accent"
                             : insufficient
@@ -225,13 +229,13 @@ export default function RootConstructionConfirmationModal({
                               : "border-root-accent/20 bg-root-surface text-root-text hover:border-root-accent/50"
                         }`}
                       >
-                        <span className="text-center text-xs font-bold">{material.label}</span>
+                        <span className="root-construction-confirm-material-label text-center text-xs font-bold">{material.label}</span>
                         {material.amount !== undefined && (
-                          <span className="mt-1 text-[9px] uppercase tracking-wider text-root-accent">
+                          <span className="root-construction-confirm-material-required mt-1 text-[9px] uppercase tracking-wider text-root-accent">
                             x{requiredAmount.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                           </span>
                         )}
-                        <span className={`mt-0.5 text-xs font-black ${insufficient ? "text-rose-400" : "text-root-muted"}`}>
+                        <span className={`root-construction-confirm-material-stock mt-0.5 text-xs font-black ${insufficient ? "text-rose-400" : "text-root-muted"}`}>
                           {stock.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                         </span>
                       </button>
@@ -240,11 +244,11 @@ export default function RootConstructionConfirmationModal({
                 </div>
               </div>
             ) : (
-              <div className="text-root-muted">Tidak ada material yang dibutuhkan untuk bangunan ini.</div>
+              <div className="root-construction-confirm-no-material text-root-muted">Tidak ada material yang dibutuhkan untuk bangunan ini.</div>
             )}
 
             {showCurrentBalance && (
-              <div className="flex items-center justify-between gap-3 pt-1 text-xs font-black text-root-text">
+              <div className="root-construction-confirm-cost-row root-construction-confirm-balance flex items-center justify-between gap-3 pt-1 text-xs font-black text-root-text">
                 <span className="text-root-muted">Kas Negara Saat Ini:</span>
                 <span className="shrink-0 text-root-accent">
                   {budget.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
