@@ -97,22 +97,6 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
   const [infoOrgName, setInfoOrgName] = useState<string | null>(null);
   const [, setMembershipVersion] = useState(0);
 
-  const handleTabKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
-    if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key)) return;
-    const tabs = Array.from(event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]') ?? []);
-    const currentIndex = tabs.indexOf(event.currentTarget);
-    if (currentIndex < 0 || tabs.length < 2) return;
-
-    event.preventDefault();
-    const nextIndex = event.key === "Home"
-      ? 0
-      : event.key === "End"
-        ? tabs.length - 1
-        : (currentIndex + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
-    tabs[nextIndex]?.focus();
-    tabs[nextIndex]?.click();
-  };
-
   useEffect(() => {
     const refreshMembership = () => setMembershipVersion(version => version + 1);
     window.addEventListener(ORGANIZATION_MEMBERSHIP_UPDATED_EVENT, refreshMembership);
@@ -165,11 +149,8 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
             <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
               <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent animate-pulse" />
             </div>
-            <div className="min-w-0 flex-1">
-              <h2 aria-label="Keanggotaan Blok Internasional" className="text-sm sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">
-                <span className="sm:hidden">Blok Internasional</span>
-                <span className="hidden sm:inline">Keanggotaan Blok Internasional</span>
-              </h2>
+            <div>
+              <h2 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Keanggotaan Blok Internasional</h2>
               <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">{playerCountryName}</p>
             </div>
           </div>
@@ -189,18 +170,11 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
         </div>
 
         {/* BODY */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-6 bg-root-surface relative z-10 neon-scrollbar">
-          <div role="tablist" aria-label="Kelompok organisasi" className="mb-4 sm:mb-6 flex w-full items-center gap-1 overflow-x-auto rounded-xl border border-root-accent/20 bg-root-canvas p-1 shadow-sm">
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-root-surface relative z-10 neon-scrollbar">
+          <div className="bg-root-canvas p-1 rounded-xl border border-root-accent/20 inline-flex mb-6 shadow-sm">
             <button
-              type="button"
-              role="tab"
-              id="org-tab-pbb"
-              aria-controls="org-panel"
-              aria-selected={activeTab === "pbb"}
-              tabIndex={activeTab === "pbb" ? 0 : -1}
-              onKeyDown={handleTabKeyDown}
               onClick={() => setActiveTab("pbb")}
-              className={`min-h-11 shrink-0 px-3 sm:px-6 py-2 rounded-lg text-[10px] sm:text-xs font-black uppercase tracking-wider sm:tracking-widest transition-all cursor-pointer ${
+              className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
                 activeTab === "pbb"
                   ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
                   : "text-root-subtle hover:text-root-accent"
@@ -209,15 +183,8 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
               Organisasi PBB & Badan Khusus
             </button>
             <button
-              type="button"
-              role="tab"
-              id="org-tab-regional"
-              aria-controls="org-panel"
-              aria-selected={activeTab === "regional"}
-              tabIndex={activeTab === "regional" ? 0 : -1}
-              onKeyDown={handleTabKeyDown}
               onClick={() => setActiveTab("regional")}
-              className={`min-h-11 shrink-0 px-3 sm:px-6 py-2 rounded-lg text-[10px] sm:text-xs font-black uppercase tracking-wider sm:tracking-widest transition-all cursor-pointer ${
+              className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
                 activeTab === "regional"
                   ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
                   : "text-root-subtle hover:text-root-accent"
@@ -227,7 +194,6 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
             </button>
           </div>
 
-          <div id="org-panel" role="tabpanel" aria-labelledby={`org-tab-${activeTab}`} tabIndex={0}>
           {activeTab === "pbb" && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {UN_ORGANIZATIONS.map((org) => {
@@ -241,7 +207,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                     <button
                       type="button"
                       onClick={() => handleOrgClick(org)}
-                      className="flex min-h-[88px] w-full items-center gap-3 pr-12 text-left cursor-pointer"
+                      className="flex min-h-[88px] w-full items-center gap-3 pr-7 text-left cursor-pointer"
                       aria-label={`Lihat keanggotaan ${org}`}
                     >
                       {orgImageMap[org] ? (
@@ -254,7 +220,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                     <button
                       type="button"
                       onClick={() => setInfoOrgName(org)}
-                      className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-lg border border-root-accent/20 bg-root-surface text-root-subtle transition-all hover:border-root-accent hover:bg-root-accent/10 hover:text-root-accent cursor-pointer"
+                      className="absolute right-2 top-2 rounded-lg border border-root-accent/20 bg-root-surface p-1 text-root-subtle transition-all hover:border-root-accent hover:bg-root-accent/10 hover:text-root-accent cursor-pointer"
                       aria-label={`Informasi ${org}`}
                       title={`Informasi ${org}`}
                     >
@@ -279,7 +245,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                     <button
                       type="button"
                       onClick={() => handleOrgClick(org)}
-                      className="flex min-h-[88px] w-full items-center gap-3 pr-12 text-left cursor-pointer"
+                      className="flex min-h-[88px] w-full items-center gap-3 pr-7 text-left cursor-pointer"
                       aria-label={`Lihat keanggotaan ${org}`}
                     >
                       {orgImageMap[org] ? (
@@ -292,7 +258,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                     <button
                       type="button"
                       onClick={() => setInfoOrgName(org)}
-                      className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-lg border border-root-accent/20 bg-root-surface text-root-subtle transition-all hover:border-root-accent hover:bg-root-accent/10 hover:text-root-accent cursor-pointer"
+                      className="absolute right-2 top-2 rounded-lg border border-root-accent/20 bg-root-surface p-1 text-root-subtle transition-all hover:border-root-accent hover:bg-root-accent/10 hover:text-root-accent cursor-pointer"
                       aria-label={`Informasi ${org}`}
                       title={`Informasi ${org}`}
                     >
@@ -303,7 +269,6 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
               })}
             </div>
           )}
-          </div>
         </div>
 
         {/* MODAL ANAK */}

@@ -21,21 +21,6 @@ interface ModalProps {
 export default function PBBModal({ isOpen, onClose, selectedCountry, countryDetail, setCountryDetail, currentDate }: ModalProps) {
   const [activeTab, setActiveTab] = useState<"resolusi" | "keamanan" | "suara">("resolusi");
   const [isElectionInfoOpen, setIsElectionInfoOpen] = useState(false);
-  const handleTabKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
-    if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key)) return;
-    const tabs = Array.from(event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]') ?? []);
-    const currentIndex = tabs.indexOf(event.currentTarget);
-    if (currentIndex < 0 || tabs.length < 2) return;
-
-    event.preventDefault();
-    const nextIndex = event.key === "Home"
-      ? 0
-      : event.key === "End"
-        ? tabs.length - 1
-        : (currentIndex + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
-    tabs[nextIndex]?.focus();
-    tabs[nextIndex]?.click();
-  };
 
   if (!isOpen) return null;
   const countryName = selectedCountry?.country || "Indonesia";
@@ -50,14 +35,8 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
             <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
               <Award className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent animate-pulse" />
             </div>
-            <div className="min-w-0 flex-1">
-              <h2
-                aria-label="Sidang Umum Perserikatan Bangsa-Bangsa"
-                className="text-sm sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase"
-              >
-                <span className="sm:hidden">Sidang Umum PBB</span>
-                <span className="hidden sm:inline">Sidang Umum Perserikatan Bangsa-Bangsa</span>
-              </h2>
+            <div>
+              <h2 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Sidang Umum Perserikatan Bangsa-Bangsa</h2>
               <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">{countryName}</p>
             </div>
           </div>
@@ -77,24 +56,13 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
         </div>
 
         {/* Body Content */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-6 bg-root-surface relative z-10 neon-scrollbar">
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-root-surface relative z-10 neon-scrollbar">
           {/* 3 TAB MENU */}
-          <div className="mb-4 sm:mb-6 flex w-full min-w-0 items-center gap-2 sm:gap-3">
-            <div
-              role="tablist"
-              aria-label="Bagian Sidang Umum PBB"
-              className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto rounded-xl border border-root-accent/20 bg-root-canvas p-1 shadow-sm"
-            >
+          <div className="flex w-full items-center justify-between gap-3 mb-6">
+            <div className="bg-root-canvas p-1 rounded-xl border border-root-accent/20 inline-flex shadow-sm">
               <button
-                type="button"
-                role="tab"
-                id="pbb-tab-resolusi"
-                aria-controls="pbb-panel"
-                aria-selected={activeTab === "resolusi"}
-                tabIndex={activeTab === "resolusi" ? 0 : -1}
-                onKeyDown={handleTabKeyDown}
                 onClick={() => setActiveTab("resolusi")}
-                className={`min-h-11 shrink-0 rounded-lg px-3 sm:px-6 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider sm:tracking-widest transition-all cursor-pointer ${
+                className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
                   activeTab === "resolusi"
                     ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
                     : "text-root-subtle hover:text-root-accent"
@@ -103,15 +71,8 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
                 Resolusi PBB
               </button>
               <button
-                type="button"
-                role="tab"
-                id="pbb-tab-keamanan"
-                aria-controls="pbb-panel"
-                aria-selected={activeTab === "keamanan"}
-                tabIndex={activeTab === "keamanan" ? 0 : -1}
-                onKeyDown={handleTabKeyDown}
                 onClick={() => setActiveTab("keamanan")}
-                className={`min-h-11 shrink-0 rounded-lg px-3 sm:px-6 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider sm:tracking-widest transition-all cursor-pointer ${
+                className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
                   activeTab === "keamanan"
                     ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
                     : "text-root-subtle hover:text-root-accent"
@@ -120,15 +81,8 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
                 Dewan Keamanan
               </button>
               <button
-                type="button"
-                role="tab"
-                id="pbb-tab-suara"
-                aria-controls="pbb-panel"
-                aria-selected={activeTab === "suara"}
-                tabIndex={activeTab === "suara" ? 0 : -1}
-                onKeyDown={handleTabKeyDown}
                 onClick={() => setActiveTab("suara")}
-                className={`min-h-11 shrink-0 rounded-lg px-3 sm:px-6 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider sm:tracking-widest transition-all cursor-pointer ${
+                className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
                   activeTab === "suara"
                     ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
                     : "text-root-subtle hover:text-root-accent"
@@ -144,7 +98,7 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
               aria-expanded={isElectionInfoOpen}
               aria-controls="pbb-security-council-election-info"
               title="Pemilihan anggota tidak tetap DK PBB"
-              className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-all ${
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-all ${
                 isElectionInfoOpen
                   ? "border-root-accent bg-root-accent text-root-canvas"
                   : "border-root-accent/30 bg-root-canvas text-root-accent hover:border-root-accent hover:bg-root-accent/10"
@@ -166,28 +120,21 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
           )}
 
           {/* Render 3 Komponen Berdasarkan Active Tab */}
-          <div
-            id="pbb-panel"
-            role="tabpanel"
-            aria-labelledby={`pbb-tab-${activeTab}`}
-            tabIndex={0}
-          >
-            {activeTab === "resolusi" && (
-              <ResolusiPBB
-                selectedCountry={selectedCountry}
-                countryDetail={countryDetail}
-                setCountryDetail={setCountryDetail}
-              />
-            )}
-            {activeTab === "keamanan" && (
-              <KeamananPBB
-                selectedCountry={selectedCountry}
-                countryDetail={countryDetail}
-                setCountryDetail={setCountryDetail}
-              />
-            )}
-            {activeTab === "suara" && <SuaraPBB countryDetail={countryDetail} />}
-          </div>
+          {activeTab === "resolusi" && (
+            <ResolusiPBB
+              selectedCountry={selectedCountry}
+              countryDetail={countryDetail}
+              setCountryDetail={setCountryDetail}
+            />
+          )}
+          {activeTab === "keamanan" && (
+            <KeamananPBB
+              selectedCountry={selectedCountry}
+              countryDetail={countryDetail}
+              setCountryDetail={setCountryDetail}
+            />
+          )}
+          {activeTab === "suara" && <SuaraPBB countryDetail={countryDetail} />}
           
         </div>
       </div>

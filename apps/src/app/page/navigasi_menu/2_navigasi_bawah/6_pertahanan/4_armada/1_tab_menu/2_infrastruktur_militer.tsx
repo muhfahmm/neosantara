@@ -1,5 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { MENU_INFO_MODAL_VISIBILITY_EVENT } from "../../../NotebookModalWrapper";
+import { isMobilePhone, useViewportMode } from "@/app/hooks/useViewportMode";
 import Image from "next/image";
 import { Info } from "lucide-react";
 import { getDefenseInfrastructureCardImage } from "../../../buildingCardImages";
@@ -107,6 +109,7 @@ export default function InfrastrukturMiliter({
   ongoingConstructions = [], 
   currentDate 
 }: TabProps) {
+  const viewportMode = useViewportMode();
   const [selectedForBuild, setSelectedForBuild] = useState<{ key: string; label: string } | null>(null);
   const [isConfirmBuildOpen, setIsConfirmBuildOpen] = useState(false);
   const [infrastrukturData] = useState<Record<string, any>>(
@@ -209,6 +212,11 @@ export default function InfrastrukturMiliter({
     if (!item) {
       alert("Data infrastruktur belum dimuat.");
       return;
+    }
+    if (isMobilePhone(viewportMode)) {
+      window.dispatchEvent(new CustomEvent(MENU_INFO_MODAL_VISIBILITY_EVENT, {
+        detail: { isOpen: true },
+      }));
     }
     setInfoKey(key);
     setIsInfoOpen(true);
@@ -468,8 +476,8 @@ export default function InfrastrukturMiliter({
 
   // 🟢 Render UI
   return (
-    <div className="space-y-6">
-      <BuildingCardGridRoot className="four-column-building-grid">
+    <div className="defense-infrastructure-content space-y-6">
+      <BuildingCardGridRoot className="defense-card-grid four-column-building-grid">
         {Object.keys(infrastrukturData).map((key) => {
           const item = infrastrukturData[key];
           if (!item) return null;
@@ -490,7 +498,7 @@ export default function InfrastrukturMiliter({
                 setIsConfirmBuildOpen(true);
               }}
               highlighted={highlightKey === key}
-              className="fleet-infrastructure-building-card p-2 sm:p-2.5 min-h-[88px] sm:min-h-[96px] cursor-pointer"
+              className="defense-infrastructure-card fleet-infrastructure-building-card p-2 sm:p-2.5 min-h-[88px] sm:min-h-[96px] cursor-pointer"
             >
               {isBuilding && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[9px] sm:text-[10px] font-bold px-2 py-0.5 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
@@ -547,6 +555,11 @@ export default function InfrastrukturMiliter({
         <InfoInfrastrukturModal
           isOpen={isInfoOpen}
           onClose={() => {
+            if (isMobilePhone(viewportMode)) {
+              window.dispatchEvent(new CustomEvent(MENU_INFO_MODAL_VISIBILITY_EVENT, {
+                detail: { isOpen: false },
+              }));
+            }
             setIsInfoOpen(false);
             setInfoKey(null);
           }}

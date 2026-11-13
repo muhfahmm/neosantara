@@ -562,6 +562,20 @@
 }
 
 @media (min-width: 1024px) {
+  .building-card-root .building-card-info-button {
+    width: 20px !important;
+    min-width: 20px !important;
+    height: 20px !important;
+    min-height: 20px !important;
+  }
+
+  .building-card-root .building-card-info-button svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+}
+
+@media (min-width: 1024px) {
   .root-modal-close-button {
     padding: 8px !important;
     font-size: 12px !important;

@@ -9,6 +9,7 @@ import { PANGKALAN_UDARA_CAPACITY } from "../logic/5_pangkalan_udara_logic";
 import { KonfirmasiPembangunanModalProps } from "../construction_support/konfirmasi_pembangunan_types";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import {
   getWaktuPembangunanBarakMiliterBonusPercent,
   getWaktuPembangunanGudangSenjataBonusPercent,
@@ -221,20 +222,22 @@ export default function KonfirmasiInfrastrukturModal({
 
   return (
     <NotebookModalWrapper onClose={onClose}>
-      <div className="flex h-full flex-col overflow-hidden">
+      <div className="defense-confirm-modal flex h-full min-h-0 flex-col overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
         {/* Header */}
-        <div className="px-6 py-4 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-          <div className="flex items-center gap-2 text-root-accent">
-            <Hammer className="h-5 w-5" />
-            <h3 className="text-base font-bold uppercase tracking-wide">Pembangunan Infrastruktur Militer</h3>
+        <div className="defense-confirm-header px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <div className="shrink-0 rounded-lg border border-root-accent/30 bg-root-surface p-1.5 sm:p-2">
+              <Hammer className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
+            </div>
+            <h3 className={`defense-confirm-title min-w-0 ${rootModalTypography.title}`}>Pembangunan Infrastruktur Militer</h3>
           </div>
           <RootModalCloseButton onClick={onClose} />
         </div>
 
         {/* Body */}
-        <div className="p-6 relative z-10 flex-1 overflow-y-auto space-y-4 text-root-text">
+        <div className="defense-confirm-content min-h-0 flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 relative z-10 space-y-4 text-root-text">
           <div>
             <div className="flex items-center justify-between mb-2">
               <h4 className="text-lg font-black text-white">{buildingLabel}</h4>
@@ -584,7 +587,7 @@ export default function KonfirmasiInfrastrukturModal({
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-root-canvas border-t border-root-accent/20 flex gap-3 relative z-10 shrink-0">
+        <div className="defense-confirm-footer p-4 bg-root-canvas border-t border-root-accent/20 flex gap-3 relative z-10 shrink-0">
           <button
             onClick={onClose}
             className="flex-1 py-2.5 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-white text-[10px] font-black uppercase cursor-pointer hover:bg-[#1A3838] transition-all text-center"

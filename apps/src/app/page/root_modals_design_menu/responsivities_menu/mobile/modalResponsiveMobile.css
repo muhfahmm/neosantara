@@ -2682,17 +2682,19 @@
   margin-bottom: 6px !important;
 }
 
-.building-card-root .building-card-info-button {
-  width: 12px !important;
-  min-width: 12px !important;
-  height: 12px !important;
-  min-height: 12px !important;
-  padding: 0 !important;
-}
+@media (max-width: 1023px) {
+  .building-card-root .building-card-info-button {
+    width: 12px !important;
+    min-width: 12px !important;
+    height: 12px !important;
+    min-height: 12px !important;
+    padding: 0 !important;
+  }
 
-.building-card-root .building-card-info-button svg {
-  width: 6px !important;
-  height: 6px !important;
+  .building-card-root .building-card-info-button svg {
+    width: 6px !important;
+    height: 6px !important;
+  }
 }
 
 .building-card-root .building-card-count {
@@ -2765,4 +2767,177 @@
   aspect-ratio: 1 / 1;
   height: auto;
   min-height: 0;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-modal) .defense-content {
+  gap: 8px !important;
+  padding: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-modal) .defense-armada-content > :not(:first-child),
+.notebook-modal-frame[data-viewport-mode]:has(.defense-modal) .defense-armada-section > :not(:first-child) {
+  margin-top: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-modal) .defense-armada-heading {
+  gap: 6px;
+  margin-bottom: 0 !important;
+  padding-bottom: 6px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-modal) .defense-armada-heading > div:first-child {
+  gap: 6px;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-modal) .defense-armada-heading > div:first-child svg {
+  width: 18px;
+  height: 18px;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-modal) .defense-armada-heading h3 {
+  font-size: 12px !important;
+  line-height: 1.15;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-modal) .defense-armada-heading > div:last-child {
+  font-size: 8px;
+  line-height: 1.2;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-modal) .defense-armada-capacity {
+  margin-bottom: 0 !important;
+  padding: 4px 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-modal) .defense-armada-capacity span {
+  font-size: 9px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-modal) .defense-card-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-modal) .defense-card-grid > .defense-armada-card,
+.notebook-modal-frame[data-viewport-mode]:has(.defense-modal) .defense-card-grid > .defense-infrastructure-card {
+  aspect-ratio: 1 / 1;
+  min-height: 0 !important;
+  padding: 6px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-modal) .defense-card-grid .building-card-label {
+  min-height: 2.2em;
+  font-size: 9px !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0.02em;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-modal) .defense-card-grid .building-card-info-button {
+  width: 16px !important;
+  min-width: 16px !important;
+  height: 16px !important;
+  min-height: 16px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-modal) .defense-card-grid .building-card-info-button svg {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-modal) .defense-card-grid .building-card-image {
+  width: 34px;
+  height: 34px;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-modal) .defense-card-grid .building-card-count {
+  font-size: 10px !important;
+  line-height: 1.1;
+}
+
+.notebook-modal-frame[data-viewport-mode='portraitPhone']:has(.defense-modal) .defense-card-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-unit-info-modal) .defense-unit-info-content {
+  padding: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-unit-info-modal) .defense-unit-info-content > :not(:first-child) {
+  margin-top: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-unit-info-modal) .defense-unit-info-card {
+  padding: 10px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-unit-info-modal) .defense-unit-info-label {
+  margin-bottom: 4px !important;
+  font-size: 10px !important;
+  line-height: 1.2;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-unit-info-modal) .defense-unit-info-value {
+  font-size: 14px !important;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-unit-info-modal) .defense-unit-info-metrics,
+.notebook-modal-frame[data-viewport-mode]:has(.defense-unit-info-modal) .defense-unit-info-power-grid {
+  gap: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-unit-info-modal) .defense-unit-info-warning {
+  margin-top: 8px !important;
+  padding: 10px !important;
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .notebook-modal-frame[data-viewport-mode]:has(.defense-unit-info-modal) > .modal-responsive-shell {
+    height: calc(var(--modal-menu-frame-height, var(--modal-max-height)) - 12px) !important;
+    max-height: calc(var(--modal-menu-frame-height, var(--modal-max-height)) - 12px) !important;
+  }
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-confirm-modal) .defense-confirm-header {
+  gap: 8px;
+  padding: 6px 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-confirm-modal) .defense-confirm-header > div:first-child {
+  gap: 6px;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-confirm-modal) .defense-confirm-header > div:first-child > div:first-child {
+  padding: 5px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-confirm-modal) .defense-confirm-header > div:first-child > div:first-child svg {
+  width: 16px;
+  height: 16px;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-confirm-modal) .defense-confirm-title {
+  font-size: clamp(12px, 2.8vw, 16px) !important;
+  line-height: 1.15;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-confirm-modal) .defense-confirm-content {
+  padding: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-confirm-modal) .defense-confirm-content > :not(:first-child) {
+  margin-top: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-confirm-modal) .defense-confirm-footer {
+  gap: 8px !important;
+  padding: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.defense-confirm-modal) .defense-confirm-footer > button {
+  min-height: 32px;
+  padding: 7px 8px !important;
+  font-size: 9px !important;
+  line-height: 1.15;
 }

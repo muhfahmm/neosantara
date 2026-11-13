@@ -50,10 +50,10 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
   <button
     onClick={onClick}
     title={title}
-    className={`country-detail-action-card w-full min-h-11 ${className || 'bg-root-canvas border border-root-accent/20'} ${isDimmed ? 'opacity-75' : ''} rounded-xl p-3 sm:p-5 lg:p-3 xl:p-5 flex flex-col items-center justify-center gap-2 sm:gap-3 lg:gap-2 xl:gap-3 ${className ? 'hover:border-amber-300 hover:bg-amber-400/10' : 'hover:border-root-accent/50 hover:bg-root-accent/10'} hover:shadow-md transition-all cursor-pointer group h-28 sm:h-32 lg:h-24 xl:h-32`}
+    className={`country-detail-action-card w-full ${className || 'bg-root-canvas border border-root-accent/20'} ${isDimmed ? 'opacity-75' : ''} rounded-xl p-5 lg:p-3 xl:p-5 flex flex-col items-center justify-center gap-3 lg:gap-2 xl:gap-3 ${className ? 'hover:border-amber-300 hover:bg-amber-400/10' : 'hover:border-root-accent/50 hover:bg-root-accent/10'} hover:shadow-md transition-all cursor-pointer group h-32 lg:h-24 xl:h-32`}
   >
-    <Icon className={`h-6 w-6 sm:h-8 sm:w-8 lg:h-6 lg:w-6 xl:h-8 xl:w-8 ${iconClass || 'text-root-accent'} group-hover:scale-110 transition-transform`} />
-    <span className={`text-[10px] sm:text-xs lg:text-[10px] xl:text-xs font-black ${labelClass || 'text-root-accent'} uppercase tracking-wider text-center leading-tight`}>
+    <Icon className={`h-8 w-8 lg:h-6 lg:w-6 xl:h-8 xl:w-8 ${iconClass || 'text-root-accent'} group-hover:scale-110 transition-transform`} />
+    <span className={`text-xs lg:text-[10px] xl:text-xs font-black ${labelClass || 'text-root-accent'} uppercase tracking-wider text-center leading-tight`}>
       {label}
     </span>
   </button>
@@ -220,7 +220,7 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
   return (
     <div className="space-y-6 lg:space-y-4 xl:space-y-6">
       {/* Grid Layout (1-2 kolom di ponsel portrait, 2-3 di landscape, 4 pada desktop) */}
-      <div className="country-detail-action-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 items-stretch gap-2.5 sm:gap-3 lg:gap-3 xl:gap-4 pt-3 sm:pt-4 lg:pt-4 xl:pt-6">
+      <div className="country-detail-action-grid grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-stretch gap-2.5 sm:gap-3 lg:gap-3 xl:gap-4 pt-3 sm:pt-4 lg:pt-4 xl:pt-6">
         <div className="relative w-full min-w-0">
           {actionDates?.serang && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.serang)}</div>}
           <ActionButton icon={Crosshair} label="Serang Negara" className={actionDates?.serang ? datedActionClass : undefined} iconClass={actionDates?.serang ? 'text-amber-300' : undefined} labelClass={actionDates?.serang ? 'text-amber-300' : undefined} onClick={() => {
