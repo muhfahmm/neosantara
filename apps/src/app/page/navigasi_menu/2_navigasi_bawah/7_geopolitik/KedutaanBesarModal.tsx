@@ -174,8 +174,8 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
               <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
                 <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent animate-pulse" />
               </div>
-              <div>
-                <h2 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Kantor Kedutaan Besar Asing</h2>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-sm sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Kantor Kedutaan Besar Asing</h2>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">{currentCountryName}</p>
               </div>
             </div>
@@ -186,7 +186,7 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
               />
               <SharedModalCloseButton
                 onClick={onClose}
-                className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+                className="min-h-11 shrink-0 p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
                appearance="custom">
                 <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
@@ -195,7 +195,7 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
           </div>
 
           {/* BODY */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-root-surface relative z-10 neon-scrollbar">
+          <div className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-6 bg-root-surface relative z-10 neon-scrollbar">
             <p className="text-xs text-root-subtle font-semibold leading-relaxed mb-4">
               Kelola daftar kedutaan asing yang dimiliki negara Anda. Setiap kedutaan yang dibangun akan muncul di sini dan dapat dihancurkan jika diperlukan.
             </p>
@@ -210,10 +210,10 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
                 {embassies.map((item: any, idx: number) => {
                   const iso = getIsoFromName(item.mitra);
                   return (
-                    <div key={idx} className="bg-root-canvas border border-root-accent/20 hover:border-root-accent/50 hover:bg-root-accent/5 p-4 rounded-xl flex flex-row items-center justify-between w-full gap-4 transition-colors">
+                    <div key={idx} className="bg-root-canvas border border-root-accent/20 hover:border-root-accent/50 hover:bg-root-accent/5 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between w-full min-w-0 gap-4 transition-colors">
 
                       {/* Bagian Informasi Kedutaan */}
-                      <div>
+                      <div className="min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           {renderFlag(iso, item.mitra)}
                           <h4 className="text-sm font-black text-root-text uppercase tracking-wider">{item.mitra}</h4>
@@ -228,10 +228,10 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
                       </div>
 
                       {/* Bagian Tombol Aksi */}
-                      <div className="flex flex-row items-center gap-2 flex-shrink-0">
+                      <div className="flex w-full sm:w-auto flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-shrink-0">
                         <button
                           onClick={() => handleOpenCountryDetail(item.mitra)}
-                          className="border border-root-accent/40 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-accent-ink px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5"
+                          className="min-h-11 border border-root-accent/40 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-accent-ink px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5"
                         >
                           <Globe className="w-3.5 h-3.5" />
                           Lihat Detail
@@ -239,7 +239,7 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
 
                         <button
                           onClick={() => handleDestroyEmbassy(item.mitra)}
-                          className="border border-rose-500/40 bg-root-surface text-rose-400 hover:bg-rose-500 hover:text-white px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer"
+                          className="min-h-11 border border-rose-500/40 bg-root-surface text-rose-400 hover:bg-rose-500 hover:text-white px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer"
                         >
                           Hancurkan Kedutaan
                         </button>

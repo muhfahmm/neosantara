@@ -3,7 +3,7 @@ import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalClos
 import React from "react";
 import { createPortal } from "react-dom";
 import { useState } from "react";
-import { X } from "lucide-react";
+import { ShieldAlert, X } from "lucide-react";
 import IcbmTidakTersediaModal from "./IcbmTidakTersediaModal";
 
 interface PerangNuklirModalProps {
@@ -40,17 +40,23 @@ export default function PerangNuklirModal({ isOpen, countryName, onClose, onConf
 					</SharedModalCloseButton>
 				</div>
 
-				<div className="p-5 sm:p-6">
+				<div className="space-y-4 p-4 sm:p-6">
 					<p className="text-sm sm:text-base text-root-text leading-relaxed">
 						Melancarkan serangan nuklir terhadap <strong className="text-white">{countryName}</strong>? Ini adalah eskalasi tertinggi dan hampir selalu membawa kehancuran besar.
 					</p>
+					<div role="alert" className="flex items-start gap-3 rounded-xl border border-rose-500/40 bg-rose-500/10 p-3 sm:p-4">
+						<ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-rose-400" aria-hidden="true" />
+						<p className="text-xs sm:text-sm leading-relaxed text-rose-200">
+							Konsekuensi diplomatik: seluruh 210 negara memberikan penalti hubungan sebesar <strong>-5</strong>.
+						</p>
+					</div>
 				</div>
 
 				<div className="flex flex-col sm:flex-row gap-3 justify-end border-t border-rose-500/20 bg-root-canvas p-4">
 					<button
 						type="button"
 						onClick={onClose}
-						className="w-full sm:w-auto px-6 bg-root-canvas hover:bg-[#142A2A] border border-root-accent/30 rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
+						className="min-h-11 w-full sm:w-auto px-6 bg-root-canvas hover:bg-[#142A2A] border border-root-accent/30 rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
 					>
 						Batal
 					</button>
@@ -65,7 +71,7 @@ export default function PerangNuklirModal({ isOpen, countryName, onClose, onConf
 							onConfirm();
 							onClose();
 						}}
-						className="w-full sm:w-auto px-6 bg-rose-700 hover:bg-rose-800 border border-rose-600 rounded-xl py-2 text-center text-white font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
+						className="min-h-11 w-full sm:w-auto px-6 bg-rose-700 hover:bg-rose-800 border border-rose-600 rounded-xl py-2 text-center text-white font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
 					>
 						Konfirmasi Nuklir
 					</button>

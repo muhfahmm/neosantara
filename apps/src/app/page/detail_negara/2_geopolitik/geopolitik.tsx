@@ -25,7 +25,7 @@ interface GeopolitikProps {
 
 // Komponen tombol aksi agar kode lebih rapi (Persis sama dengan InformasiUmum)
 const ActionButton = ({ icon: Icon, label, onClick, disabled }: { icon: any, label: string, onClick?: () => void, disabled?: boolean }) => {
-  const base = 'bg-root-canvas border border-root-accent/20 rounded-xl p-5 lg:p-3 xl:p-5 flex flex-col items-center justify-center gap-3 lg:gap-2 xl:gap-3 transition-all group h-32 lg:h-24 xl:h-32';
+  const base = 'bg-root-canvas border border-root-accent/20 rounded-xl p-4 sm:p-5 lg:p-3 xl:p-5 flex flex-col items-center justify-center gap-2 sm:gap-3 lg:gap-2 xl:gap-3 transition-all group h-28 sm:h-32 lg:h-24 xl:h-32';
   const interactive = disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:shadow-md hover:border-root-accent/50 hover:bg-root-accent/10 cursor-pointer';
   return (
     <button
@@ -33,8 +33,8 @@ const ActionButton = ({ icon: Icon, label, onClick, disabled }: { icon: any, lab
       aria-disabled={disabled}
       className={`country-detail-action-card ${base} ${interactive}`}
     >
-      <Icon className={`h-8 w-8 lg:h-6 lg:w-6 xl:h-8 xl:w-8 text-root-accent ${disabled ? '' : 'group-hover:scale-110'} transition-transform`} />
-      <span className="text-xs lg:text-[10px] xl:text-xs font-black text-root-accent uppercase tracking-wider text-center leading-tight">
+      <Icon className={`h-7 w-7 sm:h-8 sm:w-8 lg:h-6 lg:w-6 xl:h-8 xl:w-8 text-root-accent ${disabled ? '' : 'group-hover:scale-110'} transition-transform`} />
+      <span className="text-[10px] sm:text-xs lg:text-[10px] xl:text-xs font-black text-root-accent uppercase tracking-wider text-center leading-tight">
         {label}
       </span>
     </button>
