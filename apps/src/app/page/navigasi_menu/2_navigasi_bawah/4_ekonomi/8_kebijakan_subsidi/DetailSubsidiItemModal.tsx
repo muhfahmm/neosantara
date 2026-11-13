@@ -46,7 +46,7 @@ export default function DetailSubsidiItemModal({
 
           {/* Badge & Title */}
           <div>
-            <span className={`${rootModalTypography.label} mb-2 inline-block rounded-full border border-root-accent/30 bg-root-accent/10 px-2.5 py-0.5 !text-root-accent`}>
+            <span className={`subsidy-detail-category-badge ${rootModalTypography.label} mb-2 inline-block rounded-full border border-root-accent/30 bg-root-accent/10 px-2.5 py-0.5 !text-root-accent`}>
               SEKTOR {item.category}
             </span>
             <h3 className={`${rootModalTypography.sectionTitle} !text-root-text leading-tight`}>

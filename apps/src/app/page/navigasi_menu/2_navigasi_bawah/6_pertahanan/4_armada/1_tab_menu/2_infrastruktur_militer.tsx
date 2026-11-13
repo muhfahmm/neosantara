@@ -24,6 +24,7 @@ import {
 } from "@/app/page/bonus_logic";
 
 import { getBuildingMetadata } from "@/lib/buildingMetadataRegistry";
+import { BuildingCardGridRoot, BuildingCardRoot } from "@/app/page/root_modals_design_menu/card_building_root";
 
 interface TabProps {
   countryDetail: any;
@@ -468,7 +469,7 @@ export default function InfrastrukturMiliter({
   // 🟢 Render UI
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+      <BuildingCardGridRoot>
         {Object.keys(infrastrukturData).map((key) => {
           const item = infrastrukturData[key];
           if (!item) return null;
@@ -482,17 +483,14 @@ export default function InfrastrukturMiliter({
           const lastEndDate = isBuilding ? buildingConstructions[buildingConstructions.length - 1].endDate : null;
 
           return (
-            <div 
+            <BuildingCardRoot
               key={key}
               onClick={() => {
                 setSelectedForBuild({ key, label: item.label });
                 setIsConfirmBuildOpen(true);
               }}
-              className={`relative rounded-2xl overflow-visible flex flex-col justify-between transition-all bg-root-canvas border p-2 sm:p-2.5 min-h-[88px] sm:min-h-[96px] cursor-pointer ${
-                highlightKey === key 
-                  ? 'border-root-accent shadow-[0_0_12px_rgba(0,255,170,0.3)]'
-                  : 'border-root-accent/20 hover:border-root-accent/50 hover:shadow-md'
-              }`}
+              highlighted={highlightKey === key}
+              className="fleet-infrastructure-building-card p-2 sm:p-2.5 min-h-[88px] sm:min-h-[96px] cursor-pointer"
             >
               {isBuilding && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[9px] sm:text-[10px] font-bold px-2 py-0.5 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
@@ -501,7 +499,7 @@ export default function InfrastrukturMiliter({
               )}
               
               <div className="flex items-start justify-between mb-1.5 sm:mb-2">
-                <p className="text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1.5 leading-snug">
+                <p className="building-card-label text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1.5 leading-snug">
                   {item.label}
                 </p>
                 <button
@@ -509,7 +507,7 @@ export default function InfrastrukturMiliter({
                     e.stopPropagation();
                     handleInfoClick(key);
                   }}
-                  className="flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-root-surface border border-root-accent/30 text-root-subtle hover:text-root-accent hover:border-root-accent transition-colors cursor-pointer"
+                  className="building-card-info-button flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-root-surface border border-root-accent/30 text-root-subtle hover:text-root-accent hover:border-root-accent transition-colors cursor-pointer"
                 >
                   <Info className="w-3 h-3" />
                 </button>
@@ -521,26 +519,25 @@ export default function InfrastrukturMiliter({
                   alt=""
                   width={88}
                   height={88}
-                  className="h-16 w-16 sm:h-20 sm:w-20 object-contain shrink-0"
+                  className="building-card-image h-16 w-16 sm:h-20 sm:w-20 object-contain shrink-0"
                 />
-                <div className="flex flex-col justify-between">
+                <div className="min-w-0 flex-1 flex flex-col justify-between">
                 <div>
-                  <div className="flex items-end gap-1 flex-wrap">
-                    <span className="text-xs sm:text-sm lg:text-base font-black text-root-text leading-tight break-words">{formatNumber(value)}</span>
+                  <div className="min-w-0 flex items-end gap-1 flex-wrap">
+                    <span className="building-card-count text-xs sm:text-sm lg:text-base font-black text-root-text leading-tight break-words">{formatNumber(value)}</span>
                     {isBuilding && (
                       <span className="text-[10px] sm:text-xs font-bold text-root-accent leading-none">
                         +{queueCount}
                       </span>
                     )}
                   </div>
-                  <p className="text-[9px] sm:text-[10px] mt-0.5 font-bold text-root-subtle">{item.satuan_kapasitas || "Unit"}</p>
                 </div>
                 </div>
               </div>
-            </div>
+            </BuildingCardRoot>
           );
         })}
-      </div>
+      </BuildingCardGridRoot>
 
       {/* Render modal konfirmasi jika dipilih */}
       {selectedForBuild && isConfirmBuildOpen && getModalProps()}

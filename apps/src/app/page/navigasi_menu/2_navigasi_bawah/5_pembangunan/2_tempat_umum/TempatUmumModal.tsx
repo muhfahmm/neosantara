@@ -13,6 +13,7 @@ import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModa
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import ServiceAISuggestionsModal from "../ai_suggestions/ServiceAISuggestionsModal";
 import { generateTempatUmumAIAnalysis } from "../ai_suggestions/serviceAISuggestionsLogic";
+import { BuildingCardGridRoot, BuildingCardRoot } from "@/app/page/root_modals_design_menu/card_building_root";
 
 // --- IMPOR MODUL REQUIREMENTS MATERIAL ---
 import * as infrastrukturRequirements from "./construction_support/1_infrastruktur/requirements";
@@ -518,7 +519,7 @@ export default function TempatUmumModal({
                       </button>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <BuildingCardGridRoot>
                       {activeGroup.items.map((it) => {
                         const bMeta = findMeta(it.key) || {};
                         const perCount = it.value || 0;
@@ -532,7 +533,20 @@ export default function TempatUmumModal({
                         const isBuilding = queueCount > 0;
 
                         return (
-                          <div key={it.key} className="bg-root-canvas border border-root-accent/20 rounded-2xl overflow-visible flex flex-col justify-between shadow-sm hover:border-root-accent/50 transition-all relative">
+                          <BuildingCardRoot
+                            key={it.key}
+                            role="button"
+                            tabIndex={0}
+                            aria-label={`Bangun ${it.label}`}
+                            onClick={() => handleBuild(it.key, it.label)}
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter" || event.key === " ") {
+                                event.preventDefault();
+                                handleBuild(it.key, it.label);
+                              }
+                            }}
+                            className="public-building-card cursor-pointer"
+                          >
                             
                             {isBuilding && (() => {
                                const lastEndDate = buildingConstruction[buildingConstruction.length - 1].endDate;
@@ -564,52 +578,42 @@ export default function TempatUmumModal({
                               />
                             )}
 
-                            <div className="p-2 sm:p-2.5 flex flex-col flex-grow justify-between">
-                              <div>
-                                <div className="flex items-start justify-between gap-1 mb-0.5">
-                                  <p className="text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1 leading-snug">{it.label}</p>
+                            <div className="public-building-card-body min-w-0 flex flex-1 items-center gap-2 p-2 sm:p-2.5">
+                              {getBuildingCardImage(it.key) && (
+                                <Image
+                                  src={getBuildingCardImage(it.key)!}
+                                  alt=""
+                                  width={88}
+                                  height={88}
+                                  className="building-card-image h-10 w-10 sm:h-12 sm:w-12 object-contain shrink-0"
+                                />
+                              )}
+                              <div className="min-w-0 flex-1">
+                                <div className="flex min-w-0 items-center gap-1">
+                                  <p className="building-card-label public-building-label min-w-0 flex-1 text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider">{it.label}</p>
                                   <button
-                                    className="flex-shrink-0 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
+                                    className="building-card-info-button flex-shrink-0 flex items-center justify-center w-4 h-4 rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       setHoveredBuildingKey(hoveredBuildingKey === it.key ? null : it.key);
                                     }}
                                     title="Info bangunan"
                                   >
-                                    <Info className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                                    <Info className="w-2.5 h-2.5" />
                                   </button>
                                 </div>
-                                <div className="flex items-center gap-2 mt-1.5">
-                                  {getBuildingCardImage(it.key) && (
-                                    <Image
-                                      src={getBuildingCardImage(it.key)!}
-                                      alt=""
-                                      width={88}
-                                      height={88}
-                                      className="h-16 w-16 sm:h-20 sm:w-20 object-contain shrink-0"
-                                    />
+                                <div className="building-card-metrics mt-0.5 flex min-w-0 items-center gap-1">
+                                  <p className="building-card-count truncate text-[8px] sm:text-[9px] font-black text-root-text leading-tight">{formatNumber(perCount)}</p>
+                                  {isBuilding && (
+                                    <span className="shrink-0 text-[8px] sm:text-[9px] font-bold text-emerald-400 leading-tight">+{queueCount}</span>
                                   )}
-                                  <div className="flex items-end gap-1 flex-wrap">
-                                    <p className="text-xs sm:text-sm lg:text-base font-black text-root-text leading-none">{formatNumber(perCount)}</p>
-                                    {isBuilding && (
-                                      <span className="text-[10px] sm:text-xs font-bold text-emerald-400 leading-none">+{queueCount}</span>
-                                    )}
-                                  </div>
                                 </div>
                               </div>
-                              <div className="border-t border-root-accent/10 mt-1.5 pt-1">
-                                <button
-                                  onClick={() => handleBuild(it.key, it.label)}
-                                  className="w-full py-1 sm:py-1.5 rounded-xl bg-root-accent text-root-canvas font-black border border-root-accent text-[9px] sm:text-[10px] uppercase cursor-pointer hover:bg-root-accent/80 transition-all shadow-md active:scale-[0.98]"
-                                >
-                                  Bangun
-                                </button>
-                              </div>
                             </div>
-                          </div>
+                          </BuildingCardRoot>
                         );
                       })}
-                    </div>
+                    </BuildingCardGridRoot>
                   </>
                 )}
               </div>

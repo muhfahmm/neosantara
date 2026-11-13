@@ -12,6 +12,7 @@ import KonfirmasiArmadaAktifModal from "../2_modals_konfirmasi_pembangunan/1_kon
 import InfoArmadaAktifModal from "../modals_info/1_info_armada_aktif_modal";
 import { REQUIREMENTS as INFANTERI_REQUIREMENTS, findRequirements as findInfanteriRequirements } from "../construction_support/1_barak_militer/requirements";
 import { getBuildingMetadata } from "@/lib/buildingMetadataRegistry";
+import { BuildingCardGridRoot, BuildingCardRoot } from "@/app/page/root_modals_design_menu/card_building_root";
 
 interface TabProps {
   countryDetail: any;
@@ -415,7 +416,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            <BuildingCardGridRoot>
               {armadaCatalog[group].map((item) => {
                 const value = getData(item.key, group);
                 let displayText = formatNumber(value);
@@ -438,13 +439,13 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                 const totalPendingQuantity = hasPending ? pendingItems.reduce((sum: number, r: any) => sum + (r.quantity || 1), 0) : 0;
 
                 return (
-                  <div
+                  <BuildingCardRoot
                     key={`${group}-${item.key}`}
                     onClick={() => {
                       setSelectedForBuild({ key: item.key, label: item.label });
                       setIsConfirmBuildOpen(true);
                     }}
-                    className={`relative rounded-2xl flex flex-col justify-between transition-all bg-root-canvas border border-root-accent/20 shadow-sm hover:border-root-accent/50 hover:shadow-md cursor-pointer p-2 sm:p-2.5 min-h-[88px] sm:min-h-[96px] ${hasPending ? 'overflow-visible' : 'overflow-hidden'}`}
+                    className={`fleet-unit-building-card cursor-pointer p-2 sm:p-2.5 min-h-[88px] sm:min-h-[96px] ${hasPending ? "fleet-has-pending-badge" : "fleet-no-pending-badge"}`}
                   >
                     {hasPending && lastEndDate && (
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[9px] sm:text-[10px] font-bold px-2 py-0.5 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
@@ -453,7 +454,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                     )}
 
                     <div className="flex items-start justify-between mb-1.5 sm:mb-2">
-                      <p className="text-[10px] sm:text-xs font-black uppercase text-root-subtle tracking-wider flex-1 pr-1.5 leading-snug">
+                      <p className="building-card-label min-w-0 text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1.5 leading-snug">
                         {item.label}
                       </p>
                       <button
@@ -461,42 +462,37 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                           e.stopPropagation();
                           handleInfoClick(item.key);
                         }}
-                        className="flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-root-surface border border-root-accent/30 text-root-subtle hover:text-root-accent hover:border-root-accent transition-colors cursor-pointer"
+                        className="building-card-info-button flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-root-surface border border-root-accent/30 text-root-subtle hover:text-root-accent hover:border-root-accent transition-colors cursor-pointer"
                       >
                         <Info className="w-3 h-3" />
                       </button>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col items-center gap-1 text-center">
                       <Image
                         src={getDefenseUnitCardImage(item.key)!}
                         alt=""
                         width={88}
                         height={88}
-                        className="h-16 w-16 sm:h-20 sm:w-20 object-contain shrink-0"
+                        className="building-card-image h-10 w-10 sm:h-12 sm:w-12 object-contain shrink-0"
                       />
-                      <div className="flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-end gap-1 flex-wrap">
-                          <span className={`${item.key === "barak" ? "text-xs sm:text-sm" : "text-sm sm:text-base lg:text-lg"} font-black text-root-text leading-tight break-words`}>
+                      <div className="min-w-0 w-full">
+                        <div className="flex min-w-0 items-center justify-center gap-1">
+                          <span className={`building-card-count ${item.key === "barak" ? "text-xs sm:text-sm" : "text-sm sm:text-base lg:text-lg"} font-black text-root-text leading-tight break-words`}>
                             {displayText}
                           </span>
                           {hasPending && (
-                            <span className="text-xs sm:text-sm font-black text-root-accent">
+                            <span className="shrink-0 text-[8px] sm:text-[9px] font-black text-root-accent">
                               +{formatNumber(totalPendingQuantity)}
                             </span>
                           )}
                         </div>
-                        <p className="text-[9px] sm:text-[10px] mt-0.5 font-bold text-root-subtle">
-                          {item.key === "barak" ? "Pasukan / Kapasitas" : "unit"}
-                        </p>
-                      </div>
                       </div>
                     </div>
-                  </div>
+                  </BuildingCardRoot>
                 );
               })}
-            </div>
+            </BuildingCardGridRoot>
           </section>
         );
       })}

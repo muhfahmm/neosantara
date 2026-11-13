@@ -616,7 +616,7 @@
 }
 
 .notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-building-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 5px;
 }
 
@@ -774,7 +774,7 @@
   }
 
   .notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-layout .production-building-grid {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-title {
@@ -2310,4 +2310,145 @@
   font-size: 9px;
   line-height: 1.3;
   overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .building-card-grid-root {
+    gap: 6px;
+  }
+
+  .building-card-root {
+    min-height: 68px;
+    padding: 4px;
+    border-radius: 8px;
+  }
+
+  .building-card-root .building-card-label {
+    font-size: clamp(7px, 1.8vw, 9px);
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .building-card-root .building-card-image {
+    width: 28px;
+    height: 28px;
+  }
+
+  .building-card-root .building-card-info-button {
+    width: 16px;
+    height: 16px;
+  }
+
+  .building-card-root .building-card-info-button svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .building-card-root .building-card-count {
+    font-size: clamp(8px, 2vw, 11px);
+    overflow-wrap: anywhere;
+  }
+
+  .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-card-body {
+    padding: 2px;
+  }
+
+  .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-info {
+    width: 16px;
+    height: 16px;
+  }
+
+  .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-info svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-image {
+    width: 24px;
+    height: 24px;
+  }
+
+  .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-footer {
+    min-height: 18px;
+  }
+
+  .public-building-card-body {
+    gap: 4px;
+    padding: 4px;
+  }
+
+}
+
+.building-card-grid-root {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+@media (min-width: 768px) {
+  .building-card-grid-root {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .building-card-grid-root {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .building-card-grid-root,
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .building-card-grid-root {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.building-card-root .building-card-count {
+  min-width: 0;
+  max-width: 100%;
+  font-size: clamp(8px, 1vw, 13px);
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .public-building-label,
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .public-building-label {
+  font-size: 8px !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  overflow-wrap: anywhere !important;
+  text-overflow: clip !important;
+}
+
+.building-card-root.public-building-card .building-card-count {
+  font-size: clamp(8px, 0.65vw, 9px);
+}
+
+.fleet-unit-building-card .building-card-label {
+  font-size: clamp(8px, 0.9vw, 11px);
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.building-card-root .production-building-count,
+.building-card-root .production-output-count {
+  font-size: clamp(8px, 0.7vw, 10px) !important;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.building-card-root.fleet-no-pending-badge {
+  overflow: hidden;
+}
+
+.building-card-root.fleet-has-pending-badge {
+  overflow: visible;
+}
+
+.public-building-card-body,
+.production-building-card-body {
+  padding: clamp(4px, 0.5vw, 7px) !important;
+}
+
+.building-card-root.housing-building-card,
+.building-card-root.fleet-unit-building-card,
+.building-card-root.fleet-infrastructure-building-card {
+  padding: clamp(4px, 0.5vw, 7px) !important;
 }

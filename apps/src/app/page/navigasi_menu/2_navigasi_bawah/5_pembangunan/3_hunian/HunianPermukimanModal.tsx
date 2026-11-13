@@ -26,6 +26,7 @@ import {
   getTotalHousingCapacityBonusPercent,
   applyTotalHousingCapacityBonus,
 } from "@/app/page/bonus_logic";
+import { BuildingCardRoot } from "@/app/page/root_modals_design_menu/card_building_root";
 
 const DEFAULT_ELECTRICITY_CONSUMPTION: Record<string, number> = {
   rumah_subsidi: 0.0009,
@@ -37,6 +38,12 @@ const HOUSING_INFO_TITLES: Record<string, string> = {
   rumah_subsidi: "Perumahan Subsidi Rakyat",
   apartemen: "Apartemen Modern & High-Rise",
   mansion: "Kompleks Mansion Mewah",
+};
+
+const HOUSING_TAB_LABELS: Record<string, string> = {
+  rumah_subsidi: "Rumah Subsidi",
+  apartemen: "Apartemen",
+  mansion: "Mansion",
 };
 
 // 🟢 IMPOR REQUIREMENTS
@@ -432,7 +439,7 @@ export default function HunianPermukimanModal({
               id: it.key,
               isActive: activeTab === it.key,
               onSelect: () => setActiveTab(it.key),
-              label: it.label,
+              label: HOUSING_TAB_LABELS[it.key] ?? it.label,
             }))}
           >
               <div>
@@ -494,7 +501,19 @@ export default function HunianPermukimanModal({
                       <p className="text-[11px] sm:text-xs text-root-text mt-3 leading-relaxed bg-root-canvas border border-root-accent/20 p-3 sm:p-4 rounded-xl sm:rounded-2xl">{activeItem.detailDesc}</p>
                     </div>
 
-                    <div className="bg-root-canvas border border-root-accent/20 rounded-2xl p-2 sm:p-2.5 shadow-sm w-44 sm:w-52 lg:w-56 relative overflow-visible flex flex-col justify-between">
+                    <BuildingCardRoot
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Bangun ${activeItem.label}`}
+                      onClick={() => handleBuild(activeItem.key, activeItem.label)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          handleBuild(activeItem.key, activeItem.label);
+                        }
+                      }}
+                      className="housing-building-card w-44 sm:w-52 lg:w-56 p-2 sm:p-2.5 cursor-pointer"
+                    >
                       {hoveredBuildingKey === activeItem.key && (() => {
                         const bMeta = findMeta(activeItem.key) || {};
                         const perCount = activeItem.value || 0;
@@ -514,11 +533,21 @@ export default function HunianPermukimanModal({
                         );
                       })()}
 
-                      <div>
-                        <div className="flex items-start justify-between gap-1 mb-0.5">
-                          <p className="text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1 leading-snug">Total Terdaftar</p>
+                      <div className="flex min-w-0 items-center gap-2">
+                        {getBuildingCardImage(activeItem.key) && (
+                          <Image
+                            src={getBuildingCardImage(activeItem.key)!}
+                            alt=""
+                            width={104}
+                            height={104}
+                            className="building-card-image h-10 w-10 sm:h-12 sm:w-12 shrink-0 object-contain"
+                          />
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex min-w-0 items-center justify-between gap-1">
+                            <p className="building-card-label min-w-0 flex-1 truncate text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider">Total Terdaftar</p>
                           <button
-                            className="flex-shrink-0 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
+                            className="building-card-info-button flex-shrink-0 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
                             onClick={(e) => {
                               e.stopPropagation();
                               setHoveredBuildingKey(hoveredBuildingKey === activeItem.key ? null : activeItem.key);
@@ -527,30 +556,14 @@ export default function HunianPermukimanModal({
                           >
                             <Info className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                           </button>
-                        </div>
-                        {getBuildingCardImage(activeItem.key) && (
-                          <Image
-                            src={getBuildingCardImage(activeItem.key)!}
-                            alt=""
-                            width={104}
-                            height={104}
-                            className="h-20 w-20 sm:h-24 sm:w-24 object-contain mt-2"
-                          />
-                        )}
-                        <div className="flex items-end gap-1 mt-1 flex-wrap">
-                          <p className="text-xs sm:text-sm lg:text-base font-black text-root-text leading-none">{activeItem.value.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</p>
+                          </div>
+                          <p className="building-card-count mt-0.5 text-[8px] sm:text-[9px] font-black text-root-text leading-tight">
+                            {activeItem.value.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
+                          </p>
                         </div>
                       </div>
-                      <div className="border-t border-root-accent/10 mt-1.5 pt-1">
-                        <button
-                          onClick={() => handleBuild(activeItem.key, activeItem.label)}
-                          className="w-full py-1 sm:py-1.5 rounded-xl bg-root-accent text-root-canvas font-black border border-root-accent text-[9px] sm:text-[10px] uppercase cursor-pointer hover:bg-root-accent/80 transition-all shadow-md active:scale-[0.98]"
-                        >
-                          Bangun
-                        </button>
-                      </div>
+                    </BuildingCardRoot>
                     </div>
-                  </div>
                 )}
               </div>
 

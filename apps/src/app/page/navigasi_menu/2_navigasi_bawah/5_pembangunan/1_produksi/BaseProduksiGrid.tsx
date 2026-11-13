@@ -21,6 +21,7 @@ import { getActiveProductionBanForResource } from "../../7_geopolitik/1_PBB/1_re
 import { formatProductionProductName } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog";
 import { getProductionBonusMultiplier } from "../../../../bonus_logic";
 import { getTravelOilConsumptionThisMonth } from "../../3_produksi_konsumsi/fuelLogic/travelFuelLogic";
+import { BuildingCardGridRoot, BuildingCardRoot } from "@/app/page/root_modals_design_menu/card_building_root";
 
 const ELECTRICITY_FUEL_RESOURCE_KEYS = [
   "gas_alam",
@@ -191,7 +192,7 @@ export default function BaseProduksiGrid({
         )}
       </div>
 
-      <div className="production-building-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+      <BuildingCardGridRoot className="production-building-grid">
         {displayedKeys.map((key) => {
           const bMeta = findMeta(key) || {};
           const perCount = Number(countryDetail?.[key]) || 0;
@@ -234,7 +235,7 @@ export default function BaseProduksiGrid({
                   Pembangkit Tidak Membutuhkan Bahan Bakar
                 </div>
               )}
-              <div
+              <BuildingCardRoot
               onClick={() => {
                 if (!isAvailable) return;
                 onBuildClick(key, label);
@@ -243,8 +244,9 @@ export default function BaseProduksiGrid({
               tabIndex={0}
               aria-disabled={!isAvailable}
               title={productionBan ? `Diblokir resolusi PBB: ${formatProductionProductName(key)}` : undefined}
-              className={`production-building-card group relative rounded-2xl overflow-visible flex flex-col flex-grow justify-between transition-all bg-root-canvas border shadow-sm ${isAvailable ? 'border-root-accent/20 hover:border-root-accent/50 hover:shadow-md cursor-pointer' : 'border-rose-500/30 bg-rose-500/10 opacity-70 cursor-not-allowed'
-                } ${isHighlighted ? 'border-root-accent border-2 shadow-[0_0_12px_rgba(0,255,170,0.3)]' : ''}`}
+              highlighted={isHighlighted}
+              unavailable={!isAvailable}
+              className={`production-building-card group flex-grow ${isAvailable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
             >
               {productionBan && (
                 <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-root-canvas/85 p-3 text-center text-[10px] font-black uppercase tracking-wide text-rose-300 opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none">
@@ -280,10 +282,10 @@ export default function BaseProduksiGrid({
               <div className="production-building-card-body p-2 sm:p-2.5 flex flex-col flex-grow justify-between">
                 <div>
                   <div className="flex items-start justify-between gap-1 mb-0.5">
-                    <p className="production-building-label text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1 leading-snug">{label}</p>
+                    <p className="building-card-label production-building-label text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1 leading-snug">{label}</p>
                     <button
                       disabled={isProductionBanned}
-                      className="production-building-info flex-shrink-0 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
+                      className="building-card-info-button production-building-info flex-shrink-0 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
                       onClick={(e) => {
                         if (isProductionBanned) return;
                         e.stopPropagation();
@@ -302,14 +304,14 @@ export default function BaseProduksiGrid({
                         alt=""
                         width={88}
                         height={88}
-                        className="production-building-image h-16 w-16 sm:h-20 sm:w-20 object-contain shrink-0"
+                        className="building-card-image production-building-image h-16 w-16 sm:h-20 sm:w-20 object-contain shrink-0"
                         onError={() => setFailedBuildingImages((images) => ({ ...images, [key]: true }))}
                       />
                     ) : (
-                      <Building2 aria-hidden="true" className="production-building-image h-16 w-16 sm:h-20 sm:w-20 shrink-0 text-root-subtle" />
+                      <Building2 aria-hidden="true" className="building-card-image production-building-image h-16 w-16 sm:h-20 sm:w-20 shrink-0 text-root-subtle" />
                     )}
-                    <div className="flex items-end gap-1 flex-wrap">
-                      <span className="production-building-count text-xs sm:text-sm lg:text-base font-black text-root-text leading-none">{perCount}</span>
+                    <div className="min-w-0 flex-1 flex items-end gap-1 flex-wrap">
+                      <span className="building-card-count production-building-count text-xs sm:text-sm lg:text-base font-black text-root-text leading-none">{perCount}</span>
                       {isBuilding && (
                         <span className="text-[10px] sm:text-xs font-bold text-emerald-400 leading-none">
                           +{queueCount}
@@ -322,7 +324,7 @@ export default function BaseProduksiGrid({
                 {/* FOOTER LISTRIK */}
                 {isElectricityTab && (
                   <div className="production-building-footer border-t border-root-accent/10 mt-1.5 pt-1 pb-0.5 text-center min-h-[36px] flex flex-col justify-center">
-                    <span className={`font-black text-xs sm:text-sm leading-tight break-words ${isProductionZero ? 'text-rose-400' : 'text-root-accent'}`}>
+                    <span className={`production-output-count font-black text-xs sm:text-sm leading-tight break-words ${isProductionZero ? 'text-rose-400' : 'text-root-accent'}`}>
                       {rawProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                     </span>
                     {isProductionZero && (
@@ -339,7 +341,7 @@ export default function BaseProduksiGrid({
                       if (key === 'emas') {
                         const fixedProd = Number(bMeta?.produksi || 0) * perCount * productionMultiplier;
                         return (
-                          <span className="font-black text-xs sm:text-sm text-root-accent leading-tight break-words">
+                          <span className="production-output-count font-black text-xs sm:text-sm text-root-accent leading-tight break-words">
                             {fixedProd.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                           </span>
                         );
@@ -354,7 +356,7 @@ export default function BaseProduksiGrid({
 
                         return (
                           <div className="flex flex-col items-center justify-center">
-                            <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${isRedText ? 'text-rose-400' : 'text-root-accent'}`}>
+                            <span className={`production-output-count font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${isRedText ? 'text-rose-400' : 'text-root-accent'}`}>
                               {displayVal.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
                             </span>
                             {isDeficit && (
@@ -372,7 +374,7 @@ export default function BaseProduksiGrid({
                         : 0;
                       return (
                         <div className="flex flex-col items-center">
-                          <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${colorClass}`}>
+                          <span className={`production-output-count font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${colorClass}`}>
                             {stock.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                           </span>
                           {travelOilConsumption > 0 && (
@@ -386,16 +388,16 @@ export default function BaseProduksiGrid({
                   </div>
                 )}
               </div>
-              </div>
+              </BuildingCardRoot>
             </React.Fragment>
           );
         })}
         {keys.length === 0 && (
-          <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-4 text-sm text-root-subtle">
+          <div className="col-span-full rounded-xl border border-root-accent/20 bg-root-canvas p-4 text-sm text-root-subtle">
             Data untuk kategori ini tidak tersedia.
           </div>
         )}
-      </div>
+      </BuildingCardGridRoot>
 
       {/* MODAL REKOMENDASI AI SEKTOR PRODUKSI */}
       <ProductionAISuggestionsModal

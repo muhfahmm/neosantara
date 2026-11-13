@@ -695,3 +695,14 @@
     line-height: 1.4;
   }
 }
+
+@media (min-width: 641px) and (min-height: 501px) {
+  .subsidy-item-category,
+  .subsidy-detail-category-badge {
+    display: none;
+  }
+
+  .subsidy-item-header {
+    justify-content: flex-end;
+  }
+}
