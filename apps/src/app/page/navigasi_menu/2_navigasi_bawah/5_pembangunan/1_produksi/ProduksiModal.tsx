@@ -653,18 +653,18 @@ export default function ProduksiModal({
     <>
       {isOpen && !selectedTabInfo && !showSanctionInfo && (
         <NotebookModalWrapper onClose={onClose}>
-          <div className="production-modal-layout flex flex-col h-full overflow-hidden">
+          <div className="building-modal-layout production-modal-layout flex flex-col h-full overflow-hidden">
 
-            <div className="production-modal-header px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
+            <div className="building-modal-header production-modal-header px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
               <div className="flex min-w-0 items-center gap-2 sm:gap-3">
                 <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
                   <Hammer className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
                 </div>
                 <div className="min-w-0">
-                  <h2 className={`production-modal-title ${rootModalTypography.title}`}>Produksi & Pembangunan</h2>
+                  <h2 className={`building-modal-title production-modal-title ${rootModalTypography.title}`}>Produksi & Pembangunan</h2>
                 </div>
               </div>
-              <div className="production-modal-header-actions flex shrink-0 items-center gap-2">
+              <div className="building-modal-header-actions production-modal-header-actions flex shrink-0 items-center gap-2">
                 <button
                   type="button"
                   onClick={() => setSelectedTabInfo({
@@ -673,7 +673,7 @@ export default function ProduksiModal({
                   })}
                   aria-label={`Informasi ${activeSection.label}`}
                   title={`Informasi ${activeSection.label}`}
-                  className="production-info-button flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent transition-colors hover:border-root-accent hover:bg-root-accent/10"
+                  className="root-modal-info-button production-info-button flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent"
                 >
                   <Info className="h-4 w-4" />
                 </button>
@@ -685,9 +685,9 @@ export default function ProduksiModal({
               ariaLabel="Kategori produksi dan pembangunan"
               activeItemId={activeTab}
               scrollKey={viewportMode}
-              className="production-modal-body"
-              sidebarClassName="production-modal-tabs"
-              contentClassName="production-modal-content p-4 sm:p-5 lg:p-6"
+              className="building-modal-body production-modal-body"
+              sidebarClassName="building-modal-tabs production-modal-tabs"
+              contentClassName="building-modal-content production-modal-content p-4 sm:p-5 lg:p-6"
               items={TABS.map((tab) => ({
                 id: tab.id,
                 isActive: activeTab === tab.id,
@@ -725,7 +725,7 @@ export default function ProduksiModal({
                 onClick={() => setShowSanctionInfo(true)}
                 aria-label="Informasi bonus agama, ideologi, kementerian, sanksi, dan embargo"
                 title="Lihat informasi bonus agama, ideologi, kementerian, sanksi, dan embargo"
-                className="production-bonus-info flex h-8 w-8 items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent transition-all hover:border-root-accent hover:bg-root-accent/10 hover:shadow-md hover:shadow-root-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent cursor-pointer"
+                className="root-modal-info-button production-bonus-info flex h-8 w-8 items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent cursor-pointer"
               >
                 <Info className="h-4 w-4" />
               </button>

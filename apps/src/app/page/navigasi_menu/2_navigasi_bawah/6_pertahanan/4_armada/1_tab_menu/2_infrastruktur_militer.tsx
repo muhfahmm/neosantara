@@ -469,7 +469,7 @@ export default function InfrastrukturMiliter({
   // 🟢 Render UI
   return (
     <div className="space-y-6">
-      <BuildingCardGridRoot>
+      <BuildingCardGridRoot className="four-column-building-grid">
         {Object.keys(infrastrukturData).map((key) => {
           const item = infrastrukturData[key];
           if (!item) return null;
@@ -507,13 +507,13 @@ export default function InfrastrukturMiliter({
                     e.stopPropagation();
                     handleInfoClick(key);
                   }}
-                  className="building-card-info-button flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-root-surface border border-root-accent/30 text-root-subtle hover:text-root-accent hover:border-root-accent transition-colors cursor-pointer"
+                  className="building-card-info-button flex-shrink-0 flex items-center justify-center rounded-full bg-root-surface border border-root-accent/30 text-root-subtle hover:text-root-accent hover:border-root-accent transition-colors cursor-pointer"
                 >
-                  <Info className="w-3 h-3" />
+                  <Info />
                 </button>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="building-card-image-quantity-row flex flex-col items-center justify-center gap-1">
                 <Image
                   src={getDefenseInfrastructureCardImage(key)!}
                   alt=""
@@ -521,17 +521,17 @@ export default function InfrastrukturMiliter({
                   height={88}
                   className="building-card-image h-16 w-16 sm:h-20 sm:w-20 object-contain shrink-0"
                 />
-                <div className="min-w-0 flex-1 flex flex-col justify-between">
-                <div>
-                  <div className="min-w-0 flex items-end gap-1 flex-wrap">
-                    <span className="building-card-count text-xs sm:text-sm lg:text-base font-black text-root-text leading-tight break-words">{formatNumber(value)}</span>
-                    {isBuilding && (
-                      <span className="text-[10px] sm:text-xs font-bold text-root-accent leading-none">
-                        +{queueCount}
-                      </span>
-                    )}
+                <div className="building-card-quantity min-w-0 w-full flex flex-col items-center justify-center">
+                  <div>
+                    <div className="min-w-0 flex items-center justify-center gap-1 flex-wrap">
+                      <span className="building-card-count text-xs sm:text-sm lg:text-base font-black text-root-text leading-tight break-words">{formatNumber(value)}</span>
+                      {isBuilding && (
+                        <span className="text-[10px] sm:text-xs font-bold text-root-accent leading-none">
+                          +{queueCount}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
                 </div>
               </div>
             </BuildingCardRoot>

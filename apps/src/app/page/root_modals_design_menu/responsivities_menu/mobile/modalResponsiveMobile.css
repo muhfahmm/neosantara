@@ -431,28 +431,28 @@
   }
 }
 
-.notebook-modal-frame[data-viewport-mode]:has(.production-modal-layout) .notebook-modal-content {
+.notebook-modal-frame[data-viewport-mode]:has(.building-modal-layout) .notebook-modal-content {
   overflow: hidden;
 }
 
-.notebook-modal-frame[data-viewport-mode] .production-modal-layout {
+.notebook-modal-frame[data-viewport-mode] .building-modal-layout {
   position: relative;
   min-width: 0;
   min-height: 0;
 }
 
-.notebook-modal-frame[data-viewport-mode] .production-modal-header {
+.notebook-modal-frame[data-viewport-mode] .building-modal-header {
   min-height: 40px;
   height: 40px;
   padding: 2px 6px;
   gap: 4px;
 }
 
-.notebook-modal-frame[data-viewport-mode] .production-modal-header > div:first-child {
+.notebook-modal-frame[data-viewport-mode] .building-modal-header > div:first-child {
   gap: 6px;
 }
 
-.notebook-modal-frame[data-viewport-mode] .production-modal-title {
+.notebook-modal-frame[data-viewport-mode] .building-modal-title {
   overflow: hidden;
   font-size: clamp(14px, 2.8vw, 16px);
   line-height: 1.1;
@@ -460,12 +460,11 @@
   white-space: nowrap;
 }
 
-.notebook-modal-frame[data-viewport-mode] .production-modal-header-actions {
+.notebook-modal-frame[data-viewport-mode] .building-modal-header-actions {
   gap: 4px;
 }
 
-.notebook-modal-frame[data-viewport-mode] .production-info-button,
-.notebook-modal-frame[data-viewport-mode] .production-modal-close {
+.notebook-modal-frame[data-viewport-mode] .building-modal-header-actions > button {
   width: 40px;
   min-width: 40px;
   height: 40px;
@@ -473,32 +472,39 @@
   padding: 0;
 }
 
-.notebook-modal-frame[data-viewport-mode] .production-modal-close > span {
-  display: none;
+.notebook-modal-frame[data-viewport-mode] .building-modal-header-actions > .root-modal-close-button {
+  width: 64px !important;
+  min-width: 64px !important;
+  height: 26px !important;
+  min-height: 26px !important;
 }
 
-.notebook-modal-frame[data-viewport-mode] .production-modal-close > svg {
-  width: 18px;
-  height: 18px;
+.notebook-modal-frame[data-viewport-mode] .building-modal-header-actions > .root-modal-close-button > span {
+  display: inline;
 }
 
-.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-modal-body {
+.notebook-modal-frame[data-viewport-mode] .root-modal-close-button > svg {
+  width: 12px;
+  height: 12px;
+}
+
+.notebook-modal-frame[data-viewport-mode] .building-modal-body {
   min-width: 0;
   min-height: 0;
 }
 
-.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-modal-tabs {
+.notebook-modal-frame[data-viewport-mode] .building-modal-tabs {
   overflow: hidden;
 }
 
-.notebook-modal-frame[data-viewport-mode] .production-modal-tab {
+.notebook-modal-frame[data-viewport-mode] .building-modal-tabs > button {
   min-height: 34px;
   padding: 4px 8px;
   font-size: 11px;
   line-height: 1.15;
 }
 
-.notebook-modal-frame[data-viewport-mode] .production-modal-content {
+.notebook-modal-frame[data-viewport-mode] .building-modal-content {
   min-width: 0;
   padding: 8px 8px 48px;
   overscroll-behavior: contain;
@@ -515,6 +521,15 @@
   height: 40px;
   min-height: 40px;
   box-shadow: 0 2px 8px rgb(0 0 0 / 35%);
+}
+
+.notebook-modal-frame[data-viewport-mode] .production-bonus-info.root-modal-info-button {
+  right: 6px;
+  bottom: 6px;
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  min-height: 24px;
 }
 
 .notebook-modal-frame[data-viewport-mode] .production-modal-footer {
@@ -542,10 +557,6 @@
   line-height: 1.1;
 }
 
-.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-grid {
-  gap: 6px;
-}
-
 .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-card {
   min-width: 0;
   min-height: 76px;
@@ -556,6 +567,9 @@
 .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-card-body {
   min-width: 0;
   padding: 8px;
+  padding-block: 2px;
+  justify-content: flex-start;
+  gap: 4px;
 }
 
 .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-label {
@@ -563,30 +577,24 @@
   line-height: 1.15;
 }
 
-.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-info {
-  width: 28px;
-  height: 28px;
-}
-
-.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-info svg {
-  width: 14px;
-  height: 14px;
-}
-
 .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-image {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
 }
 
 .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-count {
   font-size: 12px;
 }
 
-.notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-footer {
-  min-height: 22px;
-  margin-top: 4px;
-  padding-top: 3px;
-  padding-bottom: 2px;
+.notebook-modal-frame[data-viewport-mode] .building-card-grid-root.four-column-building-grid .building-card-footer {
+  width: 100%;
+  min-height: 0;
+  margin-top: auto;
+  padding-top: 2px;
+  padding-bottom: 0;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-footer span {
@@ -594,11 +602,11 @@
   line-height: 1.1;
 }
 
-.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-body {
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .building-modal-body {
   flex-direction: row;
 }
 
-.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-tabs {
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .building-modal-tabs {
   width: 130px;
   min-width: 130px;
   max-width: 130px;
@@ -607,17 +615,12 @@
   border-right-width: 1px;
 }
 
-.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-content {
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .building-modal-content {
   padding: 6px;
 }
 
-.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-tab {
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .building-modal-tabs > button {
   min-height: 34px;
-}
-
-.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-building-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 5px;
 }
 
 .notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-building-card {
@@ -629,37 +632,20 @@
 }
 
 .notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-building-image {
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
 }
 
 .notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-building-info {
   position: absolute;
   top: 4px;
   right: 4px;
-  width: 20px;
-  height: 20px;
 }
 
 .notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-building-card-body > div > div:first-child {
   margin-bottom: 0;
   min-height: 12px;
-  padding-right: 20px;
-}
-
-.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-building-card-body > div > div:nth-child(2) {
-  gap: 3px;
-  margin-top: 2px;
-}
-
-.notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-building-footer {
-  position: absolute;
-  right: 6px;
-  bottom: 4px;
-  min-height: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
+  padding-right: 18px;
 }
 
 .notebook-modal-frame[data-viewport-mode='landscapePhone'] .production-modal-layout .production-building-footer span {
@@ -678,11 +664,11 @@
   margin-bottom: 4px;
 }
 
-.notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-body {
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .building-modal-body {
   flex-direction: column;
 }
 
-.notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-tabs {
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .building-modal-tabs {
   width: 100%;
   min-width: 0;
   max-width: 100%;
@@ -698,23 +684,19 @@
   scrollbar-width: none;
 }
 
-.notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-tabs::-webkit-scrollbar {
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .building-modal-tabs::-webkit-scrollbar {
   display: none;
 }
 
-.notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-tab {
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .building-modal-tabs > button {
   width: max-content;
   min-width: max-content;
   min-height: 40px;
   scroll-snap-align: start;
 }
 
-.notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-content {
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .building-modal-content {
   flex: 1 1 0%;
-}
-
-.notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-layout .production-building-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .paused-menu-frame[data-viewport-mode] .paused-menu-content:has(.paused-main-menu) {
@@ -769,15 +751,11 @@
     font-size: 10px;
   }
 
-  .notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-header > div:first-child > div:first-child {
+  .notebook-modal-frame[data-viewport-mode='portraitPhone'] .building-modal-header > div:first-child > div:first-child {
     display: none;
   }
 
-  .notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-layout .production-building-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .notebook-modal-frame[data-viewport-mode='portraitPhone'] .production-modal-title {
+  .notebook-modal-frame[data-viewport-mode='portraitPhone'] .building-modal-title {
     font-size: 12px;
   }
 
@@ -788,8 +766,8 @@
 
 @media (hover: none) {
   .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-card,
-  .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-info-button,
-  .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-modal-tab {
+  .notebook-modal-frame[data-viewport-mode] .building-modal-header-actions > button,
+  .notebook-modal-frame[data-viewport-mode] .building-modal-tabs > button {
     transition: none;
   }
 
@@ -2334,16 +2312,6 @@
     height: 28px;
   }
 
-  .building-card-root .building-card-info-button {
-    width: 16px;
-    height: 16px;
-  }
-
-  .building-card-root .building-card-info-button svg {
-    width: 10px;
-    height: 10px;
-  }
-
   .building-card-root .building-card-count {
     font-size: clamp(8px, 2vw, 11px);
     overflow-wrap: anywhere;
@@ -2353,23 +2321,13 @@
     padding: 2px;
   }
 
-  .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-info {
-    width: 16px;
-    height: 16px;
-  }
-
-  .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-info svg {
-    width: 10px;
-    height: 10px;
-  }
-
   .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-image {
     width: 24px;
     height: 24px;
   }
 
-  .notebook-modal-frame[data-viewport-mode] .production-modal-layout .production-building-footer {
-    min-height: 18px;
+  .notebook-modal-frame[data-viewport-mode] .building-card-grid-root.four-column-building-grid .building-card-footer {
+    min-height: 20px;
   }
 
   .public-building-card-body {
@@ -2379,25 +2337,122 @@
 
 }
 
-.building-card-grid-root {
+.building-card-grid-root:not(.four-column-building-grid) {
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
 }
 
 @media (min-width: 768px) {
-  .building-card-grid-root {
+  .building-card-grid-root:not(.four-column-building-grid) {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 }
 
 @media (min-width: 1280px) {
-  .building-card-grid-root {
+  .building-card-grid-root:not(.four-column-building-grid) {
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
   }
 }
 
-.notebook-modal-frame[data-viewport-mode='portraitPhone'] .building-card-grid-root,
-.notebook-modal-frame[data-viewport-mode='landscapePhone'] .building-card-grid-root {
+.notebook-modal-frame[data-viewport-mode='portraitPhone'] .building-card-grid-root:not(.four-column-building-grid),
+.notebook-modal-frame[data-viewport-mode='landscapePhone'] .building-card-grid-root:not(.four-column-building-grid) {
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.building-card-grid-root.four-column-building-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+}
+
+.building-card-grid-root.four-column-building-grid > .building-card-root {
+  align-self: start;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  min-height: 0 !important;
+}
+
+.notebook-modal-frame[data-viewport-mode] .building-card-grid-root.four-column-building-grid .building-card-image {
+  width: clamp(32px, 5vw, 42px);
+  height: clamp(32px, 5vw, 42px);
+}
+
+.notebook-modal-frame[data-viewport-mode] .building-card-grid-root.four-column-building-grid .production-building-card .production-building-image {
+  width: clamp(22px, 4vw, 28px) !important;
+  height: clamp(22px, 4vw, 28px) !important;
+}
+
+.notebook-modal-frame[data-viewport-mode] .building-card-root.housing-building-card .housing-building-image {
+  width: clamp(36px, 10vw, 44px);
+  height: clamp(36px, 10vw, 44px);
+}
+
+.building-card-grid-root.four-column-building-grid .building-card-image-quantity-row {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.building-card-grid-root.four-column-building-grid .building-card-quantity {
+  width: 100%;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.building-card-grid-root.four-column-building-grid .building-card-label {
+  text-transform: lowercase;
+  display: flex;
+  min-height: 2.3em;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.notebook-modal-frame[data-viewport-mode] .building-card-grid-root.four-column-building-grid .building-card-label {
+  font-size: 10px !important;
+}
+
+.building-card-grid-root.four-column-building-grid .building-card-label::first-letter {
+  text-transform: uppercase;
+}
+
+.notebook-modal-frame[data-viewport-mode] .building-card-grid-root.four-column-building-grid .building-card-count,
+.notebook-modal-frame[data-viewport-mode] .building-card-grid-root.four-column-building-grid .production-output-count {
+  font-size: 10px !important;
+}
+
+.building-card-grid-root.four-column-building-grid .building-card-quantity {
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center;
+}
+
+.notebook-modal-frame[data-viewport-mode] .building-card-grid-root.four-column-building-grid .building-card-quantity,
+.notebook-modal-frame[data-viewport-mode] .building-card-grid-root.four-column-building-grid .building-card-footer {
+  display: flex !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.notebook-modal-frame[data-viewport-mode] .building-card-grid-root.four-column-building-grid .building-card-footer {
+  margin-bottom: 6px !important;
+}
+
+.building-card-root .building-card-info-button {
+  width: 12px !important;
+  min-width: 12px !important;
+  height: 12px !important;
+  min-height: 12px !important;
+  padding: 0 !important;
+}
+
+.building-card-root .building-card-info-button svg {
+  width: 6px !important;
+  height: 6px !important;
 }
 
 .building-card-root .building-card-count {
@@ -2406,15 +2461,6 @@
   font-size: clamp(8px, 1vw, 13px);
   line-height: 1.1;
   overflow-wrap: anywhere;
-}
-
-.notebook-modal-frame[data-viewport-mode='portraitPhone'] .public-building-label,
-.notebook-modal-frame[data-viewport-mode='landscapePhone'] .public-building-label {
-  font-size: 8px !important;
-  white-space: normal !important;
-  overflow: visible !important;
-  overflow-wrap: anywhere !important;
-  text-overflow: clip !important;
 }
 
 .building-card-root.public-building-card .building-card-count {
@@ -2434,6 +2480,12 @@
   white-space: nowrap;
 }
 
+.building-card-root .building-card-label,
+.building-card-root .building-card-count,
+.building-card-root .production-output-count {
+  font-weight: 400 !important;
+}
+
 .building-card-root.fleet-no-pending-badge {
   overflow: hidden;
 }
@@ -2447,8 +2499,30 @@
   padding: clamp(4px, 0.5vw, 7px) !important;
 }
 
+.production-building-card-body {
+  padding-block: 2px !important;
+}
+
+.building-card-footer {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  margin-top: auto;
+  padding-bottom: 0;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
 .building-card-root.housing-building-card,
 .building-card-root.fleet-unit-building-card,
 .building-card-root.fleet-infrastructure-building-card {
   padding: clamp(4px, 0.5vw, 7px) !important;
+}
+
+.building-card-root.housing-building-card {
+  aspect-ratio: 1 / 1;
+  height: auto;
+  min-height: 0;
 }

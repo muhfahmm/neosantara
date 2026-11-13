@@ -391,8 +391,6 @@ export default function TempatUmumModal({
 
   if (!isOpen) return null;
 
-  const totalValue = groups.reduce((sum, group) => sum + group.items.reduce((inner, item) => inner + (item.value || 0), 0), 0);
-
   const { totalProductionMW, totalAllBreakdownConsumption } = useMemo(() => {
     return getCountryConsumptionBreakdown(countryDetail, metadata);
   }, [countryDetail, metadata]);
@@ -431,20 +429,20 @@ export default function TempatUmumModal({
   return (
     <>
       {!selectedGroupInfo && <NotebookModalWrapper onClose={onClose}>
-        <div className="flex flex-col h-full overflow-hidden">
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
+        <div className="building-modal-layout flex flex-col h-full overflow-hidden">
+          <div className="building-modal-header px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
                 <Landmark className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
               </div>
               <div className="min-w-0">
-                <h2 className={rootModalTypography.title}>Tempat Umum & Layanan Publik</h2>
+                <h2 className={`building-modal-title ${rootModalTypography.title}`}>Tempat Umum & Layanan Publik</h2>
               </div>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <div className="px-2 py-1 rounded-lg border border-root-accent/30 bg-root-surface text-right">
-                <p className="text-[8px] sm:text-[9px] font-bold uppercase tracking-wider text-root-subtle">Indeks Kepuasan</p>
-                <p className="text-xs sm:text-sm font-black leading-tight text-root-accent">{averageServiceSatisfaction} / 100</p>
+            <div className="building-modal-header-actions flex items-center gap-2 shrink-0">
+              <div className="px-1.5 py-0.5 rounded-lg border border-root-accent/30 bg-root-surface text-right">
+                <p className="text-[7px] sm:text-[8px] font-bold uppercase tracking-wider text-root-subtle">Indeks Kepuasan</p>
+                <p className="text-[10px] sm:text-xs font-black leading-tight text-root-accent">{averageServiceSatisfaction} / 100</p>
               </div>
               <button
                 type="button"
@@ -454,7 +452,7 @@ export default function TempatUmumModal({
                 })}
                 aria-label={`Informasi ${activeGroup?.label ?? "kategori aktif"}`}
                 title={`Informasi ${activeGroup?.label ?? "kategori aktif"}`}
-                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent transition-colors hover:border-root-accent hover:bg-root-accent/10"
+                className="root-modal-info-button building-modal-info-button flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent"
               >
                 <Info className="h-4 w-4" />
               </button>
@@ -464,7 +462,9 @@ export default function TempatUmumModal({
 
           <RootModalSidebarLayout
             ariaLabel="Kategori tempat umum dan layanan publik"
-            contentClassName="flex flex-col justify-between p-4 sm:p-5 lg:p-6"
+            className="building-modal-body"
+            sidebarClassName="building-modal-tabs"
+            contentClassName="building-modal-content flex flex-col justify-between p-4 sm:p-5 lg:p-6"
             items={groups.map((group) => {
               const hasConstruction = group.keys.some((key) =>
                 ongoingConstructions.some((c: any) => c.buildingKey === key)
@@ -519,7 +519,7 @@ export default function TempatUmumModal({
                       </button>
                     </div>
 
-                    <BuildingCardGridRoot>
+                    <BuildingCardGridRoot className="four-column-building-grid">
                       {activeGroup.items.map((it) => {
                         const bMeta = findMeta(it.key) || {};
                         const perCount = it.value || 0;
@@ -578,36 +578,40 @@ export default function TempatUmumModal({
                               />
                             )}
 
-                            <div className="public-building-card-body min-w-0 flex flex-1 items-center gap-2 p-2 sm:p-2.5">
-                              {getBuildingCardImage(it.key) && (
-                                <Image
-                                  src={getBuildingCardImage(it.key)!}
-                                  alt=""
-                                  width={88}
-                                  height={88}
-                                  className="building-card-image h-10 w-10 sm:h-12 sm:w-12 object-contain shrink-0"
-                                />
-                              )}
-                              <div className="min-w-0 flex-1">
-                                <div className="flex min-w-0 items-center gap-1">
-                                  <p className="building-card-label public-building-label min-w-0 flex-1 text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider">{it.label}</p>
+                            <div className="production-building-card-body public-building-card-body flex flex-1 flex-col justify-start gap-1 p-2 sm:p-2.5">
+                              <div className="min-w-0 flex flex-1 flex-col">
+                                <div className="mb-0.5 flex items-start justify-between gap-1">
+                                  <p className="building-card-label production-building-label min-w-0 flex-1 pr-1 text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider leading-snug">{it.label}</p>
                                   <button
-                                    className="building-card-info-button flex-shrink-0 flex items-center justify-center w-4 h-4 rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
+                                    className="building-card-info-button flex-shrink-0 flex items-center justify-center rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       setHoveredBuildingKey(hoveredBuildingKey === it.key ? null : it.key);
                                     }}
                                     title="Info bangunan"
                                   >
-                                    <Info className="w-2.5 h-2.5" />
+                                    <Info />
                                   </button>
                                 </div>
-                                <div className="building-card-metrics mt-0.5 flex min-w-0 items-center gap-1">
-                                  <p className="building-card-count truncate text-[8px] sm:text-[9px] font-black text-root-text leading-tight">{formatNumber(perCount)}</p>
-                                  {isBuilding && (
-                                    <span className="shrink-0 text-[8px] sm:text-[9px] font-bold text-emerald-400 leading-tight">+{queueCount}</span>
+                                <div className="mt-0.5 flex flex-1 items-center justify-center">
+                                  {getBuildingCardImage(it.key) && (
+                                    <Image
+                                      src={getBuildingCardImage(it.key)!}
+                                      alt=""
+                                      width={88}
+                                      height={88}
+                                      className="building-card-image production-building-image h-12 w-12 sm:h-14 sm:w-14 object-contain shrink-0"
+                                    />
                                   )}
                                 </div>
+                              </div>
+                              <div className="building-card-footer public-building-footer flex min-w-0 shrink-0 items-center justify-center gap-1 border-t border-root-accent/10 pt-0.5 text-center">
+                                <span className="building-card-count production-output-count text-[10px] sm:text-xs font-black text-root-accent leading-tight">
+                                  {formatNumber(perCount)}
+                                </span>
+                                {isBuilding && (
+                                  <span className="text-[8px] sm:text-[9px] font-bold text-emerald-400 leading-tight">+{queueCount}</span>
+                                )}
                               </div>
                             </div>
                           </BuildingCardRoot>
@@ -619,20 +623,9 @@ export default function TempatUmumModal({
               </div>
 
               <div className="mt-8 border-t border-root-accent/20 pt-6 space-y-4">
-                {/* Grid 2 Kartu Ringkasan (Full Width) */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch w-full">
-                  
-                  {/* 1. Total Fasilitas Publik */}
-                  <div className="rounded-2xl border border-root-accent/20 bg-root-canvas p-4 flex flex-col justify-between">
-                    <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-root-subtle">Total Fasilitas Publik</p>
-                      <p className="text-2xl sm:text-3xl font-black text-root-accent mt-2 break-words">{formatNumber(totalValue)}</p>
-                    </div>
-                  </div>
-
-
-
-                  {/* 3. Indeks Kepuasan Rakyat */}
+                {/* Ringkasan Indeks Kepuasan Rakyat */}
+                <div className="grid grid-cols-1 gap-4 items-stretch w-full">
+                  {/* Indeks Kepuasan Rakyat */}
                   {(() => {
                     const activeCategory = calculatedCategories.find((cat) => cat.id === activeTabId);
                     if (!activeCategory) return null;

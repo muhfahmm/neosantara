@@ -377,7 +377,7 @@ export default function RingkasanPopulasiModal({
           </div>
 
           <div className="flex items-center gap-2">
-            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi kependudukan" aria-label="Informasi kependudukan" className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas">
+            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi kependudukan" aria-label="Informasi kependudukan" className="root-modal-info-button flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas">
               <Info className="h-3.5 w-3.5" />
             </button>
             <RootModalCloseButton onClick={onClose} />

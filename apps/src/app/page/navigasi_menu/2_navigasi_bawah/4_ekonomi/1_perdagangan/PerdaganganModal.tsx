@@ -941,7 +941,7 @@ export default function PerdaganganModal({
                     onClick={() => setShowWTOTradeInfoModal(true)}
                     title="Lihat Informasi Efek Harga WTO & Agama"
                     aria-label="Informasi efek harga perdagangan"
-                    className="p-1 rounded-full bg-root-canvas border border-root-accent/50 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer shadow-sm flex items-center justify-center shrink-0"
+                    className="root-modal-info-button p-1 rounded-full bg-root-canvas border border-root-accent/50 text-root-accent cursor-pointer shadow-sm flex items-center justify-center shrink-0"
                   >
                     <Info className="w-3.5 h-3.5" />
                   </button>
@@ -951,7 +951,7 @@ export default function PerdaganganModal({
                     type="button"
                     onClick={() => setShowBlockedInfoModal(true)}
                     title="Informasi Blokir Pasar"
-                    className="p-1.5 lg:p-2 rounded-xl border border-rose-500/30 bg-rose-950/30 text-rose-400 hover:bg-rose-500 hover:text-white transition-all cursor-pointer font-bold text-xs uppercase flex items-center justify-center shadow-sm"
+                    className="root-modal-info-button p-1.5 lg:p-2 rounded-xl border border-rose-500/30 bg-rose-950/30 text-rose-400 cursor-pointer font-bold text-xs uppercase flex items-center justify-center shadow-sm"
                   >
                     <Info className="h-4 w-4" />
                   </button>

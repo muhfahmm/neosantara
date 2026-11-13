@@ -105,16 +105,16 @@ export default function BaseProduksiGrid({
 }: BaseProduksiGridProps) {
   const formatLabel = (key: string) => {
     const customLabels: Record<string, string> = {
-      pembangkit_listrik_tenaga_nuklir: "PLT Nuklir (PLTN)",
-      pembangkit_listrik_tenaga_air: "PLT Air (PLTA)",
-      pembangkit_listrik_tenaga_surya: "PLT Surya (PLTS)",
-      pembangkit_listrik_tenaga_uap: "PLT Uap (PLTU)",
-      pembangkit_listrik_tenaga_gas: "PLT Gas (PLTG)",
-      pembangkit_listrik_tenaga_angin: "PLT Angin (PLTB)",
-      pembangkit_listrik_tenaga_panas_bumi: "PLT Panas Bumi (PLTP)",
-      pembangkit_listrik_tenaga_hidrogen: "PLT Hidrogen (PLTH)",
-      pembangkit_listrik_tenaga_gelombang_laut: "PLT Gelombang Laut (PLTGL)",
-      pembangkit_listrik_tenaga_fusi_nuklir: "PLT Fusi Nuklir (PLTFN)",
+      "pembangkit_listrik_tenaga_nuklir": "PLTN",
+  "pembangkit_listrik_tenaga_air": "PLTA",
+  "pembangkit_listrik_tenaga_surya": "PLTS",
+  "pembangkit_listrik_tenaga_uap": "PLTU",
+  "pembangkit_listrik_tenaga_gas": "PLTG",
+  "pembangkit_listrik_tenaga_angin": "PLTB",
+  "pembangkit_listrik_tenaga_panas_bumi": "PLTP",
+  "pembangkit_listrik_tenaga_hidrogen": "PLTH",
+  "pembangkit_listrik_tenaga_gelombang_laut": "PLTGL",
+  "pembangkit_listrik_tenaga_fusi_nuklir": "PLTFN"
     };
     if (customLabels[key]) return customLabels[key];
     return key.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase());
@@ -192,7 +192,7 @@ export default function BaseProduksiGrid({
         )}
       </div>
 
-      <BuildingCardGridRoot className="production-building-grid">
+      <BuildingCardGridRoot className="four-column-building-grid">
         {displayedKeys.map((key) => {
           const bMeta = findMeta(key) || {};
           const perCount = Number(countryDetail?.[key]) || 0;
@@ -279,13 +279,13 @@ export default function BaseProduksiGrid({
                 />
               )}
 
-              <div className="production-building-card-body p-2 sm:p-2.5 flex flex-col flex-grow justify-between">
-                <div>
+              <div className="production-building-card-body p-2 sm:p-2.5 flex flex-col flex-grow justify-start gap-1">
+                <div className="building-card-main min-w-0 flex flex-1 flex-col justify-center">
                   <div className="flex items-start justify-between gap-1 mb-0.5">
                     <p className="building-card-label production-building-label text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1 leading-snug">{label}</p>
                     <button
                       disabled={isProductionBanned}
-                      className="building-card-info-button production-building-info flex-shrink-0 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
+                      className="building-card-info-button production-building-info flex-shrink-0 flex items-center justify-center rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
                       onClick={(e) => {
                         if (isProductionBanned) return;
                         e.stopPropagation();
@@ -293,100 +293,97 @@ export default function BaseProduksiGrid({
                       }}
                       title={isProductionBanned ? "Diblokir oleh resolusi PBB yang sedang berlaku" : "Info bangunan"}
                     >
-                      <Info className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                      <Info />
                     </button>
                   </div>
 
-                  <div className="flex items-center gap-2 mt-1.5">
+                  <div className="building-card-quantity min-w-0 w-full flex items-center justify-center gap-1">
+                    <span className="building-card-count production-building-count text-xs sm:text-sm lg:text-base font-black text-root-text leading-none">{perCount}</span>
+                    {isBuilding && (
+                      <span className="text-[10px] sm:text-xs font-bold text-emerald-400 leading-none">
+                        +{queueCount}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="building-card-image-quantity-row mt-0.5 flex flex-col items-center justify-center gap-1">
                     {buildingImage && !failedBuildingImages[key] ? (
                       <Image
                         src={buildingImage}
                         alt=""
                         width={88}
                         height={88}
-                        className="building-card-image production-building-image h-16 w-16 sm:h-20 sm:w-20 object-contain shrink-0"
+                        className="building-card-image production-building-image h-12 w-12 sm:h-14 sm:w-14 object-contain shrink-0"
                         onError={() => setFailedBuildingImages((images) => ({ ...images, [key]: true }))}
                       />
                     ) : (
-                      <Building2 aria-hidden="true" className="building-card-image production-building-image h-16 w-16 sm:h-20 sm:w-20 shrink-0 text-root-subtle" />
+                      <Building2 aria-hidden="true" className="building-card-image production-building-image h-12 w-12 sm:h-14 sm:w-14 shrink-0 text-root-subtle" />
                     )}
-                    <div className="min-w-0 flex-1 flex items-end gap-1 flex-wrap">
-                      <span className="building-card-count production-building-count text-xs sm:text-sm lg:text-base font-black text-root-text leading-none">{perCount}</span>
-                      {isBuilding && (
-                        <span className="text-[10px] sm:text-xs font-bold text-emerald-400 leading-none">
-                          +{queueCount}
+                  </div>
+
+                  <div className="production-output-inline flex flex-col items-center justify-center text-center">
+                    {isElectricityTab ? (
+                      <>
+                        <span className={`production-output-count font-black text-xs sm:text-sm leading-tight break-words ${isProductionZero ? 'text-rose-400' : 'text-root-accent'}`}>
+                          {rawProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                         </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* FOOTER LISTRIK */}
-                {isElectricityTab && (
-                  <div className="production-building-footer border-t border-root-accent/10 mt-1.5 pt-1 pb-0.5 text-center min-h-[36px] flex flex-col justify-center">
-                    <span className={`production-output-count font-black text-xs sm:text-sm leading-tight break-words ${isProductionZero ? 'text-rose-400' : 'text-root-accent'}`}>
-                      {rawProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
-                    </span>
-                    {isProductionZero && (
-                      <span className="text-[8px] sm:text-[9px] font-bold text-rose-400 leading-tight">(bahan bakar defisit)</span>
-                    )}
-                  </div>
-                )}
-
-                {/* FOOTER NON-LISTRIK */}
-                {!isElectricityTab && (
-                  <div className="production-building-footer border-t border-root-accent/10 mt-1.5 pt-1 pb-0.5 text-center min-h-[36px] flex flex-col justify-center gap-0.5">
-                    {(() => {
-                      // Emas: tampilkan produksi tetap (tidak berubah-ubah seperti stok)
-                      if (key === 'emas') {
-                        const fixedProd = Number(bMeta?.produksi || 0) * perCount * productionMultiplier;
-                        return (
-                          <span className="production-output-count font-black text-xs sm:text-sm text-root-accent leading-tight break-words">
-                            {fixedProd.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
-                          </span>
-                        );
-                      }
-
-                      const isFoodCommodity = FOOD_CONSUMPTION_PER_CAPITA[key] !== undefined;
-                      if (isFoodCommodity) {
-                        const isDeficit = isFoodRawMaterialDeficit(key, countryDetail, metadata);
-                        const accumulated = getMaterialStock(countryDetail, key, metadata);
-                        const displayVal = isDeficit ? 0 : accumulated;
-                        const isRedText = isDeficit;
-
-                        return (
-                          <div className="flex flex-col items-center justify-center">
-                            <span className={`production-output-count font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${isRedText ? 'text-rose-400' : 'text-root-accent'}`}>
-                              {displayVal.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
+                        {isProductionZero && (
+                          <span className="text-[8px] sm:text-[9px] font-bold text-rose-400 leading-tight">(bahan bakar defisit)</span>
+                        )}
+                      </>
+                    ) : (
+                      (() => {
+                        // Emas: tampilkan produksi tetap (tidak berubah-ubah seperti stok)
+                        if (key === 'emas') {
+                          const fixedProd = Number(bMeta?.produksi || 0) * perCount * productionMultiplier;
+                          return (
+                            <span className="production-output-count font-black text-xs sm:text-sm text-root-accent leading-tight break-words">
+                              {fixedProd.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                             </span>
-                            {isDeficit && (
-                              <span className="text-[9px] font-bold text-rose-400 leading-none mt-0.5">(bahan baku defisit)</span>
+                          );
+                        }
+
+                        const isFoodCommodity = FOOD_CONSUMPTION_PER_CAPITA[key] !== undefined;
+                        if (isFoodCommodity) {
+                          const isDeficit = isFoodRawMaterialDeficit(key, countryDetail, metadata);
+                          const accumulated = getMaterialStock(countryDetail, key, metadata);
+                          const displayVal = isDeficit ? 0 : accumulated;
+                          const isRedText = isDeficit;
+
+                          return (
+                            <div className="flex flex-col items-center justify-center">
+                              <span className={`production-output-count font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${isRedText ? 'text-rose-400' : 'text-root-accent'}`}>
+                                {displayVal.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
+                              </span>
+                              {isDeficit && (
+                                <span className="text-[9px] font-bold text-rose-400 leading-none mt-0.5">(bahan baku defisit)</span>
+                              )}
+                            </div>
+                          );
+                        }
+
+                        const stock = getMaterialStock(countryDetail, key);
+                        const isFuel = ELECTRICITY_FUEL_RESOURCE_KEYS.includes(key);
+                        const colorClass = (isFuel && stock > 0) ? 'text-emerald-400' : 'text-root-accent';
+                        const travelOilConsumption = key === 'minyak_bumi'
+                          ? getTravelOilConsumptionThisMonth(countryDetail, currentDate ?? new Date())
+                          : 0;
+                        return (
+                          <div className="flex flex-col items-center">
+                            <span className={`production-output-count font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${colorClass}`}>
+                              {stock.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
+                            </span>
+                            {travelOilConsumption > 0 && (
+                              <span className="mt-0.5 text-[8px] sm:text-[9px] font-bold leading-tight text-amber-300">
+                                Konsumsi perjalanan bulan ini: {travelOilConsumption.toLocaleString('id-ID')} barel
+                              </span>
                             )}
                           </div>
                         );
-                      }
-
-                      const stock = getMaterialStock(countryDetail, key);
-                      const isFuel = ELECTRICITY_FUEL_RESOURCE_KEYS.includes(key);
-                      const colorClass = (isFuel && stock > 0) ? 'text-emerald-400' : 'text-root-accent';
-                      const travelOilConsumption = key === 'minyak_bumi'
-                        ? getTravelOilConsumptionThisMonth(countryDetail, currentDate ?? new Date())
-                        : 0;
-                      return (
-                        <div className="flex flex-col items-center">
-                          <span className={`production-output-count font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${colorClass}`}>
-                            {stock.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
-                          </span>
-                          {travelOilConsumption > 0 && (
-                            <span className="mt-0.5 text-[8px] sm:text-[9px] font-bold leading-tight text-amber-300">
-                              Konsumsi perjalanan bulan ini: {travelOilConsumption.toLocaleString('id-ID')} barel
-                            </span>
-                          )}
-                        </div>
-                      );
-                    })()}
+                      })()
+                    )}
                   </div>
-                )}
+                </div>
               </div>
               </BuildingCardRoot>
             </React.Fragment>

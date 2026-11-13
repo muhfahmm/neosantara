@@ -403,19 +403,19 @@ export default function HunianPermukimanModal({
     <>
       {/* MODAL UTAMA */}
       {!selectedItemInfo && <NotebookModalWrapper onClose={onClose}>
-        <div className="flex flex-col h-full overflow-hidden">
+        <div className="building-modal-layout flex flex-col h-full overflow-hidden">
 
           {/* HEADER */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
+          <div className="building-modal-header px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
                 <Home className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
               </div>
               <div className="min-w-0">
-                <h2 className={rootModalTypography.title}>Hunian & Permukiman</h2>
+                <h2 className={`building-modal-title ${rootModalTypography.title}`}>Hunian & Permukiman</h2>
               </div>
             </div>
-            <div className="flex shrink-0 items-center gap-2">
+            <div className="building-modal-header-actions flex shrink-0 items-center gap-2">
               <button
                 type="button"
                 onClick={() => activeItem && setSelectedItemInfo({
@@ -424,7 +424,7 @@ export default function HunianPermukimanModal({
                 })}
                 aria-label={`Informasi ${activeItem?.label ?? "hunian aktif"}`}
                 title={`Informasi ${activeItem?.label ?? "hunian aktif"}`}
-                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent transition-colors hover:border-root-accent hover:bg-root-accent/10"
+                className="root-modal-info-button building-modal-info-button flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent"
               >
                 <Info className="h-4 w-4" />
               </button>
@@ -434,7 +434,9 @@ export default function HunianPermukimanModal({
 
           <RootModalSidebarLayout
             ariaLabel="Kategori hunian dan permukiman"
-            contentClassName="flex flex-col justify-between p-4 sm:p-5 lg:p-6"
+            className="building-modal-body"
+            sidebarClassName="building-modal-tabs"
+            contentClassName="building-modal-content flex flex-col justify-between p-4 sm:p-5 lg:p-6"
             items={items.map((it) => ({
               id: it.key,
               isActive: activeTab === it.key,
@@ -512,7 +514,7 @@ export default function HunianPermukimanModal({
                           handleBuild(activeItem.key, activeItem.label);
                         }
                       }}
-                      className="housing-building-card w-44 sm:w-52 lg:w-56 p-2 sm:p-2.5 cursor-pointer"
+                      className="housing-building-card aspect-square w-24 sm:w-28 lg:w-32 p-2 sm:p-2.5 cursor-pointer"
                     >
                       {hoveredBuildingKey === activeItem.key && (() => {
                         const bMeta = findMeta(activeItem.key) || {};
@@ -533,34 +535,29 @@ export default function HunianPermukimanModal({
                         );
                       })()}
 
-                      <div className="flex min-w-0 items-center gap-2">
+                      <div className="relative flex h-full min-w-0 flex-col items-center justify-center gap-2">
                         {getBuildingCardImage(activeItem.key) && (
                           <Image
                             src={getBuildingCardImage(activeItem.key)!}
                             alt=""
                             width={104}
                             height={104}
-                            className="building-card-image h-10 w-10 sm:h-12 sm:w-12 shrink-0 object-contain"
+                            className="building-card-image housing-building-image h-10 w-10 sm:h-12 sm:w-12 shrink-0 object-contain"
                           />
                         )}
-                        <div className="min-w-0 flex-1">
-                          <div className="flex min-w-0 items-center justify-between gap-1">
-                            <p className="building-card-label min-w-0 flex-1 truncate text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider">Total Terdaftar</p>
-                          <button
-                            className="building-card-info-button flex-shrink-0 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setHoveredBuildingKey(hoveredBuildingKey === activeItem.key ? null : activeItem.key);
-                            }}
-                            title="Info bangunan"
-                          >
-                            <Info className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                          </button>
-                          </div>
-                          <p className="building-card-count mt-0.5 text-[8px] sm:text-[9px] font-black text-root-text leading-tight">
-                            {activeItem.value.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
-                          </p>
-                        </div>
+                        <button
+                          className="building-card-info-button absolute right-0 top-0 flex-shrink-0 flex items-center justify-center rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setHoveredBuildingKey(hoveredBuildingKey === activeItem.key ? null : activeItem.key);
+                          }}
+                          title="Info bangunan"
+                        >
+                          <Info />
+                        </button>
+                        <p className="building-card-count text-[8px] sm:text-[9px] font-black text-root-text leading-tight">
+                          {activeItem.value.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
+                        </p>
                       </div>
                     </BuildingCardRoot>
                     </div>

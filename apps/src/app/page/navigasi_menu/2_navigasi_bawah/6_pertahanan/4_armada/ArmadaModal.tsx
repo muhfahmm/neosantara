@@ -97,7 +97,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
               onClick={() => setShowDefenseBonusInfo(true)}
               aria-label="Informasi armada dan bonus pertahanan"
               title="Informasi armada dan bonus pertahanan"
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent transition-all hover:border-root-accent hover:bg-root-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent cursor-pointer"
+              className="root-modal-info-button flex h-8 w-8 items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent cursor-pointer"
             >
               <Info className="h-4 w-4" />
             </button>

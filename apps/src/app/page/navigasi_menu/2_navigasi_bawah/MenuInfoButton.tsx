@@ -28,7 +28,7 @@ export default function MenuInfoButton({ title, description }: MenuInfoButtonPro
         onClick={() => setInfoModalOpen(true)}
         aria-label={`Informasi ${title}`}
         title={`Informasi ${title}`}
-        className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent transition-colors hover:border-root-accent hover:bg-root-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent"
+        className="root-modal-info-button flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent"
       >
         <Info className="h-4 w-4" />
       </button>

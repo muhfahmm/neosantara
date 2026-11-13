@@ -488,7 +488,7 @@ function PajakModalContent({
               onClick={() => setIsTaxPolicyInfoOpen(true)}
               title="Informasi kebijakan pajak"
               aria-label="Informasi kebijakan pajak"
-              className="flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas"
+              className="root-modal-info-button flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas"
             >
               <Info className="h-3.5 w-3.5" />
             </button>

@@ -502,7 +502,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                 </h3>
                 <button
                   onClick={() => setShowGeneralInfo(true)}
-                  className="p-1 text-root-subtle hover:text-root-accent hover:bg-root-accent/10 rounded-lg transition-colors cursor-pointer"
+                  className="root-modal-info-button p-1 text-root-subtle rounded-lg cursor-pointer"
                   title="Informasi & Panduan Dewan Kabinet"
                 >
                   <Info className="h-4 w-4" />

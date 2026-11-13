@@ -416,7 +416,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
               </span>
             </div>
 
-            <BuildingCardGridRoot>
+            <BuildingCardGridRoot className="four-column-building-grid">
               {armadaCatalog[group].map((item) => {
                 const value = getData(item.key, group);
                 let displayText = formatNumber(value);
@@ -462,9 +462,9 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                           e.stopPropagation();
                           handleInfoClick(item.key);
                         }}
-                        className="building-card-info-button flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-root-surface border border-root-accent/30 text-root-subtle hover:text-root-accent hover:border-root-accent transition-colors cursor-pointer"
+                        className="building-card-info-button flex-shrink-0 flex items-center justify-center rounded-full bg-root-surface border border-root-accent/30 text-root-subtle hover:text-root-accent hover:border-root-accent transition-colors cursor-pointer"
                       >
-                        <Info className="w-3 h-3" />
+                        <Info />
                       </button>
                     </div>
 
@@ -477,7 +477,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                         className="building-card-image h-10 w-10 sm:h-12 sm:w-12 object-contain shrink-0"
                       />
                       <div className="min-w-0 w-full">
-                        <div className="flex min-w-0 items-center justify-center gap-1">
+                        <div className="building-card-quantity flex min-w-0 items-center justify-center gap-1">
                           <span className={`building-card-count ${item.key === "barak" ? "text-xs sm:text-sm" : "text-sm sm:text-base lg:text-lg"} font-black text-root-text leading-tight break-words`}>
                             {displayText}
                           </span>
