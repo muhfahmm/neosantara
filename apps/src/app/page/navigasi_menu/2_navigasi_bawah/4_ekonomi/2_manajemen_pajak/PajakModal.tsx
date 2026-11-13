@@ -469,7 +469,7 @@ function PajakModalContent({
     <>
     {!isTaxPolicyInfoOpen && (
     <NotebookModalWrapper onClose={onClose} frameClassName="tax-policy-modal-frame">
-      <div className="flex flex-col h-full overflow-hidden">
+      <div className="root-modal-util-b74379da23">
         <RootInfoModalHeader
           title="Kebijakan Perpajakan Fiskal"
           onClose={onClose}
@@ -482,7 +482,7 @@ function PajakModalContent({
               onClick={() => setIsTaxPolicyInfoOpen(true)}
               title="Informasi kebijakan pajak"
               aria-label="Informasi kebijakan pajak"
-              className="root-modal-info-button"
+              className="root-modal-info-button root-modal-util-1697100c43"
             >
               <Info aria-hidden="true" />
             </button>

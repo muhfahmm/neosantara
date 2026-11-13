@@ -229,7 +229,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
   return (
     <>
       {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
-        <div className="flex flex-col h-full overflow-hidden">
+        <div className="root-modal-util-b74379da23">
 
           <RootInfoModalHeader
             title="Alokasi & Kebijakan Subsidi"
@@ -238,7 +238,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
             icon={<HandHelping aria-hidden="true" />}
             actions={
               <>
-              <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi alokasi dan kebijakan subsidi" aria-label="Informasi alokasi dan kebijakan subsidi" className="root-modal-info-button">
+              <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi alokasi dan kebijakan subsidi" aria-label="Informasi alokasi dan kebijakan subsidi" className="root-modal-info-button root-modal-util-1697100c43">
                 <Info aria-hidden="true" />
               </button>
               {forumDialogMode && (

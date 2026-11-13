@@ -509,7 +509,7 @@ function HargaModalContent({
   return (
     <>
     {!isInfoOpen && <NotebookModalWrapper onClose={onClose} frameClassName="harga-modal-frame">
-      <div className="flex flex-col h-full overflow-hidden">
+      <div className="root-modal-util-b74379da23">
         <RootInfoModalHeader
           title="Kontrol Harga Barang Pokok"
           onClose={onClose}
@@ -517,7 +517,7 @@ function HargaModalContent({
           icon={<Tag aria-hidden="true" />}
           actions={
             <>
-            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi kontrol harga barang pokok" aria-label="Informasi kontrol harga barang pokok" className="root-modal-info-button">
+            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi kontrol harga barang pokok" aria-label="Informasi kontrol harga barang pokok" className="root-modal-info-button root-modal-util-1697100c43">
               <Info aria-hidden="true" />
             </button>
             {forumDialogMode && (

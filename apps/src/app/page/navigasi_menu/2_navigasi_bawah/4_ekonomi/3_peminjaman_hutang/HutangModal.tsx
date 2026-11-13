@@ -358,7 +358,7 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
     <>
       {!isLoanInfoOpen && (
       <NotebookModalWrapper onClose={onClose} frameClassName="loan-modal-frame">
-        <div className="flex flex-col h-full overflow-hidden">
+        <div className="root-modal-util-b74379da23">
 
           <RootInfoModalHeader
             title="Pinjaman & Hutang"
@@ -371,7 +371,7 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
               onClick={() => setIsLoanInfoOpen(true)}
               title="Informasi pinjaman dan hutang"
               aria-label="Informasi pinjaman dan hutang"
-              className="root-modal-info-button"
+              className="root-modal-info-button root-modal-util-1697100c43"
             >
               <Info aria-hidden="true" />
             </button>

@@ -335,7 +335,7 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
   return (
     <>
     {!isInfoOpen && <NotebookModalWrapper onClose={onClose} frameClassName="economic-system-modal-frame">
-      <div className="flex flex-col h-full overflow-hidden">
+      <div className="root-modal-util-b74379da23">
         
         <RootInfoModalHeader
           title="Kebijakan & Sistem Ekonomi"
@@ -343,7 +343,7 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
           size="standard"
           icon={<Scale aria-hidden="true" />}
           actions={
-            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi kebijakan dan sistem ekonomi" aria-label="Informasi kebijakan dan sistem ekonomi" className="root-modal-info-button">
+            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi kebijakan dan sistem ekonomi" aria-label="Informasi kebijakan dan sistem ekonomi" className="root-modal-info-button root-modal-util-1697100c43">
               <Info aria-hidden="true" />
             </button>
           }

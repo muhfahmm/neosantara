@@ -416,14 +416,14 @@ export default function PDBModal({ isOpen, onClose, countryDetail, selectedCount
   return (
     <>
     {!isInfoOpen && <NotebookModalWrapper onClose={onClose} frameClassName="pdb-modal-frame">
-      <div className="flex flex-col h-full overflow-hidden">
+      <div className="root-modal-util-b74379da23">
         <RootInfoModalHeader
           title="Produk Domestik Bruto (PDB)"
           onClose={onClose}
           size="standard"
           icon={<TrendingUp aria-hidden="true" />}
           actions={
-            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi PDB" aria-label="Informasi PDB" className="root-modal-info-button">
+            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi PDB" aria-label="Informasi PDB" className="root-modal-info-button root-modal-util-1697100c43">
               <Info aria-hidden="true" />
             </button>
           }
