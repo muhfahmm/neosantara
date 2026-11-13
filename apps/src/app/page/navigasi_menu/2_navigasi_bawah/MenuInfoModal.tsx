@@ -41,6 +41,7 @@ export default function MenuInfoModal({
           title={title}
           titleId="menu-info-modal-title"
           onClose={onClose}
+          size="standard"
         />
         <div className={`root-info-modal-content min-h-0 overflow-y-auto bg-root-surface p-4 sm:p-5 ${fillContent ? "flex flex-1" : ""}`}>
           {description && (

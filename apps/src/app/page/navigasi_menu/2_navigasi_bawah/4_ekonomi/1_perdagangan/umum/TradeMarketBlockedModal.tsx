@@ -1,8 +1,8 @@
 "use client";
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
-import { AlertTriangle, ArrowDown, Info, X } from "lucide-react";
+import { AlertTriangle, ArrowDown, Info } from "lucide-react";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 
 interface TradeMarketBlockedModalProps {
   isOpen: boolean;
@@ -27,22 +27,13 @@ export default function TradeMarketBlockedModal({
         aria-labelledby="trade-market-blocked-title"
         className="overflow-hidden text-white"
       >
-        <div className="flex items-center justify-between gap-2 rounded-t-2xl border-b border-rose-500/30 bg-root-canvas px-3 py-2 sm:px-5 sm:py-2.5">
-          <div className="flex items-center gap-2">
-            <Info className="h-4 w-4 shrink-0 text-rose-400" />
-            <h2 id="trade-market-blocked-title" className="text-xs font-black uppercase tracking-wide text-rose-400 sm:text-sm">
-              Info Blokir
-            </h2>
-          </div>
-          <SharedModalCloseButton
-            type="button"
-            onClick={onClose}
-            className="flex shrink-0 cursor-pointer items-center gap-1 rounded-lg border border-rose-500/30 bg-root-surface px-2 py-1 text-[10px] font-bold uppercase text-rose-400 transition-colors hover:border-rose-500 hover:bg-root-surface hover:text-rose-400 hover:shadow-none"
-           appearance="custom">
-            <span className="font-semibold tracking-wide">Tutup</span>
-            <X className="h-3 w-3" />
-          </SharedModalCloseButton>
-        </div>
+        <RootInfoModalHeader
+          title="Info Blokir"
+          titleId="trade-market-blocked-title"
+          onClose={onClose}
+          size="standard"
+          icon={<Info aria-hidden="true" />}
+        />
 
         <div className="space-y-2 px-3 py-3 sm:px-4">
           <div className="mx-auto flex max-w-prose items-center gap-2 rounded-lg border border-rose-500/25 bg-rose-950/20 px-3 py-2">

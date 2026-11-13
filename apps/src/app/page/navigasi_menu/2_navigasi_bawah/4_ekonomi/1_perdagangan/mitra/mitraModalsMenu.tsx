@@ -9,7 +9,7 @@ import ConfirmRemoveTradeModal from "./ConfirmRemoveTradeModal";
 import TambahMitraBaru from "./tambahMitraBaru";
 import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
-import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 
 export interface TradePartner {
@@ -81,18 +81,13 @@ export default function MitraModalsMenu({
 
       {!isDetailOpen && (
         <NotebookModalWrapper onClose={onClose} zIndexClass="z-[80]">
-          <div className="flex h-full min-w-0 flex-col overflow-hidden">
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
-              <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
-                  <Handshake className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-                </div>
-                <div className="min-w-0">
-                  <h2 className={rootModalTypography.title}>Mitra Dagang Global</h2>
-                </div>
-              </div>
-              <RootModalCloseButton onClick={onClose} />
-            </div>
+          <div className="root-modal-util-b74379da23 min-w-0">
+            <RootInfoModalHeader
+              title="Mitra Dagang Global"
+              onClose={onClose}
+              size="standard"
+              icon={<Handshake aria-hidden="true" />}
+            />
 
             <div className="root-no-scrollbar-glow min-h-0 flex-1 overflow-y-auto p-4 sm:p-6 relative z-10 neon-scrollbar">
               {partners.length === 0 ? (

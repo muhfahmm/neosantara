@@ -1,8 +1,8 @@
 "use client";
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
-import { AlertTriangle, X } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 
 interface ArmsTradeBudgetModalProps {
   availableCash: number;
@@ -31,22 +31,13 @@ export default function ArmsTradeBudgetModal({
         aria-labelledby="arms-trade-budget-title"
         className="overflow-hidden"
       >
-        <header className="flex items-center justify-between border-b border-amber-500/20 bg-root-canvas px-3 py-2 sm:px-5 sm:py-2.5">
-          <div className="flex items-center gap-3 text-amber-300">
-            <AlertTriangle className="h-5 w-5 shrink-0" />
-            <h2 id="arms-trade-budget-title" className="text-sm font-black uppercase tracking-wide">
-              Kas Mitra Tidak Mencukupi
-            </h2>
-          </div>
-          <SharedModalCloseButton
-            type="button"
-            onClick={onClose}
-            aria-label="Tutup informasi kas mitra"
-            className="rounded-lg p-1.5 text-root-subtle transition hover:bg-white/5 hover:text-white"
-           appearance="custom">
-            <X className="h-4 w-4" />
-          </SharedModalCloseButton>
-        </header>
+        <RootInfoModalHeader
+          title="Kas Mitra Tidak Mencukupi"
+          titleId="arms-trade-budget-title"
+          onClose={onClose}
+          size="standard"
+          icon={<AlertTriangle aria-hidden="true" />}
+        />
         <div className="space-y-3 p-4 text-sm sm:p-5">
           <p className="text-[#A7C4C4]">
             Mitra belum memiliki anggaran yang cukup untuk membeli alutsista ini. Transaksi tidak dilakukan.

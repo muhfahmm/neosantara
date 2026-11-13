@@ -921,29 +921,30 @@ export default function PerdaganganModal({
       {/* 🔥 Sembunyikan Modal Utama saat Modal Info terbuka */}
       {!showBlockedInfoModal && !showWTOTradeInfoModal && (
         <NotebookModalWrapper onClose={onClose}>
-          <div className="flex flex-col h-full overflow-hidden">
+          <div className="root-modal-util-b74379da23">
 
             {/* HEADER */}
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
-              <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
-                  <ArrowRightLeft className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-                </div>
-                <div className="min-w-0">
-                  <h2 className={rootModalTypography.title}>Pasar Perdagangan Global</h2>
+            <div className="satisfaction-modal-header root-modal-util-9462ce2345">
+              <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
+                <div className="root-modal-util-08dfbca033">
+                  <div className="root-modal-util-739d92b232">
+                    <ArrowRightLeft aria-hidden="true" className="root-modal-util-d252947d10" />
+                  </div>
+                  <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
+                    Pasar Perdagangan Global
+                  </h2>
                 </div>
               </div>
-
-              <div className="flex items-center gap-2">
+              <div className="root-modal-util-08dfbca033">
                 {!isTradeMarketBlocked && (
                   <button
                     type="button"
                     onClick={() => setShowWTOTradeInfoModal(true)}
                     title="Lihat Informasi Efek Harga WTO & Agama"
                     aria-label="Informasi efek harga perdagangan"
-                    className="root-modal-info-button p-1 rounded-full bg-root-canvas border border-root-accent/50 text-root-accent cursor-pointer shadow-sm flex items-center justify-center shrink-0"
+                    className="root-modal-info-button root-modal-util-1697100c43"
                   >
-                    <Info className="w-3.5 h-3.5" />
+                    <Info aria-hidden="true" />
                   </button>
                 )}
                 {isTradeMarketBlocked && (
@@ -951,12 +952,12 @@ export default function PerdaganganModal({
                     type="button"
                     onClick={() => setShowBlockedInfoModal(true)}
                     title="Informasi Blokir Pasar"
-                    className="root-modal-info-button p-1.5 lg:p-2 rounded-xl border border-rose-500/30 bg-rose-950/30 text-rose-400 cursor-pointer font-bold text-xs uppercase flex items-center justify-center shadow-sm"
+                    aria-label="Informasi blokir pasar"
+                    className="root-modal-info-button root-modal-util-1697100c43"
                   >
-                    <Info className="h-4 w-4" />
+                    <Info aria-hidden="true" />
                   </button>
                 )}
-
                 <RootModalCloseButton onClick={onClose} />
               </div>
             </div>

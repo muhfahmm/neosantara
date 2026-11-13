@@ -3,7 +3,7 @@
 import React from "react";
 import { HandHelping, Info, ShieldAlert, TrendingUp, TrendingDown, DollarSign, Check } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
-import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { SubsidyItem, formatCurrencyCompact } from "../../../../../../../../json/5_database_kebijakan_subsidi/index";
@@ -26,20 +26,12 @@ export default function DetailSubsidiItemModal({
   return (
     <NotebookModalWrapper onClose={onClose} zIndexClass="z-[70]" frameClassName="subsidy-detail-modal-frame">
       <div className="flex h-full min-h-0 flex-col overflow-hidden">
-        {/* Header */}
-        <div className="flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
-              <HandHelping className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-            </div>
-            <div>
-              <h2 className={`${rootModalTypography.title} !text-root-accent`}>
-                Rincian Kebijakan Subsidi
-              </h2>
-            </div>
-          </div>
-          <RootModalCloseButton onClick={onClose} />
-        </div>
+        <RootInfoModalHeader
+          title="Rincian Kebijakan Subsidi"
+          onClose={onClose}
+          size="standard"
+          icon={<HandHelping aria-hidden="true" />}
+        />
 
         {/* Content Body */}
         <div className="subsidy-detail-modal-body flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto bg-root-surface p-3 sm:p-4 custom-scrollbar">

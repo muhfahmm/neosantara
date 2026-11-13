@@ -3,7 +3,7 @@ import React from "react";
 import { createPortal } from "react-dom";
 import { ChevronRight, Handshake, PackageSearch } from "lucide-react";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
-import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
 
@@ -41,16 +41,12 @@ export default function PilihItemModal({
       onClose={onClose}
     >
       <div className="flex h-full min-w-0 flex-col overflow-hidden">
-        {/* HEADER */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
-          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className="shrink-0 rounded-lg border border-emerald-500/30 bg-root-surface p-1 sm:p-1.5">
-              <HeaderIcon className="h-4 w-4 text-emerald-400 sm:h-5 sm:w-5" aria-hidden="true" />
-            </div>
-            <h2 className={rootModalTypography.title}>{title}</h2>
-          </div>
-          <RootModalCloseButton onClick={onClose} />
-        </div>
+        <RootInfoModalHeader
+          title={title}
+          onClose={onClose}
+          size="standard"
+          icon={<HeaderIcon aria-hidden="true" />}
+        />
 
         {/* BODY - Grid Card */}
         <div className="flex-1 min-h-0 overflow-y-auto px-5 pt-5 pb-2 bg-root-surface relative z-10 neon-scrollbar">

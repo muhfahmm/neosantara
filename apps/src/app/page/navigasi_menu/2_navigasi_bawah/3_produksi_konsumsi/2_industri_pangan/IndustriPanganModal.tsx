@@ -331,7 +331,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
 
       {!selectedCommodityInfo && !isMenuInfoOpen && (
       <NotebookModalWrapper onClose={onClose}>
-        <div className={"root-modal-util-35cc3749b1"}>
+        <div className={"root-modal-util-b74379da23"}>
           {/* HEADER */}
           <div className={"satisfaction-modal-header root-modal-util-9462ce2345"}>
             <div className={"satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar"}>

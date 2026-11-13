@@ -1,9 +1,9 @@
 'use client';
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useMemo, useState } from 'react';
-import { X, Search } from 'lucide-react';
+import { Search, Handshake, ShieldAlert, Check } from 'lucide-react';
 import NotebookModalWrapper from '../../../NotebookModalWrapper';
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { COUNTRIES_DATA } from '../../../../../map_system/map-data';
 import { getEmbassiesForCountry } from "../../../../../../../../../json/6_database_kedutaan_besar/embassyRegistry";
 
@@ -120,22 +120,15 @@ export default function TambahMitraBaru({
           role="dialog"
           aria-modal="true"
           aria-labelledby="add-trade-partner-title"
-          className="flex h-full min-w-0 flex-col overflow-hidden"
+          className="root-modal-util-b74379da23 min-w-0"
         >
-          {/* HEADER */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
-            <div className="flex-1">
-              <h2 id="add-trade-partner-title" className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Tambah Mitra Dagang Baru</h2>
-            </div>
-            <SharedModalCloseButton
-              type="button"
-              onClick={onClose}
-              className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-             appearance="custom">
-              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Batal</span>
-              <X className="h-4 w-4" />
-            </SharedModalCloseButton>
-          </div>
+          <RootInfoModalHeader
+            title="Tambah Mitra Dagang Baru"
+            titleId="add-trade-partner-title"
+            onClose={onClose}
+            size="standard"
+            icon={<Handshake aria-hidden="true" />}
+          />
 
           {/* BAR PENCARIAN */}
           <div className="px-4 sm:px-6 py-3 bg-root-canvas border-b border-root-accent/20 relative z-10 shrink-0 flex items-center gap-3">
@@ -225,27 +218,13 @@ export default function TambahMitraBaru({
             aria-labelledby="no-embassy-title"
             className="overflow-hidden"
           >
-            <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-b border-rose-500/20 flex items-center justify-between bg-root-canvas shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="p-1.5 rounded-lg border border-rose-500/30 bg-rose-950/40 text-rose-400">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                  </svg>
-                </div>
-                <h2 id="no-embassy-title" className="text-sm sm:text-base font-black tracking-wider uppercase text-rose-400">
-                  Pemberitahuan / Peringatan
-                </h2>
-              </div>
-              <SharedModalCloseButton
-                type="button"
-                onClick={() => setNoEmbassyModalData(null)}
-                aria-label="Tutup modal"
-                className="p-1.5 rounded-lg border border-rose-500/30 bg-rose-950/30 text-rose-400 hover:bg-rose-500 hover:text-white transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1"
-               appearance="custom">
-                <span className="text-[11px] font-bold uppercase tracking-wider pl-0.5">Tutup</span>
-                <span aria-hidden="true" className="text-base leading-none">×</span>
-              </SharedModalCloseButton>
-            </div>
+            <RootInfoModalHeader
+              title="Pemberitahuan / Peringatan"
+              titleId="no-embassy-title"
+              onClose={() => setNoEmbassyModalData(null)}
+              size="standard"
+              icon={<ShieldAlert aria-hidden="true" />}
+            />
 
             {/* Body Content */}
             <div className="p-5 sm:p-6">
@@ -288,27 +267,13 @@ export default function TambahMitraBaru({
             aria-labelledby="confirm-add-trade-partner-title"
             className="overflow-hidden"
           >
-            <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="p-1.5 rounded-lg border border-root-accent/30 bg-root-surface text-root-accent">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <h2 id="confirm-add-trade-partner-title" className="text-sm sm:text-base font-black tracking-wider uppercase text-root-accent">
-                  Konfirmasi Perjanjian Dagang
-                </h2>
-              </div>
-              <SharedModalCloseButton
-                type="button"
-                onClick={() => setConfirmModalData(null)}
-                aria-label="Tutup modal"
-                className="p-1.5 rounded-lg border border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1"
-               appearance="custom">
-                <span className="text-[11px] font-bold uppercase tracking-wider pl-0.5">Tutup</span>
-                <span aria-hidden="true" className="text-base leading-none">×</span>
-              </SharedModalCloseButton>
-            </div>
+            <RootInfoModalHeader
+              title="Konfirmasi Perjanjian Dagang"
+              titleId="confirm-add-trade-partner-title"
+              onClose={() => setConfirmModalData(null)}
+              size="standard"
+              icon={<Check aria-hidden="true" />}
+            />
 
             {/* Body Content */}
             <div className="p-5 sm:p-6">

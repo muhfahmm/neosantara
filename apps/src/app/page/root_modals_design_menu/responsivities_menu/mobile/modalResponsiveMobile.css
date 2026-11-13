@@ -1354,11 +1354,6 @@
     font-size: 9px !important;
     text-align: center;
   }
-  .tax-policy-modal-frame .tax-policy-header {
-    min-height: 44px;
-    padding: 4px 10px !important;
-  }
-
   .tax-policy-modal-frame .tax-policy-content {
     min-height: 0;
     padding: 8px !important;
@@ -1521,11 +1516,6 @@
 }
 
 @media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
-  .loan-modal-frame .loan-modal-header {
-    min-height: 44px;
-    padding: 4px 10px !important;
-  }
-
   .loan-modal-frame .loan-modal-content {
     min-height: 0;
     padding: 8px !important;
@@ -2260,11 +2250,6 @@
 }
 
 @media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
-  .harga-modal-frame .harga-modal-header {
-    gap: 6px;
-    padding: 6px 8px;
-  }
-
   .harga-modal-frame .harga-modal-body {
     padding: 8px !important;
   }
@@ -2538,11 +2523,20 @@
 
   .root-info-modal-header[data-size="standard"] {
     padding: 10px 16px;
+    gap: 8px;
   }
 
   .root-info-modal-header-main,
   .root-info-modal-actions {
     gap: 6px;
+  }
+
+  .root-info-modal-header[data-size="standard"] .root-info-modal-header-main {
+    gap: 8px;
+  }
+
+  .root-info-modal-header[data-size="standard"] .root-info-modal-actions {
+    gap: 8px;
   }
 
   .root-info-modal-icon {
@@ -2554,6 +2548,16 @@
   .root-info-modal-icon > svg {
     width: 13px !important;
     height: 13px !important;
+  }
+
+  .root-info-modal-header[data-size="standard"] .root-info-modal-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .root-info-modal-header[data-size="standard"] .root-info-modal-icon > svg {
+    width: 16px !important;
+    height: 16px !important;
   }
 
   .building-card-grid-root {

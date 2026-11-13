@@ -2,7 +2,7 @@
 
 import { ArrowRightLeft } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
-import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 
 export interface TradePriceBonus {
@@ -34,19 +34,12 @@ export default function TradePriceEffectInfoModal({
       zIndexClass="z-[200]"
     >
       <div className="flex min-w-0 flex-col overflow-hidden">
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
-          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 rounded-lg bg-root-surface border border-root-accent/30 shrink-0">
-              <ArrowRightLeft className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-            </div>
-            <div className="min-w-0">
-              <h2 className={rootModalTypography.title}>
-                Informasi Efek Harga Perdagangan
-              </h2>
-            </div>
-          </div>
-          <RootModalCloseButton onClick={onClose} />
-        </div>
+        <RootInfoModalHeader
+          title="Informasi Efek Harga Perdagangan"
+          onClose={onClose}
+          size="standard"
+          icon={<ArrowRightLeft aria-hidden="true" />}
+        />
 
         <div className="root-no-scrollbar-glow overflow-y-auto p-4 sm:p-5 bg-root-surface neon-scrollbar space-y-3">
           {bonuses.length === 0 ? (

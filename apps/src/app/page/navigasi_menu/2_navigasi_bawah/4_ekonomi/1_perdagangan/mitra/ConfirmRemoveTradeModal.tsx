@@ -3,6 +3,8 @@
 "use client";
 import React from "react";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { Handshake } from "lucide-react";
 
 interface Props {
   isOpen: boolean;
@@ -25,11 +27,13 @@ export default function ConfirmRemoveTradeModal({ isOpen, partnerName, onClose, 
         aria-labelledby="remove-trade-title"
         className="overflow-hidden"
       >
-        <header className="border-b border-rose-500/20 bg-root-canvas px-3 py-2 sm:px-5 sm:py-2.5">
-          <h2 id="remove-trade-title" className="text-sm font-black uppercase tracking-wide text-rose-400">
-            Putus Hubungan Dagang
-          </h2>
-        </header>
+        <RootInfoModalHeader
+          title="Putus Hubungan Dagang"
+          titleId="remove-trade-title"
+          onClose={onClose}
+          size="standard"
+          icon={<Handshake aria-hidden="true" />}
+        />
         <div className="space-y-5 p-4 sm:p-5">
           <p className="text-sm text-root-text">
             Apakah Anda yakin ingin memutus hubungan dagang dengan{" "}
