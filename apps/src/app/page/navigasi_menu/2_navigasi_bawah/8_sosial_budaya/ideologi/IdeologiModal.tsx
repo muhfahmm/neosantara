@@ -3,9 +3,8 @@ import RootModalCloseButton from '@/app/page/root_modals_design_menu/RootModalCl
 import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { X, Info, Shield, Globe, Vote, Crown, DollarSign, Handshake, Hammer, Flag, Feather, Sword, Check } from "lucide-react";
+import { Info, Shield, Globe, Vote, Crown, DollarSign, Handshake, Hammer, Flag, Feather, Sword, Check } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
-import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
 import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
 
@@ -234,26 +233,24 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
       />
 
       <NotebookModalWrapper onClose={onClose}>
-        <div className="flex flex-col h-full overflow-hidden">
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-            <div className="flex items-center gap-2.5">
-              <div className="p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/30">
-                <Shield className="h-5 w-5 text-root-accent" />
+        <div className="root-modal-util-b74379da23">
+          <div className="satisfaction-modal-header root-modal-util-9462ce2345">
+            <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
+              <div className="root-modal-util-08dfbca033">
+                <div className="root-modal-util-739d92b232">
+                  <Shield aria-hidden="true" className="root-modal-util-d252947d10 text-root-accent" />
+                </div>
+                <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
+                  Ideologi Dasar Kedaulatan
+                </h2>
               </div>
-              <h3 className={rootModalTypography.title}>Ideologi Dasar Kedaulatan</h3>
             </div>
-            <div className="flex shrink-0 items-center gap-2">
+            <div className="root-modal-util-08dfbca033">
               <MenuInfoButton
                 title="Ideologi Negara"
                 description="Tentukan ideologi yang menjadi dasar kebijakan dan kedaulatan negara. Tiap ideologi memberikan efek berbeda; tinjau bonusnya sebelum melakukan perubahan yang membutuhkan anggaran dan konfirmasi."
               />
-              <RootModalCloseButton
-                onClick={onClose}
-                className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-               appearance="custom">
-                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-4 w-4" />
-              </RootModalCloseButton>
+              <RootModalCloseButton onClick={onClose} />
             </div>
           </div>
 

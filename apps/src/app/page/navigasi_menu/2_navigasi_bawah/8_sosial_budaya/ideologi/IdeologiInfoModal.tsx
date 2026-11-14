@@ -94,8 +94,8 @@ export default function IdeologiInfoModal({
   };
 
   return createPortal(
-    <NotebookModalWrapper compact onClose={onClose} zIndexClass="z-[250]">
-      <div className="flex h-full min-h-0 flex-col overflow-hidden">
+    <NotebookModalWrapper onClose={onClose} zIndexClass="z-[250]">
+      <div className="root-modal-util-b74379da23">
         <RootInfoModalHeader
           title={
             <>
@@ -108,12 +108,23 @@ export default function IdeologiInfoModal({
           }
           onClose={onClose}
           icon={icon || <Info aria-hidden="true" />}
+          size="standard"
         />
 
-        {/* CONTENT */}
-        <div className="relative z-10 flex min-h-0 flex-1 flex-col justify-center overflow-y-auto bg-root-surface p-4 custom-scrollbar sm:p-6">
-          <div className="rounded-2xl border border-root-accent/30 bg-root-accent/10 p-4 text-center sm:p-6">
-            <span className="text-xs font-bold text-root-accent uppercase tracking-widest block mb-2">
+        <div className="root-info-modal-content relative z-10 flex min-h-0 flex-1 flex-col justify-center gap-4 overflow-y-auto bg-root-surface p-4 custom-scrollbar sm:p-6">
+          <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-4 sm:p-5">
+            <p className="mb-2 text-sm font-bold text-root-text">{detail.desc}</p>
+            <ul className="space-y-1.5 text-xs text-root-subtle">
+              {detail.characteristics.map((characteristic) => (
+                <li key={characteristic} className="flex items-start gap-2">
+                  <span aria-hidden="true" className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-root-accent" />
+                  <span>{characteristic}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-xl border border-root-accent/30 bg-root-accent/10 p-4 text-center sm:p-6">
+            <span className="mb-2 block text-xs font-bold uppercase tracking-widest text-root-accent">
               Bonus & Efek Utama Negara
             </span>
             <p className="text-lg sm:text-xl font-extrabold text-root-text">
@@ -121,17 +132,6 @@ export default function IdeologiInfoModal({
             </p>
           </div>
         </div>
-
-        {/* FOOTER ACTION */}
-        <div className="flex shrink-0 justify-end border-t border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
-          <button
-            onClick={onClose}
-            className="px-6 py-2.5 rounded-xl bg-root-accent hover:bg-[#00C282] text-root-canvas font-extrabold text-xs uppercase tracking-wider active:scale-95 transition-all cursor-pointer"
-          >
-            Mengerti
-          </button>
-        </div>
-
       </div>
     </NotebookModalWrapper>,
     document.body
