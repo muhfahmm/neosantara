@@ -26,7 +26,6 @@ export default function MenuInfoModal({
 
   return (
     <NotebookModalWrapper
-      compact
       onClose={onClose}
       zIndexClass="z-[200]"
       hideWhenInfoModalOpen={false}
@@ -35,7 +34,7 @@ export default function MenuInfoModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="menu-info-modal-title"
-        className={`root-modal-util-b74379da23 ${fillContent ? "h-full min-h-0 flex-1" : "!h-auto"} max-h-[calc(100dvh-160px)] sm:max-h-[calc(100dvh-176px)] lg:max-h-[calc(100dvh-172px)]`}
+        className="root-modal-util-b74379da23 h-full min-h-0 flex-1"
       >
         <RootInfoModalHeader
           title={title}
@@ -43,7 +42,7 @@ export default function MenuInfoModal({
           onClose={onClose}
           size="standard"
         />
-        <div className={`root-info-modal-content min-h-0 overflow-y-auto bg-root-surface p-4 sm:p-5 ${fillContent ? "flex flex-1" : ""}`}>
+        <div className={`root-info-modal-content min-h-0 flex-1 overflow-y-auto bg-root-surface p-4 sm:p-5 lg:p-6 ${fillContent ? "flex" : ""}`}>
           {description && (
             <p className={`${rootModalTypography.body} ${rootModalTypography.muted} break-words`}>
               {description}

@@ -12,8 +12,6 @@ import { KonfirmasiPembangunanModalProps } from "../construction_support/konfirm
 import { calculateRecruitmentDays } from "../logic/recruitmentLogic";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
-import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
-import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 
 export default function KonfirmasiArmadaAktifModal({
   isOpen,
@@ -340,19 +338,20 @@ export default function KonfirmasiArmadaAktifModal({
       onClose={onClose}
       zIndexClass="z-[70]"
     >
-      <div className={`defense-confirm-modal ${capacityType === "infanteri" ? "defense-recruitment-confirm-modal" : ""} flex h-full min-h-0 flex-col overflow-hidden`}>
+      <div className={`root-modal-util-b74379da23 defense-confirm-modal ${capacityType === "infanteri" ? "defense-recruitment-confirm-modal" : ""}`}>
         
-        {/* Header */}
-        <div className="defense-confirm-header px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className={`shrink-0 border border-root-accent/30 bg-root-surface p-1.5 sm:p-2 ${rootBorderRadius.card}`}>
-              <Hammer className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-            </div>
-            <div className="min-w-0">
-              <h2 className={`defense-confirm-title ${rootModalTypography.title}`}>Perekrutan / Pembangunan Militer</h2>
+        <div className="satisfaction-modal-header root-modal-util-9462ce2345">
+          <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
+            <div className="root-modal-util-08dfbca033">
+              <div className="root-modal-util-739d92b232">
+                <Hammer aria-hidden="true" className="root-modal-util-d252947d10 text-root-accent" />
+              </div>
+              <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
+                Perekrutan / Pembangunan Militer
+              </h2>
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="root-modal-util-08dfbca033">
             <RootModalCloseButton onClick={onClose} />
           </div>
         </div>

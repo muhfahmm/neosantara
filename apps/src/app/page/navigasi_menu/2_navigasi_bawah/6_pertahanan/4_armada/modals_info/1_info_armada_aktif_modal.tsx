@@ -1,9 +1,8 @@
 "use client";
 import React, { useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Info } from "lucide-react";
 import NotebookModalWrapper, { MENU_INFO_MODAL_VISIBILITY_EVENT } from "../../../NotebookModalWrapper";
-import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { getMonarchyMilitaryStrengthMultiplier } from "@/app/page/bonus_logic/ideologi_bonus_logic/monarki";
 import { getAuthoritarianMilitaryStrengthMultiplier } from "@/app/page/bonus_logic/ideologi_bonus_logic/otoritarianisme";
 import { isMobilePhone, useViewportMode } from "@/app/hooks/useViewportMode";
@@ -73,19 +72,15 @@ export default function InfoArmadaAktifModal({
       zIndexClass={useRootPortal ? "z-[200]" : undefined}
       hideWhenInfoModalOpen={!useRootPortal}
     >
-      <div className="defense-unit-info-modal flex h-full min-h-0 flex-col overflow-hidden">
+      <div className="root-modal-util-b74379da23 defense-unit-info-modal">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
-        {/* Header */}
-        <div className="defense-unit-info-header px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className="shrink-0 rounded-lg border border-root-accent/30 bg-root-surface p-1.5 sm:p-2">
-              <Info className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-            </div>
-            <h2 className={`defense-unit-info-title min-w-0 ${rootModalTypography.title}`}>{selectedItem?.label}</h2>
-          </div>
-          <RootModalCloseButton onClick={onClose} />
-        </div>
+        <RootInfoModalHeader
+          title={selectedItem.label}
+          titleId="defense-unit-info-title"
+          onClose={onClose}
+          size="standard"
+        />
 
         {/* Body */}
         <div className={`defense-unit-info-content min-h-0 flex-1 overflow-y-auto p-4 sm:p-5 bg-root-surface relative z-10 space-y-4 custom-scrollbar ${rootModalTypography.body}`}>

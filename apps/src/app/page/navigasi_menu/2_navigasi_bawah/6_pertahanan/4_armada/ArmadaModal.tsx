@@ -3,7 +3,7 @@ import { ShieldAlert, Swords, Building2, TrendingUp, TrendingDown, Info } from "
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
-import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import ArmadaAktif from "./1_tab_menu/1_armada_aktif";
 import InfrastrukturMiliter from "./1_tab_menu/2_infrastruktur_militer";
@@ -120,19 +120,14 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
 
     {/* POPUP MODAL INFO BONUS PERTAHANAN */}
     {showDefenseBonusInfo && (
-      <NotebookModalWrapper onClose={() => setShowDefenseBonusInfo(false)} compact>
-        <div className="flex h-full min-h-0 flex-col overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="defense-bonus-info-title">
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-            <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-              <div className={`shrink-0 border border-root-accent/30 bg-root-surface p-1.5 sm:p-2 ${rootBorderRadius.card}`}>
-                <Info className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-              </div>
-              <h2 id="defense-bonus-info-title" className={`${rootModalTypography.title} min-w-0 truncate`}>
-                Informasi Armada & Bonus Pertahanan
-              </h2>
-            </div>
-            <RootModalCloseButton onClick={() => setShowDefenseBonusInfo(false)} />
-          </div>
+      <NotebookModalWrapper onClose={() => setShowDefenseBonusInfo(false)}>
+        <div className="root-modal-util-b74379da23" role="dialog" aria-modal="true" aria-labelledby="defense-bonus-info-title">
+          <RootInfoModalHeader
+            title="Informasi Armada & Bonus Pertahanan"
+            titleId="defense-bonus-info-title"
+            onClose={() => setShowDefenseBonusInfo(false)}
+            size="standard"
+          />
           <div className={`root-info-modal-content relative z-10 flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 custom-scrollbar ${rootModalTypography.body}`}>
             <p>
               Kelola armada militer aktif dan infrastruktur pendukungnya. Armada aktif menentukan kemampuan pertahanan dan operasi laut, sementara infrastruktur militer mendukung kapasitas serta kesiapan pasukan.
