@@ -69,7 +69,7 @@ export default function PermohonanKeanggotaanModal({
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 animate-in fade-in duration-200">
       <div className="modal-responsive-shell relative rounded-2xl border border-root-accent/40 bg-[#051111] shadow-[0_0_50px_rgba(0,255,170,0.15)] flex flex-col overflow-hidden">
         {/* HEADER */}
-        <div className="flex items-center justify-between border-b border-root-accent/20 bg-root-canvas px-6 py-4">
+        <div className="flex items-center justify-between border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-root-surface border border-root-accent/30 text-root-accent">
               <Icon className="h-6 w-6" />
@@ -92,7 +92,7 @@ export default function PermohonanKeanggotaanModal({
         </div>
 
         {/* BODY */}
-        <div className="p-6 space-y-5 text-xs text-root-text">
+        <div className="space-y-5 p-4 text-xs text-root-text sm:p-6">
           {currentApp?.status === "pending" ? (
             <div className="py-4 text-center space-y-3">
               <div className="mx-auto w-14 h-14 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">

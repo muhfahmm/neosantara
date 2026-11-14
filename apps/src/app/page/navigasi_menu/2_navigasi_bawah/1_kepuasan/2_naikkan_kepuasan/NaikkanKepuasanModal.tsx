@@ -16,8 +16,6 @@ import {
 import DanaTidakCukupModal from "./DanaTidakCukupModal";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
-import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
-import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import {
@@ -375,26 +373,54 @@ export default function NaikkanKepuasanModal({
     <>
       {!isDanaTidakCukupOpen && !isMenuInfoOpen && (
       <NotebookModalWrapper onClose={onClose}>
-        <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-root-accent/20 bg-root-canvas">
+        <div className={"root-modal-util-52b6b298fe"}>
           
           {/* ============ HEADER ============ */}
-          <div className="satisfaction-modal-header relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
+          <div className={"satisfaction-modal-header root-modal-util-4450f1d9ee"}>
             
             {/* Container Kiri: Judul + Tabs */}
-            <div className="satisfaction-modal-header-main flex min-w-0 flex-1 items-center gap-2 sm:gap-4 overflow-x-auto no-scrollbar whitespace-nowrap">
+            <div className={"satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar"}>
               {/* Judul */}
-              <div className="flex shrink-0 items-center gap-2">
-                <div className="shrink-0 rounded-lg border border-root-accent/30 bg-root-surface p-1 sm:p-1.5">
-                  <Smile className="h-4 w-4 text-root-text sm:h-5 sm:w-5" />
+              <div className={"root-modal-util-08dfbca033"}>
+                <div className={"root-modal-util-acd42b9a36"}>
+                  <Smile className={"root-modal-util-ea2c28151c"} />
                 </div>
-                <h2 className={`${rootModalTypography.title} leading-none`}>
+                <h2 className={`root-modal-util-6b4648c53a root-modal-util-c2385a463d`}>
                   Kepuasan Rakyat
                 </h2>
               </div>
 
-              {/* Tabs */}
+            </div>
+
+            {/* Tombol Tutup */}
+            <div className={"root-modal-util-08dfbca033"}>
+              <button type="button" onClick={() => setIsMenuInfoOpen(true)} title="Informasi peningkatan kepuasan rakyat" aria-label="Informasi peningkatan kepuasan rakyat" className={"root-modal-info-button root-modal-util-1697100c43"}>
+                <Info aria-hidden="true" />
+              </button>
+              <RootModalCloseButton
+                onClick={onClose}
+              />
+            </div>
+          </div>
+
+          {/* ============ TREASURY BAR (Info Button Dipindah ke Sini) ============ */}
+          <div className={"satisfaction-modal-summary root-modal-util-6614545ce3"}>
+            
+            {/* Teks Kepuasan Sipil */}
+            <div className={"root-modal-util-6cfc7e6ab3"}>
+              <Smile className={"root-modal-util-00f4ec4a9a"} />
+              <span className={`root-modal-util-14d6efe9ef root-modal-util-614c0c7dff `}>
+                Kepuasan Sipil:
+              </span>
+              <span className={`root-modal-util-04f32edb66 root-modal-util-4457a4d3a8 `}>
+                {Math.round(kepuasan)}%
+              </span>
+            </div>
+
+            <div className={"satisfaction-modal-summary-controls"}>
               <RootModalTabs
-                className="satisfaction-modal-tabs"
+                className={"satisfaction-modal-tabs"}
+                compact
                 items={[
                   {
                     label: "Statistik",
@@ -405,74 +431,37 @@ export default function NaikkanKepuasanModal({
                   { label: "Naikkan Peringkat", isActive: true },
                 ]}
               />
-            </div>
-
-            {/* Tombol Tutup */}
-            <div className="flex shrink-0 items-center gap-2">
-              <button type="button" onClick={() => setIsMenuInfoOpen(true)} title="Informasi peningkatan kepuasan rakyat" aria-label="Informasi peningkatan kepuasan rakyat" className="root-modal-info-button flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas text-root-accent transition-all">
-                <Info aria-hidden="true" />
+              <button
+                onClick={() => setShowInfoModal(true)}
+                title="Lihat penjelasan setiap tab"
+                className={"root-modal-util-02d83a46d0"}
+              >
+                <Info className={"root-modal-util-371862382d"} />
               </button>
-              <RootModalCloseButton
-                onClick={onClose}
-              />
             </div>
-          </div>
-
-          {/* ============ TREASURY BAR (Info Button Dipindah ke Sini) ============ */}
-          <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2 sm:px-6">
-            
-            {/* Teks Kepuasan Sipil */}
-            <div className="flex items-center gap-2">
-              <Smile className="h-4 w-4 shrink-0 text-root-text" />
-              <span className={`${rootModalTypography.label} text-[10px] sm:text-xs`}>
-                Kepuasan Sipil:
-              </span>
-              <span className={`${rootModalTypography.value} text-xs sm:text-sm`}>
-                {Math.round(kepuasan)}%
-              </span>
-            </div>
-
-            {/* Tombol Info (Sejajar dengan Teks di Atas) */}
-            <button
-              onClick={() => setShowInfoModal(true)}
-              title="Lihat penjelasan setiap tab"
-              className="flex shrink-0 cursor-pointer items-center justify-center rounded-lg border border-root-accent/30 bg-root-surface p-1 text-root-text transition-all hover:border-root-accent sm:p-1.5"
-            >
-              <Info className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            </button>
           </div>
 
           {/* ============ CONTENT ============ */}
-          <div className="relative z-10 flex-1 overflow-y-auto bg-root-canvas/80 p-3 sm:p-5
-            [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 
-            [&::-webkit-scrollbar-track]:bg-transparent 
-            [&::-webkit-scrollbar-track]:rounded-full 
-            [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20
-            [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A]
-            [&::-webkit-scrollbar-thumb]:rounded-full 
-            [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas
-            hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent
-            [&::-webkit-scrollbar-button]:hidden
-          ">
-            <div className="animate-in fade-in space-y-4 duration-500">
+          <div className={"satisfaction-modal-content root-modal-util-9c388aeac4"}>
+            <div className={"satisfaction-modal-content-body root-modal-enter root-modal-fade-in root-modal-util-baefc15ea1"}>
               {feedback && (
                 <div
-                  className={`animate-in fade-in slide-in-from-top-4 flex items-center gap-3 ${rootBorderRadius.card} border p-4 duration-300 ${
+                  className={`root-modal-enter root-modal-fade-in root-modal-slide-in-from-top root-modal-util-f865538322 root-modal-util-5f22e64f22 root-modal-util-038752cbd9 ${
                     feedback.type === "success"
-                      ? "border-root-accent/30 bg-root-accent/10 text-root-text"
-                      : "border-rose-500/30 bg-rose-500/10 text-root-text"
+                      ? "root-modal-util-a3d19e0b6c"
+                      : "root-modal-util-a0161aecc0"
                   }`}
                 >
                   {feedback.type === "success" ? (
-                    <CheckCircle2 className="h-5 w-5 shrink-0 text-root-text" />
+                    <CheckCircle2 className={"root-modal-util-5ccff2d0cd"} />
                   ) : (
-                    <AlertCircle className="h-5 w-5 shrink-0 text-root-text" />
+                    <AlertCircle className={"root-modal-util-5ccff2d0cd"} />
                   )}
-                  <p className="text-xs font-bold">{feedback.message}</p>
+                  <p className={"root-modal-util-5ff788eca1"}>{feedback.message}</p>
                 </div>
               )}
 
-              <div className="satisfaction-initiative-grid grid grid-cols-3 gap-2">
+              <div className={"satisfaction-initiative-grid root-modal-util-8e438a7c62"}>
                 {initiatives.map((item) => {
                   const ongoingEvents = (
                     countryDetail?.ongoingConstructions || []
@@ -510,69 +499,69 @@ export default function NaikkanKepuasanModal({
                     <div
                       key={item.id}
                       id={`event-card-${item.id}`}
-                      className={`satisfaction-initiative-card relative flex min-w-0 flex-col items-center justify-between gap-2 ${rootBorderRadius.card} bg-root-surface p-2 transition-all duration-500 ${
+                      className={`satisfaction-initiative-card root-modal-util-680f06f549 root-modal-util-5f22e64f22 root-modal-util-85e89a7bff ${
                         isHighlighted
-                          ? "border-2 border-root-accent bg-[#122A26] ring-2 ring-root-accent/50"
-                          : "border border-root-accent/20 hover:border-root-accent/50"
+                          ? "root-modal-util-9ae319bd64"
+                          : "root-modal-util-39ea4195cd"
                       }`}
                     >
                       {isHighlighted && (
-                        <div className="absolute left-3 top-0 z-20 flex items-center gap-1 rounded-b-md bg-root-accent px-2.5 py-0.5 text-[8px] font-black uppercase tracking-widest text-root-canvas">
-                          <Sparkles className="h-2.5 w-2.5" />
+                        <div className={"root-modal-util-85c56ed520"}>
+                          <Sparkles className={"root-modal-util-315860d6d0"} />
                           Target Misi Aktif
                         </div>
                       )}
 
                       {isEventOngoing && (
-                        <div className="absolute -top-3.5 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-sm border border-root-accent/40 bg-root-canvas px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-root-text">
+                        <div className={"root-modal-util-29ccb89328"}>
                           Selesai: {formatBadgeDate(lastEndDate)}
                         </div>
                       )}
 
-                      <div className="flex w-full min-w-0 items-start gap-1.5">
-                        <div className="shrink-0">
+                      <div className={"root-modal-util-08f6b562f1"}>
+                        <div className={"root-modal-util-012fbd121f"}>
                           <Image
                             src={item.image}
                             alt=""
                             width={56}
                             height={56}
-                            className="h-8 w-8 object-contain lg:h-10 lg:w-10"
+                            className={"root-modal-util-b01f3b864b"}
                           />
                         </div>
-                        <div className="min-w-0 flex-1 space-y-1">
-                          <div className="flex min-w-0 flex-wrap items-center gap-1">
-                            <h4 className="min-w-0 break-words text-[10px] font-black uppercase leading-tight tracking-wide text-root-text lg:text-xs">
+                        <div className={"root-modal-util-18f938c67d"}>
+                          <div className={"root-modal-util-59587856d1"}>
+                            <h4 className={"root-modal-util-73429ab601"}>
                               {item.title}
                             </h4>
                             {hasAcaraBonus ? (
-                              <span className="flex flex-wrap items-center gap-1 rounded-full border border-root-accent/30 bg-root-accent/10 px-1 py-0.5 text-[9px] font-black uppercase tracking-wider">
-                                <span className="text-root-muted line-through">
+                              <span className={"root-modal-util-2c476ec378"}>
+                                <span className={"root-modal-util-f4ccadceff"}>
                                   +{baseBoost}%
                                 </span>
-                                <span className="text-root-text">
+                                <span className={"root-modal-util-070a7f2c69"}>
                                   +{boostedBoost}% Kepuasan
                                 </span>
                               </span>
                             ) : (
-                              <span className="rounded-full border border-root-accent/30 bg-root-accent/10 px-1 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-root-text">
+                              <span className={"root-modal-util-d613bb47ed"}>
                                 +{baseBoost}% Kepuasan
                               </span>
                             )}
                             {isSport && olahragaBonusPercent > 0 && (
-                              <span className="rounded-md border border-sky-500/30 bg-sky-500/10 px-1 py-0.5 text-[7px] font-semibold uppercase tracking-wider text-root-text">
+                              <span className={"root-modal-util-c5483046dc"}>
                                 +Kem. Olahraga (
                                 {olahragaBonusPercent.toFixed(0)}%)
                               </span>
                             )}
                           </div>
-                          <div className={`${rootModalTypography.muted} flex items-center gap-1 text-[8px] font-medium`}>
-                            <Clock className="h-3 w-3 shrink-0 text-root-text" />
-                            <span className="min-w-0 break-words">Durasi: {item.duration} hari</span>
+                          <div className={`root-modal-util-34a3521642 root-modal-util-8866ac9a30 `}>
+                            <Clock className={"root-modal-util-01ac82f339"} />
+                            <span className={"root-modal-util-3d9a1150e3"}>Durasi: {item.duration} hari</span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex w-full min-w-0 flex-col items-center">
+                      <div className={"root-modal-util-bf998e0d1f"}>
                         <button
                           onClick={() =>
                             handleInitiative(
@@ -584,10 +573,10 @@ export default function NaikkanKepuasanModal({
                             )
                           }
                           disabled={isEventOngoing}
-                          className={`w-full min-w-0 rounded-lg px-1.5 py-1 text-[8px] font-black uppercase leading-tight transition-all ${
+                          className={`root-modal-util-f84136093d ${
                             isEventOngoing
-                              ? "cursor-not-allowed border border-root-subtle/30 bg-root-canvas text-root-muted opacity-60"
-                              : "cursor-pointer border border-root-accent bg-root-accent text-root-canvas hover:brightness-110 active:scale-95"
+                              ? "root-modal-util-c73aa553ea"
+                              : "root-modal-util-3685ff24fe hover:brightness-110"
                           }`}
                         >
                           {isEventOngoing ? "Sedang Berlangsung" : "Pilih Acara"}
@@ -609,18 +598,18 @@ export default function NaikkanKepuasanModal({
           onClose={() => setShowInfoModal(false)}
           zIndexClass="z-[300]"
         >
-          <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-root-accent/20 bg-root-canvas">
+          <div className={"root-modal-util-52b6b298fe"}>
             {/* Header Modal Info */}
-            <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
-              <div className="flex items-center gap-2.5 sm:gap-3">
-                <div className="shrink-0 rounded-lg border border-root-accent/30 bg-root-accent/10 p-1.5 sm:p-2">
-                  <Info className="h-4 w-4 text-root-text sm:h-5 sm:w-5" />
+            <div className={"root-modal-util-4450f1d9ee"}>
+              <div className={"root-modal-util-c0541482fd"}>
+                <div className={"root-modal-util-6576a8ca47"}>
+                  <Info className={"root-modal-util-ea2c28151c"} />
                 </div>
                 <div>
-                  <h3 className={`${rootModalTypography.sectionTitle} leading-none sm:text-base`}>
+                  <h3 className={`root-modal-util-9361ef65fc root-modal-util-9c33c69aca `}>
                     Panduan Menu Kepuasan
                   </h3>
-                  <p className={`${rootModalTypography.muted} mt-1 text-[10px] font-semibold sm:text-xs`}>
+                  <p className={`root-modal-util-34a3521642 root-modal-util-b0a0972263 `}>
                     Penjelasan setiap tab di atas
                   </p>
                 </div>
@@ -630,60 +619,50 @@ export default function NaikkanKepuasanModal({
             </div>
 
             {/* Body Modal Info */}
-            <div className="flex-1 space-y-4 overflow-y-auto bg-root-surface p-4 sm:p-6 lg:p-8
-              [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 
-              [&::-webkit-scrollbar-track]:bg-transparent 
-              [&::-webkit-scrollbar-track]:rounded-full 
-              [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20
-              [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A]
-              [&::-webkit-scrollbar-thumb]:rounded-full 
-              [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-surface
-              hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent
-              [&::-webkit-scrollbar-button]:hidden
-            ">
+            <div className={"root-modal-util-64d21c5606"}>
               {/* Tab 1: Statistik */}
-              <div className={`${rootBorderRadius.card} border border-sky-500/30 bg-root-canvas p-4 sm:p-5`}>
-                <div className="mb-3 flex items-center gap-2.5">
-                  <div className="rounded-lg border border-sky-500/30 bg-sky-500/10 p-1.5 sm:p-2">
-                    <BarChart3 className="h-4 w-4 text-root-text sm:h-5 sm:w-5" />
+              <div className={`root-modal-util-5f22e64f22 root-modal-util-3c137e5152 `}>
+                <div className={"root-modal-util-48530515e1"}>
+                  <div className={"root-modal-util-b51ae17988"}>
+                    <BarChart3 className={"root-modal-util-ea2c28151c"} />
                   </div>
-                  <h4 className={`${rootModalTypography.sectionTitle} tracking-widest sm:text-sm`}>
+                  <h4 className={`root-modal-util-9361ef65fc root-modal-util-1ebbaf6952 `}>
                     Tab Statistik
                   </h4>
                 </div>
-                <p className="text-[11px] font-semibold leading-relaxed text-root-text sm:text-xs">
+                <p className={"root-modal-util-27a7c73979"}>
                   Menampilkan{" "}
-                  <strong className="text-root-text">dashboard lengkap</strong>{" "}
+                  <strong className={"root-modal-util-070a7f2c69"}>dashboard lengkap</strong>{" "}
                   kondisi kepuasan rakyat saat ini. Berisi grafik historis,
                   faktor-faktor yang mempengaruhi kepuasan (ekonomi, keamanan,
                   layanan publik), serta proyeksi tren beberapa hari ke depan.
                 </p>
-                <p className={`${rootModalTypography.muted} mt-2.5 text-[10px] font-medium italic sm:text-[11px]`}>
+                <p className={`root-modal-util-34a3521642 root-modal-util-c8845f1281 `}>
                   Cocok untuk: analisis mendalam sebelum mengambil keputusan
                   strategis.
                 </p>
               </div>
 
               {/* Tab 2: Naikkan Peringkat */}
-              <div className={`${rootBorderRadius.card} border border-root-accent/50 bg-root-canvas p-4 sm:p-5`}>
-                <div className="mb-3 flex items-center gap-2.5">
-                  <div className="rounded-lg border border-root-accent/30 bg-root-accent/10 p-1.5 sm:p-2">
-                    <PartyPopper className="h-4 w-4 text-root-text sm:h-5 sm:w-5" />
+              <div className={`root-modal-util-5f22e64f22 root-modal-util-83186b6486 `}>
+                <div className={"root-modal-util-48530515e1"}>
+                  <div className={"root-modal-util-07c8e7670b"}>
+                    <PartyPopper className={"root-modal-util-ea2c28151c"} />
                   </div>
-                  <h4 className={`${rootModalTypography.sectionTitle} tracking-widest sm:text-sm`}>
+                  <h4 className={`root-modal-util-9361ef65fc root-modal-util-1ebbaf6952 `}>
                     Tab Naikkan Peringkat
                   </h4>
                 </div>
-                <p className="text-[11px] font-semibold leading-relaxed text-root-text sm:text-xs">
+                <p className={"root-modal-util-27a7c73979"}>
                   Menampilkan daftar{" "}
-                  <strong className="text-root-text">
+                  <strong className={"root-modal-util-070a7f2c69"}>
                     acara & program publik
                   </strong>{" "}
                   yang bisa presiden luncurkan untuk meningkatkan kepuasan
                   rakyat. Setiap acara punya biaya, durasi, dan boost kepuasan
                   tersendiri.
                 </p>
-                <ul className={`${rootModalTypography.muted} mt-2.5 list-inside list-disc space-y-1.5 text-[10px] font-medium sm:text-[11px]`}>
+                <ul className={`root-modal-util-34a3521642 root-modal-util-7678944519 `}>
                   <li>
                     Acara berjalan sesuai durasi, boost kepuasan berlaku setelah
                     selesai.
@@ -691,18 +670,18 @@ export default function NaikkanKepuasanModal({
                   <li>Satu acara hanya bisa aktif satu kali dalam satu waktu.</li>
                   <li>
                     Bonus riset{" "}
-                    <strong className="text-root-text">Diplomasi Acara</strong>{" "}
+                    <strong className={"root-modal-util-070a7f2c69"}>Diplomasi Acara</strong>{" "}
                     dapat meningkatkan boost secara signifikan.
                   </li>
                 </ul>
               </div>
 
               {/* Tips */}
-              <div className={`flex items-start gap-2.5 ${rootBorderRadius.card} border border-amber-500/30 bg-amber-500/10 p-3 sm:p-4`}>
-                <div className="shrink-0 rounded-lg border border-amber-500/40 bg-amber-500/20 p-1.5">
-                  <Lightbulb className="h-3.5 w-3.5 text-root-text sm:h-4 sm:w-4" />
+              <div className={`root-modal-util-00911ae1e9 root-modal-util-5f22e64f22 root-modal-util-a31a206dc8 `}>
+                <div className={"root-modal-util-b9edd2710c"}>
+                  <Lightbulb className={"root-modal-util-378483ea7a"} />
                 </div>
-                <p className={`${rootModalTypography.body} text-[10px] font-semibold sm:text-[11px]`}>
+                <p className={`root-modal-util-8ff7188727 root-modal-util-cb351c8e19 `}>
                   <strong>Tips:</strong> Cek tab <strong>Statistik</strong> dulu
                   untuk melihat kondisi kepuasan saat ini, lalu pilih acara yang
                   paling cocok di tab <strong>Naikkan Peringkat</strong>.
@@ -711,10 +690,10 @@ export default function NaikkanKepuasanModal({
             </div>
 
             {/* Footer Modal Info */}
-            <div className="shrink-0 border-t border-root-accent/20 bg-root-canvas px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
+            <div className={"root-modal-util-9812891ca5"}>
               <button
                 onClick={() => setShowInfoModal(false)}
-                className="w-full cursor-pointer rounded-xl bg-root-accent py-2.5 text-xs font-black uppercase tracking-widest text-root-canvas transition-all hover:bg-root-accent/80 sm:py-3 sm:text-sm"
+                className={"root-modal-util-c21ef9bab6"}
               >
                 Mengerti
               </button>

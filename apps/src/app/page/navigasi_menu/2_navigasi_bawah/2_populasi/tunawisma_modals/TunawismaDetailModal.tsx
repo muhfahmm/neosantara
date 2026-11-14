@@ -5,8 +5,6 @@ import { AlertCircle, Home, Users, TrendingDown, MapPin, Building2, BookOpen, Co
 import { calculateHomelessCount } from "@/app/logic/populations_logic/population_logic";
 import { calculateTempatUmumScore } from "@/app/logic/kesejahteraanCalculator";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
-import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
-import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 
 interface TunawismaDetailModalProps {
@@ -50,26 +48,26 @@ export default function TunawismaDetailModal({
   const { homelessCount, homelessPercentage } = metrics;
 
   const getSeverity = (percentage: number) => {
-    if (percentage >= 5) return { level: 'KRITIS', color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/30' };
-    if (percentage >= 3) return { level: 'SERIUS', color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30' };
-    if (percentage >= 1) return { level: 'PERHATIAN', color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/30' };
-    return { level: 'TERKONTROL', color: 'text-root-text', bg: 'bg-root-accent/10', border: 'border-root-accent/30' };
+    if (percentage >= 5) return { level: "KRITIS", color: "root-modal-util-35f302741d", bg: "root-modal-util-83883b44b2", border: "root-modal-util-e9a647a894" };
+    if (percentage >= 3) return { level: "SERIUS", color: "root-modal-util-29a9a15f55", bg: "root-modal-util-c6ce0cab01", border: "root-modal-util-2bce93aa92" };
+    if (percentage >= 1) return { level: "PERHATIAN", color: "root-modal-util-ce4daf63b9", bg: "root-modal-util-c305347ff1", border: "root-modal-util-99b83ad5ac" };
+    return { level: "TERKONTROL", color: "root-modal-util-070a7f2c69", bg: "root-modal-util-09f1bb832f", border: "root-modal-util-c2db1cca90" };
   };
 
   const severity = getSeverity(homelessPercentage);
 
   return (
     <NotebookModalWrapper onClose={onClose}>
-      <div className="flex flex-col h-full overflow-hidden bg-root-canvas rounded-xl border border-root-accent/20 ">
+      <div className={"root-modal-util-4644119199"}>
 
         {/* ============ HEADER ============ */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 rounded-lg border border-root-accent/30 bg-root-surface shrink-0 ">
-              <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-root-text" />
+        <div className={"root-modal-util-9462ce2345"}>
+          <div className={"root-modal-util-1117664efc"}>
+            <div className={"root-modal-util-739d92b232"}>
+              <AlertCircle className={"root-modal-util-d252947d10"} />
             </div>
             <div>
-              <h2 className={`${rootModalTypography.title} leading-none`}>
+              <h2 className={`root-modal-util-6b4648c53a root-modal-util-c2385a463d`}>
                 Tunawisma & Hunian
               </h2>
             </div>
@@ -79,57 +77,46 @@ export default function TunawismaDetailModal({
         </div>
 
         {/* ============ CONTENT AREA ============ */}
-        <div className="flex-1 overflow-y-auto p-3 sm:p-4 bg-root-canvas/80 relative z-10
-          [&::-webkit-scrollbar]:w-1.5 
-          [&::-webkit-scrollbar-track]:bg-root-canvas
-          [&::-webkit-scrollbar-track]:rounded-full 
-          [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20
-          [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A]
-          [&::-webkit-scrollbar-thumb]:rounded-full 
-          [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas
-
-          hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent
-          [&::-webkit-scrollbar-button]:hidden
-        ">
-          <div className="space-y-3 animate-in fade-in duration-500">
+        <div className={"root-modal-util-6717e88ecf"}>
+          <div className={"root-modal-util-26941d2272 root-modal-enter root-modal-fade-in"}>
 
             {/* ============ MAIN STATS CARD ============ */}
-            <div className={`${rootBorderRadius.card} p-2 sm:p-2.5 border border-root-accent/30 bg-root-surface`}>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+            <div className={`root-modal-util-5f22e64f22 root-modal-util-d61de57126 `}>
+              <div className={"root-modal-util-0ed89b79f0"}>
                 
                 {/* Jumlah Tunawisma */}
-                <div className="flex flex-col items-start justify-center border-b sm:border-b-0 sm:border-r border-root-accent/10 pb-1 sm:pb-0 sm:pr-1">
-                  <p className="text-[9px] text-root-muted font-bold uppercase tracking-wider mb-0.5">
+                <div className={"root-modal-util-a4ec20143c"}>
+                  <p className={"root-modal-util-b17fb53f8c"}>
                     Jumlah Tunawisma
                   </p>
-                  <div className="flex items-baseline gap-1">
+                  <div className={"root-modal-util-f3b36654a6"}>
                     {/* Angka lebih kecil dan warna netral */}
-                    <span className="text-base sm:text-lg font-bold text-root-text tracking-tight">
+                    <span className={"root-modal-util-2a1909f579"}>
                       {homelessCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                     </span>
-                    <span className="text-[9px] font-bold text-root-muted">JIWA</span>
+                    <span className={"root-modal-util-a8b304616a"}>JIWA</span>
                   </div>
                 </div>
 
                 {/* Persentase */}
-                <div className="flex flex-col items-start justify-center border-b sm:border-b-0 sm:border-r border-root-accent/10 pb-1 sm:pb-0 sm:pr-1">
-                  <p className="text-[9px] text-root-muted font-bold uppercase tracking-wider mb-0.5">
+                <div className={"root-modal-util-a4ec20143c"}>
+                  <p className={"root-modal-util-b17fb53f8c"}>
                     Persentase Populasi
                   </p>
-                  <div className="flex items-baseline gap-1">
+                  <div className={"root-modal-util-f3b36654a6"}>
                     {/* Persentase dibuat netral (putih/silver) tanpa efek glow hijau */}
-                    <span className="text-base sm:text-lg font-bold text-root-text tracking-tight">
+                    <span className={"root-modal-util-2a1909f579"}>
                       {homelessPercentage.toFixed(2)}%
                     </span>
                   </div>
                 </div>
 
                 {/* Status */}
-                <div className="flex flex-col items-start justify-center">
-                  <p className="text-[9px] text-root-muted font-bold uppercase tracking-wider mb-0.5">
+                <div className={"root-modal-util-5f06f529bd"}>
+                  <p className={"root-modal-util-b17fb53f8c"}>
                     Status Keparahan
                   </p>
-                  <p className={`text-sm font-black uppercase tracking-wide ${severity.color}`}>
+                  <p className={`root-modal-util-6bfb12867d ${severity.color}`}>
                     {severity.level}
                   </p>
                 </div>
@@ -138,104 +125,104 @@ export default function TunawismaDetailModal({
             </div>
 
             {/* ============ FAKTOR PENYEBAB ============ */}
-            <div className="space-y-2">
-              <h3 className="text-xs sm:text-sm font-black text-root-text uppercase tracking-wider flex items-center gap-2">
-                <span className="w-1 h-3 bg-root-accent rounded-full inline-block"></span>
+            <div className={"root-modal-util-6f7e013d64"}>
+              <h3 className={"root-modal-util-8c1ba2cf8a"}>
+                <span className={"root-modal-util-308fa49d4e"}></span>
                 Faktor Penyebab Tunawisma
               </h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+              <div className={"root-modal-util-4b4270e9e8"}>
                 {/* Faktor 1 */}
-                <div className={`bg-root-surface border border-root-accent/20 p-2.5 sm:p-3 ${rootBorderRadius.card} flex items-start gap-2 sm:gap-2.5 hover:border-root-accent/40 transition-colors`}>
-                  <div className="p-1.5 bg-root-canvas border border-root-accent/30 rounded-md shrink-0">
-                    <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-root-text" />
+                <div className={`root-modal-util-04ab86eb09 root-modal-util-5f22e64f22 root-modal-util-1e9b17c1f9 `}>
+                  <div className={"root-modal-util-9a23f0e987"}>
+                    <Users className={"root-modal-util-839943bdc3"} />
                   </div>
                   <div>
-                    <p className="text-[10px] sm:text-xs font-black text-root-text">Pertumbuhan Populasi</p>
-                    <p className="text-[9px] sm:text-[10px] text-root-muted font-medium leading-tight mt-0.5">Laju populasi mendahului pasokan hunian</p>
+                    <p className={"root-modal-util-2db64fa2d6"}>Pertumbuhan Populasi</p>
+                    <p className={"root-modal-util-a51a6499e8"}>Laju populasi mendahului pasokan hunian</p>
                   </div>
                 </div>
 
                 {/* Faktor 2 */}
-                <div className={`bg-root-surface border border-root-accent/20 p-2.5 sm:p-3 ${rootBorderRadius.card} flex items-start gap-2 sm:gap-2.5 hover:border-root-accent/40 transition-colors`}>
-                  <div className="p-1.5 bg-root-canvas border border-root-accent/30 rounded-md shrink-0">
-                    <Home className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-root-text" />
+                <div className={`root-modal-util-04ab86eb09 root-modal-util-5f22e64f22 root-modal-util-1e9b17c1f9 `}>
+                  <div className={"root-modal-util-9a23f0e987"}>
+                    <Home className={"root-modal-util-839943bdc3"} />
                   </div>
                   <div>
-                    <p className="text-[10px] sm:text-xs font-black text-root-text">Keterbatasan Hunian</p>
-                    <p className="text-[9px] sm:text-[10px] text-root-muted font-medium leading-tight mt-0.5">Kurangnya unit rumah subsidi & apartemen</p>
+                    <p className={"root-modal-util-2db64fa2d6"}>Keterbatasan Hunian</p>
+                    <p className={"root-modal-util-a51a6499e8"}>Kurangnya unit rumah subsidi & apartemen</p>
                   </div>
                 </div>
 
                 {/* Faktor 3 */}
-                <div className={`bg-root-surface border border-root-accent/20 p-2.5 sm:p-3 ${rootBorderRadius.card} flex items-start gap-2 sm:gap-2.5 hover:border-root-accent/40 transition-colors`}>
-                  <div className="p-1.5 bg-root-canvas border border-root-accent/30 rounded-md shrink-0">
-                    <TrendingDown className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-root-text" />
+                <div className={`root-modal-util-04ab86eb09 root-modal-util-5f22e64f22 root-modal-util-1e9b17c1f9 `}>
+                  <div className={"root-modal-util-9a23f0e987"}>
+                    <TrendingDown className={"root-modal-util-839943bdc3"} />
                   </div>
                   <div>
-                    <p className="text-[10px] sm:text-xs font-black text-root-text">Tingkat Kemiskinan</p>
-                    <p className="text-[9px] sm:text-[10px] text-root-muted font-medium leading-tight mt-0.5">Daya beli perumahan warga rendah</p>
+                    <p className={"root-modal-util-2db64fa2d6"}>Tingkat Kemiskinan</p>
+                    <p className={"root-modal-util-a51a6499e8"}>Daya beli perumahan warga rendah</p>
                   </div>
                 </div>
 
                 {/* Faktor 4 */}
-                <div className={`bg-root-surface border border-root-accent/20 p-2.5 sm:p-3 ${rootBorderRadius.card} flex items-start gap-2 sm:gap-2.5 hover:border-root-accent/40 transition-colors`}>
-                  <div className="p-1.5 bg-root-canvas border border-root-accent/30 rounded-md shrink-0">
-                    <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-root-text" />
+                <div className={`root-modal-util-04ab86eb09 root-modal-util-5f22e64f22 root-modal-util-1e9b17c1f9 `}>
+                  <div className={"root-modal-util-9a23f0e987"}>
+                    <MapPin className={"root-modal-util-839943bdc3"} />
                   </div>
                   <div>
-                    <p className="text-[10px] sm:text-xs font-black text-root-text">Kesejahteraan Rendah</p>
-                    <p className="text-[9px] sm:text-[10px] text-root-muted font-medium leading-tight mt-0.5">Investasi fasilitas publik & bantuan minim</p>
+                    <p className={"root-modal-util-2db64fa2d6"}>Kesejahteraan Rendah</p>
+                    <p className={"root-modal-util-a51a6499e8"}>Investasi fasilitas publik & bantuan minim</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* ============ SOLUSI & REKOMENDASI ============ */}
-            <div className={`bg-root-surface border border-root-accent/30 p-3 sm:p-4 ${rootBorderRadius.card}`}>
-              <h3 className="text-xs sm:text-sm font-black text-root-text uppercase tracking-wider mb-2 sm:mb-3 flex items-center gap-2">
-                <span className="w-1 h-3 bg-root-accent rounded-full inline-block"></span>
+            <div className={`root-modal-util-c7821331b6 root-modal-util-5f22e64f22`}>
+              <h3 className={"root-modal-util-613de4dde9"}>
+                <span className={"root-modal-util-308fa49d4e"}></span>
                 Solusi & Rekomendasi
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <div className={"root-modal-util-fcddc39279"}>
                 
-                <div className={`flex items-start gap-2 p-2 sm:p-2.5 bg-root-canvas ${rootBorderRadius.card} border border-root-accent/15 hover:border-root-accent/40 transition-colors`}>
-                  <div className="p-1 bg-root-accent/10 rounded shrink-0">
-                    <Building2 className="h-3.5 w-3.5 text-root-text" />
+                <div className={`root-modal-util-411bcda497 root-modal-util-5f22e64f22 root-modal-util-7759bd6d45 `}>
+                  <div className={"root-modal-util-c8c37a0fc5"}>
+                    <Building2 className={"root-modal-util-29f94a0f0e"} />
                   </div>
                   <div>
-                    <p className="text-[10px] sm:text-xs font-black text-root-text">Bangun Hunian Massal</p>
-                    <p className="text-[9px] sm:text-[10px] text-root-muted font-medium leading-tight mt-0.5">Perbanyak rumah subsidi dan apartemen rakyat</p>
+                    <p className={"root-modal-util-2db64fa2d6"}>Bangun Hunian Massal</p>
+                    <p className={"root-modal-util-a51a6499e8"}>Perbanyak rumah subsidi dan apartemen rakyat</p>
                   </div>
                 </div>
 
-                <div className={`flex items-start gap-2 p-2 sm:p-2.5 bg-root-canvas ${rootBorderRadius.card} border border-root-accent/15 hover:border-root-accent/40 transition-colors`}>
-                  <div className="p-1 bg-root-accent/10 rounded shrink-0">
-                    <BookOpen className="h-3.5 w-3.5 text-root-text" />
+                <div className={`root-modal-util-411bcda497 root-modal-util-5f22e64f22 root-modal-util-7759bd6d45 `}>
+                  <div className={"root-modal-util-c8c37a0fc5"}>
+                    <BookOpen className={"root-modal-util-29f94a0f0e"} />
                   </div>
                   <div>
-                    <p className="text-[10px] sm:text-xs font-black text-root-text">Tingkatkan Kesejahteraan</p>
-                    <p className="text-[9px] sm:text-[10px] text-root-muted font-medium leading-tight mt-0.5">Perluas program lapangan kerja & layanan sosial</p>
+                    <p className={"root-modal-util-2db64fa2d6"}>Tingkatkan Kesejahteraan</p>
+                    <p className={"root-modal-util-a51a6499e8"}>Perluas program lapangan kerja & layanan sosial</p>
                   </div>
                 </div>
 
-                <div className={`flex items-start gap-2 p-2 sm:p-2.5 bg-root-canvas ${rootBorderRadius.card} border border-root-accent/15 hover:border-root-accent/40 transition-colors`}>
-                  <div className="p-1 bg-root-accent/10 rounded shrink-0">
-                    <Coins className="h-3.5 w-3.5 text-root-text" />
+                <div className={`root-modal-util-411bcda497 root-modal-util-5f22e64f22 root-modal-util-7759bd6d45 `}>
+                  <div className={"root-modal-util-c8c37a0fc5"}>
+                    <Coins className={"root-modal-util-29f94a0f0e"} />
                   </div>
                   <div>
-                    <p className="text-[10px] sm:text-xs font-black text-root-text">Program Pembiayaan Ringan</p>
-                    <p className="text-[9px] sm:text-[10px] text-root-muted font-medium leading-tight mt-0.5">Subsidi bunga KPR & skema kepemilikan terjangkau</p>
+                    <p className={"root-modal-util-2db64fa2d6"}>Program Pembiayaan Ringan</p>
+                    <p className={"root-modal-util-a51a6499e8"}>Subsidi bunga KPR & skema kepemilikan terjangkau</p>
                   </div>
                 </div>
 
-                <div className={`flex items-start gap-2 p-2 sm:p-2.5 bg-root-canvas ${rootBorderRadius.card} border border-root-accent/15 hover:border-root-accent/40 transition-colors`}>
-                  <div className="p-1 bg-root-accent/10 rounded shrink-0">
-                    <Scale className="h-3.5 w-3.5 text-root-text" />
+                <div className={`root-modal-util-411bcda497 root-modal-util-5f22e64f22 root-modal-util-7759bd6d45 `}>
+                  <div className={"root-modal-util-c8c37a0fc5"}>
+                    <Scale className={"root-modal-util-29f94a0f0e"} />
                   </div>
                   <div>
-                    <p className="text-[10px] sm:text-xs font-black text-root-text">Pemerataan Pembangunan</p>
-                    <p className="text-[9px] sm:text-[10px] text-root-muted font-medium leading-tight mt-0.5">Distribusi kawasan permukiman produktif</p>
+                    <p className={"root-modal-util-2db64fa2d6"}>Pemerataan Pembangunan</p>
+                    <p className={"root-modal-util-a51a6499e8"}>Distribusi kawasan permukiman produktif</p>
                   </div>
                 </div>
 

@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { HandHelping, Check, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
-import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
@@ -229,22 +229,17 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
   return (
     <>
       {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
-        <div className="flex flex-col h-full overflow-hidden">
+        <div className="root-modal-util-b74379da23">
 
-          {/* HEADER */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
-            <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-              <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
-                <HandHelping className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-              </div>
-              <div className="min-w-0">
-                <h2 className={rootModalTypography.title}>Alokasi & Kebijakan Subsidi</h2>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 lg:gap-3">
-              <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi alokasi dan kebijakan subsidi" aria-label="Informasi alokasi dan kebijakan subsidi" className="root-modal-info-button flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas">
-                <Info className="h-3.5 w-3.5" />
+          <RootInfoModalHeader
+            title="Alokasi & Kebijakan Subsidi"
+            onClose={onClose}
+            size="standard"
+            icon={<HandHelping aria-hidden="true" />}
+            actions={
+              <>
+              <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi alokasi dan kebijakan subsidi" aria-label="Informasi alokasi dan kebijakan subsidi" className="root-modal-info-button root-modal-util-1697100c43">
+                <Info aria-hidden="true" />
               </button>
               {forumDialogMode && (
                 <button
@@ -255,9 +250,9 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
                   Konfirmasi
                 </button>
               )}
-              <RootModalCloseButton onClick={onClose} />
-            </div>
-          </div>
+              </>
+            }
+          />
 
           {/* TOP STATS SUMMARY BANNER */}
           {!forumDialogMode && <div className="subsidy-summary-cards px-4 lg:px-6 py-2 lg:py-3 bg-root-canvas/80 border-b border-root-accent/15 grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-2.5 shrink-0">

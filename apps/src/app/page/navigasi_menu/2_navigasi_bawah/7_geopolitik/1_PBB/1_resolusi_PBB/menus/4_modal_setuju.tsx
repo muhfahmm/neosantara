@@ -54,7 +54,7 @@ export default function ModalSetuju({
       <div className="modal-responsive-shell bg-root-surface border border-emerald-500/40 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl shadow-emerald-950/50">
         
         {/* Header Modal Setuju */}
-        <div className="px-4 sm:px-6 py-3 border-b border-emerald-500/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
+        <div className="px-4 py-2.5 sm:px-6 sm:py-3 border-b border-emerald-500/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/30">
               <ThumbsUp className="h-5 w-5 text-emerald-400" />

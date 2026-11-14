@@ -24,8 +24,8 @@ export default function InfoBangunanModal({
 }: InfoBangunanModalProps) {
   return (
     <NotebookModalWrapper onClose={onClose}>
-      <div className="flex h-full flex-col overflow-hidden">
-        <RootInfoModalHeader title={`Info Bangunan - ${label}`} onClose={onClose} />
+      <div className="root-modal-util-b74379da23">
+        <RootInfoModalHeader title={`Info Bangunan - ${label}`} onClose={onClose} size="standard" />
 
         <div className={`root-info-modal-content p-4 sm:p-5 relative z-10 flex-1 overflow-y-auto space-y-4 custom-scrollbar ${rootModalTypography.body}`}>
           <div className={`root-info-modal-summary flex flex-col gap-1 border border-root-accent/20 bg-root-canvas p-3 sm:p-4 ${rootBorderRadius.card}`}>

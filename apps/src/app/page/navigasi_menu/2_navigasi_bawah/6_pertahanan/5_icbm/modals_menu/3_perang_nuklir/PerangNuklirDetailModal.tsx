@@ -2,8 +2,9 @@
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import RootModalSidebarLayout from '@/app/page/root_modals_design_menu/RootModalSidebarLayout';
 import React, { useMemo, useState, useEffect } from "react";
-import { X, Radiation, Search, Rocket, ShieldAlert } from "lucide-react";
+import { Radiation, Search, Rocket, ShieldAlert } from "lucide-react";
 import NotebookModalWrapper from "../../../../NotebookModalWrapper";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { getArmadaPowerSummary } from "../../../4_armada/logic/armadaLogic";
 import {
   getNpcCountrySimulationSnapshot,
@@ -467,42 +468,34 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
 
   return (
     <NotebookModalWrapper onClose={onClose}>
-      <div className="flex h-full flex-col overflow-hidden">
+      <div className="root-modal-util-b74379da23">
         
-        {/* Header Modal */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex flex-wrap items-center justify-between bg-root-canvas relative z-10 shrink-0 gap-3">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
-              <Radiation className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
-            </div>
-            <div>
-              <h2 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Perang Nuklir & Intelijen Strategis</h2>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">
-                {activeTab === 'ranking'
-                  ? `Ranking kekuatan militer ${rankings.length} negara`
-                  : `Daftar negara berkemampuan Nuklir & ICBM global (${filteredIcbmOwners.length} negara)`}
-              </p>
+        <div className="satisfaction-modal-header root-modal-util-9462ce2345">
+          <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
+            <div className="root-modal-util-08dfbca033 min-w-0">
+              <div className="root-modal-util-739d92b232">
+                <Radiation aria-hidden="true" className="root-modal-util-d252947d10 text-rose-500 animate-pulse" />
+              </div>
+              <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d min-w-0">
+                Perang Nuklir & Intelijen Strategis
+              </h2>
             </div>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3 flex-1 max-w-xs justify-end">
-            <div className="relative w-full">
+          <div className="root-modal-util-08dfbca033">
+            <SharedModalCloseButton onClick={onClose} />
+          </div>
+        </div>
+
+        <div className="relative z-10 flex shrink-0 items-center justify-end border-b border-root-accent/20 bg-root-canvas px-4 py-2 sm:px-6">
+          <div className={`relative w-full sm:max-w-64 ${rootBorderRadius.card}`}>
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-root-accent/60" />
               <input
                 type="text"
                 placeholder={activeTab === 'ranking' ? "Cari negara..." : "Cari negara nuklir / ICBM..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-root-surface border border-root-accent/30 rounded-xl pl-8 pr-3 py-1.5 text-xs text-root-accent placeholder-root-subtle focus:outline-none focus:border-root-accent transition-all"
+                className={`h-9 w-full border border-root-accent/30 bg-[#051111] py-1 pl-8 pr-3 text-xs text-root-text placeholder-root-subtle transition-colors focus:border-root-accent focus:outline-none ${rootBorderRadius.card}`}
               />
-            </div>
-
-            <SharedModalCloseButton
-              onClick={onClose} 
-              className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
-              appearance="custom">
-              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-4 w-4" />
-            </SharedModalCloseButton>
           </div>
         </div>
 
@@ -536,7 +529,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
             },
           ]}
         >
-          <div className="min-h-0 flex-1 overflow-hidden rounded-2xl border border-root-accent/20 bg-root-canvas shadow-inner">
+          <div className="min-h-0 flex-1 overflow-hidden rounded-xl border border-root-accent/20 bg-root-canvas shadow-inner">
             <div className="h-full min-h-0 overflow-y-auto custom-scrollbar">
               {activeTab === 'ranking' ? (
                 /* TAB 1: RANKING KEKUATAN MILITER */

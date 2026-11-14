@@ -1,7 +1,7 @@
 "use client"
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
-import { X, Globe, Construction } from "lucide-react";
+import { Globe, Construction } from "lucide-react";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 
 interface ModalProps {
   isOpen: boolean;
@@ -16,38 +16,28 @@ export default function BantuanModal({ isOpen, onClose, countryDetail, setCountr
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       <div className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        <div className="px-8 py-5 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-root-accent/10 rounded-xl border border-root-accent/30">
-                <Globe className="h-6 w-6 text-root-accent" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-root-text tracking-wide leading-none uppercase">Program Bantuan Kemanusiaan</h2>
-              </div>
-            </div>
-          </div>
-          <SharedModalCloseButton onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-root-accent/30 bg-root-accent/10 text-root-accent hover:bg-root-accent/20 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm" appearance="custom">
-            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
-          </SharedModalCloseButton>
-        </div>
+        <RootInfoModalHeader
+          title="Program Bantuan Kemanusiaan"
+          onClose={onClose}
+          size="standard"
+          icon={<Globe aria-hidden="true" className="text-root-accent" />}
+        />
 
         {/* BODY MODAL */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-root-surface relative z-10 custom-scrollbar flex flex-col items-center justify-center">
-          <div className="flex flex-col items-center justify-center w-full max-w-2xl py-6 text-center">
+        <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto bg-root-surface p-4 sm:p-8 custom-scrollbar">
+          <div className="flex w-full max-w-2xl flex-col items-center justify-center py-4 text-center sm:py-6">
             
-            <div className="p-6 rounded-full bg-root-canvas border border-root-accent/30 mb-8">
-              <Construction className="w-20 h-20 text-root-accent" strokeWidth={1.5} />
+            <div className="mb-6 rounded-full border border-root-accent/30 bg-root-canvas p-4 sm:mb-8 sm:p-6">
+              <Construction className="h-14 w-14 text-root-accent sm:h-20 sm:w-20" strokeWidth={1.5} />
             </div>
 
-            <h3 className="text-5xl md:text-6xl font-black uppercase text-root-text tracking-wide leading-[0.95] mb-4">
+            <h3 className="mb-4 text-4xl font-black uppercase leading-[0.95] tracking-wide text-root-text sm:text-5xl md:text-6xl">
               Dalam<br />Pengembangan
             </h3>
 
             <div className="w-16 h-1 bg-root-accent/40 rounded-full mb-6" />
 
-            <p className="text-sm md:text-base text-root-subtle font-medium leading-relaxed max-w-lg">
+            <p className="max-w-lg text-sm font-medium leading-relaxed text-root-subtle md:text-base">
               Sistem pengiriman bantuan kemanusiaan internasional sedang dalam tahap pembangunan.
               Pantau terus perkembangannya untuk memperkuat reputasi dan hegemoni kemanusiaan Anda.
             </p>

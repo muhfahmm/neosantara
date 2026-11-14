@@ -40,7 +40,7 @@ export default function KonfirmasiPinjamanModal({
     <NotebookModalWrapper zIndexClass="z-[70]" frameClassName="loan-confirm-modal-frame">
       <div className="relative flex h-full w-full flex-col overflow-hidden bg-root-surface font-sans pointer-events-auto">
         {/* HEADER */}
-        <div className="loan-confirm-header relative z-10 flex items-center justify-between gap-3 border-b border-root-accent/20 bg-root-canvas px-4 py-3 sm:px-6">
+        <div className="loan-confirm-header relative z-10 flex items-center justify-between gap-3 border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <div className={`shrink-0 border border-root-accent/30 bg-root-surface p-1.5 ${rootBorderRadius.card}`}>
               <CreditCard className="h-4 w-4 text-root-accent sm:h-5 sm:w-5" />

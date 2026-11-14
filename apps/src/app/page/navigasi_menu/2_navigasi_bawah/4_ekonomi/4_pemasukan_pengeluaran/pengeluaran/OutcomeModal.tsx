@@ -1,7 +1,7 @@
 "use client"
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState } from "react";
-import { X, BarChart3, ArrowDownRight } from "lucide-react";
+import { BarChart3, ArrowDownRight } from "lucide-react";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { ALL_DEPARTMENTS, getDailyMinistryCost } from "@/app/logic/economic_logic/departments";
 
 interface OutcomeModalProps {
@@ -101,24 +101,14 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       <div className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden relative font-sans pointer-events-auto flex flex-col">
-        <div className="px-6 py-4 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 flex-shrink-0">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-root-surface rounded-xl border border-root-accent/30">
-                <BarChart3 className="h-6 w-6 text-root-accent" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Alokasi Pengeluaran Negara</h2>
-              </div>
-            </div>
-          </div>
-          <SharedModalCloseButton onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5" appearance="custom">
-            <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
-          </SharedModalCloseButton>
-        </div>
+        <RootInfoModalHeader
+          title="Alokasi Pengeluaran Negara"
+          onClose={onClose}
+          size="standard"
+          icon={<BarChart3 aria-hidden="true" className="text-root-accent" />}
+        />
 
-        <div className="flex-1 overflow-y-auto p-6 bg-root-surface relative z-10 custom-scrollbar">
+        <div className="relative z-10 min-h-0 flex-1 overflow-y-auto bg-root-surface p-4 custom-scrollbar sm:p-6">
           <div className="space-y-6 max-w-4xl">
             <p className="text-xs text-root-subtle font-semibold leading-relaxed">
               Atur alokasi anggaran pengeluaran negara. Setiap kategori memiliki pengaruh berbeda terhadap stabilitas ekonomi dan kesejahteraan rakyat.

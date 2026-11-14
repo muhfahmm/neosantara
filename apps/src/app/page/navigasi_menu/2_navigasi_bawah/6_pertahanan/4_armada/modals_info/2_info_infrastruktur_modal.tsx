@@ -1,8 +1,12 @@
 "use client";
-import React from "react";
-import NotebookModalWrapper from "../../../NotebookModalWrapper";
-import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import React, { useEffect } from "react";
+import { createPortal } from "react-dom";
+import NotebookModalWrapper, { MENU_INFO_MODAL_VISIBILITY_EVENT } from "../../../NotebookModalWrapper";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { isMobilePhone, useViewportMode } from "@/app/hooks/useViewportMode";
 import { getInfraCapacityDetails } from "../logic/infraCapacityHelper";
+import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import {
   getWaktuPembangunanBarakMiliterBonusPercent,
   getWaktuPembangunanGudangSenjataBonusPercent,
@@ -33,6 +37,21 @@ export default function InfoInfrastrukturModal({
   getNestedValue,
   countryDetail,
 }: InfoInfrastrukturModalProps) {
+  const viewportMode = useViewportMode();
+  const useRootPortal = isMobilePhone(viewportMode);
+
+  useEffect(() => {
+    if (!isOpen || !selectedItem || !useRootPortal) return;
+    window.dispatchEvent(new CustomEvent(MENU_INFO_MODAL_VISIBILITY_EVENT, {
+      detail: { isOpen: true },
+    }));
+    return () => {
+      window.dispatchEvent(new CustomEvent(MENU_INFO_MODAL_VISIBILITY_EVENT, {
+        detail: { isOpen: false },
+      }));
+    };
+  }, [isOpen, selectedItem, useRootPortal]);
+
   if (!isOpen || !selectedItem) return null;
 
   const itemKey = selectedItem?.dataKey || (typeof selectedItem?.key === "string" ? selectedItem.key.replace(/^\d+_/, "") : selectedItem?.key);
@@ -83,43 +102,50 @@ export default function InfoInfrastrukturModal({
   const rawWaktu = Number(selectedItem?.waktu_pembangunan) || 0;
   const effectiveWaktu = discountPct > 0 ? Math.max(1, Math.floor(rawWaktu * (1 - discountPct / 100))) : rawWaktu;
 
-  return (
-    <NotebookModalWrapper onClose={onClose} compact>
-      <div className="flex flex-col">
+  if (typeof document === "undefined") return null;
+
+  const modal = (
+    <NotebookModalWrapper
+      onClose={onClose}
+      zIndexClass={useRootPortal ? "z-[200]" : undefined}
+      hideWhenInfoModalOpen={!useRootPortal}
+    >
+      <div className="root-modal-util-b74379da23 defense-unit-info-modal">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
-        {/* Header */}
-        <div className="px-4 sm:px-5 py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-          <h3 className="font-black text-root-accent uppercase tracking-wider text-xl">{selectedItem?.label}</h3>
-          <RootModalCloseButton onClick={onClose} />
-        </div>
+        <RootInfoModalHeader
+          title={selectedItem?.label ?? ""}
+          titleId="defense-unit-info-title"
+          onClose={onClose}
+          size="standard"
+        />
 
         {/* Body */}
-        <div className="overflow-y-auto p-4 sm:p-5 bg-root-surface relative z-10 space-y-4 text-xs font-semibold text-root-text custom-scrollbar">
+        <div className={`defense-unit-info-content min-h-0 flex-1 overflow-y-auto p-4 sm:p-5 bg-root-surface relative z-10 space-y-4 custom-scrollbar ${rootModalTypography.body}`}>
           {bonusParts.length > 0 && (
-            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs font-bold text-emerald-300">
+            <div className={`border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs font-bold text-emerald-300 ${rootBorderRadius.card}`}>
               Infrastruktur ini ditingkatkan: {bonusParts.join(" dan ")}.
             </div>
           )}
           {selectedItem?.deskripsi && (
-            <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
-              <p className="text-[12px] font-bold text-root-subtle mb-1">Deskripsi</p>
+            <div className={`defense-unit-info-card bg-root-canvas p-4 border border-root-accent/20 ${rootBorderRadius.card}`}>
+              <p className="defense-unit-info-label text-[12px] font-bold text-root-subtle mb-1">Deskripsi</p>
               <p className="text-sm font-semibold text-root-text">{selectedItem.deskripsi}</p>
             </div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
-              <p className="text-sm font-bold text-root-subtle mb-1">Jumlah Fasilitas</p>
-              <p className="text-xl font-black text-root-text">
+          <div className="defense-unit-info-metrics grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className={`defense-unit-info-card bg-root-canvas p-4 border border-root-accent/20 ${rootBorderRadius.card}`}>
+              <p className="defense-unit-info-label text-sm font-bold text-root-subtle mb-1">Jumlah Fasilitas</p>
+              <p className="defense-unit-info-value text-xl font-black text-root-text">
                 {formatNumber(value)} unit
               </p>
             </div>
 
             {capacityDetail && (
-              <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
-                <p className="text-sm font-bold text-root-subtle mb-1">Status Kapasitas Terpakai</p>
-                <p className={`text-xl font-black ${capacityDetail.isFull ? "text-rose-400" : "text-root-accent"}`}>
+              <div className={`defense-unit-info-card bg-root-canvas p-4 border border-root-accent/20 ${rootBorderRadius.card}`}>
+                <p className="defense-unit-info-label text-sm font-bold text-root-subtle mb-1">Status Kapasitas Terpakai</p>
+                <p className={`defense-unit-info-value text-xl font-black ${capacityDetail.isFull ? "text-rose-400" : "text-root-accent"}`}>
                   {formatNumber(capacityDetail.used)} / {formatNumber(capacityDetail.totalCapacity)}
                 </p>
                 <div className="text-[10px] text-root-subtle mt-1 flex items-center gap-1 flex-wrap font-medium">
@@ -144,8 +170,8 @@ export default function InfoInfrastrukturModal({
           </div>
 
           {capacityDetail && capacityDetail.supportedUnits && capacityDetail.supportedUnits.length > 0 && (
-            <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
-              <p className="text-[12px] font-bold text-root-accent uppercase tracking-wider mb-2">
+            <div className={`defense-unit-info-card bg-root-canvas p-4 border border-root-accent/20 ${rootBorderRadius.card}`}>
+              <p className="defense-unit-info-label text-[12px] font-bold text-root-accent uppercase tracking-wider mb-2">
                 🛡️ Jenis Armada yang Ditampung:
               </p>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
@@ -159,22 +185,22 @@ export default function InfoInfrastrukturModal({
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
-              <p className="text-[12px] font-bold text-root-subtle mb-1">Biaya Pembangunan</p>
-              <p className="text-base font-black text-root-accent">
+          <div className="defense-unit-info-power-grid grid grid-cols-2 gap-4">
+            <div className={`defense-unit-info-card bg-root-canvas p-4 border border-root-accent/20 ${rootBorderRadius.card}`}>
+              <p className="defense-unit-info-label text-[12px] font-bold text-root-subtle mb-1">Biaya Pembangunan</p>
+              <p className="defense-unit-info-value text-base font-black text-root-accent">
                 {formatNumber(selectedItem?.biaya_pembangunan)} NEO
               </p>
             </div>
-            <div className="bg-root-canvas p-4 rounded-xl border border-root-accent/20">
-              <p className="text-[12px] font-bold text-root-subtle mb-1">Waktu Pembangunan</p>
+            <div className="defense-unit-info-card bg-root-canvas p-4 rounded-xl border border-root-accent/20">
+              <p className="defense-unit-info-label text-[12px] font-bold text-root-subtle mb-1">Waktu Pembangunan</p>
               {discountPct > 0 ? (
-                <div className="flex items-center gap-2 text-base font-black">
+                <div className="defense-unit-info-value flex items-center gap-2 text-base font-black">
                   <span className="text-red-400 line-through text-sm">{rawWaktu} Hari</span>
                   <span className="text-root-accent">{effectiveWaktu} Hari</span>
                 </div>
               ) : (
-                <p className="text-base font-black text-white">
+                <p className="defense-unit-info-value text-base font-black text-white">
                   {rawWaktu} Hari
                 </p>
               )}
@@ -185,4 +211,6 @@ export default function InfoInfrastrukturModal({
       </div>
     </NotebookModalWrapper>
   );
+
+  return useRootPortal ? createPortal(modal, document.body) : modal;
 }

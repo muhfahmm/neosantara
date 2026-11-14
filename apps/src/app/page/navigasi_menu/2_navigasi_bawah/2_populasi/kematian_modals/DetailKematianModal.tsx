@@ -18,8 +18,6 @@ import { calculateKesehatanLogic } from "./logic/kesehatanLogic";
 import { calculateTunawismaLogic } from "./logic/tunawismaLogic";
 import { calculateKriminalitasLogic } from "./logic/kriminalitasLogic";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
-import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
-import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 
 interface DetailKematianModalProps {
   isOpen: boolean;
@@ -101,134 +99,136 @@ export default function DetailKematianModal({
       <NotebookModalWrapper onClose={onClose}>
 
         {/* Header */}
-        <div className="px-4 sm:px-6 md:px-4 py-2.5 sm:py-3 border-b-0 md:border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-rose-500/30 shrink-0">
-              <Users className="h-4 w-4 sm:h-5 sm:w-5 text-rose-400" />
-            </div>
-            <div>
-              <h2 className={`${rootModalTypography.title} leading-none`}>Rincian Angka Kematian</h2>
+        <div className={"satisfaction-modal-header root-modal-util-9462ce2345"}>
+          <div className={"satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar"}>
+            <div className={"root-modal-util-08dfbca033"}>
+              <div className={"root-modal-util-739d92b232"}>
+                <Users className={"root-modal-util-d252947d10"} />
+              </div>
+              <h2 className={"root-modal-util-6b4648c53a root-modal-util-c2385a463d"}>
+                Rincian Angka Kematian
+              </h2>
             </div>
           </div>
           <RootModalCloseButton onClick={onClose} />
         </div>
 
         {/* Body */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-3 pt-2 pb-3 sm:p-4 sm:pt-3 sm:pb-3 md:p-5 bg-root-canvas/80 relative z-10 custom-scrollbar">
-          <div className="space-y-4">
+        <div className={"root-modal-util-888ddfb0c3 custom-scrollbar"}>
+          <div className={"root-modal-util-3e7ce58d64"}>
             
             {/* Ringkasan Utama */}
-            <div className={`bg-root-canvas border border-root-accent/20 p-3 ${rootBorderRadius.card}`}>
-              <div className="flex items-center justify-between">
+            <div className={`root-modal-util-79099565c4 root-modal-util-5f22e64f22`}>
+              <div className={"root-modal-util-d27e953630"}>
                 <div>
-                  <p className="text-xs sm:text-sm font-black text-root-muted uppercase tracking-wider">Kematian Harian</p>
-                  <p className="text-2xl sm:text-3xl font-black text-rose-400 mt-0.5">-{formatNumber(dailyDeaths)}</p>
+                  <p className={"root-modal-util-dfcde80191"}>Kematian Harian</p>
+                  <p className={"root-modal-util-c007ff74a3"}>-{formatNumber(dailyDeaths)}</p>
                 </div>
-                <div className="p-2.5 sm:p-3 bg-rose-500/10 rounded-full border border-rose-500/30">
-                  <Skull className="h-8 w-8 sm:h-9 sm:w-9 text-rose-400" />
+                <div className={"root-modal-util-52dfb88ae5"}>
+                  <Skull className={"root-modal-util-c280e1e65c"} />
                 </div>
               </div>
             </div>
 
             {/* Breakdown Faktor */}
-            <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className={"root-modal-util-69ff2269b4"}>
               {/* 1. Harapan Hidup */}
-              <div className={`min-w-0 bg-root-canvas border border-root-accent/20 p-3 ${rootBorderRadius.card} space-y-1.5 relative`}>
-                <div className="flex min-w-0 items-center gap-2">
-                  <div className="p-1.5 bg-root-accent/10 rounded-lg">
-                    <Heart className="h-4 w-4 text-root-text" />
+              <div className={`root-modal-util-e0535830e3 root-modal-util-5f22e64f22 root-modal-util-3988af3ab2 `}>
+                <div className={"root-modal-util-6a00a25d56"}>
+                  <div className={"root-modal-util-d8b10b3e0e"}>
+                    <Heart className={"root-modal-util-e443a49d4d"} />
                   </div>
-                  <h4 className="min-w-0 break-words text-xs font-black uppercase text-root-text">Harapan Hidup</h4>
+                  <h4 className={"root-modal-util-37591e0638"}>Harapan Hidup</h4>
                 </div>
-                <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
-                  <span className="min-w-0 break-words text-sm font-bold text-root-text">{harapanHidup} tahun</span>
-                  <span className="text-[10px] text-root-muted">× {lifeExpectancyFactor.toFixed(2)}</span>
+                <div className={"root-modal-util-0e44f76651"}>
+                  <span className={"root-modal-util-b6bf3be5ae"}>{harapanHidup} tahun</span>
+                  <span className={"root-modal-util-d661690b23"}>× {lifeExpectancyFactor.toFixed(2)}</span>
                 </div>
-                <p className="min-w-0 whitespace-normal break-words [overflow-wrap:anywhere] text-[10px] leading-relaxed text-root-muted">Semakin tinggi harapan hidup, semakin rendah angka kematian.</p>
+                <p className={"root-modal-util-ab6dcb44a2 [overflow-wrap:anywhere]"}>Semakin tinggi harapan hidup, semakin rendah angka kematian.</p>
               </div>
 
               {/* 2. Keamanan */}
-              <div className={`min-w-0 bg-root-canvas border border-root-accent/20 p-3 ${rootBorderRadius.card} space-y-1.5 relative`}>
-                <div className="flex min-w-0 items-center gap-2">
-                  <div className="p-1.5 bg-root-accent/10 rounded-lg">
-                    <Shield className="h-4 w-4 text-root-text" />
+              <div className={`root-modal-util-e0535830e3 root-modal-util-5f22e64f22 root-modal-util-3988af3ab2 `}>
+                <div className={"root-modal-util-6a00a25d56"}>
+                  <div className={"root-modal-util-d8b10b3e0e"}>
+                    <Shield className={"root-modal-util-e443a49d4d"} />
                   </div>
-                  <h4 className="min-w-0 break-words text-xs font-black uppercase text-root-text">Tingkat Keamanan</h4>
+                  <h4 className={"root-modal-util-37591e0638"}>Tingkat Keamanan</h4>
                 </div>
-                <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
-                  <span className="min-w-0 break-words text-sm font-bold text-root-text">{tingkatKeamanan}%</span>
-                  <span className="text-[10px] text-root-muted">× {securityFactor.toFixed(2)}</span>
+                <div className={"root-modal-util-0e44f76651"}>
+                  <span className={"root-modal-util-b6bf3be5ae"}>{tingkatKeamanan}%</span>
+                  <span className={"root-modal-util-d661690b23"}>× {securityFactor.toFixed(2)}</span>
                 </div>
-                <p className="min-w-0 whitespace-normal break-words [overflow-wrap:anywhere] text-[10px] leading-relaxed text-root-muted">Lingkungan aman mengurangi kematian akibat kriminalitas dan kecelakaan.</p>
+                <p className={"root-modal-util-ab6dcb44a2 [overflow-wrap:anywhere]"}>Lingkungan aman mengurangi kematian akibat kriminalitas dan kecelakaan.</p>
               </div>
 
               {/* 3. Tunawisma */}
-              <div className={`min-w-0 bg-root-canvas border border-root-accent/20 p-3 ${rootBorderRadius.card} space-y-1.5 relative`}>
-                <div className="flex min-w-0 items-center gap-2">
-                  <div className="p-1.5 bg-root-accent/10 rounded-lg">
-                    <Home className="h-4 w-4 text-root-text" />
+              <div className={`root-modal-util-e0535830e3 root-modal-util-5f22e64f22 root-modal-util-3988af3ab2 `}>
+                <div className={"root-modal-util-6a00a25d56"}>
+                  <div className={"root-modal-util-d8b10b3e0e"}>
+                    <Home className={"root-modal-util-e443a49d4d"} />
                   </div>
-                  <h4 className="min-w-0 break-words text-xs font-black uppercase text-root-text">Tunawisma</h4>
+                  <h4 className={"root-modal-util-37591e0638"}>Tunawisma</h4>
                 </div>
-                <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
-                  <span className="min-w-0 break-words text-sm font-bold text-root-text">{formatNumber(homelessCount)} jiwa ({ (homelessRatio * 100).toFixed(2)}%)</span>
-                  <span className="text-[10px] text-root-muted">× {homelessFactor.toFixed(2)}</span>
+                <div className={"root-modal-util-0e44f76651"}>
+                  <span className={"root-modal-util-b6bf3be5ae"}>{formatNumber(homelessCount)} jiwa ({ (homelessRatio * 100).toFixed(2)}%)</span>
+                  <span className={"root-modal-util-d661690b23"}>× {homelessFactor.toFixed(2)}</span>
                 </div>
-                <p className="min-w-0 whitespace-normal break-words [overflow-wrap:anywhere] text-[10px] leading-relaxed text-root-muted">Setiap 1% populasi tunawisma meningkatkan kematian sebesar 5%.</p>
+                <p className={"root-modal-util-ab6dcb44a2 [overflow-wrap:anywhere]"}>Setiap 1% populasi tunawisma meningkatkan kematian sebesar 5%.</p>
               </div>
 
               {/* 4. Kesehatan */}
               <div 
-                className={`min-w-0 bg-root-canvas border border-root-accent/20 p-3 ${rootBorderRadius.card} space-y-1.5 relative cursor-pointer hover:border-root-accent/60 hover:bg-root-accent/5 transition-all duration-200`}
+                className={`root-modal-util-e0535830e3 root-modal-util-5f22e64f22 root-modal-util-c8bb89f962 `}
                 onClick={() => onOpenTempatUmum?.('kesehatan')}
               >
-                <div className="flex min-w-0 items-center gap-2">
-                  <div className="p-1.5 bg-root-accent/10 rounded-lg">
-                    <HeartPulse className="h-4 w-4 text-root-text" />
+                <div className={"root-modal-util-6a00a25d56"}>
+                  <div className={"root-modal-util-d8b10b3e0e"}>
+                    <HeartPulse className={"root-modal-util-e443a49d4d"} />
                   </div>
-                  <h4 className="min-w-0 break-words text-xs font-black uppercase text-root-text">Fasilitas Kesehatan</h4>
+                  <h4 className={"root-modal-util-37591e0638"}>Fasilitas Kesehatan</h4>
                 </div>
-                <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
-                  <span className="min-w-0 break-words text-sm font-bold text-root-text">{calculateKesehatanScore(countryDetail)} POIN <span className="text-xs font-normal text-root-muted">(rasio {hospitalRatio.toFixed(2)})</span></span>
-                  <span className="text-[10px] text-root-muted">× {healthFactor.toFixed(2)}</span>
+                <div className={"root-modal-util-0e44f76651"}>
+                  <span className={"root-modal-util-b6bf3be5ae"}>{calculateKesehatanScore(countryDetail)} POIN <span className={"root-modal-util-be43bc36b5"}>(rasio {hospitalRatio.toFixed(2)})</span></span>
+                  <span className={"root-modal-util-d661690b23"}>× {healthFactor.toFixed(2)}</span>
                 </div>
-                <p className="min-w-0 whitespace-normal break-words [overflow-wrap:anywhere] text-[10px] leading-relaxed text-root-muted">Ketersediaan RS yang cukup menurunkan kematian akibat penyakit yang dapat diobati.</p>
+                <p className={"root-modal-util-ab6dcb44a2 [overflow-wrap:anywhere]"}>Ketersediaan RS yang cukup menurunkan kematian akibat penyakit yang dapat diobati.</p>
               </div>
 
               {/* 5. Ketahanan Pangan */}
               <div 
-                className={`min-w-0 bg-root-canvas border border-root-accent/20 p-3 ${rootBorderRadius.card} space-y-1.5 relative cursor-pointer hover:border-root-accent/60 hover:bg-root-accent/5 transition-all duration-200`}
+                className={`root-modal-util-e0535830e3 root-modal-util-5f22e64f22 root-modal-util-c8bb89f962 `}
                 onClick={() => onOpenIndustriPangan?.()}
               >
-                <div className="flex min-w-0 items-center gap-2">
-                  <div className="p-1.5 bg-root-accent/10 rounded-lg">
-                    <Utensils className="h-4 w-4 text-root-text" />
+                <div className={"root-modal-util-6a00a25d56"}>
+                  <div className={"root-modal-util-d8b10b3e0e"}>
+                    <Utensils className={"root-modal-util-e443a49d4d"} />
                   </div>
-                  <h4 className="min-w-0 break-words text-xs font-black uppercase text-root-text">Ketahanan Pangan</h4>
+                  <h4 className={"root-modal-util-37591e0638"}>Ketahanan Pangan</h4>
                 </div>
-                <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
-                  <span className="min-w-0 break-words text-sm font-bold text-root-text">{indeksKetahananPangan} POIN</span>
-                  <span className="text-[10px] text-root-muted">× {foodSecurityFactor.toFixed(2)}</span>
+                <div className={"root-modal-util-0e44f76651"}>
+                  <span className={"root-modal-util-b6bf3be5ae"}>{indeksKetahananPangan} POIN</span>
+                  <span className={"root-modal-util-d661690b23"}>× {foodSecurityFactor.toFixed(2)}</span>
                 </div>
-                <p className="min-w-0 whitespace-normal break-words [overflow-wrap:anywhere] text-[10px] leading-relaxed text-root-muted">Ketersediaan pangan yang cukup mengurangi kematian akibat malnutrisi.</p>
+                <p className={"root-modal-util-ab6dcb44a2 [overflow-wrap:anywhere]"}>Ketersediaan pangan yang cukup mengurangi kematian akibat malnutrisi.</p>
               </div>
 
               {/* 6. Kriminalitas */}
               <div 
-                className={`min-w-0 bg-root-canvas border border-root-accent/20 p-3 ${rootBorderRadius.card} space-y-1.5 relative cursor-pointer hover:border-root-accent/60 hover:bg-root-accent/5 transition-all duration-200`}
+                className={`root-modal-util-e0535830e3 root-modal-util-5f22e64f22 root-modal-util-c8bb89f962 `}
                 onClick={() => onOpenArmada?.('polisi')}
               >
-                <div className="flex min-w-0 items-center gap-2">
-                  <div className="p-1.5 bg-root-accent/10 rounded-lg">
-                    <AlertTriangle className="h-4 w-4 text-root-text" />
+                <div className={"root-modal-util-6a00a25d56"}>
+                  <div className={"root-modal-util-d8b10b3e0e"}>
+                    <AlertTriangle className={"root-modal-util-e443a49d4d"} />
                   </div>
-                  <h4 className="min-w-0 break-words text-xs font-black uppercase text-root-text">Penegakan Hukum & Kriminalitas</h4>
+                  <h4 className={"root-modal-util-37591e0638"}>Penegakan Hukum & Kriminalitas</h4>
                 </div>
-                <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
-                  <span className="min-w-0 break-words text-sm font-bold text-root-text">{calculatePenegakanHukumScore(countryDetail)} POIN</span>
-                  <span className="text-[10px] text-root-muted">× {crimeFactor.toFixed(2)}</span>
+                <div className={"root-modal-util-0e44f76651"}>
+                  <span className={"root-modal-util-b6bf3be5ae"}>{calculatePenegakanHukumScore(countryDetail)} POIN</span>
+                  <span className={"root-modal-util-d661690b23"}>× {crimeFactor.toFixed(2)}</span>
                 </div>
-                <p className="min-w-0 whitespace-normal break-words [overflow-wrap:anywhere] text-[10px] leading-relaxed text-root-muted">Skor kepuasan penegakan hukum dari Indeks Kesejahteraan.</p>
+                <p className={"root-modal-util-ab6dcb44a2 [overflow-wrap:anywhere]"}>Skor kepuasan penegakan hukum dari Indeks Kesejahteraan.</p>
               </div>
 
             </div>

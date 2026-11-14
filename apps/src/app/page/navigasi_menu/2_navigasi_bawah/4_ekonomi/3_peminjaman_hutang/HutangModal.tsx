@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { CreditCard, ArrowRight, AlertCircle, Search, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
-import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
@@ -358,31 +358,25 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
     <>
       {!isLoanInfoOpen && (
       <NotebookModalWrapper onClose={onClose} frameClassName="loan-modal-frame">
-        <div className="flex flex-col h-full overflow-hidden">
+        <div className="root-modal-util-b74379da23">
 
-          {/* Header */}
-          <div className="loan-modal-header px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
-          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
-              <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-            </div>
-            <div className="min-w-0">
-              <h2 className={rootModalTypography.title}>Pinjaman & Hutang</h2>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
+          <RootInfoModalHeader
+            title="Pinjaman & Hutang"
+            onClose={onClose}
+            size="standard"
+            icon={<CreditCard aria-hidden="true" />}
+            actions={
             <button
               type="button"
               onClick={() => setIsLoanInfoOpen(true)}
               title="Informasi pinjaman dan hutang"
               aria-label="Informasi pinjaman dan hutang"
-              className="root-modal-info-button flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas"
+              className="root-modal-info-button root-modal-util-1697100c43"
             >
-              <Info className="h-3.5 w-3.5" />
+              <Info aria-hidden="true" />
             </button>
-            <RootModalCloseButton onClick={onClose} />
-          </div>
-        </div>
+            }
+          />
 
         {/* Body Content */}
         <div className="loan-modal-content min-h-0 flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-root-canvas/80 relative z-10 custom-scrollbar">

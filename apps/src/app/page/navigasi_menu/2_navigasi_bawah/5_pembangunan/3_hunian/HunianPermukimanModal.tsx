@@ -6,7 +6,6 @@ import { fetchBuildingMetadata } from '../../../../../../lib/buildingMetadata';
 import { getBuildingCardImage } from "../../buildingCardImages";
 import { X, Home, TrendingUp, TrendingDown, Hammer, AlertCircle, Info, Sparkles } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
-import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
@@ -408,19 +407,21 @@ export default function HunianPermukimanModal({
     <>
       {/* MODAL UTAMA */}
       {!selectedItemInfo && <NotebookModalWrapper onClose={onClose}>
-        <div className="building-modal-layout flex flex-col h-full overflow-hidden">
+        <div className="root-modal-util-b74379da23 building-modal-layout">
 
           {/* HEADER */}
-          <div className="building-modal-header px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
-            <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-              <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
-                <Home className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-              </div>
-              <div className="min-w-0">
-                <h2 className={`building-modal-title ${rootModalTypography.title}`}>Hunian & Permukiman</h2>
+          <div className="satisfaction-modal-header root-modal-util-9462ce2345">
+            <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
+              <div className="root-modal-util-08dfbca033">
+                <div className="root-modal-util-739d92b232">
+                  <Home aria-hidden="true" className="root-modal-util-d252947d10" />
+                </div>
+                <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
+                  Hunian & Permukiman
+                </h2>
               </div>
             </div>
-            <div className="building-modal-header-actions flex shrink-0 items-center gap-2">
+            <div className="root-modal-util-08dfbca033">
               <button
                 type="button"
                 onClick={() => {
@@ -436,11 +437,11 @@ export default function HunianPermukimanModal({
                 }}
                 aria-label={`Informasi ${activeItem?.label ?? "hunian aktif"}`}
                 title={`Informasi ${activeItem?.label ?? "hunian aktif"}`}
-                className="root-modal-info-button building-modal-info-button flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent"
+                className="root-modal-info-button root-modal-util-1697100c43"
               >
-                <Info className="h-4 w-4" />
+                <Info aria-hidden="true" />
               </button>
-              <RootModalCloseButton onClick={onClose} />
+              <SharedModalCloseButton onClick={onClose} />
             </div>
           </div>
 

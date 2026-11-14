@@ -1,7 +1,7 @@
 "use client"
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState } from "react";
-import { X, Atom } from "lucide-react";
+import { Atom } from "lucide-react";
 import NotebookModalWrapper from "../../../../NotebookModalWrapper";
 import DanaTidakCukupModals from "./danaTidakCukupModals";
 import ProgramNuklirTimeDetail from "./ProgramNuklirTimeDetail";
@@ -98,26 +98,25 @@ export default function ProgramNuklirModals({
     <>
       {!(isDanaTidakCukupOpen || isTimeDetailOpen) && (
         <NotebookModalWrapper onClose={onClose}>
-          <div className="flex h-full flex-col overflow-hidden">
+          <div className="root-modal-util-b74379da23">
             
-            {/* Header Modal */}
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
-                  <Atom className="h-4 w-4 sm:h-5 sm:w-5 text-amber-400 animate-pulse" />
-                </div>
-                <div>
-                  <h2 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Aktivasi Program Nuklir</h2>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">Pendanaan Riset & Pengayaan Uranium</p>
+            <div className="satisfaction-modal-header root-modal-util-9462ce2345">
+              <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
+                <div className="root-modal-util-08dfbca033">
+                  <div className="root-modal-util-739d92b232">
+                    <Atom aria-hidden="true" className="root-modal-util-d252947d10 text-amber-400 animate-pulse" />
+                  </div>
+                  <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
+                    Aktivasi Program Nuklir
+                    <span className="ml-2 align-middle text-[9px] font-semibold tracking-normal text-root-subtle normal-case">
+                      Pendanaan Riset & Pengayaan Uranium
+                    </span>
+                  </h2>
                 </div>
               </div>
-              <SharedModalCloseButton
-                onClick={onClose} 
-                className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-                appearance="custom">
-                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-4 w-4" />
-              </SharedModalCloseButton>
+              <div className="root-modal-util-08dfbca033">
+                <SharedModalCloseButton onClick={onClose} />
+              </div>
             </div>
 
             {/* Body Modal */}

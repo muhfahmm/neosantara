@@ -20,8 +20,6 @@ import { getCommunismProductionMultiplier, COMMUNISM_PRODUCTION_BONUS } from "..
 import { isMemberOfFAO, FAO_BONUS_RESOURCES } from "../../../../bonus_logic/organisasi_bonus_logic/organisasi_pbb/fao";
 import { applyNpcCountrySimulationState } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
 import { calculatePanganScore } from "@/app/logic/kepuasanCalculator";
-import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
-import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 
@@ -64,12 +62,12 @@ const safeNumber = (value: any): number => {
 
 const formatColoredNumber = (value: any, isPositive: boolean = true) => {
   const parsed = safeNumber(value);
-  if (parsed === 0) return <span className="font-black text-root-subtle">0</span>;
+  if (parsed === 0) return <span className={"root-modal-util-45beb2b6f2"}>0</span>;
   const absValue = Math.abs(parsed);
   const formatted = absValue.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 });
-  const mainColor = isPositive ? 'text-emerald-400' : 'text-rose-400';
+  const mainColor = isPositive ? "root-modal-util-edbfd1c508" : "root-modal-util-35f302741d";
   const sign = isPositive ? '+' : '-';
-  return <span className={`font-black ${mainColor}`}>{sign}{formatted}</span>;
+  return <span className={`root-modal-util-7fbb85697d ${mainColor}`}>{sign}{formatted}</span>;
 };
 
 const formatNumber = (value: any) => {
@@ -259,9 +257,9 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
   };
 
   const SortIndicator = ({ column }: { column: SortConfig['key'] }) => {
-    if (sortConfig.key !== column) return <span className="text-[#8b7e66]/30 ml-1 text-xs">⇅</span>;
-    if (sortConfig.direction === 'asc') return <ChevronUp className="h-3 w-3 ml-1 inline text-emerald-700" />;
-    return <ChevronDown className="h-3 w-3 ml-1 inline text-emerald-700" />;
+    if (sortConfig.key !== column) return <span className={"root-modal-util-b5b1d5164b"}>⇅</span>;
+    if (sortConfig.direction === 'asc') return <ChevronUp className={"root-modal-util-4bb26683ea"} />;
+    return <ChevronDown className={"root-modal-util-4bb26683ea"} />;
   };
 
   return (
@@ -290,39 +288,39 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
           compact
           onClose={() => setSelectedCommodityInfo(null)}
         >
-          <div className="food-industry-modal flex min-w-0 flex-col overflow-hidden">
+          <div className={"food-industry-modal root-modal-util-1a8b37d835"}>
             {/* HEADER */}
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
-                  <Utensils className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
+            <div className={"root-modal-util-99feb978ac"}>
+              <div className={"root-modal-util-1117664efc"}>
+                <div className={"root-modal-util-170d7abee6"}>
+                  <Utensils className={"root-modal-util-e520c3c92e"} />
                 </div>
-                <div className="min-w-0">
-                  <h2 className={rootModalTypography.title}>{selectedCommodityInfo.label}</h2>
+                <div className={"root-modal-util-7e0b7cdf1a"}>
+                  <h2 className={"root-modal-util-6b4648c53a"}>{selectedCommodityInfo.label}</h2>
                 </div>
               </div>
               <RootModalCloseButton onClick={() => setSelectedCommodityInfo(null)} />
             </div>
             {/* CONTENT */}
-            <div className="root-no-scrollbar-glow overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-root-canvas/80 relative z-10 neon-scrollbar space-y-3.5 lg:space-y-4.5 2xl:space-y-6">
-              <div className="grid grid-cols-2 gap-1.5 lg:gap-2">
-                <div className={`bg-emerald-950/40 p-2 lg:p-2.5 2xl:p-3.5 border border-emerald-500/30 ${rootBorderRadius.card} flex flex-col justify-between gap-1`}>
-                  <span className={rootModalTypography.label}>Total Produksi</span>
-                  <div className="text-[10px] lg:text-[11px] 2xl:text-xs font-black">{formatColoredNumber(selectedCommodityInfo.production, true)}</div>
+            <div className={"root-no-scrollbar-glow root-modal-util-442b6700f1 neon-scrollbar"}>
+              <div className={"root-modal-util-83c631f722"}>
+                <div className={`root-modal-util-548951b485 root-modal-util-5f22e64f22 root-modal-util-9274009d5e `}>
+                  <span className={"root-modal-util-14d6efe9ef"}>Total Produksi</span>
+                  <div className={"root-modal-util-76e5b7f137"}>{formatColoredNumber(selectedCommodityInfo.production, true)}</div>
                 </div>
-                <div className={`bg-rose-950/40 p-2 lg:p-2.5 2xl:p-3.5 border border-rose-500/30 ${rootBorderRadius.card} flex flex-col justify-between gap-1`}>
-                  <span className={rootModalTypography.label}>Total Konsumsi</span>
-                  <div className="text-[10px] lg:text-[11px] 2xl:text-xs font-black">{formatColoredNumber(selectedCommodityInfo.consumption, false)}</div>
+                <div className={`root-modal-util-057a5de724 root-modal-util-5f22e64f22 root-modal-util-9274009d5e `}>
+                  <span className={"root-modal-util-14d6efe9ef"}>Total Konsumsi</span>
+                  <div className={"root-modal-util-76e5b7f137"}>{formatColoredNumber(selectedCommodityInfo.consumption, false)}</div>
                 </div>
               </div>
               {selectedCommodityInfo.bonusDescription && (
-                <div className={`bg-emerald-500/10 p-2 lg:p-2.5 2xl:p-3.5 border border-emerald-500/30 ${rootBorderRadius.card} text-emerald-300 font-medium ${rootModalTypography.body}`}>
+                <div className={`root-modal-util-f592c4fbb0 root-modal-util-5f22e64f22 root-modal-util-19666cda60 root-modal-util-8ff7188727`}>
                   {selectedCommodityInfo.bonusDescription}
                 </div>
               )}
-              <div className={`bg-root-canvas p-2 lg:p-2.5 2xl:p-3.5 border border-root-accent/20 ${rootBorderRadius.card}`}>
-                <div className="flex justify-between items-center text-[10px] lg:text-[11px] 2xl:text-xs">
-                  <span className={rootModalTypography.label}>Netto:</span>
+              <div className={`root-modal-util-c3dd845bb0 root-modal-util-5f22e64f22`}>
+                <div className={"root-modal-util-f1cb411495"}>
+                  <span className={"root-modal-util-14d6efe9ef"}>Netto:</span>
                   {formatColoredNumber(selectedCommodityInfo.balance, selectedCommodityInfo.balance >= 0)}
                 </div>
               </div>
@@ -333,27 +331,35 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
 
       {!selectedCommodityInfo && !isMenuInfoOpen && (
       <NotebookModalWrapper onClose={onClose}>
-        <div className="food-industry-modal flex h-full min-w-0 flex-col overflow-hidden">
+        <div className={"root-modal-util-b74379da23"}>
           {/* HEADER */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
-                <Utensils className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-              </div>
-              <div className="min-w-0">
-                <h2 className={rootModalTypography.title}>Industri Pangan</h2>
+          <div className={"satisfaction-modal-header root-modal-util-9462ce2345"}>
+            <div className={"satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar"}>
+              <div className={"root-modal-util-08dfbca033"}>
+                <div className={"root-modal-util-739d92b232"}>
+                  <Utensils aria-hidden="true" className={"root-modal-util-d252947d10"} />
+                </div>
+                <h2 className={"root-modal-util-6b4648c53a root-modal-util-c2385a463d"}>
+                  Industri Pangan
+                </h2>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <button type="button" onClick={() => setIsMenuInfoOpen(true)} title="Informasi industri pangan dan konsumsi" aria-label="Informasi industri pangan dan konsumsi" className="root-modal-info-button flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas">
-                <Info className="h-3.5 w-3.5" />
+            <div className={"root-modal-util-08dfbca033"}>
+              <button
+                type="button"
+                onClick={() => setIsMenuInfoOpen(true)}
+                title="Informasi industri pangan dan konsumsi"
+                aria-label="Informasi industri pangan dan konsumsi"
+                className={"root-modal-info-button root-modal-util-1697100c43"}
+              >
+                <Info aria-hidden="true" />
               </button>
               <RootModalCloseButton onClick={onClose} />
             </div>
           </div>
           {/* CONTENT */}
-          <div className="root-no-scrollbar-glow flex-1 min-h-0 overflow-y-auto p-2 lg:p-5 2xl:p-8 bg-root-canvas/80 relative z-10 neon-scrollbar">
-            <div className="space-y-2 lg:space-y-4.5 2xl:space-y-6">
+          <div className={"food-industry-modal root-no-scrollbar-glow root-modal-util-9dc0c98e81 neon-scrollbar"}>
+            <div className={"root-modal-util-ffeb68166b"}>
               {Object.entries(SECTOR_MAP).map(([sectorId, sectorData]) => {
                 const SectorIcon = sectorData.icon;
                 const sectorItems = sectorData.items.filter(key => FOOD_CONSUMPTION_PER_CAPITA[key] !== undefined);
@@ -361,13 +367,13 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                 let deficitCount = 0; let surplusCount = 0;
                 sectorItems.forEach(key => { const prod = calculateProduction(key, countryDetail, metadata); const cons = calculateConsumption(population, FOOD_CONSUMPTION_PER_CAPITA[key]); if (prod - cons < 0) deficitCount++; else if (prod - cons > 0) surplusCount++; });
                 return (
-                  <div key={sectorId} className={`min-w-0 border border-root-accent/20 ${rootBorderRadius.card} overflow-hidden bg-root-canvas`}>
-                    <div className="flex items-center justify-between px-3.5 lg:px-4.5 2xl:px-6 py-2 lg:py-2.5 2xl:py-3.5 bg-root-canvas border-b border-root-accent/20 text-root-accent">
-                      <div className="flex min-w-0 items-center gap-2 lg:gap-3"><div className="p-1 lg:p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/30"><SectorIcon className="w-4 h-4 lg:w-4.5 lg:w-4.5 2xl:w-5 2xl:h-5 text-root-accent" /></div><h4 className={`${rootModalTypography.sectionTitle} min-w-0 break-words`}>{sectorData.label} ({sectorItems.length} Komoditas)</h4></div>
-                      <button onClick={() => analyzeSector(sectorId)} className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 lg:py-1.5 rounded-full bg-root-accent/10 hover:bg-root-accent/20 transition-colors border border-root-accent/30 group cursor-pointer" title="Analisis AI untuk sektor ini"><div className="relative"><MessageSquare className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-root-accent group-hover:scale-110 transition-transform" /><span className={`absolute -top-1 -right-1 w-2 h-2 rounded-full ${deficitCount > 0 ? 'bg-rose-400 animate-pulse' : surplusCount > 0 ? 'bg-emerald-400' : 'bg-gray-400'}`} /></div><span className="text-[8px] lg:text-[9px] font-bold uppercase tracking-wider text-root-accent">AI</span></button>
+                  <div key={sectorId} className={`root-modal-util-5298bdd041 root-modal-util-5f22e64f22 root-modal-util-23cdffb29e `}>
+                    <div className={"root-modal-util-46d52ba86c"}>
+                      <div className={"root-modal-util-d4cd52ca73"}><div className={"root-modal-util-a27f83ec88"}><SectorIcon className={"root-modal-util-f541a30647"} /></div><h4 className={`root-modal-util-9361ef65fc root-modal-util-3d9a1150e3 `}>{sectorData.label} ({sectorItems.length} Komoditas)</h4></div>
+                      <button onClick={() => analyzeSector(sectorId)} className={"root-modal-util-60a67fef2a group"} title="Analisis AI untuk sektor ini"><div className={"root-modal-util-d89972fe17"}><MessageSquare className={"root-modal-util-267d2a941e"} /><span className={`root-modal-util-54a9c5af4a ${deficitCount > 0 ? "root-modal-util-e9c97db68c" : surplusCount > 0 ? "root-modal-util-6f845a7c2f" : "root-modal-util-5237703dd5"}`} /></div><span className={"root-modal-util-615ecd8200"}>AI</span></button>
                     </div>
                     {/* Grid Items */}
-                    <div className="grid grid-cols-4 gap-1 p-1.5 lg:gap-2 lg:p-2.5 2xl:p-3 bg-root-surface">
+                    <div className={"root-modal-util-d330c4f8fa"}>
                       {sectorItems.map((key) => {
                         const consumptionPerCapita = FOOD_CONSUMPTION_PER_CAPITA[key];
                         const production = calculateProduction(key, countryDetail, metadata);
@@ -375,19 +381,19 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                         const netBalance = production - consumption;
                         const label = metadata?.[key]?.label || key.replace(/_/g, ' ').replace(/\b\w/g, (ch) => ch.toUpperCase());
                         return (
-                          <div key={key} className={`min-w-0 bg-root-canvas p-1.5 lg:p-2.5 2xl:p-3.5 flex flex-col justify-between gap-1 lg:gap-2 ${rootBorderRadius.card} border border-root-accent/20`}>
-                            <div className="flex items-start justify-between pb-1 border-b border-root-accent/10 gap-1 min-h-[24px] lg:min-h-[30px] 2xl:min-h-[34px]">
-                              <div className="flex min-w-0 flex-1 items-start gap-1 pr-0.5 lg:gap-1.5">
-                                <button type="button" onClick={(e) => { e.stopPropagation(); openCommodityInfo(key, label, production, consumption, netBalance); }} title={`Detail konsumsi ${label}`} className="p-0.5 lg:p-1 rounded-md lg:rounded-lg border border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer shrink-0"><Info className="w-3 h-3 lg:w-3.5 lg:h-3.5" /></button>
-                                <span className={`${rootModalTypography.label} food-commodity-mobile-title min-w-0 whitespace-normal break-words leading-tight`}>{label}</span>
+                          <div key={key} className={`root-modal-util-7ffb0bad63 root-modal-util-5f22e64f22 root-modal-util-e1012a77bf `}>
+                            <div className={"root-modal-util-a5a609ec40"}>
+                              <div className={"root-modal-util-32533cb404"}>
+                                <button type="button" onClick={(e) => { e.stopPropagation(); openCommodityInfo(key, label, production, consumption, netBalance); }} title={`Detail konsumsi ${label}`} className={"root-modal-util-182614346b"}><Info className={"root-modal-util-7b11a622cc"} /></button>
+                                <span className={`root-modal-util-14d6efe9ef food-commodity-mobile-title root-modal-util-e0b60b8e1d `}>{label}</span>
                               </div>
-                              {onGotoProduction && (<button onClick={() => handleBuildClick(key)} title={`Bangun ${label}`} className="self-start p-0.5 lg:p-1 rounded-md lg:rounded-lg bg-root-accent text-root-canvas hover:bg-root-accent/80 transition-all cursor-pointer shrink-0"><Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 font-bold" /></button>)}
+                              {onGotoProduction && (<button onClick={() => handleBuildClick(key)} title={`Bangun ${label}`} className={"root-modal-util-44803908b4"}><Plus className={"root-modal-util-a35739b19e"} /></button>)}
                             </div>
-                            <div className="food-commodity-mobile-value space-y-1 text-[10px] lg:text-[11px] 2xl:text-xs">
-                              <div className={`flex flex-col items-start lg:flex-row lg:items-center lg:justify-between bg-emerald-950/40 px-1 lg:px-2 py-0.5 lg:py-1 ${rootBorderRadius.card} border border-emerald-500/30`}><span className={`${rootModalTypography.label} food-commodity-mobile-label`}>Total Produksi</span>{formatColoredNumber(production, true)}</div>
-                              <div className={`flex flex-col items-start lg:flex-row lg:items-center lg:justify-between bg-rose-950/40 px-1 lg:px-2 py-0.5 lg:py-1 ${rootBorderRadius.card} border border-rose-500/30`}><span className={`${rootModalTypography.label} food-commodity-mobile-label`}>Total Konsumsi</span>{formatColoredNumber(consumption, false)}</div>
+                            <div className={"food-commodity-mobile-value root-modal-util-a8f233d4d7"}>
+                              <div className={`root-modal-util-3b859a66cf root-modal-util-5f22e64f22 root-modal-util-1b774baba7 `}><span className={`root-modal-util-14d6efe9ef food-commodity-mobile-label`}>Total Produksi</span>{formatColoredNumber(production, true)}</div>
+                              <div className={`root-modal-util-a4b253bd54 root-modal-util-5f22e64f22 root-modal-util-4b89a46abe `}><span className={`root-modal-util-14d6efe9ef food-commodity-mobile-label`}>Total Konsumsi</span>{formatColoredNumber(consumption, false)}</div>
                             </div>
-                            <div className="food-commodity-mobile-value flex flex-col items-start lg:flex-row lg:items-center lg:justify-between pt-1 border-t border-root-accent/10 mt-0.5 text-[10px] lg:text-[11px] 2xl:text-xs"><span className={`${rootModalTypography.label} food-commodity-mobile-label`}>Netto:</span>{formatColoredNumber(netBalance, netBalance >= 0)}</div>
+                            <div className={"food-commodity-mobile-value root-modal-util-1eaefe7a3f"}><span className={`root-modal-util-14d6efe9ef food-commodity-mobile-label`}>Netto:</span>{formatColoredNumber(netBalance, netBalance >= 0)}</div>
                           </div>
                         );
                       })}
@@ -397,19 +403,19 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
               })}
 
               {/* INDEKS KEPUASAN PANGAN */}
-              <div className={`root-satisfaction-index p-3.5 lg:p-4 2xl:p-5 border border-root-accent/30 bg-root-canvas ${rootBorderRadius.card}`}>
-                <div className="flex justify-between items-center">
-                  <span className="root-satisfaction-index-title font-bold uppercase tracking-wider text-root-text">
+              <div className={`root-satisfaction-index root-modal-util-2e2a9db707 root-modal-util-5f22e64f22`}>
+                <div className={"root-modal-util-56e6b92b69"}>
+                  <span className={"root-satisfaction-index-title root-modal-util-84cf691742"}>
                     Indeks Kepuasan Rakyat (Pangan)
                   </span>
-                  <span className="root-satisfaction-index-value font-semibold text-root-accent">
+                  <span className={"root-satisfaction-index-value root-modal-util-9a9af14778"}>
                     {foodSatisfaction} / 100
                   </span>
                 </div>
-                <div className="w-full h-2.5 lg:h-3 bg-root-surface rounded-full mt-2 lg:mt-3 overflow-hidden border border-root-accent/20">
+                <div className={"root-modal-util-a66208a3cc"}>
                   <div
-                    className="h-full rounded-full bg-root-accent transition-all duration-200"
-                    style={{ width: `${foodSatisfaction}%` }}
+                    className={"root-modal-progress-fill root-modal-util-0131747055"}
+                    style={{ "--root-modal-progress-value": `${foodSatisfaction}%` } as React.CSSProperties}
                   />
                 </div>
               </div>

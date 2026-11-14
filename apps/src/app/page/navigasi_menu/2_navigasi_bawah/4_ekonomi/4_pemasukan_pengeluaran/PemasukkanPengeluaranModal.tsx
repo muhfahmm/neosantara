@@ -5,7 +5,7 @@ import Image from "next/image";
 import { BarChart3, ArrowUpRight, ArrowDownRight, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
-import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
@@ -182,25 +182,25 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
   return (
     <>
     {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
-      <div className="flex flex-col h-full overflow-hidden">
+      <div className="root-modal-util-b74379da23">
 
-        {/* Header */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
-          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
-              <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-            </div>
-            <div className="min-w-0">
-              <h2 className={rootModalTypography.title}>Neraca Pemasukkan & Pengeluaran</h2>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi neraca pemasukan dan pengeluaran" aria-label="Informasi neraca pemasukan dan pengeluaran" className="root-modal-info-button flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas">
+        <RootInfoModalHeader
+          title="Neraca Pemasukkan & Pengeluaran"
+          onClose={onClose}
+          size="standard"
+          icon={<BarChart3 aria-hidden="true" />}
+          actions={
+            <button
+              type="button"
+              onClick={() => setIsInfoOpen(true)}
+              title="Informasi neraca pemasukan dan pengeluaran"
+              aria-label="Informasi neraca pemasukan dan pengeluaran"
+              className="root-modal-info-button root-modal-util-1697100c43"
+            >
               <Info className="h-3.5 w-3.5" />
             </button>
-            <RootModalCloseButton onClick={onClose} />
-          </div>
-        </div>
+          }
+        />
 
         {/* Tab Navigation (Hanya 3 Tab) */}
         <div className="px-4 lg:px-6 2xl:px-8 pt-3.5 lg:pt-4.5 2xl:pt-6 relative z-10 bg-root-canvas">

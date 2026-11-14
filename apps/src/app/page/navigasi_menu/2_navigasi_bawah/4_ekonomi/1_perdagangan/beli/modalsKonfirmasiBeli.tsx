@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { X, Plus, Minus, ShoppingCart } from "lucide-react";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
-import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { TradePartner } from "../mitra/mitraModalsMenu";
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
@@ -747,18 +747,14 @@ export default function ModalsKonfirmasiBeli({
       isHidden={isProductPickerOpen || isCountryPickerOpen}
     >
       <>
-      <div className="flex h-full min-w-0 flex-col overflow-hidden">
+      <div className="root-modal-util-b74379da23 min-w-0">
 
-        {/* HEADER */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
-          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-emerald-500/30 shrink-0">
-              <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-400" />
-            </div>
-            <h2 className={rootModalTypography.title}>Beli Komoditas</h2>
-          </div>
-          <RootModalCloseButton onClick={onClose} />
-        </div>
+        <RootInfoModalHeader
+          title="Beli Komoditas"
+          onClose={onClose}
+          size="standard"
+          icon={<ShoppingCart aria-hidden="true" />}
+        />
 
         <div className="root-no-scrollbar-glow min-h-0 flex-1 overflow-y-auto px-5 pt-5 pb-2 relative z-10 space-y-4 bg-root-surface neon-scrollbar [overflow-anchor:none]">
 

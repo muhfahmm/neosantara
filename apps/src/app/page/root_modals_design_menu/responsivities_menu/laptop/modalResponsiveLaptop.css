@@ -1,3 +1,13 @@
+@media (min-width: 1024px) and (max-width: 1599px) {
+  .root-info-modal-header[data-size="compact"] {
+    padding: 10px 20px;
+  }
+
+  .root-info-modal-header[data-size="standard"] {
+    padding: 12px 24px;
+  }
+}
+
 @media (min-width: 1024px) and (max-width: 1599px) and (min-height: 501px) {
   .tutorial-welcome-overlay {
     padding-bottom: 180px !important;

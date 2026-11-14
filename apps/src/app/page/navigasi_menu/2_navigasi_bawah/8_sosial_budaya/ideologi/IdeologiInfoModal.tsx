@@ -1,8 +1,9 @@
 "use client"
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, Info, Shield, CheckCircle2 } from "lucide-react";
+import { Info } from "lucide-react";
+import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 
 interface IdeologiInfoModalProps {
   isOpen: boolean;
@@ -93,36 +94,25 @@ export default function IdeologiInfoModal({
   };
 
   return createPortal(
-    <div className="notebook-modal-frame fixed inset-0 z-[250] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto">
-        
-        {/* HEADER */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/30 text-root-accent">
-              {icon || <Info className="h-5 w-5" />}
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <Info className="w-3 h-3 text-root-accent" />
-                <span className="text-[10px] font-bold text-root-accent uppercase tracking-wider">Informasi Ideologi</span>
-              </div>
-              <h3 className="text-sm sm:text-base font-bold text-root-text tracking-wide uppercase">{title}</h3>
-            </div>
-          </div>
-          <SharedModalCloseButton
-            onClick={onClose}
-            className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1"
-           appearance="custom">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </SharedModalCloseButton>
-        </div>
+    <NotebookModalWrapper compact onClose={onClose} zIndexClass="z-[250]">
+      <div className="flex h-full min-h-0 flex-col overflow-hidden">
+        <RootInfoModalHeader
+          title={
+            <>
+              <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-root-accent">
+                <Info aria-hidden="true" className="h-3 w-3" />
+                Informasi Ideologi
+              </span>
+              <span className="block truncate">{title}</span>
+            </>
+          }
+          onClose={onClose}
+          icon={icon || <Info aria-hidden="true" />}
+        />
 
         {/* CONTENT */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 bg-root-surface relative z-10 custom-scrollbar flex flex-col justify-center">
-          {/* Bonus / Efek Utama */}
-          <div className="bg-root-accent/10 border border-root-accent/30 p-6 rounded-2xl text-center">
+        <div className="relative z-10 flex min-h-0 flex-1 flex-col justify-center overflow-y-auto bg-root-surface p-4 custom-scrollbar sm:p-6">
+          <div className="rounded-2xl border border-root-accent/30 bg-root-accent/10 p-4 text-center sm:p-6">
             <span className="text-xs font-bold text-root-accent uppercase tracking-widest block mb-2">
               Bonus & Efek Utama Negara
             </span>
@@ -133,7 +123,7 @@ export default function IdeologiInfoModal({
         </div>
 
         {/* FOOTER ACTION */}
-        <div className="px-6 py-3 border-t border-root-accent/20 bg-root-canvas flex justify-end shrink-0">
+        <div className="flex shrink-0 justify-end border-t border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
           <button
             onClick={onClose}
             className="px-6 py-2.5 rounded-xl bg-root-accent hover:bg-[#00C282] text-root-canvas font-extrabold text-xs uppercase tracking-wider active:scale-95 transition-all cursor-pointer"
@@ -143,7 +133,7 @@ export default function IdeologiInfoModal({
         </div>
 
       </div>
-    </div>,
+    </NotebookModalWrapper>,
     document.body
   );
 }

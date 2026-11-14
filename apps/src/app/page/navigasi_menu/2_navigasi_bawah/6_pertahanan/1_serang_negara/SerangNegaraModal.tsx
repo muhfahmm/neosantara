@@ -4,7 +4,6 @@ import { Shield, Swords, ChevronUp, ChevronDown, Search } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
-import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import MenuInfoButton from "../../MenuInfoButton";
 import { getArmadaPowerSummary } from "../4_armada/logic/armadaLogic";
 // 🔥 Import modal serang baru yang akan kita buat
@@ -420,38 +419,39 @@ export default function SerangNegaraModal({
   return (
     <>
       <NotebookModalWrapper onClose={onClose}>
-        <div className="attack-country-modal flex flex-col h-full overflow-hidden">
+        <div className="root-modal-util-b74379da23 attack-country-modal">
           
-          <div className="attack-country-header px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
-            <div className="flex min-w-0 items-center gap-4 lg:gap-8">
-              <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
-                  <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
+          <div className="satisfaction-modal-header root-modal-util-9462ce2345">
+            <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
+              <div className="root-modal-util-08dfbca033">
+                <div className="root-modal-util-739d92b232">
+                  <Shield aria-hidden="true" className="root-modal-util-d252947d10 text-rose-500 animate-pulse" />
                 </div>
-                <div className="min-w-0">
-                  <h2 className={rootModalTypography.title}>Serang Negara</h2>
-                </div>
+                <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
+                  Serang Negara
+                </h2>
               </div>
             </div>
-
-            <div className="flex items-center gap-3">
-              {/* Input Search Bar */}
-              <div className={`attack-country-search relative w-40 sm:w-52 ${rootBorderRadius.card}`}>
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-root-accent/60" />
-                <input
-                  type="text"
-                  placeholder="Cari negara..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className={`attack-country-search-input h-9 w-full border border-root-accent/30 bg-root-canvas py-1 pl-8 pr-3 text-xs text-root-text placeholder-root-subtle transition-colors focus:border-root-accent focus:outline-none ${rootBorderRadius.card}`}
-                />
-              </div>
-
+            <div className="root-modal-util-08dfbca033">
               <MenuInfoButton
                 title="Serang Negara"
                 description="Pilih negara sasaran dan tinjau perbandingan kekuatan darat, laut, serta udara sebelum memulai operasi militer. Periksa kesiapan armada dan status serangan aktif karena serangan dapat mengubah hubungan diplomatik dan kondisi negara."
               />
               <RootModalCloseButton onClick={onClose} />
+            </div>
+          </div>
+
+          <div className="attack-country-toolbar relative z-10 flex shrink-0 items-center justify-end border-b border-root-accent/20 bg-root-canvas px-4 py-2 sm:px-6">
+            <div className={`attack-country-search relative w-full sm:max-w-64 ${rootBorderRadius.card}`}>
+              <Search aria-hidden="true" className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-root-accent/60" />
+              <input
+                type="search"
+                aria-label="Cari negara"
+                placeholder="Cari negara..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={`attack-country-search-input h-9 w-full border border-root-accent/30 bg-[#051111] py-1 pl-8 pr-3 text-xs text-root-text placeholder-root-subtle transition-colors focus:border-root-accent focus:outline-none ${rootBorderRadius.card}`}
+              />
             </div>
           </div>
 

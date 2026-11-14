@@ -1,5 +1,7 @@
 "use client"
 import React, { useState, useEffect } from "react";
+import { MENU_INFO_MODAL_VISIBILITY_EVENT } from "../../../NotebookModalWrapper";
+import { isMobilePhone, useViewportMode } from "@/app/hooks/useViewportMode";
 import Image from "next/image";
 import { Swords, Ship, Plane, Info } from "lucide-react";
 import { getDefenseUnitCardImage } from "../../../buildingCardImages";
@@ -119,6 +121,7 @@ const getSafeDateString = (currentDate?: string | Date, gameDate?: string): stri
 };
 
 export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCountryDetail, onCapacityFull, highlightKey, onGotoProduction, currentDate }: TabProps) {
+  const viewportMode = useViewportMode();
   const unitBreakdown = getArmadaUnitBreakdown(countryDetail || {});
 
   const getData = (key: string, group?: string): number => {
@@ -276,6 +279,11 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
   }, [countryDetail?.game_date, countryDetail?.ongoingConstructions, currentDate, _setCountryDetail]);
 
   const handleInfoClick = (key: string) => {
+    if (isMobilePhone(viewportMode)) {
+      window.dispatchEvent(new CustomEvent(MENU_INFO_MODAL_VISIBILITY_EVENT, {
+        detail: { isOpen: true },
+      }));
+    }
     setInfoKey(key);
     setIsInfoOpen(true);
   };
@@ -348,7 +356,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
   const isNATOActive = isMemberOfNATO(userCountryName);
 
   return (
-    <div className="space-y-6">
+    <div className="defense-armada-content space-y-6">
       {isNATOActive && (
         <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-xs font-bold text-emerald-300">
           Kekuatan Militer & Total HP seluruh matra (Darat, Laut, Udara) ditingkatkan +15% oleh bonus keanggotaan NATO.
@@ -383,9 +391,9 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
         );
 
         return (
-          <section key={group} className="space-y-4">
+          <section key={group} className="defense-armada-section space-y-4">
             {/* 🔥 Header Grup dengan Total Kekuatan di sampingnya */}
-            <div className="flex items-center justify-between border-b border-root-accent/20 pb-3 mb-4">
+            <div className="defense-armada-heading flex items-center justify-between border-b border-root-accent/20 pb-3 mb-4">
               <div className="flex items-center gap-3">
                 <Icon className="h-6 w-6 text-root-accent" />
                 <h3 className="text-base font-black text-root-accent uppercase tracking-wider">
@@ -410,22 +418,20 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
               </div>
             </div>
 
-            <div className="bg-root-canvas border border-root-accent/30 px-3 py-1.5 rounded-lg inline-flex items-center gap-2 mb-4">
+            <div className="defense-armada-capacity bg-root-canvas border border-root-accent/30 px-3 py-1.5 rounded-lg inline-flex items-center gap-2 mb-4">
               <span className="text-xs font-black uppercase tracking-wider text-root-accent">
                 {getGroupCapacityDisplay(group)}
               </span>
             </div>
 
-            <BuildingCardGridRoot className="four-column-building-grid">
+            <BuildingCardGridRoot className="defense-card-grid four-column-building-grid">
               {armadaCatalog[group].map((item) => {
                 const value = getData(item.key, group);
                 let displayText = formatNumber(value);
 
                 if (item.key === "barak") {
-                  const currentBarakCount = getData("barak");
                   const infantryCount = getData("pasukan_infanteri", "darat");
-                  const maxCapacity = currentBarakCount * 10000;
-                  displayText = `${formatNumber(infantryCount)} / ${formatNumber(maxCapacity)}`;
+                  displayText = formatNumber(infantryCount);
                 }
 
                 const pendingItems = (countryDetail?.ongoingConstructions || []).filter(
@@ -445,7 +451,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                       setSelectedForBuild({ key: item.key, label: item.label });
                       setIsConfirmBuildOpen(true);
                     }}
-                    className={`fleet-unit-building-card cursor-pointer p-2 sm:p-2.5 min-h-[88px] sm:min-h-[96px] ${hasPending ? "fleet-has-pending-badge" : "fleet-no-pending-badge"}`}
+                    className={`defense-armada-card fleet-unit-building-card cursor-pointer p-2 sm:p-2.5 min-h-[88px] sm:min-h-[96px] ${hasPending ? "fleet-has-pending-badge" : "fleet-no-pending-badge"}`}
                   >
                     {hasPending && lastEndDate && (
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[9px] sm:text-[10px] font-bold px-2 py-0.5 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
@@ -570,6 +576,11 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
         <InfoArmadaAktifModal
           isOpen={isInfoOpen}
           onClose={() => {
+            if (isMobilePhone(viewportMode)) {
+              window.dispatchEvent(new CustomEvent(MENU_INFO_MODAL_VISIBILITY_EVENT, {
+                detail: { isOpen: false },
+              }));
+            }
             setIsInfoOpen(false);
             setInfoKey(null);
           }}

@@ -14,8 +14,6 @@ import {
 import { calculateKesehatanScore, calculatePendidikanScore } from "@/app/logic/kesejahteraanCalculator";
 import { calculateKesehatanLogic } from "../kematian_modals/logic/kesehatanLogic";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
-import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
-import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 
 interface DetailKelahiranModalProps {
@@ -82,17 +80,17 @@ export default function DetailKelahiranModal({
 
   return (
     <NotebookModalWrapper onClose={onClose}>
-      <div className="flex flex-col h-full overflow-hidden bg-root-canvas rounded-xl border border-root-accent/20 ">
+      <div className={"root-modal-util-4644119199"}>
 
         {/* ============ HEADER (DISAMAKAN DENGAN MODAL KEPENDUDUKAN) ============ */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0 ">
-              <Users className="h-4 w-4 sm:h-5 sm:w-5 text-root-text" />
+        <div className={"root-modal-util-9462ce2345"}>
+          <div className={"root-modal-util-1117664efc"}>
+            <div className={"root-modal-util-170d7abee6"}>
+              <Users className={"root-modal-util-d252947d10"} />
             </div>
             <div>
               {/* Font size dinaikkan kembali ke text-base sm:text-xl */}
-              <h2 className={`${rootModalTypography.title} leading-none`}>
+              <h2 className={`root-modal-util-6b4648c53a root-modal-util-c2385a463d`}>
                 Rincian Pertumbuhan Penduduk
               </h2>
             </div>
@@ -102,49 +100,38 @@ export default function DetailKelahiranModal({
         </div>
 
         {/* ============ BODY (TETAP COMPACT & RESPONSIF) ============ */}
-        <div className="flex-1 overflow-y-auto p-3 sm:p-4 bg-root-canvas/80 relative z-10
-          [&::-webkit-scrollbar]:w-1.5 
-          [&::-webkit-scrollbar-track]:bg-root-canvas
-          [&::-webkit-scrollbar-track]:rounded-full 
-          [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20
-          [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A]
-          [&::-webkit-scrollbar-thumb]:rounded-full 
-          [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas
-
-          hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent
-          [&::-webkit-scrollbar-button]:hidden
-        ">
-          <div className="space-y-2">
+        <div className={"root-modal-util-6717e88ecf"}>
+          <div className={"root-modal-util-6f7e013d64"}>
 
             {/* ============ RINGKASAN UTAMA ============ */}
-            <div className={`relative bg-gradient-to-br from-root-surface to-root-canvas border border-root-accent/30 p-2 sm:p-3 ${rootBorderRadius.card} overflow-hidden`}>
+            <div className={`root-modal-util-45d5e12daf root-modal-util-5f22e64f22 root-modal-util-2cd02d11d1`}>
               
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 relative z-10">
-                <div className="min-w-0 flex-1">
-                  <p className="text-[8px] sm:text-[9px] font-black text-root-muted uppercase tracking-widest flex items-center gap-1">
-                    <TrendingUp className="h-2.5 w-2.5 text-root-text" />
+              <div className={"root-modal-util-6fe0d227d8"}>
+                <div className={"root-modal-util-3b4c716cd4"}>
+                  <p className={"root-modal-util-7e8539efb1"}>
+                    <TrendingUp className={"root-modal-util-904147d153"} />
                     Pertumbuhan Bersih Harian
                   </p>
-                  <p className={`text-xl sm:text-2xl font-black mt-0.5 tracking-tight ${netDailyChange >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                  <p className={`root-modal-util-5d0413e9d7 ${netDailyChange >= 0 ? "root-modal-util-edbfd1c508" : "root-modal-util-35f302741d"}`}>
                     {netDailyChange >= 0 ? '+' : ''}{formatNumber(netDailyChange)}
-                    <span className="text-[10px] sm:text-xs text-root-muted font-bold ml-1 tracking-normal">/hr</span>
+                    <span className={"root-modal-util-f03f2f1c1c"}>/hr</span>
                   </p>
                 </div>
-                <div className="p-1.5 bg-root-accent/10 rounded-full border border-root-accent/30 self-start sm:self-auto">
-                  <Activity className="h-5 w-5 sm:h-6 sm:w-6 text-root-text" />
+                <div className={"root-modal-util-b103ddc4d4"}>
+                  <Activity className={"root-modal-util-bf480b1526"} />
                 </div>
               </div>
 
-              <div className="mt-2 grid grid-cols-2 gap-1.5 relative z-10">
-                <div className={`bg-root-surface/80 p-1.5 ${rootBorderRadius.card} border border-emerald-500/40`}>
-                  <p className="text-[7px] sm:text-[8px] text-emerald-400 font-black uppercase tracking-wider">Kelahiran</p>
-                  <p className="text-xs sm:text-sm font-black text-emerald-400 mt-0.5">
+              <div className={"root-modal-util-690873d574"}>
+                <div className={`root-modal-util-80cbb31289 root-modal-util-5f22e64f22 root-modal-util-4164c8e312 `}>
+                  <p className={"root-modal-util-fc7a6578ee"}>Kelahiran</p>
+                  <p className={"root-modal-util-84fffb88af"}>
                     +{formatNumber(dailyBirths)}
                   </p>
                 </div>
-                <div className={`bg-root-surface/80 p-1.5 ${rootBorderRadius.card} border border-rose-500/40`}>
-                  <p className="text-[7px] sm:text-[8px] text-rose-400 font-black uppercase tracking-wider">Kematian</p>
-                  <p className="text-xs sm:text-sm font-black text-rose-400 mt-0.5">
+                <div className={`root-modal-util-80cbb31289 root-modal-util-5f22e64f22 root-modal-util-804966dce1 `}>
+                  <p className={"root-modal-util-83c4565cad"}>Kematian</p>
+                  <p className={"root-modal-util-ed8a4a668a"}>
                     -{formatNumber(dailyDeaths)}
                   </p>
                 </div>
@@ -153,43 +140,43 @@ export default function DetailKelahiranModal({
 
             {/* ============ BREAKDOWN FAKTOR ============ */}
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <div className="p-1 rounded-md bg-root-surface border border-root-accent/30 ">
-                  <Sparkles className="h-3 w-3 text-root-text" />
+              <div className={"root-modal-util-c6ef2c9467"}>
+                <div className={"root-modal-util-61c79d0ef6"}>
+                  <Sparkles className={"root-modal-util-997485ae46"} />
                 </div>
-                <h3 className="text-[10px] sm:text-xs font-black text-root-text uppercase tracking-wider italic">
+                <h3 className={"root-modal-util-00229c2359"}>
                   Faktor yang Memengaruhi
                 </h3>
-                <div className="h-[1px] flex-1 bg-gradient-to-r from-root-accent/40 to-transparent ml-1" />
+                <div className={"root-modal-util-0c271612cb"} />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+              <div className={"root-modal-util-4d27ab2ea5"}>
                 {/* 1. Populasi Dasar */}
-                <div className={`group bg-root-surface border border-root-accent/20 p-1.5 sm:p-2 ${rootBorderRadius.card} space-y-0.5 transition-all hover:border-root-accent/40`}>
-                  <div className="flex items-center gap-1">
-                    <div className="p-0.5 bg-root-canvas border border-root-accent/30 rounded-md shrink-0">
-                      <Users className="h-2.5 w-2.5 text-root-text" />
+                <div className={`group root-modal-util-4deab89164 root-modal-util-5f22e64f22 root-modal-util-b3a0d27412 `}>
+                  <div className={"root-modal-util-41681120cf"}>
+                    <div className={"root-modal-util-bff539c149"}>
+                      <Users className={"root-modal-util-904147d153"} />
                     </div>
-                    <h4 className="text-[8px] sm:text-[9px] font-black text-root-text uppercase tracking-wider">Populasi Dasar</h4>
+                    <h4 className={"root-modal-util-0c50473147"}>Populasi Dasar</h4>
                   </div>
-                  <p className="text-[11px] sm:text-xs font-bold text-root-text">
-                    {formatNumber(populasi)} <span className="text-[8px] text-root-muted font-medium">jiwa</span>
+                  <p className={"root-modal-util-30d65ce7e4"}>
+                    {formatNumber(populasi)} <span className={"root-modal-util-021a1c8cb3"}>jiwa</span>
                   </p>
                 </div>
 
                 {/* 2. Kesejahteraan */}
-                <div className={`group bg-root-surface border border-root-accent/20 p-1.5 sm:p-2 ${rootBorderRadius.card} space-y-0.5 transition-all hover:border-root-accent/40`}>
-                  <div className="flex items-center gap-1">
-                    <div className="p-0.5 bg-root-canvas border border-root-accent/30 rounded-md shrink-0">
-                      <Banknote className="h-2.5 w-2.5 text-root-text" />
+                <div className={`group root-modal-util-4deab89164 root-modal-util-5f22e64f22 root-modal-util-b3a0d27412 `}>
+                  <div className={"root-modal-util-41681120cf"}>
+                    <div className={"root-modal-util-bff539c149"}>
+                      <Banknote className={"root-modal-util-904147d153"} />
                     </div>
-                    <h4 className="text-[8px] sm:text-[9px] font-black text-root-text uppercase tracking-wider">Kesejahteraan</h4>
+                    <h4 className={"root-modal-util-0c50473147"}>Kesejahteraan</h4>
                   </div>
-                  <div className="flex flex-wrap items-center gap-1">
-                    <span className="text-[11px] sm:text-xs font-bold text-root-text">
-                      {countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : 50} <span className="text-[8px] text-root-muted font-medium">INDX</span>
+                  <div className={"root-modal-util-0edaa2882b"}>
+                    <span className={"root-modal-util-30d65ce7e4"}>
+                      {countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : 50} <span className={"root-modal-util-021a1c8cb3"}>INDX</span>
                     </span>
-                    <span className="text-[8px] text-root-text font-bold bg-root-accent/10 px-1 py-0.5 rounded border border-root-accent/20">
+                    <span className={"root-modal-util-ec349ffbf1"}>
                       × {welfareFactor.toFixed(2)}
                     </span>
                   </div>
@@ -197,24 +184,24 @@ export default function DetailKelahiranModal({
 
                 {/* 3. Fasilitas Kesehatan (clickable) */}
                 <div
-                  className={`group bg-root-surface border border-root-accent/20 p-1.5 sm:p-2 ${rootBorderRadius.card} space-y-0.5 cursor-pointer transition-all hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98]`}
+                  className={`group root-modal-util-4deab89164 root-modal-util-5f22e64f22 root-modal-util-d0c179737a `}
                   onClick={() => onOpenTempatUmum?.('kesehatan')}
                 >
-                  <div className="flex items-center justify-between gap-1">
-                    <div className="flex items-center gap-1">
-                      <div className="p-0.5 bg-root-canvas border border-root-accent/30 rounded-md shrink-0 group-hover:scale-110 transition-transform">
-                        <HeartPulse className="h-2.5 w-2.5 text-root-text" />
+                  <div className={"root-modal-util-1de6c9c32e"}>
+                    <div className={"root-modal-util-41681120cf"}>
+                      <div className={"root-modal-util-abcb8e04f7"}>
+                        <HeartPulse className={"root-modal-util-904147d153"} />
                       </div>
-                      <h4 className="text-[8px] sm:text-[9px] font-black text-root-text uppercase tracking-wider">Fasilitas Kesehatan</h4>
+                      <h4 className={"root-modal-util-0c50473147"}>Fasilitas Kesehatan</h4>
                     </div>
-                    <span className="text-[8px] text-root-muted font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity">Buka →</span>
+                    <span className={"root-modal-util-abed0b4e4b"}>Buka →</span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-1">
-                    <span className="text-[11px] sm:text-xs font-bold text-root-text">
-                      {kesehatanScore} <span className="text-[8px] text-root-muted font-medium">POIN</span>
+                  <div className={"root-modal-util-0edaa2882b"}>
+                    <span className={"root-modal-util-30d65ce7e4"}>
+                      {kesehatanScore} <span className={"root-modal-util-021a1c8cb3"}>POIN</span>
                     </span>
-                    <span className="text-[8px] text-root-muted">(rasio {hospitalRatio.toFixed(2)})</span>
-                    <span className="text-[8px] text-root-text font-bold bg-root-accent/10 px-1 py-0.5 rounded border border-root-accent/20">
+                    <span className={"root-modal-util-64adb8e57f"}>(rasio {hospitalRatio.toFixed(2)})</span>
+                    <span className={"root-modal-util-ec349ffbf1"}>
                       × {healthFactor.toFixed(2)}
                     </span>
                   </div>
@@ -222,24 +209,24 @@ export default function DetailKelahiranModal({
 
                 {/* 4. Tingkat Pendidikan (clickable) */}
                 <div
-                  className={`group bg-root-surface border border-root-accent/20 p-1.5 sm:p-2 ${rootBorderRadius.card} space-y-0.5 cursor-pointer transition-all hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98]`}
+                  className={`group root-modal-util-4deab89164 root-modal-util-5f22e64f22 root-modal-util-d0c179737a `}
                   onClick={() => onOpenTempatUmum?.('pendidikan')}
                 >
-                  <div className="flex items-center justify-between gap-1">
-                    <div className="flex items-center gap-1">
-                      <div className="p-0.5 bg-root-canvas border border-root-accent/30 rounded-md shrink-0 group-hover:scale-110 transition-transform">
-                        <GraduationCap className="h-2.5 w-2.5 text-root-text" />
+                  <div className={"root-modal-util-1de6c9c32e"}>
+                    <div className={"root-modal-util-41681120cf"}>
+                      <div className={"root-modal-util-abcb8e04f7"}>
+                        <GraduationCap className={"root-modal-util-904147d153"} />
                       </div>
-                      <h4 className="text-[8px] sm:text-[9px] font-black text-root-text uppercase tracking-wider">Tingkat Pendidikan</h4>
+                      <h4 className={"root-modal-util-0c50473147"}>Tingkat Pendidikan</h4>
                     </div>
-                    <span className="text-[8px] text-root-muted font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity">Buka →</span>
+                    <span className={"root-modal-util-abed0b4e4b"}>Buka →</span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-1">
-                    <span className="text-[11px] sm:text-xs font-bold text-root-text">
-                      {pendidikanScore} <span className="text-[8px] text-root-muted font-medium">POIN</span>
+                  <div className={"root-modal-util-0edaa2882b"}>
+                    <span className={"root-modal-util-30d65ce7e4"}>
+                      {pendidikanScore} <span className={"root-modal-util-021a1c8cb3"}>POIN</span>
                     </span>
-                    <span className="text-[8px] text-root-muted">(rasio {educationRatio.toFixed(2)})</span>
-                    <span className="text-[8px] text-root-text font-bold bg-root-accent/10 px-1 py-0.5 rounded border border-root-accent/20">
+                    <span className={"root-modal-util-64adb8e57f"}>(rasio {educationRatio.toFixed(2)})</span>
+                    <span className={"root-modal-util-ec349ffbf1"}>
                       × {educationFactor.toFixed(2)}
                     </span>
                   </div>

@@ -42,7 +42,7 @@ export default function NeonAlertModal({
         className="font-sans overflow-hidden"
         style={{ border: `2px solid ${color}` }}
       >
-        <div className="px-4 sm:px-5 py-3 bg-root-canvas flex items-center justify-between border-b" style={{ borderColor: `${color}33` }}>
+        <div className="flex items-center justify-between border-b bg-root-canvas px-3 py-2 sm:px-5 sm:py-2.5" style={{ borderColor: `${color}33` }}>
           <div className="flex items-center gap-3">
             <Icon className="h-6 w-6" style={{ color }} />
             <h3 className="text-lg font-black uppercase tracking-wide" style={{ color }}>

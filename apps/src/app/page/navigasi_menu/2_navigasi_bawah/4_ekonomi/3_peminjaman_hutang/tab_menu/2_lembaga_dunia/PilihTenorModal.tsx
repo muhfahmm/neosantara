@@ -1,7 +1,6 @@
 "use client"
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
-import { X } from "lucide-react";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 
 interface TenorOption {
   label: string;
@@ -31,21 +30,14 @@ export default function PilihTenorModal({ isOpen, onClose, selectedTerm, onSelec
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       <div className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto">
-        <div className="flex items-center justify-between px-8 py-6 border-b border-root-accent/20 bg-root-canvas relative z-10">
-          <div>
-            <h3 className="text-2xl font-black text-root-accent uppercase">Pilih Tenor</h3>
-          </div>
-          <SharedModalCloseButton
-            onClick={onClose}
-            className="p-2 sm:p-2.5 rounded-xl border border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
-           appearance="custom">
-            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
-          </SharedModalCloseButton>
-        </div>
+        <RootInfoModalHeader
+          title="Pilih Tenor"
+          onClose={onClose}
+          size="standard"
+        />
 
-        <div className="flex-1 overflow-y-auto p-8 bg-root-canvas/80 custom-scrollbar">
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div className="min-h-0 flex-1 overflow-y-auto bg-root-canvas/80 p-3 custom-scrollbar sm:p-6">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
             {TENOR_OPTIONS.map((option) => {
               const active = option.days === selectedTerm;
               return (

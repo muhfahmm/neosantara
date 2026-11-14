@@ -155,7 +155,7 @@ export default function OrgIntlInfoModal({
         aria-labelledby="organization-info-title"
         className="flex max-h-[calc(100dvh-160px)] min-w-0 flex-col overflow-hidden font-sans"
       >
-        <header className="flex items-center justify-between border-b border-root-accent/30 bg-root-canvas px-5 py-4">
+        <header className="flex items-center justify-between border-b border-root-accent/30 bg-root-canvas px-3 py-2 sm:px-5 sm:py-2.5">
           <div className="flex min-w-0 items-center gap-3">
             <div className="rounded-lg border border-root-accent/30 bg-root-accent/10 p-2 text-root-accent">
               <OrgIcon className="h-5 w-5" />
@@ -173,7 +173,7 @@ export default function OrgIntlInfoModal({
           </div>
         </header>
 
-        <div className="min-h-0 space-y-5 overflow-y-auto bg-root-surface p-5 sm:p-6">
+        <div className="min-h-0 space-y-5 overflow-y-auto bg-root-surface p-4 sm:p-6">
           <section>
             <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-root-accent">Tentang organisasi</h3>
             <p className="text-sm leading-relaxed text-root-body">{info.description}</p>

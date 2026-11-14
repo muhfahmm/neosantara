@@ -2,11 +2,12 @@
 
 "use client"
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
-import { X, Building2, Globe, FileText, Handshake, ArrowRightLeft } from "lucide-react";
+import { Building2, Globe, FileText, Handshake, ArrowRightLeft } from "lucide-react";
 import { TradePartner } from "./mitraModalsMenu";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import SharedModalCloseButton from "@/app/page/root_modals_design_menu/ModalCloseButton";
 
 interface MitraDetailModalsProps {
   isOpen: boolean;
@@ -35,29 +36,15 @@ export default function MitraDetailModals({
         role="dialog"
         aria-modal="true"
         aria-labelledby="trade-partner-detail-title"
-        className="flex h-full min-w-0 flex-col overflow-hidden"
+        className="root-modal-util-b74379da23 min-w-0"
       >
-        {/* Header */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
-              <Building2 className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-            </div>
-            <div>
-              <h2 id="trade-partner-detail-title" className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">
-                Detail Hubungan Dagang
-              </h2>
-            </div>
-          </div>
-          <SharedModalCloseButton
-            type="button"
-            onClick={onClose} 
-            className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-           appearance="custom">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </SharedModalCloseButton>
-        </div>
+        <RootInfoModalHeader
+          title="Detail Hubungan Dagang"
+          titleId="trade-partner-detail-title"
+          onClose={onClose}
+          size="standard"
+          icon={<Building2 aria-hidden="true" />}
+        />
 
         {/* Body Content */}
         <div className="flex-1 overflow-y-auto p-8 bg-root-surface relative z-10 neon-scrollbar">

@@ -1,7 +1,7 @@
 "use client"
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
-import { X } from "lucide-react";
+import { Handshake } from "lucide-react";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { PartnerOffer } from "../PerdaganganModal";
 import { getArmsTradeProducts } from "../umum/armsTradeLogic";
 
@@ -29,12 +29,12 @@ export default function TawaranPembelianTable({ offers, onAcceptOffer, onClose, 
   const isArmsMarket = marketType === "arms" || offers.some(offer => offer.marketType === "arms");
   return (
     <div className="mb-8 border border-root-accent/30 rounded-xl overflow-hidden animate-in fade-in zoom-in duration-300 bg-root-surface">
-      <div className="bg-root-canvas px-6 py-3 flex justify-between items-center text-root-accent text-xs font-black uppercase tracking-wider border-b border-root-accent/20">
-        <span>{isArmsMarket ? "Tawaran Alutsista dari Negara Mitra" : "Tawaran Khusus dari Mitra Dagang"}</span>
-        <SharedModalCloseButton onClick={onClose} className="hover:text-rose-400 transition-colors cursor-pointer" appearance="custom">
-          <X className="h-4 w-4" />
-        </SharedModalCloseButton>
-      </div>
+      <RootInfoModalHeader
+        title={isArmsMarket ? "Tawaran Alutsista dari Negara Mitra" : "Tawaran Khusus dari Mitra Dagang"}
+        onClose={onClose}
+        size="standard"
+        icon={<Handshake aria-hidden="true" />}
+      />
       <table className="w-full text-left">
         <thead>
           <tr className="bg-root-canvas border-b border-root-accent/20">
