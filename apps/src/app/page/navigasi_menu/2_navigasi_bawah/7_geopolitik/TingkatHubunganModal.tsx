@@ -290,7 +290,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                 <div className="p-1.5 bg-root-surface rounded-lg border border-root-accent/30">
                   <Info className="h-4 w-4 text-root-accent" />
                 </div>
-                <h3 id="relation-legend-title" className="text-sm font-bold text-root-accent uppercase tracking-wide">
+                <h3 id="relation-legend-title" className="text-sm font-bold text-root-text uppercase tracking-wide">
                   Indikator Hubungan Diplomatik
                 </h3>
               </div>
@@ -335,14 +335,6 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
               </div>
             </div>
 
-            <div className="px-5 py-3 border-t border-root-accent/20 bg-root-canvas">
-              <SharedModalCloseButton
-                onClick={() => setIsLegendOpen(false)}
-                className="w-full py-2.5 rounded-xl bg-root-accent text-root-canvas text-xs font-black uppercase tracking-widest hover:bg-root-accent/80 transition-all cursor-pointer"
-               appearance="custom">
-                Tutup
-              </SharedModalCloseButton>
-            </div>
           </div>
         </NotebookModalWrapper>
       )}
@@ -358,7 +350,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                   <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">
+                  <h3 className="text-base sm:text-xl font-bold text-root-text tracking-tight leading-none uppercase">
                     Pilih Jalur Diplomasi
                   </h3>
                   <p className="text-[10px] sm:text-xs text-root-subtle font-semibold mt-1">
@@ -423,18 +415,6 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
               </div>
 
               <div className="flex-1" />
-            </div>
-
-            <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-root-accent/20 bg-root-canvas shrink-0 rounded-b-2xl">
-              <div className="flex gap-3 justify-end">
-                <button
-                  type="button"
-                  onClick={() => setIsPilihJalurOpen(false)}
-                  className="px-6 py-3 bg-root-surface hover:bg-root-accent/10 border border-root-accent/30 hover:border-root-accent rounded-xl text-center text-root-text font-black text-xs tracking-wider uppercase transition-all cursor-pointer"
-                >
-                  Batal
-                </button>
-              </div>
             </div>
 
           </div>
