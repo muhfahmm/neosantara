@@ -492,12 +492,12 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
         <div className="flex flex-col h-full overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-            <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-6">
+            <div className="flex min-w-0 flex-row flex-nowrap items-center gap-2 sm:gap-6">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/30">
                   <Landmark className="h-5 w-5 text-root-accent shrink-0" />
                 </div>
-                <h3 className={rootModalTypography.title}>
+                <h3 className={`${rootModalTypography.title} min-w-0 truncate`}>
                   Dewan Kabinet Menteri
                 </h3>
                 <button
@@ -509,8 +509,8 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                 </button>
               </div>
               {/* Badge Ibukota Saat Ini & Tombol Ubah Ibukota */}
-              <div className="flex shrink-0 items-center gap-1.5 bg-root-surface px-2.5 py-1 rounded-lg border border-[#FFE600]/30 shadow-sm">
-                <span className="whitespace-nowrap text-[11px] sm:text-xs font-black text-[#FFE600] uppercase tracking-wide">
+              <div className="flex min-w-0 shrink-0 items-center gap-1.5 bg-root-surface px-2.5 py-1 rounded-lg border border-[#FFE600]/30 shadow-sm">
+                <span className="max-w-[28vw] truncate whitespace-nowrap text-[11px] sm:max-w-none sm:text-xs font-black text-[#FFE600] uppercase tracking-wide">
                   {countryDetail?.capital || countryDetail?.ibukota || (typeof window !== "undefined" ? (window as any).neosantara_player_capital : null) || "Jakarta"}
                 </span>
                 <button
