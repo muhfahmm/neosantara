@@ -1,5 +1,6 @@
 "use client"
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import RootModalCloseButton from '@/app/page/root_modals_design_menu/RootModalCloseButton';
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
@@ -29,13 +30,11 @@ import {
   ShieldAlert,
   Ship,
 } from "lucide-react";
-import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import { calculateCountryNetBalance, getDepartmentLevel } from "@/app/logic/economic_logic/treasuryUpdater";
 import { CABINET_DEPARTMENT_IMAGES, LEVEL_UP_COST, MAX_CABINET_LEVEL } from "@/app/logic/economic_logic/departments";
 import { generateKabinetChangeNotification } from "@/app/page/menus/inbox/logic/13_notifikasi_kabinet/kabinetChangeLogic";
 import PilihMenteriModal, { type MinisterCandidateDepartment } from "./PilihMenteriModal";
-import MenuInfoButton from "../MenuInfoButton";
 import GantiIbukotaModal from "./2_ganti_ibukota/GantiIbukotaModal";
 import { MapPin } from "lucide-react";
 import { applyReformasiBirokrasiToUpgradeCost } from "@/app/page/bonus_logic";
@@ -491,31 +490,23 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
         <NotebookModalWrapper onClose={onClose}>
         <div className="flex flex-col h-full overflow-hidden">
           {/* Header */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-            <div className="flex min-w-0 flex-row flex-nowrap items-center gap-2 sm:gap-6">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/30">
-                  <Landmark className="h-5 w-5 text-root-accent shrink-0" />
+          <div className="satisfaction-modal-header root-modal-util-4450f1d9ee">
+            <div className="satisfaction-modal-header-main root-modal-util-935108d13c no-scrollbar">
+              <div className="root-modal-util-c7c918256f">
+                <div className="root-modal-util-acd42b9a36">
+                  <Landmark aria-hidden="true" className="root-modal-util-ea2c28151c" />
                 </div>
-                <h3 className={`${rootModalTypography.title} min-w-0 truncate`}>
+                <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
                   Dewan Kabinet Menteri
-                </h3>
-                <button
-                  onClick={() => setShowGeneralInfo(true)}
-                  className="root-modal-info-button p-1 text-root-subtle rounded-lg cursor-pointer"
-                  title="Informasi & Panduan Dewan Kabinet"
-                >
-                  <Info className="h-4 w-4" />
-                </button>
+                </h2>
               </div>
-              {/* Badge Ibukota Saat Ini & Tombol Ubah Ibukota */}
-              <div className="flex min-w-0 shrink-0 items-center gap-1.5 bg-root-surface px-2.5 py-1 rounded-lg border border-[#FFE600]/30 shadow-sm">
-                <span className="max-w-[28vw] truncate whitespace-nowrap text-[11px] sm:max-w-none sm:text-xs font-black text-[#FFE600] uppercase tracking-wide">
+              <div className="flex shrink-0 items-center gap-1.5 rounded-lg border border-[#FFE600]/30 bg-root-surface px-2.5 py-1 shadow-sm">
+                <span className="whitespace-nowrap text-[11px] font-black uppercase tracking-wide text-[#FFE600] sm:text-xs">
                   {countryDetail?.capital || countryDetail?.ibukota || (typeof window !== "undefined" ? (window as any).neosantara_player_capital : null) || "Jakarta"}
                 </span>
                 <button
                   onClick={() => setIsGantiIbukotaOpen(true)}
-                  className="ml-1 px-2 py-0.5 rounded-md bg-[#FFE600]/20 hover:bg-[#FFE600] text-[#FFE600] hover:text-root-canvas border border-[#FFE600]/40 transition-all font-bold text-[10px] uppercase tracking-wider flex items-center gap-1 cursor-pointer"
+                  className="ml-1 flex cursor-pointer items-center gap-1 rounded-md border border-[#FFE600]/40 bg-[#FFE600]/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#FFE600] transition-all hover:bg-[#FFE600] hover:text-root-canvas"
                   title="Pindah / Ganti Ibukota Negara"
                 >
                   <MapPin className="h-3 w-3" />
@@ -524,18 +515,17 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
               </div>
             </div>
 
-            <div className="flex shrink-0 items-center gap-2">
-              <MenuInfoButton
-                title="Kementerian"
-                description="Kelola kementerian, keamanan, dan layanan negara melalui penempatan menteri serta peningkatan level departemen. Susunan kabinet memengaruhi anggaran harian dan bonus atau layanan yang diberikan."
-              />
-              <SharedModalCloseButton
-                onClick={onClose}
-                className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
-               appearance="custom">
-                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-4 w-4" />
-              </SharedModalCloseButton>
+            <div className="root-modal-util-6cfc7e6ab3">
+              <button
+                type="button"
+                onClick={() => setShowGeneralInfo(true)}
+                className="root-modal-info-button root-modal-util-1697100c43 flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent"
+                title="Informasi & Panduan Dewan Kabinet"
+                aria-label="Informasi & Panduan Dewan Kabinet"
+              >
+                <Info className="h-4 w-4" />
+              </button>
+              <RootModalCloseButton onClick={onClose} />
             </div>
           </div>
 
@@ -738,7 +728,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
               <h3 className="text-base font-bold text-root-text uppercase">Panduan Dewan Kabinet</h3>
             </div>
             <p className="text-xs text-root-subtle font-semibold leading-relaxed mb-5">
-              Kelola kabinet pemerintahan tertinggi negara untuk menjaga kinerja pelayanan birokrasi Anda tetap berintegritas. Tekan salah satu kotak level untuk melompat langsung ke level tersebut — biaya akan dijumlahkan dari semua level yang dilewati. Tekan kotak yang sudah terisi untuk menurunkan level (downgrade) dan mengurangi biaya operasional harian.
+              Kelola kementerian, keamanan, dan layanan negara melalui penempatan menteri serta peningkatan level departemen. Susunan kabinet memengaruhi anggaran harian, bonus, dan layanan negara. Tekan salah satu kotak level untuk melompat langsung ke level tersebut — biaya akan dijumlahkan dari semua level yang dilewati. Tekan kotak yang sudah terisi untuk menurunkan level (downgrade) dan mengurangi biaya operasional harian.
             </p>
             <button
               onClick={() => setShowGeneralInfo(false)}
