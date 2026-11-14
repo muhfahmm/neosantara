@@ -4,7 +4,6 @@ import { Eye, Bomb, Search } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
-import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import MenuInfoButton from "../../MenuInfoButton";
 import Spionase from "./table_menu/1_tabel_spionase";
 import Sabotase from "./table_menu/2_tabel_sabotase";
@@ -117,36 +116,31 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
   return (
     <>
       <NotebookModalWrapper onClose={onClose}>
-        <div className="intelijen-modal flex flex-col h-full overflow-hidden">
+        <div className="root-modal-util-b74379da23 intelijen-modal">
 
-          {/* HEADER MODAL */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
-          <div className="flex min-w-0 items-center gap-3 lg:gap-6">
-            <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-              <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
-                {activeTab === 'spionase' ? (
-                  <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent animate-pulse" />
-                ) : (
-                  <Bomb className="h-4 w-4 sm:h-5 sm:w-5 text-orange-400 animate-pulse" />
-                )}
-              </div>
-              <div className="min-w-0">
-                <h2 className={rootModalTypography.title}>
+          <div className="satisfaction-modal-header root-modal-util-9462ce2345">
+            <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
+              <div className="root-modal-util-08dfbca033">
+                <div className="root-modal-util-739d92b232">
+                  {activeTab === 'spionase' ? (
+                    <Eye aria-hidden="true" className="root-modal-util-d252947d10 text-root-accent animate-pulse" />
+                  ) : (
+                    <Bomb aria-hidden="true" className="root-modal-util-d252947d10 text-orange-400 animate-pulse" />
+                  )}
+                </div>
+                <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
                   {activeTab === 'spionase' ? 'Spionase' : 'Sabotase'}
                 </h2>
               </div>
             </div>
-
+            <div className="root-modal-util-08dfbca033">
+              <MenuInfoButton
+                title="Intelijen"
+                description="Gunakan Spionase untuk mengumpulkan informasi negara lain dan Sabotase untuk menjalankan operasi rahasia. Setiap operasi membutuhkan anggaran dan dapat menimbulkan konsekuensi diplomatik; pilih sasaran dengan mempertimbangkan risiko serta hasil yang diharapkan."
+              />
+              <RootModalCloseButton onClick={onClose} />
+            </div>
           </div>
-
-          <div className="flex shrink-0 items-center gap-2">
-            <MenuInfoButton
-              title="Intelijen"
-              description="Gunakan Spionase untuk mengumpulkan informasi negara lain dan Sabotase untuk menjalankan operasi rahasia. Setiap operasi membutuhkan anggaran dan dapat menimbulkan konsekuensi diplomatik; pilih sasaran dengan mempertimbangkan risiko serta hasil yang diharapkan."
-            />
-            <RootModalCloseButton onClick={onClose} />
-          </div>
-        </div>
 
         <div className="relative z-10 flex min-h-0 min-w-0 flex-1 flex-col bg-root-surface">
           <div className="intelijen-toolbar flex shrink-0 flex-col gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-6">

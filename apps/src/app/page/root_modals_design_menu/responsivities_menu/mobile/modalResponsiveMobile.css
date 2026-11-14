@@ -400,14 +400,10 @@
   font-size: 9px !important;
 }
 
-.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-header {
-  gap: 5px !important;
-  padding: 6px 8px !important;
-}
-
-.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-search {
+.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-toolbar .attack-country-search {
   width: clamp(92px, 18vw, 150px) !important;
-  flex-shrink: 1;
+  min-width: 92px;
+  flex: 0 1 150px;
 }
 
 .notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-search-input {
@@ -3061,23 +3057,6 @@
 
 .notebook-modal-frame[data-viewport-mode]:has(.defense-recruitment-confirm-modal) .defense-confirm-footer > button {
   font-size: 8px !important;
-}
-
-.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-header {
-  gap: 8px !important;
-  padding: 8px 10px !important;
-}
-
-.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-title {
-  font-size: var(--modal-font-title) !important;
-  line-height: 1.2;
-  overflow-wrap: anywhere;
-}
-
-.notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-header .root-modal-close-button {
-  min-height: 36px;
-  padding: 6px 8px !important;
-  font-size: max(10px, var(--modal-font-label)) !important;
 }
 
 .notebook-modal-frame[data-viewport-mode]:has(.root-construction-confirm-modal) .root-construction-confirm-content {

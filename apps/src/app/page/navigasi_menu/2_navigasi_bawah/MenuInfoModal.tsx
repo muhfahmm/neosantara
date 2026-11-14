@@ -35,7 +35,7 @@ export default function MenuInfoModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="menu-info-modal-title"
-        className={`flex min-w-0 flex-col overflow-hidden max-h-[calc(100dvh-160px)] sm:max-h-[calc(100dvh-176px)] lg:max-h-[calc(100dvh-172px)] ${fillContent ? "h-full min-h-0 flex-1" : ""}`}
+        className={`root-modal-util-b74379da23 ${fillContent ? "h-full min-h-0 flex-1" : "!h-auto"} max-h-[calc(100dvh-160px)] sm:max-h-[calc(100dvh-176px)] lg:max-h-[calc(100dvh-172px)]`}
       >
         <RootInfoModalHeader
           title={title}

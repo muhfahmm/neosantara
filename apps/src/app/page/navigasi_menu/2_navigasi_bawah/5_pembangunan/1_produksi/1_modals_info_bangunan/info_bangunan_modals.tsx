@@ -211,11 +211,12 @@ export default function InfoBangunan({
 
   return createPortal(
     <NotebookModalWrapper onClose={onClose}>
-      <div className="flex h-full flex-col overflow-hidden">
+      <div className="root-modal-util-b74379da23">
         <RootInfoModalHeader
           title={`Info Bangunan - ${label}`}
           icon={<Utensils aria-hidden="true" />}
           onClose={onClose}
+          size="standard"
         />
 
         <div className={`root-info-modal-content p-4 sm:p-5 relative z-10 flex-1 overflow-y-auto space-y-4 custom-scrollbar ${rootModalTypography.body}`}>

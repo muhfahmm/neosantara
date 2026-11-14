@@ -71,31 +71,32 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
   return (
     <>
       {!showDefenseBonusInfo && <NotebookModalWrapper onClose={onClose}>
-        <div className="defense-modal flex flex-col h-full overflow-hidden">
+        <div className="root-modal-util-b74379da23 defense-modal">
           
-          {/* HEADER */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-            <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className={`shrink-0 border border-root-accent/30 bg-root-surface p-1.5 sm:p-2 ${rootBorderRadius.card}`}>
-              <ShieldAlert className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
+          <div className="satisfaction-modal-header root-modal-util-9462ce2345">
+            <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
+              <div className="root-modal-util-08dfbca033">
+                <div className="root-modal-util-739d92b232">
+                  <ShieldAlert aria-hidden="true" className="root-modal-util-d252947d10 text-rose-500 animate-pulse" />
+                </div>
+                <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
+                  Pertahanan & Keamanan
+                </h2>
+              </div>
             </div>
-            <div className="min-w-0">
-              <h2 className={rootModalTypography.title}>Pertahanan & Keamanan</h2>
+            <div className="root-modal-util-08dfbca033">
+              <button
+                type="button"
+                onClick={() => setShowDefenseBonusInfo(true)}
+                aria-label="Informasi armada dan bonus pertahanan"
+                title="Informasi armada dan bonus pertahanan"
+                className="root-modal-info-button root-modal-util-1697100c43"
+              >
+                <Info aria-hidden="true" />
+              </button>
+              <RootModalCloseButton onClick={onClose} />
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setShowDefenseBonusInfo(true)}
-              aria-label="Informasi armada dan bonus pertahanan"
-              title="Informasi armada dan bonus pertahanan"
-              className="root-modal-info-button flex h-8 w-8 items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent cursor-pointer"
-            >
-              <Info className="h-4 w-4" />
-            </button>
-            <RootModalCloseButton onClick={onClose} />
-          </div>
-        </div>
 
         <RootModalSidebarLayout
           ariaLabel="Bagian armada dan infrastruktur militer"

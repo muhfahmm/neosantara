@@ -7,9 +7,7 @@ import { getBuildingCardImage } from "../../buildingCardImages";
 // 🔥 FIX 1: Tambahkan MapPin, DollarSign, BarChart3, Sparkles, Users
 import { X, Landmark, AlertTriangle, TrendingUp, TrendingDown, Hammer, Info, MapPin, DollarSign, BarChart3, Sparkles, Users } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
-import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
-import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import ServiceAISuggestionsModal from "../ai_suggestions/ServiceAISuggestionsModal";
 import { generateTempatUmumAIAnalysis } from "../ai_suggestions/serviceAISuggestionsLogic";
@@ -429,21 +427,19 @@ export default function TempatUmumModal({
   return (
     <>
       {!selectedGroupInfo && <NotebookModalWrapper onClose={onClose}>
-        <div className="building-modal-layout flex flex-col h-full overflow-hidden">
-          <div className="building-modal-header px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
-            <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-              <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
-                <Landmark className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-              </div>
-              <div className="min-w-0">
-                <h2 className={`building-modal-title ${rootModalTypography.title}`}>Tempat Umum & Layanan Publik</h2>
+        <div className="root-modal-util-b74379da23 building-modal-layout">
+          <div className="satisfaction-modal-header root-modal-util-9462ce2345">
+            <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
+              <div className="root-modal-util-08dfbca033">
+                <div className="root-modal-util-739d92b232">
+                  <Landmark aria-hidden="true" className="root-modal-util-d252947d10" />
+                </div>
+                <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
+                  Tempat Umum & Layanan Publik
+                </h2>
               </div>
             </div>
-            <div className="building-modal-header-actions flex items-center gap-2 shrink-0">
-              <div className="px-1.5 py-0.5 rounded-lg border border-root-accent/30 bg-root-surface text-right">
-                <p className="text-[7px] sm:text-[8px] font-bold uppercase tracking-wider text-root-subtle">Indeks Kepuasan</p>
-                <p className="text-[10px] sm:text-xs font-black leading-tight text-root-accent">{averageServiceSatisfaction} / 100</p>
-              </div>
+            <div className="root-modal-util-08dfbca033">
               <button
                 type="button"
                 onClick={() => activeGroup && setSelectedGroupInfo({
@@ -459,11 +455,11 @@ export default function TempatUmumModal({
                 })}
                 aria-label={`Informasi ${activeGroup?.label ?? "kategori aktif"}`}
                 title={`Informasi ${activeGroup?.label ?? "kategori aktif"}`}
-                className="root-modal-info-button building-modal-info-button flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent"
+                className="root-modal-info-button root-modal-util-1697100c43"
               >
-                <Info className="h-4 w-4" />
+                <Info aria-hidden="true" />
               </button>
-              <RootModalCloseButton onClick={onClose} />
+              <SharedModalCloseButton onClick={onClose} />
             </div>
           </div>
 
@@ -612,7 +608,29 @@ export default function TempatUmumModal({
 
               <div className="mt-8 border-t border-root-accent/20 pt-6 space-y-4">
                 {/* Ringkasan Indeks Kepuasan Rakyat */}
-                <div className="grid grid-cols-1 gap-4 items-stretch w-full">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch w-full">
+                  <div className="root-satisfaction-index rounded-2xl border border-root-accent/30 bg-root-canvas p-4 shadow-md flex flex-col justify-between">
+                    <div className="flex justify-between items-center gap-2">
+                      <span className="root-satisfaction-index-title font-black text-root-subtle uppercase tracking-wider">
+                        Indeks Kepuasan Rata-rata
+                      </span>
+                      <span className="root-satisfaction-index-value font-black text-root-accent">
+                        {averageServiceSatisfaction} / 100
+                      </span>
+                    </div>
+                    <div className="w-full h-2.5 bg-root-surface border border-root-accent/20 rounded-full mt-2 overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-200 ${
+                          averageServiceSatisfaction <= 40
+                            ? "bg-rose-500"
+                            : averageServiceSatisfaction <= 75
+                            ? "bg-amber-400"
+                            : "bg-root-accent"
+                        }`}
+                        style={{ width: `${averageServiceSatisfaction}%` }}
+                      />
+                    </div>
+                  </div>
                   {/* Indeks Kepuasan Rakyat */}
                   {(() => {
                     const activeCategory = calculatedCategories.find((cat) => cat.id === activeTabId);

@@ -93,21 +93,21 @@ export default function RootConstructionConfirmationModal({
 
   return (
     <NotebookModalWrapper onClose={onClose} zIndexClass="z-[70]">
-      <div className="root-construction-confirm-modal flex h-full min-h-0 flex-col overflow-hidden">
+      <div className="root-modal-util-b74379da23 root-construction-confirm-modal">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
-        <div className="root-construction-confirm-header relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
-          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className={`shrink-0 border border-root-accent/30 bg-root-surface p-1.5 sm:p-2 ${rootBorderRadius.card}`}>
-              <Hammer className="h-4 w-4 text-root-accent sm:h-5 sm:w-5" />
-            </div>
-            <div className="min-w-0">
-              <h2 className={`root-construction-confirm-title ${rootModalTypography.title}`}>
+        <div className="satisfaction-modal-header root-modal-util-9462ce2345">
+          <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
+            <div className="root-modal-util-08dfbca033">
+              <div className="root-modal-util-739d92b232">
+                <Hammer aria-hidden="true" className="root-modal-util-d252947d10 text-root-accent" />
+              </div>
+              <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
                 {title}
               </h2>
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="root-modal-util-08dfbca033">
             <RootModalCloseButton onClick={onClose} />
           </div>
         </div>
