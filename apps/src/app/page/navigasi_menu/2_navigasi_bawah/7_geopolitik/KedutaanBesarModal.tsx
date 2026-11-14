@@ -1,5 +1,6 @@
 "use client"
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import RootModalCloseButton from '@/app/page/root_modals_design_menu/RootModalCloseButton';
 import React, { useState } from "react";
 import { X, Globe } from "lucide-react";
 import NotebookModalWrapper from "../NotebookModalWrapper";
@@ -166,79 +167,82 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
   return (
     <>
       <NotebookModalWrapper onClose={onClose}>
-        <div className="root-modal-util-b74379da23">
+        <div className="root-modal-util-52b6b298fe">
 
-          <div className="satisfaction-modal-header root-modal-util-9462ce2345">
-            <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
-              <div className="root-modal-util-08dfbca033">
-                <div className="root-modal-util-739d92b232">
-                  <Globe aria-hidden="true" className="root-modal-util-d252947d10 text-root-accent animate-pulse" />
+          <div className="satisfaction-modal-header root-modal-util-4450f1d9ee">
+            <div className="satisfaction-modal-header-main root-modal-util-935108d13c no-scrollbar">
+              <div className="root-modal-util-c7c918256f">
+                <div className="root-modal-util-acd42b9a36">
+                  <Globe aria-hidden="true" className="root-modal-util-ea2c28151c animate-pulse" />
                 </div>
-                <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                  Kantor Kedutaan Besar Asing
-                </h2>
+                <div>
+                  <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
+                    Kantor Kedutaan Besar Asing
+                  </h2>
+                </div>
               </div>
             </div>
-            <div className="root-modal-util-08dfbca033">
+            <div className="root-modal-util-6cfc7e6ab3">
               <MenuInfoButton
                 title="Kedutaan Besar"
                 description="Kelola perwakilan diplomatik dan lihat kedutaan atau mitra yang tercatat untuk negara Anda. Hubungan kedutaan mendukung komunikasi antarnegara; tindakan terhadap kedutaan dapat memengaruhi hubungan dan kerja sama."
               />
-              <SharedModalCloseButton onClick={onClose} />
+              <RootModalCloseButton onClick={onClose} />
             </div>
           </div>
 
           {/* BODY */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-root-surface relative z-10 neon-scrollbar">
-            {embassies.length === 0 ? (
-              <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-8 text-center">
-                <p className="text-sm text-root-accent font-black mb-2">Belum ada kedutaan asing yang terdaftar.</p>
-                <p className="text-xs text-root-subtle">Bangun kedutaan melalui halaman detail negara untuk mulai menambahkan hubungan diplomatik.</p>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-3 w-full">
-                {embassies.map((item: any, idx: number) => {
-                  const iso = getIsoFromName(item.mitra);
-                  return (
-                    <div key={idx} className="bg-root-canvas border border-root-accent/20 hover:border-root-accent/50 hover:bg-root-accent/5 p-4 rounded-xl flex flex-row items-center justify-between w-full gap-4 transition-colors">
-
-                      {/* Bagian Informasi Kedutaan */}
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          {renderFlag(iso, item.mitra)}
-                          <h4 className="text-sm font-black text-root-text uppercase tracking-wider">{item.mitra}</h4>
+          <div className="satisfaction-modal-content root-modal-util-9c12d57a09">
+            <div className="satisfaction-modal-content-body root-modal-enter root-modal-fade-in root-modal-util-90f9f3a7db">
+              {embassies.length === 0 ? (
+                <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-8 text-center">
+                  <p className="text-sm text-root-accent font-black mb-2">Belum ada kedutaan asing yang terdaftar.</p>
+                  <p className="text-xs text-root-subtle">Bangun kedutaan melalui halaman detail negara untuk mulai menambahkan hubungan diplomatik.</p>
+                </div>
+              ) : (
+                <div className="flex w-full flex-col gap-3">
+                  {embassies.map((item: any, idx: number) => {
+                    const iso = getIsoFromName(item.mitra);
+                    return (
+                      <div key={idx} className="flex w-full flex-col items-stretch gap-3 rounded-xl border border-root-accent/20 bg-root-canvas p-3 transition-colors hover:border-root-accent/50 hover:bg-root-accent/5 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-4">
+                        {/* Bagian Informasi Kedutaan */}
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            {renderFlag(iso, item.mitra)}
+                            <h4 className="break-words text-sm font-black text-root-text uppercase tracking-wider">{item.mitra}</h4>
+                          </div>
+                          <div className="flex flex-wrap gap-2 text-[10px] leading-none mt-2">
+                            <span className="bg-root-accent/10 text-root-accent border border-root-accent/30 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">{item.status || 'Aktif'}</span>
+                            {item.type && <span className="bg-root-surface text-root-subtle border border-root-accent/20 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">{item.type}</span>}
+                          </div>
+                          {item.continent && (
+                            <p className="text-[10px] text-root-subtle mt-2">Benua: {item.continent}</p>
+                          )}
                         </div>
-                        <div className="flex flex-wrap gap-2 text-[10px] leading-none mt-2">
-                          <span className="bg-root-accent/10 text-root-accent border border-root-accent/30 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">{item.status || 'Aktif'}</span>
-                          {item.type && <span className="bg-root-surface text-root-subtle border border-root-accent/20 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">{item.type}</span>}
+
+                        {/* Bagian Tombol Aksi */}
+                        <div className="grid w-full grid-cols-1 gap-2 sm:w-auto sm:flex sm:shrink-0 sm:flex-row sm:items-center">
+                          <button
+                            onClick={() => handleOpenCountryDetail(item.mitra)}
+                            className="flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-root-accent/40 bg-root-surface px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider text-root-accent transition-all hover:bg-root-accent hover:text-root-accent-ink cursor-pointer"
+                          >
+                            <Globe className="w-3.5 h-3.5" />
+                            Lihat Detail
+                          </button>
+
+                          <button
+                            onClick={() => handleDestroyEmbassy(item.mitra)}
+                            className="whitespace-nowrap rounded-lg border border-rose-500/40 bg-root-surface px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider text-rose-400 transition-all hover:bg-rose-500 hover:text-white cursor-pointer"
+                          >
+                            Hancurkan Kedutaan
+                          </button>
                         </div>
-                        {item.continent && (
-                          <p className="text-[10px] text-root-subtle mt-2">Benua: {item.continent}</p>
-                        )}
                       </div>
-
-                      {/* Bagian Tombol Aksi */}
-                      <div className="flex flex-row items-center gap-2 flex-shrink-0">
-                        <button
-                          onClick={() => handleOpenCountryDetail(item.mitra)}
-                          className="border border-root-accent/40 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-accent-ink px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5"
-                        >
-                          <Globe className="w-3.5 h-3.5" />
-                          Lihat Detail
-                        </button>
-
-                        <button
-                          onClick={() => handleDestroyEmbassy(item.mitra)}
-                          className="border border-rose-500/40 bg-root-surface text-rose-400 hover:bg-rose-500 hover:text-white px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer"
-                        >
-                          Hancurkan Kedutaan
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </NotebookModalWrapper>

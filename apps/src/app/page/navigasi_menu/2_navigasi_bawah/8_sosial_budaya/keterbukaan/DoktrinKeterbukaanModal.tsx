@@ -3,11 +3,9 @@ import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import {
-  X,
   Globe,
   Lock,
   Unlock,
-  CheckCircle2,
   Users,
   Tv,
   Plane,
@@ -17,7 +15,6 @@ import { fetchDoktrinKeterbukaanFromDb } from "../../../../../../../../json/2_da
 import { generateDoctrineChangeNotification } from "@/app/page/menus/inbox/logic/10_sosial_budaya/3_keterbukaan/doctrineChangeLogic";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
-import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import MenuInfoButton from "../../MenuInfoButton";
 
 interface DoktrinKeterbukaanModalProps {
@@ -253,37 +250,33 @@ export default function DoktrinKeterbukaanModal({
 
   return createPortal(
     <NotebookModalWrapper onClose={onClose}>
-      <div className="flex flex-col h-full overflow-hidden">
-        {/* HEADER */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="p-1.5 bg-root-accent/10 rounded-lg border border-root-accent/30">
-              <Globe className="h-5 w-5 text-root-accent" />
+      <div className="root-modal-util-52b6b298fe">
+        <div className="satisfaction-modal-header root-modal-util-4450f1d9ee">
+          <div className="satisfaction-modal-header-main root-modal-util-935108d13c no-scrollbar">
+            <div className="root-modal-util-c7c918256f">
+              <div className="root-modal-util-acd42b9a36">
+                <Globe aria-hidden="true" className="root-modal-util-ea2c28151c" />
+              </div>
+              <div>
+                <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
+                  Doktrin & Keterbukaan Negara
+                </h2>
+              </div>
             </div>
-            <h3 className={rootModalTypography.title}>
-              Doktrin & Keterbukaan Negara
-            </h3>
           </div>
-
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="root-modal-util-6cfc7e6ab3">
             <MenuInfoButton
               title="Doktrin & Keterbukaan"
               description="Atur kebijakan keterbukaan negara pada kebebasan sipil dan HAM, media dan informasi, serta perbatasan dan geopolitik. Perubahan indikator memengaruhi karakter kebijakan dalam negeri dan hubungan dengan dunia."
             />
-            <RootModalCloseButton
-              onClick={onClose}
-              className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-             appearance="custom">
-              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-4 w-4" />
-            </RootModalCloseButton>
+            <RootModalCloseButton onClick={onClose} />
           </div>
         </div>
 
         <RootModalSidebarLayout
           ariaLabel="Bagian doktrin dan keterbukaan"
           activeItemId={activeTab}
-          contentClassName="space-y-6 p-4 sm:p-6"
+          contentClassName="root-modal-util-9c12d57a09 space-y-4"
           items={DOCTRINE_TABS.map((tab) => ({
             id: tab.id,
             isActive: activeTab === tab.id,
@@ -689,21 +682,12 @@ export default function DoktrinKeterbukaanModal({
                 </div>
               </div>
             )}
-        </RootModalSidebarLayout>
 
-        {/* FOOTER ACTIONS */}
-        <div className="px-6 py-4 border-t border-root-accent/20 bg-root-surface flex items-center justify-between shrink-0 relative z-10">
-          <div className="text-xs text-root-subtle font-semibold flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-root-accent" /> Perubahan doktrin terupdate secara otomatis & berdampak langsung pada negara.
+          <div className="flex items-center gap-1.5 border-t border-root-accent/20 pt-3 text-xs font-semibold text-root-subtle">
+            <span className="text-root-accent" aria-hidden="true">✓</span>
+            Perubahan doktrin terupdate secara otomatis & berdampak langsung pada negara.
           </div>
-
-          <button
-            onClick={onClose}
-            className="px-5 py-2.5 rounded-xl bg-root-accent text-root-canvas font-bold text-xs uppercase tracking-wider hover:bg-root-accent/80 active:scale-95 transition-all cursor-pointer flex items-center gap-2 shadow-md"
-          >
-            Selesai
-          </button>
-        </div>
+        </RootModalSidebarLayout>
       </div>
     </NotebookModalWrapper>,
     document.body

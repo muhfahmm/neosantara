@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { Star, Globe, MoonStar, Church, Sun, CircleDot, Atom, Check } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 import MenuInfoButton from "../../MenuInfoButton";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
 import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
@@ -219,19 +220,21 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
 
       {/* MODAL UTAMA AGAMA */}
       <NotebookModalWrapper onClose={onClose}>
-        <div className="root-modal-util-b74379da23">
-          <div className="satisfaction-modal-header root-modal-util-9462ce2345">
-            <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
-              <div className="root-modal-util-08dfbca033">
-                <div className="root-modal-util-739d92b232">
-                  <Star aria-hidden="true" className="root-modal-util-d252947d10 text-root-accent animate-spin" style={{ animationDuration: '12s' }} />
+        <div className="root-modal-util-52b6b298fe">
+          <div className="satisfaction-modal-header root-modal-util-4450f1d9ee">
+            <div className="satisfaction-modal-header-main root-modal-util-935108d13c no-scrollbar">
+              <div className="root-modal-util-c7c918256f">
+                <div className="root-modal-util-acd42b9a36">
+                  <Star aria-hidden="true" className="root-modal-util-ea2c28151c animate-spin" style={{ animationDuration: '12s' }} />
                 </div>
-                <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                  Agama & Kebebasan Berkeyakinan
-                </h2>
+                <div>
+                  <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
+                    Agama & Kebebasan Berkeyakinan
+                  </h2>
+                </div>
               </div>
             </div>
-            <div className="root-modal-util-08dfbca033">
+            <div className="root-modal-util-6cfc7e6ab3">
               <MenuInfoButton
                 title="Agama & Kepercayaan"
                 description="Pilih dan kelola agama atau kepercayaan negara, lalu tinjau persebarannya di dunia. Setiap pilihan memiliki bonus tersendiri dan perubahan agama memerlukan biaya serta konfirmasi."
@@ -240,32 +243,46 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
             </div>
           </div>
 
-          <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-root-surface relative z-10 neon-scrollbar">
-            <div className="bg-[#051111] p-1 rounded-xl border border-root-accent/20 inline-flex mb-6 shadow-sm">
-              <button onClick={() => setActiveTab("agama")}
-                className={`px-5 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${activeTab === "agama" ? "bg-root-accent text-root-canvas shadow-lg shadow-root-accent/20" : "text-root-subtle hover:text-root-text"}`}>
-                Agama & Kebebasan Berkeyakinan
-              </button>
-              <button onClick={() => setActiveTab("dunia")}
-                className={`px-5 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${activeTab === "dunia" ? "bg-root-accent text-root-canvas shadow-lg shadow-root-accent/20" : "text-root-subtle hover:text-root-text"}`}>
-                Agama Dunia
-              </button>
+          <div className="satisfaction-modal-summary root-modal-util-6614545ce3">
+            <div className="root-modal-util-6cfc7e6ab3 flex-wrap">
+              <Star aria-hidden="true" className="root-modal-util-00f4ec4a9a" />
+              <span className="root-modal-util-14d6efe9ef root-modal-util-614c0c7dff">Agama Saat Ini:</span>
+              <span className="root-modal-util-04f32edb66 root-modal-util-4457a4d3a8">{religion}</span>
+              <span className="root-modal-util-14d6efe9ef root-modal-util-614c0c7dff">Anggaran:</span>
+              <span className="root-modal-util-04f32edb66 root-modal-util-4457a4d3a8">{anggaran.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
             </div>
+            <div className="satisfaction-modal-summary-controls">
+              <RootModalTabs
+                className="satisfaction-modal-tabs"
+                compact
+                items={[
+                  {
+                    label: "Agama & Kebebasan Berkeyakinan",
+                    isActive: activeTab === "agama",
+                    onClick: () => setActiveTab("agama"),
+                    onPointerDown: () => setActiveTab("agama"),
+                  },
+                  {
+                    label: "Agama Dunia",
+                    isActive: activeTab === "dunia",
+                    onClick: () => setActiveTab("dunia"),
+                    onPointerDown: () => setActiveTab("dunia"),
+                  },
+                ]}
+              />
+            </div>
+          </div>
 
+          <div className="satisfaction-modal-content satisfaction-modal-content-body root-modal-enter root-modal-fade-in root-modal-util-9c12d57a09 root-modal-util-90f9f3a7db">
             {activeTab === "agama" && (
               <div className="space-y-6">
-                <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-xl flex justify-between items-center">
-                  <div className="text-xs font-bold text-root-text">
-                    <span>Agama Saat Ini:</span>
-                    <span className="ml-1.5 text-root-accent">{religion}</span>
+                <div className="root-modal-util-8230f2ccb3">
+                  <div className="root-modal-util-7ccf491d2f">
+                    <Star aria-hidden="true" className="root-modal-util-79b40bc7fa" />
                   </div>
-                  <div className="text-xs font-bold text-root-text">
-                    <span>Anggaran:</span>
-                    <span className="ml-1.5 text-root-accent">{anggaran.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
-                  </div>
+                  <h3 className="root-modal-util-9361ef65fc root-modal-util-cdb3e20c19">Pilih Agama Baru</h3>
+                  <div className="root-modal-util-d43b1ea5a7" />
                 </div>
-
-                <h3 className="text-sm font-bold text-root-accent uppercase tracking-wider mb-4">Pilih Agama Baru</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {RELIGION_OPTIONS.map((r) => {
                     const isActive = String(countryDetail?.religion || '').toLowerCase() === String(r).toLowerCase();
@@ -317,16 +334,17 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
 
             {activeTab === "dunia" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-root-accent/15 mb-4">
-                  <div className="flex items-center gap-2">
-                    <Globe className="h-5 w-5 text-root-accent" />
-                    <h4 className="text-sm font-bold text-root-text uppercase tracking-wider">Daftar Agama Seluruh Negara ({worldReligions.length} Negara)</h4>
-                    {sameReligionCount !== null && (
-                      <span className="text-xs font-bold text-root-accent bg-root-accent/10 rounded-full px-2.5 py-1 whitespace-nowrap">
-                        {sameReligionCount}/212 seagama
-                      </span>
-                    )}
+                <div className="root-modal-util-8230f2ccb3">
+                  <div className="root-modal-util-7ccf491d2f">
+                    <Globe aria-hidden="true" className="root-modal-util-79b40bc7fa" />
                   </div>
+                  <h4 className="root-modal-util-9361ef65fc">Daftar Agama Seluruh Negara ({worldReligions.length} Negara)</h4>
+                  <div className="root-modal-util-d43b1ea5a7" />
+                  {sameReligionCount !== null && (
+                    <span className="text-xs font-bold text-root-accent bg-root-accent/10 rounded-full px-2.5 py-1 whitespace-nowrap">
+                      {sameReligionCount}/212 seagama
+                    </span>
+                  )}
                 </div>
                 <div className="overflow-x-auto border border-root-accent/20 rounded-xl bg-root-canvas shadow-sm max-h-[400px] custom-scrollbar">
                   <table className="w-full text-xs text-left border-collapse">
