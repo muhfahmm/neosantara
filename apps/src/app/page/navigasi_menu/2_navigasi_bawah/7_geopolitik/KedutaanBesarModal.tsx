@@ -166,31 +166,25 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
   return (
     <>
       <NotebookModalWrapper onClose={onClose}>
-        <div className="flex flex-col h-full overflow-hidden">
+        <div className="root-modal-util-b74379da23">
 
-          {/* HEADER */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
-                <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent animate-pulse" />
-              </div>
-              <div>
-                <h2 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Kantor Kedutaan Besar Asing</h2>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">{currentCountryName}</p>
+          <div className="satisfaction-modal-header root-modal-util-9462ce2345">
+            <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
+              <div className="root-modal-util-08dfbca033">
+                <div className="root-modal-util-739d92b232">
+                  <Globe aria-hidden="true" className="root-modal-util-d252947d10 text-root-accent animate-pulse" />
+                </div>
+                <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
+                  Kantor Kedutaan Besar Asing
+                </h2>
               </div>
             </div>
-            <div className="flex shrink-0 items-center gap-2">
+            <div className="root-modal-util-08dfbca033">
               <MenuInfoButton
                 title="Kedutaan Besar"
                 description="Kelola perwakilan diplomatik dan lihat kedutaan atau mitra yang tercatat untuk negara Anda. Hubungan kedutaan mendukung komunikasi antarnegara; tindakan terhadap kedutaan dapat memengaruhi hubungan dan kerja sama."
               />
-              <SharedModalCloseButton
-                onClick={onClose}
-                className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-               appearance="custom">
-                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-4 w-4" />
-              </SharedModalCloseButton>
+              <SharedModalCloseButton onClick={onClose} />
             </div>
           </div>
 
