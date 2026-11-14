@@ -1,7 +1,7 @@
 "use client";
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect } from "react";
-import { X, Flame, ShieldAlert, CheckCircle2, AlertTriangle, Crosshair, MapPin } from "lucide-react";
+import { Flame, ShieldAlert, CheckCircle2, AlertTriangle, Crosshair, MapPin } from "lucide-react";
 import { executeIcbmTestLaunch, getRealisticTargetLocationName, type NeighborImpact } from "./ujicobaIcbmLogic";
 import NotebookModalWrapper from "../../../../NotebookModalWrapper";
 
@@ -223,35 +223,30 @@ export default function UjicobaIcbmModal({
   }
 
   return (
-    <NotebookModalWrapper onClose={handleCloseModal} compact zIndexClass="z-[95]">
-      <div className="flex flex-col relative font-sans">
+    <NotebookModalWrapper onClose={handleCloseModal} zIndexClass="z-[95]">
+      <div className="root-modal-util-b74379da23 font-sans">
         
-        {/* Header Modal */}
-        <div className="flex items-center justify-between border-b border-root-accent/20 bg-root-canvas px-3 py-2 sm:px-5 sm:py-2.5">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400">
-              <Flame className="h-5 w-5 animate-pulse" />
-            </div>
-            <div>
-              <h3 className="text-base sm:text-lg font-black text-root-accent uppercase tracking-wide">
+        <div className="satisfaction-modal-header root-modal-util-9462ce2345">
+          <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
+            <div className="root-modal-util-08dfbca033">
+              <div className="root-modal-util-739d92b232">
+                <Flame aria-hidden="true" className="root-modal-util-d252947d10 text-rose-400 animate-pulse" />
+              </div>
+              <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
                 Uji Coba Rudal ICBM
-              </h3>
-              <p className="text-[10px] text-root-subtle font-bold uppercase tracking-wider">
-                Protokol Uji Luncur Balistik Strategis
-              </p>
+                <span className="ml-2 align-middle text-[9px] font-semibold tracking-normal text-root-subtle normal-case">
+                  Protokol Uji Luncur Balistik Strategis
+                </span>
+              </h2>
             </div>
           </div>
-          <SharedModalCloseButton
-            onClick={handleCloseModal}
-            className="p-1.5 sm:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1"
-           appearance="custom">
-            <span className="text-[10px] font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </SharedModalCloseButton>
+          <div className="root-modal-util-08dfbca033">
+            <SharedModalCloseButton onClick={handleCloseModal} />
+          </div>
         </div>
 
         {/* Content */}
-        <div className="p-4 sm:p-5 bg-root-surface flex flex-col gap-4 text-xs">
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-5 bg-root-surface flex flex-col gap-4 text-xs">
           {testResult ? (
             <div className="rounded-xl border border-root-accent/30 bg-root-canvas p-4 flex flex-col items-center text-center gap-3 max-h-[75vh] overflow-y-auto">
               <CheckCircle2 className="h-10 w-10 text-root-accent shrink-0" />

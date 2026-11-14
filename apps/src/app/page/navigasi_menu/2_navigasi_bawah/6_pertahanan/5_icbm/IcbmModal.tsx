@@ -343,9 +343,6 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                 </div>
                 <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
                   Komando Strategis Nuklir
-                  <span className="ml-2 align-middle text-[9px] font-semibold tracking-normal text-root-subtle normal-case">
-                    {countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "Negara"}
-                  </span>
                 </h2>
               </div>
             </div>

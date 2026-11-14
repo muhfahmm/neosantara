@@ -37,7 +37,6 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
             </div>
             <div>
               <h2 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Sidang Umum Perserikatan Bangsa-Bangsa</h2>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">{countryName}</p>
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">

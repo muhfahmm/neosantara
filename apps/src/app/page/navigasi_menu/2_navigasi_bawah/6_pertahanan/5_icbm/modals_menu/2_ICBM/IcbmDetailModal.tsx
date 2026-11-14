@@ -1,7 +1,7 @@
 "use client"
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useEffect, useState } from "react";
-import { X, Rocket, ArrowUp, Plus, Clock } from "lucide-react";
+import { Rocket, ArrowUp, Plus, Clock } from "lucide-react";
 import NotebookModalWrapper from "../../../../NotebookModalWrapper";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 import { calculateProductionIncrement, formatDate, getDaysElapsed } from "@/app/logic/production_logic";
@@ -157,25 +157,22 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
       {/* Modal Utama ICBM Strategis (disembunyikan saat modal konfirmasi / dana tidak cukup muncul) */}
       {!(isConfirmBuildOpen || isInsufficientFundsOpen) && (
         <NotebookModalWrapper onClose={onClose}>
-          <div className="flex h-full flex-col overflow-hidden">
+          <div className="root-modal-util-b74379da23">
             
-            {/* Header */}
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
-                  <Rocket className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
-                </div>
-                <div>
-                  <h2 className="text-sm sm:text-lg font-bold text-root-accent tracking-tight leading-none uppercase">ICBM Strategis</h2>
+            <div className="satisfaction-modal-header root-modal-util-9462ce2345">
+              <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
+                <div className="root-modal-util-08dfbca033">
+                  <div className="root-modal-util-739d92b232">
+                    <Rocket aria-hidden="true" className="root-modal-util-d252947d10 text-rose-500 animate-pulse" />
+                  </div>
+                  <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
+                    ICBM Strategis
+                  </h2>
                 </div>
               </div>
-              <SharedModalCloseButton
-                onClick={onClose} 
-                className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-               appearance="custom">
-                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-4 w-4" />
-              </SharedModalCloseButton>
+              <div className="root-modal-util-08dfbca033">
+                <SharedModalCloseButton onClick={onClose} />
+              </div>
             </div>
 
             <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-root-surface relative z-10 custom-scrollbar">
