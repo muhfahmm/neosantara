@@ -718,26 +718,43 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
       </MenuInfoModal>
 
       {infoTarget && (
-        <MenuInfoModal
-          isOpen
+        <NotebookModalWrapper
           onClose={() => setInfoTarget(null)}
-          title={infoTarget.name}
-          description={infoTarget.description}
+          zIndexClass="z-[210]"
         >
-          <div className="mt-4 space-y-2">
-            <p className="text-[10px] font-black uppercase tracking-wide text-root-accent">
-              Dampak:
-            </p>
-            <ul className="space-y-1.5">
-              {infoTarget.effects.map((effect, i) => (
-                <li key={i} className="flex gap-2 text-xs font-semibold text-root-text">
-                  <span className="text-root-accent">•</span>
-                  {effect}
-                </li>
-              ))}
-            </ul>
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cabinet-department-info-title"
+            className="flex h-full min-h-0 flex-col"
+          >
+            <RootInfoModalHeader
+              title={infoTarget.name}
+              titleId="cabinet-department-info-title"
+              onClose={() => setInfoTarget(null)}
+              closeAriaLabel={`Tutup informasi ${infoTarget.name}`}
+              size="standard"
+            />
+            <div className="root-info-modal-content min-h-0 flex-1 overflow-y-auto bg-root-surface p-4 sm:p-5">
+              <p className="text-xs font-semibold text-root-subtle">
+                {infoTarget.description}
+              </p>
+              <div className="mt-4 space-y-2">
+                <p className="text-[10px] font-black uppercase tracking-wide text-root-accent">
+                  Dampak:
+                </p>
+                <ul className="space-y-1.5">
+                  {infoTarget.effects.map((effect, i) => (
+                    <li key={i} className="flex gap-2 text-xs font-semibold text-root-text">
+                      <span className="text-root-accent">•</span>
+                      {effect}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
-        </MenuInfoModal>
+        </NotebookModalWrapper>
       )}
 
       {/* ========== CONFIRMATION UPGRADE POPUP ========== */}
