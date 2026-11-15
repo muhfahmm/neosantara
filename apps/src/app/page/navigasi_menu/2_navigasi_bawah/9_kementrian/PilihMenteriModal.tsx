@@ -63,7 +63,6 @@ export default function PilihMenteriModal({
               <h2 className="text-sm sm:text-base font-bold uppercase tracking-wide text-root-text">
                 Kandidat Menteri
               </h2>
-              <p className="text-[10px] font-semibold text-root-subtle">{department.name}</p>
             </div>
           </div>
           <SharedModalCloseButton

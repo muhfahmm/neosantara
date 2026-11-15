@@ -1,7 +1,7 @@
 "use client";
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
-import { AlertCircle, X } from "lucide-react";
+import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { AlertCircle } from "lucide-react";
 import { createPortal } from "react-dom";
 
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
@@ -27,23 +27,29 @@ export default function DanaTidakCukupModal({
   const shortage = Math.max(0, requiredCost - currentBudget);
 
   const modalContent = (
-    <NotebookModalWrapper compact zIndexClass="z-[100000001]">
-      <div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
-        <div className="flex-1">
-          <div className="mb-6 flex items-center justify-between gap-4 border-b border-rose-500/20 pb-4">
-            <h3 className="text-xl sm:text-2xl font-black text-rose-400 tracking-wide uppercase">
-              Dana Tidak Mencukupi
-            </h3>
-            <SharedModalCloseButton
+    <NotebookModalWrapper onClose={onClose} zIndexClass="z-[100000001]">
+      <div className="root-modal-util-52b6b298fe">
+        <header className="satisfaction-modal-header root-modal-util-4450f1d9ee">
+          <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
+            <div className="root-modal-util-08dfbca033">
+              <div className="root-modal-util-acd42b9a36 !border-rose-500/30 !bg-rose-500/10">
+                <AlertCircle className="root-modal-util-ea2c28151c !text-root-danger" />
+              </div>
+              <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
+                <span className="text-root-danger">Dana Tidak Mencukupi</span>
+              </h2>
+            </div>
+          </div>
+          <div className="root-modal-util-08dfbca033">
+            <RootModalCloseButton
               type="button"
               onClick={onClose}
-              className="flex shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-rose-500/30 bg-root-surface px-3 py-2 text-xs font-bold uppercase text-rose-400 transition-colors hover:border-rose-500"
-             appearance="custom">
-              <span className="font-semibold tracking-wider">Tutup</span>
-              <X className="h-4 w-4" />
-            </SharedModalCloseButton>
+              ariaLabel="Tutup modal dana tidak mencukupi"
+            />
           </div>
+        </header>
 
+        <div className="root-modal-util-64d21c5606 relative z-10">
           <div className="rounded-2xl border border-rose-500/30 bg-root-canvas/60 p-5 text-center">
             <div className="mb-3 flex justify-center">
               <div className="rounded-full border border-rose-500/20 bg-rose-500/10 p-3 text-rose-400">
@@ -72,18 +78,18 @@ export default function DanaTidakCukupModal({
               </div>
             </div>
           </div>
-        </div>
 
-        {onTakeLoan && (
-          <div className="mt-6 flex justify-end gap-3 border-t border-rose-500/20 pt-4">
-            <button
-              onClick={onTakeLoan}
-              className="w-full sm:w-auto cursor-pointer rounded-xl border border-root-accent bg-root-accent px-6 py-2 text-center text-[11px] font-black uppercase tracking-widest text-root-canvas shadow transition-all duration-150 hover:bg-[#00e699] sm:text-xs"
-            >
-              Ambil Pinjaman
-            </button>
-          </div>
-        )}
+          {onTakeLoan && (
+            <div className="mt-6 flex justify-end gap-3 border-t border-rose-500/20 pt-4">
+              <button
+                onClick={onTakeLoan}
+                className="w-full sm:w-auto cursor-pointer rounded-xl border border-root-accent bg-root-accent px-6 py-2 text-center text-[11px] font-black uppercase tracking-widest text-root-canvas shadow transition-all duration-150 hover:bg-[#00e699] sm:text-xs"
+              >
+                Ambil Pinjaman
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </NotebookModalWrapper>
   );

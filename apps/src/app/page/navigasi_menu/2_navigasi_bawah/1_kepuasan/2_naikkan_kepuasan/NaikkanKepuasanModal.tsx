@@ -17,6 +17,7 @@ import DanaTidakCukupModal from "./DanaTidakCukupModal";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import {
   applyDiplomasiAcaraSatisfactionBonus,
@@ -599,24 +600,13 @@ export default function NaikkanKepuasanModal({
           zIndexClass="z-[300]"
         >
           <div className={"root-modal-util-52b6b298fe"}>
-            {/* Header Modal Info */}
-            <div className={"root-modal-util-4450f1d9ee"}>
-              <div className={"root-modal-util-c0541482fd"}>
-                <div className={"root-modal-util-6576a8ca47"}>
-                  <Info className={"root-modal-util-ea2c28151c"} />
-                </div>
-                <div>
-                  <h3 className={`root-modal-util-9361ef65fc root-modal-util-9c33c69aca `}>
-                    Panduan Menu Kepuasan
-                  </h3>
-                  <p className={`root-modal-util-34a3521642 root-modal-util-b0a0972263 `}>
-                    Penjelasan setiap tab di atas
-                  </p>
-                </div>
-              </div>
-
-              <RootModalCloseButton onClick={() => setShowInfoModal(false)} />
-            </div>
+            <RootInfoModalHeader
+              title="Panduan Menu Kepuasan"
+              icon={<Info aria-hidden="true" />}
+              onClose={() => setShowInfoModal(false)}
+              closeAriaLabel="Tutup panduan menu kepuasan"
+              size="standard"
+            />
 
             {/* Body Modal Info */}
             <div className={"root-modal-util-64d21c5606"}>
