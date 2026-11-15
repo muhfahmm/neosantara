@@ -786,87 +786,73 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
           onClose={() => setConfirmUpgrade(null)}
           zIndexClass="z-[210]"
         >
-          <div className="relative flex-1 w-full overflow-y-auto p-4 font-sans sm:p-5">
-            <SharedModalCloseButton
-              type="button"
-              aria-label="Tutup konfirmasi upgrade"
-              onClick={() => setConfirmUpgrade(null)}
-              className="absolute right-4 top-4 text-root-subtle transition hover:text-root-accent cursor-pointer"
-             appearance="custom">
-              <X className="h-5 w-5" />
-            </SharedModalCloseButton>
-
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-12 w-12 rounded-lg bg-root-canvas border border-root-accent/30 flex items-center justify-center shrink-0">
-                <confirmUpgrade.dept.icon className="h-6 w-6 text-root-accent" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-root-text uppercase leading-none">
-                  {confirmUpgrade.dept.name}
-                </h3>
-                <p className="text-[10px] text-root-subtle font-semibold mt-1">
-                  Level {confirmUpgrade.fromLevel} → {confirmUpgrade.targetLevel}
-                  {confirmUpgrade.targetLevel - confirmUpgrade.fromLevel > 1 && (
-                    <span className="ml-1 text-root-accent">
-                      (melewati {confirmUpgrade.targetLevel - confirmUpgrade.fromLevel} level)
-                    </span>
-                  )}
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-root-canvas border border-root-accent/20 rounded-lg p-4 mb-4">
-              <div className="space-y-1.5 mb-3">
-                {Array.from(
-                  { length: confirmUpgrade.targetLevel - confirmUpgrade.fromLevel },
-                  (_, idx) => confirmUpgrade.fromLevel + idx
-                ).map((stepLevel) => (
-                  <div key={stepLevel} className="flex justify-between text-[11px] font-bold text-root-subtle">
-                    <span>Biaya dari level {stepLevel} ke {stepLevel + 1}:</span>
-                    <span className="text-root-text">
-                      {getLevelUpCostForStep(stepLevel + 1, countryDetail).toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex justify-between items-center border-t border-root-accent/20 pt-3 mb-3">
-                <span className="text-xs font-bold text-root-subtle uppercase">Total Biaya:</span>
-                <span className="text-lg font-black text-root-accent">
-                  {confirmUpgrade.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
+          <div className="flex h-full min-h-0 w-full flex-col overflow-hidden font-sans">
+            <RootInfoModalHeader
+              title={
+                <span className="flex min-w-0 flex-col">
+                  <span>{confirmUpgrade.dept.name}</span>
                 </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-root-subtle uppercase">Kas Negara Sekarang:</span>
-                <span className="text-lg font-black text-root-text">
-                  {money.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
-                </span>
-              </div>
-              <div className="border-t border-root-accent/20 mt-3 pt-3 flex justify-between items-center">
-                <span className="text-xs font-bold text-root-subtle uppercase">Kas Setelah Upgrade:</span>
-                <span className="text-lg font-black text-amber-400">
-                  {(money - confirmUpgrade.cost).toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
-                </span>
-              </div>
-            </div>
+              }
+              icon={<confirmUpgrade.dept.icon aria-hidden="true" />}
+              onClose={() => setConfirmUpgrade(null)}
+              closeAriaLabel="Tutup konfirmasi upgrade"
+              size="standard"
+            />
 
-            <p className="text-xs text-root-subtle font-semibold mb-6">
-              {confirmUpgrade.dept.description}
-            </p>
+            <div className="min-h-0 flex-1 overflow-y-auto bg-root-surface p-4 sm:p-5">
+              <div className="bg-root-canvas border border-root-accent/20 rounded-lg p-4 mb-4">
+                <div className="space-y-1.5 mb-3">
+                  {Array.from(
+                    { length: confirmUpgrade.targetLevel - confirmUpgrade.fromLevel },
+                    (_, idx) => confirmUpgrade.fromLevel + idx
+                  ).map((stepLevel) => (
+                    <div key={stepLevel} className="flex justify-between text-[11px] font-bold text-root-subtle">
+                      <span>Biaya dari level {stepLevel} ke {stepLevel + 1}:</span>
+                      <span className="text-root-text">
+                        {getLevelUpCostForStep(stepLevel + 1, countryDetail).toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
+                      </span>
+                    </div>
+                  ))}
+                </div>
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => setConfirmUpgrade(null)}
-                className="flex-1 px-4 py-2.5 rounded-lg border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-text active:scale-95 transition-all font-bold text-sm uppercase cursor-pointer"
-              >
-                Batal
-              </button>
-              <button
-                onClick={handleConfirmUpgrade}
-                className="flex-1 px-4 py-2.5 rounded-lg bg-root-accent text-root-canvas hover:bg-root-accent/80 active:scale-95 transition-all font-bold text-sm uppercase cursor-pointer shadow-md"
-              >
-                Upgrade
-              </button>
+                <div className="flex justify-between items-center border-t border-root-accent/20 pt-3 mb-3">
+                  <span className="text-xs font-bold text-root-subtle uppercase">Total Biaya:</span>
+                  <span className="text-lg font-black text-root-accent">
+                    {confirmUpgrade.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-bold text-root-subtle uppercase">Kas Negara Sekarang:</span>
+                  <span className="text-lg font-black text-root-text">
+                    {money.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
+                  </span>
+                </div>
+                <div className="border-t border-root-accent/20 mt-3 pt-3 flex justify-between items-center">
+                  <span className="text-xs font-bold text-root-subtle uppercase">Kas Setelah Upgrade:</span>
+                  <span className="text-lg font-black text-amber-400">
+                    {(money - confirmUpgrade.cost).toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-xs text-root-subtle font-semibold mb-6">
+                {confirmUpgrade.dept.description}
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setConfirmUpgrade(null)}
+                  className="flex-1 px-4 py-2.5 rounded-lg border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-text active:scale-95 transition-all font-bold text-sm uppercase cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleConfirmUpgrade}
+                  className="flex-1 px-4 py-2.5 rounded-lg bg-root-accent text-root-canvas hover:bg-root-accent/80 active:scale-95 transition-all font-bold text-sm uppercase cursor-pointer shadow-md"
+                >
+                  Upgrade
+                </button>
+              </div>
             </div>
           </div>
         </NotebookModalWrapper>
