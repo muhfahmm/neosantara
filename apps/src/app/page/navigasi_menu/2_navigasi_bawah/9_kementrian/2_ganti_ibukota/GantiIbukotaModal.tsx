@@ -7,11 +7,7 @@ import {
   Landmark,
   Search,
   CheckCircle,
-  AlertCircle,
-  Clock,
-  Coins,
   MapPin,
-  Sparkles,
 } from "lucide-react";
 import { CAPITALS_DATA } from "@/app/page/map_system/map-data";
 import { majorCities as MAJOR_CITIES_DATA } from "@/app/page/map_system/mapDataAssets";
@@ -196,48 +192,13 @@ export default function GantiIbukotaModal({
                 <div>
                   <h3 className="text-sm sm:text-base font-bold text-root-text tracking-wide uppercase flex items-center gap-2">
                     Relokasi & Pergantian Ibukota
-                    <span className="text-[10px] bg-[#FFE600]/20 text-[#FFE600] px-2 py-0.5 rounded border border-[#FFE600]/30 font-bold uppercase">
-                      Kementerian
+                    <span className="max-w-[40vw] truncate rounded border border-[#FFE600]/30 bg-[#FFE600]/20 px-2 py-0.5 text-[10px] font-bold uppercase text-[#FFE600]">
+                      {currentCapital}
                     </span>
                   </h3>
-                  <p className="text-[11px] text-root-subtle">
-                    Pilih kota strategis untuk dijadikan pusat pemerintahan nasional
-                  </p>
                 </div>
               </div>
 
-              {/* Status Ibukota & Biaya */}
-              <div className="flex items-center gap-2 bg-root-surface px-3 py-1 rounded-lg border border-[#FFE600]/25">
-                <span className="text-[11px] text-[#A2B7B2]">Saat Ini:</span>
-                <span className="text-xs font-black text-[#FFE600] uppercase flex items-center gap-1">
-                  <Sparkles className="h-3 w-3" />
-                  {currentCapital}
-                </span>
-              </div>
-
-              <div className="text-[11px] sm:text-xs font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/20 flex items-center gap-1.5">
-                <Coins className="h-3.5 w-3.5 text-root-accent" />
-                <span>Biaya: {PINDAH_IBUKOTA_COST.toLocaleString("id-ID")} NEO</span>
-              </div>
-
-              {isCooldownActive && cooldownUntilDate ? (
-                <div className="flex items-center gap-1 text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/25 text-[11px] font-semibold">
-                  <Clock className="h-3.5 w-3.5" />
-                  <span>
-                    Cooldown s.d.{" "}
-                    {cooldownUntilDate.toLocaleDateString("id-ID", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                  </span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-1 text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/25 text-[11px] font-bold">
-                  <CheckCircle className="h-3.5 w-3.5" />
-                  <span>Siap Dipindahkan</span>
-                </div>
-              )}
             </div>
 
             <SharedModalCloseButton
@@ -250,15 +211,16 @@ export default function GantiIbukotaModal({
           </div>
 
           {/* Search Bar */}
-          <div className="p-3 sm:p-4 border-b border-root-accent/20 bg-root-canvas shrink-0">
-            <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-root-subtle" />
+          <div className="relative z-10 flex shrink-0 items-center justify-end border-b border-root-accent/20 bg-root-canvas px-4 py-2 sm:px-6">
+            <div className="relative w-full sm:max-w-64">
+              <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-root-accent/60" />
               <input
-                type="text"
+                type="search"
+                aria-label="Cari kota"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Cari nama kota besar..."
-                className="w-full bg-root-surface border border-root-accent/25 rounded-xl pl-10 pr-4 py-2 text-xs text-root-text placeholder-root-subtle focus:outline-none focus:border-root-accent transition-colors"
+                placeholder="Cari kota..."
+                className="h-9 w-full rounded-xl border border-root-accent/30 bg-[#051111] py-1 pl-8 pr-3 text-xs text-root-text placeholder-root-subtle transition-colors focus:border-root-accent focus:outline-none"
               />
             </div>
           </div>
@@ -307,7 +269,7 @@ export default function GantiIbukotaModal({
                           )}
                         </div>
                         <span className="text-[11px] text-root-subtle">
-                          Koordinat: {city.lat.toFixed(2)}°, {city.lng.toFixed(2)}°
+                          {city.lat.toFixed(2)}°, {city.lng.toFixed(2)}°
                         </span>
                       </div>
                     </div>
@@ -338,22 +300,6 @@ export default function GantiIbukotaModal({
             )}
           </div>
 
-          {/* Footer Warning */}
-          <div className="px-5 py-3 border-t border-root-accent/20 bg-root-canvas shrink-0 flex items-center justify-between text-xs text-root-subtle">
-            <div className="flex items-center gap-1.5">
-              <AlertCircle className="h-4 w-4 text-root-accent shrink-0" />
-              <span>
-                Pemindahan ibukota memerlukan biaya 150.000 NEO dan dikenakan masa cooldown selama 5 tahun.
-              </span>
-            </div>
-
-            <SharedModalCloseButton
-              onClick={onClose}
-              className="px-4 py-1.5 rounded-xl border border-root-accent/30 bg-root-surface text-root-text hover:text-root-accent transition-colors font-semibold cursor-pointer"
-             appearance="custom">
-              Tutup
-            </SharedModalCloseButton>
-          </div>
         </div>
       </NotebookModalWrapper>
       )}

@@ -483,6 +483,20 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
   };
 
   const activeData = TABS.find((t) => t.key === activeTab)?.data ?? [];
+  const infoLevel = infoTarget ? getLevel(infoTarget.id) : 0;
+  const infoMaxed = infoLevel >= MAX_LEVEL;
+  const infoMinisterTier = infoTarget
+    ? Number(countryDetail?.[`menteri_${infoTarget.id}`]) || 0
+    : 0;
+  const infoCurrentEffect = infoTarget
+    ? getEffectDescription(infoTarget.id, infoLevel, infoMinisterTier)
+    : "";
+  const infoNextEffect = infoTarget && !infoMaxed
+    ? getEffectDescription(infoTarget.id, infoLevel + 1, infoMinisterTier)
+    : null;
+  const infoNextStepCost = infoTarget && !infoMaxed
+    ? getNextStepCost(infoLevel)
+    : null;
 
   return createPortal(
     <>
@@ -539,14 +553,9 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
               <div className="space-y-4">
                 {activeData.map((dept) => {
                   const level = getLevel(dept.id);
-                  const nextStepCost = getNextStepCost(level);
                   const income = getDailyCost(level);
                   const Icon = dept.icon;
                   const maxed = level >= MAX_LEVEL;
-
-                  const hiredMinisterTier = Number(countryDetail?.[`menteri_${dept.id}`]) || 0;
-                  const currentEffect = getEffectDescription(dept.id, level, hiredMinisterTier);
-                  const nextEffect = !maxed ? getEffectDescription(dept.id, level + 1, hiredMinisterTier) : null;
 
                   return (
                     <div
@@ -557,7 +566,9 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                       <div className="bg-root-surface px-4 py-2.5 flex items-center justify-between border-b border-root-accent/20">
                         <div className="flex items-center gap-2">
                           <button
+                            type="button"
                             onClick={() => setInfoTarget(dept)}
+                            aria-label={`Informasi ${dept.name}`}
                             className="text-root-subtle hover:text-root-accent cursor-pointer transition-colors"
                           >
                             <Info className="h-4 w-4" />
@@ -657,23 +668,6 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                         </button>
                       </div>
 
-                      <div className="px-4 pb-3 -mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[10px] font-bold">
-                        <span className="text-root-accent">
-                          Efek saat ini: <span className="text-root-text">{currentEffect}</span>
-                        </span>
-                        {!maxed && nextEffect && (
-                          <span className="text-root-subtle">
-                            Level berikutnya: <span className="text-root-accent">{nextEffect}</span>
-                          </span>
-                        )}
-                      </div>
-
-                      {!maxed && (
-                        <div className="px-4 pb-3 -mt-1 text-[10px] font-bold text-root-subtle">
-                          Upgrade ke level {level + 1}: <span className="text-root-accent">{getLevelUpCostForStep(level + 1, countryDetail)?.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span> &nbsp;•&nbsp;
-                          Tekan kotak level manapun untuk lompat langsung ke level tersebut
-                        </div>
-                      )}
                     </div>
                   );
                 })}
@@ -739,6 +733,35 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
               <p className="text-xs font-semibold text-root-subtle">
                 {infoTarget.description}
               </p>
+              <section className="mt-4 space-y-3 rounded-xl border border-root-accent/20 bg-root-canvas p-3 sm:p-4">
+                <h3 className="root-modal-util-9361ef65fc">Informasi Level</h3>
+                <div className="space-y-2 text-xs font-semibold">
+                  <p className="text-root-subtle">
+                    Efek saat ini: <span className="text-root-text">{infoCurrentEffect}</span>
+                  </p>
+                  {!infoMaxed && infoNextEffect && (
+                    <>
+                      <p className="text-root-subtle">
+                        Level berikutnya: <span className="text-root-accent">{infoNextEffect}</span>
+                      </p>
+                      <p className="text-root-subtle">
+                        Upgrade ke level {infoLevel + 1}:{" "}
+                        <span className="text-root-accent">
+                          {infoNextStepCost?.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
+                        </span>
+                      </p>
+                      <p className="text-root-subtle">
+                        Tekan kotak level mana pun untuk langsung menuju level tersebut.
+                      </p>
+                    </>
+                  )}
+                  {infoMaxed && (
+                    <p className="text-root-subtle">
+                      Departemen telah mencapai level maksimum ({MAX_LEVEL}).
+                    </p>
+                  )}
+                </div>
+              </section>
               <div className="mt-4 space-y-2">
                 <p className="text-[10px] font-black uppercase tracking-wide text-root-accent">
                   Dampak:
