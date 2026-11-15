@@ -13,7 +13,8 @@ npm run electron:start
 # Alias yang setara:
 npm run electron:dev
 
-cd /d D:\project-sendiri\neosantara && npm run dev
+cd /d D:\project-sendiri\neosantara1 && npm run dev
+cd /d D:\project-sendiri\neosantara1 && npm run electron:start
 
 npm run tauri:android:prepare && npm run tauri:android:dev -- 192.168.137.16:42377 --host 192.168.137.1
 atau langsung:

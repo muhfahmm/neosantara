@@ -1,8 +1,5 @@
 "use client";
-import { createPortal } from "react-dom";
-
-import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
-import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import RootConfirmModal from "@/app/page/root_modals_design_menu/RootConfirmModal";
 interface EmbassyRelationRequirementModalProps {
   isOpen: boolean;
   countryName?: string | null;
@@ -18,40 +15,20 @@ export default function EmbassyRelationRequirementModal({
   minimumRelation,
   onClose,
 }: EmbassyRelationRequirementModalProps) {
-  if (!isOpen) return null;
-
-  const modalContent = (
-    <NotebookModalWrapper compact zIndexClass="z-[100000001]">
-      {/* Container Modal Lebih Lebar dan Panjang */}
-      <div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
-        
-        <RootInfoModalHeader title="Kedutaan Belum Dapat Dibangun" onClose={onClose} size="compact" />
-        {/* Area Konten */}
-        <div className="flex-1">
-          <p className="text-sm sm:text-base text-root-text leading-relaxed">
-            Hubungan dengan <strong className="text-white">{countryName}</strong> harus mencapai minimal{" "}
-            <strong className="text-amber-300">{minimumRelation}</strong> untuk membangun kedutaan. Hubungan saat ini{" "}
-            <strong className="text-amber-300">{currentRelation}</strong>.
-          </p>
-        </div>
-
-        {/* Area Tombol (Diperkecil) */}
-        <div className="flex justify-end mt-6 pt-4 border-t border-amber-400/20">
-          <button
-            onClick={onClose}
-            className="w-full sm:w-auto px-6 bg-root-accent hover:bg-[#00e699] border border-root-accent rounded-xl py-2 text-center text-root-canvas font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
-          >
-            Mengerti
-          </button>
-        </div>
-
-      </div>
-    </NotebookModalWrapper>
+  return (
+    <RootConfirmModal
+      isOpen={isOpen}
+      title="Kedutaan Belum Dapat Dibangun"
+      onClose={onClose}
+      variant="info"
+      cancelLabel="Mengerti"
+      footerBorderClassName="border-amber-400/20"
+    >
+      <p className="text-sm sm:text-base text-root-text leading-relaxed">
+        Hubungan dengan <strong className="text-white">{countryName}</strong> harus mencapai minimal{" "}
+        <strong className="text-amber-300">{minimumRelation}</strong> untuk membangun kedutaan. Hubungan saat ini{" "}
+        <strong className="text-amber-300">{currentRelation}</strong>.
+      </p>
+    </RootConfirmModal>
   );
-
-  if (typeof window !== "undefined") {
-    return createPortal(modalContent, document.body);
-  }
-
-  return modalContent;
 }

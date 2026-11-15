@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { createPortal } from 'react-dom';
 import {
   Swords,
   Shield,
@@ -243,8 +244,8 @@ export default function PerbandinganPasukan({
     udara: { icon: Plane, color: 'text-indigo-700', bg: 'bg-indigo-100' },
   };
 
-  return (
-    <div className="fixed inset-0 z-[9999] bg-[#050B0B] flex flex-col w-screen h-screen font-sans select-none overflow-hidden animate-[warFadeIn_0.3s_ease-out] text-white">
+  const analysisContent = (
+    <div className="fixed inset-0 z-[10000000001] bg-[#050B0B] flex flex-col w-screen h-screen font-sans select-none overflow-hidden animate-[warFadeIn_0.3s_ease-out] text-white">
       {/* ══════════ BACKGROUND GRID & GLOW FX ══════════ */}
       <div
         className="absolute inset-0 opacity-[0.08] pointer-events-none"
@@ -448,4 +449,8 @@ export default function PerbandinganPasukan({
       </div>
     </div>
   );
+
+  return typeof document !== 'undefined'
+    ? createPortal(analysisContent, document.body)
+    : analysisContent;
 }

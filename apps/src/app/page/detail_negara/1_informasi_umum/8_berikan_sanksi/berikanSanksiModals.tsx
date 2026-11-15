@@ -31,7 +31,7 @@ export default function BerikanSanksiModal({
 		`${value >= 0 ? '+' : ''}${value.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`;
 
 	const modalContent = (
-		<NotebookModalWrapper compact zIndexClass="z-[100000001]">
+		<NotebookModalWrapper compact zIndexClass="z-[100000001]" frameClassName="root-confirm-modal-frame">
 			{/* Container Modal Lebih Lebar dan Panjang */}
 			<div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
 				

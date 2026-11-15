@@ -1,6 +1,7 @@
 'use client';
 
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
+import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 import React, { useState, useMemo } from 'react';
 import {
   Sword,
@@ -359,13 +360,15 @@ export default function BeriTentaraModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      {/* Modal Container: Ukuran sama persis dengan modal detail negara */}
+    <NotebookModalWrapper
+      zIndexClass="z-[100000001]"
+      frameClassName="troop-transfer-modal-frame"
+    >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="troop-transfer-title"
-        className="modal-responsive-shell bg-root-surface border-2 sm:border-3 border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl"
+        className="troop-transfer-modal relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-root-surface font-sans"
       >
 
         {/* Background Glow */}
@@ -377,15 +380,16 @@ export default function BeriTentaraModal({
           onClose={onClose}
           icon={<Sword />}
           size="standard"
-          actions={
-            <p className="text-xs text-root-accent/70 font-semibold uppercase tracking-wider">
-              Transfer Pasukan ke Sekutu: <span className="text-root-accent font-bold">{targetName}</span>
-            </p>
+          centerContent={
+            <div className="flex min-w-0 items-center gap-2 text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-accent">
+              <ArrowRight className="h-4 w-4 shrink-0" />
+              <span className="truncate">Sekutu: {targetName}</span>
+            </div>
           }
         />
 
         {/* RINGKASAN MILITARY POWER & PERBANDINGAN KOMPARATIF */}
-        <div className="px-6 sm:px-8 py-3 bg-root-canvas/90 border-b border-root-accent/20 flex flex-col md:flex-row items-center justify-between gap-4 relative z-10 shrink-0">
+        <div className="px-3 sm:px-4 lg:px-8 py-3 bg-root-canvas/90 border-b border-root-accent/20 flex flex-col md:flex-row items-center justify-between gap-4 relative z-10 shrink-0 min-w-0">
           {/* User Status */}
           <div className="flex items-center gap-3 w-full md:w-auto">
             <div className="p-2 rounded-lg bg-root-accent/10 border border-root-accent/30">
@@ -440,7 +444,7 @@ export default function BeriTentaraModal({
         </div>
 
         {/* TAB PILIHAN MATRA: DARAT / LAUT / UDARA */}
-        <div className="px-6 sm:px-8 py-2.5 bg-root-surface border-b border-root-accent/20 flex items-center gap-2 relative z-10 shrink-0">
+        <div className="troop-transfer-tabs px-3 sm:px-4 lg:px-8 py-2.5 bg-root-surface border-b border-root-accent/20 flex items-center gap-2 relative z-10 shrink-0 overflow-x-auto no-scrollbar min-w-0">
           {(['darat', 'laut', 'udara'] as ArmadaMatra[]).map((matra) => {
             const isActive = activeTab === matra;
             const Icon = matra === 'darat' ? Sword : matra === 'laut' ? Ship : Plane;
@@ -453,7 +457,7 @@ export default function BeriTentaraModal({
               <button
                 key={matra}
                 onClick={() => setActiveTab(matra)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-black text-xs uppercase tracking-wider transition-all cursor-pointer border ${isActive
+                className={`shrink-0 whitespace-nowrap flex items-center gap-2 px-4 py-2 rounded-xl font-black text-xs uppercase tracking-wider transition-all cursor-pointer border ${isActive
                     ? 'bg-root-accent text-root-canvas border-root-accent shadow-md shadow-root-accent/20'
                     : 'bg-root-canvas text-root-subtle hover:text-root-accent border-root-accent/20 hover:border-root-accent/40'
                   }`}
@@ -473,7 +477,7 @@ export default function BeriTentaraModal({
           {totalUnitsToGift > 0 && (
             <button
               onClick={handleReset}
-              className="ml-auto text-xs font-bold text-rose-400 hover:text-rose-300 underline uppercase tracking-wider cursor-pointer"
+              className="ml-auto shrink-0 text-xs font-bold text-rose-400 hover:text-rose-300 underline uppercase tracking-wider cursor-pointer"
             >
               Reset Semua
             </button>
@@ -481,7 +485,7 @@ export default function BeriTentaraModal({
         </div>
 
         {/* BODY UTAMA: DAFTAR UNIT DAN PERBANDINGAN SLOT */}
-        <div className="flex-1 min-h-0 bg-root-surface p-4 sm:p-6 overflow-y-auto space-y-3 relative z-10">
+        <div className="troop-transfer-body flex-1 min-h-0 min-w-0 bg-root-surface p-3 sm:p-4 lg:p-6 overflow-y-auto space-y-3 relative z-10">
           {UNIT_CATALOG[activeTab].map((unit) => {
             const userStock = getUnitQuantity(playerCountryDetail, unit);
             const targetStock = getUnitQuantity(targetCountryDetail, unit);
@@ -629,7 +633,7 @@ export default function BeriTentaraModal({
         )}
 
         {/* FOOTER MODAL */}
-        <div className="px-6 py-4 border-t border-root-accent/20 bg-root-canvas shrink-0 flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10">
+        <div className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 border-t border-root-accent/20 bg-root-canvas shrink-0 flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10 min-w-0">
           <div className="flex items-center gap-2 text-xs text-root-subtle">
             <Info className="w-4 h-4 text-root-accent shrink-0" />
             <span>
@@ -664,6 +668,6 @@ export default function BeriTentaraModal({
         </div>
 
       </div>
-    </div>
+    </NotebookModalWrapper>
   );
 }

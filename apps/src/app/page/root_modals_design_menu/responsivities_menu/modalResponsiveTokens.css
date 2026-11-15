@@ -853,6 +853,28 @@
   height: 100% !important;
 }
 
+.notebook-modal-frame.troop-transfer-modal-frame > .modal-responsive-shell {
+  min-width: 0 !important;
+}
+
+.troop-transfer-modal > * {
+  min-width: 0;
+}
+
+.notebook-modal-frame.root-confirm-modal-frame > .modal-responsive-shell,
+.notebook-modal-frame.root-confirm-modal-frame[data-viewport-mode] > .modal-responsive-shell {
+  height: auto !important;
+  max-height: min(480px, var(--modal-max-height)) !important;
+  min-height: 0 !important;
+  flex: 0 1 auto !important;
+}
+
+.notebook-modal-frame.root-confirm-modal-frame .notebook-modal-sheet,
+.notebook-modal-frame.root-confirm-modal-frame .notebook-modal-content {
+  flex: 0 1 auto !important;
+  min-height: 0;
+}
+
 .notebook-modal-frame:has(.building-modal-layout) > .modal-responsive-shell {
   width: min(100%, var(--modal-max-width)) !important;
   max-width: var(--modal-max-width) !important;
@@ -925,6 +947,19 @@
 }
 
 .modal-responsive-shell > .bg-root-surface > :last-child {
+  flex: 1 1 0% !important;
+  min-height: 0;
+}
+
+.troop-transfer-modal > .troop-transfer-tabs {
+  flex: 0 0 auto !important;
+}
+
+.troop-transfer-modal > .troop-transfer-tabs > :last-child {
+  flex: 0 0 auto !important;
+}
+
+.troop-transfer-modal > .troop-transfer-body {
   flex: 1 1 0% !important;
   min-height: 0;
 }

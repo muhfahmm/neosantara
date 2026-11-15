@@ -396,7 +396,7 @@ const GameClock = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1, duration: 0.6 }}
-            className="hidden sm:flex absolute top-6 right-6 md:top-8 md:right-8 z-20 items-center gap-2 px-3 py-1.5 rounded-md border border-emerald-500/20 bg-slate-950/60  text-[9px] md:text-[10px] font-mono text-emerald-400 tracking-widest"
+            className="hidden sm:flex absolute top-6 right-6 md:top-8 md:right-8 z-20 items-center gap-2 whitespace-nowrap px-3 py-1.5 rounded-md border border-emerald-500/20 bg-slate-950/60 text-[9px] md:text-[10px] font-mono text-emerald-400 tracking-widest"
         >
             <Radio className="w-3 h-3 animate-pulse" />
             {time}
@@ -412,7 +412,7 @@ const AlertBeacon = () => (
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 2.2, duration: 0.5 }}
-        className="hidden sm:flex absolute top-20 right-6 md:top-24 md:right-8 z-20 items-center gap-2 px-3 py-1.5 rounded-md border border-red-500/30 bg-red-500/[0.08] "
+        className="flex relative self-end items-center gap-2 px-3 py-1.5 rounded-md border border-red-500/30 bg-red-500/[0.08] shrink-0"
     >
         <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
@@ -458,7 +458,7 @@ const BootLog = () => {
             initial={{ opacity: 0, x: 12 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className="hidden xl:block absolute top-36 right-8 z-20 font-mono text-[9px] text-emerald-500/70 pointer-events-none leading-relaxed w-[280px]"
+            className="relative w-full font-mono text-[9px] text-emerald-500/70 pointer-events-none leading-relaxed shrink-0"
         >
             {messages.slice(0, visibleLines).map((m, i) => (
                 <motion.div
@@ -528,7 +528,7 @@ const GlobalStatsPanel = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 1.1, duration: 0.7 }}
-            className="hidden xl:flex flex-col gap-2 absolute top-1/2 -translate-y-1/2 right-8 xl:right-12 z-20 w-[210px] pointer-events-none"
+            className="relative flex flex-col gap-2 w-full pointer-events-none"
         >
             <div className="text-[9px] tracking-[0.3em] text-emerald-500/70 font-bold mb-1 flex items-center gap-2">
                 <span className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
@@ -579,7 +579,7 @@ const PlayerRankCard = () => (
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 2.8, duration: 0.6 }}
-        className="hidden 2xl:flex absolute top-[13.5rem] right-8 z-20 flex-col gap-2 w-[240px] px-3 py-2.5 rounded-lg border border-emerald-500/15 bg-slate-950/50  pointer-events-none"
+        className="relative flex flex-col gap-2 w-full px-3 py-2.5 rounded-lg border border-emerald-500/15 bg-slate-950/50 pointer-events-none"
     >
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -654,7 +654,7 @@ const ThreatLevelMeter = ({ compact = false }: { compact?: boolean }) => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 2.4, duration: 0.6 }}
-            className="hidden 2xl:flex absolute top-[17.5rem] right-8 z-20 flex-col gap-2 w-[240px] px-3 py-2.5 rounded-lg border border-emerald-500/15 bg-slate-950/50  pointer-events-none"
+            className="relative flex flex-col gap-2 w-full px-3 py-2.5 rounded-lg border border-emerald-500/15 bg-slate-950/50 pointer-events-none"
         >
             <div className="flex items-center justify-between">
                 <span className="text-[8px] tracking-[0.25em] text-slate-400 font-bold flex items-center gap-1.5">
@@ -735,7 +735,7 @@ const TelemetryReadout = ({ compact = false }: { compact?: boolean }) => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 2.8, duration: 0.6 }}
-            className="hidden 2xl:flex absolute top-[21.5rem] right-8 z-20 flex-col gap-1.5 w-[240px] px-3 py-2.5 rounded-lg border border-emerald-500/15 bg-slate-950/50  pointer-events-none"
+            className="relative flex flex-col gap-1.5 w-full px-3 py-2.5 rounded-lg border border-emerald-500/15 bg-slate-950/50 pointer-events-none"
         >
             <div className="flex items-center gap-2 mb-0.5">
                 <Cpu className="w-3 h-3 text-emerald-500/80" />
@@ -973,24 +973,6 @@ const NewsTicker = () => {
 };
 
 /* ============================================================
-   CLASSIFICATION BANNER  —  top center
-   ============================================================ */
-const ClassificationBanner = () => (
-    <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8, duration: 0.6 }}
-        className="hidden md:flex absolute top-0 left-0 right-0 z-20 justify-center pointer-events-none"
-    >
-        <div className="px-6 py-1 bg-emerald-500/5 border-x border-b border-emerald-500/20 ">
-            <span className="text-[8px] tracking-[0.5em] font-black text-emerald-500/70">
-                ◆ CLASSIFIED — LEVEL 4 CLEARANCE ◆
-            </span>
-        </div>
-    </motion.div>
-);
-
-/* ============================================================
    HUD CORNERS
    ============================================================ */
 const HudCorners = () => (
@@ -1143,14 +1125,15 @@ export default function PlayMenuPage() {
                 <RotatingGlobe />
                 <RadarSweep />
                 <HudCorners />
-                <ClassificationBanner />
                 <GameClock />
-                <AlertBeacon />
-                <BootLog />
-                <GlobalStatsPanel />
-                <PlayerRankCard />
-                <ThreatLevelMeter />
-                <TelemetryReadout />
+                <div className="hidden xl:flex absolute top-20 right-6 md:right-8 z-20 w-[min(22rem,calc(100vw-2rem))] max-h-[calc(100dvh-7rem)] flex-col gap-2 overflow-y-auto no-scrollbar">
+                    <AlertBeacon />
+                    <BootLog />
+                    <PlayerRankCard />
+                    <ThreatLevelMeter />
+                    <TelemetryReadout />
+                    <GlobalStatsPanel />
+                </div>
                 <VerticalDataStream />
                 <AdvisorCard />
                 <HeartbeatMonitor />

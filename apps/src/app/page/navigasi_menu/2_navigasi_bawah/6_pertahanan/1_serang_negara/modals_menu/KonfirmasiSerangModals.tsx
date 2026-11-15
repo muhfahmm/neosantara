@@ -247,7 +247,7 @@ export default function SerangModals({
   );
 
   const content = (
-    <div className="fixed inset-0 z-[9999999] flex flex-col bg-root-surface font-sans select-none overflow-hidden animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[10000000001] flex flex-col bg-root-surface font-sans select-none overflow-hidden animate-in fade-in duration-200">
       <div className="w-full h-full flex flex-col bg-root-surface relative">
         {/* HEADER HALAMAN KONFIRMASI SERANG */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
