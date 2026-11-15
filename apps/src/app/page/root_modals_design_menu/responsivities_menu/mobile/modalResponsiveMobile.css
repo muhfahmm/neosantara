@@ -316,84 +316,84 @@
 .country-detail-modal-frame[data-viewport-mode] .country-detail-action-grid {
   display: grid !important;
   grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-  gap: 8px !important;
-  padding-top: 10px !important;
+  gap: 6px !important;
+  padding-top: 6px !important;
 }
 
 .country-detail-modal-frame[data-viewport-mode] .country-detail-action-card {
   box-sizing: border-box !important;
-  height: 82px !important;
-  min-height: 82px !important;
-  gap: 6px !important;
-  padding: 8px !important;
-  border-radius: 10px !important;
+  height: 60px !important;
+  min-height: 60px !important;
+  gap: 4px !important;
+  padding: 5px 4px !important;
+  border-radius: 8px !important;
 }
 
 .country-detail-modal-frame[data-viewport-mode] .country-detail-action-card>svg {
-  width: 22px !important;
-  height: 22px !important;
+  width: 17px !important;
+  height: 17px !important;
 }
 
 .country-detail-modal-frame[data-viewport-mode] .country-detail-action-card>span {
-  font-size: 10px !important;
+  font-size: 6px !important;
   line-height: 1.15 !important;
   letter-spacing: 0.04em !important;
 }
 
 .country-detail-modal-frame[data-viewport-mode] .country-user-modal-content .country-user-stats-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap: 8px !important;
+  gap: 6px !important;
 }
 
 .country-detail-modal-frame[data-viewport-mode] .country-user-modal-content .country-user-stats-grid>div:nth-child(-n + 6) {
-  min-height: 76px;
+  min-height: 60px;
   flex-direction: row !important;
   align-items: center !important;
-  gap: 8px !important;
-  padding: 8px !important;
-  border-radius: 10px !important;
-}
-
-.country-detail-modal-frame[data-viewport-mode] .country-user-modal-content .country-user-stats-grid>div:nth-child(-n + 6)>div:first-child {
-  padding: 6px !important;
+  gap: 6px !important;
+  padding: 5px 6px !important;
   border-radius: 8px !important;
 }
 
+.country-detail-modal-frame[data-viewport-mode] .country-user-modal-content .country-user-stats-grid>div:nth-child(-n + 6)>div:first-child {
+  padding: 4px !important;
+  border-radius: 6px !important;
+}
+
 .country-detail-modal-frame[data-viewport-mode] .country-user-modal-content .country-user-stats-grid>div:nth-child(-n + 6) svg {
-  width: 18px !important;
-  height: 18px !important;
+  width: 15px !important;
+  height: 15px !important;
 }
 
 .country-detail-modal-frame[data-viewport-mode] .country-user-modal-content .country-user-stats-grid>div:nth-child(-n + 6) p:first-child {
-  font-size: 8px !important;
+  font-size: 7px !important;
   line-height: 1.15 !important;
-  letter-spacing: 0.08em !important;
+  letter-spacing: 0.06em !important;
 }
 
 .country-detail-modal-frame[data-viewport-mode] .country-user-modal-content .country-user-stats-grid>div:nth-child(-n + 6) p:last-child {
-  margin-top: 3px !important;
-  font-size: 12px !important;
-  line-height: 1.2 !important;
+  margin-top: 2px !important;
+  font-size: 10px !important;
+  line-height: 1.15 !important;
 }
 
 .country-detail-modal-frame[data-viewport-mode] .country-user-modal-content .country-user-stats-grid>div:nth-child(n + 7) {
-  gap: 6px !important;
-  padding: 8px !important;
-  border-radius: 10px !important;
+  gap: 4px !important;
+  padding: 5px 6px !important;
+  border-radius: 8px !important;
 }
 
 .country-detail-modal-frame[data-viewport-mode] .country-user-modal-content .country-user-stats-grid>div:nth-child(n + 7)>div:first-child>div:first-child {
-  padding: 5px !important;
+  padding: 4px !important;
 }
 
 .country-detail-modal-frame[data-viewport-mode] .country-user-modal-content .country-user-stats-grid>div:nth-child(n + 7) svg {
-  width: 17px !important;
-  height: 17px !important;
+  width: 14px !important;
+  height: 14px !important;
 }
 
 .country-detail-modal-frame[data-viewport-mode] .country-user-modal-content .country-user-stats-grid>div:nth-child(n + 7)>p:nth-child(2) {
-  font-size: 13px !important;
-  line-height: 1.2 !important;
+  font-size: 10px !important;
+  line-height: 1.15 !important;
 }
 
 .country-detail-modal-frame[data-viewport-mode] .country-user-modal-content>div:last-child {
