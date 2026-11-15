@@ -717,39 +717,27 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
         </button>
       </MenuInfoModal>
 
-      {/* ========== INFO POPUP ========== */}
       {infoTarget && (
-        <div
-          className="fixed inset-0 z-[210] flex items-center justify-center p-4 bg-transparent pointer-events-auto"
-          onClick={() => setInfoTarget(null)}
+        <MenuInfoModal
+          isOpen
+          onClose={() => setInfoTarget(null)}
+          title={infoTarget.name}
+          description={infoTarget.description}
         >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl p-6 shadow-2xl relative font-sans"
-          >
-            <SharedModalCloseButton
-              onClick={() => setInfoTarget(null)}
-              className="absolute top-3 right-3 text-root-subtle hover:text-root-accent cursor-pointer"
-             appearance="custom">
-              <X className="h-5 w-5" />
-            </SharedModalCloseButton>
-            <h3 className="text-lg font-bold text-root-text mb-2 uppercase">{infoTarget.name}</h3>
-            <p className="text-xs text-root-subtle font-semibold mb-4">{infoTarget.description}</p>
-            <div className="space-y-2">
-              <p className="text-[10px] font-black uppercase tracking-wide text-root-accent">
-                Dampak:
-              </p>
-              <ul className="space-y-1.5">
-                {infoTarget.effects.map((effect, i) => (
-                  <li key={i} className="text-xs text-root-text font-semibold flex gap-2">
-                    <span className="text-root-accent">•</span>
-                    {effect}
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div className="mt-4 space-y-2">
+            <p className="text-[10px] font-black uppercase tracking-wide text-root-accent">
+              Dampak:
+            </p>
+            <ul className="space-y-1.5">
+              {infoTarget.effects.map((effect, i) => (
+                <li key={i} className="flex gap-2 text-xs font-semibold text-root-text">
+                  <span className="text-root-accent">•</span>
+                  {effect}
+                </li>
+              ))}
+            </ul>
           </div>
-        </div>
+        </MenuInfoModal>
       )}
 
       {/* ========== CONFIRMATION UPGRADE POPUP ========== */}
