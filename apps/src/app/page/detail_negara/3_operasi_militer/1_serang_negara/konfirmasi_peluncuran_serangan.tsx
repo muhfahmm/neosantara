@@ -1,7 +1,7 @@
 "use client";
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
-import { ShieldAlert, Swords, X } from "lucide-react";
+import { ShieldAlert, Swords } from "lucide-react";
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 
 interface KonfirmasiPeluncuranSeranganProps {
 	playerName: string;
@@ -27,22 +27,12 @@ export default function KonfirmasiPeluncuranSerangan({
 	return (
 		<div className="fixed inset-0 z-[70] flex items-center justify-center  p-4 animate-in fade-in duration-200">
 			<div className="modal-responsive-shell overflow-y-auto bg-root-surface border border-root-accent/30 rounded-2xl shadow-2xl font-sans text-white relative">
-				<div className="bg-root-canvas border-b border-root-accent/20 px-5 sm:px-6 py-4 flex items-center justify-between">
-					<div className="flex items-center gap-2.5">
-						<Swords className="w-5 h-5 text-root-accent" />
-						<h3 className="text-base font-black text-root-accent tracking-wider uppercase">
-							KOMANDO OPERASI MILITER
-						</h3>
-					</div>
-					<SharedModalCloseButton
-						type="button"
-						onClick={onBack}
-						className="rounded-lg p-1.5 text-root-subtle hover:text-root-accent cursor-pointer transition-colors"
-						aria-label="Tutup konfirmasi serangan"
-					 appearance="custom">
-						<X className="h-4 w-4" />
-					</SharedModalCloseButton>
-				</div>
+				<RootInfoModalHeader
+					title="Komando Operasi Militer"
+					onClose={onBack}
+					icon={<Swords />}
+					size="standard"
+				/>
 
 				<div className="p-5 sm:p-6 space-y-6">
 					<div className="flex items-center justify-between bg-[#111e24] border border-root-accent/20 rounded-xl p-5 sm:p-6">

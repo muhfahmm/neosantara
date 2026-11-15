@@ -1,12 +1,12 @@
 'use client';
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import { useViewportMode } from '@/app/hooks/useViewportMode';
 import Image from 'next/image';
-import { Gift, X, Check, Lock, Zap, AlertTriangle } from 'lucide-react';
+import { Gift, Check, Lock, Zap, AlertTriangle } from 'lucide-react';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import {
   formatProductionProductName,
   PRODUCTION_BAN_CATEGORIES,
@@ -408,27 +408,15 @@ export default function TopRightGiftIcon({
 
       {/* Modal Hadiah */}
       {isOpen && mounted && createPortal(
-        <NotebookModalWrapper compact zIndexClass="z-[200]">
-          <div className="reward-modal-typography w-full min-w-0 overflow-hidden flex flex-col relative font-sans pointer-events-auto">
+        <NotebookModalWrapper onClose={onClose} zIndexClass="z-[200]">
+          <div className="root-modal-util-52b6b298fe reward-modal-typography font-sans pointer-events-auto">
 
-            {/* ---- HEADER ---- */}
-            <div className="px-5 sm:px-6 py-3 sm:py-3.5 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg border border-root-accent/30 bg-root-surface shrink-0">
-                  <Gift className="h-3.5 w-3.5 text-root-accent" />
-                </div>
-                <h2 className="text-sm sm:text-base font-black text-root-accent tracking-wide uppercase">
-                  Hadiah Harian
-                </h2>
-              </div>
-              <SharedModalCloseButton
-                onClick={onClose}
-                className="p-1.5 sm:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
-               appearance="custom">
-                <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-4 w-4" />
-              </SharedModalCloseButton>
-            </div>
+            <RootInfoModalHeader
+              title="Hadiah Harian"
+              onClose={onClose}
+              icon={<Gift />}
+              size="standard"
+            />
 
             {/* ---- BODY (GRID HARIAN) ---- */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-5 bg-root-canvas relative z-10 flex flex-col items-center justify-start">
@@ -529,39 +517,13 @@ export default function TopRightGiftIcon({
         <NotebookModalWrapper compact zIndexClass="z-[300]">
           <div className="reward-modal-typography w-full min-w-0 overflow-hidden flex flex-col relative font-sans pointer-events-auto">
 
-            {/* Header */}
-            <div className="px-5 sm:px-6 py-3 sm:py-3.5 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas gap-2 shrink-0">
-              <div className="flex items-center gap-2">
-                <div className={`p-1.5 rounded-lg border shrink-0 ${
-                  feedbackModal.variant === 'success'
-                    ? 'bg-root-accent/10 border-root-accent/30'
-                    : 'bg-rose-500/10 border-rose-500/30'
-                }`}>
-                  {feedbackModal.variant === 'success' ? (
-                    <Check className="h-3.5 w-3.5 text-root-accent" />
-                  ) : (
-                    <AlertTriangle className="h-3.5 w-3.5 text-rose-400" />
-                  )}
-                </div>
-                <h3 className={`text-xs sm:text-sm font-black tracking-wide uppercase ${
-                  feedbackModal.variant === 'success' ? 'text-root-accent' : 'text-rose-400'
-                }`}>
-                  {feedbackModal.title}
-                </h3>
-              </div>
-              <SharedModalCloseButton
-                onClick={() => setFeedbackModal(null)}
-                type="button"
-                aria-label="Tutup feedback"
-                className={`p-1 rounded-lg border transition-all cursor-pointer font-bold text-xs uppercase flex items-center justify-center w-6 h-6 ${
-                  feedbackModal.variant === 'success'
-                    ? 'border-root-accent/30 bg-root-surface text-root-accent hover:bg-root-accent hover:text-root-canvas'
-                    : 'border-rose-500/30 bg-rose-950/30 text-rose-400 hover:bg-rose-500 hover:text-white'
-                }`}
-               appearance="custom">
-                <span aria-hidden="true" className="text-lg leading-none">×</span>
-              </SharedModalCloseButton>
-            </div>
+            <RootInfoModalHeader
+              title={feedbackModal.title}
+              onClose={() => setFeedbackModal(null)}
+              icon={feedbackModal.variant === 'success' ? <Check /> : <AlertTriangle />}
+              closeAriaLabel="Tutup feedback"
+              size="compact"
+            />
 
             {/* Body */}
             <div className="flex-1 min-h-0 p-4 sm:p-5 overflow-y-auto">

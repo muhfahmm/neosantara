@@ -3,6 +3,7 @@ import React from "react";
 import { createPortal } from "react-dom";
 
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 interface DestroyPaktaModalProps {
   isOpen: boolean;
   countryName?: string | null;
@@ -16,7 +17,7 @@ export default function DestroyPaktaModal({ isOpen, countryName, onClose, onConf
   const modalContent = (
     <NotebookModalWrapper compact zIndexClass="z-[100000001]">
       <div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
-        <h3 className="text-lg font-black text-rose-400 tracking-wide uppercase mb-3">Konfirmasi Putus Pakta Non-Agresi</h3>
+        <RootInfoModalHeader title="Konfirmasi Putus Pakta Non-Agresi" onClose={onClose} size="compact" />
         <p className="text-xs sm:text-sm text-root-text mb-6 leading-relaxed">Apakah Anda yakin ingin memutus pakta non-agresi dengan <strong className="text-white">{countryName}</strong>? Tindakan ini dapat memengaruhi hubungan diplomatik.</p>
 
         <div className="flex gap-3 justify-end">

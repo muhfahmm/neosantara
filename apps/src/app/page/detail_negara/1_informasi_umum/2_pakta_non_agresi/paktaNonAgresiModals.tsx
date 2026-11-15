@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import TravelFuelCostPanel from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
 import type { TravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 interface PaktaNonAgresiModalProps {
 	isOpen: boolean;
 	countryName?: string | null;
@@ -22,12 +23,9 @@ export default function PaktaNonAgresiModal({ isOpen, countryName, onClose, onCo
 			{/* Container Modal */}
 			<div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
 				
+				<RootInfoModalHeader title="Konfirmasi Pakta Non-Agresi" onClose={onClose} size="compact" />
 				{/* Area Konten */}
 				<div className="flex-1">
-					<h3 className="text-xl sm:text-2xl font-black text-root-accent tracking-wide uppercase mb-6 border-b border-root-accent/20 pb-4">
-						Konfirmasi Pakta Non-Agresi
-					</h3>
-					
 					<p className="text-sm sm:text-base text-root-text mb-4 leading-relaxed">
 						Apakah Anda ingin mengajukan Pakta Non-Agresi kepada <strong className="text-white text-lg">{countryName}</strong>?
 					</p>

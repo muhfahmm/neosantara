@@ -2,6 +2,7 @@
 import { createPortal } from "react-dom";
 
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 interface EmbassyRelationRequirementModalProps {
   isOpen: boolean;
   countryName?: string | null;
@@ -24,12 +25,9 @@ export default function EmbassyRelationRequirementModal({
       {/* Container Modal Lebih Lebar dan Panjang */}
       <div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
         
+        <RootInfoModalHeader title="Kedutaan Belum Dapat Dibangun" onClose={onClose} size="compact" />
         {/* Area Konten */}
         <div className="flex-1">
-          <h3 className="text-xl sm:text-2xl font-black text-amber-300 tracking-wide uppercase mb-6 border-b border-amber-400/20 pb-4">
-            Kedutaan Belum Dapat Dibangun
-          </h3>
-          
           <p className="text-sm sm:text-base text-root-text leading-relaxed">
             Hubungan dengan <strong className="text-white">{countryName}</strong> harus mencapai minimal{" "}
             <strong className="text-amber-300">{minimumRelation}</strong> untuk membangun kedutaan. Hubungan saat ini{" "}

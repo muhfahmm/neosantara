@@ -1,9 +1,9 @@
 "use client";
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { MapPinned, X } from "lucide-react";
+import { MapPinned } from "lucide-react";
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import { COUNTRIES_DATA } from '../../../map_system/map-data';
 
 interface BerikanWilayahModalProps {
@@ -104,27 +104,15 @@ export default function BerikanWilayahModal({
 
 	const modalContent = (
 		<div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-			<div className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+			<div role="dialog" aria-modal="true" aria-labelledby="give-territory-title" className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
-				{/* ═══════════ HEADER ═══════════ */}
-				<div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas gap-2 shrink-0 rounded-t-2xl">
-					<div className="flex items-center gap-2 sm:gap-3">
-						<div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
-							<MapPinned className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-						</div>
-						<h3 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">
-							Konfirmasi Berikan Wilayah
-						</h3>
-					</div>
-
-					<SharedModalCloseButton
-						onClick={onClose}
-						className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-					 appearance="custom">
-						<span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-						<X className="h-4 w-4" />
-					</SharedModalCloseButton>
-				</div>
+				<RootInfoModalHeader
+					title="Konfirmasi Berikan Wilayah"
+					titleId="give-territory-title"
+					onClose={onClose}
+					icon={<MapPinned />}
+					size="standard"
+				/>
 
 				{/* ═══════════ BODY: LIST WILAYAH ═══════════ */}
 				<div className="flex-1 min-h-0 bg-root-surface relative z-10 p-6 sm:p-8 flex flex-col gap-4 overflow-y-auto custom-scrollbar">

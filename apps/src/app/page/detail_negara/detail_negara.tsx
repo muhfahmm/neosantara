@@ -1,11 +1,11 @@
 'use client';
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import { rootModalTypography } from '@/app/page/root_modals_design_menu/rootModalTypography';
 import { getRelationTextColor, getRelationTier } from '@/app/logic/relationTiers';
 import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { X, Globe, Landmark, Shield, Users, Banknote, Scale, Home, Handshake, Flame, Hammer } from 'lucide-react';
+import { Globe, Landmark, Shield, Users, Banknote, Scale, Home, Handshake, Flame, Hammer } from 'lucide-react';
 import { COUNTRIES_DATA } from '../map_system/map-data';
 import { countryPaths } from '@/app/page/map_system/mapDataAssets';
 import {
@@ -779,43 +779,36 @@ export function CountryDetailModal({
   const detailModalContent = (
       <div
         style={{ display: isActionModalOpen ? 'none' : undefined }}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="country-detail-modal-title"
         className={`bg-root-surface border-none rounded-none overflow-hidden w-full h-full max-h-full flex flex-col relative font-sans pointer-events-auto shadow-none ${isDevelopingAIBuildingTab ? '!max-w-none !h-[100dvh] !max-h-none !rounded-none !border-none !p-0' : ''}`}>
 
         {/* Background Glow Texture */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.05)_0%,transparent_100%)] pointer-events-none" />
 
-        {/* HEADER Modal */}
-        <div className="country-detail-modal-header px-3 sm:px-8 py-2 sm:py-4 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0 rounded-none">
-          <div className="flex items-center gap-2 sm:gap-4">
-
-            {/* 1. Icon Globe */}
-            <div className="country-detail-modal-globe p-1 sm:p-2.5 lg:p-2 bg-root-accent/10 rounded-lg sm:rounded-xl border border-root-accent/30 shrink-0 flex items-center justify-center">
-              <Globe className="country-detail-modal-globe-icon h-3.5 w-3.5 sm:h-6 sm:w-6 lg:h-5 lg:w-5 xl:h-6 xl:w-6 text-root-accent" />
+        <RootInfoModalHeader
+          title={displayCountryName}
+          titleId="country-detail-modal-title"
+          onClose={onClose}
+          icon={<Globe />}
+          size="standard"
+          centerContent={
+            <div className="flex min-w-0 items-center gap-2">
+              {rulerIso && originalIso && rulerIso.toLowerCase() !== originalIso.toLowerCase() ? (
+                <>
+                  {renderFlagHeader(rulerIso, attackerCountryName || "Penguasa")}
+                  {renderFlagHeader(originalIso, countryName || "Wilayah Asli")}
+                </>
+              ) : (
+                renderFlagHeader(displayIso, displayCountryName)
+              )}
+              <p className="text-[10px] sm:text-xs text-root-accent font-black uppercase tracking-tight">
+                {displayCountryName}, {displayCapital}
+              </p>
             </div>
-
-            {/* 2. Judul & Subjudul */}
-            <div>
-              <div className="flex items-center gap-1 sm:gap-2 mt-0.5 sm:mt-1">
-                {/* Tampilkan 2 bendera jika wilayah dianeksasi (Bendera Penakluk & Bendera Wilayah Asli) */}
-                {rulerIso && originalIso && rulerIso.toLowerCase() !== originalIso.toLowerCase() ? (
-                  <>
-                    {renderFlagHeader(rulerIso, attackerCountryName || "Penguasa")}
-                    {renderFlagHeader(originalIso, countryName || "Wilayah Asli")}
-                  </>
-                ) : (
-                  renderFlagHeader(displayIso, displayCountryName)
-                )}
-
-                <p className="text-[10px] sm:text-xs text-root-accent font-black uppercase tracking-tight">
-                  {displayCountryName}, {displayCapital}
-                </p>
-              </div>
-            </div>
-
-          </div>
-
-          <SharedModalCloseButton onClick={onClose} />
-        </div>
+          }
+        />
 
         {/* DATA RINGKASAN */}
         <div className="country-detail-summary px-3 sm:px-8 py-1.5 sm:py-3 lg:px-3 lg:py-1.5 xl:px-8 xl:py-3 bg-root-canvas/80 border-b border-root-accent/20 flex items-center gap-3 sm:gap-8 lg:gap-3 xl:gap-8 relative z-10 overflow-x-auto lg:overflow-x-hidden shrink-0 no-scrollbar">

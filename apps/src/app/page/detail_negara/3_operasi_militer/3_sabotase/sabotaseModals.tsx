@@ -1,7 +1,7 @@
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { ChevronDown, Bomb, Search, X } from "lucide-react";
+import { ChevronDown, Bomb, Search } from "lucide-react";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { getCovertOperationSuccessChance } from "../covertOperationLogic";
 
@@ -97,23 +97,12 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 			{/* Container Modal Lebih Lebar dan Panjang */}
 			<div className="modal-responsive-shell flex flex-col bg-root-surface border border-rose-500/40 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(225,29,72,0.15)] relative pointer-events-auto">
 				
-				{/* HEADER */}
-				<div className="flex items-center justify-between mb-6 border-b border-rose-500/20 pb-4">
-					<div className="flex items-center gap-3">
-						<div className="p-2 bg-root-canvas rounded-lg border border-rose-500/30 shrink-0">
-							<Bomb className="h-5 w-5 text-rose-400 animate-pulse" />
-						</div>
-						<h3 className="text-xl sm:text-2xl font-black text-rose-400 tracking-wide uppercase">
-							Sabotase Fasilitas Negara
-						</h3>
-					</div>
-					<SharedModalCloseButton
-						onClick={onClose}
-						className="p-1.5 rounded-lg text-root-subtle hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
-					 appearance="custom">
-						<X className="h-5 w-5" />
-					</SharedModalCloseButton>
-				</div>
+				<RootInfoModalHeader
+					title="Sabotase Fasilitas Negara"
+					onClose={onClose}
+					icon={<Bomb />}
+					size="standard"
+				/>
 
 				{/* BODY CONTENT */}
 				<div className="flex-1 flex flex-col">

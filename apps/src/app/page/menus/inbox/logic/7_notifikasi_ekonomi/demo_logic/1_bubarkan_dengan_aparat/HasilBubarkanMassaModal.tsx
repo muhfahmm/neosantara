@@ -1,9 +1,9 @@
 'use client';
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { CheckCircle2, AlertTriangle, Users, HeartCrack, Activity, X } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, Users, HeartCrack, Activity } from 'lucide-react';
 
 export interface HasilBubarkanMassaModalProps {
     isOpen: boolean;
@@ -44,51 +44,26 @@ export default function HasilBubarkanMassaModal({
 
     const modalContent = (
         <div className={`fixed inset-0 ${withinForumDialog ? 'z-[2147483647]' : 'z-[100000001]'} flex items-center justify-center p-4 font-sans text-white pointer-events-none`}>
-            {/* 🔥 PERBAIKAN: Struktur Container disamakan persis dengan EmbassyRelationRequirementModal */}
-            <div className={`w-full max-w-2xl min-h-[450px] flex flex-col bg-root-surface ${borderColor} rounded-2xl p-6 sm:p-8 ${shadowColor} relative pointer-events-auto`}>
+            <div className={`modal-responsive-shell flex min-h-0 flex-col overflow-y-auto bg-root-surface ${borderColor} rounded-2xl p-4 sm:p-6 ${shadowColor} relative pointer-events-auto`}>
                 
                 {/* Area Konten */}
                 <div className="flex-1 flex flex-col">
                     
-                    {/* Header disesuaikan agar rapi di dalam container baru */}
-                    <div className="flex items-center justify-between mb-6 border-b border-root-accent/20 pb-4">
-                        <div className="flex items-center gap-3">
-                            <div className={`shrink-0 rounded-lg border p-2 ${
+                    <RootInfoModalHeader
+                        title={isKerusuhan ? 'Laporan Bentrokan / Kerusuhan' : 'Laporan Operasi Pembubaran Massa'}
+                        onClose={onClose}
+                        icon={isKerusuhan ? <AlertTriangle /> : <CheckCircle2 />}
+                        size="standard"
+                        actions={
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${
                                 isKerusuhan
-                                    ? 'border-rose-500/40 bg-rose-950/60 text-rose-400'
-                                    : 'border-root-accent/40 bg-root-canvas text-root-accent'
+                                    ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
+                                    : 'bg-root-accent/15 text-root-accent border-root-accent/30'
                             }`}>
-                                {isKerusuhan ? (
-                                    <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6" />
-                                ) : (
-                                    <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6" />
-                                )}
-                            </div>
-                            <div>
-                                <div className="flex items-center gap-2 mb-1">
-                                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${
-                                        isKerusuhan 
-                                            ? 'bg-rose-500/20 text-rose-300 border-rose-500/40' 
-                                            : 'bg-root-accent/15 text-root-accent border-root-accent/30'
-                                    }`}>
-                                        Satuan Pengamanan Dalam Negeri
-                                    </span>
-                                </div>
-                                <h2 className={`text-xl sm:text-2xl font-black tracking-wide uppercase ${
-                                    isKerusuhan ? 'text-rose-400' : 'text-root-accent'
-                                }`}>
-                                    {isKerusuhan ? 'Laporan Bentrokan / Kerusuhan' : 'Laporan Operasi Pembubaran Massa'}
-                                </h2>
-                            </div>
-                        </div>
-                        <SharedModalCloseButton
-                            type="button"
-                            onClick={onClose}
-                            className="p-2 rounded-xl border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer shadow-sm shrink-0"
-                         appearance="custom">
-                            <X className="h-4 w-4" />
-                        </SharedModalCloseButton>
-                    </div>
+                                Satuan Pengamanan Dalam Negeri
+                            </span>
+                        }
+                    />
 
                     {/* Ringkasan Status Tindakan Opsi */}
                     <div className="p-4 sm:p-5 rounded-xl border border-root-accent/20 bg-root-canvas mb-6">

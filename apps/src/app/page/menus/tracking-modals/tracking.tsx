@@ -5,8 +5,8 @@ import { createPortal } from 'react-dom';
 import type { ComponentType } from 'react';
 import Image from 'next/image';
 import { Route } from 'lucide-react';
-import PausedMenuFrame from '@/app/page/root_modals_design_menu/rootFrameMenu';
-import RootModalCloseButton from '@/app/page/root_modals_design_menu/RootModalCloseButton';
+import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
 import { estimateTravelTime } from '../../path_logic/time_logic';
 import {
@@ -247,29 +247,21 @@ export default function DiplomacyTracking({ onOpen, isUiHidden = false }: Diplom
       </button>
 
       {isTrackingOpen && (
-        <PausedMenuFrame zIndexClass="z-[200]">
-          <div className="tracking-modal-typography relative flex min-h-0 flex-1 flex-col overflow-hidden font-sans">
+        <NotebookModalWrapper onClose={() => setIsTrackingOpen(false)} zIndexClass="z-[200]">
+          <div className="root-modal-util-52b6b298fe tracking-modal-typography font-sans">
 
-            {/* HEADER */}
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0 rounded-t-2xl">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1 sm:p-1.5 rounded-lg border border-root-accent/30 bg-root-surface shrink-0">
-                  <Route className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-                </div>
-                <div>
-                  <h2
-                    id="diplomacy-tracking-title"
-                    className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase"
-                  >
-                    Pelacakan Aktivitas
-                  </h2>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">
-                    {activePaths.length} aktivitas berlangsung
-                  </p>
-                </div>
-              </div>
-              <RootModalCloseButton onClick={() => setIsTrackingOpen(false)} />
-            </div>
+            <RootInfoModalHeader
+              title="Pelacakan Aktivitas"
+              titleId="diplomacy-tracking-title"
+              onClose={() => setIsTrackingOpen(false)}
+              icon={<Route />}
+              size="standard"
+              actions={
+                <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle">
+                  {activePaths.length} aktivitas berlangsung
+                </p>
+              }
+            />
 
             {/* BODY */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-root-canvas relative z-10 custom-scrollbar flex flex-col gap-3">
@@ -327,7 +319,7 @@ export default function DiplomacyTracking({ onOpen, isUiHidden = false }: Diplom
               })}
             </div>
           </div>
-        </PausedMenuFrame>
+        </NotebookModalWrapper>
       )}
         </>
       )}

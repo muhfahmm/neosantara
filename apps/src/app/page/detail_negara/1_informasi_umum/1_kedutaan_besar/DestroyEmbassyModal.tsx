@@ -3,6 +3,7 @@ import React from "react";
 import { createPortal } from "react-dom";
 
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 interface DestroyEmbassyModalProps {
   isOpen: boolean;
   countryName?: string | null;
@@ -20,9 +21,7 @@ export default function DestroyEmbassyModal({ isOpen, countryName, onClose, onCo
         
         {/* Area Konten */}
         <div className="flex-1">
-          <h3 className="text-xl sm:text-2xl font-black text-rose-400 tracking-wide uppercase mb-6 border-b border-rose-500/20 pb-4">
-            Konfirmasi Hancurkan Kedutaan
-          </h3>
+          <RootInfoModalHeader title="Konfirmasi Hancurkan Kedutaan" onClose={onClose} size="compact" />
           
           <p className="text-sm sm:text-base text-root-text mb-6 leading-relaxed">
             Apakah Anda yakin ingin menghancurkan kedutaan di <strong className="text-white">{countryName}</strong>? Tindakan ini tidak dapat dibatalkan.

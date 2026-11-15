@@ -1,11 +1,11 @@
 'use client';
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { FlaskConical, X, Banknote, Shield, Globe2, Info } from 'lucide-react';
-import PausedMenuFrame from '@/app/page/root_modals_design_menu/rootFrameMenu';
+import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 import RootModalCloseButton from '@/app/page/root_modals_design_menu/RootModalCloseButton';
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import { ATHEISM_RESEARCH_SPEED_BONUS } from '@/app/page/bonus_logic/agama_bonus_logic/ateisme';
 import {
   calculateEducationPoints,
@@ -59,59 +59,78 @@ export default function PenelitianSelectionModal({
   if (!isOpen || !mounted) return null;
 
   return createPortal(
-    <PausedMenuFrame zIndexClass="z-[10000]">
-      <div className="research-selection-typography relative flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto p-6 text-center font-sans custom-scrollbar sm:p-8">
-        {/* BUTTON INFO / BONUS RISET (DISAMPING KIRI) */}
-        <button
-          onClick={() => setShowBonusModal(!showBonusModal)}
-          className="absolute top-4 left-4 p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm z-30"
-          title="Lihat Bonus & Modifier Riset"
-        >
-          <Info className="h-4 w-4 text-root-accent" />
-          <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pr-1">Bonus Riset</span>
-        </button>
+    <NotebookModalWrapper onClose={onClose} zIndexClass="z-[10000]">
+      <div className="root-modal-util-52b6b298fe research-selection-typography">
+        {/* Header Identik Root Kepuasan Rakyat */}
+        <div className={"satisfaction-modal-header root-modal-util-4450f1d9ee"}>
+          <div className={"satisfaction-modal-header-main root-modal-util-935108d13c no-scrollbar"}>
+            <div className={"root-modal-util-c7c918256f"}>
+              <div className={"root-modal-util-acd42b9a36"}>
+                <FlaskConical className={"root-modal-util-ea2c28151c"} />
+              </div>
+              <div>
+                <h2 id="research-selection-title" className={`root-modal-util-6b4648c53a root-modal-util-c2385a463d`}>
+                  Fokus Utama Penelitian
+                </h2>
+              </div>
+            </div>
+          </div>
 
-        {/* BUTTON TUTUP */}
-        <RootModalCloseButton onClick={onClose} className="absolute right-4 top-4 z-30" />
+          <div className={"root-modal-util-6cfc7e6ab3"}>
+            <button
+              type="button"
+              onClick={() => setShowBonusModal(true)}
+              title="Informasi bonus & modifier riset"
+              aria-label="Informasi bonus & modifier riset"
+              className={"root-modal-info-button root-modal-util-1697100c43"}
+            >
+              <Info aria-hidden="true" />
+            </button>
+            <RootModalCloseButton onClick={onClose} />
+          </div>
+        </div>
 
         {/* MODAL / POPOVER BONUS & MODIFIER RISET */}
         {showBonusModal && (
-          <div className="absolute inset-0 bg-root-canvas/95 z-40 p-6 sm:p-8 flex flex-col items-center justify-center text-left animate-in fade-in zoom-in duration-200">
-            <SharedModalCloseButton
-              onClick={() => setShowBonusModal(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent transition-all"
-             appearance="custom">
-              <X className="h-5 w-5" />
-            </SharedModalCloseButton>
+          <div className="absolute inset-0 bg-root-canvas/95 z-50 p-4 sm:p-8 flex flex-col items-center justify-center text-left animate-in fade-in zoom-in duration-200 overflow-y-auto">
+            <div className="w-full max-w-md bg-root-surface border border-root-accent/40 rounded-2xl p-4 sm:p-6 shadow-2xl relative">
+              <SharedModalCloseButton
+                onClick={() => setShowBonusModal(false)}
+                className="absolute top-3.5 right-3.5 p-1 rounded-xl border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer"
+                appearance="custom"
+              >
+                <X className="h-4 w-4" />
+              </SharedModalCloseButton>
 
-            <div className="w-full max-w-md bg-root-surface border border-root-accent/30 rounded-2xl p-6 shadow-2xl">
-              <div className="flex items-center gap-2 mb-4 pb-3 border-b border-root-accent/20">
-                <Info className="w-5 h-5 text-root-accent" />
-                <h3 className="text-base font-black text-root-accent uppercase tracking-wider">
+              <div className="flex items-center gap-2 mb-3 pb-2.5 border-b border-root-accent/20 pr-8">
+                <div className="p-1.5 rounded-lg bg-root-accent/10 border border-root-accent/30 text-root-accent shrink-0">
+                  <Info className="w-4 h-4 text-root-accent" />
+                </div>
+                <h3 className="text-sm sm:text-base font-black text-root-accent uppercase tracking-wider">
                   Daftar Bonus & Modifier Riset
                 </h3>
               </div>
 
-              <div className="space-y-2.5 text-xs">
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
-                  <span className="font-semibold text-gray-300">Keanggotaan UNESCO:</span>
-                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${isUNESCOMember ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-gray-800 text-gray-400'
+              <div className="space-y-2 text-xs">
+                <div className="flex items-center justify-between gap-2 p-2 sm:p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
+                  <span className="font-semibold text-gray-300 text-[11px] sm:text-xs">Keanggotaan UNESCO:</span>
+                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[9px] sm:text-[10px] shrink-0 ${isUNESCOMember ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-gray-800 text-gray-400'
                     }`}>
                     {isUNESCOMember ? 'Aktif (+5% Riset Sains)' : 'Tidak Aktif'}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
-                  <span className="font-semibold text-gray-300">Keanggotaan ITU:</span>
-                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${isITUMember ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-gray-800 text-gray-400'
+                <div className="flex items-center justify-between gap-2 p-2 sm:p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
+                  <span className="font-semibold text-gray-300 text-[11px] sm:text-xs">Keanggotaan ITU:</span>
+                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[9px] sm:text-[10px] shrink-0 ${isITUMember ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-gray-800 text-gray-400'
                     }`}>
                     {isITUMember ? 'Aktif (+5% Kecepatan Riset)' : 'Tidak Aktif'}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
-                  <span className="font-semibold text-gray-300">Efek Pendidikan ({educationPoints} Poin):</span>
-                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${educationModifier.isPenalty
+                <div className="flex items-center justify-between gap-2 p-2 sm:p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
+                  <span className="font-semibold text-gray-300 text-[11px] sm:text-xs">Efek Pendidikan ({educationPoints} Poin):</span>
+                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[9px] sm:text-[10px] shrink-0 ${educationModifier.isPenalty
                     ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30'
                     : 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30'
                     }`}>
@@ -119,24 +138,24 @@ export default function PenelitianSelectionModal({
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
-                  <span className="font-semibold text-gray-300">Agama Ateisme:</span>
-                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${hasAtheismResearchBonus ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30' : 'bg-gray-800 text-gray-400'
+                <div className="flex items-center justify-between gap-2 p-2 sm:p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
+                  <span className="font-semibold text-gray-300 text-[11px] sm:text-xs">Agama Ateisme:</span>
+                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[9px] sm:text-[10px] shrink-0 ${hasAtheismResearchBonus ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30' : 'bg-gray-800 text-gray-400'
                     }`}>
                     {hasAtheismResearchBonus ? 'Aktif (Durasi -15%)' : 'Tidak Aktif'}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
-                  <span className="font-semibold text-gray-300">Kontrak Penelitian:</span>
-                  <span className="font-bold uppercase px-2 py-0.5 rounded text-[10px] bg-sky-500/10 text-sky-300 border border-sky-500/30">
+                <div className="flex items-center justify-between gap-2 p-2 sm:p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
+                  <span className="font-semibold text-gray-300 text-[11px] sm:text-xs">Kontrak Penelitian:</span>
+                  <span className="font-bold uppercase px-2 py-0.5 rounded text-[9px] sm:text-[10px] bg-sky-500/10 text-sky-300 border border-sky-500/30 shrink-0">
                     {contractBonus.count} Negara (-{contractBonus.percentage.toFixed(1)}%)
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
-                  <span className="font-semibold text-gray-300">Sains & Penelitian:</span>
-                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${sainsPenelitianBonus > 0
+                <div className="flex items-center justify-between gap-2 p-2 sm:p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
+                  <span className="font-semibold text-gray-300 text-[11px] sm:text-xs">Sains & Penelitian:</span>
+                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[9px] sm:text-[10px] shrink-0 ${sainsPenelitianBonus > 0
                     ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
                     : 'bg-gray-800 text-gray-400'
                     }`}>
@@ -149,7 +168,7 @@ export default function PenelitianSelectionModal({
 
               <button
                 onClick={() => setShowBonusModal(false)}
-                className="w-full mt-5 py-2.5 rounded-xl bg-root-accent text-root-canvas font-black text-xs uppercase tracking-wider hover:bg-root-accent/80 transition-all cursor-pointer"
+                className="w-full mt-4 py-2 sm:py-2.5 rounded-xl bg-root-accent text-root-canvas font-black text-xs uppercase tracking-wider hover:bg-root-accent/80 transition-all cursor-pointer shadow-md"
               >
                 Mengerti
               </button>
@@ -157,19 +176,9 @@ export default function PenelitianSelectionModal({
           </div>
         )}
 
-        <div className="w-16 h-16 rounded-2xl bg-root-canvas border-2 border-root-accent/50 flex items-center justify-center mb-4 shadow-inner">
-          <FlaskConical className="w-8 h-8 text-root-accent animate-pulse" />
-        </div>
-
-        <h2 className="text-xl sm:text-2xl font-black text-root-accent uppercase tracking-wide mb-1">
-          Fokus Utama Penelitian
-        </h2>
-        <p className="text-xs sm:text-sm text-root-subtle font-semibold mb-8 max-w-md">
-          Pilih sektor riset strategis nasional yang ingin Anda akses terlebih dahulu.
-        </p>
-
-        {/* 3 CARD HORIZONTAL */}
-        <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 mt-2">
+        <div className="flex flex-1 flex-col items-center justify-center p-2 text-center overflow-hidden">
+        {/* 3 CARD HORIZONTAL (GRID 3 SEJAJAR) */}
+        <div className="w-full research-selection-grid grid grid-cols-3 gap-2 sm:gap-4 md:gap-6 pt-0 items-stretch">
           {/* CARD 1: EKONOMI */}
           {(() => {
             const slot = countryDetail?.active_research_by_category?.ekonomi || (
@@ -188,26 +197,26 @@ export default function PenelitianSelectionModal({
             })();
 
             return (
-              <div className="relative group h-full">
+              <div className="relative group h-full flex flex-col">
                 {formattedDate && (
-                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[10px] font-bold px-2 py-1 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
+                  <div className="absolute -top-5 sm:-top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[8px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 border border-root-accent/30 rounded shadow-md tracking-wider whitespace-nowrap">
                     {formattedDate}
                   </div>
                 )}
                 <button
                   onClick={() => onSelectCategory('ekonomi')}
-                  className="w-full group flex flex-col items-center justify-between text-center p-6 rounded-2xl bg-root-canvas border border-root-accent/30 hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98] transition-all cursor-pointer shadow-md h-full min-h-[220px]"
+                  className="w-full group flex flex-col items-center justify-between text-center p-3 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl bg-root-canvas border border-root-accent/30 hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98] transition-all cursor-pointer shadow-md flex-1 min-h-[140px] sm:min-h-[190px] md:min-h-[220px]"
                 >
                   <div className="flex flex-col items-center w-full">
-                    <div className="p-3.5 rounded-xl bg-root-surface border border-root-accent/40 text-root-accent group-hover:bg-root-accent group-hover:text-root-canvas transition-all shrink-0 mb-4 shadow-sm">
-                      <Banknote className="w-7 h-7" />
+                    <div className="p-2 sm:p-3 md:p-3.5 rounded-lg sm:rounded-xl bg-root-surface border border-root-accent/40 text-root-accent group-hover:bg-root-accent group-hover:text-root-canvas transition-all shrink-0 mb-2 sm:mb-3 md:mb-4 shadow-sm">
+                      <Banknote className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
                     </div>
 
-                    <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-root-accent/15 text-root-accent border border-root-accent/30 mb-3 tracking-wider">
+                    <span className="text-[8px] sm:text-[9px] md:text-[10px] font-black uppercase px-1.5 sm:px-2 md:px-2.5 py-0.5 sm:py-1 rounded-md bg-root-accent/15 text-root-accent border border-root-accent/30 mb-2 tracking-wider whitespace-nowrap">
                       Produksi & Pajak
                     </span>
 
-                    <h3 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-root-accent transition-colors leading-tight">
+                    <h3 className="text-[10px] sm:text-xs md:text-sm font-black text-white uppercase tracking-wider group-hover:text-root-accent transition-colors leading-tight">
                       Riset Ekonomi & Industri
                     </h3>
                   </div>
@@ -230,26 +239,26 @@ export default function PenelitianSelectionModal({
             })();
 
             return (
-              <div className="relative group h-full">
+              <div className="relative group h-full flex flex-col">
                 {formattedDate && (
-                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[10px] font-bold px-2 py-1 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
+                  <div className="absolute -top-5 sm:-top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[8px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 border border-root-accent/30 rounded shadow-md tracking-wider whitespace-nowrap">
                     {formattedDate}
                   </div>
                 )}
                 <button
                   onClick={() => onSelectCategory('militer')}
-                  className="w-full group flex flex-col items-center justify-between text-center p-6 rounded-2xl bg-root-canvas border border-root-accent/30 hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98] transition-all cursor-pointer shadow-md h-full min-h-[220px]"
+                  className="w-full group flex flex-col items-center justify-between text-center p-3 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl bg-root-canvas border border-root-accent/30 hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98] transition-all cursor-pointer shadow-md flex-1 min-h-[140px] sm:min-h-[190px] md:min-h-[220px]"
                 >
                   <div className="flex flex-col items-center w-full">
-                    <div className="p-3.5 rounded-xl bg-root-surface border border-root-accent/40 text-root-accent group-hover:bg-root-accent group-hover:text-root-canvas transition-all shrink-0 mb-4 shadow-sm">
-                      <Shield className="w-7 h-7" />
+                    <div className="p-2 sm:p-3 md:p-3.5 rounded-lg sm:rounded-xl bg-root-surface border border-root-accent/40 text-root-accent group-hover:bg-root-accent group-hover:text-root-canvas transition-all shrink-0 mb-2 sm:mb-3 md:mb-4 shadow-sm">
+                      <Shield className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
                     </div>
 
-                    <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-root-accent/15 text-root-accent border border-root-accent/30 mb-3 tracking-wider">
+                    <span className="text-[8px] sm:text-[9px] md:text-[10px] font-black uppercase px-1.5 sm:px-2 md:px-2.5 py-0.5 sm:py-1 rounded-md bg-root-accent/15 text-root-accent border border-root-accent/30 mb-2 tracking-wider whitespace-nowrap">
                       Alutsista & Siber
                     </span>
 
-                    <h3 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-root-accent transition-colors leading-tight">
+                    <h3 className="text-[10px] sm:text-xs md:text-sm font-black text-white uppercase tracking-wider group-hover:text-root-accent transition-colors leading-tight">
                       Riset Militer & Pertahanan
                     </h3>
                   </div>
@@ -272,26 +281,26 @@ export default function PenelitianSelectionModal({
             })();
 
             return (
-              <div className="relative group h-full">
+              <div className="relative group h-full flex flex-col">
                 {formattedDate && (
-                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[10px] font-bold px-2 py-1 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
+                  <div className="absolute -top-5 sm:-top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[8px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 border border-root-accent/30 rounded shadow-md tracking-wider whitespace-nowrap">
                     {formattedDate}
                   </div>
                 )}
                 <button
                   onClick={() => onSelectCategory('diplomasi')}
-                  className="w-full group flex flex-col items-center justify-between text-center p-6 rounded-2xl bg-root-canvas border border-root-accent/30 hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98] transition-all cursor-pointer shadow-md h-full min-h-[220px]"
+                  className="w-full group flex flex-col items-center justify-between text-center p-3 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl bg-root-canvas border border-root-accent/30 hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98] transition-all cursor-pointer shadow-md flex-1 min-h-[140px] sm:min-h-[190px] md:min-h-[220px]"
                 >
                   <div className="flex flex-col items-center w-full">
-                    <div className="p-3.5 rounded-xl bg-root-surface border border-root-accent/40 text-root-accent group-hover:bg-root-accent group-hover:text-root-canvas transition-all shrink-0 mb-4 shadow-sm">
-                      <Globe2 className="w-7 h-7" />
+                    <div className="p-2 sm:p-3 md:p-3.5 rounded-lg sm:rounded-xl bg-root-surface border border-root-accent/40 text-root-accent group-hover:bg-root-accent group-hover:text-root-canvas transition-all shrink-0 mb-2 sm:mb-3 md:mb-4 shadow-sm">
+                      <Globe2 className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
                     </div>
 
-                    <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-root-accent/15 text-root-accent border border-root-accent/30 mb-3 tracking-wider">
+                    <span className="text-[8px] sm:text-[9px] md:text-[10px] font-black uppercase px-1.5 sm:px-2 md:px-2.5 py-0.5 sm:py-1 rounded-md bg-root-accent/15 text-root-accent border border-root-accent/30 mb-2 tracking-wider whitespace-nowrap">
                       Geopolitik & Spionase
                     </span>
 
-                    <h3 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-root-accent transition-colors leading-tight">
+                    <h3 className="text-[10px] sm:text-xs md:text-sm font-black text-white uppercase tracking-wider group-hover:text-root-accent transition-colors leading-tight">
                       Riset Diplomasi & Intelijen
                     </h3>
                   </div>
@@ -301,7 +310,8 @@ export default function PenelitianSelectionModal({
           })()}
         </div>
       </div>
-    </PausedMenuFrame>,
-    document.body
-  );
+    </div>
+  </NotebookModalWrapper>,
+  document.body
+);
 }

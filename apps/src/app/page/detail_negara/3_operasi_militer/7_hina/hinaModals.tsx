@@ -1,8 +1,7 @@
 "use client";
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
 import { createPortal } from "react-dom";
-import { X } from "lucide-react";
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 
 interface HinaModalProps {
 	isOpen: boolean;
@@ -22,19 +21,12 @@ export default function HinaModal({ isOpen, countryName, onClose, onConfirm }: H
 				aria-modal="true"
 				aria-labelledby="hina-confirm-title"
 			>
-				<div className="flex items-center justify-between border-b border-amber-500/20 bg-root-canvas px-5 sm:px-6 py-4">
-					<h3 id="hina-confirm-title" className="text-lg sm:text-xl font-black text-amber-400 tracking-wide uppercase">
-						Konfirmasi Hina
-					</h3>
-					<SharedModalCloseButton
-						type="button"
-						onClick={onClose}
-						className="rounded-lg p-1.5 text-root-subtle transition-colors hover:text-amber-400"
-						aria-label="Tutup konfirmasi hina"
-					 appearance="custom">
-						<X className="h-4 w-4" />
-					</SharedModalCloseButton>
-				</div>
+				<RootInfoModalHeader
+					title="Konfirmasi Hina"
+					titleId="hina-confirm-title"
+					onClose={onClose}
+					size="standard"
+				/>
 
 				<div className="p-5 sm:p-6">
 					<p className="text-sm sm:text-base text-root-text leading-relaxed">

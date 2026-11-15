@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { ShieldAlert, RotateCcw, Globe, Swords, Flag } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 
 interface ModalsAnnexedGameOverProps {
     isOpen: boolean;
@@ -53,29 +54,18 @@ export default function ModalsAnnexedGameOver({
                 className={`relative w-full max-w-[520px] transition-all duration-700 delay-150 ${
                     visible ? 'translate-y-0 scale-100' : 'translate-y-8 scale-95'
                 }`}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="annexed-game-over-title"
             >
-                <div className="bg-[#0D0505] border-4 border-red-800/80 rounded-3xl shadow-[0_0_80px_rgba(225,29,72,0.4)] overflow-hidden">
-                    {/* Header */}
-                    <div className="bg-gradient-to-b from-red-950 to-[#0D0505] p-6 flex flex-col items-center gap-3 border-b-2 border-red-900/40 text-center">
-                        <div className="relative">
-
-                            <div className="relative w-20 h-20 rounded-full bg-red-950/90 border-4 border-red-600 flex items-center justify-center text-red-400 shadow-xl shadow-red-950/80">
-                                <ShieldAlert className="w-10 h-10 animate-bounce" />
-                            </div>
-                        </div>
-
-                        <div>
-                            <div className="text-[10px] font-black tracking-[0.35em] text-red-500/80 uppercase mb-1">
-                                — GAME OVER —
-                            </div>
-                            <h2 className="text-xl sm:text-2xl font-black text-red-500 uppercase tracking-widest leading-tight">
-                                WILAYAH DIANEKSASI
-                            </h2>
-                            <p className="text-[11px] text-red-300/70 font-bold uppercase tracking-wider mt-1">
-                                Kedaulatan Nasional Runtuh Total
-                            </p>
-                        </div>
-                    </div>
+                    <div className="modal-responsive-shell bg-[#0D0505] border-4 border-red-800/80 rounded-3xl shadow-[0_0_80px_rgba(225,29,72,0.4)] overflow-hidden">
+                        <RootInfoModalHeader
+                            title="Wilayah Dianeksasi"
+                            titleId="annexed-game-over-title"
+                            icon={<ShieldAlert />}
+                            size="standard"
+                            actions={<span className="text-[10px] font-black tracking-wider text-red-300/70 uppercase">Game Over</span>}
+                        />
 
                     {/* Content Section */}
                     <div className="bg-[#FAF4F0] p-6 flex flex-col gap-5">

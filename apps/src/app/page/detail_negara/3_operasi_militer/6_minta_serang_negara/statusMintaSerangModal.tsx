@@ -1,8 +1,9 @@
 "use client";
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
 import { createPortal } from "react-dom";
-import { PhoneForwarded, X, Clock, AlertTriangle } from "lucide-react";
+import { PhoneForwarded, Clock, AlertTriangle } from "lucide-react";
 
 interface StatusMintaSerangModalProps {
 	isOpen: boolean;
@@ -38,23 +39,12 @@ export default function StatusMintaSerangModal({
 	const modalContent = (
 		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
 			<div className="modal-responsive-shell overflow-y-auto rounded-2xl border border-root-accent/30 bg-root-surface text-white shadow-2xl relative pointer-events-auto">
-				{/* Header */}
-				<div className="flex items-center justify-between border-b border-amber-400/20 bg-root-canvas px-5 sm:px-6 py-4">
-					<div className="flex items-center gap-3">
-						<PhoneForwarded className="h-5 w-5 text-amber-400" />
-						<h3 className="text-sm sm:text-base font-black uppercase tracking-wider text-amber-300">
-							Mandat Serangan Sedang Berjalan
-						</h3>
-					</div>
-					<SharedModalCloseButton
-						type="button"
-						onClick={onClose}
-						className="rounded-lg p-1.5 text-root-subtle transition-colors hover:text-amber-400 cursor-pointer"
-						aria-label="Tutup"
-					 appearance="custom">
-						<X className="h-4 w-4" />
-					</SharedModalCloseButton>
-				</div>
+				<RootInfoModalHeader
+					title="Mandat Serangan Sedang Berjalan"
+					onClose={onClose}
+					icon={<PhoneForwarded />}
+					size="standard"
+				/>
 
 				{/* Body Content */}
 				<div className="space-y-5 p-5 sm:p-6">

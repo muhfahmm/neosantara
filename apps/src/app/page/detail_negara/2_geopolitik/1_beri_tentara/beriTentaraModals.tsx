@@ -1,9 +1,8 @@
 'use client';
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import React, { useState, useMemo } from 'react';
 import {
-  X,
   Sword,
   Shield,
   Ship,
@@ -362,38 +361,28 @@ export default function BeriTentaraModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       {/* Modal Container: Ukuran sama persis dengan modal detail negara */}
-      <div className="modal-responsive-shell bg-root-surface border-2 sm:border-3 border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="troop-transfer-title"
+        className="modal-responsive-shell bg-root-surface border-2 sm:border-3 border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl"
+      >
 
         {/* Background Glow */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.05)_0%,transparent_100%)] pointer-events-none" />
 
-        {/* HEADER MODAL */}
-        <div className="px-6 sm:px-8 py-4 sm:py-5 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="p-2 sm:p-2.5 bg-root-accent/10 rounded-xl border border-root-accent/30 shrink-0 flex items-center justify-center">
-              <Sword className="h-6 w-6 text-root-accent" />
-            </div>
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-root-accent tracking-tight leading-none uppercase">
-                Beri Bantuan Pasukan Militer
-              </h2>
-              <div className="flex items-center gap-2 mt-1">
-                <p className="text-xs text-root-accent/70 font-semibold uppercase tracking-wider">
-                  Transfer Pasukan ke Sekutu: <span className="text-root-accent font-bold">{targetName}</span>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <SharedModalCloseButton
-            onClick={onClose}
-            className="p-2 sm:p-2.5 rounded-xl border border-root-accent/30 bg-root-canvas text-root-accent/70 hover:text-root-accent hover:bg-root-accent/10 active:bg-root-accent/20 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
-            aria-label="Tutup modal beri tentara"
-           appearance="custom">
-            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
-          </SharedModalCloseButton>
-        </div>
+        <RootInfoModalHeader
+          title="Beri Bantuan Pasukan Militer"
+          titleId="troop-transfer-title"
+          onClose={onClose}
+          icon={<Sword />}
+          size="standard"
+          actions={
+            <p className="text-xs text-root-accent/70 font-semibold uppercase tracking-wider">
+              Transfer Pasukan ke Sekutu: <span className="text-root-accent font-bold">{targetName}</span>
+            </p>
+          }
+        />
 
         {/* RINGKASAN MILITARY POWER & PERBANDINGAN KOMPARATIF */}
         <div className="px-6 sm:px-8 py-3 bg-root-canvas/90 border-b border-root-accent/20 flex flex-col md:flex-row items-center justify-between gap-4 relative z-10 shrink-0">

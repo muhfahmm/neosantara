@@ -6,7 +6,7 @@ import RootModalCloseButton from "./RootModalCloseButton";
 
 interface RootInfoModalHeaderProps {
   title: ReactNode;
-  onClose: () => void;
+  onClose?: () => void;
   icon?: ReactNode;
   actions?: ReactNode;
   centerContent?: ReactNode;
@@ -69,11 +69,13 @@ export default function RootInfoModalHeader({
       )}
       <div className={isStandard ? "root-modal-util-08dfbca033" : "root-info-modal-actions"}>
         {actions}
-        <RootModalCloseButton
-          onClick={onClose}
-          ariaLabel={closeAriaLabel}
-          className="root-info-modal-close"
-        />
+        {onClose && (
+          <RootModalCloseButton
+            onClick={onClose}
+            ariaLabel={closeAriaLabel}
+            className="root-info-modal-close"
+          />
+        )}
       </div>
     </header>
   );

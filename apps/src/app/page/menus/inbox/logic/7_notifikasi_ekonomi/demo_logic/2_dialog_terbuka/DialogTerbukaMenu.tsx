@@ -1,5 +1,6 @@
 'use client';
 
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
@@ -350,19 +351,12 @@ export default function DialogTerbukaMenu({
       
       <div className="relative flex min-h-0 flex-1 flex-col">
         {/* === HEADER === */}
-        <header className="flex shrink-0 items-center justify-between gap-4 border-b border-root-accent/20 bg-root-canvas px-4 py-3 sm:px-6 sm:py-4 shadow-lg z-10">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="shrink-0 rounded-xl border border-root-accent/30 bg-root-accent/10 p-2 text-root-accent">
-              <MessageSquare className="h-5 w-5" />
-            </div>
-            <div className="min-w-0">
-              <h3 className="text-base font-black text-white uppercase tracking-wider">
-                <span id="dialog-terbuka-title">Forum Dialog Terbuka</span>
-              </h3>
-              <p className="text-xs text-root-subtle">Negosiasi &amp; Mediasi Massa Demonstran</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
+        <RootInfoModalHeader
+          title="Forum Dialog Terbuka"
+          titleId="dialog-terbuka-title"
+          icon={<MessageSquare />}
+          size="standard"
+          actions={
             <button
               type="button"
               onClick={handleReturn}
@@ -371,8 +365,9 @@ export default function DialogTerbukaMenu({
               <ArrowLeft className="h-4 w-4" />
               <span className="hidden sm:inline">Kembali ke Permainan</span>
             </button>
-          </div>
-        </header>
+          }
+          centerContent={<p className="text-xs text-root-subtle">Negosiasi &amp; Mediasi Massa Demonstran</p>}
+        />
 
         {/* === MAIN CONTENT AREA === */}
         <div className="flex min-h-0 flex-1 overflow-hidden">

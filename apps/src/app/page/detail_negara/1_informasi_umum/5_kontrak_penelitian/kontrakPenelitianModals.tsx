@@ -3,6 +3,7 @@ import React from "react";
 import { createPortal } from "react-dom";
 
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import TravelFuelCostPanel from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
 import type { TravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
 interface KontrakPenelitianModalProps {
@@ -22,9 +23,7 @@ export default function KontrakPenelitianModal({ isOpen, countryName, onClose, o
 				
 				{/* Area Konten */}
 				<div className="flex-1">
-					<h3 className="text-xl sm:text-2xl font-black text-root-accent tracking-wide uppercase mb-6 border-b border-root-accent/20 pb-4">
-						Konfirmasi Kontrak Penelitian
-					</h3>
+					<RootInfoModalHeader title="Konfirmasi Kontrak Penelitian" onClose={onClose} size="compact" />
 					
 					<p className="text-sm sm:text-base text-root-text mb-6 leading-relaxed">
 						Mulai kontrak penelitian dengan <strong className="text-white">{countryName}</strong>? Kolaborasi ini mengurangi durasi semua penelitian nasional sebesar <strong className="text-root-accent">0,1%</strong> per negara mitra.

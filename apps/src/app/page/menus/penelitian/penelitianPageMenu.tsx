@@ -1,10 +1,10 @@
 'use client';
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  FlaskConical, X, Sparkles, Cpu, Shield, Zap, BookOpen, Leaf, Globe2,
+  FlaskConical, Sparkles, Cpu, Shield, Zap, BookOpen, Leaf, Globe2,
   Palette, Lock, CheckCircle2, Clock, Coins, Beaker, Atom, Rocket,
   Wifi, Crosshair, HeartPulse, Wheat, Banknote, Search, TrendingUp,
   ChevronUp, Eye,
@@ -620,29 +620,17 @@ export default function PenelitianPageModal({
   return createPortal(
     <div className="research-page-modal research-modal-typography fixed top-16 sm:top-20 inset-x-0 bottom-0 z-[200] bg-root-canvas flex flex-col font-sans animate-in fade-in duration-300">
 
-      {/* HEADER */}
-      <div className="px-4 sm:px-8 py-3 bg-root-surface border-b border-root-accent/30 flex flex-col xl:flex-row xl:items-center justify-between shadow-lg relative z-20 shrink-0 gap-3">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="p-2 rounded-xl bg-root-accent/10 border border-root-accent/40 text-root-accent shrink-0">
-              <FlaskConical className="w-5 h-5 sm:w-6 sm:h-6" />
-            </div>
-            <div>
-              <h1 className="text-base sm:text-xl font-black text-root-accent tracking-wider uppercase leading-none">
-                Pusat Penelitian & Riset Nasional
-              </h1>
-              <p className="text-[10px] sm:text-xs text-root-subtle font-semibold mt-0.5">
-                Setiap riset dapat di-upgrade hingga Level 5
-              </p>
-            </div>
-          </div>
+      <RootInfoModalHeader
+        title="Pusat Penelitian & Riset Nasional"
+        onClose={onClose}
+        icon={<FlaskConical />}
+        size="standard"
+      />
 
-          <SharedModalCloseButton onClick={onClose} className="xl:hidden p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0" appearance="custom">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </SharedModalCloseButton>
-        </div>
-
+      <div className="px-4 sm:px-8 py-3 bg-root-surface border-b border-root-accent/30 flex flex-wrap items-center justify-between gap-3 shadow-lg relative z-20 shrink-0">
+        <p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
+          Setiap riset dapat di-upgrade hingga Level 5
+        </p>
         <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
           <div className="flex items-center gap-2 bg-root-canvas border border-root-accent/20 rounded-lg px-3 py-1.5">
             <span className="text-[10px] text-root-subtle font-black uppercase">Riset Selesai:</span>
@@ -671,10 +659,6 @@ export default function PenelitianPageModal({
             </button>
           )}
 
-          <SharedModalCloseButton onClick={onClose} className="hidden xl:flex p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase items-center gap-1 shadow-sm shrink-0 ml-auto" appearance="custom">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </SharedModalCloseButton>
         </div>
       </div>
 
@@ -1123,25 +1107,19 @@ export default function PenelitianPageModal({
         >
           <div
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="research-start-title"
             className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl p-6 shadow-2xl relative"
           >
-            <SharedModalCloseButton onClick={() => setConfirmTarget(null)} className="absolute top-3 right-3 text-root-subtle hover:text-root-accent cursor-pointer" appearance="custom">
-              <X className="h-5 w-5" />
-            </SharedModalCloseButton>
-
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-12 w-12 rounded-lg bg-root-canvas border border-root-accent/30 flex items-center justify-center shrink-0">
-                <confirmTarget.icon className="h-6 w-6 text-root-accent" />
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-root-text uppercase leading-tight">
-                  {confirmTarget.name}
-                </h3>
-                <p className="text-[10px] text-root-subtle font-semibold mt-0.5">
-                  Mulai Riset — Level 1
-                </p>
-              </div>
-            </div>
+            <RootInfoModalHeader
+              title={confirmTarget.name}
+              titleId="research-start-title"
+              onClose={() => setConfirmTarget(null)}
+              icon={<confirmTarget.icon />}
+              size="compact"
+              centerContent={<p className="text-[10px] text-root-subtle font-semibold">Mulai Riset — Level 1</p>}
+            />
 
             <div className="bg-root-canvas border border-root-accent/20 rounded-lg p-4 mb-4">
               <div className="flex justify-between items-center mb-2.5">
@@ -1231,25 +1209,19 @@ export default function PenelitianPageModal({
         >
           <div
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="research-upgrade-title"
             className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl p-6 shadow-2xl relative"
           >
-            <SharedModalCloseButton onClick={() => setConfirmUpgrade(null)} className="absolute top-3 right-3 text-root-subtle hover:text-root-accent cursor-pointer" appearance="custom">
-              <X className="h-5 w-5" />
-            </SharedModalCloseButton>
-
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-12 w-12 rounded-lg bg-root-canvas border border-root-accent/30 flex items-center justify-center shrink-0">
-                <confirmUpgrade.research.icon className="h-6 w-6 text-root-accent" />
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-root-text uppercase leading-tight">
-                  {confirmUpgrade.research.name}
-                </h3>
-                <p className="text-[10px] text-root-accent font-black mt-0.5">
-                  Upgrade ke Level {confirmUpgrade.targetLevel}
-                </p>
-              </div>
-            </div>
+            <RootInfoModalHeader
+              title={confirmUpgrade.research.name}
+              titleId="research-upgrade-title"
+              onClose={() => setConfirmUpgrade(null)}
+              icon={<confirmUpgrade.research.icon />}
+              size="compact"
+              centerContent={<p className="text-[10px] text-root-accent font-black">Upgrade ke Level {confirmUpgrade.targetLevel}</p>}
+            />
 
             <div className="flex items-center justify-center gap-3 mb-4">
               <div className="text-center">

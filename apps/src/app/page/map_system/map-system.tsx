@@ -1,7 +1,8 @@
 'use client';
 
 import { getRelationColor } from '@/app/logic/relationTiers';
-import React, { memo, startTransition, useCallback, useMemo, useState, useEffect, useRef } from 'react';
+import React, { memo, startTransition, useCallback, useMemo, useState, useEffect, useRef, useSyncExternalStore } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { Pause, Palmtree, Play, Shield } from 'lucide-react';
 import Link from 'next/link';
@@ -1283,6 +1284,7 @@ export default function MapPage() {
     }, []);
     const [playerNetBalanceAdjustment, setPlayerNetBalanceAdjustment] = useState<number>(0);
     const [isPaused, setIsPaused] = useState(true);
+    const [hasMounted, setHasMounted] = useState(false);
     const isPausedRef = useRef(isPaused);
     const warPauseStateRef = useRef<{ wasPaused: boolean } | null>(null);
     const dialogPauseStateRef = useRef<{ wasPaused: boolean } | null>(null);
@@ -1292,6 +1294,10 @@ export default function MapPage() {
     const currentDateRef = useRef(currentDate);
     currentDateRef.current = currentDate;
     const tradePriceProgressRef = useRef<{ country: string; day: number } | null>(null);
+
+    useEffect(() => {
+        setHasMounted(true);
+    }, []);
 
     useEffect(() => {
         isPausedRef.current = isPaused;
@@ -11469,13 +11475,14 @@ export default function MapPage() {
             />
 
             {/* Premium Floating Time Controller Widget */}
-            <div
-                data-tutorial="time-controller"
-                style={{
-                    bottom: 'calc(var(--safe-bottom) + 0.5rem)',
-                    right: 'calc(var(--safe-right) + 0.5rem)',
-                }}
-                className={`fixed z-40 transition-all ${isDialogTerbukaOpen ? 'hidden pointer-events-none' : ''} ${
+            {hasMounted && createPortal(
+                <div
+                    data-tutorial="time-controller"
+                    style={{
+                        bottom: 'calc(var(--safe-bottom) + 0.5rem)',
+                        right: 'calc(var(--safe-right) + 0.5rem)',
+                    }}
+                    className={`fixed z-[10000000000] transition-all ${isDialogTerbukaOpen ? 'hidden pointer-events-none' : ''} ${
                     isLandscapePhone
                         ? 'flex flex-row items-center gap-1.5 bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg max-w-[210px] h-[36px]'
                         : isPortraitPhone
@@ -11670,7 +11677,9 @@ export default function MapPage() {
                         </div>
                     </>
                 )}
-            </div>
+                </div>,
+                document.body
+            )}
 
             <CountryDetailModal
                 isOpen={countryDetailModalOpen && !isWarAnalysisActive}

@@ -3,6 +3,7 @@ import React from "react";
 import { createPortal } from "react-dom";
 
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 interface DestroyTradeModalProps {
   isOpen: boolean;
   countryName?: string | null;
@@ -20,9 +21,7 @@ export default function DestroyTradeModal({ isOpen, countryName, onClose, onConf
         
         {/* Area Konten */}
         <div className="flex-1">
-          <h3 className="text-xl sm:text-2xl font-black text-rose-400 tracking-wide uppercase mb-6 border-b border-rose-500/20 pb-4">
-            Konfirmasi Putus Hubungan Dagang
-          </h3>
+          <RootInfoModalHeader title="Konfirmasi Putus Hubungan Dagang" onClose={onClose} size="compact" />
           
           <p className="text-sm sm:text-base text-root-text mb-6 leading-relaxed">
             Apakah Anda yakin ingin memutus hubungan dagang dengan <strong className="text-white">{countryName}</strong>? Anda dapat menjalin kembali melalui menu Mitra.

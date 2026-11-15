@@ -1,14 +1,14 @@
 'use client';
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
-import { User, Globe, Building2, Users, Landmark, ShieldCheck, TrendingUp, Star, Flag, Swords, X } from 'lucide-react';
+import { User, Globe, Building2, Users, Landmark, ShieldCheck, TrendingUp, Star, Flag, Swords } from 'lucide-react';
 
 import { calculateCountryGDP, formatCurrencyEM } from '@/app/logic/economic_logic/treasuryUpdater';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { calculateCountryNetPopulation } from '@/app/logic/populations_logic/population_logic';
 import { getArmadaPowerSummary } from '@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
 import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import {
   getCountryProfileSummaries,
   loadCountryProfileSummaries,
@@ -194,41 +194,38 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
       frameClassName="country-detail-modal-frame"
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="country-user-modal-title"
         className="country-user-modal-panel bg-root-surface border-none rounded-none overflow-hidden w-full h-full max-h-full flex flex-col relative font-sans pointer-events-auto shadow-none"
       >
 
         {/* Background Texture */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
-        {/* HEADER */}
-        <div className="country-detail-modal-header px-3 sm:px-8 py-2 sm:py-4 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-          <div className="flex min-w-0 items-center gap-2 sm:gap-4">
-            {iso && iso.length === 2 && (
-                <div className="relative flex h-3.5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-sm border border-root-accent/30 bg-root-canvas shadow-sm sm:h-5 sm:w-8">
-                  <img
-                    src={`https://flagcdn.com/w80/${iso}.png`}
-                    alt={countryName}
-                    className="absolute inset-0 h-full w-full object-cover"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                  />
-                </div>
+        <RootInfoModalHeader
+          title={countryName}
+          titleId="country-user-modal-title"
+          onClose={onClose}
+          icon={<User />}
+          size="standard"
+          centerContent={
+            <span className="inline-flex items-center gap-2 text-[10px] font-semibold text-root-subtle sm:text-xs">
+              {iso && iso.length === 2 && (
+                <img
+                  src={`https://flagcdn.com/w80/${iso}.png`}
+                  alt={countryName}
+                  className="h-3.5 w-5 rounded-sm border border-root-accent/30 object-cover sm:h-5 sm:w-8"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
               )}
-            <div className="min-w-0">
-                <div className="mt-0.5 flex flex-wrap items-center gap-1 sm:mt-1 sm:gap-2">
-                  <p className="text-[10px] font-black uppercase tracking-tight text-root-accent sm:text-xs">
-                    {countryName}
-                  </p>
-                  <span className="flex shrink-0 items-center gap-1 px-2 sm:px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[8px] sm:text-[9px] font-black uppercase tracking-wider shadow-sm">
-                    <User className="w-2.5 h-2.5" />
-                    NEGARA ANDA
-                  </span>
-                </div>
-                <p className="text-[10px] font-semibold text-root-subtle sm:text-xs">Detail Negara Anda Sendiri</p>
-              </div>
-          </div>
-
-          <SharedModalCloseButton onClick={onClose} />
-        </div>
+              Detail Negara Anda Sendiri
+              <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/20 px-2 py-0.5 text-[8px] font-black uppercase tracking-wider text-emerald-400 sm:text-[9px]">
+                NEGARA ANDA
+              </span>
+            </span>
+          }
+        />
 
         {/* BODY CONTENT */}
         <div className="country-detail-modal-body flex-1 min-h-0 overflow-y-auto p-3 sm:p-5 md:p-8 bg-root-surface relative z-10 no-scrollbar">

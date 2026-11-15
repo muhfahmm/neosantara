@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { HandHeart } from 'lucide-react';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 
 interface ProvinceAidItem {
   key: string;
@@ -105,20 +106,21 @@ export default function ProvinceAidModal({
         aria-labelledby="province-aid-title"
         className="modal-responsive-shell bg-root-surface border-2 sm:border-3 border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl"
       >
-        <div className="shrink-0 border-b border-root-accent/20 bg-root-canvas px-6 py-4 sm:px-8 sm:py-5">
-          <div className="flex items-center gap-3">
-            <div className="rounded-lg border border-root-accent/30 bg-root-accent/10 p-2 text-root-accent">
-              <HandHeart className="h-6 w-6" />
-            </div>
-            <div>
-              <h3 id="province-aid-title" className="text-lg font-black text-root-accent">Pilih Bantuan</h3>
-              <p className="text-sm text-[#B7D5CD]">Pilih hasil produksi yang akan dikirim ke {targetCountry}.</p>
+        <RootInfoModalHeader
+          title="Pilih Bantuan"
+          titleId="province-aid-title"
+          onClose={onClose}
+          icon={<HandHeart />}
+          size="standard"
+          actions={
+            <div className="text-right">
+              <p className="text-sm text-[#B7D5CD]">Target: {targetCountry}</p>
               <p className="mt-1 text-xs font-bold text-orange-300">
-                Ketegangan saat ini: {provinceTension} · bantuan tetap dapat dikirim saat ketegangan 0
+                Ketegangan: {provinceTension}
               </p>
             </div>
-          </div>
-        </div>
+          }
+        />
 
         <div className="flex-1 overflow-y-auto p-6 sm:p-8">
         <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-3">

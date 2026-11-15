@@ -1,7 +1,7 @@
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { ChevronDown, Eye, Search, X } from "lucide-react";
+import { ChevronDown, Eye, Search } from "lucide-react";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { getCovertOperationSuccessChance } from "../covertOperationLogic";
 
@@ -97,23 +97,12 @@ export default function SpionaseModal({ isOpen, countryName, playerCountryDetail
 			{/* Container Modal Lebih Lebar dan Panjang */}
 			<div className="modal-responsive-shell flex flex-col bg-root-surface border border-root-accent/30 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(0,255,170,0.15)] relative pointer-events-auto">
 				
-				{/* HEADER */}
-				<div className="flex items-center justify-between mb-6 border-b border-root-accent/20 pb-4">
-					<div className="flex items-center gap-3">
-						<div className="p-2 bg-root-canvas rounded-lg border border-root-accent/30 shrink-0">
-							<Eye className="h-5 w-5 text-root-accent animate-pulse" />
-						</div>
-						<h3 className="text-xl sm:text-2xl font-black text-root-accent tracking-wide uppercase">
-							Spionase Intelijen Negara
-						</h3>
-					</div>
-					<SharedModalCloseButton
-						onClick={onClose}
-						className="p-1.5 rounded-lg text-root-subtle hover:text-root-accent hover:bg-root-accent/10 transition-colors cursor-pointer"
-					 appearance="custom">
-						<X className="h-5 w-5" />
-					</SharedModalCloseButton>
-				</div>
+				<RootInfoModalHeader
+					title="Spionase Intelijen Negara"
+					onClose={onClose}
+					icon={<Eye />}
+					size="standard"
+				/>
 
 				{/* BODY CONTENT */}
 				<div className="flex-1 flex flex-col">

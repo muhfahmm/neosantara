@@ -1,8 +1,9 @@
 "use client";
 
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import { createPortal } from "react-dom";
-import { CheckCircle2, Eye, Bomb, XCircle, X } from "lucide-react";
+import { CheckCircle2, Eye, Bomb, XCircle } from "lucide-react";
 import type { CovertOperationResult } from "./covertOperationLogic";
 
 interface CovertOperationResultModalProps {
@@ -29,22 +30,13 @@ export default function CovertOperationResultModal({
       aria-labelledby="covert-operation-result-title"
     >
       <div className="modal-responsive-shell overflow-y-auto rounded-2xl border border-root-accent/30 bg-root-surface text-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-root-accent/20 bg-root-canvas px-5 py-4">
-          <div className="flex items-center gap-3">
-            <OperationIcon className="h-5 w-5 text-root-accent" />
-            <h2 className="text-sm font-black uppercase tracking-wider text-root-accent">
-              Hasil Operasi {operationName}
-            </h2>
-          </div>
-          <SharedModalCloseButton
-            type="button"
-            onClick={onClose}
-            aria-label="Tutup hasil operasi"
-            className="rounded-lg p-1.5 text-root-subtle transition-colors hover:text-root-accent"
-           appearance="custom">
-            <X className="h-4 w-4" />
-          </SharedModalCloseButton>
-        </div>
+        <RootInfoModalHeader
+          title={`Hasil Operasi ${operationName}`}
+          titleId="covert-operation-header-title"
+          onClose={onClose}
+          icon={<OperationIcon />}
+          size="standard"
+        />
 
         <div className="space-y-4 p-6 text-center">
           <ResultIcon className={`mx-auto h-14 w-14 ${resultColor}`} />

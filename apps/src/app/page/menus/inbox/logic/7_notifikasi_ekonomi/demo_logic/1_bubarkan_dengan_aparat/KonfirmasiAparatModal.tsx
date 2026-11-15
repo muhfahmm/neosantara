@@ -1,7 +1,7 @@
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { ShieldAlert, AlertTriangle, X } from 'lucide-react';
+import { ShieldAlert, AlertTriangle } from 'lucide-react';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 
 interface KonfirmasiAparatModalProps {
   isOpen: boolean;
@@ -24,29 +24,17 @@ export default function KonfirmasiAparatModal({
       <div
         role="dialog"
         aria-modal="true"
+        aria-labelledby="police-action-confirmation-title"
         className="modal-responsive-shell relative overflow-hidden rounded-2xl bg-gradient-to-b from-[#1A0A0E] via-[#120508] to-[#0A0304] border border-rose-500/50 shadow-[0_0_50px_rgba(244,63,94,0.25)] flex flex-col"
       >
-        {/* Header */}
-        <div className="px-5 py-3.5 border-b border-rose-500/30 flex items-center justify-between bg-rose-950/60 shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl border border-rose-500/40 bg-rose-900/40 text-rose-400">
-              <ShieldAlert className="w-5 h-5 animate-pulse" />
-            </div>
-            <div>
-              <h2 className="text-xs sm:text-sm font-black tracking-wider uppercase text-rose-300">
-                🚨 KONFIRMASI OPERASI APARAT
-              </h2>
-              <p className="text-[10px] text-rose-400/80 uppercase font-semibold">Tindakan Keamanan & Penertiban Massa</p>
-            </div>
-          </div>
-          <SharedModalCloseButton
-            type="button"
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-           appearance="custom">
-            <X className="w-4 h-4" />
-          </SharedModalCloseButton>
-        </div>
+        <RootInfoModalHeader
+          title="Konfirmasi Operasi Aparat"
+          titleId="police-action-confirmation-title"
+          onClose={onClose}
+          icon={<ShieldAlert />}
+          size="standard"
+          actions={<span className="text-[10px] text-rose-400/80 uppercase font-semibold">Tindakan Keamanan & Penertiban Massa</span>}
+        />
 
         {/* Content */}
         <div className="p-5 space-y-4 text-left">

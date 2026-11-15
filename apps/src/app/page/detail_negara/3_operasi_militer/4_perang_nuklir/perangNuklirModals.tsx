@@ -1,9 +1,8 @@
 "use client";
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
 import { createPortal } from "react-dom";
 import { useState } from "react";
-import { X } from "lucide-react";
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import IcbmTidakTersediaModal from "./IcbmTidakTersediaModal";
 
 interface PerangNuklirModalProps {
@@ -26,19 +25,12 @@ export default function PerangNuklirModal({ isOpen, countryName, onClose, onConf
 				aria-modal="true"
 				aria-labelledby="nuclear-confirm-title"
 			>
-				<div className="flex items-center justify-between border-b border-rose-500/20 bg-root-canvas px-5 sm:px-6 py-4">
-					<h3 id="nuclear-confirm-title" className="text-lg sm:text-xl font-black text-rose-400 tracking-wide uppercase">
-						Konfirmasi Perang Nuklir
-					</h3>
-					<SharedModalCloseButton
-						type="button"
-						onClick={onClose}
-						className="rounded-lg p-1.5 text-root-subtle transition-colors hover:text-rose-400"
-						aria-label="Tutup konfirmasi perang nuklir"
-					 appearance="custom">
-						<X className="h-4 w-4" />
-					</SharedModalCloseButton>
-				</div>
+				<RootInfoModalHeader
+					title="Konfirmasi Perang Nuklir"
+					titleId="nuclear-confirm-title"
+					onClose={onClose}
+					size="standard"
+				/>
 
 				<div className="p-5 sm:p-6">
 					<p className="text-sm sm:text-base text-root-text leading-relaxed">

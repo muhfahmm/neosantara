@@ -1,7 +1,7 @@
 "use client";
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import React, { useEffect, useRef, useState } from "react";
-import { ShieldAlert, X } from "lucide-react";
+import { ShieldAlert } from "lucide-react";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import KonfirmasiPeluncuranSerangan from "./konfirmasi_peluncuran_serangan";
 import KonfirmasiSerangModals from "@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/KonfirmasiSerangModals";
@@ -90,17 +90,13 @@ export default function SerangNegaraModal({
 		return (
 			<div className="fixed inset-0 z-[100] flex items-center justify-center  p-4" role="alertdialog" aria-modal="true" aria-labelledby="attack-block-title">
 				<div className="modal-responsive-shell overflow-y-auto rounded-2xl border border-root-accent/30 bg-root-surface text-white shadow-2xl">
-					<div className="flex items-center justify-between border-b border-amber-400/20 bg-root-canvas px-5 sm:px-6 py-4">
-						<div className="flex items-center gap-3">
-							<ShieldAlert className="h-5 w-5 text-amber-400" />
-							<h3 id="attack-block-title" className="text-base font-black uppercase tracking-wider text-amber-300">
-								Serangan Tidak Dapat Dilakukan
-							</h3>
-						</div>
-						<SharedModalCloseButton type="button" onClick={() => setBlockedAttackReason(null)} className="rounded-lg p-1.5 text-root-subtle transition-colors hover:text-amber-400" aria-label="Tutup" appearance="custom">
-							<X className="h-4 w-4" />
-						</SharedModalCloseButton>
-					</div>
+					<RootInfoModalHeader
+						title="Serangan Tidak Dapat Dilakukan"
+						titleId="attack-block-title"
+						onClose={() => setBlockedAttackReason(null)}
+						icon={<ShieldAlert />}
+						size="standard"
+					/>
 					<div className="space-y-5 p-5 sm:p-6">
 						<p className="text-sm leading-relaxed text-root-text">
 							{isSelfAttack

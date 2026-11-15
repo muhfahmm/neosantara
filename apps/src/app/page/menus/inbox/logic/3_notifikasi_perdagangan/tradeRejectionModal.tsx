@@ -1,8 +1,9 @@
 'use client';
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from 'react';
 import { AlertTriangle, X } from 'lucide-react';
+import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 
 interface TradeRejectionModalProps {
   isOpen: boolean;
@@ -75,24 +76,14 @@ export default function TradeRejectionModal({
 
       {/* Modal Container */}
       <div className="fixed inset-0 z-[9999] flex items-center justify-center pt-[100px] pb-[20px] px-4 pointer-events-none">
-        <div className="modal-responsive-shell relative bg-gradient-to-br from-root-canvas via-root-surface to-root-canvas border border-red-500/30 rounded-2xl shadow-2xl overflow-hidden pointer-events-auto">
-          {/* Header */}
-          <div className="relative px-6 py-5 bg-gradient-to-r from-red-900/20 to-transparent border-b border-red-500/20 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-red-500/20 border border-red-500/40">
-                <AlertTriangle className="w-6 h-6 text-red-400" />
-              </div>
-              <h2 className="text-xl font-black text-red-400 uppercase tracking-wider">
-                {details.title}
-              </h2>
-            </div>
-            <SharedModalCloseButton
-              onClick={onClose}
-              className="p-1.5 sm:p-2 rounded-xl border border-red-500/30 bg-red-900/20 text-red-400 hover:bg-red-900/40 transition-all cursor-pointer"
-             appearance="custom">
-              <X className="w-4 h-4" />
-            </SharedModalCloseButton>
-          </div>
+        <div role="dialog" aria-modal="true" aria-labelledby="trade-rejection-title" className="modal-responsive-shell relative bg-gradient-to-br from-root-canvas via-root-surface to-root-canvas border border-red-500/30 rounded-2xl shadow-2xl overflow-hidden pointer-events-auto">
+          <RootInfoModalHeader
+            title={details.title}
+            titleId="trade-rejection-title"
+            onClose={onClose}
+            icon={<AlertTriangle />}
+            size="standard"
+          />
 
           {/* Content */}
           <div className="px-6 py-6 space-y-6">

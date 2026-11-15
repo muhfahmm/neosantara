@@ -1,11 +1,9 @@
 'use client';
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { 
   ShieldAlert, 
-  X, 
   AlertTriangle, 
   Coins, 
   Target, 
@@ -15,6 +13,7 @@ import {
   CheckCircle2,
   HelpCircle
 } from 'lucide-react';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import { 
   OPSI_BUBARKAN_MASSA, 
   DetailOpsiBubarkan, 
@@ -46,36 +45,22 @@ export default function MenuBubarkanMassaModal({
       <div
         role="dialog"
         aria-modal="true"
+        aria-labelledby="disperse-demonstration-title"
         className="modal-responsive-shell relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-b from-[#14080B] via-[#0E0406] to-[#070203] border-2 border-rose-500/50 shadow-[0_0_80px_rgba(244,63,94,0.35)] flex flex-col"
       >
-        {/* HEADER MODAL */}
-        <div className="px-5 py-4 border-b border-rose-500/30 flex items-center justify-between bg-gradient-to-r from-rose-950/80 via-[#1A0A0E] to-[#0E0406] shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl border border-rose-500/50 bg-rose-900/40 text-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.3)]">
-              <ShieldAlert className="w-6 h-6 animate-pulse" />
+        <RootInfoModalHeader
+          title="Pilih Metode Pembubaran Massa"
+          titleId="disperse-demonstration-title"
+          onClose={onClose}
+          icon={<ShieldAlert />}
+          size="standard"
+          actions={
+            <div className="text-right">
+              <span className="block text-[9px] font-black uppercase tracking-widest text-rose-300">Tindakan Keamanan Negara</span>
+              <span className="text-[10px] text-slate-400 font-bold">Kas: <strong className="text-emerald-400">{currentBudget.toLocaleString('id-ID')} NEO</strong></span>
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-rose-500/20 text-rose-300 border border-rose-500/40">
-                  Tindakan Keamanan Negara
-                </span>
-                <span className="text-[10px] text-slate-400 font-bold hidden sm:inline">
-                  Kas: <strong className="text-emerald-400">{currentBudget.toLocaleString('id-ID')} NEO</strong>
-                </span>
-              </div>
-              <h2 className="text-sm sm:text-base font-black tracking-wider uppercase text-white mt-0.5">
-                PILIH METODE PEMBUBARAN MASSA
-              </h2>
-            </div>
-          </div>
-          <SharedModalCloseButton
-            type="button"
-            onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-rose-500/20 border border-transparent hover:border-rose-500/30 transition-all cursor-pointer"
-           appearance="custom">
-            <X className="w-5 h-5" />
-          </SharedModalCloseButton>
-        </div>
+          }
+        />
 
         {/* BODY (LIST & DETAIL GRID) */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 min-h-0">

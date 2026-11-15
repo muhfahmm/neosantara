@@ -3,6 +3,7 @@ import React from "react";
 import { createPortal } from "react-dom";
 
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 interface BerikanSanksiModalProps {
 	isOpen: boolean;
 	countryName?: string | null;
@@ -36,9 +37,7 @@ export default function BerikanSanksiModal({
 				
 				{/* Area Konten */}
 				<div className="flex-1">
-					<h3 className="text-xl sm:text-2xl font-black text-root-accent tracking-wide uppercase mb-6 border-b border-root-accent/20 pb-4">
-						Konfirmasi Berikan Sanksi
-					</h3>
+					<RootInfoModalHeader title="Konfirmasi Berikan Sanksi" onClose={onClose} size="compact" />
 					
 					<p className="text-sm sm:text-base text-root-text mb-4 leading-relaxed">
 						Terapkan sanksi terhadap <strong className="text-white">{countryName}</strong>? Hubungan diplomatik akan turun secara acak sebesar <strong className="text-rose-400">15–30 poin</strong>.

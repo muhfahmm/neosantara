@@ -3,6 +3,7 @@
 import React from 'react';
 import { ShieldAlert } from 'lucide-react';
 import { RootNotebookDecorations } from '@/app/page/root_modals_design_menu/RootNotebookDecorations';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 
 interface ModalsPeringatanPeringkatProps {
     isOpen: boolean;
@@ -46,11 +47,23 @@ export function ModalsPeringatanPeringkat({ isOpen, onClose, currentRating, warn
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-4  font-sans select-none animate-fade-in">
 
             {/* Skeuomorphic Confirmation Frame */}
-            <div className="modal-responsive-shell bg-[#181111] border-[4px] border-red-950 rounded-2xl shadow-2xl relative flex flex-col p-3.5 pl-[52px] animate-scale-up animate-in fade-in duration-300">
+            <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="rank-warning-title"
+                className="modal-responsive-shell bg-[#181111] border-[4px] border-red-950 rounded-2xl shadow-2xl relative flex flex-col p-3.5 pl-[52px] animate-scale-up animate-in fade-in duration-300"
+            >
                 <RootNotebookDecorations count={7} />
 
                 {/* Parchment Sheet Card */}
                 <div className="flex-1 bg-[#FAF4F4] border-[3px] border-red-200/50 rounded-r-xl shadow-inner relative p-6 flex flex-col justify-between overflow-hidden text-center">
+                    <RootInfoModalHeader
+                        title={content.title}
+                        titleId="rank-warning-title"
+                        onClose={onClose}
+                        icon={<ShieldAlert />}
+                        size="compact"
+                    />
 
                     {/* Decorative Divider Top */}
                     <div className="flex items-center justify-center gap-1.5 text-red-800/40 shrink-0">
@@ -66,9 +79,6 @@ export function ModalsPeringatanPeringkat({ isOpen, onClose, currentRating, warn
                         </div>
 
                         <div className="space-y-2">
-                            <h3 className="text-sm font-black text-red-700 uppercase tracking-widest">
-                                {content.title}
-                            </h3>
                             <p className="text-[12px] font-extrabold text-slate-800 uppercase tracking-tight">
                                 {content.label} <span className="text-red-600 font-black text-sm">{displayValue}/100</span>
                             </p>

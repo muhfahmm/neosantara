@@ -5,8 +5,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { Newspaper, X, Swords, Flag, Coins, ShieldAlert, Sparkles, Filter } from 'lucide-react';
-import PausedMenuFrame from '@/app/page/root_modals_design_menu/rootFrameMenu';
-import RootModalCloseButton from '@/app/page/root_modals_design_menu/RootModalCloseButton';
+import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
 import { InvasionNewsData } from './logic/1_berita_invasi/beritaInvasiLogic';
 import { AnnexationNewsData } from './logic/2_berita_aneksasi/beritaAneksasiLogic';
@@ -325,21 +325,15 @@ export default function TopRightNewsIcon({
 
       {/* 🔥 News Modal - Render via Portal */}
       {isOpen && mounted && createPortal(
-        <PausedMenuFrame zIndexClass="z-[200]">
-          <div className="news-modal-typography relative flex min-h-0 flex-1 flex-col overflow-hidden font-sans">
+        <NotebookModalWrapper onClose={onClose} zIndexClass="z-[200]">
+          <div className="root-modal-util-52b6b298fe news-modal-typography font-sans">
 
-            {/* 🔥 HEADER MODAL */}
-            <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0 rounded-t-2xl">
-              <div className="flex items-center gap-2.5">
-                <div className="p-1.5 rounded-lg border border-root-accent/30 bg-root-surface shrink-0">
-                  <Newspaper className="h-4 w-4 text-root-accent" />
-                </div>
-                <h2 className="text-sm sm:text-base font-black text-root-accent tracking-wider uppercase">
-                  Berita & Update Geopolitik
-                </h2>
-              </div>
-              <RootModalCloseButton onClick={onClose} />
-            </div>
+            <RootInfoModalHeader
+              title="Berita & Update Geopolitik"
+              onClose={onClose}
+              icon={<Newspaper />}
+              size="standard"
+            />
 
             {/* 🔥 FILTER BAR */}
             <div className="px-4 sm:px-6 py-2 bg-[#051111] border-b border-root-accent/15 flex items-center justify-between gap-2 shrink-0">
@@ -528,23 +522,18 @@ export default function TopRightNewsIcon({
                 className="modal-responsive-shell overflow-hidden rounded-2xl border border-cyan-400/40 bg-root-surface shadow-2xl"
                 onClick={event => event.stopPropagation()}
               >
-                <header className="flex items-center justify-between gap-3 border-b border-cyan-400/20 bg-root-canvas px-5 py-4">
-                  <div>
-                    <h3 id="pbb-operation-title" className="font-black text-cyan-300">
-                      Pasukan Operasi Gabungan PBB
-                    </h3>
-                    <p className="mt-1 text-xs text-slate-400">
+                <RootInfoModalHeader
+                  title="Pasukan Operasi Gabungan PBB"
+                  titleId="pbb-operation-title"
+                  onClose={() => setSelectedOperationNews(null)}
+                  icon={<Newspaper />}
+                  size="standard"
+                  centerContent={
+                    <p className="text-xs text-slate-400">
                       Target: <strong className="text-white">{selectedOperationNews.target.name}</strong>
                     </p>
-                  </div>
-                  <SharedModalCloseButton
-                    onClick={() => setSelectedOperationNews(null)}
-                    aria-label="Tutup daftar negara peserta"
-                    className="rounded-lg border border-cyan-400/30 p-2 text-cyan-300 hover:bg-cyan-400/10"
-                   appearance="custom">
-                    <X className="h-4 w-4" />
-                  </SharedModalCloseButton>
-                </header>
+                  }
+                />
                 <div className="max-h-[60vh] space-y-2 overflow-y-auto p-4">
                   {selectedOperationNews.participants.map(participant => (
                     <div
@@ -567,7 +556,7 @@ export default function TopRightNewsIcon({
             </div>
           )}
           </div>
-        </PausedMenuFrame>,
+        </NotebookModalWrapper>,
         document.body
       )}
     </>

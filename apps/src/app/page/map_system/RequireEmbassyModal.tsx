@@ -1,9 +1,9 @@
 'use client';
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from 'react';
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
-import { Building2, X, ArrowRight } from 'lucide-react';
+import { Building2, ArrowRight } from 'lucide-react';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 
 interface RequireEmbassyModalProps {
@@ -28,33 +28,24 @@ export function RequireEmbassyModal({
 
   return (
     <NotebookModalWrapper compact zIndexClass="z-[300]">
-      <div className="relative w-full overflow-hidden flex flex-col font-sans pointer-events-auto">
-        
-        {/* Glow Accent Header */}
-
-
-        {/* Header Modal */}
-        <div className="flex items-center justify-between border-b border-root-accent/20 pb-4 mb-4 relative z-10">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-root-accent/10 border border-root-accent/40 flex items-center justify-center text-root-accent shrink-0 shadow">
-              <Building2 className="w-5 h-5" />
-            </div>
-            <div>
-              <span className="text-[10px] font-extrabold text-root-accent bg-root-accent/10 px-2 py-0.5 rounded border border-root-accent/30 uppercase tracking-wider">
-                Diplomasi Syarat
-              </span>
-              <h3 className="text-base font-bold text-white uppercase tracking-tight leading-snug mt-0.5">
-                Kedutaan Besar Diperlukan
-              </h3>
-            </div>
-          </div>
-          <SharedModalCloseButton
-            onClick={onClose}
-            className="p-1.5 rounded-lg border border-root-accent/20 bg-root-canvas text-root-accent/70 hover:text-root-accent hover:bg-root-accent/10 transition-all cursor-pointer"
-           appearance="custom">
-            <X className="w-4 h-4" />
-          </SharedModalCloseButton>
-        </div>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="require-embassy-title"
+        className="relative w-full overflow-hidden flex flex-col font-sans pointer-events-auto"
+      >
+        <RootInfoModalHeader
+          title="Kedutaan Besar Diperlukan"
+          titleId="require-embassy-title"
+          onClose={onClose}
+          icon={<Building2 />}
+          size="compact"
+          actions={
+            <span className="text-[10px] font-extrabold text-root-accent uppercase tracking-wider">
+              Diplomasi Syarat
+            </span>
+          }
+        />
 
         {/* Body Content */}
         <div className="space-y-4 relative z-10">

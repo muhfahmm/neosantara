@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Skull, RotateCcw, Globe, Crown, Flame, Swords } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 
 export type KudetaType = "peringkat" | "kepuasan" | "kesejahteraan";
 
@@ -97,32 +98,23 @@ export default function ModalsKudeta({ isOpen, kudetaType, currentValue, country
                 className={`relative w-full max-w-[500px] transition-all duration-700 delay-200 ${
                     visible ? 'translate-y-0 scale-100' : 'translate-y-8 scale-95'
                 }`}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="coup-game-over-title"
             >
                 {/* Outer dark frame */}
-                <div className="bg-[#0e0808] border-4 border-red-900/80 rounded-2xl shadow-2xl shadow-red-900/40 overflow-hidden">
-
-                    {/* Dramatic header band */}
-                    <div className={`bg-gradient-to-r ${content.bgColor} p-6 flex flex-col items-center gap-3 border-b-2 border-red-900/50`}>
-                        {/* Skull icon overlay */}
-                        <div className="relative">
-                            <div className="absolute inset-0 rounded-full bg-red-600/20  animate-pulse" />
-                            <div className="relative w-20 h-20 rounded-full bg-red-950/80 border-4 border-red-700 flex items-center justify-center text-red-400 shadow-lg shadow-red-900/50">
-                                <Skull className="w-10 h-10" />
-                            </div>
-                        </div>
-
-                        <div className="text-center">
-                            <div className="text-[9px] font-black tracking-[0.3em] text-red-500/70 uppercase mb-1">
-                                — GAME OVER —
-                            </div>
-                            <h2 className="text-xl font-black text-red-400 uppercase tracking-widest leading-tight">
-                                {content.title}
-                            </h2>
-                            <p className="text-[11px] text-red-300/60 font-bold uppercase tracking-wider mt-1">
-                                {content.subtitle}
-                            </p>
-                        </div>
-                    </div>
+                <div className="modal-responsive-shell bg-[#0e0808] border-4 border-red-900/80 rounded-2xl shadow-2xl shadow-red-900/40 overflow-hidden">
+                    <RootInfoModalHeader
+                        title={content.title}
+                        titleId="coup-game-over-title"
+                        icon={<Skull />}
+                        size="standard"
+                        actions={
+                            <span className="text-[10px] font-black uppercase tracking-wider text-red-300/70">
+                                Game Over · {content.subtitle}
+                            </span>
+                        }
+                    />
 
                     {/* Content parchment */}
                     <div className="bg-[#FAF4F0] p-6 flex flex-col gap-5">

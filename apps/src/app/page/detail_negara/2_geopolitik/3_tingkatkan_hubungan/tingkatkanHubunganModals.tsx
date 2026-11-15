@@ -1,9 +1,9 @@
 "use client";
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import { getRelationTier } from '@/app/logic/relationTiers';
 import React, { useState, useEffect } from "react";
-import { Heart, Coins, TrendingUp, AlertCircle, Sparkles, X, Plus, RotateCcw, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Heart, Coins, TrendingUp, AlertCircle, Sparkles, Plus, RotateCcw, ArrowRight, CheckCircle2 } from "lucide-react";
 import { getRelationValue, setRelationModifier } from "../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
@@ -115,30 +115,17 @@ export default function TingkatkanHubunganModal({
 		<NotebookModalWrapper onClose={onClose}>
 			<div className="flex h-full min-h-0 flex-col overflow-hidden bg-root-surface font-sans shadow-2xl">
 
-				{/* HEADER */}
-				<div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
-					<div className="flex items-center gap-2 sm:gap-3">
-						<div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
-							<Heart className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-						</div>
-						<div>
-							<h2 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">
-								Tingkatkan Hubungan Diplomatik
-							</h2>
-							<p className="text-[10px] sm:text-xs text-root-subtle font-semibold mt-1">
-								Negara Target: <span className="text-root-text font-bold">{targetCountryName}</span>
-							</p>
-						</div>
-					</div>
-
-					<SharedModalCloseButton
-						onClick={onClose}
-						className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
-					 appearance="custom">
-						<span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-						<X className="h-4 w-4" />
-					</SharedModalCloseButton>
-				</div>
+				<RootInfoModalHeader
+					title="Tingkatkan Hubungan Diplomatik"
+					onClose={onClose}
+					icon={<Heart />}
+					size="standard"
+					centerContent={
+						<p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
+							Negara Target: <span className="text-root-text font-bold">{targetCountryName}</span>
+						</p>
+					}
+				/>
 
 				{/* BODY — Flex column, isi compact agar tidak perlu scroll */}
 				<div className="flex-1 min-h-0 bg-root-surface relative z-10 p-4 sm:p-6 flex flex-col gap-3 sm:gap-4">

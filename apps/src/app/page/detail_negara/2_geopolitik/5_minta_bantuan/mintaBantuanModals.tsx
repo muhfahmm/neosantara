@@ -3,6 +3,7 @@ import React from "react";
 import { createPortal } from "react-dom";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import { HandHeart } from "lucide-react";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 
 interface MintaBantuanModalProps {
 	isOpen: boolean;
@@ -19,20 +20,9 @@ export default function MintaBantuanModal({ isOpen, countryName, onClose, onConf
 			{/* Container Modal Lebih Lebar dan Panjang */}
 			<div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
 				
+				<RootInfoModalHeader title="Konfirmasi Minta Bantuan" onClose={onClose} icon={<HandHeart />} size="compact" />
 				{/* Area Konten */}
 				<div className="flex-1">
-					{/* Header (Tombol Tutup dihapus) */}
-					<div className="flex items-center justify-start mb-6 border-b border-root-accent/20 pb-4">
-						<div className="flex items-center gap-3">
-							<div className="p-2 bg-root-canvas rounded-lg border border-root-accent/30 shrink-0">
-								<HandHeart className="h-5 w-5 text-root-accent" />
-							</div>
-							<h3 className="text-xl sm:text-2xl font-black text-root-accent tracking-wide uppercase">
-								Konfirmasi Minta Bantuan
-							</h3>
-						</div>
-					</div>
-
 					{/* Body */}
 					<p className="text-sm sm:text-base text-root-text mb-6 leading-relaxed">
 						Apakah Anda ingin meminta bantuan kepada{" "}

@@ -5,8 +5,8 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { Inbox, X, Trash2, Clock, CheckCircle2, AlertTriangle, ShieldAlert, ChevronRight, User } from 'lucide-react';
-import PausedMenuFrame from '@/app/page/root_modals_design_menu/rootFrameMenu';
-import RootModalCloseButton from '@/app/page/root_modals_design_menu/RootModalCloseButton';
+import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
 import { getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 import { NotificationMessage } from './logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
@@ -614,28 +614,20 @@ export default function TopLeftIcon({
 
       {/* 🔥 Inbox Modal Prototype (2 Kolom: Master List di Kiri & Detail Konten di Kanan) */}
       {isOpen && mounted && !isWarAnalysisActive && createPortal(
-        <PausedMenuFrame zIndexClass="z-[200]">
-          <div className="inbox-modal-typography relative flex min-h-0 flex-1 flex-col overflow-hidden font-sans">
+        <NotebookModalWrapper onClose={onClose} zIndexClass="z-[200]">
+          <div className="root-modal-util-52b6b298fe inbox-modal-typography font-sans">
 
-            {/* 🔥 HEADER MODAL */}
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 shrink-0 rounded-t-2xl">
-              <div className="flex items-center gap-2.5">
-                <div className="p-1.5 rounded-lg border border-root-accent/30 bg-root-surface shrink-0 text-root-accent">
-                  <Inbox className="h-4 w-4 sm:h-5 sm:w-5" />
-                </div>
-                <div>
-                  <h2 className="text-base sm:text-lg font-black text-root-accent tracking-tight leading-none uppercase">
-                    Inbox & Notifikasi
-                  </h2>
-                  <span className="text-[9px] font-bold text-root-subtle uppercase tracking-wider">
-                    {orderedNotifications.length} Pesan ({unreadCount} Belum Dibaca)
-                  </span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <RootModalCloseButton onClick={onClose} />
-              </div>
-            </div>
+            <RootInfoModalHeader
+              title="Inbox & Notifikasi"
+              onClose={onClose}
+              icon={<Inbox />}
+              size="standard"
+              actions={
+                <span className="text-[9px] font-bold text-root-subtle uppercase tracking-wider">
+                  {orderedNotifications.length} Pesan ({unreadCount} Belum Dibaca)
+                </span>
+              }
+            />
 
             {/* 🔥 BODY MODAL: 2-COLUMN SPLIT PROTOTYPE */}
             <div className="flex-1 flex overflow-hidden bg-root-canvas">
@@ -762,7 +754,7 @@ export default function TopLeftIcon({
               )}
             </div>
           </div>
-        </PausedMenuFrame>,
+        </NotebookModalWrapper>,
         document.body
       )}
     </>

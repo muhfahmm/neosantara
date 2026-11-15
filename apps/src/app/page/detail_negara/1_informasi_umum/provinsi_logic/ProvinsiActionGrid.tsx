@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import type { ProvinceAction, ProvinceActionEventDetail } from './provinceActionTypes';
 import { PROVINCE_ACTION_EVENT } from './provinceActionTypes';
 import MissionaryResultModal from './1_informasi_umum/2_tugaskan_misionaris/MissionaryResultModal';
@@ -207,9 +208,12 @@ export default function ProvinsiActionGrid({
             aria-labelledby="province-action-title"
             className="modal-responsive-shell bg-root-surface border-2 sm:border-3 border-root-accent/30 rounded-2xl overflow-hidden flex flex-col justify-center relative font-sans pointer-events-auto shadow-2xl p-6 sm:p-10"
           >
-            <h3 id="province-action-title" className="text-lg font-black text-root-accent mb-3">
-              Konfirmasi {selectedAction.label}
-            </h3>
+            <RootInfoModalHeader
+              title={`Konfirmasi ${selectedAction.label}`}
+              titleId="province-action-title"
+              onClose={() => setSelectedAction(null)}
+              size="compact"
+            />
             <p className="text-sm text-[#B7D5CD] mb-6">
               {selectedAction.description} Target: <strong>{targetCountry}</strong>.
             </p>

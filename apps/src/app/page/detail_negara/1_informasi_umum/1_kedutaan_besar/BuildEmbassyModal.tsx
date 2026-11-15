@@ -3,6 +3,7 @@ import { getWaktuPembangunanKedutaanBonusPercent } from "@/app/page/bonus_logic"
 import { createPortal } from "react-dom";
 
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 interface BuildEmbassyModalProps {
   isOpen: boolean;
   countryName?: string | null;
@@ -35,12 +36,9 @@ export default function BuildEmbassyModal({ isOpen, countryName, continent, curr
       {/* Container Modal Lebih Lebar dan Panjang */}
       <div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
         
+        <RootInfoModalHeader title="Konfirmasi Bangun Kedutaan" onClose={onClose} size="compact" />
         {/* Area Konten */}
         <div className="flex-1">
-          <h3 className="text-xl sm:text-2xl font-black text-root-accent tracking-wide uppercase mb-6 border-b border-root-accent/20 pb-4">
-            Konfirmasi Bangun Kedutaan
-          </h3>
-          
           <p className="text-sm sm:text-base text-root-text mb-4 leading-relaxed">
             Apakah Anda ingin membangun kedutaan di <strong className="text-white">{countryName}</strong>? Biaya pembangunan di <strong className="text-white">{continentLabel}</strong> adalah {
               embassyCostDiscountPct > 0 ? (
