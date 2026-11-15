@@ -41,7 +41,7 @@
 
 @media (min-width: 1024px) {
   :root {
-    --modal-max-width: min(860px, calc(100vw - 48px));
+    --modal-max-width: min(990px, calc(100vw - 48px));
     --modal-font-title: 1.125rem;
     --modal-font-section-title: 0.9375rem;
     --modal-font-body: 0.875rem;
@@ -52,7 +52,7 @@
 
 @media (min-width: 1280px) {
   :root {
-    --modal-max-width: min(940px, calc(100vw - 64px));
+    --modal-max-width: min(1070px, calc(100vw - 64px));
     --modal-font-title: 1.125rem;
     --modal-font-section-title: 1rem;
     --modal-font-body: 0.875rem;
