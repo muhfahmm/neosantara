@@ -120,9 +120,9 @@ export function generateDoctrineChangeNotification(
         effects = [{ stat: 'Kepuasan', value: '+5%' }];
         break;
       case 'transparencyScore':
-        title = '🔍 Audit Publik & Anti-Korupsi';
-        message: 'Seluruh anggaran negara diaudit publik secara terbuka, menekan potensi korupsi dan kebocoran anggaran.';
-        effects = [{ stat: 'Korupsi', value: '-15%' }];
+        title = '🔍 Transparansi Anggaran Publik';
+        message = 'Informasi anggaran negara dan hasil audit tersedia secara terbuka untuk publik.';
+        effects = [];
         break;
       case 'mediaScore':
         title = '📻 Kebebasan Media & Kebudayaan';
@@ -174,8 +174,8 @@ export function generateDoctrineChangeNotification(
         break;
       case 'transparencyScore':
         title = '🙈 Transparansi Minim & Kerawanan Anggaran';
-        message: 'Pengawasan anggaran minim publik memicu keprihatinan atas potensi meningkatnya praktek korupsi.';
-        effects = [{ stat: 'Korupsi', value: '+20%' }];
+        message = 'Minimnya pengawasan publik atas anggaran menimbulkan kekhawatiran tentang akuntabilitas pemerintah.';
+        effects = [];
         break;
       case 'mediaScore':
         title = '📺 Monopoli Penyiaran Negara';

@@ -10,7 +10,6 @@ import {
 } from 'lucide-react';
 import { getArmadaPowerSummary } from '@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
 import { convertBarakToSoldiers } from '@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/1_barak_logic';
-import { getActiveSectorImpacts } from '@/app/page/navigasi_menu/2_navigasi_bawah/9_kementrian/1_pemberantasan_korupsi/logic/corruptionLogic';
 
 interface PerbandinganPasukanProps {
   attackerName: string;
@@ -229,15 +228,8 @@ export default function PerbandinganPasukan({
   const attackerDeployedPower = getDeployedMilitaryPower(attackerBreakdown, attackerSummary);
   const targetDeployedPower = getDeployedMilitaryPower(targetBreakdown, targetSummary);
 
-  const playerMilitaryLoss = getActiveSectorImpacts(
-    asRecord(isUserDefender ? targetDetail : attackerDetail),
-  ).militaryEffectivenessLossPercent;
-  const actualAttackerPower = Math.round(
-    attackerDeployedPower * (isUserDefender ? 1 : 1 - playerMilitaryLoss / 100),
-  );
-  const actualTargetPower = Math.round(
-    targetDeployedPower * (isUserDefender ? 1 - playerMilitaryLoss / 100 : 1),
-  );
+  const actualAttackerPower = attackerDeployedPower;
+  const actualTargetPower = targetDeployedPower;
 
   const totalCombinedPower = actualAttackerPower + actualTargetPower;
   const attackerPct = totalCombinedPower > 0

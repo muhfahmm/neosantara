@@ -48,7 +48,6 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
       profiles,
       taxes,
       kabinet,
-      antikorupsi,
       sda,
       harga,
       doktrin,
@@ -77,7 +76,6 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
       queryDb<any[]>('SELECT * FROM database_profiles_negara'),
       queryOptional('SELECT * FROM database_pajak_negara'),
       queryOptional('SELECT * FROM database_level_kabinet'),
-      queryOptional('SELECT * FROM database_level_antikorupsi'),
       queryOptional('SELECT * FROM database_sda'),
       queryOptional('SELECT * FROM database_harga_barang'),
       queryOptional('SELECT * FROM database_doktrin_keterbukaan'),
@@ -123,7 +121,6 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
 
     const taxMap = makeMap(taxes);
     const kabinetMap = makeMap(kabinet);
-    const antikorupsiMap = makeMap(antikorupsi);
     const sdaMap = makeMap(sda);
     const hargaMap = makeMap(harga);
     const doktrinMap = makeMap(doktrin);
@@ -196,7 +193,6 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
       const t = taxMap.get(id) || (slug ? taxMap.get(normSlug) : {}) || {};
       const kFromDb = (slug ? kabinetMap.get(normSlug) : null) || kabinetMap.get(id) || {};
       const k = { ...kFromDb };
-      const antiKorupsi = (slug ? antikorupsiMap.get(normSlug) : null) || antikorupsiMap.get(id) || {};
 
       const s = sdaMap.get(id) || (slug ? sdaMap.get(normSlug) : {}) || {};
       const h = hargaMap.get(id) || (slug ? hargaMap.get(normSlug) : {}) || {};
@@ -283,8 +279,6 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
         pendapatan_nasional: String(prof.pendapatan_nasional || '0'),
         religion: prof.religion || 'Lainnya',
         ideology: prof.ideology || 'Demokrasi',
-        anti_corruption_agency_level: antiKorupsi.anti_corruption_agency_level,
-        whistleblower_protection: antiKorupsi.whistleblower_protection,
 
         un_vote: Number(prof.un_vote) || 0,
         reputasi_diplomatik: prof.reputasi_diplomatik || 'Netral',

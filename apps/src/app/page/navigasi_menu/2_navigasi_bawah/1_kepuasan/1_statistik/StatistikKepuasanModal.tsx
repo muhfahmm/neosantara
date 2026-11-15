@@ -111,13 +111,6 @@ export default function StatistikKepuasanModal({
         "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-09.svg",
       menuId: "Menu:KebijakanSubsidi",
     },
-    {
-      name: "Integritas & Anti-Korupsi",
-      score: sectorScores.integritas,
-      image:
-        "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-10.svg",
-      menuId: "Menu:AntiKorupsi",
-    },
   ];
 
   return (

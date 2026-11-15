@@ -154,7 +154,7 @@ export async function releaseAnnexedProvince({
     });
 
     const weightedFields: Record<string, number> = {};
-    ['harapan_hidup', 'indeks_kesehatan', 'indeks_korupsi', 'indeks_keamanan'].forEach(key => {
+    ['harapan_hidup', 'indeks_kesehatan', 'indeks_keamanan'].forEach(key => {
       const currentValue = Number(previous[key]);
       const annexedValue = Number(targetData[key]);
       if (Number.isFinite(currentValue) && Number.isFinite(annexedValue) && remainingPopulation > 0) {

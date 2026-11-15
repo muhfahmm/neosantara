@@ -41,7 +41,6 @@ import {
   getKementerianKeuanganTaxRevenueBonusPercent,
   applyKementerianKeuanganTaxRevenueBonus,
 } from "@/app/page/bonus_logic";
-import { getActiveSectorImpacts } from "@/app/page/navigasi_menu/2_navigasi_bawah/9_kementrian/1_pemberantasan_korupsi/logic/corruptionLogic";
 import { calculateTaxSatisfaction } from "@/app/logic/kepuasanCalculator";
 
 interface ModalProps {
@@ -424,11 +423,6 @@ function PajakModalContent({
     [countryDetail]
   );
 
-  const corruptionImpacts = useMemo(
-    () => getActiveSectorImpacts(countryDetail),
-    [countryDetail]
-  );
-
   const baseTotalIncome =
     vatRevenue +
     corporateTaxRevenue +
@@ -438,11 +432,8 @@ function PajakModalContent({
 
   const totalIncomeWithHarmonisasi = useMemo(
     () =>
-      applyHarmonisasiFiskalGlobalTaxRevenueBonus(
-        baseTotalIncome * (1 - corruptionImpacts.taxRevenueLossPercent / 100),
-        countryDetail
-      ),
-    [baseTotalIncome, corruptionImpacts.taxRevenueLossPercent, countryDetail]
+      applyHarmonisasiFiskalGlobalTaxRevenueBonus(baseTotalIncome, countryDetail),
+    [baseTotalIncome, countryDetail]
   );
 
   const totalIncome = useMemo(
@@ -498,13 +489,6 @@ function PajakModalContent({
             </>
           }
         />
-
-        {corruptionImpacts.taxRevenueLossPercent > 0 && (
-          <div className={`tax-policy-alert mx-4 mt-3 ${rootBorderRadius.card} border border-rose-500/25 bg-rose-950/20 px-4 py-3 text-xs text-rose-200 sm:mx-6 break-words`}>
-            Kebocoran pajak dari kasus korupsi aktif mengurangi estimasi
-            penerimaan sebesar {corruptionImpacts.taxRevenueLossPercent}%.
-          </div>
-        )}
 
         <div className="tax-policy-content min-h-0 flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-root-canvas/80 relative z-10 neon-scrollbar">
           <div className="tax-policy-rate-list">

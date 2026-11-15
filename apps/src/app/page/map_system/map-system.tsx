@@ -2967,7 +2967,7 @@ export default function MapPage() {
                                 });
 
                                 const weightedAverageFields: Record<string, number> = {};
-                                ['harapan_hidup', 'indeks_kesehatan', 'indeks_korupsi', 'indeks_keamanan'].forEach(key => {
+                                ['harapan_hidup', 'indeks_kesehatan', 'indeks_keamanan'].forEach(key => {
                                     const prevValue = Number(currentDetail[key]);
                                     const targetValue = Number(targetData[key]);
                                     if (Number.isFinite(prevValue) && Number.isFinite(targetValue) && totalPop > 0) {

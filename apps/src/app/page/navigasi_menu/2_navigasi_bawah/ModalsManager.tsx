@@ -13,7 +13,6 @@ import {
   NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
 } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import type { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
-import { processCorruptionMonth } from './9_kementrian/1_pemberantasan_korupsi/logic/scandalLogic';
 import { calculateDailyPopulationChange, type CountryDetail } from '@/app/logic/populations_logic/population_logic';
 import { generatePopulasiDefisitNotification } from '@/app/page/menus/inbox/logic/8_kebutuhan_pokok_warga/5_populasi/populasiDefisitLogic';
 
@@ -81,7 +80,6 @@ const DoktrinKeterbukaanModal = dynamic(() => import("./8_sosial_budaya/keterbuk
 
 // 9. Kementerian
 const KementerianModal = dynamic(() => import("./9_kementrian/KementerianModal"), { ssr: false, loading: ModalLoadingFallback });
-const CorruptionMenu = dynamic(() => import("./9_kementrian/1_pemberantasan_korupsi/KorupsiMenu"), { ssr: false, loading: ModalLoadingFallback });
 
 interface ModalCountryDetail {
   [key: string]: unknown;
@@ -334,26 +332,6 @@ function ModalsManager({
     }
   }, [currentDate, countryDetail, setCountryDetail]);
 
-  useEffect(() => {
-    if (!currentDate || !countryDetail) return;
-    const date = new Date(currentDate);
-    if (Number.isNaN(date.getTime())) {
-      console.warn('ModalsManager: skipped corruption processing for an invalid simulation date');
-      return;
-    }
-
-    const updatedDetail = processCorruptionMonth(countryDetail, date);
-    if (updatedDetail !== countryDetail) {
-      setCountryDetail(updatedDetail);
-      if (
-        typeof updatedDetail.presidentRating === 'number' &&
-        updatedDetail.presidentRating !== countryDetail.presidentRating
-      ) {
-        setPresidentRating?.(updatedDetail.presidentRating);
-      }
-    }
-  }, [currentDate, countryDetail, setCountryDetail, setPresidentRating]);
-
   // Jika tidak ada negara yang dipilih, jangan render apapun
   if (!selectedCountry) return null;
 
@@ -545,7 +523,7 @@ function ModalsManager({
                   { id: "infrastruktur", keys: ["jalur_sepeda", "jalan_raya", "terminal_bus", "stasiun_kereta_api", "stasiun_kereta", "kereta_bawah_tanah", "pelabuhan", "bandara", "helipad", "jembatan_nasional", "pembangkit_listrik"] },
                   { id: "pendidikan", keys: ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan"] },
                   { id: "kesehatan", keys: ["rumah_sakit_besar", "rumah_sakit_kecil", "rumah_sakit", "pusat_diagnostik", "puskesmas", "klinik", "harapan_hidup", "indeks_kesehatan"] },
-                  { id: "penegakan_hukum", keys: ["pusat_bantuan_hukum", "pengadilan", "kejaksaan", "pos_polisi", "kantor_polisi", "armada_mobil_polisi", "akademi_polisi", "lapas", "indeks_korupsi", "indeks_keamanan"] },
+                  { id: "penegakan_hukum", keys: ["pusat_bantuan_hukum", "pengadilan", "kejaksaan", "pos_polisi", "kantor_polisi", "armada_mobil_polisi", "akademi_polisi", "lapas", "indeks_keamanan"] },
                   { id: "olahraga_hiburan", keys: ["kolam_renang", "sirkuit_balap", "stadion", "stadion_internasional", "gym", "golf", "esports", "gokart", "bioskop", "teater", "taman_kota"] },
                   { id: "komersial", keys: ["mall", "pusat_perbelanjaan", "hotel", "pasar_tradisional", "pusat_grosir_tekstil"] },
                 ];
@@ -867,20 +845,6 @@ function ModalsManager({
           resetTrigger={resetTrigger}
         />
       );
-    case "Menu:AntiKorupsi":
-      return (
-        <CorruptionMenu
-          isOpen={true}
-          onClose={onClose}
-          countryDetail={countryDetail}
-          setCountryDetail={update => setCountryDetail(previous =>
-            typeof update === 'function' ? update(previous) : update
-          )}
-          currentDate={currentDate}
-          setPresidentRating={setPresidentRating}
-        />
-      );
-
     default:
       // Jika tidak ada menu yang cocok, tidak render apapun
       return null;

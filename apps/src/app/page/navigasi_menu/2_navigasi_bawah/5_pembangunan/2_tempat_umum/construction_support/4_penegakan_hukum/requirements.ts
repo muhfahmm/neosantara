@@ -56,13 +56,6 @@ export const REQUIREMENTS: BuildingRequirements[] = [
     ],
   },
   {
-    buildingKey: 'indeks_korupsi',
-    requirements: [
-      { group: 'pembangunan', label: 'semen beton', resourceKey: 'semen_beton', amount: 31538 },
-      { group: 'pembangunan', label: 'kayu', resourceKey: 'kayu', amount: 30513 },
-    ],
-  },
-  {
     buildingKey: 'indeks_keamanan',
     requirements: [
       { group: 'pembangunan', label: 'semen beton', resourceKey: 'semen_beton', amount: 31538 },

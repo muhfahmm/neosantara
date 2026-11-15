@@ -50,11 +50,6 @@ const PENALTY_SECTIONS = [
     amount: "−1 per kejadian",
     detail: "Sekali saat event berakhir tanpa penanganan maupun penolakan tercatat.",
   },
-  {
-    title: "Skandal korupsi baru",
-    amount: "−1 ringan / −2 sedang / −4 berat",
-    detail: "Dikenakan saat skandal baru muncul pada proses bulanan; skandal lama tidak mengulang penalti.",
-  },
 ];
 
 export default function RingkasanPeringkatModal({

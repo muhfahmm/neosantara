@@ -28,7 +28,6 @@ const modalPreloaders: Record<string, () => Promise<unknown>> = {
   "Menu:Ideologi": () => import("./8_sosial_budaya/ideologi/IdeologiModal"),
   "Menu:DoktrinKeterbukaan": () => import("./8_sosial_budaya/keterbukaan/DoktrinKeterbukaanModal"),
   "Dashboard:Kementerian": () => import("./9_kementrian/KementerianModal"),
-  "Menu:AntiKorupsi": () => import("./9_kementrian/1_pemberantasan_korupsi/KorupsiMenu"),
 };
 
 export function preloadModalForMenu(menuId: string) {

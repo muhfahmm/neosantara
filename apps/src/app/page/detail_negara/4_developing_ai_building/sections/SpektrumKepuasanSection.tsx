@@ -15,7 +15,6 @@ import {
   AlertCircle,
   AlertTriangle,
   ShieldAlert,
-  ShieldCheck,
   Percent,
 } from "lucide-react";
 import type { NpcAiBrainState, NpcAlert } from "@/app/logic/npc_ai_brain/types/alertTypes";
@@ -171,13 +170,6 @@ export default function SpektrumKepuasanSection({
       icon: HandHelping,
       tabTarget: "subsidi",
       desc: "Cakupan perlindungan sosial, bantuan pangan, tarif energi, dan jaring pengaman",
-    },
-    {
-      id: "integritas",
-      name: "INTEGRITAS & ANTI-KORUPSI",
-      score: indicatorScores.integritas,
-      icon: ShieldCheck,
-      desc: "Tingkat integritas pemerintahan berdasarkan indeks korupsi negara",
     },
   ], [indicatorScores]);
 

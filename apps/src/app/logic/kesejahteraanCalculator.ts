@@ -21,7 +21,6 @@ import {
   calculateServiceDeficitMetrics,
   PENEGAKAN_HUKUM_KEYS,
 } from "@/app/logic/kepuasanCalculator";
-import { getActiveSectorImpacts } from '@/app/page/navigasi_menu/2_navigasi_bawah/9_kementrian/1_pemberantasan_korupsi/logic/corruptionLogic';
 
 // ─── Helper Functions ─────────────────────────────────────────────────────
 
@@ -390,9 +389,6 @@ export function calculateKesejahteraan(
   const kesKeys = ["rumah_sakit_besar", "rumah_sakit_kecil", "pusat_diagnostik"];
   const kesTotal = kesKeys.reduce((s, k) => s + (Number(countryDetail?.[k]) || 0), 0);
   const kesehatanScore = calculateSharedKesehatanScore(countryDetail);
-  const servicePenalty = getActiveSectorImpacts(countryDetail).publicServiceLossPercent;
-  const educationScoreAfterCorruption = Math.round(pendidikanScore * (1 - servicePenalty / 100));
-  const healthScoreAfterCorruption = Math.round(kesehatanScore * (1 - servicePenalty / 100));
 
   // Sektor 3: Tempat Umum (Infrastruktur)
   const infraKeys = ["jalur_sepeda", "jalan_raya", "terminal_bus", "stasiun_kereta_api", "kereta_bawah_tanah", "pelabuhan", "bandara", "helipad"];
@@ -434,7 +430,7 @@ export function calculateKesejahteraan(
   // Indeks kesejahteraan mencakup listrik bersama pangan dan hunian.
   const keterbukaanScore = calculateKeterbukaanScore(countryDetail);
   const baseScore = Math.round(
-    (educationScoreAfterCorruption + healthScoreAfterCorruption + tempatUmumScore + penegakanHukum.score + panganScore + hunianScore + listrikScore + keterbukaanScore) / 8
+    (pendidikanScore + kesehatanScore + tempatUmumScore + penegakanHukum.score + panganScore + hunianScore + listrikScore + keterbukaanScore) / 8
   );
   const bonus = Number(countryDetail?.kesejahteraan_bonus) || 0;
   const decayAccumulated = Number(countryDetail?.kesejahteraan_decay) || 0;
@@ -448,8 +444,8 @@ export function calculateKesejahteraan(
   ) {
     console.debug('[calculateKesejahteraan] Calc results:', {
       country: countryDetail?.country,
-      pendidikanScore: educationScoreAfterCorruption,
-      kesehatanScore: healthScoreAfterCorruption,
+      pendidikanScore,
+      kesehatanScore,
       tempatUmumScore,
       penegakanHukumScore: penegakanHukum.score,
       panganScore,
@@ -478,12 +474,12 @@ export function calculateKesejahteraan(
   // Fallback dummy structs for backward compatibility
   const dummyPendidikanMetrics: PendidikanMetrics = {
     totalFacilities: pendTotal,
-    score: educationScoreAfterCorruption,
+    score: pendidikanScore,
     detail: { prasekolah: 0, dasar: 0, menengah: 0, lanjutan: 0, universitas: 0, lembagaPendidikan: 0, laboratorium: 0, observatorium: 0, pusatPenelitian: 0, pusatPengembangan: 0 }
   };
   const dummyKesehatanMetrics: KesehatanMetrics = {
     totalFacilities: kesTotal,
-    score: healthScoreAfterCorruption,
+    score: kesehatanScore,
     detail: { rumahSakitBesar: 0, rumahSakitKecil: 0, pusatDiagnostik: 0, harapanHidup: 0, indeksKesehatan: 0 },
   };
   const dummyTempatUmumMetrics: TempatUmumMetrics = {
@@ -494,8 +490,8 @@ export function calculateKesejahteraan(
 
   return {
     overallScore: Math.min(100, Math.max(1, overallScore)),
-    pendidikanScore: educationScoreAfterCorruption,
-    kesehatanScore: healthScoreAfterCorruption,
+    pendidikanScore,
+    kesehatanScore,
     tempatUmumScore,
     penegakanHukumScore: penegakanHukum.score,
     panganScore,

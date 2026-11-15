@@ -452,7 +452,7 @@ export default function DoktrinKeterbukaanModal({
                       </div>
                       <div>
                         <h4 className="text-sm font-bold text-root-text">Transparansi Pemerintah & Akuntabilitas</h4>
-                        <p className="text-xs text-root-subtle">Keterbukaan informasi anggaran negara, audit publik, dan antikorupsi.</p>
+                        <p className="text-xs text-root-subtle">Keterbukaan informasi anggaran negara dan audit publik.</p>
                       </div>
                     </div>
                     <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
@@ -476,7 +476,7 @@ export default function DoktrinKeterbukaanModal({
                     </div>
                     <div className="p-2 rounded bg-emerald-950/40 border border-emerald-500/30 text-emerald-300">
                       <span className="font-bold block">🔍 Transparan Real-Time (&gt;70%):</span>
-                      <span>Menurunkan tingkat korupsi, +Kepuasan Publik.</span>
+                      <span>Anggaran dapat diawasi publik, +Kepuasan Publik.</span>
                     </div>
                   </div>
                 </div>
