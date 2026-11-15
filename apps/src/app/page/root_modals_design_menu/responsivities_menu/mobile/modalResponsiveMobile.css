@@ -1153,8 +1153,10 @@
 
   /* Every notebook modal must leave the mobile side menus and time controller exposed. */
   .country-detail-modal-frame>.modal-responsive-shell {
-    width: min(86vw, 1000px) !important;
-    max-width: min(86vw, 1000px) !important;
+    width: min(100%, var(--modal-menu-frame-width, var(--modal-max-width))) !important;
+    max-width: var(--modal-menu-frame-width, var(--modal-max-width)) !important;
+    height: var(--modal-menu-frame-height, var(--modal-max-height)) !important;
+    max-height: var(--modal-menu-frame-height, var(--modal-max-height)) !important;
   }
 
   /* Keep mission, tracking, and other modals clear of side menus and time controls if needed, or follow root frame sizing. */

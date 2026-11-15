@@ -1204,6 +1204,20 @@ function getMarketProducers(
 }
 
 
+const subscribeToHydration = () => () => undefined;
+const getClientHydrationSnapshot = () => true;
+const getServerHydrationSnapshot = () => false;
+
+function TimeControllerPortal({
+    children,
+    isMounted,
+}: {
+    children: React.ReactNode;
+    isMounted: boolean;
+}) {
+    return isMounted ? createPortal(children, document.body) : children;
+}
+
 export default function MapPage() {
     const router = useRouter();
     const viewportMode = useViewportMode();
@@ -1284,7 +1298,11 @@ export default function MapPage() {
     }, []);
     const [playerNetBalanceAdjustment, setPlayerNetBalanceAdjustment] = useState<number>(0);
     const [isPaused, setIsPaused] = useState(true);
-    const [hasMounted, setHasMounted] = useState(false);
+    const hasMounted = useSyncExternalStore(
+        subscribeToHydration,
+        getClientHydrationSnapshot,
+        getServerHydrationSnapshot,
+    );
     const isPausedRef = useRef(isPaused);
     const warPauseStateRef = useRef<{ wasPaused: boolean } | null>(null);
     const dialogPauseStateRef = useRef<{ wasPaused: boolean } | null>(null);
@@ -1294,10 +1312,6 @@ export default function MapPage() {
     const currentDateRef = useRef(currentDate);
     currentDateRef.current = currentDate;
     const tradePriceProgressRef = useRef<{ country: string; day: number } | null>(null);
-
-    useEffect(() => {
-        setHasMounted(true);
-    }, []);
 
     useEffect(() => {
         isPausedRef.current = isPaused;
@@ -11475,14 +11489,14 @@ export default function MapPage() {
             />
 
             {/* Premium Floating Time Controller Widget */}
-            {hasMounted && createPortal(
+            <TimeControllerPortal isMounted={hasMounted}>
                 <div
                     data-tutorial="time-controller"
                     style={{
                         bottom: 'calc(var(--safe-bottom) + 0.5rem)',
                         right: 'calc(var(--safe-right) + 0.5rem)',
                     }}
-                    className={`fixed z-[10000000000] transition-all ${isDialogTerbukaOpen ? 'hidden pointer-events-none' : ''} ${
+                    className={`fixed ${hasMounted ? 'z-[10000000000]' : 'z-40'} transition-all ${isDialogTerbukaOpen ? 'hidden pointer-events-none' : ''} ${
                     isLandscapePhone
                         ? 'flex flex-row items-center gap-1.5 bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg max-w-[210px] h-[36px]'
                         : isPortraitPhone
@@ -11677,9 +11691,8 @@ export default function MapPage() {
                         </div>
                     </>
                 )}
-                </div>,
-                document.body
-            )}
+                </div>
+            </TimeControllerPortal>
 
             <CountryDetailModal
                 isOpen={countryDetailModalOpen && !isWarAnalysisActive}

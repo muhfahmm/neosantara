@@ -889,7 +889,7 @@
 }
 
 @media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
-  .notebook-modal-frame[data-viewport-mode]:not(.country-detail-modal-frame) > .modal-responsive-shell,
+  .notebook-modal-frame[data-viewport-mode] > .modal-responsive-shell,
   .paused-menu-frame[data-viewport-mode] > .modal-responsive-shell {
     box-sizing: border-box;
     width: min(100%, var(--modal-menu-frame-width, var(--modal-max-width))) !important;
