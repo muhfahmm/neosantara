@@ -1,11 +1,11 @@
 'use client';
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import { useEffect, useState } from 'react';
-import { AlertCircle, Landmark, X, Activity, Building2, Search, ScrollText, ShieldCheck } from 'lucide-react';
+import { AlertCircle, Landmark, Activity, Building2, Search, ScrollText, ShieldCheck } from 'lucide-react';
 import NotebookModalWrapper from '../../NotebookModalWrapper';
 import MenuInfoButton from '../../MenuInfoButton';
-import { rootModalTypography } from '@/app/page/root_modals_design_menu/rootModalTypography';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
+import RootModalTabs from '@/app/page/root_modals_design_menu/RootModalTabs';
 import IndeksKorupsiCard from './components/IndeksKorupsiCard';
 import LembagaAntikorupsiPanel from './components/LembagaAntikorupsiPanel';
 import SkandalAktifList from './components/SkandalAktifList';
@@ -176,93 +176,76 @@ export default function KorupsiMenu({
 
   return (
     <NotebookModalWrapper onClose={onClose}>
-      <div className="flex flex-col h-full overflow-hidden">
-        <header className="relative z-10 flex shrink-0 items-center justify-between border-b border-root-accent/30 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
-          <div className="flex items-center gap-3">
-            <div className="rounded-lg border border-root-accent/30 bg-root-accent/10 p-2 text-root-accent">
-              <Landmark className="h-5 w-5" />
-            </div>
-            <div>
-              <h2 className={rootModalTypography.title}>Pemberantasan Korupsi</h2>
-              <p className="text-xs text-[#8BA3A3]">{String(countryDetail.name_id ?? countryDetail.country ?? countryDetail.name_en ?? 'Negara aktif')}</p>
-            </div>
-          </div>
-          <div className="flex shrink-0 items-center gap-2">
+      <div className="root-modal-util-b74379da23">
+        <RootInfoModalHeader
+          title="Pemberantasan Korupsi"
+          icon={<Landmark aria-hidden="true" />}
+          onClose={onClose}
+          closeAriaLabel="Tutup menu pemberantasan korupsi"
+          size="standard"
+          actions={
             <MenuInfoButton
               title="Pemberantasan Korupsi"
               description="Pantau indeks korupsi, lembaga antikorupsi, penyelidikan, kasus aktif, dan dampak korupsi pada sektor negara. Gunakan audit serta perlindungan pelapor untuk memperkuat pengawasan dan penegakan hukum."
             />
-            <SharedModalCloseButton
-              type="button"
-              onClick={onClose}
-              aria-label="Tutup menu pemberantasan korupsi"
-              className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
-             appearance="custom">
-              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-4 w-4" />
-            </SharedModalCloseButton>
-          </div>
-        </header>
+          }
+        />
 
-        <nav aria-label="Bagian pemberantasan korupsi" className="flex shrink-0 gap-1 overflow-x-auto border-b border-root-accent/15 bg-root-canvas px-3 py-2 sm:px-5">
-          {tabs.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              type="button"
-              aria-current={activeTab === id ? 'page' : undefined}
-              onClick={() => setActiveTab(id)}
-              className={`inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold transition cursor-pointer ${
-                activeTab === id
-                  ? 'bg-root-accent text-root-canvas'
-                  : 'text-[#8BA3A3] hover:bg-root-accent/10 hover:text-root-accent'
-              }`}
-            >
-              <Icon className="h-4 w-4" />
-              {label}
-            </button>
-          ))}
+        <nav aria-label="Bagian pemberantasan korupsi" className="satisfaction-modal-summary root-modal-util-6614545ce3">
+          <RootModalTabs
+            className="satisfaction-modal-tabs"
+            compact
+            items={tabs.map(({ id, label, icon: Icon }) => ({
+              label,
+              isActive: activeTab === id,
+              onClick: () => setActiveTab(id),
+              icon: <Icon className="h-4 w-4" />,
+            }))}
+          />
         </nav>
 
-        <main className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4 sm:p-6 neon-scrollbar">
-          {(notice || currentProfileError || profileIdentityError) && (
-            <div role="status" className="flex items-start gap-2 rounded-xl border border-root-accent/20 bg-root-accent/5 px-4 py-3 text-sm text-[#B7F5DD]">
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-root-accent" />
-              <span>{notice || currentProfileError || profileIdentityError}</span>
-            </div>
-          )}
-          {profileLoading && (
-            <div role="status" className="rounded-xl border border-root-accent/20 bg-root-accent/5 px-4 py-3 text-sm text-[#B7F5DD]">
-              Memuat data level antikorupsi negara...
-            </div>
-          )}
-          {(activeTab === 'ringkasan' || activeTab === 'penyelidikan') && (
-            <IndeksKorupsiCard countryDetail={countryDetail} />
-          )}
-          {(activeTab === 'lembaga' || activeTab === 'penyelidikan') && (
-            <LembagaAntikorupsiPanel
-              countryDetail={countryDetail}
-              currentDate={currentDate}
-              busy={actionsBlocked}
-              onUpgradeAgency={targetLevel => runAction(
-                (detail, date) => upgradeAntiCorruptionAgency(detail, date, targetLevel),
-              )}
-              onImproveProtection={targetLevel => runAction(
-                (detail, date) => improveWhistleblowerProtection(detail, date, targetLevel),
-              )}
-              onAudit={() => runAction(conductBudgetAudit)}
-            />
-          )}
-          {(activeTab === 'kasus' || activeTab === 'penyelidikan') && (
-            <SkandalAktifList
-              countryDetail={countryDetail}
-              busy={actionsBlocked}
-              onInvestigate={scandalId => runInvestigation(scandalId, investigateScandal)}
-              onProsecute={scandalId => runInvestigation(scandalId, prosecuteScandal)}
-            />
-          )}
-          {(activeTab === 'dampak' || activeTab === 'ringkasan') && (
-            <DampakSektorCard countryDetail={countryDetail} />
-          )}
+        <main className="satisfaction-modal-content root-modal-util-9c12d57a09">
+          <div className="satisfaction-modal-content-body root-modal-enter root-modal-fade-in root-modal-util-90f9f3a7db">
+            {(notice || currentProfileError || profileIdentityError) && (
+              <div role="status" className="flex items-start gap-2 rounded-xl border border-root-accent/20 bg-root-accent/5 px-4 py-3 text-sm text-[#B7F5DD]">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-root-accent" />
+                <span>{notice || currentProfileError || profileIdentityError}</span>
+              </div>
+            )}
+            {profileLoading && (
+              <div role="status" className="rounded-xl border border-root-accent/20 bg-root-accent/5 px-4 py-3 text-sm text-[#B7F5DD]">
+                Memuat data level antikorupsi negara...
+              </div>
+            )}
+            {(activeTab === 'ringkasan' || activeTab === 'penyelidikan') && (
+              <IndeksKorupsiCard countryDetail={countryDetail} />
+            )}
+            {(activeTab === 'lembaga' || activeTab === 'penyelidikan') && (
+              <LembagaAntikorupsiPanel
+                countryDetail={countryDetail}
+                currentDate={currentDate}
+                busy={actionsBlocked}
+                onUpgradeAgency={targetLevel => runAction(
+                  (detail, date) => upgradeAntiCorruptionAgency(detail, date, targetLevel),
+                )}
+                onImproveProtection={targetLevel => runAction(
+                  (detail, date) => improveWhistleblowerProtection(detail, date, targetLevel),
+                )}
+                onAudit={() => runAction(conductBudgetAudit)}
+              />
+            )}
+            {(activeTab === 'kasus' || activeTab === 'penyelidikan') && (
+              <SkandalAktifList
+                countryDetail={countryDetail}
+                busy={actionsBlocked}
+                onInvestigate={scandalId => runInvestigation(scandalId, investigateScandal)}
+                onProsecute={scandalId => runInvestigation(scandalId, prosecuteScandal)}
+              />
+            )}
+            {(activeTab === 'dampak' || activeTab === 'ringkasan') && (
+              <DampakSektorCard countryDetail={countryDetail} />
+            )}
+          </div>
         </main>
       </div>
     </NotebookModalWrapper>

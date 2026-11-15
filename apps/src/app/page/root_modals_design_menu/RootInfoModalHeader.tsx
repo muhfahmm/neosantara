@@ -12,6 +12,7 @@ interface RootInfoModalHeaderProps {
   centerContent?: ReactNode;
   size?: "compact" | "standard";
   titleId?: string;
+  closeAriaLabel?: string;
 }
 
 export default function RootInfoModalHeader({
@@ -22,6 +23,7 @@ export default function RootInfoModalHeader({
   centerContent,
   size = "compact",
   titleId,
+  closeAriaLabel = "Tutup modal",
 }: RootInfoModalHeaderProps) {
   const isStandard = size === "standard";
   const headerIcon = icon ?? <Info aria-hidden="true" />;
@@ -67,7 +69,11 @@ export default function RootInfoModalHeader({
       )}
       <div className={isStandard ? "root-modal-util-08dfbca033" : "root-info-modal-actions"}>
         {actions}
-        <RootModalCloseButton onClick={onClose} className="root-info-modal-close" />
+        <RootModalCloseButton
+          onClick={onClose}
+          ariaLabel={closeAriaLabel}
+          className="root-info-modal-close"
+        />
       </div>
     </header>
   );

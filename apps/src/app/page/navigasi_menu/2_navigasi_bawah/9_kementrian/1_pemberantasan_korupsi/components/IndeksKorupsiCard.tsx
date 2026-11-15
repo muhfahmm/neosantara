@@ -14,7 +14,7 @@ export default function IndeksKorupsiCard({ countryDetail }: { countryDetail: Co
           <Activity className="h-5 w-5" />
         </div>
         <div>
-          <h3 className="font-black text-root-text">Indeks Korupsi Nasional</h3>
+          <h3 className="root-modal-util-9361ef65fc">Indeks Korupsi Nasional</h3>
         </div>
       </div>
       <div className="mb-2 flex items-end justify-between">
