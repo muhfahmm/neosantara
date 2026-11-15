@@ -46,31 +46,31 @@ export default function KonfirmasiGantiIbukotaModal({
 
   return (
     <NotebookModalWrapper compact zIndexClass="z-[100000050]">
-      {/* Container Modal Mengikuti Ukuran & Style Modal Konfirmasi Kedutaan */}
-      <div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
+      <div className="flex h-full w-full flex-col overflow-hidden font-sans text-white">
         {/* Header Modal */}
-        <div className="flex items-center justify-between border-b border-amber-400/20 pb-4 mb-5">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-amber-400/10 rounded-xl border border-amber-400/30 text-amber-300">
-              <Landmark className="h-6 w-6" />
+        <div className="relative z-10 flex shrink-0 items-center justify-between border-b border-root-accent/30 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
+          <div className="flex items-center gap-2">
+            <div className="rounded-lg border border-amber-400/30 bg-amber-400/10 p-1.5 text-amber-300">
+              <Landmark className="h-5 w-5 shrink-0" />
             </div>
-            <div>
-              <h3 className="text-xl sm:text-2xl font-black text-amber-300 tracking-wide uppercase leading-tight">
-                Konfirmasi Pemindahan Ibukota
-              </h3>
-              <p className="text-xs text-root-subtle">Keputusan Strategis Kenegaraan</p>
-            </div>
+            <h3 className="text-sm font-bold uppercase tracking-wide text-root-text sm:text-base">
+              Konfirmasi Pemindahan Ibukota
+            </h3>
           </div>
           <SharedModalCloseButton
+            type="button"
             onClick={onClose}
-            className="p-1.5 text-root-subtle hover:text-amber-300 hover:bg-amber-400/10 rounded-xl transition-colors cursor-pointer"
-           appearance="custom">
-            <X className="h-5 w-5" />
+            ariaLabel="Tutup konfirmasi pemindahan ibukota"
+            className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
+            appearance="custom"
+          >
+            <span className="pl-1 text-[10px] font-semibold uppercase tracking-widest lg:text-xs">Tutup</span>
+            <X className="h-4 w-4" />
           </SharedModalCloseButton>
         </div>
 
         {/* Area Konten Utama */}
-        <div className="flex-1 space-y-4">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4 sm:p-5">
           {/* Visualisasi Perpindahan */}
           <div className="bg-root-canvas/90 border border-amber-400/20 rounded-xl p-4 flex items-center justify-between">
             <div className="text-center flex-1">
@@ -129,7 +129,7 @@ export default function KonfirmasiGantiIbukotaModal({
         </div>
 
         {/* Area Tombol Footer */}
-        <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-amber-400/20">
+        <div className="flex shrink-0 justify-end gap-3 border-t border-root-accent/20 px-4 py-4 sm:px-5">
           <button
             onClick={onClose}
             className="px-6 py-2.5 rounded-xl border border-root-accent/30 bg-root-canvas text-[#A2B7B2] hover:text-white hover:border-root-accent/50 transition-colors font-bold text-xs uppercase cursor-pointer"
