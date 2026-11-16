@@ -1,9 +1,8 @@
 "use client";
+import React from "react";
+import RootConfirmModal from "@/app/page/root_modals_design_menu/RootConfirmModal";
 import { getWaktuPembangunanKedutaanBonusPercent } from "@/app/page/bonus_logic";
-import { createPortal } from "react-dom";
 
-import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
-import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 interface BuildEmbassyModalProps {
   isOpen: boolean;
   countryName?: string | null;
@@ -16,82 +15,81 @@ interface BuildEmbassyModalProps {
   onConfirm: () => void;
 }
 
-export default function BuildEmbassyModal({ isOpen, countryName, continent, currentBudget = 0, cost = 0, buildTimeDays = 60, countryDetail, onClose, onConfirm }: BuildEmbassyModalProps) {
-  if (!isOpen) return null;
-
-  const continentLabel = continent || 'Lainnya';
+export default function BuildEmbassyModal({
+  isOpen,
+  countryName,
+  continent,
+  currentBudget = 0,
+  cost = 0,
+  buildTimeDays = 60,
+  countryDetail,
+  onClose,
+  onConfirm,
+}: BuildEmbassyModalProps) {
+  const continentLabel = continent || "Lainnya";
   const budgetAfterBuild = currentBudget - cost;
-  const formattedCurrentBudget = currentBudget.toLocaleString('id-ID', { maximumFractionDigits: 2 });
-  const formattedBudgetAfterBuild = budgetAfterBuild.toLocaleString('id-ID', { maximumFractionDigits: 2 });
+  const formattedCurrentBudget = currentBudget.toLocaleString("id-ID", { maximumFractionDigits: 2 });
+  const formattedBudgetAfterBuild = budgetAfterBuild.toLocaleString("id-ID", { maximumFractionDigits: 2 });
   const hasBudget = currentBudget >= cost;
 
   const discountPct = getWaktuPembangunanKedutaanBonusPercent(countryDetail);
   const embassyCostDiscountPct = cost > 0 ? Math.max(0, (1 - cost / 10) * 100) : 0;
-  const effectiveBuildTimeDays = discountPct > 0 
-    ? Math.max(1, Math.floor(buildTimeDays * (1 - discountPct / 100))) 
-    : buildTimeDays;
+  const effectiveBuildTimeDays =
+    discountPct > 0
+      ? Math.max(1, Math.floor(buildTimeDays * (1 - discountPct / 100)))
+      : buildTimeDays;
 
-  const modalContent = (
-    <NotebookModalWrapper compact zIndexClass="z-[100000001]">
-      {/* Container Modal Lebih Lebar dan Panjang */}
-      <div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
-        
-        <RootInfoModalHeader title="Konfirmasi Bangun Kedutaan" onClose={onClose} size="compact" />
-        {/* Area Konten */}
-        <div className="flex-1">
-          <p className="text-sm sm:text-base text-root-text mb-4 leading-relaxed">
-            Apakah Anda ingin membangun kedutaan di <strong className="text-white">{countryName}</strong>? Biaya pembangunan di <strong className="text-white">{continentLabel}</strong> adalah {
-              embassyCostDiscountPct > 0 ? (
-                <span><span className="line-through text-rose-400 mr-1">10 NEO</span><strong className="text-root-accent">{cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</strong></span>
-              ) : <strong className="text-root-accent">{cost} NEO</strong>
-            } dengan waktu pembangunan {
-              discountPct > 0 ? (
-                <span>
-                  <span className="line-through text-rose-400 mr-1">{buildTimeDays} hari</span>
-                  <strong className="text-root-accent">{effectiveBuildTimeDays} hari</strong>
-                </span>
-              ) : (
-                <strong className="text-root-accent">{buildTimeDays} hari</strong>
-              )
-            }.
-          </p>
-          
-          <p className="text-sm sm:text-base text-root-subtle leading-relaxed">
-            Kas negara saat ini: <strong className="text-root-text">{currentBudget >= 0 ? '+' : ''}{formattedCurrentBudget} NEO</strong>. Setelah pembangunan, kas akan menjadi <strong className="text-root-accent">{budgetAfterBuild >= 0 ? '+' : ''}{formattedBudgetAfterBuild} NEO</strong>.
-          </p>
-        </div>
+  return (
+    <RootConfirmModal
+      isOpen={isOpen}
+      title="Konfirmasi Bangun Kedutaan"
+      onClose={onClose}
+      onConfirm={onConfirm}
+      confirmLabel={hasBudget ? "Bangun Kedutaan" : "Kas Tidak Mencukupi"}
+      confirmDisabled={!hasBudget}
+      footerBorderClassName="border-root-accent/20"
+    >
+      <div className="flex-1">
+        <p className="text-sm sm:text-base text-root-text mb-4 leading-relaxed">
+          Apakah Anda ingin membangun kedutaan di{" "}
+          <strong className="text-white">{countryName}</strong>? Biaya pembangunan di{" "}
+          <strong className="text-white">{continentLabel}</strong> adalah{" "}
+          {embassyCostDiscountPct > 0 ? (
+            <span>
+              <span className="line-through text-rose-400 mr-1">10 NEO</span>
+              <strong className="text-root-accent">
+                {cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
+              </strong>
+            </span>
+          ) : (
+            <strong className="text-root-accent">{cost} NEO</strong>
+          )}{" "}
+          dengan waktu pembangunan{" "}
+          {discountPct > 0 ? (
+            <span>
+              <span className="line-through text-rose-400 mr-1">{buildTimeDays} hari</span>
+              <strong className="text-root-accent">{effectiveBuildTimeDays} hari</strong>
+            </span>
+          ) : (
+            <strong className="text-root-accent">{buildTimeDays} hari</strong>
+          )}
+          .
+        </p>
 
-        {/* Area Tombol (Diperkecil) */}
-        <div className="flex flex-col sm:flex-row gap-3 justify-end mt-6 pt-4 border-t border-root-accent/20">
-          <button
-            onClick={onClose}
-            className="w-full sm:w-auto px-6 bg-root-canvas hover:bg-[#142A2A] border border-root-accent/30 rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
-          >
-            Batal
-          </button>
-
-          <button
-            onClick={() => { if (hasBudget) { onConfirm(); onClose(); } }}
-            disabled={!hasBudget}
-            className={
-              `w-full sm:w-auto px-6 rounded-xl py-2 text-center font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 shadow hover:shadow-md active:scale-[0.98] ${
-                hasBudget
-                  ? 'bg-root-accent hover:bg-[#00e699] text-root-canvas border border-root-accent cursor-pointer'
-                  : 'bg-root-canvas text-root-subtle border border-root-accent/20 opacity-40 cursor-not-allowed'
-              }`
-            }
-          >
-            {hasBudget ? 'Bangun Kedutaan' : 'Kas Tidak Mencukupi'}
-          </button>
-        </div>
-
+        <p className="text-sm sm:text-base text-root-subtle leading-relaxed">
+          Kas negara saat ini:{" "}
+          <strong className="text-root-text">
+            {currentBudget >= 0 ? "+" : ""}
+            {formattedCurrentBudget} NEO
+          </strong>
+          . Setelah pembangunan, kas akan menjadi{" "}
+          <strong className="text-root-accent">
+            {budgetAfterBuild >= 0 ? "+" : ""}
+            {formattedBudgetAfterBuild} NEO
+          </strong>
+          .
+        </p>
       </div>
-    </NotebookModalWrapper>
+    </RootConfirmModal>
   );
-
-  if (typeof window !== "undefined") {
-    return createPortal(modalContent, document.body);
-  }
-
-  return modalContent;
 }

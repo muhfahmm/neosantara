@@ -15,6 +15,8 @@ export interface RootConfirmModalProps {
   confirmLabel?: string;
   cancelLabel?: string;
   onConfirm?: () => void;
+  confirmDisabled?: boolean;
+  confirmButtonClassName?: string;
   isDestructive?: boolean;
   footerBorderClassName?: string;
   zIndexClass?: string;
@@ -30,6 +32,8 @@ export default function RootConfirmModal({
   confirmLabel = "Konfirmasi",
   cancelLabel,
   onConfirm,
+  confirmDisabled = false,
+  confirmButtonClassName,
   isDestructive = false,
   footerBorderClassName = "border-root-accent/20",
   zIndexClass = "z-[100000001]",
@@ -87,11 +91,17 @@ export default function RootConfirmModal({
               <button
                 type="button"
                 onClick={() => {
+                  if (confirmDisabled) return;
                   onConfirm();
                   onClose();
                 }}
+                disabled={confirmDisabled}
                 className={`w-full sm:w-auto px-6 rounded-xl py-2 text-center font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 shadow hover:shadow-md active:scale-[0.98] ${
-                  isDestructive
+                  confirmDisabled
+                    ? "bg-root-canvas text-root-subtle border border-root-accent/20 opacity-40 cursor-not-allowed"
+                    : confirmButtonClassName
+                    ? confirmButtonClassName
+                    : isDestructive
                     ? "bg-rose-600 hover:bg-rose-700 active:bg-rose-800 border border-rose-500 text-white cursor-pointer"
                     : "bg-root-accent hover:bg-[#00e699] border border-root-accent text-root-canvas cursor-pointer"
                 }`}

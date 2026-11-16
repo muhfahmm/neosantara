@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
-import { createPortal } from "react-dom";
-import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
+import RootConfirmModal from "@/app/page/root_modals_design_menu/RootConfirmModal";
 
 interface HinaModalProps {
 	isOpen: boolean;
@@ -11,54 +10,19 @@ interface HinaModalProps {
 }
 
 export default function HinaModal({ isOpen, countryName, onClose, onConfirm }: HinaModalProps) {
-	if (!isOpen) return null;
-
-	const modalContent = (
-		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
-			<div
-				className="modal-responsive-shell overflow-y-auto flex flex-col bg-root-surface border border-root-accent/30 rounded-2xl shadow-2xl relative pointer-events-auto"
-				role="dialog"
-				aria-modal="true"
-				aria-labelledby="hina-confirm-title"
-			>
-				<RootInfoModalHeader
-					title="Konfirmasi Hina"
-					titleId="hina-confirm-title"
-					onClose={onClose}
-					size="standard"
-				/>
-
-				<div className="p-5 sm:p-6">
-					<p className="text-sm sm:text-base text-root-text leading-relaxed">
-						Hina publik atau pemimpin <strong className="text-white">{countryName}</strong>? Tindakan diplomatik yang memalukan dapat memperburuk hubungan internasional.
-					</p>
-				</div>
-
-				<div className="flex flex-col sm:flex-row gap-3 justify-end border-t border-amber-500/20 bg-root-canvas p-4">
-					<button
-						type="button"
-						onClick={onClose}
-						className="w-full sm:w-auto px-6 bg-root-canvas hover:bg-[#142A2A] border border-root-accent/30 rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
-					>
-						Batal
-					</button>
-
-					<button
-						type="button"
-						onClick={() => { onConfirm(); onClose(); }}
-						className="w-full sm:w-auto px-6 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 border border-amber-600 rounded-xl py-2 text-center text-white font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
-					>
-						Hina
-					</button>
-				</div>
-
-			</div>
-		</div>
+	return (
+		<RootConfirmModal
+			isOpen={isOpen}
+			title="Konfirmasi Hina"
+			onClose={onClose}
+			onConfirm={onConfirm}
+			confirmLabel="Hina"
+			confirmButtonClassName="bg-amber-600 hover:bg-amber-700 active:bg-amber-800 border border-amber-600 rounded-xl py-2 text-center text-white font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
+			footerBorderClassName="border-amber-500/20"
+		>
+			<p className="text-sm sm:text-base text-root-text leading-relaxed mb-6">
+				Hina publik atau pemimpin <strong className="text-white">{countryName}</strong>? Tindakan diplomatik yang memalukan dapat memperburuk hubungan internasional.
+			</p>
+		</RootConfirmModal>
 	);
-
-	if (typeof window !== "undefined") {
-		return createPortal(modalContent, document.body);
-	}
-
-	return modalContent;
 }
