@@ -119,18 +119,6 @@ export default function KonfirmasiSpionaseModals({
         {/* BODY */}
         <div className="p-4 sm:p-5 bg-root-surface relative z-10 neon-scrollbar flex flex-col items-center justify-center">
           <div className="w-full max-w-lg space-y-5">
-            <div className="flex justify-center">
-              <div className="p-5 rounded-full bg-root-canvas border border-root-accent/30 shadow-inner">
-                <Binoculars className="w-16 h-16 text-root-accent" />
-              </div>
-            </div>
-
-            <div className="text-center space-y-1">
-              <p className="text-lg font-black text-root-accent uppercase tracking-wider">
-                Luncurkan Misi Intelijen!
-              </p>
-            </div>
-
             {/* DROPDOWN TUJUAN OPERASI SPIONASE */}
             <div className="relative text-left" ref={targetDropdownRef}>
               <div className="text-[11px] font-bold uppercase tracking-wider text-root-subtle mb-1.5 flex items-center gap-1.5">
