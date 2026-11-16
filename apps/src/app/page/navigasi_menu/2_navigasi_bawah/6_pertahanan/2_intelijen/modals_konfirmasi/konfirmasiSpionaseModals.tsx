@@ -1,7 +1,7 @@
 "use client"
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import React, { useState, useEffect, useRef } from "react";
-import { X, Binoculars, Eye, Target, ChevronDown, UserPlus } from "lucide-react";
+import { Binoculars, Eye, Target, ChevronDown, UserPlus } from "lucide-react";
 import { getSpionaseSuccessChance } from "@/app/page/detail_negara/3_operasi_militer/2_spionase/logic/spionaseLogic";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import TravelFuelCostPanel from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
@@ -97,26 +97,12 @@ export default function KonfirmasiSpionaseModals({
       >
       <div className="flex flex-col font-sans animate-in fade-in zoom-in-95 duration-150">
         
-        {/* HEADER */}
-        <div className="px-4 sm:px-5 py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-root-surface rounded-xl border border-root-accent/30">
-                <Eye className="h-6 w-6 text-root-accent animate-pulse" />
-              </div>
-              <div>
-                <h2 className="text-xl font-black text-root-accent tracking-wider uppercase">Konfirmasi Spionase</h2>
-                <p className="text-[11px] font-bold uppercase tracking-widest text-root-subtle mt-0.5">
-                  Target: {targetName}
-                </p>
-              </div>
-            </div>
-          </div>
-          <SharedModalCloseButton onClick={onClose} className="p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5" appearance="custom">
-            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
-          </SharedModalCloseButton>
-        </div>
+        <RootInfoModalHeader
+          title="Konfirmasi Spionase"
+          onClose={handleClose}
+          icon={<Eye className="text-root-accent" />}
+          size="standard"
+        />
 
         {/* BODY */}
         <div className="p-4 sm:p-5 bg-root-surface relative z-10 neon-scrollbar flex flex-col items-center justify-center">
