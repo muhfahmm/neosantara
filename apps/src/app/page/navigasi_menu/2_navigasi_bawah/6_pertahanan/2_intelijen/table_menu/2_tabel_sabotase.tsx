@@ -47,7 +47,7 @@ const extractISO = (country: any, countryName: string): string => {
 interface SabotaseProps {
   prefetchedAllCountries?: any[];
   countryDetail?: any; // 🔥 Tambahkan prop untuk negara user
-  onAction: (targetCountry: RankingRow, cost: number, tripId: string) => void;
+  onAction: (targetCountry: RankingRow, cost: number, tripId: string, operationTarget?: string) => void;
   searchQuery: string;
 }
 
@@ -267,10 +267,10 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, onActi
           targetCountry={selectedTarget}
           playerCountryDetail={countryDetail}
           travelFuelStatus={travelFuelStatus}
-          onConfirm={() => {
+          onConfirm={(operationTarget) => {
             if (!travelFuelStatus.ok || travelFuelQuote.cost === null || !tripIdRef.current) return;
             setIsModalOpen(false);
-            onAction(selectedTarget, travelFuelQuote.cost, tripIdRef.current);
+            onAction(selectedTarget, travelFuelQuote.cost, tripIdRef.current, operationTarget);
           }}
         />
       )}

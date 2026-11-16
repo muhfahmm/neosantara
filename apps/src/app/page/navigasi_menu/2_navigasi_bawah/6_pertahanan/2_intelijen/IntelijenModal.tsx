@@ -7,12 +7,17 @@ import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 import MenuInfoButton from "../../MenuInfoButton";
 import Spionase from "./table_menu/1_tabel_spionase";
 import Sabotase from "./table_menu/2_tabel_sabotase";
-import CovertOperationResultModal from "@/app/page/detail_negara/3_operasi_militer/CovertOperationResultModal";
+import ResultSpionaseModals from "@/app/page/detail_negara/3_operasi_militer/2_spionase/ResultSpionaseModals";
+import ResultSabotaseModals from "@/app/page/detail_negara/3_operasi_militer/3_sabotase/ResultSabotaseModals";
 import {
-  resolveCovertOperation,
-  type CovertOperationResult,
-  type CovertOperationType,
-} from "@/app/page/detail_negara/3_operasi_militer/covertOperationLogic";
+  resolveSpionaseOperation,
+  type SpionaseOperationResult,
+} from "@/app/page/detail_negara/3_operasi_militer/2_spionase/logic/spionaseLogic";
+import {
+  resolveSabotaseOperation,
+  applySabotaseMiliterToTarget,
+  type SabotaseOperationResult,
+} from "@/app/page/detail_negara/3_operasi_militer/3_sabotase/logic/sabotaseLogic";
 import {
   checkTravelFuel,
   consumeTravelFuel,
@@ -33,19 +38,47 @@ interface ModalProps {
 export default function IntelijenModal({ isOpen, onClose, countryDetail, setCountryDetail, prefetchedAllCountries }: ModalProps) {
   const [activeTab, setActiveTab] = useState<'spionase' | 'sabotase'>('spionase');
   const [searchQuery, setSearchQuery] = useState("");
-  const [covertOperationResult, setCovertOperationResult] = useState<CovertOperationResult | null>(null);
-  const pendingCovertOperationsRef = useRef(new Map<string, CovertOperationType>());
+  const [spionaseResult, setSpionaseResult] = useState<SpionaseOperationResult | null>(null);
+  const [sabotaseResult, setSabotaseResult] = useState<SabotaseOperationResult | null>(null);
+  const pendingCovertOperationsRef = useRef(new Map<string, { operation: 'spionase' | 'sabotase'; operationTarget?: string }>());
   const launchedTravelFuelIdsRef = useRef(new Set<string>());
 
   useEffect(() => {
-    const handleCovertOperationArrival = (event: Event) => {
+    const handleCovertOperationArrival = async (event: Event) => {
       const path = (event as CustomEvent<{ pathId?: string; targetCountry?: string }>).detail;
-      const operation = path?.pathId ? pendingCovertOperationsRef.current.get(path.pathId) : undefined;
-      if (!path?.pathId || !operation || !path.targetCountry) return;
+      const covertInfo = path?.pathId ? pendingCovertOperationsRef.current.get(path.pathId) : undefined;
+      if (!path?.pathId || !covertInfo || !path.targetCountry) return;
 
       pendingCovertOperationsRef.current.delete(path.pathId);
-      const result = resolveCovertOperation(operation, countryDetail);
-      setCovertOperationResult({ operation, targetCountry: path.targetCountry, ...result });
+      const { operation, operationTarget } = covertInfo;
+
+      if (operation === 'spionase') {
+        const result = resolveSpionaseOperation(countryDetail, operationTarget);
+        setSpionaseResult({
+          operation: 'spionase',
+          targetCountry: path.targetCountry,
+          ...result,
+        });
+      } else {
+        const result = resolveSabotaseOperation(countryDetail, operationTarget);
+        let losses = undefined;
+        if (result.succeeded) {
+          const isMilitaryTarget = !operationTarget ||
+            operationTarget.toLowerCase().includes('militer') ||
+            operationTarget.toLowerCase().includes('pabrik');
+
+          if (isMilitaryTarget) {
+            losses = await applySabotaseMiliterToTarget(path.targetCountry);
+          }
+        }
+
+        setSabotaseResult({
+          operation: 'sabotase',
+          targetCountry: path.targetCountry,
+          ...result,
+          losses,
+        });
+      }
     };
 
     window.addEventListener('neosantara_covert_operation_arrived', handleCovertOperationArrival);
@@ -54,21 +87,21 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
 
   if (!isOpen) return null;
 
-  const anggaran = countryDetail?.anggaran || 0;
-  const launchCovertOperation = (operation: CovertOperationType, targetCountry: string, pathId: string) => {
-    pendingCovertOperationsRef.current.set(pathId, operation);
+  const launchCovertOperation = (operation: 'spionase' | 'sabotase', targetCountry: string, pathId: string, operationTarget?: string) => {
+    pendingCovertOperationsRef.current.set(pathId, { operation, operationTarget });
     window.dispatchEvent(new CustomEvent('neosantara_diplomacy_path', {
       detail: {
         pathId,
         kind: operation,
         senderCountry: countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id,
         targetCountry,
+        operationTarget,
       },
     }));
   };
 
   // 🔥 Logika aksi untuk Spionase
-  const handleSpionaseAction = (target: { countryName: string }, fuelCost: number, pathId: string) => {
+  const handleSpionaseAction = (target: { countryName: string }, fuelCost: number, pathId: string, operationTarget?: string) => {
     if (!countryDetail || !checkTravelFuel(countryDetail, fuelCost).ok) return;
     const personnel = getCovertPersonnel();
     if (personnel.mataMata < 1) {
@@ -92,11 +125,11 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
     if (updatedDetail === countryDetail) return;
     launchedTravelFuelIdsRef.current.add(pathId);
     setCountryDetail(updatedDetail);
-    launchCovertOperation('spionase', target.countryName, pathId);
+    launchCovertOperation('spionase', target.countryName, pathId, operationTarget);
   };
 
   // 🔥 Logika aksi untuk Sabotase
-  const handleSabotaseAction = (target: { countryName: string }, fuelCost: number, pathId: string) => {
+  const handleSabotaseAction = (target: { countryName: string }, fuelCost: number, pathId: string, operationTarget?: string) => {
     if (!countryDetail || !checkTravelFuel(countryDetail, fuelCost).ok) return;
     const personnel = getCovertPersonnel();
     if (personnel.penyabot < 1) {
@@ -120,7 +153,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
     if (updatedDetail === countryDetail) return;
     launchedTravelFuelIdsRef.current.add(pathId);
     setCountryDetail(updatedDetail);
-    launchCovertOperation('sabotase', target.countryName, pathId);
+    launchCovertOperation('sabotase', target.countryName, pathId, operationTarget);
   };
 
   return (
@@ -208,9 +241,13 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
         </div>
       </NotebookModalWrapper>
 
-      <CovertOperationResultModal
-        result={covertOperationResult}
-        onClose={() => setCovertOperationResult(null)}
+      <ResultSpionaseModals
+        result={spionaseResult}
+        onClose={() => setSpionaseResult(null)}
+      />
+      <ResultSabotaseModals
+        result={sabotaseResult}
+        onClose={() => setSabotaseResult(null)}
       />
     </>
   );

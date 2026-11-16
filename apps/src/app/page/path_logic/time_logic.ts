@@ -1,10 +1,6 @@
 import { CAPITALS_DATA, COUNTRIES_DATA } from '../map_system/map-data';
 import { greatCircleDistanceKmRust } from './routeMathRust';
 
-/**
- * Konstanta lama dipertahankan agar import lama tidak rusak.
- * Namun tidak lagi dipakai untuk menghitung durasi perjalanan.
- */
 export const GAME_DAYS_PER_1000_KM = 1;
 
 export const MIN_TRAVEL_DAYS = 3;
@@ -12,6 +8,9 @@ export const MAX_TRAVEL_DAYS = 3;
 
 const EARTH_RADIUS_KM = 6371;
 const MAX_GREAT_CIRCLE_DISTANCE_KM = Math.PI * EARTH_RADIUS_KM;
+const MAX_DISTANCE_BASED_TRAVEL_DAYS = Math.ceil(
+  (MAX_GREAT_CIRCLE_DISTANCE_KM / 1000) * GAME_DAYS_PER_1000_KM,
+);
 
 export type SupportedContinent =
   | 'Asia'
@@ -26,6 +25,10 @@ export interface TravelEstimate {
   days: number;
   originContinent: SupportedContinent;
   destinationContinent: SupportedContinent;
+}
+
+export interface TravelTimeOptions {
+  durationByDistance?: boolean;
 }
 
 interface CountryLocation {
@@ -224,7 +227,8 @@ const getGreatCircleDistanceKm = (
 
 export const estimateTravelTime = (
   originCountry: string,
-  destinationCountry: string
+  destinationCountry: string,
+  options: TravelTimeOptions = {},
 ): TravelEstimate | null => {
   const origin = getCountryLocation(originCountry);
   const destination = getCountryLocation(destinationCountry);
@@ -233,27 +237,13 @@ export const estimateTravelTime = (
 
   const distanceKm = getGreatCircleDistanceKm(origin, destination);
 
-  /**
-   * Normalisasi jarak ke rentang 0–1 berdasarkan jarak great-circle
-   * maksimum di permukaan Bumi.
-   */
-  const normalizedDistance = clamp(
-    distanceKm / MAX_GREAT_CIRCLE_DISTANCE_KM,
-    0,
-    1
-  );
-
-  /**
-   * Perjalanan militer selalu berlangsung selama 3 hari game.
-   */
-  const days = clamp(
-    Math.round(
-      MIN_TRAVEL_DAYS +
-        normalizedDistance * (MAX_TRAVEL_DAYS - MIN_TRAVEL_DAYS)
-    ),
-    MIN_TRAVEL_DAYS,
-    MAX_TRAVEL_DAYS
-  );
+  const days = options.durationByDistance
+    ? clamp(
+        Math.ceil((distanceKm / 1000) * GAME_DAYS_PER_1000_KM),
+        MIN_TRAVEL_DAYS,
+        MAX_DISTANCE_BASED_TRAVEL_DAYS,
+      )
+    : MAX_TRAVEL_DAYS;
 
   return {
     distanceKm,

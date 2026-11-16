@@ -1,10 +1,11 @@
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { ChevronDown, Bomb, Search, UserPlus } from "lucide-react";
+import { ChevronDown, Bomb, Search, UserPlus, Target } from "lucide-react";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
-import { getCovertOperationSuccessChance } from "../covertOperationLogic";
+import { getSabotaseSuccessChance } from "./logic/sabotaseLogic";
 import { getCovertPersonnel, recruitPersonnel, COVERT_PERSONNEL_UPDATED_EVENT } from "../covertPersonnelStorage";
+import { SABOTASE_TARGET_OPTIONS, type SabotaseTargetOption } from "./sabotaseTargetOptions";
 import RekrutPenyabotModal from "./RekrutPenyabotModal";
 
 interface SabotaseModalProps {
@@ -13,8 +14,9 @@ interface SabotaseModalProps {
 	playerCountryDetail?: Record<string, unknown> | null;
 	currentBudget?: number;
 	adjustNetBalance?: (delta: number) => void;
+	updatePlayerCountryDetail?: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
 	onClose: () => void;
-	onConfirm: (targetCountry: string) => void;
+	onConfirm: (targetCountry: string, operationTarget?: string) => void;
 }
 
 export default function SabotaseModal({
@@ -23,15 +25,19 @@ export default function SabotaseModal({
 	playerCountryDetail,
 	currentBudget = 0,
 	adjustNetBalance,
+	updatePlayerCountryDetail,
 	onClose,
 	onConfirm,
 }: SabotaseModalProps) {
 	const [selectedCountry, setSelectedCountry] = useState<string>("");
 	const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+	const [selectedTargetId, setSelectedTargetId] = useState<string>(SABOTASE_TARGET_OPTIONS[0].id);
+	const [isTargetDropdownOpen, setIsTargetDropdownOpen] = useState<boolean>(false);
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [isRekrutModalOpen, setIsRekrutModalOpen] = useState<boolean>(false);
 	const [penyabotCount, setPenyabotCount] = useState<number>(() => getCovertPersonnel().penyabot);
 	const dropdownRef = useRef<HTMLDivElement>(null);
+	const targetDropdownRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		const syncPersonnel = () => {
@@ -71,6 +77,8 @@ export default function SabotaseModal({
 				setSelectedCountry("");
 			}
 			setIsDropdownOpen(false);
+			setIsTargetDropdownOpen(false);
+			setSelectedTargetId(SABOTASE_TARGET_OPTIONS[0].id);
 			setSearchQuery("");
 			setIsRekrutModalOpen(false);
 		}
@@ -80,6 +88,9 @@ export default function SabotaseModal({
 		const handleClickOutside = (e: MouseEvent) => {
 			if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
 				setIsDropdownOpen(false);
+			}
+			if (targetDropdownRef.current && !targetDropdownRef.current.contains(e.target as Node)) {
+				setIsTargetDropdownOpen(false);
 			}
 		};
 		document.addEventListener("mousedown", handleClickOutside);
@@ -96,12 +107,22 @@ export default function SabotaseModal({
 
 	if (!isOpen) return null;
 
-	const successChance = getCovertOperationSuccessChance("sabotase", playerCountryDetail);
+	const successChance = getSabotaseSuccessChance(playerCountryDetail);
 	const selectedData = countryList.find((c) => c.country === selectedCountry) || countryList[0];
+	const selectedTargetOption = SABOTASE_TARGET_OPTIONS.find(t => t.id === selectedTargetId) || SABOTASE_TARGET_OPTIONS[0];
 
 	const handleRecruitConfirm = (count: number, totalCost: number) => {
 		recruitPersonnel('penyabot', count);
-		if (adjustNetBalance) {
+		if (updatePlayerCountryDetail) {
+			updatePlayerCountryDetail(prev => {
+				if (!prev) return prev;
+				const currentKas = Number(prev.anggaran || 0);
+				return {
+					...prev,
+					anggaran: Math.max(0, currentKas - totalCost),
+				};
+			});
+		} else if (adjustNetBalance) {
 			adjustNetBalance(-totalCost);
 		}
 		setIsRekrutModalOpen(false);
@@ -140,8 +161,8 @@ export default function SabotaseModal({
 						Pilih negara target untuk melancarkan aksi sabotase rahasia:
 					</p>
 
-					{/* DROPDOWN SELECTOR DENGAN BENDERA & SEARCH */}
-					<div className="relative mb-4" ref={dropdownRef}>
+					{/* DROPDOWN NEGARA TARGET */}
+					<div className="relative mb-3" ref={dropdownRef}>
 						<button
 							type="button"
 							onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -158,7 +179,6 @@ export default function SabotaseModal({
 
 						{isDropdownOpen && (
 							<div className="absolute left-0 right-0 top-full mt-2 max-h-60 overflow-y-auto bg-root-canvas border border-rose-500/30 rounded-xl shadow-2xl z-50 divide-y divide-rose-500/10">
-								{/* INPUT SEARCH INSIDE DROPDOWN */}
 								<div className="p-2 sticky top-0 bg-root-surface border-b border-rose-500/20 z-10">
 									<div className="relative">
 										<Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-root-subtle" />
@@ -199,8 +219,53 @@ export default function SabotaseModal({
 						)}
 					</div>
 
+					{/* DROPDOWN TUJUAN OPERASI SABOTASE */}
+					<div className="relative mb-3" ref={targetDropdownRef}>
+						<div className="text-[11px] font-bold uppercase tracking-wider text-root-subtle mb-1.5 flex items-center gap-1.5">
+							<Target className="w-3.5 h-3.5 text-rose-400" />
+							<span>Target Fasilitas Sabotase</span>
+						</div>
+						<button
+							type="button"
+							onClick={() => setIsTargetDropdownOpen(!isTargetDropdownOpen)}
+							className="w-full h-12 bg-root-canvas hover:bg-[#142A2A] border border-rose-500/30 rounded-xl px-4 flex items-center justify-between text-white transition-colors cursor-pointer text-left"
+						>
+							<div className="flex flex-col truncate pr-2">
+								<span className="font-bold text-xs sm:text-sm text-rose-400 truncate">
+									{selectedTargetOption.label}
+								</span>
+							</div>
+							<ChevronDown className={`w-5 h-5 text-rose-400 transition-transform duration-200 shrink-0 ${isTargetDropdownOpen ? 'rotate-180' : ''}`} />
+						</button>
+
+						{isTargetDropdownOpen && (
+							<div className="absolute left-0 right-0 top-full mt-2 max-h-56 overflow-y-auto bg-root-canvas border border-rose-500/30 rounded-xl shadow-2xl z-50 divide-y divide-rose-500/10">
+								{SABOTASE_TARGET_OPTIONS.map((opt) => (
+									<button
+										key={opt.id}
+										type="button"
+										onClick={() => {
+											setSelectedTargetId(opt.id);
+											setIsTargetDropdownOpen(false);
+										}}
+										className={`w-full px-4 py-2.5 text-left hover:bg-rose-500/10 transition-colors ${
+											selectedTargetId === opt.id ? 'bg-rose-500/20 border-l-4 border-rose-500' : ''
+										}`}
+									>
+										<div className={`text-xs sm:text-sm font-bold ${selectedTargetId === opt.id ? 'text-rose-400' : 'text-root-text'}`}>
+											{opt.label}
+										</div>
+										<div className="text-[11px] text-root-subtle mt-0.5 leading-snug">
+											{opt.description}
+										</div>
+									</button>
+								))}
+							</div>
+						)}
+					</div>
+
 					{/* PANEL PENYABOT & TOMBOL REKRUT */}
-					<div className="bg-root-canvas border border-rose-500/20 rounded-xl p-3.5 mb-4 flex items-center justify-between">
+					<div className="bg-root-canvas border border-rose-500/20 rounded-xl p-3.5 mb-3 flex items-center justify-between">
 						<div className="flex items-center gap-3">
 							<div className="p-2 bg-root-surface border border-rose-500/30 rounded-lg">
 								<Bomb className="w-5 h-5 text-rose-400" />
@@ -225,7 +290,7 @@ export default function SabotaseModal({
 						</button>
 					</div>
 
-					<div className="bg-root-canvas border border-rose-500/20 rounded-xl p-4 inline-block">
+					<div className="bg-root-canvas border border-rose-500/20 rounded-xl p-3.5 inline-block">
 						<div className="flex items-center justify-between gap-8 text-sm font-bold text-root-subtle">
 							<span>Peluang Keberhasilan:</span>
 							<span className="text-rose-400 font-black text-lg">{successChance}%</span>
@@ -244,13 +309,18 @@ export default function SabotaseModal({
 					</button>
 					<button
 						type="button"
+						disabled={penyabotCount < 1}
 						onClick={() => {
 							if (selectedCountry) {
-								onConfirm(selectedCountry);
+								if (penyabotCount < 1) {
+									alert("Anda tidak memiliki penyabot yang tersedia! Silakan rekrut terlebih dahulu.");
+									return;
+								}
+								onConfirm(selectedCountry, selectedTargetOption.label);
 								onClose();
 							}
 						}}
-						className="w-full sm:w-auto px-6 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 border border-rose-500 rounded-xl py-2 text-center text-white font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
+						className="w-full sm:w-auto px-6 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 disabled:bg-rose-600/30 disabled:text-white/50 disabled:cursor-not-allowed disabled:border-transparent border border-rose-500 rounded-xl py-2 text-center text-white font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
 					>
 						Lancarkan Sabotase
 					</button>

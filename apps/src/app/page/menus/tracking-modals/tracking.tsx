@@ -273,7 +273,9 @@ export default function DiplomacyTracking({ onOpen, isUiHidden = false }: Diplom
 
               {activePaths.map(path => {
                 const details = PATH_REGISTRY[path.kind].metadata;
-                const estimate = estimateTravelTime(path.senderCountry, path.targetCountry);
+                const estimate = estimateTravelTime(path.senderCountry, path.targetCountry, {
+                  durationByDistance: path.kind === 'defense-alliance' || path.kind === 'spionase' || path.kind === 'sabotase',
+                });
                 if (!estimate) {
                   console.error('[DiplomacyTracking] No travel estimate for active route', {
                     senderCountry: path.senderCountry,

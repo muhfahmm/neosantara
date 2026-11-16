@@ -22,8 +22,17 @@ import MintaSerangNegaraModal from './6_minta_serang_negara/mintaSerangNegaraMod
 import StatusMintaSerangModal from './6_minta_serang_negara/statusMintaSerangModal';
 import HinaModal from './7_hina/hinaModals';
 import ProvinsiOperasiMiliter from '../1_informasi_umum/provinsi_logic/ProvinsiOperasiMiliter';
-import CovertOperationResultModal from './CovertOperationResultModal';
-import { resolveCovertOperation, type CovertOperationResult, type CovertOperationType } from './covertOperationLogic';
+import ResultSpionaseModals from './2_spionase/ResultSpionaseModals';
+import ResultSabotaseModals from './3_sabotase/ResultSabotaseModals';
+import {
+  resolveSpionaseOperation,
+  type SpionaseOperationResult,
+} from './2_spionase/logic/spionaseLogic';
+import {
+  resolveSabotaseOperation,
+  applySabotaseMiliterToTarget,
+  type SabotaseOperationResult,
+} from './3_sabotase/logic/sabotaseLogic';
 import { consumePersonnel } from './covertPersonnelStorage';
 import SerangBelumSelesaiModals from '../../navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/SerangBelumSelesaiModals';
 import { getActivePlayerAttack, usePlayerAttackStatus, type PlayerAttackStatus } from '../../navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/playerAttackStatus';
@@ -77,8 +86,9 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
   const [isMintaSerangOpen, setIsMintaSerangOpen] = useState(false);
   const [isStatusMintaSerangOpen, setIsStatusMintaSerangOpen] = useState(false);
   const [isHinaOpen, setIsHinaOpen] = useState(false);
-  const [covertOperationResult, setCovertOperationResult] = useState<CovertOperationResult | null>(null);
-  const pendingCovertOperationsRef = useRef(new Map<string, CovertOperationType>());
+  const [spionaseResult, setSpionaseResult] = useState<SpionaseOperationResult | null>(null);
+  const [sabotaseResult, setSabotaseResult] = useState<SabotaseOperationResult | null>(null);
+  const pendingCovertOperationsRef = useRef(new Map<string, { operation: 'spionase' | 'sabotase'; operationTarget?: string }>());
   const formatActionDate = (dateString?: string) => {
     if (!dateString) return '';
     const [year, month, day] = dateString.split('-').map(Number);
@@ -97,39 +107,70 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
   const datedActionClass = 'border border-amber-400/50 bg-amber-400/5 text-amber-300';
   const operationDateBadgeClass = 'absolute -top-6 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-sm border border-amber-400/30 bg-root-canvas px-2 py-1 text-[10px] font-bold tracking-wider text-amber-300 shadow-md';
 
-  const isAnyMiliterModalActive = isSerangOpen || isAttackInProgressModalOpen || blockedPlayerAttack !== null || isSpionaseOpen || isSabotaseOpen || isNuklirOpen || isKudetaOpen || isMintaSerangOpen || isStatusMintaSerangOpen || isHinaOpen || !!covertOperationResult;
+  const playerActualBudget = Number(playerCountryDetail?.anggaran ?? 0);
+
+  const isAnyMiliterModalActive = isSerangOpen || isAttackInProgressModalOpen || blockedPlayerAttack !== null || isSpionaseOpen || isSabotaseOpen || isNuklirOpen || isKudetaOpen || isMintaSerangOpen || isStatusMintaSerangOpen || isHinaOpen || !!spionaseResult || !!sabotaseResult;
 
   useEffect(() => {
-    const handleCovertOperationArrival = (event: Event) => {
+    const handleCovertOperationArrival = async (event: Event) => {
       const path = (event as CustomEvent<{ pathId?: string; targetCountry?: string }>).detail;
-      const operation = path?.pathId ? pendingCovertOperationsRef.current.get(path.pathId) : undefined;
-      if (!path?.pathId || !operation || !path.targetCountry) return;
+      const covertInfo = path?.pathId ? pendingCovertOperationsRef.current.get(path.pathId) : undefined;
+      if (!path?.pathId || !covertInfo || !path.targetCountry) return;
 
       pendingCovertOperationsRef.current.delete(path.pathId);
-      const result = resolveCovertOperation(operation, playerCountryDetail);
-      setCovertOperationResult({ operation, targetCountry: path.targetCountry, ...result });
+      const { operation, operationTarget } = covertInfo;
+
+      if (operation === 'spionase') {
+        const result = resolveSpionaseOperation(playerCountryDetail, operationTarget);
+        setSpionaseResult({
+          operation: 'spionase',
+          targetCountry: path.targetCountry,
+          ...result,
+        });
+      } else {
+        const result = resolveSabotaseOperation(playerCountryDetail, operationTarget);
+        let losses = undefined;
+        if (result.succeeded) {
+          const isMilitaryTarget = !operationTarget ||
+            operationTarget.toLowerCase().includes('militer') ||
+            operationTarget.toLowerCase().includes('pabrik');
+
+          if (isMilitaryTarget) {
+            losses = await applySabotaseMiliterToTarget(path.targetCountry, targetCountryDetail);
+          }
+        }
+
+        setSabotaseResult({
+          operation: 'sabotase',
+          targetCountry: path.targetCountry,
+          ...result,
+          losses,
+        });
+      }
     };
 
     window.addEventListener('neosantara_covert_operation_arrived', handleCovertOperationArrival);
     return () => window.removeEventListener('neosantara_covert_operation_arrived', handleCovertOperationArrival);
-  }, [playerCountryDetail]);
+  }, [playerCountryDetail, targetCountryDetail]);
 
-  const launchCovertOperation = (operation: CovertOperationType, targetCountry: string) => {
+  const launchCovertOperation = (operation: 'spionase' | 'sabotase', targetCountry: string, operationTarget?: string): boolean => {
     const personnelType = operation === 'spionase' ? 'mataMata' : 'penyabot';
     if (!consumePersonnel(personnelType, 1)) {
       alert(`Anda tidak memiliki ${operation === 'spionase' ? 'mata-mata' : 'penyabot'} yang tersedia! Silakan rekrut terlebih dahulu.`);
-      return;
+      return false;
     }
     const pathId = `covert-${operation}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-    pendingCovertOperationsRef.current.set(pathId, operation);
+    pendingCovertOperationsRef.current.set(pathId, { operation, operationTarget });
     window.dispatchEvent(new CustomEvent('neosantara_diplomacy_path', {
       detail: {
         pathId,
         kind: operation,
         senderCountry: playerCountryDetail?.country || playerCountryDetail?.nama_negara || playerCountryDetail?.name_id || playerCountryDetail?.name_en || countryName,
         targetCountry,
+        operationTarget,
       },
     }));
+    return true;
   };
 
   const launchNuclearStrike = () => {
@@ -320,24 +361,28 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         isOpen={isSpionaseOpen}
         countryName={countryName}
         playerCountryDetail={playerCountryDetail}
-        currentBudget={currentNetBalance}
-        adjustNetBalance={adjustNetBalance}
+        currentBudget={playerActualBudget}
+        updatePlayerCountryDetail={updatePlayerCountryDetail}
         onClose={() => setIsSpionaseOpen(false)}
-        onConfirm={(target) => {
-          onMilitaryActionLaunched?.('spionase');
-          launchCovertOperation('spionase', target);
+        onConfirm={(target, operationTarget) => {
+          const launched = launchCovertOperation('spionase', target, operationTarget);
+          if (launched) {
+            onMilitaryActionLaunched?.('spionase');
+          }
         }}
       />
       <SabotaseModal
         isOpen={isSabotaseOpen}
         countryName={countryName}
         playerCountryDetail={playerCountryDetail}
-        currentBudget={currentNetBalance}
-        adjustNetBalance={adjustNetBalance}
+        currentBudget={playerActualBudget}
+        updatePlayerCountryDetail={updatePlayerCountryDetail}
         onClose={() => setIsSabotaseOpen(false)}
-        onConfirm={(target) => {
-          onMilitaryActionLaunched?.('sabotase');
-          launchCovertOperation('sabotase', target);
+        onConfirm={(target, operationTarget) => {
+          const launched = launchCovertOperation('sabotase', target, operationTarget);
+          if (launched) {
+            onMilitaryActionLaunched?.('sabotase');
+          }
         }}
       />
       <PerangNuklirModal
@@ -378,9 +423,13 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         onClose={() => setIsStatusMintaSerangOpen(false)}
       />
       <HinaModal isOpen={isHinaOpen} countryName={countryName} onClose={() => setIsHinaOpen(false)} onConfirm={() => { console.log(`Hina -> ${countryName}`); }} />
-      <CovertOperationResultModal
-        result={covertOperationResult}
-        onClose={() => setCovertOperationResult(null)}
+      <ResultSpionaseModals
+        result={spionaseResult}
+        onClose={() => setSpionaseResult(null)}
+      />
+      <ResultSabotaseModals
+        result={sabotaseResult}
+        onClose={() => setSabotaseResult(null)}
       />
     </div>
   );

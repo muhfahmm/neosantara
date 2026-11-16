@@ -83,8 +83,10 @@ export default function DiplomacyPathAnimation({
   const sender = useMemo(() => buildCapitalPoint(senderCountry), [senderCountry]);
   const target = useMemo(() => buildCapitalPoint(targetCountry), [targetCountry]);
   const travelEstimate = useMemo(
-    () => estimateTravelTime(senderCountry, targetCountry),
-    [senderCountry, targetCountry]
+    () => estimateTravelTime(senderCountry, targetCountry, {
+      durationByDistance: kind === 'defense-alliance' || kind === 'spionase' || kind === 'sabotase',
+    }),
+    [kind, senderCountry, targetCountry]
   );
   
   const laneOffset = laneIndex - (laneCount - 1) / 2;

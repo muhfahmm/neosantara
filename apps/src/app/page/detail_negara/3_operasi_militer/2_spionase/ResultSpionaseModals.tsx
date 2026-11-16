@@ -3,38 +3,36 @@
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import { createPortal } from "react-dom";
-import { CheckCircle2, Eye, Bomb, XCircle } from "lucide-react";
-import type { CovertOperationResult } from "./covertOperationLogic";
+import { CheckCircle2, Eye, XCircle } from "lucide-react";
+import type { SpionaseOperationResult } from "./logic/spionaseLogic";
 
-interface CovertOperationResultModalProps {
-  result: CovertOperationResult | null;
+interface ResultSpionaseModalsProps {
+  result: SpionaseOperationResult | null;
   onClose: () => void;
 }
 
-export default function CovertOperationResultModal({
+export default function ResultSpionaseModals({
   result,
   onClose,
-}: CovertOperationResultModalProps) {
+}: ResultSpionaseModalsProps) {
   if (!result) return null;
 
-  const operationName = result.operation === "spionase" ? "Spionase" : "Sabotase";
-  const OperationIcon = result.operation === "spionase" ? Eye : Bomb;
   const ResultIcon = result.succeeded ? CheckCircle2 : XCircle;
   const resultColor = result.succeeded ? "text-root-accent" : "text-rose-400";
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-[10000] flex items-center justify-center  p-4 font-sans"
+      className="fixed inset-0 z-[10000] flex items-center justify-center p-4 font-sans"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="covert-operation-result-title"
+      aria-labelledby="spionase-result-title"
     >
       <div className="modal-responsive-shell overflow-y-auto rounded-2xl border border-root-accent/30 bg-root-surface text-white shadow-2xl">
         <RootInfoModalHeader
-          title={`Hasil Operasi ${operationName}`}
-          titleId="covert-operation-header-title"
+          title="Hasil Operasi Spionase"
+          titleId="spionase-result-header-title"
           onClose={onClose}
-          icon={<OperationIcon />}
+          icon={<Eye />}
           size="standard"
         />
 
@@ -42,17 +40,18 @@ export default function CovertOperationResultModal({
           <ResultIcon className={`mx-auto h-14 w-14 ${resultColor}`} />
           <div>
             <h3
-              id="covert-operation-result-title"
+              id="spionase-result-title"
               className={`text-xl font-black uppercase tracking-wide ${resultColor}`}
             >
-              {result.succeeded ? "Operasi Berhasil" : "Operasi Gagal"}
+              {result.succeeded ? "Misi Spionase Berhasil" : "Misi Spionase Gagal"}
             </h3>
             <p className="mt-2 text-sm text-root-text">
               {result.succeeded
-                ? `Operasi ${operationName.toLowerCase()} berhasil dilaksanakan di ${result.targetCountry}.`
-                : `Operasi ${operationName.toLowerCase()} gagal dilaksanakan di ${result.targetCountry}.`}
+                ? `Operasi spionase${result.operationTarget ? ` (${result.operationTarget})` : ''} berhasil dilaksanakan di ${result.targetCountry}. Agen intelijen kami berhasil mengumpulkan informasi rahasia sasaran.`
+                : `Operasi spionase${result.operationTarget ? ` (${result.operationTarget})` : ''} gagal dilaksanakan di ${result.targetCountry}. Agen intelijen terdeteksi oleh otoritas keamanan setempat.`}
             </p>
           </div>
+
           <p className="text-xs font-semibold text-root-subtle">
             Peluang keberhasilan saat operasi diluncurkan:{" "}
             <span className="font-black text-root-accent">{result.successChance}%</span>
@@ -64,7 +63,8 @@ export default function CovertOperationResultModal({
             type="button"
             onClick={onClose}
             className="w-full rounded-xl bg-root-accent px-4 py-2.5 text-xs font-black uppercase tracking-widest text-root-canvas transition-colors hover:bg-[#00e699]"
-           appearance="custom">
+            appearance="custom"
+          >
             Tutup
           </SharedModalCloseButton>
         </div>
