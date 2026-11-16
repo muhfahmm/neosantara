@@ -54,10 +54,6 @@ export default function RekrutMataMataModal({
       footerBorderClassName="border-root-accent/20"
     >
       <div className="flex flex-col gap-4 font-sans text-white">
-        <p className="text-sm text-root-text leading-relaxed">
-          Tentukan jumlah agen mata-mata yang ingin direkrut untuk mendukung operasi intelijen negara Anda.
-        </p>
-
         {/* Info Ringkasan Status */}
         <div className="grid grid-cols-2 gap-2 p-3 bg-root-canvas border border-root-accent/20 rounded-xl text-xs">
           <div>

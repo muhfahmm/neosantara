@@ -55,10 +55,6 @@ export default function RekrutPenyabotModal({
       footerBorderClassName="border-rose-500/20"
     >
       <div className="flex flex-col gap-4 font-sans text-white">
-        <p className="text-sm text-root-text leading-relaxed">
-          Tentukan jumlah agen penyabot yang ingin direkrut untuk melancarkan sabotase fasilitas lawan.
-        </p>
-
         {/* Info Ringkasan Status */}
         <div className="grid grid-cols-2 gap-2 p-3 bg-root-canvas border border-rose-500/20 rounded-xl text-xs">
           <div>
