@@ -125,15 +125,16 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
   };
 
   // 🔥 Logika aksi untuk Spionase
-  const handleSpionaseAction = (target: { countryName: string }, fuelCost: number, pathId: string, operationTarget?: string) => {
+  const handleSpionaseAction = (target: { countryName: string }, fuelCost: number, pathId: string, operationTarget: string, personnelCount: number) => {
     if (!countryDetail || !checkTravelFuel(countryDetail, fuelCost).ok) return;
+    if (!Number.isInteger(personnelCount) || personnelCount < 1) return;
     const personnel = getCovertPersonnel();
-    if (personnel.mataMata < 1) {
-      alert("Anda tidak memiliki mata-mata yang tersedia! Silakan rekrut terlebih dahulu.");
+    if (personnel.mataMata < personnelCount) {
+      alert(`Mata-mata tersedia ${personnel.mataMata}, tetapi operasi membutuhkan ${personnelCount} personel.`);
       return;
     }
     if (launchedTravelFuelIdsRef.current.has(pathId)) return;
-    if (!consumePersonnel('mataMata', 1)) return;
+    if (!consumePersonnel('mataMata', personnelCount)) return;
 
     const updatedDetail = consumeTravelFuel(
       countryDetail,
@@ -153,15 +154,16 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
   };
 
   // 🔥 Logika aksi untuk Sabotase
-  const handleSabotaseAction = (target: { countryName: string }, fuelCost: number, pathId: string, operationTarget?: string) => {
+  const handleSabotaseAction = (target: { countryName: string }, fuelCost: number, pathId: string, operationTarget: string, personnelCount: number) => {
     if (!countryDetail || !checkTravelFuel(countryDetail, fuelCost).ok) return;
+    if (!Number.isInteger(personnelCount) || personnelCount < 1) return;
     const personnel = getCovertPersonnel();
-    if (personnel.penyabot < 1) {
-      alert("Anda tidak memiliki penyabot yang tersedia! Silakan rekrut terlebih dahulu.");
+    if (personnel.penyabot < personnelCount) {
+      alert(`Penyabot tersedia ${personnel.penyabot}, tetapi operasi membutuhkan ${personnelCount} personel.`);
       return;
     }
     if (launchedTravelFuelIdsRef.current.has(pathId)) return;
-    if (!consumePersonnel('penyabot', 1)) return;
+    if (!consumePersonnel('penyabot', personnelCount)) return;
 
     const updatedDetail = consumeTravelFuel(
       countryDetail,

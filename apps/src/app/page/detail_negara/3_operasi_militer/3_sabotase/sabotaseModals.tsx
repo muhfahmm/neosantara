@@ -132,7 +132,7 @@ export default function SabotaseModal({
 	};
 
 	const modalContent = (
-		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
+		<div className={`${isRekrutModalOpen ? "hidden" : "fixed inset-0 z-[9999] flex items-center justify-center p-4"} font-sans text-white pointer-events-none`}>
 			<div className="modal-responsive-shell flex flex-col bg-root-surface border border-rose-500/40 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(225,29,72,0.15)] relative pointer-events-auto">
 				
 				<RootInfoModalHeader

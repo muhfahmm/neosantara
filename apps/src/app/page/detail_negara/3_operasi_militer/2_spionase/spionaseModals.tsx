@@ -132,7 +132,7 @@ export default function SpionaseModal({
 	};
 
 	const modalContent = (
-		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
+		<div className={`${isRekrutModalOpen ? "hidden" : "fixed inset-0 z-[9999] flex items-center justify-center p-4"} font-sans text-white pointer-events-none`}>
 			<div className="modal-responsive-shell flex flex-col bg-root-surface border border-root-accent/30 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(0,255,170,0.15)] relative pointer-events-auto">
 				
 				<RootInfoModalHeader

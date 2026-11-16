@@ -1,7 +1,7 @@
 "use client"
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import React, { useState, useEffect, useRef } from "react";
-import { Bomb, AlertTriangle, Target, ChevronDown, UserPlus } from "lucide-react";
+import { Bomb, AlertTriangle, Target, ChevronDown, UserPlus, Minus, Plus } from "lucide-react";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import TravelFuelCostPanel from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
 import type { TravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
@@ -17,7 +17,7 @@ interface KonfirmasiSabotaseModalsProps {
   updatePlayerCountryDetail: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
   onRecruitModalVisibilityChange: (isOpen: boolean) => void;
   travelFuelStatus?: TravelFuelStatus;
-  onConfirm: (operationTarget?: string) => void;
+  onConfirm: (operationTarget: string, personnelCount: number) => void;
 }
 
 export default function KonfirmasiSabotaseModals({
@@ -31,6 +31,7 @@ export default function KonfirmasiSabotaseModals({
   onConfirm,
 }: KonfirmasiSabotaseModalsProps) {
   const [penyabotCount, setPenyabotCount] = useState<number>(() => getCovertPersonnel().penyabot);
+  const [personnelToSend, setPersonnelToSend] = useState(1);
   const [isRecruitModalOpen, setIsRecruitModalOpen] = useState(false);
   const [selectedTargetId, setSelectedTargetId] = useState<string>(SABOTASE_TARGET_OPTIONS[0].id);
   const [isTargetDropdownOpen, setIsTargetDropdownOpen] = useState<boolean>(false);
@@ -38,7 +39,9 @@ export default function KonfirmasiSabotaseModals({
 
   useEffect(() => {
     const syncPersonnel = () => {
-      setPenyabotCount(getCovertPersonnel().penyabot);
+      const available = getCovertPersonnel().penyabot;
+      setPenyabotCount(available);
+      setPersonnelToSend(current => available > 0 ? Math.max(1, Math.min(current, available)) : 0);
     };
     syncPersonnel();
     window.addEventListener(COVERT_PERSONNEL_UPDATED_EVENT, syncPersonnel);
@@ -67,7 +70,11 @@ export default function KonfirmasiSabotaseModals({
   const targetName = targetCountry.countryName || "Target";
   const hasAgent = penyabotCount >= 1;
   const isFuelOk = travelFuelStatus ? travelFuelStatus.ok : true;
-  const canLaunch = hasAgent && isFuelOk;
+  const maxPersonnelToSend = penyabotCount;
+  const selectedPersonnelCount = hasAgent
+    ? Math.min(Math.max(1, personnelToSend), maxPersonnelToSend)
+    : 0;
+  const canLaunch = hasAgent && selectedPersonnelCount >= 1 && selectedPersonnelCount <= penyabotCount && isFuelOk;
   const selectedTargetOption = SABOTASE_TARGET_OPTIONS.find(t => t.id === selectedTargetId) || SABOTASE_TARGET_OPTIONS[0];
   const handleRecruitConfirm = (count: number, totalCost: number) => {
     if (currentBudget < totalCost) return;
@@ -195,6 +202,48 @@ export default function KonfirmasiSabotaseModals({
                 Rekrut
               </button>
             </div>
+            <div className="w-full rounded-xl border border-rose-500/30 bg-root-canvas p-3.5">
+              <div className="mb-2 flex items-center justify-between text-xs font-bold text-root-subtle">
+                <span>Personel untuk dikirim:</span>
+                <span className="text-rose-400">Maksimal ({penyabotCount})</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setPersonnelToSend(current => Math.max(1, current - 1))}
+                  disabled={!hasAgent || selectedPersonnelCount <= 1}
+                  aria-label="Kurangi personel sabotase"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-rose-500/30 bg-root-surface text-rose-400 transition-colors hover:bg-rose-500/10 disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  <Minus className="h-4 w-4" />
+                </button>
+                <input
+                  type="number"
+                  min={hasAgent ? 1 : 0}
+                  max={maxPersonnelToSend}
+                  value={selectedPersonnelCount}
+                  aria-label="Jumlah personel sabotase"
+                  onChange={event => {
+                    const value = Number.parseInt(event.target.value, 10);
+                    setPersonnelToSend(!hasAgent
+                      ? 0
+                      : Number.isNaN(value)
+                        ? 1
+                        : Math.min(maxPersonnelToSend, Math.max(1, value)));
+                  }}
+                  className="h-10 flex-1 rounded-lg border border-rose-500/30 bg-root-surface text-center text-lg font-black text-rose-400 focus:border-rose-400 focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => setPersonnelToSend(current => Math.min(maxPersonnelToSend, current + 1))}
+                  disabled={!hasAgent || selectedPersonnelCount >= penyabotCount}
+                  aria-label="Tambah personel sabotase"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-rose-500/30 bg-root-surface text-rose-400 transition-colors hover:bg-rose-500/10 disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
             {travelFuelStatus && <TravelFuelCostPanel status={travelFuelStatus} />}
           </div>
         </div>
@@ -208,7 +257,7 @@ export default function KonfirmasiSabotaseModals({
             onClick={() => {
               setIsRecruitModalOpen(false);
               onRecruitModalVisibilityChange(false);
-              onConfirm(selectedTargetOption.label);
+              onConfirm(selectedTargetOption.label, selectedPersonnelCount);
             }}
             disabled={!canLaunch}
             className="px-6 py-2 rounded-xl bg-rose-600 text-white shadow-lg shadow-rose-900/30 font-black text-xs uppercase tracking-wider hover:bg-rose-500 active:scale-95 transition-all cursor-pointer flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-40"

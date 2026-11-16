@@ -1,7 +1,7 @@
 "use client"
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import React, { useState, useEffect, useRef } from "react";
-import { Binoculars, Eye, Target, ChevronDown, UserPlus } from "lucide-react";
+import { Binoculars, Eye, Target, ChevronDown, UserPlus, Minus, Plus } from "lucide-react";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import TravelFuelCostPanel from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
 import type { TravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
@@ -17,7 +17,7 @@ interface KonfirmasiSpionaseModalsProps {
   updatePlayerCountryDetail: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
   onRecruitModalVisibilityChange: (isOpen: boolean) => void;
   travelFuelStatus?: TravelFuelStatus;
-  onConfirm: (operationTarget?: string) => void;
+  onConfirm: (operationTarget: string, personnelCount: number) => void;
 }
 
 export default function KonfirmasiSpionaseModals({
@@ -31,6 +31,7 @@ export default function KonfirmasiSpionaseModals({
   onConfirm,
 }: KonfirmasiSpionaseModalsProps) {
   const [mataMataCount, setMataMataCount] = useState<number>(() => getCovertPersonnel().mataMata);
+  const [personnelToSend, setPersonnelToSend] = useState(1);
   const [isRecruitModalOpen, setIsRecruitModalOpen] = useState(false);
   const [selectedTargetId, setSelectedTargetId] = useState<string>(SPIONASE_TARGET_OPTIONS[0].id);
   const [isTargetDropdownOpen, setIsTargetDropdownOpen] = useState<boolean>(false);
@@ -38,7 +39,9 @@ export default function KonfirmasiSpionaseModals({
 
   useEffect(() => {
     const syncPersonnel = () => {
-      setMataMataCount(getCovertPersonnel().mataMata);
+      const available = getCovertPersonnel().mataMata;
+      setMataMataCount(available);
+      setPersonnelToSend(current => available > 0 ? Math.max(1, Math.min(current, available)) : 0);
     };
     syncPersonnel();
     window.addEventListener(COVERT_PERSONNEL_UPDATED_EVENT, syncPersonnel);
@@ -67,7 +70,11 @@ export default function KonfirmasiSpionaseModals({
   const targetName = targetCountry.countryName || "Target";
   const hasAgent = mataMataCount >= 1;
   const isFuelOk = travelFuelStatus ? travelFuelStatus.ok : true;
-  const canLaunch = hasAgent && isFuelOk;
+  const maxPersonnelToSend = mataMataCount;
+  const selectedPersonnelCount = hasAgent
+    ? Math.min(Math.max(1, personnelToSend), maxPersonnelToSend)
+    : 0;
+  const canLaunch = hasAgent && selectedPersonnelCount >= 1 && selectedPersonnelCount <= mataMataCount && isFuelOk;
   const selectedTargetOption = SPIONASE_TARGET_OPTIONS.find(t => t.id === selectedTargetId) || SPIONASE_TARGET_OPTIONS[0];
   const handleRecruitConfirm = (count: number, totalCost: number) => {
     if (currentBudget < totalCost) return;
@@ -195,6 +202,48 @@ export default function KonfirmasiSpionaseModals({
                 Rekrut
               </button>
             </div>
+            <div className="w-full rounded-xl border border-root-accent/30 bg-root-canvas p-3.5">
+              <div className="mb-2 flex items-center justify-between text-xs font-bold text-root-subtle">
+                <span>Personel untuk dikirim:</span>
+                <span className="text-root-accent">Maksimal ({mataMataCount})</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setPersonnelToSend(current => Math.max(1, current - 1))}
+                  disabled={!hasAgent || selectedPersonnelCount <= 1}
+                  aria-label="Kurangi personel spionase"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-root-accent/30 bg-root-surface text-root-accent transition-colors hover:bg-root-accent/10 disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  <Minus className="h-4 w-4" />
+                </button>
+                <input
+                  type="number"
+                  min={hasAgent ? 1 : 0}
+                  max={maxPersonnelToSend}
+                  value={selectedPersonnelCount}
+                  aria-label="Jumlah personel spionase"
+                  onChange={event => {
+                    const value = Number.parseInt(event.target.value, 10);
+                    setPersonnelToSend(!hasAgent
+                      ? 0
+                      : Number.isNaN(value)
+                        ? 1
+                        : Math.min(maxPersonnelToSend, Math.max(1, value)));
+                  }}
+                  className="h-10 flex-1 rounded-lg border border-root-accent/30 bg-root-surface text-center text-lg font-black text-root-accent focus:border-root-accent focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => setPersonnelToSend(current => Math.min(maxPersonnelToSend, current + 1))}
+                  disabled={!hasAgent || selectedPersonnelCount >= mataMataCount}
+                  aria-label="Tambah personel spionase"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-root-accent/30 bg-root-surface text-root-accent transition-colors hover:bg-root-accent/10 disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
             {travelFuelStatus && <TravelFuelCostPanel status={travelFuelStatus} />}
           </div>
         </div>
@@ -208,7 +257,7 @@ export default function KonfirmasiSpionaseModals({
             onClick={() => {
               setIsRecruitModalOpen(false);
               onRecruitModalVisibilityChange(false);
-              onConfirm(selectedTargetOption.label);
+              onConfirm(selectedTargetOption.label, selectedPersonnelCount);
             }}
             disabled={!canLaunch}
             className="px-6 py-2 rounded-xl bg-root-accent text-root-canvas shadow-lg shadow-root-accent/20 font-black text-xs uppercase tracking-wider hover:bg-root-accent/80 active:scale-95 transition-all cursor-pointer flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-40"

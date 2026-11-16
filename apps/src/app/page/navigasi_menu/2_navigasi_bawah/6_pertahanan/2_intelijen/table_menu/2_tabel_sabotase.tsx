@@ -49,7 +49,7 @@ interface SabotaseProps {
   countryDetail?: any; // 🔥 Tambahkan prop untuk negara user
   updatePlayerCountryDetail: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
   onRecruitModalVisibilityChange: (isOpen: boolean) => void;
-  onAction: (targetCountry: RankingRow, cost: number, tripId: string, operationTarget?: string) => void;
+  onAction: (targetCountry: RankingRow, cost: number, tripId: string, operationTarget: string, personnelCount: number) => void;
   searchQuery: string;
 }
 
@@ -271,10 +271,10 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, update
           updatePlayerCountryDetail={updatePlayerCountryDetail}
           onRecruitModalVisibilityChange={onRecruitModalVisibilityChange}
           travelFuelStatus={travelFuelStatus}
-          onConfirm={(operationTarget) => {
+          onConfirm={(operationTarget, personnelCount) => {
             if (!travelFuelStatus.ok || travelFuelQuote.cost === null || !tripIdRef.current) return;
             setIsModalOpen(false);
-            onAction(selectedTarget, travelFuelQuote.cost, tripIdRef.current, operationTarget);
+            onAction(selectedTarget, travelFuelQuote.cost, tripIdRef.current, operationTarget, personnelCount);
           }}
         />
       )}
