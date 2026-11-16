@@ -117,9 +117,6 @@ export default function KonfirmasiSpionaseModals({
               <p className="text-lg font-black text-root-accent uppercase tracking-wider">
                 Luncurkan Misi Intelijen!
               </p>
-              <p className="text-xs text-root-subtle font-medium leading-relaxed max-w-lg mx-auto">
-                Kirim agen rahasia untuk mengumpulkan data intelijen vital negara <span className="text-root-text font-bold">{targetName}</span>.
-              </p>
             </div>
 
             {/* DROPDOWN TUJUAN OPERASI SPIONASE */}
