@@ -40,27 +40,35 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
   const [searchQuery, setSearchQuery] = useState("");
   const [spionaseResult, setSpionaseResult] = useState<SpionaseOperationResult | null>(null);
   const [sabotaseResult, setSabotaseResult] = useState<SabotaseOperationResult | null>(null);
-  const pendingCovertOperationsRef = useRef(new Map<string, { operation: 'spionase' | 'sabotase'; operationTarget?: string }>());
+  const pendingCovertOperationsRef = useRef(new Map<string, {
+    operation: 'spionase' | 'sabotase';
+    operationTarget?: string;
+    successChance: number;
+    succeeded: boolean;
+  }>());
   const launchedTravelFuelIdsRef = useRef(new Set<string>());
 
   useEffect(() => {
     const handleCovertOperationArrival = async (event: Event) => {
-      const path = (event as CustomEvent<{ pathId?: string; targetCountry?: string }>).detail;
+      const path = (event as CustomEvent<{
+        pathId?: string;
+        targetCountry?: string;
+      }>).detail;
       const covertInfo = path?.pathId ? pendingCovertOperationsRef.current.get(path.pathId) : undefined;
       if (!path?.pathId || !covertInfo || !path.targetCountry) return;
 
       pendingCovertOperationsRef.current.delete(path.pathId);
-      const { operation, operationTarget } = covertInfo;
+      const { operation, operationTarget, successChance, succeeded } = covertInfo;
 
       if (operation === 'spionase') {
-        const result = resolveSpionaseOperation(countryDetail, operationTarget);
+        const result = { operationTarget, successChance, succeeded };
         setSpionaseResult({
           operation: 'spionase',
           targetCountry: path.targetCountry,
           ...result,
         });
       } else {
-        const result = resolveSabotaseOperation(countryDetail, operationTarget);
+        const result = { operationTarget, successChance, succeeded };
         let losses = undefined;
         if (result.succeeded) {
           const isMilitaryTarget = !operationTarget ||
@@ -88,7 +96,15 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
   if (!isOpen) return null;
 
   const launchCovertOperation = (operation: 'spionase' | 'sabotase', targetCountry: string, pathId: string, operationTarget?: string) => {
-    pendingCovertOperationsRef.current.set(pathId, { operation, operationTarget });
+    const result = operation === 'spionase'
+      ? resolveSpionaseOperation(countryDetail, operationTarget)
+      : resolveSabotaseOperation(countryDetail, operationTarget);
+    pendingCovertOperationsRef.current.set(pathId, {
+      operation,
+      operationTarget,
+      successChance: result.successChance,
+      succeeded: result.succeeded,
+    });
     window.dispatchEvent(new CustomEvent('neosantara_diplomacy_path', {
       detail: {
         pathId,
@@ -96,6 +112,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
         senderCountry: countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id,
         targetCountry,
         operationTarget,
+        operationSucceeded: result.succeeded,
       },
     }));
   };

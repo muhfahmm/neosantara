@@ -6,6 +6,41 @@ export const GAME_DAYS_PER_1000_KM = 1;
 export const MIN_TRAVEL_DAYS = 3;
 export const MAX_TRAVEL_DAYS = 3;
 
+/**
+ * Durasi dasar operasi militer, intelijen, dan ratifikasi perjanjian bilateral internasional (dalam hari simulasi):
+ * - Kedutaan Besar: 60 hari (konstruksi gedung fisik)
+ * - Aliansi Pertahanan: 45 hari (perundingan doktrin militer & pertahanan bersama)
+ * - Kontrak Penelitian: 40 hari (penyelarasan protokol ilmiah & laboratorium)
+ * - Perjanjian Perdagangan: 30 hari (tarif bea cukai, kuota & rute ekspor/impor)
+ * - Pakta Non-Agresi: 25 hari (perjanjian demiliterisasi & gencatan senjata)
+ * - Serang Negara: 14 hari (mobilisasi pasukan, logistik perang & armada tempur)
+ * - Sabotase: 10 hari (infiltrasi tim penyabot, penanaman peledak & eksekusi)
+ * - Spionase: 7 hari (penyusupan agen mata-mata, penyadapan & ekstraksi data)
+ */
+export const DIPLOMACY_BASE_RATIFICATION_DAYS: Record<string, number> = {
+  'defense-alliance': 45,
+  'research-contract': 40,
+  'trade-agreement': 30,
+  'non-aggression-pact': 25,
+  'serang-negara': 14,
+  'serang': 14,
+  'sabotase': 10,
+  'spionase': 7,
+};
+
+export const getDiplomaticRatificationDays = (
+  kind?: string | null,
+  distanceKm = 0,
+): number => {
+  if (!kind) return MAX_TRAVEL_DAYS;
+  const baseDays = DIPLOMACY_BASE_RATIFICATION_DAYS[kind];
+  if (!baseDays) return MAX_TRAVEL_DAYS;
+
+  // Waktu perjalanan utusan diplomatik / logistik antar benua/jarak jauh (1 hari per 2.000 km, max +10 hari)
+  const travelDays = Math.min(10, Math.ceil(distanceKm / 2000));
+  return baseDays + travelDays;
+};
+
 const EARTH_RADIUS_KM = 6371;
 const MAX_GREAT_CIRCLE_DISTANCE_KM = Math.PI * EARTH_RADIUS_KM;
 const MAX_DISTANCE_BASED_TRAVEL_DAYS = Math.ceil(
@@ -29,6 +64,7 @@ export interface TravelEstimate {
 
 export interface TravelTimeOptions {
   durationByDistance?: boolean;
+  diplomacyKind?: string;
 }
 
 interface CountryLocation {
@@ -237,7 +273,9 @@ export const estimateTravelTime = (
 
   const distanceKm = getGreatCircleDistanceKm(origin, destination);
 
-  const days = options.durationByDistance
+  const days = options.diplomacyKind
+    ? getDiplomaticRatificationDays(options.diplomacyKind, distanceKm)
+    : options.durationByDistance
     ? clamp(
         Math.ceil((distanceKm / 1000) * GAME_DAYS_PER_1000_KM),
         MIN_TRAVEL_DAYS,

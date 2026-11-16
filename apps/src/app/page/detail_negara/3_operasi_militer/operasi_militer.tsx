@@ -88,7 +88,12 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
   const [isHinaOpen, setIsHinaOpen] = useState(false);
   const [spionaseResult, setSpionaseResult] = useState<SpionaseOperationResult | null>(null);
   const [sabotaseResult, setSabotaseResult] = useState<SabotaseOperationResult | null>(null);
-  const pendingCovertOperationsRef = useRef(new Map<string, { operation: 'spionase' | 'sabotase'; operationTarget?: string }>());
+  const pendingCovertOperationsRef = useRef(new Map<string, {
+    operation: 'spionase' | 'sabotase';
+    operationTarget?: string;
+    successChance: number;
+    succeeded: boolean;
+  }>());
   const formatActionDate = (dateString?: string) => {
     if (!dateString) return '';
     const [year, month, day] = dateString.split('-').map(Number);
@@ -113,22 +118,25 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
 
   useEffect(() => {
     const handleCovertOperationArrival = async (event: Event) => {
-      const path = (event as CustomEvent<{ pathId?: string; targetCountry?: string }>).detail;
+      const path = (event as CustomEvent<{
+        pathId?: string;
+        targetCountry?: string;
+      }>).detail;
       const covertInfo = path?.pathId ? pendingCovertOperationsRef.current.get(path.pathId) : undefined;
       if (!path?.pathId || !covertInfo || !path.targetCountry) return;
 
       pendingCovertOperationsRef.current.delete(path.pathId);
-      const { operation, operationTarget } = covertInfo;
+      const { operation, operationTarget, successChance, succeeded } = covertInfo;
 
       if (operation === 'spionase') {
-        const result = resolveSpionaseOperation(playerCountryDetail, operationTarget);
+        const result = { operationTarget, successChance, succeeded };
         setSpionaseResult({
           operation: 'spionase',
           targetCountry: path.targetCountry,
           ...result,
         });
       } else {
-        const result = resolveSabotaseOperation(playerCountryDetail, operationTarget);
+        const result = { operationTarget, successChance, succeeded };
         let losses = undefined;
         if (result.succeeded) {
           const isMilitaryTarget = !operationTarget ||
@@ -160,7 +168,15 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
       return false;
     }
     const pathId = `covert-${operation}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-    pendingCovertOperationsRef.current.set(pathId, { operation, operationTarget });
+    const result = operation === 'spionase'
+      ? resolveSpionaseOperation(playerCountryDetail, operationTarget)
+      : resolveSabotaseOperation(playerCountryDetail, operationTarget);
+    pendingCovertOperationsRef.current.set(pathId, {
+      operation,
+      operationTarget,
+      successChance: result.successChance,
+      succeeded: result.succeeded,
+    });
     window.dispatchEvent(new CustomEvent('neosantara_diplomacy_path', {
       detail: {
         pathId,
@@ -168,6 +184,7 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         senderCountry: playerCountryDetail?.country || playerCountryDetail?.nama_negara || playerCountryDetail?.name_id || playerCountryDetail?.name_en || countryName,
         targetCountry,
         operationTarget,
+        operationSucceeded: result.succeeded,
       },
     }));
     return true;

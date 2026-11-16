@@ -48,6 +48,8 @@ interface ActiveDiplomacyPath {
   resourceKey?: string;
   amount?: number;
   isPlayerAttacker?: boolean;
+  operationTarget?: string;
+  operationSucceeded?: boolean;
 }
 
 interface DiplomacyTrackingProps {
@@ -79,7 +81,9 @@ export default function DiplomacyTracking({ onOpen, isUiHidden = false }: Diplom
       targetValue: unknown,
       resourceKey?: unknown,
       amount?: unknown,
-      isPlayerAttacker?: boolean
+      isPlayerAttacker?: boolean,
+      operationTarget?: unknown,
+      operationSucceeded?: unknown,
     ) => {
       const kind = String(kindValue || '') as DiplomacyPathKind;
       const senderCountry = String(senderValue || '').trim();
@@ -99,6 +103,8 @@ export default function DiplomacyTracking({ onOpen, isUiHidden = false }: Diplom
             resourceKey: typeof resourceKey === 'string' ? resourceKey : undefined,
             amount: Number(amount) || undefined,
             isPlayerAttacker: isPlayerAttacker === true,
+            operationTarget: typeof operationTarget === 'string' ? operationTarget : undefined,
+            operationSucceeded: typeof operationSucceeded === 'boolean' ? operationSucceeded : undefined,
           }]);
     };
 
@@ -111,6 +117,8 @@ export default function DiplomacyTracking({ onOpen, isUiHidden = false }: Diplom
         resourceKey?: unknown;
         amount?: unknown;
         isPlayerAttacker?: boolean;
+        operationTarget?: unknown;
+        operationSucceeded?: unknown;
       }>).detail;
       addPath(
         detail?.kind,
@@ -119,7 +127,9 @@ export default function DiplomacyTracking({ onOpen, isUiHidden = false }: Diplom
         detail?.targetCountry,
         detail?.resourceKey,
         detail?.amount,
-        detail?.isPlayerAttacker
+        detail?.isPlayerAttacker,
+        detail?.operationTarget,
+        detail?.operationSucceeded,
       );
     };
 
@@ -274,6 +284,7 @@ export default function DiplomacyTracking({ onOpen, isUiHidden = false }: Diplom
               {activePaths.map(path => {
                 const details = PATH_REGISTRY[path.kind].metadata;
                 const estimate = estimateTravelTime(path.senderCountry, path.targetCountry, {
+                  diplomacyKind: path.kind,
                   durationByDistance: path.kind === 'defense-alliance' || path.kind === 'spionase' || path.kind === 'sabotase',
                 });
                 if (!estimate) {

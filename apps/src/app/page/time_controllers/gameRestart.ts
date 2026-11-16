@@ -81,6 +81,8 @@ export function handleGameRestart(options: RestartOptions): void {
             sessionStorage.removeItem('perang_nuklir_detail_open');
             localStorage.removeItem('programNuklirActive');
             localStorage.removeItem('icbmBuildTask');
+            localStorage.removeItem('neosantara_covert_personnel');
+            window.dispatchEvent(new CustomEvent('neosantara_covert_personnel_updated', { detail: { mataMata: 0, penyabot: 0 } }));
         } catch (e) { }
 
         window.dispatchEvent(new CustomEvent('daily_reward_reset'));

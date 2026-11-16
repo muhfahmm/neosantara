@@ -6,11 +6,15 @@ export interface SpionaseNotification extends NotificationMessage {
   tradeType: 'spionase';
   partnerCountry: string;
   targetCountry?: string;
-  level: SpionaseLevel;
+  level?: SpionaseLevel;
   costEM?: number;
   effectText?: string;
   isHandled?: boolean;
   remainingResponseDays?: number;
+  // Properti untuk spionase ofensif pemain
+  isOffensive?: boolean;
+  operationResult?: 'success' | 'failed';
+  operationTarget?: string;
 }
 
 const SPIONASE_POOL = [
@@ -68,5 +72,46 @@ export function generateSpionaseNotification(
     costEM: item.costEM,
     effectText: item.effectText,
     isHandled: false
+  };
+}
+
+export function generatePlayerSpionaseResultNotification(
+  targetCountry: string,
+  succeeded: boolean,
+  dateStr: string,
+  operationTarget?: string,
+): SpionaseNotification {
+  const targetLabel = operationTarget || 'Informasi Intelijen Negara';
+  const title = succeeded
+    ? `🕵️ Misi Spionase Berhasil: ${targetCountry}`
+    : `❌ Misi Spionase Gagal: ${targetCountry}`;
+
+  const message = succeeded
+    ? `Laporan Operasi Intelijen: Agen spionase kita telah berhasil menyusup dan mengekstraksi data strategis (${targetLabel}) dari target ${targetCountry}. Seluruh dokumen rahasia lawan berhasil dienkripsi dan dikirim ke markas pusat.`
+    : `Laporan Darurat Intelijen: Misi spionase terhadap ${targetCountry} (${targetLabel}) mengalami kegagalan. Agen penyusup kita terdeteksi oleh jaringan kontra-intelijen lawan dan terpaksa melakukan evakuasi darurat.`;
+
+  const effectText = succeeded
+    ? `Data intelijen (${targetLabel}) negara ${targetCountry} berhasil diamankan.`
+    : `Misi gagal. Agen gagal mendapatkan data ${targetLabel}.`;
+
+  return {
+    id: `player-spionase-result-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    title,
+    sender: 'Badan Intelijen Negara (Operasi Khusus)',
+    message,
+    timestamp: dateStr,
+    type: 'peringkat',
+    value: succeeded ? 100 : 0,
+    isRead: false,
+    priority: succeeded ? 'normal' : 'critical',
+    tradeType: 'spionase',
+    partnerCountry: targetCountry,
+    targetCountry,
+    level: 'ringan',
+    isHandled: true,
+    isOffensive: true,
+    operationResult: succeeded ? 'success' : 'failed',
+    operationTarget: targetLabel,
+    effectText,
   };
 }

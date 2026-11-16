@@ -200,31 +200,35 @@ export function CountryDetailModal({
       String(currentDate.getMonth() + 1).padStart(2, '0'),
       String(currentDate.getDate()).padStart(2, '0'),
     ].join('-');
-    const attackDateKey = `${normalizeCountryKey(countryName)}:serang`;
 
     setMilitaryActionDates(previous => {
-      const scheduledDate = previous[attackDateKey];
-      if (!scheduledDate || scheduledDate >= currentDateKey) return previous;
+      let changed = false;
       const next = { ...previous };
-      delete next[attackDateKey];
-      return next;
+      for (const [key, scheduledDate] of Object.entries(previous)) {
+        if (scheduledDate && scheduledDate < currentDateKey) {
+          delete next[key];
+          changed = true;
+        }
+      }
+      return changed ? next : previous;
     });
   }, [currentDate, countryName]);
 
   const recordMilitaryAction = (action: 'serang' | 'spionase' | 'sabotase') => {
     const actionDate = currentDate ? new Date(currentDate) : new Date();
-    if (action === 'serang') {
-      const attackerCountry = countryDetail?.country || 'Afganistan';
-      const travelEstimate = estimateTravelTime(attackerCountry, countryName || '');
-      if (!travelEstimate) {
-        console.error('[CountryDetail] Unable to estimate attack arrival date', {
-          attackerCountry,
-          targetCountry: countryName,
-        });
-        return;
-      }
-      actionDate.setDate(actionDate.getDate() + travelEstimate.days);
+    const attackerCountry = countryDetail?.country || 'Indonesia';
+    const travelEstimate = estimateTravelTime(attackerCountry, countryName || '', {
+      diplomacyKind: action,
+    });
+    if (!travelEstimate) {
+      console.error('[CountryDetail] Unable to estimate operation arrival date', {
+        action,
+        attackerCountry,
+        targetCountry: countryName,
+      });
+      return;
     }
+    actionDate.setDate(actionDate.getDate() + travelEstimate.days);
 
     const dateString = [
       actionDate.getFullYear(),
@@ -269,6 +273,29 @@ export function CountryDetailModal({
     window.addEventListener('military_operation_resolved', handleMilitaryOperationResolved);
     return () => window.removeEventListener('military_operation_resolved', handleMilitaryOperationResolved);
   }, [countryName]);
+
+  useEffect(() => {
+    const handleCovertArrival = (event: Event) => {
+      const detail = (event as CustomEvent<{ targetCountry?: string; kind?: string }>).detail;
+      if (!detail?.targetCountry || normalizeCountryKey(detail.targetCountry) !== normalizeCountryKey(countryName)) {
+        return;
+      }
+      const kind = detail.kind;
+      if (kind === 'spionase' || kind === 'sabotase') {
+        const actionDateKey = `${normalizeCountryKey(countryName)}:${kind}`;
+        setMilitaryActionDates(previous => {
+          if (!(actionDateKey in previous)) return previous;
+          const next = { ...previous };
+          delete next[actionDateKey];
+          return next;
+        });
+      }
+    };
+
+    window.addEventListener('neosantara_covert_operation_arrived', handleCovertArrival);
+    return () => window.removeEventListener('neosantara_covert_operation_arrived', handleCovertArrival);
+  }, [countryName]);
+
   useEffect(() => {
     const handleRequestedInvasionResolved = (event: Event) => {
       const detail = (event as CustomEvent<{

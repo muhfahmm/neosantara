@@ -157,6 +157,8 @@ import { getActivePlayerAttack, setActivePlayerAttack } from '../navigasi_menu/2
 import { generateAITradeBeliNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/2_beli/tradeBeliLogic';
 import { generateAITradeJualNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/1_jual/tradeJualLogic';
 import { generateTradeRelationOfferNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/3_hubungan_dagang/tradeRelationLogic';
+import { generatePlayerSpionaseResultNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/1_spionase/spionaseLogic';
+import { generatePlayerSabotaseResultNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/2_sabotase/sabotaseLogic';
 import { createEmbassyOfferNotification } from '../menus/inbox/logic/4_notifikasi_kedubes/1_penawaran_kedutaan_besar';
 import { executeAparatOperation } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/bubarkanAparatLogic';
 import type { DetailOpsiBubarkan } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/opsiBubarkanMassaConfig';
@@ -4516,6 +4518,61 @@ export default function MapPage() {
             return result.length === next.length ? next : result;
         }));
     }, []);
+    useEffect(() => {
+        const handleCovertOperationArrival = (event: Event) => {
+            const detail = (event as CustomEvent<{
+                pathId?: unknown;
+                kind?: unknown;
+                targetCountry?: unknown;
+                operationTarget?: unknown;
+                operationSucceeded?: unknown;
+            }>).detail;
+            if (
+                typeof detail?.pathId !== 'string' ||
+                typeof detail.targetCountry !== 'string' ||
+                (detail.kind !== 'spionase' && detail.kind !== 'sabotase') ||
+                typeof detail.operationSucceeded !== 'boolean'
+            ) return;
+
+            const notification = detail.kind === 'spionase'
+                ? generatePlayerSpionaseResultNotification(
+                    detail.targetCountry,
+                    detail.operationSucceeded,
+                    simulationDateString,
+                    typeof detail.operationTarget === 'string' ? detail.operationTarget : undefined,
+                )
+                : generatePlayerSabotaseResultNotification(
+                    detail.targetCountry,
+                    detail.operationSucceeded,
+                    simulationDateString,
+                    typeof detail.operationTarget === 'string' ? detail.operationTarget : undefined,
+                );
+            const notificationId = `player-covert-result-${detail.pathId}`;
+            const uniqueNotification = { ...notification, id: notificationId };
+
+            setNotifications(previous => previous.some(item => item.id === notificationId)
+                ? previous
+                : [uniqueNotification, ...previous]);
+            setCountryDetail((previous: Record<string, unknown> | null) => {
+                if (!previous) return previous;
+                const pending = Array.isArray(previous.pending_notifications)
+                    ? previous.pending_notifications
+                    : [];
+                if (pending.some((item: unknown) =>
+                    item !== null && typeof item === 'object' &&
+                    (item as { id?: unknown }).id === notificationId
+                )) return previous;
+                return {
+                    ...previous,
+                    pending_notifications: [uniqueNotification, ...pending],
+                };
+            });
+        };
+
+        window.addEventListener('neosantara_covert_operation_arrived', handleCovertOperationArrival);
+        return () => window.removeEventListener('neosantara_covert_operation_arrived', handleCovertOperationArrival);
+    }, [setCountryDetail, setNotifications, simulationDateString]);
+
     const claimCovertNotification = useCallback((notificationId: string): boolean => {
         const countryIdentity = getWarCountryIdentity(getPlayerCountryIdentity(countryDetail));
         const storedIds = Array.isArray(countryDetail?.processed_covert_notification_ids)
@@ -7029,6 +7086,8 @@ export default function MapPage() {
                     localStorage.removeItem('pbb_reported_war_ban_violations_v1');
                     localStorage.removeItem('programNuklirActive');
                     localStorage.removeItem('icbmBuildTask');
+                    localStorage.removeItem('neosantara_covert_personnel');
+                    window.dispatchEvent(new CustomEvent('neosantara_covert_personnel_updated', { detail: { mataMata: 0, penyabot: 0 } }));
                     try {
                         sessionStorage.removeItem('programNuklirActive');
                         sessionStorage.removeItem('program_nuklir_modal_open');
@@ -7491,6 +7550,8 @@ export default function MapPage() {
                         clearActiveNpcCountrySimulationState();
                         localStorage.removeItem('programNuklirActive');
                         localStorage.removeItem('icbmBuildTask');
+                        localStorage.removeItem('neosantara_covert_personnel');
+                        window.dispatchEvent(new CustomEvent('neosantara_covert_personnel_updated', { detail: { mataMata: 0, penyabot: 0 } }));
                         try {
                             sessionStorage.removeItem('programNuklirActive');
                             sessionStorage.removeItem('program_nuklir_modal_open');

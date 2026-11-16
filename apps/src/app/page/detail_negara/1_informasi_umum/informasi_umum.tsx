@@ -243,11 +243,11 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     return tripId;
   };
   const getDiplomacyTravelArrival = (
-    kind?: 'defense-alliance' | 'trade-agreement' | 'research-contract',
+    kind?: 'defense-alliance' | 'trade-agreement' | 'research-contract' | 'non-aggression-pact',
   ) => {
     const senderCountry = playerCountryName || 'Indonesia';
     const travelEstimate = estimateTravelTime(senderCountry, countryName, {
-      durationByDistance: kind === 'defense-alliance',
+      diplomacyKind: kind || 'non-aggression-pact',
     });
     if (!travelEstimate) {
       console.error('[Diplomacy] Unable to estimate route arrival date', { senderCountry, targetCountry: countryName });
@@ -889,7 +889,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
             return;
           }
 
-          const arrival = getDiplomacyTravelArrival();
+          const arrival = getDiplomacyTravelArrival('non-aggression-pact');
           if (!arrival) return;
           const pathId = consumeDiplomacyTravelFuel('non-aggression-pact');
           if (!pathId) return;

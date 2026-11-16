@@ -502,6 +502,7 @@ export default function PilihNegaraPage() {
                     window.localStorage.removeItem('pbb_reported_war_ban_violations_v1');
                     window.localStorage.removeItem('programNuklirActive');
                     window.localStorage.removeItem('icbmBuildTask');
+                    window.localStorage.removeItem('neosantara_covert_personnel');
                     window.sessionStorage.removeItem('programNuklirActive');
                     window.sessionStorage.removeItem('program_nuklir_modal_open');
                     window.sessionStorage.removeItem('icbm_detail_open');
@@ -787,6 +788,7 @@ export default function PilihNegaraPage() {
                 window.localStorage.removeItem('pbb_reported_war_ban_violations_v1');
                 window.localStorage.removeItem('programNuklirActive');
                 window.localStorage.removeItem('icbmBuildTask');
+                window.localStorage.removeItem('neosantara_covert_personnel');
                 window.sessionStorage.removeItem('programNuklirActive');
                 window.sessionStorage.removeItem('program_nuklir_modal_open');
                 window.sessionStorage.removeItem('icbm_detail_open');

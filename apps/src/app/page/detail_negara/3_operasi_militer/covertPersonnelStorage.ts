@@ -62,3 +62,30 @@ export function consumePersonnel(type: 'mataMata' | 'penyabot', count: number = 
 
   return true;
 }
+
+export function clearCovertPersonnel(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    sessionStorage.removeItem(STORAGE_KEY);
+    const emptyState: CovertPersonnelState = { mataMata: 0, penyabot: 0 };
+    window.dispatchEvent(new CustomEvent(COVERT_PERSONNEL_UPDATED_EVENT, { detail: emptyState }));
+  } catch (e) {
+    console.error('Failed to clear covert personnel:', e);
+  }
+}
+
+// Cek apakah halaman dibuka lewat reload / refresh atau kembali dari luar game
+if (typeof window !== 'undefined') {
+  try {
+    const navEntries = performance.getEntriesByType?.('navigation');
+    const isReload = (navEntries && navEntries.length > 0 && (navEntries[0] as PerformanceNavigationTiming).type === 'reload')
+      || (performance as any).navigation?.type === 1;
+
+    if (isReload) {
+      clearCovertPersonnel();
+    }
+  } catch {
+    // Abaikan jika tidak didukung browser
+  }
+}

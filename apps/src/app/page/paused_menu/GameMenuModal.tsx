@@ -108,6 +108,8 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
             sessionStorage.removeItem('presiden_simulator_load_save');
             localStorage.removeItem('programNuklirActive');
             localStorage.removeItem('icbmBuildTask');
+            localStorage.removeItem('neosantara_covert_personnel');
+            window.dispatchEvent(new CustomEvent('neosantara_covert_personnel_updated', { detail: { mataMata: 0, penyabot: 0 } }));
         } catch (e) {}
         router.replace('/page');
     };

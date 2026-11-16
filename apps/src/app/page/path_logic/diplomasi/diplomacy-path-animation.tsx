@@ -84,6 +84,7 @@ export default function DiplomacyPathAnimation({
   const target = useMemo(() => buildCapitalPoint(targetCountry), [targetCountry]);
   const travelEstimate = useMemo(
     () => estimateTravelTime(senderCountry, targetCountry, {
+      diplomacyKind: kind,
       durationByDistance: kind === 'defense-alliance' || kind === 'spionase' || kind === 'sabotase',
     }),
     [kind, senderCountry, targetCountry]

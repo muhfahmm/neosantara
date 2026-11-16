@@ -6,11 +6,16 @@ export interface SabotaseNotification extends NotificationMessage {
   tradeType: 'sabotase';
   partnerCountry: string;
   targetCountry?: string;
-  sabotaseType: SabotaseType;
+  sabotaseType?: SabotaseType;
   costEM?: number;
   effectText?: string;
   isHandled?: boolean;
   remainingResponseDays?: number;
+  // Properti untuk sabotase ofensif pemain
+  isOffensive?: boolean;
+  operationResult?: 'success' | 'failed';
+  operationTarget?: string;
+  lossesDetail?: string;
 }
 
 const SABOTASE_POOL = [
@@ -76,5 +81,48 @@ export function generateSabotaseNotification(
     costEM: item.costEM,
     effectText: item.effectText,
     isHandled: false
+  };
+}
+
+export function generatePlayerSabotaseResultNotification(
+  targetCountry: string,
+  succeeded: boolean,
+  dateStr: string,
+  operationTarget?: string,
+  lossesText?: string,
+): SabotaseNotification {
+  const targetLabel = operationTarget || 'Fasilitas & Pabrik Militer';
+  const title = succeeded
+    ? `💣 Misi Sabotase Berhasil: ${targetCountry}`
+    : `❌ Misi Sabotase Gagal: ${targetCountry}`;
+
+  const message = succeeded
+    ? `Laporan Operasi Tempur Rahasia: Tim sabotase elit kita sukses meledakkan dan melumpuhkan target (${targetLabel}) di wilayah ${targetCountry}. Kerusakan signifikan terkonfirmasi pada instalasi lawan tanpa meninggalkan jejak!`
+    : `Laporan Darurat Lapangan: Operasi sabotase terhadap ${targetCountry} (${targetLabel}) digagalkan! Sistem pertahanan dan pengamanan instalasi lawan berhasil mendeteksi pergerakan tim penyabot kita sebelum peledak diaktifkan.`;
+
+  const effectText = succeeded
+    ? (lossesText || `Fasilitas (${targetLabel}) lawan berhasil dirusak dan kekuatan militer target berkurang.`)
+    : `Misi gagal. Instalasi ${targetLabel} target tetap utuh.`;
+
+  return {
+    id: `player-sabotase-result-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    title,
+    sender: 'Komando Pasukan Khusus & Intelijen Tempur',
+    message,
+    timestamp: dateStr,
+    type: 'kesejahteraan',
+    value: succeeded ? 100 : 0,
+    isRead: false,
+    priority: succeeded ? 'normal' : 'critical',
+    tradeType: 'sabotase',
+    partnerCountry: targetCountry,
+    targetCountry,
+    sabotaseType: 'militer',
+    isHandled: true,
+    isOffensive: true,
+    operationResult: succeeded ? 'success' : 'failed',
+    operationTarget: targetLabel,
+    lossesDetail: lossesText,
+    effectText,
   };
 }
