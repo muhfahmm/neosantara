@@ -14,19 +14,19 @@ export function getCountryColor(countryName: string): string {
 
   const continent = country?.continent;
   switch (continent) {
-    case 'Asia': return '#a855f7';
-    case 'Africa': return '#eab308';
-    case 'Europe': return '#3b82f6';
-    case 'North America': return '#22c55e';
-    case 'South America': return '#f97316';
-    case 'Oceania': return '#ec4899';
-    case 'Antarctica': return '#cbd5e1';
+    case 'Asia': return '#2e7d32';
+    case 'Africa': return '#d97706';
+    case 'Europe': return '#2563eb';
+    case 'North America': return '#0d9488';
+    case 'South America': return '#ea580c';
+    case 'Oceania': return '#0284c7';
+    case 'Antarctica': return '#e2e8f0';
     default: break;
   }
 
   // Fallback map if country name is formatted differently
-  if (['rusia', 'russia'].includes(normalizedName)) return '#3b82f6'; // Europe
-  if (['china', 'tiongkok'].includes(normalizedName)) return '#a855f7'; // Asia
+  if (['rusia', 'russia'].includes(normalizedName)) return '#2563eb'; // Europe
+  if (['china', 'tiongkok'].includes(normalizedName)) return '#2e7d32'; // Asia
 
   console.warn(`Continent color not found for country: ${countryName}, using default`);
   return '#475569';

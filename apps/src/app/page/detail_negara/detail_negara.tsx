@@ -761,20 +761,18 @@ export function CountryDetailModal({
           : 'Sangat Panas';
   const isDevelopingAIBuildingTab = activeTab === "developing_ai_building";
 
-  // Fungsi Helper untuk bendera di Header
-  const renderFlagHeader = (iso: string | undefined, altName: string) => {
-    if (!iso || iso.length !== 2) return null;
-    return (
-      <div className="w-5 sm:w-8 h-3.5 sm:h-5 rounded-sm overflow-hidden border border-root-accent/30 flex-shrink-0 shadow-sm bg-root-canvas relative flex items-center justify-center">
-        <img
-          src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
-          alt={altName}
-          className="w-full h-full object-cover absolute inset-0"
-          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-        />
-      </div>
-    );
-  };
+  const headerFlagIcon = displayIso && displayIso.length === 2 ? (
+    <span className="flex h-4 w-4 items-center justify-center overflow-hidden rounded-sm sm:h-5 sm:w-5">
+      <img
+        src={`https://flagcdn.com/w80/${displayIso.toLowerCase()}.png`}
+        alt={displayCountryName}
+        className="h-auto max-h-full w-full object-cover"
+        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+      />
+    </span>
+  ) : (
+    <Globe />
+  );
 
   const detailModalContent = (
       <div
@@ -788,26 +786,18 @@ export function CountryDetailModal({
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.05)_0%,transparent_100%)] pointer-events-none" />
 
         <RootInfoModalHeader
-          title={displayCountryName}
+          title={
+            <span className="inline-flex min-w-0 items-baseline gap-2">
+              <span className="truncate">{displayCountryName}</span>
+              <span className="shrink-0 text-[0.7em] font-semibold normal-case text-root-text/80">
+                {displayCapital}
+              </span>
+            </span>
+          }
           titleId="country-detail-modal-title"
           onClose={onClose}
-          icon={<Globe />}
+          icon={headerFlagIcon}
           size="standard"
-          centerContent={
-            <div className="flex min-w-0 items-center gap-2">
-              {rulerIso && originalIso && rulerIso.toLowerCase() !== originalIso.toLowerCase() ? (
-                <>
-                  {renderFlagHeader(rulerIso, attackerCountryName || "Penguasa")}
-                  {renderFlagHeader(originalIso, countryName || "Wilayah Asli")}
-                </>
-              ) : (
-                renderFlagHeader(displayIso, displayCountryName)
-              )}
-              <p className="text-[10px] sm:text-xs text-root-accent font-black uppercase tracking-tight">
-                {displayCountryName}, {displayCapital}
-              </p>
-            </div>
-          }
         />
 
         {/* DATA RINGKASAN */}

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { MapPinned } from "lucide-react";
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
+import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 import { COUNTRIES_DATA } from '../../../map_system/map-data';
 
 interface BerikanWilayahModalProps {
@@ -70,18 +71,46 @@ export default function BerikanWilayahModal({
 			(window as Window & {
 				neosantara_annexed_countries?: Record<string, { attackerCountry?: string }>;
 			}).neosantara_annexed_countries || {};
+		const cityOwners =
+			(window as Window & {
+				neosantara_city_owner?: Record<string, { ownerCountry?: string; countryIso?: string }>;
+			}).neosantara_city_owner || {};
 
 		const territories = new Map<string, string>();
+		const playerKey = normalizeCountryName(playerCountryName);
+		const targetKey = normalizeCountryName(countryName);
+
+		// 1. Cek dari neosantara_annexed_countries
 		Object.entries(annexedCountries).forEach(([territoryName, annexation]) => {
 			const canonicalTerritoryName = getCanonicalTerritoryName(territoryName);
 			const normalizedTerritory = normalizeCountryName(canonicalTerritoryName);
 
 			if (
-				normalizeCountryName(annexation?.attackerCountry) === normalizeCountryName(playerCountryName) &&
+				normalizeCountryName(annexation?.attackerCountry) === playerKey &&
 				normalizedTerritory &&
+				normalizedTerritory !== targetKey &&
 				!territories.has(normalizedTerritory)
 			) {
 				territories.set(normalizedTerritory, canonicalTerritoryName);
+			}
+		});
+
+		// 2. Cek dari neosantara_city_owner (misal player menganeksasi kota/provinsi)
+		Object.values(cityOwners).forEach(city => {
+			if (!city?.ownerCountry || normalizeCountryName(city.ownerCountry) !== playerKey) return;
+			const origIso = String(city.countryIso || '').toLowerCase();
+			const origCountry = COUNTRIES_DATA.find(c => c.iso.toLowerCase() === origIso);
+			if (origCountry) {
+				const canonicalTerritoryName = origCountry.country;
+				const normalizedTerritory = normalizeCountryName(canonicalTerritoryName);
+				if (
+					normalizedTerritory &&
+					normalizedTerritory !== playerKey &&
+					normalizedTerritory !== targetKey &&
+					!territories.has(normalizedTerritory)
+				) {
+					territories.set(normalizedTerritory, canonicalTerritoryName);
+				}
 			}
 		});
 
@@ -103,8 +132,11 @@ export default function BerikanWilayahModal({
 	if (!isOpen) return null;
 
 	const modalContent = (
-		<div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-			<div role="dialog" aria-modal="true" aria-labelledby="give-territory-title" className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+		<NotebookModalWrapper
+			onClose={onClose}
+			zIndexClass="z-[100000001]"
+		>
+			<div role="dialog" aria-modal="true" aria-labelledby="give-territory-title" className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
 
 				<RootInfoModalHeader
 					title="Konfirmasi Berikan Wilayah"
@@ -190,7 +222,7 @@ export default function BerikanWilayahModal({
 							onClick={() => {
 								if (!selectedTerritory) return;
 								if (onConfirm(selectedTerritory)) onClose();
-								else setTransferError('Wilayah tidak dapat diberikan. Pastikan wilayah masih dikuasai dan negara tujuan merupakan sekutu.');
+								else setTransferError('Wilayah tidak dapat diberikan. Pastikan wilayah masih dikuasai.');
 							}}
 							disabled={!selectedTerritory}
 							className="px-6 py-3 bg-amber-500 hover:bg-amber-400 border border-amber-500 rounded-xl text-center text-root-canvas font-black text-xs tracking-wider uppercase transition-all cursor-pointer shadow-md disabled:cursor-not-allowed disabled:opacity-40"
@@ -200,7 +232,7 @@ export default function BerikanWilayahModal({
 					</div>
 				</div>
 			</div>
-		</div>
+		</NotebookModalWrapper>
 	);
 
 	if (typeof window !== "undefined") {
