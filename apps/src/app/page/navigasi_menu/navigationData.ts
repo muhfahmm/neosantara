@@ -20,15 +20,16 @@ export const subMenuItems: Record<string, any[]> = {
   "Populasi": [
     { id: "Dashboard:Populasi:Overview", label: "Ringkasan Populasi", icon: Users2, image: "/images/game/interface/sub-tabs/populasi/ringkasan-populasi.svg" },
   ],
-  "Ekonomi": [
-    { id: "Menu:Perdagangan", label: "Perdagangan", icon: ArrowRightLeft, image: "/images/game/interface/sub-tabs/ekonomi/perdagangan.svg" },
-    { id: "Menu:Pajak", label: "Pajak", icon: FileText, image: "/images/game/interface/sub-tabs/ekonomi/pajak.svg" },
-    { id: "Menu:Hutang", label: "Pinjaman", icon: CreditCard, image: "/images/game/interface/sub-tabs/ekonomi/hutang.svg" },
-    { id: "Menu:PDB", label: "PDB", icon: TrendingUp, image: "/images/game/interface/sub-tabs/ekonomi/pdb.svg" },
-    { id: "Menu:Harga", label: "Harga Kebutuhan", icon: Tag, image: "/images/game/interface/sub-tabs/ekonomi/harga-barang.svg" },
-    { id: "Menu:SistemEkonomi", label: "Sistem Ekonomi", icon: Scale, image: "/images/game/interface/sub-tabs/ekonomi/sistem-ekonomi.svg" },
-    { id: "Menu:KebijakanSubsidi", label: "Subsidi", icon: HandHelping, image: "/images/game/interface/sub-tabs/ekonomi/kebijakan-subsidi.svg" },
-  ],
+"Ekonomi": [
+  { id: "Menu:Perdagangan", label: "Perdagangan", icon: ArrowRightLeft, image: "/images/game/interface/sub-tabs/ekonomi/perdagangan.svg" },
+  { id: "Menu:Pajak", label: "Pajak", icon: FileText, image: "/images/game/interface/sub-tabs/ekonomi/pajak.svg" },
+  { id: "Menu:Hutang", label: "Pinjaman", icon: CreditCard, image: "/images/game/interface/sub-tabs/ekonomi/hutang.svg" },
+  { id: "Menu:Budget", label: "Anggaran", icon: BarChart3, image: "/images/game/interface/sub-tabs/ekonomi/anggaran.svg" }, // <--- ditambahkan kembali di sini
+  { id: "Menu:PDB", label: "PDB", icon: TrendingUp, image: "/images/game/interface/sub-tabs/ekonomi/pdb.svg" },
+  { id: "Menu:Harga", label: "Harga Kebutuhan", icon: Tag, image: "/images/game/interface/sub-tabs/ekonomi/harga-barang.svg" },
+  { id: "Menu:SistemEkonomi", label: "Sistem Ekonomi", icon: Scale, image: "/images/game/interface/sub-tabs/ekonomi/sistem-ekonomi.svg" },
+  { id: "Menu:KebijakanSubsidi", label: "Subsidi", icon: HandHelping, image: "/images/game/interface/sub-tabs/ekonomi/kebijakan-subsidi.svg" },
+],
   "Pembangunan": [
     { id: "Menu:Produksi", label: "Produksi", icon: Hammer, image: "/images/game/interface/sub-tabs/pembangunan/produksi.svg" },
     { id: "Menu:TempatUmum", label: "Tempat Umum", icon: Users2, image: "/images/game/interface/sub-tabs/pembangunan/tempat-umum.svg" },

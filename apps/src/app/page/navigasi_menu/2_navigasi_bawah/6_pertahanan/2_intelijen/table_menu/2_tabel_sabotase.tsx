@@ -47,11 +47,12 @@ const extractISO = (country: any, countryName: string): string => {
 interface SabotaseProps {
   prefetchedAllCountries?: any[];
   countryDetail?: any; // 🔥 Tambahkan prop untuk negara user
+  updatePlayerCountryDetail: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
   onAction: (targetCountry: RankingRow, cost: number, tripId: string, operationTarget?: string) => void;
   searchQuery: string;
 }
 
-export default function Sabotase({ prefetchedAllCountries, countryDetail, onAction, searchQuery }: SabotaseProps) {
+export default function Sabotase({ prefetchedAllCountries, countryDetail, updatePlayerCountryDetail, onAction, searchQuery }: SabotaseProps) {
   const [sortConfig, setSortConfig] = useState<{ key: keyof RankingRow; direction: 'asc' | 'desc' } | null>({
     key: 'totalPower',
     direction: 'desc'
@@ -266,6 +267,8 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, onActi
           onClose={() => setIsModalOpen(false)}
           targetCountry={selectedTarget}
           playerCountryDetail={countryDetail}
+          currentBudget={Number(countryDetail?.anggaran) || 0}
+          updatePlayerCountryDetail={updatePlayerCountryDetail}
           travelFuelStatus={travelFuelStatus}
           onConfirm={(operationTarget) => {
             if (!travelFuelStatus.ok || travelFuelQuote.cost === null || !tripIdRef.current) return;

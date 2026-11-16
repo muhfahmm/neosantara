@@ -1,6 +1,8 @@
 import React from 'react';
 import { Eye, Check, X, ShieldAlert } from 'lucide-react';
 import type { SpionaseNotification } from '@/app/page/detail_negara/3_operasi_militer/2_spionase/logic/spionaseLogic';
+import EconomicIntelReportPanel from '@/app/page/detail_negara/3_operasi_militer/2_spionase/EconomicIntelReportPanel';
+import MilitaryIntelReportPanel from '@/app/page/detail_negara/3_operasi_militer/2_spionase/MilitaryIntelReportPanel';
 
 interface SpionaseNotificationProps {
   notification: SpionaseNotification;
@@ -42,6 +44,13 @@ export default function SpionaseNotificationCard({ notification, onAccept, onRej
             <span>Hasil Intelijen: {notification.effectText}</span>
             <span className="text-root-subtle font-black">Target: {notification.operationTarget || 'Informasi Rahasia'}</span>
           </div>
+
+          {notification.militaryReport && (
+            <MilitaryIntelReportPanel report={notification.militaryReport} />
+          )}
+          {notification.economicReport && (
+            <EconomicIntelReportPanel report={notification.economicReport} />
+          )}
 
           <div className="pt-2 flex items-center justify-end">
             <div className={`text-[11px] font-bold ${isSuccess ? 'text-emerald-400 bg-emerald-950/80 border-emerald-500/50' : 'text-rose-400 bg-rose-950/80 border-rose-500/50'} px-3 py-1.5 rounded-xl border flex items-center gap-1.5`}>

@@ -48,27 +48,6 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
   const launchedTravelFuelIdsRef = useRef(new Set<string>());
 
   useEffect(() => {
-    const handleCovertOperationArrival = async (event: Event) => {
-      const path = (event as CustomEvent<{
-        pathId?: string;
-        targetCountry?: string;
-      }>).detail;
-      const covertInfo = path?.pathId ? pendingCovertOperationsRef.current.get(path.pathId) : undefined;
-      if (!path?.pathId || !covertInfo || !path.targetCountry) return;
-
-      const { operation, operationTarget, successChance, succeeded } = covertInfo;
-
-      if (operation === 'spionase') {
-        pendingCovertOperationsRef.current.delete(path.pathId);
-        const result = { operationTarget, successChance, succeeded };
-        setSpionaseResult({
-          operation: 'spionase',
-          targetCountry: path.targetCountry,
-          ...result,
-        });
-      }
-    };
-
     const handleCovertOperationResolved = (event: Event) => {
       const detail = (event as CustomEvent<{
         pathId?: string;
@@ -76,35 +55,45 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
         targetCountry?: string;
         operationSucceeded?: boolean;
         losses?: SabotaseOperationResult['losses'];
+        militaryReport?: SpionaseOperationResult['militaryReport'];
+        economicReport?: SpionaseOperationResult['economicReport'];
       }>).detail;
       if (
-        detail?.kind !== 'sabotase' ||
+        (detail?.kind !== 'spionase' && detail?.kind !== 'sabotase') ||
         !detail.pathId ||
         !detail.targetCountry ||
         typeof detail.operationSucceeded !== 'boolean'
       ) return;
 
       const covertInfo = pendingCovertOperationsRef.current.get(detail.pathId);
-      if (!covertInfo || covertInfo.operation !== 'sabotase') return;
+      if (!covertInfo || covertInfo.operation !== detail.kind) return;
 
       pendingCovertOperationsRef.current.delete(detail.pathId);
-      setSabotaseResult({
-        operation: 'sabotase',
-        targetCountry: detail.targetCountry,
-        operationTarget: covertInfo.operationTarget,
-        successChance: covertInfo.successChance,
-        succeeded: detail.operationSucceeded,
-        losses: detail.losses,
-      });
+      if (detail.kind === 'spionase') {
+        setSpionaseResult({
+          operation: 'spionase',
+          targetCountry: detail.targetCountry,
+          operationTarget: covertInfo.operationTarget,
+          successChance: covertInfo.successChance,
+          succeeded: detail.operationSucceeded,
+          militaryReport: detail.militaryReport,
+          economicReport: detail.economicReport,
+        });
+      } else {
+        setSabotaseResult({
+          operation: 'sabotase',
+          targetCountry: detail.targetCountry,
+          operationTarget: covertInfo.operationTarget,
+          successChance: covertInfo.successChance,
+          succeeded: detail.operationSucceeded,
+          losses: detail.losses,
+        });
+      }
     };
 
-    window.addEventListener('neosantara_covert_operation_arrived', handleCovertOperationArrival);
     window.addEventListener('neosantara_covert_operation_resolved', handleCovertOperationResolved);
-    return () => {
-      window.removeEventListener('neosantara_covert_operation_arrived', handleCovertOperationArrival);
-      window.removeEventListener('neosantara_covert_operation_resolved', handleCovertOperationResolved);
-    };
-  }, [countryDetail]);
+    return () => window.removeEventListener('neosantara_covert_operation_resolved', handleCovertOperationResolved);
+  }, []);
 
   if (!isOpen) return null;
 
@@ -253,6 +242,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
                 <Spionase
                   prefetchedAllCountries={prefetchedAllCountries}
                   countryDetail={countryDetail}
+                  updatePlayerCountryDetail={setCountryDetail}
                   onAction={handleSpionaseAction}
                   searchQuery={searchQuery}
                 />
@@ -261,6 +251,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
                 <Sabotase
                   prefetchedAllCountries={prefetchedAllCountries}
                   countryDetail={countryDetail}
+                  updatePlayerCountryDetail={setCountryDetail}
                   onAction={handleSabotaseAction}
                   searchQuery={searchQuery}
                 />

@@ -1,19 +1,22 @@
 "use client"
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect, useRef } from "react";
-import { X, Bomb, AlertTriangle, Target, ChevronDown } from "lucide-react";
+import { X, Bomb, AlertTriangle, Target, ChevronDown, UserPlus } from "lucide-react";
 import { getSabotaseSuccessChance } from "@/app/page/detail_negara/3_operasi_militer/3_sabotase/logic/sabotaseLogic";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import TravelFuelCostPanel from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
 import type { TravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
-import { getCovertPersonnel, COVERT_PERSONNEL_UPDATED_EVENT } from "@/app/page/detail_negara/3_operasi_militer/covertPersonnelStorage";
+import { getCovertPersonnel, recruitPersonnel, COVERT_PERSONNEL_UPDATED_EVENT } from "@/app/page/detail_negara/3_operasi_militer/covertPersonnelStorage";
 import { SABOTASE_TARGET_OPTIONS } from "@/app/page/detail_negara/3_operasi_militer/3_sabotase/sabotaseTargetOptions";
+import RekrutPenyabotModal from "@/app/page/detail_negara/3_operasi_militer/3_sabotase/RekrutPenyabotModal";
 
 interface KonfirmasiSabotaseModalsProps {
   isOpen: boolean;
   onClose: () => void;
   targetCountry: any;
   playerCountryDetail?: Record<string, unknown> | null;
+  currentBudget: number;
+  updatePlayerCountryDetail: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
   travelFuelStatus?: TravelFuelStatus;
   onConfirm: (operationTarget?: string) => void;
 }
@@ -23,10 +26,13 @@ export default function KonfirmasiSabotaseModals({
   onClose,
   targetCountry,
   playerCountryDetail,
+  currentBudget,
+  updatePlayerCountryDetail,
   travelFuelStatus,
   onConfirm,
 }: KonfirmasiSabotaseModalsProps) {
   const [penyabotCount, setPenyabotCount] = useState<number>(() => getCovertPersonnel().penyabot);
+  const [isRecruitModalOpen, setIsRecruitModalOpen] = useState(false);
   const [selectedTargetId, setSelectedTargetId] = useState<string>(SABOTASE_TARGET_OPTIONS[0].id);
   const [isTargetDropdownOpen, setIsTargetDropdownOpen] = useState<boolean>(false);
   const targetDropdownRef = useRef<HTMLDivElement>(null);
@@ -65,13 +71,30 @@ export default function KonfirmasiSabotaseModals({
   const isFuelOk = travelFuelStatus ? travelFuelStatus.ok : true;
   const canLaunch = hasAgent && isFuelOk;
   const selectedTargetOption = SABOTASE_TARGET_OPTIONS.find(t => t.id === selectedTargetId) || SABOTASE_TARGET_OPTIONS[0];
+  const handleRecruitConfirm = (count: number, totalCost: number) => {
+    if (currentBudget < totalCost) return;
+    recruitPersonnel('penyabot', count);
+    updatePlayerCountryDetail(previous => {
+      if (!previous) return previous;
+      return {
+        ...previous,
+        anggaran: Math.max(0, Number(previous.anggaran || 0) - totalCost),
+      };
+    });
+    setIsRecruitModalOpen(false);
+  };
+  const handleClose = () => {
+    setIsRecruitModalOpen(false);
+    onClose();
+  };
 
   return (
-    <NotebookModalWrapper
-      onClose={onClose}
-      compact
-      zIndexClass="z-[60]"
-    >
+    <>
+      <NotebookModalWrapper
+        onClose={handleClose}
+        compact
+        zIndexClass="z-[60]"
+      >
       <div className="flex flex-col font-sans animate-in fade-in zoom-in-95 duration-150">
         
         {/* HEADER */}
@@ -171,10 +194,29 @@ export default function KonfirmasiSabotaseModals({
                 <span className="text-root-subtle">Penyabot Dibutuhkan:</span>
                 <span className="font-bold text-root-text">1 personel</span>
               </div>
-              <div className="w-full flex justify-between items-center text-xs mt-1">
-                <span className="text-root-subtle">Penyabot Tersedia:</span>
-                <span className={`font-bold ${hasAgent ? 'text-rose-400' : 'text-rose-400'}`}>{penyabotCount} personel</span>
+            </div>
+            <div className="w-full rounded-xl border border-rose-500/20 bg-root-canvas p-3.5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="rounded-lg border border-rose-500/30 bg-root-surface p-2">
+                  <Bomb className="h-5 w-5 text-rose-400" />
+                </div>
+                <div>
+                  <span className="block text-[11px] font-bold uppercase tracking-wider text-root-subtle">
+                    Personel Sabotase
+                  </span>
+                  <span className="text-sm font-black text-white">
+                    Penyabot: <span className="text-rose-400">{penyabotCount}</span>
+                  </span>
+                </div>
               </div>
+              <button
+                type="button"
+                onClick={() => setIsRecruitModalOpen(true)}
+                className="flex items-center gap-1.5 rounded-lg border border-rose-500 px-4 py-1.5 text-xs font-black uppercase tracking-wider text-rose-400 transition-colors hover:bg-rose-500/10 cursor-pointer"
+              >
+                <UserPlus className="h-3.5 w-3.5" />
+                Rekrut
+              </button>
             </div>
             {travelFuelStatus && <TravelFuelCostPanel status={travelFuelStatus} />}
           </div>
@@ -182,11 +224,14 @@ export default function KonfirmasiSabotaseModals({
 
         {/* FOOTER */}
         <div className="px-4 sm:px-5 py-3 border-t border-rose-500/30 bg-root-canvas relative z-10 shrink-0 flex items-center justify-end gap-3">
-          <button onClick={onClose} className="px-6 py-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
+          <button onClick={handleClose} className="px-6 py-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
             Batal
           </button>
           <button
-            onClick={() => onConfirm(selectedTargetOption.label)}
+            onClick={() => {
+              setIsRecruitModalOpen(false);
+              onConfirm(selectedTargetOption.label);
+            }}
             disabled={!canLaunch}
             className="px-6 py-2 rounded-xl bg-rose-600 text-white shadow-lg shadow-rose-900/30 font-black text-xs uppercase tracking-wider hover:bg-rose-500 active:scale-95 transition-all cursor-pointer flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-40"
           >
@@ -194,7 +239,15 @@ export default function KonfirmasiSabotaseModals({
             {!hasAgent ? "Penyabot Habis" : "Luncurkan Sabotase"}
           </button>
         </div>
-      </div>
-    </NotebookModalWrapper>
+        </div>
+      </NotebookModalWrapper>
+      <RekrutPenyabotModal
+        isOpen={isRecruitModalOpen}
+        currentPersonnelCount={penyabotCount}
+        currentBudget={currentBudget}
+        onClose={() => setIsRecruitModalOpen(false)}
+        onConfirm={handleRecruitConfirm}
+      />
+    </>
   );
 }

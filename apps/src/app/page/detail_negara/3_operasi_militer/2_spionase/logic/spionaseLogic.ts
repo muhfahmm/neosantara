@@ -1,5 +1,7 @@
 import { getMilitaryResearchLevelBonus } from '@/app/page/bonus_logic/militaryResearchBonus';
 import type { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import type { SpionaseEconomicIntelReport } from './spionaseEkonomiLogic';
+import type { SpionaseMilitaryIntelReport } from './spionaseMiliterLogic';
 
 export interface SpionaseOperationResult {
   operation: 'spionase';
@@ -7,6 +9,8 @@ export interface SpionaseOperationResult {
   operationTarget?: string;
   successChance: number;
   succeeded: boolean;
+  militaryReport?: SpionaseMilitaryIntelReport;
+  economicReport?: SpionaseEconomicIntelReport;
 }
 
 export type SpionaseLevel = 'ringan' | 'sedang' | 'berat';
@@ -23,6 +27,8 @@ export interface SpionaseNotification extends NotificationMessage {
   isOffensive?: boolean;
   operationResult?: 'success' | 'failed';
   operationTarget?: string;
+  militaryReport?: SpionaseMilitaryIntelReport;
+  economicReport?: SpionaseEconomicIntelReport;
 }
 
 export const SPIONASE_BASE_SUCCESS_CHANCE = 50;
@@ -89,6 +95,8 @@ export function generatePlayerSpionaseResultNotification(
   succeeded: boolean,
   dateStr: string,
   operationTarget?: string,
+  militaryReport?: SpionaseMilitaryIntelReport,
+  economicReport?: SpionaseEconomicIntelReport,
 ): SpionaseNotification {
   const targetLabel = operationTarget || 'Informasi Intelijen Negara';
   const title = succeeded
@@ -96,11 +104,25 @@ export function generatePlayerSpionaseResultNotification(
     : `❌ Misi Spionase Gagal: ${targetCountry}`;
 
   const message = succeeded
-    ? `Laporan Operasi Intelijen: Agen spionase kita telah berhasil menyusup dan mengekstraksi data strategis (${targetLabel}) dari target ${targetCountry}. Seluruh dokumen rahasia lawan berhasil dienkripsi dan dikirim ke markas pusat.`
+    ? militaryReport
+      ? `Laporan Operasi Intelijen: Agen berhasil mengekstraksi data militer (${targetLabel}) dari ${targetCountry}. Rincian jumlah unit darat, udara, dan laut terlampir.`
+      : economicReport
+        ? `Laporan Operasi Intelijen: Agen berhasil memperoleh data fiskal (${targetLabel}) dari ${targetCountry}. Rincian anggaran dan tarif pajak terlampir.`
+        : `Laporan Operasi Intelijen: Agen spionase kita telah berhasil menyusup dan mengekstraksi data strategis (${targetLabel}) dari target ${targetCountry}. Seluruh dokumen rahasia lawan berhasil dienkripsi dan dikirim ke markas pusat.`
     : `Laporan Darurat Intelijen: Misi spionase terhadap ${targetCountry} (${targetLabel}) mengalami kegagalan. Agen penyusup kita terdeteksi oleh jaringan kontra-intelijen lawan dan terpaksa melakukan evakuasi darurat.`;
 
+  const militaryReportSummary = militaryReport
+    ? `Total ${militaryReport.totalUnits.toLocaleString('id-ID')} unit; darat ${militaryReport.groups.darat.totalUnits.toLocaleString('id-ID')}, udara ${militaryReport.groups.udara.totalUnits.toLocaleString('id-ID')}, laut ${militaryReport.groups.laut.totalUnits.toLocaleString('id-ID')}.`
+    : undefined;
+  const economicReportSummary = economicReport
+    ? `Anggaran ${economicReport.budget.toLocaleString('id-ID')} NEO; estimasi pajak ${economicReport.estimatedDailyTaxRevenue.toLocaleString('id-ID')} NEO/hari.`
+    : undefined;
   const effectText = succeeded
-    ? `Data intelijen (${targetLabel}) negara ${targetCountry} berhasil diamankan.`
+    ? militaryReportSummary
+      ? `Data militer (${targetLabel}) berhasil diamankan. ${militaryReportSummary}`
+      : economicReportSummary
+        ? `Data fiskal (${targetLabel}) berhasil diamankan. ${economicReportSummary}`
+        : `Data intelijen (${targetLabel}) negara ${targetCountry} berhasil diamankan.`
     : `Misi gagal. Agen gagal mendapatkan data ${targetLabel}.`;
 
   return {
@@ -121,6 +143,8 @@ export function generatePlayerSpionaseResultNotification(
     isOffensive: true,
     operationResult: succeeded ? 'success' : 'failed',
     operationTarget: targetLabel,
+    ...(militaryReport ? { militaryReport } : {}),
+    ...(economicReport ? { economicReport } : {}),
     effectText,
   };
 }

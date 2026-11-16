@@ -1,19 +1,22 @@
 "use client"
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect, useRef } from "react";
-import { X, Binoculars, Eye, Target, ChevronDown } from "lucide-react";
+import { X, Binoculars, Eye, Target, ChevronDown, UserPlus } from "lucide-react";
 import { getSpionaseSuccessChance } from "@/app/page/detail_negara/3_operasi_militer/2_spionase/logic/spionaseLogic";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import TravelFuelCostPanel from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
 import type { TravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
-import { getCovertPersonnel, COVERT_PERSONNEL_UPDATED_EVENT } from "@/app/page/detail_negara/3_operasi_militer/covertPersonnelStorage";
+import { getCovertPersonnel, recruitPersonnel, COVERT_PERSONNEL_UPDATED_EVENT } from "@/app/page/detail_negara/3_operasi_militer/covertPersonnelStorage";
 import { SPIONASE_TARGET_OPTIONS } from "@/app/page/detail_negara/3_operasi_militer/2_spionase/spionaseTargetOptions";
+import RekrutMataMataModal from "@/app/page/detail_negara/3_operasi_militer/2_spionase/RekrutMataMataModal";
 
 interface KonfirmasiSpionaseModalsProps {
   isOpen: boolean;
   onClose: () => void;
   targetCountry: any;
   playerCountryDetail?: Record<string, unknown> | null;
+  currentBudget: number;
+  updatePlayerCountryDetail: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
   travelFuelStatus?: TravelFuelStatus;
   onConfirm: (operationTarget?: string) => void;
 }
@@ -23,10 +26,13 @@ export default function KonfirmasiSpionaseModals({
   onClose,
   targetCountry,
   playerCountryDetail,
+  currentBudget,
+  updatePlayerCountryDetail,
   travelFuelStatus,
   onConfirm,
 }: KonfirmasiSpionaseModalsProps) {
   const [mataMataCount, setMataMataCount] = useState<number>(() => getCovertPersonnel().mataMata);
+  const [isRecruitModalOpen, setIsRecruitModalOpen] = useState(false);
   const [selectedTargetId, setSelectedTargetId] = useState<string>(SPIONASE_TARGET_OPTIONS[0].id);
   const [isTargetDropdownOpen, setIsTargetDropdownOpen] = useState<boolean>(false);
   const targetDropdownRef = useRef<HTMLDivElement>(null);
@@ -65,13 +71,30 @@ export default function KonfirmasiSpionaseModals({
   const isFuelOk = travelFuelStatus ? travelFuelStatus.ok : true;
   const canLaunch = hasAgent && isFuelOk;
   const selectedTargetOption = SPIONASE_TARGET_OPTIONS.find(t => t.id === selectedTargetId) || SPIONASE_TARGET_OPTIONS[0];
+  const handleRecruitConfirm = (count: number, totalCost: number) => {
+    if (currentBudget < totalCost) return;
+    recruitPersonnel('mataMata', count);
+    updatePlayerCountryDetail(previous => {
+      if (!previous) return previous;
+      return {
+        ...previous,
+        anggaran: Math.max(0, Number(previous.anggaran || 0) - totalCost),
+      };
+    });
+    setIsRecruitModalOpen(false);
+  };
+  const handleClose = () => {
+    setIsRecruitModalOpen(false);
+    onClose();
+  };
 
   return (
-    <NotebookModalWrapper
-      onClose={onClose}
-      compact
-      zIndexClass="z-[60]"
-    >
+    <>
+      <NotebookModalWrapper
+        onClose={handleClose}
+        compact
+        zIndexClass="z-[60]"
+      >
       <div className="flex flex-col font-sans animate-in fade-in zoom-in-95 duration-150">
         
         {/* HEADER */}
@@ -171,10 +194,29 @@ export default function KonfirmasiSpionaseModals({
                 <span className="text-root-subtle">Mata-Mata Dibutuhkan:</span>
                 <span className="font-bold text-root-text">1 personel</span>
               </div>
-              <div className="w-full flex justify-between items-center text-xs mt-1">
-                <span className="text-root-subtle">Mata-Mata Tersedia:</span>
-                <span className={`font-bold ${hasAgent ? 'text-root-accent' : 'text-rose-400'}`}>{mataMataCount} personel</span>
+            </div>
+            <div className="w-full rounded-xl border border-root-accent/20 bg-root-canvas p-3.5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="rounded-lg border border-root-accent/30 bg-root-surface p-2">
+                  <Eye className="h-5 w-5 text-root-accent" />
+                </div>
+                <div>
+                  <span className="block text-[11px] font-bold uppercase tracking-wider text-root-subtle">
+                    Personel Intelijen
+                  </span>
+                  <span className="text-sm font-black text-white">
+                    Mata-Mata: <span className={hasAgent ? "text-root-accent" : "text-rose-400"}>{mataMataCount}</span>
+                  </span>
+                </div>
               </div>
+              <button
+                type="button"
+                onClick={() => setIsRecruitModalOpen(true)}
+                className="flex items-center gap-1.5 rounded-lg border border-root-accent px-4 py-1.5 text-xs font-black uppercase tracking-wider text-root-accent transition-colors hover:bg-root-accent/10 cursor-pointer"
+              >
+                <UserPlus className="h-3.5 w-3.5" />
+                Rekrut
+              </button>
             </div>
             {travelFuelStatus && <TravelFuelCostPanel status={travelFuelStatus} />}
           </div>
@@ -182,11 +224,14 @@ export default function KonfirmasiSpionaseModals({
 
         {/* FOOTER */}
         <div className="px-4 sm:px-5 py-3 border-t border-root-accent/30 bg-root-canvas relative z-10 shrink-0 flex items-center justify-end gap-3">
-          <button onClick={onClose} className="px-6 py-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
+          <button onClick={handleClose} className="px-6 py-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
             Batal
           </button>
           <button
-            onClick={() => onConfirm(selectedTargetOption.label)}
+            onClick={() => {
+              setIsRecruitModalOpen(false);
+              onConfirm(selectedTargetOption.label);
+            }}
             disabled={!canLaunch}
             className="px-6 py-2 rounded-xl bg-root-accent text-root-canvas shadow-lg shadow-root-accent/20 font-black text-xs uppercase tracking-wider hover:bg-root-accent/80 active:scale-95 transition-all cursor-pointer flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-40"
           >
@@ -194,7 +239,15 @@ export default function KonfirmasiSpionaseModals({
             {!hasAgent ? "Mata-Mata Habis" : "Luncurkan Misi"}
           </button>
         </div>
-      </div>
-    </NotebookModalWrapper>
+        </div>
+      </NotebookModalWrapper>
+      <RekrutMataMataModal
+        isOpen={isRecruitModalOpen}
+        currentPersonnelCount={mataMataCount}
+        currentBudget={currentBudget}
+        onClose={() => setIsRecruitModalOpen(false)}
+        onConfirm={handleRecruitConfirm}
+      />
+    </>
   );
 }

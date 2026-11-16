@@ -158,6 +158,8 @@ import { generateAITradeBeliNotification } from '../menus/inbox/logic/3_notifika
 import { generateAITradeJualNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/1_jual/tradeJualLogic';
 import { generateTradeRelationOfferNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/3_hubungan_dagang/tradeRelationLogic';
 import { generatePlayerSpionaseResultNotification, generateSpionaseNotification } from '../detail_negara/3_operasi_militer/2_spionase/logic/spionaseLogic';
+import { collectSpionaseMilitaryIntel } from '../detail_negara/3_operasi_militer/2_spionase/logic/spionaseMiliterLogic';
+import { collectSpionaseEconomicIntel } from '../detail_negara/3_operasi_militer/2_spionase/logic/spionaseEkonomiLogic';
 import { generatePlayerSabotaseResultNotification, generateSabotaseNotification } from '../detail_negara/3_operasi_militer/3_sabotase/logic/sabotaseLogic';
 import { applySabotaseMiliterToTarget } from '../detail_negara/3_operasi_militer/3_sabotase/logic/sabotaseMiliterLogic';
 import { applySabotaseInfrastrukturToTarget, calculateSabotaseInfrastructureDamage } from '../detail_negara/3_operasi_militer/3_sabotase/logic/sabotaseInfrastrukturLogic';
@@ -4538,6 +4540,8 @@ export default function MapPage() {
 
             let operationSucceeded = detail.operationSucceeded;
             let losses: Awaited<ReturnType<typeof applySabotaseMiliterToTarget>> = [];
+            let militaryReport: Awaited<ReturnType<typeof collectSpionaseMilitaryIntel>> = null;
+            let economicReport: Awaited<ReturnType<typeof collectSpionaseEconomicIntel>> = null;
             const operationTarget = typeof detail.operationTarget === 'string'
                 ? detail.operationTarget
                 : undefined;
@@ -4552,6 +4556,10 @@ export default function MapPage() {
                 normalizedOperationTarget.includes('sembako') ||
                 normalizedOperationTarget.includes('rantai_pasok');
             const isManufacturingTarget = normalizedOperationTarget.includes('manufaktur');
+            const isMilitaryIntelTarget = normalizedOperationTarget.includes('militer') ||
+                normalizedOperationTarget.includes('pertahanan');
+            const isEconomicIntelTarget = normalizedOperationTarget.includes('ekonomi') ||
+                normalizedOperationTarget.includes('anggaran');
 
             if (
                 detail.kind === 'sabotase' &&
@@ -4573,12 +4581,34 @@ export default function MapPage() {
                 }
             }
 
+            if (detail.kind === 'spionase' && operationSucceeded && isMilitaryIntelTarget) {
+                try {
+                    militaryReport = await collectSpionaseMilitaryIntel(detail.targetCountry);
+                    operationSucceeded = militaryReport !== null;
+                } catch (error) {
+                    console.error('[SpionaseMiliter] Gagal mengumpulkan laporan saat operasi tiba.', error);
+                    operationSucceeded = false;
+                }
+            }
+
+            if (detail.kind === 'spionase' && operationSucceeded && isEconomicIntelTarget) {
+                try {
+                    economicReport = await collectSpionaseEconomicIntel(detail.targetCountry);
+                    operationSucceeded = economicReport !== null;
+                } catch (error) {
+                    console.error('[SpionaseEkonomi] Gagal mengumpulkan laporan saat operasi tiba.', error);
+                    operationSucceeded = false;
+                }
+            }
+
             const notification = detail.kind === 'spionase'
                 ? generatePlayerSpionaseResultNotification(
                     detail.targetCountry,
                     operationSucceeded,
                     simulationDateString,
                     operationTarget,
+                    militaryReport || undefined,
+                    economicReport || undefined,
                 )
                 : generatePlayerSabotaseResultNotification(
                     detail.targetCountry,
@@ -4617,6 +4647,8 @@ export default function MapPage() {
                     operationTarget,
                     operationSucceeded,
                     losses,
+                    militaryReport,
+                    economicReport,
                 },
             }));
         };

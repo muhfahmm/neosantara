@@ -5,6 +5,8 @@ import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalClos
 import { createPortal } from "react-dom";
 import { CheckCircle2, Eye, XCircle } from "lucide-react";
 import type { SpionaseOperationResult } from "./logic/spionaseLogic";
+import EconomicIntelReportPanel from "./EconomicIntelReportPanel";
+import MilitaryIntelReportPanel from "./MilitaryIntelReportPanel";
 
 interface ResultSpionaseModalsProps {
   result: SpionaseOperationResult | null;
@@ -51,6 +53,13 @@ export default function ResultSpionaseModals({
                 : `Operasi spionase${result.operationTarget ? ` (${result.operationTarget})` : ''} gagal dilaksanakan di ${result.targetCountry}. Agen intelijen terdeteksi oleh otoritas keamanan setempat.`}
             </p>
           </div>
+
+          {result.succeeded && result.militaryReport && (
+            <MilitaryIntelReportPanel report={result.militaryReport} />
+          )}
+          {result.succeeded && result.economicReport && (
+            <EconomicIntelReportPanel report={result.economicReport} />
+          )}
 
           <p className="text-xs font-semibold text-root-subtle">
             Peluang keberhasilan saat operasi diluncurkan:{" "}

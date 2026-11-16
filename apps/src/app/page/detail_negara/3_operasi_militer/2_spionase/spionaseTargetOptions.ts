@@ -13,16 +13,6 @@ export const SPIONASE_TARGET_OPTIONS: SpionaseTargetOption[] = [
   {
     id: 'ekonomi',
     label: 'Intelijen Ekonomi & Anggaran',
-    description: 'Mencari data cadangan kas negara, devisa rahasia, kapasitas produksi, dan jalur pasokan perdagangan.',
-  },
-  {
-    id: 'teknologi',
-    label: 'Intelijen Riset & Teknologi',
-    description: 'Mencuri cetak biru penelitian strategis, riset nuklir, dan proyek rekayasa sains target.',
-  },
-  {
-    id: 'politik',
-    label: 'Intelijen Politik & Stabilitas',
-    description: 'Memantau stabilitas rezim, tensi internal diplomatik, serta kelemahan tokoh-tokoh kunci pemerintahan.',
+    description: 'Mengungkap saldo anggaran negara, tarif pajak, dan estimasi penerimaan pajak harian.',
   },
 ];
