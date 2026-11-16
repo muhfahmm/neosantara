@@ -802,7 +802,7 @@ export function CountryDetailModal({
 
         {/* DATA RINGKASAN */}
         <div className="country-detail-summary px-3 sm:px-8 py-1.5 sm:py-3 lg:px-3 lg:py-1.5 xl:px-8 xl:py-3 bg-root-canvas/80 border-b border-root-accent/20 flex items-center gap-3 sm:gap-8 lg:gap-3 xl:gap-8 relative z-10 overflow-x-auto lg:overflow-x-hidden shrink-0 no-scrollbar">
-          <div className="flex items-center gap-3 sm:gap-6 lg:grid lg:w-full lg:min-w-0 lg:grid-cols-[repeat(6,minmax(0,1fr))] lg:gap-3 xl:gap-6">
+          <div className="flex items-center gap-3 sm:gap-6 lg:grid lg:w-full lg:min-w-0 lg:grid-cols-[repeat(4,minmax(0,1fr))] lg:gap-3 xl:gap-6">
             {/* Hubungan */}
             <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 lg:gap-1.5">
               <div className="p-1 sm:p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-md sm:rounded-lg border border-root-accent/20 text-root-accent shrink-0 flex items-center justify-center">
@@ -847,56 +847,6 @@ export function CountryDetailModal({
                 <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-bold text-root-accent uppercase`}>
                   {displayCapital}
                 </span>
-              </div>
-            </div>
-
-            {/* Populasi */}
-            <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 lg:gap-1.5">
-              <div className="p-1 sm:p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-md sm:rounded-lg border border-root-accent/20 text-root-accent shrink-0 flex items-center justify-center">
-                <Users className="h-2 w-2 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
-              </div>
-              <div className="flex min-w-0 flex-col">
-                <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-black text-root-accent/60 uppercase tracking-wider`}>Populasi</span>
-                <div className="flex min-w-0 flex-wrap items-center gap-x-1 lg:gap-x-0.5">
-                  <span className={`min-w-0 break-words ${COUNTRY_SUMMARY_FONT_SIZE} font-bold text-root-accent uppercase`}>
-                    {headerDetailData?.jumlah_penduduk
-                      ? Number(headerDetailData.jumlah_penduduk).toLocaleString('id-ID', { maximumFractionDigits: 2 })
-                      : isLoadingDetail
-                        ? <span className="inline-block w-20 h-3 bg-root-accent/20 animate-pulse rounded" />
-                        : '-'
-                    }
-                  </span>
-                  {!isLoadingDetail && detailData && (
-                    <span className={`break-words ${COUNTRY_SUMMARY_FONT_SIZE} font-black ${dailyNetPopulation >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                      ({dailyNetPopulation >= 0 ? `+${dailyNetPopulation.toLocaleString('id-ID', { maximumFractionDigits: 2 })}` : dailyNetPopulation.toLocaleString('id-ID', { maximumFractionDigits: 2 })})
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Anggaran Negara */}
-            <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 lg:gap-1.5">
-              <div className="p-1 sm:p-1.5 lg:p-1 xl:p-1.5 bg-root-accent/10 rounded-md sm:rounded-lg border border-root-accent/20 text-root-accent shrink-0 flex items-center justify-center">
-                <Banknote className="h-2 w-2 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
-              </div>
-              <div className="flex min-w-0 flex-col">
-                <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-black text-root-accent/60 uppercase tracking-wider`}>Anggaran</span>
-                <div className="flex min-w-0 flex-wrap items-center gap-x-1 lg:gap-x-0.5">
-                  <span className={`min-w-0 break-words ${COUNTRY_SUMMARY_FONT_SIZE} font-bold text-root-accent uppercase`}>
-                    {headerDetailData?.anggaran !== undefined
-                      ? `${Number(headerDetailData.anggaran).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`
-                      : isLoadingDetail
-                        ? <span className="inline-block w-16 h-3 bg-root-accent/20 animate-pulse rounded" />
-                        : '-'
-                    }
-                  </span>
-                  {!isLoadingDetail && detailData && (
-                    <span className={`break-words ${COUNTRY_SUMMARY_FONT_SIZE} font-black ${targetEffectiveNetBalance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                      ({targetEffectiveNetBalance >= 0 ? `+${targetEffectiveNetBalance.toLocaleString('id-ID', { maximumFractionDigits: 2 })}` : targetEffectiveNetBalance.toLocaleString('id-ID', { maximumFractionDigits: 2 })})
-                    </span>
-                  )}
-                </div>
               </div>
             </div>
 
