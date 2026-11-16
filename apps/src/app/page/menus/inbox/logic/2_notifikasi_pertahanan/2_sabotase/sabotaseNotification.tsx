@@ -1,6 +1,6 @@
 import React from 'react';
 import { Bomb, Check, X, ShieldAlert } from 'lucide-react';
-import { SabotaseNotification } from './sabotaseLogic';
+import type { SabotaseNotification } from '@/app/page/detail_negara/3_operasi_militer/3_sabotase/logic/sabotaseLogic';
 
 interface SabotaseNotificationProps {
   notification: SabotaseNotification;

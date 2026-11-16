@@ -19,6 +19,9 @@ export default function ResultSabotaseModals({
 
   const ResultIcon = result.succeeded ? CheckCircle2 : XCircle;
   const resultColor = result.succeeded ? "text-root-accent" : "text-rose-400";
+  const isInfrastructureTarget = /listrik|energi|infrastruktur/i.test(result.operationTarget || "");
+  const isFoodProductionTarget = /pangan|sembako|rantai_pasok/i.test(result.operationTarget || "");
+  const isManufacturingTarget = /manufaktur/i.test(result.operationTarget || "");
 
   const modalContent = (
     <div
@@ -57,11 +60,23 @@ export default function ResultSabotaseModals({
               <div className="flex items-center gap-2 mb-2 pb-2 border-b border-rose-500/20">
                 <Bomb className="w-4 h-4 text-rose-400" />
                 <span className="text-xs font-black uppercase tracking-wider text-rose-400">
-                  Kerugian Alutsista Fasilitas Musuh
+                  {isFoodProductionTarget
+                    ? "Kerugian Bangunan Produksi Pangan Musuh"
+                    : isManufacturingTarget
+                      ? "Kerugian Bangunan Manufaktur Musuh"
+                      : isInfrastructureTarget
+                        ? "Kerugian Infrastruktur Energi Musuh"
+                        : "Kerugian Alutsista Fasilitas Musuh"}
                 </span>
               </div>
               <p className="text-[11px] text-root-subtle mb-3 leading-relaxed">
-                Sabotase berhasil melumpuhkan 5% fasilitas alutsista militer target. Rincian unit yang dihancurkan:
+                {isFoodProductionTarget
+                  ? "Sabotase menghancurkan 5% bangunan pada empat tab produksi pangan target (minimal 1 per jenis). Rincian bangunan yang dihancurkan:"
+                  : isManufacturingTarget
+                    ? "Sabotase menghancurkan 5% bangunan pada kategori Manufaktur (minimal 1 per jenis). Rincian bangunan yang dihancurkan:"
+                    : isInfrastructureTarget
+                      ? "Sabotase menghancurkan 5% bangunan listrik dan mineral energi target (minimal 1 per jenis). Rincian bangunan yang dihancurkan:"
+                      : "Sabotase berhasil melumpuhkan 5% fasilitas alutsista militer target. Rincian unit yang dihancurkan:"}
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto no-scrollbar pr-1">
                 {result.losses.map((loss) => (

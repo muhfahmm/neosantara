@@ -106,6 +106,17 @@ export function clearActiveNpcCountrySimulationState(): void {
   }
 }
 
+function getConcurrentCountryStateUpdates(
+  initial: Record<string, unknown> | undefined,
+  latest: Record<string, unknown> | undefined,
+): Record<string, unknown> {
+  if (!initial || !latest || initial === latest) return {};
+
+  return Object.fromEntries(
+    Object.entries(latest).filter(([key, value]) => !Object.is(value, initial[key])),
+  );
+}
+
 export function getNpcCountrySimulationSnapshot(): NpcSimulationState | null {
   if (!activeNpcSimulationState) return null;
   return JSON.parse(JSON.stringify(activeNpcSimulationState)) as NpcSimulationState;
@@ -560,6 +571,7 @@ async function persistNpcSimulation(
     return;
   }
 
+  const initialCountryStates = new Map(Object.entries(state.countries));
   const simulatedCountries = new Map<string, CountryRecord>();
   let preparationStartedAt = performance.now();
   const annexedCountries =
@@ -666,7 +678,12 @@ async function persistNpcSimulation(
   }
 
   for (const [slug, country] of simulatedCountries) {
-    state.countries[slug] = getMutableCountryState(country);
+    const simulatedState = getMutableCountryState(country);
+    const concurrentUpdates = getConcurrentCountryStateUpdates(
+      initialCountryStates.get(slug),
+      state.countries[slug],
+    );
+    state.countries[slug] = { ...simulatedState, ...concurrentUpdates };
   }
   state.lastSimulatedDate = currentDate;
   if (generation !== simulationGeneration) return;

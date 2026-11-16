@@ -157,8 +157,12 @@ import { getActivePlayerAttack, setActivePlayerAttack } from '../navigasi_menu/2
 import { generateAITradeBeliNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/2_beli/tradeBeliLogic';
 import { generateAITradeJualNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/1_jual/tradeJualLogic';
 import { generateTradeRelationOfferNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/3_hubungan_dagang/tradeRelationLogic';
-import { generatePlayerSpionaseResultNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/1_spionase/spionaseLogic';
-import { generatePlayerSabotaseResultNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/2_sabotase/sabotaseLogic';
+import { generatePlayerSpionaseResultNotification, generateSpionaseNotification } from '../detail_negara/3_operasi_militer/2_spionase/logic/spionaseLogic';
+import { generatePlayerSabotaseResultNotification, generateSabotaseNotification } from '../detail_negara/3_operasi_militer/3_sabotase/logic/sabotaseLogic';
+import { applySabotaseMiliterToTarget } from '../detail_negara/3_operasi_militer/3_sabotase/logic/sabotaseMiliterLogic';
+import { applySabotaseInfrastrukturToTarget, calculateSabotaseInfrastructureDamage } from '../detail_negara/3_operasi_militer/3_sabotase/logic/sabotaseInfrastrukturLogic';
+import { applySabotaseProduksiPanganToTarget } from '../detail_negara/3_operasi_militer/3_sabotase/logic/sabotaseProduksiPanganLogic';
+import { applySabotaseManufakturToTarget } from '../detail_negara/3_operasi_militer/3_sabotase/logic/sabotaseManufakturLogic';
 import { createEmbassyOfferNotification } from '../menus/inbox/logic/4_notifikasi_kedubes/1_penawaran_kedutaan_besar';
 import { executeAparatOperation } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/bubarkanAparatLogic';
 import type { DetailOpsiBubarkan } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/opsiBubarkanMassaConfig';
@@ -199,8 +203,6 @@ import {
     getRequestedAttackRequests,
     type RequestedAttackRecord,
 } from '../detail_negara/3_operasi_militer/6_minta_serang_negara/requestedInvasionLogic';
-import { generateSpionaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/1_spionase/spionaseLogic';
-import { generateSabotaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/2_sabotase/sabotaseLogic';
 import {
     generateDiserangNotification,
     getAttackChancePercentFromRelation,
@@ -4519,7 +4521,7 @@ export default function MapPage() {
         }));
     }, []);
     useEffect(() => {
-        const handleCovertOperationArrival = (event: Event) => {
+        const handleCovertOperationArrival = async (event: Event) => {
             const detail = (event as CustomEvent<{
                 pathId?: unknown;
                 kind?: unknown;
@@ -4534,18 +4536,58 @@ export default function MapPage() {
                 typeof detail.operationSucceeded !== 'boolean'
             ) return;
 
+            let operationSucceeded = detail.operationSucceeded;
+            let losses: Awaited<ReturnType<typeof applySabotaseMiliterToTarget>> = [];
+            const operationTarget = typeof detail.operationTarget === 'string'
+                ? detail.operationTarget
+                : undefined;
+            const isMilitaryTarget = !operationTarget ||
+                operationTarget.toLowerCase().includes('militer') ||
+                operationTarget.toLowerCase().includes('pabrik');
+            const normalizedOperationTarget = operationTarget?.toLowerCase() || '';
+            const isInfrastructureTarget = normalizedOperationTarget.includes('listrik') ||
+                normalizedOperationTarget.includes('energi') ||
+                normalizedOperationTarget.includes('infrastruktur');
+            const isFoodProductionTarget = normalizedOperationTarget.includes('pangan') ||
+                normalizedOperationTarget.includes('sembako') ||
+                normalizedOperationTarget.includes('rantai_pasok');
+            const isManufacturingTarget = normalizedOperationTarget.includes('manufaktur');
+
+            if (
+                detail.kind === 'sabotase' &&
+                operationSucceeded &&
+                (isMilitaryTarget || isInfrastructureTarget || isFoodProductionTarget || isManufacturingTarget)
+            ) {
+                try {
+                    losses = isFoodProductionTarget
+                        ? await applySabotaseProduksiPanganToTarget(detail.targetCountry)
+                        : isManufacturingTarget
+                            ? await applySabotaseManufakturToTarget(detail.targetCountry)
+                            : isInfrastructureTarget
+                                ? await applySabotaseInfrastrukturToTarget(detail.targetCountry)
+                                : await applySabotaseMiliterToTarget(detail.targetCountry);
+                    operationSucceeded = losses.length > 0;
+                } catch (error) {
+                    console.error('[Sabotase] Gagal menerapkan efek operasi saat tiba.', error);
+                    operationSucceeded = false;
+                }
+            }
+
             const notification = detail.kind === 'spionase'
                 ? generatePlayerSpionaseResultNotification(
                     detail.targetCountry,
-                    detail.operationSucceeded,
+                    operationSucceeded,
                     simulationDateString,
-                    typeof detail.operationTarget === 'string' ? detail.operationTarget : undefined,
+                    operationTarget,
                 )
                 : generatePlayerSabotaseResultNotification(
                     detail.targetCountry,
-                    detail.operationSucceeded,
+                    operationSucceeded,
                     simulationDateString,
-                    typeof detail.operationTarget === 'string' ? detail.operationTarget : undefined,
+                    operationTarget,
+                    losses.length > 0
+                        ? losses.map(loss => `${loss.unitKey}: -${loss.lostQuantity}`).join(', ')
+                        : undefined,
                 );
             const notificationId = `player-covert-result-${detail.pathId}`;
             const uniqueNotification = { ...notification, id: notificationId };
@@ -4567,6 +4609,16 @@ export default function MapPage() {
                     pending_notifications: [uniqueNotification, ...pending],
                 };
             });
+            window.dispatchEvent(new CustomEvent('neosantara_covert_operation_resolved', {
+                detail: {
+                    pathId: detail.pathId,
+                    kind: detail.kind,
+                    targetCountry: detail.targetCountry,
+                    operationTarget,
+                    operationSucceeded,
+                    losses,
+                },
+            }));
         };
 
         window.addEventListener('neosantara_covert_operation_arrived', handleCovertOperationArrival);
@@ -4597,6 +4649,7 @@ export default function MapPage() {
             tradeType?: unknown;
             costEM?: unknown;
             targetCountry?: unknown;
+            sabotaseType?: unknown;
         };
         if (
             !countryDetail ||
@@ -4695,12 +4748,20 @@ export default function MapPage() {
                 });
             }
         } else {
-            const breakdown = getArmadaUnitBreakdown(countryDetail || {});
+            const infrastructureSabotage = covertNotification.sabotaseType === 'infrastruktur';
+            const infrastructureDamage = infrastructureSabotage
+                ? calculateSabotaseInfrastructureDamage(countryDetail)
+                : null;
+            const breakdown = infrastructureSabotage
+                ? []
+                : getArmadaUnitBreakdown(countryDetail);
             const equipment = Object.fromEntries(
                 breakdown.map(unit => [unit.dataKey, unit.quantity]),
             );
-            const { losses } = applySabotageLosses(equipment);
-            const updates = losses.map(loss => {
+            const militaryLosses = infrastructureSabotage
+                ? []
+                : applySabotageLosses(equipment).losses;
+            const unitUpdates = militaryLosses.map(loss => {
                 const unit = breakdown.find(item => item.dataKey === loss.unitKey);
                 return {
                     unitKey: loss.unitKey,
@@ -4708,16 +4769,21 @@ export default function MapPage() {
                     quantity: loss.remainingQuantity,
                 };
             });
+            const losses = infrastructureDamage?.losses || militaryLosses;
             const lossesMessage = losses.length > 0
                 ? losses.map(loss =>
                     `${loss.unitKey.replace(/_/g, ' ')}: -${loss.lostQuantity.toLocaleString('id-ID')} (sisa ${loss.remainingQuantity.toLocaleString('id-ID')})`
                 ).join('; ')
-                : 'Tidak ada alutsista yang dapat dikurangi.';
+                : infrastructureSabotage
+                    ? 'Tidak ada bangunan listrik atau mineral energi yang dapat dikurangi.'
+                    : 'Tidak ada alutsista yang dapat dikurangi.';
             resultNotification = {
                 id: `notif-covert-sabotage-result-${encodeURIComponent(notification.id)}`,
                 title: '💥 KERUSAKAN SABOTASE TERJADI',
                 sender: 'Kementerian Pertahanan & Keamanan',
-                message: `Sabotase mengurangi alutsista 5% per kategori secara permanen. Kerugian: ${lossesMessage}. Personel/infanteri tidak dikurangi.`,
+                message: infrastructureSabotage
+                    ? `Sabotase mengurangi bangunan listrik dan mineral energi 5% per jenis (minimal 1). Kerusakan: ${lossesMessage}.`
+                    : `Sabotase mengurangi alutsista 5% per kategori secara permanen. Kerugian: ${lossesMessage}. Personel/infanteri tidak dikurangi.`,
                 timestamp: currentDateStr,
                 type: 'kesejahteraan',
                 value: 0,
@@ -4737,8 +4803,11 @@ export default function MapPage() {
                     entry !== null && typeof entry === 'object' &&
                     (entry as { id?: unknown }).id === resultNotification.id
                 ) ? pending : [...pending, resultNotification];
+                const damagedCountry = infrastructureSabotage && infrastructureDamage
+                    ? { ...previous, ...infrastructureDamage.updates }
+                    : updateArmadaEquipmentCounts(previous, unitUpdates);
                 return {
-                    ...updateArmadaEquipmentCounts(previous, updates),
+                    ...damagedCountry,
                     processed_covert_notification_ids: [...new Set([...existingIds, notification.id])],
                     pending_notifications: pendingNext,
                 };

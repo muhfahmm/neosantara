@@ -30,10 +30,10 @@ import {
 } from './2_spionase/logic/spionaseLogic';
 import {
   resolveSabotaseOperation,
-  applySabotaseMiliterToTarget,
   type SabotaseOperationResult,
 } from './3_sabotase/logic/sabotaseLogic';
 import { consumePersonnel } from './covertPersonnelStorage';
+import { checkTravelFuel, consumeTravelFuel } from '../../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic';
 import SerangBelumSelesaiModals from '../../navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/SerangBelumSelesaiModals';
 import { getActivePlayerAttack, usePlayerAttackStatus, type PlayerAttackStatus } from '../../navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/playerAttackStatus';
 
@@ -125,49 +125,90 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
       const covertInfo = path?.pathId ? pendingCovertOperationsRef.current.get(path.pathId) : undefined;
       if (!path?.pathId || !covertInfo || !path.targetCountry) return;
 
-      pendingCovertOperationsRef.current.delete(path.pathId);
       const { operation, operationTarget, successChance, succeeded } = covertInfo;
 
       if (operation === 'spionase') {
+        pendingCovertOperationsRef.current.delete(path.pathId);
         const result = { operationTarget, successChance, succeeded };
         setSpionaseResult({
           operation: 'spionase',
           targetCountry: path.targetCountry,
           ...result,
         });
-      } else {
-        const result = { operationTarget, successChance, succeeded };
-        let losses = undefined;
-        if (result.succeeded) {
-          const isMilitaryTarget = !operationTarget ||
-            operationTarget.toLowerCase().includes('militer') ||
-            operationTarget.toLowerCase().includes('pabrik');
-
-          if (isMilitaryTarget) {
-            losses = await applySabotaseMiliterToTarget(path.targetCountry, targetCountryDetail);
-          }
-        }
-
-        setSabotaseResult({
-          operation: 'sabotase',
-          targetCountry: path.targetCountry,
-          ...result,
-          losses,
-        });
       }
     };
 
+    const handleCovertOperationResolved = (event: Event) => {
+      const detail = (event as CustomEvent<{
+        pathId?: string;
+        kind?: string;
+        targetCountry?: string;
+        operationSucceeded?: boolean;
+        losses?: SabotaseOperationResult['losses'];
+      }>).detail;
+      if (
+        detail?.kind !== 'sabotase' ||
+        !detail.pathId ||
+        !detail.targetCountry ||
+        typeof detail.operationSucceeded !== 'boolean'
+      ) return;
+
+      const covertInfo = pendingCovertOperationsRef.current.get(detail.pathId);
+      if (!covertInfo || covertInfo.operation !== 'sabotase') return;
+
+      pendingCovertOperationsRef.current.delete(detail.pathId);
+      setSabotaseResult({
+        operation: 'sabotase',
+        targetCountry: detail.targetCountry,
+        operationTarget: covertInfo.operationTarget,
+        successChance: covertInfo.successChance,
+        succeeded: detail.operationSucceeded,
+        losses: detail.losses,
+      });
+    };
+
     window.addEventListener('neosantara_covert_operation_arrived', handleCovertOperationArrival);
-    return () => window.removeEventListener('neosantara_covert_operation_arrived', handleCovertOperationArrival);
+    window.addEventListener('neosantara_covert_operation_resolved', handleCovertOperationResolved);
+    return () => {
+      window.removeEventListener('neosantara_covert_operation_arrived', handleCovertOperationArrival);
+      window.removeEventListener('neosantara_covert_operation_resolved', handleCovertOperationResolved);
+    };
   }, [playerCountryDetail, targetCountryDetail]);
 
-  const launchCovertOperation = (operation: 'spionase' | 'sabotase', targetCountry: string, operationTarget?: string): boolean => {
+  const launchCovertOperation = (
+    operation: 'spionase' | 'sabotase',
+    targetCountry: string,
+    operationTarget: string,
+    fuelCost: number,
+  ): boolean => {
+    if (!playerCountryDetail || !Number.isFinite(fuelCost) || !checkTravelFuel(playerCountryDetail, fuelCost).ok) {
+      return false;
+    }
+    if (!updatePlayerCountryDetail) {
+      console.error('Operasi dibatalkan karena stok minyak tidak dapat disimpan.');
+      return false;
+    }
+
+    const pathId = `covert-${operation}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    const fuelUpdatedDetail = consumeTravelFuel(playerCountryDetail, fuelCost, {
+      id: pathId,
+      date: String(
+        playerCountryDetail.currentDate ||
+        playerCountryDetail.gameDate ||
+        new Date().toISOString(),
+      ).slice(0, 10),
+      targetCountry,
+      travelType: operation,
+      amount: fuelCost,
+    });
+    if (fuelUpdatedDetail === playerCountryDetail) return false;
+
     const personnelType = operation === 'spionase' ? 'mataMata' : 'penyabot';
     if (!consumePersonnel(personnelType, 1)) {
       alert(`Anda tidak memiliki ${operation === 'spionase' ? 'mata-mata' : 'penyabot'} yang tersedia! Silakan rekrut terlebih dahulu.`);
       return false;
     }
-    const pathId = `covert-${operation}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    updatePlayerCountryDetail(() => fuelUpdatedDetail);
     const result = operation === 'spionase'
       ? resolveSpionaseOperation(playerCountryDetail, operationTarget)
       : resolveSabotaseOperation(playerCountryDetail, operationTarget);
@@ -381,11 +422,12 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         currentBudget={playerActualBudget}
         updatePlayerCountryDetail={updatePlayerCountryDetail}
         onClose={() => setIsSpionaseOpen(false)}
-        onConfirm={(target, operationTarget) => {
-          const launched = launchCovertOperation('spionase', target, operationTarget);
+        onConfirm={(target, operationTarget, fuelCost) => {
+          const launched = launchCovertOperation('spionase', target, operationTarget, fuelCost);
           if (launched) {
             onMilitaryActionLaunched?.('spionase');
           }
+          return launched;
         }}
       />
       <SabotaseModal
@@ -395,11 +437,12 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         currentBudget={playerActualBudget}
         updatePlayerCountryDetail={updatePlayerCountryDetail}
         onClose={() => setIsSabotaseOpen(false)}
-        onConfirm={(target, operationTarget) => {
-          const launched = launchCovertOperation('sabotase', target, operationTarget);
+        onConfirm={(target, operationTarget, fuelCost) => {
+          const launched = launchCovertOperation('sabotase', target, operationTarget, fuelCost);
           if (launched) {
             onMilitaryActionLaunched?.('sabotase');
           }
+          return launched;
         }}
       />
       <PerangNuklirModal

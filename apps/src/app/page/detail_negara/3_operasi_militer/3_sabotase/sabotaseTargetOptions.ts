@@ -17,12 +17,12 @@ export const SABOTASE_TARGET_OPTIONS: SabotaseTargetOption[] = [
   },
   {
     id: 'rantai_pasok',
-    label: 'Gudang Logistik & Sembako',
-    description: 'Membakar cadangan pangan, pasokan logistik bahan baku, atau jaringan distribusi perdagangan.',
+    label: 'Sabotase Produksi Pangan',
+    description: 'Menghancurkan 5% bangunan produksi Peternakan, Agrikultur, Perikanan, dan Olahan Pangan (minimal 1 per jenis).',
   },
   {
-    id: 'jaringan_komunikasi',
-    label: 'Pusat Komunikasi & Radar',
-    description: 'Merusak satelit komunikasi bawah tanah, antena radar pertahanan udara, dan jaringan kendali taktis.',
+    id: 'manufaktur',
+    label: 'Sabotase Manufaktur',
+    description: 'Menghancurkan 5% bangunan pabrik semikonduktor, mesin, besi, semen, dan kayu (minimal 1 per jenis).',
   },
 ];

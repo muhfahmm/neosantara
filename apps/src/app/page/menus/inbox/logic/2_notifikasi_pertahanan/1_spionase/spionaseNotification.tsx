@@ -1,6 +1,6 @@
 import React from 'react';
 import { Eye, Check, X, ShieldAlert } from 'lucide-react';
-import { SpionaseNotification } from './spionaseLogic';
+import type { SpionaseNotification } from '@/app/page/detail_negara/3_operasi_militer/2_spionase/logic/spionaseLogic';
 
 interface SpionaseNotificationProps {
   notification: SpionaseNotification;

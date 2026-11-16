@@ -1,12 +1,15 @@
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { ChevronDown, Bomb, Search, UserPlus, Target } from "lucide-react";
+import { ChevronDown, Bomb, UserPlus, Target } from "lucide-react";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { getSabotaseSuccessChance } from "./logic/sabotaseLogic";
 import { getCovertPersonnel, recruitPersonnel, COVERT_PERSONNEL_UPDATED_EVENT } from "../covertPersonnelStorage";
-import { SABOTASE_TARGET_OPTIONS, type SabotaseTargetOption } from "./sabotaseTargetOptions";
+import { SABOTASE_TARGET_OPTIONS } from "./sabotaseTargetOptions";
 import RekrutPenyabotModal from "./RekrutPenyabotModal";
+import TravelFuelCostPanel from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
+import { getTravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
+import { useTravelFuelQuote } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/useTravelFuelQuote";
 
 interface SabotaseModalProps {
 	isOpen: boolean;
@@ -16,7 +19,7 @@ interface SabotaseModalProps {
 	adjustNetBalance?: (delta: number) => void;
 	updatePlayerCountryDetail?: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
 	onClose: () => void;
-	onConfirm: (targetCountry: string, operationTarget?: string) => void;
+	onConfirm: (targetCountry: string, operationTarget: string, fuelCost: number) => boolean;
 }
 
 export default function SabotaseModal({
@@ -29,15 +32,36 @@ export default function SabotaseModal({
 	onClose,
 	onConfirm,
 }: SabotaseModalProps) {
-	const [selectedCountry, setSelectedCountry] = useState<string>("");
-	const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 	const [selectedTargetId, setSelectedTargetId] = useState<string>(SABOTASE_TARGET_OPTIONS[0].id);
 	const [isTargetDropdownOpen, setIsTargetDropdownOpen] = useState<boolean>(false);
-	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [isRekrutModalOpen, setIsRekrutModalOpen] = useState<boolean>(false);
 	const [penyabotCount, setPenyabotCount] = useState<number>(() => getCovertPersonnel().penyabot);
-	const dropdownRef = useRef<HTMLDivElement>(null);
 	const targetDropdownRef = useRef<HTMLDivElement>(null);
+	const launchInProgressRef = useRef(false);
+	const targetCountryName = String(countryName || "").trim();
+	const playerCountryName = String(
+		playerCountryDetail?.country ||
+		playerCountryDetail?.nama_negara ||
+		playerCountryDetail?.name_id ||
+		playerCountryDetail?.name_en ||
+		"",
+	);
+	const travelFuelQuote = useTravelFuelQuote(
+		playerCountryName,
+		targetCountryName,
+		"sabotase",
+		isOpen && Boolean(targetCountryName),
+	);
+	const travelFuelStatus = getTravelFuelStatus(
+		playerCountryDetail,
+		travelFuelQuote.cost,
+		travelFuelQuote.loading,
+		travelFuelQuote.fallback,
+	);
+
+	useEffect(() => {
+		if (!isOpen) launchInProgressRef.current = false;
+	}, [isOpen]);
 
 	useEffect(() => {
 		const syncPersonnel = () => {
@@ -48,47 +72,16 @@ export default function SabotaseModal({
 		return () => window.removeEventListener(COVERT_PERSONNEL_UPDATED_EVENT, syncPersonnel);
 	}, [isOpen]);
 
-	const countryList = useMemo(() => {
-		const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
-
-		return [...COUNTRIES_DATA]
-			.filter((c) => {
-				const cNorm = (c.country || "").toLowerCase().trim();
-				const raw = String(c.country || '').trim();
-				const clean = cNorm.replace(/[^a-z0-9]/g, '');
-				const iso = String(c.iso || '').toLowerCase().trim();
-
-				if (annexedStore[raw] || annexedStore[cNorm] || (clean && annexedStore[clean])) return false;
-				if (iso && (annexedStore[iso] || annexedStore[`iso_${iso}`])) return false;
-
-				return true;
-			})
-			.sort((a, b) => a.country.localeCompare(b.country, "id"));
-	}, []);
-
 	useEffect(() => {
 		if (isOpen) {
-			if (countryList.length > 0) {
-				const initial = countryName && countryList.some(c => c.country === countryName) 
-					? countryName 
-					: countryList[0].country;
-				setSelectedCountry(initial);
-			} else {
-				setSelectedCountry("");
-			}
-			setIsDropdownOpen(false);
 			setIsTargetDropdownOpen(false);
 			setSelectedTargetId(SABOTASE_TARGET_OPTIONS[0].id);
-			setSearchQuery("");
 			setIsRekrutModalOpen(false);
 		}
-	}, [isOpen, countryName, countryList]);
+	}, [isOpen]);
 
 	useEffect(() => {
 		const handleClickOutside = (e: MouseEvent) => {
-			if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-				setIsDropdownOpen(false);
-			}
 			if (targetDropdownRef.current && !targetDropdownRef.current.contains(e.target as Node)) {
 				setIsTargetDropdownOpen(false);
 			}
@@ -97,18 +90,12 @@ export default function SabotaseModal({
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, []);
 
-	const filteredCountries = useMemo(() => {
-		if (!searchQuery.trim()) return countryList;
-		const q = searchQuery.toLowerCase().trim();
-		return countryList.filter(c => 
-			c.country.toLowerCase().includes(q) || (c.iso && c.iso.toLowerCase().includes(q))
-		);
-	}, [countryList, searchQuery]);
-
 	if (!isOpen) return null;
 
 	const successChance = getSabotaseSuccessChance(playerCountryDetail);
-	const selectedData = countryList.find((c) => c.country === selectedCountry) || countryList[0];
+	const targetData = COUNTRIES_DATA.find(
+		country => country.country.toLowerCase() === targetCountryName.toLowerCase(),
+	);
 	const selectedTargetOption = SABOTASE_TARGET_OPTIONS.find(t => t.id === selectedTargetId) || SABOTASE_TARGET_OPTIONS[0];
 
 	const handleRecruitConfirm = (count: number, totalCost: number) => {
@@ -158,65 +145,14 @@ export default function SabotaseModal({
 				{/* BODY CONTENT */}
 				<div className="flex-1 flex flex-col">
 					<p className="text-sm sm:text-base text-root-text mb-4 leading-relaxed">
-						Pilih negara target untuk melancarkan aksi sabotase rahasia:
+						Negara target mengikuti detail negara yang sedang dibuka:
 					</p>
 
-					{/* DROPDOWN NEGARA TARGET */}
-					<div className="relative mb-3" ref={dropdownRef}>
-						<button
-							type="button"
-							onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-							className="w-full h-12 bg-root-canvas hover:bg-[#142A2A] border border-rose-500/30 rounded-xl px-4 flex items-center justify-between text-white transition-colors cursor-pointer"
-						>
-							<div className="flex items-center gap-3 truncate">
-								{renderFlag(selectedData?.iso, selectedData?.country)}
-								<span className="font-bold text-sm tracking-wide truncate text-rose-400">
-									{selectedData?.country || "Pilih Negara Target"}
-								</span>
-							</div>
-							<ChevronDown className={`w-5 h-5 text-rose-400 transition-transform duration-200 shrink-0 ${isDropdownOpen ? 'rotate-180' : ''}`} />
-						</button>
-
-						{isDropdownOpen && (
-							<div className="absolute left-0 right-0 top-full mt-2 max-h-60 overflow-y-auto bg-root-canvas border border-rose-500/30 rounded-xl shadow-2xl z-50 divide-y divide-rose-500/10">
-								<div className="p-2 sticky top-0 bg-root-surface border-b border-rose-500/20 z-10">
-									<div className="relative">
-										<Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-root-subtle" />
-										<input
-											type="text"
-											placeholder="Cari negara..."
-											value={searchQuery}
-											onChange={(e) => setSearchQuery(e.target.value)}
-											className="w-full bg-root-canvas border border-rose-500/20 rounded-lg px-9 py-2 text-sm text-root-text placeholder-root-subtle outline-none focus:border-rose-400"
-										/>
-									</div>
-								</div>
-
-								{filteredCountries.length === 0 ? (
-									<div className="p-4 text-center text-sm text-root-subtle">Tidak ada negara ditemukan</div>
-								) : (
-									filteredCountries.map((c) => (
-										<button
-											key={c.country}
-											type="button"
-											onClick={() => {
-												setSelectedCountry(c.country);
-												setIsDropdownOpen(false);
-											}}
-											className={`w-full px-4 py-2.5 flex items-center gap-3 text-left hover:bg-rose-500/10 transition-colors text-sm font-bold text-root-text ${
-												selectedCountry === c.country ? 'bg-rose-500/20 text-rose-400 border-l-4 border-rose-500' : ''
-											}`}
-										>
-											{renderFlag(c.iso, c.country)}
-											<span className="truncate flex-1">{c.country}</span>
-											<span className="text-[10px] text-root-subtle font-mono uppercase bg-root-canvas px-1.5 py-0.5 rounded border border-rose-500/20">
-												{c.iso?.toUpperCase()}
-											</span>
-										</button>
-									))
-								)}
-							</div>
-						)}
+					<div className="w-full h-12 bg-root-canvas border border-rose-500/30 rounded-xl px-4 flex items-center gap-3 text-white mb-3">
+						{renderFlag(targetData?.iso, targetCountryName)}
+						<span className="font-bold text-sm tracking-wide truncate text-rose-400">
+							{targetCountryName || "Negara target tidak tersedia"}
+						</span>
 					</div>
 
 					{/* DROPDOWN TUJUAN OPERASI SABOTASE */}
@@ -296,6 +232,7 @@ export default function SabotaseModal({
 							<span className="text-rose-400 font-black text-lg">{successChance}%</span>
 						</div>
 					</div>
+					<TravelFuelCostPanel status={travelFuelStatus} label="Bahan bakar operasi" />
 				</div>
 
 				{/* FOOTER ACTIONS */}
@@ -309,15 +246,23 @@ export default function SabotaseModal({
 					</button>
 					<button
 						type="button"
-						disabled={penyabotCount < 1}
+						disabled={penyabotCount < 1 || !travelFuelStatus.ok}
 						onClick={() => {
-							if (selectedCountry) {
-								if (penyabotCount < 1) {
-									alert("Anda tidak memiliki penyabot yang tersedia! Silakan rekrut terlebih dahulu.");
-									return;
-								}
-								onConfirm(selectedCountry, selectedTargetOption.label);
+							if (
+								!targetCountryName ||
+								!travelFuelStatus.ok ||
+								travelFuelQuote.cost === null ||
+								launchInProgressRef.current
+							) return;
+							if (penyabotCount < 1) {
+								alert("Anda tidak memiliki penyabot yang tersedia! Silakan rekrut terlebih dahulu.");
+								return;
+							}
+							launchInProgressRef.current = true;
+							if (onConfirm(targetCountryName, selectedTargetOption.label, travelFuelQuote.cost)) {
 								onClose();
+							} else {
+								launchInProgressRef.current = false;
 							}
 						}}
 						className="w-full sm:w-auto px-6 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 disabled:bg-rose-600/30 disabled:text-white/50 disabled:cursor-not-allowed disabled:border-transparent border border-rose-500 rounded-xl py-2 text-center text-white font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"

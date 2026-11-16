@@ -15,7 +15,6 @@ import {
 } from "@/app/page/detail_negara/3_operasi_militer/2_spionase/logic/spionaseLogic";
 import {
   resolveSabotaseOperation,
-  applySabotaseMiliterToTarget,
   type SabotaseOperationResult,
 } from "@/app/page/detail_negara/3_operasi_militer/3_sabotase/logic/sabotaseLogic";
 import {
@@ -57,40 +56,54 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
       const covertInfo = path?.pathId ? pendingCovertOperationsRef.current.get(path.pathId) : undefined;
       if (!path?.pathId || !covertInfo || !path.targetCountry) return;
 
-      pendingCovertOperationsRef.current.delete(path.pathId);
       const { operation, operationTarget, successChance, succeeded } = covertInfo;
 
       if (operation === 'spionase') {
+        pendingCovertOperationsRef.current.delete(path.pathId);
         const result = { operationTarget, successChance, succeeded };
         setSpionaseResult({
           operation: 'spionase',
           targetCountry: path.targetCountry,
           ...result,
         });
-      } else {
-        const result = { operationTarget, successChance, succeeded };
-        let losses = undefined;
-        if (result.succeeded) {
-          const isMilitaryTarget = !operationTarget ||
-            operationTarget.toLowerCase().includes('militer') ||
-            operationTarget.toLowerCase().includes('pabrik');
-
-          if (isMilitaryTarget) {
-            losses = await applySabotaseMiliterToTarget(path.targetCountry);
-          }
-        }
-
-        setSabotaseResult({
-          operation: 'sabotase',
-          targetCountry: path.targetCountry,
-          ...result,
-          losses,
-        });
       }
     };
 
+    const handleCovertOperationResolved = (event: Event) => {
+      const detail = (event as CustomEvent<{
+        pathId?: string;
+        kind?: string;
+        targetCountry?: string;
+        operationSucceeded?: boolean;
+        losses?: SabotaseOperationResult['losses'];
+      }>).detail;
+      if (
+        detail?.kind !== 'sabotase' ||
+        !detail.pathId ||
+        !detail.targetCountry ||
+        typeof detail.operationSucceeded !== 'boolean'
+      ) return;
+
+      const covertInfo = pendingCovertOperationsRef.current.get(detail.pathId);
+      if (!covertInfo || covertInfo.operation !== 'sabotase') return;
+
+      pendingCovertOperationsRef.current.delete(detail.pathId);
+      setSabotaseResult({
+        operation: 'sabotase',
+        targetCountry: detail.targetCountry,
+        operationTarget: covertInfo.operationTarget,
+        successChance: covertInfo.successChance,
+        succeeded: detail.operationSucceeded,
+        losses: detail.losses,
+      });
+    };
+
     window.addEventListener('neosantara_covert_operation_arrived', handleCovertOperationArrival);
-    return () => window.removeEventListener('neosantara_covert_operation_arrived', handleCovertOperationArrival);
+    window.addEventListener('neosantara_covert_operation_resolved', handleCovertOperationResolved);
+    return () => {
+      window.removeEventListener('neosantara_covert_operation_arrived', handleCovertOperationArrival);
+      window.removeEventListener('neosantara_covert_operation_resolved', handleCovertOperationResolved);
+    };
   }, [countryDetail]);
 
   if (!isOpen) return null;
