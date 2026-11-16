@@ -2,7 +2,6 @@
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import React, { useState, useEffect, useRef } from "react";
 import { Binoculars, Eye, Target, ChevronDown, UserPlus } from "lucide-react";
-import { getSpionaseSuccessChance } from "@/app/page/detail_negara/3_operasi_militer/2_spionase/logic/spionaseLogic";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import TravelFuelCostPanel from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
 import type { TravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
@@ -13,10 +12,10 @@ import RekrutMataMataModal from "@/app/page/detail_negara/3_operasi_militer/2_sp
 interface KonfirmasiSpionaseModalsProps {
   isOpen: boolean;
   onClose: () => void;
-  targetCountry: any;
-  playerCountryDetail?: Record<string, unknown> | null;
+  targetCountry: { countryName: string };
   currentBudget: number;
   updatePlayerCountryDetail: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
+  onRecruitModalVisibilityChange: (isOpen: boolean) => void;
   travelFuelStatus?: TravelFuelStatus;
   onConfirm: (operationTarget?: string) => void;
 }
@@ -25,9 +24,9 @@ export default function KonfirmasiSpionaseModals({
   isOpen,
   onClose,
   targetCountry,
-  playerCountryDetail,
   currentBudget,
   updatePlayerCountryDetail,
+  onRecruitModalVisibilityChange,
   travelFuelStatus,
   onConfirm,
 }: KonfirmasiSpionaseModalsProps) {
@@ -66,7 +65,6 @@ export default function KonfirmasiSpionaseModals({
   if (!isOpen || !targetCountry) return null;
 
   const targetName = targetCountry.countryName || "Target";
-  const successChance = getSpionaseSuccessChance(playerCountryDetail);
   const hasAgent = mataMataCount >= 1;
   const isFuelOk = travelFuelStatus ? travelFuelStatus.ok : true;
   const canLaunch = hasAgent && isFuelOk;
@@ -82,10 +80,16 @@ export default function KonfirmasiSpionaseModals({
       };
     });
     setIsRecruitModalOpen(false);
+    onRecruitModalVisibilityChange(false);
   };
   const handleClose = () => {
     setIsRecruitModalOpen(false);
+    onRecruitModalVisibilityChange(false);
     onClose();
+  };
+  const handleRecruitModalClose = () => {
+    setIsRecruitModalOpen(false);
+    onRecruitModalVisibilityChange(false);
   };
 
   return (
@@ -93,12 +97,13 @@ export default function KonfirmasiSpionaseModals({
       <NotebookModalWrapper
         onClose={handleClose}
         compact
+        isHidden={isRecruitModalOpen}
         zIndexClass="z-[60]"
       >
       <div className="flex flex-col font-sans animate-in fade-in zoom-in-95 duration-150">
         
         <RootInfoModalHeader
-          title="Konfirmasi Spionase"
+          title={`Konfirmasi Spionase ${targetName}`}
           onClose={handleClose}
           icon={<Eye className="text-root-accent" />}
           size="standard"
@@ -164,20 +169,6 @@ export default function KonfirmasiSpionaseModals({
               )}
             </div>
 
-            <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-xl shadow-sm flex flex-col items-center">
-              <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle mb-1">Target Misi</p>
-              <p className="text-base font-black text-root-accent">{targetName}</p>
-              <p className="text-xs text-root-subtle mt-1">
-                Kekuatan Militer: <span className="font-black text-root-text">{targetCountry?.totalPower?.toLocaleString("id-ID", { maximumFractionDigits: 0 }) || "Tidak diketahui"}</span>
-              </p>
-              <p className="text-xs text-root-subtle mt-1.5">
-                Peluang keberhasilan: <span className="font-black text-root-accent">{successChance}%</span>
-              </p>
-              <div className="mt-2.5 pt-2.5 border-t border-root-accent/10 w-full flex justify-between items-center text-xs">
-                <span className="text-root-subtle">Mata-Mata Dibutuhkan:</span>
-                <span className="font-bold text-root-text">1 personel</span>
-              </div>
-            </div>
             <div className="w-full rounded-xl border border-root-accent/20 bg-root-canvas p-3.5 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="rounded-lg border border-root-accent/30 bg-root-surface p-2">
@@ -194,7 +185,10 @@ export default function KonfirmasiSpionaseModals({
               </div>
               <button
                 type="button"
-                onClick={() => setIsRecruitModalOpen(true)}
+                onClick={() => {
+                  setIsRecruitModalOpen(true);
+                  onRecruitModalVisibilityChange(true);
+                }}
                 className="flex items-center gap-1.5 rounded-lg border border-root-accent px-4 py-1.5 text-xs font-black uppercase tracking-wider text-root-accent transition-colors hover:bg-root-accent/10 cursor-pointer"
               >
                 <UserPlus className="h-3.5 w-3.5" />
@@ -213,6 +207,7 @@ export default function KonfirmasiSpionaseModals({
           <button
             onClick={() => {
               setIsRecruitModalOpen(false);
+              onRecruitModalVisibilityChange(false);
               onConfirm(selectedTargetOption.label);
             }}
             disabled={!canLaunch}
@@ -228,7 +223,7 @@ export default function KonfirmasiSpionaseModals({
         isOpen={isRecruitModalOpen}
         currentPersonnelCount={mataMataCount}
         currentBudget={currentBudget}
-        onClose={() => setIsRecruitModalOpen(false)}
+        onClose={handleRecruitModalClose}
         onConfirm={handleRecruitConfirm}
       />
     </>

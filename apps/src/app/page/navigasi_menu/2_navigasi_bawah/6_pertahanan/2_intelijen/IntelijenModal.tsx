@@ -36,6 +36,7 @@ interface ModalProps {
 
 export default function IntelijenModal({ isOpen, onClose, countryDetail, setCountryDetail, prefetchedAllCountries }: ModalProps) {
   const [activeTab, setActiveTab] = useState<'spionase' | 'sabotase'>('spionase');
+  const [isPersonnelRecruitModalOpen, setIsPersonnelRecruitModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [spionaseResult, setSpionaseResult] = useState<SpionaseOperationResult | null>(null);
   const [sabotaseResult, setSabotaseResult] = useState<SabotaseOperationResult | null>(null);
@@ -46,6 +47,10 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
     succeeded: boolean;
   }>());
   const launchedTravelFuelIdsRef = useRef(new Set<string>());
+  const handleClose = () => {
+    setIsPersonnelRecruitModalOpen(false);
+    onClose();
+  };
 
   useEffect(() => {
     const handleCovertOperationResolved = (event: Event) => {
@@ -177,7 +182,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
 
   return (
     <>
-      <NotebookModalWrapper onClose={onClose}>
+      <NotebookModalWrapper onClose={handleClose} isHidden={isPersonnelRecruitModalOpen}>
         <div className="root-modal-util-b74379da23 intelijen-modal">
 
           <div className="satisfaction-modal-header root-modal-util-9462ce2345">
@@ -200,7 +205,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
                 title="Intelijen"
                 description="Gunakan Spionase untuk mengumpulkan informasi negara lain dan Sabotase untuk menjalankan operasi rahasia. Setiap operasi membutuhkan anggaran dan dapat menimbulkan konsekuensi diplomatik; pilih sasaran dengan mempertimbangkan risiko serta hasil yang diharapkan."
               />
-              <RootModalCloseButton onClick={onClose} />
+              <RootModalCloseButton onClick={handleClose} />
             </div>
           </div>
 
@@ -243,6 +248,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
                   prefetchedAllCountries={prefetchedAllCountries}
                   countryDetail={countryDetail}
                   updatePlayerCountryDetail={setCountryDetail}
+                  onRecruitModalVisibilityChange={setIsPersonnelRecruitModalOpen}
                   onAction={handleSpionaseAction}
                   searchQuery={searchQuery}
                 />
@@ -252,6 +258,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
                   prefetchedAllCountries={prefetchedAllCountries}
                   countryDetail={countryDetail}
                   updatePlayerCountryDetail={setCountryDetail}
+                  onRecruitModalVisibilityChange={setIsPersonnelRecruitModalOpen}
                   onAction={handleSabotaseAction}
                   searchQuery={searchQuery}
                 />

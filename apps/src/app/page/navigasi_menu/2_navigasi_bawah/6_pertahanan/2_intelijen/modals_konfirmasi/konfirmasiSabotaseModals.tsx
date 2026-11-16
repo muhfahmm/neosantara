@@ -2,7 +2,6 @@
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import React, { useState, useEffect, useRef } from "react";
 import { Bomb, AlertTriangle, Target, ChevronDown, UserPlus } from "lucide-react";
-import { getSabotaseSuccessChance } from "@/app/page/detail_negara/3_operasi_militer/3_sabotase/logic/sabotaseLogic";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import TravelFuelCostPanel from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
 import type { TravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
@@ -13,10 +12,10 @@ import RekrutPenyabotModal from "@/app/page/detail_negara/3_operasi_militer/3_sa
 interface KonfirmasiSabotaseModalsProps {
   isOpen: boolean;
   onClose: () => void;
-  targetCountry: any;
-  playerCountryDetail?: Record<string, unknown> | null;
+  targetCountry: { countryName: string };
   currentBudget: number;
   updatePlayerCountryDetail: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
+  onRecruitModalVisibilityChange: (isOpen: boolean) => void;
   travelFuelStatus?: TravelFuelStatus;
   onConfirm: (operationTarget?: string) => void;
 }
@@ -25,9 +24,9 @@ export default function KonfirmasiSabotaseModals({
   isOpen,
   onClose,
   targetCountry,
-  playerCountryDetail,
   currentBudget,
   updatePlayerCountryDetail,
+  onRecruitModalVisibilityChange,
   travelFuelStatus,
   onConfirm,
 }: KonfirmasiSabotaseModalsProps) {
@@ -66,7 +65,6 @@ export default function KonfirmasiSabotaseModals({
   if (!isOpen || !targetCountry) return null;
 
   const targetName = targetCountry.countryName || "Target";
-  const successChance = getSabotaseSuccessChance(playerCountryDetail);
   const hasAgent = penyabotCount >= 1;
   const isFuelOk = travelFuelStatus ? travelFuelStatus.ok : true;
   const canLaunch = hasAgent && isFuelOk;
@@ -82,10 +80,16 @@ export default function KonfirmasiSabotaseModals({
       };
     });
     setIsRecruitModalOpen(false);
+    onRecruitModalVisibilityChange(false);
   };
   const handleClose = () => {
     setIsRecruitModalOpen(false);
+    onRecruitModalVisibilityChange(false);
     onClose();
+  };
+  const handleRecruitModalClose = () => {
+    setIsRecruitModalOpen(false);
+    onRecruitModalVisibilityChange(false);
   };
 
   return (
@@ -93,12 +97,13 @@ export default function KonfirmasiSabotaseModals({
       <NotebookModalWrapper
         onClose={handleClose}
         compact
+        isHidden={isRecruitModalOpen}
         zIndexClass="z-[60]"
       >
       <div className="flex flex-col font-sans animate-in fade-in zoom-in-95 duration-150">
         
         <RootInfoModalHeader
-          title="Konfirmasi Sabotase"
+          title={`Konfirmasi Sabotase ${targetName}`}
           onClose={handleClose}
           icon={<Bomb className="text-rose-400" />}
           size="standard"
@@ -116,9 +121,6 @@ export default function KonfirmasiSabotaseModals({
             <div className="text-center space-y-1">
               <p className="text-lg font-black text-rose-400 uppercase tracking-wider">
                 Lancarkan Operasi Khusus!
-              </p>
-              <p className="text-xs text-root-subtle font-medium leading-relaxed max-w-lg mx-auto">
-                Kirim tim operasi khusus untuk melumpuhkan fasilitas vital di negara <span className="text-root-text font-bold">{targetName}</span>.
               </p>
             </div>
 
@@ -167,20 +169,6 @@ export default function KonfirmasiSabotaseModals({
               )}
             </div>
 
-            <div className="bg-root-canvas border border-rose-500/20 p-4 rounded-xl shadow-sm flex flex-col items-center">
-              <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle mb-1">Target Operasi</p>
-              <p className="text-base font-black text-rose-400">{targetName}</p>
-              <p className="text-xs text-root-subtle mt-1">
-                Kekuatan Militer: <span className="font-black text-root-text">{targetCountry?.totalPower?.toLocaleString("id-ID", { maximumFractionDigits: 0 }) || "Tidak diketahui"}</span>
-              </p>
-              <p className="text-xs text-root-subtle mt-1.5">
-                Peluang keberhasilan: <span className="font-black text-rose-400">{successChance}%</span>
-              </p>
-              <div className="mt-2.5 pt-2.5 border-t border-rose-500/10 w-full flex justify-between items-center text-xs">
-                <span className="text-root-subtle">Penyabot Dibutuhkan:</span>
-                <span className="font-bold text-root-text">1 personel</span>
-              </div>
-            </div>
             <div className="w-full rounded-xl border border-rose-500/20 bg-root-canvas p-3.5 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="rounded-lg border border-rose-500/30 bg-root-surface p-2">
@@ -197,7 +185,10 @@ export default function KonfirmasiSabotaseModals({
               </div>
               <button
                 type="button"
-                onClick={() => setIsRecruitModalOpen(true)}
+                onClick={() => {
+                  setIsRecruitModalOpen(true);
+                  onRecruitModalVisibilityChange(true);
+                }}
                 className="flex items-center gap-1.5 rounded-lg border border-rose-500 px-4 py-1.5 text-xs font-black uppercase tracking-wider text-rose-400 transition-colors hover:bg-rose-500/10 cursor-pointer"
               >
                 <UserPlus className="h-3.5 w-3.5" />
@@ -216,6 +207,7 @@ export default function KonfirmasiSabotaseModals({
           <button
             onClick={() => {
               setIsRecruitModalOpen(false);
+              onRecruitModalVisibilityChange(false);
               onConfirm(selectedTargetOption.label);
             }}
             disabled={!canLaunch}
@@ -231,7 +223,7 @@ export default function KonfirmasiSabotaseModals({
         isOpen={isRecruitModalOpen}
         currentPersonnelCount={penyabotCount}
         currentBudget={currentBudget}
-        onClose={() => setIsRecruitModalOpen(false)}
+        onClose={handleRecruitModalClose}
         onConfirm={handleRecruitConfirm}
       />
     </>
