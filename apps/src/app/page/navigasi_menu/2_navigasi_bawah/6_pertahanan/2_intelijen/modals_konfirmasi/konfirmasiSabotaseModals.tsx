@@ -101,12 +101,12 @@ export default function KonfirmasiSabotaseModals({
 
   return (
     <>
-      <NotebookModalWrapper
-        onClose={handleClose}
-        compact
-        isHidden={isRecruitModalOpen}
-        zIndexClass="z-[60]"
-      >
+      {!isRecruitModalOpen && (
+        <NotebookModalWrapper
+          onClose={handleClose}
+          compact
+          zIndexClass="z-[60]"
+        >
       <div className="flex flex-col font-sans animate-in fade-in zoom-in-95 duration-150">
         
         <RootInfoModalHeader
@@ -267,7 +267,8 @@ export default function KonfirmasiSabotaseModals({
           </button>
         </div>
         </div>
-      </NotebookModalWrapper>
+        </NotebookModalWrapper>
+      )}
       <RekrutPenyabotModal
         isOpen={isRecruitModalOpen}
         currentPersonnelCount={penyabotCount}

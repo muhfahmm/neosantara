@@ -9,11 +9,10 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { COUNTRIES_DATA } from '../../map_system/map-data';
 import SerangNegaraModal from './1_serang_negara/serangNegaraModals';
 import SeranganMasihBerlangsungModal from './1_serang_negara/SeranganMasihBerlangsungModal';
-import SpionaseModal from './2_spionase/spionaseModals';
-import SabotaseModal from './3_sabotase/sabotaseModals';
 import PerangNuklirModal from './4_perang_nuklir/perangNuklirModals';
 import { getReadyIcbmCount } from './4_perang_nuklir/IcbmTidakTersediaModal';
 import { launchIcbmWarStrike } from '../../navigasi_menu/2_navigasi_bawah/6_pertahanan/5_icbm/modals_menu/3_perang_nuklir/icbmWarLogic';
@@ -22,6 +21,10 @@ import MintaSerangNegaraModal from './6_minta_serang_negara/mintaSerangNegaraMod
 import StatusMintaSerangModal from './6_minta_serang_negara/statusMintaSerangModal';
 import HinaModal from './7_hina/hinaModals';
 import ProvinsiOperasiMiliter from '../1_informasi_umum/provinsi_logic/ProvinsiOperasiMiliter';
+import SerangBelumSelesaiModals from '../../navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/SerangBelumSelesaiModals';
+import { getActivePlayerAttack, usePlayerAttackStatus, type PlayerAttackStatus } from '../../navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/playerAttackStatus';
+import KonfirmasiSpionaseModals from '../../navigasi_menu/2_navigasi_bawah/6_pertahanan/2_intelijen/modals_konfirmasi/konfirmasiSpionaseModals';
+import KonfirmasiSabotaseModals from '../../navigasi_menu/2_navigasi_bawah/6_pertahanan/2_intelijen/modals_konfirmasi/konfirmasiSabotaseModals';
 import ResultSpionaseModals from './2_spionase/ResultSpionaseModals';
 import ResultSabotaseModals from './3_sabotase/ResultSabotaseModals';
 import {
@@ -32,10 +35,12 @@ import {
   resolveSabotaseOperation,
   type SabotaseOperationResult,
 } from './3_sabotase/logic/sabotaseLogic';
-import { consumePersonnel } from './covertPersonnelStorage';
-import { checkTravelFuel, consumeTravelFuel } from '../../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic';
-import SerangBelumSelesaiModals from '../../navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/SerangBelumSelesaiModals';
-import { getActivePlayerAttack, usePlayerAttackStatus, type PlayerAttackStatus } from '../../navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/playerAttackStatus';
+import { consumePersonnel, getCovertPersonnel } from './covertPersonnelStorage';
+import {
+  consumeTravelFuel,
+  getTravelFuelStatus,
+} from '../../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic';
+import { useTravelFuelQuote } from '../../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/useTravelFuelQuote';
 
 interface OperasiMiliterProps {
   countryName: string;
@@ -71,7 +76,7 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
   </button>
 );
 
-export default function OperasiMiliter({ countryName, selectedCity, selectedCityId, playerCountryDetail, targetCountryDetail, onCloseDetailModal, onCloseCountryDetail, onActionModalStateChange, isOccupiedProvince, occupyingCountry, provinceTension, currentDate, actionDates, onMilitaryActionLaunched, updatePlayerCountryDetail, currentNetBalance = 0, adjustNetBalance }: OperasiMiliterProps) {
+export default function OperasiMiliter({ countryName, selectedCity, selectedCityId, playerCountryDetail, targetCountryDetail, onCloseDetailModal, onCloseCountryDetail, onActionModalStateChange, isOccupiedProvince, occupyingCountry, provinceTension, currentDate, actionDates, onMilitaryActionLaunched, updatePlayerCountryDetail }: OperasiMiliterProps) {
   const [isSerangOpen, setIsSerangOpen] = useState(false);
   const [isAttackInProgressModalOpen, setIsAttackInProgressModalOpen] = useState(false);
   const [blockedPlayerAttack, setBlockedPlayerAttack] = useState<{
@@ -92,8 +97,38 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
     operation: 'spionase' | 'sabotase';
     operationTarget?: string;
     successChance: number;
-    succeeded: boolean;
   }>());
+  const playerCountryName = String(
+    playerCountryDetail?.country ||
+    playerCountryDetail?.nama_negara ||
+    playerCountryDetail?.name_id ||
+    playerCountryDetail?.name_en ||
+    '',
+  );
+  const spionaseFuelQuote = useTravelFuelQuote(
+    playerCountryName,
+    countryName,
+    'spionase',
+    isSpionaseOpen,
+  );
+  const sabotaseFuelQuote = useTravelFuelQuote(
+    playerCountryName,
+    countryName,
+    'sabotase',
+    isSabotaseOpen,
+  );
+  const spionaseFuelStatus = getTravelFuelStatus(
+    playerCountryDetail,
+    spionaseFuelQuote.cost,
+    spionaseFuelQuote.loading,
+    spionaseFuelQuote.fallback,
+  );
+  const sabotaseFuelStatus = getTravelFuelStatus(
+    playerCountryDetail,
+    sabotaseFuelQuote.cost,
+    sabotaseFuelQuote.loading,
+    sabotaseFuelQuote.fallback,
+  );
   const formatActionDate = (dateString?: string) => {
     if (!dateString) return '';
     const [year, month, day] = dateString.split('-').map(Number);
@@ -111,8 +146,6 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
   };
   const datedActionClass = 'border border-amber-400/50 bg-amber-400/5 text-amber-300';
   const operationDateBadgeClass = 'absolute -top-6 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-sm border border-amber-400/30 bg-root-canvas px-2 py-1 text-[10px] font-bold tracking-wider text-amber-300 shadow-md';
-
-  const playerActualBudget = Number(playerCountryDetail?.anggaran ?? 0);
 
   const isAnyMiliterModalActive = isSerangOpen || isAttackInProgressModalOpen || blockedPlayerAttack !== null || isSpionaseOpen || isSabotaseOpen || isNuklirOpen || isKudetaOpen || isMintaSerangOpen || isStatusMintaSerangOpen || isHinaOpen || !!spionaseResult || !!sabotaseResult;
 
@@ -166,37 +199,40 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
 
   const launchCovertOperation = (
     operation: 'spionase' | 'sabotase',
-    targetCountry: string,
     operationTarget: string,
-    fuelCost: number,
-  ): boolean => {
-    if (!playerCountryDetail || !Number.isFinite(fuelCost) || !checkTravelFuel(playerCountryDetail, fuelCost).ok) {
-      return false;
-    }
-    if (!updatePlayerCountryDetail) {
-      console.error('Operasi dibatalkan karena stok minyak tidak dapat disimpan.');
-      return false;
+    personnelCount: number,
+  ) => {
+    const fuelQuote = operation === 'spionase' ? spionaseFuelQuote : sabotaseFuelQuote;
+    const fuelStatus = operation === 'spionase' ? spionaseFuelStatus : sabotaseFuelStatus;
+    const personnelType = operation === 'spionase' ? 'mataMata' : 'penyabot';
+    const targetPersonnelCount = getCovertPersonnel()[personnelType];
+    if (
+      !playerCountryDetail ||
+      !updatePlayerCountryDetail ||
+      fuelQuote.cost === null ||
+      !fuelStatus.ok ||
+      !Number.isInteger(personnelCount) ||
+      personnelCount < 1
+    ) return;
+    if (targetPersonnelCount < personnelCount) {
+      alert(`Personel tersedia ${targetPersonnelCount}, tetapi operasi membutuhkan ${personnelCount} personel.`);
+      return;
     }
 
     const pathId = `covert-${operation}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-    const fuelUpdatedDetail = consumeTravelFuel(playerCountryDetail, fuelCost, {
+    const fuelUpdatedDetail = consumeTravelFuel(playerCountryDetail, fuelQuote.cost, {
       id: pathId,
       date: String(
         playerCountryDetail.currentDate ||
         playerCountryDetail.gameDate ||
         new Date().toISOString(),
       ).slice(0, 10),
-      targetCountry,
+      targetCountry: countryName,
       travelType: operation,
-      amount: fuelCost,
+      amount: fuelQuote.cost,
     });
-    if (fuelUpdatedDetail === playerCountryDetail) return false;
+    if (fuelUpdatedDetail === playerCountryDetail || !consumePersonnel(personnelType, personnelCount)) return;
 
-    const personnelType = operation === 'spionase' ? 'mataMata' : 'penyabot';
-    if (!consumePersonnel(personnelType, 1)) {
-      alert(`Anda tidak memiliki ${operation === 'spionase' ? 'mata-mata' : 'penyabot'} yang tersedia! Silakan rekrut terlebih dahulu.`);
-      return false;
-    }
     updatePlayerCountryDetail(() => fuelUpdatedDetail);
     const result = operation === 'spionase'
       ? resolveSpionaseOperation(playerCountryDetail, operationTarget)
@@ -205,19 +241,20 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
       operation,
       operationTarget,
       successChance: result.successChance,
-      succeeded: result.succeeded,
     });
     window.dispatchEvent(new CustomEvent('neosantara_diplomacy_path', {
       detail: {
         pathId,
         kind: operation,
-        senderCountry: playerCountryDetail?.country || playerCountryDetail?.nama_negara || playerCountryDetail?.name_id || playerCountryDetail?.name_en || countryName,
-        targetCountry,
+        senderCountry: playerCountryName,
+        targetCountry: countryName,
         operationTarget,
         operationSucceeded: result.succeeded,
       },
     }));
-    return true;
+    onMilitaryActionLaunched?.(operation);
+    setIsSpionaseOpen(false);
+    setIsSabotaseOpen(false);
   };
 
   const launchNuclearStrike = () => {
@@ -334,11 +371,25 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         </div>
         <div className="relative w-full min-w-0">
           {actionDates?.spionase && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.spionase)}</div>}
-          <ActionButton icon={Eye} label="Spionase" className={actionDates?.spionase ? datedActionClass : undefined} iconClass={actionDates?.spionase ? 'text-amber-300' : undefined} labelClass={actionDates?.spionase ? 'text-amber-300' : undefined} onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsSpionaseOpen(true); }} />
+          <ActionButton
+            icon={Eye}
+            label="Spionase"
+            className={actionDates?.spionase ? datedActionClass : undefined}
+            iconClass={actionDates?.spionase ? 'text-amber-300' : undefined}
+            labelClass={actionDates?.spionase ? 'text-amber-300' : undefined}
+            onClick={() => setIsSpionaseOpen(true)}
+          />
         </div>
         <div className="relative w-full min-w-0">
           {actionDates?.sabotase && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.sabotase)}</div>}
-          <ActionButton icon={Bomb} label="Sabotase" className={actionDates?.sabotase ? datedActionClass : undefined} iconClass={actionDates?.sabotase ? 'text-amber-300' : undefined} labelClass={actionDates?.sabotase ? 'text-amber-300' : undefined} onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsSabotaseOpen(true); }} />
+          <ActionButton
+            icon={Bomb}
+            label="Sabotase"
+            className={actionDates?.sabotase ? datedActionClass : undefined}
+            iconClass={actionDates?.sabotase ? 'text-amber-300' : undefined}
+            labelClass={actionDates?.sabotase ? 'text-amber-300' : undefined}
+            onClick={() => setIsSabotaseOpen(true)}
+          />
         </div>
         <ActionButton icon={Radiation} label="Perang Nuklir" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsNuklirOpen(true); }} />
         
@@ -404,36 +455,6 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         ongoingCity={blockedPlayerAttack?.status.targetCityName}
         requestedTarget={blockedPlayerAttack?.requestedTarget}
       />
-      <SpionaseModal
-        isOpen={isSpionaseOpen}
-        countryName={countryName}
-        playerCountryDetail={playerCountryDetail}
-        currentBudget={playerActualBudget}
-        updatePlayerCountryDetail={updatePlayerCountryDetail}
-        onClose={() => setIsSpionaseOpen(false)}
-        onConfirm={(target, operationTarget, fuelCost) => {
-          const launched = launchCovertOperation('spionase', target, operationTarget, fuelCost);
-          if (launched) {
-            onMilitaryActionLaunched?.('spionase');
-          }
-          return launched;
-        }}
-      />
-      <SabotaseModal
-        isOpen={isSabotaseOpen}
-        countryName={countryName}
-        playerCountryDetail={playerCountryDetail}
-        currentBudget={playerActualBudget}
-        updatePlayerCountryDetail={updatePlayerCountryDetail}
-        onClose={() => setIsSabotaseOpen(false)}
-        onConfirm={(target, operationTarget, fuelCost) => {
-          const launched = launchCovertOperation('sabotase', target, operationTarget, fuelCost);
-          if (launched) {
-            onMilitaryActionLaunched?.('sabotase');
-          }
-          return launched;
-        }}
-      />
       <PerangNuklirModal
         isOpen={isNuklirOpen}
         countryName={countryName}
@@ -472,6 +493,36 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         onClose={() => setIsStatusMintaSerangOpen(false)}
       />
       <HinaModal isOpen={isHinaOpen} countryName={countryName} onClose={() => setIsHinaOpen(false)} onConfirm={() => { console.log(`Hina -> ${countryName}`); }} />
+      {typeof document !== 'undefined' && isSpionaseOpen && updatePlayerCountryDetail && createPortal(
+        <KonfirmasiSpionaseModals
+          isOpen={isSpionaseOpen}
+          onClose={() => setIsSpionaseOpen(false)}
+          targetCountry={{ countryName }}
+          currentBudget={Number(playerCountryDetail?.anggaran ?? 0)}
+          updatePlayerCountryDetail={updatePlayerCountryDetail}
+          onRecruitModalVisibilityChange={() => undefined}
+          travelFuelStatus={spionaseFuelStatus}
+          onConfirm={(operationTarget, personnelCount) => {
+            launchCovertOperation('spionase', operationTarget, personnelCount);
+          }}
+        />,
+        document.body,
+      )}
+      {typeof document !== 'undefined' && isSabotaseOpen && updatePlayerCountryDetail && createPortal(
+        <KonfirmasiSabotaseModals
+          isOpen={isSabotaseOpen}
+          onClose={() => setIsSabotaseOpen(false)}
+          targetCountry={{ countryName }}
+          currentBudget={Number(playerCountryDetail?.anggaran ?? 0)}
+          updatePlayerCountryDetail={updatePlayerCountryDetail}
+          onRecruitModalVisibilityChange={() => undefined}
+          travelFuelStatus={sabotaseFuelStatus}
+          onConfirm={(operationTarget, personnelCount) => {
+            launchCovertOperation('sabotase', operationTarget, personnelCount);
+          }}
+        />,
+        document.body,
+      )}
       <ResultSpionaseModals
         result={spionaseResult}
         onClose={() => setSpionaseResult(null)}
