@@ -1,23 +1,46 @@
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { ChevronDown, Bomb, Search } from "lucide-react";
+import { ChevronDown, Bomb, Search, UserPlus } from "lucide-react";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { getCovertOperationSuccessChance } from "../covertOperationLogic";
+import { getCovertPersonnel, recruitPersonnel, COVERT_PERSONNEL_UPDATED_EVENT } from "../covertPersonnelStorage";
+import RekrutPenyabotModal from "./RekrutPenyabotModal";
 
 interface SabotaseModalProps {
 	isOpen: boolean;
 	countryName?: string | null;
 	playerCountryDetail?: Record<string, unknown> | null;
+	currentBudget?: number;
+	adjustNetBalance?: (delta: number) => void;
 	onClose: () => void;
 	onConfirm: (targetCountry: string) => void;
 }
 
-export default function SabotaseModal({ isOpen, countryName, playerCountryDetail, onClose, onConfirm }: SabotaseModalProps) {
+export default function SabotaseModal({
+	isOpen,
+	countryName,
+	playerCountryDetail,
+	currentBudget = 0,
+	adjustNetBalance,
+	onClose,
+	onConfirm,
+}: SabotaseModalProps) {
 	const [selectedCountry, setSelectedCountry] = useState<string>("");
 	const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 	const [searchQuery, setSearchQuery] = useState<string>("");
+	const [isRekrutModalOpen, setIsRekrutModalOpen] = useState<boolean>(false);
+	const [penyabotCount, setPenyabotCount] = useState<number>(() => getCovertPersonnel().penyabot);
 	const dropdownRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const syncPersonnel = () => {
+			setPenyabotCount(getCovertPersonnel().penyabot);
+		};
+		syncPersonnel();
+		window.addEventListener(COVERT_PERSONNEL_UPDATED_EVENT, syncPersonnel);
+		return () => window.removeEventListener(COVERT_PERSONNEL_UPDATED_EVENT, syncPersonnel);
+	}, [isOpen]);
 
 	const countryList = useMemo(() => {
 		const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
@@ -49,6 +72,7 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 			}
 			setIsDropdownOpen(false);
 			setSearchQuery("");
+			setIsRekrutModalOpen(false);
 		}
 	}, [isOpen, countryName, countryList]);
 
@@ -75,6 +99,14 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 	const successChance = getCovertOperationSuccessChance("sabotase", playerCountryDetail);
 	const selectedData = countryList.find((c) => c.country === selectedCountry) || countryList[0];
 
+	const handleRecruitConfirm = (count: number, totalCost: number) => {
+		recruitPersonnel('penyabot', count);
+		if (adjustNetBalance) {
+			adjustNetBalance(-totalCost);
+		}
+		setIsRekrutModalOpen(false);
+	};
+
 	const renderFlag = (iso?: string, name?: string) => {
 		if (!iso || iso.length !== 2) {
 			return <span className="w-6 h-4 rounded-sm bg-slate-300 flex items-center justify-center text-[9px]">🏳️</span>;
@@ -92,9 +124,7 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 	};
 
 	const modalContent = (
-		// 🔥 PERBAIKAN: Menghapus bg-black/60 agar tidak ada backdrop
 		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
-			{/* Container Modal Lebih Lebar dan Panjang */}
 			<div className="modal-responsive-shell flex flex-col bg-root-surface border border-rose-500/40 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(225,29,72,0.15)] relative pointer-events-auto">
 				
 				<RootInfoModalHeader
@@ -115,11 +145,11 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 						<button
 							type="button"
 							onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-							className="w-full h-12 bg-root-canvas hover:bg-[#1f1515] border border-rose-500/40 rounded-xl px-4 flex items-center justify-between text-white transition-colors cursor-pointer"
+							className="w-full h-12 bg-root-canvas hover:bg-[#142A2A] border border-rose-500/30 rounded-xl px-4 flex items-center justify-between text-white transition-colors cursor-pointer"
 						>
 							<div className="flex items-center gap-3 truncate">
 								{renderFlag(selectedData?.iso, selectedData?.country)}
-								<span className="font-bold text-sm tracking-wide truncate text-rose-300">
+								<span className="font-bold text-sm tracking-wide truncate text-rose-400">
 									{selectedData?.country || "Pilih Negara Target"}
 								</span>
 							</div>
@@ -127,9 +157,9 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 						</button>
 
 						{isDropdownOpen && (
-							<div className="absolute left-0 right-0 top-full mt-2 max-h-60 overflow-y-auto bg-root-canvas border border-rose-500/40 rounded-xl shadow-2xl z-50 divide-y divide-rose-500/15">
+							<div className="absolute left-0 right-0 top-full mt-2 max-h-60 overflow-y-auto bg-root-canvas border border-rose-500/30 rounded-xl shadow-2xl z-50 divide-y divide-rose-500/10">
 								{/* INPUT SEARCH INSIDE DROPDOWN */}
-								<div className="p-2 sticky top-0 bg-root-surface border-b border-rose-500/30 z-10">
+								<div className="p-2 sticky top-0 bg-root-surface border-b border-rose-500/20 z-10">
 									<div className="relative">
 										<Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-root-subtle" />
 										<input
@@ -137,7 +167,7 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 											placeholder="Cari negara..."
 											value={searchQuery}
 											onChange={(e) => setSearchQuery(e.target.value)}
-											className="w-full bg-root-canvas border border-rose-500/30 rounded-lg px-9 py-2 text-sm text-root-text placeholder-root-subtle outline-none focus:border-rose-400"
+											className="w-full bg-root-canvas border border-rose-500/20 rounded-lg px-9 py-2 text-sm text-root-text placeholder-root-subtle outline-none focus:border-rose-400"
 										/>
 									</div>
 								</div>
@@ -154,7 +184,7 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 												setIsDropdownOpen(false);
 											}}
 											className={`w-full px-4 py-2.5 flex items-center gap-3 text-left hover:bg-rose-500/10 transition-colors text-sm font-bold text-root-text ${
-												selectedCountry === c.country ? 'bg-rose-500/20 text-rose-300 border-l-4 border-rose-500' : ''
+												selectedCountry === c.country ? 'bg-rose-500/20 text-rose-400 border-l-4 border-rose-500' : ''
 											}`}
 										>
 											{renderFlag(c.iso, c.country)}
@@ -169,6 +199,32 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 						)}
 					</div>
 
+					{/* PANEL PENYABOT & TOMBOL REKRUT */}
+					<div className="bg-root-canvas border border-rose-500/20 rounded-xl p-3.5 mb-4 flex items-center justify-between">
+						<div className="flex items-center gap-3">
+							<div className="p-2 bg-root-surface border border-rose-500/30 rounded-lg">
+								<Bomb className="w-5 h-5 text-rose-400" />
+							</div>
+							<div>
+								<span className="text-[11px] font-bold uppercase tracking-wider text-root-subtle block">
+									Personel Sabotase
+								</span>
+								<div className="text-sm font-black text-white">
+									Penyabot: <span className="text-rose-400">{penyabotCount}</span>
+								</div>
+							</div>
+						</div>
+
+						<button
+							type="button"
+							onClick={() => setIsRekrutModalOpen(true)}
+							className="px-4 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500 text-rose-400 hover:text-rose-300 font-black text-xs uppercase tracking-wider transition-all duration-150 flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-sm"
+						>
+							<UserPlus className="w-3.5 h-3.5" />
+							Rekrut
+						</button>
+					</div>
+
 					<div className="bg-root-canvas border border-rose-500/20 rounded-xl p-4 inline-block">
 						<div className="flex items-center justify-between gap-8 text-sm font-bold text-root-subtle">
 							<span>Peluang Keberhasilan:</span>
@@ -177,7 +233,7 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 					</div>
 				</div>
 
-				{/* FOOTER ACTIONS (Diperkecil) */}
+				{/* FOOTER ACTIONS */}
 				<div className="flex flex-col sm:flex-row gap-3 justify-end mt-6 pt-4 border-t border-rose-500/20">
 					<button
 						type="button"
@@ -194,12 +250,21 @@ export default function SabotaseModal({ isOpen, countryName, playerCountryDetail
 								onClose();
 							}
 						}}
-						className="w-full sm:w-auto px-6 bg-rose-600 hover:bg-rose-700 border border-rose-500 rounded-xl py-2 text-center text-white font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
+						className="w-full sm:w-auto px-6 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 border border-rose-500 rounded-xl py-2 text-center text-white font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
 					>
-						Luncurkan Sabotase
+						Lancarkan Sabotase
 					</button>
 				</div>
 			</div>
+
+			{/* MODAL REKRUT PENYABOT */}
+			<RekrutPenyabotModal
+				isOpen={isRekrutModalOpen}
+				currentPersonnelCount={penyabotCount}
+				currentBudget={currentBudget}
+				onClose={() => setIsRekrutModalOpen(false)}
+				onConfirm={handleRecruitConfirm}
+			/>
 		</div>
 	);
 

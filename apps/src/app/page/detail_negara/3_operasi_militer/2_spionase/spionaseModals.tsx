@@ -1,23 +1,46 @@
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { ChevronDown, Eye, Search } from "lucide-react";
+import { ChevronDown, Eye, Search, UserPlus } from "lucide-react";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { getCovertOperationSuccessChance } from "../covertOperationLogic";
+import { getCovertPersonnel, recruitPersonnel, COVERT_PERSONNEL_UPDATED_EVENT } from "../covertPersonnelStorage";
+import RekrutMataMataModal from "./RekrutMataMataModal";
 
 interface SpionaseModalProps {
 	isOpen: boolean;
 	countryName?: string | null;
 	playerCountryDetail?: Record<string, unknown> | null;
+	currentBudget?: number;
+	adjustNetBalance?: (delta: number) => void;
 	onClose: () => void;
 	onConfirm: (targetCountry: string) => void;
 }
 
-export default function SpionaseModal({ isOpen, countryName, playerCountryDetail, onClose, onConfirm }: SpionaseModalProps) {
+export default function SpionaseModal({
+	isOpen,
+	countryName,
+	playerCountryDetail,
+	currentBudget = 0,
+	adjustNetBalance,
+	onClose,
+	onConfirm,
+}: SpionaseModalProps) {
 	const [selectedCountry, setSelectedCountry] = useState<string>("");
 	const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 	const [searchQuery, setSearchQuery] = useState<string>("");
+	const [isRekrutModalOpen, setIsRekrutModalOpen] = useState<boolean>(false);
+	const [mataMataCount, setMataMataCount] = useState<number>(() => getCovertPersonnel().mataMata);
 	const dropdownRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const syncPersonnel = () => {
+			setMataMataCount(getCovertPersonnel().mataMata);
+		};
+		syncPersonnel();
+		window.addEventListener(COVERT_PERSONNEL_UPDATED_EVENT, syncPersonnel);
+		return () => window.removeEventListener(COVERT_PERSONNEL_UPDATED_EVENT, syncPersonnel);
+	}, [isOpen]);
 
 	const countryList = useMemo(() => {
 		const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
@@ -49,6 +72,7 @@ export default function SpionaseModal({ isOpen, countryName, playerCountryDetail
 			}
 			setIsDropdownOpen(false);
 			setSearchQuery("");
+			setIsRekrutModalOpen(false);
 		}
 	}, [isOpen, countryName, countryList]);
 
@@ -75,6 +99,14 @@ export default function SpionaseModal({ isOpen, countryName, playerCountryDetail
 	const successChance = getCovertOperationSuccessChance("spionase", playerCountryDetail);
 	const selectedData = countryList.find((c) => c.country === selectedCountry) || countryList[0];
 
+	const handleRecruitConfirm = (count: number, totalCost: number) => {
+		recruitPersonnel('mataMata', count);
+		if (adjustNetBalance) {
+			adjustNetBalance(-totalCost);
+		}
+		setIsRekrutModalOpen(false);
+	};
+
 	const renderFlag = (iso?: string, name?: string) => {
 		if (!iso || iso.length !== 2) {
 			return <span className="w-6 h-4 rounded-sm bg-slate-300 flex items-center justify-center text-[9px]">🏳️</span>;
@@ -92,9 +124,7 @@ export default function SpionaseModal({ isOpen, countryName, playerCountryDetail
 	};
 
 	const modalContent = (
-		// 🔥 PERBAIKAN: Menghapus bg-black/60 agar tidak ada backdrop
 		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
-			{/* Container Modal Lebih Lebar dan Panjang */}
 			<div className="modal-responsive-shell flex flex-col bg-root-surface border border-root-accent/30 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(0,255,170,0.15)] relative pointer-events-auto">
 				
 				<RootInfoModalHeader
@@ -169,6 +199,32 @@ export default function SpionaseModal({ isOpen, countryName, playerCountryDetail
 						)}
 					</div>
 
+					{/* PANEL MATA-MATA & TOMBOL REKRUT */}
+					<div className="bg-root-canvas border border-root-accent/20 rounded-xl p-3.5 mb-4 flex items-center justify-between">
+						<div className="flex items-center gap-3">
+							<div className="p-2 bg-root-surface border border-root-accent/30 rounded-lg">
+								<Eye className="w-5 h-5 text-root-accent" />
+							</div>
+							<div>
+								<span className="text-[11px] font-bold uppercase tracking-wider text-root-subtle block">
+									Personel Intelijen
+								</span>
+								<div className="text-sm font-black text-white">
+									Mata-Mata: <span className="text-root-accent">{mataMataCount}</span>
+								</div>
+							</div>
+						</div>
+
+						<button
+							type="button"
+							onClick={() => setIsRekrutModalOpen(true)}
+							className="px-4 py-1.5 rounded-lg bg-root-accent/10 hover:bg-root-accent/20 border border-root-accent text-root-accent hover:text-[#00e699] font-black text-xs uppercase tracking-wider transition-all duration-150 flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-sm"
+						>
+							<UserPlus className="w-3.5 h-3.5" />
+							Rekrut
+						</button>
+					</div>
+
 					<div className="bg-root-canvas border border-root-accent/20 rounded-xl p-4 inline-block">
 						<div className="flex items-center justify-between gap-8 text-sm font-bold text-root-subtle">
 							<span>Peluang Keberhasilan:</span>
@@ -177,7 +233,7 @@ export default function SpionaseModal({ isOpen, countryName, playerCountryDetail
 					</div>
 				</div>
 
-				{/* FOOTER ACTIONS (Diperkecil) */}
+				{/* FOOTER ACTIONS */}
 				<div className="flex flex-col sm:flex-row gap-3 justify-end mt-6 pt-4 border-t border-root-accent/20">
 					<button
 						type="button"
@@ -200,6 +256,15 @@ export default function SpionaseModal({ isOpen, countryName, playerCountryDetail
 					</button>
 				</div>
 			</div>
+
+			{/* MODAL REKRUT MATA-MATA */}
+			<RekrutMataMataModal
+				isOpen={isRekrutModalOpen}
+				currentPersonnelCount={mataMataCount}
+				currentBudget={currentBudget}
+				onClose={() => setIsRekrutModalOpen(false)}
+				onConfirm={handleRecruitConfirm}
+			/>
 		</div>
 	);
 

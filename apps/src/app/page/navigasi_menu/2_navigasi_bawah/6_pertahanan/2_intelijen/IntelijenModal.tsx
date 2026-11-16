@@ -17,6 +17,10 @@ import {
   checkTravelFuel,
   consumeTravelFuel,
 } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
+import {
+  getCovertPersonnel,
+  consumePersonnel,
+} from "@/app/page/detail_negara/3_operasi_militer/covertPersonnelStorage";
 
 interface ModalProps {
   isOpen: boolean;
@@ -66,13 +70,16 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
   // 🔥 Logika aksi untuk Spionase
   const handleSpionaseAction = (target: { countryName: string }, fuelCost: number, pathId: string) => {
     if (!countryDetail || !checkTravelFuel(countryDetail, fuelCost).ok) return;
-    if (anggaran < 10000000) {
-      alert("Kas negara tidak mencukupi untuk misi spionase!");
+    const personnel = getCovertPersonnel();
+    if (personnel.mataMata < 1) {
+      alert("Anda tidak memiliki mata-mata yang tersedia! Silakan rekrut terlebih dahulu.");
       return;
     }
     if (launchedTravelFuelIdsRef.current.has(pathId)) return;
+    if (!consumePersonnel('mataMata', 1)) return;
+
     const updatedDetail = consumeTravelFuel(
-      { ...countryDetail, anggaran: anggaran - 10000000 },
+      countryDetail,
       fuelCost,
       {
         id: pathId,
@@ -91,13 +98,16 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
   // 🔥 Logika aksi untuk Sabotase
   const handleSabotaseAction = (target: { countryName: string }, fuelCost: number, pathId: string) => {
     if (!countryDetail || !checkTravelFuel(countryDetail, fuelCost).ok) return;
-    if (anggaran < 20000000) {
-      alert("Kas negara tidak mencukupi untuk operasi sabotase!");
+    const personnel = getCovertPersonnel();
+    if (personnel.penyabot < 1) {
+      alert("Anda tidak memiliki penyabot yang tersedia! Silakan rekrut terlebih dahulu.");
       return;
     }
     if (launchedTravelFuelIdsRef.current.has(pathId)) return;
+    if (!consumePersonnel('penyabot', 1)) return;
+
     const updatedDetail = consumeTravelFuel(
-      { ...countryDetail, anggaran: anggaran - 20000000 },
+      countryDetail,
       fuelCost,
       {
         id: pathId,

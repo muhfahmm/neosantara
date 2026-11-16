@@ -1,11 +1,12 @@
 "use client"
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { X, Binoculars, Eye } from "lucide-react";
 import { getCovertOperationSuccessChance } from "@/app/page/detail_negara/3_operasi_militer/covertOperationLogic";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import TravelFuelCostPanel from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
 import type { TravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
+import { getCovertPersonnel, COVERT_PERSONNEL_UPDATED_EVENT } from "@/app/page/detail_negara/3_operasi_militer/covertPersonnelStorage";
 
 interface KonfirmasiSpionaseModalsProps {
   isOpen: boolean;
@@ -24,10 +25,24 @@ export default function KonfirmasiSpionaseModals({
   travelFuelStatus,
   onConfirm,
 }: KonfirmasiSpionaseModalsProps) {
+  const [mataMataCount, setMataMataCount] = useState<number>(() => getCovertPersonnel().mataMata);
+
+  useEffect(() => {
+    const syncPersonnel = () => {
+      setMataMataCount(getCovertPersonnel().mataMata);
+    };
+    syncPersonnel();
+    window.addEventListener(COVERT_PERSONNEL_UPDATED_EVENT, syncPersonnel);
+    return () => window.removeEventListener(COVERT_PERSONNEL_UPDATED_EVENT, syncPersonnel);
+  }, [isOpen]);
+
   if (!isOpen || !targetCountry) return null;
 
   const targetName = targetCountry.countryName || "Target";
   const successChance = getCovertOperationSuccessChance('spionase', playerCountryDetail);
+  const hasAgent = mataMataCount >= 1;
+  const isFuelOk = travelFuelStatus ? travelFuelStatus.ok : true;
+  const canLaunch = hasAgent && isFuelOk;
 
   return (
     <NotebookModalWrapper
@@ -71,10 +86,6 @@ export default function KonfirmasiSpionaseModals({
               <p className="text-lg font-black text-root-accent uppercase tracking-wider">
                 Luncurkan Misi Intelijen!
               </p>
-              <p className="text-xs text-root-subtle font-medium leading-relaxed max-w-lg mx-auto">
-                Kirim agen rahasia untuk mengumpulkan data intelijen vital negara <span className="text-root-text font-bold">{targetName}</span>.
-                Biaya operasional diperkirakan sebesar <span className="font-black text-root-accent">10.000.000 NEO</span>.
-              </p>
             </div>
 
             <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-xl shadow-sm flex flex-col items-center">
@@ -86,6 +97,14 @@ export default function KonfirmasiSpionaseModals({
               <p className="text-xs text-root-subtle mt-2">
                 Peluang keberhasilan: <span className="font-black text-root-accent">{successChance}%</span>
               </p>
+              <div className="mt-3 pt-3 border-t border-root-accent/10 w-full flex justify-between items-center text-xs">
+                <span className="text-root-subtle">Mata-Mata Dibutuhkan:</span>
+                <span className="font-bold text-root-text">1 personel</span>
+              </div>
+              <div className="w-full flex justify-between items-center text-xs mt-1">
+                <span className="text-root-subtle">Mata-Mata Tersedia:</span>
+                <span className={`font-bold ${hasAgent ? 'text-root-accent' : 'text-rose-400'}`}>{mataMataCount} personel</span>
+              </div>
             </div>
             {travelFuelStatus && <TravelFuelCostPanel status={travelFuelStatus} />}
           </div>
@@ -98,11 +117,11 @@ export default function KonfirmasiSpionaseModals({
           </button>
           <button
             onClick={onConfirm}
-            disabled={travelFuelStatus ? !travelFuelStatus.ok : false}
-            className="px-6 py-2 rounded-xl bg-root-accent text-root-canvas shadow-lg shadow-root-accent/20 font-black text-xs uppercase tracking-wider hover:bg-root-accent/80 active:scale-95 transition-all cursor-pointer flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={!canLaunch}
+            className="px-6 py-2 rounded-xl bg-root-accent text-root-canvas shadow-lg shadow-root-accent/20 font-black text-xs uppercase tracking-wider hover:bg-root-accent/80 active:scale-95 transition-all cursor-pointer flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-40"
           >
             <Binoculars className="w-4 h-4" />
-            Luncurkan Misi
+            {!hasAgent ? "Mata-Mata Habis" : "Luncurkan Misi"}
           </button>
         </div>
       </div>

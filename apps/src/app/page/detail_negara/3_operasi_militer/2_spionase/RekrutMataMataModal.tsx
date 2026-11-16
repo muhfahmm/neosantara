@@ -1,0 +1,157 @@
+"use client";
+
+import React, { useState } from "react";
+import RootConfirmModal from "@/app/page/root_modals_design_menu/RootConfirmModal";
+import { UserPlus, Eye, Plus, Minus } from "lucide-react";
+import { RECRUIT_COST_PER_PERSON } from "../covertPersonnelStorage";
+
+interface RekrutMataMataModalProps {
+  isOpen: boolean;
+  currentPersonnelCount: number;
+  currentBudget?: number;
+  onClose: () => void;
+  onConfirm: (count: number, totalCost: number) => void;
+}
+
+export default function RekrutMataMataModal({
+  isOpen,
+  currentPersonnelCount,
+  currentBudget = 0,
+  onClose,
+  onConfirm,
+}: RekrutMataMataModalProps) {
+  const [count, setCount] = useState<number>(1);
+
+  if (!isOpen) return null;
+
+  const totalCost = count * RECRUIT_COST_PER_PERSON;
+  const hasBudget = currentBudget >= totalCost;
+  const maxPossible = Math.max(1, Math.floor(currentBudget / RECRUIT_COST_PER_PERSON));
+
+  const handleIncrement = (delta: number) => {
+    setCount(prev => Math.max(1, prev + delta));
+  };
+
+  const handleSetMax = () => {
+    if (maxPossible > 0) {
+      setCount(maxPossible);
+    }
+  };
+
+  return (
+    <RootConfirmModal
+      isOpen={isOpen}
+      title="Rekrut Mata-Mata"
+      icon={<UserPlus className="w-5 h-5 text-root-accent" />}
+      onClose={onClose}
+      onConfirm={() => {
+        if (hasBudget && count > 0) {
+          onConfirm(count, totalCost);
+        }
+      }}
+      confirmLabel={hasBudget ? `Rekrut (${count})` : "EM Tidak Mencukupi"}
+      confirmDisabled={!hasBudget || count <= 0}
+      footerBorderClassName="border-root-accent/20"
+    >
+      <div className="flex flex-col gap-4 font-sans text-white">
+        <p className="text-sm text-root-text leading-relaxed">
+          Tentukan jumlah agen mata-mata yang ingin direkrut untuk mendukung operasi intelijen negara Anda.
+        </p>
+
+        {/* Info Ringkasan Status */}
+        <div className="grid grid-cols-2 gap-2 p-3 bg-root-canvas border border-root-accent/20 rounded-xl text-xs">
+          <div>
+            <span className="text-root-subtle block mb-0.5">Mata-Mata Saat Ini:</span>
+            <span className="font-bold text-root-accent flex items-center gap-1.5">
+              <Eye className="w-3.5 h-3.5" />
+              {currentPersonnelCount} personel
+            </span>
+          </div>
+          <div>
+            <span className="text-root-subtle block mb-0.5">Biaya Per Orang:</span>
+            <span className="font-bold text-white">{RECRUIT_COST_PER_PERSON.toLocaleString('id-ID')} EM</span>
+          </div>
+        </div>
+
+        {/* Counter Pemilihan Jumlah */}
+        <div className="flex flex-col gap-2 p-4 bg-root-canvas border border-root-accent/30 rounded-xl">
+          <div className="flex items-center justify-between text-xs font-bold text-root-subtle">
+            <span>Jumlah Rekrut:</span>
+            <button
+              type="button"
+              onClick={handleSetMax}
+              className="text-[10px] text-root-accent uppercase tracking-wider underline hover:text-[#00e699] cursor-pointer"
+            >
+              Maksimal ({maxPossible})
+            </button>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => handleIncrement(-1)}
+              disabled={count <= 1}
+              className="w-10 h-10 flex items-center justify-center rounded-lg bg-root-surface border border-root-accent/30 text-root-accent hover:bg-root-accent/10 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+            >
+              <Minus className="w-4 h-4" />
+            </button>
+
+            <input
+              type="number"
+              min={1}
+              value={count}
+              onChange={(e) => {
+                const val = parseInt(e.target.value, 10);
+                if (Number.isNaN(val) || val < 1) setCount(1);
+                else setCount(val);
+              }}
+              className="flex-1 h-10 bg-root-surface border border-root-accent/30 rounded-lg text-center font-black text-root-accent text-lg focus:outline-none focus:border-root-accent"
+            />
+
+            <button
+              type="button"
+              onClick={() => handleIncrement(1)}
+              className="w-10 h-10 flex items-center justify-center rounded-lg bg-root-surface border border-root-accent/30 text-root-accent hover:bg-root-accent/10 active:scale-95 cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Preset buttons */}
+          <div className="flex gap-2 pt-1">
+            {[1, 5, 10, 25].map(step => (
+              <button
+                key={step}
+                type="button"
+                onClick={() => setCount(step)}
+                className={`flex-1 py-1 rounded-md text-[11px] font-bold border transition-colors cursor-pointer ${
+                  count === step
+                    ? "bg-root-accent text-root-canvas border-root-accent"
+                    : "bg-root-surface text-root-subtle border-root-accent/20 hover:text-white"
+                }`}
+              >
+                +{step}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Biaya dan Saldo */}
+        <div className="p-3 bg-root-canvas border border-root-accent/20 rounded-xl space-y-1.5 text-xs">
+          <div className="flex justify-between items-center">
+            <span className="text-root-subtle">Total Biaya Rekrut:</span>
+            <span className="font-bold text-root-accent text-sm">
+              {totalCost.toLocaleString('id-ID')} EM
+            </span>
+          </div>
+          <div className="flex justify-between items-center text-[11px]">
+            <span className="text-root-subtle">Kas / Saldo Tersedia:</span>
+            <span className={hasBudget ? "text-root-text font-bold" : "text-rose-400 font-bold"}>
+              {currentBudget.toLocaleString('id-ID', { maximumFractionDigits: 0 })} EM
+            </span>
+          </div>
+        </div>
+      </div>
+    </RootConfirmModal>
+  );
+}

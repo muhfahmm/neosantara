@@ -24,6 +24,7 @@ import HinaModal from './7_hina/hinaModals';
 import ProvinsiOperasiMiliter from '../1_informasi_umum/provinsi_logic/ProvinsiOperasiMiliter';
 import CovertOperationResultModal from './CovertOperationResultModal';
 import { resolveCovertOperation, type CovertOperationResult, type CovertOperationType } from './covertOperationLogic';
+import { consumePersonnel } from './covertPersonnelStorage';
 import SerangBelumSelesaiModals from '../../navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/SerangBelumSelesaiModals';
 import { getActivePlayerAttack, usePlayerAttackStatus, type PlayerAttackStatus } from '../../navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/playerAttackStatus';
 
@@ -43,6 +44,8 @@ interface OperasiMiliterProps {
   actionDates?: Partial<Record<'serang' | 'spionase' | 'sabotase' | 'mintaSerang', string>>;
   onMilitaryActionLaunched?: (action: 'serang' | 'spionase' | 'sabotase') => void;
   updatePlayerCountryDetail?: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
+  currentNetBalance?: number;
+  adjustNetBalance?: (delta: number) => void;
 }
 
 // Komponen tombol aksi (Persis sama dengan menu lainnya)
@@ -59,7 +62,7 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
   </button>
 );
 
-export default function OperasiMiliter({ countryName, selectedCity, selectedCityId, playerCountryDetail, targetCountryDetail, onCloseDetailModal, onCloseCountryDetail, onActionModalStateChange, isOccupiedProvince, occupyingCountry, provinceTension, currentDate, actionDates, onMilitaryActionLaunched, updatePlayerCountryDetail }: OperasiMiliterProps) {
+export default function OperasiMiliter({ countryName, selectedCity, selectedCityId, playerCountryDetail, targetCountryDetail, onCloseDetailModal, onCloseCountryDetail, onActionModalStateChange, isOccupiedProvince, occupyingCountry, provinceTension, currentDate, actionDates, onMilitaryActionLaunched, updatePlayerCountryDetail, currentNetBalance = 0, adjustNetBalance }: OperasiMiliterProps) {
   const [isSerangOpen, setIsSerangOpen] = useState(false);
   const [isAttackInProgressModalOpen, setIsAttackInProgressModalOpen] = useState(false);
   const [blockedPlayerAttack, setBlockedPlayerAttack] = useState<{
@@ -112,6 +115,11 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
   }, [playerCountryDetail]);
 
   const launchCovertOperation = (operation: CovertOperationType, targetCountry: string) => {
+    const personnelType = operation === 'spionase' ? 'mataMata' : 'penyabot';
+    if (!consumePersonnel(personnelType, 1)) {
+      alert(`Anda tidak memiliki ${operation === 'spionase' ? 'mata-mata' : 'penyabot'} yang tersedia! Silakan rekrut terlebih dahulu.`);
+      return;
+    }
     const pathId = `covert-${operation}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
     pendingCovertOperationsRef.current.set(pathId, operation);
     window.dispatchEvent(new CustomEvent('neosantara_diplomacy_path', {
@@ -308,14 +316,30 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         ongoingCity={blockedPlayerAttack?.status.targetCityName}
         requestedTarget={blockedPlayerAttack?.requestedTarget}
       />
-      <SpionaseModal isOpen={isSpionaseOpen} countryName={countryName} playerCountryDetail={playerCountryDetail} onClose={() => setIsSpionaseOpen(false)} onConfirm={(target) => {
-        onMilitaryActionLaunched?.('spionase');
-        launchCovertOperation('spionase', target);
-      }} />
-      <SabotaseModal isOpen={isSabotaseOpen} countryName={countryName} playerCountryDetail={playerCountryDetail} onClose={() => setIsSabotaseOpen(false)} onConfirm={(target) => {
-        onMilitaryActionLaunched?.('sabotase');
-        launchCovertOperation('sabotase', target);
-      }} />
+      <SpionaseModal
+        isOpen={isSpionaseOpen}
+        countryName={countryName}
+        playerCountryDetail={playerCountryDetail}
+        currentBudget={currentNetBalance}
+        adjustNetBalance={adjustNetBalance}
+        onClose={() => setIsSpionaseOpen(false)}
+        onConfirm={(target) => {
+          onMilitaryActionLaunched?.('spionase');
+          launchCovertOperation('spionase', target);
+        }}
+      />
+      <SabotaseModal
+        isOpen={isSabotaseOpen}
+        countryName={countryName}
+        playerCountryDetail={playerCountryDetail}
+        currentBudget={currentNetBalance}
+        adjustNetBalance={adjustNetBalance}
+        onClose={() => setIsSabotaseOpen(false)}
+        onConfirm={(target) => {
+          onMilitaryActionLaunched?.('sabotase');
+          launchCovertOperation('sabotase', target);
+        }}
+      />
       <PerangNuklirModal
         isOpen={isNuklirOpen}
         countryName={countryName}

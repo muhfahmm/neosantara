@@ -995,6 +995,8 @@ export function CountryDetailModal({
                 provinceTension={provinceTensionValue}
                 currentDate={currentDate}
                 updatePlayerCountryDetail={setCountryDetail}
+                currentNetBalance={playerEffectiveNetBalance}
+                adjustNetBalance={adjustPlayerNetBalance}
               />
             )}
 
