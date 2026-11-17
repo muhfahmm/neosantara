@@ -462,47 +462,6 @@
   height: 13px;
 }
 
-.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-toolbar {
-  flex-direction: row !important;
-  flex-wrap: nowrap !important;
-  align-items: center !important;
-  gap: 5px !important;
-  padding: 6px 8px !important;
-}
-
-.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-tabs {
-  height: auto !important;
-  flex: 0 1 auto;
-  flex-wrap: nowrap !important;
-  gap: 2px !important;
-  padding: 3px !important;
-}
-
-.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-tabs>button {
-  min-width: 0;
-  padding: 5px 6px !important;
-  font-size: 9px !important;
-  letter-spacing: 0.04em !important;
-}
-
-.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-tabs>button svg {
-  width: 13px;
-  height: 13px;
-}
-
-.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-search {
-  width: clamp(92px, 18vw, 150px) !important;
-  min-width: 92px;
-  flex: 0 1 150px;
-}
-
-.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-search-input {
-  height: 29px !important;
-  padding-left: 27px !important;
-  padding-right: 6px !important;
-  font-size: 10px !important;
-}
-
 .notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-results {
   display: flex;
   flex-direction: column;

@@ -1,9 +1,9 @@
 "use client"
 import React, { useEffect, useRef, useState } from "react";
-import { Eye, Bomb, Search } from "lucide-react";
+import { Eye, Bomb } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
-import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
+import RootModalSearchToolbar from "@/app/page/root_modals_design_menu/RootModalSearchToolbar";
 import MenuInfoButton from "../../MenuInfoButton";
 import Spionase from "./table_menu/1_tabel_spionase";
 import Sabotase from "./table_menu/2_tabel_sabotase";
@@ -214,10 +214,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
           </div>
 
         <div className="relative z-10 flex min-h-0 min-w-0 flex-1 flex-col bg-root-surface">
-          <div className="intelijen-toolbar flex shrink-0 flex-col gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-            <RootModalTabs
-              compact
-              className="intelijen-tabs w-fit"
+            <RootModalSearchToolbar
               items={[
                 {
                   label: "Spionase",
@@ -232,19 +229,11 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
                   onClick: () => setActiveTab("sabotase"),
                 },
               ]}
+              searchValue={searchQuery}
+              onSearchChange={setSearchQuery}
+              searchPlaceholder="Cari negara target..."
+              searchAriaLabel="Cari negara target"
             />
-            <div className="intelijen-search relative w-full sm:max-w-64">
-              <Search aria-hidden="true" className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-root-accent/60" />
-              <input
-                type="search"
-                aria-label="Cari negara target"
-                placeholder="Cari negara target..."
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-                className="intelijen-search-input h-9 w-full rounded-lg border border-root-accent/30 bg-[#051111] py-1 pl-8 pr-3 text-xs text-root-text placeholder-root-subtle transition-colors focus:border-root-accent focus:outline-none"
-              />
-            </div>
-          </div>
           <div className="intelijen-results min-h-0 min-w-0 flex-1 overflow-y-auto p-4 sm:p-6">
             <div className="h-full min-h-0 w-full">
               {activeTab === 'spionase' && (
