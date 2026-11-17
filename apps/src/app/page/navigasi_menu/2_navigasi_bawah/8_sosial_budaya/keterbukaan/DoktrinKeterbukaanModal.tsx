@@ -269,7 +269,47 @@ export default function DoktrinKeterbukaanModal({
             <MenuInfoButton
               title="Doktrin & Keterbukaan"
               description="Atur kebijakan keterbukaan negara pada kebebasan sipil dan HAM, media dan informasi, serta perbatasan dan geopolitik. Perubahan indikator memengaruhi karakter kebijakan dalam negeri dan hubungan dengan dunia."
-            />
+            >
+              <div className="mt-4 space-y-3 rounded-2xl border border-root-accent/20 bg-root-canvas p-4 shadow-md sm:p-5">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-root-subtle">
+                      Status Keterbukaan Nasional
+                    </span>
+                    <div className="mt-0.5 flex flex-wrap items-center gap-2">
+                      <h3 className="text-base font-bold text-root-text sm:text-lg">{regime.label}</h3>
+                      <span className={`rounded border px-2 py-0.5 text-[11px] font-bold ${regime.color}`}>
+                        {regime.badge}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="block text-xs font-bold uppercase text-root-subtle">Indeks Keterbukaan</span>
+                    <span className="text-xl font-black text-root-accent sm:text-2xl">{overallScore} / 100</span>
+                  </div>
+                </div>
+                <p className="text-xs leading-relaxed text-root-subtle">{regime.desc}</p>
+                <div className="space-y-1 pt-1">
+                  <div className="flex justify-between text-[10px] font-bold uppercase">
+                    <span className="flex items-center gap-1 text-rose-400">
+                      <Lock className="h-3 w-3" /> Tertutup Total (0%)
+                    </span>
+                    <span className="flex items-center gap-1 text-root-accent">
+                      Terbuka Bebas (100%) <Unlock className="h-3 w-3" />
+                    </span>
+                  </div>
+                  <div className="relative h-2.5 w-full overflow-hidden rounded-full border border-root-accent/20 bg-root-surface sm:h-3">
+                    <div
+                      className="h-full transition-all duration-300"
+                      style={{
+                        width: `${overallScore}%`,
+                        backgroundColor: getRelationColor(overallScore),
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </MenuInfoButton>
             <RootModalCloseButton onClick={onClose} />
           </div>
         </div>
@@ -286,50 +326,6 @@ export default function DoktrinKeterbukaanModal({
             icon: <tab.icon className="h-4 w-4 shrink-0" />,
           }))}
         >
-            {/* OVERVIEW SPECTRUM BANNER */}
-            <div className="p-4 sm:p-5 bg-root-canvas border border-root-accent/20 rounded-2xl space-y-3 shadow-md">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <span className="text-[10px] font-bold text-root-subtle uppercase tracking-wider block">
-                    Status Keterbukaan Nasional
-                  </span>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <h3 className="text-base sm:text-lg font-bold text-root-text">{regime.label}</h3>
-                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded border ${regime.color}`}>
-                      {regime.badge}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="text-right">
-                  <span className="text-xs font-bold text-root-subtle uppercase block">Indeks Keterbukaan</span>
-                  <span className="text-xl sm:text-2xl font-black text-root-accent">{overallScore} / 100</span>
-                </div>
-              </div>
-
-              <p className="text-xs text-root-subtle leading-relaxed">{regime.desc}</p>
-
-              {/* Progress Bar Visual */}
-              <div className="space-y-1 pt-1">
-                <div className="flex justify-between text-[10px] font-bold uppercase">
-                  <span className="flex items-center gap-1 text-rose-400">
-                    <Lock className="w-3 h-3" /> Tertutup Total (0%)
-                  </span>
-                  <span className="flex items-center gap-1 text-root-accent">
-                    Terbuka Bebas (100%) <Unlock className="w-3 h-3" />
-                  </span>
-                </div>
-                <div className="h-2.5 sm:h-3 w-full bg-root-surface rounded-full overflow-hidden border border-root-accent/20 relative">
-                  <div
-                    className="h-full transition-all duration-300"
-                    style={{
-                      width: `${overallScore}%`,
-                      backgroundColor: getRelationColor(overallScore),
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
             {/* TAB 1: KEBEBASAN SIPIL & HAM */}
             {activeTab === "civil" && (
               <div className="space-y-4">

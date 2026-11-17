@@ -606,73 +606,6 @@ export default function TempatUmumModal({
                 )}
               </div>
 
-              <div className="mt-8 border-t border-root-accent/20 pt-6 space-y-4">
-                {/* Ringkasan Indeks Kepuasan Rakyat */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch w-full">
-                  <div className="root-satisfaction-index rounded-2xl border border-root-accent/30 bg-root-canvas p-4 shadow-md flex flex-col justify-between">
-                    <div className="flex justify-between items-center gap-2">
-                      <span className="root-satisfaction-index-title font-black text-root-subtle uppercase tracking-wider">
-                        Indeks Kepuasan Rata-rata
-                      </span>
-                      <span className="root-satisfaction-index-value font-black text-root-accent">
-                        {averageServiceSatisfaction} / 100
-                      </span>
-                    </div>
-                    <div className="w-full h-2.5 bg-root-surface border border-root-accent/20 rounded-full mt-2 overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all duration-200 ${
-                          averageServiceSatisfaction <= 40
-                            ? "bg-rose-500"
-                            : averageServiceSatisfaction <= 75
-                            ? "bg-amber-400"
-                            : "bg-root-accent"
-                        }`}
-                        style={{ width: `${averageServiceSatisfaction}%` }}
-                      />
-                    </div>
-                  </div>
-                  {/* Indeks Kepuasan Rakyat */}
-                  {(() => {
-                    const activeCategory = calculatedCategories.find((cat) => cat.id === activeTabId);
-                    if (!activeCategory) return null;
-
-                    const targetRatio = PUBLIC_SERVICE_CATEGORIES[activeCategory.id].targetRatio;
-                    const percentageMet = Math.min(100, (activeCategory.index / targetRatio) * 100);
-                    const satisfactionScore = publicServiceCategoryScores[activeCategory.id];
-
-                    return (
-                      <div className="root-satisfaction-index rounded-2xl border border-root-accent/30 bg-root-canvas p-4 shadow-md flex flex-col justify-between">
-                        <div>
-                          <div className="flex justify-between items-center gap-2">
-                            <span className="root-satisfaction-index-title font-black text-root-subtle uppercase tracking-wider">
-                              {activeCategory.id === "kesehatan" || activeCategory.id === "penegakan_hukum"
-                                ? `Kepuasan Rakyat (${activeCategory.label})`
-                                : `Indeks Kepuasan (${activeCategory.label})`}
-                            </span>
-                            <span className="root-satisfaction-index-value font-black text-root-accent">
-                              {satisfactionScore} / 100
-                            </span>
-                          </div>
-                          
-                          <div className="w-full h-2.5 bg-root-surface border border-root-accent/20 rounded-full mt-2 overflow-hidden">
-                            <div
-                              className={`h-full rounded-full transition-all duration-200 ${
-                                satisfactionScore <= 40
-                                  ? "bg-rose-500"
-                                  : satisfactionScore <= 75
-                                  ? "bg-amber-400"
-                                  : "bg-root-accent"
-                              }`}
-                              style={{ width: `${satisfactionScore}%` }}
-                            />
-                          </div>
-
-                        </div>
-                      </div>
-                    );
-                  })()}
-                </div>
-              </div>
             </RootModalSidebarLayout>
         </div>
       </NotebookModalWrapper>}
@@ -684,11 +617,71 @@ export default function TempatUmumModal({
         description={selectedGroupInfo?.description}
       >
         {selectedGroupInfo && (
-          <div className="mt-3 flex items-center gap-2 rounded-xl border border-root-accent/30 bg-root-canvas px-3 py-2">
-            <Users aria-hidden="true" className="h-4 w-4 shrink-0 text-root-accent" />
-            <div>
-              <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Kapasitas Standar AI</p>
-              <p className="text-xs font-black text-root-accent">1 Bangunan: {selectedGroupInfo.capacity}</p>
+          <div className="mt-3 space-y-3">
+            <div className="flex items-center gap-2 rounded-xl border border-root-accent/30 bg-root-canvas px-3 py-2">
+              <Users aria-hidden="true" className="h-4 w-4 shrink-0 text-root-accent" />
+              <div>
+                <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Kapasitas Standar AI</p>
+                <p className="text-xs font-black text-root-accent">1 Bangunan: {selectedGroupInfo.capacity}</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="root-satisfaction-index flex flex-col justify-between rounded-2xl border border-root-accent/30 bg-root-canvas p-4 shadow-md">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="root-satisfaction-index-title font-black uppercase tracking-wider text-root-subtle">
+                    Indeks Kepuasan Rata-rata
+                  </span>
+                  <span className="root-satisfaction-index-value font-black text-root-accent">
+                    {averageServiceSatisfaction} / 100
+                  </span>
+                </div>
+                <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full border border-root-accent/20 bg-root-surface">
+                  <div
+                    className={`h-full rounded-full transition-all duration-200 ${
+                      averageServiceSatisfaction <= 40
+                        ? "bg-rose-500"
+                        : averageServiceSatisfaction <= 75
+                          ? "bg-amber-400"
+                          : "bg-root-accent"
+                    }`}
+                    style={{ width: `${averageServiceSatisfaction}%` }}
+                  />
+                </div>
+              </div>
+
+              {(() => {
+                const activeCategory = calculatedCategories.find((category) => category.id === activeTabId);
+                if (!activeCategory) return null;
+
+                const satisfactionScore = publicServiceCategoryScores[activeCategory.id];
+                return (
+                  <div className="root-satisfaction-index flex flex-col justify-between rounded-2xl border border-root-accent/30 bg-root-canvas p-4 shadow-md">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="root-satisfaction-index-title font-black uppercase tracking-wider text-root-subtle">
+                        {activeCategory.id === "kesehatan" || activeCategory.id === "penegakan_hukum"
+                          ? `Kepuasan Rakyat (${activeCategory.label})`
+                          : `Indeks Kepuasan (${activeCategory.label})`}
+                      </span>
+                      <span className="root-satisfaction-index-value font-black text-root-accent">
+                        {satisfactionScore} / 100
+                      </span>
+                    </div>
+                    <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full border border-root-accent/20 bg-root-surface">
+                      <div
+                        className={`h-full rounded-full transition-all duration-200 ${
+                          satisfactionScore <= 40
+                            ? "bg-rose-500"
+                            : satisfactionScore <= 75
+                              ? "bg-amber-400"
+                              : "bg-root-accent"
+                        }`}
+                        style={{ width: `${satisfactionScore}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         )}

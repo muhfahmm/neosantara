@@ -539,33 +539,6 @@ export default function HunianPermukimanModal({
               </div>
 
               {/* FOOTER STATISTIK */}
-              <div className="mt-8 border-t border-root-accent/20 pt-6 space-y-4">
-                {/* 🔥 INDEKS KEPUASAN PERUMAHAN */}
-                <div className="root-satisfaction-index p-5 rounded-xl border border-root-accent/30 bg-root-canvas shadow-md">
-                  <div className="flex justify-between items-center">
-                    <span className="root-satisfaction-index-title font-black text-root-subtle uppercase tracking-wider">
-                      Indeks Kepuasan Rakyat (Perumahan)
-                    </span>
-                    <span className="root-satisfaction-index-value font-black text-root-accent">
-                      {housingSatisfaction} / 100
-                    </span>
-                  </div>
-                  <div className="w-full h-3 bg-root-surface border border-root-accent/20 rounded-full mt-3 overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-200 ${
-                        housingSatisfaction <= 40
-                          ? "bg-rose-500"
-                          : housingSatisfaction <= 75
-                          ? "bg-amber-400"
-                          : "bg-root-accent"
-                      }`}
-                      style={{ width: `${housingSatisfaction}%` }}
-                    />
-                  </div>
-                </div>
-
-
-              </div>
             </RootModalSidebarLayout>
         </div>
       </NotebookModalWrapper>}
@@ -707,6 +680,28 @@ export default function HunianPermukimanModal({
                 </div>
               )}
             </section>
+            <div className="root-satisfaction-index rounded-xl border border-root-accent/30 bg-root-canvas p-4 shadow-md">
+              <div className="flex items-center justify-between gap-3">
+                <span className="root-satisfaction-index-title font-black uppercase tracking-wider text-root-subtle">
+                  Indeks Kepuasan Rakyat (Perumahan)
+                </span>
+                <span className="root-satisfaction-index-value shrink-0 font-black text-root-accent">
+                  {housingSatisfaction} / 100
+                </span>
+              </div>
+              <div className="mt-3 h-3 w-full overflow-hidden rounded-full border border-root-accent/20 bg-root-surface">
+                <div
+                  className={`h-full rounded-full transition-all duration-200 ${
+                    housingSatisfaction <= 40
+                      ? "bg-rose-500"
+                      : housingSatisfaction <= 75
+                        ? "bg-amber-400"
+                        : "bg-root-accent"
+                  }`}
+                  style={{ width: `${housingSatisfaction}%` }}
+                />
+              </div>
+            </div>
           </div>
         )}
       </MenuInfoModal>

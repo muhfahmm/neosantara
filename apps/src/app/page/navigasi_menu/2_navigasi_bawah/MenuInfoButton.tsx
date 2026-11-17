@@ -4,13 +4,15 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { Info } from "lucide-react";
 import MenuInfoModal from "./MenuInfoModal";
+import type { ReactNode } from "react";
 
 interface MenuInfoButtonProps {
   title: string;
   description: string;
+  children?: ReactNode;
 }
 
-export default function MenuInfoButton({ title, description }: MenuInfoButtonProps) {
+export default function MenuInfoButton({ title, description, children }: MenuInfoButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -30,7 +32,9 @@ export default function MenuInfoButton({ title, description }: MenuInfoButtonPro
           onClose={() => setIsOpen(false)}
           title={`Informasi ${title}`}
           description={description}
-        />,
+        >
+          {children}
+        </MenuInfoModal>,
         document.body
       )}
     </>
