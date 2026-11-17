@@ -15,7 +15,7 @@ interface OrgIntlInfoModalProps {
   countryDetail?: Record<string, unknown> | null;
 }
 
-const ORGANIZATION_INFO: Record<string, { description: string; focus: string; benefit?: string }> = {
+const ORGANIZATION_INFO: Record<string, { description: string; focus: string; requirement?: string; benefit?: string }> = {
   "Interpol": {
     description: "Organisasi yang membantu kepolisian negara anggota bekerja sama dalam menangani kejahatan lintas negara.",
     focus: "Pertukaran informasi kepolisian, koordinasi bantuan internasional, serta penindakan kejahatan lintas batas.",
@@ -64,46 +64,55 @@ const ORGANIZATION_INFO: Record<string, { description: string; focus: string; be
   "Perhimpunan Bangsa-Bangsa Asia Tenggara (ASEAN)": {
     description: "Organisasi regional untuk mendorong kerja sama dan integrasi di antara negara-negara Asia Tenggara.",
     focus: "Kerja sama politik-keamanan, ekonomi, dan sosial-budaya kawasan.",
+    requirement: "Negara harus berada di kawasan Asia Tenggara.",
     benefit: "Kecepatan Pembangunan +10%",
   },
   "Uni Eropa (EU)": {
     description: "Persatuan politik dan ekonomi negara-negara Eropa dengan lembaga dan kebijakan bersama di berbagai bidang.",
     focus: "Pasar bersama, kebijakan lintas negara, dan kerja sama regional.",
+    requirement: "Negara harus berada di kawasan Eropa.",
     benefit: "Penerimaan Pajak +10%",
   },
   "Liga Arab": {
     description: "Organisasi regional yang mendorong koordinasi dan hubungan antarnegara anggota Arab.",
     focus: "Konsultasi dan kerja sama politik, ekonomi, budaya, serta sosial.",
+    requirement: "Negara harus berada di kawasan Timur Tengah atau Afrika Utara.",
     benefit: "Pengaruh Diplomasi +5 Suara PBB",
   },
   "Uni Afrika (AU)": {
     description: "Organisasi kontinental yang mendorong persatuan, perdamaian, dan pembangunan di Afrika.",
     focus: "Integrasi Afrika, penyelesaian konflik, dan pembangunan berkelanjutan.",
+    requirement: "Negara harus berada di benua Afrika.",
     benefit: "Kecepatan Pembangunan +10%",
   },
   "Organisasi Kerja Sama Islam (OKI)": {
     description: "Organisasi antar-pemerintah yang memperkuat kerja sama dan solidaritas di antara negara-negara anggotanya.",
     focus: "Konsultasi politik, pembangunan, bantuan kemanusiaan, dan isu dunia Islam.",
+    requirement: "Agama utama negara harus Islam.",
     benefit: "Produksi Pangan +10%",
   },
   "BRICS (Brasil, Rusia, India, China, Afrika Selatan)": {
     description: "Forum kerja sama negara-negara BRICS untuk memperkuat dialog dan koordinasi di berbagai isu global.",
     focus: "Kerja sama ekonomi, pembangunan, dan koordinasi dalam tata kelola global.",
+    requirement: "Negara harus memiliki skor hubungan lebih dari 50 dengan China atau Rusia.",
     benefit: "Pendapatan Negara +10%",
   },
   "Pakta Pertahanan Atlantik Utara (NATO)": {
     description: "Aliansi pertahanan kolektif negara-negara anggota di kawasan Atlantik Utara dan Eropa.",
     focus: "Konsultasi keamanan dan pertahanan kolektif berdasarkan perjanjian aliansi.",
+    requirement: "Negara harus berada di Amerika Utara atau Eropa.",
     benefit: "Kekuatan Militer +15%",
   },
   "Organisasi Negara-Negara Pengekspor Minyak Bumi (OPEC)": {
     description: "Organisasi negara-negara pengekspor minyak yang mengoordinasikan kebijakan perminyakan para anggotanya.",
     focus: "Koordinasi kebijakan minyak dan stabilitas pasar energi.",
+    requirement: "Negara harus memiliki produksi minyak bumi.",
     benefit: "Harga Minyak +20%",
   },
   "Kelompok Duapuluh (G20)": {
     description: "Forum kerja sama ekonomi internasional bagi ekonomi besar dan Uni Eropa serta Uni Afrika.",
     focus: "Koordinasi ekonomi global, stabilitas keuangan, dan pembangunan.",
+    requirement: "Negara harus termasuk dalam 20 besar berdasarkan PDB dunia.",
     benefit: "Pendapatan Negara +20%",
   },
 };
@@ -184,6 +193,12 @@ export default function OrgIntlInfoModal({
             <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-root-accent">Tentang organisasi</h3>
             <p className="text-sm leading-relaxed text-root-body">{info.description}</p>
           </section>
+          {info.requirement && (
+            <section className="rounded-xl border border-root-accent/20 bg-root-canvas p-4">
+              <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-root-accent">Syarat Masuk</h3>
+              <p className="text-sm leading-relaxed text-root-body">{info.requirement}</p>
+            </section>
+          )}
           <section className="rounded-xl border border-root-accent/20 bg-root-canvas p-4">
             <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-root-accent">Fokus kerja</h3>
             <p className="text-sm leading-relaxed text-root-body">{info.focus}</p>
