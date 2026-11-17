@@ -1,4 +1,4 @@
-// ISO alpha-2 groups follow the UN M49 overview: https://unstats.un.org/unsd/methodology/m49/overview/
+// ISO alpha-2 groups follow the UN Statistics Division regional overview: https://unstats.un.org/unsd/methodology/m49/overview/
 export const SOUTH_EAST_ASIA_ISO_CODES = new Set([
   "bn", "kh", "id", "la", "my", "mm", "ph", "sg", "th", "tl", "vn",
 ]);

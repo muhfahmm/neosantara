@@ -383,8 +383,8 @@ function checkArabLeague(countryName: string, countryIso: string): MembershipReq
     requirement,
     passed,
     passed
-      ? `Negara kamu (${countryName}) berada di kawasan Western Asia atau Northern Africa menurut UN M49.`
-      : `Negara kamu (${countryName}) tidak berada di kawasan Western Asia atau Northern Africa menurut UN M49.`
+      ? `Negara kamu (${countryName}) berada di Timur Tengah atau Afrika Utara.`
+      : `Negara kamu (${countryName}) tidak berada di Timur Tengah atau Afrika Utara.`
   );
 }
 
