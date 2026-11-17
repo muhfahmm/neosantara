@@ -129,7 +129,7 @@ export default function DoktrinKeterbukaanModal({
       return {
         label: "Negara Globalis & Pasar Bebas",
         color: "bg-teal-950/80 text-root-accent border-root-accent/50",
-        badge: "Tipe Amerika Serikat / Singapura",
+        badge: "Hegemon Pasar Bebas",
         desc: "Jaminan penuh HAM, kebebasan pers & demonstrasi total, internet terbuka penuh, visa bebas, dan pasar bebas tanpa batas.",
       };
     }
