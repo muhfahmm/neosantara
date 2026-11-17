@@ -105,7 +105,9 @@ export default function KonfirmasiSabotaseModals({
         <NotebookModalWrapper
           onClose={handleClose}
           compact
+          contentSized
           zIndexClass="z-[60]"
+          frameClassName="covert-operation-confirmation-frame"
         >
       <div className="flex flex-col font-sans animate-in fade-in zoom-in-95 duration-150">
         

@@ -16,6 +16,7 @@ interface NotebookModalWrapperProps {
   squareCorners?: boolean;
   hideWhenInfoModalOpen?: boolean;
   frameClassName?: string;
+  contentSized?: boolean;
 }
 
 export function NotebookModalWrapper({
@@ -28,6 +29,7 @@ export function NotebookModalWrapper({
   squareCorners = false,
   hideWhenInfoModalOpen = true,
   frameClassName = '',
+  contentSized = false,
 }: NotebookModalWrapperProps) {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const decorationsCount = ringCount ?? (compact ? 5 : 11);
@@ -58,12 +60,12 @@ export function NotebookModalWrapper({
         <RootNotebookDecorations count={decorationsCount} />
 
         {/* Main Panel Sheet — Green Theme */}
-        <div className={`notebook-modal-sheet flex-1 min-h-0 min-w-0 bg-root-surface border-[3px] border-root-accent/20 ${squareCorners ? 'rounded-none' : 'rounded-r-xl'} shadow-inner relative flex flex-col overflow-hidden`}>
+        <div className={`notebook-modal-sheet ${contentSized ? 'notebook-modal-content-sized-sheet' : 'flex-1 min-h-0'} min-w-0 bg-root-surface border-[3px] border-root-accent/20 ${squareCorners ? 'rounded-none' : 'rounded-r-xl'} shadow-inner relative flex flex-col overflow-hidden`}>
           {/* Subtle radial glow */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
           {/* Render Actual Modal Children */}
-          <div className="notebook-modal-content flex-1 min-h-0 overflow-y-auto flex flex-col min-w-0 relative z-10">
+          <div className={`notebook-modal-content ${contentSized ? 'notebook-modal-content-sized-content' : 'flex-1 min-h-0 overflow-y-auto'} flex flex-col min-w-0 relative z-10`}>
             {children}
           </div>
         </div>

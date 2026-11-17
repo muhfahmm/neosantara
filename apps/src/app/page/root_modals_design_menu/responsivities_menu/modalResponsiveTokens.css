@@ -875,6 +875,23 @@
   min-height: 0;
 }
 
+.notebook-modal-frame.covert-operation-confirmation-frame > .modal-responsive-shell,
+.notebook-modal-frame.covert-operation-confirmation-frame[data-viewport-mode] > .modal-responsive-shell {
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  flex: 0 1 auto !important;
+}
+
+.notebook-modal-frame.covert-operation-confirmation-frame .notebook-modal-content-sized-sheet,
+.notebook-modal-frame.covert-operation-confirmation-frame .notebook-modal-content-sized-content {
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  flex: 0 1 auto !important;
+  overflow: visible !important;
+}
+
 .notebook-modal-frame:has(.building-modal-layout) > .modal-responsive-shell {
   width: min(100%, var(--modal-max-width)) !important;
   max-width: var(--modal-max-width) !important;
