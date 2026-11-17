@@ -1,4 +1,5 @@
 "use client"
+import RootTable from "@/app/page/root_modals_design_menu/RootTable";
 import React, { useState, useEffect } from "react";
 import { TrendingUp, User, ChevronUp, ChevronDown, Info } from "lucide-react";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
@@ -381,7 +382,7 @@ function AllCountriesGDP({
     <div className="flex-1 min-h-0 flex flex-col space-y-1 sm:space-y-2">
       <div className={`flex min-h-0 flex-1 flex-col overflow-hidden border border-root-accent/30 bg-root-canvas ${rootBorderRadius.card}`}>
         <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden neon-scrollbar">
-          <table className="w-full table-fixed text-xs text-left">
+          <RootTable className="w-full table-fixed text-xs text-left">
             <thead className="pdb-table-header bg-root-canvas border-b border-root-accent/30 sticky top-0 z-10">
               <tr>
                 <th className="w-[15%] px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-root-accent uppercase tracking-wider text-center leading-tight">No</th>
@@ -390,7 +391,7 @@ function AllCountriesGDP({
               </tr>
             </thead>
             <tbody className="divide-y divide-root-accent/10">{renderAllRows()}</tbody>
-          </table>
+          </RootTable>
         </div>
       </div>
     </div>

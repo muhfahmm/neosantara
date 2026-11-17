@@ -1,4 +1,5 @@
 "use client";
+import RootTable from "@/app/page/root_modals_design_menu/RootTable";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Binoculars, ChevronUp, ChevronDown } from "lucide-react";
@@ -188,10 +189,10 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, update
     <div className="flex h-full min-h-0 w-full flex-col">
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-root-accent/20 bg-root-canvas shadow-sm">
         <div className="intelijen-table-viewport min-h-0 flex-1 overflow-auto">
-          <table className="intelijen-table w-full text-xs md:text-[10px] lg:text-[11px] 2xl:text-xs">
+          <RootTable className="intelijen-table w-full text-xs md:text-[10px] lg:text-[11px] 2xl:text-xs">
             <thead className="bg-root-canvas border-b border-root-accent/20 sticky top-0 z-10 text-[9px] sm:text-[10px] lg:text-xs whitespace-nowrap">
               <tr>
-                <th className="px-2 py-1.5 text-left font-black text-root-accent uppercase tracking-normal sm:tracking-wider w-10 bg-root-canvas">Rank</th>
+                <th className="px-2 py-1.5 text-left font-black text-root-accent uppercase tracking-normal sm:tracking-wider w-10 bg-root-canvas">No</th>
                 <th className="px-2 py-1.5 text-left font-black text-root-accent uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors bg-root-canvas" onClick={() => handleSort('countryName')}>
                   Negara{getSortArrow('countryName')}
                 </th>
@@ -266,7 +267,7 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, update
                 );
               })}
             </tbody>
-          </table>
+          </RootTable>
         </div>
       </div>
 

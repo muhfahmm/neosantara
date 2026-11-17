@@ -1,4 +1,5 @@
 "use client";
+import RootTable from "@/app/page/root_modals_design_menu/RootTable";
 import React from "react";
 
 interface TabelDalamPembangunanProps {
@@ -25,7 +26,7 @@ export default function TabelDalamPembangunan({ entries }: TabelDalamPembangunan
   }
 
   return (
-    <table className="w-full text-xs bg-root-canvas">
+    <RootTable className="w-full text-xs bg-root-canvas">
       <thead className="bg-root-canvas text-root-accent border-b border-root-accent/20">
         <tr>
           <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">No</th>
@@ -46,6 +47,6 @@ export default function TabelDalamPembangunan({ entries }: TabelDalamPembangunan
           </tr>
         ))}
       </tbody>
-    </table>
+    </RootTable>
   );
 }

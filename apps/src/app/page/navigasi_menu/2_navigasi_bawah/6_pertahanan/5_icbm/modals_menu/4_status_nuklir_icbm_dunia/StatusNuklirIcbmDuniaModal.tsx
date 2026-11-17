@@ -1,4 +1,5 @@
 "use client"
+import RootTable from "@/app/page/root_modals_design_menu/RootTable";
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useMemo, useState, useEffect } from "react";
 import { Search, Rocket, ShieldAlert, Globe } from "lucide-react";
@@ -425,7 +426,7 @@ export default function StatusNuklirIcbmDuniaModal({
         <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-root-surface custom-scrollbar flex flex-col gap-4">
           <div className="overflow-hidden border border-root-accent/20 rounded-xl bg-root-canvas shadow-inner flex flex-col flex-1">
             <div className="overflow-y-auto custom-scrollbar flex-1">
-              <table className="w-full text-xs">
+              <RootTable className="w-full text-xs">
                 <thead className="bg-root-canvas text-root-accent border-b border-root-accent/20 sticky top-0 z-10">
                   <tr>
                     <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">No</th>
@@ -518,7 +519,7 @@ export default function StatusNuklirIcbmDuniaModal({
                     </tr>
                   )}
                 </tbody>
-              </table>
+              </RootTable>
             </div>
           </div>
         </div>

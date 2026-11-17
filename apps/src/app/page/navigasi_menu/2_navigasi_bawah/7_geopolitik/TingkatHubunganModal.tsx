@@ -1,4 +1,5 @@
 "use client"
+import RootTable from "@/app/page/root_modals_design_menu/RootTable";
 
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import { getRelationBadge, RELATION_TIERS } from '@/app/logic/relationTiers';
@@ -217,7 +218,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
           <div className="flex-1 min-h-0 flex flex-col p-6 bg-root-surface relative z-10">
             <div className="flex-1 min-h-0 bg-root-canvas border border-root-accent/20 rounded-xl overflow-hidden shadow-sm flex flex-col">
               <div className="flex-1 min-h-0 overflow-y-auto neon-scrollbar">
-                <table className="min-w-full table-auto border-separate border-spacing-0 text-left">
+                <RootTable className="min-w-full table-auto border-separate border-spacing-0 text-left">
                   <thead className="sticky top-0 z-10 bg-root-canvas">
                     <tr className="border-b border-root-accent/20">
                       <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 border-b border-root-accent/20 text-center cursor-pointer hover:bg-root-accent/10 transition text-[9px] sm:text-[10px] text-root-accent font-black uppercase tracking-wider whitespace-nowrap w-14" onClick={() => handleSort('no')}>No{renderSortArrow('no')}</th>
@@ -274,7 +275,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                       })
                     )}
                   </tbody>
-                </table>
+                </RootTable>
               </div>
             </div>
           </div>

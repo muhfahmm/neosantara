@@ -1,4 +1,5 @@
 "use client";
+import RootTable from "@/app/page/root_modals_design_menu/RootTable";
 
 import { useEffect, useMemo, useState } from "react";
 import { Search, Users } from "lucide-react";
@@ -225,7 +226,7 @@ export default function TabelPopulasiNegara({
 
       {!loading && !error && (
         <div className={`mt-3 max-h-[50vh] overflow-auto ${rootBorderRadius.card} border border-root-accent/15`}>
-          <table className="w-full min-w-[420px] border-collapse text-left">
+          <RootTable className="w-full min-w-[420px] border-collapse text-left">
             <thead className="sticky top-0 z-10 bg-root-canvas">
               <tr className={`${rootModalTypography.label} text-left`}>
                 <th scope="col" className="px-3 py-2.5">No.</th>
@@ -275,7 +276,7 @@ export default function TabelPopulasiNegara({
                 </tr>
               )}
             </tbody>
-          </table>
+          </RootTable>
         </div>
       )}
     </section>

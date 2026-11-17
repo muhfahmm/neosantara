@@ -1,4 +1,5 @@
 "use client"
+import RootTable from "@/app/page/root_modals_design_menu/RootTable";
 import React, { useEffect, useMemo, useState } from "react";
 import { Vote, Search } from "lucide-react";
 import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
@@ -185,7 +186,7 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
       </div>
 
       <div className="overflow-x-auto max-h-[450px] overflow-y-auto neon-scrollbar">
-        <table className="w-full text-xs border-collapse">
+        <RootTable className="w-full text-xs border-collapse">
           <thead className="bg-[#051111] border-b border-root-accent/20 sticky top-0 z-10">
             <tr>
               {/* ✅ KOLOM NOMOR BARU */}
@@ -243,7 +244,7 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
               })
             )}
           </tbody>
-        </table>
+        </RootTable>
       </div>
     </div>
   );

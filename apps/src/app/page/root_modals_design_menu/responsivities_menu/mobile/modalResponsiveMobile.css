@@ -417,15 +417,52 @@
 
 .notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table {
   width: 100%;
-  min-width: 560px;
+  min-width: 0;
   table-layout: fixed;
   font-size: 9px;
 }
 
 .notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table th,
 .notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table td {
+  overflow: hidden;
   padding: 4px 5px !important;
   line-height: 1.15;
+  text-overflow: ellipsis;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table th:nth-child(1),
+.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table td:nth-child(1) {
+  width: 5%;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table th:nth-child(2),
+.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table td:nth-child(2) {
+  width: 23%;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table th:nth-child(3),
+.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table td:nth-child(3) {
+  width: 13%;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table th:nth-child(4),
+.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table td:nth-child(4) {
+  width: 11%;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table th:nth-child(5),
+.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table td:nth-child(5) {
+  width: 13%;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table th:nth-child(6),
+.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table td:nth-child(6) {
+  width: 22%;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table th:nth-child(7),
+.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table td:nth-child(7) {
+  width: 13%;
 }
 
 .notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table th,
@@ -434,9 +471,21 @@
   white-space: nowrap;
 }
 
-.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table td img,
-.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table td>div {
+.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table td img {
   flex-shrink: 0;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table td:nth-child(2)>div {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table td:nth-child(2)>div>span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .notebook-modal-frame[data-viewport-mode]:has(.attack-country-modal) .attack-country-table td img {
@@ -476,20 +525,57 @@
 
 .notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table {
   width: 100%;
-  min-width: 600px;
+  min-width: 0;
   table-layout: fixed;
   font-size: 9px !important;
 }
 
 .notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table th,
 .notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table td {
+  overflow: hidden;
   padding: 3px 5px !important;
   line-height: 1.15;
+  text-overflow: ellipsis;
   vertical-align: middle;
 }
 
 .notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table th {
   font-size: 8px !important;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table th:nth-child(1),
+.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table td:nth-child(1) {
+  width: 5%;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table th:nth-child(2),
+.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table td:nth-child(2) {
+  width: 23%;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table th:nth-child(3),
+.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table td:nth-child(3) {
+  width: 13%;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table th:nth-child(4),
+.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table td:nth-child(4) {
+  width: 11%;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table th:nth-child(5),
+.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table td:nth-child(5) {
+  width: 13%;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table th:nth-child(6),
+.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table td:nth-child(6) {
+  width: 22%;
+}
+
+.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table th:nth-child(7),
+.notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table td:nth-child(7) {
+  width: 13%;
 }
 
 .notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table td:nth-child(n + 3):nth-child(-n + 6) {
@@ -500,10 +586,15 @@
 .notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table td:nth-child(2)>div {
   min-height: 16px;
   gap: 4px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table td:nth-child(2)>div>span {
-  overflow-wrap: anywhere;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table td img,
@@ -520,6 +611,91 @@
 .notebook-modal-frame[data-viewport-mode]:has(.intelijen-modal) .intelijen-table td button svg {
   width: 13px;
   height: 13px;
+}
+
+.intelijen-modal .intelijen-table,
+.attack-country-modal .attack-country-table {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+}
+
+.intelijen-modal .intelijen-table th,
+.intelijen-modal .intelijen-table td,
+.attack-country-modal .attack-country-table th,
+.attack-country-modal .attack-country-table td {
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.intelijen-modal .intelijen-table th:nth-child(1),
+.intelijen-modal .intelijen-table td:nth-child(1),
+.attack-country-modal .attack-country-table th:nth-child(1),
+.attack-country-modal .attack-country-table td:nth-child(1) {
+  width: 5%;
+}
+
+.intelijen-modal .intelijen-table th:nth-child(2),
+.intelijen-modal .intelijen-table td:nth-child(2),
+.attack-country-modal .attack-country-table th:nth-child(2),
+.attack-country-modal .attack-country-table td:nth-child(2) {
+  width: 23%;
+}
+
+.intelijen-modal .intelijen-table th:nth-child(3),
+.intelijen-modal .intelijen-table td:nth-child(3),
+.attack-country-modal .attack-country-table th:nth-child(3),
+.attack-country-modal .attack-country-table td:nth-child(3) {
+  width: 13%;
+}
+
+.intelijen-modal .intelijen-table th:nth-child(4),
+.intelijen-modal .intelijen-table td:nth-child(4),
+.attack-country-modal .attack-country-table th:nth-child(4),
+.attack-country-modal .attack-country-table td:nth-child(4) {
+  width: 11%;
+}
+
+.intelijen-modal .intelijen-table th:nth-child(5),
+.intelijen-modal .intelijen-table td:nth-child(5),
+.attack-country-modal .attack-country-table th:nth-child(5),
+.attack-country-modal .attack-country-table td:nth-child(5) {
+  width: 13%;
+}
+
+.intelijen-modal .intelijen-table th:nth-child(6),
+.intelijen-modal .intelijen-table td:nth-child(6),
+.attack-country-modal .attack-country-table th:nth-child(6),
+.attack-country-modal .attack-country-table td:nth-child(6) {
+  width: 22%;
+}
+
+.intelijen-modal .intelijen-table th:nth-child(7),
+.intelijen-modal .intelijen-table td:nth-child(7),
+.attack-country-modal .attack-country-table th:nth-child(7),
+.attack-country-modal .attack-country-table td:nth-child(7) {
+  width: 13%;
+}
+
+.intelijen-modal .intelijen-table td:nth-child(2),
+.attack-country-modal .attack-country-table td:nth-child(2) {
+  white-space: normal;
+}
+
+.intelijen-modal .intelijen-table td:nth-child(2)>div,
+.attack-country-modal .attack-country-table td:nth-child(2)>div {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.intelijen-modal .intelijen-table td:nth-child(2)>div>span,
+.attack-country-modal .attack-country-table td:nth-child(2)>div>span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .notebook-modal-frame[data-viewport-mode]:has(.annexed-territories-modal) .annexed-territories-content {

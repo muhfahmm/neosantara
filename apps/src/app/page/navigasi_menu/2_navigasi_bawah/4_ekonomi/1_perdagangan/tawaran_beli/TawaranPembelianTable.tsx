@@ -1,4 +1,5 @@
 "use client"
+import RootTable from "@/app/page/root_modals_design_menu/RootTable";
 import React from "react";
 import { Handshake } from "lucide-react";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
@@ -35,7 +36,7 @@ export default function TawaranPembelianTable({ offers, onAcceptOffer, onClose, 
         size="standard"
         icon={<Handshake aria-hidden="true" />}
       />
-      <table className="w-full text-left">
+      <RootTable className="w-full text-left">
         <thead>
           <tr className="bg-root-canvas border-b border-root-accent/20">
             <th className="px-4 py-2.5 text-[10px] font-black text-root-accent uppercase tracking-wider">Mitra</th>
@@ -112,7 +113,7 @@ export default function TawaranPembelianTable({ offers, onAcceptOffer, onClose, 
             })
           )}
         </tbody>
-      </table>
+      </RootTable>
     </div>
   );
 }

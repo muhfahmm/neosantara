@@ -1,4 +1,5 @@
 "use client";
+import RootTable from "@/app/page/root_modals_design_menu/RootTable";
 
 import React, { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
@@ -287,7 +288,7 @@ export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps)
       ) : (
         <div className="overflow-hidden rounded-2xl bg-root-canvas border border-root-accent/30">
           <div className="overflow-auto max-h-[60vh] custom-scrollbar">
-            <table className="min-w-full table-auto border-separate border-spacing-0 text-left text-root-text">
+            <RootTable className="min-w-full table-auto border-separate border-spacing-0 text-left text-root-text">
               <thead>
                 <tr className="bg-root-canvas text-root-accent">
                   <th
@@ -337,7 +338,7 @@ export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps)
               <tbody>
                 {renderAllRows()}
               </tbody>
-            </table>
+            </RootTable>
           </div>
         </div>
       )}

@@ -1,4 +1,5 @@
 "use client";
+import RootTable from "@/app/page/root_modals_design_menu/RootTable";
 import React, { useCallback, useMemo, useState, useEffect } from "react";
 import {
   Zap,
@@ -395,7 +396,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
             ) : (
               <div className={`root-modal-util-d5020ca04d root-modal-util-5f22e64f22`}>
                 <div className={`root-no-scrollbar-glow root-modal-util-21ad3142af root-modal-util-5f22e64f22 root-modal-util-4e8f3fa2d1 `}>
-                  <table className={"root-modal-util-a1e9cf0ef6"}>
+                  <RootTable className={"root-modal-util-a1e9cf0ef6"}>
                     <thead className={"root-modal-util-ecea3fcb79"}>
                       <tr className={"root-modal-util-48bed30924"}>
                         <th className={"root-modal-util-503f70b539"}>No</th>
@@ -464,7 +465,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                         </tr>
                       )}
                     </tbody>
-                  </table>
+                  </RootTable>
                 </div>
               </div>
             )}

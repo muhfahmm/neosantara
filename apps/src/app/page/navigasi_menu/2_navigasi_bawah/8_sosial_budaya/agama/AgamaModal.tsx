@@ -1,4 +1,5 @@
 "use client"
+import RootTable from "@/app/page/root_modals_design_menu/RootTable";
 import RootModalCloseButton from '@/app/page/root_modals_design_menu/RootModalCloseButton';
 import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
@@ -272,7 +273,7 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
             </div>
           </div>
 
-          <div className="satisfaction-modal-content satisfaction-modal-content-body root-modal-enter root-modal-fade-in root-modal-util-9c12d57a09 root-modal-util-90f9f3a7db">
+          <div className="satisfaction-modal-content satisfaction-modal-content-body root-modal-enter root-modal-fade-in root-modal-util-9c12d57a09 root-modal-util-90f9f3a7db flex min-h-0 flex-col">
             {activeTab === "agama" && (
               <div className="space-y-6">
                 <div className="root-modal-util-8230f2ccb3">
@@ -332,7 +333,7 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
             )}
 
             {activeTab === "dunia" && (
-              <div className="space-y-4">
+              <div className="flex min-h-0 flex-1 flex-col gap-4">
                 <div className="root-modal-util-8230f2ccb3">
                   <div className="root-modal-util-7ccf491d2f">
                     <Globe aria-hidden="true" className="root-modal-util-79b40bc7fa" />
@@ -345,8 +346,8 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                     </span>
                   )}
                 </div>
-                <div className="overflow-x-auto border border-root-accent/20 rounded-xl bg-root-canvas shadow-sm max-h-[400px] custom-scrollbar">
-                  <table className="w-full text-xs text-left border-collapse">
+                <div className="min-h-0 flex-1 overflow-auto border border-root-accent/20 rounded-xl bg-root-canvas shadow-sm custom-scrollbar">
+                  <RootTable className="w-full text-xs text-left border-collapse">
                     <thead className="bg-[#051111] border-b border-root-accent/20 sticky top-0 z-10">
                       <tr>
                         <th className="px-4 py-3 font-bold text-root-accent uppercase tracking-wider w-12 text-center">No</th>
@@ -390,7 +391,7 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                         );
                       })}
                     </tbody>
-                  </table>
+                  </RootTable>
                 </div>
               </div>
             )}

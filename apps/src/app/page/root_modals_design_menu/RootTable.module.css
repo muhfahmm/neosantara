@@ -1,0 +1,50 @@
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: var(--root-color-text);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  text-align: left;
+}
+
+.table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.table thead tr {
+  height: 1.875rem;
+}
+
+.table thead th {
+  box-sizing: border-box;
+  height: 1.875rem !important;
+  padding: 0.375rem 0.75rem !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--root-color-accent) 20%, transparent);
+  background-color: var(--root-color-canvas);
+  color: var(--root-color-accent);
+  font-weight: 900;
+  line-height: 1rem !important;
+  text-transform: uppercase;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.table tbody tr:not(:has(> td[colspan])) {
+  height: 2.5rem;
+}
+
+.table tbody td:not([colspan]) {
+  box-sizing: border-box;
+  height: 2.5rem !important;
+  padding: 0.25rem 0.75rem !important;
+  line-height: 1rem !important;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.table tbody td {
+  border-bottom: 1px solid color-mix(in srgb, var(--root-color-accent) 10%, transparent);
+}

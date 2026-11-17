@@ -1,4 +1,5 @@
 "use client"
+import RootTable from "@/app/page/root_modals_design_menu/RootTable";
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import RootModalSidebarLayout from '@/app/page/root_modals_design_menu/RootModalSidebarLayout';
 import React, { useMemo, useState, useEffect } from "react";
@@ -533,7 +534,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
             <div className="h-full min-h-0 overflow-y-auto custom-scrollbar">
               {activeTab === 'ranking' ? (
                 /* TAB 1: RANKING KEKUATAN MILITER */
-                <table className="w-full text-xs">
+                <RootTable className="w-full text-xs">
                   <thead className="bg-root-canvas text-root-accent border-b border-root-accent/20 sticky top-0 z-10">
                     <tr>
                       <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Rank</th>
@@ -593,10 +594,10 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                       </tr>
                     )}
                   </tbody>
-                </table>
+                </RootTable>
               ) : (
                 /* TAB 2: NEGARA PEMILIK NUKLIR & ICBM */
-                <table className="w-full text-xs">
+                <RootTable className="w-full text-xs">
                   <thead className="bg-root-canvas text-root-accent border-b border-root-accent/20 sticky top-0 z-10">
                     <tr>
                       <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">No</th>
@@ -706,7 +707,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                       </tr>
                     )}
                   </tbody>
-                </table>
+                </RootTable>
               )}
             </div>
           </div>

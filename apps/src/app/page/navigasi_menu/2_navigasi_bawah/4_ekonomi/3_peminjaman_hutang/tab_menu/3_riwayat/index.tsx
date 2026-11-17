@@ -1,4 +1,5 @@
 "use client";
+import RootTable from "@/app/page/root_modals_design_menu/RootTable";
 import React, { useState } from "react";
 import { formatLoanSourceName, getLoanSourceFlagIso, renderFlag, LoanRecord } from "../utils";
 import { Info } from "lucide-react";
@@ -45,7 +46,7 @@ export default function Riwayat({ loanHistory, setPendingPaymentLoan, setPenalty
       />
 
       <div className={`loan-history-table-scroll overflow-x-auto border border-root-accent/30 bg-root-surface ${rootBorderRadius.card}`}>
-        <table className="loan-history-table w-full min-w-[720px] table-fixed text-xs">
+        <RootTable className="loan-history-table w-full min-w-[720px] table-fixed text-xs">
           <thead className="bg-root-canvas border-b border-root-accent/30 sticky top-0 z-10">
             <tr>
               <th className="whitespace-nowrap px-4 py-3 text-left text-[10px] font-black text-root-accent uppercase tracking-wider">Negara</th>
@@ -153,7 +154,7 @@ export default function Riwayat({ loanHistory, setPendingPaymentLoan, setPenalty
               ))
             )}
           </tbody>
-        </table>
+        </RootTable>
       </div>
     </div>
   );

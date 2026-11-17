@@ -1,4 +1,5 @@
 "use client";
+import RootTable from "@/app/page/root_modals_design_menu/RootTable";
 import React, { useId, useMemo, useRef, useState } from "react";
 import { Shield, Swords, ChevronUp, ChevronDown, Search } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
@@ -459,7 +460,7 @@ export default function SerangNegaraModal({
             <div className="w-full space-y-4 md:flex md:min-h-0 md:flex-1 md:flex-col md:space-y-0">
               <div className="w-full overflow-hidden border border-root-accent/20 rounded-xl bg-root-canvas shadow-sm md:flex md:min-h-0 md:flex-1 md:flex-col">
                 <div className="attack-country-table-viewport max-h-[52vh] overflow-auto md:max-h-none md:min-h-0 md:flex-1">
-                  <table className="attack-country-table w-full text-xs md:h-full">
+                  <RootTable className="attack-country-table w-full text-xs md:h-full">
                     <thead className="bg-root-canvas border-b border-root-accent/20 sticky top-0 z-10 text-[9px] sm:text-[10px] lg:text-xs whitespace-nowrap">
                       <tr>
                         <th className="px-2 py-1.5 text-left font-black text-root-accent uppercase tracking-normal sm:tracking-wider w-10 bg-root-canvas">Rank</th>
@@ -541,7 +542,7 @@ export default function SerangNegaraModal({
                         })
                       )}
                     </tbody>
-                  </table>
+                  </RootTable>
                 </div>
               </div>
             </div>

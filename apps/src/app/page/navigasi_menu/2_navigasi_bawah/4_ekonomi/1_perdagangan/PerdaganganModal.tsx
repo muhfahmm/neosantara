@@ -1,4 +1,5 @@
 "use client"
+import RootTable from "@/app/page/root_modals_design_menu/RootTable";
 import React, { useMemo, useState, useEffect } from "react";
 import { ArrowRightLeft, Info, AlertTriangle } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
@@ -1080,7 +1081,7 @@ export default function PerdaganganModal({
                   </div>
 
                   <div className="border border-root-accent/20 rounded-lg overflow-hidden bg-root-surface">
-                    <table className="w-full text-left">
+                    <RootTable className="w-full text-left">
                       <thead>
                         <tr className="bg-root-canvas border-b border-root-accent/20">
                           <th className="px-2 py-1.5 text-[9px] font-black text-root-accent uppercase tracking-wider">Tanggal</th>
@@ -1105,7 +1106,7 @@ export default function PerdaganganModal({
                           ))
                         )}
                       </tbody>
-                    </table>
+                    </RootTable>
                   </div>
                 </>
               )}
