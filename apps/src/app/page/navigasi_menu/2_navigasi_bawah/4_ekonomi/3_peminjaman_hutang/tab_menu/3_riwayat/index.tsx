@@ -37,7 +37,6 @@ export default function Riwayat({ loanHistory, setPendingPaymentLoan, setPenalty
   return (
     <div>
       <RootModalTabs
-        compact
         className="loan-history-tabs mb-3 w-2/3 xl:w-2/5 [&>button]:min-w-0 [&>button]:flex-1"
         items={[
           { label: `Hutang Aktif (${activeLoans.length})`, isActive: historySubTab === "active", onClick: () => setHistorySubTab("active") },

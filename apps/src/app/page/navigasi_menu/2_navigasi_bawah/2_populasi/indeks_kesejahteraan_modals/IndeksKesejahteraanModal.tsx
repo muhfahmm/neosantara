@@ -203,7 +203,6 @@ export default function IndeksKesejahteraanModal({
                     <div className={"welfare-modal-score-controls"}>
                       <RootModalTabs
                         className={"satisfaction-modal-tabs"}
-                        compact
                         items={[
                           {
                             label: "Statistik",

@@ -28,6 +28,28 @@
   --satisfaction-description-font-size: 10px;
 }
 
+.root-modal-tabs {
+  gap: 4px;
+  padding: 4px;
+}
+
+.root-modal-tab-button {
+  min-height: 36px;
+  gap: 6px;
+  padding: 8px 14px;
+}
+
+@media ((orientation: landscape) and (max-height: 500px)),
+((orientation: portrait) and (max-width: 640px)) {
+  .root-modal-tab-button {
+    min-height: 28px;
+    padding: 4px 10px;
+    font-size: 9px;
+    line-height: 1.1;
+    letter-spacing: 0.08em;
+  }
+}
+
 @media (min-width: 640px) {
   :root {
     --modal-max-width: min(720px, calc(100vw - 40px));

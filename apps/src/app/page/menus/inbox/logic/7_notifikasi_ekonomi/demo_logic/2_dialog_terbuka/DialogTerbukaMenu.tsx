@@ -17,8 +17,8 @@ import { DetailOpsiBubarkan } from '../1_bubarkan_dengan_aparat/opsiBubarkanMass
 import HasilBubarkanMassaModal from '../1_bubarkan_dengan_aparat/HasilBubarkanMassaModal';
 
 const PajakModal = dynamic(() => import('@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/2_manajemen_pajak/PajakModal'), { ssr: false });
-const HargaModal = dynamic(() => import('@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/6_harga/HargaModal'), { ssr: false });
-const SubsidiModal = dynamic(() => import('@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/8_kebijakan_subsidi/SubsidiModal'), { ssr: false });
+const HargaModal = dynamic(() => import('@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/6_daya_beli/1_harga/HargaModal'), { ssr: false });
+const SubsidiModal = dynamic(() => import('@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/6_daya_beli/2_kebijakan_subsidi/SubsidiModal'), { ssr: false });
 
 interface DialogTerbukaMenuProps {
   returnHref?: string;

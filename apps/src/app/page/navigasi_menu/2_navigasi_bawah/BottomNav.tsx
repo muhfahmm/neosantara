@@ -138,37 +138,50 @@ export default function BottomNav({
   return (
     <div
       style={{
-        bottom: 'calc(var(--safe-bottom) + 0.35rem)',
+        bottom: isMobile
+          ? 'calc(var(--safe-bottom) + 0.35rem)'
+          : 'calc(var(--safe-bottom) + var(--bottom-nav-desktop-offset, 0.35rem))',
       }}
-      className={`fixed left-1/2 -translate-x-1/2 transition-all duration-500 z-[200] pointer-events-none ${
+      className={`fixed left-1/2 z-[200] w-max max-w-[95vw] -translate-x-1/2 pointer-events-none transition-transform duration-300 ${
         isLandscapePhone
           ? 'max-w-[calc(100vw-1rem)]'
-          : 'w-max max-w-[95vw]'
+          : ''
       }`}
     >
       <nav
-        className={`pointer-events-auto flex items-center bg-root-surface/90 border border-root-accent/30 transition-all duration-500 ease-in-out ${
+        aria-label="Navigasi menu utama"
+        className={`root-bottom-nav pointer-events-auto flex w-max max-w-full flex-wrap items-center border border-root-accent/30 bg-root-surface/95 shadow-xl shadow-black/30 backdrop-blur-md transition-[background-color,box-shadow] duration-200 ${
           isLandscapePhone
-            ? 'gap-0.5 px-1 py-0.5 rounded-lg max-h-[38px] overflow-visible'
+            ? 'gap-0.5 rounded-md p-0.5'
             : isPortraitPhone
-            ? 'gap-1 px-1.5 py-1 rounded-xl max-h-[44px] overflow-visible'
-            : 'gap-1 lg:gap-1.5 px-1.5 lg:px-2 py-1 lg:py-1.5 rounded-xl lg:rounded-2xl overflow-visible'
+            ? 'gap-1 rounded-lg p-1.5'
+            : 'gap-1.5 rounded-2xl p-1.5 lg:p-2'
         }`}
       >
         {/* Main Navigation Section */}
-        <div className={`flex items-center ${isLandscapePhone ? 'gap-0.5' : 'gap-0.5 lg:gap-1 2xl:gap-2'}`}>
+        <div className={`flex min-w-0 flex-wrap items-center ${isLandscapePhone ? 'gap-0.5' : 'gap-1'}`}>
           {(isMenuSelected
-            ? [{ id: "Peta Taktis", icon: LayoutGrid, label: "Peta Taktis" }, menuItems.find(item => item.id === activeTab)]
+            ? [
+                { id: "Peta Taktis", icon: LayoutGrid, label: "Peta Taktis" },
+                menuItems.find(item => item.id === activeTab),
+              ]
             : menuItems
           ).filter(Boolean).map((item: any) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             const isMap = item.id === "Peta Taktis";
+            const hasSubItems = Boolean(subMenuItems[item.id]?.length);
 
             return (
               <div key={item.id} className="group relative shrink-0">
                 <button
                   data-tutorial={item.id === "Ekonomi" ? "menu-ekonomi" : item.id === "Pembangunan" ? "menu-pembangunan" : undefined}
+                  type="button"
+                  title={item.label}
+                  aria-label={item.label}
+                  aria-pressed={isActive}
+                  aria-expanded={!isMap && hasSubItems ? isActive : undefined}
+                  aria-controls={!isMap && isActive && hasSubItems ? "bottom-nav-submenu" : undefined}
                   onFocus={() => {
                     if (!isActive && !isMap) prefetchMenuGroup(item.id);
                   }}
@@ -176,20 +189,24 @@ export default function BottomNav({
                     if (!isActive && !isMap) prefetchMenuGroup(item.id);
                   }}
                   onClick={() => isMap ? handleFullReset() : handleMainClick(item.id)}
-                  className={`rounded-lg xl:rounded-xl cursor-pointer transition-all duration-300 flex items-center justify-center ${
+                  className={`inline-flex shrink-0 cursor-pointer items-center justify-center border text-[10px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent/60 ${
                     isLandscapePhone
-                      ? 'px-1.5 py-1 min-h-[30px] gap-1'
+                      ? 'min-h-[30px] gap-1 rounded-md px-1.5 py-1'
                       : isPortraitPhone
-                      ? 'px-2 py-1.5 min-h-[34px] gap-1'
-                      : 'px-2 py-1.5 lg:px-2.5 lg:py-2 2xl:px-4 2xl:py-3 gap-1.5 lg:gap-2 2xl:gap-2.5'
-                  } ${isActive
-                    ? "bg-root-accent text-root-canvas font-bold border border-root-accent"
-                    : "text-root-subtle hover:text-root-accent hover:bg-root-accent/10"
-                    }`}
+                      ? 'min-h-9 gap-2 rounded-lg px-2 py-1.5'
+                      : 'min-h-10 gap-2 rounded-xl px-2.5 py-2'
+                  } ${
+                    isActive
+                      ? "border-root-accent bg-root-accent text-root-accent-ink shadow-sm"
+                      : "border-transparent text-root-muted hover:bg-root-accent/10 hover:text-root-text"
+                  }`}
                 >
-                  <Icon className={`${isLandscapePhone ? 'h-3 w-3' : 'h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5'} ${isActive ? "text-root-canvas" : ""}`} />
-                  {isActive && (
-                    <span className="text-[8px] sm:text-[9px] lg:text-[10px] 2xl:text-[11px] font-black uppercase tracking-widest whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300">
+                  <Icon
+                    aria-hidden="true"
+                    className={`shrink-0 ${isLandscapePhone ? 'h-3.5 w-3.5' : 'h-4 w-4'}`}
+                  />
+                  {isActive && !isMobile && (
+                    <span className={`whitespace-nowrap font-black uppercase ${isLandscapePhone ? 'text-[8px] tracking-wide' : 'text-[10px] tracking-widest'}`}>
                       {item.label}
                     </span>
                   )}
@@ -202,30 +219,47 @@ export default function BottomNav({
 
         {/* Vertical Divider */}
         {isMenuSelected && currentSubItems?.length > 0 && (
-          <div className="h-4 lg:h-6 2xl:h-8 w-[1px] bg-root-accent/30 mx-0.5 lg:mx-2 animate-in fade-in duration-500 shrink-0" />
+          <div
+            aria-hidden="true"
+            className={`w-px shrink-0 bg-root-accent/25 ${isLandscapePhone ? 'mx-0.5 h-5' : 'mx-1 h-7'}`}
+          />
         )}
 
         {/* Sub-Menu Extension Section */}
         {isMenuSelected && currentSubItems?.length > 0 && (
-          <div className={`flex items-center animate-in slide-in-from-left-4 fade-in duration-500 ${isLandscapePhone ? 'gap-0.5' : 'gap-1 lg:gap-1.5'}`}>
+          <div
+            id="bottom-nav-submenu"
+            role="group"
+            aria-label={`Submenu ${activeTab}`}
+            className={`flex min-w-0 flex-wrap items-center ${isLandscapePhone ? 'gap-0.5' : 'gap-1'}`}
+          >
             {currentSubItems.map((sub: any) => (
               <div key={sub.id} className="relative group shrink-0">
                 <button
+                  type="button"
+                  title={sub.label}
+                  aria-label={sub.label}
                   onPointerEnter={() => prefetchMenuModal(sub.id)}
                   onFocus={() => prefetchMenuModal(sub.id)}
                   onPointerDown={() => prefetchMenuModal(sub.id)}
                   onClick={() => setActiveMenu(sub.id)}
-                  className={`flex shrink-0 cursor-pointer items-center justify-center rounded-lg text-root-subtle transition-colors hover:bg-root-accent/10 hover:text-root-accent ${
+                  className={`inline-flex shrink-0 cursor-pointer items-center justify-center border border-transparent font-semibold text-root-text transition-colors hover:bg-root-accent/10 hover:text-root-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent/60 ${
                     isLandscapePhone
-                      ? 'h-6 px-1'
+                      ? 'min-h-[30px] gap-1 rounded-md px-1.5 py-1 text-[9px]'
                       : isPortraitPhone
-                      ? 'h-7 px-1.5'
-                      : 'h-7 px-1.5 lg:h-[34px] lg:px-2 2xl:h-9 2xl:px-2.5'
+                      ? 'min-h-9 gap-2 rounded-lg px-2 py-1.5 text-[10px]'
+                      : 'min-h-9 gap-2 rounded-xl px-3 py-2 text-[10px]'
                   }`}
                 >
-                  <span className="whitespace-nowrap text-[8px] sm:text-[9px] lg:text-[10px] 2xl:text-[11px] font-black uppercase tracking-widest">
-                    {sub.label}
-                  </span>
+                  <sub.icon
+                    aria-hidden="true"
+                    className={`shrink-0 text-root-accent/80 ${isLandscapePhone ? 'h-3 w-3' : 'h-3.5 w-3.5'}`}
+                  />
+                  {!isMobile && (
+                    <span className="whitespace-nowrap font-black uppercase tracking-wider">
+                      {sub.label}
+                    </span>
+                  )}
                 </button>
               </div>
             ))}
@@ -236,9 +270,12 @@ export default function BottomNav({
   );
 }
 
-function Tooltip({ label, small = false }: { label: string, small?: boolean }) {
+function Tooltip({ label }: { label: string }) {
   return (
-    <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2.5 bg-root-surface border border-root-accent/30 text-root-text text-[13px] font-semibold rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-[9999] scale-95 group-hover:scale-100 group-hover:block`}>
+    <div
+      role="tooltip"
+      className="pointer-events-none absolute bottom-full left-1/2 z-[9999] mb-3 -translate-x-1/2 scale-95 whitespace-nowrap rounded-lg border border-root-accent/30 bg-root-surface px-4 py-2.5 text-[13px] font-semibold text-root-text opacity-0 transition-all duration-200 group-hover:block group-hover:scale-100 group-hover:opacity-100"
+    >
       {label}
       <div className="absolute top-full left-1/2 -translate-x-1/2 border-x-4 border-x-transparent border-t-4 border-t-root-surface"></div>
     </div>

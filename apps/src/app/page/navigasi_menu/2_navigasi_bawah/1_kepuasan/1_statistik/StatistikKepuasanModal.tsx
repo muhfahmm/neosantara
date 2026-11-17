@@ -155,7 +155,6 @@ export default function StatistikKepuasanModal({
           <div className={"satisfaction-modal-summary-controls"}>
             <RootModalTabs
               className={"satisfaction-modal-tabs"}
-              compact
               items={[
                 { label: "Statistik", isActive: true },
                 {

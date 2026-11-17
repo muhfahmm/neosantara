@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Zap, Utensils, GraduationCap, Bus, Store, ShieldAlert } from "lucide-react";
-import { INITIAL_SUBSIDY_ITEMS, SubsidyItem, clampSubsidyCost } from "../../../../../../../../../json/5_database_kebijakan_subsidi/index";
+import { INITIAL_SUBSIDY_ITEMS, SubsidyItem, clampSubsidyCost } from "../../../../../../../../../../json/5_database_kebijakan_subsidi/index";
 
 interface AlokasiSubsidiTabProps {
   countryDetail: any;

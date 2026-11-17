@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import { createPortal } from "react-dom";
 import { Tag, Loader2, Info } from "lucide-react";
-import NotebookModalWrapper from "../../NotebookModalWrapper";
+import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
@@ -131,6 +131,7 @@ interface ModalProps {
   setCountryDetail: React.Dispatch<React.SetStateAction<any>>;
   forumDialogMode?: boolean;
   onConfirmChanges?: (changes: string[]) => void;
+  tabBar?: React.ReactNode;
 }
 
 export default function HargaModal(props: ModalProps) {
@@ -142,6 +143,7 @@ export default function HargaModal(props: ModalProps) {
       setCountryDetail={props.setCountryDetail}
       forumDialogMode={props.forumDialogMode}
       onConfirmChanges={props.onConfirmChanges}
+      tabBar={props.tabBar}
     />
   );
 }
@@ -152,6 +154,7 @@ function HargaModalContent({
   setCountryDetail,
   forumDialogMode = false,
   onConfirmChanges,
+  tabBar,
 }: Omit<ModalProps, "isOpen">) {
   const [, startTransition] = useTransition();
 
@@ -532,6 +535,8 @@ function HargaModalContent({
             </>
           }
         />
+
+        {tabBar}
 
         <div className="harga-modal-body min-h-0 flex-1 overflow-y-auto p-4 lg:p-6 bg-root-surface relative z-10 neon-scrollbar">
           {loading ? (

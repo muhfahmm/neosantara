@@ -1,4 +1,5 @@
-import { Smile, Users2, Activity, Wallet, Wrench, Shield, ShieldAlert, Globe, Star, Landmark, ArrowRightLeft, FileText, CreditCard, BarChart3, TrendingUp, Hammer, Swords as MilitaryIcon, Bolt, Droplet, Radiation, Info, HandHelping, HeartHandshake, Tag, Eye, Home, Utensils, Atom, Scale } from "lucide-react";
+import { Smile, Users2, Activity, Wallet, Wrench, Shield, ShieldAlert, Globe, Star, Landmark, ArrowRightLeft, FileText, CreditCard, BarChart3, TrendingUp, Hammer, Swords as MilitaryIcon, Bolt, HeartHandshake, Tag, Eye, Home, Utensils, Atom, Scale } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 export const menuItems = [
   { id: "Kepuasan", icon: Smile, image: "/images/game/interface/tab-menu/kepuasan.svg", label: "Kepuasan" },
@@ -12,7 +13,14 @@ export const menuItems = [
   { id: "Kementerian", icon: Landmark, image: "/images/game/interface/tab-menu/kementerian.svg", label: "Kementerian" },
 ];
 
-export const subMenuItems: Record<string, any[]> = {
+interface SubMenuItem {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  image: string;
+}
+
+export const subMenuItems: Record<string, SubMenuItem[]> = {
   "Kepuasan": [
     { id: "Dashboard:Kepuasan", label: "Statistik Kepuasan", icon: BarChart3, image: "/images/game/interface/sub-tabs/kepuasan/statistik-kepuasan.svg" },
     { id: "Action:NaikkanKepuasan", label: "Naikkan Kepuasan", icon: TrendingUp, image: "/images/game/interface/sub-tabs/kepuasan/naikkan-kepuasan.svg" },
@@ -24,11 +32,9 @@ export const subMenuItems: Record<string, any[]> = {
   { id: "Menu:Perdagangan", label: "Perdagangan", icon: ArrowRightLeft, image: "/images/game/interface/sub-tabs/ekonomi/perdagangan.svg" },
   { id: "Menu:Pajak", label: "Pajak", icon: FileText, image: "/images/game/interface/sub-tabs/ekonomi/pajak.svg" },
   { id: "Menu:Hutang", label: "Pinjaman", icon: CreditCard, image: "/images/game/interface/sub-tabs/ekonomi/hutang.svg" },
-  { id: "Menu:Budget", label: "Anggaran", icon: BarChart3, image: "/images/game/interface/sub-tabs/ekonomi/anggaran.svg" }, // <--- ditambahkan kembali di sini
-  { id: "Menu:PDB", label: "PDB", icon: TrendingUp, image: "/images/game/interface/sub-tabs/ekonomi/pdb.svg" },
-  { id: "Menu:Harga", label: "Harga Kebutuhan", icon: Tag, image: "/images/game/interface/sub-tabs/ekonomi/harga-barang.svg" },
+  { id: "Menu:Pendapatan", label: "Pendapatan", icon: BarChart3, image: "/images/game/interface/sub-tabs/ekonomi/anggaran.svg" },
+  { id: "Menu:DayaBeli", label: "Daya Beli", icon: Tag, image: "/images/game/interface/sub-tabs/ekonomi/harga-barang.svg" },
   { id: "Menu:SistemEkonomi", label: "Sistem Ekonomi", icon: Scale, image: "/images/game/interface/sub-tabs/ekonomi/sistem-ekonomi.svg" },
-  { id: "Menu:KebijakanSubsidi", label: "Subsidi", icon: HandHelping, image: "/images/game/interface/sub-tabs/ekonomi/kebijakan-subsidi.svg" },
 ],
   "Pembangunan": [
     { id: "Menu:Produksi", label: "Produksi", icon: Hammer, image: "/images/game/interface/sub-tabs/pembangunan/produksi.svg" },

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { BarChart3, ArrowUpRight, ArrowDownRight, Info } from "lucide-react";
-import NotebookModalWrapper from "../../NotebookModalWrapper";
+import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
@@ -36,7 +36,7 @@ import {
   isMemberOfG20,
   getKementerianPariwisataIncomeBonusPercent,
 } from "@/app/page/bonus_logic";
-import { getGoldStateProfitSharePercent } from "../7_sistem_ekonomi/logic/nationalizationLogic";
+import { getGoldStateProfitSharePercent } from "../../7_sistem_ekonomi/logic/nationalizationLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -45,6 +45,7 @@ interface ModalProps {
   selectedCountry: any;
   onGotoPajak?: () => void;
   onGotoProduction?: (tab: string, key: string) => void;
+  tabBar?: React.ReactNode;
 }
 
 interface FinancialItem {
@@ -77,7 +78,7 @@ const calculateTourismIncome = (countryDetail: any) => {
 };
 
 // --- KOMPONEN UTAMA ---
-export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDetail, selectedCountry, onGotoPajak, onGotoProduction }: ModalProps) {
+export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDetail, selectedCountry, onGotoPajak, onGotoProduction, tabBar }: ModalProps) {
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"summary" | "income" | "outcome">("summary");
   const [outcomeMainTab, setOutcomeMainTab] = useState<"kabinet" | "subsidi" | "total">("kabinet");
@@ -201,6 +202,8 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
             </button>
           }
         />
+
+        {tabBar}
 
         {/* Tab Navigation (Hanya 3 Tab) */}
         <div className="px-4 lg:px-6 2xl:px-8 pt-3.5 lg:pt-4.5 2xl:pt-6 relative z-10 bg-root-canvas">

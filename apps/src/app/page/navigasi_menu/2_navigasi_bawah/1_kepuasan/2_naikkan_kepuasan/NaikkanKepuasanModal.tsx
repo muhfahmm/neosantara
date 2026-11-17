@@ -419,7 +419,6 @@ export default function NaikkanKepuasanModal({
             <div className={"satisfaction-modal-summary-controls"}>
               <RootModalTabs
                 className={"satisfaction-modal-tabs"}
-                compact
                 items={[
                   {
                     label: "Statistik",

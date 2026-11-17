@@ -29,6 +29,7 @@
 
   --side-btn-tracking-bottom: 0.75rem;
   --side-btn-tracking-left: 5.25rem;
+  --bottom-nav-desktop-offset: 0.6rem;
 }
 
 @media (min-width: 1024px) {
@@ -43,6 +44,7 @@
     --side-btn-penelitian-bottom: 1rem;
     --side-btn-tracking-bottom: 1rem;
     --side-btn-tracking-left: 5.75rem;
+    --bottom-nav-desktop-offset: 1rem;
   }
 }
 
@@ -56,6 +58,7 @@
     --side-btn-penelitian-bottom: 1.25rem;
     --side-btn-tracking-bottom: 1.25rem;
     --side-btn-tracking-left: 6.25rem;
+    --bottom-nav-desktop-offset: 1.4rem;
   }
 }
 

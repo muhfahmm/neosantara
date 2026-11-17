@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { HandHelping, Check, Info } from "lucide-react";
-import NotebookModalWrapper from "../../NotebookModalWrapper";
+import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
@@ -16,7 +16,7 @@ import {
   TotalSubsidySummary,
   formatCurrencyCompact,
   clampSubsidyCost
-} from "../../../../../../../../json/5_database_kebijakan_subsidi/index";
+} from "../../../../../../../../../json/5_database_kebijakan_subsidi/index";
 
 import SemuaSektorTab from "./tab_menu/1_semua_sektor/SemuaSektorTab";
 import EnergiTab from "./tab_menu/2_energi/EnergiTab";
@@ -40,6 +40,7 @@ interface ModalProps {
   setCountryDetail?: (detail: any | ((prev: any) => any)) => void;
   forumDialogMode?: boolean;
   onConfirmChanges?: (changes: string[]) => void;
+  tabBar?: React.ReactNode;
 }
 
 const resolveSubsidyItemsForCountry = (countryDetail: any): SubsidyItem[] => {
@@ -57,7 +58,7 @@ const resolveSubsidyItemsForCountry = (countryDetail: any): SubsidyItem[] => {
   }));
 };
 
-export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountryDetail, forumDialogMode = false, onConfirmChanges }: ModalProps) {
+export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountryDetail, forumDialogMode = false, onConfirmChanges, tabBar }: ModalProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("Semua");
 
   const [subsidyItems, setSubsidyItems] = useState<SubsidyItem[]>(() => resolveSubsidyItemsForCountry(countryDetail));
@@ -253,6 +254,8 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
               </>
             }
           />
+
+          {tabBar}
 
           {/* TOP STATS SUMMARY BANNER */}
           {!forumDialogMode && <div className="subsidy-summary-cards px-4 lg:px-6 py-2 lg:py-3 bg-root-canvas/80 border-b border-root-accent/15 grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-2.5 shrink-0">

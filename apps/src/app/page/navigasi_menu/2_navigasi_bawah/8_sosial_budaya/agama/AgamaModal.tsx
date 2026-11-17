@@ -254,7 +254,6 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
             <div className="satisfaction-modal-summary-controls">
               <RootModalTabs
                 className="satisfaction-modal-tabs"
-                compact
                 items={[
                   {
                     label: "Agama & Kebebasan Berkeyakinan",

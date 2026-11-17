@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from "react";
 import { TrendingUp, Search, User, ChevronUp, ChevronDown, Info } from "lucide-react";
-import NotebookModalWrapper from "../../NotebookModalWrapper";
+import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
@@ -16,7 +16,7 @@ import {
 } from "@/app/logic/economic_logic/treasuryUpdater";
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 import { applyNpcCountrySimulationState } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
-import { getRelationValue } from '../../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
+import { getRelationValue } from '../../../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 
 const getNormalizedSlug = (detail: any) => {
   if (!detail) return '';
@@ -55,6 +55,7 @@ interface ModalProps {
   countryDetail: any;
   selectedCountry: any;
   prefetchedAllCountries?: any[];
+  tabBar?: React.ReactNode;
 }
 
 const computeTaxValue = (detail: any) => {
@@ -408,7 +409,7 @@ function AllCountriesGDP({
 }
 
 // --- KOMPONEN UTAMA PDB MODAL ---
-export default function PDBModal({ isOpen, onClose, countryDetail, selectedCountry, prefetchedAllCountries }: ModalProps) {
+export default function PDBModal({ isOpen, onClose, countryDetail, selectedCountry, prefetchedAllCountries, tabBar }: ModalProps) {
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   if (!isOpen) return null;
   const countryName = selectedCountry?.country || countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || "Indonesia";
@@ -428,6 +429,8 @@ export default function PDBModal({ isOpen, onClose, countryDetail, selectedCount
             </button>
           }
         />
+
+        {tabBar}
 
         <div className="pdb-modal-body flex-1 min-h-0 flex flex-col p-4 lg:p-6 bg-root-surface relative z-10">
           <AllCountriesGDP playerCountryName={countryName} playerCountryDetail={countryDetail} prefetchedAllCountries={prefetchedAllCountries} />

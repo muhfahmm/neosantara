@@ -268,7 +268,6 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
             <div className="satisfaction-modal-summary-controls">
               <RootModalTabs
                 className="satisfaction-modal-tabs"
-                compact
                 items={[
                   {
                     label: "Ideologi & Kedaulatan",

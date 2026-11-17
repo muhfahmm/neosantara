@@ -2,11 +2,11 @@
 
 import React from "react";
 import { HandHelping, Info, ShieldAlert, TrendingUp, TrendingDown, DollarSign, Check } from "lucide-react";
-import NotebookModalWrapper from "../../NotebookModalWrapper";
+import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
-import { SubsidyItem, formatCurrencyCompact } from "../../../../../../../../json/5_database_kebijakan_subsidi/index";
+import { SubsidyItem, formatCurrencyCompact } from "../../../../../../../../../json/5_database_kebijakan_subsidi/index";
 
 interface DetailSubsidiItemModalProps {
   isOpen: boolean;

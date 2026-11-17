@@ -49,11 +49,9 @@ const IndustriPanganModal = dynamic(() => import("./3_produksi_konsumsi/2_indust
 const PerdaganganModal = dynamic(() => import("./4_ekonomi/1_perdagangan/PerdaganganModal"), { ssr: false, loading: ModalLoadingFallback });
 const PajakModal = dynamic(() => import("./4_ekonomi/2_manajemen_pajak/PajakModal"), { ssr: false, loading: ModalLoadingFallback });
 const HutangModal = dynamic(() => import("./4_ekonomi/3_peminjaman_hutang/HutangModal"), { ssr: false, loading: ModalLoadingFallback });
-const PemasukkanPengeluaranModal = dynamic(() => import("./4_ekonomi/4_pemasukan_pengeluaran/PemasukkanPengeluaranModal"), { ssr: false, loading: ModalLoadingFallback });
-const PDBModal = dynamic(() => import("./4_ekonomi/5_pdb_nasional_dunia/PDBModal"), { ssr: false, loading: ModalLoadingFallback });
-const HargaModal = dynamic(() => import("./4_ekonomi/6_harga/HargaModal"), { ssr: false, loading: ModalLoadingFallback });
+const PendapatanModal = dynamic(() => import("./4_ekonomi/4_pendapatan/PendapatanModal"), { ssr: false, loading: ModalLoadingFallback });
+const DayaBeliModal = dynamic(() => import("./4_ekonomi/6_daya_beli/DayaBeliModal"), { ssr: false, loading: ModalLoadingFallback });
 const SistemEkonomiModal = dynamic(() => import("./4_ekonomi/7_sistem_ekonomi/SistemEkonomiModal"), { ssr: false, loading: ModalLoadingFallback });
-const SubsidiModal = dynamic(() => import("./4_ekonomi/8_kebijakan_subsidi/SubsidiModal"), { ssr: false, loading: ModalLoadingFallback });
 
 // 5. Pembangunan
 const ProduksiModal = dynamic(() => import("./5_pembangunan/1_produksi/ProduksiModal"), { ssr: false, loading: ModalLoadingFallback });
@@ -194,8 +192,8 @@ function ModalsManager({
   // Fetch full country dataset lazily when a menu that requires global country comparison is opened
   useEffect(() => {
     const menusNeedingAllCountries = [
-      'Menu:Kelistrikan', 'Menu:IndustriPangan', 'Menu:PDB', 'Menu:Budget', 'Menu:Perdagangan',
-      'Menu:SistemEkonomi', 'Menu:KebijakanSubsidi', 'Menu:SerangNegara', 'Menu:Intelijen', 'Menu:ICBM',
+      'Menu:Kelistrikan', 'Menu:IndustriPangan', 'Menu:PDB', 'Menu:Budget', 'Menu:Pendapatan', 'Menu:Perdagangan',
+      'Menu:SistemEkonomi', 'Menu:DayaBeli', 'Menu:KebijakanSubsidi', 'Menu:SerangNegara', 'Menu:Intelijen', 'Menu:ICBM',
       'Kelistrikan', 'Industri Pangan', 'PDB', 'Finansial Global'
     ];
     if (prefetchedAllCountries === null && (menusNeedingAllCountries.includes(activeMenu) || activeMenu?.includes('Serang') || activeMenu?.includes('Intelijen'))) {
@@ -595,13 +593,18 @@ function ModalsManager({
           resetTrigger={resetTrigger}
         />
       );
+    case "Menu:Pendapatan":
     case "Menu:Budget":
+    case "Menu:PDB":
       return (
-        <PemasukkanPengeluaranModal
+        <PendapatanModal
+          key={activeMenu}
           isOpen={true}
           onClose={onClose}
+          initialTab={activeMenu === "Menu:PDB" ? "pdb" : "anggaran"}
           countryDetail={countryDetail}
           selectedCountry={selectedCountry}
+          prefetchedAllCountries={prefetchedAllCountries || undefined}
           onGotoPajak={() => setActiveMenu("Menu:Pajak")}
           onGotoProduction={(tab, key) => {
             setActiveMenu("Menu:Produksi");
@@ -609,21 +612,15 @@ function ModalsManager({
           }}
         />
       );
-    case "Menu:PDB":
-      return (
-        <PDBModal
-          isOpen={true}
-          onClose={onClose}
-          countryDetail={countryDetail}
-          selectedCountry={selectedCountry}
-          prefetchedAllCountries={prefetchedAllCountries || undefined}
-        />
-      );
+    case "Menu:DayaBeli":
     case "Menu:Harga":
+    case "Menu:KebijakanSubsidi":
       return (
-        <HargaModal
+        <DayaBeliModal
+          key={activeMenu}
           isOpen={true}
           onClose={onClose}
+          initialTab={activeMenu === "Menu:KebijakanSubsidi" ? "subsidi" : "harga"}
           countryDetail={countryDetail}
           setCountryDetail={setCountryDetail}
         />
@@ -631,15 +628,6 @@ function ModalsManager({
     case "Menu:SistemEkonomi":
       return (
         <SistemEkonomiModal
-          isOpen={true}
-          onClose={onClose}
-          countryDetail={countryDetail}
-          setCountryDetail={setCountryDetail}
-        />
-      );
-    case "Menu:KebijakanSubsidi":
-      return (
-        <SubsidiModal
           isOpen={true}
           onClose={onClose}
           countryDetail={countryDetail}

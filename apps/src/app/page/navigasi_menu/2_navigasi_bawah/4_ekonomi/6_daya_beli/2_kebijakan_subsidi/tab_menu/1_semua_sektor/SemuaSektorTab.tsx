@@ -1,8 +1,8 @@
-// Path: d:\project-sendiri\em\apps\src\app\page\navigasi_menu\2_navigasi_bawah\4_ekonomi\8_kebijakan_subsidi\tab_menu\1_semua_sektor\SemuaSektorTab.tsx
+// Path: d:\project-sendiri\em\apps\src\app\page\navigasi_menu\2_navigasi_bawah\4_ekonomi\2_kebijakan_subsidi\tab_menu\1_semua_sektor\SemuaSektorTab.tsx
 "use client";
 
 import React from "react";
-import { SubsidyItem } from "../../../../../../../../../../json/5_database_kebijakan_subsidi/index";
+import { SubsidyItem } from "../../../../../../../../../../../json/5_database_kebijakan_subsidi/index";
 import SubsidyCardGrid from "../common/SubsidyCardGrid";
 
 interface Props {

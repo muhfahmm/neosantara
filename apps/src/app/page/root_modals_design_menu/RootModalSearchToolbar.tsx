@@ -30,8 +30,6 @@ export default function RootModalSearchToolbar({
   searchContainerClassName = "",
 }: RootModalSearchToolbarProps) {
   const isCompactViewport = useViewportMode() !== "desktop";
-  const compactTabClassName =
-    "!min-w-0 !px-1.5 !py-[5px] !text-[9px] !tracking-[0.04em]";
   const isInlineLayout = layout === "inline";
   const verticalPaddingClassName = isCompactViewport ? "py-1.5" : "py-2";
   const toolbarClassName = isInlineLayout
@@ -49,17 +47,16 @@ export default function RootModalSearchToolbar({
   return (
     <div className={`${toolbarClassName} ${className}`}>
       <RootModalTabs
-        compact
         className={`${isInlineLayout ? "w-full" : "w-fit"} ${
           isCompactViewport
-            ? "!h-auto !flex-[0_1_auto] !flex-nowrap !gap-0.5 !p-[3px] [&_svg]:!h-[13px] [&_svg]:!w-[13px]"
+            ? "!h-auto !flex-[0_1_auto] !flex-nowrap"
             : ""
         } ${tabsClassName}`}
         items={items.map((item) => ({
           ...item,
           className: [
             item.className,
-            isCompactViewport ? compactTabClassName : "",
+            isCompactViewport ? "!min-w-0" : "",
           ]
             .filter(Boolean)
             .join(" "),
