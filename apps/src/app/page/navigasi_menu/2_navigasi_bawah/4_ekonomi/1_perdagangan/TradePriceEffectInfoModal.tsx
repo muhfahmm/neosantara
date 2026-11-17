@@ -32,6 +32,8 @@ export default function TradePriceEffectInfoModal({
       compact
       onClose={onClose}
       zIndexClass="z-[200]"
+      contentSized
+      frameClassName="content-sized-info-frame"
     >
       <div className="flex min-w-0 flex-col overflow-hidden">
         <RootInfoModalHeader

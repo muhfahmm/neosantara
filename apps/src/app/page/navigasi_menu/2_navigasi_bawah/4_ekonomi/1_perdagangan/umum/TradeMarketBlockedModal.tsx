@@ -19,7 +19,8 @@ export default function TradeMarketBlockedModal({
     <NotebookModalWrapper
       zIndexClass="z-[300]"
       compact
-      frameClassName="trade-market-blocked-info-frame"
+      contentSized
+      frameClassName="trade-market-blocked-info-frame content-sized-info-frame"
     >
       <section
         role="dialog"

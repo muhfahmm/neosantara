@@ -438,9 +438,8 @@ export default function PDBModal({ isOpen, onClose, countryDetail, selectedCount
       isOpen={isInfoOpen}
       onClose={() => setIsInfoOpen(false)}
       title="Informasi Produk Domestik Bruto"
-      fillContent
     >
-      <div className={`flex min-h-full flex-col justify-between gap-3 ${rootModalTypography.body}`}>
+      <div className={`flex flex-col gap-3 ${rootModalTypography.body}`}>
         <p className={`${rootModalTypography.body} ${rootModalTypography.muted}`}>
           PDB mengukur kekuatan ekonomi makro kedaulatan {countryName}. Daftar merangking negara berdasarkan netto PDB.
         </p>

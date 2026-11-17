@@ -24,7 +24,12 @@ export default function DetailSubsidiItemModal({
   if (!isOpen || !item) return null;
 
   return (
-    <NotebookModalWrapper onClose={onClose} zIndexClass="z-[70]" frameClassName="subsidy-detail-modal-frame">
+    <NotebookModalWrapper
+      onClose={onClose}
+      zIndexClass="z-[70]"
+      contentSized
+      frameClassName="subsidy-detail-modal-frame content-sized-info-frame"
+    >
       <div className="flex h-full min-h-0 flex-col overflow-hidden">
         <RootInfoModalHeader
           title="Rincian Kebijakan Subsidi"

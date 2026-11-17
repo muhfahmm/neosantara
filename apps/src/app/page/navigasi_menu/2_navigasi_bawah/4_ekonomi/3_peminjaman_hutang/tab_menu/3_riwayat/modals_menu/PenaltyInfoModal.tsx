@@ -18,7 +18,12 @@ export default function PenaltyInfoModal({ isOpen, onClose, loan }: Props) {
   const missed = Number(loan.missedMonths || 0);
 
   return (
-    <NotebookModalWrapper onClose={onClose} zIndexClass="z-[80]" frameClassName="loan-modal-frame">
+    <NotebookModalWrapper
+      onClose={onClose}
+      zIndexClass="z-[80]"
+      contentSized
+      frameClassName="loan-modal-frame content-sized-info-frame"
+    >
       <div className="flex h-full min-w-0 w-full flex-col overflow-hidden bg-root-surface font-sans">
         <RootInfoModalHeader
           title="Detail Denda Telat Bayar"

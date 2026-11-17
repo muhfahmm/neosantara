@@ -17,7 +17,8 @@ export default function LoanInfoModal({ isOpen, onClose }: LoanInfoModalProps) {
     <NotebookModalWrapper
       onClose={onClose}
       zIndexClass="z-[200]"
-      frameClassName="loan-modal-frame"
+      contentSized
+      frameClassName="loan-modal-frame content-sized-info-frame"
     >
       <div className="flex h-full min-w-0 w-full flex-col overflow-hidden bg-root-surface font-sans">
         <RootInfoModalHeader

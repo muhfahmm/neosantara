@@ -12,6 +12,7 @@ interface MenuInfoModalProps {
   description?: string;
   children?: ReactNode;
   fillContent?: boolean;
+  contentSized?: boolean;
 }
 
 export default function MenuInfoModal({
@@ -21,7 +22,9 @@ export default function MenuInfoModal({
   description,
   children,
   fillContent = false,
+  contentSized = true,
 }: MenuInfoModalProps) {
+  const shouldSizeToContent = contentSized && !fillContent;
   if (!isOpen) return null;
 
   return (
@@ -29,12 +32,14 @@ export default function MenuInfoModal({
       onClose={onClose}
       zIndexClass="z-[200]"
       hideWhenInfoModalOpen={false}
+      contentSized={shouldSizeToContent}
+      frameClassName={shouldSizeToContent ? "menu-info-content-sized-frame" : ""}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="menu-info-modal-title"
-        className="root-modal-util-b74379da23 h-full min-h-0 flex-1"
+        className={`root-modal-util-b74379da23 ${shouldSizeToContent ? "menu-info-content-sized-dialog" : "h-full min-h-0 flex-1"}`}
       >
         <RootInfoModalHeader
           title={title}
@@ -42,7 +47,7 @@ export default function MenuInfoModal({
           onClose={onClose}
           size="standard"
         />
-        <div className={`root-info-modal-content min-h-0 flex-1 overflow-y-auto bg-root-surface p-4 sm:p-5 lg:p-6 ${fillContent ? "flex" : ""}`}>
+        <div className={`root-info-modal-content min-h-0 ${shouldSizeToContent ? "" : "flex-1 overflow-y-auto"} bg-root-surface p-4 sm:p-5 lg:p-6 ${fillContent ? "flex" : ""}`}>
           {description && (
             <p className={`${rootModalTypography.body} ${rootModalTypography.muted} break-words`}>
               {description}
