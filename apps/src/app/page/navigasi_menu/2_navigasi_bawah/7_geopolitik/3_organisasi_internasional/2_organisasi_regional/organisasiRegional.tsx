@@ -126,8 +126,7 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
           const officialMembership = getOrgMembers(orgName, playerCountryName).some(
             (member: MemberData) => member.country?.toLowerCase().trim() === playerCountryName.toLowerCase().trim()
           );
-          const isMember = app?.status === "accepted" ||
-            isUserJoinedOrg(playerCountryName, orgName) ||
+          const isMember = isUserJoinedOrg(playerCountryName, orgName) ||
             officialMembership ||
             members.some((member) => member.country?.toLowerCase().trim() === playerCountryName.toLowerCase().trim());
 
@@ -244,6 +243,7 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
         orgName={orgName}
         countryName={playerCountryName}
         orgIcon={Icon}
+        organizationType="regional"
         canSubmit={eligibility.canApply}
       />
     </div>

@@ -13,6 +13,7 @@ import {
   getOrgMembers,
   ORGANIZATION_MEMBERSHIP_UPDATED_EVENT
 } from "@/../../json/14_database_organisasi_internasional";
+import { isUserJoinedOrg } from "./orgMembershipLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -109,7 +110,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
   const membershipMap: Record<string, boolean> = {};
   [...UN_ORGANIZATIONS, ...REGIONAL_ORGANIZATIONS].forEach((org) => {
     const members = getOrgMembers(org, playerCountryName);
-    membershipMap[org] = members.some(
+    membershipMap[org] = isUserJoinedOrg(playerCountryName, org) || members.some(
       (member: { country?: string }) => member.country?.toLowerCase().trim() === playerCountryName.toLowerCase().trim()
     );
   });
@@ -183,7 +184,11 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                 return (
                   <div
                     key={org}
-                    className={`group relative rounded-xl p-3 shadow-md transition-all ${isMember ? 'bg-root-accent/15 border-2 border-root-accent' : 'bg-root-canvas border border-root-accent/20'} hover:border-root-accent/60 hover:bg-root-accent/10`}
+                    className={`group relative rounded-xl p-3 shadow-md transition-all ${
+                      isMember
+                        ? "border-2 border-emerald-500/80 bg-emerald-500/10 hover:border-emerald-400 hover:bg-emerald-500/15"
+                        : "border border-root-accent/20 bg-root-canvas hover:border-root-accent/60 hover:bg-root-accent/10"
+                    }`}
                   >
                     <button
                       type="button"
@@ -221,7 +226,11 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                 return (
                   <div
                     key={org}
-                    className={`group relative rounded-xl p-3 shadow-md transition-all ${isMember ? 'bg-root-accent/15 border-2 border-root-accent' : 'bg-root-canvas border border-root-accent/20'} hover:border-root-accent/60 hover:bg-root-accent/10`}
+                    className={`group relative rounded-xl p-3 shadow-md transition-all ${
+                      isMember
+                        ? "border-2 border-emerald-500/80 bg-emerald-500/10 hover:border-emerald-400 hover:bg-emerald-500/15"
+                        : "border border-root-accent/20 bg-root-canvas hover:border-root-accent/60 hover:bg-root-accent/10"
+                    }`}
                   >
                     <button
                       type="button"

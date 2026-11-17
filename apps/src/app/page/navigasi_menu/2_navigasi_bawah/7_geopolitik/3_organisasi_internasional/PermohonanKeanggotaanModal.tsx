@@ -6,11 +6,8 @@ import { createPortal } from "react-dom";
 import { Send, CheckCircle, ShieldCheck, Globe, Loader2, Clock, AlertTriangle } from "lucide-react";
 import NotebookModalWrapper, { APPLICATION_MODAL_VISIBILITY_EVENT } from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
-import {
-  getApplicationForOrg,
-  submitOrgApplication,
-  OrgApplication,
-} from "./orgMembershipLogic";
+import { getApplicationForOrg, submitOrgApplication } from "./orgMembershipLogic";
+import type { OrgApplication, OrganizationApplicationType } from "./orgMembershipLogic";
 import { getDaysElapsed, formatDate } from "@/app/logic/production_logic";
 import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
 
@@ -20,6 +17,7 @@ interface PermohonanKeanggotaanModalProps {
   orgName: string;
   countryName: string;
   orgIcon?: React.ElementType;
+  organizationType: OrganizationApplicationType;
   onSubmitted?: () => void;
   canSubmit?: boolean | null;
 }
@@ -30,6 +28,7 @@ export default function PermohonanKeanggotaanModal({
   orgName,
   countryName,
   orgIcon: Icon = Globe,
+  organizationType,
   onSubmitted,
   canSubmit = true,
 }: PermohonanKeanggotaanModalProps) {
@@ -66,7 +65,7 @@ export default function PermohonanKeanggotaanModal({
     if (canSubmit !== true) return;
     setSubmitting(true);
     setTimeout(() => {
-      const app = submitOrgApplication(countryName, orgName, currentDateStr);
+      const app = submitOrgApplication(countryName, orgName, currentDateStr, undefined, organizationType);
       setCurrentApp(app);
       setSubmitting(false);
       if (onSubmitted) {

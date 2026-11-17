@@ -107,6 +107,53 @@ function normalizeOrganizationName(organizationName: string): string {
   return organizationName.toLowerCase().trim().replace(/[^a-z0-9]/g, '');
 }
 
+type ActiveMembershipWindow = Window & {
+  neosantara_active_organization_memberships?: Record<string, string[]>;
+};
+
+function getActiveMembershipStore(): Record<string, string[]> {
+  if (typeof window === 'undefined') return {};
+  const runtimeWindow = window as ActiveMembershipWindow;
+  if (!runtimeWindow.neosantara_active_organization_memberships) {
+    runtimeWindow.neosantara_active_organization_memberships = {};
+  }
+  return runtimeWindow.neosantara_active_organization_memberships;
+}
+
+export function getActiveOrganizationMemberships(countryName: string): string[] {
+  if (!countryName || typeof window === 'undefined') return [];
+  const countryKey = normalizeCountryName(countryName);
+  return [...(getActiveMembershipStore()[countryKey] || [])];
+}
+
+export function addActiveOrganizationMembership(countryName: string, organizationName: string): void {
+  if (!countryName || !organizationName || typeof window === 'undefined') return;
+  const store = getActiveMembershipStore();
+  const countryKey = normalizeCountryName(countryName);
+  const memberships = store[countryKey] || [];
+  if (!memberships.some(name => normalizeOrganizationName(name) === normalizeOrganizationName(organizationName))) {
+    store[countryKey] = [...memberships, organizationName.trim()];
+  }
+}
+
+export function replaceActiveOrganizationMemberships(countryName: string, organizations: string[]): void {
+  if (!countryName || typeof window === 'undefined') return;
+  const store = getActiveMembershipStore();
+  const countryKey = normalizeCountryName(countryName);
+  const memberships = new Map<string, string>();
+  organizations.forEach(name => {
+    if (typeof name !== 'string' || !name.trim()) return;
+    const key = normalizeOrganizationName(name);
+    if (!memberships.has(key)) memberships.set(key, name.trim());
+  });
+  store[countryKey] = [...memberships.values()];
+}
+
+export function clearActiveOrganizationMemberships(): void {
+  if (typeof window === 'undefined') return;
+  delete (window as ActiveMembershipWindow).neosantara_active_organization_memberships;
+}
+
 function getExpelledCountryNames(): Set<string> {
   if (typeof window === 'undefined') return new Set();
 
@@ -297,46 +344,38 @@ export function getOrgMembers(orgName: string, playerCountryName?: string): { co
       !organizationExpelledCountry(playerCountryName) &&
       typeof window !== 'undefined'
     ) {
-      try {
-        const rawJoined = localStorage.getItem(`neosantara_user_joined_orgs_v1_${normPlayer.replace(/[^a-z0-9]/g, '')}`);
-        if (rawJoined) {
-          const joinedArray: string[] = JSON.parse(rawJoined);
-          const normOrg = orgName.toLowerCase().trim().replace(/[^a-z0-9]/g, '');
-          
-          // Alias map for short keys saved in joinedOrgs
-          const keyAliases: Record<string, string[]> = {
-            "interpol": ["interpol"],
-            "organisasikesehatanduniawho": ["who", "organisasikesehatanduniawho"],
-            "unesco": ["unesco"],
-            "organisasiperdaganganduniawto": ["wto", "organisasiperdaganganduniawto"],
-            "organisasiburuhinternasionalilo": ["ilo", "organisasiburuhinternasionalilo"],
-            "organisasipangandanpertanianfao": ["fao", "organisasipangandanpertanianfao"],
-            "organisasimaritiminternasionalimo": ["imo", "organisasimaritiminternasionalimo"],
-            "organisasitelekomunikasiinternasionalitu": ["itu", "organisasitelekomunikasiinternasionalitu"],
-            "organisasimeteorologiduniawmo": ["wmo", "organisasimeteorologiduniawmo"],
-            "perhimpunanbangsabangsaasiatenggaraasean": ["asean", "perhimpunanbangsabangsaasiatenggaraasean"],
-            "unieropaeu": ["eu", "unieropaeu"],
-            "ligaarab": ["arab_league", "ligaarab"],
-            "uniafrikaau": ["au", "uniafrikaau"],
-            "organisasikerjasamaislamoki": ["oic", "oki", "organisasikerjasamaislamoki"],
-            "bricsbrasilrusiaindiachinaafrikaselatan": ["brics", "bricsbrasilrusiaindiachinaafrikaselatan"],
-            "paktapertahananatlantikutaranato": ["nato", "paktapertahananatlantikutaranato"],
-            "organisasinegaranegarapengeksporminyakbumiopec": ["opec", "organisasinegaranegarapengeksporminyakbumiopec"],
-            "kelompokduapuluhg20": ["g20", "kelompokduapuluhg20"]
-          };
+      const normOrg = normalizeOrganizationName(orgName);
+      const keyAliases: Record<string, string[]> = {
+        "interpol": ["interpol"],
+        "organisasikesehatanduniawho": ["who", "organisasikesehatanduniawho"],
+        "unesco": ["unesco"],
+        "organisasiperdaganganduniawto": ["wto", "organisasiperdaganganduniawto"],
+        "organisasiburuhinternasionalilo": ["ilo", "organisasiburuhinternasionalilo"],
+        "organisasipangandanpertanianfao": ["fao", "organisasipangandanpertanianfao"],
+        "organisasimaritiminternasionalimo": ["imo", "organisasimaritiminternasionalimo"],
+        "organisasitelekomunikasiinternasionalitu": ["itu", "organisasitelekomunikasiinternasionalitu"],
+        "organisasimeteorologiduniawmo": ["wmo", "organisasimeteorologiduniawmo"],
+        "perhimpunanbangsabangsaasiatenggaraasean": ["asean", "perhimpunanbangsabangsaasiatenggaraasean"],
+        "unieropaeu": ["eu", "unieropaeu"],
+        "ligaarab": ["arab_league", "ligaarab"],
+        "uniafrikaau": ["au", "uniafrikaau"],
+        "organisasikerjasamaislamoki": ["oic", "oki", "organisasikerjasamaislamoki"],
+        "bricsbrasilrusiaindiachinaafrikaselatan": ["brics", "bricsbrasilrusiaindiachinaafrikaselatan"],
+        "paktapertahananatlantikutaranato": ["nato", "paktapertahananatlantikutaranato"],
+        "organisasinegaranegarapengeksporminyakbumiopec": ["opec", "organisasinegaranegarapengeksporminyakbumiopec"],
+        "kelompokduapuluhg20": ["g20", "kelompokduapuluhg20"]
+      };
 
-          const validKeys = keyAliases[normOrg] || [normOrg];
-          const isJoined = joinedArray.some(j => validKeys.includes(j.toLowerCase().trim().replace(/[^a-z0-9]/g, '')));
+      const validKeys = keyAliases[normOrg] || [normOrg];
+      const isJoined = getActiveOrganizationMemberships(playerCountryName).some(
+        name => validKeys.includes(normalizeOrganizationName(name))
+      );
 
-          if (isJoined) {
-            result.push({
-              country: formattedPlayer,
-              status: 'Anggota',
-            });
-          }
-        }
-      } catch (e) {
-        console.error('Failed to parse joined orgs in getOrgMembers:', e);
+      if (isJoined) {
+        result.push({
+          country: formattedPlayer,
+          status: 'Anggota',
+        });
       }
     }
   }

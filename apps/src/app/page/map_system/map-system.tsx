@@ -261,7 +261,15 @@ import {
     getWMODisasterRiskModifier,
     applyKementerianLingkunganHidupDisasterRiskReduction,
 } from '../bonus_logic';
-import { checkAndProcessOrgApplications } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/3_organisasi_internasional/orgMembershipLogic';
+import {
+    checkAndProcessOrgApplications,
+    clearUnpersistedOrganizationMembershipState,
+    getOrgApplicationType,
+    getUserJoinedOrgSnapshot,
+    restoreUserJoinedOrgs,
+} from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/3_organisasi_internasional/orgMembershipLogic';
+import { createPBBMembershipNotification } from '../menus/inbox/logic/16_notifikasi_organisasi_internasional/1_notifikasi_organisasi_pbb/organisasiPBBNotificationLogic';
+import { createRegionalMembershipNotification } from '../menus/inbox/logic/16_notifikasi_organisasi_internasional/2_notifikasi_organisasi_regional/organisasiRegionalNotificationLogic';
 import { fetchAllCountryProfilesFromDb } from '@/../../json/semua_fitur_negara/0_profiles';
 import {
     createInitialElectionState,
@@ -4479,6 +4487,8 @@ export default function MapPage() {
                     'penawaran_kontrak_penelitian',
                     'penawaran_aliansi_pertahanan',
                     'penawaran_kedutaan_besar',
+                    'keanggotaan_organisasi_pbb',
+                    'keanggotaan_organisasi_regional',
                 ].includes(String(tradeType)) ||
                 tradeType === 'diserang' ||
                 tradeType === 'bantuan_sekutu' ||
@@ -7407,6 +7417,7 @@ export default function MapPage() {
         if (typeof window !== 'undefined') {
             const loadSaveStr = sessionStorage.getItem('presiden_simulator_load_save');
             const isNewGame = localStorage.getItem('presiden_simulator_new_game') === '1';
+            clearUnpersistedOrganizationMembershipState();
             if (loadSaveStr || isNewGame) {
                 setActivePlayerAttack(null);
             }
@@ -7426,6 +7437,12 @@ export default function MapPage() {
                         const savedDetail = savedState.countryDetail && typeof savedState.countryDetail === 'object'
                             ? savedState.countryDetail
                             : {};
+                        const savedOrganizationMemberships = Array.isArray(savedDetail.organizationMemberships)
+                            ? savedDetail.organizationMemberships.filter(
+                                (organization: unknown): organization is string => typeof organization === 'string'
+                            )
+                            : [];
+                        restoreUserJoinedOrgs(chosen.country, savedOrganizationMemberships);
                         const {
                             __neosantara_game_session: savedSessionState,
                             pabrik_mesin_mobil: legacyCarMachineCount,
@@ -7681,7 +7698,13 @@ export default function MapPage() {
             setCurrentGameDateString(currentDateStr);
             const userCountryName = String(countryDetail?.country || countryDetail?.nama || '');
             if (userCountryName) {
-                checkAndProcessOrgApplications(userCountryName, currentDateStr);
+                checkAndProcessOrgApplications(userCountryName, currentDateStr, (application, outcome) => {
+                    const organizationType = getOrgApplicationType(application);
+                    const notification = organizationType === 'pbb'
+                        ? createPBBMembershipNotification(application, outcome, currentDateStr)
+                        : createRegionalMembershipNotification(application, outcome, currentDateStr);
+                    setNotifications(previous => [notification, ...previous]);
+                });
             }
         }
 
@@ -8963,6 +8986,7 @@ export default function MapPage() {
                     presidentRating,
                     playerDiamonds,
                     notifications,
+                    organizationMemberships: getUserJoinedOrgSnapshot(selectedCountry.country),
                     missionCompletions: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_mission_completions') : null,
                     activeMissionId: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_active_mission') : null,
                     claimableMissions: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_claimable_missions') : null,

@@ -20,6 +20,8 @@ import BencanaNotification from './logic/6_notifikasi_bencana/1_bencana_alam/ben
 import WabahNotification from './logic/6_notifikasi_bencana/2_wabah_penyakit/wabahNotification';
 import KeamananNotificationCard from './logic/14_notifikasi_keamanan/keamananNotification';
 import BantuanSekutuNotificationCard from './logic/15_notifikasi_bantuan_sekutu/bantuanSekutuNotification';
+import OrganizationMembershipNotificationCard from './logic/16_notifikasi_organisasi_internasional/OrganizationMembershipNotificationCard';
+import type { OrganizationMembershipNotification } from './logic/16_notifikasi_organisasi_internasional/organizationMembershipNotificationLogic';
 import TradeRelationNotification from './logic/3_notifikasi_perdagangan/3_hubungan_dagang/tradeRelationNotification';
 import SpionaseNotificationCard from './logic/2_notifikasi_pertahanan/1_spionase/spionaseNotification';
 import SabotaseNotificationCard from './logic/2_notifikasi_pertahanan/2_sabotase/sabotaseNotification';
@@ -97,6 +99,7 @@ export default function TopLeftIcon({
   const isLandscapePhone = viewportMode === 'landscapePhone';
   const isPortraitPhone = viewportMode === 'portraitPhone';
   const isMobile = isLandscapePhone || isPortraitPhone;
+  const isToastBlocked = isMenuModalOpen || isOpen || isWarAnalysisActive;
   const orderedNotifications = useMemo(() => {
     return [...visibleNotifications].sort((first, second) => {
       const firstArrivalDate = first.diplomacyArrivalDate;
@@ -147,7 +150,7 @@ export default function TopLeftIcon({
   }, [visibleNotifications]);
 
   useEffect(() => {
-    if (!showToast || !toastNotification) return;
+    if (!showToast || !toastNotification || isToastBlocked) return;
 
     const timer = window.setTimeout(() => {
       dismissedToastIdRef.current = toastNotification.id;
@@ -155,7 +158,7 @@ export default function TopLeftIcon({
     }, 3000);
 
     return () => window.clearTimeout(timer);
-  }, [showToast, toastNotification?.id]);
+  }, [showToast, toastNotification?.id, isToastBlocked]);
 
 
 
@@ -165,6 +168,14 @@ export default function TopLeftIcon({
     const handleRedirect = onRedirectClick ? () => onRedirectClick(notif) : undefined;
 
     const tradeType = (notif as any).tradeType;
+    if (tradeType === 'keanggotaan_organisasi_pbb' || tradeType === 'keanggotaan_organisasi_regional') {
+      return (
+        <OrganizationMembershipNotificationCard
+          key={notif.id}
+          notification={notif as OrganizationMembershipNotification}
+        />
+      );
+    }
     if (tradeType === 'jual') {
       return (
         <TradeJualNotification
@@ -570,7 +581,7 @@ export default function TopLeftIcon({
 
           {/* Toast Notification Box */}
           <div
-            className={`transition-[opacity,transform] duration-300 ease-out origin-top-left will-change-[opacity,transform] ${showToast && toastNotification && !isMenuModalOpen
+            className={`transition-[opacity,transform] duration-300 ease-out origin-top-left will-change-[opacity,transform] ${showToast && toastNotification && !isToastBlocked
                 ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
                 : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
               } flex ${isLandscapePhone ? 'h-24 w-52' : 'h-28 w-64'} flex-col rounded-xl border-2 border-root-accent bg-root-surface p-2.5 shadow-lg cursor-pointer group`}

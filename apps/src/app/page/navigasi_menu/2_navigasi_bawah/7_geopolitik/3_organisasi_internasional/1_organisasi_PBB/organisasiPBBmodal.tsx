@@ -106,6 +106,8 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
           const app = getApplicationForOrg(playerCountryName, orgName);
           const currentDateStr = getCurrentGameDateString() || formatDate(new Date());
           const remainingDays = app ? Math.max(0, 30 - getDaysElapsed(app.submissionDate, currentDateStr)) : 30;
+          const isMember = isUserJoinedOrg(playerCountryName, orgName) ||
+            members.some((member) => member.country?.toLowerCase().trim() === playerCountryName.toLowerCase().trim());
 
           return (
             <div className="mb-4 p-3.5 rounded-xl bg-[#0E2A20] border border-emerald-500/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-bold text-emerald-300 shadow-md">
@@ -113,7 +115,7 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
                 <span>Efek Keanggotaan Organisasi:</span>
                 <span className="font-black text-emerald-400 text-sm">{ORGANIZATION_BENEFITS[orgName]}</span>
               </div>
-              {(app?.status === "accepted" || isUserJoinedOrg(playerCountryName, orgName)) ? (
+              {isMember ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-black text-[11px] uppercase tracking-wider shrink-0 shadow-sm">
                   <Check className="h-3.5 w-3.5 text-emerald-400" />
                   <span>Anggota Aktif</span>
@@ -206,6 +208,7 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
         orgName={orgName}
         countryName={playerCountryName}
         orgIcon={Icon}
+        organizationType="pbb"
       />
     </div>
   );
