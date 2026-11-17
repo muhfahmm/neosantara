@@ -189,40 +189,58 @@ function checkOpec(countryName: string, production: number | null): MembershipRe
 }
 
 function checkBrics(countryName: string, relationDataRevision: number): MembershipRequirementStatus {
-  const requirement = "Skor hubungan dengan China dan Rusia harus sama-sama di atas 50.";
   if (!countryName) {
-    return makeRequirement("diplomacy", requirement, null, "Negara yang sedang dimainkan belum dapat diidentifikasi.");
+    return makeRequirement(
+      "diplomacy",
+      "Skor hubungan dengan China dan Rusia harus sama-sama di atas 50.",
+      null,
+      "Negara yang sedang dimainkan belum dapat diidentifikasi."
+    );
   }
-  const hasChinaScore = hasBaseRelationDataForPair(countryName, "China");
-  const hasRussiaScore = hasBaseRelationDataForPair(countryName, "Rusia");
-  const chinaScore = hasChinaScore ? getRelationValue(countryName, "China") : null;
-  const russiaScore = hasRussiaScore ? getRelationValue(countryName, "Rusia") : null;
-  const hasAllScores = hasChinaScore && hasRussiaScore;
-  const hasFailingScore =
-    (chinaScore !== null && chinaScore <= 50) ||
-    (russiaScore !== null && russiaScore <= 50);
-  const detail = `Hubungan dengan China: ${chinaScore ?? "belum tersedia"}; dengan Rusia: ${russiaScore ?? "belum tersedia"}.`;
-  if (!hasAllScores && !hasFailingScore) {
+  const playerCountry = normalizeText(countryName);
+  const relationTargets = [
+    { name: "China", key: "china" },
+    { name: "Rusia", key: "rusia" },
+  ].filter((target) => playerCountry !== target.key);
+  const targetNames = relationTargets.map((target) => target.name);
+  const requirement = relationTargets.length === 1
+    ? `Skor hubungan dengan ${targetNames[0]} harus di atas 50.`
+    : "Skor hubungan dengan China dan Rusia harus sama-sama di atas 50.";
+  const scores = relationTargets.map(({ name }) => {
+    const hasScore = hasBaseRelationDataForPair(countryName, name);
+    return {
+      name,
+      score: hasScore ? getRelationValue(countryName, name) : null,
+    };
+  });
+  const hasMissingScore = scores.some(({ score }) => score === null);
+  const hasFailingScore = scores.some(({ score }) => score !== null && score <= 50);
+  const detail = scores
+    .map(({ name, score }) => `Hubungan dengan ${name}: ${score ?? "belum tersedia"}`)
+    .join("; ") + ".";
+  if (hasMissingScore && !hasFailingScore) {
+    const targetList = targetNames.join(" dan ");
     return makeRequirement(
       "diplomacy",
       requirement,
       null,
       relationDataRevision > 0
-        ? "Data hubungan diplomatik China atau Rusia belum tersedia; kelayakan belum dapat dipastikan."
-        : "Mengambil skor China dan Rusia dari tabel hubungan diplomatik.",
+        ? `Data hubungan diplomatik ${targetList} belum tersedia; kelayakan belum dapat dipastikan.`
+        : `Mengambil skor ${targetList} dari tabel hubungan diplomatik.`,
       detail
     );
   }
-  const passed = hasAllScores &&
-    chinaScore !== null && chinaScore > 50 &&
-    russiaScore !== null && russiaScore > 50;
+  const passed = !hasMissingScore && !hasFailingScore;
+  const scoreSummary = scores
+    .map(({ name, score }) => `${name} (${score ?? "belum tersedia"})`)
+    .join(" dan ");
   return makeRequirement(
     "diplomacy",
     requirement,
     passed,
     passed
-      ? `Skor hubungan dengan China (${chinaScore}) dan Rusia (${russiaScore}) keduanya di atas 50.`
-      : `Syarat gagal: hubungan dengan China (${chinaScore ?? "belum tersedia"}) dan Rusia (${russiaScore ?? "belum tersedia"}) harus keduanya di atas 50.`,
+      ? `Skor hubungan dengan ${scoreSummary} di atas 50.`
+      : `Syarat gagal: skor hubungan dengan ${scoreSummary} harus di atas 50.`,
     detail
   );
 }

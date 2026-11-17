@@ -100,7 +100,7 @@ const ORGANIZATION_INFO: Record<string, { description: string; focus: string; re
   "BRICS (Brasil, Rusia, India, China, Afrika Selatan)": {
     description: "Forum kerja sama negara-negara BRICS untuk memperkuat dialog dan koordinasi di berbagai isu global.",
     focus: "Kerja sama ekonomi, pembangunan, dan koordinasi dalam tata kelola global.",
-    requirement: "Negara harus memiliki skor hubungan lebih dari 50 dengan China atau Rusia.",
+    requirement: "Skor hubungan dengan China dan Rusia harus sama-sama di atas 50.",
     benefit: "Pendapatan Negara +10%",
   },
   "Pakta Pertahanan Atlantik Utara (NATO)": {
