@@ -189,7 +189,7 @@ function checkOpec(countryName: string, production: number | null): MembershipRe
 }
 
 function checkBrics(countryName: string, relationDataRevision: number): MembershipRequirementStatus {
-  const requirement = "Skor hubungan dengan China atau Rusia harus di atas 50.";
+  const requirement = "Skor hubungan dengan China dan Rusia harus sama-sama di atas 50.";
   if (!countryName) {
     return makeRequirement("diplomacy", requirement, null, "Negara yang sedang dimainkan belum dapat diidentifikasi.");
   }
@@ -197,29 +197,32 @@ function checkBrics(countryName: string, relationDataRevision: number): Membersh
   const hasRussiaScore = hasBaseRelationDataForPair(countryName, "Rusia");
   const chinaScore = hasChinaScore ? getRelationValue(countryName, "China") : null;
   const russiaScore = hasRussiaScore ? getRelationValue(countryName, "Rusia") : null;
-  const passed = chinaScore !== null && chinaScore > 50 || russiaScore !== null && russiaScore > 50;
   const hasAllScores = hasChinaScore && hasRussiaScore;
-  const hasAnyQualifyingScore = passed;
-  const meetsCriteria = hasAnyQualifyingScore || hasAllScores;
+  const hasFailingScore =
+    chinaScore !== null && chinaScore <= 50 ||
+    russiaScore !== null && russiaScore <= 50;
   const detail = `Hubungan dengan China: ${chinaScore ?? "belum tersedia"}; dengan Rusia: ${russiaScore ?? "belum tersedia"}.`;
-  if (!meetsCriteria) {
+  if (!hasAllScores && !hasFailingScore) {
     return makeRequirement(
       "diplomacy",
       requirement,
       null,
       relationDataRevision > 0
-        ? "Data skor hubungan China atau Rusia belum lengkap; kelayakan belum dapat dipastikan."
-        : "Data hubungan antarnegara sedang dimuat; kelayakan belum dapat dipastikan.",
+        ? "Data hubungan diplomatik China atau Rusia belum tersedia; kelayakan belum dapat dipastikan."
+        : "Mengambil skor China dan Rusia dari tabel hubungan diplomatik.",
       detail
     );
   }
+  const passed = hasAllScores &&
+    chinaScore !== null && chinaScore > 50 &&
+    russiaScore !== null && russiaScore > 50;
   return makeRequirement(
     "diplomacy",
     requirement,
     passed,
     passed
-      ? `Syarat hubungan terpenuhi: skor dengan China atau Rusia lebih dari 50.`
-      : `Skor hubungan negara kamu (${countryName}) dengan China dan Rusia belum ada yang di atas 50.`,
+      ? `Skor hubungan dengan China (${chinaScore}) dan Rusia (${russiaScore}) keduanya di atas 50.`
+      : `Syarat gagal: hubungan dengan China (${chinaScore ?? "belum tersedia"}) dan Rusia (${russiaScore ?? "belum tersedia"}) harus keduanya di atas 50.`,
     detail
   );
 }
