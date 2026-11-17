@@ -1,7 +1,7 @@
 "use client"
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useEffect, useState } from "react";
-import { X, Loader2, User, ChevronRight, Send, Clock, Check } from "lucide-react";
+import { Loader2, User, ChevronRight, Send, Clock, Check } from "lucide-react";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { getOrgMembers } from "@/../../json/14_database_organisasi_internasional";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import PermohonanKeanggotaanModal from "../PermohonanKeanggotaanModal";
@@ -93,31 +93,12 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
 
   return (
     <div className="w-full h-full flex flex-col bg-root-surface">
-      {/* HEADER */}
-      <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas shrink-0">
-        <div className="flex items-center gap-2 sm:gap-3">
-          {Icon && (
-            <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
-              <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-            </div>
-          )}
-          <div>
-            <h3 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">
-              {orgName}
-            </h3>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">
-              Organisasi PBB
-            </p>
-          </div>
-        </div>
-        <SharedModalCloseButton
-          onClick={onClose}
-          className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-         appearance="custom">
-          <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-          <X className="h-4 w-4" />
-        </SharedModalCloseButton>
-      </div>
+      <RootInfoModalHeader
+        title={orgName}
+        onClose={onClose}
+        icon={Icon ? <Icon aria-hidden="true" className="text-root-accent" /> : undefined}
+        size="standard"
+      />
 
       {/* BODY - Daftar Negara Anggota */}
       <div className="flex-1 overflow-y-auto p-6 sm:p-8 bg-root-surface custom-scrollbar">

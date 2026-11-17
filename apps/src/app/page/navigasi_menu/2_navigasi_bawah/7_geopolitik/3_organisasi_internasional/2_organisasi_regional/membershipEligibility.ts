@@ -199,8 +199,8 @@ function checkBrics(countryName: string, relationDataRevision: number): Membersh
   const russiaScore = hasRussiaScore ? getRelationValue(countryName, "Rusia") : null;
   const hasAllScores = hasChinaScore && hasRussiaScore;
   const hasFailingScore =
-    chinaScore !== null && chinaScore <= 50 ||
-    russiaScore !== null && russiaScore <= 50;
+    (chinaScore !== null && chinaScore <= 50) ||
+    (russiaScore !== null && russiaScore <= 50);
   const detail = `Hubungan dengan China: ${chinaScore ?? "belum tersedia"}; dengan Rusia: ${russiaScore ?? "belum tersedia"}.`;
   if (!hasAllScores && !hasFailingScore) {
     return makeRequirement(

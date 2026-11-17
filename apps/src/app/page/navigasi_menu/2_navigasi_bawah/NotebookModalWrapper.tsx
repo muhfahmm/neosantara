@@ -5,6 +5,7 @@ import { RootNotebookDecorations } from '@/app/page/root_modals_design_menu/Root
 import { useViewportMode } from '@/app/hooks/useViewportMode';
 
 export const MENU_INFO_MODAL_VISIBILITY_EVENT = 'neosantara_menu_info_modal_visibility';
+export const APPLICATION_MODAL_VISIBILITY_EVENT = 'neosantara_application_modal_visibility';
 
 interface NotebookModalWrapperProps {
   children: React.ReactNode;
@@ -15,6 +16,7 @@ interface NotebookModalWrapperProps {
   compact?: boolean;
   squareCorners?: boolean;
   hideWhenInfoModalOpen?: boolean;
+  hideWhenApplicationModalOpen?: boolean;
   frameClassName?: string;
   contentSized?: boolean;
 }
@@ -28,10 +30,12 @@ export function NotebookModalWrapper({
   compact = false,
   squareCorners = false,
   hideWhenInfoModalOpen = true,
+  hideWhenApplicationModalOpen = true,
   frameClassName = '',
   contentSized = false,
 }: NotebookModalWrapperProps) {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
   const decorationsCount = ringCount ?? (compact ? 5 : 11);
   const viewportMode = useViewportMode();
 
@@ -47,10 +51,22 @@ export function NotebookModalWrapper({
     return () => window.removeEventListener(MENU_INFO_MODAL_VISIBILITY_EVENT, handleInfoModalVisibility);
   }, [hideWhenInfoModalOpen]);
 
+  useEffect(() => {
+    if (!hideWhenApplicationModalOpen) return;
+
+    const handleApplicationModalVisibility = (event: Event) => {
+      const { isOpen } = (event as CustomEvent<{ isOpen: boolean }>).detail;
+      setIsApplicationModalOpen(isOpen);
+    };
+
+    window.addEventListener(APPLICATION_MODAL_VISIBILITY_EVENT, handleApplicationModalVisibility);
+    return () => window.removeEventListener(APPLICATION_MODAL_VISIBILITY_EVENT, handleApplicationModalVisibility);
+  }, [hideWhenApplicationModalOpen]);
+
   return (
     <div
       data-viewport-mode={viewportMode === 'desktop' ? undefined : viewportMode}
-      className={`responsive-modal-frame notebook-modal-frame ${frameClassName} ${isHidden || (hideWhenInfoModalOpen && isInfoModalOpen) ? 'hidden' : ''} fixed inset-0 ${zIndexClass} flex items-center justify-center font-sans pointer-events-auto`}
+      className={`responsive-modal-frame notebook-modal-frame ${frameClassName} ${isHidden || (hideWhenInfoModalOpen && isInfoModalOpen) || (hideWhenApplicationModalOpen && isApplicationModalOpen) ? 'hidden' : ''} fixed inset-0 ${zIndexClass} flex items-center justify-center font-sans pointer-events-auto`}
     >
       {/* Notebook Outer Frame */}
       <div
