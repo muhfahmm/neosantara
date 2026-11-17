@@ -17,7 +17,6 @@ import DanaTidakCukupModal from "./DanaTidakCukupModal";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
-import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import {
   applyDiplomasiAcaraSatisfactionBonus,
@@ -56,7 +55,6 @@ export default function NaikkanKepuasanModal({
   const [isDanaTidakCukupOpen, setIsDanaTidakCukupOpen] = useState(false);
   const [pendingCost, setPendingCost] = useState(0);
   const [pendingTitle, setPendingTitle] = useState("");
-  const [showInfoModal, setShowInfoModal] = useState(false);
   const [isMenuInfoOpen, setIsMenuInfoOpen] = useState(false);
   const [activeMissionId, setActiveMissionId] = useState<string | null>(null);
   const [highlightedEventId, setHighlightedEventId] = useState<string | null>(
@@ -432,13 +430,6 @@ export default function NaikkanKepuasanModal({
                   { label: "Naikkan Peringkat", isActive: true },
                 ]}
               />
-              <button
-                onClick={() => setShowInfoModal(true)}
-                title="Lihat penjelasan setiap tab"
-                className={"root-modal-util-02d83a46d0"}
-              >
-                <Info className={"root-modal-util-371862382d"} />
-              </button>
             </div>
           </div>
 
@@ -593,111 +584,88 @@ export default function NaikkanKepuasanModal({
       </NotebookModalWrapper>
       )}
 
-      {/* ============ MODAL INFO ============ */}
-      {showInfoModal && !isDanaTidakCukupOpen && (
-        <NotebookModalWrapper
-          onClose={() => setShowInfoModal(false)}
-          zIndexClass="z-[300]"
-        >
-          <div className={"root-modal-util-52b6b298fe"}>
-            <RootInfoModalHeader
-              title="Panduan Menu Kepuasan"
-              icon={<Info aria-hidden="true" />}
-              onClose={() => setShowInfoModal(false)}
-              closeAriaLabel="Tutup panduan menu kepuasan"
-              size="standard"
-            />
-
-            {/* Body Modal Info */}
-            <div className={"root-modal-util-64d21c5606"}>
-              {/* Tab 1: Statistik */}
-              <div className={`root-modal-util-5f22e64f22 root-modal-util-3c137e5152 `}>
-                <div className={"root-modal-util-48530515e1"}>
-                  <div className={"root-modal-util-b51ae17988"}>
-                    <BarChart3 className={"root-modal-util-ea2c28151c"} />
-                  </div>
-                  <h4 className={`root-modal-util-9361ef65fc root-modal-util-1ebbaf6952 `}>
-                    Tab Statistik
-                  </h4>
-                </div>
-                <p className={"root-modal-util-27a7c73979"}>
-                  Menampilkan{" "}
-                  <strong className={"root-modal-util-070a7f2c69"}>dashboard lengkap</strong>{" "}
-                  kondisi kepuasan rakyat saat ini. Berisi grafik historis,
-                  faktor-faktor yang mempengaruhi kepuasan (ekonomi, keamanan,
-                  layanan publik), serta proyeksi tren beberapa hari ke depan.
-                </p>
-                <p className={`root-modal-util-34a3521642 root-modal-util-c8845f1281 `}>
-                  Cocok untuk: analisis mendalam sebelum mengambil keputusan
-                  strategis.
-                </p>
-              </div>
-
-              {/* Tab 2: Naikkan Peringkat */}
-              <div className={`root-modal-util-5f22e64f22 root-modal-util-83186b6486 `}>
-                <div className={"root-modal-util-48530515e1"}>
-                  <div className={"root-modal-util-07c8e7670b"}>
-                    <PartyPopper className={"root-modal-util-ea2c28151c"} />
-                  </div>
-                  <h4 className={`root-modal-util-9361ef65fc root-modal-util-1ebbaf6952 `}>
-                    Tab Naikkan Peringkat
-                  </h4>
-                </div>
-                <p className={"root-modal-util-27a7c73979"}>
-                  Menampilkan daftar{" "}
-                  <strong className={"root-modal-util-070a7f2c69"}>
-                    acara & program publik
-                  </strong>{" "}
-                  yang bisa presiden luncurkan untuk meningkatkan kepuasan
-                  rakyat. Setiap acara punya biaya, durasi, dan boost kepuasan
-                  tersendiri.
-                </p>
-                <ul className={`root-modal-util-34a3521642 root-modal-util-7678944519 `}>
-                  <li>
-                    Acara berjalan sesuai durasi, boost kepuasan berlaku setelah
-                    selesai.
-                  </li>
-                  <li>Satu acara hanya bisa aktif satu kali dalam satu waktu.</li>
-                  <li>
-                    Bonus riset{" "}
-                    <strong className={"root-modal-util-070a7f2c69"}>Diplomasi Acara</strong>{" "}
-                    dapat meningkatkan boost secara signifikan.
-                  </li>
-                </ul>
-              </div>
-
-              {/* Tips */}
-              <div className={`root-modal-util-00911ae1e9 root-modal-util-5f22e64f22 root-modal-util-a31a206dc8 `}>
-                <div className={"root-modal-util-b9edd2710c"}>
-                  <Lightbulb className={"root-modal-util-378483ea7a"} />
-                </div>
-                <p className={`root-modal-util-8ff7188727 root-modal-util-cb351c8e19 `}>
-                  <strong>Tips:</strong> Cek tab <strong>Statistik</strong> dulu
-                  untuk melihat kondisi kepuasan saat ini, lalu pilih acara yang
-                  paling cocok di tab <strong>Naikkan Peringkat</strong>.
-                </p>
-              </div>
-            </div>
-
-            {/* Footer Modal Info */}
-            <div className={"root-modal-util-9812891ca5"}>
-              <button
-                onClick={() => setShowInfoModal(false)}
-                className={"root-modal-util-c21ef9bab6"}
-              >
-                Mengerti
-              </button>
-            </div>
-          </div>
-        </NotebookModalWrapper>
-      )}
-
       <MenuInfoModal
         isOpen={isMenuInfoOpen}
         onClose={() => setIsMenuInfoOpen(false)}
         title="Informasi Peningkatan Kepuasan Rakyat"
-        description="Pilih acara atau inisiatif untuk meningkatkan kepuasan rakyat. Periksa biaya dan durasinya sebelum memulai; dampak kepuasan diterapkan setelah kegiatan selesai. Tab Statistik membantu menilai kondisi sebelum memilih program."
-      />
+        contentSized={false}
+      >
+        <div className="space-y-4">
+          <div className="root-modal-util-5f22e64f22 root-modal-util-3c137e5152">
+            <div className="root-modal-util-48530515e1">
+              <div className="root-modal-util-b51ae17988">
+                <BarChart3 className="root-modal-util-ea2c28151c" />
+              </div>
+              <h4 className="root-modal-util-9361ef65fc root-modal-util-1ebbaf6952">
+                Tab Statistik
+              </h4>
+            </div>
+            <p className="root-modal-util-27a7c73979">
+              Menampilkan{" "}
+              <strong className="root-modal-util-070a7f2c69">dashboard lengkap</strong>{" "}
+              kondisi kepuasan rakyat saat ini. Berisi grafik historis,
+              faktor-faktor yang mempengaruhi kepuasan (ekonomi, keamanan,
+              layanan publik), serta proyeksi tren beberapa hari ke depan.
+            </p>
+            <p className="root-modal-util-34a3521642 root-modal-util-c8845f1281">
+              Cocok untuk: analisis mendalam sebelum mengambil keputusan
+              strategis.
+            </p>
+          </div>
+
+          <div className="root-modal-util-5f22e64f22 root-modal-util-83186b6486">
+            <div className="root-modal-util-48530515e1">
+              <div className="root-modal-util-07c8e7670b">
+                <PartyPopper className="root-modal-util-ea2c28151c" />
+              </div>
+              <h4 className="root-modal-util-9361ef65fc root-modal-util-1ebbaf6952">
+                Tab Naikkan Peringkat
+              </h4>
+            </div>
+            <p className="root-modal-util-27a7c73979">
+              Menampilkan daftar{" "}
+              <strong className="root-modal-util-070a7f2c69">
+                acara & program publik
+              </strong>{" "}
+              yang bisa presiden luncurkan untuk meningkatkan kepuasan rakyat.
+              Setiap acara punya biaya, durasi, dan boost kepuasan tersendiri.
+            </p>
+            <ul className="root-modal-util-34a3521642 root-modal-util-7678944519">
+              <li>
+                Acara berjalan sesuai durasi, boost kepuasan berlaku setelah
+                selesai.
+              </li>
+              <li>Satu acara hanya bisa aktif satu kali dalam satu waktu.</li>
+              <li>
+                Bonus riset{" "}
+                <strong className="root-modal-util-070a7f2c69">Diplomasi Acara</strong>{" "}
+                dapat meningkatkan boost secara signifikan.
+              </li>
+            </ul>
+          </div>
+
+          <div className="root-modal-util-00911ae1e9 root-modal-util-5f22e64f22 root-modal-util-a31a206dc8">
+            <div className="root-modal-util-b9edd2710c">
+              <Lightbulb className="root-modal-util-378483ea7a" />
+            </div>
+            <p className="root-modal-util-8ff7188727 root-modal-util-cb351c8e19">
+              <strong>Tips:</strong> Cek tab <strong>Statistik</strong> dulu
+              untuk melihat kondisi kepuasan saat ini, lalu pilih acara yang
+              paling cocok di tab <strong>Naikkan Peringkat</strong>.
+            </p>
+          </div>
+
+          <div className="root-modal-util-9812891ca5">
+            <button
+              type="button"
+              onClick={() => setIsMenuInfoOpen(false)}
+              className="root-modal-util-c21ef9bab6"
+            >
+              Mengerti
+            </button>
+          </div>
+        </div>
+      </MenuInfoModal>
 
       {/* ============ Modal Dana Tidak Cukup ============ */}
       <DanaTidakCukupModal
