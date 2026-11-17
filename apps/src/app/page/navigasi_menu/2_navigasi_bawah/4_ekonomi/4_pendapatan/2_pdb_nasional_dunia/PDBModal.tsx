@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from "react";
-import { TrendingUp, Search, User, ChevronUp, ChevronDown, Info } from "lucide-react";
+import { TrendingUp, User, ChevronUp, ChevronDown, Info } from "lucide-react";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
@@ -55,6 +55,7 @@ interface ModalProps {
   countryDetail: any;
   selectedCountry: any;
   prefetchedAllCountries?: any[];
+  searchQuery: string;
   tabBar?: React.ReactNode;
 }
 
@@ -177,10 +178,12 @@ function AllCountriesGDP({
   playerCountryName,
   playerCountryDetail,
   prefetchedAllCountries,
+  searchQuery,
 }: {
   playerCountryName: string;
   playerCountryDetail?: any;
   prefetchedAllCountries?: any[];
+  searchQuery: string;
 }) {
   const [allCountries, setAllCountries] = useState<any[]>(() => {
     if (Array.isArray(prefetchedAllCountries) && prefetchedAllCountries.length > 0) {
@@ -198,7 +201,6 @@ function AllCountriesGDP({
     return cachedAllCountries || getInitialCountriesData();
   });
 
-  const [searchQuery, setSearchQuery] = useState('');
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({
     key: 'net',
     direction: 'desc',
@@ -377,19 +379,6 @@ function AllCountriesGDP({
 
   return (
     <div className="flex-1 min-h-0 flex flex-col space-y-1 sm:space-y-2">
-      <div className="pdb-search-row flex justify-between items-center gap-3 flex-shrink-0 flex-wrap">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Cari negara / benua..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-8 pr-3 py-1 rounded-lg bg-root-canvas border border-root-accent/30 text-xs sm:text-sm font-bold text-root-text outline-none focus:border-root-accent w-40 sm:w-48 transition-all placeholder:text-root-subtle"
-          />
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-root-subtle" />
-        </div>
-      </div>
-
       <div className={`flex min-h-0 flex-1 flex-col overflow-hidden border border-root-accent/30 bg-root-canvas ${rootBorderRadius.card}`}>
         <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden neon-scrollbar">
           <table className="w-full table-fixed text-xs text-left">
@@ -409,7 +398,7 @@ function AllCountriesGDP({
 }
 
 // --- KOMPONEN UTAMA PDB MODAL ---
-export default function PDBModal({ isOpen, onClose, countryDetail, selectedCountry, prefetchedAllCountries, tabBar }: ModalProps) {
+export default function PDBModal({ isOpen, onClose, countryDetail, selectedCountry, prefetchedAllCountries, searchQuery, tabBar }: ModalProps) {
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   if (!isOpen) return null;
   const countryName = selectedCountry?.country || countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || "Indonesia";
@@ -433,7 +422,12 @@ export default function PDBModal({ isOpen, onClose, countryDetail, selectedCount
         {tabBar}
 
         <div className="pdb-modal-body flex-1 min-h-0 flex flex-col p-4 lg:p-6 bg-root-surface relative z-10">
-          <AllCountriesGDP playerCountryName={countryName} playerCountryDetail={countryDetail} prefetchedAllCountries={prefetchedAllCountries} />
+          <AllCountriesGDP
+            playerCountryName={countryName}
+            playerCountryDetail={countryDetail}
+            prefetchedAllCountries={prefetchedAllCountries}
+            searchQuery={searchQuery}
+          />
         </div>
       </div>
     </NotebookModalWrapper>}

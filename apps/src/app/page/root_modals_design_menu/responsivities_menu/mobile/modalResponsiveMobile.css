@@ -2394,10 +2394,6 @@
     max-height: calc(100dvh - var(--modal-top-offset) - var(--modal-bottom-offset) - 8px) !important;
   }
 
-  .pdb-modal-frame .pdb-search-row {
-    gap: 6px;
-  }
-
   .pdb-modal-frame .pdb-modal-body {
     padding-top: 8px !important;
   }

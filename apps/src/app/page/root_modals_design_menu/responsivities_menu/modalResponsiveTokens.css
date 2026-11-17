@@ -804,20 +804,6 @@
   flex: 0 0 auto;
 }
 
-.welfare-modal-score-content {
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.welfare-modal-score-controls {
-  display: flex;
-  min-width: 0;
-  flex: 0 1 auto;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
 @media (max-width: 640px) {
   .satisfaction-modal-summary {
     flex-wrap: wrap;
@@ -825,11 +811,6 @@
 
   .satisfaction-modal-summary-controls {
     flex: 1 0 100%;
-  }
-
-  .welfare-modal-score-controls {
-    flex-wrap: wrap;
-    gap: 6px;
   }
 }
 

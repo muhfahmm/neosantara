@@ -384,8 +384,8 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
           <div className="loan-modal-summary mb-3.5 space-y-3 lg:mb-5 lg:space-y-4 2xl:mb-6">
             <RootModalSearchToolbar
               layout="inline"
-              className="loan-modal-controls"
-              tabsClassName="loan-modal-tabs xl:!w-3/5 xl:!flex-none [&>button]:!min-w-0 [&>button]:!flex-1"
+              className="loan-modal-controls xl:!justify-between"
+              tabsClassName="loan-modal-tabs xl:!w-fit xl:!flex-none"
               searchContainerClassName="loan-modal-search xl:!w-[35%] xl:!flex-none"
               showSearch={activeTab === "bilateral"}
               items={[

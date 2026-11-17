@@ -1,20 +1,18 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useMemo, useState, useEffect } from "react";
 import {
   Zap,
   BatteryCharging,
   MapPin,
-  Search,
   ChevronUp,
   ChevronDown,
   Info,
-  X,
 } from "lucide-react";
 
 import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
-import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
+import RootModalSearchToolbar from "@/app/page/root_modals_design_menu/RootModalSearchToolbar";
 import {
   calculateActualElectricityProduction,
   ELECTRICITY_PLANT_KEYS,
@@ -81,9 +79,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
     })();
   }, [isOpen, prefetchedAllCountries, allCountries.length]);
 
-  if (!isOpen) return null;
-
-  const findMeta = (key: string) => {
+  const findMeta = useCallback((key: string) => {
     if (!metadata) return undefined;
     if (metadata[key]) return metadata[key];
     for (const k of Object.keys(metadata)) {
@@ -93,37 +89,52 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
       if (k.endsWith(`_${key}`) || k === `1_${key}`) return entry;
     }
     return undefined;
-  };
+  }, [metadata]);
 
-  const productionCalculation = calculateActualElectricityProduction(countryDetail, metadata);
-  logElectricityProductionCalculation(productionCalculation, "modal");
-  const powerSources = ELECTRICITY_PLANT_KEYS
-    .map((key) => {
-      const bMeta = findMeta(key);
-      const count = Number(countryDetail?.[key]) || 0;
-      const unitProduction = Number(bMeta?.produksi) || 0;
-      const plantProduction = productionCalculation.perPlant[key];
+  const productionCalculation = useMemo(
+    () => isOpen ? calculateActualElectricityProduction(countryDetail, metadata) : null,
+    [isOpen, countryDetail, metadata],
+  );
+  useEffect(() => {
+    if (productionCalculation) {
+      logElectricityProductionCalculation(productionCalculation, "modal");
+    }
+  }, [productionCalculation]);
 
-      return {
-        key,
-        label: bMeta?.label || key.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase()),
-        desc: POWER_SOURCE_DESCRIPTIONS[key] || bMeta?.desc || "Sumber energi listrik nasional.",
-        value: count,
-        unitProduction,
-        actualProduction: plantProduction.actual,
-        fuelShortage: plantProduction.fuelShortage,
-      };
-    })
-    .filter((source) => source.value > 0 || source.unitProduction > 0);
+  const powerSources = useMemo(() => {
+    if (!productionCalculation) return [];
+    return ELECTRICITY_PLANT_KEYS
+      .map((key) => {
+        const bMeta = findMeta(key);
+        const count = Number(countryDetail?.[key]) || 0;
+        const unitProduction = Number(bMeta?.produksi) || 0;
+        const plantProduction = productionCalculation.perPlant[key];
 
-  const totalCapacityMW = productionCalculation.actualTotal;
+        return {
+          key,
+          label: bMeta?.label || key.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase()),
+          desc: POWER_SOURCE_DESCRIPTIONS[key] || bMeta?.desc || "Sumber energi listrik nasional.",
+          value: count,
+          unitProduction,
+          actualProduction: plantProduction.actual,
+          fuelShortage: plantProduction.fuelShortage,
+        };
+      })
+      .filter((source) => source.value > 0 || source.unitProduction > 0);
+  }, [
+    countryDetail,
+    findMeta,
+    productionCalculation,
+  ]);
 
-  const calculateBuildingElectricityConsumption = (country: any) => {
-    if (!country) return 0;
-    return getCountryConsumptionBreakdown(country, metadata).totalAllBreakdownConsumption;
-  };
+  const totalCapacityMW = productionCalculation?.actualTotal ?? 0;
 
-  const userBuildingConsumption = calculateBuildingElectricityConsumption(countryDetail);
+  const userBuildingConsumption = useMemo(
+    () => isOpen && countryDetail
+      ? getCountryConsumptionBreakdown(countryDetail, metadata).totalAllBreakdownConsumption
+      : 0,
+    [isOpen, countryDetail, metadata],
+  );
   const populationDemand = 0;
   const estimatedConsumptionMW = Math.max(0, userBuildingConsumption + populationDemand);
   const balanceMW = totalCapacityMW - estimatedConsumptionMW;
@@ -137,11 +148,12 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
     return Math.round(coverage * 100);
   })();
 
-  const globalElectricityData = activeTab === "global"
-    ? allCountries.map((country, index) => {
+  const globalElectricityData = useMemo(() => {
+    if (!isOpen || activeTab !== "global") return [];
+    return allCountries.map((country, index) => {
       const calculation = calculateActualElectricityProduction(country, metadata);
       const totalProduction = calculation.actualTotal;
-      const buildingConsumption = calculateBuildingElectricityConsumption(country);
+      const buildingConsumption = getCountryConsumptionBreakdown(country, metadata).totalAllBreakdownConsumption;
       const totalConsumption = buildingConsumption > 0
         ? buildingConsumption
         : totalProduction * 0.7;
@@ -173,10 +185,10 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
         balance: Math.abs(balance) < 0.01 || !Number.isFinite(balance) ? 0 : balance,
         isUser,
       };
-    }).sort((a, b) => b.production - a.production)
-    : [];
+    }).sort((a, b) => b.production - a.production);
+  }, [isOpen, activeTab, allCountries, countryDetail, metadata]);
 
-  const sortedData = [...globalElectricityData].sort((a, b) => {
+  const sortedData = useMemo(() => [...globalElectricityData].sort((a, b) => {
     let aValue: string | number;
     let bValue: string | number;
     switch (sortConfig.key) {
@@ -198,11 +210,11 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
     }
     if (sortConfig.direction === 'asc') return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
     return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
-  });
+  }), [globalElectricityData, sortConfig]);
 
-  const filteredData = searchQuery.trim() === ''
+  const filteredData = useMemo(() => searchQuery.trim() === ''
     ? sortedData
-    : sortedData.filter(country => country.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    : sortedData.filter(country => country.name.toLowerCase().includes(searchQuery.toLowerCase())), [searchQuery, sortedData]);
 
   const handleSort = (column: SortConfig['key']) => {
     setSortConfig(current => ({
@@ -221,7 +233,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
   // Simpan indeks ke countryDetail
   useEffect(() => {
-    if (setCountryDetail && countryDetail) {
+    if (isOpen && setCountryDetail && countryDetail) {
       setCountryDetail({
         ...countryDetail,
         satisfaction: {
@@ -230,27 +242,22 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
         }
       });
     }
-  }, [electricitySatisfaction]);
+  }, [isOpen, electricitySatisfaction]);
 
-  const gridTabs = (
-    <RootModalTabs
-      className={"satisfaction-modal-tabs root-modal-util-3f7356eee3"}
-      items={[
-        {
-          label: "Neraca User",
-          isActive: activeTab === "user",
-          onClick: () => setActiveTab("user"),
-          className: "!px-1 !py-1 !text-[8px] !tracking-normal sm:!px-2 sm:!text-[9px]",
-        },
-        {
-          label: `Neraca ${allCountries.length || 212} Negara`,
-          isActive: activeTab === "global",
-          onClick: () => setActiveTab("global"),
-          className: "!px-1 !py-1 !text-[8px] !tracking-normal sm:!px-2 sm:!text-[9px]",
-        },
-      ]}
-    />
-  );
+  if (!isOpen) return null;
+
+  const gridTabItems = [
+    {
+      label: "Neraca User",
+      isActive: activeTab === "user",
+      onClick: () => setActiveTab("user"),
+    },
+    {
+      label: `Neraca ${allCountries.length || 212} Negara`,
+      isActive: activeTab === "global",
+      onClick: () => setActiveTab("global"),
+    },
+  ];
 
   return (
     <>
@@ -276,6 +283,20 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
             </div>
           </div>
 
+          <div className={"satisfaction-modal-summary root-modal-util-6614545ce3"}>
+            <RootModalSearchToolbar
+              layout="default"
+              className="!w-full !border-0 !bg-transparent !px-0 !py-0"
+              searchContainerClassName="xl:!w-[35%] xl:!max-w-none xl:!flex-none"
+              showSearch={activeTab === "global"}
+              items={gridTabItems}
+              searchValue={searchQuery}
+              onSearchChange={setSearchQuery}
+              searchPlaceholder="Cari nama negara..."
+              searchAriaLabel="Cari nama negara"
+            />
+          </div>
+
           {/* BODY (SCROLLBAR HIJAU DITERAPKAN DI SINI) */}
           <div className={"root-no-scrollbar-glow root-modal-util-e7871a31f6"}>
 
@@ -291,7 +312,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                       </div>
                       <h3 className={"root-modal-util-9361ef65fc"}>Statistik Grid</h3>
                     </div>
-                    {gridTabs}
                   </div>
                   {/* Grid Card di dalamnya memanjang ke samping (3 kolom) */}
                   <div className={"root-modal-util-4d7d412dd7"}>
@@ -374,19 +394,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
               </div>
             ) : (
               <div className={`root-modal-util-d5020ca04d root-modal-util-5f22e64f22`}>
-                <div className={"grid-national-search-toolbar"}>
-                  <div className={"root-modal-util-46b5b1836b"}>
-                    <Search className={"root-modal-util-91f313a187"} />
-                    <input
-                      type="text"
-                      placeholder="Cari nama negara..."
-                      value={searchQuery}
-                      onChange={(event) => setSearchQuery(event.target.value)}
-                      className={"root-modal-util-7e81aff836"}
-                    />
-                  </div>
-                  {gridTabs}
-                </div>
                 <div className={`root-no-scrollbar-glow root-modal-util-21ad3142af root-modal-util-5f22e64f22 root-modal-util-4e8f3fa2d1 `}>
                   <table className={"root-modal-util-a1e9cf0ef6"}>
                     <thead className={"root-modal-util-ecea3fcb79"}>

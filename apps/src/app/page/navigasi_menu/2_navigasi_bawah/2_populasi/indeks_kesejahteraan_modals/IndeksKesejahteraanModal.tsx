@@ -2,13 +2,12 @@
 
 import { useState, useMemo, useEffect } from "react";
 import {
-  Info, TrendingUp, TrendingDown, BookOpen, Heart, MapPin,
+  Info, BookOpen, Heart, MapPin,
   Wheat, Home, Library, Hospital, Landmark, CheckCircle, Sprout, Globe, Zap, ShieldCheck,
-  Minus, AlertTriangle, Lightbulb, CheckCircle2, Star
+  AlertTriangle, Lightbulb, CheckCircle2, Star
 } from "lucide-react";
 import {
   calculateKesejahteraan,
-  getKesejahteraanStatus,
   getKesejahteraanBreakdown,
   type KesejahteraanIndex,
 } from "@/app/logic/kesejahteraanCalculator";
@@ -30,6 +29,7 @@ import {
 import NaikkanKesejahteraanTab from "./NaikkanKesejahteraanTab";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { RootModalTabs } from "@/app/page/root_modals_design_menu/RootModalTabs";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 
 // ── Kelas CSS untuk Scrollbar (Tailwind Murni) ──
@@ -134,7 +134,6 @@ export default function IndeksKesejahteraanModal({
   if (!isOpen || !kesejahteraan) return null;
 
   const countryName = selectedCountry?.country || "Indonesia";
-  const status = getKesejahteraanStatus(overallScore);
 
   const getScoreColor = (score: number) => {
     if (score >= 81) return { bg: "root-modal-util-4ecd8bae5f", border: "root-modal-util-410a4300f8", text: "root-modal-util-edbfd1c508", icon: "root-modal-util-edbfd1c508" };
@@ -154,78 +153,51 @@ export default function IndeksKesejahteraanModal({
   const listrikColor = getScoreColor(listrikActualScore);
   const keterbukaanColor = getScoreColor(keterbukaanActualScore);
 
-  const getTrendIcon = (trend: 'naik' | 'turun' | 'stabil') => {
-    switch (trend) {
-      case 'naik':
-        return <TrendingUp className={"root-modal-util-0da45f160d"} />;
-      case 'turun':
-        return <TrendingDown className={"root-modal-util-8297eefa73"} />;
-      default:
-        return <Minus className={"root-modal-util-f93163651e"} />;
-    }
-  };
-
   return (
     <>
       <NotebookModalWrapper onClose={onClose} zIndexClass="z-[70]">
         <div className={"root-modal-util-4644119199"}>
-          {/* Header */}
-          <div className={"satisfaction-modal-header root-modal-util-9462ce2345"}>
-            <div className={"satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar"}>
-              <div className={"root-modal-util-08dfbca033"}>
-                <div className={"root-modal-util-739d92b232"}>
-                  <MapPin className={"root-modal-util-d252947d10"} />
-                </div>
-                <h2 className={`root-modal-util-6b4648c53a root-modal-util-c2385a463d`}>
-                  Kesejahteraan
-                </h2>
-              </div>
+          <RootInfoModalHeader
+            title="Kesejahteraan"
+            icon={<MapPin aria-hidden="true" />}
+            onClose={onClose}
+            size="standard"
+          />
 
+          <div className={"satisfaction-modal-summary root-modal-util-6614545ce3"}>
+            <div className={"root-modal-util-6cfc7e6ab3"}>
+              <span className={"root-modal-util-14d6efe9ef root-modal-util-614c0c7dff"}>
+                Indeks Kesejahteraan:
+              </span>
+              <span className={"root-modal-util-04f32edb66 root-modal-util-4457a4d3a8"}>
+                {overallScore}/100
+              </span>
             </div>
-
-            <RootModalCloseButton onClick={onClose} />
+            <div className={"satisfaction-modal-summary-controls flex-wrap"}>
+              <RootModalTabs
+                className={"satisfaction-modal-tabs"}
+                items={[
+                  {
+                    label: "Statistik",
+                    isActive: activeTab === "statistik",
+                    onClick: () => setActiveTab("statistik"),
+                    onPointerDown: () => setActiveTab("statistik"),
+                  },
+                  {
+                    label: "Naikkan Kesejahteraan",
+                    isActive: activeTab === "naikkan",
+                    onClick: () => setActiveTab("naikkan"),
+                    onPointerDown: () => setActiveTab("naikkan"),
+                  },
+                ]}
+              />
+            </div>
           </div>
 
           {/* Content (Scrollable) */}
           <div className={`root-modal-util-02dd6794b4 ${scrollbarDark}`}>
             <div className={"root-modal-enter root-modal-fade-in root-modal-util-844322115e"}>
               <div className={"root-modal-util-6d5b89fc13"}>
-                <div className={`welfare-modal-score-card root-modal-util-5f22e64f22 root-modal-util-c7fc9dfef1`}>
-                  <div className={"welfare-modal-score-content root-modal-util-619d6b1c3c"}>
-                    <div>
-                      <p className={"root-modal-util-cb863dc36d"}>Indeks Kesejahteraan Keseluruhan</p>
-                      <div className={"root-modal-util-e6bf4398f0"}>
-                        <span className={"root-modal-util-9392c390b5"}>{overallScore}</span>
-                        <span className={"root-modal-util-ed90095d77"}>/100</span>
-                      </div>
-                      <p className={"root-modal-util-80b1941b5e"}>{status}</p>
-                    </div>
-                    <div className={"welfare-modal-score-controls"}>
-                      <RootModalTabs
-                        className={"satisfaction-modal-tabs"}
-                        items={[
-                          {
-                            label: "Statistik",
-                            isActive: activeTab === "statistik",
-                            onClick: () => setActiveTab("statistik"),
-                            onPointerDown: () => setActiveTab("statistik"),
-                          },
-                          {
-                            label: "Naikkan Kesejahteraan",
-                            isActive: activeTab === "naikkan",
-                            onClick: () => setActiveTab("naikkan"),
-                            onPointerDown: () => setActiveTab("naikkan"),
-                          },
-                        ]}
-                      />
-                      <div className={"root-modal-util-39e1d08950"}>
-                        {getTrendIcon(kesejahteraan.trend)}
-                        <span className={"root-modal-util-be9ac43ed4"}>{kesejahteraan.trend}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
                 {activeTab === "statistik" ? (
                   <div className={"root-modal-util-6f7e013d64"}>
                     {/* Breakdown Komponen */}

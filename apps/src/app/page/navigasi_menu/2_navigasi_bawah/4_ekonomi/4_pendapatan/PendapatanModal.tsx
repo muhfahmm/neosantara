@@ -3,7 +3,7 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import { BarChart3, TrendingUp } from "lucide-react";
-import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
+import RootModalSearchToolbar from "@/app/page/root_modals_design_menu/RootModalSearchToolbar";
 
 const PemasukkanPengeluaranModal = dynamic(
   () => import("./1_anggaran/PemasukkanPengeluaranModal"),
@@ -44,34 +44,47 @@ export default function PendapatanModal({
   onGotoProduction,
 }: PendapatanModalProps) {
   const [activeTab, setActiveTab] = useState<PendapatanTab>(initialTab);
+  const [searchQuery, setSearchQuery] = useState("");
 
   if (!isOpen) return null;
 
+  const handleClose = () => {
+    setSearchQuery("");
+    onClose();
+  };
+
   const tabBar = (
-    <div className="flex shrink-0 border-b border-root-accent/20 bg-root-canvas px-4 py-2 sm:px-6">
-      <RootModalTabs
-        items={[
-          {
-            label: "Anggaran",
-            icon: <BarChart3 aria-hidden="true" className="h-3.5 w-3.5" />,
-            isActive: activeTab === "anggaran",
-            onClick: () => setActiveTab("anggaran"),
+    <RootModalSearchToolbar
+      layout="default"
+      showSearch={activeTab === "pdb"}
+      items={[
+        {
+          label: "Anggaran",
+          icon: <BarChart3 aria-hidden="true" className="h-3.5 w-3.5" />,
+          isActive: activeTab === "anggaran",
+          onClick: () => {
+            setSearchQuery("");
+            setActiveTab("anggaran");
           },
-          {
-            label: "PDB Nasional & Dunia",
-            icon: <TrendingUp aria-hidden="true" className="h-3.5 w-3.5" />,
-            isActive: activeTab === "pdb",
-            onClick: () => setActiveTab("pdb"),
-          },
-        ]}
-      />
-    </div>
+        },
+        {
+          label: "PDB Nasional & Dunia",
+          icon: <TrendingUp aria-hidden="true" className="h-3.5 w-3.5" />,
+          isActive: activeTab === "pdb",
+          onClick: () => setActiveTab("pdb"),
+        },
+      ]}
+      searchValue={searchQuery}
+      onSearchChange={setSearchQuery}
+      searchPlaceholder="Cari negara / benua..."
+      searchAriaLabel="Cari negara atau benua"
+    />
   );
 
   return activeTab === "anggaran" ? (
     <PemasukkanPengeluaranModal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       countryDetail={countryDetail}
       selectedCountry={selectedCountry}
       onGotoPajak={onGotoPajak}
@@ -81,10 +94,11 @@ export default function PendapatanModal({
   ) : (
     <PDBModal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       countryDetail={countryDetail}
       selectedCountry={selectedCountry}
       prefetchedAllCountries={prefetchedAllCountries}
+      searchQuery={searchQuery}
       tabBar={tabBar}
     />
   );
