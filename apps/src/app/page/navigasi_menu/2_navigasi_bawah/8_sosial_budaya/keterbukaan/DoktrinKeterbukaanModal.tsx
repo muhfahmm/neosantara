@@ -6,9 +6,6 @@ import {
   Globe,
   Lock,
   Unlock,
-  Users,
-  Tv,
-  Plane,
 } from "lucide-react";
 
 import { fetchDoktrinKeterbukaanFromDb } from "../../../../../../../../json/2_database_doktrin_keterbukaan/index";
@@ -27,9 +24,9 @@ interface DoktrinKeterbukaanModalProps {
 }
 
 const DOCTRINE_TABS = [
-  { id: "civil", label: "Kebebasan Sipil & HAM", icon: Users },
-  { id: "media", label: "Media & Informasi", icon: Tv },
-  { id: "global", label: "Perbatasan & Geopolitik", icon: Plane },
+  { id: "civil", label: "Kebebasan Sipil & HAM" },
+  { id: "media", label: "Media & Informasi" },
+  { id: "global", label: "Perbatasan & Geopolitik" },
 ] as const;
 
 export default function DoktrinKeterbukaanModal({
@@ -323,7 +320,6 @@ export default function DoktrinKeterbukaanModal({
             isActive: activeTab === tab.id,
             onSelect: () => setActiveTab(tab.id),
             label: tab.label,
-            icon: <tab.icon className="h-4 w-4 shrink-0" />,
           }))}
         >
             {/* TAB 1: KEBEBASAN SIPIL & HAM */}
