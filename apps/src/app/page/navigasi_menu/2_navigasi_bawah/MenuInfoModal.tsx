@@ -1,7 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
-import NotebookModalWrapper from "./NotebookModalWrapper";
+import { useEffect, type ReactNode } from "react";
+import NotebookModalWrapper, { MENU_INFO_MODAL_VISIBILITY_EVENT } from "./NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 
@@ -25,6 +25,20 @@ export default function MenuInfoModal({
   contentSized = true,
 }: MenuInfoModalProps) {
   const shouldSizeToContent = contentSized && !fillContent;
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const dispatchVisibility = (nextIsOpen: boolean) => {
+      window.dispatchEvent(new CustomEvent(MENU_INFO_MODAL_VISIBILITY_EVENT, {
+        detail: { isOpen: nextIsOpen },
+      }));
+    };
+
+    dispatchVisibility(true);
+    return () => dispatchVisibility(false);
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (

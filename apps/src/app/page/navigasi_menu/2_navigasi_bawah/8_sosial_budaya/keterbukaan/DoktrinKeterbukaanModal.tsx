@@ -13,6 +13,7 @@ import {
 
 import { fetchDoktrinKeterbukaanFromDb } from "../../../../../../../../json/2_database_doktrin_keterbukaan/index";
 import { generateDoctrineChangeNotification } from "@/app/page/menus/inbox/logic/10_sosial_budaya/3_keterbukaan/doctrineChangeLogic";
+import { getRelationColor } from "@/app/logic/relationTiers";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import MenuInfoButton from "../../MenuInfoButton";
@@ -100,7 +101,7 @@ export default function DoktrinKeterbukaanModal({
       return {
         label: "Negara Terisolasi Total (Autarki)",
         color: "bg-rose-950/80 text-rose-300 border-rose-500/50",
-        badge: "Tipe Korea Utara",
+        badge: "Isolasionis Ekstrem",
         desc: "Negara memutus hubungan dengan dunia luar, mengontrol ketat pers, agama, demonstrasi, internet, perbatasan, dan autarki ekonomi.",
       };
     } else if (score <= 40) {
@@ -320,8 +321,11 @@ export default function DoktrinKeterbukaanModal({
                 </div>
                 <div className="h-2.5 sm:h-3 w-full bg-root-surface rounded-full overflow-hidden border border-root-accent/20 relative">
                   <div
-                    className="h-full bg-gradient-to-r from-rose-600 via-amber-500 to-root-accent transition-all duration-300"
-                    style={{ width: `${overallScore}%` }}
+                    className="h-full transition-all duration-300"
+                    style={{
+                      width: `${overallScore}%`,
+                      backgroundColor: getRelationColor(overallScore),
+                    }}
                   />
                 </div>
               </div>
