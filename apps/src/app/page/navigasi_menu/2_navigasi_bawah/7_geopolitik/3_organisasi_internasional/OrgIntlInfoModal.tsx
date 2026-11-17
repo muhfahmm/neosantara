@@ -148,12 +148,18 @@ export default function OrgIntlInfoModal({
   );
 
   return (
-    <NotebookModalWrapper onClose={onClose} compact zIndexClass="z-[250]">
+    <NotebookModalWrapper
+      onClose={onClose}
+      compact
+      contentSized
+      frameClassName="menu-info-content-sized-frame"
+      zIndexClass="z-[250]"
+    >
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="organization-info-title"
-        className="flex max-h-[calc(100dvh-160px)] min-w-0 flex-col overflow-hidden font-sans"
+        className="flex max-h-[var(--modal-max-height)] min-w-0 flex-col overflow-hidden font-sans"
       >
         <header className="flex items-center justify-between border-b border-root-accent/30 bg-root-canvas px-3 py-2 sm:px-5 sm:py-2.5">
           <div className="flex min-w-0 items-center gap-3">
@@ -173,7 +179,7 @@ export default function OrgIntlInfoModal({
           </div>
         </header>
 
-        <div className="min-h-0 space-y-5 overflow-y-auto bg-root-surface p-4 sm:p-6">
+        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto bg-root-surface p-4 sm:p-6">
           <section>
             <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-root-accent">Tentang organisasi</h3>
             <p className="text-sm leading-relaxed text-root-body">{info.description}</p>
