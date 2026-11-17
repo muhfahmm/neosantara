@@ -1,5 +1,6 @@
 "use client"
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import RootModalTabs from '@/app/page/root_modals_design_menu/RootModalTabs';
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Info, Globe, Shield, HeartPulse, BookOpen, ArrowRightLeft, Users, Sprout, Ship, Wifi, Cloud, Landmark, Flag, Star, Handshake, BarChart, Crown, TrendingUp } from "lucide-react";
@@ -165,28 +166,13 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
 
         {/* BODY */}
         <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-root-surface relative z-10 neon-scrollbar">
-          <div className="bg-root-canvas p-1 rounded-xl border border-root-accent/20 inline-flex mb-6 shadow-sm">
-            <button
-              onClick={() => setActiveTab("pbb")}
-              className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                activeTab === "pbb"
-                  ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
-                  : "text-root-subtle hover:text-root-accent"
-              }`}
-            >
-              Organisasi PBB & Badan Khusus
-            </button>
-            <button
-              onClick={() => setActiveTab("regional")}
-              className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                activeTab === "regional"
-                  ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
-                  : "text-root-subtle hover:text-root-accent"
-              }`}
-            >
-              Organisasi Regional & Blok Ekonomi
-            </button>
-          </div>
+          <RootModalTabs
+            className="mb-6"
+            items={[
+              { label: "Organisasi PBB & Badan Khusus", isActive: activeTab === "pbb", onClick: () => setActiveTab("pbb") },
+              { label: "Organisasi Regional & Blok Ekonomi", isActive: activeTab === "regional", onClick: () => setActiveTab("regional") },
+            ]}
+          />
 
           {activeTab === "pbb" && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">

@@ -57,10 +57,10 @@ export default function RootModalSidebarLayout({
             type="button"
             aria-current={item.isActive ? 'page' : undefined}
             onClick={item.onSelect}
-            className={`root-modal-sidebar-button flex min-h-[29px] w-full items-center gap-2 border px-2 py-1.5 text-left transition-all cursor-pointer sm:min-h-[33px] sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${
+            className={`root-modal-sidebar-button flex min-h-[29px] w-full items-center gap-2 border px-2 py-1.5 text-left transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent/40 sm:min-h-[33px] sm:px-2.5 sm:py-2 ${rootBorderRadius.card} ${
               item.isActive
-                ? 'border-root-accent bg-root-accent text-root-canvas font-black shadow-md'
-                : 'border-root-accent/20 bg-root-surface text-root-text hover:border-root-accent hover:text-root-accent'
+                ? 'border-root-accent bg-root-accent text-root-accent-ink font-black shadow-md'
+                : 'border-root-accent/20 bg-root-surface text-root-text hover:bg-root-accent/10 hover:text-root-accent'
             } ${item.description ? 'items-start' : ''}`}
           >
             {item.icon}

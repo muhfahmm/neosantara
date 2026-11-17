@@ -1,5 +1,6 @@
 "use client"
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import RootModalTabs from '@/app/page/root_modals_design_menu/RootModalTabs';
 import React, { useState } from "react";
 import { Award, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
@@ -51,38 +52,13 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
         <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-root-surface relative z-10 neon-scrollbar">
           {/* 3 TAB MENU */}
           <div className="flex w-full items-center justify-between gap-3 mb-6">
-            <div className="bg-root-canvas p-1 rounded-xl border border-root-accent/20 inline-flex shadow-sm">
-              <button
-                onClick={() => setActiveTab("resolusi")}
-                className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                  activeTab === "resolusi"
-                    ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
-                    : "text-root-subtle hover:text-root-accent"
-                }`}
-              >
-                Resolusi PBB
-              </button>
-              <button
-                onClick={() => setActiveTab("keamanan")}
-                className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                  activeTab === "keamanan"
-                    ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
-                    : "text-root-subtle hover:text-root-accent"
-                }`}
-              >
-                Dewan Keamanan
-              </button>
-              <button
-                onClick={() => setActiveTab("suara")}
-                className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                  activeTab === "suara"
-                    ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20"
-                    : "text-root-subtle hover:text-root-accent"
-                }`}
-              >
-                Suara Negara
-              </button>
-            </div>
+            <RootModalTabs
+              items={[
+                { label: "Resolusi PBB", isActive: activeTab === "resolusi", onClick: () => setActiveTab("resolusi") },
+                { label: "Dewan Keamanan", isActive: activeTab === "keamanan", onClick: () => setActiveTab("keamanan") },
+                { label: "Suara Negara", isActive: activeTab === "suara", onClick: () => setActiveTab("suara") },
+              ]}
+            />
             <button
               type="button"
               onClick={() => setIsElectionInfoOpen(open => !open)}

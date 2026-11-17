@@ -398,35 +398,13 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                 ) : (
                   <div className="space-y-4">
                     {/* Sub-tabs under Kabinet: Kementerian (15), Keamanan (5), Layanan (2) */}
-                    <div className="flex gap-2 border-b border-root-accent/10 pb-2">
-                      <button
-                        onClick={() => setKabinetSubTab("kementerian")}
-                        className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${kabinetSubTab === "kementerian"
-                            ? "bg-root-accent text-root-canvas"
-                            : "bg-root-canvas text-root-subtle hover:text-root-text border border-root-accent/20"
-                          }`}
-                      >
-                        Kementerian (15)
-                      </button>
-                      <button
-                        onClick={() => setKabinetSubTab("keamanan")}
-                        className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${kabinetSubTab === "keamanan"
-                            ? "bg-root-accent text-root-canvas"
-                            : "bg-root-canvas text-root-subtle hover:text-root-text border border-root-accent/20"
-                          }`}
-                      >
-                        Keamanan (5)
-                      </button>
-                      <button
-                        onClick={() => setKabinetSubTab("layanan")}
-                        className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${kabinetSubTab === "layanan"
-                            ? "bg-root-accent text-root-canvas"
-                            : "bg-root-canvas text-root-subtle hover:text-root-text border border-root-accent/20"
-                          }`}
-                      >
-                        Layanan (2)
-                      </button>
-                    </div>
+                    <RootModalTabs
+                      items={[
+                        { label: "Kementerian (15)", isActive: kabinetSubTab === "kementerian", onClick: () => setKabinetSubTab("kementerian") },
+                        { label: "Keamanan (5)", isActive: kabinetSubTab === "keamanan", onClick: () => setKabinetSubTab("keamanan") },
+                        { label: "Layanan (2)", isActive: kabinetSubTab === "layanan", onClick: () => setKabinetSubTab("layanan") },
+                      ]}
+                    />
 
                     <div className={`space-y-4 border border-root-accent/30 bg-root-surface p-6 ${rootBorderRadius.card}`}>
                       <h4 className="text-[10px] text-root-accent font-black uppercase tracking-wider mb-4">
