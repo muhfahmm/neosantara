@@ -33,16 +33,17 @@ export default function RootModalSearchToolbar({
   const compactTabClassName =
     "!min-w-0 !px-1.5 !py-[5px] !text-[9px] !tracking-[0.04em]";
   const isInlineLayout = layout === "inline";
+  const verticalPaddingClassName = isCompactViewport ? "py-1.5" : "py-2";
   const toolbarClassName = isInlineLayout
     ? `flex w-full min-w-0 shrink-0 flex-col items-stretch ${
         isCompactViewport
-          ? "gap-[6px] pt-1.5"
-          : "gap-3 pt-2 xl:flex-row xl:items-center"
+          ? `gap-[6px] ${verticalPaddingClassName}`
+          : `gap-3 ${verticalPaddingClassName} xl:flex-row xl:items-center`
       }`
     : `flex shrink-0 border-b border-root-accent/20 bg-root-canvas ${
         isCompactViewport
-          ? "flex-row flex-nowrap items-center gap-[5px] px-2 py-1.5"
-          : "flex-col gap-2 px-4 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+          ? `flex-row flex-nowrap items-center gap-[5px] px-2 ${verticalPaddingClassName}`
+          : `flex-col gap-2 px-4 ${verticalPaddingClassName} sm:flex-row sm:items-center sm:justify-between sm:px-6`
       }`;
 
   return (

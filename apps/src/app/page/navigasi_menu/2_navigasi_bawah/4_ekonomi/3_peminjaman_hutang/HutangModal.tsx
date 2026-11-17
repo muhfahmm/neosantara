@@ -379,7 +379,7 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
           />
 
         {/* Body Content */}
-        <div className="loan-modal-content min-h-0 flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-root-canvas/80 relative z-10 custom-scrollbar">
+        <div className="loan-modal-content min-h-0 flex-1 overflow-y-auto px-3.5 pb-3.5 lg:px-5 lg:pb-5 2xl:px-8 2xl:pb-8 bg-root-canvas/80 relative z-10 custom-scrollbar">
           
           <div className="loan-modal-summary mb-3.5 space-y-3 lg:mb-5 lg:space-y-4 2xl:mb-6">
             <RootModalSearchToolbar

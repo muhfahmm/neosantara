@@ -1605,7 +1605,7 @@
 ((orientation: portrait) and (max-width: 640px)) {
   .loan-modal-frame .loan-modal-content {
     min-height: 0;
-    padding: 8px !important;
+    padding: 0 8px 8px !important;
   }
 
   .loan-modal-summary {
