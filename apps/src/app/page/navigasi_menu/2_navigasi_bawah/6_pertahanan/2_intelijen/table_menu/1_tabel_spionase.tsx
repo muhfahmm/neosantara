@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Binoculars, ChevronUp, ChevronDown } from "lucide-react";
 import { getArmadaPowerSummary } from "../../4_armada/logic/armadaLogic";
 import KonfirmasiSpionaseModals from "../modals_konfirmasi/konfirmasiSpionaseModals";
@@ -49,11 +50,12 @@ interface SpionaseProps {
   countryDetail?: any; // 🔥 Tambahkan prop untuk negara user
   updatePlayerCountryDetail: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
   onRecruitModalVisibilityChange: (isOpen: boolean) => void;
+  onConfirmationModalVisibilityChange: (isOpen: boolean) => void;
   onAction: (targetCountry: RankingRow, cost: number, tripId: string, operationTarget: string, personnelCount: number) => void;
   searchQuery: string;
 }
 
-export default function Spionase({ prefetchedAllCountries, countryDetail, updatePlayerCountryDetail, onRecruitModalVisibilityChange, onAction, searchQuery }: SpionaseProps) {
+export default function Spionase({ prefetchedAllCountries, countryDetail, updatePlayerCountryDetail, onRecruitModalVisibilityChange, onConfirmationModalVisibilityChange, onAction, searchQuery }: SpionaseProps) {
   const [sortConfig, setSortConfig] = useState<{ key: keyof RankingRow; direction: 'asc' | 'desc' } | null>({
     key: 'totalPower',
     direction: 'desc'
@@ -174,6 +176,12 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, update
     if (row.countryName.toLowerCase().trim() === selectedCountryName.toLowerCase().trim()) return;
     setSelectedTarget(row);
     setIsModalOpen(true);
+    onConfirmationModalVisibilityChange(true);
+  };
+
+  const handleCloseConfirmation = () => {
+    setIsModalOpen(false);
+    onConfirmationModalVisibilityChange(false);
   };
 
   return (
@@ -262,10 +270,10 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, update
         </div>
       </div>
 
-      {selectedTarget && (
+      {selectedTarget && typeof document !== "undefined" && createPortal(
         <KonfirmasiSpionaseModals
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={handleCloseConfirmation}
           targetCountry={selectedTarget}
           currentBudget={Number(countryDetail?.anggaran) || 0}
           updatePlayerCountryDetail={updatePlayerCountryDetail}
@@ -274,9 +282,11 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, update
           onConfirm={(operationTarget, personnelCount) => {
             if (!travelFuelStatus.ok || travelFuelQuote.cost === null || !tripIdRef.current) return;
             setIsModalOpen(false);
+            onConfirmationModalVisibilityChange(false);
             onAction(selectedTarget, travelFuelQuote.cost, tripIdRef.current, operationTarget, personnelCount);
           }}
-        />
+        />,
+        document.body,
       )}
     </div>
   );

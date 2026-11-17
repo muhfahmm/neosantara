@@ -37,6 +37,7 @@ interface ModalProps {
 export default function IntelijenModal({ isOpen, onClose, countryDetail, setCountryDetail, prefetchedAllCountries }: ModalProps) {
   const [activeTab, setActiveTab] = useState<'spionase' | 'sabotase'>('spionase');
   const [isPersonnelRecruitModalOpen, setIsPersonnelRecruitModalOpen] = useState(false);
+  const [isCovertConfirmationOpen, setIsCovertConfirmationOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [spionaseResult, setSpionaseResult] = useState<SpionaseOperationResult | null>(null);
   const [sabotaseResult, setSabotaseResult] = useState<SabotaseOperationResult | null>(null);
@@ -49,6 +50,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
   const launchedTravelFuelIdsRef = useRef(new Set<string>());
   const handleClose = () => {
     setIsPersonnelRecruitModalOpen(false);
+    setIsCovertConfirmationOpen(false);
     onClose();
   };
 
@@ -184,7 +186,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
 
   return (
     <>
-      <NotebookModalWrapper onClose={handleClose} isHidden={isPersonnelRecruitModalOpen}>
+      <NotebookModalWrapper onClose={handleClose} isHidden={isPersonnelRecruitModalOpen || isCovertConfirmationOpen}>
         <div className="root-modal-util-b74379da23 intelijen-modal">
 
           <div className="satisfaction-modal-header root-modal-util-9462ce2345">
@@ -251,6 +253,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
                   countryDetail={countryDetail}
                   updatePlayerCountryDetail={setCountryDetail}
                   onRecruitModalVisibilityChange={setIsPersonnelRecruitModalOpen}
+                  onConfirmationModalVisibilityChange={setIsCovertConfirmationOpen}
                   onAction={handleSpionaseAction}
                   searchQuery={searchQuery}
                 />
@@ -261,6 +264,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
                   countryDetail={countryDetail}
                   updatePlayerCountryDetail={setCountryDetail}
                   onRecruitModalVisibilityChange={setIsPersonnelRecruitModalOpen}
+                  onConfirmationModalVisibilityChange={setIsCovertConfirmationOpen}
                   onAction={handleSabotaseAction}
                   searchQuery={searchQuery}
                 />
