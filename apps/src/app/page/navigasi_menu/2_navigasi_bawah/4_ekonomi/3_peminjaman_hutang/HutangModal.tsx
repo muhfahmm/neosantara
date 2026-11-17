@@ -1,10 +1,10 @@
 "use client"
 import React, { useState, useEffect, useRef } from "react";
-import { CreditCard, ArrowRight, AlertCircle, Search, Info } from "lucide-react";
+import { CreditCard, ArrowRight, AlertCircle, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
-import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
+import RootModalSearchToolbar from "@/app/page/root_modals_design_menu/RootModalSearchToolbar";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 
@@ -382,30 +382,22 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
         <div className="loan-modal-content min-h-0 flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-root-canvas/80 relative z-10 custom-scrollbar">
           
           <div className="loan-modal-summary mb-3.5 space-y-3 lg:mb-5 lg:space-y-4 2xl:mb-6">
-            <div className="loan-modal-controls flex flex-col items-stretch gap-3 xl:flex-row xl:items-center">
-              <RootModalTabs
-                compact
-                className="loan-modal-tabs w-full xl:w-3/5 xl:flex-none [&>button]:min-w-0 [&>button]:flex-1"
-                items={[
-                  { label: "Negara Lain", isActive: activeTab === "bilateral", onClick: () => setActiveTab("bilateral") },
-                  { label: "Lembaga Dunia", isActive: activeTab === "multilateral", onClick: () => setActiveTab("multilateral") },
-                  { label: "Riwayat", isActive: activeTab === "history", onClick: () => setActiveTab("history") },
-                ]}
-              />
-              {activeTab === "bilateral" && (
-                <div className={`loan-modal-search relative min-w-0 flex-1 ${rootBorderRadius.card} xl:w-[35%] xl:flex-none`}>
-                  <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-root-subtle" />
-                  <input
-                    type="text"
-                    aria-label="Cari nama negara peminjam"
-                    placeholder="Cari nama negara peminjam..."
-                    value={countrySearchQuery}
-                    onChange={(event) => setCountrySearchQuery(event.target.value)}
-                    className={`h-9 w-full border border-root-accent/30 bg-root-surface px-4 pl-10 text-sm font-bold text-root-text placeholder:text-root-subtle transition-all focus:border-root-accent focus:outline-none ${rootBorderRadius.card}`}
-                  />
-                </div>
-              )}
-            </div>
+            <RootModalSearchToolbar
+              layout="inline"
+              className="loan-modal-controls"
+              tabsClassName="loan-modal-tabs xl:!w-3/5 xl:!flex-none [&>button]:!min-w-0 [&>button]:!flex-1"
+              searchContainerClassName="loan-modal-search xl:!w-[35%] xl:!flex-none"
+              showSearch={activeTab === "bilateral"}
+              items={[
+                { label: "Negara Lain", isActive: activeTab === "bilateral", onClick: () => setActiveTab("bilateral") },
+                { label: "Lembaga Dunia", isActive: activeTab === "multilateral", onClick: () => setActiveTab("multilateral") },
+                { label: "Riwayat", isActive: activeTab === "history", onClick: () => setActiveTab("history") },
+              ]}
+              searchValue={countrySearchQuery}
+              onSearchChange={setCountrySearchQuery}
+              searchPlaceholder="Cari nama negara peminjam..."
+              searchAriaLabel="Cari nama negara peminjam"
+            />
 
             <div className="loan-modal-stat-grid grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
               <div className={`loan-modal-stat-card flex min-w-0 flex-col justify-center border border-root-accent/30 bg-root-surface p-3.5 lg:p-4 ${rootBorderRadius.card}`}>
