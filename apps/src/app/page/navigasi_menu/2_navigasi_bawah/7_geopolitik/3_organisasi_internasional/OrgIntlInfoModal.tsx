@@ -152,7 +152,7 @@ export default function OrgIntlInfoModal({
       onClose={onClose}
       compact
       contentSized
-      frameClassName="menu-info-content-sized-frame"
+      frameClassName="menu-info-content-sized-frame organization-info-content-sized-frame"
       zIndexClass="z-[250]"
     >
       <section

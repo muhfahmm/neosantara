@@ -907,6 +907,19 @@
   overflow: visible !important;
 }
 
+.notebook-modal-frame.organization-info-content-sized-frame
+  > .modal-responsive-shell
+  > .notebook-modal-content-sized-sheet {
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+.notebook-modal-frame.organization-info-content-sized-frame[data-viewport-mode]
+  > .modal-responsive-shell
+  > .notebook-modal-content-sized-sheet {
+  border-radius: 8px !important;
+}
+
 .notebook-modal-frame.content-sized-info-frame .notebook-modal-content > :first-child {
   height: auto !important;
   min-height: 0 !important;
