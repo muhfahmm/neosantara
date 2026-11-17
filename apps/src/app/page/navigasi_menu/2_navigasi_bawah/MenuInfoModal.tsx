@@ -13,6 +13,7 @@ interface MenuInfoModalProps {
   children?: ReactNode;
   fillContent?: boolean;
   contentSized?: boolean;
+  frameClassName?: string;
 }
 
 export default function MenuInfoModal({
@@ -23,6 +24,7 @@ export default function MenuInfoModal({
   children,
   fillContent = false,
   contentSized = true,
+  frameClassName = "",
 }: MenuInfoModalProps) {
   const shouldSizeToContent = contentSized && !fillContent;
 
@@ -47,7 +49,12 @@ export default function MenuInfoModal({
       zIndexClass="z-[200]"
       hideWhenInfoModalOpen={false}
       contentSized={shouldSizeToContent}
-      frameClassName={shouldSizeToContent ? "menu-info-content-sized-frame" : ""}
+      frameClassName={[
+        shouldSizeToContent ? "menu-info-content-sized-frame" : "",
+        frameClassName,
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       <div
         role="dialog"

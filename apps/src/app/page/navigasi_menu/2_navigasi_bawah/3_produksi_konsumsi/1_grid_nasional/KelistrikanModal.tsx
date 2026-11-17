@@ -371,23 +371,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                   </div>
                 </div>
 
-                {/* KOTAK 3: INDEKS KEPUASAN LISTRIK */}
-                <div className={`root-satisfaction-index root-modal-util-c624fd55b4 root-modal-util-5f22e64f22`}>
-                  <div className={"root-modal-util-56e6b92b69"}>
-                    <span className={"root-satisfaction-index-title root-modal-util-84cf691742"}>
-                      Indeks Kepuasan Rakyat (Listrik)
-                    </span>
-                    <span className={"root-satisfaction-index-value root-modal-util-ca525b9094"}>
-                      {electricitySatisfaction} / 100
-                    </span>
-                  </div>
-                  <div className={"root-modal-util-b0f44f38ef"}>
-                    <div
-                      className={"root-modal-progress-fill root-modal-util-0131747055"}
-                      style={{ "--root-modal-progress-value": `${electricitySatisfaction}%` } as React.CSSProperties}
-                    />
-                  </div>
-                </div>
               </div>
             ) : (
               <div className={`root-modal-util-d5020ca04d root-modal-util-5f22e64f22`}>
@@ -488,7 +471,24 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
         onClose={() => setIsInfoOpen(false)}
         title="Informasi Grid Kelistrikan Nasional"
         description="Pantau neraca daya negara Anda atau bandingkan produksi, konsumsi, dan neraca listrik dengan negara lain."
-      />
+      >
+        <div className="root-satisfaction-index root-modal-util-c624fd55b4 root-modal-util-5f22e64f22 mt-4">
+          <div className="root-modal-util-56e6b92b69">
+            <span className="root-satisfaction-index-title root-modal-util-84cf691742">
+              Indeks Kepuasan Rakyat (Listrik)
+            </span>
+            <span className="root-satisfaction-index-value root-modal-util-ca525b9094">
+              {electricitySatisfaction} / 100
+            </span>
+          </div>
+          <div className="root-modal-util-b0f44f38ef">
+            <div
+              className="root-modal-progress-fill root-modal-util-0131747055"
+              style={{ "--root-modal-progress-value": `${electricitySatisfaction}%` } as React.CSSProperties}
+            />
+          </div>
+        </div>
+      </MenuInfoModal>
 
       <DetailKonsumsiTerestimasiModal
         isOpen={isDetailKonsumsiOpen}

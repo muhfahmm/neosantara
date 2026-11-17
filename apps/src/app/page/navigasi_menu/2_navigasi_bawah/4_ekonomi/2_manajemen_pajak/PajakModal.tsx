@@ -790,24 +790,6 @@ function PajakModalContent({
             </div>
           </div>
 
-          {/* ---- INDEKS KEPUASAN RAKYAT ---- */}
-          <div className={`root-satisfaction-index tax-policy-satisfaction-card mt-6 p-5 ${rootBorderRadius.card} border border-root-accent/30 bg-root-surface`}>
-            <div className="flex justify-between items-center">
-              <span className="root-satisfaction-index-title font-black uppercase tracking-widest text-root-text">
-                Indeks Kepuasan Rakyat (Pajak)
-              </span>
-              <span className="root-satisfaction-index-value font-black text-amber-400">
-                {satisfaction} / 100
-              </span>
-            </div>
-            <div className="w-full h-3 bg-root-canvas border border-root-accent/20 rounded-full mt-3 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-200"
-                style={{ width: `${satisfaction}%` }}
-              />
-            </div>
-          </div>
-
           <p
             className={`mt-3 text-center text-xs font-bold ${
               populationTaxModifier >= 0 ? "text-root-accent" : "text-rose-400"
@@ -825,6 +807,7 @@ function PajakModalContent({
     <TaxPolicyInfoModal
       isOpen={isTaxPolicyInfoOpen}
       onClose={() => setIsTaxPolicyInfoOpen(false)}
+      satisfaction={satisfaction}
     />
     {isConfirmDialogOpen && createPortal(
       <div className="fixed inset-0 z-[2147483647] flex items-center justify-center p-4 ">

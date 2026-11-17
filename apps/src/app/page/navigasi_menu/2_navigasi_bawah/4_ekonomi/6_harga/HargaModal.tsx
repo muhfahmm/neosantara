@@ -562,38 +562,6 @@ function HargaModalContent({
             )}
           </div>
 
-          {/* ---- INDEKS KEPUASAN RAKYAT (HARGA) ---- */}
-          {!forumDialogMode && (
-          <div className={`root-satisfaction-index harga-satisfaction-card mt-4 border border-root-accent/30 bg-root-canvas p-4 lg:mt-6 lg:p-5 ${rootBorderRadius.card}`}>
-            <div className="flex justify-between items-center">
-              <span className="root-satisfaction-index-title font-black text-root-accent uppercase tracking-widest">
-                Indeks Kepuasan Rakyat (Harga Pokok)
-              </span>
-              <span className="root-satisfaction-index-value font-black text-root-accent">
-                {satisfaction} / 100
-              </span>
-            </div>
-            <div className="w-full h-2.5 lg:h-3 bg-root-surface border border-root-accent/20 rounded-full mt-2.5 lg:mt-3 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-root-accent transition-all duration-200"
-                style={{ width: `${satisfaction}%` }}
-              />
-            </div>
-            {commodityImpacts.length > 0 && (
-              <p
-                className={`mt-3 text-center text-xs font-bold ${
-                  avgCommodityModifier >= 0
-                    ? "text-root-accent"
-                    : "text-rose-400"
-                }`}
-              >
-                Dampak populasi harga pokok:{" "}
-                {avgCommodityModifier >= 0 ? "+" : ""}
-                {avgCommodityModifier.toFixed(2)}% / bulan
-              </p>
-            )}
-          </div>
-          )}
         </div>
       </div>
     </NotebookModalWrapper>}
@@ -602,7 +570,37 @@ function HargaModalContent({
       onClose={() => setIsInfoOpen(false)}
       title="Informasi Kontrol Harga Barang Pokok"
       description="Atur harga nasional untuk setiap barang pokok. Harga memengaruhi kepuasan rakyat dan dampak populasi."
-    />
+    >
+      {!forumDialogMode && (
+        <div className={`root-satisfaction-index harga-satisfaction-card mt-4 border border-root-accent/30 bg-root-canvas p-4 lg:mt-6 lg:p-5 ${rootBorderRadius.card}`}>
+          <div className="flex items-center justify-between gap-3">
+            <span className="root-satisfaction-index-title font-black uppercase tracking-widest text-root-accent">
+              Indeks Kepuasan Rakyat (Harga Pokok)
+            </span>
+            <span className="root-satisfaction-index-value shrink-0 font-black text-root-accent">
+              {satisfaction} / 100
+            </span>
+          </div>
+          <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full border border-root-accent/20 bg-root-surface lg:h-3">
+            <div
+              className="h-full rounded-full bg-root-accent transition-all duration-200"
+              style={{ width: `${satisfaction}%` }}
+            />
+          </div>
+          {commodityImpacts.length > 0 && (
+            <p
+              className={`mt-3 text-center text-xs font-bold ${
+                avgCommodityModifier >= 0 ? "text-root-accent" : "text-rose-400"
+              }`}
+            >
+              Dampak populasi harga pokok:{" "}
+              {avgCommodityModifier >= 0 ? "+" : ""}
+              {avgCommodityModifier.toFixed(2)}% / bulan
+            </p>
+          )}
+        </div>
+      )}
+    </MenuInfoModal>
     {isConfirmDialogOpen && createPortal(
       <div className="fixed inset-0 z-[2147483647] flex items-center justify-center p-4 ">
         <div role="dialog" aria-modal="true" aria-labelledby="price-confirm-title" className={`w-full max-w-md border border-root-accent/30 bg-root-canvas p-6 shadow-2xl ${rootBorderRadius.card}`}>

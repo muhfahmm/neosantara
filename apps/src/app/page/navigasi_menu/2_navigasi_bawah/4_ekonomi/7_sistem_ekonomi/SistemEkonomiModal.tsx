@@ -390,7 +390,6 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
               />
             )}
 
-            <SatisfactionBar average={economicPolicyAverage} />
         </RootModalSidebarLayout>
 
       </div>
@@ -400,7 +399,9 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
       onClose={() => setIsInfoOpen(false)}
       title="Informasi Kebijakan & Sistem Ekonomi"
       description="Atur spektrum sistem ekonomi, pilih kebijakan sektoral, dan sesuaikan kepemilikan atau tingkat nasionalisasi sektor produksi. Perubahan kebijakan membentuk arah ekonomi serta porsi keuntungan negara."
-    />
+    >
+      <SatisfactionBar average={economicPolicyAverage} />
+    </MenuInfoModal>
     </>
   );
 }

@@ -438,6 +438,8 @@ export default function PDBModal({ isOpen, onClose, countryDetail, selectedCount
       isOpen={isInfoOpen}
       onClose={() => setIsInfoOpen(false)}
       title="Informasi Produk Domestik Bruto"
+      contentSized={false}
+      frameClassName="pdb-modal-frame"
     >
       <div className={`flex flex-col gap-3 ${rootModalTypography.body}`}>
         <p className={`${rootModalTypography.body} ${rootModalTypography.muted}`}>

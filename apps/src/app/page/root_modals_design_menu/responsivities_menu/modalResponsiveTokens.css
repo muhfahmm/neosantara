@@ -1102,8 +1102,8 @@
 }
 
 .notebook-modal-frame.trade-market-blocked-info-frame > .modal-responsive-shell {
-  width: min(600px, var(--modal-menu-frame-width, calc(100vw - 32px))) !important;
-  max-width: min(600px, var(--modal-menu-frame-width, calc(100vw - 32px))) !important;
+  width: min(100%, var(--modal-max-width)) !important;
+  max-width: var(--modal-max-width) !important;
   height: auto !important;
 }
 
@@ -1113,8 +1113,8 @@
 }
 
 .notebook-modal-frame.trade-market-blocked-info-frame[data-viewport-mode]:not(.country-detail-modal-frame) > .modal-responsive-shell {
-  width: min(600px, var(--modal-menu-frame-width, calc(100vw - 32px))) !important;
-  max-width: min(600px, var(--modal-menu-frame-width, calc(100vw - 32px))) !important;
+  width: min(100%, var(--modal-menu-frame-width, var(--modal-max-width))) !important;
+  max-width: var(--modal-menu-frame-width, var(--modal-max-width)) !important;
   height: auto !important;
   max-height: var(--modal-menu-frame-height, var(--modal-max-height)) !important;
 }
