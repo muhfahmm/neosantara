@@ -25,6 +25,7 @@ import { initializeSimulationClock, SimulationTimeManager, createSimulationCalen
 import dynamic from 'next/dynamic';
 import useKeyboardShortcuts from '../paused_menu/5_keyword';
 import { subMenuItems } from '../navigasi_menu/navigationData';
+import ModalsManager from '../navigasi_menu/2_navigasi_bawah/ModalsManager';
 import {
     canAcceptTradeDeal,
     getTradeRejectionDescription,
@@ -65,7 +66,6 @@ const ClosedTradeRejectionModal = dynamic(() => import('../menus/inbox/logic/3_n
 const RequireEmbassyModal = dynamic(() => import('./RequireEmbassyModal').then(m => m.RequireEmbassyModal), { ssr: false });
 import { Navbar } from '../navbar/Navbar';
 const BottomNav = dynamic(() => import('../navigasi_menu/2_navigasi_bawah/BottomNav'), { ssr: false });
-const ModalsManager = dynamic(() => import('../navigasi_menu/2_navigasi_bawah/ModalsManager'), { ssr: false });
 import { calculateDailyPopulationChange, updateDailyPopulation } from '@/app/logic/populations_logic/population_logic';
 import { logger } from '../../../lib/logger';
 const CountryDetailModal = dynamic(() => import('../detail_negara/detail_negara').then(m => m.CountryDetailModal), { ssr: false });

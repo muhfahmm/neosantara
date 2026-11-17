@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import dynamic from "next/dynamic";
 import { HandHelping, Tag } from "lucide-react";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
-
-const HargaModal = dynamic(() => import("./1_harga/HargaModal"), { ssr: false });
-const SubsidiModal = dynamic(() => import("./2_kebijakan_subsidi/SubsidiModal"), { ssr: false });
+import HargaModal from "./1_harga/HargaModal";
+import SubsidiModal from "./2_kebijakan_subsidi/SubsidiModal";
 
 type DayaBeliTab = "harga" | "subsidi";
 type CountryDetail = Record<string, unknown>;

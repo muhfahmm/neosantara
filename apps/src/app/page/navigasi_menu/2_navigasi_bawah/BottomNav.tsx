@@ -3,37 +3,7 @@
 import { useState, useEffect } from "react";
 import { LayoutGrid } from "lucide-react";
 import { menuItems, subMenuItems } from "../navigationData";
-import { preloadModalForMenu } from "./modalPreloaders";
 import { useViewportMode } from "@/app/hooks/useViewportMode";
-
-const modalPreloadPromises = new Map<string, Promise<unknown>>();
-let modalsManagerPromise: Promise<typeof import("./ModalsManager")> | null = null;
-
-function loadModalsManager() {
-  if (!modalsManagerPromise) {
-    modalsManagerPromise = import("./ModalsManager").catch(error => {
-      modalsManagerPromise = null;
-      throw error;
-    });
-  }
-  return modalsManagerPromise;
-}
-
-function prefetchMenuModal(menuId: string) {
-  if (modalPreloadPromises.has(menuId)) return;
-
-  const preloadPromise = Promise.resolve(preloadModalForMenu(menuId));
-  modalPreloadPromises.set(menuId, preloadPromise);
-  void preloadPromise.catch(error => {
-    modalPreloadPromises.delete(menuId);
-    console.error(`BottomNav: failed to preload menu "${menuId}"`, error);
-  });
-}
-
-function prefetchMenuGroup(menuId: string) {
-  const menuOptions = subMenuItems[menuId] || [];
-  menuOptions.forEach(menu => prefetchMenuModal(menu.id));
-}
 
 interface BottomNavProps {
   activeMenu: string;
@@ -51,18 +21,6 @@ export default function BottomNav({
   isAttackerForcesModalOpen = false,
 }: BottomNavProps) {
   const [isTemporarilyHidden, setIsTemporarilyHidden] = useState(false);
-
-  useEffect(() => {
-    const preload = () => {
-      void loadModalsManager().catch(error => {
-        console.error('BottomNav: failed to preload menu manager', error);
-      });
-    };
-
-    const timeoutId = window.setTimeout(preload, 1000);
-
-    return () => window.clearTimeout(timeoutId);
-  }, []);
 
   useEffect(() => {
     const handleHide = () => setIsTemporarilyHidden(true);
@@ -182,12 +140,6 @@ export default function BottomNav({
                   aria-pressed={isActive}
                   aria-expanded={!isMap && hasSubItems ? isActive : undefined}
                   aria-controls={!isMap && isActive && hasSubItems ? "bottom-nav-submenu" : undefined}
-                  onFocus={() => {
-                    if (!isActive && !isMap) prefetchMenuGroup(item.id);
-                  }}
-                  onPointerDown={() => {
-                    if (!isActive && !isMap) prefetchMenuGroup(item.id);
-                  }}
                   onClick={() => isMap ? handleFullReset() : handleMainClick(item.id)}
                   className={`inline-flex shrink-0 cursor-pointer items-center justify-center border text-[10px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent/60 ${
                     isLandscapePhone
@@ -239,9 +191,6 @@ export default function BottomNav({
                   type="button"
                   title={sub.label}
                   aria-label={sub.label}
-                  onPointerEnter={() => prefetchMenuModal(sub.id)}
-                  onFocus={() => prefetchMenuModal(sub.id)}
-                  onPointerDown={() => prefetchMenuModal(sub.id)}
                   onClick={() => setActiveMenu(sub.id)}
                   className={`inline-flex shrink-0 cursor-pointer items-center justify-center border border-transparent font-semibold text-root-text transition-colors hover:bg-root-accent/10 hover:text-root-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent/60 ${
                     isLandscapePhone
