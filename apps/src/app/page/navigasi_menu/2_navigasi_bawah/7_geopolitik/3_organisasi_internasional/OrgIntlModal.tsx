@@ -139,6 +139,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
           orgIcon={orgIconMap[infoOrgName] || Globe}
           isMember={Boolean(membershipMap[infoOrgName])}
           countryDetail={countryDetail}
+          selectedCountry={selectedCountry}
         />
       )}
       {!infoOrgName && <NotebookModalWrapper onClose={handleClose}>
@@ -268,6 +269,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                 orgName={selectedOrgName}
                 orgIcon={selectedOrgIcon}
                 selectedCountry={selectedCountry}
+                countryDetail={countryDetail}
                 onClose={() => setIsChildModalOpen(false)}
                 onOpenCountryDetail={onOpenCountryDetail}
                 onOpenPlayerDetail={onOpenPlayerDetail}

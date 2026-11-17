@@ -163,6 +163,17 @@ export function getBaseRelationValue(sourceCountry?: string, targetCountry?: str
   return 15 + (Math.abs(hash) % 81);
 }
 
+export function hasBaseRelationDataForPair(sourceCountry?: string, targetCountry?: string): boolean {
+  if (!sourceCountry || !targetCountry) return false;
+
+  const source = sourceCountry.trim().toLowerCase();
+  const target = targetCountry.trim().toLowerCase();
+  if (source === target) return true;
+
+  const targetMap = relationsDb[normalizeSlug(sourceCountry)];
+  return targetMap?.[target] !== undefined;
+}
+
 /**
  * Checks whether an embassy exists between source and target countries.
  * Checks against active embassies array if provided, or defaults to checking relation score.

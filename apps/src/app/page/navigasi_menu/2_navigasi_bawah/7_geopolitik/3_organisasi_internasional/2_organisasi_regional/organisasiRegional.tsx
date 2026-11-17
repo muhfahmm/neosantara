@@ -8,11 +8,14 @@ import PermohonanKeanggotaanModal from "../PermohonanKeanggotaanModal";
 import { getApplicationForOrg, isUserJoinedOrg } from "../orgMembershipLogic";
 import { getDaysElapsed, formatDate } from "@/app/logic/production_logic";
 import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
+import MembershipEligibilityPanel from "./MembershipEligibilityPanel";
+import { EligibilityCountry, useOrgMembershipEligibility } from "./membershipEligibility";
 
 interface OrganisasiPBBModalProps {
   orgName: string;
   orgIcon?: React.ElementType;
-  selectedCountry?: any;
+  selectedCountry?: EligibilityCountry | null;
+  countryDetail?: Record<string, unknown> | null;
   onClose: () => void;
   onOpenCountryDetail?: (countryName: string) => void;
   onOpenPlayerDetail?: () => void;
@@ -22,6 +25,10 @@ interface MemberData {
   country: string;
   status: string;
   iso?: string;
+}
+
+interface AnnexedCountriesWindow extends Window {
+  neosantara_annexed_countries?: Record<string, unknown>;
 }
 
 const ORGANIZATION_BENEFITS: Record<string, string> = {
@@ -42,13 +49,14 @@ const ORGANIZATION_BENEFITS: Record<string, string> = {
   "group of twenty (g20)": "Pendapatan Negara +20%",
 };
 
-export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCountry, onClose, onOpenCountryDetail, onOpenPlayerDetail }: OrganisasiPBBModalProps) {
+export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCountry, countryDetail, onClose, onOpenCountryDetail, onOpenPlayerDetail }: OrganisasiPBBModalProps) {
   const [members, setMembers] = useState<MemberData[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPermohonanOpen, setIsPermohonanOpen] = useState(false);
 
   const playerCountryName = selectedCountry?.country || "";
   const benefitText = ORGANIZATION_BENEFITS[orgName?.toLowerCase()?.trim()] || "";
+  const eligibility = useOrgMembershipEligibility(orgName, selectedCountry, countryDetail);
 
   const getIsoFromName = (name: string) => {
     const found = COUNTRIES_DATA?.find(
@@ -74,7 +82,9 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
   useEffect(() => {
     setLoading(true);
     const data = getOrgMembers(orgName, playerCountryName);
-    const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+    const annexedStore = (typeof window !== 'undefined'
+      ? (window as AnnexedCountriesWindow).neosantara_annexed_countries
+      : {}) || {};
     const activeMembers = data.filter((m: MemberData) => {
       const raw = String(m.country || '').trim();
       const norm = raw.toLowerCase();
@@ -87,7 +97,7 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
     });
     setMembers(activeMembers);
     setLoading(false);
-  }, [orgName]);
+  }, [orgName, playerCountryName]);
 
   const handleOpenDetail = (countryName: string, isPlayer: boolean) => {
     if (isPlayer) {
@@ -128,25 +138,34 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
 
       {/* BODY - Daftar Negara Anggota */}
       <div className="flex-1 overflow-y-auto p-6 sm:p-8 bg-root-surface custom-scrollbar space-y-4">
-        {benefitText && (() => {
+        {eligibility.requirements.length > 0 && (() => {
           const app = getApplicationForOrg(playerCountryName, orgName);
           const currentDateStr = getCurrentGameDateString() || formatDate(new Date());
           const remainingDays = app ? Math.max(0, 30 - getDaysElapsed(app.submissionDate, currentDateStr)) : 30;
+          const officialMembership = getOrgMembers(orgName, playerCountryName).some(
+            (member: MemberData) => member.country?.toLowerCase().trim() === playerCountryName.toLowerCase().trim()
+          );
+          const isMember = app?.status === "accepted" ||
+            isUserJoinedOrg(playerCountryName, orgName) ||
+            officialMembership ||
+            members.some((member) => member.country?.toLowerCase().trim() === playerCountryName.toLowerCase().trim());
 
           return (
             <div className="w-full bg-root-accent/10 border border-root-accent/30 rounded-xl p-4 flex items-center justify-between shadow-md flex-wrap gap-3">
-              <div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-root-accent/70 block">
-                  Efek / Keuntungan Keanggotaan
-                </span>
-                <span className="text-sm sm:text-base font-extrabold text-root-accent tracking-wide">
-                  {benefitText}
-                </span>
-              </div>
-              {(app?.status === "accepted" || isUserJoinedOrg(playerCountryName, orgName)) ? (
+              {benefitText && (
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-root-accent/70 block">
+                    Efek / Keuntungan Keanggotaan
+                  </span>
+                  <span className="text-sm sm:text-base font-extrabold text-root-accent tracking-wide">
+                    {benefitText}
+                  </span>
+                </div>
+              )}
+              {isMember ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-black text-[11px] uppercase tracking-wider shrink-0 shadow-sm">
                   <Check className="h-3.5 w-3.5 text-emerald-400" />
-                  <span>Anggota Aktif</span>
+                  <span>Sudah Menjadi Anggota</span>
                 </span>
               ) : app?.status === "pending" ? (
                 <button
@@ -159,7 +178,13 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
               ) : (
                 <button
                   onClick={() => setIsPermohonanOpen(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-root-accent text-root-canvas hover:bg-root-accent/80 font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer shadow-sm shrink-0"
+                  disabled={eligibility.canApply !== true}
+                  title={eligibility.canApply === true ? undefined : "Syarat keanggotaan belum terpenuhi atau belum dapat diverifikasi."}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-black text-[11px] uppercase tracking-wider transition-all shadow-sm shrink-0 ${
+                    eligibility.canApply === true
+                      ? "bg-root-accent text-root-canvas hover:bg-root-accent/80 cursor-pointer"
+                      : "bg-slate-700 text-slate-400 cursor-not-allowed opacity-70"
+                  }`}
                 >
                   <Send className="h-3.5 w-3.5" />
                   <span>Kirim Permohonan</span>
@@ -168,6 +193,8 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
             </div>
           );
         })()}
+
+        <MembershipEligibilityPanel eligibility={eligibility} />
 
         <div className="w-full bg-root-canvas border border-root-accent/20 rounded-xl p-6 shadow-md">
           <div className="flex justify-between items-center mb-4 border-b border-root-accent/20 pb-2">
@@ -236,6 +263,7 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
         orgName={orgName}
         countryName={playerCountryName}
         orgIcon={Icon}
+        canSubmit={eligibility.canApply}
       />
     </div>
   );

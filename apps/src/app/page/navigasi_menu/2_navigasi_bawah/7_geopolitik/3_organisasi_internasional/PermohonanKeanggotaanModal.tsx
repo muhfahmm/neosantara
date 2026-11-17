@@ -19,6 +19,7 @@ interface PermohonanKeanggotaanModalProps {
   countryName: string;
   orgIcon?: React.ElementType;
   onSubmitted?: () => void;
+  canSubmit?: boolean | null;
 }
 
 export default function PermohonanKeanggotaanModal({
@@ -28,6 +29,7 @@ export default function PermohonanKeanggotaanModal({
   countryName,
   orgIcon: Icon = Globe,
   onSubmitted,
+  canSubmit = true,
 }: PermohonanKeanggotaanModalProps) {
   const [mounted, setMounted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -51,6 +53,7 @@ export default function PermohonanKeanggotaanModal({
   if (!isOpen || !mounted) return null;
 
   const handleSubmit = () => {
+    if (canSubmit !== true) return;
     setSubmitting(true);
     setTimeout(() => {
       const app = submitOrgApplication(countryName, orgName, currentDateStr);
@@ -194,7 +197,7 @@ export default function PermohonanKeanggotaanModal({
           {(!currentApp || currentApp.status === "rejected") && (
             <button
               onClick={handleSubmit}
-              disabled={submitting}
+              disabled={submitting || canSubmit !== true}
               className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 px-6 py-2 text-xs font-black text-root-canvas transition-all shadow-md cursor-pointer uppercase tracking-wider disabled:opacity-50"
             >
               {submitting ? (

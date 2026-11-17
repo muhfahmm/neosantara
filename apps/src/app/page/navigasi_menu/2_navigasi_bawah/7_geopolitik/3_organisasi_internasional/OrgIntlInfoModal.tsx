@@ -5,6 +5,11 @@ import { Info } from "lucide-react";
 import { getKerjaSamaOrganisasiRegionalBonusPercent } from "@/app/page/bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/4_Kerja Sama Organisasi Regional";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import MembershipEligibilityPanel from "./2_organisasi_regional/MembershipEligibilityPanel";
+import {
+  EligibilityCountry,
+  useOrgMembershipEligibility,
+} from "./2_organisasi_regional/membershipEligibility";
 
 interface OrgIntlInfoModalProps {
   isOpen: boolean;
@@ -13,6 +18,7 @@ interface OrgIntlInfoModalProps {
   orgIcon: React.ElementType;
   isMember: boolean;
   countryDetail?: Record<string, unknown> | null;
+  selectedCountry?: EligibilityCountry | null;
 }
 
 const ORGANIZATION_INFO: Record<string, { description: string; focus: string; requirement?: string; benefit?: string }> = {
@@ -124,7 +130,10 @@ export default function OrgIntlInfoModal({
   orgIcon: OrgIcon,
   isMember,
   countryDetail,
+  selectedCountry,
 }: OrgIntlInfoModalProps) {
+  const eligibility = useOrgMembershipEligibility(orgName, selectedCountry, countryDetail, isOpen);
+
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -193,9 +202,11 @@ export default function OrgIntlInfoModal({
             <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-root-accent">Tentang organisasi</h3>
             <p className="text-sm leading-relaxed text-root-body">{info.description}</p>
           </section>
-          {info.requirement && (
+          {eligibility.requirements.length > 0 ? (
+            <MembershipEligibilityPanel eligibility={eligibility} />
+          ) : info.requirement && (
             <section className="rounded-xl border border-root-accent/20 bg-root-canvas p-4">
-              <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-root-accent">Syarat Masuk</h3>
+              <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-root-accent">Syarat Keanggotaan</h3>
               <p className="text-sm leading-relaxed text-root-body">{info.requirement}</p>
             </section>
           )}

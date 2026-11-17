@@ -19,6 +19,9 @@ import {
 } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import { calculateCountryNetPopulation } from '@/app/logic/populations_logic/population_logic';
 import { getRelationValue } from '../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
+import { ORGANIZATION_MEMBERSHIP_UPDATED_EVENT } from '@/../../json/14_database_organisasi_internasional/organizationMembers';
+import { isMemberOfNATO } from '@/app/page/bonus_logic/organisasi_bonus_logic/organisasi_regional/nato';
+import { playerHasEmbassyWith } from './1_informasi_umum/1_kedutaan_besar/logic/kedutaanBesarLogic';
 import { getProvinceReligionOverride } from './1_informasi_umum/provinsi_logic/1_informasi_umum/2_tugaskan_misionaris';
 import { getProvinceIdeologyOverride } from './1_informasi_umum/provinsi_logic/1_informasi_umum/5_tanamkan_ideologi';
 import { getProvinceRebellionChance } from './1_informasi_umum/provinsi_logic/ketegangan_provinsi/1_pemberontakan';
@@ -57,6 +60,12 @@ interface CountryDetailModalProps {
 }
 
 const normalizeCountryKey = (value: unknown) => String(value || '').toLowerCase().trim();
+const normalizeAlliancePartner = (value: unknown) => String(value || '')
+  .toLowerCase()
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/[^a-z0-9]/g, '');
+const EMPTY_COUNTRY_RELATION_LIST: never[] = [];
 const COUNTRY_SUMMARY_FONT_SIZE = 'text-[8px] lg:text-[9px] xl:text-[11px]';
 
 interface AnnexationInfo {
@@ -192,6 +201,63 @@ export function CountryDetailModal({
   const preserveActiveTabRef = useRef(false);
   const countryDetailRef = useRef(countryDetail);
   countryDetailRef.current = countryDetail;
+  const natoPlayerCountryName = countryDetail?.country ||
+    countryDetail?.nama_negara ||
+    countryDetail?.name_id ||
+    countryDetail?.name ||
+    '';
+  const playerEmbassies = Array.isArray(countryDetail?.embassies)
+    ? countryDetail.embassies
+    : EMPTY_COUNTRY_RELATION_LIST;
+  const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies)
+    ? countryDetail.removedEmbassies
+    : EMPTY_COUNTRY_RELATION_LIST;
+
+  useEffect(() => {
+    if (!natoPlayerCountryName || !setCountryDetail) return;
+
+    const activateNatoEmbassyAlliances = () => {
+      if (!isMemberOfNATO(natoPlayerCountryName)) return;
+
+      const embassyPartners = COUNTRIES_DATA
+        .filter((country) =>
+          normalizeAlliancePartner(country.country) !== normalizeAlliancePartner(natoPlayerCountryName) &&
+          playerHasEmbassyWith(
+            country.country,
+            playerEmbassies,
+            natoPlayerCountryName,
+            removedEmbassies
+          )
+        )
+        .map((country) => country.country);
+
+      if (embassyPartners.length === 0) return;
+
+      setCountryDetail((previous: Record<string, unknown> | null) => {
+        if (!previous) return previous;
+        const existing = Array.isArray(previous.defenseAlliances) ? previous.defenseAlliances : [];
+        const existingPartners = new Set(existing.map(normalizeAlliancePartner));
+        const newPartners = embassyPartners.filter(
+          (partner) => !existingPartners.has(normalizeAlliancePartner(partner))
+        );
+        if (newPartners.length === 0) return previous;
+
+        return {
+          ...previous,
+          defenseAlliances: [...existing, ...newPartners],
+        };
+      });
+    };
+
+    const initialSync = window.setTimeout(activateNatoEmbassyAlliances, 0);
+    window.addEventListener(ORGANIZATION_MEMBERSHIP_UPDATED_EVENT, activateNatoEmbassyAlliances);
+    window.addEventListener('country_relations_updated', activateNatoEmbassyAlliances);
+    return () => {
+      window.clearTimeout(initialSync);
+      window.removeEventListener(ORGANIZATION_MEMBERSHIP_UPDATED_EVENT, activateNatoEmbassyAlliances);
+      window.removeEventListener('country_relations_updated', activateNatoEmbassyAlliances);
+    };
+  }, [natoPlayerCountryName, playerEmbassies, removedEmbassies, setCountryDetail]);
 
   useEffect(() => {
     if (!currentDate) return;
