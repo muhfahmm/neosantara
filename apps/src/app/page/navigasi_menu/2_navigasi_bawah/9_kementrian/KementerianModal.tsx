@@ -40,6 +40,7 @@ import { MapPin } from "lucide-react";
 import { applyReformasiBirokrasiToUpgradeCost } from "@/app/page/bonus_logic";
 import NotebookModalWrapper from "../NotebookModalWrapper";
 import MenuInfoModal from "../MenuInfoModal";
+import RootConfirmModal from "@/app/page/root_modals_design_menu/RootConfirmModal";
 
 interface ModalProps {
   isOpen: boolean;
@@ -502,7 +503,10 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
     <>
       {/* ========== MODAL UTAMA ========== */}
       {!isGantiIbukotaOpen && (
-        <NotebookModalWrapper onClose={onClose}>
+        <NotebookModalWrapper
+          onClose={onClose}
+          isHidden={confirmUpgrade !== null || confirmDowngrade !== null}
+        >
         <div className="root-modal-util-b74379da23">
           <RootInfoModalHeader
             title="Dewan Kabinet Menteri"
@@ -781,82 +785,59 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
       )}
 
       {/* ========== CONFIRMATION UPGRADE POPUP ========== */}
-      {confirmUpgrade && (
-        <NotebookModalWrapper
-          onClose={() => setConfirmUpgrade(null)}
-          zIndexClass="z-[210]"
-        >
-          <div className="flex h-full min-h-0 w-full flex-col overflow-hidden font-sans">
-            <RootInfoModalHeader
-              title={
-                <span className="flex min-w-0 flex-col">
-                  <span>{confirmUpgrade.dept.name}</span>
-                </span>
-              }
-              icon={<confirmUpgrade.dept.icon aria-hidden="true" />}
-              onClose={() => setConfirmUpgrade(null)}
-              closeAriaLabel="Tutup konfirmasi upgrade"
-              size="standard"
-            />
-
-            <div className="min-h-0 flex-1 overflow-y-auto bg-root-surface p-4 sm:p-5">
-              <div className="bg-root-canvas border border-root-accent/20 rounded-lg p-4 mb-4">
-                <div className="space-y-1.5 mb-3">
-                  {Array.from(
-                    { length: confirmUpgrade.targetLevel - confirmUpgrade.fromLevel },
-                    (_, idx) => confirmUpgrade.fromLevel + idx
-                  ).map((stepLevel) => (
-                    <div key={stepLevel} className="flex justify-between text-[11px] font-bold text-root-subtle">
-                      <span>Biaya dari level {stepLevel} ke {stepLevel + 1}:</span>
-                      <span className="text-root-text">
-                        {getLevelUpCostForStep(stepLevel + 1, countryDetail).toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex justify-between items-center border-t border-root-accent/20 pt-3 mb-3">
-                  <span className="text-xs font-bold text-root-subtle uppercase">Total Biaya:</span>
-                  <span className="text-lg font-black text-root-accent">
-                    {confirmUpgrade.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-root-subtle uppercase">Kas Negara Sekarang:</span>
-                  <span className="text-lg font-black text-root-text">
-                    {money.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
-                  </span>
-                </div>
-                <div className="border-t border-root-accent/20 mt-3 pt-3 flex justify-between items-center">
-                  <span className="text-xs font-bold text-root-subtle uppercase">Kas Setelah Upgrade:</span>
-                  <span className="text-lg font-black text-amber-400">
-                    {(money - confirmUpgrade.cost).toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
-                  </span>
-                </div>
+      <RootConfirmModal
+        isOpen={confirmUpgrade !== null}
+        onClose={() => setConfirmUpgrade(null)}
+        onConfirm={handleConfirmUpgrade}
+        title={confirmUpgrade?.dept.name ?? ""}
+        icon={confirmUpgrade ? <confirmUpgrade.dept.icon aria-hidden="true" /> : undefined}
+        confirmLabel="Upgrade"
+        cancelLabel="Batal"
+        zIndexClass="z-[210]"
+      >
+        {confirmUpgrade && (
+          <div className="space-y-4">
+            <div className="rounded-lg border border-root-accent/20 bg-root-canvas p-4">
+              <div className="mb-3 max-h-32 space-y-1.5 overflow-y-auto pr-1">
+                {Array.from(
+                  { length: confirmUpgrade.targetLevel - confirmUpgrade.fromLevel },
+                  (_, idx) => confirmUpgrade.fromLevel + idx
+                ).map((stepLevel) => (
+                  <div key={stepLevel} className="flex justify-between gap-3 text-[11px] font-bold text-root-subtle">
+                    <span>Biaya dari level {stepLevel} ke {stepLevel + 1}:</span>
+                    <span className="shrink-0 text-root-text">
+                      {getLevelUpCostForStep(stepLevel + 1, countryDetail).toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
+                    </span>
+                  </div>
+                ))}
               </div>
 
-              <p className="text-xs text-root-subtle font-semibold mb-6">
-                {confirmUpgrade.dept.description}
-              </p>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setConfirmUpgrade(null)}
-                  className="flex-1 px-4 py-2.5 rounded-lg border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-text active:scale-95 transition-all font-bold text-sm uppercase cursor-pointer"
-                >
-                  Batal
-                </button>
-                <button
-                  onClick={handleConfirmUpgrade}
-                  className="flex-1 px-4 py-2.5 rounded-lg bg-root-accent text-root-canvas hover:bg-root-accent/80 active:scale-95 transition-all font-bold text-sm uppercase cursor-pointer shadow-md"
-                >
-                  Upgrade
-                </button>
+              <div className="mb-3 flex items-center justify-between border-t border-root-accent/20 pt-3">
+                <span className="text-xs font-bold uppercase text-root-subtle">Total Biaya:</span>
+                <span className="text-lg font-black text-root-accent">
+                  {confirmUpgrade.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
+                </span>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-xs font-bold uppercase text-root-subtle">Kas Negara Sekarang:</span>
+                <span className="text-lg font-black text-root-text">
+                  {money.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
+                </span>
+              </div>
+              <div className="mt-3 flex items-center justify-between gap-3 border-t border-root-accent/20 pt-3">
+                <span className="text-xs font-bold uppercase text-root-subtle">Kas Setelah Upgrade:</span>
+                <span className="text-lg font-black text-amber-400">
+                  {(money - confirmUpgrade.cost).toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
+                </span>
               </div>
             </div>
+
+            <p className="text-xs font-semibold text-root-subtle">
+              {confirmUpgrade.dept.description}
+            </p>
           </div>
-        </NotebookModalWrapper>
-      )}
+        )}
+      </RootConfirmModal>
 
       {/* ========== CONFIRMATION DOWNGRADE POPUP ========== */}
       {confirmDowngrade && (

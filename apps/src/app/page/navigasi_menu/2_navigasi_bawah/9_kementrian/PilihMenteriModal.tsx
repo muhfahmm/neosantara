@@ -1,10 +1,10 @@
 "use client";
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React from "react";
 import { createPortal } from "react-dom";
-import { Award, Banknote, Check, X } from "lucide-react";
+import { Award, Banknote, Check } from "lucide-react";
 import NotebookModalWrapper from "../NotebookModalWrapper";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 
 export interface MinisterCandidateDepartment {
   id: string;
@@ -53,27 +53,14 @@ export default function PilihMenteriModal({
 
   return createPortal(
     <NotebookModalWrapper onClose={onClose}>
-      <div className="flex flex-col h-full overflow-hidden">
-        <header className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="p-1.5 rounded-lg border border-root-accent/30 bg-root-accent/10">
-              <Icon className="h-5 w-5 text-root-accent" />
-            </div>
-            <div>
-              <h2 className="text-sm sm:text-base font-bold uppercase tracking-wide text-root-text">
-                Kandidat Menteri
-              </h2>
-            </div>
-          </div>
-          <SharedModalCloseButton
-            type="button"
-            onClick={onClose}
-            className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
-           appearance="custom">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </SharedModalCloseButton>
-        </header>
+      <div className="root-modal-util-b74379da23">
+        <RootInfoModalHeader
+          title="Kandidat Menteri"
+          icon={<Icon aria-hidden="true" />}
+          onClose={onClose}
+          closeAriaLabel="Tutup kandidat menteri"
+          size="standard"
+        />
 
         <div className="flex-1 overflow-y-auto bg-root-surface p-4 sm:p-6 neon-scrollbar">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-root-accent/20 bg-root-canvas p-3">
