@@ -14,7 +14,7 @@ import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import {
   getRelationValue,
   hasBaseRelationDataForPair,
-} from "../../../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry";
+} from "../../../../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry";
 import {
   SOUTH_EAST_ASIA_ISO_CODES,
   WESTERN_ASIA_OR_NORTHERN_AFRICA_ISO_CODES,

@@ -5,11 +5,11 @@ import { Info } from "lucide-react";
 import { getKerjaSamaOrganisasiRegionalBonusPercent } from "@/app/page/bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/4_Kerja Sama Organisasi Regional";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
-import MembershipEligibilityPanel from "./2_organisasi_regional/MembershipEligibilityPanel";
+import MembershipEligibilityPanel from "./2_organisasi_regional/requirementsLogic/MembershipEligibilityPanel";
 import {
   EligibilityCountry,
   useOrgMembershipEligibility,
-} from "./2_organisasi_regional/membershipEligibility";
+} from "./2_organisasi_regional/requirementsLogic/membershipEligibility";
 
 interface OrgIntlInfoModalProps {
   isOpen: boolean;

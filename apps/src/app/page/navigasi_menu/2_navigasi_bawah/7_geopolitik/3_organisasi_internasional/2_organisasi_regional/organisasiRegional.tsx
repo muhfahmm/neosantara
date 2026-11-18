@@ -8,8 +8,8 @@ import PermohonanKeanggotaanModal from "../PermohonanKeanggotaanModal";
 import { getApplicationForOrg, isUserJoinedOrg } from "../orgMembershipLogic";
 import { getDaysElapsed, formatDate } from "@/app/logic/production_logic";
 import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
-import MembershipEligibilityPanel from "./MembershipEligibilityPanel";
-import { EligibilityCountry, useOrgMembershipEligibility } from "./membershipEligibility";
+import MembershipEligibilityPanel from "./requirementsLogic/MembershipEligibilityPanel";
+import { EligibilityCountry, useOrgMembershipEligibility } from "./requirementsLogic/membershipEligibility";
 
 interface OrganisasiPBBModalProps {
   orgName: string;
