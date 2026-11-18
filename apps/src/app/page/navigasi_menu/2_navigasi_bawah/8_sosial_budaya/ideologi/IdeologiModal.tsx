@@ -10,8 +10,8 @@ import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
 import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
 
-import IdeologiConfirmModal from "./modalsGanti";
-import IdeologiGagalModal from "./modalsGagalGanti";
+import IdeologiConfirmModal from "./KonfirmasiPerubahanIdeologiModal";
+import IdeologiGagalModal from "./DanaTidakCukupIdeologiModal";
 import IdeologiInfoModal from "./IdeologiInfoModal";
 import MenuInfoButton from "../../MenuInfoButton";
 import { attemptChangeIdeology, IDEOLOGY_CHANGE_COST } from "./logic/logikaPergantian";
@@ -234,6 +234,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
         bonusText={infoTarget ? IDEOLOGY_BONUSES[infoTarget] || '' : ''}
       />
 
+      {!isConfirmOpen && !showErrorModal && !infoTarget && (
       <NotebookModalWrapper onClose={onClose}>
         <div className="root-modal-util-52b6b298fe">
           <div className="satisfaction-modal-header root-modal-util-4450f1d9ee">
@@ -424,6 +425,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
           </div>
         </div>
       </NotebookModalWrapper>
+      )}
     </>,
     document.body
   );

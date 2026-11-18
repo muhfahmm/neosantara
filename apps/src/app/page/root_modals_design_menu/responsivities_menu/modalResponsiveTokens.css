@@ -920,6 +920,17 @@
   border-radius: 8px !important;
 }
 
+.notebook-modal-frame.social-confirm-modal-frame > .modal-responsive-shell,
+.notebook-modal-frame.social-confirm-modal-frame[data-viewport-mode] > .modal-responsive-shell {
+  box-sizing: border-box;
+  width: min(100%, var(--modal-max-width)) !important;
+  max-width: var(--modal-max-width) !important;
+  height: auto !important;
+  max-height: var(--modal-max-height) !important;
+  min-height: 0 !important;
+  flex: 0 1 auto !important;
+}
+
 .notebook-modal-frame.content-sized-info-frame .notebook-modal-content > :first-child {
   height: auto !important;
   min-height: 0 !important;

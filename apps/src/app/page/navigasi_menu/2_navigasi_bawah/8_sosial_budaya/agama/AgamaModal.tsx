@@ -12,8 +12,8 @@ import { COUNTRIES_DATA } from "../../../../map_system/map-data";
 import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
 
 // 🔥 IMPOR MODAL KONFIRMASI DAN GAGAL
-import AgamaConfirmModal from "./modalsGanti";
-import AgamaGagalModal from "./modalsGagalGanti";
+import AgamaConfirmModal from "./KonfirmasiPerubahanAgamaModal";
+import AgamaGagalModal from "./DanaTidakCukupAgamaModal";
 
 // 🔥 IMPOR LOGIKA DARI FILE LOGIKA (Pastikan file logikaPergantian.ts memiliki attemptChangeReligion dan RELIGION_CHANGE_COST)
 import { attemptChangeReligion, RELIGION_CHANGE_COST } from "./logic/logikaPergantian";
@@ -220,6 +220,7 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
       />
 
       {/* MODAL UTAMA AGAMA */}
+      {!isConfirmOpen && !showErrorModal && (
       <NotebookModalWrapper onClose={onClose}>
         <div className="root-modal-util-52b6b298fe">
           <div className="satisfaction-modal-header root-modal-util-4450f1d9ee">
@@ -398,6 +399,7 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
           </div>
         </div>
       </NotebookModalWrapper>
+      )}
     </>,
     document.body
   );
