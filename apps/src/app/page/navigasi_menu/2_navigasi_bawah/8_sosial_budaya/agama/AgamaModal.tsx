@@ -70,6 +70,7 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
 
   // 🔥 STATE UNTUK MODAL KONFIRMASI & GAGAL
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isCurrentReligionInfoOpen, setIsCurrentReligionInfoOpen] = useState(false);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
 
@@ -167,6 +168,11 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
 
   const handleSelectReligion = (religionName: string) => {
     setSelectedReligion(religionName);
+    if (religionName.toLowerCase().trim() === religion.toLowerCase().trim()) {
+      setIsCurrentReligionInfoOpen(true);
+      return;
+    }
+    setIsCurrentReligionInfoOpen(false);
     setIsConfirmOpen(true);
   };
 
@@ -203,8 +209,12 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
     <>
       {/* 🔥 RENDER KONFIRMASI & GAGAL MODAL */}
       <AgamaConfirmModal
-        isOpen={isConfirmOpen}
-        onClose={() => setIsConfirmOpen(false)}
+        isOpen={isConfirmOpen || isCurrentReligionInfoOpen}
+        isInfoMode={isCurrentReligionInfoOpen}
+        onClose={() => {
+          setIsConfirmOpen(false);
+          setIsCurrentReligionInfoOpen(false);
+        }}
         onConfirm={handleConfirmChange}
         title={selectedReligion || ''}
         icon={selectedReligion ? RELIGION_ICONS[selectedReligion] : <Globe className="w-5 h-5" />}
@@ -220,7 +230,7 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
       />
 
       {/* MODAL UTAMA AGAMA */}
-      {!isConfirmOpen && !showErrorModal && (
+      {!isConfirmOpen && !isCurrentReligionInfoOpen && !showErrorModal && (
       <NotebookModalWrapper onClose={onClose}>
         <div className="root-modal-util-52b6b298fe">
           <div className="satisfaction-modal-header root-modal-util-4450f1d9ee">
