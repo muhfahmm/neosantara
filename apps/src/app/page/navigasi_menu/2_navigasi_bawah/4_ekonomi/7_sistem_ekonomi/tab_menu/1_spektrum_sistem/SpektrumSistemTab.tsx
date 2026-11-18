@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { TrendingUp, AlertCircle, HeartPulse, Users } from "lucide-react";
+import { TrendingUp, HeartPulse } from "lucide-react";
 import { EconomicSystemEffect } from "../../logic/logikaSistemEkonomi";
 import { calculateEconomicPopulationImpact } from "@/app/logic/economic_logic/economicPopulationImpact";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
@@ -192,37 +192,6 @@ export default function SpektrumSistemTab({
           </div>
         </div>
 
-        <div className={`economic-impact-card bg-root-canvas border border-root-accent/20 p-3 ${rootBorderRadius.card} flex items-center gap-3 min-w-0`}>
-          <div className="p-1.5 lg:p-2 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-400 shrink-0">
-            <AlertCircle className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-          </div>
-          <div className="min-w-0">
-            <p className="economic-impact-label text-[8px] lg:text-[9px] font-black text-root-subtle uppercase tracking-wider">
-              Dampak Inflasi
-            </p>
-            <p className="economic-impact-value text-sm font-black text-root-text mt-0.5 whitespace-nowrap">
-              {systemDetails.inflationImpact >= 0
-                ? `+${systemDetails.inflationImpact.toFixed(1)}%`
-                : `${systemDetails.inflationImpact.toFixed(1)}%`}
-            </p>
-          </div>
-        </div>
-
-        <div className={`economic-impact-card bg-root-canvas border border-root-accent/20 p-3 ${rootBorderRadius.card} flex items-center gap-3 min-w-0`}>
-          <div className="p-1.5 lg:p-2 bg-purple-500/10 border border-purple-500/20 rounded-lg text-purple-400 shrink-0">
-            <Users className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-          </div>
-          <div className="min-w-0">
-            <p className="economic-impact-label text-[8px] lg:text-[9px] font-black text-root-subtle uppercase tracking-wider">
-              Ketimpangan (Gini)
-            </p>
-            <p className="economic-impact-value text-sm font-black text-root-text mt-0.5 whitespace-nowrap">
-              {systemDetails.giniIndexImpact >= 0
-                ? `+${systemDetails.giniIndexImpact.toFixed(2)}`
-                : `${systemDetails.giniIndexImpact.toFixed(2)}`}
-            </p>
-          </div>
-        </div>
       </div>
 
     </div>

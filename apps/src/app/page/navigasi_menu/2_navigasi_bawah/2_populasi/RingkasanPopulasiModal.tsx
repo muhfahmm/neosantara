@@ -21,7 +21,6 @@ const DetailKelahiranModal = dynamic(() => import("./kelahiran_modals/DetailKela
 const DetailKematianModal = dynamic(() => import("./kematian_modals/DetailKematianModal"), { ssr: false });
 const TempatUmumModal = dynamic(() => import("../5_pembangunan/2_tempat_umum/TempatUmumModal"), { ssr: false });
 const IndeksKesejahteraanModal = dynamic(() => import("./indeks_kesejahteraan_modals/IndeksKesejahteraanModal"), { ssr: false });
-const TunawismaDetailModal = dynamic(() => import("./tunawisma_modals/TunawismaDetailModal"), { ssr: false });
 import {
   HINDU_POPULATION_GROWTH_BONUS,
 } from "@/app/page/bonus_logic/agama_bonus_logic/hindu";
@@ -143,7 +142,6 @@ export default function RingkasanPopulasiModal({
   const [isTempatUmumOpen, setIsTempatUmumOpen] = useState(false);
   const [tempatUmumActiveTab, setTempatUmumActiveTab] = useState<string>("infrastruktur");
   const [isKesejahteraanOpen, setIsKesejahteraanOpen] = useState(Boolean(initialOpenKesejahteraan));
-  const [isTunawismaOpen, setIsTunawismaOpen] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
 
   // Hitung metrik demografi secara sinkron
@@ -418,8 +416,7 @@ export default function RingkasanPopulasiModal({
 
             {/* Tunawisma */}
             <div
-              className={`population-summary-card group root-modal-util-ef77e14e02 root-modal-util-5f22e64f22 root-modal-util-eef2dbcee8 `}
-              onClick={() => setIsTunawismaOpen(true)}
+              className={`population-summary-card root-modal-util-ef77e14e02 root-modal-util-5f22e64f22 root-modal-util-eef2dbcee8 cursor-default`}
             >
               <div className={"root-modal-util-85d02ce91c"}>
                 <div className={"root-modal-util-758830936e"}>
@@ -433,7 +430,6 @@ export default function RingkasanPopulasiModal({
                   </p>
                 </div>
               </div>
-              <ChevronRight className={"population-summary-chevron root-modal-util-3535e4faba"} />
             </div>
 
             {/* Kesejahteraan */}
@@ -653,14 +649,6 @@ export default function RingkasanPopulasiModal({
       />}
 
       {kesejahteraanModal}
-
-      {isTunawismaOpen && <TunawismaDetailModal
-        isOpen={isTunawismaOpen}
-        onClose={() => setIsTunawismaOpen(false)}
-        countryDetail={countryDetail}
-        selectedCountry={selectedCountry}
-        homelessCount={homelessCount}
-      />}
     </>
   );
 }

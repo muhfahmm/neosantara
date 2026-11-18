@@ -1577,7 +1577,7 @@
     @apply text-xs font-bold;
   }
   .root-modal-util-8e438a7c62 {
-    @apply grid grid-cols-3 gap-2;
+    @apply flex flex-col gap-2;
   }
   .root-modal-util-680f06f549 {
     @apply relative flex min-w-0 flex-col items-center justify-between gap-2;
@@ -2333,7 +2333,7 @@
     @apply text-[9px] sm:text-[10px] text-root-muted font-medium;
   }
   .root-modal-util-d385c0a7e6 {
-    @apply text-xl sm:text-2xl font-black;
+    @apply text-base sm:text-lg font-black;
   }
   .root-modal-util-12e912b2e4 {
     @apply text-[10px] sm:text-xs text-root-text font-semibold bg-root-canvas p-1.5 rounded border border-root-accent/10;
@@ -3178,5 +3178,129 @@
   }
   .root-modal-util-a66208a3cc {
     @apply w-full h-2.5 lg:h-3 bg-root-surface rounded-full mt-2 lg:mt-3 overflow-hidden border border-root-accent/20;
+  }
+}
+
+@media (min-width: 1024px) and (min-height: 501px) {
+  .notebook-modal-frame:has(.satisfaction-sector-list) .satisfaction-sector-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 12px;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-sector-list) .satisfaction-sector-card {
+    box-sizing: border-box;
+    min-height: 72px;
+    padding: 8px 12px;
+    gap: 10px;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-sector-list) .satisfaction-sector-icon img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-sector-list) .satisfaction-sector-progress {
+    height: 6px;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-initiative-grid) .root-modal-util-680f06f549 {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-initiative-grid) .root-modal-util-08f6b562f1 {
+    width: auto;
+    flex: 1;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-initiative-grid) .root-modal-util-bf998e0d1f {
+    width: auto;
+    flex: 0 0 auto;
+    align-items: flex-end;
+    align-self: center;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-initiative-grid) .root-modal-util-2c476ec378,
+  .notebook-modal-frame:has(.satisfaction-initiative-grid) .root-modal-util-d613bb47ed {
+    padding: 3px 8px;
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-initiative-grid) .root-modal-util-c5483046dc {
+    padding: 3px 6px;
+    font-size: 9px;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-initiative-grid) .root-modal-util-8866ac9a30 {
+    gap: 6px;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-initiative-grid) .root-modal-util-01ac82f339 {
+    width: 15px;
+    height: 15px;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-initiative-grid) .root-modal-util-3d9a1150e3 {
+    white-space: nowrap;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-initiative-grid) .root-modal-util-f84136093d {
+    box-sizing: border-box;
+    width: auto;
+    min-width: 180px;
+    min-height: 36px;
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 1600px) and (min-height: 501px) {
+  .notebook-modal-frame:has(.satisfaction-sector-list) .satisfaction-sector-list {
+    gap: 10px 16px;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-sector-list) .satisfaction-sector-card {
+    min-height: 76px;
+    padding: 10px 14px;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-sector-list) .satisfaction-sector-icon img {
+    width: 44px;
+    height: 44px;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-initiative-grid) .root-modal-util-680f06f549 {
+    gap: 20px;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-initiative-grid) .root-modal-util-2c476ec378,
+  .notebook-modal-frame:has(.satisfaction-initiative-grid) .root-modal-util-d613bb47ed {
+    font-size: 12px;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-initiative-grid) .root-modal-util-c5483046dc {
+    font-size: 10px;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-initiative-grid) .root-modal-util-8866ac9a30 {
+    font-size: 12px;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-initiative-grid) .root-modal-util-01ac82f339 {
+    width: 16px;
+    height: 16px;
+  }
+
+  .notebook-modal-frame:has(.satisfaction-initiative-grid) .root-modal-util-f84136093d {
+    min-width: 220px;
+    min-height: 40px;
+    padding: 9px 18px;
+    font-size: 13px;
   }
 }

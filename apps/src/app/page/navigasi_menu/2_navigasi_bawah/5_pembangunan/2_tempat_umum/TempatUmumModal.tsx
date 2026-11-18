@@ -5,10 +5,11 @@ import Image from "next/image";
 import { fetchBuildingMetadata } from '../../../../../../lib/buildingMetadata';
 import { getBuildingCardImage } from "../../buildingCardImages";
 // 🔥 FIX 1: Tambahkan MapPin, DollarSign, BarChart3, Sparkles, Users
-import { X, Landmark, AlertTriangle, TrendingUp, TrendingDown, Hammer, Info, MapPin, DollarSign, BarChart3, Sparkles, Users } from "lucide-react";
+import { X, Landmark, AlertTriangle, TrendingUp, TrendingDown, Hammer, Info, MapPin, DollarSign, BarChart3, Users } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
+import { RootAISuggestionsButton } from "@/app/page/root_modals_design_menu/RootAISuggestionsModal";
 import ServiceAISuggestionsModal from "../ai_suggestions/ServiceAISuggestionsModal";
 import { generateTempatUmumAIAnalysis } from "../ai_suggestions/serviceAISuggestionsLogic";
 import { BuildingCardGridRoot, BuildingCardRoot } from "@/app/page/root_modals_design_menu/card_building_root";
@@ -494,13 +495,10 @@ export default function TempatUmumModal({
                         <p className="text-[10px] sm:text-xs text-root-subtle mt-0.5">{activeGroup.description}</p>
                       </div>
 
-                      <button
+                      <RootAISuggestionsButton
                         onClick={handleOpenAIModal}
-                        className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-root-accent/10 border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all text-[10px] sm:text-xs font-black shadow-md cursor-pointer shrink-0 active:scale-95"
-                      >
-                        <Sparkles className="w-3.5 h-3.5 text-root-accent hover:text-root-canvas" />
-                        <span>Rekomendasi AI</span>
-                      </button>
+                        title="Buka rekomendasi AI fasilitas publik"
+                      />
                     </div>
 
                     <BuildingCardGridRoot className="four-column-building-grid">

@@ -248,20 +248,17 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, update
                     <td className="px-3 py-2.5 text-root-text md:px-2 md:py-1 lg:px-2.5 lg:py-1.5 2xl:px-3 2xl:py-2">{formatNumber(row.udara)}</td>
                     <td className={`px-3 py-2.5 font-black md:px-2 md:py-1 lg:px-2.5 lg:py-1.5 2xl:px-3 2xl:py-2 ${isUserCountry ? 'text-root-accent' : 'text-rose-400'}`}>{formatNumber(row.totalPower)}</td>
                     <td className="px-3 py-2.5 text-center md:px-2 md:py-1 lg:px-2.5 lg:py-1.5 2xl:px-3 2xl:py-2">
-                      <button
-                        type="button"
-                        disabled={isUserCountry}
-                        onClick={() => handleOpenModal(row)}
-                        className={`p-1.5 rounded-lg border transition-all ${
-                          isUserCountry
-                            ? 'bg-rose-500/10 text-rose-500 border-rose-500/40 cursor-not-allowed'
-                            : 'bg-orange-500/10 text-orange-400 hover:bg-orange-500 hover:text-white border-orange-500/30 cursor-pointer'
-                        }`}
-                        title={isUserCountry ? "Ini negara yang sedang Anda gunakan" : "Lancarkan operasi sabotase"}
-                        aria-label={isUserCountry ? `${row.countryName}, negara yang sedang Anda gunakan` : `Lancarkan operasi sabotase di ${row.countryName}`}
-                      >
-                        <Bomb className="w-4 h-4" />
-                      </button>
+                      {!isUserCountry && (
+                        <button
+                          type="button"
+                          onClick={() => handleOpenModal(row)}
+                          className="p-1.5 rounded-lg border transition-all bg-orange-500/10 text-orange-400 hover:bg-orange-500 hover:text-white border-orange-500/30 cursor-pointer"
+                          title="Lancarkan operasi sabotase"
+                          aria-label={`Lancarkan operasi sabotase di ${row.countryName}`}
+                        >
+                          <Bomb className="w-4 h-4" />
+                        </button>
+                      )}
                     </td>
                   </tr>
                 );

@@ -30,12 +30,11 @@ import NaikkanKesejahteraanTab from "./NaikkanKesejahteraanTab";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { RootModalTabs } from "@/app/page/root_modals_design_menu/RootModalTabs";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 
 // ── Kelas CSS untuk Scrollbar (Tailwind Murni) ──
 const scrollbarDark = "root-modal-util-62ec13c825";
-
-const scrollbarInner = "root-modal-util-0a361b9445";
 
 interface IndeksKesejahteraanModalProps {
   isOpen: boolean;
@@ -502,25 +501,23 @@ export default function IndeksKesejahteraanModal({
 
       {/* MODAL INFO EFEK POIN PENDIDIKAN */}
       {showPendidikanInfoModal && (
-        <div className={"root-modal-util-f5ce218781"}>
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className={`root-modal-util-3443dcd9d5 ${scrollbarInner}`}
-          >
-            <RootModalCloseButton
-              onClick={() => setShowPendidikanInfoModal(false)}
-              className={"root-modal-util-9f672f28d8"}
-            />
-
-            <div className={"root-modal-util-c9149b7c89"}>
-              <div className={"root-modal-util-e50e0a173e"}>
-                <Library className={"root-modal-util-a8600f1bbf"} />
+        <NotebookModalWrapper
+          onClose={() => setShowPendidikanInfoModal(false)}
+          zIndexClass="z-[75]"
+        >
+          <div className="flex h-full flex-col overflow-hidden">
+            <header className="flex shrink-0 items-center justify-between gap-3 border-b border-root-accent/20 bg-root-canvas px-4 py-3 sm:px-6">
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="shrink-0 rounded-lg border border-root-accent/30 bg-root-surface p-1.5 text-root-accent">
+                  <Library className="h-5 w-5" />
+                </span>
+                <h3 className={`${rootModalTypography.title} min-w-0`}>
+                  Pengaruh Poin Pendidikan
+                </h3>
               </div>
-              <div>
-                <h3 className={"root-modal-util-cffa11fbe4"}>Pengaruh Poin Pendidikan</h3>
-                <p className={"root-modal-util-2a2ce278e0"}>Efek Kecepatan Riset & Panduan Strategis</p>
-              </div>
-            </div>
+              <RootModalCloseButton onClick={() => setShowPendidikanInfoModal(false)} />
+            </header>
+            <div className="min-h-0 flex-1 overflow-y-auto bg-root-surface p-3 sm:p-4 neon-scrollbar">
 
             {(() => {
               const eduModifier = getEducationResearchModifier(pendidikanActualScore);
@@ -577,30 +574,29 @@ export default function IndeksKesejahteraanModal({
               );
             })()}
           </div>
-        </div>
+          </div>
+        </NotebookModalWrapper>
       )}
 
       {/* MODAL INFO KESEHATAN */}
       {showKesehatanInfoModal && (
-        <div className={"root-modal-util-f5ce218781"}>
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className={`root-modal-util-3443dcd9d5 ${scrollbarInner}`}
-          >
-            <RootModalCloseButton
-              onClick={() => setShowKesehatanInfoModal(false)}
-              className={"root-modal-util-9f672f28d8"}
-            />
-
-            <div className={"root-modal-util-c9149b7c89"}>
-              <div className={"root-modal-util-e50e0a173e"}>
-                <Hospital className={"root-modal-util-a8600f1bbf"} />
+        <NotebookModalWrapper
+          onClose={() => setShowKesehatanInfoModal(false)}
+          zIndexClass="z-[75]"
+        >
+          <div className="flex h-full flex-col overflow-hidden">
+            <header className="flex shrink-0 items-center justify-between gap-3 border-b border-root-accent/20 bg-root-canvas px-4 py-3 sm:px-6">
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="shrink-0 rounded-lg border border-root-accent/30 bg-root-surface p-1.5 text-root-accent">
+                  <Hospital className="h-5 w-5" />
+                </span>
+                <h3 className={`${rootModalTypography.title} min-w-0`}>
+                  Pengaruh Pelayanan Kesehatan
+                </h3>
               </div>
-              <div>
-                <h3 className={"root-modal-util-cffa11fbe4"}>Pengaruh Pelayanan Kesehatan</h3>
-                <p className={"root-modal-util-2a2ce278e0"}>Risiko Wabah & Panduan Layanan Medis</p>
-              </div>
-            </div>
+              <RootModalCloseButton onClick={() => setShowKesehatanInfoModal(false)} />
+            </header>
+            <div className="min-h-0 flex-1 overflow-y-auto bg-root-surface p-3 sm:p-4 neon-scrollbar">
 
             {(() => {
               const countryName = selectedCountry?.country || countryDetail?.country || "";
@@ -670,30 +666,29 @@ export default function IndeksKesejahteraanModal({
               );
             })()}
           </div>
-        </div>
+          </div>
+        </NotebookModalWrapper>
       )}
 
       {/* MODAL INFO PENEGAKAN HUKUM */}
       {showPenegakanHukumInfoModal && (
-        <div className={"root-modal-util-f5ce218781"}>
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className={`root-modal-util-3443dcd9d5 ${scrollbarInner}`}
-          >
-            <RootModalCloseButton
-              onClick={() => setShowPenegakanHukumInfoModal(false)}
-              className={"root-modal-util-9f672f28d8"}
-            />
-
-            <div className={"root-modal-util-c9149b7c89"}>
-              <div className={"root-modal-util-e50e0a173e"}>
-                <ShieldCheck className={"root-modal-util-a8600f1bbf"} />
+        <NotebookModalWrapper
+          onClose={() => setShowPenegakanHukumInfoModal(false)}
+          zIndexClass="z-[75]"
+        >
+          <div className="flex h-full flex-col overflow-hidden">
+            <header className="flex shrink-0 items-center justify-between gap-3 border-b border-root-accent/20 bg-root-canvas px-4 py-3 sm:px-6">
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="shrink-0 rounded-lg border border-root-accent/30 bg-root-surface p-1.5 text-root-accent">
+                  <ShieldCheck className="h-5 w-5" />
+                </span>
+                <h3 className={`${rootModalTypography.title} min-w-0`}>
+                  Pengaruh Penegakan Hukum
+                </h3>
               </div>
-              <div>
-                <h3 className={"root-modal-util-cffa11fbe4"}>Pengaruh Penegakan Hukum</h3>
-                <p className={"root-modal-util-2a2ce278e0"}>Risiko Kriminalitas & Panduan Hukum</p>
-              </div>
-            </div>
+              <RootModalCloseButton onClick={() => setShowPenegakanHukumInfoModal(false)} />
+            </header>
+            <div className="min-h-0 flex-1 overflow-y-auto bg-root-surface p-3 sm:p-4 neon-scrollbar">
 
             {(() => {
               const lawScore = kesejahteraan.penegakanHukumScore;
@@ -761,7 +756,8 @@ export default function IndeksKesejahteraanModal({
               );
             })()}
           </div>
-        </div>
+          </div>
+        </NotebookModalWrapper>
       )}
     </>
   );

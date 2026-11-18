@@ -1,7 +1,4 @@
 :root:not([data-theme='light']) {
-  --root-scrollbar-track: #0a1a1a;
-  --root-scrollbar-thumb: #00d995;
-  --root-scrollbar-thumb-hover: #00ffaa;
   scrollbar-color: var(--root-scrollbar-thumb) var(--root-scrollbar-track);
   scrollbar-width: thin;
 }
@@ -28,7 +25,7 @@
   background: var(--root-scrollbar-thumb);
   border: 2px solid var(--root-scrollbar-track);
   border-radius: 9999px;
-  box-shadow: 0 0 8px rgb(0 255 170 / 40%);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--root-color-accent) 35%, transparent);
 }
 
 :root:not([data-theme='light'])::-webkit-scrollbar-thumb:hover,

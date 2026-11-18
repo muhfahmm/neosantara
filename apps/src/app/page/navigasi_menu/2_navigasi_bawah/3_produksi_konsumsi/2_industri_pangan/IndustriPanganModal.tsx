@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import {
   X, Plus, Globe, User, Search, ChevronUp, ChevronDown, ChevronRight, ChevronDown as ChevronDownIcon, Utensils, Info,
-  Beef, Wheat, Fish, Cookie, MessageSquare
+  Beef, Wheat, Fish, Cookie
 } from "lucide-react";
 import {
   FOOD_CONSUMPTION_PER_CAPITA,
@@ -26,6 +26,7 @@ import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoMod
 import AISuggestModal from "./AI_suggest_modals";
 import AIDetailDefisitModal from "./AI_detail_defisit";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import { RootAISuggestionsButton } from "@/app/page/root_modals_design_menu/RootAISuggestionsModal";
 import {
   SECTOR_MAP,
   generateSectorAnalysis,
@@ -370,7 +371,11 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                   <div key={sectorId} className={`root-modal-util-5298bdd041 root-modal-util-5f22e64f22 root-modal-util-23cdffb29e `}>
                     <div className={"root-modal-util-46d52ba86c"}>
                       <div className={"root-modal-util-d4cd52ca73"}><div className={"root-modal-util-a27f83ec88"}><SectorIcon className={"root-modal-util-f541a30647"} /></div><h4 className={`root-modal-util-9361ef65fc root-modal-util-3d9a1150e3 `}>{sectorData.label} ({sectorItems.length} Komoditas)</h4></div>
-                      <button onClick={() => analyzeSector(sectorId)} className={"root-modal-util-60a67fef2a group"} title="Analisis AI untuk sektor ini"><div className={"root-modal-util-d89972fe17"}><MessageSquare className={"root-modal-util-267d2a941e"} /><span className={`root-modal-util-54a9c5af4a ${deficitCount > 0 ? "root-modal-util-e9c97db68c" : surplusCount > 0 ? "root-modal-util-6f845a7c2f" : "root-modal-util-5237703dd5"}`} /></div><span className={"root-modal-util-615ecd8200"}>AI</span></button>
+                      <RootAISuggestionsButton
+                        onClick={() => analyzeSector(sectorId)}
+                        title={`Analisis AI untuk sektor ${sectorData.label}`}
+                        status={deficitCount > 0 ? "deficit" : surplusCount > 0 ? "surplus" : "neutral"}
+                      />
                     </div>
                     {/* Grid Items */}
                     <div className={"root-modal-util-d330c4f8fa"}>

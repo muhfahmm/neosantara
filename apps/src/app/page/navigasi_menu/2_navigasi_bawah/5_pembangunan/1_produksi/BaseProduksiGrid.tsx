@@ -2,7 +2,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { Building2, Info, MessageSquare } from "lucide-react";
+import { Building2, Info } from "lucide-react";
+import { RootAISuggestionsButton } from "@/app/page/root_modals_design_menu/RootAISuggestionsModal";
 import { getBuildingCardImage } from "../../buildingCardImages";
 import { getKelistrikanFuelRequirements } from "./construction_support/1_produksi/1_kelistrikan/fuelLogic";
 import { getDaysElapsed, formatDate } from '@/app/logic/production_logic';
@@ -178,17 +179,10 @@ export default function BaseProduksiGrid({
         </div>
 
         {showAIButton && (
-          <button
-            type="button"
+          <RootAISuggestionsButton
             onClick={handleOpenAISuggestions}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-root-accent/10 hover:bg-root-accent/20 transition-all border border-root-accent/30 group cursor-pointer shadow-sm"
-            title={`Analisis AI untuk Sektor ${title}`}
-          >
-            <div className="relative">
-              <MessageSquare className="w-4 h-4 text-root-accent" />
-            </div>
-            <span className="text-[10px] font-black uppercase tracking-wider text-root-accent">Rekomendasi AI</span>
-          </button>
+            title={`Analisis AI untuk sektor ${title}`}
+          />
         )}
       </div>
 

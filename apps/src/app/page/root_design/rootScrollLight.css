@@ -1,7 +1,4 @@
 :root[data-theme='light'] {
-  --root-scrollbar-track: #e6dccb;
-  --root-scrollbar-thumb: #9a8c78;
-  --root-scrollbar-thumb-hover: #8c5f2e;
   scrollbar-color: var(--root-scrollbar-thumb) var(--root-scrollbar-track);
   scrollbar-width: thin;
 }

@@ -172,16 +172,6 @@ export default function StatistikKepuasanModal({
         <div className={"satisfaction-modal-content root-modal-util-9c12d57a09"}>
           <div className={"satisfaction-modal-content-body root-modal-enter root-modal-fade-in root-modal-util-90f9f3a7db"}>
             <section>
-              <div className={"root-modal-util-8230f2ccb3"}>
-                <div className={"root-modal-util-7ccf491d2f"}>
-                  <TrendingUp className={"root-modal-util-79b40bc7fa"} />
-                </div>
-                <h3 className={`root-modal-util-9361ef65fc root-modal-util-cdb3e20c19 `}>
-                  Sektor Utama
-                </h3>
-                <div className={"root-modal-util-d43b1ea5a7"}></div>
-              </div>
-
               <div className={"satisfaction-sector-list root-modal-util-11abdabb16"}>
                 {sectors.map((sector) => {
                   return (

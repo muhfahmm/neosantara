@@ -4,7 +4,7 @@ import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalClos
 import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
-import { Newspaper, X, Swords, Flag, Coins, ShieldAlert, Sparkles, Filter } from 'lucide-react';
+import { Newspaper, X, Swords, Flag, Coins, ShieldAlert, Sparkles } from 'lucide-react';
 import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
@@ -27,7 +27,6 @@ export type NewsItemData =
   | SecurityCouncilInvasionNews
   | AiNewsItem;
 
-type NewsCategory = 'semua' | 'diplomasi' | 'ekonomi_keuangan' | 'pencapaian_militer' | 'operasi_militer';
 type NewsType = NewsItemData['type'];
 
 interface TopRightNewsIconProps {
@@ -88,9 +87,6 @@ export default function TopRightNewsIcon({
   const isLandscapePhone = viewportMode === 'landscapePhone';
   const isPortraitPhone = viewportMode === 'portraitPhone';
   const isMobile = isLandscapePhone || isPortraitPhone;
-  const [filterCategory, setFilterCategory] = useState<NewsCategory>('semua');
-  const [filterType, setFilterType] = useState<'semua' | NewsType>('semua');
-
   const [toastNews, setToastNews] = useState<NewsItemData | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [selectedOperationNews, setSelectedOperationNews] = useState<SecurityCouncilInvasionNews | null>(null);
@@ -136,22 +132,7 @@ export default function TopRightNewsIcon({
     return () => window.clearTimeout(timer);
   }, [showToast, toastNews?.id]);
 
-  const getCategory = (item: NewsItemData): Exclude<NewsCategory, 'semua'> => {
-    if ('category' in item) return item.category;
-    return 'operasi_militer';
-  };
-
-  const filteredNews = cappedNewsList.filter((item) => (
-    (filterCategory === 'semua' || getCategory(item) === filterCategory) &&
-    (filterType === 'semua' || item.type === filterType)
-  ));
-
-  const categoryTypes: Record<Exclude<NewsCategory, 'semua'>, NewsType[]> = {
-    diplomasi: ['pakta_non_agresi', 'aliansi_pertahanan', 'perjanjian_dagang', 'kontrak_penelitian', 'sanksi_ekonomi', 'update_geopolitik'],
-    ekonomi_keuangan: ['krisis_ekonomi', 'pajak_baru', 'kebijakan_negara', 'pembangunan_sipil', 'update_geopolitik'],
-    pencapaian_militer: ['program_nuklir', 'ekspansi_militer', 'pengadaan_armada', 'update_geopolitik'],
-    operasi_militer: ['invasi', 'invasi_gabungan_pbb', 'aneksasi', 'pengambilan_sda'],
-  };
+  const displayNews = cappedNewsList;
 
   const typeLabels: Record<NewsType, string> = {
     invasi: 'Invasi Militer',
@@ -333,87 +314,28 @@ export default function TopRightNewsIcon({
               onClose={onClose}
               icon={<Newspaper />}
               size="standard"
+              actions={
+                onClearNews && newsList.length > 0 ? (
+                  <button
+                    onClick={onClearNews}
+                    className="px-2.5 py-1 rounded-lg text-[10px] font-bold text-rose-400 hover:bg-rose-500/10 border border-rose-500/30 uppercase tracking-wider transition-all cursor-pointer shrink-0"
+                  >
+                    Bersihkan
+                  </button>
+                ) : undefined
+              }
             />
-
-            {/* 🔥 FILTER BAR */}
-            <div className="px-4 sm:px-6 py-2 bg-[#051111] border-b border-root-accent/15 flex items-center justify-between gap-2 shrink-0">
-              <div className="min-w-0 space-y-2 overflow-x-auto custom-scrollbar">
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <Filter className="w-3.5 h-3.5 text-root-subtle shrink-0" />
-                  <span className="text-[10px] font-bold text-root-subtle uppercase tracking-wider shrink-0 mr-1">Filter:</span>
-                  {([
-                    ['semua', 'Semua'],
-                    ['diplomasi', 'Diplomasi'],
-                    ['ekonomi_keuangan', 'Ekonomi & Keuangan'],
-                    ['pencapaian_militer', 'Pencapaian Militer'],
-                    ['operasi_militer', 'Operasi Perang'],
-                  ] as Array<[NewsCategory, string]>).map(([category, label]) => (
-                    <button
-                      key={category}
-                      onClick={() => {
-                        setFilterCategory(category);
-                        setFilterType('semua');
-                      }}
-                      className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer whitespace-nowrap ${
-                        filterCategory === category
-                          ? 'bg-root-accent text-root-canvas shadow-md shadow-root-accent/20'
-                          : 'bg-root-surface text-root-subtle hover:text-root-accent border border-root-accent/20'
-                      }`}
-                    >
-                      {label} ({category === 'semua'
-                        ? newsList.length
-                        : newsList.filter(item => getCategory(item) === category).length})
-                    </button>
-                  ))}
-                </div>
-                {filterCategory !== 'semua' && (
-                  <div className="flex items-center gap-1.5 pl-5">
-                    <button
-                      onClick={() => setFilterType('semua')}
-                      className={`px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase transition-all cursor-pointer whitespace-nowrap ${
-                        filterType === 'semua'
-                          ? 'bg-root-accent/20 text-root-accent'
-                          : 'bg-root-surface text-root-subtle hover:text-root-accent'
-                      }`}
-                    >
-                      Semua Subkategori
-                    </button>
-                    {categoryTypes[filterCategory].map(type => (
-                      <button
-                        key={type}
-                        onClick={() => setFilterType(type)}
-                        className={`px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase transition-all cursor-pointer whitespace-nowrap ${
-                          filterType === type
-                            ? 'bg-root-accent/20 text-root-accent'
-                            : 'bg-root-surface text-root-subtle hover:text-root-accent'
-                        }`}
-                      >
-                        {typeLabels[type]} ({newsList.filter(item => item.type === type).length})
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-              {onClearNews && newsList.length > 0 && (
-                <button
-                  onClick={onClearNews}
-                  className="px-2.5 py-1 rounded-lg text-[10px] font-bold text-rose-400 hover:bg-rose-500/10 border border-rose-500/30 uppercase tracking-wider transition-all cursor-pointer shrink-0"
-                >
-                  Bersihkan
-                </button>
-              )}
-            </div>
 
             {/* 🔥 BODY MODAL */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-root-canvas relative z-10 custom-scrollbar">
-              {filteredNews.length === 0 ? (
+              {displayNews.length === 0 ? (
                 <div className="flex flex-col items-center justify-center text-center space-y-4 max-w-md mx-auto my-auto py-16">
                   <Newspaper className="h-16 w-16 text-root-accent/20" />
                   <h4 className="text-lg font-bold text-root-accent uppercase">Tidak Ada Berita</h4>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {filteredNews.map((news) => {
+                  {displayNews.map((news) => {
                     const targetCountry = getNewsCountryName(news);
                     const canOpenCountry = Boolean(targetCountry && onOpenNewsCountry);
                     const canOpenConstruction = isAiConstructionNews(news) && Boolean(onOpenAiConstruction);

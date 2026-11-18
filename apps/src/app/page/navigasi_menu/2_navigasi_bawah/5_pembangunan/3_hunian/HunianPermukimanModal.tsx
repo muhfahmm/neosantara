@@ -4,11 +4,12 @@ import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { fetchBuildingMetadata } from '../../../../../../lib/buildingMetadata';
 import { getBuildingCardImage } from "../../buildingCardImages";
-import { X, Home, TrendingUp, TrendingDown, Hammer, AlertCircle, Info, Sparkles } from "lucide-react";
+import { X, Home, TrendingUp, TrendingDown, Hammer, AlertCircle, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
+import { RootAISuggestionsButton } from "@/app/page/root_modals_design_menu/RootAISuggestionsModal";
 import ServiceAISuggestionsModal from "../ai_suggestions/ServiceAISuggestionsModal";
 import { generateHunianAIAnalysis } from "../ai_suggestions/serviceAISuggestionsLogic";
 import InfoBangunanModal from "./1_modals_info_bangunan/info_bangunan_modals";
@@ -466,13 +467,10 @@ export default function HunianPermukimanModal({
                           <h3 className={`${rootModalTypography.sectionTitle} !text-root-accent font-black uppercase tracking-wider`}>{activeItem.label}</h3>
                         </div>
 
-                        <button
+                        <RootAISuggestionsButton
                           onClick={handleOpenAIModal}
-                          className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-root-accent/10 border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all text-[10px] sm:text-xs font-black shadow-md cursor-pointer shrink-0 active:scale-95"
-                        >
-                          <Sparkles className="w-3.5 h-3.5 text-root-accent hover:text-root-canvas" />
-                          <span>Rekomendasi AI</span>
-                        </button>
+                          title="Buka rekomendasi AI hunian"
+                        />
                       </div>
                       <p className="text-[11px] sm:text-xs text-root-text mt-3 leading-relaxed bg-root-canvas border border-root-accent/20 p-3 sm:p-4 rounded-xl sm:rounded-2xl">{activeItem.detailDesc}</p>
                     </div>

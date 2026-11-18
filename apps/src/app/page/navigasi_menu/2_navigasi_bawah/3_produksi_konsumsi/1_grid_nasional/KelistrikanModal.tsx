@@ -395,32 +395,32 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
               </div>
             ) : (
               <div className={`root-modal-util-d5020ca04d root-modal-util-5f22e64f22`}>
-                <div className={`root-no-scrollbar-glow root-modal-util-21ad3142af root-modal-util-5f22e64f22 root-modal-util-4e8f3fa2d1 `}>
-                  <RootTable className={"root-modal-util-a1e9cf0ef6"}>
+                <div className={`root-no-scrollbar-glow overflow-y-auto overflow-x-hidden border border-root-accent/20 bg-root-surface max-h-[60vh] root-modal-util-5f22e64f22 root-modal-util-4e8f3fa2d1`}>
+                  <RootTable className="w-full table-fixed text-[10px] sm:text-xs">
                     <thead className={"root-modal-util-ecea3fcb79"}>
                       <tr className={"root-modal-util-48bed30924"}>
-                        <th className={"root-modal-util-503f70b539"}>No</th>
+                        <th className="w-10 sm:w-12 px-1.5 sm:px-2.5 py-2 text-left font-black uppercase tracking-wider text-root-accent">No</th>
                         <th
                           onClick={() => handleSort('name')}
-                          className={"root-modal-util-3a1e0e892a"}
+                          className="w-[34%] sm:w-[32%] cursor-pointer px-1.5 sm:px-2.5 py-2 text-left font-black uppercase tracking-wider text-root-accent hover:bg-root-surface"
                         >
                           Negara <SortIndicator column="name" />
                         </th>
                         <th
                           onClick={() => handleSort('production')}
-                          className={"root-modal-util-927b9c2a7f"}
+                          className="w-[22%] cursor-pointer px-1.5 sm:px-2.5 py-2 text-right font-black uppercase tracking-wider text-emerald-400 hover:bg-emerald-950/40"
                         >
                           Produksi (MW) <SortIndicator column="production" />
                         </th>
                         <th
                           onClick={() => handleSort('consumption')}
-                          className={"root-modal-util-5a4276aa31"}
+                          className="w-[22%] cursor-pointer px-1.5 sm:px-2.5 py-2 text-right font-black uppercase tracking-wider text-rose-400 hover:bg-rose-950/40"
                         >
                           Konsumsi (MW) <SortIndicator column="consumption" />
                         </th>
                         <th
                           onClick={() => handleSort('balance')}
-                          className={"root-modal-util-913d8c7381"}
+                          className="w-[22%] cursor-pointer px-1.5 sm:px-2.5 py-2 text-right font-black uppercase tracking-wider text-root-accent hover:bg-root-surface"
                         >
                           Neraca Daya <SortIndicator column="balance" />
                         </th>
@@ -439,20 +439,20 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                             key={`${country.name}-${rowIndex}`}
                             className={country.isUser ? "root-modal-util-73b452f399" : "root-modal-util-4ecd8bae5f"}
                           >
-                            <td className={`root-modal-util-3b24a321dd ${country.isUser ? "root-modal-util-edbfd1c508" : "root-modal-util-2717107f89"}`}>
+                            <td className={`px-1.5 sm:px-2.5 py-2 font-bold ${country.isUser ? "root-modal-util-edbfd1c508" : "root-modal-util-2717107f89"}`}>
                               {rowIndex + 1}
                             </td>
-                            <td className={`root-modal-util-3b24a321dd ${country.isUser ? "root-modal-util-edbfd1c508" : "root-modal-util-070a7f2c69"}`}>
+                            <td className={`px-1.5 sm:px-2.5 py-2 font-bold truncate ${country.isUser ? "root-modal-util-edbfd1c508" : "root-modal-util-070a7f2c69"}`} title={country.name}>
                               <span>{country.name}</span>
                               {country.isUser && <span className={"root-modal-util-13dc0814cd"}>Negara Anda</span>}
                             </td>
-                            <td className={"root-modal-util-f444102e27"}>
+                            <td className="px-1.5 sm:px-2.5 py-2 text-right font-bold text-emerald-400 truncate">
                               {country.production <= 0 ? "0" : country.production.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                             </td>
-                            <td className={"root-modal-util-05ad91ba15"}>
+                            <td className="px-1.5 sm:px-2.5 py-2 text-right font-bold text-rose-400 truncate">
                               {country.consumption <= 0 ? "0" : country.consumption.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                             </td>
-                            <td className={`root-modal-util-ee36968489 ${country.balance > 0.01 ? "root-modal-util-edbfd1c508" : country.balance < -0.01 ? "root-modal-util-35f302741d" : "root-modal-util-8d44cef396"}`}>
+                            <td className={`px-1.5 sm:px-2.5 py-2 text-right font-black truncate ${country.balance > 0.01 ? "root-modal-util-edbfd1c508" : country.balance < -0.01 ? "root-modal-util-35f302741d" : "root-modal-util-8d44cef396"}`}>
                               {country.balance === 0 ? "0" : `${country.balance > 0 ? "+" : "-"}${Math.abs(country.balance).toLocaleString("id-ID", { maximumFractionDigits: 2 })}`}
                             </td>
                           </tr>

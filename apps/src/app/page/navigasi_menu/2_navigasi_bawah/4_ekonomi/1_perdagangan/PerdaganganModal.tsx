@@ -963,33 +963,33 @@ export default function PerdaganganModal({
               </div>
             </div>
 
-            <div className={`min-h-0 flex-1 bg-root-canvas/80 relative z-10 neon-scrollbar [overflow-anchor:none] ${isTradeMarketBlocked ? "overflow-hidden p-2 sm:p-3" : "overflow-y-auto p-3.5 lg:p-5 2xl:p-8"}`}>
+            <div className={`min-h-0 flex-1 bg-root-canvas/80 relative z-10 neon-scrollbar [overflow-anchor:none] ${isTradeMarketBlocked ? "overflow-y-auto p-4 sm:p-6 lg:p-8" : "overflow-y-auto p-3.5 lg:p-5 2xl:p-8"}`}>
               {isTradeMarketBlocked ? (
-                <div className="flex h-full flex-col items-center justify-center rounded-xl border border-rose-500/30 bg-rose-950/20 p-1.5 text-center sm:p-2">
-                  <AlertTriangle className="mb-1 h-6 w-6 text-rose-400 sm:h-7 sm:w-7" />
-                  <h3 className="mb-1.5 text-sm font-black uppercase text-rose-400 sm:text-base">
+                <div className="flex h-full min-h-[280px] flex-col items-center justify-center rounded-2xl border border-rose-500/30 bg-rose-950/20 p-4 text-center sm:p-6 lg:p-8">
+                  <AlertTriangle className="mb-2 h-8 w-8 text-rose-400 sm:h-10 sm:w-10 lg:h-12 lg:w-12" />
+                  <h3 className="mb-3 text-base font-black uppercase tracking-wider text-rose-400 sm:text-xl lg:text-2xl">
                     Perdagangan Diblokir
                   </h3>
                   
-                  <div className="mb-1.5 grid w-full max-w-lg grid-cols-2 gap-1">
-                    <div className="flex min-w-0 items-center justify-between gap-1 rounded-md border border-rose-500/20 bg-root-canvas px-1.5 py-1 text-left">
-                      <span className="text-[7px] font-semibold text-[#DCEAEA] sm:text-[8px]">Sentralisasi</span>
-                      <strong className="shrink-0 text-[9px] text-rose-300 sm:text-[10px]">{tradeAccess.centralizationScore.toFixed(1)}</strong>
+                  <div className="mb-4 grid w-full max-w-xl grid-cols-2 gap-2 sm:gap-2.5">
+                    <div className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-rose-500/20 bg-root-canvas px-3 py-2 text-left">
+                      <span className="text-[10px] font-semibold text-[#DCEAEA] sm:text-xs lg:text-sm">Sentralisasi</span>
+                      <strong className="shrink-0 text-xs font-black text-rose-300 sm:text-sm lg:text-base">{tradeAccess.centralizationScore.toFixed(1)}</strong>
                     </div>
-                    <div className="flex min-w-0 items-center justify-between gap-1 rounded-md border border-rose-500/20 bg-root-canvas px-1.5 py-1 text-left">
-                      <span className="text-[7px] font-semibold text-[#DCEAEA] sm:text-[8px]">Nasionalisasi</span>
-                      <strong className="shrink-0 text-[9px] text-[#F3F7F7] sm:text-[10px]">{tradeAccess.averageNationalization.toFixed(1)}%</strong>
+                    <div className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-rose-500/20 bg-root-canvas px-3 py-2 text-left">
+                      <span className="text-[10px] font-semibold text-[#DCEAEA] sm:text-xs lg:text-sm">Nasionalisasi</span>
+                      <strong className="shrink-0 text-xs font-black text-[#F3F7F7] sm:text-sm lg:text-base">{tradeAccess.averageNationalization.toFixed(1)}%</strong>
                     </div>
-                    <div className="flex min-w-0 items-center justify-between gap-1 rounded-md border border-rose-500/20 bg-root-canvas px-1.5 py-1 text-left">
-                      <span className="text-[7px] font-semibold text-[#DCEAEA] sm:text-[8px]">Ideologi</span>
-                      <strong className="shrink-0 text-[9px] text-[#F3F7F7] sm:text-[10px]">×{tradeAccess.ideologyModifier.toFixed(2)}</strong>
+                    <div className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-rose-500/20 bg-root-canvas px-3 py-2 text-left">
+                      <span className="text-[10px] font-semibold text-[#DCEAEA] sm:text-xs lg:text-sm">Ideologi</span>
+                      <strong className="shrink-0 text-xs font-black text-[#F3F7F7] sm:text-sm lg:text-base">×{tradeAccess.ideologyModifier.toFixed(2)}</strong>
                     </div>
-                    <div className="flex min-w-0 items-center justify-between gap-1 rounded-md border border-rose-500/20 bg-root-canvas px-1.5 py-1 text-left">
-                      <span className="text-[7px] font-semibold text-[#DCEAEA] sm:text-[8px]">Agama</span>
-                      <strong className="shrink-0 text-[9px] text-[#F3F7F7] sm:text-[10px]">×{tradeAccess.religionModifier.toFixed(2)}</strong>
+                    <div className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-rose-500/20 bg-root-canvas px-3 py-2 text-left">
+                      <span className="text-[10px] font-semibold text-[#DCEAEA] sm:text-xs lg:text-sm">Agama</span>
+                      <strong className="shrink-0 text-xs font-black text-[#F3F7F7] sm:text-sm lg:text-base">×{tradeAccess.religionModifier.toFixed(2)}</strong>
                     </div>
                   </div>
-                  <p className="text-[9px] font-medium text-[#DCEAEA] sm:text-[10px]">
+                  <p className="text-xs font-medium text-[#DCEAEA] sm:text-sm lg:text-base">
                     Batas akses: skor sentralisasi di bawah 85.
                   </p>
                 </div>
