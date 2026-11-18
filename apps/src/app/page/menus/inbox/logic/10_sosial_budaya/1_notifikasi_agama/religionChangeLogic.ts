@@ -8,6 +8,8 @@ export interface ReligionEventChainItem {
 
 export interface ReligionChangeNotification extends NotificationMessage {
   tradeType: 'perubahan_agama';
+  changeStage: 'scheduled' | 'completed';
+  completionDate?: string;
   fromReligion: string;
   toReligion: string;
   approvalDelta: number;
@@ -105,15 +107,20 @@ const RELIGION_EVENT_CHAIN_MAP: Record<string, ReligionEventChainItem[]> = {
 export function generateReligionChangeNotification(
   fromReligion: string,
   toReligion: string,
-  dateStr: string
+  dateStr: string,
+  completionDate?: string,
 ): ReligionChangeNotification {
   const key = `${fromReligion}->${toReligion}`;
   const matched = RELIGION_MATRIX[key];
 
   const mood = matched?.mood || (fromReligion === toReligion ? 'netral' : 'campuran');
   const approvalDelta = matched?.approvalDelta || (fromReligion === toReligion ? 0 : -5);
-  const title = matched?.title || `☪️ Perubahan Agama Resmi Negara: ${fromReligion} ➔ ${toReligion}`;
-  const message = matched?.message || `Pemerintah resmi menetapkan perubahan status agama resmi negara dari ${fromReligion} menjadi ${toReligion}. Keputusan ini memicu dinamika sosial di tengah masyarakat.`;
+  const title = completionDate
+    ? `Perubahan Agama Dijadwalkan: ${fromReligion} ➔ ${toReligion}`
+    : matched?.title || `☪️ Perubahan Agama Resmi Negara: ${fromReligion} ➔ ${toReligion}`;
+  const message = completionDate
+    ? `Perubahan agama dari ${fromReligion} menjadi ${toReligion} dijadwalkan selesai pada ${completionDate}. Perubahan akan berlaku setelah tanggal tersebut.`
+    : matched?.message || `Pemerintah resmi menetapkan perubahan status agama resmi negara dari ${fromReligion} menjadi ${toReligion}. Keputusan ini memicu dinamika sosial di tengah masyarakat.`;
 
   const chainKey = fromReligion === 'Ateisme' ? `Ateisme->${toReligion}` : toReligion;
   const eventChain = RELIGION_EVENT_CHAIN_MAP[chainKey];
@@ -128,6 +135,8 @@ export function generateReligionChangeNotification(
     value: approvalDelta,
     isRead: false,
     tradeType: 'perubahan_agama',
+    changeStage: completionDate ? 'scheduled' : 'completed',
+    completionDate,
     fromReligion,
     toReligion,
     approvalDelta,

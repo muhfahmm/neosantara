@@ -1,7 +1,5 @@
 const AUTOMATIC_CHANGE_TRADE_TYPES = new Set([
   "perubahan_sistem_ekonomi",
-  "perubahan_ideologi",
-  "perubahan_agama",
   "perubahan_doktrin",
   "perubahan_fokus_riset",
   "perubahan_kabinet",

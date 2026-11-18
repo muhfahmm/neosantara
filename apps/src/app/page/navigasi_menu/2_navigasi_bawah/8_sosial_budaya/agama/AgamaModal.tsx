@@ -17,7 +17,17 @@ import AgamaGagalModal from "./DanaTidakCukupAgamaModal";
 
 // 🔥 IMPOR LOGIKA DARI FILE LOGIKA (Pastikan file logikaPergantian.ts memiliki attemptChangeReligion dan RELIGION_CHANGE_COST)
 import { attemptChangeReligion, RELIGION_CHANGE_COST } from "./logic/logikaPergantian";
-import { generateReligionChangeNotification } from "@/app/page/menus/inbox/logic/10_sosial_budaya/1_agama/religionChangeLogic";
+import {
+  generateReligionChangeNotification,
+  type ReligionChangeNotification,
+} from "@/app/page/menus/inbox/logic/10_sosial_budaya/1_notifikasi_agama/religionChangeLogic";
+import {
+  createPendingSocialCulturalChange,
+  formatSocialCulturalChangeDate,
+  isPendingSocialCulturalChange,
+  SOCIAL_CULTURAL_CHANGE_DELAY_DAYS,
+  type PendingSocialCulturalChange,
+} from "@/app/page/menus/inbox/logic/10_sosial_budaya/socialCulturalChangeLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -25,6 +35,7 @@ interface ModalProps {
   onOpenDebt?: () => void;
   countryDetail: any;
   setCountryDetail?: (detail: any | ((prev: any) => any)) => void;
+  onNotification?: (notification: ReligionChangeNotification) => void;
 }
 
 const RELIGION_OPTIONS = [
@@ -62,7 +73,7 @@ const RELIGION_ICONS: Record<string, React.ReactNode> = {
   'Ateisme': <Atom className="w-5 h-5" />,
 };
 
-export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail, setCountryDetail }: ModalProps) {
+export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail, setCountryDetail, onNotification }: ModalProps) {
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<"agama" | "dunia">("agama");
   const [selectedReligion, setSelectedReligion] = useState<string | null>(null);
@@ -165,6 +176,10 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
     : null;
   const religion = countryDetail?.religion || "Mayoritas Muslim";
   const anggaran = Number(countryDetail?.anggaran) || 0;
+  const pendingSocialChanges: PendingSocialCulturalChange[] = Array.isArray(countryDetail?.pending_social_cultural_changes)
+    ? countryDetail.pending_social_cultural_changes.filter(isPendingSocialCulturalChange)
+    : [];
+  const pendingReligionChange = pendingSocialChanges.find(change => change.type === 'religion');
 
   const handleSelectReligion = (religionName: string) => {
     setSelectedReligion(religionName);
@@ -176,10 +191,24 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
     setIsConfirmOpen(true);
   };
 
-  const handleConfirmChange = async () => {
+  const handleChange = (isInstant: boolean) => {
     if (!selectedReligion || isSaving) return;
+    const pendingChanges: PendingSocialCulturalChange[] = Array.isArray(countryDetail?.pending_social_cultural_changes)
+      ? countryDetail.pending_social_cultural_changes
+      : [];
+    const canceledPendingChange = isInstant && pendingChanges.some((change) => change.type === 'religion');
+    if (!isInstant && pendingChanges.some((change) => change.type === 'religion')) {
+      setFeedback({
+        type: "error",
+        message: "Perubahan agama lain masih menunggu penyelesaian. Tunggu hingga selesai sebelum menjadwalkan perubahan baru.",
+      });
+      setIsConfirmOpen(false);
+      return;
+    }
+
     const result = attemptChangeReligion(anggaran);
     if (!result.success) {
+      setIsConfirmOpen(false);
       setShowErrorModal(true);
       return;
     }
@@ -187,19 +216,53 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
     setIsSaving(true);
     const oldReligion = countryDetail?.religion || "Islam";
     const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
-    const notif = generateReligionChangeNotification(oldReligion, selectedReligion, dateStr);
-    const newPending = [notif, ...(Array.isArray(countryDetail?.pending_notifications) ? countryDetail.pending_notifications : [])];
+    let scheduledChange: PendingSocialCulturalChange | null = null;
+    if (!isInstant) {
+      try {
+        scheduledChange = createPendingSocialCulturalChange('religion', oldReligion, selectedReligion, dateStr);
+      } catch (error) {
+        setFeedback({
+          type: "error",
+          message: error instanceof Error ? error.message : "Tanggal perubahan agama tidak valid.",
+        });
+        setIsConfirmOpen(false);
+        setIsSaving(false);
+        return;
+      }
+    }
+    const notification = isInstant
+      ? generateReligionChangeNotification(oldReligion, selectedReligion, dateStr)
+      : scheduledChange
+        ? generateReligionChangeNotification(oldReligion, selectedReligion, dateStr, scheduledChange.endDate)
+        : null;
 
-    setCountryDetail?.((prev: any) => ({
-      ...(prev || {}),
-      religion: selectedReligion,
-      anggaran: result.newAnggaran,
-      pending_notifications: newPending,
-      message: `Agama negara diubah ke ${selectedReligion}. Biaya perubahan ${RELIGION_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO.`
-    }));
+    if (notification) onNotification?.(notification);
+    setCountryDetail?.((prev: Record<string, unknown> | null) => {
+      const currentPendingChanges: PendingSocialCulturalChange[] = Array.isArray(prev?.pending_social_cultural_changes)
+        ? prev.pending_social_cultural_changes
+        : [];
+      const nextPendingChanges = scheduledChange
+        ? [...currentPendingChanges, scheduledChange]
+        : isInstant
+          ? currentPendingChanges.filter((change) => change.type !== 'religion')
+          : currentPendingChanges;
+      const currentNotifications = Array.isArray(prev?.pending_notifications) ? prev.pending_notifications : [];
+      return {
+        ...(prev || {}),
+        ...(isInstant ? { religion: selectedReligion } : {}),
+        anggaran: result.newAnggaran,
+        ...(notification ? { pending_notifications: [notification, ...currentNotifications] } : {}),
+        ...(scheduledChange || isInstant ? { pending_social_cultural_changes: nextPendingChanges } : {}),
+        message: isInstant
+          ? `Agama negara langsung diubah ke ${selectedReligion}.${canceledPendingChange ? ' Jadwal perubahan sebelumnya dibatalkan.' : ''} Biaya perubahan ${RELIGION_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO.`
+          : `Perubahan agama ke ${selectedReligion} dijadwalkan dalam ${SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari. Biaya ${RELIGION_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`,
+      };
+    });
     setFeedback({
       type: "success",
-      message: `Agama berhasil diubah menjadi ${selectedReligion}. Biaya ${RELIGION_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`
+      message: isInstant
+        ? `Agama berhasil diubah seketika menjadi ${selectedReligion}.${canceledPendingChange ? ' Jadwal perubahan sebelumnya dibatalkan.' : ''} Biaya ${RELIGION_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`
+        : `Perubahan agama menjadi ${selectedReligion} dijadwalkan selesai dalam ${SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari. Biaya ${RELIGION_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`,
     });
     setIsConfirmOpen(false);
     setIsSaving(false);
@@ -215,7 +278,8 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
           setIsConfirmOpen(false);
           setIsCurrentReligionInfoOpen(false);
         }}
-        onConfirm={handleConfirmChange}
+        onInstantChange={() => handleChange(true)}
+        onConfirm={() => handleChange(false)}
         title={selectedReligion || ''}
         icon={selectedReligion ? RELIGION_ICONS[selectedReligion] : <Globe className="w-5 h-5" />}
         bonusText={selectedReligion ? RELIGION_BONUSES[selectedReligion] || 'Tidak ada bonus spesifik' : ''}
@@ -298,17 +362,23 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                   {RELIGION_OPTIONS.map((r) => {
                     const isActive = String(countryDetail?.religion || '').toLowerCase() === String(r).toLowerCase();
                     const isSelected = String(selectedReligion || '').toLowerCase() === String(r).toLowerCase();
+                    const isScheduled = pendingReligionChange?.toValue.toLowerCase() === r.toLowerCase();
 
                     return (
-                      <button
-                        key={r}
-                        type="button"
-                        onClick={() => handleSelectReligion(r)}
-                        className={`group flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer text-left ${isActive
-                            ? 'border-root-accent bg-root-accent/15 shadow-md'
-                            : 'border-root-accent/20 bg-root-canvas hover:border-root-accent/50 hover:bg-root-accent/5'
-                          }`}
-                      >
+                      <div key={r} className="relative">
+                        {isScheduled && pendingReligionChange && (
+                          <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[10px] font-bold px-2 py-1 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
+                            {formatSocialCulturalChangeDate(pendingReligionChange.endDate)}
+                          </div>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleSelectReligion(r)}
+                          className={`group flex w-full items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer text-left ${isActive
+                              ? 'border-root-accent bg-root-accent/15 shadow-md'
+                              : 'border-root-accent/20 bg-root-canvas hover:border-root-accent/50 hover:bg-root-accent/5'
+                            }`}
+                        >
                           <div className={`relative w-14 h-16 flex-shrink-0 rounded-md flex items-center justify-center shadow-lg border-b-[4px] bg-[#051111] border-root-accent/40`}>
                             {getReligionImage(r) ? (
                               <Image src={getReligionImage(r)!} alt="" aria-hidden="true" width={56} height={64} className="h-full w-full object-contain p-1" />
@@ -327,8 +397,12 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                           <p className="text-xs text-root-subtle mt-1 leading-tight">
                             {RELIGION_BONUSES[r] || 'Tidak ada bonus spesifik'}
                           </p>
+                          <span className="text-[10px] font-semibold text-root-accent mt-1">
+                            Waktu perubahan: {SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari (pilihan Ubah)
+                          </span>
                         </div>
-                      </button>
+                        </button>
+                      </div>
                     );
                   })}
                 </div>

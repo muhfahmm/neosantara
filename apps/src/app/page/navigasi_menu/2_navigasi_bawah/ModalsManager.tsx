@@ -93,6 +93,7 @@ interface ModalsManagerProps {
   presidentRating?: number;
   setPresidentRating?: (rating: number) => void;
   notifications?: NotificationMessage[];
+  onAddNotification?: (notification: NotificationMessage) => void;
   metadata?: Record<string, any>;
   onRemoveNotification?: (notificationId: string) => void;
   onOpenInbox?: () => void;
@@ -119,6 +120,7 @@ function ModalsManager({
   presidentRating = 50,
   setPresidentRating,
   notifications = [],
+  onAddNotification,
   metadata: initialMetadata,
   onRemoveNotification,
   onOpenInbox,
@@ -782,6 +784,7 @@ function ModalsManager({
           onClose={onClose}
           countryDetail={countryDetail}
           setCountryDetail={setCountryDetail}
+          onNotification={onAddNotification}
           onOpenDebt={() => setActiveMenu("Menu:Hutang")}
         />
       );
@@ -792,6 +795,7 @@ function ModalsManager({
           onClose={onClose}
           countryDetail={countryDetail}
           setCountryDetail={setCountryDetail}
+          onNotification={onAddNotification}
           onOpenDebt={() => setActiveMenu("Menu:Hutang")}
         />
       );

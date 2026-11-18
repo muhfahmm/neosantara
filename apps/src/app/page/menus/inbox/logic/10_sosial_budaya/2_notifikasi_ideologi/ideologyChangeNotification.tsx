@@ -1,22 +1,26 @@
 import React from 'react';
-import { MoonStar, TrendingUp, TrendingDown, Sparkles } from 'lucide-react';
-import { ReligionChangeNotification } from './religionChangeLogic';
+import { Shield, TrendingUp, TrendingDown, Sparkles } from 'lucide-react';
+import { IdeologyChangeNotification } from './ideologyChangeLogic';
 
 interface Props {
-  notification: ReligionChangeNotification;
+  notification: IdeologyChangeNotification;
   onAccept?: () => void;
   onReject?: () => void;
 }
 
-export default function ReligionChangeNotificationCard({ notification }: Props) {
-  const { fromReligion, toReligion, approvalDelta, mood, eventChain } = notification;
+export default function IdeologyChangeNotificationCard({ notification }: Props) {
+  const { fromIdeology, toIdeology, approvalDelta, mood, eventChain } = notification;
   const isPositive = approvalDelta >= 0;
+  const isScheduled = notification.changeStage === 'scheduled';
 
   const getBadgeStyle = () => {
     switch (mood) {
+      case 'euforia':
       case 'senang':
+      case 'bangga':
         return 'text-emerald-300 bg-emerald-900/80 border-emerald-500/50';
       case 'panik':
+      case 'marah':
       case 'protes':
         return 'text-rose-300 bg-rose-900/80 border-rose-500/50';
       default:
@@ -27,7 +31,7 @@ export default function ReligionChangeNotificationCard({ notification }: Props) 
   return (
     <div className={`border-l-4 ${isPositive ? 'bg-emerald-950/40 border-emerald-500' : 'bg-rose-950/40 border-rose-500'} p-4 sm:p-5 rounded-r-2xl shadow-lg flex gap-4 items-start select-none relative overflow-hidden transition-all border ${isPositive ? 'border-emerald-500/30' : 'border-rose-500/30'}`}>
       <div className={`w-11 h-11 rounded-xl ${isPositive ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400' : 'bg-rose-500/20 border-rose-500/40 text-rose-400'} border flex items-center justify-center shrink-0 shadow-inner`}>
-        <MoonStar className={`w-6 h-6 ${isPositive ? 'text-emerald-400 animate-bounce' : 'text-rose-400 animate-pulse'}`} />
+        <Shield className={`w-6 h-6 ${isPositive ? 'text-emerald-400 animate-bounce' : 'text-rose-400 animate-pulse'}`} />
       </div>
 
       <div className="flex-1 space-y-2">
@@ -36,8 +40,12 @@ export default function ReligionChangeNotificationCard({ notification }: Props) 
             {notification.title}
           </h4>
           <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1 border ${getBadgeStyle()}`}>
-            {isPositive ? <TrendingUp className="w-3 h-3 text-emerald-400" /> : <TrendingDown className="w-3 h-3 text-rose-400" />}
-            Approval: {isPositive ? `+${approvalDelta}%` : `${approvalDelta}%`}
+            {isScheduled ? 'Dijadwalkan' : (
+              <>
+                {isPositive ? <TrendingUp className="w-3 h-3 text-emerald-400" /> : <TrendingDown className="w-3 h-3 text-rose-400" />}
+                Approval: {isPositive ? `+${approvalDelta}%` : `${approvalDelta}%`}
+              </>
+            )}
           </span>
         </div>
 
@@ -50,9 +58,9 @@ export default function ReligionChangeNotificationCard({ notification }: Props) 
         </p>
 
         <div className="bg-root-canvas border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex items-center justify-between">
-          <span>Pergantian Keyakinan Negara: <strong className="text-slate-100">{fromReligion}</strong> ➔ <strong className="text-root-accent">{toReligion}</strong></span>
+          <span>Transisi Ideologi: <strong className="text-slate-100">{fromIdeology}</strong> ➔ <strong className="text-root-accent">{toIdeology}</strong></span>
           <span className={isPositive ? 'text-emerald-400 font-black' : 'text-rose-400 font-black'}>
-            Respon: {mood.toUpperCase()}
+            {isScheduled ? `Selesai: ${notification.completionDate}` : `Status: ${mood.toUpperCase()}`}
           </span>
         </div>
 
@@ -60,7 +68,7 @@ export default function ReligionChangeNotificationCard({ notification }: Props) 
           <div className="bg-root-surface border border-root-accent/20 rounded-xl p-2.5 space-y-1.5 mt-2">
             <span className="text-[10px] font-black text-root-accent uppercase tracking-wider flex items-center gap-1">
               <Sparkles className="w-3 h-3 text-root-accent" />
-              Prediksi Dini Event Chain (7 Hari):
+              Prediksi Dini Event Chain (3 Hari):
             </span>
             <div className="space-y-1">
               {eventChain.map((item, idx) => (

@@ -8,6 +8,8 @@ export interface IdeologyEventChainItem {
 
 export interface IdeologyChangeNotification extends NotificationMessage {
   tradeType: 'perubahan_ideologi';
+  changeStage: 'scheduled' | 'completed';
+  completionDate?: string;
   fromIdeology: string;
   toIdeology: string;
   approvalDelta: number;
@@ -123,15 +125,20 @@ const EVENT_CHAIN_MAP: Record<string, IdeologyEventChainItem[]> = {
 export function generateIdeologyChangeNotification(
   fromIdeology: string,
   toIdeology: string,
-  dateStr: string
+  dateStr: string,
+  completionDate?: string,
 ): IdeologyChangeNotification {
   const key = `${fromIdeology}->${toIdeology}`;
   const matched = IDEOLOGY_MATRIX[key];
 
   const mood = matched?.mood || (fromIdeology === toIdeology ? 'netral' : 'campuran');
   const approvalDelta = matched?.approvalDelta || (fromIdeology === toIdeology ? 0 : 5);
-  const title = matched?.title || `🏛️ Perubahan Ideologi Negara: ${fromIdeology} ➔ ${toIdeology}`;
-  const message = matched?.message || `Pemerintah resmi mengubah arah ideologi negara dari ${fromIdeology} menjadi ${toIdeology}. Perubahan ini membawa dampak pada struktur kebijakan sosial dan ekonomi nasional.`;
+  const title = completionDate
+    ? `Perubahan Ideologi Dijadwalkan: ${fromIdeology} ➔ ${toIdeology}`
+    : matched?.title || `🏛️ Perubahan Ideologi Negara: ${fromIdeology} ➔ ${toIdeology}`;
+  const message = completionDate
+    ? `Perubahan ideologi dari ${fromIdeology} menjadi ${toIdeology} dijadwalkan selesai pada ${completionDate}. Perubahan akan berlaku setelah tanggal tersebut.`
+    : matched?.message || `Pemerintah resmi mengubah arah ideologi negara dari ${fromIdeology} menjadi ${toIdeology}. Perubahan ini membawa dampak pada struktur kebijakan sosial dan ekonomi nasional.`;
 
   const eventChain = EVENT_CHAIN_MAP[toIdeology];
 
@@ -145,6 +152,8 @@ export function generateIdeologyChangeNotification(
     value: approvalDelta,
     isRead: false,
     tradeType: 'perubahan_ideologi',
+    changeStage: completionDate ? 'scheduled' : 'completed',
+    completionDate,
     fromIdeology,
     toIdeology,
     approvalDelta,

@@ -37,8 +37,8 @@ import HunianDefisitNotificationCard from './logic/8_kebutuhan_pokok_warga/2_hun
 import PanganDefisitNotificationCard from './logic/8_kebutuhan_pokok_warga/3_pangan/panganDefisitNotificationCard';
 import TempatUmumDefisitNotificationCard from './logic/8_kebutuhan_pokok_warga/4_tempat_umum/tempatUmumDefisitNotificationCard';
 import PopulasiDefisitNotificationCard from './logic/8_kebutuhan_pokok_warga/5_populasi/populasiDefisitNotificationCard';
-import IdeologyChangeNotificationCard from './logic/10_sosial_budaya/2_ideologi/ideologyChangeNotification';
-import ReligionChangeNotificationCard from './logic/10_sosial_budaya/1_agama/religionChangeNotification';
+import IdeologyChangeNotificationCard from './logic/10_sosial_budaya/2_notifikasi_ideologi/ideologyChangeNotification';
+import ReligionChangeNotificationCard from './logic/10_sosial_budaya/1_notifikasi_agama/religionChangeNotification';
 import DoctrineChangeNotificationCard from './logic/10_sosial_budaya/3_keterbukaan/doctrineChangeNotification';
 import ResearchChangeNotificationCard from './logic/11_notifikasi_penelitian/researchChangeNotification';
 import SistemEkonomiChangeNotificationCard from './logic/7_notifikasi_ekonomi/4_sistem_ekonomi/sistemEkonomiChangeNotification';
@@ -64,7 +64,6 @@ interface TopLeftIconProps {
   onRedirectClick?: (notification: NotificationMessage) => void;
   userCountryName?: string;
   isWarAnalysisActive?: boolean;
-  isMenuModalOpen?: boolean;
 }
 
 export default function TopLeftIcon({
@@ -78,7 +77,6 @@ export default function TopLeftIcon({
   onRedirectClick,
   userCountryName,
   isWarAnalysisActive = false,
-  isMenuModalOpen = false,
 }: TopLeftIconProps) {
   const [mounted, setMounted] = useState(false);
   const [toastNotification, setToastNotification] = useState<NotificationMessage | null>(null);
@@ -99,7 +97,7 @@ export default function TopLeftIcon({
   const isLandscapePhone = viewportMode === 'landscapePhone';
   const isPortraitPhone = viewportMode === 'portraitPhone';
   const isMobile = isLandscapePhone || isPortraitPhone;
-  const isToastBlocked = isMenuModalOpen || isOpen || isWarAnalysisActive;
+  const isToastBlocked = isOpen || isWarAnalysisActive;
   const orderedNotifications = useMemo(() => {
     return [...visibleNotifications].sort((first, second) => {
       const firstArrivalDate = first.diplomacyArrivalDate;
@@ -550,7 +548,7 @@ export default function TopLeftIcon({
   return (
     <>
       {mounted && !isWarAnalysisActive && createPortal(
-        <div className="side-btn-inbox fixed z-[50] flex flex-col items-start gap-2 pointer-events-none">
+        <div className="side-btn-inbox fixed z-[10000000002] flex flex-col items-start gap-2 pointer-events-none">
           <button
             onClick={() => {
               if (toastNotification) {

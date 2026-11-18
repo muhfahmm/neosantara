@@ -144,6 +144,9 @@ const BottomLeftPenelitianIcon = dynamic(() => import('../menus/penelitian/penel
 const BottomLeftMissionIcon = dynamic(() => import('../menus/mission/missionModals'), { ssr: false });
 import { NotificationMessage, getKepuasanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import { isNonActionableUpdateNotification } from '../menus/inbox/logic/automaticChangeNotification';
+import { generateReligionChangeNotification } from '../menus/inbox/logic/10_sosial_budaya/1_notifikasi_agama/religionChangeLogic';
+import { generateIdeologyChangeNotification } from '../menus/inbox/logic/10_sosial_budaya/2_notifikasi_ideologi/ideologyChangeLogic';
+import { isPendingSocialCulturalChange, type PendingSocialCulturalChange } from '../menus/inbox/logic/10_sosial_budaya/socialCulturalChangeLogic';
 import { getPeringkatWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/2_peringkat/peringkatLogic';
 import { getKesejahteraanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanLogic';
 import { getTradeAgreementsForCountry } from '../../../../../json/9_database_mitra_perdagangan/tradeAgreementRegistry';
@@ -8280,6 +8283,30 @@ export default function MapPage() {
                 const completedNuclearBuilds = currentOngoing.filter((c: any) => c.buildingKey === "program_nuklir" && c.endDate <= currentDateStr);
                 let nextProgramNuklirActive = Boolean(prev.programNuklirActive);
                 let nextPendingNotifications = Array.isArray(prev.pending_notifications) ? [...prev.pending_notifications] : [];
+                const rawPendingSocialChanges: unknown[] = Array.isArray(prev.pending_social_cultural_changes)
+                    ? prev.pending_social_cultural_changes
+                    : [];
+                const pendingSocialChanges = rawPendingSocialChanges.filter(isPendingSocialCulturalChange);
+                const completedSocialChanges = pendingSocialChanges.filter(change => change.endDate <= currentDateStr);
+                const nextPendingSocialChanges = rawPendingSocialChanges.filter(change =>
+                    !isPendingSocialCulturalChange(change) || change.endDate > currentDateStr
+                );
+                let nextReligion = prev.religion;
+                let nextIdeology = prev.ideology;
+                const socialChangeNotifications = completedSocialChanges.map((change: PendingSocialCulturalChange) => {
+                    if (change.type === 'religion') {
+                        nextReligion = change.toValue;
+                        return {
+                            ...generateReligionChangeNotification(change.fromValue, change.toValue, change.endDate),
+                            id: `social-change-completed-${change.id}`,
+                        };
+                    }
+                    nextIdeology = change.toValue;
+                    return {
+                        ...generateIdeologyChangeNotification(change.fromValue, change.toValue, change.endDate),
+                        id: `social-change-completed-${change.id}`,
+                    };
+                });
 
                 if (completedNuclearBuilds.length > 0 && !nextProgramNuklirActive) {
                     nextProgramNuklirActive = true;
@@ -8678,7 +8705,11 @@ export default function MapPage() {
                     icbm_status: nextIcbmStatus,
                     icbmBuildTask: nextIcbmTask,
                     population_crisis_tiers: currentCrisisTiers,
+                    ...(completedSocialChanges.some(change => change.type === 'religion') ? { religion: nextReligion } : {}),
+                    ...(completedSocialChanges.some(change => change.type === 'ideology') ? { ideology: nextIdeology } : {}),
+                    pending_social_cultural_changes: nextPendingSocialChanges,
                     pending_notifications: [
+                        ...socialChangeNotifications,
                         ...diplomacyCompletionNotifications,
                         ...nextPendingNotifications,
                         ...newCrisisNotifications,
@@ -9626,7 +9657,6 @@ export default function MapPage() {
                 }}
                 isOpen={inboxModalOpen}
                 isWarAnalysisActive={isWarAnalysisActive}
-                isMenuModalOpen={isMenuModalOpen}
                 onClose={() => setInboxModalOpen(false)}
                 notifications={notifications}
                 onClearAll={() => setNotifications([])}
@@ -11668,6 +11698,11 @@ export default function MapPage() {
                 presidentRating={presidentRating}
                 setPresidentRating={setPresidentRating}
                 notifications={notifications}
+                onAddNotification={(notification) => {
+                    setNotifications(previous => previous.some(item => item.id === notification.id)
+                        ? previous
+                        : [notification, ...previous]);
+                }}
                 onRemoveNotification={(notificationId) => {
                     setNotifications(previous => previous.filter(notification => notification.id !== notificationId));
                 }}

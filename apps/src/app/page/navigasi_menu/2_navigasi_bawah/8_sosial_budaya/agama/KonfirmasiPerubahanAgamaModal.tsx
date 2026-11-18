@@ -4,11 +4,13 @@ import { createPortal } from "react-dom";
 import { Coins, Church } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { SOCIAL_CULTURAL_CHANGE_DELAY_DAYS } from "@/app/page/menus/inbox/logic/10_sosial_budaya/socialCulturalChangeLogic";
 
 interface AgamaConfirmModalProps {
   isOpen: boolean;
   isInfoMode?: boolean;
   onClose: () => void;
+  onInstantChange: () => void;
   onConfirm: () => void;
   title: string;
   icon: React.ReactNode;
@@ -20,6 +22,7 @@ export default function AgamaConfirmModal({
   isOpen,
   isInfoMode = false,
   onClose,
+  onInstantChange,
   onConfirm,
   title,
   icon,
@@ -82,13 +85,19 @@ export default function AgamaConfirmModal({
             )}
 
             {!isInfoMode && (
+              <p className="mt-3 text-center text-xs text-root-subtle">
+                Pilih Seketika untuk perubahan langsung atau Ubah untuk perubahan dalam {SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari.
+              </p>
+            )}
+
+            {!isInfoMode && (
               <div className="flex w-full gap-4 mt-6">
                 <button
                   type="button"
-                  onClick={onClose}
-                  className="flex-1 py-2.5 rounded-xl bg-transparent border-2 border-red-500 hover:bg-red-500/20 text-red-500 font-extrabold text-xs uppercase shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  onClick={onInstantChange}
+                  className="flex-1 py-2.5 rounded-xl bg-[#00D68F] hover:bg-[#00C282] text-root-canvas font-extrabold text-xs uppercase shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  Batal
+                  Seketika
                 </button>
                 <button
                   type="button"

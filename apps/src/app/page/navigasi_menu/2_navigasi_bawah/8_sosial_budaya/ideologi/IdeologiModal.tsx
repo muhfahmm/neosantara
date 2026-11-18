@@ -15,7 +15,17 @@ import IdeologiGagalModal from "./DanaTidakCukupIdeologiModal";
 import IdeologiInfoModal from "./IdeologiInfoModal";
 import MenuInfoButton from "../../MenuInfoButton";
 import { attemptChangeIdeology, IDEOLOGY_CHANGE_COST } from "./logic/logikaPergantian";
-import { generateIdeologyChangeNotification } from "@/app/page/menus/inbox/logic/10_sosial_budaya/2_ideologi/ideologyChangeLogic";
+import {
+  generateIdeologyChangeNotification,
+  type IdeologyChangeNotification,
+} from "@/app/page/menus/inbox/logic/10_sosial_budaya/2_notifikasi_ideologi/ideologyChangeLogic";
+import {
+  createPendingSocialCulturalChange,
+  formatSocialCulturalChangeDate,
+  isPendingSocialCulturalChange,
+  SOCIAL_CULTURAL_CHANGE_DELAY_DAYS,
+  type PendingSocialCulturalChange,
+} from "@/app/page/menus/inbox/logic/10_sosial_budaya/socialCulturalChangeLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -23,6 +33,7 @@ interface ModalProps {
   onOpenDebt?: () => void;
   countryDetail: any;
   setCountryDetail?: (detail: any | ((prev: any) => any)) => void;
+  onNotification?: (notification: IdeologyChangeNotification) => void;
 }
 
 const IDEOLOGY_OPTIONS = [
@@ -60,7 +71,7 @@ const IDEOLOGY_ICONS: Record<string, React.ReactNode> = {
   'Otoritarianisme': <Sword className="w-5 h-5" />,
 };
 
-export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDetail, setCountryDetail }: ModalProps) {
+export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDetail, setCountryDetail, onNotification }: ModalProps) {
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<"ideologi" | "dunia">("ideologi");
   const [selectedIdeology, setSelectedIdeology] = useState<string | null>(null);
@@ -163,48 +174,91 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
     : null;
   const ideology = countryDetail?.ideology || "Demokratis Pancasila";
   const anggaran = Number(countryDetail?.anggaran) || 0;
+  const pendingSocialChanges: PendingSocialCulturalChange[] = Array.isArray(countryDetail?.pending_social_cultural_changes)
+    ? countryDetail.pending_social_cultural_changes.filter(isPendingSocialCulturalChange)
+    : [];
+  const pendingIdeologyChange = pendingSocialChanges.find(change => change.type === 'ideology');
 
   const handleSelectIdeology = (option: string) => {
     setSelectedIdeology(option);
     setIsConfirmOpen(true); // 🔥 Buka modal konfirmasi baru
   };
 
-  const handleConfirmChange = async () => {
+  const handleChange = (isInstant: boolean) => {
     if (!selectedIdeology || isSaving) return;
+    const pendingChanges: PendingSocialCulturalChange[] = Array.isArray(countryDetail?.pending_social_cultural_changes)
+      ? countryDetail.pending_social_cultural_changes
+      : [];
+    const canceledPendingChange = isInstant && pendingChanges.some((change) => change.type === 'ideology');
+    if (!isInstant && pendingChanges.some((change) => change.type === 'ideology')) {
+      setFeedback({
+        type: "error",
+        message: "Perubahan ideologi lain masih menunggu penyelesaian. Tunggu hingga selesai sebelum menjadwalkan perubahan baru.",
+      });
+      setIsConfirmOpen(false);
+      return;
+    }
+
     const result = attemptChangeIdeology(anggaran);
     if (!result.success) {
+      setIsConfirmOpen(false);
       setShowErrorModal(true);
       return;
     }
 
     setIsSaving(true);
-    try {
-      const oldIdeology = countryDetail?.ideology || "Demokrasi";
-      const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
-      const notif = generateIdeologyChangeNotification(oldIdeology, selectedIdeology, dateStr);
-      const newPending = [notif, ...(Array.isArray(countryDetail?.pending_notifications) ? countryDetail.pending_notifications : [])];
-
-      setCountryDetail?.((prev: any) => ({
-        ...(prev || {}),
-        ideology: selectedIdeology,
-        anggaran: result.newAnggaran,
-        pending_notifications: newPending,
-        message: `Ideologi negara diubah ke ${selectedIdeology}. Biaya perubahan ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO.`
-      }));
-      setFeedback({
-        type: "success",
-        message: `Ideologi berhasil diubah menjadi ${selectedIdeology}. Biaya ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`
-      });
-      setIsConfirmOpen(false);
-    } catch (error) {
-      setFeedback({
-        type: "error",
-        message: error instanceof Error ? error.message : 'Gagal menyimpan perubahan ideologi.'
-      });
-      setIsConfirmOpen(false);
-    } finally {
-      setIsSaving(false);
+    const oldIdeology = countryDetail?.ideology || "Demokrasi";
+    const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
+    let scheduledChange: PendingSocialCulturalChange | null = null;
+    if (!isInstant) {
+      try {
+        scheduledChange = createPendingSocialCulturalChange('ideology', oldIdeology, selectedIdeology, dateStr);
+      } catch (error) {
+        setFeedback({
+          type: "error",
+          message: error instanceof Error ? error.message : "Tanggal perubahan ideologi tidak valid.",
+        });
+        setIsConfirmOpen(false);
+        setIsSaving(false);
+        return;
+      }
     }
+    const notification = isInstant
+      ? generateIdeologyChangeNotification(oldIdeology, selectedIdeology, dateStr)
+      : scheduledChange
+        ? generateIdeologyChangeNotification(oldIdeology, selectedIdeology, dateStr, scheduledChange.endDate)
+        : null;
+
+    if (notification) onNotification?.(notification);
+    setCountryDetail?.((prev: Record<string, unknown> | null) => {
+      const currentPendingChanges: PendingSocialCulturalChange[] = Array.isArray(prev?.pending_social_cultural_changes)
+        ? prev.pending_social_cultural_changes
+        : [];
+      const nextPendingChanges = scheduledChange
+        ? [...currentPendingChanges, scheduledChange]
+        : isInstant
+          ? currentPendingChanges.filter((change) => change.type !== 'ideology')
+          : currentPendingChanges;
+      const currentNotifications = Array.isArray(prev?.pending_notifications) ? prev.pending_notifications : [];
+      return {
+        ...(prev || {}),
+        ...(isInstant ? { ideology: selectedIdeology } : {}),
+        anggaran: result.newAnggaran,
+        ...(notification ? { pending_notifications: [notification, ...currentNotifications] } : {}),
+        ...(scheduledChange || isInstant ? { pending_social_cultural_changes: nextPendingChanges } : {}),
+        message: isInstant
+          ? `Ideologi negara langsung diubah ke ${selectedIdeology}.${canceledPendingChange ? ' Jadwal perubahan sebelumnya dibatalkan.' : ''} Biaya perubahan ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO.`
+          : `Perubahan ideologi ke ${selectedIdeology} dijadwalkan dalam ${SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari. Biaya ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`,
+      };
+    });
+    setFeedback({
+      type: "success",
+      message: isInstant
+        ? `Ideologi berhasil diubah seketika menjadi ${selectedIdeology}.${canceledPendingChange ? ' Jadwal perubahan sebelumnya dibatalkan.' : ''} Biaya ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`
+        : `Perubahan ideologi menjadi ${selectedIdeology} dijadwalkan selesai dalam ${SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari. Biaya ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`,
+    });
+    setIsConfirmOpen(false);
+    setIsSaving(false);
   };
 
   return createPortal(
@@ -213,7 +267,8 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
       <IdeologiConfirmModal
         isOpen={isConfirmOpen}
         onClose={() => setIsConfirmOpen(false)}
-        onConfirm={handleConfirmChange}
+        onInstantChange={() => handleChange(true)}
+        onConfirm={() => handleChange(false)}
         title={selectedIdeology || ''}
         icon={selectedIdeology ? IDEOLOGY_ICONS[selectedIdeology] : <Shield className="w-5 h-5" />}
         bonusText={selectedIdeology ? IDEOLOGY_BONUSES[selectedIdeology] || 'Tidak ada bonus spesifik' : ''}
@@ -302,16 +357,22 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                   {IDEOLOGY_OPTIONS.map((option) => {
                     const isActive = String(countryDetail?.ideology || '').toLowerCase() === String(option).toLowerCase();
                     const isSelected = String(selectedIdeology || '').toLowerCase() === String(option).toLowerCase();
+                    const isScheduled = pendingIdeologyChange?.toValue.toLowerCase() === option.toLowerCase();
 
                     return (
-                      <div
-                        key={option}
-                        onClick={() => handleSelectIdeology(option)}
-                        className={`group relative flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer text-left ${isActive
-                            ? 'border-root-accent bg-root-accent/15 shadow-md'
-                            : 'border-root-accent/20 bg-root-canvas hover:border-root-accent/50 hover:bg-root-accent/5'
-                          }`}
-                      >
+                      <div key={option} className="relative">
+                        {isScheduled && pendingIdeologyChange && (
+                          <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[10px] font-bold px-2 py-1 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
+                            {formatSocialCulturalChangeDate(pendingIdeologyChange.endDate)}
+                          </div>
+                        )}
+                        <div
+                          onClick={() => handleSelectIdeology(option)}
+                          className={`group relative flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer text-left ${isActive
+                              ? 'border-root-accent bg-root-accent/15 shadow-md'
+                              : 'border-root-accent/20 bg-root-canvas hover:border-root-accent/50 hover:bg-root-accent/5'
+                            }`}
+                        >
                         {/* TOMBOL (i) INFORMASI */}
                         <button
                           type="button"
@@ -343,6 +404,10 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                           <p className="text-xs text-root-subtle mt-1 leading-tight">
                             {IDEOLOGY_BONUSES[option] || 'Tidak ada bonus spesifik'}
                           </p>
+                          <span className="text-[10px] font-semibold text-root-accent mt-1">
+                            Waktu perubahan: {SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari (pilihan Ubah)
+                          </span>
+                        </div>
                         </div>
                       </div>
                     );
