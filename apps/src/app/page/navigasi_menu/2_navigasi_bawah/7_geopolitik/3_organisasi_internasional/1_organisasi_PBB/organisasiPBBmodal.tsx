@@ -13,6 +13,10 @@ interface OrganisasiRegionalProps {
   orgName: string;
   orgIcon?: React.ElementType;
   selectedCountry?: any;
+  countryDetail?: Record<string, unknown> | null;
+  setCountryDetail?: (
+    detail: Record<string, unknown> | ((previous: Record<string, unknown>) => Record<string, unknown>)
+  ) => void;
   onClose: () => void;
   onOpenCountryDetail?: (countryName: string) => void;
   onOpenPlayerDetail?: () => void;
@@ -36,7 +40,7 @@ const ORGANIZATION_BENEFITS: Record<string, string> = {
   "Organisasi Maritim Internasional (IMO)": "Hasil Perikanan +10%",
 };
 
-export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCountry, onClose, onOpenCountryDetail, onOpenPlayerDetail }: OrganisasiRegionalProps) {
+export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCountry, countryDetail, setCountryDetail, onClose, onOpenCountryDetail, onOpenPlayerDetail }: OrganisasiRegionalProps) {
   const [members, setMembers] = useState<MemberData[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPermohonanOpen, setIsPermohonanOpen] = useState(false);
@@ -209,6 +213,8 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
         countryName={playerCountryName}
         orgIcon={Icon}
         organizationType="pbb"
+        currentBudget={Number(countryDetail?.anggaran) || 0}
+        setCountryDetail={setCountryDetail}
       />
     </div>
   );

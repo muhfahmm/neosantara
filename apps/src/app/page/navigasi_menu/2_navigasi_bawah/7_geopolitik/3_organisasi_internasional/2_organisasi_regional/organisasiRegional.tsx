@@ -16,6 +16,9 @@ interface OrganisasiPBBModalProps {
   orgIcon?: React.ElementType;
   selectedCountry?: EligibilityCountry | null;
   countryDetail?: Record<string, unknown> | null;
+  setCountryDetail?: (
+    detail: Record<string, unknown> | ((previous: Record<string, unknown>) => Record<string, unknown>)
+  ) => void;
   onClose: () => void;
   onOpenCountryDetail?: (countryName: string) => void;
   onOpenPlayerDetail?: () => void;
@@ -49,7 +52,7 @@ const ORGANIZATION_BENEFITS: Record<string, string> = {
   "group of twenty (g20)": "Pendapatan Negara +20%",
 };
 
-export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCountry, countryDetail, onClose, onOpenCountryDetail, onOpenPlayerDetail }: OrganisasiPBBModalProps) {
+export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCountry, countryDetail, setCountryDetail, onClose, onOpenCountryDetail, onOpenPlayerDetail }: OrganisasiPBBModalProps) {
   const [members, setMembers] = useState<MemberData[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPermohonanOpen, setIsPermohonanOpen] = useState(false);
@@ -245,6 +248,8 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
         orgIcon={Icon}
         organizationType="regional"
         canSubmit={eligibility.canApply}
+        currentBudget={Number(countryDetail?.anggaran) || 0}
+        setCountryDetail={setCountryDetail}
       />
     </div>
   );

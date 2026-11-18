@@ -1,7 +1,7 @@
 "use client";
 
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { Send, CheckCircle, ShieldCheck, Globe, Loader2, Clock, AlertTriangle } from "lucide-react";
 import NotebookModalWrapper, { APPLICATION_MODAL_VISIBILITY_EVENT } from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
@@ -10,6 +10,7 @@ import { getApplicationForOrg, submitOrgApplication } from "./orgMembershipLogic
 import type { OrgApplication, OrganizationApplicationType } from "./orgMembershipLogic";
 import { getDaysElapsed, formatDate } from "@/app/logic/production_logic";
 import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
+import DanaTidakCukupOrganisasiModal from "./DanaTidakCukupOrganisasiModal";
 
 interface PermohonanKeanggotaanModalProps {
   isOpen: boolean;
@@ -20,6 +21,10 @@ interface PermohonanKeanggotaanModalProps {
   organizationType: OrganizationApplicationType;
   onSubmitted?: () => void;
   canSubmit?: boolean | null;
+  currentBudget: number;
+  setCountryDetail?: (
+    detail: Record<string, unknown> | ((previous: Record<string, unknown>) => Record<string, unknown>)
+  ) => void;
 }
 
 export default function PermohonanKeanggotaanModal({
@@ -31,10 +36,15 @@ export default function PermohonanKeanggotaanModal({
   organizationType,
   onSubmitted,
   canSubmit = true,
+  currentBudget,
+  setCountryDetail,
 }: PermohonanKeanggotaanModalProps) {
   const [mounted, setMounted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [currentApp, setCurrentApp] = useState<OrgApplication | undefined>(undefined);
+  const [isInsufficientFundsOpen, setIsInsufficientFundsOpen] = useState(false);
+  const submissionStarted = useRef(false);
+  const applicationFee = organizationType === "pbb" ? 1_000_000 : 500_000;
 
   const getCurrentDateStr = () => {
     return getCurrentGameDateString() || formatDate(new Date());
@@ -45,6 +55,7 @@ export default function PermohonanKeanggotaanModal({
   useEffect(() => {
     setMounted(true);
     if (isOpen) {
+      submissionStarted.current = false;
       const app = getApplicationForOrg(countryName, orgName);
       setCurrentApp(app);
     }
@@ -62,7 +73,20 @@ export default function PermohonanKeanggotaanModal({
   if (!isOpen || !mounted) return null;
 
   const handleSubmit = () => {
-    if (canSubmit !== true) return;
+    if (canSubmit !== true || submissionStarted.current) return;
+    if (currentBudget < applicationFee) {
+      setIsInsufficientFundsOpen(true);
+      return;
+    }
+    if (!setCountryDetail) {
+      console.error("Cannot submit organization application: country budget updater is unavailable.");
+      return;
+    }
+    submissionStarted.current = true;
+    setCountryDetail((previous) => ({
+      ...previous,
+      anggaran: currentBudget - applicationFee,
+    }));
     setSubmitting(true);
     setTimeout(() => {
       const app = submitOrgApplication(countryName, orgName, currentDateStr, undefined, organizationType);
@@ -181,6 +205,12 @@ export default function PermohonanKeanggotaanModal({
                   <span className="text-root-subtle block">Estimasi Penerimaan:</span>
                   <span className="font-bold text-emerald-400">Tinggi (65% - 90%)</span>
                 </div>
+                <div>
+                  <span className="text-root-subtle block">Biaya Pengajuan:</span>
+                  <span className="font-bold text-amber-400">
+                    {applicationFee.toLocaleString("id-ID")} NEO
+                  </span>
+                </div>
               </div>
             </div>
           )}
@@ -217,5 +247,15 @@ export default function PermohonanKeanggotaanModal({
     </NotebookModalWrapper>
   );
 
-  return createPortal(modalContent, document.body);
+  return (
+    <>
+      {createPortal(modalContent, document.body)}
+      <DanaTidakCukupOrganisasiModal
+        isOpen={isInsufficientFundsOpen}
+        onClose={() => setIsInsufficientFundsOpen(false)}
+        requiredCost={applicationFee}
+        currentBudget={currentBudget}
+      />
+    </>
+  );
 }

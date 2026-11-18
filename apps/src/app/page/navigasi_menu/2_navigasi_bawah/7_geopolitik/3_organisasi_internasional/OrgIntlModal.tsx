@@ -20,6 +20,9 @@ interface ModalProps {
   onClose: () => void;
   selectedCountry: { country?: string | null } | null;
   countryDetail?: Record<string, unknown> | null;
+  setCountryDetail?: (
+    detail: Record<string, unknown> | ((previous: Record<string, unknown>) => Record<string, unknown>)
+  ) => void;
   onOpenCountryDetail?: (countryName: string) => void;
   onOpenPlayerDetail?: () => void;
 }
@@ -91,7 +94,7 @@ const orgImageMap: Record<string, string> = {
   "Kelompok Duapuluh (G20)": "/images/game/interface/sub-tabs/geopolitik/organisasi-regional/g20.svg",
 };
 
-export default function OrgIntlModal({ isOpen, onClose, selectedCountry, countryDetail, onOpenCountryDetail, onOpenPlayerDetail }: ModalProps) {
+export default function OrgIntlModal({ isOpen, onClose, selectedCountry, countryDetail, setCountryDetail, onOpenCountryDetail, onOpenPlayerDetail }: ModalProps) {
   const [activeTab, setActiveTab] = useState<"pbb" | "regional">("pbb");
   const [isChildModalOpen, setIsChildModalOpen] = useState(false);
   const [selectedOrgName, setSelectedOrgName] = useState<string | null>(null);
@@ -269,6 +272,8 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                 orgName={selectedOrgName}
                 orgIcon={selectedOrgIcon}
                 selectedCountry={selectedCountry}
+                countryDetail={countryDetail}
+                setCountryDetail={setCountryDetail}
                 onClose={() => setIsChildModalOpen(false)}
                 onOpenCountryDetail={onOpenCountryDetail}
                 onOpenPlayerDetail={onOpenPlayerDetail}
@@ -279,6 +284,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                 orgIcon={selectedOrgIcon}
                 selectedCountry={selectedCountry}
                 countryDetail={countryDetail}
+                setCountryDetail={setCountryDetail}
                 onClose={() => setIsChildModalOpen(false)}
                 onOpenCountryDetail={onOpenCountryDetail}
                 onOpenPlayerDetail={onOpenPlayerDetail}
