@@ -42,7 +42,6 @@ export default function PilihMenteriModal({
   const [insufficientFunds, setInsufficientFunds] = React.useState<number | null>(null);
 
   const handleHire = (tier: number, cost: number) => {
-    if (hiredTier > 0) return;
     if (availableNetIncome < cost) {
       setInsufficientFunds(cost);
       return;
@@ -62,7 +61,7 @@ export default function PilihMenteriModal({
           size="standard"
         />
 
-        <div className="flex-1 overflow-y-auto bg-root-surface p-4 sm:p-6 neon-scrollbar">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden bg-root-surface p-3 sm:p-4 lg:p-5 neon-scrollbar">
           {insufficientFunds !== null && (
             <div role="alert" className="mb-4 rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-xs font-bold text-rose-300">
               Netto harian negara tidak cukup. Kandidat ini membutuhkan {insufficientFunds.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO dari netto.
@@ -76,7 +75,7 @@ export default function PilihMenteriModal({
             </div>
           )}
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="flex min-w-0 flex-col gap-2.5">
             {MINISTER_CANDIDATES.map(candidate => {
               const isHired = hiredTier === candidate.tier;
               const insufficientCash = availableNetIncome < candidate.cost;
@@ -85,31 +84,31 @@ export default function PilihMenteriModal({
               return (
                 <article
                   key={candidate.tier}
-                  className={`flex flex-col rounded-xl border bg-root-canvas p-4 ${
+                  className={`flex min-w-0 flex-col overflow-hidden rounded-xl border bg-root-canvas p-3 md:grid md:min-h-[68px] md:grid-cols-[100px_minmax(0,1fr)_135px_150px] md:items-center md:gap-[25px] xl:grid-cols-[128px_minmax(180px,1fr)_168px_200px] ${
                     isHired
-                      ? "border-emerald-400/60 shadow-lg shadow-emerald-500/10"
+                      ? "border-emerald-400/60"
                       : "border-root-accent/20"
                   }`}
                 >
-                  <div className="mb-3 flex items-center justify-between">
-                    <span className="flex items-center gap-2 text-sm font-black text-root-text">
-                      <Award className="h-4 w-4 text-root-accent" />
+                  <div className="mb-2 flex min-w-0 items-center justify-between whitespace-nowrap lg:mb-0">
+                    <span className="flex items-center gap-1.5 text-xs font-black text-root-text xl:text-sm">
+                      <Award className="h-4 w-4 shrink-0 text-root-accent" />
                       Menteri {candidate.tier}
                     </span>
-                    {isHired && <span className="text-[9px] font-black uppercase text-emerald-300">Menjabat</span>}
+                    {isHired && <span className="ml-2 text-[9px] font-black uppercase text-emerald-300">Menjabat</span>}
                   </div>
-                  <p className="mb-4 flex-1 text-xs font-bold text-root-accent">
+                  <p className="mb-2 min-w-0 truncate text-[11px] font-bold text-root-accent lg:mb-0 xl:text-xs">
                     {signedEffect} {department.effectLabel}
                   </p>
-                  <div className="mb-3 flex items-center justify-between border-t border-root-accent/10 pt-3 text-[11px]">
+                  <div className="mb-2 flex min-w-0 items-center justify-between whitespace-nowrap border-t border-root-accent/10 pt-2 text-[10px] lg:mb-0 lg:border-l lg:border-t-0 lg:px-2 lg:pt-0">
                     <span className="font-semibold text-root-subtle">Biaya rekrutmen</span>
-                    <span className="font-black text-root-text">{candidate.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
+                    <span className="ml-1.5 text-[11px] font-black text-root-text xl:text-xs">{candidate.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
                   </div>
                   <button
                     type="button"
-                    disabled={hiredTier > 0}
+                    disabled={isHired}
                     onClick={() => handleHire(candidate.tier, candidate.cost)}
-                    className={`w-full rounded-lg px-3 py-2 text-xs font-black uppercase transition-colors ${
+                    className={`w-full whitespace-nowrap rounded-lg px-3 py-2.5 text-[11px] font-black uppercase leading-tight transition-colors ${
                       isHired
                         ? "cursor-default bg-emerald-500/20 text-emerald-300"
                         : insufficientCash
@@ -117,13 +116,14 @@ export default function PilihMenteriModal({
                           : "bg-root-accent text-root-canvas hover:bg-root-accent/80"
                     }`}
                   >
-                    {isHired ? "Sedang Menjabat" : hiredTier > 0 ? "Posisi Terisi" : insufficientCash ? "Netto Tidak Cukup" : "Rekrut Menteri"}
+                    {isHired
+                      ? "Sedang Menjabat"
+                      : hiredTier > 0
+                        ? "Ganti Menteri"
+                        : insufficientCash
+                          ? "Netto Tidak Cukup"
+                          : "Rekrut Menteri"}
                   </button>
-                  {!isHired && !hiredTier && insufficientCash && (
-                    <span className="mt-2 text-center text-[10px] font-semibold text-rose-300">
-                      Klik untuk melihat pemberitahuan biaya
-                    </span>
-                  )}
                 </article>
               );
             })}

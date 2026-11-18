@@ -20,10 +20,10 @@ export default function TopNav({ activeView, onSelect, onFocusHome }: TopNavProp
   };
 
   const containerClasses = isLandscapePhone
-    ? 'fixed left-1/2 z-[200] flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-root-accent/30 bg-root-surface/90 px-1 py-0.5 shadow-lg max-h-[38px]'
+    ? 'fixed left-1/2 z-[200] flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-root-accent/30 bg-root-surface/90 px-1 py-0.5 max-h-[38px]'
     : isPortraitPhone
-    ? 'fixed left-1/2 z-[200] flex -translate-x-1/2 items-center gap-1 rounded-xl border border-root-accent/30 bg-root-surface/90 px-1.5 py-1 shadow-lg max-h-[44px]'
-    : 'fixed bottom-[4.25rem] left-1/2 z-[200] flex -translate-x-1/2 items-center gap-0.5 rounded-xl border border-root-accent/30 bg-root-surface/90 px-1.5 py-1 shadow-lg lg:bottom-[4.5rem] lg:gap-1 lg:rounded-2xl lg:px-2 lg:py-1.5 xl:bottom-[5.25rem] 2xl:bottom-[7rem]';
+    ? 'fixed left-1/2 z-[200] flex -translate-x-1/2 items-center gap-1 rounded-xl border border-root-accent/30 bg-root-surface/90 px-1.5 py-1 max-h-[44px]'
+    : 'fixed bottom-[4.25rem] left-1/2 z-[200] flex -translate-x-1/2 items-center gap-0.5 rounded-xl border border-root-accent/30 bg-root-surface/90 px-1.5 py-1 lg:bottom-[4.5rem] lg:gap-1 lg:rounded-2xl lg:px-2 lg:py-1.5 xl:bottom-[5.25rem] 2xl:bottom-[7rem]';
 
   return (
     <div

@@ -108,7 +108,7 @@ export default function BottomNav({
     >
       <nav
         aria-label="Navigasi menu utama"
-        className={`root-bottom-nav pointer-events-auto flex w-max max-w-full flex-wrap items-center border border-root-accent/30 bg-root-surface/95 shadow-xl shadow-black/30 backdrop-blur-md transition-[background-color,box-shadow] duration-200 ${
+        className={`root-bottom-nav pointer-events-auto flex w-max max-w-full flex-wrap items-center border border-root-accent/30 bg-root-surface/95 backdrop-blur-md transition-[background-color,box-shadow] duration-200 ${
           isLandscapePhone
             ? 'gap-0.5 rounded-md p-0.5'
             : isPortraitPhone
@@ -149,7 +149,7 @@ export default function BottomNav({
                       : 'min-h-10 gap-2 rounded-xl px-2.5 py-2'
                   } ${
                     isActive
-                      ? "border-root-accent bg-root-accent text-root-accent-ink shadow-sm"
+                      ? "border-root-accent bg-root-accent text-root-accent-ink"
                       : "border-transparent text-root-muted hover:bg-root-accent/10 hover:text-root-text"
                   }`}
                 >

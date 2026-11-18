@@ -34,7 +34,10 @@ import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModal
 import { calculateCountryNetBalance, getDepartmentLevel } from "@/app/logic/economic_logic/treasuryUpdater";
 import { CABINET_DEPARTMENT_IMAGES, LEVEL_UP_COST, MAX_CABINET_LEVEL } from "@/app/logic/economic_logic/departments";
 import { generateKabinetChangeNotification } from "@/app/page/menus/inbox/logic/13_notifikasi_kabinet/kabinetChangeLogic";
-import PilihMenteriModal, { type MinisterCandidateDepartment } from "./PilihMenteriModal";
+import PilihMenteriModal, {
+  MINISTER_CANDIDATES,
+  type MinisterCandidateDepartment,
+} from "./PilihMenteriModal";
 import GantiIbukotaModal from "./2_ganti_ibukota/GantiIbukotaModal";
 import { MapPin } from "lucide-react";
 import { applyReformasiBirokrasiToUpgradeCost } from "@/app/page/bonus_logic";
@@ -405,15 +408,18 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
   };
 
   const hireMinister = (department: MinisterCandidateDepartment, tier: number, cost: number) => {
-    if (
-      availableNetIncome < cost ||
-      Number(countryDetail?.[`menteri_${department.id}`]) > 0
-    ) return;
+    const previousTier = Number(countryDetail?.[`menteri_${department.id}`]) || 0;
+    const previousCost = previousTier > 0
+      ? (MINISTER_CANDIDATES.find(candidate => candidate.tier === previousTier)?.cost ?? 0)
+      : 0;
+    if (availableNetIncome + previousCost < cost) return;
+    const pendingExpense = (Number(countryDetail?.minister_recruitment_expense_pending) || 0)
+      - previousCost
+      + cost;
     setCountryDetail({
       ...countryDetail,
       [`menteri_${department.id}`]: tier,
-      minister_recruitment_expense_pending:
-        (Number(countryDetail?.minister_recruitment_expense_pending) || 0) + cost,
+      minister_recruitment_expense_pending: Math.max(0, pendingExpense),
     });
     setMinisterDepartment(null);
   };
@@ -602,7 +608,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5 mb-2 text-root-text font-bold text-sm">
-                            <span className="h-3 w-3 rounded-full bg-root-accent inline-block shadow-[0_0_8px_#00FFAA]" />
+                            <span className="h-3 w-3 rounded-full bg-root-accent inline-block" />
                             {income.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO per hari
                           </div>
 
@@ -640,7 +646,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                                   }
                                   className={`h-4 flex-1 rounded-sm transition-all ${
                                     boxLevel === level
-                                      ? "bg-root-accent cursor-default shadow-[0_0_8px_#00FFAA]"
+                                      ? "bg-root-accent cursor-default"
                                       : filled
                                       ? "bg-root-accent/70 hover:bg-root-accent cursor-pointer"
                                       : canAffordJump
@@ -684,7 +690,14 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
       {ministerDepartment && (
         <PilihMenteriModal
           department={ministerDepartment}
-          availableNetIncome={availableNetIncome}
+          availableNetIncome={
+            availableNetIncome +
+            (MINISTER_CANDIDATES.find(
+              candidate =>
+                candidate.tier ===
+                (Number(countryDetail?.[`menteri_${ministerDepartment.id}`]) || 0)
+            )?.cost ?? 0)
+          }
           hiredTier={Number(countryDetail?.[`menteri_${ministerDepartment.id}`]) || 0}
           onClose={() => setMinisterDepartment(null)}
           onHire={(tier, cost) => hireMinister(ministerDepartment, tier, cost)}
