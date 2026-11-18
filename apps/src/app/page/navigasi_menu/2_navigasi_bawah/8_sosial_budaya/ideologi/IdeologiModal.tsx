@@ -80,7 +80,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
   // 🔥 STATE BARU UNTUK MODAL KONFIRMASI & INFO
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [infoTarget, setInfoTarget] = useState<string | null>(null);
-  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [feedback, setFeedback] = useState<string | null>(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
 
   const [worldIdeologies, setWorldIdeologies] = useState<{ country: string; ideology: string }[]>([]);
@@ -191,10 +191,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
       : [];
     const canceledPendingChange = isInstant && pendingChanges.some((change) => change.type === 'ideology');
     if (!isInstant && pendingChanges.some((change) => change.type === 'ideology')) {
-      setFeedback({
-        type: "error",
-        message: "Perubahan ideologi lain masih menunggu penyelesaian. Tunggu hingga selesai sebelum menjadwalkan perubahan baru.",
-      });
+      setFeedback("Perubahan ideologi lain masih menunggu penyelesaian. Tunggu hingga selesai sebelum menjadwalkan perubahan baru.");
       setIsConfirmOpen(false);
       return;
     }
@@ -214,10 +211,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
       try {
         scheduledChange = createPendingSocialCulturalChange('ideology', oldIdeology, selectedIdeology, dateStr);
       } catch (error) {
-        setFeedback({
-          type: "error",
-          message: error instanceof Error ? error.message : "Tanggal perubahan ideologi tidak valid.",
-        });
+        setFeedback(error instanceof Error ? error.message : "Tanggal perubahan ideologi tidak valid.");
         setIsConfirmOpen(false);
         setIsSaving(false);
         return;
@@ -250,12 +244,6 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
           ? `Ideologi negara langsung diubah ke ${selectedIdeology}.${canceledPendingChange ? ' Jadwal perubahan sebelumnya dibatalkan.' : ''} Biaya perubahan ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO.`
           : `Perubahan ideologi ke ${selectedIdeology} dijadwalkan dalam ${SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari. Biaya ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`,
       };
-    });
-    setFeedback({
-      type: "success",
-      message: isInstant
-        ? `Ideologi berhasil diubah seketika menjadi ${selectedIdeology}.${canceledPendingChange ? ' Jadwal perubahan sebelumnya dibatalkan.' : ''} Biaya ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`
-        : `Perubahan ideologi menjadi ${selectedIdeology} dijadwalkan selesai dalam ${SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari. Biaya ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`,
     });
     setIsConfirmOpen(false);
     setIsSaving(false);
@@ -315,13 +303,6 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
           </div>
 
           <div className="satisfaction-modal-summary root-modal-util-6614545ce3">
-            <div className="root-modal-util-6cfc7e6ab3 flex-wrap">
-              <Shield aria-hidden="true" className="root-modal-util-00f4ec4a9a" />
-              <span className="root-modal-util-14d6efe9ef root-modal-util-614c0c7dff">Ideologi Utama:</span>
-              <span className="root-modal-util-04f32edb66 root-modal-util-4457a4d3a8">{ideology}</span>
-              <span className="root-modal-util-14d6efe9ef root-modal-util-614c0c7dff">Anggaran:</span>
-              <span className="root-modal-util-04f32edb66 root-modal-util-4457a4d3a8">{anggaran.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
-            </div>
             <div className="satisfaction-modal-summary-controls">
               <RootModalTabs
                 className="satisfaction-modal-tabs"
@@ -415,11 +396,9 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                 </div>
 
                 {feedback && (
-                  <div role={feedback.type === 'error' ? 'alert' : 'status'} className={`mt-6 p-4 rounded-xl border ${
-                    feedback.type === 'success'
-                      ? 'border-root-accent/30 bg-root-accent/10 text-root-accent'
-                      : 'border-rose-500/30 bg-rose-500/10 text-rose-300'
-                  }`}>{feedback.message}</div>
+                  <div role="alert" className="mt-6 rounded-xl border border-rose-500/30 bg-rose-500/10 p-4 text-rose-300">
+                    {feedback}
+                  </div>
                 )}
               </div>
             )}

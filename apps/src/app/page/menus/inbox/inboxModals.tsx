@@ -64,6 +64,7 @@ interface TopLeftIconProps {
   onRedirectClick?: (notification: NotificationMessage) => void;
   userCountryName?: string;
   isWarAnalysisActive?: boolean;
+  isToastSuppressed?: boolean;
 }
 
 export default function TopLeftIcon({
@@ -77,6 +78,7 @@ export default function TopLeftIcon({
   onRedirectClick,
   userCountryName,
   isWarAnalysisActive = false,
+  isToastSuppressed = false,
 }: TopLeftIconProps) {
   const [mounted, setMounted] = useState(false);
   const [toastNotification, setToastNotification] = useState<NotificationMessage | null>(null);
@@ -97,7 +99,7 @@ export default function TopLeftIcon({
   const isLandscapePhone = viewportMode === 'landscapePhone';
   const isPortraitPhone = viewportMode === 'portraitPhone';
   const isMobile = isLandscapePhone || isPortraitPhone;
-  const isToastBlocked = isOpen || isWarAnalysisActive;
+  const isToastBlocked = isOpen || isWarAnalysisActive || isToastSuppressed;
   const orderedNotifications = useMemo(() => {
     return [...visibleNotifications].sort((first, second) => {
       const firstArrivalDate = first.diplomacyArrivalDate;

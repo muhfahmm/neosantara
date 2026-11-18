@@ -9657,6 +9657,7 @@ export default function MapPage() {
                 }}
                 isOpen={inboxModalOpen}
                 isWarAnalysisActive={isWarAnalysisActive}
+                isToastSuppressed={activeMenu === "Menu:Agama" || activeMenu === "Menu:Ideologi"}
                 onClose={() => setInboxModalOpen(false)}
                 notifications={notifications}
                 onClearAll={() => setNotifications([])}

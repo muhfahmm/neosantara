@@ -82,7 +82,7 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
   // 🔥 STATE UNTUK MODAL KONFIRMASI & GAGAL
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isCurrentReligionInfoOpen, setIsCurrentReligionInfoOpen] = useState(false);
-  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [feedback, setFeedback] = useState<string | null>(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
 
   const [worldReligions, setWorldReligions] = useState<{ country: string; religion: string }[]>([]);
@@ -198,10 +198,7 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
       : [];
     const canceledPendingChange = isInstant && pendingChanges.some((change) => change.type === 'religion');
     if (!isInstant && pendingChanges.some((change) => change.type === 'religion')) {
-      setFeedback({
-        type: "error",
-        message: "Perubahan agama lain masih menunggu penyelesaian. Tunggu hingga selesai sebelum menjadwalkan perubahan baru.",
-      });
+      setFeedback("Perubahan agama lain masih menunggu penyelesaian. Tunggu hingga selesai sebelum menjadwalkan perubahan baru.");
       setIsConfirmOpen(false);
       return;
     }
@@ -221,10 +218,7 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
       try {
         scheduledChange = createPendingSocialCulturalChange('religion', oldReligion, selectedReligion, dateStr);
       } catch (error) {
-        setFeedback({
-          type: "error",
-          message: error instanceof Error ? error.message : "Tanggal perubahan agama tidak valid.",
-        });
+        setFeedback(error instanceof Error ? error.message : "Tanggal perubahan agama tidak valid.");
         setIsConfirmOpen(false);
         setIsSaving(false);
         return;
@@ -257,12 +251,6 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
           ? `Agama negara langsung diubah ke ${selectedReligion}.${canceledPendingChange ? ' Jadwal perubahan sebelumnya dibatalkan.' : ''} Biaya perubahan ${RELIGION_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO.`
           : `Perubahan agama ke ${selectedReligion} dijadwalkan dalam ${SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari. Biaya ${RELIGION_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`,
       };
-    });
-    setFeedback({
-      type: "success",
-      message: isInstant
-        ? `Agama berhasil diubah seketika menjadi ${selectedReligion}.${canceledPendingChange ? ' Jadwal perubahan sebelumnya dibatalkan.' : ''} Biaya ${RELIGION_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`
-        : `Perubahan agama menjadi ${selectedReligion} dijadwalkan selesai dalam ${SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari. Biaya ${RELIGION_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`,
     });
     setIsConfirmOpen(false);
     setIsSaving(false);
@@ -320,13 +308,6 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
           </div>
 
           <div className="satisfaction-modal-summary root-modal-util-6614545ce3">
-            <div className="root-modal-util-6cfc7e6ab3 flex-wrap">
-              <Star aria-hidden="true" className="root-modal-util-00f4ec4a9a" />
-              <span className="root-modal-util-14d6efe9ef root-modal-util-614c0c7dff">Agama Saat Ini:</span>
-              <span className="root-modal-util-04f32edb66 root-modal-util-4457a4d3a8">{religion}</span>
-              <span className="root-modal-util-14d6efe9ef root-modal-util-614c0c7dff">Anggaran:</span>
-              <span className="root-modal-util-04f32edb66 root-modal-util-4457a4d3a8">{anggaran.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
-            </div>
             <div className="satisfaction-modal-summary-controls">
               <RootModalTabs
                 className="satisfaction-modal-tabs"
@@ -408,11 +389,9 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                 </div>
 
                 {feedback && (
-                  <div role={feedback.type === 'error' ? 'alert' : 'status'} className={`mt-6 p-4 rounded-xl border ${
-                    feedback.type === 'success'
-                      ? 'border-root-accent/30 bg-root-accent/10 text-root-accent'
-                      : 'border-rose-500/30 bg-rose-500/10 text-rose-300'
-                  }`}>{feedback.message}</div>
+                  <div role="alert" className="mt-6 rounded-xl border border-rose-500/30 bg-rose-500/10 p-4 text-rose-300">
+                    {feedback}
+                  </div>
                 )}
               </div>
             )}
