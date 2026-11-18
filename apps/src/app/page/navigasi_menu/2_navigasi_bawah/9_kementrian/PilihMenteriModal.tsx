@@ -63,16 +63,6 @@ export default function PilihMenteriModal({
         />
 
         <div className="flex-1 overflow-y-auto bg-root-surface p-4 sm:p-6 neon-scrollbar">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-root-accent/20 bg-root-canvas p-3">
-            <p className="text-xs font-semibold text-[#A0B0B0]">
-              Pilih satu kandidat untuk meningkatkan efek {department.effectLabel}.
-            </p>
-            <p className="flex items-center gap-1.5 text-xs font-bold text-root-accent">
-              <Banknote className="h-4 w-4" />
-              Netto harian: {availableNetIncome.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
-            </p>
-          </div>
-
           {insufficientFunds !== null && (
             <div role="alert" className="mb-4 rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-xs font-bold text-rose-300">
               Netto harian negara tidak cukup. Kandidat ini membutuhkan {insufficientFunds.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO dari netto.
