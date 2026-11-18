@@ -1,13 +1,14 @@
 :root {
-  --root-color-canvas: #1a0a0a;
-  --root-color-surface: #0F2424;
-  --root-color-accent: #00FFAA;
-  --root-color-accent-ink: #071414;
-  --root-color-text: #E0E0E0;
-  --root-color-body: #D0D8D8;
-  --root-color-muted: #AAB6B6;
-  --root-color-subtle: #6B8A8A;
-  --root-color-danger: #FF2D55;
+--root-color-canvas: #0F172A;
+--root-color-surface: #1E293B;
+--root-color-accent: #0EA5E9;
+--root-color-accent-ink: #FFFFFF;
+--root-color-text: #F8FAFC;
+--root-color-body: #CBD5E1;
+--root-color-muted: #A6B4C8;
+--root-color-subtle: #94A3B8;
+--root-color-danger: #EF4444;
+
   --root-frame-rail-start: #FFF8EC;
   --root-frame-rail-middle: #E8DDCB;
   --root-frame-rail-end: #FFF8EC;
