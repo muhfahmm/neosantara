@@ -99,7 +99,7 @@ export default function AISuggestModal({
                         className="group relative p-1 rounded-full hover:bg-rose-900/50 transition-colors cursor-pointer focus:outline-none"
                         title="Klik untuk Lihat Detail Defisit & Rekomendasi"
                       >
-                        <AlertCircle className="w-5 h-5 text-rose-400 group-hover:scale-110 transition-transform" />
+                        <AlertCircle className="w-5 h-5 text-rose-400" />
                         <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[8px] font-bold text-root-accent opacity-80 whitespace-nowrap group-hover:opacity-100">Detail</span>
                       </button>
                     ) : item.isSurplus ? (

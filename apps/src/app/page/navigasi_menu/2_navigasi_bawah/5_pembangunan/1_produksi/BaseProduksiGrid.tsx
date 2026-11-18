@@ -185,7 +185,7 @@ export default function BaseProduksiGrid({
             title={`Analisis AI untuk Sektor ${title}`}
           >
             <div className="relative">
-              <MessageSquare className="w-4 h-4 text-root-accent group-hover:scale-110 transition-transform" />
+              <MessageSquare className="w-4 h-4 text-root-accent" />
             </div>
             <span className="text-[10px] font-black uppercase tracking-wider text-root-accent">Rekomendasi AI</span>
           </button>

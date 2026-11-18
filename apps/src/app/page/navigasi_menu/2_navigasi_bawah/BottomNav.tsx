@@ -223,7 +223,7 @@ function Tooltip({ label }: { label: string }) {
   return (
     <div
       role="tooltip"
-      className="pointer-events-none absolute bottom-full left-1/2 z-[9999] mb-3 -translate-x-1/2 scale-95 whitespace-nowrap rounded-lg border border-root-accent/30 bg-root-surface px-4 py-2.5 text-[13px] font-semibold text-root-text opacity-0 transition-all duration-200 group-hover:block group-hover:scale-100 group-hover:opacity-100"
+      className="pointer-events-none absolute bottom-full left-1/2 z-[9999] mb-3 -translate-x-1/2 whitespace-nowrap rounded-lg border border-root-accent/30 bg-root-surface px-4 py-2.5 text-[13px] font-semibold text-root-text opacity-0 transition-opacity duration-150 group-hover:block group-hover:opacity-100"
     >
       {label}
       <div className="absolute top-full left-1/2 -translate-x-1/2 border-x-4 border-x-transparent border-t-4 border-t-root-surface"></div>

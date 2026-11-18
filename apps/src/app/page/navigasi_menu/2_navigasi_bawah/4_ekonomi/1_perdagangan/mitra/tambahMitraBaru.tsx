@@ -176,7 +176,7 @@ export default function TambahMitraBaru({
                               }`}
                           >
                             {item.iso ? (
-                              <div className="w-8 h-5 rounded-sm overflow-hidden border border-root-accent/30 flex-shrink-0 bg-root-surface relative group-hover:scale-105 transition-transform">
+                              <div className="w-8 h-5 rounded-sm overflow-hidden border border-root-accent/30 flex-shrink-0 bg-root-surface relative">
                                 <img
                                   src={`https://flagcdn.com/w80/${item.iso.toLowerCase()}.png`}
                                   alt={item.country}

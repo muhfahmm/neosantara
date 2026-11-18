@@ -458,9 +458,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                   >
                     <div className={`p-3 sm:p-3.5 rounded-full ${
                         isUnlockerCardActive ? 'bg-root-accent/20 border-root-accent/40' : 'bg-root-surface border-root-accent/20'
-                      } border mb-2.5 sm:mb-3 ${
-                        isLockedCard || isUnlockerCardActive ? '' : 'group-hover:scale-110 transition-transform'
-                      }`}
+                      } border mb-2.5 sm:mb-3`}
                     >
                       {isUnlockerCardActive ? (
                         <div className="w-8 h-8 sm:w-10 sm:h-10 text-root-accent flex items-center justify-center">
@@ -503,10 +501,10 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                 }`}
               >
                 <div className="flex items-center gap-3.5 sm:gap-4">
-                  <div className={`p-3 sm:p-3.5 rounded-xl border flex items-center justify-center transition-transform duration-200 ${
+                  <div className={`p-3 sm:p-3.5 rounded-xl border flex items-center justify-center duration-200 ${
                     !isNuclearProgramActive || totalReadyIcbm <= 0
                       ? 'bg-root-canvas border-root-subtle/30 text-root-subtle'
-                      : 'bg-rose-500/10 border-rose-500/40 text-rose-400 group-hover:scale-105 group-hover:bg-rose-500/20'
+                      : 'bg-rose-500/10 border-rose-500/40 text-rose-400 group-hover:bg-rose-500/20'
                   }`}>
                     <Flame className="w-6 h-6 sm:w-7 sm:h-7 animate-pulse" />
                   </div>

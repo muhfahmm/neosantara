@@ -668,7 +668,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                               : `Pilih kandidat menteri • Upgrade 1 level: ${getLevelUpCostForStep(level + 1, countryDetail)?.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO`
                           }
                           aria-label={`Pilih kandidat menteri untuk ${dept.name}`}
-                          className={`h-12 w-12 shrink-0 rounded-lg border flex items-center justify-center cursor-pointer hover:scale-105 transition-transform ${
+                          className={`h-12 w-12 shrink-0 rounded-lg border flex items-center justify-center cursor-pointer transition-colors ${
                             maxed
                               ? "border-root-accent/10 bg-root-surface text-root-subtle"
                               : "border-root-accent/40 bg-root-accent text-root-canvas shadow-md"

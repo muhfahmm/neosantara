@@ -382,7 +382,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                     setIsPilihJalurOpen(false);
                     setIsTingkatkanUangOpen(true);
                   }}
-                  className="group flex flex-col items-center justify-center text-center p-6 sm:p-8 rounded-2xl border border-root-accent/30 bg-root-canvas hover:bg-root-accent/10 hover:border-root-accent transition-all cursor-pointer shadow-sm hover:scale-[1.02] min-h-[200px] sm:min-h-[240px]"
+                  className="group flex flex-col items-center justify-center text-center p-6 sm:p-8 rounded-2xl border border-root-accent/30 bg-root-canvas hover:bg-root-accent/10 hover:border-root-accent transition-all cursor-pointer shadow-sm min-h-[200px] sm:min-h-[240px]"
                 >
                   <div className="p-4 bg-root-accent/10 rounded-2xl border border-root-accent/30 mb-4 group-hover:bg-root-accent transition-all">
                     <Coins className="h-8 w-8 sm:h-10 sm:w-10 text-root-accent group-hover:text-root-canvas transition-colors" />
@@ -401,7 +401,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                     setIsPilihJalurOpen(false);
                     setIsBeriHadiahBarangOpen(true);
                   }}
-                  className="group flex flex-col items-center justify-center text-center p-6 sm:p-8 rounded-2xl border border-root-accent/30 bg-root-canvas hover:bg-root-accent/10 hover:border-root-accent transition-all cursor-pointer shadow-sm hover:scale-[1.02] min-h-[200px] sm:min-h-[240px]"
+                  className="group flex flex-col items-center justify-center text-center p-6 sm:p-8 rounded-2xl border border-root-accent/30 bg-root-canvas hover:bg-root-accent/10 hover:border-root-accent transition-all cursor-pointer shadow-sm min-h-[200px] sm:min-h-[240px]"
                 >
                   <div className="p-4 bg-root-accent/10 rounded-2xl border border-root-accent/30 mb-4 group-hover:bg-root-accent transition-all">
                     <Gift className="h-8 w-8 sm:h-10 sm:w-10 text-root-accent group-hover:text-root-canvas transition-colors" />
