@@ -1,10 +1,10 @@
 "use client"
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import RootModalTabs from '@/app/page/root_modals_design_menu/RootModalTabs';
 import React, { useState } from "react";
 import { Award, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import MenuInfoButton from "../../MenuInfoButton";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import ResolusiPBB from "./1_resolusi_PBB/menus/1_resolusiPBB";
 import KeamananPBB from "./2_keamanan_PBB/menus/1_keamananPBB";
 import SuaraPBB from "./3_suara_negara_PBB/suaraPBB";
@@ -28,25 +28,18 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
     <NotebookModalWrapper onClose={onClose}>
       <div className="root-modal-util-b74379da23">
         
-        <div className="satisfaction-modal-header root-modal-util-9462ce2345">
-          <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
-            <div className="root-modal-util-08dfbca033">
-              <div className="root-modal-util-739d92b232">
-                <Award aria-hidden="true" className="root-modal-util-d252947d10 text-root-accent animate-pulse" />
-              </div>
-              <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                Sidang Umum Perserikatan Bangsa-Bangsa
-              </h2>
-            </div>
-          </div>
-          <div className="root-modal-util-08dfbca033">
+        <RootInfoModalHeader
+          title="Sidang Umum Perserikatan Bangsa-Bangsa"
+          onClose={onClose}
+          icon={<Award />}
+          actions={
             <MenuInfoButton
               title="PBB"
               description="Pantau agenda Perserikatan Bangsa-Bangsa melalui resolusi, Dewan Keamanan, dan suara negara. Partisipasi serta keputusan di setiap bagian dapat memengaruhi kebijakan global dan posisi diplomatik negara."
             />
-            <SharedModalCloseButton onClick={onClose} />
-          </div>
-        </div>
+          }
+          size="standard"
+        />
 
         {/* Body Content */}
         <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-root-surface relative z-10 neon-scrollbar">

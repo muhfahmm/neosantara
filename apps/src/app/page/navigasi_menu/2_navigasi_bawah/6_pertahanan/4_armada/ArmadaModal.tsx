@@ -120,15 +120,25 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
 
     {/* POPUP MODAL INFO BONUS PERTAHANAN */}
     {showDefenseBonusInfo && (
-      <NotebookModalWrapper onClose={() => setShowDefenseBonusInfo(false)}>
-        <div className="root-modal-util-b74379da23" role="dialog" aria-modal="true" aria-labelledby="defense-bonus-info-title">
+      <NotebookModalWrapper
+        onClose={() => setShowDefenseBonusInfo(false)}
+        zIndexClass="z-[200]"
+        contentSized={true}
+        frameClassName="menu-info-content-sized-frame"
+      >
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="defense-bonus-info-title"
+          className="root-modal-util-b74379da23 menu-info-content-sized-dialog"
+        >
           <RootInfoModalHeader
             title="Informasi Armada & Bonus Pertahanan"
             titleId="defense-bonus-info-title"
             onClose={() => setShowDefenseBonusInfo(false)}
             size="standard"
           />
-          <div className={`root-info-modal-content relative z-10 flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 custom-scrollbar ${rootModalTypography.body}`}>
+          <div className={`root-info-modal-content min-h-0 bg-root-surface p-4 sm:p-5 lg:p-6 space-y-4 ${rootModalTypography.body}`}>
             <p>
               Kelola armada militer aktif dan infrastruktur pendukungnya. Armada aktif menentukan kemampuan pertahanan dan operasi laut, sementara infrastruktur militer mendukung kapasitas serta kesiapan pasukan.
             </p>

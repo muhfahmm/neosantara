@@ -1,7 +1,7 @@
 "use client";
 
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
-import { getRelationTier } from '@/app/logic/relationTiers';
+import { getRelationBadge } from '@/app/logic/relationTiers';
 import React, { useState, useEffect, useMemo } from "react";
 import {
   Gift,
@@ -178,13 +178,8 @@ export default function BeriHadiahModal({
     onClose();
   };
 
-  const getRelationStatusBadge = (val: number) => {
-    const tier = getRelationTier(val);
-    return { label: tier.label, color: `${tier.textColor} ${tier.badgeClassName}` };
-  };
-
-  const currentBadge = getRelationStatusBadge(currentRelation);
-  const newBadge = getRelationStatusBadge(newRelation);
+  const currentBadge = getRelationBadge(currentRelation);
+  const newBadge = getRelationBadge(newRelation);
 
   if (!isOpen) return null;
 
@@ -316,8 +311,8 @@ export default function BeriHadiahModal({
                     <span className="block text-[9px] sm:text-[10px] font-bold text-root-subtle uppercase">Saat Ini</span>
                     <span className="text-lg sm:text-xl font-black text-root-text">{currentRelation}</span>
                     <div className="mt-1">
-                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${currentBadge.color}`}>
-                        {currentBadge.label}
+                      <span className={`inline-block px-3 py-0.5 rounded-md border font-black text-xs shadow-sm ${currentBadge.className}`}>
+                        {currentBadge.alias}
                       </span>
                     </div>
                   </div>
@@ -335,8 +330,8 @@ export default function BeriHadiahModal({
                     <span className="block text-[9px] sm:text-[10px] font-bold text-root-subtle uppercase">Setelah Pemberian</span>
                     <span className="text-lg sm:text-xl font-black text-root-accent">{newRelation}</span>
                     <div className="mt-1">
-                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${newBadge.color}`}>
-                        {newBadge.label}
+                      <span className={`inline-block px-3 py-0.5 rounded-md border font-black text-xs shadow-sm ${newBadge.className}`}>
+                        {newBadge.alias}
                       </span>
                     </div>
                   </div>

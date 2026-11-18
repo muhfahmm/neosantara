@@ -9,6 +9,7 @@ import { COUNTRIES_DATA } from "../../../map_system/map-data";
 import getTradeAgreementsForCountry from '../../../../../../../json/9_database_mitra_perdagangan/tradeAgreementRegistry';
 import { getEmbassiesForCountry } from '../../../../../../../json/6_database_kedutaan_besar/embassyRegistry';
 import MenuInfoButton from "../MenuInfoButton";
+import RootConfirmModal from "@/app/page/root_modals_design_menu/RootConfirmModal";
 
 type TradeAgreement = {
   mitra: string;
@@ -248,36 +249,20 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
       </NotebookModalWrapper>
 
       {/* Modal Konfirmasi Hancurkan Kedutaan */}
-      {confirmModal.isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-8 pointer-events-auto rounded-2xl">
-          <div className="modal-responsive-shell bg-root-surface border border-rose-500/40 rounded-2xl p-8 shadow-2xl relative">
-            <SharedModalCloseButton
-              onClick={() => setConfirmModal({ isOpen: false, partnerName: null })}
-              className="absolute top-4 right-4 p-1.5 rounded-lg text-root-subtle hover:text-root-accent transition-colors cursor-pointer"
-             appearance="custom">
-              <X className="h-5 w-5" />
-            </SharedModalCloseButton>
-            <h3 className="text-lg font-bold text-rose-400 uppercase tracking-wide mb-3">Konfirmasi Hancurkan Kedutaan</h3>
-            <p className="text-sm text-root-subtle font-medium leading-relaxed mb-6">
-              Apakah Anda yakin ingin menghancurkan Kedutaan Besar di <strong className="text-root-text">{confirmModal.partnerName}</strong>? Tindakan ini tidak dapat dibatalkan dan akan memutuskan hubungan diplomatik.
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setConfirmModal({ isOpen: false, partnerName: null })}
-                className="flex-1 py-2.5 rounded-xl border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-text text-xs font-bold uppercase transition-all cursor-pointer"
-              >
-                Batal
-              </button>
-              <button
-                onClick={handleConfirmDestroy}
-                className="flex-1 py-2.5 rounded-xl border border-rose-500/50 bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 transition-all font-bold text-xs uppercase cursor-pointer"
-              >
-                Hancurkan Kedutaan
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <RootConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ isOpen: false, partnerName: null })}
+        onConfirm={handleConfirmDestroy}
+        title="Konfirmasi Hancurkan Kedutaan"
+        confirmLabel="Hancurkan Kedutaan"
+        isDestructive
+        footerBorderClassName="border-rose-500/20"
+        zIndexClass="z-[100]"
+      >
+        <p className="text-sm text-root-subtle font-medium leading-relaxed my-2 [overflow-wrap:anywhere]">
+          Apakah Anda yakin ingin menghancurkan Kedutaan Besar di <strong className="text-root-text">{confirmModal.partnerName}</strong>? Tindakan ini tidak dapat dibatalkan dan akan memutuskan hubungan diplomatik.
+        </p>
+      </RootConfirmModal>
 
       {/* Modal Notifikasi Sukses */}
       {successModal.isOpen && (

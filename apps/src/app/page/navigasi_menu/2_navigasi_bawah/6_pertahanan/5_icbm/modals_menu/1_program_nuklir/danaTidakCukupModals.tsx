@@ -45,7 +45,7 @@ export default function DanaTidakCukupModals({
           <div className="flex items-center gap-3">
             <AlertCircle className="h-6 w-6 text-root-danger animate-pulse drop-shadow-[0_0_6px_#FF2D55]" />
             <div>
-              <h2 className="text-lg sm:text-xl font-bold text-root-danger tracking-tight leading-none uppercase">Dana Tidak Mencukupi</h2>
+              <h2 className="text-[length:var(--modal-font-title)] font-bold text-root-danger tracking-tight leading-none uppercase">Dana Tidak Mencukupi</h2>
               <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-root-subtle mt-1">Gagal melakukan pendanaan program nuklir</p>
             </div>
           </div>

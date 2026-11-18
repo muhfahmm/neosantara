@@ -66,7 +66,7 @@ export function ExitConfirmModal({
                             <div className={`text-[11px] font-black uppercase tracking-[0.25em] ${isExitWindow ? 'text-rose-400/80' : 'text-root-accent/70'}`}>
                                 {subtitle}
                             </div>
-                            <h3 className="text-2xl font-black text-white tracking-tight">
+                            <h3 className="text-[length:var(--modal-font-title)] font-black text-white tracking-tight">
                                 {title}
                             </h3>
                             <p className="text-sm font-semibold text-root-subtle leading-relaxed">

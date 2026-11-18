@@ -31,7 +31,7 @@ export default function IcbmInsufficientFundsModal({
           <div className="flex items-center gap-3">
             <AlertCircle className="h-6 w-6 text-root-danger drop-shadow-[0_0_6px_#FF2D55]" />
             <div>
-              <h3 className="text-xl font-black text-root-danger uppercase tracking-wide">Dana Tidak Cukup</h3>
+              <h3 className="text-[length:var(--modal-font-title)] font-black text-root-danger uppercase tracking-wide">Dana Tidak Cukup</h3>
               <p className="text-[11px] text-root-subtle mt-1">Kas negara Anda tidak mencukupi untuk membangun ICBM.</p>
             </div>
           </div>

@@ -1,10 +1,9 @@
 "use client"
 import RootTable from "@/app/page/root_modals_design_menu/RootTable";
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
-import { getRelationBadge, RELATION_TIERS } from '@/app/logic/relationTiers';
+import { getRelationBadge } from '@/app/logic/relationTiers';
 import React, { useEffect, useState } from "react";
-import { X, Globe, Search, Info, Building2, ShieldCheck, ShieldAlert, Heart, Gift, Coins, Sparkles, ArrowRight } from "lucide-react";
+import { Globe, Search, Info, Building2, ShieldCheck, ShieldAlert, Heart, Gift, Coins, Sparkles, ArrowRight } from "lucide-react";
 import NotebookModalWrapper from "../NotebookModalWrapper";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { getRelationValue, hasEmbassy } from "../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry";
@@ -13,7 +12,7 @@ import { getEmbassiesForCountry } from "../../../../../../../json/6_database_ked
 import TingkatkanHubunganModal from "@/app/page/detail_negara/2_geopolitik/3_tingkatkan_hubungan/tingkatkanHubunganModals";
 import BeriHadiahModal from "@/app/page/detail_negara/2_geopolitik/2_beri_hadiah/beriHadiahModals";
 import MenuInfoButton from "../MenuInfoButton";
-import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 
 interface ModalProps {
@@ -161,25 +160,18 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
       {!isLegendOpen && !isPilihJalurOpen && !isTingkatkanUangOpen && !isBeriHadiahBarangOpen && <NotebookModalWrapper onClose={onClose}>
         <div className="root-modal-util-b74379da23">
 
-          <div className="satisfaction-modal-header root-modal-util-9462ce2345">
-            <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
-              <div className="root-modal-util-08dfbca033">
-                <div className="root-modal-util-739d92b232">
-                  <Globe aria-hidden="true" className="root-modal-util-d252947d10 text-root-accent animate-pulse" />
-                </div>
-                <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                  Tingkat Hubungan Diplomatik
-                </h2>
-              </div>
-            </div>
-            <div className="root-modal-util-08dfbca033">
+          <RootInfoModalHeader
+            title="Tingkat Hubungan Diplomatik"
+            onClose={onClose}
+            icon={<Globe />}
+            actions={
               <MenuInfoButton
                 title="Tingkat Hubungan"
                 description="Lihat tingkat hubungan diplomatik dengan negara lain, telusuri negara berdasarkan hubungan, dan gunakan aksi diplomasi yang tersedia untuk memperbaikinya. Hubungan dapat memengaruhi kerja sama bilateral serta respons negara lain."
               />
-              <RootModalCloseButton onClick={onClose} />
-            </div>
-          </div>
+            }
+            size="standard"
+          />
 
           <div className="relative z-10 flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2 sm:px-6">
             <button
@@ -286,17 +278,13 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
       {isLegendOpen && (
         <NotebookModalWrapper onClose={() => setIsLegendOpen(false)} compact zIndexClass="z-[70]">
           <div role="dialog" aria-modal="true" aria-labelledby="relation-legend-title" className="flex max-h-[calc(100dvh-160px)] min-w-0 flex-col overflow-hidden">
-            <div className="flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-3 py-2 sm:px-5 sm:py-2.5">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-root-surface rounded-lg border border-root-accent/30">
-                  <Info className="h-4 w-4 text-root-accent" />
-                </div>
-                <h3 id="relation-legend-title" className="text-sm font-bold text-root-text uppercase tracking-wide">
-                  Indikator Hubungan Diplomatik
-                </h3>
-              </div>
-              <RootModalCloseButton onClick={() => setIsLegendOpen(false)} />
-            </div>
+            <RootInfoModalHeader
+              title="Indikator Hubungan Diplomatik"
+              titleId="relation-legend-title"
+              onClose={() => setIsLegendOpen(false)}
+              icon={<Info />}
+              size="standard"
+            />
 
             <div className="min-h-0 space-y-3 overflow-y-auto bg-root-surface p-4 sm:p-5">
               <div className="flex items-center justify-between border-b border-root-accent/15 pb-2">
@@ -345,36 +333,14 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
         <NotebookModalWrapper onClose={() => setIsPilihJalurOpen(false)}>
           <div className="flex h-full flex-col overflow-hidden">
 
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas gap-2 shrink-0 rounded-t-2xl">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-root-accent/30 shrink-0">
-                  <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-                </div>
-                <div>
-                  <h3 className="text-base sm:text-xl font-bold text-root-text tracking-tight leading-none uppercase">
-                    Pilih Jalur Diplomasi
-                  </h3>
-                  <p className="text-[10px] sm:text-xs text-root-subtle font-semibold mt-1">
-                    Tingkatkan Hubungan ke Seluruh Negara Dunia
-                  </p>
-                </div>
-              </div>
-
-              <SharedModalCloseButton
-                onClick={() => setIsPilihJalurOpen(false)}
-                className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
-               appearance="custom">
-                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-4 w-4" />
-              </SharedModalCloseButton>
-            </div>
+            <RootInfoModalHeader
+              title="Pilih Jalur Diplomasi"
+              onClose={() => setIsPilihJalurOpen(false)}
+              icon={<Sparkles />}
+              size="standard"
+            />
 
             <div className="flex-1 min-h-0 bg-root-surface relative z-10 p-6 sm:p-8 lg:p-12 flex flex-col items-center justify-center gap-6 sm:gap-8">
-              <p className="text-sm sm:text-base text-root-text text-center leading-relaxed max-w-2xl">
-                Pilih metode bantuan yang ingin Anda salurkan untuk menaikkan tingkat hubungan bilateral dengan{" "}
-                <strong className="text-root-accent">seluruh negara dunia</strong>.
-              </p>
-
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 w-full max-w-3xl">
                 <button
                   type="button"

@@ -135,7 +135,7 @@ export default function IcbmBuildStatusModal({
               <Rocket className="h-4 w-4 sm:h-5 sm:w-5 text-amber-400" />
             </div>
             <div>
-              <h3 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Status Pembangunan ICBM</h3>
+              <h3 className="text-[length:var(--modal-font-title)] font-bold text-root-accent tracking-tight leading-none uppercase">Status Pembangunan ICBM</h3>
               <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">Pantau perkembangan produksi rudal balistik antarbenua</p>
             </div>
           </div>

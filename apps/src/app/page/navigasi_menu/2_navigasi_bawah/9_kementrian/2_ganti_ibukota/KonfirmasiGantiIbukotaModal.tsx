@@ -62,7 +62,7 @@ export default function KonfirmasiGantiIbukotaModal({
             <Landmark className="h-6 w-6 text-root-accent" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-root-text uppercase leading-none">
+            <h3 className="text-[length:var(--modal-font-title)] font-bold text-root-text uppercase leading-none">
               Konfirmasi Pemindahan Ibukota
             </h3>
           </div>

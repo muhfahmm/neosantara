@@ -26,7 +26,7 @@ export default function ProgramNuklirTimeDetail({
           <div className="flex items-center gap-3">
             <Clock3 className="h-6 w-6 text-[#FBBF24] drop-shadow-[0_0_6px_#FBBF24]" />
             <div>
-              <h2 className="text-2xl font-bold text-[#FBBF24] uppercase tracking-tight">Waktu Pembangunan Program Nuklir</h2>
+              <h2 className="text-[length:var(--modal-font-title)] font-bold text-[#FBBF24] uppercase tracking-tight">Waktu Pembangunan Program Nuklir</h2>
               <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-root-subtle mt-1">Estimasi pembangunan selama program nuklir aktif</p>
             </div>
           </div>

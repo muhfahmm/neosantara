@@ -212,7 +212,7 @@ export default function CountryDetailKonsumsiModal({
               <Zap className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
             <div>
-              <h2 className="text-base sm:text-xl font-bold text-rose-400 tracking-tight leading-none uppercase">
+              <h2 className="text-[length:var(--modal-font-title)] font-bold text-rose-400 tracking-tight leading-none uppercase">
                 Rincian Konsumsi Listrik - {countryName}
               </h2>
               <p className="text-[10px] text-root-subtle font-semibold mt-0.5">Detail beban konsumsi listrik nasional</p>

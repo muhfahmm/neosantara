@@ -416,7 +416,7 @@ export default function RingkasanPopulasiModal({
 
             {/* Tunawisma */}
             <div
-              className={`population-summary-card root-modal-util-ef77e14e02 root-modal-util-5f22e64f22 root-modal-util-eef2dbcee8 cursor-default`}
+              className={`population-summary-card root-modal-util-ef77e14e02 root-modal-util-5f22e64f22 border-rose-500/30 hover:border-rose-500/60 transition-all cursor-default`}
             >
               <div className={"root-modal-util-85d02ce91c"}>
                 <div className={"root-modal-util-758830936e"}>

@@ -399,12 +399,12 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
               searchAriaLabel="Cari nama negara peminjam"
             />
 
-            <div className="loan-modal-stat-grid grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-              <div className={`loan-modal-stat-card flex min-w-0 flex-col justify-center border border-root-accent/30 bg-root-surface p-3.5 lg:p-4 ${rootBorderRadius.card}`}>
-                <h4 className={`${rootModalTypography.label} loan-modal-stat-label mb-1.5`}>Rasio Hutang terhadap PDB</h4>
-                <div className="loan-modal-debt-ratio flex justify-between items-end gap-2 mb-2">
-                  <span className="text-xl lg:text-2xl font-black text-root-accent">{debtRatio}%</span>
-                  <div className="text-[10px] lg:text-xs font-bold text-right flex items-center gap-1">
+            <div className="loan-modal-stat-grid grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-2.5">
+              <div className={`loan-modal-stat-card flex min-w-0 flex-col justify-center border border-root-accent/30 bg-root-surface p-2.5 lg:p-3 ${rootBorderRadius.card}`}>
+                <h4 className={`${rootModalTypography.label} loan-modal-stat-label mb-1 text-[11px] lg:text-xs`}>Rasio Hutang terhadap PDB</h4>
+                <div className="loan-modal-debt-ratio flex justify-between items-end gap-2 mb-1.5">
+                  <span className="text-lg lg:text-xl font-black text-root-accent">{debtRatio}%</span>
+                  <div className="text-[9px] lg:text-[11px] font-bold text-right flex items-center gap-1">
                     <span className="text-root-subtle">Batas Aman:</span>
                     {getBankSentralLoanSafeLimitBonusPercent(countryDetail) > 0 ? (
                       <span className="flex items-center gap-1">
@@ -418,7 +418,7 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
                     )}
                   </div>
                 </div>
-                <div className="h-2.5 bg-root-canvas border border-root-accent/20 rounded-full overflow-hidden">
+                <div className="h-2 bg-root-canvas border border-root-accent/20 rounded-full overflow-hidden">
                   {(() => {
                     const safeLimit = getSafeDebtLimitRatio(countryDetail);
                     const dangerLimit = safeLimit + 20;
@@ -434,9 +434,9 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
                 </div>
               </div>
 
-              <div className={`loan-modal-stat-card loan-modal-total-card flex min-w-0 flex-col justify-center border border-root-accent/30 bg-root-surface p-3.5 lg:p-4 ${rootBorderRadius.card}`}>
-                <span className={rootModalTypography.sectionTitle}>Total Beban Hutang</span>
-                <span className="text-base lg:text-lg font-black text-rose-400 mt-1 break-words">{totalHutang.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+              <div className={`loan-modal-stat-card loan-modal-total-card flex min-w-0 flex-col justify-center border border-root-accent/30 bg-root-surface p-2.5 lg:p-3 ${rootBorderRadius.card}`}>
+                <span className={`${rootModalTypography.sectionTitle} text-xs lg:text-sm`}>Total Beban Hutang</span>
+                <span className="text-sm lg:text-base font-black text-rose-400 mt-0.5 break-words">{totalHutang.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
               </div>
             </div>
           </div>

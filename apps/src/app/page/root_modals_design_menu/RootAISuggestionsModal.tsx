@@ -181,15 +181,7 @@ export default function RootAISuggestionsModal({
             </div>
           </section>
 
-          {summary && (
-            <aside className="root-ai-modal__summary">
-              <Sparkles className="h-5 w-5 shrink-0" aria-hidden="true" />
-              <div>
-                <strong>{summaryTitle}</strong>
-                <p>{summary}</p>
-              </div>
-            </aside>
-          )}
+          {/* Ringkasan AI ditiadakan sesuai konfigurasi visual */}
         </div>
       </div>
     </NotebookModalWrapper>

@@ -125,7 +125,7 @@ export default function PermohonanKeanggotaanModal({
               <div className="mb-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-root-accent">
                 Permohonan Keanggotaan
               </div>
-              <h2 id="membership-application-title" className="text-sm font-bold leading-tight text-root-text sm:text-base">
+              <h2 id="membership-application-title" className="text-[length:var(--modal-font-title)] font-bold leading-tight text-root-text">
                 {orgName}
               </h2>
             </div>

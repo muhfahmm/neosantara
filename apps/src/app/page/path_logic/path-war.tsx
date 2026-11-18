@@ -1559,7 +1559,7 @@ export default function WarMap({
                 <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#FF7088]">
                   Informasi Pergerakan Militer
                 </p>
-                <h2 id="attacker-forces-title" className="mt-1 break-words text-base font-black text-root-accent sm:text-xl">
+                <h2 id="attacker-forces-title" className="mt-1 break-words text-[length:var(--modal-font-title)] font-black text-root-accent">
                   {attackerForceDisplayName}
                 </h2>
                 <p className="mt-1 break-words text-xs text-white/65">

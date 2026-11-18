@@ -189,7 +189,7 @@ export default function OrgIntlInfoModal({
                 <Info className="h-3 w-3" />
                 Informasi Organisasi
               </div>
-              <h2 id="organization-info-title" className="text-sm font-bold leading-tight text-root-text sm:text-base">{orgName}</h2>
+              <h2 id="organization-info-title" className="text-[length:var(--modal-font-title)] font-bold leading-tight text-root-text">{orgName}</h2>
             </div>
           </div>
           <div className="ml-3">

@@ -190,7 +190,7 @@ export default function GantiIbukotaModal({
                   <Landmark className="h-5 w-5 shrink-0" />
                 </div>
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-root-text tracking-wide uppercase flex items-center gap-2">
+                  <h3 className="text-[length:var(--modal-font-title)] font-bold text-root-text tracking-wide uppercase flex items-center gap-2">
                     Relokasi & Pergantian Ibukota
                     <span className="max-w-[40vw] truncate rounded border border-[#FFE600]/30 bg-[#FFE600]/20 px-2 py-0.5 text-[10px] font-bold uppercase text-[#FFE600]">
                       {currentCapital}

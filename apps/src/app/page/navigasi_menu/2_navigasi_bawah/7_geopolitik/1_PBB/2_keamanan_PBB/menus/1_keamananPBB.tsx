@@ -19,7 +19,7 @@ import { PBB_RESOLUTION_DURATION_OPTIONS } from "@/app/page/navigasi_menu/2_navi
 import { clearAnnexedCountryVotes, isCountryAnnexed } from "../../pbbVotingEligibility";
 import NotebookModalWrapper from "../../../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
-import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import {
   getStoredCouncilMembers,
   markLimitedVetoUsed,
@@ -940,17 +940,12 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
           zIndexClass="z-[200]"
         >
           <div className="flex h-full flex-col overflow-hidden">
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10 shrink-0">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1.5 sm:p-2 bg-root-surface rounded-xl border border-root-accent/30">
-                  <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
-                </div>
-                <div>
-                  <h3 className={rootModalTypography.title}>Resolusi Dewan Keamanan PBB</h3>
-                </div>
-              </div>
-              <RootModalCloseButton onClick={() => setIsResolusiModalOpen(false)} />
-            </div>
+            <RootInfoModalHeader
+              title="Resolusi Dewan Keamanan PBB"
+              onClose={() => setIsResolusiModalOpen(false)}
+              icon={<Shield />}
+              size="standard"
+            />
 
             <div className="flex-1 p-4 sm:p-6 bg-root-surface relative z-10 flex flex-col items-center overflow-y-auto custom-scrollbar">
               <div className="w-full max-w-4xl space-y-6 sm:space-y-8 py-2">

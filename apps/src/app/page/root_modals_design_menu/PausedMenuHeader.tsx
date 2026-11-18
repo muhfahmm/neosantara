@@ -29,7 +29,7 @@ export function PausedMenuHeader({
                         <ArrowLeft className="h-4 w-4" />
                     </button>
                 )}
-                <h2 className="truncate text-sm font-extrabold uppercase tracking-wider text-root-accent">
+                <h2 className="truncate text-[length:var(--modal-font-title)] font-extrabold uppercase tracking-wider text-root-accent">
                     {title}
                 </h2>
             </div>

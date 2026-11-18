@@ -257,7 +257,7 @@ export default function SerangModals({
                 <Swords className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
               </div>
               <div>
-                <h3 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Konfirmasi Serangan</h3>
+                <h3 className="text-[length:var(--modal-font-title)] font-bold text-root-accent tracking-tight leading-none uppercase">Konfirmasi Serangan</h3>
               </div>
             </div>
             <div className="hidden sm:flex items-center gap-2 ml-4 lg:ml-8 pl-4 lg:pl-8 border-l border-root-accent/30">

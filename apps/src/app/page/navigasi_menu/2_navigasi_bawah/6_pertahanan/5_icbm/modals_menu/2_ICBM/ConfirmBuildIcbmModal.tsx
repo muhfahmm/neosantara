@@ -32,7 +32,7 @@ export default function ConfirmBuildIcbmModal({
       <div className="flex flex-col font-sans">
         <div className="px-4 sm:px-5 py-3 border-b border-root-accent/20 bg-root-canvas flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-black text-root-accent uppercase tracking-wide">Konfirmasi Pembangunan ICBM</h3>
+            <h3 className="text-[length:var(--modal-font-title)] font-black text-root-accent uppercase tracking-wide">Konfirmasi Pembangunan ICBM</h3>
             <p className="text-[11px] text-root-subtle mt-1">Pastikan sumber daya mencukupi sebelum melanjutkan.</p>
           </div>
           <SharedModalCloseButton onClick={onClose} className="p-2.5 rounded-xl border border-root-accent/40 text-root-subtle hover:text-root-accent hover:bg-root-accent/10 transition-all cursor-pointer flex items-center gap-1.5" appearance="custom">

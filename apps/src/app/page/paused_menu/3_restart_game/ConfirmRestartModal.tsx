@@ -35,7 +35,7 @@ export function ConfirmRestartModal({ isOpen, onClose, onConfirm }: ConfirmResta
 
                         {/* Teks */}
                         <div className="text-center space-y-2 max-w-md">
-                            <h3 className="text-base font-black text-white tracking-tight">
+                            <h3 className="text-[length:var(--modal-font-title)] font-black text-white tracking-tight">
                                 Apakah Anda yakin?
                             </h3>
                             <p className="text-xs font-semibold text-root-subtle leading-relaxed">
