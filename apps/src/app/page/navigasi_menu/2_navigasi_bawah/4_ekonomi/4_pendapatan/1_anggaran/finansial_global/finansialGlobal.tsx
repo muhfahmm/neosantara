@@ -270,7 +270,7 @@ export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps)
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <div className="text-[10px] text-root-accent font-black uppercase tracking-wider">APBN Semua Negara</div>
+        <div className="text-[10px] text-root-accent font-black uppercase tracking-wider">Anggaran Nasional Semua Negara</div>
         <div className="relative">
           <input
             type="text"

@@ -17,6 +17,7 @@ import SpektrumSistemTab from "./tab_menu/1_spektrum_sistem/SpektrumSistemTab";
 import KartuKebijakanTab from "./tab_menu/2_kartu_kebijakan/KartuKebijakanTab";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
+import { markMissionAsClaimable } from "@/app/page/menus/mission/missionModals";
 import {
   NATIONALIZATION_LEVELS,
   NATIONALIZATION_SECTORS,
@@ -126,7 +127,7 @@ const SektorTab = React.memo(({
                       Estimasi bagian negara dari surplus: {electricitySurplusMW.toLocaleString("id-ID", { maximumFractionDigits: 2 })} MW ×{" "}
                       {electricityPrice.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO × {electricityProfitShare}% ={" "}
                       {electricityEstimatedStateShare.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO. Estimasi ini belum
-                      dimasukkan ke APBN karena listrik belum memiliki transaksi jual-beli.
+                      dimasukkan ke Anggaran Nasional karena listrik belum memiliki transaksi jual-beli.
                     </p>
                   )}
                 </div>
@@ -251,6 +252,9 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
   );
 
   const handlePolicyChange = useCallback((policyId: string, choice: "A" | "B") => {
+    if (policyChoices[policyId] !== choice) {
+      markMissionAsClaimable("sistem_ekonomi");
+    }
     setPolicyChoices((prev) => {
       if (prev[policyId] === choice) return prev;
       return {
@@ -268,9 +272,12 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
         };
       });
     });
-  }, [setCountryDetail]);
+  }, [policyChoices, setCountryDetail]);
 
   const handleSpectrumChange = useCallback((value: number) => {
+    if (Number(countryDetail?.sistem_ekonomi_val) !== value) {
+      markMissionAsClaimable("sistem_ekonomi");
+    }
     setSliderValue(value);
     const details = getEconomicSystemDetails(value);
     
@@ -285,7 +292,7 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
         };
       });
     });
-  }, [setCountryDetail]);
+  }, [countryDetail?.sistem_ekonomi_val, setCountryDetail]);
 
   const handleSectorLevelChange = useCallback((sectorId: NationalizationSectorId, value: number) => {
     setSectorLevels((prev) => {

@@ -165,7 +165,7 @@ export default function ICBMNotificationCard({ notification, onAccept, onReject 
 
         <div className="bg-[#1A0A0A] border border-rose-500/50 rounded-xl p-2.5 text-xs text-rose-300 font-bold flex items-center justify-between">
           <span>Dampak: {notification.effectText}</span>
-          {notification.costEM && <span className="text-amber-300 font-black">Biaya Pencegatan (Anti-Ballistic System): {notification.costEM} EM</span>}
+          {notification.costEM && <span className="text-amber-300 font-black">Biaya Pencegatan (Anti-Ballistic System): {notification.costEM} NEO</span>}
         </div>
 
         <div className="pt-2 flex items-center justify-end gap-2.5">
@@ -191,7 +191,7 @@ export default function ICBMNotificationCard({ notification, onAccept, onReject 
                   className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-500 hover:bg-rose-400 text-white rounded-xl transition-all cursor-pointer shadow-[0_0_20px_rgba(244,63,94,0.6)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <ShieldAlert className="w-3.5 h-3.5" />
-                  Aktifkan Perisai Rudal ({notification.costEM} EM)
+                  Aktifkan Perisai Rudal ({notification.costEM} NEO)
                 </button>
               )}
             </>

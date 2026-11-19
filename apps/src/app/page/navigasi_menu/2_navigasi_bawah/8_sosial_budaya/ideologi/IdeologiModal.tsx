@@ -19,6 +19,7 @@ import {
   generateIdeologyChangeNotification,
   type IdeologyChangeNotification,
 } from "@/app/page/menus/inbox/logic/10_sosial_budaya/2_notifikasi_ideologi/ideologyChangeLogic";
+import { markMissionAsClaimable } from "@/app/page/menus/mission/missionModals";
 import {
   createPendingSocialCulturalChange,
   formatSocialCulturalChangeDate,
@@ -245,6 +246,10 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
           : `Perubahan ideologi ke ${selectedIdeology} dijadwalkan dalam ${SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari. Biaya ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`,
       };
     });
+    if (setCountryDetail && isInstant) {
+      markMissionAsClaimable('ganti_ideologi');
+      markMissionAsClaimable('ideologi_negara');
+    }
     setIsConfirmOpen(false);
     setIsSaving(false);
   };

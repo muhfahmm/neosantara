@@ -15,7 +15,7 @@
  * Aturan:
  * - Tidak boleh melebihi sisa kapasitas Pangkalan Udara.
  * - Komposisi seimbang: Drone & Helikopter lebih terjangkau, Jet Tempur berteknologi tinggi proporsional.
- * - Menjaga Netto APBN dan sisa kas aman.
+ * - Menjaga saldo bersih Anggaran Nasional dan sisa kas tetap aman.
  */
 
 import { calculateNetBalanceWithEconomicEmbargo } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";

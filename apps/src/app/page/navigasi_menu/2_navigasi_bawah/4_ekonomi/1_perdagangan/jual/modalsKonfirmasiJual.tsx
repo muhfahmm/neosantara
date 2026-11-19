@@ -53,6 +53,7 @@ import {
 } from "../umum/priceHistoryLogic";
 import { recordTrade } from "../umum/tradeVolumeLedger";
 import CandlestickChart from "../umum/CandlestickChart";
+import { markMissionAsClaimable } from "@/app/page/menus/mission/missionModals";
 
 const getFlagEmoji = (countryName: string) => {
   const matched = COUNTRIES_DATA.find(c => c.country.toLowerCase().trim() === countryName.toLowerCase().trim());
@@ -527,8 +528,9 @@ export default function JualModalsMenu({
       hour: tradeDate.getUTCHours(),
       counterparty: effectiveSelectedCountry,
     }));
+    markMissionAsClaimable("ekspor_perdagangan");
     onConfirm(totalPendapatan, `${quantity}x Satuan`);
-    alert(`Berhasil menjual ${quantity} ${formatLabel(selectedProduct)} ke ${effectiveSelectedCountry}. Bagian APBN (${stateProfitSharePercent}%) sebesar ${formatTradePrice(totalPendapatan)} NEO telah ditambahkan.`);
+    alert(`Berhasil menjual ${quantity} ${formatLabel(selectedProduct)} ke ${effectiveSelectedCountry}. Bagian Anggaran Nasional (${stateProfitSharePercent}%) sebesar ${formatTradePrice(totalPendapatan)} NEO telah ditambahkan.`);
     onClose();
   };
 
@@ -667,7 +669,7 @@ export default function JualModalsMenu({
                 <div className="mt-2 rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3">
                   <div className="flex justify-between gap-3 text-xs">
                     <span className="text-root-subtle">{nationalizationSectorName} · bagian negara {stateProfitSharePercent}%</span>
-                    <strong className="text-emerald-400">{formatTradePrice(stateProfitIncome)} NEO ke APBN</strong>
+                    <strong className="text-emerald-400">{formatTradePrice(stateProfitIncome)} NEO ke Anggaran Nasional</strong>
                   </div>
                 </div>
               )}

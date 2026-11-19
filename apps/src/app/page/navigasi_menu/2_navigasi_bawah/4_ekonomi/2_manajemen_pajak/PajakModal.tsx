@@ -42,6 +42,7 @@ import {
   applyKementerianKeuanganTaxRevenueBonus,
 } from "@/app/page/bonus_logic";
 import { calculateTaxSatisfaction } from "@/app/logic/kepuasanCalculator";
+import { markMissionAsClaimable } from "@/app/page/menus/mission/missionModals";
 
 interface ModalProps {
   isOpen: boolean;
@@ -234,6 +235,12 @@ function PajakModalContent({
 
       const oldVal = committedRatesRef.current[taxId] ?? 0;
       if (oldVal === nextVal) return; // tidak berubah — skip
+      markMissionAsClaimable("pajak_kelola");
+      if (nextVal > oldVal) {
+        markMissionAsClaimable("pajak_naik");
+      } else {
+        markMissionAsClaimable("pajak_turun");
+      }
 
       // Update committed ref DULU agar commit berikutnya memakai baseline
       // yang benar (meskipun React belum sempat commit countryDetail).

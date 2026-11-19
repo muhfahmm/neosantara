@@ -11,7 +11,7 @@
  *    -> Bangun bangunan militer yang sesuai (Barak, Gudang Senjata, Hangar Tank, Pangkalan Udara, Pangkalan Laut) dulu.
  * 4. Bila kapasitas masih aman:
  *    -> Tambah unit (Darat, Laut, Udara) secara proporsional seimbang tanpa melebihi kapasitas (overload).
- * 5. Anggaran militer tidak boleh membuat Netto APBN negatif.
+ * 5. Anggaran militer tidak boleh membuat saldo bersih Anggaran Nasional negatif.
  *
  * Menghasilkan satu daftar keputusan: { bangun bangunan militer | tambah unit | tahan }.
  */

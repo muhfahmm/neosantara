@@ -81,7 +81,7 @@ export default function IncomeModal({ isOpen, onClose, countryDetail }: IncomeMo
         <div className="relative z-10 min-h-0 flex-1 overflow-y-auto bg-root-surface p-4 custom-scrollbar sm:p-6">
           <div className="space-y-6 max-w-3xl mx-auto">
             <div className="bg-root-canvas border border-root-accent/30 p-6 rounded-xl space-y-4">
-              <h4 className="text-xs text-root-accent font-black uppercase tracking-wider mb-4">APBN Estimasi Harian</h4>
+              <h4 className="text-xs text-root-accent font-black uppercase tracking-wider mb-4">Anggaran Nasional · Estimasi Harian</h4>
               
               <div className="space-y-3">
                 {incomeItems.map((item, index) => (

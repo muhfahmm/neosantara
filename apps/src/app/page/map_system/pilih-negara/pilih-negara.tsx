@@ -427,7 +427,7 @@ export default function PilihNegaraPage() {
 
             <StatusItem
               icon={<TrendingUp className="w-3 h-3 xl:w-3.5 xl:h-3.5 text-root-accent" />}
-              label="NETTO APBN"
+              label="NETTO ANGGARAN NASIONAL"
               value={
                 hasInteracted && countryDetail && Object.keys(countryDetail).length > 0
                   ? netBalance >= 0
@@ -508,7 +508,7 @@ export default function PilihNegaraPage() {
                     window.sessionStorage.removeItem('icbm_detail_open');
                     window.sessionStorage.removeItem('perang_nuklir_detail_open');
                     window.sessionStorage.removeItem('presiden_simulator_load_save');
-                    window.localStorage.setItem('player_diamonds', '150');
+                    window.localStorage.setItem('player_diamonds', '500');
                     window.localStorage.setItem('presiden_simulator_new_game', '1');
                   }
                 }}
@@ -794,7 +794,7 @@ export default function PilihNegaraPage() {
                 window.sessionStorage.removeItem('icbm_detail_open');
                 window.sessionStorage.removeItem('perang_nuklir_detail_open');
                 window.sessionStorage.removeItem('presiden_simulator_load_save');
-                window.localStorage.setItem('player_diamonds', '150');
+                window.localStorage.setItem('player_diamonds', '500');
                 window.localStorage.setItem('presiden_simulator_new_game', '1');
               }
 

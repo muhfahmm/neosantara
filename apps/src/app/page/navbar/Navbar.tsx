@@ -4,9 +4,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
     Power, Users, Landmark, Save, RotateCcw, Smile, LayoutGrid, Star,
-    Activity
+    Activity, Gem
 } from 'lucide-react';
-import { formatCurrencyEM } from '@/app/logic/economic_logic/treasuryUpdater';
+import { formatCurrencyNEO } from '@/app/logic/economic_logic/treasuryUpdater';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import {
     calculateDailyPopulationChange,
@@ -47,6 +47,7 @@ interface NavbarProps {
     onOpenKesejahteraan?: () => void;
     onOpenPopulasi?: () => void;
     presidentRating?: number;
+    playerDiamonds?: number;
     kesejahteraan?: number;
     wasmModuleRef: React.RefObject<FpsMonitorWasmModule | null>;
 }
@@ -66,6 +67,7 @@ export function Navbar({
     onOpenKesejahteraan,
     onOpenPopulasi,
     presidentRating = 50,
+    playerDiamonds = 500,
     kesejahteraan = 50,
     wasmModuleRef,
 }: NavbarProps) {
@@ -290,7 +292,7 @@ export function Navbar({
                         <MobileStatusItem
                             icon={<Landmark className="h-2.5 w-2.5" />}
                             label="KAS NEGARA"
-                            value={countryDetail ? formatCurrencyEM(anggaran) : '-'}
+                            value={countryDetail ? formatCurrencyNEO(anggaran) : '-'}
                             change={countryDetail ? netBalanceLabel : undefined}
                             valueColor={anggaran < 0 ? 'text-rose-400' : undefined}
                         />
@@ -407,7 +409,7 @@ export function Navbar({
                             className="col-span-3"
                             icon={<Landmark className="h-2.5 w-2.5" />}
                             label="KAS NEGARA"
-                            value={countryDetail ? formatCurrencyEM(anggaran) : '-'}
+                            value={countryDetail ? formatCurrencyNEO(anggaran) : '-'}
                             change={countryDetail ? netBalanceLabel : undefined}
                             valueColor={anggaran < 0 ? 'text-rose-400' : undefined}
                         />
@@ -434,6 +436,13 @@ export function Navbar({
                             value={`${kesejahteraan}/100`}
                             valueColor={getKesejahteraanColorClass(kesejahteraan)}
                             onClick={onOpenKesejahteraan}
+                        />
+                        <MobileStatusItem
+                            className="col-span-6 border-t border-root-accent/15 pt-0.5 mt-0.5"
+                            icon={<Gem className="h-2.5 w-2.5 text-cyan-400 fill-cyan-400/20" />}
+                            label="GEMS"
+                            value={playerDiamonds.toLocaleString('id-ID')}
+                            valueColor="text-cyan-400"
                         />
                     </div>
                 </div>
@@ -524,7 +533,7 @@ export function Navbar({
                                 label="KAS NEGARA"
                                 value={countryDetail ? (
                                     <span className="flex items-center gap-1 text-root-text tabular-nums">
-                                        <span className={anggaran < 0 ? 'text-rose-400 font-black' : ''}>{formatCurrencyEM(anggaran)}</span>
+                                        <span className={anggaran < 0 ? 'text-rose-400 font-black' : ''}>{formatCurrencyNEO(anggaran)}</span>
                                         <span className={`${netBalance >= 0 ? 'text-root-accent' : 'text-rose-400'} text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
                                             ({netBalanceLabel})
                                         </span>
@@ -572,6 +581,32 @@ export function Navbar({
                                     color={getKesejahteraanColorClass(kesejahteraan)}
                                 />
                             </button>
+
+                            {/* GEMS */}
+                            <div
+                                className="group relative flex-shrink-0 cursor-default"
+                                title="Total Gems Akun Pemain"
+                            >
+                                <StatusItem
+                                    icon={<Gem className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-cyan-400 fill-cyan-400/20" />}
+                                    label="GEMS"
+                                    value={
+                                        <span className="flex items-center gap-1 text-cyan-400 tabular-nums font-black">
+                                            {playerDiamonds.toLocaleString('id-ID')}
+                                        </span>
+                                    }
+                                    color="text-cyan-400"
+                                />
+                                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max bg-root-surface border border-cyan-500/30 rounded-xl p-2.5 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none shadow-xl">
+                                    <p className="text-[10px] font-black text-cyan-400 uppercase tracking-wider mb-1 border-b border-cyan-500/20 pb-1 text-center">Saldo Gems Pemain</p>
+                                    <p className="text-[11px] font-bold text-root-text text-center">
+                                        💎 {playerDiamonds.toLocaleString('id-ID')} Gems
+                                    </p>
+                                    <p className="text-[9px] text-root-subtle text-center mt-1">
+                                        Mata uang premium untuk fitur & bonus khusus.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

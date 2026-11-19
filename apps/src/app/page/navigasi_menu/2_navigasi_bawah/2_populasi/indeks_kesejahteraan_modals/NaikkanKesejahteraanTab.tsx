@@ -2,6 +2,7 @@ import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalClos
 import { useState, useEffect } from "react";
 import { X, Heart, Coins, Sparkles, AlertCircle, CheckCircle2, Clock } from "lucide-react";
 import DanaTidakCukupModal from "../../1_kepuasan/2_naikkan_kepuasan/DanaTidakCukupModal";
+import { markMissionAsClaimable } from "@/app/page/menus/mission/missionModals";
 
 interface NaikkanKesejahteraanTabProps {
   countryDetail: any;
@@ -206,24 +207,9 @@ export default function NaikkanKesejahteraanTab({
       ongoingConstructions: newConstructions,
     });
 
-    // Tandai misi terkait / aktif sebagai siap klaim
-    if (typeof window !== "undefined") {
-      try {
-        const matchingMissionId = MISSION_ID_BY_INITIATIVE[init.id] || activeMissionId;
-        if (matchingMissionId) {
-          const raw = localStorage.getItem("presiden_simulator_claimable_missions");
-          const list: string[] = raw ? JSON.parse(raw) : [];
-          if (!list.includes(matchingMissionId)) {
-            list.push(matchingMissionId);
-            localStorage.setItem("presiden_simulator_claimable_missions", JSON.stringify(list));
-            window.dispatchEvent(
-              new CustomEvent("mission_claimable_updated", {
-                detail: { cardId: matchingMissionId, claimableList: list },
-              })
-            );
-          }
-        }
-      } catch {}
+    const matchingMissionId = MISSION_ID_BY_INITIATIVE[init.id];
+    if (matchingMissionId) {
+      markMissionAsClaimable(matchingMissionId);
     }
 
     setFeedback({
@@ -319,13 +305,6 @@ export default function NaikkanKesejahteraanTab({
                   : "root-modal-util-004a18b3e0"
               }`}
             >
-              {isHighlighted && (
-                <div className={"root-modal-util-9c7b827dd0"}>
-                  <Sparkles className={"root-modal-util-315860d6d0"} />
-                  Target Misi Aktif
-                </div>
-              )}
-
               {isLaunched && (
                 <div className={"root-modal-util-65ecbf5d72"}>
                   <Clock className={"root-modal-util-a9546f0c0b"} />

@@ -32,6 +32,7 @@ import { generateDemonstrasiSubsidiNotification } from "@/app/page/menus/inbox/l
 import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
 import { calculateSubsidySatisfaction } from "@/app/logic/kepuasanCalculator";
 import { calculateEconomicPopulationImpact } from "@/app/logic/economic_logic/economicPopulationImpact";
+import { markMissionAsClaimable } from "@/app/page/menus/mission/missionModals";
 
 interface ModalProps {
   isOpen: boolean;
@@ -140,6 +141,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
           ...(prev?.pending_notifications || [])
         ],
       }));
+      markMissionAsClaimable("subsidi");
     }
   };
 
@@ -170,6 +172,9 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
       const changes = subsidyItems.filter(item =>
         initialItems.find(initial => initial.id === item.id)?.isSubsidized !== item.isSubsidized
       );
+      if (changes.length > 0) {
+        markMissionAsClaimable("subsidi");
+      }
       const dateStr = getCurrentGameDateString();
       const countryPop = Number(countryDetail?.jumlah_penduduk || countryDetail?.populasi || 50000000);
       const newNotifs = changes.flatMap(item => {

@@ -12,6 +12,7 @@ import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModa
 import NegaraLain from "./tab_menu/1_negara_lain";
 import LembagaDunia from "./tab_menu/2_lembaga_dunia";
 import { isCommunistMultilateralLoanRestricted } from "../7_sistem_ekonomi/logic/nationalizationLogic";
+import { markMissionAsClaimable } from "@/app/page/menus/mission/missionModals";
 import Riwayat from "./tab_menu/3_riwayat";
 
 // 🔥 IMPOR UTILITAS TAB
@@ -164,6 +165,9 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
       totalHutang: Math.max(0, updatedTotalHutang),
       pinjamanList: nextLoanList,
     });
+    if (updatedTotalHutang <= 0) {
+      markMissionAsClaimable("hutang_lunas");
+    }
   }, [isOpen, currentDate, countryDetail, setCountryDetail]);
 
   // 🔥 FUNGSI BAYAR MANUAL SEBELUM JATUH TEMPO
@@ -214,6 +218,9 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
       totalHutang: Math.max(0, newTotalHutang),
       pinjamanList: newPinjamanList,
     });
+    if (newTotalHutang <= 0) {
+      markMissionAsClaimable("hutang_lunas");
+    }
 
     // Tutup modal
     setPendingPaymentLoan(null);
@@ -348,6 +355,7 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
       pinjamanList: [newLoanRecord, ...riwayatPinjaman],
       loanCooldowns: nextCooldowns,
     });
+    markMissionAsClaimable(isMultilateral ? "pinjam_bank" : "pinjam_negara");
 
     setPendingLoan(null);
   };

@@ -192,6 +192,6 @@ export const calculateCountryNetBalance = (detail: any) => {
 export const calculateMinistryCost = calculateTotalMinistryCostPerDay;
 export const calculateCountryGDP = calculateTotalPDB;
 
-export const formatCurrencyEM = (amount: number) => {
+export const formatCurrencyNEO = (amount: number) => {
   return `${Math.round(amount).toLocaleString('id-ID')} NEO`;
 };

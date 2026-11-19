@@ -255,7 +255,7 @@ export default function PajakSection({ countryDetail }: PajakSectionProps) {
             +{formatNumber(totalEstimatedRevenue)}{" "}
             <span className="text-sm font-bold text-emerald-300">NEO</span>
           </p>
-          <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">Pemasukan kas APBN negara</p>
+          <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">Pemasukan kas Anggaran Nasional</p>
         </div>
 
         <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl shadow-sm">

@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { User, Globe, Building2, Users, Landmark, ShieldCheck, TrendingUp, Star, Flag, Swords } from 'lucide-react';
 
-import { calculateCountryGDP, formatCurrencyEM } from '@/app/logic/economic_logic/treasuryUpdater';
+import { calculateCountryGDP, formatCurrencyNEO } from '@/app/logic/economic_logic/treasuryUpdater';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { calculateCountryNetPopulation } from '@/app/logic/populations_logic/population_logic';
 import { getArmadaPowerSummary } from '@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
@@ -268,7 +268,7 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
                 <div className="min-w-0">
                   <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">Kas Negara</p>
                   <p className="mt-0.5 flex flex-wrap items-center gap-x-1 text-[10px] md:text-sm sm:text-base font-black text-root-text">
-                    <span className={`break-words ${anggaran < 0 ? 'text-rose-400 font-black' : ''}`}>{formatCurrencyEM(anggaran)}</span>
+                    <span className={`break-words ${anggaran < 0 ? 'text-rose-400 font-black' : ''}`}>{formatCurrencyNEO(anggaran)}</span>
                     <span className={`${netBalance >= 0 ? 'text-root-accent' : 'text-rose-400'} text-[9px] md:text-[10px] sm:text-xs font-black`}>
                       ({netBalanceLabel})
                     </span>
@@ -305,7 +305,7 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
                 </div>
                 <div className="min-w-0">
                   <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">PDB Harian</p>
-                  <p className="text-xs md:text-sm sm:text-base font-black text-root-text mt-0.5 break-words">{formatCurrencyEM(gdp)}</p>
+                  <p className="text-xs md:text-sm sm:text-base font-black text-root-text mt-0.5 break-words">{formatCurrencyNEO(gdp)}</p>
                 </div>
               </div>
 

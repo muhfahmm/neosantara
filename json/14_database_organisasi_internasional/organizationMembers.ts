@@ -313,6 +313,7 @@ export function getOrgMembers(orgName: string, playerCountryName?: string): { co
       .includes(normalizeOrganizationName(orgName));
 
   if (list && Array.isArray(list)) {
+    const normPlayer = playerCountryName ? normalizeCountryName(playerCountryName) : null;
     list.forEach((item) => {
       const rawCountry = typeof item === 'string' ? item : (item as any).country || '';
       const formattedCountry = rawCountry
@@ -320,6 +321,12 @@ export function getOrgMembers(orgName: string, playerCountryName?: string): { co
         .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
       
+      // Jika negara ini adalah negara pemain (player), jangan masukkan dari daftar statis
+      // Status keanggotaan pemain dikontrol penuh oleh sistem keanggotaan aktif (isUserJoinedOrg)
+      if (normPlayer && normalizeCountryName(rawCountry) === normPlayer) {
+        return;
+      }
+
       if (!organizationExpelledCountry(formattedCountry)) {
         result.push({
           country: formattedCountry,

@@ -126,7 +126,7 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 px-3 py-1.5 bg-root-surface border border-root-accent/30 rounded-xl">
             <DollarSign className="w-3.5 h-3.5 text-rose-400" />
-            <span className="text-[10px] font-bold text-root-subtle uppercase">Total Beban APBN:</span>
+            <span className="text-[10px] font-bold text-root-subtle uppercase">Total Beban Anggaran Nasional:</span>
             <span className="text-[11px] font-black text-rose-400">
               {formatCurrencyCompact(summary.totalCost)} / hari
             </span>
@@ -165,7 +165,7 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
             {formatNumber(summary.totalCost)}{" "}
             <span className="text-sm font-bold text-rose-300">NEO</span>
           </p>
-          <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">Pengeluaran kas APBN harian</p>
+          <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">Pengeluaran kas Anggaran Nasional per hari</p>
         </div>
 
         <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl shadow-sm">

@@ -27,6 +27,7 @@ import {
   applyTotalHousingCapacityBonus,
 } from "@/app/page/bonus_logic";
 import { BuildingCardRoot } from "@/app/page/root_modals_design_menu/card_building_root";
+import { recordFacilityMissionProgress } from "@/app/page/menus/mission/missionModals";
 
 const DEFAULT_ELECTRICITY_CONSUMPTION: Record<string, number> = {
   rumah_subsidi: 0.0009,
@@ -281,6 +282,7 @@ export default function HunianPermukimanModal({
     );
 
     setCountryDetail(updatedDetail);
+    recordFacilityMissionProgress(key, quantity);
     
     setShowConfirm(false);
     setSelectedBuilding(null);

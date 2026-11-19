@@ -49,7 +49,7 @@ export default function RekrutMataMataModal({
           onConfirm(count, totalCost);
         }
       }}
-      confirmLabel={hasBudget ? `Rekrut (${count})` : "EM Tidak Mencukupi"}
+      confirmLabel={hasBudget ? `Rekrut (${count})` : "NEO Tidak Mencukupi"}
       confirmDisabled={!hasBudget || count <= 0}
       footerBorderClassName="border-root-accent/20"
     >
@@ -65,7 +65,7 @@ export default function RekrutMataMataModal({
           </div>
           <div>
             <span className="text-root-subtle block mb-0.5">Biaya Per Orang:</span>
-            <span className="font-bold text-white">{RECRUIT_COST_PER_PERSON.toLocaleString('id-ID')} EM</span>
+            <span className="font-bold text-white">{RECRUIT_COST_PER_PERSON.toLocaleString('id-ID')} NEO</span>
           </div>
         </div>
 
@@ -137,13 +137,13 @@ export default function RekrutMataMataModal({
           <div className="flex justify-between items-center">
             <span className="text-root-subtle">Total Biaya Rekrut:</span>
             <span className="font-bold text-root-accent text-sm">
-              {totalCost.toLocaleString('id-ID')} EM
+              {totalCost.toLocaleString('id-ID')} NEO
             </span>
           </div>
           <div className="flex justify-between items-center text-[11px]">
             <span className="text-root-subtle">Kas / Saldo Tersedia:</span>
             <span className={hasBudget ? "text-root-text font-bold" : "text-rose-400 font-bold"}>
-              {currentBudget.toLocaleString('id-ID', { maximumFractionDigits: 0 })} EM
+              {currentBudget.toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO
             </span>
           </div>
         </div>

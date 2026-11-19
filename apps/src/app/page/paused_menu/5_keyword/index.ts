@@ -22,7 +22,7 @@ export const GAME_SHORTCUTS: Record<string, ShortcutDefinition> = {
   KEY_B: { key: 'b', label: 'B', description: '🏦 Pinjaman & Hutang Negara', category: 'Menu Utama', action: 'Menu:Hutang' },
   KEY_C: { key: 'c', label: 'C', description: '🏛️ Dewan Kabinet Menteri', category: 'Menu Utama', action: 'Dashboard:Kementerian' },
   KEY_D: { key: 'd', label: 'D', description: '🤝 Kedutaan Besar Bilateral', category: 'Menu Utama', action: 'Menu:KedutaanBesar' },
-  KEY_E: { key: 'e', label: 'E', description: '👛 Pemasukan & Pengeluaran APBN', category: 'Menu Utama', action: 'Menu:Budget' },
+  KEY_E: { key: 'e', label: 'E', description: '👛 Pemasukan & Pengeluaran Anggaran Nasional', category: 'Menu Utama', action: 'Menu:Budget' },
   KEY_F: { key: 'f', label: 'F', description: '🎯 Fokus & Reset Zoom ke Negara Sendiri', category: 'Zoom & Map', action: 'MAP_FOCUS_HOME' },
   KEY_G: { key: 'g', label: 'G', description: '🌐 Pasar Perdagangan Global', category: 'Menu Utama', action: 'Menu:Perdagangan' },
   KEY_H: { key: 'h', label: 'H', description: '🏠 Hunian & Permukiman Warga', category: 'Menu Utama', action: 'Menu:HunianPermukiman' },

@@ -33,6 +33,10 @@ import {
 import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import { calculateCountryNetBalance, getDepartmentLevel } from "@/app/logic/economic_logic/treasuryUpdater";
 import { CABINET_DEPARTMENT_IMAGES, LEVEL_UP_COST, MAX_CABINET_LEVEL } from "@/app/logic/economic_logic/departments";
+import {
+  recordMinisterRecruitmentMission,
+  recordMinistryUpgradeMission,
+} from "@/app/page/menus/mission/missionModals";
 import { generateKabinetChangeNotification } from "@/app/page/menus/inbox/logic/13_notifikasi_kabinet/kabinetChangeLogic";
 import PilihMenteriModal, {
   MINISTER_CANDIDATES,
@@ -421,6 +425,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
       [`menteri_${department.id}`]: tier,
       minister_recruitment_expense_pending: Math.max(0, pendingExpense),
     });
+    recordMinisterRecruitmentMission(department.id, tier);
     setMinisterDepartment(null);
   };
 
@@ -464,6 +469,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
       pending_notifications: newPending,
     });
 
+    recordMinistryUpgradeMission(dept.id);
     setLevels((prev) => ({ ...prev, [dept.id]: targetLevel }));
     setConfirmUpgrade(null);
   };

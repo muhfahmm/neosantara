@@ -126,12 +126,7 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
           const app = getApplicationForOrg(playerCountryName, orgName);
           const currentDateStr = getCurrentGameDateString() || formatDate(new Date());
           const remainingDays = app ? Math.max(0, 30 - getDaysElapsed(app.submissionDate, currentDateStr)) : 30;
-          const officialMembership = getOrgMembers(orgName, playerCountryName).some(
-            (member: MemberData) => member.country?.toLowerCase().trim() === playerCountryName.toLowerCase().trim()
-          );
-          const isMember = isUserJoinedOrg(playerCountryName, orgName) ||
-            officialMembership ||
-            members.some((member) => member.country?.toLowerCase().trim() === playerCountryName.toLowerCase().trim());
+          const isMember = isUserJoinedOrg(playerCountryName, orgName);
 
           return (
             <div className="w-full bg-root-accent/10 border border-root-accent/30 rounded-xl p-4 flex items-center justify-between shadow-md flex-wrap gap-3">

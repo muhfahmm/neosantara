@@ -22,6 +22,10 @@ import {
 import { isMemberOfUNESCO, isMemberOfITU } from '@/app/page/bonus_logic';
 import { getSainsPenelitianResearchSpeedBonusPercent } from '@/app/page/bonus_logic/kementerian_bonus_logic/3_Sains_Penelitian';
 import {
+  recordResearchMissionStart,
+  recordResearchMissionUpgrade,
+} from '@/app/page/menus/mission/missionModals';
+import {
   getResearchCardBonus,
   getResearchCardLevel,
   normalizeResearchLevels,
@@ -497,6 +501,7 @@ export default function PenelitianPageModal({
       active_research_end_date: endDateStr,
       pending_notifications: [notif, ...currentPending],
     });
+    recordResearchMissionStart(research.id);
     setConfirmTarget(null);
   };
 
@@ -536,6 +541,7 @@ export default function PenelitianPageModal({
       active_research_end_date: endDateStr,
       pending_notifications: [notif, ...currentPending],
     });
+    recordResearchMissionUpgrade();
     setConfirmUpgrade(null);
   };
 

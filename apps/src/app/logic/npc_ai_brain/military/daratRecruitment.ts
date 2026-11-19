@@ -9,7 +9,7 @@
  * Aturan:
  * - Hanya isi kategori yang sisa kapasitasnya > 0 (jangan overload).
  * - Jaga komposisi seimbang.
- * - Cek kas & tidak membuat Netto APBN negatif.
+ * - Cek kas & tidak membuat saldo bersih Anggaran Nasional negatif.
  */
 
 import { calculateNetBalanceWithEconomicEmbargo } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";

@@ -48,6 +48,7 @@ import {
 } from "../umum/priceHistoryLogic";
 import { recordTrade } from "../umum/tradeVolumeLedger";
 import CandlestickChart from "../umum/CandlestickChart";
+import { markMissionAsClaimable } from "@/app/page/menus/mission/missionModals";
 
 const getFlagEmoji = (countryName: string) => {
   const matched = COUNTRIES_DATA.find(c => c.country.toLowerCase().trim() === countryName.toLowerCase().trim());
@@ -735,6 +736,7 @@ export default function ModalsKonfirmasiBeli({
       counterparty: targetCountry,
     }));
 
+    markMissionAsClaimable("impor_perdagangan");
     onConfirm(totalPrice, `${quantity}x Satuan`);
     alert(`Berhasil membeli ${quantity} ${formatLabel(effectiveSelectedProduct)} dari ${targetCountry}.`);
     onClose();

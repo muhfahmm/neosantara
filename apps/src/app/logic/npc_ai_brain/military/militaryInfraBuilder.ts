@@ -10,7 +10,7 @@
  *
  * Aturan:
  * 1. Dibangun jika sisa kapasitas < 10% (atau kapasitas penuh) sebelum merekrut/memproduksi unit.
- * 2. Cek uang (anggaran) & Netto APBN tidak boleh negatif.
+ * 2. Cek uang (anggaran) & saldo bersih Anggaran Nasional tidak boleh negatif.
  * 3. Cek ketersediaan material konstruksi militer (semen, bijih besi, kayu, batu bara).
  * 4. Mendukung waktu pembangunan (masuk ke antrian jika belum selesai).
  */
@@ -116,7 +116,7 @@ export function cobaBangunInfraMiliter(
     return { sukses: false, alasan: `${infraKey} sedang dalam proses pembangunan.` };
   }
 
-  // Cek Kas & Netto APBN
+  // Cek Kas & Saldo Bersih Anggaran Nasional
   const biayaTotal = (BIAYA_INFRA_MILITER[infraKey] || 50000) * jumlah;
   const kas = nilaiAngka(ctx.country.anggaran);
   if (kas - biayaTotal < 100000) {
@@ -125,7 +125,7 @@ export function cobaBangunInfraMiliter(
 
   const netto = calculateNetBalanceWithEconomicEmbargo(ctx.country, ctx.negaraNama);
   if (netto < 0) {
-    return { sukses: false, alasan: `Netto APBN defisit (${netto}), menahan ekspansi militer.` };
+    return { sukses: false, alasan: `Saldo bersih Anggaran Nasional defisit (${netto}), menahan ekspansi militer.` };
   }
 
   // Cek Material

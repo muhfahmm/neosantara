@@ -5,7 +5,7 @@ export interface CovertPersonnelState {
 
 const STORAGE_KEY = 'neosantara_covert_personnel';
 export const COVERT_PERSONNEL_UPDATED_EVENT = 'neosantara_covert_personnel_updated';
-export const RECRUIT_COST_PER_PERSON = 1000; // 1000 EM
+export const RECRUIT_COST_PER_PERSON = 1000; // 1000 NEO
 
 export function getCovertPersonnel(): CovertPersonnelState {
   if (typeof window === 'undefined') {

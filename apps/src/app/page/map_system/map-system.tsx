@@ -330,6 +330,7 @@ import {
 } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/1_invasiMiliterGabunganLogic';
 import {
     clearMissionProgressData,
+    markMissionAsClaimable,
     type MissionNavigationTarget
 } from '../menus/mission/missionModals';
 import { calculateFoodCoverageByGroup } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic';
@@ -3404,7 +3405,7 @@ export default function MapPage() {
 
     const [penelitianModalOpen, setPenelitianModalOpen] = useState(false);
     const [missionModalOpen, setMissionModalOpen] = useState(false);
-    const [playerDiamonds, setPlayerDiamonds] = useState<number>(150);
+    const [playerDiamonds, setPlayerDiamonds] = useState<number>(500);
 
     // Sinkronisasi saldo diamond dari localStorage saat client mounted & realtime event
     useEffect(() => {
@@ -3412,8 +3413,8 @@ export default function MapPage() {
             const loadSaveStr = sessionStorage.getItem('presiden_simulator_load_save');
             const newGameMarker = localStorage.getItem('presiden_simulator_new_game');
             if (newGameMarker === '1') {
-                localStorage.setItem('player_diamonds', '150');
-                setPlayerDiamonds(150);
+                localStorage.setItem('player_diamonds', '500');
+                setPlayerDiamonds(500);
             }
 
             const syncDiamonds = () => {
@@ -3425,7 +3426,7 @@ export default function MapPage() {
                         return;
                     }
                 }
-                setPlayerDiamonds(150);
+                setPlayerDiamonds(500);
             };
 
             if (loadSaveStr) {
@@ -7182,9 +7183,9 @@ export default function MapPage() {
                 // tidak boleh menghapus progress sesi yang masih berjalan.
                 if (newGameMarker === '1') {
                     clearMissionProgressData();
-                    localStorage.setItem('player_diamonds', '150');
-                    setPlayerDiamonds(150);
-                    window.dispatchEvent(new CustomEvent('player_diamonds_updated', { detail: { diamonds: 150 } }));
+                    localStorage.setItem('player_diamonds', '500');
+                    setPlayerDiamonds(500);
+                    window.dispatchEvent(new CustomEvent('player_diamonds_updated', { detail: { diamonds: 500 } }));
                 }
 
                 if (newGameMarker === '1') {
@@ -7679,9 +7680,9 @@ export default function MapPage() {
                             sessionStorage.removeItem('icbm_detail_open');
                             sessionStorage.removeItem('perang_nuklir_detail_open');
                         } catch (e) { }
-                        localStorage.setItem('player_diamonds', '150');
-                        setPlayerDiamonds(150);
-                        window.dispatchEvent(new CustomEvent('player_diamonds_updated', { detail: { diamonds: 150 } }));
+                        localStorage.setItem('player_diamonds', '500');
+                        setPlayerDiamonds(500);
+                        window.dispatchEvent(new CustomEvent('player_diamonds_updated', { detail: { diamonds: 500 } }));
                     }
                 }
             }
@@ -8288,6 +8289,13 @@ export default function MapPage() {
                     : [];
                 const pendingSocialChanges = rawPendingSocialChanges.filter(isPendingSocialCulturalChange);
                 const completedSocialChanges = pendingSocialChanges.filter(change => change.endDate <= currentDateStr);
+                if (completedSocialChanges.some(change => change.type === 'religion')) {
+                    markMissionAsClaimable('ganti_agama');
+                }
+                if (completedSocialChanges.some(change => change.type === 'ideology')) {
+                    markMissionAsClaimable('ganti_ideologi');
+                    markMissionAsClaimable('ideologi_negara');
+                }
                 const nextPendingSocialChanges = rawPendingSocialChanges.filter(change =>
                     !isPendingSocialCulturalChange(change) || change.endDate > currentDateStr
                 );
@@ -9618,6 +9626,7 @@ export default function MapPage() {
                         netBalanceAdjustment={playerNetBalanceAdjustment}
                         currentDate={currentDate}
                         presidentRating={presidentRating}
+                        playerDiamonds={playerDiamonds}
                         wasmModuleRef={wasmModuleRef}
                         kesejahteraan={countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : kesejahteraan}
                         onOpenGameMenu={openGameMenu}
@@ -10373,7 +10382,7 @@ export default function MapPage() {
 
                     // ── LOGIKA KHUSUS PEMBERONTAKAN ──
                     if (tNotif.tradeType === 'pemberontakan') {
-                        // Ambil biaya dari notifikasi (gambar menunjukkan 25000 EM)
+                        // Ambil biaya dari notifikasi (gambar menunjukkan 25000 NEO)
                         const cost = Number(tNotif.responseCost ?? tNotif.bantuanCost ?? 25000);
                         const budget = Number(countryDetail?.anggaran || 0);
 
@@ -10441,7 +10450,7 @@ export default function MapPage() {
                                 id: warningId,
                                 title: '⚠️ KAS NEGARA TIDAK MENCUKUPI',
                                 sender: 'Kementerian Keuangan',
-                                message: `Penanganan "${tNotif.title}" membutuhkan ${cost.toLocaleString('id-ID')} EM, sedangkan kas tersedia ${budget.toLocaleString('id-ID')} EM. Aksi tidak diproses; notifikasi tetap menunggu respons.`,
+                                message: `Penanganan "${tNotif.title}" membutuhkan ${cost.toLocaleString('id-ID')} NEO, sedangkan kas tersedia ${budget.toLocaleString('id-ID')} NEO. Aksi tidak diproses; notifikasi tetap menunggu respons.`,
                                 timestamp: simulationDateString,
                                 type: 'kesejahteraan',
                                 value: 0,
@@ -10455,7 +10464,7 @@ export default function MapPage() {
                             setResultModal({
                                 isOpen: true,
                                 title: 'Kas Negara Tidak Mencukupi',
-                                message: `Dibutuhkan ${cost.toLocaleString('id-ID')} EM, tersedia ${budget.toLocaleString('id-ID')} EM. Agen belum ditangkap dan notifikasi tetap dapat ditangani setelah kas mencukupi.`,
+                                message: `Dibutuhkan ${cost.toLocaleString('id-ID')} NEO, tersedia ${budget.toLocaleString('id-ID')} NEO. Agen belum ditangkap dan notifikasi tetap dapat ditangani setelah kas mencukupi.`,
                                 type: 'error',
                                 persistent: true,
                             });
@@ -10481,7 +10490,7 @@ export default function MapPage() {
                         setResultModal({
                             isOpen: true,
                             title: tNotif.tradeType === 'spionase' ? 'Agen Spionase Ditangkap' : 'Sabotase Berhasil Ditangani',
-                            message: `${tNotif.tradeType === 'spionase' ? 'Agen berhasil ditangkap' : 'Kerusakan berhasil ditangani'}. Biaya operasi sebesar ${cost.toLocaleString('id-ID')} EM telah dibayarkan; tidak ada dampak spionase atau sabotase yang diterapkan.`,
+                            message: `${tNotif.tradeType === 'spionase' ? 'Agen berhasil ditangkap' : 'Kerusakan berhasil ditangani'}. Biaya operasi sebesar ${cost.toLocaleString('id-ID')} NEO telah dibayarkan; tidak ada dampak spionase atau sabotase yang diterapkan.`,
                             type: 'success',
                             persistent: true,
                         });
@@ -10904,6 +10913,7 @@ export default function MapPage() {
                 onClose={() => setMissionModalOpen(false)}
                 countryDetail={countryDetail}
                 setCountryDetail={setCountryDetail}
+                currentDate={currentDate}
                 onStartMission={(destination: MissionNavigationTarget) => {
                     setMissionModalOpen(false);
                     setInboxModalOpen(false);

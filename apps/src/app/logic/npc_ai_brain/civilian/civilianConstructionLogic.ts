@@ -9,7 +9,7 @@
  * - Perumahan
  *
  * 4 Syarat sebelum membangun (Cek Berurutan, Gagal Satu = Batal):
- * 1. Uang (kas negara) cukup untuk biaya_pembangunan dan tidak membuat Netto APBN negatif.
+ * 1. Uang (kas negara) cukup untuk biaya_pembangunan dan tidak membuat saldo bersih Anggaran Nasional negatif.
  * 2. Material cukup. Bila kurang, cek bahan alternatif jika ada di stok. Bila tetap kurang, tunda dan buat alert KEKURANGAN.
  * 3. Ada lowongan kerja/penduduk yang cukup untuk bangunan tersebut.
  * 4. Listrik cukup untuk konsumsi bangunan baru (balance MW cukup).
@@ -117,7 +117,7 @@ export function getPendingBuildingCount(ctx: BrainContext, buildingKey: string):
 
 /**
  * Evaluasi 4 syarat ketat pembangunan sipil:
- * 1. Kas cukup & Netto APBN tidak negatif
+ * 1. Kas cukup & saldo bersih Anggaran Nasional tidak negatif
  * 2. Material cukup (atau substitusi alternatif)
  * 3. Penduduk/lowongan kerja cukup
  * 4. Listrik mencukupi konsumsi bangunan
@@ -132,7 +132,7 @@ export function evaluasiSyaratPembangunan(
     return { lolos: false, alasan: `Metadata untuk ${buildingKey} tidak ditemukan.` };
   }
 
-  // --- SYARAT 1: KAS NEGARA & NETTO APBN ---
+  // --- SYARAT 1: KAS NEGARA & SALDO BERSIH ANGGARAN NASIONAL ---
   const biayaPerUnit = nilaiAngka(meta.biaya_pembangunan);
   const totalBiaya = biayaPerUnit * jumlah;
   const kasSekarang = nilaiAngka(ctx.country.anggaran);
@@ -150,7 +150,7 @@ export function evaluasiSyaratPembangunan(
     return {
       lolos: false,
       statusGagal: "dana_kurang",
-      alasan: `Netto APBN negara sedang defisit (${nettoAPBN.toLocaleString()}), menunda pembangunan sipil.`,
+      alasan: `Saldo bersih Anggaran Nasional sedang defisit (${nettoAPBN.toLocaleString()}), menunda pembangunan sipil.`,
     };
   }
 

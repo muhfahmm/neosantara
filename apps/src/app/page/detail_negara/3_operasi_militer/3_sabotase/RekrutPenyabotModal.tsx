@@ -49,7 +49,7 @@ export default function RekrutPenyabotModal({
           onConfirm(count, totalCost);
         }
       }}
-      confirmLabel={hasBudget ? `Rekrut (${count})` : "EM Tidak Mencukupi"}
+      confirmLabel={hasBudget ? `Rekrut (${count})` : "NEO Tidak Mencukupi"}
       confirmDisabled={!hasBudget || count <= 0}
       confirmButtonClassName="bg-rose-600 hover:bg-rose-700 active:bg-rose-800 border border-rose-500 text-white cursor-pointer"
       footerBorderClassName="border-rose-500/20"
@@ -66,7 +66,7 @@ export default function RekrutPenyabotModal({
           </div>
           <div>
             <span className="text-root-subtle block mb-0.5">Biaya Per Orang:</span>
-            <span className="font-bold text-white">{RECRUIT_COST_PER_PERSON.toLocaleString('id-ID')} EM</span>
+            <span className="font-bold text-white">{RECRUIT_COST_PER_PERSON.toLocaleString('id-ID')} NEO</span>
           </div>
         </div>
 
@@ -138,13 +138,13 @@ export default function RekrutPenyabotModal({
           <div className="flex justify-between items-center">
             <span className="text-root-subtle">Total Biaya Rekrut:</span>
             <span className="font-bold text-rose-400 text-sm">
-              {totalCost.toLocaleString('id-ID')} EM
+              {totalCost.toLocaleString('id-ID')} NEO
             </span>
           </div>
           <div className="flex justify-between items-center text-[11px]">
             <span className="text-root-subtle">Kas / Saldo Tersedia:</span>
             <span className={hasBudget ? "text-root-text font-bold" : "text-rose-400 font-bold"}>
-              {currentBudget.toLocaleString('id-ID', { maximumFractionDigits: 0 })} EM
+              {currentBudget.toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO
             </span>
           </div>
         </div>

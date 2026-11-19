@@ -11,6 +11,7 @@ import {
 import { fetchDoktrinKeterbukaanFromDb } from "../../../../../../../../json/2_database_doktrin_keterbukaan/index";
 import { generateDoctrineChangeNotification } from "@/app/page/menus/inbox/logic/10_sosial_budaya/3_keterbukaan/doctrineChangeLogic";
 import { getRelationColor } from "@/app/logic/relationTiers";
+import { markMissionAsClaimable } from "@/app/page/menus/mission/missionModals";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import MenuInfoButton from "../../MenuInfoButton";
@@ -198,6 +199,12 @@ export default function DoktrinKeterbukaanModal({
         opennessIndex: nextOverall,
         pending_notifications: newPending,
       }));
+      if (sliderMap.some(({ oldVal, newVal }) => oldVal !== newVal)) {
+        markMissionAsClaimable('doktrin_keterbukaan');
+      }
+      if (religionScore !== nextReligion) {
+        markMissionAsClaimable('toleransi_agama');
+      }
     }
   };
 

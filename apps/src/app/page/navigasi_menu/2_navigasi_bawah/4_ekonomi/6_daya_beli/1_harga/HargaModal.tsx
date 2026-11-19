@@ -16,6 +16,7 @@ import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModa
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { generateHargaChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/2_harga_barang_pokok/hargaChangeLogic";
+import { markMissionAsClaimable } from "@/app/page/menus/mission/missionModals";
 import { generateDemonstrasiHargaNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/demonstrasiEkonomiLogic";
 import { calculatePriceCommodityImpacts } from "@/app/logic/economic_logic/economicPopulationImpact";
 
@@ -303,6 +304,7 @@ function HargaModalContent({
     const batch = pendingRef.current;
     if (batch.length === 0) return;
     pendingRef.current = [];
+    markMissionAsClaimable("harga_pokok");
 
     const next = { ...committedPricesRef.current };
     const notifs: any[] = [];

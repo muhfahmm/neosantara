@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   Smile,
-  Sparkles,
   AlertCircle,
   CheckCircle2,
   Clock,
@@ -24,6 +23,12 @@ import {
   getKementerianOlahragaEventSatisfactionBonusPercent,
   isSportEvent,
 } from "@/app/page/bonus_logic";
+import { markMissionAsClaimable } from "@/app/page/menus/mission/missionModals";
+
+const EVENT_MISSION_ID_BY_ITEM: Record<string, string> = {
+  piala_dunia_rugbi: "event_piala_rugbi",
+  piala_dunia_fifa: "event_piala_fifa",
+};
 
 interface NaikkanKepuasanModalProps {
   isOpen: boolean;
@@ -282,6 +287,9 @@ export default function NaikkanKepuasanModal({
       if (setPresidentRating) {
         setPresidentRating(newPresidentRating);
       }
+      if (Number(newDetail.kepuasan) >= 80) {
+        markMissionAsClaimable("kepuasan_target");
+      }
     }
   };
 
@@ -330,31 +338,8 @@ export default function NaikkanKepuasanModal({
 
     setCountryDetail(updatedDetail);
 
-    // Tandai penyelesaian misi jika pemain sedang menjalankan misi event / kepuasan
-    if (typeof window !== "undefined") {
-      try {
-        const activeMission = localStorage.getItem(
-          "presiden_simulator_active_mission"
-        );
-        const rawList = localStorage.getItem(
-          "presiden_simulator_claimable_missions"
-        );
-        const list: string[] = rawList ? JSON.parse(rawList) : [];
-        const targetMissionId = activeMission || `event_${itemId}`;
-        if (targetMissionId && !list.includes(targetMissionId)) {
-          list.push(targetMissionId);
-          localStorage.setItem(
-            "presiden_simulator_claimable_missions",
-            JSON.stringify(list)
-          );
-          window.dispatchEvent(
-            new CustomEvent("mission_claimable_updated", {
-              detail: { cardId: targetMissionId, claimableList: list },
-            })
-          );
-        }
-      } catch {}
-    }
+    const eventMissionId = EVENT_MISSION_ID_BY_ITEM[itemId] ?? `event_${itemId}`;
+    markMissionAsClaimable(eventMissionId);
 
     setFeedback({
       type: "success",
@@ -496,13 +481,6 @@ export default function NaikkanKepuasanModal({
                           : "root-modal-util-39ea4195cd"
                       }`}
                     >
-                      {isHighlighted && (
-                        <div className={"root-modal-util-85c56ed520"}>
-                          <Sparkles className={"root-modal-util-315860d6d0"} />
-                          Target Misi Aktif
-                        </div>
-                      )}
-
                       {isEventOngoing && (
                         <div className={"root-modal-util-29ccb89328"}>
                           Selesai: {formatBadgeDate(lastEndDate)}

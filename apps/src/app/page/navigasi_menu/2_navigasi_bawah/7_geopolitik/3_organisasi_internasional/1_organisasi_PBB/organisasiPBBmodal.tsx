@@ -110,8 +110,7 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
           const app = getApplicationForOrg(playerCountryName, orgName);
           const currentDateStr = getCurrentGameDateString() || formatDate(new Date());
           const remainingDays = app ? Math.max(0, 30 - getDaysElapsed(app.submissionDate, currentDateStr)) : 30;
-          const isMember = isUserJoinedOrg(playerCountryName, orgName) ||
-            members.some((member) => member.country?.toLowerCase().trim() === playerCountryName.toLowerCase().trim());
+          const isMember = isUserJoinedOrg(playerCountryName, orgName);
 
           return (
             <div className="mb-4 p-3.5 rounded-xl bg-[#0E2A20] border border-emerald-500/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-bold text-emerald-300 shadow-md">

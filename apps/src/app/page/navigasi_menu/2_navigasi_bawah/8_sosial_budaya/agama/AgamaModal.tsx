@@ -21,6 +21,7 @@ import {
   generateReligionChangeNotification,
   type ReligionChangeNotification,
 } from "@/app/page/menus/inbox/logic/10_sosial_budaya/1_notifikasi_agama/religionChangeLogic";
+import { markMissionAsClaimable } from "@/app/page/menus/mission/missionModals";
 import {
   createPendingSocialCulturalChange,
   formatSocialCulturalChangeDate,
@@ -252,6 +253,9 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
           : `Perubahan agama ke ${selectedReligion} dijadwalkan dalam ${SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari. Biaya ${RELIGION_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`,
       };
     });
+    if (setCountryDetail && isInstant) {
+      markMissionAsClaimable('ganti_agama');
+    }
     setIsConfirmOpen(false);
     setIsSaving(false);
   };

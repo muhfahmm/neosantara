@@ -52,8 +52,8 @@ export function restartGame(options: RestartGameOptions): void {
         window.localStorage.removeItem('hutangModalLoanSources');
         window.localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
         options.clearMissionProgress();
-        window.localStorage.setItem('player_diamonds', '150');
-        options.setPlayerDiamonds(150);
+        window.localStorage.setItem('player_diamonds', '500');
+        options.setPlayerDiamonds(500);
         clearActiveNpcCountrySimulationState();
         gameWindow.neosantara_country_color_overrides = {};
         gameWindow.neosantara_annexed_countries = {};

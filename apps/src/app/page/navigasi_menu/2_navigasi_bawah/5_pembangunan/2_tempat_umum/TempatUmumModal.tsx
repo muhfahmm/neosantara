@@ -34,6 +34,7 @@ import {
 } from "../build_logic/build_logic";
 import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
 import { getEffectiveBuildTime } from "@/app/page/bonus_logic";
+import { recordFacilityMissionProgress } from "@/app/page/menus/mission/missionModals";
 import {
   calculateLayananPublikScore,
   calculatePublicServiceCategoryScores,
@@ -267,6 +268,7 @@ export default function TempatUmumModal({
       updatedDetail.kepuasan = Math.min(100, (Number(countryDetail?.kepuasan) || 65.0) + (1.0 * quantity));
       setCountryDetail(updatedDetail);
       setSelectedBuilding(null);
+      recordFacilityMissionProgress(key, quantity);
       return;
     }
 
@@ -301,6 +303,7 @@ export default function TempatUmumModal({
 
     setCountryDetail(updatedDetail);
     setSelectedBuilding(null);
+    recordFacilityMissionProgress(key, quantity);
   };
 
   useEffect(() => {

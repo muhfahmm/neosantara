@@ -1592,12 +1592,6 @@
   .root-modal-util-39ea4195cd {
     @apply border border-root-accent/20 hover:border-root-accent/50;
   }
-  .root-modal-util-85c56ed520 {
-    @apply absolute left-3 top-0 z-20 flex items-center gap-1 rounded-b-md bg-root-accent px-2.5 py-0.5 text-[8px] font-black uppercase tracking-widest text-root-canvas;
-  }
-  .root-modal-util-315860d6d0 {
-    @apply h-2.5 w-2.5;
-  }
   .root-modal-util-29ccb89328 {
     @apply absolute -top-3.5 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-sm border border-root-accent/40 bg-root-canvas px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-root-text;
   }
@@ -2530,9 +2524,6 @@
   }
   .root-modal-util-004a18b3e0 {
     @apply border-root-accent/20 hover:border-root-accent/50;
-  }
-  .root-modal-util-9c7b827dd0 {
-    @apply absolute top-0 left-0 bg-root-accent text-root-canvas px-2.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-br-lg shadow-sm flex items-center gap-1 animate-pulse;
   }
   .root-modal-util-65ecbf5d72 {
     @apply absolute top-0 right-0 bg-amber-500/10 text-amber-400 px-3 py-1 text-[9px] font-black uppercase tracking-wider rounded-bl-lg border-l border-b border-amber-500/40 flex items-center gap-1;

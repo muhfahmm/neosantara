@@ -15,7 +15,7 @@
  * Aturan:
  * - Tidak boleh overload pangkalan laut.
  * - Prioritaskan kapal patroli / korvet / logistik sebelum kapal induk / destroyer berat.
- * - Membutuhkan kas yang cukup dan Netto APBN positif.
+ * - Membutuhkan kas yang cukup dan saldo bersih Anggaran Nasional positif.
  */
 
 import { calculateNetBalanceWithEconomicEmbargo } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";

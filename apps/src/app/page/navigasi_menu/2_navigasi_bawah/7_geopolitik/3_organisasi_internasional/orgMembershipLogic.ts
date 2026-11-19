@@ -155,8 +155,8 @@ export function submitOrgApplication(
   const apps = getOrgApplications();
   const key = `${normalizeKey(countryName)}_${normalizeKey(orgName)}`;
   
-  // Persentase penerimaan acak antara 65% - 90% jika tidak ditentukan
-  const approvalRate = customApprovalRate ?? (Math.floor(Math.random() * 26) + 65);
+  // Peluang penerimaan diatur tetap 50%
+  const approvalRate = customApprovalRate ?? 50;
 
   const newApp: OrgApplication = {
     orgName,
