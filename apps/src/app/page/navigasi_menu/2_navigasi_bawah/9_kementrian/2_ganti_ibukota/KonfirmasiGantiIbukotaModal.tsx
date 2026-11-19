@@ -45,8 +45,14 @@ export default function KonfirmasiGantiIbukotaModal({
   };
 
   return (
-    <NotebookModalWrapper onClose={onClose} zIndexClass="z-[100000050]">
-      <div className="relative flex-1 w-full overflow-y-auto p-4 font-sans sm:p-5">
+    <NotebookModalWrapper
+      compact
+      contentSized
+      frameClassName="root-confirm-modal-frame"
+      onClose={onClose}
+      zIndexClass="z-[100000050]"
+    >
+      <div className="relative w-full p-4 font-sans sm:p-5">
         <SharedModalCloseButton
           type="button"
           aria-label="Tutup konfirmasi pemindahan ibukota"

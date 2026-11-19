@@ -867,15 +867,17 @@
 .notebook-modal-frame.root-confirm-modal-frame > .modal-responsive-shell,
 .notebook-modal-frame.root-confirm-modal-frame[data-viewport-mode] > .modal-responsive-shell {
   height: auto !important;
-  max-height: min(480px, var(--modal-max-height)) !important;
+  max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 24px) !important;
   min-height: 0 !important;
   flex: 0 1 auto !important;
+  overflow: hidden !important;
 }
 
 .notebook-modal-frame.root-confirm-modal-frame .notebook-modal-sheet,
 .notebook-modal-frame.root-confirm-modal-frame .notebook-modal-content {
   flex: 0 1 auto !important;
   min-height: 0;
+  overflow: hidden !important;
 }
 
 .notebook-modal-frame.menu-info-content-sized-frame > .modal-responsive-shell,
@@ -964,10 +966,12 @@
   width: min(100%, var(--modal-max-width)) !important;
   max-width: var(--modal-max-width) !important;
   height: auto !important;
-  max-height: var(--modal-max-height) !important;
+  max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 24px) !important;
   min-height: 0 !important;
   flex: 0 1 auto !important;
 }
+
+
 
 .notebook-modal-frame.content-sized-info-frame .notebook-modal-content > :first-child {
   height: auto !important;
@@ -976,6 +980,7 @@
 }
 
 .notebook-modal-frame.content-sized-info-frame :is(
+  .root-info-modal-content,
   .loan-modal-content,
   .subsidy-detail-modal-body,
   .root-no-scrollbar-glow
@@ -985,6 +990,19 @@
   min-height: 0 !important;
   flex: 0 1 auto !important;
   overflow: visible !important;
+}
+
+.notebook-modal-frame.menu-info-content-sized-frame .organization-info-content {
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  flex: 0 1 auto !important;
+  overflow: visible !important;
+}
+
+.notebook-modal-frame.social-confirm-modal-frame .notebook-modal-content {
+  overflow: hidden !important;
+  overscroll-behavior: none;
 }
 
 .notebook-modal-frame.covert-operation-confirmation-frame > .modal-responsive-shell,
@@ -1068,6 +1086,11 @@
   padding-bottom: var(--modal-bottom-offset) !important;
   padding-left: var(--modal-side-offset) !important;
   padding-right: var(--modal-side-offset-right, var(--modal-side-offset)) !important;
+}
+
+.notebook-modal-frame.root-confirm-modal-frame.fixed.inset-0:has(> .modal-responsive-shell),
+.notebook-modal-frame.social-confirm-modal-frame.fixed.inset-0:has(> .modal-responsive-shell) {
+  padding: 12px !important;
 }
 
 .modal-responsive-shell > .bg-root-surface {

@@ -197,7 +197,7 @@ export default function OrgIntlInfoModal({
           </div>
         </header>
 
-        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto bg-root-surface p-4 sm:p-6">
+        <div className="organization-info-content space-y-5 bg-root-surface p-4 sm:p-6">
           <section>
             <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-root-accent">Tentang organisasi</h3>
             <p className="text-sm leading-relaxed text-root-body">{info.description}</p>

@@ -57,7 +57,7 @@ export default function IdeologiConfirmModal({
           titleId="ideology-confirm-title"
         />
 
-        <div className="max-h-[calc(100dvh-120px)] overflow-y-auto bg-root-surface p-4 sm:p-5">
+        <div className="bg-root-surface p-4 sm:p-5">
           <div className="flex w-full flex-col items-center rounded-2xl border border-root-accent/20 bg-root-canvas p-5 shadow-xl sm:p-6">
             <div className="relative w-16 h-20 flex-shrink-0 rounded-xl flex items-center justify-center shadow-lg border border-root-accent/30 bg-root-canvas">
               <div className="absolute top-1 left-2 w-2 h-4 bg-root-accent/20 rounded-full" />

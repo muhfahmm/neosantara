@@ -94,7 +94,13 @@ export default function IdeologiInfoModal({
   };
 
   return createPortal(
-    <NotebookModalWrapper onClose={onClose} zIndexClass="z-[250]">
+    <NotebookModalWrapper
+      compact
+      contentSized
+      frameClassName="content-sized-info-frame"
+      onClose={onClose}
+      zIndexClass="z-[250]"
+    >
       <div className="root-modal-util-b74379da23">
         <RootInfoModalHeader
           title={
@@ -111,7 +117,7 @@ export default function IdeologiInfoModal({
           size="standard"
         />
 
-        <div className="root-info-modal-content relative z-10 flex min-h-0 flex-1 flex-col justify-center gap-4 overflow-y-auto bg-root-surface p-4 custom-scrollbar sm:p-6">
+        <div className="root-info-modal-content relative z-10 flex flex-col justify-center gap-4 bg-root-surface p-4 sm:p-6">
           <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-4 sm:p-5">
             <p className="mb-2 text-sm font-bold text-root-text">{detail.desc}</p>
             <ul className="space-y-1.5 text-xs text-root-subtle">
