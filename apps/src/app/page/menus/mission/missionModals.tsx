@@ -1649,7 +1649,7 @@ export default function MissionModals({
       {/* Modal Misi */}
       {isOpen && mounted && createPortal(
         <NotebookModalWrapper onClose={onClose} zIndexClass="z-[100000]">
-          <div className="root-modal-util-52b6b298fe mission-modal-typography font-sans">
+          <div className="root-modal-util-b74379da23 mission-modal-typography font-sans">
             <RootInfoModalHeader
               title="Misi Presiden"
               onClose={onClose ?? (() => {})}

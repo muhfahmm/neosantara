@@ -907,6 +907,44 @@
   overflow: visible !important;
 }
 
+.notebook-modal-frame.populasi-info-content-sized-frame > .modal-responsive-shell,
+.notebook-modal-frame.populasi-info-content-sized-frame[data-viewport-mode] > .modal-responsive-shell {
+  box-sizing: border-box;
+  width: min(100%, var(--modal-max-width)) !important;
+  max-width: var(--modal-max-width) !important;
+  height: auto !important;
+  max-height: calc(100dvh - 80px) !important;
+  min-height: 0 !important;
+  flex: 0 1 auto !important;
+}
+
+.notebook-modal-frame.populasi-info-content-sized-frame > .modal-responsive-shell > .notebook-modal-sheet,
+.notebook-modal-frame.populasi-info-content-sized-frame > .modal-responsive-shell > .notebook-modal-sheet > .notebook-modal-content {
+  height: auto !important;
+  max-height: calc(100dvh - 110px) !important;
+  min-height: 0 !important;
+  flex: 0 1 auto !important;
+}
+
+.notebook-modal-frame.populasi-info-content-sized-frame > .modal-responsive-shell,
+.notebook-modal-frame.populasi-info-content-sized-frame[data-viewport-mode] > .modal-responsive-shell {
+  box-sizing: border-box;
+  width: min(100%, var(--modal-max-width)) !important;
+  max-width: var(--modal-max-width) !important;
+  height: auto !important;
+  max-height: calc(100dvh - 80px) !important;
+  min-height: 0 !important;
+  flex: 0 1 auto !important;
+}
+
+.notebook-modal-frame.populasi-info-content-sized-frame > .modal-responsive-shell > .notebook-modal-sheet,
+.notebook-modal-frame.populasi-info-content-sized-frame > .modal-responsive-shell > .notebook-modal-sheet > .notebook-modal-content {
+  height: auto !important;
+  max-height: calc(100dvh - 110px) !important;
+  min-height: 0 !important;
+  flex: 0 1 auto !important;
+}
+
 .notebook-modal-frame.organization-info-content-sized-frame
   > .modal-responsive-shell
   > .notebook-modal-content-sized-sheet {

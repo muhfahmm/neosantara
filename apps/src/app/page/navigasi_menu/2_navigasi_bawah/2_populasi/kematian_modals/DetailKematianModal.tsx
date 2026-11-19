@@ -18,6 +18,7 @@ import { calculateKesehatanLogic } from "./logic/kesehatanLogic";
 import { calculateTunawismaLogic } from "./logic/tunawismaLogic";
 import { calculateKriminalitasLogic } from "./logic/kriminalitasLogic";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 
 interface DetailKematianModalProps {
   isOpen: boolean;
@@ -96,141 +97,154 @@ export default function DetailKematianModal({
 
   return (
     <>
-      <NotebookModalWrapper onClose={onClose}>
+      <NotebookModalWrapper
+        compact
+        frameClassName="populasi-info-content-sized-frame"
+        zIndexClass="z-[75]"
+        onClose={onClose}
+      >
+        <div className="flex w-full min-w-0 flex-col overflow-hidden bg-root-surface">
+          <RootInfoModalHeader
+            title="Rincian Angka Kematian"
+            onClose={onClose}
+            size="standard"
+            icon={<Skull aria-hidden="true" />}
+          />
 
-        {/* Header */}
-        <div className={"satisfaction-modal-header root-modal-util-9462ce2345"}>
-          <div className={"satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar"}>
-            <div className={"root-modal-util-08dfbca033"}>
-              <div className={"root-modal-util-739d92b232"}>
-                <Users className={"root-modal-util-d252947d10"} />
-              </div>
-              <h2 className={"root-modal-util-6b4648c53a root-modal-util-c2385a463d"}>
-                Rincian Angka Kematian
-              </h2>
-            </div>
-          </div>
-          <RootModalCloseButton onClick={onClose} />
-        </div>
-
-        {/* Body */}
-        <div className={"root-modal-util-888ddfb0c3 custom-scrollbar"}>
-          <div className={"root-modal-util-3e7ce58d64"}>
+          {/* Body */}
+          <div className="max-h-[calc(100dvh-170px)] min-h-0 flex-1 overflow-y-auto p-3 sm:p-4 bg-root-surface neon-scrollbar space-y-3">
             
             {/* Ringkasan Utama */}
-            <div className={`root-modal-util-79099565c4 root-modal-util-5f22e64f22`}>
-              <div className={"root-modal-util-d27e953630"}>
-                <div>
-                  <p className={"root-modal-util-dfcde80191"}>Kematian Harian</p>
-                  <p className={"root-modal-util-c007ff74a3"}>-{formatNumber(dailyDeaths)}</p>
+            <div className="relative bg-gradient-to-br from-root-surface to-root-canvas border border-rose-500/30 rounded-xl p-2.5 sm:p-3 shadow-md">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <p className="flex items-center gap-1.5 text-[10px] sm:text-xs font-black uppercase tracking-wider text-rose-400">
+                    <Skull className="h-3.5 w-3.5 text-rose-400" />
+                    Kematian Harian
+                  </p>
+                  <p className="text-base sm:text-lg font-black text-rose-400 tabular-nums tracking-tight">
+                    -{formatNumber(dailyDeaths)}
+                    <span className="text-[10px] sm:text-xs font-bold text-root-subtle ml-1">/hr</span>
+                  </p>
                 </div>
-                <div className={"root-modal-util-52dfb88ae5"}>
-                  <Skull className={"root-modal-util-c280e1e65c"} />
+                <div className="p-2 rounded-xl bg-root-canvas border border-rose-500/30 text-rose-400 shadow-inner">
+                  <Skull className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
               </div>
             </div>
 
             {/* Breakdown Faktor */}
-            <div className={"root-modal-util-69ff2269b4"}>
-              {/* 1. Harapan Hidup */}
-              <div className={`root-modal-util-e0535830e3 root-modal-util-5f22e64f22 root-modal-util-3988af3ab2 `}>
-                <div className={"root-modal-util-6a00a25d56"}>
-                  <div className={"root-modal-util-d8b10b3e0e"}>
-                    <Heart className={"root-modal-util-e443a49d4d"} />
-                  </div>
-                  <h4 className={"root-modal-util-37591e0638"}>Harapan Hidup</h4>
-                </div>
-                <div className={"root-modal-util-0e44f76651"}>
-                  <span className={"root-modal-util-b6bf3be5ae"}>{harapanHidup} tahun</span>
-                  <span className={"root-modal-util-d661690b23"}>× {lifeExpectancyFactor.toFixed(2)}</span>
-                </div>
-                <p className={"root-modal-util-ab6dcb44a2 [overflow-wrap:anywhere]"}>Semakin tinggi harapan hidup, semakin rendah angka kematian.</p>
+            <div className="space-y-2">
+              <div className="flex items-center gap-1.5 pb-1 border-b border-root-accent/15">
+                <h3 className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-root-accent">
+                  Faktor yang Memengaruhi
+                </h3>
               </div>
 
-              {/* 2. Keamanan */}
-              <div className={`root-modal-util-e0535830e3 root-modal-util-5f22e64f22 root-modal-util-3988af3ab2 `}>
-                <div className={"root-modal-util-6a00a25d56"}>
-                  <div className={"root-modal-util-d8b10b3e0e"}>
-                    <Shield className={"root-modal-util-e443a49d4d"} />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {/* 1. Harapan Hidup */}
+                <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-2.5 space-y-1">
+                  <div className="flex items-center gap-1.5 text-root-subtle">
+                    <Heart className="h-3.5 w-3.5 text-rose-400" />
+                    <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Harapan Hidup</h4>
                   </div>
-                  <h4 className={"root-modal-util-37591e0638"}>Tingkat Keamanan</h4>
-                </div>
-                <div className={"root-modal-util-0e44f76651"}>
-                  <span className={"root-modal-util-b6bf3be5ae"}>{tingkatKeamanan}%</span>
-                  <span className={"root-modal-util-d661690b23"}>× {securityFactor.toFixed(2)}</span>
-                </div>
-                <p className={"root-modal-util-ab6dcb44a2 [overflow-wrap:anywhere]"}>Lingkungan aman mengurangi kematian akibat kriminalitas dan kecelakaan.</p>
-              </div>
-
-              {/* 3. Tunawisma */}
-              <div className={`root-modal-util-e0535830e3 root-modal-util-5f22e64f22 root-modal-util-3988af3ab2 `}>
-                <div className={"root-modal-util-6a00a25d56"}>
-                  <div className={"root-modal-util-d8b10b3e0e"}>
-                    <Home className={"root-modal-util-e443a49d4d"} />
+                  <div className="flex items-center justify-between text-xs sm:text-sm font-black tabular-nums text-root-text">
+                    <span>{harapanHidup} tahun</span>
+                    <span className="text-[10px] sm:text-xs font-bold text-root-accent">× {lifeExpectancyFactor.toFixed(2)}</span>
                   </div>
-                  <h4 className={"root-modal-util-37591e0638"}>Tunawisma</h4>
+                  <p className="text-[9px] text-root-subtle leading-tight">Semakin tinggi harapan hidup, semakin rendah angka kematian.</p>
                 </div>
-                <div className={"root-modal-util-0e44f76651"}>
-                  <span className={"root-modal-util-b6bf3be5ae"}>{formatNumber(homelessCount)} jiwa ({ (homelessRatio * 100).toFixed(2)}%)</span>
-                  <span className={"root-modal-util-d661690b23"}>× {homelessFactor.toFixed(2)}</span>
-                </div>
-                <p className={"root-modal-util-ab6dcb44a2 [overflow-wrap:anywhere]"}>Setiap 1% populasi tunawisma meningkatkan kematian sebesar 5%.</p>
-              </div>
 
-              {/* 4. Kesehatan */}
-              <div 
-                className={`root-modal-util-e0535830e3 root-modal-util-5f22e64f22 root-modal-util-c8bb89f962 `}
-                onClick={() => onOpenTempatUmum?.('kesehatan')}
-              >
-                <div className={"root-modal-util-6a00a25d56"}>
-                  <div className={"root-modal-util-d8b10b3e0e"}>
-                    <HeartPulse className={"root-modal-util-e443a49d4d"} />
+                {/* 2. Keamanan */}
+                <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-2.5 space-y-1">
+                  <div className="flex items-center gap-1.5 text-root-subtle">
+                    <Shield className="h-3.5 w-3.5 text-cyan-400" />
+                    <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Tingkat Keamanan</h4>
                   </div>
-                  <h4 className={"root-modal-util-37591e0638"}>Fasilitas Kesehatan</h4>
-                </div>
-                <div className={"root-modal-util-0e44f76651"}>
-                  <span className={"root-modal-util-b6bf3be5ae"}>{calculateKesehatanScore(countryDetail)} POIN <span className={"root-modal-util-be43bc36b5"}>(rasio {hospitalRatio.toFixed(2)})</span></span>
-                  <span className={"root-modal-util-d661690b23"}>× {healthFactor.toFixed(2)}</span>
-                </div>
-                <p className={"root-modal-util-ab6dcb44a2 [overflow-wrap:anywhere]"}>Ketersediaan RS yang cukup menurunkan kematian akibat penyakit yang dapat diobati.</p>
-              </div>
-
-              {/* 5. Ketahanan Pangan */}
-              <div 
-                className={`root-modal-util-e0535830e3 root-modal-util-5f22e64f22 root-modal-util-c8bb89f962 `}
-                onClick={() => onOpenIndustriPangan?.()}
-              >
-                <div className={"root-modal-util-6a00a25d56"}>
-                  <div className={"root-modal-util-d8b10b3e0e"}>
-                    <Utensils className={"root-modal-util-e443a49d4d"} />
+                  <div className="flex items-center justify-between text-xs sm:text-sm font-black tabular-nums text-root-text">
+                    <span>{tingkatKeamanan}%</span>
+                    <span className="text-[10px] sm:text-xs font-bold text-root-accent">× {securityFactor.toFixed(2)}</span>
                   </div>
-                  <h4 className={"root-modal-util-37591e0638"}>Ketahanan Pangan</h4>
+                  <p className="text-[9px] text-root-subtle leading-tight">Lingkungan aman mengurangi fatalitas kecelakaan & kejahatan.</p>
                 </div>
-                <div className={"root-modal-util-0e44f76651"}>
-                  <span className={"root-modal-util-b6bf3be5ae"}>{indeksKetahananPangan} POIN</span>
-                  <span className={"root-modal-util-d661690b23"}>× {foodSecurityFactor.toFixed(2)}</span>
-                </div>
-                <p className={"root-modal-util-ab6dcb44a2 [overflow-wrap:anywhere]"}>Ketersediaan pangan yang cukup mengurangi kematian akibat malnutrisi.</p>
-              </div>
 
-              {/* 6. Kriminalitas */}
-              <div 
-                className={`root-modal-util-e0535830e3 root-modal-util-5f22e64f22 root-modal-util-c8bb89f962 `}
-                onClick={() => onOpenArmada?.('polisi')}
-              >
-                <div className={"root-modal-util-6a00a25d56"}>
-                  <div className={"root-modal-util-d8b10b3e0e"}>
-                    <AlertTriangle className={"root-modal-util-e443a49d4d"} />
+                {/* 3. Tunawisma */}
+                <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-2.5 space-y-1">
+                  <div className="flex items-center gap-1.5 text-root-subtle">
+                    <Home className="h-3.5 w-3.5 text-amber-400" />
+                    <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Tunawisma</h4>
                   </div>
-                  <h4 className={"root-modal-util-37591e0638"}>Penegakan Hukum & Kriminalitas</h4>
+                  <div className="flex items-center justify-between text-xs sm:text-sm font-black tabular-nums text-root-text">
+                    <span>{formatNumber(homelessCount)} jiwa ({(homelessRatio * 100).toFixed(2)}%)</span>
+                    <span className="text-[10px] sm:text-xs font-bold text-root-accent">× {homelessFactor.toFixed(2)}</span>
+                  </div>
+                  <p className="text-[9px] text-root-subtle leading-tight">Setiap 1% tunawisma meningkatkan kematian sebesar 5%.</p>
                 </div>
-                <div className={"root-modal-util-0e44f76651"}>
-                  <span className={"root-modal-util-b6bf3be5ae"}>{calculatePenegakanHukumScore(countryDetail)} POIN</span>
-                  <span className={"root-modal-util-d661690b23"}>× {crimeFactor.toFixed(2)}</span>
-                </div>
-                <p className={"root-modal-util-ab6dcb44a2 [overflow-wrap:anywhere]"}>Skor kepuasan penegakan hukum dari Indeks Kesejahteraan.</p>
-              </div>
 
+                {/* 4. Kesehatan (clickable) */}
+                <div 
+                  className="rounded-xl border border-root-accent/25 bg-root-canvas hover:border-root-accent/50 p-2.5 space-y-1 cursor-pointer transition-colors"
+                  onClick={() => onOpenTempatUmum?.('kesehatan')}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <HeartPulse className="h-3.5 w-3.5 text-emerald-400" />
+                      <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Fasilitas Kesehatan</h4>
+                    </div>
+                    <span className="text-[9px] font-black uppercase tracking-wider text-root-accent hover:underline">Buka →</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs sm:text-sm font-black tabular-nums text-root-text">
+                    <span>{calculateKesehatanScore(countryDetail)} POIN <span className="text-[9px] font-normal text-root-subtle">(rasio {hospitalRatio.toFixed(2)})</span></span>
+                    <span className="text-[10px] sm:text-xs font-bold text-root-accent">× {healthFactor.toFixed(2)}</span>
+                  </div>
+                  <p className="text-[9px] text-root-subtle leading-tight">Ketersediaan RS menurunkan kematian penyakit yang dapat diobati.</p>
+                </div>
+
+                {/* 5. Ketahanan Pangan (clickable) */}
+                <div 
+                  className="rounded-xl border border-root-accent/25 bg-root-canvas hover:border-root-accent/50 p-2.5 space-y-1 cursor-pointer transition-colors"
+                  onClick={() => onOpenIndustriPangan?.()}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <Utensils className="h-3.5 w-3.5 text-lime-400" />
+                      <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Ketahanan Pangan</h4>
+                    </div>
+                    <span className="text-[9px] font-black uppercase tracking-wider text-root-accent hover:underline">Buka →</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs sm:text-sm font-black tabular-nums text-root-text">
+                    <span>{indeksKetahananPangan} POIN</span>
+                    <span className="text-[10px] sm:text-xs font-bold text-root-accent">× {foodSecurityFactor.toFixed(2)}</span>
+                  </div>
+                  <p className="text-[9px] text-root-subtle leading-tight">Ketersediaan pangan yang cukup mengurangi risiko malnutrisi.</p>
+                </div>
+
+                {/* 6. Kriminalitas (clickable) */}
+                <div 
+                  className="rounded-xl border border-root-accent/25 bg-root-canvas hover:border-root-accent/50 p-2.5 space-y-1 cursor-pointer transition-colors"
+                  onClick={() => onOpenArmada?.('polisi')}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <AlertTriangle className="h-3.5 w-3.5 text-amber-400" />
+                      <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Penegakan Hukum</h4>
+                    </div>
+                    <span className="text-[9px] font-black uppercase tracking-wider text-root-accent hover:underline">Buka →</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs sm:text-sm font-black tabular-nums text-root-text">
+                    <span>{calculatePenegakanHukumScore(countryDetail)} POIN</span>
+                    <span className="text-[10px] sm:text-xs font-bold text-root-accent">× {crimeFactor.toFixed(2)}</span>
+                  </div>
+                  <p className="text-[9px] text-root-subtle leading-tight">Kepuasan hukum & kepolisian dari Indeks Kesejahteraan.</p>
+                </div>
+
+              </div>
             </div>
           </div>
         </div>

@@ -9644,7 +9644,7 @@ export default function MapPage() {
                         }}
                     />
                     {/* Top Left Icon - Inbox */}
-                    <TopLeftIcon
+                    {!penelitianModalOpen && <TopLeftIcon
                         userCountryName={String(
                             countryDetail?.country ||
                             countryDetail?.nama_negara ||
@@ -10808,7 +10808,7 @@ export default function MapPage() {
                     }
                     setInboxModalOpen(false);
                 }}
-            />
+            />}
 
             {/* Top Right Icons - Gift and News */}
             {!isWarAnalysisActive && <TopRightGiftIcon
@@ -11728,7 +11728,7 @@ export default function MapPage() {
                         bottom: 'calc(var(--safe-bottom) + 0.5rem)',
                         right: 'calc(var(--safe-right) + 0.5rem)',
                     }}
-                    className={`fixed ${hasMounted ? 'z-[10000000000]' : 'z-40'} transition-all ${isDialogTerbukaOpen ? 'hidden pointer-events-none' : ''} ${
+                    className={`fixed ${hasMounted ? 'z-[10000000000]' : 'z-40'} transition-all ${isDialogTerbukaOpen || penelitianModalOpen ? 'hidden pointer-events-none' : ''} ${
                     isLandscapePhone
                         ? 'flex flex-row items-center gap-1.5 bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg max-w-[210px] h-[36px]'
                         : isPortraitPhone

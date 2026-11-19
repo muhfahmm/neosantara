@@ -14,7 +14,7 @@ import {
 import { calculateKesehatanScore, calculatePendidikanScore } from "@/app/logic/kesejahteraanCalculator";
 import { calculateKesehatanLogic } from "../kematian_modals/logic/kesehatanLogic";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
-import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 
 interface DetailKelahiranModalProps {
   isOpen: boolean;
@@ -79,160 +79,144 @@ export default function DetailKelahiranModal({
   const formatNumber = (num: number) => num.toLocaleString('id-ID', { maximumFractionDigits: 2 });
 
   return (
-    <NotebookModalWrapper onClose={onClose}>
-      <div className={"root-modal-util-4644119199"}>
+    <NotebookModalWrapper
+      compact
+      frameClassName="populasi-info-content-sized-frame"
+      zIndexClass="z-[75]"
+      onClose={onClose}
+    >
+      <div className="flex w-full min-w-0 flex-col overflow-hidden bg-root-surface">
+        <RootInfoModalHeader
+          title="Rincian Pertumbuhan Penduduk"
+          onClose={onClose}
+          size="standard"
+          icon={<Users aria-hidden="true" />}
+        />
 
-        {/* ============ HEADER (DISAMAKAN DENGAN MODAL KEPENDUDUKAN) ============ */}
-        <div className={"root-modal-util-9462ce2345"}>
-          <div className={"root-modal-util-1117664efc"}>
-            <div className={"root-modal-util-170d7abee6"}>
-              <Users className={"root-modal-util-d252947d10"} />
+        {/* ============ BODY (COMPACT CONTENT-SIZED) ============ */}
+        <div className="max-h-[calc(100dvh-170px)] min-h-0 flex-1 overflow-y-auto p-3 sm:p-4 bg-root-surface neon-scrollbar space-y-3">
+          {/* ============ RINGKASAN UTAMA ============ */}
+          <div className="relative bg-gradient-to-br from-root-surface to-root-canvas border border-root-accent/30 rounded-xl p-2.5 sm:p-3 shadow-md">
+            
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-root-accent/15">
+              <div className="space-y-0.5">
+                <p className="flex items-center gap-1.5 text-[10px] sm:text-xs font-black uppercase tracking-wider text-root-subtle">
+                  <TrendingUp className="h-3.5 w-3.5 text-root-accent" />
+                  Pertumbuhan Bersih Harian
+                </p>
+                <p className={`text-base sm:text-lg font-black tabular-nums tracking-tight ${netDailyChange >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                  {netDailyChange >= 0 ? '+' : ''}{formatNumber(netDailyChange)}
+                  <span className="text-[10px] sm:text-xs font-bold text-root-subtle ml-1">/hr</span>
+                </p>
+              </div>
+              <div className="p-2 rounded-xl bg-root-canvas border border-root-accent/20 text-root-accent shadow-inner">
+                <Activity className="h-5 w-5 sm:h-6 sm:w-6" />
+              </div>
             </div>
-            <div>
-              {/* Font size dinaikkan kembali ke text-base sm:text-xl */}
-              <h2 className={`root-modal-util-6b4648c53a root-modal-util-c2385a463d`}>
-                Rincian Pertumbuhan Penduduk
-              </h2>
+
+            <div className="grid grid-cols-2 gap-2">
+              <div className="rounded-lg bg-root-canvas/90 border border-emerald-500/30 p-2 text-center">
+                <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-wide text-emerald-400/80 mb-0.5">Kelahiran</p>
+                <p className="text-xs sm:text-sm font-black text-emerald-400 tabular-nums">
+                  +{formatNumber(dailyBirths)}
+                </p>
+              </div>
+              <div className="rounded-lg bg-root-canvas/90 border border-rose-500/30 p-2 text-center">
+                <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-wide text-rose-400/80 mb-0.5">Kematian</p>
+                <p className="text-xs sm:text-sm font-black text-rose-400 tabular-nums">
+                  -{formatNumber(dailyDeaths)}
+                </p>
+              </div>
             </div>
           </div>
 
-          <RootModalCloseButton onClick={onClose} />
-        </div>
-
-        {/* ============ BODY (TETAP COMPACT & RESPONSIF) ============ */}
-        <div className={"root-modal-util-6717e88ecf"}>
-          <div className={"root-modal-util-6f7e013d64"}>
-
-            {/* ============ RINGKASAN UTAMA ============ */}
-            <div className={`root-modal-util-45d5e12daf root-modal-util-5f22e64f22 root-modal-util-2cd02d11d1`}>
-              
-              <div className={"root-modal-util-6fe0d227d8"}>
-                <div className={"root-modal-util-3b4c716cd4"}>
-                  <p className={"root-modal-util-7e8539efb1"}>
-                    <TrendingUp className={"root-modal-util-904147d153"} />
-                    Pertumbuhan Bersih Harian
-                  </p>
-                  <p className={`root-modal-util-5d0413e9d7 ${netDailyChange >= 0 ? "root-modal-util-edbfd1c508" : "root-modal-util-35f302741d"}`}>
-                    {netDailyChange >= 0 ? '+' : ''}{formatNumber(netDailyChange)}
-                    <span className={"root-modal-util-f03f2f1c1c"}>/hr</span>
-                  </p>
-                </div>
-                <div className={"root-modal-util-b103ddc4d4"}>
-                  <Activity className={"root-modal-util-bf480b1526"} />
-                </div>
-              </div>
-
-              <div className={"root-modal-util-690873d574"}>
-                <div className={`root-modal-util-80cbb31289 root-modal-util-5f22e64f22 root-modal-util-4164c8e312 `}>
-                  <p className={"root-modal-util-fc7a6578ee"}>Kelahiran</p>
-                  <p className={"root-modal-util-84fffb88af"}>
-                    +{formatNumber(dailyBirths)}
-                  </p>
-                </div>
-                <div className={`root-modal-util-80cbb31289 root-modal-util-5f22e64f22 root-modal-util-804966dce1 `}>
-                  <p className={"root-modal-util-83c4565cad"}>Kematian</p>
-                  <p className={"root-modal-util-ed8a4a668a"}>
-                    -{formatNumber(dailyDeaths)}
-                  </p>
-                </div>
-              </div>
+          {/* ============ BREAKDOWN FAKTOR ============ */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-1.5 pb-1 border-b border-root-accent/15">
+              <Sparkles className="h-3.5 w-3.5 text-root-accent" />
+              <h3 className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-root-accent">
+                Faktor yang Memengaruhi
+              </h3>
             </div>
 
-            {/* ============ BREAKDOWN FAKTOR ============ */}
-            <div>
-              <div className={"root-modal-util-c6ef2c9467"}>
-                <div className={"root-modal-util-61c79d0ef6"}>
-                  <Sparkles className={"root-modal-util-997485ae46"} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {/* 1. Populasi Dasar */}
+              <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-2.5 space-y-1">
+                <div className="flex items-center gap-1.5 text-root-subtle">
+                  <Users className="h-3.5 w-3.5 text-root-accent" />
+                  <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Populasi Dasar</h4>
                 </div>
-                <h3 className={"root-modal-util-00229c2359"}>
-                  Faktor yang Memengaruhi
-                </h3>
-                <div className={"root-modal-util-0c271612cb"} />
+                <p className="text-xs sm:text-sm font-black tabular-nums text-root-text">
+                  {formatNumber(populasi)} <span className="text-[10px] font-bold text-root-subtle">jiwa</span>
+                </p>
               </div>
 
-              <div className={"root-modal-util-4d27ab2ea5"}>
-                {/* 1. Populasi Dasar */}
-                <div className={`group root-modal-util-4deab89164 root-modal-util-5f22e64f22 root-modal-util-b3a0d27412 `}>
-                  <div className={"root-modal-util-41681120cf"}>
-                    <div className={"root-modal-util-bff539c149"}>
-                      <Users className={"root-modal-util-904147d153"} />
-                    </div>
-                    <h4 className={"root-modal-util-0c50473147"}>Populasi Dasar</h4>
-                  </div>
-                  <p className={"root-modal-util-30d65ce7e4"}>
-                    {formatNumber(populasi)} <span className={"root-modal-util-021a1c8cb3"}>jiwa</span>
-                  </p>
+              {/* 2. Kesejahteraan */}
+              <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-2.5 space-y-1">
+                <div className="flex items-center gap-1.5 text-root-subtle">
+                  <Banknote className="h-3.5 w-3.5 text-root-accent" />
+                  <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Kesejahteraan</h4>
                 </div>
-
-                {/* 2. Kesejahteraan */}
-                <div className={`group root-modal-util-4deab89164 root-modal-util-5f22e64f22 root-modal-util-b3a0d27412 `}>
-                  <div className={"root-modal-util-41681120cf"}>
-                    <div className={"root-modal-util-bff539c149"}>
-                      <Banknote className={"root-modal-util-904147d153"} />
-                    </div>
-                    <h4 className={"root-modal-util-0c50473147"}>Kesejahteraan</h4>
-                  </div>
-                  <div className={"root-modal-util-0edaa2882b"}>
-                    <span className={"root-modal-util-30d65ce7e4"}>
-                      {countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : 50} <span className={"root-modal-util-021a1c8cb3"}>INDX</span>
-                    </span>
-                    <span className={"root-modal-util-ec349ffbf1"}>
-                      × {welfareFactor.toFixed(2)}
-                    </span>
-                  </div>
+                <div className="flex items-center justify-between text-xs sm:text-sm font-black tabular-nums text-root-text">
+                  <span>
+                    {countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : 50} <span className="text-[10px] font-bold text-root-subtle">INDX</span>
+                  </span>
+                  <span className="text-[10px] sm:text-xs font-bold text-root-accent">
+                    × {welfareFactor.toFixed(2)}
+                  </span>
                 </div>
-
-                {/* 3. Fasilitas Kesehatan (clickable) */}
-                <div
-                  className={`group root-modal-util-4deab89164 root-modal-util-5f22e64f22 root-modal-util-d0c179737a `}
-                  onClick={() => onOpenTempatUmum?.('kesehatan')}
-                >
-                  <div className={"root-modal-util-1de6c9c32e"}>
-                    <div className={"root-modal-util-41681120cf"}>
-                      <div className={"root-modal-util-abcb8e04f7"}>
-                        <HeartPulse className={"root-modal-util-904147d153"} />
-                      </div>
-                      <h4 className={"root-modal-util-0c50473147"}>Fasilitas Kesehatan</h4>
-                    </div>
-                    <span className={"root-modal-util-abed0b4e4b"}>Buka →</span>
-                  </div>
-                  <div className={"root-modal-util-0edaa2882b"}>
-                    <span className={"root-modal-util-30d65ce7e4"}>
-                      {kesehatanScore} <span className={"root-modal-util-021a1c8cb3"}>POIN</span>
-                    </span>
-                    <span className={"root-modal-util-64adb8e57f"}>(rasio {hospitalRatio.toFixed(2)})</span>
-                    <span className={"root-modal-util-ec349ffbf1"}>
-                      × {healthFactor.toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-
-                {/* 4. Tingkat Pendidikan (clickable) */}
-                <div
-                  className={`group root-modal-util-4deab89164 root-modal-util-5f22e64f22 root-modal-util-d0c179737a `}
-                  onClick={() => onOpenTempatUmum?.('pendidikan')}
-                >
-                  <div className={"root-modal-util-1de6c9c32e"}>
-                    <div className={"root-modal-util-41681120cf"}>
-                      <div className={"root-modal-util-abcb8e04f7"}>
-                        <GraduationCap className={"root-modal-util-904147d153"} />
-                      </div>
-                      <h4 className={"root-modal-util-0c50473147"}>Tingkat Pendidikan</h4>
-                    </div>
-                    <span className={"root-modal-util-abed0b4e4b"}>Buka →</span>
-                  </div>
-                  <div className={"root-modal-util-0edaa2882b"}>
-                    <span className={"root-modal-util-30d65ce7e4"}>
-                      {pendidikanScore} <span className={"root-modal-util-021a1c8cb3"}>POIN</span>
-                    </span>
-                    <span className={"root-modal-util-64adb8e57f"}>(rasio {educationRatio.toFixed(2)})</span>
-                    <span className={"root-modal-util-ec349ffbf1"}>
-                      × {educationFactor.toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-
               </div>
+
+              {/* 3. Fasilitas Kesehatan (clickable) */}
+              <div
+                className="rounded-xl border border-root-accent/25 bg-root-canvas hover:border-root-accent/50 p-2.5 space-y-1 cursor-pointer transition-colors"
+                onClick={() => onOpenTempatUmum?.('kesehatan')}
+                role="button"
+                tabIndex={0}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <HeartPulse className="h-3.5 w-3.5 text-root-accent" />
+                    <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Fasilitas Kesehatan</h4>
+                  </div>
+                  <span className="text-[9px] font-black uppercase tracking-wider text-root-accent hover:underline">Buka →</span>
+                </div>
+                <div className="flex items-center justify-between text-xs sm:text-sm font-black tabular-nums text-root-text">
+                  <span>
+                    {kesehatanScore} <span className="text-[10px] font-bold text-root-subtle">POIN</span>
+                    <span className="text-[9px] font-normal text-root-subtle ml-1">(rasio {hospitalRatio.toFixed(2)})</span>
+                  </span>
+                  <span className="text-[10px] sm:text-xs font-bold text-root-accent">
+                    × {healthFactor.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
+              {/* 4. Tingkat Pendidikan (clickable) */}
+              <div
+                className="rounded-xl border border-root-accent/25 bg-root-canvas hover:border-root-accent/50 p-2.5 space-y-1 cursor-pointer transition-colors"
+                onClick={() => onOpenTempatUmum?.('pendidikan')}
+                role="button"
+                tabIndex={0}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <GraduationCap className="h-3.5 w-3.5 text-root-accent" />
+                    <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Tingkat Pendidikan</h4>
+                  </div>
+                  <span className="text-[9px] font-black uppercase tracking-wider text-root-accent hover:underline">Buka →</span>
+                </div>
+                <div className="flex items-center justify-between text-xs sm:text-sm font-black tabular-nums text-root-text">
+                  <span>
+                    {pendidikanScore} <span className="text-[10px] font-bold text-root-subtle">POIN</span>
+                    <span className="text-[9px] font-normal text-root-subtle ml-1">(rasio {educationRatio.toFixed(2)})</span>
+                  </span>
+                  <span className="text-[10px] sm:text-xs font-bold text-root-accent">
+                    × {educationFactor.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
