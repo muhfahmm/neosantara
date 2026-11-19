@@ -206,7 +206,7 @@ export default function CountryDetailKonsumsiModal({
       <div className="relative flex h-full min-h-0 w-full flex-col overflow-hidden font-sans pointer-events-auto">
 
         {/* HEADER */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-rose-500/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-rose-500/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0">
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="p-1 sm:p-1.5 bg-root-surface rounded-lg border border-rose-500/40 text-rose-400 shrink-0">
               <Zap className="h-4 w-4 sm:h-5 sm:w-5" />

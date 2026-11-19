@@ -4,6 +4,7 @@ import React, { ElementType } from "react";
 import { AlertCircle, ArrowRight, CheckCircle2, MessageSquare, Sparkles } from "lucide-react";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import RootModalCloseButton from "./RootModalCloseButton";
+import RootInfoModalHeader from "./RootInfoModalHeader";
 
 export type RootAISuggestionStatus = "deficit" | "surplus" | "neutral";
 
@@ -85,21 +86,13 @@ export default function RootAISuggestionsModal({
 
   return (
     <NotebookModalWrapper onClose={onClose} zIndexClass="z-[75]">
-      <div className="root-ai-modal">
-        <header className="root-ai-modal__header">
-          <div className="root-ai-modal__heading">
-            <span className="root-ai-modal__icon">
-              <HeaderIcon className="h-5 w-5" />
-            </span>
-            <div className="min-w-0">
-              <h2 className="root-ai-modal__title">
-                {title || `Rekomendasi & Analisis AI Sektor ${sectorLabel}`}
-              </h2>
-              <p className="root-ai-modal__subtitle">{subtitle}</p>
-            </div>
-          </div>
-          <RootModalCloseButton onClick={onClose} />
-        </header>
+      <div className="root-modal-util-b74379da23">
+        <RootInfoModalHeader
+          title={title || `Rekomendasi & Analisis AI Sektor ${sectorLabel}`}
+          onClose={onClose}
+          icon={<HeaderIcon />}
+          size="standard"
+        />
 
         <div className="root-ai-modal__body neon-scrollbar">
           <div className="root-ai-modal__metrics">

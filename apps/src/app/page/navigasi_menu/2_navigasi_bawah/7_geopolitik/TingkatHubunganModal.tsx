@@ -276,8 +276,8 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
 
       {/* MODAL LEGENDA */}
       {isLegendOpen && (
-        <NotebookModalWrapper onClose={() => setIsLegendOpen(false)} compact zIndexClass="z-[70]">
-          <div role="dialog" aria-modal="true" aria-labelledby="relation-legend-title" className="flex max-h-[calc(100dvh-160px)] min-w-0 flex-col overflow-hidden">
+        <NotebookModalWrapper onClose={() => setIsLegendOpen(false)} zIndexClass="z-[70]">
+          <div role="dialog" aria-modal="true" aria-labelledby="relation-legend-title" className="root-modal-util-b74379da23">
             <RootInfoModalHeader
               title="Indikator Hubungan Diplomatik"
               titleId="relation-legend-title"
@@ -331,7 +331,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
       {/* MODAL PILIH JALUR */}
       {isPilihJalurOpen && (
         <NotebookModalWrapper onClose={() => setIsPilihJalurOpen(false)}>
-          <div className="flex h-full flex-col overflow-hidden">
+          <div className="root-modal-util-b74379da23">
 
             <RootInfoModalHeader
               title="Pilih Jalur Diplomasi"
@@ -348,17 +348,14 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                     setIsPilihJalurOpen(false);
                     setIsTingkatkanUangOpen(true);
                   }}
-                  className="group flex flex-col items-center justify-center text-center p-6 sm:p-8 rounded-2xl border border-root-accent/30 bg-root-canvas hover:bg-root-accent/10 hover:border-root-accent transition-all cursor-pointer shadow-sm min-h-[200px] sm:min-h-[240px]"
+                  className="group flex flex-col items-center justify-center text-center p-6 sm:p-8 rounded-2xl border border-root-accent/30 bg-root-canvas hover:bg-root-accent/10 hover:border-root-accent transition-all cursor-pointer shadow-sm min-h-[160px] sm:min-h-[180px]"
                 >
-                  <div className="p-4 bg-root-accent/10 rounded-2xl border border-root-accent/30 mb-4 group-hover:bg-root-accent transition-all">
+                  <div className="p-4 bg-root-accent/10 rounded-2xl border border-root-accent/30 mb-3 group-hover:bg-root-accent transition-all">
                     <Coins className="h-8 w-8 sm:h-10 sm:w-10 text-root-accent group-hover:text-root-canvas transition-colors" />
                   </div>
-                  <h4 className="text-base sm:text-lg font-black text-root-accent uppercase tracking-wide mb-2">
+                  <h4 className="text-base sm:text-lg font-black text-root-accent uppercase tracking-wide">
                     Jalur Uang (NEO)
                   </h4>
-                  <p className="text-xs sm:text-sm text-root-subtle leading-relaxed max-w-xs">
-                    Tingkatkan Hubungan Diplomatik dengan menyalurkan kas anggaran negara (10.000 NEO = +1 Tingkat).
-                  </p>
                 </button>
 
                 <button
@@ -367,17 +364,14 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                     setIsPilihJalurOpen(false);
                     setIsBeriHadiahBarangOpen(true);
                   }}
-                  className="group flex flex-col items-center justify-center text-center p-6 sm:p-8 rounded-2xl border border-root-accent/30 bg-root-canvas hover:bg-root-accent/10 hover:border-root-accent transition-all cursor-pointer shadow-sm min-h-[200px] sm:min-h-[240px]"
+                  className="group flex flex-col items-center justify-center text-center p-6 sm:p-8 rounded-2xl border border-root-accent/30 bg-root-canvas hover:bg-root-accent/10 hover:border-root-accent transition-all cursor-pointer shadow-sm min-h-[160px] sm:min-h-[180px]"
                 >
-                  <div className="p-4 bg-root-accent/10 rounded-2xl border border-root-accent/30 mb-4 group-hover:bg-root-accent transition-all">
+                  <div className="p-4 bg-root-accent/10 rounded-2xl border border-root-accent/30 mb-3 group-hover:bg-root-accent transition-all">
                     <Gift className="h-8 w-8 sm:h-10 sm:w-10 text-root-accent group-hover:text-root-canvas transition-colors" />
                   </div>
-                  <h4 className="text-base sm:text-lg font-black text-root-accent uppercase tracking-wide mb-2">
+                  <h4 className="text-base sm:text-lg font-black text-root-accent uppercase tracking-wide">
                     Jalur Hadiah Komoditas
                   </h4>
-                  <p className="text-xs sm:text-sm text-root-subtle leading-relaxed max-w-xs">
-                    Beri Hadiah Komoditas berupa hasil mineral, pangan, manufaktur, agrikultur, atau perikanan.
-                  </p>
                 </button>
               </div>
 

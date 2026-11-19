@@ -1236,10 +1236,10 @@
     @apply text-rose-400;
   }
   .root-modal-util-d3c57b9316 {
-    @apply flex h-full flex-col overflow-hidden rounded-xl border border-root-accent/20 bg-root-canvas shadow-[0_0_30px_rgba(0,255,170,0.15)];
+    @apply flex h-full flex-col overflow-hidden border border-root-accent/20 bg-root-canvas shadow-[0_0_30px_rgba(0,255,170,0.15)];
   }
   .root-modal-util-c5a2828bc0 {
-    @apply relative z-10 flex shrink-0 items-center justify-between gap-2 rounded-t-2xl border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3;
+    @apply relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3;
   }
   .root-modal-util-1117664efc {
     @apply flex items-center gap-2 sm:gap-3;
@@ -1353,7 +1353,7 @@
     @apply mt-0.5 h-4 w-4 shrink-0 text-root-accent;
   }
   .root-modal-util-52b6b298fe {
-    @apply relative flex h-full flex-col overflow-hidden rounded-xl border border-root-accent/20 bg-root-canvas;
+    @apply relative flex h-full flex-col overflow-hidden border border-root-accent/20 bg-root-canvas;
   }
   .root-modal-util-4450f1d9ee {
     @apply relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3;
@@ -1778,7 +1778,7 @@
     @apply mt-1 text-sm;
   }
   .root-modal-util-b74379da23 {
-    @apply flex flex-col h-full overflow-hidden bg-root-canvas rounded-xl border border-root-accent/20 relative;
+    @apply flex flex-col h-full overflow-hidden bg-root-canvas border border-root-accent/20 relative;
   }
   .root-modal-util-be617bb95e {
     @apply flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/50 bg-root-canvas p-1 text-root-accent transition-all hover:bg-root-accent hover:text-root-canvas;
@@ -2144,10 +2144,10 @@
     @apply bg-root-accent/10;
   }
   .root-modal-util-4644119199 {
-    @apply flex flex-col h-full overflow-hidden bg-root-canvas rounded-xl border border-root-accent/20;
+    @apply flex flex-col h-full overflow-hidden bg-root-canvas border border-root-accent/20;
   }
   .root-modal-util-9462ce2345 {
-    @apply px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl;
+    @apply px-4 sm:px-6 py-2.5 sm:py-3 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0;
   }
   .root-modal-util-739d92b232 {
     @apply p-1 sm:p-1.5 rounded-lg border border-root-accent/30 bg-root-surface shrink-0;
@@ -2686,7 +2686,7 @@
     @apply text-[8px] text-root-muted;
   }
   .root-modal-util-73d543abdb {
-    @apply px-4 sm:px-6 md:px-4 py-2.5 sm:py-3 border-b-0 md:border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0 rounded-t-2xl;
+    @apply px-4 sm:px-6 md:px-4 py-2.5 sm:py-3 border-b-0 md:border-b border-root-accent/20 flex items-center justify-between bg-root-canvas relative z-10 gap-2 shrink-0;
   }
   .root-modal-util-96c8287dff {
     @apply p-1 sm:p-1.5 bg-root-surface rounded-lg border border-rose-500/30 shrink-0;

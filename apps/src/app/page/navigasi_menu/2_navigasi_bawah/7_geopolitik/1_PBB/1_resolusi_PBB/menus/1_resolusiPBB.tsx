@@ -745,7 +745,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
           onClose={() => setShowCreateModal(false)}
           zIndexClass="z-[200]"
         >
-          <div className="flex h-full flex-col overflow-hidden">
+          <div className="root-modal-util-b74379da23">
             
             <RootInfoModalHeader
               title="Resolusi Sidang Umum PBB"

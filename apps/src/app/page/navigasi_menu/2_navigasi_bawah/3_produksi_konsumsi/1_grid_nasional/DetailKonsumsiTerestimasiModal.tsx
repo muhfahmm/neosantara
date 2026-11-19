@@ -90,7 +90,7 @@ export default function DetailKonsumsiTerestimasiModal({
 
           {/* CARD SUMMARY GRID: ROW 1 (3 KARTU UTAMA) */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-            
+
             {/* Total Produksi Listrik */}
             <div className="bg-emerald-950/40 border border-emerald-500/40 p-3.5 rounded-xl flex flex-col justify-between">
               <div>
@@ -204,51 +204,46 @@ export default function DetailKonsumsiTerestimasiModal({
             <div className="flex items-center gap-1 overflow-x-auto custom-scrollbar pb-1 sm:pb-0">
               <button
                 onClick={() => setActiveTab("semua")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
-                  activeTab === "semua"
-                    ? "bg-root-accent text-root-canvas shadow-md"
-                    : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${activeTab === "semua"
+                  ? "bg-root-accent text-root-canvas shadow-md"
+                  : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
+                  }`}
               >
                 Semua Sektor
               </button>
               <button
                 onClick={() => setActiveTab("produksi")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
-                  activeTab === "produksi"
-                    ? "bg-root-accent text-root-canvas shadow-md"
-                    : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${activeTab === "produksi"
+                  ? "bg-root-accent text-root-canvas shadow-md"
+                  : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
+                  }`}
               >
                 Produksi
               </button>
               <button
                 onClick={() => setActiveTab("tempat_umum")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
-                  activeTab === "tempat_umum"
-                    ? "bg-root-accent text-root-canvas shadow-md"
-                    : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${activeTab === "tempat_umum"
+                  ? "bg-root-accent text-root-canvas shadow-md"
+                  : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
+                  }`}
               >
                 Tempat Umum
               </button>
               <button
                 onClick={() => setActiveTab("pertahanan")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
-                  activeTab === "pertahanan"
-                    ? "bg-root-accent text-root-canvas shadow-md"
-                    : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${activeTab === "pertahanan"
+                  ? "bg-root-accent text-root-canvas shadow-md"
+                  : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
+                  }`}
               >
                 Pertahanan & Keamanan
               </button>
               <button
                 onClick={() => setActiveTab("hunian")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
-                  activeTab === "hunian"
-                    ? "bg-root-accent text-root-canvas shadow-md"
-                    : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${activeTab === "hunian"
+                  ? "bg-root-accent text-root-canvas shadow-md"
+                  : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
+                  }`}
               >
                 Hunian
               </button>
