@@ -101,7 +101,7 @@ export default function PermohonanKeanggotaanModal({
   const daysElapsed = currentApp ? getDaysElapsed(currentApp.submissionDate, currentDateStr) : 0;
   const remainingDays = Math.max(0, 30 - daysElapsed);
 
-  const modalContent = (
+  const modalContent = !isInsufficientFundsOpen ? (
     <NotebookModalWrapper
       onClose={onClose}
       compact
@@ -245,7 +245,7 @@ export default function PermohonanKeanggotaanModal({
         </footer>
       </section>
     </NotebookModalWrapper>
-  );
+  ) : null;
 
   return (
     <>
