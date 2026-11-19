@@ -9646,7 +9646,7 @@ export default function MapPage() {
                         }}
                     />
                     {/* Top Left Icon - Inbox */}
-                    {!penelitianModalOpen && <TopLeftIcon
+                    <TopLeftIcon
                         userCountryName={String(
                             countryDetail?.country ||
                             countryDetail?.nama_negara ||
@@ -10810,7 +10810,7 @@ export default function MapPage() {
                     }
                     setInboxModalOpen(false);
                 }}
-            />}
+            />
 
             {/* Top Right Icons - Gift and News */}
             {!isWarAnalysisActive && <TopRightGiftIcon

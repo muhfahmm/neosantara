@@ -452,11 +452,6 @@ export default function KonfirmasiArmadaAktifModal({
             <p className="defense-confirm-amount-hint text-[10px] text-root-subtle">
               Maksimal: {Math.max(0, effectiveMaxBuildable).toLocaleString('id-ID', { maximumFractionDigits: 2 })} {capacityType === "infanteri" ? "pasukan" : "unit"}.
             </p>
-            {budgetLimited && (
-              <p className="text-[10px] font-bold text-amber-400">
-                ⚠️ Dibatasi oleh kas negara — sisa slot infra masih {Math.max(0, remaining).toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit, tapi kas negara hanya cukup untuk {Math.max(0, getMaxAffordableQuantity()).toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit.
-              </p>
-            )}
           </div>
 
           {/* ========== ESTIMASI WAKTU & TANGGAL SELESAI ========== */}
@@ -471,19 +466,6 @@ export default function KonfirmasiArmadaAktifModal({
                   <span className="text-root-subtle">Waktu Dibutuhkan:</span>
                   <span className="font-bold text-emerald-400">{estimatedDays} hari</span>
                 </div>
-                {completionDate && (
-                  <div className="flex justify-between border-t border-root-accent/10 pt-1 mt-1">
-                    <span className="text-root-subtle">Selesai Tanggal:</span>
-                    <span className="font-bold text-emerald-400">
-                      {new Date(completionDate).toLocaleDateString('id-ID', {
-                        weekday: 'short',
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                      })}
-                    </span>
-                  </div>
-                )}
               </div>
             </div>
           )}
@@ -584,14 +566,6 @@ export default function KonfirmasiArmadaAktifModal({
 
 
 
-          {capacityType !== "infanteri" && buildAmount > 0 && (
-            <div className="flex justify-between items-center text-xs font-bold pt-1">
-              <span className="text-root-subtle">Sisa Kas Setelah Pembangunan:</span>
-              <span className={isAnggaranCukup ? "text-emerald-400 font-black" : "text-rose-400 font-black"}>
-                {(anggaran - totalCost).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO
-              </span>
-            </div>
-          )}
         </div>
 
         {/* Footer */}

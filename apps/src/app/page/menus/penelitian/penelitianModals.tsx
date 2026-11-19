@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
 import PenelitianSelectionModal, { SelectionCategoryKey } from './penelitianSelectionModal';
 import PenelitianPageModal, { CategoryKey } from './penelitianPageMenu';
@@ -59,21 +60,23 @@ export default function BottomLeftPenelitianIcon({
 
   return (
     <>
-      {/* Icon Tombol Kiri Bawah */}
-      <button
-        onClick={onClick}
-        title="Penelitian - Riset dan Teknologi"
-        className="side-floating-btn side-btn-penelitian"
-      >
-        <img
-          src="/images/game/interface/menu/research.svg"
-          alt=""
-          aria-hidden="true"
-          onError={(event) => { event.currentTarget.style.display = 'none'; }}
-          width={72}
-          height={72}
-        />
-      </button>
+      {typeof document !== 'undefined' && createPortal(
+        <button
+          onClick={onClick}
+          title="Penelitian - Riset dan Teknologi"
+          className="side-floating-btn side-btn-penelitian"
+        >
+          <img
+            src="/images/game/interface/menu/research.svg"
+            alt=""
+            aria-hidden="true"
+            onError={(event) => { event.currentTarget.style.display = 'none'; }}
+            width={72}
+            height={72}
+          />
+        </button>,
+        document.body
+      )}
 
       {/* Modal 1: Selection Modal 3 Pilihan (Ekonomi, Militer, Diplomasi) */}
       {isOpen && selectedFocus === null && (

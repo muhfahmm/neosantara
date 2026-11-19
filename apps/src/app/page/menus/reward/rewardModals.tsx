@@ -385,26 +385,28 @@ export default function TopRightGiftIcon({
   // --------------------------------------------------------------------
   return (
     <>
-      {/* Tombol hadiah */}
-      <button
-        onClick={onClick}
-        title="Hadiah - Bonus dan Reward"
-        className="side-floating-btn side-btn-reward"
-      >
-        <Image
-          src="/images/game/interface/menu/reward.svg"
-          alt=""
-          aria-hidden="true"
-          onError={(event) => { event.currentTarget.style.display = 'none'; }}
-          width={72}
-          height={72}
-        />
-        {!claimedToday && (
-          <span className="side-floating-badge animate-pulse">
-            !
-          </span>
-        )}
-      </button>
+      {mounted && createPortal(
+        <button
+          onClick={onClick}
+          title="Hadiah - Bonus dan Reward"
+          className="side-floating-btn side-btn-reward"
+        >
+          <Image
+            src="/images/game/interface/menu/reward.svg"
+            alt=""
+            aria-hidden="true"
+            onError={(event) => { event.currentTarget.style.display = 'none'; }}
+            width={72}
+            height={72}
+          />
+          {!claimedToday && (
+            <span className="side-floating-badge animate-pulse">
+              !
+            </span>
+          )}
+        </button>,
+        document.body
+      )}
 
       {/* Modal Hadiah */}
       {isOpen && mounted && createPortal(

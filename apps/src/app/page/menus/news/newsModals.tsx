@@ -224,25 +224,28 @@ export default function TopRightNewsIcon({
 
   return (
     <>
-      <button
-        onClick={onClick}
-        title="Berita - Berita dan Update Negara"
-        className="side-floating-btn side-btn-news"
-      >
-        <Image
-          src="/images/game/interface/menu/news.svg"
-          alt=""
-          aria-hidden="true"
-          onError={(event) => { event.currentTarget.style.display = 'none'; }}
-          width={72}
-          height={72}
-        />
-        {newsList.length > 0 && (
-          <span className="side-floating-badge">
-            {newsList.length}
-          </span>
-        )}
-      </button>
+      {mounted && createPortal(
+        <button
+          onClick={onClick}
+          title="Berita - Berita dan Update Negara"
+          className="side-floating-btn side-btn-news"
+        >
+          <Image
+            src="/images/game/interface/menu/news.svg"
+            alt=""
+            aria-hidden="true"
+            onError={(event) => { event.currentTarget.style.display = 'none'; }}
+            width={72}
+            height={72}
+          />
+          {newsList.length > 0 && (
+            <span className="side-floating-badge">
+              {newsList.length}
+            </span>
+          )}
+        </button>,
+        document.body
+      )}
 
       {/* 🔥 POPUP TOAST NOTIFIKASI BERITA DI SEBELAH KIRI */}
       {mounted && showToast && toastNews && createPortal(
