@@ -3404,6 +3404,7 @@ export default function MapPage() {
     }, [currentDate, countryDetail, selectedCountry?.country]);
 
     const [penelitianModalOpen, setPenelitianModalOpen] = useState(false);
+    const [researchMainPageOpen, setResearchMainPageOpen] = useState(false);
     const [missionModalOpen, setMissionModalOpen] = useState(false);
     const [playerDiamonds, setPlayerDiamonds] = useState<number>(500);
 
@@ -9611,6 +9612,10 @@ export default function MapPage() {
         });
     };
 
+    const closeTrackingMenu = () => {
+        window.dispatchEvent(new Event('neosantara:close-tracking-menu'));
+    };
+
     return (
         <main
             data-viewport-mode={viewportMode === 'desktop' ? undefined : viewportMode}
@@ -9657,6 +9662,7 @@ export default function MapPage() {
                         )}
                 onClick={() => {
                     setCountryDetailModalOpen(false);
+                    closeTrackingMenu();
                     openInbox();
                     setGiftModalOpen(false);
                     setNewsModalOpen(false);
@@ -9667,6 +9673,7 @@ export default function MapPage() {
                     setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
                 }}
                 isOpen={inboxModalOpen}
+                isMenuButtonHidden={researchMainPageOpen}
                 isWarAnalysisActive={isWarAnalysisActive}
                 isToastSuppressed={activeMenu === "Menu:Agama" || activeMenu === "Menu:Ideologi"}
                 onClose={() => setInboxModalOpen(false)}
@@ -10816,6 +10823,7 @@ export default function MapPage() {
             {!isWarAnalysisActive && <TopRightGiftIcon
                 onClick={() => {
                     setCountryDetailModalOpen(false);
+                    closeTrackingMenu();
                     setGiftModalOpen(true);
                     setInboxModalOpen(false);
                     setNewsModalOpen(false);
@@ -10824,6 +10832,7 @@ export default function MapPage() {
                     setActiveMenu("");
                 }}
                 isOpen={giftModalOpen}
+                isMenuButtonHidden={researchMainPageOpen}
                 onClose={() => setGiftModalOpen(false)}
                 canClaimReward={Boolean(countryDetail)}
                 onClaimReward={(resourceKey, amount) => {
@@ -10840,6 +10849,7 @@ export default function MapPage() {
             {!isWarAnalysisActive && <TopRightNewsIcon
                 onClick={() => {
                     setCountryDetailModalOpen(false);
+                    closeTrackingMenu();
                     setNewsModalOpen(true);
                     setInboxModalOpen(false);
                     setGiftModalOpen(false);
@@ -10848,6 +10858,7 @@ export default function MapPage() {
                     setActiveMenu("");
                 }}
                 isOpen={newsModalOpen}
+                isMenuButtonHidden={researchMainPageOpen}
                 onClose={() => setNewsModalOpen(false)}
                 newsList={newsList}
                 onClearNews={() => {
@@ -10885,6 +10896,7 @@ export default function MapPage() {
             {!isWarAnalysisActive && <BottomLeftPenelitianIcon
                 onClick={() => {
                     setCountryDetailModalOpen(false);
+                    closeTrackingMenu();
                     setPenelitianModalOpen(true);
                     setMissionModalOpen(false);
                     setInboxModalOpen(false);
@@ -10896,6 +10908,8 @@ export default function MapPage() {
                     }
                 }}
                 isOpen={penelitianModalOpen}
+                isMenuButtonHidden={researchMainPageOpen}
+                onResearchPageChange={setResearchMainPageOpen}
                 onClose={() => setPenelitianModalOpen(false)}
                 countryDetail={countryDetail}
                 setCountryDetail={setCountryDetail}
@@ -10904,6 +10918,7 @@ export default function MapPage() {
             {!isWarAnalysisActive && <BottomLeftMissionIcon
                 onClick={() => {
                     setCountryDetailModalOpen(false);
+                    closeTrackingMenu();
                     setMissionModalOpen(true);
                     setPenelitianModalOpen(false);
                     setInboxModalOpen(false);
@@ -10912,11 +10927,13 @@ export default function MapPage() {
                     setActiveMenu("");
                 }}
                 isOpen={missionModalOpen}
+                isMenuButtonHidden={researchMainPageOpen}
                 onClose={() => setMissionModalOpen(false)}
                 countryDetail={countryDetail}
                 setCountryDetail={setCountryDetail}
                 currentDate={currentDate}
                 onStartMission={(destination: MissionNavigationTarget) => {
+                    closeTrackingMenu();
                     setMissionModalOpen(false);
                     setInboxModalOpen(false);
                     setNewsModalOpen(false);
@@ -10950,7 +10967,7 @@ export default function MapPage() {
 
                     setActiveMenu(destination.menuId);
                 }}
-            />}
+            /> }
 
                 </>
             )}
@@ -11660,6 +11677,7 @@ export default function MapPage() {
 
             <DiplomacyTracking
                 isUiHidden={isWarAnalysisActive || isDialogTerbukaOpen}
+                isMenuButtonHidden={researchMainPageOpen}
                 onOpen={() => setCountryDetailModalOpen(false)}
             />
 

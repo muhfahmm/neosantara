@@ -65,6 +65,7 @@ interface TopLeftIconProps {
   userCountryName?: string;
   isWarAnalysisActive?: boolean;
   isToastSuppressed?: boolean;
+  isMenuButtonHidden?: boolean;
 }
 
 export default function TopLeftIcon({
@@ -79,6 +80,7 @@ export default function TopLeftIcon({
   userCountryName,
   isWarAnalysisActive = false,
   isToastSuppressed = false,
+  isMenuButtonHidden = false,
 }: TopLeftIconProps) {
   const [mounted, setMounted] = useState(false);
   const [toastNotification, setToastNotification] = useState<NotificationMessage | null>(null);
@@ -549,7 +551,7 @@ export default function TopLeftIcon({
 
   return (
     <>
-      {mounted && !isWarAnalysisActive && createPortal(
+      {mounted && !isWarAnalysisActive && !isMenuButtonHidden && createPortal(
         <div className="side-btn-inbox fixed z-[10000000002] flex flex-col items-start gap-2 pointer-events-none">
           <button
             onClick={() => {

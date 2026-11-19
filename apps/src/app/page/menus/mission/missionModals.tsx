@@ -27,6 +27,7 @@ interface MissionModalsProps {
   countryDetail?: any;
   setCountryDetail?: (updater: any) => void;
   currentDate: Date;
+  isMenuButtonHidden?: boolean;
 }
 
 export type MissionCategory =
@@ -1515,6 +1516,7 @@ export default function MissionModals({
   countryDetail,
   setCountryDetail,
   currentDate,
+  isMenuButtonHidden = false,
 }: MissionModalsProps) {
   const viewportMode = useViewportMode();
   const isLandscapePhone = viewportMode === 'landscapePhone';
@@ -1625,7 +1627,7 @@ export default function MissionModals({
 
   return (
     <>
-      {mounted && createPortal(
+      {mounted && !isMenuButtonHidden && createPortal(
         <button
           onClick={onClick}
           title="Misi & Sasaran Strategis"

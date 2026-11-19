@@ -150,6 +150,7 @@ interface TopRightGiftIconProps {
   onClose?: () => void;
   canClaimReward: boolean;
   onClaimReward: (resourceKey: string, amount: number) => void;
+  isMenuButtonHidden?: boolean;
 }
 
 interface FeedbackModalData {
@@ -171,6 +172,7 @@ export default function TopRightGiftIcon({
   onClose,
   canClaimReward,
   onClaimReward,
+  isMenuButtonHidden = false,
 }: TopRightGiftIconProps) {
   const [currentDay, setCurrentDay] = useState<number>(1);
   const [claimedToday, setClaimedToday] = useState<boolean>(false);
@@ -346,37 +348,43 @@ export default function TopRightGiftIcon({
   // --------------------------------------------------------------------
   if (isLoading) {
     return (
-      <button
-        onClick={onClick}
-        title="Hadiah - Bonus dan Reward"
-        style={{
-          top: isMobile ? 'calc(var(--safe-top) + var(--navbar-h) + 0.5rem)' : undefined,
-          right: isMobile ? 'calc(var(--safe-right) + 0.5rem)' : undefined,
-        }}
-        className={`fixed z-[100] flex cursor-default items-center justify-center opacity-70 ${
-          isLandscapePhone
-            ? 'h-8 w-8 rounded-lg border border-root-accent/30 bg-root-surface/90 shadow-lg'
-            : isPortraitPhone
-            ? 'h-9 w-9 rounded-xl border border-root-accent/30 bg-root-surface/90 shadow-lg'
-            : 'top-24 right-7 h-12 w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16'
-        }`}
-      >
-        <Image
-          src="/images/game/interface/menu/reward.svg"
-          alt=""
-          aria-hidden="true"
-          onError={(event) => { event.currentTarget.style.display = 'none'; }}
-          width={72}
-          height={72}
-          className={`object-contain animate-pulse brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
-            isLandscapePhone
-              ? 'h-5.5 w-5.5'
-              : isPortraitPhone
-              ? 'h-6 w-6'
-              : 'h-14 w-14 lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]'
-          }`}
-        />
-      </button>
+      <>
+        {mounted && !isMenuButtonHidden && createPortal(
+          <button
+            onClick={onClick}
+            title="Hadiah - Bonus dan Reward"
+            style={{
+              top: isMobile ? 'calc(var(--safe-top) + var(--navbar-h) + 0.5rem)' : undefined,
+              right: isMobile ? 'calc(var(--safe-right) + 0.5rem)' : undefined,
+              zIndex: 100001,
+            }}
+            className={`fixed flex cursor-default items-center justify-center opacity-70 ${
+              isLandscapePhone
+                ? 'h-8 w-8 rounded-lg border border-root-accent/30 bg-root-surface/90 shadow-lg'
+                : isPortraitPhone
+                ? 'h-9 w-9 rounded-xl border border-root-accent/30 bg-root-surface/90 shadow-lg'
+                : 'top-24 right-7 h-12 w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16'
+            }`}
+          >
+            <Image
+              src="/images/game/interface/menu/reward.svg"
+              alt=""
+              aria-hidden="true"
+              onError={(event) => { event.currentTarget.style.display = 'none'; }}
+              width={72}
+              height={72}
+              className={`object-contain animate-pulse brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] ${
+                isLandscapePhone
+                  ? 'h-5.5 w-5.5'
+                  : isPortraitPhone
+                  ? 'h-6 w-6'
+                  : 'h-14 w-14 lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]'
+              }`}
+            />
+          </button>,
+          document.body
+        )}
+      </>
     );
   }
 
@@ -385,7 +393,7 @@ export default function TopRightGiftIcon({
   // --------------------------------------------------------------------
   return (
     <>
-      {mounted && createPortal(
+      {mounted && !isMenuButtonHidden && createPortal(
         <button
           onClick={onClick}
           title="Hadiah - Bonus dan Reward"

@@ -37,6 +37,7 @@ interface TopRightNewsIconProps {
   onClearNews?: () => void;
   onOpenAiConstruction?: (news: AiNewsItem) => void;
   onOpenNewsCountry?: (countryName: string) => void;
+  isMenuButtonHidden?: boolean;
 }
 
 function isAiConstructionNews(item: NewsItemData): item is AiNewsItem {
@@ -81,6 +82,7 @@ export default function TopRightNewsIcon({
   onClearNews,
   onOpenAiConstruction,
   onOpenNewsCountry,
+  isMenuButtonHidden = false,
 }: TopRightNewsIconProps) {
   const [mounted, setMounted] = useState(false);
   const viewportMode = useViewportMode();
@@ -224,7 +226,7 @@ export default function TopRightNewsIcon({
 
   return (
     <>
-      {mounted && createPortal(
+      {mounted && !isMenuButtonHidden && createPortal(
         <button
           onClick={onClick}
           title="Berita - Berita dan Update Negara"
@@ -248,7 +250,7 @@ export default function TopRightNewsIcon({
       )}
 
       {/* 🔥 POPUP TOAST NOTIFIKASI BERITA DI SEBELAH KIRI */}
-      {mounted && showToast && toastNews && createPortal(
+      {mounted && !isMenuButtonHidden && showToast && toastNews && createPortal(
         <div
           style={{
             top: isLandscapePhone ? 'calc(var(--safe-top) + 5.5rem)' : isPortraitPhone ? 'calc(var(--safe-top) + 12rem)' : undefined,

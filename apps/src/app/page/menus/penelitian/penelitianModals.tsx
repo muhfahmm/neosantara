@@ -15,6 +15,8 @@ interface BottomLeftPenelitianIconProps {
   countryDetail?: any;
   setCountryDetail?: (detail: any) => void;
   currentDate?: Date;
+  isMenuButtonHidden?: boolean;
+  onResearchPageChange?: (isOpen: boolean) => void;
 }
 
 export default function BottomLeftPenelitianIcon({
@@ -24,6 +26,8 @@ export default function BottomLeftPenelitianIcon({
   countryDetail,
   setCountryDetail,
   currentDate,
+  isMenuButtonHidden = false,
+  onResearchPageChange,
 }: BottomLeftPenelitianIconProps) {
   const [selectedFocus, setSelectedFocus] = useState<SelectionCategoryKey | null>(null);
   const viewportMode = useViewportMode();
@@ -34,12 +38,14 @@ export default function BottomLeftPenelitianIcon({
   useEffect(() => {
     if (!isOpen) {
       setSelectedFocus(null);
+      onResearchPageChange?.(false);
     }
-  }, [isOpen]);
+  }, [isOpen, onResearchPageChange]);
 
   useEffect(() => {
     const handleResetFocus = () => {
       setSelectedFocus(null);
+      onResearchPageChange?.(false);
     };
     window.addEventListener('reset_penelitian_selection', handleResetFocus);
     window.addEventListener('open_penelitian_modal', handleResetFocus);
@@ -47,20 +53,27 @@ export default function BottomLeftPenelitianIcon({
       window.removeEventListener('reset_penelitian_selection', handleResetFocus);
       window.removeEventListener('open_penelitian_modal', handleResetFocus);
     };
-  }, []);
+  }, [onResearchPageChange]);
 
   const handleCloseAll = () => {
     setSelectedFocus(null);
+    onResearchPageChange?.(false);
     if (onClose) onClose();
   };
 
   const handleSelectCategory = (category: SelectionCategoryKey) => {
     setSelectedFocus(category);
+    onResearchPageChange?.(true);
+  };
+
+  const handleBackToSelection = () => {
+    setSelectedFocus(null);
+    onResearchPageChange?.(false);
   };
 
   return (
     <>
-      {typeof document !== 'undefined' && createPortal(
+      {!isMenuButtonHidden && typeof document !== 'undefined' && createPortal(
         <button
           onClick={onClick}
           title="Penelitian - Riset dan Teknologi"
@@ -94,7 +107,7 @@ export default function BottomLeftPenelitianIcon({
         <PenelitianPageModal
           isOpen={isOpen}
           onClose={handleCloseAll}
-          onBackToSelection={() => setSelectedFocus(null)}
+          onBackToSelection={handleBackToSelection}
           initialCategory={selectedFocus}
           countryDetail={countryDetail}
           setCountryDetail={setCountryDetail}

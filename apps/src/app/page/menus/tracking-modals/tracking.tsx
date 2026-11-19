@@ -55,6 +55,7 @@ interface ActiveDiplomacyPath {
 interface DiplomacyTrackingProps {
   onOpen?: () => void;
   isUiHidden?: boolean;
+  isMenuButtonHidden?: boolean;
 }
 
 const normalizeCountryName = (name: unknown) => String(name || '')
@@ -63,13 +64,25 @@ const normalizeCountryName = (name: unknown) => String(name || '')
   .replace(/[\u0300-\u036f]/g, '')
   .replace(/[^a-z0-9]/g, '');
 
-export default function DiplomacyTracking({ onOpen, isUiHidden = false }: DiplomacyTrackingProps) {
+export default function DiplomacyTracking({
+  onOpen,
+  isUiHidden = false,
+  isMenuButtonHidden = false,
+}: DiplomacyTrackingProps) {
   const [activePaths, setActivePaths] = useState<ActiveDiplomacyPath[]>([]);
   const [isTrackingOpen, setIsTrackingOpen] = useState(false);
   const viewportMode = useViewportMode();
   const isLandscapePhone = viewportMode === 'landscapePhone';
   const isPortraitPhone = viewportMode === 'portraitPhone';
   const isMobile = isLandscapePhone || isPortraitPhone;
+
+  useEffect(() => {
+    const handleClose = () => setIsTrackingOpen(false);
+    window.addEventListener('neosantara:close-tracking-menu', handleClose);
+    return () => {
+      window.removeEventListener('neosantara:close-tracking-menu', handleClose);
+    };
+  }, []);
 
   useEffect(() => {
     const allowedKinds = Object.keys(PATH_REGISTRY) as DiplomacyPathKind[];
@@ -229,32 +242,34 @@ export default function DiplomacyTracking({ onOpen, isUiHidden = false }: Diplom
         <>
           {!isUiHidden && (
             <>
-          <button
-        type="button"
-        onClick={() => {
-          if (!isTrackingOpen) {
-            onOpen?.();
-          }
-          setIsTrackingOpen(open => !open);
-        }}
-        title="Pelacakan aktivitas diplomasi"
-        aria-label={isTrackingOpen ? 'Tutup pelacakan aktivitas' : 'Buka pelacakan aktivitas'}
-        aria-expanded={isTrackingOpen}
-        className="side-floating-btn side-btn-tracking"
-      >
-        <Image
-          src="/images/game/interface/menu/diplomacy-activity.svg"
-          alt=""
-          aria-hidden="true"
-          width={72}
-          height={72}
-        />
-        {activePaths.length > 0 && (
-          <span className="side-floating-badge">
-            {activePaths.length}
-          </span>
-        )}
-      </button>
+          {!isMenuButtonHidden && (
+            <button
+              type="button"
+              onClick={() => {
+                if (!isTrackingOpen) {
+                  onOpen?.();
+                }
+                setIsTrackingOpen(open => !open);
+              }}
+              title="Pelacakan aktivitas diplomasi"
+              aria-label={isTrackingOpen ? 'Tutup pelacakan aktivitas' : 'Buka pelacakan aktivitas'}
+              aria-expanded={isTrackingOpen}
+              className="side-floating-btn side-btn-tracking"
+            >
+              <Image
+                src="/images/game/interface/menu/diplomacy-activity.svg"
+                alt=""
+                aria-hidden="true"
+                width={72}
+                height={72}
+              />
+              {activePaths.length > 0 && (
+                <span className="side-floating-badge">
+                  {activePaths.length}
+                </span>
+              )}
+            </button>
+          )}
 
       {isTrackingOpen && (
         <NotebookModalWrapper onClose={() => setIsTrackingOpen(false)} zIndexClass="z-[200]">
