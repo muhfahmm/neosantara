@@ -54,8 +54,6 @@ interface ActiveDiplomacyPath {
 
 interface DiplomacyTrackingProps {
   onOpen?: () => void;
-  isOpen?: boolean;
-  onClose?: () => void;
   isUiHidden?: boolean;
 }
 
@@ -65,28 +63,9 @@ const normalizeCountryName = (name: unknown) => String(name || '')
   .replace(/[\u0300-\u036f]/g, '')
   .replace(/[^a-z0-9]/g, '');
 
-export default function DiplomacyTracking({ onOpen, isOpen, onClose, isUiHidden = false }: DiplomacyTrackingProps) {
+export default function DiplomacyTracking({ onOpen, isUiHidden = false }: DiplomacyTrackingProps) {
   const [activePaths, setActivePaths] = useState<ActiveDiplomacyPath[]>([]);
-  const [internalTrackingOpen, setInternalTrackingOpen] = useState(false);
-  const isTrackingOpen = isOpen !== undefined ? isOpen : internalTrackingOpen;
-  const setIsTrackingOpen = (val: boolean | ((prev: boolean) => boolean)) => {
-    if (typeof val === 'function') {
-      const nextVal = val(isTrackingOpen);
-      if (nextVal) {
-        onOpen?.();
-      } else {
-        onClose?.();
-      }
-      setInternalTrackingOpen(nextVal);
-    } else {
-      if (val) {
-        onOpen?.();
-      } else {
-        onClose?.();
-      }
-      setInternalTrackingOpen(val);
-    }
-  };
+  const [isTrackingOpen, setIsTrackingOpen] = useState(false);
   const viewportMode = useViewportMode();
   const isLandscapePhone = viewportMode === 'landscapePhone';
   const isPortraitPhone = viewportMode === 'portraitPhone';

@@ -624,7 +624,7 @@ export default function PenelitianPageModal({
   };
 
   return createPortal(
-    <div className="research-page-modal research-modal-typography fixed top-16 sm:top-20 inset-x-0 bottom-0 z-[10000000001] bg-root-canvas flex flex-col font-sans animate-in fade-in duration-300">
+    <div className="research-page-modal research-modal-typography fixed top-16 sm:top-20 inset-x-0 bottom-0 z-[200] bg-root-canvas flex flex-col font-sans animate-in fade-in duration-300">
 
       <RootInfoModalHeader
         title="Pusat Penelitian & Riset Nasional"

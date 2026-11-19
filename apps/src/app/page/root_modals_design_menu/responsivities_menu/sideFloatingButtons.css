@@ -133,7 +133,7 @@
 /* Class Tombol Utama */
 .side-floating-btn {
   position: fixed;
-  z-index: 1000;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;

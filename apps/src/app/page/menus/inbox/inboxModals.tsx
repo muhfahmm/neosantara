@@ -550,7 +550,7 @@ export default function TopLeftIcon({
   return (
     <>
       {mounted && !isWarAnalysisActive && createPortal(
-        <div className="side-btn-inbox fixed z-[1000] flex flex-col items-start gap-2 pointer-events-none">
+        <div className="side-btn-inbox fixed z-[10000000002] flex flex-col items-start gap-2 pointer-events-none">
           <button
             onClick={() => {
               if (toastNotification) {
