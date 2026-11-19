@@ -1417,7 +1417,7 @@ export default function MissionModals({
                         className="w-full sm:w-auto shrink-0 px-5 py-2.5 rounded-lg bg-root-accent hover:opacity-90 active:scale-95 text-root-accent-ink font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-md shadow-root-accent/20 cursor-pointer"
                       >
                         <Play className="w-3.5 h-3.5 fill-root-accent-ink" />
-                        {isActiveThis ? 'Lanjutkan' : 'Mulai'}
+                        Mulai
                       </button>
                     )}
                   </div>
