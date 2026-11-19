@@ -276,8 +276,18 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
 
       {/* MODAL LEGENDA */}
       {isLegendOpen && (
-        <NotebookModalWrapper onClose={() => setIsLegendOpen(false)} zIndexClass="z-[70]">
-          <div role="dialog" aria-modal="true" aria-labelledby="relation-legend-title" className="root-modal-util-b74379da23">
+        <NotebookModalWrapper
+          onClose={() => setIsLegendOpen(false)}
+          zIndexClass="z-[70]"
+          contentSized={true}
+          frameClassName="menu-info-content-sized-frame"
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="relation-legend-title"
+            className="root-modal-util-b74379da23 menu-info-content-sized-dialog"
+          >
             <RootInfoModalHeader
               title="Indikator Hubungan Diplomatik"
               titleId="relation-legend-title"
@@ -286,7 +296,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
               size="standard"
             />
 
-            <div className="min-h-0 space-y-3 overflow-y-auto bg-root-surface p-4 sm:p-5">
+            <div className="root-info-modal-content min-h-0 space-y-3 bg-root-surface p-4 sm:p-5">
               <div className="flex items-center justify-between border-b border-root-accent/15 pb-2">
                 <span className="text-xs font-bold text-root-text">0 - 25</span>
                 <div className="flex items-center gap-3">
@@ -330,8 +340,12 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
 
       {/* MODAL PILIH JALUR */}
       {isPilihJalurOpen && (
-        <NotebookModalWrapper onClose={() => setIsPilihJalurOpen(false)}>
-          <div className="root-modal-util-b74379da23">
+        <NotebookModalWrapper
+          onClose={() => setIsPilihJalurOpen(false)}
+          contentSized={true}
+          frameClassName="menu-info-content-sized-frame"
+        >
+          <div className="root-modal-util-b74379da23 menu-info-content-sized-dialog">
 
             <RootInfoModalHeader
               title="Pilih Jalur Diplomasi"
@@ -340,7 +354,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
               size="standard"
             />
 
-            <div className="flex-1 min-h-0 bg-root-surface relative z-10 p-6 sm:p-8 lg:p-12 flex flex-col items-center justify-center gap-6 sm:gap-8">
+            <div className="root-info-modal-content min-h-0 bg-root-surface relative z-10 p-6 sm:p-8 flex flex-col items-center justify-center">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 w-full max-w-3xl">
                 <button
                   type="button"
@@ -374,8 +388,6 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                   </h4>
                 </button>
               </div>
-
-              <div className="flex-1" />
             </div>
 
           </div>
