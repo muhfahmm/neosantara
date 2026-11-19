@@ -1332,18 +1332,8 @@ export default function MissionModals({
 
                     {/* KONTEN TENGAH */}
                     <div className="flex-1 min-w-0 w-full">
+                      {/* JUDUL / INSTRUKSI MISI (SEBAGAI JUDUL DI ATAS) */}
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span
-                          className="text-[9px] font-black uppercase px-2 py-0.5 rounded border"
-                          style={{
-                            color: card.accent,
-                            borderColor: `${card.accent}40`,
-                            backgroundColor: `${card.accent}10`,
-                          }}
-                        >
-                          {card.categoryLabel}
-                        </span>
-
                         {isClaimable && (
                           <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded border border-emerald-400/50 bg-emerald-400/20 text-emerald-300 animate-pulse">
                             🎉 Siap Diklaim
@@ -1356,9 +1346,9 @@ export default function MissionModals({
                           </span>
                         )}
 
-                        <h3 className="text-sm sm:text-base font-black text-root-text leading-tight">
-                          {card.title}
-                        </h3>
+                        <p className="text-xs sm:text-sm text-root-text font-bold leading-relaxed">
+                          👉 <span className="text-root-text font-semibold">{getMissionInstruction(card, completionCount)}</span>
+                        </p>
                         {(() => {
                           const reqTarget = getMissionRequiredTarget(card, completionCount);
                           if (reqTarget !== null) {
@@ -1380,13 +1370,8 @@ export default function MissionModals({
                         })()}
                       </div>
 
-                      {/* PENJELASAN TINDAKAN / INSTRUKSI MISI */}
-                      <p className="mt-1 text-xs text-[#9BB5B5] leading-relaxed">
-                        👉 <span className="text-[#C2D6D6] font-medium">{getMissionInstruction(card, completionCount)}</span>
-                      </p>
-
                       {/* BADGES HADIAH USULAN */}
-                      <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
                         <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-amber-300">
                           <Gift className="h-3 w-3" />
                           Hadiah usulan
