@@ -9613,6 +9613,12 @@ export default function MapPage() {
         });
     };
 
+    const isSideButtonsHidden =
+        isWarAnalysisActive ||
+        isDialogTerbukaOpen ||
+        penelitianModalOpen ||
+        isMenuModalOpen;
+
     return (
         <main
             data-viewport-mode={viewportMode === 'desktop' ? undefined : viewportMode}
@@ -9648,7 +9654,8 @@ export default function MapPage() {
                         }}
                     />
                     {/* Top Left Icon - Inbox */}
-                    <TopLeftIcon
+                    {!isSideButtonsHidden && (
+                        <TopLeftIcon
                         userCountryName={String(
                             countryDetail?.country ||
                             countryDetail?.nama_negara ||
@@ -10814,153 +10821,160 @@ export default function MapPage() {
                     setInboxModalOpen(false);
                 }}
             />
+            )}
 
             {/* Top Right Icons - Gift and News */}
-            {!isWarAnalysisActive && <TopRightGiftIcon
-                onClick={() => {
-                    setCountryDetailModalOpen(false);
-                    setGiftModalOpen(true);
-                    setInboxModalOpen(false);
-                    setNewsModalOpen(false);
-                    setPenelitianModalOpen(false);
-                    setMissionModalOpen(false);
-                    setTrackingModalOpen(false);
-                    setActiveMenu("");
-                }}
-                isOpen={giftModalOpen}
-                onClose={() => setGiftModalOpen(false)}
-                canClaimReward={Boolean(countryDetail)}
-                onClaimReward={(resourceKey, amount) => {
-                    setCountryDetail((previous: Record<string, unknown> | null) => previous
-                        ? {
-                            ...previous,
-                            [`inventory_${resourceKey}`]:
-                                (Number(previous[`inventory_${resourceKey}`]) || 0) + amount,
-                        }
-                        : previous
-                    );
-                }}
-            />}
-            {!isWarAnalysisActive && <TopRightNewsIcon
-                onClick={() => {
-                    setCountryDetailModalOpen(false);
-                    setNewsModalOpen(true);
-                    setInboxModalOpen(false);
-                    setGiftModalOpen(false);
-                    setPenelitianModalOpen(false);
-                    setMissionModalOpen(false);
-                    setTrackingModalOpen(false);
-                    setActiveMenu("");
-                }}
-                isOpen={newsModalOpen}
-                onClose={() => setNewsModalOpen(false)}
-                newsList={newsList}
-                onClearNews={() => {
-                    setNewsList([]);
-                    clearPendingAiNews();
-                    clearStoredAiNews();
-                }}
-                onOpenAiConstruction={(news: AiNewsItem) => {
-                    const targetCountry = news.countryName;
-                    if (!targetCountry) return;
-                    const buildingKey = news.buildingKey;
-                    const targetTab = news.targetTab || news.indicatorKey;
-                    setAiConstructionNavigation({ countryName: targetCountry, buildingKey, targetTab });
-                    setCountryDetailModalName(targetCountry);
-                    setCountryDetailModalOpen(true);
-                    setNewsModalOpen(false);
-                    setInboxModalOpen(false);
-                    setGiftModalOpen(false);
-                    setPenelitianModalOpen(false);
-                    setMissionModalOpen(false);
-                    setTrackingModalOpen(false);
-                    setActiveMenu("");
-                }}
-                onOpenNewsCountry={(countryName) => {
-                    setAiConstructionNavigation(null);
-                    setCountryDetailModalName(countryName);
-                    setCountryDetailModalOpen(true);
-                    setNewsModalOpen(false);
-                    setInboxModalOpen(false);
-                    setGiftModalOpen(false);
-                    setPenelitianModalOpen(false);
-                    setMissionModalOpen(false);
-                    setTrackingModalOpen(false);
-                    setActiveMenu("");
-                }}
-            />}
-            {!isWarAnalysisActive && <BottomLeftPenelitianIcon
-                onClick={() => {
-                    setCountryDetailModalOpen(false);
-                    setPenelitianModalOpen(true);
-                    setMissionModalOpen(false);
-                    setInboxModalOpen(false);
-                    setGiftModalOpen(false);
-                    setNewsModalOpen(false);
-                    setTrackingModalOpen(false);
-                    setActiveMenu("");
-                    if (typeof window !== 'undefined') {
-                        window.dispatchEvent(new CustomEvent('reset_penelitian_selection'));
-                    }
-                }}
-                isOpen={penelitianModalOpen}
-                onClose={() => setPenelitianModalOpen(false)}
-                countryDetail={countryDetail}
-                setCountryDetail={setCountryDetail}
-                currentDate={currentDate}
-            />}
-            {!isWarAnalysisActive && <BottomLeftMissionIcon
-                onClick={() => {
-                    setCountryDetailModalOpen(false);
-                    setMissionModalOpen(true);
-                    setPenelitianModalOpen(false);
-                    setInboxModalOpen(false);
-                    setGiftModalOpen(false);
-                    setNewsModalOpen(false);
-                    setTrackingModalOpen(false);
-                    setActiveMenu("");
-                }}
-                isOpen={missionModalOpen}
-                onClose={() => setMissionModalOpen(false)}
-                countryDetail={countryDetail}
-                setCountryDetail={setCountryDetail}
-                currentDate={currentDate}
-                onStartMission={(destination: MissionNavigationTarget) => {
-                    setMissionModalOpen(false);
-                    setInboxModalOpen(false);
-                    setNewsModalOpen(false);
-                    setPenelitianModalOpen(false);
-                    setTrackingModalOpen(false);
-
-                    if (destination.menuId === 'Menu:Penelitian') {
-                        setActiveMenu("");
-                        setPenelitianModalOpen(true);
-                        window.dispatchEvent(new CustomEvent('reset_penelitian_selection'));
-                        return;
-                    }
-
-                    if (destination.menuId === 'Menu:Hadiah') {
-                        setActiveMenu("");
+            {!isSideButtonsHidden && (
+                <TopRightGiftIcon
+                    onClick={() => {
+                        setCountryDetailModalOpen(false);
                         setGiftModalOpen(true);
-                        return;
-                    }
+                        setInboxModalOpen(false);
+                        setNewsModalOpen(false);
+                        setPenelitianModalOpen(false);
+                        setMissionModalOpen(false);
+                        setTrackingModalOpen(false);
+                        setActiveMenu("");
+                    }}
+                    isOpen={giftModalOpen}
+                    onClose={() => setGiftModalOpen(false)}
+                    canClaimReward={Boolean(countryDetail)}
+                    onClaimReward={(resourceKey, amount) => {
+                        setCountryDetail((previous: Record<string, unknown> | null) => previous
+                            ? {
+                                ...previous,
+                                [`inventory_${resourceKey}`]:
+                                    (Number(previous[`inventory_${resourceKey}`]) || 0) + amount,
+                            }
+                            : previous
+                        );
+                    }}
+                />
+            )}
+            {!isSideButtonsHidden && (
+                <TopRightNewsIcon
+                    onClick={() => {
+                        setCountryDetailModalOpen(false);
+                        setNewsModalOpen(true);
+                        setInboxModalOpen(false);
+                        setGiftModalOpen(false);
+                        setPenelitianModalOpen(false);
+                        setMissionModalOpen(false);
+                        setTrackingModalOpen(false);
+                        setActiveMenu("");
+                    }}
+                    isOpen={newsModalOpen}
+                    onClose={() => setNewsModalOpen(false)}
+                    newsList={newsList}
+                    onClearNews={() => {
+                        setNewsList([]);
+                        clearPendingAiNews();
+                        clearStoredAiNews();
+                    }}
+                    onOpenAiConstruction={(news: AiNewsItem) => {
+                        const targetCountry = news.countryName;
+                        if (!targetCountry) return;
+                        const buildingKey = news.buildingKey;
+                        const targetTab = news.targetTab || news.indicatorKey;
+                        setAiConstructionNavigation({ countryName: targetCountry, buildingKey, targetTab });
+                        setCountryDetailModalName(targetCountry);
+                        setCountryDetailModalOpen(true);
+                        setNewsModalOpen(false);
+                        setInboxModalOpen(false);
+                        setGiftModalOpen(false);
+                        setPenelitianModalOpen(false);
+                        setMissionModalOpen(false);
+                        setTrackingModalOpen(false);
+                        setActiveMenu("");
+                    }}
+                    onOpenNewsCountry={(countryName) => {
+                        setAiConstructionNavigation(null);
+                        setCountryDetailModalName(countryName);
+                        setCountryDetailModalOpen(true);
+                        setNewsModalOpen(false);
+                        setInboxModalOpen(false);
+                        setGiftModalOpen(false);
+                        setPenelitianModalOpen(false);
+                        setMissionModalOpen(false);
+                        setTrackingModalOpen(false);
+                        setActiveMenu("");
+                    }}
+                />
+            )}
+            <BottomLeftPenelitianIcon
+                    onClick={() => {
+                        setCountryDetailModalOpen(false);
+                        setPenelitianModalOpen(true);
+                        setMissionModalOpen(false);
+                        setInboxModalOpen(false);
+                        setGiftModalOpen(false);
+                        setNewsModalOpen(false);
+                        setTrackingModalOpen(false);
+                        setActiveMenu("");
+                        if (typeof window !== 'undefined') {
+                            window.dispatchEvent(new CustomEvent('reset_penelitian_selection'));
+                        }
+                    }}
+                    isOpen={penelitianModalOpen}
+                    onClose={() => setPenelitianModalOpen(false)}
+                    countryDetail={countryDetail}
+                    setCountryDetail={setCountryDetail}
+                    currentDate={currentDate}
+            />
+            {!isSideButtonsHidden && (
+                <BottomLeftMissionIcon
+                    onClick={() => {
+                        setCountryDetailModalOpen(false);
+                        setMissionModalOpen(true);
+                        setPenelitianModalOpen(false);
+                        setInboxModalOpen(false);
+                        setGiftModalOpen(false);
+                        setNewsModalOpen(false);
+                        setTrackingModalOpen(false);
+                        setActiveMenu("");
+                    }}
+                    isOpen={missionModalOpen}
+                    onClose={() => setMissionModalOpen(false)}
+                    countryDetail={countryDetail}
+                    setCountryDetail={setCountryDetail}
+                    currentDate={currentDate}
+                    onStartMission={(destination: MissionNavigationTarget) => {
+                        setMissionModalOpen(false);
+                        setInboxModalOpen(false);
+                        setNewsModalOpen(false);
+                        setPenelitianModalOpen(false);
+                        setTrackingModalOpen(false);
 
-                    if (destination.productionDeepLink) {
-                        setProductionDeepLink(destination.productionDeepLink);
-                    }
+                        if (destination.menuId === 'Menu:Penelitian') {
+                            setActiveMenu("");
+                            setPenelitianModalOpen(true);
+                            window.dispatchEvent(new CustomEvent('reset_penelitian_selection'));
+                            return;
+                        }
 
-                    if (destination.tempatUmumTab) {
-                        setTempatUmumDeepLink(destination.tempatUmumTab);
-                    }
+                        if (destination.menuId === 'Menu:Hadiah') {
+                            setActiveMenu("");
+                            setGiftModalOpen(true);
+                            return;
+                        }
 
-                    if (destination.openWelfareActions) {
-                        setKesejahteraanDeepLink(true);
-                        setKesejahteraanInitialTab("naikkan");
-                    }
+                        if (destination.productionDeepLink) {
+                            setProductionDeepLink(destination.productionDeepLink);
+                        }
 
-                    setActiveMenu(destination.menuId);
-                }}
-            />}
+                        if (destination.tempatUmumTab) {
+                            setTempatUmumDeepLink(destination.tempatUmumTab);
+                        }
+
+                        if (destination.openWelfareActions) {
+                            setKesejahteraanDeepLink(true);
+                            setKesejahteraanInitialTab("naikkan");
+                        }
+
+                        setActiveMenu(destination.menuId);
+                    }}
+                />
+            )}
 
                 </>
             )}
@@ -11669,7 +11683,7 @@ export default function MapPage() {
             )}
 
             <DiplomacyTracking
-                isUiHidden={isWarAnalysisActive || isDialogTerbukaOpen}
+                isUiHidden={isSideButtonsHidden}
                 isOpen={trackingModalOpen}
                 onOpen={() => {
                     setCountryDetailModalOpen(false);

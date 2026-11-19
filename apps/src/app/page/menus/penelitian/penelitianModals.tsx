@@ -66,7 +66,7 @@ export default function BottomLeftPenelitianIcon({
   return (
     <>
       {/* Icon Tombol Kiri Bawah */}
-      {mounted && typeof document !== 'undefined' && createPortal(
+      {mounted && !isOpen && typeof document !== 'undefined' && createPortal(
         <button
           onClick={onClick}
           title="Penelitian - Riset dan Teknologi"
