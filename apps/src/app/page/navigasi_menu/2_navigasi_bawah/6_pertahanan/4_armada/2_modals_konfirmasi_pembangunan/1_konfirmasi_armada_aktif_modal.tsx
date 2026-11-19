@@ -337,8 +337,10 @@ export default function KonfirmasiArmadaAktifModal({
     <NotebookModalWrapper
       onClose={onClose}
       zIndexClass="z-[70]"
+      contentSized={true}
+      frameClassName="menu-info-content-sized-frame"
     >
-      <div className={`root-modal-util-b74379da23 defense-confirm-modal ${capacityType === "infanteri" ? "defense-recruitment-confirm-modal" : ""}`}>
+      <div className={`root-modal-util-b74379da23 defense-confirm-modal menu-info-content-sized-dialog ${capacityType === "infanteri" ? "defense-recruitment-confirm-modal" : ""}`}>
         
         <div className="satisfaction-modal-header root-modal-util-9462ce2345">
           <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">

@@ -973,11 +973,20 @@
 }
 
 .notebook-modal-frame.menu-info-content-sized-frame .menu-info-content-sized-dialog,
-.notebook-modal-frame.menu-info-content-sized-frame .root-info-modal-content {
+.notebook-modal-frame.menu-info-content-sized-frame .root-info-modal-content,
+.notebook-modal-frame.menu-info-content-sized-frame .root-construction-confirm-modal,
+.notebook-modal-frame.menu-info-content-sized-frame .defense-confirm-modal {
   height: auto !important;
   min-height: 0 !important;
   flex: 0 1 auto !important;
   overflow: visible !important;
+}
+
+.notebook-modal-frame.menu-info-content-sized-frame :is(.root-construction-confirm-content, .defense-confirm-content) {
+  flex: 0 1 auto !important;
+  min-height: 0 !important;
+  max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 180px);
+  overflow-y: auto !important;
 }
 
 .notebook-modal-frame.populasi-info-content-sized-frame > .modal-responsive-shell,

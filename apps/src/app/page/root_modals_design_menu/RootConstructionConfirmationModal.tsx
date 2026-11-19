@@ -92,8 +92,13 @@ export default function RootConstructionConfirmationModal({
     quantityExceedsAvailable;
 
   return (
-    <NotebookModalWrapper onClose={onClose} zIndexClass="z-[70]">
-      <div className="root-modal-util-b74379da23 root-construction-confirm-modal">
+    <NotebookModalWrapper
+      onClose={onClose}
+      zIndexClass="z-[70]"
+      contentSized={true}
+      frameClassName="menu-info-content-sized-frame"
+    >
+      <div className="root-modal-util-b74379da23 root-construction-confirm-modal menu-info-content-sized-dialog">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
         <div className="satisfaction-modal-header root-modal-util-9462ce2345">
