@@ -198,17 +198,17 @@ export default function PenelitianSelectionModal({
 
             return (
               <div className="relative group h-full flex flex-col">
-                {formattedDate && (
-                  <div className="absolute -top-5 sm:-top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[8px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 border border-root-accent/30 rounded shadow-md tracking-wider whitespace-nowrap">
-                    {formattedDate}
-                  </div>
-                )}
                 <button
                   onClick={() => onSelectCategory('ekonomi')}
-                  className="w-full group flex flex-col items-center justify-between text-center p-3 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl bg-root-canvas border border-root-accent/30 hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98] transition-all cursor-pointer shadow-md flex-1 min-h-[140px] sm:min-h-[190px] md:min-h-[220px]"
+                  className="w-full group flex flex-col items-center justify-between text-center p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-root-canvas border border-root-accent/30 hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98] transition-all cursor-pointer shadow-md flex-1 min-h-[160px] lg:min-h-[180px]"
                 >
                   <div className="flex flex-col items-center w-full">
-                    <div className="p-2 sm:p-3 md:p-3.5 rounded-lg sm:rounded-xl bg-root-surface border border-root-accent/40 text-root-accent group-hover:bg-root-accent group-hover:text-root-canvas transition-all shrink-0 mb-2 sm:mb-3 md:mb-4 shadow-sm">
+                    {formattedDate && (
+                      <div className="mb-2 bg-root-surface text-root-accent text-[8px] sm:text-[9px] font-bold px-2 py-0.5 border border-root-accent/30 rounded shadow-sm tracking-wider whitespace-nowrap">
+                        Selesai: {formattedDate}
+                      </div>
+                    )}
+                    <div className="p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl bg-root-surface border border-root-accent/40 text-root-accent group-hover:bg-root-accent group-hover:text-root-canvas transition-all shrink-0 mb-2 sm:mb-2.5 shadow-sm">
                       <Banknote className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
                     </div>
 
@@ -240,17 +240,17 @@ export default function PenelitianSelectionModal({
 
             return (
               <div className="relative group h-full flex flex-col">
-                {formattedDate && (
-                  <div className="absolute -top-5 sm:-top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[8px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 border border-root-accent/30 rounded shadow-md tracking-wider whitespace-nowrap">
-                    {formattedDate}
-                  </div>
-                )}
                 <button
                   onClick={() => onSelectCategory('militer')}
-                  className="w-full group flex flex-col items-center justify-between text-center p-3 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl bg-root-canvas border border-root-accent/30 hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98] transition-all cursor-pointer shadow-md flex-1 min-h-[140px] sm:min-h-[190px] md:min-h-[220px]"
+                  className="w-full group flex flex-col items-center justify-between text-center p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-root-canvas border border-root-accent/30 hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98] transition-all cursor-pointer shadow-md flex-1 min-h-[160px] lg:min-h-[180px]"
                 >
                   <div className="flex flex-col items-center w-full">
-                    <div className="p-2 sm:p-3 md:p-3.5 rounded-lg sm:rounded-xl bg-root-surface border border-root-accent/40 text-root-accent group-hover:bg-root-accent group-hover:text-root-canvas transition-all shrink-0 mb-2 sm:mb-3 md:mb-4 shadow-sm">
+                    {formattedDate && (
+                      <div className="mb-2 bg-root-surface text-root-accent text-[8px] sm:text-[9px] font-bold px-2 py-0.5 border border-root-accent/30 rounded shadow-sm tracking-wider whitespace-nowrap">
+                        Selesai: {formattedDate}
+                      </div>
+                    )}
+                    <div className="p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl bg-root-surface border border-root-accent/40 text-root-accent group-hover:bg-root-accent group-hover:text-root-canvas transition-all shrink-0 mb-2 sm:mb-2.5 shadow-sm">
                       <Shield className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
                     </div>
 
@@ -282,17 +282,17 @@ export default function PenelitianSelectionModal({
 
             return (
               <div className="relative group h-full flex flex-col">
-                {formattedDate && (
-                  <div className="absolute -top-5 sm:-top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[8px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 border border-root-accent/30 rounded shadow-md tracking-wider whitespace-nowrap">
-                    {formattedDate}
-                  </div>
-                )}
                 <button
                   onClick={() => onSelectCategory('diplomasi')}
-                  className="w-full group flex flex-col items-center justify-between text-center p-3 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl bg-root-canvas border border-root-accent/30 hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98] transition-all cursor-pointer shadow-md flex-1 min-h-[140px] sm:min-h-[190px] md:min-h-[220px]"
+                  className="w-full group flex flex-col items-center justify-between text-center p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-root-canvas border border-root-accent/30 hover:border-root-accent hover:bg-root-accent/10 active:scale-[0.98] transition-all cursor-pointer shadow-md flex-1 min-h-[160px] lg:min-h-[180px]"
                 >
                   <div className="flex flex-col items-center w-full">
-                    <div className="p-2 sm:p-3 md:p-3.5 rounded-lg sm:rounded-xl bg-root-surface border border-root-accent/40 text-root-accent group-hover:bg-root-accent group-hover:text-root-canvas transition-all shrink-0 mb-2 sm:mb-3 md:mb-4 shadow-sm">
+                    {formattedDate && (
+                      <div className="mb-2 bg-root-surface text-root-accent text-[8px] sm:text-[9px] font-bold px-2 py-0.5 border border-root-accent/30 rounded shadow-sm tracking-wider whitespace-nowrap">
+                        Selesai: {formattedDate}
+                      </div>
+                    )}
+                    <div className="p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl bg-root-surface border border-root-accent/40 text-root-accent group-hover:bg-root-accent group-hover:text-root-canvas transition-all shrink-0 mb-2 sm:mb-2.5 shadow-sm">
                       <Globe2 className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
                     </div>
 

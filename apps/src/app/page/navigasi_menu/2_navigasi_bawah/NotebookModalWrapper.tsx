@@ -29,8 +29,8 @@ export function NotebookModalWrapper({
   isHidden = false,
   compact = false,
   squareCorners = false,
-  hideWhenInfoModalOpen = true,
-  hideWhenApplicationModalOpen = true,
+  hideWhenInfoModalOpen = false,
+  hideWhenApplicationModalOpen = false,
   frameClassName = '',
   contentSized = false,
 }: NotebookModalWrapperProps) {

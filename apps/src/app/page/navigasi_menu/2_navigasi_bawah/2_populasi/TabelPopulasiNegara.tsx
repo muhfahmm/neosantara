@@ -1,5 +1,5 @@
 "use client";
-import RootTable from "@/app/page/root_modals_design_menu/RootTable";
+import RootTable, { RootTableHeader, RootTableHeadCell, RootTableRow, RootTableCell } from "@/app/page/root_modals_design_menu/RootTable";
 
 import { useEffect, useMemo, useState } from "react";
 import { Search, Users } from "lucide-react";
@@ -225,16 +225,16 @@ export default function TabelPopulasiNegara({
       )}
 
       {!loading && !error && (
-        <div className={`mt-3 max-h-[50vh] overflow-auto ${rootBorderRadius.card} border border-root-accent/15`}>
-          <RootTable className="w-full min-w-[420px] border-collapse text-left">
-            <thead className="sticky top-0 z-10 bg-root-canvas">
+        <div className={`mt-3 max-h-[50vh] overflow-x-auto overflow-y-auto w-full ${rootBorderRadius.card} border border-root-accent/15`}>
+          <RootTable className="w-full min-w-[360px] sm:min-w-[420px] border-collapse text-left">
+            <RootTableHeader>
               <tr className={`${rootModalTypography.label} text-left`}>
-                <th scope="col" className="px-3 py-2.5">No.</th>
-                <th scope="col" className="px-3 py-2.5">Negara</th>
-                <th scope="col" className="px-3 py-2.5 text-right">Pertumbuhan / hari</th>
-                <th scope="col" className="px-3 py-2.5 text-right">Estimasi / bulan</th>
+                <RootTableHeadCell scope="col" className="w-12">No.</RootTableHeadCell>
+                <RootTableHeadCell scope="col">Negara</RootTableHeadCell>
+                <RootTableHeadCell scope="col" className="text-right">Pertumbuhan / hari</RootTableHeadCell>
+                <RootTableHeadCell scope="col" className="text-right">Estimasi / bulan</RootTableHeadCell>
               </tr>
-            </thead>
+            </RootTableHeader>
             <tbody>
               {filteredCountries.map((country, index) => (
                 (() => {
@@ -243,37 +243,36 @@ export default function TabelPopulasiNegara({
                   const changeColor = rootModalTypography.value;
 
                   return (
-                    <tr
+                    <RootTableRow
                       key={country.id ?? country.country_slug}
-                      className="border-t border-root-accent/10 text-xs odd:bg-root-surface even:bg-root-canvas/50"
                     >
-                      <td className="px-3 py-2 text-root-subtle">{index + 1}</td>
-                      <td className="px-3 py-2 font-semibold text-root-text">
+                      <RootTableCell className="text-root-subtle">{index + 1}</RootTableCell>
+                      <RootTableCell className="font-semibold text-root-text">
                         {country.name_id}
                         {country.name_en && country.name_en !== country.name_id && (
                           <span className="ml-1.5 text-[10px] font-normal text-root-subtle">
                             ({country.name_en})
                           </span>
                         )}
-                      </td>
-                      <td className={`px-3 py-2 text-right font-black tabular-nums ${changeColor}`}>
+                      </RootTableCell>
+                      <RootTableCell isNumeric className={`font-black ${changeColor}`}>
                         {dailyChange > 0 ? "+" : ""}
                         {dailyChange.toLocaleString("id-ID")} jiwa
-                      </td>
-                      <td className={`px-3 py-2 text-right font-black tabular-nums ${changeColor}`}>
+                      </RootTableCell>
+                      <RootTableCell isNumeric className={`font-black ${changeColor}`}>
                         {monthlyChange > 0 ? "+" : ""}
                         {monthlyChange.toLocaleString("id-ID")} jiwa
-                      </td>
-                    </tr>
+                      </RootTableCell>
+                    </RootTableRow>
                   );
                 })()
               ))}
               {filteredCountries.length === 0 && (
-                <tr>
+                <RootTableRow>
                   <td colSpan={4} className="px-3 py-6 text-center text-xs text-root-subtle">
                     Tidak ada negara yang cocok dengan pencarian.
                   </td>
-                </tr>
+                </RootTableRow>
               )}
             </tbody>
           </RootTable>

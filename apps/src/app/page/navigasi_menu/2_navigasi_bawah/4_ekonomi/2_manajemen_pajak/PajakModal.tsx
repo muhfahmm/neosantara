@@ -498,14 +498,14 @@ function PajakModalContent({
         />
 
         <div className="tax-policy-content min-h-0 flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-root-canvas/80 relative z-10 neon-scrollbar">
-          <div className="tax-policy-rate-list">
+          <div className="tax-policy-rate-list max-w-3xl mx-auto space-y-4">
             {/* 1. PPN - Pajak Pertambahan Nilai */}
             <div className="tax-policy-rate-card space-y-2">
               <div className={`tax-policy-rate-heading flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
                 <span>Pajak Pertambahan Nilai (PPN)</span>
                 <div className="tax-policy-rate-values flex items-center gap-2">
-                  <span className="text-root-text">{tempRates.vat}%</span>
-                  <span className="text-emerald-400 font-black">
+                  <span className="text-root-text font-mono tabular-nums game-stat-number">{tempRates.vat}%</span>
+                  <span className="text-emerald-400 font-black font-mono tabular-nums game-stat-number">
                     ({vatRevenue.toLocaleString("id-ID")} NEO)
                   </span>
                 </div>
@@ -545,10 +545,10 @@ function PajakModalContent({
               <div className={`tax-policy-rate-heading flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
                 <span>Pajak Korporasi</span>
                 <div className="tax-policy-rate-values flex items-center gap-2">
-                  <span className="text-root-text">
+                  <span className="text-root-text font-mono tabular-nums game-stat-number">
                     {tempRates.corporate_tax}%
                   </span>
-                  <span className="text-emerald-400 font-black">
+                  <span className="text-emerald-400 font-black font-mono tabular-nums game-stat-number">
                     ({corporateTaxRevenue.toLocaleString("id-ID")} NEO)
                   </span>
                 </div>
@@ -588,8 +588,8 @@ function PajakModalContent({
               <div className={`tax-policy-rate-heading flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
                 <span>Pajak Penghasilan Pribadi</span>
                 <div className="tax-policy-rate-values flex items-center gap-2">
-                  <span className="text-root-text">{tempRates.income_tax}%</span>
-                  <span className="text-emerald-400 font-black">
+                  <span className="text-root-text font-mono tabular-nums game-stat-number">{tempRates.income_tax}%</span>
+                  <span className="text-emerald-400 font-black font-mono tabular-nums game-stat-number">
                     ({personalIncomeTaxRevenue.toLocaleString("id-ID")} NEO)
                   </span>
                 </div>
@@ -635,10 +635,10 @@ function PajakModalContent({
               <div className={`tax-policy-rate-heading flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
                 <span>Cukai</span>
                 <div className="tax-policy-rate-values flex items-center gap-2">
-                  <span className="text-root-text">
+                  <span className="text-root-text font-mono tabular-nums game-stat-number">
                     {tempRates.cigarette_tax}%
                   </span>
-                  <span className="text-emerald-400 font-black">
+                  <span className="text-emerald-400 font-black font-mono tabular-nums game-stat-number">
                     ({cigaretteTaxRevenue.toLocaleString("id-ID")} NEO)
                   </span>
                 </div>
@@ -678,10 +678,10 @@ function PajakModalContent({
               <div className={`tax-policy-rate-heading flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
                 <span>Pajak Lingkungan</span>
                 <div className="tax-policy-rate-values flex items-center gap-2">
-                  <span className="text-root-text">
+                  <span className="text-root-text font-mono tabular-nums game-stat-number">
                     {tempRates.environment_tax}%
                   </span>
-                  <span className="text-emerald-400 font-black">
+                  <span className="text-emerald-400 font-black font-mono tabular-nums game-stat-number">
                     ({environmentalTaxRevenue.toLocaleString("id-ID")} NEO)
                   </span>
                 </div>
@@ -724,7 +724,7 @@ function PajakModalContent({
           </div>
 
           {!forumDialogMode && (
-          <>
+          <div className="max-w-3xl mx-auto">
           {/* Total Income Summary */}
           <div className={`tax-policy-revenue-card mt-8 p-5 ${rootBorderRadius.card} border border-root-accent/30 bg-root-surface`}>
             <div className="flex justify-between items-center flex-wrap gap-2">
@@ -805,7 +805,7 @@ function PajakModalContent({
             Dampak populasi pajak: {populationTaxModifier >= 0 ? "+" : ""}
             {populationTaxModifier.toFixed(2)}% / bulan
           </p>
-          </>
+          </div>
           )}
         </div>
       </div>

@@ -273,10 +273,10 @@ export default function BaseProduksiGrid({
                 />
               )}
 
-              <div className="production-building-card-body p-2 sm:p-2.5 flex flex-col flex-grow justify-start gap-1">
-                <div className="building-card-main min-w-0 flex flex-1 flex-col justify-center">
-                  <div className="flex items-start justify-between gap-1 mb-0.5">
-                    <p className="building-card-label production-building-label text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1 leading-snug">{label}</p>
+              <div className="production-building-card-body p-2 sm:p-2.5 flex flex-col flex-1 justify-between">
+                <div>
+                  <div className="building-card-header flex items-start justify-between mb-1.5 sm:mb-2">
+                    <p className="building-card-label production-building-label min-w-0 text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1.5 leading-snug">{label}</p>
                     <button
                       disabled={isProductionBanned}
                       className="building-card-info-button production-building-info flex-shrink-0 flex items-center justify-center rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
@@ -291,16 +291,7 @@ export default function BaseProduksiGrid({
                     </button>
                   </div>
 
-                  <div className="building-card-quantity min-w-0 w-full flex items-center justify-center gap-1">
-                    <span className="building-card-count production-building-count text-xs sm:text-sm lg:text-base font-black text-root-text leading-none">{perCount}</span>
-                    {isBuilding && (
-                      <span className="text-[10px] sm:text-xs font-bold text-emerald-400 leading-none">
-                        +{queueCount}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="building-card-image-quantity-row mt-0.5 flex flex-col items-center justify-center gap-1">
+                  <div className="building-card-image-quantity-row flex flex-col items-center justify-center gap-1">
                     {buildingImage && !failedBuildingImages[key] ? (
                       <Image
                         src={buildingImage}
@@ -314,8 +305,19 @@ export default function BaseProduksiGrid({
                       <Building2 aria-hidden="true" className="building-card-image production-building-image h-12 w-12 sm:h-14 sm:w-14 shrink-0 text-root-subtle" />
                     )}
                   </div>
+                </div>
 
-                  <div className="production-output-inline flex flex-col items-center justify-center text-center">
+                <div className="building-card-footer flex flex-col items-center justify-center w-full min-w-0 shrink-0 text-center mt-2">
+                  <div className="building-card-quantity min-w-0 w-full flex items-center justify-center gap-1">
+                    <span className="building-card-count production-building-count text-xs sm:text-sm lg:text-base font-black text-root-text leading-tight">{perCount}</span>
+                    {isBuilding && (
+                      <span className="text-[10px] sm:text-xs font-bold text-emerald-400 leading-none">
+                        +{queueCount}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="production-output-inline flex flex-col items-center justify-center text-center mt-0.5">
                     {isElectricityTab ? (
                       <>
                         <span className={`production-output-count font-black text-xs sm:text-sm leading-tight break-words ${isProductionZero ? 'text-rose-400' : 'text-root-accent'}`}>

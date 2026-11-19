@@ -625,7 +625,12 @@ export default function TopLeftIcon({
 
       {/* 🔥 Inbox Modal Prototype (2 Kolom: Master List di Kiri & Detail Konten di Kanan) */}
       {isOpen && mounted && !isWarAnalysisActive && createPortal(
-        <NotebookModalWrapper onClose={onClose} zIndexClass="z-[200]">
+        <NotebookModalWrapper
+          onClose={onClose}
+          zIndexClass="z-[200]"
+          hideWhenInfoModalOpen={false}
+          hideWhenApplicationModalOpen={false}
+        >
           <div className="root-modal-util-52b6b298fe inbox-modal-typography font-sans">
 
             <RootInfoModalHeader
@@ -651,7 +656,7 @@ export default function TopLeftIcon({
               ) : (
                 <>
                   {/* === KOLOM KIRI: DAFTAR PESAN / MASTER LIST === */}
-                  <div className="w-[42%] sm:w-[40%] lg:w-[36%] flex flex-col border-r border-root-accent/20 bg-[#081515] overflow-hidden shrink-0">
+                  <div className="w-[42%] sm:w-[40%] lg:w-[36%] min-w-[280px] max-w-[340px] flex flex-col border-r border-root-accent/20 bg-[#081515] overflow-hidden shrink-0">
                     <div className="flex-1 overflow-y-auto custom-scrollbar p-2 sm:p-2.5 space-y-1.5">
                       {orderedNotifications.map((notif) => {
                         const isSelected = selectedNotification?.id === notif.id;
@@ -689,11 +694,11 @@ export default function TopLeftIcon({
 
                             {/* Info Singkat */}
                             <div className="flex-1 min-w-0">
-                              <h4 className={`text-[11px] sm:text-xs font-black leading-tight whitespace-normal break-words ${isUrgent ? 'text-rose-400' : isSelected ? 'text-root-accent' : 'text-root-text'
+                              <h4 className={`text-[11px] sm:text-xs font-black leading-tight line-clamp-1 truncate ${isUrgent ? 'text-rose-400' : isSelected ? 'text-root-accent' : 'text-root-text'
                                 }`}>
                                 {notif.title}
                               </h4>
-                              <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mt-1 text-[9px] text-root-subtle font-semibold">
+                              <div className="flex items-center gap-1.5 mt-1 text-[9px] text-root-subtle font-semibold min-w-0">
                                 {countryIso && countryIso !== 'un' && (
                                   <img
                                     src={`https://flagcdn.com/w20/${countryIso.toLowerCase()}.png`}
@@ -701,8 +706,8 @@ export default function TopLeftIcon({
                                     className="w-3.5 h-2.5 object-cover rounded-xs shrink-0"
                                   />
                                 )}
-                                <span className="whitespace-normal break-words">{notifSender}</span>
-                                <span className="ml-auto shrink-0 flex items-center gap-0.5 text-[8.5px] text-[#557575]">
+                                <span className="truncate flex-1">{notifSender}</span>
+                                <span className="shrink-0 flex items-center gap-0.5 text-[8.5px] text-[#557575]">
                                   <Clock className="w-2.5 h-2.5" />
                                   {notif.timestamp}
                                 </span>

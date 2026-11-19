@@ -2881,7 +2881,7 @@
   gap: 6px !important;
 }
 
-.building-card-grid-root.four-column-building-grid>.building-card-root {
+.notebook-modal-frame[data-viewport-mode] .building-card-grid-root.four-column-building-grid>.building-card-root {
   align-self: start;
   aspect-ratio: 1 / 1;
   height: auto;
@@ -2918,20 +2918,17 @@
   text-align: center;
 }
 
-.building-card-grid-root.four-column-building-grid .building-card-label {
+.notebook-modal-frame[data-viewport-mode] .building-card-grid-root.four-column-building-grid .building-card-label {
   text-transform: lowercase;
   display: flex;
   min-height: 2.3em;
   align-items: center;
   justify-content: center;
   text-align: center;
-}
-
-.notebook-modal-frame[data-viewport-mode] .building-card-grid-root.four-column-building-grid .building-card-label {
   font-size: 10px !important;
 }
 
-.building-card-grid-root.four-column-building-grid .building-card-label::first-letter {
+.notebook-modal-frame[data-viewport-mode] .building-card-grid-root.four-column-building-grid .building-card-label::first-letter {
   text-transform: uppercase;
 }
 
@@ -2975,7 +2972,7 @@
   }
 }
 
-.building-card-root .building-card-count {
+.notebook-modal-frame[data-viewport-mode] .building-card-root .building-card-count {
   min-width: 0;
   max-width: 100%;
   font-size: clamp(8px, 1vw, 13px);
@@ -2983,26 +2980,26 @@
   overflow-wrap: anywhere;
 }
 
-.building-card-root.public-building-card .building-card-count {
+.notebook-modal-frame[data-viewport-mode] .building-card-root.public-building-card .building-card-count {
   font-size: clamp(8px, 0.65vw, 9px);
 }
 
-.fleet-unit-building-card .building-card-label {
+.notebook-modal-frame[data-viewport-mode] .fleet-unit-building-card .building-card-label {
   font-size: clamp(8px, 0.9vw, 11px);
   line-height: 1.15;
   overflow-wrap: anywhere;
 }
 
-.building-card-root .production-building-count,
-.building-card-root .production-output-count {
+.notebook-modal-frame[data-viewport-mode] .building-card-root .production-building-count,
+.notebook-modal-frame[data-viewport-mode] .building-card-root .production-output-count {
   font-size: clamp(8px, 0.7vw, 10px) !important;
   line-height: 1.1;
   white-space: nowrap;
 }
 
-.building-card-root .building-card-label,
-.building-card-root .building-card-count,
-.building-card-root .production-output-count {
+.notebook-modal-frame[data-viewport-mode] .building-card-root .building-card-label,
+.notebook-modal-frame[data-viewport-mode] .building-card-root .building-card-count,
+.notebook-modal-frame[data-viewport-mode] .building-card-root .production-output-count {
   font-weight: 400 !important;
 }
 
@@ -3014,12 +3011,12 @@
   overflow: visible;
 }
 
-.public-building-card-body,
-.production-building-card-body {
+.notebook-modal-frame[data-viewport-mode] .public-building-card-body,
+.notebook-modal-frame[data-viewport-mode] .production-building-card-body {
   padding: clamp(4px, 0.5vw, 7px) !important;
 }
 
-.production-building-card-body {
+.notebook-modal-frame[data-viewport-mode] .production-building-card-body {
   padding-block: 2px !important;
 }
 
@@ -3035,13 +3032,13 @@
   text-align: center;
 }
 
-.building-card-root.housing-building-card,
-.building-card-root.fleet-unit-building-card,
-.building-card-root.fleet-infrastructure-building-card {
+.notebook-modal-frame[data-viewport-mode] .building-card-root.housing-building-card,
+.notebook-modal-frame[data-viewport-mode] .building-card-root.fleet-unit-building-card,
+.notebook-modal-frame[data-viewport-mode] .building-card-root.fleet-infrastructure-building-card {
   padding: clamp(4px, 0.5vw, 7px) !important;
 }
 
-.building-card-root.housing-building-card {
+.notebook-modal-frame[data-viewport-mode] .building-card-root.housing-building-card {
   aspect-ratio: 1 / 1;
   height: auto;
   min-height: 0;

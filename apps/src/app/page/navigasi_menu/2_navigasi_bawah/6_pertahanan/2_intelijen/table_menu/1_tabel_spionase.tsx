@@ -1,5 +1,5 @@
 "use client";
-import RootTable from "@/app/page/root_modals_design_menu/RootTable";
+import RootTable, { RootTableHeader, RootTableHeadCell, RootTableRow, RootTableCell } from "@/app/page/root_modals_design_menu/RootTable";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Binoculars, ChevronUp, ChevronDown } from "lucide-react";
@@ -190,64 +190,60 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, update
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-root-accent/20 bg-root-canvas shadow-sm">
         <div className="intelijen-table-viewport min-h-0 flex-1 overflow-auto">
           <RootTable className="intelijen-table w-full text-xs md:text-[10px] lg:text-[11px] 2xl:text-xs">
-            <thead className="bg-root-canvas border-b border-root-accent/20 sticky top-0 z-10 text-[9px] sm:text-[10px] lg:text-xs whitespace-nowrap">
+            <RootTableHeader className="whitespace-nowrap">
               <tr>
-                <th className="px-2 py-1.5 text-left font-black text-root-accent uppercase tracking-normal sm:tracking-wider w-10 bg-root-canvas">No</th>
-                <th className="px-2 py-1.5 text-left font-black text-root-accent uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors bg-root-canvas" onClick={() => handleSort('countryName')}>
+                <RootTableHeadCell className="w-10">No</RootTableHeadCell>
+                <RootTableHeadCell className="cursor-pointer hover:bg-root-accent/10 transition-colors" onClick={() => handleSort('countryName')}>
                   Negara{getSortArrow('countryName')}
-                </th>
-                <th className="px-2 py-1.5 text-right font-black text-root-accent uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors bg-root-canvas" onClick={() => handleSort('darat')}>
+                </RootTableHeadCell>
+                <RootTableHeadCell className="text-right cursor-pointer hover:bg-root-accent/10 transition-colors" onClick={() => handleSort('darat')}>
                   Darat{getSortArrow('darat')}
-                </th>
-                <th className="px-2 py-1.5 text-right font-black text-root-accent uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors bg-root-canvas" onClick={() => handleSort('laut')}>
+                </RootTableHeadCell>
+                <RootTableHeadCell className="text-right cursor-pointer hover:bg-root-accent/10 transition-colors" onClick={() => handleSort('laut')}>
                   Laut{getSortArrow('laut')}
-                </th>
-                <th className="px-2 py-1.5 text-right font-black text-root-accent uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors bg-root-canvas" onClick={() => handleSort('udara')}>
+                </RootTableHeadCell>
+                <RootTableHeadCell className="text-right cursor-pointer hover:bg-root-accent/10 transition-colors" onClick={() => handleSort('udara')}>
                   Udara{getSortArrow('udara')}
-                </th>
-                <th className="px-2 py-1.5 text-right font-black text-root-accent uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors bg-root-canvas" onClick={() => handleSort('totalPower')}>
+                </RootTableHeadCell>
+                <RootTableHeadCell className="text-right cursor-pointer hover:bg-root-accent/10 transition-colors" onClick={() => handleSort('totalPower')}>
                   Total Kekuatan{getSortArrow('totalPower')}
-                </th>
-                <th className="px-2 py-1.5 text-center font-black text-root-accent uppercase tracking-normal sm:tracking-wider bg-root-canvas">Aksi</th>
+                </RootTableHeadCell>
+                <RootTableHeadCell className="text-center">Aksi</RootTableHeadCell>
               </tr>
-            </thead>
+            </RootTableHeader>
             <tbody className="divide-y divide-root-accent/10">
               {rankings.map((row, index) => {
                 const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "Negara";
                 const isUserCountry = row.countryName.toLowerCase().trim() === selectedCountryName.toLowerCase().trim();
                 
                 return (
-                  <tr 
+                  <RootTableRow 
                     key={`${row.countryName}-${index}`} 
-                    className={`transition-colors ${
-                      isUserCountry
-                        ? 'bg-root-accent/10 hover:bg-root-accent/20 border-l-4 border-l-root-accent'
-                        : 'hover:bg-root-accent/5'
-                    }`}
+                    isActive={isUserCountry}
                   >
-                    <td className={`px-3 py-2.5 md:px-2 md:py-1 lg:px-2.5 lg:py-1.5 2xl:px-3 2xl:py-2 font-black ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>{index + 1}</td>
+                    <RootTableCell className={`font-black ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>{index + 1}</RootTableCell>
                     
-                    <td className={`px-3 py-2.5 md:px-2 md:py-1 lg:px-2.5 lg:py-1.5 2xl:px-3 2xl:py-2 font-bold ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>
-                      <div className="flex items-center gap-2 min-h-[20px]">
+                    <RootTableCell className={`font-bold ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>
+                      <div className="flex items-center gap-2 min-h-[20px] min-w-0">
                         {row.iso && row.iso.length === 2 ? (
                           <img
                             src={`https://flagcdn.com/w20/${row.iso.toLowerCase()}.png`}
                             alt={row.countryName}
-                            className="w-5 h-4 object-cover rounded-sm border border-root-accent/20 shadow-sm flex-shrink-0"
+                            className="w-5 h-4 object-cover rounded-sm border border-root-accent/20 shadow-sm shrink-0"
                             onError={(e) => (e.target as HTMLImageElement).style.display = "none"}
                           />
                         ) : (
-                          <div className="w-5 h-4 rounded-sm bg-root-surface border border-root-accent/20 flex-shrink-0" />
+                          <div className="w-5 h-4 rounded-sm bg-root-surface border border-root-accent/20 shrink-0" />
                         )}
-                        <span>{row.countryName}</span>
+                        <span className="truncate">{row.countryName}</span>
                       </div>
-                    </td>
+                    </RootTableCell>
 
-                    <td className="px-3 py-2.5 text-root-text md:px-2 md:py-1 lg:px-2.5 lg:py-1.5 2xl:px-3 2xl:py-2">{formatNumber(row.darat)}</td>
-                    <td className="px-3 py-2.5 text-root-text md:px-2 md:py-1 lg:px-2.5 lg:py-1.5 2xl:px-3 2xl:py-2">{formatNumber(row.laut)}</td>
-                    <td className="px-3 py-2.5 text-root-text md:px-2 md:py-1 lg:px-2.5 lg:py-1.5 2xl:px-3 2xl:py-2">{formatNumber(row.udara)}</td>
-                    <td className={`px-3 py-2.5 font-black md:px-2 md:py-1 lg:px-2.5 lg:py-1.5 2xl:px-3 2xl:py-2 ${isUserCountry ? 'text-root-accent' : 'text-rose-400'}`}>{formatNumber(row.totalPower)}</td>
-                    <td className="px-3 py-2.5 text-center md:px-2 md:py-1 lg:px-2.5 lg:py-1.5 2xl:px-3 2xl:py-2">
+                    <RootTableCell isNumeric className="text-root-text">{formatNumber(row.darat)}</RootTableCell>
+                    <RootTableCell isNumeric className="text-root-text">{formatNumber(row.laut)}</RootTableCell>
+                    <RootTableCell isNumeric className="text-root-text">{formatNumber(row.udara)}</RootTableCell>
+                    <RootTableCell isNumeric className={`font-black ${isUserCountry ? 'text-root-accent' : 'text-rose-400'}`}>{formatNumber(row.totalPower)}</RootTableCell>
+                    <RootTableCell className="text-center">
                       {!isUserCountry && (
                         <button
                           type="button"
@@ -259,8 +255,8 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, update
                           <Binoculars className="w-4 h-4" />
                         </button>
                       )}
-                    </td>
-                  </tr>
+                    </RootTableCell>
+                  </RootTableRow>
                 );
               })}
             </tbody>

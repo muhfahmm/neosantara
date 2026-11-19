@@ -42,9 +42,9 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
         />
 
         {/* Body Content */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-root-surface relative z-10 neon-scrollbar">
+        <div className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-5 bg-root-surface relative z-10 neon-scrollbar">
           {/* 3 TAB MENU */}
-          <div className="flex w-full items-center justify-between gap-3 mb-6">
+          <div className="flex w-full items-center justify-between gap-3 mb-4 sm:mb-5">
             <RootModalTabs
               items={[
                 { label: "Resolusi PBB", isActive: activeTab === "resolusi", onClick: () => setActiveTab("resolusi") },

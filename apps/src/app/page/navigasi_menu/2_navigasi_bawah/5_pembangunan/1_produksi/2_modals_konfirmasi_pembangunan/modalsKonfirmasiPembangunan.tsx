@@ -89,17 +89,6 @@ export default function KonfirmasiPembangunanModal({
           {waktuPembangunan !== undefined && (
             <>
               <div className="flex justify-between gap-3">
-                <span className="text-root-muted">Estimasi Waktu Pembangunan per bangunan:</span>
-                <span className="flex items-center gap-2 font-semibold">
-                  {hasConstructionTimeDiscount && (
-                    <span className="text-rose-400 line-through">{waktuPembangunan} Hari</span>
-                  )}
-                  <span className={hasConstructionTimeDiscount ? "text-emerald-400" : "text-root-text"}>
-                    {constructionTime} Hari
-                  </span>
-                </span>
-              </div>
-              <div className="flex justify-between gap-3">
                 <span className="text-root-muted">Estimasi Waktu Pembangunan Total:</span>
                 <span className="flex items-center gap-2 font-semibold">
                   {hasConstructionTimeDiscount && (

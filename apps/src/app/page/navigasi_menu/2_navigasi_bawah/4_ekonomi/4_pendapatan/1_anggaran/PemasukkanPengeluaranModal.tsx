@@ -231,23 +231,23 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                     {/* Section Pemasukkan */}
                     <div className="space-y-2">
                       <div className="flex justify-between items-center text-xs font-black text-emerald-400 pb-1 border-b border-root-accent/20">
-                        <span className="flex items-center gap-2">
-                          <ArrowUpRight className="h-4 w-4" /> Rincian Pemasukkan (Pendapatan Negara)
+                        <span className="flex items-center gap-2 min-w-0">
+                          <ArrowUpRight className="h-4 w-4 shrink-0" /> <span className="truncate">Rincian Pemasukkan (Pendapatan Negara)</span>
                         </span>
-                        <span>+ {totalIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                        <span className="font-mono tabular-nums game-stat-number shrink-0">+ {totalIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                       </div>
                       <div className="pl-4 space-y-1.5 text-xs">
-                        <div className="flex justify-between items-center text-root-text">
-                          <span className="font-semibold">• Revenue Pajak Nasional:</span>
-                          <span className="font-bold text-emerald-400">+ {taxRevenue.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                        <div className="flex justify-between items-center text-root-text gap-2">
+                          <span className="font-semibold truncate">• Revenue Pajak Nasional:</span>
+                          <span className="font-bold font-mono tabular-nums game-stat-number text-emerald-400 shrink-0">+ {taxRevenue.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                         </div>
-                        <div className="flex justify-between items-center text-root-text">
-                          <span className="font-semibold">• Sektor Komersial ({commercialCount} Gedung):</span>
-                          <span className="font-bold text-emerald-400">+ {commercialIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                        <div className="flex justify-between items-center text-root-text gap-2">
+                          <span className="font-semibold truncate">• Sektor Komersial ({commercialCount} Gedung):</span>
+                          <span className="font-bold font-mono tabular-nums game-stat-number text-emerald-400 shrink-0">+ {commercialIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                         </div>
-                        <div className="flex justify-between items-center text-root-text">
-                          <span className="font-semibold">• Sektor Wisata & Pariwisata ({tourismCount} Destinasi):</span>
-                          <span className="font-bold text-emerald-400">
+                        <div className="flex justify-between items-center text-root-text gap-2">
+                          <span className="font-semibold truncate">• Sektor Wisata & Pariwisata ({tourismCount} Destinasi):</span>
+                          <span className="font-bold font-mono tabular-nums game-stat-number text-emerald-400 shrink-0">
                             {baseTourismIncome > 0 && tourismIncome > baseTourismIncome && (
                               <span className="mr-1.5 text-rose-400 line-through">
                                 + {baseTourismIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}
@@ -256,9 +256,9 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                             + {tourismIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center text-root-text">
-                          <span className="font-semibold">• Produksi Tambang Emas ({goldBuildingCount} Unit):</span>
-                          <span className="font-bold text-emerald-400">+ {goldIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                        <div className="flex justify-between items-center text-root-text gap-2">
+                          <span className="font-semibold truncate">• Produksi Tambang Emas ({goldBuildingCount} Unit):</span>
+                          <span className="font-bold font-mono tabular-nums game-stat-number text-emerald-400 shrink-0">+ {goldIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                         </div>
                       </div>
                     </div>
@@ -266,35 +266,35 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                     {/* Section Pengeluaran */}
                     <div className="space-y-2 pt-2">
                       <div className="flex justify-between items-center text-xs font-black text-rose-400 pb-1 border-b border-root-accent/20">
-                        <span className="flex items-center gap-2">
-                          <ArrowDownRight className="h-4 w-4" /> Rincian Pengeluaran (Beban Negara)
+                        <span className="flex items-center gap-2 min-w-0">
+                          <ArrowDownRight className="h-4 w-4 shrink-0" /> <span className="truncate">Rincian Pengeluaran (Beban Negara)</span>
                         </span>
-                        <span>- {totalOutcome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                        <span className="font-mono tabular-nums game-stat-number shrink-0">- {totalOutcome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                       </div>
                       <div className="pl-4 space-y-1.5 text-xs">
-                        <div className="flex justify-between items-center text-root-text">
-                          <span className="font-semibold">• Biaya Operasional Dewan Kabinet (22 Departemen):</span>
-                          <span className="font-bold text-rose-400">- {ministryCostPerDay.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                        <div className="flex justify-between items-center text-root-text gap-2">
+                          <span className="font-semibold truncate">• Biaya Operasional Dewan Kabinet (22 Departemen):</span>
+                          <span className="font-bold font-mono tabular-nums game-stat-number text-rose-400 shrink-0">- {ministryCostPerDay.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                         </div>
-                        <div className="flex justify-between items-center text-root-text">
-                          <span className="font-semibold">• Alokasi Kebijakan Subsidi (6 Pos Kebutuhan):</span>
-                          <span className="font-bold text-rose-400">- {totalSubsidyCost.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                        <div className="flex justify-between items-center text-root-text gap-2">
+                          <span className="font-semibold truncate">• Alokasi Kebijakan Subsidi (6 Pos Kebutuhan):</span>
+                          <span className="font-bold font-mono tabular-nums game-stat-number text-rose-400 shrink-0">- {totalSubsidyCost.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="mt-4 pt-4 border-t border-root-accent/30">
-                    <div className="flex justify-between items-center text-sm font-black text-root-text">
-                      <span>Netto Saldo Harian (Pemasukkan - Pengeluaran):</span>
-                      <span className={`${netBalance >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                    <div className="flex justify-between items-center text-sm font-black text-root-text gap-2">
+                      <span className="truncate">Netto Saldo Harian (Pemasukkan - Pengeluaran):</span>
+                      <span className={`font-mono tabular-nums game-stat-number shrink-0 ${netBalance >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
                         {netBalance >= 0 ? "+ " : "- "}{Math.abs(netBalance).toLocaleString("id-ID", { maximumFractionDigits: 0 })}
                       </span>
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-between items-center text-xs font-black text-root-text pt-2 px-1">
-                  <span className="text-root-subtle">Total Saldo Kas Negara:</span>
-                  <span className="text-root-accent">{anggaran.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                <div className="flex justify-between items-center text-xs font-black text-root-text pt-2 px-1 gap-2">
+                  <span className="text-root-subtle truncate">Total Saldo Kas Negara:</span>
+                  <span className="text-root-accent font-mono tabular-nums game-stat-number shrink-0">{anggaran.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
                 </div>
               </div>
             )}

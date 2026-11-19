@@ -563,10 +563,10 @@ export default function TempatUmumModal({
                               />
                             )}
 
-                            <div className="production-building-card-body public-building-card-body flex flex-1 flex-col justify-start gap-1 p-2 sm:p-2.5">
-                              <div className="min-w-0 flex flex-1 flex-col">
-                                <div className="mb-0.5 flex items-start justify-between gap-1">
-                                  <p className="building-card-label production-building-label min-w-0 flex-1 pr-1 text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider leading-snug">{it.label}</p>
+                            <div className="production-building-card-body public-building-card-body flex flex-1 flex-col justify-between p-2 sm:p-2.5">
+                              <div>
+                                <div className="building-card-header flex items-start justify-between mb-1.5 sm:mb-2">
+                                  <p className="building-card-label production-building-label min-w-0 flex-1 pr-1.5 text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider leading-snug">{it.label}</p>
                                   <button
                                     className="building-card-info-button flex-shrink-0 flex items-center justify-center rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
                                     onClick={(e) => {
@@ -578,7 +578,7 @@ export default function TempatUmumModal({
                                     <Info />
                                   </button>
                                 </div>
-                                <div className="mt-0.5 flex flex-1 items-center justify-center">
+                                <div className="building-card-image-quantity-row flex flex-col items-center justify-center gap-1">
                                   {getBuildingCardImage(it.key) && (
                                     <Image
                                       src={getBuildingCardImage(it.key)!}
@@ -590,7 +590,7 @@ export default function TempatUmumModal({
                                   )}
                                 </div>
                               </div>
-                              <div className="building-card-footer public-building-footer flex min-w-0 shrink-0 items-center justify-center gap-1 border-t border-root-accent/10 pt-0.5 text-center">
+                              <div className="building-card-footer public-building-footer flex min-w-0 shrink-0 items-center justify-center gap-1 border-t border-root-accent/10 pt-1 text-center mt-1">
                                 <span className="building-card-count production-output-count text-[10px] sm:text-xs font-black text-root-accent leading-tight">
                                   {formatNumber(perCount)}
                                 </span>

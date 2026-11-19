@@ -130,12 +130,6 @@ export default function RootConstructionConfirmationModal({
                 {loading ? "Memuat..." : `${totalCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO`}
               </span>
             </div>
-            <div className="root-construction-confirm-cost-row flex justify-between gap-3 text-xs text-root-muted">
-              <span>Biaya per bangunan:</span>
-              <span className="shrink-0 text-root-text">
-                {cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
-              </span>
-            </div>
 
             <div className="root-construction-confirm-quantity-card rounded-xl border border-root-accent/30 bg-root-surface p-4">
               <label className="flex flex-col gap-2">

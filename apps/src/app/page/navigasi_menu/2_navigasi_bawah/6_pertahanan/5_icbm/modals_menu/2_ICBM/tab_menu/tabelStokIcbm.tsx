@@ -1,5 +1,5 @@
 "use client";
-import RootTable from "@/app/page/root_modals_design_menu/RootTable";
+import RootTable, { RootTableHeader, RootTableHeadCell, RootTableRow, RootTableCell } from "@/app/page/root_modals_design_menu/RootTable";
 
 import React from "react";
 import { Rocket, ShieldCheck, AlertCircle } from "lucide-react";
@@ -76,46 +76,38 @@ export default function TabelStokIcbm({
 
       {/* Tabel Detail Tiap Rudal */}
       <RootTable className="w-full text-xs bg-root-canvas">
-        <thead className="bg-root-canvas text-root-accent border-b border-root-accent/20">
+        <RootTableHeader>
           <tr>
-            <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">
-              No
-            </th>
-            <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">
-              Alutsista
-            </th>
-            <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">
-              Tipe / Spesifikasi
-            </th>
-            <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">
-              Lokasi Penempatan
-            </th>
-            <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">
-              Status Operasional
-            </th>
+            <RootTableHeadCell className="w-12">No</RootTableHeadCell>
+            <RootTableHeadCell>Alutsista</RootTableHeadCell>
+            <RootTableHeadCell>Tipe / Spesifikasi</RootTableHeadCell>
+            <RootTableHeadCell>Lokasi Penempatan</RootTableHeadCell>
+            <RootTableHeadCell className="text-center">Status Operasional</RootTableHeadCell>
           </tr>
-        </thead>
+        </RootTableHeader>
         <tbody className="divide-y divide-root-accent/10">
           {readyUnits.map((unit) => (
-            <tr key={unit.id} className="hover:bg-root-surface transition-colors">
-              <td className="px-3 py-2.5 font-bold text-root-text">{unit.index}</td>
-              <td className="px-3 py-2.5 font-bold text-white flex items-center gap-2">
-                <Rocket className="w-3.5 h-3.5 text-rose-400" />
-                {unit.name}
-              </td>
-              <td className="px-3 py-2.5 text-root-subtle font-medium text-[11px]">
+            <RootTableRow key={unit.id}>
+              <RootTableCell className="font-bold text-root-text">{unit.index}</RootTableCell>
+              <RootTableCell className="font-bold text-white">
+                <div className="flex items-center gap-2">
+                  <Rocket className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                  <span>{unit.name}</span>
+                </div>
+              </RootTableCell>
+              <RootTableCell className="text-root-subtle font-medium text-[11px]">
                 {unit.type}
-              </td>
-              <td className="px-3 py-2.5 text-root-text font-mono text-[11px]">
+              </RootTableCell>
+              <RootTableCell className="text-root-text font-mono text-[11px]">
                 {unit.silo}
-              </td>
-              <td className="px-3 py-2.5 text-center">
+              </RootTableCell>
+              <RootTableCell className="text-center">
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-root-accent/15 text-root-accent border border-root-accent/30">
-                  <span className="w-1.5 h-1.5 rounded-full bg-root-accent animate-ping" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-root-accent animate-ping shrink-0" />
                   {unit.status}
                 </span>
-              </td>
-            </tr>
+              </RootTableCell>
+            </RootTableRow>
           ))}
         </tbody>
       </RootTable>

@@ -105,7 +105,7 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
       />
 
       {/* BODY - Daftar Negara Anggota */}
-      <div className="flex-1 overflow-y-auto p-6 sm:p-8 bg-root-surface custom-scrollbar">
+      <div className="flex-1 overflow-y-auto p-3 sm:p-5 bg-root-surface custom-scrollbar">
         {ORGANIZATION_BENEFITS[orgName] && (() => {
           const app = getApplicationForOrg(playerCountryName, orgName);
           const currentDateStr = getCurrentGameDateString() || formatDate(new Date());
@@ -161,7 +161,7 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
               Belum ada data anggota yang ditemukan untuk organisasi ini.
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
               {members.map((member, idx) => {
                 const isPlayer = member.country?.toLowerCase().trim() === playerCountryName.toLowerCase().trim();
                 return (
@@ -174,14 +174,14 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
                     }`}
                     onClick={() => handleOpenDetail(member.country, isPlayer)}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-between gap-2 min-w-0">
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
                         {renderFlag(member.iso || getIsoFromName(member.country), member.country)}
-                        <span className={`text-sm font-bold ${isPlayer ? 'text-root-accent' : 'text-root-accent/90'}`}>
+                        <span className={`text-sm font-bold truncate block ${isPlayer ? 'text-root-accent' : 'text-root-accent/90'}`}>
                           {member.country}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 shrink-0">
                         {isPlayer && (
                           <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-root-accent text-root-canvas text-[9px] font-black uppercase tracking-wider shadow-sm">
                             <User className="w-3 h-3" />

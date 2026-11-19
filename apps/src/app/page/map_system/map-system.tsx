@@ -4870,7 +4870,9 @@ export default function MapPage() {
         setNotifications(previous => previous.map(item => item.id === notification.id
             ? { ...item, isHandled: true, status: 'ignored' }
             : item));
-        setInboxModalOpen(false);
+        if (trigger === 'ignored') {
+            setInboxModalOpen(false);
+        }
     }, [claimCovertNotification, countryDetail, setCountryDetail, setNotifications, simulationDateString]);
     useEffect(() => {
         if (!countryDetail) return;

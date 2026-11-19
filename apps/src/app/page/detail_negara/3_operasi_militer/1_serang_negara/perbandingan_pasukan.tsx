@@ -258,7 +258,7 @@ export default function PerbandinganPasukan({
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,255,170,0.08),transparent_70%)] pointer-events-none" />
 
       {/* ══════════ FULL MENU CONTAINER ══════════ */}
-      <div className="relative z-10 flex flex-col w-full h-full">
+      <div className="relative z-10 flex flex-col w-full h-full min-h-0">
         {/* ══════════ HEADER ══════════ */}
         <div className="px-6 sm:px-10 py-3.5 sm:py-4 border-b border-root-accent/20 flex items-center justify-between bg-root-canvas shrink-0 shadow-lg">
           <div className="flex items-center gap-4">

@@ -488,7 +488,7 @@ export default function HunianPermukimanModal({
                           handleBuild(activeItem.key, activeItem.label);
                         }
                       }}
-                      className="housing-building-card aspect-square w-24 sm:w-28 lg:w-32 p-2 sm:p-2.5 cursor-pointer"
+                      className="housing-building-card flex flex-col justify-between w-28 sm:w-32 lg:w-40 p-2 sm:p-2.5 cursor-pointer"
                     >
                       {hoveredBuildingKey === activeItem.key && (() => {
                         const bMeta = findMeta(activeItem.key) || {};
@@ -509,27 +509,38 @@ export default function HunianPermukimanModal({
                         );
                       })()}
 
-                      <div className="relative flex h-full min-w-0 flex-col items-center justify-center gap-2">
-                        {getBuildingCardImage(activeItem.key) && (
-                          <Image
-                            src={getBuildingCardImage(activeItem.key)!}
-                            alt=""
-                            width={104}
-                            height={104}
-                            className="building-card-image housing-building-image h-10 w-10 sm:h-12 sm:w-12 shrink-0 object-contain"
-                          />
-                        )}
-                        <button
-                          className="building-card-info-button absolute right-0 top-0 flex-shrink-0 flex items-center justify-center rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setHoveredBuildingKey(hoveredBuildingKey === activeItem.key ? null : activeItem.key);
-                          }}
-                          title="Info bangunan"
-                        >
-                          <Info />
-                        </button>
-                        <p className="building-card-count text-[8px] sm:text-[9px] font-black text-root-text leading-tight">
+                      <div>
+                        <div className="building-card-header flex items-start justify-between mb-1.5 sm:mb-2">
+                          <p className="building-card-label min-w-0 text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1.5 leading-snug">
+                            {activeItem.label}
+                          </p>
+                          <button
+                            className="building-card-info-button flex-shrink-0 flex items-center justify-center rounded-full transition-colors cursor-pointer bg-root-surface border border-root-accent/30 hover:border-root-accent text-root-subtle hover:text-root-accent"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setHoveredBuildingKey(hoveredBuildingKey === activeItem.key ? null : activeItem.key);
+                            }}
+                            title="Info bangunan"
+                          >
+                            <Info />
+                          </button>
+                        </div>
+
+                        <div className="building-card-image-quantity-row flex flex-col items-center justify-center gap-1">
+                          {getBuildingCardImage(activeItem.key) && (
+                            <Image
+                              src={getBuildingCardImage(activeItem.key)!}
+                              alt=""
+                              width={104}
+                              height={104}
+                              className="building-card-image housing-building-image h-10 w-10 sm:h-12 sm:w-12 shrink-0 object-contain"
+                            />
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="building-card-footer flex min-w-0 shrink-0 items-center justify-center gap-1 border-t border-root-accent/10 pt-1 text-center mt-1">
+                        <p className="building-card-count text-xs sm:text-sm lg:text-base font-black text-root-text leading-tight">
                           {activeItem.value.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                         </p>
                       </div>

@@ -459,7 +459,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                       </div>
                     )}
 
-                    <div className="flex items-start justify-between mb-1.5 sm:mb-2">
+                    <div className="building-card-header flex items-start justify-between mb-1.5 sm:mb-2">
                       <p className="building-card-label min-w-0 text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1.5 leading-snug">
                         {item.label}
                       </p>

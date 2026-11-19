@@ -194,34 +194,21 @@ export default function KonfirmasiInfrastrukturModal({
       detailContent={(quantity) => (
         <>
           {waktuPembangunan !== undefined && (
-            <>
-              <div className="flex justify-between gap-3">
-                <span className="text-root-muted">Estimasi Waktu Pembangunan per bangunan:</span>
-                <span className="flex items-center gap-2 font-semibold">
-                  {constructionDiscountPercent > 0 && (
-                    <span className="text-red-400 line-through text-xs">{waktuPembangunan} Hari</span>
-                  )}
-                  <span className={constructionDiscountPercent > 0 ? "text-root-accent" : "text-root-text"}>
-                    {effectiveTimePerBuilding} Hari
+            <div className="flex justify-between gap-3">
+              <span className="text-root-muted">Estimasi Waktu Pembangunan Total:</span>
+              <span className="flex items-center gap-2 font-semibold">
+                {constructionDiscountPercent > 0 && (
+                  <span className="text-red-400 line-through text-xs">
+                    {waktuPembangunan * quantity} Hari
                   </span>
+                )}
+                <span className={constructionDiscountPercent > 0 ? "text-root-accent" : "text-root-text"}>
+                  {effectiveTimePerBuilding !== undefined
+                    ? effectiveTimePerBuilding * quantity
+                    : 0} Hari
                 </span>
-              </div>
-              <div className="flex justify-between gap-3">
-                <span className="text-root-muted">Estimasi Waktu Pembangunan Total:</span>
-                <span className="flex items-center gap-2 font-semibold">
-                  {constructionDiscountPercent > 0 && (
-                    <span className="text-red-400 line-through text-xs">
-                      {waktuPembangunan * quantity} Hari
-                    </span>
-                  )}
-                  <span className={constructionDiscountPercent > 0 ? "text-root-accent" : "text-root-text"}>
-                    {effectiveTimePerBuilding !== undefined
-                      ? effectiveTimePerBuilding * quantity
-                      : 0} Hari
-                  </span>
-                </span>
-              </div>
-            </>
+              </span>
+            </div>
           )}
           {produksiPerHari !== undefined && (
             <div className="flex justify-between gap-3">

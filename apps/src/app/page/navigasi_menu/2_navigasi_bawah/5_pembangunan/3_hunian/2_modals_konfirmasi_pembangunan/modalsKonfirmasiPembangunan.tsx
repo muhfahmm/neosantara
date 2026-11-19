@@ -72,16 +72,10 @@ export default function KonfirmasiPembangunanModal({
       detailContent={(quantity) => (
         <>
           {waktuPembangunan !== undefined && (
-            <>
-              <div className="flex justify-between gap-3">
-                <span className="text-root-muted">Estimasi Waktu Pembangunan per bangunan:</span>
-                <span className="font-semibold text-root-text">{waktuPembangunan} Hari</span>
-              </div>
-              <div className="flex justify-between gap-3">
-                <span className="text-root-muted">Estimasi Waktu Pembangunan Total:</span>
-                <span className="font-semibold text-root-text">{waktuPembangunan * quantity} Hari</span>
-              </div>
-            </>
+            <div className="flex justify-between gap-3">
+              <span className="text-root-muted">Estimasi Waktu Pembangunan Total:</span>
+              <span className="font-semibold text-root-text">{waktuPembangunan * quantity} Hari</span>
+            </div>
           )}
           {produksiPerHari !== undefined && (
             <div className="flex justify-between gap-3">

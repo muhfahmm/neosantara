@@ -26,6 +26,15 @@
   --satisfaction-title-font-size: 12px;
   --satisfaction-value-font-size: 20px;
   --satisfaction-description-font-size: 10px;
+
+  /* Card Image Size Tokens */
+  --building-card-image-size: 52px;
+}
+
+.game-stat-number {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  letter-spacing: -0.02em;
 }
 
 .root-modal-tabs {
@@ -69,6 +78,7 @@
     --modal-font-body: 0.875rem;
     --modal-font-label: 0.6875rem;
     --modal-font-value: 0.9375rem;
+    --building-card-image-size: 80px;
   }
 }
 
@@ -80,6 +90,13 @@
     --modal-font-body: 0.875rem;
     --modal-font-label: 0.75rem;
     --modal-font-value: 1rem;
+    --building-card-image-size: 80px;
+  }
+}
+
+@media (min-width: 1600px) {
+  :root {
+    --modal-max-width: min(1280px, calc(100vw - 120px));
   }
 }
 
@@ -100,6 +117,16 @@
     --modal-side-offset: 40px;
     --modal-side-offset-right: 40px;
     --modal-max-height: calc(100dvh - 112px);
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 800px) {
+  :root {
+    --modal-top-offset: 78px;
+    --modal-bottom-offset: 12px;
+    --modal-max-height: calc(100dvh - 90px);
+    --modal-font-title: 1.05rem;
+    --modal-font-section-title: 0.85rem;
   }
 }
 
@@ -697,6 +724,50 @@
   .building-card-root .building-card-info-button svg {
     width: 12px !important;
     height: 12px !important;
+  }
+
+  /* Desktop layout card images for building & military cards */
+  .building-card-root .building-card-image,
+  .building-card-root .housing-building-image {
+    width: var(--building-card-image-size, 80px) !important;
+    height: var(--building-card-image-size, 80px) !important;
+  }
+
+  /* Desktop housing building card size & structure */
+  .building-card-root.housing-building-card {
+    min-height: 88px;
+    width: auto;
+    min-width: 140px;
+    max-width: 160px;
+  }
+
+  /* Desktop layout building card header & label standards */
+  .building-card-root .building-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    gap: 0.375rem;
+  }
+
+  .building-card-root .building-card-label {
+    min-height: 2.2em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.25;
+  }
+
+  /* Desktop layout building card count & metric value standards */
+  .building-card-root .building-card-count {
+    font-size: 12px !important;
+    line-height: 1.25 !important;
+  }
+
+  .building-card-root .production-output-count {
+    font-size: 12px !important;
+    line-height: 1.25 !important;
   }
 }
 
@@ -1845,11 +1916,11 @@
     @apply flex-1 min-h-0 overflow-y-auto relative z-10 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-root-canvas [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20 [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent [&::-webkit-scrollbar-button]:hidden;
   }
   .root-modal-util-3d27351158 {
-    @apply px-3 sm:px-5 lg:px-6 py-1 sm:py-2.5 bg-root-canvas border-b-0 lg:border-b border-root-accent/20 relative z-10;
+    @apply relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2 sm:px-6;
   }
   @media (min-width: 1600px) {
     .root-modal-util-3d27351158 {
-      @apply px-8 py-3;
+      @apply px-6 py-2.5;
     }
   }
   .root-modal-util-0178524ccb {
@@ -1972,11 +2043,11 @@
     @apply h-3.5 w-3.5 lg:h-4 lg:w-4 text-root-subtle group-hover:text-root-accent group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5;
   }
   .root-modal-util-2e92dbbd9a {
-    @apply px-3 pt-1.5 pb-2 lg:p-4.5 bg-root-canvas/80 relative z-10;
+    @apply relative z-10 flex-1 overflow-y-auto bg-root-canvas/80 p-3 sm:p-5;
   }
   @media (min-width: 1600px) {
     .root-modal-util-2e92dbbd9a {
-      @apply p-8;
+      @apply p-5;
     }
   }
   .root-modal-util-1adf0b2971 {
@@ -2820,11 +2891,11 @@
     @apply !flex-nowrap gap-0.5 whitespace-nowrap p-0.5;
   }
   .root-modal-util-e7871a31f6 {
-    @apply flex-1 min-h-0 overflow-y-auto p-2.5 sm:p-3 lg:p-4 bg-root-canvas/80 relative z-10 [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-root-canvas [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20 [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent [&::-webkit-scrollbar-button]:hidden;
+    @apply relative z-10 flex-1 overflow-y-auto bg-root-canvas/80 p-3 sm:p-5 [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-root-canvas [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20 [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent [&::-webkit-scrollbar-button]:hidden;
   }
   @media (min-width: 1600px) {
     .root-modal-util-e7871a31f6 {
-      @apply p-6;
+      @apply p-5;
     }
   }
   .root-modal-util-b392992219 {
@@ -3077,11 +3148,11 @@
     }
   }
   .root-modal-util-9dc0c98e81 {
-    @apply flex-1 min-h-0 overflow-y-auto p-2 lg:p-5 bg-root-canvas/80 relative z-10;
+    @apply flex-1 min-h-0 overflow-y-auto p-3 sm:p-5 bg-root-canvas/80 relative z-10;
   }
   @media (min-width: 1600px) {
     .root-modal-util-9dc0c98e81 {
-      @apply p-8;
+      @apply p-5;
     }
   }
   .root-modal-util-ffeb68166b {

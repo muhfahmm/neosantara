@@ -1,4 +1,6 @@
 export const rootBorderRadius = {
-  card: "rounded-lg",
   frame: "rounded-2xl",
+  card: "rounded-xl",
+  button: "rounded-lg",
+  badge: "rounded-md",
 } as const;

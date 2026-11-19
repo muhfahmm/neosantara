@@ -86,48 +86,48 @@ export default function DetailKonsumsiTerestimasiModal({
         </div>
 
         {/* BODY */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-root-canvas/90 relative z-10 custom-scrollbar space-y-6">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-5 lg:p-6 bg-root-canvas/90 relative z-10 custom-scrollbar space-y-4 sm:space-y-6">
 
           {/* CARD SUMMARY GRID: ROW 1 (3 KARTU UTAMA) */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3.5">
 
             {/* Total Produksi Listrik */}
-            <div className="bg-emerald-950/40 border border-emerald-500/40 p-3.5 rounded-xl flex flex-col justify-between">
+            <div className="bg-emerald-950/40 border border-emerald-500/40 p-2.5 sm:p-3.5 rounded-xl flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-1 mb-1">
-                  <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+                  <TrendingUp className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                   <p className="text-[9px] font-black uppercase tracking-wider text-emerald-400">Total Produksi Listrik</p>
                 </div>
-                <p className="text-base sm:text-lg font-black text-emerald-400 mt-1 break-words">
-                  {totalProductionMW.toLocaleString("id-ID", { maximumFractionDigits: 2 })} <span className="text-xs font-bold text-root-subtle">MW</span>
+                <p className="text-sm sm:text-base lg:text-lg font-black font-mono tabular-nums game-stat-number text-emerald-400 mt-1 break-words">
+                  {totalProductionMW.toLocaleString("id-ID", { maximumFractionDigits: 2 })} <span className="text-xs font-bold font-sans text-root-subtle">MW</span>
                 </p>
               </div>
               <p className="text-[9px] text-emerald-300/70 mt-1.5 font-medium">Pembangkit aktif</p>
             </div>
 
             {/* Total Konsumsi */}
-            <div className="bg-rose-950/40 border border-rose-500/40 p-3.5 rounded-xl flex flex-col justify-between">
+            <div className="bg-rose-950/40 border border-rose-500/40 p-2.5 sm:p-3.5 rounded-xl flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-1 mb-1">
-                  <TrendingDown className="w-3.5 h-3.5 text-rose-400" />
+                  <TrendingDown className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                   <p className="text-[9px] font-black uppercase tracking-wider text-rose-400">Total Konsumsi Terestimasi</p>
                 </div>
-                <p className="text-base sm:text-lg font-black text-rose-400 mt-1 break-words">
-                  {totalAllBreakdownConsumption.toLocaleString("id-ID", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} <span className="text-xs font-bold text-root-subtle">MW</span>
+                <p className="text-sm sm:text-base lg:text-lg font-black font-mono tabular-nums game-stat-number text-rose-400 mt-1 break-words">
+                  {totalAllBreakdownConsumption.toLocaleString("id-ID", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} <span className="text-xs font-bold font-sans text-root-subtle">MW</span>
                 </p>
               </div>
               <p className="text-[9px] text-rose-300/70 mt-1.5 font-medium">Beban energi nasional</p>
             </div>
 
             {/* Total Netto Listrik */}
-            <div className={`p-3.5 rounded-xl flex flex-col justify-between ${nettoMW >= 0 ? 'bg-cyan-950/40 border border-cyan-500/40' : 'bg-amber-950/40 border border-amber-500/40'}`}>
+            <div className={`p-2.5 sm:p-3.5 rounded-xl flex flex-col justify-between ${nettoMW >= 0 ? 'bg-cyan-950/40 border border-cyan-500/40' : 'bg-amber-950/40 border border-amber-500/40'}`}>
               <div>
                 <div className="flex items-center gap-1 mb-1">
-                  <Activity className={`w-3.5 h-3.5 ${nettoMW >= 0 ? 'text-cyan-400' : 'text-amber-400'}`} />
+                  <Activity className={`w-3.5 h-3.5 shrink-0 ${nettoMW >= 0 ? 'text-cyan-400' : 'text-amber-400'}`} />
                   <p className={`text-[9px] font-black uppercase tracking-wider ${nettoMW >= 0 ? 'text-cyan-400' : 'text-amber-400'}`}>Total Netto Listrik</p>
                 </div>
-                <p className={`text-base sm:text-lg font-black mt-1 break-words ${nettoMW >= 0 ? 'text-cyan-400' : 'text-rose-400'}`}>
-                  {nettoMW >= 0 ? '+' : ''}{nettoMW.toLocaleString("id-ID", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} <span className="text-xs font-bold text-root-subtle">MW</span>
+                <p className={`text-sm sm:text-base lg:text-lg font-black font-mono tabular-nums game-stat-number mt-1 break-words ${nettoMW >= 0 ? 'text-cyan-400' : 'text-rose-400'}`}>
+                  {nettoMW >= 0 ? '+' : ''}{nettoMW.toLocaleString("id-ID", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} <span className="text-xs font-bold font-sans text-root-subtle">MW</span>
                 </p>
               </div>
               <p className={`text-[9px] mt-1.5 font-medium ${nettoMW >= 0 ? 'text-cyan-300/70' : 'text-amber-300/70'}`}>
@@ -138,44 +138,44 @@ export default function DetailKonsumsiTerestimasiModal({
           </div>
 
           {/* CARD SUMMARY GRID: ROW 2 (4 KARTU SEKTOR) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
 
             {/* Sektor Produksi */}
-            <div className="bg-root-canvas border border-root-accent/20 p-3.5 rounded-xl flex flex-col justify-between">
+            <div className="bg-root-canvas border border-root-accent/20 p-2.5 sm:p-3.5 rounded-xl flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-1 mb-1">
-                  <Factory className="w-3.5 h-3.5 text-root-accent" />
+                  <Factory className="w-3.5 h-3.5 text-root-accent shrink-0" />
                   <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Produksi & Tambang</p>
                 </div>
-                <p className="text-base sm:text-lg font-black text-root-accent">
-                  {totalProduksiConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold text-root-subtle">MW</span>
+                <p className="text-sm sm:text-base lg:text-lg font-black font-mono tabular-nums game-stat-number text-root-accent">
+                  {totalProduksiConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold font-sans text-root-subtle">MW</span>
                 </p>
               </div>
               <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{produksiBreakdown.filter(p => p.count > 0).length} jenis industri</p>
             </div>
 
             {/* Sektor Tempat Umum */}
-            <div className="bg-root-canvas border border-root-accent/20 p-3.5 rounded-xl flex flex-col justify-between">
+            <div className="bg-root-canvas border border-root-accent/20 p-2.5 sm:p-3.5 rounded-xl flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-1 mb-1">
-                  <Building2 className="w-3.5 h-3.5 text-root-accent" />
+                  <Building2 className="w-3.5 h-3.5 text-root-accent shrink-0" />
                   <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Tempat Umum</p>
                 </div>
-                <p className="text-base sm:text-lg font-black text-root-accent">
-                  {totalTempatUmumConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold text-root-subtle">MW</span>
+                <p className="text-sm sm:text-base lg:text-lg font-black font-mono tabular-nums game-stat-number text-root-accent">
+                  {totalTempatUmumConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold font-sans text-root-subtle">MW</span>
                 </p>
               </div>
               <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{tempatUmumBreakdown.filter(t => t.count > 0).length} fasilitas publik</p>
             </div>
 
             {/* Sektor Pertahanan & Keamanan */}
-            <div className="bg-root-canvas border border-root-accent/20 p-3.5 rounded-xl flex flex-col justify-between">
+            <div className="bg-root-canvas border border-root-accent/20 p-2.5 sm:p-3.5 rounded-xl flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-1 mb-1">
                   <Shield className="w-3.5 h-3.5 text-root-accent" />
                   <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Pertahanan & Keamanan</p>
                 </div>
-                <p className="text-base sm:text-lg font-black text-root-accent">
+                <p className="text-sm sm:text-base lg:text-lg font-black text-root-accent">
                   {totalPertahananConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold text-root-subtle">MW</span>
                 </p>
               </div>
