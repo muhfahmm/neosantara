@@ -1626,29 +1626,32 @@ export default function MissionModals({
   return (
     <>
       {/* Icon Tombol Misi */}
-      <button
-        onClick={onClick}
-        title="Misi & Sasaran Strategis"
-        className="side-floating-btn side-btn-misi"
-      >
-        <img
-          src="/images/game/interface/menu/mission.svg"
-          alt=""
-          aria-hidden="true"
-          onError={(event) => { event.currentTarget.style.display = 'none'; }}
-          width={72}
-          height={72}
-        />
-        {totalClaimable > 0 && (
-          <span className="side-floating-badge animate-pulse">
-            {totalClaimable}
-          </span>
-        )}
-      </button>
+      {mounted && typeof document !== 'undefined' && createPortal(
+        <button
+          onClick={onClick}
+          title="Misi & Sasaran Strategis"
+          className="side-floating-btn side-btn-misi"
+        >
+          <img
+            src="/images/game/interface/menu/mission.svg"
+            alt=""
+            aria-hidden="true"
+            onError={(event) => { event.currentTarget.style.display = 'none'; }}
+            width={72}
+            height={72}
+          />
+          {totalClaimable > 0 && (
+            <span className="side-floating-badge animate-pulse">
+              {totalClaimable}
+            </span>
+          )}
+        </button>,
+        document.body
+      )}
 
       {/* Modal Misi */}
       {isOpen && mounted && createPortal(
-        <NotebookModalWrapper onClose={onClose} zIndexClass="z-[100000]">
+        <NotebookModalWrapper onClose={onClose} zIndexClass="z-[200]">
           <div className="root-modal-util-b74379da23 mission-modal-typography font-sans">
             <RootInfoModalHeader
               title="Misi Presiden"

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
 import PenelitianSelectionModal, { SelectionCategoryKey } from './penelitianSelectionModal';
 import PenelitianPageModal, { CategoryKey } from './penelitianPageMenu';
@@ -25,7 +26,12 @@ export default function BottomLeftPenelitianIcon({
   currentDate,
 }: BottomLeftPenelitianIconProps) {
   const [selectedFocus, setSelectedFocus] = useState<SelectionCategoryKey | null>(null);
+  const [mounted, setMounted] = useState(false);
   const viewportMode = useViewportMode();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const isLandscapePhone = viewportMode === 'landscapePhone';
   const isPortraitPhone = viewportMode === 'portraitPhone';
   const isMobile = isLandscapePhone || isPortraitPhone;
@@ -60,20 +66,23 @@ export default function BottomLeftPenelitianIcon({
   return (
     <>
       {/* Icon Tombol Kiri Bawah */}
-      <button
-        onClick={onClick}
-        title="Penelitian - Riset dan Teknologi"
-        className="side-floating-btn side-btn-penelitian"
-      >
-        <img
-          src="/images/game/interface/menu/research.svg"
-          alt=""
-          aria-hidden="true"
-          onError={(event) => { event.currentTarget.style.display = 'none'; }}
-          width={72}
-          height={72}
-        />
-      </button>
+      {mounted && typeof document !== 'undefined' && createPortal(
+        <button
+          onClick={onClick}
+          title="Penelitian - Riset dan Teknologi"
+          className="side-floating-btn side-btn-penelitian"
+        >
+          <img
+            src="/images/game/interface/menu/research.svg"
+            alt=""
+            aria-hidden="true"
+            onError={(event) => { event.currentTarget.style.display = 'none'; }}
+            width={72}
+            height={72}
+          />
+        </button>,
+        document.body
+      )}
 
       {/* Modal 1: Selection Modal 3 Pilihan (Ekonomi, Militer, Diplomasi) */}
       {isOpen && selectedFocus === null && (

@@ -59,7 +59,7 @@ export default function PenelitianSelectionModal({
   if (!isOpen || !mounted) return null;
 
   return createPortal(
-    <NotebookModalWrapper onClose={onClose} zIndexClass="z-[10000]">
+    <NotebookModalWrapper onClose={onClose} zIndexClass="z-[200]">
       <div className="root-modal-util-52b6b298fe research-selection-typography">
         {/* Header Identik Root Kepuasan Rakyat */}
         <div className={"satisfaction-modal-header root-modal-util-4450f1d9ee"}>
