@@ -24,6 +24,9 @@
   --side-btn-misi-bottom: 5rem;
   --side-btn-misi-left: 1.75rem;
 
+  --side-btn-shop-bottom: 5rem;
+  --side-btn-shop-left: 5.25rem;
+
   --side-btn-penelitian-bottom: 0.75rem;
   --side-btn-penelitian-left: 1.75rem;
 
@@ -41,6 +44,8 @@
     --side-btn-reward-top: 6rem;
     --side-btn-news-top: 10.5rem;
     --side-btn-misi-bottom: 5.5rem;
+    --side-btn-shop-bottom: 5.5rem;
+    --side-btn-shop-left: 5.75rem;
     --side-btn-penelitian-bottom: 1rem;
     --side-btn-tracking-bottom: 1rem;
     --side-btn-tracking-left: 5.75rem;
@@ -55,6 +60,8 @@
     --side-btn-radius: 1.25rem;
     --side-btn-news-top: 11.5rem;
     --side-btn-misi-bottom: 6.5rem;
+    --side-btn-shop-bottom: 6.5rem;
+    --side-btn-shop-left: 6.25rem;
     --side-btn-penelitian-bottom: 1.25rem;
     --side-btn-tracking-bottom: 1.25rem;
     --side-btn-tracking-left: 6.25rem;
@@ -84,15 +91,18 @@
     --side-btn-news-top: calc(var(--safe-top) + var(--navbar-h) + 3.85rem);
     --side-btn-news-right: calc(var(--safe-right) + 0.5rem);
 
-    /* Posisi 3 Menu Kiri Bawah (1 Baris Sejajar / Flex Row) */
+    /* Posisi 4 Menu Kiri Bawah (1 Baris Sejajar / Flex Row) */
     --side-btn-penelitian-bottom: calc(var(--safe-bottom) + 0.45rem);
     --side-btn-penelitian-left: calc(var(--safe-left) + 0.5rem);
 
     --side-btn-misi-bottom: calc(var(--safe-bottom) + 0.45rem);
     --side-btn-misi-left: calc(var(--safe-left) + 2.85rem);
 
+    --side-btn-shop-bottom: calc(var(--safe-bottom) + 0.45rem);
+    --side-btn-shop-left: calc(var(--safe-left) + 5.2rem);
+
     --side-btn-tracking-bottom: calc(var(--safe-bottom) + 0.45rem);
-    --side-btn-tracking-left: calc(var(--safe-left) + 5.2rem);
+    --side-btn-tracking-left: calc(var(--safe-left) + 7.55rem);
   }
 }
 
@@ -118,15 +128,18 @@
     --side-btn-news-top: calc(var(--safe-top) + var(--navbar-h) + 4.1rem);
     --side-btn-news-right: calc(var(--safe-right) + 0.5rem);
 
-    /* Posisi 3 Menu Kiri Bawah (Sejajar di atas BottomNav) */
+    /* Posisi 4 Menu Kiri Bawah (2 Baris Sejajar di atas BottomNav) */
     --side-btn-penelitian-bottom: calc(var(--safe-bottom) + 4rem);
     --side-btn-penelitian-left: calc(var(--safe-left) + 0.5rem);
 
-    --side-btn-misi-bottom: calc(var(--safe-bottom) + 4rem);
-    --side-btn-misi-left: calc(var(--safe-left) + 3.1rem);
-
     --side-btn-tracking-bottom: calc(var(--safe-bottom) + 4rem);
-    --side-btn-tracking-left: calc(var(--safe-left) + 5.7rem);
+    --side-btn-tracking-left: calc(var(--safe-left) + 3.1rem);
+
+    --side-btn-misi-bottom: calc(var(--safe-bottom) + 6.6rem);
+    --side-btn-misi-left: calc(var(--safe-left) + 0.5rem);
+
+    --side-btn-shop-bottom: calc(var(--safe-bottom) + 6.6rem);
+    --side-btn-shop-left: calc(var(--safe-left) + 3.1rem);
   }
 }
 
@@ -214,6 +227,11 @@
 .side-btn-misi {
   bottom: var(--side-btn-misi-bottom);
   left: var(--side-btn-misi-left);
+}
+
+.side-btn-shop {
+  bottom: var(--side-btn-shop-bottom);
+  left: var(--side-btn-shop-left);
 }
 
 .side-btn-tracking {

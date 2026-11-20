@@ -142,6 +142,7 @@ import {
 } from '@/app/logic/npc_ai_brain/core/aiNewsBridge';
 const BottomLeftPenelitianIcon = dynamic(() => import('../menus/penelitian/penelitianModals'), { ssr: false });
 const BottomLeftMissionIcon = dynamic(() => import('../menus/mission/missionModals'), { ssr: false });
+const BottomLeftShopIcon = dynamic(() => import('../menus/shop/shopModals'), { ssr: false });
 import { NotificationMessage, getKepuasanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import { isNonActionableUpdateNotification } from '../menus/inbox/logic/automaticChangeNotification';
 import { generateReligionChangeNotification } from '../menus/inbox/logic/10_sosial_budaya/1_notifikasi_agama/religionChangeLogic';
@@ -1822,6 +1823,7 @@ export default function MapPage() {
         setNewsModalOpen(false);
         setPenelitianModalOpen(false);
         setMissionModalOpen(false);
+        setShopModalOpen(false);
         setIsSaveModalOpen(false);
         setIsRestartConfirmOpen(false);
         setIsPresidentMenuOpen(true);
@@ -1837,6 +1839,7 @@ export default function MapPage() {
         setNewsModalOpen(false);
         setPenelitianModalOpen(false);
         setMissionModalOpen(false);
+        setShopModalOpen(false);
         setIsSaveModalOpen(false);
         setIsRestartConfirmOpen(false);
         setActiveMenu('Peta Taktis');
@@ -1895,6 +1898,7 @@ export default function MapPage() {
         onOpenMission: () => {
             setMissionModalOpen(true);
             setPenelitianModalOpen(false);
+            setShopModalOpen(false);
             setInboxModalOpen(false);
             setGiftModalOpen(false);
             setNewsModalOpen(false);
@@ -1960,6 +1964,7 @@ export default function MapPage() {
             setNewsModalOpen(false);
             setPenelitianModalOpen(false);
             setMissionModalOpen(false);
+            setShopModalOpen(false);
             setIsSaveModalOpen(false);
             setIsRestartConfirmOpen(false);
 
@@ -1970,7 +1975,9 @@ export default function MapPage() {
             setActiveMenu('Peta Taktis');
         },
         onCloseMenu: () => {
-            if (missionModalOpen) {
+            if (shopModalOpen) {
+                setShopModalOpen(false);
+            } else if (missionModalOpen) {
                 setMissionModalOpen(false);
             } else if (penelitianModalOpen) {
                 setPenelitianModalOpen(false);
@@ -3406,6 +3413,7 @@ export default function MapPage() {
     const [penelitianModalOpen, setPenelitianModalOpen] = useState(false);
     const [researchMainPageOpen, setResearchMainPageOpen] = useState(false);
     const [missionModalOpen, setMissionModalOpen] = useState(false);
+    const [shopModalOpen, setShopModalOpen] = useState(false);
     const [playerDiamonds, setPlayerDiamonds] = useState<number>(500);
 
     // Sinkronisasi saldo diamond dari localStorage saat client mounted & realtime event
@@ -7043,12 +7051,12 @@ export default function MapPage() {
             notifModalMountedRef.current = true;
             return; // skip initial mount
         }
-        if (inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen || missionModalOpen) {
+        if (inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen || missionModalOpen || shopModalOpen) {
             window.dispatchEvent(new Event('hide_strategy_modal'));
         } else {
             window.dispatchEvent(new Event('show_strategy_modal'));
         }
-    }, [inboxModalOpen, giftModalOpen, newsModalOpen, penelitianModalOpen, missionModalOpen]);
+    }, [inboxModalOpen, giftModalOpen, newsModalOpen, penelitianModalOpen, missionModalOpen, shopModalOpen]);
 
     // Close inbox, gift, news, and penelitian modals if a navigation menu modal is opened
     useEffect(() => {
@@ -7058,6 +7066,7 @@ export default function MapPage() {
             setNewsModalOpen(false);
             setPenelitianModalOpen(false);
             setMissionModalOpen(false);
+            setShopModalOpen(false);
         }
     }, [activeMenu]);
 
@@ -9668,6 +9677,7 @@ export default function MapPage() {
                     setNewsModalOpen(false);
                     setPenelitianModalOpen(false);
                     setMissionModalOpen(false);
+                    setShopModalOpen(false);
                     setActiveMenu("");
                     // Mark all notifications as read when opening inbox
                     setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
@@ -10829,6 +10839,7 @@ export default function MapPage() {
                     setNewsModalOpen(false);
                     setPenelitianModalOpen(false);
                     setMissionModalOpen(false);
+                    setShopModalOpen(false);
                     setActiveMenu("");
                 }}
                 isOpen={giftModalOpen}
@@ -10855,6 +10866,7 @@ export default function MapPage() {
                     setGiftModalOpen(false);
                     setPenelitianModalOpen(false);
                     setMissionModalOpen(false);
+                    setShopModalOpen(false);
                     setActiveMenu("");
                 }}
                 isOpen={newsModalOpen}
@@ -10879,6 +10891,7 @@ export default function MapPage() {
                     setGiftModalOpen(false);
                     setPenelitianModalOpen(false);
                     setMissionModalOpen(false);
+                    setShopModalOpen(false);
                     setActiveMenu("");
                 }}
                 onOpenNewsCountry={(countryName) => {
@@ -10890,6 +10903,7 @@ export default function MapPage() {
                     setGiftModalOpen(false);
                     setPenelitianModalOpen(false);
                     setMissionModalOpen(false);
+                    setShopModalOpen(false);
                     setActiveMenu("");
                 }}
             />}
@@ -10899,6 +10913,7 @@ export default function MapPage() {
                     closeTrackingMenu();
                     setPenelitianModalOpen(true);
                     setMissionModalOpen(false);
+                    setShopModalOpen(false);
                     setInboxModalOpen(false);
                     setGiftModalOpen(false);
                     setNewsModalOpen(false);
@@ -10921,6 +10936,7 @@ export default function MapPage() {
                     closeTrackingMenu();
                     setMissionModalOpen(true);
                     setPenelitianModalOpen(false);
+                    setShopModalOpen(false);
                     setInboxModalOpen(false);
                     setGiftModalOpen(false);
                     setNewsModalOpen(false);
@@ -10935,6 +10951,7 @@ export default function MapPage() {
                 onStartMission={(destination: MissionNavigationTarget) => {
                     closeTrackingMenu();
                     setMissionModalOpen(false);
+                    setShopModalOpen(false);
                     setInboxModalOpen(false);
                     setNewsModalOpen(false);
                     setPenelitianModalOpen(false);
@@ -10968,6 +10985,24 @@ export default function MapPage() {
                     setActiveMenu(destination.menuId);
                 }}
             /> }
+            {!isWarAnalysisActive && <BottomLeftShopIcon
+                onClick={() => {
+                    setCountryDetailModalOpen(false);
+                    closeTrackingMenu();
+                    setShopModalOpen(true);
+                    setMissionModalOpen(false);
+                    setPenelitianModalOpen(false);
+                    setInboxModalOpen(false);
+                    setGiftModalOpen(false);
+                    setNewsModalOpen(false);
+                    setActiveMenu("");
+                }}
+                isOpen={shopModalOpen}
+                isMenuButtonHidden={researchMainPageOpen}
+                onClose={() => setShopModalOpen(false)}
+                playerDiamonds={playerDiamonds}
+                countryDetail={countryDetail}
+            />}
 
                 </>
             )}
