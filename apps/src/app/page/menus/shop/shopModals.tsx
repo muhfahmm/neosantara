@@ -19,6 +19,7 @@ interface ShopModalProps {
   isMenuButtonHidden?: boolean;
   playerDiamonds?: number;
   countryDetail?: any;
+  initialTab?: "neo" | "gems";
 }
 
 export default function ShopModal({
@@ -28,13 +29,20 @@ export default function ShopModal({
   isMenuButtonHidden = false,
   playerDiamonds = 500,
   countryDetail,
+  initialTab = "neo",
 }: ShopModalProps) {
-  const [activeTab, setActiveTab] = useState<"neo" | "gems">("neo");
+  const [activeTab, setActiveTab] = useState<"neo" | "gems">(initialTab);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTab(initialTab);
+    }
+  }, [isOpen, initialTab]);
 
   const playerKas = Number(countryDetail?.anggaran ?? 0);
 

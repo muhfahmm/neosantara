@@ -3414,6 +3414,7 @@ export default function MapPage() {
     const [researchMainPageOpen, setResearchMainPageOpen] = useState(false);
     const [missionModalOpen, setMissionModalOpen] = useState(false);
     const [shopModalOpen, setShopModalOpen] = useState(false);
+    const [shopInitialTab, setShopInitialTab] = useState<"neo" | "gems">("neo");
     const [playerDiamonds, setPlayerDiamonds] = useState<number>(500);
 
     // Sinkronisasi saldo diamond dari localStorage saat client mounted & realtime event
@@ -9658,6 +9659,30 @@ export default function MapPage() {
                             setKesejahteraanDeepLink(false);
                             setActiveMenu("Dashboard:Populasi:Overview");
                         }}
+                        onOpenGemsShop={() => {
+                            setCountryDetailModalOpen(false);
+                            closeTrackingMenu();
+                            setShopInitialTab("gems");
+                            setShopModalOpen(true);
+                            setMissionModalOpen(false);
+                            setPenelitianModalOpen(false);
+                            setInboxModalOpen(false);
+                            setGiftModalOpen(false);
+                            setNewsModalOpen(false);
+                            setActiveMenu("");
+                        }}
+                        onOpenKasShop={() => {
+                            setCountryDetailModalOpen(false);
+                            closeTrackingMenu();
+                            setShopInitialTab("neo");
+                            setShopModalOpen(true);
+                            setMissionModalOpen(false);
+                            setPenelitianModalOpen(false);
+                            setInboxModalOpen(false);
+                            setGiftModalOpen(false);
+                            setNewsModalOpen(false);
+                            setActiveMenu("");
+                        }}
                     />
                     {/* Top Left Icon - Inbox */}
                     <TopLeftIcon
@@ -10989,6 +11014,7 @@ export default function MapPage() {
                 onClick={() => {
                     setCountryDetailModalOpen(false);
                     closeTrackingMenu();
+                    setShopInitialTab("neo");
                     setShopModalOpen(true);
                     setMissionModalOpen(false);
                     setPenelitianModalOpen(false);
@@ -11002,6 +11028,7 @@ export default function MapPage() {
                 onClose={() => setShopModalOpen(false)}
                 playerDiamonds={playerDiamonds}
                 countryDetail={countryDetail}
+                initialTab={shopInitialTab}
             />}
 
                 </>

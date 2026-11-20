@@ -46,6 +46,8 @@ interface NavbarProps {
     onOpenPeringkat?: () => void;
     onOpenKesejahteraan?: () => void;
     onOpenPopulasi?: () => void;
+    onOpenGemsShop?: () => void;
+    onOpenKasShop?: () => void;
     presidentRating?: number;
     playerDiamonds?: number;
     kesejahteraan?: number;
@@ -66,6 +68,8 @@ export function Navbar({
     onOpenPeringkat,
     onOpenKesejahteraan,
     onOpenPopulasi,
+    onOpenGemsShop,
+    onOpenKasShop,
     presidentRating = 50,
     playerDiamonds = 500,
     kesejahteraan = 50,
@@ -412,6 +416,7 @@ export function Navbar({
                             value={countryDetail ? formatCurrencyNEO(anggaran) : '-'}
                             change={countryDetail ? netBalanceLabel : undefined}
                             valueColor={anggaran < 0 ? 'text-rose-400' : undefined}
+                            onClick={onOpenKasShop}
                         />
                         <MobileStatusItem
                             className="col-span-2"
@@ -438,11 +443,12 @@ export function Navbar({
                             onClick={onOpenKesejahteraan}
                         />
                         <MobileStatusItem
-                            className="col-span-6 border-t border-root-accent/15 pt-0.5 mt-0.5"
+                            className="col-span-6 border-t border-root-accent/15 pt-0.5 mt-0.5 cursor-pointer"
                             icon={<Gem className="h-2.5 w-2.5 text-cyan-400 fill-cyan-400/20" />}
                             label="GEMS"
                             value={playerDiamonds.toLocaleString('id-ID')}
                             valueColor="text-cyan-400"
+                            onClick={onOpenGemsShop}
                         />
                     </div>
                 </div>
@@ -528,20 +534,36 @@ export function Navbar({
                                 </div>
                             </button>
 
-                            <StatusItem
-                                icon={<Landmark className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
-                                label="KAS NEGARA"
-                                value={countryDetail ? (
-                                    <span className="flex items-center gap-1 text-root-text tabular-nums">
-                                        <span className={anggaran < 0 ? 'text-rose-400 font-black' : ''}>{formatCurrencyNEO(anggaran)}</span>
-                                        <span className={`${netBalance >= 0 ? 'text-root-accent' : 'text-rose-400'} text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
-                                            ({netBalanceLabel})
+                            {/* KAS NEGARA */}
+                            <button
+                                onClick={onOpenKasShop}
+                                className="group relative flex-shrink-0 cursor-pointer text-left hover:opacity-85 transition-opacity"
+                                title="Klik untuk membuka Toko Kas Negara (NEO)"
+                            >
+                                <StatusItem
+                                    icon={<Landmark className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
+                                    label="KAS NEGARA"
+                                    value={countryDetail ? (
+                                        <span className="flex items-center gap-1 text-root-text tabular-nums">
+                                            <span className={anggaran < 0 ? 'text-rose-400 font-black' : ''}>{formatCurrencyNEO(anggaran)}</span>
+                                            <span className={`${netBalance >= 0 ? 'text-root-accent' : 'text-rose-400'} text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
+                                                ({netBalanceLabel})
+                                            </span>
                                         </span>
-                                    </span>
-                                ) : (
-                                    '-'
-                                )}
-                            />
+                                    ) : (
+                                        '-'
+                                    )}
+                                />
+                                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max bg-root-surface border border-root-accent/30 rounded-xl p-2.5 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none shadow-xl">
+                                    <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-1 border-b border-root-accent/20 pb-1 text-center">Anggaran Kas Negara</p>
+                                    <p className="text-[11px] font-bold text-root-text text-center">
+                                        💰 {formatCurrencyNEO(anggaran)}
+                                    </p>
+                                    <p className="text-[9px] text-root-subtle text-center mt-1">
+                                        Klik untuk menambah kas negara di Toko NEO.
+                                    </p>
+                                </div>
+                            </button>
 
                             <button 
                                 onClick={onOpenKepuasan}
@@ -583,9 +605,10 @@ export function Navbar({
                             </button>
 
                             {/* GEMS */}
-                            <div
-                                className="group relative flex-shrink-0 cursor-default"
-                                title="Total Gems Akun Pemain"
+                            <button
+                                onClick={onOpenGemsShop}
+                                className="group relative flex-shrink-0 cursor-pointer text-left hover:opacity-85 transition-opacity"
+                                title="Klik untuk membuka Toko Gems"
                             >
                                 <StatusItem
                                     icon={<Gem className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-cyan-400 fill-cyan-400/20" />}
@@ -603,10 +626,10 @@ export function Navbar({
                                         💎 {playerDiamonds.toLocaleString('id-ID')} Gems
                                     </p>
                                     <p className="text-[9px] text-root-subtle text-center mt-1">
-                                        Mata uang premium untuk fitur & bonus khusus.
+                                        Klik untuk membeli Gems di Toko Permata.
                                     </p>
                                 </div>
-                            </div>
+                            </button>
                         </div>
                     </div>
 
