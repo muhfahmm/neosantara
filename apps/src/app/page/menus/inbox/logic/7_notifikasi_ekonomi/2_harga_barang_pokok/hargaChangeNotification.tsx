@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tag, TrendingUp, TrendingDown } from 'lucide-react';
 import { HargaChangeNotification } from './hargaChangeLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface HargaChangeNotificationProps {
   notification: HargaChangeNotification;
@@ -9,6 +10,7 @@ interface HargaChangeNotificationProps {
 }
 
 export default function HargaChangeNotificationCard({ notification, onAccept, onReject }: HargaChangeNotificationProps) {
+  const { t } = useLanguage();
   const isIncrease = notification.isIncrease;
 
   return (
@@ -23,12 +25,12 @@ export default function HargaChangeNotificationCard({ notification, onAccept, on
             {notification.title}
           </h4>
           <span className={`text-[10px] font-bold ${isIncrease ? 'text-rose-300 bg-rose-900/60 border-rose-500/40' : 'text-emerald-300 bg-emerald-900/60 border-emerald-500/40'} px-2.5 py-0.5 rounded-full border uppercase tracking-wider`}>
-            {isIncrease ? 'Harga Naik (Marah)' : 'Harga Turun (Senang)'}
+            {isIncrease ? 'Harga Naik' : 'Harga Turun'}
           </span>
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          Pengirim: {notification.sender} | Tanggal: {notification.timestamp}
+          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
         </p>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">

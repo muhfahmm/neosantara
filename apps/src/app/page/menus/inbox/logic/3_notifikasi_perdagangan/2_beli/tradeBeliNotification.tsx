@@ -1,6 +1,6 @@
 import React from 'react';
 import { ShoppingBag, Check, X } from 'lucide-react';
-import { TradeOfferNotification } from './tradeBeliLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface TradeBeliNotificationProps {
   notification: any; // TradeOfferNotification
@@ -9,7 +9,21 @@ interface TradeBeliNotificationProps {
 }
 
 export default function TradeBeliNotification({ notification, onAccept, onReject }: TradeBeliNotificationProps) {
-  const formatProduct = notification.productKey?.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()) || '';
+  const { t } = useLanguage();
+  const rawKey = notification.productKey || '';
+  const localizedProduct = t(`side_inbox.items.${rawKey}`) || rawKey.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+  const partner = notification.partnerName || 'Mitra';
+
+  const title = t('side_inbox.trade.beliTitle', { partner, product: localizedProduct }) || notification.title;
+  const badge = t('side_inbox.trade.beliBadge') || 'Ekspor AI';
+  const senderLabel = t('side_inbox.trade.beliSender', { partner }) || notification.sender;
+  const message = t('side_inbox.trade.beliMessage', {
+    partner,
+    product: localizedProduct,
+    quantity: notification.quantity?.toLocaleString('id-ID', { maximumFractionDigits: 2 }),
+    price: notification.pricePerUnit?.toLocaleString('id-ID', { maximumFractionDigits: 2 }),
+    total: notification.totalPrice?.toLocaleString('id-ID', { maximumFractionDigits: 2 }),
+  }) || notification.message;
 
   return (
     <div className="bg-emerald-50/70 border-l-4 border-emerald-500 p-4 rounded-r-xl shadow-sm flex gap-4 items-start select-none">
@@ -18,30 +32,30 @@ export default function TradeBeliNotification({ notification, onAccept, onReject
       </div>
       <div className="flex-1 space-y-1">
         <div className="flex items-center justify-between">
-          <h4 className="text-sm font-black text-emerald-900 uppercase tracking-wide">{notification.title}</h4>
+          <h4 className="text-sm font-black text-emerald-900 uppercase tracking-wide">{title}</h4>
           <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/50 px-2 py-0.5 rounded border border-emerald-200">
-            Ekspor AI
+            {badge}
           </span>
         </div>
         <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-          Pengirim: {notification.sender} | Waktu: {notification.timestamp}
+          {t('side_inbox.senderPrefix', { sender: senderLabel, date: notification.timestamp }) || `Pengirim: ${senderLabel} | Waktu: ${notification.timestamp}`}
         </p>
         <p className="text-xs font-medium text-slate-700 leading-relaxed pt-1">
-          {notification.message}
+          {message}
         </p>
         
         {/* Detail Penawaran */}
         <div className="bg-white/80 border border-emerald-100 rounded-lg p-2.5 mt-2 grid grid-cols-3 gap-2 text-center text-[10px] font-bold text-[#5c3c10]">
           <div>
-            <div className="text-slate-400 text-[9px] uppercase">Kuantitas</div>
+            <div className="text-slate-400 text-[9px] uppercase">{t('side_inbox.trade.buyQty') || 'Kuantitas'}</div>
             <div>{notification.quantity?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Unit</div>
           </div>
           <div>
-            <div className="text-slate-400 text-[9px] uppercase">Harga Satuan</div>
+            <div className="text-slate-400 text-[9px] uppercase">{t('side_inbox.trade.unitPrice') || 'Harga Satuan'}</div>
             <div>{notification.pricePerUnit?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
           </div>
           <div>
-            <div className="text-slate-400 text-[9px] uppercase">Total Biaya</div>
+            <div className="text-slate-400 text-[9px] uppercase">{t('side_inbox.trade.totalCost') || 'Total Biaya'}</div>
             <div className="text-emerald-700">{notification.totalPrice?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
           </div>
         </div>
@@ -53,7 +67,7 @@ export default function TradeBeliNotification({ notification, onAccept, onReject
               className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-100 hover:bg-rose-200 border border-rose-300 text-rose-800 rounded transition-all cursor-pointer shadow-sm flex items-center gap-1"
             >
               <X className="w-3 h-3" />
-              Tolak
+              {t('side_inbox.trade.reject') || 'Tolak'}
             </button>
           )}
           {onAccept && (
@@ -62,7 +76,7 @@ export default function TradeBeliNotification({ notification, onAccept, onReject
               className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-[#FAF6EE] rounded transition-all cursor-pointer shadow hover:shadow-md flex items-center gap-1"
             >
               <Check className="w-3 h-3" />
-              Setujui & Beli
+              {t('side_inbox.trade.acceptBuy') || 'Setujui & Beli'}
             </button>
           )}
         </div>

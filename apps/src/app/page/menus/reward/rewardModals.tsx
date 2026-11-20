@@ -142,6 +142,11 @@ const deriveRewardStatus = (
   return { day: 1, claimed: false };
 };
 
+function getLocalizedRewardItem(resourceKey: string, t: (key: string, params?: any) => string): string {
+  const tr = t(`side_reward.items.${resourceKey}`);
+  return (tr && tr !== `side_reward.items.${resourceKey}`) ? tr : formatProductionProductName(resourceKey);
+}
+
 // ----------------------------------------------------------------------
 // Interface props
 // ----------------------------------------------------------------------
@@ -340,7 +345,7 @@ export default function TopRightGiftIcon({
     // Tampilkan modal feedback (menggantikan alert)
     setFeedbackModal({
       title: 'Hadiah Diklaim!',
-      message: `Anda mendapatkan ${reward.amount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} ${formatProductionProductName(reward.resourceKey)} dari sektor ${reward.categoryLabel}.`,
+      message: `Anda mendapatkan ${reward.amount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} ${getLocalizedRewardItem(reward.resourceKey, t)} dari sektor ${reward.categoryLabel}.`,
       variant: 'success',
     });
   };
@@ -491,7 +496,7 @@ export default function TopRightGiftIcon({
                       </span>
 
                       <span className="text-[9px] sm:text-[10px] text-center text-root-subtle mt-1 leading-tight">
-                        {reward ? (t(`side_reward.items.${reward.resourceKey}`) || formatProductionProductName(reward.resourceKey)) : 'Memuat produk'}
+                        {reward ? getLocalizedRewardItem(reward.resourceKey, t) : '—'}
                       </span>
 
                       <div className={`mt-2 ${statusColor}`}>{statusIcon}</div>

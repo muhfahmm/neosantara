@@ -159,39 +159,41 @@ export default function TopRightNewsIcon({
   };
 
   const renderBadge = (type: NewsItemData['type']) => {
+    const trBadge = type ? t(`side_news.badges.${type}`) : '';
+    const label = (trBadge && trBadge !== `side_news.badges.${type}`) ? trBadge : (typeLabels[type] || type);
     switch (type) {
       case 'invasi':
         return (
           <span className="text-[10px] font-extrabold text-rose-400 bg-rose-500/15 px-2.5 py-0.5 rounded-full border border-rose-500/30 uppercase tracking-wider flex items-center gap-1">
             <Swords className="w-3 h-3 text-rose-400" />
-            Invasi Militer
+            {label}
           </span>
         );
       case 'aneksasi':
         return (
           <span className="text-[10px] font-extrabold text-amber-400 bg-amber-500/15 px-2.5 py-0.5 rounded-full border border-amber-500/30 uppercase tracking-wider flex items-center gap-1">
             <Flag className="w-3 h-3 text-amber-400" />
-            Aneksasi Wilayah
+            {label}
           </span>
         );
       case 'pengambilan_sda':
         return (
           <span className="text-[10px] font-extrabold text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded-full border border-emerald-500/30 uppercase tracking-wider flex items-center gap-1">
             <Coins className="w-3 h-3 text-emerald-400" />
-            Perampasan Aset & SDA
+            {label}
           </span>
         );
       case 'invasi_gabungan_pbb':
         return (
           <span className="text-[10px] font-extrabold text-cyan-300 bg-cyan-500/15 px-2.5 py-0.5 rounded-full border border-cyan-500/30 uppercase tracking-wider flex items-center gap-1">
             <Swords className="w-3 h-3" />
-            Invasi Gabungan PBB
+            {label}
           </span>
         );
       default:
         return (
           <span className="text-[10px] font-extrabold text-root-accent bg-root-accent/10 px-2.5 py-0.5 rounded-full border border-root-accent/30 uppercase tracking-wider">
-            {typeLabels[type]}
+            {label}
           </span>
         );
     }
@@ -284,7 +286,7 @@ export default function TopRightNewsIcon({
             <div className="flex items-center justify-between pb-1.5 border-b border-root-accent/30">
               <span className="text-[10px] font-black text-root-accent uppercase tracking-wider flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-root-accent animate-ping" />
-                Berita Geopolitik Baru!
+                {t('side_news.contents.toastTitle') || 'Berita Geopolitik Baru!'}
               </span>
               <SharedModalCloseButton
                 onClick={(e) => {
@@ -300,11 +302,16 @@ export default function TopRightNewsIcon({
               </SharedModalCloseButton>
             </div>
             <h5 className="mt-1.5 line-clamp-2 whitespace-normal break-words text-[11px] font-bold leading-snug text-white group-hover:text-root-accent transition-colors">
-              {toastNews.headline}
+              {(() => {
+                const tr = toastNews.type ? t(`side_news.headlines.${toastNews.type}`) : '';
+                return (tr && tr !== `side_news.headlines.${toastNews.type}`) ? tr : toastNews.headline;
+              })()}
             </h5>
             <div className="mt-auto flex items-center justify-between border-t border-root-accent/10 pt-1 text-[9px] text-root-subtle">
               <span>{toastNews.timestamp}</span>
-              <span className="font-extrabold text-root-accent group-hover:underline">Buka Menu →</span>
+              <span className="font-extrabold text-root-accent group-hover:underline">
+                {t('side_news.contents.openMenu') || 'Buka Menu →'}
+              </span>
             </div>
           </div>
         </div>,
@@ -381,7 +388,10 @@ export default function TopRightNewsIcon({
                         <div className="flex-1 space-y-1.5">
                           <div className="flex flex-wrap items-center justify-between gap-2">
                             <h3 className="text-sm sm:text-base font-black text-white tracking-wide leading-tight">
-                              {news.headline}
+                              {(() => {
+                                const tr = news.type ? t(`side_news.headlines.${news.type}`) : '';
+                                return (tr && tr !== `side_news.headlines.${news.type}`) ? tr : news.headline;
+                              })()}
                             </h3>
                             {renderBadge(news.type)}
                           </div>
@@ -389,17 +399,24 @@ export default function TopRightNewsIcon({
                           <div className="flex flex-wrap items-center gap-3 text-[10px] font-bold text-root-subtle uppercase tracking-wider">
                             {('attackerCountry' in news) && (
                               <>
-                                <span>Penyerang: <strong className="text-white">{news.attackerCountry}</strong></span>
+                                <span>{t('side_news.attacker')}: <strong className="text-white">{news.attackerCountry}</strong></span>
                                 <span>•</span>
-                                <span>Target: <strong className="text-white">{news.targetCountry}</strong></span>
+                                <span>{t('side_news.target')}: <strong className="text-white">{news.targetCountry}</strong></span>
                                 <span>•</span>
                               </>
                             )}
-                            <span>Waktu: <strong className="text-amber-400">{news.dateStr} ({news.timestamp})</strong></span>
+                            <span>{t('side_news.time')}: <strong className="text-amber-400">{news.dateStr} ({news.timestamp})</strong></span>
                           </div>
 
                           <p className="text-xs font-medium text-slate-300 leading-relaxed pt-1">
-                            {news.content}
+                            {(() => {
+                              if (news.type && t(`side_news.contents.${news.type}`)) {
+                                const actor = ('countryName' in news && news.countryName) || ('attackerCountry' in news && news.attackerCountry) || '';
+                                const partner = ('targetCountry' in news && news.targetCountry) || ('target' in news && news.target?.name) || '';
+                                return t(`side_news.contents.${news.type}`, { actor, partner });
+                              }
+                              return news.content;
+                            })()}
                           </p>
 
                           {/* Extra info spesifik tipe berita */}
@@ -407,7 +424,8 @@ export default function TopRightNewsIcon({
                             <div className="bg-[#051111] border border-amber-500/30 rounded-xl p-2.5 text-xs text-amber-300 font-bold flex items-center justify-between mt-2">
                               <span className="flex items-center gap-1.5">
                                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                                Peta Diperbarui: Warna wilayah {news.targetCountry} telah disesuaikan dengan warna {news.attackerCountry}!
+                                {t('side_news.mapUpdatedAnnexation', { target: news.targetCountry, attacker: news.attackerCountry }) ||
+                                  `Peta Diperbarui: Warna wilayah ${news.targetCountry} telah disesuaikan dengan warna ${news.attackerCountry}!`}
                               </span>
                             </div>
                           )}
@@ -416,20 +434,22 @@ export default function TopRightNewsIcon({
                             <div className="bg-[#051111] border border-emerald-500/30 rounded-xl p-2.5 text-xs text-emerald-300 font-bold flex items-center justify-between mt-2">
                               <span className="flex items-center gap-1.5">
                                 <Coins className="w-3.5 h-3.5 text-emerald-400" />
-                                Transfer Aset: Kas +{new Intl.NumberFormat('id-ID').format(news.lootedCash)} NEO & Seluruh SDA Berhasil Diambil
+                                {t('side_news.assetLootTransfer', { cash: new Intl.NumberFormat('id-ID').format(news.lootedCash) }) ||
+                                  `Transfer Aset: Kas +${new Intl.NumberFormat('id-ID').format(news.lootedCash)} NEO & Seluruh SDA Berhasil Diambil`}
                               </span>
                             </div>
                           )}
                           {news.type === 'invasi_gabungan_pbb' && (
                             <div className="mt-2 text-xs font-bold text-cyan-300">
-                              Klik untuk melihat {news.participants.length} negara anggota Dewan Keamanan yang terlibat.
+                              {t('side_news.unParticipantsNotice', { count: news.participants.length }) ||
+                                `Klik untuk melihat ${news.participants.length} negara anggota Dewan Keamanan yang terlibat.`}
                             </div>
                           )}
 
                           {canNavigate && (
                             <div className="pt-2 flex items-center justify-end">
                               <span className="text-[10px] font-black text-root-accent group-hover:underline flex items-center gap-1">
-                                {canOpenConstruction ? 'Buka Menu Pembangunan / Kebijakan →' : canOpenCountry ? 'Buka Profil Negara →' : 'Buka Detail Operasi →'}
+                                {canOpenConstruction ? t('side_news.openConstruction') : canOpenCountry ? t('side_news.openCountry') : t('side_news.openOperation')}
                               </span>
                             </div>
                           )}
@@ -454,14 +474,14 @@ export default function TopRightNewsIcon({
                 onClick={event => event.stopPropagation()}
               >
                 <RootInfoModalHeader
-                  title="Pasukan Operasi Gabungan PBB"
+                  title={t('side_news.unOperationTitle')}
                   titleId="pbb-operation-title"
                   onClose={() => setSelectedOperationNews(null)}
                   icon={<Newspaper />}
                   size="standard"
                   centerContent={
                     <p className="text-xs text-slate-400">
-                      Target: <strong className="text-white">{selectedOperationNews.target.name}</strong>
+                      {t('side_news.target')}: <strong className="text-white">{selectedOperationNews.target.name}</strong>
                     </p>
                   }
                 />
@@ -479,7 +499,7 @@ export default function TopRightNewsIcon({
                   ))}
                   {selectedOperationNews.participants.length === 0 && (
                     <p className="py-8 text-center text-sm text-slate-400">
-                      Tidak ada anggota Dewan Keamanan yang tersedia untuk operasi ini.
+                      {t('side_news.noUnMembers')}
                     </p>
                   )}
                 </div>

@@ -1,55 +1,61 @@
-"use client";
+import React from 'react';
+import { Users, ArrowRight, Check } from 'lucide-react';
+import { PopulasiDefisitNotification } from './populasiDefisitLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
-import { AlertTriangle, Users } from "lucide-react";
-import type { PopulasiDefisitNotification } from "./populasiDefisitLogic";
-
-interface Props {
+interface PopulasiDefisitNotificationCardProps {
   notification: PopulasiDefisitNotification;
+  onRedirect?: () => void;
 }
 
 export default function PopulasiDefisitNotificationCard({
   notification,
-}: Props) {
+  onRedirect
+}: PopulasiDefisitNotificationCardProps) {
+  const { t } = useLanguage();
+  const isHandled = notification.isHandled;
+
   return (
-    <article className="relative flex items-start gap-4 overflow-hidden rounded-2xl border border-rose-500/30 border-l-4 border-l-rose-500 bg-rose-950/40 p-4 shadow-lg sm:p-5">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-rose-500/40 bg-rose-500/20 text-rose-400">
-        <Users className="h-6 w-6" />
+    <div className={`border-l-4 ${isHandled ? 'bg-emerald-950/30 border-emerald-500' : 'bg-rose-950/40 border-rose-500'} p-4 sm:p-5 rounded-r-2xl shadow-lg flex gap-4 items-start select-none relative overflow-hidden transition-all border border-rose-500/20`}>
+      <div className={`w-11 h-11 rounded-xl ${isHandled ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400' : 'bg-rose-500/20 border-rose-500/40 text-rose-400'} border flex items-center justify-center shrink-0 shadow-inner`}>
+        {isHandled ? <Check className="w-6 h-6 text-emerald-400" /> : <Users className="w-6 h-6 animate-pulse text-rose-400" />}
       </div>
+
       <div className="flex-1 space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h4 className="text-sm font-black uppercase leading-tight tracking-wide text-white">
-            {notification.title}
+          <h4 className="text-sm font-black text-white uppercase tracking-wide leading-tight">
+            {t('side_inbox.basicNeeds.populationTitle') || notification.title}
           </h4>
-          <span className="flex items-center gap-1 rounded-full border border-rose-500/50 bg-rose-900/80 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-rose-300">
-            <AlertTriangle className="h-3 w-3" />
-            Populasi menurun
+          <span className="text-[10px] font-bold text-rose-300 bg-rose-900/60 px-2.5 py-0.5 rounded-full border border-rose-500/40 uppercase tracking-wider">
+            {t('side_inbox.basicNeeds.populationBadge') || 'Demografi Warga'}
           </span>
         </div>
-        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-          Pengirim: {notification.sender} | Tanggal: {notification.timestamp}
+
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
         </p>
-        <p className="text-xs font-medium leading-relaxed text-slate-200">
+
+        <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">
           {notification.message}
         </p>
-        <div className="grid grid-cols-1 gap-2 pt-1 sm:grid-cols-2">
-          <div className="rounded-lg border border-rose-500/20 bg-root-canvas p-2.5">
-            <p className="text-[9px] font-bold uppercase text-slate-400">
-              Perubahan bersih harian
-            </p>
-            <p className="mt-1 text-sm font-black text-rose-400">
-              {notification.dailyChange.toLocaleString("id-ID")} jiwa
-            </p>
-          </div>
-          <div className="rounded-lg border border-rose-500/20 bg-root-canvas p-2.5">
-            <p className="text-[9px] font-bold uppercase text-slate-400">
-              Populasi saat laporan
-            </p>
-            <p className="mt-1 text-sm font-black text-root-text">
-              {notification.currentPopulation.toLocaleString("id-ID")} jiwa
-            </p>
-          </div>
+
+        <div className="pt-2 flex items-center justify-end">
+          {isHandled ? (
+            <div className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/50 flex items-center gap-1.5">
+              <Check className="w-3.5 h-3.5" />
+              <span>{t('side_inbox.basicNeeds.resolved') || 'PERTUMBUHAN PENDUDUK KEMBALI STABIL'}</span>
+            </div>
+          ) : (
+            <button
+              onClick={onRedirect}
+              className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white rounded-xl transition-all cursor-pointer shadow-[0_0_12px_rgba(244,63,94,0.4)] flex items-center gap-1.5 font-bold"
+            >
+              <span>{t('side_inbox.basicNeeds.solveNow') || 'Kelola Kebijakan Demografi →'}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       </div>
-    </article>
+    </div>
   );
 }

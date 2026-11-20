@@ -1,6 +1,7 @@
 import React from 'react';
 import { HandHelping, Check, AlertTriangle } from 'lucide-react';
 import { SubsidiChangeNotification } from './subsidiChangeLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface SubsidiChangeNotificationProps {
   notification: SubsidiChangeNotification;
@@ -9,6 +10,7 @@ interface SubsidiChangeNotificationProps {
 }
 
 export default function SubsidiChangeNotificationCard({ notification, onAccept, onReject }: SubsidiChangeNotificationProps) {
+  const { t } = useLanguage();
   const isSubsidized = notification.isSubsidized;
 
   return (
@@ -23,12 +25,12 @@ export default function SubsidiChangeNotificationCard({ notification, onAccept, 
             {notification.title}
           </h4>
           <span className={`text-[10px] font-bold ${isSubsidized ? 'text-emerald-300 bg-emerald-900/60 border-emerald-500/40' : 'text-rose-300 bg-rose-900/60 border-rose-500/40'} px-2.5 py-0.5 rounded-full border uppercase tracking-wider`}>
-            {isSubsidized ? 'Subsidi Diberikan (Senang)' : 'Subsidi Dicabut (Gejolak)'}
+            {isSubsidized ? 'Subsidi Aktif' : 'Subsidi Nonaktif'}
           </span>
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          Pengirim: {notification.sender} | Tanggal: {notification.timestamp}
+          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
         </p>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">

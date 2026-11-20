@@ -34,8 +34,9 @@ function createWorldNews(
   content: string,
   dateStr: string,
   countryName: string,
+  targetCountry?: string
 ): WorldNewsItemData {
-  const common = { id, headline, content, timestamp: dateStr, dateStr, countryName };
+  const common = { id, headline, content, timestamp: dateStr, dateStr, countryName, targetCountry };
   if (type === 'krisis_ekonomi' || type === 'pajak_baru') {
     return { ...common, type, category: 'ekonomi_keuangan' };
   }
@@ -108,7 +109,7 @@ export function generateWorldNewsEvents(
         break;
     }
 
-    news.push(createWorldNews(id, type, headline, content, dateStr, actor.country));
+    news.push(createWorldNews(id, type, headline, content, dateStr, actor.country, partner.country));
   }
 
   return {

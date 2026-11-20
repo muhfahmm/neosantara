@@ -1,6 +1,7 @@
 import React from 'react';
 import { Scale, TrendingUp, TrendingDown } from 'lucide-react';
 import { SistemEkonomiChangeNotification } from './sistemEkonomiChangeLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface Props {
   notification: SistemEkonomiChangeNotification;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function SistemEkonomiChangeNotificationCard({ notification }: Props) {
+  const { t } = useLanguage();
   const { sliderValue, systemName, policyChoices } = notification;
   const isCapitalist = sliderValue >= 50;
 
@@ -29,7 +31,7 @@ export default function SistemEkonomiChangeNotificationCard({ notification }: Pr
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          Pengirim: {notification.sender} | Tanggal: {notification.timestamp}
+          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
         </p>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">

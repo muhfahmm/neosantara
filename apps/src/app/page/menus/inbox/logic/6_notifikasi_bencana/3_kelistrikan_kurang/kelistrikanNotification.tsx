@@ -4,6 +4,7 @@
 import React from 'react';
 import { CheckCircle, AlertCircle, Zap, Battery, Power } from 'lucide-react';
 import { KelistrikanNotification } from './kelistrikanLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface KelistrikanNotificationProps {
   notification: KelistrikanNotification;
@@ -16,6 +17,7 @@ export default function KelistrikanNotificationComponent({
   onMarkAsRead,
   onResolve,
 }: KelistrikanNotificationProps) {
+  const { t } = useLanguage();
   const [isExpanded, setIsExpanded] = React.useState(false);
 
   const handleResolve = () => {
@@ -44,10 +46,6 @@ export default function KelistrikanNotificationComponent({
 
   const getRatingImpactText = () => {
     const impact = Math.abs(notification.value);
-    if (impact === 1) return 'Peringkat turun 1 poin';
-    if (impact === 2) return 'Peringkat turun 2 poin';
-    if (impact === 3) return 'Peringkat turun 3 poin';
-    if (impact === 5) return 'Peringkat turun 5 poin';
     return `Peringkat turun ${impact} poin`;
   };
 
@@ -77,11 +75,11 @@ export default function KelistrikanNotificationComponent({
               <div className="flex items-center space-x-4">
                 <div className="flex items-center">
                   <Zap className="w-4 h-4 mr-1" />
-                  <span>Defisit: <strong>{notification.deficitAmount} MW</strong></span>
+                  <span>{t('side_inbox.electricityCrisis.deficit') || 'Defisit'}: <strong>{notification.deficitAmount} MW</strong></span>
                 </div>
                 <div className="flex items-center">
                   <Battery className="w-4 h-4 mr-1" />
-                  <span>Durasi: <strong>{notification.durationDays} hari</strong></span>
+                  <span>{t('side_inbox.electricityCrisis.duration') || 'Durasi'}: <strong>{notification.durationDays} {t('side_inbox.electricityCrisis.days') || 'hari'}</strong></span>
                 </div>
                 <div className="flex items-center">
                   <Power className="w-4 h-4 mr-1" />
@@ -92,26 +90,26 @@ export default function KelistrikanNotificationComponent({
 
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-blue-600 hover:text-blue-800 text-sm font-medium mt-2"
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium mt-2 cursor-pointer"
             >
-              {isExpanded ? '▲ Sembunyikan Detail' : '▼ Lihat Detail Lengkap'}
+              {isExpanded ? (t('side_inbox.electricityCrisis.hideDetail') || '▲ Sembunyikan Detail') : (t('side_inbox.electricityCrisis.viewDetail') || '▼ Lihat Detail Lengkap')}
             </button>
 
             {isExpanded && (
               <div className="mt-3 p-3 bg-white rounded border border-gray-200">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <h4 className="font-semibold text-gray-700 mb-2">📋 Detail Krisis</h4>
+                    <h4 className="font-semibold text-gray-700 mb-2">{t('side_inbox.electricityCrisis.crisisDetail') || '📋 Detail Krisis'}</h4>
                     <ul className="space-y-1 text-sm">
-                      <li><strong>Defisit Listrik:</strong> {notification.deficitAmount} MW</li>
-                      <li><strong>Tingkat Keparahan:</strong> {notification.severity.toUpperCase()}</li>
-                      <li><strong>Durasi Estimasi:</strong> {notification.durationDays} hari</li>
-                      <li><strong>Hari Tersisa:</strong> {notification.remainingDurationDays} hari</li>
-                      <li><strong>Mulai:</strong> {notification.startDate}</li>
+                      <li><strong>{t('side_inbox.electricityCrisis.deficit') || 'Defisit Listrik'}:</strong> {notification.deficitAmount} MW</li>
+                      <li><strong>{t('side_inbox.electricityCrisis.severity') || 'Tingkat Keparahan'}:</strong> {notification.severity.toUpperCase()}</li>
+                      <li><strong>{t('side_inbox.electricityCrisis.duration') || 'Durasi Estimasi'}:</strong> {notification.durationDays} {t('side_inbox.electricityCrisis.days') || 'hari'}</li>
+                      <li><strong>{t('side_inbox.electricityCrisis.remainingDays') || 'Hari Tersisa'}:</strong> {notification.remainingDurationDays} {t('side_inbox.electricityCrisis.days') || 'hari'}</li>
+                      <li><strong>{t('side_inbox.electricityCrisis.startDate') || 'Mulai'}:</strong> {notification.startDate}</li>
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-700 mb-2">📍 Area Terdampak</h4>
+                    <h4 className="font-semibold text-gray-700 mb-2">{t('side_inbox.electricityCrisis.affectedAreas') || '📍 Area Terdampak'}</h4>
                     <ul className="space-y-1 text-sm">
                       {notification.affectedAreas.map((area, index) => (
                         <li key={index} className="flex items-start">
@@ -124,11 +122,9 @@ export default function KelistrikanNotificationComponent({
                 </div>
                 
                 <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded">
-                  <h4 className="font-semibold text-red-700 mb-2">⚠️ Dampak terhadap Pemerintahan</h4>
+                  <h4 className="font-semibold text-red-700 mb-2">{t('side_inbox.electricityCrisis.govImpactTitle') || '⚠️ Dampak terhadap Pemerintahan'}</h4>
                   <p className="text-sm text-red-700">
-                    Krisis kelistrikan ini berdampak langsung pada tingkat kepercayaan publik. 
-                    Setiap notifikasi kelistrikan kurang akan mengurangi peringkat kepuasan rakyat sebesar {Math.abs(notification.value)} poin.
-                    Respon cepat terhadap krisis ini dapat membantu memulihkan kepercayaan publik.
+                    {t('side_inbox.electricityCrisis.govImpactDesc') || `Krisis kelistrikan ini berdampak langsung pada tingkat kepercayaan publik. Setiap notifikasi kelistrikan kurang akan mengurangi peringkat kepuasan rakyat.`}
                   </p>
                 </div>
               </div>
@@ -140,24 +136,24 @@ export default function KelistrikanNotificationComponent({
           {!notification.isRead && (
             <button
               onClick={() => onMarkAsRead(notification.id)}
-              className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition"
+              className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition cursor-pointer"
             >
-              Tandai Dibaca
+              {t('side_inbox.markRead') || 'Tandai Dibaca'}
             </button>
           )}
           
           <button
             onClick={handleResolve}
-            className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition flex items-center justify-center"
+            className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition flex items-center justify-center cursor-pointer"
           >
             <CheckCircle className="w-4 h-4 mr-1" />
-            Tangani & Terapkan Dampak
+            {t('side_inbox.electricityCrisis.resolveButton') || 'Tangani & Terapkan Dampak'}
           </button>
         </div>
       </div>
       
       <div className="mt-3 text-xs text-gray-500">
-        Dikirim oleh: {notification.sender} • {notification.timestamp}
+        {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Dikirim oleh: ${notification.sender} • ${notification.timestamp}`}
       </div>
     </div>
   );

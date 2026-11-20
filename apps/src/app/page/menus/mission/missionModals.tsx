@@ -1042,6 +1042,21 @@ export function addPlayerDiamonds(amount: number): number {
   }
 }
 
+export function getLocalizedMissionTitle(card: MissionCard, t?: (key: string, params?: any) => string): string {
+  if (!t) return card.title;
+  const tr = t(`side_misi.missions.${card.id}.title`);
+  return tr && tr !== `side_misi.missions.${card.id}.title` ? tr : card.title;
+}
+
+export function getLocalizedMissionCategory(card: MissionCard, t?: (key: string, params?: any) => string): string {
+  if (!t) return card.categoryLabel;
+  const labelTr = t(`side_misi.labels.${card.categoryLabel}`);
+  if (labelTr && labelTr !== `side_misi.labels.${card.categoryLabel}`) return labelTr;
+  const catTr = t(`side_misi.categories.${card.category}`);
+  if (catTr && catTr !== `side_misi.categories.${card.category}`) return catTr;
+  return card.categoryLabel;
+}
+
 /** Helper untuk memberikan penjelasan detail instruksi apa yang harus dilakukan pemain untuk menyelesaikan misi */
 export function getMissionInstruction(
   card: MissionCard,
@@ -1051,7 +1066,7 @@ export function getMissionInstruction(
   if (card.description) return card.description;
 
   const id = card.id;
-  const title = card.title;
+  const title = t ? getLocalizedMissionTitle(card, t) : card.title;
   const reqTarget = getMissionRequiredTarget(card, completionCount);
 
   // Jika ada translation function t, gunakan template dinamis dari JSON bahasa
@@ -1662,12 +1677,17 @@ export default function MissionModals({
     if (!result.claimed) return;
     let rewardText = `+${result.diamond} Gems`;
     if (result.neo) {
-      rewardText += ` & +${result.neo.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO kas`;
+      rewardText += ` & +${result.neo.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`;
     }
     if (result.sda) {
-      rewardText += ` & +${result.sda.amount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} ${formatProductionProductName(result.sda.productKey)}`;
+      rewardText += ` & +${result.sda.amount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} ${t(`side_reward.items.${result.sda.productKey}`) || formatProductionProductName(result.sda.productKey)}`;
     }
-    setClaimFeedback(`🎉 Selamat! Hadiah misi "${title}" berhasil diklaim: ${rewardText}!`);
+    const cardObj = MISSION_CARDS.find(c => c.id === cardId);
+    const localizedTitle = cardObj ? getLocalizedMissionTitle(cardObj, t) : title;
+    setClaimFeedback(
+      t('side_misi.claimSuccess', { title: localizedTitle, reward: rewardText }) ||
+      `🎉 Selamat! Hadiah misi "${localizedTitle}" berhasil diklaim: ${rewardText}!`
+    );
     setTimeout(() => {
       setClaimFeedback(null);
     }, 5000);
@@ -1768,7 +1788,7 @@ export default function MissionModals({
                         className="flex flex-col gap-2 rounded-lg border border-emerald-400/20 bg-root-surface p-3 sm:flex-row sm:items-center sm:justify-between"
                       >
                         <div className="min-w-0">
-                          <p className="text-xs font-bold text-root-text">{card.title}</p>
+                          <p className="text-xs font-bold text-root-text">{getLocalizedMissionTitle(card, t)}</p>
                           <p className="mt-1 text-[10px] font-semibold text-emerald-200">
                             {t('side_misi.readyToClaim')}
                             {badges.neo !== undefined && ` · ${badges.neo.toLocaleString('id-ID')} NEO`}
@@ -1778,8 +1798,8 @@ export default function MissionModals({
                         </div>
                         <button
                           type="button"
-                          onClick={() => handleClaim(card.id, card.title)}
-                          aria-label={`Klaim hadiah misi: ${card.title}`}
+                          onClick={() => handleClaim(card.id, getLocalizedMissionTitle(card, t))}
+                          aria-label={`${t('side_misi.claimReward')}: ${getLocalizedMissionTitle(card, t)}`}
                           className="w-full shrink-0 rounded-lg bg-root-accent px-4 py-2 text-xs font-black uppercase tracking-widest text-root-accent-ink transition-all hover:opacity-90 sm:w-auto"
                         >
                           {t('side_misi.claimReward')}
@@ -1885,8 +1905,8 @@ export default function MissionModals({
                     {isClaimable ? (
                       <button
                         type="button"
-                        onClick={() => handleClaim(card.id, card.title)}
-                        aria-label={`Klaim hadiah misi: ${card.title}`}
+                        onClick={() => handleClaim(card.id, getLocalizedMissionTitle(card, t))}
+                        aria-label={`${t('side_misi.claimReward')}: ${getLocalizedMissionTitle(card, t)}`}
                         className="w-full sm:w-auto shrink-0 px-5 py-2.5 rounded-lg bg-root-accent hover:opacity-90 active:scale-95 text-root-accent-ink font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-md shadow-root-accent/20 cursor-pointer"
                       >
                         <Gift className="w-3.5 h-3.5" />
@@ -1896,7 +1916,7 @@ export default function MissionModals({
                       <button
                         type="button"
                         onClick={() => handleStart(card)}
-                        aria-label={`Mulai misi: ${card.title}`}
+                        aria-label={`${t('side_misi.start')}: ${getLocalizedMissionTitle(card, t)}`}
                         className="w-full sm:w-auto shrink-0 px-5 py-2.5 rounded-lg bg-root-accent hover:opacity-90 active:scale-95 text-root-accent-ink font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-md shadow-root-accent/20 cursor-pointer"
                       >
                         <Play className="w-3.5 h-3.5 fill-root-accent-ink" />
@@ -1909,7 +1929,7 @@ export default function MissionModals({
 
               {currentCards.length === 0 && (
                 <div className="text-center py-12 text-sm font-bold text-root-subtle">
-                  Tidak ada misi aktif saat ini.
+                  {t('side_misi.noActiveMissions')}
                 </div>
               )}
             </div>

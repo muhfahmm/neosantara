@@ -10,6 +10,7 @@ export interface DiplomacyNewsData {
   type: DiplomacyNewsType;
   category: 'diplomasi';
   countryName?: string;
+  targetCountry?: string;
   headline: string;
   content: string;
   timestamp: string;

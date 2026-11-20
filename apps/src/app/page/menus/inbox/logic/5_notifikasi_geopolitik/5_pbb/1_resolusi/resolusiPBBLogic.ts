@@ -4,6 +4,7 @@ import { PRODUCTION_BAN_PRODUCTS, formatProductionProductName } from '@/app/page
 import { isCountryAnnexed } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbVotingEligibility';
 import { getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 import { getDisplayCountryName } from '@/app/logic/countryNameLogic';
+import { createInboxNotificationText } from '../../../notificationMessage';
 
 export interface AIResolusiPBBNotification extends NotificationMessage {
   tradeType: 'usulan_resolusi_pbb';
@@ -20,32 +21,26 @@ export interface AIResolusiPBBNotification extends NotificationMessage {
 const RESOLUTION_TYPES: Array<{
   type: 'war_ban' | 'arms_embargo' | 'economic_embargo' | 'military_invasion' | 'production_ban';
   title: string;
-  desc: string;
 }> = [
   {
     type: 'war_ban',
     title: 'Larangan Perang',
-    desc: 'Dilarang menyerang negara ini selama periode yang dipilih.'
   },
   {
     type: 'arms_embargo',
     title: 'Embargo Penjualan Senjata',
-    desc: 'Perdagangan senjata dilarang selama periode yang dipilih.'
   },
   {
     type: 'economic_embargo',
     title: 'Embargo Ekonomi',
-    desc: 'Produksi pabrik dan tambang serta pendapatan negara turun 60% selama periode yang dipilih.'
   },
   {
     type: 'military_invasion',
     title: 'Resolusi Invasi',
-    desc: 'Resolusi memungkinkan negara diinvasi tanpa kecaman oleh negara lain.'
   },
   {
     type: 'production_ban',
     title: 'Larangan Produksi',
-    desc: 'Produksi produk yang dipilih dihentikan selama periode yang dipilih.'
   }
 ];
 
@@ -80,19 +75,28 @@ export function generateAIResolusiPBBNotification(
   const selectedProductionProduct = chosen.type === 'production_ban'
     ? PRODUCTION_BAN_PRODUCTS[Math.floor(Math.random() * PRODUCTION_BAN_PRODUCTS.length)]
     : undefined;
-  const description = selectedProductionProduct
-    ? `Produksi ${formatProductionProductName(selectedProductionProduct.key)} dihentikan selama periode yang dipilih.`
-    : chosen.desc;
-
-  const message = isWarBan
-    ? `Kabar Diplomasi PBB! Negara ${proposerCountry} secara resmi mengajukan usulan "${chosen.title}" untuk seluruh dunia selama ${duration}. Usulan ini: ${description}. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!`
-    : `Kabar Diplomasi PBB! Negara ${proposerCountry} secara resmi mengajukan usulan "${chosen.title}" yang menargetkan ${targetCountry} selama ${duration} akibat ketegangan hubungan bilateral yang buruk (Skor: ${relationScore}/100). Usulan ini: ${description}. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!`;
+  const messageKey = isWarBan
+    ? chosen.type === 'production_ban'
+      ? 'side_inbox.notificationMessages.resolution.worldProductionBan'
+      : 'side_inbox.notificationMessages.resolution.worldWarBan'
+    : `side_inbox.notificationMessages.resolution.targeted.${chosen.type}`;
+  const message = createInboxNotificationText(messageKey, {
+    proposer: proposerCountry,
+    target: targetCountry,
+    duration,
+    score: relationScore,
+    product: selectedProductionProduct
+      ? formatProductionProductName(selectedProductionProduct.key)
+      : '',
+  }, selectedProductionProduct
+    ? { product: `side_inbox.items.${selectedProductionProduct.key}` }
+    : {});
 
   return {
     id: `resolusi-pbb-${proposerCountry}-${targetCountry}-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
     title,
     sender: `Sekretariat Jenderal Majelis Umum PBB`,
-    message,
+    ...message,
     timestamp: dateStr,
     type: 'peringkat',
     value: relationScore,

@@ -1,5 +1,6 @@
 import { CheckCircle2, XCircle } from "lucide-react";
 import { OrganizationMembershipNotification } from "./organizationMembershipNotificationLogic";
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface OrganizationMembershipNotificationCardProps {
   notification: OrganizationMembershipNotification;
@@ -8,6 +9,7 @@ interface OrganizationMembershipNotificationCardProps {
 export default function OrganizationMembershipNotificationCard({
   notification,
 }: OrganizationMembershipNotificationCardProps) {
+  const { t } = useLanguage();
   const isAccepted = notification.outcome === "accepted";
 
   return (
@@ -40,7 +42,7 @@ export default function OrganizationMembershipNotificationCard({
                 : "border-rose-500/40 bg-rose-900/50 text-rose-300"
             }`}
           >
-            {notification.category} · {isAccepted ? "Diterima" : "Ditolak"}
+            {notification.category} · {isAccepted ? (t('side_inbox.actions.accept') || "Diterima") : (t('side_inbox.actions.reject') || "Ditolak")}
           </span>
         </div>
 
@@ -48,12 +50,6 @@ export default function OrganizationMembershipNotificationCard({
           {notification.countryName} · {notification.organizationName} · {notification.timestamp}
         </p>
         <p className="text-xs font-medium leading-relaxed text-slate-200">{notification.message}</p>
-        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-          Peluang penerimaan saat pengajuan:{" "}
-          <span className={isAccepted ? "text-emerald-300" : "text-rose-300"}>
-            {notification.approvalRate}%
-          </span>
-        </p>
       </div>
     </div>
   );

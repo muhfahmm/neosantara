@@ -53,6 +53,154 @@ import { getActiveUserCountryName } from '@/app/page/navigasi_menu/2_navigasi_ba
 import { isNonActionableUpdateNotification } from './logic/automaticChangeNotification';
 import { getInboxNotificationImage } from './inboxAssetMapping';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getInboxNotificationMessage } from './logic/notificationMessage';
+
+function getLocalizedInboxTitle(notif: any, t: (key: any, params?: any) => string): string {
+  if (!notif) return '';
+  if (notif.titleKey) return t(notif.titleKey, notif.titleParams);
+  const rawTitle = String(notif.title || '');
+  const tradeType = notif.tradeType || notif.type;
+
+  // 1. Trade Jual
+  if (tradeType === 'jual' || rawTitle.toLowerCase().includes('ingin membeli')) {
+    const rawKey = notif.productKey || '';
+    const localizedProduct = t(`side_inbox.items.${rawKey}`) || rawKey.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+    const partner = notif.partnerName || notif.partnerCountry || 'Mitra';
+    const res = t('side_inbox.listTitles.tradeJual', { partner, product: localizedProduct });
+    if (res && res !== 'side_inbox.listTitles.tradeJual') return res;
+  }
+
+  // 2. Trade Beli
+  if (tradeType === 'beli' || rawTitle.toLowerCase().includes('penawaran dagang: beli')) {
+    const rawKey = notif.productKey || '';
+    const localizedProduct = t(`side_inbox.items.${rawKey}`) || rawKey.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+    const partner = notif.partnerName || notif.partnerCountry || 'Mitra';
+    const res = t('side_inbox.listTitles.tradeBeli', { partner, product: localizedProduct });
+    if (res && res !== 'side_inbox.listTitles.tradeBeli') return res;
+  }
+
+  // 3. Trade Relation
+  if (tradeType === 'hubungan_dagang' || rawTitle.toLowerCase().includes('hubungan dagang bilateral')) {
+    const partner = notif.partnerCountry || 'Mitra';
+    const res = t('side_inbox.listTitles.tradeRelation', { partner });
+    if (res && res !== 'side_inbox.listTitles.tradeRelation') return res;
+  }
+
+  // 4. Non-Agresi
+  if (tradeType === 'pakta_non_agresi' || rawTitle.toLowerCase().includes('pakta non-agresi')) {
+    const partner = notif.partnerCountry || 'Mitra';
+    const res = t('side_inbox.nonAggressionOfferTitle', { partner });
+    if (res && res !== 'side_inbox.nonAggressionOfferTitle') return res;
+  }
+
+  // 5. Aliansi Pertahanan
+  if (tradeType === 'aliansi_pertahanan' || rawTitle.toLowerCase().includes('aliansi pertahanan')) {
+    const partner = notif.partnerCountry || 'Mitra';
+    const res = t('side_inbox.listTitles.defenseAlliance', { partner });
+    if (res && res !== 'side_inbox.listTitles.defenseAlliance') return res;
+  }
+
+  // 6. Kontrak Penelitian
+  if (tradeType === 'kontrak_penelitian' || rawTitle.toLowerCase().includes('kontrak penelitian')) {
+    const partner = notif.partnerCountry || 'Mitra';
+    const res = t('side_inbox.listTitles.researchContract', { partner });
+    if (res && res !== 'side_inbox.listTitles.researchContract') return res;
+  }
+
+  // 7. Hubungan Panas
+  if (tradeType === 'hubungan_panas' || rawTitle.toLowerCase().includes('ketegangan diplomatik')) {
+    const partner = notif.partnerCountry || 'Mitra';
+    const res = t('side_inbox.listTitles.hubunganPanas', { partner });
+    if (res && res !== 'side_inbox.listTitles.hubunganPanas') return res;
+  }
+
+  // 8. Resolusi PBB
+  if (tradeType === 'usulan_resolusi_pbb' || rawTitle.toLowerCase().includes('resolusi pbb') || rawTitle.toLowerCase().includes('serangan tanpa')) {
+    const res = t('side_inbox.listTitles.resolusiPBB', { title: rawTitle });
+    if (res && res !== 'side_inbox.listTitles.resolusiPBB') return res;
+  }
+
+  // 9. Keamanan PBB
+  if (tradeType === 'usulan_keamanan_pbb' || rawTitle.toLowerCase().includes('dewan keamanan pbb')) {
+    const proposer = notif.proposerCountry || 'PBB';
+    const target = notif.targetCountry || 'Target';
+    const res = t('side_inbox.listTitles.keamananPBB', { proposer, target });
+    if (res && res !== 'side_inbox.listTitles.keamananPBB') return res;
+  }
+
+  // 10. Sabotase
+  if (tradeType === 'sabotase' || rawTitle.toLowerCase().includes('sabotase')) {
+    const partner = notif.partnerCountry || 'Target';
+    const res = t('side_inbox.listTitles.sabotase', { partner });
+    if (res && res !== 'side_inbox.listTitles.sabotase') return res;
+  }
+
+  // 11. Spionase
+  if (tradeType === 'spionase' || rawTitle.toLowerCase().includes('spionase')) {
+    const partner = notif.partnerCountry || 'Target';
+    const res = t('side_inbox.listTitles.spionase', { partner });
+    if (res && res !== 'side_inbox.listTitles.spionase') return res;
+  }
+
+  // 12. Pemberontakan
+  if (tradeType === 'pemberontakan' || rawTitle.toLowerCase().includes('pemberontakan')) {
+    const country = notif.provinceName || 'Wilayah';
+    const res = t('side_inbox.listTitles.pemberontakan', { country });
+    if (res && res !== 'side_inbox.listTitles.pemberontakan') return res;
+  }
+
+  // 13. Diserang
+  if (tradeType === 'diserang' || rawTitle.toLowerCase().includes('diserang') || rawTitle.toLowerCase().includes('serangan militer')) {
+    const res = t('side_inbox.listTitles.diserang');
+    if (res && res !== 'side_inbox.listTitles.diserang') return res;
+  }
+
+  // 14. ICBM
+  if (tradeType === 'icbm' || rawTitle.toLowerCase().includes('icbm') || rawTitle.toLowerCase().includes('rudal balistik')) {
+    const res = t('side_inbox.listTitles.icbm');
+    if (res && res !== 'side_inbox.listTitles.icbm') return res;
+  }
+
+  // 15. Bencana Alam
+  if (tradeType === 'bencana' || rawTitle.toLowerCase().includes('bencana alam')) {
+    const name = notif.bencanaType || 'Bencana';
+    const province = notif.provinceName || 'Wilayah';
+    const res = t('side_inbox.listTitles.bencana', { name, province });
+    if (res && res !== 'side_inbox.listTitles.bencana') return res;
+  }
+
+  // 16. Wabah Penyakit
+  if (tradeType === 'wabah' || rawTitle.toLowerCase().includes('wabah')) {
+    const name = notif.wabahName || 'Epidemi';
+    const province = notif.provinceName || 'Wilayah';
+    const res = t('side_inbox.listTitles.wabah', { name, province });
+    if (res && res !== 'side_inbox.listTitles.wabah') return res;
+  }
+
+  // 17. Basic needs
+  if (tradeType === 'kelistrikan' || rawTitle.toLowerCase().includes('listrik')) {
+    const res = t('side_inbox.listTitles.listrik');
+    if (res && res !== 'side_inbox.listTitles.listrik') return res;
+  }
+  if (tradeType === 'hunian' || rawTitle.toLowerCase().includes('hunian')) {
+    const res = t('side_inbox.listTitles.hunian');
+    if (res && res !== 'side_inbox.listTitles.hunian') return res;
+  }
+  if (tradeType === 'pangan' || rawTitle.toLowerCase().includes('pangan')) {
+    const res = t('side_inbox.listTitles.pangan');
+    if (res && res !== 'side_inbox.listTitles.pangan') return res;
+  }
+  if (tradeType === 'tempat_umum' || rawTitle.toLowerCase().includes('tempat umum')) {
+    const res = t('side_inbox.listTitles.tempatUmum');
+    if (res && res !== 'side_inbox.listTitles.tempatUmum') return res;
+  }
+  if (tradeType === 'populasi' || rawTitle.toLowerCase().includes('populasi')) {
+    const res = t('side_inbox.listTitles.populasi');
+    if (res && res !== 'side_inbox.listTitles.populasi') return res;
+  }
+
+  return rawTitle;
+}
 
 interface TopLeftIconProps {
   onClick?: () => void;
@@ -166,10 +314,19 @@ export default function TopLeftIcon({
 
 
 
-  const renderActiveNotificationDetail = (notif: NotificationMessage) => {
-    const handleAction = onActionClick ? () => onActionClick(notif) : undefined;
-    const handleCrackdown = onCrackdownClick ? () => onCrackdownClick(notif) : undefined;
-    const handleRedirect = onRedirectClick ? () => onRedirectClick(notif) : undefined;
+  const renderActiveNotificationDetail = (notification: NotificationMessage) => {
+    const handleAction = onActionClick ? () => onActionClick(notification) : undefined;
+    const handleCrackdown = onCrackdownClick ? () => onCrackdownClick(notification) : undefined;
+    const handleRedirect = onRedirectClick ? () => onRedirectClick(notification) : undefined;
+    const notif = {
+      ...notification,
+      title: notification.titleKey ? t(notification.titleKey, notification.titleParams) : notification.title,
+      sender: notification.senderKey ? t(notification.senderKey, notification.senderParams) : notification.sender,
+      message: getInboxNotificationMessage(notification, t),
+      effectText: notification.effectTextKey
+        ? t(notification.effectTextKey, notification.effectTextParams)
+        : notification.effectText,
+    };
 
     const tradeType = (notif as any).tradeType;
     if (tradeType === 'keanggotaan_organisasi_pbb' || tradeType === 'keanggotaan_organisasi_regional') {
@@ -600,7 +757,7 @@ export default function TopLeftIcon({
             <div className="flex items-center justify-between border-b border-root-accent/30 pb-1.5">
               <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-root-accent">
                 <span className={`h-2 w-2 rounded-full bg-root-accent ${showToast ? 'animate-ping' : ''}`} />
-                Pesan Baru Masuk
+                {t('side_inbox.toastTitle') || 'Pesan Baru Masuk'}
               </span>
               <SharedModalCloseButton
                 onClick={(e) => {
@@ -614,12 +771,12 @@ export default function TopLeftIcon({
               </SharedModalCloseButton>
             </div>
             <h5 className="mt-1.5 line-clamp-2 whitespace-normal break-words text-[11px] font-bold leading-snug text-white group-hover:text-root-accent">
-              {toastNotification?.title}
+              {getLocalizedInboxTitle(toastNotification, t) || toastNotification?.title}
             </h5>
             <div className="mt-auto flex items-center justify-between border-t border-root-accent/10 pt-1">
               <span className="text-[8px] font-semibold text-root-subtle">{toastNotification?.timestamp}</span>
               <span className="text-[9px] font-black text-root-accent underline transition-transform group-hover:translate-x-1">
-                Buka Inbox ({unreadCount}) →
+                {t('side_inbox.openInbox', { count: unreadCount }) || `Buka Inbox (${unreadCount}) →`}
               </span>
             </div>
           </div>
@@ -704,7 +861,7 @@ export default function TopLeftIcon({
                             <div className="flex-1 min-w-0">
                               <h4 className={`text-[11px] sm:text-xs font-black leading-tight line-clamp-1 truncate ${isUrgent ? 'text-rose-400' : isSelected ? 'text-root-accent' : 'text-root-text'
                                 }`}>
-                                {notif.title}
+                                {getLocalizedInboxTitle(notif, t) || notif.title}
                               </h4>
                               <div className="flex items-center gap-1.5 mt-1 text-[9px] text-root-subtle font-semibold min-w-0">
                                 {countryIso && countryIso !== 'un' && (
@@ -737,7 +894,7 @@ export default function TopLeftIcon({
                           className="w-full py-2 px-3 rounded-lg border border-red-500/40 bg-red-950/30 text-red-400 hover:bg-red-900/50 hover:text-red-300 transition-all cursor-pointer font-bold text-[10px] sm:text-xs uppercase flex items-center justify-center gap-1.5 shadow-sm"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
-                          <span>Hapus Semua Pesan</span>
+                          <span>{t('side_inbox.clearAll')}</span>
                         </button>
                       </div>
                     )}
@@ -770,7 +927,7 @@ export default function TopLeftIcon({
                       </div>
                     ) : (
                       <div className="h-full flex items-center justify-center text-center text-slate-500 text-xs">
-                        Pilih pesan di sebelah kiri untuk melihat detail.
+                        {t('side_inbox.selectToView')}
                       </div>
                     )}
                   </div>

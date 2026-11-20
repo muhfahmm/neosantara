@@ -53,3 +53,4 @@ CMakeSettings.json
 # System
 .DS_Store
 Thumbs.db
+/apps/src-tauri/gen/android/gradle/wrapper/gradle-8.14.3.zip

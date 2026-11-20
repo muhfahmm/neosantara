@@ -50,5 +50,764 @@
     "populasi": "Buka indikator Kependudukan lalu buat program kebijakan untuk {title}.",
     "default": "Lakukan tindakan \"{title}\" melalui menu terkait untuk menyelesaikan misi ini.",
     "unitMin": "minimal {target} unit "
-  }
+  },
+  "missions": {
+    "aliansi_pertahanan": {
+      "title": "Bentuk Aliansi Pertahanan Militer"
+    },
+    "angka_kelahiran": {
+      "title": "Tingkatkan Angka Kelahiran Nasional"
+    },
+    "bangun_barak": {
+      "title": "Barak Militer"
+    },
+    "bangun_gudang_senjata": {
+      "title": "Gudang Senjata"
+    },
+    "bangun_hangar_tank": {
+      "title": "Hangar Tank"
+    },
+    "bangun_kedubes": {
+      "title": "Bangun Kedutaan Besar Bilateral"
+    },
+    "bangun_pangkalan_laut": {
+      "title": "Pangkalan Laut"
+    },
+    "bangun_pangkalan_udara": {
+      "title": "Pangkalan Udara"
+    },
+    "bangun_plta": {
+      "title": "PLT Air (PLTA)"
+    },
+    "bangun_pltb": {
+      "title": "PLT Angin (PLTB)"
+    },
+    "bangun_pltfn": {
+      "title": "PLT Fusi Nuklir (PLTFN)"
+    },
+    "bangun_pltg": {
+      "title": "PLT Gas (PLTG)"
+    },
+    "bangun_pltgl": {
+      "title": "PLT Gelombang Laut (PLTGL)"
+    },
+    "bangun_plth": {
+      "title": "PLT Hidrogen (PLTH)"
+    },
+    "bangun_pltn": {
+      "title": "PLT Nuklir (PLTN)"
+    },
+    "bangun_pltp": {
+      "title": "PLT Panas Bumi (PLTP)"
+    },
+    "bangun_plts": {
+      "title": "PLT Surya (PLTS)"
+    },
+    "bangun_pltu": {
+      "title": "PLT Uap (PLTU)"
+    },
+    "budidaya_mutiara": {
+      "title": "Budidaya Mutiara"
+    },
+    "dk_bantuan_logistik": {
+      "title": "Bantuan Logistik"
+    },
+    "dk_blokade_ekonomi": {
+      "title": "Blokade Ekonomi"
+    },
+    "dk_blokade_laut": {
+      "title": "Blokade Laut"
+    },
+    "dk_blokade_penuh": {
+      "title": "Blokade Penuh"
+    },
+    "dk_dukung_negara": {
+      "title": "Dukung Negara"
+    },
+    "dk_invasi_militer": {
+      "title": "Invasi Militer"
+    },
+    "doktrin_keterbukaan": {
+      "title": "Ubah Doktrin & Keterbukaan Negara"
+    },
+    "edukasi_dasar": {
+      "title": "Sekolah Dasar"
+    },
+    "edukasi_laboratorium": {
+      "title": "Laboratorium Riset"
+    },
+    "edukasi_lanjutan": {
+      "title": "Sekolah Lanjutan Atas"
+    },
+    "edukasi_lembaga": {
+      "title": "Lembaga Pendidikan Khusus"
+    },
+    "edukasi_menengah": {
+      "title": "Sekolah Menengah"
+    },
+    "edukasi_observatorium": {
+      "title": "Observatorium Astronomi"
+    },
+    "edukasi_prasekolah": {
+      "title": "Pras Binaan & PAUD"
+    },
+    "edukasi_pusat_kembang": {
+      "title": "Pusat Pengembangan Teknologi"
+    },
+    "edukasi_pusat_riset": {
+      "title": "Pusat Penelitian Nasional"
+    },
+    "edukasi_universitas": {
+      "title": "Universitas Negeri"
+    },
+    "ekspor_perdagangan": {
+      "title": "Ekspor Komoditas Perdagangan"
+    },
+    "event_balap_f1": {
+      "title": "Balap F1"
+    },
+    "event_festival": {
+      "title": "Festival"
+    },
+    "event_karnaval": {
+      "title": "Karnaval"
+    },
+    "event_konser": {
+      "title": "Konser"
+    },
+    "event_olimpiade": {
+      "title": "Olimpiade"
+    },
+    "event_piala_davis": {
+      "title": "Piala Davis"
+    },
+    "event_piala_fifa": {
+      "title": "Piala Dunia FIFA"
+    },
+    "event_piala_rugbi": {
+      "title": "Piala Dunia Rugbi"
+    },
+    "ganti_agama": {
+      "title": "Ganti Agama / Kepercayaan Resmi Negara"
+    },
+    "ganti_ideologi": {
+      "title": "Ganti Ideologi Negara"
+    },
+    "hapus_tunawisma": {
+      "title": "Entaskan Warga Tunawisma ke Hunian Layak"
+    },
+    "harga_pokok": {
+      "title": "Sesuaikan Harga Barang Pokok"
+    },
+    "hukum_akademi_polisi": {
+      "title": "Akademi Kepolisian"
+    },
+    "hukum_bantuan": {
+      "title": "Pusat Bantuan Hukum"
+    },
+    "hukum_kejaksaan": {
+      "title": "Kejaksaan Agung"
+    },
+    "hukum_pengadilan": {
+      "title": "Pengadilan Negeri"
+    },
+    "hukum_pos_polisi": {
+      "title": "Pos Polisi"
+    },
+    "hunian_apartemen": {
+      "title": "Apartemen Modern & High-Rise"
+    },
+    "hunian_mansion": {
+      "title": "Kompleks Mansion Mewah"
+    },
+    "hunian_subsidi": {
+      "title": "Perumahan Subsidi Rakyat"
+    },
+    "hutang_lunas": {
+      "title": "Lunasi Cicilan Pinjaman & Hutang"
+    },
+    "ideologi_negara": {
+      "title": "Penguatan Dasar Ideologi Negara"
+    },
+    "impor_perdagangan": {
+      "title": "Impor Kebutuhan Barang Pokok"
+    },
+    "indeks_kesejahteraan": {
+      "title": "Capai Indeks Kesejahteraan Rakyat 75%"
+    },
+    "infra_bandara": {
+      "title": "Bandara Internasional"
+    },
+    "infra_helipad": {
+      "title": "Helipad & Pangkalan Udara Sipil"
+    },
+    "infra_jalan_raya": {
+      "title": "Jalan Raya Nasional"
+    },
+    "infra_jalur_sepeda": {
+      "title": "Jalur Sepeda"
+    },
+    "infra_kereta_bawah": {
+      "title": "Kereta Bawah Tanah"
+    },
+    "infra_pelabuhan": {
+      "title": "Pelabuhan Internasional"
+    },
+    "infra_stasiun_kereta": {
+      "title": "Stasiun Kereta Api"
+    },
+    "infra_terminal_bus": {
+      "title": "Terminal Bus"
+    },
+    "kebijakan_bank_sentral": {
+      "title": "Optimalisasi Batas Aman Bank Sentral"
+    },
+    "kebun_kakao": {
+      "title": "Kebun Kakao"
+    },
+    "kebun_karet": {
+      "title": "Kebun Karet"
+    },
+    "kebun_kopi": {
+      "title": "Kebun Kopi"
+    },
+    "kebun_sawit": {
+      "title": "Kebun Kelapa Sawit"
+    },
+    "kebun_sayur": {
+      "title": "Kebun Sayur Mayur"
+    },
+    "kebun_tebu": {
+      "title": "Kebun Tebu"
+    },
+    "kebun_teh": {
+      "title": "Kebun Teh"
+    },
+    "kepuasan_target": {
+      "title": "Capai Indeks Kepuasan Rakyat 80%"
+    },
+    "kes_bantuan_pendidikan": {
+      "title": "Bantuan Pendidikan Siswa"
+    },
+    "kes_bantuan_tunai": {
+      "title": "Bantuan Tunai Langsung"
+    },
+    "kes_jaminan_kesehatan": {
+      "title": "Jaminan Kesehatan Universal"
+    },
+    "kes_pasar_murah": {
+      "title": "Pasar Murah Nasional"
+    },
+    "kes_perbaikan_rumah": {
+      "title": "Perbaikan Perumahan Rakyat"
+    },
+    "kes_subsidi_pangan": {
+      "title": "Subsidi Pangan Pokok"
+    },
+    "kilang_gas_alam": {
+      "title": "Kilang Gas Alam"
+    },
+    "kilang_minyak_bumi": {
+      "title": "Kilang Minyak Bumi"
+    },
+    "komersial_grosir": {
+      "title": "Pusat Grosir Tekstil"
+    },
+    "komersial_hotel": {
+      "title": "Hotel Berbintang"
+    },
+    "komersial_mall": {
+      "title": "Mall & Pusat Belanja"
+    },
+    "komersial_restoran": {
+      "title": "Pusat Restoran & Kuliner"
+    },
+    "kontrak_penelitian": {
+      "title": "Kerja Sama Kontrak Penelitian Internasional"
+    },
+    "krisis_bencana_alam": {
+      "title": "Salurkan Bantuan Darurat Bencana Alam"
+    },
+    "krisis_klaim_hadiah": {
+      "title": "Klaim Hadiah Bantuan SDA Harian"
+    },
+    "krisis_operasi_polisi": {
+      "title": "Danai Operasi Penumpasan Kriminalitas"
+    },
+    "krisis_separatisme": {
+      "title": "Redam Ketegangan Separatisme Provinsi"
+    },
+    "krisis_wabah_penyakit": {
+      "title": "Tangani Wabah Penyakit & Salurkan Vaksin"
+    },
+    "ladang_gandum": {
+      "title": "Ladang Gandum"
+    },
+    "ladang_jagung": {
+      "title": "Ladang Jagung"
+    },
+    "ladang_kedelai": {
+      "title": "Ladang Kedelai"
+    },
+    "ladang_umbi": {
+      "title": "Ladang Umbi-umbian"
+    },
+    "layanan_darurat": {
+      "title": "Kesiapan Unit Layanan Darurat Medis"
+    },
+    "medis_pusat_diagnostik": {
+      "title": "Pusat Diagnostik"
+    },
+    "medis_rs_besar": {
+      "title": "Rumah Sakit Besar"
+    },
+    "medis_rs_kecil": {
+      "title": "Rumah Sakit Kecil"
+    },
+    "menteri_rekrut_kesehatan": {
+      "title": "Angkat Menteri Kesehatan Spesialis"
+    },
+    "menteri_rekrut_keuangan": {
+      "title": "Angkat Menteri Keuangan Profesional"
+    },
+    "menteri_rekrut_pendidikan": {
+      "title": "Angkat Menteri Pendidikan Cendekiawan"
+    },
+    "menteri_rekrut_pertahanan": {
+      "title": "Angkat Menteri Pertahanan Veteran"
+    },
+    "menteri_rekrut_polisi": {
+      "title": "Angkat Kepala Polisi Berintegritas"
+    },
+    "menteri_rekrut_tier_tinggi": {
+      "title": "Rekrut Tokoh Menteri Berbakat (Tier IV / V)"
+    },
+    "naikkan_hubungan": {
+      "title": "Tingkatkan Hubungan Bilateral Positif"
+    },
+    "operasi_sabotase": {
+      "title": "Operasi Sabotase Infrastruktur Musuh"
+    },
+    "operasi_serang_negara": {
+      "title": "Deklarasi Invasi Militer"
+    },
+    "operasi_spionase": {
+      "title": "Operasi Spionase Rahasia"
+    },
+    "pabrik_air_mineral": {
+      "title": "Pabrik Air Mineral"
+    },
+    "pabrik_beras": {
+      "title": "Pabrik Penggilingan Beras"
+    },
+    "pabrik_besi": {
+      "title": "Pabrik Besi Baja"
+    },
+    "pabrik_daging": {
+      "title": "Pengolahan Daging"
+    },
+    "pabrik_gula": {
+      "title": "Pabrik Gula"
+    },
+    "pabrik_kayu": {
+      "title": "Pabrik Pengolahan Kayu"
+    },
+    "pabrik_mesin": {
+      "title": "Pabrik Mesin Mobil & Motor"
+    },
+    "pabrik_mie_instan": {
+      "title": "Pabrik Mie Instan"
+    },
+    "pabrik_minyak_goreng": {
+      "title": "Pabrik Minyak Goreng"
+    },
+    "pabrik_roti": {
+      "title": "Pabrik Roti"
+    },
+    "pabrik_semen_beton": {
+      "title": "Pabrik Semen Beton"
+    },
+    "pabrik_semikonduktor": {
+      "title": "Pabrik Semikonduktor"
+    },
+    "pabrik_susu": {
+      "title": "Pabrik Susu & Olahan"
+    },
+    "pajak_kelola": {
+      "title": "Manajemen Kebijakan Pajak"
+    },
+    "pajak_naik": {
+      "title": "Naikkan Tarif Pajak"
+    },
+    "pajak_turun": {
+      "title": "Turunkan Tarif Pajak"
+    },
+    "pakta_non_agresi": {
+      "title": "Ratifikasi Pakta Non-Agresi"
+    },
+    "pbb_fao": {
+      "title": "FAO - Pangan & Pertanian PBB"
+    },
+    "pbb_ilo": {
+      "title": "ILO - Organisasi Buruh Internasional"
+    },
+    "pbb_imf": {
+      "title": "IMF - Dana Moneter Internasional"
+    },
+    "pbb_imo": {
+      "title": "IMO - Organisasi Maritim Internasional"
+    },
+    "pbb_interpol": {
+      "title": "Interpol"
+    },
+    "pbb_itu": {
+      "title": "ITU - Organisasi Telekomunikasi"
+    },
+    "pbb_unesco": {
+      "title": "UNESCO - Pendidikan & Budaya PBB"
+    },
+    "pbb_unhcr": {
+      "title": "UNHCR - Komisioner Pengungsi PBB"
+    },
+    "pbb_unicef": {
+      "title": "UNICEF - Dana Anak-anak PBB"
+    },
+    "pbb_who": {
+      "title": "WHO - Organisasi Kesehatan Dunia"
+    },
+    "pbb_wmo": {
+      "title": "WMO - Organisasi Meteorologi Dunia"
+    },
+    "pbb_world_bank": {
+      "title": "Bank Dunia - Lembaga Keuangan Global"
+    },
+    "pbb_wto": {
+      "title": "WTO - Organisasi Perdagangan Dunia"
+    },
+    "pdb_ranking": {
+      "title": "Naikkan Peringkat PDB Nasional"
+    },
+    "perikanan_ikan": {
+      "title": "Tambak & Armada Ikan"
+    },
+    "pertahankan_wilayah": {
+      "title": "Kelola Wilayah yang Direbut / Aneksasi"
+    },
+    "peternakan_ayam": {
+      "title": "Peternakan Ayam Unggas"
+    },
+    "peternakan_domba": {
+      "title": "Peternakan Domba & Kambing"
+    },
+    "peternakan_sapi_perah": {
+      "title": "Peternakan Sapi Perah"
+    },
+    "peternakan_sapi_potong": {
+      "title": "Peternakan Sapi Potong"
+    },
+    "pinjam_bank": {
+      "title": "Pinjam dari Bank Internasional"
+    },
+    "pinjam_negara": {
+      "title": "Pinjam dari Negara Lain"
+    },
+    "program_icbm": {
+      "title": "Pengembangan Fasilitas Rudal ICBM"
+    },
+    "reg_arab_league": {
+      "title": "Liga Arab - Aliansi Kawasan Arab"
+    },
+    "reg_asean": {
+      "title": "ASEAN - Asia Tenggara"
+    },
+    "reg_au": {
+      "title": "Uni Afrika - Integrasi Benua Afrika"
+    },
+    "reg_brics": {
+      "title": "BRICS - Blok Ekonomi Berkembang"
+    },
+    "reg_eu": {
+      "title": "Uni Eropa - Pasar Tunggal Eropa"
+    },
+    "reg_g20": {
+      "title": "G20 - Kelompok Duapuluh"
+    },
+    "reg_liga_arab": {
+      "title": "Liga Arab"
+    },
+    "reg_nato": {
+      "title": "NATO - Pakta Pertahanan Atlantik Utara"
+    },
+    "reg_oas": {
+      "title": "OAS - Negara-negara Amerika"
+    },
+    "reg_oki": {
+      "title": "OKI - Organisasi Kerja Sama Islam"
+    },
+    "reg_opec": {
+      "title": "OPEC - Negara Pengekspor Minyak"
+    },
+    "reg_uni_afrika": {
+      "title": "Uni Afrika (AU)"
+    },
+    "resolusi_embargo_ekonomi": {
+      "title": "Embargo Ekonomi"
+    },
+    "resolusi_embargo_senjata": {
+      "title": "Embargo Penjualan Senjata"
+    },
+    "resolusi_invasi": {
+      "title": "Resolusi Invasi"
+    },
+    "resolusi_larangan_perang": {
+      "title": "Larangan Perang"
+    },
+    "resolusi_larangan_produksi": {
+      "title": "Larangan Produksi"
+    },
+    "riset_agrikultur_cerdas": {
+      "title": "Riset Agrikultur Cerdas Multi-Komoditas"
+    },
+    "riset_aliansi_tahan": {
+      "title": "Riset Protokol Aliansi Pertahanan"
+    },
+    "riset_diplomasi_kedubes": {
+      "title": "Riset Optimalisasi Manfaat Kedutaan"
+    },
+    "riset_drone_otonom": {
+      "title": "Riset Drone Pengintai Taktis"
+    },
+    "riset_eksplorasi_sda": {
+      "title": "Riset Eksplorasi Mineral & Energi"
+    },
+    "riset_harmonisasi_fiskal": {
+      "title": "Riset Harmonisasi Fiskal Global"
+    },
+    "riset_jet_tempur": {
+      "title": "Riset Jet Tempur Superioritas"
+    },
+    "riset_mitigasi_bencana": {
+      "title": "Riset Mitigasi Bencana Alam Global"
+    },
+    "riset_otomasi": {
+      "title": "Riset Otomasi Fabrikasi & Semikonduktor"
+    },
+    "riset_pangan_dasar": {
+      "title": "Riset Pengolahan Pangan Dasar"
+    },
+    "riset_perikanan_terpadu": {
+      "title": "Riset Budidaya Perikanan Terpadu"
+    },
+    "riset_peternakan_presisi": {
+      "title": "Riset Peternakan Presisi Modern"
+    },
+    "riset_pos_perbatasan": {
+      "title": "Riset Pos Pertahanan Perbatasan"
+    },
+    "riset_radar_pesisir": {
+      "title": "Riset Radar Pesisir Pantai"
+    },
+    "riset_rekayasa_material": {
+      "title": "Riset Rekayasa Material Manufaktur"
+    },
+    "riset_senjata_presisi": {
+      "title": "Riset Senapan Serbu Presisi"
+    },
+    "riset_tank_gen5": {
+      "title": "Riset Tank Tempur Generasi 5"
+    },
+    "riset_tank_komposit": {
+      "title": "Riset Tank Tempur Komposit"
+    },
+    "riset_upgrade_card": {
+      "title": "Tingkatkan Kartu Riset ke Level II / III"
+    },
+    "sawah_padi": {
+      "title": "Sawah Padi"
+    },
+    "silo_nuklir": {
+      "title": "Kesiapan Peluncuran Hulu Ledak Nuklir"
+    },
+    "sistem_ekonomi": {
+      "title": "Perubahan Sistem Ekonomi"
+    },
+    "sport_bioskop": {
+      "title": "Bioskop & Cinema"
+    },
+    "sport_esports": {
+      "title": "Arena Esports"
+    },
+    "sport_gokart": {
+      "title": "Sirkuit Gokart"
+    },
+    "sport_golf": {
+      "title": "Lapangan Golf"
+    },
+    "sport_gym": {
+      "title": "Gym & Pusat Kebugaran"
+    },
+    "sport_kolam_renang": {
+      "title": "Kolam Renang Umum"
+    },
+    "sport_sirkuit_balap": {
+      "title": "Sirkuit Balap"
+    },
+    "sport_stadion": {
+      "title": "Stadion Nasional"
+    },
+    "sport_stadion_intl": {
+      "title": "Stadion Internasional"
+    },
+    "sport_teater": {
+      "title": "Gedung Teater"
+    },
+    "subsidi": {
+      "title": "Alokasi & Kebijakan Subsidi"
+    },
+    "surplus_apbn": {
+      "title": "Capai Surplus Anggaran Nasional"
+    },
+    "tambak_udang": {
+      "title": "Tambak Udang"
+    },
+    "tambang_batu_bara": {
+      "title": "Tambang Batu Bara"
+    },
+    "tambang_bijih_besi": {
+      "title": "Tambang Bijih Besi"
+    },
+    "tambang_emas": {
+      "title": "Tambang Emas"
+    },
+    "tambang_garam": {
+      "title": "Tambang Garam"
+    },
+    "tambang_litium": {
+      "title": "Tambang Litium"
+    },
+    "tambang_ltj": {
+      "title": "Tambang Logam Tanah Jarang"
+    },
+    "tambang_uranium": {
+      "title": "Tambang Uranium"
+    },
+    "tekan_kematian": {
+      "title": "Tekan Angka Kematian & Wabah"
+    },
+    "toleransi_agama": {
+      "title": "Harmoni & Kehidupan Beragama"
+    },
+    "upgrade_darat": {
+      "title": "Peningkatan Kekuatan Darat"
+    },
+    "upgrade_garda_nasional": {
+      "title": "Pemberdayaan Garda Nasional"
+    },
+    "upgrade_kemendag": {
+      "title": "Upgrade Kementerian Perdagangan"
+    },
+    "upgrade_kemendikbud": {
+      "title": "Upgrade Kementerian Pendidikan"
+    },
+    "upgrade_kemenhan": {
+      "title": "Upgrade Kementerian Pertahanan"
+    },
+    "upgrade_kemenkes": {
+      "title": "Upgrade Kementerian Kesehatan"
+    },
+    "upgrade_kemenkeu": {
+      "title": "Upgrade Kementerian Keuangan"
+    },
+    "upgrade_kemenkumham": {
+      "title": "Upgrade Kementerian Kehakiman"
+    },
+    "upgrade_kemenlh": {
+      "title": "Upgrade Kementerian Lingkungan Hidup"
+    },
+    "upgrade_kemenpar": {
+      "title": "Upgrade Kementerian Pariwisata"
+    },
+    "upgrade_kemensains": {
+      "title": "Upgrade Kementerian Sains & Riset"
+    },
+    "upgrade_laut": {
+      "title": "Peningkatan Kekuatan Laut"
+    },
+    "upgrade_polisi": {
+      "title": "Peningkatan Efektivitas Kepolisian"
+    },
+    "upgrade_udara": {
+      "title": "Peningkatan Kekuatan Udara"
+    }
+  },
+  "categories": {
+    "ekonomi": "Ekonomi & Pajak",
+    "event": "Gelar Acara",
+    "geopolitik": "Geopolitik & Diplomasi",
+    "hunian": "Hunian & Pemukiman",
+    "kabinet": "Kabinet & Menteri",
+    "kementerian": "Kementerian & Keamanan",
+    "kesejahteraan": "Bantuan Sosial & Kesejahteraan",
+    "krisis": "Manajemen Krisis & Darurat",
+    "layanan_publik": "Layanan Publik & Fasilitas",
+    "organisasi_pbb": "Badan & Organisasi PBB",
+    "organisasi_regional": "Organisasi Regional Internasional",
+    "pangan": "Pangan & Agrikultur",
+    "penelitian": "Riset & Laboratorium",
+    "pertahanan": "Pertahanan & Militer",
+    "populasi": "Populasi & Demografi",
+    "produksi": "Produksi SDA & Energi",
+    "resolusi_dk_pbb": "Dewan Keamanan PBB",
+    "resolusi_pbb": "Majelis Umum PBB",
+    "sosial_budaya": "Sosial Budaya & Ideologi"
+  },
+  "labels": {
+    "Agama": "Agama",
+    "Agrikultur": "Agrikultur",
+    "Armada Aktif": "Armada Aktif",
+    "Badan PBB": "Badan PBB",
+    "Bank Sentral": "Bank Sentral",
+    "Bantuan Sosial": "Bantuan Sosial",
+    "Dewan Keamanan": "Dewan Keamanan",
+    "Diplomasi": "Diplomasi",
+    "Gelar Acara": "Gelar Acara",
+    "Hunian": "Hunian",
+    "Ideologi": "Ideologi",
+    "Infrastruktur": "Infrastruktur",
+    "Infrastruktur Militer": "Infrastruktur Militer",
+    "Intelijen": "Intelijen",
+    "Keamanan": "Keamanan",
+    "Keamanan Nasional": "Keamanan Nasional",
+    "Kedutaan Besar": "Kedutaan Besar",
+    "Kelistrikan": "Kelistrikan",
+    "Kementerian": "Kementerian",
+    "Kesehatan": "Kesehatan",
+    "Keterbukaan": "Keterbukaan",
+    "Komersial": "Komersial",
+    "Layanan Darurat": "Layanan Darurat",
+    "Logistik": "Logistik",
+    "Manufaktur": "Manufaktur",
+    "Mineral & Energi": "Mineral & Energi",
+    "Olahan Pangan": "Olahan Pangan",
+    "Olahraga & Hiburan": "Olahraga & Hiburan",
+    "Operasi Militer": "Operasi Militer",
+    "Pendidikan": "Pendidikan",
+    "Penegakan Hukum": "Penegakan Hukum",
+    "Perikanan": "Perikanan",
+    "Peternakan": "Peternakan",
+    "Populasi": "Populasi",
+    "Regional": "Regional",
+    "Rekrutmen Menteri": "Rekrutmen Menteri",
+    "Resolusi PBB": "Resolusi PBB",
+    "Riset Diplomasi": "Riset Diplomasi",
+    "Riset Ekonomi": "Riset Ekonomi",
+    "Riset Militer": "Riset Militer",
+    "Riset Umum": "Riset Umum",
+    "Senjata Strategis": "Senjata Strategis",
+    "Sistem Ekonomi": "Sistem Ekonomi",
+    "Tanggap Darurat": "Tanggap Darurat",
+    "Tingkat Hubungan": "Tingkat Hubungan",
+    "Wilayah Kependudukan": "Wilayah Kependudukan"
+  },
+  "claimSuccess": "🎉 Selamat! Hadiah misi \"{title}\" berhasil diklaim: {reward}!"
 }

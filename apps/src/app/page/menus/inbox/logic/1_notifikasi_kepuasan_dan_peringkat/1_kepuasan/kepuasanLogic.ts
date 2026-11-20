@@ -1,8 +1,21 @@
+import type { InboxMessageParams } from '../../notificationMessage';
+import { createInboxNotificationText, getDefaultInboxText } from '../../notificationMessage';
+
 export interface NotificationMessage {
   id: string;
   title: string;
+  titleKey?: string;
+  titleParams?: InboxMessageParams;
   sender: string;
+  senderKey?: string;
+  senderParams?: InboxMessageParams;
   message: string;
+  messageKey?: string;
+  messageParams?: InboxMessageParams;
+  messageParamKeys?: Record<string, string>;
+  effectText?: string;
+  effectTextKey?: string;
+  effectTextParams?: InboxMessageParams;
   timestamp: string;
   type: 'kepuasan' | 'peringkat' | 'kesejahteraan';
   value: number;
@@ -24,11 +37,18 @@ export interface NotificationMessage {
  * Dipicu ketika nilai kepuasan turun ke angka 20-25 (di atas batas kritis modal 10).
  */
 export function getKepuasanWarningMessage(value: number, dateStr: string): NotificationMessage {
+  const titleKey = 'side_inbox.ratingWarning.title';
+  const senderKey = 'side_inbox.ratingWarning.sender';
+
   return {
     id: `kepuasan-warning-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title: "⚠️ Peringatan Dini: Kepuasan Rakyat Menurun!",
-    sender: "Kementerian Dalam Negeri",
-    message: `Lapor Presiden! Indeks kepuasan rakyat telah merosot ke angka ${Math.round(value)}/100. Ketidakpuasan mulai menyebar di berbagai provinsi. Jika terus dibiarkan hingga di bawah 10, gelombang aksi protes besar-besaran tidak akan terhindarkan dan stabilitas negara akan terancam! Mohon segera luncurkan festival budaya atau turunkan tarif pajak barang pokok.`,
+    title: getDefaultInboxText(titleKey),
+    titleKey,
+    sender: getDefaultInboxText(senderKey),
+    senderKey,
+    ...createInboxNotificationText('side_inbox.notificationMessages.ratings.satisfaction', {
+      value: Math.round(value),
+    }),
     timestamp: dateStr,
     type: 'kepuasan',
     value: Math.round(value),

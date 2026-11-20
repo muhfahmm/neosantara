@@ -50,5 +50,764 @@
     "populasi": "打开人口统计指标，制定针对{title}的政策方案。",
     "default": "通过对应功能菜单执行\"{title}\"行动以完成此项国家任务。",
     "unitMin": "至少 {target} 处"
-  }
+  },
+  "missions": {
+    "aliansi_pertahanan": {
+      "title": "缔结共同军事防御同盟"
+    },
+    "angka_kelahiran": {
+      "title": "实施生育激励提升国民出生率"
+    },
+    "bangun_barak": {
+      "title": "常备军军营兵舍"
+    },
+    "bangun_gudang_senjata": {
+      "title": "战略军械武备库"
+    },
+    "bangun_hangar_tank": {
+      "title": "装甲装具重型坦克车库"
+    },
+    "bangun_kedubes": {
+      "title": "建立双边驻外大使馆"
+    },
+    "bangun_pangkalan_laut": {
+      "title": "海军舰队深水母港基地"
+    },
+    "bangun_pangkalan_udara": {
+      "title": "空军前线军事航空基地"
+    },
+    "bangun_plta": {
+      "title": "巨型水利水电枢纽工程 (PLTA)"
+    },
+    "bangun_pltb": {
+      "title": "陆上海上风力涡轮发电场 (PLTB)"
+    },
+    "bangun_pltfn": {
+      "title": "可控托卡马克核聚变电站 (PLTFN)"
+    },
+    "bangun_pltg": {
+      "title": "清洁天然气燃气轮机电站 (PLTG)"
+    },
+    "bangun_pltgl": {
+      "title": "海洋潮汐与潮涌波浪能电站 (PLTGL)"
+    },
+    "bangun_plth": {
+      "title": "绿氢清洁燃料电池电站 (PLTH)"
+    },
+    "bangun_pltn": {
+      "title": "大型核裂变反应堆发电站 (PLTN)"
+    },
+    "bangun_pltp": {
+      "title": "深层地热能清洁发电站 (PLTP)"
+    },
+    "bangun_plts": {
+      "title": "集中式光伏太阳能电站 (PLTS)"
+    },
+    "bangun_pltu": {
+      "title": "超临界燃煤火力蒸汽电站 (PLTU)"
+    },
+    "budidaya_mutiara": {
+      "title": "深海珍珠贝人工养殖场"
+    },
+    "dk_bantuan_logistik": {
+      "title": "维和人道主义战略后勤补给决议"
+    },
+    "dk_blokade_ekonomi": {
+      "title": "全面经济禁运与资产冻结决议"
+    },
+    "dk_blokade_laut": {
+      "title": "公海航道海军海上武装封锁决议"
+    },
+    "dk_blokade_penuh": {
+      "title": "海陆空三栖全域极限界限封锁决议"
+    },
+    "dk_dukung_negara": {
+      "title": "安理会支持主权国家决议"
+    },
+    "dk_invasi_militer": {
+      "title": "安理会联合正义军事干预决议"
+    },
+    "doktrin_keterbukaan": {
+      "title": "改革国家对外开放与地缘战略学说"
+    },
+    "edukasi_dasar": {
+      "title": "初等公立小学"
+    },
+    "edukasi_laboratorium": {
+      "title": "前沿科研实验室"
+    },
+    "edukasi_lanjutan": {
+      "title": "高级中学"
+    },
+    "edukasi_lembaga": {
+      "title": "职业技术专业研修院"
+    },
+    "edukasi_menengah": {
+      "title": "初级中学"
+    },
+    "edukasi_observatorium": {
+      "title": "国家天文观测台"
+    },
+    "edukasi_prasekolah": {
+      "title": "学前启蒙托儿所与幼儿园"
+    },
+    "edukasi_pusat_kembang": {
+      "title": "高新技术研发孵化中心"
+    },
+    "edukasi_pusat_riset": {
+      "title": "国家综合科学研究中心"
+    },
+    "edukasi_universitas": {
+      "title": "综合性国立大学"
+    },
+    "ekspor_perdagangan": {
+      "title": "大宗商品贸易出口"
+    },
+    "event_balap_f1": {
+      "title": "F1一级方程式大奖赛"
+    },
+    "event_festival": {
+      "title": "国民文化节"
+    },
+    "event_karnaval": {
+      "title": "城市狂欢游行"
+    },
+    "event_konser": {
+      "title": "国家大型音乐会"
+    },
+    "event_olimpiade": {
+      "title": "奥林匹克运动会"
+    },
+    "event_piala_davis": {
+      "title": "戴维斯杯网球赛"
+    },
+    "event_piala_fifa": {
+      "title": "FIFA世界杯足球赛"
+    },
+    "event_piala_rugbi": {
+      "title": "橄榄球世界杯"
+    },
+    "ganti_agama": {
+      "title": "确定或变更国家法定正教信仰"
+    },
+    "ganti_ideologi": {
+      "title": "革新确立全新国家立国思想"
+    },
+    "hapus_tunawisma": {
+      "title": "彻底消除无家可归者提供安居保障"
+    },
+    "harga_pokok": {
+      "title": "调控基本大宗商品价格"
+    },
+    "hukum_akademi_polisi": {
+      "title": "国家警察警官学院"
+    },
+    "hukum_bantuan": {
+      "title": "民众公共法律援助中心"
+    },
+    "hukum_kejaksaan": {
+      "title": "最高国家检察院"
+    },
+    "hukum_pengadilan": {
+      "title": "地方初级人民法院"
+    },
+    "hukum_pos_polisi": {
+      "title": "社区基层治安派出所"
+    },
+    "hunian_apartemen": {
+      "title": "现代高层住宅公寓"
+    },
+    "hunian_mansion": {
+      "title": "高端豪华花园府邸"
+    },
+    "hunian_subsidi": {
+      "title": "保障性平价安居社区"
+    },
+    "hutang_lunas": {
+      "title": "偿还国家债务分期"
+    },
+    "ideologi_negara": {
+      "title": "巩固国家核心指导思想与意识形态"
+    },
+    "impor_perdagangan": {
+      "title": "关键生活必需品进口"
+    },
+    "indeks_kesejahteraan": {
+      "title": "国民总体综合福祉指数达到75%"
+    },
+    "infra_bandara": {
+      "title": "大型国际民航机场"
+    },
+    "infra_helipad": {
+      "title": "民航直升机停机坪与飞行场"
+    },
+    "infra_jalan_raya": {
+      "title": "国家级主干公路"
+    },
+    "infra_jalur_sepeda": {
+      "title": "城市专用自行车道"
+    },
+    "infra_kereta_bawah": {
+      "title": "城市地下轨道交通(地铁)"
+    },
+    "infra_pelabuhan": {
+      "title": "深水国际集装箱海港"
+    },
+    "infra_stasiun_kereta": {
+      "title": "中心客运火车站"
+    },
+    "infra_terminal_bus": {
+      "title": "公交枢纽总站"
+    },
+    "kebijakan_bank_sentral": {
+      "title": "优化中央银行法定外汇与风险准备金"
+    },
+    "kebun_kakao": {
+      "title": "优质可可豆种植林"
+    },
+    "kebun_karet": {
+      "title": "天然橡胶树林基地"
+    },
+    "kebun_kopi": {
+      "title": "高山精品咖啡种植园"
+    },
+    "kebun_sawit": {
+      "title": "规模化油棕种植庄园"
+    },
+    "kebun_sayur": {
+      "title": "有机温室蔬菜大棚"
+    },
+    "kebun_tebu": {
+      "title": "甘蔗糖料生产庄园"
+    },
+    "kebun_teh": {
+      "title": "高山生态云雾茶园"
+    },
+    "kepuasan_target": {
+      "title": "国民满意度指数达到80%"
+    },
+    "kes_bantuan_pendidikan": {
+      "title": "国家学生助学育才金"
+    },
+    "kes_bantuan_tunai": {
+      "title": "全民直接现金补助计划"
+    },
+    "kes_jaminan_kesehatan": {
+      "title": "全民公费医疗健康保障"
+    },
+    "kes_pasar_murah": {
+      "title": "全国平价惠民便民市集"
+    },
+    "kes_perbaikan_rumah": {
+      "title": "城镇危旧房改扩建工程"
+    },
+    "kes_subsidi_pangan": {
+      "title": "基础粮油平价专项补贴"
+    },
+    "kilang_gas_alam": {
+      "title": "液化天然气 (LNG) 处理装置"
+    },
+    "kilang_minyak_bumi": {
+      "title": "重型原油提炼与石油精炼厂"
+    },
+    "komersial_grosir": {
+      "title": "纺织品大型批发交易中心"
+    },
+    "komersial_hotel": {
+      "title": "五星级涉外豪华酒店"
+    },
+    "komersial_mall": {
+      "title": "大型综合购物中心"
+    },
+    "komersial_restoran": {
+      "title": "特色美食餐饮街区"
+    },
+    "kontrak_penelitian": {
+      "title": "国际前沿联合科研合作协定"
+    },
+    "krisis_bencana_alam": {
+      "title": "紧急调拨重大自然灾害救灾物资"
+    },
+    "krisis_klaim_hadiah": {
+      "title": "领取每日战略资源物资补给"
+    },
+    "krisis_operasi_polisi": {
+      "title": "出资严打重大黑恶违法犯罪行动"
+    },
+    "krisis_separatisme": {
+      "title": "安抚平息地方分裂主义动荡"
+    },
+    "krisis_wabah_penyakit": {
+      "title": "遏制传染疫情并分发疫苗"
+    },
+    "ladang_gandum": {
+      "title": "大型小麦耕作田"
+    },
+    "ladang_jagung": {
+      "title": "高产玉米农田"
+    },
+    "ladang_kedelai": {
+      "title": "优质大豆农作物田"
+    },
+    "ladang_umbi": {
+      "title": "薯类块茎种植基地"
+    },
+    "layanan_darurat": {
+      "title": "全国急救医疗应急响应部署"
+    },
+    "medis_pusat_diagnostik": {
+      "title": "现代临床医学诊断中心"
+    },
+    "medis_rs_besar": {
+      "title": "三甲综合中心医院"
+    },
+    "medis_rs_kecil": {
+      "title": "社区医疗诊所中心"
+    },
+    "menteri_rekrut_kesehatan": {
+      "title": "任命医疗卫生部长"
+    },
+    "menteri_rekrut_keuangan": {
+      "title": "任命资深财政部长"
+    },
+    "menteri_rekrut_pendidikan": {
+      "title": "任命国民教育部长"
+    },
+    "menteri_rekrut_pertahanan": {
+      "title": "任命国防军务部长"
+    },
+    "menteri_rekrut_polisi": {
+      "title": "任命国家警察总长"
+    },
+    "menteri_rekrut_tier_tinggi": {
+      "title": "选聘顶尖特级阁僚 (Tier IV / V)"
+    },
+    "naikkan_hubungan": {
+      "title": "提升双边友好外交关系"
+    },
+    "operasi_sabotase": {
+      "title": "对敌关键战略设施实施破坏破袭"
+    },
+    "operasi_serang_negara": {
+      "title": "发起大规模正规武装军事入侵"
+    },
+    "operasi_spionase": {
+      "title": "实施机密间谍潜伏谍报行动"
+    },
+    "pabrik_air_mineral": {
+      "title": "天然优质矿泉水灌装厂"
+    },
+    "pabrik_beras": {
+      "title": "全自动稻谷碾米厂"
+    },
+    "pabrik_besi": {
+      "title": "高炉冶金粗钢钢铁重工集团"
+    },
+    "pabrik_daging": {
+      "title": "冷链肉类精深加工厂"
+    },
+    "pabrik_gula": {
+      "title": "精制白砂糖压榨提炼厂"
+    },
+    "pabrik_kayu": {
+      "title": "工业原木精细采伐与木料加工厂"
+    },
+    "pabrik_mesin": {
+      "title": "重型机械设备及汽车总装工业厂"
+    },
+    "pabrik_mie_instan": {
+      "title": "现代方便面自动化生产厂"
+    },
+    "pabrik_minyak_goreng": {
+      "title": "精炼食用油加工厂"
+    },
+    "pabrik_roti": {
+      "title": "自动化大型烘焙面点厂"
+    },
+    "pabrik_semen_beton": {
+      "title": "高标号水泥混凝土制造工业基地"
+    },
+    "pabrik_semikonduktor": {
+      "title": "先进制程半导体芯片晶圆代工厂"
+    },
+    "pabrik_susu": {
+      "title": "乳制品与鲜奶加工厂"
+    },
+    "pajak_kelola": {
+      "title": "国家税收政策调控"
+    },
+    "pajak_naik": {
+      "title": "提高国家税率"
+    },
+    "pajak_turun": {
+      "title": "降低国家税率"
+    },
+    "pakta_non_agresi": {
+      "title": "签署批准互不侵犯条约"
+    },
+    "pbb_fao": {
+      "title": "联合国粮食及农业组织 (FAO)"
+    },
+    "pbb_ilo": {
+      "title": "国际劳工组织 (ILO)"
+    },
+    "pbb_imf": {
+      "title": "国际货币基金组织 (IMF)"
+    },
+    "pbb_imo": {
+      "title": "国际海事组织 (IMO)"
+    },
+    "pbb_interpol": {
+      "title": "国际刑警组织 (Interpol)"
+    },
+    "pbb_itu": {
+      "title": "国际电信联盟 (ITU)"
+    },
+    "pbb_unesco": {
+      "title": "联合国教科文组织 (UNESCO)"
+    },
+    "pbb_unhcr": {
+      "title": "联合国难民事务高级专员署 (UNHCR)"
+    },
+    "pbb_unicef": {
+      "title": "联合国儿童基金会 (UNICEF)"
+    },
+    "pbb_who": {
+      "title": "世界卫生组织 (WHO)"
+    },
+    "pbb_wmo": {
+      "title": "世界气象组织 (WMO)"
+    },
+    "pbb_world_bank": {
+      "title": "世界银行 (World Bank)"
+    },
+    "pbb_wto": {
+      "title": "世界贸易组织 (WTO)"
+    },
+    "pdb_ranking": {
+      "title": "提升国家GDP全球排名"
+    },
+    "perikanan_ikan": {
+      "title": "深海捕捞船队与网箱渔场"
+    },
+    "pertahankan_wilayah": {
+      "title": "兼并占领并治理新吞并领土"
+    },
+    "peternakan_ayam": {
+      "title": "规模化肉鸡家禽养殖场"
+    },
+    "peternakan_domba": {
+      "title": "绵羊山羊繁育牧场"
+    },
+    "peternakan_sapi_perah": {
+      "title": "优质奶牛繁育牧场"
+    },
+    "peternakan_sapi_potong": {
+      "title": "优质肉牛养殖牧场"
+    },
+    "pinjam_bank": {
+      "title": "向国际银行借款"
+    },
+    "pinjam_negara": {
+      "title": "向他国申请双边贷款"
+    },
+    "program_icbm": {
+      "title": "洲际战略弹道导弹 (ICBM) 研发部署"
+    },
+    "reg_arab_league": {
+      "title": "阿拉伯国家联盟 (Liga Arab)"
+    },
+    "reg_asean": {
+      "title": "东南亚国家联盟 (ASEAN)"
+    },
+    "reg_au": {
+      "title": "非洲联盟 (AU)"
+    },
+    "reg_brics": {
+      "title": "金砖国家合作机制 (BRICS)"
+    },
+    "reg_eu": {
+      "title": "欧洲联盟 (EU)"
+    },
+    "reg_g20": {
+      "title": "二十国集团领导人峰会 (G20)"
+    },
+    "reg_liga_arab": {
+      "title": "阿拉伯国家联盟 (Liga Arab)"
+    },
+    "reg_nato": {
+      "title": "北大西洋公约组织 (NATO)"
+    },
+    "reg_oas": {
+      "title": "美洲国家组织 (OAS)"
+    },
+    "reg_oki": {
+      "title": "伊斯兰合作组织 (OIC)"
+    },
+    "reg_opec": {
+      "title": "石油输出国组织 (OPEC)"
+    },
+    "reg_uni_afrika": {
+      "title": "非洲联盟 (AU)"
+    },
+    "resolusi_embargo_ekonomi": {
+      "title": "多边经贸与跨境清算封锁决议"
+    },
+    "resolusi_embargo_senjata": {
+      "title": "全面武器装备交易禁运决议"
+    },
+    "resolusi_invasi": {
+      "title": "联大武力强制入侵授权决议"
+    },
+    "resolusi_larangan_perang": {
+      "title": "全球严禁一切形式战争冲突大公约"
+    },
+    "resolusi_larangan_produksi": {
+      "title": "特定战略品类生产禁令决议"
+    },
+    "riset_agrikultur_cerdas": {
+      "title": "多作物智能智慧农业系统研发"
+    },
+    "riset_aliansi_tahan": {
+      "title": "多国战略防御盟约协同作战机制"
+    },
+    "riset_diplomasi_kedubes": {
+      "title": "外交使馆涉外效能与软实力优化"
+    },
+    "riset_drone_otonom": {
+      "title": "自主战术侦察与察打无人机研发"
+    },
+    "riset_eksplorasi_sda": {
+      "title": "地质矿产与新能源深地勘探技术"
+    },
+    "riset_harmonisasi_fiskal": {
+      "title": "全球跨国财政平衡与税法协调"
+    },
+    "riset_jet_tempur": {
+      "title": "制空霸权隐身重型战斗机工程研发"
+    },
+    "riset_mitigasi_bencana": {
+      "title": "全球极端自然灾害前瞻减灾技术"
+    },
+    "riset_otomasi": {
+      "title": "晶圆制造与半导体自动化技术研发"
+    },
+    "riset_pangan_dasar": {
+      "title": "现代基础食品生物加工技术研发"
+    },
+    "riset_perikanan_terpadu": {
+      "title": "深远海一体化集约水产养殖科研"
+    },
+    "riset_peternakan_presisi": {
+      "title": "现代数字精准畜牧育种科技"
+    },
+    "riset_pos_perbatasan": {
+      "title": "智能边防防御哨所与监控工程研发"
+    },
+    "riset_radar_pesisir": {
+      "title": "超视距海岸预警防空雷达网研发"
+    },
+    "riset_rekayasa_material": {
+      "title": "高精制造工程材料前沿研发"
+    },
+    "riset_senjata_presisi": {
+      "title": "高精度模块化突击步枪军工研发"
+    },
+    "riset_tank_gen5": {
+      "title": "第五代数字化智能主战坦克系统"
+    },
+    "riset_tank_komposit": {
+      "title": "复合重装甲主战坦克防护研发"
+    },
+    "riset_upgrade_card": {
+      "title": "科研技术卡升格至 Level II / III"
+    },
+    "sawah_padi": {
+      "title": "现代水稻种植梯田"
+    },
+    "silo_nuklir": {
+      "title": "地下发射井战略核弹头战备就绪"
+    },
+    "sistem_ekonomi": {
+      "title": "国家经济体制改革"
+    },
+    "sport_bioskop": {
+      "title": "数字巨幕影城"
+    },
+    "sport_esports": {
+      "title": "专业电子竞技场馆"
+    },
+    "sport_gokart": {
+      "title": "卡丁车娱乐赛道"
+    },
+    "sport_golf": {
+      "title": "标准高尔夫球场"
+    },
+    "sport_gym": {
+      "title": "现代全民健身健美俱乐部"
+    },
+    "sport_kolam_renang": {
+      "title": "市政公共标准游泳馆"
+    },
+    "sport_sirkuit_balap": {
+      "title": "国际赛车竞速赛道"
+    },
+    "sport_stadion": {
+      "title": "国家体育场"
+    },
+    "sport_stadion_intl": {
+      "title": "顶级国际赛事体育场馆"
+    },
+    "sport_teater": {
+      "title": "国家大剧院与话剧院"
+    },
+    "subsidi": {
+      "title": "国家财政补贴政策配置"
+    },
+    "surplus_apbn": {
+      "title": "达成国家财政预算盈余"
+    },
+    "tambak_udang": {
+      "title": "沿海高产对虾养殖池塘"
+    },
+    "tambang_batu_bara": {
+      "title": "现代化深井露天煤矿"
+    },
+    "tambang_bijih_besi": {
+      "title": "大型露天铁矿石采掘基地"
+    },
+    "tambang_emas": {
+      "title": "战略储量原生金矿山"
+    },
+    "tambang_garam": {
+      "title": "工业与食用岩盐海盐矿场"
+    },
+    "tambang_litium": {
+      "title": "战略新能源锂辉石盐湖提锂基地"
+    },
+    "tambang_ltj": {
+      "title": "重离子型稀土金属精矿区"
+    },
+    "tambang_uranium": {
+      "title": "核级战略铀矿石采矿场"
+    },
+    "tekan_kematian": {
+      "title": "降低死亡率并扑灭恶性疫病"
+    },
+    "toleransi_agama": {
+      "title": "宗教和谐共融与信仰自由"
+    },
+    "upgrade_darat": {
+      "title": "陆军机械化常备战力升级"
+    },
+    "upgrade_garda_nasional": {
+      "title": "组建加强国民警卫队"
+    },
+    "upgrade_kemendag": {
+      "title": "扩建升级商业贸易部"
+    },
+    "upgrade_kemendikbud": {
+      "title": "扩建升级教育部"
+    },
+    "upgrade_kemenhan": {
+      "title": "扩建升级国防部"
+    },
+    "upgrade_kemenkes": {
+      "title": "扩建升级卫生健康部"
+    },
+    "upgrade_kemenkeu": {
+      "title": "扩建升级财政部"
+    },
+    "upgrade_kemenkumham": {
+      "title": "扩建升级司法部"
+    },
+    "upgrade_kemenlh": {
+      "title": "扩建升级生态环境部"
+    },
+    "upgrade_kemenpar": {
+      "title": "扩建升级文化旅游部"
+    },
+    "upgrade_kemensains": {
+      "title": "扩建升级科技研发部"
+    },
+    "upgrade_laut": {
+      "title": "海军水面作战主力舰队升级"
+    },
+    "upgrade_polisi": {
+      "title": "提升国家警察执法战备效能"
+    },
+    "upgrade_udara": {
+      "title": "空军空中作战战力升级"
+    }
+  },
+  "categories": {
+    "ekonomi": "经济与税收",
+    "event": "举办盛典",
+    "geopolitik": "地缘政治与外交",
+    "hunian": "住宅与社区",
+    "kabinet": "内阁与部长",
+    "kementerian": "部委与安保",
+    "kesejahteraan": "社会福利与救助",
+    "krisis": "危机管理与应急响应",
+    "layanan_publik": "公共服务与基础设施",
+    "organisasi_pbb": "联合国下属机构",
+    "organisasi_regional": "区域国际组织",
+    "pangan": "粮食与农业",
+    "penelitian": "科研与前沿技术",
+    "pertahanan": "国防与军事",
+    "populasi": "人口与人口统计",
+    "produksi": "资源生产与能源",
+    "resolusi_dk_pbb": "联合国安理会",
+    "resolusi_pbb": "联合国大会",
+    "sosial_budaya": "社会文化与意识形态"
+  },
+  "labels": {
+    "Agama": "宗教信仰",
+    "Agrikultur": "农作物种植",
+    "Armada Aktif": "现役常备部队",
+    "Badan PBB": "联合国机构",
+    "Bank Sentral": "中央银行",
+    "Bantuan Sosial": "民生救助",
+    "Dewan Keamanan": "安理会决议",
+    "Diplomasi": "外交关系",
+    "Gelar Acara": "举办盛典",
+    "Hunian": "住宅社区",
+    "Ideologi": "指导思想",
+    "Infrastruktur": "交通基建",
+    "Infrastruktur Militer": "军事防御基建",
+    "Intelijen": "情报机务",
+    "Keamanan": "公共治安",
+    "Keamanan Nasional": "国家安全",
+    "Kedutaan Besar": "大使馆",
+    "Kelistrikan": "电力生产",
+    "Kementerian": "政府部门",
+    "Kesehatan": "医疗卫生",
+    "Keterbukaan": "对外开放度",
+    "Komersial": "商业服务",
+    "Layanan Darurat": "应急救援",
+    "Logistik": "战略后勤",
+    "Manufaktur": "重工制造",
+    "Mineral & Energi": "矿产与能源",
+    "Olahan Pangan": "食品精加工",
+    "Olahraga & Hiburan": "体育与文娱",
+    "Operasi Militer": "军事行动",
+    "Pendidikan": "国民教育",
+    "Penegakan Hukum": "法律司法",
+    "Perikanan": "水产养殖",
+    "Peternakan": "畜牧养殖",
+    "Populasi": "国民人口",
+    "Regional": "区域同盟",
+    "Rekrutmen Menteri": "阁僚任命",
+    "Resolusi PBB": "联大决议",
+    "Riset Diplomasi": "外交战略研发",
+    "Riset Ekonomi": "经济科技研发",
+    "Riset Militer": "军事国防研发",
+    "Riset Umum": "综合基础科研",
+    "Senjata Strategis": "战略威慑武备",
+    "Sistem Ekonomi": "经济体制",
+    "Tanggap Darurat": "紧急应对",
+    "Tingkat Hubungan": "关系水平",
+    "Wilayah Kependudukan": "领土控制与兼并"
+  },
+  "claimSuccess": "🎉 恭喜！任务\"{title}\"奖励已成功领取：{reward}！"
 }

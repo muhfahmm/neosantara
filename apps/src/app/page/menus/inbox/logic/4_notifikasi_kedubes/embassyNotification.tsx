@@ -1,100 +1,51 @@
-// embassyNotification.tsx
-// Component UI untuk Notifikasi Penawaran Kedutaan Besar dari AI di Inbox
-
 import React from 'react';
-import { Check, X } from 'lucide-react';
+import { Building2, ArrowRight } from 'lucide-react';
 import { EmbassyOfferNotification } from './1_penawaran_kedutaan_besar';
-import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
-interface EmbassyNotificationProps {
+export interface EmbassyNotificationProps {
   notification: EmbassyOfferNotification;
   onAccept?: () => void;
   onReject?: () => void;
+  onRedirectClick?: () => void;
 }
 
-export default function EmbassyNotification({
-  notification,
-  onAccept,
-  onReject
-}: EmbassyNotificationProps) {
-  const partnerName = notification.partnerCountry;
-  const foundCountry = COUNTRIES_DATA?.find(
-    c => c.country?.toLowerCase().trim() === partnerName?.toLowerCase().trim()
-  );
-  const iso = foundCountry?.iso?.toLowerCase() || '';
+export default function EmbassyNotification({ notification, onAccept, onReject, onRedirectClick }: EmbassyNotificationProps) {
+  const { t } = useLanguage();
+  const partner = notification.partnerCountry || 'Mitra';
 
   return (
-    <div className="bg-root-surface border border-root-accent/40 p-4 rounded-xl shadow-lg flex gap-4 items-start select-none relative overflow-hidden group hover:border-root-accent/70 transition-all">
-      {/* Visual Accent Bar */}
-      <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-root-accent" />
-
-      <div className="w-10 h-10 rounded-full bg-[#051111] border border-root-accent/40 flex items-center justify-center overflow-hidden shrink-0 mt-0.5 shadow">
-        {iso ? (
-          <img
-            src={`https://flagcdn.com/w80/${iso}.png`}
-            alt={partnerName}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
-            }}
-          />
-        ) : (
-          <span className="text-base font-bold text-root-accent">🌐</span>
-        )}
+    <div className="bg-root-surface border border-root-accent/30 p-4 sm:p-5 rounded-2xl shadow-sm flex gap-4 items-start select-none relative overflow-hidden transition-all">
+      <div className="w-11 h-11 rounded-xl bg-root-canvas border border-root-accent/30 flex items-center justify-center text-root-accent shrink-0 shadow-inner">
+        <Building2 className="w-6 h-6" />
       </div>
 
-      <div className="flex-1 space-y-1.5">
-        <div className="flex items-center justify-between gap-2">
-          <h4 className="text-sm font-bold text-root-accent tracking-wide uppercase flex items-center gap-2">
-            {iso && (
-              <img
-                src={`https://flagcdn.com/w40/${iso}.png`}
-                alt={partnerName}
-                className="w-5 h-3.5 object-cover rounded-sm border border-root-accent/30 inline-block"
-              />
-            )}
-            {notification.title}
+      <div className="flex-1 space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h4 className="text-sm font-black text-root-accent uppercase tracking-wide leading-tight">
+            {t('side_inbox.geopolitics.embassyTitle', { partner }) || notification.title}
           </h4>
-          <span className="text-[10px] font-extrabold text-root-accent bg-root-accent/10 px-2 py-0.5 rounded border border-root-accent/30 shrink-0">
-            Hubungan Diplomatik
+          <span className="text-[10px] font-bold text-root-accent bg-root-accent/10 px-2.5 py-0.5 rounded-full border border-root-accent/30 uppercase tracking-wider">
+            {t('side_inbox.geopolitics.embassyBadge') || 'Kedutaan Besar'}
           </span>
         </div>
 
-        <p className="text-[10px] font-semibold text-root-subtle uppercase tracking-wider">
-          Pengirim: {notification.sender} | Waktu: {notification.timestamp}
+        <p className="text-[10px] font-bold text-root-subtle uppercase tracking-wider">
+          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Waktu: ${notification.timestamp}`}
         </p>
 
-        <p className="text-xs font-normal text-root-text leading-relaxed pt-1">
+        <p className="text-xs font-medium text-root-text leading-relaxed pt-0.5">
           {notification.message}
         </p>
 
-        {/* Info Box */}
-        <div className="bg-root-canvas border border-root-accent/20 rounded-lg p-2.5 mt-2 flex items-center justify-between text-xs text-root-accent">
-          <span className="text-[11px] text-[#A0C0C0]">Tujuan Permohonan:</span>
-          <span className="font-bold text-sky-400 bg-sky-400/10 px-2 py-0.5 rounded border border-sky-400/30 text-[10px]">
-            Pendirian Kedutaan Besar Bilateral
-          </span>
-        </div>
-
-        <div className="pt-2 flex justify-end gap-2">
-          {onReject && (
-            <button
-              onClick={onReject}
-              className="px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider bg-red-950/60 hover:bg-red-900 border border-red-500/40 text-red-300 rounded-lg transition-all cursor-pointer flex items-center gap-1.5"
-            >
-              <X className="w-3.5 h-3.5" />
-              Tolak
-            </button>
-          )}
-          {onAccept && (
-            <button
-              onClick={onAccept}
-              className="px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider bg-root-accent hover:bg-root-accent/80 text-root-canvas rounded-lg transition-all cursor-pointer shadow-[0_0_12px_rgba(0,255,170,0.3)] flex items-center gap-1.5"
-            >
-              <Check className="w-3.5 h-3.5" />
-              Terima & Bangun Kedutaan
-            </button>
-          )}
+        <div className="pt-2 flex items-center justify-end">
+          <button
+            onClick={onRedirectClick || onAccept}
+            className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-root-accent hover:bg-root-accent/80 text-root-canvas rounded-xl transition-all cursor-pointer shadow-[0_0_12px_rgba(0,255,170,0.3)] flex items-center gap-1.5"
+          >
+            <span>Buka Kedutaan Besar →</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
     </div>

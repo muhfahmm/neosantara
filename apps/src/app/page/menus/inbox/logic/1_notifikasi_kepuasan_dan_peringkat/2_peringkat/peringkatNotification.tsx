@@ -1,6 +1,7 @@
 import React from 'react';
 import { Award, ShieldAlert } from 'lucide-react';
 import { NotificationMessage } from '../1_kepuasan/kepuasanLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface PeringkatNotificationProps {
   notification: NotificationMessage;
@@ -8,6 +9,8 @@ interface PeringkatNotificationProps {
 }
 
 export default function PeringkatNotification({ notification, onCrackdownClick }: PeringkatNotificationProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="bg-red-50/70 border-l-4 border-red-500 p-4 rounded-r-xl shadow-sm flex gap-4 items-start select-none">
       <div className="w-10 h-10 rounded-full bg-red-100 border border-red-300 flex items-center justify-center text-red-600 shrink-0">
@@ -17,11 +20,11 @@ export default function PeringkatNotification({ notification, onCrackdownClick }
         <div className="flex items-center justify-between">
           <h4 className="text-sm font-black text-red-900 uppercase tracking-wide">{notification.title}</h4>
           <span className="text-[10px] font-bold text-red-700 bg-red-100/50 px-2 py-0.5 rounded border border-red-200">
-            Peringkat: {notification.value}/100
+            {t('side_inbox.types.peringkat')}: {notification.value}/100
           </span>
         </div>
         <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-          Pengirim: {notification.sender} | Waktu: {notification.timestamp}
+          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp })}
         </p>
         <p className="text-xs font-medium text-slate-700 leading-relaxed pt-1">
           {notification.message}
@@ -34,7 +37,9 @@ export default function PeringkatNotification({ notification, onCrackdownClick }
               className="px-3 py-1 text-[10px] font-black uppercase tracking-wider bg-rose-100 hover:bg-rose-200 border border-rose-300 text-rose-900 rounded transition-all cursor-pointer shadow-sm flex items-center gap-1 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <ShieldAlert className="w-3 h-3" />
-              {notification.provinceIncident.handled ? 'Massa Telah Dibubarkan' : 'Bubarkan Massa'}
+              {notification.provinceIncident.handled
+                ? t('side_inbox.ratingWarning.demonstratorsDispersed')
+                : t('side_inbox.ratingWarning.disperseDemonstration')}
             </button>
           )}
         </div>

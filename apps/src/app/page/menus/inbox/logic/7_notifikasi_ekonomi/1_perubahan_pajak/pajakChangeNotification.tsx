@@ -1,6 +1,7 @@
 import React from 'react';
 import { FileText, TrendingUp, TrendingDown, Check, AlertTriangle } from 'lucide-react';
 import { PajakChangeNotification } from './pajakChangeLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface PajakChangeNotificationProps {
   notification: PajakChangeNotification;
@@ -9,6 +10,7 @@ interface PajakChangeNotificationProps {
 }
 
 export default function PajakChangeNotificationCard({ notification, onAccept, onReject }: PajakChangeNotificationProps) {
+  const { t } = useLanguage();
   const isIncrease = notification.isIncrease;
 
   return (
@@ -23,12 +25,12 @@ export default function PajakChangeNotificationCard({ notification, onAccept, on
             {notification.title}
           </h4>
           <span className={`text-[10px] font-bold ${isIncrease ? 'text-amber-300 bg-amber-900/60 border-amber-500/40' : 'text-emerald-300 bg-emerald-900/60 border-emerald-500/40'} px-2.5 py-0.5 rounded-full border uppercase tracking-wider`}>
-            {isIncrease ? 'Pajak Naik (Protes)' : 'Pajak Turun (Bahagia)'}
+            {isIncrease ? 'Pajak Naik' : 'Pajak Turun'}
           </span>
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          Pengirim: {notification.sender} | Tanggal: {notification.timestamp}
+          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
         </p>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Handshake, Check, X } from 'lucide-react';
 import { TradeRelationOfferNotification } from './tradeRelationLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface TradeRelationNotificationProps {
   notification: TradeRelationOfferNotification;
@@ -9,7 +10,9 @@ interface TradeRelationNotificationProps {
 }
 
 export default function TradeRelationNotification({ notification, onAccept, onReject }: TradeRelationNotificationProps) {
+  const { t } = useLanguage();
   const isHandled = notification.isHandled;
+  const partner = notification.partnerCountry || 'Mitra';
 
   return (
     <div className={`border-l-4 ${isHandled ? 'bg-emerald-950/30 border-emerald-500' : 'bg-cyan-950/40 border-cyan-500'} p-4 sm:p-5 rounded-r-2xl shadow-lg flex gap-4 items-start select-none relative overflow-hidden transition-all border border-cyan-500/20`}>
@@ -20,15 +23,15 @@ export default function TradeRelationNotification({ notification, onAccept, onRe
       <div className="flex-1 space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h4 className="text-sm font-black text-white uppercase tracking-wide leading-tight">
-            {notification.title}
+            {t('side_inbox.trade.tradeRelationTitle') || notification.title}
           </h4>
           <span className="text-[10px] font-bold text-cyan-300 bg-cyan-900/60 px-2.5 py-0.5 rounded-full border border-cyan-500/40 uppercase tracking-wider">
-            Hubungan Dagang
+            {t('side_inbox.trade.tradeRelationBadge') || 'Hubungan Dagang'}
           </span>
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          Pengirim: {notification.sender} | Tanggal: {notification.timestamp}
+          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
         </p>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">
@@ -39,7 +42,7 @@ export default function TradeRelationNotification({ notification, onAccept, onRe
           {isHandled ? (
             <div className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/50 flex items-center gap-1.5">
               <Check className="w-3.5 h-3.5" />
-              <span>PERJANJIAN DAGANG DENGAN {notification.partnerCountry} TELAH DIRESMIKAN</span>
+              <span>{t('side_inbox.trade.tradeRelationSuccess', { partner }) || `PERJANJIAN DAGANG DENGAN ${partner} TELAH DIRESMIKAN`}</span>
             </div>
           ) : (
             <>
@@ -49,16 +52,16 @@ export default function TradeRelationNotification({ notification, onAccept, onRe
                   className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-950/60 hover:bg-rose-900 border border-rose-500/40 text-rose-300 rounded-xl transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
                 >
                   <X className="w-3.5 h-3.5" />
-                  Tolak Permohonan
+                  <span>{t('side_inbox.actions.reject') || 'Tolak'}</span>
                 </button>
               )}
               {onAccept && (
                 <button
                   onClick={onAccept}
-                  className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-root-accent hover:bg-emerald-400 text-root-canvas rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.3)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
+                  className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 text-slate-950 rounded-xl transition-all cursor-pointer shadow-[0_0_12px_rgba(6,182,212,0.4)] flex items-center gap-1.5"
                 >
                   <Check className="w-3.5 h-3.5" />
-                  Terima Perjanjian Dagang
+                  <span>{t('side_inbox.trade.signPact') || 'Tandatangani Perjanjian'}</span>
                 </button>
               )}
             </>

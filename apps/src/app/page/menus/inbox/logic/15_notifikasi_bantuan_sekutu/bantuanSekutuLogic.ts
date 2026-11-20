@@ -1,5 +1,6 @@
 import type { NotificationMessage } from '../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import { areSameWarCountry } from '../../../../detail_negara/3_operasi_militer/1_serang_negara/warCountryIdentity';
+import { createInboxNotificationText } from '../notificationMessage';
 
 /**
  * Konfigurasi Permintaan Bantuan Sekutu
@@ -207,7 +208,10 @@ export function createAllyHelpRequest(
     requestId: uniqueId,
     title: `🛡️ PERMINTAAN BANTUAN: ${context.targetCountry.toUpperCase()}`,
     sender: `KEMENTERIAN PERTAHANAN — ${context.targetCountry.toUpperCase()}`,
-    message: `${context.targetCountry} diserang secara mendadak oleh kekuatan militer ${context.attackerCountry}. Berdasarkan Traktat Aliansi Pertahanan Bersama, sekutu meminta bantuan militer untuk mempertahankan kedaulatan wilayahnya.`,
+    ...createInboxNotificationText('side_inbox.notificationMessages.alliedAidRequest', {
+      target: context.targetCountry,
+      attacker: context.attackerCountry,
+    }),
     timestamp: context.currentDateStr,
     type: 'peringkat',
     tradeType: 'bantuan_sekutu',

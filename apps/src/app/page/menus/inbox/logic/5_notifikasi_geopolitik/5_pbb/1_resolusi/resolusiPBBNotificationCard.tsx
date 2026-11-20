@@ -1,6 +1,7 @@
 import React from 'react';
 import { Landmark, AlertTriangle, ArrowRight, FileText } from 'lucide-react';
 import { AIResolusiPBBNotification } from './resolusiPBBLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface ResolusiPBBNotificationCardProps {
   notification: AIResolusiPBBNotification;
@@ -13,6 +14,7 @@ export default function ResolusiPBBNotificationCard({
   onAccept,
   onRedirect
 }: ResolusiPBBNotificationCardProps) {
+  const { t } = useLanguage();
   const score = notification.relationScore;
   const isNoTarget = notification.resolutionType === 'war_ban' || 
     notification.resolutionType === 'production_ban' ||
@@ -39,7 +41,7 @@ export default function ResolusiPBBNotificationCard({
       <div className="flex-1 space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h4 className="text-sm font-black text-white uppercase tracking-wide leading-tight">
-            {cleanTitle}
+            {t('side_inbox.geopolitics.unResolutionTitle', { title: cleanTitle }) || cleanTitle}
           </h4>
           <span className="text-[10px] font-extrabold text-cyan-300 bg-cyan-900/80 px-2.5 py-0.5 rounded-full border border-cyan-500/50 uppercase tracking-wider flex items-center gap-1">
             <AlertTriangle className="w-3 h-3 text-amber-400" />
@@ -48,32 +50,26 @@ export default function ResolusiPBBNotificationCard({
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          {isNoTarget
-            ? `Pengusul: ${notification.proposerCountry} | Target: ${displayTarget} | Tanggal: ${notification.timestamp}`
-            : `Pengusul: ${notification.proposerCountry} | Target: ${notification.targetCountry} | Tanggal: ${notification.timestamp}`}
+          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
         </p>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">
           {notification.message}
         </p>
 
-        <div className="bg-[#051111] border border-cyan-500/30 rounded-xl p-2.5 text-xs text-cyan-300 font-bold flex items-center justify-between">
-          <span className="flex items-center gap-1.5">
-            <FileText className="w-3.5 h-3.5 text-cyan-400" />
-            {notification.resolutionTitle}
-          </span>
+        <div className="bg-root-canvas border border-cyan-500/30 rounded-xl p-2.5 text-xs text-cyan-300 font-bold flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1">
+          <span>Usulan: {notification.resolutionTitle}</span>
+          <span className="text-root-subtle font-black">Target: {notification.targetCountry || displayTarget}</span>
         </div>
 
-        <div className="pt-2 flex items-center justify-end gap-2.5">
-          {(onAccept || onRedirect) && (
-            <button
-              onClick={onAccept || onRedirect}
-              className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-root-accent hover:bg-emerald-400 text-root-canvas rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.3)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <span>Buka Sidang PBB</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          )}
+        <div className="pt-2 flex items-center justify-end">
+          <button
+            onClick={onRedirect}
+            className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 text-slate-950 rounded-xl transition-all cursor-pointer shadow-[0_0_12px_rgba(6,182,212,0.4)] flex items-center gap-1.5"
+          >
+            <span>{t('side_inbox.geopolitics.openResolution') || 'Buka Detail Resolusi PBB →'}</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
     </div>

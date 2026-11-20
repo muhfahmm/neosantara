@@ -50,5 +50,764 @@
     "populasi": "Abra el indicador de Población y cree un programa político para {title}.",
     "default": "Realice la acción \"{title}\" a través del menú correspondiente para completar esta misión.",
     "unitMin": "al menos {target} unidades de "
-  }
+  },
+  "missions": {
+    "aliansi_pertahanan": {
+      "title": "Formar Alianza de Defensa Militar"
+    },
+    "angka_kelahiran": {
+      "title": "Aumentar la Tasa de Natalidad"
+    },
+    "bangun_barak": {
+      "title": "Cuartel Militar"
+    },
+    "bangun_gudang_senjata": {
+      "title": "Arsenal y Almacén de Armas"
+    },
+    "bangun_hangar_tank": {
+      "title": "Hangar de Tanques y Blindados"
+    },
+    "bangun_kedubes": {
+      "title": "Construir Embajada Bilateral"
+    },
+    "bangun_pangkalan_laut": {
+      "title": "Base Naval"
+    },
+    "bangun_pangkalan_udara": {
+      "title": "Base Aérea Militar"
+    },
+    "bangun_plta": {
+      "title": "Planta Hidroeléctrica"
+    },
+    "bangun_pltb": {
+      "title": "Parque Eólico de Turbinas"
+    },
+    "bangun_pltfn": {
+      "title": "Planta de Fusión Nuclear"
+    },
+    "bangun_pltg": {
+      "title": "Central Eléctrica de Gas Natural"
+    },
+    "bangun_pltgl": {
+      "title": "Planta de Energía Mareomotriz"
+    },
+    "bangun_plth": {
+      "title": "Planta de Hidrógeno Verde"
+    },
+    "bangun_pltn": {
+      "title": "Planta de Energía Nuclear"
+    },
+    "bangun_pltp": {
+      "title": "Central Geotérmica"
+    },
+    "bangun_plts": {
+      "title": "Planta Solar Fotovoltaica"
+    },
+    "bangun_pltu": {
+      "title": "Central Termoeléctrica de Carbón"
+    },
+    "budidaya_mutiara": {
+      "title": "Cultivo de Perlas"
+    },
+    "dk_bantuan_logistik": {
+      "title": "Apoyo Logístico de Mantenimiento de Paz"
+    },
+    "dk_blokade_ekonomi": {
+      "title": "Bloqueo Económico Total"
+    },
+    "dk_blokade_laut": {
+      "title": "Bloqueo Marítimo Naval"
+    },
+    "dk_blokade_penuh": {
+      "title": "Bloqueo Total y Aislamiento"
+    },
+    "dk_dukung_negara": {
+      "title": "Apoyo a Estado Soberano"
+    },
+    "dk_invasi_militer": {
+      "title": "Invasión Militar Autorizada"
+    },
+    "doktrin_keterbukaan": {
+      "title": "Modificar Doctrina de Apertura Nacional"
+    },
+    "edukasi_dasar": {
+      "title": "Escuela Primaria"
+    },
+    "edukasi_laboratorium": {
+      "title": "Laboratorio de Investigación"
+    },
+    "edukasi_lanjutan": {
+      "title": "Escuela Secundaria Superior"
+    },
+    "edukasi_lembaga": {
+      "title": "Instituto Técnico Especializado"
+    },
+    "edukasi_menengah": {
+      "title": "Escuela Secundaria Básica"
+    },
+    "edukasi_observatorium": {
+      "title": "Observatorio Astronómico"
+    },
+    "edukasi_prasekolah": {
+      "title": "Preescolar y Guardería"
+    },
+    "edukasi_pusat_kembang": {
+      "title": "Centro de Desarrollo Tecnológico"
+    },
+    "edukasi_pusat_riset": {
+      "title": "Centro Nacional de Investigaciones"
+    },
+    "edukasi_universitas": {
+      "title": "Universidad Estatal"
+    },
+    "ekspor_perdagangan": {
+      "title": "Exportar Materias Primas Comerciales"
+    },
+    "event_balap_f1": {
+      "title": "Gran Premio de Fórmula 1"
+    },
+    "event_festival": {
+      "title": "Festival"
+    },
+    "event_karnaval": {
+      "title": "Carnaval"
+    },
+    "event_konser": {
+      "title": "Concierto"
+    },
+    "event_olimpiade": {
+      "title": "Juegos Olímpicos"
+    },
+    "event_piala_davis": {
+      "title": "Copa Davis"
+    },
+    "event_piala_fifa": {
+      "title": "Copa Mundial de la FIFA"
+    },
+    "event_piala_rugbi": {
+      "title": "Copa Mundial de Rugby"
+    },
+    "ganti_agama": {
+      "title": "Cambiar Religión Oficial del Estado"
+    },
+    "ganti_ideologi": {
+      "title": "Transformar Ideología del Estado"
+    },
+    "hapus_tunawisma": {
+      "title": "Erradicar la Falta de Vivienda Digna"
+    },
+    "harga_pokok": {
+      "title": "Ajustar Precios de Productos Básicos"
+    },
+    "hukum_akademi_polisi": {
+      "title": "Academia de Policía"
+    },
+    "hukum_bantuan": {
+      "title": "Centro de Asistencia Legal"
+    },
+    "hukum_kejaksaan": {
+      "title": "Fiscalía General del Estado"
+    },
+    "hukum_pengadilan": {
+      "title": "Tribunal de Distrito"
+    },
+    "hukum_pos_polisi": {
+      "title": "Comisaría de Policía"
+    },
+    "hunian_apartemen": {
+      "title": "Apartamentos Modernos de Gran Altura"
+    },
+    "hunian_mansion": {
+      "title": "Mansiones y Complejos de Lujo"
+    },
+    "hunian_subsidi": {
+      "title": "Vivienda Pública Subsidiada"
+    },
+    "hutang_lunas": {
+      "title": "Pagar Cuotas de Deuda Nacional"
+    },
+    "ideologi_negara": {
+      "title": "Fortalecer la Ideología del Estado"
+    },
+    "impor_perdagangan": {
+      "title": "Importar Bienes Básicos Esenciales"
+    },
+    "indeks_kesejahteraan": {
+      "title": "Alcanzar 75% en Índice de Bienestar"
+    },
+    "infra_bandara": {
+      "title": "Aeropuerto Internacional"
+    },
+    "infra_helipad": {
+      "title": "Helipuerto y Base Aérea Civil"
+    },
+    "infra_jalan_raya": {
+      "title": "Carreteras Nacionales"
+    },
+    "infra_jalur_sepeda": {
+      "title": "Carriles para Bicicletas"
+    },
+    "infra_kereta_bawah": {
+      "title": "Metro Subterráneo"
+    },
+    "infra_pelabuhan": {
+      "title": "Puerto Marítimo Internacional"
+    },
+    "infra_stasiun_kereta": {
+      "title": "Estación de Tren"
+    },
+    "infra_terminal_bus": {
+      "title": "Terminal de Autobuses"
+    },
+    "kebijakan_bank_sentral": {
+      "title": "Optimizar Reservas del Banco Central"
+    },
+    "kebun_kakao": {
+      "title": "Plantación de Cacao"
+    },
+    "kebun_karet": {
+      "title": "Plantación de Caucho"
+    },
+    "kebun_kopi": {
+      "title": "Plantación de Café"
+    },
+    "kebun_sawit": {
+      "title": "Plantación de Palma Aceitera"
+    },
+    "kebun_sayur": {
+      "title": "Huerto de Verduras"
+    },
+    "kebun_tebu": {
+      "title": "Plantación de Caña de Azúcar"
+    },
+    "kebun_teh": {
+      "title": "Plantación de Té"
+    },
+    "kepuasan_target": {
+      "title": "Alcanzar 80% de Aprobación Popular"
+    },
+    "kes_bantuan_pendidikan": {
+      "title": "Becas y Ayuda Estudiantil"
+    },
+    "kes_bantuan_tunai": {
+      "title": "Asistencia Social Directa en Efectivo"
+    },
+    "kes_jaminan_kesehatan": {
+      "title": "Cobertura Sanitaria Universal"
+    },
+    "kes_pasar_murah": {
+      "title": "Mercados Populares de Precios Justos"
+    },
+    "kes_perbaikan_rumah": {
+      "title": "Renovación de Viviendas Sociales"
+    },
+    "kes_subsidi_pangan": {
+      "title": "Subsidios para Alimentos Básicos"
+    },
+    "kilang_gas_alam": {
+      "title": "Planta de Gas Natural Licuado"
+    },
+    "kilang_minyak_bumi": {
+      "title": "Refinería de Petróleo Crudo"
+    },
+    "komersial_grosir": {
+      "title": "Centro Mayorista Textil"
+    },
+    "komersial_hotel": {
+      "title": "Hotel de Gran Lujo"
+    },
+    "komersial_mall": {
+      "title": "Centro Comercial y Tiendas"
+    },
+    "komersial_restoran": {
+      "title": "Restaurante y Zona Gastronómica"
+    },
+    "kontrak_penelitian": {
+      "title": "Contrato de Investigación Internacional"
+    },
+    "krisis_bencana_alam": {
+      "title": "Desplegar Ayuda por Desastres Naturales"
+    },
+    "krisis_klaim_hadiah": {
+      "title": "Reclamar Suministros Diarios de Recursos"
+    },
+    "krisis_operasi_polisi": {
+      "title": "Financiar Operativo contra la Delincuencia"
+    },
+    "krisis_separatisme": {
+      "title": "Calmar Tensiones Separatistas Regionales"
+    },
+    "krisis_wabah_penyakit": {
+      "title": "Controlar Epidemia y Distribuir Vacunas"
+    },
+    "ladang_gandum": {
+      "title": "Campo de Trigo"
+    },
+    "ladang_jagung": {
+      "title": "Campo de Maíz"
+    },
+    "ladang_kedelai": {
+      "title": "Campo de Soja"
+    },
+    "ladang_umbi": {
+      "title": "Cultivo de Tubérculos"
+    },
+    "layanan_darurat": {
+      "title": "Preparación de Emergencias Médicas"
+    },
+    "medis_pusat_diagnostik": {
+      "title": "Centro de Diagnóstico Médico"
+    },
+    "medis_rs_besar": {
+      "title": "Hospital General Grande"
+    },
+    "medis_rs_kecil": {
+      "title": "Hospital Comunitario / Clínica"
+    },
+    "menteri_rekrut_kesehatan": {
+      "title": "Nombrar Ministro de Salud"
+    },
+    "menteri_rekrut_keuangan": {
+      "title": "Nombrar Ministro de Hacienda"
+    },
+    "menteri_rekrut_pendidikan": {
+      "title": "Nombrar Ministro de Educación"
+    },
+    "menteri_rekrut_pertahanan": {
+      "title": "Nombrar Ministro de Defensa"
+    },
+    "menteri_rekrut_polisi": {
+      "title": "Nombrar Jefe de Policía Nacional"
+    },
+    "menteri_rekrut_tier_tinggi": {
+      "title": "Reclutar Ministro de Élite (Nivel IV / V)"
+    },
+    "naikkan_hubungan": {
+      "title": "Mejorar Relaciones Bilaterales"
+    },
+    "operasi_sabotase": {
+      "title": "Sabotaje de Infraestructura Enemiga"
+    },
+    "operasi_serang_negara": {
+      "title": "Declaración de Invasión Militar"
+    },
+    "operasi_spionase": {
+      "title": "Operación Secreta de Espionaje"
+    },
+    "pabrik_air_mineral": {
+      "title": "Planta de Agua Mineral"
+    },
+    "pabrik_beras": {
+      "title": "Molino de Arroz"
+    },
+    "pabrik_besi": {
+      "title": "Siderurgia y Acería"
+    },
+    "pabrik_daging": {
+      "title": "Planta Procesadora de Carne"
+    },
+    "pabrik_gula": {
+      "title": "Ingenio Azucarero"
+    },
+    "pabrik_kayu": {
+      "title": "Aserradero y Procesadora de Madera"
+    },
+    "pabrik_mesin": {
+      "title": "Fábrica de Motores y Maquinaria"
+    },
+    "pabrik_mie_instan": {
+      "title": "Fábrica de Fideos Instantáneos"
+    },
+    "pabrik_minyak_goreng": {
+      "title": "Refinería de Aceite Comestible"
+    },
+    "pabrik_roti": {
+      "title": "Panificadora Industrial"
+    },
+    "pabrik_semen_beton": {
+      "title": "Planta de Cemento y Hormigón"
+    },
+    "pabrik_semikonduktor": {
+      "title": "Fábrica de Semiconductores"
+    },
+    "pabrik_susu": {
+      "title": "Planta Lechera y Láctea"
+    },
+    "pajak_kelola": {
+      "title": "Gestión de Política Fiscal"
+    },
+    "pajak_naik": {
+      "title": "Subir Tasas Impositivas"
+    },
+    "pajak_turun": {
+      "title": "Bajar Tasas Impositivas"
+    },
+    "pakta_non_agresi": {
+      "title": "Ratificar Pacto de No Agresión"
+    },
+    "pbb_fao": {
+      "title": "FAO - Alimentación y Agricultura ONU"
+    },
+    "pbb_ilo": {
+      "title": "OIT - Organización Internacional del Trabajo"
+    },
+    "pbb_imf": {
+      "title": "FMI - Fondo Monetario Internacional"
+    },
+    "pbb_imo": {
+      "title": "OMI - Organización Marítima Internacional"
+    },
+    "pbb_interpol": {
+      "title": "Interpol - Policía Criminal Internacional"
+    },
+    "pbb_itu": {
+      "title": "UIT - Unión Internacional de Telecomunicaciones"
+    },
+    "pbb_unesco": {
+      "title": "UNESCO - Educación y Cultura ONU"
+    },
+    "pbb_unhcr": {
+      "title": "ACNUR - Agencia de la ONU para Refugiados"
+    },
+    "pbb_unicef": {
+      "title": "UNICEF - Fondo para la Infancia de la ONU"
+    },
+    "pbb_who": {
+      "title": "OMS - Organización Mundial de la Salud"
+    },
+    "pbb_wmo": {
+      "title": "OMM - Organización Meteorológica Mundial"
+    },
+    "pbb_world_bank": {
+      "title": "Banco Mundial - Institución Financiera Global"
+    },
+    "pbb_wto": {
+      "title": "OMC - Organización Mundial del Comercio"
+    },
+    "pdb_ranking": {
+      "title": "Aumentar Ranking de PIB Nacional"
+    },
+    "perikanan_ikan": {
+      "title": "Piscifactoría y Flota Pesquera"
+    },
+    "pertahankan_wilayah": {
+      "title": "Gobernar Territorio Anexionado"
+    },
+    "peternakan_ayam": {
+      "title": "Granja Avícola"
+    },
+    "peternakan_domba": {
+      "title": "Granja de Ovejas y Cabras"
+    },
+    "peternakan_sapi_perah": {
+      "title": "Granja de Vacas Lecheras"
+    },
+    "peternakan_sapi_potong": {
+      "title": "Rancho de Ganado Vacuno"
+    },
+    "pinjam_bank": {
+      "title": "Préstamo de Banco Internacional"
+    },
+    "pinjam_negara": {
+      "title": "Préstamo Bilateral de Otro País"
+    },
+    "program_icbm": {
+      "title": "Desarrollo de Misiles Estratégicos ICBM"
+    },
+    "reg_arab_league": {
+      "title": "Liga Árabe - Alianza Regional"
+    },
+    "reg_asean": {
+      "title": "ASEAN - Sudeste Asiático"
+    },
+    "reg_au": {
+      "title": "Unión Africana - Integración Continental"
+    },
+    "reg_brics": {
+      "title": "BRICS - Bloque de Economías Emergentes"
+    },
+    "reg_eu": {
+      "title": "Unión Europea - Mercado Único"
+    },
+    "reg_g20": {
+      "title": "G20 - Grupo de los Veinte"
+    },
+    "reg_liga_arab": {
+      "title": "Liga Árabe"
+    },
+    "reg_nato": {
+      "title": "OTAN - Tratado del Atlántico Norte"
+    },
+    "reg_oas": {
+      "title": "OEA - Organización de los Estados Americanos"
+    },
+    "reg_oki": {
+      "title": "OCI - Organización para la Cooperación Islámica"
+    },
+    "reg_opec": {
+      "title": "OPEP - Países Exportadores de Petróleo"
+    },
+    "reg_uni_afrika": {
+      "title": "Unión Africana (UA)"
+    },
+    "resolusi_embargo_ekonomi": {
+      "title": "Embargo Económico Multilateral"
+    },
+    "resolusi_embargo_senjata": {
+      "title": "Embargo de Armas y Tecnología Militar"
+    },
+    "resolusi_invasi": {
+      "title": "Resolución de Invasión Colectiva"
+    },
+    "resolusi_larangan_perang": {
+      "title": "Prohibición Global de la Guerra"
+    },
+    "resolusi_larangan_produksi": {
+      "title": "Resolución de Prohibición de Producción"
+    },
+    "riset_agrikultur_cerdas": {
+      "title": "Agricultura Inteligente Multicultivo"
+    },
+    "riset_aliansi_tahan": {
+      "title": "Protocolos de Alianzas de Defensa"
+    },
+    "riset_diplomasi_kedubes": {
+      "title": "Optimización de Beneficios de Embajadas"
+    },
+    "riset_drone_otonom": {
+      "title": "Drones Tácticos Autónomos de Reconocimiento"
+    },
+    "riset_eksplorasi_sda": {
+      "title": "Investigación de Exploración Minera y Energética"
+    },
+    "riset_harmonisasi_fiskal": {
+      "title": "Armonización Fiscal Global"
+    },
+    "riset_jet_tempur": {
+      "title": "Caza de Superioridad Aérea"
+    },
+    "riset_mitigasi_bencana": {
+      "title": "Mitigación Global de Desastres Naturales"
+    },
+    "riset_otomasi": {
+      "title": "Automatización de Semiconductores"
+    },
+    "riset_pangan_dasar": {
+      "title": "Investigación en Procesamiento de Alimentos"
+    },
+    "riset_perikanan_terpadu": {
+      "title": "Investigación en Acuicultura Integrada"
+    },
+    "riset_peternakan_presisi": {
+      "title": "Investigación en Ganadería de Precisión"
+    },
+    "riset_pos_perbatasan": {
+      "title": "Investigación de Puestos Fronterizos"
+    },
+    "riset_radar_pesisir": {
+      "title": "Radar Costero de Alerta Temprana"
+    },
+    "riset_rekayasa_material": {
+      "title": "Investigación en Materiales de Manufactura"
+    },
+    "riset_senjata_presisi": {
+      "title": "Fusiles de Asalto de Precisión"
+    },
+    "riset_tank_gen5": {
+      "title": "Tanque de Combate de 5ª Generación"
+    },
+    "riset_tank_komposit": {
+      "title": "Tanques de Combate con Blindaje Compuesto"
+    },
+    "riset_upgrade_card": {
+      "title": "Mejorar Cartas de Investigación a Nivel II / III"
+    },
+    "sawah_padi": {
+      "title": "Arrozal"
+    },
+    "silo_nuklir": {
+      "title": "Preparación de Lanzamiento Nuclear"
+    },
+    "sistem_ekonomi": {
+      "title": "Reforma del Sistema Económico"
+    },
+    "sport_bioskop": {
+      "title": "Cine y Salas de Estreno"
+    },
+    "sport_esports": {
+      "title": "Arena de Esports"
+    },
+    "sport_gokart": {
+      "title": "Pista de Karts"
+    },
+    "sport_golf": {
+      "title": "Campo de Golf"
+    },
+    "sport_gym": {
+      "title": "Gimnasio y Centro de Fitness"
+    },
+    "sport_kolam_renang": {
+      "title": "Piscina Pública"
+    },
+    "sport_sirkuit_balap": {
+      "title": "Circuito de Carreras"
+    },
+    "sport_stadion": {
+      "title": "Estadio Nacional"
+    },
+    "sport_stadion_intl": {
+      "title": "Estadio Internacional"
+    },
+    "sport_teater": {
+      "title": "Teatro de Artes Escénicas"
+    },
+    "subsidi": {
+      "title": "Política y Asignación de Subsidios"
+    },
+    "surplus_apbn": {
+      "title": "Lograr Superávit Presupuestario Nacional"
+    },
+    "tambak_udang": {
+      "title": "Criadero de Camarones"
+    },
+    "tambang_batu_bara": {
+      "title": "Mina de Carbón"
+    },
+    "tambang_bijih_besi": {
+      "title": "Mina de Mineral de Hierro"
+    },
+    "tambang_emas": {
+      "title": "Mina de Oro"
+    },
+    "tambang_garam": {
+      "title": "Mina de Sal"
+    },
+    "tambang_litium": {
+      "title": "Mina de Litio"
+    },
+    "tambang_ltj": {
+      "title": "Mina de Tierras Raras"
+    },
+    "tambang_uranium": {
+      "title": "Mina de Uranio"
+    },
+    "tekan_kematian": {
+      "title": "Reducir la Mortalidad y Epidemias"
+    },
+    "toleransi_agama": {
+      "title": "Armonía Religiosa y Convivencia"
+    },
+    "upgrade_darat": {
+      "title": "Mejora de Fuerzas Terrestres"
+    },
+    "upgrade_garda_nasional": {
+      "title": "Fortalecer Guardia Nacional"
+    },
+    "upgrade_kemendag": {
+      "title": "Mejorar Ministerio de Comercio"
+    },
+    "upgrade_kemendikbud": {
+      "title": "Mejorar Ministerio de Educación"
+    },
+    "upgrade_kemenhan": {
+      "title": "Mejorar Ministerio de Defensa"
+    },
+    "upgrade_kemenkes": {
+      "title": "Mejorar Ministerio de Salud"
+    },
+    "upgrade_kemenkeu": {
+      "title": "Mejorar Ministerio de Hacienda"
+    },
+    "upgrade_kemenkumham": {
+      "title": "Mejorar Ministerio de Justicia"
+    },
+    "upgrade_kemenlh": {
+      "title": "Mejorar Ministerio de Medio Ambiente"
+    },
+    "upgrade_kemenpar": {
+      "title": "Mejorar Ministerio de Turismo"
+    },
+    "upgrade_kemensains": {
+      "title": "Mejorar Ministerio de Ciencia y Tecnología"
+    },
+    "upgrade_laut": {
+      "title": "Mejora de Fuerzas Navales"
+    },
+    "upgrade_polisi": {
+      "title": "Mejorar Eficacia Policial"
+    },
+    "upgrade_udara": {
+      "title": "Mejora de Fuerzas Aéreas"
+    }
+  },
+  "categories": {
+    "ekonomi": "Economía e Impuestos",
+    "event": "Organizar Eventos",
+    "geopolitik": "Geopolítica y Diplomacia",
+    "hunian": "Vivienda y Residencial",
+    "kabinet": "Gabinete y Ministros",
+    "kementerian": "Ministerios y Seguridad",
+    "kesejahteraan": "Bienestar Social y Asistencia",
+    "krisis": "Gestión de Crisis y Emergencias",
+    "layanan_publik": "Servicios Públicos e Infraestructura",
+    "organisasi_pbb": "Agencias y Organismos ONU",
+    "organisasi_regional": "Organizaciones Regionales",
+    "pangan": "Alimentación y Agricultura",
+    "penelitian": "Investigación y Laboratorio",
+    "pertahanan": "Defensa y Militar",
+    "populasi": "Población y Demografía",
+    "produksi": "Producción de Recursos y Energía",
+    "resolusi_dk_pbb": "Consejo de Seguridad ONU",
+    "resolusi_pbb": "Asamblea General ONU",
+    "sosial_budaya": "Sociocultural e Ideología"
+  },
+  "labels": {
+    "Agama": "Religión",
+    "Agrikultur": "Agricultura",
+    "Armada Aktif": "Flota Activa",
+    "Badan PBB": "Organismo ONU",
+    "Bank Sentral": "Banco Central",
+    "Bantuan Sosial": "Asistencia Social",
+    "Dewan Keamanan": "Consejo de Seguridad",
+    "Diplomasi": "Diplomacia",
+    "Gelar Acara": "Organizar Eventos",
+    "Hunian": "Vivienda",
+    "Ideologi": "Ideología",
+    "Infrastruktur": "Infraestructura",
+    "Infrastruktur Militer": "Infraestructura Militar",
+    "Intelijen": "Inteligencia",
+    "Keamanan": "Seguridad",
+    "Keamanan Nasional": "Seguridad Nacional",
+    "Kedutaan Besar": "Embajada",
+    "Kelistrikan": "Electricidad",
+    "Kementerian": "Ministerio",
+    "Kesehatan": "Salud",
+    "Keterbukaan": "Apertura",
+    "Komersial": "Comercial",
+    "Layanan Darurat": "Servicios de Emergencia",
+    "Logistik": "Logística",
+    "Manufaktur": "Manufactura",
+    "Mineral & Energi": "Minerales y Energía",
+    "Olahan Pangan": "Alimentos Procesados",
+    "Olahraga & Hiburan": "Deportes y Entretenimiento",
+    "Operasi Militer": "Operación Militar",
+    "Pendidikan": "Educación",
+    "Penegakan Hukum": "Cumplimiento de la Ley",
+    "Perikanan": "Pesca",
+    "Peternakan": "Ganadería",
+    "Populasi": "Población",
+    "Regional": "Regional",
+    "Rekrutmen Menteri": "Reclutamiento Ministerial",
+    "Resolusi PBB": "Resolución ONU",
+    "Riset Diplomasi": "Investigación Diplomática",
+    "Riset Ekonomi": "Investigación Económica",
+    "Riset Militer": "Investigación Militar",
+    "Riset Umum": "Investigación General",
+    "Senjata Strategis": "Armas Estratégicas",
+    "Sistem Ekonomi": "Sistema Económico",
+    "Tanggap Darurat": "Respuesta a Emergencias",
+    "Tingkat Hubungan": "Nivel de Relaciones",
+    "Wilayah Kependudukan": "Territorio Ocupado"
+  },
+  "claimSuccess": "🎉 ¡Felicitaciones! Recompensa de la misión \"{title}\" reclamada: {reward}!"
 }

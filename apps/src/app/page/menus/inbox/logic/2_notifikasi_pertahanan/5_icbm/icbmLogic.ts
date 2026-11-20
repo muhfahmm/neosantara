@@ -1,4 +1,5 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { createInboxNotificationText } from '../../notificationMessage';
 
 export interface ICBMNotification extends NotificationMessage {
   tradeType: 'icbm' | 'program_nuklir_dimulai' | 'program_nuklir_selesai' | 'ujicoba_nuklir';
@@ -20,7 +21,10 @@ export function generateICBMNotification(
     id: `icbm-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     title: `☢️ DETEKSI PELUNCURAN RUDAL NUKLIR (ICBM)!`,
     sender: `Komando Pertahanan Udara & Antariksa Nasional`,
-    message: `PERINGATAN DARURAT TINGKAT TERTINGGI! Radar pertahanan terdeteksi peluncuran Rudal Balistik Antar-Benua (ICBM) bertulu ledak hulu nuklir dari negara ${launcherCountry} mengarah langsung ke ${targetCity}! Waktu benturan diperkirakan dalam hitungan menit!`,
+    ...createInboxNotificationText('side_inbox.notificationMessages.icbm.incomingAlert', {
+      launcher: launcherCountry,
+      target: targetCity,
+    }),
     timestamp: dateStr,
     type: 'peringkat',
     value: 0,
@@ -43,7 +47,11 @@ export function generateProgramNuklirDimulaiNotification(
     id: `nuklir-dimulai-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     title: `☢️ PROYEK RAHASIA: Pembangunan Program Nuklir Dimulai!`,
     sender: `Komando Strategis Nuklir & Kementerian Pertahanan`,
-    message: `Lapor Presiden! Proyek Rahasia Pembangunan Program Nuklir Nasional (${userCountryName || 'Indonesia'}) resmi dimulai pada ${dateStr}. Fasilitas pengayaan uranium, reaktor riset, dan fasilitas penunjang strategis sedang dibangun. Perkiraan rampung pada ${endDateStr}.`,
+    ...createInboxNotificationText('side_inbox.notificationMessages.icbm.programStarted', {
+      country: userCountryName || 'Indonesia',
+      startDate: dateStr,
+      endDate: endDateStr,
+    }),
     timestamp: dateStr,
     type: 'kesejahteraan',
     value: 0,
@@ -63,7 +71,9 @@ export function generateProgramNuklirSelesaiNotification(
     id: `nuklir-selesai-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     title: `⚛️ NUKLIR AKTIF: Program Nuklir Nasional Resmi Beroperasi!`,
     sender: `Komando Strategis Nuklir & Dewan Keamanan Nasional`,
-    message: `KABAR STRATEGIS KENEGARAAN! Pembangunan Fasilitas Program Nuklir Nasional telah selesai sepenuhnya! Negara ${userCountryName || 'Indonesia'} kini resmi menjadi Negara Berkemampuan Nuklir. Akses perakitan Senjata Rudal ICBM dan Operasi Perang Nuklir telah terbuka sepenuhnya!`,
+    ...createInboxNotificationText('side_inbox.notificationMessages.icbm.programCompleted', {
+      country: userCountryName || 'Indonesia',
+    }),
     timestamp: dateStr,
     type: 'kesejahteraan',
     value: 100,
@@ -84,7 +94,10 @@ export function generateUjicobaNuklirAINotification(
     id: `ujicoba-nuklir-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     title: `🚀 UJI COBA NUKLIR & RUDAL ICBM: ${testerCountry}`,
     sender: `Badan Intelijen Strategis & Deteksi Seismik Global`,
-    message: `LAPORAN INTELIJEN GLOBAL: Negara ${testerCountry} baru saja melaksanakan uji coba peluncuran rudal balistik antarbenua (ICBM) bertulu ledak hulu nuklir ke ${targetLocation}. Sensor seismik dan satelit pengintai mencatat getaran getaran ledakan berkekuatan tinggi di area pengujian!`,
+    ...createInboxNotificationText('side_inbox.notificationMessages.icbm.testReport', {
+      tester: testerCountry,
+      target: targetLocation,
+    }),
     timestamp: dateStr,
     type: 'peringkat',
     value: 0,

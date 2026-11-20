@@ -1,6 +1,7 @@
 import React from 'react';
 import { Shield, TrendingUp, TrendingDown, Sparkles } from 'lucide-react';
 import { IdeologyChangeNotification } from './ideologyChangeLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface Props {
   notification: IdeologyChangeNotification;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function IdeologyChangeNotificationCard({ notification }: Props) {
+  const { t } = useLanguage();
   const { fromIdeology, toIdeology, approvalDelta, mood, eventChain } = notification;
   const isPositive = approvalDelta >= 0;
   const isScheduled = notification.changeStage === 'scheduled';
@@ -50,36 +52,17 @@ export default function IdeologyChangeNotificationCard({ notification }: Props) 
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          Pengirim: {notification.sender} | Tanggal: {notification.timestamp}
+          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
         </p>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">
           {notification.message}
         </p>
 
-        <div className="bg-root-canvas border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex items-center justify-between">
-          <span>Transisi Ideologi: <strong className="text-slate-100">{fromIdeology}</strong> ➔ <strong className="text-root-accent">{toIdeology}</strong></span>
-          <span className={isPositive ? 'text-emerald-400 font-black' : 'text-rose-400 font-black'}>
-            {isScheduled ? `Selesai: ${notification.completionDate}` : `Status: ${mood.toUpperCase()}`}
-          </span>
+        <div className="bg-root-canvas border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex justify-between items-center">
+          <span>Ideologi: <strong className="text-slate-400">{fromIdeology}</strong> ➔ <strong className="text-white">{toIdeology}</strong></span>
+          <span className="text-[10px] font-bold text-root-accent">{isScheduled ? 'Sedang Diproses' : 'Resmi Berlaku'}</span>
         </div>
-
-        {eventChain && eventChain.length > 0 && (
-          <div className="bg-root-surface border border-root-accent/20 rounded-xl p-2.5 space-y-1.5 mt-2">
-            <span className="text-[10px] font-black text-root-accent uppercase tracking-wider flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-root-accent" />
-              Prediksi Dini Event Chain (3 Hari):
-            </span>
-            <div className="space-y-1">
-              {eventChain.map((item, idx) => (
-                <div key={idx} className="flex justify-between items-center text-[10px] text-slate-300">
-                  <span>• {item.message}</span>
-                  <span className="font-bold text-amber-400">{item.effect}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

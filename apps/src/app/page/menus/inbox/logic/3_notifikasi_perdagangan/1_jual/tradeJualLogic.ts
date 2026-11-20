@@ -1,4 +1,5 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { createInboxNotificationText } from '../../notificationMessage';
 
 export interface TradeOfferNotification extends NotificationMessage {
   tradeType: 'jual'; // AI menawarkan untuk membeli produk milik User (User MENJUAL ke AI)
@@ -23,7 +24,13 @@ export function generateAITradeJualNotification(
     id: `trade-jual-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     title: `💰 Permintaan Pasar: ${partnerName} Ingin Membeli ${formatProduct}`,
     sender: `Delegasi Ekonomi ${partnerName}`,
-    message: `Lapor Presiden! Negara mitra kita, ${partnerName}, sedang mengalami defisit komoditas ${formatProduct} dan berniat mengimpor dari kita. Mereka menawarkan kontrak pembelian sebesar ${quantity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit ${formatProduct} dengan harga ${pricePerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO/unit (Total nilai ekspor: ${totalPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO). Ini kesempatan emas untuk meningkatkan devisa kas negara!`,
+    ...createInboxNotificationText('side_inbox.trade.jualMessage', {
+      partner: partnerName,
+      product: formatProduct,
+      quantity: quantity.toLocaleString('id-ID', { maximumFractionDigits: 2 }),
+      price: pricePerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 }),
+      total: totalPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 }),
+    }, { product: `side_inbox.items.${productKey}` }),
     timestamp: dateStr,
     type: 'kepuasan',
     value: 0,

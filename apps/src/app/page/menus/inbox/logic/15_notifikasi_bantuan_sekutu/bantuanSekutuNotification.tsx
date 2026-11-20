@@ -1,6 +1,7 @@
 import React from 'react';
 import { ShieldAlert, Check, X, Shield, Clock } from 'lucide-react';
 import { BantuanSekutuNotification, BANTUAN_SEKUTU_CONFIG } from './bantuanSekutuLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface BantuanSekutuNotificationProps {
   notification: BantuanSekutuNotification;
@@ -13,6 +14,7 @@ export default function BantuanSekutuNotificationCard({
   onAccept,
   onReject,
 }: BantuanSekutuNotificationProps) {
+  const { t } = useLanguage();
   const isHandled = Boolean(notification.isHandled || notification.status !== 'pending');
   const isAccepted = notification.status === 'accepted';
   const isExpired = notification.status === 'expired';
@@ -75,7 +77,7 @@ export default function BantuanSekutuNotificationCard({
           <span>•</span>
           <span>Penyerang: <strong className="text-rose-400">{notification.attackerCountry}</strong></span>
           <span>•</span>
-          <span>Tanggal: {notification.timestamp}</span>
+          <span>{t('side_inbox.timeLabel') || 'Tanggal'}: {notification.timestamp}</span>
         </div>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">
@@ -126,7 +128,7 @@ export default function BantuanSekutuNotificationCard({
                   className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-950/60 hover:bg-rose-900 border border-rose-500/40 text-rose-300 rounded-xl transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
                 >
                   <X className="w-3.5 h-3.5" />
-                  Tolak
+                  {t('side_inbox.actions.reject') || 'Tolak'}
                 </button>
               )}
               {onAccept && (
@@ -136,7 +138,7 @@ export default function BantuanSekutuNotificationCard({
                   className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-root-accent hover:bg-emerald-400 text-root-canvas rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.3)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <Check className="w-3.5 h-3.5" />
-                  Terima Bantuan
+                  {t('side_inbox.actions.accept') || 'Terima Bantuan'}
                 </button>
               )}
             </>

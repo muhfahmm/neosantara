@@ -4,6 +4,7 @@ import React from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface TradeRejectionModalProps {
   isOpen: boolean;
@@ -14,10 +15,6 @@ interface TradeRejectionModalProps {
   customReason?: string;
 }
 
-/**
- * Modal penolakan tawaran perdagangan karena sistem ekonomi negara tertutup
- * Ditampilkan ketika user mencoba menerima trade offer tapi ekonomi tertutup
- */
 export default function TradeRejectionModal({
   isOpen,
   onClose,
@@ -26,156 +23,112 @@ export default function TradeRejectionModal({
   reason = 'closed_system',
   customReason,
 }: TradeRejectionModalProps) {
+  const { t } = useLanguage();
   if (!isOpen) return null;
 
+  const partner = partnerCountry || 'Mitra';
   const isClosedEconomy = reason === 'closed_system';
   const isHighCentralization = reason === 'high_centralization';
+
+  const defaultRecommendations = (t('side_inbox.tradeModals.recommendations') as unknown as string[]) || [
+    'Ubah sistem ekonomi di menu Kebijakan Ekonomi',
+    'Turunkan skor sentralisasi ekonomi hingga di bawah 85',
+    'Pertimbangkan ideologi dan regulasi perdagangan yang lebih terbuka',
+  ];
 
   const getReasonDetails = () => {
     if (isClosedEconomy) {
       return {
-        title: 'SISTEM EKONOMI TERTUTUP',
-        description: `Negara Anda menganut sistem ekonomi tertutup. Perdagangan internasional dengan ${partnerCountry} tidak dapat dilakukan sampai sistem ekonomi diubah ke model yang lebih terbuka.`,
-        recommendations: [
-          'Ubah sistem ekonomi di menu Kebijakan Ekonomi',
-          'Turunkan skor sentralisasi ekonomi hingga di bawah 85',
-          'Pertimbangkan ideologi dan agama yang lebih liberal',
-        ],
+        title: t('side_inbox.tradeModals.closedAlertTitle') || 'SISTEM EKONOMI TERTUTUP',
+        description: t('side_inbox.tradeModals.closedAlertDesc', { partner }) || `Negara Anda menganut sistem ekonomi tertutup. Perdagangan internasional dengan ${partner} tidak dapat dilakukan sampai sistem ekonomi diubah ke model yang lebih terbuka.`,
+        recommendations: defaultRecommendations,
       };
     }
 
     if (isHighCentralization) {
       return {
-        title: 'SENTRALISASI EKONOMI TERLALU TINGGI',
-        description: `Perdagangan internasional dengan ${partnerCountry} tidak dapat dilakukan karena tingkat sentralisasi ekonomi Negara Anda terlalu tinggi (> 85). Kurangi kontrol pusat terhadap sektor-sektor ekonomi untuk membuka peluang perdagangan global.`,
-        recommendations: [
-          'Desentralisasi sektor-sektor ekonomi strategis',
-          'Perkuat ekonomi lokal dan swasta di berbagai daerah',
-          'Tinjau kembali kebijakan ekonomi yang terlalu tersentralisasi',
-          'Pertimbangkan ideologi yang lebih liberal atau demokratis',
-        ],
+        title: t('side_inbox.tradeModals.closedAlertTitle') || 'SENTRALISASI EKONOMI TERLALU TINGGI',
+        description: t('side_inbox.tradeModals.closedAlertDesc', { partner }) || `Perdagangan internasional dengan ${partner} tidak dapat dilakukan karena tingkat sentralisasi ekonomi Negara Anda terlalu tinggi (> 85).`,
+        recommendations: defaultRecommendations,
       };
     }
 
     return {
-      title: 'PENOLAKAN PERJANJIAN PERDAGANGAN',
-      description: customReason || 'Perjanjian perdagangan tidak dapat diterima saat ini.',
-      recommendations: [],
+      title: t('side_inbox.tradeModals.closedTitle') || 'PERDAGANGAN TIDAK DAPAT DILAKUKAN',
+      description: customReason || `Perdagangan dengan ${partner} saat ini tidak memenuhi syarat diplomasi dan regulasi nasional.`,
+      recommendations: defaultRecommendations,
     };
   };
 
   const details = getReasonDetails();
 
   return (
-    <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-[9998] "
-        onClick={onClose}
-      />
-
-      {/* Modal Container */}
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center pt-[100px] pb-[20px] px-4 pointer-events-none">
-        <div role="dialog" aria-modal="true" aria-labelledby="trade-rejection-title" className="modal-responsive-shell relative bg-gradient-to-br from-root-canvas via-root-surface to-root-canvas border border-red-500/30 rounded-2xl shadow-2xl overflow-hidden pointer-events-auto">
-          <RootInfoModalHeader
-            title={details.title}
-            titleId="trade-rejection-title"
-            onClose={onClose}
-            icon={<AlertTriangle />}
-            size="standard"
-          />
-
-          {/* Content */}
-          <div className="px-6 py-6 space-y-6">
-            {/* Penolakan Info */}
-            <div className="space-y-3">
-              <div className="p-4 rounded-xl bg-red-950/30 border border-red-500/20">
-                <p className="text-sm font-medium text-slate-200 leading-relaxed">
-                  <span className="text-red-400 font-bold">Perjanjian Ditolak: </span>
-                  {details.description}
-                </p>
-              </div>
-
-              {/* Partner Info */}
-              <div className="p-3 rounded-lg bg-root-surface border border-slate-700/40 flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-slate-400 uppercase tracking-wider">
-                    Mitra Perdagangan
-                  </p>
-                  <p className="text-sm font-bold text-slate-100 mt-1">
-                    {partnerCountry}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400 uppercase tracking-wider">
-                    Tipe Perdagangan
-                  </p>
-                  <p className="text-sm font-bold text-amber-400 mt-1 uppercase">
-                    {tradeType === 'jual' ? 'Penjualan' : 'Pembelian'}
-                  </p>
-                </div>
-              </div>
+    <div className="fixed inset-0 z-[100000002] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="relative w-full max-w-lg bg-[#0a1818] border-2 border-red-500/50 rounded-2xl shadow-[0_0_30px_rgba(239,68,68,0.25)] overflow-hidden font-sans">
+        
+        {/* Header Modal */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-red-500/30 bg-red-950/40">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400 shrink-0">
+              <AlertTriangle className="w-5 h-5 animate-pulse" />
             </div>
-
-            {/* Rekomendasi (jika ada) */}
-            {details.recommendations.length > 0 && (
-              <div className="space-y-3">
-                <p className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-                  ✨ Saran untuk Membuka Ekonomi:
-                </p>
-                <div className="space-y-2">
-                  {details.recommendations.map((rec, idx) => (
-                    <div
-                      key={idx}
-                      className="flex gap-3 p-3 rounded-lg bg-slate-900/30 border border-slate-700/40"
-                    >
-                      <div className="flex-shrink-0 w-5 h-5 rounded-full bg-root-accent/20 border border-root-accent/40 flex items-center justify-center mt-0.5">
-                        <span className="text-[10px] font-bold text-root-accent">
-                          {idx + 1}
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-300 leading-relaxed pt-0.5">
-                        {rec}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Info Box - Status Sistem Ekonomi */}
-            <div className="p-4 rounded-lg bg-blue-950/20 border border-blue-500/30">
-              <p className="text-[10px] font-bold text-blue-300 uppercase tracking-wider mb-2">
-                ℹ️ Informasi Sistem Ekonomi
+            <div>
+              <h3 className="text-sm font-black text-white uppercase tracking-wider">
+                {t('side_inbox.tradeModals.closedTitle') || "Akses Perdagangan Ditolak"}
+              </h3>
+              <p className="text-[10px] font-bold text-red-300 uppercase tracking-widest mt-0.5">
+                {t('side_inbox.tradeModals.closedSub') || "Regulasi Pasar Tertutup"}
               </p>
-              <ul className="space-y-1.5 text-xs text-blue-200">
-                <li>
-                  • Hanya negara dengan sistem ekonomi <span className="font-bold">TERBUKA</span> atau{' '}
-                  <span className="font-bold">LIBERAL</span> yang dapat melakukan perdagangan global
-                </li>
-                <li>
-                  • Perubahan sistem ekonomi dapat dilakukan di menu{' '}
-                  <span className="font-bold">Navigasi &gt; Kebijakan Ekonomi</span>
-                </li>
-                <li>
-                  • Skor sentralisasi ekonomi harus di bawah 85 untuk membuka perdagangan
-                </li>
-              </ul>
             </div>
           </div>
+          <SharedModalCloseButton
+            onClick={onClose}
+            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors"
+           appearance="custom">
+            <X className="w-4 h-4 text-red-400" />
+          </SharedModalCloseButton>
+        </div>
 
-          {/* Footer */}
-          <div className="px-6 py-4 bg-gradient-to-r from-red-900/10 to-transparent border-t border-red-500/20 flex justify-end gap-3">
-            <SharedModalCloseButton
-              onClick={onClose}
-              className="px-6 py-2 text-xs font-black uppercase tracking-wider rounded-xl border border-red-500/40 bg-red-950/40 text-red-300 hover:bg-red-950/60 transition-all cursor-pointer flex items-center gap-2"
-             appearance="custom">
-              <X className="w-3 h-3" />
-              Mengerti
-            </SharedModalCloseButton>
+        {/* Content Body */}
+        <div className="p-5 space-y-4">
+          {/* Box Peringatan Utama */}
+          <div className="bg-red-950/30 border border-red-500/30 rounded-xl p-4">
+            <h4 className="text-xs font-black text-red-400 uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
+              <span>⚠️</span>
+              <span>{details.title}</span>
+            </h4>
+            <p className="text-xs text-slate-200 leading-relaxed">
+              {details.description}
+            </p>
+          </div>
+
+          {/* Rekomendasi Langkah */}
+          <div className="bg-[#051111] border border-root-accent/20 rounded-xl p-4 space-y-2">
+            <h5 className="text-[11px] font-black text-root-accent uppercase tracking-wider">
+              {t('side_inbox.tradeModals.stepResolutionTitle') || "Langkah Penyelesaian yang Diperlukan:"}
+            </h5>
+            <ul className="space-y-1.5">
+              {Array.isArray(details.recommendations) && details.recommendations.map((rec, index) => (
+                <li key={index} className="text-xs text-slate-300 flex items-start gap-2">
+                  <span className="text-root-accent shrink-0 font-bold">•</span>
+                  <span>{rec}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
+
+        {/* Footer Tombol Tutup */}
+        <div className="px-5 py-3 border-t border-red-500/20 bg-[#051111] flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-5 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-red-600/30 hover:bg-red-600/50 text-red-200 border border-red-500/40 hover:border-red-400 transition-all cursor-pointer shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+          >
+            {t('side_inbox.tradeModals.dismiss') || 'Mengerti & Tutup'}
+          </button>
+        </div>
+
       </div>
-    </>
+    </div>
   );
 }

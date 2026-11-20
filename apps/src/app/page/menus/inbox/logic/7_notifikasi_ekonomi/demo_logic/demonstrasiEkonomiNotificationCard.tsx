@@ -1,6 +1,7 @@
 import React from 'react';
 import { Flame, Megaphone, ShieldAlert, MessageSquare, Banknote, EyeOff } from 'lucide-react';
 import { DemonstrasiNotification } from './demonstrasiEkonomiLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface Props {
   notification: DemonstrasiNotification;
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export default function DemonstrasiEkonomiNotificationCard({ notification, onAction }: Props) {
+  const { t } = useLanguage();
   const isEkstrem = notification.severity === 'ekstrem';
   const isHandled = notification.demo_status === 'selesai' || notification.demo_status === 'kerusuhan';
 
@@ -24,7 +26,7 @@ export default function DemonstrasiEkonomiNotificationCard({ notification, onAct
             {notification.title}
           </h4>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-            Pengirim: {notification.sender} | Tanggal: {notification.timestamp}
+            {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
           </p>
         </div>
       </div>
@@ -48,52 +50,55 @@ export default function DemonstrasiEkonomiNotificationCard({ notification, onAct
             </div>
           )}
         </div>
-        <span className={`text-[11px] font-black uppercase ${
+
+        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${
           notification.demo_status === 'selesai'
-            ? 'text-emerald-400'
+            ? 'bg-emerald-950/80 border-emerald-500/50 text-emerald-300'
             : notification.demo_status === 'kerusuhan'
-            ? 'text-rose-500 font-extrabold'
-            : notification.demo_status === 'dialog'
-            ? 'text-blue-400'
-            : notification.demo_status === 'ignored'
-            ? 'text-slate-400'
-            : 'text-rose-400'
+            ? 'bg-red-950/80 border-red-500/60 text-red-300 animate-pulse'
+            : 'bg-amber-950/80 border-amber-500/50 text-amber-300 animate-pulse'
         }`}>
-          STATUS: {
-            notification.demo_status === 'selesai'
-              ? (notification.message.includes('[KEPUTUSAN PEMERINTAH]') ? 'DITANGANI (APARAT)' : 'DITANGANI')
-              : notification.demo_status === 'kerusuhan'
-              ? 'KERUSUHAN'
-              : notification.demo_status === 'dialog'
-              ? 'DALAM DIALOG'
-              : notification.demo_status === 'ignored'
-              ? 'DIABAIKAN'
-              : 'GEJOLAK AKTIF'
-          }
+          Status: {notification.demo_status?.toUpperCase() || 'BERLANGSUNG'}
         </span>
       </div>
 
-      {/* TOMBOL AKSI (Hanya muncul jika belum ditangani & bukan kerusuhan & bukan diabaikan) */}
-      {!isHandled && notification.demo_status !== 'ignored' && onAction && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2 pt-3 border-t border-slate-700/50">
-          <button onClick={() => onAction('hard_power')} className="flex flex-col items-center justify-center gap-1 p-2 rounded-lg bg-rose-900/40 hover:bg-rose-800/60 border border-rose-500/30 text-rose-200 transition-all cursor-pointer">
-            <ShieldAlert className="w-4 h-4" />
-            <span className="text-[9px] font-bold uppercase text-center">Bubarkan<br/>(Aparat)</span>
-          </button>
-          
-          <button onClick={() => onAction('dialog')} className="flex flex-col items-center justify-center gap-1 p-2 rounded-lg bg-blue-900/40 hover:bg-blue-800/60 border border-blue-500/30 text-blue-200 transition-all cursor-pointer">
-            <MessageSquare className="w-4 h-4" />
-            <span className="text-[9px] font-bold uppercase text-center">Dialog<br/>Terbuka</span>
-          </button>
-
-          <button onClick={() => onAction('fulfill')} className="flex flex-col items-center justify-center gap-1 p-2 rounded-lg bg-emerald-900/40 hover:bg-emerald-800/60 border border-emerald-500/30 text-emerald-200 transition-all cursor-pointer">
-            <Banknote className="w-4 h-4" />
-            <span className="text-[9px] font-bold uppercase text-center">Penuhi<br/>Tuntutan</span>
+      {/* ACTION BUTTONS (HANYA MUNCUL JIKA DEMO BELUM SELESAI / KERUSUHAN) */}
+      {!isHandled && onAction && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 border-t border-slate-800">
+          <button
+            onClick={() => onAction('hard_power')}
+            className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-rose-600/30 hover:bg-rose-600/50 text-rose-300 border border-rose-500/40 transition-all cursor-pointer shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+            title="Gunakan aparat keamanan untuk membubarkan massa secara paksa"
+          >
+            <ShieldAlert className="w-3.5 h-3.5" />
+            <span>Tindak Tegas</span>
           </button>
 
-          <button onClick={() => onAction('ignore')} className="flex flex-col items-center justify-center gap-1 p-2 rounded-lg bg-slate-800/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-300 transition-all cursor-pointer">
-            <EyeOff className="w-4 h-4" />
-            <span className="text-[9px] font-bold uppercase text-center">Abaikan<br/>Demo</span>
+          <button
+            onClick={() => onAction('dialog')}
+            className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-cyan-600/30 hover:bg-cyan-600/50 text-cyan-300 border border-cyan-500/40 transition-all cursor-pointer shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+            title="Lakukan dialog publik dan dengarkan aspirasi demonstran"
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            <span>Dialog Terbuka</span>
+          </button>
+
+          <button
+            onClick={() => onAction('fulfill')}
+            className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/40 transition-all cursor-pointer shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+            title="Penuhi tuntutan ekonomi demonstran untuk meredakan amarah publik"
+          >
+            <Banknote className="w-3.5 h-3.5" />
+            <span>Penuhi Tuntutan</span>
+          </button>
+
+          <button
+            onClick={() => onAction('ignore')}
+            className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600/50 transition-all cursor-pointer shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+            title="Biarkan demonstrasi tanpa intervensi pemerintah"
+          >
+            <EyeOff className="w-3.5 h-3.5" />
+            <span>Abaikan Aksi</span>
           </button>
         </div>
       )}

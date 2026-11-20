@@ -50,5 +50,764 @@
     "populasi": "افتح مؤشر السكان وأنشئ برنامجاً سياسياً لـ {title}.",
     "default": "قم بإجراء \"{title}\" من خلال القائمة المناسبة لإكمال هذه المهمة.",
     "unitMin": "ما لا يقل عن {target} وحدات من "
-  }
+  },
+  "missions": {
+    "aliansi_pertahanan": {
+      "title": "تشكيل تحالف دفاعي عسكري"
+    },
+    "angka_kelahiran": {
+      "title": "زيادة معدل المواليد الوطني"
+    },
+    "bangun_barak": {
+      "title": "ثكنة عسكرية"
+    },
+    "bangun_gudang_senjata": {
+      "title": "مستودع أسلحة وذخيرة"
+    },
+    "bangun_hangar_tank": {
+      "title": "مستودع دبابات ومدرعات"
+    },
+    "bangun_kedubes": {
+      "title": "إنشاء سفارة ثنائية"
+    },
+    "bangun_pangkalan_laut": {
+      "title": "قاعدة بحرية عسكرية"
+    },
+    "bangun_pangkalan_udara": {
+      "title": "قاعدة جوية عسكرية"
+    },
+    "bangun_plta": {
+      "title": "محطة كهرومائية (سد مائي)"
+    },
+    "bangun_pltb": {
+      "title": "مزرعة توربينات الرياح"
+    },
+    "bangun_pltfn": {
+      "title": "محطة طاقة الاندماج النووي"
+    },
+    "bangun_pltg": {
+      "title": "محطة طاقة توربينات الغاز"
+    },
+    "bangun_pltgl": {
+      "title": "محطة طاقة أمواج وحركة المد والجزر"
+    },
+    "bangun_plth": {
+      "title": "محطة طاقة وقود الهيدروجين"
+    },
+    "bangun_pltn": {
+      "title": "محطة طاقة نووية"
+    },
+    "bangun_pltp": {
+      "title": "محطة طاقة حرارية أرضية"
+    },
+    "bangun_plts": {
+      "title": "محطة طاقة شمسية"
+    },
+    "bangun_pltu": {
+      "title": "محطة طاقة حرارية تعمل بالفحم"
+    },
+    "budidaya_mutiara": {
+      "title": "مزرعة استزراع اللؤلؤ"
+    },
+    "dk_bantuan_logistik": {
+      "title": "قرار الدعم اللوجستي الإنساني"
+    },
+    "dk_blokade_ekonomi": {
+      "title": "قرار الحصار الاقتصادي الشامل"
+    },
+    "dk_blokade_laut": {
+      "title": "قرار الحصار البحري"
+    },
+    "dk_blokade_penuh": {
+      "title": "قرار الإغلاق والحصار الكامل"
+    },
+    "dk_dukung_negara": {
+      "title": "قرار دعم الدولة ذات السيادة"
+    },
+    "dk_invasi_militer": {
+      "title": "قرار التدخل العسكري المشترك"
+    },
+    "doktrin_keterbukaan": {
+      "title": "تعديل مذهب الانفتاح الوطني"
+    },
+    "edukasi_dasar": {
+      "title": "مدرسة ابتدائية"
+    },
+    "edukasi_laboratorium": {
+      "title": "مختبر أبحاث علمية"
+    },
+    "edukasi_lanjutan": {
+      "title": "مدرسة ثانوية"
+    },
+    "edukasi_lembaga": {
+      "title": "معهد تعليمي تقني متخصص"
+    },
+    "edukasi_menengah": {
+      "title": "مدرسة إعدادية (متوسطة)"
+    },
+    "edukasi_observatorium": {
+      "title": "مرصد فلكي"
+    },
+    "edukasi_prasekolah": {
+      "title": "رياض الأطفال والتعليم المبكر"
+    },
+    "edukasi_pusat_kembang": {
+      "title": "مركز التطوير التكنولوجي"
+    },
+    "edukasi_pusat_riset": {
+      "title": "المركز القومي للبحوث"
+    },
+    "edukasi_universitas": {
+      "title": "جامعة حكومية"
+    },
+    "ekspor_perdagangan": {
+      "title": "تصدير السلع التجارية"
+    },
+    "event_balap_f1": {
+      "title": "سباق فورمولا 1"
+    },
+    "event_festival": {
+      "title": "مهرجان ثقافي"
+    },
+    "event_karnaval": {
+      "title": "كرنفال احتفالي"
+    },
+    "event_konser": {
+      "title": "حفل موسيقي"
+    },
+    "event_olimpiade": {
+      "title": "الألعاب الأولمبية"
+    },
+    "event_piala_davis": {
+      "title": "كأس ديفيز للتنس"
+    },
+    "event_piala_fifa": {
+      "title": "كأس العالم لكرة القدم FIFA"
+    },
+    "event_piala_rugbi": {
+      "title": "كأس العالم للرجبي"
+    },
+    "ganti_agama": {
+      "title": "تغيير الدين الرسمي للدولة"
+    },
+    "ganti_ideologi": {
+      "title": "تغيير الفكر والأيديولوجيا الحاكمة"
+    },
+    "hapus_tunawisma": {
+      "title": "القضاء على التشرد وتوفير سكن لائق"
+    },
+    "harga_pokok": {
+      "title": "تعديل أسعار السلع الأساسية"
+    },
+    "hukum_akademi_polisi": {
+      "title": "أكاديمية الشرطة"
+    },
+    "hukum_bantuan": {
+      "title": "مركز المساعدة القانونية"
+    },
+    "hukum_kejaksaan": {
+      "title": "النيابة العامة العليا"
+    },
+    "hukum_pengadilan": {
+      "title": "محكمة ابتدائية"
+    },
+    "hukum_pos_polisi": {
+      "title": "مركز شرطة"
+    },
+    "hunian_apartemen": {
+      "title": "شقق سكنية حديثة شاهقة"
+    },
+    "hunian_mansion": {
+      "title": "مجمع فلل وقصور فاخرة"
+    },
+    "hunian_subsidi": {
+      "title": "إسكان شعبي مدعوم"
+    },
+    "hutang_lunas": {
+      "title": "سداد أقساط الدين الوطني"
+    },
+    "ideologi_negara": {
+      "title": "ترسيخ الأيديولوجيا الوطنية للدولة"
+    },
+    "impor_perdagangan": {
+      "title": "استيراد السلع الأساسية"
+    },
+    "indeks_kesejahteraan": {
+      "title": "تحقيق مؤشر الرفاهية الشعبية 75%"
+    },
+    "infra_bandara": {
+      "title": "مطار دولي"
+    },
+    "infra_helipad": {
+      "title": "مهبط مروحيات وقاعدة جوية مدنية"
+    },
+    "infra_jalan_raya": {
+      "title": "الطرق السريعة الوطنية"
+    },
+    "infra_jalur_sepeda": {
+      "title": "مسارات الدراجات الهوائية"
+    },
+    "infra_kereta_bawah": {
+      "title": "شبكة قطارات الأنفاق (المترو)"
+    },
+    "infra_pelabuhan": {
+      "title": "ميناء بحري دولي"
+    },
+    "infra_stasiun_kereta": {
+      "title": "محطة قطار مركزية"
+    },
+    "infra_terminal_bus": {
+      "title": "محطة حافلات مركزية"
+    },
+    "kebijakan_bank_sentral": {
+      "title": "تحسين احتياطيات البنك المركزي"
+    },
+    "kebun_kakao": {
+      "title": "مزرعة كاكاو"
+    },
+    "kebun_karet": {
+      "title": "مزرعة مطاط طبيعي"
+    },
+    "kebun_kopi": {
+      "title": "مزرعة بن (قهوة)"
+    },
+    "kebun_sawit": {
+      "title": "مزرعة نخيل الزيت"
+    },
+    "kebun_sayur": {
+      "title": "مزرعة خضروات"
+    },
+    "kebun_tebu": {
+      "title": "مزرعة قصب السكر"
+    },
+    "kebun_teh": {
+      "title": "مزرعة شاي"
+    },
+    "kepuasan_target": {
+      "title": "بلوغ نسبة رضا شعبي 80%"
+    },
+    "kes_bantuan_pendidikan": {
+      "title": "منح ومساعدات تعليمية للطلاب"
+    },
+    "kes_bantuan_tunai": {
+      "title": "مساعدات نقدية مباشرة"
+    },
+    "kes_jaminan_kesehatan": {
+      "title": "التأمين الصحي الشامل"
+    },
+    "kes_pasar_murah": {
+      "title": "أسواق السلع المخفضة الوطنية"
+    },
+    "kes_perbaikan_rumah": {
+      "title": "ترميم وتحسين المساكن الشعبية"
+    },
+    "kes_subsidi_pangan": {
+      "title": "دعم السلع الغذائية الأساسية"
+    },
+    "kilang_gas_alam": {
+      "title": "محطة إسالة ومعالجة الغاز الطبيعي"
+    },
+    "kilang_minyak_bumi": {
+      "title": "مصفاة نفط خام"
+    },
+    "komersial_grosir": {
+      "title": "مركز بيع المنسوجات بالجملة"
+    },
+    "komersial_hotel": {
+      "title": "فندق مصنف بالنجوم"
+    },
+    "komersial_mall": {
+      "title": "مركز تجاري ومول تسوق"
+    },
+    "komersial_restoran": {
+      "title": "مجمع مطاعم ومأكولات"
+    },
+    "kontrak_penelitian": {
+      "title": "عقد بحث علمي دولي مشترك"
+    },
+    "krisis_bencana_alam": {
+      "title": "تقديم الإغاثة الطارئة لضحايا الكوارث"
+    },
+    "krisis_klaim_hadiah": {
+      "title": "استلام إمدادات الموارد اليومية"
+    },
+    "krisis_operasi_polisi": {
+      "title": "تمويل عمليات مكافحة الجريمة المنظمة"
+    },
+    "krisis_separatisme": {
+      "title": "احتواء التوترات الانفصالية الإقليمية"
+    },
+    "krisis_wabah_penyakit": {
+      "title": "مكافحة الأوبئة وتوزيع اللقاحات"
+    },
+    "ladang_gandum": {
+      "title": "حقول القمح"
+    },
+    "ladang_jagung": {
+      "title": "حقول الذرة"
+    },
+    "ladang_kedelai": {
+      "title": "حقول فول الصويا"
+    },
+    "ladang_umbi": {
+      "title": "حقول الدرنات والجذور"
+    },
+    "layanan_darurat": {
+      "title": "جاهزية خدمات الطوارئ الطبية"
+    },
+    "medis_pusat_diagnostik": {
+      "title": "مركز تشخيص طبي متقدم"
+    },
+    "medis_rs_besar": {
+      "title": "مستشفى مركزي عام"
+    },
+    "medis_rs_kecil": {
+      "title": "مستشفى مجتمعي صغير / عيادة"
+    },
+    "menteri_rekrut_kesehatan": {
+      "title": "تعيين وزير الصحة"
+    },
+    "menteri_rekrut_keuangan": {
+      "title": "تعيين وزير المالية"
+    },
+    "menteri_rekrut_pendidikan": {
+      "title": "تعيين وزير التعليم"
+    },
+    "menteri_rekrut_pertahanan": {
+      "title": "تعيين وزير الدفاع"
+    },
+    "menteri_rekrut_polisi": {
+      "title": "تعيين قائد الشرطة الوطنية"
+    },
+    "menteri_rekrut_tier_tinggi": {
+      "title": "تعيين وزير رفيع المستوى (الدرجة IV / V)"
+    },
+    "naikkan_hubungan": {
+      "title": "تحسين العلاقات الثنائية"
+    },
+    "operasi_sabotase": {
+      "title": "عملية تخريب البنية التحتية للعدو"
+    },
+    "operasi_serang_negara": {
+      "title": "إعلان الغزو العسكري"
+    },
+    "operasi_spionase": {
+      "title": "عملية تجسس سرية"
+    },
+    "pabrik_air_mineral": {
+      "title": "مصنع تعبئة مياه معدنية"
+    },
+    "pabrik_beras": {
+      "title": "مضرب ومطحنة أرز"
+    },
+    "pabrik_besi": {
+      "title": "مجمع ومصنع الحديد والصلب"
+    },
+    "pabrik_daging": {
+      "title": "مصنع معالجة اللحوم"
+    },
+    "pabrik_gula": {
+      "title": "مصنع تكرير السكر"
+    },
+    "pabrik_kayu": {
+      "title": "مصنع معالجة الأخشاب"
+    },
+    "pabrik_mesin": {
+      "title": "مصنع آلات ومحركات ومركبات"
+    },
+    "pabrik_mie_instan": {
+      "title": "مصنع نودلز سريعة التحضير"
+    },
+    "pabrik_minyak_goreng": {
+      "title": "معمل تكرير زيوت الطعام"
+    },
+    "pabrik_roti": {
+      "title": "مخبز صناعي كبير"
+    },
+    "pabrik_semen_beton": {
+      "title": "مصنع الأسمنت والخرسانة"
+    },
+    "pabrik_semikonduktor": {
+      "title": "مصنع رقائق وأشباه الموصلات"
+    },
+    "pabrik_susu": {
+      "title": "مصنع ألبان وحليب"
+    },
+    "pajak_kelola": {
+      "title": "إدارة السياسة الضريبية"
+    },
+    "pajak_naik": {
+      "title": "رفع معدلات الضرائب"
+    },
+    "pajak_turun": {
+      "title": "خفض معدلات الضرائب"
+    },
+    "pakta_non_agresi": {
+      "title": "التصديق على معاهدة عدم اعتداء"
+    },
+    "pbb_fao": {
+      "title": "الفاو - منظمة الأغذية والزراعة للأمم المتحدة"
+    },
+    "pbb_ilo": {
+      "title": "منظمة العمل الدولية (ILO)"
+    },
+    "pbb_imf": {
+      "title": "صندوق النقد الدولي (IMF)"
+    },
+    "pbb_imo": {
+      "title": "المنظمة البحرية الدولية (IMO)"
+    },
+    "pbb_interpol": {
+      "title": "الإنتربول - منظمة الشرطة الجنائية الدولية"
+    },
+    "pbb_itu": {
+      "title": "الاتحاد الدولي للاتصالات (ITU)"
+    },
+    "pbb_unesco": {
+      "title": "اليونسكو - منظمة الأمم المتحدة للتربية والعلم والثقافة"
+    },
+    "pbb_unhcr": {
+      "title": "مفوضية الأمم المتحدة لشؤون اللاجئين (UNHCR)"
+    },
+    "pbb_unicef": {
+      "title": "اليونيسف - منظمة الأمم المتحدة للطفولة"
+    },
+    "pbb_who": {
+      "title": "منظمة الصحة العالمية (WHO)"
+    },
+    "pbb_wmo": {
+      "title": "المنظمة العالمية للأرصاد الجوية (WMO)"
+    },
+    "pbb_world_bank": {
+      "title": "البنك الدولي (World Bank)"
+    },
+    "pbb_wto": {
+      "title": "منظمة التجارة العالمية (WTO)"
+    },
+    "pdb_ranking": {
+      "title": "رفع تصنيف الناتج المحلي الإجمالي"
+    },
+    "perikanan_ikan": {
+      "title": "مزارع أسماك وأسطول صيد"
+    },
+    "pertahankan_wilayah": {
+      "title": "إدارة الأراضي التي تم ضمها أو احتلالها"
+    },
+    "peternakan_ayam": {
+      "title": "مزرعة دواجن"
+    },
+    "peternakan_domba": {
+      "title": "مزرعة أغنام وماعز"
+    },
+    "peternakan_sapi_perah": {
+      "title": "مزرعة أبقار حلوب"
+    },
+    "peternakan_sapi_potong": {
+      "title": "مزرعة أبقار تسمين"
+    },
+    "pinjam_bank": {
+      "title": "الاقتراض من البنك الدولي"
+    },
+    "pinjam_negara": {
+      "title": "اقتراض ثنائي من دولة أخرى"
+    },
+    "program_icbm": {
+      "title": "تطوير منظومة صواريخ باليستية عابرة للقارات"
+    },
+    "reg_arab_league": {
+      "title": "جامعة الدول العربية"
+    },
+    "reg_asean": {
+      "title": "آسيان - رابطة دول جنوب شرق آسيا"
+    },
+    "reg_au": {
+      "title": "الاتحاد الأفريقي (AU)"
+    },
+    "reg_brics": {
+      "title": "مجموعة بريكس (BRICS)"
+    },
+    "reg_eu": {
+      "title": "الاتحاد الأوروبي (EU)"
+    },
+    "reg_g20": {
+      "title": "مجموعة العشرين (G20)"
+    },
+    "reg_liga_arab": {
+      "title": "جامعة الدول العربية"
+    },
+    "reg_nato": {
+      "title": "حلف شمال الأطلسي (NATO)"
+    },
+    "reg_oas": {
+      "title": "منظمة الدول الأمريكية (OAS)"
+    },
+    "reg_oki": {
+      "title": "منظمة التعاون الإسلامي (OIC)"
+    },
+    "reg_opec": {
+      "title": "منظمة أوبك (OPEC)"
+    },
+    "reg_uni_afrika": {
+      "title": "الاتحاد الأفريقي (AU)"
+    },
+    "resolusi_embargo_ekonomi": {
+      "title": "قرار الحظر الاقتصادي متعدد الأطراف"
+    },
+    "resolusi_embargo_senjata": {
+      "title": "قرار حظر تصدير وتداول الأسلحة"
+    },
+    "resolusi_invasi": {
+      "title": "قرار تفويض العمل العسكري"
+    },
+    "resolusi_larangan_perang": {
+      "title": "قرار حظر شن الحروب دولياً"
+    },
+    "resolusi_larangan_produksi": {
+      "title": "قرار حظر إنتاج سلع استراتيجية"
+    },
+    "riset_agrikultur_cerdas": {
+      "title": "أبحاث الزراعة الذكية متعددة المحاصيل"
+    },
+    "riset_aliansi_tahan": {
+      "title": "أبحاث بروتوكولات التحالفات الدفاعية"
+    },
+    "riset_diplomasi_kedubes": {
+      "title": "أبحاث تعظيم العوائد الدبلوماسية للسفارات"
+    },
+    "riset_drone_otonom": {
+      "title": "أبحاث طائرات الاستطلاع المسيرة التكتيكية"
+    },
+    "riset_eksplorasi_sda": {
+      "title": "أبحاث استكشاف المعادن ومصادر الطاقة"
+    },
+    "riset_harmonisasi_fiskal": {
+      "title": "أبحاث التنسيق والتوحيد المالي العالمي"
+    },
+    "riset_jet_tempur": {
+      "title": "أبحاث مقاتلات السيادة الجوية الشبحية"
+    },
+    "riset_mitigasi_bencana": {
+      "title": "أبحاث التخفيف من حدة الكوارث الطبيعية"
+    },
+    "riset_otomasi": {
+      "title": "أبحاث أتمتة تصنيع أشباه الموصلات"
+    },
+    "riset_pangan_dasar": {
+      "title": "أبحاث تكنولوجيا معالجة الأغذية الأساسية"
+    },
+    "riset_perikanan_terpadu": {
+      "title": "أبحاث الاستزراع المائي المتكامل"
+    },
+    "riset_peternakan_presisi": {
+      "title": "أبحاث الثروة الحيوانية الدقيقة الحديثة"
+    },
+    "riset_pos_perbatasan": {
+      "title": "أبحاث تحصين المراكز الحدودية الدفاعية"
+    },
+    "riset_radar_pesisir": {
+      "title": "أبحاث رادارات المراقبة الساحلية المبكرة"
+    },
+    "riset_rekayasa_material": {
+      "title": "أبحاث هندسة مواد التصنيع المتقدمة"
+    },
+    "riset_senjata_presisi": {
+      "title": "أبحاث البنادق الهجومية عالية الدقة"
+    },
+    "riset_tank_gen5": {
+      "title": "أبحاث دبابات القتال الرئيسية من الجيل الخامس"
+    },
+    "riset_tank_komposit": {
+      "title": "أبحاث دبابات القتال بالدروع المركبة"
+    },
+    "riset_upgrade_card": {
+      "title": "ترقية بطاقات الأبحاث إلى المستوى II / III"
+    },
+    "sawah_padi": {
+      "title": "حقول الأرز"
+    },
+    "silo_nuklir": {
+      "title": "جاهزية إطلاق الرؤوس النووية"
+    },
+    "sistem_ekonomi": {
+      "title": "إصلاح النظام الاقتصادي"
+    },
+    "sport_bioskop": {
+      "title": "دور سينما ومسارح"
+    },
+    "sport_esports": {
+      "title": "صالة الرياضات الإلكترونية"
+    },
+    "sport_gokart": {
+      "title": "حلبة كارتينغ"
+    },
+    "sport_golf": {
+      "title": "ملعب غولف"
+    },
+    "sport_gym": {
+      "title": "صالة ألعاب رياضية ومركز لياقة"
+    },
+    "sport_kolam_renang": {
+      "title": "مسبح عام"
+    },
+    "sport_sirkuit_balap": {
+      "title": "حلبة سباق سيارات"
+    },
+    "sport_stadion": {
+      "title": "استاد وطني"
+    },
+    "sport_stadion_intl": {
+      "title": "ملعب رياضي دولي"
+    },
+    "sport_teater": {
+      "title": "مسرح الفنون الاستعراضية"
+    },
+    "subsidi": {
+      "title": "سياسة وتخصيص الدعم الحكومي"
+    },
+    "surplus_apbn": {
+      "title": "تحقيق فائض في الميزانية الوطنية"
+    },
+    "tambak_udang": {
+      "title": "مزرعة جمبري (روبيان)"
+    },
+    "tambang_batu_bara": {
+      "title": "منجم فحم"
+    },
+    "tambang_bijih_besi": {
+      "title": "منجم خام الحديد"
+    },
+    "tambang_emas": {
+      "title": "منجم ذهب"
+    },
+    "tambang_garam": {
+      "title": "منجم ملح وملاحات"
+    },
+    "tambang_litium": {
+      "title": "منجم استخراج الليثيوم"
+    },
+    "tambang_ltj": {
+      "title": "منجم العناصر الأرضية النادرة"
+    },
+    "tambang_uranium": {
+      "title": "منجم يورانيوم"
+    },
+    "tekan_kematian": {
+      "title": "خفض معدل الوفيات والسيطرة على الأوبئة"
+    },
+    "toleransi_agama": {
+      "title": "التسامح والتعايش الديني"
+    },
+    "upgrade_darat": {
+      "title": "تعزيز القوات البرية"
+    },
+    "upgrade_garda_nasional": {
+      "title": "تمكين الحرس الوطني"
+    },
+    "upgrade_kemendag": {
+      "title": "تطوير وزارة التجارة"
+    },
+    "upgrade_kemendikbud": {
+      "title": "تطوير وزارة التعليم"
+    },
+    "upgrade_kemenhan": {
+      "title": "تطوير وزارة الدفاع"
+    },
+    "upgrade_kemenkes": {
+      "title": "تطوير وزارة الصحة"
+    },
+    "upgrade_kemenkeu": {
+      "title": "تطوير وزارة المالية"
+    },
+    "upgrade_kemenkumham": {
+      "title": "تطوير وزارة العدل"
+    },
+    "upgrade_kemenlh": {
+      "title": "تطوير وزارة البيئة"
+    },
+    "upgrade_kemenpar": {
+      "title": "تطوير وزارة السياحة"
+    },
+    "upgrade_kemensains": {
+      "title": "تطوير وزارة العلوم والتكنولوجيا"
+    },
+    "upgrade_laut": {
+      "title": "تعزيز القوات البحرية"
+    },
+    "upgrade_polisi": {
+      "title": "رفع كفاءة جهاز الشرطة"
+    },
+    "upgrade_udara": {
+      "title": "تعزيز القوات الجوية"
+    }
+  },
+  "categories": {
+    "ekonomi": "الاقتصاد والضرائب",
+    "event": "تنظيم الفعاليات",
+    "geopolitik": "الجيوسياسية والدبلوماسية",
+    "hunian": "الإسكان والمستوطنات",
+    "kabinet": "مجلس الوزراء والوزراء",
+    "kementerian": "الوزارات والأمن",
+    "kesejahteraan": "الرعاية والمساعدات الاجتماعية",
+    "krisis": "إدارة الأزمات والطوارئ",
+    "layanan_publik": "الخدمات العامة والبنية التحتية",
+    "organisasi_pbb": "وكالات ومنظمات الأمم المتحدة",
+    "organisasi_regional": "المنظمات الإقليمية الدولية",
+    "pangan": "الأغذية والزراعة",
+    "penelitian": "البحوث والمختبرات",
+    "pertahanan": "الدفاع والشؤون العسكرية",
+    "populasi": "السكان والديموغرافيا",
+    "produksi": "إنتاج الموارد والطاقة",
+    "resolusi_dk_pbb": "مجلس الأمن الدولي",
+    "resolusi_pbb": "الجمعية العامة للأمم المتحدة",
+    "sosial_budaya": "المجتمع والثقافة والأيديولوجيا"
+  },
+  "labels": {
+    "Agama": "الشؤون الدينية",
+    "Agrikultur": "الزراعة والمحاصيل",
+    "Armada Aktif": "القوات والأسطول النشط",
+    "Badan PBB": "وكالة تابعة للأمم المتحدة",
+    "Bank Sentral": "البنك المركزي",
+    "Bantuan Sosial": "المساعدات الاجتماعية",
+    "Dewan Keamanan": "قرارات مجلس الأمن",
+    "Diplomasi": "الدبلوماسية",
+    "Gelar Acara": "تنظيم الفعاليات",
+    "Hunian": "الإسكان",
+    "Ideologi": "الأيديولوجيا الوطنية",
+    "Infrastruktur": "البنية التحتية",
+    "Infrastruktur Militer": "البنية التحتية العسكرية",
+    "Intelijen": "الاستخبارات",
+    "Keamanan": "الأمن العام",
+    "Keamanan Nasional": "الأمن القومي",
+    "Kedutaan Besar": "السفارة",
+    "Kelistrikan": "الكهرباء والطاقة",
+    "Kementerian": "الوزارات",
+    "Kesehatan": "الرعاية الصحية",
+    "Keterbukaan": "الانفتاح والمذهب",
+    "Komersial": "الأنشطة التجارية",
+    "Layanan Darurat": "خدمات الطوارئ",
+    "Logistik": "الخدمات اللوجستية",
+    "Manufaktur": "الصناعات التحويلية",
+    "Mineral & Energi": "المعادن والطاقة",
+    "Olahan Pangan": "الأغذية المصنعة",
+    "Olahraga & Hiburan": "الرياضة والترفيه",
+    "Operasi Militer": "العمليات العسكرية",
+    "Pendidikan": "التعليم والتدريب",
+    "Penegakan Hukum": "إنفاذ القانون والقضاء",
+    "Perikanan": "مصائد الأسماك",
+    "Peternakan": "الثروة الحيوانية",
+    "Populasi": "السكان",
+    "Regional": "منظمة إقليمية",
+    "Rekrutmen Menteri": "تعيين الوزراء",
+    "Resolusi PBB": "قرارات الأمم المتحدة",
+    "Riset Diplomasi": "أبحاث الدبلوماسية",
+    "Riset Ekonomi": "أبحاث الاقتصاد",
+    "Riset Militer": "الأبحاث العسكرية",
+    "Riset Umum": "الأبحاث العامة",
+    "Senjata Strategis": "الأسلحة الاستراتيجية",
+    "Sistem Ekonomi": "النظام الاقتصادي",
+    "Tanggap Darurat": "الاستجابة للطوارئ",
+    "Tingkat Hubungan": "مستوى العلاقات",
+    "Wilayah Kependudukan": "الأراضي المحتلة والسيطرة"
+  },
+  "claimSuccess": "🎉 تهانينا! تم استلام مكافأة المهمة \"{title}\": {reward}!"
 }

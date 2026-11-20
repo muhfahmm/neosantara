@@ -1,6 +1,7 @@
 import React from 'react';
-import { ShieldAlert, Check, X, Shield } from 'lucide-react';
+import { ShieldCheck, Check, X, Shield } from 'lucide-react';
 import { DefenseAllianceOfferNotification } from './defenseAllianceLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface DefenseAllianceNotificationCardProps {
   notification: DefenseAllianceOfferNotification;
@@ -13,27 +14,29 @@ export default function DefenseAllianceNotificationCard({
   onAccept,
   onReject
 }: DefenseAllianceNotificationCardProps) {
+  const { t } = useLanguage();
   const isHandled = notification.isHandled;
   const status = notification.status;
+  const partner = notification.partnerCountry || 'Mitra';
 
   return (
-    <div className={`border-l-4 ${isHandled ? (status === 'rejected' ? 'bg-rose-950/30 border-rose-500' : 'bg-emerald-950/30 border-emerald-500') : 'bg-indigo-950/40 border-indigo-500'} p-4 sm:p-5 rounded-r-2xl shadow-lg flex gap-4 items-start select-none relative overflow-hidden transition-all border border-indigo-500/20`}>
+    <div className={`border-l-4 ${isHandled ? (status === 'rejected' ? 'bg-rose-950/30 border-rose-500' : 'bg-emerald-950/30 border-emerald-500') : 'bg-indigo-950/40 border-indigo-400'} p-4 sm:p-5 rounded-r-2xl shadow-lg flex gap-4 items-start select-none relative overflow-hidden transition-all border border-indigo-500/20`}>
       <div className={`w-11 h-11 rounded-xl ${isHandled ? (status === 'rejected' ? 'bg-rose-500/20 border-rose-500/40 text-rose-400' : 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400') : 'bg-indigo-500/20 border-indigo-500/40 text-indigo-400'} border flex items-center justify-center shrink-0 shadow-inner`}>
-        {isHandled ? (status === 'rejected' ? <X className="w-6 h-6 text-rose-400" /> : <Check className="w-6 h-6 text-emerald-400" />) : <Shield className="w-6 h-6 animate-pulse text-indigo-400" />}
+        {isHandled ? (status === 'rejected' ? <X className="w-6 h-6 text-rose-400" /> : <Check className="w-6 h-6 text-emerald-400" />) : <Shield className="w-6 h-6 animate-pulse text-indigo-300" />}
       </div>
 
       <div className="flex-1 space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h4 className="text-sm font-black text-white uppercase tracking-wide leading-tight">
-            {notification.title}
+            {t('side_inbox.geopolitics.allianceTitle', { partner }) || notification.title}
           </h4>
           <span className="text-[10px] font-bold text-indigo-300 bg-indigo-900/60 px-2.5 py-0.5 rounded-full border border-indigo-500/40 uppercase tracking-wider">
-            Aliansi Militer
+            {t('side_inbox.geopolitics.allianceBadge') || 'Aliansi Pertahanan'}
           </span>
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          Pengirim: {notification.sender} | Tanggal: {notification.timestamp}
+          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
         </p>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">
@@ -48,7 +51,7 @@ export default function DefenseAllianceNotificationCard({
               title="Buka Detail Negara"
             >
               {status === 'rejected' ? <X className="w-3.5 h-3.5" /> : <Check className="w-3.5 h-3.5" />}
-              <span>{status === 'rejected' ? `ALIANSI PERTAHANAN DENGAN ${notification.partnerCountry} DITOLAK` : `ALIANSI PERTAHANAN RESMI TERBENTUK DENGAN ${notification.partnerCountry}`}</span>
+              <span>{t('side_inbox.geopolitics.allianceSigned', { partner }) || `ALIANSI PERTAHANAN DENGAN ${partner} RESMI BERLAKU`}</span>
             </button>
           ) : (
             <>
@@ -58,16 +61,16 @@ export default function DefenseAllianceNotificationCard({
                   className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-950/60 hover:bg-rose-900 border border-rose-500/40 text-rose-300 rounded-xl transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
                 >
                   <X className="w-3.5 h-3.5" />
-                  Tolak Aliansi
+                  <span>{t('side_inbox.actions.reject') || 'Tolak Aliansi'}</span>
                 </button>
               )}
               {onAccept && (
                 <button
                   onClick={onAccept}
-                  className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-root-accent hover:bg-emerald-400 text-root-canvas rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.3)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
+                  className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white rounded-xl transition-all cursor-pointer shadow-[0_0_12px_rgba(99,102,241,0.4)] flex items-center gap-1.5"
                 >
-                  <ShieldAlert className="w-3.5 h-3.5" />
-                  Bentuk Aliansi Pertahanan
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>{t('side_inbox.geopolitics.acceptAlliance') || 'Bentuk Aliansi Pertahanan'}</span>
                 </button>
               )}
             </>

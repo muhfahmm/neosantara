@@ -1,6 +1,7 @@
 import React from 'react';
 import { FlaskConical, Banknote, Shield, Globe2 } from 'lucide-react';
 import { ResearchChangeNotification } from './researchChangeLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface Props {
   notification: ResearchChangeNotification;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function ResearchChangeNotificationCard({ notification }: Props) {
+  const { t } = useLanguage();
   const { categoryKey, categoryName, focusScope } = notification;
 
   const getIcon = () => {
@@ -37,7 +39,7 @@ export default function ResearchChangeNotificationCard({ notification }: Props) 
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          Pengirim: {notification.sender} | Tanggal: {notification.timestamp}
+          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
         </p>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">

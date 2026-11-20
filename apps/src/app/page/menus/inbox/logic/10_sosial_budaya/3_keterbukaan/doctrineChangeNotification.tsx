@@ -1,6 +1,7 @@
 import React from 'react';
 import { Sliders, TrendingUp, TrendingDown, Shield } from 'lucide-react';
 import { DoctrineChangeNotification } from './doctrineChangeLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface Props {
   notification: DoctrineChangeNotification;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function DoctrineChangeNotificationCard({ notification }: Props) {
+  const { t } = useLanguage();
   const { sliderLabel, fromValue, toValue, threshold, effects } = notification;
   const isIncrease = toValue >= fromValue;
   const isPositive = threshold === 'above70' || threshold === 'drastic_up' || (isIncrease && threshold !== 'drastic_down');
@@ -31,7 +33,7 @@ export default function DoctrineChangeNotificationCard({ notification }: Props) 
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          Pengirim: {notification.sender} | Tanggal: {notification.timestamp}
+          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
         </p>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">

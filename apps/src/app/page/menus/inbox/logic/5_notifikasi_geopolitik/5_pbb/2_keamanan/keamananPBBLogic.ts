@@ -2,6 +2,7 @@ import { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_k
 import { chooseAIResolutionDuration } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
 import { isCountryAnnexed } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbVotingEligibility';
 import { getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
+import { createInboxNotificationText } from '../../../notificationMessage';
 
 export interface AIKeamananPBBNotification extends NotificationMessage {
   tradeType: 'usulan_keamanan_pbb';
@@ -65,7 +66,17 @@ export function generateAIKeamananPBBNotification(
     id: `keamanan-pbb-${proposerCountry}-${targetCountry}-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
     title: `🛡️ DEWAN KEAMANAN PBB: ${proposerCountry} ➔ ${targetCountry}`,
     sender: `Dewan Keamanan Tertinggi PBB`,
-    message: `DARURAT DEWAN KEAMANAN PBB! Negara ${proposerCountry} secara resmi mengajukan draf Operasi Kritis "${chosen.title}" terhadap ${targetCountry} selama ${duration} akibat hubungan diplomatik yang sangat buruk (Skor: ${relationScore}/100). Tindakan ini: ${chosen.desc}. Pemungutan suara Dewan Keamanan akan segera diselenggarakan!`,
+    ...createInboxNotificationText('side_inbox.pbbSecurityCouncilEmergency', {
+      proposer: proposerCountry,
+      target: targetCountry,
+      duration,
+      score: relationScore,
+      actionTitle: chosen.title,
+      actionDesc: chosen.desc,
+    }, {
+      actionTitle: `side_inbox.pbbActions.${chosen.action}.title`,
+      actionDesc: `side_inbox.pbbActions.${chosen.action}.desc`,
+    }),
     timestamp: dateStr,
     type: 'peringkat',
     value: relationScore,

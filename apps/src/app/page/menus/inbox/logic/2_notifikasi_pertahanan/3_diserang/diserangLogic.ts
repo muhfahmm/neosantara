@@ -1,4 +1,5 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { createInboxNotificationText } from '../../notificationMessage';
 
 export type AttackLevel = 'ancaman' | 'serangan_perbatasan' | 'deklarasi_perang' | 'invasi';
 
@@ -15,28 +16,28 @@ const ATTACK_POOL = [
   {
     attackLevel: 'ancaman' as AttackLevel,
     title: '🪖 Ancaman Perbatasan: Mobilisasi Pasukan Musuh',
-    message: (enemy: string) => `Lapor Panglima! Negara tetangga, ${enemy}, terdeteksi memobilisasi divisi lapis baja di dekat zona perbatasan. Belum ada tembakan dilepaskan, namun merupakan bentuk provokasi terbuka.`,
+    messageKey: 'side_inbox.notificationMessages.diserang.threat',
     costEM: 100,
     effectText: 'Diplomasi / Mobilisasi Darurat'
   },
   {
     attackLevel: 'serangan_perbatasan' as AttackLevel,
     title: '⚔️ Serangan Perbatasan: Batalyon Musuh Membuka Tembakan!',
-    message: (enemy: string) => `PERINGATAN MILITER! Pasukan militer ${enemy} menyerang pos perbatasan utama kita! Baku tembak dan artileri berkecamuk di garis depan.`,
+    messageKey: 'side_inbox.notificationMessages.diserang.borderAttack',
     costEM: 200,
     effectText: '-5% Kekuatan Militer, Korban 50+ Jiwa'
   },
   {
     attackLevel: 'deklarasi_perang' as AttackLevel,
     title: '📜 Deklarasi Perang Resmi oleh Negara Musuh!',
-    message: (enemy: string) => `KONFLIK BESAR! Pemerintah ${enemy} secara resmi menyatakan Deklarasi Perang penuh terhadap negara kita! Armada tempur mereka bergerak cepat.`,
+    messageKey: 'side_inbox.notificationMessages.diserang.warDeclaration',
     costEM: 300,
     effectText: 'Perang Aktif, Ekonomi -15%, Approval -10%'
   },
   {
     attackLevel: 'invasi' as AttackLevel,
     title: '🚨 Invasi Skala Penuh: Perebutan Wilayah!',
-    message: (enemy: string) => `INVASI MILITER MASIF! Pasukan gabungan ${enemy} melancarkan operasi invasi darat dan udara untuk merebut dan menganeksasi wilayah provinsi kita!`,
+    messageKey: 'side_inbox.notificationMessages.diserang.invasion',
     costEM: 400,
     effectText: 'Risiko Kehilangan 1 Provinsi jika Tidak Dipertahankan'
   }
@@ -96,9 +97,12 @@ export function generateDiserangNotification(
       ? '🚨 Invasi Skala Penuh: Pertahanan Wilayah Nasional!'
       : item.title,
     sender: `Markas Besar Angkatan Bersenjata`,
-    message: isInvasionWithoutTerritories
-      ? `INVASI MILITER MASIF! Pasukan gabungan ${enemyCountry} melancarkan operasi invasi darat dan udara untuk menembus pertahanan nasional kita. Saat ini kita belum memiliki wilayah aneksasi yang dapat direbut.`
-      : item.message(enemyCountry),
+    ...createInboxNotificationText(
+      isInvasionWithoutTerritories
+        ? 'side_inbox.notificationMessages.diserang.invasionWithoutTerritories'
+        : item.messageKey,
+      { enemy: enemyCountry }
+    ),
     timestamp: dateStr,
     type: 'kepuasan',
     value: 0,

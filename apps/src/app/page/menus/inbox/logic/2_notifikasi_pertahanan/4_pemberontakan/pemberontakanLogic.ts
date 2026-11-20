@@ -1,4 +1,5 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { createInboxNotificationText } from '../../notificationMessage';
 import {
   applyPencegahanSeparatismeBonus,
   applyGardaNasionalSeparatismeReduction,
@@ -57,7 +58,9 @@ export function generatePemberontakanNotification(
     id: `pemberontakan-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     title: `🔥 Pemberontakan Bersenjata di ${countryName}`,
     sender: `Otoritas Keamanan ${countryName}`,
-    message: `Lapor Presiden! Terjadi gelombang demonstrasi radikal dan gerakan separatis bersenjata di ${countryName}. Kelompok pemberontak menuntut perubahan status politik dari pemerintah pusat!`,
+    ...createInboxNotificationText('side_inbox.notificationMessages.rebellion', {
+      country: countryName,
+    }),
     timestamp: dateStr,
     type: 'kepuasan',
     value: 0,

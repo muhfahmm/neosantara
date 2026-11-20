@@ -1,6 +1,7 @@
 import React from 'react';
 import { ShieldAlert, AlertTriangle, ArrowRight, Shield } from 'lucide-react';
 import { AIKeamananPBBNotification } from './keamananPBBLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface KeamananPBBNotificationCardProps {
   notification: AIKeamananPBBNotification;
@@ -13,7 +14,33 @@ export default function KeamananPBBNotificationCard({
   onAccept,
   onRedirect
 }: KeamananPBBNotificationCardProps) {
+  const { t } = useLanguage();
   const score = notification.relationScore;
+  const proposer = notification.proposerCountry;
+  const target = notification.targetCountry;
+  const actionKey = notification.securityAction;
+
+  const actionInfo = actionKey && t(`side_inbox.pbbActions.${actionKey}.title`)
+    ? {
+        title: t(`side_inbox.pbbActions.${actionKey}.title`),
+        desc: t(`side_inbox.pbbActions.${actionKey}.desc`),
+      }
+    : {
+        title: notification.actionTitle,
+        desc: '',
+      };
+
+  const localizedTitle = t('side_inbox.pbbSecurityCouncilTitle', { proposer, target }) || notification.title;
+  const localizedMessage = actionInfo.desc
+    ? (t('side_inbox.pbbSecurityCouncilEmergency', {
+        proposer,
+        target,
+        actionTitle: actionInfo.title,
+        duration: notification.duration,
+        score,
+        actionDesc: actionInfo.desc,
+      }) || notification.message)
+    : notification.message;
 
   return (
     <div className="border-l-4 bg-rose-950/60 border-rose-500 p-4 sm:p-5 rounded-r-2xl shadow-xl flex gap-4 items-start select-none relative overflow-hidden transition-all border border-rose-500/40 animate-pulse">
@@ -24,26 +51,26 @@ export default function KeamananPBBNotificationCard({
       <div className="flex-1 space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h4 className="text-sm font-black text-rose-200 uppercase tracking-wide leading-tight">
-            {notification.title}
+            {localizedTitle}
           </h4>
           <span className="text-[10px] font-extrabold text-rose-200 bg-rose-900/90 px-2.5 py-0.5 rounded-full border border-rose-500/60 uppercase tracking-wider flex items-center gap-1">
             <AlertTriangle className="w-3 h-3 text-rose-400" />
-            Hubungan: {score}/100
+            {t('side_inbox.relation') || 'Hubungan'}: {score}/100
           </span>
         </div>
 
         <p className="text-[10px] font-bold text-rose-300 uppercase tracking-wider">
-          Pengusul: {notification.proposerCountry} | Target: {notification.targetCountry} | Tanggal: {notification.timestamp}
+          {proposer} ➔ {target} | {notification.timestamp}
         </p>
 
         <p className="text-xs font-medium text-slate-100 leading-relaxed pt-0.5">
-          {notification.message}
+          {localizedMessage}
         </p>
 
         <div className="bg-[#1A0A0A] border border-rose-500/40 rounded-xl p-2.5 text-xs text-rose-300 font-bold flex items-center justify-between">
           <span className="flex items-center gap-1.5">
             <Shield className="w-3.5 h-3.5 text-rose-400" />
-            {notification.actionTitle}
+            {actionInfo.title}
           </span>
         </div>
 
@@ -53,7 +80,7 @@ export default function KeamananPBBNotificationCard({
               onClick={onAccept || onRedirect}
               className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-500 hover:bg-rose-400 text-white rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(244,63,94,0.4)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
             >
-              <span>Dewan Keamanan PBB</span>
+              <span>{t('side_news.badges.invasi_gabungan_pbb') || 'Dewan Keamanan PBB'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           )}

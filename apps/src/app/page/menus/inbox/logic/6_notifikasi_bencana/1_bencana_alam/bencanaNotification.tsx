@@ -4,6 +4,7 @@
 import React from 'react';
 import { Flame, Check, X } from 'lucide-react';
 import { BencanaAlamNotification } from './bencanaLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface BencanaNotificationProps {
   notification: BencanaAlamNotification;
@@ -12,8 +13,11 @@ interface BencanaNotificationProps {
 }
 
 export default function BencanaNotification({ notification, onAccept, onReject }: BencanaNotificationProps) {
+  const { t } = useLanguage();
   const isHandled = notification.isHandled;
   const responseCost = notification.bantuanCost;
+  const name = notification.eventName || 'Bencana';
+  const province = notification.sender || 'Wilayah';
 
   return (
     <div className={`border-l-4 ${isHandled ? 'bg-emerald-950/30 border-emerald-500' : 'bg-rose-950/40 border-rose-500'} p-4 sm:p-5 rounded-r-2xl shadow-lg flex gap-4 items-start select-none relative overflow-hidden transition-all border border-rose-500/20`}>
@@ -26,16 +30,16 @@ export default function BencanaNotification({ notification, onAccept, onReject }
         {/* Header Title & Category */}
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h4 className="text-sm font-black text-white uppercase tracking-wide leading-tight">
-            {notification.title}
+            {t('side_inbox.disaster.naturalTitle', { name, province }) || notification.title}
           </h4>
           <span className="text-[10px] font-bold text-rose-300 bg-rose-900/60 px-2.5 py-0.5 rounded-full border border-rose-500/40 uppercase tracking-wider">
-            {notification.category || 'Bencana Alam'}
+            {t('side_inbox.disaster.naturalBadge') || notification.category || 'Bencana Alam'}
           </span>
         </div>
 
         {/* Sender & Timestamp */}
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          Pengirim: {notification.sender} | Tanggal: {notification.timestamp}
+          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
         </p>
 
         {/* Message */}
@@ -44,26 +48,18 @@ export default function BencanaNotification({ notification, onAccept, onReject }
         </p>
 
         {/* Details Grid: Korban & Kerugian */}
-        <div className="bg-root-canvas border border-rose-500/30 rounded-xl p-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs font-bold text-white shadow-inner">
+        <div className="bg-root-canvas border border-rose-500/30 rounded-xl p-3 grid grid-cols-2 sm:grid-cols-3 gap-2 text-center text-xs font-bold text-white shadow-inner">
           <div className="border-r border-rose-500/20 pr-1">
-            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Korban Terdampak</div>
+            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">{t('side_inbox.disaster.victims') || 'Korban Terdampak'}</div>
             <div className="text-rose-400 font-extrabold mt-0.5">{notification.korban?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Jiwa</div>
           </div>
-          <div className="border-r border-rose-500/20 px-1">
-            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Durasi</div>
-            <div className="text-cyan-300 font-extrabold mt-0.5">
-              {notification.remainingDurationDays !== undefined
-                ? `${Math.max(0, notification.remainingDurationDays)} Hari`
-                : `${notification.durationDays ?? 30} Hari`}
-            </div>
-          </div>
-          <div className="border-r border-rose-500/20 px-1">
-            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Total Kerugian</div>
+          <div className="border-r border-rose-500/20 pr-1">
+            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">{t('side_inbox.disaster.financialLoss') || 'Kerugian Finansial'}</div>
             <div className="text-amber-400 font-extrabold mt-0.5">{notification.totalKerugian?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
           </div>
-          <div className="pl-1">
-            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Alokasi Bantuan (1 NEO/Jiwa)</div>
-            <div className="text-root-accent font-extrabold mt-0.5">{responseCost?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
+          <div>
+            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">{t('side_inbox.disaster.aidCost') || 'Biaya Bantuan'}</div>
+            <div className="text-emerald-400 font-extrabold mt-0.5">{responseCost?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
           </div>
         </div>
 
@@ -72,7 +68,7 @@ export default function BencanaNotification({ notification, onAccept, onReject }
           {isHandled ? (
             <div className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/50 flex items-center gap-1.5">
               <Check className="w-3.5 h-3.5" />
-              <span>BANTUAN DARURAT SEBESAR {responseCost?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO TELAH DISALURKAN</span>
+              <span>{t('side_inbox.disaster.handled') || 'DANA BANTUAN DARURAT SELESAI DISALURKAN'}</span>
             </div>
           ) : (
             <>
@@ -82,16 +78,16 @@ export default function BencanaNotification({ notification, onAccept, onReject }
                   className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-950/60 hover:bg-rose-900 border border-rose-500/40 text-rose-300 rounded-xl transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
                 >
                   <X className="w-3.5 h-3.5" />
-                  Abaikan / Tolak
+                  <span>{t('side_inbox.actions.reject') || 'Abaikan'}</span>
                 </button>
               )}
               {onAccept && (
                 <button
                   onClick={onAccept}
-                  className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-root-accent hover:bg-emerald-400 text-root-canvas rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.3)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
+                  className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white rounded-xl transition-all cursor-pointer shadow-[0_0_12px_rgba(244,63,94,0.4)] flex items-center gap-1.5"
                 >
-                  <Check className="w-3.5 h-3.5" />
-                  Bantu Korban ({responseCost?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO)
+                  <Flame className="w-3.5 h-3.5" />
+                  <span>{t('side_inbox.disaster.sendAid') || 'Salurkan Bantuan'}</span>
                 </button>
               )}
             </>

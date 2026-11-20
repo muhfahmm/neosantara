@@ -1,6 +1,7 @@
 import React from 'react';
 import { Shield, Check, X } from 'lucide-react';
 import { KeamananNotification } from './keamananLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface KeamananNotificationProps {
   notification: KeamananNotification;
@@ -13,6 +14,7 @@ export default function KeamananNotificationCard({
   onAccept,
   onReject,
 }: KeamananNotificationProps) {
+  const { t } = useLanguage();
   const isHandled = notification.isHandled;
 
   return (
@@ -34,7 +36,7 @@ export default function KeamananNotificationCard({
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          Pengirim: {notification.sender} | Tanggal: {notification.timestamp}
+          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
         </p>
         <p className="text-[10px] font-bold uppercase tracking-wider text-rose-300">
           Risiko keamanan dari sektor kesehatan &amp; penegakan hukum: {notification.securityRiskPercent}%
@@ -48,13 +50,13 @@ export default function KeamananNotificationCard({
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Warga Terdampak</div>
             <div className="text-rose-400 font-extrabold mt-0.5">{notification.korban.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Orang</div>
           </div>
-          <div className="border-r border-rose-500/20 px-1">
+          <div className="border-r border-rose-500/20 pr-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Total Kerugian</div>
             <div className="text-amber-400 font-extrabold mt-0.5">{notification.totalKerugian.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
           </div>
-          <div className="pl-1">
-            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Biaya Operasi Kepolisian</div>
-            <div className="text-root-accent font-extrabold mt-0.5">{notification.responseCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
+          <div>
+            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Biaya Penanganan</div>
+            <div className="text-emerald-400 font-extrabold mt-0.5">{notification.bantuanCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
           </div>
         </div>
 
@@ -62,20 +64,26 @@ export default function KeamananNotificationCard({
           {isHandled ? (
             <div className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/50 flex items-center gap-1.5">
               <Check className="w-3.5 h-3.5" />
-              <span>OPERASI KEPOLISIAN SEBESAR {notification.responseCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO TELAH DILAKSANAKAN</span>
+              <span>OPERASI PENGAMANAN &amp; PENERTIBAN TUNTAS</span>
             </div>
           ) : (
             <>
               {onReject && (
-                <button onClick={onReject} className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-950/60 hover:bg-rose-900 border border-rose-500/40 text-rose-300 rounded-xl transition-all cursor-pointer shadow-sm flex items-center gap-1.5">
+                <button
+                  onClick={onReject}
+                  className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-950/60 hover:bg-rose-900 border border-rose-500/40 text-rose-300 rounded-xl transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
+                >
                   <X className="w-3.5 h-3.5" />
-                  Abaikan / Tolak
+                  <span>Abaikan</span>
                 </button>
               )}
               {onAccept && (
-                <button onClick={onAccept} className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-root-accent hover:bg-emerald-400 text-root-canvas rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.3)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]">
-                  <Check className="w-3.5 h-3.5" />
-                  Danai Operasi ({notification.responseCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO)
+                <button
+                  onClick={onAccept}
+                  className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white rounded-xl transition-all cursor-pointer shadow-[0_0_12px_rgba(244,63,94,0.4)] flex items-center gap-1.5 font-bold"
+                >
+                  <Shield className="w-3.5 h-3.5" />
+                  <span>Kerahkan Operasi Pengamanan</span>
                 </button>
               )}
             </>

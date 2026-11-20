@@ -50,5 +50,764 @@
     "populasi": "Open Demographics indicator and formulate policy program for {title}.",
     "default": "Perform action \"{title}\" via the corresponding menu to fulfill this mission.",
     "unitMin": "at least {target} units of "
-  }
+  },
+  "missions": {
+    "aliansi_pertahanan": {
+      "title": "Form Military Defense Alliance"
+    },
+    "angka_kelahiran": {
+      "title": "Increase National Birth Rate"
+    },
+    "bangun_barak": {
+      "title": "Military Barracks"
+    },
+    "bangun_gudang_senjata": {
+      "title": "Armory & Weapons Depot"
+    },
+    "bangun_hangar_tank": {
+      "title": "Armor & Tank Hangar"
+    },
+    "bangun_kedubes": {
+      "title": "Establish Bilateral Embassy"
+    },
+    "bangun_pangkalan_laut": {
+      "title": "Naval Fleet Base"
+    },
+    "bangun_pangkalan_udara": {
+      "title": "Military Air Base"
+    },
+    "bangun_plta": {
+      "title": "Hydroelectric Dam (HPP)"
+    },
+    "bangun_pltb": {
+      "title": "Wind Turbine Power Farm"
+    },
+    "bangun_pltfn": {
+      "title": "Nuclear Fusion Power Plant (NFPP)"
+    },
+    "bangun_pltg": {
+      "title": "Gas Turbine Power Plant"
+    },
+    "bangun_pltgl": {
+      "title": "Ocean Wave & Tidal Plant"
+    },
+    "bangun_plth": {
+      "title": "Hydrogen Fuel Power Plant"
+    },
+    "bangun_pltn": {
+      "title": "Nuclear Power Plant (NPP)"
+    },
+    "bangun_pltp": {
+      "title": "Geothermal Power Plant"
+    },
+    "bangun_plts": {
+      "title": "Solar Power Station (SPP)"
+    },
+    "bangun_pltu": {
+      "title": "Thermal Coal Power Plant"
+    },
+    "budidaya_mutiara": {
+      "title": "Pearl Oyster Culture"
+    },
+    "dk_bantuan_logistik": {
+      "title": "Peacekeeping Logistic Support"
+    },
+    "dk_blokade_ekonomi": {
+      "title": "Comprehensive Economic Blockade"
+    },
+    "dk_blokade_laut": {
+      "title": "Naval Blockade"
+    },
+    "dk_blokade_penuh": {
+      "title": "Total Air, Land & Sea Embargo"
+    },
+    "dk_dukung_negara": {
+      "title": "Sovereign State Support"
+    },
+    "dk_invasi_militer": {
+      "title": "Military Coalition Invasion"
+    },
+    "doktrin_keterbukaan": {
+      "title": "Reform National Openness Doctrine"
+    },
+    "edukasi_dasar": {
+      "title": "Primary School"
+    },
+    "edukasi_laboratorium": {
+      "title": "Research Laboratory"
+    },
+    "edukasi_lanjutan": {
+      "title": "Senior High School"
+    },
+    "edukasi_lembaga": {
+      "title": "Specialized Vocational Institute"
+    },
+    "edukasi_menengah": {
+      "title": "Junior High School"
+    },
+    "edukasi_observatorium": {
+      "title": "Astronomical Observatory"
+    },
+    "edukasi_prasekolah": {
+      "title": "Preschool & Kindergarten"
+    },
+    "edukasi_pusat_kembang": {
+      "title": "Technology Development Center"
+    },
+    "edukasi_pusat_riset": {
+      "title": "National Research Center"
+    },
+    "edukasi_universitas": {
+      "title": "State University"
+    },
+    "ekspor_perdagangan": {
+      "title": "Export Trade Commodities"
+    },
+    "event_balap_f1": {
+      "title": "Formula 1 Grand Prix"
+    },
+    "event_festival": {
+      "title": "Festival"
+    },
+    "event_karnaval": {
+      "title": "Carnival"
+    },
+    "event_konser": {
+      "title": "Concert"
+    },
+    "event_olimpiade": {
+      "title": "Olympic Games"
+    },
+    "event_piala_davis": {
+      "title": "Davis Cup"
+    },
+    "event_piala_fifa": {
+      "title": "FIFA World Cup"
+    },
+    "event_piala_rugbi": {
+      "title": "Rugby World Cup"
+    },
+    "ganti_agama": {
+      "title": "Adopt National State Religion"
+    },
+    "ganti_ideologi": {
+      "title": "Transform State Ideology"
+    },
+    "hapus_tunawisma": {
+      "title": "Eliminate Homelessness with Shelter"
+    },
+    "harga_pokok": {
+      "title": "Adjust Basic Commodity Prices"
+    },
+    "hukum_akademi_polisi": {
+      "title": "Police Academy"
+    },
+    "hukum_bantuan": {
+      "title": "Legal Aid Center"
+    },
+    "hukum_kejaksaan": {
+      "title": "Attorney General Office"
+    },
+    "hukum_pengadilan": {
+      "title": "District Court"
+    },
+    "hukum_pos_polisi": {
+      "title": "Police Station"
+    },
+    "hunian_apartemen": {
+      "title": "Modern High-Rise Apartments"
+    },
+    "hunian_mansion": {
+      "title": "Luxury Mansion Estates"
+    },
+    "hunian_subsidi": {
+      "title": "Subsidized Public Housing"
+    },
+    "hutang_lunas": {
+      "title": "Repay Sovereign Debt Installments"
+    },
+    "ideologi_negara": {
+      "title": "Reinforce National Ideology"
+    },
+    "impor_perdagangan": {
+      "title": "Import Essential Commodities"
+    },
+    "indeks_kesejahteraan": {
+      "title": "Reach 75% Public Welfare Index"
+    },
+    "infra_bandara": {
+      "title": "International Airport"
+    },
+    "infra_helipad": {
+      "title": "Helipad & Civil Airfield"
+    },
+    "infra_jalan_raya": {
+      "title": "National Highways"
+    },
+    "infra_jalur_sepeda": {
+      "title": "Bicycle Paths"
+    },
+    "infra_kereta_bawah": {
+      "title": "Metro / Subway System"
+    },
+    "infra_pelabuhan": {
+      "title": "International Seaport"
+    },
+    "infra_stasiun_kereta": {
+      "title": "Railway Station"
+    },
+    "infra_terminal_bus": {
+      "title": "Bus Terminal"
+    },
+    "kebijakan_bank_sentral": {
+      "title": "Optimize Central Bank Reserves"
+    },
+    "kebun_kakao": {
+      "title": "Cocoa Plantation"
+    },
+    "kebun_karet": {
+      "title": "Rubber Plantation"
+    },
+    "kebun_kopi": {
+      "title": "Coffee Plantation"
+    },
+    "kebun_sawit": {
+      "title": "Oil Palm Plantation"
+    },
+    "kebun_sayur": {
+      "title": "Vegetable Garden"
+    },
+    "kebun_tebu": {
+      "title": "Sugarcane Plantation"
+    },
+    "kebun_teh": {
+      "title": "Tea Plantation"
+    },
+    "kepuasan_target": {
+      "title": "Reach 80% Public Approval Index"
+    },
+    "kes_bantuan_pendidikan": {
+      "title": "Student Education Aid"
+    },
+    "kes_bantuan_tunai": {
+      "title": "Direct Cash Assistance"
+    },
+    "kes_jaminan_kesehatan": {
+      "title": "Universal Healthcare Coverage"
+    },
+    "kes_pasar_murah": {
+      "title": "National Fair Price Markets"
+    },
+    "kes_perbaikan_rumah": {
+      "title": "Public Housing Renovation"
+    },
+    "kes_subsidi_pangan": {
+      "title": "Staple Food Subsidies"
+    },
+    "kilang_gas_alam": {
+      "title": "Natural Gas Liquefaction Facility"
+    },
+    "kilang_minyak_bumi": {
+      "title": "Crude Oil Refinery"
+    },
+    "komersial_grosir": {
+      "title": "Textile Wholesale Center"
+    },
+    "komersial_hotel": {
+      "title": "Luxury Star Hotel"
+    },
+    "komersial_mall": {
+      "title": "Shopping Mall & Center"
+    },
+    "komersial_restoran": {
+      "title": "Restaurant & Culinary Center"
+    },
+    "kontrak_penelitian": {
+      "title": "International Joint Research Contract"
+    },
+    "krisis_bencana_alam": {
+      "title": "Deploy Natural Disaster Relief"
+    },
+    "krisis_klaim_hadiah": {
+      "title": "Claim Daily Resource Supplies"
+    },
+    "krisis_operasi_polisi": {
+      "title": "Fund Crime Crackdown Operation"
+    },
+    "krisis_separatisme": {
+      "title": "Quell Regional Separatist Tensions"
+    },
+    "krisis_wabah_penyakit": {
+      "title": "Control Epidemic & Distribute Vaccines"
+    },
+    "ladang_gandum": {
+      "title": "Wheat Field"
+    },
+    "ladang_jagung": {
+      "title": "Corn Field"
+    },
+    "ladang_kedelai": {
+      "title": "Soybean Field"
+    },
+    "ladang_umbi": {
+      "title": "Root Tuber Field"
+    },
+    "layanan_darurat": {
+      "title": "Emergency Medical Services Readiness"
+    },
+    "medis_pusat_diagnostik": {
+      "title": "Diagnostic Center"
+    },
+    "medis_rs_besar": {
+      "title": "General Medical Hospital"
+    },
+    "medis_rs_kecil": {
+      "title": "Community Clinic / Hospital"
+    },
+    "menteri_rekrut_kesehatan": {
+      "title": "Appoint Health Minister"
+    },
+    "menteri_rekrut_keuangan": {
+      "title": "Appoint Finance Minister"
+    },
+    "menteri_rekrut_pendidikan": {
+      "title": "Appoint Education Minister"
+    },
+    "menteri_rekrut_pertahanan": {
+      "title": "Appoint Defense Minister"
+    },
+    "menteri_rekrut_polisi": {
+      "title": "Appoint National Police Chief"
+    },
+    "menteri_rekrut_tier_tinggi": {
+      "title": "Recruit Elite Minister (Tier IV / V)"
+    },
+    "naikkan_hubungan": {
+      "title": "Improve Bilateral Relations"
+    },
+    "operasi_sabotase": {
+      "title": "Sabotage Enemy Infrastructure"
+    },
+    "operasi_serang_negara": {
+      "title": "Declare Military Invasion"
+    },
+    "operasi_spionase": {
+      "title": "Covert Espionage Operation"
+    },
+    "pabrik_air_mineral": {
+      "title": "Bottled Mineral Water Plant"
+    },
+    "pabrik_beras": {
+      "title": "Rice Milling Factory"
+    },
+    "pabrik_besi": {
+      "title": "Steel & Iron Smelter"
+    },
+    "pabrik_daging": {
+      "title": "Meat Processing Plant"
+    },
+    "pabrik_gula": {
+      "title": "Sugar Processing Mill"
+    },
+    "pabrik_kayu": {
+      "title": "Lumber & Timber Mill"
+    },
+    "pabrik_mesin": {
+      "title": "Machinery & Automotive Plant"
+    },
+    "pabrik_mie_instan": {
+      "title": "Instant Noodle Factory"
+    },
+    "pabrik_minyak_goreng": {
+      "title": "Cooking Oil Refinery"
+    },
+    "pabrik_roti": {
+      "title": "Commercial Bakery Factory"
+    },
+    "pabrik_semen_beton": {
+      "title": "Cement & Concrete Plant"
+    },
+    "pabrik_semikonduktor": {
+      "title": "Semiconductor Wafer Fab"
+    },
+    "pabrik_susu": {
+      "title": "Dairy & Milk Processing Plant"
+    },
+    "pajak_kelola": {
+      "title": "Tax Policy Management"
+    },
+    "pajak_naik": {
+      "title": "Raise Tax Rates"
+    },
+    "pajak_turun": {
+      "title": "Lower Tax Rates"
+    },
+    "pakta_non_agresi": {
+      "title": "Ratify Non-Aggression Pact"
+    },
+    "pbb_fao": {
+      "title": "FAO - Food & Agriculture Organization"
+    },
+    "pbb_ilo": {
+      "title": "ILO - International Labour Organization"
+    },
+    "pbb_imf": {
+      "title": "IMF - International Monetary Fund"
+    },
+    "pbb_imo": {
+      "title": "IMO - International Maritime Organization"
+    },
+    "pbb_interpol": {
+      "title": "Interpol - International Criminal Police"
+    },
+    "pbb_itu": {
+      "title": "ITU - International Telecommunication Union"
+    },
+    "pbb_unesco": {
+      "title": "UNESCO - UN Educational & Cultural"
+    },
+    "pbb_unhcr": {
+      "title": "UNHCR - UN Refugee Agency"
+    },
+    "pbb_unicef": {
+      "title": "UNICEF - UN Children's Fund"
+    },
+    "pbb_who": {
+      "title": "WHO - World Health Organization"
+    },
+    "pbb_wmo": {
+      "title": "WMO - World Meteorological Organization"
+    },
+    "pbb_world_bank": {
+      "title": "World Bank - Global Financial Institution"
+    },
+    "pbb_wto": {
+      "title": "WTO - World Trade Organization"
+    },
+    "pdb_ranking": {
+      "title": "Boost National GDP Ranking"
+    },
+    "perikanan_ikan": {
+      "title": "Fish Hatchery & Trawler Fleet"
+    },
+    "pertahankan_wilayah": {
+      "title": "Govern Annexed Territory"
+    },
+    "peternakan_ayam": {
+      "title": "Poultry Farm"
+    },
+    "peternakan_domba": {
+      "title": "Sheep & Goat Farm"
+    },
+    "peternakan_sapi_perah": {
+      "title": "Dairy Cattle Farm"
+    },
+    "peternakan_sapi_potong": {
+      "title": "Beef Cattle Ranch"
+    },
+    "pinjam_bank": {
+      "title": "Borrow from International Bank"
+    },
+    "pinjam_negara": {
+      "title": "Bilateral Loan from Partner Country"
+    },
+    "program_icbm": {
+      "title": "Deploy ICBM Strategic Missile"
+    },
+    "reg_arab_league": {
+      "title": "Arab League - Regional Alliance"
+    },
+    "reg_asean": {
+      "title": "ASEAN - Southeast Asia"
+    },
+    "reg_au": {
+      "title": "African Union - Continental Integration"
+    },
+    "reg_brics": {
+      "title": "BRICS - Emerging Economic Bloc"
+    },
+    "reg_eu": {
+      "title": "European Union - EU Single Market"
+    },
+    "reg_g20": {
+      "title": "G20 - Group of Twenty"
+    },
+    "reg_liga_arab": {
+      "title": "Arab League"
+    },
+    "reg_nato": {
+      "title": "NATO - North Atlantic Treaty Organization"
+    },
+    "reg_oas": {
+      "title": "OAS - Organization of American States"
+    },
+    "reg_oki": {
+      "title": "OIC - Organization of Islamic Cooperation"
+    },
+    "reg_opec": {
+      "title": "OPEC - Petroleum Exporting Countries"
+    },
+    "reg_uni_afrika": {
+      "title": "African Union (AU)"
+    },
+    "resolusi_embargo_ekonomi": {
+      "title": "Multilateral Economic Embargo"
+    },
+    "resolusi_embargo_senjata": {
+      "title": "Arms Sales Embargo"
+    },
+    "resolusi_invasi": {
+      "title": "Invasion Authorization Resolution"
+    },
+    "resolusi_larangan_perang": {
+      "title": "Global Non-War Resolution"
+    },
+    "resolusi_larangan_produksi": {
+      "title": "Production Ban Resolution"
+    },
+    "riset_agrikultur_cerdas": {
+      "title": "Smart Multi-Commodity Agriculture Research"
+    },
+    "riset_aliansi_tahan": {
+      "title": "Defense Alliance Protocol Research"
+    },
+    "riset_diplomasi_kedubes": {
+      "title": "Embassy Benefits Optimization Research"
+    },
+    "riset_drone_otonom": {
+      "title": "Tactical Autonomous Recon Drone Research"
+    },
+    "riset_eksplorasi_sda": {
+      "title": "Mineral & Energy Exploration Research"
+    },
+    "riset_harmonisasi_fiskal": {
+      "title": "Global Fiscal Harmonization Research"
+    },
+    "riset_jet_tempur": {
+      "title": "Air Superiority Fighter Jet Research"
+    },
+    "riset_mitigasi_bencana": {
+      "title": "Global Disaster Mitigation Research"
+    },
+    "riset_otomasi": {
+      "title": "Fabrication & Semiconductor Automation"
+    },
+    "riset_pangan_dasar": {
+      "title": "Basic Food Processing Research"
+    },
+    "riset_perikanan_terpadu": {
+      "title": "Integrated Aquaculture Research"
+    },
+    "riset_peternakan_presisi": {
+      "title": "Precision Livestock Farming Research"
+    },
+    "riset_pos_perbatasan": {
+      "title": "Border Defense Outpost Research"
+    },
+    "riset_radar_pesisir": {
+      "title": "Coastal Early Warning Radar Research"
+    },
+    "riset_rekayasa_material": {
+      "title": "Advanced Manufacturing Materials Research"
+    },
+    "riset_senjata_presisi": {
+      "title": "Precision Assault Rifle Research"
+    },
+    "riset_tank_gen5": {
+      "title": "Generation 5 Main Battle Tank Research"
+    },
+    "riset_tank_komposit": {
+      "title": "Composite Armor Battle Tank Research"
+    },
+    "riset_upgrade_card": {
+      "title": "Upgrade Research Cards to Level II / III"
+    },
+    "sawah_padi": {
+      "title": "Paddy Rice Field"
+    },
+    "silo_nuklir": {
+      "title": "Nuclear Warhead Launch Readiness"
+    },
+    "sistem_ekonomi": {
+      "title": "Reform Economic System"
+    },
+    "sport_bioskop": {
+      "title": "Cinema & Theater"
+    },
+    "sport_esports": {
+      "title": "Esports Arena"
+    },
+    "sport_gokart": {
+      "title": "Go-Kart Circuit"
+    },
+    "sport_golf": {
+      "title": "Golf Course"
+    },
+    "sport_gym": {
+      "title": "Fitness Center & Gym"
+    },
+    "sport_kolam_renang": {
+      "title": "Public Swimming Pool"
+    },
+    "sport_sirkuit_balap": {
+      "title": "Motorsport Race Track"
+    },
+    "sport_stadion": {
+      "title": "National Stadium"
+    },
+    "sport_stadion_intl": {
+      "title": "International Arena"
+    },
+    "sport_teater": {
+      "title": "Performing Arts Theater"
+    },
+    "subsidi": {
+      "title": "Subsidy Policy & Allocation"
+    },
+    "surplus_apbn": {
+      "title": "Achieve National Budget Surplus"
+    },
+    "tambak_udang": {
+      "title": "Shrimp Aquaculture Pond"
+    },
+    "tambang_batu_bara": {
+      "title": "Coal Mine"
+    },
+    "tambang_bijih_besi": {
+      "title": "Iron Ore Mine"
+    },
+    "tambang_emas": {
+      "title": "Gold Mine"
+    },
+    "tambang_garam": {
+      "title": "Salt Mine / Salt Works"
+    },
+    "tambang_litium": {
+      "title": "Lithium Extraction Mine"
+    },
+    "tambang_ltj": {
+      "title": "Rare Earth Elements Mine"
+    },
+    "tambang_uranium": {
+      "title": "Uranium Mine"
+    },
+    "tekan_kematian": {
+      "title": "Reduce Mortality & Epidemic Impact"
+    },
+    "toleransi_agama": {
+      "title": "Religious Harmony & Tolerance"
+    },
+    "upgrade_darat": {
+      "title": "Upgrade Army Ground Forces"
+    },
+    "upgrade_garda_nasional": {
+      "title": "Empower National Guard"
+    },
+    "upgrade_kemendag": {
+      "title": "Upgrade Ministry of Trade"
+    },
+    "upgrade_kemendikbud": {
+      "title": "Upgrade Ministry of Education"
+    },
+    "upgrade_kemenhan": {
+      "title": "Upgrade Ministry of Defense"
+    },
+    "upgrade_kemenkes": {
+      "title": "Upgrade Ministry of Health"
+    },
+    "upgrade_kemenkeu": {
+      "title": "Upgrade Ministry of Finance"
+    },
+    "upgrade_kemenkumham": {
+      "title": "Upgrade Ministry of Justice"
+    },
+    "upgrade_kemenlh": {
+      "title": "Upgrade Ministry of Environment"
+    },
+    "upgrade_kemenpar": {
+      "title": "Upgrade Ministry of Tourism"
+    },
+    "upgrade_kemensains": {
+      "title": "Upgrade Ministry of Science & Tech"
+    },
+    "upgrade_laut": {
+      "title": "Upgrade Navy Maritime Forces"
+    },
+    "upgrade_polisi": {
+      "title": "Upgrade Police Enforcement"
+    },
+    "upgrade_udara": {
+      "title": "Upgrade Air Combat Forces"
+    }
+  },
+  "categories": {
+    "ekonomi": "Economy & Tax",
+    "event": "Host Events",
+    "geopolitik": "Geopolitics & Diplomacy",
+    "hunian": "Housing & Residential",
+    "kabinet": "Cabinet & Ministers",
+    "kementerian": "Ministries & Security",
+    "kesejahteraan": "Social Welfare & Aid",
+    "krisis": "Crisis & Emergency Management",
+    "layanan_publik": "Public Services & Infrastructure",
+    "organisasi_pbb": "UN Agencies & Organizations",
+    "organisasi_regional": "Regional Organizations",
+    "pangan": "Food & Agriculture",
+    "penelitian": "Research & Laboratory",
+    "pertahanan": "Defense & Military",
+    "populasi": "Population & Demographics",
+    "produksi": "Resource Production & Energy",
+    "resolusi_dk_pbb": "UN Security Council",
+    "resolusi_pbb": "UN General Assembly",
+    "sosial_budaya": "Socio-Cultural & Ideology"
+  },
+  "labels": {
+    "Agama": "Religion",
+    "Agrikultur": "Agriculture",
+    "Armada Aktif": "Active Fleet",
+    "Badan PBB": "UN Agency",
+    "Bank Sentral": "Central Bank",
+    "Bantuan Sosial": "Social Welfare",
+    "Dewan Keamanan": "Security Council",
+    "Diplomasi": "Diplomacy",
+    "Gelar Acara": "Host Events",
+    "Hunian": "Housing",
+    "Ideologi": "Ideology",
+    "Infrastruktur": "Infrastructure",
+    "Infrastruktur Militer": "Military Infrastructure",
+    "Intelijen": "Intelligence",
+    "Keamanan": "Security",
+    "Keamanan Nasional": "National Security",
+    "Kedutaan Besar": "Embassy",
+    "Kelistrikan": "Power & Electricity",
+    "Kementerian": "Ministry",
+    "Kesehatan": "Healthcare",
+    "Keterbukaan": "Openness",
+    "Komersial": "Commercial",
+    "Layanan Darurat": "Emergency Services",
+    "Logistik": "Logistics",
+    "Manufaktur": "Manufacturing",
+    "Mineral & Energi": "Minerals & Energy",
+    "Olahan Pangan": "Processed Food",
+    "Olahraga & Hiburan": "Sports & Entertainment",
+    "Operasi Militer": "Military Operation",
+    "Pendidikan": "Education",
+    "Penegakan Hukum": "Law Enforcement",
+    "Perikanan": "Fisheries",
+    "Peternakan": "Livestock",
+    "Populasi": "Population",
+    "Regional": "Regional",
+    "Rekrutmen Menteri": "Minister Recruitment",
+    "Resolusi PBB": "UN Resolution",
+    "Riset Diplomasi": "Diplomacy Research",
+    "Riset Ekonomi": "Economy Research",
+    "Riset Militer": "Military Research",
+    "Riset Umum": "General Research",
+    "Senjata Strategis": "Strategic Weapons",
+    "Sistem Ekonomi": "Economic System",
+    "Tanggap Darurat": "Emergency Response",
+    "Tingkat Hubungan": "Relations Level",
+    "Wilayah Kependudukan": "Occupied Territory"
+  },
+  "claimSuccess": "🎉 Congratulations! Mission \"{title}\" reward claimed: {reward}!"
 }
