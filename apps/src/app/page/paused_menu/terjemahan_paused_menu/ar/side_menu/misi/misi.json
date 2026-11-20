@@ -1,9 +1,15 @@
 {
-    "noActiveMissions":  "لا توجد مهام نشطة حالياً.",
-    "mainMissions":  "مهام رئيسية",
-    "claimReward":  "استلام المكافأة",
-    "completed":  "مكتمل",
-    "dailyMissions":  "مهام يومية",
-    "title":  "المهام الوطنية",
-    "progress":  "التقدم"
+  "title": "المهام الرئاسية",
+  "mainMissions": "مهام نشطة",
+  "claimReward": "استلام المكافأة",
+  "completed": "مكتمل",
+  "dailyMissions": "مهام يومية",
+  "progress": "التقدم",
+  "noActiveMissions": "لا توجد مهام نشطة حالياً.",
+  "expTotal": "مجموع الخبرة",
+  "suggestedReward": "المكافأة المقترحة",
+  "start": "بدء",
+  "readyToClaim": "جاهز للاستلام",
+  "previousRewards": "مكافآت المهام السابقة",
+  "unclaimed": "غير مستلمة"
 }

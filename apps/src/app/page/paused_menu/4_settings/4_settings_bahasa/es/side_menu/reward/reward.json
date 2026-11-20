@@ -1,8 +1,13 @@
-﻿{
-    "availableIn":  "Available in",
-    "dailyLogin":  "Daily Login Reward",
-    "claim":  "Claim",
-    "claimed":  "Claimed",
-    "title":  "Rewards \u0026 Bonuses",
-    "bonusStreak":  "Day Streak"
+{
+  "title": "Recompensas Diarias",
+  "dailyLogin": "Recompensa de Inicio Diario",
+  "claim": "¡Reclamar!",
+  "claimed": "Reclamado",
+  "availableIn": "Disponible en",
+  "bonusStreak": "Racha de Días",
+  "dayProgress": "Día {current} de {total}",
+  "claimedToday": "Ya reclamado hoy",
+  "clickToClaim": "¡Haz clic en la casilla de hoy para reclamar!",
+  "dayLabel": "DÍA {day}",
+  "footerNotice": "Las recompensas difieren cada día y se sortean semanalmente. Valores de 10.000, 15.000, 20.000 o 25.000 aleatorios por día."
 }

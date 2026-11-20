@@ -1,8 +1,13 @@
-﻿{
-    "availableIn":  "Tersedia dalam",
-    "dailyLogin":  "Hadiah Masuk Harian",
-    "claim":  "Klaim",
-    "claimed":  "Sudah Diklaim",
-    "title":  "Hadiah \u0026 Bonus",
-    "bonusStreak":  "Runtutan Hari"
+{
+  "title": "Hadiah Harian",
+  "dailyLogin": "Hadiah Masuk Harian",
+  "claim": "Klaim!",
+  "claimed": "Sudah Diklaim",
+  "availableIn": "Tersedia dalam",
+  "bonusStreak": "Runtutan Hari",
+  "dayProgress": "Hari ke-{current} dari {total}",
+  "claimedToday": "Sudah diklaim hari ini",
+  "clickToClaim": "Klik kotak hari ini untuk klaim!",
+  "dayLabel": "HARI {day}",
+  "footerNotice": "Hadiah berbeda setiap hari dan diacak setiap minggu. Nominal 10.000, 15.000, 20.000, atau 25.000 diacak untuk tiap hari."
 }

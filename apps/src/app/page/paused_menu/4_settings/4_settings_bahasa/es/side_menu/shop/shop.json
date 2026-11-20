@@ -1,9 +1,10 @@
-﻿{
-    "buy":  "Buy",
-    "gems":  "Gems Store",
-    "coins":  "Treasury (NEO)",
-    "premium":  "Premium Bundles",
-    "insufficientFunds":  "Insufficient Funds",
-    "title":  "Game Store",
-    "discounts":  "Limited Discounts"
+{
+  "title": "Tienda del Juego",
+  "coins": "Artículos NEO (Monedas)",
+  "gems": "Artículos GEMS",
+  "premium": "Categorías Adicionales",
+  "buy": "Comprar",
+  "insufficientFunds": "Saldo Insuficiente",
+  "discounts": "Ofertas Limitadas",
+  "inDevelopment": "En Desarrollo"
 }

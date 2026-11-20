@@ -1672,7 +1672,7 @@ export default function MissionModals({
                     </span>
                   )}
                   <span className="text-[10px] text-root-subtle font-semibold uppercase tracking-wider">
-                    Jumlah Pengalaman: <span className="text-amber-400 font-black">Ex {totalExp}</span>
+                    {t('side_misi.expTotal')}: <span className="text-amber-400 font-black">Ex {totalExp}</span>
                   </span>
                 </div>
               }
@@ -1692,10 +1692,10 @@ export default function MissionModals({
                 <section className="space-y-2 rounded-xl border border-emerald-400/30 bg-emerald-500/5 p-3">
                   <div className="flex items-center justify-between gap-2">
                     <h3 className="text-[11px] font-black uppercase tracking-wide text-emerald-300">
-                      Hadiah Misi Sebelumnya
+                      {t('side_misi.previousRewards')}
                     </h3>
                     <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-black text-emerald-200">
-                      {previousClaimableCards.length} belum diklaim
+                      {previousClaimableCards.length} {t('side_misi.unclaimed')}
                     </span>
                   </div>
                   {previousClaimableCards.map(card => {
@@ -1709,7 +1709,7 @@ export default function MissionModals({
                         <div className="min-w-0">
                           <p className="text-xs font-bold text-root-text">{card.title}</p>
                           <p className="mt-1 text-[10px] font-semibold text-emerald-200">
-                            Siap diklaim
+                            {t('side_misi.readyToClaim')}
                             {badges.neo !== undefined && ` · ${badges.neo.toLocaleString('id-ID')} NEO`}
                             {badges.sda && ` · ${badges.sda.amount.toLocaleString('id-ID')} ${formatProductionProductName(badges.sda.productKey)}`}
                             {` · ${badges.diamond} Gems`}
@@ -1721,7 +1721,7 @@ export default function MissionModals({
                           aria-label={`Klaim hadiah misi: ${card.title}`}
                           className="w-full shrink-0 rounded-lg bg-root-accent px-4 py-2 text-xs font-black uppercase tracking-widest text-root-accent-ink transition-all hover:opacity-90 sm:w-auto"
                         >
-                          Klaim Hadiah
+                          {t('side_misi.claimReward')}
                         </button>
                       </div>
                     );
@@ -1764,7 +1764,7 @@ export default function MissionModals({
                       <div className="flex items-center gap-2 flex-wrap">
                         {isClaimable && (
                           <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded border border-emerald-400/50 bg-emerald-400/20 text-emerald-300 animate-pulse">
-                            🎉 Siap Diklaim
+                            🎉 {t('side_misi.readyToClaim')}
                           </span>
                         )}
 
@@ -1796,7 +1796,7 @@ export default function MissionModals({
                       <div className="mt-2 flex flex-wrap items-center gap-2">
                         <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-amber-300">
                           <Gift className="h-3 w-3" />
-                          Hadiah usulan
+                          {t('side_misi.suggestedReward')}
                         </span>
 
                         {badges.neo !== undefined && (
@@ -1839,7 +1839,7 @@ export default function MissionModals({
                         className="w-full sm:w-auto shrink-0 px-5 py-2.5 rounded-lg bg-root-accent hover:opacity-90 active:scale-95 text-root-accent-ink font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-md shadow-root-accent/20 cursor-pointer"
                       >
                         <Play className="w-3.5 h-3.5 fill-root-accent-ink" />
-                        {t('common.yes') === 'Yes' ? 'Start' : t('common.yes') === '是' ? '开始' : 'Mulai'}
+                        {t('side_misi.start')}
                       </button>
                     )}
                   </div>

@@ -1,9 +1,15 @@
 {
-    "noActiveMissions":  "No active missions right now.",
-    "mainMissions":  "Main Missions",
-    "claimReward":  "Claim Reward",
-    "completed":  "Completed",
-    "dailyMissions":  "Daily Missions",
-    "title":  "National Missions",
-    "progress":  "Progress"
+  "title": "大統領ミッション",
+  "mainMissions": "進行中のミッション",
+  "claimReward": "報酬を受け取る",
+  "completed": "完了",
+  "dailyMissions": "デイリーミッション",
+  "progress": "進捗",
+  "noActiveMissions": "現在進行中のミッションはありません。",
+  "expTotal": "総経験値",
+  "suggestedReward": "提示報酬",
+  "start": "開始",
+  "readyToClaim": "受け取り可能",
+  "previousRewards": "過去のミッション報酬",
+  "unclaimed": "未受け取り"
 }

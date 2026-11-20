@@ -1,9 +1,15 @@
 {
-    "noActiveMissions":  "当前没有正在进行的任务。",
-    "mainMissions":  "主线任务",
-    "claimReward":  "领取奖励",
-    "completed":  "已完成",
-    "dailyMissions":  "每日任务",
-    "title":  "国家任务",
-    "progress":  "进度"
+  "title": "总统国家任务",
+  "mainMissions": "进行中任务",
+  "claimReward": "领取奖励",
+  "completed": "已完成",
+  "dailyMissions": "每日任务",
+  "progress": "进度",
+  "noActiveMissions": "当前无进行中的任务。",
+  "expTotal": "总经验值",
+  "suggestedReward": "提案奖励",
+  "start": "开始",
+  "readyToClaim": "可领取",
+  "previousRewards": "历史任务奖励",
+  "unclaimed": "待领取"
 }

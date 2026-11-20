@@ -1,8 +1,13 @@
-﻿{
-    "availableIn":  "Available in",
-    "dailyLogin":  "Daily Login Reward",
-    "claim":  "Claim",
-    "claimed":  "Claimed",
-    "title":  "Rewards \u0026 Bonuses",
-    "bonusStreak":  "Day Streak"
+{
+  "title": "Daily Reward",
+  "dailyLogin": "Daily Login Reward",
+  "claim": "Claim!",
+  "claimed": "Claimed",
+  "availableIn": "Available in",
+  "bonusStreak": "Day Streak",
+  "dayProgress": "Day {current} of {total}",
+  "claimedToday": "Already claimed today",
+  "clickToClaim": "Click today box to claim!",
+  "dayLabel": "DAY {day}",
+  "footerNotice": "Rewards differ every day and randomize weekly. Values of 10,000, 15,000, 20,000, or 25,000 are randomized daily."
 }

@@ -6,6 +6,7 @@ import { FlaskConical, X, Banknote, Shield, Globe2, Info } from 'lucide-react';
 import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 import RootModalCloseButton from '@/app/page/root_modals_design_menu/RootModalCloseButton';
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { ATHEISM_RESEARCH_SPEED_BONUS } from '@/app/page/bonus_logic/agama_bonus_logic/ateisme';
 import {
   calculateEducationPoints,
@@ -32,6 +33,7 @@ export default function PenelitianSelectionModal({
   religion,
   countryDetail,
 }: PenelitianSelectionModalProps) {
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const hasAtheismResearchBonus = String(religion || '').trim().toLowerCase() === 'ateisme';
   const countryName = countryDetail?.country || '';
@@ -70,7 +72,7 @@ export default function PenelitianSelectionModal({
               </div>
               <div>
                 <h2 id="research-selection-title" className={`root-modal-util-6b4648c53a root-modal-util-c2385a463d`}>
-                  Fokus Utama Penelitian
+                  {t('side_penelitian.title')}
                 </h2>
               </div>
             </div>
@@ -213,11 +215,11 @@ export default function PenelitianSelectionModal({
                     </div>
 
                     <span className="text-[8px] sm:text-[9px] md:text-[10px] font-black uppercase px-1.5 sm:px-2 md:px-2.5 py-0.5 sm:py-1 rounded-md bg-root-accent/15 text-root-accent border border-root-accent/30 mb-2 tracking-wider whitespace-nowrap">
-                      Produksi & Pajak
+                      {t('side_penelitian.tagEconomy')}
                     </span>
 
                     <h3 className="text-[10px] sm:text-xs md:text-sm font-black text-white uppercase tracking-wider group-hover:text-root-accent transition-colors leading-tight">
-                      Riset Ekonomi & Industri
+                      {t('side_penelitian.branchEconomy')}
                     </h3>
                   </div>
                 </button>
@@ -255,11 +257,11 @@ export default function PenelitianSelectionModal({
                     </div>
 
                     <span className="text-[8px] sm:text-[9px] md:text-[10px] font-black uppercase px-1.5 sm:px-2 md:px-2.5 py-0.5 sm:py-1 rounded-md bg-root-accent/15 text-root-accent border border-root-accent/30 mb-2 tracking-wider whitespace-nowrap">
-                      Alutsista & Siber
+                      {t('side_penelitian.tagMilitary')}
                     </span>
 
                     <h3 className="text-[10px] sm:text-xs md:text-sm font-black text-white uppercase tracking-wider group-hover:text-root-accent transition-colors leading-tight">
-                      Riset Militer & Pertahanan
+                      {t('side_penelitian.branchMilitary')}
                     </h3>
                   </div>
                 </button>
@@ -297,11 +299,11 @@ export default function PenelitianSelectionModal({
                     </div>
 
                     <span className="text-[8px] sm:text-[9px] md:text-[10px] font-black uppercase px-1.5 sm:px-2 md:px-2.5 py-0.5 sm:py-1 rounded-md bg-root-accent/15 text-root-accent border border-root-accent/30 mb-2 tracking-wider whitespace-nowrap">
-                      Geopolitik & Spionase
+                      {t('side_penelitian.tagDiplomacy')}
                     </span>
 
                     <h3 className="text-[10px] sm:text-xs md:text-sm font-black text-white uppercase tracking-wider group-hover:text-root-accent transition-colors leading-tight">
-                      Riset Diplomasi & Intelijen
+                      {t('side_penelitian.branchDiplomacy')}
                     </h3>
                   </div>
                 </button>

@@ -1,9 +1,10 @@
 {
-    "deleteAll":  "حذف الكل",
-    "tabUnread":  "غير مقروء",
-    "tabImportant":  "هام",
-    "tabAll":  "الكل",
-    "markRead":  "تحديد كمقروء",
-    "empty":  "لا توجد رسائل حالياً.",
-    "title":  "صندوق الوارد"
+  "title": "صندوق الوارد والإشعارات",
+  "empty": "لا توجد رسائل",
+  "tabAll": "الكل",
+  "tabUnread": "غير مقروءة",
+  "tabImportant": "هام",
+  "markRead": "تحديد كمقروء",
+  "deleteAll": "حذف الكل",
+  "messageStatus": "{total} رسالة ({unread} غير مقروءة)"
 }

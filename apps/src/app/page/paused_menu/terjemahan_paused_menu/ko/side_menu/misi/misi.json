@@ -1,9 +1,15 @@
 {
-    "noActiveMissions":  "No active missions right now.",
-    "mainMissions":  "Main Missions",
-    "claimReward":  "Claim Reward",
-    "completed":  "Completed",
-    "dailyMissions":  "Daily Missions",
-    "title":  "National Missions",
-    "progress":  "Progress"
+  "title": "대통령 임무",
+  "mainMissions": "활성 임무",
+  "claimReward": "보상 수령",
+  "completed": "완료",
+  "dailyMissions": "일일 임무",
+  "progress": "진행도",
+  "noActiveMissions": "현재 활성화된 임무가 없습니다.",
+  "expTotal": "총 경험치",
+  "suggestedReward": "제안된 보상",
+  "start": "시작",
+  "readyToClaim": "수령 가능",
+  "previousRewards": "이전 임무 보상",
+  "unclaimed": "미수령"
 }

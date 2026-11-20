@@ -144,7 +144,7 @@ export default function ShopModal({
                   }}
                 >
                   <Coins size={16} />
-                  <span>Item NEO (Koin)</span>
+                  <span>{t('side_shop.coins')}</span>
                 </button>
 
                 <button
@@ -175,7 +175,7 @@ export default function ShopModal({
                   }}
                 >
                   <Gem size={16} />
-                  <span>Item GEMS</span>
+                  <span>{t('side_shop.gems')}</span>
                 </button>
               </div>
 
@@ -204,7 +204,7 @@ export default function ShopModal({
                     color: "var(--root-color-subtle)",
                   }}
                 >
-                  Kategori Tambahan
+                  {t('side_shop.premium')}
                 </div>
 
                 <div

@@ -1,12 +1,16 @@
-﻿{
-    "branchMilitary":  "عسكري",
-    "speedUp":  "تسريع",
-    "completedResearch":  "التقنيات المكتملة",
-    "subtitle":  "RESEARCH \u0026 DEVELOPMENT",
-    "points":  "نقاط البحث",
-    "startResearch":  "بدء البحث",
-    "activeResearch":  "قيد البحث",
-    "branchCivilian":  "مدني وصناعي",
-    "title":  "مركز البحوث والتكنولوجيا",
-    "branchEconomy":  "اقتصادي"
+{
+  "title": "التركيز الرئيسي للبحوث",
+  "subtitle": "البحث والتطوير",
+  "activeResearch": "أبحاث جارية",
+  "completedResearch": "التقنيات المكتملة",
+  "points": "نقاط البحث",
+  "speedUp": "تسريع",
+  "startResearch": "بدء البحث",
+  "branchCivilian": "مدني وصناعي",
+  "branchEconomy": "بحوث الاقتصاد والصناعة",
+  "branchMilitary": "بحوث الدفاع والعسكرية",
+  "branchDiplomacy": "بحوث الدبلوماسية والاستخبارات",
+  "tagEconomy": "الإنتاج والضرائب",
+  "tagMilitary": "التسليح والسيبرانية",
+  "tagDiplomacy": "الجيوسياسية والتجسس"
 }

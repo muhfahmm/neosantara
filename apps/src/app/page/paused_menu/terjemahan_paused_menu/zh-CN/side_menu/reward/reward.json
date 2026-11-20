@@ -1,8 +1,13 @@
 {
-    "availableIn":  "距离下次领取",
-    "dailyLogin":  "每日登录奖励",
-    "claim":  "领取",
-    "claimed":  "已领取",
-    "title":  "奖励与福利",
-    "bonusStreak":  "连续登录天数"
+  "title": "每日签到奖励",
+  "dailyLogin": "每日登录奖励",
+  "claim": "领取！",
+  "claimed": "已领取",
+  "availableIn": "可领取倒计时",
+  "bonusStreak": "连续签到",
+  "dayProgress": "第 {current} 天，共 {total} 天",
+  "claimedToday": "今日已领取",
+  "clickToClaim": "点击今日宝箱进行领取！",
+  "dayLabel": "第 {day} 天",
+  "footerNotice": "每日奖励各不相同并每周重置。金额 10,000、15,000、20,000 或 25,000 每日随机。"
 }

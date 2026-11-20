@@ -1,9 +1,10 @@
-﻿{
-    "buy":  "购买",
-    "gems":  "宝石商店",
-    "coins":  "国库资金 (NEO)",
-    "premium":  "高级特惠包",
-    "insufficientFunds":  "余额不足",
-    "title":  "游戏商城",
-    "discounts":  "限时折扣"
+{
+  "title": "游戏商店",
+  "coins": "NEO (金币) 道具",
+  "gems": "GEMS (宝石) 道具",
+  "premium": "更多类别",
+  "buy": "购买",
+  "insufficientFunds": "余额不足",
+  "discounts": "限时特惠",
+  "inDevelopment": "开发中"
 }

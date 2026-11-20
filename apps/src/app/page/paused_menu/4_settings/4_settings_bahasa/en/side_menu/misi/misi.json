@@ -1,9 +1,15 @@
-﻿{
-    "noActiveMissions":  "No active missions right now.",
-    "mainMissions":  "Main Missions",
-    "claimReward":  "Claim Reward",
-    "completed":  "Completed",
-    "dailyMissions":  "Daily Missions",
-    "title":  "National Missions",
-    "progress":  "Progress"
+{
+  "title": "Presidential Missions",
+  "mainMissions": "Active Missions",
+  "claimReward": "Claim Reward",
+  "completed": "Completed",
+  "dailyMissions": "Daily Missions",
+  "progress": "Progress",
+  "noActiveMissions": "No active missions currently.",
+  "expTotal": "Total Experience",
+  "suggestedReward": "Suggested reward",
+  "start": "Start",
+  "readyToClaim": "Ready to Claim",
+  "previousRewards": "Previous Mission Rewards",
+  "unclaimed": "unclaimed"
 }

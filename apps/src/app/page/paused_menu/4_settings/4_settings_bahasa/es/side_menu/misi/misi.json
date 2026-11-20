@@ -1,9 +1,15 @@
-﻿{
-    "noActiveMissions":  "No active missions right now.",
-    "mainMissions":  "Main Missions",
-    "claimReward":  "Claim Reward",
-    "completed":  "Completed",
-    "dailyMissions":  "Daily Missions",
-    "title":  "National Missions",
-    "progress":  "Progress"
+{
+  "title": "Misiones Presidenciales",
+  "mainMissions": "Misiones Activas",
+  "claimReward": "Reclamar Recompensa",
+  "completed": "Completado",
+  "dailyMissions": "Misiones Diarias",
+  "progress": "Progreso",
+  "noActiveMissions": "No hay misiones activas en este momento.",
+  "expTotal": "Experiencia Total",
+  "suggestedReward": "Recompensa propuesta",
+  "start": "Comenzar",
+  "readyToClaim": "Listo para reclamar",
+  "previousRewards": "Recompensas de Misiones Anteriores",
+  "unclaimed": "sin reclamar"
 }

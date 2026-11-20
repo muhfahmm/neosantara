@@ -1,12 +1,16 @@
 {
-    "branchMilitary":  "Militer",
-    "speedUp":  "Percepat",
-    "completedResearch":  "Teknologi Selesai",
-    "subtitle":  "RESEARCH \u0026 DEVELOPMENT",
-    "points":  "Poin Riset",
-    "startResearch":  "Mulai Riset",
-    "activeResearch":  "Penelitian Berlangsung",
-    "branchCivilian":  "Sipil \u0026 Industri",
-    "title":  "Pusat Penelitian \u0026 Teknologi",
-    "branchEconomy":  "Ekonomi"
+  "title": "Fokus Utama Penelitian",
+  "subtitle": "RESEARCH & DEVELOPMENT",
+  "activeResearch": "Penelitian Berlangsung",
+  "completedResearch": "Teknologi Selesai",
+  "points": "Poin Riset",
+  "speedUp": "Percepat",
+  "startResearch": "Mulai Riset",
+  "branchCivilian": "Sipil & Industri",
+  "branchEconomy": "Riset Ekonomi & Industri",
+  "branchMilitary": "Riset Militer & Pertahanan",
+  "branchDiplomacy": "Riset Diplomasi & Intelijen",
+  "tagEconomy": "Produksi & Pajak",
+  "tagMilitary": "Alutsista & Siber",
+  "tagDiplomacy": "Geopolitik & Spionase"
 }

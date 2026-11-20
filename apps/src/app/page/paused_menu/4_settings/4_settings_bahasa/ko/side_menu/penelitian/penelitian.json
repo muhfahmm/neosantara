@@ -1,12 +1,16 @@
-﻿{
-    "branchMilitary":  "Military",
-    "speedUp":  "Speed Up",
-    "completedResearch":  "Completed Tech",
-    "subtitle":  "RESEARCH \u0026 DEVELOPMENT",
-    "points":  "Research Points",
-    "startResearch":  "Start Research",
-    "activeResearch":  "Active Research",
-    "branchCivilian":  "Civil \u0026 Industry",
-    "title":  "Research \u0026 Technology Center",
-    "branchEconomy":  "Economy"
+{
+  "title": "주요 연구 집중 분야",
+  "subtitle": "연구 및 개발",
+  "activeResearch": "진행 중인 연구",
+  "completedResearch": "완료된 기술",
+  "points": "연구 포인트",
+  "speedUp": "가속",
+  "startResearch": "연구 시작",
+  "branchCivilian": "민간 및 산업",
+  "branchEconomy": "경제 및 산업 연구",
+  "branchMilitary": "군사 및 국방 연구",
+  "branchDiplomacy": "외교 및 첩보 연구",
+  "tagEconomy": "생산 및 조세",
+  "tagMilitary": "군비 및 사이버",
+  "tagDiplomacy": "지정학 및 스파이"
 }

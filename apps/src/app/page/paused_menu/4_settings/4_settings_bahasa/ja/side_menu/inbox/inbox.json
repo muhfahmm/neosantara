@@ -1,9 +1,10 @@
-﻿{
-    "deleteAll":  "Delete All",
-    "tabUnread":  "Unread",
-    "tabImportant":  "Important",
-    "tabAll":  "All",
-    "markRead":  "Mark Read",
-    "empty":  "No messages available right now.",
-    "title":  "Inbox"
+{
+  "title": "受信トレイ＆通知",
+  "empty": "メッセージはありません",
+  "tabAll": "すべて",
+  "tabUnread": "未読",
+  "tabImportant": "重要",
+  "markRead": "既読にする",
+  "deleteAll": "すべて削除",
+  "messageStatus": "{total} 件のメッセージ ({unread} 件未読)"
 }

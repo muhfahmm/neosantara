@@ -1,9 +1,10 @@
 {
-    "buy":  "Buy",
-    "gems":  "Gems Store",
-    "coins":  "Treasury (NEO)",
-    "premium":  "Premium Bundles",
-    "insufficientFunds":  "Insufficient Funds",
-    "title":  "Game Store",
-    "discounts":  "Limited Discounts"
+  "title": "Spiel-Shop",
+  "coins": "NEO-Gegenstände (Münzen)",
+  "gems": "GEMS-Gegenstände",
+  "premium": "Zusätzliche Kategorien",
+  "buy": "Kaufen",
+  "insufficientFunds": "Unzureichendes Guthaben",
+  "discounts": "Zeitlich begrenzte Angebote",
+  "inDevelopment": "In Entwicklung"
 }

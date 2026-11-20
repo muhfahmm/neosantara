@@ -644,7 +644,10 @@ export default function TopLeftIcon({
               size="standard"
               actions={
                 <span className="text-[9px] font-bold text-root-subtle uppercase tracking-wider">
-                  {orderedNotifications.length} Pesan ({unreadCount} Belum Dibaca)
+                  {t('side_inbox.messageStatus', {
+                    total: orderedNotifications.length,
+                    unread: unreadCount,
+                  })}
                 </span>
               }
             />

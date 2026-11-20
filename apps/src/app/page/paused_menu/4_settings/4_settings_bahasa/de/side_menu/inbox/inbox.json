@@ -1,9 +1,10 @@
-﻿{
-    "deleteAll":  "Delete All",
-    "tabUnread":  "Unread",
-    "tabImportant":  "Important",
-    "tabAll":  "All",
-    "markRead":  "Mark Read",
-    "empty":  "No messages available right now.",
-    "title":  "Inbox"
+{
+  "title": "Postfach & Benachrichtigungen",
+  "empty": "Keine Nachrichten",
+  "tabAll": "Alle",
+  "tabUnread": "Ungelesen",
+  "tabImportant": "Wichtig",
+  "markRead": "Gelesen markieren",
+  "deleteAll": "Alle löschen",
+  "messageStatus": "{total} Nachrichten ({unread} Ungelesen)"
 }

@@ -1,9 +1,10 @@
-﻿{
-    "deleteAll":  "Hapus Semua",
-    "tabUnread":  "Belum Dibaca",
-    "tabImportant":  "Penting",
-    "tabAll":  "Semua",
-    "markRead":  "Tandai Dibaca",
-    "empty":  "Tidak ada pesan masuk saat ini.",
-    "title":  "Kotak Masuk"
+{
+  "title": "Inbox & Notifikasi",
+  "empty": "Tidak Ada Pesan",
+  "tabAll": "Semua",
+  "tabUnread": "Belum Dibaca",
+  "tabImportant": "Penting",
+  "markRead": "Tandai Dibaca",
+  "deleteAll": "Hapus Semua",
+  "messageStatus": "{total} Pesan ({unread} Belum Dibaca)"
 }

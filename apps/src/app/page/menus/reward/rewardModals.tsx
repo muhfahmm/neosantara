@@ -434,10 +434,10 @@ export default function TopRightGiftIcon({
             <div className="flex-1 overflow-y-auto p-4 sm:p-5 bg-root-canvas relative z-10 flex flex-col items-center justify-start">
               <div className="w-full text-center mb-4">
                 <p className="text-xs sm:text-sm text-root-subtle font-semibold">
-                  Hari ke-{currentDay} dari 7
+                  {t('side_reward.dayProgress', { current: currentDay, total: 7 })}
                   {claimedToday
-                    ? ' ✅ Sudah diklaim hari ini'
-                    : ' ⏳ Klik kotak hari ini untuk klaim!'}
+                    ? ` ✅ ${t('side_reward.claimedToday')}`
+                    : ` ⏳ ${t('side_reward.clickToClaim')}`}
                 </p>
               </div>
 
@@ -483,7 +483,7 @@ export default function TopRightGiftIcon({
                       className={`relative flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border ${borderColor} ${bgColor} ${cursor} transition-all duration-200 ${isToday && !claimedToday ? 'hover:scale-105 hover:shadow-[0_0_15px_rgba(0,255,170,0.2)]' : ''}`}
                     >
                       <span className="text-[10px] sm:text-xs font-bold text-root-subtle uppercase tracking-wider">
-                        Hari {day}
+                        {t('side_reward.dayLabel', { day })}
                       </span>
 
                       <span className="text-xs sm:text-sm font-bold text-root-text mt-1 whitespace-nowrap">
@@ -498,7 +498,7 @@ export default function TopRightGiftIcon({
 
                       {isToday && !claimedToday && (
                         <span className="absolute -top-2 -right-2 bg-root-accent text-root-canvas text-[9px] font-black px-2 py-0.5 rounded-full shadow">
-                          Klaim!
+                          {t('side_reward.claim')}
                         </span>
                       )}
                     </div>
@@ -510,11 +510,7 @@ export default function TopRightGiftIcon({
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-root-surface rounded-full border border-root-accent/30 text-root-accent text-xs">
                   <Zap className="h-4 w-4" />
                   <span>
-                    Hadiah berbeda setiap hari dan diacak setiap minggu. Nominal{' '}
-                    <span className="font-black text-white">
-                      10.000, 15.000, 20.000, atau 25.000
-                    </span>
-                    {' '}diacak untuk tiap hari.
+                    {t('side_reward.footerNotice')}
                   </span>
                 </div>
               </div>

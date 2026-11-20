@@ -1,9 +1,10 @@
 {
-    "buy":  "Buy",
-    "gems":  "Gems Store",
-    "coins":  "Treasury (NEO)",
-    "premium":  "Premium Bundles",
-    "insufficientFunds":  "Insufficient Funds",
-    "title":  "Game Store",
-    "discounts":  "Limited Discounts"
+  "title": "ゲームショップ",
+  "coins": "NEOアイテム (コイン)",
+  "gems": "GEMSアイテム (宝石)",
+  "premium": "その他のカテゴリー",
+  "buy": "購入",
+  "insufficientFunds": "残高不足",
+  "discounts": "期間限定セール",
+  "inDevelopment": "開発中"
 }

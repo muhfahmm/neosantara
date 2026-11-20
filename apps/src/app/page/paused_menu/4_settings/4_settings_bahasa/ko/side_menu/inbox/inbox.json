@@ -1,9 +1,10 @@
-﻿{
-    "deleteAll":  "Delete All",
-    "tabUnread":  "Unread",
-    "tabImportant":  "Important",
-    "tabAll":  "All",
-    "markRead":  "Mark Read",
-    "empty":  "No messages available right now.",
-    "title":  "Inbox"
+{
+  "title": "수신함 및 알림",
+  "empty": "메시지가 없습니다",
+  "tabAll": "전체",
+  "tabUnread": "읽지 않음",
+  "tabImportant": "중요",
+  "markRead": "읽음 표시",
+  "deleteAll": "모두 삭제",
+  "messageStatus": "{total}개의 메시지 ({unread}개 안 읽음)"
 }

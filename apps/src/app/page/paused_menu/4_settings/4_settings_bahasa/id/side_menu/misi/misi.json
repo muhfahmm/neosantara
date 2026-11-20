@@ -1,9 +1,15 @@
-﻿{
-    "noActiveMissions":  "Tidak ada misi aktif saat ini.",
-    "mainMissions":  "Misi Utama",
-    "claimReward":  "Klaim Hadiah",
-    "completed":  "Selesai",
-    "dailyMissions":  "Misi Harian",
-    "title":  "Misi Nasional",
-    "progress":  "Progres"
+{
+  "title": "Misi Presiden",
+  "mainMissions": "Misi Aktif",
+  "claimReward": "Klaim Hadiah",
+  "completed": "Selesai",
+  "dailyMissions": "Misi Harian",
+  "progress": "Progres",
+  "noActiveMissions": "Tidak ada misi aktif saat ini.",
+  "expTotal": "Jumlah Pengalaman",
+  "suggestedReward": "Hadiah usulan",
+  "start": "Mulai",
+  "readyToClaim": "Siap Diklaim",
+  "previousRewards": "Hadiah Misi Sebelumnya",
+  "unclaimed": "belum diklaim"
 }

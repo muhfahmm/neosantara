@@ -1,9 +1,10 @@
-﻿{
-    "buy":  "Beli",
-    "gems":  "Toko Gems",
-    "coins":  "Kas Negara (NEO)",
-    "premium":  "Paket Premium",
-    "insufficientFunds":  "Saldo Tidak Cukup",
-    "title":  "Toko Permainan",
-    "discounts":  "Promo Terbatas"
+{
+  "title": "Toko Permainan",
+  "coins": "Item NEO (Koin)",
+  "gems": "Item GEMS",
+  "premium": "Kategori Tambahan",
+  "buy": "Beli",
+  "insufficientFunds": "Saldo Tidak Cukup",
+  "discounts": "Promo Terbatas",
+  "inDevelopment": "Dalam Pengembangan"
 }

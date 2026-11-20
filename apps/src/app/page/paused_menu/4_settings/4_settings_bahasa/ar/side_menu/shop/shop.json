@@ -1,9 +1,10 @@
-﻿{
-    "buy":  "شراء",
-    "gems":  "متجر الجواهر",
-    "coins":  "الخزينة (NEO)",
-    "premium":  "باقات مميزة",
-    "insufficientFunds":  "رصيد غير كافٍ",
-    "title":  "متجر اللعبة",
-    "discounts":  "عروض محدودة"
+{
+  "title": "متجر اللعبة",
+  "coins": "عناصر NEO (العملات)",
+  "gems": "عناصر GEMS (الجواهر)",
+  "premium": "فئات إضافية",
+  "buy": "شراء",
+  "insufficientFunds": "رصيد غير كافٍ",
+  "discounts": "عروض محدودة",
+  "inDevelopment": "قيد التطوير"
 }

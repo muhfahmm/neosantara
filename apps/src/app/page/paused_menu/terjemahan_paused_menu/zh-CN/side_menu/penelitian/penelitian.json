@@ -1,12 +1,16 @@
 {
-    "branchMilitary":  "军事科技",
-    "speedUp":  "加速",
-    "completedResearch":  "已掌握科技",
-    "subtitle":  "RESEARCH \u0026 DEVELOPMENT",
-    "points":  "研发点数",
-    "startResearch":  "开始研发",
-    "activeResearch":  "正在研发",
-    "branchCivilian":  "民用与工业",
-    "title":  "科技研发中心",
-    "branchEconomy":  "经济体系"
+  "title": "主要研究方向",
+  "subtitle": "研究与开发",
+  "activeResearch": "进行中的研究",
+  "completedResearch": "已研发技术",
+  "points": "科研点数",
+  "speedUp": "加速",
+  "startResearch": "开始研究",
+  "branchCivilian": "民用与工业",
+  "branchEconomy": "经济与工业研究",
+  "branchMilitary": "军事与国防研究",
+  "branchDiplomacy": "外交与情报研究",
+  "tagEconomy": "生产与税收",
+  "tagMilitary": "军备与网络",
+  "tagDiplomacy": "地缘政治与间谍"
 }

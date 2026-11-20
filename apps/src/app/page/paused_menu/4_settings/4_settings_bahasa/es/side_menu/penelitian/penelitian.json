@@ -1,12 +1,16 @@
-﻿{
-    "branchMilitary":  "Military",
-    "speedUp":  "Speed Up",
-    "completedResearch":  "Completed Tech",
-    "subtitle":  "RESEARCH \u0026 DEVELOPMENT",
-    "points":  "Research Points",
-    "startResearch":  "Start Research",
-    "activeResearch":  "Active Research",
-    "branchCivilian":  "Civil \u0026 Industry",
-    "title":  "Research \u0026 Technology Center",
-    "branchEconomy":  "Economy"
+{
+  "title": "Enfoque Principal de Investigación",
+  "subtitle": "INVESTIGACIÓN Y DESARROLLO",
+  "activeResearch": "Investigación en Curso",
+  "completedResearch": "Tecnología Completada",
+  "points": "Puntos de Investigación",
+  "speedUp": "Acelerar",
+  "startResearch": "Iniciar Investigación",
+  "branchCivilian": "Civil e Industria",
+  "branchEconomy": "Investigación Económica e Industrial",
+  "branchMilitary": "Investigación Militar y Defensa",
+  "branchDiplomacy": "Investigación Diplomática e Inteligencia",
+  "tagEconomy": "Producción e Impuestos",
+  "tagMilitary": "Defensa y Ciberseguridad",
+  "tagDiplomacy": "Geopolítica y Espionaje"
 }

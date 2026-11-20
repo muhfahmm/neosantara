@@ -1,8 +1,13 @@
-﻿{
-    "availableIn":  "Available in",
-    "dailyLogin":  "Daily Login Reward",
-    "claim":  "Claim",
-    "claimed":  "Claimed",
-    "title":  "Rewards \u0026 Bonuses",
-    "bonusStreak":  "Day Streak"
+{
+  "title": "Tägliche Belohnungen",
+  "dailyLogin": "Täglicher Login-Bonus",
+  "claim": "Einfordern!",
+  "claimed": "Eingefordert",
+  "availableIn": "Verfügbar in",
+  "bonusStreak": "Tagesserie",
+  "dayProgress": "Tag {current} von {total}",
+  "claimedToday": "Heute bereits abgeholt",
+  "clickToClaim": "Klicke auf das heutige Feld zum Einfordern!",
+  "dayLabel": "TAG {day}",
+  "footerNotice": "Belohnungen variieren täglich und rotieren wöchentlich. 10.000, 15.000, 20.000 oder 25.000 zufällig vergeben."
 }
