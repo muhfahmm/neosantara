@@ -1,53 +1,65 @@
 import { NotificationMessage } from '../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { createInboxNotificationText, getDefaultInboxText } from '../notificationMessage';
 
 export interface ResearchChangeNotification extends NotificationMessage {
   tradeType: 'perubahan_fokus_riset';
   categoryKey: 'ekonomi' | 'militer' | 'diplomasi';
   categoryName: string;
   focusScope: string;
+  focusScopeKey: string;
+  focusScopeParams?: Record<string, string | number>;
 }
 
-const RESEARCH_LABELS: Record<string, { name: string; scope: string; desc: string }> = {
+const RESEARCH_LABELS: Record<string, { nameKey: string; scopeKey: string; descriptionKey: string }> = {
   ekonomi: {
-    name: 'Riset Ekonomi & Industri',
-    scope: 'Produksi, Manufaktur, Pertambangan & Logistik',
-    desc: 'Pengembangan teknologi manufaktur, efisiensi rantai pasok pertambangan, otomatisasi produksi, dan peningkatan penerimaan devisa negara.'
+    nameKey: 'side_inbox.researchNotification.categories.ekonomi.name',
+    scopeKey: 'side_inbox.researchNotification.categories.ekonomi.scope',
+    descriptionKey: 'side_inbox.researchNotification.categories.ekonomi.description',
   },
   militer: {
-    name: 'Riset Militer & Pertahanan',
-    scope: 'Alutsista, Perang Siber & Pertahanan Nuklir',
-    desc: 'Modernisasi armada tempur darat/laut/udara, pertahanan ruang siber, sistem pencegat rudal balistik, dan pengembangan energi nuklir militer.'
+    nameKey: 'side_inbox.researchNotification.categories.militer.name',
+    scopeKey: 'side_inbox.researchNotification.categories.militer.scope',
+    descriptionKey: 'side_inbox.researchNotification.categories.militer.description',
   },
   diplomasi: {
-    name: 'Riset Diplomasi & Intelijen',
-    scope: 'Geopolitik, Kriptografi & Intelijen Global',
-    desc: 'Penguatan jaringan spionase internasional, sistem enkripsi kriptografi tingkat tinggi, dan peningkatan daya tawar diplomasi PBB.'
-  }
+    nameKey: 'side_inbox.researchNotification.categories.diplomasi.name',
+    scopeKey: 'side_inbox.researchNotification.categories.diplomasi.scope',
+    descriptionKey: 'side_inbox.researchNotification.categories.diplomasi.description',
+  },
 };
 
 export function generateResearchChangeNotification(
   categoryKey: 'ekonomi' | 'militer' | 'diplomasi',
   dateStr: string
 ): ResearchChangeNotification {
-  const info = RESEARCH_LABELS[categoryKey] || {
-    name: 'Riset Strategis Nasional',
-    scope: 'Inovasi Teknologi & Pembangunan',
-    desc: 'Pemerintah menetapkan fokus riset strategis baru untuk mendukung percepatan kemajuan nasional.'
-  };
+  const info = RESEARCH_LABELS[categoryKey];
+  const titleKey = 'side_inbox.researchNotification.focusTitle';
+  const messageKey = 'side_inbox.researchNotification.focusMessage';
+  const senderKey = 'side_inbox.researchNotification.sender';
+  const name = getDefaultInboxText(info.nameKey);
+  const scope = getDefaultInboxText(info.scopeKey);
+  const description = getDefaultInboxText(info.descriptionKey);
 
   return {
     id: `research-focus-${categoryKey}-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
-    title: `🔬 PERUBAHAN FOKUS RISET: ${info.name}`,
-    sender: `Badan Riset & Inovasi Nasional (BRIN)`,
-    message: `Pemerintah resmi mengarahkan laboratorium dan alokasi anggaran riset nasional untuk memprioritaskan ${info.name} (${info.scope}). ${info.desc}`,
+    title: getDefaultInboxText(titleKey),
+    titleKey,
+    sender: getDefaultInboxText(senderKey),
+    senderKey,
+    ...createInboxNotificationText(messageKey, { name, scope, description }, {
+      name: info.nameKey,
+      scope: info.scopeKey,
+      description: info.descriptionKey,
+    }),
     timestamp: dateStr,
     type: 'kepuasan',
     value: 10,
     isRead: false,
     tradeType: 'perubahan_fokus_riset',
     categoryKey,
-    categoryName: info.name,
-    focusScope: info.scope,
+    categoryName: name,
+    focusScope: scope,
+    focusScopeKey: info.scopeKey,
   };
 }
 
@@ -60,26 +72,43 @@ export function generateResearchStartNotification(
   targetLevel: number = 1
 ): ResearchChangeNotification {
   const validCategoryKey = (categoryKey === 'lingkungan' ? 'ekonomi' : categoryKey) as 'ekonomi' | 'militer' | 'diplomasi';
-  const info = RESEARCH_LABELS[validCategoryKey] || {
-    name: 'Riset Strategis Nasional',
-    scope: 'Inovasi & Pembangunan',
-    desc: ''
+  const info = RESEARCH_LABELS[validCategoryKey] ?? {
+    nameKey: 'side_inbox.researchNotification.fallbackName',
+    scopeKey: 'side_inbox.researchNotification.fallbackScope',
+    descriptionKey: 'side_inbox.researchNotification.fallbackDescription',
   };
-
-  const statusLabel = isUpgrade ? `Upgrade Level ${targetLevel}` : 'Riset Baru';
+  const titleKey = isUpgrade
+    ? 'side_inbox.researchNotification.upgradeTitle'
+    : 'side_inbox.researchNotification.startTitle';
+  const senderKey = 'side_inbox.researchNotification.sender';
+  const messageKey = isUpgrade
+    ? 'side_inbox.researchNotification.upgradeMessage'
+    : 'side_inbox.researchNotification.startMessage';
+  const focusScopeKey = isUpgrade
+    ? 'side_inbox.researchNotification.upgradeScope'
+    : 'side_inbox.researchNotification.newScope';
+  const focusScopeParams = isUpgrade ? { level: targetLevel } : undefined;
+  const title = getDefaultInboxText(titleKey);
+  const sender = getDefaultInboxText(senderKey);
+  const focusScope = getDefaultInboxText(focusScopeKey, focusScopeParams);
+  const messageParams = { research: researchName, level: targetLevel, duration: durationDays };
 
   return {
     id: `research-start-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
-    title: `🔬 PELUNCURAN RISET: ${researchName}`,
-    sender: `Badan Riset & Inovasi Nasional (BRIN)`,
-    message: `Pemerintah resmi memproses ${statusLabel}: "${researchName}". Estimasi waktu penyelesaian adalah ${durationDays} hari.`,
+    title,
+    titleKey,
+    sender,
+    senderKey,
+    ...createInboxNotificationText(messageKey, messageParams),
     timestamp: dateStr,
     type: 'kepuasan',
     value: 10,
     isRead: false,
     tradeType: 'perubahan_fokus_riset',
     categoryKey: validCategoryKey,
-    categoryName: info.name,
-    focusScope: statusLabel,
+    categoryName: getDefaultInboxText(info.nameKey),
+    focusScope,
+    focusScopeKey,
+    focusScopeParams,
   };
 }

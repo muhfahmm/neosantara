@@ -4,6 +4,7 @@ import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModa
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { CheckCircle2, AlertTriangle, Users, HeartCrack, Activity } from 'lucide-react';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 export interface HasilBubarkanMassaModalProps {
     isOpen: boolean;
@@ -32,10 +33,11 @@ export default function HasilBubarkanMassaModal({
     withinForumDialog = false,
     onClose,
 }: HasilBubarkanMassaModalProps) {
+    const { t } = useLanguage();
     if (typeof window === 'undefined' || !isOpen) return null;
 
     const isError = type === 'error';
-    const isKerusuhan = title.toLowerCase().includes('kerusuhan') || title.toLowerCase().includes('gagal') || isError;
+    const isKerusuhan = isError;
     const finalDead = deadCount !== undefined ? deadCount : casualties;
 
     // Warna border dan background disesuaikan dengan konteks (Kerusuhan vs Sukses)
@@ -50,7 +52,7 @@ export default function HasilBubarkanMassaModal({
                 <div className="flex-1 flex flex-col">
                     
                     <RootInfoModalHeader
-                        title={isKerusuhan ? 'Laporan Bentrokan / Kerusuhan' : 'Laporan Operasi Pembubaran Massa'}
+                        title={t(isKerusuhan ? 'side_inbox.demo.reportTitleClash' : 'side_inbox.demo.reportTitleSuccess')}
                         onClose={onClose}
                         icon={isKerusuhan ? <AlertTriangle /> : <CheckCircle2 />}
                         size="standard"
@@ -60,7 +62,7 @@ export default function HasilBubarkanMassaModal({
                                     ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
                                     : 'bg-root-accent/15 text-root-accent border-root-accent/30'
                             }`}>
-                                Satuan Pengamanan Dalam Negeri
+                                {t('side_inbox.demo.securityUnit')}
                             </span>
                         }
                     />
@@ -75,7 +77,7 @@ export default function HasilBubarkanMassaModal({
                             </h3>
                             {actionName && (
                                 <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-black/40 border border-root-accent/20 text-root-accent">
-                                    {actionName}
+                                    {actionName?.startsWith('side_inbox.') ? t(actionName) : actionName}
                                 </span>
                             )}
                         </div>
@@ -88,22 +90,22 @@ export default function HasilBubarkanMassaModal({
                     <div>
                         <h4 className="text-xs font-black uppercase tracking-wider text-root-accent mb-3 flex items-center gap-1.5">
                             <Activity className="w-4 h-4" />
-                            Dampak Terhadap Massa Demonstran
+                            {t('side_inbox.demo.crowdImpact')}
                         </h4>
                         
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             {/* Korban Terluka */}
                             <div className="bg-root-canvas border border-amber-500/30 rounded-xl p-4 flex flex-col justify-between">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">Korban Terluka</span>
+                                    <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">{t('side_inbox.demo.injured')}</span>
                                     <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
                                 </div>
                                 <div className="mt-3">
                                     <p className="text-xl sm:text-2xl font-black text-amber-300">
-                                        {injuredCount.toLocaleString('id-ID')} <span className="text-xs font-semibold text-slate-400">Jiwa</span>
+                                        {injuredCount.toLocaleString('id-ID')} <span className="text-xs font-semibold text-slate-400">{t('side_inbox.demo.people')}</span>
                                     </p>
                                     <p className="text-[10px] text-amber-400/80 mt-1 font-medium">
-                                        Iritasi gas, terinjak & cedera fisik
+                                        {t('side_inbox.demo.injuryImpact')}
                                     </p>
                                 </div>
                             </div>
@@ -111,15 +113,15 @@ export default function HasilBubarkanMassaModal({
                             {/* Korban Tewas */}
                             <div className="bg-root-canvas border border-rose-500/30 rounded-xl p-4 flex flex-col justify-between">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">Korban Tewas</span>
+                                    <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">{t('side_inbox.demo.killed')}</span>
                                     <HeartCrack className="w-4 h-4 sm:w-5 sm:h-5 text-rose-400" />
                                 </div>
                                 <div className="mt-3">
                                     <p className="text-xl sm:text-2xl font-black text-rose-400">
-                                        {finalDead.toLocaleString('id-ID')} <span className="text-xs font-semibold text-slate-400">Jiwa</span>
+                                        {finalDead.toLocaleString('id-ID')} <span className="text-xs font-semibold text-slate-400">{t('side_inbox.demo.people')}</span>
                                     </p>
                                     <p className="text-[10px] text-rose-400/80 mt-1 font-medium">
-                                        Mengurangi populasi resmi negara
+                                        {t('side_inbox.demo.populationImpact')}
                                     </p>
                                 </div>
                             </div>
@@ -127,15 +129,15 @@ export default function HasilBubarkanMassaModal({
                             {/* Sisa Demonstran di Jalan */}
                             <div className="bg-root-canvas border border-root-accent/30 rounded-xl p-4 flex flex-col justify-between">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">Sisa Massa</span>
+                                    <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">{t('side_inbox.demo.remainingProtesters')}</span>
                                     <Users className="w-4 h-4 sm:w-5 sm:h-5 text-root-accent" />
                                 </div>
                                 <div className="mt-3">
                                     <p className="text-xl sm:text-2xl font-black text-root-accent">
-                                        {(remainingMassa !== undefined ? remainingMassa : 0).toLocaleString('id-ID')} <span className="text-xs font-semibold text-slate-400">Jiwa</span>
+                                        {(remainingMassa !== undefined ? remainingMassa : 0).toLocaleString('id-ID')} <span className="text-xs font-semibold text-slate-400">{t('side_inbox.demo.people')}</span>
                                     </p>
                                     <p className="text-[10px] text-root-accent/70 mt-1 font-medium">
-                                        {remainingMassa === 0 ? 'Massa berhasil dibubarkan' : 'Masih bertahan di lapangan'}
+                                        {t(remainingMassa === 0 ? 'side_inbox.demo.dispersed' : 'side_inbox.demo.stillAtSite')}
                                     </p>
                                 </div>
                             </div>
@@ -154,7 +156,7 @@ export default function HasilBubarkanMassaModal({
                                 : 'bg-root-accent text-root-canvas hover:bg-[#00e699] border border-root-accent'
                         }`}
                     >
-                        Dimengerti
+                        {t('side_inbox.demo.understood')}
                     </button>
                 </div>
 

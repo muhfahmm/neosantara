@@ -22,6 +22,10 @@ interface DiplomacyNotification {
   title?: string;
   message?: string;
   timestamp?: string;
+  partnerCountry?: string;
+  partnerName?: string;
+  proposerCountry?: string;
+  targetCountry?: string;
 }
 
 const diplomacyNewsTypes: Array<[RegExp, DiplomacyNewsType]> = [
@@ -45,6 +49,10 @@ export function generateDiplomacyNews(
     id: `news-${notification.id || `${timestamp}-${title}`}`,
     type: matchedType,
     category: 'diplomasi',
+    targetCountry: notification.partnerCountry ||
+      notification.partnerName ||
+      notification.proposerCountry ||
+      notification.targetCountry,
     headline: title,
     content: notification.message || '',
     timestamp,

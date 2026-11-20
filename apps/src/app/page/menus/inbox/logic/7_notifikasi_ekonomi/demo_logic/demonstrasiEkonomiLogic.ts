@@ -1,14 +1,9 @@
 // File: demonstrasiEkonomiLogic.ts
 
-export interface DemonstrasiNotification {
-  id: string;
-  title: string;
-  sender: string;
-  message: string;
-  timestamp: string;
-  type: 'kepuasan' | 'peringkat' | 'kesejahteraan';
-  value: number;
-  isRead: boolean;
+import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { createInboxNotificationText, getDefaultInboxText } from '../../notificationMessage';
+
+export interface DemonstrasiNotification extends NotificationMessage {
   tradeType: 'demonstrasi_rakyat';
   cause: 'subsidi' | 'harga' | 'pajak';
   severity: 'sedang' | 'tinggi' | 'ekstrem';
@@ -56,11 +51,19 @@ export function generateDemonstrasiSubsidiNotification(
 ): DemonstrasiNotification {
   const severity = isCritical ? 'ekstrem' : 'tinggi';
   const demonstratorCount = calculateDemonstrators('subsidi', severity, countryPopulation);
+  const titleKey = 'side_inbox.demo.generated.subsidyTitle';
+  const titleParams = { subsidyName };
+  const senderKey = 'side_inbox.demo.generated.subsidySender';
+  const messageKey = 'side_inbox.demo.generated.subsidyMessage';
+  const messageParams = { subsidyName, demonstratorCount };
   return {
     id: `demo-subsidi-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    title: `🔥 DEMONSTRASI MASIF: PENOLAKAN PENCABUTAN SUBSIDI`,
-    sender: `Aliansi Buruh, Mahasiswa & Koalisi Masyarakat Sipil`,
-    message: `Gelombang unjuk rasa besar-besaran pecah di berbagai ibu kota provinsi setelah pemerintah menonaktifkan program ${subsidyName}! Sekitar ${demonstratorCount.toLocaleString('id-ID')} massa memadati jalan protokol, menuntut pengembalian anggaran subsidi serta mengecam pemotongan jaring pengaman sosial rakyat.`,
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    sender: getDefaultInboxText(senderKey),
+    senderKey,
+    ...createInboxNotificationText(messageKey, messageParams),
     timestamp: dateStr,
     type: 'kepuasan',
     value: 0,
@@ -85,19 +88,28 @@ export function generateDemonstrasiHargaNotification(
   const isExtreme = levelJump >= 3;
   const severity = isExtreme ? 'ekstrem' : 'tinggi';
   const demonstratorCount = calculateDemonstrators('harga', severity, countryPopulation);
-  const title = isExtreme
-    ? `🔥 KERUSUHAN & DEMONSTRASI DARURAT: LONJAKAN EKSTREM HARGA ${itemName}`
-    : `📢 DEMONSTRASI WARGA: AKSI PROTES KENAIKAN HARGA ${itemName}`;
-
-  const message = isExtreme
-    ? `Massa rakyat dan ibu rumah tangga sebanyak kurleb ${demonstratorCount.toLocaleString('id-ID')} jiwa tumpah ruah menggelar demonstrasi besar memblokade pusat distribusi setelah harga pasar ${itemName} dinaikkan secara drastis sekaligus melonjak ${levelJump} level ke Rp ${newPrice.toLocaleString('id-ID')} (sebelumnya Rp ${oldPrice.toLocaleString('id-ID')}). Gejolak sosial memanas menuntut pencabutan kebijakan harga ekstrem ini!`
-    : `Aksi demonstrasi dan unjuk rasa damai dihadiri sekitar ${demonstratorCount.toLocaleString('id-ID')} warga digelar di depan gedung perwakilan daerah atas kenaikan harga komoditas ${itemName} dari Rp ${oldPrice.toLocaleString('id-ID')} menjadi Rp ${newPrice.toLocaleString('id-ID')}. Serikat konsumen mendesak stabilisasi harga barang pokok.`;
+  const direction = isExtreme ? 'extreme' : 'standard';
+  const formatPrice = (price: number) => price.toLocaleString('id-ID');
+  const titleKey = `side_inbox.demo.generated.price${direction}Title`;
+  const titleParams = { itemName, oldPrice: formatPrice(oldPrice), newPrice: formatPrice(newPrice) };
+  const senderKey = 'side_inbox.demo.generated.priceSender';
+  const messageKey = `side_inbox.demo.generated.price${direction}Message`;
+  const messageParams = {
+    itemName,
+    oldPrice: formatPrice(oldPrice),
+    newPrice: formatPrice(newPrice),
+    levelJump,
+    demonstratorCount,
+  };
 
   return {
     id: `demo-harga-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    title,
-    sender: `Serikat Konsumen, Asosiasi Pedagang & Komunitas Warga`,
-    message,
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    sender: getDefaultInboxText(senderKey),
+    senderKey,
+    ...createInboxNotificationText(messageKey, messageParams),
     timestamp: dateStr,
     type: 'kepuasan',
     value: 0,
@@ -120,11 +132,19 @@ export function generateDemonstrasiPajakNotification(
   countryPopulation?: number
 ): DemonstrasiNotification {
   const demonstratorCount = calculateDemonstrators('pajak', 'ekstrem', countryPopulation);
+  const titleKey = 'side_inbox.demo.generated.taxTitle';
+  const titleParams = { taxName, oldRate, newRate };
+  const senderKey = 'side_inbox.demo.generated.taxSender';
+  const messageKey = 'side_inbox.demo.generated.taxMessage';
+  const messageParams = { taxName, oldRate, newRate, rateDifference, demonstratorCount };
   return {
     id: `demo-pajak-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    title: `🔥 AKSI MOGOK & DEMONSTRASI NASIONAL: PENOLAKAN LONJAKAN ${taxName.toUpperCase()}`,
-    sender: `Federasi Serikat Buruh & Asosiasi Pelaku Industri Nasional`,
-    message: `Gelombang aksi unjuk rasa besar disertai aksi mogok kerja massal oleh sekitar ${demonstratorCount.toLocaleString('id-ID')} buruh dan pekerja meletus serentak menyusul kebijakan kenaikan tarif ${taxName} yang melonjak gila-gilaan sebesar +${rateDifference} poin (dari ${oldRate}% ke ${newRate}%). Ribuan demonstran menuntut pembatalan kenaikan beban pajak yang mencekik ekonomi rakyat!`,
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    sender: getDefaultInboxText(senderKey),
+    senderKey,
+    ...createInboxNotificationText(messageKey, messageParams),
     timestamp: dateStr,
     type: 'kepuasan',
     value: 0,

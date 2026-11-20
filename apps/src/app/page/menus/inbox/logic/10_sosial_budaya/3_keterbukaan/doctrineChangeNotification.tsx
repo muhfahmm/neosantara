@@ -2,6 +2,7 @@ import React from 'react';
 import { Sliders, TrendingUp, TrendingDown, Shield } from 'lucide-react';
 import { DoctrineChangeNotification } from './doctrineChangeLogic';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getInboxNotificationMessage, getInboxNotificationSender, getInboxNotificationTitle } from '../../notificationMessage';
 
 interface Props {
   notification: DoctrineChangeNotification;
@@ -11,7 +12,7 @@ interface Props {
 
 export default function DoctrineChangeNotificationCard({ notification }: Props) {
   const { t } = useLanguage();
-  const { sliderLabel, fromValue, toValue, threshold, effects } = notification;
+  const { sliderKey, fromValue, toValue, threshold, effects } = notification;
   const isIncrease = toValue >= fromValue;
   const isPositive = threshold === 'above70' || threshold === 'drastic_up' || (isIncrease && threshold !== 'drastic_down');
 
@@ -24,29 +25,32 @@ export default function DoctrineChangeNotificationCard({ notification }: Props) 
       <div className="flex-1 space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h4 className="text-sm font-black text-white uppercase tracking-wide leading-tight">
-            {notification.title}
+            {getInboxNotificationTitle(notification, t)}
           </h4>
           <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1 border ${isPositive ? 'text-emerald-300 bg-emerald-900/80 border-emerald-500/50' : 'text-rose-300 bg-rose-900/80 border-rose-500/50'}`}>
             {isIncrease ? <TrendingUp className="w-3 h-3 text-emerald-400" /> : <TrendingDown className="w-3 h-3 text-rose-400" />}
-            {sliderLabel}: {fromValue}% ➔ {toValue}%
+            {t(`side_inbox.dynamicNotifications.socialCultural.doctrine.sliders.${sliderKey}`)}: {fromValue}% ➔ {toValue}%
           </span>
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
+          {t('side_inbox.senderPrefix', {
+            sender: getInboxNotificationSender(notification, t),
+            date: notification.timestamp,
+          })}
         </p>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">
-          {notification.message}
+          {getInboxNotificationMessage(notification, t)}
         </p>
 
         {effects && effects.length > 0 && (
           <div className="bg-root-canvas border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex flex-wrap gap-2 items-center justify-between">
-            <span className="text-[10px] font-bold text-slate-400 uppercase">Dampak Kebijakan:</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase">{t('side_inbox.social.policyImpact')}</span>
             <div className="flex flex-wrap gap-1.5">
               {effects.map((eff, i) => (
                 <span key={i} className={`px-2 py-0.5 rounded-md border text-[10px] font-black uppercase ${eff.value.startsWith('+') ? 'bg-emerald-950/80 border-emerald-500/40 text-emerald-300' : 'bg-rose-950/80 border-rose-500/40 text-rose-300'}`}>
-                  {eff.stat}: {eff.value}
+                  {eff.statKey ? t(eff.statKey) : eff.stat}: {eff.value}
                 </span>
               ))}
             </div>

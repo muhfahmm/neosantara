@@ -1,6 +1,8 @@
 import { CheckCircle2, XCircle } from "lucide-react";
 import { OrganizationMembershipNotification } from "./organizationMembershipNotificationLogic";
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getInboxNotificationMessage, getInboxNotificationTitle, getLocalizedOrganizationName } from '@/app/page/menus/inbox/logic/notificationMessage';
+import { getLocalizedCountryName } from '@/app/logic/countryNameLogic';
 
 interface OrganizationMembershipNotificationCardProps {
   notification: OrganizationMembershipNotification;
@@ -33,7 +35,7 @@ export default function OrganizationMembershipNotificationCard({
       <div className="min-w-0 flex-1 space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h4 className="text-sm font-black uppercase leading-tight tracking-wide text-white">
-            {notification.title}
+            {getInboxNotificationTitle(notification, t)}
           </h4>
           <span
             className={`rounded-full border px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider ${
@@ -42,14 +44,14 @@ export default function OrganizationMembershipNotificationCard({
                 : "border-rose-500/40 bg-rose-900/50 text-rose-300"
             }`}
           >
-            {notification.category} · {isAccepted ? (t('side_inbox.actions.accept') || "Diterima") : (t('side_inbox.actions.reject') || "Ditolak")}
+            {t(notification.categoryKey)} · {isAccepted ? t('side_inbox.actions.accept') : t('side_inbox.actions.reject')}
           </span>
         </div>
 
         <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-          {notification.countryName} · {notification.organizationName} · {notification.timestamp}
+          {getLocalizedCountryName(notification.countryName)} · {getLocalizedOrganizationName(notification.organizationName, t)} · {notification.timestamp}
         </p>
-        <p className="text-xs font-medium leading-relaxed text-slate-200">{notification.message}</p>
+        <p className="text-xs font-medium leading-relaxed text-slate-200">{getInboxNotificationMessage(notification, t)}</p>
       </div>
     </div>
   );

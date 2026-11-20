@@ -194,11 +194,16 @@
     "risk": "Risk: {risk}",
     "recoveryCost": "Restoration Operation Cost: {cost} NEO",
     "stabilized": "STABILITY RESTORED",
-    "quellRebellion": "SUPPRESS INSURGENCY",
+    "quellRebellion": "武装反乱の鎮圧",
     "diserangTitle": "⚔️ MILITARY ATTACK ON SOVEREIGN TERRITORY!",
     "diserangBadge": "Military Invasion",
     "icbmTitle": "🚀 INTERCONTINENTAL BALLISTIC MISSILE (ICBM) ALERT!",
-    "icbmBadge": "Nuclear & Ballistic Threat"
+    "icbmBadge": "Nuclear & Ballistic Threat",
+    "deployDefense": "防衛部隊を展開",
+    "defenseDeployed": "軍事防衛部隊配備完了",
+    "impact": "影響度",
+    "mobilizationCost": "防衛動員費用",
+    "estimatedImpact": "推定被害規模: 全域壊滅"
   },
   "disaster": {
     "naturalTitle": "🚨 NATURAL DISASTER: {name} IN {province}",
@@ -207,12 +212,14 @@
     "financialLoss": "Financial Loss",
     "infrastructureDamage": "Infrastructure Damage",
     "aidCost": "Relief & Evacuation Cost",
-    "sendAid": "DISPATCH EMERGENCY RELIEF",
+    "sendAid": "緊急支援物資の輸送",
     "handled": "RELIEF FULLY DISPATCHED",
     "wabahTitle": "☣️ DISEASE EPIDEMIC: {name} IN {province}",
     "wabahBadge": "Disease Epidemic",
     "infected": "Confirmed Infected",
-    "quarantineCost": "Quarantine Control Cost"
+    "quarantineCost": "Quarantine Control Cost",
+    "quarantine": "地域隔離・封鎖措置の実施",
+    "quarantineSuccess": "地域隔離措置を発令しました"
   },
   "geopolitics": {
     "allianceTitle": "🛡️ DEFENSE ALLIANCE PROPOSAL: {partner}",
@@ -229,7 +236,9 @@
     "embassyBadge": "Embassy",
     "unResolutionTitle": "🏛️ UN RESOLUTION: {title}",
     "unResolutionBadge": "UN General Assembly Resolution",
-    "openResolution": "VIEW UN RESOLUTION DETAILS →"
+    "openResolution": "VIEW UN RESOLUTION DETAILS →",
+    "openEmbassy": "大使館を開設 →",
+    "openBilateralDiplomacy": "二国間外交を開く →"
   },
   "basicNeeds": {
     "electricTitle": "⚡ ENERGY CRISIS: NATIONAL ELECTRICAL DEFICIT",
@@ -243,7 +252,12 @@
     "populationTitle": "👥 DEMOGRAPHIC & POPULATION CRISIS",
     "populationBadge": "Citizen Demographics",
     "solveNow": "RESOLVE NOW",
-    "resolved": "CRISIS RESOLVED"
+    "resolved": "CRISIS RESOLVED",
+    "buildPowerPlant": "発電所を建設 →",
+    "buildHousing": "住宅施設を建設 →",
+    "boostFood": "食料増産を実施 →",
+    "buildPublicFacilities": "公共施設を整備 →",
+    "manageDemographics": "人口政策を管理 →"
   },
   "tradeModals": {
     "closedTitle": "Trade Access Denied",
@@ -291,11 +305,11 @@
   },
   "security": {
     "nationalSecurityReport": "National Security Status Report",
-    "affectedCitizens": "Affected Citizens",
-    "totalLoss": "Total Losses",
-    "responseCost": "Response Cost",
+    "affectedCitizens": "影響を受けた市民",
+    "totalLoss": "総被害額",
+    "responseCost": "対応費用",
     "securityOperationsComplete": "SECURITY OPERATIONS COMPLETED",
-    "deploySecurity": "Deploy Security Operations",
+    "deploySecurity": "治安維持部隊を展開",
     "alliedAid": "Allied Military Assistance",
     "aidAccepted": "MILITARY AID ACCEPTED",
     "offerExpired": "OFFER EXPIRED",
@@ -306,7 +320,10 @@
     "warships": "Warships",
     "orgMembership": "International Organization Membership",
     "accepted": "Accepted",
-    "rejected": "Rejected"
+    "rejected": "Rejected",
+    "securityRisk": "治安危機及び秩序混乱",
+    "operationsComplete": "治安維持作戦完了",
+    "ignore": "無視"
   },
   "electricityCrisis": {
     "hideDetail": "▲ Hide Details",
@@ -324,14 +341,77 @@
     "days": "days"
   },
   "demo": {
-    "cause": "Cause",
-    "mass": "Crowd",
-    "people": "people",
-    "status": "Status",
-    "ongoing": "ONGOING",
-    "hardPower": "Crackdown",
-    "dialog": "Public Dialog",
-    "fulfill": "Fulfill Demands",
-    "ignore": "Ignore Protest"
+    "cause": "抗議要因",
+    "mass": "群衆規模",
+    "people": "名",
+    "status": "状態",
+    "ongoing": "進行中",
+    "hardPower": "強硬排除",
+    "dialog": "公開対話",
+    "fulfill": "要求受諾",
+    "ignore": "静観・放置",
+    "disperseModalTitle": "国家安全保障措置",
+    "disperseModalSub": "治安維持部隊展開オプション",
+    "operationCost": "作戦費用",
+    "cancel": "中止",
+    "confirmDisperse": "強制排除を実行！",
+    "understood": "了解",
+    "confirmTitle": "治安部隊投入の確認",
+    "confirmSubtitle": "デモ集団の解散措置",
+    "confirmWarning": "国家の強制力を行使します。衝突による負傷者や支持率低下は避けられません！",
+    "confirmQuestion": "この強制解散作戦を承認し部隊を展開しますか？",
+    "reportTitleSuccess": "🚨 デモ群衆強制排除作戦報告書",
+    "reportTitleClash": "🔥 衝突及び暴動鎮圧報告書",
+    "injured": "負傷者数",
+    "killed": "死者・重傷者数",
+    "remainingProtesters": "現場残留デモ隊",
+    "dialogForumTitle": "公開対話フォーラム",
+    "backToGame": "ゲームに戻る",
+    "laborLeader": "労働組合代表",
+    "protesterRep": "抗議集団代表",
+    "anger": "群衆の怒り",
+    "trust": "国民の信頼",
+    "demandsTitle": "要求項目リスト",
+    "refreshChoices": "対応案の変更",
+    "disperseWithPolice": "機動隊による強制排除",
+    "sessionStarted": "公開対話を開始しました。緊張を緩和する最適な対応を選択してください。"
+  },
+  "notificationMessages": {
+    "ratings": {
+      "satisfaction": "大統領、国民満足度が{value}/100まで低下しました。不満が複数の州に広がり始めています。10を下回る状態が続けば大規模な抗議活動は避けられず、国家の安定が脅かされます。至急、文化祭を開催するか生活必需品への税率を引き下げてください。",
+      "ranking": "大統領、国民からの信頼度（あなたのランキング）が{value}/100まで低下しました。議会が悪化傾向に注目し始め、野党から弾劾の噂も出ています。ランキングが10を下回ると失脚するおそれがあります。国民の要望に応え、物価を安定させ、福祉を守ってください。",
+      "welfare": "大統領、国民福祉指数が{value}/100まで低下しました。教育、医療、公共インフラなどの基礎施設の不足が、生活の質を大きく損ない始めています。10を下回ると深刻な人道危機に陥ります。学校や病院、公共施設を建設するか、直接給付を実施してください。"
+    },
+    "rebellion": "大統領、{country}で過激な抗議活動と武装分離運動が発生しました。反乱勢力は中央政府に政治的地位の変更を要求しています！",
+    "alliedAidRequest": "{target}が{attacker}の軍事力による奇襲攻撃を受けました。相互防衛同盟条約に基づき、同盟国は領土主権を守るための軍事支援を求めています。",
+    "diserang": {
+      "threat": "司令官、隣国の{enemy}が国境地帯付近で装甲師団を動員していることを確認しました。まだ発砲はありませんが、あからさまな挑発行為です。",
+      "borderAttack": "軍事警報！{enemy}の部隊が主要な国境検問所を攻撃しました。前線では銃撃戦と砲撃が続いています。",
+      "warDeclaration": "大規模な紛争です！{enemy}政府がわが国に対して全面戦争を正式に宣言し、戦闘艦隊が急速に進軍しています。",
+      "invasion": "大規模な軍事侵攻です！{enemy}の連合軍が、わが国の州を占領・併合するため陸空から侵攻を開始しました。",
+      "invasionWithoutTerritories": "大規模な軍事侵攻です！{enemy}の連合軍が国土防衛線を突破するため、陸空からの作戦を開始しました。現在、占領可能な併合地域はありません。"
+    },
+    "icbm": {
+      "incomingAlert": "最高度の緊急事態です！防衛レーダーが、{launcher}から発射され{target}へ直進する核弾頭搭載の大陸間弾道ミサイル（ICBM）を探知しました。着弾まで数分と予測されます！",
+      "programStarted": "大統領、国家核開発計画（{country}）の機密プロジェクトが{startDate}に正式に始まりました。ウラン濃縮施設、研究炉、戦略支援インフラを建設中です。完成予定日は{endDate}です。",
+      "programCompleted": "国家戦略発表！国家核開発計画の施設建設がすべて完了しました。{country}は正式に核保有能力を持つ国となり、ICBMの製造と核戦争作戦が利用可能になりました！",
+      "testReport": "世界情報報告：{tester}が{target}に向けて、核弾頭搭載の大陸間弾道ミサイル（ICBM）の発射実験を行いました。地震センサーと偵察衛星が、試験区域での強力な爆発振動を記録しました！"
+    },
+    "resolution": {
+      "worldWarBan": "国連外交速報！{proposer}が、{duration}にわたる世界全体への「戦争禁止」を正式に提案しました。指定国への攻撃を選択期間中禁止する内容です。国連総会の採決はまもなく行われます！",
+      "worldProductionBan": "国連外交速報！{proposer}が、{duration}にわたる世界全体への「生産禁止」を正式に提案しました。選択期間中、{product}の生産を停止する内容です。国連総会の採決はまもなく行われます！",
+      "targeted": {
+        "arms_embargo": "国連外交速報！二国間関係の悪化（スコア：{score}/100）を理由に、{proposer}が{target}を対象とする{duration}の「武器販売禁輸」を正式に提案しました。選択期間中、武器取引を禁止する内容です。国連総会の採決はまもなく行われます！",
+        "economic_embargo": "国連外交速報！二国間関係の悪化（スコア：{score}/100）を理由に、{proposer}が{target}を対象とする{duration}の「経済制裁」を正式に提案しました。選択期間中、工場・鉱業の生産と国家収入を60％削減する内容です。国連総会の採決はまもなく行われます！",
+        "military_invasion": "国連外交速報！二国間関係の悪化（スコア：{score}/100）を理由に、{proposer}が{target}を対象とする{duration}の「侵攻決議」を正式に提案しました。他国から非難を受けずに侵攻できる内容です。国連総会の採決はまもなく行われます！",
+        "production_ban": "国連外交速報！二国間関係の悪化（スコア：{score}/100）を理由に、{proposer}が{target}を対象とする{duration}の「生産禁止」を正式に提案しました。選択期間中、{product}の生産を停止する内容です。国連総会の採決はまもなく行われます！"
+      }
+    }
+  },
+  "policyNotice": {
+    "policyImpact": "政策影響",
+    "ministry": "担当省庁",
+    "activeResearch": "進行中の研究",
+    "strategicSector": "戦略部門"
   }
 }

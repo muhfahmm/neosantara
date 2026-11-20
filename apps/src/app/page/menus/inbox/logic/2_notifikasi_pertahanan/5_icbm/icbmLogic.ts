@@ -1,5 +1,5 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
-import { createInboxNotificationText } from '../../notificationMessage';
+import { createInboxNotificationText, getDefaultInboxText } from '../../notificationMessage';
 
 export interface ICBMNotification extends NotificationMessage {
   tradeType: 'icbm' | 'program_nuklir_dimulai' | 'program_nuklir_selesai' | 'ujicoba_nuklir';
@@ -17,10 +17,16 @@ export function generateICBMNotification(
   targetCity: string,
   dateStr: string
 ): ICBMNotification {
+  const titleKey = 'side_inbox.defense.icbmTitles.incoming';
+  const senderKey = 'side_inbox.defense.icbmSenders.incoming';
+  const effectTextKey = 'side_inbox.defense.icbmEffects.incoming';
+
   return {
     id: `icbm-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title: `☢️ DETEKSI PELUNCURAN RUDAL NUKLIR (ICBM)!`,
-    sender: `Komando Pertahanan Udara & Antariksa Nasional`,
+    title: getDefaultInboxText(titleKey),
+    titleKey,
+    sender: getDefaultInboxText(senderKey),
+    senderKey,
     ...createInboxNotificationText('side_inbox.notificationMessages.icbm.incomingAlert', {
       launcher: launcherCountry,
       target: targetCity,
@@ -33,7 +39,8 @@ export function generateICBMNotification(
     launcherCountry,
     targetCity,
     costEM: 500,
-    effectText: 'Kehancuran Kota Total & Jutaan Korban jika Gagal Dicegat',
+    effectText: getDefaultInboxText(effectTextKey),
+    effectTextKey,
     isHandled: false
   };
 }
@@ -43,12 +50,18 @@ export function generateProgramNuklirDimulaiNotification(
   endDateStr: string,
   dateStr: string
 ): ICBMNotification {
+  const titleKey = 'side_inbox.defense.icbmTitles.programStarted';
+  const senderKey = 'side_inbox.defense.icbmSenders.program';
+  const effectTextKey = 'side_inbox.defense.icbmEffects.programStarted';
+
   return {
     id: `nuklir-dimulai-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title: `☢️ PROYEK RAHASIA: Pembangunan Program Nuklir Dimulai!`,
-    sender: `Komando Strategis Nuklir & Kementerian Pertahanan`,
+    title: getDefaultInboxText(titleKey),
+    titleKey,
+    sender: getDefaultInboxText(senderKey),
+    senderKey,
     ...createInboxNotificationText('side_inbox.notificationMessages.icbm.programStarted', {
-      country: userCountryName || 'Indonesia',
+      country: userCountryName || 'Nusantara',
       startDate: dateStr,
       endDate: endDateStr,
     }),
@@ -58,7 +71,9 @@ export function generateProgramNuklirDimulaiNotification(
     isRead: false,
     tradeType: 'program_nuklir_dimulai',
     endDateStr,
-    effectText: `Estimasi Rampung: ${endDateStr}`,
+    effectText: getDefaultInboxText(effectTextKey, { endDate: endDateStr }),
+    effectTextKey,
+    effectTextParams: { endDate: endDateStr },
     isHandled: false
   };
 }
@@ -67,19 +82,26 @@ export function generateProgramNuklirSelesaiNotification(
   userCountryName: string,
   dateStr: string
 ): ICBMNotification {
+  const titleKey = 'side_inbox.defense.icbmTitles.programCompleted';
+  const senderKey = 'side_inbox.defense.icbmSenders.program';
+  const effectTextKey = 'side_inbox.defense.icbmEffects.programCompleted';
+
   return {
     id: `nuklir-selesai-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title: `⚛️ NUKLIR AKTIF: Program Nuklir Nasional Resmi Beroperasi!`,
-    sender: `Komando Strategis Nuklir & Dewan Keamanan Nasional`,
+    title: getDefaultInboxText(titleKey),
+    titleKey,
+    sender: getDefaultInboxText(senderKey),
+    senderKey,
     ...createInboxNotificationText('side_inbox.notificationMessages.icbm.programCompleted', {
-      country: userCountryName || 'Indonesia',
+      country: userCountryName || 'Nusantara',
     }),
     timestamp: dateStr,
     type: 'kesejahteraan',
     value: 100,
     isRead: false,
     tradeType: 'program_nuklir_selesai',
-    effectText: 'Fasilitas Pengayaan Nuklir Aktif & Akses Perakitan ICBM Terbuka',
+    effectText: getDefaultInboxText(effectTextKey),
+    effectTextKey,
     isHandled: true
   };
 }
@@ -90,10 +112,17 @@ export function generateUjicobaNuklirAINotification(
   remainingIcbm: number,
   dateStr: string
 ): ICBMNotification {
+  const titleKey = 'side_inbox.defense.icbmTitles.testReport';
+  const senderKey = 'side_inbox.defense.icbmSenders.testReport';
+  const effectTextKey = 'side_inbox.defense.icbmEffects.testReport';
+
   return {
     id: `ujicoba-nuklir-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title: `🚀 UJI COBA NUKLIR & RUDAL ICBM: ${testerCountry}`,
-    sender: `Badan Intelijen Strategis & Deteksi Seismik Global`,
+    title: getDefaultInboxText(titleKey, { tester: testerCountry }),
+    titleKey,
+    titleParams: { tester: testerCountry },
+    sender: getDefaultInboxText(senderKey),
+    senderKey,
     ...createInboxNotificationText('side_inbox.notificationMessages.icbm.testReport', {
       tester: testerCountry,
       target: targetLocation,
@@ -105,7 +134,9 @@ export function generateUjicobaNuklirAINotification(
     tradeType: 'ujicoba_nuklir',
     launcherCountry: testerCountry,
     targetLocation,
-    effectText: `Status Persediaan Rudal ${testerCountry}: ${remainingIcbm} Unit Siap Tempur`,
+    effectText: getDefaultInboxText(effectTextKey, { tester: testerCountry, count: remainingIcbm }),
+    effectTextKey,
+    effectTextParams: { tester: testerCountry, count: remainingIcbm },
     isHandled: true
   };
 }

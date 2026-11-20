@@ -2,6 +2,8 @@ import React from 'react';
 import { Users, ArrowRight, Check } from 'lucide-react';
 import { PopulasiDefisitNotification } from './populasiDefisitLogic';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getInboxNotificationSender } from '@/app/page/menus/inbox/logic/notificationMessage';
+import { getInboxNotificationMessage } from '@/app/page/menus/inbox/logic/notificationMessage';
 
 interface PopulasiDefisitNotificationCardProps {
   notification: PopulasiDefisitNotification;
@@ -24,33 +26,33 @@ export default function PopulasiDefisitNotificationCard({
       <div className="flex-1 space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h4 className="text-sm font-black text-white uppercase tracking-wide leading-tight">
-            {t('side_inbox.basicNeeds.populationTitle') || notification.title}
+            {t('side_inbox.basicNeeds.populationTitle') }
           </h4>
           <span className="text-[10px] font-bold text-rose-300 bg-rose-900/60 px-2.5 py-0.5 rounded-full border border-rose-500/40 uppercase tracking-wider">
-            {t('side_inbox.basicNeeds.populationBadge') || 'Demografi Warga'}
+            {t('side_inbox.basicNeeds.populationBadge')}
           </span>
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
+          {t('side_inbox.senderPrefix', { sender: getInboxNotificationSender(notification, t), date: notification.timestamp })}
         </p>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">
-          {notification.message}
+          {getInboxNotificationMessage(notification, t)}
         </p>
 
         <div className="pt-2 flex items-center justify-end">
           {isHandled ? (
             <div className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/50 flex items-center gap-1.5">
               <Check className="w-3.5 h-3.5" />
-              <span>{t('side_inbox.basicNeeds.resolved') || 'PERTUMBUHAN PENDUDUK KEMBALI STABIL'}</span>
+              <span>{t('side_inbox.basicNeeds.resolved')}</span>
             </div>
           ) : (
             <button
               onClick={onRedirect}
               className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white rounded-xl transition-all cursor-pointer shadow-[0_0_12px_rgba(244,63,94,0.4)] flex items-center gap-1.5 font-bold"
             >
-              <span>{t('side_inbox.basicNeeds.solveNow') || 'Kelola Kebijakan Demografi →'}</span>
+              <span>{t('side_inbox.basicNeeds.solveNow')}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           )}

@@ -194,11 +194,16 @@
     "risk": "Risk: {risk}",
     "recoveryCost": "Restoration Operation Cost: {cost} NEO",
     "stabilized": "STABILITY RESTORED",
-    "quellRebellion": "SUPPRESS INSURGENCY",
+    "quellRebellion": "Quell Armed Rebellion",
     "diserangTitle": "⚔️ MILITARY ATTACK ON SOVEREIGN TERRITORY!",
     "diserangBadge": "Military Invasion",
     "icbmTitle": "🚀 INTERCONTINENTAL BALLISTIC MISSILE (ICBM) ALERT!",
-    "icbmBadge": "Nuclear & Ballistic Threat"
+    "icbmBadge": "Nuclear & Ballistic Threat",
+    "deployDefense": "Deploy Defense Forces",
+    "defenseDeployed": "MILITARY DEFENSE FORCES DEPLOYED",
+    "impact": "Impact",
+    "mobilizationCost": "Defense Mobilization Cost",
+    "estimatedImpact": "Estimated Impact: Full-Scale Devastation"
   },
   "disaster": {
     "naturalTitle": "🚨 NATURAL DISASTER: {name} IN {province}",
@@ -207,12 +212,14 @@
     "financialLoss": "Financial Loss",
     "infrastructureDamage": "Infrastructure Damage",
     "aidCost": "Relief & Evacuation Cost",
-    "sendAid": "DISPATCH EMERGENCY RELIEF",
+    "sendAid": "Send Emergency Aid",
     "handled": "RELIEF FULLY DISPATCHED",
     "wabahTitle": "☣️ DISEASE EPIDEMIC: {name} IN {province}",
     "wabahBadge": "Disease Epidemic",
     "infected": "Confirmed Infected",
-    "quarantineCost": "Quarantine Control Cost"
+    "quarantineCost": "Quarantine Control Cost",
+    "quarantine": "Implement Regional Quarantine",
+    "quarantineSuccess": "REGIONAL QUARANTINE ENFORCED"
   },
   "geopolitics": {
     "allianceTitle": "🛡️ DEFENSE ALLIANCE PROPOSAL: {partner}",
@@ -229,7 +236,9 @@
     "embassyBadge": "Embassy",
     "unResolutionTitle": "🏛️ UN RESOLUTION: {title}",
     "unResolutionBadge": "UN General Assembly Resolution",
-    "openResolution": "VIEW UN RESOLUTION DETAILS →"
+    "openResolution": "VIEW UN RESOLUTION DETAILS →",
+    "openEmbassy": "Open Embassy →",
+    "openBilateralDiplomacy": "Open Bilateral Diplomacy →"
   },
   "basicNeeds": {
     "electricTitle": "⚡ ENERGY CRISIS: NATIONAL ELECTRICAL DEFICIT",
@@ -243,7 +252,12 @@
     "populationTitle": "👥 DEMOGRAPHIC & POPULATION CRISIS",
     "populationBadge": "Citizen Demographics",
     "solveNow": "RESOLVE NOW",
-    "resolved": "CRISIS RESOLVED"
+    "resolved": "CRISIS RESOLVED",
+    "buildPowerPlant": "Build Power Plant →",
+    "buildHousing": "Build Housing Facilities →",
+    "boostFood": "Boost Food Production →",
+    "buildPublicFacilities": "Build Public Facilities →",
+    "manageDemographics": "Manage Demographic Policy →"
   },
   "tradeModals": {
     "closedTitle": "Trade Access Denied",
@@ -292,10 +306,10 @@
   "security": {
     "nationalSecurityReport": "National Security Status Report",
     "affectedCitizens": "Affected Citizens",
-    "totalLoss": "Total Losses",
+    "totalLoss": "Total Loss",
     "responseCost": "Response Cost",
     "securityOperationsComplete": "SECURITY OPERATIONS COMPLETED",
-    "deploySecurity": "Deploy Security Operations",
+    "deploySecurity": "Deploy Security Operation",
     "alliedAid": "Allied Military Assistance",
     "aidAccepted": "MILITARY AID ACCEPTED",
     "offerExpired": "OFFER EXPIRED",
@@ -306,7 +320,10 @@
     "warships": "Warships",
     "orgMembership": "International Organization Membership",
     "accepted": "Accepted",
-    "rejected": "Rejected"
+    "rejected": "Rejected",
+    "securityRisk": "Security Risk & Public Disorder",
+    "operationsComplete": "SECURITY OPERATIONS COMPLETED",
+    "ignore": "Ignore"
   },
   "electricityCrisis": {
     "hideDetail": "▲ Hide Details",
@@ -326,12 +343,75 @@
   "demo": {
     "cause": "Cause",
     "mass": "Crowd",
-    "people": "people",
+    "people": "citizens",
     "status": "Status",
     "ongoing": "ONGOING",
-    "hardPower": "Crackdown",
-    "dialog": "Public Dialog",
+    "hardPower": "Take Firm Action",
+    "dialog": "Open Dialogue",
     "fulfill": "Fulfill Demands",
-    "ignore": "Ignore Protest"
+    "ignore": "Ignore Action",
+    "disperseModalTitle": "National Security Action",
+    "disperseModalSub": "Security Operation Options",
+    "operationCost": "Operation Cost",
+    "cancel": "Cancel",
+    "confirmDisperse": "Yes, Disperse!",
+    "understood": "Understood",
+    "confirmTitle": "Confirm Security Operation",
+    "confirmSubtitle": "Crowd Dispersal Action",
+    "confirmWarning": "This action utilizes state coercive force. Clashes, casualties, public satisfaction drop, and approval rating decline are unavoidable!",
+    "confirmQuestion": "Are you certain you want to deploy this dispersal operation?",
+    "reportTitleSuccess": "🚨 CROWD DISPERSAL OPERATION REPORT",
+    "reportTitleClash": "🔥 CLASH & RIOT REPORT",
+    "injured": "Injured Casualties",
+    "killed": "Fatalities / Critical",
+    "remainingProtesters": "Remaining Protesters",
+    "dialogForumTitle": "Open Dialogue Forum",
+    "backToGame": "Back to Game",
+    "laborLeader": "Labor Union Leader",
+    "protesterRep": "Protester Representative",
+    "anger": "Crowd Anger",
+    "trust": "Public Trust",
+    "demandsTitle": "Public Demands List",
+    "refreshChoices": "Change Response Options",
+    "disperseWithPolice": "Disperse with Riot Police",
+    "sessionStarted": "Open dialogue initiated. Choose the best response to de-escalate tensions."
+  },
+  "notificationMessages": {
+    "ratings": {
+      "satisfaction": "Mr. President, public satisfaction has fallen to {value}/100. Discontent is spreading across several provinces. If it continues to drop below 10, widespread protests will be unavoidable and national stability will be threatened. Please hold a cultural festival or lower taxes on basic goods immediately.",
+      "ranking": "Mr. President, public confidence in your leadership has fallen to {value}/100. Parliament is taking notice of the downward trend, and opposition rumors of impeachment are emerging. If your ranking falls below 10, you risk being ousted. Please address public concerns, stabilize prices, and protect public welfare.",
+      "welfare": "Mr. President, the Public Welfare Index has fallen to {value}/100. Shortages of basic facilities such as schools, healthcare, and public infrastructure are sharply reducing quality of life. If it drops below 10, the nation will face a severe humanitarian crisis. Build schools, hospitals, and public facilities, or provide direct cash assistance."
+    },
+    "rebellion": "Mr. President, radical demonstrations and an armed separatist movement have erupted in {country}. The rebels are demanding a change in political status from the central government!",
+    "alliedAidRequest": "{target} has been unexpectedly attacked by the armed forces of {attacker}. Under the Mutual Defense Alliance Treaty, our ally is requesting military support to defend its territorial sovereignty.",
+    "diserang": {
+      "threat": "Commander, a neighboring country, {enemy}, has been detected mobilizing armored divisions near the border. No shots have been fired, but this is an overt provocation.",
+      "borderAttack": "MILITARY ALERT! {enemy}'s forces have attacked our main border post! Gunfire and artillery are raging along the front line.",
+      "warDeclaration": "MAJOR CONFLICT! The government of {enemy} has officially declared full-scale war on our nation! Their combat fleet is advancing rapidly.",
+      "invasion": "MASSIVE MILITARY INVASION! Combined forces from {enemy} have launched a ground and air invasion to seize and annex our provinces!",
+      "invasionWithoutTerritories": "MASSIVE MILITARY INVASION! Combined forces from {enemy} have launched a ground and air operation to breach our national defenses. We currently have no annexed territory for them to seize."
+    },
+    "icbm": {
+      "incomingAlert": "HIGHEST-LEVEL EMERGENCY! Defense radar has detected a nuclear-armed intercontinental ballistic missile (ICBM) launched from {launcher} and heading directly for {target}! Impact is expected within minutes!",
+      "programStarted": "Mr. President, the classified National Nuclear Program project ({country}) officially began on {startDate}. Uranium enrichment facilities, research reactors, and strategic support infrastructure are under construction. Completion is estimated for {endDate}.",
+      "programCompleted": "STRATEGIC NATIONAL ANNOUNCEMENT! Construction of the National Nuclear Program facilities is complete. {country} is now officially a nuclear-capable nation. ICBM assembly and nuclear warfare operations are now fully available!",
+      "testReport": "GLOBAL INTELLIGENCE REPORT: {tester} has just conducted a nuclear-armed intercontinental ballistic missile (ICBM) launch test toward {target}. Seismic sensors and surveillance satellites recorded powerful blast tremors at the test site!"
+    },
+    "resolution": {
+      "worldWarBan": "UN DIPLOMATIC UPDATE! {proposer} has officially proposed a \"War Ban\" for the entire world for {duration}. The proposal would prohibit attacks on designated nations during the selected period. The UN General Assembly vote will take place shortly!",
+      "worldProductionBan": "UN DIPLOMATIC UPDATE! {proposer} has officially proposed a \"Production Ban\" for the entire world for {duration}. Production of {product} would be suspended during the selected period. The UN General Assembly vote will take place shortly!",
+      "targeted": {
+        "arms_embargo": "UN DIPLOMATIC UPDATE! {proposer} has officially proposed an \"Arms Sales Embargo\" targeting {target} for {duration}, citing poor bilateral relations (Score: {score}/100). The proposal would prohibit arms trade during the selected period. The UN General Assembly vote will take place shortly!",
+        "economic_embargo": "UN DIPLOMATIC UPDATE! {proposer} has officially proposed an \"Economic Embargo\" targeting {target} for {duration}, citing poor bilateral relations (Score: {score}/100). The proposal would reduce factory and mining output and national revenue by 60% during the selected period. The UN General Assembly vote will take place shortly!",
+        "military_invasion": "UN DIPLOMATIC UPDATE! {proposer} has officially proposed an \"Invasion Resolution\" targeting {target} for {duration}, citing poor bilateral relations (Score: {score}/100). The resolution would permit an invasion without condemnation by other nations. The UN General Assembly vote will take place shortly!",
+        "production_ban": "UN DIPLOMATIC UPDATE! {proposer} has officially proposed a \"Production Ban\" targeting {target} for {duration}, citing poor bilateral relations (Score: {score}/100). Production of {product} would be suspended during the selected period. The UN General Assembly vote will take place shortly!"
+      }
+    }
+  },
+  "policyNotice": {
+    "policyImpact": "Policy Impact",
+    "ministry": "Ministry",
+    "activeResearch": "Active Research",
+    "strategicSector": "Strategic Sector"
   }
 }

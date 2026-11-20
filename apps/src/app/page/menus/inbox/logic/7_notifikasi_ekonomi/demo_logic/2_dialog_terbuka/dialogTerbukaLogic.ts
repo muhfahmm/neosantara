@@ -1,9 +1,11 @@
 import { DemonstrasiNotification } from '../demonstrasiEkonomiLogic';
+import { getDefaultInboxText } from '../../../notificationMessage';
 
 export interface DialogTerbukaResult {
   success: boolean;
   cost: number;
   message: string;
+  messageKey: string;
   targetPath: string;
   error?: string;
   updatedNotification?: DemonstrasiNotification;
@@ -24,12 +26,14 @@ export function startDialogTerbuka(
     ...notification,
     demo_status: 'dialog',
   };
+  const messageKey = 'side_inbox.demo.actions.dialogStarted';
 
   return {
     success: true,
     cost: DIALOG_TERBUKA_COST,
     targetPath: '/page/map_system/forum-dialog-terbuka',
-    message: `Pemerintah resmi mengumumkan pembukaan forum dialog terbuka dengan perwakilan massa demonstran. Mengalihkan ke forum dialog...`,
+    message: getDefaultInboxText(messageKey),
+    messageKey,
     updatedNotification,
   };
 }

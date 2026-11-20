@@ -15,6 +15,8 @@ import {
 import MenuBubarkanMassaModal from '../1_bubarkan_dengan_aparat/MenuBubarkanMassaModal';
 import { DetailOpsiBubarkan } from '../1_bubarkan_dengan_aparat/opsiBubarkanMassaConfig';
 import HasilBubarkanMassaModal from '../1_bubarkan_dengan_aparat/HasilBubarkanMassaModal';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getInboxNotificationMessage } from '../../../notificationMessage';
 
 const PajakModal = dynamic(() => import('@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/2_manajemen_pajak/PajakModal'), { ssr: false });
 const HargaModal = dynamic(() => import('@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/6_daya_beli/1_harga/HargaModal'), { ssr: false });
@@ -44,27 +46,42 @@ type BubarkanReport = {
   actionName?: string;
 };
 
-const DEFAULT_CONTEXT: DialogContext = {
-  title: 'Tuntutan Ekonomi',
-  opening: 'Pak Presiden, kami menunggu langkah nyata pemerintah.',
-  demands: [{ id: 'general', text: 'Kebijakan ekonomi yang meringankan beban rakyat', status: 'pending' }],
+type Translate = (key: string, params?: Record<string, string | number>) => string;
+type StoredDemoNotification = {
+  cause?: string;
+  severity?: string;
+  details?: Record<string, unknown>;
+  message?: string;
+  messageKey?: string;
+  messageParams?: Record<string, string | number>;
+  messageParamKeys?: Record<string, string>;
+  demonstratorCount?: number;
 };
 
-const INITIAL_MESSAGES = [
-  { id: 'sys-1', sender: 'system', text: 'Sesi negosiasi dimulai.' },
-  { id: 'npc-1', sender: 'npc', text: DEFAULT_CONTEXT.opening },
-];
+function defaultContext(t: Translate): DialogContext {
+  return {
+    title: t('side_inbox.demo.demandsTitle'),
+    opening: t('side_inbox.demo.sessionStarted'),
+    demands: [{ id: 'general', text: t('side_inbox.demo.generated.subsidyTitle'), status: 'pending' }],
+  };
+}
 
-const INITIAL_CHOICE_TEXT: Record<Choice, string[]> = {
-  HARD_POWER: ['Tegaskan batas anggaran dan tolak tuntutan penuh.', 'Berikan peringatan agar aksi tidak mengganggu layanan publik.', 'Minta massa menghentikan blokade sebelum dialog dilanjutkan.'],
-  SOFT_POWER: ['Ajak perwakilan massa menyusun jadwal perundingan.', 'Buka mediasi dan audit kebijakan secara bersama.', 'Minta waktu singkat sambil menjamin transparansi data.'],
-  CONCESSION: ['Pulihkan bantuan bagi warga yang terdampak.', 'Setujui bantuan darurat untuk meredakan keadaan.', 'Kurangi beban kebijakan yang memicu demonstrasi.'],
-};
+function initialMessages(t: Translate) {
+  return [
+    { id: 'sys-1', sender: 'system', text: t('side_inbox.demo.sessionStarted') },
+    { id: 'npc-1', sender: 'npc', text: t('side_inbox.demo.sessionStarted') },
+  ];
+}
 
-function randomChoices(): ChoiceOption[] {
-  return (Object.keys(INITIAL_CHOICE_TEXT) as Choice[]).map(choice => ({
+function randomChoices(t: Translate): ChoiceOption[] {
+  const choices: Record<Choice, string[]> = {
+    HARD_POWER: [t('side_inbox.demo.hardPower'), t('side_inbox.demo.tooltips.hardPower')],
+    SOFT_POWER: [t('side_inbox.demo.dialog'), t('side_inbox.demo.tooltips.dialog')],
+    CONCESSION: [t('side_inbox.demo.fulfill'), t('side_inbox.demo.tooltips.fulfill')],
+  };
+  return (Object.keys(choices) as Choice[]).map(choice => ({
     choice,
-    text: INITIAL_CHOICE_TEXT[choice][Math.floor(Math.random() * INITIAL_CHOICE_TEXT[choice].length)],
+    text: choices[choice][Math.floor(Math.random() * choices[choice].length)],
   }));
 }
 
@@ -100,67 +117,85 @@ function initialMood(
 }
 
 function contextFromNotification(
-  notification: { cause?: string; details?: Record<string, unknown>; message?: string; demonstratorCount?: number },
-  totalDemonstrators?: number
+  notification: {
+    cause?: string;
+    severity?: string;
+    details?: Record<string, unknown>;
+    message?: string;
+    messageKey?: string;
+    messageParams?: Record<string, string | number>;
+    messageParamKeys?: Record<string, string>;
+    demonstratorCount?: number;
+  },
+  t: Translate
 ): DialogContext {
   const details = notification.details ?? {};
-  const massa = totalDemonstrators ?? notification.demonstratorCount ?? 0;
-  
-  // Opening prefix berdasarkan massa:
-  let massaOpeningPrefix = '';
-  if (massa >= 100000) {
-    massaOpeningPrefix = `Kami tidak akan bergerak! Ada ${massa.toLocaleString('id-ID')} rakyat yang tumpah ruah di sini! `;
-  } else if (massa > 0 && massa <= 50000) {
-    massaOpeningPrefix = `Kami mulai kelelahan... tapi kami tetap menuntut keadilan! `;
+  const params: Record<string, string | number> = {
+    subsidyName: String(details.subsidyName ?? ''),
+    itemName: String(details.itemName ?? ''),
+    taxName: String(details.taxName ?? ''),
+    demonstratorCount: notification.demonstratorCount ?? 0,
+    levelJump: Number(details.levelJump ?? 0),
+    oldPrice: String(details.oldPrice ?? ''),
+    newPrice: String(details.newPrice ?? ''),
+    rateDifference: Number(details.rateDifference ?? 0),
+    oldRate: Number(details.oldRate ?? 0),
+    newRate: Number(details.newRate ?? 0),
+  };
+  const cause = notification.cause;
+  let titleKey: string | undefined;
+  let messageKey: string | undefined;
+  if (notification.cause === 'subsidi') {
+    titleKey = 'side_inbox.demo.generated.subsidyTitle';
+    messageKey = 'side_inbox.demo.generated.subsidyMessage';
+  } else if (cause === 'harga') {
+    const extreme = notification.severity === 'ekstrem';
+    titleKey = `side_inbox.demo.generated.price${extreme ? 'extreme' : 'standard'}Title`;
+    messageKey = `side_inbox.demo.generated.price${extreme ? 'extreme' : 'standard'}Message`;
+  } else if (cause === 'pajak') {
+    titleKey = 'side_inbox.demo.generated.taxTitle';
+    messageKey = 'side_inbox.demo.generated.taxMessage';
   }
 
-  if (notification.cause === 'subsidi') {
-    const subsidy = String(details.subsidyName ?? 'subsidi rakyat');
-    return { title: `Pencabutan ${subsidy}`, opening: `${massaOpeningPrefix}Pencabutan ${subsidy} langsung membebani keluarga kami. Kembalikan perlindungan ini.`, demands: [
-      { id: 'restore-subsidy', text: `Pulihkan program ${subsidy}`, status: 'pending' },
-      { id: 'protect-poor', text: 'Jamin perlindungan bagi keluarga rentan', status: 'pending' },
-    ] };
-  }
-  if (notification.cause === 'harga') {
-    const item = String(details.itemName ?? 'kebutuhan pokok');
-    return { title: `Lonjakan Harga ${item}`, opening: `${massaOpeningPrefix}Harga ${item} melonjak akibat kebijakan pemerintah. Stabilkan harga sebelum beban rakyat makin berat.`, demands: [
-      { id: 'stabilize-price', text: `Stabilkan harga ${item}`, status: 'pending' },
-      { id: 'open-distribution', text: 'Buka distribusi dan pengawasan harga', status: 'pending' },
-    ] };
-  }
-  if (notification.cause === 'pajak') {
-    const tax = String(details.taxName ?? 'pajak');
-    const newRate = details.newRate ? ` menjadi ${details.newRate}%` : '';
-    return { title: `Kenaikan ${tax}`, opening: `${massaOpeningPrefix}Kenaikan ${tax}${newRate} menekan penghasilan warga dan usaha kecil. Batalkan kebijakan ini.`, demands: [
-      { id: 'cancel-tax-rise', text: `Batalkan kenaikan ${tax}`, status: 'pending' },
-      { id: 'review-tax', text: `Evaluasi tarif ${tax} bersama perwakilan rakyat`, status: 'pending' },
-    ] };
-  }
-  return { ...DEFAULT_CONTEXT, opening: `${massaOpeningPrefix}${notification.message ?? DEFAULT_CONTEXT.opening}` };
+  const translatedTitle = titleKey
+    ? t(titleKey, params)
+    : notification.messageKey
+      ? getInboxNotificationMessage({ ...notification, message: notification.message ?? '' }, t)
+      : notification.message ?? t('side_inbox.demo.sessionStarted');
+  const translatedMessage = messageKey
+    ? t(messageKey, params)
+    : notification.messageKey
+      ? getInboxNotificationMessage({ ...notification, message: notification.message ?? '' }, t)
+      : notification.message ?? t('side_inbox.demo.sessionStarted');
+  return {
+    title: t('side_inbox.demo.demandsTitle'),
+    opening: translatedMessage,
+    demands: [{ id: cause ?? 'general', text: translatedTitle, status: 'pending' }],
+  };
 }
 
 function aggregateContexts(
-  notifications: Array<{ cause?: string; details?: Record<string, unknown>; message?: string; demonstratorCount?: number }>,
-  totalDemonstrators?: number
+  notifications: Array<{
+    cause?: string;
+    severity?: string;
+    details?: Record<string, unknown>;
+    message?: string;
+    messageKey?: string;
+    messageParams?: Record<string, string | number>;
+    messageParamKeys?: Record<string, string>;
+    demonstratorCount?: number;
+  }>,
+  t: Translate
 ): DialogContext {
-  const contexts = notifications.map(n => contextFromNotification(n, totalDemonstrators));
-  const demands = contexts.flatMap(context => context.demands).filter((demand, index, all) => all.findIndex(item => item.text === demand.text) === index);
-  const activeDemands = (demands.length ? demands : DEFAULT_CONTEXT.demands).map((demand, index) => ({ ...demand, id: `${demand.id}-${index}` }));
-  const summary = activeDemands.slice(0, 3).map(demand => demand.text).join('; ');
-  const more = activeDemands.length > 3 ? `, serta ${activeDemands.length - 3} tuntutan lain` : '';
-  
-  const massa = totalDemonstrators ?? 0;
-  let massaPrefix = '';
-  if (massa >= 100000) {
-    massaPrefix = `Kami tidak akan bergerak! Ada ${massa.toLocaleString('id-ID')} rakyat yang bersatu di jalanan! `;
-  } else if (massa > 0 && massa <= 50000) {
-    massaPrefix = `Massa kami mulai kelelahan... tapi tuntutan keadilan kami tidak akan padam! `;
-  }
-
-  return { 
-    title: `Tuntutan Massa (${activeDemands.length})`, 
-    opening: `${massaPrefix}Kami membawa ${activeDemands.length} tuntutan dari aksi yang berlangsung: ${summary}${more}. Pemerintah harus memberi jawaban nyata.`, 
-    demands: activeDemands 
+  const contexts = notifications.map(notification => contextFromNotification(notification, t));
+  const demands = contexts.flatMap(context => context.demands)
+    .filter((demand, index, all) => all.findIndex(item => item.text === demand.text) === index)
+    .map((demand, index) => ({ ...demand, id: `${demand.id}-${index}` }));
+  const opening = contexts.map(context => context.opening).filter(Boolean).join('\n\n');
+  return {
+    title: t('side_inbox.demo.demandsTitle'),
+    opening: opening || t('side_inbox.demo.sessionStarted'),
+    demands: demands.length ? demands : defaultContext(t).demands,
   };
 }
 
@@ -181,6 +216,7 @@ export default function DialogTerbukaMenu({
   setCountryDetail,
 }: DialogTerbukaMenuProps) {
   const router = useRouter();
+  const { t } = useLanguage();
 
   const handleReturn = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
@@ -201,15 +237,15 @@ export default function DialogTerbukaMenu({
   };
 
   // State untuk prototipe
-  const [context, setContext] = useState<DialogContext>(DEFAULT_CONTEXT);
-  const [messages, setMessages] = useState(INITIAL_MESSAGES);
+  const [context, setContext] = useState<DialogContext>(() => defaultContext(t));
+  const [messages, setMessages] = useState(() => initialMessages(t));
   const [angerLevel, setAngerLevel] = useState(75);
   const [trustLevel, setTrustLevel] = useState(30);
   const [totalMassa, setTotalMassa] = useState<number>(0);
   const [patience, setPatience] = useState(3);
   const [memory, setMemory] = useState<Record<string, number | string>>({});
   const [budget, setBudget] = useState(100_000);
-  const [choices, setChoices] = useState<ChoiceOption[]>(randomChoices());
+  const [choices, setChoices] = useState<ChoiceOption[]>(() => randomChoices(t));
   const [refreshCount, setRefreshCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<'ongoing' | 'success' | 'riot' | 'walkout'>('ongoing');
@@ -235,18 +271,18 @@ export default function DialogTerbukaMenu({
     try {
       const raw = sessionStorage.getItem('dialog-terbuka-notification');
       if (!raw) return;
-      const stored = JSON.parse(raw) as { 
-        selected?: { cause?: string; severity?: string; details?: Record<string, unknown>; message?: string; demonstratorCount?: number }; 
-        notifications?: Array<{ cause?: string; severity?: string; details?: Record<string, unknown>; message?: string; demonstratorCount?: number }> 
-      };
-      const notification = stored.selected ?? (stored as { cause?: string; severity?: string; details?: Record<string, unknown>; message?: string; demonstratorCount?: number });
+      const stored = JSON.parse(raw) as {
+        selected?: StoredDemoNotification;
+        notifications?: StoredDemoNotification[];
+      } & StoredDemoNotification;
+      const notification = stored.selected ?? stored;
       const allNotifications = stored.notifications?.length ? stored.notifications : [notification];
       
       // Hitung total massa dari seluruh notifikasi demo aktif
       const totalDem = allNotifications.reduce((acc, curr) => acc + (Number(curr.demonstratorCount) || 50000), 0);
       setTotalMassa(totalDem);
 
-      const notificationContext = aggregateContexts(allNotifications, totalDem);
+      const notificationContext = aggregateContexts(allNotifications, t);
       const mood = initialMood(notification, totalDem);
       setContext(notificationContext);
       setAngerLevel(mood.anger);
@@ -254,7 +290,7 @@ export default function DialogTerbukaMenu({
       setMessages([{ id: 'npc-1', sender: 'npc', text: notificationContext.opening }]);
       sessionStorage.removeItem('dialog-terbuka-notification');
     } catch {
-      setContext(DEFAULT_CONTEXT);
+      setContext(defaultContext(t));
     }
   }, []);
 
@@ -265,7 +301,7 @@ export default function DialogTerbukaMenu({
 
   const regenerateChoices = () => {
     if (refreshCount >= 3 || loading || status !== 'ongoing') return;
-    setChoices(randomChoices());
+    setChoices(randomChoices(t));
     setRefreshCount(count => count + 1);
   };
 
@@ -285,7 +321,8 @@ export default function DialogTerbukaMenu({
       setChoices(result.choices ?? []);
       setMessages(prev => [...prev, { id: `npc-${Date.now()}`, sender: 'npc', text: result.npc_response }]);
     } catch (error) {
-      setMessages(prev => [...prev, { id: `sys-${Date.now()}`, sender: 'system', text: error instanceof Error ? error.message : 'Koneksi negosiasi gagal.' }]);
+      console.error('Negotiation request failed', error);
+      setMessages(prev => [...prev, { id: `sys-${Date.now()}`, sender: 'system', text: t('side_inbox.demo.negotiationFailed') }]);
     } finally {
       setLoading(false);
     }
@@ -302,8 +339,8 @@ export default function DialogTerbukaMenu({
       id: `player-${Date.now()}`,
       sender: 'player',
       text: policyChanges.length > 0
-        ? `Pemerintah mengonfirmasi tuntutan: ${confirmedDemand.text}. Perubahan: ${policyChanges.join('; ')}.`
-        : `Pemerintah berkomitmen menindaklanjuti tuntutan: ${confirmedDemand.text}.`,
+        ? t('side_inbox.demo.policyChangesConfirmed', { demand: confirmedDemand.text, changes: policyChanges.join('; ') })
+        : t('side_inbox.demo.policyFollowUpCommitted', { demand: confirmedDemand.text }),
     }]);
 
     try {
@@ -334,10 +371,11 @@ export default function DialogTerbukaMenu({
         text: result.npc_response,
       }]);
     } catch (error) {
+      console.error('Policy negotiation request failed', error);
       setMessages(previous => [...previous, {
         id: `sys-${Date.now()}`,
         sender: 'system',
-        text: error instanceof Error ? error.message : 'Koneksi negosiasi AI gagal.',
+        text: t('side_inbox.demo.policyNegotiationFailed'),
       }]);
     } finally {
       setSelectedDemand(null);
@@ -352,7 +390,7 @@ export default function DialogTerbukaMenu({
       <div className="relative flex min-h-0 flex-1 flex-col">
         {/* === HEADER === */}
         <RootInfoModalHeader
-          title="Forum Dialog Terbuka"
+          title={t('side_inbox.demo.dialogForumTitle')}
           titleId="dialog-terbuka-title"
           icon={<MessageSquare />}
           size="standard"
@@ -363,10 +401,10 @@ export default function DialogTerbukaMenu({
               className="flex shrink-0 items-center gap-2 rounded-xl border border-root-accent/30 bg-root-surface px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-slate-300 transition-colors hover:border-root-accent hover:text-root-accent"
             >
               <ArrowLeft className="h-4 w-4" />
-              <span className="hidden sm:inline">Kembali ke Permainan</span>
+              <span className="hidden sm:inline">{t('side_inbox.demo.backToGame')}</span>
             </button>
           }
-          centerContent={<p className="text-xs text-root-subtle">Negosiasi &amp; Mediasi Massa Demonstran</p>}
+          centerContent={<p className="text-xs text-root-subtle">{t('side_inbox.demo.sessionStarted')}</p>}
         />
 
         {/* === MAIN CONTENT AREA === */}
@@ -380,18 +418,18 @@ export default function DialogTerbukaMenu({
               <div className="relative w-20 h-20 rounded-full border-2 border-root-accent/50 bg-root-surface flex items-center justify-center mb-3 shadow-[0_0_15px_rgba(0,255,170,0.2)]">
                 <User className="w-10 h-10 text-root-accent" />
                 <div className="absolute -bottom-2 -right-2 bg-rose-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full border-2 border-root-canvas flex items-center gap-1">
-                  <Flame className="w-3 h-3" /> MARAH
+                  <Flame className="w-3 h-3" /> {t('side_inbox.demo.anger').toUpperCase()}
                 </div>
               </div>
-              <h4 className="font-bold text-lg text-white">Ketua Aliansi Buruh</h4>
-              <p className="text-xs text-root-subtle">Perwakilan Massa Demonstran</p>
+              <h4 className="font-bold text-lg text-white">{t('side_inbox.demo.laborLeader')}</h4>
+              <p className="text-xs text-root-subtle">{t('side_inbox.demo.protesterRep')}</p>
             </div>
 
             {/* Bar Emosi & Kepercayaan */}
             <div className="p-6 border-b border-root-accent/10 space-y-4">
               <div>
                 <div className="flex justify-between text-xs font-bold mb-1">
-                  <span className="text-rose-400 uppercase flex items-center gap-1"><Flame className="w-3 h-3"/> Kemarahan</span>
+                  <span className="text-rose-400 uppercase flex items-center gap-1"><Flame className="w-3 h-3"/> {t('side_inbox.demo.anger')}</span>
                   <span className="text-white">{angerPercent}%</span>
                 </div>
                 <div className="h-2 w-full bg-root-surface rounded-full overflow-hidden border border-rose-500/30">
@@ -403,7 +441,7 @@ export default function DialogTerbukaMenu({
               </div>
               <div>
                 <div className="flex justify-between text-xs font-bold mb-1">
-                  <span className="text-emerald-400 uppercase flex items-center gap-1"><ShieldAlert className="w-3 h-3"/> Kepercayaan</span>
+                  <span className="text-emerald-400 uppercase flex items-center gap-1"><ShieldAlert className="w-3 h-3"/> {t('side_inbox.demo.trust')}</span>
                   <span className="text-white">{trustPercent}%</span>
                 </div>
                 <div className="h-2 w-full bg-root-surface rounded-full overflow-hidden border border-root-accent/30">
@@ -424,7 +462,7 @@ export default function DialogTerbukaMenu({
                     const menu = getPolicyMenuForDemand(demand.id);
                     setSelectedDemand(demand);
                     if (menu) setPolicyMenu(menu);
-                    else setMessages(previous => [...previous, { id: `sys-${Date.now()}`, sender: 'system', text: 'Menu kebijakan untuk tuntutan ini belum tersedia.' }]);
+                    else setMessages(previous => [...previous, { id: `sys-${Date.now()}`, sender: 'system', text: t('side_inbox.demo.policyMenuUnavailable') }]);
                   }} key={demand.id} className="w-full text-left flex items-start gap-2 bg-root-surface p-3 rounded-lg border border-root-accent/10 transition hover:border-root-accent/60 hover:bg-[#123333]">
                     {demand.status === 'completed' && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />}
                     {demand.status === 'rejected' && <XCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />}
@@ -447,11 +485,11 @@ export default function DialogTerbukaMenu({
                 <div className="flex items-center gap-2">
                   <Flame className="w-4 h-4 text-rose-400 animate-pulse" />
                   <span>
-                    ⚠️ <strong className="text-white font-mono">{totalMassa.toLocaleString('id-ID')}</strong> Massa saat ini memadati jalanan.
+                    ⚠️ <strong className="text-white font-mono">{totalMassa.toLocaleString('id-ID')}</strong> {t('side_inbox.demo.mass')} {t('side_inbox.demo.currentlyInStreets')}
                   </span>
                 </div>
                 <span className="text-[10px] uppercase tracking-wider font-mono text-rose-300">
-                  {totalMassa >= 500000 ? 'Level: KRITIS / SANGAT MARAH' : totalMassa <= 50000 ? 'Level: TERKENDALI' : 'Level: GEJOLAK TINGGI'}
+                  {totalMassa >= 500000 ? t('side_inbox.demo.statuses.riot') : totalMassa <= 50000 ? t('side_inbox.demo.statuses.active') : t('side_inbox.demo.statuses.inDialogue')}
                 </span>
               </div>
             )}
@@ -480,7 +518,7 @@ export default function DialogTerbukaMenu({
                       {!isPlayer && (
                         <div className="flex items-center gap-2 mb-2">
                           <User className="w-4 h-4 text-root-accent" />
-                          <span className="text-xs font-black uppercase text-root-accent">Ketua Aliansi</span>
+                          <span className="text-xs font-black uppercase text-root-accent">{t('side_inbox.demo.laborLeader')}</span>
                         </div>
                       )}
                       <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
@@ -505,7 +543,7 @@ export default function DialogTerbukaMenu({
                 ))}
               </div>
               <button onClick={regenerateChoices} disabled={refreshCount >= 3 || loading || status !== 'ongoing'} className="mt-3 inline-flex items-center gap-1 rounded-lg border border-root-accent/30 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:border-root-accent hover:text-root-accent disabled:cursor-not-allowed disabled:opacity-40">
-                <RefreshCw className="h-3.5 w-3.5" /> Ganti jawaban ({3 - refreshCount} tersisa)
+                <RefreshCw className="h-3.5 w-3.5" /> {t('side_inbox.demo.refreshChoices')} ({3 - refreshCount})
               </button>
               <button 
                 type="button"
@@ -519,9 +557,9 @@ export default function DialogTerbukaMenu({
                 disabled={loading} 
                 className="mt-3 ml-2 inline-flex items-center gap-1 rounded-lg border border-rose-500/40 px-3 py-1.5 text-xs font-semibold text-rose-300 hover:border-rose-400 hover:text-rose-200 transition-colors disabled:cursor-not-allowed disabled:opacity-40"
               >
-                <Flame className="h-3.5 w-3.5 text-rose-400" /> Bubarkan massa
+                <Flame className="h-3.5 w-3.5 text-rose-400" /> {t('side_inbox.demo.disperseWithPolice')}
               </button>
-              {events.map(event => <p key={event} className="mt-3 text-xs font-semibold text-rose-300">Peringatan: {event}</p>)}
+              {events.map(event => <p key={event} className="mt-3 text-xs font-semibold text-rose-300">{t('side_inbox.demo.warningLabel')}: {event}</p>)}
             </div>
             
           </section>
@@ -558,9 +596,9 @@ export default function DialogTerbukaMenu({
       {policyMenu && (!countryDetail || !setCountryDetail) && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <div role="dialog" aria-modal="true" className="modal-responsive-shell rounded-2xl border border-root-accent/30 bg-root-canvas p-6 shadow-2xl">
-            <h3 className="text-lg font-bold text-white">Menu ekonomi tidak tersedia</h3>
-            <p className="mt-2 text-sm text-slate-400">Buka dialog ini dari sesi permainan aktif untuk mengubah kebijakan.</p>
-            <SharedModalCloseButton type="button" onClick={() => setPolicyMenu(null)} className="mt-5 rounded-lg bg-root-accent px-3 py-2 text-xs font-bold text-root-accent-ink" appearance="custom">Tutup</SharedModalCloseButton>
+            <h3 className="text-lg font-bold text-white">{t('side_inbox.demo.economyUnavailableTitle')}</h3>
+            <p className="mt-2 text-sm text-slate-400">{t('side_inbox.demo.economyUnavailableMessage')}</p>
+            <SharedModalCloseButton type="button" onClick={() => setPolicyMenu(null)} className="mt-5 rounded-lg bg-root-accent px-3 py-2 text-xs font-bold text-root-accent-ink" appearance="custom">{t('side_inbox.demo.cancel')}</SharedModalCloseButton>
           </div>
         </div>
       )}
@@ -575,7 +613,7 @@ export default function DialogTerbukaMenu({
           if (onExecuteBubarkanOption) {
             onExecuteBubarkanOption(option, setBubarkanReport);
           } else {
-            handleChoice({ choice: 'HARD_POWER', text: `Kerahkan operasi: ${option.title}` }, true);
+            handleChoice({ choice: 'HARD_POWER', text: `${t('side_inbox.demo.executeOperation')}: ${t(option.title)}` }, true);
           }
         }}
       />

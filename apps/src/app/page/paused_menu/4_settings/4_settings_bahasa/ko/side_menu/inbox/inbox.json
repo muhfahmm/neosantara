@@ -194,11 +194,16 @@
     "risk": "Risk: {risk}",
     "recoveryCost": "Restoration Operation Cost: {cost} NEO",
     "stabilized": "STABILITY RESTORED",
-    "quellRebellion": "SUPPRESS INSURGENCY",
+    "quellRebellion": "무장 반란 강경 진압",
     "diserangTitle": "⚔️ MILITARY ATTACK ON SOVEREIGN TERRITORY!",
     "diserangBadge": "Military Invasion",
     "icbmTitle": "🚀 INTERCONTINENTAL BALLISTIC MISSILE (ICBM) ALERT!",
-    "icbmBadge": "Nuclear & Ballistic Threat"
+    "icbmBadge": "Nuclear & Ballistic Threat",
+    "deployDefense": "방위군 부대 투입",
+    "defenseDeployed": "군사 방위 태세 배치 완료",
+    "impact": "영향",
+    "mobilizationCost": "방위 동원 비용",
+    "estimatedImpact": "예상 파괴력: 전면적 초토화"
   },
   "disaster": {
     "naturalTitle": "🚨 NATURAL DISASTER: {name} IN {province}",
@@ -207,12 +212,14 @@
     "financialLoss": "Financial Loss",
     "infrastructureDamage": "Infrastructure Damage",
     "aidCost": "Relief & Evacuation Cost",
-    "sendAid": "DISPATCH EMERGENCY RELIEF",
+    "sendAid": "긴급 구호 자금 지원",
     "handled": "RELIEF FULLY DISPATCHED",
     "wabahTitle": "☣️ DISEASE EPIDEMIC: {name} IN {province}",
     "wabahBadge": "Disease Epidemic",
     "infected": "Confirmed Infected",
-    "quarantineCost": "Quarantine Control Cost"
+    "quarantineCost": "Quarantine Control Cost",
+    "quarantine": "지역 격리 조치 시행",
+    "quarantineSuccess": "지역 격리 명령이 정식 발효되었습니다"
   },
   "geopolitics": {
     "allianceTitle": "🛡️ DEFENSE ALLIANCE PROPOSAL: {partner}",
@@ -229,7 +236,9 @@
     "embassyBadge": "Embassy",
     "unResolutionTitle": "🏛️ UN RESOLUTION: {title}",
     "unResolutionBadge": "UN General Assembly Resolution",
-    "openResolution": "VIEW UN RESOLUTION DETAILS →"
+    "openResolution": "VIEW UN RESOLUTION DETAILS →",
+    "openEmbassy": "대사관 열기 →",
+    "openBilateralDiplomacy": "양자 외교 개시 →"
   },
   "basicNeeds": {
     "electricTitle": "⚡ ENERGY CRISIS: NATIONAL ELECTRICAL DEFICIT",
@@ -243,7 +252,12 @@
     "populationTitle": "👥 DEMOGRAPHIC & POPULATION CRISIS",
     "populationBadge": "Citizen Demographics",
     "solveNow": "RESOLVE NOW",
-    "resolved": "CRISIS RESOLVED"
+    "resolved": "CRISIS RESOLVED",
+    "buildPowerPlant": "발전소 증설 →",
+    "buildHousing": "주거 시설 확충 →",
+    "boostFood": "식량 생산 확대 →",
+    "buildPublicFacilities": "공공시설 확충 →",
+    "manageDemographics": "인구 정책 관리 →"
   },
   "tradeModals": {
     "closedTitle": "Trade Access Denied",
@@ -291,11 +305,11 @@
   },
   "security": {
     "nationalSecurityReport": "National Security Status Report",
-    "affectedCitizens": "Affected Citizens",
-    "totalLoss": "Total Losses",
-    "responseCost": "Response Cost",
+    "affectedCitizens": "피해 시민",
+    "totalLoss": "총 피해액",
+    "responseCost": "대응 비용",
     "securityOperationsComplete": "SECURITY OPERATIONS COMPLETED",
-    "deploySecurity": "Deploy Security Operations",
+    "deploySecurity": "치안 작전 부대 투입",
     "alliedAid": "Allied Military Assistance",
     "aidAccepted": "MILITARY AID ACCEPTED",
     "offerExpired": "OFFER EXPIRED",
@@ -306,7 +320,10 @@
     "warships": "Warships",
     "orgMembership": "International Organization Membership",
     "accepted": "Accepted",
-    "rejected": "Rejected"
+    "rejected": "Rejected",
+    "securityRisk": "치안 위험 및 공공질서 교란",
+    "operationsComplete": "치안 유지 작전 완료",
+    "ignore": "무시"
   },
   "electricityCrisis": {
     "hideDetail": "▲ Hide Details",
@@ -324,14 +341,77 @@
     "days": "days"
   },
   "demo": {
-    "cause": "Cause",
-    "mass": "Crowd",
-    "people": "people",
-    "status": "Status",
-    "ongoing": "ONGOING",
-    "hardPower": "Crackdown",
-    "dialog": "Public Dialog",
-    "fulfill": "Fulfill Demands",
-    "ignore": "Ignore Protest"
+    "cause": "시위 원인",
+    "mass": "군중 규모",
+    "people": "명",
+    "status": "상태",
+    "ongoing": "격렬 진행 중",
+    "hardPower": "강경 진압",
+    "dialog": "공개 대화",
+    "fulfill": "요구 전면 수용",
+    "ignore": "방치 및 침묵",
+    "disperseModalTitle": "국가 안보 진압 조치",
+    "disperseModalSub": "치안 작전 옵션",
+    "operationCost": "작전 소요 비용",
+    "cancel": "취소",
+    "confirmDisperse": "해산 작전 승인!",
+    "understood": "확인 완료",
+    "confirmTitle": "치안 작전 승인 확인",
+    "confirmSubtitle": "군중 강제 해산 작전",
+    "confirmWarning": "국가의 물리적 강제력을 사용합니다. 물리적 충돌, 인명 피해, 지지율 하락은 불가피합니다!",
+    "confirmQuestion": "이 해산 작전의 배치를 확정하시겠습니까?",
+    "reportTitleSuccess": "🚨 군중 해산 작전 결과 보고서",
+    "reportTitleClash": "🔥 충돌 및 폭동 진압 보고서",
+    "injured": "부상자 수",
+    "killed": "사망 / 위독 인원",
+    "remainingProtesters": "잔여 시위 인원",
+    "dialogForumTitle": "공개 대화 원탁회의",
+    "backToGame": "게임으로 복귀",
+    "laborLeader": "노동조합 대표",
+    "protesterRep": "시위대 대표단",
+    "anger": "군중의 분노",
+    "trust": "국민적 신뢰도",
+    "demandsTitle": "핵심 요구 목록",
+    "refreshChoices": "대응 선택지 갱신",
+    "disperseWithPolice": "기동경찰 강제 해산",
+    "sessionStarted": "대화 세션이 시작되었습니다. 긴장을 완화할 수 있는 대응을 선택하십시오."
+  },
+  "notificationMessages": {
+    "ratings": {
+      "satisfaction": "대통령님, 국민 만족도 지수가 {value}/100으로 하락했습니다. 여러 주에서 불만이 확산되기 시작했습니다. 10 미만으로 더 떨어지면 대규모 시위가 불가피해지고 국가 안정이 위협받습니다. 즉시 문화 축제를 개최하거나 생필품 세율을 낮춰 주십시오.",
+      "ranking": "대통령님, 국민의 지도력 신뢰도(대통령 순위)가 {value}/100으로 하락했습니다. 의회가 부정적인 추세에 주목하고 있으며 야권에서 탄핵 소문이 나오기 시작했습니다. 순위가 10 미만으로 떨어지면 실각할 위험이 있습니다. 국민의 요구를 해결하고 물가를 안정시키며 복지를 지켜 주십시오.",
+      "welfare": "대통령님, 국민 복지 지수가 {value}/100으로 하락했습니다. 교육, 의료 서비스, 공공 기반 시설 등 기본 시설 부족으로 삶의 질이 크게 떨어지고 있습니다. 10 미만으로 악화되면 심각한 인도주의 위기가 발생합니다. 학교와 병원, 공공 시설을 건설하거나 직접 지원금을 지급해 주십시오."
+    },
+    "rebellion": "대통령님, {country}에서 급진 시위와 무장 분리주의 운동이 발생했습니다. 반군은 중앙 정부에 정치적 지위 변경을 요구하고 있습니다!",
+    "alliedAidRequest": "{target}이(가) {attacker}의 군사력에 기습 공격을 받았습니다. 상호 방위 동맹 조약에 따라 동맹국이 영토 주권을 지키기 위한 군사 지원을 요청했습니다.",
+    "diserang": {
+      "threat": "사령관님, 인접국 {enemy}가 국경 지대 인근에서 기갑 사단을 동원하는 정황이 포착되었습니다. 아직 발포는 없었지만 노골적인 도발입니다.",
+      "borderAttack": "군사 경보! {enemy}의 병력이 주요 국경 초소를 공격했습니다! 전선에서 총격전과 포격이 벌어지고 있습니다.",
+      "warDeclaration": "대규모 분쟁 발생! {enemy} 정부가 우리나라에 전면전을 공식 선포했으며 전투 함대가 빠르게 진격 중입니다.",
+      "invasion": "대규모 군사 침공! {enemy} 연합군이 우리 주를 점령하고 병합하기 위해 육해공 침공 작전을 개시했습니다!",
+      "invasionWithoutTerritories": "대규모 군사 침공! {enemy} 연합군이 국가 방어선을 돌파하기 위해 육해공 작전을 개시했습니다. 현재 적이 점령할 수 있는 병합 영토는 없습니다."
+    },
+    "icbm": {
+      "incomingAlert": "최고 단계 긴급 상황! 방공 레이더가 {launcher}에서 발사되어 {target}으로 향하는 핵탄두 탑재 대륙간탄도미사일(ICBM)을 포착했습니다! 수분 내 충돌이 예상됩니다!",
+      "programStarted": "대통령님, 국가 핵 프로그램({country})의 비밀 프로젝트가 {startDate}에 공식 착수되었습니다. 우라늄 농축 시설과 연구용 원자로, 전략 지원 기반 시설을 건설 중입니다. 완공 예정일은 {endDate}입니다.",
+      "programCompleted": "국가 전략 발표! 국가 핵 프로그램 시설 건설이 모두 완료되었습니다. {country}는 공식 핵보유 능력을 갖춘 국가가 되었으며, ICBM 조립과 핵전쟁 작전이 모두 가능해졌습니다!",
+      "testReport": "글로벌 정보 보고: {tester}가 {target}을 향해 핵탄두 탑재 대륙간탄도미사일(ICBM) 시험 발사를 실시했습니다. 지진 센서와 정찰 위성이 시험 지역의 강력한 폭발 진동을 기록했습니다!"
+    },
+    "resolution": {
+      "worldWarBan": "유엔 외교 소식! {proposer}가 {duration} 동안 전 세계에 적용되는 '전쟁 금지'안을 공식 발의했습니다. 지정된 국가에 대한 공격을 선택 기간 동안 금지하는 내용입니다. 유엔 총회 표결이 곧 진행됩니다!",
+      "worldProductionBan": "유엔 외교 소식! {proposer}가 {duration} 동안 전 세계에 적용되는 '생산 금지'안을 공식 발의했습니다. 선택 기간 동안 {product} 생산을 중단하는 내용입니다. 유엔 총회 표결이 곧 진행됩니다!",
+      "targeted": {
+        "arms_embargo": "유엔 외교 소식! 양국 관계 악화(점수: {score}/100)를 이유로 {proposer}가 {target}을 대상으로 {duration} 동안 적용되는 '무기 판매 금수'안을 공식 발의했습니다. 선택 기간 동안 무기 거래를 금지하는 내용입니다. 유엔 총회 표결이 곧 진행됩니다!",
+        "economic_embargo": "유엔 외교 소식! 양국 관계 악화(점수: {score}/100)를 이유로 {proposer}가 {target}을 대상으로 {duration} 동안 적용되는 '경제 금수'안을 공식 발의했습니다. 선택 기간 동안 공장 및 광산 생산량과 국가 수입을 60% 줄이는 내용입니다. 유엔 총회 표결이 곧 진행됩니다!",
+        "military_invasion": "유엔 외교 소식! 양국 관계 악화(점수: {score}/100)를 이유로 {proposer}가 {target}을 대상으로 {duration} 동안 적용되는 '침공 결의안'을 공식 발의했습니다. 다른 국가의 비난 없이 침공을 허용하는 내용입니다. 유엔 총회 표결이 곧 진행됩니다!",
+        "production_ban": "유엔 외교 소식! 양국 관계 악화(점수: {score}/100)를 이유로 {proposer}가 {target}을 대상으로 {duration} 동안 적용되는 '생산 금지'안을 공식 발의했습니다. 선택 기간 동안 {product} 생산을 중단하는 내용입니다. 유엔 총회 표결이 곧 진행됩니다!"
+      }
+    }
+  },
+  "policyNotice": {
+    "policyImpact": "정책적 영향",
+    "ministry": "소관 부처",
+    "activeResearch": "진행 연구",
+    "strategicSector": "전략 부문"
   }
 }

@@ -1,4 +1,5 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { createInboxNotificationText, getDefaultInboxText } from '../../notificationMessage';
 
 export interface TempatUmumDefisitNotification extends NotificationMessage {
   tradeType: 'defisit_tempat_umum';
@@ -12,12 +13,19 @@ export function generateTempatUmumDefisitNotification(
   dateStr: string
 ): TempatUmumDefisitNotification {
   const formattedPop = population.toLocaleString('id-ID', { maximumFractionDigits: 2 });
+  const titleKey = 'side_inbox.basicNeeds.publicServices.title';
+  const titleParams = { score };
+  const messageKey = 'side_inbox.basicNeeds.publicServices.message';
+  const messageParams = { score, population: formattedPop };
 
   return {
     id: `tempat-umum-defisit-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
-    title: `🏛️ KRISIS LAYANAN PUBLIK: Indeks Tempat Umum ${score}/100!`,
-    sender: `Kementerian Pembangunan & Layanan Publik Nasional`,
-    message: `Indeks Kepuasan Tempat Umum & Layanan Publik berada di tingkat sangat rendah yaitu ${score}/100 (dibawah batas minimum 20/100). Sarana publik seperti Infrastruktur, Pendidikan, Kesehatan, Penegakan Hukum, Olahraga, dan Komersial belum mencukupi kebutuhan ${formattedPop} jiwa populasi warga. Segera bangun berbagai fasilitas umum baru!`,
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    sender: getDefaultInboxText('side_inbox.basicNeeds.publicServices.sender'),
+    senderKey: 'side_inbox.basicNeeds.publicServices.sender',
+    ...createInboxNotificationText(messageKey, messageParams),
     timestamp: dateStr,
     type: 'kesejahteraan',
     value: score,

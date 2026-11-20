@@ -21,6 +21,7 @@
       "testReport": "世界情報報告：{tester}が{target}に向けて、核弾頭搭載の大陸間弾道ミサイル（ICBM）の発射実験を行いました。地震センサーと偵察衛星が、試験区域での強力な爆発振動を記録しました！"
     },
     "resolution": {
+      "cardTitle": "🏛️ 国連決議：{proposer} — {resolutionType}",
       "worldWarBan": "国連外交速報！{proposer}が、{duration}にわたる世界全体への「戦争禁止」を正式に提案しました。指定国への攻撃を選択期間中禁止する内容です。国連総会の採決はまもなく行われます！",
       "worldProductionBan": "国連外交速報！{proposer}が、{duration}にわたる世界全体への「生産禁止」を正式に提案しました。選択期間中、{product}の生産を停止する内容です。国連総会の採決はまもなく行われます！",
       "targeted": {
@@ -59,6 +60,16 @@
     "ekonomi": "経済・金融",
     "kebutuhan_pokok": "生活基礎物資"
   },
+  "offerMessages": {
+    "embassy": "大統領{user}、ご挨拶申し上げます。{partner}政府は、外交関係と二国間協力を深めるため、首都に大使館を設置する正式な許可を申請しました。この申請を受け入れますか？",
+    "embassySender": "{partner}外務省",
+    "defenseAlliance": "大統領{user}、{partner}政府が相互防衛同盟を提案しています。侵略や外国からの攻撃が発生した場合、両国は軍事支援を行い、戦略情報を共有することを約束します。批准しますか？",
+    "defenseAllianceSender": "{partner}安全保障・防衛評議会",
+    "researchContract": "大統領{user}、{partner}国家研究コンソーシアムが共同研究開発契約を提案しています。両国は知識を共有し、戦略技術分野の研究速度が25%上昇します。この契約を受け入れますか？",
+    "researchContractSender": "{partner}研究・技術・科学省",
+    "tradeRelation": "大統領{user}、{partner}政府は戦略的パートナーシップの拡大と二国間貿易ルートの開設を求めています。この協定により、輸出入品への特別なアクセスと関税優遇が得られます。批准しますか？",
+    "tradeRelationSender": "{partner}外務貿易省"
+  },
   "ratingWarning": {
     "title": "⚠️ 早期警告：国民満足度が低下しています！",
     "sender": "内務省",
@@ -82,10 +93,12 @@
   "toastTitle": "新着公電メッセージ",
   "openInbox": "受信トレイを開く ({count}) →",
   "nonAggressionOfferTitle": "🕊️ 不可侵条約の締結提案：{partner}",
+  "nonAggressionRecipient": "大統領",
   "nonAggressionSender": "{partner} 外務省・外交使節団",
   "nonAggressionMessage": "{user} 大統領閣下、{partner} 政府より二国間不可侵条約の締結が正式に提案されました。双方は武力行使を行わず国境警備の安定を誓約します。本条約に批准しますか？",
   "diplomacyPeaceBadge": "外交と平和維持",
   "senderPrefix": "発信元：{sender} | 日時：{date}",
+  "relation": "関係スコア",
   "rejectPact": "条約を拒絶",
   "acceptPact": "不可侵条約を批准",
   "pactRejected": "{partner} との不可侵条約締結を拒否しました",
@@ -232,17 +245,61 @@
     "spionaseBadge": "情報・諜報活動",
     "spionaseSuccess": "任務成功",
     "spionaseFailed": "工作員を拘束",
+    "spionaseArchived": "情報報告をアーカイブしました",
+    "agentUpdated": "工作員の状態を更新しました",
     "pemberontakanTitle": "🔥 {country} で武装反乱が発生",
+    "pemberontakanSender": "{country}治安当局",
     "pemberontakanBadge": "地域反乱",
+    "pemberontakanEffect": "分離独立リスク：{risk} | 国家不安定化リスク",
+    "independenceDeclarationRisk": "独立宣言リスク",
     "affectedRegion": "被害を受けた国・地域：{province}",
     "risk": "危険度：{risk}",
     "recoveryCost": "復旧作戦費用：{cost} NEO",
     "stabilized": "治安を回復",
-    "quellRebellion": "反乱を鎮圧",
+    "quellRebellion": "武装反乱の鎮圧",
     "diserangTitle": "⚔️ 主権領土への軍事攻撃！",
     "diserangBadge": "軍事侵攻",
     "icbmTitle": "🚀 大陸間弾道ミサイル（ICBM）警報！",
-    "icbmBadge": "核・弾道ミサイルの脅威"
+    "icbmBadge": "核・弾道ミサイルの脅威",
+    "attackSender": "国軍司令部",
+    "attackTitles": {
+      "threat": "🪖 国境の脅威：敵軍が動員中",
+      "borderAttack": "⚔️ 国境攻撃：敵大隊が発砲！",
+      "warDeclaration": "📜 敵国が正式に宣戦布告！",
+      "invasion": "🚨 全面侵攻：領土の占領！",
+      "invasionWithoutTerritories": "🚨 全面侵攻：国家防衛への攻撃！"
+    },
+    "attackEffects": {
+      "threat": "外交 / 緊急動員",
+      "borderAttack": "軍事力 -5%、死傷者50人以上",
+      "warDeclaration": "戦争状態、経済 -15%、支持率 -10%",
+      "invasion": "防衛できなければ州を1つ失う危険",
+      "invasionWithoutTerritories": "失われる併合領土はありません"
+    },
+    "icbmTitles": {
+      "incoming": "☢️ 核弾頭搭載ICBMの発射を検知！",
+      "programStarted": "☢️ 極秘計画：国家核開発計画が始動！",
+      "programCompleted": "⚛️ 核保有能力を獲得：国家核開発計画が稼働！",
+      "testReport": "🚀 核ICBM発射実験：{tester}"
+    },
+    "icbmSenders": {
+      "incoming": "国家航空宇宙防衛司令部",
+      "program": "戦略核司令部・国防省",
+      "testReport": "戦略情報機関・国際地震観測機関"
+    },
+    "icbmEffects": {
+      "incoming": "迎撃に失敗した場合、都市が壊滅し多数の犠牲者が発生",
+      "programStarted": "完成予定日：{endDate}",
+      "programCompleted": "ウラン濃縮施設が稼働し、ICBMの組み立てが可能",
+      "testReport": "{tester}のミサイル備蓄：即応可能なミサイル{count}基"
+    },
+    "targetLocation": "標的地域",
+    "defaultTargetLocation": "首都",
+    "deployDefense": "防衛部隊を展開",
+    "defenseDeployed": "軍事防衛部隊配備完了",
+    "impact": "影響度",
+    "mobilizationCost": "防衛動員費用",
+    "estimatedImpact": "推定被害規模: 全域壊滅"
   },
   "disaster": {
     "naturalTitle": "🚨 自然災害：{province} の {name}",
@@ -251,12 +308,27 @@
     "financialLoss": "経済的損失",
     "infrastructureDamage": "インフラ被害",
     "aidCost": "救援・避難費用",
-    "sendAid": "緊急救援を派遣",
+    "sendAid": "緊急支援物資の輸送",
     "handled": "救援をすべて派遣済み",
     "wabahTitle": "☣️ 感染症の流行：{province} の {name}",
     "wabahBadge": "感染症の流行",
     "infected": "感染確認者",
-    "quarantineCost": "隔離措置費用"
+    "quarantineCost": "隔離措置費用",
+    "quarantine": "地域隔離・封鎖措置の実施",
+    "quarantineSuccess": "地域隔離措置を発令しました"
+  },
+  "outbreak": {
+    "distribution": {
+      "pandemicNone": "今年のパンデミック発生なし（{chancePercent}%）",
+      "pandemicOne": "今年のパンデミック発生1回（{chancePercent}%）",
+      "epidemicNone": "今年の流行発生なし（{chancePercent}%）",
+      "epidemicOne": "今年の流行発生1回（{chancePercent}%）",
+      "epidemicTwo": "今年の流行発生2回（{chancePercent}%）"
+    },
+    "medicalAssistance": {
+      "alreadyHandled": "この感染症はすでに対応済みです。",
+      "populationRestored": "{eventName}から{count}人が救助されました。"
+    }
   },
   "geopolitics": {
     "allianceTitle": "🛡️ 防衛同盟の提案：{partner}",
@@ -268,12 +340,38 @@
     "researchContractSigned": "{partner} との研究契約が有効です",
     "acceptResearch": "共同研究を開始",
     "hotRelationTitle": "⚠️ 外交的緊張の高まり：{partner}",
+    "hotRelationSender": "外務・外交情報省",
+    "hotRelationTitle20": "🚨 関係悪化：{partner}（{score}/100）",
+    "hotRelationMessage20": "外交警告：{partner}との二国間関係が危機的水準（{score}/100）まで悪化しました。地政学的緊張が高まり、経済制裁、外交官追放、さらには軍事衝突につながる恐れがあります。",
+    "hotRelationTitle15": "⚠️ 緊張高まる：{partner}との関係が{score}/100に低下",
+    "hotRelationMessage15": "{partner}との外交関係は安全基準の20を下回る{score}/100まで低下しました。和平使節団または外交支援の派遣を検討してください。",
+    "hotRelationTitle10": "🔥 紛争の脅威：{partner}との関係が深刻に悪化（{score}/100）",
+    "hotRelationMessage10": "{partner}との緊張が高まっています（スコア：{score}/100）。大使館は協力の低下と国民の敵対感情の高まりを報告しています。",
+    "hotRelationTitle5": "💣 国境の脅威：{partner}との関係が危機的（{score}/100）",
+    "hotRelationMessage5": "{partner}との外交関係は{score}/100まで急落しました。相手国の政治勢力と軍が国境沿いに兵器を配備し始めています。",
+    "hotRelationTitle1": "⚔️ 開戦寸前：{partner}との関係が崩壊（{score}/100）",
+    "hotRelationMessage1": "国家非常事態です。{partner}との外交関係は最低水準（{score}/100）に達しました。外交連絡はほぼ途絶え、相手側の軍は最高警戒態勢です。直ちに緊急外交措置を講じてください。",
     "hotRelationBadge": "外交危機",
     "embassyTitle": "🏛️ 大使館外交使節団：{partner}",
     "embassyBadge": "大使館",
     "unResolutionTitle": "🏛️ 国連決議：{title}",
+    "resolutionSender": "国連総会事務局",
+    "proposalLabel": "提案",
+    "targetLabel": "対象",
+    "globalTarget": "全世界",
+    "globalSector": "世界の商品部門",
+    "resolutionTypes": {
+      "war_ban": "戦争禁止",
+      "arms_embargo": "武器販売禁輸",
+      "economic_embargo": "経済制裁",
+      "military_invasion": "侵攻決議",
+      "production_ban": "生産禁止"
+    },
     "unResolutionBadge": "国連総会決議",
-    "openResolution": "国連決議の詳細を表示 →"
+    "openResolution": "国連決議の詳細を表示 →",
+    "openEmbassy": "大使館を開設 →",
+    "openBilateralDiplomacy": "二国間外交を開く →",
+    "openCountryDetails": "国の詳細を開く"
   },
   "basicNeeds": {
     "electricTitle": "⚡ エネルギー危機：国家的な電力不足",
@@ -287,7 +385,42 @@
     "populationTitle": "👥 人口・人口構成の危機",
     "populationBadge": "市民の人口構成",
     "solveNow": "今すぐ解決",
-    "resolved": "危機は解決しました"
+    "resolved": "危機は解決しました",
+    "buildPowerPlant": "発電所を建設 →",
+    "buildHousing": "住宅施設を建設 →",
+    "boostFood": "食料増産を実施 →",
+    "buildPublicFacilities": "公共施設を整備 →",
+    "manageDemographics": "人口政策を管理 →"
+  },
+  "tradeValidation": {
+    "closedSystem": {
+      "title": "閉鎖的な経済体制",
+      "message": "あなたの国の経済体制「{economyName}」は、中央集権的すぎるため国際貿易に参加できません。",
+      "reasons": {
+        "1": "経済体制の中央集権性が高すぎる（スコア < 60）",
+        "2": "政府による経済部門への統制が強すぎる",
+        "3": "保護主義的な政策が国際市場への参入を妨げている"
+      },
+      "solutions": {
+        "1": "混合経済またはより開放的な体制に変更する",
+        "2": "戦略部門の一部を民営化して中央集権性を下げる",
+        "3": "自由貿易政策を導入して国際市場を開放する"
+      }
+    },
+    "highCentralization": {
+      "title": "経済の中央集権性が高すぎます",
+      "message": "経済体制は「{economyName}」ですが、部門の平均中央集権度が高すぎる（> 85）ため国際貿易に参加できません。",
+      "reasons": {
+        "1": "経済部門の中央集権度が上限（85）を超えている",
+        "2": "政府が直接管理する部門が多すぎる",
+        "3": "経済政策が依然として中央集権的である"
+      },
+      "solutions": {
+        "1": "製造、貿易、銀行部門の中央集権性を下げる",
+        "2": "民間投資に向けて不動産所有を開放する",
+        "3": "金融・銀行政策を自由化する"
+      }
+    }
   },
   "tradeModals": {
     "closedTitle": "貿易アクセスが拒否されました",
@@ -322,7 +455,9 @@
     "inProcess": "処理中",
     "officialInForce": "施行中",
     "policyImpact": "政策の影響：",
-    "approval": "支持率"
+    "approval": "支持率",
+    "religionLabel": "宗教",
+    "ideologyLabel": "イデオロギー"
   },
   "governance": {
     "cabinetTitle": "内閣改造",
@@ -333,14 +468,58 @@
     "activeResearch": "進行中の研究",
     "strategicSector": "戦略分野"
   },
+  "researchNotification": {
+    "sender": "国家研究イノベーション庁",
+    "focusTitle": "🔬 研究重点分野の変更",
+    "focusMessage": "政府は研究所と国家研究予算を{name}（{scope}）に重点配分します。{description}",
+    "startTitle": "🔬 新規研究を開始",
+    "upgradeTitle": "🔬 研究のアップグレードを開始",
+    "startMessage": "政府は研究プロジェクト「{research}」を開始しました。完了予定: {duration}日。",
+    "upgradeMessage": "政府は「{research}」をレベル{level}へアップグレードします。完了予定: {duration}日。",
+    "activeBadge": "進行中の研究",
+    "strategicSector": "戦略分野",
+    "newScope": "新規研究",
+    "upgradeScope": "レベル{level}へのアップグレード",
+    "fallbackName": "国家戦略研究",
+    "fallbackScope": "技術革新・開発",
+    "fallbackDescription": "政府は国家の発展を加速するため、新たな戦略研究分野を定めました。",
+    "categories": {
+      "ekonomi": {
+        "name": "経済・産業研究",
+        "scope": "生産、製造、採掘、物流",
+        "description": "製造技術の開発、採掘サプライチェーンの効率化、生産の自動化、外貨収入の拡大。"
+      },
+      "militer": {
+        "name": "軍事・防衛研究",
+        "scope": "兵器、サイバー戦、防核防衛",
+        "description": "陸海空軍の近代化、サイバー防衛の強化、弾道ミサイル迎撃システムの開発、軍事用原子力エネルギーの研究。"
+      },
+      "diplomasi": {
+        "name": "外交・情報研究",
+        "scope": "地政学、暗号技術、国際情報活動",
+        "description": "国際情報網、高度暗号技術、国連における外交的影響力を強化。"
+      }
+    }
+  },
   "security": {
     "nationalSecurityReport": "国家安全保障状況報告",
     "affectedCitizens": "影響を受けた市民",
-    "totalLoss": "総損失",
+    "totalLoss": "総被害額",
     "responseCost": "対応費用",
     "securityOperationsComplete": "治安作戦完了",
-    "deploySecurity": "治安作戦を展開",
+    "deploySecurity": "治安維持部隊を展開",
     "alliedAid": "同盟国からの軍事支援",
+    "allyLabel": "同盟国",
+    "attackerLabel": "攻撃国",
+    "allianceStatus": "同盟の状態",
+    "activeStatus": "有効",
+    "deadlineLabel": "回答期限",
+    "rejectionPenaltyLabel": "拒否時のペナルティ",
+    "rejectionPenalty": "関係値 {value}",
+    "aidApproved": "軍事支援を承認しました",
+    "requestRejected": "要請を拒否しました",
+    "requestExpired": "要請の期限が切れました",
+    "requestPending": "保留中の要請",
     "aidAccepted": "軍事支援を受け入れました",
     "offerExpired": "提案の期限が切れました",
     "aidRejected": "支援を拒否しました",
@@ -350,7 +529,10 @@
     "warships": "軍艦",
     "orgMembership": "国際機関への加盟",
     "accepted": "承認",
-    "rejected": "拒否"
+    "rejected": "拒否",
+    "securityRisk": "治安危機及び秩序混乱",
+    "operationsComplete": "治安維持作戦完了",
+    "ignore": "無視"
   },
   "electricityCrisis": {
     "hideDetail": "▲ 詳細を隠す",
@@ -368,14 +550,433 @@
     "days": "日"
   },
   "demo": {
-    "cause": "原因",
-    "mass": "群衆",
-    "people": "人",
-    "status": "状況",
+    "policyMenuUnavailable": "この要求に対応する政策メニューはまだ利用できません。",
+    "currentlyInStreets": "が現在、街頭を埋め尽くしています。",
+    "economyUnavailableTitle": "経済メニューを利用できません",
+    "economyUnavailableMessage": "政策を変更するには、ゲームの進行中にこのダイアログを開いてください。",
+    "generated": {
+      "subsidyTitle": "🔥 大規模デモ：{subsidyName}補助金削減への抗議",
+      "subsidySender": "労働者・学生・市民団体連合",
+      "subsidyMessage": "政府が{subsidyName}補助金を撤回した後、抗議が発生しました。約{demonstratorCount}人が街頭を埋め、支援の復活と社会保障を求めています。",
+      "priceSender": "消費者組合・商業者協会・地域団体",
+      "priceextremeTitle": "🔥 緊急暴動・デモ：{itemName}価格が急騰",
+      "priceextremeMessage": "約{demonstratorCount}人が、{itemName}価格が{levelJump}段階上がり、Rp {oldPrice}からRp {newPrice}になったことを受けて配送拠点を封鎖しました。参加者は政策撤回を求めています。",
+      "pricestandardTitle": "📢 市民デモ：{itemName}値上げへの抗議",
+      "pricestandardMessage": "約{demonstratorCount}人が、{itemName}価格のRp {oldPrice}からRp {newPrice}への値上げに抗議しました。消費者団体は価格安定を求めています。",
+      "taxTitle": "🔥 全国ストライキ・デモ：{taxName}増税に反対",
+      "taxSender": "全国労働組合連盟・産業団体",
+      "taxMessage": "{taxName}税率が{oldRate}%から{newRate}%へ{rateDifference}ポイント上昇したことを受け、約{demonstratorCount}人の労働者がストライキを開始しました。参加者は政策撤回を求めています。"
+    },
+    "cause": "抗議要因",
+    "actions": {
+      "ignored": "政府はデモに対応しませんでした。デモは無視扱いとなり、抗議は続いています。",
+      "fulfilled": {
+        "subsidi": "政府は補助金の要求を受け入れました。デモ参加者は解散し、大統領の支持率が{bonus}ポイント上昇しました。",
+        "harga": "政府は価格調整の要求を受け入れました。デモ参加者は解散し、大統領の支持率が{bonus}ポイント上昇しました。",
+        "pajak": "政府は税制見直しの要求を受け入れました。デモ参加者は解散し、大統領の支持率が{bonus}ポイント上昇しました。"
+      },
+      "dialogStarted": "政府はデモ代表者との対話フォーラムを開始しました。"
+    },
+    "options": {
+      "water_cannon": {
+        "title": "放水車", "subtitle": "高圧放水", "description": "高圧の水を放ち、致命傷を与えずに群衆を解散させます。", "effectiveness": "低（解散成功率40%）", "casualties": "死亡者0%", "impact": "満足度-5、支持率-2。失敗すると群衆がさらに攻撃的になり、治安部隊を嘲笑する恐れがあります。"
+      },
+      "gas_air_mata": {
+        "title": "催涙ガス", "subtitle": "群衆を解散させるCSガス", "description": "群衆にCSガスを使用し、目や呼吸器に刺激を与えます。", "effectiveness": "中（解散成功率70%）", "casualties": "負傷または呼吸困難1%～3%", "impact": "満足度-10、支持率-5。国連から軽度の懸念が示される可能性があります。"
+      },
+      "jam_malam": {
+        "title": "夜間外出禁止令・封鎖", "subtitle": "市民非常事態、ネット遮断、道路封鎖", "description": "市民非常事態を宣言し、首都への道路を封鎖してインターネット通信を遮断します。", "effectiveness": "中（効果まで2日）", "casualties": "死亡者0%", "impact": "満足度-8、支持率-5。事業活動の停滞により、日々の資金流入が一時的に減少します。"
+      },
+      "brimob": {
+        "title": "機動隊", "subtitle": "盾を装備した暴動鎮圧部隊", "description": "盾や警棒を装備した機動隊を投入し、デモ参加者を拘束または押し戻します。", "effectiveness": "高（解散成功率85%）", "casualties": "重傷または危篤5%～12%", "impact": "満足度-15、支持率-10。国連の人権非難と外交関係20ポイント低下を招きます。"
+      },
+      "militer": {
+        "title": "軍（完全武装）", "subtitle": "装甲車、戦車、武装兵士", "description": "装甲車、戦車、銃器を投入し、群衆を強制的に解散させます。", "effectiveness": "非常に高（解散成功率95%）", "casualties": "死亡者20%～35%", "impact": "満足度-25、支持率-20。国連が経済禁輸制裁を議論する緊急会合を開く可能性が非常に高いです。"
+      }
+    },
+    "causes": { "subsidi": "補助金", "harga": "価格", "pajak": "税金" },
+    "statuses": { "active": "継続中", "inDialogue": "対話中", "ignored": "無視", "completed": "完了", "riot": "暴動", "ongoing": "継続中" },
+    "tooltips": { "hardPower": "治安部隊を使って群衆を強制的に解散させる", "dialog": "公開対話を行い、デモ参加者の声を聞く", "fulfill": "デモ参加者の経済的要求に応じ、怒りを和らげる", "ignore": "政府が介入せずデモを続けさせる" },
+    "mass": "群衆規模",
+    "people": "名",
+    "status": "状態",
     "ongoing": "進行中",
-    "hardPower": "強硬な取り締まり",
-    "dialog": "市民との対話",
-    "fulfill": "要求に応える",
-    "ignore": "抗議を無視"
+    "hardPower": "強硬排除",
+    "dialog": "公開対話",
+    "fulfill": "要求受諾",
+    "ignore": "静観・放置",
+    "disperseModalTitle": "国家安全保障措置",
+    "disperseModalSub": "治安維持部隊展開オプション",
+    "operationCost": "作戦費用",
+    "cancel": "中止",
+    "confirmDisperse": "強制排除を実行！",
+    "understood": "了解",
+    "securityUnit": "国内治安部隊",
+    "treasuryBalance": "国庫",
+    "operationOptions": "治安作戦の選択肢",
+    "effectiveness": "有効性",
+    "successChance": "成功率",
+    "casualties": "犠牲者",
+    "consequences": "影響と結果",
+    "highUNReviewRisk": "国連による国際人権審査が行われる可能性が非常に高いです。",
+    "sanctionsLikely": "国連の制裁・禁輸決議がほぼ確実に提案されます。",
+    "executeOperation": "作戦を実行",
+    "insufficientFunds": "資金不足",
+    "crowdImpact": "デモ参加者への影響",
+    "injuryImpact": "ガス刺激、踏みつけ、身体的負傷",
+    "populationImpact": "国の公式人口を減少させます",
+    "dispersed": "群衆は解散しました",
+    "stillAtSite": "現場に残っています",
+    "confirmTitle": "治安部隊投入の確認",
+    "confirmSubtitle": "デモ集団の解散措置",
+    "confirmWarning": "国家の強制力を行使します。衝突による負傷者や支持率低下は避けられません！",
+    "confirmQuestion": "この強制解散作戦を承認し部隊を展開しますか？",
+    "reportTitleSuccess": "🚨 デモ群衆強制排除作戦報告書",
+    "reportTitleClash": "🔥 衝突及び暴動鎮圧報告書",
+    "injured": "負傷者数",
+    "killed": "死者・重傷者数",
+    "remainingProtesters": "現場残留デモ隊",
+    "dialogForumTitle": "公開対話フォーラム",
+    "warningLabel": "警告",
+    "backToGame": "ゲームに戻る",
+    "laborLeader": "労働組合代表",
+    "protesterRep": "抗議集団代表",
+    "anger": "群衆の怒り",
+    "trust": "国民の信頼",
+    "demandsTitle": "要求項目リスト",
+    "refreshChoices": "対応案の変更",
+    "disperseWithPolice": "機動隊による強制排除",
+    "sessionStarted": "公開対話を開始しました。緊張を緩和する最適な対応を選択してください。",
+    "negotiationFailed": "交渉サービスに接続できませんでした。",
+    "policyNegotiationFailed": "政策交渉サービスに接続できませんでした。",
+    "policyChangesConfirmed": "政府は要求を確認しました：{demand}。変更内容：{changes}。",
+    "policyFollowUpCommitted": "政府は要求への対応を約束しました：{demand}。"
+  },
+  "economicChange": {
+    "tax": {
+      "sender": "国税局・業界団体",
+      "increaseTitle": "📢 市民の抗議：{taxName}税率が{oldRate}%から{newRate}%に引き上げ",
+      "increaseMessage": "労働組合や企業は、{taxName}税率が{oldRate}%から{newRate}%に引き上げられたことに不満を表明しています。この政策は購買力を弱め、産業コストを増加させると見られています。",
+      "decreaseTitle": "🎉 市民の歓迎：{taxName}税率が{oldRate}%から{newRate}%に引き下げ",
+      "decreaseMessage": "市民と産業界は、{taxName}税率が{oldRate}%から{newRate}%に引き下げられたことを歓迎しています。国内消費と投資競争力の向上が期待されます。"
+    },
+    "price": {
+      "sender": "市場商業・消費者協会",
+      "increaseTitle": "💥 価格上昇：{itemName}が値上がり（Rp {oldPrice} ➔ Rp {newPrice}）",
+      "increaseMessage": "家庭や小規模商店から、{itemName}がRp {oldPrice}からRp {newPrice}に値上がりしたとの声が上がっています。低所得層の購買力を圧迫しています。",
+      "decreaseTitle": "🛒 価格低下：{itemName}が値下がり（Rp {oldPrice} ➔ Rp {newPrice}）",
+      "decreaseMessage": "{itemName}がRp {oldPrice}からRp {newPrice}に値下がりし、市民から歓迎されています。食料品価格の低下はインフレ安定と満足度向上に役立ちます。"
+    },
+    "subsidy": {
+      "sender": "財務省・市民団体",
+      "grantedTitle": "✨ 補助金配分：{subsidyName}を正式承認",
+      "grantedMessage": "政府による{subsidyName}補助金の配分は市民に歓迎されています。購買力と社会福祉を支える措置と見られています。",
+      "withdrawnTitle": "⚠️ 市民の不満：{subsidyName}補助金を撤回",
+      "withdrawnMessage": "政府が{subsidyName}補助金を撤回した後、不満と抗議が広がっています。予算調整による生活費の上昇が懸念されています。"
+    },
+    "system": {
+      "sender": "経済担当調整省・国家経済評議会",
+      "title": "📊 経済システム改革：{systemName}（{sliderValue}%）",
+      "message": "政府は経済政策の方針を{systemName}に更新しました（指標スコア：{sliderValue}%）。価格設定、戦略資産の所有、労働規制、対外貿易に影響します。",
+      "label": "制度",
+      "spectrum": "指標",
+      "applied": "政策カード適用済み"
+    }
+  },
+  "policyNotice": {
+    "policyImpact": "政策影響",
+    "ministry": "担当省庁",
+    "activeResearch": "進行中の研究",
+    "strategicSector": "戦略部門"
+  },
+  "durationUnits": {
+    "monthOne": "{count}か月",
+    "monthMany": "{count}か月",
+    "yearOne": "{count}年",
+    "yearMany": "{count}年"
+  },
+  "dynamicNotifications": {
+    "pbb": {
+      "sender": "国際連合事務局",
+      "unauthorizedAttackCancelledTitle": "🕊️ 無許可の攻撃計画を中止",
+      "unauthorizedAttackCancelledMessage": "{attacker}による{target}への攻撃は実行されませんでした。無許可攻撃の実行確率は{chance}%であり、この試みは紛争開始前に中止されました。",
+      "unauthorizedAttacksCancelledTitle": "🕊️ 無許可攻撃を中止",
+      "unauthorizedAttacksCancelledMessage": "無許可のAI紛争計画を{count}件中止しました。決議のない攻撃が実行される確率は{chance}%で、審査を通過したAI攻撃は制裁なしで続行される場合があります。",
+      "warBanCancelledTitle": "🕊️ 国連の戦争禁止決議により攻撃を中止",
+      "warBanCancelledMessage": "AI国家の攻撃計画を{count}件中止しました。戦争禁止決議が有効です。委任状審査または違反確率の判定を通過した計画のうち、実行できるのは{chance}%のみです。"
+    },
+    "espionage": {
+      "incomingSender": "国家情報機関（{partner}）",
+      "incomingEffect": "未対応の場合、30～60日間にわたり軍事力とHPが5%低下します。",
+      "incomingTitles": {
+        "ringan": "🕵️ 軽度のスパイ活動：{partner}による国境侵入",
+        "sedang": "⚠️ 諜報警報：{partner}による軍事基地への侵入",
+        "berat": "🚨 深刻なスパイ活動：{partner}のスパイ網"
+      },
+      "incomingMessages": {
+        "ringan": "司令官への報告です。{partner}の外国情報員が許可なく国境検問所を通過しようとしたところを発見されました。国境警備隊が初動を阻止しました。",
+        "sedang": "安全保障上の警告です。{partner}の工作員が東部地域の軍事施設に侵入しました。兵器の有効性に関する機密文書が漏洩するおそれがあります。",
+        "berat": "諜報上の緊急事態です！{partner}の高度なスパイ網が、国家研究の戦略データと軍艦隊の位置情報を漏洩させています！"
+      },
+      "targets": {
+        "default": "国家情報",
+        "military": "軍事・防衛情報",
+        "economy": "経済・予算情報"
+      },
+      "offensiveSuccessTitle": "🕵️ スパイ任務成功：{country}",
+      "offensiveFailureTitle": "❌ スパイ任務失敗：{country}",
+      "offensiveMilitaryMessage": "情報作戦報告：工作員が{country}から軍事データ（{target}）を取得しました。合計{totalUnits}部隊（陸上{landUnits}、航空{airUnits}、海上{navalUnits}）。",
+      "offensiveEconomyMessage": "情報作戦報告：工作員が{country}から財政データ（{target}）を取得しました。予算は{budget} NEO、推定日次税収は{dailyTax} NEOです。",
+      "offensiveGenericMessage": "情報作戦報告：工作員が{country}に潜入し、戦略データ（{target}）を取得しました。敵の機密文書は暗号化され、本部へ送信されました。",
+      "offensiveFailureMessage": "情報緊急報告：{country}へのスパイ任務（{target}）は失敗しました。敵の防諜網に発見されたため、工作員を緊急退避させました。",
+      "offensiveSuccessEffect": "{country}から情報データ（{target}）を確保しました。",
+      "offensiveMilitaryEffect": "軍事データ（{target}）を確保：合計{totalUnits}部隊。",
+      "offensiveEconomyEffect": "財政データ（{target}）を確保：予算{budget} NEO、推定日次税収{dailyTax} NEO。",
+      "offensiveFailureEffect": "任務失敗：工作員は{target}を入手できませんでした。",
+      "offensiveSender": "国家情報機関（特殊作戦）"
+    },
+    "sabotage": {
+      "incomingMessage": "{partner}に関連する{eventName}が検知されました。重要施設を保護し、直ちに被害に対処してください。",
+      "incomingSender": "国防・安全保障省",
+      "defaultTarget": "軍事施設",
+      "targetOptions": {
+        "militaryFacility": "軍事施設・工場",
+        "energyInfrastructure": "電力・エネルギーインフラ",
+        "foodProduction": "食料生産",
+        "manufacturing": "製造業"
+      },
+      "eventNames": {
+        "infrastruktur": "国家インフラへの破壊工作",
+        "militer": "軍事施設の爆発",
+        "siber": "防衛ネットワークへのサイバー攻撃",
+        "nuklir": "核施設への破壊工作"
+      },
+      "effects": {
+        "infrastruktur": "未対応の場合、電力施設とエネルギー鉱物が5%減少",
+        "militer": "未対応の場合、軍事装備が恒久的に5%減少",
+        "siber": "未対応の場合、軍事装備が恒久的に5%減少",
+        "nuklir": "未対応の場合、軍事装備が恒久的に5%減少"
+      },
+      "offensiveSuccessTitle": "💣 破壊工作に成功：{country}",
+      "offensiveFailureTitle": "❌ 破壊工作に失敗：{country}",
+      "offensiveSuccessMessage": "秘密作戦により{country}の{target}を損傷させました。敵施設への損害が確認されました。",
+      "offensiveFailureMessage": "{country}の{target}への作戦は防衛システムに阻止されました。",
+      "offensiveSuccessEffect": "{target}が損傷し、対象国の軍事力が低下しました。",
+      "offensiveFailureEffect": "作戦は失敗し、{target}施設は無傷です。",
+      "offensiveSender": "特殊部隊・戦闘情報司令部"
+    },
+    "socialCultural": {
+      "religionValues": {
+        "Islam": "イスラム教",
+        "Katolik": "カトリック",
+        "Protestan": "プロテスタント",
+        "Hindu": "ヒンドゥー教",
+        "Buddha": "仏教",
+        "Shinto": "神道",
+        "Yahudi": "ユダヤ教",
+        "Ateisme": "無神論"
+      },
+      "ideologyValues": {
+        "Demokrasi": "民主主義",
+        "Monarki": "君主制",
+        "Kapitalisme": "資本主義",
+        "Sosialisme": "社会主義",
+        "Komunisme": "共産主義",
+        "Nasionalisme": "ナショナリズム",
+        "Konservatisme": "保守主義",
+        "Liberalisme": "自由主義",
+        "Otoritarianisme": "権威主義"
+      },
+      "religion": {
+        "title": "☪️ 国教の変更：{from} ➔ {to}",
+        "scheduledTitle": "宗教変更の予定：{from} ➔ {to}",
+        "message": "政府は国教を{from}から{to}に変更しました。この決定は社会情勢に影響しています。",
+        "scheduledMessage": "{from}から{to}への宗教変更は{completionDate}に完了予定で、その日以降に施行されます。",
+        "sender": "宗教・国家文化省"
+      },
+      "ideology": {
+        "title": "🏛️ 国家理念の変更：{from} ➔ {to}",
+        "scheduledTitle": "理念変更の予定：{from} ➔ {to}",
+        "message": "政府は国家理念を{from}から{to}に変更しました。国家の社会・経済政策に影響します。",
+        "scheduledMessage": "{from}から{to}への理念変更は{completionDate}に完了予定で、その日以降に施行されます。",
+        "sender": "国家理念諮問委員会"
+      },
+      "doctrine": {
+        "title": "📜 新たな政策方針：{sliderLabel}",
+        "message": "政府は{sliderLabel}の指標を{fromValue}%から{toValue}%に更新しました。",
+        "sender": "法務・人権・国家政策省",
+        "stats": {
+          "approval": "支持率",
+          "stability": "安定性",
+          "diplomacy": "外交",
+          "economy": "経済",
+          "gdp": "GDP",
+          "population": "人口",
+          "satisfaction": "満足度",
+          "humanRights": "人権",
+          "tourism": "観光",
+          "foreignInvestment": "外国直接投資",
+          "localIndustry": "国内産業"
+        },
+        "sliders": {
+          "speechScore": "言論・報道の自由",
+          "religionScore": "信教の自由",
+          "demoScore": "デモの権利",
+          "transparencyScore": "国家予算の透明性",
+          "mediaScore": "メディア・放送",
+          "internetScore": "インターネット・デジタルアクセス",
+          "borderScore": "国境・移民",
+          "tradeScore": "貿易・市場",
+          "diplomacyScore": "外交・多国間関係"
+        }
+      }
+    },
+    "basicNeeds": {
+      "electricity": {
+        "title": "⚡ 電力不足警告：供給不足 {step}%",
+        "sender": "PT PLN（Persero）・国営送電網",
+        "message": "国の電力網で{deficit} MW（総需要の{step}%）の供給不足が発生しています。現在の発電量は{production} MW、推定消費量は{consumption} MWです。計画停電を避けるため、追加の発電所を稼働させてください。この危機により国民満足度が{ratingPenalty}ポイント低下します。"
+      },
+      "housing": {
+        "title": "🏠 住宅不足警告：住居需要",
+        "criticalTitle": "🏠 深刻な住宅危機：満足度指数 {satisfaction}/100！",
+        "sender": "住宅・居住地域省",
+        "message": "住宅満足度指数は{satisfaction}/100です。{shortage}人が適切な住居を確保できておらず、総人口{population}人のうち居住支援を受けているのは{percentage}%です。危機に対処するため、補助住宅やアパートなどを建設してください。"
+      },
+      "food": {
+        "title": "⚠️ 食料不足：{total}分類中{count}分類で対応が必要",
+        "sender": "農業省・国家食料庁",
+        "message": "{total}の主要分類のうち{count}分類で食料需要の充足率が目標を下回っています。主食、動物性・植物性タンパク質、野菜、基礎物資の生産・輸入・流通を増やしてください。"
+      },
+      "publicServices": {
+        "title": "🏛️ 公共サービス危機：サービス指数 {score}/100！",
+        "sender": "開発・国家公共サービス省",
+        "message": "公共サービス満足度指数は{score}/100で、最低基準の20/100を下回っています。インフラ、教育、医療、法執行、スポーツ、商業サービスが人口{population}人の需要を満たせていません。公共施設を増設してください。"
+      },
+      "population": {
+        "title": "⚠️ 人口減少警告",
+        "sender": "内務省",
+        "message": "{country}の人口は1日あたり正味{dailyLoss}人減少しています。この状態が続けば、30日間で{monthlyLoss}人の減少が見込まれます。食料、住居、医療政策を見直してください。"
+      }
+    },
+    "cabinet": {
+      "sender": "内閣官房・国家省庁評議会",
+      "upgradeTitle": "🏛️ 内閣強化：{department}（レベル {oldLevel} ➔ レベル {newLevel}）",
+      "upgradeMessage": "大統領と内閣は{department}への追加予算と運用能力の強化を承認しました。レベルは{oldLevel}から{newLevel}に上がり、{effect}を強化します。",
+      "restructureTitle": "📉 内閣再編：{department}（レベル {oldLevel} ➔ レベル {newLevel}）",
+      "restructureMessage": "政府は{department}の省庁支出効率を調整し、レベルを{oldLevel}から{newLevel}に変更しました。"
+    },
+    "organization": {
+      "names": {
+        "interpol": "インターポール",
+        "who": "世界保健機関（WHO）",
+        "unesco": "国連教育科学文化機関（UNESCO）",
+        "wto": "世界貿易機関（WTO）",
+        "ilo": "国際労働機関（ILO）",
+        "fao": "国連食糧農業機関（FAO）",
+        "imo": "国際海事機関（IMO）",
+        "itu": "国際電気通信連合（ITU）",
+        "wmo": "世界気象機関（WMO）",
+        "asean": "東南アジア諸国連合（ASEAN）",
+        "eu": "欧州連合（EU）",
+        "arabLeague": "アラブ連盟",
+        "africanUnion": "アフリカ連合（AU）",
+        "oic": "イスラム協力機構（OIC）",
+        "brics": "BRICS（ブラジル、ロシア、インド、中国、南アフリカ）",
+        "nato": "北大西洋条約機構（NATO）",
+        "opec": "石油輸出国機構（OPEC）",
+        "g20": "20か国・地域（G20）"
+      },
+      "unCategory": "国連機関",
+      "regionalCategory": "地域機関",
+      "acceptedTitle": "{organization}への加盟が承認されました",
+      "rejectedTitle": "{organization}への加盟が拒否されました",
+      "sender": "{organization}事務局",
+      "acceptedMessage": "30日間の交渉を経て、{country}の{organization}加盟申請が承認されました。加盟資格とその特典が有効になりました。",
+      "rejectedMessage": "30日間の交渉を経て、{country}の{organization}加盟申請は拒否されました。今後、再申請できます。"
+    },
+    "security": {
+      "category": "警察事件",
+      "title": "🚔 警察事件：{eventName}",
+      "sender": "国家警察（{country}）",
+      "message": "{country}で{eventName}が報告されました。警察は住民の保護、事件の捜査、公共の安全回復にあたっています。",
+      "risk": "保健・法執行分野の治安リスク：{percent}%",
+      "people": "人",
+      "events": {
+        "armedRobbery": "武装強盗",
+        "financialRobbery": "金融施設強盗",
+        "burglary": "侵入・窃盗",
+        "organizedCrime": "組織犯罪ネットワーク",
+        "unrest": "暴動・公共秩序の乱れ",
+        "pickpocketing": "公共エリアでのスリ",
+        "vehicleTheft": "車両盗難",
+        "digitalFraud": "デジタル詐欺",
+        "vandalism": "公共施設の破壊行為",
+        "kidnapping": "誘拐",
+        "extortion": "事業者への恐喝",
+        "humanTrafficking": "人身取引"
+      }
+    },
+    "tradeModal": {
+      "recommendation1": "経済政策メニューで経済体制を変更してください。",
+      "recommendation2": "経済の中央集権度を85未満に下げてください。",
+      "recommendation3": "より開放的な思想と貿易規制を検討してください。",
+      "reason1": "経済の極端な中央集権化（スコア85超）。",
+      "reason2": "閉鎖的な思想が国家統制を強めています。",
+      "reason3": "国際貿易圏との保護主義的な対立。",
+      "customReason": "{partner}との貿易は国内の外交・規制要件を満たしていません。現在の経済体制：{economy}。"
+    }
+  },
+  "dynamicEventTranslations": {
+    "disaster": {
+      "message": "{country}で{eventName}が発生し、{victims}人が被災、{loss} NEOの損失が生じました。直ちに救援と避難を開始してください。",
+      "messageWithScale": "{country}で{eventName}が発生し、{victims}人が被災、{loss} NEOの損失が生じました。{severityNote}直ちに救援と避難を開始してください。",
+      "sender": "{country}国家災害管理庁",
+      "isolatedScale": "現地分析により局地規模の災害と確認されました。",
+      "catastrophicScale": "現地分析により壊滅的な災害と確認されました。",
+      "categories": { "geological": "地質災害", "hydrometeorological": "水文気象災害", "fire": "火災災害", "coastal": "海洋・沿岸災害", "environmentalHealth": "環境衛生危機" },
+      "eventNames": {
+        "earthquakeLight": "軽度の地震", "earthquakeMajor": "大地震", "volcanicEruption": "火山噴火", "tsunami": "津波", "landslide": "土砂崩れ",
+        "majorFlood": "大規模洪水", "flashFlood": "鉄砲水", "drought": "長期干ばつ", "tropicalStorm": "熱帯暴風雨", "cyclone": "熱帯低気圧", "tornado": "竜巻", "hailstorm": "激しい雹害",
+        "forestFire": "森林火災", "peatFire": "泥炭地火災", "industrialFire": "工場火災", "settlementFire": "人口密集地の火災", "coastalErosion": "海岸侵食", "waterspout": "海上竜巻", "seaLevelRise": "海面上昇",
+        "foodPoisoning": "集団食中毒", "waterContamination": "飲料水汚染", "airPollution": "深刻な大気汚染", "hazardousWaste": "有害廃棄物危機", "heatwave": "致命的な熱波", "snowstorm": "極端な吹雪と凍傷", "sinkhole": "突発的な巨大陥没穴", "refineryFire": "製油所・石油基地火災"
+      }
+    },
+    "outbreak": {
+      "title": "🦠 {outbreakType}：{eventName}",
+      "titleWithVariant": "🦠 {outbreakType}：{eventName} — {variant}",
+      "message": "{country}で{eventName}が確認されました。感染者は{infected}人、{duration}日間の推定死亡者は{deaths}人です。直ちに公衆衛生対策を実施してください。",
+      "messageWithVariant": "{country}で{eventName}が確認されました。感染者は{infected}人、{duration}日間の推定死亡者は{deaths}人です。医療状況：{variant}。直ちに公衆衛生対策を実施してください。",
+      "sender": "{country}保健省・WHO",
+      "epidemic": "感染症流行",
+      "pandemic": "世界的パンデミック",
+      "localizedCluster": "局地的クラスター",
+      "superSpreader": "スーパースプレッダー株の変異",
+      "categories": { "infectious": "感染症（流行病）", "animalAndPlant": "動植物の病気（流行病）", "mutations": "遺伝子変異・スーパー耐性菌", "pandemic": "世界的パンデミック" },
+      "eventNames": {
+        "dengue": "デング熱流行", "malaria": "マラリア流行", "cholera": "コレラ流行", "typhoid": "腸チフス流行", "tuberculosis": "結核流行", "hepatitisA": "A型肝炎流行", "measles": "麻疹流行", "polio": "ポリオ流行", "diphtheria": "ジフテリア流行", "rabies": "狂犬病流行",
+        "avianFlu": "H5N1鳥インフルエンザ", "footAndMouth": "口蹄疫", "ricePlanthopper": "稲ウンカ被害", "ganoderma": "ガノデルマ菌", "tungro": "イネ萎縮ウイルス", "ratInfestation": "大規模なネズミ被害", "bananaWilt": "バナナ細菌性萎凋病", "africanSwineFever": "アフリカ豚熱",
+        "superbug": "薬剤耐性スーパーバグ流行", "candidaAuris": "カンジダ・アウリス重症流行", "autoimmune": "自己免疫疾患の集団発生", "globalInfluenza": "世界的インフルエンザ・パンデミック", "coronavirusVariant": "変異コロナウイルス・パンデミック", "pathogenX": "新型ウイルス（病原体X）パンデミック", "mpox": "エムポックス・パンデミック", "hivVariant": "新型HIV/AIDS変異株パンデミック", "zombieVirus": "ゾンビウイルス（生物研究所流出）", "engineeredSpanishFlu": "人工改変されたスペイン風邪変異株",
+        "mysteriousEncephalitis": "原因不明の脳炎流行", "congoHemorrhagicFever": "クリミア・コンゴ出血熱流行", "marburgVariant": "新型マールブルグウイルス・パンデミック", "redTide": "海洋生物毒素異常（赤潮）"
+      }
+    },
+    "electricity": {
+      "title": "⚡ 電力危機：{eventName}［{severity}］",
+      "message": "{country}で{eventName}が発生し、{deficit} MWの不足が生じています。約{areaCount}地域に{duration}日間影響する見込みです。",
+      "sender": "{country}国営電力会社（PLN）",
+      "ratingImpact": "評価が{impact}ポイント低下",
+      "severities": { "ringan": "軽度", "sedang": "中程度", "berat": "深刻", "kritis": "危機的" },
+      "eventNames": { "mildShortage": "軽度の電力不足", "substationMaintenance": "主要変電所の保守", "gasShortage": "ガス発電所の供給危機", "transmissionFault": "主要送電線の障害", "hydropowerDrought": "干ばつによる水力発電の減少", "turbineFailure": "石炭火力タービンの故障", "nationalEnergyCrisis": "国家エネルギー危機", "systemicBlackout": "大規模な系統停電" },
+      "areas": { "mediumHousing": "中規模住宅地", "commercialArea": "商業地区", "lightIndustry": "軽工業", "cityCenterDistrict": "市街中心地区", "industrialZone": "工業地帯", "primaryGasPlant": "主要ガス発電所", "manufacturingIndustry": "製造業地区", "tradeDistrict": "商業地区", "metropolitanArea": "大都市圏", "heavyIndustryZone": "重工業地帯", "dataCenter": "データセンター", "primaryHydroSystem": "主要水力発電系統", "energyIntensiveIndustry": "エネルギー集約型産業", "hospital": "病院", "governmentCenter": "政府機関地区", "mainCoalPlant": "主要石炭火力発電所", "strategicIndustrialZone": "戦略工業地区", "internationalAirport": "国際空港", "mainPort": "主要港", "nationalGrid": "全国電力網", "vitalIndustry": "基幹産業", "healthFacilities": "医療施設", "transportSystem": "交通網", "nationalCommunications": "国内通信網", "nationwideGrid": "全国の電力網", "interconnectionGrid": "連系系統", "criticalInfrastructure": "重要インフラ", "financialSector": "金融部門", "emergencyServices": "緊急サービス" }
+    }
+  },
+  "tradeAccess": {
+    "reasons": {
+      "centralizationMonitored": "中央集権度が高いため、貿易は国際的な監視下にあります。",
+      "centralizationLimitsImports": "中央集権化により輸入が制限されています。",
+      "ideologyCentralizes": "現在の思想が中央集権化を強めています。",
+      "religionRestrictsTrade": "宗教に基づく政策が国際貿易を制限しています。",
+      "extremeCentralization": "極端な中央集権化（スコア85超）。"
+    }
   }
 }

@@ -1,3 +1,5 @@
+import { getDefaultInboxText } from '../notificationMessage';
+
 /**
  * tradeValidationLogic.ts
  * Logika validasi untuk penawaran perdagangan
@@ -106,40 +108,33 @@ export function getTradeRejectionDescription(
   ekonomiName: string
 ): {
   title: string;
+  titleKey: string;
   mainMessage: string;
+  mainMessageKey: string;
+  messageParams: { economyName: string };
   reasons: string[];
+  reasonKeys: string[];
   solutions: string[];
+  solutionKeys: string[];
 } {
-  if (reason === 'closed_system') {
-    return {
-      title: 'SISTEM EKONOMI TERTUTUP',
-      mainMessage: `Negara Anda menganut sistem ekonomi "${ekonomiName}" yang terlalu terpusat untuk melakukan perdagangan global.`,
-      reasons: [
-        'Sistem ekonomi terlalu terpusat (nilai < 60)',
-        'Kontrol pemerintah atas sektor ekonomi terlalu kuat',
-        'Kebijakan proteksionisme mencegah akses pasar internasional',
-      ],
-      solutions: [
-        'Ubah sistem ekonomi ke Ekonomi Campuran atau lebih terbuka',
-        'Kurangi sentralisasi dengan privatisasi beberapa sektor strategis',
-        'Terapkan kebijakan Free Trade untuk membuka pasar internasional',
-      ],
-    };
-  }
+  const reasonPrefix = reason === 'closed_system'
+    ? 'side_inbox.tradeValidation.closedSystem'
+    : 'side_inbox.tradeValidation.highCentralization';
+  const titleKey = `${reasonPrefix}.title`;
+  const mainMessageKey = `${reasonPrefix}.message`;
+  const reasonKeys = [1, 2, 3].map(index => `${reasonPrefix}.reasons.${index}`);
+  const solutionKeys = [1, 2, 3].map(index => `${reasonPrefix}.solutions.${index}`);
+  const messageParams = { economyName: ekonomiName };
 
-  // high_centralization
   return {
-    title: 'SENTRALISASI EKONOMI TERLALU TINGGI',
-    mainMessage: `Meski sistem ekonomi adalah "${ekonomiName}", rata-rata sentralisasi sektor masih terlalu tinggi (> 85) untuk perdagangan global.`,
-    reasons: [
-      'Sentralisasi sektor ekonomi melebihi ambang batas (85)',
-      'Terlalu banyak sektor dikontrol langsung oleh pemerintah',
-      'Kebijakan ekonomi masih dominan ke arah terpusat',
-    ],
-    solutions: [
-      'Kurangi sentralisasi di sektor: manufaktur, perdagangan, perbankan',
-      'Buka kepemilikan properti untuk investasi swasta',
-      'Liberalisasi kebijakan moneter dan perbankan',
-    ],
+    title: getDefaultInboxText(titleKey),
+    titleKey,
+    mainMessage: getDefaultInboxText(mainMessageKey, messageParams),
+    mainMessageKey,
+    messageParams,
+    reasons: reasonKeys.map(key => getDefaultInboxText(key)),
+    reasonKeys,
+    solutions: solutionKeys.map(key => getDefaultInboxText(key)),
+    solutionKeys,
   };
 }

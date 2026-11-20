@@ -2,6 +2,7 @@ import React from 'react';
 import { Landmark, TrendingUp, TrendingDown } from 'lucide-react';
 import { KabinetChangeNotification } from './kabinetChangeLogic';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getInboxNotificationMessage, getInboxNotificationSender, getInboxNotificationTitle } from '@/app/page/menus/inbox/logic/notificationMessage';
 
 interface Props {
   notification: KabinetChangeNotification;
@@ -22,7 +23,7 @@ export default function KabinetChangeNotificationCard({ notification }: Props) {
       <div className="flex-1 space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h4 className="text-sm font-black text-white uppercase tracking-wide leading-tight">
-            {notification.title}
+            {getInboxNotificationTitle(notification, t)}
           </h4>
           <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider border ${isUpgrade ? 'text-emerald-300 bg-emerald-900/80 border-emerald-500/50' : 'text-amber-300 bg-amber-900/80 border-amber-500/50'}`}>
             Level {oldLevel} ➔ Level {newLevel}
@@ -30,17 +31,17 @@ export default function KabinetChangeNotificationCard({ notification }: Props) {
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
+          {t('side_inbox.senderPrefix', { sender: getInboxNotificationSender(notification, t), date: notification.timestamp })}
         </p>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">
-          {notification.message}
+          {getInboxNotificationMessage(notification, t)}
         </p>
 
         <div className="bg-root-canvas border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex justify-between items-center">
-          <span>Kementerian: <strong className="text-white">{deptName}</strong></span>
+          <span>{t('side_inbox.policyNotice.ministry')}: <strong className="text-white">{deptName}</strong></span>
           <span className={isUpgrade ? 'text-emerald-400 font-black' : 'text-amber-400 font-black'}>
-            Dampak: {effectLabel}
+            {t('side_inbox.policyNotice.policyImpact')}: {effectLabel}
           </span>
         </div>
       </div>

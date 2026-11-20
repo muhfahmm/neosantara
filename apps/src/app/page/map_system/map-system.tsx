@@ -144,6 +144,7 @@ const BottomLeftPenelitianIcon = dynamic(() => import('../menus/penelitian/penel
 const BottomLeftMissionIcon = dynamic(() => import('../menus/mission/missionModals'), { ssr: false });
 const BottomLeftShopIcon = dynamic(() => import('../menus/shop/shopModals'), { ssr: false });
 import { NotificationMessage, getKepuasanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { createInboxNotificationText, getDefaultInboxText } from '../menus/inbox/logic/notificationMessage';
 import { isNonActionableUpdateNotification } from '../menus/inbox/logic/automaticChangeNotification';
 import { generateReligionChangeNotification } from '../menus/inbox/logic/10_sosial_budaya/1_notifikasi_agama/religionChangeLogic';
 import { generateIdeologyChangeNotification } from '../menus/inbox/logic/10_sosial_budaya/2_notifikasi_ideologi/ideologyChangeLogic';
@@ -3968,11 +3969,18 @@ export default function MapPage() {
                 Math.random() >= 0.25
             ) {
                 npcWarQueueRunningRef.current = false;
+                const titleKey = 'side_inbox.dynamicNotifications.pbb.unauthorizedAttackCancelledTitle';
+                const senderKey = 'side_inbox.dynamicNotifications.pbb.sender';
                 setNotifications(previous => [{
                     id: `notif-war-no-mandate-${Date.now()}`,
-                    title: '🕊️ RENCANA SERANGAN TANPA MANDAT DIBATALKAN',
-                    sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
-                    message: `Serangan ${detail.attacker} terhadap ${detail.target} tidak jadi diluncurkan. Serangan tanpa mandat hanya memiliki peluang 25%; upaya ini dibatalkan sebelum konflik dimulai.`,
+                    title: getDefaultInboxText(titleKey),
+                    titleKey,
+                    sender: getDefaultInboxText(senderKey),
+                    senderKey,
+                    ...createInboxNotificationText(
+                        'side_inbox.dynamicNotifications.pbb.unauthorizedAttackCancelledMessage',
+                        { attacker: detail.attacker, target: detail.target, chance: 25 }
+                    ),
                     timestamp: currentDate.toISOString().slice(0, 10),
                     type: 'peringkat',
                     value: 100,
@@ -6427,11 +6435,18 @@ export default function MapPage() {
                     authorizedInvasions.length -
                     violationInvasions.length;
                 if (cancelledUnauthorizedCount > 0) {
+                    const titleKey = 'side_inbox.dynamicNotifications.pbb.unauthorizedAttacksCancelledTitle';
+                    const senderKey = 'side_inbox.dynamicNotifications.pbb.sender';
                     newNotifsToAdd.push({
                         id: `notif-npc-war-no-mandate-${currentDateStr}`,
-                        title: '🕊️ SERANGAN TANPA MANDAT DIBATALKAN',
-                        sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
-                        message: `${cancelledUnauthorizedCount} rencana konflik AI tanpa mandat dibatalkan. Peluang serangan tanpa resolusi adalah 25%; serangan AI yang lolos tetap dapat berjalan tanpa sanksi.`,
+                        title: getDefaultInboxText(titleKey),
+                        titleKey,
+                        sender: getDefaultInboxText(senderKey),
+                        senderKey,
+                        ...createInboxNotificationText(
+                            'side_inbox.dynamicNotifications.pbb.unauthorizedAttacksCancelledMessage',
+                            { count: cancelledUnauthorizedCount, chance: 25 }
+                        ),
                         timestamp: currentDateStr,
                         type: 'peringkat',
                         value: 100,
@@ -6440,11 +6455,21 @@ export default function MapPage() {
                 }
 
                 if (warBanActive && annualInvasions.length < possibleInvasions.length) {
+                    const titleKey = 'side_inbox.dynamicNotifications.pbb.warBanCancelledTitle';
+                    const senderKey = 'side_inbox.dynamicNotifications.pbb.sender';
                     newNotifsToAdd.push({
                         id: `notif-war-ban-ai-block-${currentDateStr}`,
-                        title: '🕊️ LARANGAN PERANG PBB MENGHENTIKAN SERANGAN',
-                        sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
-                        message: `${possibleInvasions.length - annualInvasions.length} rencana serangan negara AI dibatalkan. Larangan perang aktif; hanya 20% dari rencana yang lolos pemeriksaan mandat/peluang pelanggaran dapat berjalan.`,
+                        title: getDefaultInboxText(titleKey),
+                        titleKey,
+                        sender: getDefaultInboxText(senderKey),
+                        senderKey,
+                        ...createInboxNotificationText(
+                            'side_inbox.dynamicNotifications.pbb.warBanCancelledMessage',
+                            {
+                                count: possibleInvasions.length - annualInvasions.length,
+                                chance: 20,
+                            }
+                        ),
                         timestamp: currentDateStr,
                         type: 'peringkat',
                         value: 100,

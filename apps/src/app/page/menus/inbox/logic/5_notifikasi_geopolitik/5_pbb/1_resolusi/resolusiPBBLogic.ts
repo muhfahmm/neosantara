@@ -3,8 +3,8 @@ import { chooseAIResolutionDuration } from '@/app/page/navigasi_menu/2_navigasi_
 import { PRODUCTION_BAN_PRODUCTS, formatProductionProductName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog';
 import { isCountryAnnexed } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbVotingEligibility';
 import { getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
-import { getDisplayCountryName } from '@/app/logic/countryNameLogic';
-import { createInboxNotificationText } from '../../../notificationMessage';
+import { getDisplayCountryName, isGlobalCountryTarget } from '@/app/logic/countryNameLogic';
+import { createInboxNotificationText, getDefaultInboxText } from '../../../notificationMessage';
 
 export interface AIResolusiPBBNotification extends NotificationMessage {
   tradeType: 'usulan_resolusi_pbb';
@@ -20,28 +20,12 @@ export interface AIResolusiPBBNotification extends NotificationMessage {
 
 const RESOLUTION_TYPES: Array<{
   type: 'war_ban' | 'arms_embargo' | 'economic_embargo' | 'military_invasion' | 'production_ban';
-  title: string;
 }> = [
-  {
-    type: 'war_ban',
-    title: 'Larangan Perang',
-  },
-  {
-    type: 'arms_embargo',
-    title: 'Embargo Penjualan Senjata',
-  },
-  {
-    type: 'economic_embargo',
-    title: 'Embargo Ekonomi',
-  },
-  {
-    type: 'military_invasion',
-    title: 'Resolusi Invasi',
-  },
-  {
-    type: 'production_ban',
-    title: 'Larangan Produksi',
-  }
+  { type: 'war_ban' },
+  { type: 'arms_embargo' },
+  { type: 'economic_embargo' },
+  { type: 'military_invasion' },
+  { type: 'production_ban' },
 ];
 
 const REGULAR_RESOLUTION_TYPES = RESOLUTION_TYPES.filter(resolution =>
@@ -66,16 +50,20 @@ export function generateAIResolusiPBBNotification(
   const chosen = forcedResolutionType
     ? RESOLUTION_TYPES.find(resolution => resolution.type === forcedResolutionType) || RESOLUTION_TYPES[0]
     : RESOLUTION_TYPES[Math.floor(Math.random() * RESOLUTION_TYPES.length)];
-  const isWarBan = chosen.type === 'war_ban' || targetCountry?.toLowerCase().includes('dunia') || targetCountry?.toLowerCase().includes('global');
+  const isGlobalTarget = isGlobalCountryTarget(targetCountry);
+  const isGlobalResolution = chosen.type === 'war_ban' || (chosen.type === 'production_ban' && isGlobalTarget);
 
-  const title = isWarBan
-    ? `🏛️ USULAN RESOLUSI PBB: ${proposerCountry} (LARANGAN PERANG)`
-    : `🏛️ USULAN RESOLUSI PBB: ${proposerCountry} ➔ ${targetCountry}`;
+  const titleKey = 'side_inbox.notificationMessages.resolution.cardTitle';
+  const resolutionTitleKey = `side_inbox.geopolitics.resolutionTypes.${chosen.type}`;
+  const titleParams = {
+    proposer: proposerCountry,
+    resolutionType: getDefaultInboxText(resolutionTitleKey),
+  };
   const duration = chooseAIResolutionDuration(chosen.type, relationScore);
   const selectedProductionProduct = chosen.type === 'production_ban'
     ? PRODUCTION_BAN_PRODUCTS[Math.floor(Math.random() * PRODUCTION_BAN_PRODUCTS.length)]
     : undefined;
-  const messageKey = isWarBan
+  const messageKey = isGlobalResolution
     ? chosen.type === 'production_ban'
       ? 'side_inbox.notificationMessages.resolution.worldProductionBan'
       : 'side_inbox.notificationMessages.resolution.worldWarBan'
@@ -94,8 +82,12 @@ export function generateAIResolusiPBBNotification(
 
   return {
     id: `resolusi-pbb-${proposerCountry}-${targetCountry}-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
-    title,
-    sender: `Sekretariat Jenderal Majelis Umum PBB`,
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    titleParamKeys: { resolutionType: resolutionTitleKey },
+    sender: getDefaultInboxText('side_inbox.geopolitics.resolutionSender'),
+    senderKey: 'side_inbox.geopolitics.resolutionSender',
     ...message,
     timestamp: dateStr,
     type: 'peringkat',
@@ -103,10 +95,10 @@ export function generateAIResolusiPBBNotification(
     isRead: false,
     tradeType: 'usulan_resolusi_pbb',
     proposerCountry,
-    targetCountry: isWarBan ? 'Seluruh Dunia (Global)' : targetCountry,
+    targetCountry: isGlobalResolution ? 'Seluruh Dunia (Global)' : targetCountry,
     relationScore,
     resolutionType: chosen.type,
-    resolutionTitle: chosen.title,
+    resolutionTitle: getDefaultInboxText(resolutionTitleKey),
     duration,
     productKey: selectedProductionProduct?.key
   };

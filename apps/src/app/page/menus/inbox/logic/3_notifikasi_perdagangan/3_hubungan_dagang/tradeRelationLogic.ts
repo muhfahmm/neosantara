@@ -1,5 +1,6 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import { getDisplayCountryName } from '@/app/logic/countryNameLogic';
+import { createInboxNotificationText, getDefaultInboxText } from '../../notificationMessage';
 
 export interface TradeRelationOfferNotification extends NotificationMessage {
   tradeType: 'penawaran_hubungan_dagang';
@@ -13,11 +14,24 @@ export function generateTradeRelationOfferNotification(
   dateStr: string
 ): TradeRelationOfferNotification {
   partnerCountry = getDisplayCountryName(partnerCountry);
+  const titleKey = 'side_inbox.listTitles.tradeRelation';
+  const titleParams = { partner: partnerCountry };
+  const senderKey = 'side_inbox.offerMessages.tradeRelationSender';
+  const senderParams = { partner: partnerCountry };
+  const message = createInboxNotificationText(
+    'side_inbox.offerMessages.tradeRelation',
+    { user: userCountryName || 'Nusantara', partner: partnerCountry }
+  );
+
   return {
     id: `trade-relation-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title: `🤝 Penawaran Perjanjian Dagang: ${partnerCountry}`,
-    sender: `Kementerian Luar Negeri & Perdagangan ${partnerCountry}`,
-    message: `Presiden ${userCountryName || 'Nusantara'}, pemerintah ${partnerCountry} bermaksud memperluas kemitraan strategis dan membuka jalur perdagangan bilateral dengan negara Anda. Dengan menandatangani Perjanjian Hubungan Dagang ini, kedua negara akan mendapatkan akses komoditas ekspor-impor eksklusif dan insentif tarif khusus. Apakah Anda setuju meratifikasi perjanjian hubungan dagang ini?`,
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    sender: getDefaultInboxText(senderKey, senderParams),
+    senderKey,
+    senderParams,
+    ...message,
     timestamp: dateStr,
     type: 'kesejahteraan',
     value: 0,

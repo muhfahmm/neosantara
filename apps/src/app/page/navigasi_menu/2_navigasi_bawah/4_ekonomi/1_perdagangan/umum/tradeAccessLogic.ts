@@ -79,7 +79,7 @@ export function calculateTradeAccess(
   }
 
   if (centralizationScore < 70) {
-    reason.push("Tingkat sentralisasi tinggi; perdagangan dipantau komunitas internasional.");
+    reason.push("side_inbox.tradeAccess.reasons.centralizationMonitored");
     return {
       averageNationalization: safeAverage,
       centralizationScore,
@@ -94,13 +94,13 @@ export function calculateTradeAccess(
     };
   }
 
-  reason.push("Sentralisasi tinggi membatasi impor.");
-  if (ideologyModifier > 1) reason.push(`Ideologi ${ideology} menaikkan sentralisasi.`);
+  reason.push("side_inbox.tradeAccess.reasons.centralizationLimitsImports");
+  if (ideologyModifier > 1) reason.push("side_inbox.tradeAccess.reasons.ideologyCentralizes");
   if (religionModifier > 1) {
-    reason.push(`Agama ${religion} menghambat perdagangan global.`);
+    reason.push("side_inbox.tradeAccess.reasons.religionRestrictsTrade");
   }
   if (centralizationScore >= 85) {
-    reason[0] = `Sentralisasi ekstrem (skor ${Math.round(centralizationScore)}).`;
+    reason[0] = "side_inbox.tradeAccess.reasons.extremeCentralization";
     return {
       averageNationalization: safeAverage,
       centralizationScore,

@@ -218,6 +218,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     }
     try {
       window.localStorage.setItem(STORAGE_KEY, code);
+      document.documentElement.lang = code;
       window.dispatchEvent(new Event(LANGUAGE_CHANGE_EVENT));
     } catch (e) {
       if (process.env.NODE_ENV === 'development') {

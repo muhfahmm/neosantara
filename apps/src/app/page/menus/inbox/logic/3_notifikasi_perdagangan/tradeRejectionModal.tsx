@@ -5,6 +5,7 @@ import { AlertTriangle, X } from 'lucide-react';
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getLocalizedCountryName } from '@/app/logic/countryNameLogic';
 
 interface TradeRejectionModalProps {
   isOpen: boolean;
@@ -26,36 +27,37 @@ export default function TradeRejectionModal({
   const { t } = useLanguage();
   if (!isOpen) return null;
 
-  const partner = partnerCountry || 'Mitra';
+  const partner = getLocalizedCountryName(partnerCountry || 'Mitra');
   const isClosedEconomy = reason === 'closed_system';
   const isHighCentralization = reason === 'high_centralization';
 
-  const defaultRecommendations = (t('side_inbox.tradeModals.recommendations') as unknown as string[]) || [
-    'Ubah sistem ekonomi di menu Kebijakan Ekonomi',
-    'Turunkan skor sentralisasi ekonomi hingga di bawah 85',
-    'Pertimbangkan ideologi dan regulasi perdagangan yang lebih terbuka',
-  ];
+  const defaultRecommendations = [1, 2, 3].map(index =>
+    t(`side_inbox.dynamicNotifications.tradeModal.recommendation${index}`)
+  );
 
   const getReasonDetails = () => {
     if (isClosedEconomy) {
       return {
-        title: t('side_inbox.tradeModals.closedAlertTitle') || 'SISTEM EKONOMI TERTUTUP',
-        description: t('side_inbox.tradeModals.closedAlertDesc', { partner }) || `Negara Anda menganut sistem ekonomi tertutup. Perdagangan internasional dengan ${partner} tidak dapat dilakukan sampai sistem ekonomi diubah ke model yang lebih terbuka.`,
+        title: t('side_inbox.tradeModals.closedAlertTitle'),
+        description: t('side_inbox.tradeModals.closedAlertDesc', { partner }),
         recommendations: defaultRecommendations,
       };
     }
 
     if (isHighCentralization) {
       return {
-        title: t('side_inbox.tradeModals.closedAlertTitle') || 'SENTRALISASI EKONOMI TERLALU TINGGI',
-        description: t('side_inbox.tradeModals.closedAlertDesc', { partner }) || `Perdagangan internasional dengan ${partner} tidak dapat dilakukan karena tingkat sentralisasi ekonomi Negara Anda terlalu tinggi (> 85).`,
+        title: t('side_inbox.tradeModals.closedAlertTitle'),
+        description: t('side_inbox.tradeModals.closedAlertDesc', { partner }),
         recommendations: defaultRecommendations,
       };
     }
 
     return {
-      title: t('side_inbox.tradeModals.closedTitle') || 'PERDAGANGAN TIDAK DAPAT DILAKUKAN',
-      description: customReason || `Perdagangan dengan ${partner} saat ini tidak memenuhi syarat diplomasi dan regulasi nasional.`,
+      title: t('side_inbox.tradeModals.closedTitle'),
+      description: t('side_inbox.dynamicNotifications.tradeModal.customReason', {
+        partner,
+        economy: customReason || '',
+      }),
       recommendations: defaultRecommendations,
     };
   };
@@ -74,10 +76,10 @@ export default function TradeRejectionModal({
             </div>
             <div>
               <h3 className="text-sm font-black text-white uppercase tracking-wider">
-                {t('side_inbox.tradeModals.closedTitle') || "Akses Perdagangan Ditolak"}
+                {t('side_inbox.tradeModals.closedTitle')}
               </h3>
               <p className="text-[10px] font-bold text-red-300 uppercase tracking-widest mt-0.5">
-                {t('side_inbox.tradeModals.closedSub') || "Regulasi Pasar Tertutup"}
+                {t('side_inbox.tradeModals.closedSub')}
               </p>
             </div>
           </div>
@@ -105,7 +107,7 @@ export default function TradeRejectionModal({
           {/* Rekomendasi Langkah */}
           <div className="bg-[#051111] border border-root-accent/20 rounded-xl p-4 space-y-2">
             <h5 className="text-[11px] font-black text-root-accent uppercase tracking-wider">
-              {t('side_inbox.tradeModals.stepResolutionTitle') || "Langkah Penyelesaian yang Diperlukan:"}
+              {t('side_inbox.tradeModals.stepResolutionTitle')}
             </h5>
             <ul className="space-y-1.5">
               {Array.isArray(details.recommendations) && details.recommendations.map((rec, index) => (
@@ -124,7 +126,7 @@ export default function TradeRejectionModal({
             onClick={onClose}
             className="px-5 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-red-600/30 hover:bg-red-600/50 text-red-200 border border-red-500/40 hover:border-red-400 transition-all cursor-pointer shadow-sm hover:scale-[1.02] active:scale-[0.98]"
           >
-            {t('side_inbox.tradeModals.dismiss') || 'Mengerti & Tutup'}
+            {t('side_inbox.tradeModals.dismiss')}
           </button>
         </div>
 

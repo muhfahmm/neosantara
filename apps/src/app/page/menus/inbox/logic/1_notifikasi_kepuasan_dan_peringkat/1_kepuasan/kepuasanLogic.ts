@@ -6,6 +6,7 @@ export interface NotificationMessage {
   title: string;
   titleKey?: string;
   titleParams?: InboxMessageParams;
+  titleParamKeys?: Record<string, string>;
   sender: string;
   senderKey?: string;
   senderParams?: InboxMessageParams;
@@ -16,6 +17,7 @@ export interface NotificationMessage {
   effectText?: string;
   effectTextKey?: string;
   effectTextParams?: InboxMessageParams;
+  effectTextParamKeys?: Record<string, string>;
   timestamp: string;
   type: 'kepuasan' | 'peringkat' | 'kesejahteraan';
   value: number;

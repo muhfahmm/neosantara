@@ -194,11 +194,16 @@
     "risk": "暴乱风险：{risk}",
     "recoveryCost": "维稳与平叛军事预算：{cost} NEO",
     "stabilized": "局势已恢复和平与稳定",
-    "quellRebellion": "实施军事平叛行动",
+    "quellRebellion": "坚决镇压武装暴乱",
     "diserangTitle": "⚔️ 国家领土遭受敌方军事入侵！",
     "diserangBadge": "军事入侵",
     "icbmTitle": "🚀 警报：侦测到洲际弹道导弹（ICBM）发射！",
-    "icbmBadge": "核武器与战略威胁"
+    "icbmBadge": "核武器与战略威胁",
+    "deployDefense": "调动国防武装力量",
+    "defenseDeployed": "国防驻军部队已完成全面部署",
+    "impact": "战略影响",
+    "mobilizationCost": "战备动员与部署预算",
+    "estimatedImpact": "预计毁灭烈度：全域毁灭性破坏"
   },
   "disaster": {
     "naturalTitle": "🚨 突发自然灾害：{province} 发生 {name}",
@@ -207,12 +212,14 @@
     "financialLoss": "直接经济损失",
     "infrastructureDamage": "基础设施破坏指数",
     "aidCost": "紧急救灾与撤离预算",
-    "sendAid": "立即拨付紧急救灾款项",
+    "sendAid": "紧急拨付救灾物资",
     "handled": "救灾救援物资已全面送达",
     "wabahTitle": "☣️ 突发传染病疫情：{province} 暴发 {name}",
     "wabahBadge": "疫情爆发",
     "infected": "累计确诊感染人数",
-    "quarantineCost": "全境防疫与隔离管控支出"
+    "quarantineCost": "全境防疫与隔离管控支出",
+    "quarantine": "实施全境隔离封控",
+    "quarantineSuccess": "区域隔离封控令已正式执行"
   },
   "geopolitics": {
     "allianceTitle": "🛡️ 共同军事防御同盟提议：{partner}",
@@ -229,7 +236,9 @@
     "embassyBadge": "驻外使馆",
     "unResolutionTitle": "🏛️ 联合国大会决议：{title}",
     "unResolutionBadge": "联大官方决议",
-    "openResolution": "查看联合国决议详情 →"
+    "openResolution": "查看联合国决议详情 →",
+    "openEmbassy": "前往常驻大使馆 →",
+    "openBilateralDiplomacy": "启动双边外交会晤 →"
   },
   "basicNeeds": {
     "electricTitle": "⚡ 能源安全危机：国家遭遇严重电力短缺",
@@ -243,7 +252,12 @@
     "populationTitle": "👥 人口发展危机：劳动力与人口结构失衡",
     "populationBadge": "人口统计",
     "solveNow": "立即统筹治理",
-    "resolved": "民生危机已解除"
+    "resolved": "民生危机已解除",
+    "buildPowerPlant": "扩建国家电厂设施 →",
+    "buildHousing": "扩建民生保障住房 →",
+    "boostFood": "提升国家粮食自给产能 →",
+    "buildPublicFacilities": "兴建公共民生基建设施 →",
+    "manageDemographics": "调控国家人口与育儿政策 →"
   },
   "tradeModals": {
     "closedTitle": "外贸准入受阻",
@@ -306,7 +320,10 @@
     "warships": "海防主力舰艇",
     "orgMembership": "加入国际多边组织公报",
     "accepted": "已获批准",
-    "rejected": "已被驳回"
+    "rejected": "已被驳回",
+    "securityRisk": "治安风险与公共秩序动荡",
+    "operationsComplete": "治安维稳平叛行动顺利完成",
+    "ignore": "置之不理"
   },
   "electricityCrisis": {
     "hideDetail": "▲ 收起详细危机指标",
@@ -332,6 +349,69 @@
     "hardPower": "强力维稳",
     "dialog": "公开圆桌对话",
     "fulfill": "全面采纳诉求",
-    "ignore": "冷处理置之不理"
+    "ignore": "冷处理置之不理",
+    "disperseModalTitle": "国家安全维稳行动",
+    "disperseModalSub": "治安处置策略方案",
+    "operationCost": "行动经费支出",
+    "cancel": "取消",
+    "confirmDisperse": "确认执行清场！",
+    "understood": "确认知晓",
+    "confirmTitle": "确认维稳处置指令",
+    "confirmSubtitle": "执行现场驱散行动",
+    "confirmWarning": "该处置手段将动用国家强制力量。现场冲突、人员死伤、民众满意度与总统支持率下滑在所难免！",
+    "confirmQuestion": "您是否确定立即下达本次强制驱散与清场指令？",
+    "reportTitleSuccess": "🚨 人群驱散维稳行动总结报告",
+    "reportTitleClash": "🔥 现场冲突与骚乱处置报告",
+    "injured": "受伤人数统计",
+    "killed": "遇难/重伤人数",
+    "remainingProtesters": "现场残存示威群体",
+    "dialogForumTitle": "公开对话圆桌论坛",
+    "backToGame": "返回游戏主界面",
+    "laborLeader": "工会联盟首席代表",
+    "protesterRep": "示威群众领袖发言人",
+    "anger": "示威群众怒气值",
+    "trust": "民众政府信任度",
+    "demandsTitle": "核心诉求清单",
+    "refreshChoices": "调整沟通方案",
+    "disperseWithPolice": "动用防暴力量强行清场",
+    "sessionStarted": "公开圆桌对话已启动。请审慎选择沟通回应以化解对抗局面。"
+  },
+  "notificationMessages": {
+    "ratings": {
+      "satisfaction": "总统阁下，民众满意度已降至{value}/100，不满情绪开始在多个省份蔓延。若继续跌破10，大规模抗议将不可避免，国家稳定也将受到威胁。请尽快举办文化节或降低生活必需品税率。",
+      "ranking": "总统阁下，民众对您领导能力的信任度（您的排名）已降至{value}/100。议会开始关注这一负面趋势，反对派也出现了弹劾传闻。若排名跌破10，您可能会被罢免。请尽快回应民众诉求、稳定物价并保障民生。",
+      "welfare": "总统阁下，民众福利指数已降至{value}/100。教育、医疗和公共基础设施等基本设施不足，正严重影响生活质量。若跌破10，国家将面临严重的人道主义危机。请建设学校、医院和公共设施，或发放直接现金援助。"
+    },
+    "rebellion": "总统阁下，{country}爆发了激进示威和武装分离主义运动。叛乱组织要求中央政府改变其政治地位！",
+    "alliedAidRequest": "{target}遭到{attacker}军事力量的突然袭击。根据《共同防御联盟条约》，盟友请求军事援助以捍卫其领土主权。",
+    "diserang": {
+      "threat": "指挥官，已发现邻国{enemy}在边境附近调动装甲师。虽然尚未开火，但这是公然挑衅。",
+      "borderAttack": "军事警报！{enemy}的部队袭击了我方主要边境哨所！前线正在发生枪战和炮击。",
+      "warDeclaration": "重大冲突！{enemy}政府已正式对我国宣战，其作战舰队正在迅速推进。",
+      "invasion": "大规模军事入侵！{enemy}的联军已发动陆空入侵，企图夺取并吞并我方省份！",
+      "invasionWithoutTerritories": "大规模军事入侵！{enemy}的联军已发动陆空行动，试图突破我国防线。目前我方没有可供其夺取的已吞并领土。"
+    },
+    "icbm": {
+      "incomingAlert": "最高级别紧急警报！防空雷达发现一枚由{launcher}发射、携带核弹头并直指{target}的洲际弹道导弹（ICBM）！预计数分钟内命中！",
+      "programStarted": "总统阁下，国家核计划（{country}）的秘密项目已于{startDate}正式启动。铀浓缩设施、研究反应堆和战略配套设施正在建设，预计于{endDate}完工。",
+      "programCompleted": "国家战略通报！国家核计划设施已全部建成。{country}现已正式成为具备核能力的国家，ICBM组装和核战争行动现已全面开放！",
+      "testReport": "全球情报报告：{tester}刚刚向{target}进行了携带核弹头的洲际弹道导弹（ICBM）试射。地震传感器和侦察卫星记录到试验区域发生强烈爆炸震动！"
+    },
+    "resolution": {
+      "worldWarBan": "联合国外交快讯！{proposer}正式提出一项为期{duration}、适用于全球的“禁战决议”。该提案将在所选期间禁止攻击指定国家。联合国大会即将进行表决！",
+      "worldProductionBan": "联合国外交快讯！{proposer}正式提出一项为期{duration}、适用于全球的“禁产决议”。该提案将在所选期间停止生产{product}。联合国大会即将进行表决！",
+      "targeted": {
+        "arms_embargo": "联合国外交快讯！鉴于双边关系紧张（评分：{score}/100），{proposer}正式提出一项为期{duration}、针对{target}的“武器销售禁运”决议。该提案将在所选期间禁止武器贸易。联合国大会即将进行表决！",
+        "economic_embargo": "联合国外交快讯！鉴于双边关系紧张（评分：{score}/100），{proposer}正式提出一项为期{duration}、针对{target}的“经济禁运”决议。该提案将在所选期间将工厂和矿业产出及国家收入削减60%。联合国大会即将进行表决！",
+        "military_invasion": "联合国外交快讯！鉴于双边关系紧张（评分：{score}/100），{proposer}正式提出一项为期{duration}、针对{target}的“入侵决议”。该决议允许在不受其他国家谴责的情况下入侵。联合国大会即将进行表决！",
+        "production_ban": "联合国外交快讯！鉴于双边关系紧张（评分：{score}/100），{proposer}正式提出一项为期{duration}、针对{target}的“禁产决议”。该提案将在所选期间停止生产{product}。联合国大会即将进行表决！"
+      }
+    }
+  },
+  "policyNotice": {
+    "policyImpact": "政策综合影响",
+    "ministry": "主管部委",
+    "activeResearch": "当前科技前沿攻关",
+    "strategicSector": "国家战略支柱产业"
   }
 }

@@ -53,19 +53,27 @@ import { getActiveUserCountryName } from '@/app/page/navigasi_menu/2_navigasi_ba
 import { isNonActionableUpdateNotification } from './logic/automaticChangeNotification';
 import { getInboxNotificationImage } from './inboxAssetMapping';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
-import { getInboxNotificationMessage } from './logic/notificationMessage';
+import { getInboxNotificationEffectText, getInboxNotificationMessage, getInboxNotificationSender, getInboxNotificationTitle } from './logic/notificationMessage';
+import { getLocalizedCountryName, isGlobalCountryTarget, localizeCountryNamesInText } from '@/app/logic/countryNameLogic';
 
 function getLocalizedInboxTitle(notif: any, t: (key: any, params?: any) => string): string {
   if (!notif) return '';
-  if (notif.titleKey) return t(notif.titleKey, notif.titleParams);
+  if (notif.titleKey) return getInboxNotificationTitle(notif, t);
   const rawTitle = String(notif.title || '');
+  if (
+    String(notif.id || '').startsWith('notif-war-no-mandate-') ||
+    String(notif.id || '').startsWith('notif-npc-war-no-mandate-') ||
+    String(notif.id || '').startsWith('notif-war-ban-ai-block-')
+  ) {
+    return getInboxNotificationTitle(notif, t);
+  }
   const tradeType = notif.tradeType || notif.type;
 
   // 1. Trade Jual
   if (tradeType === 'jual' || rawTitle.toLowerCase().includes('ingin membeli')) {
     const rawKey = notif.productKey || '';
     const localizedProduct = t(`side_inbox.items.${rawKey}`) || rawKey.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
-    const partner = notif.partnerName || notif.partnerCountry || 'Mitra';
+    const partner = getLocalizedCountryName(notif.partnerName || notif.partnerCountry || 'Mitra');
     const res = t('side_inbox.listTitles.tradeJual', { partner, product: localizedProduct });
     if (res && res !== 'side_inbox.listTitles.tradeJual') return res;
   }
@@ -74,77 +82,80 @@ function getLocalizedInboxTitle(notif: any, t: (key: any, params?: any) => strin
   if (tradeType === 'beli' || rawTitle.toLowerCase().includes('penawaran dagang: beli')) {
     const rawKey = notif.productKey || '';
     const localizedProduct = t(`side_inbox.items.${rawKey}`) || rawKey.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
-    const partner = notif.partnerName || notif.partnerCountry || 'Mitra';
+    const partner = getLocalizedCountryName(notif.partnerName || notif.partnerCountry || 'Mitra');
     const res = t('side_inbox.listTitles.tradeBeli', { partner, product: localizedProduct });
     if (res && res !== 'side_inbox.listTitles.tradeBeli') return res;
   }
 
   // 3. Trade Relation
   if (tradeType === 'hubungan_dagang' || rawTitle.toLowerCase().includes('hubungan dagang bilateral')) {
-    const partner = notif.partnerCountry || 'Mitra';
+    const partner = getLocalizedCountryName(notif.partnerCountry || 'Mitra');
     const res = t('side_inbox.listTitles.tradeRelation', { partner });
     if (res && res !== 'side_inbox.listTitles.tradeRelation') return res;
   }
 
   // 4. Non-Agresi
   if (tradeType === 'pakta_non_agresi' || rawTitle.toLowerCase().includes('pakta non-agresi')) {
-    const partner = notif.partnerCountry || 'Mitra';
+    const partner = getLocalizedCountryName(notif.partnerCountry || 'Mitra');
     const res = t('side_inbox.nonAggressionOfferTitle', { partner });
     if (res && res !== 'side_inbox.nonAggressionOfferTitle') return res;
   }
 
   // 5. Aliansi Pertahanan
   if (tradeType === 'aliansi_pertahanan' || rawTitle.toLowerCase().includes('aliansi pertahanan')) {
-    const partner = notif.partnerCountry || 'Mitra';
+    const partner = getLocalizedCountryName(notif.partnerCountry || 'Mitra');
     const res = t('side_inbox.listTitles.defenseAlliance', { partner });
     if (res && res !== 'side_inbox.listTitles.defenseAlliance') return res;
   }
 
   // 6. Kontrak Penelitian
   if (tradeType === 'kontrak_penelitian' || rawTitle.toLowerCase().includes('kontrak penelitian')) {
-    const partner = notif.partnerCountry || 'Mitra';
+    const partner = getLocalizedCountryName(notif.partnerCountry || 'Mitra');
     const res = t('side_inbox.listTitles.researchContract', { partner });
     if (res && res !== 'side_inbox.listTitles.researchContract') return res;
   }
 
   // 7. Hubungan Panas
   if (tradeType === 'hubungan_panas' || rawTitle.toLowerCase().includes('ketegangan diplomatik')) {
-    const partner = notif.partnerCountry || 'Mitra';
+    const partner = getLocalizedCountryName(notif.partnerCountry || 'Mitra');
     const res = t('side_inbox.listTitles.hubunganPanas', { partner });
     if (res && res !== 'side_inbox.listTitles.hubunganPanas') return res;
   }
 
   // 8. Resolusi PBB
   if (tradeType === 'usulan_resolusi_pbb' || rawTitle.toLowerCase().includes('resolusi pbb') || rawTitle.toLowerCase().includes('serangan tanpa')) {
-    const res = t('side_inbox.listTitles.resolusiPBB', { title: rawTitle });
+    const res = t('side_inbox.listTitles.resolusiPBB', { title: localizeCountryNamesInText(rawTitle) });
     if (res && res !== 'side_inbox.listTitles.resolusiPBB') return res;
   }
 
   // 9. Keamanan PBB
   if (tradeType === 'usulan_keamanan_pbb' || rawTitle.toLowerCase().includes('dewan keamanan pbb')) {
-    const proposer = notif.proposerCountry || 'PBB';
-    const target = notif.targetCountry || 'Target';
+    const proposer = getLocalizedCountryName(notif.proposerCountry || 'PBB');
+    const rawTarget = notif.targetCountry || 'Target';
+    const target = isGlobalCountryTarget(rawTarget)
+      ? t('side_inbox.geopolitics.globalTarget')
+      : getLocalizedCountryName(rawTarget);
     const res = t('side_inbox.listTitles.keamananPBB', { proposer, target });
     if (res && res !== 'side_inbox.listTitles.keamananPBB') return res;
   }
 
   // 10. Sabotase
   if (tradeType === 'sabotase' || rawTitle.toLowerCase().includes('sabotase')) {
-    const partner = notif.partnerCountry || 'Target';
+    const partner = getLocalizedCountryName(notif.partnerCountry || 'Target');
     const res = t('side_inbox.listTitles.sabotase', { partner });
     if (res && res !== 'side_inbox.listTitles.sabotase') return res;
   }
 
   // 11. Spionase
   if (tradeType === 'spionase' || rawTitle.toLowerCase().includes('spionase')) {
-    const partner = notif.partnerCountry || 'Target';
+    const partner = getLocalizedCountryName(notif.partnerCountry || 'Target');
     const res = t('side_inbox.listTitles.spionase', { partner });
     if (res && res !== 'side_inbox.listTitles.spionase') return res;
   }
 
   // 12. Pemberontakan
   if (tradeType === 'pemberontakan' || rawTitle.toLowerCase().includes('pemberontakan')) {
-    const country = notif.provinceName || 'Wilayah';
+    const country = getLocalizedCountryName(notif.provinceName || 'Wilayah');
     const res = t('side_inbox.listTitles.pemberontakan', { country });
     if (res && res !== 'side_inbox.listTitles.pemberontakan') return res;
   }
@@ -199,7 +210,7 @@ function getLocalizedInboxTitle(notif: any, t: (key: any, params?: any) => strin
     if (res && res !== 'side_inbox.listTitles.populasi') return res;
   }
 
-  return rawTitle;
+  return getInboxNotificationTitle(notif, t) || localizeCountryNamesInText(rawTitle);
 }
 
 interface TopLeftIconProps {
@@ -320,12 +331,10 @@ export default function TopLeftIcon({
     const handleRedirect = onRedirectClick ? () => onRedirectClick(notification) : undefined;
     const notif = {
       ...notification,
-      title: notification.titleKey ? t(notification.titleKey, notification.titleParams) : notification.title,
-      sender: notification.senderKey ? t(notification.senderKey, notification.senderParams) : notification.sender,
+      title: getInboxNotificationTitle(notification, t),
+      sender: getInboxNotificationSender(notification, t),
       message: getInboxNotificationMessage(notification, t),
-      effectText: notification.effectTextKey
-        ? t(notification.effectTextKey, notification.effectTextParams)
-        : notification.effectText,
+      effectText: getInboxNotificationEffectText(notification, t),
     };
 
     const tradeType = (notif as any).tradeType;
@@ -700,9 +709,14 @@ export default function TopLeftIcon({
       default:
         return (
           <div key={notif.id} className="bg-root-surface border border-root-accent/30 p-5 rounded-xl shadow-sm">
-            <h4 className="font-bold text-root-accent text-sm uppercase">{notif.title}</h4>
-            <div className="text-xs text-root-subtle mt-1">Pengirim: {notif.sender || 'Pemerintah'} | {notif.timestamp}</div>
-            <div className="text-xs text-root-text mt-3 leading-relaxed">{notif.message}</div>
+            <h4 className="font-bold text-root-accent text-sm uppercase">{getLocalizedInboxTitle(notif, t) || notif.title}</h4>
+            <div className="text-xs text-root-subtle mt-1">
+              {t('side_inbox.senderPrefix', {
+                sender: getInboxNotificationSender(notif, t) || notif.sender || 'Pemerintah',
+                date: notif.timestamp,
+              })}
+            </div>
+            <div className="text-xs text-root-text mt-3 leading-relaxed">{getInboxNotificationMessage(notif, t)}</div>
           </div>
         );
     }
@@ -825,8 +839,9 @@ export default function TopLeftIcon({
                     <div className="flex-1 overflow-y-auto custom-scrollbar p-2 sm:p-2.5 space-y-1.5">
                       {orderedNotifications.map((notif) => {
                         const isSelected = selectedNotification?.id === notif.id;
-                        const notifSender = String(notif.sender || (notif as any).partnerCountry || (notif as any).proposerCountry || 'Pemerintah');
-                        const countryIso = getIsoForCountryName(notifSender);
+                        const senderCountry = String((notif as any).partnerCountry || (notif as any).proposerCountry || notif.sender || 'Pemerintah');
+                        const notifSender = getInboxNotificationSender(notif, t) || senderCountry;
+                        const countryIso = getIsoForCountryName(senderCountry);
                         const isUrgent = notif.title?.toLowerCase().includes('peringatan') || notif.title?.toLowerCase().includes('krisis') || notif.title?.toLowerCase().includes('diserang');
 
                         return (

@@ -1,6 +1,7 @@
 import { getMilitaryResearchLevelBonus } from '@/app/page/bonus_logic/militaryResearchBonus';
 import type { SabotageUnitLoss } from '@/app/page/detail_negara/3_operasi_militer/covertEffectsLogic';
 import type { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { getDefaultInboxText } from '@/app/page/menus/inbox/logic/notificationMessage';
 
 export interface SabotaseOperationResult {
   operation: 'sabotase';
@@ -25,43 +26,17 @@ export interface SabotaseNotification extends NotificationMessage {
   isOffensive?: boolean;
   operationResult?: 'success' | 'failed';
   operationTarget?: string;
+  operationTargetKey?: string;
   lossesDetail?: string;
 }
 
 export const SABOTASE_BASE_SUCCESS_CHANCE = 50;
 
-const SABOTASE_POOL = [
-  {
-    sabotaseType: 'infrastruktur' as SabotaseType,
-    title: '💣 Sabotase Infrastruktur Nasional',
-    message: (partner: string) => `Pipa minyak, jembatan komersial, dan jaringan transportasi utama diduga disabotase oleh kelompok suruhan dari ${partner}!`,
-    costEM: 8000,
-    effectText: '-5% bangunan listrik dan mineral energi (jika dibiarkan)'
-  },
-  {
-    sabotaseType: 'militer' as SabotaseType,
-    title: '🔥 Sabotase Militer: Ledakan Gudang Amunisi',
-    message: (partner: string) => `Gudang alutsista dan instalasi militer utama mengalami ledakan sabotase terencana yang dipicu oleh agen asing ${partner}!`,
-    costEM: 15000,
-    effectText: '-5% Alutsista (permanen jika dibiarkan)'
-  },
-  {
-    sabotaseType: 'siber' as SabotaseType,
-    title: '⚡ Sabotase Siber: Kelumpuhan Jaringan Komunikasi',
-    message: (partner: string) => {
-      void partner;
-      return 'Serangan peretas siber berskala besar melumpuhkan radar dan sistem pertahanan udara nasional selama beberapa hari!';
-    },
-    costEM: 10000,
-    effectText: '-5% Alutsista (permanen jika dibiarkan)'
-  },
-  {
-    sabotaseType: 'nuklir' as SabotaseType,
-    title: '☢️ Sabotase Fasilitas Nuklir!',
-    message: (partner: string) => `BAHAYA MAKSIMAL! Terjadi infiltrasi sabotase pada reaktor nuklir nasional oleh infiltran dari ${partner}! Risiko kebocoran nuklir tinggi!`,
-    costEM: 200,
-    effectText: '-5% Alutsista (permanen jika dibiarkan)'
-  }
+const SABOTASE_POOL: Array<{ sabotaseType: SabotaseType; costEM: number }> = [
+  { sabotaseType: 'infrastruktur', costEM: 8000 },
+  { sabotaseType: 'militer', costEM: 15000 },
+  { sabotaseType: 'siber', costEM: 10000 },
+  { sabotaseType: 'nuklir', costEM: 200 },
 ];
 
 export function generateSabotaseNotification(
@@ -79,11 +54,28 @@ export function generateSabotaseNotification(
     item = SABOTASE_POOL[1];
   }
 
+  const textPrefix = 'side_inbox.dynamicNotifications.sabotage';
+  const eventNameKey = `${textPrefix}.eventNames.${item.sabotaseType}`;
+  const effectTextKey = `${textPrefix}.effects.${item.sabotaseType}`;
+  const titleKey = 'side_inbox.defense.sabotaseTitle';
+  const messageKey = `${textPrefix}.incomingMessage`;
+  const titleParams = { partner: partnerCountry };
+  const messageParams = {
+    eventName: getDefaultInboxText(eventNameKey),
+    partner: partnerCountry,
+  };
+
   return {
     id: `sabotase-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title: item.title,
-    sender: 'Kementerian Pertahanan & Keamanan',
-    message: item.message(partnerCountry),
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    sender: getDefaultInboxText(`${textPrefix}.incomingSender`),
+    senderKey: `${textPrefix}.incomingSender`,
+    message: getDefaultInboxText(messageKey, messageParams),
+    messageKey,
+    messageParams,
+    messageParamKeys: { eventName: eventNameKey },
     timestamp: dateStr,
     type: 'kesejahteraan',
     value: 0,
@@ -94,7 +86,8 @@ export function generateSabotaseNotification(
     ...(targetCountry ? { targetCountry } : {}),
     sabotaseType: item.sabotaseType,
     costEM: item.costEM,
-    effectText: item.effectText,
+    effectText: getDefaultInboxText(effectTextKey),
+    effectTextKey,
     isHandled: false
   };
 }
@@ -106,24 +99,43 @@ export function generatePlayerSabotaseResultNotification(
   operationTarget?: string,
   lossesText?: string,
 ): SabotaseNotification {
-  const targetLabel = operationTarget || 'Fasilitas & Pabrik Militer';
-  const title = succeeded
-    ? `💣 Misi Sabotase Berhasil: ${targetCountry}`
-    : `❌ Misi Sabotase Gagal: ${targetCountry}`;
-
-  const message = succeeded
-    ? `Laporan Operasi Tempur Rahasia: Tim sabotase elit kita sukses meledakkan dan melumpuhkan target (${targetLabel}) di wilayah ${targetCountry}. Kerusakan signifikan terkonfirmasi pada instalasi lawan tanpa meninggalkan jejak!`
-    : `Laporan Darurat Lapangan: Operasi sabotase terhadap ${targetCountry} (${targetLabel}) digagalkan! Sistem pertahanan dan pengamanan instalasi lawan berhasil mendeteksi pergerakan tim penyabot kita sebelum peledak diaktifkan.`;
-
-  const effectText = succeeded
-    ? (lossesText || `Fasilitas (${targetLabel}) lawan berhasil dirusak dan kekuatan militer target berkurang.`)
-    : `Misi gagal. Instalasi ${targetLabel} target tetap utuh.`;
+  const textPrefix = 'side_inbox.dynamicNotifications.sabotage';
+  const defaultTargetKey = `${textPrefix}.defaultTarget`;
+  const targetIsDefault = !operationTarget || operationTarget === 'Fasilitas & Pabrik Militer' || operationTarget === 'Fasilitas Militer';
+  const targetOptionKeys: Record<string, string> = {
+    'Fasilitas & Pabrik Militer': `${textPrefix}.targetOptions.militaryFacility`,
+    'Infrastruktur Listrik & Energi': `${textPrefix}.targetOptions.energyInfrastructure`,
+    'Sabotase Produksi Pangan': `${textPrefix}.targetOptions.foodProduction`,
+    'Sabotase Manufaktur': `${textPrefix}.targetOptions.manufacturing`,
+  };
+  const operationTargetKey = targetIsDefault
+    ? defaultTargetKey
+    : operationTarget
+      ? targetOptionKeys[operationTarget]
+      : undefined;
+  const targetLabel = operationTargetKey
+    ? getDefaultInboxText(operationTargetKey)
+    : operationTarget ?? getDefaultInboxText(defaultTargetKey);
+  const titleKey = `${textPrefix}.${succeeded ? 'offensiveSuccessTitle' : 'offensiveFailureTitle'}`;
+  const messageKey = `${textPrefix}.${succeeded ? 'offensiveSuccessMessage' : 'offensiveFailureMessage'}`;
+  const effectTextKey = `${textPrefix}.${succeeded ? 'offensiveSuccessEffect' : 'offensiveFailureEffect'}`;
+  const titleParams = { country: targetCountry };
+  const messageParams = { country: targetCountry, target: targetLabel };
+  const effectTextParams = { target: targetLabel };
 
   return {
     id: `player-sabotase-result-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title,
-    sender: 'Komando Pasukan Khusus & Intelijen Tempur',
-    message,
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    sender: getDefaultInboxText(`${textPrefix}.offensiveSender`),
+    senderKey: `${textPrefix}.offensiveSender`,
+    message: getDefaultInboxText(messageKey, messageParams),
+    messageKey,
+    messageParams,
+    messageParamKeys: operationTargetKey ? { target: operationTargetKey } : {},
+    effectText: getDefaultInboxText(effectTextKey, effectTextParams),
+    effectTextKey,
     timestamp: dateStr,
     type: 'kesejahteraan',
     value: succeeded ? 100 : 0,
@@ -137,8 +149,11 @@ export function generatePlayerSabotaseResultNotification(
     isOffensive: true,
     operationResult: succeeded ? 'success' : 'failed',
     operationTarget: targetLabel,
+    operationTargetKey,
+    effectTextParams,
+    effectTextParamKeys: operationTargetKey ? { target: operationTargetKey } : {},
+    // Keep the unit-loss data available for other notification consumers.
     lossesDetail: lossesText,
-    effectText,
   };
 }
 

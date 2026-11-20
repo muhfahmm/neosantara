@@ -2,6 +2,7 @@ import { getMilitaryResearchLevelBonus } from '@/app/page/bonus_logic/militaryRe
 import type { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import type { SpionaseEconomicIntelReport } from './spionaseEkonomiLogic';
 import type { SpionaseMilitaryIntelReport } from './spionaseMiliterLogic';
+import { createInboxNotificationText, getDefaultInboxText } from '@/app/page/menus/inbox/logic/notificationMessage';
 
 export interface SpionaseOperationResult {
   operation: 'spionase';
@@ -36,24 +37,15 @@ export const SPIONASE_BASE_SUCCESS_CHANCE = 50;
 const SPIONASE_POOL = [
   {
     level: 'ringan' as SpionaseLevel,
-    title: '🕵️ Spionase Ringan: Penyusupan Perbatasan',
-    message: (partner: string) => `Lapor Komandan! Agen intelijen asing asal ${partner} terdeteksi mencoba melintasi pos perbatasan tanpa izin resmi. Penjaga batas berhasil memblokir pergerakan awal mereka.`,
     costEM: 20000,
-    effectText: '-5% Kekuatan & HP Militer (30-60 hari jika dibiarkan)'
   },
   {
     level: 'sedang' as SpionaseLevel,
-    title: '⚠️ Spionase Sedang: Infiltrasi Pangkalan Militer',
-    message: (partner: string) => `Peringatan Keamanan! Agen spionase ${partner} menyusup ke instalasi militer wilayah timur. Beberapa dokumen rahasia efektivitas persenjataan berisiko bocor!`,
     costEM: 10000,
-    effectText: '-5% Kekuatan & HP Militer (30-60 hari jika dibiarkan)'
   },
   {
     level: 'berat' as SpionaseLevel,
-    title: '🚨 Spionase Berat: Jaringan Mata-Mata Besar',
-    message: (partner: string) => `DARURAT INTELIJEN! Jaringan mata-mata tingkat tinggi dari ${partner} membocorkan data strategis riset nasional dan posisi armada armada militer kita!`,
     costEM: 15000,
-    effectText: '-5% Kekuatan & HP Militer (30-60 hari jika dibiarkan)'
   }
 ];
 
@@ -69,12 +61,23 @@ export function generateSpionaseNotification(
   } else if (roll < 0.45) {
     item = SPIONASE_POOL[1];
   }
+  const textPrefix = 'side_inbox.dynamicNotifications.espionage';
+  const titleKey = `${textPrefix}.incomingTitles.${item.level}`;
+  const messageKey = `${textPrefix}.incomingMessages.${item.level}`;
+  const senderKey = `${textPrefix}.incomingSender`;
+  const effectTextKey = `${textPrefix}.incomingEffect`;
+  const titleParams = { partner: partnerCountry };
+  const messageParams = { partner: partnerCountry };
 
   return {
     id: `spionase-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title: item.title,
-    sender: `Badan Intelijen Negara (${partnerCountry})`,
-    message: item.message(partnerCountry),
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    sender: getDefaultInboxText(senderKey, messageParams),
+    senderKey,
+    senderParams: messageParams,
+    ...createInboxNotificationText(messageKey, messageParams),
     timestamp: dateStr,
     type: 'peringkat',
     value: 0,
@@ -85,7 +88,8 @@ export function generateSpionaseNotification(
     ...(targetCountry ? { targetCountry } : {}),
     level: item.level,
     costEM: item.costEM,
-    effectText: item.effectText,
+    effectText: getDefaultInboxText(effectTextKey),
+    effectTextKey,
     isHandled: false
   };
 }
@@ -98,38 +102,61 @@ export function generatePlayerSpionaseResultNotification(
   militaryReport?: SpionaseMilitaryIntelReport,
   economicReport?: SpionaseEconomicIntelReport,
 ): SpionaseNotification {
-  const targetLabel = operationTarget || 'Informasi Intelijen Negara';
-  const title = succeeded
-    ? `🕵️ Misi Spionase Berhasil: ${targetCountry}`
-    : `❌ Misi Spionase Gagal: ${targetCountry}`;
-
-  const message = succeeded
-    ? militaryReport
-      ? `Laporan Operasi Intelijen: Agen berhasil mengekstraksi data militer (${targetLabel}) dari ${targetCountry}. Rincian jumlah unit darat, udara, dan laut terlampir.`
+  const textPrefix = 'side_inbox.dynamicNotifications.espionage';
+  const defaultTargetKey = `${textPrefix}.targets.default`;
+  const targetKey = operationTarget === 'Intelijen Militer & Pertahanan'
+    ? `${textPrefix}.targets.military`
+    : operationTarget === 'Intelijen Ekonomi & Anggaran'
+      ? `${textPrefix}.targets.economy`
+      : operationTarget
+        ? undefined
+        : defaultTargetKey;
+  const targetLabel = targetKey
+    ? getDefaultInboxText(targetKey)
+    : operationTarget ?? getDefaultInboxText(defaultTargetKey);
+  const titleKey = `${textPrefix}.${succeeded ? 'offensiveSuccessTitle' : 'offensiveFailureTitle'}`;
+  const messageKey = !succeeded
+    ? `${textPrefix}.offensiveFailureMessage`
+    : militaryReport
+      ? `${textPrefix}.offensiveMilitaryMessage`
       : economicReport
-        ? `Laporan Operasi Intelijen: Agen berhasil memperoleh data fiskal (${targetLabel}) dari ${targetCountry}. Rincian anggaran dan tarif pajak terlampir.`
-        : `Laporan Operasi Intelijen: Agen spionase kita telah berhasil menyusup dan mengekstraksi data strategis (${targetLabel}) dari target ${targetCountry}. Seluruh dokumen rahasia lawan berhasil dienkripsi dan dikirim ke markas pusat.`
-    : `Laporan Darurat Intelijen: Misi spionase terhadap ${targetCountry} (${targetLabel}) mengalami kegagalan. Agen penyusup kita terdeteksi oleh jaringan kontra-intelijen lawan dan terpaksa melakukan evakuasi darurat.`;
-
-  const militaryReportSummary = militaryReport
-    ? `Total ${militaryReport.totalUnits.toLocaleString('id-ID')} unit; darat ${militaryReport.groups.darat.totalUnits.toLocaleString('id-ID')}, udara ${militaryReport.groups.udara.totalUnits.toLocaleString('id-ID')}, laut ${militaryReport.groups.laut.totalUnits.toLocaleString('id-ID')}.`
-    : undefined;
-  const economicReportSummary = economicReport
-    ? `Anggaran ${economicReport.budget.toLocaleString('id-ID')} NEO; estimasi pajak ${economicReport.estimatedDailyTaxRevenue.toLocaleString('id-ID')} NEO/hari.`
-    : undefined;
-  const effectText = succeeded
-    ? militaryReportSummary
-      ? `Data militer (${targetLabel}) berhasil diamankan. ${militaryReportSummary}`
-      : economicReportSummary
-        ? `Data fiskal (${targetLabel}) berhasil diamankan. ${economicReportSummary}`
-        : `Data intelijen (${targetLabel}) negara ${targetCountry} berhasil diamankan.`
-    : `Misi gagal. Agen gagal mendapatkan data ${targetLabel}.`;
+        ? `${textPrefix}.offensiveEconomyMessage`
+        : `${textPrefix}.offensiveGenericMessage`;
+  const effectTextKey = !succeeded
+    ? `${textPrefix}.offensiveFailureEffect`
+    : militaryReport
+      ? `${textPrefix}.offensiveMilitaryEffect`
+      : economicReport
+        ? `${textPrefix}.offensiveEconomyEffect`
+        : `${textPrefix}.offensiveSuccessEffect`;
+  const titleParams = { country: targetCountry };
+  const messageParams = {
+    country: targetCountry,
+    target: targetLabel,
+    totalUnits: militaryReport?.totalUnits ?? 0,
+    landUnits: militaryReport?.groups.darat.totalUnits ?? 0,
+    airUnits: militaryReport?.groups.udara.totalUnits ?? 0,
+    navalUnits: militaryReport?.groups.laut.totalUnits ?? 0,
+    budget: economicReport?.budget ?? 0,
+    dailyTax: economicReport?.estimatedDailyTaxRevenue ?? 0,
+  };
+  const effectTextParams = {
+    target: targetLabel,
+    totalUnits: messageParams.totalUnits,
+    budget: messageParams.budget,
+    dailyTax: messageParams.dailyTax,
+  };
+  const messageParamKeys: Record<string, string> = targetKey ? { target: targetKey } : {};
+  const senderKey = `${textPrefix}.offensiveSender`;
 
   return {
     id: `player-spionase-result-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title,
-    sender: 'Badan Intelijen Negara (Operasi Khusus)',
-    message,
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    sender: getDefaultInboxText(senderKey),
+    senderKey,
+    ...createInboxNotificationText(messageKey, messageParams, messageParamKeys),
     timestamp: dateStr,
     type: 'peringkat',
     value: succeeded ? 100 : 0,
@@ -145,7 +172,10 @@ export function generatePlayerSpionaseResultNotification(
     operationTarget: targetLabel,
     ...(militaryReport ? { militaryReport } : {}),
     ...(economicReport ? { economicReport } : {}),
-    effectText,
+    effectText: getDefaultInboxText(effectTextKey, effectTextParams),
+    effectTextKey,
+    effectTextParams,
+    effectTextParamKeys: messageParamKeys,
   };
 }
 

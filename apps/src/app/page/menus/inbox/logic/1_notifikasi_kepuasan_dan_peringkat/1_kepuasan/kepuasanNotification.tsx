@@ -2,6 +2,7 @@ import React from 'react';
 import { Smile, AlertTriangle, ExternalLink } from 'lucide-react';
 import { NotificationMessage } from './kepuasanLogic';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getInboxNotificationMessage, getInboxNotificationSender, getInboxNotificationTitle } from '@/app/page/menus/inbox/logic/notificationMessage';
 
 interface KepuasanNotificationProps {
   notification: NotificationMessage;
@@ -19,16 +20,16 @@ export default function KepuasanNotification({ notification, onActionClick, onRe
       </div>
       <div className="flex-1 space-y-1">
         <div className="flex items-center justify-between">
-          <h4 className="text-sm font-black text-amber-900 uppercase tracking-wide">{notification.title}</h4>
+          <h4 className="text-sm font-black text-amber-900 uppercase tracking-wide">{getInboxNotificationTitle(notification, t)}</h4>
           <span className="text-[10px] font-bold text-amber-700 bg-amber-100/50 px-2 py-0.5 rounded border border-amber-200">
             {t('side_inbox.types.kepuasan')}: {notification.value}/100
           </span>
         </div>
         <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp })}
+          {t('side_inbox.senderPrefix', { sender: getInboxNotificationSender(notification, t), date: notification.timestamp })}
         </p>
         <p className="text-xs font-medium text-slate-700 leading-relaxed pt-1">
-          {notification.message}
+          {getInboxNotificationMessage(notification, t)}
         </p>
         <div className="pt-2 flex justify-end gap-2">
           {onActionClick && (

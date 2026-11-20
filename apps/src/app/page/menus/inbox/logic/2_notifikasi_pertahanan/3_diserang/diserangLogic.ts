@@ -1,5 +1,5 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
-import { createInboxNotificationText } from '../../notificationMessage';
+import { createInboxNotificationText, getDefaultInboxText } from '../../notificationMessage';
 
 export type AttackLevel = 'ancaman' | 'serangan_perbatasan' | 'deklarasi_perang' | 'invasi';
 
@@ -15,31 +15,31 @@ export interface DiserangNotification extends NotificationMessage {
 const ATTACK_POOL = [
   {
     attackLevel: 'ancaman' as AttackLevel,
-    title: '🪖 Ancaman Perbatasan: Mobilisasi Pasukan Musuh',
+    titleKey: 'side_inbox.defense.attackTitles.threat',
     messageKey: 'side_inbox.notificationMessages.diserang.threat',
     costEM: 100,
-    effectText: 'Diplomasi / Mobilisasi Darurat'
+    effectTextKey: 'side_inbox.defense.attackEffects.threat'
   },
   {
     attackLevel: 'serangan_perbatasan' as AttackLevel,
-    title: '⚔️ Serangan Perbatasan: Batalyon Musuh Membuka Tembakan!',
+    titleKey: 'side_inbox.defense.attackTitles.borderAttack',
     messageKey: 'side_inbox.notificationMessages.diserang.borderAttack',
     costEM: 200,
-    effectText: '-5% Kekuatan Militer, Korban 50+ Jiwa'
+    effectTextKey: 'side_inbox.defense.attackEffects.borderAttack'
   },
   {
     attackLevel: 'deklarasi_perang' as AttackLevel,
-    title: '📜 Deklarasi Perang Resmi oleh Negara Musuh!',
+    titleKey: 'side_inbox.defense.attackTitles.warDeclaration',
     messageKey: 'side_inbox.notificationMessages.diserang.warDeclaration',
     costEM: 300,
-    effectText: 'Perang Aktif, Ekonomi -15%, Approval -10%'
+    effectTextKey: 'side_inbox.defense.attackEffects.warDeclaration'
   },
   {
     attackLevel: 'invasi' as AttackLevel,
-    title: '🚨 Invasi Skala Penuh: Perebutan Wilayah!',
+    titleKey: 'side_inbox.defense.attackTitles.invasion',
     messageKey: 'side_inbox.notificationMessages.diserang.invasion',
     costEM: 400,
-    effectText: 'Risiko Kehilangan 1 Provinsi jika Tidak Dipertahankan'
+    effectTextKey: 'side_inbox.defense.attackEffects.invasion'
   }
 ];
 
@@ -90,19 +90,24 @@ export function generateDiserangNotification(
   }
 
   const isInvasionWithoutTerritories = item.attackLevel === 'invasi' && !hasAnnexedTerritories;
+  const titleKey = isInvasionWithoutTerritories
+    ? 'side_inbox.defense.attackTitles.invasionWithoutTerritories'
+    : item.titleKey;
+  const messageKey = isInvasionWithoutTerritories
+    ? 'side_inbox.notificationMessages.diserang.invasionWithoutTerritories'
+    : item.messageKey;
+  const effectTextKey = isInvasionWithoutTerritories
+    ? 'side_inbox.defense.attackEffects.invasionWithoutTerritories'
+    : item.effectTextKey;
+  const senderKey = 'side_inbox.defense.attackSender';
 
   return {
     id: `diserang-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title: isInvasionWithoutTerritories
-      ? '🚨 Invasi Skala Penuh: Pertahanan Wilayah Nasional!'
-      : item.title,
-    sender: `Markas Besar Angkatan Bersenjata`,
-    ...createInboxNotificationText(
-      isInvasionWithoutTerritories
-        ? 'side_inbox.notificationMessages.diserang.invasionWithoutTerritories'
-        : item.messageKey,
-      { enemy: enemyCountry }
-    ),
+    title: getDefaultInboxText(titleKey),
+    titleKey,
+    sender: getDefaultInboxText(senderKey),
+    senderKey,
+    ...createInboxNotificationText(messageKey, { enemy: enemyCountry }),
     timestamp: dateStr,
     type: 'kepuasan',
     value: 0,
@@ -111,9 +116,8 @@ export function generateDiserangNotification(
     enemyCountry,
     attackLevel: item.attackLevel,
     costEM: item.costEM,
-    effectText: isInvasionWithoutTerritories
-      ? 'Tidak ada wilayah aneksasi yang dapat hilang'
-      : item.effectText,
+    effectText: getDefaultInboxText(effectTextKey),
+    effectTextKey,
     isHandled: false
   };
 }

@@ -2,6 +2,8 @@ import React from 'react';
 import { ShieldAlert, Check, X, Shield, Clock } from 'lucide-react';
 import { BantuanSekutuNotification, BANTUAN_SEKUTU_CONFIG } from './bantuanSekutuLogic';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getInboxNotificationMessage, getInboxNotificationTitle } from '../notificationMessage';
+import { getLocalizedCountryName } from '@/app/logic/countryNameLogic';
 
 interface BantuanSekutuNotificationProps {
   notification: BantuanSekutuNotification;
@@ -51,7 +53,7 @@ export default function BantuanSekutuNotificationCard({
       <div className="flex-1 space-y-2.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h4 className="text-sm font-black text-white uppercase tracking-wide leading-tight">
-            {notification.title}
+            {getInboxNotificationTitle(notification, t)}
           </h4>
           <span
             className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border uppercase tracking-wider ${
@@ -63,44 +65,44 @@ export default function BantuanSekutuNotificationCard({
             }`}
           >
             {isAccepted
-              ? 'BANTUAN DITERIMA'
+              ? t('side_inbox.security.aidApproved')
               : isExpired
-              ? 'PERMINTAAN KEDALUWARSA'
+              ? t('side_inbox.security.requestExpired')
               : isRejected
-              ? 'DITOLAK'
-              : notification.category}
+              ? t('side_inbox.security.requestRejected')
+              : t('side_inbox.security.requestPending')}
           </span>
         </div>
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          <span>Sekutu: <strong className="text-emerald-400">{notification.allyCountry}</strong></span>
+          <span>{t('side_inbox.security.allyLabel')}: <strong className="text-emerald-400">{getLocalizedCountryName(notification.allyCountry)}</strong></span>
           <span>•</span>
-          <span>Penyerang: <strong className="text-rose-400">{notification.attackerCountry}</strong></span>
+          <span>{t('side_inbox.security.attackerLabel')}: <strong className="text-rose-400">{getLocalizedCountryName(notification.attackerCountry)}</strong></span>
           <span>•</span>
-          <span>{t('side_inbox.timeLabel') || 'Tanggal'}: {notification.timestamp}</span>
+          <span>{t('side_inbox.timeLabel')}: {notification.timestamp}</span>
         </div>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">
-          {notification.message}
+          {getInboxNotificationMessage(notification, t)}
         </p>
 
         {/* Ringkasan Keadaan & Batas Waktu */}
         <div className="bg-root-canvas border border-amber-500/20 rounded-xl p-3 grid grid-cols-2 sm:grid-cols-3 gap-2 text-center text-xs font-bold text-white shadow-inner">
           <div className="border-r border-amber-500/20 pr-1">
-            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Status Aliansi</div>
-            <div className="text-emerald-400 font-extrabold mt-0.5">AKTIF</div>
+            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">{t('side_inbox.security.allianceStatus')}</div>
+            <div className="text-emerald-400 font-extrabold mt-0.5">{t('side_inbox.security.activeStatus')}</div>
           </div>
           <div className="border-r border-amber-500/20 px-1">
-            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Batas Menjawab</div>
+            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">{t('side_inbox.security.deadlineLabel')}</div>
             <div className="text-amber-300 font-extrabold mt-0.5 flex items-center justify-center gap-1">
               <Clock className="w-3 h-3 text-amber-400" />
               <span>{notification.deadlineDate}</span>
             </div>
           </div>
           <div className="col-span-2 sm:col-span-1 pl-1">
-            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Sanksi Tolak</div>
+            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">{t('side_inbox.security.rejectionPenaltyLabel')}</div>
             <div className="text-rose-400 font-extrabold mt-0.5">
-              Hubungan {BANTUAN_SEKUTU_CONFIG.relationPenaltyReject}
+              {t('side_inbox.security.rejectionPenalty', { value: BANTUAN_SEKUTU_CONFIG.relationPenaltyReject })}
             </div>
           </div>
         </div>
@@ -113,10 +115,10 @@ export default function BantuanSekutuNotificationCard({
               {isRejected && <X className="w-3.5 h-3.5 text-rose-400" />}
               <span>
                 {isAccepted
-                  ? 'BANTUAN MILITER TELAH DISETUJUI'
+                  ? t('side_inbox.security.aidApproved')
                   : isRejected
-                  ? 'PERMINTAAN DITOLAK'
-                  : 'PERMINTAAN TELAH BERAKHIR / KEDALUWARSA'}
+                  ? t('side_inbox.security.requestRejected')
+                  : t('side_inbox.security.requestExpired')}
               </span>
             </div>
           ) : (
@@ -128,7 +130,7 @@ export default function BantuanSekutuNotificationCard({
                   className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-950/60 hover:bg-rose-900 border border-rose-500/40 text-rose-300 rounded-xl transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
                 >
                   <X className="w-3.5 h-3.5" />
-                  {t('side_inbox.actions.reject') || 'Tolak'}
+                  {t('side_inbox.actions.reject')}
                 </button>
               )}
               {onAccept && (
@@ -138,7 +140,7 @@ export default function BantuanSekutuNotificationCard({
                   className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-root-accent hover:bg-emerald-400 text-root-canvas rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.3)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <Check className="w-3.5 h-3.5" />
-                  {t('side_inbox.actions.accept') || 'Terima Bantuan'}
+                  {t('side_inbox.actions.accept')}
                 </button>
               )}
             </>

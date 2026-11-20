@@ -1,8 +1,11 @@
 import { DemonstrasiNotification } from '../demonstrasiEkonomiLogic';
+import { getDefaultInboxText } from '../../../notificationMessage';
 
 export interface PenuhiTuntutanResult {
   success: boolean;
   message: string;
+  messageKey: string;
+  messageParams?: Record<string, string | number>;
   targetMenuId: string;
   presidentRatingBonus: number;
   updatedNotification: DemonstrasiNotification;
@@ -23,15 +26,17 @@ export function executePenuhiTuntutan(
   notification: DemonstrasiNotification
 ): PenuhiTuntutanResult {
   let targetMenuId = 'Menu:KebijakanSubsidi';
-  let causeLabel = 'Kebijakan Subsidi';
+  let cause = 'subsidi';
 
   if (notification.cause === 'harga') {
     targetMenuId = 'Menu:Harga';
-    causeLabel = 'Kontrol Harga Barang Pokok';
+    cause = 'harga';
   } else if (notification.cause === 'pajak') {
     targetMenuId = 'Menu:Pajak';
-    causeLabel = 'Manajemen Pajak';
+    cause = 'pajak';
   }
+  const messageKey = `side_inbox.demo.actions.fulfilled.${cause}`;
+  const messageParams = { bonus: PENUHI_TUNTUTAN_RATING_BONUS };
 
   const updatedNotification: DemonstrasiNotification = {
     ...notification,
@@ -42,7 +47,9 @@ export function executePenuhiTuntutan(
     success: true,
     presidentRatingBonus: PENUHI_TUNTUTAN_RATING_BONUS,
     targetMenuId,
-    message: `Pemerintah resmi menyatakan kesediaan memenuhi aspirasi publik dan meninjau kembali ${causeLabel}. Massa aksi membubarkan diri dengan suka cita. Peringkat Presiden naik +10 poin. Mengalihkan ke menu pengaturan...`,
+    message: getDefaultInboxText(messageKey, messageParams),
+    messageKey,
+    messageParams,
     updatedNotification,
   };
 }

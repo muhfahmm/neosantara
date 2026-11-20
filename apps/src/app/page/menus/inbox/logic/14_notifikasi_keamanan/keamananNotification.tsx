@@ -2,6 +2,7 @@ import React from 'react';
 import { Shield, Check, X } from 'lucide-react';
 import { KeamananNotification } from './keamananLogic';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getInboxNotificationMessage, getInboxNotificationSender, getInboxNotificationTitle } from '@/app/page/menus/inbox/logic/notificationMessage';
 
 interface KeamananNotificationProps {
   notification: KeamananNotification;
@@ -28,34 +29,34 @@ export default function KeamananNotificationCard({
       <div className="flex-1 space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h4 className="text-sm font-black text-white uppercase tracking-wide leading-tight">
-            {notification.title}
+            {getInboxNotificationTitle(notification, t)}
           </h4>
           <span className="text-[10px] font-bold text-rose-300 bg-rose-900/60 px-2.5 py-0.5 rounded-full border border-rose-500/40 uppercase tracking-wider">
-            {notification.category}
+            {t(notification.categoryKey)}
           </span>
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
+          {t('side_inbox.senderPrefix', { sender: getInboxNotificationSender(notification, t), date: notification.timestamp })}
         </p>
         <p className="text-[10px] font-bold uppercase tracking-wider text-rose-300">
-          Risiko keamanan dari sektor kesehatan &amp; penegakan hukum: {notification.securityRiskPercent}%
+          {t('side_inbox.dynamicNotifications.security.risk', { percent: notification.securityRiskPercent })}
         </p>
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">
-          {notification.message}
+          {getInboxNotificationMessage(notification, t)}
         </p>
 
         <div className="bg-root-canvas border border-rose-500/30 rounded-xl p-3 grid grid-cols-3 gap-2 text-center text-xs font-bold text-white shadow-inner">
           <div className="border-r border-rose-500/20 pr-1">
-            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Warga Terdampak</div>
-            <div className="text-rose-400 font-extrabold mt-0.5">{notification.korban.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Orang</div>
+            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">{t('side_inbox.security.affectedCitizens')}</div>
+            <div className="text-rose-400 font-extrabold mt-0.5">{notification.korban.toLocaleString('id-ID', { maximumFractionDigits: 2 })} {t('side_inbox.dynamicNotifications.security.people')}</div>
           </div>
           <div className="border-r border-rose-500/20 pr-1">
-            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Total Kerugian</div>
+            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">{t('side_inbox.security.totalLoss')}</div>
             <div className="text-amber-400 font-extrabold mt-0.5">{notification.totalKerugian.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
           </div>
           <div>
-            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Biaya Penanganan</div>
+            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">{t('side_inbox.security.responseCost')}</div>
             <div className="text-emerald-400 font-extrabold mt-0.5">{notification.bantuanCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
           </div>
         </div>
@@ -64,7 +65,7 @@ export default function KeamananNotificationCard({
           {isHandled ? (
             <div className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/50 flex items-center gap-1.5">
               <Check className="w-3.5 h-3.5" />
-              <span>OPERASI PENGAMANAN &amp; PENERTIBAN TUNTAS</span>
+              <span>{t('side_inbox.security.securityOperationsComplete')}</span>
             </div>
           ) : (
             <>
@@ -74,7 +75,7 @@ export default function KeamananNotificationCard({
                   className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-950/60 hover:bg-rose-900 border border-rose-500/40 text-rose-300 rounded-xl transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
                 >
                   <X className="w-3.5 h-3.5" />
-                  <span>Abaikan</span>
+                  <span>{t('side_inbox.security.ignore')}</span>
                 </button>
               )}
               {onAccept && (
@@ -83,7 +84,7 @@ export default function KeamananNotificationCard({
                   className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white rounded-xl transition-all cursor-pointer shadow-[0_0_12px_rgba(244,63,94,0.4)] flex items-center gap-1.5 font-bold"
                 >
                   <Shield className="w-3.5 h-3.5" />
-                  <span>Kerahkan Operasi Pengamanan</span>
+                  <span>{t('side_inbox.security.deploySecurity')}</span>
                 </button>
               )}
             </>

@@ -3,9 +3,11 @@
 // Setiap notifikasi kelistrikan kurang akan menurunkan peringkat sebesar 1
 
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { createInboxNotificationText, getDefaultInboxText } from '../../notificationMessage';
 
 export interface KelistrikanNotification extends NotificationMessage {
   tradeType: 'kelistrikan_kurang';
+  eventNameKey: string;
   deficitAmount: number; // Jumlah kelistrikan yang kurang dalam MW
   affectedAreas: string[]; // Area yang terkena dampak
   severity: 'ringan' | 'sedang' | 'berat' | 'kritis';
@@ -16,8 +18,7 @@ export interface KelistrikanNotification extends NotificationMessage {
 }
 
 interface KelistrikanEventItem {
-  name: string;
-  description: (country: string, deficit: number) => string;
+  nameKey: string;
   deficitRange: [number, number]; // MW
   affectedAreasTemplate: () => string[];
   severity: 'ringan' | 'sedang' | 'berat' | 'kritis';
@@ -27,43 +28,54 @@ interface KelistrikanEventItem {
 export const KELISTRIKAN_KURANG_POOL: KelistrikanEventItem[] = [
   // Kekurangan Ringan (40%)
   {
-    name: 'Defisit Listrik Ringan',
-    description: (country, deficit) => `Pasokan listrik di ${country} mengalami defisit ringan sebesar ${deficit} MW akibat peningkatan konsumsi di jam sibuk. Beberapa daerah mengalami pemadaman bergilir selama 2-3 jam.`,
+    nameKey: 'side_inbox.dynamicEventTranslations.electricity.eventNames.mildShortage',
     deficitRange: [100, 500],
     affectedAreasTemplate: () => {
-      const areas = ['Perumahan menengah', 'Kawasan komersial', 'Industri ringan'];
+      const areas = [
+        'side_inbox.dynamicEventTranslations.electricity.areas.mediumHousing',
+        'side_inbox.dynamicEventTranslations.electricity.areas.commercialArea',
+        'side_inbox.dynamicEventTranslations.electricity.areas.lightIndustry',
+      ];
       return areas.slice(0, 1 + Math.floor(Math.random() * 2));
     },
     severity: 'ringan',
     weight: 10
   },
   {
-    name: 'Pemeliharaan Gardu Induk',
-    description: (country, deficit) => `Pemeliharaan rutin gardu induk utama menyebabkan penurunan kapasitas transmisi sebesar ${deficit} MW di wilayah ${country}.`,
+    nameKey: 'side_inbox.dynamicEventTranslations.electricity.eventNames.substationMaintenance',
     deficitRange: [200, 800],
-    affectedAreasTemplate: () => ['Distrik pusat kota', 'Kawasan industri'],
+    affectedAreasTemplate: () => [
+      'side_inbox.dynamicEventTranslations.electricity.areas.cityCenterDistrict',
+      'side_inbox.dynamicEventTranslations.electricity.areas.industrialZone',
+    ],
     severity: 'ringan',
     weight: 8
   },
   
   // Kekurangan Sedang (30%)
   {
-    name: 'Krisis Pasokan Gas untuk PLTG',
-    description: (country, deficit) => `Keterlambatan pasokan gas alam menyebabkan operasional PLTG berkurang, menciptakan defisit ${deficit} MW di sistem kelistrikan ${country}.`,
+    nameKey: 'side_inbox.dynamicEventTranslations.electricity.eventNames.gasShortage',
     deficitRange: [500, 1500],
     affectedAreasTemplate: () => {
-      const areas = ['PLTG utama', 'Industri manufaktur', 'Kawasan perdagangan'];
+      const areas = [
+        'side_inbox.dynamicEventTranslations.electricity.areas.primaryGasPlant',
+        'side_inbox.dynamicEventTranslations.electricity.areas.manufacturingIndustry',
+        'side_inbox.dynamicEventTranslations.electricity.areas.tradeDistrict',
+      ];
       return areas.slice(0, 2 + Math.floor(Math.random() * 1));
     },
     severity: 'sedang',
     weight: 6
   },
   {
-    name: 'Gangguan Transmisi Jalur Utama',
-    description: (country, deficit) => `Gangguan pada jalur transmisi tegangan tinggi menyebabkan defisit ${deficit} MW dan memaksa PLN menerapkan pemadaman bergilir di berbagai daerah ${country}.`,
+    nameKey: 'side_inbox.dynamicEventTranslations.electricity.eventNames.transmissionFault',
     deficitRange: [800, 2000],
     affectedAreasTemplate: () => {
-      const areas = ['Kawasan metropolitan', 'Zona industri berat', 'Pusat data'];
+      const areas = [
+        'side_inbox.dynamicEventTranslations.electricity.areas.metropolitanArea',
+        'side_inbox.dynamicEventTranslations.electricity.areas.heavyIndustryZone',
+        'side_inbox.dynamicEventTranslations.electricity.areas.dataCenter',
+      ];
       return areas;
     },
     severity: 'sedang',
@@ -72,22 +84,30 @@ export const KELISTRIKAN_KURANG_POOL: KelistrikanEventItem[] = [
   
   // Kekurangan Berat (20%)
   {
-    name: 'Kekeringan Parah Mengurangi PLTA',
-    description: (country, deficit) => `Kekeringan ekstrem menurunkan kapasitas waduk PLTA hingga 60%, menyebabkan defisit listrik mencapai ${deficit} MW di seluruh ${country}.`,
+    nameKey: 'side_inbox.dynamicEventTranslations.electricity.eventNames.hydropowerDrought',
     deficitRange: [1500, 3500],
     affectedAreasTemplate: () => {
-      const areas = ['Sistem PLTA utama', 'Industri energi-intensif', 'Rumah sakit', 'Pusat pemerintahan'];
+      const areas = [
+        'side_inbox.dynamicEventTranslations.electricity.areas.primaryHydroSystem',
+        'side_inbox.dynamicEventTranslations.electricity.areas.energyIntensiveIndustry',
+        'side_inbox.dynamicEventTranslations.electricity.areas.hospital',
+        'side_inbox.dynamicEventTranslations.electricity.areas.governmentCenter',
+      ];
       return areas.slice(0, 3);
     },
     severity: 'berat',
     weight: 3
   },
   {
-    name: 'Rusaknya Turbin PLTU',
-    description: (country, deficit) => `Kerusakan mendadak pada turbin PLTU skala besar mengurangi kapasitas pembangkitan sebesar ${deficit} MW. Perbaikan diperkirakan memakan waktu beberapa minggu.`,
+    nameKey: 'side_inbox.dynamicEventTranslations.electricity.eventNames.turbineFailure',
     deficitRange: [2000, 5000],
     affectedAreasTemplate: () => {
-      const areas = ['PLTU utama', 'Kawasan industri strategis', 'Bandara internasional', 'Pelabuhan utama'];
+      const areas = [
+        'side_inbox.dynamicEventTranslations.electricity.areas.mainCoalPlant',
+        'side_inbox.dynamicEventTranslations.electricity.areas.strategicIndustrialZone',
+        'side_inbox.dynamicEventTranslations.electricity.areas.internationalAirport',
+        'side_inbox.dynamicEventTranslations.electricity.areas.mainPort',
+      ];
       return areas;
     },
     severity: 'berat',
@@ -96,22 +116,32 @@ export const KELISTRIKAN_KURANG_POOL: KelistrikanEventItem[] = [
   
   // Kekurangan Kritis (10%)
   {
-    name: 'Krisis Energi Nasional',
-    description: (country, deficit) => `Kombinasi faktor cuaca ekstrem, gangguan pasokan bahan bakar, dan kerusakan infrastruktur menyebabkan defisit listrik kritis sebesar ${deficit} MW di ${country}. Sistem kelistrikan nasional dalam kondisi darurat.`,
+    nameKey: 'side_inbox.dynamicEventTranslations.electricity.eventNames.nationalEnergyCrisis',
     deficitRange: [3000, 8000],
     affectedAreasTemplate: () => {
-      const areas = ['Seluruh sistem kelistrikan nasional', 'Industri vital', 'Fasilitas kesehatan', 'Sistem transportasi', 'Komunikasi nasional'];
+      const areas = [
+        'side_inbox.dynamicEventTranslations.electricity.areas.nationalGrid',
+        'side_inbox.dynamicEventTranslations.electricity.areas.vitalIndustry',
+        'side_inbox.dynamicEventTranslations.electricity.areas.healthFacilities',
+        'side_inbox.dynamicEventTranslations.electricity.areas.transportSystem',
+        'side_inbox.dynamicEventTranslations.electricity.areas.nationalCommunications',
+      ];
       return areas;
     },
     severity: 'kritis',
     weight: 1
   },
   {
-    name: 'Blackout Sistemik Skala Besar',
-    description: (country, deficit) => `Kaskade kegagalan sistem menyebabkan blackout masif dengan defisit mencapai ${deficit} MW. Ribuan rumah tangga dan industri terpengaruh, mengancam stabilitas ekonomi ${country}.`,
+    nameKey: 'side_inbox.dynamicEventTranslations.electricity.eventNames.systemicBlackout',
     deficitRange: [5000, 10000],
     affectedAreasTemplate: () => {
-      const areas = ['Seluruh wilayah nasional', 'Grid interkoneksi', 'Infrastruktur kritis', 'Sektor keuangan', 'Layanan darurat'];
+      const areas = [
+        'side_inbox.dynamicEventTranslations.electricity.areas.nationwideGrid',
+        'side_inbox.dynamicEventTranslations.electricity.areas.interconnectionGrid',
+        'side_inbox.dynamicEventTranslations.electricity.areas.criticalInfrastructure',
+        'side_inbox.dynamicEventTranslations.electricity.areas.financialSector',
+        'side_inbox.dynamicEventTranslations.electricity.areas.emergencyServices',
+      ];
       return areas;
     },
     severity: 'kritis',
@@ -159,7 +189,18 @@ export function generateKelistrikanKurangNotification(
   const affectedAreas = selectedEvent.affectedAreasTemplate();
   
   const country = userCountryName || 'Indonesia';
-  const message = selectedEvent.description(country, deficitAmount);
+  const eventName = getDefaultInboxText(selectedEvent.nameKey);
+  const severityKey = `side_inbox.dynamicEventTranslations.electricity.severities.${actualSeverity}`;
+  const titleKey = 'side_inbox.dynamicEventTranslations.electricity.title';
+  const titleParams = { eventName, severity: getDefaultInboxText(severityKey) };
+  const messageKey = 'side_inbox.dynamicEventTranslations.electricity.message';
+  const messageParams = {
+    eventName,
+    country,
+    deficit: deficitAmount,
+    duration: { ringan: 7, sedang: 14, berat: 21, kritis: 30 }[actualSeverity],
+    areaCount: affectedAreas.length,
+  };
 
   // Duration based on severity
   const durationDays = {
@@ -179,14 +220,25 @@ export function generateKelistrikanKurangNotification(
 
   return {
     id: `kelistrikan-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-    title: `⚡ KRISIS LISTRIK: ${selectedEvent.name.toUpperCase()} [${actualSeverity.toUpperCase()}]`,
-    sender: `PERUSAHAAN LISTRIK NEGARA (PLN) - ${country.toUpperCase()}`,
-    message: `${message}\n\n📊 DATA KRISIS:\n• Defisit: ${deficitAmount} MW\n• Area Terdampak: ${affectedAreas.join(', ')}\n• Durasi Perkiraan: ${durationDays} hari\n• Dampak Peringkat: -${ratingPenalty} poin`,
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    titleParamKeys: {
+      eventName: selectedEvent.nameKey,
+      severity: severityKey,
+    },
+    sender: getDefaultInboxText('side_inbox.dynamicEventTranslations.electricity.sender', { country }),
+    senderKey: 'side_inbox.dynamicEventTranslations.electricity.sender',
+    senderParams: { country },
+    ...createInboxNotificationText(messageKey, messageParams, {
+      eventName: selectedEvent.nameKey,
+    }),
     timestamp: dateStr,
     type: 'peringkat', // Menggunakan type 'peringkat' untuk memicu penurunan rating
     value: -ratingPenalty, // Nilai negatif untuk menurunkan rating
     isRead: false,
     tradeType: 'kelistrikan_kurang',
+    eventNameKey: selectedEvent.nameKey,
     deficitAmount,
     affectedAreas,
     severity: actualSeverity,

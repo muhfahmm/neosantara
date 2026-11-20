@@ -19,6 +19,7 @@ import { FpsMonitoring, type FpsMonitorWasmModule } from '../paused_menu/4_setti
 import { AttackDebugButton } from '@/app/debug/AttackDebugButton';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
 import { useLanguage } from '../paused_menu/terjemahan_paused_menu/languageLogic';
+import { getLocalizedCountryName } from '@/app/logic/countryNameLogic';
 
 interface Country {
     id: number;
@@ -80,6 +81,9 @@ export function Navbar({
     const [mapZoom, setMapZoom] = useState(1);
     const anggaran = Number(countryDetail?.anggaran) || 0;
     const countryName = selectedCountry?.country || countryDetail?.country || countryDetail?.nama_negara || '';
+    const displayCountryName = selectedCountry
+        ? getLocalizedCountryName(selectedCountry.country)
+        : '';
     const netBalance =
         calculateNetBalanceWithEconomicEmbargo(countryDetail, countryName) +
         netBalanceAdjustment -
@@ -269,7 +273,7 @@ export function Navbar({
                             <img
                                 src={`https://flagcdn.com/w80/${selectedCountry.iso.toLowerCase()}.png`}
                                 className="w-5 h-3.5 rounded-sm object-cover border border-root-accent/30 shrink-0"
-                                alt={selectedCountry.country}
+                                alt={displayCountryName}
                                 onError={(e) => {
                                     (e.target as HTMLImageElement).src = 'https://flagcdn.com/w80/un.png';
                                 }}
@@ -278,10 +282,10 @@ export function Navbar({
                             <span className="text-xs shrink-0">🌐</span>
                         )}
                         <span 
-                            title={selectedCountry ? selectedCountry.country : 'Main'}
+                            title={selectedCountry ? displayCountryName : 'Main'}
                             className="max-w-[70px] min-[800px]:max-w-[100px] truncate text-[10px] font-black leading-tight text-root-text uppercase tracking-tight"
                         >
-                            {selectedCountry ? selectedCountry.country : 'Main'}
+                            {selectedCountry ? displayCountryName : 'Main'}
                         </span>
                         <FpsMonitoring wasmModuleRef={wasmModuleRef} />
                     </div>
@@ -364,14 +368,14 @@ export function Navbar({
                                 <img
                                     src={`https://flagcdn.com/w80/${selectedCountry.iso.toLowerCase()}.png`}
                                     className="w-5 h-3.5 rounded-sm object-cover border border-root-accent/30 shrink-0"
-                                    alt={selectedCountry.country}
+                                    alt={displayCountryName}
                                 />
                             )}
                             <span 
-                                title={selectedCountry ? selectedCountry.country : 'Main Simulation'}
+                                title={selectedCountry ? displayCountryName : 'Main Simulation'}
                                 className="max-w-[120px] truncate text-xs font-black leading-tight text-root-text uppercase tracking-tight"
                             >
-                                {selectedCountry ? selectedCountry.country : 'Main Simulation'}
+                                {selectedCountry ? displayCountryName : 'Main Simulation'}
                             </span>
                             <FpsMonitoring wasmModuleRef={wasmModuleRef} />
                         </div>
@@ -491,7 +495,7 @@ export function Navbar({
                                 )}
                                 <div className="flex flex-col leading-tight">
                                     <span className="text-[9px] lg:text-[10px] 2xl:text-[11px] font-black text-root-text tracking-tight uppercase">
-                                        {selectedCountry ? selectedCountry.country : 'Main Simulation'}
+                                        {selectedCountry ? displayCountryName : 'Main Simulation'}
                                     </span>
                                     <span className="text-[7px] lg:text-[8px] 2xl:text-[9px] font-bold text-root-subtle uppercase tracking-widest">
                                         {selectedCountry ? selectedCountry.capital : 'Global Map'}

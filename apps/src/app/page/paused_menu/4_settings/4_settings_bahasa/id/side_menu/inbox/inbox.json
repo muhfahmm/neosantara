@@ -194,11 +194,16 @@
     "risk": "Risiko: {risk}",
     "recoveryCost": "Biaya Operasi Pemulihan: {cost} NEO",
     "stabilized": "STABILITAS BERHASIL DIPULIHKAN",
-    "quellRebellion": "TINDAK TEGAS PEMBERONTAKAN",
+    "quellRebellion": "Tindak Tegas Pemberontakan",
     "diserangTitle": "⚔️ SERANGAN MILITER TERHADAP WILAYAH!",
     "diserangBadge": "Invasi Militer",
     "icbmTitle": "🚀 PERINGATAN PELUNCURAN RUDAL BALISTIK (ICBM)!",
-    "icbmBadge": "Ancaman Nuklir & Balistik"
+    "icbmBadge": "Ancaman Nuklir & Balistik",
+    "deployDefense": "Kerahkan Pasukan Pertahanan",
+    "defenseDeployed": "PERTAHANAN MILITER TELAH DIKERAHKAN",
+    "impact": "Dampak",
+    "mobilizationCost": "Biaya Mobilisasi Pertahanan",
+    "estimatedImpact": "Estimasi Dampak: Kehancuran Skala Penuh"
   },
   "disaster": {
     "naturalTitle": "🚨 BENCANA ALAM: {name} DI {province}",
@@ -207,12 +212,14 @@
     "financialLoss": "Kerugian Finansial",
     "infrastructureDamage": "Kerusakan Infrastruktur",
     "aidCost": "Biaya Bantuan & Evakuasi",
-    "sendAid": "SALURKAN DANA BANTUAN",
+    "sendAid": "Kirim Bantuan Darurat",
     "handled": "BANTUAN TUNTAS DISALURKAN",
     "wabahTitle": "☣️ WABAH PENYAKIT: {name} DI {province}",
     "wabahBadge": "Wabah Penyakit",
     "infected": "Jumlah Terinfeksi",
-    "quarantineCost": "Biaya Penanganan Karantina"
+    "quarantineCost": "Biaya Penanganan Karantina",
+    "quarantine": "Terapkan Karantina Wilayah",
+    "quarantineSuccess": "KARANTINA WILAYAH RESMI DITERAPKAN"
   },
   "geopolitics": {
     "allianceTitle": "🛡️ PENAWARAN ALIANSI PERTAHANAN: {partner}",
@@ -229,7 +236,9 @@
     "embassyBadge": "Kedutaan Besar",
     "unResolutionTitle": "🏛️ RESOLUSI PBB: {title}",
     "unResolutionBadge": "Resolusi Sidang Umum PBB",
-    "openResolution": "BUKA DETAIL RESOLUSI PBB →"
+    "openResolution": "BUKA DETAIL RESOLUSI PBB →",
+    "openEmbassy": "Buka Kedutaan Besar →",
+    "openBilateralDiplomacy": "Buka Diplomasi Bilateral →"
   },
   "basicNeeds": {
     "electricTitle": "⚡ KRISIS ENERGI: DEFISIT LISTRIK NASIONAL",
@@ -243,7 +252,12 @@
     "populationTitle": "👥 KRISIS DEMOGRAFI & POPULASI PENDUDUK",
     "populationBadge": "Demografi Warga",
     "solveNow": "ATASI SEKARANG",
-    "resolved": "KRISIS TERATASI"
+    "resolved": "KRISIS TERATASI",
+    "buildPowerPlant": "Bangun Pembangkit Listrik →",
+    "buildHousing": "Bangun Fasilitas Hunian →",
+    "boostFood": "Tingkatkan Produksi Pangan →",
+    "buildPublicFacilities": "Bangun Fasilitas Publik →",
+    "manageDemographics": "Kelola Kebijakan Demografi →"
   },
   "tradeModals": {
     "closedTitle": "Akses Perdagangan Ditolak",
@@ -306,7 +320,10 @@
     "warships": "Kapal Perang",
     "orgMembership": "Keanggotaan Organisasi Internasional",
     "accepted": "Diterima",
-    "rejected": "Ditolak"
+    "rejected": "Ditolak",
+    "securityRisk": "Risiko Keamanan & Gangguan Ketertiban",
+    "operationsComplete": "OPERASI PENGAMANAN SELESAI",
+    "ignore": "Abaikan"
   },
   "electricityCrisis": {
     "hideDetail": "▲ Sembunyikan Detail",
@@ -332,6 +349,69 @@
     "hardPower": "Tindak Tegas",
     "dialog": "Dialog Terbuka",
     "fulfill": "Penuhi Tuntutan",
-    "ignore": "Abaikan Aksi"
+    "ignore": "Abaikan Aksi",
+    "disperseModalTitle": "Tindakan Keamanan Negara",
+    "disperseModalSub": "Pilihan Operasi Keamanan",
+    "operationCost": "Biaya Operasi",
+    "cancel": "Batal",
+    "confirmDisperse": "Ya, Bubarkan!",
+    "understood": "Dimengerti",
+    "confirmTitle": "Konfirmasi Operasi Aparat",
+    "confirmSubtitle": "Tindakan Pembubaran Massa",
+    "confirmWarning": "Tindakan ini akan menggunakan kekuatan koersif negara. Potensi bentrokan fisik, korban jiwa/luka-luka, penurunan Indeks Kepuasan Rakyat, dan penurunan Peringkat Presiden tidak dapat dihindari!",
+    "confirmQuestion": "Apakah Anda yakin ingin mengerahkan operasi pembubaran ini?",
+    "reportTitleSuccess": "🚨 LAPORAN OPERASI PEMBUBARAN MASSA",
+    "reportTitleClash": "🔥 LAPORAN BENTROKAN / KERUSUHAN",
+    "injured": "Korban Terluka",
+    "killed": "Korban Tewas / Kritis",
+    "remainingProtesters": "Sisa Demonstran Bertahan",
+    "dialogForumTitle": "Forum Dialog Terbuka",
+    "backToGame": "Kembali ke Permainan",
+    "laborLeader": "Pemimpin Serikat Buruh",
+    "protesterRep": "Perwakilan Aksi Massa",
+    "anger": "Kemarahan Massa",
+    "trust": "Kepercayaan Publik",
+    "demandsTitle": "Daftar Tuntutan Rakyat",
+    "refreshChoices": "Ganti Alternatif Tanggapan",
+    "disperseWithPolice": "Bubarkan dengan Aparat Keamanan",
+    "sessionStarted": "Sesi dialog terbuka dimulai. Pilih respons terbaik untuk meredakan ketegangan."
+  },
+  "notificationMessages": {
+    "ratings": {
+      "satisfaction": "Lapor Presiden! Indeks kepuasan rakyat telah merosot ke angka {value}/100. Ketidakpuasan mulai menyebar di berbagai provinsi. Jika terus dibiarkan hingga di bawah 10, gelombang aksi protes besar-besaran tidak akan terhindarkan dan stabilitas negara akan terancam! Mohon segera luncurkan festival budaya atau turunkan tarif pajak barang pokok.",
+      "ranking": "Presiden, tingkat kepercayaan rakyat (Peringkat Anda) telah merosot ke angka {value}/100. Parlemen mulai memperhatikan tren negatif ini dan desas-desus oposisi tentang pemakzulan mulai terdengar. Jika peringkat terus merosot di bawah 10, Anda terancam dilengserkan! Tolong segera penuhi aspirasi rakyat, stabilkan harga, dan jaga kesejahteraan mereka.",
+      "welfare": "Lapor Presiden, Indeks Kesejahteraan Rakyat telah turun mencapai angka {value}/100. Kurangnya fasilitas dasar seperti pendidikan, layanan kesehatan, dan infrastruktur publik mulai memicu penurunan kualitas hidup yang masif. Jika terus memburuk ke bawah angka 10, krisis kemanusiaan parah akan melanda negeri ini! Segera bangun sekolah, rumah sakit, tempat umum, atau salurkan program BLT."
+    },
+    "rebellion": "Lapor Presiden! Terjadi gelombang demonstrasi radikal dan gerakan separatis bersenjata di {country}. Kelompok pemberontak menuntut perubahan status politik dari pemerintah pusat!",
+    "alliedAidRequest": "{target} diserang secara mendadak oleh kekuatan militer {attacker}. Berdasarkan Traktat Aliansi Pertahanan Bersama, sekutu meminta bantuan militer untuk mempertahankan kedaulatan wilayahnya.",
+    "diserang": {
+      "threat": "Lapor Panglima! Negara tetangga, {enemy}, terdeteksi memobilisasi divisi lapis baja di dekat zona perbatasan. Belum ada tembakan dilepaskan, namun merupakan bentuk provokasi terbuka.",
+      "borderAttack": "PERINGATAN MILITER! Pasukan militer {enemy} menyerang pos perbatasan utama kita! Baku tembak dan artileri berkecamuk di garis depan.",
+      "warDeclaration": "KONFLIK BESAR! Pemerintah {enemy} secara resmi menyatakan Deklarasi Perang penuh terhadap negara kita! Armada tempur mereka bergerak cepat.",
+      "invasion": "INVASI MILITER MASIF! Pasukan gabungan {enemy} melancarkan operasi invasi darat dan udara untuk merebut dan menganeksasi wilayah provinsi kita!",
+      "invasionWithoutTerritories": "INVASI MILITER MASIF! Pasukan gabungan {enemy} melancarkan operasi invasi darat dan udara untuk menembus pertahanan nasional kita. Saat ini kita belum memiliki wilayah aneksasi yang dapat direbut."
+    },
+    "icbm": {
+      "incomingAlert": "PERINGATAN DARURAT TINGKAT TERTINGGI! Radar pertahanan terdeteksi peluncuran Rudal Balistik Antar-Benua (ICBM) bertulu ledak hulu nuklir dari negara {launcher} mengarah langsung ke {target}! Waktu benturan diperkirakan dalam hitungan menit!",
+      "programStarted": "Lapor Presiden! Proyek Rahasia Pembangunan Program Nuklir Nasional ({country}) resmi dimulai pada {startDate}. Fasilitas pengayaan uranium, reaktor riset, dan fasilitas penunjang strategis sedang dibangun. Perkiraan rampung pada {endDate}.",
+      "programCompleted": "KABAR STRATEGIS KENEGARAAN! Pembangunan Fasilitas Program Nuklir Nasional telah selesai sepenuhnya! Negara {country} kini resmi menjadi Negara Berkemampuan Nuklir. Akses perakitan Senjata Rudal ICBM dan Operasi Perang Nuklir telah terbuka sepenuhnya!",
+      "testReport": "LAPORAN INTELIJEN GLOBAL: Negara {tester} baru saja melaksanakan uji coba peluncuran rudal balistik antarbenua (ICBM) bertulu ledak hulu nuklir ke {target}. Sensor seismik dan satelit pengintai mencatat getaran getaran ledakan berkekuatan tinggi di area pengujian!"
+    },
+    "resolution": {
+      "worldWarBan": "Kabar Diplomasi PBB! Negara {proposer} secara resmi mengajukan usulan \"Larangan Perang\" untuk seluruh dunia selama {duration}. Usulan ini: Dilarang menyerang negara yang ditetapkan selama periode yang dipilih. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!",
+      "worldProductionBan": "Kabar Diplomasi PBB! Negara {proposer} secara resmi mengajukan usulan \"Larangan Produksi\" untuk seluruh dunia selama {duration}. Usulan ini: Produksi {product} dihentikan selama periode yang dipilih. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!",
+      "targeted": {
+        "arms_embargo": "Kabar Diplomasi PBB! Negara {proposer} secara resmi mengajukan usulan \"Embargo Penjualan Senjata\" yang menargetkan {target} selama {duration} akibat ketegangan hubungan bilateral yang buruk (Skor: {score}/100). Usulan ini: Perdagangan senjata dilarang selama periode yang dipilih. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!",
+        "economic_embargo": "Kabar Diplomasi PBB! Negara {proposer} secara resmi mengajukan usulan \"Embargo Ekonomi\" yang menargetkan {target} selama {duration} akibat ketegangan hubungan bilateral yang buruk (Skor: {score}/100). Usulan ini: Produksi pabrik dan tambang serta pendapatan negara turun 60% selama periode yang dipilih. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!",
+        "military_invasion": "Kabar Diplomasi PBB! Negara {proposer} secara resmi mengajukan usulan \"Resolusi Invasi\" yang menargetkan {target} selama {duration} akibat ketegangan hubungan bilateral yang buruk (Skor: {score}/100). Usulan ini: Resolusi memungkinkan negara diinvasi tanpa kecaman oleh negara lain. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!",
+        "production_ban": "Kabar Diplomasi PBB! Negara {proposer} secara resmi mengajukan usulan \"Larangan Produksi\" yang menargetkan {target} selama {duration} akibat ketegangan hubungan bilateral yang buruk (Skor: {score}/100). Usulan ini: Produksi {product} dihentikan selama periode yang dipilih. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!"
+      }
+    }
+  },
+  "policyNotice": {
+    "policyImpact": "Dampak Kebijakan",
+    "ministry": "Kementerian",
+    "activeResearch": "Riset Aktif",
+    "strategicSector": "Sektor Strategis"
   }
 }

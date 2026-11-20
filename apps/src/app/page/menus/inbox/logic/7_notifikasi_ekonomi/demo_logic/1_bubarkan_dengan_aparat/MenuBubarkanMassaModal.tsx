@@ -14,6 +14,7 @@ import {
   HelpCircle
 } from 'lucide-react';
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { 
   OPSI_BUBARKAN_MASSA, 
   DetailOpsiBubarkan, 
@@ -33,6 +34,7 @@ export default function MenuBubarkanMassaModal({
   onSelectOption,
   currentBudget = 100_000_000,
 }: MenuBubarkanMassaModalProps) {
+  const { t } = useLanguage();
   const [selectedId, setSelectedId] = useState<OpsiBubarkanMassa>('brimob');
 
   if (typeof window === 'undefined' || !isOpen) return null;
@@ -49,15 +51,15 @@ export default function MenuBubarkanMassaModal({
         className="modal-responsive-shell relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-b from-[#14080B] via-[#0E0406] to-[#070203] border-2 border-rose-500/50 shadow-[0_0_80px_rgba(244,63,94,0.35)] flex flex-col"
       >
         <RootInfoModalHeader
-          title="Pilih Metode Pembubaran Massa"
+          title={t('side_inbox.demo.disperseModalSub')}
           titleId="disperse-demonstration-title"
           onClose={onClose}
           icon={<ShieldAlert />}
           size="standard"
           actions={
             <div className="text-right">
-              <span className="block text-[9px] font-black uppercase tracking-widest text-rose-300">Tindakan Keamanan Negara</span>
-              <span className="text-[10px] text-slate-400 font-bold">Kas: <strong className="text-emerald-400">{currentBudget.toLocaleString('id-ID')} NEO</strong></span>
+              <span className="block text-[9px] font-black uppercase tracking-widest text-rose-300">{t('side_inbox.demo.disperseModalTitle')}</span>
+              <span className="text-[10px] text-slate-400 font-bold">{t('side_inbox.demo.treasuryBalance')}: <strong className="text-emerald-400">{currentBudget.toLocaleString('id-ID')} NEO</strong></span>
             </div>
           }
         />
@@ -68,7 +70,7 @@ export default function MenuBubarkanMassaModal({
           {/* KOLOM KIRI: PILIHAN STRATEGI (5 OPSI) */}
           <div className="lg:col-span-7 flex flex-col gap-2.5 overflow-y-auto pr-1">
             <p className="text-[10px] font-black tracking-widest uppercase text-rose-400/90 mb-1">
-              Pilihan Operasi Keamanan
+              {t('side_inbox.demo.operationOptions')}
             </p>
             {OPSI_BUBARKAN_MASSA.map((option, index) => {
               const isSelected = selectedId === option.id;
@@ -95,25 +97,25 @@ export default function MenuBubarkanMassaModal({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <h4 className="text-xs sm:text-sm font-black text-white uppercase tracking-tight truncate">
-                        {index + 1}. {option.title}
+                        {index + 1}. {t(option.title)}
                       </h4>
                       <span className={`text-[10px] font-black shrink-0 px-2 py-0.5 rounded-md border ${
                         affordable 
                           ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-400' 
                           : 'bg-rose-950/60 border-rose-500/40 text-rose-400'
                       }`}>
-                        {option.costLabel}
+                        {option.cost.toLocaleString('id-ID')} NEO
                       </span>
                     </div>
                     <p className="text-[10px] text-slate-400 truncate mt-0.5 font-medium">
-                      {option.subtitle}
+                      {t(option.subtitle)}
                     </p>
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[10px] font-bold">
                       <span className="text-amber-300 flex items-center gap-1">
-                        <Target className="w-3 h-3" /> Efektivitas: {option.effectivenessPercent}%
+                        <Target className="w-3 h-3" /> {t('side_inbox.demo.effectiveness')}: {option.effectivenessPercent}%
                       </span>
                       <span className="text-slate-300 flex items-center gap-1">
-                        <Skull className="w-3 h-3 text-rose-400" /> {option.casualtiesLabel}
+                      <Skull className="w-3 h-3 text-rose-400" /> {t(option.casualtiesLabel)}
                       </span>
                     </div>
                   </div>
@@ -137,10 +139,10 @@ export default function MenuBubarkanMassaModal({
               <div className="border-b border-rose-500/20 pb-3">
                 <div className="flex items-center gap-2 text-rose-400 text-xs font-black uppercase tracking-wider">
                   <span>{currentSelected.icon}</span>
-                  <span>{currentSelected.title}</span>
+                  <span>{t(currentSelected.title)}</span>
                 </div>
                 <p className="text-xs text-slate-300 mt-1.5 leading-relaxed font-normal">
-                  {currentSelected.description}
+                  {t(currentSelected.description)}
                 </p>
               </div>
 
@@ -149,30 +151,30 @@ export default function MenuBubarkanMassaModal({
                 {/* Biaya Operasi */}
                 <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#170609] border border-rose-500/20 text-xs">
                   <span className="text-slate-400 font-bold flex items-center gap-1.5">
-                    <Coins className="w-4 h-4 text-amber-400" /> Biaya Operasi:
+                    <Coins className="w-4 h-4 text-amber-400" /> {t('side_inbox.demo.operationCost')}:
                   </span>
                   <span className={`font-black ${isBudgetSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
-                    {currentSelected.costLabel}
+                    {currentSelected.cost.toLocaleString('id-ID')} NEO
                   </span>
                 </div>
 
                 {/* Efektivitas Pembubaran */}
                 <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#170609] border border-rose-500/20 text-xs">
                   <span className="text-slate-400 font-bold flex items-center gap-1.5">
-                    <Target className="w-4 h-4 text-blue-400" /> Peluang Berhasil:
+                    <Target className="w-4 h-4 text-blue-400" /> {t('side_inbox.demo.successChance')}:
                   </span>
                   <span className="font-black text-white">
-                    {currentSelected.effectivenessLabel}
+                    {t(currentSelected.effectivenessLabel)}
                   </span>
                 </div>
 
                 {/* Perkiraan Korban Jiwa */}
                 <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#170609] border border-rose-500/20 text-xs">
                   <span className="text-slate-400 font-bold flex items-center gap-1.5">
-                    <Skull className="w-4 h-4 text-rose-400" /> Korban Jiwa:
+                    <Skull className="w-4 h-4 text-rose-400" /> {t('side_inbox.demo.casualties')}:
                   </span>
                   <span className="font-black text-rose-300">
-                    {currentSelected.casualtiesLabel}
+                    {t(currentSelected.casualtiesLabel)}
                   </span>
                 </div>
               </div>
@@ -181,19 +183,19 @@ export default function MenuBubarkanMassaModal({
               <div className="p-3.5 rounded-xl bg-rose-950/40 border border-rose-500/40 space-y-1.5 text-xs text-left">
                 <div className="flex items-center gap-1.5 text-rose-400 font-black uppercase text-[10px] tracking-wider">
                   <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                  <span>Dampak & Konsekuensi</span>
+                  <span>{t('side_inbox.demo.consequences')}</span>
                 </div>
                 <p className="text-[11px] text-rose-200 leading-relaxed">
-                  {currentSelected.impactDescription}
+                  {t(currentSelected.impactDescription)}
                 </p>
                 {currentSelected.unNotificationRisk === 'high' && (
                   <p className="text-[10px] text-amber-300 font-bold flex items-center gap-1 pt-1 border-t border-rose-500/20">
-                    <Globe2 className="w-3 h-3 shrink-0" /> Potensi Sidang HAM Internasional PBB Sangat Tinggi.
+                    <Globe2 className="w-3 h-3 shrink-0" /> {t('side_inbox.demo.highUNReviewRisk')}
                   </p>
                 )}
                 {currentSelected.unNotificationRisk === 'sanctions' && (
                   <p className="text-[10px] text-rose-300 font-black flex items-center gap-1 pt-1 border-t border-rose-500/20">
-                    <Globe2 className="w-3 h-3 shrink-0 text-red-500 animate-pulse" /> Resolusi Sanksi Embargo PBB Hampir Pasti Muncul!
+                    <Globe2 className="w-3 h-3 shrink-0 text-red-500 animate-pulse" /> {t('side_inbox.demo.sanctionsLikely')}
                   </p>
                 )}
               </div>
@@ -206,7 +208,7 @@ export default function MenuBubarkanMassaModal({
                 onClick={onClose}
                 className="px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer"
               >
-                Batal
+                {t('side_inbox.demo.cancel')}
               </button>
 
               <button
@@ -219,7 +221,7 @@ export default function MenuBubarkanMassaModal({
                     : 'border-slate-800 bg-slate-900 text-slate-500 cursor-not-allowed opacity-60'
                 }`}
               >
-                <span>{isBudgetSufficient ? 'Eksekusi Operasi' : 'Kas Tidak Cukup'}</span>
+                <span>{t(isBudgetSufficient ? 'side_inbox.demo.executeOperation' : 'side_inbox.demo.insufficientFunds')}</span>
                 {isBudgetSufficient && <ArrowRight className="w-4 h-4" />}
               </button>
             </div>

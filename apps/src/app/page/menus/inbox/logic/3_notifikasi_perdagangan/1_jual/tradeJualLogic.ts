@@ -1,5 +1,5 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
-import { createInboxNotificationText } from '../../notificationMessage';
+import { createInboxNotificationText, getDefaultInboxText } from '../../notificationMessage';
 
 export interface TradeOfferNotification extends NotificationMessage {
   tradeType: 'jual'; // AI menawarkan untuk membeli produk milik User (User MENJUAL ke AI)
@@ -19,11 +19,15 @@ export function generateAITradeJualNotification(
 ): TradeOfferNotification {
   const formatProduct = productKey.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   const totalPrice = pricePerUnit * quantity;
+  const senderKey = 'side_inbox.trade.jualSender';
+  const senderParams = { partner: partnerName };
 
   return {
     id: `trade-jual-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title: `💰 Permintaan Pasar: ${partnerName} Ingin Membeli ${formatProduct}`,
-    sender: `Delegasi Ekonomi ${partnerName}`,
+    title: getDefaultInboxText('side_inbox.trade.jualTitle', { partner: partnerName, product: formatProduct }),
+    sender: getDefaultInboxText(senderKey, senderParams),
+    senderKey,
+    senderParams,
     ...createInboxNotificationText('side_inbox.trade.jualMessage', {
       partner: partnerName,
       product: formatProduct,

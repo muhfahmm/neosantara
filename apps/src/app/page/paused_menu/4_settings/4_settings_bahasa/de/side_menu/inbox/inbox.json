@@ -194,11 +194,16 @@
     "risk": "Risk: {risk}",
     "recoveryCost": "Restoration Operation Cost: {cost} NEO",
     "stabilized": "STABILITY RESTORED",
-    "quellRebellion": "SUPPRESS INSURGENCY",
+    "quellRebellion": "Aufstand Niederschlagen",
     "diserangTitle": "⚔️ MILITARY ATTACK ON SOVEREIGN TERRITORY!",
     "diserangBadge": "Military Invasion",
     "icbmTitle": "🚀 INTERCONTINENTAL BALLISTIC MISSILE (ICBM) ALERT!",
-    "icbmBadge": "Nuclear & Ballistic Threat"
+    "icbmBadge": "Nuclear & Ballistic Threat",
+    "deployDefense": "Verteidigungskräfte Mobilisieren",
+    "defenseDeployed": "MILITÄRISCHE VERTEIDIGUNG EINGELEITET",
+    "impact": "Auswirkungen",
+    "mobilizationCost": "Mobilisierungskosten",
+    "estimatedImpact": "Geschätzte Zerstörung: Totale Zerstörung"
   },
   "disaster": {
     "naturalTitle": "🚨 NATURAL DISASTER: {name} IN {province}",
@@ -207,12 +212,14 @@
     "financialLoss": "Financial Loss",
     "infrastructureDamage": "Infrastructure Damage",
     "aidCost": "Relief & Evacuation Cost",
-    "sendAid": "DISPATCH EMERGENCY RELIEF",
+    "sendAid": "Soforthilfe Entsenden",
     "handled": "RELIEF FULLY DISPATCHED",
     "wabahTitle": "☣️ DISEASE EPIDEMIC: {name} IN {province}",
     "wabahBadge": "Disease Epidemic",
     "infected": "Confirmed Infected",
-    "quarantineCost": "Quarantine Control Cost"
+    "quarantineCost": "Quarantine Control Cost",
+    "quarantine": "Regionale Quarantäne Verhängen",
+    "quarantineSuccess": "REGIONALE QUARANTÄNE IN KRAFT"
   },
   "geopolitics": {
     "allianceTitle": "🛡️ DEFENSE ALLIANCE PROPOSAL: {partner}",
@@ -229,7 +236,9 @@
     "embassyBadge": "Embassy",
     "unResolutionTitle": "🏛️ UN RESOLUTION: {title}",
     "unResolutionBadge": "UN General Assembly Resolution",
-    "openResolution": "VIEW UN RESOLUTION DETAILS →"
+    "openResolution": "VIEW UN RESOLUTION DETAILS →",
+    "openEmbassy": "Botschaft Öffnen →",
+    "openBilateralDiplomacy": "Bilaterale Diplomatie Öffnen →"
   },
   "basicNeeds": {
     "electricTitle": "⚡ ENERGY CRISIS: NATIONAL ELECTRICAL DEFICIT",
@@ -243,7 +252,12 @@
     "populationTitle": "👥 DEMOGRAPHIC & POPULATION CRISIS",
     "populationBadge": "Citizen Demographics",
     "solveNow": "RESOLVE NOW",
-    "resolved": "CRISIS RESOLVED"
+    "resolved": "CRISIS RESOLVED",
+    "buildPowerPlant": "Kraftwerk Bauen →",
+    "buildHousing": "Wohnraum Schaffen →",
+    "boostFood": "Nahrungsmittelproduktion Steigern →",
+    "buildPublicFacilities": "Öffentliche Einrichtungen Bauen →",
+    "manageDemographics": "Demografiepolitik Steuern →"
   },
   "tradeModals": {
     "closedTitle": "Trade Access Denied",
@@ -291,11 +305,11 @@
   },
   "security": {
     "nationalSecurityReport": "National Security Status Report",
-    "affectedCitizens": "Affected Citizens",
-    "totalLoss": "Total Losses",
-    "responseCost": "Response Cost",
+    "affectedCitizens": "Betroffene Bürger",
+    "totalLoss": "Gesamtschaden",
+    "responseCost": "Einsatzaufwand",
     "securityOperationsComplete": "SECURITY OPERATIONS COMPLETED",
-    "deploySecurity": "Deploy Security Operations",
+    "deploySecurity": "Sicherheitskräfte Entsenden",
     "alliedAid": "Allied Military Assistance",
     "aidAccepted": "MILITARY AID ACCEPTED",
     "offerExpired": "OFFER EXPIRED",
@@ -306,7 +320,10 @@
     "warships": "Warships",
     "orgMembership": "International Organization Membership",
     "accepted": "Accepted",
-    "rejected": "Rejected"
+    "rejected": "Rejected",
+    "securityRisk": "Sicherheitsrisiko & Öffentliche Unruhe",
+    "operationsComplete": "SICHERHEITSOPERATION ERFOLGREICH BEENDET",
+    "ignore": "Ignorieren"
   },
   "electricityCrisis": {
     "hideDetail": "▲ Hide Details",
@@ -324,14 +341,77 @@
     "days": "days"
   },
   "demo": {
-    "cause": "Cause",
-    "mass": "Crowd",
-    "people": "people",
+    "cause": "Ursache",
+    "mass": "Menge",
+    "people": "Bürger",
     "status": "Status",
-    "ongoing": "ONGOING",
-    "hardPower": "Crackdown",
-    "dialog": "Public Dialog",
-    "fulfill": "Fulfill Demands",
-    "ignore": "Ignore Protest"
+    "ongoing": "LAUFEND",
+    "hardPower": "Hart Durchgreifen",
+    "dialog": "Offener Dialog",
+    "fulfill": "Forderungen Erfüllen",
+    "ignore": "Protest Ignorieren",
+    "disperseModalTitle": "Nationale Sicherheitsmaßnahme",
+    "disperseModalSub": "Einsatzoptionen der Sicherheitskräfte",
+    "operationCost": "Einsatzkosten",
+    "cancel": "Abbrechen",
+    "confirmDisperse": "Ja, Auflösen!",
+    "understood": "Verstanden",
+    "confirmTitle": "Sicherheitseinsatz Bestätigen",
+    "confirmSubtitle": "Auflösung von Menschenmengen",
+    "confirmWarning": "Diese Maßnahme setzt staatliche Zwangsgewalt ein. Zusammenstöße, Verletzte und Zustimmungseinbrüche sind unvermeidbar!",
+    "confirmQuestion": "Sind Sie sicher, dass Sie diese Räumung anordnen möchten?",
+    "reportTitleSuccess": "🚨 EINSATZBERICHT ZUR MENGENDURCHDRINGUNG",
+    "reportTitleClash": "🔥 BERICHT ÜBER ZUSAMMENSTÖSSE UND UNRUHEN",
+    "injured": "Verletzte Opfer",
+    "killed": "Todesopfer / Schwerverletzte",
+    "remainingProtesters": "Verbleibende Demonstranten",
+    "dialogForumTitle": "Offenes Dialogforum",
+    "backToGame": "Zurück zum Spiel",
+    "laborLeader": "Gewerkschaftsführer",
+    "protesterRep": "Vertreter der Protestbewegung",
+    "anger": "Wut der Demonstranten",
+    "trust": "Öffentliches Vertrauen",
+    "demandsTitle": "Forderungskatalog",
+    "refreshChoices": "Antwortoptionen Wechseln",
+    "disperseWithPolice": "Mit Bereitschaftspolizei Auflösen",
+    "sessionStarted": "Dialog eröffnet. Wählen Sie die beste Reaktion zur Deeskalation."
+  },
+  "notificationMessages": {
+    "ratings": {
+      "satisfaction": "Herr Präsident, die Zufriedenheit der Bevölkerung ist auf {value}/100 gesunken. In mehreren Provinzen breitet sich Unzufriedenheit aus. Sinkt der Wert weiter unter 10, sind Massenproteste unvermeidlich und die Stabilität des Landes ist gefährdet. Bitte veranstalten Sie ein Kulturfest oder senken Sie die Steuern auf Grundbedarfsgüter.",
+      "ranking": "Herr Präsident, das Vertrauen der Bevölkerung in Ihre Führung ist auf {value}/100 gesunken. Das Parlament beobachtet den negativen Trend, und in der Opposition werden erste Amtsenthebungsgerüchte laut. Fällt Ihr Rang unter 10, droht Ihnen die Absetzung. Bitte erfüllen Sie die Anliegen der Bevölkerung, stabilisieren Sie die Preise und sichern Sie ihr Wohlergehen.",
+      "welfare": "Herr Präsident, der Wohlstandsindex der Bevölkerung ist auf {value}/100 gesunken. Der Mangel an grundlegenden Einrichtungen wie Schulen, Gesundheitsversorgung und öffentlicher Infrastruktur beeinträchtigt die Lebensqualität zunehmend. Sinkt der Wert unter 10, droht eine schwere humanitäre Krise. Bauen Sie Schulen, Krankenhäuser und öffentliche Einrichtungen oder zahlen Sie direkte Hilfen aus."
+    },
+    "rebellion": "Herr Präsident, in {country} sind radikale Proteste und eine bewaffnete Separatistenbewegung ausgebrochen. Die Aufständischen fordern von der Zentralregierung eine Änderung des politischen Status!",
+    "alliedAidRequest": "{target} wurde überraschend von den Streitkräften von {attacker} angegriffen. Gemäß dem Vertrag über die gegenseitige Verteidigungsallianz bittet der Verbündete um militärische Unterstützung zur Verteidigung seiner territorialen Souveränität.",
+    "diserang": {
+      "threat": "Herr Oberbefehlshaber, im Nachbarland {enemy} wurde eine Mobilisierung gepanzerter Divisionen nahe der Grenze festgestellt. Es sind noch keine Schüsse gefallen, doch dies ist eine offene Provokation.",
+      "borderAttack": "MILITÄRALARM! Die Streitkräfte von {enemy} haben unseren wichtigsten Grenzposten angegriffen! An der Front toben Feuergefechte und Artilleriebeschuss.",
+      "warDeclaration": "GROSSER KONFLIKT! Die Regierung von {enemy} hat unserem Land offiziell den uneingeschränkten Krieg erklärt! Ihre Kampfflotte rückt schnell vor.",
+      "invasion": "MASSIVE MILITÄRINVASION! Verbände aus {enemy} haben eine Boden- und Luftoffensive gestartet, um unsere Provinzen zu erobern und zu annektieren!",
+      "invasionWithoutTerritories": "MASSIVE MILITÄRINVASION! Verbände aus {enemy} haben eine Boden- und Luftoffensive gestartet, um unsere Landesverteidigung zu durchbrechen. Derzeit besitzen wir kein annektiertes Gebiet, das sie erobern könnten."
+    },
+    "icbm": {
+      "incomingAlert": "HÖCHSTE ALARMSTUFE! Das Verteidigungsradar hat den Start einer nuklear bestückten Interkontinentalrakete (ICBM) aus {launcher} in Richtung {target} erfasst! Der Einschlag wird innerhalb weniger Minuten erwartet!",
+      "programStarted": "Herr Präsident, das geheime nationale Nuklearprogramm ({country}) wurde am {startDate} offiziell gestartet. Anlagen zur Urananreicherung, Forschungsreaktoren und strategische Infrastruktur befinden sich im Bau. Die Fertigstellung ist für {endDate} geplant.",
+      "programCompleted": "STRATEGISCHE STAATSMELDUNG! Der Bau der Anlagen des nationalen Nuklearprogramms ist vollständig abgeschlossen. {country} ist nun offiziell eine Atommacht. Die Montage von ICBMs und nukleare Kriegsoperationen sind jetzt freigeschaltet!",
+      "testReport": "GLOBALER NACHRICHTENDIENSTBERICHT: {tester} hat soeben einen Teststart einer nuklear bestückten Interkontinentalrakete (ICBM) in Richtung {target} durchgeführt. Seismische Sensoren und Aufklärungssatelliten registrierten starke Erschütterungen durch die Explosion am Testgelände!"
+    },
+    "resolution": {
+      "worldWarBan": "UN-DIPLOMATIEBERICHT! {proposer} hat offiziell ein weltweites „Kriegsverbot“ für {duration} vorgeschlagen. Der Vorschlag würde Angriffe auf festgelegte Staaten während des gewählten Zeitraums untersagen. Die Abstimmung in der UN-Generalversammlung findet in Kürze statt!",
+      "worldProductionBan": "UN-DIPLOMATIEBERICHT! {proposer} hat offiziell ein weltweites „Produktionsverbot“ für {duration} vorgeschlagen. Die Produktion von {product} würde während des gewählten Zeitraums eingestellt. Die Abstimmung in der UN-Generalversammlung findet in Kürze statt!",
+      "targeted": {
+        "arms_embargo": "UN-DIPLOMATIEBERICHT! {proposer} hat wegen der angespannten bilateralen Beziehungen (Wert: {score}/100) offiziell ein „Waffenembargo“ gegen {target} für {duration} vorgeschlagen. Der Vorschlag würde den Waffenhandel während des gewählten Zeitraums untersagen. Die Abstimmung in der UN-Generalversammlung findet in Kürze statt!",
+        "economic_embargo": "UN-DIPLOMATIEBERICHT! {proposer} hat wegen der angespannten bilateralen Beziehungen (Wert: {score}/100) offiziell ein „Wirtschaftsembargo“ gegen {target} für {duration} vorgeschlagen. Der Vorschlag würde die Fabrik- und Bergbauproduktion sowie die Staatseinnahmen während des gewählten Zeitraums um 60 % senken. Die Abstimmung in der UN-Generalversammlung findet in Kürze statt!",
+        "military_invasion": "UN-DIPLOMATIEBERICHT! {proposer} hat wegen der angespannten bilateralen Beziehungen (Wert: {score}/100) offiziell eine „Invasionsresolution“ gegen {target} für {duration} vorgeschlagen. Die Resolution würde eine Invasion ohne Verurteilung durch andere Staaten ermöglichen. Die Abstimmung in der UN-Generalversammlung findet in Kürze statt!",
+        "production_ban": "UN-DIPLOMATIEBERICHT! {proposer} hat wegen der angespannten bilateralen Beziehungen (Wert: {score}/100) offiziell ein „Produktionsverbot“ gegen {target} für {duration} vorgeschlagen. Die Produktion von {product} würde während des gewählten Zeitraums eingestellt. Die Abstimmung in der UN-Generalversammlung findet in Kürze statt!"
+      }
+    }
+  },
+  "policyNotice": {
+    "policyImpact": "Politikauswirkung",
+    "ministry": "Ministerium",
+    "activeResearch": "Aktive Forschung",
+    "strategicSector": "Strategischer Sektor"
   }
 }

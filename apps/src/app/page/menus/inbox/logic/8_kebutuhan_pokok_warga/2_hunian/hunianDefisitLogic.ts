@@ -1,4 +1,5 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { createInboxNotificationText, getDefaultInboxText } from '../../notificationMessage';
 
 export interface HunianDefisitNotification extends NotificationMessage {
   tradeType: 'defisit_hunian';
@@ -20,17 +21,26 @@ export function generateHunianDefisitNotification(
   const formattedShortage = shortage.toLocaleString('id-ID', { maximumFractionDigits: 2 });
   const formattedPop = population.toLocaleString('id-ID', { maximumFractionDigits: 2 });
 
-  const title = housingSatisfaction <= 20
-    ? `🏠 KRISIS KRITIS PERUMAHAN: Indeks Kepuasan Perumahan ${housingSatisfaction}/100!`
-    : `🏠 PERINGATAN DEFISIT PEMUKIMAN: Kebutuhan Tempat Hunian Warga`;
-
-  const message = `Indeks Kepuasan Rakyat (Perumahan) berada di tingkat sangat rendah yaitu ${housingSatisfaction}/100. Terdapat ${formattedShortage} jiwa tunawisma yang belum memiliki tempat hunian terakomodasi (hanya ${percentageMet.toFixed(1)}% populasi terfasilitasi dari total ${formattedPop} jiwa). Segera bangun Perumahan Subsidi, Apartemen, atau Mansion untuk mengatasi krisis perumahan rakyat ini!`;
+  const titleKey = housingSatisfaction <= 20
+    ? 'side_inbox.basicNeeds.housing.criticalTitle'
+    : 'side_inbox.basicNeeds.housing.title';
+  const titleParams = { satisfaction: housingSatisfaction };
+  const messageKey = 'side_inbox.basicNeeds.housing.message';
+  const messageParams = {
+    satisfaction: housingSatisfaction,
+    shortage: formattedShortage,
+    percentage: percentageMet.toFixed(1),
+    population: formattedPop,
+  };
 
   return {
     id: `hunian-defisit-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
-    title,
-    sender: `Kementerian Perumahan & Kawasan Permukiman`,
-    message,
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    sender: getDefaultInboxText('side_inbox.basicNeeds.housing.sender'),
+    senderKey: 'side_inbox.basicNeeds.housing.sender',
+    ...createInboxNotificationText(messageKey, messageParams),
     timestamp: dateStr,
     type: 'kesejahteraan',
     value: shortage,

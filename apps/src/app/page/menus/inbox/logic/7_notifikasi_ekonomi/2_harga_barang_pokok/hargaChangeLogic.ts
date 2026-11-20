@@ -1,4 +1,5 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { createInboxNotificationText, getDefaultInboxText } from '../../notificationMessage';
 
 export interface HargaChangeNotification extends NotificationMessage {
   tradeType: 'harga_barang_pokok';
@@ -16,19 +17,22 @@ export function generateHargaChangeNotification(
 ): HargaChangeNotification {
   const isIncrease = newPrice > oldPrice;
 
-  const title = isIncrease
-    ? `💥 Kenaikan Harga: ${itemName} Melonjak (Rp ${oldPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} ➔ Rp ${newPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })})`
-    : `🛒 Harga Terjangkau: ${itemName} Turun (Rp ${oldPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} ➔ Rp ${newPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })})`;
-
-  const message = isIncrease
-    ? `Ibu rumah tangga dan pedagang kecil mengeluhkan kenaikan harga pasar komoditas ${itemName} dari Rp ${oldPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} menjadi Rp ${newPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })}. Kenaikan harga barang pokok ini menekan daya beli warga kelas menengah ke bawah.`
-    : `Masyarakat menyambut positif penurunan harga komoditas ${itemName} dari Rp ${oldPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} menjadi Rp ${newPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })}. Bahan pangan yang makin terjangkau menjaga stabilitas inflasi dan meningkatkan kepuasan publik.`;
+  const direction = isIncrease ? 'increase' : 'decrease';
+  const formatPrice = (price: number) => price.toLocaleString('id-ID', { maximumFractionDigits: 2 });
+  const titleKey = `side_inbox.economicChange.price.${direction}Title`;
+  const titleParams = { itemName, oldPrice: formatPrice(oldPrice), newPrice: formatPrice(newPrice) };
+  const senderKey = 'side_inbox.economicChange.price.sender';
+  const messageKey = `side_inbox.economicChange.price.${direction}Message`;
+  const messageParams = { itemName, oldPrice: formatPrice(oldPrice), newPrice: formatPrice(newPrice) };
 
   return {
     id: `harga-change-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title,
-    sender: `Asosiasi Pedagang Pasar & Konsumen`,
-    message,
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    sender: getDefaultInboxText(senderKey),
+    senderKey,
+    ...createInboxNotificationText(messageKey, messageParams),
     timestamp: dateStr,
     type: isIncrease ? 'kepuasan' : 'kesejahteraan',
     value: 0,

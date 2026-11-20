@@ -19,6 +19,7 @@ import {
   determineYearlyOutbreakCount,
   parseYearMonth,
 } from './outbreakManagement';
+import { createInboxNotificationText, getDefaultInboxText } from '../../notificationMessage';
 
 export {
   PANDEMIC_YEARLY_PERCENTAGE_CYCLE,
@@ -31,7 +32,9 @@ export {
 export interface WabahPenyakitNotification extends NotificationMessage {
   tradeType: 'wabah_penyakit';
   category: string; // Wabah Penyakit Menular, Penyakit Hewan & Tumbuhan, Penyakit Baru & Mutasi, Pandemi Global
+  categoryKey: string;
   eventName: string;
+  eventNameKey: string;
   korban: number; // Jumlah pasien terinfeksi / korban terdampak
   perkiraanKematian: number;
   durationDays: number;
@@ -46,12 +49,11 @@ export interface WabahPenyakitNotification extends NotificationMessage {
 }
 
 interface WabahEventItem {
-  name: string;
+  nameKey: string;
   category: string;
   weight: number;
   korbanRange: [number, number];
   kerugianRange: [number, number];
-  descriptionTemplate: (country: string, korban: number, kerugian: number) => string;
 }
 
 const SKENARIO_PANDEMI = [
@@ -72,267 +74,235 @@ const randomInRange = (min: number, max: number): number =>
 export const WABAH_PENYAKIT_POOL: WabahEventItem[] = [
   // Wabah Penyakit Menular (20%) - Epidemi
   {
-    name: 'Wabah Demam Berdarah',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.dengue',
     category: 'Wabah Penyakit Menular (Epidemi)',
     weight: 5,
     korbanRange: [800, 5000],
     kerugianRange: [500000, 2500000],
-    descriptionTemplate: (country) => `Peningkatan populasi nyamuk Aedes aegypti memicu lonjakan kasus Demam Berdarah Dengue (DBD) di sejumlah provinsi di ${country}.`,
   },
   {
-    name: 'Wabah Malaria',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.malaria',
     category: 'Wabah Penyakit Menular (Epidemi)',
     weight: 4,
     korbanRange: [600, 4000],
     kerugianRange: [400000, 2000000],
-    descriptionTemplate: (country) => `Kasus malaria endemik melonjak tajam di area pemukiman perbatasan dan pesisir tropis ${country}.`,
   },
   {
-    name: 'Wabah Kolera',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.cholera',
     category: 'Wabah Penyakit Menular (Epidemi)',
     weight: 3,
     korbanRange: [500, 3500],
     kerugianRange: [300000, 1500000],
-    descriptionTemplate: (country) => `Kontaminasi saluran pencemaran air bersih memicu penularan infeksi kolera massal di permukiman padat ${country}.`,
   },
   {
-    name: 'Wabah Tifus',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.typhoid',
     category: 'Wabah Penyakit Menular (Epidemi)',
     weight: 2,
     korbanRange: [400, 2500],
     kerugianRange: [250000, 1200000],
-    descriptionTemplate: (country) => `Infeksi bakteri tifus menyebar luas akibat penurunan sanitasi lingkungan pasca banjir di ${country}.`,
   },
   {
-    name: 'Wabah Tuberkulosis',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.tuberculosis',
     category: 'Wabah Penyakit Menular (Epidemi)',
     weight: 2,
     korbanRange: [700, 4500],
     kerugianRange: [450000, 2200000],
-    descriptionTemplate: (country) => `Penularan tuberkulosis paru meningkat secara signifikan di kawasan industri dan perkotaan ${country}.`,
   },
   {
-    name: 'Wabah Hepatitis A',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.hepatitisA',
     category: 'Wabah Penyakit Menular (Epidemi)',
     weight: 1,
     korbanRange: [300, 2000],
     kerugianRange: [200000, 1000000],
-    descriptionTemplate: (country) => `Penyebaran virus Hepatitis A dilaporkan terinfeksi melalui jajanan publik yang tercemar di ${country}.`,
   },
   {
-    name: 'Wabah Campak',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.measles',
     category: 'Wabah Penyakit Menular (Epidemi)',
     weight: 1,
     korbanRange: [400, 2500],
     kerugianRange: [250000, 1100000],
-    descriptionTemplate: (country) => `Penurunan cakupan imunisasi memicu munculnya outbreak kasus campak pada anak-anak di ${country}.`,
   },
   {
-    name: 'Wabah Polio',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.polio',
     category: 'Wabah Penyakit Menular (Epidemi)',
     weight: 1,
     korbanRange: [200, 1500],
     kerugianRange: [150000, 900000],
-    descriptionTemplate: (country) => `Kementerian Kesehatan ${country} mendeteksi transmisi lokal virus polio dan menetapkan status KLB medis.`,
   },
   {
-    name: 'Wabah Difteri',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.diphtheria',
     category: 'Wabah Penyakit Menular (Epidemi)',
     weight: 0.5,
     korbanRange: [150, 1000],
     kerugianRange: [100000, 600000],
-    descriptionTemplate: (country) => `Infeksi difteri menyerang saluran pernapasan warga di permukiman padat penduduk ${country}.`,
   },
   {
-    name: 'Wabah Rabies',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.rabies',
     category: 'Wabah Penyakit Menular (Epidemi)',
     weight: 0.5,
     korbanRange: [100, 800],
     kerugianRange: [80000, 500000],
-    descriptionTemplate: (country) => `Gigitan hewan penular rabies meningkat pesat memicu kepanikan warga di pedesaan ${country}.`,
   },
 
   // Penyakit Hewan & Tumbuhan (8%) - Epidemi
   {
-    name: 'Flu Burung H5N1',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.avianFlu',
     category: 'Penyakit Hewan & Tumbuhan (Epidemi)',
     weight: 2,
     korbanRange: [1000, 6000],
     kerugianRange: [800000, 4000000],
-    descriptionTemplate: (country) => `Penyebaran virus H5N1 pada ternak unggas memaksa pemusnahan massal di peternakan ${country}.`,
   },
   {
-    name: 'Penyakit Mulut & Kuku (PMK)',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.footAndMouth',
     category: 'Penyakit Hewan & Tumbuhan (Epidemi)',
     weight: 2,
     korbanRange: [1200, 8000],
     kerugianRange: [900000, 4500000],
-    descriptionTemplate: (country) => `Wabah PMK menyerang ribuan ekor sapi dan hewan ternak produktif di pusat peternakan ${country}.`,
   },
   {
-    name: 'Hama Wereng Padi',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.ricePlanthopper',
     category: 'Penyakit Hewan & Tumbuhan (Epidemi)',
     weight: 1.5,
     korbanRange: [1500, 9000],
     kerugianRange: [1000000, 5000000],
-    descriptionTemplate: (country) => `Serangan hama wereng cokelat merusak ratusan hektar tanaman padi produktif di ${country}.`,
   },
   {
-    name: 'Jamur Ganoderma',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.ganoderma',
     category: 'Penyakit Hewan & Tumbuhan (Epidemi)',
     weight: 1,
     korbanRange: [800, 5000],
     kerugianRange: [600000, 3000000],
-    descriptionTemplate: (country) => `Infeksi jamur Ganoderma membusukkan akar perkebunan kelapa sawit utama di ${country}.`,
   },
   {
-    name: 'Virus Tungro',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.tungro',
     category: 'Penyakit Hewan & Tumbuhan (Epidemi)',
     weight: 0.5,
     korbanRange: [500, 3000],
     kerugianRange: [400000, 2000000],
-    descriptionTemplate: (country) => `Virus tungro kerdil tanaman padi meluas menurunkan ketersediaan beras nasional di ${country}.`,
   },
   {
-    name: 'Hama Tikus Massal',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.ratInfestation',
     category: 'Penyakit Hewan & Tumbuhan (Epidemi)',
     weight: 0.5,
     korbanRange: [1000, 7000],
     kerugianRange: [700000, 3500000],
-    descriptionTemplate: (country) => `Ledakan populasi hama tikus merusak lumbung pangan dan tanaman siap panen di ${country}.`,
   },
   {
-    name: 'Layu Bakteri Pisang',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.bananaWilt',
     category: 'Penyakit Hewan & Tumbuhan (Epidemi)',
     weight: 0.3,
     korbanRange: [400, 2500],
     kerugianRange: [300000, 1500000],
-    descriptionTemplate: (country) => `Penyakit darah pisang mematikan perkebunan holtikultura di wilayah selatan ${country}.`,
   },
   {
-    name: 'Flu Babi Afrika (ASF)',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.africanSwineFever',
     category: 'Penyakit Hewan & Tumbuhan (Epidemi)',
     weight: 0.2,
     korbanRange: [800, 5000],
     kerugianRange: [600000, 3000000],
-    descriptionTemplate: (country) => `Virus African Swine Fever memicu kematian ternak babi skala besar di peternakan ${country}.`,
   },
 
   // Penyakit Baru & Mutasi (2%) - Epidemi
   {
-    name: 'Wabah Superbug Resistant',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.superbug',
     category: 'Mutasi Genetik & Superbug',
     weight: 1,
     korbanRange: [1500, 9000],
     kerugianRange: [1200000, 6000000],
-    descriptionTemplate: (country) => `Bakteri resisten multi-obat (Superbug) merebak di rumah sakit kota ${country} dan tidak mempan antibiotik biasa.`,
   },
   {
-    name: 'Wabah Jamur Mematikan (Candida Auris)',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.candidaAuris',
     category: 'Mutasi Genetik & Superbug',
     weight: 0.5,
     korbanRange: [1000, 6000],
     kerugianRange: [800000, 4000000],
-    descriptionTemplate: (country) => `Patogen jamur mematikan menular di fasilitas kesehatan publik ${country} memicu krisis karantina medis.`,
   },
   {
-    name: 'Penyakit Autoimun Massal',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.autoimmune',
     category: 'Mutasi Genetik & Superbug',
     weight: 0.5,
     korbanRange: [800, 5000],
     kerugianRange: [700000, 3500000],
-    descriptionTemplate: (country) => `Gangguan autoimun misterius terdeteksi meluas pada ribuan pekerja industri di ${country}.`,
   },
 
   // Pandemi Global (10%) - Pandemi
   {
-    name: 'Pandemi Influenza Global',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.globalInfluenza',
     category: 'Pandemi Global',
     weight: 4,
     korbanRange: [8000, 50000],
     kerugianRange: [6000000, 30000000],
-    descriptionTemplate: (country) => `Mutasi virus influenza baru menyebar cepat antarnegara, memicu pandemi flu global yang menginfeksi warga ${country}.`,
   },
   {
-    name: 'Pandemi Virus Corona Mutasi',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.coronavirusVariant',
     category: 'Pandemi Global',
     weight: 3,
     korbanRange: [10000, 70000],
     kerugianRange: [8000000, 40000000],
-    descriptionTemplate: (country) => `Varian baru virus Corona dengan daya tular tinggi merebak masif. Rumah sakit di ${country} kelebihan kapasitas rawat.`,
   },
   {
-    name: 'Pandemi Virus Baru (Pathogen X)',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.pathogenX',
     category: 'Pandemi Global',
     weight: 1,
     korbanRange: [15000, 90000],
     kerugianRange: [10000000, 50000000],
-    descriptionTemplate: (country) => `Organisasi Kesehatan Dunia menetapkan status Pandemi Global atas merebaknya virus baru (Pathogen X) yang menjangkiti ${country}.`,
   },
   {
-    name: 'Pandemi Cacar Monyet (Mpox)',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.mpox',
     category: 'Pandemi Global',
     weight: 1,
     korbanRange: [5000, 30000],
     kerugianRange: [4000000, 20000000],
-    descriptionTemplate: (country) => `Penularan Mpox skala internasional meluas cepat ke wilayah pemukiman di ${country}.`,
   },
   {
-    name: 'Pandemi HIV/AIDS Varian Baru',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.hivVariant',
     category: 'Pandemi Global',
     weight: 0.5,
     korbanRange: [4000, 25000],
     kerugianRange: [3000000, 15000000],
-    descriptionTemplate: (country) => `Varian baru penyakit imunitas menular terdeteksi di berbagai kota di ${country}.`,
   },
   {
-    name: 'Virus Zombie (Bio-Lab Outbreak)',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.zombieVirus',
     category: 'Pandemi Global',
     weight: 0.3,
     korbanRange: [20000, 120000],
     kerugianRange: [15000000, 80000000],
-    descriptionTemplate: (country) => `DARURAT NASIONAL! Kebocoran sampel patogen neuro-virus di laboratorium senjata biologis memicu anomali perilaku agresif warga di ${country}.`,
   },
   {
-    name: 'Mutasi Flu Spanyol Rekayasa',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.engineeredSpanishFlu',
     category: 'Pandemi Global',
     weight: 0.2,
     korbanRange: [12000, 80000],
     kerugianRange: [9000000, 45000000],
-    descriptionTemplate: (country) => `Mutasi ganas virus influenza klasik merebak masif mengancam keselamatan sistem kesehatan nasional ${country}.`,
   },
   // Varian Baru Tak Terduga
   {
-    name: 'Wabah Ensefalitis Misterius',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.mysteriousEncephalitis',
     category: 'Wabah Penyakit Menular (Epidemi)',
     weight: 1.5,
     korbanRange: [700, 4800],
     kerugianRange: [600000, 3200000],
-    descriptionTemplate: (country) => `Gejala peradangan otak misterius menyebar cepat pada masyarakat perkotaan ${country}, memicu kepanikan dokter spesialis.`,
   },
   {
-    name: 'Wabah Demam Berdarah Kongo (CCHF)',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.congoHemorrhagicFever',
     category: 'Wabah Penyakit Menular (Epidemi)',
     weight: 1.0,
     korbanRange: [400, 3200],
     kerugianRange: [500000, 2800000],
-    descriptionTemplate: (country) => `Transmisi virus Crimean-Congo Hemorrhagic Fever yang ditularkan kutu parasit terdeteksi di beberapa distrik ${country}.`,
   },
   {
-    name: 'Pandemi Virus Marburg Subtipe Baru',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.marburgVariant',
     category: 'Pandemi Global',
     weight: 0.8,
     korbanRange: [6000, 38000],
     kerugianRange: [5000000, 25000000],
-    descriptionTemplate: (country) => `Peringatan darurat kesehatan internasional diterbitkan setelah virus demam berdarah Marburg subtipe baru meluas ke perbatasan ${country}.`,
   },
   {
-    name: 'Anomali Bio-Toksin Laut (Red Tide)',
+    nameKey: 'side_inbox.dynamicEventTranslations.outbreak.eventNames.redTide',
     category: 'Penyakit Hewan & Tumbuhan (Epidemi)',
     weight: 1.2,
     korbanRange: [900, 6500],
     kerugianRange: [800000, 4200000],
-    descriptionTemplate: (country) => `Ledakan alga beracun (Red Tide) mencemari biota laut dan tambak nelayan pesisir ${country}, melumpuhkan ekspor perikanan.`,
   }
 ];
 
@@ -370,15 +340,18 @@ export function generateWabahPenyakitNotification(
   const virulensiRoll = Math.random();
   let virulensiMultiplier = 1.0;
   let mutasiLabel = "";
+  let mutasiKey: string | undefined;
 
   if (virulensiRoll < 0.20) {
     // 20% Varian Terkendali / Respons Cepat
     virulensiMultiplier = 0.5 + Math.random() * 0.3; // 50% - 80%
-    mutasiLabel = " (Klaster Terlokalisir)";
+    mutasiLabel = "Klaster Terlokalisir";
+    mutasiKey = 'side_inbox.dynamicEventTranslations.outbreak.localizedCluster';
   } else if (virulensiRoll > 0.80) {
     // 20% Mutasi Ganas / Super-Spreader Tak Terduga
     virulensiMultiplier = 1.5 + Math.random() * 0.9; // 150% - 240%
-    mutasiLabel = " (Mutasi Strain Super-Spreader)";
+    mutasiLabel = "Mutasi Strain Super-Spreader";
+    mutasiKey = 'side_inbox.dynamicEventTranslations.outbreak.superSpreader';
   } else {
     // 60% Tingkat Penularan Reguler
     virulensiMultiplier = 0.85 + Math.random() * 0.4; // 85% - 125%
@@ -436,20 +409,64 @@ export function generateWabahPenyakitNotification(
   const persentaseKematian = korban > 0 ? perkiraanKematian / korban : 0;
 
   const country = userCountryName || 'Indonesia';
-  const message = `${selectedEvent.descriptionTemplate(country, korban, totalKerugian)}${mutasiLabel ? ` [Laporan Medis: Terkonfirmasi ${mutasiLabel.replace(/[\(\)]/g, '')}]` : ''}`;
+  const eventName = getDefaultInboxText(selectedEvent.nameKey);
+  const categoryKeyByLabel: Record<string, string> = {
+    'Wabah Penyakit Menular (Epidemi)': 'side_inbox.dynamicEventTranslations.outbreak.categories.infectious',
+    'Penyakit Hewan & Tumbuhan (Epidemi)': 'side_inbox.dynamicEventTranslations.outbreak.categories.animalAndPlant',
+    'Mutasi Genetik & Superbug': 'side_inbox.dynamicEventTranslations.outbreak.categories.mutations',
+    'Pandemi Global': 'side_inbox.dynamicEventTranslations.outbreak.categories.pandemic',
+  };
+  const categoryKey = categoryKeyByLabel[selectedEvent.category];
+  if (!categoryKey) throw new Error(`Missing outbreak category translation key: ${selectedEvent.category}`);
+  const outbreakTypeKey = isPandemi
+    ? 'side_inbox.dynamicEventTranslations.outbreak.pandemic'
+    : 'side_inbox.dynamicEventTranslations.outbreak.epidemic';
+  const titleKey = mutasiKey
+    ? 'side_inbox.dynamicEventTranslations.outbreak.titleWithVariant'
+    : 'side_inbox.dynamicEventTranslations.outbreak.title';
+  const titleParams = {
+    outbreakType: getDefaultInboxText(outbreakTypeKey),
+    eventName,
+    ...(mutasiKey ? { variant: getDefaultInboxText(mutasiKey) } : {}),
+  };
+  const messageKey = mutasiKey
+    ? 'side_inbox.dynamicEventTranslations.outbreak.messageWithVariant'
+    : 'side_inbox.dynamicEventTranslations.outbreak.message';
+  const messageParams = {
+    country,
+    eventName,
+    infected: korban.toLocaleString('id-ID'),
+    deaths: perkiraanKematian.toLocaleString('id-ID'),
+    duration: durationDays,
+    ...(mutasiKey ? { variant: getDefaultInboxText(mutasiKey) } : {}),
+  };
 
   return {
     id: `wabah-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-    title: `${isPandemi ? '☣️ PANDEMI GLOBAL:' : '🦠 WABAH PENYAKIT:'} ${selectedEvent.name.toUpperCase()}${mutasiLabel ? mutasiLabel.toUpperCase() : ''}`,
-    sender: `KEMENTERIAN KESEHATAN & WHO (${country.toUpperCase()})`,
-    message,
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    titleParamKeys: {
+      outbreakType: outbreakTypeKey,
+      eventName: selectedEvent.nameKey,
+      ...(mutasiKey ? { variant: mutasiKey } : {}),
+    },
+    sender: getDefaultInboxText('side_inbox.dynamicEventTranslations.outbreak.sender', { country }),
+    senderKey: 'side_inbox.dynamicEventTranslations.outbreak.sender',
+    senderParams: { country },
+    ...createInboxNotificationText(messageKey, messageParams, {
+      eventName: selectedEvent.nameKey,
+      ...(mutasiKey ? { variant: mutasiKey } : {}),
+    }),
     timestamp: dateStr,
     type: 'kesejahteraan',
     value: 0,
     isRead: false,
     tradeType: 'wabah_penyakit',
     category: selectedEvent.category,
-    eventName: selectedEvent.name,
+    categoryKey,
+    eventName,
+    eventNameKey: selectedEvent.nameKey,
     korban,
     perkiraanKematian,
     durationDays,

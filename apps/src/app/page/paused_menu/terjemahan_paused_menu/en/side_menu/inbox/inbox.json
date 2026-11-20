@@ -21,6 +21,7 @@
       "testReport": "GLOBAL INTELLIGENCE REPORT: {tester} has just conducted a nuclear-armed intercontinental ballistic missile (ICBM) launch test toward {target}. Seismic sensors and surveillance satellites recorded powerful blast tremors at the test site!"
     },
     "resolution": {
+      "cardTitle": "🏛️ UN Resolution: {proposer} — {resolutionType}",
       "worldWarBan": "UN DIPLOMATIC UPDATE! {proposer} has officially proposed a \"War Ban\" for the entire world for {duration}. The proposal would prohibit attacks on designated nations during the selected period. The UN General Assembly vote will take place shortly!",
       "worldProductionBan": "UN DIPLOMATIC UPDATE! {proposer} has officially proposed a \"Production Ban\" for the entire world for {duration}. Production of {product} would be suspended during the selected period. The UN General Assembly vote will take place shortly!",
       "targeted": {
@@ -59,6 +60,16 @@
     "ekonomi": "Economy & Monetary",
     "kebutuhan_pokok": "Basic Citizen Needs"
   },
+  "offerMessages": {
+    "embassy": "Greetings, President {user}. The government of {partner} has formally requested permission to establish an embassy in your capital to strengthen diplomatic ties and bilateral cooperation. Do you accept this request?",
+    "embassySender": "Ministry of Foreign Affairs of {partner}",
+    "defenseAlliance": "President {user}, the government of {partner} proposes a mutual defense alliance. Both nations would commit military support and share strategic intelligence in the event of an invasion or foreign attack. Are you willing to ratify it?",
+    "defenseAllianceSender": "Security and Defense Council of {partner}",
+    "researchContract": "President {user}, the National Research Consortium of {partner} proposes a joint research and development contract. Both nations would share knowledge and gain a 25% research speed increase in strategic technologies. Do you accept this contract?",
+    "researchContractSender": "Ministry of Research, Technology, and Science of {partner}",
+    "tradeRelation": "President {user}, the government of {partner} seeks to expand its strategic partnership and open bilateral trade routes. This agreement provides exclusive access to import and export goods and special tariff incentives. Do you agree to ratify it?",
+    "tradeRelationSender": "Ministry of Foreign Affairs and Trade of {partner}"
+  },
   "ratingWarning": {
     "title": "⚠️ Early Warning: Public Satisfaction Is Declining!",
     "sender": "Ministry of Home Affairs",
@@ -82,10 +93,12 @@
   "toastTitle": "New Message Received",
   "openInbox": "Open Inbox ({count}) →",
   "nonAggressionOfferTitle": "🕊️ Non-Aggression Pact Offer: {partner}",
+  "nonAggressionRecipient": "President",
   "nonAggressionSender": "Ministry of Foreign Affairs & Diplomacy of {partner}",
   "nonAggressionMessage": "President of {user}, the government of {partner} officially proposes a bilateral Non-Aggression Pact. Both nations pledge to maintain peace, refrain from military aggression, and safeguard border stability. Do you agree to ratify this treaty?",
   "diplomacyPeaceBadge": "Diplomacy & Peace",
   "senderPrefix": "Sender: {sender} | Date: {date}",
+  "relation": "Relationship Score",
   "rejectPact": "Reject Pact",
   "acceptPact": "Ratify Non-Aggression Pact",
   "pactRejected": "NON-AGGRESSION PACT WITH {partner} REJECTED",
@@ -232,17 +245,61 @@
     "spionaseBadge": "Intelligence & Espionage",
     "spionaseSuccess": "Mission Succeeded",
     "spionaseFailed": "Operative Captured",
+    "spionaseArchived": "Intelligence report archived",
+    "agentUpdated": "Operative status updated",
     "pemberontakanTitle": "🔥 ARMED INSURGENCY IN {country}",
+    "pemberontakanSender": "Security Authority of {country}",
     "pemberontakanBadge": "Regional Insurgency",
+    "pemberontakanEffect": "Separatism Risk: {risk} | National Instability Risk",
+    "independenceDeclarationRisk": "Independence Declaration Risk",
     "affectedRegion": "Affected Nation/Region: {province}",
     "risk": "Risk: {risk}",
     "recoveryCost": "Restoration Operation Cost: {cost} NEO",
     "stabilized": "STABILITY RESTORED",
-    "quellRebellion": "SUPPRESS INSURGENCY",
+    "quellRebellion": "Quell Armed Rebellion",
     "diserangTitle": "⚔️ MILITARY ATTACK ON SOVEREIGN TERRITORY!",
     "diserangBadge": "Military Invasion",
     "icbmTitle": "🚀 INTERCONTINENTAL BALLISTIC MISSILE (ICBM) ALERT!",
-    "icbmBadge": "Nuclear & Ballistic Threat"
+    "icbmBadge": "Nuclear & Ballistic Threat",
+    "attackSender": "Armed Forces Headquarters",
+    "attackTitles": {
+      "threat": "🪖 Border Threat: Enemy Forces Mobilizing",
+      "borderAttack": "⚔️ Border Attack: Enemy Battalion Opens Fire!",
+      "warDeclaration": "📜 Formal Declaration of War by the Enemy!",
+      "invasion": "🚨 Full-Scale Invasion: Territory Seizure!",
+      "invasionWithoutTerritories": "🚨 Full-Scale Invasion: National Defense Under Attack!"
+    },
+    "attackEffects": {
+      "threat": "Diplomacy / Emergency Mobilization",
+      "borderAttack": "-5% Military Strength; 50+ casualties",
+      "warDeclaration": "War Active, Economy -15%, Approval -10%",
+      "invasion": "Risk of losing one province if undefended",
+      "invasionWithoutTerritories": "No annexed territory can be lost"
+    },
+    "icbmTitles": {
+      "incoming": "☢️ NUCLEAR INTERCONTINENTAL BALLISTIC MISSILE (ICBM) LAUNCH DETECTED!",
+      "programStarted": "☢️ CLASSIFIED PROJECT: National Nuclear Program Begins!",
+      "programCompleted": "⚛️ NUCLEAR CAPABILITY: National Nuclear Program Operational!",
+      "testReport": "🚀 NUCLEAR ICBM TEST: {tester}"
+    },
+    "icbmSenders": {
+      "incoming": "National Air and Space Defense Command",
+      "program": "Strategic Nuclear Command and Ministry of Defense",
+      "testReport": "Strategic Intelligence and Global Seismic Detection Agency"
+    },
+    "icbmEffects": {
+      "incoming": "Total city destruction and millions of casualties if interception fails",
+      "programStarted": "Estimated completion: {endDate}",
+      "programCompleted": "Uranium enrichment facilities active; ICBM assembly unlocked",
+      "testReport": "{tester} missile stockpile: {count} units ready for deployment"
+    },
+    "targetLocation": "Target Area",
+    "defaultTargetLocation": "Capital",
+    "deployDefense": "Deploy Defense Forces",
+    "defenseDeployed": "MILITARY DEFENSE FORCES DEPLOYED",
+    "impact": "Impact",
+    "mobilizationCost": "Defense Mobilization Cost",
+    "estimatedImpact": "Estimated Impact: Full-Scale Devastation"
   },
   "disaster": {
     "naturalTitle": "🚨 NATURAL DISASTER: {name} IN {province}",
@@ -251,12 +308,27 @@
     "financialLoss": "Financial Loss",
     "infrastructureDamage": "Infrastructure Damage",
     "aidCost": "Relief & Evacuation Cost",
-    "sendAid": "DISPATCH EMERGENCY RELIEF",
+    "sendAid": "Send Emergency Aid",
     "handled": "RELIEF FULLY DISPATCHED",
     "wabahTitle": "☣️ DISEASE EPIDEMIC: {name} IN {province}",
     "wabahBadge": "Disease Epidemic",
     "infected": "Confirmed Infected",
-    "quarantineCost": "Quarantine Control Cost"
+    "quarantineCost": "Quarantine Control Cost",
+    "quarantine": "Implement Regional Quarantine",
+    "quarantineSuccess": "REGIONAL QUARANTINE ENFORCED"
+  },
+  "outbreak": {
+    "distribution": {
+      "pandemicNone": "No pandemic this year ({chancePercent}%)",
+      "pandemicOne": "1 pandemic this year ({chancePercent}%)",
+      "epidemicNone": "No epidemic this year ({chancePercent}%)",
+      "epidemicOne": "1 epidemic this year ({chancePercent}%)",
+      "epidemicTwo": "2 epidemics this year ({chancePercent}%)"
+    },
+    "medicalAssistance": {
+      "alreadyHandled": "This outbreak has already been addressed.",
+      "populationRestored": "{count} people have been saved from {eventName}."
+    }
   },
   "geopolitics": {
     "allianceTitle": "🛡️ DEFENSE ALLIANCE PROPOSAL: {partner}",
@@ -268,12 +340,38 @@
     "researchContractSigned": "RESEARCH CONTRACT WITH {partner} ACTIVE",
     "acceptResearch": "INITIATE RESEARCH COLLABORATION",
     "hotRelationTitle": "⚠️ ESCALATING DIPLOMATIC TENSIONS: {partner}",
+    "hotRelationSender": "Ministry of Foreign Affairs & Diplomatic Intelligence",
+    "hotRelationTitle20": "🚨 RELATIONS DETERIORATING: {partner} ({score}/100)",
+    "hotRelationMessage20": "Diplomatic warning! Bilateral relations with {partner} have fallen to a critical level ({score}/100). Rising geopolitical tensions could lead to economic sanctions, diplomat expulsions, or even military confrontation.",
+    "hotRelationTitle15": "⚠️ TENSIONS RISING: {partner} RELATIONS FALL TO {score}/100",
+    "hotRelationMessage15": "Diplomatic relations with {partner} have fallen to {score}/100, below the safe threshold of 20. Consider sending a peace delegation or diplomatic aid.",
+    "hotRelationTitle10": "🔥 CONFLICT THREAT: RELATIONS WITH {partner} ARE SEVERELY STRAINED ({score}/100)",
+    "hotRelationMessage10": "Tensions with {partner} are rising (score: {score}/100). The embassy reports declining cooperation and growing public hostility.",
+    "hotRelationTitle5": "💣 BORDER THREAT: RELATIONS WITH {partner} ARE CRITICAL ({score}/100)",
+    "hotRelationMessage5": "Diplomatic relations with {partner} have plunged to {score}/100. The opposing political and military forces are beginning to deploy weapons along the border.",
+    "hotRelationTitle1": "⚔️ BRINK OF WAR: RELATIONS WITH {partner} HAVE COLLAPSED ({score}/100)",
+    "hotRelationMessage1": "National emergency! Diplomatic relations with {partner} have reached their lowest point ({score}/100). Diplomatic contact is nearly severed and opposing forces are at their highest state of readiness. Take emergency diplomatic action!",
     "hotRelationBadge": "Diplomatic Crisis",
     "embassyTitle": "🏛️ EMBASSY DIPLOMATIC MISSION: {partner}",
     "embassyBadge": "Embassy",
     "unResolutionTitle": "🏛️ UN RESOLUTION: {title}",
+    "resolutionSender": "Secretariat of the UN General Assembly",
+    "proposalLabel": "Proposal",
+    "targetLabel": "Target",
+    "globalTarget": "Global (Worldwide)",
+    "globalSector": "Global Commodity Sector",
+    "resolutionTypes": {
+      "war_ban": "War Ban",
+      "arms_embargo": "Arms Sales Embargo",
+      "economic_embargo": "Economic Embargo",
+      "military_invasion": "Invasion Resolution",
+      "production_ban": "Production Ban"
+    },
     "unResolutionBadge": "UN General Assembly Resolution",
-    "openResolution": "VIEW UN RESOLUTION DETAILS →"
+    "openResolution": "VIEW UN RESOLUTION DETAILS →",
+    "openEmbassy": "Open Embassy →",
+    "openBilateralDiplomacy": "Open Bilateral Diplomacy →",
+    "openCountryDetails": "Open Country Details"
   },
   "basicNeeds": {
     "electricTitle": "⚡ ENERGY CRISIS: NATIONAL ELECTRICAL DEFICIT",
@@ -287,7 +385,42 @@
     "populationTitle": "👥 DEMOGRAPHIC & POPULATION CRISIS",
     "populationBadge": "Citizen Demographics",
     "solveNow": "RESOLVE NOW",
-    "resolved": "CRISIS RESOLVED"
+    "resolved": "CRISIS RESOLVED",
+    "buildPowerPlant": "Build Power Plant →",
+    "buildHousing": "Build Housing Facilities →",
+    "boostFood": "Boost Food Production →",
+    "buildPublicFacilities": "Build Public Facilities →",
+    "manageDemographics": "Manage Demographic Policy →"
+  },
+  "tradeValidation": {
+    "closedSystem": {
+      "title": "CLOSED ECONOMIC SYSTEM",
+      "message": "Your country follows the \"{economyName}\" economic system, which is too centralized for global trade.",
+      "reasons": {
+        "1": "The economic system is too centralized (score < 60)",
+        "2": "Government control over economic sectors is too strong",
+        "3": "Protectionist policies prevent access to international markets"
+      },
+      "solutions": {
+        "1": "Adopt a mixed or more open economic system",
+        "2": "Reduce centralization by privatizing strategic sectors",
+        "3": "Apply free-trade policies to open international markets"
+      }
+    },
+    "highCentralization": {
+      "title": "ECONOMIC CENTRALIZATION TOO HIGH",
+      "message": "Although your system is \"{economyName}\", average sector centralization is still too high (> 85) for global trade.",
+      "reasons": {
+        "1": "Economic sector centralization exceeds the threshold (85)",
+        "2": "Too many sectors are directly controlled by the government",
+        "3": "Economic policy remains predominantly centralized"
+      },
+      "solutions": {
+        "1": "Reduce centralization in manufacturing, trade, and banking",
+        "2": "Open property ownership to private investment",
+        "3": "Liberalize monetary and banking policy"
+      }
+    }
   },
   "tradeModals": {
     "closedTitle": "Trade Access Denied",
@@ -322,7 +455,9 @@
     "inProcess": "Processing",
     "officialInForce": "In Force",
     "policyImpact": "Policy Impact:",
-    "approval": "Approval"
+    "approval": "Approval",
+    "religionLabel": "Religion",
+    "ideologyLabel": "Ideology"
   },
   "governance": {
     "cabinetTitle": "Cabinet Restructuring",
@@ -333,14 +468,58 @@
     "activeResearch": "Active Research",
     "strategicSector": "Strategic Sector"
   },
+  "researchNotification": {
+    "sender": "National Research and Innovation Agency",
+    "focusTitle": "🔬 RESEARCH FOCUS CHANGED",
+    "focusMessage": "The government has directed national laboratories and research funding to prioritize {name} ({scope}). {description}",
+    "startTitle": "🔬 NEW RESEARCH STARTED",
+    "upgradeTitle": "🔬 RESEARCH UPGRADE STARTED",
+    "startMessage": "The government has started the research project \"{research}\". Estimated completion: {duration} days.",
+    "upgradeMessage": "The government has started upgrading \"{research}\" to level {level}. Estimated completion: {duration} days.",
+    "activeBadge": "Active Research",
+    "strategicSector": "Strategic Sector",
+    "newScope": "New Research",
+    "upgradeScope": "Level {level} Upgrade",
+    "fallbackName": "National Strategic Research",
+    "fallbackScope": "Technology Innovation and Development",
+    "fallbackDescription": "The government has established a new strategic research focus to accelerate national progress.",
+    "categories": {
+      "ekonomi": {
+        "name": "Economic and Industrial Research",
+        "scope": "Production, Manufacturing, Mining, and Logistics",
+        "description": "Developing manufacturing technology, improving mining supply-chain efficiency, automating production, and increasing national foreign-exchange revenue."
+      },
+      "militer": {
+        "name": "Military and Defense Research",
+        "scope": "Weapons, Cyberwarfare, and Nuclear Defense",
+        "description": "Modernizing land, sea, and air forces; strengthening cyber defense; developing ballistic-missile interceptors; and advancing military nuclear energy."
+      },
+      "diplomasi": {
+        "name": "Diplomacy and Intelligence Research",
+        "scope": "Geopolitics, Cryptography, and Global Intelligence",
+        "description": "Strengthening international intelligence networks, high-grade encryption, and diplomatic leverage at the UN."
+      }
+    }
+  },
   "security": {
     "nationalSecurityReport": "National Security Status Report",
     "affectedCitizens": "Affected Citizens",
-    "totalLoss": "Total Losses",
+    "totalLoss": "Total Loss",
     "responseCost": "Response Cost",
     "securityOperationsComplete": "SECURITY OPERATIONS COMPLETED",
-    "deploySecurity": "Deploy Security Operations",
+    "deploySecurity": "Deploy Security Operation",
     "alliedAid": "Allied Military Assistance",
+    "allyLabel": "Ally",
+    "attackerLabel": "Attacker",
+    "allianceStatus": "Alliance Status",
+    "activeStatus": "ACTIVE",
+    "deadlineLabel": "Response Deadline",
+    "rejectionPenaltyLabel": "Rejection Penalty",
+    "rejectionPenalty": "Relations {value}",
+    "aidApproved": "MILITARY AID APPROVED",
+    "requestRejected": "REQUEST REJECTED",
+    "requestExpired": "REQUEST HAS EXPIRED",
+    "requestPending": "REQUEST PENDING",
     "aidAccepted": "MILITARY AID ACCEPTED",
     "offerExpired": "OFFER EXPIRED",
     "aidRejected": "AID REJECTED",
@@ -350,7 +529,10 @@
     "warships": "Warships",
     "orgMembership": "International Organization Membership",
     "accepted": "Accepted",
-    "rejected": "Rejected"
+    "rejected": "Rejected",
+    "securityRisk": "Security Risk & Public Disorder",
+    "operationsComplete": "SECURITY OPERATIONS COMPLETED",
+    "ignore": "Ignore"
   },
   "electricityCrisis": {
     "hideDetail": "▲ Hide Details",
@@ -368,14 +550,435 @@
     "days": "days"
   },
   "demo": {
+    "policyMenuUnavailable": "The policy menu for this demand is not available yet.",
+    "currentlyInStreets": "are currently filling the streets.",
+    "economyUnavailableTitle": "Economic menu unavailable",
+    "economyUnavailableMessage": "Open this dialogue from an active game session to change policies.",
+    "generated": {
+      "subsidyTitle": "🔥 Mass Demonstration: Opposition to Cutting {subsidyName} Subsidies",
+      "subsidySender": "Labor, Student & Civil Society Coalition",
+      "subsidyMessage": "Protests erupted after the government withdrew the {subsidyName} subsidy. Around {demonstratorCount} people filled the streets, demanding restored aid and social protection.",
+      "priceSender": "Consumers' Union, Traders' Association & Community Groups",
+      "priceextremeTitle": "🔥 Emergency Riot & Demonstration: {itemName} Price Surge",
+      "priceextremeMessage": "Around {demonstratorCount} people blocked distribution centers after {itemName} prices jumped {levelJump} levels, from Rp {oldPrice} to Rp {newPrice}. Protesters demand the policy be reversed.",
+      "pricestandardTitle": "📢 Public Demonstration: Protest Against {itemName} Price Increase",
+      "pricestandardMessage": "Around {demonstratorCount} residents protested the increase in {itemName} prices from Rp {oldPrice} to Rp {newPrice}. Consumer groups are calling for price stabilization.",
+      "taxTitle": "🔥 National Strike & Demonstration: Opposition to {taxName} Hike",
+      "taxSender": "National Federation of Labor Unions & Industry Associations",
+      "taxMessage": "Around {demonstratorCount} workers launched a strike after {taxName} rose by {rateDifference} points, from {oldRate}% to {newRate}%. Protesters demand the policy be withdrawn."
+    },
     "cause": "Cause",
+    "actions": {
+      "ignored": "The government did not respond to the demonstration. It is marked as ignored, and protests continue.",
+      "fulfilled": {
+        "subsidi": "The government accepted the subsidy demands. Protesters dispersed, and the President's approval rose by {bonus} points.",
+        "harga": "The government accepted the price adjustment demands. Protesters dispersed, and the President's approval rose by {bonus} points.",
+        "pajak": "The government accepted the tax review demands. Protesters dispersed, and the President's approval rose by {bonus} points."
+      },
+      "dialogStarted": "The government opened a dialogue forum with protest representatives."
+    },
+    "options": {
+      "water_cannon": {
+        "title": "Water Cannon", "subtitle": "High-pressure water spray", "description": "Uses a high-pressure water stream to disperse the crowd without causing fatal injuries.", "effectiveness": "Low (40% chance of dispersal)", "casualties": "0% fatalities", "impact": "Satisfaction -5, approval -2. Failure may make the crowd more aggressive and prompt them to mock security forces."
+      },
+      "gas_air_mata": {
+        "title": "Tear Gas", "subtitle": "CS gas for crowd dispersal", "description": "Fires CS gas into the crowd, causing eye and respiratory irritation.", "effectiveness": "Medium (70% chance of dispersal)", "casualties": "1%–3% injured or short of breath", "impact": "Satisfaction -10, approval -5. May prompt mild concern from the UN."
+      },
+      "jam_malam": {
+        "title": "Curfew & Blockade", "subtitle": "Civil emergency, internet shutdown, and road closures", "description": "Declares a civil emergency, closes access roads to the capital, and shuts down internet communications.", "effectiveness": "Medium (takes 2 days)", "casualties": "0% fatalities", "impact": "Satisfaction -8, approval -5. Daily cash flow temporarily slows as business activity is disrupted."
+      },
+      "brimob": {
+        "title": "Riot Police", "subtitle": "Shielded crowd-control units", "description": "Deploys shielded riot police with batons to arrest or push back demonstrators.", "effectiveness": "High (85% chance of dispersal)", "casualties": "5%–12% seriously injured or critical", "impact": "Satisfaction -15, approval -10. Triggers UN human rights condemnation and a 20-point decline in diplomatic relations."
+      },
+      "militer": {
+        "title": "Military (Fully Armed)", "subtitle": "Armored vehicles, tanks, and armed personnel", "description": "Deploys armored vehicles, tanks, and firearms to forcibly disperse the crowd.", "effectiveness": "Very high (95% chance of dispersal)", "casualties": "20%–35% fatalities", "impact": "Satisfaction -25, approval -20. The UN is very likely to convene an emergency session on an economic embargo."
+      }
+    },
+    "causes": { "subsidi": "Subsidy", "harga": "Prices", "pajak": "Taxes" },
+    "statuses": { "active": "Ongoing", "inDialogue": "In dialogue", "ignored": "Ignored", "completed": "Completed", "riot": "Riot", "ongoing": "Ongoing" },
+    "tooltips": { "hardPower": "Use security forces to disperse the crowd by force", "dialog": "Hold a public dialogue and hear the demonstrators' concerns", "fulfill": "Meet the demonstrators' economic demands to ease public anger", "ignore": "Leave the demonstration without government intervention" },
     "mass": "Crowd",
-    "people": "people",
+    "people": "citizens",
     "status": "Status",
     "ongoing": "ONGOING",
-    "hardPower": "Crackdown",
-    "dialog": "Public Dialog",
+    "hardPower": "Take Firm Action",
+    "dialog": "Open Dialogue",
     "fulfill": "Fulfill Demands",
-    "ignore": "Ignore Protest"
+    "ignore": "Ignore Action",
+    "disperseModalTitle": "National Security Action",
+    "disperseModalSub": "Security Operation Options",
+    "operationCost": "Operation Cost",
+    "cancel": "Cancel",
+    "confirmDisperse": "Yes, Disperse!",
+    "understood": "Understood",
+    "securityUnit": "Domestic Security Unit",
+    "treasuryBalance": "Treasury",
+    "operationOptions": "Security Operation Options",
+    "effectiveness": "Effectiveness",
+    "successChance": "Chance of Success",
+    "casualties": "Casualties",
+    "consequences": "Impact & Consequences",
+    "highUNReviewRisk": "Very high risk of an international UN human rights review.",
+    "sanctionsLikely": "A UN sanctions and embargo resolution is highly likely!",
+    "executeOperation": "Execute Operation",
+    "insufficientFunds": "Insufficient Funds",
+    "crowdImpact": "Impact on Demonstrators",
+    "injuryImpact": "Gas irritation, trampling, and physical injuries",
+    "populationImpact": "Reduces the country's official population",
+    "dispersed": "The crowd was dispersed",
+    "stillAtSite": "Still holding their ground",
+    "confirmTitle": "Confirm Security Operation",
+    "confirmSubtitle": "Crowd Dispersal Action",
+    "confirmWarning": "This action utilizes state coercive force. Clashes, casualties, public satisfaction drop, and approval rating decline are unavoidable!",
+    "confirmQuestion": "Are you certain you want to deploy this dispersal operation?",
+    "reportTitleSuccess": "🚨 CROWD DISPERSAL OPERATION REPORT",
+    "reportTitleClash": "🔥 CLASH & RIOT REPORT",
+    "injured": "Injured Casualties",
+    "killed": "Fatalities / Critical",
+    "remainingProtesters": "Remaining Protesters",
+    "dialogForumTitle": "Open Dialogue Forum",
+    "warningLabel": "Warning",
+    "backToGame": "Back to Game",
+    "laborLeader": "Labor Union Leader",
+    "protesterRep": "Protester Representative",
+    "anger": "Crowd Anger",
+    "trust": "Public Trust",
+    "demandsTitle": "Public Demands List",
+    "refreshChoices": "Change Response Options",
+    "disperseWithPolice": "Disperse with Riot Police",
+    "sessionStarted": "Open dialogue initiated. Choose the best response to de-escalate tensions.",
+    "negotiationFailed": "The negotiation service could not be reached.",
+    "policyNegotiationFailed": "The policy negotiation service could not be reached.",
+    "policyChangesConfirmed": "The government confirms the demands: {demand}. Changes: {changes}.",
+    "policyFollowUpCommitted": "The government commits to following up on the demands: {demand}."
+  },
+  "economicChange": {
+    "tax": {
+      "sender": "Directorate General of Taxation & Business Associations",
+      "increaseTitle": "📢 Public Protest: {taxName} Tax Raised ({oldRate}% ➔ {newRate}%)",
+      "increaseMessage": "Workers' unions and businesses have voiced discontent over the {taxName} rate increase from {oldRate}% to {newRate}%. The policy is seen as reducing purchasing power and raising industry costs.",
+      "decreaseTitle": "🎉 Public Approval: {taxName} Tax Reduced ({oldRate}% ➔ {newRate}%)",
+      "decreaseMessage": "The public and industry welcome the {taxName} rate reduction from {oldRate}% to {newRate}%. The move is expected to boost domestic consumption and investment competitiveness."
+    },
+    "price": {
+      "sender": "Market Traders' & Consumers' Association",
+      "increaseTitle": "💥 Price Surge: {itemName} Rises (Rp {oldPrice} ➔ Rp {newPrice})",
+      "increaseMessage": "Households and small traders report a rise in {itemName} prices from Rp {oldPrice} to Rp {newPrice}. The increase is putting pressure on lower-income households' purchasing power.",
+      "decreaseTitle": "🛒 More Affordable: {itemName} Price Falls (Rp {oldPrice} ➔ Rp {newPrice})",
+      "decreaseMessage": "The public welcomes the drop in {itemName} prices from Rp {oldPrice} to Rp {newPrice}. More affordable food helps stabilize inflation and improve public satisfaction."
+    },
+    "subsidy": {
+      "sender": "Ministry of Finance & Civil Society Organizations",
+      "grantedTitle": "✨ Subsidy Allocated: {subsidyName} Approved",
+      "grantedMessage": "The public welcomes the government's allocation of the {subsidyName} subsidy, which is seen as supporting purchasing power and public welfare.",
+      "withdrawnTitle": "⚠️ Public Discontent: {subsidyName} Subsidy Withdrawn",
+      "withdrawnMessage": "Discontent and protests have emerged after the government withdrew the {subsidyName} subsidy. The budget adjustment may increase the cost of living."
+    },
+    "system": {
+      "sender": "Coordinating Ministry for Economic Affairs & National Economic Council",
+      "title": "📊 Economic System Reform: {systemName} ({sliderValue}%)",
+      "message": "The government has updated the national economic policy orientation to {systemName} (spectrum score: {sliderValue}%). The change affects pricing, strategic asset ownership, labor regulation, and foreign trade.",
+      "label": "System",
+      "spectrum": "Spectrum",
+      "applied": "Policy Card Applied"
+    }
+  },
+  "policyNotice": {
+    "policyImpact": "Policy Impact",
+    "ministry": "Ministry",
+    "activeResearch": "Active Research",
+    "strategicSector": "Strategic Sector"
+  },
+  "durationUnits": {
+    "monthOne": "{count} month",
+    "monthMany": "{count} months",
+    "yearOne": "{count} year",
+    "yearMany": "{count} years"
+  },
+  "dynamicNotifications": {
+    "pbb": {
+      "sender": "United Nations Secretariat",
+      "unauthorizedAttackCancelledTitle": "🕊️ Unauthorized Attack Plan Cancelled",
+      "unauthorizedAttackCancelledMessage": "The attack by {attacker} against {target} was not launched. Unauthorized attacks have a {chance}% chance of proceeding; this attempt was cancelled before the conflict began.",
+      "unauthorizedAttacksCancelledTitle": "🕊️ Unauthorized Attacks Cancelled",
+      "unauthorizedAttacksCancelledMessage": "{count} unauthorized AI conflict plans were cancelled. Attacks without a resolution have a {chance}% chance to proceed; AI attacks that pass may continue without sanctions.",
+      "warBanCancelledTitle": "🕊️ UN War Ban Stopped Attacks",
+      "warBanCancelledMessage": "{count} AI attack plans were cancelled. The war ban is active; only {chance}% of plans that pass mandate checks or the violation chance may proceed."
+    },
+    "espionage": {
+      "incomingSender": "National Intelligence Agency ({partner})",
+      "incomingEffect": "-5% military strength and HP for 30–60 days if left unresolved.",
+      "incomingTitles": {
+        "ringan": "🕵️ Minor Espionage: Border Infiltration by {partner}",
+        "sedang": "⚠️ Espionage Alert: Military Base Infiltration by {partner}",
+        "berat": "🚨 Major Espionage: {partner} Spy Network"
+      },
+      "incomingMessages": {
+        "ringan": "Commander, a foreign intelligence agent from {partner} was caught trying to cross the border post without authorization. Border guards stopped their initial movement.",
+        "sedang": "Security alert! An agent from {partner} infiltrated a military installation in the eastern region. Classified weapons-effectiveness documents may be exposed.",
+        "berat": "INTELLIGENCE EMERGENCY! A high-level spy network from {partner} is leaking strategic national research data and the positions of our military fleets!"
+      },
+      "targets": {
+        "default": "National Intelligence Information",
+        "military": "Military & Defense Intelligence",
+        "economy": "Economic & Budget Intelligence"
+      },
+      "offensiveSuccessTitle": "🕵️ Espionage Mission Succeeded: {country}",
+      "offensiveFailureTitle": "❌ Espionage Mission Failed: {country}",
+      "offensiveMilitaryMessage": "Intelligence operations report: an agent extracted military data ({target}) from {country}. Total units: {totalUnits}; land: {landUnits}, air: {airUnits}, and naval: {navalUnits}.",
+      "offensiveEconomyMessage": "Intelligence operations report: an agent obtained fiscal data ({target}) from {country}. Budget: {budget} NEO; estimated daily tax revenue: {dailyTax} NEO.",
+      "offensiveGenericMessage": "Intelligence operations report: our agent infiltrated {country} and extracted strategic data ({target}). The opposing country's classified documents were encrypted and sent to headquarters.",
+      "offensiveFailureMessage": "Intelligence emergency report: the espionage mission against {country} ({target}) failed. The agent was detected by the opposing counterintelligence network and had to be evacuated.",
+      "offensiveSuccessEffect": "Intelligence data ({target}) from {country} was secured.",
+      "offensiveMilitaryEffect": "Military data ({target}) secured: {totalUnits} units in total.",
+      "offensiveEconomyEffect": "Fiscal data ({target}) secured: budget {budget} NEO, estimated daily tax {dailyTax} NEO.",
+      "offensiveFailureEffect": "Mission failed. The agent did not obtain {target}.",
+      "offensiveSender": "National Intelligence Agency (Special Operations)"
+    },
+    "sabotage": {
+      "incomingMessage": "{eventName} linked to {partner} has been detected. Protect critical facilities and address the damage immediately.",
+      "incomingSender": "Ministry of Defense & Security",
+      "defaultTarget": "Military Facility",
+      "targetOptions": {
+        "militaryFacility": "Military Facilities & Factories",
+        "energyInfrastructure": "Electricity & Energy Infrastructure",
+        "foodProduction": "Food Production",
+        "manufacturing": "Manufacturing"
+      },
+      "eventNames": {
+        "infrastruktur": "national infrastructure sabotage",
+        "militer": "military facility explosion",
+        "siber": "cyberattack on defense networks",
+        "nuklir": "nuclear facility sabotage"
+      },
+      "effects": {
+        "infrastruktur": "-5% electricity buildings and energy minerals if left unresolved",
+        "militer": "-5% military equipment permanently if left unresolved",
+        "siber": "-5% military equipment permanently if left unresolved",
+        "nuklir": "-5% military equipment permanently if left unresolved"
+      },
+      "offensiveSuccessTitle": "💣 Sabotage Mission Succeeded: {country}",
+      "offensiveFailureTitle": "❌ Sabotage Mission Failed: {country}",
+      "offensiveSuccessMessage": "The covert operation damaged {target} in {country}. Damage to the opposing installation is confirmed.",
+      "offensiveFailureMessage": "The operation against {target} in {country} was thwarted by the target's defense systems.",
+      "offensiveSuccessEffect": "{target} was damaged and the target's military strength was reduced.",
+      "offensiveFailureEffect": "The mission failed. The {target} installation remains intact.",
+      "offensiveSender": "Special Forces & Combat Intelligence Command"
+    },
+    "socialCultural": {
+      "religionValues": {
+        "Islam": "Islam",
+        "Katolik": "Catholicism",
+        "Protestan": "Protestantism",
+        "Hindu": "Hinduism",
+        "Buddha": "Buddhism",
+        "Shinto": "Shintoism",
+        "Yahudi": "Judaism",
+        "Ateisme": "Atheism"
+      },
+      "ideologyValues": {
+        "Demokrasi": "Democracy",
+        "Monarki": "Monarchy",
+        "Kapitalisme": "Capitalism",
+        "Sosialisme": "Socialism",
+        "Komunisme": "Communism",
+        "Nasionalisme": "Nationalism",
+        "Konservatisme": "Conservatism",
+        "Liberalisme": "Liberalism",
+        "Otoritarianisme": "Authoritarianism"
+      },
+      "religion": {
+        "title": "☪️ Official State Religion Changed: {from} ➔ {to}",
+        "scheduledTitle": "Religion Change Scheduled: {from} ➔ {to}",
+        "message": "The government changed the state's official religion from {from} to {to}. The decision is affecting social dynamics.",
+        "scheduledMessage": "The religion change from {from} to {to} is scheduled to complete on {completionDate}. It will take effect after that date.",
+        "sender": "Ministry of Religion & National Culture"
+      },
+      "ideology": {
+        "title": "🏛️ National Ideology Changed: {from} ➔ {to}",
+        "scheduledTitle": "Ideology Change Scheduled: {from} ➔ {to}",
+        "message": "The government changed the national ideology from {from} to {to}, affecting national social and economic policy.",
+        "scheduledMessage": "The ideology change from {from} to {to} is scheduled to complete on {completionDate}. It will take effect after that date.",
+        "sender": "National Ideology Advisory Council"
+      },
+      "doctrine": {
+        "title": "📜 New Policy Doctrine: {sliderLabel}",
+        "message": "The government updated the {sliderLabel} indicator from {fromValue}% to {toValue}%.",
+        "sender": "Ministry of Law, Human Rights & National Policy",
+        "stats": {
+          "approval": "Approval",
+          "stability": "Stability",
+          "diplomacy": "Diplomacy",
+          "economy": "Economy",
+          "gdp": "GDP",
+          "population": "Population",
+          "satisfaction": "Satisfaction",
+          "humanRights": "Human Rights",
+          "tourism": "Tourism",
+          "foreignInvestment": "Foreign Direct Investment",
+          "localIndustry": "Local Industry"
+        },
+        "sliders": {
+          "speechScore": "Freedom of Speech & Press",
+          "religionScore": "Freedom of Religion",
+          "demoScore": "Right to Demonstrate",
+          "transparencyScore": "Public Budget Transparency",
+          "mediaScore": "Media & Broadcasting",
+          "internetScore": "Internet & Digital Access",
+          "borderScore": "Borders & Immigration",
+          "tradeScore": "Trade & Markets",
+          "diplomacyScore": "Diplomacy & Multilateral Affairs"
+        }
+      }
+    },
+    "basicNeeds": {
+      "electricity": {
+        "title": "⚡ POWER SHORTAGE WARNING: {step}% Supply Deficit",
+        "sender": "PT PLN (Persero) & National Power Grid",
+        "message": "The national power grid has a supply deficit of {deficit} MW ({step}% of total demand). Current production is {production} MW, while estimated consumption is {consumption} MW. Activate additional power plants to prevent rolling blackouts. This crisis lowers public satisfaction by {ratingPenalty} points."
+      },
+      "housing": {
+        "title": "🏠 HOUSING SHORTAGE WARNING: Residential Needs",
+        "criticalTitle": "🏠 CRITICAL HOUSING CRISIS: Satisfaction Index {satisfaction}/100!",
+        "sender": "Ministry of Housing & Settlement Areas",
+        "message": "The housing satisfaction index is {satisfaction}/100. {shortage} people lack adequate housing (only {percentage}% of a population of {population} are served). Build subsidized housing, apartments, or other homes to address the crisis."
+      },
+      "food": {
+        "title": "⚠️ FOOD SHORTAGE: {count} of {total} Categories Need Attention",
+        "sender": "Ministry of Agriculture & National Food Agency",
+        "message": "Food coverage for {count} of {total} core categories is below target. Categories include staple foods, animal and plant proteins, vegetables, and basic goods. Increase production, imports, or distribution in under-supplied categories."
+      },
+      "publicServices": {
+        "title": "🏛️ PUBLIC SERVICES CRISIS: Service Index {score}/100!",
+        "sender": "Ministry of Development & National Public Services",
+        "message": "The public services satisfaction index is {score}/100, below the minimum threshold of 20/100. Infrastructure, education, healthcare, law enforcement, sports, and commercial services cannot meet the needs of {population} people. Build more public facilities."
+      },
+      "population": {
+        "title": "⚠️ Population Decline Warning",
+        "sender": "Ministry of Home Affairs",
+        "message": "The population of {country} is declining by a net {dailyLoss} people per day. If this continues, the decline is projected to reach {monthlyLoss} people in 30 days. Review food, housing, and healthcare policies."
+      }
+    },
+    "cabinet": {
+      "sender": "Cabinet Secretariat & National Council of Ministries",
+      "upgradeTitle": "🏛️ CABINET UPGRADE: {department} (Level {oldLevel} ➔ Level {newLevel})",
+      "upgradeMessage": "The President and Cabinet approved additional funding and increased operational capacity for {department}, from Level {oldLevel} to Level {newLevel}. This strengthens {effect}.",
+      "restructureTitle": "📉 CABINET RESTRUCTURING: {department} (Level {oldLevel} ➔ Level {newLevel})",
+      "restructureMessage": "The government adjusted ministry spending efficiency for {department}, from Level {oldLevel} to Level {newLevel}."
+    },
+    "organization": {
+      "names": {
+        "interpol": "Interpol",
+        "who": "World Health Organization (WHO)",
+        "unesco": "UN Educational, Scientific and Cultural Organization (UNESCO)",
+        "wto": "World Trade Organization (WTO)",
+        "ilo": "International Labour Organization (ILO)",
+        "fao": "Food and Agriculture Organization (FAO)",
+        "imo": "International Maritime Organization (IMO)",
+        "itu": "International Telecommunication Union (ITU)",
+        "wmo": "World Meteorological Organization (WMO)",
+        "asean": "Association of Southeast Asian Nations (ASEAN)",
+        "eu": "European Union (EU)",
+        "arabLeague": "Arab League",
+        "africanUnion": "African Union (AU)",
+        "oic": "Organisation of Islamic Cooperation (OIC)",
+        "brics": "BRICS (Brazil, Russia, India, China, South Africa)",
+        "nato": "North Atlantic Treaty Organization (NATO)",
+        "opec": "Organization of the Petroleum Exporting Countries (OPEC)",
+        "g20": "Group of Twenty (G20)"
+      },
+      "unCategory": "UN Organization",
+      "regionalCategory": "Regional Organization",
+      "acceptedTitle": "Membership in {organization} Accepted",
+      "rejectedTitle": "Membership in {organization} Rejected",
+      "sender": "{organization} Secretariat",
+      "acceptedMessage": "After 30 days of negotiations, {country}'s application to join {organization} was accepted. Membership and its benefits are now active.",
+      "rejectedMessage": "After 30 days of negotiations, {country}'s application to join {organization} was rejected. The country may apply again in the future."
+    },
+    "security": {
+      "category": "Police Incident",
+      "title": "🚔 POLICE INCIDENT: {eventName}",
+      "sender": "NATIONAL POLICE ({country})",
+      "message": "A {eventName} incident was reported in {country}. Police are securing affected residents, investigating the incident, and taking steps to restore public safety.",
+      "risk": "Security risk across public health and law enforcement: {percent}%",
+      "people": "people",
+      "events": {
+        "armedRobbery": "Armed Robbery",
+        "financialRobbery": "Financial Center Robbery",
+        "burglary": "Burglary and Theft",
+        "organizedCrime": "Organized Crime Network",
+        "unrest": "Riot and Public Disorder",
+        "pickpocketing": "Public-Area Pickpocketing",
+        "vehicleTheft": "Vehicle Theft",
+        "digitalFraud": "Digital Fraud",
+        "vandalism": "Public-Facility Vandalism",
+        "kidnapping": "Kidnapping",
+        "extortion": "Business Extortion",
+        "humanTrafficking": "Human Trafficking"
+      }
+    },
+    "tradeModal": {
+      "recommendation1": "Change the economic system in Economic Policy.",
+      "recommendation2": "Lower the economic centralization score below 85.",
+      "recommendation3": "Consider a more open ideology and trade regulations.",
+      "reason1": "Extreme economic centralization (score above 85).",
+      "reason2": "A closed ideology increases state control.",
+      "reason3": "Protectionist friction with international trade blocs.",
+      "customReason": "Trade with {partner} does not meet national diplomatic and regulatory requirements. Current economic system: {economy}."
+    }
+  },
+  "dynamicEventTranslations": {
+    "disaster": {
+      "message": "{eventName} struck {country}, affecting {victims} people and causing losses of {loss} NEO. Send aid and begin evacuations immediately.",
+      "messageWithScale": "{eventName} struck {country}, affecting {victims} people and causing losses of {loss} NEO. {severityNote} Send aid and begin evacuations immediately.",
+      "sender": "NATIONAL DISASTER MANAGEMENT AGENCY ({country})",
+      "isolatedScale": "Field analysis confirms an isolated-scale disaster.",
+      "catastrophicScale": "Field analysis confirms a catastrophic disaster.",
+      "categories": { "geological": "Geological Disaster", "hydrometeorological": "Hydrometeorological Disaster", "fire": "Fire Disaster", "coastal": "Marine & Coastal Disaster", "environmentalHealth": "Environmental Health Crisis" },
+      "eventNames": {
+        "earthquakeLight": "Minor Earthquake", "earthquakeMajor": "Major Earthquake", "volcanicEruption": "Volcanic Eruption", "tsunami": "Tsunami", "landslide": "Landslide",
+        "majorFlood": "Major Flood", "flashFlood": "Flash Flood", "drought": "Prolonged Drought", "tropicalStorm": "Tropical Storm", "cyclone": "Tropical Cyclone", "tornado": "Tornado", "hailstorm": "Extreme Hailstorm",
+        "forestFire": "Forest Fire", "peatFire": "Peatland Fire", "industrialFire": "Industrial Fire", "settlementFire": "Dense-Settlement Fire", "coastalErosion": "Coastal Erosion", "waterspout": "Waterspout", "seaLevelRise": "Rising Sea Level",
+        "foodPoisoning": "Mass Food Poisoning", "waterContamination": "Drinking-Water Contamination", "airPollution": "Extreme Air Pollution", "hazardousWaste": "Hazardous-Waste Crisis", "heatwave": "Deadly Heatwave", "snowstorm": "Extreme Snowstorm and Frostbite", "sinkhole": "Sudden Giant Sinkhole", "refineryFire": "Oil Refinery and Depot Fire"
+      }
+    },
+    "outbreak": {
+      "title": "🦠 {outbreakType}: {eventName}",
+      "titleWithVariant": "🦠 {outbreakType}: {eventName} — {variant}",
+      "message": "{eventName} has been detected in {country}. There are {infected} infected people and an estimated {deaths} fatalities over {duration} days. Implement public-health measures immediately.",
+      "messageWithVariant": "{eventName} has been detected in {country}. There are {infected} infected people and an estimated {deaths} fatalities over {duration} days. Medical status: {variant}. Implement public-health measures immediately.",
+      "sender": "MINISTRY OF HEALTH & WHO ({country})",
+      "epidemic": "DISEASE OUTBREAK",
+      "pandemic": "GLOBAL PANDEMIC",
+      "localizedCluster": "Localized Cluster",
+      "superSpreader": "Super-spreader Strain Mutation",
+      "categories": { "infectious": "Infectious Disease (Epidemic)", "animalAndPlant": "Animal & Plant Disease (Epidemic)", "mutations": "Genetic Mutation & Superbug", "pandemic": "Global Pandemic" },
+      "eventNames": {
+        "dengue": "Dengue Fever Outbreak", "malaria": "Malaria Outbreak", "cholera": "Cholera Outbreak", "typhoid": "Typhoid Outbreak", "tuberculosis": "Tuberculosis Outbreak", "hepatitisA": "Hepatitis A Outbreak", "measles": "Measles Outbreak", "polio": "Polio Outbreak", "diphtheria": "Diphtheria Outbreak", "rabies": "Rabies Outbreak",
+        "avianFlu": "H5N1 Avian Influenza", "footAndMouth": "Foot-and-Mouth Disease (FMD)", "ricePlanthopper": "Rice Planthopper Infestation", "ganoderma": "Ganoderma Fungus", "tungro": "Rice Tungro Virus", "ratInfestation": "Mass Rat Infestation", "bananaWilt": "Banana Bacterial Wilt", "africanSwineFever": "African Swine Fever (ASF)",
+        "superbug": "Drug-Resistant Superbug Outbreak", "candidaAuris": "Deadly Candida Auris Outbreak", "autoimmune": "Mass Autoimmune Disease", "globalInfluenza": "Global Influenza Pandemic", "coronavirusVariant": "Mutated Coronavirus Pandemic", "pathogenX": "New Virus Pandemic (Pathogen X)", "mpox": "Monkeypox (Mpox) Pandemic", "hivVariant": "New HIV/AIDS Variant Pandemic", "zombieVirus": "Zombie Virus (Bio-Lab Outbreak)", "engineeredSpanishFlu": "Engineered Spanish Flu Mutation",
+        "mysteriousEncephalitis": "Mysterious Encephalitis Outbreak", "congoHemorrhagicFever": "Congo Hemorrhagic Fever Outbreak (CCHF)", "marburgVariant": "New Marburg Virus Subtype Pandemic", "redTide": "Marine Biotoxin Anomaly (Red Tide)"
+      }
+    },
+    "electricity": {
+      "title": "⚡ POWER CRISIS: {eventName} [{severity}]",
+      "message": "{eventName} in {country} has caused a {deficit} MW shortfall, affecting {areaCount} areas for an estimated {duration} days.",
+      "sender": "STATE ELECTRICITY COMPANY (PLN) — {country}",
+      "ratingImpact": "Rating decreased by {impact} points",
+      "severities": { "ringan": "MILD", "sedang": "MODERATE", "berat": "SEVERE", "kritis": "CRITICAL" },
+      "eventNames": { "mildShortage": "Minor Power Deficit", "substationMaintenance": "Main Substation Maintenance", "gasShortage": "Gas Supply Crisis for Gas Plants", "transmissionFault": "Main Transmission-Line Failure", "hydropowerDrought": "Drought Reduces Hydropower", "turbineFailure": "Coal-Plant Turbine Failure", "nationalEnergyCrisis": "National Energy Crisis", "systemicBlackout": "Large-Scale Systemic Blackout" },
+      "areas": {
+        "mediumHousing": "Mid-range residential areas", "commercialArea": "Commercial district", "lightIndustry": "Light industry", "cityCenterDistrict": "City-center district", "industrialZone": "Industrial zone", "primaryGasPlant": "Main gas power plant", "manufacturingIndustry": "Manufacturing industry", "tradeDistrict": "Trade district", "metropolitanArea": "Metropolitan area", "heavyIndustryZone": "Heavy-industry zone", "dataCenter": "Data center", "primaryHydroSystem": "Main hydropower system", "energyIntensiveIndustry": "Energy-intensive industry", "hospital": "Hospital", "governmentCenter": "Government center", "mainCoalPlant": "Main coal power plant", "strategicIndustrialZone": "Strategic industrial zone", "internationalAirport": "International airport", "mainPort": "Main port", "nationalGrid": "Entire national power grid", "vitalIndustry": "Critical industry", "healthFacilities": "Healthcare facilities", "transportSystem": "Transport system", "nationalCommunications": "National communications", "nationwideGrid": "Nationwide grid", "interconnectionGrid": "Interconnection grid", "criticalInfrastructure": "Critical infrastructure", "financialSector": "Financial sector", "emergencyServices": "Emergency services"
+      }
+    }
+  },
+  "tradeAccess": {
+    "reasons": {
+      "centralizationMonitored": "High centralization puts trade under international monitoring.",
+      "centralizationLimitsImports": "High centralization limits imports.",
+      "ideologyCentralizes": "The current ideology increases centralization.",
+      "religionRestrictsTrade": "Religion-based policy restricts global trade.",
+      "extremeCentralization": "Extreme centralization (score above 85)."
+    }
   }
 }

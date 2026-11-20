@@ -1,5 +1,5 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
-import { createInboxNotificationText } from '../../notificationMessage';
+import { createInboxNotificationText, getDefaultInboxText } from '../../notificationMessage';
 import {
   applyPencegahanSeparatismeBonus,
   applyGardaNasionalSeparatismeReduction,
@@ -52,12 +52,24 @@ export function generatePemberontakanNotification(
   dateStr: string,
   riskPercent?: number
 ): PemberontakanNotification {
-  const displayRisk = riskPercent !== undefined ? `${riskPercent}%` : 'Risiko Deklarasi Kemerdekaan';
+  const displayRisk = riskPercent !== undefined
+    ? `${riskPercent}%`
+    : getDefaultInboxText('side_inbox.defense.independenceDeclarationRisk');
+  const titleKey = 'side_inbox.defense.pemberontakanTitle';
+  const titleParams = { country: countryName };
+  const senderKey = 'side_inbox.defense.pemberontakanSender';
+  const senderParams = { country: countryName };
+  const effectTextKey = 'side_inbox.defense.pemberontakanEffect';
+  const effectTextParams = { risk: displayRisk };
 
   return {
     id: `pemberontakan-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title: `🔥 Pemberontakan Bersenjata di ${countryName}`,
-    sender: `Otoritas Keamanan ${countryName}`,
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    sender: getDefaultInboxText(senderKey, senderParams),
+    senderKey,
+    senderParams,
     ...createInboxNotificationText('side_inbox.notificationMessages.rebellion', {
       country: countryName,
     }),
@@ -69,7 +81,9 @@ export function generatePemberontakanNotification(
     provinceName: countryName,
     rebelGroup: `Kelompok Pemberontak ${countryName}`,
     costEM: 250,
-    effectText: `Risiko Separatisme: ${displayRisk} | Risiko Instabilitas Nasional`,
+    effectText: getDefaultInboxText(effectTextKey, effectTextParams),
+    effectTextKey,
+    effectTextParams,
     isHandled: false
   };
 }

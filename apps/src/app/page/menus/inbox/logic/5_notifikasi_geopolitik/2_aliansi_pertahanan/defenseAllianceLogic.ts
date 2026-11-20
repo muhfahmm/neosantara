@@ -1,5 +1,6 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import { getDisplayCountryName } from '@/app/logic/countryNameLogic';
+import { createInboxNotificationText, getDefaultInboxText } from '../../notificationMessage';
 
 export interface DefenseAllianceOfferNotification extends NotificationMessage {
   tradeType: 'penawaran_aliansi_pertahanan';
@@ -14,11 +15,24 @@ export function generateDefenseAllianceOfferNotification(
   dateStr: string
 ): DefenseAllianceOfferNotification {
   partnerCountry = getDisplayCountryName(partnerCountry);
+  const titleKey = 'side_inbox.geopolitics.allianceTitle';
+  const titleParams = { partner: partnerCountry };
+  const senderKey = 'side_inbox.offerMessages.defenseAllianceSender';
+  const senderParams = { partner: partnerCountry };
+  const message = createInboxNotificationText(
+    'side_inbox.offerMessages.defenseAlliance',
+    { user: userCountryName || 'Nusantara', partner: partnerCountry }
+  );
+
   return {
     id: `defense-alliance-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title: `🛡️ Penawaran Aliansi Pertahanan Militer: ${partnerCountry}`,
-    sender: `Dewan Keamanan & Pertahanan Tinggi ${partnerCountry}`,
-    message: `Presiden ${userCountryName || 'Nusantara'}, pemerintah ${partnerCountry} mengajukan perjanjian Aliansi Pertahanan Bersama (Pact of Mutual Defense). Dalam perjanjian ini, kedua negara saling berkomitmen memberikan pertahanan militer penuh dan akses intelijen strategis jika terjadi invasi atau serangan dari pihak asing. Apakah Anda bersedia meratifikasi aliansi pertahanan ini?`,
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    sender: getDefaultInboxText(senderKey, senderParams),
+    senderKey,
+    senderParams,
+    ...message,
     timestamp: dateStr,
     type: 'kesejahteraan',
     value: 0,

@@ -1,4 +1,5 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { createInboxNotificationText, getDefaultInboxText } from '../../notificationMessage';
 
 export interface PanganDefisitNotification extends NotificationMessage {
   tradeType: 'defisit_pangan';
@@ -13,14 +14,19 @@ export function generatePanganDefisitNotification(
   deficitCommodityNames: string[],
   dateStr: string
 ): PanganDefisitNotification {
-  const sampleNames = deficitCommodityNames.slice(0, 4).join(', ');
-  const extraText = deficitCommodityNames.length > 4 ? ` dan ${deficitCommodityNames.length - 4} komoditas lainnya` : '';
+  const titleKey = 'side_inbox.basicNeeds.food.title';
+  const titleParams = { count: deficitCount, total: totalSectors };
+  const messageKey = 'side_inbox.basicNeeds.food.message';
+  const messageParams = { count: deficitCount, total: totalSectors };
 
   return {
     id: `pangan-defisit-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
-    title: `⚠️ DEFISIT PANGAN: ${deficitCount} dari ${totalSectors} Kategori Perlu Perhatian`,
-    sender: `Kementerian Pertanian & Badan Pangan Nasional`,
-    message: `Coverage kebutuhan pangan untuk ${deficitCount} dari ${totalSectors} kategori inti berada di bawah target (termasuk ${sampleNames}${extraText}). Kategori yang digunakan adalah pangan pokok, protein hewani, protein nabati, sayur, serta olahan dan kebutuhan dasar. Tingkatkan produksi, impor, atau distribusi pada kategori yang tertinggal.`,
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    sender: getDefaultInboxText('side_inbox.basicNeeds.food.sender'),
+    senderKey: 'side_inbox.basicNeeds.food.sender',
+    ...createInboxNotificationText(messageKey, messageParams),
     timestamp: dateStr,
     type: 'kepuasan',
     value: deficitCount,

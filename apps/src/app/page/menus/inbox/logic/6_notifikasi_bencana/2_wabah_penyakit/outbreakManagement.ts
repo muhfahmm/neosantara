@@ -5,6 +5,7 @@
  * - Population decline selama outbreak
  * - Population recovery ketika bantuan diberikan
  */
+import { getDefaultInboxText } from '../../notificationMessage';
 
 // ===============================================
 // 📊 DISTRIBUSI PROBABILITAS TAHUNAN
@@ -14,6 +15,7 @@ export interface YearlyOutbreakDistribution {
   count: number;
   probability: number;
   description: string;
+  descriptionKey: string;
 }
 
 /**
@@ -54,24 +56,26 @@ export function getPandemicYearlyDistribution(
 ): YearlyOutbreakDistribution[] {
   const chancePercent = getPandemicBaseChancePercentByYear(countryDetail, currentDateStr);
   const prob = chancePercent / 100;
+  const noneKey = 'side_inbox.outbreak.distribution.pandemicNone';
+  const oneKey = 'side_inbox.outbreak.distribution.pandemicOne';
   return [
-    { count: 0, probability: Math.max(0, 1 - prob), description: `Tahun aman, 0 pandemi (${(100 - chancePercent)}%)` },
-    { count: 1, probability: prob, description: `1 pandemi dalam tahun ini (${chancePercent}%)` },
+    { count: 0, probability: Math.max(0, 1 - prob), description: getDefaultInboxText(noneKey, { chancePercent: 100 - chancePercent }), descriptionKey: noneKey },
+    { count: 1, probability: prob, description: getDefaultInboxText(oneKey, { chancePercent }), descriptionKey: oneKey },
   ];
 }
 
 export const PANDEMIC_YEARLY_DISTRIBUTION: YearlyOutbreakDistribution[] = [
-  { count: 0, probability: 0.90, description: 'Tahun aman, 0 pandemi (90%)' },
-  { count: 1, probability: 0.10, description: '1 pandemi dalam tahun ini (10%)' },
+  { count: 0, probability: 0.90, description: getDefaultInboxText('side_inbox.outbreak.distribution.pandemicNone', { chancePercent: 90 }), descriptionKey: 'side_inbox.outbreak.distribution.pandemicNone' },
+  { count: 1, probability: 0.10, description: getDefaultInboxText('side_inbox.outbreak.distribution.pandemicOne', { chancePercent: 10 }), descriptionKey: 'side_inbox.outbreak.distribution.pandemicOne' },
 ];
 
 /**
  * Epidemi: peluang terjadi sekitar 40% per tahun, setara sekitar 4,17% per bulan.
  */
 export const EPIDEMIC_YEARLY_DISTRIBUTION: YearlyOutbreakDistribution[] = [
-  { count: 0, probability: 0.60, description: 'Tahun aman, 0 epidemi (60%)' },
-  { count: 1, probability: 0.32, description: '1 epidemi dalam tahun ini (32%)' },
-  { count: 2, probability: 0.08, description: '2 epidemi dalam tahun ini (8%)' },
+  { count: 0, probability: 0.60, description: getDefaultInboxText('side_inbox.outbreak.distribution.epidemicNone', { chancePercent: 60 }), descriptionKey: 'side_inbox.outbreak.distribution.epidemicNone' },
+  { count: 1, probability: 0.32, description: getDefaultInboxText('side_inbox.outbreak.distribution.epidemicOne', { chancePercent: 32 }), descriptionKey: 'side_inbox.outbreak.distribution.epidemicOne' },
+  { count: 2, probability: 0.08, description: getDefaultInboxText('side_inbox.outbreak.distribution.epidemicTwo', { chancePercent: 8 }), descriptionKey: 'side_inbox.outbreak.distribution.epidemicTwo' },
 ];
 
 export function getMonthlyOutbreakChancePercent(annualChancePercent: number): number {
@@ -350,7 +354,7 @@ export function getActiveOutbreakPopulationLoss(
 export function handleMedicalAssistance(
   countryDetail: any,
   outbreakId: string
-): { restored: number; message: string } | null {
+): { restored: number; message: string; messageKey: string; messageParams?: Record<string, string | number> } | null {
   const allOutbreaks = Array.isArray(countryDetail?.active_outbreaks)
     ? countryDetail.active_outbreaks
     : [];
@@ -361,20 +365,24 @@ export function handleMedicalAssistance(
   }
 
   if (outbreak.isHandled) {
+    const messageKey = 'side_inbox.outbreak.medicalAssistance.alreadyHandled';
     return {
       restored: 0,
-      message: `Outbreak sudah ditangani sebelumnya`,
+      message: getDefaultInboxText(messageKey),
+      messageKey,
     };
   }
 
   // Populasi yang akan di-restore = korban yang tersisa
   const restored = outbreak.korban || 0;
+  const messageKey = 'side_inbox.outbreak.medicalAssistance.populationRestored';
+  const messageParams = { count: restored.toLocaleString('id-ID'), eventName: outbreak.eventName };
 
   return {
     restored,
-    message: `Populasi ${restored.toLocaleString(
-      'id-ID'
-    )} orang berhasil diselamatkan dari ${outbreak.eventName}`,
+    message: getDefaultInboxText(messageKey, messageParams),
+    messageKey,
+    messageParams,
   };
 }
 

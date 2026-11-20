@@ -6,11 +6,14 @@ import {
   applyKementerianLingkunganHidupDisasterImpactReduction,
   applyLayananDaruratDisasterDeathReduction,
 } from '@/app/page/bonus_logic';
+import { createInboxNotificationText, getDefaultInboxText } from '../../notificationMessage';
 
 export interface BencanaAlamNotification extends NotificationMessage {
   tradeType: 'bencana_alam';
   category: string;
+  categoryKey: string;
   eventName: string;
+  eventNameKey: string;
   korban: number; // Jumlah korban jiwa/terdampak
   totalKerugian: number; // Dalam NEO
   bantuanCost: number; // 1 NEO / Korban = korban
@@ -21,240 +24,212 @@ export interface BencanaAlamNotification extends NotificationMessage {
 }
 
 interface BencanaEventItem {
-  name: string;
+  nameKey: string;
   category: string;
   weight: number;
   korbanRange: [number, number];
   kerugianRange: [number, number];
-  descriptionTemplate: (country: string, korban: number, kerugian: number) => string;
 }
 
 export const BENCANA_ALAM_POOL: BencanaEventItem[] = [
   // Bencana Geologi (10%)
   {
-    name: 'Gempa Bumi Ringan',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.earthquakeLight',
     category: 'Bencana Geologi',
     weight: 4,
     korbanRange: [100, 800],
     kerugianRange: [100000, 500000],
-    descriptionTemplate: (country) => `Gempa bumi tektonik berkekuatan sedang mengguncang wilayah pesisir ${country}. Beberapa bangunan pemukiman warga mengalami retak dan kerusakan parsial.`,
   },
   {
-    name: 'Gempa Bumi Besar',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.earthquakeMajor',
     category: 'Bencana Geologi',
     weight: 2,
     korbanRange: [2000, 15000],
     kerugianRange: [2000000, 15000000],
-    descriptionTemplate: (country) => `Gempa bumi dahsyat mengguncang pusat kota ${country}, merobohkan berbagai fasilitas umum dan infrastruktur publik. Posko darurat telah didirikan untuk evakuasi warga.`,
   },
   {
-    name: 'Letusan Gunung Berapi',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.volcanicEruption',
     category: 'Bencana Geologi',
     weight: 2,
     korbanRange: [1500, 10000],
     kerugianRange: [1500000, 10000000],
-    descriptionTemplate: (country) => `Gunung berapi aktif melontarkan abu vulkanik pekat dan awan panas di sekitar wilayah lereng pemukiman ${country}. Warga radius 15 km diminta segera mengungsi.`,
   },
   {
-    name: 'Tsunami',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.tsunami',
     category: 'Bencana Geologi',
     weight: 1,
     korbanRange: [5000, 40000],
     kerugianRange: [5000000, 30000000],
-    descriptionTemplate: (country) => `Gelombang tsunami menerjang kawasan pantai ${country} menyusul gempa bawah laut mendalam. Terjadi kerusakan masif pada wilayah pelabuhan dan pemukiman pesisir.`,
   },
   {
-    name: 'Tanah Longsor',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.landslide',
     category: 'Bencana Geologi',
     weight: 1,
     korbanRange: [300, 2000],
     kerugianRange: [200000, 1200000],
-    descriptionTemplate: (country) => `Hujan deras terus-menerus memicu material tanah tebing longsor menimbun jalan utama dan perkampungan di wilayah dataran tinggi ${country}.`,
   },
 
   // Bencana Hidrometeorologi (20%)
   {
-    name: 'Banjir Besar',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.majorFlood',
     category: 'Bencana Hidrometeorologi',
     weight: 6,
     korbanRange: [1000, 8000],
     kerugianRange: [800000, 4000000],
-    descriptionTemplate: (country) => `Luapan sungai utama merendam ribuan rumah warga di kawasan perkotaan ${country}. Aktivitas ekonomi dan transportasi lumpuh total.`,
   },
   {
-    name: 'Banjir Bandang',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.flashFlood',
     category: 'Bencana Hidrometeorologi',
     weight: 3,
     korbanRange: [800, 5000],
     kerugianRange: [600000, 3000000],
-    descriptionTemplate: (country) => `Banjir bandang membawa lumpur dan material kayu menerjang pemukiman warga di sekitar DAS ${country} secara mendadak.`,
   },
   {
-    name: 'Kekeringan Panjang',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.drought',
     category: 'Bencana Hidrometeorologi',
     weight: 4,
     korbanRange: [2000, 12000],
     kerugianRange: [1000000, 6000000],
-    descriptionTemplate: (country) => `Fenomena kemarau ekstrem menyebabkan krisis air bersih dan kegagalan panen serentak di sektor pertanian ${country}.`,
   },
   {
-    name: 'Badai Tropis',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.tropicalStorm',
     category: 'Bencana Hidrometeorologi',
     weight: 4,
     korbanRange: [1200, 7000],
     kerugianRange: [900000, 4500000],
-    descriptionTemplate: (country) => `Badai tropis disertai angin kencang merobohkan tiang listrik dan merusak atap bangunan pemukiman warga di ${country}.`,
   },
   {
-    name: 'Siklon Tropis',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.cyclone',
     category: 'Bencana Hidrometeorologi',
     weight: 1,
     korbanRange: [3000, 20000],
     kerugianRange: [3000000, 18000000],
-    descriptionTemplate: (country) => `Siklon tropis skala besar menerjang garis pantai ${country} memicu hujan lebat dan angin destruktif berkecepatan tinggi.`,
   },
   {
-    name: 'Angin Puting Beliung',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.tornado',
     category: 'Bencana Hidrometeorologi',
     weight: 1,
     korbanRange: [200, 1500],
     kerugianRange: [150000, 800000],
-    descriptionTemplate: (country) => `Puting beliung berputar merusak permukiman padat penduduk dan pasar tradisional di beberapa kawasan ${country}.`,
   },
   {
-    name: 'Hujan Es Ekstrem',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.hailstorm',
     category: 'Bencana Hidrometeorologi',
     weight: 1,
     korbanRange: [150, 1000],
     kerugianRange: [100000, 600000],
-    descriptionTemplate: (country) => `Fenomena hujan es berukuran sedang merusak kendaraan publik dan lahan pertanian produktif di ${country}.`,
   },
 
   // Bencana Kebakaran (12%)
   {
-    name: 'Kebakaran Hutan',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.forestFire',
     category: 'Bencana Kebakaran',
     weight: 5,
     korbanRange: [1500, 10000],
     kerugianRange: [1200000, 7000000],
-    descriptionTemplate: (country) => `Kebakaran hutan hebat meluas di kawasan konservasi ${country}, memicu kabut asap tebal dan gangguan saluran pernapasan warga.`,
   },
   {
-    name: 'Kebakaran Lahan Gambut',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.peatFire',
     category: 'Bencana Kebakaran',
     weight: 3,
     korbanRange: [1000, 6000],
     kerugianRange: [800000, 4000000],
-    descriptionTemplate: (country) => `Kebakaran bawah tanah di lahan gambut ${country} membara dan menyebarkan asap pekat ke wilayah sekitar.`,
   },
   {
-    name: 'Kebakaran Industri',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.industrialFire',
     category: 'Bencana Kebakaran',
     weight: 2,
     korbanRange: [400, 3000],
     kerugianRange: [1000000, 5000000],
-    descriptionTemplate: (country) => `Ledakan dan kebakaran hebat melanda kawasan pabrik manufaktur di zona industri ${country}.`,
   },
   {
-    name: 'Kebakaran Permukiman Padat',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.settlementFire',
     category: 'Bencana Kebakaran',
     weight: 2,
     korbanRange: [500, 4000],
     kerugianRange: [400000, 2500000],
-    descriptionTemplate: (country) => `Kebakaran meluas menghanguskan ratusan rumah di kawasan permukiman padat ibu kota ${country}.`,
   },
 
   // Bencana Laut & Pesisir (8%)
   {
-    name: 'Abrasi Pantai',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.coastalErosion',
     category: 'Bencana Laut & Pesisir',
     weight: 4,
     korbanRange: [200, 1500],
     kerugianRange: [150000, 900000],
-    descriptionTemplate: (country) => `Pengikisan garis pantai mengancam pondasi bangunan desa nelayan dan infrastruktur pesisir di ${country}.`,
   },
   {
-    name: 'Puting Beliung Laut',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.waterspout',
     category: 'Bencana Laut & Pesisir',
     weight: 2,
     korbanRange: [300, 2000],
     kerugianRange: [250000, 1200000],
-    descriptionTemplate: (country) => `Puting beliung di kawasan perairan menghempaskan kapal-kapal nelayan dan merusak fasilitas dermaga ${country}.`,
   },
   {
-    name: 'Kenaikan Air Laut',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.seaLevelRise',
     category: 'Bencana Laut & Pesisir',
     weight: 2,
     korbanRange: [800, 5000],
     kerugianRange: [600000, 3500000],
-    descriptionTemplate: (country) => `Fenomena banjir rob pasang laut merendam jalan perkotaan dan fasilitas pelabuhan utama di ${country}.`,
   },
 
   // Krisis Kesehatan Lingkungan (10%)
   {
-    name: 'Keracunan Massal Pangan',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.foodPoisoning',
     category: 'Krisis Kesehatan Lingkungan',
     weight: 4,
     korbanRange: [300, 2500],
     kerugianRange: [200000, 1000000],
-    descriptionTemplate: (country) => `Insiden keracunan bahan pangan terkontaminasi menyebabkan ratusan warga di ${country} harus dirawat intensif.`,
   },
   {
-    name: 'Keracunan Air Bersih',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.waterContamination',
     category: 'Krisis Kesehatan Lingkungan',
     weight: 3,
     korbanRange: [500, 4000],
     kerugianRange: [350000, 1800000],
-    descriptionTemplate: (country) => `Pencemaran zat kimia pada sumber air minum publik mengakibatkan krisis pasokan air bersih di ${country}.`,
   },
   {
-    name: 'Polusi Udara Ekstrem',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.airPollution',
     category: 'Krisis Kesehatan Lingkungan',
     weight: 2,
     korbanRange: [1000, 7000],
     kerugianRange: [500000, 2500000],
-    descriptionTemplate: (country) => `Indeks kualitas udara memburuk ke tingkat berbahaya di perkotaan ${country}, meningkatkan kasus ISPA massal.`,
   },
   {
-    name: 'Krisis Limbah B3',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.hazardousWaste',
     category: 'Krisis Kesehatan Lingkungan',
     weight: 1,
     korbanRange: [400, 3000],
     kerugianRange: [400000, 2000000],
-    descriptionTemplate: (country) => `Kebocoran limbah bahan berbahaya dan beracun dari industri mencemari area permukiman warga ${country}.`,
   },
   // Bencana Ekstrem Anomali / Cuaca Tak Terduga
   {
-    name: 'Gelombang Panas Mematikan',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.heatwave',
     category: 'Bencana Hidrometeorologi',
     weight: 2,
     korbanRange: [800, 6000],
     kerugianRange: [700000, 3500000],
-    descriptionTemplate: (country) => `Anomali iklim memicu gelombang panas ekstrem dengan suhu menembus rekor tertinggi, melumpuhkan aktivitas publik di ${country}.`,
   },
   {
-    name: 'Badai Salju & Frostbite Ekstrem',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.snowstorm',
     category: 'Bencana Hidrometeorologi',
     weight: 1.5,
     korbanRange: [500, 4500],
     kerugianRange: [600000, 3000000],
-    descriptionTemplate: (country) => `Penurunan suhu anjlok secara drastis disertai badai pembekuan, memutus jaringan transmisi listrik dan logistik ${country}.`,
   },
   {
-    name: 'Sinkhole Raksasa Tiba-Tiba',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.sinkhole',
     category: 'Bencana Geologi',
     weight: 1,
     korbanRange: [200, 1800],
     kerugianRange: [400000, 2200000],
-    descriptionTemplate: (country) => `Runtuhan tanah misterius berskala masif (sinkhole) terbentuk secara tiba-tiba di kawasan urban ${country}, menelan bangunan dan ruas jalan utama.`,
   },
   {
-    name: 'Kebakaran Kilang & Depo Minyak',
+    nameKey: 'side_inbox.dynamicEventTranslations.disaster.eventNames.refineryFire',
     category: 'Bencana Kebakaran',
     weight: 1.5,
     korbanRange: [400, 3500],
     kerugianRange: [1500000, 8000000],
-    descriptionTemplate: (country) => `Insiden kebakaran hebat melahap tangki kilang minyak strategis di ${country}, memicu ledakan beruntun dan ancaman krisis bahan bakar.`,
   },
 ];
 
@@ -289,16 +264,16 @@ function generateIncidentNotification(
   // Variabilitas Skala Kejadian (Bisa Skala Kecil/Lokal, Sedang, hingga Skala Ekstrem / Mega Disasters)
   const severityRoll = Math.random();
   let severityMultiplier = 1.0;
-  let severityNote = "";
+  let severityNoteKey: string | undefined;
 
   if (severityRoll < 0.15) {
     // 15% Kemungkinan Kejadian Anomali Ringan / Terisolasi
     severityMultiplier = 0.4 + Math.random() * 0.3; // 40% - 70%
-    severityNote = " (Skala Terisolasi)";
+    severityNoteKey = 'side_inbox.dynamicEventTranslations.disaster.isolatedScale';
   } else if (severityRoll > 0.85) {
     // 15% Kemungkinan Kejadian Katastropik Ekstrem Tak Terduga
     severityMultiplier = 1.6 + Math.random() * 0.9; // 160% - 250%
-    severityNote = " (Skala Bencana Katastropik)";
+    severityNoteKey = 'side_inbox.dynamicEventTranslations.disaster.catastrophicScale';
   } else {
     // 70% Fluktuasi Reguler
     severityMultiplier = 0.8 + Math.random() * 0.5; // 80% - 130%
@@ -319,20 +294,51 @@ function generateIncidentNotification(
   const bantuanCost = korban;
 
   const country = userCountryName || 'Indonesia';
-  const message = `${selectedEvent.descriptionTemplate(country, korban, totalKerugian)}${severityNote ? ` [Status Analisis Lapangan: Terkonfirmasi Bencana${severityNote}]` : ''}`;
+  const eventName = getDefaultInboxText(selectedEvent.nameKey);
+  const categoryKeyByLabel: Record<string, string> = {
+    'Bencana Geologi': 'side_inbox.dynamicEventTranslations.disaster.categories.geological',
+    'Bencana Hidrometeorologi': 'side_inbox.dynamicEventTranslations.disaster.categories.hydrometeorological',
+    'Bencana Kebakaran': 'side_inbox.dynamicEventTranslations.disaster.categories.fire',
+    'Bencana Laut & Pesisir': 'side_inbox.dynamicEventTranslations.disaster.categories.coastal',
+    'Krisis Kesehatan Lingkungan': 'side_inbox.dynamicEventTranslations.disaster.categories.environmentalHealth',
+  };
+  const categoryKey = categoryKeyByLabel[selectedEvent.category];
+  if (!categoryKey) throw new Error(`Missing disaster category translation key: ${selectedEvent.category}`);
+  const titleKey = 'side_inbox.disaster.naturalTitle';
+  const titleParams = { name: eventName, province: country };
+  const messageKey = severityNoteKey
+    ? 'side_inbox.dynamicEventTranslations.disaster.messageWithScale'
+    : 'side_inbox.dynamicEventTranslations.disaster.message';
+  const messageParams = {
+    eventName,
+    country,
+    victims: korban.toLocaleString('id-ID'),
+    loss: totalKerugian.toLocaleString('id-ID'),
+    ...(severityNoteKey ? { severityNote: getDefaultInboxText(severityNoteKey) } : {}),
+  };
 
   return {
     id: `bencana-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-    title: `🚨 BENCANA ALAM: ${selectedEvent.name.toUpperCase()}${severityNote ? severityNote.toUpperCase() : ''}`,
-    sender: `BADAN NASIONAL PENANGGULANGAN BENCANA (${country.toUpperCase()})`,
-    message,
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    titleParamKeys: { name: selectedEvent.nameKey },
+    sender: getDefaultInboxText('side_inbox.dynamicEventTranslations.disaster.sender', { country }),
+    senderKey: 'side_inbox.dynamicEventTranslations.disaster.sender',
+    senderParams: { country },
+    ...createInboxNotificationText(messageKey, messageParams, {
+      eventName: selectedEvent.nameKey,
+      ...(severityNoteKey ? { severityNote: severityNoteKey } : {}),
+    }),
     timestamp: dateStr,
     type: 'kepuasan',
     value: 0,
     isRead: false,
     tradeType: 'bencana_alam',
     category: selectedEvent.category,
-    eventName: selectedEvent.name,
+    categoryKey,
+    eventName,
+    eventNameKey: selectedEvent.nameKey,
     korban,
     totalKerugian,
     bantuanCost,

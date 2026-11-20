@@ -2,6 +2,8 @@ import React from 'react';
 import { Flame, Check, X, ShieldAlert } from 'lucide-react';
 import { PemberontakanNotification } from './pemberontakanLogic';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getInboxNotificationMessage } from '@/app/page/menus/inbox/logic/notificationMessage';
+import { getLocalizedCountryName } from '@/app/logic/countryNameLogic';
 
 interface PemberontakanNotificationProps {
   notification: PemberontakanNotification;
@@ -12,8 +14,10 @@ interface PemberontakanNotificationProps {
 export default function PemberontakanNotificationCard({ notification, onAccept, onReject }: PemberontakanNotificationProps) {
   const { t } = useLanguage();
   const isHandled = notification.isHandled;
-  const country = notification.provinceName || 'Wilayah';
-  const risk = notification.effectText || '';
+  const country = getLocalizedCountryName(notification.provinceName || 'Wilayah');
+  const risk = notification.effectTextKey
+    ? t(notification.effectTextKey, notification.effectTextParams)
+    : notification.effectText || '';
   const cost = notification.costEM ?? 250;
 
   return (
@@ -25,31 +29,31 @@ export default function PemberontakanNotificationCard({ notification, onAccept, 
       <div className="flex-1 space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h4 className="text-sm font-black text-white uppercase tracking-wide leading-tight">
-            {t('side_inbox.defense.pemberontakanTitle', { country }) || notification.title}
+            {t('side_inbox.defense.pemberontakanTitle', { country }) }
           </h4>
           <span className="text-[10px] font-bold text-amber-300 bg-amber-900/60 px-2.5 py-0.5 rounded-full border border-amber-500/40 uppercase tracking-wider">
-            {t('side_inbox.defense.pemberontakanBadge') || 'Pemberontakan Daerah'}
+            {t('side_inbox.defense.pemberontakanBadge')}
           </span>
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          {t('side_inbox.defense.affectedRegion', { province: notification.provinceName }) || `Negara Terdampak: ${notification.provinceName}`} | {t('side_inbox.timeLabel') || 'Tanggal'}: {notification.timestamp}
+          {t('side_inbox.defense.affectedRegion', { province: country })} | {t('side_inbox.timeLabel')}: {notification.timestamp}
         </p>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">
-          {notification.message}
+          {getInboxNotificationMessage(notification, t)}
         </p>
 
         <div className="bg-root-canvas border border-amber-500/30 rounded-xl p-2.5 text-xs text-amber-300 font-bold flex items-center justify-between">
-          <span>{t('side_inbox.defense.risk', { risk }) || `Risiko: ${risk}`}</span>
-          <span className="text-amber-400 font-black">{t('side_inbox.defense.recoveryCost', { cost }) || `Biaya Operasi Pemulihan: ${cost} NEO`}</span>
+          <span>{risk}</span>
+          <span className="text-amber-400 font-black">{t('side_inbox.defense.recoveryCost', { cost })}</span>
         </div>
 
         <div className="pt-2 flex items-center justify-end gap-2.5">
           {isHandled ? (
             <div className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/50 flex items-center gap-1.5">
               <Check className="w-3.5 h-3.5" />
-              <span>{t('side_inbox.defense.stabilized') || 'STABILITAS BERHASIL DIPULIHKAN'}</span>
+              <span>{t('side_inbox.defense.stabilized')}</span>
             </div>
           ) : (
             <>
@@ -59,7 +63,7 @@ export default function PemberontakanNotificationCard({ notification, onAccept, 
                   className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-950/60 hover:bg-rose-900 border border-rose-500/40 text-rose-300 rounded-xl transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
                 >
                   <X className="w-3.5 h-3.5" />
-                  <span>{t('side_inbox.actions.reject') || 'Abaikan'}</span>
+                  <span>{t('side_inbox.actions.reject')}</span>
                 </button>
               )}
               {onAccept && (
@@ -68,7 +72,7 @@ export default function PemberontakanNotificationCard({ notification, onAccept, 
                   className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 rounded-xl transition-all cursor-pointer shadow-[0_0_12px_rgba(245,158,11,0.4)] flex items-center gap-1.5"
                 >
                   <ShieldAlert className="w-3.5 h-3.5" />
-                  <span>{t('side_inbox.defense.quellRebellion') || 'Tindak Tegas Pemberontakan'}</span>
+                  <span>{t('side_inbox.defense.quellRebellion')}</span>
                 </button>
               )}
             </>

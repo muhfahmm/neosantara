@@ -1,8 +1,10 @@
 import { DemonstrasiNotification } from '../demonstrasiEkonomiLogic';
+import { getDefaultInboxText } from '../../../notificationMessage';
 
 export interface AbaikanDemoResult {
   success: boolean;
   message: string;
+  messageKey: string;
   updatedNotification: DemonstrasiNotification;
 }
 
@@ -22,10 +24,12 @@ export function executeAbaikanDemo(
     ...notification,
     demo_status: 'ignored',
   };
+  const messageKey = 'side_inbox.demo.actions.ignored';
 
   return {
     success: true,
-    message: `Pemerintah memilih untuk tidak merespons unjuk rasa ini. Status unjuk rasa kini ditandai "DIABAIKAN". Aksi protes tetap berlanjut di ruang publik.`,
+    message: getDefaultInboxText(messageKey),
+    messageKey,
     updatedNotification,
   };
 }

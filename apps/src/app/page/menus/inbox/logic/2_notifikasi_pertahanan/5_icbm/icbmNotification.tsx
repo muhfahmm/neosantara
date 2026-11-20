@@ -2,6 +2,8 @@ import React from 'react';
 import { Rocket, AlertTriangle, Shield } from 'lucide-react';
 import { ICBMNotification } from './icbmLogic';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getInboxNotificationSender } from '@/app/page/menus/inbox/logic/notificationMessage';
+import { getInboxNotificationMessage } from '@/app/page/menus/inbox/logic/notificationMessage';
 
 interface ICBMNotificationProps {
   notification: ICBMNotification;
@@ -22,24 +24,24 @@ export default function ICBMNotificationCard({ notification, onAccept, onReject 
       <div className="flex-1 space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h4 className="text-sm font-black text-white uppercase tracking-wide leading-tight">
-            {t('side_inbox.defense.icbmTitle') || notification.title}
+            {t('side_inbox.defense.icbmTitle') }
           </h4>
           <span className="text-[10px] font-bold text-red-300 bg-red-900/80 px-2.5 py-0.5 rounded-full border border-red-500/50 uppercase tracking-wider">
-            {t('side_inbox.defense.icbmBadge') || 'Ancaman Nuklir & Balistik'}
+            {t('side_inbox.defense.icbmBadge')}
           </span>
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
+          {t('side_inbox.senderPrefix', { sender: getInboxNotificationSender(notification, t), date: notification.timestamp })}
         </p>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">
-          {notification.message}
+          {getInboxNotificationMessage(notification, t)}
         </p>
 
         <div className="bg-root-canvas border border-red-500/40 rounded-xl p-2.5 text-xs text-red-300 font-bold flex items-center justify-between">
-          <span>Target Wilayah: {notification.targetCity || 'Ibu Kota'}</span>
-          <span className="text-red-400 font-black">Estimasi Dampak: Kehancuran Skala Penuh</span>
+          <span>{t('side_inbox.defense.targetLocation')}: {notification.targetCity || t('side_inbox.defense.defaultTargetLocation')}</span>
+          <span className="text-red-400 font-black">{t('side_inbox.defense.estimatedImpact')}</span>
         </div>
       </div>
     </div>

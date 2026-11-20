@@ -21,6 +21,7 @@
       "testReport": "LAPORAN INTELIJEN GLOBAL: Negara {tester} baru saja melaksanakan uji coba peluncuran rudal balistik antarbenua (ICBM) bertulu ledak hulu nuklir ke {target}. Sensor seismik dan satelit pengintai mencatat getaran getaran ledakan berkekuatan tinggi di area pengujian!"
     },
     "resolution": {
+      "cardTitle": "🏛️ Resolusi PBB: {resolutionType} — {proposer}",
       "worldWarBan": "Kabar Diplomasi PBB! Negara {proposer} secara resmi mengajukan usulan \"Larangan Perang\" untuk seluruh dunia selama {duration}. Usulan ini: Dilarang menyerang negara yang ditetapkan selama periode yang dipilih. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!",
       "worldProductionBan": "Kabar Diplomasi PBB! Negara {proposer} secara resmi mengajukan usulan \"Larangan Produksi\" untuk seluruh dunia selama {duration}. Usulan ini: Produksi {product} dihentikan selama periode yang dipilih. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!",
       "targeted": {
@@ -59,6 +60,16 @@
     "ekonomi": "Ekonomi & Moneter",
     "kebutuhan_pokok": "Kebutuhan Pokok Warga"
   },
+  "offerMessages": {
+    "embassy": "Salam hangat, Presiden {user}. Pemerintah {partner} mengajukan permohonan resmi untuk mendirikan kedutaan di ibu kota negara Anda guna mempererat hubungan diplomatik dan kerja sama bilateral. Apakah Anda menerima permohonan ini?",
+    "embassySender": "Kementerian Luar Negeri {partner}",
+    "defenseAlliance": "Presiden {user}, pemerintah {partner} mengajukan perjanjian aliansi pertahanan bersama. Kedua negara berkomitmen memberikan dukungan militer dan berbagi intelijen strategis jika terjadi invasi atau serangan asing. Apakah Anda bersedia meratifikasinya?",
+    "defenseAllianceSender": "Dewan Keamanan dan Pertahanan {partner}",
+    "researchContract": "Presiden {user}, Konsorsium Riset Nasional {partner} menawarkan kontrak penelitian dan pengembangan bersama. Kedua negara akan berbagi pengetahuan dan mempercepat riset sebesar 25% di bidang teknologi strategis. Apakah Anda menerima kontrak ini?",
+    "researchContractSender": "Kementerian Riset, Teknologi, dan Sains {partner}",
+    "tradeRelation": "Presiden {user}, pemerintah {partner} bermaksud memperluas kemitraan strategis dan membuka jalur perdagangan bilateral. Perjanjian ini memberikan akses komoditas ekspor-impor eksklusif serta insentif tarif khusus. Apakah Anda setuju meratifikasinya?",
+    "tradeRelationSender": "Kementerian Luar Negeri dan Perdagangan {partner}"
+  },
   "ratingWarning": {
     "title": "⚠️ Peringatan Dini: Kepuasan Rakyat Menurun!",
     "sender": "Kementerian Dalam Negeri",
@@ -82,10 +93,12 @@
   "toastTitle": "Pesan Baru Masuk",
   "openInbox": "Buka Kotak Masuk ({count}) →",
   "nonAggressionOfferTitle": "🕊️ Penawaran Pakta Non-Agresi: {partner}",
+  "nonAggressionRecipient": "Presiden",
   "nonAggressionSender": "Kementerian Luar Negeri & Diplomasi {partner}",
   "nonAggressionMessage": "Presiden {user}, pemerintah {partner} secara resmi mengajukan Pakta Non-Agresi bilateral. Kedua negara berjanji menjaga perdamaian, tidak melakukan agresi militer, serta menjaga stabilitas perbatasan. Apakah Anda bersedia menandatangani perjanjian non-agresi ini?",
   "diplomacyPeaceBadge": "Diplomasi & Perdamaian",
   "senderPrefix": "Pengirim: {sender} | Tanggal: {date}",
+  "relation": "Skor Hubungan",
   "rejectPact": "Tolak Pakta",
   "acceptPact": "Ratifikasi Pakta Non-Agresi",
   "pactRejected": "PAKTA NON-AGRESI DENGAN {partner} DITOLAK",
@@ -232,17 +245,61 @@
     "spionaseBadge": "Intelijen & Spionase",
     "spionaseSuccess": "Misi Berhasil",
     "spionaseFailed": "Agen Tertangkap",
+    "spionaseArchived": "Laporan intelijen telah diarsipkan",
+    "agentUpdated": "Status agen telah diperbarui",
     "pemberontakanTitle": "🔥 PEMBERONTAKAN BERSENJATA DI {country}",
+    "pemberontakanSender": "Otoritas Keamanan {country}",
     "pemberontakanBadge": "Pemberontakan Daerah",
+    "pemberontakanEffect": "Risiko Separatisme: {risk} | Risiko Instabilitas Nasional",
+    "independenceDeclarationRisk": "Risiko Deklarasi Kemerdekaan",
     "affectedRegion": "Negara/Wilayah Terdampak: {province}",
     "risk": "Risiko: {risk}",
     "recoveryCost": "Biaya Operasi Pemulihan: {cost} NEO",
     "stabilized": "STABILITAS BERHASIL DIPULIHKAN",
-    "quellRebellion": "TINDAK TEGAS PEMBERONTAKAN",
+    "quellRebellion": "Tindak Tegas Pemberontakan",
     "diserangTitle": "⚔️ SERANGAN MILITER TERHADAP WILAYAH!",
     "diserangBadge": "Invasi Militer",
     "icbmTitle": "🚀 PERINGATAN PELUNCURAN RUDAL BALISTIK (ICBM)!",
-    "icbmBadge": "Ancaman Nuklir & Balistik"
+    "icbmBadge": "Ancaman Nuklir & Balistik",
+    "attackSender": "Markas Besar Angkatan Bersenjata",
+    "attackTitles": {
+      "threat": "🪖 Ancaman Perbatasan: Mobilisasi Pasukan Musuh",
+      "borderAttack": "⚔️ Serangan Perbatasan: Batalyon Musuh Membuka Tembakan!",
+      "warDeclaration": "📜 Deklarasi Perang Resmi oleh Negara Musuh!",
+      "invasion": "🚨 Invasi Skala Penuh: Perebutan Wilayah!",
+      "invasionWithoutTerritories": "🚨 Invasi Skala Penuh: Pertahanan Wilayah Nasional!"
+    },
+    "attackEffects": {
+      "threat": "Diplomasi / Mobilisasi Darurat",
+      "borderAttack": "-5% Kekuatan Militer, Korban 50+ Jiwa",
+      "warDeclaration": "Perang Aktif, Ekonomi -15%, Persetujuan -10%",
+      "invasion": "Risiko Kehilangan 1 Provinsi jika Tidak Dipertahankan",
+      "invasionWithoutTerritories": "Tidak ada wilayah aneksasi yang dapat hilang"
+    },
+    "icbmTitles": {
+      "incoming": "☢️ DETEKSI PELUNCURAN RUDAL NUKLIR (ICBM)!",
+      "programStarted": "☢️ PROYEK RAHASIA: Pembangunan Program Nuklir Dimulai!",
+      "programCompleted": "⚛️ NUKLIR AKTIF: Program Nuklir Nasional Resmi Beroperasi!",
+      "testReport": "🚀 UJI COBA NUKLIR & RUDAL ICBM: {tester}"
+    },
+    "icbmSenders": {
+      "incoming": "Komando Pertahanan Udara & Antariksa Nasional",
+      "program": "Komando Strategis Nuklir & Kementerian Pertahanan",
+      "testReport": "Badan Intelijen Strategis & Deteksi Seismik Global"
+    },
+    "icbmEffects": {
+      "incoming": "Kehancuran Kota Total & Jutaan Korban jika Gagal Dicegat",
+      "programStarted": "Estimasi Rampung: {endDate}",
+      "programCompleted": "Fasilitas Pengayaan Nuklir Aktif & Akses Perakitan ICBM Terbuka",
+      "testReport": "Status Persediaan Rudal {tester}: {count} Unit Siap Tempur"
+    },
+    "targetLocation": "Target Wilayah",
+    "defaultTargetLocation": "Ibu Kota",
+    "deployDefense": "Kerahkan Pasukan Pertahanan",
+    "defenseDeployed": "PERTAHANAN MILITER TELAH DIKERAHKAN",
+    "impact": "Dampak",
+    "mobilizationCost": "Biaya Mobilisasi Pertahanan",
+    "estimatedImpact": "Estimasi Dampak: Kehancuran Skala Penuh"
   },
   "disaster": {
     "naturalTitle": "🚨 BENCANA ALAM: {name} DI {province}",
@@ -251,12 +308,27 @@
     "financialLoss": "Kerugian Finansial",
     "infrastructureDamage": "Kerusakan Infrastruktur",
     "aidCost": "Biaya Bantuan & Evakuasi",
-    "sendAid": "SALURKAN DANA BANTUAN",
+    "sendAid": "Kirim Bantuan Darurat",
     "handled": "BANTUAN TUNTAS DISALURKAN",
     "wabahTitle": "☣️ WABAH PENYAKIT: {name} DI {province}",
     "wabahBadge": "Wabah Penyakit",
     "infected": "Jumlah Terinfeksi",
-    "quarantineCost": "Biaya Penanganan Karantina"
+    "quarantineCost": "Biaya Penanganan Karantina",
+    "quarantine": "Terapkan Karantina Wilayah",
+    "quarantineSuccess": "KARANTINA WILAYAH RESMI DITERAPKAN"
+  },
+  "outbreak": {
+    "distribution": {
+      "pandemicNone": "Tahun aman, 0 pandemi ({chancePercent}%)",
+      "pandemicOne": "1 pandemi dalam tahun ini ({chancePercent}%)",
+      "epidemicNone": "Tahun aman, 0 epidemi ({chancePercent}%)",
+      "epidemicOne": "1 epidemi dalam tahun ini ({chancePercent}%)",
+      "epidemicTwo": "2 epidemi dalam tahun ini ({chancePercent}%)"
+    },
+    "medicalAssistance": {
+      "alreadyHandled": "Wabah ini sudah ditangani.",
+      "populationRestored": "{count} orang berhasil diselamatkan dari {eventName}."
+    }
   },
   "geopolitics": {
     "allianceTitle": "🛡️ PENAWARAN ALIANSI PERTAHANAN: {partner}",
@@ -268,12 +340,38 @@
     "researchContractSigned": "KONTRAK PENELITIAN DENGAN {partner} BERJALAN",
     "acceptResearch": "MULAI KERJASAMA RISET",
     "hotRelationTitle": "⚠️ KETEGANGAN DIPLOMATIK MENINGKAT: {partner}",
+    "hotRelationSender": "Kementerian Luar Negeri & Intelijen Diplomasi",
+    "hotRelationTitle20": "🚨 HUBUNGAN MEMBURUK: {partner} ({score}/100)",
+    "hotRelationMessage20": "Peringatan diplomasi! Hubungan bilateral dengan {partner} turun ke tingkat kritis ({score}/100). Ketegangan geopolitik dapat memicu sanksi ekonomi, pengusiran diplomat, hingga konfrontasi militer.",
+    "hotRelationTitle15": "⚠️ KETEGANGAN MEMANAS: {partner} TURUN KE {score}/100",
+    "hotRelationMessage15": "Hubungan diplomatik dengan {partner} merosot hingga {score}/100, di bawah batas aman 20. Pertimbangkan mengirim delegasi perdamaian atau bantuan diplomatik.",
+    "hotRelationTitle10": "🔥 ANCAMAN KONFLIK: HUBUNGAN DENGAN {partner} SANGAT BURUK ({score}/100)",
+    "hotRelationMessage10": "Ketegangan dengan {partner} meningkat (skor {score}/100). Kedutaan melaporkan kerja sama menurun dan sentimen bermusuhan menguat di tengah masyarakat.",
+    "hotRelationTitle5": "💣 PERBATASAN TERANCAM: HUBUNGAN DENGAN {partner} KRITIS ({score}/100)",
+    "hotRelationMessage5": "Hubungan diplomatik dengan {partner} merosot tajam ke {score}/100. Pihak oposisi dan militer negara tersebut mulai menempatkan persenjataan di perbatasan.",
+    "hotRelationTitle1": "⚔️ AMBANG PERANG: HUBUNGAN DENGAN {partner} HANCUR ({score}/100)",
+    "hotRelationMessage1": "Darurat nasional! Hubungan diplomatik dengan {partner} mencapai titik terendah ({score}/100). Kontak diplomatik hampir terputus dan militer lawan berada pada kesiagaan tertinggi. Segera lakukan diplomasi darurat!",
     "hotRelationBadge": "Krisis Diplomatik",
     "embassyTitle": "🏛️ PERWAKILAN DIPLOMATIK KEDUTAAN BESAR: {partner}",
     "embassyBadge": "Kedutaan Besar",
     "unResolutionTitle": "🏛️ RESOLUSI PBB: {title}",
+    "resolutionSender": "Sekretariat Jenderal Majelis Umum PBB",
+    "proposalLabel": "Usulan",
+    "targetLabel": "Target",
+    "globalTarget": "Seluruh Dunia (Global)",
+    "globalSector": "Sektor Komoditas Global",
+    "resolutionTypes": {
+      "war_ban": "Larangan Perang",
+      "arms_embargo": "Embargo Penjualan Senjata",
+      "economic_embargo": "Embargo Ekonomi",
+      "military_invasion": "Resolusi Invasi",
+      "production_ban": "Larangan Produksi"
+    },
     "unResolutionBadge": "Resolusi Sidang Umum PBB",
-    "openResolution": "BUKA DETAIL RESOLUSI PBB →"
+    "openResolution": "BUKA DETAIL RESOLUSI PBB →",
+    "openEmbassy": "Buka Kedutaan Besar →",
+    "openBilateralDiplomacy": "Buka Diplomasi Bilateral →",
+    "openCountryDetails": "Buka Detail Negara"
   },
   "basicNeeds": {
     "electricTitle": "⚡ KRISIS ENERGI: DEFISIT LISTRIK NASIONAL",
@@ -287,7 +385,42 @@
     "populationTitle": "👥 KRISIS DEMOGRAFI & POPULASI PENDUDUK",
     "populationBadge": "Demografi Warga",
     "solveNow": "ATASI SEKARANG",
-    "resolved": "KRISIS TERATASI"
+    "resolved": "KRISIS TERATASI",
+    "buildPowerPlant": "Bangun Pembangkit Listrik →",
+    "buildHousing": "Bangun Fasilitas Hunian →",
+    "boostFood": "Tingkatkan Produksi Pangan →",
+    "buildPublicFacilities": "Bangun Fasilitas Publik →",
+    "manageDemographics": "Kelola Kebijakan Demografi →"
+  },
+  "tradeValidation": {
+    "closedSystem": {
+      "title": "SISTEM EKONOMI TERTUTUP",
+      "message": "Negara Anda menganut sistem ekonomi \"{economyName}\" yang terlalu terpusat untuk melakukan perdagangan global.",
+      "reasons": {
+        "1": "Sistem ekonomi terlalu terpusat (nilai < 60)",
+        "2": "Kontrol pemerintah atas sektor ekonomi terlalu kuat",
+        "3": "Kebijakan proteksionisme mencegah akses pasar internasional"
+      },
+      "solutions": {
+        "1": "Ubah sistem ekonomi ke Ekonomi Campuran atau lebih terbuka",
+        "2": "Kurangi sentralisasi dengan privatisasi beberapa sektor strategis",
+        "3": "Terapkan kebijakan Perdagangan Bebas untuk membuka pasar internasional"
+      }
+    },
+    "highCentralization": {
+      "title": "SENTRALISASI EKONOMI TERLALU TINGGI",
+      "message": "Meski sistem ekonomi adalah \"{economyName}\", rata-rata sentralisasi sektor masih terlalu tinggi (> 85) untuk perdagangan global.",
+      "reasons": {
+        "1": "Sentralisasi sektor ekonomi melebihi ambang batas (85)",
+        "2": "Terlalu banyak sektor dikontrol langsung oleh pemerintah",
+        "3": "Kebijakan ekonomi masih dominan ke arah terpusat"
+      },
+      "solutions": {
+        "1": "Kurangi sentralisasi di sektor manufaktur, perdagangan, dan perbankan",
+        "2": "Buka kepemilikan properti untuk investasi swasta",
+        "3": "Liberalisasi kebijakan moneter dan perbankan"
+      }
+    }
   },
   "tradeModals": {
     "closedTitle": "Akses Perdagangan Ditolak",
@@ -322,7 +455,9 @@
     "inProcess": "Sedang Diproses",
     "officialInForce": "Resmi Berlaku",
     "policyImpact": "Dampak Kebijakan:",
-    "approval": "Persetujuan"
+    "approval": "Persetujuan",
+    "religionLabel": "Agama",
+    "ideologyLabel": "Ideologi"
   },
   "governance": {
     "cabinetTitle": "Perombakan Struktur Kabinet",
@@ -333,6 +468,39 @@
     "activeResearch": "Riset Aktif",
     "strategicSector": "Sektor Strategis"
   },
+  "researchNotification": {
+    "sender": "Badan Riset dan Inovasi Nasional (BRIN)",
+    "focusTitle": "🔬 PERUBAHAN FOKUS RISET",
+    "focusMessage": "Pemerintah mengarahkan laboratorium dan anggaran nasional untuk memprioritaskan {name} ({scope}). {description}",
+    "startTitle": "🔬 RISET BARU DIMULAI",
+    "upgradeTitle": "🔬 PENINGKATAN RISET DIMULAI",
+    "startMessage": "Pemerintah mulai mengerjakan riset \"{research}\". Estimasi penyelesaian: {duration} hari.",
+    "upgradeMessage": "Pemerintah mulai meningkatkan riset \"{research}\" ke level {level}. Estimasi penyelesaian: {duration} hari.",
+    "activeBadge": "Riset Aktif",
+    "strategicSector": "Sektor Strategis",
+    "newScope": "Riset Baru",
+    "upgradeScope": "Peningkatan Level {level}",
+    "fallbackName": "Riset Strategis Nasional",
+    "fallbackScope": "Inovasi Teknologi & Pembangunan",
+    "fallbackDescription": "Pemerintah menetapkan fokus riset strategis baru untuk mendukung percepatan kemajuan nasional.",
+    "categories": {
+      "ekonomi": {
+        "name": "Riset Ekonomi & Industri",
+        "scope": "Produksi, Manufaktur, Pertambangan & Logistik",
+        "description": "Pengembangan teknologi manufaktur, efisiensi rantai pasok pertambangan, otomatisasi produksi, dan peningkatan penerimaan devisa negara."
+      },
+      "militer": {
+        "name": "Riset Militer & Pertahanan",
+        "scope": "Alutsista, Perang Siber & Pertahanan Nuklir",
+        "description": "Modernisasi armada tempur darat, laut, dan udara; pertahanan siber; sistem pencegat rudal balistik; serta energi nuklir militer."
+      },
+      "diplomasi": {
+        "name": "Riset Diplomasi & Intelijen",
+        "scope": "Geopolitik, Kriptografi & Intelijen Global",
+        "description": "Penguatan jaringan intelijen internasional, enkripsi tingkat tinggi, dan daya tawar diplomatik di PBB."
+      }
+    }
+  },
   "security": {
     "nationalSecurityReport": "Laporan Status Keamanan Nasional",
     "affectedCitizens": "Warga Terdampak",
@@ -341,6 +509,17 @@
     "securityOperationsComplete": "OPERASI PENGAMANAN & PENERTIBAN TUNTAS",
     "deploySecurity": "Kerahkan Operasi Pengamanan",
     "alliedAid": "Bantuan Militer Sekutu",
+    "allyLabel": "Sekutu",
+    "attackerLabel": "Penyerang",
+    "allianceStatus": "Status Aliansi",
+    "activeStatus": "AKTIF",
+    "deadlineLabel": "Batas Menjawab",
+    "rejectionPenaltyLabel": "Sanksi Penolakan",
+    "rejectionPenalty": "Hubungan {value}",
+    "aidApproved": "BANTUAN MILITER TELAH DISETUJUI",
+    "requestRejected": "PERMINTAAN DITOLAK",
+    "requestExpired": "PERMINTAAN TELAH BERAKHIR / KEDALUWARSA",
+    "requestPending": "PERMINTAAN MENUNGGU",
     "aidAccepted": "BANTUAN MILITER RESMI DITERIMA",
     "offerExpired": "PENAWARAN KEDALUWARSA",
     "aidRejected": "BANTUAN DITOLAK",
@@ -350,7 +529,10 @@
     "warships": "Kapal Perang",
     "orgMembership": "Keanggotaan Organisasi Internasional",
     "accepted": "Diterima",
-    "rejected": "Ditolak"
+    "rejected": "Ditolak",
+    "securityRisk": "Risiko Keamanan & Gangguan Ketertiban",
+    "operationsComplete": "OPERASI PENGAMANAN SELESAI",
+    "ignore": "Abaikan"
   },
   "electricityCrisis": {
     "hideDetail": "▲ Sembunyikan Detail",
@@ -368,7 +550,53 @@
     "days": "hari"
   },
   "demo": {
+    "policyMenuUnavailable": "Menu kebijakan untuk tuntutan ini belum tersedia.",
+    "currentlyInStreets": "saat ini memadati jalanan.",
+    "economyUnavailableTitle": "Menu ekonomi tidak tersedia",
+    "economyUnavailableMessage": "Buka dialog ini dari sesi permainan aktif untuk mengubah kebijakan.",
+    "generated": {
+      "subsidyTitle": "🔥 Demonstrasi Massal: Penolakan Pencabutan Subsidi {subsidyName}",
+      "subsidySender": "Aliansi Buruh, Mahasiswa & Koalisi Masyarakat Sipil",
+      "subsidyMessage": "Gelombang unjuk rasa pecah setelah pemerintah mencabut subsidi {subsidyName}. Sekitar {demonstratorCount} orang memenuhi jalan dan menuntut pemulihan bantuan serta perlindungan sosial.",
+      "priceSender": "Serikat Konsumen, Asosiasi Pedagang & Komunitas Warga",
+      "priceextremeTitle": "🔥 Kerusuhan & Demonstrasi Darurat: Harga {itemName} Melonjak",
+      "priceextremeMessage": "Sekitar {demonstratorCount} orang memblokade pusat distribusi setelah harga {itemName} naik {levelJump} tingkat, dari Rp {oldPrice} menjadi Rp {newPrice}. Massa menuntut pencabutan kebijakan harga.",
+      "pricestandardTitle": "📢 Demonstrasi Warga: Protes Kenaikan Harga {itemName}",
+      "pricestandardMessage": "Sekitar {demonstratorCount} warga berunjuk rasa menolak kenaikan harga {itemName} dari Rp {oldPrice} menjadi Rp {newPrice}. Serikat konsumen meminta stabilisasi harga.",
+      "taxTitle": "🔥 Mogok & Demonstrasi Nasional: Penolakan Kenaikan {taxName}",
+      "taxSender": "Federasi Serikat Buruh & Asosiasi Pelaku Industri Nasional",
+      "taxMessage": "Sekitar {demonstratorCount} pekerja menggelar aksi mogok setelah tarif {taxName} naik {rateDifference} poin, dari {oldRate}% menjadi {newRate}%. Demonstran menuntut pembatalan kebijakan."
+    },
     "cause": "Penyebab",
+    "actions": {
+      "ignored": "Pemerintah tidak merespons demonstrasi. Aksi ditandai diabaikan dan protes tetap berlangsung.",
+      "fulfilled": {
+        "subsidi": "Pemerintah menyetujui tuntutan subsidi. Demonstran membubarkan diri dan peringkat Presiden naik {bonus} poin.",
+        "harga": "Pemerintah menyetujui tuntutan penyesuaian harga. Demonstran membubarkan diri dan peringkat Presiden naik {bonus} poin.",
+        "pajak": "Pemerintah menyetujui tuntutan peninjauan pajak. Demonstran membubarkan diri dan peringkat Presiden naik {bonus} poin."
+      },
+      "dialogStarted": "Pemerintah membuka forum dialog dengan perwakilan demonstran."
+    },
+    "options": {
+      "water_cannon": {
+        "title": "Water Cannon (Meriam Air)", "subtitle": "Semprotan air bertekanan tinggi", "description": "Menyemprotkan air bertekanan tinggi untuk membubarkan massa tanpa menimbulkan luka fatal.", "effectiveness": "Rendah (40% peluang bubar)", "casualties": "0% korban jiwa", "impact": "Kepuasan -5, peringkat -2. Jika gagal, massa menjadi lebih agresif dan mengejek aparat."
+      },
+      "gas_air_mata": {
+        "title": "Gas Air Mata", "subtitle": "Gas CS untuk mengurai kerumunan", "description": "Menembakkan gas CS ke kerumunan sehingga mata dan saluran pernapasan mengalami iritasi.", "effectiveness": "Sedang (70% peluang bubar)", "casualties": "1%–3% luka atau sesak napas", "impact": "Kepuasan -10, peringkat -5. Dapat memicu kecaman ringan dari PBB."
+      },
+      "jam_malam": {
+        "title": "Jam Malam & Blokade", "subtitle": "Darurat sipil, pemadaman internet, dan penutupan jalan", "description": "Menetapkan darurat sipil, menutup akses jalan ibu kota, dan memutus jaringan internet.", "effectiveness": "Sedang (membutuhkan 2 hari)", "casualties": "0% korban jiwa", "impact": "Kepuasan -8, peringkat -5. Arus kas harian melambat sementara karena kegiatan bisnis terganggu."
+      },
+      "brimob": {
+        "title": "Brimob / Polisi Antihuru-hara", "subtitle": "Pasukan antihuru-hara dengan tameng", "description": "Mengerahkan pasukan antihuru-hara dengan tameng dan pentungan untuk menangkap atau memukul mundur demonstran.", "effectiveness": "Tinggi (85% peluang bubar)", "casualties": "5%–12% korban luka berat atau kritis", "impact": "Kepuasan -15, peringkat -10. Memicu kecaman HAM PBB dan penurunan hubungan diplomatik sebesar 20."
+      },
+      "militer": {
+        "title": "Militer (Bersenjata Lengkap)", "subtitle": "Kendaraan lapis baja, tank, dan personel bersenjata", "description": "Mengerahkan kendaraan lapis baja, tank, dan senjata api untuk membubarkan massa secara paksa.", "effectiveness": "Sangat tinggi (95% peluang bubar)", "casualties": "20%–35% korban jiwa", "impact": "Kepuasan -25, peringkat -20. PBB hampir pasti menggelar sidang darurat untuk menjatuhkan sanksi embargo."
+      }
+    },
+    "causes": { "subsidi": "Subsidi", "harga": "Harga", "pajak": "Pajak" },
+    "statuses": { "active": "Berlangsung", "inDialogue": "Dalam dialog", "ignored": "Diabaikan", "completed": "Selesai", "riot": "Kerusuhan", "ongoing": "Berlangsung" },
+    "tooltips": { "hardPower": "Gunakan aparat keamanan untuk membubarkan massa secara paksa", "dialog": "Lakukan dialog publik dan dengarkan aspirasi demonstran", "fulfill": "Penuhi tuntutan ekonomi demonstran untuk meredakan amarah publik", "ignore": "Biarkan demonstrasi tanpa intervensi pemerintah" },
     "mass": "Massa",
     "people": "jiwa",
     "status": "Status",
@@ -376,6 +604,485 @@
     "hardPower": "Tindak Tegas",
     "dialog": "Dialog Terbuka",
     "fulfill": "Penuhi Tuntutan",
-    "ignore": "Abaikan Aksi"
+    "ignore": "Abaikan Aksi",
+    "disperseModalTitle": "Tindakan Keamanan Negara",
+    "disperseModalSub": "Pilihan Operasi Keamanan",
+    "operationCost": "Biaya Operasi",
+    "cancel": "Batal",
+    "confirmDisperse": "Ya, Bubarkan!",
+    "understood": "Dimengerti",
+    "securityUnit": "Satuan Pengamanan Dalam Negeri",
+    "treasuryBalance": "Kas Negara",
+    "operationOptions": "Pilihan Operasi Keamanan",
+    "effectiveness": "Efektivitas",
+    "successChance": "Peluang Berhasil",
+    "casualties": "Korban Jiwa",
+    "consequences": "Dampak & Konsekuensi",
+    "highUNReviewRisk": "Potensi sidang HAM internasional PBB sangat tinggi.",
+    "sanctionsLikely": "Resolusi sanksi embargo PBB hampir pasti muncul!",
+    "executeOperation": "Eksekusi Operasi",
+    "insufficientFunds": "Kas Tidak Cukup",
+    "crowdImpact": "Dampak terhadap Massa Demonstran",
+    "injuryImpact": "Iritasi gas, terinjak, dan cedera fisik",
+    "populationImpact": "Mengurangi populasi resmi negara",
+    "dispersed": "Massa berhasil dibubarkan",
+    "stillAtSite": "Masih bertahan di lapangan",
+    "confirmTitle": "Konfirmasi Operasi Aparat",
+    "confirmSubtitle": "Tindakan Pembubaran Massa",
+    "confirmWarning": "Tindakan ini akan menggunakan kekuatan koersif negara. Potensi bentrokan fisik, korban jiwa/luka-luka, penurunan Indeks Kepuasan Rakyat, dan penurunan Peringkat Presiden tidak dapat dihindari!",
+    "confirmQuestion": "Apakah Anda yakin ingin mengerahkan operasi pembubaran ini?",
+    "reportTitleSuccess": "🚨 LAPORAN OPERASI PEMBUBARAN MASSA",
+    "reportTitleClash": "🔥 LAPORAN BENTROKAN / KERUSUHAN",
+    "injured": "Korban Terluka",
+    "killed": "Korban Tewas / Kritis",
+    "remainingProtesters": "Sisa Demonstran Bertahan",
+    "dialogForumTitle": "Forum Dialog Terbuka",
+    "warningLabel": "Peringatan",
+    "backToGame": "Kembali ke Permainan",
+    "laborLeader": "Pemimpin Serikat Buruh",
+    "protesterRep": "Perwakilan Aksi Massa",
+    "anger": "Kemarahan Massa",
+    "trust": "Kepercayaan Publik",
+    "demandsTitle": "Daftar Tuntutan Rakyat",
+    "refreshChoices": "Ganti Alternatif Tanggapan",
+    "disperseWithPolice": "Bubarkan dengan Aparat Keamanan",
+    "sessionStarted": "Sesi dialog terbuka dimulai. Pilih respons terbaik untuk meredakan ketegangan.",
+    "negotiationFailed": "Layanan negosiasi tidak dapat dihubungi.",
+    "policyNegotiationFailed": "Layanan negosiasi kebijakan tidak dapat dihubungi.",
+    "policyChangesConfirmed": "Pemerintah mengonfirmasi tuntutan: {demand}. Perubahan: {changes}.",
+    "policyFollowUpCommitted": "Pemerintah berkomitmen menindaklanjuti tuntutan: {demand}."
+  },
+  "economicChange": {
+    "tax": {
+      "sender": "Direktorat Jenderal Pajak & Gabungan Asosiasi",
+      "increaseTitle": "📢 Protes Publik: Kenaikan Tarif {taxName} ({oldRate}% ➔ {newRate}%)",
+      "increaseMessage": "Serikat pekerja dan pelaku usaha menyampaikan kekecewaan atas kenaikan tarif {taxName} dari {oldRate}% menjadi {newRate}%. Kebijakan ini dinilai memberatkan daya beli dan meningkatkan beban modal industri.",
+      "decreaseTitle": "🎉 Apresiasi Publik: Penurunan Tarif {taxName} ({oldRate}% ➔ {newRate}%)",
+      "decreaseMessage": "Masyarakat dan kalangan industri menyambut kebijakan penurunan tarif {taxName} dari {oldRate}% menjadi {newRate}%. Langkah ini diyakini merangsang konsumsi domestik dan daya saing investasi."
+    },
+    "price": {
+      "sender": "Asosiasi Pedagang Pasar & Konsumen",
+      "increaseTitle": "💥 Kenaikan Harga: {itemName} Melonjak (Rp {oldPrice} ➔ Rp {newPrice})",
+      "increaseMessage": "Rumah tangga dan pedagang kecil mengeluhkan kenaikan harga {itemName} dari Rp {oldPrice} menjadi Rp {newPrice}. Kenaikan ini menekan daya beli warga berpenghasilan rendah.",
+      "decreaseTitle": "🛒 Harga Terjangkau: {itemName} Turun (Rp {oldPrice} ➔ Rp {newPrice})",
+      "decreaseMessage": "Masyarakat menyambut penurunan harga {itemName} dari Rp {oldPrice} menjadi Rp {newPrice}. Harga pangan yang lebih terjangkau membantu menjaga inflasi dan meningkatkan kepuasan publik."
+    },
+    "subsidy": {
+      "sender": "Kementerian Keuangan & Organisasi Masyarakat",
+      "grantedTitle": "✨ Alokasi Subsidi: {subsidyName} Resmi Diberikan",
+      "grantedMessage": "Keputusan pemerintah mengalokasikan subsidi {subsidyName} disambut baik. Bantuan ini dinilai membantu daya beli dan kesejahteraan masyarakat.",
+      "withdrawnTitle": "⚠️ Gejolak Ketidakpuasan: Pencabutan {subsidyName}",
+      "withdrawnMessage": "Ketidakpuasan dan protes muncul setelah pemerintah mencabut subsidi {subsidyName}. Penyesuaian anggaran dikhawatirkan meningkatkan beban hidup masyarakat."
+    },
+    "system": {
+      "sender": "Kementerian Koordinator Bidang Perekonomian & Dewan Ekonomi Nasional",
+      "title": "📊 Reformasi Sistem Ekonomi: {systemName} ({sliderValue}%)",
+      "message": "Pemerintah memperbarui orientasi kebijakan dan sistem ekonomi nasional menjadi {systemName} (skor spektrum: {sliderValue}%). Perubahan ini memengaruhi harga, kepemilikan aset strategis, ketenagakerjaan, dan perdagangan luar negeri.",
+      "label": "Sistem",
+      "spectrum": "Spektrum",
+      "applied": "Kartu Kebijakan Diterapkan"
+    }
+  },
+  "policyNotice": {
+    "policyImpact": "Dampak Kebijakan",
+    "ministry": "Kementerian",
+    "activeResearch": "Riset Aktif",
+    "strategicSector": "Sektor Strategis"
+  },
+  "durationUnits": {
+    "monthOne": "{count} bulan",
+    "monthMany": "{count} bulan",
+    "yearOne": "{count} tahun",
+    "yearMany": "{count} tahun"
+  },
+  "dynamicNotifications": {
+    "pbb": {
+      "sender": "Sekretariat Perserikatan Bangsa-Bangsa",
+      "unauthorizedAttackCancelledTitle": "🕊️ Rencana Serangan Tanpa Mandat Dibatalkan",
+      "unauthorizedAttackCancelledMessage": "Serangan {attacker} terhadap {target} tidak jadi diluncurkan. Serangan tanpa mandat hanya memiliki peluang {chance}%; upaya ini dibatalkan sebelum konflik dimulai.",
+      "unauthorizedAttacksCancelledTitle": "🕊️ Serangan Tanpa Mandat Dibatalkan",
+      "unauthorizedAttacksCancelledMessage": "{count} rencana konflik AI tanpa mandat dibatalkan. Peluang serangan tanpa resolusi adalah {chance}%; serangan AI yang lolos tetap dapat berjalan tanpa sanksi.",
+      "warBanCancelledTitle": "🕊️ Larangan Perang PBB Menghentikan Serangan",
+      "warBanCancelledMessage": "{count} rencana serangan negara AI dibatalkan. Larangan perang aktif; hanya {chance}% dari rencana yang lolos pemeriksaan mandat atau peluang pelanggaran dapat berjalan."
+    },
+    "espionage": {
+      "incomingSender": "Badan Intelijen Negara ({partner})",
+      "incomingEffect": "-5% kekuatan dan HP militer selama 30–60 hari jika tidak ditangani.",
+      "incomingTitles": {
+        "ringan": "🕵️ Spionase Ringan: Penyusupan Perbatasan oleh {partner}",
+        "sedang": "⚠️ Spionase Sedang: Infiltrasi Pangkalan Militer oleh {partner}",
+        "berat": "🚨 Spionase Berat: Jaringan Mata-Mata {partner}"
+      },
+      "incomingMessages": {
+        "ringan": "Lapor Komandan! Agen intelijen asing asal {partner} terdeteksi mencoba melintasi pos perbatasan tanpa izin resmi. Penjaga batas berhasil memblokir pergerakan awal mereka.",
+        "sedang": "Peringatan Keamanan! Agen spionase {partner} menyusup ke instalasi militer wilayah timur. Beberapa dokumen rahasia efektivitas persenjataan berisiko bocor!",
+        "berat": "DARURAT INTELIJEN! Jaringan mata-mata tingkat tinggi dari {partner} membocorkan data strategis riset nasional dan posisi armada militer kita!"
+      },
+      "targets": {
+        "default": "Informasi Intelijen Negara",
+        "military": "Intelijen Militer & Pertahanan",
+        "economy": "Intelijen Ekonomi & Anggaran"
+      },
+      "offensiveSuccessTitle": "🕵️ Misi Spionase Berhasil: {country}",
+      "offensiveFailureTitle": "❌ Misi Spionase Gagal: {country}",
+      "offensiveMilitaryMessage": "Laporan operasi intelijen: agen berhasil mengekstraksi data militer ({target}) dari {country}. Total {totalUnits} unit: darat {landUnits}, udara {airUnits}, dan laut {navalUnits}.",
+      "offensiveEconomyMessage": "Laporan operasi intelijen: agen berhasil memperoleh data fiskal ({target}) dari {country}. Anggaran {budget} NEO; estimasi penerimaan pajak harian {dailyTax} NEO.",
+      "offensiveGenericMessage": "Laporan operasi intelijen: agen berhasil menyusup dan mengekstraksi data strategis ({target}) dari {country}. Dokumen rahasia lawan telah dienkripsi dan dikirim ke markas pusat.",
+      "offensiveFailureMessage": "Laporan darurat intelijen: misi spionase terhadap {country} ({target}) gagal. Agen terdeteksi oleh jaringan kontra-intelijen lawan dan terpaksa dievakuasi.",
+      "offensiveSuccessEffect": "Data intelijen ({target}) dari {country} berhasil diamankan.",
+      "offensiveMilitaryEffect": "Data militer ({target}) berhasil diamankan: total {totalUnits} unit.",
+      "offensiveEconomyEffect": "Data fiskal ({target}) berhasil diamankan: anggaran {budget} NEO, estimasi pajak harian {dailyTax} NEO.",
+      "offensiveFailureEffect": "Misi gagal. Agen tidak berhasil mendapatkan data {target}.",
+      "offensiveSender": "Badan Intelijen Negara (Operasi Khusus)"
+    },
+    "sabotage": {
+      "incomingMessage": "{eventName} yang terkait dengan {partner} terdeteksi. Lindungi fasilitas penting dan segera tangani kerusakan.",
+      "incomingSender": "Kementerian Pertahanan & Keamanan",
+      "defaultTarget": "Fasilitas Militer",
+      "targetOptions": {
+        "militaryFacility": "Fasilitas & Pabrik Militer",
+        "energyInfrastructure": "Infrastruktur Listrik & Energi",
+        "foodProduction": "Produksi Pangan",
+        "manufacturing": "Manufaktur"
+      },
+      "eventNames": {
+        "infrastruktur": "sabotase infrastruktur nasional",
+        "militer": "ledakan fasilitas militer",
+        "siber": "serangan siber terhadap jaringan pertahanan",
+        "nuklir": "sabotase fasilitas nuklir"
+      },
+      "effects": {
+        "infrastruktur": "-5% bangunan listrik dan mineral energi jika dibiarkan",
+        "militer": "-5% alutsista secara permanen jika dibiarkan",
+        "siber": "-5% alutsista secara permanen jika dibiarkan",
+        "nuklir": "-5% alutsista secara permanen jika dibiarkan"
+      },
+      "offensiveSuccessTitle": "💣 Misi Sabotase Berhasil: {country}",
+      "offensiveFailureTitle": "❌ Misi Sabotase Gagal: {country}",
+      "offensiveSuccessMessage": "Operasi rahasia berhasil merusak {target} di wilayah {country}. Kerusakan pada instalasi lawan telah dikonfirmasi.",
+      "offensiveFailureMessage": "Operasi terhadap {target} di wilayah {country} digagalkan oleh sistem pertahanan lawan.",
+      "offensiveSuccessEffect": "Fasilitas {target} berhasil dirusak dan kekuatan militer target berkurang.",
+      "offensiveFailureEffect": "Misi gagal. Instalasi {target} tetap utuh.",
+      "offensiveSender": "Komando Pasukan Khusus & Intelijen Tempur"
+    },
+    "socialCultural": {
+      "religionValues": {
+        "Islam": "Islam",
+        "Katolik": "Katolik",
+        "Protestan": "Protestan",
+        "Hindu": "Hindu",
+        "Buddha": "Buddha",
+        "Shinto": "Shinto",
+        "Yahudi": "Yahudi",
+        "Ateisme": "Ateisme"
+      },
+      "ideologyValues": {
+        "Demokrasi": "Demokrasi",
+        "Monarki": "Monarki",
+        "Kapitalisme": "Kapitalisme",
+        "Sosialisme": "Sosialisme",
+        "Komunisme": "Komunisme",
+        "Nasionalisme": "Nasionalisme",
+        "Konservatisme": "Konservatisme",
+        "Liberalisme": "Liberalisme",
+        "Otoritarianisme": "Otoritarianisme"
+      },
+      "religion": {
+        "title": "☪️ Perubahan Agama Resmi Negara: {from} ➔ {to}",
+        "scheduledTitle": "Perubahan Agama Dijadwalkan: {from} ➔ {to}",
+        "message": "Pemerintah mengubah status agama resmi negara dari {from} menjadi {to}. Keputusan ini memicu dinamika sosial di tengah masyarakat.",
+        "scheduledMessage": "Perubahan agama dari {from} menjadi {to} dijadwalkan selesai pada {completionDate}. Perubahan akan berlaku setelah tanggal tersebut.",
+        "sender": "Kementerian Agama & Kebudayaan Nasional"
+      },
+      "ideology": {
+        "title": "🏛️ Perubahan Ideologi Negara: {from} ➔ {to}",
+        "scheduledTitle": "Perubahan Ideologi Dijadwalkan: {from} ➔ {to}",
+        "message": "Pemerintah mengubah arah ideologi negara dari {from} menjadi {to}. Perubahan ini berdampak pada kebijakan sosial dan ekonomi nasional.",
+        "scheduledMessage": "Perubahan ideologi dari {from} menjadi {to} dijadwalkan selesai pada {completionDate}. Perubahan akan berlaku setelah tanggal tersebut.",
+        "sender": "Dewan Pertimbangan Perubahan Ideologi Negara"
+      },
+      "doctrine": {
+        "title": "📜 Kebijakan Doktrin Baru: {sliderLabel}",
+        "message": "Pemerintah memperbarui indikator {sliderLabel} dari {fromValue}% menjadi {toValue}%.",
+        "sender": "Kementerian Hukum, HAM & Kebijakan Negara",
+        "stats": {
+          "approval": "Persetujuan",
+          "stability": "Stabilitas",
+          "diplomacy": "Diplomasi",
+          "economy": "Ekonomi",
+          "gdp": "PDB",
+          "population": "Populasi",
+          "satisfaction": "Kepuasan",
+          "humanRights": "HAM",
+          "tourism": "Pariwisata",
+          "foreignInvestment": "Investasi Asing",
+          "localIndustry": "Industri Lokal"
+        },
+        "sliders": {
+          "speechScore": "Kebebasan Berbicara & Pers",
+          "religionScore": "Kebebasan Beragama",
+          "demoScore": "Hak Demonstrasi & Aksi",
+          "transparencyScore": "Transparansi Anggaran & Publik",
+          "mediaScore": "Media & Penyiaran",
+          "internetScore": "Akses Internet & Digital",
+          "borderScore": "Perbatasan & Imigrasi",
+          "tradeScore": "Perdagangan & Pasar",
+          "diplomacyScore": "Diplomasi & Multilateral"
+        }
+      }
+    },
+    "basicNeeds": {
+      "electricity": {
+        "title": "⚡ PERINGATAN KRISIS LISTRIK: Defisit Daya {step}%",
+        "sender": "PT PLN (Persero) & Grid Kelistrikan Nasional",
+        "message": "Grid kelistrikan nasional mengalami defisit pasokan sebesar {deficit} MW ({step}% dari total beban). Produksi saat ini {production} MW, sedangkan estimasi konsumsi mencapai {consumption} MW. Segera operasikan pembangkit tambahan untuk menghindari pemadaman bergilir. Krisis ini menurunkan peringkat kepuasan rakyat sebesar {ratingPenalty} poin."
+      },
+      "housing": {
+        "title": "🏠 PERINGATAN DEFISIT PEMUKIMAN: Kebutuhan Hunian Warga",
+        "criticalTitle": "🏠 KRISIS KRITIS PERUMAHAN: Indeks Kepuasan {satisfaction}/100!",
+        "sender": "Kementerian Perumahan & Kawasan Permukiman",
+        "message": "Indeks kepuasan perumahan berada di {satisfaction}/100. Sebanyak {shortage} jiwa belum memiliki hunian yang layak (baru {percentage}% dari total {population} jiwa yang terlayani). Bangun perumahan subsidi, apartemen, atau hunian lain untuk mengatasi krisis ini."
+      },
+      "food": {
+        "title": "⚠️ DEFISIT PANGAN: {count} dari {total} Kategori Perlu Perhatian",
+        "sender": "Kementerian Pertanian & Badan Pangan Nasional",
+        "message": "Cakupan kebutuhan pangan untuk {count} dari {total} kategori inti berada di bawah target. Kategori mencakup pangan pokok, protein hewani dan nabati, sayuran, serta kebutuhan dasar. Tingkatkan produksi, impor, atau distribusi pada kategori yang tertinggal."
+      },
+      "publicServices": {
+        "title": "🏛️ KRISIS LAYANAN PUBLIK: Indeks Layanan {score}/100!",
+        "sender": "Kementerian Pembangunan & Layanan Publik Nasional",
+        "message": "Indeks kepuasan layanan publik berada di {score}/100, di bawah batas minimum 20/100. Infrastruktur, pendidikan, kesehatan, penegakan hukum, olahraga, dan layanan komersial belum mencukupi kebutuhan {population} jiwa. Segera bangun fasilitas umum."
+      },
+      "population": {
+        "title": "⚠️ Peringatan Defisit Populasi",
+        "sender": "Kementerian Dalam Negeri",
+        "message": "Populasi {country} menurun bersih sebanyak {dailyLoss} jiwa per hari. Jika kondisi berlanjut, penurunan diperkirakan mencapai {monthlyLoss} jiwa dalam 30 hari. Tinjau kebijakan pangan, hunian, dan layanan kesehatan."
+      }
+    },
+    "cabinet": {
+      "sender": "Sekretariat Kabinet & Dewan Kementerian Nasional",
+      "upgradeTitle": "🏛️ PENINGKATAN KABINET: {department} (Level {oldLevel} ➔ Level {newLevel})",
+      "upgradeMessage": "Presiden dan Kabinet menyetujui tambahan anggaran serta peningkatan kapasitas operasional {department} dari Level {oldLevel} menjadi Level {newLevel}. Peningkatan ini memperkuat {effect}.",
+      "restructureTitle": "📉 RESTRUKTURISASI KABINET: {department} (Level {oldLevel} ➔ Level {newLevel})",
+      "restructureMessage": "Pemerintah menyesuaikan efisiensi pos kementerian {department} dari Level {oldLevel} menjadi Level {newLevel}."
+    },
+    "organization": {
+      "names": {
+        "interpol": "Interpol",
+        "who": "Organisasi Kesehatan Dunia (WHO)",
+        "unesco": "Organisasi Pendidikan, Keilmuan, dan Kebudayaan PBB (UNESCO)",
+        "wto": "Organisasi Perdagangan Dunia (WTO)",
+        "ilo": "Organisasi Buruh Internasional (ILO)",
+        "fao": "Organisasi Pangan dan Pertanian (FAO)",
+        "imo": "Organisasi Maritim Internasional (IMO)",
+        "itu": "Organisasi Telekomunikasi Internasional (ITU)",
+        "wmo": "Organisasi Meteorologi Dunia (WMO)",
+        "asean": "Perhimpunan Bangsa-Bangsa Asia Tenggara (ASEAN)",
+        "eu": "Uni Eropa (EU)",
+        "arabLeague": "Liga Arab",
+        "africanUnion": "Uni Afrika (AU)",
+        "oic": "Organisasi Kerja Sama Islam (OKI)",
+        "brics": "BRICS (Brasil, Rusia, India, China, Afrika Selatan)",
+        "nato": "Pakta Pertahanan Atlantik Utara (NATO)",
+        "opec": "Organisasi Negara-Negara Pengekspor Minyak Bumi (OPEC)",
+        "g20": "Kelompok Duapuluh (G20)"
+      },
+      "unCategory": "Organisasi PBB",
+      "regionalCategory": "Organisasi Regional",
+      "acceptedTitle": "Keanggotaan {organization} Diterima",
+      "rejectedTitle": "Keanggotaan {organization} Ditolak",
+      "sender": "Sekretariat {organization}",
+      "acceptedMessage": "Permohonan {country} untuk bergabung dengan {organization} diterima setelah 30 hari perundingan. Keanggotaan dan manfaat organisasi kini aktif.",
+      "rejectedMessage": "Permohonan {country} untuk bergabung dengan {organization} ditolak setelah 30 hari perundingan. Negara dapat mengajukan permohonan kembali di kemudian hari."
+    },
+    "security": {
+      "category": "Insiden Kepolisian",
+      "title": "🚔 INSIDEN KEPOLISIAN: {eventName}",
+      "sender": "KEPOLISIAN NEGARA ({country})",
+      "message": "Insiden {eventName} dilaporkan di {country}. Kepolisian sedang mengamankan warga terdampak, menyelidiki kejadian, dan mengambil langkah untuk memulihkan keamanan.",
+      "risk": "Risiko keamanan dari sektor kesehatan dan penegakan hukum: {percent}%",
+      "people": "Orang",
+      "events": {
+        "armedRobbery": "Perampokan Bersenjata",
+        "financialRobbery": "Perampokan Pusat Keuangan",
+        "burglary": "Pembobolan dan Pencurian",
+        "organizedCrime": "Jaringan Kejahatan Terorganisasi",
+        "unrest": "Kerusuhan dan Gangguan Ketertiban",
+        "pickpocketing": "Pencopetan di Area Publik",
+        "vehicleTheft": "Pencurian Kendaraan",
+        "digitalFraud": "Penipuan Digital",
+        "vandalism": "Vandalisme Fasilitas Umum",
+        "kidnapping": "Penculikan",
+        "extortion": "Pemerasan terhadap Pelaku Usaha",
+        "humanTrafficking": "Perdagangan Manusia"
+      }
+    },
+    "tradeModal": {
+      "recommendation1": "Ubah sistem ekonomi di menu Kebijakan Ekonomi.",
+      "recommendation2": "Turunkan skor sentralisasi ekonomi hingga di bawah 85.",
+      "recommendation3": "Pertimbangkan ideologi dan regulasi perdagangan yang lebih terbuka.",
+      "reason1": "Sentralisasi ekonomi ekstrem (skor di atas 85).",
+      "reason2": "Ideologi tertutup meningkatkan kontrol negara.",
+      "reason3": "Friksi proteksionisme dengan blok perdagangan internasional.",
+      "customReason": "Perdagangan dengan {partner} tidak memenuhi syarat diplomasi dan regulasi nasional. Sistem ekonomi saat ini: {economy}."
+    }
+  },
+  "dynamicEventTranslations": {
+    "disaster": {
+      "message": "Kejadian {eventName} melanda {country}, berdampak pada {victims} jiwa dan menimbulkan kerugian {loss} NEO. Segera salurkan bantuan dan lakukan evakuasi.",
+      "messageWithScale": "Kejadian {eventName} melanda {country}, berdampak pada {victims} jiwa dan menimbulkan kerugian {loss} NEO. {severityNote} Segera salurkan bantuan dan lakukan evakuasi.",
+      "sender": "BADAN NASIONAL PENANGGULANGAN BENCANA ({country})",
+      "isolatedScale": "Analisis lapangan mengonfirmasi bencana skala terisolasi.",
+      "catastrophicScale": "Analisis lapangan mengonfirmasi bencana katastropik.",
+      "categories": {
+        "geological": "Bencana Geologi",
+        "hydrometeorological": "Bencana Hidrometeorologi",
+        "fire": "Bencana Kebakaran",
+        "coastal": "Bencana Laut & Pesisir",
+        "environmentalHealth": "Krisis Kesehatan Lingkungan"
+      },
+      "eventNames": {
+        "earthquakeLight": "Gempa Bumi Ringan",
+        "earthquakeMajor": "Gempa Bumi Besar",
+        "volcanicEruption": "Letusan Gunung Berapi",
+        "tsunami": "Tsunami",
+        "landslide": "Tanah Longsor",
+        "majorFlood": "Banjir Besar",
+        "flashFlood": "Banjir Bandang",
+        "drought": "Kekeringan Panjang",
+        "tropicalStorm": "Badai Tropis",
+        "cyclone": "Siklon Tropis",
+        "tornado": "Angin Puting Beliung",
+        "hailstorm": "Hujan Es Ekstrem",
+        "forestFire": "Kebakaran Hutan",
+        "peatFire": "Kebakaran Lahan Gambut",
+        "industrialFire": "Kebakaran Industri",
+        "settlementFire": "Kebakaran Permukiman Padat",
+        "coastalErosion": "Abrasi Pantai",
+        "waterspout": "Puting Beliung Laut",
+        "seaLevelRise": "Kenaikan Air Laut",
+        "foodPoisoning": "Keracunan Massal Pangan",
+        "waterContamination": "Keracunan Air Bersih",
+        "airPollution": "Polusi Udara Ekstrem",
+        "hazardousWaste": "Krisis Limbah B3",
+        "heatwave": "Gelombang Panas Mematikan",
+        "snowstorm": "Badai Salju & Frostbite Ekstrem",
+        "sinkhole": "Sinkhole Raksasa Tiba-Tiba",
+        "refineryFire": "Kebakaran Kilang & Depo Minyak"
+      }
+    },
+    "outbreak": {
+      "title": "🦠 {outbreakType}: {eventName}",
+      "titleWithVariant": "🦠 {outbreakType}: {eventName} — {variant}",
+      "message": "{eventName} terdeteksi di {country}. Tercatat {infected} orang terinfeksi dan perkiraan {deaths} korban jiwa selama {duration} hari. Segera terapkan langkah kesehatan masyarakat.",
+      "messageWithVariant": "{eventName} terdeteksi di {country}. Tercatat {infected} orang terinfeksi dan perkiraan {deaths} korban jiwa selama {duration} hari. Status medis: {variant}. Segera terapkan langkah kesehatan masyarakat.",
+      "sender": "KEMENTERIAN KESEHATAN & WHO ({country})",
+      "epidemic": "WABAH PENYAKIT",
+      "pandemic": "PANDEMI GLOBAL",
+      "localizedCluster": "Klaster Terlokalisir",
+      "superSpreader": "Mutasi Strain Super-Spreader",
+      "categories": {
+        "infectious": "Wabah Penyakit Menular (Epidemi)",
+        "animalAndPlant": "Penyakit Hewan & Tumbuhan (Epidemi)",
+        "mutations": "Mutasi Genetik & Superbug",
+        "pandemic": "Pandemi Global"
+      },
+      "eventNames": {
+        "dengue": "Wabah Demam Berdarah",
+        "malaria": "Wabah Malaria",
+        "cholera": "Wabah Kolera",
+        "typhoid": "Wabah Tifus",
+        "tuberculosis": "Wabah Tuberkulosis",
+        "hepatitisA": "Wabah Hepatitis A",
+        "measles": "Wabah Campak",
+        "polio": "Wabah Polio",
+        "diphtheria": "Wabah Difteri",
+        "rabies": "Wabah Rabies",
+        "avianFlu": "Flu Burung H5N1",
+        "footAndMouth": "Penyakit Mulut & Kuku (PMK)",
+        "ricePlanthopper": "Hama Wereng Padi",
+        "ganoderma": "Jamur Ganoderma",
+        "tungro": "Virus Tungro",
+        "ratInfestation": "Hama Tikus Massal",
+        "bananaWilt": "Layu Bakteri Pisang",
+        "africanSwineFever": "Flu Babi Afrika (ASF)",
+        "superbug": "Wabah Superbug Resistant",
+        "candidaAuris": "Wabah Jamur Mematikan (Candida Auris)",
+        "autoimmune": "Penyakit Autoimun Massal",
+        "globalInfluenza": "Pandemi Influenza Global",
+        "coronavirusVariant": "Pandemi Virus Corona Mutasi",
+        "pathogenX": "Pandemi Virus Baru (Pathogen X)",
+        "mpox": "Pandemi Cacar Monyet (Mpox)",
+        "hivVariant": "Pandemi HIV/AIDS Varian Baru",
+        "zombieVirus": "Virus Zombie (Bio-Lab Outbreak)",
+        "engineeredSpanishFlu": "Mutasi Flu Spanyol Rekayasa",
+        "mysteriousEncephalitis": "Wabah Ensefalitis Misterius",
+        "congoHemorrhagicFever": "Wabah Demam Berdarah Kongo (CCHF)",
+        "marburgVariant": "Pandemi Virus Marburg Subtipe Baru",
+        "redTide": "Anomali Bio-Toksin Laut (Red Tide)"
+      }
+    },
+    "electricity": {
+      "title": "⚡ KRISIS LISTRIK: {eventName} [{severity}]",
+      "message": "Kejadian {eventName} di {country} menyebabkan defisit {deficit} MW dan berdampak pada {areaCount} area selama sekitar {duration} hari.",
+      "sender": "PERUSAHAAN LISTRIK NEGARA (PLN) - {country}",
+      "ratingImpact": "Peringkat turun {impact} poin",
+      "severities": {
+        "ringan": "RINGAN",
+        "sedang": "SEDANG",
+        "berat": "BERAT",
+        "kritis": "KRITIS"
+      },
+      "eventNames": {
+        "mildShortage": "Defisit Listrik Ringan",
+        "substationMaintenance": "Pemeliharaan Gardu Induk",
+        "gasShortage": "Krisis Pasokan Gas untuk PLTG",
+        "transmissionFault": "Gangguan Transmisi Jalur Utama",
+        "hydropowerDrought": "Kekeringan Parah Mengurangi PLTA",
+        "turbineFailure": "Rusaknya Turbin PLTU",
+        "nationalEnergyCrisis": "Krisis Energi Nasional",
+        "systemicBlackout": "Blackout Sistemik Skala Besar"
+      },
+      "areas": {
+        "mediumHousing": "Perumahan menengah",
+        "commercialArea": "Kawasan komersial",
+        "lightIndustry": "Industri ringan",
+        "cityCenterDistrict": "Distrik pusat kota",
+        "industrialZone": "Kawasan industri",
+        "primaryGasPlant": "PLTG utama",
+        "manufacturingIndustry": "Industri manufaktur",
+        "tradeDistrict": "Kawasan perdagangan",
+        "metropolitanArea": "Kawasan metropolitan",
+        "heavyIndustryZone": "Zona industri berat",
+        "dataCenter": "Pusat data",
+        "primaryHydroSystem": "Sistem PLTA utama",
+        "energyIntensiveIndustry": "Industri energi-intensif",
+        "hospital": "Rumah sakit",
+        "governmentCenter": "Pusat pemerintahan",
+        "mainCoalPlant": "PLTU utama",
+        "strategicIndustrialZone": "Kawasan industri strategis",
+        "internationalAirport": "Bandara internasional",
+        "mainPort": "Pelabuhan utama",
+        "nationalGrid": "Seluruh sistem kelistrikan nasional",
+        "vitalIndustry": "Industri vital",
+        "healthFacilities": "Fasilitas kesehatan",
+        "transportSystem": "Sistem transportasi",
+        "nationalCommunications": "Komunikasi nasional",
+        "nationwideGrid": "Seluruh wilayah nasional",
+        "interconnectionGrid": "Grid interkoneksi",
+        "criticalInfrastructure": "Infrastruktur kritis",
+        "financialSector": "Sektor keuangan",
+        "emergencyServices": "Layanan darurat"
+      }
+    }
+  },
+  "tradeAccess": {
+    "reasons": {
+      "centralizationMonitored": "Sentralisasi tinggi; perdagangan dipantau komunitas internasional.",
+      "centralizationLimitsImports": "Sentralisasi tinggi membatasi impor.",
+      "ideologyCentralizes": "Ideologi yang berlaku meningkatkan sentralisasi.",
+      "religionRestrictsTrade": "Kebijakan berbasis agama membatasi perdagangan global.",
+      "extremeCentralization": "Sentralisasi ekstrem (skor di atas 85)."
+    }
   }
 }

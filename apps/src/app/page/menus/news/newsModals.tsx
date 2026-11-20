@@ -9,6 +9,8 @@ import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/Note
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
+import { getLocalizedCountryName, localizeCountryNamesInText } from '@/app/logic/countryNameLogic';
+import { getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 import { InvasionNewsData } from './logic/1_berita_invasi/beritaInvasiLogic';
 import { AnnexationNewsData } from './logic/2_berita_aneksasi/beritaAneksasiLogic';
 import { ResourceLootNewsData } from './logic/3_berita_pengambilan_sda/beritaPengambilanSDALogic';
@@ -62,6 +64,50 @@ function getNewsCountryName(item: NewsItemData): string | undefined {
   }
   if ('attackerCountry' in item && item.attackerCountry) return item.attackerCountry;
   return undefined;
+}
+
+function getLocalizedNewsCountry(countryName: string, iso?: string): string {
+  const countryIso = iso && /^[a-z]{2}$/i.test(iso) && iso.toLowerCase() !== 'un'
+    ? iso
+    : getIsoForCountryName(countryName);
+  return countryIso !== 'un'
+    ? getLocalizedCountryName(countryIso)
+    : getLocalizedCountryName(countryName);
+}
+
+function getNewsCountryFlags(item: NewsItemData): Array<{ iso: string; name: string }> {
+  const flags: Array<{ iso: string; name: string }> = [];
+  const addFlag = (name: unknown, iso?: unknown) => {
+    if (typeof name !== 'string' || !name.trim()) return;
+    const resolvedIso = typeof iso === 'string' && /^[a-z]{2}$/i.test(iso) && iso.toLowerCase() !== 'un'
+      ? iso.toLowerCase()
+      : getIsoForCountryName(name);
+    if (!/^[a-z]{2}$/.test(resolvedIso) || resolvedIso === 'un') return;
+    if (flags.some(flag => flag.iso === resolvedIso)) return;
+    flags.push({ iso: resolvedIso, name: getLocalizedCountryName(resolvedIso) });
+  };
+
+  if ('countryName' in item) {
+    addFlag(item.countryName, 'countryIso' in item ? item.countryIso : undefined);
+  }
+  if ('attackerCountry' in item) {
+    addFlag(item.attackerCountry, 'attackerIso' in item ? item.attackerIso : undefined);
+  }
+  if ('targetCountry' in item) {
+    addFlag(item.targetCountry, 'targetIso' in item ? item.targetIso : undefined);
+  }
+  if ('target' in item && item.target && typeof item.target === 'object') {
+    addFlag(item.target.name, item.target.iso);
+  }
+  if ('proposer' in item && item.proposer && typeof item.proposer === 'object') {
+    addFlag(item.proposer.name, item.proposer.iso);
+  }
+
+  if (flags.length === 0) {
+    const countryName = getNewsCountryName(item);
+    if (countryName) addFlag(countryName);
+  }
+  return flags.slice(0, 2);
 }
 
 function limitNewsPerMonth(news: NewsItemData[]): NewsItemData[] {
@@ -199,7 +245,37 @@ export default function TopRightNewsIcon({
     }
   };
 
-  const renderIcon = (type: NewsItemData['type']) => {
+  const renderIcon = (news: NewsItemData) => {
+    const flags = getNewsCountryFlags(news);
+    if (flags.length > 0) {
+      return (
+        <div
+          title={flags.map(flag => flag.name).join(' / ')}
+          className="w-10 h-10 rounded-xl bg-root-accent/10 border border-root-accent/30 flex items-center justify-center shrink-0 shadow-inner"
+        >
+          {flags.length === 1 ? (
+            <img
+              src={`https://flagcdn.com/w80/${flags[0].iso}.png`}
+              alt={flags[0].name}
+              className="w-8 h-5 rounded-sm object-cover"
+            />
+          ) : (
+            <div className="flex items-center gap-0.5">
+              {flags.map(flag => (
+                <img
+                  key={flag.iso}
+                  src={`https://flagcdn.com/w40/${flag.iso}.png`}
+                  alt={flag.name}
+                  className="w-4 h-3 rounded-sm object-cover"
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    const type = news.type;
     switch (type) {
       case 'invasi':
         return (
@@ -304,7 +380,9 @@ export default function TopRightNewsIcon({
             <h5 className="mt-1.5 line-clamp-2 whitespace-normal break-words text-[11px] font-bold leading-snug text-white group-hover:text-root-accent transition-colors">
               {(() => {
                 const tr = toastNews.type ? t(`side_news.headlines.${toastNews.type}`) : '';
-                return (tr && tr !== `side_news.headlines.${toastNews.type}`) ? tr : toastNews.headline;
+                return (tr && tr !== `side_news.headlines.${toastNews.type}`)
+                  ? tr
+                  : localizeCountryNamesInText(toastNews.headline);
               })()}
             </h5>
             <div className="mt-auto flex items-center justify-between border-t border-root-accent/10 pt-1 text-[9px] text-root-subtle">
@@ -353,6 +431,9 @@ export default function TopRightNewsIcon({
                 <div className="space-y-4">
                   {displayNews.map((news) => {
                     const targetCountry = getNewsCountryName(news);
+                    const displayTargetCountry = targetCountry
+                      ? getLocalizedNewsCountry(targetCountry, 'targetIso' in news ? news.targetIso : undefined)
+                      : '';
                     const canOpenCountry = Boolean(targetCountry && onOpenNewsCountry);
                     const canOpenConstruction = isAiConstructionNews(news) && Boolean(onOpenAiConstruction);
                     const canOpenParticipants = news.type === 'invasi_gabungan_pbb';
@@ -379,18 +460,20 @@ export default function TopRightNewsIcon({
                       }}
                       role={canNavigate ? 'button' : undefined}
                       tabIndex={canNavigate ? 0 : undefined}
-                      title={canOpenConstruction ? `Klik untuk melihat pembangunan di ${targetCountry}` : canOpenCountry ? `Klik untuk melihat negara ${targetCountry}` : canOpenParticipants ? 'Klik untuk melihat negara peserta' : undefined}
+                      title={canOpenConstruction ? `Klik untuk melihat pembangunan di ${displayTargetCountry}` : canOpenCountry ? `Klik untuk melihat negara ${displayTargetCountry}` : canOpenParticipants ? 'Klik untuk melihat negara peserta' : undefined}
                       className={`bg-root-surface border border-root-accent/25 p-4 sm:p-5 rounded-2xl shadow-lg relative space-y-3 hover:border-root-accent/50 transition-all ${canNavigate ? 'cursor-pointer' : ''}`}
                     >
                       <div className="flex items-start gap-3.5">
-                        {renderIcon(news.type)}
+                        {renderIcon(news)}
 
                         <div className="flex-1 space-y-1.5">
                           <div className="flex flex-wrap items-center justify-between gap-2">
                             <h3 className="text-sm sm:text-base font-black text-white tracking-wide leading-tight">
                               {(() => {
                                 const tr = news.type ? t(`side_news.headlines.${news.type}`) : '';
-                                return (tr && tr !== `side_news.headlines.${news.type}`) ? tr : news.headline;
+                                return (tr && tr !== `side_news.headlines.${news.type}`)
+                                  ? tr
+                                  : localizeCountryNamesInText(news.headline);
                               })()}
                             </h3>
                             {renderBadge(news.type)}
@@ -399,9 +482,9 @@ export default function TopRightNewsIcon({
                           <div className="flex flex-wrap items-center gap-3 text-[10px] font-bold text-root-subtle uppercase tracking-wider">
                             {('attackerCountry' in news) && (
                               <>
-                                <span>{t('side_news.attacker')}: <strong className="text-white">{news.attackerCountry}</strong></span>
+                                <span>{t('side_news.attacker')}: <strong className="text-white">{getLocalizedNewsCountry(news.attackerCountry, 'attackerIso' in news ? news.attackerIso : undefined)}</strong></span>
                                 <span>•</span>
-                                <span>{t('side_news.target')}: <strong className="text-white">{news.targetCountry}</strong></span>
+                                <span>{t('side_news.target')}: <strong className="text-white">{getLocalizedNewsCountry(news.targetCountry, 'targetIso' in news ? news.targetIso : undefined)}</strong></span>
                                 <span>•</span>
                               </>
                             )}
@@ -410,12 +493,18 @@ export default function TopRightNewsIcon({
 
                           <p className="text-xs font-medium text-slate-300 leading-relaxed pt-1">
                             {(() => {
-                              if (news.type && t(`side_news.contents.${news.type}`)) {
-                                const actor = ('countryName' in news && news.countryName) || ('attackerCountry' in news && news.attackerCountry) || '';
-                                const partner = ('targetCountry' in news && news.targetCountry) || ('target' in news && news.target?.name) || '';
-                                return t(`side_news.contents.${news.type}`, { actor, partner });
+                              if (news.type) {
+                                const contentKey = `side_news.contents.${news.type}`;
+                                const actorName = ('countryName' in news && news.countryName) || ('attackerCountry' in news && news.attackerCountry) || '';
+                                const actorIso = 'attackerIso' in news ? news.attackerIso : undefined;
+                                const partnerName = ('targetCountry' in news && news.targetCountry) || ('target' in news && news.target?.name) || '';
+                                const partnerIso = 'targetIso' in news ? news.targetIso : ('target' in news ? news.target?.iso : undefined);
+                                const actor = actorName ? getLocalizedNewsCountry(actorName, actorIso) : '';
+                                const partner = partnerName ? getLocalizedNewsCountry(partnerName, partnerIso) : '';
+                                const translatedContent = t(contentKey, { actor, partner });
+                                if (translatedContent !== contentKey) return translatedContent;
                               }
-                              return news.content;
+                              return localizeCountryNamesInText(news.content);
                             })()}
                           </p>
 
@@ -424,8 +513,11 @@ export default function TopRightNewsIcon({
                             <div className="bg-[#051111] border border-amber-500/30 rounded-xl p-2.5 text-xs text-amber-300 font-bold flex items-center justify-between mt-2">
                               <span className="flex items-center gap-1.5">
                                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                                {t('side_news.mapUpdatedAnnexation', { target: news.targetCountry, attacker: news.attackerCountry }) ||
-                                  `Peta Diperbarui: Warna wilayah ${news.targetCountry} telah disesuaikan dengan warna ${news.attackerCountry}!`}
+                                {t('side_news.mapUpdatedAnnexation', {
+                                  target: getLocalizedNewsCountry(news.targetCountry, news.targetIso),
+                                  attacker: getLocalizedNewsCountry(news.attackerCountry, news.attackerIso),
+                                }) ||
+                                  `Peta Diperbarui: Warna wilayah ${getLocalizedNewsCountry(news.targetCountry, news.targetIso)} telah disesuaikan dengan warna ${getLocalizedNewsCountry(news.attackerCountry, news.attackerIso)}!`}
                               </span>
                             </div>
                           )}
@@ -481,7 +573,7 @@ export default function TopRightNewsIcon({
                   size="standard"
                   centerContent={
                     <p className="text-xs text-slate-400">
-                      {t('side_news.target')}: <strong className="text-white">{selectedOperationNews.target.name}</strong>
+                      {t('side_news.target')}: <strong className="text-white">{getLocalizedNewsCountry(selectedOperationNews.target.name, selectedOperationNews.target.iso)}</strong>
                     </p>
                   }
                 />
@@ -491,7 +583,7 @@ export default function TopRightNewsIcon({
                       key={`${selectedOperationNews.resolutionId}-${participant.iso}`}
                       className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-[#051111] px-4 py-3"
                     >
-                      <span className="font-bold text-white">{participant.name}</span>
+                      <span className="font-bold text-white">{getLocalizedNewsCountry(participant.name, participant.iso)}</span>
                       <span className="shrink-0 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-2.5 py-1 text-[10px] font-bold uppercase text-cyan-300">
                         {participant.role}
                       </span>

@@ -2,6 +2,8 @@
 // Logika notifikasi penawaran pembangunan Kedutaan Besar dari negara AI ke User
 
 import { NotificationMessage } from '../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { getDisplayCountryName } from '@/app/logic/countryNameLogic';
+import { createInboxNotificationText, getDefaultInboxText } from '../notificationMessage';
 
 export interface EmbassyOfferNotification extends NotificationMessage {
   tradeType: 'penawaran_kedutaan_besar';
@@ -13,11 +15,25 @@ export function createEmbassyOfferNotification(
   userCountryName: string,
   dateStr: string
 ): EmbassyOfferNotification {
+  partnerCountry = getDisplayCountryName(partnerCountry);
+  const titleKey = 'side_inbox.geopolitics.embassyTitle';
+  const titleParams = { partner: partnerCountry };
+  const senderKey = 'side_inbox.offerMessages.embassySender';
+  const senderParams = { partner: partnerCountry };
+  const message = createInboxNotificationText(
+    'side_inbox.offerMessages.embassy',
+    { user: userCountryName || 'Nusantara', partner: partnerCountry }
+  );
+
   return {
     id: `embassy-offer-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title: `🏛️ Penawaran Kedutaan Besar: ${partnerCountry}`,
-    sender: `Kementerian Luar Negeri ${partnerCountry}`,
-    message: `Salam hangat untuk Presiden ${userCountryName || 'Nusantara'}. Pemerintah ${partnerCountry} secara resmi mengajukan permohonan diplomatik untuk mendirikan bangunan Kedutaan Besar di ibu kota negara Anda guna mempererat hubungan diplomatik dan kerja sama bilateral antar negara. Apakah Anda berkenan menerima permohonan kedutaan besar ini?`,
+    title: getDefaultInboxText(titleKey, titleParams),
+    titleKey,
+    titleParams,
+    sender: getDefaultInboxText(senderKey, senderParams),
+    senderKey,
+    senderParams,
+    ...message,
     timestamp: dateStr,
     type: 'kepuasan',
     value: 0,

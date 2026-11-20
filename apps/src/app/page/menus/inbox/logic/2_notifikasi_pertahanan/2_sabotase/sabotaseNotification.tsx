@@ -2,6 +2,7 @@ import React from 'react';
 import { Bomb, Check, X, ShieldAlert } from 'lucide-react';
 import type { SabotaseNotification } from '@/app/page/detail_negara/3_operasi_militer/3_sabotase/logic/sabotaseLogic';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getInboxNotificationEffectText, getInboxNotificationMessage, getInboxNotificationSender, getInboxNotificationTitle } from '../../notificationMessage';
 
 interface SabotaseNotificationProps {
   notification: SabotaseNotification;
@@ -14,9 +15,22 @@ export default function SabotaseNotificationCard({ notification, onAccept, onRej
   const isHandled = notification.isHandled;
   const isOffensive = notification.isOffensive;
   const isSuccess = notification.operationResult === 'success';
-  const partner = notification.partnerCountry || 'Target';
-  const effectText = notification.effectText || '';
-  const operationTarget = notification.operationTarget || 'Fasilitas Militer';
+  const defaultTarget = t('side_inbox.dynamicNotifications.sabotage.defaultTarget');
+  const effectText = notification.effectTextKey
+    ? getInboxNotificationEffectText(notification, t)
+    : notification.effectText || '';
+  const operationTargetKey = notification.operationTargetKey ?? ({
+    'Fasilitas & Pabrik Militer': 'side_inbox.dynamicNotifications.sabotage.targetOptions.militaryFacility',
+    'Fasilitas Militer': 'side_inbox.dynamicNotifications.sabotage.targetOptions.militaryFacility',
+    'Infrastruktur Listrik & Energi': 'side_inbox.dynamicNotifications.sabotage.targetOptions.energyInfrastructure',
+    'Sabotase Produksi Pangan': 'side_inbox.dynamicNotifications.sabotage.targetOptions.foodProduction',
+    'Sabotase Manufaktur': 'side_inbox.dynamicNotifications.sabotage.targetOptions.manufacturing',
+  } as Record<string, string>)[notification.operationTarget || ''];
+  const operationTarget = operationTargetKey
+    ? t(operationTargetKey)
+    : !notification.operationTarget
+    ? defaultTarget
+    : notification.operationTarget;
 
   if (isOffensive) {
     return (
@@ -28,30 +42,30 @@ export default function SabotaseNotificationCard({ notification, onAccept, onRej
         <div className="flex-1 space-y-2">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h4 className="text-sm font-black text-white uppercase tracking-wide leading-tight">
-              {t('side_inbox.defense.sabotaseTitle', { partner }) || notification.title}
+              {getInboxNotificationTitle(notification, t)}
             </h4>
             <span className={`text-[10px] font-bold ${isSuccess ? 'text-emerald-300 bg-emerald-900/60 border-emerald-500/40' : 'text-rose-300 bg-rose-900/60 border-rose-500/40'} px-2.5 py-0.5 rounded-full border uppercase tracking-wider`}>
-              {isSuccess ? (t('side_inbox.defense.sabotaseSuccess') || 'Sabotase Berhasil') : (t('side_inbox.defense.sabotaseFailed') || 'Sabotase Digagalkan')}
+              {isSuccess ? (t('side_inbox.defense.sabotaseSuccess')) : (t('side_inbox.defense.sabotaseFailed'))}
             </span>
           </div>
 
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-            {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
+            {t('side_inbox.senderPrefix', { sender: getInboxNotificationSender(notification, t), date: notification.timestamp })}
           </p>
 
           <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">
-            {notification.message}
+            {getInboxNotificationMessage(notification, t)}
           </p>
 
           <div className={`bg-root-canvas border ${isSuccess ? 'border-emerald-500/30 text-emerald-300' : 'border-rose-500/30 text-rose-300'} rounded-xl p-2.5 text-xs font-bold flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1`}>
-            <span>{t('side_inbox.defense.damageImpact', { effect: effectText }) || `Dampak Kerusakan: ${effectText}`}</span>
-            <span className="text-root-subtle font-black">{t('side_inbox.defense.facility', { target: operationTarget }) || `Instalasi: ${operationTarget}`}</span>
+            <span>{t('side_inbox.defense.damageImpact', { effect: effectText })}</span>
+            <span className="text-root-subtle font-black">{t('side_inbox.defense.facility', { target: operationTarget })}</span>
           </div>
 
           <div className="pt-2 flex items-center justify-end">
             <div className={`text-[11px] font-bold ${isSuccess ? 'text-emerald-400 bg-emerald-950/80 border-emerald-500/50' : 'text-rose-400 bg-rose-950/80 border-rose-500/50'} px-3 py-1.5 rounded-xl border flex items-center gap-1.5`}>
               {isSuccess ? <Check className="w-3.5 h-3.5" /> : <X className="w-3.5 h-3.5" />}
-              <span>{isSuccess ? (t('side_inbox.defense.completed') || 'OPERASI SABOTASE SELESAI') : (t('side_inbox.defense.evacuated') || 'TIM SABOTASE TELAH DIEVAKUASI')}</span>
+              <span>{isSuccess ? (t('side_inbox.defense.completed')) : (t('side_inbox.defense.evacuated'))}</span>
             </div>
           </div>
         </div>
@@ -69,31 +83,31 @@ export default function SabotaseNotificationCard({ notification, onAccept, onRej
       <div className="flex-1 space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h4 className="text-sm font-black text-white uppercase tracking-wide leading-tight">
-            {t('side_inbox.defense.sabotaseTitle', { partner }) || notification.title}
+            {getInboxNotificationTitle(notification, t)}
           </h4>
           <span className="text-[10px] font-bold text-rose-300 bg-rose-900/60 px-2.5 py-0.5 rounded-full border border-rose-500/40 uppercase tracking-wider">
-            {t('side_inbox.defense.sabotaseBadge') || 'Operasi Sabotase'}
+            {t('side_inbox.defense.sabotaseBadge')}
           </span>
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          {t('side_inbox.senderPrefix', { sender: notification.sender, date: notification.timestamp }) || `Pengirim: ${notification.sender} | Tanggal: ${notification.timestamp}`}
+          {t('side_inbox.senderPrefix', { sender: getInboxNotificationSender(notification, t), date: notification.timestamp })}
         </p>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">
-          {notification.message}
+          {getInboxNotificationMessage(notification, t)}
         </p>
 
         <div className="bg-root-canvas border border-rose-500/30 rounded-xl p-2.5 text-xs text-rose-300 font-bold flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1">
-          <span>{t('side_inbox.defense.damageImpact', { effect: effectText }) || `Dampak: ${effectText}`}</span>
-          <span className="text-root-subtle font-black">{t('side_inbox.defense.facility', { target: operationTarget }) || `Fasilitas: ${operationTarget}`}</span>
+          <span>{t('side_inbox.defense.damageImpact', { effect: effectText })}</span>
+          <span className="text-root-subtle font-black">{t('side_inbox.defense.facility', { target: operationTarget })}</span>
         </div>
 
         <div className="pt-2 flex items-center justify-end gap-2.5">
           {isHandled ? (
             <div className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/50 flex items-center gap-1.5">
               <Check className="w-3.5 h-3.5" />
-              <span>{t('side_inbox.defense.stabilized') || 'PENYELIDIKAN & PEMULIHAN FASILITAS BERHASIL'}</span>
+              <span>{t('side_inbox.defense.stabilized')}</span>
             </div>
           ) : (
             <>
@@ -103,7 +117,7 @@ export default function SabotaseNotificationCard({ notification, onAccept, onRej
                   className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white rounded-xl transition-all cursor-pointer shadow-[0_0_12px_rgba(244,63,94,0.4)] flex items-center gap-1.5"
                 >
                   <ShieldAlert className="w-3.5 h-3.5" />
-                  <span>{t('side_inbox.actions.crackdown') || 'Perketat Penjagaan'}</span>
+                  <span>{t('side_inbox.actions.crackdown')}</span>
                 </button>
               )}
             </>

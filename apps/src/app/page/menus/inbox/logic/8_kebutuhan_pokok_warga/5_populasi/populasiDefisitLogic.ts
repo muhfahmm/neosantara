@@ -1,4 +1,5 @@
 import type { NotificationMessage } from "../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic";
+import { createInboxNotificationText, getDefaultInboxText } from "../../notificationMessage";
 
 export interface PopulasiDefisitNotification extends NotificationMessage {
   tradeType: "defisit_populasi";
@@ -14,12 +15,21 @@ export function generatePopulasiDefisitNotification(
   countryName: string,
 ): PopulasiDefisitNotification {
   const monthlyEstimate = dailyChange * 30;
+  const titleKey = "side_inbox.basicNeeds.population.title";
+  const messageKey = "side_inbox.basicNeeds.population.message";
+  const messageParams = {
+    country: countryName,
+    dailyLoss: Math.abs(dailyChange).toLocaleString("id-ID"),
+    monthlyLoss: Math.abs(monthlyEstimate).toLocaleString("id-ID"),
+  };
 
   return {
     id: `population-deficit-${countryName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${dateStr.slice(0, 7)}`,
-    title: "⚠️ Peringatan Defisit Populasi",
-    sender: "Kementerian Dalam Negeri",
-    message: `Populasi ${countryName} sedang mengalami penurunan bersih ${Math.abs(dailyChange).toLocaleString("id-ID")} jiwa per hari. Jika kondisi ini bertahan, estimasi penurunan mencapai ${Math.abs(monthlyEstimate).toLocaleString("id-ID")} jiwa dalam 30 hari. Tinjau kembali kebijakan dan kondisi pangan, hunian, serta layanan kesehatan.`,
+    title: getDefaultInboxText(titleKey),
+    titleKey,
+    sender: getDefaultInboxText("side_inbox.basicNeeds.population.sender"),
+    senderKey: "side_inbox.basicNeeds.population.sender",
+    ...createInboxNotificationText(messageKey, messageParams),
     timestamp: dateStr,
     type: "kepuasan",
     value: dailyChange,

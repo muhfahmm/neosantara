@@ -194,11 +194,16 @@
     "risk": "Risk: {risk}",
     "recoveryCost": "Restoration Operation Cost: {cost} NEO",
     "stabilized": "STABILITY RESTORED",
-    "quellRebellion": "SUPPRESS INSURGENCY",
+    "quellRebellion": "قمع التمرد المسلح",
     "diserangTitle": "⚔️ MILITARY ATTACK ON SOVEREIGN TERRITORY!",
     "diserangBadge": "Military Invasion",
     "icbmTitle": "🚀 INTERCONTINENTAL BALLISTIC MISSILE (ICBM) ALERT!",
-    "icbmBadge": "Nuclear & Ballistic Threat"
+    "icbmBadge": "Nuclear & Ballistic Threat",
+    "deployDefense": "نشر قوات الدفاع",
+    "defenseDeployed": "تم نشر قوات الدفاع العسكري",
+    "impact": "التأثير",
+    "mobilizationCost": "تكلفة التعبئة الدفاعية",
+    "estimatedImpact": "التأثير المتوقع: دمار شامل"
   },
   "disaster": {
     "naturalTitle": "🚨 NATURAL DISASTER: {name} IN {province}",
@@ -207,12 +212,14 @@
     "financialLoss": "Financial Loss",
     "infrastructureDamage": "Infrastructure Damage",
     "aidCost": "Relief & Evacuation Cost",
-    "sendAid": "DISPATCH EMERGENCY RELIEF",
+    "sendAid": "إرسال مساعدات طارئة",
     "handled": "RELIEF FULLY DISPATCHED",
     "wabahTitle": "☣️ DISEASE EPIDEMIC: {name} IN {province}",
     "wabahBadge": "Disease Epidemic",
     "infected": "Confirmed Infected",
-    "quarantineCost": "Quarantine Control Cost"
+    "quarantineCost": "Quarantine Control Cost",
+    "quarantine": "فرض الحجر الصحي المناطقي",
+    "quarantineSuccess": "تم فرض الحجر الصحي رسمياً"
   },
   "geopolitics": {
     "allianceTitle": "🛡️ DEFENSE ALLIANCE PROPOSAL: {partner}",
@@ -229,7 +236,9 @@
     "embassyBadge": "Embassy",
     "unResolutionTitle": "🏛️ UN RESOLUTION: {title}",
     "unResolutionBadge": "UN General Assembly Resolution",
-    "openResolution": "VIEW UN RESOLUTION DETAILS →"
+    "openResolution": "VIEW UN RESOLUTION DETAILS →",
+    "openEmbassy": "فتح السفارة ←",
+    "openBilateralDiplomacy": "بدء الدبلوماسية الثنائية ←"
   },
   "basicNeeds": {
     "electricTitle": "⚡ ENERGY CRISIS: NATIONAL ELECTRICAL DEFICIT",
@@ -243,7 +252,12 @@
     "populationTitle": "👥 DEMOGRAPHIC & POPULATION CRISIS",
     "populationBadge": "Citizen Demographics",
     "solveNow": "RESOLVE NOW",
-    "resolved": "CRISIS RESOLVED"
+    "resolved": "CRISIS RESOLVED",
+    "buildPowerPlant": "بناء محطة توليد طاقة ←",
+    "buildHousing": "بناء مجمعات سكنية ←",
+    "boostFood": "زيادة الإنتاج الغذائي ←",
+    "buildPublicFacilities": "بناء مرافق عامة ←",
+    "manageDemographics": "إدارة السياسات السكانية ←"
   },
   "tradeModals": {
     "closedTitle": "Trade Access Denied",
@@ -291,11 +305,11 @@
   },
   "security": {
     "nationalSecurityReport": "National Security Status Report",
-    "affectedCitizens": "Affected Citizens",
-    "totalLoss": "Total Losses",
-    "responseCost": "Response Cost",
+    "affectedCitizens": "المواطنون المتضررون",
+    "totalLoss": "إجمالي الخسائر",
+    "responseCost": "تكلفة الاستجابة",
     "securityOperationsComplete": "SECURITY OPERATIONS COMPLETED",
-    "deploySecurity": "Deploy Security Operations",
+    "deploySecurity": "نشر قوات الأمن",
     "alliedAid": "Allied Military Assistance",
     "aidAccepted": "MILITARY AID ACCEPTED",
     "offerExpired": "OFFER EXPIRED",
@@ -306,7 +320,10 @@
     "warships": "Warships",
     "orgMembership": "International Organization Membership",
     "accepted": "Accepted",
-    "rejected": "Rejected"
+    "rejected": "Rejected",
+    "securityRisk": "مخاطر أمنية واضطراب عام",
+    "operationsComplete": "اكتملت العمليات الأمنية بنجاح",
+    "ignore": "تجاهل"
   },
   "electricityCrisis": {
     "hideDetail": "▲ Hide Details",
@@ -324,14 +341,77 @@
     "days": "days"
   },
   "demo": {
-    "cause": "Cause",
-    "mass": "Crowd",
-    "people": "people",
-    "status": "Status",
-    "ongoing": "ONGOING",
-    "hardPower": "Crackdown",
-    "dialog": "Public Dialog",
-    "fulfill": "Fulfill Demands",
-    "ignore": "Ignore Protest"
+    "cause": "سبب الاحتجاج",
+    "mass": "حجم الحشد",
+    "people": "مواطن",
+    "status": "الحالة",
+    "ongoing": "مستمرة بقوة",
+    "hardPower": "حزم أمني",
+    "dialog": "حوار مفتوح",
+    "fulfill": "تلبية المطالب",
+    "ignore": "تجاهل الاحتجاج",
+    "disperseModalTitle": "إجراءات الأمن القومي",
+    "disperseModalSub": "خيارات عمليات فض الحشود",
+    "operationCost": "تكلفة العملية",
+    "cancel": "إلغاء",
+    "confirmDisperse": "نعم، قم بالفض!",
+    "understood": "تم الفهم",
+    "confirmTitle": "تأكيد العملية الأمنية",
+    "confirmSubtitle": "إجراءات فض المظاهرات",
+    "confirmWarning": "يستخدم هذا الإجراء القوة القسرية للدولة. الصدامات والإصابات وتراجع الرضا العام أمور لا مفر منها!",
+    "confirmQuestion": "هل أنت متأكد من رغبتك في إرسال قوات الفض؟",
+    "reportTitleSuccess": "🚨 تقرير عملية فض الحشود",
+    "reportTitleClash": "🔥 تقرير الاشتباكات وأعمال الشغب",
+    "injured": "عدد المصابين",
+    "killed": "الضحايا / الحالات الحرجة",
+    "remainingProtesters": "المتظاهرون المتبقون",
+    "dialogForumTitle": "منتدى الحوار المفتوح",
+    "backToGame": "العودة إلى اللعبة",
+    "laborLeader": "رئيس اتحاد العمال",
+    "protesterRep": "ممثل المحتجين",
+    "anger": "غضب الحشود",
+    "trust": "الثقة العامة",
+    "demandsTitle": "قائمة المطالب الشعبية",
+    "refreshChoices": "تغيير خيارات الرد",
+    "disperseWithPolice": "الفض بقوات مكافحة الشغب",
+    "sessionStarted": "بدأت جلسة الحوار. اختر الرد الأنسب لتهدئة التوترات."
+  },
+  "notificationMessages": {
+    "ratings": {
+      "satisfaction": "سيدي الرئيس، انخفض مؤشر رضا الشعب إلى {value}/100، وبدأ الاستياء ينتشر في عدة أقاليم. إذا استمر الانخفاض إلى أقل من 10، فستصبح الاحتجاجات الواسعة حتمية وستتعرض استقرارية الدولة للخطر. يُرجى تنظيم مهرجان ثقافي أو خفض ضرائب السلع الأساسية فورًا.",
+      "ranking": "سيدي الرئيس، تراجعت ثقة الشعب بقيادتكم إلى {value}/100. بدأ البرلمان يلاحظ هذا الاتجاه السلبي، وظهرت شائعات المعارضة عن العزل. إذا انخفض ترتيبكم إلى أقل من 10، فقد تتم الإطاحة بكم. يُرجى تلبية مطالب الشعب وتثبيت الأسعار وحماية رفاهه.",
+      "welfare": "سيدي الرئيس، انخفض مؤشر رفاه الشعب إلى {value}/100. بدأ نقص المرافق الأساسية، مثل التعليم والرعاية الصحية والبنية التحتية العامة، يخفض جودة الحياة بشدة. إذا هبط المؤشر إلى أقل من 10، فستواجه البلاد أزمة إنسانية خطيرة. أنشئوا المدارس والمستشفيات والمرافق العامة أو قدموا مساعدات نقدية مباشرة."
+    },
+    "rebellion": "سيدي الرئيس، اندلعت احتجاجات متطرفة وحركة انفصالية مسلحة في {country}. وتطالب الجماعة المتمردة الحكومة المركزية بتغيير الوضع السياسي!",
+    "alliedAidRequest": "تعرضت {target} لهجوم مفاجئ من القوات العسكرية التابعة لـ{attacker}. وبموجب معاهدة التحالف الدفاعي المشترك، يطلب الحليف دعمًا عسكريًا للدفاع عن سيادة أراضيه.",
+    "diserang": {
+      "threat": "أيها القائد، رُصدت الدولة المجاورة {enemy} وهي تحشد فرقًا مدرعة قرب الحدود. لم تُطلق أي رصاصة بعد، لكن هذا استفزاز علني.",
+      "borderAttack": "إنذار عسكري! هاجمت قوات {enemy} موقعنا الحدودي الرئيسي! وتدور اشتباكات وإطلاق مدفعي على خط المواجهة.",
+      "warDeclaration": "نزاع واسع! أعلنت حكومة {enemy} رسميًا الحرب الشاملة على دولتنا، ويتقدم أسطولها القتالي بسرعة.",
+      "invasion": "غزو عسكري واسع النطاق! شنت القوات المشتركة التابعة لـ{enemy} هجومًا بريًا وجويًا للاستيلاء على أقاليمنا وضمها!",
+      "invasionWithoutTerritories": "غزو عسكري واسع النطاق! شنت القوات المشتركة التابعة لـ{enemy} عملية برية وجوية لاختراق دفاعاتنا الوطنية. لا نملك حاليًا أقاليم مضمومة يمكن الاستيلاء عليها."
+    },
+    "icbm": {
+      "incomingAlert": "حالة طوارئ من الدرجة القصوى! رصد رادار الدفاع إطلاق صاروخ باليستي عابر للقارات (ICBM) مزود برأس نووي من {launcher} ويتجه مباشرة إلى {target}! يُتوقع الاصطدام خلال دقائق!",
+      "programStarted": "سيدي الرئيس، بدأ رسميًا في {startDate} المشروع السري للبرنامج النووي الوطني ({country}). يجري إنشاء منشآت تخصيب اليورانيوم ومفاعلات الأبحاث والبنية التحتية الاستراتيجية المساندة. يُتوقع اكتماله في {endDate}.",
+      "programCompleted": "إعلان استراتيجي وطني! اكتمل بناء منشآت البرنامج النووي الوطني. أصبحت {country} رسميًا دولة قادرة نوويًا، وأصبحت صناعة صواريخ ICBM وعمليات الحرب النووية متاحة بالكامل!",
+      "testReport": "تقرير استخباراتي عالمي: أجرت {tester} للتو اختبار إطلاق صاروخ باليستي عابر للقارات (ICBM) برأس نووي باتجاه {target}. وسجلت أجهزة الاستشعار الزلزالية والأقمار الصناعية الاستطلاعية اهتزازات انفجار قوية في موقع الاختبار!"
+    },
+    "resolution": {
+      "worldWarBan": "تحديث دبلوماسي للأمم المتحدة! قدمت {proposer} رسميًا مقترح «حظر الحرب» على العالم بأسره لمدة {duration}. ويحظر المقترح مهاجمة الدول المحددة خلال الفترة المختارة. وسيُجرى تصويت الجمعية العامة للأمم المتحدة قريبًا!",
+      "worldProductionBan": "تحديث دبلوماسي للأمم المتحدة! قدمت {proposer} رسميًا مقترح «حظر الإنتاج» على العالم بأسره لمدة {duration}. وسيتوقف إنتاج {product} خلال الفترة المختارة. وسيُجرى تصويت الجمعية العامة للأمم المتحدة قريبًا!",
+      "targeted": {
+        "arms_embargo": "تحديث دبلوماسي للأمم المتحدة! قدمت {proposer} رسميًا مقترح «حظر مبيعات الأسلحة» ضد {target} لمدة {duration} بسبب سوء العلاقات الثنائية (النتيجة: {score}/100). ويحظر المقترح تجارة الأسلحة خلال الفترة المختارة. وسيُجرى تصويت الجمعية العامة للأمم المتحدة قريبًا!",
+        "economic_embargo": "تحديث دبلوماسي للأمم المتحدة! قدمت {proposer} رسميًا مقترح «حظر اقتصادي» ضد {target} لمدة {duration} بسبب سوء العلاقات الثنائية (النتيجة: {score}/100). ويخفض المقترح إنتاج المصانع والتعدين وإيرادات الدولة بنسبة 60% خلال الفترة المختارة. وسيُجرى تصويت الجمعية العامة للأمم المتحدة قريبًا!",
+        "military_invasion": "تحديث دبلوماسي للأمم المتحدة! قدمت {proposer} رسميًا مقترح «قرار الغزو» ضد {target} لمدة {duration} بسبب سوء العلاقات الثنائية (النتيجة: {score}/100). ويسمح القرار بغزو الدولة دون إدانة من الدول الأخرى. وسيُجرى تصويت الجمعية العامة للأمم المتحدة قريبًا!",
+        "production_ban": "تحديث دبلوماسي للأمم المتحدة! قدمت {proposer} رسميًا مقترح «حظر الإنتاج» ضد {target} لمدة {duration} بسبب سوء العلاقات الثنائية (النتيجة: {score}/100). وسيتوقف إنتاج {product} خلال الفترة المختارة. وسيُجرى تصويت الجمعية العامة للأمم المتحدة قريبًا!"
+      }
+    }
+  },
+  "policyNotice": {
+    "policyImpact": "تأثير السياسة",
+    "ministry": "الوزارة",
+    "activeResearch": "البحث النشط",
+    "strategicSector": "القطاع الاستراتيجي"
   }
 }

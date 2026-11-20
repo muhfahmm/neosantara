@@ -21,6 +21,7 @@
       "testReport": "全球情报报告：{tester}刚刚向{target}进行了携带核弹头的洲际弹道导弹（ICBM）试射。地震传感器和侦察卫星记录到试验区域发生强烈爆炸震动！"
     },
     "resolution": {
+      "cardTitle": "🏛️ 联合国大会决议：{proposer} — {resolutionType}",
       "worldWarBan": "联合国外交快讯！{proposer}正式提出一项为期{duration}、适用于全球的“禁战决议”。该提案将在所选期间禁止攻击指定国家。联合国大会即将进行表决！",
       "worldProductionBan": "联合国外交快讯！{proposer}正式提出一项为期{duration}、适用于全球的“禁产决议”。该提案将在所选期间停止生产{product}。联合国大会即将进行表决！",
       "targeted": {
@@ -59,6 +60,16 @@
     "ekonomi": "国家经济与货币",
     "kebutuhan_pokok": "民众核心基本需求"
   },
+  "offerMessages": {
+    "embassy": "总统{user}，您好。{partner}政府正式申请在贵国首都设立大使馆，以加强外交关系和双边合作。您是否接受该申请？",
+    "embassySender": "{partner}外交部",
+    "defenseAlliance": "总统{user}，{partner}政府提议缔结共同防御联盟。若发生入侵或外国袭击，两国将承诺提供军事支持并共享战略情报。您愿意批准该联盟吗？",
+    "defenseAllianceSender": "{partner}安全与国防委员会",
+    "researchContract": "总统{user}，{partner}国家研究联盟提议签署联合研发合同。两国将共享知识，并使战略技术领域的研究速度提升25%。您是否接受该合同？",
+    "researchContractSender": "{partner}研究、技术与科学部",
+    "tradeRelation": "总统{user}，{partner}政府希望扩大两国战略伙伴关系并开通双边贸易路线。该协议将提供进出口商品的专属渠道和特别关税优惠。您是否同意批准该协议？",
+    "tradeRelationSender": "{partner}外交与贸易部"
+  },
   "ratingWarning": {
     "title": "⚠️ 预警：民众满意度正在下降！",
     "sender": "内政部",
@@ -82,10 +93,12 @@
   "toastTitle": "收到新公函通知",
   "openInbox": "进入收件箱 ({count}) →",
   "nonAggressionOfferTitle": "🕊️ 互不侵犯条约缔结提案：{partner}",
+  "nonAggressionRecipient": "总统",
   "nonAggressionSender": "{partner} 外交与国际合作部",
   "nonAggressionMessage": "{user} 元首阁下，{partner} 政府正式提议与贵国缔结双边互不侵犯条约。双方恪守和平共处，绝不采取敌对军事行动，并共同维护边界安宁。请问阁下是否签署并批准本条约？",
   "diplomacyPeaceBadge": "和平外交与安全",
   "senderPrefix": "发件方：{sender} | 日期：{date}",
+  "relation": "关系评分",
   "rejectPact": "拒绝条约",
   "acceptPact": "签署并批准互不侵犯条约",
   "pactRejected": "与 {partner} 的互不侵犯条约已拒绝签署",
@@ -232,17 +245,61 @@
     "spionaseBadge": "情报与间谍",
     "spionaseSuccess": "情报窃取成功",
     "spionaseFailed": "特工人员被俘",
+    "spionaseArchived": "情报报告已归档",
+    "agentUpdated": "特工状态已更新",
     "pemberontakanTitle": "🔥 {country} 爆发武装暴动",
+    "pemberontakanSender": "{country}安全部门",
     "pemberontakanBadge": "区域叛乱",
+    "pemberontakanEffect": "分离主义风险：{risk} | 国家动荡风险",
+    "independenceDeclarationRisk": "独立宣言风险",
     "affectedRegion": "波及省份/地区：{province}",
     "risk": "暴乱风险：{risk}",
     "recoveryCost": "维稳与平叛军事预算：{cost} NEO",
     "stabilized": "局势已恢复和平与稳定",
-    "quellRebellion": "实施军事平叛行动",
+    "quellRebellion": "坚决镇压武装暴乱",
     "diserangTitle": "⚔️ 国家领土遭受敌方军事入侵！",
     "diserangBadge": "军事入侵",
     "icbmTitle": "🚀 警报：侦测到洲际弹道导弹（ICBM）发射！",
-    "icbmBadge": "核武器与战略威胁"
+    "icbmBadge": "核武器与战略威胁",
+    "attackSender": "武装部队总司令部",
+    "attackTitles": {
+      "threat": "🪖 边境威胁：敌军正在动员",
+      "borderAttack": "⚔️ 边境遭袭：敌方营队开火！",
+      "warDeclaration": "📜 敌方正式宣战！",
+      "invasion": "🚨 全面入侵：试图夺取领土！",
+      "invasionWithoutTerritories": "🚨 全面入侵：国家防御受到威胁！"
+    },
+    "attackEffects": {
+      "threat": "外交 / 紧急动员",
+      "borderAttack": "军事力量 -5%；伤亡超过50人",
+      "warDeclaration": "战争状态，经济 -15%，支持率 -10%",
+      "invasion": "若未能防守，可能失去一个省份",
+      "invasionWithoutTerritories": "没有可失去的吞并领土"
+    },
+    "icbmTitles": {
+      "incoming": "☢️ 检测到核弹头洲际弹道导弹（ICBM）发射！",
+      "programStarted": "☢️ 机密项目：国家核计划启动！",
+      "programCompleted": "⚛️ 获得核能力：国家核计划已投入运行！",
+      "testReport": "🚀 核弹道导弹试射：{tester}"
+    },
+    "icbmSenders": {
+      "incoming": "国家航空航天防御司令部",
+      "program": "战略核司令部与国防部",
+      "testReport": "战略情报与全球地震监测机构"
+    },
+    "icbmEffects": {
+      "incoming": "若拦截失败，城市将被彻底摧毁并造成数百万伤亡",
+      "programStarted": "预计完成日期：{endDate}",
+      "programCompleted": "铀浓缩设施已启用，可组装洲际导弹",
+      "testReport": "{tester}导弹库存：{count}枚已做好战斗准备"
+    },
+    "targetLocation": "目标区域",
+    "defaultTargetLocation": "首都",
+    "deployDefense": "调动国防武装力量",
+    "defenseDeployed": "国防驻军部队已完成全面部署",
+    "impact": "战略影响",
+    "mobilizationCost": "战备动员与部署预算",
+    "estimatedImpact": "预计毁灭烈度：全域毁灭性破坏"
   },
   "disaster": {
     "naturalTitle": "🚨 突发自然灾害：{province} 发生 {name}",
@@ -251,12 +308,27 @@
     "financialLoss": "直接经济损失",
     "infrastructureDamage": "基础设施破坏指数",
     "aidCost": "紧急救灾与撤离预算",
-    "sendAid": "立即拨付紧急救灾款项",
+    "sendAid": "紧急拨付救灾物资",
     "handled": "救灾救援物资已全面送达",
     "wabahTitle": "☣️ 突发传染病疫情：{province} 暴发 {name}",
     "wabahBadge": "疫情爆发",
     "infected": "累计确诊感染人数",
-    "quarantineCost": "全境防疫与隔离管控支出"
+    "quarantineCost": "全境防疫与隔离管控支出",
+    "quarantine": "实施全境隔离封控",
+    "quarantineSuccess": "区域隔离封控令已正式执行"
+  },
+  "outbreak": {
+    "distribution": {
+      "pandemicNone": "本年度无大流行（{chancePercent}%）",
+      "pandemicOne": "本年度发生1次大流行（{chancePercent}%）",
+      "epidemicNone": "本年度无流行病（{chancePercent}%）",
+      "epidemicOne": "本年度发生1次流行病（{chancePercent}%）",
+      "epidemicTwo": "本年度发生2次流行病（{chancePercent}%）"
+    },
+    "medicalAssistance": {
+      "alreadyHandled": "该疫情已处理。",
+      "populationRestored": "已有{count}人从{eventName}中获救。"
+    }
   },
   "geopolitics": {
     "allianceTitle": "🛡️ 共同军事防御同盟提议：{partner}",
@@ -268,12 +340,38 @@
     "researchContractSigned": "与 {partner} 的科研合作协定已顺利启动",
     "acceptResearch": "启动联合科研合作",
     "hotRelationTitle": "⚠️ 外交危机升温：与 {partner} 关系急剧恶化",
+    "hotRelationSender": "外交部与外交情报部门",
+    "hotRelationTitle20": "🚨 关系恶化：{partner}（{score}/100）",
+    "hotRelationMessage20": "外交警报！与{partner}的双边关系已降至危急水平（{score}/100）。地缘政治紧张局势可能引发经济制裁、驱逐外交官，甚至军事冲突。",
+    "hotRelationTitle15": "⚠️ 紧张升级：与{partner}的关系降至{score}/100",
+    "hotRelationMessage15": "与{partner}的外交关系已降至{score}/100，低于20的安全阈值。建议派遣和平代表团或提供外交援助。",
+    "hotRelationTitle10": "🔥 冲突威胁：与{partner}关系严重恶化（{score}/100）",
+    "hotRelationMessage10": "与{partner}的紧张局势加剧（评分：{score}/100）。大使馆报告称双方合作减少，公众敌意上升。",
+    "hotRelationTitle5": "💣 边境受威胁：与{partner}关系危急（{score}/100）",
+    "hotRelationMessage5": "与{partner}的外交关系骤降至{score}/100。对方政治和军事力量开始在边境部署武器。",
+    "hotRelationTitle1": "⚔️ 战争边缘：与{partner}关系破裂（{score}/100）",
+    "hotRelationMessage1": "国家紧急状态！与{partner}的外交关系已跌至最低点（{score}/100）。外交联系几乎中断，对方军队处于最高戒备状态。请立即采取紧急外交行动！",
     "hotRelationBadge": "外交危机",
     "embassyTitle": "🏛️ 大使馆常驻外交使团：{partner}",
     "embassyBadge": "驻外使馆",
     "unResolutionTitle": "🏛️ 联合国大会决议：{title}",
+    "resolutionSender": "联合国大会秘书处",
+    "proposalLabel": "提案",
+    "targetLabel": "目标",
+    "globalTarget": "全球",
+    "globalSector": "全球商品领域",
+    "resolutionTypes": {
+      "war_ban": "禁战决议",
+      "arms_embargo": "武器销售禁运",
+      "economic_embargo": "经济禁运",
+      "military_invasion": "入侵决议",
+      "production_ban": "禁产决议"
+    },
     "unResolutionBadge": "联大官方决议",
-    "openResolution": "查看联合国决议详情 →"
+    "openResolution": "查看联合国决议详情 →",
+    "openEmbassy": "前往常驻大使馆 →",
+    "openBilateralDiplomacy": "启动双边外交会晤 →",
+    "openCountryDetails": "打开国家详情"
   },
   "basicNeeds": {
     "electricTitle": "⚡ 能源安全危机：国家遭遇严重电力短缺",
@@ -287,7 +385,42 @@
     "populationTitle": "👥 人口发展危机：劳动力与人口结构失衡",
     "populationBadge": "人口统计",
     "solveNow": "立即统筹治理",
-    "resolved": "民生危机已解除"
+    "resolved": "民生危机已解除",
+    "buildPowerPlant": "扩建国家电厂设施 →",
+    "buildHousing": "扩建民生保障住房 →",
+    "boostFood": "提升国家粮食自给产能 →",
+    "buildPublicFacilities": "兴建公共民生基建设施 →",
+    "manageDemographics": "调控国家人口与育儿政策 →"
+  },
+  "tradeValidation": {
+    "closedSystem": {
+      "title": "封闭经济体制",
+      "message": "贵国实行的“{economyName}”经济体制过于集权，无法开展全球贸易。",
+      "reasons": {
+        "1": "经济体制过于集权（得分 < 60）",
+        "2": "政府对经济部门的控制过强",
+        "3": "保护主义政策阻碍进入国际市场"
+      },
+      "solutions": {
+        "1": "改为混合型或更开放的经济体制",
+        "2": "通过私有化部分战略部门降低集权程度",
+        "3": "实施自由贸易政策，开放国际市场"
+      }
+    },
+    "highCentralization": {
+      "title": "经济集权程度过高",
+      "message": "尽管经济体制为“{economyName}”，各部门平均集权程度仍过高（> 85），不利于开展全球贸易。",
+      "reasons": {
+        "1": "经济部门集权程度超过阈值（85）",
+        "2": "过多部门由政府直接控制",
+        "3": "经济政策仍明显偏向集中管理"
+      },
+      "solutions": {
+        "1": "降低制造业、贸易和银行业的集权程度",
+        "2": "开放房产所有权以吸引私人投资",
+        "3": "放宽货币与银行政策管制"
+      }
+    }
   },
   "tradeModals": {
     "closedTitle": "外贸准入受阻",
@@ -322,7 +455,9 @@
     "inProcess": "生效处理中",
     "officialInForce": "正式生效",
     "policyImpact": "政策综合影响：",
-    "approval": "支持率"
+    "approval": "支持率",
+    "religionLabel": "宗教",
+    "ideologyLabel": "意识形态"
   },
   "governance": {
     "cabinetTitle": "国家内阁部长职位改组",
@@ -333,6 +468,39 @@
     "activeResearch": "进行中科研",
     "strategicSector": "战略前沿领域"
   },
+  "researchNotification": {
+    "sender": "国家研究与创新机构",
+    "focusTitle": "🔬 研究重点已调整",
+    "focusMessage": "政府已安排国家实验室和研究预算优先开展{name}（{scope}）。{description}",
+    "startTitle": "🔬 新研究项目已启动",
+    "upgradeTitle": "🔬 研究升级已启动",
+    "startMessage": "政府已启动研究项目“{research}”。预计完成时间：{duration}天。",
+    "upgradeMessage": "政府已开始将“{research}”升级至{level}级。预计完成时间：{duration}天。",
+    "activeBadge": "研究进行中",
+    "strategicSector": "战略领域",
+    "newScope": "新研究",
+    "upgradeScope": "升级至{level}级",
+    "fallbackName": "国家战略研究",
+    "fallbackScope": "技术创新与发展",
+    "fallbackDescription": "政府确定了新的战略研究重点，以加快国家发展。",
+    "categories": {
+      "ekonomi": {
+        "name": "经济与工业研究",
+        "scope": "生产、制造、采矿与物流",
+        "description": "开发制造技术、提高采矿供应链效率、实现生产自动化并增加国家外汇收入。"
+      },
+      "militer": {
+        "name": "军事与国防研究",
+        "scope": "武器、网络战与核防御",
+        "description": "推进陆海空军现代化、强化网络防御、研发弹道导弹拦截系统及军事核能。"
+      },
+      "diplomasi": {
+        "name": "外交与情报研究",
+        "scope": "地缘政治、密码学与全球情报",
+        "description": "强化国际情报网络、高级加密技术以及在联合国的外交影响力。"
+      }
+    }
+  },
   "security": {
     "nationalSecurityReport": "国家安全与防卫戒备等级报告",
     "affectedCitizens": "受波及民众",
@@ -341,6 +509,17 @@
     "securityOperationsComplete": "治安维稳平叛行动顺利完成",
     "deploySecurity": "紧急调动武装力量平叛",
     "alliedAid": "战略盟友军事援助到达",
+    "allyLabel": "盟友",
+    "attackerLabel": "攻击方",
+    "allianceStatus": "联盟状态",
+    "activeStatus": "有效",
+    "deadlineLabel": "回复期限",
+    "rejectionPenaltyLabel": "拒绝惩罚",
+    "rejectionPenalty": "关系值 {value}",
+    "aidApproved": "军事援助已获批准",
+    "requestRejected": "请求已拒绝",
+    "requestExpired": "请求已过期",
+    "requestPending": "请求待处理",
     "aidAccepted": "盟友军事援助正式接收入库",
     "offerExpired": "援助提案已过有效期",
     "aidRejected": "军事援助已被拒绝",
@@ -350,7 +529,10 @@
     "warships": "海防主力舰艇",
     "orgMembership": "加入国际多边组织公报",
     "accepted": "已获批准",
-    "rejected": "已被驳回"
+    "rejected": "已被驳回",
+    "securityRisk": "治安风险与公共秩序动荡",
+    "operationsComplete": "治安维稳平叛行动顺利完成",
+    "ignore": "置之不理"
   },
   "electricityCrisis": {
     "hideDetail": "▲ 收起详细危机指标",
@@ -368,7 +550,53 @@
     "days": "天"
   },
   "demo": {
+    "policyMenuUnavailable": "此诉求对应的政策菜单尚不可用。",
+    "currentlyInStreets": "目前正在占据街道。",
+    "economyUnavailableTitle": "经济菜单不可用",
+    "economyUnavailableMessage": "请在游戏进行中打开此对话以更改政策。",
+    "generated": {
+      "subsidyTitle": "🔥 大规模示威：反对削减{subsidyName}补贴",
+      "subsidySender": "工人、学生与公民社会联盟",
+      "subsidyMessage": "政府撤销{subsidyName}补贴后爆发抗议。约有{demonstratorCount}人走上街头，要求恢复援助与社会保障。",
+      "priceSender": "消费者联盟、商户协会与社区团体",
+      "priceextremeTitle": "🔥 紧急骚乱与示威：{itemName}价格暴涨",
+      "priceextremeMessage": "约有{demonstratorCount}人封锁配送中心，此前{itemName}价格跳涨{levelJump}级，从Rp {oldPrice}涨至Rp {newPrice}。示威者要求撤销该政策。",
+      "pricestandardTitle": "📢 民众示威：抗议{itemName}涨价",
+      "pricestandardMessage": "约有{demonstratorCount}名居民抗议{itemName}价格从Rp {oldPrice}涨至Rp {newPrice}。消费者团体呼吁稳定价格。",
+      "taxTitle": "🔥 全国罢工与示威：反对上调{taxName}",
+      "taxSender": "全国工会联合会与行业协会",
+      "taxMessage": "{taxName}税率上调{rateDifference}个百分点，从{oldRate}%升至{newRate}%后，约有{demonstratorCount}名工人开始罢工。示威者要求撤销该政策。"
+    },
     "cause": "示威导火索",
+    "actions": {
+      "ignored": "政府未回应示威，活动已标记为忽略，抗议仍在继续。",
+      "fulfilled": {
+        "subsidi": "政府接受了补贴诉求。示威者散去，总统支持率上升{bonus}点。",
+        "harga": "政府接受了价格调整诉求。示威者散去，总统支持率上升{bonus}点。",
+        "pajak": "政府接受了税务审查诉求。示威者散去，总统支持率上升{bonus}点。"
+      },
+      "dialogStarted": "政府与示威代表开启了对话论坛。"
+    },
+    "options": {
+      "water_cannon": {
+        "title": "高压水炮", "subtitle": "高压喷水", "description": "使用高压水流驱散人群，避免造成致命伤害。", "effectiveness": "较低（驱散概率40%）", "casualties": "死亡率0%", "impact": "满意度-5，支持率-2。若行动失败，人群可能更加激进并嘲讽安保力量。"
+      },
+      "gas_air_mata": {
+        "title": "催泪瓦斯", "subtitle": "用于驱散人群的CS催泪气体", "description": "向人群施放CS气体，引发眼部和呼吸道刺激。", "effectiveness": "中等（驱散概率70%）", "casualties": "1%–3%受伤或呼吸困难", "impact": "满意度-10，支持率-5。可能引发联合国轻度关切。"
+      },
+      "jam_malam": {
+        "title": "宵禁与封锁", "subtitle": "民事紧急状态、断网与封路", "description": "宣布民事紧急状态，封闭通往首都的道路并切断互联网通信。", "effectiveness": "中等（需要2天）", "casualties": "死亡率0%", "impact": "满意度-8，支持率-5。商业活动受阻会使每日现金流暂时放缓。"
+      },
+      "brimob": {
+        "title": "防暴警察", "subtitle": "配备盾牌的防暴部队", "description": "派遣配备盾牌和警棍的防暴部队逮捕或驱散示威者。", "effectiveness": "较高（驱散概率85%）", "casualties": "5%–12%重伤或情况危急", "impact": "满意度-15，支持率-10。将引发联合国人权谴责，并使外交关系下降20点。"
+      },
+      "militer": {
+        "title": "军队（全副武装）", "subtitle": "装甲车、坦克与武装人员", "description": "调动装甲车、坦克和枪械，强行驱散人群。", "effectiveness": "很高（驱散概率95%）", "casualties": "死亡率20%–35%", "impact": "满意度-25，支持率-20。联合国几乎必然召开紧急会议讨论经济禁运制裁。"
+      }
+    },
+    "causes": { "subsidi": "补贴", "harga": "价格", "pajak": "税收" },
+    "statuses": { "active": "进行中", "inDialogue": "对话中", "ignored": "已忽略", "completed": "已完成", "riot": "骚乱", "ongoing": "进行中" },
+    "tooltips": { "hardPower": "调动安全部队强制驱散人群", "dialog": "开展公开对话并听取示威者诉求", "fulfill": "满足示威者的经济诉求，以缓和公众不满", "ignore": "不进行政府干预，任由示威继续" },
     "mass": "集会群体规模",
     "people": "人",
     "status": "状态",
@@ -376,6 +604,379 @@
     "hardPower": "强力维稳",
     "dialog": "公开圆桌对话",
     "fulfill": "全面采纳诉求",
-    "ignore": "冷处理置之不理"
+    "ignore": "冷处理置之不理",
+    "disperseModalTitle": "国家安全维稳行动",
+    "disperseModalSub": "治安处置策略方案",
+    "operationCost": "行动经费支出",
+    "cancel": "取消",
+    "confirmDisperse": "确认执行清场！",
+    "understood": "确认知晓",
+    "securityUnit": "国内安全部队",
+    "treasuryBalance": "国库",
+    "operationOptions": "安全行动选项",
+    "effectiveness": "行动效果",
+    "successChance": "成功概率",
+    "casualties": "伤亡人数",
+    "consequences": "影响与后果",
+    "highUNReviewRisk": "联合国国际人权审查的风险极高。",
+    "sanctionsLikely": "联合国制裁与禁运决议几乎必然会提出！",
+    "executeOperation": "执行行动",
+    "insufficientFunds": "资金不足",
+    "crowdImpact": "对示威人群的影响",
+    "injuryImpact": "气体刺激、踩踏与身体受伤",
+    "populationImpact": "将减少国家官方人口",
+    "dispersed": "人群已被驱散",
+    "stillAtSite": "仍留在现场",
+    "confirmTitle": "确认维稳处置指令",
+    "confirmSubtitle": "执行现场驱散行动",
+    "confirmWarning": "该处置手段将动用国家强制力量。现场冲突、人员死伤、民众满意度与总统支持率下滑在所难免！",
+    "confirmQuestion": "您是否确定立即下达本次强制驱散与清场指令？",
+    "reportTitleSuccess": "🚨 人群驱散维稳行动总结报告",
+    "reportTitleClash": "🔥 现场冲突与骚乱处置报告",
+    "injured": "受伤人数统计",
+    "killed": "遇难/重伤人数",
+    "remainingProtesters": "现场残存示威群体",
+    "dialogForumTitle": "公开对话圆桌论坛",
+    "warningLabel": "警告",
+    "backToGame": "返回游戏主界面",
+    "laborLeader": "工会联盟首席代表",
+    "protesterRep": "示威群众领袖发言人",
+    "anger": "示威群众怒气值",
+    "trust": "民众政府信任度",
+    "demandsTitle": "核心诉求清单",
+    "refreshChoices": "调整沟通方案",
+    "disperseWithPolice": "动用防暴力量强行清场",
+    "sessionStarted": "公开圆桌对话已启动。请审慎选择沟通回应以化解对抗局面。",
+    "negotiationFailed": "无法连接协商服务。",
+    "policyNegotiationFailed": "无法连接政策协商服务。",
+    "policyChangesConfirmed": "政府确认了以下诉求：{demand}。调整内容：{changes}。",
+    "policyFollowUpCommitted": "政府承诺跟进以下诉求：{demand}。"
+  },
+  "economicChange": {
+    "tax": {
+      "sender": "税务总局与行业协会",
+      "increaseTitle": "📢 民众抗议：{taxName}税率从{oldRate}%上调至{newRate}%",
+      "increaseMessage": "工会和企业对{taxName}税率从{oldRate}%上调至{newRate}%表示不满。该政策被认为会削弱购买力并增加工业成本。",
+      "decreaseTitle": "🎉 民众欢迎：{taxName}税率从{oldRate}%下调至{newRate}%",
+      "decreaseMessage": "民众与产业界欢迎{taxName}税率从{oldRate}%下调至{newRate}%。此举有望促进国内消费并增强投资竞争力。"
+    },
+    "price": {
+      "sender": "市场商户与消费者协会",
+      "increaseTitle": "💥 价格上涨：{itemName}从Rp {oldPrice}涨至Rp {newPrice}",
+      "increaseMessage": "家庭和小商户反映{itemName}价格从Rp {oldPrice}上涨至Rp {newPrice}，低收入群体的购买力受到挤压。",
+      "decreaseTitle": "🛒 价格回落：{itemName}从Rp {oldPrice}降至Rp {newPrice}",
+      "decreaseMessage": "民众欢迎{itemName}价格从Rp {oldPrice}降至Rp {newPrice}。食品价格更加亲民，有助于稳定通胀并提升公众满意度。"
+    },
+    "subsidy": {
+      "sender": "财政部与社会组织",
+      "grantedTitle": "✨ 补贴拨款：{subsidyName}已获批准",
+      "grantedMessage": "政府拨付{subsidyName}补贴的决定受到欢迎，该补贴被认为有助于提升购买力和社会福利。",
+      "withdrawnTitle": "⚠️ 民众不满：撤销{subsidyName}补贴",
+      "withdrawnMessage": "政府撤销{subsidyName}补贴后，各界出现不满与抗议。预算调整可能加重民众生活负担。"
+    },
+    "system": {
+      "sender": "经济事务统筹部与国家经济委员会",
+      "title": "📊 经济体制改革：{systemName}（{sliderValue}%）",
+      "message": "政府已将国家经济政策方向调整为{systemName}（指标得分：{sliderValue}%）。此项调整将影响价格、战略资产所有权、劳动法规和对外贸易。",
+      "label": "体系",
+      "spectrum": "指标",
+      "applied": "政策卡已应用"
+    }
+  },
+  "policyNotice": {
+    "policyImpact": "政策综合影响",
+    "ministry": "主管部委",
+    "activeResearch": "当前科技前沿攻关",
+    "strategicSector": "国家战略支柱产业"
+  },
+  "durationUnits": {
+    "monthOne": "{count}个月",
+    "monthMany": "{count}个月",
+    "yearOne": "{count}年",
+    "yearMany": "{count}年"
+  },
+  "dynamicNotifications": {
+    "pbb": {
+      "sender": "联合国秘书处",
+      "unauthorizedAttackCancelledTitle": "🕊️ 未经授权的攻击计划已取消",
+      "unauthorizedAttackCancelledMessage": "{attacker}对{target}的攻击未能发动。未经授权的攻击只有{chance}%的执行概率；此次行动在冲突开始前已取消。",
+      "unauthorizedAttacksCancelledTitle": "🕊️ 未经授权的攻击已取消",
+      "unauthorizedAttacksCancelledMessage": "{count}项未经授权的AI冲突计划已取消。未获决议授权的攻击有{chance}%的执行概率；通过检查的AI攻击仍可能在不受制裁的情况下继续。",
+      "warBanCancelledTitle": "🕊️ 联合国禁战决议阻止了攻击",
+      "warBanCancelledMessage": "{count}项AI国家攻击计划已取消。禁战决议仍然有效；只有通过授权检查或违规概率判定的计划中{chance}%可以继续。"
+    },
+    "espionage": {
+      "incomingSender": "国家情报局（{partner}）",
+      "incomingEffect": "若未及时处理，军事力量和生命值将在30至60天内降低5%。",
+      "incomingTitles": {
+        "ringan": "🕵️ 轻度间谍活动：{partner}渗透边境",
+        "sedang": "⚠️ 间谍警报：{partner}渗透军事基地",
+        "berat": "🚨 严重间谍活动：{partner}间谍网络"
+      },
+      "incomingMessages": {
+        "ringan": "指挥官报告：发现来自{partner}的外国情报人员试图未经许可穿越边境哨所，边防人员已阻止其初步行动。",
+        "sedang": "安全警报！来自{partner}的间谍潜入东部地区军事设施，武器效能机密文件可能泄露。",
+        "berat": "情报紧急事件！来自{partner}的高级间谍网络正在泄露国家战略研究数据和我方舰队位置！"
+      },
+      "targets": {
+        "default": "国家情报信息",
+        "military": "军事与国防情报",
+        "economy": "经济与预算情报"
+      },
+      "offensiveSuccessTitle": "🕵️ 间谍任务成功：{country}",
+      "offensiveFailureTitle": "❌ 间谍任务失败：{country}",
+      "offensiveMilitaryMessage": "情报行动报告：特工从{country}获取了军事数据（{target}）。共{totalUnits}个单位：陆军{landUnits}、空军{airUnits}、海军{navalUnits}。",
+      "offensiveEconomyMessage": "情报行动报告：特工从{country}获取了财政数据（{target}）。预算为{budget} NEO，预计每日税收为{dailyTax} NEO。",
+      "offensiveGenericMessage": "情报行动报告：我方特工渗透{country}并获取了战略数据（{target}）。敌方机密文件已加密并发送至总部。",
+      "offensiveFailureMessage": "情报紧急报告：针对{country}的间谍任务（{target}）失败。特工被敌方反情报网络发现并被迫紧急撤离。",
+      "offensiveSuccessEffect": "已获取{country}的情报数据（{target}）。",
+      "offensiveMilitaryEffect": "已获取军事数据（{target}）：共{totalUnits}个单位。",
+      "offensiveEconomyEffect": "已获取财政数据（{target}）：预算{budget} NEO，预计每日税收{dailyTax} NEO。",
+      "offensiveFailureEffect": "任务失败，特工未能获取{target}。",
+      "offensiveSender": "国家情报局（特别行动）"
+    },
+    "sabotage": {
+      "incomingMessage": "发现与{partner}有关的{eventName}。请保护关键设施并立即处理损害。",
+      "incomingSender": "国防与安全部",
+      "defaultTarget": "军事设施",
+      "targetOptions": {
+        "militaryFacility": "军事设施与工厂",
+        "energyInfrastructure": "电力与能源基础设施",
+        "foodProduction": "粮食生产",
+        "manufacturing": "制造业"
+      },
+      "eventNames": {
+        "infrastruktur": "国家基础设施蓄意破坏",
+        "militer": "军事设施爆炸",
+        "siber": "针对防御网络的网络攻击",
+        "nuklir": "核设施蓄意破坏"
+      },
+      "effects": {
+        "infrastruktur": "若不处理，电力设施及能源矿产减少5%",
+        "militer": "若不处理，军事装备永久减少5%",
+        "siber": "若不处理，军事装备永久减少5%",
+        "nuklir": "若不处理，军事装备永久减少5%"
+      },
+      "offensiveSuccessTitle": "💣 蓄意破坏行动成功：{country}",
+      "offensiveFailureTitle": "❌ 蓄意破坏行动失败：{country}",
+      "offensiveSuccessMessage": "秘密行动已破坏{country}的{target}，敌方设施受损已获确认。",
+      "offensiveFailureMessage": "针对{country}{target}的行动被目标防御系统挫败。",
+      "offensiveSuccessEffect": "{target}已受损，目标军事力量下降。",
+      "offensiveFailureEffect": "行动失败，{target}设施完好无损。",
+      "offensiveSender": "特种部队与作战情报司令部"
+    },
+    "socialCultural": {
+      "religionValues": {
+        "Islam": "伊斯兰教",
+        "Katolik": "天主教",
+        "Protestan": "新教",
+        "Hindu": "印度教",
+        "Buddha": "佛教",
+        "Shinto": "神道教",
+        "Yahudi": "犹太教",
+        "Ateisme": "无神论"
+      },
+      "ideologyValues": {
+        "Demokrasi": "民主主义",
+        "Monarki": "君主制",
+        "Kapitalisme": "资本主义",
+        "Sosialisme": "社会主义",
+        "Komunisme": "共产主义",
+        "Nasionalisme": "民族主义",
+        "Konservatisme": "保守主义",
+        "Liberalisme": "自由主义",
+        "Otoritarianisme": "威权主义"
+      },
+      "religion": {
+        "title": "☪️ 国教变更：{from} ➔ {to}",
+        "scheduledTitle": "宗教变更计划：{from} ➔ {to}",
+        "message": "政府将国家官方宗教从{from}改为{to}，该决定正在影响社会动态。",
+        "scheduledMessage": "计划于{completionDate}完成从{from}到{to}的宗教变更，并于之后生效。",
+        "sender": "宗教与国家文化部"
+      },
+      "ideology": {
+        "title": "🏛️ 国家意识形态变更：{from} ➔ {to}",
+        "scheduledTitle": "意识形态变更计划：{from} ➔ {to}",
+        "message": "政府将国家意识形态从{from}改为{to}，这将影响国家社会与经济政策。",
+        "scheduledMessage": "计划于{completionDate}完成从{from}到{to}的意识形态变更，并于之后生效。",
+        "sender": "国家意识形态咨询委员会"
+      },
+      "doctrine": {
+        "title": "📜 新政策纲领：{sliderLabel}",
+        "message": "政府已将{sliderLabel}指标从{fromValue}%调整为{toValue}%。",
+        "sender": "法律、人权与国家政策部",
+        "stats": {
+          "approval": "支持度",
+          "stability": "稳定性",
+          "diplomacy": "外交",
+          "economy": "经济",
+          "gdp": "GDP",
+          "population": "人口",
+          "satisfaction": "满意度",
+          "humanRights": "人权",
+          "tourism": "旅游业",
+          "foreignInvestment": "外商直接投资",
+          "localIndustry": "本地工业"
+        },
+        "sliders": {
+          "speechScore": "言论与新闻自由",
+          "religionScore": "宗教自由",
+          "demoScore": "示威权利",
+          "transparencyScore": "公共预算透明度",
+          "mediaScore": "媒体与广播",
+          "internetScore": "互联网与数字访问",
+          "borderScore": "边境与移民",
+          "tradeScore": "贸易与市场",
+          "diplomacyScore": "外交与多边事务"
+        }
+      }
+    },
+    "basicNeeds": {
+      "electricity": {
+        "title": "⚡ 电力供应不足警告：缺口 {step}%",
+        "sender": "PLN（Persero）及国家电网",
+        "message": "国家电网存在 {deficit} MW 的电力缺口（占总需求 {step}%）。当前发电量为 {production} MW，预计用电量为 {consumption} MW。请启用额外电厂以避免轮流停电。此次危机将使公众满意度下降 {ratingPenalty} 点。"
+      },
+      "housing": {
+        "title": "🏠 住房短缺警告：居民住房需求",
+        "criticalTitle": "🏠 严重住房危机：满意度指数 {satisfaction}/100！",
+        "sender": "住房与居住区部",
+        "message": "住房满意度指数为 {satisfaction}/100。{shortage} 人缺少合适住所（总人口 {population} 人中仅有 {percentage}% 得到安置）。请建设补贴住房、公寓或其他住宅以缓解危机。"
+      },
+      "food": {
+        "title": "⚠️ 食品短缺：{total} 个类别中有 {count} 个需要关注",
+        "sender": "农业部及国家粮食局",
+        "message": "{total} 个核心食品类别中有 {count} 个的供应覆盖率低于目标。请增加主食、动物和植物蛋白、蔬菜及基本商品的生产、进口或配送。"
+      },
+      "publicServices": {
+        "title": "🏛️ 公共服务危机：服务指数 {score}/100！",
+        "sender": "国家发展与公共服务部",
+        "message": "公共服务满意度指数为 {score}/100，低于 20/100 的最低标准。基础设施、教育、医疗、执法、体育及商业服务无法满足 {population} 人的需求。请新建公共设施。"
+      },
+      "population": {
+        "title": "⚠️ 人口下降警告",
+        "sender": "内政部",
+        "message": "{country}的人口每天净减少 {dailyLoss} 人。若这一趋势持续，预计 30 天内将减少 {monthlyLoss} 人。请重新审视食品、住房和医疗政策。"
+      }
+    },
+    "cabinet": {
+      "sender": "内阁秘书处及国家部委委员会",
+      "upgradeTitle": "🏛️ 内阁升级：{department}（等级 {oldLevel} ➔ 等级 {newLevel}）",
+      "upgradeMessage": "总统与内阁批准为 {department} 增加预算并提升运营能力，等级由 {oldLevel} 提升至 {newLevel}，从而加强{effect}。",
+      "restructureTitle": "📉 内阁重组：{department}（等级 {oldLevel} ➔ 等级 {newLevel}）",
+      "restructureMessage": "政府调整了 {department} 的部委支出效率，等级由 {oldLevel} 调整为 {newLevel}。"
+    },
+    "organization": {
+      "names": {
+        "interpol": "国际刑警组织",
+        "who": "世界卫生组织（WHO）",
+        "unesco": "联合国教育、科学及文化组织（UNESCO）",
+        "wto": "世界贸易组织（WTO）",
+        "ilo": "国际劳工组织（ILO）",
+        "fao": "联合国粮食及农业组织（FAO）",
+        "imo": "国际海事组织（IMO）",
+        "itu": "国际电信联盟（ITU）",
+        "wmo": "世界气象组织（WMO）",
+        "asean": "东南亚国家联盟（ASEAN）",
+        "eu": "欧盟（EU）",
+        "arabLeague": "阿拉伯国家联盟",
+        "africanUnion": "非洲联盟（AU）",
+        "oic": "伊斯兰合作组织（OIC）",
+        "brics": "金砖国家（巴西、俄罗斯、印度、中国、南非）",
+        "nato": "北大西洋公约组织（NATO）",
+        "opec": "石油输出国组织（OPEC）",
+        "g20": "二十国集团（G20）"
+      },
+      "unCategory": "联合国组织",
+      "regionalCategory": "区域组织",
+      "acceptedTitle": "已获准加入 {organization}",
+      "rejectedTitle": "加入 {organization} 的申请被拒绝",
+      "sender": "{organization}秘书处",
+      "acceptedMessage": "经过 30 天谈判，{country}加入{organization}的申请已获批准。成员资格及其权益现已生效。",
+      "rejectedMessage": "经过 30 天谈判，{country}加入{organization}的申请被拒绝。该国以后可以重新申请。"
+    },
+    "security": {
+      "category": "警务事件",
+      "title": "🚔 警务事件：{eventName}",
+      "sender": "{country}国家警察",
+      "message": "{country}报告发生{eventName}事件。警方正在保护受影响居民、调查事件并采取措施恢复公共安全。",
+      "risk": "公共卫生与执法领域的治安风险：{percent}%",
+      "people": "人",
+      "events": {
+        "armedRobbery": "持械抢劫",
+        "financialRobbery": "金融中心抢劫",
+        "burglary": "入室盗窃",
+        "organizedCrime": "有组织犯罪网络",
+        "unrest": "骚乱与公共秩序混乱",
+        "pickpocketing": "公共场所扒窃",
+        "vehicleTheft": "车辆盗窃",
+        "digitalFraud": "网络诈骗",
+        "vandalism": "破坏公共设施",
+        "kidnapping": "绑架",
+        "extortion": "勒索企业经营者",
+        "humanTrafficking": "人口贩运"
+      }
+    },
+    "tradeModal": {
+      "recommendation1": "在经济政策菜单中更改经济体制。",
+      "recommendation2": "将经济集权分数降至 85 以下。",
+      "recommendation3": "考虑采用更开放的意识形态和贸易法规。",
+      "reason1": "经济高度集权（分数超过 85）。",
+      "reason2": "封闭的意识形态加强了国家控制。",
+      "reason3": "与国际贸易集团存在保护主义摩擦。",
+      "customReason": "与{partner}的贸易不符合国家外交和法规要求。当前经济体制：{economy}。"
+    }
+  },
+  "dynamicEventTranslations": {
+    "disaster": {
+      "message": "{eventName}袭击了{country}，影响{victims}人并造成{loss} NEO损失。请立即提供援助并组织疏散。",
+      "messageWithScale": "{eventName}袭击了{country}，影响{victims}人并造成{loss} NEO损失。{severityNote}请立即提供援助并组织疏散。",
+      "sender": "{country}国家灾害管理局",
+      "isolatedScale": "现场分析确认这是局部规模的灾害。",
+      "catastrophicScale": "现场分析确认发生了灾难性灾害。",
+      "categories": { "geological": "地质灾害", "hydrometeorological": "水文气象灾害", "fire": "火灾灾害", "coastal": "海洋与沿海灾害", "environmentalHealth": "环境健康危机" },
+      "eventNames": {
+        "earthquakeLight": "轻微地震", "earthquakeMajor": "强烈地震", "volcanicEruption": "火山喷发", "tsunami": "海啸", "landslide": "山体滑坡",
+        "majorFlood": "严重洪水", "flashFlood": "山洪暴发", "drought": "长期干旱", "tropicalStorm": "热带风暴", "cyclone": "热带气旋", "tornado": "龙卷风", "hailstorm": "极端冰雹",
+        "forestFire": "森林火灾", "peatFire": "泥炭地火灾", "industrialFire": "工业火灾", "settlementFire": "高密度居民区火灾", "coastalErosion": "海岸侵蚀", "waterspout": "海龙卷", "seaLevelRise": "海平面上升",
+        "foodPoisoning": "大规模食物中毒", "waterContamination": "饮用水污染", "airPollution": "极端空气污染", "hazardousWaste": "有害废物危机", "heatwave": "致命热浪", "snowstorm": "极端暴风雪与冻伤", "sinkhole": "突发巨型天坑", "refineryFire": "炼油厂与油库火灾"
+      }
+    },
+    "outbreak": {
+      "title": "🦠 {outbreakType}：{eventName}",
+      "titleWithVariant": "🦠 {outbreakType}：{eventName} — {variant}",
+      "message": "{country}发现{eventName}。已有{infected}人感染，预计在{duration}天内造成{deaths}人死亡。请立即采取公共卫生措施。",
+      "messageWithVariant": "{country}发现{eventName}。已有{infected}人感染，预计在{duration}天内造成{deaths}人死亡。医学状态：{variant}。请立即采取公共卫生措施。",
+      "sender": "{country}卫生部与世卫组织",
+      "epidemic": "疾病暴发",
+      "pandemic": "全球大流行",
+      "localizedCluster": "局部聚集性病例",
+      "superSpreader": "超级传播毒株变异",
+      "categories": { "infectious": "传染病（流行病）", "animalAndPlant": "动植物疾病（流行病）", "mutations": "基因突变与超级细菌", "pandemic": "全球大流行" },
+      "eventNames": {
+        "dengue": "登革热疫情", "malaria": "疟疾疫情", "cholera": "霍乱疫情", "typhoid": "伤寒疫情", "tuberculosis": "结核病疫情", "hepatitisA": "甲型肝炎疫情", "measles": "麻疹疫情", "polio": "脊髓灰质炎疫情", "diphtheria": "白喉疫情", "rabies": "狂犬病疫情",
+        "avianFlu": "H5N1禽流感", "footAndMouth": "口蹄疫", "ricePlanthopper": "水稻飞虱虫害", "ganoderma": "灵芝菌病", "tungro": "水稻东格鲁病毒", "ratInfestation": "大规模鼠害", "bananaWilt": "香蕉细菌性枯萎病", "africanSwineFever": "非洲猪瘟",
+        "superbug": "耐药超级细菌疫情", "candidaAuris": "耳念珠菌严重疫情", "autoimmune": "大规模自身免疫疾病", "globalInfluenza": "全球流感大流行", "coronavirusVariant": "变异冠状病毒大流行", "pathogenX": "新型病毒大流行（病原体X）", "mpox": "猴痘大流行", "hivVariant": "新型艾滋病毒变种大流行", "zombieVirus": "僵尸病毒（生物实验室泄漏）", "engineeredSpanishFlu": "人工改造的西班牙流感变种",
+        "mysteriousEncephalitis": "不明原因脑炎疫情", "congoHemorrhagicFever": "克里米亚-刚果出血热疫情", "marburgVariant": "新型马尔堡病毒变种大流行", "redTide": "海洋生物毒素异常（赤潮）"
+      }
+    },
+    "electricity": {
+      "title": "⚡ 电力危机：{eventName}（{severity}）",
+      "message": "{country}发生{eventName}，造成{deficit} MW电力缺口，约{areaCount}个区域预计受影响{duration}天。",
+      "sender": "{country}国家电力公司（PLN）",
+      "ratingImpact": "评级下降 {impact} 点",
+      "severities": { "ringan": "轻微", "sedang": "中等", "berat": "严重", "kritis": "危急" },
+      "eventNames": { "mildShortage": "轻微电力缺口", "substationMaintenance": "主变电站维护", "gasShortage": "燃气电厂供应危机", "transmissionFault": "主输电线路故障", "hydropowerDrought": "干旱导致水电减少", "turbineFailure": "燃煤电厂涡轮机故障", "nationalEnergyCrisis": "国家能源危机", "systemicBlackout": "大范围系统性停电" },
+      "areas": { "mediumHousing": "中等住宅区", "commercialArea": "商业区", "lightIndustry": "轻工业区", "cityCenterDistrict": "市中心区", "industrialZone": "工业区", "primaryGasPlant": "主要燃气电厂", "manufacturingIndustry": "制造业区", "tradeDistrict": "贸易区", "metropolitanArea": "大都市区", "heavyIndustryZone": "重工业区", "dataCenter": "数据中心", "primaryHydroSystem": "主要水电系统", "energyIntensiveIndustry": "高耗能产业", "hospital": "医院", "governmentCenter": "政府中心", "mainCoalPlant": "主要燃煤电厂", "strategicIndustrialZone": "战略工业区", "internationalAirport": "国际机场", "mainPort": "主要港口", "nationalGrid": "全国电网", "vitalIndustry": "关键产业", "healthFacilities": "医疗设施", "transportSystem": "交通系统", "nationalCommunications": "国家通信系统", "nationwideGrid": "全国电网区域", "interconnectionGrid": "互联电网", "criticalInfrastructure": "关键基础设施", "financialSector": "金融业", "emergencyServices": "应急服务" }
+    }
+  },
+  "tradeAccess": {
+    "reasons": {
+      "centralizationMonitored": "由于集权程度较高，贸易受到国际监督。",
+      "centralizationLimitsImports": "高度集权限制进口。",
+      "ideologyCentralizes": "当前意识形态加剧了集权。",
+      "religionRestrictsTrade": "基于宗教的政策限制全球贸易。",
+      "extremeCentralization": "极端集权（分数超过 85）。"
+    }
   }
 }

@@ -2,6 +2,7 @@ import { DemonstrasiNotification } from '../demonstrasiEkonomiLogic';
 import { terbitkanBeritaAI } from '@/app/logic/npc_ai_brain/core/aiNewsBridge';
 import { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import { DetailOpsiBubarkan, OPSI_BUBARKAN_MASSA } from './opsiBubarkanMassaConfig';
+import { getDefaultInboxText } from '../../../notificationMessage';
 
 export const APARAT_OPERATION_COST = 5000000; // Default fallback 5.000.000 NEO
 
@@ -56,12 +57,13 @@ export function executeAparatOperation({
   result?: AparatOperationResult;
 } {
   const option = selectedOption || OPSI_BUBARKAN_MASSA[2]; // Fallback Brimob
+  const optionName = getDefaultInboxText(option.title);
   const operationalCost = option.cost;
 
   if (currentBudget < operationalCost) {
     return {
       canProceed: false,
-      errorMessage: `Anggaran kas negara tidak mencukupi untuk operasi ${option.title} (${currentBudget.toLocaleString('id-ID')} NEO dari ${operationalCost.toLocaleString('id-ID')} NEO yang dibutuhkan).`,
+      errorMessage: `Anggaran kas negara tidak mencukupi untuk operasi ${optionName} (${currentBudget.toLocaleString('id-ID')} NEO dari ${operationalCost.toLocaleString('id-ID')} NEO yang dibutuhkan).`,
     };
   }
 
@@ -151,7 +153,7 @@ export function executeAparatOperation({
     if (option.id === 'water_cannon') {
       decisionText = `\n\n[KEPUTUSAN PEMERINTAH]: Water cannon disemprotkan namun demonstran melawan balik dengan barikade dan lemparan batu. Operasi gagal, simpati publik meluas dan massa membengkak (+20%) menjadi ${remainingMassa.toLocaleString('id-ID')} demonstran!`;
     } else {
-      decisionText = `\n\n[KEPUTUSAN PEMERINTAH]: Operasi ${option.title} dilancarkan namun situasi di lapangan memburuk menjadi bentrokan berdarah. Tercatat ${casualties} korban jiwa, simpati publik memicu massa membengkak (+20%) menjadi ${remainingMassa.toLocaleString('id-ID')} demonstran!`;
+      decisionText = `\n\n[KEPUTUSAN PEMERINTAH]: Operasi ${optionName} dilancarkan namun situasi di lapangan memburuk menjadi bentrokan berdarah. Tercatat ${casualties} korban jiwa, simpati publik memicu massa membengkak (+20%) menjadi ${remainingMassa.toLocaleString('id-ID')} demonstran!`;
     }
   } else {
     if (option.id === 'water_cannon') {
@@ -161,7 +163,7 @@ export function executeAparatOperation({
     } else if (option.id === 'jam_malam') {
       decisionText = `\n\n[KEPUTUSAN PEMERINTAH]: Pemerintah memberlakukan Jam Malam & Pemadaman Internet. Konsentrasi massa lumpuh berkurang 80% menyisakan ${remainingMassa.toLocaleString('id-ID')} demonstran.`;
     } else {
-      decisionText = `\n\n[KEPUTUSAN PEMERINTAH]: Operasi ${option.title} dikerahkan dengan tegas. Massa demonstrasi berhasil dipukul mundur total (${casualties} korban jiwa/terluka).`;
+      decisionText = `\n\n[KEPUTUSAN PEMERINTAH]: Operasi ${optionName} dikerahkan dengan tegas. Massa demonstrasi berhasil dipukul mundur total (${casualties} korban jiwa/terluka).`;
     }
   }
 
@@ -178,8 +180,8 @@ export function executeAparatOperation({
     title: isRiot ? '🔥 LAPORAN BENTROKAN / KERUSUHAN' : '🚨 LAPORAN OPERASI PEMBUBARAN MASSA',
     sender: 'Satuan Pengamanan Dalam Negeri',
     message: isRiot
-      ? `Operasi ${option.title} gagal meredam aksi. Situasi berkembang menjadi kerusuhan; ${injuredCount.toLocaleString('id-ID')} warga terluka dan massa tersisa ${remainingMassa.toLocaleString('id-ID')} orang.`
-      : `Operasi ${option.title} selesai. Massa tersisa ${remainingMassa.toLocaleString('id-ID')} orang; ${injuredCount.toLocaleString('id-ID')} warga tercatat terluka.`,
+      ? `Operasi ${optionName} gagal meredam aksi. Situasi berkembang menjadi kerusuhan; ${injuredCount.toLocaleString('id-ID')} warga terluka dan massa tersisa ${remainingMassa.toLocaleString('id-ID')} orang.`
+      : `Operasi ${optionName} selesai. Massa tersisa ${remainingMassa.toLocaleString('id-ID')} orang; ${injuredCount.toLocaleString('id-ID')} warga tercatat terluka.`,
     timestamp: currentDateStr,
     type: 'kepuasan',
     value: 0,
@@ -195,7 +197,7 @@ export function executeAparatOperation({
       id: `infrastruktur-rusak-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
       title: '⚠️ PERINGATAN: Infrastruktur Rusak Akibat Kericuhan Unjuk Rasa',
       sender: 'Kementerian Pekerjaan Umum & Keamanan Nasional',
-      message: `Upaya pembubaran massa dengan ${option.title} gagal meredam aksi dan memicu aksi anarkis massa. Berbagai fasilitas umum mengalami kerusakan. Segera pulihkan stabilitas nasional!`,
+      message: `Upaya pembubaran massa dengan ${optionName} gagal meredam aksi dan memicu aksi anarkis massa. Berbagai fasilitas umum mengalami kerusakan. Segera pulihkan stabilitas nasional!`,
       timestamp: currentDateStr,
       type: 'kesejahteraan',
       value: 0,
@@ -209,11 +211,11 @@ export function executeAparatOperation({
     type: 'update_geopolitik',
     category: 'operasi_militer',
     headline: isRiot
-      ? `Operasi ${option.title} Gagal! Kericuhan Meluas di ${playerCountry}`
-      : `Pemerintah ${playerCountry} Kerahkan ${option.title}, Unjuk Rasa Berhasil Dibubarkan`,
+      ? `Operasi ${optionName} Gagal! Kericuhan Meluas di ${playerCountry}`
+      : `Pemerintah ${playerCountry} Kerahkan ${optionName}, Unjuk Rasa Berhasil Dibubarkan`,
     content: isRiot
-      ? `Pengerahan ${option.title} oleh otoritas keamanan ${playerCountry} gagal membendung amarah massa unjuk rasa. Situasi berubah menjadi bentrokan terbuka dengan laporan ${casualties} korban.`
-      : `Pemerintah ${playerCountry} mengambil tindakan tegas membubarkan demonstrasi menggunakan ${option.title}. Konsentrasi massa berhasil diurai dengan ${casualties} korban luka/jiwa dilaporkan.`,
+      ? `Pengerahan ${optionName} oleh otoritas keamanan ${playerCountry} gagal membendung amarah massa unjuk rasa. Situasi berubah menjadi bentrokan terbuka dengan laporan ${casualties} korban.`
+      : `Pemerintah ${playerCountry} mengambil tindakan tegas membubarkan demonstrasi menggunakan ${optionName}. Konsentrasi massa berhasil diurai dengan ${casualties} korban luka/jiwa dilaporkan.`,
     timestamp: currentDateStr,
     dateStr: currentDateStr,
     countryName: playerCountry,
@@ -249,7 +251,7 @@ export function executeAparatOperation({
       sender: 'Dewan Keamanan & Dewan HAM PBB',
       message: isSanctionMeeting
         ? `Dewan Keamanan PBB menggelar Rapat Darurat mengecam keras penggunaan kekuatan militer bersenjata berat di ${playerCountry} yang menelan hingga ${casualties} korban jiwa. Usulan Resolusi Sanksi Embargo Ekonomi segera dimasukkan ke agenda pemungutan suara!`
-        : `Dewan HAM Perserikatan Bangsa-Bangsa (PBB) mengecam represifitas pengerahan ${option.title} di ${playerCountry} (${casualties} korban tercatat). Hubungan bilateral dengan negara-negara penggiat HAM (${affectedCountries.join(', ')}) merosot tajam!`,
+        : `Dewan HAM Perserikatan Bangsa-Bangsa (PBB) mengecam represifitas pengerahan ${optionName} di ${playerCountry} (${casualties} korban tercatat). Hubungan bilateral dengan negara-negara penggiat HAM (${affectedCountries.join(', ')}) merosot tajam!`,
       timestamp: currentDateStr,
       type: 'peringkat',
       value: 0,
@@ -263,12 +265,12 @@ export function executeAparatOperation({
         title: '🔥 OPERASI GAGAL / RICUH!',
         message: option.id === 'water_cannon'
           ? `Water Cannon gagal memukul mundur demonstran! Massa mengejek aparat dan demonstrasi semakin membesar. Kepuasan -${kepuasanPenalty} poin dan Peringkat Presiden -${ratingPenalty} poin.`
-          : `Aparat kewalahan! Pengerahan ${option.title} memicu bentrokan (${casualties} korban jiwa). Kepuasan -${kepuasanPenalty} poin dan Peringkat Presiden -${ratingPenalty} poin!`,
+          : `Aparat kewalahan! Pengerahan ${optionName} memicu bentrokan (${casualties} korban jiwa). Kepuasan -${kepuasanPenalty} poin dan Peringkat Presiden -${ratingPenalty} poin!`,
         type: 'error' as const,
       }
     : {
         title: '🚨 Operasi Pembubaran Selesai',
-        message: `Massa unjuk rasa berhasil dibubarkan dengan ${option.title}. ${casualties > 0 ? `Tercatat ${casualties} korban jiwa/terluka.` : 'Tidak ada korban jiwa.'} Kepuasan Rakyat -${kepuasanPenalty} poin dan Peringkat Presiden -${ratingPenalty} poin.`,
+        message: `Massa unjuk rasa berhasil dibubarkan dengan ${optionName}. ${casualties > 0 ? `Tercatat ${casualties} korban jiwa/terluka.` : 'Tidak ada korban jiwa.'} Kepuasan Rakyat -${kepuasanPenalty} poin dan Peringkat Presiden -${ratingPenalty} poin.`,
         type: 'success' as const,
       };
 
