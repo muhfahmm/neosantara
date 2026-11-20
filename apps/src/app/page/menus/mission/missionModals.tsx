@@ -1043,12 +1043,73 @@ export function addPlayerDiamonds(amount: number): number {
 }
 
 /** Helper untuk memberikan penjelasan detail instruksi apa yang harus dilakukan pemain untuk menyelesaikan misi */
-export function getMissionInstruction(card: MissionCard, completionCount = 0): string {
+export function getMissionInstruction(
+  card: MissionCard,
+  completionCount = 0,
+  t?: (key: string, params?: Record<string, string | number>) => string
+): string {
   if (card.description) return card.description;
 
   const id = card.id;
   const title = card.title;
   const reqTarget = getMissionRequiredTarget(card, completionCount);
+
+  // Jika ada translation function t, gunakan template dinamis dari JSON bahasa
+  if (t) {
+    if (card.category === 'event') {
+      if (id === 'kepuasan_target') return t('side_misi.instructions.kepuasan_target');
+      return t('side_misi.instructions.event', { title });
+    }
+    if (card.category === 'kesejahteraan') {
+      return t('side_misi.instructions.kesejahteraan', { title });
+    }
+    if (card.category === 'ekonomi') {
+      if (id === 'pinjam_negara') return t('side_misi.instructions.pinjam_negara');
+      if (id === 'pinjam_bank') return t('side_misi.instructions.pinjam_bank');
+      if (id === 'hutang_lunas') return t('side_misi.instructions.hutang_lunas');
+      if (id === 'pajak_naik' || id === 'pajak_turun' || id === 'pajak_kelola') return t('side_misi.instructions.pajak');
+      return t('side_misi.instructions.ekonomi_default', { title });
+    }
+    if (reqTarget !== null) {
+      if (id.startsWith('bangun_plt')) return t('side_misi.instructions.plt_target', { target: reqTarget, title });
+      if (id.startsWith('tambang_') || id.startsWith('kilang_')) return t('side_misi.instructions.sda_target', { target: reqTarget, title });
+      if (id.startsWith('pabrik_')) return t('side_misi.instructions.pabrik_target', { target: reqTarget, title });
+      if (id.startsWith('peternakan_')) return t('side_misi.instructions.peternakan_target', { target: reqTarget, title });
+      if (id.startsWith('sawah_') || id.startsWith('ladang_') || id.startsWith('kebun_')) return t('side_misi.instructions.agrikultur_target', { target: reqTarget, title });
+      if (id.startsWith('tambak_') || id.startsWith('budidaya_') || id.startsWith('perikanan_')) return t('side_misi.instructions.perikanan_target', { target: reqTarget, title });
+      return t('side_misi.instructions.pangan_target', { target: reqTarget, title });
+    }
+    if (card.category === 'produksi' || card.category === 'pangan') {
+      if (id.startsWith('bangun_plt')) return t('side_misi.instructions.plt', { title });
+      return t('side_misi.instructions.produksi_default', { title });
+    }
+    if (card.category === 'layanan_publik') {
+      const targetText = reqTarget === null ? '' : t('side_misi.instructions.unitMin', { target: reqTarget });
+      if (id.startsWith('infra_')) return t('side_misi.instructions.infra', { targetText, title });
+      if (id.startsWith('hukum_')) return t('side_misi.instructions.hukum', { targetText, title });
+      if (id.startsWith('sport_')) return t('side_misi.instructions.sport', { targetText, title });
+      if (id.startsWith('komersial_')) return t('side_misi.instructions.komersial', { targetText, title });
+      return t('side_misi.instructions.layanan_default', { targetText, title });
+    }
+    if (card.category === 'hunian') {
+      return t('side_misi.instructions.hunian', { target: reqTarget ?? BASE_PRODUCTION_TARGET, title });
+    }
+    if (card.category === 'penelitian') return t('side_misi.instructions.penelitian', { title });
+    if (card.category === 'pertahanan') return t('side_misi.instructions.pertahanan', { title });
+    if (card.category === 'geopolitik') return t('side_misi.instructions.geopolitik', { title });
+    if (card.category === 'resolusi_pbb' || card.category === 'resolusi_dk_pbb') return t('side_misi.instructions.pbb', { title });
+    if (card.category === 'organisasi_pbb') return t('side_misi.instructions.organisasi_pbb', { title });
+    if (card.category === 'organisasi_regional') return t('side_misi.instructions.organisasi_regional', { title });
+    if (card.category === 'sosial_budaya') {
+      if (id === 'ideologi_negara' || id === 'ganti_ideologi') return t('side_misi.instructions.ideologi');
+      if (id === 'toleransi_agama' || id === 'ganti_agama') return t('side_misi.instructions.agama');
+      return t('side_misi.instructions.sosial_default', { title });
+    }
+    if (card.category === 'kementerian' || card.category === 'kabinet') return t('side_misi.instructions.kementerian', { title });
+    if (card.category === 'krisis') return t('side_misi.instructions.krisis', { title });
+    if (card.category === 'populasi') return t('side_misi.instructions.populasi', { title });
+    return t('side_misi.instructions.default', { title });
+  }
 
   // Gelar Acara
   if (card.category === 'event') {
@@ -1711,7 +1772,7 @@ export default function MissionModals({
                           <p className="mt-1 text-[10px] font-semibold text-emerald-200">
                             {t('side_misi.readyToClaim')}
                             {badges.neo !== undefined && ` · ${badges.neo.toLocaleString('id-ID')} NEO`}
-                            {badges.sda && ` · ${badges.sda.amount.toLocaleString('id-ID')} ${formatProductionProductName(badges.sda.productKey)}`}
+                            {badges.sda && ` · ${badges.sda.amount.toLocaleString('id-ID')} ${t(`side_reward.items.${badges.sda.productKey}`) || formatProductionProductName(badges.sda.productKey)}`}
                             {` · ${badges.diamond} Gems`}
                           </p>
                         </div>
@@ -1769,7 +1830,7 @@ export default function MissionModals({
                         )}
 
                         <p className="text-xs sm:text-sm text-root-text font-bold leading-relaxed">
-                          👉 <span className="text-root-text font-semibold">{getMissionInstruction(card, completionCount)}</span>
+                          👉 <span className="text-root-text font-semibold">{getMissionInstruction(card, completionCount, t)}</span>
                         </p>
                         {(() => {
                           const reqTarget = getMissionRequiredTarget(card, completionCount);
@@ -1809,7 +1870,7 @@ export default function MissionModals({
                         {badges.sda && (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-orange-500/15 border border-orange-400/40 text-orange-200 font-black text-[10px]">
                             <Package className="h-3 w-3 text-orange-300" />
-                            {badges.sda.amount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} {formatProductionProductName(badges.sda.productKey)}
+                            {badges.sda.amount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} {t(`side_reward.items.${badges.sda.productKey}`) || formatProductionProductName(badges.sda.productKey)}
                           </span>
                         )}
 

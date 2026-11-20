@@ -491,7 +491,7 @@ export default function TopRightGiftIcon({
                       </span>
 
                       <span className="text-[9px] sm:text-[10px] text-center text-root-subtle mt-1 leading-tight">
-                        {reward ? formatProductionProductName(reward.resourceKey) : 'Memuat produk'}
+                        {reward ? (t(`side_reward.items.${reward.resourceKey}`) || formatProductionProductName(reward.resourceKey)) : 'Memuat produk'}
                       </span>
 
                       <div className={`mt-2 ${statusColor}`}>{statusIcon}</div>
