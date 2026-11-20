@@ -35,8 +35,13 @@ import idNews from './id/side_menu/news/news.json';
 import idReward from './id/side_menu/reward/reward.json';
 import idMisi from './id/side_menu/misi/misi.json';
 import idPenelitian from './id/side_menu/penelitian/penelitian.json';
+import idPenelitianEkonomi from './id/side_menu/penelitian/ekonomi/main.json';
+import idPenelitianMiliter from './id/side_menu/penelitian/militer/main.json';
+import idPenelitianDiplomasi from './id/side_menu/penelitian/diplomasi/main.json';
 import idShop from './id/side_menu/shop/shop.json';
 import idPelacakanAktivitas from './id/side_menu/pelacakan_aktivitas/pelacakan_aktivitas.json';
+import idCountryDetailUser from './id/detail_negara/detail_negara_user/main.json';
+import idCountryDetailAI from './id/detail_negara/detail_negara_ai/main.json';
 
 const ID_DICTIONARY: LanguageDictionary = {
   common: idCommon,
@@ -48,9 +53,18 @@ const ID_DICTIONARY: LanguageDictionary = {
   side_news: idNews,
   side_reward: idReward,
   side_misi: idMisi,
-  side_penelitian: idPenelitian,
+  side_penelitian: {
+    ...idPenelitian,
+    categories: {
+      ekonomi: idPenelitianEkonomi,
+      militer: idPenelitianMiliter,
+      diplomasi: idPenelitianDiplomasi,
+    },
+  },
   side_shop: idShop,
   side_pelacakan_aktivitas: idPelacakanAktivitas,
+  detail_negara_user: idCountryDetailUser,
+  detail_negara_ai: idCountryDetailAI,
 };
 
 const STORAGE_KEY = 'app_language';
@@ -102,8 +116,13 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     side_reward,
     side_misi,
     side_penelitian,
+    researchEconomy,
+    researchMilitary,
+    researchDiplomacy,
     side_shop,
     side_pelacakan_aktivitas,
+    detail_negara_user,
+    detail_negara_ai,
   ] = await Promise.all([
     import(`./${code}/common.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navbar/navbar.json`).then((m) => m.default).catch(() => ({})),
@@ -115,8 +134,13 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     import(`./${code}/side_menu/reward/reward.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/side_menu/misi/misi.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/side_menu/penelitian/penelitian.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/side_menu/penelitian/ekonomi/main.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/side_menu/penelitian/militer/main.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/side_menu/penelitian/diplomasi/main.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/side_menu/shop/shop.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/side_menu/pelacakan_aktivitas/pelacakan_aktivitas.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/detail_negara/detail_negara_user/main.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/detail_negara/detail_negara_ai/main.json`).then((m) => m.default).catch(() => ({})),
   ]);
 
   return {
@@ -129,9 +153,18 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     side_news,
     side_reward,
     side_misi,
-    side_penelitian,
+    side_penelitian: {
+      ...side_penelitian,
+      categories: {
+        ekonomi: researchEconomy,
+        militer: researchMilitary,
+        diplomasi: researchDiplomacy,
+      },
+    },
     side_shop,
     side_pelacakan_aktivitas,
+    detail_negara_user,
+    detail_negara_ai,
   };
 }
 

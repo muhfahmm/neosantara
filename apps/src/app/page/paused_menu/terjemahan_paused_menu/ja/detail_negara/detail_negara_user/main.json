@@ -1,0 +1,18 @@
+{
+  "subtitle": "自国の詳細",
+  "badge": "自国",
+  "capital": "首都",
+  "population": "人口",
+  "treasury": "国庫",
+  "ideology": "イデオロギー",
+  "religion": "主要な宗教",
+  "dailyGdp": "日次GDP",
+  "faithVictory": "宗教の勝利数",
+  "ideologyVictory": "イデオロギーの勝利数",
+  "militaryPower": "総軍事力",
+  "land": "陸軍",
+  "sea": "海軍",
+  "air": "空軍",
+  "footer": "あなたが統治している国です",
+  "loadError": "国のデータを読み込めませんでした: {error}"
+}

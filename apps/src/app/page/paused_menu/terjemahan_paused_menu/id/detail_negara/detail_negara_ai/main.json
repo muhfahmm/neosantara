@@ -1,0 +1,61 @@
+{
+  "unavailable": "Data tidak tersedia",
+  "city": "Kota",
+  "capital": "Ibukota",
+  "ideology": "Ideologi",
+  "religion": "Agama",
+  "relation": "Hubungan",
+  "tension": "Ketegangan",
+  "demonstrationChance": "Demo {value}%",
+  "rebellionChance": "Pemberontakan {value}%",
+  "referendumPending": "Referendum berlangsung hingga {date}",
+  "referendumFailed": "Hasil referendum gagal diproses",
+  "tabs": {
+    "general": "Informasi Umum",
+    "geopolitics": "Geopolitik",
+    "military": "Operasi Militer",
+    "constructionProgress": "Progress Pembangunan"
+  },
+  "tensionLevels": {
+    "veryStable": "Sangat Stabil",
+    "stable": "Stabil",
+    "neutral": "Netral",
+    "hot": "Panas",
+    "veryHot": "Sangat Panas"
+  },
+  "actions": {
+    "embassyBuilding": "Dalam Pembangunan",
+    "destroyEmbassy": "Hancurkan Kedutaan",
+    "buildEmbassy": "Bangun Kedutaan",
+    "ratifying": "Dalam Ratifikasi",
+    "nonAggressionPact": "Pakta Non Agresi",
+    "endNonAggressionPact": "Putus Pakta Non Agresi",
+    "defenseAlliance": "Aliansi Pertahanan",
+    "endDefenseAlliance": "Putus Aliansi Pertahanan",
+    "trade": "Perjanjian Dagang",
+    "endTrade": "Putus Hubungan Dagang",
+    "researchContract": "Kontrak Penelitian",
+    "endResearchContract": "Putus Kontrak Penelitian",
+    "sendTroops": "Kirim Pasukan",
+    "callAlly": "Panggil Sekutu",
+    "imposeSanction": "Berikan Sanksi",
+    "removeSanction": "Cabut Sanksi",
+    "giveTroops": "Beri Tentara",
+    "giveGift": "Beri Hadiah",
+    "improveRelation": "Tingkatkan Hubungan",
+    "requestHelp": "Minta Bantuan",
+    "transferTerritory": "Berikan Wilayah",
+    "attack": "Serang Negara",
+    "espionage": "Spionase",
+    "sabotage": "Sabotase",
+    "nuclearWar": "Perang Nuklir",
+    "coup": "Lakukan Kudeta",
+    "requestAttack": "Minta Menyerang Negara",
+    "insult": "Hina"
+  },
+  "tooltips": {
+    "diplomacyBlocked": "Aksi diplomatik diblokir selama perang bilateral atau embargo PBB.",
+    "tradeIdeologyRestricted": "Perjanjian dagang tidak tersedia untuk ideologi Komunisme atau Sosialisme.",
+    "attackInProgress": "Serangan ke {country} masih berjalan"
+  }
+}

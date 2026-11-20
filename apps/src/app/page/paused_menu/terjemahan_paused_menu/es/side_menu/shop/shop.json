@@ -6,5 +6,40 @@
   "buy": "Comprar",
   "insufficientFunds": "Saldo Insuficiente",
   "discounts": "Ofertas Limitadas",
-  "inDevelopment": "En Desarrollo"
+  "inDevelopment": "En Desarrollo",
+  "neoBalance": "Tesoro Nacional",
+  "gemBalance": "Moneda prémium",
+  "gemUnit": "Gemas",
+  "badges": {
+    "popular": "Popular",
+    "bestValue": "Mejor valor"
+  },
+  "coinPackages": {
+    "coin_pkg_1": "Fondos tácticos",
+    "coin_pkg_2": "Subsidio para proyectos",
+    "coin_pkg_3": "Presupuesto de desarrollo",
+    "coin_pkg_4": "Reserva nacional",
+    "coin_pkg_5": "Bonos del Estado",
+    "coin_pkg_6": "Banco Central de Emergencia"
+  },
+  "gemPackages": {
+    "gem_pkg_1": "Bolsa de gemas",
+    "gem_pkg_2": "Pila de gemas",
+    "gem_pkg_3": "Caja de gemas",
+    "gem_pkg_4": "Cofre de gemas",
+    "gem_pkg_5": "Almacén de gemas",
+    "gem_pkg_6": "Bóveda nacional"
+  },
+  "premiumItems": {
+    "title": "Artículos prémium",
+    "description": "Accede a paquetes exclusivos y funciones especiales"
+  },
+  "discountItems": {
+    "title": "Artículos con descuento",
+    "description": "Ofertas limitadas y precios especiales"
+  },
+  "adItems": {
+    "title": "Anuncios con recompensa",
+    "description": "Mira anuncios para obtener bonificaciones gratis de NEO o gemas"
+  }
 }

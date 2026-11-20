@@ -6,5 +6,40 @@
   "buy": "구매",
   "insufficientFunds": "잔액 부족",
   "discounts": "한정 특가",
-  "inDevelopment": "개발 중"
+  "inDevelopment": "개발 중",
+  "neoBalance": "국고",
+  "gemBalance": "프리미엄 화폐",
+  "gemUnit": "젬",
+  "badges": {
+    "popular": "인기",
+    "bestValue": "최고 혜택"
+  },
+  "coinPackages": {
+    "coin_pkg_1": "전술 자금",
+    "coin_pkg_2": "프로젝트 보조금",
+    "coin_pkg_3": "개발 예산",
+    "coin_pkg_4": "국가 비축금",
+    "coin_pkg_5": "국채",
+    "coin_pkg_6": "긴급 중앙은행"
+  },
+  "gemPackages": {
+    "gem_pkg_1": "젬 주머니",
+    "gem_pkg_2": "젬 더미",
+    "gem_pkg_3": "젬 상자",
+    "gem_pkg_4": "젬 보물 상자",
+    "gem_pkg_5": "젬 창고",
+    "gem_pkg_6": "국가 금고"
+  },
+  "premiumItems": {
+    "title": "프리미엄 아이템",
+    "description": "독점 패키지와 특별 기능 이용"
+  },
+  "discountItems": {
+    "title": "할인 아이템",
+    "description": "기간 한정 특가"
+  },
+  "adItems": {
+    "title": "보상형 광고",
+    "description": "광고를 보고 무료 NEO 또는 젬 보너스 획득"
+  }
 }

@@ -1,0 +1,18 @@
+{
+  "subtitle": "Your Country Details",
+  "badge": "YOUR COUNTRY",
+  "capital": "Capital",
+  "population": "Population",
+  "treasury": "National Treasury",
+  "ideology": "Ideology",
+  "religion": "Main Religion",
+  "dailyGdp": "Daily GDP",
+  "faithVictory": "Religious Victories",
+  "ideologyVictory": "Ideological Victories",
+  "militaryPower": "Total Military Power",
+  "land": "Land",
+  "sea": "Naval",
+  "air": "Air",
+  "footer": "This is the country you are leading",
+  "loadError": "Failed to load country data: {error}"
+}

@@ -215,11 +215,11 @@ export default function PenelitianSelectionModal({
                     </div>
 
                     <span className="text-[8px] sm:text-[9px] md:text-[10px] font-black uppercase px-1.5 sm:px-2 md:px-2.5 py-0.5 sm:py-1 rounded-md bg-root-accent/15 text-root-accent border border-root-accent/30 mb-2 tracking-wider whitespace-nowrap">
-                      {t('side_penelitian.tagEconomy')}
+                      {t('side_penelitian.categories.ekonomi.tag')}
                     </span>
 
                     <h3 className="text-[10px] sm:text-xs md:text-sm font-black text-white uppercase tracking-wider group-hover:text-root-accent transition-colors leading-tight">
-                      {t('side_penelitian.branchEconomy')}
+                      {t('side_penelitian.categories.ekonomi.title')}
                     </h3>
                   </div>
                 </button>
@@ -257,11 +257,11 @@ export default function PenelitianSelectionModal({
                     </div>
 
                     <span className="text-[8px] sm:text-[9px] md:text-[10px] font-black uppercase px-1.5 sm:px-2 md:px-2.5 py-0.5 sm:py-1 rounded-md bg-root-accent/15 text-root-accent border border-root-accent/30 mb-2 tracking-wider whitespace-nowrap">
-                      {t('side_penelitian.tagMilitary')}
+                      {t('side_penelitian.categories.militer.tag')}
                     </span>
 
                     <h3 className="text-[10px] sm:text-xs md:text-sm font-black text-white uppercase tracking-wider group-hover:text-root-accent transition-colors leading-tight">
-                      {t('side_penelitian.branchMilitary')}
+                      {t('side_penelitian.categories.militer.title')}
                     </h3>
                   </div>
                 </button>
@@ -299,11 +299,11 @@ export default function PenelitianSelectionModal({
                     </div>
 
                     <span className="text-[8px] sm:text-[9px] md:text-[10px] font-black uppercase px-1.5 sm:px-2 md:px-2.5 py-0.5 sm:py-1 rounded-md bg-root-accent/15 text-root-accent border border-root-accent/30 mb-2 tracking-wider whitespace-nowrap">
-                      {t('side_penelitian.tagDiplomacy')}
+                      {t('side_penelitian.categories.diplomasi.tag')}
                     </span>
 
                     <h3 className="text-[10px] sm:text-xs md:text-sm font-black text-white uppercase tracking-wider group-hover:text-root-accent transition-colors leading-tight">
-                      {t('side_penelitian.branchDiplomacy')}
+                      {t('side_penelitian.categories.diplomasi.title')}
                     </h3>
                   </div>
                 </button>

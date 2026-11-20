@@ -32,7 +32,7 @@ export default function ShopModal({
   countryDetail,
   initialTab = "neo",
 }: ShopModalProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [activeTab, setActiveTab] = useState<"neo" | "gems">(initialTab);
   const [mounted, setMounted] = useState(false);
 
@@ -88,12 +88,12 @@ export default function ShopModal({
                   {/* Saldo NEO */}
                   <span className="inline-flex items-center gap-1.5 rounded-lg border border-root-accent/30 bg-root-canvas px-2.5 py-1 text-root-accent">
                     <Coins size={14} className="text-amber-400" />
-                    <span>{playerKas.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                    <span>{playerKas.toLocaleString(language, { maximumFractionDigits: 0 })} NEO</span>
                   </span>
                   {/* Saldo GEMS */}
                   <span className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-500/30 bg-root-canvas px-2.5 py-1 text-cyan-300">
                     <Gem size={14} className="text-cyan-400" />
-                    <span>{playerDiamonds.toLocaleString("id-ID")} Gems</span>
+                    <span>{playerDiamonds.toLocaleString(language)} {t("side_shop.gemUnit")}</span>
                   </span>
                 </div>
               }

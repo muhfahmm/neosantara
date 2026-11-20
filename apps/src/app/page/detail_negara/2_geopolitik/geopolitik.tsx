@@ -14,6 +14,7 @@ import MintaBantuanModal from './5_minta_bantuan/mintaBantuanModals';
 import BerikanWilayahModal from './6_berikan_wilayah/berikanWilayahModals';
 import { COUNTRIES_DATA } from '../../map_system/map-data';
 import { getCountryColor } from '../../menus/news/logic/1_berita_invasi/beritaInvasiLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface GeopolitikProps {
   countryName: string;
@@ -43,6 +44,7 @@ const ActionButton = ({ icon: Icon, label, onClick, disabled }: { icon: any, lab
 };
 
 export default function Geopolitik({ countryName, playerCountryDetail, setPlayerCountryDetail, targetCountryDetail, setTargetCountryDetail, onActionModalStateChange }: GeopolitikProps) {
+  const { t } = useLanguage();
   const [isBeriTentaraOpen, setIsBeriTentaraOpen] = useState(false);
   const [isBeriHadiahOpen, setIsBeriHadiahOpen] = useState(false);
   const [isTingkatkanOpen, setIsTingkatkanOpen] = useState(false);
@@ -261,14 +263,14 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
     <div className="space-y-6 lg:space-y-4 xl:space-y-6">
       {/* Grid Layout 5 Tombol Aksi */}
       <div className="country-detail-action-grid grid grid-cols-2 md:grid-cols-4 items-stretch gap-4 lg:gap-3 xl:gap-4 pt-6 lg:pt-4 xl:pt-6">
-        <ActionButton icon={Sword} label="Beri Tentara" onClick={() => setIsBeriTentaraOpen(true)} disabled={!hasDefenseAlliance} />
-        <ActionButton icon={Gift} label="Beri Hadiah" onClick={() => setIsBeriHadiahOpen(true)} />
-        <ActionButton icon={Heart} label="Tingkatkan Hubungan" onClick={() => setIsTingkatkanOpen(true)} />
-        <ActionButton icon={Phone} label="Minta Bantuan" onClick={() => {
+        <ActionButton icon={Sword} label={t('detail_negara_ai.actions.giveTroops')} onClick={() => setIsBeriTentaraOpen(true)} disabled={!hasDefenseAlliance} />
+        <ActionButton icon={Gift} label={t('detail_negara_ai.actions.giveGift')} onClick={() => setIsBeriHadiahOpen(true)} />
+        <ActionButton icon={Heart} label={t('detail_negara_ai.actions.improveRelation')} onClick={() => setIsTingkatkanOpen(true)} />
+        <ActionButton icon={Phone} label={t('detail_negara_ai.actions.requestHelp')} onClick={() => {
           setIsMintaBantuanOpen(true);
           onActionModalStateChange?.(true);
         }} />
-        <ActionButton icon={Map} label="Berikan Wilayah" onClick={openBerikanWilayahModal} disabled={!hasAnnexedTerritory} />
+        <ActionButton icon={Map} label={t('detail_negara_ai.actions.transferTerritory')} onClick={openBerikanWilayahModal} disabled={!hasAnnexedTerritory} />
       </div>
 
       <BeriTentaraModal

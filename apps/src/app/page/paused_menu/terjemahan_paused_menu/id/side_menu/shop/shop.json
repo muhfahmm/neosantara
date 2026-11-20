@@ -6,5 +6,40 @@
   "buy": "Beli",
   "insufficientFunds": "Saldo Tidak Cukup",
   "discounts": "Promo Terbatas",
-  "inDevelopment": "Dalam Pengembangan"
+  "inDevelopment": "Dalam Pengembangan",
+  "neoBalance": "Kas Negara",
+  "gemBalance": "Mata Uang Premium",
+  "gemUnit": "Gems",
+  "badges": {
+    "popular": "Populer",
+    "bestValue": "Terbaik"
+  },
+  "coinPackages": {
+    "coin_pkg_1": "Dana Taktis",
+    "coin_pkg_2": "Subsidi Proyek",
+    "coin_pkg_3": "Anggaran Pembangunan",
+    "coin_pkg_4": "Kas Cadangan Nasional",
+    "coin_pkg_5": "Obligasi Negara",
+    "coin_pkg_6": "Bank Sentral Darurat"
+  },
+  "gemPackages": {
+    "gem_pkg_1": "Kantong Permata",
+    "gem_pkg_2": "Tumpukan Permata",
+    "gem_pkg_3": "Kotak Permata",
+    "gem_pkg_4": "Peti Harta Permata",
+    "gem_pkg_5": "Gudang Permata",
+    "gem_pkg_6": "Brankas Nasional"
+  },
+  "premiumItems": {
+    "title": "Item Premium",
+    "description": "Akses paket eksklusif & fitur spesial"
+  },
+  "discountItems": {
+    "title": "Item Diskon",
+    "description": "Penawaran terbatas & harga spesial"
+  },
+  "adItems": {
+    "title": "Iklan Berhadiah",
+    "description": "Tonton iklan untuk bonus NEO atau Gems gratis"
+  }
 }

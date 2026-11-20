@@ -2,8 +2,11 @@
 
 import React from "react";
 import { PlaySquare } from "lucide-react";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 export default function AdMenu() {
+  const { t } = useLanguage();
+
   return (
     <div
       style={{
@@ -40,7 +43,7 @@ export default function AdMenu() {
               color: "var(--root-color-text)",
             }}
           >
-            Iklan Berhadiah
+            {t("side_shop.adItems.title")}
           </span>
           <span
             style={{
@@ -49,7 +52,7 @@ export default function AdMenu() {
               fontWeight: 600,
             }}
           >
-            Tonton iklan untuk bonus NEO atau Gems gratis
+            {t("side_shop.adItems.description")}
           </span>
         </div>
       </div>
@@ -66,7 +69,7 @@ export default function AdMenu() {
           whiteSpace: "nowrap",
         }}
       >
-        Dalam Pengembangan
+        {t("side_shop.inDevelopment")}
       </span>
     </div>
   );

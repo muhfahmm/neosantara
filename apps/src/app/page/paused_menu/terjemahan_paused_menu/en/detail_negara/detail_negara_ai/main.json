@@ -1,0 +1,61 @@
+{
+  "unavailable": "Data unavailable",
+  "city": "City",
+  "capital": "Capital",
+  "ideology": "Ideology",
+  "religion": "Religion",
+  "relation": "Relations",
+  "tension": "Tension",
+  "demonstrationChance": "Protest {value}%",
+  "rebellionChance": "Rebellion {value}%",
+  "referendumPending": "Referendum runs until {date}",
+  "referendumFailed": "Failed to process referendum results",
+  "tabs": {
+    "general": "General Information",
+    "geopolitics": "Geopolitics",
+    "military": "Military Operations",
+    "constructionProgress": "Construction Progress"
+  },
+  "tensionLevels": {
+    "veryStable": "Very Stable",
+    "stable": "Stable",
+    "neutral": "Neutral",
+    "hot": "Tense",
+    "veryHot": "Very Tense"
+  },
+  "actions": {
+    "embassyBuilding": "Under Construction",
+    "destroyEmbassy": "Close Embassy",
+    "buildEmbassy": "Build Embassy",
+    "ratifying": "Awaiting Ratification",
+    "nonAggressionPact": "Non-Aggression Pact",
+    "endNonAggressionPact": "End Non-Aggression Pact",
+    "defenseAlliance": "Defense Alliance",
+    "endDefenseAlliance": "End Defense Alliance",
+    "trade": "Trade Agreement",
+    "endTrade": "End Trade Relations",
+    "researchContract": "Research Contract",
+    "endResearchContract": "End Research Contract",
+    "sendTroops": "Send Troops",
+    "callAlly": "Call Ally",
+    "imposeSanction": "Impose Sanctions",
+    "removeSanction": "Lift Sanctions",
+    "giveTroops": "Send Troops",
+    "giveGift": "Give a Gift",
+    "improveRelation": "Improve Relations",
+    "requestHelp": "Request Aid",
+    "transferTerritory": "Transfer Territory",
+    "attack": "Attack Country",
+    "espionage": "Espionage",
+    "sabotage": "Sabotage",
+    "nuclearWar": "Nuclear War",
+    "coup": "Stage a Coup",
+    "requestAttack": "Request an Attack",
+    "insult": "Insult"
+  },
+  "tooltips": {
+    "diplomacyBlocked": "Diplomatic actions are blocked during bilateral war or a UN embargo.",
+    "tradeIdeologyRestricted": "Trade agreements are unavailable under Communist or Socialist ideologies.",
+    "attackInProgress": "An attack on {country} is already in progress"
+  }
+}

@@ -2,14 +2,16 @@
 
 import React from "react";
 import { Coins } from "lucide-react";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 export interface CoinShopPackage {
   id: string;
-  name: string;
+  nameKey: "coin_pkg_1" | "coin_pkg_2" | "coin_pkg_3" | "coin_pkg_4" | "coin_pkg_5" | "coin_pkg_6";
   neoAmount: number;
   bonusNeo?: number;
   idrPrice: number;
   badge?: string;
+  badgeKey?: "popular" | "bestValue";
   isPopular?: boolean;
   isBestValue?: boolean;
 }
@@ -17,13 +19,13 @@ export interface CoinShopPackage {
 export const COIN_PACKAGES: CoinShopPackage[] = [
   {
     id: "coin_pkg_1",
-    name: "Dana Taktis",
+    nameKey: "coin_pkg_1",
     neoAmount: 50_000,
     idrPrice: 15_000,
   },
   {
     id: "coin_pkg_2",
-    name: "Subsidi Proyek",
+    nameKey: "coin_pkg_2",
     neoAmount: 150_000,
     bonusNeo: 15_000,
     idrPrice: 39_000,
@@ -31,16 +33,16 @@ export const COIN_PACKAGES: CoinShopPackage[] = [
   },
   {
     id: "coin_pkg_3",
-    name: "Anggaran Pembangunan",
+    nameKey: "coin_pkg_3",
     neoAmount: 400_000,
     bonusNeo: 60_000,
     idrPrice: 89_000,
-    badge: "Populer",
+    badgeKey: "popular",
     isPopular: true,
   },
   {
     id: "coin_pkg_4",
-    name: "Kas Cadangan Nasional",
+    nameKey: "coin_pkg_4",
     neoAmount: 1_000_000,
     bonusNeo: 200_000,
     idrPrice: 199_000,
@@ -48,7 +50,7 @@ export const COIN_PACKAGES: CoinShopPackage[] = [
   },
   {
     id: "coin_pkg_5",
-    name: "Obligasi Negara",
+    nameKey: "coin_pkg_5",
     neoAmount: 2_500_000,
     bonusNeo: 625_000,
     idrPrice: 399_000,
@@ -56,11 +58,11 @@ export const COIN_PACKAGES: CoinShopPackage[] = [
   },
   {
     id: "coin_pkg_6",
-    name: "Bank Sentral Darurat",
+    nameKey: "coin_pkg_6",
     neoAmount: 7_000_000,
     bonusNeo: 2_450_000,
     idrPrice: 899_000,
-    badge: "Terbaik",
+    badgeKey: "bestValue",
     isBestValue: true,
   },
 ];
@@ -70,6 +72,8 @@ interface ShopCoinsItemsProps {
 }
 
 export default function ShopCoinsItems({ onBuy }: ShopCoinsItemsProps) {
+  const { t, language } = useLanguage();
+
   return (
     <div
       style={{
@@ -124,7 +128,7 @@ export default function ShopCoinsItems({ onBuy }: ShopCoinsItemsProps) {
                   color: pkg.isBestValue || pkg.isPopular ? "#0F172A" : "#FFFFFF",
                 }}
               >
-                {pkg.badge}
+                {pkg.badgeKey ? t(`side_shop.badges.${pkg.badgeKey}`) : pkg.badge}
               </div>
             )}
 
@@ -159,7 +163,7 @@ export default function ShopCoinsItems({ onBuy }: ShopCoinsItemsProps) {
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {pkg.name}
+                    {t(`side_shop.coinPackages.${pkg.nameKey}`)}
                   </h3>
                   <span
                     style={{
@@ -168,7 +172,7 @@ export default function ShopCoinsItems({ onBuy }: ShopCoinsItemsProps) {
                       fontWeight: 600,
                     }}
                   >
-                    Kas Negara
+                    {t("side_shop.neoBalance")}
                   </span>
                 </div>
               </div>
@@ -192,7 +196,7 @@ export default function ShopCoinsItems({ onBuy }: ShopCoinsItemsProps) {
                     color: "var(--root-color-accent)",
                   }}
                 >
-                  +{totalNeo.toLocaleString("id-ID")}
+                  +{totalNeo.toLocaleString(language)}
                 </span>
                 <span
                   style={{

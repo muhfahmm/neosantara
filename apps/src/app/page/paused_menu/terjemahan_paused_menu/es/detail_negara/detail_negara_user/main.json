@@ -1,0 +1,18 @@
+{
+  "subtitle": "Detalles de tu país",
+  "badge": "TU PAÍS",
+  "capital": "Capital",
+  "population": "Población",
+  "treasury": "Tesoro nacional",
+  "ideology": "Ideología",
+  "religion": "Religión principal",
+  "dailyGdp": "PIB diario",
+  "faithVictory": "Victorias religiosas",
+  "ideologyVictory": "Victorias ideológicas",
+  "militaryPower": "Poder militar total",
+  "land": "Tierra",
+  "sea": "Marina",
+  "air": "Aérea",
+  "footer": "Este es el país que lideras",
+  "loadError": "No se pudieron cargar los datos del país: {error}"
+}

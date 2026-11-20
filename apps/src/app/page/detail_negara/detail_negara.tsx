@@ -33,6 +33,7 @@ import {
   getActiveRequestedAttackRequests,
   REQUESTED_ATTACK_REQUESTS_CHANGED_EVENT,
 } from './3_operasi_militer/6_minta_serang_negara/requestedInvasionLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 // Import 3 komponen terpisah
 import InformasiUmum from "./1_informasi_umum/informasi_umum";
@@ -139,6 +140,7 @@ export function CountryDetailModal({
   initialDevelopingBuildingKey,
   initialDevelopingTab,
 }: CountryDetailModalProps) {
+  const { t } = useLanguage();
   // State untuk menu tab
   const [activeTab, setActiveTab] = useState<"informasi" | "geopolitik" | "militer" | "developing_ai_building">("informasi");
   const [annexationRevision, setAnnexationRevision] = useState(0);
@@ -823,12 +825,12 @@ export function CountryDetailModal({
   // Wilayah tetap menggunakan nama dan ibukota aslinya, tetapi memakai bendera penguasa.
   const originalIso = mapData?.iso || detailData?.iso || "";
   let displayIso = originalIso;
-  const countryCapital = mapData?.capital || detailData?.capital || "Data tidak tersedia";
+  const countryCapital = mapData?.capital || detailData?.capital || t('detail_negara_ai.unavailable');
   const isTargetingCity = Boolean(selectedCity && selectedCity.trim() !== "");
-  const displayCapital = (isTargetingCity ? selectedCity : countryCapital) || "Data tidak tersedia";
+  const displayCapital = (isTargetingCity ? selectedCity : countryCapital) || t('detail_negara_ai.unavailable');
   const capitalCardLabel = isTargetingCity && selectedCity?.toLowerCase().trim() !== countryCapital.toLowerCase().trim()
-    ? "Kota"
-    : "Ibukota";
+    ? t('detail_negara_ai.city')
+    : t('detail_negara_ai.capital');
 
   const attackerCountryName = annexedInfo?.attackerCountry;
   let rulerIso = "";
@@ -844,14 +846,14 @@ export function CountryDetailModal({
     displayIso = rulerIso || originalIso;
   }
   const provinceTensionStatus = provinceTensionValue <= 25
-    ? 'Sangat Stabil'
+    ? t('detail_negara_ai.tensionLevels.veryStable')
     : provinceTensionValue <= 40
-      ? 'Stabil'
+      ? t('detail_negara_ai.tensionLevels.stable')
       : provinceTensionValue <= 65
-        ? 'Netral'
+        ? t('detail_negara_ai.tensionLevels.neutral')
         : provinceTensionValue <= 80
-          ? 'Panas'
-          : 'Sangat Panas';
+          ? t('detail_negara_ai.tensionLevels.hot')
+          : t('detail_negara_ai.tensionLevels.veryHot');
   const isDevelopingAIBuildingTab = activeTab === "developing_ai_building";
 
   const headerFlagIcon = displayIso && displayIso.length === 2 ? (
@@ -905,7 +907,7 @@ export function CountryDetailModal({
               </div>
               <div className="flex min-w-0 flex-col">
                 <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-black text-root-accent/60 uppercase tracking-wider`}>
-                  {isPlayerOccupiedProvince ? 'Ketegangan' : 'Hubungan'}
+                  {isPlayerOccupiedProvince ? t('detail_negara_ai.tension') : t('detail_negara_ai.relation')}
                 </span>
                 <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-extrabold uppercase ${isPlayerOccupiedProvince ? 'text-emerald-400' : getRelationTextColor(relationValue)}`}>
                   {isPlayerOccupiedProvince
@@ -914,17 +916,17 @@ export function CountryDetailModal({
                 </span>
                 {isPlayerOccupiedProvince && (
                   <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-semibold normal-case text-[#B7D5CD]/75`}>
-                    Demo {getProvinceDemonstrationChance(provinceTensionValue)}% · Pemberontakan {getProvinceRebellionChance(provinceTensionValue)}%
+                    {t('detail_negara_ai.demonstrationChance', { value: getProvinceDemonstrationChance(provinceTensionValue) })} · {t('detail_negara_ai.rebellionChance', { value: getProvinceRebellionChance(provinceTensionValue) })}
                   </span>
                 )}
                 {isPlayerOccupiedProvince && provinceReferendum?.status === 'pending' && (
                   <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-bold normal-case text-amber-300`}>
-                    Referendum berlangsung hingga {provinceReferendum.votingEndsAt}
+                    {t('detail_negara_ai.referendumPending', { date: provinceReferendum.votingEndsAt })}
                   </span>
                 )}
                 {isPlayerOccupiedProvince && provinceReferendum?.status === 'failed' && (
                   <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-bold normal-case text-rose-300`}>
-                    Hasil referendum gagal diproses
+                    {t('detail_negara_ai.referendumFailed')}
                   </span>
                 )}
               </div>
@@ -949,7 +951,7 @@ export function CountryDetailModal({
                 <Scale className="h-2 w-2 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
               </div>
               <div className="flex min-w-0 flex-col">
-                <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-black text-root-accent/60 uppercase tracking-wider`}>Ideologi</span>
+                <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-black text-root-accent/60 uppercase tracking-wider`}>{t('detail_negara_ai.ideology')}</span>
                 <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-bold text-root-accent uppercase`}>
                   {headerDetailData?.ideology
                     ? headerDetailData.ideology
@@ -967,7 +969,7 @@ export function CountryDetailModal({
                 <Home className="h-2 w-2 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-root-accent" />
               </div>
               <div className="flex min-w-0 flex-col">
-                <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-black text-root-accent/60 uppercase tracking-wider`}>Agama</span>
+                <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-black text-root-accent/60 uppercase tracking-wider`}>{t('detail_negara_ai.religion')}</span>
                 <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-bold text-root-accent uppercase`}>
                   {headerDetailData?.religion
                     ? headerDetailData.religion
@@ -992,7 +994,7 @@ export function CountryDetailModal({
                 className={`country-detail-tab-button px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg ${rootModalTypography.tab} transition-all cursor-pointer flex items-center gap-2 ${activeTab === "informasi" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
                   }`}
               >
-                <Globe className="country-detail-tab-icon h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Informasi Umum
+                <Globe className="country-detail-tab-icon h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> {t('detail_negara_ai.tabs.general')}
               </button>
               {!isPlayerOccupiedProvince && (
                 <button
@@ -1000,7 +1002,7 @@ export function CountryDetailModal({
                   className={`country-detail-tab-button px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg ${rootModalTypography.tab} transition-all cursor-pointer flex items-center gap-2 ${activeTab === "geopolitik" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
                     }`}
                 >
-                  <Landmark className="country-detail-tab-icon h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Geopolitik
+                  <Landmark className="country-detail-tab-icon h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> {t('detail_negara_ai.tabs.geopolitics')}
                 </button>
               )}
               <button
@@ -1008,14 +1010,14 @@ export function CountryDetailModal({
                 className={`country-detail-tab-button px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg ${rootModalTypography.tab} transition-all cursor-pointer flex items-center gap-2 ${activeTab === "militer" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
                   }`}
               >
-                <Shield className="country-detail-tab-icon h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Operasi Militer
+                <Shield className="country-detail-tab-icon h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> {t('detail_negara_ai.tabs.military')}
               </button>
               <button
                 onClick={() => setActiveTab("developing_ai_building")}
                 className={`country-detail-tab-button hidden px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg ${rootModalTypography.tab} transition-all cursor-pointer items-center gap-2 ${activeTab === "developing_ai_building" ? "bg-root-accent text-root-canvas shadow-md shadow-root-accent/20" : "text-root-accent/60 hover:text-root-accent"
                   }`}
               >
-                <Hammer className="country-detail-tab-icon h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Progress Pembangunan
+                <Hammer className="country-detail-tab-icon h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> {t('detail_negara_ai.tabs.constructionProgress')}
               </button>
             </div>
 

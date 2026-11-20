@@ -6,5 +6,40 @@
   "buy": "شراء",
   "insufficientFunds": "رصيد غير كافٍ",
   "discounts": "عروض محدودة",
-  "inDevelopment": "قيد التطوير"
+  "inDevelopment": "قيد التطوير",
+  "neoBalance": "الخزينة الوطنية",
+  "gemBalance": "عملة مميزة",
+  "gemUnit": "جواهر",
+  "badges": {
+    "popular": "شائع",
+    "bestValue": "أفضل قيمة"
+  },
+  "coinPackages": {
+    "coin_pkg_1": "أموال تكتيكية",
+    "coin_pkg_2": "دعم المشاريع",
+    "coin_pkg_3": "ميزانية التنمية",
+    "coin_pkg_4": "الاحتياطي الوطني",
+    "coin_pkg_5": "سندات حكومية",
+    "coin_pkg_6": "البنك المركزي للطوارئ"
+  },
+  "gemPackages": {
+    "gem_pkg_1": "كيس الجواهر",
+    "gem_pkg_2": "كومة جواهر",
+    "gem_pkg_3": "صندوق الجواهر",
+    "gem_pkg_4": "صندوق كنز الجواهر",
+    "gem_pkg_5": "خزنة الجواهر",
+    "gem_pkg_6": "الخزنة الوطنية"
+  },
+  "premiumItems": {
+    "title": "عناصر مميزة",
+    "description": "الوصول إلى حزم حصرية وميزات خاصة"
+  },
+  "discountItems": {
+    "title": "عناصر مخفضة",
+    "description": "عروض محدودة وأسعار خاصة"
+  },
+  "adItems": {
+    "title": "إعلانات بمكافآت",
+    "description": "شاهد الإعلانات للحصول على مكافآت NEO أو جواهر مجانًا"
+  }
 }

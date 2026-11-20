@@ -9,8 +9,13 @@ import type idNews from './id/side_menu/news/news.json';
 import type idReward from './id/side_menu/reward/reward.json';
 import type idMisi from './id/side_menu/misi/misi.json';
 import type idPenelitian from './id/side_menu/penelitian/penelitian.json';
+import type idPenelitianEkonomi from './id/side_menu/penelitian/ekonomi/main.json';
+import type idPenelitianMiliter from './id/side_menu/penelitian/militer/main.json';
+import type idPenelitianDiplomasi from './id/side_menu/penelitian/diplomasi/main.json';
 import type idShop from './id/side_menu/shop/shop.json';
 import type idPelacakanAktivitas from './id/side_menu/pelacakan_aktivitas/pelacakan_aktivitas.json';
+import type idCountryDetailUser from './id/detail_negara/detail_negara_user/main.json';
+import type idCountryDetailAI from './id/detail_negara/detail_negara_ai/main.json';
 
 export type TextDirection = 'ltr' | 'rtl';
 
@@ -56,7 +61,17 @@ export type TranslationNamespace =
   | 'side_misi'
   | 'side_penelitian'
   | 'side_shop'
-  | 'side_pelacakan_aktivitas';
+  | 'side_pelacakan_aktivitas'
+  | 'detail_negara_user'
+  | 'detail_negara_ai';
+
+type ResearchTranslation = typeof idPenelitian & {
+  categories: {
+    ekonomi: typeof idPenelitianEkonomi;
+    militer: typeof idPenelitianMiliter;
+    diplomasi: typeof idPenelitianDiplomasi;
+  };
+};
 
 export interface TranslationSchema {
   common: typeof idCommon;
@@ -68,9 +83,11 @@ export interface TranslationSchema {
   side_news: typeof idNews;
   side_reward: typeof idReward;
   side_misi: typeof idMisi;
-  side_penelitian: typeof idPenelitian;
+  side_penelitian: ResearchTranslation;
   side_shop: typeof idShop;
   side_pelacakan_aktivitas: typeof idPelacakanAktivitas;
+  detail_negara_user: typeof idCountryDetailUser;
+  detail_negara_ai: typeof idCountryDetailAI;
 }
 
 export type TranslationRecord = Record<string, string | Record<string, unknown>>;
@@ -94,9 +111,11 @@ export type TranslationKey =
   | `side_news.${NestedKeyOf<typeof idNews>}`
   | `side_reward.${NestedKeyOf<typeof idReward>}`
   | `side_misi.${NestedKeyOf<typeof idMisi>}`
-  | `side_penelitian.${NestedKeyOf<typeof idPenelitian>}`
+  | `side_penelitian.${NestedKeyOf<ResearchTranslation>}`
   | `side_shop.${NestedKeyOf<typeof idShop>}`
   | `side_pelacakan_aktivitas.${NestedKeyOf<typeof idPelacakanAktivitas>}`
+  | `detail_negara_user.${NestedKeyOf<typeof idCountryDetailUser>}`
+  | `detail_negara_ai.${NestedKeyOf<typeof idCountryDetailAI>}`
   | (string & {});
 
 export type InterpolationParams = Record<string, string | number>;

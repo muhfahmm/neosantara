@@ -1,0 +1,18 @@
+{
+  "subtitle": "Detail Negara Anda Sendiri",
+  "badge": "NEGARA ANDA",
+  "capital": "Ibukota",
+  "population": "Populasi",
+  "treasury": "Kas Negara",
+  "ideology": "Ideologi",
+  "religion": "Agama Utama",
+  "dailyGdp": "PDB Harian",
+  "faithVictory": "Kemenangan Agama",
+  "ideologyVictory": "Kemenangan Ideologi",
+  "militaryPower": "Total Kekuatan Militer (Power)",
+  "land": "Darat",
+  "sea": "Laut",
+  "air": "Udara",
+  "footer": "Ini adalah negara yang sedang Anda pimpin",
+  "loadError": "Gagal memuat data negara: {error}"
+}

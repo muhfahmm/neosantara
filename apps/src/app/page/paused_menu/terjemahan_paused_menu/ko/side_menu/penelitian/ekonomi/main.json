@@ -1,0 +1,32 @@
+{
+  "title": "경제 및 산업 연구",
+  "tag": "생산 및 조세",
+  "researchTitles": {
+    "otomasi_industri": "전자·기계 공장 자동화",
+    "manufaktur_material": "제조 소재 공학",
+    "manufaktur_terintegrasi": "광물 및 에너지 탐사",
+    "manufaktur_lanjut": "광물·에너지 통합 인프라",
+    "peternakan_modern": "정밀 축산",
+    "peternakan_genetika": "가축 유전학 및 사료",
+    "perkebunan_komoditas": "스마트 다작물 농업",
+    "agrikultur_cerdas": "회복력 있는 다작물 농업",
+    "perikanan_modern": "통합 양식업",
+    "perikanan_pascapanen": "수산 및 수확 후 기술",
+    "pengolahan_pangan": "기초 식품 가공",
+    "industri_pangan_terpadu": "통합 식품 산업"
+  },
+  "effects": {
+    "manufaktur": "제조 생산량",
+    "waktu_pembangunan_manufaktur": "제조 시설 건설 시간",
+    "mineral_energi": "광물 및 에너지 생산량",
+    "waktu_pembangunan_mineral_energi": "광물·에너지 시설 건설 시간",
+    "peternakan": "축산 생산량",
+    "waktu_pembangunan_peternakan": "축산 시설 건설 시간",
+    "agrikultur": "농업 생산량",
+    "waktu_pembangunan_agrikultur": "농업 시설 건설 시간",
+    "perikanan": "수산 생산량",
+    "waktu_pembangunan_perikanan": "수산 시설 건설 시간",
+    "olahan_pangan": "가공식품 생산량",
+    "waktu_pembangunan_olahan_pangan": "식품 공장 건설 시간"
+  }
+}

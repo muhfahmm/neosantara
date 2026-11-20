@@ -6,5 +6,40 @@
   "buy": "购买",
   "insufficientFunds": "余额不足",
   "discounts": "限时特惠",
-  "inDevelopment": "开发中"
+  "inDevelopment": "开发中",
+  "neoBalance": "国库",
+  "gemBalance": "高级货币",
+  "gemUnit": "宝石",
+  "badges": {
+    "popular": "热门",
+    "bestValue": "超值"
+  },
+  "coinPackages": {
+    "coin_pkg_1": "战术资金",
+    "coin_pkg_2": "项目补贴",
+    "coin_pkg_3": "发展预算",
+    "coin_pkg_4": "国家储备金",
+    "coin_pkg_5": "政府债券",
+    "coin_pkg_6": "紧急中央银行"
+  },
+  "gemPackages": {
+    "gem_pkg_1": "宝石袋",
+    "gem_pkg_2": "宝石堆",
+    "gem_pkg_3": "宝石箱",
+    "gem_pkg_4": "宝石藏宝箱",
+    "gem_pkg_5": "宝石仓库",
+    "gem_pkg_6": "国家金库"
+  },
+  "premiumItems": {
+    "title": "高级道具",
+    "description": "解锁专属礼包和特别功能"
+  },
+  "discountItems": {
+    "title": "折扣道具",
+    "description": "限时优惠与特价"
+  },
+  "adItems": {
+    "title": "激励广告",
+    "description": "观看广告，免费获得 NEO 或宝石奖励"
+  }
 }

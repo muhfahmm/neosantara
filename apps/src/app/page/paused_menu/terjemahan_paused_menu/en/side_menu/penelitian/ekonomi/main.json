@@ -1,0 +1,32 @@
+{
+  "title": "Economic & Industrial Research",
+  "tag": "Production & Tax",
+  "researchTitles": {
+    "otomasi_industri": "Electronic and Machinery Factory Automation",
+    "manufaktur_material": "Manufacturing Materials Engineering",
+    "manufaktur_terintegrasi": "Mineral and Energy Exploration",
+    "manufaktur_lanjut": "Integrated Mineral and Energy Infrastructure",
+    "peternakan_modern": "Precision Livestock Farming",
+    "peternakan_genetika": "Livestock Genetics and Feed",
+    "perkebunan_komoditas": "Smart Multi-Commodity Agriculture",
+    "agrikultur_cerdas": "Resilient Multi-Commodity Agriculture",
+    "perikanan_modern": "Integrated Aquaculture",
+    "perikanan_pascapanen": "Fisheries and Post-Harvest Technology",
+    "pengolahan_pangan": "Basic Food Processing",
+    "industri_pangan_terpadu": "Integrated Food Industry"
+  },
+  "effects": {
+    "manufaktur": "Manufacturing Output",
+    "waktu_pembangunan_manufaktur": "Manufacturing Construction Time",
+    "mineral_energi": "Mineral and Energy Output",
+    "waktu_pembangunan_mineral_energi": "Mineral and Energy Construction Time",
+    "peternakan": "Livestock Output",
+    "waktu_pembangunan_peternakan": "Livestock Facility Construction Time",
+    "agrikultur": "Agricultural Output",
+    "waktu_pembangunan_agrikultur": "Agricultural Construction Time",
+    "perikanan": "Fisheries Output",
+    "waktu_pembangunan_perikanan": "Fisheries Facility Construction Time",
+    "olahan_pangan": "Processed Food Output",
+    "waktu_pembangunan_olahan_pangan": "Processed Food Factory Construction Time"
+  }
+}

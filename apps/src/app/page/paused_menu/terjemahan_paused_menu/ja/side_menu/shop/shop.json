@@ -6,5 +6,40 @@
   "buy": "購入",
   "insufficientFunds": "残高不足",
   "discounts": "期間限定セール",
-  "inDevelopment": "開発中"
+  "inDevelopment": "開発中",
+  "neoBalance": "国家財政",
+  "gemBalance": "プレミアム通貨",
+  "gemUnit": "ジェム",
+  "badges": {
+    "popular": "人気",
+    "bestValue": "お得"
+  },
+  "coinPackages": {
+    "coin_pkg_1": "戦術資金",
+    "coin_pkg_2": "プロジェクト補助金",
+    "coin_pkg_3": "開発予算",
+    "coin_pkg_4": "国家予備資金",
+    "coin_pkg_5": "国債",
+    "coin_pkg_6": "緊急中央銀行"
+  },
+  "gemPackages": {
+    "gem_pkg_1": "ジェムの袋",
+    "gem_pkg_2": "ジェムの山",
+    "gem_pkg_3": "ジェムの箱",
+    "gem_pkg_4": "ジェムの宝箱",
+    "gem_pkg_5": "ジェムの保管庫",
+    "gem_pkg_6": "国家金庫"
+  },
+  "premiumItems": {
+    "title": "プレミアムアイテム",
+    "description": "限定パックや特別機能を利用できます"
+  },
+  "discountItems": {
+    "title": "割引アイテム",
+    "description": "期間限定の特別価格オファー"
+  },
+  "adItems": {
+    "title": "リワード広告",
+    "description": "広告を見て無料のNEOまたはジェムのボーナスを獲得"
+  }
 }

@@ -1,0 +1,61 @@
+{
+  "unavailable": "البيانات غير متاحة",
+  "city": "المدينة",
+  "capital": "العاصمة",
+  "ideology": "الأيديولوجيا",
+  "religion": "الديانة",
+  "relation": "العلاقات",
+  "tension": "التوتر",
+  "demonstrationChance": "احتمال المظاهرة {value}%",
+  "rebellionChance": "احتمال التمرد {value}%",
+  "referendumPending": "يستمر الاستفتاء حتى {date}",
+  "referendumFailed": "تعذّرت معالجة نتائج الاستفتاء",
+  "tabs": {
+    "general": "معلومات عامة",
+    "geopolitics": "الجغرافيا السياسية",
+    "military": "العمليات العسكرية",
+    "constructionProgress": "تقدم البناء"
+  },
+  "tensionLevels": {
+    "veryStable": "مستقر جدًا",
+    "stable": "مستقر",
+    "neutral": "محايد",
+    "hot": "متوتر",
+    "veryHot": "متوتر جدًا"
+  },
+  "actions": {
+    "embassyBuilding": "قيد الإنشاء",
+    "destroyEmbassy": "إغلاق السفارة",
+    "buildEmbassy": "إنشاء سفارة",
+    "ratifying": "قيد التصديق",
+    "nonAggressionPact": "اتفاقية عدم اعتداء",
+    "endNonAggressionPact": "إنهاء اتفاقية عدم الاعتداء",
+    "defenseAlliance": "تحالف دفاعي",
+    "endDefenseAlliance": "إنهاء التحالف الدفاعي",
+    "trade": "اتفاقية تجارية",
+    "endTrade": "إنهاء العلاقات التجارية",
+    "researchContract": "عقد بحث",
+    "endResearchContract": "إنهاء عقد البحث",
+    "sendTroops": "إرسال قوات",
+    "callAlly": "استدعاء الحليف",
+    "imposeSanction": "فرض عقوبات",
+    "removeSanction": "رفع العقوبات",
+    "giveTroops": "تقديم قوات",
+    "giveGift": "تقديم هدية",
+    "improveRelation": "تحسين العلاقات",
+    "requestHelp": "طلب المساعدة",
+    "transferTerritory": "نقل الأراضي",
+    "attack": "مهاجمة البلد",
+    "espionage": "التجسس",
+    "sabotage": "التخريب",
+    "nuclearWar": "حرب نووية",
+    "coup": "تنفيذ انقلاب",
+    "requestAttack": "طلب شن هجوم",
+    "insult": "إهانة"
+  },
+  "tooltips": {
+    "diplomacyBlocked": "الإجراءات الدبلوماسية محظورة أثناء الحرب الثنائية أو حظر الأمم المتحدة.",
+    "tradeIdeologyRestricted": "الاتفاقيات التجارية غير متاحة للأيديولوجيات الشيوعية أو الاشتراكية.",
+    "attackInProgress": "هناك هجوم جارٍ بالفعل على {country}"
+  }
+}

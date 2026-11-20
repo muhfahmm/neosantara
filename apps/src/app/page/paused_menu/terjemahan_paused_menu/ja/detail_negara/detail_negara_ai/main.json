@@ -1,0 +1,61 @@
+{
+  "unavailable": "データがありません",
+  "city": "都市",
+  "capital": "首都",
+  "ideology": "イデオロギー",
+  "religion": "宗教",
+  "relation": "関係",
+  "tension": "緊張度",
+  "demonstrationChance": "デモ {value}%",
+  "rebellionChance": "反乱 {value}%",
+  "referendumPending": "住民投票は{date}まで実施中",
+  "referendumFailed": "住民投票の結果を処理できませんでした",
+  "tabs": {
+    "general": "一般情報",
+    "geopolitics": "地政学",
+    "military": "軍事作戦",
+    "constructionProgress": "建設の進捗"
+  },
+  "tensionLevels": {
+    "veryStable": "非常に安定",
+    "stable": "安定",
+    "neutral": "中立",
+    "hot": "緊張",
+    "veryHot": "非常に緊張"
+  },
+  "actions": {
+    "embassyBuilding": "建設中",
+    "destroyEmbassy": "大使館を閉鎖",
+    "buildEmbassy": "大使館を建設",
+    "ratifying": "批准中",
+    "nonAggressionPact": "不可侵条約",
+    "endNonAggressionPact": "不可侵条約を終了",
+    "defenseAlliance": "防衛同盟",
+    "endDefenseAlliance": "防衛同盟を終了",
+    "trade": "貿易協定",
+    "endTrade": "貿易関係を終了",
+    "researchContract": "研究契約",
+    "endResearchContract": "研究契約を終了",
+    "sendTroops": "部隊を派遣",
+    "callAlly": "同盟国を呼ぶ",
+    "imposeSanction": "制裁を科す",
+    "removeSanction": "制裁を解除",
+    "giveTroops": "部隊を提供",
+    "giveGift": "贈り物を贈る",
+    "improveRelation": "関係を改善",
+    "requestHelp": "支援を要請",
+    "transferTerritory": "領土を譲渡",
+    "attack": "国を攻撃",
+    "espionage": "スパイ活動",
+    "sabotage": "破壊工作",
+    "nuclearWar": "核戦争",
+    "coup": "クーデターを起こす",
+    "requestAttack": "攻撃を要請",
+    "insult": "侮辱"
+  },
+  "tooltips": {
+    "diplomacyBlocked": "二国間戦争中または国連の禁輸措置中は外交行動を実行できません。",
+    "tradeIdeologyRestricted": "共産主義または社会主義の国とは貿易協定を結べません。",
+    "attackInProgress": "{country}への攻撃はすでに進行中です"
+  }
+}

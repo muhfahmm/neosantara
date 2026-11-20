@@ -20,6 +20,7 @@ import {
   type AnnexedCountryStore,
   type VictoryCount,
 } from './nationInfluenceLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface NegaraUserModalProps {
   isOpen: boolean;
@@ -51,6 +52,7 @@ function getDetailString(value: unknown): string {
 }
 
 export default function NegaraUserModal({ isOpen, onClose, selectedCountry, countryDetail }: NegaraUserModalProps) {
+  const { t, language } = useLanguage();
   const countrySummaries = useSyncExternalStore(
     subscribeToCountryProfileSummaries,
     getCountryProfileSummaries,
@@ -110,7 +112,7 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
   const anggaran = Number(countryDetail?.anggaran) || 0;
   const gdp = calculateCountryGDP(countryDetail) || Number(countryDetail?.pdb) || 500_000;
   const netBalance = calculateNetBalanceWithEconomicEmbargo(countryDetail || {}, selectedCountry?.country);
-  const netBalanceLabel = `${netBalance >= 0 ? '+ ' : '- '}${Math.abs(netBalance).toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
+  const netBalanceLabel = `${netBalance >= 0 ? '+ ' : '- '}${Math.abs(netBalance).toLocaleString(language, { maximumFractionDigits: 2 })}`;
 
   const ideology = getDetailString(countryDetail?.ideology) ||
     getDetailString(countryDetail?.ideologi) || '—';
@@ -144,7 +146,7 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
   );
   const formatNumber = (n: number | undefined) => {
     if (n == null || n === 0) return '—';
-    return n.toLocaleString('id-ID', { maximumFractionDigits: 2 });
+    return n.toLocaleString(language, { maximumFractionDigits: 2 });
   };
 
   const renderVictoryCard = (
@@ -179,7 +181,7 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
       </div>
       {summaryError && countrySummaries.length === 0 && (
         <p className="text-[9px] text-rose-400" role="status">
-          Gagal memuat data negara: {summaryError}
+          {t('detail_negara_user.loadError', { error: summaryError })}
         </p>
       )}
     </div>
@@ -219,9 +221,9 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
               )}
-              Detail Negara Anda Sendiri
+              {t('detail_negara_user.subtitle')}
               <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/20 px-2 py-0.5 text-[8px] font-black uppercase tracking-wider text-emerald-400 sm:text-[9px]">
-                NEGARA ANDA
+                {t('detail_negara_user.badge')}
               </span>
             </span>
           }
@@ -239,7 +241,7 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
                   <Landmark className="w-3.5 h-3.5 md:w-4 md:h-4 sm:w-5 sm:h-5 text-root-accent" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">Ibukota</p>
+                  <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">{t('detail_negara_user.capital')}</p>
                   <p className="text-xs md:text-sm sm:text-base font-black text-root-text mt-0.5 break-words">{capital}</p>
                 </div>
               </div>
@@ -250,11 +252,11 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
                   <Users className="w-3.5 h-3.5 md:w-4 md:h-4 sm:w-5 sm:h-5 text-blue-400" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">Populasi</p>
+                  <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">{t('detail_negara_user.population')}</p>
                   <p className="mt-0.5 flex flex-wrap items-center gap-x-1 text-[10px] md:text-sm sm:text-base font-black text-root-text">
                     <span className="break-words">{formatNumber(population)}</span>
                     <span className={`${netPopulationChange >= 0 ? 'text-emerald-400' : 'text-rose-400'} text-[9px] md:text-[10px] sm:text-xs font-black`}>
-                      ({netPopulationChange >= 0 ? `+${netPopulationChange.toLocaleString('id-ID', { maximumFractionDigits: 2 })}` : netPopulationChange.toLocaleString('id-ID', { maximumFractionDigits: 2 })})
+                      ({netPopulationChange >= 0 ? `+${netPopulationChange.toLocaleString(language, { maximumFractionDigits: 2 })}` : netPopulationChange.toLocaleString(language, { maximumFractionDigits: 2 })})
                     </span>
                   </p>
                 </div>
@@ -266,7 +268,7 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
                   <Building2 className="w-3.5 h-3.5 md:w-4 md:h-4 sm:w-5 sm:h-5 text-emerald-400" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">Kas Negara</p>
+                  <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">{t('detail_negara_user.treasury')}</p>
                   <p className="mt-0.5 flex flex-wrap items-center gap-x-1 text-[10px] md:text-sm sm:text-base font-black text-root-text">
                     <span className={`break-words ${anggaran < 0 ? 'text-rose-400 font-black' : ''}`}>{formatCurrencyNEO(anggaran)}</span>
                     <span className={`${netBalance >= 0 ? 'text-root-accent' : 'text-rose-400'} text-[9px] md:text-[10px] sm:text-xs font-black`}>
@@ -282,7 +284,7 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
                   <Globe className="w-3.5 h-3.5 md:w-4 md:h-4 sm:w-5 sm:h-5 text-purple-400" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">Ideologi</p>
+                  <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">{t('detail_negara_user.ideology')}</p>
                   <p className="text-xs md:text-sm sm:text-base font-black text-root-text mt-0.5 break-words">{ideology}</p>
                 </div>
               </div>
@@ -293,7 +295,7 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
                   <ShieldCheck className="w-3.5 h-3.5 md:w-4 md:h-4 sm:w-5 sm:h-5 text-rose-400" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">Agama Utama</p>
+                  <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">{t('detail_negara_user.religion')}</p>
                   <p className="text-xs md:text-sm sm:text-base font-black text-root-text mt-0.5 break-words">{religion}</p>
                 </div>
               </div>
@@ -304,13 +306,13 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
                   <TrendingUp className="w-3.5 h-3.5 md:w-4 md:h-4 sm:w-5 sm:h-5 text-amber-400" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">PDB Harian</p>
+                  <p className="text-[9px] font-black text-root-subtle uppercase tracking-widest">{t('detail_negara_user.dailyGdp')}</p>
                   <p className="text-xs md:text-sm sm:text-base font-black text-root-text mt-0.5 break-words">{formatCurrencyNEO(gdp)}</p>
                 </div>
               </div>
 
-              {renderVictoryCard('Kemenangan Agama', Star, influence.faith)}
-              {renderVictoryCard('Kemenangan Ideologi', Flag, influence.ideology)}
+              {renderVictoryCard(t('detail_negara_user.faithVictory'), Star, influence.faith)}
+              {renderVictoryCard(t('detail_negara_user.ideologyVictory'), Flag, influence.ideology)}
 
               <div className="flex min-w-0 flex-col gap-2 rounded-xl border border-root-accent/20 bg-root-canvas p-2 shadow-sm sm:p-4">
                 <div className="flex min-w-0 items-center gap-2">
@@ -318,23 +320,23 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
                     <Swords className="h-4 w-4 text-rose-400 sm:h-5 sm:w-5" />
                   </div>
                   <p className="min-w-0 text-[9px] font-black uppercase tracking-widest text-root-subtle">
-                    Total Kekuatan Militer (Power)
+                    {t('detail_negara_user.militaryPower')}
                   </p>
                 </div>
                 <p className="text-sm font-black text-root-text sm:text-lg">
-                  {militaryPower.totalPower.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
+                  {militaryPower.totalPower.toLocaleString(language, { maximumFractionDigits: 2 })}
                 </p>
                 <div className="flex flex-wrap gap-x-3 gap-y-1 text-[9px] font-bold text-root-subtle sm:text-[10px]">
-                  <span>Darat {militaryPower.darat.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
-                  <span>Laut {militaryPower.laut.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
-                  <span>Udara {militaryPower.udara.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
+                  <span>{t('detail_negara_user.land')} {militaryPower.darat.toLocaleString(language, { maximumFractionDigits: 2 })}</span>
+                  <span>{t('detail_negara_user.sea')} {militaryPower.laut.toLocaleString(language, { maximumFractionDigits: 2 })}</span>
+                  <span>{t('detail_negara_user.air')} {militaryPower.udara.toLocaleString(language, { maximumFractionDigits: 2 })}</span>
                 </div>
               </div>
             </div>
 
             {/* FOOTER NOTE */}
             <div className="text-center text-[10px] text-root-subtle font-semibold tracking-wider uppercase pt-2 border-t border-root-accent/20">
-              Ini adalah negara yang sedang Anda pimpin
+              {t('detail_negara_user.footer')}
             </div>
 
           </div>

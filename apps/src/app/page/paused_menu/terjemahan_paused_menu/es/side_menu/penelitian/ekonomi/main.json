@@ -1,0 +1,32 @@
+{
+  "title": "Investigación Económica e Industrial",
+  "tag": "Producción e Impuestos",
+  "researchTitles": {
+    "otomasi_industri": "Automatización de fábricas electrónicas y maquinaria",
+    "manufaktur_material": "Ingeniería de materiales de fabricación",
+    "manufaktur_terintegrasi": "Exploración de minerales y energía",
+    "manufaktur_lanjut": "Infraestructura integrada de minerales y energía",
+    "peternakan_modern": "Ganadería de precisión",
+    "peternakan_genetika": "Genética y alimentación ganadera",
+    "perkebunan_komoditas": "Agricultura inteligente multicomercial",
+    "agrikultur_cerdas": "Agricultura resiliente multicomercial",
+    "perikanan_modern": "Acuicultura integrada",
+    "perikanan_pascapanen": "Tecnología pesquera y poscosecha",
+    "pengolahan_pangan": "Procesamiento básico de alimentos",
+    "industri_pangan_terpadu": "Industria alimentaria integrada"
+  },
+  "effects": {
+    "manufaktur": "Producción manufacturera",
+    "waktu_pembangunan_manufaktur": "Tiempo de construcción manufacturera",
+    "mineral_energi": "Producción de minerales y energía",
+    "waktu_pembangunan_mineral_energi": "Tiempo de construcción de minerales y energía",
+    "peternakan": "Producción ganadera",
+    "waktu_pembangunan_peternakan": "Tiempo de construcción ganadera",
+    "agrikultur": "Producción agrícola",
+    "waktu_pembangunan_agrikultur": "Tiempo de construcción agrícola",
+    "perikanan": "Producción pesquera",
+    "waktu_pembangunan_perikanan": "Tiempo de construcción pesquera",
+    "olahan_pangan": "Producción de alimentos procesados",
+    "waktu_pembangunan_olahan_pangan": "Tiempo de construcción de fábricas de alimentos"
+  }
+}

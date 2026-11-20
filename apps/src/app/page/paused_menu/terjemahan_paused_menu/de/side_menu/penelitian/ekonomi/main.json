@@ -1,0 +1,32 @@
+{
+  "title": "Wirtschafts- & Industrieforschung",
+  "tag": "Produktion & Steuern",
+  "researchTitles": {
+    "otomasi_industri": "Automatisierung der Elektronik- und Maschinenfertigung",
+    "manufaktur_material": "Werkstofftechnik für die Fertigung",
+    "manufaktur_terintegrasi": "Mineral- und Energieexploration",
+    "manufaktur_lanjut": "Integrierte Mineral- und Energieinfrastruktur",
+    "peternakan_modern": "Präzisionsviehzucht",
+    "peternakan_genetika": "Tiergenetik und Futtermittel",
+    "perkebunan_komoditas": "Intelligente Mehrkomponenten-Landwirtschaft",
+    "agrikultur_cerdas": "Widerstandsfähige Mehrkomponenten-Landwirtschaft",
+    "perikanan_modern": "Integrierte Aquakultur",
+    "perikanan_pascapanen": "Fischerei- und Nachernte-Technologie",
+    "pengolahan_pangan": "Grundlegende Lebensmittelverarbeitung",
+    "industri_pangan_terpadu": "Integrierte Lebensmittelindustrie"
+  },
+  "effects": {
+    "manufaktur": "Fertigungsproduktion",
+    "waktu_pembangunan_manufaktur": "Bauzeit der Fertigung",
+    "mineral_energi": "Mineral- und Energieproduktion",
+    "waktu_pembangunan_mineral_energi": "Bauzeit für Mineral- und Energieanlagen",
+    "peternakan": "Viehzuchtproduktion",
+    "waktu_pembangunan_peternakan": "Bauzeit für Viehzuchtanlagen",
+    "agrikultur": "Landwirtschaftliche Produktion",
+    "waktu_pembangunan_agrikultur": "Bauzeit für Landwirtschaft",
+    "perikanan": "Fischereiproduktion",
+    "waktu_pembangunan_perikanan": "Bauzeit für Fischereianlagen",
+    "olahan_pangan": "Produktion verarbeiteter Lebensmittel",
+    "waktu_pembangunan_olahan_pangan": "Bauzeit für Lebensmittelwerke"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "unavailable": "Keine Daten verfügbar",
+  "city": "Stadt",
+  "capital": "Hauptstadt",
+  "ideology": "Ideologie",
+  "religion": "Religion",
+  "relation": "Beziehungen",
+  "tension": "Spannung",
+  "demonstrationChance": "Protest {value}%",
+  "rebellionChance": "Aufstand {value}%",
+  "referendumPending": "Referendum läuft bis {date}",
+  "referendumFailed": "Referendumsergebnisse konnten nicht verarbeitet werden",
+  "tabs": {
+    "general": "Allgemeine Informationen",
+    "geopolitics": "Geopolitik",
+    "military": "Militäroperationen",
+    "constructionProgress": "Baufortschritt"
+  },
+  "tensionLevels": {
+    "veryStable": "Sehr stabil",
+    "stable": "Stabil",
+    "neutral": "Neutral",
+    "hot": "Angespannt",
+    "veryHot": "Sehr angespannt"
+  },
+  "actions": {
+    "embassyBuilding": "Im Bau",
+    "destroyEmbassy": "Botschaft schließen",
+    "buildEmbassy": "Botschaft bauen",
+    "ratifying": "Wird ratifiziert",
+    "nonAggressionPact": "Nichtangriffspakt",
+    "endNonAggressionPact": "Nichtangriffspakt beenden",
+    "defenseAlliance": "Verteidigungsbündnis",
+    "endDefenseAlliance": "Verteidigungsbündnis beenden",
+    "trade": "Handelsabkommen",
+    "endTrade": "Handelsbeziehungen beenden",
+    "researchContract": "Forschungsvertrag",
+    "endResearchContract": "Forschungsvertrag beenden",
+    "sendTroops": "Truppen entsenden",
+    "callAlly": "Verbündeten rufen",
+    "imposeSanction": "Sanktionen verhängen",
+    "removeSanction": "Sanktionen aufheben",
+    "giveTroops": "Truppen bereitstellen",
+    "giveGift": "Geschenk machen",
+    "improveRelation": "Beziehungen verbessern",
+    "requestHelp": "Hilfe anfordern",
+    "transferTerritory": "Gebiet übertragen",
+    "attack": "Land angreifen",
+    "espionage": "Spionage",
+    "sabotage": "Sabotage",
+    "nuclearWar": "Atomkrieg",
+    "coup": "Staatsstreich durchführen",
+    "requestAttack": "Angriff anfordern",
+    "insult": "Beleidigen"
+  },
+  "tooltips": {
+    "diplomacyBlocked": "Diplomatische Aktionen sind während eines bilateralen Kriegs oder eines UN-Embargos gesperrt.",
+    "tradeIdeologyRestricted": "Handelsabkommen sind bei kommunistischer oder sozialistischer Ideologie nicht verfügbar.",
+    "attackInProgress": "Ein Angriff auf {country} läuft bereits"
+  }
+}

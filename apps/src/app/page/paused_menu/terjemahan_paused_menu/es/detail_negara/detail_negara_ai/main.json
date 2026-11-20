@@ -1,0 +1,61 @@
+{
+  "unavailable": "Datos no disponibles",
+  "city": "Ciudad",
+  "capital": "Capital",
+  "ideology": "Ideología",
+  "religion": "Religión",
+  "relation": "Relaciones",
+  "tension": "Tensión",
+  "demonstrationChance": "Protesta {value}%",
+  "rebellionChance": "Rebelión {value}%",
+  "referendumPending": "El referéndum continúa hasta {date}",
+  "referendumFailed": "No se pudieron procesar los resultados del referéndum",
+  "tabs": {
+    "general": "Información general",
+    "geopolitics": "Geopolítica",
+    "military": "Operaciones militares",
+    "constructionProgress": "Progreso de construcción"
+  },
+  "tensionLevels": {
+    "veryStable": "Muy estable",
+    "stable": "Estable",
+    "neutral": "Neutral",
+    "hot": "Tensa",
+    "veryHot": "Muy tensa"
+  },
+  "actions": {
+    "embassyBuilding": "En construcción",
+    "destroyEmbassy": "Cerrar embajada",
+    "buildEmbassy": "Construir embajada",
+    "ratifying": "En ratificación",
+    "nonAggressionPact": "Pacto de no agresión",
+    "endNonAggressionPact": "Terminar pacto de no agresión",
+    "defenseAlliance": "Alianza defensiva",
+    "endDefenseAlliance": "Terminar alianza defensiva",
+    "trade": "Acuerdo comercial",
+    "endTrade": "Terminar relaciones comerciales",
+    "researchContract": "Contrato de investigación",
+    "endResearchContract": "Terminar contrato de investigación",
+    "sendTroops": "Enviar tropas",
+    "callAlly": "Llamar al aliado",
+    "imposeSanction": "Imponer sanciones",
+    "removeSanction": "Levantar sanciones",
+    "giveTroops": "Enviar tropas",
+    "giveGift": "Dar un regalo",
+    "improveRelation": "Mejorar relaciones",
+    "requestHelp": "Solicitar ayuda",
+    "transferTerritory": "Transferir territorio",
+    "attack": "Atacar país",
+    "espionage": "Espionaje",
+    "sabotage": "Sabotaje",
+    "nuclearWar": "Guerra nuclear",
+    "coup": "Dar un golpe de Estado",
+    "requestAttack": "Solicitar un ataque",
+    "insult": "Insultar"
+  },
+  "tooltips": {
+    "diplomacyBlocked": "Las acciones diplomáticas están bloqueadas durante una guerra bilateral o un embargo de la ONU.",
+    "tradeIdeologyRestricted": "Los acuerdos comerciales no están disponibles con ideologías comunistas o socialistas.",
+    "attackInProgress": "Ya hay un ataque en curso contra {country}"
+  }
+}

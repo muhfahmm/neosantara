@@ -6,5 +6,40 @@
   "buy": "Buy",
   "insufficientFunds": "Insufficient Balance",
   "discounts": "Limited Deals",
-  "inDevelopment": "In Development"
+  "inDevelopment": "In Development",
+  "neoBalance": "National Treasury",
+  "gemBalance": "Premium Currency",
+  "gemUnit": "Gems",
+  "badges": {
+    "popular": "Popular",
+    "bestValue": "Best Value"
+  },
+  "coinPackages": {
+    "coin_pkg_1": "Tactical Funds",
+    "coin_pkg_2": "Project Subsidy",
+    "coin_pkg_3": "Development Budget",
+    "coin_pkg_4": "National Reserve",
+    "coin_pkg_5": "Government Bonds",
+    "coin_pkg_6": "Emergency Central Bank"
+  },
+  "gemPackages": {
+    "gem_pkg_1": "Gem Pouch",
+    "gem_pkg_2": "Gem Stack",
+    "gem_pkg_3": "Gem Box",
+    "gem_pkg_4": "Gem Treasure Chest",
+    "gem_pkg_5": "Gem Vault",
+    "gem_pkg_6": "National Vault"
+  },
+  "premiumItems": {
+    "title": "Premium Items",
+    "description": "Access exclusive bundles and special features"
+  },
+  "discountItems": {
+    "title": "Discount Items",
+    "description": "Limited offers and special prices"
+  },
+  "adItems": {
+    "title": "Rewarded Ads",
+    "description": "Watch ads for free NEO or Gems bonuses"
+  }
 }

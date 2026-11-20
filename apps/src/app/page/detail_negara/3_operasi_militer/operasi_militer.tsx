@@ -41,6 +41,7 @@ import {
   getTravelFuelStatus,
 } from '../../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic';
 import { useTravelFuelQuote } from '../../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/useTravelFuelQuote';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface OperasiMiliterProps {
   countryName: string;
@@ -77,6 +78,7 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
 );
 
 export default function OperasiMiliter({ countryName, selectedCity, selectedCityId, playerCountryDetail, targetCountryDetail, onCloseDetailModal, onCloseCountryDetail, onActionModalStateChange, isOccupiedProvince, occupyingCountry, provinceTension, currentDate, actionDates, onMilitaryActionLaunched, updatePlayerCountryDetail }: OperasiMiliterProps) {
+  const { t } = useLanguage();
   const [isSerangOpen, setIsSerangOpen] = useState(false);
   const [isAttackInProgressModalOpen, setIsAttackInProgressModalOpen] = useState(false);
   const [blockedPlayerAttack, setBlockedPlayerAttack] = useState<{
@@ -356,7 +358,7 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
       <div className="country-detail-action-grid grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-stretch gap-2.5 sm:gap-3 lg:gap-3 xl:gap-4 pt-3 sm:pt-4 lg:pt-4 xl:pt-6">
         <div className="relative w-full min-w-0">
           {actionDates?.serang && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.serang)}</div>}
-          <ActionButton icon={Crosshair} label="Serang Negara" className={actionDates?.serang ? datedActionClass : undefined} iconClass={actionDates?.serang ? 'text-amber-300' : undefined} labelClass={actionDates?.serang ? 'text-amber-300' : undefined} onClick={() => {
+          <ActionButton icon={Crosshair} label={t('detail_negara_ai.actions.attack')} className={actionDates?.serang ? datedActionClass : undefined} iconClass={actionDates?.serang ? 'text-amber-300' : undefined} labelClass={actionDates?.serang ? 'text-amber-300' : undefined} onClick={() => {
             const activeAttack = getActivePlayerAttack();
             if (activeAttack) {
               setBlockedPlayerAttack({ status: activeAttack, requestedTarget: countryName });
@@ -367,13 +369,13 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
               return;
             }
             setIsSerangOpen(true);
-          }} isDimmed={Boolean(activePlayerAttack)} title={activePlayerAttack ? `Serangan ke ${activePlayerAttack.targetCountry} masih berjalan` : undefined} />
+          }} isDimmed={Boolean(activePlayerAttack)} title={activePlayerAttack ? t('detail_negara_ai.tooltips.attackInProgress', { country: activePlayerAttack.targetCountry }) : undefined} />
         </div>
         <div className="relative w-full min-w-0">
           {actionDates?.spionase && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.spionase)}</div>}
           <ActionButton
             icon={Eye}
-            label="Spionase"
+            label={t('detail_negara_ai.actions.espionage')}
             className={actionDates?.spionase ? datedActionClass : undefined}
             iconClass={actionDates?.spionase ? 'text-amber-300' : undefined}
             labelClass={actionDates?.spionase ? 'text-amber-300' : undefined}
@@ -384,21 +386,21 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
           {actionDates?.sabotase && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.sabotase)}</div>}
           <ActionButton
             icon={Bomb}
-            label="Sabotase"
+            label={t('detail_negara_ai.actions.sabotage')}
             className={actionDates?.sabotase ? datedActionClass : undefined}
             iconClass={actionDates?.sabotase ? 'text-amber-300' : undefined}
             labelClass={actionDates?.sabotase ? 'text-amber-300' : undefined}
             onClick={() => setIsSabotaseOpen(true)}
           />
         </div>
-        <ActionButton icon={Radiation} label="Perang Nuklir" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsNuklirOpen(true); }} />
+        <ActionButton icon={Radiation} label={t('detail_negara_ai.actions.nuclearWar')} onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsNuklirOpen(true); }} />
         
-        <ActionButton icon={UserX} label="Lakukan Kudeta" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsKudetaOpen(true); }} />
+        <ActionButton icon={UserX} label={t('detail_negara_ai.actions.coup')} onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsKudetaOpen(true); }} />
         <div className="relative w-full min-w-0">
           {actionDates?.mintaSerang && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.mintaSerang)}</div>}
           <ActionButton
             icon={Phone}
-            label="Minta Menyerang Negara"
+            label={t('detail_negara_ai.actions.requestAttack')}
             className={actionDates?.mintaSerang ? datedActionClass : undefined}
             iconClass={actionDates?.mintaSerang ? 'text-amber-300' : undefined}
             labelClass={actionDates?.mintaSerang ? 'text-amber-300' : undefined}
@@ -411,7 +413,7 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
             }}
           />
         </div>
-        <ActionButton icon={MessageSquare} label="Hina" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsHinaOpen(true); }} />
+        <ActionButton icon={MessageSquare} label={t('detail_negara_ai.actions.insult')} onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsHinaOpen(true); }} />
       </div>
 
       <SerangNegaraModal

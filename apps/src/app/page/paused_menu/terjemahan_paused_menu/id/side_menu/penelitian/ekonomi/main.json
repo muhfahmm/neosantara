@@ -1,0 +1,32 @@
+{
+  "title": "Riset Ekonomi & Industri",
+  "tag": "Produksi & Pajak",
+  "researchTitles": {
+    "otomasi_industri": "Otomasi Fabrikasi Elektronik & Mesin",
+    "manufaktur_material": "Rekayasa Material Manufaktur",
+    "manufaktur_terintegrasi": "Eksplorasi Mineral & Energi",
+    "manufaktur_lanjut": "Infrastruktur Mineral & Energi Terpadu",
+    "peternakan_modern": "Peternakan Presisi",
+    "peternakan_genetika": "Genetika & Pakan Ternak",
+    "perkebunan_komoditas": "Agrikultur Cerdas Multi-Komoditas",
+    "agrikultur_cerdas": "Agrikultur Tangguh Multi-Komoditas",
+    "perikanan_modern": "Budidaya Perikanan Terpadu",
+    "perikanan_pascapanen": "Teknologi Perikanan & Pascapanen",
+    "pengolahan_pangan": "Pengolahan Pangan Dasar",
+    "industri_pangan_terpadu": "Industri Pangan Terintegrasi"
+  },
+  "effects": {
+    "manufaktur": "Produksi Manufaktur",
+    "waktu_pembangunan_manufaktur": "Waktu Pembangunan Manufaktur",
+    "mineral_energi": "Produksi Mineral & Energi",
+    "waktu_pembangunan_mineral_energi": "Waktu Pembangunan Mineral & Energi",
+    "peternakan": "Produksi Peternakan",
+    "waktu_pembangunan_peternakan": "Waktu Pembangunan Peternakan",
+    "agrikultur": "Produksi Agrikultur",
+    "waktu_pembangunan_agrikultur": "Waktu Pembangunan Agrikultur",
+    "perikanan": "Produksi Perikanan",
+    "waktu_pembangunan_perikanan": "Waktu Pembangunan Perikanan",
+    "olahan_pangan": "Produksi Olahan Pangan",
+    "waktu_pembangunan_olahan_pangan": "Waktu Pembangunan Olahan Pangan"
+  }
+}

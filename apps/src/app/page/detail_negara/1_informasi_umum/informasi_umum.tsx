@@ -58,6 +58,7 @@ import {
   type TravelFuelType,
 } from "../../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
 import { useTravelFuelQuote } from "../../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/useTravelFuelQuote";
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface InformasiUmumProps {
   countryName: string;
@@ -112,6 +113,7 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
 };
 
 export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, targetNetBalance, adjustNetBalance, currentDate, autoBuildEmbassy, isBilateralWar = false, onDiplomacyBlocked, isOccupiedProvince, isAnnexedTerritory, occupyingCountry, isPbbOccupied, canLiberatePbbOccupation, playerReligion, targetReligion, updateTargetReligion, playerIdeology, targetIdeology, updateTargetIdeology, provinceBudget, provinceNetBalance, provinceTension, provinceData, onCloseDetailModal, onActionModalStateChange }: InformasiUmumProps) {
+  const { t, language } = useLanguage();
   const playerCountryName = getPlayerCountryIdentity(playerCountryDetail, '');
   const [isDestroyModalOpen, setIsDestroyModalOpen] = useState(false);
   const [isBuildEmbassyModalOpen, setIsBuildEmbassyModalOpen] = useState(false);
@@ -395,7 +397,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   const isResearchRatifying = hasUsableEmbassy && !!researchRatification;
   const hasTrade = getTradeButtonLabel(countryName, playerCountryName, removedTradePartners, addedTradePartners) === 'Putus Hubungan Dagang';
   const tradeIsActive = hasUsableEmbassy && !isTradeRatifying && (hasTrade || tradeActive);
-  const tradeLabel = tradeIsActive ? 'Putus Hubungan Dagang' : 'Perjanjian Dagang';
+  const tradeLabel = tradeIsActive ? t('detail_negara_ai.actions.endTrade') : t('detail_negara_ai.actions.trade');
   const tradeClass = getTradeButtonClass(countryName, playerCountryName, removedTradePartners, addedTradePartners);
   const tradeIconClass = tradeIsActive ? 'text-root-accent' : undefined;
   const tradeLabelClass = tradeIsActive ? 'text-root-accent' : undefined;
@@ -497,7 +499,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
       const date = new Date(y, m - 1, d);
       if (isNaN(date.getTime())) return dateString;
       const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
-      const parts = new Intl.DateTimeFormat('id-ID', options).formatToParts(date);
+      const parts = new Intl.DateTimeFormat(language, options).formatToParts(date);
       const day = parts.find((p) => p.type === 'day')?.value || '';
       const month = parts.find((p) => p.type === 'month')?.value || '';
       const year = parts.find((p) => p.type === 'year')?.value || '';
@@ -546,14 +548,14 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
             icon={Building2}
             label={
               isEmbassyBuilding
-                ? 'Dalam Pembangunan'
+                ? t('detail_negara_ai.actions.embassyBuilding')
                 : embassyActive
-                  ? 'Hancurkan Kedutaan'
-                  : 'Bangun Kedutaan'
+                  ? t('detail_negara_ai.actions.destroyEmbassy')
+                  : t('detail_negara_ai.actions.buildEmbassy')
             }
             onClick={handleEmbassyClick}
             disabled={isEmbassyBuilding || isDiplomacyBlocked}
-            title={isDiplomacyBlocked ? 'Aksi diplomatik diblokir selama perang bilateral atau embargo PBB.' : undefined}
+            title={isDiplomacyBlocked ? t('detail_negara_ai.tooltips.diplomacyBlocked') : undefined}
             keepOpacity={isEmbassyBuilding}
             className={
               isEmbassyBuilding
@@ -569,11 +571,11 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
 
         <div className="relative min-w-0">
           {isPactRatifying && pactEndDate && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{formatBadgeDate(pactEndDate)}</div>}
-          <ActionButton icon={ShieldOff} label={isPactRatifying ? 'Dalam Ratifikasi' : paktaIsActive ? 'Putus Pakta Non Agresi' : 'Pakta Non Agresi'} onClick={() => { paktaIsActive ? openActionModal(setIsDestroyPaktaOpen) : openActionModal(setIsPaktaModalOpen); }} disabled={!hasUsableEmbassy || isPactRatifying || isDiplomacyBlocked} keepOpacity={isPactRatifying} title={isDiplomacyBlocked ? 'Aksi diplomatik diblokir selama perang bilateral atau embargo PBB.' : undefined} className={isPactRatifying ? inProgressBorderClass : paktaIsActive ? modernGreenBorderClass : undefined} iconClass={isPactRatifying ? 'text-amber-300' : paktaIsActive ? 'text-root-accent' : undefined} labelClass={isPactRatifying ? 'text-amber-300' : paktaIsActive ? 'text-root-accent' : undefined} />
+          <ActionButton icon={ShieldOff} label={isPactRatifying ? t('detail_negara_ai.actions.ratifying') : paktaIsActive ? t('detail_negara_ai.actions.endNonAggressionPact') : t('detail_negara_ai.actions.nonAggressionPact')} onClick={() => { paktaIsActive ? openActionModal(setIsDestroyPaktaOpen) : openActionModal(setIsPaktaModalOpen); }} disabled={!hasUsableEmbassy || isPactRatifying || isDiplomacyBlocked} keepOpacity={isPactRatifying} title={isDiplomacyBlocked ? t('detail_negara_ai.tooltips.diplomacyBlocked') : undefined} className={isPactRatifying ? inProgressBorderClass : paktaIsActive ? modernGreenBorderClass : undefined} iconClass={isPactRatifying ? 'text-amber-300' : paktaIsActive ? 'text-root-accent' : undefined} labelClass={isPactRatifying ? 'text-amber-300' : paktaIsActive ? 'text-root-accent' : undefined} />
         </div>
         <div className="relative min-w-0">
           {isAllianceRatifying && ratificationDate(allianceRatification) && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{ratificationDate(allianceRatification)}</div>}
-          <ActionButton icon={ShieldCheck} label={isAllianceRatifying ? 'Dalam Ratifikasi' : aliansiIsActive ? 'Putus Aliansi Pertahanan' : 'Aliansi Pertahanan'} onClick={() => { aliansiIsActive ? openActionModal(setIsDestroyAliansiOpen) : openActionModal(setIsAliansiModalOpen); }} disabled={!hasUsableEmbassy || isAllianceRatifying || isDiplomacyBlocked} keepOpacity={isAllianceRatifying} title={isDiplomacyBlocked ? 'Aksi diplomatik diblokir selama perang bilateral atau embargo PBB.' : undefined} className={isAllianceRatifying ? inProgressBorderClass : aliansiIsActive ? modernGreenBorderClass : undefined} iconClass={isAllianceRatifying ? 'text-amber-300' : aliansiIsActive ? 'text-root-accent' : undefined} labelClass={isAllianceRatifying ? 'text-amber-300' : aliansiIsActive ? 'text-root-accent' : undefined} />
+          <ActionButton icon={ShieldCheck} label={isAllianceRatifying ? t('detail_negara_ai.actions.ratifying') : aliansiIsActive ? t('detail_negara_ai.actions.endDefenseAlliance') : t('detail_negara_ai.actions.defenseAlliance')} onClick={() => { aliansiIsActive ? openActionModal(setIsDestroyAliansiOpen) : openActionModal(setIsAliansiModalOpen); }} disabled={!hasUsableEmbassy || isAllianceRatifying || isDiplomacyBlocked} keepOpacity={isAllianceRatifying} title={isDiplomacyBlocked ? t('detail_negara_ai.tooltips.diplomacyBlocked') : undefined} className={isAllianceRatifying ? inProgressBorderClass : aliansiIsActive ? modernGreenBorderClass : undefined} iconClass={isAllianceRatifying ? 'text-amber-300' : aliansiIsActive ? 'text-root-accent' : undefined} labelClass={isAllianceRatifying ? 'text-amber-300' : aliansiIsActive ? 'text-root-accent' : undefined} />
         </div>
 
         {/* PERBAIKAN: Tombol Perjanjian Dagang diubah menggunakan modernGreenBorderClass yang sama */}
@@ -581,7 +583,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           {isTradeRatifying && ratificationDate(tradeRatification) && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{ratificationDate(tradeRatification)}</div>}
           <ActionButton
             icon={Handshake}
-            label={isTradeRatifying ? 'Dalam Ratifikasi' : tradeLabel}
+            label={isTradeRatifying ? t('detail_negara_ai.actions.ratifying') : tradeLabel}
             onClick={() => {
               if (tradeIsActive) {
                 openActionModal(setIsDestroyTradeModalOpen);
@@ -593,9 +595,9 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
             disabled={!hasUsableEmbassy || isTradeRatifying || isTradeIdeologyRestricted || isDiplomacyBlocked}
             keepOpacity={isTradeRatifying}
             title={isDiplomacyBlocked
-              ? 'Aksi diplomatik diblokir selama perang bilateral atau embargo PBB.'
+              ? t('detail_negara_ai.tooltips.diplomacyBlocked')
               : isTradeIdeologyRestricted
-                ? 'Perjanjian dagang tidak tersedia untuk ideologi Komunisme atau Sosialisme.'
+                ? t('detail_negara_ai.tooltips.tradeIdeologyRestricted')
                 : undefined}
             iconClass={isTradeRatifying ? 'text-amber-300' : tradeIsActive ? 'text-root-accent' : tradeIconClass}
             labelClass={isTradeRatifying ? 'text-amber-300' : tradeIsActive ? 'text-root-accent' : tradeLabelClass}
@@ -604,13 +606,13 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
 
         <div className="relative min-w-0">
           {isResearchRatifying && ratificationDate(researchRatification) && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{ratificationDate(researchRatification)}</div>}
-          <ActionButton icon={FlaskConical} label={isResearchRatifying ? 'Dalam Ratifikasi' : kontrakIsActive ? 'Putus Kontrak Penelitian' : 'Kontrak Penelitian'} onClick={() => { kontrakIsActive ? openActionModal(setIsDestroyKontrakOpen) : openActionModal(setIsKontrakModalOpen); }} disabled={!hasUsableEmbassy || isResearchRatifying || isDiplomacyBlocked} keepOpacity={isResearchRatifying} title={isDiplomacyBlocked ? 'Aksi diplomatik diblokir selama perang bilateral atau embargo PBB.' : undefined} className={isResearchRatifying ? inProgressBorderClass : kontrakIsActive ? modernGreenBorderClass : undefined} iconClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-root-accent' : undefined} labelClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-root-accent' : undefined} />
+          <ActionButton icon={FlaskConical} label={isResearchRatifying ? t('detail_negara_ai.actions.ratifying') : kontrakIsActive ? t('detail_negara_ai.actions.endResearchContract') : t('detail_negara_ai.actions.researchContract')} onClick={() => { kontrakIsActive ? openActionModal(setIsDestroyKontrakOpen) : openActionModal(setIsKontrakModalOpen); }} disabled={!hasUsableEmbassy || isResearchRatifying || isDiplomacyBlocked} keepOpacity={isResearchRatifying} title={isDiplomacyBlocked ? t('detail_negara_ai.tooltips.diplomacyBlocked') : undefined} className={isResearchRatifying ? inProgressBorderClass : kontrakIsActive ? modernGreenBorderClass : undefined} iconClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-root-accent' : undefined} labelClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-root-accent' : undefined} />
         </div>
-        <ActionButton icon={Sword} label="Kirim Pasukan" onClick={() => { openActionModal(setIsKirimPasukanModalOpen); }} disabled={!aliansiIsActive} />
-        <ActionButton icon={Phone} label="Panggil Sekutu" onClick={() => { openActionModal(setIsPanggilSekutuModalOpen); }} disabled={!aliansiIsActive} />
+        <ActionButton icon={Sword} label={t('detail_negara_ai.actions.sendTroops')} onClick={() => { openActionModal(setIsKirimPasukanModalOpen); }} disabled={!aliansiIsActive} />
+        <ActionButton icon={Phone} label={t('detail_negara_ai.actions.callAlly')} onClick={() => { openActionModal(setIsPanggilSekutuModalOpen); }} disabled={!aliansiIsActive} />
         <ActionButton
           icon={Ban}
-          label={isSanctionActive ? 'Cabut Sanksi' : 'Berikan Sanksi'}
+          label={isSanctionActive ? t('detail_negara_ai.actions.removeSanction') : t('detail_negara_ai.actions.imposeSanction')}
           onClick={() => {
             if (isSanctionActive) {
               const previousCount = removeEconomicSanctions(countryName);

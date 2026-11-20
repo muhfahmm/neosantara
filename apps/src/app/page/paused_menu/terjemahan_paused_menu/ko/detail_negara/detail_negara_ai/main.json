@@ -1,0 +1,61 @@
+{
+  "unavailable": "데이터를 사용할 수 없습니다",
+  "city": "도시",
+  "capital": "수도",
+  "ideology": "이념",
+  "religion": "종교",
+  "relation": "관계",
+  "tension": "긴장도",
+  "demonstrationChance": "시위 {value}%",
+  "rebellionChance": "반란 {value}%",
+  "referendumPending": "주민투표가 {date}까지 진행됩니다",
+  "referendumFailed": "주민투표 결과를 처리하지 못했습니다",
+  "tabs": {
+    "general": "일반 정보",
+    "geopolitics": "지정학",
+    "military": "군사 작전",
+    "constructionProgress": "건설 진행 상황"
+  },
+  "tensionLevels": {
+    "veryStable": "매우 안정",
+    "stable": "안정",
+    "neutral": "중립",
+    "hot": "긴장",
+    "veryHot": "매우 긴장"
+  },
+  "actions": {
+    "embassyBuilding": "건설 중",
+    "destroyEmbassy": "대사관 폐쇄",
+    "buildEmbassy": "대사관 건설",
+    "ratifying": "비준 중",
+    "nonAggressionPact": "불가침 조약",
+    "endNonAggressionPact": "불가침 조약 종료",
+    "defenseAlliance": "방위 동맹",
+    "endDefenseAlliance": "방위 동맹 종료",
+    "trade": "무역 협정",
+    "endTrade": "무역 관계 종료",
+    "researchContract": "연구 계약",
+    "endResearchContract": "연구 계약 종료",
+    "sendTroops": "병력 파견",
+    "callAlly": "동맹국 호출",
+    "imposeSanction": "제재 부과",
+    "removeSanction": "제재 해제",
+    "giveTroops": "병력 지원",
+    "giveGift": "선물 제공",
+    "improveRelation": "관계 개선",
+    "requestHelp": "지원 요청",
+    "transferTerritory": "영토 양도",
+    "attack": "국가 공격",
+    "espionage": "간첩 활동",
+    "sabotage": "사보타주",
+    "nuclearWar": "핵전쟁",
+    "coup": "쿠데타 실행",
+    "requestAttack": "공격 요청",
+    "insult": "모욕"
+  },
+  "tooltips": {
+    "diplomacyBlocked": "양자 전쟁 또는 유엔 금수 조치 중에는 외교 행동이 차단됩니다.",
+    "tradeIdeologyRestricted": "공산주의 또는 사회주의 이념에서는 무역 협정을 이용할 수 없습니다.",
+    "attackInProgress": "{country} 공격이 이미 진행 중입니다"
+  }
+}

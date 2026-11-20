@@ -2,8 +2,11 @@
 
 import React from "react";
 import { Crown } from "lucide-react";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 export default function PremiumItems() {
+  const { t } = useLanguage();
+
   return (
     <div
       style={{
@@ -40,7 +43,7 @@ export default function PremiumItems() {
               color: "var(--root-color-text)",
             }}
           >
-            Item Premium
+            {t("side_shop.premiumItems.title")}
           </span>
           <span
             style={{
@@ -49,7 +52,7 @@ export default function PremiumItems() {
               fontWeight: 600,
             }}
           >
-            Akses paket eksklusif & fitur spesial
+            {t("side_shop.premiumItems.description")}
           </span>
         </div>
       </div>
@@ -66,7 +69,7 @@ export default function PremiumItems() {
           whiteSpace: "nowrap",
         }}
       >
-        Dalam Pengembangan
+        {t("side_shop.inDevelopment")}
       </span>
     </div>
   );

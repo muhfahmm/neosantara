@@ -1,0 +1,18 @@
+{
+  "subtitle": "내 국가 정보",
+  "badge": "내 국가",
+  "capital": "수도",
+  "population": "인구",
+  "treasury": "국고",
+  "ideology": "이념",
+  "religion": "주요 종교",
+  "dailyGdp": "일일 GDP",
+  "faithVictory": "종교 승리",
+  "ideologyVictory": "이념 승리",
+  "militaryPower": "총 군사력",
+  "land": "육군",
+  "sea": "해군",
+  "air": "공군",
+  "footer": "현재 통치 중인 국가입니다",
+  "loadError": "국가 데이터를 불러오지 못했습니다: {error}"
+}

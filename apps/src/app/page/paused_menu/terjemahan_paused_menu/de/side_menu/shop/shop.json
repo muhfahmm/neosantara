@@ -6,5 +6,40 @@
   "buy": "Kaufen",
   "insufficientFunds": "Unzureichendes Guthaben",
   "discounts": "Zeitlich begrenzte Angebote",
-  "inDevelopment": "In Entwicklung"
+  "inDevelopment": "In Entwicklung",
+  "neoBalance": "Staatskasse",
+  "gemBalance": "Premiumwährung",
+  "gemUnit": "Edelsteine",
+  "badges": {
+    "popular": "Beliebt",
+    "bestValue": "Bester Wert"
+  },
+  "coinPackages": {
+    "coin_pkg_1": "Taktische Mittel",
+    "coin_pkg_2": "Projektsubvention",
+    "coin_pkg_3": "Entwicklungsbudget",
+    "coin_pkg_4": "Nationale Reserve",
+    "coin_pkg_5": "Staatsanleihen",
+    "coin_pkg_6": "Notfall-Zentralbank"
+  },
+  "gemPackages": {
+    "gem_pkg_1": "Edelsteinbeutel",
+    "gem_pkg_2": "Edelsteinstapel",
+    "gem_pkg_3": "Edelsteinbox",
+    "gem_pkg_4": "Edelstein-Schatztruhe",
+    "gem_pkg_5": "Edelsteinlager",
+    "gem_pkg_6": "Nationaler Tresor"
+  },
+  "premiumItems": {
+    "title": "Premiumartikel",
+    "description": "Zugang zu exklusiven Paketen und besonderen Funktionen"
+  },
+  "discountItems": {
+    "title": "Rabattartikel",
+    "description": "Begrenzte Angebote und Sonderpreise"
+  },
+  "adItems": {
+    "title": "Belohnungsanzeigen",
+    "description": "Sieh dir Anzeigen an und erhalte kostenlose NEO- oder Edelsteinboni"
+  }
 }

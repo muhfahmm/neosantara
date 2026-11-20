@@ -1,0 +1,32 @@
+{
+  "title": "经济与工业研究",
+  "tag": "生产与税收",
+  "researchTitles": {
+    "otomasi_industri": "电子与机械工厂自动化",
+    "manufaktur_material": "制造材料工程",
+    "manufaktur_terintegrasi": "矿产与能源勘探",
+    "manufaktur_lanjut": "矿产与能源综合基础设施",
+    "peternakan_modern": "精准畜牧",
+    "peternakan_genetika": "畜牧遗传与饲料",
+    "perkebunan_komoditas": "智能多品类农业",
+    "agrikultur_cerdas": "韧性多品类农业",
+    "perikanan_modern": "综合水产养殖",
+    "perikanan_pascapanen": "渔业与收获后技术",
+    "pengolahan_pangan": "基础食品加工",
+    "industri_pangan_terpadu": "综合食品工业"
+  },
+  "effects": {
+    "manufaktur": "制造业产量",
+    "waktu_pembangunan_manufaktur": "制造设施建设时间",
+    "mineral_energi": "矿产与能源产量",
+    "waktu_pembangunan_mineral_energi": "矿产与能源设施建设时间",
+    "peternakan": "畜牧业产量",
+    "waktu_pembangunan_peternakan": "畜牧设施建设时间",
+    "agrikultur": "农业产量",
+    "waktu_pembangunan_agrikultur": "农业设施建设时间",
+    "perikanan": "渔业产量",
+    "waktu_pembangunan_perikanan": "渔业设施建设时间",
+    "olahan_pangan": "加工食品产量",
+    "waktu_pembangunan_olahan_pangan": "食品工厂建设时间"
+  }
+}

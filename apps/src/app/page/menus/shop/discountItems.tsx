@@ -2,8 +2,11 @@
 
 import React from "react";
 import { Tag } from "lucide-react";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 export default function DiscountItems() {
+  const { t } = useLanguage();
+
   return (
     <div
       style={{
@@ -40,7 +43,7 @@ export default function DiscountItems() {
               color: "var(--root-color-text)",
             }}
           >
-            Item Diskon
+            {t("side_shop.discountItems.title")}
           </span>
           <span
             style={{
@@ -49,7 +52,7 @@ export default function DiscountItems() {
               fontWeight: 600,
             }}
           >
-            Penawaran terbatas & harga spesial
+            {t("side_shop.discountItems.description")}
           </span>
         </div>
       </div>
@@ -66,7 +69,7 @@ export default function DiscountItems() {
           whiteSpace: "nowrap",
         }}
       >
-        Dalam Pengembangan
+        {t("side_shop.inDevelopment")}
       </span>
     </div>
   );

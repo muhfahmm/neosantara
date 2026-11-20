@@ -2,14 +2,16 @@
 
 import React from "react";
 import { Gem } from "lucide-react";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 export interface GemShopPackage {
   id: string;
-  name: string;
+  nameKey: "gem_pkg_1" | "gem_pkg_2" | "gem_pkg_3" | "gem_pkg_4" | "gem_pkg_5" | "gem_pkg_6";
   gemAmount: number;
   bonusGems?: number;
   idrPrice: number;
   badge?: string;
+  badgeKey?: "popular" | "bestValue";
   isPopular?: boolean;
   isBestValue?: boolean;
 }
@@ -17,13 +19,13 @@ export interface GemShopPackage {
 export const GEM_PACKAGES: GemShopPackage[] = [
   {
     id: "gem_pkg_1",
-    name: "Kantong Permata",
+    nameKey: "gem_pkg_1",
     gemAmount: 100,
     idrPrice: 15_000,
   },
   {
     id: "gem_pkg_2",
-    name: "Tumpukan Permata",
+    nameKey: "gem_pkg_2",
     gemAmount: 300,
     bonusGems: 30,
     idrPrice: 45_000,
@@ -31,16 +33,16 @@ export const GEM_PACKAGES: GemShopPackage[] = [
   },
   {
     id: "gem_pkg_3",
-    name: "Kotak Permata",
+    nameKey: "gem_pkg_3",
     gemAmount: 750,
     bonusGems: 150,
     idrPrice: 99_000,
-    badge: "Populer",
+    badgeKey: "popular",
     isPopular: true,
   },
   {
     id: "gem_pkg_4",
-    name: "Peti Harta Permata",
+    nameKey: "gem_pkg_4",
     gemAmount: 1_800,
     bonusGems: 450,
     idrPrice: 219_000,
@@ -48,7 +50,7 @@ export const GEM_PACKAGES: GemShopPackage[] = [
   },
   {
     id: "gem_pkg_5",
-    name: "Gudang Permata",
+    nameKey: "gem_pkg_5",
     gemAmount: 4_000,
     bonusGems: 1_200,
     idrPrice: 449_000,
@@ -56,11 +58,11 @@ export const GEM_PACKAGES: GemShopPackage[] = [
   },
   {
     id: "gem_pkg_6",
-    name: "Brankas Nasional",
+    nameKey: "gem_pkg_6",
     gemAmount: 10_000,
     bonusGems: 4_000,
     idrPrice: 999_000,
-    badge: "Terbaik",
+    badgeKey: "bestValue",
     isBestValue: true,
   },
 ];
@@ -70,6 +72,8 @@ interface ShopGemsItemsProps {
 }
 
 export default function ShopGemsItems({ onBuy }: ShopGemsItemsProps) {
+  const { t, language } = useLanguage();
+
   return (
     <div
       style={{
@@ -124,7 +128,7 @@ export default function ShopGemsItems({ onBuy }: ShopGemsItemsProps) {
                   color: pkg.isBestValue || pkg.isPopular ? "#0F172A" : "#FFFFFF",
                 }}
               >
-                {pkg.badge}
+                {pkg.badgeKey ? t(`side_shop.badges.${pkg.badgeKey}`) : pkg.badge}
               </div>
             )}
 
@@ -159,7 +163,7 @@ export default function ShopGemsItems({ onBuy }: ShopGemsItemsProps) {
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {pkg.name}
+                    {t(`side_shop.gemPackages.${pkg.nameKey}`)}
                   </h3>
                   <span
                     style={{
@@ -168,7 +172,7 @@ export default function ShopGemsItems({ onBuy }: ShopGemsItemsProps) {
                       fontWeight: 600,
                     }}
                   >
-                    Mata Uang Premium
+                    {t("side_shop.gemBalance")}
                   </span>
                 </div>
               </div>
@@ -192,7 +196,7 @@ export default function ShopGemsItems({ onBuy }: ShopGemsItemsProps) {
                     color: "#38BDF8",
                   }}
                 >
-                  +{totalGems.toLocaleString("id-ID")}
+                  +{totalGems.toLocaleString(language)}
                 </span>
                 <span
                   style={{
@@ -201,7 +205,7 @@ export default function ShopGemsItems({ onBuy }: ShopGemsItemsProps) {
                     color: "var(--root-color-subtle)",
                   }}
                 >
-                  Gems
+                  {t("side_shop.gemUnit")}
                 </span>
               </div>
             </div>

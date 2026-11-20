@@ -1,0 +1,61 @@
+{
+  "unavailable": "暂无数据",
+  "city": "城市",
+  "capital": "首都",
+  "ideology": "意识形态",
+  "religion": "宗教",
+  "relation": "关系",
+  "tension": "紧张度",
+  "demonstrationChance": "示威概率 {value}%",
+  "rebellionChance": "叛乱概率 {value}%",
+  "referendumPending": "公投将持续至 {date}",
+  "referendumFailed": "无法处理公投结果",
+  "tabs": {
+    "general": "基本信息",
+    "geopolitics": "地缘政治",
+    "military": "军事行动",
+    "constructionProgress": "建设进度"
+  },
+  "tensionLevels": {
+    "veryStable": "非常稳定",
+    "stable": "稳定",
+    "neutral": "中立",
+    "hot": "紧张",
+    "veryHot": "非常紧张"
+  },
+  "actions": {
+    "embassyBuilding": "建设中",
+    "destroyEmbassy": "关闭大使馆",
+    "buildEmbassy": "建立大使馆",
+    "ratifying": "待批准",
+    "nonAggressionPact": "互不侵犯条约",
+    "endNonAggressionPact": "终止互不侵犯条约",
+    "defenseAlliance": "防御同盟",
+    "endDefenseAlliance": "终止防御同盟",
+    "trade": "贸易协定",
+    "endTrade": "终止贸易关系",
+    "researchContract": "研究合同",
+    "endResearchContract": "终止研究合同",
+    "sendTroops": "派遣军队",
+    "callAlly": "召唤盟友",
+    "imposeSanction": "实施制裁",
+    "removeSanction": "解除制裁",
+    "giveTroops": "提供军队",
+    "giveGift": "赠送礼物",
+    "improveRelation": "改善关系",
+    "requestHelp": "请求援助",
+    "transferTerritory": "转让领土",
+    "attack": "攻击国家",
+    "espionage": "间谍活动",
+    "sabotage": "破坏活动",
+    "nuclearWar": "核战争",
+    "coup": "发动政变",
+    "requestAttack": "请求攻击",
+    "insult": "侮辱"
+  },
+  "tooltips": {
+    "diplomacyBlocked": "双边战争或联合国禁运期间无法采取外交行动。",
+    "tradeIdeologyRestricted": "共产主义或社会主义意识形态下无法签订贸易协定。",
+    "attackInProgress": "针对 {country} 的攻击已在进行中"
+  }
+}

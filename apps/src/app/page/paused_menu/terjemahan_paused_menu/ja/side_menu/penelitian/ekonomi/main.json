@@ -1,0 +1,32 @@
+{
+  "title": "経済・産業研究",
+  "tag": "生産・税制",
+  "researchTitles": {
+    "otomasi_industri": "電子・機械工場の自動化",
+    "manufaktur_material": "製造材料工学",
+    "manufaktur_terintegrasi": "鉱物・エネルギー探査",
+    "manufaktur_lanjut": "鉱物・エネルギー統合インフラ",
+    "peternakan_modern": "精密畜産",
+    "peternakan_genetika": "家畜の遺伝学と飼料",
+    "perkebunan_komoditas": "スマート多品目農業",
+    "agrikultur_cerdas": "強靭な多品目農業",
+    "perikanan_modern": "統合養殖",
+    "perikanan_pascapanen": "水産・収穫後技術",
+    "pengolahan_pangan": "基礎食品加工",
+    "industri_pangan_terpadu": "統合食品産業"
+  },
+  "effects": {
+    "manufaktur": "製造生産",
+    "waktu_pembangunan_manufaktur": "製造施設の建設時間",
+    "mineral_energi": "鉱物・エネルギー生産",
+    "waktu_pembangunan_mineral_energi": "鉱物・エネルギー施設の建設時間",
+    "peternakan": "畜産生産",
+    "waktu_pembangunan_peternakan": "畜産施設の建設時間",
+    "agrikultur": "農業生産",
+    "waktu_pembangunan_agrikultur": "農地の建設時間",
+    "perikanan": "水産生産",
+    "waktu_pembangunan_perikanan": "水産施設の建設時間",
+    "olahan_pangan": "加工食品の生産",
+    "waktu_pembangunan_olahan_pangan": "食品工場の建設時間"
+  }
+}

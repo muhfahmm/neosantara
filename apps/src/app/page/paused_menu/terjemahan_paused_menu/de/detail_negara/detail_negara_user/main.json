@@ -1,0 +1,18 @@
+{
+  "subtitle": "Details zu deinem Land",
+  "badge": "DEIN LAND",
+  "capital": "Hauptstadt",
+  "population": "Bevölkerung",
+  "treasury": "Staatskasse",
+  "ideology": "Ideologie",
+  "religion": "Hauptreligion",
+  "dailyGdp": "Tägliches BIP",
+  "faithVictory": "Religiöse Siege",
+  "ideologyVictory": "Ideologische Siege",
+  "militaryPower": "Militärische Gesamtstärke",
+  "land": "Landstreitkräfte",
+  "sea": "Marine",
+  "air": "Luftwaffe",
+  "footer": "Dies ist das Land, das du führst",
+  "loadError": "Länderdaten konnten nicht geladen werden: {error}"
+}

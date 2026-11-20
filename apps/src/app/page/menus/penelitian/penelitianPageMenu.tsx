@@ -36,6 +36,7 @@ import {
   getMilitaryResearchLevelBonus,
 } from '@/app/page/bonus_logic/militaryResearchBonus';
 import { generateResearchStartNotification } from '../inbox/logic/11_notifikasi_penelitian/researchChangeLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 export type CategoryKey = 'ekonomi' | 'militer' | 'diplomasi';
 
@@ -311,10 +312,10 @@ const RESEARCH_DATA: Research[] = [
   { id: 'tatanan_dunia_baru', name: 'Sinergi Ekonomi Global', category: 'diplomasi', tier: 5, cost: 25000, duration: 150, prerequisites: ['suara_dewan_keamanan'], icon: Sparkles, description: 'Integrasi ekonomi lintas sektor nasional melalui jaringan diplomasi global untuk mendorong produktivitas semua lini.', effects: [{ stat: 'produksi_semua_lini', value: 2, label: '+2% Produksi Semua Lini' }] },
 ];
 
-const CATEGORIES: { key: CategoryKey; label: string; icon: React.ElementType }[] = [
-  { key: 'ekonomi', label: 'Ekonomi & Industri', icon: Banknote },
-  { key: 'militer', label: 'Militer & Pertahanan', icon: Shield },
-  { key: 'diplomasi', label: 'Diplomasi & Intelijen', icon: Globe2 },
+const CATEGORIES: { key: CategoryKey; icon: React.ElementType }[] = [
+  { key: 'ekonomi', icon: Banknote },
+  { key: 'militer', icon: Shield },
+  { key: 'diplomasi', icon: Globe2 },
 ];
 
 export type SelectionCategoryKey = 'ekonomi' | 'militer' | 'diplomasi';
@@ -344,6 +345,7 @@ export default function PenelitianPageModal({
   setCountryDetail,
   currentDate,
 }: PenelitianPageModalProps) {
+  const { t, language } = useLanguage();
   const allowedCategories = FOCUS_CATEGORIES_MAP[initialCategory] || ['ekonomi'];
   const defaultCategory = CATEGORIES.find((cat) => allowedCategories.includes(cat.key))?.key || allowedCategories[0];
   const [mounted, setMounted] = useState(false);
@@ -400,6 +402,15 @@ export default function PenelitianPageModal({
 
   const educationPoints = calculateEducationPoints(countryDetail);
   const educationModifier = getEducationResearchModifier(educationPoints);
+  const educationModifierValue = educationModifier.label.match(/[+-]?\d+(?:\.\d+)?/)?.[0].replace(/[+-]/g, '') || '0';
+  const educationModifierType = educationModifier.label.includes('Netral')
+    ? 'neutral'
+    : educationModifier.isPenalty
+      ? 'penalty'
+      : 'bonus';
+  const educationModifierLabel = t(`side_penelitian.page.education.${educationModifierType}`, {
+    value: educationModifierValue,
+  });
 
   const getEffectiveResearchDuration = (durationDays: number, category?: string) => {
     return applyCombinedResearchDuration(
@@ -562,10 +573,13 @@ export default function PenelitianPageModal({
     if (r.category !== activeCategory) return false;
     if (searchQuery.trim() === '') return true;
     const q = searchQuery.toLowerCase();
+    const translatedName = t(`side_penelitian.categories.${r.category}.researchTitles.${r.id}`).toLowerCase();
+    const translatedEffects = r.effects
+      .map((effect) => t(`side_penelitian.categories.${r.category}.effects.${effect.stat}`).toLowerCase());
     return (
-      r.name.toLowerCase().includes(q) ||
+      translatedName.includes(q) ||
       r.description.toLowerCase().includes(q) ||
-      r.effects.some((e) => e.label.toLowerCase().includes(q))
+      translatedEffects.some((label) => label.includes(q))
     );
   });
   const tierCount = Math.max(
@@ -594,19 +608,25 @@ export default function PenelitianPageModal({
     total: RESEARCH_DATA.length,
   };
 
+  const getResearchTitle = (research: Research) =>
+    t(`side_penelitian.categories.${research.category}.researchTitles.${research.id}`);
+
   const applyLevelBonus = (
     effect: ResearchEffect,
     level: number,
     baseValue = effect.value,
-    levelValue?: number
+    levelValue?: number,
+    category: CategoryKey = activeCategory
   ): string => {
     const isFlat = !effect.label.includes('%');
-    if (level <= 0) return effect.label;
+    const localizedLabel = t(`side_penelitian.categories.${category}.effects.${effect.stat}`);
+    const numericPrefix = effect.label.match(/^([+-]?\d+(?:\.\d+)?%?)\s*/)?.[1];
+    if (level <= 0) return numericPrefix ? `${numericPrefix} ${localizedLabel}` : localizedLabel;
 
     const bonus = getCardBonus(level);
     const amplified = levelValue ?? (bonus > 0 ? bonus : baseValue);
 
-    const cleanLabel = effect.label.replace(/^[+-]?\d+(\.\d+)?%?\s*/, '');
+    const cleanLabel = localizedLabel;
 
     if (isFlat) {
       const isReduction = effect.label.trim().startsWith('-');
@@ -627,7 +647,7 @@ export default function PenelitianPageModal({
     <div className="research-page-modal research-modal-typography fixed top-16 sm:top-20 inset-x-0 bottom-0 z-[200] bg-root-canvas flex flex-col font-sans animate-in fade-in duration-300">
 
       <RootInfoModalHeader
-        title="Pusat Penelitian & Riset Nasional"
+        title={t('side_penelitian.page.title')}
         onClose={onClose}
         icon={<FlaskConical />}
         size="standard"
@@ -635,18 +655,18 @@ export default function PenelitianPageModal({
 
       <div className="px-4 sm:px-8 py-3 bg-root-surface border-b border-root-accent/30 flex flex-wrap items-center justify-between gap-3 shadow-lg relative z-20 shrink-0">
         <p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
-          Setiap riset dapat di-upgrade hingga Level 5
+          {t('side_penelitian.page.upgradeHint')}
         </p>
         <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
           <div className="flex items-center gap-2 bg-root-canvas border border-root-accent/20 rounded-lg px-3 py-1.5">
-            <span className="text-[10px] text-root-subtle font-black uppercase">Riset Selesai:</span>
+            <span className="text-[10px] text-root-subtle font-black uppercase">{t('side_penelitian.page.completedResearch')}</span>
             <span className="text-[11px] font-black text-root-accent">{globalStats.done}/{globalStats.total}</span>
           </div>
 
           <div className="relative">
             <input
               type="text"
-              placeholder="Cari riset..."
+              placeholder={t('side_penelitian.page.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-8 pr-3 py-1.5 rounded-lg bg-root-canvas border border-root-accent/30 text-xs font-bold text-root-text outline-none focus:border-root-accent w-36 sm:w-48 xl:w-56 transition-all placeholder:text-root-subtle"
@@ -657,11 +677,11 @@ export default function PenelitianPageModal({
           {onBackToSelection && (
             <button
               onClick={onBackToSelection}
-              title="Ganti Sektor Utama"
+              title={t('side_penelitian.page.changeSectorTitle')}
               className="px-3 py-1.5 rounded-lg border border-root-accent/30 bg-root-canvas text-root-accent hover:bg-root-accent/10 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
             >
               <FlaskConical className="w-3.5 h-3.5" />
-              <span>Ganti Sektor</span>
+              <span>{t('side_penelitian.page.changeSector')}</span>
             </button>
           )}
 
@@ -674,7 +694,7 @@ export default function PenelitianPageModal({
         {/* SIDEBAR */}
         <div className="w-52 sm:w-60 lg:w-64 border-r border-root-accent/30 bg-root-canvas p-2.5 sm:p-3 flex flex-col gap-2 overflow-y-auto custom-scrollbar shrink-0">
           <div className="text-[10px] font-black text-root-subtle uppercase tracking-widest px-2 py-1.5">
-            Kategori Riset
+            {t('side_penelitian.page.researchCategories')}
           </div>
           {CATEGORIES.filter((cat) => allowedCategories.includes(cat.key)).map((cat) => {
             const isActiveTab = activeCategory === cat.key;
@@ -692,7 +712,7 @@ export default function PenelitianPageModal({
                 <div className="flex items-center gap-2 min-w-0">
                   <Icon className="w-4 h-4 shrink-0" />
                   <span className="text-[11px] font-bold uppercase tracking-wider truncate">
-                    {cat.label}
+                    {t(`side_penelitian.categories.${cat.key}.title`)}
                   </span>
                 </div>
                 <span
@@ -711,15 +731,15 @@ export default function PenelitianPageModal({
               <div className="flex items-center gap-2 mb-2">
                 <Clock className="w-3.5 h-3.5 text-root-accent animate-pulse" />
                 <span className="text-[10px] font-black text-root-accent uppercase tracking-widest">
-                  {activeUpgradeData ? 'Upgrade Aktif' : 'Riset Aktif'}
+                  {activeUpgradeData ? t('side_penelitian.page.activeUpgrade') : t('side_penelitian.page.activeResearch')}
                 </span>
               </div>
               <p className="text-xs font-bold text-root-text truncate">
-                {activeUpgradeData ? activeUpgradeData.research.name : activeResearch?.name}
+                {activeUpgradeData ? getResearchTitle(activeUpgradeData.research) : activeResearch ? getResearchTitle(activeResearch) : ''}
               </p>
               {activeUpgradeData && (
                 <p className="text-[10px] text-amber-300 font-black mt-0.5">
-                  → Level {activeUpgradeData.targetLevel}
+                  → {t('side_penelitian.page.level', { level: activeUpgradeData.targetLevel })}
                 </p>
               )}
               <div className="w-full h-2 bg-root-canvas rounded-full mt-2 overflow-hidden border border-root-accent/20">
@@ -729,7 +749,7 @@ export default function PenelitianPageModal({
                 />
               </div>
               <p className="text-[10px] font-black text-root-accent mt-1.5">
-                {activeCategoryResearchProgress}% selesai
+                {t('side_penelitian.page.progressComplete', { progress: activeCategoryResearchProgress })}
               </p>
             </div>
           )}
@@ -740,7 +760,7 @@ export default function PenelitianPageModal({
               <div className="flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-root-accent" />
                 <span className="text-xs font-black text-root-accent uppercase tracking-wider">
-                  POIN PENDIDIKAN
+                  {t('side_penelitian.page.educationPoints')}
                 </span>
               </div>
               <span className="text-base sm:text-lg font-black text-amber-400">
@@ -752,35 +772,35 @@ export default function PenelitianPageModal({
               ? 'bg-[#2A141A] border-rose-500/50 text-rose-300'
               : 'bg-[#0E2A20] border-emerald-500/50 text-emerald-300'
               }`}>
-              <span className="font-bold">Pengaruh Waktu Riset:</span>
-              <span className="font-black">{educationModifier.label}</span>
+              <span className="font-bold">{t('side_penelitian.page.researchTimeEffect')}</span>
+              <span className="font-black">{educationModifierLabel}</span>
             </div>
 
             {hasAtheismResearchBonus && (
               <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#0E2A20] border border-emerald-500/50 text-emerald-300 text-xs font-bold">
-                <span className="font-bold">Bonus Ateisme:</span>
-                <span className="font-black">-15% Waktu Penelitian</span>
+                <span className="font-bold">{t('side_penelitian.page.atheismBonus')}</span>
+                <span className="font-black">{t('side_penelitian.page.researchTimeBonus', { value: ATHEISM_RESEARCH_SPEED_BONUS * 100 })}</span>
               </div>
             )}
 
             {isMemberOfUNESCO(countryDetail?.country || '') && (
               <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#0E2A20] border border-emerald-500/50 text-emerald-300 text-xs font-bold">
-                <span className="font-bold">Keanggotaan UNESCO:</span>
-                <span className="font-black">+5% Kecepatan Riset</span>
+                <span className="font-bold">{t('side_penelitian.page.unescoMembership')}</span>
+                <span className="font-black">{t('side_penelitian.page.researchSpeedBonus', { value: 5 })}</span>
               </div>
             )}
 
             {isMemberOfITU(countryDetail?.country || '') && (
               <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#0E2A20] border border-emerald-500/50 text-emerald-300 text-xs font-bold">
-                <span className="font-bold">Keanggotaan ITU:</span>
-                <span className="font-black">+5% Kecepatan Riset</span>
+                <span className="font-bold">{t('side_penelitian.page.ituMembership')}</span>
+                <span className="font-black">{t('side_penelitian.page.researchSpeedBonus', { value: 5 })}</span>
               </div>
             )}
 
             {getSainsPenelitianResearchSpeedBonusPercent(countryDetail) > 0 && (
               <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#0E2A20] border border-emerald-500/50 text-emerald-300 text-xs font-bold">
-                <span className="font-bold">Sains dan Penelitian:</span>
-                <span className="font-black">-{getSainsPenelitianResearchSpeedBonusPercent(countryDetail).toFixed(1)}% Waktu Riset</span>
+                <span className="font-bold">{t('side_penelitian.page.scienceResearch')}</span>
+                <span className="font-black">{t('side_penelitian.page.researchTimeBonus', { value: getSainsPenelitianResearchSpeedBonusPercent(countryDetail).toFixed(1) })}</span>
               </div>
             )}
           </div>
@@ -790,19 +810,19 @@ export default function PenelitianPageModal({
             <div className="flex items-center gap-1.5 mb-2">
               <TrendingUp className="w-3 h-3 text-root-accent" />
               <span className="text-[9px] font-black text-root-accent uppercase tracking-widest">
-                Bonus Level Card
+                {t('side_penelitian.page.cardLevelBonus')}
               </span>
             </div>
             <div className="space-y-1 pr-1">
               {Array.from({ length: 5 }, (_, i) => i + 1).map((lvl) => (
                 <div key={lvl} className="flex items-center justify-between px-2 py-0.5 rounded bg-root-canvas">
-                  <span className="text-[9px] font-black text-root-subtle">Level {lvl}</span>
+                  <span className="text-[9px] font-black text-root-subtle">{t('side_penelitian.page.level', { level: lvl })}</span>
                   <span className="text-[9px] font-black text-root-accent">+{RESEARCH_CARD_LEVEL_BONUS[lvl]}%</span>
                 </div>
               ))}
             </div>
             <p className="text-[8px] text-root-subtle font-semibold mt-2 leading-tight">
-              Setiap card riset bisa di-upgrade dari Level 1 hingga Level 5. Bonus level mengamplifikasi semua efek riset tersebut.
+              {t('side_penelitian.page.cardLevelExplanation')}
             </p>
           </div>
         </div>
@@ -811,10 +831,10 @@ export default function PenelitianPageModal({
         <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-root-surface custom-scrollbar">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-base sm:text-lg font-black text-root-accent uppercase tracking-wider">
-              {CATEGORIES.find((c) => c.key === activeCategory)?.label}
+              {t(`side_penelitian.categories.${activeCategory}.title`)}
             </h2>
             <p className="text-[11px] text-root-subtle font-semibold">
-              {filteredData.length} teknologi tersedia
+              {t('side_penelitian.page.technologiesAvailable', { count: filteredData.length })}
             </p>
           </div>
 
@@ -843,7 +863,7 @@ export default function PenelitianPageModal({
                     {/* Header Tier Badge */}
                     <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-root-canvas border border-root-accent/30 shrink-0">
                       <span className="text-xs font-black text-root-accent uppercase tracking-wider">
-                        TIER {ROMAN_NUMERALS[tierNum - 1]}
+                        {t('side_penelitian.page.tier')} {ROMAN_NUMERALS[tierNum - 1]}
                       </span>
                       <span className="text-[10px] font-bold text-root-subtle">
                         {tierItems.filter((r) => isUnlocked(r.id)).length}/{tierItems.length}
@@ -892,8 +912,11 @@ export default function PenelitianPageModal({
 
                               const [y, m, d] = endDateStr.split('-').map(Number);
                               const date = new Date(y, m - 1, d);
-                              const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
-                              const formattedDateStr = `${d} ${monthNames[date.getMonth()]}, ${date.getFullYear()}`;
+                              const formattedDateStr = date.toLocaleDateString(language, {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                              });
 
                               return (
                                 <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[10px] font-bold px-2 py-1 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
@@ -919,7 +942,7 @@ export default function PenelitianPageModal({
                                   </div>
                                   <div className="min-w-0">
                                     <h3 className="text-[11px] font-bold text-root-text truncate leading-tight">
-                                      {research.name}
+                                      {getResearchTitle(research)}
                                     </h3>
                                   </div>
                                 </div>
@@ -942,7 +965,8 @@ export default function PenelitianPageModal({
                                       baseValue,
                                       research.category === 'militer'
                                         ? getMilitaryResearchLevelBonus(research.id, Math.max(1, level))
-                                        : undefined
+                                        : undefined,
+                                      research.category
                                     );
                                     return (
                                       <div key={i} className="flex items-center gap-1 text-[9px] font-bold">
@@ -970,11 +994,11 @@ export default function PenelitianPageModal({
                                       <span className="flex items-center gap-1">
                                         {hasDiscount && (
                                           <span className="text-rose-400/80 line-through">
-                                            {baseDur}h
+                                            {baseDur}{t('side_penelitian.page.hoursUnit')}
                                           </span>
                                         )}
                                         <span className={hasDiscount ? 'text-emerald-400 font-extrabold' : hasPenalty ? 'text-rose-400 font-extrabold' : ''}>
-                                          {effDur}h
+                                          {effDur}{t('side_penelitian.page.hoursUnit')}
                                         </span>
                                       </span>
                                     );
@@ -1012,12 +1036,12 @@ export default function PenelitianPageModal({
                                   locked ? (
                                     <div className="w-full py-1 rounded bg-gray-800/40 border border-gray-700/50 flex items-center justify-center gap-1 text-gray-500 text-[9px] font-black uppercase">
                                       <Lock className="w-2.5 h-2.5" />
-                                      Terkunci
+                                      {t('side_penelitian.page.locked')}
                                     </div>
                                   ) : activeCategoryResearchId ? (
                                     <div className="w-full py-1 rounded bg-root-canvas border border-root-subtle/30 flex items-center justify-center gap-1 text-root-subtle text-[9px] font-black uppercase">
                                       <Clock className="w-2.5 h-2.5" />
-                                      Antrian Penuh
+                                      {t('side_penelitian.page.queueFull')}
                                     </div>
                                   ) : (
                                     <button
@@ -1029,7 +1053,9 @@ export default function PenelitianPageModal({
                                         }`}
                                     >
                                       <Rocket className="w-2.5 h-2.5" />
-                                      {canUnlock ? `Riset (${research.cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })})` : 'Kas Tidak Cukup'}
+                                      {canUnlock
+                                        ? t('side_penelitian.page.researchButton', { cost: research.cost.toLocaleString(language, { maximumFractionDigits: 2 }) })
+                                        : t('side_penelitian.page.insufficientFunds')}
                                     </button>
                                   )
                                 )}
@@ -1037,7 +1063,7 @@ export default function PenelitianPageModal({
                                 {active && (
                                   <div className="w-full py-1 rounded bg-root-accent/20 border border-root-accent/50 flex items-center justify-center gap-1 text-root-accent text-[9px] font-black uppercase">
                                     <Clock className="w-2.5 h-2.5 animate-pulse" />
-                                    Diteliti ({activeCategoryResearchProgress}%)
+                                    {t('side_penelitian.page.researching', { progress: activeCategoryResearchProgress })}
                                   </div>
                                 )}
 
@@ -1045,17 +1071,17 @@ export default function PenelitianPageModal({
                                   isMaxed ? (
                                     <div className="w-full py-1 rounded bg-gradient-to-r from-amber-500/20 to-amber-600/20 border border-amber-500/50 flex items-center justify-center gap-1 text-amber-300 text-[9px] font-black uppercase">
                                       <CheckCircle2 className="w-2.5 h-2.5" />
-                                      MAX (5/5)
+                                      {t('side_penelitian.page.maxLevel', { level: MAX_CARD_LEVEL, maxLevel: MAX_CARD_LEVEL })}
                                     </div>
                                   ) : isResearching ? (
                                     <div className="w-full py-1 rounded bg-root-accent/20 border border-root-accent/50 flex items-center justify-center gap-1 text-root-accent text-[9px] font-black uppercase">
                                       <Clock className="w-2.5 h-2.5 animate-pulse" />
-                                      Diteliti ({activeCategoryResearchProgress}%)
+                                      {t('side_penelitian.page.researching', { progress: activeCategoryResearchProgress })}
                                     </div>
                                   ) : activeCategoryResearchId ? (
                                     <div className="w-full py-1 rounded bg-root-canvas border border-root-subtle/30 flex items-center justify-center gap-1 text-root-subtle text-[9px] font-black uppercase">
                                       <Clock className="w-2.5 h-2.5" />
-                                      Antrian Penuh
+                                      {t('side_penelitian.page.queueFull')}
                                     </div>
                                   ) : (
                                     <div className="flex flex-col gap-1">
@@ -1068,10 +1094,12 @@ export default function PenelitianPageModal({
                                           }`}
                                       >
                                         <ChevronUp className="w-2.5 h-2.5" />
-                                        {canUpgrade ? `Upgrade Lv.${nextLevel}` : 'Kas Tidak Cukup'}
+                                        {canUpgrade
+                                          ? t('side_penelitian.page.upgradeButton', { level: nextLevel })
+                                          : t('side_penelitian.page.insufficientFunds')}
                                       </button>
                                       <div className="text-[8px] font-bold text-root-accent text-center tracking-tight">
-                                        Efek Berikutnya: {applyLevelBonus(
+                                        {t('side_penelitian.page.nextEffect', { effect: applyLevelBonus(
                                           research.effects[0],
                                           nextLevel,
                                           research.category === 'militer'
@@ -1079,8 +1107,9 @@ export default function PenelitianPageModal({
                                             : research.effects[0].value,
                                           research.category === 'militer'
                                             ? getMilitaryResearchLevelBonus(research.id, nextLevel)
-                                            : undefined
-                                        )}
+                                            : undefined,
+                                          research.category
+                                        ) })}
                                       </div>
                                     </div>
                                   )
@@ -1099,7 +1128,7 @@ export default function PenelitianPageModal({
 
           {filteredData.length === 0 && (
             <div className="text-center py-12 text-root-subtle text-sm font-bold">
-              Tidak ada riset yang cocok dengan "{searchQuery}"
+              {t('side_penelitian.page.noResults', { query: searchQuery })}
             </div>
           )}
         </div>
@@ -1119,19 +1148,19 @@ export default function PenelitianPageModal({
             className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl p-6 shadow-2xl relative"
           >
             <RootInfoModalHeader
-              title={confirmTarget.name}
+              title={getResearchTitle(confirmTarget)}
               titleId="research-start-title"
               onClose={() => setConfirmTarget(null)}
               icon={<confirmTarget.icon />}
               size="compact"
-              centerContent={<p className="text-[10px] text-root-subtle font-semibold">Mulai Riset — Level 1</p>}
+              centerContent={<p className="text-[10px] text-root-subtle font-semibold">{t('side_penelitian.page.startResearchLevelOne')}</p>}
             />
 
             <div className="bg-root-canvas border border-root-accent/20 rounded-lg p-4 mb-4">
               <div className="flex justify-between items-center mb-2.5">
-                <span className="text-xs font-bold text-root-subtle uppercase">Biaya Riset</span>
+                <span className="text-xs font-bold text-root-subtle uppercase">{t('side_penelitian.page.researchCost')}</span>
                 <span className="text-sm font-black text-root-accent">
-                  {confirmTarget.cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO
+                  {confirmTarget.cost.toLocaleString(language, { maximumFractionDigits: 2 })} NEO
                 </span>
               </div>
 
@@ -1140,26 +1169,29 @@ export default function PenelitianPageModal({
                 const endDateStr = addDays(getSafeDateString(), effDur);
                 const [y, m, d] = endDateStr.split('-').map(Number);
                 const date = new Date(y, m - 1, d);
-                const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
-                const formattedEndDate = `${d} ${monthNames[date.getMonth()]}, ${date.getFullYear()}`;
+                const formattedEndDate = date.toLocaleDateString(language, {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                });
                 const hasDiscount = effDur < confirmTarget.duration;
 
                 return (
                   <div>
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold text-root-subtle uppercase">Durasi</span>
+                      <span className="text-xs font-bold text-root-subtle uppercase">{t('side_penelitian.page.duration')}</span>
                       <span className="text-sm font-black text-sky-300 flex items-center gap-2">
                         {hasDiscount && (
-                          <span className="text-rose-400 line-through">{confirmTarget.duration} hari</span>
+                          <span className="text-rose-400 line-through">{confirmTarget.duration} {t('side_penelitian.page.daysUnit')}</span>
                         )}
                         <span className={hasDiscount ? 'text-emerald-400 font-extrabold' : ''}>
-                          {effDur} hari
+                          {effDur} {t('side_penelitian.page.daysUnit')}
                         </span>
                       </span>
                     </div>
 
                     <div className="flex justify-between items-center mt-2 border-t border-root-accent/10 pt-2">
-                      <span className="text-xs font-bold text-root-subtle uppercase">Estimasi Selesai</span>
+                      <span className="text-xs font-bold text-root-subtle uppercase">{t('side_penelitian.page.estimatedCompletion')}</span>
                       <span className="text-xs font-black text-root-accent">
                         {formattedEndDate}
                       </span>
@@ -1171,7 +1203,7 @@ export default function PenelitianPageModal({
 
             <div className="bg-root-accent/5 border border-root-accent/20 rounded-lg p-3 mb-5">
               <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-2">
-                Efek pada Level 1:
+                {t('side_penelitian.page.effectAtLevelOne')}
               </p>
               {confirmTarget.effects.map((eff, i) => (
                 <p key={i} className="text-[11px] font-bold text-root-text">
@@ -1183,7 +1215,8 @@ export default function PenelitianPageModal({
                       : eff.value,
                     confirmTarget.category === 'militer'
                       ? getMilitaryResearchLevelBonus(confirmTarget.id, 1)
-                      : undefined
+                      : undefined,
+                      confirmTarget.category
                   )}
                 </p>
               ))}
@@ -1194,13 +1227,13 @@ export default function PenelitianPageModal({
                 onClick={() => setConfirmTarget(null)}
                 className="flex-1 px-4 py-2.5 rounded-lg border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-text active:scale-95 transition-all font-bold text-xs uppercase cursor-pointer"
               >
-                Batal
+                {t('side_penelitian.page.cancel')}
               </button>
               <button
                 onClick={() => handleStartResearch(confirmTarget)}
                 className="flex-1 px-4 py-2.5 rounded-lg bg-root-accent text-root-canvas hover:bg-root-accent/80 active:scale-95 transition-all font-bold text-xs uppercase cursor-pointer shadow-md"
               >
-                Mulai Riset
+                {t('side_penelitian.page.startResearch')}
               </button>
             </div>
           </div>
@@ -1221,19 +1254,19 @@ export default function PenelitianPageModal({
             className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl p-6 shadow-2xl relative"
           >
             <RootInfoModalHeader
-              title={confirmUpgrade.research.name}
+              title={getResearchTitle(confirmUpgrade.research)}
               titleId="research-upgrade-title"
               onClose={() => setConfirmUpgrade(null)}
               icon={<confirmUpgrade.research.icon />}
               size="compact"
-              centerContent={<p className="text-[10px] text-root-accent font-black">Upgrade ke Level {confirmUpgrade.targetLevel}</p>}
+              centerContent={<p className="text-[10px] text-root-accent font-black">{t('side_penelitian.page.upgradeToLevel', { level: confirmUpgrade.targetLevel })}</p>}
             />
 
             <div className="flex items-center justify-center gap-3 mb-4">
               <div className="text-center">
-                <p className="text-[9px] text-root-subtle font-black uppercase">Sekarang</p>
+                <p className="text-[9px] text-root-subtle font-black uppercase">{t('side_penelitian.page.now')}</p>
                 <p className="text-lg font-black text-root-subtle">
-                  LV.{getLevel(confirmUpgrade.research.id)}
+                  {t('side_penelitian.page.levelShort')}{getLevel(confirmUpgrade.research.id)}
                 </p>
                 <p className="text-[10px] text-root-subtle font-bold">
                   +{getCardBonus(getLevel(confirmUpgrade.research.id))}%
@@ -1241,8 +1274,8 @@ export default function PenelitianPageModal({
               </div>
               <ChevronUp className="w-5 h-5 text-root-accent rotate-90" />
               <div className="text-center">
-                <p className="text-[9px] text-root-accent font-black uppercase">Target</p>
-                <p className="text-lg font-black text-root-accent">LV.{confirmUpgrade.targetLevel}</p>
+                <p className="text-[9px] text-root-accent font-black uppercase">{t('side_penelitian.page.target')}</p>
+                <p className="text-lg font-black text-root-accent">{t('side_penelitian.page.levelShort')}{confirmUpgrade.targetLevel}</p>
                 <p className="text-[10px] text-root-accent font-bold">
                   +{getCardBonus(confirmUpgrade.targetLevel)}%
                 </p>
@@ -1251,9 +1284,9 @@ export default function PenelitianPageModal({
 
             <div className="bg-root-canvas border border-root-accent/20 rounded-lg p-4 mb-4">
               <div className="flex justify-between items-center mb-2.5">
-                <span className="text-xs font-bold text-root-subtle uppercase">Biaya Upgrade</span>
+                <span className="text-xs font-bold text-root-subtle uppercase">{t('side_penelitian.page.upgradeCost')}</span>
                 <span className="text-sm font-black text-root-accent">
-                  {getCardUpgradeCost(confirmUpgrade.research, confirmUpgrade.targetLevel).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO
+                  {getCardUpgradeCost(confirmUpgrade.research, confirmUpgrade.targetLevel).toLocaleString(language, { maximumFractionDigits: 2 })} NEO
                 </span>
               </div>
 
@@ -1263,26 +1296,29 @@ export default function PenelitianPageModal({
                 const endDateStr = addDays(getSafeDateString(), effDur);
                 const [y, m, d] = endDateStr.split('-').map(Number);
                 const date = new Date(y, m - 1, d);
-                const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
-                const formattedEndDate = `${d} ${monthNames[date.getMonth()]}, ${date.getFullYear()}`;
+                const formattedEndDate = date.toLocaleDateString(language, {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                });
                 const hasDiscount = effDur < baseDur;
 
                 return (
                   <div>
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold text-root-subtle uppercase">Durasi</span>
+                      <span className="text-xs font-bold text-root-subtle uppercase">{t('side_penelitian.page.duration')}</span>
                       <span className="text-sm font-black text-sky-300 flex items-center gap-2">
                         {hasDiscount && (
-                          <span className="text-rose-400 line-through">{baseDur} hari</span>
+                          <span className="text-rose-400 line-through">{baseDur} {t('side_penelitian.page.daysUnit')}</span>
                         )}
                         <span className={hasDiscount ? 'text-emerald-400 font-extrabold' : ''}>
-                          {effDur} hari
+                          {effDur} {t('side_penelitian.page.daysUnit')}
                         </span>
                       </span>
                     </div>
 
                     <div className="flex justify-between items-center mt-2 border-t border-root-accent/10 pt-2">
-                      <span className="text-xs font-bold text-root-subtle uppercase">Estimasi Selesai</span>
+                      <span className="text-xs font-bold text-root-subtle uppercase">{t('side_penelitian.page.estimatedCompletion')}</span>
                       <span className="text-xs font-black text-root-accent">
                         {formattedEndDate}
                       </span>
@@ -1294,7 +1330,10 @@ export default function PenelitianPageModal({
 
             <div className="bg-root-accent/5 border border-root-accent/20 rounded-lg p-3 mb-5">
               <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-2">
-                Efek Baru (Level {confirmUpgrade.targetLevel} +{getCardBonus(confirmUpgrade.targetLevel)}%):
+                {t('side_penelitian.page.newEffect', {
+                  level: confirmUpgrade.targetLevel,
+                  bonus: getCardBonus(confirmUpgrade.targetLevel),
+                })}
               </p>
               {confirmUpgrade.research.effects.map((eff, i) => (
                 <p key={i} className="text-[11px] font-bold text-root-text">
@@ -1306,7 +1345,8 @@ export default function PenelitianPageModal({
                       : eff.value,
                     confirmUpgrade.research.category === 'militer'
                       ? getMilitaryResearchLevelBonus(confirmUpgrade.research.id, confirmUpgrade.targetLevel)
-                      : undefined
+                      : undefined,
+                      confirmUpgrade.research.category
                   )}
                 </p>
               ))}
@@ -1317,13 +1357,13 @@ export default function PenelitianPageModal({
                 onClick={() => setConfirmUpgrade(null)}
                 className="flex-1 px-4 py-2.5 rounded-lg border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-text active:scale-95 transition-all font-bold text-xs uppercase cursor-pointer"
               >
-                Batal
+                {t('side_penelitian.page.cancel')}
               </button>
               <button
                 onClick={handleUpgradeResearch}
                 className="flex-1 px-4 py-2.5 rounded-lg bg-gradient-to-r from-root-accent to-emerald-400 text-root-canvas hover:opacity-90 active:scale-95 transition-all font-bold text-xs uppercase cursor-pointer shadow-md"
               >
-                Upgrade
+                {t('side_penelitian.page.upgrade')}
               </button>
             </div>
           </div>

@@ -1,0 +1,32 @@
+{
+  "title": "بحوث الاقتصاد والصناعة",
+  "tag": "الإنتاج والضرائب",
+  "researchTitles": {
+    "otomasi_industri": "أتمتة مصانع الإلكترونيات والآلات",
+    "manufaktur_material": "هندسة مواد التصنيع",
+    "manufaktur_terintegrasi": "استكشاف المعادن والطاقة",
+    "manufaktur_lanjut": "بنية تحتية متكاملة للمعادن والطاقة",
+    "peternakan_modern": "تربية ماشية دقيقة",
+    "peternakan_genetika": "وراثة الماشية والأعلاف",
+    "perkebunan_komoditas": "زراعة ذكية متعددة المحاصيل",
+    "agrikultur_cerdas": "زراعة مرنة متعددة المحاصيل",
+    "perikanan_modern": "استزراع مائي متكامل",
+    "perikanan_pascapanen": "تقنيات الصيد وما بعد الحصاد",
+    "pengolahan_pangan": "معالجة الأغذية الأساسية",
+    "industri_pangan_terpadu": "صناعة غذائية متكاملة"
+  },
+  "effects": {
+    "manufaktur": "إنتاج التصنيع",
+    "waktu_pembangunan_manufaktur": "مدة إنشاء مرافق التصنيع",
+    "mineral_energi": "إنتاج المعادن والطاقة",
+    "waktu_pembangunan_mineral_energi": "مدة إنشاء مرافق المعادن والطاقة",
+    "peternakan": "إنتاج الثروة الحيوانية",
+    "waktu_pembangunan_peternakan": "مدة إنشاء مرافق تربية الماشية",
+    "agrikultur": "الإنتاج الزراعي",
+    "waktu_pembangunan_agrikultur": "مدة إنشاء المزارع",
+    "perikanan": "إنتاج مصايد الأسماك",
+    "waktu_pembangunan_perikanan": "مدة إنشاء مرافق الصيد",
+    "olahan_pangan": "إنتاج الأغذية المصنعة",
+    "waktu_pembangunan_olahan_pangan": "مدة إنشاء مصانع الأغذية"
+  }
+}
