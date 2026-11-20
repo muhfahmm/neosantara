@@ -1,0 +1,32 @@
+{
+  "title": "설정",
+  "backToPausedMenu": "일시 정지 메뉴로 돌아가기",
+  "audio": {
+    "musicVolume": "음악 볼륨 ({value}%)",
+    "sfxVolume": "효과음 볼륨 ({value}%)"
+  },
+  "display": {
+    "resolution": "화면 해상도"
+  },
+  "theme": {
+    "title": "디스플레이 테마",
+    "dark": "어둡게",
+    "light": "밝게"
+  },
+  "map": {
+    "title": "지도 경계 및 도시 표시",
+    "subtitle": "MAP DISPLAY",
+    "bordersOnly": "국경선만 표시",
+    "all": "모든 세부 정보",
+    "showProvinceBorders": "도/주 경계선",
+    "showMajorCities": "주요 도시",
+    "showCapitals": "수도"
+  },
+  "language": {
+    "title": "언어 설정",
+    "subtitle": "LANGUAGE SELECTOR",
+    "selectDesc": "인터페이스 및 게임 텍스트 언어를 선택하세요.",
+    "current": "현재 언어",
+    "saved": "언어 설정이 저장되었습니다"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "menu": "Menü",
+  "profile": "Profil",
+  "statusBar": {
+    "gems": "EDELSTEINE",
+    "kesejahteraan": "WOHLSTAND",
+    "peringkat": "RANG",
+    "kepuasan": "ZUSTIMMUNG",
+    "kasNegara": "STAATSKASSE",
+    "populasi": "BEVÖLKERUNG",
+    "fpsMonitor": "FPS-MONITOR"
+  },
+  "tooltips": {
+    "gems": "Klicken, um den Edelstein-Shop zu öffnen",
+    "gemsTitle": "Edelsteinguthaben des Spielers",
+    "gemsDesc": "Klicken, um Edelsteine im Shop zu kaufen.",
+    "kesejahteraan": "Klicken, um Wohlstandsdetails anzuzeigen",
+    "peringkat": "Klicken, um Rangdetails anzuzeigen",
+    "kepuasan": "Klicken, um Zustimmungsdetails anzuzeigen",
+    "kasNegara": "Klicken, um Staatskasse-Shop (NEO) zu öffnen",
+    "kasNegaraTitle": "Haushalt der Staatskasse",
+    "kasNegaraDesc": "Klicken, um die Staatskasse im NEO-Shop aufzufüllen.",
+    "populasi": "Klicken, um Bevölkerungsdetails anzuzeigen",
+    "fps": "FPS-Monitordetails öffnen"
+  },
+  "actions": {
+    "quickSave": "Schnellspeichern",
+    "restart": "Neustart",
+    "openMenu": "Pausemenü öffnen",
+    "zoom": "Zoom"
+  }
+}

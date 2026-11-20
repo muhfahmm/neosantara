@@ -1,0 +1,20 @@
+{
+  "simulation": {
+    "title": "Government Simulation",
+    "gdp": "National GDP",
+    "treasury": "State Treasury",
+    "inflation": "Inflation",
+    "stability": "Political Stability"
+  },
+  "geopolitics": {
+    "relations": "Diplomatic Relations",
+    "alliance": "Alliance",
+    "treaty": "Trade Treaty",
+    "tensions": "Regional Tensions"
+  },
+  "notification": {
+    "gameSaved": "Game successfully saved.",
+    "gameLoaded": "Game successfully loaded.",
+    "autosave": "Autosave completed."
+  }
+}

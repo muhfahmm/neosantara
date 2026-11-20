@@ -1,0 +1,11 @@
+﻿{
+    "source":  "Origin",
+    "ongoingCount":  "{count} active operations",
+    "subtitle":  "DIPLOMACY \u0026 DEFENSE ACTIVITY",
+    "activeSince":  "Started at",
+    "eta":  "Estimated Arrival",
+    "target":  "Target",
+    "intercept":  "Intercept / Cancel",
+    "title":  "Activity Tracking",
+    "empty":  "No active operations currently running."
+}

@@ -18,6 +18,7 @@ import { menuItems, subMenuItems } from '../navigasi_menu/navigationData';
 import { FpsMonitoring, type FpsMonitorWasmModule } from '../paused_menu/4_settings/fpsMonitoring';
 import { AttackDebugButton } from '@/app/debug/AttackDebugButton';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
+import { useLanguage } from '../paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface Country {
     id: number;
@@ -75,6 +76,7 @@ export function Navbar({
     kesejahteraan = 50,
     wasmModuleRef,
 }: NavbarProps) {
+    const { t } = useLanguage();
     const [mapZoom, setMapZoom] = useState(1);
     const anggaran = Number(countryDetail?.anggaran) || 0;
     const countryName = selectedCountry?.country || countryDetail?.country || countryDetail?.nama_negara || '';
@@ -288,35 +290,35 @@ export function Navbar({
                     <div className="flex min-w-0 flex-1 items-center justify-start min-[840px]:justify-center gap-x-2 sm:gap-x-3 overflow-x-auto no-scrollbar px-1.5">
                         <MobileStatusItem
                             icon={<Users className="h-2.5 w-2.5" />}
-                            label="POPULASI"
+                            label={t('navbar.statusBar.populasi')}
                             value={populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                             change={netPopulationLabel}
                             onClick={onOpenPopulasi}
                         />
                         <MobileStatusItem
                             icon={<Landmark className="h-2.5 w-2.5" />}
-                            label="KAS NEGARA"
+                            label={t('navbar.statusBar.kasNegara')}
                             value={countryDetail ? formatCurrencyNEO(anggaran) : '-'}
                             change={countryDetail ? netBalanceLabel : undefined}
                             valueColor={anggaran < 0 ? 'text-rose-400' : undefined}
                         />
                         <MobileStatusItem
                             icon={<Smile className="h-2.5 w-2.5" />}
-                            label="KEPUASAN"
+                            label={t('navbar.statusBar.kepuasan')}
                             value={`${Math.round(kepuasanScore)}%`}
                             valueColor={getKepuasanColor(kepuasanScore)}
                             onClick={onOpenKepuasan}
                         />
                         <MobileStatusItem
                             icon={<Star className="h-2.5 w-2.5 fill-root-accent" />}
-                            label="PERINGKAT"
+                            label={t('navbar.statusBar.peringkat')}
                             value={`${presidentRating}/100`}
                             valueColor={getPresidentRatingColor(presidentRating)}
                             onClick={onOpenPeringkat}
                         />
                         <MobileStatusItem
                             icon={<Activity className="h-2.5 w-2.5" />}
-                            label="SEJAHTERA"
+                            label={t('navbar.statusBar.kesejahteraan')}
                             value={`${kesejahteraan}/100`}
                             valueColor={getKesejahteraanColorClass(kesejahteraan)}
                             onClick={onOpenKesejahteraan}
@@ -404,7 +406,7 @@ export function Navbar({
                         <MobileStatusItem
                             className="col-span-3"
                             icon={<Users className="h-2.5 w-2.5" />}
-                            label="POPULASI"
+                            label={t('navbar.statusBar.populasi')}
                             value={populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                             change={netPopulationLabel}
                             onClick={onOpenPopulasi}
@@ -412,7 +414,7 @@ export function Navbar({
                         <MobileStatusItem
                             className="col-span-3"
                             icon={<Landmark className="h-2.5 w-2.5" />}
-                            label="KAS NEGARA"
+                            label={t('navbar.statusBar.kasNegara')}
                             value={countryDetail ? formatCurrencyNEO(anggaran) : '-'}
                             change={countryDetail ? netBalanceLabel : undefined}
                             valueColor={anggaran < 0 ? 'text-rose-400' : undefined}
@@ -421,7 +423,7 @@ export function Navbar({
                         <MobileStatusItem
                             className="col-span-2"
                             icon={<Smile className="h-2.5 w-2.5" />}
-                            label="KEPUASAN"
+                            label={t('navbar.statusBar.kepuasan')}
                             value={`${Math.round(kepuasanScore)}%`}
                             valueColor={getKepuasanColor(kepuasanScore)}
                             onClick={onOpenKepuasan}
@@ -429,7 +431,7 @@ export function Navbar({
                         <MobileStatusItem
                             className="col-span-2"
                             icon={<Star className="h-2.5 w-2.5 fill-root-accent" />}
-                            label="PERINGKAT"
+                            label={t('navbar.statusBar.peringkat')}
                             value={`${presidentRating}/100`}
                             valueColor={getPresidentRatingColor(presidentRating)}
                             onClick={onOpenPeringkat}
@@ -437,7 +439,7 @@ export function Navbar({
                         <MobileStatusItem
                             className="col-span-2"
                             icon={<Activity className="h-2.5 w-2.5" />}
-                            label="SEJAHTERA"
+                            label={t('navbar.statusBar.kesejahteraan')}
                             value={`${kesejahteraan}/100`}
                             valueColor={getKesejahteraanColorClass(kesejahteraan)}
                             onClick={onOpenKesejahteraan}
@@ -445,7 +447,7 @@ export function Navbar({
                         <MobileStatusItem
                             className="col-span-6 border-t border-root-accent/15 pt-0.5 mt-0.5 cursor-pointer"
                             icon={<Gem className="h-2.5 w-2.5 text-cyan-400 fill-cyan-400/20" />}
-                            label="GEMS"
+                            label={t('navbar.statusBar.gems')}
                             value={playerDiamonds.toLocaleString('id-ID')}
                             valueColor="text-cyan-400"
                             onClick={onOpenGemsShop}
@@ -508,11 +510,11 @@ export function Navbar({
                             <button
                                 onClick={onOpenPopulasi}
                                 className="group relative flex-shrink-0 cursor-pointer text-left hover:opacity-85 transition-opacity"
-                                title="Klik untuk membuka Ringkasan Kependudukan"
+                                title={t('navbar.tooltips.populasi')}
                             >
                                 <StatusItem 
                                     icon={<Users className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
-                                    label="POPULASI" 
+                                    label={t('navbar.statusBar.populasi')} 
                                     value={
                                         <span className="flex items-center gap-1 text-root-text">
                                             <span className="tabular-nums">{populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
@@ -538,11 +540,11 @@ export function Navbar({
                             <button
                                 onClick={onOpenKasShop}
                                 className="group relative flex-shrink-0 cursor-pointer text-left hover:opacity-85 transition-opacity"
-                                title="Klik untuk membuka Toko Kas Negara (NEO)"
+                                title={t('navbar.tooltips.kasNegara')}
                             >
                                 <StatusItem
                                     icon={<Landmark className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
-                                    label="KAS NEGARA"
+                                    label={t('navbar.statusBar.kasNegara')}
                                     value={countryDetail ? (
                                         <span className="flex items-center gap-1 text-root-text tabular-nums">
                                             <span className={anggaran < 0 ? 'text-rose-400 font-black' : ''}>{formatCurrencyNEO(anggaran)}</span>
@@ -555,12 +557,12 @@ export function Navbar({
                                     )}
                                 />
                                 <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max bg-root-surface border border-root-accent/30 rounded-xl p-2.5 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none shadow-xl">
-                                    <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-1 border-b border-root-accent/20 pb-1 text-center">Anggaran Kas Negara</p>
+                                    <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-1 border-b border-root-accent/20 pb-1 text-center">{t('navbar.tooltips.kasNegaraTitle')}</p>
                                     <p className="text-[11px] font-bold text-root-text text-center">
                                         💰 {formatCurrencyNEO(anggaran)}
                                     </p>
                                     <p className="text-[9px] text-root-subtle text-center mt-1">
-                                        Klik untuk menambah kas negara di Toko NEO.
+                                        {t('navbar.tooltips.kasNegaraDesc')}
                                     </p>
                                 </div>
                             </button>
@@ -568,11 +570,11 @@ export function Navbar({
                             <button 
                                 onClick={onOpenKepuasan}
                                 className="cursor-pointer hover:opacity-80 transition-opacity"
-                                title="Klik untuk melihat detail kepuasan"
+                                title={t('navbar.tooltips.kepuasan')}
                             >
                                 <StatusItem 
                                     icon={<Smile className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
-                                    label="KEPUASAN" 
+                                    label={t('navbar.statusBar.kepuasan')} 
                                     value={`${Math.round(kepuasanScore)}%`}
                                     color={getKepuasanColor(kepuasanScore)}
                                 />
@@ -581,11 +583,11 @@ export function Navbar({
                             <button
                                 onClick={onOpenPeringkat}
                                 className="cursor-pointer transition-opacity hover:opacity-80"
-                                title="Klik untuk melihat detail peringkat"
+                                title={t('navbar.tooltips.peringkat')}
                             >
                                 <StatusItem
                                     icon={<Star className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 fill-root-accent text-root-accent" />}
-                                    label="PERINGKAT"
+                                    label={t('navbar.statusBar.peringkat')}
                                     value={`${presidentRating}/100`}
                                     color={getPresidentRatingColor(presidentRating)}
                                 />
@@ -594,11 +596,11 @@ export function Navbar({
                             <button 
                                 onClick={onOpenKesejahteraan}
                                 className="cursor-pointer hover:opacity-80 transition-opacity"
-                                title="Klik untuk melihat detail kesejahteraan"
+                                title={t('navbar.tooltips.kesejahteraan')}
                             >
                                 <StatusItem
                                     icon={<Activity className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
-                                    label="KESEJAHTERAAN"
+                                    label={t('navbar.statusBar.kesejahteraan')}
                                     value={`${kesejahteraan}/100`}
                                     color={getKesejahteraanColorClass(kesejahteraan)}
                                 />
@@ -608,11 +610,11 @@ export function Navbar({
                             <button
                                 onClick={onOpenGemsShop}
                                 className="group relative flex-shrink-0 cursor-pointer text-left hover:opacity-85 transition-opacity"
-                                title="Klik untuk membuka Toko Gems"
+                                title={t('navbar.tooltips.gems')}
                             >
                                 <StatusItem
                                     icon={<Gem className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-cyan-400 fill-cyan-400/20" />}
-                                    label="GEMS"
+                                    label={t('navbar.statusBar.gems')}
                                     value={
                                         <span className="flex items-center gap-1 text-cyan-400 tabular-nums font-black">
                                             {playerDiamonds.toLocaleString('id-ID')}
@@ -621,12 +623,12 @@ export function Navbar({
                                     color="text-cyan-400"
                                 />
                                 <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max bg-root-surface border border-cyan-500/30 rounded-xl p-2.5 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none shadow-xl">
-                                    <p className="text-[10px] font-black text-cyan-400 uppercase tracking-wider mb-1 border-b border-cyan-500/20 pb-1 text-center">Saldo Gems Pemain</p>
+                                    <p className="text-[10px] font-black text-cyan-400 uppercase tracking-wider mb-1 border-b border-cyan-500/20 pb-1 text-center">{t('navbar.tooltips.gemsTitle')}</p>
                                     <p className="text-[11px] font-bold text-root-text text-center">
                                         💎 {playerDiamonds.toLocaleString('id-ID')} Gems
                                     </p>
                                     <p className="text-[9px] text-root-subtle text-center mt-1">
-                                        Klik untuk membeli Gems di Toko Permata.
+                                        {t('navbar.tooltips.gemsDesc')}
                                     </p>
                                 </div>
                             </button>

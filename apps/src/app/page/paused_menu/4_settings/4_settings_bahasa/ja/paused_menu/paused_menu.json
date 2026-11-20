@@ -1,0 +1,78 @@
+{
+  "main": {
+    "resume": "再開",
+    "saveGame": "ゲーム保存",
+    "loadGame": "ゲーム読込",
+    "restart": "やり直し",
+    "settings": "設定",
+    "keyboardShortcuts": "キーボードショートカット",
+    "exitGame": "ゲーム終了"
+  },
+  "settings": {
+    "title": "設定",
+    "backLabel": "ポーズメニューに戻る",
+    "musicVolume": "BGM音量 ({value}%)",
+    "sfxVolume": "効果音 ({value}%)",
+    "resolution": "画面解像度",
+    "themeTitle": "表示テーマ",
+    "themeDark": "ダーク",
+    "themeLight": "ライト",
+    "mapDisplayTitle": "地図の境界線と都市表示",
+    "mapDisplayBadge": "MAP DISPLAY",
+    "mapBordersOnly": "国境線のみ",
+    "mapAllDetails": "すべての詳細",
+    "mapProvinceBorders": "州・県境線",
+    "mapMajorCities": "主要都市",
+    "mapCapitals": "首都",
+    "languageTitle": "言語設定",
+    "languageSubtitle": "LANGUAGE SELECTOR",
+    "languageDesc": "インターフェースと言語を選択してください。"
+  },
+  "saveGameModal": {
+    "title": "ゲーム保存",
+    "newSlotTitle": "新規スロット作成",
+    "backLabel": "ポーズメニューに戻る",
+    "newSlotButton": "新規スロット",
+    "loading": "セーブデータを読み込み中...",
+    "empty": "前回のセーブデータはありません。",
+    "saveNamePlaceholder": "セーブ名を入力...",
+    "saveButton": "保存",
+    "savingButton": "保存中...",
+    "overwriteWarning": "このセーブデータは上書きされます。続行しますか？"
+  },
+  "loadGameModal": {
+    "title": "ゲーム読込",
+    "loading": "セーブデータを読み込み中...",
+    "emptyTitle": "セーブデータがありません",
+    "emptyDesc": "最初に「ゲーム保存」ボタンからゲームを保存してください。",
+    "deleteTitle": "セーブファイルを削除",
+    "confirmDelete": "このセーブファイルを完全に削除してもよろしいですか？"
+  },
+  "restartModal": {
+    "title": "進捗をリセットしますか？",
+    "backLabel": "ポーズメニューに戻る",
+    "confirmTitle": "本当によろしいですか？",
+    "description": "すべての時間経過、予算、シミュレーションデータが初期状態に戻ります。この操作は取り消せません。",
+    "cancelButton": "キャンセル",
+    "confirmButton": "リセット"
+  },
+  "exitModal": {
+    "defaultTitle": "シミュレーションを終了しますか？",
+    "defaultSubtitle": "終了プロトコル",
+    "defaultMessage": "NEOSANTARA を終了してもよろしいですか？進行状況が保存されていることを確認してください。",
+    "defaultConfirm": "ゲーム終了",
+    "mainMenuTitle": "ゲームを終了しますか？",
+    "mainMenuSubtitle": "終了確認",
+    "mainMenuMessage": "メインメニューに戻ります。保存されていない進捗は失われます。",
+    "mainMenuConfirm": "はい、ゲーム終了",
+    "backLabel": "ポーズメニューに戻る"
+  },
+  "keyboardModal": {
+    "title": "キーボードショートカット",
+    "backLabel": "ポーズメニューに戻る",
+    "searchPlaceholder": "キーまたはアクションを検索...",
+    "searchAria": "キーボードショートカットを検索",
+    "clearSearchAria": "検索をクリア",
+    "categoryAll": "すべて"
+  }
+}

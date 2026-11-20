@@ -2,6 +2,7 @@
 
 import React, { useEffect, useSyncExternalStore } from 'react';
 import { Moon, Sun } from 'lucide-react';
+import { useLanguage } from '../terjemahan_paused_menu/languageLogic';
 
 type ThemeMode = 'dark' | 'light';
 
@@ -52,6 +53,7 @@ export function ThemeInitializer() {
 }
 
 export function ThemeSettingsSection() {
+    const { t } = useLanguage();
     const theme = useSyncExternalStore(subscribeToTheme, getCurrentTheme, () => 'dark');
     const storageError = useSyncExternalStore(subscribeToTheme, getStorageError, () => false);
 
@@ -73,10 +75,10 @@ export function ThemeSettingsSection() {
                 {theme === 'dark'
                     ? <Moon className="w-3.5 h-3.5 text-root-accent" />
                     : <Sun className="w-3.5 h-3.5 text-root-accent" />}
-                <span>Tema Tampilan</span>
+                <span>{t('paused_menu.settings.themeTitle')}</span>
             </label>
 
-            <div className="grid grid-cols-2 gap-2" role="group" aria-label="Tema tampilan">
+            <div className="grid grid-cols-2 gap-2" role="group" aria-label={t('paused_menu.settings.themeTitle')}>
                 <button
                     type="button"
                     aria-pressed={theme === 'light'}
@@ -88,7 +90,7 @@ export function ThemeSettingsSection() {
                     }`}
                 >
                     <Sun className="h-3.5 w-3.5" />
-                    Terang
+                    {t('paused_menu.settings.themeLight')}
                 </button>
                 <button
                     type="button"
@@ -101,7 +103,7 @@ export function ThemeSettingsSection() {
                     }`}
                 >
                     <Moon className="h-3.5 w-3.5" />
-                    Gelap
+                    {t('paused_menu.settings.themeDark')}
                 </button>
             </div>
             {storageError && (

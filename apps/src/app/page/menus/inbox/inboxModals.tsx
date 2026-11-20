@@ -52,6 +52,7 @@ import KeamananPBBNotificationCard from './logic/5_notifikasi_geopolitik/5_pbb/2
 import { getActiveUserCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
 import { isNonActionableUpdateNotification } from './logic/automaticChangeNotification';
 import { getInboxNotificationImage } from './inboxAssetMapping';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface TopLeftIconProps {
   onClick?: () => void;
@@ -82,6 +83,7 @@ export default function TopLeftIcon({
   isToastSuppressed = false,
   isMenuButtonHidden = false,
 }: TopLeftIconProps) {
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [toastNotification, setToastNotification] = useState<NotificationMessage | null>(null);
   const [showToast, setShowToast] = useState(false);
@@ -636,7 +638,7 @@ export default function TopLeftIcon({
           <div className="root-modal-util-52b6b298fe inbox-modal-typography font-sans">
 
             <RootInfoModalHeader
-              title="Inbox & Notifikasi"
+              title={t('side_inbox.title')}
               onClose={onClose}
               icon={<Inbox />}
               size="standard"
@@ -652,8 +654,9 @@ export default function TopLeftIcon({
               {visibleNotifications.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4 max-w-md mx-auto my-auto p-6">
                   <Inbox className="h-16 w-16 text-root-accent/30" />
-                  <h4 className="text-lg font-bold text-root-accent uppercase">Tidak Ada Pesan</h4>
-                  {/* 🔥 Teks "Kotak masuk Anda bersih..." telah dihapus dari sini */}
+                  <h4 className="text-lg font-bold text-root-accent uppercase">
+                    {t('side_inbox.empty')}
+                  </h4>
                 </div>
               ) : (
                 <>

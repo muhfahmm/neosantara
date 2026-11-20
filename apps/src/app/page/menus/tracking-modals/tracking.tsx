@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { Route } from 'lucide-react';
 import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
 import { estimateTravelTime } from '../../path_logic/time_logic';
 import {
@@ -69,6 +70,7 @@ export default function DiplomacyTracking({
   isUiHidden = false,
   isMenuButtonHidden = false,
 }: DiplomacyTrackingProps) {
+  const { t } = useLanguage();
   const [activePaths, setActivePaths] = useState<ActiveDiplomacyPath[]>([]);
   const [isTrackingOpen, setIsTrackingOpen] = useState(false);
   const viewportMode = useViewportMode();
@@ -276,14 +278,14 @@ export default function DiplomacyTracking({
           <div className="root-modal-util-52b6b298fe tracking-modal-typography font-sans">
 
             <RootInfoModalHeader
-              title="Pelacakan Aktivitas"
+              title={t('side_pelacakan_aktivitas.title')}
               titleId="diplomacy-tracking-title"
               onClose={() => setIsTrackingOpen(false)}
               icon={<Route />}
               size="standard"
               actions={
                 <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle">
-                  {activePaths.length} aktivitas berlangsung
+                  {t('side_pelacakan_aktivitas.ongoingCount', { count: activePaths.length })}
                 </p>
               }
             />
@@ -292,7 +294,7 @@ export default function DiplomacyTracking({
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-root-canvas relative z-10 custom-scrollbar flex flex-col gap-3">
               {activePaths.length === 0 && (
                 <div className="rounded-xl border border-root-accent/20 bg-root-surface/70 px-5 py-8 text-center text-sm font-bold text-[#B9D7D1]">
-                  Tidak ada aktivitas yang sedang berlangsung.
+                  {t('side_pelacakan_aktivitas.empty')}
                 </div>
               )}
 

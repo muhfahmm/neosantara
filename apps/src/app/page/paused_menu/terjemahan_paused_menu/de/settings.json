@@ -1,0 +1,32 @@
+{
+  "title": "Einstellungen",
+  "backToPausedMenu": "Zurück zum Pausemenü",
+  "audio": {
+    "musicVolume": "Musiklautstärke ({value}%)",
+    "sfxVolume": "Soundeffekte ({value}%)"
+  },
+  "display": {
+    "resolution": "Bildschirmauflösung"
+  },
+  "theme": {
+    "title": "Erscheinungsbild",
+    "dark": "Dunkel",
+    "light": "Hell"
+  },
+  "map": {
+    "title": "Kartenlinien & Städtelandschaft",
+    "subtitle": "MAP DISPLAY",
+    "bordersOnly": "Nur Landesgrenzen",
+    "all": "Alle Details",
+    "showProvinceBorders": "Provinzgrenzen",
+    "showMajorCities": "Großstädte",
+    "showCapitals": "Hauptstädte"
+  },
+  "language": {
+    "title": "Spracheinstellungen",
+    "subtitle": "LANGUAGE SELECTOR",
+    "selectDesc": "Wählen Sie die Sprache für Oberfläche und Texte.",
+    "current": "Aktuelle Sprache",
+    "saved": "Spracheinstellung gespeichert"
+  }
+}

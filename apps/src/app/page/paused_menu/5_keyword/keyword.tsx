@@ -5,6 +5,7 @@ import { Command, Search } from 'lucide-react';
 import PausedMenuFrame from '../../root_modals_design_menu/rootFrameMenu';
 import { PausedMenuHeader } from '../../root_modals_design_menu/PausedMenuHeader';
 import { GAME_SHORTCUTS, type ShortcutDefinition } from './index';
+import { useLanguage } from '../terjemahan_paused_menu/languageLogic';
 
 interface KeywordModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ interface KeywordModalProps {
 }
 
 export function KeywordModal({ isOpen, onClose }: KeywordModalProps) {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
 
@@ -35,7 +37,11 @@ export function KeywordModal({ isOpen, onClose }: KeywordModalProps) {
     <PausedMenuFrame zIndexClass="z-[999999999]">
       <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden p-4 text-root-text custom-scrollbar sm:p-8">
         <div className="relative z-10 flex min-h-0 flex-1 flex-col">
-          <PausedMenuHeader title="Pintasan Keyboard" onBack={onClose} backLabel="Kembali ke menu jeda" />
+          <PausedMenuHeader
+            title={t('paused_menu.keyboardModal.title')}
+            onBack={onClose}
+            backLabel={t('paused_menu.keyboardModal.backLabel')}
+          />
 
           <div className="mb-4 flex shrink-0 flex-col gap-3 border-b border-root-accent/15 pb-4">
             <div className="relative w-full">
@@ -44,15 +50,15 @@ export function KeywordModal({ isOpen, onClose }: KeywordModalProps) {
                 type="text"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="Cari tombol atau fungsi (cth: Map, Pause, Tab)..."
-                aria-label="Cari pintasan keyboard"
+                placeholder={t('paused_menu.keyboardModal.searchPlaceholder')}
+                aria-label={t('paused_menu.keyboardModal.searchAria')}
                 className="w-full rounded-lg border border-root-accent/30 bg-root-canvas py-2 pl-8 pr-4 text-xs font-bold text-root-text shadow-inner placeholder:text-root-subtle focus:border-root-accent focus:outline-none"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  aria-label="Hapus pencarian"
+                  aria-label={t('paused_menu.keyboardModal.clearSearchAria')}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-root-subtle hover:text-root-accent"
                 >
                   ✕

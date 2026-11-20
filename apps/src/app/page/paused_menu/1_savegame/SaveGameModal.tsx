@@ -5,6 +5,7 @@ import { Calendar, Globe, Plus, RotateCw } from 'lucide-react';
 import PausedMenuFrame from '../../root_modals_design_menu/rootFrameMenu';
 import { PausedMenuHeader } from '../../root_modals_design_menu/PausedMenuHeader';
 import type { GameSaveRecord } from './saveGameLogic';
+import { useLanguage } from '../terjemahan_paused_menu/languageLogic';
 
 interface SaveGameModalProps {
     selectedCountry: { country: string; iso: string } | null;
@@ -37,6 +38,7 @@ export function SaveGameModal({
     onBackToSlots,
     onSave,
 }: SaveGameModalProps) {
+    const { t } = useLanguage();
     const [saveToOverwrite, setSaveToOverwrite] = useState<GameSaveRecord | null>(null);
     const handleBack = () => {
         if (isCreatingNewSlot && existingSaveFiles.length > 0) {
@@ -50,8 +52,9 @@ export function SaveGameModal({
         <PausedMenuFrame zIndexClass="z-[99999999]">
                 <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-4 text-root-text custom-scrollbar sm:p-8">
                     <PausedMenuHeader
-                        title={isCreatingNewSlot ? 'Buat Simpanan Baru' : 'Simpan Permainan'}
+                        title={isCreatingNewSlot ? t('paused_menu.saveGameModal.newSlotTitle') : t('paused_menu.saveGameModal.title')}
                         onBack={handleBack}
+                        backLabel={t('paused_menu.saveGameModal.backLabel')}
                         rightContent={
                             !isCreatingNewSlot ? (
                                 <button
@@ -59,7 +62,7 @@ export function SaveGameModal({
                                     onClick={onCreateNewSlot}
                                     className="flex items-center gap-1 rounded border border-root-accent/40 bg-root-accent/15 px-3 py-1.5 text-[11px] font-extrabold uppercase text-root-accent cursor-pointer"
                                 >
-                                    <Plus className="h-3.5 w-3.5" /> Slot Baru
+                                    <Plus className="h-3.5 w-3.5" /> {t('paused_menu.saveGameModal.newSlotButton')}
                                 </button>
                             ) : null
                         }
@@ -69,9 +72,13 @@ export function SaveGameModal({
                         <div className="min-h-0 flex-1 overflow-y-auto pr-1">
                             <div className="space-y-2">
                                 {isLoading ? (
-                                    <p className="py-12 text-center text-xs text-root-subtle">Memuat data simpanan...</p>
+                                    <p className="py-12 text-center text-xs text-root-subtle">
+                                        {t('paused_menu.saveGameModal.loading')}
+                                    </p>
                                 ) : existingSaveFiles.length === 0 ? (
-                                    <p className="py-12 text-center text-xs text-root-subtle">Belum ada simpanan sebelumnya.</p>
+                                    <p className="py-12 text-center text-xs text-root-subtle">
+                                        {t('paused_menu.saveGameModal.empty')}
+                                    </p>
                                 ) : existingSaveFiles.map(save => (
                                     <div key={save.id} className="flex items-center justify-between gap-3 rounded-lg border border-root-accent/20 bg-root-canvas p-3">
                                         <div className="min-w-0">

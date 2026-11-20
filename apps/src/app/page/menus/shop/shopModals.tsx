@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ShoppingBag, Coins, Gem } from "lucide-react";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 import ShopCoinsItems from "./shopCoinsItems";
 import ShopGemsItems from "./shopGemsItems";
 import PremiumItems from "./premiumItems";
@@ -31,6 +32,7 @@ export default function ShopModal({
   countryDetail,
   initialTab = "neo",
 }: ShopModalProps) {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<"neo" | "gems">(initialTab);
   const [mounted, setMounted] = useState(false);
 
@@ -53,7 +55,7 @@ export default function ShopModal({
         <button
           type="button"
           onClick={onClick}
-          title="Toko & Penukaran (Shop)"
+          title={t('side_shop.title')}
           className="side-floating-btn side-btn-shop"
         >
           <Image
@@ -77,7 +79,7 @@ export default function ShopModal({
           <div className="root-modal-util-b74379da23 font-sans w-full h-full flex flex-col min-h-0 pointer-events-auto">
             {/* Header Modal */}
             <RootInfoModalHeader
-              title="Toko & Pusat Penukaran"
+              title={t('side_shop.title')}
               onClose={onClose}
               icon={<ShoppingBag />}
               size="standard"

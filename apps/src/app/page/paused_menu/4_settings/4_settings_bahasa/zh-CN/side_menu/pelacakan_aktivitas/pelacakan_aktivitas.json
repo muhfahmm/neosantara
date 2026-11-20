@@ -1,0 +1,11 @@
+﻿{
+    "source":  "出发地",
+    "ongoingCount":  "{count} 项活动进行中",
+    "subtitle":  "外交与国防活动监测",
+    "activeSince":  "开始于",
+    "eta":  "预计到达",
+    "target":  "目的地",
+    "intercept":  "拦截 / 取消",
+    "title":  "活动追踪",
+    "empty":  "当前没有正在进行的活动。"
+}

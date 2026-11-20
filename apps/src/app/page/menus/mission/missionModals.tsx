@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
 import {
   Target, Compass, Award, Rocket,
@@ -1518,6 +1519,7 @@ export default function MissionModals({
   currentDate,
   isMenuButtonHidden = false,
 }: MissionModalsProps) {
+  const { t } = useLanguage();
   const viewportMode = useViewportMode();
   const isLandscapePhone = viewportMode === 'landscapePhone';
   const isPortraitPhone = viewportMode === 'portraitPhone';
@@ -1655,18 +1657,18 @@ export default function MissionModals({
         <NotebookModalWrapper onClose={onClose} zIndexClass="z-[100000]">
           <div className="root-modal-util-b74379da23 mission-modal-typography font-sans">
             <RootInfoModalHeader
-              title="Misi Presiden"
+              title={t('side_misi.title')}
               onClose={onClose ?? (() => {})}
               icon={<Target />}
               size="standard"
               actions={
                 <div className="flex flex-wrap items-center justify-end gap-2">
                   <span className="inline-flex items-center gap-1 rounded-full bg-root-accent/15 border border-root-accent/30 px-2 py-0.5 text-[9px] font-black uppercase text-root-accent">
-                    <Dices className="h-2.5 w-2.5" />5 Misi Aktif
+                    <Dices className="h-2.5 w-2.5" />5 {t('side_misi.mainMissions')}
                   </span>
                   {totalClaimable > 0 && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-red-500/20 border border-red-500/40 px-2 py-0.5 text-[9px] font-black uppercase text-red-300">
-                      <Bell className="h-2.5 w-2.5" />{totalClaimable} Siap Klaim
+                      <Bell className="h-2.5 w-2.5" />{totalClaimable} {t('side_misi.claimReward')}
                     </span>
                   )}
                   <span className="text-[10px] text-root-subtle font-semibold uppercase tracking-wider">
@@ -1827,7 +1829,7 @@ export default function MissionModals({
                         className="w-full sm:w-auto shrink-0 px-5 py-2.5 rounded-lg bg-root-accent hover:opacity-90 active:scale-95 text-root-accent-ink font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-md shadow-root-accent/20 cursor-pointer"
                       >
                         <Gift className="w-3.5 h-3.5" />
-                        Klaim Hadiah
+                        {t('side_misi.claimReward')}
                       </button>
                     ) : (
                       <button
@@ -1837,7 +1839,7 @@ export default function MissionModals({
                         className="w-full sm:w-auto shrink-0 px-5 py-2.5 rounded-lg bg-root-accent hover:opacity-90 active:scale-95 text-root-accent-ink font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-md shadow-root-accent/20 cursor-pointer"
                       >
                         <Play className="w-3.5 h-3.5 fill-root-accent-ink" />
-                        Mulai
+                        {t('common.yes') === 'Yes' ? 'Start' : t('common.yes') === '是' ? '开始' : 'Mulai'}
                       </button>
                     )}
                   </div>

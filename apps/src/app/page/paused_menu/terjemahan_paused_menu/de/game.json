@@ -1,0 +1,20 @@
+{
+  "simulation": {
+    "title": "Regierungssimulation",
+    "gdp": "BIP",
+    "treasury": "Staatsschatz",
+    "inflation": "Inflation",
+    "stability": "Politische Stabilität"
+  },
+  "geopolitics": {
+    "relations": "Diplomatische Beziehungen",
+    "alliance": "Allianz",
+    "treaty": "Handelsabkommen",
+    "tensions": "Regionale Spannungen"
+  },
+  "notification": {
+    "gameSaved": "Spiel erfolgreich gespeichert.",
+    "gameLoaded": "Spiel erfolgreich geladen.",
+    "autosave": "Automatisches Speichern abgeschlossen."
+  }
+}

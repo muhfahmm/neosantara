@@ -1,0 +1,32 @@
+{
+  "title": "Ajustes",
+  "backToPausedMenu": "Volver al menú de pausa",
+  "audio": {
+    "musicVolume": "Volumen de Música ({value}%)",
+    "sfxVolume": "Efectos de Sonido ({value}%)"
+  },
+  "display": {
+    "resolution": "Resolución de Pantalla"
+  },
+  "theme": {
+    "title": "Tema de Pantalla",
+    "dark": "Oscuro",
+    "light": "Claro"
+  },
+  "map": {
+    "title": "Líneas de Mapa y Ciudades",
+    "subtitle": "MAP DISPLAY",
+    "bordersOnly": "Solo Fronteras",
+    "all": "Todos los Detalles",
+    "showProvinceBorders": "Fronteras Provinciales",
+    "showMajorCities": "Ciudades Principales",
+    "showCapitals": "Capitales"
+  },
+  "language": {
+    "title": "Ajustes de Idioma",
+    "subtitle": "LANGUAGE SELECTOR",
+    "selectDesc": "Elige el idioma de la interfaz y del juego.",
+    "current": "Idioma Actual",
+    "saved": "Preferencia de idioma guardada"
+  }
+}

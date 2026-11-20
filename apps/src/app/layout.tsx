@@ -8,6 +8,7 @@ import RelationsDataLoader from './RelationsDataLoader';
 import SecurityProtector from './SecurityProtector';
 import SoundProvider from './SoundProvider';
 import { ThemeInitializer } from './page/paused_menu/4_settings/ThemeSettingsSection';
+import { LanguageProvider } from './page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,7 +50,9 @@ export default function RootLayout({
         <HmrShield />
         <ThemeInitializer />
         <RelationsDataLoader>
-          {children}
+          <LanguageProvider>
+            {children}
+          </LanguageProvider>
         </RelationsDataLoader>
         <ClientErrorCatcher />
         <SecurityProtector />

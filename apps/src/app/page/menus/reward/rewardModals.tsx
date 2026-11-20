@@ -7,6 +7,7 @@ import { useViewportMode } from '@/app/hooks/useViewportMode';
 import Image from 'next/image';
 import { Gift, Check, Lock, Zap, AlertTriangle } from 'lucide-react';
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import {
   formatProductionProductName,
   PRODUCTION_BAN_CATEGORIES,
@@ -174,6 +175,7 @@ export default function TopRightGiftIcon({
   onClaimReward,
   isMenuButtonHidden = false,
 }: TopRightGiftIconProps) {
+  const { t } = useLanguage();
   const [currentDay, setCurrentDay] = useState<number>(1);
   const [claimedToday, setClaimedToday] = useState<boolean>(false);
   const [lastClaimDate, setLastClaimDate] = useState<string | null>(null);
@@ -422,7 +424,7 @@ export default function TopRightGiftIcon({
           <div className="root-modal-util-52b6b298fe reward-modal-typography font-sans pointer-events-auto">
 
             <RootInfoModalHeader
-              title="Hadiah Harian"
+              title={t('side_reward.title')}
               onClose={onClose}
               icon={<Gift />}
               size="standard"

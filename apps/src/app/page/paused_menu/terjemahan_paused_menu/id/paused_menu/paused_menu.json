@@ -1,0 +1,78 @@
+{
+  "main": {
+    "resume": "Lanjutkan",
+    "saveGame": "Simpan Permainan",
+    "loadGame": "Muat Permainan",
+    "restart": "Mulai Ulang",
+    "settings": "Pengaturan",
+    "keyboardShortcuts": "Pintasan Keyboard",
+    "exitGame": "Keluar Permainan"
+  },
+  "settings": {
+    "title": "Pengaturan",
+    "backLabel": "Kembali ke menu jeda",
+    "musicVolume": "Volume Musik ({value}%)",
+    "sfxVolume": "Efek Suara ({value}%)",
+    "resolution": "Resolusi Layar",
+    "themeTitle": "Tema Tampilan",
+    "themeDark": "Gelap",
+    "themeLight": "Terang",
+    "mapDisplayTitle": "Tampilan Garis & Kota Peta",
+    "mapDisplayBadge": "MAP DISPLAY",
+    "mapBordersOnly": "Hanya Batas Negara",
+    "mapAllDetails": "Semua Detail",
+    "mapProvinceBorders": "Garis Batas Provinsi",
+    "mapMajorCities": "Kota-Kota Besar",
+    "mapCapitals": "Ibu Kota",
+    "languageTitle": "Pengaturan Bahasa",
+    "languageSubtitle": "LANGUAGE SELECTOR",
+    "languageDesc": "Pilih bahasa tampilan antarmuka dan teks game."
+  },
+  "saveGameModal": {
+    "title": "Simpan Permainan",
+    "newSlotTitle": "Buat Simpanan Baru",
+    "backLabel": "Kembali ke menu jeda",
+    "newSlotButton": "Slot Baru",
+    "loading": "Memuat data simpanan...",
+    "empty": "Belum ada simpanan sebelumnya.",
+    "saveNamePlaceholder": "Masukkan nama simpanan...",
+    "saveButton": "Simpan",
+    "savingButton": "Menyimpan...",
+    "overwriteWarning": "Simpanan ini akan ditimpa. Lanjutkan?"
+  },
+  "loadGameModal": {
+    "title": "Muat Permainan",
+    "loading": "Memuat data simpanan...",
+    "emptyTitle": "TIDAK ADA DATA SIMPANAN",
+    "emptyDesc": "Simpan permainan Anda melalui tombol “Simpan Permainan” terlebih dahulu.",
+    "deleteTitle": "Hapus Save File",
+    "confirmDelete": "Apakah Anda yakin ingin menghapus save file ini secara permanen?"
+  },
+  "restartModal": {
+    "title": "Atur Ulang Progres?",
+    "backLabel": "Kembali ke menu jeda",
+    "confirmTitle": "Apakah Anda yakin?",
+    "description": "Seluruh kemajuan waktu, anggaran, dan data simulasi akan dikembalikan ke kondisi awal. Tindakan ini tidak dapat dibatalkan.",
+    "cancelButton": "Batal",
+    "confirmButton": "Atur Ulang"
+  },
+  "exitModal": {
+    "defaultTitle": "Akhiri Sesi Simulasi?",
+    "defaultSubtitle": "PROTOKOL TERMINASI",
+    "defaultMessage": "Apakah Anda yakin ingin keluar dari NEOSANTARA? Pastikan seluruh kemajuan simulasi Anda telah tersimpan.",
+    "defaultConfirm": "Keluar Game",
+    "mainMenuTitle": "Keluar Permainan?",
+    "mainMenuSubtitle": "KONFIRMASI KELUAR",
+    "mainMenuMessage": "Anda akan kembali ke Menu Utama. Progres yang belum disimpan akan hilang.",
+    "mainMenuConfirm": "Ya, Keluar Permainan",
+    "backLabel": "Kembali ke menu jeda"
+  },
+  "keyboardModal": {
+    "title": "Pintasan Keyboard",
+    "backLabel": "Kembali ke menu jeda",
+    "searchPlaceholder": "Cari tombol atau fungsi (cth: Map, Pause, Tab)...",
+    "searchAria": "Cari pintasan keyboard",
+    "clearSearchAria": "Hapus pencarian",
+    "categoryAll": "Semua"
+  }
+}

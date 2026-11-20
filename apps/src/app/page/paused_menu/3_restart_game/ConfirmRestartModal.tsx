@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { AlertTriangle, RotateCcw } from 'lucide-react';
 import PausedMenuFrame from '../../root_modals_design_menu/rootFrameMenu';
 import { PausedMenuHeader } from '../../root_modals_design_menu/PausedMenuHeader';
+import { useLanguage } from '../terjemahan_paused_menu/languageLogic';
 
 interface ConfirmRestartModalProps {
     isOpen: boolean;
@@ -13,13 +14,19 @@ interface ConfirmRestartModalProps {
 }
 
 export function ConfirmRestartModal({ isOpen, onClose, onConfirm }: ConfirmRestartModalProps) {
+    const { t } = useLanguage();
+
     if (!isOpen) return null;
 
     const content = (
         <PausedMenuFrame zIndexClass="z-[999999999]" ornamentCount={7}>
                 <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-4 text-root-text custom-scrollbar sm:p-8">
 
-                    <PausedMenuHeader title="Atur Ulang Progres?" onBack={onClose} backLabel="Kembali ke menu jeda" />
+                    <PausedMenuHeader
+                        title={t('paused_menu.restartModal.title')}
+                        onBack={onClose}
+                        backLabel={t('paused_menu.restartModal.backLabel')}
+                    />
 
                     {/* Konten Utama */}
                     <div className="flex-1 flex flex-col justify-center items-center space-y-5 my-4">
@@ -36,10 +43,10 @@ export function ConfirmRestartModal({ isOpen, onClose, onConfirm }: ConfirmResta
                         {/* Teks */}
                         <div className="text-center space-y-2 max-w-md">
                             <h3 className="text-[length:var(--modal-font-title)] font-black text-white tracking-tight">
-                                Apakah Anda yakin?
+                                {t('paused_menu.restartModal.confirmTitle')}
                             </h3>
                             <p className="text-xs font-semibold text-root-subtle leading-relaxed">
-                                Seluruh kemajuan waktu, anggaran, dan data simulasi akan dikembalikan ke kondisi awal. Tindakan ini tidak dapat dibatalkan.
+                                {t('paused_menu.restartModal.description')}
                             </p>
                         </div>
                     </div>
@@ -51,14 +58,14 @@ export function ConfirmRestartModal({ isOpen, onClose, onConfirm }: ConfirmResta
                             onClick={onClose} 
                             className="rounded border border-root-accent/30 px-5 py-2.5 text-xs font-bold text-root-text hover:bg-root-accent/10 transition-colors cursor-pointer"
                         >
-                            Batal
+                            {t('paused_menu.restartModal.cancelButton')}
                         </button>
                         <button 
                             type="button" 
                             onClick={() => { onConfirm(); onClose(); }} 
                             className="rounded border border-amber-500 bg-amber-500/25 px-5 py-2.5 text-xs font-extrabold text-amber-300 hover:bg-amber-500/40 transition-colors cursor-pointer"
                         >
-                            Atur Ulang
+                            {t('paused_menu.restartModal.confirmButton')}
                         </button>
                     </div>
 

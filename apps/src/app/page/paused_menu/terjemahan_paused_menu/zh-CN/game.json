@@ -1,0 +1,20 @@
+{
+  "simulation": {
+    "title": "政府模拟",
+    "gdp": "国内生产总值",
+    "treasury": "国库",
+    "inflation": "通货膨胀",
+    "stability": "政治稳定度"
+  },
+  "geopolitics": {
+    "relations": "外交关系",
+    "alliance": "同盟",
+    "treaty": "贸易条约",
+    "tensions": "地区紧张局势"
+  },
+  "notification": {
+    "gameSaved": "游戏保存成功。",
+    "gameLoaded": "游戏加载成功。",
+    "autosave": "自动保存完成。"
+  }
+}

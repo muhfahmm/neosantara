@@ -1,0 +1,32 @@
+{
+  "menu": "Menu",
+  "profile": "Profile",
+  "statusBar": {
+    "gems": "GEMS",
+    "kesejahteraan": "WELFARE",
+    "peringkat": "RANK",
+    "kepuasan": "APPROVAL",
+    "kasNegara": "TREASURY",
+    "populasi": "POPULATION",
+    "fpsMonitor": "FPS MONITOR"
+  },
+  "tooltips": {
+    "gems": "Click to open Gems Store",
+    "gemsTitle": "Player Gems Balance",
+    "gemsDesc": "Click to buy Gems at Gems Store.",
+    "kesejahteraan": "Click to view welfare details",
+    "peringkat": "Click to view rank details",
+    "kepuasan": "Click to view approval details",
+    "kasNegara": "Click to open National Treasury Store (NEO)",
+    "kasNegaraTitle": "National Treasury Budget",
+    "kasNegaraDesc": "Click to top up treasury in NEO Store.",
+    "populasi": "Click to view population details",
+    "fps": "Open FPS monitor details"
+  },
+  "actions": {
+    "quickSave": "Quick Save",
+    "restart": "Restart",
+    "openMenu": "Open Paused Menu",
+    "zoom": "Zoom"
+  }
+}

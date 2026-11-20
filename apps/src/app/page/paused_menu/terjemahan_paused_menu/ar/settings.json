@@ -1,0 +1,32 @@
+{
+  "title": "الإعدادات",
+  "backToPausedMenu": "العودة إلى قائمة الإيقاف المؤقت",
+  "audio": {
+    "musicVolume": "مستوى صوت الموسيقى ({value}%)",
+    "sfxVolume": "المؤثرات الصوتية ({value}%)"
+  },
+  "display": {
+    "resolution": "دقة الشاشة"
+  },
+  "theme": {
+    "title": "مظهر الشاشة",
+    "dark": "داكن",
+    "light": "فاتح"
+  },
+  "map": {
+    "title": "عرض حدود الخريطة والمدن",
+    "subtitle": "MAP DISPLAY",
+    "bordersOnly": "حدود الدولة فقط",
+    "all": "جميع التفاصيل",
+    "showProvinceBorders": "حدود المقاطعات",
+    "showMajorCities": "المدن الكبرى",
+    "showCapitals": "العواصم"
+  },
+  "language": {
+    "title": "إعدادات اللغة",
+    "subtitle": "LANGUAGE SELECTOR",
+    "selectDesc": "اختر لغة الواجهة ونصوص اللعبة.",
+    "current": "اللغة الحالية",
+    "saved": "تم حفظ تفضيل اللغة"
+  }
+}

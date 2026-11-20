@@ -1,0 +1,9 @@
+﻿{
+    "deleteAll":  "Delete All",
+    "tabUnread":  "Unread",
+    "tabImportant":  "Important",
+    "tabAll":  "All",
+    "markRead":  "Mark Read",
+    "empty":  "No messages available right now.",
+    "title":  "Inbox"
+}

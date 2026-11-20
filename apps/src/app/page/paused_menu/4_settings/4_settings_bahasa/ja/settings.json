@@ -1,0 +1,32 @@
+{
+  "title": "設定",
+  "backToPausedMenu": "ポーズメニューに戻る",
+  "audio": {
+    "musicVolume": "BGM音量 ({value}%)",
+    "sfxVolume": "効果音 ({value}%)"
+  },
+  "display": {
+    "resolution": "画面解像度"
+  },
+  "theme": {
+    "title": "表示テーマ",
+    "dark": "ダーク",
+    "light": "ライト"
+  },
+  "map": {
+    "title": "地図の境界線と都市表示",
+    "subtitle": "MAP DISPLAY",
+    "bordersOnly": "国境線のみ",
+    "all": "すべての詳細",
+    "showProvinceBorders": "州・県境線",
+    "showMajorCities": "主要都市",
+    "showCapitals": "首都"
+  },
+  "language": {
+    "title": "言語設定",
+    "subtitle": "LANGUAGE SELECTOR",
+    "selectDesc": "インターフェースと言語を選択してください。",
+    "current": "現在の言語",
+    "saved": "言語設定が保存されました"
+  }
+}

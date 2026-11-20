@@ -1,0 +1,78 @@
+{
+  "main": {
+    "resume": "继续游戏",
+    "saveGame": "保存游戏",
+    "loadGame": "加载游戏",
+    "restart": "重新开始",
+    "settings": "设置",
+    "keyboardShortcuts": "快捷键",
+    "exitGame": "退出游戏"
+  },
+  "settings": {
+    "title": "设置",
+    "backLabel": "返回暂停菜单",
+    "musicVolume": "音乐音量 ({value}%)",
+    "sfxVolume": "音效音量 ({value}%)",
+    "resolution": "屏幕分辨率",
+    "themeTitle": "显示主题",
+    "themeDark": "深色",
+    "themeLight": "浅色",
+    "mapDisplayTitle": "地图边界与城市显示",
+    "mapDisplayBadge": "MAP DISPLAY",
+    "mapBordersOnly": "仅国家边界",
+    "mapAllDetails": "全部细节",
+    "mapProvinceBorders": "省份边界",
+    "mapMajorCities": "主要城市",
+    "mapCapitals": "首都",
+    "languageTitle": "语言设置",
+    "languageSubtitle": "LANGUAGE SELECTOR",
+    "languageDesc": "选择界面与游戏文本的显示语言。"
+  },
+  "saveGameModal": {
+    "title": "保存游戏",
+    "newSlotTitle": "创建新存档槽位",
+    "backLabel": "返回暂停菜单",
+    "newSlotButton": "新槽位",
+    "loading": "正在加载存档数据...",
+    "empty": "暂无历史存档。",
+    "saveNamePlaceholder": "输入存档名称...",
+    "saveButton": "保存",
+    "savingButton": "正在保存...",
+    "overwriteWarning": "该存档将被覆盖。是否继续？"
+  },
+  "loadGameModal": {
+    "title": "加载游戏",
+    "loading": "正在加载存档数据...",
+    "emptyTitle": "未找到存档数据",
+    "emptyDesc": "请先通过“保存游戏”按钮保存您的进度。",
+    "deleteTitle": "删除存档文件",
+    "confirmDelete": "您确定要永久删除此存档文件吗？"
+  },
+  "restartModal": {
+    "title": "重置游戏进度？",
+    "backLabel": "返回暂停菜单",
+    "confirmTitle": "您确定吗？",
+    "description": "所有时间进度、预算和模拟数据将被还原至初始状态。此操作无法撤销。",
+    "cancelButton": "取消",
+    "confirmButton": "重置"
+  },
+  "exitModal": {
+    "defaultTitle": "结束模拟会话？",
+    "defaultSubtitle": "终止协议",
+    "defaultMessage": "您确定要退出 NEOSANTARA 吗？请确保您的模拟进度已保存。",
+    "defaultConfirm": "退出游戏",
+    "mainMenuTitle": "退出游戏？",
+    "mainMenuSubtitle": "退出确认",
+    "mainMenuMessage": "您将返回主菜单。未保存的进度将会丢失。",
+    "mainMenuConfirm": "是，退出游戏",
+    "backLabel": "返回暂停菜单"
+  },
+  "keyboardModal": {
+    "title": "快捷键",
+    "backLabel": "返回暂停菜单",
+    "searchPlaceholder": "搜索按键或功能...",
+    "searchAria": "搜索快捷键",
+    "clearSearchAria": "清除搜索",
+    "categoryAll": "全部"
+  }
+}

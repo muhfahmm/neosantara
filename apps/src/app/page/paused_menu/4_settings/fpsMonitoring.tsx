@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Activity, Copy } from 'lucide-react';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
+import { useLanguage } from '../terjemahan_paused_menu/languageLogic';
 
 export type FpsMonitorWasmModule = {
     get_perf_stats_on_map?: () => unknown;
@@ -45,6 +46,7 @@ export function FpsMonitoring({
 }: {
     wasmModuleRef: React.RefObject<FpsMonitorWasmModule | null>;
 }) {
+    const { t } = useLanguage();
     const [stats, setStats] = useState(INITIAL_STATS);
     const [history, setHistory] = useState<string[]>([]);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -141,7 +143,7 @@ export function FpsMonitoring({
                 type="button"
                 onClick={() => setIsExpanded(value => !value)}
                 aria-expanded={isExpanded}
-                aria-label="Buka detail monitor FPS"
+                aria-label={t('navbar.tooltips.fps')}
                 className={`flex h-full ${
                     isMobileDevice
                         ? 'w-[60px] flex-row items-center justify-center gap-1 rounded-lg px-1'
@@ -160,7 +162,7 @@ export function FpsMonitoring({
                     <>
                         <span className="flex items-center gap-1 text-[7px] font-black tracking-wide text-root-accent lg:text-[8px]">
                             <Activity className="h-2.5 w-2.5" />
-                            FPS MONITOR
+                            {t('navbar.statusBar.fpsMonitor')}
                         </span>
                         <span className={`text-base font-black leading-none tabular-nums lg:text-lg ${stats.fps < 40 ? 'text-rose-400' : stats.fps < 55 ? 'text-amber-400' : 'text-emerald-300'}`}>
                             {stats.fps} <span className="text-[9px] font-bold text-gray-300">FPS</span>

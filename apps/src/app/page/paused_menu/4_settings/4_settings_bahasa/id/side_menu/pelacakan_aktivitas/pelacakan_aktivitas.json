@@ -1,0 +1,11 @@
+﻿{
+    "source":  "Asal",
+    "ongoingCount":  "{count} aktivitas berlangsung",
+    "subtitle":  "AKTIVITAS DIPLOMASI \u0026 PERTAHANAN",
+    "activeSince":  "Berjalan sejak",
+    "eta":  "Estimasi Tiba",
+    "target":  "Tujuan",
+    "intercept":  "Cegat / Batalkan",
+    "title":  "Pelacakan Aktivitas",
+    "empty":  "Tidak ada aktivitas yang sedang berlangsung."
+}

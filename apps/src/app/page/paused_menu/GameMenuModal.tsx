@@ -9,6 +9,8 @@ import {
 import { KeywordModal } from './5_keyword/keyword';
 import { MapSettingsSection } from './4_settings/MapSettingsSection';
 import { ThemeSettingsSection } from './4_settings/ThemeSettingsSection';
+import { LanguageSettingsSection } from './terjemahan_paused_menu/LanguageSettingsSection';
+import { useLanguage } from './terjemahan_paused_menu/languageLogic';
 import { ExitConfirmModal } from './ExitConfirmModal';
 import { LoadGameView } from './2_load_game/LoadGameView';
 import { deleteGameSave, fetchLoadableGameSaves, loadGameSave, type LoadGameSave } from './2_load_game/loadGameLogic';
@@ -25,6 +27,7 @@ interface GameMenuModalProps {
 
 export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick }: GameMenuModalProps) {
     const router = useRouter();
+    const { t } = useLanguage();
     const [subview, setSubview] = useState<'menu' | 'load' | 'options'>('menu');
     const [saveFiles, setSaveFiles] = useState<LoadGameSave[]>([]);
     const [isLoadingSaves, setIsLoadingSaves] = useState(false);
@@ -135,7 +138,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                         onClick={onClose}
                                         className="paused-menu-action w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
-                                        Lanjutkan
+                                        {t('paused_menu.main.resume')}
                                     </button>
                                     <button
                                         onClick={() => {
@@ -145,13 +148,13 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                         data-tutorial="tombol-simpan"
                                         className="paused-menu-action w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
-                                        Simpan Permainan
+                                        {t('paused_menu.main.saveGame')}
                                     </button>
                                     <button
                                         onClick={handleOpenLoad}
                                         className="paused-menu-action w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
-                                        Muat Permainan
+                                        {t('paused_menu.main.loadGame')}
                                     </button>
                                     <button
                                         onClick={() => {
@@ -160,20 +163,20 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                         }}
                                         className="paused-menu-action w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
-                                        Mulai Ulang
+                                        {t('paused_menu.main.restart')}
                                     </button>
                                     <button
                                         onClick={() => setSubview('options')}
                                         className="paused-menu-action w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
-                                        Pengaturan
+                                        {t('paused_menu.main.settings')}
                                     </button>
                                     <button
                                         onClick={() => setShowKeywordModal(true)}
                                         className="paused-menu-action paused-menu-keyboard-action w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99] flex items-center justify-center gap-2"
                                     >
                                         <Keyboard className="w-4 h-4 text-root-accent" />
-                                        <span>Pintasan Keyboard</span>
+                                        <span>{t('paused_menu.main.keyboardShortcuts')}</span>
                                     </button>
                                     </div>
                                 </div>
@@ -183,7 +186,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                         onClick={handleExitGame}
                                         className="paused-menu-action w-full bg-root-canvas hover:bg-rose-500/10 active:bg-rose-500/20 border border-rose-500/30 hover:border-rose-500/60 rounded py-3.5 text-center text-root-text hover:text-rose-300 font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(244,63,94,0.15)] active:scale-[0.99]"
                                     >
-                                        Keluar Permainan
+                                        {t('paused_menu.main.exitGame')}
                                     </button>
                                 </div>
                             </div>
@@ -203,14 +206,18 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                         {/* View: OPTIONS CONFIG */}
                         {subview === 'options' && (
                             <div className="flex-1 flex flex-col justify-between">
-                                <PausedMenuHeader title="Pengaturan" onBack={() => setSubview('menu')} backLabel="Kembali ke menu jeda" />
+                                <PausedMenuHeader
+                                    title={t('paused_menu.settings.title')}
+                                    onBack={() => setSubview('menu')}
+                                    backLabel={t('paused_menu.settings.backLabel')}
+                                />
 
                                 <div className="flex-1 space-y-6 text-left shrink-0">
                                     {/* Option: Music Volume */}
                                     <div className="space-y-2">
                                         <label className="text-[11px] font-black text-root-text uppercase tracking-wider flex items-center gap-1.5">
                                             <Music className="w-3.5 h-3.5 text-root-accent" />
-                                            <span>Volume Musik ({musicVol}%)</span>
+                                            <span>{t('paused_menu.settings.musicVolume', { value: musicVol })}</span>
                                         </label>
                                         <input
                                             type="range"
@@ -230,7 +237,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                     <div className="space-y-2">
                                         <label className="text-[11px] font-black text-root-text uppercase tracking-wider flex items-center gap-1.5">
                                             <Volume2 className="w-3.5 h-3.5 text-root-accent" />
-                                            <span>Efek Suara ({sfxVol}%)</span>
+                                            <span>{t('paused_menu.settings.sfxVolume', { value: sfxVol })}</span>
                                         </label>
                                         <input
                                             type="range"
@@ -250,7 +257,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                     <div className="space-y-2">
                                         <label className="text-[11px] font-black text-root-text uppercase tracking-wider flex items-center gap-1.5">
                                             <Monitor className="w-3.5 h-3.5 text-root-accent" />
-                                            <span>Resolusi Layar</span>
+                                            <span>{t('paused_menu.settings.resolution')}</span>
                                         </label>
                                         <select
                                             value={resolution}
@@ -264,6 +271,9 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                     </div>
 
                                     <ThemeSettingsSection />
+
+                                    {/* Pengaturan Bahasa */}
+                                    <LanguageSettingsSection />
 
                                     {/* Pengaturan Peta (Batas Negara vs Kota) */}
                                     <MapSettingsSection />
@@ -294,10 +304,10 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                 isOpen={showMainMenuConfirm}
                 onClose={() => setShowMainMenuConfirm(false)}
                 onConfirm={executeMainMenu}
-                title="Keluar Permainan?"
-                subtitle="KONFIRMASI KELUAR"
-                message="Anda akan kembali ke Menu Utama. Progres yang belum disimpan akan hilang."
-                confirmText="Ya, Keluar Permainan"
+                title={t('paused_menu.exitModal.mainMenuTitle')}
+                subtitle={t('paused_menu.exitModal.mainMenuSubtitle')}
+                message={t('paused_menu.exitModal.mainMenuMessage')}
+                confirmText={t('paused_menu.exitModal.mainMenuConfirm')}
             />
         </React.Fragment>,
         document.body

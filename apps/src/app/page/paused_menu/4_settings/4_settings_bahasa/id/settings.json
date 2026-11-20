@@ -1,0 +1,32 @@
+{
+  "title": "Pengaturan",
+  "backToPausedMenu": "Kembali ke menu jeda",
+  "audio": {
+    "musicVolume": "Volume Musik ({value}%)",
+    "sfxVolume": "Efek Suara ({value}%)"
+  },
+  "display": {
+    "resolution": "Resolusi Layar"
+  },
+  "theme": {
+    "title": "Tema Tampilan",
+    "dark": "Gelap",
+    "light": "Terang"
+  },
+  "map": {
+    "title": "Tampilan Garis & Kota Peta",
+    "subtitle": "MAP DISPLAY",
+    "bordersOnly": "Hanya Batas Negara",
+    "all": "Semua Detail",
+    "showProvinceBorders": "Garis Batas Provinsi",
+    "showMajorCities": "Kota-Kota Besar",
+    "showCapitals": "Ibu Kota"
+  },
+  "language": {
+    "title": "Pengaturan Bahasa",
+    "subtitle": "LANGUAGE SELECTOR",
+    "selectDesc": "Pilih bahasa tampilan antarmuka dan teks game.",
+    "current": "Bahasa Aktif",
+    "saved": "Pilihan bahasa tersimpan"
+  }
+}

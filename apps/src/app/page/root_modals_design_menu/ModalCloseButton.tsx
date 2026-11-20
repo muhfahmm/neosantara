@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { X } from 'lucide-react';
+import { useLanguage } from '../paused_menu/terjemahan_paused_menu/languageLogic';
 
 export interface ModalCloseButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     ariaLabel?: string;
@@ -18,12 +19,14 @@ function getBorderOnlyHoverClasses(className: string) {
 
 export function ModalCloseButton({
     onClick,
-    ariaLabel = 'Tutup modal',
+    ariaLabel,
     className = '',
     appearance = 'standard',
     children,
     ...buttonProps
 }: ModalCloseButtonProps) {
+    const { t } = useLanguage();
+    const defaultAriaLabel = ariaLabel ?? t('common.close');
     const closeButtonClassName = getBorderOnlyHoverClasses(className);
     const sharedModalCloseClasses =
         'root-modal-close-button inline-flex shrink-0 cursor-pointer items-center justify-center gap-1 rounded-xl border border-root-accent/30 bg-root-surface p-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-root-subtle shadow-sm transition-all hover:text-root-accent hover:border-root-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent focus-visible:ring-offset-2 focus-visible:ring-offset-root-canvas lg:p-2 lg:text-xs';
@@ -34,7 +37,7 @@ export function ModalCloseButton({
                 {...buttonProps}
                 type={buttonProps.type ?? 'button'}
                 onClick={onClick}
-                aria-label={buttonProps['aria-label'] ?? ariaLabel}
+                aria-label={buttonProps['aria-label'] ?? defaultAriaLabel}
                 className={`${sharedModalCloseClasses} ${closeButtonClassName} !rounded-lg`}
             >
                 {children}
@@ -47,7 +50,7 @@ export function ModalCloseButton({
             <button
                 type="button"
                 onClick={onClick}
-                aria-label={ariaLabel}
+                aria-label={defaultAriaLabel}
                 className={`${sharedModalCloseClasses} p-1.5 text-root-accent ${closeButtonClassName} !rounded-lg`}
             >
                 <X aria-hidden="true" className="h-4 w-4" />
@@ -59,10 +62,10 @@ export function ModalCloseButton({
         <button
             type="button"
             onClick={onClick}
-            aria-label={ariaLabel}
+            aria-label={defaultAriaLabel}
             className={`${sharedModalCloseClasses} ${closeButtonClassName} !rounded-lg`}
         >
-            <span className="pl-1 text-[10px] font-semibold uppercase tracking-[0.2em] lg:text-xs">{children ?? 'Tutup'}</span>
+            <span className="pl-1 text-[10px] font-semibold uppercase tracking-[0.2em] lg:text-xs">{children ?? t('common.close')}</span>
             <X aria-hidden="true" className="h-4 w-4" />
         </button>
     );

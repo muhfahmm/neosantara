@@ -1,0 +1,32 @@
+{
+  "menu": "Menú",
+  "profile": "Perfil",
+  "statusBar": {
+    "gems": "GEMAS",
+    "kesejahteraan": "BIENESTAR",
+    "peringkat": "RANGO",
+    "kepuasan": "APROBACIÓN",
+    "kasNegara": "TESORO",
+    "populasi": "POBLACIÓN",
+    "fpsMonitor": "MONITOR FPS"
+  },
+  "tooltips": {
+    "gems": "Haz clic para abrir la Tienda de Gemas",
+    "gemsTitle": "Saldo de Gemas del Jugador",
+    "gemsDesc": "Haz clic para comprar gemas en la tienda.",
+    "kesejahteraan": "Haz clic para ver detalles de bienestar",
+    "peringkat": "Haz clic para ver detalles de rango",
+    "kepuasan": "Haz clic para ver detalles de aprobación",
+    "kasNegara": "Haz clic para abrir la Tienda del Tesoro (NEO)",
+    "kasNegaraTitle": "Presupuesto del Tesoro Nacional",
+    "kasNegaraDesc": "Haz clic para recargar el tesoro en la Tienda NEO.",
+    "populasi": "Haz clic para ver detalles de población",
+    "fps": "Abrir detalles del monitor FPS"
+  },
+  "actions": {
+    "quickSave": "Guardado Rápido",
+    "restart": "Reiniciar",
+    "openMenu": "Abrir Menú de Pausa",
+    "zoom": "Zoom"
+  }
+}

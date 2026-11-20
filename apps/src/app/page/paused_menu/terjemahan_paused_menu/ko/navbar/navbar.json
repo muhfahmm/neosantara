@@ -1,0 +1,32 @@
+{
+  "menu": "메뉴",
+  "profile": "프로필",
+  "statusBar": {
+    "gems": "젬",
+    "kesejahteraan": "복지",
+    "peringkat": "순위",
+    "kepuasan": "만족도",
+    "kasNegara": "국고",
+    "populasi": "인구",
+    "fpsMonitor": "FPS 모니터"
+  },
+  "tooltips": {
+    "gems": "클릭하여 젬 상점 열기",
+    "gemsTitle": "보유 젬 잔액",
+    "gemsDesc": "클릭하여 젬 상점에서 젬을 구매합니다.",
+    "kesejahteraan": "클릭하여 복지 세부 정보 보기",
+    "peringkat": "클릭하여 순위 세부 정보 보기",
+    "kepuasan": "클릭하여 만족도 세부 정보 보기",
+    "kasNegara": "클릭하여 국고 상점 (NEO) 열기",
+    "kasNegaraTitle": "국가 재정 예산",
+    "kasNegaraDesc": "클릭하여 NEO 상점에서 국고를 충전합니다.",
+    "populasi": "클릭하여 인구 세부 정보 보기",
+    "fps": "FPS 모니터 세부 정보 열기"
+  },
+  "actions": {
+    "quickSave": "빠른 저장",
+    "restart": "다시 시작",
+    "openMenu": "일시 정지 메뉴 열기",
+    "zoom": "확대/축소"
+  }
+}

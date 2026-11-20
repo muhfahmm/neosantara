@@ -1,0 +1,78 @@
+{
+  "main": {
+    "resume": "Fortsetzen",
+    "saveGame": "Spiel Speichern",
+    "loadGame": "Spiel Laden",
+    "restart": "Neustart",
+    "settings": "Einstellungen",
+    "keyboardShortcuts": "Tastaturkürzel",
+    "exitGame": "Spiel Beenden"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "backLabel": "Zurück zum Pausemenü",
+    "musicVolume": "Musiklautstärke ({value}%)",
+    "sfxVolume": "Soundeffekte ({value}%)",
+    "resolution": "Bildschirmauflösung",
+    "themeTitle": "Erscheinungsbild",
+    "themeDark": "Dunkel",
+    "themeLight": "Hell",
+    "mapDisplayTitle": "Kartenlinien & Städtelandschaft",
+    "mapDisplayBadge": "MAP DISPLAY",
+    "mapBordersOnly": "Nur Landesgrenzen",
+    "mapAllDetails": "Alle Details",
+    "mapProvinceBorders": "Provinzgrenzen",
+    "mapMajorCities": "Großstädte",
+    "mapCapitals": "Hauptstädte",
+    "languageTitle": "Spracheinstellungen",
+    "languageSubtitle": "LANGUAGE SELECTOR",
+    "languageDesc": "Wählen Sie die Sprache für Oberfläche und Texte."
+  },
+  "saveGameModal": {
+    "title": "Spiel Speichern",
+    "newSlotTitle": "Neuen Speicherplatz erstellen",
+    "backLabel": "Zurück zum Pausemenü",
+    "newSlotButton": "Neuer Slot",
+    "loading": "Lade Speicherdaten...",
+    "empty": "Keine vorherigen Speicherstände vorhanden.",
+    "saveNamePlaceholder": "Speicherstandname eingeben...",
+    "saveButton": "Speichern",
+    "savingButton": "Speichern...",
+    "overwriteWarning": "Dieser Speicherstand wird überschrieben. Fortfahren?"
+  },
+  "loadGameModal": {
+    "title": "Spiel Laden",
+    "loading": "Lade Speicherdaten...",
+    "emptyTitle": "KEINE SPEICHERDATEN GEFUNDEN",
+    "emptyDesc": "Speichern Sie zuerst Ihr Spiel über die Schaltfläche „Spiel Speichern“.",
+    "deleteTitle": "Spielstand Löschen",
+    "confirmDelete": "Möchten Sie diesen Spielstand wirklich dauerhaft löschen?"
+  },
+  "restartModal": {
+    "title": "Fortschritt zurücksetzen?",
+    "backLabel": "Zurück zum Pausemenü",
+    "confirmTitle": "Sind Sie sicher?",
+    "description": "Alle Zeitfortschritte, Budgets und Simulationsdaten werden zurückgesetzt. Dies kann nicht rückgängig gemacht werden.",
+    "cancelButton": "Abbrechen",
+    "confirmButton": "Zurücksetzen"
+  },
+  "exitModal": {
+    "defaultTitle": "Simulationssitzung beenden?",
+    "defaultSubtitle": "TERMINIERUNGSPROTOKOLL",
+    "defaultMessage": "Möchten Sie NEOSANTARA wirklich verlassen? Stellen Sie sicher, dass Ihr Fortschritt gespeichert ist.",
+    "defaultConfirm": "Spiel Beenden",
+    "mainMenuTitle": "Spiel Beenden?",
+    "mainMenuSubtitle": "BEENDEN BESTÄTIGEN",
+    "mainMenuMessage": "Sie kehren zum Hauptmenü zurück. Nicht gespeicherter Fortschritt geht verloren.",
+    "mainMenuConfirm": "Ja, Spiel Beenden",
+    "backLabel": "Zurück zum Pausemenü"
+  },
+  "keyboardModal": {
+    "title": "Tastaturkürzel",
+    "backLabel": "Zurück zum Pausemenü",
+    "searchPlaceholder": "Tasten oder Aktionen suchen...",
+    "searchAria": "Tastaturkürzel suchen",
+    "clearSearchAria": "Suche löschen",
+    "categoryAll": "Alle"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "simulation": {
+    "title": "정부 시뮬레이션",
+    "gdp": "국내총생산 (GDP)",
+    "treasury": "국고",
+    "inflation": "인플레이션",
+    "stability": "정치적 안정성"
+  },
+  "geopolitics": {
+    "relations": "외교 관계",
+    "alliance": "동맹",
+    "treaty": "무역 조약",
+    "tensions": "지역 긴장"
+  },
+  "notification": {
+    "gameSaved": "게임이 저장되었습니다.",
+    "gameLoaded": "게임을 불러왔습니다.",
+    "autosave": "자동 저장이 완료되었습니다."
+  }
+}

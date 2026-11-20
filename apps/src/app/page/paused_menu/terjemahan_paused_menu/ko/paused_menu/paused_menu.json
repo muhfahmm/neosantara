@@ -1,0 +1,78 @@
+{
+  "main": {
+    "resume": "계속하기",
+    "saveGame": "게임 저장",
+    "loadGame": "게임 불러오기",
+    "restart": "다시 시작",
+    "settings": "설정",
+    "keyboardShortcuts": "키보드 단축키",
+    "exitGame": "게임 종료"
+  },
+  "settings": {
+    "title": "설정",
+    "backLabel": "일시 정지 메뉴로 돌아가기",
+    "musicVolume": "음악 볼륨 ({value}%)",
+    "sfxVolume": "효과음 볼륨 ({value}%)",
+    "resolution": "화면 해상도",
+    "themeTitle": "디스플레이 테마",
+    "themeDark": "어둡게",
+    "themeLight": "밝게",
+    "mapDisplayTitle": "지도 경계 및 도시 표시",
+    "mapDisplayBadge": "MAP DISPLAY",
+    "mapBordersOnly": "국경선만 표시",
+    "mapAllDetails": "모든 세부 정보",
+    "mapProvinceBorders": "도/주 경계선",
+    "mapMajorCities": "주요 도시",
+    "mapCapitals": "수도",
+    "languageTitle": "언어 설정",
+    "languageSubtitle": "LANGUAGE SELECTOR",
+    "languageDesc": "인터페이스 및 게임 텍스트 언어를 선택하세요."
+  },
+  "saveGameModal": {
+    "title": "게임 저장",
+    "newSlotTitle": "새 저장 슬롯 생성",
+    "backLabel": "일시 정지 메뉴로 돌아가기",
+    "newSlotButton": "새 슬롯",
+    "loading": "저장 데이터를 불러오는 중...",
+    "empty": "이전 저장 기록이 없습니다.",
+    "saveNamePlaceholder": "저장 파일 이름 입력...",
+    "saveButton": "저장",
+    "savingButton": "저장 중...",
+    "overwriteWarning": "이 저장 파일이 덮어쓰기됩니다. 계속하시겠습니까?"
+  },
+  "loadGameModal": {
+    "title": "게임 불러오기",
+    "loading": "저장 데이터를 불러오는 중...",
+    "emptyTitle": "저장된 게임이 없습니다",
+    "emptyDesc": "먼저 “게임 저장” 버튼으로 진행 상황을 저장하세요.",
+    "deleteTitle": "저장 파일 삭제",
+    "confirmDelete": "이 저장 파일을 영구적으로 삭제하시겠습니까?"
+  },
+  "restartModal": {
+    "title": "진행 상황을 초기화하시겠습니까?",
+    "backLabel": "일시 정지 메뉴로 돌아가기",
+    "confirmTitle": "확실합니까?",
+    "description": "모든 시간 진행, 예산 및 시뮬레이션 데이터가 초기화됩니다. 이 작업은 되돌릴 수 없습니다.",
+    "cancelButton": "취소",
+    "confirmButton": "초기화"
+  },
+  "exitModal": {
+    "defaultTitle": "시뮬레이션 세션을 종료하시겠습니까?",
+    "defaultSubtitle": "종료 프로토콜",
+    "defaultMessage": "NEOSANTARA를 종료하시겠습니까? 진행 상황이 모두 저장되었는지 확인하세요.",
+    "defaultConfirm": "게임 종료",
+    "mainMenuTitle": "게임을 종료하시겠습니까?",
+    "mainMenuSubtitle": "종료 확인",
+    "mainMenuMessage": "메인 메뉴로 돌아갑니다. 저장되지 않은 진행 상황은 손실됩니다.",
+    "mainMenuConfirm": "예, 게임 종료",
+    "backLabel": "일시 정지 메뉴로 돌아가기"
+  },
+  "keyboardModal": {
+    "title": "키보드 단축키",
+    "backLabel": "일시 정지 메뉴로 돌아가기",
+    "searchPlaceholder": "키 또는 기능 검색...",
+    "searchAria": "키보드 단축키 검색",
+    "clearSearchAria": "검색 지우기",
+    "categoryAll": "전체"
+  }
+}

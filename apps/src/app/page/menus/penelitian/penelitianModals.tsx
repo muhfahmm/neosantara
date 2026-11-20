@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
 import PenelitianSelectionModal, { SelectionCategoryKey } from './penelitianSelectionModal';
 import PenelitianPageModal, { CategoryKey } from './penelitianPageMenu';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 import { generateResearchChangeNotification } from '../inbox/logic/11_notifikasi_penelitian/researchChangeLogic';
 
@@ -29,6 +30,7 @@ export default function BottomLeftPenelitianIcon({
   isMenuButtonHidden = false,
   onResearchPageChange,
 }: BottomLeftPenelitianIconProps) {
+  const { t } = useLanguage();
   const [selectedFocus, setSelectedFocus] = useState<SelectionCategoryKey | null>(null);
   const viewportMode = useViewportMode();
   const isLandscapePhone = viewportMode === 'landscapePhone';
@@ -76,7 +78,7 @@ export default function BottomLeftPenelitianIcon({
       {!isMenuButtonHidden && typeof document !== 'undefined' && createPortal(
         <button
           onClick={onClick}
-          title="Penelitian - Riset dan Teknologi"
+          title={t('side_penelitian.title')}
           className="side-floating-btn side-btn-penelitian"
         >
           <img

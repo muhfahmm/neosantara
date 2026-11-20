@@ -1,0 +1,78 @@
+{
+  "main": {
+    "resume": "Resume",
+    "saveGame": "Save Game",
+    "loadGame": "Load Game",
+    "restart": "Restart",
+    "settings": "Settings",
+    "keyboardShortcuts": "Keyboard Shortcuts",
+    "exitGame": "Exit Game"
+  },
+  "settings": {
+    "title": "Settings",
+    "backLabel": "Back to paused menu",
+    "musicVolume": "Music Volume ({value}%)",
+    "sfxVolume": "Sound Effects ({value}%)",
+    "resolution": "Screen Resolution",
+    "themeTitle": "Display Theme",
+    "themeDark": "Dark",
+    "themeLight": "Light",
+    "mapDisplayTitle": "Map Borders & Cities Display",
+    "mapDisplayBadge": "MAP DISPLAY",
+    "mapBordersOnly": "Country Borders Only",
+    "mapAllDetails": "All Details",
+    "mapProvinceBorders": "Province Borders",
+    "mapMajorCities": "Major Cities",
+    "mapCapitals": "Capitals",
+    "languageTitle": "Language Settings",
+    "languageSubtitle": "LANGUAGE SELECTOR",
+    "languageDesc": "Choose your preferred display and game text language."
+  },
+  "saveGameModal": {
+    "title": "Save Game",
+    "newSlotTitle": "Create New Save Slot",
+    "backLabel": "Back to paused menu",
+    "newSlotButton": "New Slot",
+    "loading": "Loading save data...",
+    "empty": "No previous saves found.",
+    "saveNamePlaceholder": "Enter save name...",
+    "saveButton": "Save",
+    "savingButton": "Saving...",
+    "overwriteWarning": "This save will be overwritten. Proceed?"
+  },
+  "loadGameModal": {
+    "title": "Load Game",
+    "loading": "Loading save data...",
+    "emptyTitle": "NO SAVED GAMES FOUND",
+    "emptyDesc": "Save your game first using the “Save Game” button.",
+    "deleteTitle": "Delete Save File",
+    "confirmDelete": "Are you sure you want to permanently delete this save file?"
+  },
+  "restartModal": {
+    "title": "Reset Progress?",
+    "backLabel": "Back to paused menu",
+    "confirmTitle": "Are you sure?",
+    "description": "All time progress, budget, and simulation data will be reset to default. This action cannot be undone.",
+    "cancelButton": "Cancel",
+    "confirmButton": "Reset"
+  },
+  "exitModal": {
+    "defaultTitle": "End Simulation Session?",
+    "defaultSubtitle": "TERMINATION PROTOCOL",
+    "defaultMessage": "Are you sure you want to exit NEOSANTARA? Ensure all your simulation progress has been saved.",
+    "defaultConfirm": "Exit Game",
+    "mainMenuTitle": "Exit Game?",
+    "mainMenuSubtitle": "EXIT CONFIRMATION",
+    "mainMenuMessage": "You will return to Main Menu. Unsaved progress will be lost.",
+    "mainMenuConfirm": "Yes, Exit Game",
+    "backLabel": "Back to paused menu"
+  },
+  "keyboardModal": {
+    "title": "Keyboard Shortcuts",
+    "backLabel": "Back to paused menu",
+    "searchPlaceholder": "Search keys or actions (e.g. Map, Pause, Tab)...",
+    "searchAria": "Search keyboard shortcuts",
+    "clearSearchAria": "Clear search",
+    "categoryAll": "All"
+  }
+}

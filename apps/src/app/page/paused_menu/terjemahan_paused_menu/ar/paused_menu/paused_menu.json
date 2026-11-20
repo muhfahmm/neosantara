@@ -1,0 +1,78 @@
+{
+  "main": {
+    "resume": "استئناف",
+    "saveGame": "حفظ اللعبة",
+    "loadGame": "تحميل اللعبة",
+    "restart": "إعادة البدء",
+    "settings": "الإعدادات",
+    "keyboardShortcuts": "اختصارات لوحة المفاتيح",
+    "exitGame": "الخروج من اللعبة"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "backLabel": "العودة إلى قائمة الإيقاف المؤقت",
+    "musicVolume": "مستوى صوت الموسيقى ({value}%)",
+    "sfxVolume": "المؤثرات الصوتية ({value}%)",
+    "resolution": "دقة الشاشة",
+    "themeTitle": "مظهر الشاشة",
+    "themeDark": "داكن",
+    "themeLight": "فاتح",
+    "mapDisplayTitle": "عرض حدود الخريطة والمدن",
+    "mapDisplayBadge": "MAP DISPLAY",
+    "mapBordersOnly": "حدود الدولة فقط",
+    "mapAllDetails": "جميع التفاصيل",
+    "mapProvinceBorders": "حدود المقاطعات",
+    "mapMajorCities": "المدن الكبرى",
+    "mapCapitals": "العواصم",
+    "languageTitle": "إعدادات اللغة",
+    "languageSubtitle": "LANGUAGE SELECTOR",
+    "languageDesc": "اختر لغة الواجهة ونصوص اللعبة."
+  },
+  "saveGameModal": {
+    "title": "حفظ اللعبة",
+    "newSlotTitle": "إنشاء خانة حفظ جديدة",
+    "backLabel": "العودة إلى قائمة الإيقاف المؤقت",
+    "newSlotButton": "خانة جديدة",
+    "loading": "جارٍ تحميل بيانات الحفظ...",
+    "empty": "لا توجد ملفات حفظ سابقة.",
+    "saveNamePlaceholder": "أدخل اسم الحفظ...",
+    "saveButton": "حفظ",
+    "savingButton": "جارٍ الحفظ...",
+    "overwriteWarning": "سيتم استبدال ملف الحفظ هذا. هل تريد المتابعة؟"
+  },
+  "loadGameModal": {
+    "title": "تحميل اللعبة",
+    "loading": "جارٍ تحميل بيانات الحفظ...",
+    "emptyTitle": "لا توجد بيانات حفظ",
+    "emptyDesc": "احفظ لعبتك أولاً من خلال زر «حفظ اللعبة».",
+    "deleteTitle": "حذف ملف الحفظ",
+    "confirmDelete": "هل أنت متأكد من رغبتك في حذف ملف الحفظ هذا نهائياً؟"
+  },
+  "restartModal": {
+    "title": "إعادة تعيين التقدم؟",
+    "backLabel": "العودة إلى قائمة الإيقاف المؤقت",
+    "confirmTitle": "هل أنت متأكد؟",
+    "description": "سيتم إعادة ضبط جميع بيانات الوقت والميزانية والمحاكاة إلى الحالة الأولية. لا يمكن التراجع عن هذا الإجراء.",
+    "cancelButton": "إلغاء",
+    "confirmButton": "إعادة تعيين"
+  },
+  "exitModal": {
+    "defaultTitle": "إنهاء جلسة المحاكاة؟",
+    "defaultSubtitle": "بروتوكول الإنهاء",
+    "defaultMessage": "هل أنت متأكد أنك تريد الخروج من NEOSANTARA؟ تأكد من حفظ تقدم المحاكاة الخاص بك.",
+    "defaultConfirm": "الخروج من اللعبة",
+    "mainMenuTitle": "الخروج من اللعبة؟",
+    "mainMenuSubtitle": "تأكيد الخروج",
+    "mainMenuMessage": "ستعود إلى القائمة الرئيسية. سيتم فقدان التقدم غير المحفوظ.",
+    "mainMenuConfirm": "نعم، اخرج من اللعبة",
+    "backLabel": "العودة إلى قائمة الإيقاف المؤقت"
+  },
+  "keyboardModal": {
+    "title": "اختصارات لوحة المفاتيح",
+    "backLabel": "العودة إلى قائمة الإيقاف المؤقت",
+    "searchPlaceholder": "ابحث عن المفاتيح أو الإجراءات...",
+    "searchAria": "البحث في الاختصارات",
+    "clearSearchAria": "مسح البحث",
+    "categoryAll": "الكل"
+  }
+}

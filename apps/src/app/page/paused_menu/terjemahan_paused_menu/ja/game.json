@@ -1,0 +1,20 @@
+{
+  "simulation": {
+    "title": "国家シミュレーション",
+    "gdp": "国内総生産 (GDP)",
+    "treasury": "国庫",
+    "inflation": "インフレ率",
+    "stability": "政治的安定"
+  },
+  "geopolitics": {
+    "relations": "外交関係",
+    "alliance": "同盟",
+    "treaty": "通商条約",
+    "tensions": "地域緊張"
+  },
+  "notification": {
+    "gameSaved": "ゲームを保存しました。",
+    "gameLoaded": "ゲームを読み込みました。",
+    "autosave": "オートセーブが完了しました。"
+  }
+}

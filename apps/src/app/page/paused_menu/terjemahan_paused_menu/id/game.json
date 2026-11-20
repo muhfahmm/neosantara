@@ -1,0 +1,20 @@
+{
+  "simulation": {
+    "title": "Simulasi Pemerintahan",
+    "gdp": "PDB Nasional",
+    "treasury": "Kas Negara",
+    "inflation": "Inflasi",
+    "stability": "Stabilitas Politik"
+  },
+  "geopolitics": {
+    "relations": "Hubungan Diplomatik",
+    "alliance": "Aliansi",
+    "treaty": "Perjanjian Dagang",
+    "tensions": "Ketegangan Wilayah"
+  },
+  "notification": {
+    "gameSaved": "Permainan berhasil disimpan.",
+    "gameLoaded": "Permainan berhasil dimuat.",
+    "autosave": "Penyimpanan otomatis selesai."
+  }
+}

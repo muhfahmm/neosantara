@@ -1,0 +1,32 @@
+{
+  "title": "Settings",
+  "backToPausedMenu": "Back to paused menu",
+  "audio": {
+    "musicVolume": "Music Volume ({value}%)",
+    "sfxVolume": "Sound Effects ({value}%)"
+  },
+  "display": {
+    "resolution": "Screen Resolution"
+  },
+  "theme": {
+    "title": "Display Theme",
+    "dark": "Dark",
+    "light": "Light"
+  },
+  "map": {
+    "title": "Map Borders & Cities Display",
+    "subtitle": "MAP DISPLAY",
+    "bordersOnly": "Country Borders Only",
+    "all": "All Details",
+    "showProvinceBorders": "Province Borders",
+    "showMajorCities": "Major Cities",
+    "showCapitals": "Capitals"
+  },
+  "language": {
+    "title": "Language Settings",
+    "subtitle": "LANGUAGE SELECTOR",
+    "selectDesc": "Choose your preferred display and game text language.",
+    "current": "Current Language",
+    "saved": "Language preference saved"
+  }
+}

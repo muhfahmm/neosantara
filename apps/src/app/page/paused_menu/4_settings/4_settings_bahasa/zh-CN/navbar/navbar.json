@@ -1,0 +1,32 @@
+{
+  "menu": "菜单",
+  "profile": "个人资料",
+  "statusBar": {
+    "gems": "宝石",
+    "kesejahteraan": "社会福利",
+    "peringkat": "排名",
+    "kepuasan": "满意度",
+    "kasNegara": "国库资金",
+    "populasi": "总人口",
+    "fpsMonitor": "帧率监控"
+  },
+  "tooltips": {
+    "gems": "点击打开宝石商店",
+    "gemsTitle": "玩家宝石余额",
+    "gemsDesc": "点击前往商店购买宝石。",
+    "kesejahteraan": "点击查看福利详情",
+    "peringkat": "点击查看排名详情",
+    "kepuasan": "点击查看民众满意度详情",
+    "kasNegara": "点击打开国库资金商店 (NEO)",
+    "kasNegaraTitle": "国家预算资金",
+    "kasNegaraDesc": "点击在 NEO 商店中充实国库。",
+    "populasi": "点击查看人口详情",
+    "fps": "打开帧率监控详情"
+  },
+  "actions": {
+    "quickSave": "快速保存",
+    "restart": "重新开始",
+    "openMenu": "打开暂停菜单",
+    "zoom": "缩放"
+  }
+}

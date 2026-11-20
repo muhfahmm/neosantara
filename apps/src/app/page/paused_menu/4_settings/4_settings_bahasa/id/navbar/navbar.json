@@ -1,0 +1,32 @@
+{
+  "menu": "Menu",
+  "profile": "Profil",
+  "statusBar": {
+    "gems": "GEMS",
+    "kesejahteraan": "KESEJAHTERAAN",
+    "peringkat": "PERINGKAT",
+    "kepuasan": "KEPUASAN",
+    "kasNegara": "KAS NEGARA",
+    "populasi": "POPULASI",
+    "fpsMonitor": "FPS MONITOR"
+  },
+  "tooltips": {
+    "gems": "Klik untuk membuka Toko Gems",
+    "gemsTitle": "Saldo Gems Pemain",
+    "gemsDesc": "Klik untuk membeli Gems di Toko Permata.",
+    "kesejahteraan": "Klik untuk melihat detail kesejahteraan",
+    "peringkat": "Klik untuk melihat detail peringkat",
+    "kepuasan": "Klik untuk melihat detail kepuasan",
+    "kasNegara": "Klik untuk membuka Toko Kas Negara (NEO)",
+    "kasNegaraTitle": "Anggaran Kas Negara",
+    "kasNegaraDesc": "Klik untuk menambah kas negara di Toko NEO.",
+    "populasi": "Klik untuk melihat detail populasi",
+    "fps": "Buka detail monitor FPS"
+  },
+  "actions": {
+    "quickSave": "Simpan Cepat",
+    "restart": "Mulai Ulang",
+    "openMenu": "Buka Menu Jeda",
+    "zoom": "Zoom"
+  }
+}

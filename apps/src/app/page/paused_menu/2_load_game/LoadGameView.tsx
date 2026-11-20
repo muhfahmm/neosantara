@@ -4,6 +4,7 @@ import React from 'react';
 import { Calendar, Globe, Trash2 } from 'lucide-react';
 import type { LoadGameSave } from './loadGameLogic';
 import { PausedMenuHeader } from '../../root_modals_design_menu/PausedMenuHeader';
+import { useLanguage } from '../terjemahan_paused_menu/languageLogic';
 
 interface LoadGameViewProps {
     saves: LoadGameSave[];
@@ -14,16 +15,28 @@ interface LoadGameViewProps {
 }
 
 export function LoadGameView({ saves, isLoading, onBack, onLoad, onDelete }: LoadGameViewProps) {
+    const { t } = useLanguage();
+
     return (
         <div className="flex flex-1 flex-col justify-between overflow-hidden">
-            <PausedMenuHeader title="Muat Permainan" onBack={onBack} />
+            <PausedMenuHeader
+                title={t('paused_menu.loadGameModal.title')}
+                onBack={onBack}
+                backLabel={t('paused_menu.settings.backLabel')}
+            />
             <div className="flex-1 space-y-3 overflow-y-auto pr-1">
                 {isLoading ? (
-                    <p className="py-16 text-center text-xs font-bold text-root-subtle">Memuat data simpanan...</p>
+                    <p className="py-16 text-center text-xs font-bold text-root-subtle">
+                        {t('paused_menu.loadGameModal.loading')}
+                    </p>
                 ) : saves.length === 0 ? (
                     <div className="py-20 text-center">
-                        <p className="text-xs font-bold tracking-wider text-root-subtle">TIDAK ADA DATA SIMPANAN</p>
-                        <p className="mx-auto mt-2 max-w-[220px] text-[10px] text-root-subtle/70">Simpan permainan Anda melalui tombol “Simpan Permainan” terlebih dahulu.</p>
+                        <p className="text-xs font-bold tracking-wider text-root-subtle">
+                            {t('paused_menu.loadGameModal.emptyTitle')}
+                        </p>
+                        <p className="mx-auto mt-2 max-w-[220px] text-[10px] text-root-subtle/70">
+                            {t('paused_menu.loadGameModal.emptyDesc')}
+                        </p>
                     </div>
                 ) : saves.map(save => (
                     <div
@@ -50,7 +63,7 @@ export function LoadGameView({ saves, isLoading, onBack, onLoad, onDelete }: Loa
                         <button
                             type="button"
                             onClick={event => onDelete(save.id, event)}
-                            title="Hapus Save File"
+                            title={t('paused_menu.loadGameModal.deleteTitle')}
                             className="z-10 shrink-0 rounded bg-rose-500/10 p-1.5 text-rose-400 hover:bg-rose-500/20 cursor-pointer"
                         >
                             <Trash2 className="h-3.5 w-3.5" />

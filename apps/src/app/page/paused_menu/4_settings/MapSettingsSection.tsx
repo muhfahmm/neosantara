@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Globe, Building2, MapPin, Layers } from 'lucide-react';
+import { useLanguage } from '../terjemahan_paused_menu/languageLogic';
 import {
     MapDisplaySettings,
     getMapDisplaySettings,
@@ -10,6 +11,7 @@ import {
 } from './mapSettingsLogic';
 
 export function MapSettingsSection() {
+    const { t } = useLanguage();
     const [settings, setSettings] = useState<MapDisplaySettings>(DEFAULT_MAP_DISPLAY_SETTINGS);
 
     useEffect(() => {
@@ -49,9 +51,11 @@ export function MapSettingsSection() {
             <div className="flex items-center justify-between">
                 <label className="text-[11px] font-black text-root-text uppercase tracking-wider flex items-center gap-1.5">
                     <Globe className="w-3.5 h-3.5 text-root-accent" />
-                    <span>Tampilan Garis & Kota Peta</span>
+                    <span>{t('paused_menu.settings.mapDisplayTitle')}</span>
                 </label>
-                <span className="text-[9px] font-mono text-root-accent/70 uppercase">MAP DISPLAY</span>
+                <span className="text-[9px] font-mono text-root-accent/70 uppercase">
+                    {t('paused_menu.settings.mapDisplayBadge')}
+                </span>
             </div>
 
             {/* Mode Cepat (Preset) */}
@@ -66,7 +70,7 @@ export function MapSettingsSection() {
                     }`}
                 >
                     <Globe className="w-3.5 h-3.5" />
-                    <span>Hanya Batas Negara</span>
+                    <span>{t('paused_menu.settings.mapBordersOnly')}</span>
                 </button>
 
                 <button
@@ -79,7 +83,7 @@ export function MapSettingsSection() {
                     }`}
                 >
                     <Building2 className="w-3.5 h-3.5" />
-                    <span>Lengkap dengan Kota</span>
+                    <span>{t('paused_menu.settings.mapAllDetails')}</span>
                 </button>
             </div>
 
@@ -92,7 +96,9 @@ export function MapSettingsSection() {
                 >
                     <div className="flex items-center gap-2">
                         <Layers className="w-3.5 h-3.5 text-root-accent" />
-                        <span className="text-[11px] font-semibold text-gray-200">Garis Batas Provinsi / Kota</span>
+                        <span className="text-[11px] font-semibold text-gray-200">
+                            {t('paused_menu.settings.mapProvinceBorders')}
+                        </span>
                     </div>
                     <div className={`w-8 h-4.5 flex items-center rounded-full p-0.5 transition-colors ${
                         settings.showProvinceBorders ? 'bg-root-accent' : 'bg-root-subtle/50'
@@ -110,7 +116,9 @@ export function MapSettingsSection() {
                 >
                     <div className="flex items-center gap-2">
                         <Building2 className="w-3.5 h-3.5 text-amber-400" />
-                        <span className="text-[11px] font-semibold text-gray-200">Pin Kota-Kota Besar</span>
+                        <span className="text-[11px] font-semibold text-gray-200">
+                            {t('paused_menu.settings.mapMajorCities')}
+                        </span>
                     </div>
                     <div className={`w-8 h-4.5 flex items-center rounded-full p-0.5 transition-colors ${
                         settings.showMajorCities ? 'bg-root-accent' : 'bg-root-subtle/50'
@@ -128,7 +136,9 @@ export function MapSettingsSection() {
                 >
                     <div className="flex items-center gap-2">
                         <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-                        <span className="text-[11px] font-semibold text-gray-200">Pin Ibukota Negara</span>
+                        <span className="text-[11px] font-semibold text-gray-200">
+                            {t('paused_menu.settings.mapCapitals')}
+                        </span>
                     </div>
                     <div className={`w-8 h-4.5 flex items-center rounded-full p-0.5 transition-colors ${
                         settings.showCapitals ? 'bg-root-accent' : 'bg-root-subtle/50'

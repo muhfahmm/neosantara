@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { Newspaper, X, Swords, Flag, Coins, ShieldAlert, Sparkles } from 'lucide-react';
 import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
 import { InvasionNewsData } from './logic/1_berita_invasi/beritaInvasiLogic';
 import { AnnexationNewsData } from './logic/2_berita_aneksasi/beritaAneksasiLogic';
@@ -84,6 +85,7 @@ export default function TopRightNewsIcon({
   onOpenNewsCountry,
   isMenuButtonHidden = false,
 }: TopRightNewsIconProps) {
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const viewportMode = useViewportMode();
   const isLandscapePhone = viewportMode === 'landscapePhone';
@@ -315,7 +317,7 @@ export default function TopRightNewsIcon({
           <div className="root-modal-util-52b6b298fe news-modal-typography font-sans">
 
             <RootInfoModalHeader
-              title="Berita & Update Geopolitik"
+              title={t('side_news.title')}
               onClose={onClose}
               icon={<Newspaper />}
               size="standard"
@@ -325,7 +327,7 @@ export default function TopRightNewsIcon({
                     onClick={onClearNews}
                     className="px-2.5 py-1 rounded-lg text-[10px] font-bold text-rose-400 hover:bg-rose-500/10 border border-rose-500/30 uppercase tracking-wider transition-all cursor-pointer shrink-0"
                   >
-                    Bersihkan
+                    {t('side_news.clearNews')}
                   </button>
                 ) : undefined
               }
@@ -336,7 +338,9 @@ export default function TopRightNewsIcon({
               {displayNews.length === 0 ? (
                 <div className="flex flex-col items-center justify-center text-center space-y-4 max-w-md mx-auto my-auto py-16">
                   <Newspaper className="h-16 w-16 text-root-accent/20" />
-                  <h4 className="text-lg font-bold text-root-accent uppercase">Tidak Ada Berita</h4>
+                  <h4 className="text-lg font-bold text-root-accent uppercase">
+                    {t('side_news.empty')}
+                  </h4>
                 </div>
               ) : (
                 <div className="space-y-4">

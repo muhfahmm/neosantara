@@ -1,0 +1,78 @@
+{
+  "main": {
+    "resume": "Reanudar",
+    "saveGame": "Guardar Partida",
+    "loadGame": "Cargar Partida",
+    "restart": "Reiniciar",
+    "settings": "Ajustes",
+    "keyboardShortcuts": "Atajos de Teclado",
+    "exitGame": "Salir del Juego"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "backLabel": "Volver al menú de pausa",
+    "musicVolume": "Volumen de Música ({value}%)",
+    "sfxVolume": "Efectos de Sonido ({value}%)",
+    "resolution": "Resolución de Pantalla",
+    "themeTitle": "Tema de Pantalla",
+    "themeDark": "Oscuro",
+    "themeLight": "Claro",
+    "mapDisplayTitle": "Líneas de Mapa y Ciudades",
+    "mapDisplayBadge": "MAP DISPLAY",
+    "mapBordersOnly": "Solo Fronteras",
+    "mapAllDetails": "Todos los Detalles",
+    "mapProvinceBorders": "Fronteras Provinciales",
+    "mapMajorCities": "Ciudades Principales",
+    "mapCapitals": "Capitales",
+    "languageTitle": "Ajustes de Idioma",
+    "languageSubtitle": "LANGUAGE SELECTOR",
+    "languageDesc": "Elige el idioma de la interfaz y del juego."
+  },
+  "saveGameModal": {
+    "title": "Guardar Partida",
+    "newSlotTitle": "Crear Nueva Ranura",
+    "backLabel": "Volver al menú de pausa",
+    "newSlotButton": "Nueva Ranura",
+    "loading": "Cargando datos guardados...",
+    "empty": "No hay partidas guardadas.",
+    "saveNamePlaceholder": "Nombre de la partida...",
+    "saveButton": "Guardar",
+    "savingButton": "Guardando...",
+    "overwriteWarning": "Esta partida se sobrescribirá. ¿Continuar?"
+  },
+  "loadGameModal": {
+    "title": "Cargar Partida",
+    "loading": "Cargando datos guardados...",
+    "emptyTitle": "NO HAY PARTIDAS GUARDADAS",
+    "emptyDesc": "Guarda tu juego primero con el botón “Guardar Partida”.",
+    "deleteTitle": "Eliminar Partida",
+    "confirmDelete": "¿Estás seguro de que deseas eliminar este archivo de forma permanente?"
+  },
+  "restartModal": {
+    "title": "¿Reiniciar Progreso?",
+    "backLabel": "Volver al menú de pausa",
+    "confirmTitle": "¿Estás seguro?",
+    "description": "Todo el progreso, presupuesto y datos de simulación se restablecerán. Esta acción no se puede deshacer.",
+    "cancelButton": "Cancelar",
+    "confirmButton": "Reiniciar"
+  },
+  "exitModal": {
+    "defaultTitle": "¿Finalizar Sesión de Simulación?",
+    "defaultSubtitle": "PROTOCOLO DE TERMINACIÓN",
+    "defaultMessage": "¿Seguro que deseas salir de NEOSANTARA? Asegúrate de haber guardado tu progreso.",
+    "defaultConfirm": "Salir del Juego",
+    "mainMenuTitle": "¿Salir del Juego?",
+    "mainMenuSubtitle": "CONFIRMAR SALIDA",
+    "mainMenuMessage": "Volverás al Menú Principal. El progreso no guardado se perderá.",
+    "mainMenuConfirm": "Sí, Salir del Juego",
+    "backLabel": "Volver al menú de pausa"
+  },
+  "keyboardModal": {
+    "title": "Atajos de Teclado",
+    "backLabel": "Volver al menú de pausa",
+    "searchPlaceholder": "Buscar teclas o funciones...",
+    "searchAria": "Buscar atajos de teclado",
+    "clearSearchAria": "Borrar búsqueda",
+    "categoryAll": "Todos"
+  }
+}

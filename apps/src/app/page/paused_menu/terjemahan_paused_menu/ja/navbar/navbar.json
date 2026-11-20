@@ -1,0 +1,32 @@
+{
+  "menu": "メニュー",
+  "profile": "プロフィール",
+  "statusBar": {
+    "gems": "ジェム",
+    "kesejahteraan": "幸福度",
+    "peringkat": "ランキング",
+    "kepuasan": "支持率",
+    "kasNegara": "国庫資金",
+    "populasi": "総人口",
+    "fpsMonitor": "FPSモニター"
+  },
+  "tooltips": {
+    "gems": "クリックしてジェムショップを開く",
+    "gemsTitle": "所持ジェム残高",
+    "gemsDesc": "クリックしてジェムを購入します。",
+    "kesejahteraan": "クリックして幸福度の詳細を表示",
+    "peringkat": "クリックしてランキングの詳細を表示",
+    "kepuasan": "クリックして支持率の詳細を表示",
+    "kasNegara": "クリックして国庫ショップ (NEO) を開く",
+    "kasNegaraTitle": "国家予算",
+    "kasNegaraDesc": "クリックしてNEOショップで国庫を補充します。",
+    "populasi": "クリックして人口の詳細を表示",
+    "fps": "FPSモニターの詳細を開く"
+  },
+  "actions": {
+    "quickSave": "クイックセーブ",
+    "restart": "やり直し",
+    "openMenu": "ポーズメニューを開く",
+    "zoom": "ズーム"
+  }
+}
