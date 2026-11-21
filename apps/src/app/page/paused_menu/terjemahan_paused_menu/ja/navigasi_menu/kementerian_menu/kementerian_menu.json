@@ -1,0 +1,228 @@
+{
+  "header": {
+    "title": "閣僚評議会",
+    "close": "閣僚評議会を閉じる",
+    "info": "内閣の情報とガイド",
+    "sections": "閣僚評議会のセクション"
+  },
+  "capital": {
+    "change": "首都を移転 / 変更",
+    "changeShort": "変更",
+    "relocationTitle": "首都の移転",
+    "search": "都市を検索",
+    "searchPlaceholder": "都市を検索...",
+    "noCityMatch": "「{query}」に一致する都市はありません。",
+    "current": "現在の首都",
+    "select": "首都を選択",
+    "confirmClose": "首都移転の確認を閉じる",
+    "confirmTitle": "首都移転の確認",
+    "old": "旧首都",
+    "new": "新首都",
+    "relocationCost": "公式移転費用:",
+    "currentTreasury": "現在の国庫:",
+    "estimatedTreasury": "移転後の予想残高:",
+    "cooldownPolicy": "{years}年間のクールダウン期間。",
+    "cooldownNotice": "新しい首都を定めた後、次の日付まで再移転できません:",
+    "insufficientFunds": "国庫の残高が不足しているため、移転費用 {cost} NEO を支払えません。",
+    "set": "首都に設定"
+  },
+  "tabs": {
+    "kementerian": "省庁",
+    "keamanan": "治安",
+    "layanan": "サービス"
+  },
+  "level": "レベル {level}/{max}",
+  "dailyCost": "1日あたり {cost} NEO",
+  "tooltips": {
+    "currentLevel": "現在のレベル",
+    "downgrade": "クリックしてレベル {level} に下げる",
+    "jump": "レベル {level} へ直接アップグレード: {cost} NEO",
+    "negativeDaily": "このアップグレードにより日次収支が赤字になります",
+    "insufficientCash": "レベル {level} には資金が不足しています（必要額: {cost} NEO）",
+    "unsupported": "現在の国庫残高と日次収入ではアップグレードできません"
+  },
+  "candidate": {
+    "select": "大臣候補を選択",
+    "upgradeNext": "大臣候補を選択 • 1レベルアップグレード: {cost} NEO",
+    "selectFor": "{name}の大臣候補を選択",
+    "title": "大臣候補",
+    "close": "大臣候補を閉じる",
+    "insufficientIncome": "国の日次純収入が不足しています。この候補には純収入 {cost} NEO が必要です。",
+    "active": "候補者 {tier} が就任中です（ボーナス {effect}%）。",
+    "tier": "大臣 {tier}",
+    "serving": "就任中",
+    "recruitmentCost": "採用費用",
+    "replace": "大臣を交代",
+    "netInsufficient": "純収入が不足",
+    "hire": "大臣を採用"
+  },
+  "guide": {
+    "title": "内閣ガイド",
+    "description": "大臣の任命と省庁レベルの強化を通じて、各省庁、治安、公共サービスを管理します。内閣の構成は日次予算、ボーナス、公共サービスに影響します。レベル枠を選ぶとそのレベルまで直接強化でき、費用には途中の全レベルが含まれます。入力済みの枠を選ぶとレベルを下げ、日々の運営費を削減できます。",
+    "understand": "了解"
+  },
+  "department": {
+    "info": "情報: {name}",
+    "closeInfo": "{name}の情報を閉じる",
+    "levelInfo": "レベル情報",
+    "currentEffect": "現在の効果",
+    "nextLevel": "次のレベル",
+    "upgradeToLevel": "レベル {level} に強化",
+    "levelShortcut": "任意のレベル枠を選択すると、そのレベルまで直接強化できます。",
+    "maxLevel": "この部門は最大レベル ({max}) に達しています。",
+    "effects": "効果"
+  },
+  "confirm": {
+    "upgrade": "アップグレード",
+    "cancel": "キャンセル",
+    "costFromTo": "レベル {from} から {to} への強化費用:",
+    "totalCost": "合計費用:",
+    "currentTreasury": "現在の国庫:",
+    "treasuryAfterUpgrade": "強化後の国庫:",
+    "levelTransition": "レベル {from} → {to}",
+    "downgradeDescription": "この部門をレベル {from} から {to} に下げます。新しいレベルに応じて日々の運営費が減少します。",
+    "dailyCostCurrent": "現在の日次費用（レベル {level}）:",
+    "dailyCostNew": "新しい日次費用（レベル {level}）:",
+    "downgrade": "レベルを下げる"
+  },
+  "common": {
+    "close": "閉じる",
+    "cancel": "キャンセル",
+    "active": "有効"
+  },
+  "effects": {
+    "none": "特定の効果なし",
+    "level": "{value} {label}",
+    "trade": "販売価格 +{sell}%、購入価格 -{buy}%"
+  },
+  "effectLabels": {
+    "infrastruktur": "建設速度",
+    "pendidikan": "食料・天然資源の生産量",
+    "sains": "研究時間（短縮）",
+    "kesehatan": "パンデミック・流行病による死亡者数",
+    "olahraga": "イベントによる満足度向上の効果",
+    "kehakiman": "犯罪率",
+    "pertahanan": "軍事力（陸・海・空）",
+    "luar-negeri": "他国との条約締結率",
+    "kebudayaan": "大統領ランキングの低下",
+    "pariwisata": "観光収入",
+    "lingkungan": "自然災害による被害の発生率と影響",
+    "perumahan": "住宅収容能力",
+    "pembangunan": "建設速度",
+    "perdagangan": "販売価格と購入価格",
+    "keuangan": "税収",
+    "polisi": "犯罪率",
+    "garda-nasional": "人口居住地域の分離主義",
+    "komandan-angkatan-darat": "陸軍力",
+    "komandan-armada": "海軍力",
+    "layanan-darurat": "自然災害による死亡者数",
+    "bank-sentral": "安全な融資上限"
+  },
+  "departments": {
+    "infrastruktur": {
+      "name": "インフラ省",
+      "description": "道路、橋、国家インフラ計画の建設を管理します。",
+      "effects": ["建設速度: レベルごとに +1%"]
+    },
+    "pendidikan": {
+      "name": "教育省",
+      "description": "教育課程と学校を管理し、食料や天然資源の生産性を高めます。",
+      "effects": ["食料・天然資源の生産量: レベルごとに +1%"]
+    },
+    "sains": {
+      "name": "科学研究省",
+      "description": "技術研究と国家の革新を支援し、研究時間を短縮します。",
+      "effects": ["研究時間の短縮: レベルごとに -1%"]
+    },
+    "kesehatan": {
+      "name": "保健省",
+      "description": "病院や予防接種を管理し、感染症やパンデミックに対応します。",
+      "effects": ["パンデミック・流行病による死亡者数: レベルごとに -1%"]
+    },
+    "olahraga": {
+      "name": "スポーツ省",
+      "description": "国のスポーツ施設を整備し、満足度向上プログラムの効果を高めます。",
+      "effects": ["イベントによる満足度向上の効果: レベルごとに +1%"]
+    },
+    "kehakiman": {
+      "name": "司法省",
+      "description": "法執行と国家司法制度を維持します。",
+      "effects": ["犯罪率: レベルごとに -1%"]
+    },
+    "pertahanan": {
+      "name": "国防省",
+      "description": "軍隊と国家防衛を管理します。",
+      "effects": ["軍事力: レベルごとに +1%（陸・海・空）"]
+    },
+    "luar-negeri": {
+      "name": "外務省",
+      "description": "外交関係と国家間の協力を管理します。",
+      "effects": ["他国との条約締結率: レベルごとに +1%"]
+    },
+    "kebudayaan": {
+      "name": "文化省",
+      "description": "文化と国民意識を守り、指導者の評価を支えます。",
+      "effects": ["大統領ランキングの低下を軽減: レベルごとに -1%"]
+    },
+    "pariwisata": {
+      "name": "観光省",
+      "description": "観光産業を発展させ、観光地の収入を最大化します。",
+      "effects": ["観光収入: レベルごとに +1%"]
+    },
+    "lingkungan": {
+      "name": "環境省",
+      "description": "自然環境を保護し、気象・水文・地質災害のリスクを軽減します。",
+      "effects": ["自然災害による被害の発生率と影響: レベルごとに -1%"]
+    },
+    "perumahan": {
+      "name": "住宅省",
+      "description": "住宅供給を管理し、居住可能な住宅数を拡大します。",
+      "effects": ["住宅収容能力: レベルごとに +1%"]
+    },
+    "pembangunan": {
+      "name": "開発省",
+      "description": "大規模な国家開発計画と地域計画を監督します。",
+      "effects": ["建設速度: レベルごとに +1%"]
+    },
+    "perdagangan": {
+      "name": "貿易省",
+      "description": "輸出入政策と国家間の貿易関係を管理します。",
+      "effects": ["販売価格: レベルごとに +1%", "購入価格: レベルごとに -1%"]
+    },
+    "keuangan": {
+      "name": "財務省",
+      "description": "国家予算、税金、財政政策を管理します。",
+      "effects": ["税収: レベルごとに +1%"]
+    },
+    "polisi": {
+      "name": "警察",
+      "description": "公共の秩序と日常の法執行を維持します。",
+      "effects": ["犯罪率: レベルごとに -1%"]
+    },
+    "garda-nasional": {
+      "name": "国家警備隊",
+      "description": "国内の安定を守り、人口居住地域の分離主義に対処します。",
+      "effects": ["人口居住地域の分離主義: レベルごとに -1%"]
+    },
+    "komandan-angkatan-darat": {
+      "name": "陸軍司令官",
+      "description": "領土防衛を担う陸軍を指揮します。",
+      "effects": ["陸軍力: レベルごとに +1%"]
+    },
+    "komandan-armada": {
+      "name": "艦隊司令官",
+      "description": "海軍を指揮し、国の海域を守ります。",
+      "effects": ["海軍力: レベルごとに +1%"]
+    },
+    "layanan-darurat": {
+      "name": "緊急サービス",
+      "description": "迅速な医療避難を調整し、自然災害による犠牲者を減らします。",
+      "effects": ["自然災害による死亡者数: レベルごとに -1%"]
+    },
+    "bank-sentral": {
+      "name": "中央銀行総裁",
+      "description": "金融政策、国の融資能力、安全な債務上限を管理します。",
+      "effects": ["安全な融資上限: レベルごとに +1%"]
+    }
+  }
+}

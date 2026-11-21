@@ -1,0 +1,228 @@
+{
+  "header": {
+    "title": "Ministerial Cabinet",
+    "close": "Close the ministerial cabinet",
+    "info": "Cabinet information and guide",
+    "sections": "Ministerial cabinet sections"
+  },
+  "capital": {
+    "change": "Move / Change National Capital",
+    "changeShort": "Change",
+    "relocationTitle": "Capital Relocation",
+    "search": "Search cities",
+    "searchPlaceholder": "Search cities...",
+    "noCityMatch": "No cities match the search \"{query}\".",
+    "current": "Current Capital",
+    "select": "Select Capital",
+    "confirmClose": "Close capital relocation confirmation",
+    "confirmTitle": "Confirm Capital Relocation",
+    "old": "Previous Capital",
+    "new": "New Capital",
+    "relocationCost": "Official Relocation Cost:",
+    "currentTreasury": "Current Treasury:",
+    "estimatedTreasury": "Estimated Remaining Treasury:",
+    "cooldownPolicy": "{years}-year cooldown period.",
+    "cooldownNotice": "After the new capital is designated, you cannot move it again until",
+    "insufficientFunds": "The treasury does not have enough funds for the relocation cost of {cost} NEO.",
+    "set": "Set Capital"
+  },
+  "tabs": {
+    "kementerian": "Ministries",
+    "keamanan": "Security",
+    "layanan": "Services"
+  },
+  "level": "Level {level}/{max}",
+  "dailyCost": "{cost} NEO per day",
+  "tooltips": {
+    "currentLevel": "Current level",
+    "downgrade": "Click to downgrade to level {level}",
+    "jump": "Upgrade directly to level {level}: {cost} NEO",
+    "negativeDaily": "This upgrade would make daily income negative",
+    "insufficientCash": "Not enough cash for level {level} (requires {cost} NEO)",
+    "unsupported": "This upgrade is not supported by the current treasury and daily income"
+  },
+  "candidate": {
+    "select": "Select a minister candidate",
+    "upgradeNext": "Select a minister candidate • Upgrade 1 level: {cost} NEO",
+    "selectFor": "Select a minister candidate for {name}",
+    "title": "Minister Candidates",
+    "close": "Close minister candidates",
+    "insufficientIncome": "The country's daily net income is insufficient. This candidate requires {cost} NEO in net income.",
+    "active": "Candidate {tier} is serving with a {effect}% bonus.",
+    "tier": "Minister {tier}",
+    "serving": "Serving",
+    "recruitmentCost": "Recruitment cost",
+    "replace": "Replace Minister",
+    "netInsufficient": "Insufficient Net Income",
+    "hire": "Recruit Minister"
+  },
+  "guide": {
+    "title": "Cabinet Guide",
+    "description": "Manage national ministries, security, and services by appointing ministers and upgrading departments. The cabinet affects the daily budget, bonuses, and public services. Select a level box to upgrade directly to that level; the cost includes all skipped levels. Select a filled box to downgrade and reduce daily operating costs.",
+    "understand": "Got it"
+  },
+  "department": {
+    "info": "Information: {name}",
+    "closeInfo": "Close information for {name}",
+    "levelInfo": "Level Information",
+    "currentEffect": "Current effect",
+    "nextLevel": "Next level",
+    "upgradeToLevel": "Upgrade to level {level}",
+    "levelShortcut": "Select any level box to jump directly to that level.",
+    "maxLevel": "This department has reached the maximum level ({max}).",
+    "effects": "Effects"
+  },
+  "confirm": {
+    "upgrade": "Upgrade",
+    "cancel": "Cancel",
+    "costFromTo": "Cost to upgrade from level {from} to {to}:",
+    "totalCost": "Total Cost:",
+    "currentTreasury": "Current Treasury:",
+    "treasuryAfterUpgrade": "Treasury After Upgrade:",
+    "levelTransition": "Level {from} → {to}",
+    "downgradeDescription": "You are about to downgrade this department from level {from} to {to}. Its daily operating cost will decrease to match the new level.",
+    "dailyCostCurrent": "Current daily cost (level {level}):",
+    "dailyCostNew": "New daily cost (level {level}):",
+    "downgrade": "Downgrade"
+  },
+  "common": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "active": "Active"
+  },
+  "effects": {
+    "none": "No specific effect",
+    "level": "{value} {label}",
+    "trade": "Sell Price +{sell}% & Buy Price -{buy}%"
+  },
+  "effectLabels": {
+    "infrastruktur": "Construction Speed",
+    "pendidikan": "Food & Natural Resource Production",
+    "sains": "Research Time (Faster)",
+    "kesehatan": "Pandemic & Epidemic Deaths",
+    "olahraga": "Event Satisfaction Improvement Effectiveness",
+    "kehakiman": "Crime Rate",
+    "pertahanan": "Military Strength (Land/Sea/Air)",
+    "luar-negeri": "Treaty Chances with Other Countries",
+    "kebudayaan": "Reduction in Presidential Ranking",
+    "pariwisata": "Tourism Revenue",
+    "lingkungan": "Chance and Impact of Natural Disaster Damage",
+    "perumahan": "Housing Capacity",
+    "pembangunan": "Construction Speed",
+    "perdagangan": "Selling and Buying Prices",
+    "keuangan": "Tax Revenue",
+    "polisi": "Crime Rate",
+    "garda-nasional": "Separatism in Populated Regions",
+    "komandan-angkatan-darat": "Land Strength",
+    "komandan-armada": "Naval Strength",
+    "layanan-darurat": "Deaths Caused by Natural Disasters",
+    "bank-sentral": "Safe Loan Limit"
+  },
+  "departments": {
+    "infrastruktur": {
+      "name": "Ministry of Infrastructure",
+      "description": "Manages the construction of roads, bridges, and national infrastructure projects.",
+      "effects": ["Construction Speed: +1% per level"]
+    },
+    "pendidikan": {
+      "name": "Ministry of Education",
+      "description": "Oversees curricula and schools, and improves food and natural resource productivity.",
+      "effects": ["Food and Natural Resource Production: +1% per level"]
+    },
+    "sains": {
+      "name": "Science and Research",
+      "description": "Funds technology research, national innovation, and faster research.",
+      "effects": ["Research Time Reduction: -1% per level"]
+    },
+    "kesehatan": {
+      "name": "Ministry of Health",
+      "description": "Manages hospitals, vaccination, and responses to outbreaks and pandemics.",
+      "effects": ["Pandemic and Epidemic Death Reduction: -1% per level"]
+    },
+    "olahraga": {
+      "name": "Ministry of Sports",
+      "description": "Develops national sports facilities and strengthens satisfaction programs.",
+      "effects": ["Event Satisfaction Improvement Effectiveness: +1% per level"]
+    },
+    "kehakiman": {
+      "name": "Ministry of Justice",
+      "description": "Maintains law enforcement and the national judicial system.",
+      "effects": ["Crime Rate: -1% per level"]
+    },
+    "pertahanan": {
+      "name": "Ministry of Defense",
+      "description": "Oversees the armed forces and national defense.",
+      "effects": ["Military Strength: +1% per level (land/sea/air)"]
+    },
+    "luar-negeri": {
+      "name": "Ministry of Foreign Affairs",
+      "description": "Manages diplomatic relations and cooperation between countries.",
+      "effects": ["Treaty Chances with Other Countries: +1% per level"]
+    },
+    "kebudayaan": {
+      "name": "Ministry of Culture",
+      "description": "Preserves culture and national identity, and supports leadership reputation.",
+      "effects": ["Reduction in Presidential Ranking Decline: -1% per level"]
+    },
+    "pariwisata": {
+      "name": "Ministry of Tourism",
+      "description": "Develops tourism and maximizes revenue from destinations.",
+      "effects": ["Tourism Revenue: +1% per level"]
+    },
+    "lingkungan": {
+      "name": "Ministry of Environment",
+      "description": "Protects the natural environment and mitigates meteorological, hydrological, and geological disaster risks.",
+      "effects": ["Chance and Impact of Natural Disaster Damage: -1% per level"]
+    },
+    "perumahan": {
+      "name": "Ministry of Housing",
+      "description": "Oversees housing provision and expands residential capacity.",
+      "effects": ["Housing Capacity: +1% per level"]
+    },
+    "pembangunan": {
+      "name": "Ministry of Development",
+      "description": "Oversees large-scale national development projects and regional planning.",
+      "effects": ["Construction Speed: +1% per level"]
+    },
+    "perdagangan": {
+      "name": "Ministry of Trade",
+      "description": "Manages import-export policy and trade relations between countries.",
+      "effects": ["Selling Price: +1% per level", "Buying Price: -1% per level"]
+    },
+    "keuangan": {
+      "name": "Ministry of Finance",
+      "description": "Manages the national budget, taxes, and fiscal policy.",
+      "effects": ["Tax Revenue: +1% per level"]
+    },
+    "polisi": {
+      "name": "Police",
+      "description": "Maintains public order and day-to-day law enforcement.",
+      "effects": ["Crime Rate: -1% per level"]
+    },
+    "garda-nasional": {
+      "name": "National Guard",
+      "description": "Maintains domestic stability and addresses separatism in populated regions.",
+      "effects": ["Separatism in Populated Regions: -1% per level"]
+    },
+    "komandan-angkatan-darat": {
+      "name": "Army Commander",
+      "description": "Leads the country's land forces in territorial defense.",
+      "effects": ["Land Military Strength: +1% per level"]
+    },
+    "komandan-armada": {
+      "name": "Fleet Commander",
+      "description": "Leads the navy and protects the country's waters.",
+      "effects": ["Naval Military Strength: +1% per level"]
+    },
+    "layanan-darurat": {
+      "name": "Emergency Services",
+      "description": "Coordinates rapid medical evacuation and reduces casualties from natural disasters.",
+      "effects": ["Deaths Caused by Natural Disasters: -1% per level"]
+    },
+    "bank-sentral": {
+      "name": "Central Bank Governor",
+      "description": "Controls monetary policy, national lending capacity, and the safe debt limit.",
+      "effects": ["Safe Loan Limit: +1% per level"]
+    }
+  }
+}

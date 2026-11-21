@@ -1,0 +1,228 @@
+{
+  "header": {
+    "title": "Ministerkabinett",
+    "close": "Ministerkabinett schließen",
+    "info": "Informationen und Anleitung zum Kabinett",
+    "sections": "Bereiche des Ministerkabinetts"
+  },
+  "capital": {
+    "change": "Nationale Hauptstadt verlegen / ändern",
+    "changeShort": "Ändern",
+    "relocationTitle": "Verlegung der Hauptstadt",
+    "search": "Städte suchen",
+    "searchPlaceholder": "Städte suchen...",
+    "noCityMatch": "Keine Stadt entspricht der Suche \"{query}\".",
+    "current": "Aktuelle Hauptstadt",
+    "select": "Hauptstadt auswählen",
+    "confirmClose": "Bestätigung der Hauptstadtverlegung schließen",
+    "confirmTitle": "Verlegung der Hauptstadt bestätigen",
+    "old": "Bisherige Hauptstadt",
+    "new": "Neue Hauptstadt",
+    "relocationCost": "Offizielle Verlegungskosten:",
+    "currentTreasury": "Aktueller Staatshaushalt:",
+    "estimatedTreasury": "Voraussichtlicher Resthaushalt:",
+    "cooldownPolicy": "{years} Jahre Sperrfrist.",
+    "cooldownNotice": "Nach der Festlegung der neuen Hauptstadt kann sie erst wieder verlegt werden am",
+    "insufficientFunds": "Der Staatshaushalt reicht für die Verlegungskosten von {cost} NEO nicht aus.",
+    "set": "Hauptstadt festlegen"
+  },
+  "tabs": {
+    "kementerian": "Ministerien",
+    "keamanan": "Sicherheit",
+    "layanan": "Dienste"
+  },
+  "level": "Stufe {level}/{max}",
+  "dailyCost": "{cost} NEO pro Tag",
+  "tooltips": {
+    "currentLevel": "Aktuelle Stufe",
+    "downgrade": "Klicken, um auf Stufe {level} zurückzustufen",
+    "jump": "Direkt auf Stufe {level} verbessern: {cost} NEO",
+    "negativeDaily": "Durch diese Verbesserung würden die täglichen Einnahmen negativ",
+    "insufficientCash": "Nicht genügend Bargeld für Stufe {level} (benötigt: {cost} NEO)",
+    "unsupported": "Der aktuelle Haushalt und die täglichen Einnahmen reichen für diese Verbesserung nicht aus"
+  },
+  "candidate": {
+    "select": "Ministerkandidaten auswählen",
+    "upgradeNext": "Ministerkandidaten auswählen • 1 Stufe verbessern: {cost} NEO",
+    "selectFor": "Ministerkandidaten für {name} auswählen",
+    "title": "Ministerkandidaten",
+    "close": "Ministerkandidaten schließen",
+    "insufficientIncome": "Die täglichen Nettoeinnahmen des Landes reichen nicht aus. Dieser Kandidat benötigt {cost} NEO Nettoeinnahmen.",
+    "active": "Kandidat {tier} ist mit einem Bonus von {effect}% im Amt.",
+    "tier": "Minister {tier}",
+    "serving": "Im Amt",
+    "recruitmentCost": "Einstellungskosten",
+    "replace": "Minister ersetzen",
+    "netInsufficient": "Nettoeinnahmen unzureichend",
+    "hire": "Minister einstellen"
+  },
+  "guide": {
+    "title": "Anleitung zum Kabinett",
+    "description": "Verwalten Sie Ministerien, Sicherheit und staatliche Dienste durch die Ernennung von Ministern und den Ausbau der Abteilungen. Das Kabinett beeinflusst den Tageshaushalt, Boni und öffentliche Dienste. Wählen Sie ein Stufenfeld, um direkt auf diese Stufe zu verbessern; die Kosten umfassen alle übersprungenen Stufen. Wählen Sie ein gefülltes Feld, um die Stufe und die täglichen Betriebskosten zu senken.",
+    "understand": "Verstanden"
+  },
+  "department": {
+    "info": "Informationen: {name}",
+    "closeInfo": "Informationen zu {name} schließen",
+    "levelInfo": "Stufeninformationen",
+    "currentEffect": "Aktueller Effekt",
+    "nextLevel": "Nächste Stufe",
+    "upgradeToLevel": "Auf Stufe {level} verbessern",
+    "levelShortcut": "Wählen Sie ein beliebiges Stufenfeld, um direkt dorthin zu wechseln.",
+    "maxLevel": "Diese Abteilung hat die Höchststufe erreicht ({max}).",
+    "effects": "Auswirkungen"
+  },
+  "confirm": {
+    "upgrade": "Verbessern",
+    "cancel": "Abbrechen",
+    "costFromTo": "Kosten für die Verbesserung von Stufe {from} auf {to}:",
+    "totalCost": "Gesamtkosten:",
+    "currentTreasury": "Aktueller Staatshaushalt:",
+    "treasuryAfterUpgrade": "Haushalt nach der Verbesserung:",
+    "levelTransition": "Stufe {from} → {to}",
+    "downgradeDescription": "Diese Abteilung wird von Stufe {from} auf {to} zurückgestuft. Die täglichen Betriebskosten sinken entsprechend der neuen Stufe.",
+    "dailyCostCurrent": "Aktuelle Tageskosten (Stufe {level}):",
+    "dailyCostNew": "Neue Tageskosten (Stufe {level}):",
+    "downgrade": "Zurückstufen"
+  },
+  "common": {
+    "close": "Schließen",
+    "cancel": "Abbrechen",
+    "active": "Aktiv"
+  },
+  "effects": {
+    "none": "Keine spezifische Wirkung",
+    "level": "{value} {label}",
+    "trade": "Verkaufspreis +{sell}% und Einkaufspreis -{buy}%"
+  },
+  "effectLabels": {
+    "infrastruktur": "Baugeschwindigkeit",
+    "pendidikan": "Nahrungsmittel- und Rohstoffproduktion",
+    "sains": "Forschungszeit (schneller)",
+    "kesehatan": "Todesfälle durch Pandemien und Epidemien",
+    "olahraga": "Wirksamkeit von Veranstaltungen zur Zufriedenheitssteigerung",
+    "kehakiman": "Kriminalitätsrate",
+    "pertahanan": "Militärstärke (Land/See/Luft)",
+    "luar-negeri": "Vertragschancen mit anderen Ländern",
+    "kebudayaan": "Senkung des Präsidentenrangs",
+    "pariwisata": "Tourismuseinnahmen",
+    "lingkungan": "Wahrscheinlichkeit und Auswirkung von Naturkatastrophenschäden",
+    "perumahan": "Wohnraumkapazität",
+    "pembangunan": "Baugeschwindigkeit",
+    "perdagangan": "Verkaufs- und Einkaufspreise",
+    "keuangan": "Steuereinnahmen",
+    "polisi": "Kriminalitätsrate",
+    "garda-nasional": "Separatismus in besiedelten Gebieten",
+    "komandan-angkatan-darat": "Landstreitkraft",
+    "komandan-armada": "Seestreitkraft",
+    "layanan-darurat": "Todesfälle durch Naturkatastrophen",
+    "bank-sentral": "Sichere Kreditgrenze"
+  },
+  "departments": {
+    "infrastruktur": {
+      "name": "Infrastrukturministerium",
+      "description": "Verwaltet den Bau von Straßen, Brücken und nationalen Infrastrukturprojekten.",
+      "effects": ["Baugeschwindigkeit: +1% pro Stufe"]
+    },
+    "pendidikan": {
+      "name": "Bildungsministerium",
+      "description": "Verantwortet Lehrpläne und Schulen und steigert die Produktivität bei Lebensmitteln und Rohstoffen.",
+      "effects": ["Nahrungsmittel- und Rohstoffproduktion: +1% pro Stufe"]
+    },
+    "sains": {
+      "name": "Wissenschaft und Forschung",
+      "description": "Finanziert Technologieforschung, nationale Innovation und eine kürzere Forschungsdauer.",
+      "effects": ["Verkürzung der Forschungszeit: -1% pro Stufe"]
+    },
+    "kesehatan": {
+      "name": "Gesundheitsministerium",
+      "description": "Verwaltet Krankenhäuser und Impfungen und bekämpft Ausbrüche und Pandemien.",
+      "effects": ["Weniger Todesfälle durch Pandemien und Epidemien: -1% pro Stufe"]
+    },
+    "olahraga": {
+      "name": "Sportministerium",
+      "description": "Baut nationale Sportanlagen aus und verbessert Programme zur Steigerung der Zufriedenheit.",
+      "effects": ["Wirksamkeit von Zufriedenheitsveranstaltungen: +1% pro Stufe"]
+    },
+    "kehakiman": {
+      "name": "Justizministerium",
+      "description": "Sichert die Strafverfolgung und das nationale Gerichtssystem.",
+      "effects": ["Kriminalitätsrate: -1% pro Stufe"]
+    },
+    "pertahanan": {
+      "name": "Verteidigungsministerium",
+      "description": "Verantwortet die Streitkräfte und die Landesverteidigung.",
+      "effects": ["Militärstärke: +1% pro Stufe (Land/See/Luft)"]
+    },
+    "luar-negeri": {
+      "name": "Außenministerium",
+      "description": "Verwaltet diplomatische Beziehungen und die Zusammenarbeit zwischen Ländern.",
+      "effects": ["Vertragschancen mit anderen Ländern: +1% pro Stufe"]
+    },
+    "kebudayaan": {
+      "name": "Kulturministerium",
+      "description": "Bewahrt Kultur und nationale Identität und stärkt das Ansehen der Führung.",
+      "effects": ["Verringerung des Rückgangs des Präsidentenrangs: -1% pro Stufe"]
+    },
+    "pariwisata": {
+      "name": "Tourismusministerium",
+      "description": "Fördert den Tourismussektor und maximiert die Einnahmen aus Reisezielen.",
+      "effects": ["Tourismuseinnahmen: +1% pro Stufe"]
+    },
+    "lingkungan": {
+      "name": "Umweltministerium",
+      "description": "Schützt die Natur und mindert Risiken meteorologischer, hydrologischer und geologischer Katastrophen.",
+      "effects": ["Wahrscheinlichkeit und Auswirkung von Naturkatastrophenschäden: -1% pro Stufe"]
+    },
+    "perumahan": {
+      "name": "Wohnungsbauministerium",
+      "description": "Verantwortet die Wohnraumversorgung und den Ausbau der Wohnkapazitäten.",
+      "effects": ["Wohnraumkapazität: +1% pro Stufe"]
+    },
+    "pembangunan": {
+      "name": "Entwicklungsministerium",
+      "description": "Überwacht groß angelegte nationale Entwicklungsprojekte und die Raumplanung.",
+      "effects": ["Baugeschwindigkeit: +1% pro Stufe"]
+    },
+    "perdagangan": {
+      "name": "Handelsministerium",
+      "description": "Verwaltet die Import- und Exportpolitik sowie Handelsbeziehungen zwischen Ländern.",
+      "effects": ["Verkaufspreis: +1% pro Stufe", "Einkaufspreis: -1% pro Stufe"]
+    },
+    "keuangan": {
+      "name": "Finanzministerium",
+      "description": "Verwaltet den Staatshaushalt, Steuern und die Finanzpolitik.",
+      "effects": ["Steuereinnahmen: +1% pro Stufe"]
+    },
+    "polisi": {
+      "name": "Polizei",
+      "description": "Sorgt für öffentliche Ordnung und die tägliche Strafverfolgung.",
+      "effects": ["Kriminalitätsrate: -1% pro Stufe"]
+    },
+    "garda-nasional": {
+      "name": "Nationalgarde",
+      "description": "Sichert die innere Stabilität und bekämpft Separatismus in besiedelten Gebieten.",
+      "effects": ["Separatismus in besiedelten Gebieten: -1% pro Stufe"]
+    },
+    "komandan-angkatan-darat": {
+      "name": "Heereskommandant",
+      "description": "Führt die Landstreitkräfte des Landes bei der Verteidigung des Staatsgebiets.",
+      "effects": ["Landstreitkraft: +1% pro Stufe"]
+    },
+    "komandan-armada": {
+      "name": "Flottenkommandant",
+      "description": "Führt die Marine und schützt die Gewässer des Landes.",
+      "effects": ["Seestreitkraft: +1% pro Stufe"]
+    },
+    "layanan-darurat": {
+      "name": "Rettungsdienst",
+      "description": "Koordiniert schnelle medizinische Evakuierungen und verringert Opferzahlen bei Naturkatastrophen.",
+      "effects": ["Todesfälle durch Naturkatastrophen: -1% pro Stufe"]
+    },
+    "bank-sentral": {
+      "name": "Präsident der Zentralbank",
+      "description": "Steuert die Geldpolitik, die nationale Kreditkapazität und die sichere Schuldenobergrenze.",
+      "effects": ["Sichere Kreditgrenze: +1% pro Stufe"]
+    }
+  }
+}

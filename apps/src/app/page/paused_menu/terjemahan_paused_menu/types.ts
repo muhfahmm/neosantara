@@ -40,6 +40,7 @@ import type idDefenseSabotage from './id/navigasi_menu/pertahanan_menu/sabotase/
 import type idDefenseAnnexedTerritories from './id/navigasi_menu/pertahanan_menu/wilayah_direbut/wilayah_direbut.json';
 import type idMilitaryMenu from './id/navigasi_menu/militer_menu/militer_menu.json';
 import type idIcbmMenu from './id/navigasi_menu/icbm_menu/icbm_menu.json';
+import type idMinistryMenu from './id/navigasi_menu/kementerian_menu/kementerian_menu.json';
 import type idGeopoliticsPbb from './id/navigasi_menu/geopolitik_menu/pbb_menu/pbb_menu.json';
 import type idGeopoliticsEmbassy from './id/navigasi_menu/geopolitik_menu/kedutaan_besar/kedutaan_besar.json';
 import type idGeopoliticsOrganizations from './id/navigasi_menu/geopolitik_menu/organisasi_internasional/organisasi_internasional.json';
@@ -119,6 +120,7 @@ export type TranslationNamespace =
   | 'navigation_defense_annexed_territories'
   | 'navigation_military_menu'
   | 'navigation_icbm_menu'
+  | 'navigation_ministry_menu'
   | 'navigation_geopolitics_pbb'
   | 'navigation_geopolitics_embassy'
   | 'navigation_geopolitics_organizations'
@@ -174,6 +176,7 @@ export interface TranslationSchema {
   navigation_defense_annexed_territories: typeof idDefenseAnnexedTerritories;
   navigation_military_menu: typeof idMilitaryMenu;
   navigation_icbm_menu: typeof idIcbmMenu;
+  navigation_ministry_menu: typeof idMinistryMenu;
   navigation_geopolitics_pbb: typeof idGeopoliticsPbb;
   navigation_geopolitics_embassy: typeof idGeopoliticsEmbassy;
   navigation_geopolitics_organizations: typeof idGeopoliticsOrganizations;
@@ -233,6 +236,7 @@ export type TranslationKey =
   | `navigation_defense_annexed_territories.${NestedKeyOf<typeof idDefenseAnnexedTerritories>}`
   | `navigation_military_menu.${NestedKeyOf<typeof idMilitaryMenu>}`
   | `navigation_icbm_menu.${NestedKeyOf<typeof idIcbmMenu>}`
+  | `navigation_ministry_menu.${NestedKeyOf<typeof idMinistryMenu>}`
   | `navigation_geopolitics_pbb.${NestedKeyOf<typeof idGeopoliticsPbb>}`
   | `navigation_geopolitics_embassy.${NestedKeyOf<typeof idGeopoliticsEmbassy>}`
   | `navigation_geopolitics_organizations.${NestedKeyOf<typeof idGeopoliticsOrganizations>}`

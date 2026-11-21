@@ -66,6 +66,7 @@ import idDefenseSabotage from './id/navigasi_menu/pertahanan_menu/sabotase/sabot
 import idDefenseAnnexedTerritories from './id/navigasi_menu/pertahanan_menu/wilayah_direbut/wilayah_direbut.json';
 import idMilitaryMenu from './id/navigasi_menu/militer_menu/militer_menu.json';
 import idIcbmMenu from './id/navigasi_menu/icbm_menu/icbm_menu.json';
+import idMinistryMenu from './id/navigasi_menu/kementerian_menu/kementerian_menu.json';
 import idGeopoliticsPbb from './id/navigasi_menu/geopolitik_menu/pbb_menu/pbb_menu.json';
 import idGeopoliticsEmbassy from './id/navigasi_menu/geopolitik_menu/kedutaan_besar/kedutaan_besar.json';
 import idGeopoliticsOrganizations from './id/navigasi_menu/geopolitik_menu/organisasi_internasional/organisasi_internasional.json';
@@ -120,6 +121,7 @@ const ID_DICTIONARY: LanguageDictionary = {
   navigation_defense_annexed_territories: idDefenseAnnexedTerritories,
   navigation_military_menu: idMilitaryMenu,
   navigation_icbm_menu: idIcbmMenu,
+  navigation_ministry_menu: idMinistryMenu,
   navigation_geopolitics_pbb: idGeopoliticsPbb,
   navigation_geopolitics_embassy: idGeopoliticsEmbassy,
   navigation_geopolitics_organizations: idGeopoliticsOrganizations,
@@ -209,6 +211,7 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     defenseAnnexedTerritories,
     militaryMenu,
     icbmMenu,
+    ministryMenu,
     geopoliticsPbb,
     geopoliticsEmbassy,
     geopoliticsOrganizations,
@@ -258,6 +261,7 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     import(`./${code}/navigasi_menu/pertahanan_menu/wilayah_direbut/wilayah_direbut.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navigasi_menu/militer_menu/militer_menu.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navigasi_menu/icbm_menu/icbm_menu.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/kementerian_menu/kementerian_menu.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navigasi_menu/geopolitik_menu/pbb_menu/pbb_menu.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navigasi_menu/geopolitik_menu/kedutaan_besar/kedutaan_besar.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navigasi_menu/geopolitik_menu/organisasi_internasional/organisasi_internasional.json`).then((m) => m.default).catch(() => ({})),
@@ -313,6 +317,7 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     navigation_defense_annexed_territories: defenseAnnexedTerritories,
     navigation_military_menu: militaryMenu,
     navigation_icbm_menu: icbmMenu,
+    navigation_ministry_menu: ministryMenu,
     navigation_geopolitics_pbb: geopoliticsPbb,
     navigation_geopolitics_embassy: geopoliticsEmbassy,
     navigation_geopolitics_organizations: geopoliticsOrganizations,

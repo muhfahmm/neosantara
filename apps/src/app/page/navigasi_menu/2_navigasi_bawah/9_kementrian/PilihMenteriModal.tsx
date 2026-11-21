@@ -5,11 +5,11 @@ import { createPortal } from "react-dom";
 import { Award, Banknote, Check } from "lucide-react";
 import NotebookModalWrapper from "../NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { useKementerianMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useKementerianMenuTranslation";
 
 export interface MinisterCandidateDepartment {
   id: string;
   name: string;
-  effectLabel: string;
   effectDirection: 1 | -1;
   icon: React.ElementType;
 }
@@ -37,6 +37,7 @@ export default function PilihMenteriModal({
   onClose,
   onHire,
 }: Props) {
+  const { language, ministry: tr } = useKementerianMenuTranslation();
   const Icon = department.icon;
   const activeCandidate = MINISTER_CANDIDATES.find(candidate => candidate.tier === hiredTier);
   const [insufficientFunds, setInsufficientFunds] = React.useState<number | null>(null);
@@ -54,24 +55,29 @@ export default function PilihMenteriModal({
     <NotebookModalWrapper onClose={onClose}>
       <div className="root-modal-util-b74379da23">
         <RootInfoModalHeader
-          title="Kandidat Menteri"
+          title={tr("candidate.title")}
           icon={<Icon aria-hidden="true" />}
           onClose={onClose}
-          closeAriaLabel="Tutup kandidat menteri"
+          closeAriaLabel={tr("candidate.close")}
           size="standard"
         />
 
         <div className="flex-1 overflow-y-auto overflow-x-hidden bg-root-surface p-3 sm:p-4 lg:p-5 neon-scrollbar">
           {insufficientFunds !== null && (
             <div role="alert" className="mb-4 rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-xs font-bold text-rose-300">
-              Netto harian negara tidak cukup. Kandidat ini membutuhkan {insufficientFunds.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO dari netto.
+              {tr("candidate.insufficientIncome", {
+                cost: insufficientFunds.toLocaleString(language, { maximumFractionDigits: 2 }),
+              })}
             </div>
           )}
 
           {activeCandidate && (
             <div className="mb-4 flex items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-xs font-bold text-emerald-300">
               <Check className="h-4 w-4" />
-              Kandidat {activeCandidate.tier} sudah menjabat dengan peningkatan {activeCandidate.effect}%.
+              {tr("candidate.active", {
+                tier: activeCandidate.tier,
+                effect: activeCandidate.effect,
+              })}
             </div>
           )}
 
@@ -93,16 +99,16 @@ export default function PilihMenteriModal({
                   <div className="mb-2 flex min-w-0 items-center justify-between whitespace-nowrap lg:mb-0">
                     <span className="flex items-center gap-1.5 text-xs font-black text-root-text xl:text-sm">
                       <Award className="h-4 w-4 shrink-0 text-root-accent" />
-                      Menteri {candidate.tier}
+                      {tr("candidate.tier", { tier: candidate.tier })}
                     </span>
-                    {isHired && <span className="ml-2 text-[9px] font-black uppercase text-emerald-300">Menjabat</span>}
+                    {isHired && <span className="ml-2 text-[9px] font-black uppercase text-emerald-300">{tr("candidate.serving")}</span>}
                   </div>
                   <p className="mb-2 min-w-0 truncate text-[11px] font-bold text-root-accent lg:mb-0 xl:text-xs">
-                    {signedEffect} {department.effectLabel}
+                    {signedEffect} {tr(`effectLabels.${department.id}`)}
                   </p>
                   <div className="mb-2 flex min-w-0 items-center justify-between whitespace-nowrap border-t border-root-accent/10 pt-2 text-[10px] lg:mb-0 lg:border-l lg:border-t-0 lg:px-2 lg:pt-0">
-                    <span className="font-semibold text-root-subtle">Biaya rekrutmen</span>
-                    <span className="ml-1.5 text-[11px] font-black text-root-text xl:text-xs">{candidate.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
+                    <span className="font-semibold text-root-subtle">{tr("candidate.recruitmentCost")}</span>
+                    <span className="ml-1.5 text-[11px] font-black text-root-text xl:text-xs">{candidate.cost.toLocaleString(language, { maximumFractionDigits: 2 })} NEO</span>
                   </div>
                   <button
                     type="button"
@@ -117,12 +123,12 @@ export default function PilihMenteriModal({
                     }`}
                   >
                     {isHired
-                      ? "Sedang Menjabat"
+                      ? tr("candidate.serving")
                       : hiredTier > 0
-                        ? "Ganti Menteri"
+                        ? tr("candidate.replace")
                         : insufficientCash
-                          ? "Netto Tidak Cukup"
-                          : "Rekrut Menteri"}
+                          ? tr("candidate.netInsufficient")
+                          : tr("candidate.hire")}
                   </button>
                 </article>
               );

@@ -16,6 +16,7 @@ import KonfirmasiGantiIbukotaModal, {
   PINDAH_IBUKOTA_COST,
   PINDAH_IBUKOTA_COOLDOWN_YEARS,
 } from "./KonfirmasiGantiIbukotaModal";
+import { useKementerianMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useKementerianMenuTranslation";
 
 interface GantiIbukotaModalProps {
   isOpen: boolean;
@@ -39,6 +40,7 @@ export default function GantiIbukotaModal({
   setCountryDetail,
   currentDate,
 }: GantiIbukotaModalProps) {
+  const { language, ministry: tr } = useKementerianMenuTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTargetCity, setSelectedTargetCity] = useState<string | null>(null);
 
@@ -116,11 +118,11 @@ export default function GantiIbukotaModal({
     list.sort((a, b) => {
       if (a.isCurrentCapital) return -1;
       if (b.isCurrentCapital) return 1;
-      return a.name.localeCompare(b.name, "id-ID");
+      return a.name.localeCompare(b.name, language);
     });
 
     return list;
-  }, [countryName, countryDetail?.iso, currentCapital]);
+  }, [countryName, countryDetail?.iso, currentCapital, language]);
 
   const filteredCities = useMemo(() => {
     if (!searchTerm.trim()) return availableCities;
@@ -191,7 +193,7 @@ export default function GantiIbukotaModal({
                 </div>
                 <div>
                   <h3 className="text-[length:var(--modal-font-title)] font-bold text-root-text tracking-wide uppercase flex items-center gap-2">
-                    Relokasi & Pergantian Ibukota
+                    {tr("capital.relocationTitle")}
                     <span className="max-w-[40vw] truncate rounded border border-[#FFE600]/30 bg-[#FFE600]/20 px-2 py-0.5 text-[10px] font-bold uppercase text-[#FFE600]">
                       {currentCapital}
                     </span>
@@ -205,7 +207,7 @@ export default function GantiIbukotaModal({
               onClick={onClose}
               className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
              appearance="custom">
-              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">{tr("common.close")}</span>
               <X className="h-4 w-4" />
             </SharedModalCloseButton>
           </div>
@@ -216,10 +218,10 @@ export default function GantiIbukotaModal({
               <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-root-accent/60" />
               <input
                 type="search"
-                aria-label="Cari kota"
+                aria-label={tr("capital.search")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Cari kota..."
+                placeholder={tr("capital.searchPlaceholder")}
                 className="h-9 w-full rounded-xl border border-root-accent/30 bg-[#051111] py-1 pl-8 pr-3 text-xs text-root-text placeholder-root-subtle transition-colors focus:border-root-accent focus:outline-none"
               />
             </div>
@@ -229,7 +231,7 @@ export default function GantiIbukotaModal({
           <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3 neon-scrollbar bg-root-surface">
             {filteredCities.length === 0 ? (
               <div className="py-16 text-center text-root-subtle text-xs">
-                Tidak ada kota yang cocok dengan pencarian "{searchTerm}".
+                {tr("capital.noCityMatch", { query: searchTerm })}
               </div>
             ) : (
               filteredCities.map((city) => {
@@ -264,7 +266,7 @@ export default function GantiIbukotaModal({
                           </span>
                           {isSelected && (
                             <span className="text-[10px] bg-[#FFE600] text-root-canvas font-black px-2 py-0.5 rounded uppercase tracking-wider">
-                              Ibukota Saat Ini
+                              {tr("capital.current")}
                             </span>
                           )}
                         </div>
@@ -278,7 +280,7 @@ export default function GantiIbukotaModal({
                       {isSelected ? (
                         <span className="text-xs font-bold text-[#FFE600] px-3 py-1.5 flex items-center gap-1.5">
                           <CheckCircle className="h-4 w-4" />
-                          Aktif
+                          {tr("common.active")}
                         </span>
                       ) : (
                         <button
@@ -290,7 +292,7 @@ export default function GantiIbukotaModal({
                               : "bg-root-accent hover:bg-root-accent/90 text-root-canvas shadow-[0_0_12px_rgba(0,255,170,0.25)] active:scale-95"
                           }`}
                         >
-                          Pilih Ibukota
+                          {tr("capital.select")}
                         </button>
                       )}
                     </div>

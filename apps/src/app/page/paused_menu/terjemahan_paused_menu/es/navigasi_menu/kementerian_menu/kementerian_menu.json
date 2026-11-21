@@ -1,0 +1,228 @@
+{
+  "header": {
+    "title": "Consejo de Ministros",
+    "close": "Cerrar el consejo de ministros",
+    "info": "Información y guía del gabinete",
+    "sections": "Secciones del consejo de ministros"
+  },
+  "capital": {
+    "change": "Trasladar / Cambiar la capital nacional",
+    "changeShort": "Cambiar",
+    "relocationTitle": "Traslado de la capital",
+    "search": "Buscar ciudades",
+    "searchPlaceholder": "Buscar ciudades...",
+    "noCityMatch": "Ninguna ciudad coincide con la búsqueda \"{query}\".",
+    "current": "Capital actual",
+    "select": "Elegir capital",
+    "confirmClose": "Cerrar la confirmación del traslado de capital",
+    "confirmTitle": "Confirmar traslado de capital",
+    "old": "Capital anterior",
+    "new": "Nueva capital",
+    "relocationCost": "Coste oficial del traslado:",
+    "currentTreasury": "Tesorería actual:",
+    "estimatedTreasury": "Tesorería restante estimada:",
+    "cooldownPolicy": "Período de espera de {years} años.",
+    "cooldownNotice": "Una vez establecida la nueva capital, no podrás volver a trasladarla hasta",
+    "insufficientFunds": "La tesorería no tiene fondos suficientes para el coste de traslado de {cost} NEO.",
+    "set": "Establecer capital"
+  },
+  "tabs": {
+    "kementerian": "Ministerios",
+    "keamanan": "Seguridad",
+    "layanan": "Servicios"
+  },
+  "level": "Nivel {level}/{max}",
+  "dailyCost": "{cost} NEO al día",
+  "tooltips": {
+    "currentLevel": "Nivel actual",
+    "downgrade": "Haz clic para bajar al nivel {level}",
+    "jump": "Mejorar directamente al nivel {level}: {cost} NEO",
+    "negativeDaily": "Esta mejora dejaría los ingresos diarios en negativo",
+    "insufficientCash": "No hay suficiente efectivo para el nivel {level} (se necesitan {cost} NEO)",
+    "unsupported": "La tesorería y los ingresos diarios actuales no permiten esta mejora"
+  },
+  "candidate": {
+    "select": "Elegir candidato a ministro",
+    "upgradeNext": "Elegir candidato a ministro • Mejorar 1 nivel: {cost} NEO",
+    "selectFor": "Elegir candidato a ministro para {name}",
+    "title": "Candidatos a ministro",
+    "close": "Cerrar candidatos a ministro",
+    "insufficientIncome": "Los ingresos netos diarios del país son insuficientes. Este candidato requiere {cost} NEO de ingresos netos.",
+    "active": "El candidato {tier} está en el cargo con una bonificación del {effect}%.",
+    "tier": "Ministro {tier}",
+    "serving": "En el cargo",
+    "recruitmentCost": "Coste de contratación",
+    "replace": "Reemplazar ministro",
+    "netInsufficient": "Ingresos netos insuficientes",
+    "hire": "Contratar ministro"
+  },
+  "guide": {
+    "title": "Guía del gabinete",
+    "description": "Gestiona los ministerios, la seguridad y los servicios nacionales mediante el nombramiento de ministros y la mejora de los departamentos. El gabinete influye en el presupuesto diario, las bonificaciones y los servicios públicos. Selecciona una casilla de nivel para avanzar directamente hasta ese nivel; el coste incluye todos los niveles intermedios. Selecciona una casilla ocupada para reducir el nivel y los costes diarios.",
+    "understand": "Entendido"
+  },
+  "department": {
+    "info": "Información: {name}",
+    "closeInfo": "Cerrar información de {name}",
+    "levelInfo": "Información del nivel",
+    "currentEffect": "Efecto actual",
+    "nextLevel": "Nivel siguiente",
+    "upgradeToLevel": "Mejorar al nivel {level}",
+    "levelShortcut": "Selecciona cualquier casilla de nivel para avanzar directamente hasta ella.",
+    "maxLevel": "Este departamento ha alcanzado el nivel máximo ({max}).",
+    "effects": "Efectos"
+  },
+  "confirm": {
+    "upgrade": "Mejorar",
+    "cancel": "Cancelar",
+    "costFromTo": "Coste para mejorar del nivel {from} al {to}:",
+    "totalCost": "Coste total:",
+    "currentTreasury": "Tesorería actual:",
+    "treasuryAfterUpgrade": "Tesorería después de la mejora:",
+    "levelTransition": "Nivel {from} → {to}",
+    "downgradeDescription": "Vas a bajar este departamento del nivel {from} al {to}. El coste operativo diario se reducirá según el nuevo nivel.",
+    "dailyCostCurrent": "Coste diario actual (nivel {level}):",
+    "dailyCostNew": "Nuevo coste diario (nivel {level}):",
+    "downgrade": "Bajar de nivel"
+  },
+  "common": {
+    "close": "Cerrar",
+    "cancel": "Cancelar",
+    "active": "Activo"
+  },
+  "effects": {
+    "none": "Sin efecto específico",
+    "level": "{value} {label}",
+    "trade": "Precio de venta +{sell}% y precio de compra -{buy}%"
+  },
+  "effectLabels": {
+    "infrastruktur": "Velocidad de construcción",
+    "pendidikan": "Producción de alimentos y recursos naturales",
+    "sains": "Tiempo de investigación (más rápido)",
+    "kesehatan": "Muertes por pandemias y epidemias",
+    "olahraga": "Eficacia de los eventos para mejorar la satisfacción",
+    "kehakiman": "Tasa de criminalidad",
+    "pertahanan": "Poder militar (tierra/mar/aire)",
+    "luar-negeri": "Probabilidad de tratados con otros países",
+    "kebudayaan": "Reducción del rango presidencial",
+    "pariwisata": "Ingresos turísticos",
+    "lingkungan": "Probabilidad e impacto de daños por desastres naturales",
+    "perumahan": "Capacidad de vivienda",
+    "pembangunan": "Velocidad de construcción",
+    "perdagangan": "Precios de venta y compra",
+    "keuangan": "Ingresos fiscales",
+    "polisi": "Tasa de criminalidad",
+    "garda-nasional": "Separatismo en regiones pobladas",
+    "komandan-angkatan-darat": "Poder terrestre",
+    "komandan-armada": "Poder naval",
+    "layanan-darurat": "Muertes causadas por desastres naturales",
+    "bank-sentral": "Límite seguro de préstamos"
+  },
+  "departments": {
+    "infrastruktur": {
+      "name": "Ministerio de Infraestructura",
+      "description": "Gestiona la construcción de carreteras, puentes y proyectos de infraestructura nacional.",
+      "effects": ["Velocidad de construcción: +1% por nivel"]
+    },
+    "pendidikan": {
+      "name": "Ministerio de Educación",
+      "description": "Gestiona los planes de estudio y las escuelas, y mejora la productividad de alimentos y recursos naturales.",
+      "effects": ["Producción de alimentos y recursos naturales: +1% por nivel"]
+    },
+    "sains": {
+      "name": "Ciencia e Investigación",
+      "description": "Financia la investigación tecnológica, la innovación nacional y la reducción del tiempo de investigación.",
+      "effects": ["Reducción del tiempo de investigación: -1% por nivel"]
+    },
+    "kesehatan": {
+      "name": "Ministerio de Salud",
+      "description": "Gestiona hospitales, vacunación y la respuesta a brotes y pandemias.",
+      "effects": ["Reducción de muertes por pandemias y epidemias: -1% por nivel"]
+    },
+    "olahraga": {
+      "name": "Ministerio de Deportes",
+      "description": "Desarrolla instalaciones deportivas nacionales y refuerza los programas de satisfacción.",
+      "effects": ["Eficacia de eventos para mejorar la satisfacción: +1% por nivel"]
+    },
+    "kehakiman": {
+      "name": "Ministerio de Justicia",
+      "description": "Mantiene el cumplimiento de la ley y el sistema judicial nacional.",
+      "effects": ["Tasa de criminalidad: -1% por nivel"]
+    },
+    "pertahanan": {
+      "name": "Ministerio de Defensa",
+      "description": "Supervisa las fuerzas armadas y la defensa nacional.",
+      "effects": ["Poder militar: +1% por nivel (tierra/mar/aire)"]
+    },
+    "luar-negeri": {
+      "name": "Ministerio de Asuntos Exteriores",
+      "description": "Gestiona las relaciones diplomáticas y la cooperación entre países.",
+      "effects": ["Probabilidad de tratados con otros países: +1% por nivel"]
+    },
+    "kebudayaan": {
+      "name": "Ministerio de Cultura",
+      "description": "Preserva la cultura y la identidad nacional, y apoya la reputación del liderazgo.",
+      "effects": ["Reducción de la caída del rango presidencial: -1% por nivel"]
+    },
+    "pariwisata": {
+      "name": "Ministerio de Turismo",
+      "description": "Desarrolla el turismo y maximiza los ingresos de los destinos.",
+      "effects": ["Ingresos turísticos: +1% por nivel"]
+    },
+    "lingkungan": {
+      "name": "Ministerio de Medio Ambiente",
+      "description": "Protege el medio ambiente y mitiga los riesgos de desastres meteorológicos, hidrológicos y geológicos.",
+      "effects": ["Probabilidad e impacto de daños por desastres naturales: -1% por nivel"]
+    },
+    "perumahan": {
+      "name": "Ministerio de Vivienda",
+      "description": "Gestiona la provisión de viviendas y amplía la capacidad residencial.",
+      "effects": ["Capacidad de vivienda: +1% por nivel"]
+    },
+    "pembangunan": {
+      "name": "Ministerio de Desarrollo",
+      "description": "Supervisa grandes proyectos nacionales de desarrollo y la planificación territorial.",
+      "effects": ["Velocidad de construcción: +1% por nivel"]
+    },
+    "perdagangan": {
+      "name": "Ministerio de Comercio",
+      "description": "Gestiona la política de importación y exportación y las relaciones comerciales entre países.",
+      "effects": ["Precio de venta: +1% por nivel", "Precio de compra: -1% por nivel"]
+    },
+    "keuangan": {
+      "name": "Ministerio de Finanzas",
+      "description": "Gestiona el presupuesto nacional, los impuestos y la política fiscal.",
+      "effects": ["Ingresos fiscales: +1% por nivel"]
+    },
+    "polisi": {
+      "name": "Policía",
+      "description": "Mantiene el orden público y la aplicación cotidiana de la ley.",
+      "effects": ["Tasa de criminalidad: -1% por nivel"]
+    },
+    "garda-nasional": {
+      "name": "Guardia Nacional",
+      "description": "Mantiene la estabilidad interna y combate el separatismo en las regiones pobladas.",
+      "effects": ["Separatismo en regiones pobladas: -1% por nivel"]
+    },
+    "komandan-angkatan-darat": {
+      "name": "Comandante del Ejército",
+      "description": "Dirige las fuerzas terrestres del país para defender el territorio.",
+      "effects": ["Poder militar terrestre: +1% por nivel"]
+    },
+    "komandan-armada": {
+      "name": "Comandante de la Flota",
+      "description": "Dirige la armada y protege las aguas del país.",
+      "effects": ["Poder militar naval: +1% por nivel"]
+    },
+    "layanan-darurat": {
+      "name": "Servicios de Emergencia",
+      "description": "Coordina evacuaciones médicas rápidas y reduce las víctimas de desastres naturales.",
+      "effects": ["Muertes causadas por desastres naturales: -1% por nivel"]
+    },
+    "bank-sentral": {
+      "name": "Gobernador del Banco Central",
+      "description": "Controla la política monetaria, la capacidad crediticia nacional y el límite seguro de deuda.",
+      "effects": ["Límite seguro de préstamos: +1% por nivel"]
+    }
+  }
+}

@@ -48,6 +48,7 @@ import { applyReformasiBirokrasiToUpgradeCost } from "@/app/page/bonus_logic";
 import NotebookModalWrapper from "../NotebookModalWrapper";
 import MenuInfoModal from "../MenuInfoModal";
 import RootConfirmModal from "@/app/page/root_modals_design_menu/RootConfirmModal";
+import { useKementerianMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useKementerianMenuTranslation";
 
 interface ModalProps {
   isOpen: boolean;
@@ -95,21 +96,32 @@ const MINISTRY_EFFECTS: Record<string, { stat: string; perLevel: number; unit: s
 };
 
 // Fungsi untuk mendapatkan deskripsi efek berdasarkan level
-const getEffectDescription = (deptId: string, level: number, ministerTier = 0): string => {
+type MinistryTranslate = (key: string, params?: Record<string, string | number>) => string;
+
+const getEffectDescription = (
+  deptId: string,
+  level: number,
+  ministerTier = 0,
+  translate?: MinistryTranslate
+): string => {
   const config = MINISTRY_EFFECTS[deptId];
-  if (!config) return "Tidak ada efek spesifik";
+  if (!config) return translate ? translate("effects.none") : "Tidak ada efek spesifik";
   const ministerBonus = ministerTier > 0
     ? [0, 5, 10, 15, 20, 50][ministerTier] / 100
     : 0;
   const totalEffect = config.perLevel * level + Math.sign(config.perLevel) * ministerBonus;
   const sign = totalEffect >= 0 ? "+" : "";
+  const label = translate ? translate(`effectLabels.${deptId}`) : config.label;
 
   if (deptId === "perdagangan") {
     const val = (Math.abs(totalEffect) * 100).toFixed(1);
-    return `Harga Jual +${val}% & Harga Beli -${val}%`;
+    return translate
+      ? translate("effects.trade", { sell: val, buy: val })
+      : `Harga Jual +${val}% & Harga Beli -${val}%`;
   }
 
-  return `${sign}${(totalEffect * 100).toFixed(1)}% ${config.label}`;
+  const value = `${sign}${(totalEffect * 100).toFixed(1)}%`;
+  return translate ? translate("effects.level", { value, label }) : `${value} ${label}`;
 };
 
 const MAX_LEVEL = MAX_CABINET_LEVEL; // sumber: departments.ts
@@ -343,6 +355,7 @@ const canAffordUpgrade = (
 };
 
 export default function KementerianModal({ isOpen, onClose, countryDetail, setCountryDetail, resetTrigger, currentDate }: ModalProps) {
+  const { language, ministry: tr } = useKementerianMenuTranslation();
   const [mounted, setMounted] = useState(false);
   const [isGantiIbukotaOpen, setIsGantiIbukotaOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabKey>("kementerian");
@@ -405,7 +418,6 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
     setMinisterDepartment({
       id: dept.id,
       name: dept.name,
-      effectLabel: effect.label,
       effectDirection: effect.perLevel >= 0 ? 1 : -1,
       icon: dept.icon,
     });
@@ -502,10 +514,10 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
     ? Number(countryDetail?.[`menteri_${infoTarget.id}`]) || 0
     : 0;
   const infoCurrentEffect = infoTarget
-    ? getEffectDescription(infoTarget.id, infoLevel, infoMinisterTier)
+    ? getEffectDescription(infoTarget.id, infoLevel, infoMinisterTier, tr)
     : "";
   const infoNextEffect = infoTarget && !infoMaxed
-    ? getEffectDescription(infoTarget.id, infoLevel + 1, infoMinisterTier)
+    ? getEffectDescription(infoTarget.id, infoLevel + 1, infoMinisterTier, tr)
     : null;
   const infoNextStepCost = infoTarget && !infoMaxed
     ? getNextStepCost(infoLevel)
@@ -521,10 +533,10 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
         >
         <div className="root-modal-util-b74379da23">
           <RootInfoModalHeader
-            title="Dewan Kabinet Menteri"
+            title={tr("header.title")}
             icon={<Landmark aria-hidden="true" />}
             onClose={onClose}
-            closeAriaLabel="Tutup menu dewan kabinet menteri"
+            closeAriaLabel={tr("header.close")}
             size="standard"
             actions={
               <>
@@ -535,20 +547,20 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                   <button
                     type="button"
                     onClick={() => setIsGantiIbukotaOpen(true)}
-                    aria-label="Pindah / Ganti Ibukota Negara"
+                    aria-label={tr("capital.change")}
                     className="flex shrink-0 cursor-pointer items-center gap-1 rounded-md border border-[#FFE600]/40 bg-[#FFE600]/20 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#FFE600] transition-all hover:bg-[#FFE600] hover:text-root-canvas sm:px-2"
-                    title="Pindah / Ganti Ibukota Negara"
+                    title={tr("capital.change")}
                   >
                     <MapPin className="h-3 w-3" />
-                    <span className="hidden sm:inline">Ubah</span>
+                    <span className="hidden sm:inline">{tr("capital.changeShort")}</span>
                   </button>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowGeneralInfo(true)}
                   className="root-modal-info-button root-modal-util-1697100c43 flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent"
-                  title="Informasi & Panduan Dewan Kabinet"
-                  aria-label="Informasi & Panduan Dewan Kabinet"
+                  title={tr("header.info")}
+                  aria-label={tr("header.info")}
                 >
                   <Info className="h-4 w-4" />
                 </button>
@@ -557,13 +569,13 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
           />
 
           <RootModalSidebarLayout
-            ariaLabel="Bagian dewan kabinet menteri"
+            ariaLabel={tr("header.sections")}
             contentClassName="p-4 sm:p-6 lg:p-8"
             items={TABS.map((tab) => ({
               id: tab.key,
               isActive: activeTab === tab.key,
               onSelect: () => setActiveTab(tab.key),
-              label: tab.label,
+              label: tr(`tabs.${tab.key}`),
             }))}
           >
               <div className="space-y-4">
@@ -584,15 +596,15 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                           <button
                             type="button"
                             onClick={() => setInfoTarget(dept)}
-                            aria-label={`Informasi ${dept.name}`}
+                            aria-label={tr("department.info", { name: tr(`departments.${dept.id}.name`) })}
                             className="text-root-subtle hover:text-root-accent cursor-pointer transition-colors"
                           >
                             <Info className="h-4 w-4" />
                           </button>
-                          <span className="text-root-text text-sm font-bold">{dept.name}</span>
+                          <span className="text-root-text text-sm font-bold">{tr(`departments.${dept.id}.name`)}</span>
                         </div>
                         <span className="text-root-accent text-[10px] font-bold uppercase bg-root-canvas px-2 py-0.5 rounded border border-root-accent/20">
-                          Level {level}/{MAX_LEVEL}
+                          {tr("level", { level, max: MAX_LEVEL })}
                         </span>
                       </div>
 
@@ -615,7 +627,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5 mb-2 text-root-text font-bold text-sm">
                             <span className="h-3 w-3 rounded-full bg-root-accent inline-block" />
-                            {income.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO per hari
+                            {tr("dailyCost", { cost: income.toLocaleString(language, { maximumFractionDigits: 2 }) })}
                           </div>
 
                           <div className="flex gap-1">
@@ -639,16 +651,16 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                                   disabled={boxLevel === level || (isJumpTarget && !canAffordJump)}
                                   title={
                                     boxLevel === level
-                                      ? `Level saat ini`
+                                      ? tr("tooltips.currentLevel")
                                       : filled
-                                      ? `Klik untuk turun ke level ${boxLevel} (downgrade)`
+                                      ? tr("tooltips.downgrade", { level: boxLevel })
                                       : canAffordJump
-                                      ? `Lompat ke level ${boxLevel}: ${jumpCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO`
+                                      ? tr("tooltips.jump", { level: boxLevel, cost: jumpCost.toLocaleString(language, { maximumFractionDigits: 2 }) })
                                       : willBeDailyNegative
-                                      ? `Upgrade ini akan membuat pendapatan harian menjadi negatif` 
+                                      ? tr("tooltips.negativeDaily")
                                       : remainingCashAfterUpgrade < 0
-                                      ? `Kas saat ini tidak cukup untuk level ${boxLevel} (butuh ${jumpCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO)`
-                                      : `Upgrade ini tidak didukung oleh kas dan pendapatan harian saat ini`
+                                      ? tr("tooltips.insufficientCash", { level: boxLevel, cost: jumpCost.toLocaleString(language, { maximumFractionDigits: 2 }) })
+                                      : tr("tooltips.unsupported")
                                   }
                                   className={`h-4 flex-1 rounded-sm transition-all ${
                                     boxLevel === level
@@ -670,10 +682,12 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                           onClick={() => openMinisterCandidates(dept)}
                           title={
                             maxed
-                              ? "Pilih kandidat menteri"
-                              : `Pilih kandidat menteri • Upgrade 1 level: ${getLevelUpCostForStep(level + 1, countryDetail)?.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO`
+                              ? tr("candidate.select")
+                              : tr("candidate.upgradeNext", {
+                                cost: getLevelUpCostForStep(level + 1, countryDetail)?.toLocaleString(language, { maximumFractionDigits: 2 }) ?? 0,
+                              })
                           }
-                          aria-label={`Pilih kandidat menteri untuk ${dept.name}`}
+                          aria-label={tr("candidate.selectFor", { name: tr(`departments.${dept.id}.name`) })}
                           className={`h-12 w-12 shrink-0 rounded-lg border flex items-center justify-center cursor-pointer transition-colors ${
                             maxed
                               ? "border-root-accent/10 bg-root-surface text-root-subtle"
@@ -722,15 +736,15 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
       <MenuInfoModal
         isOpen={showGeneralInfo}
         onClose={() => setShowGeneralInfo(false)}
-        title="Panduan Dewan Kabinet"
-        description="Kelola kementerian, keamanan, dan layanan negara melalui penempatan menteri serta peningkatan level departemen. Susunan kabinet memengaruhi anggaran harian, bonus, dan layanan negara. Tekan salah satu kotak level untuk melompat langsung ke level tersebut — biaya akan dijumlahkan dari semua level yang dilewati. Tekan kotak yang sudah terisi untuk menurunkan level (downgrade) dan mengurangi biaya operasional harian."
+        title={tr("guide.title")}
+        description={tr("guide.description")}
       >
         <button
           type="button"
           onClick={() => setShowGeneralInfo(false)}
           className="mt-5 w-full rounded-xl bg-root-accent py-2.5 text-xs font-extrabold uppercase text-root-canvas shadow-md transition-all hover:bg-root-accent/80"
         >
-          Mengerti
+          {tr("guide.understand")}
         </button>
       </MenuInfoModal>
 
@@ -746,54 +760,54 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
             className="flex h-full min-h-0 flex-col"
           >
             <RootInfoModalHeader
-              title={infoTarget.name}
+              title={tr(`departments.${infoTarget.id}.name`)}
               titleId="cabinet-department-info-title"
               onClose={() => setInfoTarget(null)}
-              closeAriaLabel={`Tutup informasi ${infoTarget.name}`}
+              closeAriaLabel={tr("department.closeInfo", { name: tr(`departments.${infoTarget.id}.name`) })}
               size="standard"
             />
             <div className="root-info-modal-content min-h-0 flex-1 overflow-y-auto bg-root-surface p-4 sm:p-5">
               <p className="text-xs font-semibold text-root-subtle">
-                {infoTarget.description}
+                {tr(`departments.${infoTarget.id}.description`)}
               </p>
               <section className="mt-4 space-y-3 rounded-xl border border-root-accent/20 bg-root-canvas p-3 sm:p-4">
-                <h3 className="root-modal-util-9361ef65fc">Informasi Level</h3>
+                <h3 className="root-modal-util-9361ef65fc">{tr("department.levelInfo")}</h3>
                 <div className="space-y-2 text-xs font-semibold">
                   <p className="text-root-subtle">
-                    Efek saat ini: <span className="text-root-text">{infoCurrentEffect}</span>
+                    {tr("department.currentEffect")}: <span className="text-root-text">{infoCurrentEffect}</span>
                   </p>
                   {!infoMaxed && infoNextEffect && (
                     <>
                       <p className="text-root-subtle">
-                        Level berikutnya: <span className="text-root-accent">{infoNextEffect}</span>
+                        {tr("department.nextLevel")}: <span className="text-root-accent">{infoNextEffect}</span>
                       </p>
                       <p className="text-root-subtle">
-                        Upgrade ke level {infoLevel + 1}:{" "}
+                        {tr("department.upgradeToLevel", { level: infoLevel + 1 })}:{" "}
                         <span className="text-root-accent">
-                          {infoNextStepCost?.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
+                          {infoNextStepCost?.toLocaleString(language, { maximumFractionDigits: 2 })} NEO
                         </span>
                       </p>
                       <p className="text-root-subtle">
-                        Tekan kotak level mana pun untuk langsung menuju level tersebut.
+                        {tr("department.levelShortcut")}
                       </p>
                     </>
                   )}
                   {infoMaxed && (
                     <p className="text-root-subtle">
-                      Departemen telah mencapai level maksimum ({MAX_LEVEL}).
+                      {tr("department.maxLevel", { max: MAX_LEVEL })}
                     </p>
                   )}
                 </div>
               </section>
               <div className="mt-4 space-y-2">
                 <p className="text-[10px] font-black uppercase tracking-wide text-root-accent">
-                  Dampak:
+                  {tr("department.effects")}:
                 </p>
                 <ul className="space-y-1.5">
-                  {infoTarget.effects.map((effect, i) => (
+                  {infoTarget.effects.map((_, i) => (
                     <li key={i} className="flex gap-2 text-xs font-semibold text-root-text">
                       <span className="text-root-accent">•</span>
-                      {effect}
+                      {tr(`departments.${infoTarget.id}.effects.${i}`)}
                     </li>
                   ))}
                 </ul>
@@ -808,10 +822,10 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
         isOpen={confirmUpgrade !== null}
         onClose={() => setConfirmUpgrade(null)}
         onConfirm={handleConfirmUpgrade}
-        title={confirmUpgrade?.dept.name ?? ""}
+        title={confirmUpgrade ? tr(`departments.${confirmUpgrade.dept.id}.name`) : ""}
         icon={confirmUpgrade ? <confirmUpgrade.dept.icon aria-hidden="true" /> : undefined}
-        confirmLabel="Upgrade"
-        cancelLabel="Batal"
+        confirmLabel={tr("confirm.upgrade")}
+        cancelLabel={tr("confirm.cancel")}
         zIndexClass="z-[210]"
       >
         {confirmUpgrade && (
@@ -823,36 +837,36 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                   (_, idx) => confirmUpgrade.fromLevel + idx
                 ).map((stepLevel) => (
                   <div key={stepLevel} className="flex justify-between gap-3 text-[11px] font-bold text-root-subtle">
-                    <span>Biaya dari level {stepLevel} ke {stepLevel + 1}:</span>
+                    <span>{tr("confirm.costFromTo", { from: stepLevel, to: stepLevel + 1 })}</span>
                     <span className="shrink-0 text-root-text">
-                      {getLevelUpCostForStep(stepLevel + 1, countryDetail).toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
+                      {getLevelUpCostForStep(stepLevel + 1, countryDetail).toLocaleString(language, { maximumFractionDigits: 2 })} NEO
                     </span>
                   </div>
                 ))}
               </div>
 
               <div className="mb-3 flex items-center justify-between border-t border-root-accent/20 pt-3">
-                <span className="text-xs font-bold uppercase text-root-subtle">Total Biaya:</span>
+                <span className="text-xs font-bold uppercase text-root-subtle">{tr("confirm.totalCost")}</span>
                 <span className="text-lg font-black text-root-accent">
-                  {confirmUpgrade.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
+                  {confirmUpgrade.cost.toLocaleString(language, { maximumFractionDigits: 2 })} NEO
                 </span>
               </div>
               <div className="flex items-center justify-between gap-3">
-                <span className="text-xs font-bold uppercase text-root-subtle">Kas Negara Sekarang:</span>
+                <span className="text-xs font-bold uppercase text-root-subtle">{tr("confirm.currentTreasury")}</span>
                 <span className="text-lg font-black text-root-text">
-                  {money.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
+                  {money.toLocaleString(language, { maximumFractionDigits: 2 })} NEO
                 </span>
               </div>
               <div className="mt-3 flex items-center justify-between gap-3 border-t border-root-accent/20 pt-3">
-                <span className="text-xs font-bold uppercase text-root-subtle">Kas Setelah Upgrade:</span>
+                <span className="text-xs font-bold uppercase text-root-subtle">{tr("confirm.treasuryAfterUpgrade")}</span>
                 <span className="text-lg font-black text-amber-400">
-                  {(money - confirmUpgrade.cost).toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
+                  {(money - confirmUpgrade.cost).toLocaleString(language, { maximumFractionDigits: 2 })} NEO
                 </span>
               </div>
             </div>
 
             <p className="text-xs font-semibold text-root-subtle">
-              {confirmUpgrade.dept.description}
+              {tr(`departments.${confirmUpgrade.dept.id}.description`)}
             </p>
           </div>
         )}
@@ -881,31 +895,33 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
               </div>
               <div>
                 <h3 className="text-lg font-bold text-root-text uppercase leading-none">
-                  {confirmDowngrade.dept.name}
+                  {tr(`departments.${confirmDowngrade.dept.id}.name`)}
                 </h3>
                 <p className="text-[10px] text-root-subtle font-semibold mt-1">
-                  Level {confirmDowngrade.fromLevel} → {confirmDowngrade.targetLevel}
+                  {tr("confirm.levelTransition", { from: confirmDowngrade.fromLevel, to: confirmDowngrade.targetLevel })}
                 </p>
               </div>
             </div>
 
             <div className="bg-root-canvas border border-root-accent/20 rounded-lg p-4 mb-4">
               <p className="text-xs text-root-subtle font-semibold mb-2">
-                Anda akan menurunkan level departemen ini dari {confirmDowngrade.fromLevel} ke {confirmDowngrade.targetLevel}.
-                Biaya operasional harian akan berkurang sesuai level baru.
+                {tr("confirm.downgradeDescription", {
+                  from: confirmDowngrade.fromLevel,
+                  to: confirmDowngrade.targetLevel,
+                })}
               </p>
               <div className="flex justify-between items-center text-xs font-bold text-root-text border-t border-root-accent/20 pt-3">
-                <span>Biaya harian saat ini (level {confirmDowngrade.fromLevel}):</span>
-                <span className="text-rose-400">- {LEVEL_UP_COST[confirmDowngrade.fromLevel].toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
+                <span>{tr("confirm.dailyCostCurrent", { level: confirmDowngrade.fromLevel })}</span>
+                <span className="text-rose-400">- {LEVEL_UP_COST[confirmDowngrade.fromLevel].toLocaleString(language, { maximumFractionDigits: 2 })} NEO</span>
               </div>
               <div className="flex justify-between items-center text-xs font-bold text-root-text mt-1">
-                <span>Biaya harian baru (level {confirmDowngrade.targetLevel}):</span>
-                <span className="text-root-accent">- {LEVEL_UP_COST[confirmDowngrade.targetLevel].toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
+                <span>{tr("confirm.dailyCostNew", { level: confirmDowngrade.targetLevel })}</span>
+                <span className="text-root-accent">- {LEVEL_UP_COST[confirmDowngrade.targetLevel].toLocaleString(language, { maximumFractionDigits: 2 })} NEO</span>
               </div>
             </div>
 
             <p className="text-xs text-root-subtle font-semibold mb-6">
-              {confirmDowngrade.dept.description}
+              {tr(`departments.${confirmDowngrade.dept.id}.description`)}
             </p>
 
             <div className="flex gap-3">
@@ -913,13 +929,13 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                 onClick={() => setConfirmDowngrade(null)}
                 className="flex-1 px-4 py-2.5 rounded-lg border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-text active:scale-95 transition-all font-bold text-sm uppercase cursor-pointer"
               >
-                Batal
+                {tr("confirm.cancel")}
               </button>
               <button
                 onClick={handleConfirmDowngrade}
                 className="flex-1 px-4 py-2.5 rounded-lg bg-rose-600 text-white hover:bg-rose-500 active:scale-95 transition-all font-bold text-sm uppercase cursor-pointer border border-rose-500/50 shadow-md"
               >
-                Turunkan Level
+                {tr("confirm.downgrade")}
               </button>
             </div>
           </div>

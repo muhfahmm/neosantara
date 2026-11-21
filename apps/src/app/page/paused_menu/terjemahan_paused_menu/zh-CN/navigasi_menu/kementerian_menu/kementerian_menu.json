@@ -1,0 +1,228 @@
+{
+  "header": {
+    "title": "部长内阁",
+    "close": "关闭部长内阁",
+    "info": "内阁信息与指南",
+    "sections": "部长内阁分区"
+  },
+  "capital": {
+    "change": "迁移 / 更改国家首都",
+    "changeShort": "更改",
+    "relocationTitle": "迁都",
+    "search": "搜索城市",
+    "searchPlaceholder": "搜索城市...",
+    "noCityMatch": "没有符合搜索条件“{query}”的城市。",
+    "current": "当前首都",
+    "select": "选择首都",
+    "confirmClose": "关闭迁都确认窗口",
+    "confirmTitle": "确认迁都",
+    "old": "原首都",
+    "new": "新首都",
+    "relocationCost": "官方迁都费用：",
+    "currentTreasury": "当前国库：",
+    "estimatedTreasury": "预计剩余国库：",
+    "cooldownPolicy": "{years}年冷却期。",
+    "cooldownNotice": "新首都确定后，在此日期之前无法再次迁都：",
+    "insufficientFunds": "国库资金不足，无法支付{cost} NEO的迁都费用。",
+    "set": "设为首都"
+  },
+  "tabs": {
+    "kementerian": "部委",
+    "keamanan": "安全",
+    "layanan": "服务"
+  },
+  "level": "等级 {level}/{max}",
+  "dailyCost": "每日 {cost} NEO",
+  "tooltips": {
+    "currentLevel": "当前等级",
+    "downgrade": "点击降至等级 {level}",
+    "jump": "直接升级至等级 {level}：{cost} NEO",
+    "negativeDaily": "此升级会导致每日收入为负",
+    "insufficientCash": "现金不足，无法达到等级 {level}（需要 {cost} NEO）",
+    "unsupported": "当前国库和每日收入不足以支持此升级"
+  },
+  "candidate": {
+    "select": "选择部长候选人",
+    "upgradeNext": "选择部长候选人 • 升级1级：{cost} NEO",
+    "selectFor": "为{name}选择部长候选人",
+    "title": "部长候选人",
+    "close": "关闭部长候选人窗口",
+    "insufficientIncome": "国家每日净收入不足。该候选人需要{cost} NEO净收入。",
+    "active": "候选人 {tier} 正在任职，提供 {effect}% 加成。",
+    "tier": "{tier}级部长",
+    "serving": "在任",
+    "recruitmentCost": "聘用费用",
+    "replace": "更换部长",
+    "netInsufficient": "净收入不足",
+    "hire": "聘用部长"
+  },
+  "guide": {
+    "title": "内阁指南",
+    "description": "通过任命部长和提升部门等级来管理国家部委、安全与公共服务。内阁会影响每日预算、加成和公共服务。选择等级方格可直接升级至该等级，费用包含所有跨越的等级；选择已填充的方格可降低等级并减少每日运营开支。",
+    "understand": "明白"
+  },
+  "department": {
+    "info": "信息：{name}",
+    "closeInfo": "关闭{name}信息",
+    "levelInfo": "等级信息",
+    "currentEffect": "当前效果",
+    "nextLevel": "下一级效果",
+    "upgradeToLevel": "升级至等级 {level}",
+    "levelShortcut": "选择任意等级方格即可直接升级至该等级。",
+    "maxLevel": "该部门已达到最高等级（{max}）。",
+    "effects": "效果"
+  },
+  "confirm": {
+    "upgrade": "升级",
+    "cancel": "取消",
+    "costFromTo": "从等级 {from} 升至 {to} 的费用：",
+    "totalCost": "总费用：",
+    "currentTreasury": "当前国库：",
+    "treasuryAfterUpgrade": "升级后国库：",
+    "levelTransition": "等级 {from} → {to}",
+    "downgradeDescription": "即将把该部门从等级 {from} 降至 {to}。每日运营费用将随新等级降低。",
+    "dailyCostCurrent": "当前每日费用（等级 {level}）：",
+    "dailyCostNew": "新的每日费用（等级 {level}）：",
+    "downgrade": "降低等级"
+  },
+  "common": {
+    "close": "关闭",
+    "cancel": "取消",
+    "active": "启用"
+  },
+  "effects": {
+    "none": "无特定效果",
+    "level": "{value} {label}",
+    "trade": "售价 +{sell}%，进价 -{buy}%"
+  },
+  "effectLabels": {
+    "infrastruktur": "建设速度",
+    "pendidikan": "粮食与自然资源产量",
+    "sains": "研究时间（加快）",
+    "kesehatan": "疫情与流行病死亡人数",
+    "olahraga": "活动提升满意度的效果",
+    "kehakiman": "犯罪率",
+    "pertahanan": "军事实力（陆/海/空）",
+    "luar-negeri": "与其他国家签订条约的概率",
+    "kebudayaan": "降低总统排名",
+    "pariwisata": "旅游收入",
+    "lingkungan": "自然灾害造成损失的概率与影响",
+    "perumahan": "住房容量",
+    "pembangunan": "建设速度",
+    "perdagangan": "售价与进价",
+    "keuangan": "税收收入",
+    "polisi": "犯罪率",
+    "garda-nasional": "人口聚居区的分离主义",
+    "komandan-angkatan-darat": "陆军实力",
+    "komandan-armada": "海军实力",
+    "layanan-darurat": "自然灾害造成的死亡人数",
+    "bank-sentral": "安全贷款额度"
+  },
+  "departments": {
+    "infrastruktur": {
+      "name": "基础设施部",
+      "description": "负责道路、桥梁和国家基础设施项目的建设。",
+      "effects": ["建设速度：每级 +1%"]
+    },
+    "pendidikan": {
+      "name": "教育部",
+      "description": "管理课程与学校，并提升粮食和自然资源生产效率。",
+      "effects": ["粮食与自然资源产量：每级 +1%"]
+    },
+    "sains": {
+      "name": "科学与研究部",
+      "description": "资助技术研究、国家创新并提高研究效率。",
+      "effects": ["研究时间缩短：每级 -1%"]
+    },
+    "kesehatan": {
+      "name": "卫生部",
+      "description": "管理医院、疫苗接种以及疫情和流行病防控。",
+      "effects": ["疫情与流行病死亡人数减少：每级 -1%"]
+    },
+    "olahraga": {
+      "name": "体育部",
+      "description": "建设国家体育设施并提升满意度活动的效果。",
+      "effects": ["活动提升满意度的效果：每级 +1%"]
+    },
+    "kehakiman": {
+      "name": "司法部",
+      "description": "维护执法工作和国家司法体系。",
+      "effects": ["犯罪率：每级 -1%"]
+    },
+    "pertahanan": {
+      "name": "国防部",
+      "description": "管理武装力量和国家防务。",
+      "effects": ["军事实力：每级 +1%（陆/海/空）"]
+    },
+    "luar-negeri": {
+      "name": "外交部",
+      "description": "管理外交关系与国家间合作。",
+      "effects": ["与其他国家签订条约的概率：每级 +1%"]
+    },
+    "kebudayaan": {
+      "name": "文化部",
+      "description": "保护文化和国家认同，并维护领导层声望。",
+      "effects": ["降低总统排名下滑：每级 -1%"]
+    },
+    "pariwisata": {
+      "name": "旅游部",
+      "description": "发展旅游业并提高旅游目的地收入。",
+      "effects": ["旅游收入：每级 +1%"]
+    },
+    "lingkungan": {
+      "name": "环境部",
+      "description": "保护自然环境并降低气象、水文和地质灾害风险。",
+      "effects": ["自然灾害造成损失的概率与影响：每级 -1%"]
+    },
+    "perumahan": {
+      "name": "住房部",
+      "description": "管理住房供应并扩大居住容量。",
+      "effects": ["住房容量：每级 +1%"]
+    },
+    "pembangunan": {
+      "name": "发展部",
+      "description": "监督大型国家发展项目和区域规划。",
+      "effects": ["建设速度：每级 +1%"]
+    },
+    "perdagangan": {
+      "name": "贸易部",
+      "description": "管理进出口政策和国家间贸易关系。",
+      "effects": ["售价：每级 +1%", "进价：每级 -1%"]
+    },
+    "keuangan": {
+      "name": "财政部",
+      "description": "管理国家预算、税收和财政政策。",
+      "effects": ["税收收入：每级 +1%"]
+    },
+    "polisi": {
+      "name": "警察部队",
+      "description": "维护公共秩序并负责日常执法。",
+      "effects": ["犯罪率：每级 -1%"]
+    },
+    "garda-nasional": {
+      "name": "国民警卫队",
+      "description": "维护国内稳定并处理人口聚居区的分离主义问题。",
+      "effects": ["人口聚居区的分离主义：每级 -1%"]
+    },
+    "komandan-angkatan-darat": {
+      "name": "陆军司令",
+      "description": "领导陆军力量，保卫国家领土。",
+      "effects": ["陆军实力：每级 +1%"]
+    },
+    "komandan-armada": {
+      "name": "舰队司令",
+      "description": "领导海军并守卫国家海域。",
+      "effects": ["海军实力：每级 +1%"]
+    },
+    "layanan-darurat": {
+      "name": "紧急救援服务",
+      "description": "协调快速医疗疏散并减少自然灾害伤亡。",
+      "effects": ["自然灾害造成的死亡人数：每级 -1%"]
+    },
+    "bank-sentral": {
+      "name": "中央银行行长",
+      "description": "管理货币政策、国家贷款能力和安全债务上限。",
+      "effects": ["安全贷款额度：每级 +1%"]
+    }
+  }
+}

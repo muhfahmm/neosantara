@@ -1,0 +1,228 @@
+{
+  "header": {
+    "title": "장관 내각",
+    "close": "장관 내각 닫기",
+    "info": "내각 정보 및 안내",
+    "sections": "장관 내각 섹션"
+  },
+  "capital": {
+    "change": "국가 수도 이전 / 변경",
+    "changeShort": "변경",
+    "relocationTitle": "수도 이전",
+    "search": "도시 검색",
+    "searchPlaceholder": "도시 검색...",
+    "noCityMatch": "\"{query}\" 검색과 일치하는 도시가 없습니다.",
+    "current": "현재 수도",
+    "select": "수도 선택",
+    "confirmClose": "수도 이전 확인 닫기",
+    "confirmTitle": "수도 이전 확인",
+    "old": "이전 수도",
+    "new": "새 수도",
+    "relocationCost": "공식 이전 비용:",
+    "currentTreasury": "현재 국고:",
+    "estimatedTreasury": "예상 잔여 국고:",
+    "cooldownPolicy": "{years}년 대기 기간.",
+    "cooldownNotice": "새 수도가 지정된 후 다음 날짜까지 다시 이전할 수 없습니다:",
+    "insufficientFunds": "국고에 이전 비용 {cost} NEO를 지불할 자금이 부족합니다.",
+    "set": "수도로 지정"
+  },
+  "tabs": {
+    "kementerian": "부처",
+    "keamanan": "안보",
+    "layanan": "서비스"
+  },
+  "level": "레벨 {level}/{max}",
+  "dailyCost": "하루 {cost} NEO",
+  "tooltips": {
+    "currentLevel": "현재 레벨",
+    "downgrade": "클릭하여 레벨 {level}(으)로 낮추기",
+    "jump": "레벨 {level}(으)로 바로 업그레이드: {cost} NEO",
+    "negativeDaily": "이 업그레이드로 일일 수입이 적자가 됩니다",
+    "insufficientCash": "레벨 {level}에 필요한 현금이 부족합니다 ({cost} NEO 필요)",
+    "unsupported": "현재 국고와 일일 수입으로는 이 업그레이드를 진행할 수 없습니다"
+  },
+  "candidate": {
+    "select": "장관 후보 선택",
+    "upgradeNext": "장관 후보 선택 • 1레벨 업그레이드: {cost} NEO",
+    "selectFor": "{name} 장관 후보 선택",
+    "title": "장관 후보",
+    "close": "장관 후보 창 닫기",
+    "insufficientIncome": "국가의 일일 순수입이 부족합니다. 이 후보에게는 순수입 {cost} NEO가 필요합니다.",
+    "active": "후보 {tier}이(가) {effect}% 보너스를 제공하며 재임 중입니다.",
+    "tier": "{tier}급 장관",
+    "serving": "재임 중",
+    "recruitmentCost": "임용 비용",
+    "replace": "장관 교체",
+    "netInsufficient": "순수입 부족",
+    "hire": "장관 임용"
+  },
+  "guide": {
+    "title": "내각 안내",
+    "description": "장관을 임명하고 부처 레벨을 올려 국가 부처, 안보, 서비스를 관리합니다. 내각 구성은 일일 예산, 보너스, 공공 서비스에 영향을 줍니다. 레벨 칸을 선택하면 해당 레벨로 바로 업그레이드되며, 비용에는 건너뛴 모든 레벨이 포함됩니다. 이미 채워진 칸을 선택하면 레벨과 일일 운영 비용을 낮출 수 있습니다.",
+    "understand": "확인"
+  },
+  "department": {
+    "info": "정보: {name}",
+    "closeInfo": "{name} 정보 닫기",
+    "levelInfo": "레벨 정보",
+    "currentEffect": "현재 효과",
+    "nextLevel": "다음 레벨",
+    "upgradeToLevel": "레벨 {level}(으)로 업그레이드",
+    "levelShortcut": "원하는 레벨 칸을 선택하여 해당 레벨로 바로 이동하세요.",
+    "maxLevel": "이 부처는 최고 레벨({max})에 도달했습니다.",
+    "effects": "효과"
+  },
+  "confirm": {
+    "upgrade": "업그레이드",
+    "cancel": "취소",
+    "costFromTo": "레벨 {from}에서 {to}(으)로 업그레이드하는 비용:",
+    "totalCost": "총 비용:",
+    "currentTreasury": "현재 국고:",
+    "treasuryAfterUpgrade": "업그레이드 후 국고:",
+    "levelTransition": "레벨 {from} → {to}",
+    "downgradeDescription": "이 부처의 레벨을 {from}에서 {to}(으)로 낮춥니다. 새 레벨에 따라 일일 운영 비용이 줄어듭니다.",
+    "dailyCostCurrent": "현재 일일 비용 (레벨 {level}):",
+    "dailyCostNew": "새 일일 비용 (레벨 {level}):",
+    "downgrade": "레벨 낮추기"
+  },
+  "common": {
+    "close": "닫기",
+    "cancel": "취소",
+    "active": "활성"
+  },
+  "effects": {
+    "none": "특정 효과 없음",
+    "level": "{value} {label}",
+    "trade": "판매 가격 +{sell}%, 구매 가격 -{buy}%"
+  },
+  "effectLabels": {
+    "infrastruktur": "건설 속도",
+    "pendidikan": "식량 및 천연자원 생산량",
+    "sains": "연구 시간 (단축)",
+    "kesehatan": "팬데믹 및 전염병 사망자",
+    "olahraga": "행사 만족도 향상 효과",
+    "kehakiman": "범죄율",
+    "pertahanan": "군사력 (육상/해상/공중)",
+    "luar-negeri": "타국과의 조약 체결 확률",
+    "kebudayaan": "대통령 순위 하락",
+    "pariwisata": "관광 수입",
+    "lingkungan": "자연재해 피해 확률 및 영향",
+    "perumahan": "주거 수용력",
+    "pembangunan": "건설 속도",
+    "perdagangan": "판매 및 구매 가격",
+    "keuangan": "세수",
+    "polisi": "범죄율",
+    "garda-nasional": "인구 거주 지역의 분리주의",
+    "komandan-angkatan-darat": "육군 전력",
+    "komandan-armada": "해군 전력",
+    "layanan-darurat": "자연재해 사망자 수",
+    "bank-sentral": "안전 대출 한도"
+  },
+  "departments": {
+    "infrastruktur": {
+      "name": "인프라부",
+      "description": "도로, 교량 및 국가 기반 시설 사업의 건설을 관리합니다.",
+      "effects": ["건설 속도: 레벨당 +1%"]
+    },
+    "pendidikan": {
+      "name": "교육부",
+      "description": "교육 과정과 학교를 관리하고 식량 및 천연자원 생산성을 높입니다.",
+      "effects": ["식량 및 천연자원 생산량: 레벨당 +1%"]
+    },
+    "sains": {
+      "name": "과학연구부",
+      "description": "기술 연구와 국가 혁신을 지원하고 연구 시간을 단축합니다.",
+      "effects": ["연구 시간 단축: 레벨당 -1%"]
+    },
+    "kesehatan": {
+      "name": "보건부",
+      "description": "병원과 예방 접종을 관리하고 감염병 및 팬데믹에 대응합니다.",
+      "effects": ["팬데믹 및 전염병 사망자 감소: 레벨당 -1%"]
+    },
+    "olahraga": {
+      "name": "체육부",
+      "description": "국가 체육 시설을 개발하고 만족도 향상 프로그램의 효과를 높입니다.",
+      "effects": ["행사 만족도 향상 효과: 레벨당 +1%"]
+    },
+    "kehakiman": {
+      "name": "법무부",
+      "description": "법 집행과 국가 사법 제도를 유지합니다.",
+      "effects": ["범죄율: 레벨당 -1%"]
+    },
+    "pertahanan": {
+      "name": "국방부",
+      "description": "군대와 국가 방위를 관리합니다.",
+      "effects": ["군사력: 레벨당 +1% (육상/해상/공중)"]
+    },
+    "luar-negeri": {
+      "name": "외교부",
+      "description": "외교 관계와 국가 간 협력을 관리합니다.",
+      "effects": ["타국과의 조약 체결 확률: 레벨당 +1%"]
+    },
+    "kebudayaan": {
+      "name": "문화부",
+      "description": "문화와 국가 정체성을 보존하고 지도부의 평판을 지원합니다.",
+      "effects": ["대통령 순위 하락 감소: 레벨당 -1%"]
+    },
+    "pariwisata": {
+      "name": "관광부",
+      "description": "관광 산업을 발전시키고 관광지 수입을 늘립니다.",
+      "effects": ["관광 수입: 레벨당 +1%"]
+    },
+    "lingkungan": {
+      "name": "환경부",
+      "description": "자연환경을 보전하고 기상·수문·지질 재해 위험을 완화합니다.",
+      "effects": ["자연재해 피해 확률 및 영향: 레벨당 -1%"]
+    },
+    "perumahan": {
+      "name": "주택부",
+      "description": "주택 공급을 관리하고 주거 수용력을 확대합니다.",
+      "effects": ["주거 수용력: 레벨당 +1%"]
+    },
+    "pembangunan": {
+      "name": "개발부",
+      "description": "대규모 국가 개발 사업과 지역 계획을 감독합니다.",
+      "effects": ["건설 속도: 레벨당 +1%"]
+    },
+    "perdagangan": {
+      "name": "통상부",
+      "description": "수출입 정책과 국가 간 무역 관계를 관리합니다.",
+      "effects": ["판매 가격: 레벨당 +1%", "구매 가격: 레벨당 -1%"]
+    },
+    "keuangan": {
+      "name": "재정부",
+      "description": "국가 예산, 세금 및 재정 정책을 관리합니다.",
+      "effects": ["세수: 레벨당 +1%"]
+    },
+    "polisi": {
+      "name": "경찰",
+      "description": "공공질서와 일상적인 법 집행을 유지합니다.",
+      "effects": ["범죄율: 레벨당 -1%"]
+    },
+    "garda-nasional": {
+      "name": "국가경비대",
+      "description": "국내 안정을 유지하고 인구 거주 지역의 분리주의에 대응합니다.",
+      "effects": ["인구 거주 지역의 분리주의: 레벨당 -1%"]
+    },
+    "komandan-angkatan-darat": {
+      "name": "육군 사령관",
+      "description": "영토 방위를 위해 국가의 육군을 지휘합니다.",
+      "effects": ["육군 전력: 레벨당 +1%"]
+    },
+    "komandan-armada": {
+      "name": "함대 사령관",
+      "description": "해군을 지휘하고 국가 해역을 보호합니다.",
+      "effects": ["해군 전력: 레벨당 +1%"]
+    },
+    "layanan-darurat": {
+      "name": "응급 구조 서비스",
+      "description": "신속한 의료 대피를 조정하고 자연재해 사상자를 줄입니다.",
+      "effects": ["자연재해 사망자 수: 레벨당 -1%"]
+    },
+    "bank-sentral": {
+      "name": "중앙은행 총재",
+      "description": "통화 정책, 국가 대출 역량 및 안전 부채 한도를 관리합니다.",
+      "effects": ["안전 대출 한도: 레벨당 +1%"]
+    }
+  }
+}

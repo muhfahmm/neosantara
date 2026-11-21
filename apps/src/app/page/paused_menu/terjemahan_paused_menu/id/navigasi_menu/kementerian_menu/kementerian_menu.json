@@ -1,0 +1,228 @@
+{
+  "header": {
+    "title": "Dewan Kabinet Menteri",
+    "close": "Tutup menu dewan kabinet menteri",
+    "info": "Informasi & Panduan Dewan Kabinet",
+    "sections": "Bagian dewan kabinet menteri"
+  },
+  "capital": {
+    "change": "Pindah / Ganti Ibukota Negara",
+    "changeShort": "Ubah",
+    "relocationTitle": "Relokasi & Pergantian Ibukota",
+    "search": "Cari kota",
+    "searchPlaceholder": "Cari kota...",
+    "noCityMatch": "Tidak ada kota yang cocok dengan pencarian \"{query}\".",
+    "current": "Ibukota Saat Ini",
+    "select": "Pilih Ibukota",
+    "confirmClose": "Tutup konfirmasi pemindahan ibukota",
+    "confirmTitle": "Konfirmasi Pemindahan Ibukota",
+    "old": "Ibukota Lama",
+    "new": "Ibukota Baru",
+    "relocationCost": "Biaya Relokasi Resmi:",
+    "currentTreasury": "Kas Negara Saat Ini:",
+    "estimatedTreasury": "Perkiraan Sisa Kas:",
+    "cooldownPolicy": "Ketentuan cooldown {years} tahun.",
+    "cooldownNotice": "Setelah ibukota baru ditetapkan, Anda tidak dapat memindahkan ibukota lagi hingga",
+    "insufficientFunds": "Kas negara tidak mencukupi untuk biaya relokasi sebesar {cost} NEO.",
+    "set": "Tetapkan Ibukota"
+  },
+  "tabs": {
+    "kementerian": "Kementerian",
+    "keamanan": "Keamanan",
+    "layanan": "Layanan"
+  },
+  "level": "Level {level}/{max}",
+  "dailyCost": "{cost} NEO per hari",
+  "tooltips": {
+    "currentLevel": "Level saat ini",
+    "downgrade": "Klik untuk turun ke level {level} (downgrade)",
+    "jump": "Lompat ke level {level}: {cost} NEO",
+    "negativeDaily": "Upgrade ini akan membuat pendapatan harian menjadi negatif",
+    "insufficientCash": "Kas saat ini tidak cukup untuk level {level} (butuh {cost} NEO)",
+    "unsupported": "Upgrade ini tidak didukung oleh kas dan pendapatan harian saat ini"
+  },
+  "candidate": {
+    "select": "Pilih kandidat menteri",
+    "upgradeNext": "Pilih kandidat menteri • Upgrade 1 level: {cost} NEO",
+    "selectFor": "Pilih kandidat menteri untuk {name}",
+    "title": "Kandidat Menteri",
+    "close": "Tutup kandidat menteri",
+    "insufficientIncome": "Netto harian negara tidak cukup. Kandidat ini membutuhkan {cost} NEO dari netto.",
+    "active": "Kandidat {tier} sudah menjabat dengan peningkatan {effect}%.",
+    "tier": "Menteri {tier}",
+    "serving": "Menjabat",
+    "recruitmentCost": "Biaya rekrutmen",
+    "replace": "Ganti Menteri",
+    "netInsufficient": "Netto Tidak Cukup",
+    "hire": "Rekrut Menteri"
+  },
+  "guide": {
+    "title": "Panduan Dewan Kabinet",
+    "description": "Kelola kementerian, keamanan, dan layanan negara melalui penempatan menteri serta peningkatan level departemen. Susunan kabinet memengaruhi anggaran harian, bonus, dan layanan negara. Tekan salah satu kotak level untuk melompat langsung ke level tersebut — biaya akan dijumlahkan dari semua level yang dilewati. Tekan kotak yang sudah terisi untuk menurunkan level dan mengurangi biaya operasional harian.",
+    "understand": "Mengerti"
+  },
+  "department": {
+    "info": "Informasi {name}",
+    "closeInfo": "Tutup informasi {name}",
+    "levelInfo": "Informasi Level",
+    "currentEffect": "Efek saat ini",
+    "nextLevel": "Level berikutnya",
+    "upgradeToLevel": "Upgrade ke level {level}",
+    "levelShortcut": "Tekan kotak level mana pun untuk langsung menuju level tersebut.",
+    "maxLevel": "Departemen telah mencapai level maksimum ({max}).",
+    "effects": "Dampak"
+  },
+  "confirm": {
+    "upgrade": "Upgrade",
+    "cancel": "Batal",
+    "costFromTo": "Biaya dari level {from} ke {to}:",
+    "totalCost": "Total Biaya:",
+    "currentTreasury": "Kas Negara Sekarang:",
+    "treasuryAfterUpgrade": "Kas Setelah Upgrade:",
+    "levelTransition": "Level {from} → {to}",
+    "downgradeDescription": "Anda akan menurunkan level departemen ini dari {from} ke {to}. Biaya operasional harian akan berkurang sesuai level baru.",
+    "dailyCostCurrent": "Biaya harian saat ini (level {level}):",
+    "dailyCostNew": "Biaya harian baru (level {level}):",
+    "downgrade": "Turunkan Level"
+  },
+  "common": {
+    "close": "Tutup",
+    "cancel": "Batal",
+    "active": "Aktif"
+  },
+  "effects": {
+    "none": "Tidak ada efek spesifik",
+    "level": "{value} {label}",
+    "trade": "Harga Jual +{sell}% & Harga Beli -{buy}%"
+  },
+  "effectLabels": {
+    "infrastruktur": "Kecepatan Pembangunan",
+    "pendidikan": "Produksi Pangan & Sumber Daya Alam",
+    "sains": "Waktu Riset (Lebih Cepat)",
+    "kesehatan": "Kematian Akibat Pandemi & Epidemi",
+    "olahraga": "Efektivitas Peningkatan Kepuasan Acara",
+    "kehakiman": "Tingkat Kriminalitas",
+    "pertahanan": "Kekuatan Militer (Darat/Laut/Udara)",
+    "luar-negeri": "Peluang Perjanjian dengan Negara Lain",
+    "kebudayaan": "Penurunan Peringkat Presiden",
+    "pariwisata": "Pendapatan dari Tempat Wisata",
+    "lingkungan": "Peluang & Dampak Kerusakan Bencana Alam",
+    "perumahan": "Kapasitas Perumahan",
+    "pembangunan": "Kecepatan Pembangunan",
+    "perdagangan": "Harga Jual dan Harga Beli",
+    "keuangan": "Penerimaan Pajak",
+    "polisi": "Tingkat Kriminalitas",
+    "garda-nasional": "Separatisme di Wilayah Kependudukan",
+    "komandan-angkatan-darat": "Kekuatan Darat",
+    "komandan-armada": "Kekuatan Laut",
+    "layanan-darurat": "Jumlah Kematian Akibat Bencana Alam",
+    "bank-sentral": "Batas Aman Pinjaman"
+  },
+  "departments": {
+    "infrastruktur": {
+      "name": "Kementerian Infrastruktur",
+      "description": "Mengelola pembangunan jalan, jembatan, dan proyek infrastruktur nasional.",
+      "effects": ["Kecepatan Pembangunan: +1% per level"]
+    },
+    "pendidikan": {
+      "name": "Kementerian Pendidikan",
+      "description": "Mengatur kurikulum, sekolah, serta peningkatan produktivitas pangan dan sumber daya alam.",
+      "effects": ["Meningkatkan Produksi Pangan dan Sumber Daya Alam: +1% per level"]
+    },
+    "sains": {
+      "name": "Sains dan Penelitian",
+      "description": "Mendanai riset teknologi, inovasi nasional, dan efisiensi waktu penelitian.",
+      "effects": ["Mengurangi Kecepatan/Waktu Riset: -1% per level"]
+    },
+    "kesehatan": {
+      "name": "Kementerian Kesehatan",
+      "description": "Mengelola rumah sakit, vaksinasi, serta penanggulangan wabah dan pandemi.",
+      "effects": ["Mengurangi Kematian Akibat Pandemi dan Epidemi: -1% per level"]
+    },
+    "olahraga": {
+      "name": "Kementerian Olahraga",
+      "description": "Mengembangkan fasilitas olahraga nasional dan meningkatkan persentase efek program peningkatan kepuasan.",
+      "effects": ["Efektivitas Peningkatan Kepuasan Acara: +1% per level"]
+    },
+    "kehakiman": {
+      "name": "Kementerian Kehakiman",
+      "description": "Menjaga penegakan hukum dan sistem peradilan negara.",
+      "effects": ["Tingkat Kriminalitas: -1% per level"]
+    },
+    "pertahanan": {
+      "name": "Kementerian Pertahanan",
+      "description": "Mengatur kekuatan militer dan pertahanan nasional.",
+      "effects": ["Kekuatan Militer: +1% per level (darat/laut/udara)"]
+    },
+    "luar-negeri": {
+      "name": "Kementerian Luar Negeri",
+      "description": "Mengatur hubungan diplomatik dan kerja sama antarnegara.",
+      "effects": ["Meningkatkan Peluang Perjanjian dengan Negara Lain: +1% per level"]
+    },
+    "kebudayaan": {
+      "name": "Kementerian Kebudayaan",
+      "description": "Melestarikan budaya, identitas nasional, dan reputasi kepemimpinan.",
+      "effects": ["Menurunkan Penurunan Peringkat Presiden: -1% per level"]
+    },
+    "pariwisata": {
+      "name": "Kementerian Pariwisata",
+      "description": "Mengembangkan sektor wisata dan mengoptimalkan devisa destinasi.",
+      "effects": ["Pendapatan dari Tempat Wisata: +1% per level"]
+    },
+    "lingkungan": {
+      "name": "Kementerian Lingkungan Hidup",
+      "description": "Mengelola kelestarian alam dan mitigasi risiko bencana hidrometeorologi serta geologi.",
+      "effects": ["Mengurangi Peluang dan Dampak Kerusakan Bencana Alam: -1% per level"]
+    },
+    "perumahan": {
+      "name": "Kementerian Perumahan",
+      "description": "Mengatur penyediaan tempat tinggal dan perluasan kapasitas hunian permukiman.",
+      "effects": ["Kapasitas Perumahan: +1% per level"]
+    },
+    "pembangunan": {
+      "name": "Kementerian Pembangunan",
+      "description": "Mengawasi proyek pembangunan nasional berskala besar dan tata ruang wilayah.",
+      "effects": ["Kecepatan Pembangunan: +1% per level"]
+    },
+    "perdagangan": {
+      "name": "Kementerian Perdagangan",
+      "description": "Mengatur kebijakan ekspor-impor dan hubungan dagang antarnegara.",
+      "effects": ["Harga Jual: +1% per level", "Harga Beli: -1% per level"]
+    },
+    "keuangan": {
+      "name": "Kementerian Keuangan",
+      "description": "Mengelola anggaran negara, pajak, dan kebijakan fiskal nasional.",
+      "effects": ["Penerimaan Pajak: +1% per level"]
+    },
+    "polisi": {
+      "name": "Polisi",
+      "description": "Menjaga ketertiban umum dan penegakan hukum sehari-hari.",
+      "effects": ["Tingkat Kriminalitas: -1% per level"]
+    },
+    "garda-nasional": {
+      "name": "Garda Nasional",
+      "description": "Menjaga stabilitas dalam negeri dan menangani separatisme di wilayah kependudukan.",
+      "effects": ["Mengurangi Separatisme di Wilayah Kependudukan: -1% per level"]
+    },
+    "komandan-angkatan-darat": {
+      "name": "Komandan Angkatan Darat",
+      "description": "Memimpin kekuatan militer darat negara dalam pertahanan wilayah.",
+      "effects": ["Kekuatan Militer Darat: +1% per level"]
+    },
+    "komandan-armada": {
+      "name": "Komandan Armada",
+      "description": "Memimpin angkatan laut dan menjaga perairan negara.",
+      "effects": ["Kekuatan Militer Laut: +1% per level"]
+    },
+    "layanan-darurat": {
+      "name": "Layanan Darurat",
+      "description": "Menangani respons cepat evakuasi medis dan mitigasi korban jiwa bencana alam.",
+      "effects": ["Mengurangi Jumlah Kematian Akibat Bencana Alam: -1% per level"]
+    },
+    "bank-sentral": {
+      "name": "Kepala Bank Sentral",
+      "description": "Mengendalikan kebijakan moneter, kapasitas pinjaman nasional, dan batas aman utang negara.",
+      "effects": ["Meningkatkan Batas Aman Pinjaman: +1% per level"]
+    }
+  }
+}
