@@ -238,5 +238,15 @@
     "batu_bara": "Coal",
     "kayu": "Timber",
     "em_cost": "Production cost (NEO)"
+  },
+  "constructionSupport": {
+    "unit": "Unit",
+    "missingMaterials": "⚠️ Insufficient Materials",
+    "noMaterialsRequired": "No materials required for this building.",
+    "materialsRequired": "Materials Required",
+    "moreMaterials": "+{count} more materials",
+    "hide": "Hide",
+    "show": "Show",
+    "noBuildingsAvailable": "No buildings available"
   }
 }

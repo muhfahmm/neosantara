@@ -237,5 +237,29 @@
     "buy": "شراء",
     "sell": "بيع",
     "expired": "منتهي الصلاحية"
+  },
+  "addPartner": {
+    "title": "إضافة شريك تجاري جديد",
+    "searchPlaceholder": "ابحث عن اسم الدولة...",
+    "emptyTitle": "لم يتم العثور على دول",
+    "emptySubtitle": "حاول إدخال كلمة بحث أخرى.",
+    "continentHeading": "🌍 {continent}",
+    "countryCount": "{count} دولة",
+    "noEmbassyModalTitle": "إشعار / تحذير",
+    "noEmbassyHeading": "فشل إضافة الشريك",
+    "noEmbassyBodyPrefix": "لا يمكنك إقامة علاقات تجارية مع ",
+    "noEmbassyBodyMid": " لأن دولتك لا تملك ",
+    "noEmbassyLabel": "سفارة",
+    "noEmbassyBodySuffix": " نشطة هناك بعد.",
+    "noEmbassyHintPrefix": "💡 افتح مكتباً للسفارة أولاً في قائمة ",
+    "noEmbassyHintMenu": "الجغرافيا السياسية ← السفارات",
+    "noEmbassyHintSuffix": " قبل اقتراح اتفاقية تجارة ثنائية.",
+    "understood": "مفهوم",
+    "confirmTitle": "تأكيد الاتفاقية التجارية",
+    "confirmBodyPrefix": "هل أنت متأكد أنك تريد إقامة علاقات شراكة تجارية رسمية مع ",
+    "confirmBodySuffix": "؟",
+    "confirmHint": "🤝 بمجرد الشراكة، يمكنك شراء وبيع السلع الاستراتيجية مباشرة مع تلك الدولة.",
+    "cancel": "إلغاء",
+    "confirmButton": "موافقة وإضافة"
   }
 }

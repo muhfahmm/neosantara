@@ -238,5 +238,15 @@
     "batu_bara": "Batu bara",
     "kayu": "Kayu",
     "em_cost": "Biaya produksi NEO"
+  },
+  "constructionSupport": {
+    "unit": "Unit",
+    "missingMaterials": "⚠️ Material Kurang",
+    "noMaterialsRequired": "Tidak ada material yang dibutuhkan untuk bangunan ini.",
+    "materialsRequired": "Material Dibutuhkan",
+    "moreMaterials": "+{count} material lainnya",
+    "hide": "Sembunyikan",
+    "show": "Tampilkan",
+    "noBuildingsAvailable": "Tidak ada building tersedia"
   }
 }

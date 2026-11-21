@@ -1,12 +1,17 @@
 {
   "title": "Control de precios de productos básicos",
   "monthUnit": "mes",
-  "tabs": { "essentials": "Productos básicos", "subsidyPolicy": "Política de subsidios" },
+  "tabs": {
+    "essentials": "Productos básicos",
+    "subsidyPolicy": "Política de subsidios"
+  },
   "subsidy": {
     "title": "Asignación y política de subsidios",
     "infoButton": "Información sobre asignación y política de subsidios",
     "confirm": "Confirmar",
-    "categories": { "all": "Todos los sectores" },
+    "categories": {
+      "all": "Todos los sectores"
+    },
     "summary": {
       "totalBudget": "Gasto total del presupuesto de subsidios",
       "activeSectors": "Sectores activos / total",
@@ -65,5 +70,21 @@
     "noChanges": "No se han cambiado los precios. Confirma para volver al foro.",
     "back": "Volver",
     "yes": "Sí, confirmar"
+  },
+  "subsidyDetail": {
+    "title": "Detalles de la Política de Subsidios",
+    "sectorBadge": "SECTOR {category}",
+    "policyDescription": "Descripción de la Política",
+    "budgetCost": "Costo Presupuestario",
+    "approvalBonus": "Bono de Aprobación",
+    "approvalUnit": "Aprobación",
+    "inflationReduction": "Reducción de Inflación",
+    "inflationUnit": "Inflación",
+    "revocationRisk": "Riesgo de Revocación",
+    "currentAllocationStatus": "Estado de Asignación Actual",
+    "statusActive": "✓ Subsidio Activo",
+    "statusInactive": "✗ Inactivo",
+    "revokeSubsidy": "Revocar Subsidio",
+    "activateSubsidy": "Activar Subsidio"
   }
 }

@@ -40,7 +40,11 @@
     "netGdp": "Netto-BIP",
     "rowBreakdown": "Gesamteinnahmen: {totalIncome} NEO (Steuern: {tax} + Gold: {gold} + Handel: {commercial} + Tourismus: {tourism}) − Gesamtausgaben: {totalOutcome} NEO = Netto: {net} NEO"
   },
-  "tabs": { "summary": "BIP-Übersicht", "income": "Einnahmen", "outcome": "Ausgaben" },
+  "tabs": {
+    "summary": "BIP-Übersicht",
+    "income": "Einnahmen",
+    "outcome": "Ausgaben"
+  },
   "summary": {
     "detailTitle": "Staatliche Haushalts- und BIP-Ströme",
     "incomeTitle": "Einnahmenübersicht (Staatseinnahmen)",
@@ -186,5 +190,19 @@
       "pension": "Staatliches Rentensicherungsprogramm",
       "disaster": "Nothilfefonds für Katastrophen"
     }
+  },
+  "globalFinancial": {
+    "title": "Nationale Haushalte aller Länder",
+    "searchPlaceholder": "Land / Kontinent suchen...",
+    "loading": "Lade Daten aller Länder...",
+    "noCountryData": "Keine Länderdaten verfügbar.",
+    "noSearchResults": "Keine Daten passend zu \"{query}\".",
+    "colCountryName": "Ländername",
+    "colContinent": "Kontinent",
+    "colTotalTax": "Gesamtsteuern",
+    "colGoldBuildings": "Goldgebäude",
+    "colGoldProduction": "Goldproduktion",
+    "colExpenses": "Ausgaben",
+    "colDailyNetBalance": "Täglicher Nettosaldo"
   }
 }

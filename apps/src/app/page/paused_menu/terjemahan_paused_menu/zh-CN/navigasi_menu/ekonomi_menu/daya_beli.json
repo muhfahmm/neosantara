@@ -1,12 +1,17 @@
 {
   "title": "基本生活用品价格管控",
   "monthUnit": "月",
-  "tabs": { "essentials": "生活必需品价格", "subsidyPolicy": "补贴政策" },
+  "tabs": {
+    "essentials": "生活必需品价格",
+    "subsidyPolicy": "补贴政策"
+  },
   "subsidy": {
     "title": "补贴分配与政策",
     "infoButton": "补贴分配与政策信息",
     "confirm": "确认",
-    "categories": { "all": "所有部门" },
+    "categories": {
+      "all": "所有部门"
+    },
     "summary": {
       "totalBudget": "补贴预算总支出",
       "activeSectors": "已启用部门 / 总数",
@@ -65,5 +70,21 @@
     "noChanges": "价格没有变化。确认后返回论坛。",
     "back": "返回",
     "yes": "确认"
+  },
+  "subsidyDetail": {
+    "title": "补贴政策详情",
+    "sectorBadge": "部门 {category}",
+    "policyDescription": "政策描述",
+    "budgetCost": "预算成本",
+    "approvalBonus": "满意度加成",
+    "approvalUnit": "支持率",
+    "inflationReduction": "通胀削减",
+    "inflationUnit": "通胀",
+    "revocationRisk": "取消风险",
+    "currentAllocationStatus": "当前分配状态",
+    "statusActive": "✓ 补贴已激活",
+    "statusInactive": "✗ 未激活",
+    "revokeSubsidy": "取消补贴",
+    "activateSubsidy": "激活补贴"
   }
 }

@@ -1,0 +1,37 @@
+{
+  "welcome": {
+    "advisorAlt": "Penasihat Negara",
+    "message": "Selamat datang, {playerName}. Hari ini adalah hari pertama Anda sebagai kepala negara.",
+    "skip": "AKHIRI",
+    "continue": "LANJUT"
+  },
+  "overlay": {
+    "stepCount": "Langkah {current} dari {total}",
+    "skip": "Lewati",
+    "previous": "Kembali",
+    "next": "Lanjut",
+    "finish": "Selesai"
+  },
+  "steps": {
+    "tampilanUtama": {
+      "title": "Tampilan Utama",
+      "body": "Peta menunjukkan wilayah negara; tanggal simulasi menunjukkan waktu dalam permainan. Anggaran menunjukkan kas dan saldo bersih, populasi menunjukkan jumlah penduduk, sedangkan kepuasan menggambarkan penilaian rakyat."
+    },
+    "aturWaktu": {
+      "title": "Atur Waktu",
+      "body": "Gunakan tombol mulai/jeda dan pengatur kecepatan untuk mengendalikan simulasi; kondisi negara berubah saat waktu berjalan. Coba mulai lalu jeda, atau lanjutkan setelah membaca."
+    },
+    "kondisiEkonomi": {
+      "title": "Kondisi Ekonomi",
+      "body": "Buka menu Ekonomi untuk memeriksa pemasukan dan pengeluaran negara. Bandingkan keduanya untuk melihat apakah saldo bersih anggaran Anda positif atau negatif."
+    },
+    "pembangunanSederhana": {
+      "title": "Pembangunan Sederhana",
+      "body": "Buka menu Pembangunan, lalu pilih fasilitas atau produksi yang ingin Anda bangun. Periksa biaya dan kebutuhan material sebelum membangun satu unit—langkah ini opsional, tidak ada pembelian yang diwajibkan."
+    },
+    "simpanPermainan": {
+      "title": "Simpan Permainan",
+      "body": "Simpan permainan melalui Game Menu atau tombol Simpan untuk memilih slot penyimpanan. Progres dapat dilanjutkan nanti; setelah ini Anda siap mengelola negara sendiri."
+    }
+  }
+}

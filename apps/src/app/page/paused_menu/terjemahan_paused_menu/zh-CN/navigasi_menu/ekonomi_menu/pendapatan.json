@@ -40,7 +40,11 @@
     "netGdp": "净 GDP",
     "rowBreakdown": "总收入：{totalIncome} NEO（税收：{tax} + 黄金：{gold} + 商业：{commercial} + 旅游：{tourism}）− 总支出：{totalOutcome} NEO = 净额：{net} NEO"
   },
-  "tabs": { "summary": "GDP概览", "income": "收入", "outcome": "支出" },
+  "tabs": {
+    "summary": "GDP概览",
+    "income": "收入",
+    "outcome": "支出"
+  },
   "summary": {
     "detailTitle": "国家收支与GDP流向",
     "incomeTitle": "收入明细（国家收入）",
@@ -186,5 +190,19 @@
       "pension": "公共养老金保障计划",
       "disaster": "灾害紧急救助基金"
     }
+  },
+  "globalFinancial": {
+    "title": "各国国家预算",
+    "searchPlaceholder": "搜索国家 / 大洲...",
+    "loading": "正在加载所有国家数据...",
+    "noCountryData": "暂无国家数据。",
+    "noSearchResults": "没有匹配 \"{query}\" 的数据。",
+    "colCountryName": "国家名称",
+    "colContinent": "大洲",
+    "colTotalTax": "总税收",
+    "colGoldBuildings": "黄金建筑",
+    "colGoldProduction": "黄金产量",
+    "colExpenses": "支出",
+    "colDailyNetBalance": "每日净余额"
   }
 }

@@ -51,5 +51,12 @@
     "moneyPath": "资金途径 (NEO)",
     "commodityGiftPath": "商品赠礼途径",
     "allCountries": "所有国家"
+  },
+  "humanitarianAid": {
+    "title": "人道主义援助计划",
+    "inDevelopmentLine1": "正在",
+    "inDevelopmentLine2": "开发中",
+    "description": "国际人道主义援助配送系统目前正在建设中。请持续关注更新，以增强您的人道主义声誉与影响力。",
+    "comingSoon": "敬请期待"
   }
 }

@@ -6,6 +6,7 @@ import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/Note
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import TravelFuelCostPanel from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
 import type { TravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 interface AliansiPertahananModalProps {
 	isOpen: boolean;
 	countryName?: string | null;
@@ -15,6 +16,7 @@ interface AliansiPertahananModalProps {
 }
 
 export default function AliansiPertahananModal({ isOpen, countryName, onClose, onConfirm, travelFuelStatus }: AliansiPertahananModalProps) {
+	const { t } = useLanguage();
 	if (!isOpen) return null;
 	const modalContent = (
 		<NotebookModalWrapper compact zIndexClass="z-[100000001]" frameClassName="root-confirm-modal-frame">
@@ -23,10 +25,10 @@ export default function AliansiPertahananModal({ isOpen, countryName, onClose, o
 				
 				{/* Area Konten */}
 				<div className="flex-1">
-					<RootInfoModalHeader title="Konfirmasi Aliansi Pertahanan" onClose={onClose} size="compact" />
+					<RootInfoModalHeader title={t("detail_negara_ai.alliance.buildTitle")} onClose={onClose} size="compact" />
 					
 					<p className="text-sm sm:text-base text-root-text mb-6 leading-relaxed">
-						Apakah Anda ingin mengajukan Aliansi Pertahanan dengan <strong className="text-white">{countryName}</strong>? Jika disetujui, kedua negara akan saling membantu saat diserang.
+						{t("detail_negara_ai.alliance.buildPromptPrefix")} <strong className="text-white">{countryName}</strong>? {t("detail_negara_ai.alliance.buildPromptSuffix")}
 					</p>
 					{travelFuelStatus && <TravelFuelCostPanel status={travelFuelStatus} />}
 				</div>
@@ -37,7 +39,7 @@ export default function AliansiPertahananModal({ isOpen, countryName, onClose, o
 						onClick={onClose}
 						className="w-full sm:w-auto px-6 bg-root-canvas hover:bg-[#142A2A] border border-root-accent/30 rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
 					>
-						Batal
+						{t("detail_negara_ai.common.cancel")}
 					</button>
 
 					<button
@@ -45,7 +47,7 @@ export default function AliansiPertahananModal({ isOpen, countryName, onClose, o
 						disabled={travelFuelStatus ? !travelFuelStatus.ok : false}
 						className="w-full sm:w-auto px-6 bg-root-accent hover:bg-[#00e699] border border-root-accent rounded-xl py-2 text-center text-root-canvas font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
 					>
-						Ajukan Aliansi
+						{t("detail_negara_ai.alliance.buildConfirm")}
 					</button>
 				</div>
 

@@ -9,5 +9,6 @@
   "close": "Tutup",
   "error": "Terjadi kesalahan",
   "success": "Berhasil",
-  "search": "Cari..."
+  "search": "Cari...",
+  "infoTitle": "Informasi {title}"
 }

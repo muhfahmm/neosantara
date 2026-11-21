@@ -237,5 +237,29 @@
     "buy": "Kaufen",
     "sell": "Verkaufen",
     "expired": "Abgelaufen"
+  },
+  "addPartner": {
+    "title": "Neuen Handelspartner hinzufügen",
+    "searchPlaceholder": "Ländername suchen...",
+    "emptyTitle": "Keine Länder gefunden",
+    "emptySubtitle": "Versuchen Sie ein anderes Suchwort einzugeben.",
+    "continentHeading": "🌍 {continent}",
+    "countryCount": "{count} Länder",
+    "noEmbassyModalTitle": "Hinweis / Warnung",
+    "noEmbassyHeading": "Partner konnte nicht hinzugefügt werden",
+    "noEmbassyBodyPrefix": "Sie können keine Handelsbeziehungen mit ",
+    "noEmbassyBodyMid": " aufnehmen, da Ihr Land dort noch keine aktive ",
+    "noEmbassyLabel": "Botschaft",
+    "noEmbassyBodySuffix": " hat.",
+    "noEmbassyHintPrefix": "💡 Eröffnen Sie zuerst eine Botschaft im Menü ",
+    "noEmbassyHintMenu": "Geopolitik → Botschaften",
+    "noEmbassyHintSuffix": ", bevor Sie ein bilaterales Handelsabkommen vorschlagen.",
+    "understood": "Verstanden",
+    "confirmTitle": "Handelsabkommen bestätigen",
+    "confirmBodyPrefix": "Sind Sie sicher, dass Sie offizielle Handelspartnerbeziehungen mit ",
+    "confirmBodySuffix": " aufnehmen möchten?",
+    "confirmHint": "🤝 Nach der Partnerschaft können Sie strategische Rohstoffe direkt mit diesem Land handeln.",
+    "cancel": "Abbrechen",
+    "confirmButton": "Zustimmen & Hinzufügen"
   }
 }

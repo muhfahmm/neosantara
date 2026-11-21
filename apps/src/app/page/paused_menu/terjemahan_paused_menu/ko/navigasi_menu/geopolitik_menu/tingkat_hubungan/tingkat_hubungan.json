@@ -51,5 +51,12 @@
     "moneyPath": "자금 경로 (NEO)",
     "commodityGiftPath": "자원 선물 경로",
     "allCountries": "모든 국가"
+  },
+  "humanitarianAid": {
+    "title": "인도적 지원 프로그램",
+    "inDevelopmentLine1": "개발",
+    "inDevelopmentLine2": "진행 중",
+    "description": "국제 인도적 지원 전달 시스템이 현재 구축 중입니다. 인도적 평판과 영향력을 강화할 수 있는 업데이트를 기대해 주세요.",
+    "comingSoon": "출시 예정"
   }
 }

@@ -6,6 +6,7 @@ import { MapPinned } from "lucide-react";
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 import { COUNTRIES_DATA } from '../../../map_system/map-data';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface BerikanWilayahModalProps {
 	isOpen: boolean;
@@ -64,6 +65,7 @@ export default function BerikanWilayahModal({
 	onClose,
 	onConfirm,
 }: BerikanWilayahModalProps) {
+	const { t } = useLanguage();
 	// ─── Ambil daftar wilayah aneksasi milik player ───
 	const annexedTerritories = (() => {
 		if (typeof window === 'undefined') return [];
@@ -139,7 +141,7 @@ export default function BerikanWilayahModal({
 			<div role="dialog" aria-modal="true" aria-labelledby="give-territory-title" className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
 
 				<RootInfoModalHeader
-					title="Konfirmasi Berikan Wilayah"
+					title={t("detail_negara_ai.geopolitics.giveTerritoryTitle")}
 					titleId="give-territory-title"
 					onClose={onClose}
 					icon={<MapPinned />}
@@ -150,7 +152,7 @@ export default function BerikanWilayahModal({
 				<div className="flex-1 min-h-0 bg-root-surface relative z-10 p-6 sm:p-8 flex flex-col gap-4 overflow-y-auto custom-scrollbar">
 					{countryName && (
 						<p className="text-center text-xs font-black uppercase tracking-wider text-root-accent">
-							Penerima: {countryName}
+							{t("detail_negara_ai.geopolitics.recipient")}: {countryName}
 						</p>
 					)}
 					{transferError && (
@@ -161,7 +163,7 @@ export default function BerikanWilayahModal({
 					{annexedTerritories.length === 0 ? (
 						<div className="flex-1 flex items-center justify-center text-center">
 							<p className="text-sm font-bold text-root-subtle uppercase tracking-wider">
-								Tidak ada wilayah aneksasi
+								{t("detail_negara_ai.geopolitics.noAnnexedTerritories")}
 							</p>
 						</div>
 					) : (
@@ -216,18 +218,18 @@ export default function BerikanWilayahModal({
 							onClick={onClose}
 							className="px-6 py-3 bg-root-surface hover:bg-[#163535] border border-root-accent/30 rounded-xl text-center text-root-text font-black text-xs tracking-wider uppercase transition-all cursor-pointer"
 						>
-							Batal
+							{t("detail_negara_ai.common.cancel")}
 						</button>
 						<button
 							onClick={() => {
 								if (!selectedTerritory) return;
 								if (onConfirm(selectedTerritory)) onClose();
-								else setTransferError('Wilayah tidak dapat diberikan. Pastikan wilayah masih dikuasai.');
+								else setTransferError(t("detail_negara_ai.geopolitics.territoryTransferError"));
 							}}
 							disabled={!selectedTerritory}
 							className="px-6 py-3 bg-amber-500 hover:bg-amber-400 border border-amber-500 rounded-xl text-center text-root-canvas font-black text-xs tracking-wider uppercase transition-all cursor-pointer shadow-md disabled:cursor-not-allowed disabled:opacity-40"
 						>
-							Berikan
+							{t("detail_negara_ai.geopolitics.give")}
 						</button>
 					</div>
 				</div>

@@ -3,6 +3,7 @@
 import { AlertTriangle } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface SeranganMasihBerlangsungModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ export default function SeranganMasihBerlangsungModal({
   countryName,
   onClose,
 }: SeranganMasihBerlangsungModalProps) {
+  const { t } = useLanguage();
   if (!isOpen || typeof document === 'undefined') return null;
 
   return createPortal(
@@ -28,7 +30,7 @@ export default function SeranganMasihBerlangsungModal({
       <div className="modal-responsive-shell overflow-y-auto flex flex-col bg-root-surface border border-root-accent/30 rounded-2xl shadow-2xl relative pointer-events-auto">
         
         <RootInfoModalHeader
-          title="Serangan Masih Berlangsung"
+          title={t("detail_negara_ai.military.attackInProgressTitle")}
           titleId="attack-in-progress-title"
           onClose={onClose}
           icon={<AlertTriangle />}
@@ -37,13 +39,11 @@ export default function SeranganMasihBerlangsungModal({
 
         <div className="space-y-4 p-5 sm:p-6">
           <p className="text-sm leading-relaxed text-root-text">
-            Negara Anda sedang menjalankan operasi militer terhadap{' '}
-            <strong className="text-white">{countryName}</strong>. Anda tidak dapat
-            melancarkan serangan kedua ke negara yang sama sebelum operasi ini selesai.
+            {t("detail_negara_ai.military.attackInProgressPrefix")}{' '}
+            <strong className="text-white">{countryName}</strong>. {t("detail_negara_ai.military.attackInProgressMid")}
           </p>
           <p className="text-sm leading-relaxed text-root-subtle">
-            Tunggu hingga hasil perang ditentukan dan pilih tindakan untuk mengakhiri
-            operasi yang sedang berlangsung.
+            {t("detail_negara_ai.military.attackInProgressSub")}
           </p>
         </div>
 
@@ -53,7 +53,7 @@ export default function SeranganMasihBerlangsungModal({
             onClick={onClose}
             className="w-full sm:w-auto px-6 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-root-canvas font-black text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
           >
-            Mengerti
+            {t("detail_negara_ai.embassy.understood")}
           </button>
         </div>
 

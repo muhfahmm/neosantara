@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 export interface MaterialRequirement {
   resourceKey: string;
@@ -26,12 +27,13 @@ export default function MaterialRequirementsDisplay({
   defaultShowMaterials = true,
   compactView = false,
 }: MaterialRequirementsDisplayProps) {
+  const { t, language } = useLanguage();
   const [showMaterialGrid, setShowMaterialGrid] = useState(defaultShowMaterials);
 
   if (!requirements || requirements.length === 0) {
     return (
       <div className="text-xs text-[#8b7e66]">
-        Tidak ada material yang dibutuhkan untuk bangunan ini.
+        {t("navigation_military_menu.constructionSupport.noMaterialsRequired")}
       </div>
     );
   }
@@ -40,7 +42,7 @@ export default function MaterialRequirementsDisplay({
   if (compactView) {
     return (
       <div className="bg-[#e4dac3]/20 border border-[#C4B49C]/30 rounded-xl p-3 space-y-2">
-        <div className="text-xs font-bold text-[#5c3c10] uppercase tracking-wider">Material Dibutuhkan</div>
+        <div className="text-xs font-bold text-[#5c3c10] uppercase tracking-wider">{t("navigation_military_menu.constructionSupport.materialsRequired")}</div>
         <div className="grid grid-cols-3 gap-2">
           {requirements.slice(0, 3).map((material) => {
             const stock = materialStocks[material.resourceKey] ?? 0;
@@ -61,7 +63,7 @@ export default function MaterialRequirementsDisplay({
                   </div>
                 )}
                 <div className={`text-[9px] font-black mt-0.5 ${isStockZero ? 'text-red-600' : 'text-[#8b7e66]'}`}>
-                  {stock.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
+                  {stock.toLocaleString(language, { maximumFractionDigits: 2 })}
                 </div>
               </div>
             );
@@ -69,7 +71,7 @@ export default function MaterialRequirementsDisplay({
         </div>
         {requirements.length > 3 && (
           <div className="text-[9px] text-[#8b7e66] text-center pt-1 border-t border-[#C4B49C]/20">
-            +{requirements.length - 3} material lainnya
+            {t("navigation_military_menu.constructionSupport.moreMaterials", { count: requirements.length - 3 })}
           </div>
         )}
       </div>
@@ -81,7 +83,7 @@ export default function MaterialRequirementsDisplay({
     <div className="space-y-3 text-xs">
       {showToggleButton && (
         <div className="flex items-center justify-between">
-          <div className="font-black uppercase tracking-[0.2em] text-[#5c3c10]">Material Dibutuhkan</div>
+          <div className="font-black uppercase tracking-[0.2em] text-[#5c3c10]">{t("navigation_military_menu.constructionSupport.materialsRequired")}</div>
           <button
             onClick={() => setShowMaterialGrid(!showMaterialGrid)}
             className="flex items-center gap-1.5 px-2 py-1 bg-white/80 border border-[#C4B49C]/30 rounded-lg text-[#5c3c10] hover:bg-[#5c3c10]/10 transition-all cursor-pointer"
@@ -89,12 +91,12 @@ export default function MaterialRequirementsDisplay({
             {showMaterialGrid ? (
               <>
                 <EyeOff className="h-3 w-3" />
-                <span className="text-[8px] font-bold uppercase">Sembunyikan</span>
+                <span className="text-[8px] font-bold uppercase">{t("navigation_military_menu.constructionSupport.hide")}</span>
               </>
             ) : (
               <>
                 <Eye className="h-3 w-3" />
-                <span className="text-[8px] font-bold uppercase">Tampilkan</span>
+                <span className="text-[8px] font-bold uppercase">{t("navigation_military_menu.constructionSupport.show")}</span>
               </>
             )}
           </button>
@@ -126,7 +128,7 @@ export default function MaterialRequirementsDisplay({
                 </div>
               )}
               <div className={`text-[10px] font-black mt-0.5 ${isStockZero ? 'text-red-600' : 'text-[#8b7e66]'}`}>
-                {stock.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
+                {stock.toLocaleString(language, { maximumFractionDigits: 2 })}
               </div>
             </button>
           );

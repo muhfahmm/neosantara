@@ -6,6 +6,7 @@ import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/Note
 import TravelFuelCostPanel from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
 import type { TravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 interface BuildTradeModalProps {
   isOpen: boolean;
   countryName?: string | null;
@@ -16,6 +17,7 @@ interface BuildTradeModalProps {
 }
 
 export default function BuildTradeModal({ isOpen, countryName, onClose, onConfirm, travelFuelStatus }: BuildTradeModalProps) {
+  const { t } = useLanguage();
   if (!isOpen) return null;
 
   const modalContent = (
@@ -23,11 +25,11 @@ export default function BuildTradeModal({ isOpen, countryName, onClose, onConfir
       {/* Container Modal Lebih Lebar dan Panjang */}
       <div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
         
-        <RootInfoModalHeader title="Konfirmasi Perjanjian Dagang" onClose={onClose} size="compact" />
+        <RootInfoModalHeader title={t("detail_negara_ai.trade.buildTitle")} onClose={onClose} size="compact" />
         {/* Area Konten */}
         <div className="flex-1">
           <p className="text-sm sm:text-base text-root-text mb-6 leading-relaxed">
-            Apakah Anda ingin mengajukan perjanjian dagang kepada <strong className="text-white">{countryName}</strong>? Ini akan membuka jalur perdagangan antara kedua negara jika diterima.
+            {t("detail_negara_ai.trade.buildPromptPrefix")} <strong className="text-white">{countryName}</strong>? {t("detail_negara_ai.trade.buildPromptSuffix")}
           </p>
           {travelFuelStatus && <TravelFuelCostPanel status={travelFuelStatus} />}
           
@@ -40,7 +42,7 @@ export default function BuildTradeModal({ isOpen, countryName, onClose, onConfir
             onClick={onClose}
             className="w-full sm:w-auto px-6 bg-root-canvas hover:bg-[#142A2A] border border-root-accent/30 rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
           >
-            Batal
+            {t("detail_negara_ai.common.cancel")}
           </button>
 
           <button
@@ -48,7 +50,7 @@ export default function BuildTradeModal({ isOpen, countryName, onClose, onConfir
             disabled={travelFuelStatus ? !travelFuelStatus.ok : false}
             className="w-full sm:w-auto px-6 bg-root-accent hover:bg-[#00e699] border border-root-accent rounded-xl py-2 text-center text-root-canvas font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
           >
-            Jalin Perjanjian
+            {t("detail_negara_ai.trade.buildConfirm")}
           </button>
         </div>
 

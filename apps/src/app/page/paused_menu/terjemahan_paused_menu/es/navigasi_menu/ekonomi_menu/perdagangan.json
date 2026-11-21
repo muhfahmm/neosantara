@@ -237,5 +237,29 @@
     "buy": "Comprar",
     "sell": "Vender",
     "expired": "Caducada"
+  },
+  "addPartner": {
+    "title": "Agregar Nuevo Socio Comercial",
+    "searchPlaceholder": "Buscar nombre del país...",
+    "emptyTitle": "No se encontraron países",
+    "emptySubtitle": "Intenta ingresar otra palabra clave de búsqueda.",
+    "continentHeading": "🌍 {continent}",
+    "countryCount": "{count} Países",
+    "noEmbassyModalTitle": "Aviso / Advertencia",
+    "noEmbassyHeading": "Error al Agregar Socio",
+    "noEmbassyBodyPrefix": "No puedes establecer relaciones comerciales con ",
+    "noEmbassyBodyMid": " porque tu país aún no tiene una ",
+    "noEmbassyLabel": "Embajada",
+    "noEmbassyBodySuffix": " activa allí.",
+    "noEmbassyHintPrefix": "💡 Abre primero una oficina de Embajada en el menú ",
+    "noEmbassyHintMenu": "Geopolítica → Embajadas",
+    "noEmbassyHintSuffix": " antes de proponer un acuerdo comercial bilateral.",
+    "understood": "Entendido",
+    "confirmTitle": "Confirmar Acuerdo Comercial",
+    "confirmBodyPrefix": "¿Estás seguro de que deseas establecer relaciones comerciales oficiales con ",
+    "confirmBodySuffix": "?",
+    "confirmHint": "🤝 Una vez asociados, podrás comprar y vender productos estratégicos directamente con ese país.",
+    "cancel": "Cancelar",
+    "confirmButton": "Aceptar y Agregar"
   }
 }

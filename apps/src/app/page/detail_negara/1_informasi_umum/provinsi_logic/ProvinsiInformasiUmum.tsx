@@ -6,6 +6,7 @@ import assignMissionaries from './1_informasi_umum/2_tugaskan_misionaris';
 import requireTaxes from './1_informasi_umum/3_wajibkan_pajak';
 import sendAid from './1_informasi_umum/4_kirim_bantuan';
 import instillIdeology from './1_informasi_umum/5_tanamkan_ideologi';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface ProvinsiInformasiUmumProps {
   countryName: string;
@@ -50,6 +51,7 @@ export default function ProvinsiInformasiUmum({
   updatePlayerCountryDetail,
   adjustPlayerNetBalance
 }: ProvinsiInformasiUmumProps) {
+  const { t } = useLanguage();
   return (
     <ProvinsiActionGrid
       targetCountry={countryName}
@@ -72,8 +74,8 @@ export default function ProvinsiInformasiUmum({
       actions={canLiberatePbbOccupation
         ? [{
             ...liberateProvince,
-            label: 'Bebaskan Negara',
-            description: 'Mengakhiri pendudukan PBB dan memulihkan kedaulatan negara ini.',
+            label: t('detail_negara_ai.province.liberateLabel'),
+            description: t('detail_negara_ai.province.liberateDescription'),
           }]
         : isPbbOccupied
           ? []

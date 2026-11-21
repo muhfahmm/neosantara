@@ -16,5 +16,99 @@
     "gameSaved": "Spiel erfolgreich gespeichert.",
     "gameLoaded": "Spiel erfolgreich geladen.",
     "autosave": "Automatisches Speichern abgeschlossen."
+  },
+  "requireEmbassy": {
+    "title": "Botschaft erforderlich",
+    "badge": "Diplomatische Voraussetzung",
+    "proposingCountry": "Antragstellendes Land",
+    "description": "Bericht Präsident! Um das Handelsbeziehungsangebot von {country} offiziell anzunehmen, muss unsere Regierung eine Botschaft in diesem Land haben.",
+    "redirectNotice": "Sie werden zum Menü Länderdetails für {country} weitergeleitet, um eine Botschaft zu errichten.",
+    "openDetail": "Länderdetails öffnen"
+  },
+  "warResultModal": {
+    "lossesAria": "Aufschlüsselung der Ausrüstungsverluste",
+    "lossesTitle": "Aufschlüsselung der Ausrüstungsverluste",
+    "defeatTitle": "Bericht über Niederlage",
+    "victoryTitle": "Kampf- und Kriegsergebnisbericht"
+  },
+  "annexedModal": {
+    "defaultAttacker": "Angreiferstaat",
+    "title": "Gebiet annektiert",
+    "gameOver": "Spiel vorbei",
+    "victimCountry": "Opferland",
+    "occupyingCountry": "Besatzungsland",
+    "description": "Die letzte Verteidigungsfestung von {country} ist vollständig gefallen und von {attacker} besetzt worden. Ihre nationale Souveränität ist offiziell beendet.",
+    "nextAction": "Nächste Aktion",
+    "restartSameCountry": "Neustart — Gleiches Land",
+    "chooseNewCountry": "Neues Land wählen",
+    "finePrint": "Die Gebietsannexion beendet Ihre Führung. Ein Neustart stellt den Ausgangszustand aus den Standarddaten wieder her."
+  },
+  "coupModal": {
+    "country": "Land",
+    "chooseAction": "Aktion wählen",
+    "restartSameCountry": "Neustart — Gleiches Land",
+    "startDifferentCountry": "Mit anderem Land starten",
+    "finePrint": "Ein Neustart löscht den gesamten Fortschritt dieses Landes.",
+    "peringkat": {
+      "title": "SIE WURDEN GESTÜRZT",
+      "subtitle": "Präsidentschaftsbewertung eingebrochen",
+      "desc": "Das Vertrauen von Volk und Parlament ist auf null gesunken. Das Parlament hat Sie einstimmig des Amtes enthoben.",
+      "valueLabel": "Endbewertung:"
+    },
+    "kepuasan": {
+      "title": "VOLKSREVOLUTION",
+      "subtitle": "Volkszufriedenheit auf Null",
+      "desc": "Das Volk vertraut Ihrer Regierung nicht mehr. Massenproteste führten zu einer nationalen Revolution.",
+      "valueLabel": "Endzufriedenheit:"
+    },
+    "kesejahteraan": {
+      "title": "TOTALE HUMANITÄRE KRISE",
+      "subtitle": "Wohlfahrtsindex auf Null",
+      "desc": "Die Lebensqualität ist auf ein unerträgliches Maß gesunken. Ihr Land befindet sich im humanitären Notstand.",
+      "valueLabel": "Endwohlfahrt:"
+    }
+  },
+  "warningModal": {
+    "criticalBadge": "⚠️ KRITISCH ⚠️",
+    "acknowledge": "Verstanden",
+    "satisfaction": {
+      "title": "Krise der Volkszufriedenheit",
+      "label": "Aktuelle Volkszufriedenheit:",
+      "desc": "Die Zufriedenheit der Bevölkerung ist stark gesunken! Ergreifen Sie sofort soziale Maßnahmen."
+    },
+    "welfare": {
+      "title": "Wohlfahrtskrise",
+      "label": "Wohlfahrtsindex:",
+      "desc": "Die Lebensqualität in Ihrem Land befindet sich in der Krisenzone! Bauen Sie Infrastruktur aus."
+    },
+    "rank": {
+      "title": "Nationale Sicherheitswarnung",
+      "label": "Ihre Bewertung:",
+      "desc": "Das Vertrauen in Ihre Führung ist kritisch! Es droht ein Amtsenthebungsverfahren."
+    }
+  },
+  "consumptionDetailModal": {
+    "title": "Stromverbrauchsaufschlüsselung - {country}",
+    "subtitle": "Details zur nationalen Stromverbrauchslast",
+    "totalEstimated": "Geschätzter Gesamtverbrauch",
+    "nationalEnergyLoad": "Nationale Energielast",
+    "productionMining": "Produktion & Bergbau",
+    "industryTypes": "{count} Industriearten",
+    "publicPlaces": "Öffentliche Orte",
+    "publicFacilities": "{count} öffentliche Einrichtungen",
+    "defenseSecurity": "Verteidigung & Sicherheit",
+    "basesInfrastructure": "{count} Basen & Infrastruktur",
+    "housingSettlement": "Wohnen & Siedlung",
+    "householdLoad": "Haushaltslast",
+    "allSectors": "Alle Sektoren",
+    "production": "Produktion",
+    "housing": "Wohnen",
+    "searchPlaceholder": "Einrichtungen suchen...",
+    "consumptionPerUnit": "Verbrauch / Einheit:",
+    "totalLoad": "Gesamtlast:",
+    "noMatchingFacilities": "Keine Einrichtungen entsprechen den Suchkriterien."
+  },
+  "selectCountry": {
+    "startSimulation": "SIMULATION STARTEN"
   }
 }

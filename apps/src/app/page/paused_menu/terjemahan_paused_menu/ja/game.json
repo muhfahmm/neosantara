@@ -16,5 +16,99 @@
     "gameSaved": "ゲームを保存しました。",
     "gameLoaded": "ゲームを読み込みました。",
     "autosave": "オートセーブが完了しました。"
+  },
+  "requireEmbassy": {
+    "title": "大使館が必要です",
+    "badge": "外交条件",
+    "proposingCountry": "提案国",
+    "description": "大統領へ報告！{country} からの貿易関係提案を正式に受諾するには、同国に大使館を設置する必要があります。",
+    "redirectNotice": "大使館を設立するため、{country} の国詳細メニューに移動します。",
+    "openDetail": "国詳細を開く"
+  },
+  "warResultModal": {
+    "lossesAria": "軍事装備損失の内訳",
+    "lossesTitle": "軍事装備損失の内訳",
+    "defeatTitle": "戦闘敗北報告",
+    "victoryTitle": "戦闘・戦争結果報告"
+  },
+  "annexedModal": {
+    "defaultAttacker": "侵略国",
+    "title": "領土併合",
+    "gameOver": "ゲームオーバー",
+    "victimCountry": "被害国",
+    "occupyingCountry": "占領国",
+    "description": "{country} の最後の防衛拠点は完全に陥落し、{attacker} の軍事侵略により占領されました。国家主権は正式に終了しました。",
+    "nextAction": "次の行動",
+    "restartSameCountry": "リスタート — 同じ国",
+    "chooseNewCountry": "新しい国を選ぶ",
+    "finePrint": "領土併合により指導権は終了します。リスタートするとデフォルトデータから初期化されます。"
+  },
+  "coupModal": {
+    "country": "国",
+    "chooseAction": "行動を選択",
+    "restartSameCountry": "リスタート — 同じ国",
+    "startDifferentCountry": "別の国で始める",
+    "finePrint": "リスタートするとこの国の進行状況がすべて消去されます。",
+    "peringkat": {
+      "title": "クーデターにより失脚",
+      "subtitle": "大統領支持率が崩壊",
+      "desc": "国民と議会の信頼がゼロになりました。議会は緊急会議を開き、全会一致であなたを弾劾しました。",
+      "valueLabel": "最終評価:"
+    },
+    "kepuasan": {
+      "title": "人民革命",
+      "subtitle": "国民満足度がゼロに到達",
+      "desc": "国民はもはやあなたの政府を信頼していません。大規模な抗議が全国革命に発展しました。",
+      "valueLabel": "最終満足度:"
+    },
+    "kesejahteraan": {
+      "title": "全面的人道危機",
+      "subtitle": "国民福祉指数がゼロ",
+      "desc": "生活の質が耐え難い水準まで低下しました。国際機関により人道上の緊急事態が宣言されました。",
+      "valueLabel": "最終福祉:"
+    }
+  },
+  "warningModal": {
+    "criticalBadge": "⚠️ 危機 ⚠️",
+    "acknowledge": "了解",
+    "satisfaction": {
+      "title": "国民満足度危機",
+      "label": "現在の国民満足度:",
+      "desc": "政府の業績に対する国民の満足度が急落しています！直ちに社会対策を講じてください。"
+    },
+    "welfare": {
+      "title": "国民福祉危機",
+      "label": "福祉指数:",
+      "desc": "国の生活の質と人間開発が危機的状況にあります！インフラ整備と社会支援を行ってください。"
+    },
+    "rank": {
+      "title": "国家安全保障警告",
+      "label": "あなたの評価:",
+      "desc": "指導力への国民の信頼が危機的水準に達しています！議会による弾劾の恐れがあります。"
+    }
+  },
+  "consumptionDetailModal": {
+    "title": "電力消費内訳 - {country}",
+    "subtitle": "国の電力消費負荷の詳細",
+    "totalEstimated": "推定総消費量",
+    "nationalEnergyLoad": "国のエネルギー負荷",
+    "productionMining": "生産・鉱業",
+    "industryTypes": "{count} 種類の産業",
+    "publicPlaces": "公共施設",
+    "publicFacilities": "{count} の公共施設",
+    "defenseSecurity": "防衛・治安",
+    "basesInfrastructure": "{count} の基地・インフラ",
+    "housingSettlement": "住宅・居住地",
+    "householdLoad": "家庭負荷",
+    "allSectors": "すべての部門",
+    "production": "生産",
+    "housing": "住宅",
+    "searchPlaceholder": "施設を検索...",
+    "consumptionPerUnit": "単位あたり消費:",
+    "totalLoad": "総負荷:",
+    "noMatchingFacilities": "検索条件に一致する施設はありません。"
+  },
+  "selectCountry": {
+    "startSimulation": "シミュレーション開始"
   }
 }

@@ -43,5 +43,23 @@
   "treatNow": "عالج الآن: أنقذ {count} شخصًا.",
   "handle": "عالج · {cost} NEO",
   "insufficientTreasury": "الأموال في خزينة الدولة غير كافية.",
-  "infoTitle": "معلومات السكان"
+  "infoTitle": "معلومات السكان",
+  "countryTable": {
+    "ariaLabel": "جدول سكان الدول",
+    "title": "سكان الدول",
+    "loadingCount": "جارٍ تحميل بيانات الدول...",
+    "countSummary": "{count} دولة · مرتبة حسب أعلى نمو يومي",
+    "searchPlaceholder": "ابحث عن دولة...",
+    "searchAria": "ابحث عن دولة",
+    "loadingData": "جارٍ جلب بيانات السكان...",
+    "fetchError": "فشل طلب بيانات الدول (HTTP {status}).",
+    "invalidFormat": "تنسيق بيانات سكان الدول غير صالح.",
+    "genericError": "حدث خطأ أثناء تحميل بيانات السكان.",
+    "colNo": "رقم",
+    "colCountry": "الدولة",
+    "colDailyGrowth": "النمو / يوم",
+    "colMonthlyEstimate": "التقدير / شهر",
+    "unitPeople": "نسمة",
+    "noMatch": "لا توجد دول تطابق البحث."
+  }
 }

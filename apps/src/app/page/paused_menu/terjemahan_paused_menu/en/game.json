@@ -16,5 +16,99 @@
     "gameSaved": "Game successfully saved.",
     "gameLoaded": "Game successfully loaded.",
     "autosave": "Autosave completed."
+  },
+  "requireEmbassy": {
+    "title": "Embassy Required",
+    "badge": "Diplomatic Requirement",
+    "proposingCountry": "Proposing Country",
+    "description": "Report President! To officially accept the Trade Relations offer from {country}, our government must have an Embassy in that country.",
+    "redirectNotice": "You will be redirected to the {country} Country Detail menu to establish an Embassy.",
+    "openDetail": "Open Country Detail"
+  },
+  "warResultModal": {
+    "lossesAria": "Military equipment losses breakdown",
+    "lossesTitle": "Military Equipment Losses Breakdown",
+    "defeatTitle": "Battle Defeat Report",
+    "victoryTitle": "Battle & War Result Report"
+  },
+  "annexedModal": {
+    "defaultAttacker": "Aggressor Nation",
+    "title": "Territory Annexed",
+    "gameOver": "Game Over",
+    "victimCountry": "Victim Country",
+    "occupyingCountry": "Occupying Country",
+    "description": "The last defense fortress of {country} has completely fallen and been occupied by {attacker} military aggression. Your national sovereignty has officially ended and all territory has been annexed.",
+    "nextAction": "Next Action",
+    "restartSameCountry": "Restart — Same Country Simulation",
+    "chooseNewCountry": "Choose New Country",
+    "finePrint": "Territory annexation ends your leadership. Restarting will restore the country initial status from default data."
+  },
+  "coupModal": {
+    "country": "Country",
+    "chooseAction": "Choose Action",
+    "restartSameCountry": "Restart — Same Country",
+    "startDifferentCountry": "Start with Different Country",
+    "finePrint": "Restarting will erase all progress for this country and restart from default data.",
+    "peringkat": {
+      "title": "YOU HAVE BEEN OVERTHROWN",
+      "subtitle": "Presidential Rating Collapsed",
+      "desc": "Public and parliamentary trust in you has reached zero. Parliament held an emergency session and unanimously impeached you from the Presidency. Citizens took to the streets celebrating the fall of your government. Your presidency has officially ended.",
+      "valueLabel": "Final Rating:"
+    },
+    "kepuasan": {
+      "title": "PEOPLE REVOLUTION",
+      "subtitle": "Public Satisfaction Reached Zero",
+      "desc": "The people no longer trust your government. Mass protests turned into a national revolution. The military sided with the people and you were forced to resign. A transitional government will be formed to restore national trust.",
+      "valueLabel": "Final Satisfaction:"
+    },
+    "kesejahteraan": {
+      "title": "TOTAL HUMANITARIAN CRISIS",
+      "subtitle": "Public Welfare Index Zero",
+      "desc": "The quality of life has fallen to an intolerable level. The UN imposed international sanctions. Starving and homeless citizens forced you to step down. Your country has been declared in a humanitarian emergency by international bodies.",
+      "valueLabel": "Final Welfare:"
+    }
+  },
+  "warningModal": {
+    "criticalBadge": "⚠️ CRITICAL ⚠️",
+    "acknowledge": "I Understand",
+    "satisfaction": {
+      "title": "Public Satisfaction Crisis",
+      "label": "Current Public Satisfaction:",
+      "desc": "Public satisfaction with your government performance has plummeted! Citizens are protesting your cabinet policies across regions. Immediately take social action and launch cultural festivals to boost national morale before instability grows!"
+    },
+    "welfare": {
+      "title": "Public Welfare Crisis",
+      "label": "Welfare Index:",
+      "desc": "The quality of life and human development in your country are in the crisis zone! Basic education, healthcare, public places, food, and housing facilities are severely lacking. Build sectoral infrastructure and distribute social aid programs immediately to save public welfare!"
+    },
+    "rank": {
+      "title": "National Security Warning",
+      "label": "Your Rating:",
+      "desc": "Public trust in your leadership has reached a critical level! If your rating drops below this number, you risk impeachment by parliament. Immediately raise your rating by fulfilling public aspirations and organizing aid programs!"
+    }
+  },
+  "consumptionDetailModal": {
+    "title": "Electricity Consumption Breakdown - {country}",
+    "subtitle": "National electricity consumption load details",
+    "totalEstimated": "Total Estimated Consumption",
+    "nationalEnergyLoad": "National energy load",
+    "productionMining": "Production & Mining",
+    "industryTypes": "{count} industry types",
+    "publicPlaces": "Public Places",
+    "publicFacilities": "{count} public facilities",
+    "defenseSecurity": "Defense & Security",
+    "basesInfrastructure": "{count} bases & infrastructure",
+    "housingSettlement": "Housing & Settlement",
+    "householdLoad": "Household load",
+    "allSectors": "All Sectors",
+    "production": "Production",
+    "housing": "Housing",
+    "searchPlaceholder": "Search facilities...",
+    "consumptionPerUnit": "Consumption / Unit:",
+    "totalLoad": "Total Load:",
+    "noMatchingFacilities": "No facilities match the search criteria."
+  },
+  "selectCountry": {
+    "startSimulation": "START SIMULATION"
   }
 }

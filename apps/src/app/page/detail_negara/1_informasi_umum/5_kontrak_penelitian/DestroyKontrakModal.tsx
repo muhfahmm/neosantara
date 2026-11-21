@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 interface DestroyKontrakModalProps {
   isOpen: boolean;
   countryName?: string | null;
@@ -12,6 +13,7 @@ interface DestroyKontrakModalProps {
 }
 
 export default function DestroyKontrakModal({ isOpen, countryName, onClose, onConfirm }: DestroyKontrakModalProps) {
+  const { t } = useLanguage();
   if (!isOpen) return null;
 
   const modalContent = (
@@ -21,10 +23,10 @@ export default function DestroyKontrakModal({ isOpen, countryName, onClose, onCo
         
         {/* Area Konten */}
         <div className="flex-1">
-          <RootInfoModalHeader title="Konfirmasi Hentikan Kontrak Penelitian" onClose={onClose} size="compact" />
+          <RootInfoModalHeader title={t("detail_negara_ai.research.destroyTitle")} onClose={onClose} size="compact" />
           
           <p className="text-sm sm:text-base text-root-text mb-6 leading-relaxed">
-            Apakah Anda yakin ingin menghentikan kontrak penelitian dengan <strong className="text-white">{countryName}</strong>? Menghentikan kontrak akan mengakhiri kolaborasi penelitian.
+            {t("detail_negara_ai.research.destroyPromptPrefix")} <strong className="text-white">{countryName}</strong>? {t("detail_negara_ai.research.destroyPromptSuffix")}
           </p>
         </div>
 
@@ -34,14 +36,14 @@ export default function DestroyKontrakModal({ isOpen, countryName, onClose, onCo
             onClick={onClose}
             className="w-full sm:w-auto px-6 bg-root-canvas hover:bg-[#142A2A] border border-root-accent/30 rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
           >
-            Batal
+            {t("detail_negara_ai.common.cancel")}
           </button>
 
           <button
             onClick={() => { onConfirm(); onClose(); }}
             className="w-full sm:w-auto px-6 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 border border-rose-500 rounded-xl py-2 text-center text-white font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
           >
-            Hentikan Kontrak
+            {t("detail_negara_ai.research.destroyConfirm")}
           </button>
         </div>
 

@@ -16,5 +16,99 @@
     "gameSaved": "游戏保存成功。",
     "gameLoaded": "游戏加载成功。",
     "autosave": "自动保存完成。"
+  },
+  "requireEmbassy": {
+    "title": "需要大使馆",
+    "badge": "外交条件",
+    "proposingCountry": "提议国家",
+    "description": "报告总统！要正式接受来自 {country} 的贸易关系提议，我国政府必须在该国设有大使馆。",
+    "redirectNotice": "您将被重定向到 {country} 国家详情菜单以建立大使馆。",
+    "openDetail": "打开国家详情"
+  },
+  "warResultModal": {
+    "lossesAria": "军事装备损失明细",
+    "lossesTitle": "军事装备损失明细",
+    "defeatTitle": "战斗失败报告",
+    "victoryTitle": "战斗与战争结果报告"
+  },
+  "annexedModal": {
+    "defaultAttacker": "侵略国",
+    "title": "领土被吞并",
+    "gameOver": "游戏结束",
+    "victimCountry": "受害国",
+    "occupyingCountry": "占领国",
+    "description": "{country} 的最后防线已完全沦陷，被 {attacker} 的军事侵略占领。您的国家主权已正式结束，所有领土已被吞并。",
+    "nextAction": "下一步行动",
+    "restartSameCountry": "重新开始 — 同一国家模拟",
+    "chooseNewCountry": "选择新国家",
+    "finePrint": "领土吞并结束了您的领导。重新开始将从默认数据恢复国家初始状态。"
+  },
+  "coupModal": {
+    "country": "国家",
+    "chooseAction": "选择行动",
+    "restartSameCountry": "重新开始 — 同一国家",
+    "startDifferentCountry": "选择不同国家开始",
+    "finePrint": "重新开始将清除该国的所有进度并从默认数据重新开始。",
+    "peringkat": {
+      "title": "您已被政变推翻",
+      "subtitle": "总统支持率崩盘",
+      "desc": "人民和议会对您的信任已降至零。议会召开紧急会议并一致弹劾了您的总统职务。您的总统任期正式结束。",
+      "valueLabel": "最终评分:"
+    },
+    "kepuasan": {
+      "title": "人民革命",
+      "subtitle": "民众满意度降至零",
+      "desc": "人民不再信任您的政府。大规模抗议演变为全国革命，您被迫辞职。",
+      "valueLabel": "最终满意度:"
+    },
+    "kesejahteraan": {
+      "title": "全面人道主义危机",
+      "subtitle": "人民福利指数为零",
+      "desc": "人民生活质量已降至无法忍受的水平。国际机构宣布您的国家进入人道主义紧急状态。",
+      "valueLabel": "最终福利:"
+    }
+  },
+  "warningModal": {
+    "criticalBadge": "⚠️ 危急 ⚠️",
+    "acknowledge": "我明白了",
+    "satisfaction": {
+      "title": "民众满意度危机",
+      "label": "当前民众满意度:",
+      "desc": "民众对您政府绩效的满意度急剧下降！请立即采取社会行动并举办文化节以提振士气！"
+    },
+    "welfare": {
+      "title": "民众福利危机",
+      "label": "福利指数:",
+      "desc": "您国家的生活质量和人类发展处于危机区！请立即建设基础设施并发放社会援助！"
+    },
+    "rank": {
+      "title": "国家安全警告",
+      "label": "您的评分:",
+      "desc": "民众对您领导力的信任已达到危急水平！如果评分继续下降，您可能面临议会弹劾！"
+    }
+  },
+  "consumptionDetailModal": {
+    "title": "电力消耗明细 - {country}",
+    "subtitle": "国家电力消耗负荷详情",
+    "totalEstimated": "预估总消耗",
+    "nationalEnergyLoad": "国家能源负荷",
+    "productionMining": "生产与采矿",
+    "industryTypes": "{count} 种工业",
+    "publicPlaces": "公共场所",
+    "publicFacilities": "{count} 个公共设施",
+    "defenseSecurity": "国防与安全",
+    "basesInfrastructure": "{count} 个基地与基础设施",
+    "housingSettlement": "住房与定居点",
+    "householdLoad": "家庭负荷",
+    "allSectors": "所有部门",
+    "production": "生产",
+    "housing": "住房",
+    "searchPlaceholder": "搜索设施...",
+    "consumptionPerUnit": "单位消耗:",
+    "totalLoad": "总负荷:",
+    "noMatchingFacilities": "没有符合搜索条件的设施。"
+  },
+  "selectCountry": {
+    "startSimulation": "开始模拟"
   }
 }

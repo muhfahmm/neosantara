@@ -1,0 +1,37 @@
+{
+  "welcome": {
+    "advisorAlt": "Asesor del Estado",
+    "message": "Bienvenido, {playerName}. Hoy es su primer día como jefe de estado.",
+    "skip": "FINALIZAR",
+    "continue": "CONTINUAR"
+  },
+  "overlay": {
+    "stepCount": "Paso {current} de {total}",
+    "skip": "Omitir",
+    "previous": "Atrás",
+    "next": "Siguiente",
+    "finish": "Finalizar"
+  },
+  "steps": {
+    "tampilanUtama": {
+      "title": "Vista Principal",
+      "body": "El mapa muestra el territorio nacional; la fecha de simulación indica el tiempo en el juego. El presupuesto muestra el tesoro y el saldo neto, la población muestra el número de habitantes y la satisfacción refleja la aprobación pública."
+    },
+    "aturWaktu": {
+      "title": "Control del Tiempo",
+      "body": "Use los botones de inicio/pausa y el selector de velocidad para controlar la simulación; las condiciones del país cambian con el paso del tiempo."
+    },
+    "kondisiEkonomi": {
+      "title": "Condición Económica",
+      "body": "Abra el menú Economía para examinar ingresos y gastos nacionales. Compare ambos para ver si su saldo neto presupuestario es positivo o negativo."
+    },
+    "pembangunanSederhana": {
+      "title": "Construcción Básica",
+      "body": "Abra el menú Construcción y elija las instalaciones o producción que desea construir. Verifique costos y materiales requeridos antes de construir."
+    },
+    "simpanPermainan": {
+      "title": "Guardar Partida",
+      "body": "Guarde la partida a través del Menú de Juego o el botón Guardar para elegir una ranura de guardado. El progreso se puede reanudar más tarde."
+    }
+  }
+}

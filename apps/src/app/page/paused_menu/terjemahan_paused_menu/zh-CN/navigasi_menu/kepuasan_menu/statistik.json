@@ -18,5 +18,59 @@
   "info": {
     "title": "民众满意度统计",
     "description": "满意度评分汇总了整体状况以及税收、物价、粮食和公共服务等领域指标。请在“统计”页签查看评分，再打开相关领域了解影响满意度的政策。"
+  },
+  "rankingModal": {
+    "title": "President Rating",
+    "subtitle": "Breakdown of rating score changes",
+    "currentScore": "Current score",
+    "calculatedDecay": "Calculated decay",
+    "counterPerMonth": "{value} counter/month",
+    "normalEstimate": "Normal estimate: satisfaction {satisfaction}, openness {openness}, {lowSectors} low sectors, and Culture bonus. Excludes counter, active crisis, or service deficit pressure.",
+    "allDirectSources": "All direct decrease sources",
+    "decayFactorsTitle": "Decay factors and implementation notes",
+    "satisfactionMultiplierLabel": "Satisfaction multiplier:",
+    "satisfactionMultiplierText": "≤25: 0.10 · ≤40: 0.30 · ≤65: 0.60 · ≤80: 0.85 · >80: 1.00.",
+    "currentDirectionLabel": "Current direction:",
+    "currentDirectionText": "low satisfaction/sectors/openness and Culture bonus reduce the multiplier, slowing decay. Sector penalties still apply.",
+    "crisisLabel": "Crisis ≥30 days:",
+    "crisisText": "active disaster/outbreak forces multiplier 1.00, including rejected events.",
+    "oldSaveLabel": "Old saves:",
+    "oldSaveText": "old thresholds may be read as multipliers and alter counter progress.",
+    "distinguishableImpactsTitle": "Impacts to distinguish",
+    "distinguishableImpactsP1": "Electricity penalty of 1–3 points is written in notifications, but its application helper is not connected yet. Indirect impact via satisfaction/sectors is still possible.",
+    "distinguishableImpactsP2": "Diplomatic reputation differs from rating. Lower satisfaction does not directly cut rating.",
+    "rangeNote": "Score range 0–100; score ≤1 may trigger a coup. Bonuses: fulfill protest demands +10, handle disaster/outbreak +5, police response +2.",
+    "penalties": [
+      {
+        "title": "Automatic decay over time",
+        "amount": "Whole counter = points deducted",
+        "detail": "Counter increases each month based on multiplier. Multiple months at once can deduct multiple points."
+      },
+      {
+        "title": "Low satisfaction sectors",
+        "amount": "−2 per sector, every 6 months (max −10)",
+        "detail": "Threshold <25 for 9 sectors: tax, prices, food, electricity, housing, public services, health, law, openness. Initial public services (11), health (12), and law (5) are already below threshold."
+      },
+      {
+        "title": "Unhandled protests",
+        "amount": "−1 per protest per simulation day",
+        "detail": "Counted while protest is active, ignored, or pending; does not apply to resolved protests/riots."
+      },
+      {
+        "title": "Dispersing protests with security forces",
+        "amount": "−2 / −5 / −5 / −10 / −20; may add −5",
+        "detail": "Method order: water cannon, tear gas, curfew, riot police, military. Failure triggering riots adds −5."
+      },
+      {
+        "title": "Rejecting disaster or outbreak aid",
+        "amount": "−4 per rejection",
+        "detail": "Applied when aid on natural disaster or outbreak notifications is rejected/ignored."
+      },
+      {
+        "title": "Expired disaster or outbreak without handling",
+        "amount": "−1 per incident",
+        "detail": "Once when an event ends without recorded handling or rejection."
+      }
+    ]
   }
 }

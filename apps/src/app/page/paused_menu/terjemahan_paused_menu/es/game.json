@@ -16,5 +16,99 @@
     "gameSaved": "Partida guardada con éxito.",
     "gameLoaded": "Partida cargada con éxito.",
     "autosave": "Autoguardado completado."
+  },
+  "requireEmbassy": {
+    "title": "Embajada Requerida",
+    "badge": "Requisito Diplomático",
+    "proposingCountry": "País Proponente",
+    "description": "¡Informe Presidente! Para aceptar oficialmente la oferta de Relaciones Comerciales de {country}, nuestro gobierno debe tener una Embajada en ese país.",
+    "redirectNotice": "Será redirigido al menú de Detalles del País de {country} para establecer una Embajada.",
+    "openDetail": "Abrir Detalles del País"
+  },
+  "warResultModal": {
+    "lossesAria": "Desglose de pérdidas militares",
+    "lossesTitle": "Desglose de Pérdidas Militares",
+    "defeatTitle": "Informe de Derrota en Batalla",
+    "victoryTitle": "Informe de Resultados de Batalla y Guerra"
+  },
+  "annexedModal": {
+    "defaultAttacker": "Nación Agresora",
+    "title": "Territorio Anexado",
+    "gameOver": "Fin del Juego",
+    "victimCountry": "País Víctima",
+    "occupyingCountry": "País Ocupante",
+    "description": "La última fortaleza defensiva de {country} ha caído por completo y ha sido ocupada por la agresión militar de {attacker}. Su soberanía nacional ha terminado oficialmente.",
+    "nextAction": "Siguiente Acción",
+    "restartSameCountry": "Reiniciar — Mismo País",
+    "chooseNewCountry": "Elegir Nuevo País",
+    "finePrint": "La anexión territorial termina su liderazgo. Reiniciar restaurará el estado inicial desde los datos predeterminados."
+  },
+  "coupModal": {
+    "country": "País",
+    "chooseAction": "Elegir Acción",
+    "restartSameCountry": "Reiniciar — Mismo País",
+    "startDifferentCountry": "Comenzar con Otro País",
+    "finePrint": "Reiniciar borrará todo el progreso de este país y comenzará desde los datos predeterminados.",
+    "peringkat": {
+      "title": "HAS SIDO DERROCADO",
+      "subtitle": "Calificación Presidencial Colapsada",
+      "desc": "La confianza del pueblo y del parlamento en usted ha llegado a cero. El parlamento lo destituyó por unanimidad.",
+      "valueLabel": "Calificación Final:"
+    },
+    "kepuasan": {
+      "title": "REVOLUCIÓN POPULAR",
+      "subtitle": "Satisfacción Pública en Cero",
+      "desc": "El pueblo ya no confía en su gobierno. Las protestas se convirtieron en una revolución nacional y fue obligado a renunciar.",
+      "valueLabel": "Satisfacción Final:"
+    },
+    "kesejahteraan": {
+      "title": "CRISIS HUMANITARIA TOTAL",
+      "subtitle": "Índice de Bienestar en Cero",
+      "desc": "La calidad de vida ha caído a un nivel intolerable. Su país ha sido declarado en emergencia humanitaria.",
+      "valueLabel": "Bienestar Final:"
+    }
+  },
+  "warningModal": {
+    "criticalBadge": "⚠️ CRÍTICO ⚠️",
+    "acknowledge": "Entendido",
+    "satisfaction": {
+      "title": "Crisis de Satisfacción Pública",
+      "label": "Satisfacción Pública Actual:",
+      "desc": "¡La satisfacción pública con su gobierno se ha desplomado! Tome medidas sociales de inmediato."
+    },
+    "welfare": {
+      "title": "Crisis de Bienestar Público",
+      "label": "Índice de Bienestar:",
+      "desc": "¡La calidad de vida en su país está en zona de crisis! Construya infraestructura y distribuya ayuda social."
+    },
+    "rank": {
+      "title": "Advertencia de Seguridad Nacional",
+      "label": "Su Calificación:",
+      "desc": "¡La confianza pública en su liderazgo está en nivel crítico! Corre riesgo de destitución parlamentaria."
+    }
+  },
+  "consumptionDetailModal": {
+    "title": "Desglose de Consumo Eléctrico - {country}",
+    "subtitle": "Detalles de carga de consumo eléctrico nacional",
+    "totalEstimated": "Consumo Total Estimado",
+    "nationalEnergyLoad": "Carga energética nacional",
+    "productionMining": "Producción y Minería",
+    "industryTypes": "{count} tipos de industria",
+    "publicPlaces": "Lugares Públicos",
+    "publicFacilities": "{count} instalaciones públicas",
+    "defenseSecurity": "Defensa y Seguridad",
+    "basesInfrastructure": "{count} bases e infraestructura",
+    "housingSettlement": "Vivienda y Asentamientos",
+    "householdLoad": "Carga doméstica",
+    "allSectors": "Todos los Sectores",
+    "production": "Producción",
+    "housing": "Vivienda",
+    "searchPlaceholder": "Buscar instalaciones...",
+    "consumptionPerUnit": "Consumo / Unidad:",
+    "totalLoad": "Carga Total:",
+    "noMatchingFacilities": "No hay instalaciones que coincidan con la búsqueda."
+  },
+  "selectCountry": {
+    "startSimulation": "INICIAR SIMULACIÓN"
   }
 }

@@ -43,5 +43,23 @@
   "treatNow": "今すぐ対処: {count}人を救います。",
   "handle": "対処 · {cost} NEO",
   "insufficientTreasury": "国庫の資金が不足しています。",
-  "infoTitle": "人口情報"
+  "infoTitle": "人口情報",
+  "countryTable": {
+    "ariaLabel": "国別人口表",
+    "title": "国別人口",
+    "loadingCount": "国データを読み込み中...",
+    "countSummary": "{count} か国 · 日次増加数順",
+    "searchPlaceholder": "国を検索...",
+    "searchAria": "国を検索",
+    "loadingData": "人口データを取得中...",
+    "fetchError": "国データのリクエストに失敗しました (HTTP {status})。",
+    "invalidFormat": "人口データの形式が無効です。",
+    "genericError": "人口データの読み込み中にエラーが発生しました。",
+    "colNo": "番号",
+    "colCountry": "国",
+    "colDailyGrowth": "日次増加",
+    "colMonthlyEstimate": "月間推定",
+    "unitPeople": "人",
+    "noMatch": "検索に一致する国がありません。"
+  }
 }

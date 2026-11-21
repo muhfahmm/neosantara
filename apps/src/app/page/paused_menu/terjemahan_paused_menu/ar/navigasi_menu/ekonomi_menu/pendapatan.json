@@ -40,7 +40,11 @@
     "netGdp": "صافي الناتج المحلي",
     "rowBreakdown": "إجمالي الإيرادات: {totalIncome} NEO (الضرائب: {tax} + الذهب: {gold} + التجارة: {commercial} + السياحة: {tourism}) − إجمالي النفقات: {totalOutcome} NEO = الصافي: {net} NEO"
   },
-  "tabs": { "summary": "ملخص الناتج المحلي", "income": "الإيرادات", "outcome": "النفقات" },
+  "tabs": {
+    "summary": "ملخص الناتج المحلي",
+    "income": "الإيرادات",
+    "outcome": "النفقات"
+  },
   "summary": {
     "detailTitle": "تدفقات الرصيد والناتج المحلي الوطني",
     "incomeTitle": "تفاصيل الإيرادات (دخل الدولة)",
@@ -186,5 +190,19 @@
       "pension": "برنامج ضمان المعاشات العامة",
       "disaster": "صندوق إغاثة الطوارئ للكوارث"
     }
+  },
+  "globalFinancial": {
+    "title": "الميزانيات الوطنية لجميع الدول",
+    "searchPlaceholder": "ابحث عن دولة / قارة...",
+    "loading": "جارٍ تحميل بيانات جميع الدول...",
+    "noCountryData": "لا توجد بيانات للدول.",
+    "noSearchResults": "لا توجد بيانات تطابق البحث \"{query}\".",
+    "colCountryName": "اسم الدولة",
+    "colContinent": "القارة",
+    "colTotalTax": "إجمالي الضرائب",
+    "colGoldBuildings": "مباني الذهب",
+    "colGoldProduction": "إنتاج الذهب",
+    "colExpenses": "المصروفات",
+    "colDailyNetBalance": "صافي الرصيد اليومي"
   }
 }

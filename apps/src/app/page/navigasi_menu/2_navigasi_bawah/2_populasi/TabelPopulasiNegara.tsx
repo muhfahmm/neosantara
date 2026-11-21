@@ -10,6 +10,7 @@ import { applyNpcCountrySimulationState } from "@/app/logic/npc_country_simulati
 import { NPC_COUNTRY_SIMULATION_UPDATED_EVENT } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface CountryPopulationRow {
   id: number;
@@ -34,6 +35,7 @@ export default function TabelPopulasiNegara({
   userCountryDetail,
   currentDate,
 }: TabelPopulasiNegaraProps = {}) {
+  const { t, language } = useLanguage();
   const [rawCountries, setRawCountries] = useState<Record<string, unknown>[]>([]);
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [search, setSearch] = useState("");
@@ -184,19 +186,19 @@ export default function TabelPopulasiNegara({
 
   return (
     <section
-      aria-label="Tabel populasi negara"
+      aria-label={t("population_summary.countryTable.ariaLabel")}
       className={`${rootBorderRadius.card} border border-root-accent/20 bg-root-surface p-3.5 lg:p-4.5 2xl:p-6`}
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className={`${rootModalTypography.sectionTitle} flex items-center gap-2`}>
             <Users className="h-4 w-4" />
-            Populasi Negara
+            {t("population_summary.countryTable.title")}
           </h3>
           <p className={`${rootModalTypography.muted} mt-1 text-[9px] lg:text-[10px]`}>
             {loading
-              ? "Memuat data negara..."
-              : `${countries.length} negara · urut dari pertumbuhan harian tertinggi`}
+              ? t("population_summary.countryTable.loadingCount")
+              : t("population_summary.countryTable.countSummary", { count: countries.length })}
           </p>
         </div>
         <label className="flex min-w-[170px] items-center gap-2 rounded-lg border border-root-accent/20 bg-root-canvas px-2.5 py-2">
@@ -205,8 +207,8 @@ export default function TabelPopulasiNegara({
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Cari negara..."
-            aria-label="Cari negara"
+            placeholder={t("population_summary.countryTable.searchPlaceholder")}
+            aria-label={t("population_summary.countryTable.searchAria")}
             className="w-full bg-transparent text-xs text-root-text outline-none placeholder:text-root-muted"
           />
         </label>
@@ -214,7 +216,7 @@ export default function TabelPopulasiNegara({
 
       {loading && (
         <p className={`${rootModalTypography.muted} mt-4 text-xs`} role="status">
-          Sedang mengambil data populasi...
+          {t("population_summary.countryTable.loadingData")}
         </p>
       )}
 
@@ -229,10 +231,10 @@ export default function TabelPopulasiNegara({
           <RootTable className="w-full min-w-[360px] sm:min-w-[420px] border-collapse text-left">
             <RootTableHeader>
               <tr className={`${rootModalTypography.label} text-left`}>
-                <RootTableHeadCell scope="col" className="w-12">No.</RootTableHeadCell>
-                <RootTableHeadCell scope="col">Negara</RootTableHeadCell>
-                <RootTableHeadCell scope="col" className="text-right">Pertumbuhan / hari</RootTableHeadCell>
-                <RootTableHeadCell scope="col" className="text-right">Estimasi / bulan</RootTableHeadCell>
+                <RootTableHeadCell scope="col" className="w-12">{t("population_summary.countryTable.colNo")}</RootTableHeadCell>
+                <RootTableHeadCell scope="col">{t("population_summary.countryTable.colCountry")}</RootTableHeadCell>
+                <RootTableHeadCell scope="col" className="text-right">{t("population_summary.countryTable.colDailyGrowth")}</RootTableHeadCell>
+                <RootTableHeadCell scope="col" className="text-right">{t("population_summary.countryTable.colMonthlyEstimate")}</RootTableHeadCell>
               </tr>
             </RootTableHeader>
             <tbody>
@@ -257,11 +259,11 @@ export default function TabelPopulasiNegara({
                       </RootTableCell>
                       <RootTableCell isNumeric className={`font-black ${changeColor}`}>
                         {dailyChange > 0 ? "+" : ""}
-                        {dailyChange.toLocaleString("id-ID")} jiwa
+                        {dailyChange.toLocaleString(language === "id" ? "id-ID" : "en-US")} {t("population_summary.countryTable.unitPeople")}
                       </RootTableCell>
                       <RootTableCell isNumeric className={`font-black ${changeColor}`}>
                         {monthlyChange > 0 ? "+" : ""}
-                        {monthlyChange.toLocaleString("id-ID")} jiwa
+                        {monthlyChange.toLocaleString(language === "id" ? "id-ID" : "en-US")} {t("population_summary.countryTable.unitPeople")}
                       </RootTableCell>
                     </RootTableRow>
                   );
@@ -270,7 +272,7 @@ export default function TabelPopulasiNegara({
               {filteredCountries.length === 0 && (
                 <RootTableRow>
                   <td colSpan={4} className="px-3 py-6 text-center text-xs text-root-subtle">
-                    Tidak ada negara yang cocok dengan pencarian.
+                    {t("population_summary.countryTable.noMatch")}
                   </td>
                 </RootTableRow>
               )}

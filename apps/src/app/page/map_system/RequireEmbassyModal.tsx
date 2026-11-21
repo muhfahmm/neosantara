@@ -5,6 +5,7 @@ import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/Note
 import { Building2, ArrowRight } from 'lucide-react';
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface RequireEmbassyModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ export function RequireEmbassyModal({
   onClose,
   onProceedToDetail
 }: RequireEmbassyModalProps) {
+  const { t } = useLanguage();
   if (!isOpen || !partnerName) return null;
 
   const foundCountry = COUNTRIES_DATA?.find(
@@ -35,14 +37,14 @@ export function RequireEmbassyModal({
         className="relative w-full overflow-hidden flex flex-col font-sans pointer-events-auto"
       >
         <RootInfoModalHeader
-          title="Kedutaan Besar Diperlukan"
+          title={t('game.requireEmbassy.title')}
           titleId="require-embassy-title"
           onClose={onClose}
           icon={<Building2 />}
           size="compact"
           actions={
             <span className="text-[10px] font-extrabold text-root-accent uppercase tracking-wider">
-              Diplomasi Syarat
+              {t('game.requireEmbassy.badge')}
             </span>
           }
         />
@@ -63,18 +65,18 @@ export function RequireEmbassyModal({
               )}
             </div>
             <div>
-              <div className="text-[10px] font-bold text-[#A0C0C0] uppercase">Negara Pengaju Hubungan</div>
+              <div className="text-[10px] font-bold text-[#A0C0C0] uppercase">{t('game.requireEmbassy.proposingCountry')}</div>
               <div className="text-sm font-extrabold text-root-accent uppercase tracking-wide">{partnerName}</div>
             </div>
           </div>
 
           <p className="text-xs text-root-text leading-relaxed">
-            Lapor Presiden! Untuk secara resmi menerima penawaran Hubungan Perdagangan dari <strong className="text-root-accent">{partnerName}</strong>, pemerintah kita wajib memiliki <strong className="text-root-accent">Kedutaan Besar</strong> di negara tersebut.
+            {t('game.requireEmbassy.description', { country: partnerName })}
           </p>
 
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 text-[11px] text-amber-300 font-medium leading-normal flex items-start gap-2">
             <span className="text-base leading-none">⚠️</span>
-            <span>Anda akan dialihkan ke menu <strong>Detail Negara {partnerName}</strong> untuk mendirikan Kedutaan Besar.</span>
+            <span>{t('game.requireEmbassy.redirectNotice', { country: partnerName })}</span>
           </div>
         </div>
 
@@ -84,13 +86,13 @@ export function RequireEmbassyModal({
             onClick={onClose}
             className="flex-1 py-2.5 px-4 rounded-xl border border-root-accent/30 bg-root-canvas text-[#A0C0C0] hover:text-white hover:bg-root-accent/10 transition-all font-bold text-xs uppercase tracking-wider cursor-pointer text-center"
           >
-            Batal
+            {t('common.cancel')}
           </button>
           <button
             onClick={() => onProceedToDetail(partnerName)}
             className="flex-1 py-2.5 px-4 rounded-xl bg-root-accent hover:bg-root-accent/80 text-root-canvas transition-all font-extrabold text-xs uppercase tracking-wider cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.4)] flex items-center justify-center gap-1.5"
           >
-            <span>Buka Detail Negara</span>
+            <span>{t('game.requireEmbassy.openDetail')}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

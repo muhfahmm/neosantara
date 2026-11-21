@@ -1,6 +1,7 @@
 "use client"
 import { Zap } from "lucide-react";
 import BaseProduksiGrid from "../BaseProduksiGrid";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 const KEYS = [
   "pembangkit_listrik_tenaga_nuklir",
@@ -16,5 +17,6 @@ const KEYS = [
 ];
 
 export default function KelistrikanTab(props: any) {
-  return <BaseProduksiGrid {...props} keys={KEYS} title="Kelistrikan" Icon={Zap} isElectricityTab={true} />;
+  const { t } = useLanguage();
+  return <BaseProduksiGrid {...props} keys={KEYS} title={t("navigasi_menu.pembangunan_menu.produksi.tabs.kelistrikan")} Icon={Zap} isElectricityTab={true} />;
 }

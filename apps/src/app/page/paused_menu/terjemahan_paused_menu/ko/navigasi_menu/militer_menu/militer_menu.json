@@ -238,5 +238,15 @@
     "batu_bara": "석탄",
     "kayu": "목재",
     "em_cost": "생산 비용(NEO)"
+  },
+  "constructionSupport": {
+    "unit": "유닛",
+    "missingMaterials": "⚠️ 자재 부족",
+    "noMaterialsRequired": "이 건물에 필요한 자재가 없습니다.",
+    "materialsRequired": "필요 자재",
+    "moreMaterials": "+{count}개 추가 자재",
+    "hide": "숨기기",
+    "show": "표시",
+    "noBuildingsAvailable": "사용 가능한 건물이 없습니다"
   }
 }

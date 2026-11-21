@@ -9,5 +9,6 @@
   "close": "Schließen",
   "error": "Ein Fehler ist aufgetreten",
   "success": "Erfolgreich",
-  "search": "Suchen..."
+  "search": "Suchen...",
+  "infoTitle": "{title} Informationen"
 }

@@ -238,5 +238,15 @@
     "batu_bara": "石炭",
     "kayu": "木材",
     "em_cost": "生産費（NEO）"
+  },
+  "constructionSupport": {
+    "unit": "ユニット",
+    "missingMaterials": "⚠️ 素材不足",
+    "noMaterialsRequired": "この建物に必要な素材はありません。",
+    "materialsRequired": "必要な素材",
+    "moreMaterials": "他 {count} 種類の素材",
+    "hide": "非表示",
+    "show": "表示",
+    "noBuildingsAvailable": "利用可能な建物がありません"
   }
 }

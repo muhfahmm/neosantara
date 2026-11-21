@@ -51,5 +51,12 @@
     "moneyPath": "Vía monetaria (NEO)",
     "commodityGiftPath": "Vía de regalos de materias primas",
     "allCountries": "Todos los países"
+  },
+  "humanitarianAid": {
+    "title": "Programa de Ayuda Humanitaria",
+    "inDevelopmentLine1": "En",
+    "inDevelopmentLine2": "Desarrollo",
+    "description": "El sistema internacional de envío de ayuda humanitaria está actualmente en construcción. Mantente atento a las novedades para fortalecer tu reputación y hegemonía humanitaria.",
+    "comingSoon": "Próximamente"
   }
 }

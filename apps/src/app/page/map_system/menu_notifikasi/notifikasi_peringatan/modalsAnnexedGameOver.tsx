@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { ShieldAlert, RotateCcw, Globe, Swords, Flag } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface ModalsAnnexedGameOverProps {
     isOpen: boolean;
@@ -15,10 +16,12 @@ interface ModalsAnnexedGameOverProps {
 export default function ModalsAnnexedGameOver({
     isOpen,
     countryName = "Indonesia",
-    attackerCountry = "Negara Agresor",
+    attackerCountry,
     onRestart,
 }: ModalsAnnexedGameOverProps) {
     const router = useRouter();
+    const { t } = useLanguage();
+    const resolvedAttacker = attackerCountry || t('game.annexedModal.defaultAttacker');
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
@@ -60,11 +63,11 @@ export default function ModalsAnnexedGameOver({
             >
                     <div className="modal-responsive-shell bg-[#0D0505] border-4 border-red-800/80 rounded-3xl shadow-[0_0_80px_rgba(225,29,72,0.4)] overflow-hidden">
                         <RootInfoModalHeader
-                            title="Wilayah Dianeksasi"
+                            title={t('game.annexedModal.title')}
                             titleId="annexed-game-over-title"
                             icon={<ShieldAlert />}
                             size="standard"
-                            actions={<span className="text-[10px] font-black tracking-wider text-red-300/70 uppercase">Game Over</span>}
+                            actions={<span className="text-[10px] font-black tracking-wider text-red-300/70 uppercase">{t('game.annexedModal.gameOver')}</span>}
                         />
 
                     {/* Content Section */}
@@ -76,15 +79,15 @@ export default function ModalsAnnexedGameOver({
                                     <Flag className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-[9px] font-black text-red-600 uppercase tracking-widest">Negara Korban</p>
+                                    <p className="text-[9px] font-black text-red-600 uppercase tracking-widest">{t('game.annexedModal.victimCountry')}</p>
                                     <p className="text-sm font-black text-slate-900">{countryName}</p>
                                 </div>
                             </div>
                             <div className="text-right">
-                                <p className="text-[9px] font-black text-red-600 uppercase tracking-widest">Negara Penguasa</p>
+                                <p className="text-[9px] font-black text-red-600 uppercase tracking-widest">{t('game.annexedModal.occupyingCountry')}</p>
                                 <p className="text-sm font-black text-red-700 flex items-center gap-1 justify-end">
                                     <Swords className="w-3.5 h-3.5" />
-                                    {attackerCountry}
+                                    {resolvedAttacker}
                                 </p>
                             </div>
                         </div>
@@ -92,14 +95,14 @@ export default function ModalsAnnexedGameOver({
                         {/* Narrative Description */}
                         <div className="bg-white/90 border border-slate-200/80 rounded-2xl p-4 shadow-inner">
                             <p className="text-[12px] font-medium text-slate-800 leading-relaxed text-center">
-                                Benteng pertahanan terakhir <strong className="text-red-700">{countryName}</strong> telah sepenuhnya jatuh dan diduduki oleh agresi militer <strong className="text-red-700">{attackerCountry}</strong>. Kedaulatan nasional Anda resmi berakhir dan seluruh wilayah telah dicaplok.
+                                {t('game.annexedModal.description', { country: countryName, attacker: resolvedAttacker })}
                             </p>
                         </div>
 
                         {/* Divider */}
                         <div className="flex items-center gap-2">
                             <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-red-400/60" />
-                            <span className="text-[9px] font-black text-red-500 uppercase tracking-widest">Tindakan Lanjutan</span>
+                            <span className="text-[9px] font-black text-red-500 uppercase tracking-widest">{t('game.annexedModal.nextAction')}</span>
                             <div className="flex-1 h-[1px] bg-gradient-to-l from-transparent to-red-400/60" />
                         </div>
 
@@ -110,7 +113,7 @@ export default function ModalsAnnexedGameOver({
                                 className="w-full flex items-center justify-center gap-2.5 bg-slate-900 hover:bg-slate-800 active:bg-slate-950 border border-slate-700 rounded-xl py-3.5 text-[#FAF6EE] font-black text-[11px] tracking-widest uppercase transition-all duration-150 cursor-pointer shadow-lg hover:shadow-xl active:scale-[0.98] group"
                             >
                                 <RotateCcw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500 text-amber-400" />
-                                Restart — Simulasi Negara Sama
+                                {t('game.annexedModal.restartSameCountry')}
                             </button>
 
                             <button
@@ -118,13 +121,13 @@ export default function ModalsAnnexedGameOver({
                                 className="w-full flex items-center justify-center gap-2.5 bg-gradient-to-r from-red-700 to-rose-600 hover:from-red-600 hover:to-rose-500 active:from-red-800 border border-red-500 rounded-xl py-3.5 text-[#FAF6EE] font-black text-[11px] tracking-widest uppercase transition-all duration-150 cursor-pointer shadow-lg hover:shadow-xl active:scale-[0.98] group"
                             >
                                 <Globe className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300 text-white" />
-                                Pilih Negara Baru
+                                {t('game.annexedModal.chooseNewCountry')}
                             </button>
                         </div>
 
                         {/* Fine Print */}
                         <p className="text-center text-[9px] text-slate-400 font-medium">
-                            Aneksasi wilayah mengakhiri kepemimpinan Anda. Restart akan mengembalikan status awal negara dari data default.
+                            {t('game.annexedModal.finePrint')}
                         </p>
                     </div>
                 </div>

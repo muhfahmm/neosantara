@@ -43,5 +43,23 @@
   "treatNow": "Treat now: recover {count} people.",
   "handle": "Treat · {cost} NEO",
   "insufficientTreasury": "Insufficient funds in the national treasury.",
-  "infoTitle": "Population Information"
+  "infoTitle": "Population Information",
+  "countryTable": {
+    "ariaLabel": "Country population table",
+    "title": "Country Population",
+    "loadingCount": "Loading country data...",
+    "countSummary": "{count} countries · sorted by highest daily growth",
+    "searchPlaceholder": "Search country...",
+    "searchAria": "Search country",
+    "loadingData": "Fetching population data...",
+    "fetchError": "Country data request failed (HTTP {status}).",
+    "invalidFormat": "Invalid country population data format.",
+    "genericError": "An error occurred while loading population data.",
+    "colNo": "No.",
+    "colCountry": "Country",
+    "colDailyGrowth": "Growth / day",
+    "colMonthlyEstimate": "Estimate / month",
+    "unitPeople": "people",
+    "noMatch": "No countries match your search."
+  }
 }

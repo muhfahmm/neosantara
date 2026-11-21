@@ -7,6 +7,7 @@ import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModa
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { SubsidyItem, formatCurrencyCompact } from "../../../../../../../../../json/5_database_kebijakan_subsidi/index";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface DetailSubsidiItemModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ export default function DetailSubsidiItemModal({
   item,
   toggleSubsidy,
 }: DetailSubsidiItemModalProps) {
+  const { t } = useLanguage();
   if (!isOpen || !item) return null;
 
   return (
@@ -32,7 +34,7 @@ export default function DetailSubsidiItemModal({
     >
       <div className="flex h-full min-h-0 flex-col overflow-hidden">
         <RootInfoModalHeader
-          title="Rincian Kebijakan Subsidi"
+          title={t("navigation_economy_purchasing_power.subsidyDetail.title")}
           onClose={onClose}
           size="standard"
           icon={<HandHelping aria-hidden="true" />}
@@ -44,7 +46,7 @@ export default function DetailSubsidiItemModal({
           {/* Badge & Title */}
           <div>
             <span className={`subsidy-detail-category-badge ${rootModalTypography.label} mb-2 inline-block rounded-full border border-root-accent/30 bg-root-accent/10 px-2.5 py-0.5 !text-root-accent`}>
-              SEKTOR {item.category}
+              {t("navigation_economy_purchasing_power.subsidyDetail.sectorBadge", { category: item.category })}
             </span>
             <h3 className={`${rootModalTypography.sectionTitle} !text-root-text leading-tight`}>
               {item.name}
@@ -55,7 +57,7 @@ export default function DetailSubsidiItemModal({
           <div className={`bg-root-surface border border-root-accent/20 p-3 ${rootBorderRadius.card} space-y-2`}>
             <div className={`${rootModalTypography.sectionTitle} flex items-center gap-2 !text-root-accent`}>
               <Info className="h-4 w-4 shrink-0" />
-              <span>Deskripsi Kebijakan</span>
+              <span>{t("navigation_economy_purchasing_power.subsidyDetail.policyDescription")}</span>
             </div>
             <p className={`${rootModalTypography.body} pl-6`}>
               {item.description}
@@ -69,7 +71,7 @@ export default function DetailSubsidiItemModal({
             <div className={`bg-root-surface p-2.5 ${rootBorderRadius.card} border border-root-accent/20`}>
               <div className={`${rootModalTypography.label} mb-1 flex items-center gap-1.5`}>
                 <DollarSign className="h-3.5 w-3.5 text-root-accent" />
-                <span>Beban Anggaran</span>
+                <span>{t("navigation_economy_purchasing_power.subsidyDetail.budgetCost")}</span>
               </div>
               <span className="text-[length:var(--modal-font-value)] font-black text-root-accent">
                 {formatCurrencyCompact(item.budgetCost)}
@@ -80,10 +82,10 @@ export default function DetailSubsidiItemModal({
             <div className={`bg-root-surface p-2.5 ${rootBorderRadius.card} border border-root-accent/20`}>
               <div className={`${rootModalTypography.label} mb-1 flex items-center gap-1.5`}>
                 <TrendingUp className="h-3.5 w-3.5 text-emerald-400" />
-                <span>Bonus Kepuasan</span>
+                <span>{t("navigation_economy_purchasing_power.subsidyDetail.approvalBonus")}</span>
               </div>
               <span className="text-[length:var(--modal-font-value)] font-black text-emerald-400">
-                +{item.approvalImpact}% Approval
+                +{item.approvalImpact}% {t("navigation_economy_purchasing_power.subsidyDetail.approvalUnit")}
               </span>
             </div>
 
@@ -91,10 +93,10 @@ export default function DetailSubsidiItemModal({
             <div className={`bg-root-surface p-2.5 ${rootBorderRadius.card} border border-root-accent/20`}>
               <div className={`${rootModalTypography.label} mb-1 flex items-center gap-1.5`}>
                 <TrendingDown className="h-3.5 w-3.5 text-blue-400" />
-                <span>Reduksi Inflasi</span>
+                <span>{t("navigation_economy_purchasing_power.subsidyDetail.inflationReduction")}</span>
               </div>
               <span className="text-[length:var(--modal-font-value)] font-black text-blue-400">
-                -{item.inflationReduction}% Inflasi
+                -{item.inflationReduction}% {t("navigation_economy_purchasing_power.subsidyDetail.inflationUnit")}
               </span>
             </div>
 
@@ -102,7 +104,7 @@ export default function DetailSubsidiItemModal({
             <div className={`bg-root-surface p-2.5 ${rootBorderRadius.card} border border-root-accent/20`}>
               <div className={`${rootModalTypography.label} mb-1 flex items-center gap-1.5`}>
                 <ShieldAlert className="h-3.5 w-3.5 text-amber-400" />
-                <span>Risiko Cabut</span>
+                <span>{t("navigation_economy_purchasing_power.subsidyDetail.revocationRisk")}</span>
               </div>
               <span className={`text-[length:var(--modal-font-value)] font-black ${item.demoRiskIfDisabled === 'Kritis' ? 'text-rose-500' :
                   item.demoRiskIfDisabled === 'Tinggi' ? 'text-amber-400' : 'text-emerald-400'
@@ -116,9 +118,9 @@ export default function DetailSubsidiItemModal({
           {/* Status & Action Footer */}
           <div className={`bg-root-surface border border-root-accent/20 p-3 ${rootBorderRadius.card} flex items-center justify-between gap-3`}>
             <div>
-              <p className={rootModalTypography.label}>Status Alokasi Saat Ini</p>
+              <p className={rootModalTypography.label}>{t("navigation_economy_purchasing_power.subsidyDetail.currentAllocationStatus")}</p>
               <p className={`text-[length:var(--modal-font-value)] font-black uppercase mt-0.5 ${item.isSubsidized ? 'text-emerald-400' : 'text-root-subtle'}`}>
-                {item.isSubsidized ? '✓ Subsidi Aktif' : '✗ Non-Aktif'}
+                {item.isSubsidized ? t("navigation_economy_purchasing_power.subsidyDetail.statusActive") : t("navigation_economy_purchasing_power.subsidyDetail.statusInactive")}
               </p>
             </div>
 
@@ -131,9 +133,9 @@ export default function DetailSubsidiItemModal({
                   }`}
               >
                 {item.isSubsidized ? (
-                  <>Cabut Subsidi</>
+                  <>{t("navigation_economy_purchasing_power.subsidyDetail.revokeSubsidy")}</>
                 ) : (
-                  <><Check className="h-3.5 w-3.5" /> Aktifkan Subsidi</>
+                  <><Check className="h-3.5 w-3.5" /> {t("navigation_economy_purchasing_power.subsidyDetail.activateSubsidy")}</>
                 )}
               </button>
             )}

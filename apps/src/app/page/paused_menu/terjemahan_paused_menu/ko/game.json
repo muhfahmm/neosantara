@@ -16,5 +16,99 @@
     "gameSaved": "게임이 저장되었습니다.",
     "gameLoaded": "게임을 불러왔습니다.",
     "autosave": "자동 저장이 완료되었습니다."
+  },
+  "requireEmbassy": {
+    "title": "대사관 필요",
+    "badge": "외교 조건",
+    "proposingCountry": "제안 국가",
+    "description": "대통령님께 보고드립니다! {country}의 무역 관계 제안을 공식 수락하려면 해당 국가에 대사관이 있어야 합니다.",
+    "redirectNotice": "대사관을 설립하기 위해 {country} 국가 상세 메뉴로 이동합니다.",
+    "openDetail": "국가 상세 열기"
+  },
+  "warResultModal": {
+    "lossesAria": "군사 장비 손실 내역",
+    "lossesTitle": "군사 장비 손실 내역",
+    "defeatTitle": "전투 패배 보고서",
+    "victoryTitle": "전투 및 전쟁 결과 보고서"
+  },
+  "annexedModal": {
+    "defaultAttacker": "침략국",
+    "title": "영토 합병됨",
+    "gameOver": "게임 오버",
+    "victimCountry": "피해국",
+    "occupyingCountry": "점령국",
+    "description": "{country}의 마지막 방어 요새가 완전히 함락되어 {attacker}의 군사 침략에 점령되었습니다. 국가 주권이 공식적으로 종료되었습니다.",
+    "nextAction": "다음 행동",
+    "restartSameCountry": "재시작 — 같은 국가",
+    "chooseNewCountry": "새 국가 선택",
+    "finePrint": "영토 합병으로 리더십이 종료됩니다. 재시작 시 기본 데이터로 초기화됩니다."
+  },
+  "coupModal": {
+    "country": "국가",
+    "chooseAction": "행동 선택",
+    "restartSameCountry": "재시작 — 같은 국가",
+    "startDifferentCountry": "다른 국가로 시작",
+    "finePrint": "재시작하면 이 국가의 모든 진행 상황이 삭제됩니다.",
+    "peringkat": {
+      "title": "쿠데타로 실각함",
+      "subtitle": "대통령 지지율 붕괴",
+      "desc": "국민과 의회의 신뢰가 바닥났습니다. 의회가 긴급 회의를 열어 만장일치로 탄핵했습니다.",
+      "valueLabel": "최종 등급:"
+    },
+    "kepuasan": {
+      "title": "국민 혁명",
+      "subtitle": "국민 만족도 0 도달",
+      "desc": "국민이 더 이상 정부를 신뢰하지 않습니다. 대규모 시위가 전국 혁명으로 번졌습니다.",
+      "valueLabel": "최종 만족도:"
+    },
+    "kesejahteraan": {
+      "title": "전면적 인도주의 위기",
+      "subtitle": "국민 복지 지수 0",
+      "desc": "삶의 질이 견딜 수 없는 수준으로 떨어졌습니다. 국제기구가 인도적 비상사태를 선포했습니다.",
+      "valueLabel": "최종 복지:"
+    }
+  },
+  "warningModal": {
+    "criticalBadge": "⚠️ 위기 ⚠️",
+    "acknowledge": "확인",
+    "satisfaction": {
+      "title": "국민 만족도 위기",
+      "label": "현재 국민 만족도:",
+      "desc": "정부 성과에 대한 국민 만족도가 급락했습니다! 즉시 사회 조치를 취하세요."
+    },
+    "welfare": {
+      "title": "국민 복지 위기",
+      "label": "복지 지수:",
+      "desc": "국가의 삶의 질이 위기 수준입니다! 인프라를 구축하고 사회 지원을 제공하세요."
+    },
+    "rank": {
+      "title": "국가 안보 경고",
+      "label": "현재 등급:",
+      "desc": "지도력에 대한 국민 신뢰가 위기 수준입니다! 의회 탄핵 위험이 있습니다."
+    }
+  },
+  "consumptionDetailModal": {
+    "title": "전력 소비 내역 - {country}",
+    "subtitle": "국가 전력 소비 부하 상세",
+    "totalEstimated": "총 예상 소비량",
+    "nationalEnergyLoad": "국가 에너지 부하",
+    "productionMining": "생산 및 광업",
+    "industryTypes": "{count}개 산업 유형",
+    "publicPlaces": "공공장소",
+    "publicFacilities": "{count}개 공공시설",
+    "defenseSecurity": "국방 및 안보",
+    "basesInfrastructure": "{count}개 기지 및 인프라",
+    "housingSettlement": "주거 및 정착지",
+    "householdLoad": "가정 부하",
+    "allSectors": "모든 부문",
+    "production": "생산",
+    "housing": "주거",
+    "searchPlaceholder": "시설 검색...",
+    "consumptionPerUnit": "단위당 소비:",
+    "totalLoad": "총 부하:",
+    "noMatchingFacilities": "검색 조건과 일치하는 시설이 없습니다."
+  },
+  "selectCountry": {
+    "startSimulation": "시뮬레이션 시작"
   }
 }

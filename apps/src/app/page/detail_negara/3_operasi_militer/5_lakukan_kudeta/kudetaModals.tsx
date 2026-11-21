@@ -3,6 +3,7 @@ import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModa
 import React from "react";
 import { createPortal } from "react-dom";
 import { AlertTriangle } from "lucide-react";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface KudetaModalProps {
 	isOpen: boolean;
@@ -12,6 +13,7 @@ interface KudetaModalProps {
 }
 
 export default function KudetaModal({ isOpen, countryName, onClose, onConfirm }: KudetaModalProps) {
+	const { t } = useLanguage();
 	if (!isOpen) return null;
 
 	const modalContent = (
@@ -23,7 +25,7 @@ export default function KudetaModal({ isOpen, countryName, onClose, onConfirm }:
 				aria-labelledby="coup-confirm-title"
 			>
 				<RootInfoModalHeader
-					title="Konfirmasi Lakukan Kudeta"
+					title={t("detail_negara_ai.military.coupTitle")}
 					titleId="coup-confirm-title"
 					onClose={onClose}
 					icon={<AlertTriangle />}
@@ -32,7 +34,7 @@ export default function KudetaModal({ isOpen, countryName, onClose, onConfirm }:
 
 				<div className="p-5 sm:p-6">
 					<p className="text-sm sm:text-base text-root-text leading-relaxed">
-						Lakukan kudeta di <strong className="text-white">{countryName}</strong>? Ini adalah operasi rahasia yang berisiko tinggi terhadap stabilitas pemerintahan.
+						{t("detail_negara_ai.military.coupPromptPrefix")} <strong className="text-white">{countryName}</strong>? {t("detail_negara_ai.military.coupPromptSuffix")}
 					</p>
 				</div>
 
@@ -42,7 +44,7 @@ export default function KudetaModal({ isOpen, countryName, onClose, onConfirm }:
 						onClick={onClose}
 						className="w-full sm:w-auto px-6 bg-root-canvas hover:bg-[#142A2A] border border-root-accent/30 rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
 					>
-						Batal
+						{t("detail_negara_ai.common.cancel")}
 					</button>
 
 					<button
@@ -50,7 +52,7 @@ export default function KudetaModal({ isOpen, countryName, onClose, onConfirm }:
 						onClick={() => { onConfirm(); onClose(); }}
 						className="w-full sm:w-auto px-6 bg-rose-600 hover:bg-rose-700 border border-rose-500 rounded-xl py-2 text-center text-white font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
 					>
-						Lakukan
+						{t("detail_negara_ai.military.coupConfirm")}
 					</button>
 				</div>
 

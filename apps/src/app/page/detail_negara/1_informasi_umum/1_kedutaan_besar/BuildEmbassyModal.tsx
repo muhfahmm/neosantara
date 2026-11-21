@@ -2,6 +2,7 @@
 import React from "react";
 import RootConfirmModal from "@/app/page/root_modals_design_menu/RootConfirmModal";
 import { getWaktuPembangunanKedutaanBonusPercent } from "@/app/page/bonus_logic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface BuildEmbassyModalProps {
   isOpen: boolean;
@@ -26,7 +27,8 @@ export default function BuildEmbassyModal({
   onClose,
   onConfirm,
 }: BuildEmbassyModalProps) {
-  const continentLabel = continent || "Lainnya";
+  const { t } = useLanguage();
+  const continentLabel = continent || t("detail_negara_ai.embassy.otherContinent");
   const budgetAfterBuild = currentBudget - cost;
   const formattedCurrentBudget = currentBudget.toLocaleString("id-ID", { maximumFractionDigits: 2 });
   const formattedBudgetAfterBuild = budgetAfterBuild.toLocaleString("id-ID", { maximumFractionDigits: 2 });
@@ -42,18 +44,18 @@ export default function BuildEmbassyModal({
   return (
     <RootConfirmModal
       isOpen={isOpen}
-      title="Konfirmasi Bangun Kedutaan"
+      title={t("detail_negara_ai.embassy.buildTitle")}
       onClose={onClose}
       onConfirm={onConfirm}
-      confirmLabel={hasBudget ? "Bangun Kedutaan" : "Kas Tidak Mencukupi"}
+      confirmLabel={hasBudget ? t("detail_negara_ai.embassy.buildConfirm") : t("detail_negara_ai.embassy.insufficientBudget")}
       confirmDisabled={!hasBudget}
       footerBorderClassName="border-root-accent/20"
     >
       <div className="flex-1">
         <p className="text-sm sm:text-base text-root-text mb-4 leading-relaxed">
-          Apakah Anda ingin membangun kedutaan di{" "}
-          <strong className="text-white">{countryName}</strong>? Biaya pembangunan di{" "}
-          <strong className="text-white">{continentLabel}</strong> adalah{" "}
+          {t("detail_negara_ai.embassy.buildPromptPrefix")}{" "}
+          <strong className="text-white">{countryName}</strong>? {t("detail_negara_ai.embassy.buildCostIn")}{" "}
+          <strong className="text-white">{continentLabel}</strong> {t("detail_negara_ai.embassy.is")}{" "}
           {embassyCostDiscountPct > 0 ? (
             <span>
               <span className="line-through text-rose-400 mr-1">10 NEO</span>
@@ -64,25 +66,25 @@ export default function BuildEmbassyModal({
           ) : (
             <strong className="text-root-accent">{cost} NEO</strong>
           )}{" "}
-          dengan waktu pembangunan{" "}
+          {t("detail_negara_ai.embassy.withBuildTime")}{" "}
           {discountPct > 0 ? (
             <span>
-              <span className="line-through text-rose-400 mr-1">{buildTimeDays} hari</span>
-              <strong className="text-root-accent">{effectiveBuildTimeDays} hari</strong>
+              <span className="line-through text-rose-400 mr-1">{buildTimeDays} {t("detail_negara_ai.embassy.days")}</span>
+              <strong className="text-root-accent">{effectiveBuildTimeDays} {t("detail_negara_ai.embassy.days")}</strong>
             </span>
           ) : (
-            <strong className="text-root-accent">{buildTimeDays} hari</strong>
+            <strong className="text-root-accent">{buildTimeDays} {t("detail_negara_ai.embassy.days")}</strong>
           )}
           .
         </p>
 
         <p className="text-sm sm:text-base text-root-subtle leading-relaxed">
-          Kas negara saat ini:{" "}
+          {t("detail_negara_ai.embassy.currentBudget")}{" "}
           <strong className="text-root-text">
             {currentBudget >= 0 ? "+" : ""}
             {formattedCurrentBudget} NEO
           </strong>
-          . Setelah pembangunan, kas akan menjadi{" "}
+          . {t("detail_negara_ai.embassy.afterBuildBudget")}{" "}
           <strong className="text-root-accent">
             {budgetAfterBuild >= 0 ? "+" : ""}
             {formattedBudgetAfterBuild} NEO

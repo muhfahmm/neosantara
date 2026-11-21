@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 interface BerikanSanksiModalProps {
 	isOpen: boolean;
 	countryName?: string | null;
@@ -21,6 +22,7 @@ export default function BerikanSanksiModal({
 	onClose,
 	onConfirm,
 }: BerikanSanksiModalProps) {
+	const { t } = useLanguage();
 	if (!isOpen) return null;
 
 	const netBalanceMultiplier = currentNetBalance >= 0
@@ -37,24 +39,24 @@ export default function BerikanSanksiModal({
 				
 				{/* Area Konten */}
 				<div className="flex-1">
-					<RootInfoModalHeader title="Konfirmasi Berikan Sanksi" onClose={onClose} size="compact" />
+					<RootInfoModalHeader title={t("detail_negara_ai.sanction.title")} onClose={onClose} size="compact" />
 					
 					<p className="text-sm sm:text-base text-root-text mb-4 leading-relaxed">
-						Terapkan sanksi terhadap <strong className="text-white">{countryName}</strong>? Hubungan diplomatik akan turun secara acak sebesar <strong className="text-rose-400">15–30 poin</strong>.
+						{t("detail_negara_ai.sanction.promptPrefix")} <strong className="text-white">{countryName}</strong>? {t("detail_negara_ai.sanction.promptMid")} <strong className="text-rose-400">15–30 {t("detail_negara_ai.sanction.points")}</strong>.
 					</p>
 					
 					<div className="mb-6 rounded-xl border border-root-accent/20 bg-root-canvas p-4 text-sm sm:text-base text-root-text">
 						<div className="flex justify-between gap-3">
-							<span className="text-root-subtle">Netto kas saat ini</span>
+							<span className="text-root-subtle">{t("detail_negara_ai.sanction.currentNetBalance")}</span>
 							<strong className="text-right text-root-accent font-mono">{formatNetBalance(currentNetBalance)}</strong>
 						</div>
 						<div className="my-2 border-t border-root-accent/20" />
 						<div className="flex justify-between gap-3">
-							<span className="text-root-subtle">Dampak tiap sanksi</span>
+							<span className="text-root-subtle">{t("detail_negara_ai.sanction.impactPerSanction")}</span>
 							<strong className="text-rose-400">-{reductionPercent}%</strong>
 						</div>
 						<div className="mt-1 flex justify-between gap-3">
-							<span className="text-root-subtle">Netto kas setelah sanksi</span>
+							<span className="text-root-subtle">{t("detail_negara_ai.sanction.afterSanctionNetBalance")}</span>
 							<strong className="text-right text-rose-400 font-mono">{formatNetBalance(reducedNetBalance)}</strong>
 						</div>
 					</div>
@@ -66,14 +68,14 @@ export default function BerikanSanksiModal({
 						onClick={onClose}
 						className="w-full sm:w-auto px-6 bg-root-canvas hover:bg-[#142A2A] border border-root-accent/30 rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
 					>
-						Batal
+						{t("detail_negara_ai.common.cancel")}
 					</button>
 
 					<button
 						onClick={() => { onConfirm(); onClose(); }}
 						className="w-full sm:w-auto px-6 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 border border-amber-600 rounded-xl py-2 text-center text-white font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
 					>
-						Terapkan Sanksi
+						{t("detail_negara_ai.sanction.confirm")}
 					</button>
 				</div>
 

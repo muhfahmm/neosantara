@@ -43,5 +43,23 @@
   "treatNow": "지금 대응: {count}명을 회복합니다.",
   "handle": "대응 · {cost} NEO",
   "insufficientTreasury": "국고 자금이 부족합니다.",
-  "infoTitle": "인구 정보"
+  "infoTitle": "인구 정보",
+  "countryTable": {
+    "ariaLabel": "국가별 인구 표",
+    "title": "국가별 인구",
+    "loadingCount": "국가 데이터 로드 중...",
+    "countSummary": "{count}개국 · 일일 최대 증가순",
+    "searchPlaceholder": "국가 검색...",
+    "searchAria": "국가 검색",
+    "loadingData": "인구 데이터를 가져오는 중...",
+    "fetchError": "국가 데이터 요청 실패 (HTTP {status}).",
+    "invalidFormat": "국가 인구 데이터 형식이 잘못되었습니다.",
+    "genericError": "인구 데이터를 불러오는 중 오류가 발생했습니다.",
+    "colNo": "번호",
+    "colCountry": "국가",
+    "colDailyGrowth": "일일 증가",
+    "colMonthlyEstimate": "월간 추정",
+    "unitPeople": "명",
+    "noMatch": "검색과 일치하는 국가가 없습니다."
+  }
 }

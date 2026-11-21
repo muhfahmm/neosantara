@@ -1,11 +1,12 @@
 "use client";
 
 import type { TravelFuelStatus } from "./travelFuelLogic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 export default function TravelFuelCostPanel({
   status,
-  label = "Biaya perjalanan",
-  locale = "id-ID",
+  label,
+  locale,
   translate,
 }: {
   status: TravelFuelStatus;
@@ -16,8 +17,11 @@ export default function TravelFuelCostPanel({
     params?: Record<string, string | number>,
   ) => string;
 }) {
+  const { t, language } = useLanguage();
+  const resolvedLocale = locale ?? (language === "id" ? "id-ID" : "en-US");
+  const resolvedLabel = label ?? t("common.travelCost", { defaultValue: language === "id" ? "Biaya perjalanan" : "Travel cost" });
   const numberFormat = (value: number) =>
-    value.toLocaleString(locale, { maximumFractionDigits: 0 });
+    value.toLocaleString(resolvedLocale, { maximumFractionDigits: 0 });
 
   return (
     <div className={`mb-5 rounded-xl border p-3 text-sm ${
@@ -26,7 +30,7 @@ export default function TravelFuelCostPanel({
         : "border-root-danger/40 bg-root-danger/10"
     }`}>
       <p className="font-bold text-root-text">
-        {label}:{" "}
+        {resolvedLabel}:{" "}
         <span className={status.ok ? "text-root-accent" : "text-root-danger"}>
           {status.loading || status.cost === null
             ? translate?.("calculating") ?? "Menghitung..."

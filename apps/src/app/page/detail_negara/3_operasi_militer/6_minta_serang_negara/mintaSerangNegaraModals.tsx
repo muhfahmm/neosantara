@@ -4,6 +4,7 @@ import { ChevronDown, Coins, ArrowUp, Swords } from "lucide-react";
 import { CAPITALS_DATA, COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { majorCities as MAJOR_CITIES_DATA } from "@/app/page/map_system/mapDataAssets";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 type AttackTargetCity = {
 	cityId: string;
@@ -32,6 +33,7 @@ export default function MintaSerangNegaraModal({
 	onClose,
 	onConfirm,
 }: MintaSerangNegaraModalProps) {
+	const { t } = useLanguage();
 	const [selectedCountry, setSelectedCountry] = useState<string>("");
 	const [selectedCityId, setSelectedCityId] = useState<string>("");
 	const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
@@ -197,7 +199,7 @@ export default function MintaSerangNegaraModal({
 									<div className="flex items-center gap-2.5 truncate">
 										{renderFlag(selectedData?.iso, selectedData?.country)}
 										<span className="font-sans font-bold text-xs sm:text-sm tracking-wide truncate text-root-text">
-											{selectedData?.country || "Pilih Negara"}
+											{selectedData?.country || t("detail_negara_ai.military.selectCountry")}
 										</span>
 									</div>
 									<ChevronDown className={`w-4 h-4 text-root-accent transition-transform duration-200 shrink-0 ${isDropdownOpen ? 'rotate-180' : ''}`} />
@@ -233,7 +235,7 @@ export default function MintaSerangNegaraModal({
 						{/* Input Pembayaran */}
 						<div>
 							<label className="block text-[10px] sm:text-xs font-black text-root-accent uppercase tracking-wider mb-2">
-								Jumlah Pembayaran (NEO)
+								{t("detail_negara_ai.military.paymentAmount")}
 							</label>
 							<div className="flex items-center gap-2 bg-root-canvas border border-root-accent/40 rounded-xl px-3 h-11">
 								<Coins className="w-4 h-4 text-root-accent shrink-0" />
@@ -261,7 +263,7 @@ export default function MintaSerangNegaraModal({
 					{/* Kota target dipilih dari kota-kota yang saat ini dimiliki negara sasaran */}
 					<div className="shrink-0">
 						<label htmlFor="requested-invasion-target-city" className="block text-[10px] sm:text-xs font-black text-root-accent uppercase tracking-wider mb-2">
-							Kota yang Diserang
+							{t("detail_negara_ai.military.targetCity")}
 						</label>
 						<select
 							id="requested-invasion-target-city"
@@ -271,10 +273,10 @@ export default function MintaSerangNegaraModal({
 							className="w-full h-11 bg-root-canvas border border-root-accent/40 rounded-xl px-3 text-white font-bold text-xs sm:text-sm disabled:opacity-50 cursor-pointer"
 						>
 							{targetCities.length === 0
-								? <option value="">Tidak ada data kota untuk negara ini</option>
+								? <option value="">{t("detail_negara_ai.military.noCityData")}</option>
 								: targetCities.map(city => (
 									<option key={city.cityId} value={city.cityId}>
-										{city.name}{city.isCapital ? ' (Ibu kota)' : ''}
+										{city.name}{city.isCapital ? ` (${t("detail_negara_ai.capital")})` : ''}
 									</option>
 								))
 							}
@@ -284,7 +286,7 @@ export default function MintaSerangNegaraModal({
 					{/* Success Rate Bar */}
 					<div className="bg-root-canvas border border-root-accent/30 rounded-xl p-3 sm:p-4 shrink-0">
 						<div className="flex items-center justify-between text-xs font-black text-root-subtle uppercase tracking-wider mb-2.5">
-							<span>Peluang Kesuksesan</span>
+							<span>{t("detail_negara_ai.province.successChance")}</span>
 							<span className={`font-black text-sm ${successRate > 50 ? 'text-emerald-400' : successRate > 20 ? 'text-amber-400' : 'text-rose-400'}`}>
 								{successRate}%
 							</span>
@@ -296,7 +298,7 @@ export default function MintaSerangNegaraModal({
 							/>
 						</div>
 						<p className="text-[10px] text-root-subtle font-semibold mt-2.5">
-							Peluang meningkat seiring besarnya pembayaran. Minimum efektif: 20.000 NEO untuk hasil yang berarti.
+							{t("detail_negara_ai.military.paymentChanceNote")}
 						</p>
 					</div>
 
@@ -312,7 +314,7 @@ export default function MintaSerangNegaraModal({
 							onClick={onClose}
 							className="px-6 py-3 bg-root-surface hover:bg-[#163535] border border-root-accent/30 rounded-xl text-center text-root-text font-black text-xs tracking-wider uppercase transition-all cursor-pointer"
 						>
-							Batal
+							{t("detail_negara_ai.common.cancel")}
 						</button>
 						<button
 							type="button"
@@ -330,7 +332,7 @@ export default function MintaSerangNegaraModal({
 									: "bg-gray-700 text-gray-400 border border-gray-600 cursor-not-allowed opacity-50"
 							}`}
 						>
-							Sarankan
+							{t("detail_negara_ai.military.suggest")}
 						</button>
 					</div>
 				</div>

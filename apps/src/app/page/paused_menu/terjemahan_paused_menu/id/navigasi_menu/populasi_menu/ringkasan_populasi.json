@@ -43,5 +43,23 @@
   "treatNow": "Tangani sekarang: pulihkan {count} jiwa.",
   "handle": "Tangani · {cost} NEO",
   "insufficientTreasury": "Kas negara tidak mencukupi.",
-  "infoTitle": "Informasi Kependudukan"
+  "infoTitle": "Informasi Kependudukan",
+  "countryTable": {
+    "ariaLabel": "Tabel populasi negara",
+    "title": "Populasi Negara",
+    "loadingCount": "Memuat data negara...",
+    "countSummary": "{count} negara · urut dari pertumbuhan harian tertinggi",
+    "searchPlaceholder": "Cari negara...",
+    "searchAria": "Cari negara",
+    "loadingData": "Sedang mengambil data populasi...",
+    "fetchError": "Permintaan data negara gagal (HTTP {status}).",
+    "invalidFormat": "Format data populasi negara tidak valid.",
+    "genericError": "Terjadi kesalahan saat memuat data populasi.",
+    "colNo": "No.",
+    "colCountry": "Negara",
+    "colDailyGrowth": "Pertumbuhan / hari",
+    "colMonthlyEstimate": "Estimasi / bulan",
+    "unitPeople": "jiwa",
+    "noMatch": "Tidak ada negara yang cocok dengan pencarian."
+  }
 }

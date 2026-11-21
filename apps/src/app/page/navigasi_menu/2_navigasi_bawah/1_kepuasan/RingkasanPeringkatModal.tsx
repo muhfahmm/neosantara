@@ -9,6 +9,7 @@ import { getDecayMultiplierFromSatisfaction } from "@/app/logic/peringkatCalcula
 import { applyKementerianKebudayaanDecayMultiplierBonus } from "@/app/page/bonus_logic";
 import NotebookModalWrapper from "../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface RingkasanPeringkatModalProps {
   isOpen: boolean;
@@ -59,7 +60,14 @@ export default function RingkasanPeringkatModal({
   countryDetail,
   metadata = {},
 }: RingkasanPeringkatModalProps) {
+  const { t } = useLanguage();
   if (!isOpen) return null;
+
+  const penaltySections = [0, 1, 2, 3, 4, 5].map((idx) => ({
+    title: t(`satisfaction_statistics.rankingModal.penalties.${idx}.title`),
+    amount: t(`satisfaction_statistics.rankingModal.penalties.${idx}.amount`),
+    detail: t(`satisfaction_statistics.rankingModal.penalties.${idx}.detail`),
+  }));
 
   const satisfaction = Number(countryDetail?.kepuasan ?? 50);
   const lowSectorCount = countLowSatisfactionSectors(countryDetail, metadata);
@@ -90,10 +98,10 @@ export default function RingkasanPeringkatModal({
             </div>
             <div>
               <h2 className={"root-modal-util-db32311dd9"}>
-                Peringkat Presiden
+                {t("satisfaction_statistics.rankingModal.title")}
               </h2>
               <p className={"root-modal-util-738a0e9e27"}>
-                Rincian penyebab perubahan nilai peringkat
+                {t("satisfaction_statistics.rankingModal.subtitle")}
               </p>
             </div>
           </div>
@@ -106,7 +114,7 @@ export default function RingkasanPeringkatModal({
             <div className={"root-modal-util-e20f2b9b36"}>
               <div>
                 <p className={"root-modal-util-149d168639"}>
-                  Nilai saat ini
+                  {t("satisfaction_statistics.rankingModal.currentScore")}
                 </p>
                 <p className={`root-modal-util-bf9b09e569 ${ratingColor}`}>
                   {Math.round(presidentRating)}
@@ -114,25 +122,28 @@ export default function RingkasanPeringkatModal({
                 </p>
               </div>
               <div className={"root-modal-util-440d1dcd57"}>
-                <p className={"root-modal-util-79f0d0bec1"}>Decay terhitung</p>
+                <p className={"root-modal-util-79f0d0bec1"}>{t("satisfaction_statistics.rankingModal.calculatedDecay")}</p>
                 <p className={"root-modal-util-a9ce546982"}>
-                  {finalMultiplier.toFixed(2)} counter/bulan
+                  {t("satisfaction_statistics.rankingModal.counterPerMonth", { value: finalMultiplier.toFixed(2) })}
                 </p>
               </div>
             </div>
             <p className={"root-modal-util-671b937750"}>
-              Estimasi normal: kepuasan {Math.round(satisfaction)}, keterbukaan {opennessScore}, {lowSectorCount} sektor rendah,
-              dan bonus Kebudayaan. Belum termasuk counter, krisis aktif, atau tekanan defisit layanan.
+              {t("satisfaction_statistics.rankingModal.normalEstimate", {
+                satisfaction: Math.round(satisfaction),
+                openness: opennessScore,
+                lowSectors: lowSectorCount,
+              })}
             </p>
           </section>
 
           <section className={"root-modal-util-6ed543e2fb"}>
             <h3 className={"root-modal-util-4cf7f34e06"}>
               <span className={"root-modal-util-ec6ebdb191"} />
-              Semua sumber penurunan langsung
+              {t("satisfaction_statistics.rankingModal.allDirectSources")}
             </h3>
             <div className={"root-modal-util-0166cc080d"}>
-              {PENALTY_SECTIONS.map((section) => (
+              {penaltySections.map((section) => (
                 <article
                   key={section.title}
                   className={`root-modal-util-5f22e64f22 root-modal-util-d01275d2de `}
@@ -155,21 +166,18 @@ export default function RingkasanPeringkatModal({
           <section className={`root-modal-util-5f22e64f22 root-modal-util-72b4ea9f47 `}>
             <h3 className={"root-modal-util-b499deba0a"}>
               <AlertTriangle className={"root-modal-util-a7e4e66fa3"} />
-              Faktor decay dan catatan implementasi
+              {t("satisfaction_statistics.rankingModal.decayFactorsTitle")}
             </h3>
             <ul className={"root-modal-util-220919c901"}>
-              <li><strong className={"root-modal-util-ac56fca21e"}>Multiplier kepuasan:</strong> ≤25: 0,10 · ≤40: 0,30 · ≤65: 0,60 · ≤80: 0,85 · &gt;80: 1,00.</li>
+              <li><strong className={"root-modal-util-ac56fca21e"}>{t("satisfaction_statistics.rankingModal.satisfactionMultiplierLabel")}</strong> {t("satisfaction_statistics.rankingModal.satisfactionMultiplierText")}</li>
               <li>
-                <strong className={"root-modal-util-ac56fca21e"}>Arah saat ini:</strong> kepuasan/sektor/keterbukaan rendah dan bonus
-                Kebudayaan mengecilkan multiplier, sehingga memperlambat decay. Penalti sektor tetap berlaku.
+                <strong className={"root-modal-util-ac56fca21e"}>{t("satisfaction_statistics.rankingModal.currentDirectionLabel")}</strong> {t("satisfaction_statistics.rankingModal.currentDirectionText")}
               </li>
               <li>
-                <strong className={"root-modal-util-ac56fca21e"}>Krisis ≥30 hari:</strong> bencana/wabah aktif memaksa multiplier 1,00,
-                termasuk event yang sudah ditolak.
+                <strong className={"root-modal-util-ac56fca21e"}>{t("satisfaction_statistics.rankingModal.crisisLabel")}</strong> {t("satisfaction_statistics.rankingModal.crisisText")}
               </li>
               <li>
-                <strong className={"root-modal-util-ac56fca21e"}>Save lama:</strong> threshold lama bisa terbaca sebagai multiplier dan
-                mengubah progres counter.
+                <strong className={"root-modal-util-ac56fca21e"}>{t("satisfaction_statistics.rankingModal.oldSaveLabel")}</strong> {t("satisfaction_statistics.rankingModal.oldSaveText")}
               </li>
             </ul>
           </section>
@@ -177,18 +185,18 @@ export default function RingkasanPeringkatModal({
           <section className={`root-modal-util-5f22e64f22 root-modal-util-d36a8a639f `}>
             <h3 className={"root-modal-util-1a38f80d7a"}>
               <Info className={"root-modal-util-a7e4e66fa3"} />
-              Dampak yang perlu dibedakan
+              {t("satisfaction_statistics.rankingModal.distinguishableImpactsTitle")}
             </h3>
             <div className={"root-modal-util-220919c901"}>
-              <p>Penalti listrik 1–3 poin tertulis di notifikasi, tetapi helper penerapannya belum tersambung. Dampak tidak langsung lewat kepuasan/sektor masih mungkin.</p>
-              <p>Reputasi diplomatik berbeda dari peringkat. Kepuasan turun tidak langsung memotong peringkat.</p>
+              <p>{t("satisfaction_statistics.rankingModal.distinguishableImpactsP1")}</p>
+              <p>{t("satisfaction_statistics.rankingModal.distinguishableImpactsP2")}</p>
             </div>
           </section>
 
           <section className={`root-modal-util-5f22e64f22 root-modal-util-e61ab2a7d6 `}>
             <div className={"root-modal-util-7b6566b31a"}>
               <ShieldAlert className={"root-modal-util-16249c4e4c"} />
-              <p>Rentang nilai 0–100; nilai ≤1 dapat memicu kudeta. Bonus: penuhi tuntutan demo +10, tangani bencana/wabah +5, respons polisi +2.</p>
+              <p>{t("satisfaction_statistics.rankingModal.rangeNote")}</p>
             </div>
           </section>
         </div>

@@ -238,5 +238,15 @@
     "batu_bara": "煤炭",
     "kayu": "木材",
     "em_cost": "生产费用（NEO）"
+  },
+  "constructionSupport": {
+    "unit": "单位",
+    "missingMaterials": "⚠️ 材料不足",
+    "noMaterialsRequired": "此建筑不需要材料。",
+    "materialsRequired": "所需材料",
+    "moreMaterials": "+{count} 种其他材料",
+    "hide": "隐藏",
+    "show": "显示",
+    "noBuildingsAvailable": "没有可用的建筑"
   }
 }

@@ -237,5 +237,29 @@
     "buy": "Beli",
     "sell": "Jual",
     "expired": "Kadaluwarsa"
+  },
+  "addPartner": {
+    "title": "Tambah Mitra Dagang Baru",
+    "searchPlaceholder": "Cari nama negara...",
+    "emptyTitle": "Tidak ada negara ditemukan",
+    "emptySubtitle": "Coba masukkan kata kunci pencarian yang lain.",
+    "continentHeading": "🌍 Benua {continent}",
+    "countryCount": "{count} Negara",
+    "noEmbassyModalTitle": "Pemberitahuan / Peringatan",
+    "noEmbassyHeading": "Gagal Menambahkan Mitra",
+    "noEmbassyBodyPrefix": "Anda tidak dapat menjalin hubungan dagang dengan ",
+    "noEmbassyBodyMid": " karena negara Anda belum memiliki ",
+    "noEmbassyLabel": "Kedutaan Besar (Kedubes)",
+    "noEmbassyBodySuffix": " yang aktif di sana.",
+    "noEmbassyHintPrefix": "💡 Buka kantor Kedutaan Besar terlebih dahulu di menu ",
+    "noEmbassyHintMenu": "Geopolitik → Kedutaan Besar",
+    "noEmbassyHintSuffix": " sebelum mengajukan perjanjian perdagangan bilateral.",
+    "understood": "Paham",
+    "confirmTitle": "Konfirmasi Perjanjian Dagang",
+    "confirmBodyPrefix": "Apakah Anda yakin ingin menjalin hubungan mitra dagang resmi dengan negara ",
+    "confirmBodySuffix": "?",
+    "confirmHint": "🤝 Setelah bermitra, Anda dapat melakukan transaksi jual-beli komoditas strategis secara langsung dengan negara tersebut.",
+    "cancel": "Batal",
+    "confirmButton": "Setuju & Tambahkan"
   }
 }

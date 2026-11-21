@@ -1,12 +1,17 @@
 {
   "title": "التحكم في أسعار السلع الأساسية",
   "monthUnit": "شهر",
-  "tabs": { "essentials": "أسعار السلع الأساسية", "subsidyPolicy": "سياسة الدعم" },
+  "tabs": {
+    "essentials": "أسعار السلع الأساسية",
+    "subsidyPolicy": "سياسة الدعم"
+  },
   "subsidy": {
     "title": "توزيع الدعم وسياساته",
     "infoButton": "معلومات توزيع الدعم وسياساته",
     "confirm": "تأكيد",
-    "categories": { "all": "جميع القطاعات" },
+    "categories": {
+      "all": "جميع القطاعات"
+    },
     "summary": {
       "totalBudget": "إجمالي عبء ميزانية الدعم",
       "activeSectors": "القطاعات النشطة / الإجمالي",
@@ -65,5 +70,21 @@
     "noChanges": "لم تتغير الأسعار. أكّد للعودة إلى المنتدى.",
     "back": "رجوع",
     "yes": "نعم، تأكيد"
+  },
+  "subsidyDetail": {
+    "title": "تفاصيل سياسة الدعم",
+    "sectorBadge": "قطاع {category}",
+    "policyDescription": "وصف السياسة",
+    "budgetCost": "تكلفة الميزانية",
+    "approvalBonus": "مكافأة الرضا",
+    "approvalUnit": "الرضا",
+    "inflationReduction": "خفض التضخم",
+    "inflationUnit": "التضخم",
+    "revocationRisk": "مخاطر الإلغاء",
+    "currentAllocationStatus": "حالة التخصيص الحالية",
+    "statusActive": "✓ الدعم نشط",
+    "statusInactive": "✗ غير نشط",
+    "revokeSubsidy": "إلغاء الدعم",
+    "activateSubsidy": "تفعيل الدعم"
   }
 }

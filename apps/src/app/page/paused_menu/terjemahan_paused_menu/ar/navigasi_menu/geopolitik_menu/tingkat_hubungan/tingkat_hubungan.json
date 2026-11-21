@@ -51,5 +51,12 @@
     "moneyPath": "المسار المالي (NEO)",
     "commodityGiftPath": "مسار هدايا السلع",
     "allCountries": "جميع الدول"
+  },
+  "humanitarianAid": {
+    "title": "برنامج المساعدات الإنسانية",
+    "inDevelopmentLine1": "قيد",
+    "inDevelopmentLine2": "التطوير",
+    "description": "نظام إيصال المساعدات الإنسانية الدولية قيد الإنشاء حالياً. ترقبوا التحديثات لتعزيز سمعتكم وهيمنتكم الإنسانية.",
+    "comingSoon": "قريباً"
   }
 }

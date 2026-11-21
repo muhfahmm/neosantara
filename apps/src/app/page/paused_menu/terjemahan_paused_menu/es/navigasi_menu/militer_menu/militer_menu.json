@@ -238,5 +238,15 @@
     "batu_bara": "Carbón",
     "kayu": "Madera",
     "em_cost": "Coste de producción (NEO)"
+  },
+  "constructionSupport": {
+    "unit": "Unidad",
+    "missingMaterials": "⚠️ Materiales Insuficientes",
+    "noMaterialsRequired": "No se requieren materiales para este edificio.",
+    "materialsRequired": "Materiales Requeridos",
+    "moreMaterials": "+{count} materiales más",
+    "hide": "Ocultar",
+    "show": "Mostrar",
+    "noBuildingsAvailable": "No hay edificios disponibles"
   }
 }

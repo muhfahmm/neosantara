@@ -43,5 +43,23 @@
   "treatNow": "立即处理：救治 {count} 人。",
   "handle": "处理 · {cost} NEO",
   "insufficientTreasury": "国库资金不足。",
-  "infoTitle": "人口信息"
+  "infoTitle": "人口信息",
+  "countryTable": {
+    "ariaLabel": "国家人口表",
+    "title": "国家人口",
+    "loadingCount": "正在加载国家数据...",
+    "countSummary": "{count} 个国家 · 按每日最高增长排序",
+    "searchPlaceholder": "搜索国家...",
+    "searchAria": "搜索国家",
+    "loadingData": "正在获取人口数据...",
+    "fetchError": "国家数据请求失败 (HTTP {status})。",
+    "invalidFormat": "国家人口数据格式无效。",
+    "genericError": "加载人口数据时出错。",
+    "colNo": "序号",
+    "colCountry": "国家",
+    "colDailyGrowth": "日增长",
+    "colMonthlyEstimate": "月预估",
+    "unitPeople": "人",
+    "noMatch": "没有符合搜索条件的国家。"
+  }
 }

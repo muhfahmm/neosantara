@@ -43,5 +43,23 @@
   "treatNow": "Jetzt behandeln: {count} Menschen retten.",
   "handle": "Behandeln · {cost} NEO",
   "insufficientTreasury": "Unzureichende Mittel in der Staatskasse.",
-  "infoTitle": "Bevölkerungsinformationen"
+  "infoTitle": "Bevölkerungsinformationen",
+  "countryTable": {
+    "ariaLabel": "Länderbevölkerungstabelle",
+    "title": "Länderbevölkerung",
+    "loadingCount": "Länderdaten werden geladen...",
+    "countSummary": "{count} Länder · sortiert nach höchstem täglichen Wachstum",
+    "searchPlaceholder": "Land suchen...",
+    "searchAria": "Land suchen",
+    "loadingData": "Bevölkerungsdaten werden abgerufen...",
+    "fetchError": "Länderdatenanfrage fehlgeschlagen (HTTP {status}).",
+    "invalidFormat": "Ungültiges Format der Bevölkerungsdaten.",
+    "genericError": "Beim Laden der Bevölkerungsdaten ist ein Fehler aufgetreten.",
+    "colNo": "Nr.",
+    "colCountry": "Land",
+    "colDailyGrowth": "Wachstum / Tag",
+    "colMonthlyEstimate": "Schätzung / Monat",
+    "unitPeople": "Einw.",
+    "noMatch": "Keine Länder entsprechen der Suche."
+  }
 }

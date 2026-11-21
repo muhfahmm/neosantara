@@ -12,12 +12,14 @@ import {
   applyNpcCountrySimulationStates,
   NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
 } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface FinansialGlobalProps {
   countryDetail: any;
 }
 
 export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps) {
+  const { t } = useLanguage();
   const [allCountries, setAllCountries] = useState<any[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -188,7 +190,7 @@ export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps)
       return (
         <tr>
           <td className="px-4 py-6 text-center text-sm text-[#333]" colSpan={7}>
-            Tidak ada data negara.
+            {t("navigation_economy_income.globalFinancial.noCountryData")}
           </td>
         </tr>
       );
@@ -233,7 +235,7 @@ export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps)
       return (
         <tr>
           <td className="px-4 py-6 text-center text-sm text-[#333]" colSpan={7}>
-            Tidak ada data yang cocok dengan pencarian "{searchQuery}".
+            {t("navigation_economy_income.globalFinancial.noSearchResults", { query: searchQuery })}
           </td>
         </tr>
       );
@@ -270,11 +272,11 @@ export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps)
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <div className="text-[10px] text-root-accent font-black uppercase tracking-wider">Anggaran Nasional Semua Negara</div>
+        <div className="text-[10px] text-root-accent font-black uppercase tracking-wider">{t("navigation_economy_income.globalFinancial.title")}</div>
         <div className="relative">
           <input
             type="text"
-            placeholder="Cari negara / benua..."
+            placeholder={t("navigation_economy_income.globalFinancial.searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-8 pr-3 py-1.5 rounded-lg bg-root-canvas border border-root-accent/30 text-sm font-bold text-root-text outline-none focus:border-root-accent w-48 transition-all placeholder:text-root-subtle"
@@ -284,7 +286,7 @@ export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps)
       </div>
 
       {loading ? (
-        <div className="py-8 text-center text-root-subtle">Loading data semua negara...</div>
+        <div className="py-8 text-center text-root-subtle">{t("navigation_economy_income.globalFinancial.loading")}</div>
       ) : (
         <div className="overflow-hidden rounded-2xl bg-root-canvas border border-root-accent/30">
           <div className="overflow-auto max-h-[60vh] custom-scrollbar">
@@ -295,43 +297,43 @@ export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps)
                     className="px-4 py-3 border-b border-root-accent/30 cursor-pointer hover:bg-root-surface transition font-black uppercase text-xs"
                     onClick={() => handleSort('name')}
                   >
-                    Nama Negara{renderSortArrow('name')}
+                    {t("navigation_economy_income.globalFinancial.colCountryName")}{renderSortArrow('name')}
                   </th>
                   <th
                     className="px-4 py-3 border-b border-root-accent/30 cursor-pointer hover:bg-root-surface transition font-black uppercase text-xs"
                     onClick={() => handleSort('continent')}
                   >
-                    Benua{renderSortArrow('continent')}
+                    {t("navigation_economy_income.globalFinancial.colContinent")}{renderSortArrow('continent')}
                   </th>
                   <th
                     className="px-4 py-3 border-b border-root-accent/30 text-right cursor-pointer hover:bg-root-surface transition font-black uppercase text-xs"
                     onClick={() => handleSort('tax')}
                   >
-                    Total Pajak{renderSortArrow('tax')}
+                    {t("navigation_economy_income.globalFinancial.colTotalTax")}{renderSortArrow('tax')}
                   </th>
                   <th
                     className="px-4 py-3 border-b border-root-accent/30 text-right cursor-pointer hover:bg-root-surface transition font-black uppercase text-xs"
                     onClick={() => handleSort('buildingCount')}
                   >
-                    Bangunan Emas{renderSortArrow('buildingCount')}
+                    {t("navigation_economy_income.globalFinancial.colGoldBuildings")}{renderSortArrow('buildingCount')}
                   </th>
                   <th
                     className="px-4 py-3 border-b border-root-accent/30 text-right cursor-pointer hover:bg-root-surface transition font-black uppercase text-xs"
                     onClick={() => handleSort('gold')}
                   >
-                    Produksi Emas{renderSortArrow('gold')}
+                    {t("navigation_economy_income.globalFinancial.colGoldProduction")}{renderSortArrow('gold')}
                   </th>
                   <th
                     className="px-4 py-3 border-b border-root-accent/30 text-right cursor-pointer hover:bg-root-surface transition font-black uppercase text-xs"
                     onClick={() => handleSort('ministry')}
                   >
-                    Pengeluaran{renderSortArrow('ministry')}
+                    {t("navigation_economy_income.globalFinancial.colExpenses")}{renderSortArrow('ministry')}
                   </th>
                   <th
                     className="px-4 py-3 border-b border-root-accent/30 text-right cursor-pointer hover:bg-root-surface transition font-black uppercase text-xs"
                     onClick={() => handleSort('net')}
                   >
-                    Net Balance Harian{renderSortArrow('net')}
+                    {t("navigation_economy_income.globalFinancial.colDailyNetBalance")}{renderSortArrow('net')}
                   </th>
                 </tr>
               </thead>

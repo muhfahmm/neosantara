@@ -40,7 +40,11 @@
     "netGdp": "순 GDP",
     "rowBreakdown": "총수입: {totalIncome} NEO (세금: {tax} + 금: {gold} + 상업: {commercial} + 관광: {tourism}) − 총지출: {totalOutcome} NEO = 순액: {net} NEO"
   },
-  "tabs": { "summary": "GDP 요약", "income": "수입", "outcome": "지출" },
+  "tabs": {
+    "summary": "GDP 요약",
+    "income": "수입",
+    "outcome": "지출"
+  },
   "summary": {
     "detailTitle": "국가 잔액 및 GDP 흐름",
     "incomeTitle": "수입 내역 (국가 수입)",
@@ -186,5 +190,19 @@
       "pension": "공공 연금 보장 프로그램",
       "disaster": "재난 긴급 구호 기금"
     }
+  },
+  "globalFinancial": {
+    "title": "모든 국가의 국가 예산",
+    "searchPlaceholder": "국가 / 대륙 검색...",
+    "loading": "모든 국가 데이터 로딩 중...",
+    "noCountryData": "국가 데이터가 없습니다.",
+    "noSearchResults": "\"{query}\"와(과) 일치하는 데이터가 없습니다.",
+    "colCountryName": "국가명",
+    "colContinent": "대륙",
+    "colTotalTax": "총 세수",
+    "colGoldBuildings": "금광 건물",
+    "colGoldProduction": "금 생산량",
+    "colExpenses": "지출",
+    "colDailyNetBalance": "일일 순수지"
   }
 }

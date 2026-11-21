@@ -16,5 +16,99 @@
     "gameSaved": "Permainan berhasil disimpan.",
     "gameLoaded": "Permainan berhasil dimuat.",
     "autosave": "Penyimpanan otomatis selesai."
+  },
+  "requireEmbassy": {
+    "title": "Kedutaan Besar Diperlukan",
+    "badge": "Diplomasi Syarat",
+    "proposingCountry": "Negara Pengaju Hubungan",
+    "description": "Lapor Presiden! Untuk secara resmi menerima penawaran Hubungan Perdagangan dari {country}, pemerintah kita wajib memiliki Kedutaan Besar di negara tersebut.",
+    "redirectNotice": "Anda akan dialihkan ke menu Detail Negara {country} untuk mendirikan Kedutaan Besar.",
+    "openDetail": "Buka Detail Negara"
+  },
+  "warResultModal": {
+    "lossesAria": "Rincian kerugian alutsista",
+    "lossesTitle": "Rincian Kerugian Alutsista",
+    "defeatTitle": "Laporan Kekalahan Pertempuran",
+    "victoryTitle": "Laporan Hasil Pertempuran & Perang"
+  },
+  "annexedModal": {
+    "defaultAttacker": "Negara Agresor",
+    "title": "Wilayah Dianeksasi",
+    "gameOver": "Game Over",
+    "victimCountry": "Negara Korban",
+    "occupyingCountry": "Negara Penguasa",
+    "description": "Benteng pertahanan terakhir {country} telah sepenuhnya jatuh dan diduduki oleh agresi militer {attacker}. Kedaulatan nasional Anda resmi berakhir dan seluruh wilayah telah dicaplok.",
+    "nextAction": "Tindakan Lanjutan",
+    "restartSameCountry": "Restart — Simulasi Negara Sama",
+    "chooseNewCountry": "Pilih Negara Baru",
+    "finePrint": "Aneksasi wilayah mengakhiri kepemimpinan Anda. Restart akan mengembalikan status awal negara dari data default."
+  },
+  "coupModal": {
+    "country": "Negara",
+    "chooseAction": "Pilih Tindakan",
+    "restartSameCountry": "Restart — Negara yang Sama",
+    "startDifferentCountry": "Mulai dengan Negara Berbeda",
+    "finePrint": "Restart akan menghapus semua progres negara ini dan memulai ulang dari data default.",
+    "peringkat": {
+      "title": "ANDA TELAH DIKUDETA",
+      "subtitle": "Peringkat Kepresidenan Jatuh",
+      "desc": "Kepercayaan rakyat dan parlemen terhadap Anda telah mencapai titik nol. Parlemen bersidang darurat dan dengan suara bulat memakzulkan Anda dari jabatan Presiden. Rakyat turun ke jalan merayakan kejatuhan pemerintahan Anda. Masa kepresidenan Anda resmi berakhir.",
+      "valueLabel": "Peringkat Akhir:"
+    },
+    "kepuasan": {
+      "title": "REVOLUSI RAKYAT",
+      "subtitle": "Kepuasan Rakyat Mencapai Titik Nol",
+      "desc": "Rakyat tak lagi percaya pada pemerintahan Anda. Demo besar-besaran berubah menjadi revolusi nasional. Militer memilih berpihak kepada rakyat dan Anda terpaksa mengundurkan diri. Pemerintahan transisi akan dibentuk untuk memulihkan kepercayaan bangsa.",
+      "valueLabel": "Kepuasan Terakhir:"
+    },
+    "kesejahteraan": {
+      "title": "KRISIS KEMANUSIAAN TOTAL",
+      "subtitle": "Indeks Kesejahteraan Rakyat Nol",
+      "desc": "Kualitas hidup rakyat telah jatuh ke tingkat yang tidak dapat ditoleransi. PBB menjatuhkan sanksi internasional. Rakyat yang kelaparan dan tanpa tempat tinggal memaksa Anda mundur. Negara Anda dinyatakan dalam kondisi darurat kemanusiaan oleh lembaga internasional.",
+      "valueLabel": "Kesejahteraan Terakhir:"
+    }
+  },
+  "warningModal": {
+    "criticalBadge": "⚠️ KRITIS ⚠️",
+    "acknowledge": "Saya Mengerti",
+    "satisfaction": {
+      "title": "Krisis Kepuasan Rakyat",
+      "label": "Kepuasan Rakyat saat ini:",
+      "desc": "Kepuasan masyarakat terhadap kinerja pemerintahan Anda telah merosot tajam! Rakyat mulai memprotes kebijakan kabinet Anda di berbagai daerah. Segera ambil tindakan sosial dan luncurkan festival budaya untuk menaikkan moral bangsa sebelum gelombang ketidakstabilan membesar!"
+    },
+    "welfare": {
+      "title": "Krisis Kesejahteraan Rakyat",
+      "label": "Indeks Kesejahteraan:",
+      "desc": "Tingkat kualitas hidup dan pembangunan manusia di negara Anda berada di zona krisis! Fasilitas dasar pendidikan, kesehatan, tempat umum, pangan, dan perumahan sangat minim. Segera bangun infrastruktur sektoral dan salurkan program bantuan sosial (BLT/Bansos) untuk menyelamatkan kualitas hidup rakyat!"
+    },
+    "rank": {
+      "title": "Peringatan Keamanan Negara",
+      "label": "Peringkat Anda:",
+      "desc": "Kepercayaan rakyat terhadap kepemimpinan Anda telah mencapai tingkat krisis! Jika peringkat Anda turun di bawah angka ini, Anda berisiko dimakzulkan oleh parlemen. Segera naikkan peringkat dengan memenuhi aspirasi rakyat dan menyelenggarakan program bantuan!"
+    }
+  },
+  "consumptionDetailModal": {
+    "title": "Rincian Konsumsi Listrik - {country}",
+    "subtitle": "Detail beban konsumsi listrik nasional",
+    "totalEstimated": "Total Konsumsi Terestimasi",
+    "nationalEnergyLoad": "Beban energi nasional",
+    "productionMining": "Produksi & Tambang",
+    "industryTypes": "{count} jenis industri",
+    "publicPlaces": "Tempat Umum",
+    "publicFacilities": "{count} fasilitas publik",
+    "defenseSecurity": "Pertahanan & Keamanan",
+    "basesInfrastructure": "{count} pangkalan & infrastruktur",
+    "housingSettlement": "Hunian & Permukiman",
+    "householdLoad": "Beban rumah tangga",
+    "allSectors": "Semua Sektor",
+    "production": "Produksi",
+    "housing": "Hunian",
+    "searchPlaceholder": "Cari fasilitas...",
+    "consumptionPerUnit": "Konsumsi / Unit:",
+    "totalLoad": "Total Beban:",
+    "noMatchingFacilities": "Tidak ada fasilitas yang sesuai kriteria pencarian."
+  },
+  "selectCountry": {
+    "startSimulation": "MULAI SIMULASI"
   }
 }

@@ -237,5 +237,29 @@
     "buy": "구매",
     "sell": "판매",
     "expired": "만료됨"
+  },
+  "addPartner": {
+    "title": "새 무역 파트너 추가",
+    "searchPlaceholder": "국가 이름 검색...",
+    "emptyTitle": "국가를 찾을 수 없습니다",
+    "emptySubtitle": "다른 검색어를 입력해 보세요.",
+    "continentHeading": "🌍 {continent}",
+    "countryCount": "{count}개국",
+    "noEmbassyModalTitle": "알림 / 경고",
+    "noEmbassyHeading": "파트너 추가 실패",
+    "noEmbassyBodyPrefix": "",
+    "noEmbassyBodyMid": "와(과) 무역 관계를 맺을 수 없습니다. 해당 국가에 아직 활성화된 ",
+    "noEmbassyLabel": "대사관",
+    "noEmbassyBodySuffix": "이(가) 없습니다.",
+    "noEmbassyHintPrefix": "💡 양자 무역 협정을 제안하기 전에 ",
+    "noEmbassyHintMenu": "지정학 → 대사관",
+    "noEmbassyHintSuffix": " 메뉴에서 대사관을 먼저 개설하세요.",
+    "understood": "확인",
+    "confirmTitle": "무역 협정 확인",
+    "confirmBodyPrefix": "",
+    "confirmBodySuffix": "와(과) 공식 무역 파트너 관계를 맺으시겠습니까?",
+    "confirmHint": "🤝 파트너가 되면 해당 국가와 전략 물자를 직접 거래할 수 있습니다.",
+    "cancel": "취소",
+    "confirmButton": "동의 및 추가"
   }
 }

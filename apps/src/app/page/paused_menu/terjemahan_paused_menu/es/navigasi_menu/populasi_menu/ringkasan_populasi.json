@@ -43,5 +43,23 @@
   "treatNow": "Tratar ahora: recuperar {count} personas.",
   "handle": "Tratar · {cost} NEO",
   "insufficientTreasury": "Fondos insuficientes en el tesoro nacional.",
-  "infoTitle": "Información demográfica"
+  "infoTitle": "Información demográfica",
+  "countryTable": {
+    "ariaLabel": "Tabla de población por país",
+    "title": "Población por País",
+    "loadingCount": "Cargando datos de países...",
+    "countSummary": "{count} países · ordenado por mayor crecimiento diario",
+    "searchPlaceholder": "Buscar país...",
+    "searchAria": "Buscar país",
+    "loadingData": "Obteniendo datos de población...",
+    "fetchError": "Error al solicitar datos de países (HTTP {status}).",
+    "invalidFormat": "Formato de datos de población inválido.",
+    "genericError": "Ocurrió un error al cargar los datos de población.",
+    "colNo": "N.º",
+    "colCountry": "País",
+    "colDailyGrowth": "Crecimiento / día",
+    "colMonthlyEstimate": "Estimación / mes",
+    "unitPeople": "hab.",
+    "noMatch": "Ningún país coincide con la búsqueda."
+  }
 }

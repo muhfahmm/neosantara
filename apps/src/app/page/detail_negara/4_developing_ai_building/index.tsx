@@ -28,6 +28,7 @@ import SpektrumKepuasanSection from "./sections/SpektrumKepuasanSection";
 import ProduksiPanganSection from "./sections/ProduksiPanganSection";
 import HunianPermukimanSection from "./sections/HunianPermukimanSection";
 import DoktrinKeterbukaanSection from "./sections/DoktrinKeterbukaanSection";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface DevelopingAIBuildingProps {
   countryDetail?: Record<string, unknown> | null;
@@ -53,19 +54,19 @@ type PembangunanSubTab =
 
 interface TabConfig {
   id: MenuTab;
-  label: string;
+  labelKey: string;
   icon: React.ElementType;
 }
 
 const TABS: TabConfig[] = [
-  { id: "kepuasan_rakyat", label: "Kepuasan Rakyat", icon: Smile },
-  { id: "keterbukaan", label: "Doktrin & Keterbukaan", icon: Globe },
-  { id: "kelistrikan", label: "Statistik Kelistrikan", icon: Zap },
-  { id: "pajak", label: "Pajak", icon: FileText },
-  { id: "harga", label: "Harga Barang Pokok", icon: Tag },
-  { id: "sistem_ekonomi", label: "Kebijakan & Sistem Ekonomi", icon: Scale },
-  { id: "subsidi", label: "Subsidi", icon: HandHelping },
-  { id: "pembangunan", label: "Pembangunan", icon: Building2 },
+  { id: "kepuasan_rakyat", labelKey: "detail_negara_ai.building.tabs.satisfaction", icon: Smile },
+  { id: "keterbukaan", labelKey: "detail_negara_ai.building.tabs.doctrine", icon: Globe },
+  { id: "kelistrikan", labelKey: "detail_negara_ai.building.tabs.electricity", icon: Zap },
+  { id: "pajak", labelKey: "detail_negara_ai.building.tabs.tax", icon: FileText },
+  { id: "harga", labelKey: "detail_negara_ai.building.tabs.prices", icon: Tag },
+  { id: "sistem_ekonomi", labelKey: "detail_negara_ai.building.tabs.economy", icon: Scale },
+  { id: "subsidi", labelKey: "detail_negara_ai.building.tabs.subsidy", icon: HandHelping },
+  { id: "pembangunan", labelKey: "detail_negara_ai.building.tabs.construction", icon: Building2 },
 ];
 
 export function resolveMenuTabFromKey(keyOrTab?: string): MenuTab {
@@ -154,6 +155,7 @@ export default function DevelopingAIBuilding({
   initialBuildingKey,
   initialTab,
 }: DevelopingAIBuildingProps) {
+  const { t } = useLanguage();
   const [liveCountryDetail, setLiveCountryDetail] = useState<Record<string, any> | null>(
     countryDetail ? (countryDetail as Record<string, any>) : null
   );
@@ -207,7 +209,7 @@ export default function DevelopingAIBuilding({
                 }`}
               >
                 <Icon className={`h-4 w-4 shrink-0 ${isActive ? "text-root-canvas" : "text-root-accent"}`} />
-                <span>{tab.label}</span>
+                <span>{t(tab.labelKey)}</span>
               </button>
             );
           })}
@@ -255,9 +257,9 @@ export default function DevelopingAIBuilding({
           <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-root-accent/20 bg-root-surface">
             <div className="flex shrink-0 gap-1.5 overflow-x-auto border-b border-root-accent/20 bg-root-canvas p-3 no-scrollbar">
               {([
-                { id: "fasilitas_militer", label: "Fasilitas & Militer", icon: Building2 },
-                { id: "produksi_pangan", label: "Produksi Pangan", icon: Wheat },
-                { id: "hunian", label: "Hunian", icon: Home },
+                { id: "fasilitas_militer", label: t("detail_negara_ai.building.subtabs.militaryFacilities"), icon: Building2 },
+                { id: "produksi_pangan", label: t("detail_negara_ai.building.subtabs.foodProduction"), icon: Wheat },
+                { id: "hunian", label: t("detail_negara_ai.building.subtabs.housing"), icon: Home },
               ] as const).map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activePembangunanTab === tab.id;

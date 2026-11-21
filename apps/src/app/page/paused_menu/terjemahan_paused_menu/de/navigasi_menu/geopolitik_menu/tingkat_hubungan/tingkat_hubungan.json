@@ -51,5 +51,12 @@
     "moneyPath": "Geldweg (NEO)",
     "commodityGiftPath": "Weg der Rohstoffgeschenke",
     "allCountries": "Alle Länder"
+  },
+  "humanitarianAid": {
+    "title": "Humanitäres Hilfsprogramm",
+    "inDevelopmentLine1": "In",
+    "inDevelopmentLine2": "Entwicklung",
+    "description": "Das internationale System zur Lieferung humanitärer Hilfe befindet sich derzeit im Aufbau. Bleiben Sie dran, um Ihren humanitären Ruf und Ihre Hegemonie zu stärken.",
+    "comingSoon": "Demnächst"
   }
 }

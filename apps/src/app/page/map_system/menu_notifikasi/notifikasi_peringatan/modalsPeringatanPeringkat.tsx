@@ -4,6 +4,7 @@ import React from 'react';
 import { ShieldAlert } from 'lucide-react';
 import { RootNotebookDecorations } from '@/app/page/root_modals_design_menu/RootNotebookDecorations';
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface ModalsPeringatanPeringkatProps {
     isOpen: boolean;
@@ -14,6 +15,7 @@ interface ModalsPeringatanPeringkatProps {
 }
 
 export function ModalsPeringatanPeringkat({ isOpen, onClose, currentRating, warningType = "peringkat", currentValue }: ModalsPeringatanPeringkatProps) {
+    const { t } = useLanguage();
     if (!isOpen) return null;
 
     const displayValue = currentValue !== undefined ? currentValue : currentRating;
@@ -22,21 +24,21 @@ export function ModalsPeringatanPeringkat({ isOpen, onClose, currentRating, warn
         switch (warningType) {
             case "kepuasan":
                 return {
-                    title: "Krisis Kepuasan Rakyat",
-                    label: "Kepuasan Rakyat saat ini:",
-                    desc: "Kepuasan masyarakat terhadap kinerja pemerintahan Anda telah merosot tajam! Rakyat mulai memprotes kebijakan kabinet Anda di berbagai daerah. Segera ambil tindakan sosial dan luncurkan festival budaya untuk menaikkan moral bangsa sebelum gelombang ketidakstabilan membesar!"
+                    title: t('game.warningModal.satisfaction.title'),
+                    label: t('game.warningModal.satisfaction.label'),
+                    desc: t('game.warningModal.satisfaction.desc')
                 };
             case "kesejahteraan":
                 return {
-                    title: "Krisis Kesejahteraan Rakyat",
-                    label: "Indeks Kesejahteraan:",
-                    desc: "Tingkat kualitas hidup dan pembangunan manusia di negara Anda berada di zona krisis! Fasilitas dasar pendidikan, kesehatan, tempat umum, pangan, and perumahan sangat minim. Segera bangun infrastruktur sektoral dan salurkan program bantuan sosial (BLT/Bansos) untuk menyelamatkan kualitas hidup rakyat!"
+                    title: t('game.warningModal.welfare.title'),
+                    label: t('game.warningModal.welfare.label'),
+                    desc: t('game.warningModal.welfare.desc')
                 };
             default:
                 return {
-                    title: "Peringatan Keamanan Negara",
-                    label: "Peringkat Anda:",
-                    desc: "Kepercayaan rakyat terhadap kepemimpinan Anda telah mencapai tingkat krisis! Jika peringkat Anda turun di bawah angka ini, Anda berisiko dimakzulkan oleh parlemen. Segera naikkan peringkat dengan memenuhi aspirasi rakyat dan menyelenggarakan program bantuan!"
+                    title: t('game.warningModal.rank.title'),
+                    label: t('game.warningModal.rank.label'),
+                    desc: t('game.warningModal.rank.desc')
                 };
         }
     };
@@ -68,7 +70,7 @@ export function ModalsPeringatanPeringkat({ isOpen, onClose, currentRating, warn
                     {/* Decorative Divider Top */}
                     <div className="flex items-center justify-center gap-1.5 text-red-800/40 shrink-0">
                         <div className="h-[1px] w-8 bg-gradient-to-r from-transparent to-red-800/40" />
-                        <span className="text-[8px] tracking-widest font-black text-red-700">⚠️ KRITIS ⚠️</span>
+                        <span className="text-[8px] tracking-widest font-black text-red-700">{t('game.warningModal.criticalBadge')}</span>
                         <div className="h-[1px] w-8 bg-gradient-to-l from-transparent to-red-800/40" />
                     </div>
 
@@ -94,7 +96,7 @@ export function ModalsPeringatanPeringkat({ isOpen, onClose, currentRating, warn
                             onClick={onClose}
                             className="flex-1 bg-red-600 hover:bg-red-700 active:bg-red-800 border border-red-700 rounded py-2.5 text-center text-[#FAF6EE] font-black text-[11px] tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
                         >
-                            Saya Mengerti
+                            {t('game.warningModal.acknowledge')}
                         </button>
                     </div>
 

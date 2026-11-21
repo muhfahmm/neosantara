@@ -2,6 +2,7 @@
 import React from "react";
 import { Info } from "lucide-react";
 import MaterialRequirementsDisplay, { MaterialRequirement } from "./MaterialRequirementsDisplay";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface BuildingRequirementCardProps {
   buildingKey: string;
@@ -28,6 +29,7 @@ export default function BuildingRequirementCard({
   highlightBorder = false,
   cost = 0,
 }: BuildingRequirementCardProps) {
+  const { t, language } = useLanguage();
   const hasMissingMaterials = requirements.some(
     (req) => (materialStocks[req.resourceKey] ?? 0) < (req.amount ?? 0)
   );
@@ -62,11 +64,11 @@ export default function BuildingRequirementCard({
       <div className="flex justify-between items-center mb-3 pb-3 border-b border-[#C4B49C]/20">
         <div>
           <div className="text-2xl font-black text-[#2e261a]">{quantity}</div>
-          <p className="text-[9px] font-bold text-[#8b7e66]">Unit</p>
+          <p className="text-[9px] font-bold text-[#8b7e66]">{t("navigation_military_menu.constructionSupport.unit")}</p>
         </div>
         {cost > 0 && (
           <div className="text-right">
-            <div className="text-sm font-black text-[#2e261a]">{cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</div>
+            <div className="text-sm font-black text-[#2e261a]">{cost.toLocaleString(language, { maximumFractionDigits: 2 })}</div>
             <p className="text-[9px] font-bold text-[#8b7e66]">NEO</p>
           </div>
         )}
@@ -87,7 +89,7 @@ export default function BuildingRequirementCard({
       {/* Warning jika ada material yang kurang */}
       {hasMissingMaterials && (
         <div className="mt-3 pt-3 border-t border-red-200 bg-red-50/50 rounded-lg p-2">
-          <p className="text-[9px] font-bold text-red-700 text-center">⚠️ Material Kurang</p>
+          <p className="text-[9px] font-bold text-red-700 text-center">{t("navigation_military_menu.constructionSupport.missingMaterials")}</p>
         </div>
       )}
     </div>

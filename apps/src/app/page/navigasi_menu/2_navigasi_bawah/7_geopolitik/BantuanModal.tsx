@@ -2,6 +2,7 @@
 import React from "react";
 import { Globe, Construction } from "lucide-react";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -11,13 +12,14 @@ interface ModalProps {
 }
 
 export default function BantuanModal({ isOpen, onClose, countryDetail, setCountryDetail }: ModalProps) {
+  const { t } = useLanguage();
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       <div className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl">
         <RootInfoModalHeader
-          title="Program Bantuan Kemanusiaan"
+          title={t('navigation_geopolitics_relations.humanitarianAid.title')}
           onClose={onClose}
           size="standard"
           icon={<Globe aria-hidden="true" className="text-root-accent" />}
@@ -32,19 +34,18 @@ export default function BantuanModal({ isOpen, onClose, countryDetail, setCountr
             </div>
 
             <h3 className="mb-4 text-4xl font-black uppercase leading-[0.95] tracking-wide text-root-text sm:text-5xl md:text-6xl">
-              Dalam<br />Pengembangan
+              {t('navigation_geopolitics_relations.humanitarianAid.inDevelopmentLine1')}<br />{t('navigation_geopolitics_relations.humanitarianAid.inDevelopmentLine2')}
             </h3>
 
             <div className="w-16 h-1 bg-root-accent/40 rounded-full mb-6" />
 
             <p className="max-w-lg text-sm font-medium leading-relaxed text-root-subtle md:text-base">
-              Sistem pengiriman bantuan kemanusiaan internasional sedang dalam tahap pembangunan.
-              Pantau terus perkembangannya untuk memperkuat reputasi dan hegemoni kemanusiaan Anda.
+              {t('navigation_geopolitics_relations.humanitarianAid.description')}
             </p>
 
             <div className="mt-8 inline-flex items-center rounded-full bg-root-accent/10 border border-root-accent/30 px-6 py-2 text-xs font-bold uppercase tracking-widest text-root-accent">
               <span className="mr-2 h-2.5 w-2.5 animate-pulse rounded-full bg-root-accent" />
-              Segera Hadir
+              {t('navigation_geopolitics_relations.humanitarianAid.comingSoon')}
             </div>
 
           </div>

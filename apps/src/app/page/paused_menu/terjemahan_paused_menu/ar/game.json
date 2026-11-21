@@ -16,5 +16,99 @@
     "gameSaved": "تم حفظ اللعبة بنجاح.",
     "gameLoaded": "تم تحميل اللعبة بنجاح.",
     "autosave": "اكتمل الحفظ التلقائي."
+  },
+  "requireEmbassy": {
+    "title": "السفارة مطلوبة",
+    "badge": "شرط دبلوماسي",
+    "proposingCountry": "الدولة المقترحة",
+    "description": "تقرير للرئيس! لقبول عرض العلاقات التجارية من {country} رسمياً، يجب أن تمتلك حكومتنا سفارة في تلك الدولة.",
+    "redirectNotice": "سيتم توجيهك إلى قائمة تفاصيل الدولة {country} لإنشاء سفارة.",
+    "openDetail": "فتح تفاصيل الدولة"
+  },
+  "warResultModal": {
+    "lossesAria": "تفاصيل خسائر المعدات العسكرية",
+    "lossesTitle": "تفاصيل خسائر المعدات العسكرية",
+    "defeatTitle": "تقرير هزيمة المعركة",
+    "victoryTitle": "تقرير نتائج المعركة والحرب"
+  },
+  "annexedModal": {
+    "defaultAttacker": "الدولة المعتدية",
+    "title": "تم ضم الأراضي",
+    "gameOver": "انتهت اللعبة",
+    "victimCountry": "الدولة الضحية",
+    "occupyingCountry": "الدولة المحتلة",
+    "description": "سقط آخر حصن دفاعي لـ {country} بالكامل واحتله العدوان العسكري لـ {attacker}. انتهت سيادتك الوطنية رسمياً.",
+    "nextAction": "الإجراء التالي",
+    "restartSameCountry": "إعادة التشغيل — نفس الدولة",
+    "chooseNewCountry": "اختر دولة جديدة",
+    "finePrint": "ضم الأراضي ينهي قيادتك. ستؤدي إعادة التشغيل إلى استعادة الحالة الأولية."
+  },
+  "coupModal": {
+    "country": "الدولة",
+    "chooseAction": "اختر إجراءً",
+    "restartSameCountry": "إعادة التشغيل — نفس الدولة",
+    "startDifferentCountry": "البدء بدولة مختلفة",
+    "finePrint": "ستؤدي إعادة التشغيل إلى مسح كل التقدم لهذه الدولة.",
+    "peringkat": {
+      "title": "تمت الإطاحة بك",
+      "subtitle": "انهار تقييم الرئاسة",
+      "desc": "وصلت ثقة الشعب والبرلمان بك إلى الصفر. عقد البرلمان جلسة طارئة وعزلك بالإجماع.",
+      "valueLabel": "التقييم النهائي:"
+    },
+    "kepuasan": {
+      "title": "ثورة شعبية",
+      "subtitle": "وصل رضا الشعب إلى الصفر",
+      "desc": "لم يعد الشعب يثق بحكومتك. تحولت الاحتجاجات إلى ثورة وطنية وأُجبرت على الاستقالة.",
+      "valueLabel": "الرضا النهائي:"
+    },
+    "kesejahteraan": {
+      "title": "أزمة إنسانية شاملة",
+      "subtitle": "مؤشر الرفاهية صفر",
+      "desc": "انخفضت جودة الحياة إلى مستوى لا يُطاق. أُعلنت دولتك في حالة طوارئ إنسانية.",
+      "valueLabel": "الرفاهية النهائية:"
+    }
+  },
+  "warningModal": {
+    "criticalBadge": "⚠️ حرج ⚠️",
+    "acknowledge": "أفهم ذلك",
+    "satisfaction": {
+      "title": "أزمة رضا الشعب",
+      "label": "رضا الشعب الحالي:",
+      "desc": "انخفض رضا الشعب عن أداء حكومتك بشكل حاد! اتخذ إجراءات اجتماعية فوراً."
+    },
+    "welfare": {
+      "title": "أزمة الرفاهية",
+      "label": "مؤشر الرفاهية:",
+      "desc": "جودة الحياة في دولتك في منطقة الخطر! قم ببناء البنية التحتية وتوزيع المساعدات."
+    },
+    "rank": {
+      "title": "تحذير الأمن القومي",
+      "label": "تقييمك:",
+      "desc": "ثقة الشعب بقيادتك في مستوى حرج! قد تواجه العزل من البرلمان."
+    }
+  },
+  "consumptionDetailModal": {
+    "title": "تفاصيل استهلاك الكهرباء - {country}",
+    "subtitle": "تفاصيل حمل استهلاك الكهرباء الوطني",
+    "totalEstimated": "إجمالي الاستهلاك المقدر",
+    "nationalEnergyLoad": "حمل الطاقة الوطني",
+    "productionMining": "الإنتاج والتعدين",
+    "industryTypes": "{count} أنواع صناعات",
+    "publicPlaces": "الأماكن العامة",
+    "publicFacilities": "{count} مرافق عامة",
+    "defenseSecurity": "الدفاع والأمن",
+    "basesInfrastructure": "{count} قواعد وبنية تحتية",
+    "housingSettlement": "الإسكان والمستوطنات",
+    "householdLoad": "حمل الأسر",
+    "allSectors": "جميع القطاعات",
+    "production": "الإنتاج",
+    "housing": "الإسكان",
+    "searchPlaceholder": "ابحث عن المرافق...",
+    "consumptionPerUnit": "الاستهلاك / وحدة:",
+    "totalLoad": "إجمالي الحمل:",
+    "noMatchingFacilities": "لا توجد مرافق تطابق معايير البحث."
+  },
+  "selectCountry": {
+    "startSimulation": "بدء المحاكاة"
   }
 }

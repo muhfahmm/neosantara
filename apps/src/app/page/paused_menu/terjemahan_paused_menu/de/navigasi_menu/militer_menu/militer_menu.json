@@ -238,5 +238,15 @@
     "batu_bara": "Kohle",
     "kayu": "Holz",
     "em_cost": "Produktionskosten (NEO)"
+  },
+  "constructionSupport": {
+    "unit": "Einheit",
+    "missingMaterials": "⚠️ Unzureichende Materialien",
+    "noMaterialsRequired": "Für dieses Gebäude sind keine Materialien erforderlich.",
+    "materialsRequired": "Benötigte Materialien",
+    "moreMaterials": "+{count} weitere Materialien",
+    "hide": "Ausblenden",
+    "show": "Anzeigen",
+    "noBuildingsAvailable": "Keine Gebäude verfügbar"
   }
 }

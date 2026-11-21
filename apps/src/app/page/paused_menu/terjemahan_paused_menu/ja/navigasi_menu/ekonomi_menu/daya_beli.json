@@ -1,12 +1,17 @@
 {
   "title": "生活必需品の価格管理",
   "monthUnit": "月",
-  "tabs": { "essentials": "生活必需品価格", "subsidyPolicy": "補助金政策" },
+  "tabs": {
+    "essentials": "生活必需品価格",
+    "subsidyPolicy": "補助金政策"
+  },
   "subsidy": {
     "title": "補助金の配分と政策",
     "infoButton": "補助金の配分と政策に関する情報",
     "confirm": "確認",
-    "categories": { "all": "全部門" },
+    "categories": {
+      "all": "全部門"
+    },
     "summary": {
       "totalBudget": "補助金予算の合計負担",
       "activeSectors": "有効部門 / 全部門",
@@ -65,5 +70,21 @@
     "noChanges": "価格は変更されていません。確認してフォーラムに戻ります。",
     "back": "戻る",
     "yes": "はい、確認"
+  },
+  "subsidyDetail": {
+    "title": "補助金政策の詳細",
+    "sectorBadge": "部門 {category}",
+    "policyDescription": "政策の説明",
+    "budgetCost": "予算コスト",
+    "approvalBonus": "支持率ボーナス",
+    "approvalUnit": "支持率",
+    "inflationReduction": "インフレ抑制",
+    "inflationUnit": "インフレ",
+    "revocationRisk": "廃止リスク",
+    "currentAllocationStatus": "現在の配分状況",
+    "statusActive": "✓ 補助金有効",
+    "statusInactive": "✗ 無効",
+    "revokeSubsidy": "補助金を廃止",
+    "activateSubsidy": "補助金を有効化"
   }
 }

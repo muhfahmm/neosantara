@@ -1,12 +1,17 @@
 {
   "title": "생필품 가격 통제",
   "monthUnit": "월",
-  "tabs": { "essentials": "생필품 가격", "subsidyPolicy": "보조금 정책" },
+  "tabs": {
+    "essentials": "생필품 가격",
+    "subsidyPolicy": "보조금 정책"
+  },
   "subsidy": {
     "title": "보조금 배분 및 정책",
     "infoButton": "보조금 배분 및 정책 정보",
     "confirm": "확인",
-    "categories": { "all": "전체 부문" },
+    "categories": {
+      "all": "전체 부문"
+    },
     "summary": {
       "totalBudget": "총 보조금 예산 부담",
       "activeSectors": "활성 부문 / 전체",
@@ -65,5 +70,21 @@
     "noChanges": "가격이 변경되지 않았습니다. 확인하면 포럼으로 돌아갑니다.",
     "back": "뒤로",
     "yes": "예, 확인"
+  },
+  "subsidyDetail": {
+    "title": "보조금 정책 세부 정보",
+    "sectorBadge": "부문 {category}",
+    "policyDescription": "정책 설명",
+    "budgetCost": "예산 비용",
+    "approvalBonus": "지지도 보너스",
+    "approvalUnit": "지지도",
+    "inflationReduction": "인플레이션 감소",
+    "inflationUnit": "인플레이션",
+    "revocationRisk": "철회 위험",
+    "currentAllocationStatus": "현재 배정 상태",
+    "statusActive": "✓ 보조금 활성",
+    "statusInactive": "✗ 비활성",
+    "revokeSubsidy": "보조금 철회",
+    "activateSubsidy": "보조금 활성화"
   }
 }

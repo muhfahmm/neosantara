@@ -1,12 +1,17 @@
 {
   "title": "Essential Goods Price Control",
   "monthUnit": "month",
-  "tabs": { "essentials": "Essential Goods", "subsidyPolicy": "Subsidy Policy" },
+  "tabs": {
+    "essentials": "Essential Goods",
+    "subsidyPolicy": "Subsidy Policy"
+  },
   "subsidy": {
     "title": "Subsidy Allocation & Policy",
     "infoButton": "Subsidy allocation and policy information",
     "confirm": "Confirm",
-    "categories": { "all": "All Sectors" },
+    "categories": {
+      "all": "All Sectors"
+    },
     "summary": {
       "totalBudget": "Total Subsidy Budget",
       "activeSectors": "Active Sectors / Total",
@@ -65,5 +70,21 @@
     "noChanges": "No prices have changed. Confirm to return to the forum.",
     "back": "Back",
     "yes": "Yes, confirm"
+  },
+  "subsidyDetail": {
+    "title": "Subsidy Policy Details",
+    "sectorBadge": "SECTOR {category}",
+    "policyDescription": "Policy Description",
+    "budgetCost": "Budget Cost",
+    "approvalBonus": "Approval Bonus",
+    "approvalUnit": "Approval",
+    "inflationReduction": "Inflation Reduction",
+    "inflationUnit": "Inflation",
+    "revocationRisk": "Revocation Risk",
+    "currentAllocationStatus": "Current Allocation Status",
+    "statusActive": "✓ Subsidy Active",
+    "statusInactive": "✗ Inactive",
+    "revokeSubsidy": "Revoke Subsidy",
+    "activateSubsidy": "Activate Subsidy"
   }
 }

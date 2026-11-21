@@ -3,6 +3,7 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 export interface TutorialWelcomeModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ export function TutorialWelcomeModal({
   playerName = 'Presiden',
   advisorImageSrc = '/images/game/buildings/introduction/introduction.svg',
 }: TutorialWelcomeModalProps) {
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
   const continueButtonRef = useRef<HTMLButtonElement>(null);
@@ -82,7 +84,7 @@ export function TutorialWelcomeModal({
         {!imageFailed && (
           <img
             src={advisorImageSrc}
-            alt="Penasihat Negara"
+            alt={t('tutorial.welcome.advisorAlt')}
             onError={() => setImageFailed(true)}
             className={`${imageClass} object-contain object-bottom shrink-0 select-none pointer-events-none drop-shadow-[0_8px_20px_rgba(0,0,0,0.65)]`}
           />
@@ -114,7 +116,7 @@ export function TutorialWelcomeModal({
             id={labelId}
             className="text-sm sm:text-[15px] leading-relaxed font-medium text-root-text"
           >
-            Selamat datang, {playerName}. Hari ini adalah hari pertama Anda sebagai kepala negara.
+            {t('tutorial.welcome.message', { playerName })}
           </p>
 
           <div className={`${isLandscapePhone ? 'mt-1 pt-1' : 'mt-2 pt-2'} border-t border-root-accent/20 flex items-center justify-end gap-3 sm:gap-4`}>
@@ -123,7 +125,7 @@ export function TutorialWelcomeModal({
               onClick={onSkip}
               className="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-root-subtle hover:text-root-text transition-colors cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-root-accent"
             >
-              AKHIRI
+              {t('tutorial.welcome.skip')}
             </button>
             <button
               ref={continueButtonRef}
@@ -131,7 +133,7 @@ export function TutorialWelcomeModal({
               onClick={onContinue}
               className="px-4 sm:px-5 py-2 rounded-lg bg-root-accent hover:bg-root-accent/85 active:scale-[0.98] text-xs sm:text-sm font-black text-root-canvas tracking-wide transition-all cursor-pointer shadow-[0_0_16px_rgba(0,255,170,0.3)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-root-accent"
             >
-              LANJUT
+              {t('tutorial.welcome.continue')}
             </button>
           </div>
         </div>

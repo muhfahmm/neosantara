@@ -237,5 +237,29 @@
     "buy": "Buy",
     "sell": "Sell",
     "expired": "Expired"
+  },
+  "addPartner": {
+    "title": "Add New Trade Partner",
+    "searchPlaceholder": "Search country name...",
+    "emptyTitle": "No countries found",
+    "emptySubtitle": "Try entering a different search keyword.",
+    "continentHeading": "🌍 {continent}",
+    "countryCount": "{count} Countries",
+    "noEmbassyModalTitle": "Notice / Warning",
+    "noEmbassyHeading": "Failed to Add Partner",
+    "noEmbassyBodyPrefix": "You cannot establish trade relations with ",
+    "noEmbassyBodyMid": " because your country does not yet have an active ",
+    "noEmbassyLabel": "Embassy",
+    "noEmbassyBodySuffix": " there.",
+    "noEmbassyHintPrefix": "💡 Open an Embassy office first in the ",
+    "noEmbassyHintMenu": "Geopolitics → Embassies",
+    "noEmbassyHintSuffix": " menu before proposing a bilateral trade agreement.",
+    "understood": "Understood",
+    "confirmTitle": "Confirm Trade Agreement",
+    "confirmBodyPrefix": "Are you sure you want to establish official trade partner relations with ",
+    "confirmBodySuffix": "?",
+    "confirmHint": "🤝 Once partnered, you can directly buy and sell strategic commodities with that country.",
+    "cancel": "Cancel",
+    "confirmButton": "Agree & Add"
   }
 }

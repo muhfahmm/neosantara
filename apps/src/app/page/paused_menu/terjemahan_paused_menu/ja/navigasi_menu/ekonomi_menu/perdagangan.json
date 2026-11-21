@@ -237,5 +237,29 @@
     "buy": "購入",
     "sell": "売却",
     "expired": "期限切れ"
+  },
+  "addPartner": {
+    "title": "新しい貿易パートナーを追加",
+    "searchPlaceholder": "国名を検索...",
+    "emptyTitle": "国が見つかりません",
+    "emptySubtitle": "別の検索キーワードをお試しください。",
+    "continentHeading": "🌍 {continent}",
+    "countryCount": "{count} か国",
+    "noEmbassyModalTitle": "通知 / 警告",
+    "noEmbassyHeading": "パートナーの追加に失敗しました",
+    "noEmbassyBodyPrefix": "",
+    "noEmbassyBodyMid": " との貿易関係を結ぶことはできません。あなたの国にはまだ有効な ",
+    "noEmbassyLabel": "大使館",
+    "noEmbassyBodySuffix": " がありません。",
+    "noEmbassyHintPrefix": "💡 二国間貿易協定を提案する前に、",
+    "noEmbassyHintMenu": "地政学 → 大使館",
+    "noEmbassyHintSuffix": " メニューで大使館を開設してください。",
+    "understood": "了解",
+    "confirmTitle": "貿易協定の確認",
+    "confirmBodyPrefix": "",
+    "confirmBodySuffix": " と公式な貿易パートナー関係を結びますか？",
+    "confirmHint": "🤝 パートナーになると、その国と戦略物資を直接売買できるようになります。",
+    "cancel": "キャンセル",
+    "confirmButton": "同意して追加"
   }
 }

@@ -40,7 +40,11 @@
     "netGdp": "Net GDP",
     "rowBreakdown": "Total income: {totalIncome} NEO (tax: {tax} + gold: {gold} + commercial: {commercial} + tourism: {tourism}) − total expenditure: {totalOutcome} NEO = net: {net} NEO"
   },
-  "tabs": { "summary": "GDP Summary", "income": "Income", "outcome": "Expenditure" },
+  "tabs": {
+    "summary": "GDP Summary",
+    "income": "Income",
+    "outcome": "Expenditure"
+  },
   "summary": {
     "detailTitle": "National Balance & GDP Flows",
     "incomeTitle": "Income Breakdown (National Revenue)",
@@ -186,5 +190,19 @@
       "pension": "Public Pension Security Program",
       "disaster": "Emergency Disaster Relief Fund"
     }
+  },
+  "globalFinancial": {
+    "title": "National Budgets of All Countries",
+    "searchPlaceholder": "Search country / continent...",
+    "loading": "Loading all country data...",
+    "noCountryData": "No country data available.",
+    "noSearchResults": "No data matching search \"{query}\".",
+    "colCountryName": "Country Name",
+    "colContinent": "Continent",
+    "colTotalTax": "Total Tax",
+    "colGoldBuildings": "Gold Buildings",
+    "colGoldProduction": "Gold Production",
+    "colExpenses": "Expenses",
+    "colDailyNetBalance": "Daily Net Balance"
   }
 }

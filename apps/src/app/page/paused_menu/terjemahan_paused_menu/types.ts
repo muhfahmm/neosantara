@@ -48,6 +48,9 @@ import type idGeopoliticsRelations from './id/navigasi_menu/geopolitik_menu/ting
 import type idSosialBudayaAgama from './id/navigasi_menu/sosial_budaya/agama/agama.json';
 import type idSosialBudayaIdeologi from './id/navigasi_menu/sosial_budaya/ideologi/ideologi.json';
 import type idSosialBudayaDoktrin from './id/navigasi_menu/sosial_budaya/doktrin_keterbukaan/doktrin_keterbukaan.json';
+import type idMenuUtama from './id/menu_utama.json';
+import type idPilihNegara from './id/pilih_negara.json';
+import type idTutorial from './id/tutorial/tutorial.json';
 
 export type TextDirection = 'ltr' | 'rtl';
 
@@ -127,7 +130,10 @@ export type TranslationNamespace =
   | 'navigation_geopolitics_relations'
   | 'nav_sosial_budaya_agama'
   | 'nav_sosial_budaya_ideologi'
-  | 'nav_sosial_budaya_doktrin';
+  | 'nav_sosial_budaya_doktrin'
+  | 'menu_utama'
+  | 'pilih_negara'
+  | 'tutorial';
 
 type ResearchTranslation = typeof idPenelitian & {
   categories: {
@@ -184,6 +190,9 @@ export interface TranslationSchema {
   nav_sosial_budaya_agama: typeof idSosialBudayaAgama;
   nav_sosial_budaya_ideologi: typeof idSosialBudayaIdeologi;
   nav_sosial_budaya_doktrin: typeof idSosialBudayaDoktrin;
+  menu_utama: typeof idMenuUtama;
+  pilih_negara: typeof idPilihNegara;
+  tutorial: typeof idTutorial;
 }
 
 export type TranslationRecord = Record<string, string | Record<string, unknown>>;
@@ -244,6 +253,9 @@ export type TranslationKey =
   | `nav_sosial_budaya_agama.${NestedKeyOf<typeof idSosialBudayaAgama>}`
   | `nav_sosial_budaya_ideologi.${NestedKeyOf<typeof idSosialBudayaIdeologi>}`
   | `nav_sosial_budaya_doktrin.${NestedKeyOf<typeof idSosialBudayaDoktrin>}`
+  | `menu_utama.${NestedKeyOf<typeof idMenuUtama>}`
+  | `pilih_negara.${NestedKeyOf<typeof idPilihNegara>}`
+  | `tutorial.${NestedKeyOf<typeof idTutorial>}`
   | (string & {});
 
 export type InterpolationParams = Record<string, string | number>;

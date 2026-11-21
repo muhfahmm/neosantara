@@ -40,7 +40,11 @@
     "netGdp": "純GDP",
     "rowBreakdown": "総収入: {totalIncome} NEO（税: {tax} + 金: {gold} + 商業: {commercial} + 観光: {tourism}）− 総支出: {totalOutcome} NEO = 純額: {net} NEO"
   },
-  "tabs": { "summary": "GDP概要", "income": "収入", "outcome": "支出" },
+  "tabs": {
+    "summary": "GDP概要",
+    "income": "収入",
+    "outcome": "支出"
+  },
   "summary": {
     "detailTitle": "国家収支とGDPの流れ",
     "incomeTitle": "収入の内訳（国家収入）",
@@ -186,5 +190,19 @@
       "pension": "公的年金保障制度",
       "disaster": "災害緊急支援基金"
     }
+  },
+  "globalFinancial": {
+    "title": "全国家の国家予算",
+    "searchPlaceholder": "国 / 大陸を検索...",
+    "loading": "全国家データを読み込み中...",
+    "noCountryData": "国家データがありません。",
+    "noSearchResults": "「{query}」に一致するデータがありません。",
+    "colCountryName": "国名",
+    "colContinent": "大陸",
+    "colTotalTax": "総税収",
+    "colGoldBuildings": "金鉱施設",
+    "colGoldProduction": "金生産量",
+    "colExpenses": "支出",
+    "colDailyNetBalance": "日次純収支"
   }
 }

@@ -1,12 +1,17 @@
 {
   "title": "Preiskontrolle für Grundbedarf",
   "monthUnit": "Monat",
-  "tabs": { "essentials": "Grundbedarf", "subsidyPolicy": "Subventionspolitik" },
+  "tabs": {
+    "essentials": "Grundbedarf",
+    "subsidyPolicy": "Subventionspolitik"
+  },
   "subsidy": {
     "title": "Subventionszuweisung und -politik",
     "infoButton": "Informationen zu Subventionszuweisung und -politik",
     "confirm": "Bestätigen",
-    "categories": { "all": "Alle Bereiche" },
+    "categories": {
+      "all": "Alle Bereiche"
+    },
     "summary": {
       "totalBudget": "Gesamtes Subventionsbudget",
       "activeSectors": "Aktive Bereiche / Gesamt",
@@ -65,5 +70,21 @@
     "noChanges": "Es wurden keine Preise geändert. Bestätigen Sie, um zum Forum zurückzukehren.",
     "back": "Zurück",
     "yes": "Ja, bestätigen"
+  },
+  "subsidyDetail": {
+    "title": "Details zur Subventionspolitik",
+    "sectorBadge": "SEKTOR {category}",
+    "policyDescription": "Politikbeschreibung",
+    "budgetCost": "Haushaltskosten",
+    "approvalBonus": "Zustimmungsbonus",
+    "approvalUnit": "Zustimmung",
+    "inflationReduction": "Inflationssenkung",
+    "inflationUnit": "Inflation",
+    "revocationRisk": "Widerrufsrisiko",
+    "currentAllocationStatus": "Aktueller Zuweisungsstatus",
+    "statusActive": "✓ Subvention Aktiv",
+    "statusInactive": "✗ Inaktiv",
+    "revokeSubsidy": "Subvention widerrufen",
+    "activateSubsidy": "Subvention aktivieren"
   }
 }

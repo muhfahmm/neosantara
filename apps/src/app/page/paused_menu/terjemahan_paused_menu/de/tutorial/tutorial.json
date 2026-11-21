@@ -1,0 +1,37 @@
+{
+  "welcome": {
+    "advisorAlt": "Staatsberater",
+    "message": "Willkommen, {playerName}. Heute ist Ihr erster Tag als Staatsoberhaupt.",
+    "skip": "BEENDEN",
+    "continue": "WEITER"
+  },
+  "overlay": {
+    "stepCount": "Schritt {current} von {total}",
+    "skip": "Überspringen",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "finish": "Fertig"
+  },
+  "steps": {
+    "tampilanUtama": {
+      "title": "Hauptansicht",
+      "body": "Die Karte zeigt das Staatsgebiet; das Simulationsdatum die Spielzeit. Das Budget zeigt Staatskasse und Nettosaldo, die Bevölkerung die Bürgerzahl und die Zufriedenheit die Volksmeinung."
+    },
+    "aturWaktu": {
+      "title": "Zeitsteuerung",
+      "body": "Nutzen Sie Start/Pause und den Geschwindigkeitsregler zur Steuerung der Simulation; der Zustand des Landes ändert sich im Zeitverlauf."
+    },
+    "kondisiEkonomi": {
+      "title": "Wirtschaftliche Lage",
+      "body": "Öffnen Sie das Wirtschaftsmenü, um Einnahmen und Ausgaben zu prüfen. Vergleichen Sie beide, um zu sehen, ob Ihr Haushalt positiv oder negativ ist."
+    },
+    "pembangunanSederhana": {
+      "title": "Grundlegender Aufbau",
+      "body": "Öffnen Sie das Baumenu und wählen Sie Einrichtungen oder Produktionsstätten. Prüfen Sie Kosten und Materialbedarf vor dem Bau."
+    },
+    "simpanPermainan": {
+      "title": "Spiel speichern",
+      "body": "Speichern Sie das Spiel über das Spielmenü oder die Schaltfläche Speichern. Der Fortschritt kann später fortgesetzt werden."
+    }
+  }
+}

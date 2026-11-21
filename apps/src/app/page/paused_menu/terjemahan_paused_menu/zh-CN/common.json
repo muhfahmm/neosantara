@@ -9,5 +9,6 @@
   "close": "关闭",
   "error": "发生错误",
   "success": "成功",
-  "search": "搜索..."
+  "search": "搜索...",
+  "infoTitle": "{title} 信息"
 }

@@ -6,6 +6,7 @@ import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/Note
 import TravelFuelCostPanel from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
 import type { TravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 interface PaktaNonAgresiModalProps {
 	isOpen: boolean;
 	countryName?: string | null;
@@ -16,6 +17,7 @@ interface PaktaNonAgresiModalProps {
 }
 
 export default function PaktaNonAgresiModal({ isOpen, countryName, onClose, onConfirm, travelFuelStatus }: PaktaNonAgresiModalProps) {
+	const { t } = useLanguage();
 	if (!isOpen) return null;
 
 	const modalContent = (
@@ -23,14 +25,14 @@ export default function PaktaNonAgresiModal({ isOpen, countryName, onClose, onCo
 			{/* Container Modal */}
 			<div className="w-full flex flex-col p-4 sm:p-5 font-sans text-white">
 				
-				<RootInfoModalHeader title="Konfirmasi Pakta Non-Agresi" onClose={onClose} size="compact" />
+				<RootInfoModalHeader title={t("detail_negara_ai.pact.buildTitle")} onClose={onClose} size="compact" />
 				{/* Area Konten */}
 				<div className="flex-1">
 					<p className="text-sm sm:text-base text-root-text mb-4 leading-relaxed">
-						Apakah Anda ingin mengajukan Pakta Non-Agresi kepada <strong className="text-white text-lg">{countryName}</strong>?
+						{t("detail_negara_ai.pact.buildPromptPrefix")} <strong className="text-white text-lg">{countryName}</strong>?
 					</p>
 					<p className="text-sm sm:text-base text-root-text mb-6 leading-relaxed">
-						Pakta ini akan berlaku jika diterima dan menegaskan bahwa kedua negara tidak akan saling menyerang dalam jangka waktu yang disepakati.
+						{t("detail_negara_ai.pact.buildDescription")}
 					</p>
 					{travelFuelStatus && <TravelFuelCostPanel status={travelFuelStatus} />}
 					
@@ -43,7 +45,7 @@ export default function PaktaNonAgresiModal({ isOpen, countryName, onClose, onCo
 						onClick={onClose}
 						className="w-full sm:w-auto px-6 bg-root-canvas border border-root-accent/30 hover:border-root-accent rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-colors duration-150 cursor-pointer shadow"
 					>
-						Batal
+						{t("detail_negara_ai.common.cancel")}
 					</button>
 
 					<button
@@ -51,7 +53,7 @@ export default function PaktaNonAgresiModal({ isOpen, countryName, onClose, onCo
 						disabled={travelFuelStatus ? !travelFuelStatus.ok : false}
 						className="w-full sm:w-auto px-6 bg-root-accent border border-root-accent hover:border-root-text rounded-xl py-2 text-center text-root-canvas font-black text-[11px] sm:text-xs tracking-widest uppercase transition-colors duration-150 cursor-pointer shadow active:scale-[0.98]"
 					>
-						Jalin Pakta
+						{t("detail_negara_ai.pact.buildConfirm")}
 					</button>
 				</div>
 			</div>

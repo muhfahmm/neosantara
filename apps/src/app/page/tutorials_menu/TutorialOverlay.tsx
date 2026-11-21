@@ -11,6 +11,7 @@ import {
   TUTORIAL_START_EVENT,
 } from './tutorialProgress';
 import type { TutorialPlacement } from './tutorialTypes';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface TutorialOverlayProps {
   autoStart?: boolean;
@@ -132,6 +133,7 @@ export function TutorialOverlay({
   autoStart = false,
   suppressAutoStart = false,
 }: TutorialOverlayProps) {
+  const { t } = useLanguage();
   const mounted = useSyncExternalStore(subscribeToMount, getClientMountSnapshot, getServerMountSnapshot);
   const progress = useSyncExternalStore(
     subscribeTutorialProgress,
@@ -260,6 +262,9 @@ export function TutorialOverlay({
   if (!mounted || !active || !step) return null;
   if (!layout) return null;
 
+  const stepTitle = t(`tutorial.steps.${step.id.replace(/-([a-z])/g, (_, c) => c.toUpperCase())}.title`, { defaultValue: step.title });
+  const stepBody = t(`tutorial.steps.${step.id.replace(/-([a-z])/g, (_, c) => c.toUpperCase())}.body`, { defaultValue: step.body });
+
   return createPortal(
     <div data-tutorial-overlay className="fixed inset-0 z-[100000000] pointer-events-none font-sans">
       <svg className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden="true">
@@ -291,21 +296,21 @@ export function TutorialOverlay({
       >
         <div className="mb-3 flex items-center justify-between gap-3">
           <p className="text-[10px] font-black uppercase tracking-[0.18em] text-root-accent">
-            Langkah {progress.stepIndex + 1} dari {tutorialRegistry.length}
+            {t('tutorial.overlay.stepCount', { current: progress.stepIndex + 1, total: tutorialRegistry.length })}
           </p>
           <button
             type="button"
             onClick={skip}
             className="rounded-lg px-2 py-1 text-xs font-bold text-root-subtle hover:text-root-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-root-accent"
           >
-            Lewati
+            {t('tutorial.overlay.skip')}
           </button>
         </div>
         <h2 id="tutorial-title" className="mb-2 text-lg font-black text-root-accent">
-          {step.title}
+          {stepTitle}
         </h2>
         <p id="tutorial-body" className="text-sm leading-relaxed text-root-text">
-          {step.body}
+          {stepBody}
         </p>
         <div className="mt-5 flex items-center justify-between gap-3">
           <button
@@ -314,14 +319,14 @@ export function TutorialOverlay({
             disabled={progress.stepIndex === 0}
             className="rounded-lg border border-root-accent/25 px-3 py-2 text-xs font-bold text-root-subtle hover:border-root-accent/60 hover:text-root-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-root-accent disabled:cursor-not-allowed disabled:opacity-40"
           >
-            Kembali
+            {t('tutorial.overlay.previous')}
           </button>
           <button
             type="button"
             onClick={next}
             className="rounded-lg bg-root-accent px-4 py-2 text-xs font-black text-root-canvas hover:bg-root-accent/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-root-accent"
           >
-            Lanjut
+            {progress.stepIndex >= tutorialRegistry.length - 1 ? t('tutorial.overlay.finish') : t('tutorial.overlay.next')}
           </button>
         </div>
       </section>

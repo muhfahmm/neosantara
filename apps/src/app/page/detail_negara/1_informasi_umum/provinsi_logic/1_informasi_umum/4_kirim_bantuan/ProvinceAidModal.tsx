@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { HandHeart } from 'lucide-react';
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface ProvinceAidItem {
   key: string;
@@ -84,6 +85,7 @@ export default function ProvinceAidModal({
   onClose,
   onConfirm
 }: ProvinceAidModalProps) {
+  const { t } = useLanguage();
   const availableSectors = AID_SECTORS.map(sector => ({
     ...sector,
     availableItems: sector.items
@@ -107,16 +109,16 @@ export default function ProvinceAidModal({
         className="modal-responsive-shell bg-root-surface border-2 sm:border-3 border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl"
       >
         <RootInfoModalHeader
-          title="Pilih Bantuan"
+          title={t('detail_negara_ai.province.aidTitle')}
           titleId="province-aid-title"
           onClose={onClose}
           icon={<HandHeart />}
           size="standard"
           actions={
             <div className="text-right">
-              <p className="text-sm text-[#B7D5CD]">Target: {targetCountry}</p>
+              <p className="text-sm text-[#B7D5CD]">{t('detail_negara_ai.province.targetLabel')}: {targetCountry}</p>
               <p className="mt-1 text-xs font-bold text-orange-300">
-                Ketegangan: {provinceTension}
+                {t('detail_negara_ai.tension')}: {provinceTension}
               </p>
             </div>
           }
@@ -144,7 +146,7 @@ export default function ProvinceAidModal({
         {selectedSector && selectedSector.availableItems.length > 0 ? (
           <div className="mb-5 space-y-2">
             <p className="text-xs font-bold uppercase tracking-wider text-[#B7D5CD]">
-              Pilih barang bantuan · {selectedSector.label}
+              {t('detail_negara_ai.province.chooseAidItem')} · {selectedSector.label}
             </p>
             {selectedSector.availableItems.map(item => (
               <button
@@ -159,14 +161,14 @@ export default function ProvinceAidModal({
               >
                 <span className="text-sm font-bold">{item.label}</span>
                 <span className="text-xs text-[#B7D5CD]">
-                  Produksi: {Number(provinceData?.[item.key] ?? 0).toLocaleString()}
+                  {t('detail_negara_ai.province.production')}: {Number(provinceData?.[item.key] ?? 0).toLocaleString()}
                 </span>
               </button>
             ))}
           </div>
         ) : (
           <p className="mb-5 rounded-lg border border-white/10 bg-black/20 p-4 text-sm text-[#B7D5CD]">
-            Pilih sektor bantuan yang tersedia untuk provinsi ini.
+            {t('detail_negara_ai.province.chooseAidSector')}
           </p>
         )}
 
@@ -178,7 +180,7 @@ export default function ProvinceAidModal({
             onClick={onClose}
             className="flex-1 rounded-lg border border-root-accent/30 px-4 py-3 text-xs font-black uppercase text-root-accent hover:bg-root-accent/10"
           >
-            Batal
+            {t('detail_negara_ai.common.cancel')}
           </button>
           <button
             type="button"
@@ -186,7 +188,7 @@ export default function ProvinceAidModal({
             onClick={() => selectedSector && selectedItem && onConfirm(selectedSector.label, selectedItem.label)}
             className="flex-1 rounded-lg bg-root-accent px-4 py-3 text-xs font-black uppercase text-root-canvas hover:bg-[#00D991] disabled:cursor-not-allowed disabled:opacity-40"
           >
-            Kirim Bantuan
+            {t('detail_negara_ai.province.sendAid')}
           </button>
         </div>
         </div>

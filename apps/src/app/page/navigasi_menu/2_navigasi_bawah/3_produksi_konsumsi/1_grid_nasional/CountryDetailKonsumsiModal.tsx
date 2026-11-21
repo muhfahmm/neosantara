@@ -4,6 +4,7 @@ import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalClos
 import React, { useState, useMemo } from "react";
 import { X, Zap, Building2, Home, Factory, Search, Shield } from "lucide-react";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface CountryDetailKonsumsiModalProps {
   isOpen: boolean;
@@ -18,6 +19,7 @@ export default function CountryDetailKonsumsiModal({
   countryData,
   metadata = {},
 }: CountryDetailKonsumsiModalProps) {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<"semua" | "produksi" | "tempat_umum" | "hunian" | "pertahanan">("semua");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -213,9 +215,9 @@ export default function CountryDetailKonsumsiModal({
             </div>
             <div>
               <h2 className="text-[length:var(--modal-font-title)] font-bold text-rose-400 tracking-tight leading-none uppercase">
-                Rincian Konsumsi Listrik - {countryName}
+                {t("game.consumptionDetailModal.title", { country: countryName })}
               </h2>
-              <p className="text-[10px] text-root-subtle font-semibold mt-0.5">Detail beban konsumsi listrik nasional</p>
+              <p className="text-[10px] text-root-subtle font-semibold mt-0.5">{t("game.consumptionDetailModal.subtitle")}</p>
             </div>
           </div>
 
@@ -223,7 +225,7 @@ export default function CountryDetailKonsumsiModal({
             onClick={onClose}
             className="p-1.5 lg:p-2 rounded-xl border border-rose-500/30 bg-root-surface text-root-subtle hover:text-rose-400 hover:border-rose-400 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
            appearance="custom">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">{t("common.close")}</span>
             <X className="h-4 w-4" />
           </SharedModalCloseButton>
         </div>
@@ -235,64 +237,64 @@ export default function CountryDetailKonsumsiModal({
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3.5">
             <div className="bg-rose-950/40 border border-rose-500/40 p-3.5 rounded-xl flex flex-col justify-between">
               <div>
-                <p className="text-[9px] font-black uppercase tracking-wider text-rose-400">Total Konsumsi Terestimasi</p>
+                <p className="text-[9px] font-black uppercase tracking-wider text-rose-400">{t("game.consumptionDetailModal.totalEstimated")}</p>
                 <p className="text-lg sm:text-xl font-black text-rose-400 mt-1 break-words">
                   {totalAllBreakdownConsumption.toLocaleString("id-ID", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} <span className="text-xs font-bold text-root-subtle">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-rose-300/70 mt-1.5 font-medium">Beban energi nasional</p>
+              <p className="text-[9px] text-rose-300/70 mt-1.5 font-medium">{t("game.consumptionDetailModal.nationalEnergyLoad")}</p>
             </div>
 
             <div className="bg-root-canvas border border-root-accent/20 p-3.5 rounded-xl flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-1 mb-1">
                   <Factory className="w-3.5 h-3.5 text-root-accent" />
-                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Produksi & Tambang</p>
+                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">{t("game.consumptionDetailModal.productionMining")}</p>
                 </div>
                 <p className="text-base sm:text-lg font-black text-root-accent">
                   {totalProduksiConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold text-root-subtle">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{produksiBreakdown.filter(p => p.count > 0).length} jenis industri</p>
+              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{t("game.consumptionDetailModal.industryTypes", { count: String(produksiBreakdown.filter(p => p.count > 0).length) })}</p>
             </div>
 
             <div className="bg-root-canvas border border-root-accent/20 p-3.5 rounded-xl flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-1 mb-1">
                   <Building2 className="w-3.5 h-3.5 text-root-accent" />
-                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Tempat Umum</p>
+                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">{t("game.consumptionDetailModal.publicPlaces")}</p>
                 </div>
                 <p className="text-base sm:text-lg font-black text-root-accent">
                   {totalTempatUmumConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold text-root-subtle">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{tempatUmumBreakdown.filter(t => t.count > 0).length} fasilitas publik</p>
+              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{t("game.consumptionDetailModal.publicFacilities", { count: String(tempatUmumBreakdown.filter(t => t.count > 0).length) })}</p>
             </div>
 
             <div className="bg-root-canvas border border-root-accent/20 p-3.5 rounded-xl flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-1 mb-1">
                   <Shield className="w-3.5 h-3.5 text-root-accent" />
-                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Pertahanan & Keamanan</p>
+                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">{t("game.consumptionDetailModal.defenseSecurity")}</p>
                 </div>
                 <p className="text-base sm:text-lg font-black text-root-accent">
                   {totalPertahananConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold text-root-subtle">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{pertahananBreakdown.filter(p => p.count > 0).length} pangkalan & infrastruktur</p>
+              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{t("game.consumptionDetailModal.basesInfrastructure", { count: String(pertahananBreakdown.filter(p => p.count > 0).length) })}</p>
             </div>
 
             <div className="bg-root-canvas border border-root-accent/20 p-3.5 rounded-xl flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-1 mb-1">
                   <Home className="w-3.5 h-3.5 text-root-accent" />
-                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Hunian & Permukiman</p>
+                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">{t("game.consumptionDetailModal.housingSettlement")}</p>
                 </div>
                 <p className="text-base sm:text-lg font-black text-root-accent">
                   {totalHunianConsumption.toLocaleString("id-ID", { maximumFractionDigits: 2 })} <span className="text-xs font-bold text-root-subtle">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">Beban rumah tangga</p>
+              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{t("game.consumptionDetailModal.householdLoad")}</p>
             </div>
           </div>
 
@@ -307,7 +309,7 @@ export default function CountryDetailKonsumsiModal({
                     : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
                 }`}
               >
-                Semua Sektor
+                {t("game.consumptionDetailModal.allSectors")}
               </button>
               <button
                 onClick={() => setActiveTab("produksi")}
@@ -317,7 +319,7 @@ export default function CountryDetailKonsumsiModal({
                     : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
                 }`}
               >
-                Produksi
+                {t("game.consumptionDetailModal.production")}
               </button>
               <button
                 onClick={() => setActiveTab("tempat_umum")}
@@ -327,7 +329,7 @@ export default function CountryDetailKonsumsiModal({
                     : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
                 }`}
               >
-                Tempat Umum
+                {t("game.consumptionDetailModal.publicPlaces")}
               </button>
               <button
                 onClick={() => setActiveTab("pertahanan")}
@@ -337,7 +339,7 @@ export default function CountryDetailKonsumsiModal({
                     : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
                 }`}
               >
-                Pertahanan & Keamanan
+                {t("game.consumptionDetailModal.defenseSecurity")}
               </button>
               <button
                 onClick={() => setActiveTab("hunian")}
@@ -347,7 +349,7 @@ export default function CountryDetailKonsumsiModal({
                     : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
                 }`}
               >
-                Hunian
+                {t("game.consumptionDetailModal.housing")}
               </button>
             </div>
 
@@ -357,7 +359,7 @@ export default function CountryDetailKonsumsiModal({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari fasilitas..."
+                placeholder={t("game.consumptionDetailModal.searchPlaceholder")}
                 className="w-full bg-root-surface border border-root-accent/30 rounded-lg pl-8 pr-3 py-1.5 text-xs text-root-text placeholder-root-subtle focus:outline-none focus:border-root-accent"
               />
             </div>
@@ -387,13 +389,13 @@ export default function CountryDetailKonsumsiModal({
 
                   <div className="border-t border-root-accent/10 mt-3 pt-2 flex items-center justify-between">
                     <div>
-                      <p className="text-[9px] text-root-subtle">Konsumsi / Unit:</p>
+                      <p className="text-[9px] text-root-subtle">{t("game.consumptionDetailModal.consumptionPerUnit")}</p>
                       <p className="text-xs font-bold text-root-text">
                         {item.rate.toLocaleString("id-ID", { maximumFractionDigits: 4 })} MW
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[9px] text-rose-400 font-bold">Total Beban:</p>
+                      <p className="text-[9px] text-rose-400 font-bold">{t("game.consumptionDetailModal.totalLoad")}</p>
                       <p className="text-sm font-black text-rose-400">
                         {item.total.toLocaleString("id-ID", { maximumFractionDigits: 2 })} MW
                       </p>
@@ -403,7 +405,7 @@ export default function CountryDetailKonsumsiModal({
               ))
             ) : (
               <div className="col-span-full py-12 text-center bg-root-canvas border border-root-accent/10 rounded-xl">
-                <p className="text-xs text-root-subtle font-bold uppercase tracking-wider">Tidak ada fasilitas yang sesuai kriteria pencarian.</p>
+                <p className="text-xs text-root-subtle font-bold uppercase tracking-wider">{t("game.consumptionDetailModal.noMatchingFacilities")}</p>
               </div>
             )}
           </div>

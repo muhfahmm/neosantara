@@ -190,5 +190,19 @@
       "pension": "Program Jaminan Pensiun Rakyat",
       "disaster": "Dana Bantuan Darurat Bencana"
     }
+  },
+  "globalFinancial": {
+    "title": "Anggaran Nasional Semua Negara",
+    "searchPlaceholder": "Cari negara / benua...",
+    "loading": "Loading data semua negara...",
+    "noCountryData": "Tidak ada data negara.",
+    "noSearchResults": "Tidak ada data yang cocok dengan pencarian \"{query}\".",
+    "colCountryName": "Nama Negara",
+    "colContinent": "Benua",
+    "colTotalTax": "Total Pajak",
+    "colGoldBuildings": "Bangunan Emas",
+    "colGoldProduction": "Produksi Emas",
+    "colExpenses": "Pengeluaran",
+    "colDailyNetBalance": "Net Balance Harian"
   }
 }

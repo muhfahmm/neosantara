@@ -1,0 +1,37 @@
+{
+  "welcome": {
+    "advisorAlt": "State Advisor",
+    "message": "Welcome, {playerName}. Today is your first day as head of state.",
+    "skip": "END",
+    "continue": "CONTINUE"
+  },
+  "overlay": {
+    "stepCount": "Step {current} of {total}",
+    "skip": "Skip",
+    "previous": "Back",
+    "next": "Next",
+    "finish": "Finish"
+  },
+  "steps": {
+    "tampilanUtama": {
+      "title": "Main Overview",
+      "body": "The map displays country territory; the simulation date indicates game time. Budget shows treasury and net balance, population shows citizen count, and satisfaction represents public approval."
+    },
+    "aturWaktu": {
+      "title": "Time Control",
+      "body": "Use play/pause buttons and speed controller to manage simulation; country state evolves as time moves. Try playing then pausing, or continue after reading."
+    },
+    "kondisiEkonomi": {
+      "title": "Economic Condition",
+      "body": "Open Economy menu to inspect national revenues and expenses. Compare both to check whether your net budget balance is positive or negative."
+    },
+    "pembangunanSederhana": {
+      "title": "Basic Construction",
+      "body": "Open Construction menu, then choose facilities or production buildings to construct. Check cost and material requirements before building—this step is optional with no mandatory purchases."
+    },
+    "simpanPermainan": {
+      "title": "Save Game",
+      "body": "Save your game via Game Menu or Save button to select a save slot. Progress can be resumed later; now you are ready to govern your nation."
+    }
+  }
+}

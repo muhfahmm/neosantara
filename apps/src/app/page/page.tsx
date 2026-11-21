@@ -14,6 +14,7 @@ import { ExitConfirmModal } from './paused_menu/ExitConfirmModal';
 import { soundManager } from '@/lib/soundManager';
 import { MOBILE_PREBAKED_CONTINENTS } from './map_system/rust_map_mobile/mobilePrebakedPaths';
 import { isMobileDevice } from './map_system/rust_map_mobile';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 /* ============================================================
    HOLOGRAPHIC WORLD MAP  —  wireframe + network nodes + pings
@@ -352,11 +353,14 @@ const GlitchTitle = () => {
    TYPEWRITER SUBTITLE
    ============================================================ */
 const TypewriterSubtitle = () => {
-    const fullText = 'SIMULASI GEOPOLITIK & TATA KELOLA GLOBAL';
+    const { t } = useLanguage();
+    const fullText = t('menu_utama.subtitle');
     const [displayed, setDisplayed] = useState('');
     const [done, setDone] = useState(false);
     useEffect(() => {
         let i = 0;
+        setDisplayed('');
+        setDone(false);
         const timer = setInterval(() => {
             i += 1;
             setDisplayed(fullText.slice(0, i));
@@ -366,7 +370,7 @@ const TypewriterSubtitle = () => {
             }
         }, 35);
         return () => clearInterval(timer);
-    }, []);
+    }, [fullText]);
     return (
         <p className="text-slate-400 text-[9px] sm:text-[11px] md:text-xs lg:text-sm tracking-[0.2em] sm:tracking-[0.25em] font-light">
             {displayed}
@@ -931,12 +935,13 @@ const CoordinatesReadout = () => {
    NEWS TICKER  —  bottom bar
    ============================================================ */
 const NewsTicker = () => {
+    const { t } = useLanguage();
     const headlines = [
-        { tag: 'DIPLOMASI', text: 'Presiden NEOSANTARA menjadwalkan pertemuan puncak dengan negara-negara ASEAN pekan depan' },
-        { tag: 'EKONOMI', text: 'Indeks pasar global naik 2.4% setelah pengumuman paket stimulus baru' },
-        { tag: 'MILITER', text: 'Latihan gabungan angkatan laut digelar di perairan Selat Malaka' },
-        { tag: 'TEKNOLOGI', text: 'Revolusi AI mencapai milestone baru dalam prediksi geopolitik' },
-        { tag: 'LINGKUNGAN', text: 'Komitmen karbon netral 2050 diperkuat oleh 12 negara tambahan' },
+        { tag: t('menu_utama.ticker_diplomacy_tag'), text: t('menu_utama.ticker_diplomacy_text') },
+        { tag: t('menu_utama.ticker_economy_tag'), text: t('menu_utama.ticker_economy_text') },
+        { tag: t('menu_utama.ticker_military_tag'), text: t('menu_utama.ticker_military_text') },
+        { tag: t('menu_utama.ticker_tech_tag'), text: t('menu_utama.ticker_tech_text') },
+        { tag: t('menu_utama.ticker_env_tag'), text: t('menu_utama.ticker_env_text') },
     ];
     const loop = [...headlines, ...headlines];
     return (
@@ -988,6 +993,7 @@ const HudCorners = () => (
    MAIN PAGE
    ============================================================ */
 export default function PlayMenuPage() {
+    const { t } = useLanguage();
     const [isLoaded, setIsLoaded] = useState(false);
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
@@ -1028,17 +1034,17 @@ export default function PlayMenuPage() {
 
     const handleDeleteSave = async (id: number, e: React.MouseEvent) => {
         e.stopPropagation();
-        if (!window.confirm("Apakah Anda yakin ingin menghapus save file ini secara permanen?")) return;
+        if (!window.confirm(t('menu_utama.confirm_delete_save'))) return;
         try {
             const response = await fetch(`/api/game-save?id=${id}`, { method: 'DELETE' });
             if (response.ok) {
                 setSaveFiles(prev => prev.filter(save => save.id !== id));
             } else {
-                alert("Gagal menghapus save file");
+                alert(t('menu_utama.delete_save_failed'));
             }
         } catch (error) {
             console.error("Error deleting save:", error);
-            alert("Terjadi kesalahan saat menghapus");
+            alert(t('menu_utama.delete_save_error'));
         }
     };
 
@@ -1048,10 +1054,10 @@ export default function PlayMenuPage() {
     };
 
     const menuItems = [
-        { id: 'start', label: 'MULAI SIMULASI', sub: 'INISIASI PEMERINTAHAN BARU', icon: Play, color: '#10b981', path: '/page/map_system/pilih-negara' },
-        { id: 'continue', label: 'LANJUTKAN', sub: 'MUAT DATA STRATEGIS', icon: Save, color: '#3b82f6', path: '#' },
-        { id: 'settings', label: 'PENGATURAN', sub: 'KONFIGURASI SISTEM', icon: Settings, color: '#f59e0b', path: '#' },
-        { id: 'exit', label: 'KELUAR', sub: 'AKHIRI SESI', icon: LogOut, color: '#ef4444', path: '#' },
+        { id: 'start', label: t('menu_utama.start_label'), sub: t('menu_utama.start_sub'), icon: Play, color: '#10b981', path: '/page/map_system/pilih-negara' },
+        { id: 'continue', label: t('menu_utama.continue_label'), sub: t('menu_utama.continue_sub'), icon: Save, color: '#3b82f6', path: '#' },
+        { id: 'settings', label: t('menu_utama.settings_label'), sub: t('menu_utama.settings_sub'), icon: Settings, color: '#f59e0b', path: '#' },
+        { id: 'exit', label: t('menu_utama.exit_label'), sub: t('menu_utama.exit_sub'), icon: LogOut, color: '#ef4444', path: '#' },
     ];
 
     return (
@@ -1221,7 +1227,7 @@ export default function PlayMenuPage() {
                                                     } else if (item.id === 'settings') {
                                                         setIsSettingsModalOpen(true);
                                                     } else {
-                                                        alert("Fitur pengaturan segera hadir!");
+                                                        alert(t('menu_utama.settings_coming_soon'));
                                                     }
                                                 }}
                                                 className={btnClass}
@@ -1285,7 +1291,7 @@ export default function PlayMenuPage() {
                                     <div className="flex items-center gap-2.5 sm:gap-3">
                                         <Save className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500 shrink-0" />
                                         <h2 className="text-lg sm:text-xl md:text-2xl font-black text-white tracking-widest">
-                                            LANJUTKAN SIMULASI
+                                            {t('menu_utama.continue_modal_title')}
                                         </h2>
                                     </div>
                                     <button
@@ -1300,16 +1306,16 @@ export default function PlayMenuPage() {
                                     {isLoadingSaves ? (
                                         <div className="flex flex-col items-center justify-center py-12 gap-3 text-slate-400 font-bold">
                                             <div className="w-8 h-8 rounded-full border-4 border-emerald-500/20 border-t-emerald-500 animate-spin" />
-                                            <span>Memuat save file dari database...</span>
+                                            <span>{t('menu_utama.loading_saves')}</span>
                                         </div>
                                     ) : saveFiles.length === 0 ? (
                                         <div className="flex flex-col items-center justify-center py-16 text-center gap-3 border border-white/5 bg-white/2 rounded-xl">
                                             <Globe className="w-12 h-12 text-slate-600" />
                                             <span className="text-slate-400 font-bold tracking-wider uppercase text-sm">
-                                                Tidak Ditemukan Save File
+                                                {t('menu_utama.no_saves_title')}
                                             </span>
                                             <p className="text-slate-500 text-xs max-w-xs leading-relaxed">
-                                                Belum ada permainan yang disimpan ke database. Silakan klik &quot;Mulai Simulasi&quot; untuk membuat game baru.
+                                                {t('menu_utama.no_saves_desc')}
                                             </p>
                                         </div>
                                     ) : (
@@ -1355,7 +1361,7 @@ export default function PlayMenuPage() {
 
                                                     <button
                                                         onClick={(e) => handleDeleteSave(save.id, e)}
-                                                        title="Hapus Save File"
+                                                        title={t('menu_utama.delete_save_title')}
                                                         className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-all cursor-pointer z-20 shrink-0 self-center"
                                                     >
                                                         <Trash2 className="w-4 h-4" />
@@ -1371,7 +1377,7 @@ export default function PlayMenuPage() {
                                         onClick={() => setIsContinueModalOpen(false)}
                                         className="py-2.5 px-6 rounded-xl border border-white/10 hover:bg-white/5 active:bg-white/10 text-slate-300 font-bold text-xs uppercase transition-all cursor-pointer"
                                      appearance="custom">
-                                        Tutup
+                                        {t('menu_utama.close')}
                                     </SharedModalCloseButton>
                                 </div>
                             </motion.div>

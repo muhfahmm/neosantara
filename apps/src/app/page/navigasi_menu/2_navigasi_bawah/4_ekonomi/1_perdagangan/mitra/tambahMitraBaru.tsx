@@ -6,6 +6,7 @@ import NotebookModalWrapper from '../../../NotebookModalWrapper';
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { COUNTRIES_DATA } from '../../../../../map_system/map-data';
 import { getEmbassiesForCountry } from "../../../../../../../../../json/6_database_kedutaan_besar/embassyRegistry";
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface TambahMitraBaruProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ export default function TambahMitraBaru({
   onAddPartner,
   countryDetail,
 }: TambahMitraBaruProps) {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = React.useState('');
   const [noEmbassyModalData, setNoEmbassyModalData] = useState<{ countryName: string } | null>(null);
   const [confirmModalData, setConfirmModalData] = useState<{ countryName: string; region: string } | null>(null);
@@ -123,7 +125,7 @@ export default function TambahMitraBaru({
           className="root-modal-util-b74379da23 min-w-0"
         >
           <RootInfoModalHeader
-            title="Tambah Mitra Dagang Baru"
+            title={t("navigation_economy_trade.addPartner.title")}
             titleId="add-trade-partner-title"
             onClose={onClose}
             size="standard"
@@ -136,7 +138,7 @@ export default function TambahMitraBaru({
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-root-subtle" />
               <input
                 type="text"
-                placeholder="Cari nama negara..."
+                placeholder={t("navigation_economy_trade.addPartner.searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-root-accent/30 bg-root-surface text-sm font-semibold text-root-text placeholder-root-subtle focus:outline-none focus:border-root-accent transition-colors"
@@ -149,17 +151,17 @@ export default function TambahMitraBaru({
             {Object.keys(groupedByContinent).length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center py-20 text-root-subtle">
                 <Search className="h-12 w-12 mb-3 opacity-30 text-root-accent animate-pulse" />
-                <p className="text-sm font-bold text-root-text">Tidak ada negara ditemukan</p>
-                <p className="text-xs text-root-subtle">Coba masukkan kata kunci pencarian yang lain.</p>
+                <p className="text-sm font-bold text-root-text">{t("navigation_economy_trade.addPartner.emptyTitle")}</p>
+                <p className="text-xs text-root-subtle">{t("navigation_economy_trade.addPartner.emptySubtitle")}</p>
               </div>
             ) : (
               <div className="space-y-10">
                 {Object.entries(groupedByContinent).sort(([a], [b]) => a.localeCompare(b)).map(([continent, countries]) => (
                   <div key={continent} className="space-y-4">
                     <h3 className="text-sm font-black text-root-accent uppercase tracking-widest border-b border-root-accent/20 pb-2 flex items-center justify-between">
-                      <span>🌍 Benua {continent}</span>
+                      <span>{t("navigation_economy_trade.addPartner.continentHeading", { continent })}</span>
                       <span className="text-[10px] bg-root-accent/10 text-root-accent border border-root-accent/30 px-2 py-0.5 rounded-full font-bold">
-                        {countries.length} Negara
+                        {t("navigation_economy_trade.addPartner.countryCount", { count: countries.length })}
                       </span>
                     </h3>
 
@@ -219,7 +221,7 @@ export default function TambahMitraBaru({
             className="overflow-hidden"
           >
             <RootInfoModalHeader
-              title="Pemberitahuan / Peringatan"
+              title={t("navigation_economy_trade.addPartner.noEmbassyModalTitle")}
               titleId="no-embassy-title"
               onClose={() => setNoEmbassyModalData(null)}
               size="standard"
@@ -229,14 +231,20 @@ export default function TambahMitraBaru({
             {/* Body Content */}
             <div className="p-5 sm:p-6">
               <h3 className="text-lg sm:text-xl font-black uppercase tracking-wide mb-3 text-rose-400">
-                Gagal Menambahkan Mitra
+                {t("navigation_economy_trade.addPartner.noEmbassyHeading")}
               </h3>
               <div className="space-y-2 text-sm sm:text-base text-[#A0B0B0] leading-relaxed font-medium">
                 <p>
-                  Anda tidak dapat menjalin hubungan dagang dengan <strong className="text-white uppercase">{noEmbassyModalData.countryName}</strong> karena negara Anda belum memiliki <strong className="text-rose-400">Kedutaan Besar (Kedubes)</strong> yang aktif di sana.
+                  {t("navigation_economy_trade.addPartner.noEmbassyBodyPrefix")}
+                  <strong className="text-white uppercase">{noEmbassyModalData.countryName}</strong>
+                  {t("navigation_economy_trade.addPartner.noEmbassyBodyMid")}
+                  <strong className="text-rose-400">{t("navigation_economy_trade.addPartner.noEmbassyLabel")}</strong>
+                  {t("navigation_economy_trade.addPartner.noEmbassyBodySuffix")}
                 </p>
                 <p className="text-xs text-root-subtle">
-                  💡 Buka kantor Kedutaan Besar terlebih dahulu di menu <strong>Geopolitik → Kedutaan Besar</strong> sebelum mengajukan perjanjian perdagangan bilateral.
+                  {t("navigation_economy_trade.addPartner.noEmbassyHintPrefix")}
+                  <strong>{t("navigation_economy_trade.addPartner.noEmbassyHintMenu")}</strong>
+                  {t("navigation_economy_trade.addPartner.noEmbassyHintSuffix")}
                 </p>
               </div>
             </div>
@@ -248,7 +256,7 @@ export default function TambahMitraBaru({
                 onClick={() => setNoEmbassyModalData(null)}
                 className="min-w-28 px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider cursor-pointer transition-all bg-rose-500/20 border border-rose-500/50 text-rose-400 hover:bg-rose-500/30"
               >
-                Paham
+                {t("navigation_economy_trade.addPartner.understood")}
               </button>
             </div>
           </section>
@@ -268,7 +276,7 @@ export default function TambahMitraBaru({
             className="overflow-hidden"
           >
             <RootInfoModalHeader
-              title="Konfirmasi Perjanjian Dagang"
+              title={t("navigation_economy_trade.addPartner.confirmTitle")}
               titleId="confirm-add-trade-partner-title"
               onClose={() => setConfirmModalData(null)}
               size="standard"
@@ -278,14 +286,16 @@ export default function TambahMitraBaru({
             {/* Body Content */}
             <div className="p-5 sm:p-6">
               <h3 className="text-lg sm:text-xl font-black uppercase tracking-wide mb-3 text-root-text">
-                Konfirmasi Perjanjian Dagang
+                {t("navigation_economy_trade.addPartner.confirmTitle")}
               </h3>
               <div className="space-y-2 text-sm sm:text-base text-[#A0B0B0] leading-relaxed font-medium">
                 <p>
-                  Apakah Anda yakin ingin menjalin hubungan mitra dagang resmi dengan negara <strong className="text-root-accent uppercase">{confirmModalData.countryName}</strong>?
+                  {t("navigation_economy_trade.addPartner.confirmBodyPrefix")}
+                  <strong className="text-root-accent uppercase">{confirmModalData.countryName}</strong>
+                  {t("navigation_economy_trade.addPartner.confirmBodySuffix")}
                 </p>
                 <p className="text-xs text-root-subtle">
-                  🤝 Setelah bermitra, Anda dapat melakukan transaksi jual-beli komoditas strategis secara langsung dengan negara tersebut.
+                  {t("navigation_economy_trade.addPartner.confirmHint")}
                 </p>
               </div>
             </div>
@@ -297,14 +307,14 @@ export default function TambahMitraBaru({
                 onClick={() => setConfirmModalData(null)}
                 className="min-w-24 px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider cursor-pointer transition-all bg-root-surface border border-root-accent/30 text-root-accent hover:bg-root-accent hover:text-root-canvas"
               >
-                Batal
+                {t("navigation_economy_trade.addPartner.cancel")}
               </button>
               <button
                 type="button"
                 onClick={handleConfirmAddPartner}
                 className="min-w-28 px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider cursor-pointer transition-all bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-[0_0_15px_rgba(0,255,170,0.3)]"
               >
-                Setuju & Tambahkan
+                {t("navigation_economy_trade.addPartner.confirmButton")}
               </button>
             </div>
           </section>

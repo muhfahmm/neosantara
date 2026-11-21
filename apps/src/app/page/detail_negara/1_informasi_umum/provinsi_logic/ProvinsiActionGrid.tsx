@@ -8,6 +8,7 @@ import MissionaryResultModal from './1_informasi_umum/2_tugaskan_misionaris/Miss
 import IdeologyResultModal from './1_informasi_umum/5_tanamkan_ideologi/IdeologyResultModal';
 import ProvinceAidModal from './1_informasi_umum/4_kirim_bantuan/ProvinceAidModal';
 import { applyProvinceTensionChange } from './ketegangan_provinsi';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface MissionaryResult {
   targetCountry: string;
@@ -58,6 +59,7 @@ export default function ProvinsiActionGrid({
   currentDate,
   provinceData
 }: ProvinsiActionGridProps) {
+  const { t } = useLanguage();
   const [selectedAction, setSelectedAction] = useState<ProvinceAction | null>(null);
   const [missionaryResult, setMissionaryResult] = useState<MissionaryResult | null>(null);
   const missionaryCompleted = Boolean(
@@ -121,15 +123,15 @@ export default function ProvinsiActionGrid({
       }
     } catch (error) {
       actionSucceeded = false;
-      actionMessage = error instanceof Error ? error.message : 'Aksi provinsi gagal diproses.';
+      actionMessage = error instanceof Error ? error.message : t('detail_negara_ai.province.actionFailedProcess');
     }
     if (selectedAction.id === 'tugaskan_misionaris' || selectedAction.id === 'tanamkan_ideologi') {
       setMissionaryResult({
         targetCountry,
-        actionLabel: selectedAction.id === 'tanamkan_ideologi' ? 'Ideologi' : 'Misionaris',
+        actionLabel: selectedAction.id === 'tanamkan_ideologi' ? t('detail_negara_ai.province.ideologyLabel') : t('detail_negara_ai.province.missionaryLabel'),
         succeeded: actionSucceeded,
         successChance: successChance ?? 75,
-        message: actionMessage || `${selectedAction.label} ${actionSucceeded ? 'berhasil' : 'gagal'}.`
+        message: actionMessage || `${selectedAction.label} ${actionSucceeded ? t('detail_negara_ai.province.succeededLower') : t('detail_negara_ai.province.failedLower')}.`
       });
     }
     const detail: ProvinceActionEventDetail = {
@@ -155,11 +157,11 @@ export default function ProvinsiActionGrid({
           const taxActive = id === 'wajibkan_pajak' && taxAlreadyEnforced;
           const isActive = missionaryActive || ideologyActive || taxActive;
           const displayLabel = missionaryActive
-            ? 'Agama Sudah Sama'
+            ? t('detail_negara_ai.province.sameReligion')
             : ideologyActive
-              ? 'Ideologi Sudah Sama'
+              ? t('detail_negara_ai.province.sameIdeology')
               : taxActive
-                ? 'Pajak Diberlakukan'
+                ? t('detail_negara_ai.province.taxEnforced')
                 : label;
           return (
           <button
@@ -176,11 +178,11 @@ export default function ProvinsiActionGrid({
             }`}
             aria-pressed={isActive}
             title={missionaryActive
-              ? 'Agama provinsi sudah sama dengan agama negara Anda'
+              ? t('detail_negara_ai.province.sameReligionTitle')
               : ideologyActive
-                ? 'Ideologi provinsi sudah sama dengan ideologi negara Anda'
+                ? t('detail_negara_ai.province.sameIdeologyTitle')
                 : taxActive
-                  ? 'Pajak sudah diberlakukan di provinsi ini'
+                  ? t('detail_negara_ai.province.taxEnforcedTitle')
                   : undefined}
           >
             <Icon className="h-8 w-8 text-root-accent group-hover:scale-110 transition-transform" />
@@ -209,13 +211,13 @@ export default function ProvinsiActionGrid({
             className="modal-responsive-shell bg-root-surface border-2 sm:border-3 border-root-accent/30 rounded-2xl overflow-hidden flex flex-col justify-center relative font-sans pointer-events-auto shadow-2xl p-6 sm:p-10"
           >
             <RootInfoModalHeader
-              title={`Konfirmasi ${selectedAction.label}`}
+              title={`${t('detail_negara_ai.province.confirmPrefix')} ${selectedAction.label}`}
               titleId="province-action-title"
               onClose={() => setSelectedAction(null)}
               size="compact"
             />
             <p className="text-sm text-[#B7D5CD] mb-6">
-              {selectedAction.description} Target: <strong>{targetCountry}</strong>.
+              {selectedAction.description} {t('detail_negara_ai.province.targetLabel')}: <strong>{targetCountry}</strong>.
             </p>
             <div className="flex gap-3 justify-end">
               <button
@@ -223,14 +225,14 @@ export default function ProvinsiActionGrid({
                 onClick={() => setSelectedAction(null)}
                 className="flex-1 rounded-lg border border-root-accent/30 px-4 py-2.5 text-xs font-black uppercase text-root-accent hover:bg-root-accent/10"
               >
-                Batal
+                {t('detail_negara_ai.common.cancel')}
               </button>
               <button
                 type="button"
                 onClick={() => confirmAction()}
                 className="flex-1 rounded-lg bg-root-accent px-4 py-2.5 text-xs font-black uppercase text-root-canvas hover:bg-[#00D991]"
               >
-                Konfirmasi
+                {t('detail_negara_ai.common.confirm')}
               </button>
             </div>
           </div>

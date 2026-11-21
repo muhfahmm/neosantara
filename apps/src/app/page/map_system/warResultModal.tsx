@@ -7,6 +7,7 @@ import NotebookModalWrapper from '../navigasi_menu/2_navigasi_bawah/NotebookModa
 import ModalCloseButton from '../root_modals_design_menu/ModalCloseButton';
 import RootInfoModalHeader from '../root_modals_design_menu/RootInfoModalHeader';
 import { AlertTriangle, Swords } from 'lucide-react';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 export interface WarUnitLoss {
     unitKey: string;
@@ -32,6 +33,7 @@ export default function ResultModal({
     compact = false,
     onClose,
 }: ResultModalProps) {
+    const { t } = useLanguage();
     if (typeof document === 'undefined' || !isOpen) return null;
 
     const isLosses = losses.length > 0;
@@ -59,9 +61,9 @@ export default function ResultModal({
                         </p>
 
                         {isLosses && (
-                            <section aria-label="Rincian kerugian alutsista" className="mt-5 border-t border-root-accent/15 pt-4">
+                            <section aria-label={t('game.warResultModal.lossesAria')} className="mt-5 border-t border-root-accent/15 pt-4">
                                 <h3 className="mb-3 text-xs sm:text-sm font-black uppercase tracking-wider text-root-accent">
-                                    Rincian Kerugian Alutsista
+                                    {t('game.warResultModal.lossesTitle')}
                                 </h3>
                                 <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                                     {losses.map((loss) => {
@@ -89,7 +91,7 @@ export default function ResultModal({
                             onClick={onClose}
                             appearance="custom"
                             className={`w-full rounded-xl border px-6 py-2 text-center text-[11px] font-black uppercase tracking-widest transition-all sm:w-auto sm:text-xs ${isError ? 'border-rose-500/50 bg-rose-500/20 text-rose-400 hover:bg-rose-500/30' : 'border-root-accent/30 bg-root-canvas text-root-text hover:bg-[#142A2A]'}`}
-                        >Tutup</ModalCloseButton>
+                        >{t('common.close')}</ModalCloseButton>
                     </div>
                 </div>
             </NotebookModalWrapper>
@@ -104,7 +106,7 @@ export default function ResultModal({
                 className={`relative flex h-full flex-col overflow-hidden rounded-xl border ${isError ? 'border-rose-500/40' : 'border-root-accent/20'} bg-root-canvas font-sans shadow-[0_0_30px_rgba(0,255,170,0.15)]`}
             >
                 <RootInfoModalHeader
-                    title={isError ? 'Laporan Kekalahan Pertempuran' : 'Laporan Hasil Pertempuran & Perang'}
+                    title={isError ? t('game.warResultModal.defeatTitle') : t('game.warResultModal.victoryTitle')}
                     titleId="result-modal-title"
                     onClose={onClose}
                     icon={isError ? <AlertTriangle /> : <Swords />}
@@ -123,9 +125,9 @@ export default function ResultModal({
                     </p>
 
                     {isLosses && (
-                        <section aria-label="Rincian kerugian alutsista" className="mt-5 lg:mt-6 pt-4 lg:pt-5 border-t border-root-accent/15">
+                        <section aria-label={t('game.warResultModal.lossesAria')} className="mt-5 lg:mt-6 pt-4 lg:pt-5 border-t border-root-accent/15">
                             <h4 className="mb-3 lg:mb-4 text-xs sm:text-sm lg:text-base font-black uppercase tracking-wider text-root-accent">
-                                Rincian Kerugian Alutsista
+                                {t('game.warResultModal.lossesTitle')}
                             </h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 lg:gap-3">
                                 {losses.map((loss) => {
@@ -170,7 +172,7 @@ export default function ResultModal({
                             : 'bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-[0_0_10px_rgba(0,255,170,0.2)]'
                         }`}
                      appearance="custom">
-                        Tutup
+                        {t('common.close')}
                     </SharedModalCloseButton>
                 </div>
             </div>

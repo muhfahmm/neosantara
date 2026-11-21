@@ -2,6 +2,7 @@
 
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import { CheckCircle2, XCircle } from 'lucide-react';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface IdeologyResultModalProps {
   targetCountry: string;
@@ -18,6 +19,7 @@ export default function IdeologyResultModal({
   message,
   onClose
 }: IdeologyResultModalProps) {
+  const { t } = useLanguage();
   const ResultIcon = succeeded ? CheckCircle2 : XCircle;
   const resultColor = succeeded ? 'text-root-accent' : 'text-red-400';
 
@@ -30,7 +32,7 @@ export default function IdeologyResultModal({
         className="modal-responsive-shell bg-root-surface border-2 sm:border-3 border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl"
       >
         <RootInfoModalHeader
-          title="Hasil Penanaman Ideologi"
+          title={t('detail_negara_ai.province.ideologyResultTitle')}
           titleId="ideology-result-header"
           onClose={onClose}
           icon={<ResultIcon />}
@@ -39,13 +41,13 @@ export default function IdeologyResultModal({
         <div className="flex-1 overflow-y-auto p-6 sm:p-10 text-center">
           <ResultIcon className={`mx-auto mb-3 h-12 w-12 ${resultColor}`} aria-hidden="true" />
           <h3 className={`mb-2 text-lg font-black uppercase ${resultColor}`}>
-            Ideologi {succeeded ? 'Berhasil' : 'Gagal'}
+            {t('detail_negara_ai.province.ideologyLabel')} {succeeded ? t('detail_negara_ai.province.succeeded') : t('detail_negara_ai.province.failed')}
           </h3>
           <p className="mb-4 text-sm text-[#B7D5CD]">
-            Hasil penanaman ideologi untuk <strong>{targetCountry}</strong>.
+            {t('detail_negara_ai.province.ideologyResultFor')} <strong>{targetCountry}</strong>.
           </p>
           <div className="mb-5 rounded-xl border border-white/10 bg-black/20 p-4">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#B7D5CD]">Peluang keberhasilan</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[#B7D5CD]">{t('detail_negara_ai.province.successChance')}</p>
             <p className="mt-1 text-2xl font-black text-root-accent">{successChance}%</p>
           </div>
           <p className="mb-6 text-sm text-white">{message}</p>
@@ -54,7 +56,7 @@ export default function IdeologyResultModal({
             onClick={onClose}
             className="w-full rounded-lg bg-root-accent px-4 py-3 text-xs font-black uppercase text-root-canvas transition-colors hover:bg-[#00D991]"
           >
-            Tutup
+            {t('detail_negara_ai.common.close')}
           </button>
         </div>
       </div>

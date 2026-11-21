@@ -9,5 +9,6 @@
   "close": "닫기",
   "error": "오류가 발생했습니다",
   "success": "성공",
-  "search": "검색..."
+  "search": "검색...",
+  "infoTitle": "{title} 정보"
 }

@@ -7,6 +7,7 @@ import { Heart, Coins, TrendingUp, AlertCircle, Sparkles, Plus, RotateCcw, Arrow
 import { getRelationValue, setRelationModifier } from "../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface TingkatkanHubunganModalProps {
 	isOpen: boolean;
@@ -25,6 +26,7 @@ export default function TingkatkanHubunganModal({
 	onClose,
 	onConfirm
 }: TingkatkanHubunganModalProps) {
+	const { t } = useLanguage();
 	const [inputAmount, setInputAmount] = useState<number>(10000);
 	const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
@@ -111,13 +113,13 @@ export default function TingkatkanHubunganModal({
 			<div className="flex h-full min-h-0 flex-col overflow-hidden bg-root-surface font-sans shadow-2xl">
 
 				<RootInfoModalHeader
-					title="Tingkatkan Hubungan Diplomatik"
+					title={t("detail_negara_ai.geopolitics.improveRelationTitle")}
 					onClose={onClose}
 					icon={<Heart />}
 					size="standard"
 					centerContent={
 						<p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
-							Negara Target: <span className="text-root-text font-bold">{targetCountryName}</span>
+							{t("detail_negara_ai.geopolitics.targetCountry")}: <span className="text-root-text font-bold">{targetCountryName}</span>
 						</p>
 					}
 				/>
@@ -131,7 +133,7 @@ export default function TingkatkanHubunganModal({
 						<div className="p-3 rounded-xl bg-root-canvas border border-root-accent/20 flex items-start gap-2.5">
 							<Sparkles className="h-4 w-4 text-root-accent shrink-0 mt-0.5" />
 							<p className="text-[11px] sm:text-xs text-root-text leading-relaxed">
-								Berikan bantuan <strong className="text-root-accent">NEO</strong> kepada <strong className="text-white">{targetCountryName}</strong>. Setiap <strong className="text-root-accent">10.000 NEO</strong> = <strong className="text-root-accent">+1 Tingkat</strong> hubungan.
+								{t("detail_negara_ai.geopolitics.giveAidPrefix")} <strong className="text-root-accent">NEO</strong> {t("detail_negara_ai.geopolitics.to")} <strong className="text-white">{targetCountryName}</strong>. {t("detail_negara_ai.geopolitics.every10kNeo")} <strong className="text-root-accent">10.000 NEO</strong> = <strong className="text-root-accent">+1 {t("detail_negara_ai.geopolitics.level")}</strong> {t("detail_negara_ai.geopolitics.relationLower")}.
 							</p>
 						</div>
 
@@ -139,7 +141,7 @@ export default function TingkatkanHubunganModal({
 						<div className="flex items-center justify-between bg-root-canvas p-3 rounded-xl border border-root-accent/20">
 							<span className="text-[11px] sm:text-xs text-root-subtle font-semibold flex items-center gap-2">
 								<Coins className="h-4 w-4 text-root-accent" />
-								Anggaran NEO Anda:
+								{t("detail_negara_ai.geopolitics.yourNeoBudget")}:
 							</span>
 							<span className="font-black text-root-accent text-sm">
 								{formatNEO(playerBudget)} NEO
@@ -150,7 +152,7 @@ export default function TingkatkanHubunganModal({
 					{/* Input Nominal NEO */}
 					<div className="shrink-0">
 						<label className="block text-[10px] sm:text-xs font-black text-root-accent uppercase tracking-wider mb-2">
-							Input Nominal Bantuan (NEO)
+							{t("detail_negara_ai.geopolitics.inputAidNominal")}
 						</label>
 						<div className="relative">
 							<input
@@ -159,7 +161,7 @@ export default function TingkatkanHubunganModal({
 								step={10000}
 								value={inputAmount || ""}
 								onChange={(e) => setInputAmount(Math.max(0, parseInt(e.target.value) || 0))}
-								placeholder="Masukkan nominal NEO (Kelipatan 10.000)"
+								placeholder={t("detail_negara_ai.geopolitics.inputAidPlaceholder")}
 								className="w-full bg-root-canvas border-2 border-root-accent/40 focus:border-root-accent rounded-xl py-2.5 px-4 text-base font-black text-root-accent outline-none transition placeholder-root-subtle/60"
 							/>
 							<span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-root-accent/60">
@@ -195,7 +197,7 @@ export default function TingkatkanHubunganModal({
 								onClick={handleSetMax}
 								className="py-1.5 px-2 bg-root-accent/20 hover:bg-root-accent/30 border border-root-accent/50 rounded-lg text-[11px] font-black text-root-accent transition-all cursor-pointer"
 							>
-								Maksimal
+								{t("detail_negara_ai.geopolitics.max")}
 							</button>
 						</div>
 					</div>
@@ -204,14 +206,14 @@ export default function TingkatkanHubunganModal({
 					{!isAllCountries ? (
 						<div className="bg-root-canvas p-3 sm:p-4 rounded-xl border border-root-accent/30 shrink-0">
 							<div className="text-[10px] sm:text-xs font-black text-root-subtle uppercase tracking-wider flex items-center justify-between mb-3">
-								<span>Kalkulasi Peningkatan Hubungan</span>
+								<span>{t("detail_negara_ai.geopolitics.relationCalcTitle")}</span>
 								<TrendingUp className="h-4 w-4 text-root-accent" />
 							</div>
 
 							<div className="flex items-center justify-between gap-3 bg-root-surface p-3 rounded-lg border border-root-accent/20">
 								{/* Current Level */}
 								<div className="text-center flex-1">
-									<span className="block text-[9px] sm:text-[10px] font-bold text-root-subtle uppercase">Saat Ini</span>
+									<span className="block text-[9px] sm:text-[10px] font-bold text-root-subtle uppercase">{t("detail_negara_ai.geopolitics.current")}</span>
 									<span className="text-lg sm:text-xl font-black text-root-text">{currentRelation}</span>
 									<div className="mt-1">
 										<span className={`inline-block px-3 py-0.5 rounded-md border font-black text-xs shadow-sm ${currentBadge.className}`}>
@@ -223,14 +225,14 @@ export default function TingkatkanHubunganModal({
 								{/* Arrow & Delta */}
 								<div className="flex flex-col items-center justify-center px-2">
 									<span className="text-[11px] font-black text-root-accent bg-root-accent/10 px-2 py-0.5 rounded border border-root-accent/30 mb-1 whitespace-nowrap">
-										+{actualGained} Tingkat
+										+{actualGained} {t("detail_negara_ai.geopolitics.level")}
 									</span>
 									<ArrowRight className="h-4 w-4 text-root-accent" />
 								</div>
 
 								{/* New Level */}
 								<div className="text-center flex-1">
-									<span className="block text-[9px] sm:text-[10px] font-bold text-root-subtle uppercase">Setelah Pemberian</span>
+									<span className="block text-[9px] sm:text-[10px] font-bold text-root-subtle uppercase">{t("detail_negara_ai.geopolitics.afterGiving")}</span>
 									<span className="text-lg sm:text-xl font-black text-root-accent">{newRelation}</span>
 									<div className="mt-1">
 										<span className={`inline-block px-3 py-0.5 rounded-md border font-black text-xs shadow-sm ${newBadge.className}`}>
@@ -269,21 +271,21 @@ export default function TingkatkanHubunganModal({
 					{isInsufficientBudget && (
 						<div className="p-2.5 sm:p-3 bg-root-modal-negative-bg border border-root-modal-negative/40 rounded-xl text-root-modal-negative text-[11px] sm:text-xs flex items-center gap-2 shrink-0">
 							<AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
-							<span>Anggaran NEO Anda tidak mencukupi (Tersedia: {formatNEO(playerBudget)} NEO).</span>
+							<span>{t("detail_negara_ai.geopolitics.insufficientNeoBudget")} ({t("detail_negara_ai.geopolitics.available")}: {formatNEO(playerBudget)} NEO).</span>
 						</div>
 					)}
 
 					{isLessThanMin && (
 						<div className="p-2.5 sm:p-3 bg-root-modal-warning-bg border border-root-modal-warning/40 rounded-xl text-root-modal-warning text-[11px] sm:text-xs flex items-center gap-2 shrink-0">
 							<AlertCircle className="h-4 w-4 shrink-0 text-amber-400" />
-							<span>Minimal pemberian bantuan adalah 10.000 NEO untuk 1 tingkat hubungan.</span>
+							<span>{t("detail_negara_ai.geopolitics.minAidWarning")}</span>
 						</div>
 					)}
 
 					{isMaxRelation && (
 						<div className="p-2.5 sm:p-3 bg-root-modal-positive-bg border border-root-modal-positive-border rounded-xl text-root-modal-positive text-[11px] sm:text-xs flex items-center gap-2 shrink-0">
 							<CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
-							<span>Tingkat hubungan dengan negara ini sudah mencapai nilai maksimum (100).</span>
+							<span>{t("detail_negara_ai.geopolitics.maxRelationReached")}</span>
 						</div>
 					)}
 
@@ -299,7 +301,7 @@ export default function TingkatkanHubunganModal({
 							onClick={onClose}
 							className="flex-1 bg-root-surface hover:bg-root-accent/10 border border-root-accent/30 hover:border-root-accent rounded-xl py-2.5 sm:py-3 text-center text-root-text font-extrabold text-xs tracking-wider uppercase transition-all cursor-pointer"
 						>
-							Batal
+							{t("detail_negara_ai.common.cancel")}
 						</button>
 						<button
 							type="button"
@@ -311,7 +313,7 @@ export default function TingkatkanHubunganModal({
 								}`}
 						>
 							<Heart className="h-4 w-4" />
-							Tingkatkan (+{actualGained})
+							{t("detail_negara_ai.geopolitics.improve")} (+{actualGained})
 						</button>
 					</div>
 				</div>

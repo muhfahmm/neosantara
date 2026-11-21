@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Skull, RotateCcw, Globe, Crown, Flame, Swords } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 export type KudetaType = "peringkat" | "kepuasan" | "kesejahteraan";
 
@@ -55,6 +56,7 @@ const kudetaContent: Record<KudetaType, {
 
 export default function ModalsKudeta({ isOpen, kudetaType, currentValue, countryName, onRestart }: ModalsKudetaProps) {
     const router = useRouter();
+    const { t } = useLanguage();
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
@@ -105,13 +107,13 @@ export default function ModalsKudeta({ isOpen, kudetaType, currentValue, country
                 {/* Outer dark frame */}
                 <div className="modal-responsive-shell bg-[#0e0808] border-4 border-red-900/80 rounded-2xl shadow-2xl shadow-red-900/40 overflow-hidden">
                     <RootInfoModalHeader
-                        title={content.title}
+                        title={t(`game.coupModal.${kudetaType}.title`)}
                         titleId="coup-game-over-title"
                         icon={<Skull />}
                         size="standard"
                         actions={
                             <span className="text-[10px] font-black uppercase tracking-wider text-red-300/70">
-                                Game Over · {content.subtitle}
+                                {t('game.annexedModal.gameOver')} · {t(`game.coupModal.${kudetaType}.subtitle`)}
                             </span>
                         }
                     />
@@ -122,11 +124,11 @@ export default function ModalsKudeta({ isOpen, kudetaType, currentValue, country
                         {/* Country & Value badge */}
                         <div className="flex items-center justify-between bg-red-50 border border-red-200 rounded-xl px-4 py-3">
                             <div>
-                                <p className="text-[10px] font-black text-red-400 uppercase tracking-widest">Negara</p>
+                                <p className="text-[10px] font-black text-red-400 uppercase tracking-widest">{t('game.coupModal.country')}</p>
                                 <p className="text-sm font-black text-slate-800">{countryName || "—"}</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-[10px] font-black text-red-400 uppercase tracking-widest">{content.valueLabel}</p>
+                                <p className="text-[10px] font-black text-red-400 uppercase tracking-widest">{t(`game.coupModal.${kudetaType}.valueLabel`)}</p>
                                 <p className={`text-2xl font-black ${content.accentColor}`}>{currentValue}<span className="text-sm text-slate-400">/100</span></p>
                             </div>
                         </div>
@@ -134,14 +136,14 @@ export default function ModalsKudeta({ isOpen, kudetaType, currentValue, country
                         {/* Description */}
                         <div className="bg-white/60 border border-slate-200/60 rounded-xl p-4">
                             <p className="text-[12px] font-medium text-slate-700 leading-relaxed text-center">
-                                {content.desc}
+                                {t(`game.coupModal.${kudetaType}.desc`)}
                             </p>
                         </div>
 
                         {/* Divider */}
                         <div className="flex items-center gap-2">
                             <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-red-300/50" />
-                            <span className="text-[9px] font-black text-red-400/60 uppercase tracking-widest">Pilih Tindakan</span>
+                            <span className="text-[9px] font-black text-red-400/60 uppercase tracking-widest">{t('game.coupModal.chooseAction')}</span>
                             <div className="flex-1 h-[1px] bg-gradient-to-l from-transparent to-red-300/50" />
                         </div>
 
@@ -153,7 +155,7 @@ export default function ModalsKudeta({ isOpen, kudetaType, currentValue, country
                                 className="w-full flex items-center justify-center gap-2.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 border border-slate-600 rounded-xl py-3.5 text-[#FAF6EE] font-black text-[11px] tracking-widest uppercase transition-all duration-150 cursor-pointer shadow-lg hover:shadow-xl active:scale-[0.98] group"
                             >
                                 <RotateCcw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
-                                Restart — Negara yang Sama
+                                {t('game.coupModal.restartSameCountry')}
                             </button>
 
                             {/* Choose different country */}
@@ -162,13 +164,13 @@ export default function ModalsKudeta({ isOpen, kudetaType, currentValue, country
                                 className="w-full flex items-center justify-center gap-2.5 bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 active:from-red-800 border border-red-500 rounded-xl py-3.5 text-[#FAF6EE] font-black text-[11px] tracking-widest uppercase transition-all duration-150 cursor-pointer shadow-lg hover:shadow-xl active:scale-[0.98] group"
                             >
                                 <Globe className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
-                                Mulai dengan Negara Berbeda
+                                {t('game.coupModal.startDifferentCountry')}
                             </button>
                         </div>
 
                         {/* Fine print */}
                         <p className="text-center text-[9px] text-slate-400 font-medium">
-                            Restart akan menghapus semua progres negara ini dan memulai ulang dari data default.
+                            {t('game.coupModal.finePrint')}
                         </p>
                     </div>
                 </div>

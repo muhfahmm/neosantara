@@ -51,5 +51,12 @@
     "moneyPath": "資金ルート（NEO）",
     "commodityGiftPath": "資源贈呈ルート",
     "allCountries": "すべての国"
+  },
+  "humanitarianAid": {
+    "title": "人道支援プログラム",
+    "inDevelopmentLine1": "開発",
+    "inDevelopmentLine2": "進行中",
+    "description": "国際人道支援配送システムは現在構築中です。人道的な評判と影響力を強化するため、今後のアップデートにご期待ください。",
+    "comingSoon": "近日公開"
   }
 }

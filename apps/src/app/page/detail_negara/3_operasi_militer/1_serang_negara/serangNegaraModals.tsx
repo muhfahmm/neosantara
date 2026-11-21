@@ -6,6 +6,7 @@ import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import KonfirmasiPeluncuranSerangan from "./konfirmasi_peluncuran_serangan";
 import KonfirmasiSerangModals from "@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/KonfirmasiSerangModals";
 import { areSameWarCountry, getWarCountryIdentity } from './warCountryIdentity';
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 import { getArmadaPowerSummary } from "@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic";
 import { applyWarLossesToUserArmada } from './war_algoritm/battleEngine';
@@ -50,6 +51,7 @@ export default function SerangNegaraModal({
 	onPlayerAttackBlocked,
 	updatePlayerCountryDetail,
 }: SerangNegaraModalProps) {
+	const { t } = useLanguage();
 	const [isLaunchConfirmationOpen, setIsLaunchConfirmationOpen] = useState(false);
 	const [blockedAttackReason, setBlockedAttackReason] = useState<'pact' | 'self' | null>(null);
 	const attackFuelTripIdRef = useRef<string | null>(null);
@@ -91,7 +93,7 @@ export default function SerangNegaraModal({
 			<div className="fixed inset-0 z-[100] flex items-center justify-center  p-4" role="alertdialog" aria-modal="true" aria-labelledby="attack-block-title">
 				<div className="modal-responsive-shell overflow-y-auto rounded-2xl border border-root-accent/30 bg-root-surface text-white shadow-2xl">
 					<RootInfoModalHeader
-						title="Serangan Tidak Dapat Dilakukan"
+						title={t("detail_negara_ai.military.attackBlockedTitle")}
 						titleId="attack-block-title"
 						onClose={() => setBlockedAttackReason(null)}
 						icon={<ShieldAlert />}
@@ -100,14 +102,14 @@ export default function SerangNegaraModal({
 					<div className="space-y-5 p-5 sm:p-6">
 						<p className="text-sm leading-relaxed text-root-text">
 							{isSelfAttack
-								? <>Target <strong className="text-white">{countryName}</strong> adalah negara Anda sendiri. Negara tidak dapat melancarkan serangan terhadap dirinya sendiri.</>
-								: <>Anda tidak dapat menyerang <strong className="text-white">{countryName}</strong> karena negara tersebut masih terikat <strong className="text-amber-300">Pakta Non-Agresi</strong> dengan negara Anda.</>}
+								? <>{t("detail_negara_ai.military.selfAttackPrefix")} <strong className="text-white">{countryName}</strong> {t("detail_negara_ai.military.selfAttackSuffix")}</>
+								: <>{t("detail_negara_ai.military.pactAttackPrefix")} <strong className="text-white">{countryName}</strong> {t("detail_negara_ai.military.pactAttackMid")} <strong className="text-amber-300">{t("detail_negara_ai.actions.nonAggressionPact")}</strong> {t("detail_negara_ai.military.pactAttackSuffix")}</>}
 						</p>
 						{!isSelfAttack && <p className="text-xs leading-relaxed text-root-subtle">
-							Putus pakta non-agresi terlebih dahulu melalui menu Detail Negara sebelum melancarkan serangan.
+							{t("detail_negara_ai.military.pactAttackNote")}
 						</p>}
 						<button type="button" onClick={() => setBlockedAttackReason(null)} className="w-full rounded-xl bg-amber-500 py-3 text-sm font-black uppercase tracking-wider text-root-canvas transition-colors hover:bg-amber-400">
-							Mengerti
+							{t("detail_negara_ai.embassy.understood")}
 						</button>
 					</div>
 				</div>

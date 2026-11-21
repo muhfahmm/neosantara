@@ -2,6 +2,7 @@
 import React from "react";
 import BuildingRequirementCard from "./BuildingRequirementCard";
 import { MaterialRequirement } from "./MaterialRequirementsDisplay";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 export interface BuildingWithRequirements {
   buildingKey: string;
@@ -31,10 +32,11 @@ export default function MaterialRequirementsGrid({
   highlightKeys,
   gridCols = 3,
 }: MaterialRequirementsGridProps) {
+  const { t } = useLanguage();
   if (!buildings || buildings.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-sm text-[#8b7e66]">Tidak ada building tersedia</p>
+        <p className="text-sm text-[#8b7e66]">{t("navigation_military_menu.constructionSupport.noBuildingsAvailable")}</p>
       </div>
     );
   }

@@ -1,12 +1,17 @@
 {
   "title": "Kontrol Harga Barang Pokok",
   "monthUnit": "bulan",
-  "tabs": { "essentials": "Harga Kebutuhan", "subsidyPolicy": "Kebijakan Subsidi" },
+  "tabs": {
+    "essentials": "Harga Kebutuhan",
+    "subsidyPolicy": "Kebijakan Subsidi"
+  },
   "subsidy": {
     "title": "Alokasi & Kebijakan Subsidi",
     "infoButton": "Informasi alokasi dan kebijakan subsidi",
     "confirm": "Konfirmasi",
-    "categories": { "all": "Semua Sektor" },
+    "categories": {
+      "all": "Semua Sektor"
+    },
     "summary": {
       "totalBudget": "Total Beban Anggaran Subsidi",
       "activeSectors": "Sektor Aktif / Total",
@@ -65,5 +70,21 @@
     "noChanges": "Belum ada perubahan harga. Konfirmasi untuk kembali ke forum dialog.",
     "back": "Kembali",
     "yes": "Ya, konfirmasi"
+  },
+  "subsidyDetail": {
+    "title": "Rincian Kebijakan Subsidi",
+    "sectorBadge": "SEKTOR {category}",
+    "policyDescription": "Deskripsi Kebijakan",
+    "budgetCost": "Beban Anggaran",
+    "approvalBonus": "Bonus Kepuasan",
+    "approvalUnit": "Approval",
+    "inflationReduction": "Reduksi Inflasi",
+    "inflationUnit": "Inflasi",
+    "revocationRisk": "Risiko Cabut",
+    "currentAllocationStatus": "Status Alokasi Saat Ini",
+    "statusActive": "✓ Subsidi Aktif",
+    "statusInactive": "✗ Non-Aktif",
+    "revokeSubsidy": "Cabut Subsidi",
+    "activateSubsidy": "Aktifkan Subsidi"
   }
 }

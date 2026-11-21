@@ -9,5 +9,6 @@
   "close": "إغلاق",
   "error": "حدث خطأ",
   "success": "تم بنجاح",
-  "search": "بحث..."
+  "search": "بحث...",
+  "infoTitle": "معلومات {title}"
 }

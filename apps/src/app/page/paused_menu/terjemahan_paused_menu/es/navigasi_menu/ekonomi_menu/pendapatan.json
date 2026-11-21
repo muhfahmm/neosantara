@@ -40,7 +40,11 @@
     "netGdp": "PIB neto",
     "rowBreakdown": "Ingresos totales: {totalIncome} NEO (impuestos: {tax} + oro: {gold} + comercio: {commercial} + turismo: {tourism}) − gastos totales: {totalOutcome} NEO = neto: {net} NEO"
   },
-  "tabs": { "summary": "Resumen del PIB", "income": "Ingresos", "outcome": "Gastos" },
+  "tabs": {
+    "summary": "Resumen del PIB",
+    "income": "Ingresos",
+    "outcome": "Gastos"
+  },
   "summary": {
     "detailTitle": "Flujo del saldo y del PIB nacional",
     "incomeTitle": "Desglose de ingresos (ingresos nacionales)",
@@ -186,5 +190,19 @@
       "pension": "Programa público de pensiones",
       "disaster": "Fondo de ayuda de emergencia por desastres"
     }
+  },
+  "globalFinancial": {
+    "title": "Presupuestos Nacionales de Todos los Países",
+    "searchPlaceholder": "Buscar país / continente...",
+    "loading": "Cargando datos de todos los países...",
+    "noCountryData": "No hay datos de países.",
+    "noSearchResults": "No hay datos que coincidan con \"{query}\".",
+    "colCountryName": "Nombre del País",
+    "colContinent": "Continente",
+    "colTotalTax": "Impuestos Totales",
+    "colGoldBuildings": "Edificios de Oro",
+    "colGoldProduction": "Producción de Oro",
+    "colExpenses": "Gastos",
+    "colDailyNetBalance": "Balance Neto Diario"
   }
 }

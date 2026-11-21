@@ -74,6 +74,9 @@ import idGeopoliticsRelations from './id/navigasi_menu/geopolitik_menu/tingkat_h
 import idSosialBudayaAgama from './id/navigasi_menu/sosial_budaya/agama/agama.json';
 import idSosialBudayaIdeologi from './id/navigasi_menu/sosial_budaya/ideologi/ideologi.json';
 import idSosialBudayaDoktrin from './id/navigasi_menu/sosial_budaya/doktrin_keterbukaan/doktrin_keterbukaan.json';
+import idMenuUtama from './id/menu_utama.json';
+import idPilihNegara from './id/pilih_negara.json';
+import idTutorial from './id/tutorial/tutorial.json';
 
 const ID_DICTIONARY: LanguageDictionary = {
   common: idCommon,
@@ -129,6 +132,9 @@ const ID_DICTIONARY: LanguageDictionary = {
   nav_sosial_budaya_agama: idSosialBudayaAgama,
   nav_sosial_budaya_ideologi: idSosialBudayaIdeologi,
   nav_sosial_budaya_doktrin: idSosialBudayaDoktrin,
+  menu_utama: idMenuUtama,
+  pilih_negara: idPilihNegara,
+  tutorial: idTutorial,
 };
 
 const STORAGE_KEY = 'app_language';
@@ -219,6 +225,9 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     sosialBudayaAgama,
     sosialBudayaIdeologi,
     sosialBudayaDoktrin,
+    menuUtama,
+    pilihNegara,
+    tutorial,
   ] = await Promise.all([
     import(`./${code}/common.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navbar/navbar.json`).then((m) => m.default).catch(() => ({})),
@@ -269,6 +278,9 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     import(`./${code}/navigasi_menu/sosial_budaya/agama/agama.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navigasi_menu/sosial_budaya/ideologi/ideologi.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navigasi_menu/sosial_budaya/doktrin_keterbukaan/doktrin_keterbukaan.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/menu_utama.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/pilih_negara.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/tutorial/tutorial.json`).then((m) => m.default).catch(() => ({})),
   ]);
 
   return {
@@ -325,6 +337,9 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     nav_sosial_budaya_agama: sosialBudayaAgama,
     nav_sosial_budaya_ideologi: sosialBudayaIdeologi,
     nav_sosial_budaya_doktrin: sosialBudayaDoktrin,
+    menu_utama: menuUtama,
+    pilih_negara: pilihNegara,
+    tutorial,
   };
 }
 

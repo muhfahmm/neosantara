@@ -25,6 +25,7 @@ import { getArmadaPowerSummary } from '@/app/page/navigasi_menu/2_navigasi_bawah
 import { convertBarakToSoldiers } from '@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/1_barak_logic';
 import { getInfraCapacityDetails } from '@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/infraCapacityHelper';
 import { setRelationModifier } from '../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface BeriTentaraModalProps {
   isOpen: boolean;
@@ -119,6 +120,7 @@ export default function BeriTentaraModal({
   onClose,
   onConfirm,
 }: BeriTentaraModalProps) {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<ArmadaMatra>('darat');
   // State jumlah pengiriman per unit (key: unit.key)
   const [giftAmounts, setGiftAmounts] = useState<Record<string, number>>({});
@@ -375,7 +377,7 @@ export default function BeriTentaraModal({
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.05)_0%,transparent_100%)] pointer-events-none" />
 
         <RootInfoModalHeader
-          title="Beri Bantuan Pasukan Militer"
+          title={t("detail_negara_ai.geopolitics.giveTroopsTitle")}
           titleId="troop-transfer-title"
           onClose={onClose}
           icon={<Sword />}
@@ -383,7 +385,7 @@ export default function BeriTentaraModal({
           centerContent={
             <div className="flex min-w-0 items-center gap-2 text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-accent">
               <ArrowRight className="h-4 w-4 shrink-0" />
-              <span className="truncate">Sekutu: {targetName}</span>
+              <span className="truncate">{t("detail_negara_ai.geopolitics.ally")}: {targetName}</span>
             </div>
           }
         />
@@ -397,7 +399,7 @@ export default function BeriTentaraModal({
             </div>
             <div className="flex flex-col">
               <span className="text-[10px] font-black uppercase tracking-wider text-root-subtle">
-                Power Militer {playerName} (Anda)
+                {t("detail_negara_ai.geopolitics.militaryPower")} {playerName} ({t("detail_negara_ai.geopolitics.you")})
               </span>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-black text-root-accent font-mono">
@@ -415,7 +417,7 @@ export default function BeriTentaraModal({
 
           {/* Indicator Panah Transfer */}
           <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-root-surface border border-root-accent/30 text-xs font-bold text-root-accent">
-            <span>Transfer Bantuan</span>
+            <span>{t("detail_negara_ai.geopolitics.transferAid")}</span>
             <ArrowRight className="w-4 h-4 text-root-accent" />
           </div>
 
@@ -423,7 +425,7 @@ export default function BeriTentaraModal({
           <div className="flex items-center gap-3 w-full md:w-auto justify-start md:justify-end">
             <div className="flex flex-col items-start md:items-end">
               <span className="text-[10px] font-black uppercase tracking-wider text-root-subtle">
-                Power Militer {targetName} (Sekutu)
+                {t("detail_negara_ai.geopolitics.militaryPower")} {targetName} ({t("detail_negara_ai.geopolitics.ally")})
               </span>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-black text-[#FFD700] font-mono">
@@ -448,7 +450,7 @@ export default function BeriTentaraModal({
           {(['darat', 'laut', 'udara'] as ArmadaMatra[]).map((matra) => {
             const isActive = activeTab === matra;
             const Icon = matra === 'darat' ? Sword : matra === 'laut' ? Ship : Plane;
-            const label = matra === 'darat' ? 'Angkatan Darat' : matra === 'laut' ? 'Angkatan Laut' : 'Angkatan Udara';
+            const label = matra === 'darat' ? t("detail_negara_ai.geopolitics.army") : matra === 'laut' ? t("detail_negara_ai.geopolitics.navy") : t("detail_negara_ai.geopolitics.airForce");
 
             // Hitung unit yang dipilih di matra ini
             const matraGiftCount = UNIT_CATALOG[matra].reduce((acc, u) => acc + (giftAmounts[u.key] || 0), 0);
@@ -637,7 +639,7 @@ export default function BeriTentaraModal({
           <div className="flex items-center gap-2 text-xs text-root-subtle">
             <Info className="w-4 h-4 text-root-accent shrink-0" />
             <span>
-              Total unit yang akan dikirim: <strong className="text-root-accent">{formatNumber(totalUnitsToGift)} unit</strong>
+              {t("detail_negara_ai.geopolitics.totalUnitsToSend")}: <strong className="text-root-accent">{formatNumber(totalUnitsToGift)} {t("detail_negara_ai.geopolitics.unitLower")}</strong>
             </span>
           </div>
 
@@ -647,7 +649,7 @@ export default function BeriTentaraModal({
               disabled={isSubmitting}
               className="flex-1 sm:flex-initial px-6 py-2.5 bg-root-surface hover:bg-[#163535] border border-root-accent/30 rounded-xl text-center text-root-text font-black text-xs tracking-wider uppercase transition-all cursor-pointer"
             >
-              Batal
+              {t("detail_negara_ai.common.cancel")}
             </button>
 
             <button
@@ -656,11 +658,11 @@ export default function BeriTentaraModal({
               className="flex-1 sm:flex-initial px-6 py-2.5 bg-root-accent hover:bg-[#00e699] disabled:opacity-30 disabled:pointer-events-none border border-root-accent rounded-xl text-center text-root-canvas font-black text-xs tracking-wider uppercase transition-all cursor-pointer shadow-md flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
-                <span>Memproses...</span>
+                <span>{t("detail_negara_ai.geopolitics.processing")}</span>
               ) : (
                 <>
                   <Sword className="w-4 h-4" />
-                  <span>Kirim Pasukan</span>
+                  <span>{t("detail_negara_ai.actions.sendTroops")}</span>
                 </>
               )}
             </button>

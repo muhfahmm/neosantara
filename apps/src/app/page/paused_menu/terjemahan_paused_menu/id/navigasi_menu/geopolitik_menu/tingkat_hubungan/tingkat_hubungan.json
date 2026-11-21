@@ -51,5 +51,12 @@
     "moneyPath": "Jalur Uang (NEO)",
     "commodityGiftPath": "Jalur Hadiah Komoditas",
     "allCountries": "Semua Negara"
+  },
+  "humanitarianAid": {
+    "title": "Program Bantuan Kemanusiaan",
+    "inDevelopmentLine1": "Dalam",
+    "inDevelopmentLine2": "Pengembangan",
+    "description": "Sistem pengiriman bantuan kemanusiaan internasional sedang dalam tahap pembangunan. Pantau terus perkembangannya untuk memperkuat reputasi dan hegemoni kemanusiaan Anda.",
+    "comingSoon": "Segera Hadir"
   }
 }

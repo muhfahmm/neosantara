@@ -21,6 +21,7 @@ import { getMaterialStock } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pe
 import { getRelationValue, setRelationModifier } from "../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 const CATEGORY_MAP: Record<string, string[]> = {
   "Mineral & Energi": ["uranium", "batu_bara", "minyak_bumi", "gas_alam", "garam", "litium", "logam_tanah_jarang", "bijih_besi"],
@@ -66,6 +67,7 @@ export default function BeriHadiahModal({
   onClose,
   onConfirm
 }: BeriHadiahModalProps) {
+  const { t } = useLanguage();
   const effectiveSetPlayerCountryDetail = setPlayerCountryDetail || setCountryDetail;
   const [selectedProduct, setSelectedProduct] = useState<string>("padi");
   const [quantity, setQuantity] = useState<number>(100);
@@ -188,13 +190,13 @@ export default function BeriHadiahModal({
       <NotebookModalWrapper onClose={onClose}>
         <div className="flex h-full min-h-0 flex-col overflow-hidden bg-root-surface font-sans shadow-2xl">
           <RootInfoModalHeader
-            title="Beri Hadiah Komoditas"
+            title={t("detail_negara_ai.geopolitics.giveGiftTitle")}
             onClose={onClose}
             icon={<Gift />}
             size="standard"
             centerContent={
               <p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
-                Negara Penerima: <span className="text-root-text font-bold">{targetCountryName}</span>
+                {t("detail_negara_ai.geopolitics.recipientCountry")}: <span className="text-root-text font-bold">{targetCountryName}</span>
               </p>
             }
           />
@@ -206,17 +208,17 @@ export default function BeriHadiahModal({
               <div className="p-3 rounded-xl bg-root-canvas border border-root-accent/20 flex items-start gap-2.5">
                 <Sparkles className="h-4 w-4 text-root-accent shrink-0 mt-0.5" />
                 <p className="text-[11px] sm:text-xs text-root-text leading-relaxed">
-                  Kirim bantuan komoditas ke <strong className="text-white">{targetCountryName}</strong>. Setiap setara <strong className="text-root-accent">10.000 Nilai Komoditas</strong> akan menaikkan <strong className="text-root-accent">+1 Tingkat Hubungan</strong>.
+                  {t("detail_negara_ai.geopolitics.sendCommodityAidPrefix")} <strong className="text-white">{targetCountryName}</strong>. {t("detail_negara_ai.geopolitics.every10kValue")} <strong className="text-root-accent">10.000 {t("detail_negara_ai.geopolitics.commodityValue")}</strong> {t("detail_negara_ai.geopolitics.willIncrease")} <strong className="text-root-accent">+1 {t("detail_negara_ai.geopolitics.relationLevel")}</strong>.
                 </p>
               </div>
 
               <div className="flex items-center justify-between bg-root-canvas p-3 rounded-xl border border-root-accent/20">
                 <span className="text-[11px] sm:text-xs text-root-subtle font-semibold flex items-center gap-2">
                   <Package className="h-4 w-4 text-root-accent" />
-                  Stok Komoditas Tersedia:
+                  {t("detail_negara_ai.geopolitics.availableCommodityStock")}:
                 </span>
                 <span className={`font-black text-sm ${stockAvailable > 0 ? "text-root-accent" : "text-rose-400"}`}>
-                  {stockAvailable.toLocaleString("id-ID", { maximumFractionDigits: 2 })} Unit
+                  {stockAvailable.toLocaleString("id-ID", { maximumFractionDigits: 2 })} {t("detail_negara_ai.geopolitics.unit")}
                 </span>
               </div>
             </div>
@@ -226,7 +228,7 @@ export default function BeriHadiahModal({
               {/* Button Pemilih Produk */}
               <div>
                 <label className="block text-[10px] sm:text-xs font-black text-root-accent uppercase tracking-wider mb-2">
-                  Pilih Produk Komoditas
+                  {t("detail_negara_ai.geopolitics.selectCommodityProduct")}
                 </label>
                 <button
                   type="button"
@@ -246,7 +248,7 @@ export default function BeriHadiahModal({
               {/* Input Kuantitas Hadiah */}
               <div>
                 <label className="block text-[10px] sm:text-xs font-black text-root-accent uppercase tracking-wider mb-2">
-                  Jumlah Komoditas (Unit)
+                  {t("detail_negara_ai.geopolitics.commodityAmount")}
                 </label>
                 <div className="flex h-11 w-full min-w-0 items-center gap-1.5 rounded-xl border border-root-accent/40 bg-root-canvas px-2 sm:gap-2 sm:px-3">
                   <input
@@ -257,7 +259,7 @@ export default function BeriHadiahModal({
                     className="w-0 min-w-0 flex-1 bg-transparent text-sm font-sans font-black text-root-text outline-none placeholder-root-subtle"
                     placeholder="0"
                   />
-                  <span className="mr-1 shrink-0 text-xs font-bold text-root-subtle">Unit</span>
+                  <span className="mr-1 shrink-0 text-xs font-bold text-root-subtle">{t("detail_negara_ai.geopolitics.unit")}</span>
                   <div className="flex shrink-0 gap-1">
                     <button
                       type="button"
@@ -366,14 +368,14 @@ export default function BeriHadiahModal({
             {isInsufficientStock && (
               <div className="p-2.5 sm:p-3 bg-root-modal-negative-bg border border-root-modal-negative/40 rounded-xl text-root-modal-negative text-[11px] sm:text-xs flex items-center gap-2 shrink-0">
                 <AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
-                <span>Stok komoditas Anda tidak mencukupi (Tersedia: {stockAvailable.toLocaleString("id-ID", { maximumFractionDigits: 2 })} unit).</span>
+                <span>{t("detail_negara_ai.geopolitics.insufficientCommodityStock")} ({t("detail_negara_ai.geopolitics.available")}: {stockAvailable.toLocaleString("id-ID", { maximumFractionDigits: 2 })} {t("detail_negara_ai.geopolitics.unit")}).</span>
               </div>
             )}
 
             {isMaxRelation && (
               <div className="p-2.5 sm:p-3 bg-root-modal-positive-bg border border-root-modal-positive-border rounded-xl text-root-modal-positive text-[11px] sm:text-xs flex items-center gap-2 shrink-0">
                 <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
-                <span>Tingkat hubungan dengan negara ini sudah mencapai nilai maksimum (100).</span>
+                <span>{t("detail_negara_ai.geopolitics.maxRelationReached")}</span>
               </div>
             )}
 
@@ -389,7 +391,7 @@ export default function BeriHadiahModal({
                 onClick={onClose}
                 className="flex-1 bg-root-surface hover:bg-root-accent/10 border border-root-accent/30 hover:border-root-accent rounded-xl py-2.5 sm:py-3 text-center text-root-text font-extrabold text-xs tracking-wider uppercase transition-all cursor-pointer"
               >
-                Batal
+                {t("detail_negara_ai.common.cancel")}
               </button>
               <button
                 type="button"
@@ -401,7 +403,7 @@ export default function BeriHadiahModal({
                   }`}
               >
                 <Gift className="h-4 w-4" />
-                Berikan Hadiah (+{actualGained})
+                {t("detail_negara_ai.geopolitics.giveGift")} (+{actualGained})
               </button>
             </div>
           </div>
@@ -412,7 +414,7 @@ export default function BeriHadiahModal({
       <PilihItemModal
         isOpen={isProductPickerOpen}
         onClose={() => setIsProductPickerOpen(false)}
-        title="Pilih Produk Komoditas"
+        title={t("detail_negara_ai.geopolitics.selectCommodityProduct")}
         data={groupedProductItems}
         selectedValue={selectedProduct}
         onSelect={(val) => setSelectedProduct(val)}

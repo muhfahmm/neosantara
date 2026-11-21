@@ -37,6 +37,8 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getLocalizedCountryName } from '@/app/logic/countryNameLogic';
 import { COUNTRIES_DATA, CAPITALS_DATA } from '../map-data';
 import { countryPaths } from '../mapDataAssets';
 import {
@@ -100,6 +102,7 @@ const getFlagEmoji = (iso: string) => {
 // =================================================
 
 export default function PilihNegaraPage() {
+  const { t, language } = useLanguage();
   const router = useRouter();
   const countries = useMemo(
     () =>
@@ -130,16 +133,16 @@ export default function PilihNegaraPage() {
 
   // Mapping sumber daya alam yang tersedia di database_SDA
   const resourceMap = useMemo(() => [
-    { key: 'emas', icon: Gem, label: 'Emas' },
-    { key: 'minyak_bumi', icon: Droplet, label: 'Minyak Bumi' },
-    { key: 'gas_alam', icon: Flame, label: 'Gas Alam' },
-    { key: 'batu_bara', icon: Mountain, label: 'Batu Bara' },
-    { key: 'uranium', icon: Radiation, label: 'Uranium' },
-    { key: 'bijih_besi', icon: Hammer, label: 'Bijih Besi' },
-    { key: 'garam', icon: Cable, label: 'Garam' },
-    { key: 'litium', icon: Battery, label: 'Litium' },
-    { key: 'logam_tanah_jarang', icon: Sparkles, label: 'Logam Tanah Jarang' },
-  ], []);
+    { key: 'emas', icon: Gem, label: t('pilih_negara.resource_gold') },
+    { key: 'minyak_bumi', icon: Droplet, label: t('pilih_negara.resource_oil') },
+    { key: 'gas_alam', icon: Flame, label: t('pilih_negara.resource_natural_gas') },
+    { key: 'batu_bara', icon: Mountain, label: t('pilih_negara.resource_coal') },
+    { key: 'uranium', icon: Radiation, label: t('pilih_negara.resource_uranium') },
+    { key: 'bijih_besi', icon: Hammer, label: t('pilih_negara.resource_iron_ore') },
+    { key: 'garam', icon: Cable, label: t('pilih_negara.resource_salt') },
+    { key: 'litium', icon: Battery, label: t('pilih_negara.resource_lithium') },
+    { key: 'logam_tanah_jarang', icon: Sparkles, label: t('pilih_negara.resource_rare_earth') },
+  ], [t]);
 
   // Gunakan sdaData sebagai sumber ketersediaan SDA
   const getCurrentSDA = sdaData;
@@ -251,6 +254,7 @@ export default function PilihNegaraPage() {
       countries.filter(
         (c) =>
           c.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          getLocalizedCountryName(c.iso || c.country, language).toLowerCase().includes(searchQuery.toLowerCase()) ||
           c.capital.toLowerCase().includes(searchQuery.toLowerCase())
       ),
     [countries, searchQuery]
@@ -411,23 +415,23 @@ export default function PilihNegaraPage() {
           <div className="flex items-center gap-1.5 lg:gap-3 xl:gap-6 shrink-0">
             <StatusItem
               icon={<MapPin className="w-3 h-3 xl:w-3.5 xl:h-3.5 text-root-accent" />}
-              label="IBUKOTA"
+              label={t('pilih_negara.capital')}
               value={hasInteracted && filteredCountries[currentIndex] ? (filteredCountries[currentIndex]?.capital || '-') : '-'}
             />
             <StatusItem
               icon={<Users className="w-3 h-3 xl:w-3.5 xl:h-3.5 text-root-accent" />}
-              label="POPULASI"
+              label={t('pilih_negara.population')}
               value={hasInteracted && countryDetail ? (countryDetail?.jumlah_penduduk?.toLocaleString('id-ID', { maximumFractionDigits: 2 }) || '0') : '-'}
             />
             <StatusItem
               icon={<Landmark className="w-3 h-3 xl:w-3.5 xl:h-3.5 text-root-accent" />}
-              label="KAS NEGARA"
+              label={t('pilih_negara.treasury')}
               value={hasInteracted && countryDetail ? `${countryDetail?.anggaran || 0} NEO` : '-'}
             />
 
             <StatusItem
               icon={<TrendingUp className="w-3 h-3 xl:w-3.5 xl:h-3.5 text-root-accent" />}
-              label="NETTO ANGGARAN NASIONAL"
+              label={t('pilih_negara.net_national_budget')}
               value={
                 hasInteracted && countryDetail && Object.keys(countryDetail).length > 0
                   ? netBalance >= 0
@@ -444,22 +448,22 @@ export default function PilihNegaraPage() {
               }
             />
 
-            <StatusItem icon={<Globe className="w-3.5 h-3.5 text-root-accent" />} label="TOTAL NEGARA" value="207" />
+            <StatusItem icon={<Globe className="w-3.5 h-3.5 text-root-accent" />} label={t('pilih_negara.total_countries')} value="207" />
             <StatusItem
               icon={<Home className="w-3.5 h-3.5 text-root-accent" />}
-              label="AGAMA MAYORITAS"
+              label={t('pilih_negara.majority_religion')}
               value={hasInteracted && countryDetail ? (countryDetail?.religion || '-') : '-'}
             />
             <StatusItem
               icon={<Scale className="w-3.5 h-3.5 text-root-accent" />}
-              label="IDEOLOGI"
+              label={t('pilih_negara.ideology')}
               value={hasInteracted && countryDetail ? (countryDetail?.ideology || '-') : '-'}
             />
 
             {/* UN Vote Badge */}
             <div className="flex items-center gap-1.5 lg:gap-2.5 xl:gap-4 border-l border-root-accent/20 pl-2 lg:pl-3 xl:pl-6 shrink-0">
               <span className="text-[7.5px] lg:text-[8.5px] xl:text-[10px] font-black text-root-subtle tracking-widest uppercase">
-                SUARA PBB
+                {t('pilih_negara.un_votes')}
               </span>
               <div className="bg-root-surface text-root-accent px-1.5 lg:px-2.5 xl:px-4 py-0.5 xl:py-1.5 rounded-lg font-black text-[9px] lg:text-[11px] xl:text-[14px] border border-root-accent/30">
                 {hasInteracted && countryDetail ? (countryDetail?.un_vote || 0) : '-'}
@@ -515,10 +519,10 @@ export default function PilihNegaraPage() {
                 className="flex flex-col"
               >
                 <span className="text-[8.5px] lg:text-[10px] xl:text-[12px] font-black text-root-text tracking-tight uppercase group-hover:text-root-accent transition-colors truncate">
-                  {hasInteracted && filteredCountries[currentIndex] ? filteredCountries[currentIndex]?.country : 'Select Country'}
+                  {hasInteracted && filteredCountries[currentIndex] ? getLocalizedCountryName(filteredCountries[currentIndex].iso || filteredCountries[currentIndex].country, language) : t('pilih_negara.select_country')}
                 </span>
                 <span className="text-[8px] sm:text-[9px] font-bold text-root-subtle uppercase tracking-widest truncate">
-                  {hasInteracted && filteredCountries[currentIndex] ? filteredCountries[currentIndex]?.capital : 'Region Map'}
+                  {hasInteracted && filteredCountries[currentIndex] ? filteredCountries[currentIndex]?.capital : t('pilih_negara.region_map')}
                 </span>
               </Link>
             </div>
@@ -533,7 +537,7 @@ export default function PilihNegaraPage() {
           className="fixed bottom-3 right-3 z-30 flex items-center gap-2 rounded-lg border border-root-accent/30 bg-root-canvas/90 px-3 py-2 text-[10px] font-bold tracking-wider text-root-subtle pointer-events-none"
         >
           <div className="h-3 w-3 rounded-full border-2 border-root-accent/20 border-t-root-accent animate-spin" />
-          PETA SEDANG DISIAPKAN
+          {t('pilih_negara.map_preparing')}
         </div>
       )}
       {mapLoadError && (
@@ -541,13 +545,13 @@ export default function PilihNegaraPage() {
           role="alert"
           className="fixed bottom-3 right-3 z-30 flex max-w-[min(90vw,28rem)] items-center gap-3 rounded-lg border border-rose-500/40 bg-root-canvas/95 px-3 py-2 text-[10px] font-bold text-rose-300"
         >
-          <span className="min-w-0 break-words">Peta gagal dimuat: {mapLoadError}</span>
+          <span className="min-w-0 break-words">{t('pilih_negara.map_load_failed')} {mapLoadError}</span>
           <button
             type="button"
             onClick={() => setMapLoadAttempt((attempt) => attempt + 1)}
             className="shrink-0 rounded border border-rose-400/40 px-2 py-1 text-white"
           >
-            COBA LAGI
+            {t('pilih_negara.retry')}
           </button>
         </div>
       )}
@@ -578,7 +582,7 @@ export default function PilihNegaraPage() {
                   : 'text-root-subtle hover:text-root-text'
               }`}
             >
-              PETA UTAMA
+              {t('pilih_negara.tab_main_map')}
             </button>
             <button
               onClick={() => setActiveTab('hubungan')}
@@ -588,7 +592,7 @@ export default function PilihNegaraPage() {
                   : 'text-root-subtle hover:text-root-text'
               }`}
             >
-              HUBUNGAN
+              {t('pilih_negara.tab_relations')}
             </button>
           </div>
 
@@ -596,7 +600,7 @@ export default function PilihNegaraPage() {
             <Search className="absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-root-accent" />
             <input
               type="text"
-              placeholder="Cari Negara atau Ibukota..."
+              placeholder={t('pilih_negara.search_placeholder')}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -617,7 +621,7 @@ export default function PilihNegaraPage() {
                 <Layers className="w-3 lg:w-3.5 xl:w-4 h-3 lg:h-3.5 xl:h-4 text-root-accent" />
               </div>
               <p className="text-[9px] lg:text-[10px] xl:text-xs font-black text-root-text uppercase tracking-wider leading-none">
-                SUMBER DAYA ALAM
+                {t('pilih_negara.natural_resources')}
               </p>
             </div>
 
@@ -626,13 +630,13 @@ export default function PilihNegaraPage() {
               <div className="flex items-center gap-1 xl:gap-1.5 bg-root-accent/10 px-1.5 lg:px-2 xl:px-2.5 py-0.5 xl:py-1 rounded-full border border-root-accent/40">
                 <span className="w-1 xl:w-1.5 h-1 xl:h-1.5 rounded-full bg-root-accent animate-pulse"></span>
                 <span className="text-[7px] lg:text-[8px] xl:text-[9px] font-bold text-root-accent uppercase tracking-wide">
-                  {Object.values(getCurrentSDA).filter(Boolean).length}/{resourceMap.length} Tersedia
+                  {Object.values(getCurrentSDA).filter(Boolean).length}/{resourceMap.length} {t('pilih_negara.available')}
                 </span>
               </div>
             ) : (
               <div className="flex items-center gap-1 xl:gap-1.5 bg-root-canvas px-1.5 lg:px-2 xl:px-2.5 py-0.5 xl:py-1 rounded-full border border-root-subtle/30">
                 <span className="w-1 xl:w-1.5 h-1 xl:h-1.5 rounded-full bg-root-subtle"></span>
-                <span className="text-[7px] lg:text-[8px] xl:text-[9px] font-bold text-root-subtle uppercase tracking-wide">Pilih Negara</span>
+                <span className="text-[7px] lg:text-[8px] xl:text-[9px] font-bold text-root-subtle uppercase tracking-wide">{t('pilih_negara.select_country')}</span>
               </div>
             )}
           </div>
@@ -722,7 +726,7 @@ export default function PilihNegaraPage() {
                   >
                     <img
                       src={`https://flagcdn.com/w80/${(item as any).iso}.png`}
-                      alt={item.country}
+                      alt={getLocalizedCountryName(item.iso || item.country, language)}
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = 'https://flagcdn.com/w80/un.png';
@@ -735,7 +739,7 @@ export default function PilihNegaraPage() {
                       item.offset === 0 && hasInteracted ? 'text-root-accent' : 'text-root-text/70'
                     }`}
                   >
-                    {item.country}
+                    {getLocalizedCountryName(item.iso || item.country, language)}
                   </h3>
                   <p
                     className={`text-[5.5px] lg:text-[6.5px] xl:text-[7px] font-bold uppercase truncate max-w-full ${
@@ -766,7 +770,7 @@ export default function PilihNegaraPage() {
             <div className="p-0.5 sm:p-1 bg-root-accent/10 group-hover:bg-root-canvas/20 rounded-md sm:rounded-lg">
               <ArrowLeft className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-root-accent group-hover:text-root-canvas" />
             </div>
-            KEMBALI
+            {t('common.back')}
           </Link>
 
           <button
@@ -807,7 +811,7 @@ export default function PilihNegaraPage() {
             } font-black tracking-widest rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] transition-all cursor-pointer select-none touch-manipulation`}
             aria-disabled={!hasInteracted || !filteredCountries[currentIndex]}
           >
-            MULAI SIMULASI
+            {t('game.selectCountry.startSimulation')}
             <Play className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${hasInteracted && filteredCountries[currentIndex] ? 'fill-root-canvas' : 'fill-root-subtle'}`} />
           </button>
         </div>

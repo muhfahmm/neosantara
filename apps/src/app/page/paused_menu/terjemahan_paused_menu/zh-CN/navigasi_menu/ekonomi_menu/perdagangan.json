@@ -237,5 +237,29 @@
     "buy": "购买",
     "sell": "出售",
     "expired": "已过期"
+  },
+  "addPartner": {
+    "title": "添加新贸易伙伴",
+    "searchPlaceholder": "搜索国家名称...",
+    "emptyTitle": "未找到国家",
+    "emptySubtitle": "请尝试输入其他搜索关键词。",
+    "continentHeading": "🌍 {continent}",
+    "countryCount": "{count} 个国家",
+    "noEmbassyModalTitle": "通知 / 警告",
+    "noEmbassyHeading": "添加伙伴失败",
+    "noEmbassyBodyPrefix": "您无法与 ",
+    "noEmbassyBodyMid": " 建立贸易关系，因为您的国家尚未在当地设立活跃的 ",
+    "noEmbassyLabel": "大使馆",
+    "noEmbassyBodySuffix": "。",
+    "noEmbassyHintPrefix": "💡 请先在 ",
+    "noEmbassyHintMenu": "地缘政治 → 大使馆",
+    "noEmbassyHintSuffix": " 菜单中开设大使馆，然后再提出双边贸易协定。",
+    "understood": "明白了",
+    "confirmTitle": "确认贸易协定",
+    "confirmBodyPrefix": "您确定要与 ",
+    "confirmBodySuffix": " 建立正式贸易伙伴关系吗？",
+    "confirmHint": "🤝 成为伙伴后，您可以直接与该国进行战略商品买卖交易。",
+    "cancel": "取消",
+    "confirmButton": "同意并添加"
   }
 }
