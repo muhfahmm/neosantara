@@ -40,6 +40,7 @@ import idPenelitianMiliter from './id/side_menu/penelitian/militer/main.json';
 import idPenelitianDiplomasi from './id/side_menu/penelitian/diplomasi/main.json';
 import idShop from './id/side_menu/shop/shop.json';
 import idPelacakanAktivitas from './id/side_menu/pelacakan_aktivitas/pelacakan_aktivitas.json';
+import idPencapaian from './id/side_menu/pencapaian/pencapaian.json';
 import idCountryDetailUser from './id/detail_negara/detail_negara_user/main.json';
 import idCountryDetailAI from './id/detail_negara/detail_negara_ai/main.json';
 import idSatisfactionStatistics from './id/navigasi_menu/kepuasan_menu/statistik.json';
@@ -98,6 +99,7 @@ const ID_DICTIONARY: LanguageDictionary = {
   },
   side_shop: idShop,
   side_pelacakan_aktivitas: idPelacakanAktivitas,
+  side_pencapaian: idPencapaian,
   detail_negara_user: idCountryDetailUser,
   detail_negara_ai: idCountryDetailAI,
   navigation_satisfaction_statistics: idSatisfactionStatistics,
@@ -191,6 +193,7 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     researchDiplomacy,
     side_shop,
     side_pelacakan_aktivitas,
+    side_pencapaian,
     detail_negara_user,
     detail_negara_ai,
     satisfactionStatistics,
@@ -244,6 +247,7 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     import(`./${code}/side_menu/penelitian/diplomasi/main.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/side_menu/shop/shop.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/side_menu/pelacakan_aktivitas/pelacakan_aktivitas.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/side_menu/pencapaian/pencapaian.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/detail_negara/detail_negara_user/main.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/detail_negara/detail_negara_ai/main.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navigasi_menu/kepuasan_menu/statistik.json`).then((m) => m.default).catch(() => ({})),
@@ -303,6 +307,7 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     },
     side_shop,
     side_pelacakan_aktivitas,
+    side_pencapaian,
     detail_negara_user,
     detail_negara_ai,
     navigation_satisfaction_statistics: satisfactionStatistics,

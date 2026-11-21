@@ -1,0 +1,175 @@
+{
+  "title": "Pencapaian Presiden",
+  "tabMisi": "Misi",
+  "tabPencapaian": "Pencapaian",
+  "totalUnlocked": "Terbuka",
+  "filterAll": "Semua",
+  "filterLocked": "Belum Terbuka",
+  "filterUnlocked": "Terbuka",
+  "filterCategory": "Kategori",
+  "rewardClaimed": "Diraih",
+  "rewardReady": "Klaim Hadiah",
+  "rewardLocked": "Terkunci",
+  "progress": "Progres",
+  "claimedToast": "🎉 Selamat! Hadiah pencapaian \"{title}\" berhasil diklaim: {reward}!",
+  "categories": {
+    "all": "Semua Kategori",
+    "kepuasan": "Kepuasan & Kesejahteraan",
+    "populasi": "Populasi",
+    "produksi": "Produksi & Konsumsi",
+    "ekonomi": "Ekonomi",
+    "pembangunan": "Pembangunan",
+    "penelitian": "Penelitian",
+    "kementerian": "Kementerian & Kabinet",
+    "geopolitik": "Geopolitik & Diplomasi",
+    "sosial_budaya": "Sosial & Budaya",
+    "pertahanan": "Pertahanan",
+    "tanggap_darurat": "Tanggap Darurat"
+  },
+  "items": {
+    "negara_sejahtera": {
+      "title": "Negara Sejahtera",
+      "description": "Pertahankan indeks kepuasan rakyat minimal 80% selama beberapa bulan dalam game."
+    },
+    "kebahagiaan_merata": {
+      "title": "Kebahagiaan Merata",
+      "description": "Tingkatkan beberapa sektor kepuasan rakyat hingga mencapai target yang ditentukan."
+    },
+    "rumah_untuk_semua": {
+      "title": "Rumah untuk Semua",
+      "description": "Atasi defisit hunian atau turunkan jumlah warga tunawisma hingga batas minimum."
+    },
+    "layanan_untuk_semua": {
+      "title": "Layanan untuk Semua",
+      "description": "Penuhi kebutuhan dasar populasi, seperti pangan, listrik, hunian, dan tempat umum."
+    },
+    "penduduk_sehat": {
+      "title": "Penduduk Sehat",
+      "description": "Turunkan angka kematian atau tangani wabah hingga kondisi kesehatan kembali stabil."
+    },
+    "pertumbuhan_terjaga": {
+      "title": "Pertumbuhan Terjaga",
+      "description": "Capai target pertumbuhan populasi tanpa membiarkan kebutuhan dasar mengalami defisit berkepanjangan."
+    },
+    "mandiri_energi": {
+      "title": "Mandiri Energi",
+      "description": "Penuhi kebutuhan listrik nasional tanpa defisit selama beberapa bulan dalam game."
+    },
+    "lumbung_pangan": {
+      "title": "Lumbung Pangan",
+      "description": "Penuhi kebutuhan pangan warga dan capai surplus produksi."
+    },
+    "rantai_produksi_lengkap": {
+      "title": "Rantai Produksi Lengkap",
+      "description": "Bangun fasilitas produksi dari beberapa kategori industri yang berbeda."
+    },
+    "anggaran_sehat": {
+      "title": "Anggaran Sehat",
+      "description": "Catat surplus anggaran nasional selama beberapa periode berturut-turut."
+    },
+    "bebas_utang": {
+      "title": "Bebas Utang",
+      "description": "Lunasi seluruh pinjaman negara yang masih berjalan."
+    },
+    "mitra_dagang_dunia": {
+      "title": "Mitra Dagang Dunia",
+      "description": "Selesaikan perdagangan dengan beberapa negara dan perdagangkan beragam komoditas."
+    },
+    "daya_beli_terjaga": {
+      "title": "Daya Beli Terjaga",
+      "description": "Pertahankan harga kebutuhan pokok pada tingkat yang terjangkau selama beberapa bulan dalam game."
+    },
+    "pembangun_bangsa": {
+      "title": "Pembangun Bangsa",
+      "description": "Bangun fasilitas produksi, layanan umum, dan hunian."
+    },
+    "kota_terhubung": {
+      "title": "Kota Terhubung",
+      "description": "Bangun beberapa jenis infrastruktur transportasi."
+    },
+    "pelayanan_publik_lengkap": {
+      "title": "Pelayanan Publik Lengkap",
+      "description": "Bangun fasilitas pendidikan, kesehatan, dan layanan publik lainnya."
+    },
+    "negeri_inovatif": {
+      "title": "Negeri Inovatif",
+      "description": "Selesaikan sejumlah penelitian dari kategori yang berbeda."
+    },
+    "lompatan_teknologi": {
+      "title": "Lompatan Teknologi",
+      "description": "Tingkatkan beberapa kartu penelitian ke level yang lebih tinggi."
+    },
+    "riset_untuk_rakyat": {
+      "title": "Riset untuk Rakyat",
+      "description": "Selesaikan penelitian yang mendukung ekonomi, kesejahteraan, atau mitigasi krisis."
+    },
+    "kabinet_andal": {
+      "title": "Kabinet Andal",
+      "description": "Rekrut menteri untuk beberapa bidang pemerintahan."
+    },
+    "pemerintahan_profesional": {
+      "title": "Pemerintahan Profesional",
+      "description": "Tingkatkan sejumlah kementerian hingga level yang ditentukan."
+    },
+    "layanan_siaga": {
+      "title": "Layanan Siaga",
+      "description": "Tingkatkan kesiapan layanan darurat dan kesehatan."
+    },
+    "diplomat_ulung": {
+      "title": "Diplomat Ulung",
+      "description": "Bangun kedutaan dan tingkatkan hubungan dengan beberapa negara."
+    },
+    "tetangga_bersahabat": {
+      "title": "Tetangga Bersahabat",
+      "description": "Bentuk pakta non-agresi atau perjanjian kerja sama dengan negara lain."
+    },
+    "jaringan_global": {
+      "title": "Jaringan Global",
+      "description": "Bergabung dengan beberapa organisasi internasional atau regional."
+    },
+    "suara_dunia": {
+      "title": "Suara Dunia",
+      "description": "Berpartisipasi dalam agenda PBB dan capai hasil diplomatik tertentu."
+    },
+    "masyarakat_harmonis": {
+      "title": "Masyarakat Harmonis",
+      "description": "Capai tingkat toleransi dan kepuasan sosial yang ditentukan."
+    },
+    "identitas_nasional": {
+      "title": "Identitas Nasional",
+      "description": "Tetapkan ideologi, agama, atau doktrin negara dan pertahankan kestabilan sosial."
+    },
+    "kebijakan_inklusif": {
+      "title": "Kebijakan Inklusif",
+      "description": "Capai target keterbukaan atau kebebasan sipil yang ditentukan."
+    },
+    "penjaga_negeri": {
+      "title": "Penjaga Negeri",
+      "description": "Bangun infrastruktur pertahanan dan tingkatkan kesiapan armada."
+    },
+    "mata_telinga_negara": {
+      "title": "Mata dan Telinga Negara",
+      "description": "Selesaikan operasi intelijen dengan sukses."
+    },
+    "wilayah_terkelola": {
+      "title": "Wilayah Terkelola",
+      "description": "Stabilkan wilayah yang direbut atau dianeksasi."
+    },
+    "kesiapan_strategis": {
+      "title": "Kesiapan Strategis",
+      "description": "Selesaikan target pembangunan atau penelitian pertahanan tingkat lanjut."
+    },
+    "tanggap_bencana": {
+      "title": "Tanggap Bencana",
+      "description": "Salurkan bantuan dan pulihkan kondisi setelah bencana alam."
+    },
+    "krisis_teratasi": {
+      "title": "Krisis Teratasi",
+      "description": "Tangani wabah penyakit hingga penyebarannya terkendali."
+    },
+    "negara_tangguh": {
+      "title": "Negara Tangguh",
+      "description": "Pulihkan layanan penting setelah krisis tanpa membiarkan kebutuhan dasar warga terus mengalami defisit."
+    }
+  }
+}

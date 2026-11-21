@@ -1,0 +1,175 @@
+{
+  "title": "Logros Presidenciales",
+  "tabMisi": "Misiones",
+  "tabPencapaian": "Logros",
+  "totalUnlocked": "Desbloqueados",
+  "filterAll": "Todos",
+  "filterLocked": "Bloqueados",
+  "filterUnlocked": "Desbloqueados",
+  "filterCategory": "Categoría",
+  "rewardClaimed": "Reclamado",
+  "rewardReady": "Reclamar",
+  "rewardLocked": "Bloqueado",
+  "progress": "Progreso",
+  "claimedToast": "🎉 ¡Felicidades! Recompensa por \"{title}\" reclamada: {reward}!",
+  "categories": {
+    "all": "Todas las categorías",
+    "kepuasan": "Satisfacción y Bienestar",
+    "populasi": "Población",
+    "produksi": "Producción y Consumo",
+    "ekonomi": "Economía",
+    "pembangunan": "Desarrollo",
+    "penelitian": "Investigación",
+    "kementerian": "Gabinete y Ministerios",
+    "geopolitik": "Geopolítica y Diplomacia",
+    "sosial_budaya": "Social y Cultural",
+    "pertahanan": "Defensa",
+    "tanggap_darurat": "Emergencias"
+  },
+  "items": {
+    "negara_sejahtera": {
+      "title": "Prosperous Nation",
+      "description": "Maintain public satisfaction at 80% or above for multiple in-game months."
+    },
+    "kebahagiaan_merata": {
+      "title": "Equitable Happiness",
+      "description": "Elevate multiple public satisfaction sectors to their target benchmarks."
+    },
+    "rumah_untuk_semua": {
+      "title": "Homes for All",
+      "description": "Eliminate housing deficits or reduce homelessness to minimum levels."
+    },
+    "layanan_untuk_semua": {
+      "title": "Services for All",
+      "description": "Fulfill fundamental population needs such as food, electricity, housing, and public spaces."
+    },
+    "penduduk_sehat": {
+      "title": "Healthy Citizens",
+      "description": "Lower mortality rates or contain outbreaks until public health restabilizes."
+    },
+    "pertumbuhan_terjaga": {
+      "title": "Sustained Growth",
+      "description": "Achieve population growth targets without prolonged basic necessity shortages."
+    },
+    "mandiri_energi": {
+      "title": "Energy Independence",
+      "description": "Cover national electricity needs without deficit for multiple in-game months."
+    },
+    "lumbung_pangan": {
+      "title": "National Granary",
+      "description": "Fulfill national food requirements and maintain a production surplus."
+    },
+    "rantai_produksi_lengkap": {
+      "title": "Complete Supply Chain",
+      "description": "Construct production facilities across multiple distinct industrial sectors."
+    },
+    "anggaran_sehat": {
+      "title": "Balanced Budget",
+      "description": "Record consecutive national budget surpluses over multiple fiscal periods."
+    },
+    "bebas_utang": {
+      "title": "Debt Free",
+      "description": "Repay all active sovereign loans and debts in full."
+    },
+    "mitra_dagang_dunia": {
+      "title": "Global Trading Partner",
+      "description": "Conclude trade deals with several nations across diverse commodities."
+    },
+    "daya_beli_terjaga": {
+      "title": "Stable Purchasing Power",
+      "description": "Maintain essential goods prices at affordable levels across multiple months."
+    },
+    "pembangun_bangsa": {
+      "title": "Nation Builder",
+      "description": "Construct production, public service, and residential complexes."
+    },
+    "kota_terhubung": {
+      "title": "Connected Metropolis",
+      "description": "Develop multiple distinct transportation infrastructures."
+    },
+    "pelayanan_publik_lengkap": {
+      "title": "Comprehensive Public Care",
+      "description": "Establish education, health, and diverse public service facilities."
+    },
+    "negeri_inovatif": {
+      "title": "Innovative Realm",
+      "description": "Complete research breakthroughs across various distinct categories."
+    },
+    "lompatan_teknologi": {
+      "title": "Technological Leap",
+      "description": "Upgrade multiple research development cards to advanced tiers."
+    },
+    "riset_untuk_rakyat": {
+      "title": "Research for the People",
+      "description": "Complete research directly bolstering economy, welfare, or crisis mitigation."
+    },
+    "kabinet_andal": {
+      "title": "Reliable Cabinet",
+      "description": "Appoint qualified ministers across all key ministerial portfolios."
+    },
+    "pemerintahan_profesional": {
+      "title": "Professional Governance",
+      "description": "Upgrade administrative ministries to target capability levels."
+    },
+    "layanan_siaga": {
+      "title": "Alert Emergency Services",
+      "description": "Enhance emergency response and public healthcare readiness."
+    },
+    "diplomat_ulung": {
+      "title": "Master Diplomat",
+      "description": "Establish embassies and cultivate strong ties with multiple nations."
+    },
+    "tetangga_bersahabat": {
+      "title": "Friendly Neighbors",
+      "description": "Enact non-aggression pacts or mutual cooperation accords with neighbors."
+    },
+    "jaringan_global": {
+      "title": "Global Network",
+      "description": "Join several international or regional multilateral organizations."
+    },
+    "suara_dunia": {
+      "title": "World Voice",
+      "description": "Participate in UN sessions and achieve decisive diplomatic outcomes."
+    },
+    "masyarakat_harmonis": {
+      "title": "Harmonious Society",
+      "description": "Attain targeted societal tolerance and civil satisfaction metrics."
+    },
+    "identitas_nasional": {
+      "title": "National Identity",
+      "description": "Establish national ideology, state faith, or doctrine while securing social order."
+    },
+    "kebijakan_inklusif": {
+      "title": "Inclusive Policies",
+      "description": "Reach target milestones in civic freedom and open governance."
+    },
+    "penjaga_negeri": {
+      "title": "Guardian of the Realm",
+      "description": "Construct defense installations and maximize naval/armed forces readiness."
+    },
+    "mata_telinga_negara": {
+      "title": "Eyes and Ears of the State",
+      "description": "Successfully execute covert intelligence operations."
+    },
+    "wilayah_terkelola": {
+      "title": "Integrated Territory",
+      "description": "Stabilize and develop captured or annexed territorial provinces."
+    },
+    "kesiapan_strategis": {
+      "title": "Strategic Preparedness",
+      "description": "Complete advanced military construction or strategic defense programs."
+    },
+    "tanggap_bencana": {
+      "title": "Disaster Response",
+      "description": "Deploy aid and restore normal conditions following natural disasters."
+    },
+    "krisis_teratasi": {
+      "title": "Crisis Resolved",
+      "description": "Contain epidemic outbreaks until disease spread is fully halted."
+    },
+    "negara_tangguh": {
+      "title": "Resilient State",
+      "description": "Restore vital services post-crisis without prolonged civilian deprivations."
+    }
+  }
+}

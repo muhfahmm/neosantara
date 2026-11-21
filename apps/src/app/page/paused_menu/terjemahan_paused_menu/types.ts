@@ -14,6 +14,7 @@ import type idPenelitianMiliter from './id/side_menu/penelitian/militer/main.jso
 import type idPenelitianDiplomasi from './id/side_menu/penelitian/diplomasi/main.json';
 import type idShop from './id/side_menu/shop/shop.json';
 import type idPelacakanAktivitas from './id/side_menu/pelacakan_aktivitas/pelacakan_aktivitas.json';
+import type idPencapaian from './id/side_menu/pencapaian/pencapaian.json';
 import type idCountryDetailUser from './id/detail_negara/detail_negara_user/main.json';
 import type idCountryDetailAI from './id/detail_negara/detail_negara_ai/main.json';
 import type idSatisfactionStatistics from './id/navigasi_menu/kepuasan_menu/statistik.json';
@@ -97,6 +98,7 @@ export type TranslationNamespace =
   | 'side_penelitian'
   | 'side_shop'
   | 'side_pelacakan_aktivitas'
+  | 'side_pencapaian'
   | 'detail_negara_user'
   | 'detail_negara_ai'
   | 'navigation_satisfaction_statistics'
@@ -156,6 +158,7 @@ export interface TranslationSchema {
   side_penelitian: ResearchTranslation;
   side_shop: typeof idShop;
   side_pelacakan_aktivitas: typeof idPelacakanAktivitas;
+  side_pencapaian: typeof idPencapaian;
   detail_negara_user: typeof idCountryDetailUser;
   detail_negara_ai: typeof idCountryDetailAI;
   navigation_satisfaction_statistics: typeof idSatisfactionStatistics;
@@ -219,6 +222,7 @@ export type TranslationKey =
   | `side_penelitian.${NestedKeyOf<ResearchTranslation>}`
   | `side_shop.${NestedKeyOf<typeof idShop>}`
   | `side_pelacakan_aktivitas.${NestedKeyOf<typeof idPelacakanAktivitas>}`
+  | `side_pencapaian.${NestedKeyOf<typeof idPencapaian>}`
   | `detail_negara_user.${NestedKeyOf<typeof idCountryDetailUser>}`
   | `detail_negara_ai.${NestedKeyOf<typeof idCountryDetailAI>}`
   | `navigation_satisfaction_statistics.${NestedKeyOf<typeof idSatisfactionStatistics>}`

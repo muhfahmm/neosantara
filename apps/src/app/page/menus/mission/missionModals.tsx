@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
+import RootModalTabs from '@/app/page/root_modals_design_menu/RootModalTabs';
+import PencapaianContent from './pencapaianModals';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
 import {
@@ -1607,6 +1609,7 @@ export default function MissionModals({
   const [claimableList, setClaimableList] = useState<string[]>([]);
   const [claimFeedback, setClaimFeedback] = useState<string | null>(null);
   const [buildingProgressMap, setBuildingProgressMap] = useState<Record<string, number>>({});
+  const [activeTab, setActiveTab] = useState<'misi' | 'pencapaian'>('misi');
 
   useEffect(() => {
     refreshMissionPoolForNewYear(currentDate);
@@ -1736,11 +1739,11 @@ export default function MissionModals({
       {/* Modal Misi */}
       {isOpen && mounted && createPortal(
         <NotebookModalWrapper onClose={onClose} zIndexClass="z-[100000]">
-          <div className="root-modal-util-b74379da23 mission-modal-typography font-sans">
+          <div className="root-modal-util-b74379da23 mission-modal-typography font-sans flex flex-col h-full max-h-[90vh]">
             <RootInfoModalHeader
-              title={t('side_misi.title')}
+              title={activeTab === 'misi' ? t('side_misi.title') : t('side_pencapaian.title')}
               onClose={onClose ?? (() => {})}
-              icon={<Target />}
+              icon={activeTab === 'misi' ? <Target /> : <Trophy />}
               size="standard"
               actions={
                 <div className="flex flex-wrap items-center justify-end gap-2">
@@ -1759,7 +1762,58 @@ export default function MissionModals({
               }
             />
 
-            {/* BODY: HANYA 5 KARTU KEBAWAH */}
+            {/* TAB MENU SEPERTI DI MENU KEPUASAN (satisfaction-modal-summary) */}
+            <div className="satisfaction-modal-summary root-modal-util-6614545ce3">
+              <div className="root-modal-util-6cfc7e6ab3">
+                {activeTab === 'misi' ? (
+                  <>
+                    <Target className="root-modal-util-00f4ec4a9a text-root-accent" />
+                    <span className="root-modal-util-14d6efe9ef root-modal-util-614c0c7dff">
+                      {t('side_misi.title')}
+                    </span>
+                    <span className="root-modal-util-04f32edb66 root-modal-util-4457a4d3a8 text-root-accent font-black">
+                      5 {t('side_misi.mainMissions')}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Trophy className="root-modal-util-00f4ec4a9a text-amber-400" />
+                    <span className="root-modal-util-14d6efe9ef root-modal-util-614c0c7dff">
+                      {t('side_pencapaian.title')}
+                    </span>
+                    <span className="root-modal-util-04f32edb66 root-modal-util-4457a4d3a8 text-amber-400 font-black">
+                      {t('side_pencapaian.tabPencapaian')}
+                    </span>
+                  </>
+                )}
+              </div>
+
+              <div className="satisfaction-modal-summary-controls">
+                <RootModalTabs
+                  className="satisfaction-modal-tabs"
+                  items={[
+                    {
+                      label: t('side_pencapaian.tabMisi') || 'Misi',
+                      isActive: activeTab === 'misi',
+                      onClick: () => setActiveTab('misi'),
+                      onPointerDown: () => setActiveTab('misi'),
+                    },
+                    {
+                      label: t('side_pencapaian.tabPencapaian') || 'Pencapaian',
+                      isActive: activeTab === 'pencapaian',
+                      onClick: () => setActiveTab('pencapaian'),
+                      onPointerDown: () => setActiveTab('pencapaian'),
+                    },
+                  ]}
+                />
+              </div>
+            </div>
+
+            {/* TAB CONTENT: PENCAPAIAN ATAU MISI */}
+            {activeTab === 'pencapaian' ? (
+              <PencapaianContent countryDetail={countryDetail} setCountryDetail={setCountryDetail} />
+            ) : (
+            /* BODY: HANYA 5 KARTU KEBAWAH */
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-root-canvas relative z-10 custom-scrollbar space-y-3">
               {/* FEEDBACK TOAST */}
               {claimFeedback && (
@@ -1933,6 +1987,7 @@ export default function MissionModals({
                 </div>
               )}
             </div>
+            )}
           </div>
         </NotebookModalWrapper>,
         document.body
