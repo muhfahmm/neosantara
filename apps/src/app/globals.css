@@ -308,3 +308,39 @@ body {
   background: #2563eb;
   color: #ffffff;
 }
+
+.inbox-notification-detail > :first-child {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 16px !important;
+  border-radius: 16px !important;
+  background-color: var(--root-color-surface) !important;
+  color: var(--root-color-text);
+}
+
+.inbox-notification-detail > :first-child:not([class*="border-l-"]) {
+  border-left: 4px solid var(--root-color-accent) !important;
+}
+
+.inbox-notification-detail > :first-child :is(h4, h5) {
+  color: var(--root-color-text) !important;
+  font-size: 15px !important;
+  line-height: 1.35 !important;
+}
+
+.inbox-notification-detail > :first-child p[class*="uppercase"][class*="tracking-wider"] {
+  color: var(--root-color-muted) !important;
+  font-size: 11px !important;
+  line-height: 1.4 !important;
+}
+
+.inbox-notification-detail > :first-child p[class*="leading-relaxed"]:not([class*="uppercase"]) {
+  color: var(--root-color-body) !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+}
+
+.inbox-notification-detail > :first-child button {
+  min-height: 34px;
+  font-size: 11px !important;
+}

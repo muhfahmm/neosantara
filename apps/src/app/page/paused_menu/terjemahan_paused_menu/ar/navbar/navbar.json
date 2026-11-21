@@ -21,6 +21,10 @@
     "kasNegaraTitle": "ميزانية خزينة الدولة",
     "kasNegaraDesc": "انقر لتعبئة الخزينة في متجر NEO.",
     "populasi": "انقر لعرض تفاصيل السكان",
+    "populationTitle": "تفاصيل السكان",
+    "births": "المواليد",
+    "deaths": "الوفيات",
+    "netGrowth": "صافي النمو",
     "fps": "فتح تفاصيل مراقب الإطارات"
   },
   "actions": {
@@ -28,5 +32,58 @@
     "restart": "إعادة البدء",
     "openMenu": "فتح قائمة التوقف",
     "zoom": "تكبير/تصغير"
+  },
+  "navigation": {
+    "gameMenu": "قائمة اللعبة",
+    "mainMenu": "تنقل القائمة الرئيسية",
+    "subMenu": "تنقل القائمة الفرعية",
+    "mainMap": "المحاكاة الرئيسية",
+    "globalMap": "خريطة العالم",
+    "top": {
+      "groupLabel": "تنقل عرض الخريطة",
+      "map": "الخريطة التكتيكية",
+      "diplomacy": "العلاقات الدبلوماسية",
+      "focusHome": "التركيز والتكبير على بلدك"
+    },
+    "main": {
+      "kepuasan": "الرضا",
+      "populasi": "السكان",
+      "produksiKonsumsi": "الإنتاج والاستهلاك",
+      "ekonomi": "الاقتصاد",
+      "pembangunan": "التنمية",
+      "pertahanan": "الدفاع",
+      "geopolitik": "الجغرافيا السياسية",
+      "sosialBudaya": "المجتمع والثقافة",
+      "kementerian": "الوزارة"
+    },
+    "sub": {
+      "kepuasanStatistics": "إحصاءات الرضا",
+      "increaseSatisfaction": "زيادة الرضا",
+      "populationSummary": "ملخص السكان",
+      "trade": "التجارة",
+      "tax": "الضرائب",
+      "loans": "القروض",
+      "income": "الدخل",
+      "purchasingPower": "القوة الشرائية",
+      "economicSystem": "النظام الاقتصادي",
+      "production": "الإنتاج",
+      "publicFacilities": "المرافق العامة",
+      "housing": "الإسكان",
+      "nationalGrid": "شبكة الكهرباء الوطنية",
+      "foodIndustry": "الصناعات الغذائية",
+      "attackCountry": "مهاجمة دولة",
+      "intelligence": "الاستخبارات",
+      "capturedTerritory": "الأقاليم المحتلة",
+      "fleet": "الأسطول",
+      "icbm": "الصواريخ الباليستية العابرة للقارات",
+      "un": "الأمم المتحدة",
+      "embassy": "السفارات",
+      "internationalOrganizations": "المنظمات الدولية",
+      "relationLevel": "مستوى العلاقات",
+      "religion": "الدين والمعتقدات",
+      "nationalIdeology": "الأيديولوجية الوطنية",
+      "opennessDoctrine": "مبدأ الانفتاح",
+      "ministry": "الوزارة"
+    }
   }
 }

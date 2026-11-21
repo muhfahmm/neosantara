@@ -1,0 +1,69 @@
+{
+  "title": "Kontrol Harga Barang Pokok",
+  "monthUnit": "bulan",
+  "tabs": { "essentials": "Harga Kebutuhan", "subsidyPolicy": "Kebijakan Subsidi" },
+  "subsidy": {
+    "title": "Alokasi & Kebijakan Subsidi",
+    "infoButton": "Informasi alokasi dan kebijakan subsidi",
+    "confirm": "Konfirmasi",
+    "categories": { "all": "Semua Sektor" },
+    "summary": {
+      "totalBudget": "Total Beban Anggaran Subsidi",
+      "activeSectors": "Sektor Aktif / Total",
+      "sectorCount": "{active} dari {total} sektor",
+      "approvalSupport": "Dukungan Kepuasan Rakyat",
+      "approvalValue": "+{percent}% tingkat persetujuan",
+      "populationImpact": "Dampak Netto Populasi",
+      "saved": "Alokasi Subsidi Berhasil Diperbarui!"
+    },
+    "sidebarLabel": "Kategori kebijakan subsidi",
+    "viewDetails": "Lihat Rincian Kebijakan",
+    "viewItemDetails": "Lihat rincian subsidi {item}",
+    "enableItem": "Aktifkan subsidi {item}",
+    "disableItem": "Nonaktifkan subsidi {item}",
+    "info": {
+      "title": "Informasi Alokasi & Kebijakan Subsidi",
+      "description": "Pilih program subsidi untuk berbagai sektor dan tinjau biaya bulanannya sebelum mengubah alokasi. Subsidi menggunakan anggaran negara serta dapat memengaruhi dukungan kepuasan rakyat dan pertumbuhan populasi.",
+      "satisfaction": "Indeks Kepuasan Rakyat (Subsidi)"
+    },
+    "confirmation": {
+      "title": "Konfirmasi kebijakan subsidi",
+      "description": "Perubahan alokasi subsidi akan diterapkan. Lanjutkan?",
+      "back": "Kembali",
+      "confirm": "Ya, konfirmasi"
+    }
+  },
+  "infoButton": "Informasi kontrol harga barang pokok",
+  "confirm": "Konfirmasi",
+  "loading": "Memuat data harga negara...",
+  "noData": "Belum ada data harga yang tersedia untuk negara ini.",
+  "currentValue": "Nilai saat ini",
+  "populationImpact": "Dampak populasi",
+  "subsidyActive": "Subsidi harga pokok: aktif",
+  "errors": {
+    "loadFailed": "Gagal memuat data harga dari database."
+  },
+  "commodities": {
+    "rice": "Beras",
+    "beef": "Daging Sapi",
+    "chicken": "Ayam",
+    "cookingOil": "Minyak Goreng",
+    "sugar": "Gula",
+    "eggs": "Telur",
+    "electricity": "Listrik",
+    "water": "Air"
+  },
+  "info": {
+    "title": "Informasi Kontrol Harga Barang Pokok",
+    "description": "Atur harga nasional untuk setiap barang pokok. Harga memengaruhi kepuasan rakyat dan dampak populasi.",
+    "satisfaction": "Indeks Kepuasan Rakyat (Harga Pokok)",
+    "populationImpact": "Dampak populasi harga pokok: {percent}% / bulan"
+  },
+  "confirmation": {
+    "title": "Konfirmasi kebijakan harga",
+    "changesApply": "Perubahan harga barang pokok akan diterapkan. Lanjutkan?",
+    "noChanges": "Belum ada perubahan harga. Konfirmasi untuk kembali ke forum dialog.",
+    "back": "Kembali",
+    "yes": "Ya, konfirmasi"
+  }
+}

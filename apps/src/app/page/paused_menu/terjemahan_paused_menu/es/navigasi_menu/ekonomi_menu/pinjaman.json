@@ -1,0 +1,84 @@
+{
+  "title": "Préstamos y deuda",
+  "infoButton": "Información sobre préstamos y deuda",
+  "dayUnit": "días",
+  "monthUnit": "meses",
+  "tabs": { "bilateral": "Otros países", "multilateral": "Instituciones internacionales", "history": "Historial" },
+  "search": { "placeholder": "Buscar país prestamista...", "ariaLabel": "Buscar país prestamista" },
+  "summary": { "debtRatio": "Ratio deuda/PIB", "safeLimit": "Límite seguro:", "totalDebt": "Carga total de deuda" },
+  "institutions": { "imf": "Fondo Monetario Internacional (FMI)", "worldBank": "Banco Mundial" },
+  "bilateral": { "noResults": "Ningún país coincide con la búsqueda.", "maximum": "Límite del préstamo", "gracePeriod": "Plazo de devolución", "borrow": "Pedir prestado" },
+  "institution": {
+    "restrictedBanner": "Los préstamos del FMI y del Banco Mundial están bloqueados para países comunistas con una nacionalización sectorial media superior al 50%.",
+    "blocked": "Solicitudes bloqueadas",
+    "available": "Disponible para solicitar",
+    "cooldownRemaining": "Disponible de nuevo el {date}",
+    "interest": "Interés: {percent}%",
+    "amount": "Importe del préstamo",
+    "decreaseAmount": "Reducir en 1 millón",
+    "setMaximumAmount": "Establecer en 15 millones",
+    "repaymentTerm": "Plazo de devolución",
+    "submit": "Solicitar crédito",
+    "errors": {
+      "restricted": "Los préstamos del FMI y del Banco Mundial no están disponibles para países comunistas con una nacionalización media superior al 50%.",
+      "cooldown": "Podrás solicitar otro préstamo después del {date}.",
+      "invalidAmount": "Introduce un importe de préstamo válido.",
+      "maximum": "El préstamo máximo de {institution} es de {amount} NEO.",
+      "termRange": "Elige un plazo entre 180 y 1825 días."
+    }
+  },
+  "terms": {
+    "title": "Elegir plazo",
+    "selected": "Seleccionado",
+    "shortDefault": "6 meses",
+    "options": { "sixMonths": "6 meses", "nineMonths": "9 meses", "oneYear": "1 año", "twoYears": "2 años", "threeYears": "3 años", "fourYears": "4 años", "fiveYears": "5 años" }
+  },
+  "history": {
+    "active": "Deuda activa ({count})",
+    "paid": "Pagados ({count})",
+    "emptyActive": "No hay deudas activas.",
+    "emptyPaid": "Aún no se ha devuelto ningún préstamo.",
+    "paymentAria": "Confirmar el pago del préstamo de {source}",
+    "headers": { "source": "Prestamista", "principal": "Capital", "interest": "Interés inicial", "paid": "Pagado", "penalty": "Penalización", "currentTotal": "Total actual", "dueDate": "Vencimiento" }
+  },
+  "confirmation": {
+    "title": "Confirmar préstamo",
+    "source": "Origen del préstamo",
+    "amount": "Importe del préstamo",
+    "interest": "Interés",
+    "term": "Plazo de devolución",
+    "totalPayment": "Devolución total",
+    "summary": "Resumen del préstamo",
+    "cashBalance": "Saldo de la tesorería nacional",
+    "outstanding": "Deuda pendiente total",
+    "ready": "Préstamo listo para confirmar",
+    "approvalNote": "El préstamo se añadirá a la tesorería nacional cuando se apruebe.",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar préstamo"
+  },
+  "payment": {
+    "title": "Confirmar pago",
+    "amountDue": "Vas a pagar {amount}",
+    "sourceLabel": "por un préstamo de",
+    "insufficientAlert": "La tesorería nacional no tiene fondos suficientes para realizar este pago.",
+    "insufficient": "No hay fondos suficientes para pagar el préstamo completo",
+    "payNow": "Pagar ahora"
+  },
+  "penalties": {
+    "generalTitle": "Penalización por pago atrasado",
+    "detailTitle": "Detalles de la penalización por atraso",
+    "loanData": "Datos del préstamo",
+    "accumulated": "Penalización acumulada",
+    "missed": "Meses de atraso",
+    "general": {
+      "paragraphOne": "Cuando vence un préstamo y no se puede pagar por completo, el sistema abona lo máximo posible con los fondos nacionales.",
+      "paragraphTwo": "El saldo restante se marca como vencido y se añade una penalización cada mes.",
+      "paragraphThree": "Este cálculo se aplica tanto a préstamos bilaterales como multilaterales."
+    }
+  },
+  "info": {
+    "title": "Información sobre préstamos y deuda",
+    "paragraphOne": "Los préstamos de otros países o instituciones internacionales aumentan tanto la tesorería como la deuda nacional. Cada préstamo tiene intereses y una fecha de vencimiento; revisa las condiciones antes de aceptarlo.",
+    "paragraphTwo": "El ratio deuda/PIB compara la deuda total con el tamaño de la economía nacional. El límite seguro inicial es del 60% y puede variar por bonificaciones activas. Revisa el historial y paga antes del vencimiento para evitar penalizaciones."
+  }
+}

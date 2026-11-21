@@ -1,0 +1,23 @@
+{
+  "title": "تفاصيل معدل الوفيات",
+  "dailyDeaths": "الوفيات اليومية",
+  "perHour": "/ساعة",
+  "factors": "العوامل المؤثرة",
+  "lifeExpectancy": "متوسط العمر المتوقع",
+  "years": "سنة",
+  "lifeExpectancyDescription": "كلما ارتفع متوسط العمر المتوقع، انخفض معدل الوفيات.",
+  "security": "مستوى الأمن",
+  "securityDescription": "تقلل البيئة الآمنة الوفيات الناتجة عن الحوادث والجرائم.",
+  "homeless": "التشرد",
+  "homelessCount": "{count} نسمة ({ratio}٪)",
+  "homelessDescription": "كل زيادة قدرها 1٪ في التشرد ترفع الوفيات بنسبة 5٪.",
+  "healthFacilities": "المرافق الصحية",
+  "open": "افتح ←",
+  "points": "نقاط",
+  "ratio": "(النسبة {value})",
+  "healthDescription": "يقلل توفر المستشفيات الوفيات الناجمة عن الأمراض القابلة للعلاج.",
+  "foodSecurity": "الأمن الغذائي",
+  "foodDescription": "يقلل توفر الغذاء الكافي خطر سوء التغذية.",
+  "lawEnforcement": "إنفاذ القانون",
+  "lawDescription": "الرضا عن القضاء والشرطة وفقًا لمؤشر الرفاه."
+}

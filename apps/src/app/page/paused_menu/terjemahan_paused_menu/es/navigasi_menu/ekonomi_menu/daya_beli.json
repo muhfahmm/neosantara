@@ -1,0 +1,69 @@
+{
+  "title": "Control de precios de productos básicos",
+  "monthUnit": "mes",
+  "tabs": { "essentials": "Productos básicos", "subsidyPolicy": "Política de subsidios" },
+  "subsidy": {
+    "title": "Asignación y política de subsidios",
+    "infoButton": "Información sobre asignación y política de subsidios",
+    "confirm": "Confirmar",
+    "categories": { "all": "Todos los sectores" },
+    "summary": {
+      "totalBudget": "Gasto total del presupuesto de subsidios",
+      "activeSectors": "Sectores activos / total",
+      "sectorCount": "{active} de {total} sectores",
+      "approvalSupport": "Apoyo a la aprobación pública",
+      "approvalValue": "+{percent}% de aprobación",
+      "populationImpact": "Impacto neto en la población",
+      "saved": "¡Asignación de subsidios actualizada!"
+    },
+    "sidebarLabel": "Categorías de políticas de subsidios",
+    "viewDetails": "Ver detalles de la política",
+    "viewItemDetails": "Ver detalles del subsidio {item}",
+    "enableItem": "Activar el subsidio {item}",
+    "disableItem": "Desactivar el subsidio {item}",
+    "info": {
+      "title": "Información sobre asignación y política de subsidios",
+      "description": "Elige programas de subsidios para distintos sectores y revisa sus costes mensuales antes de cambiar la asignación. Los subsidios utilizan el presupuesto nacional y pueden afectar la aprobación pública y el crecimiento de la población.",
+      "satisfaction": "Índice de satisfacción pública (subsidios)"
+    },
+    "confirmation": {
+      "title": "Confirmar política de subsidios",
+      "description": "Se aplicarán los cambios en la asignación de subsidios. ¿Continuar?",
+      "back": "Volver",
+      "confirm": "Sí, confirmar"
+    }
+  },
+  "infoButton": "Información sobre el control de precios",
+  "confirm": "Confirmar",
+  "loading": "Cargando los precios nacionales...",
+  "noData": "No hay datos de precios disponibles para este país.",
+  "currentValue": "Valor actual",
+  "populationImpact": "Impacto en la población",
+  "subsidyActive": "Subsidio de productos básicos: activo",
+  "errors": {
+    "loadFailed": "No se pudieron cargar los precios de la base de datos."
+  },
+  "commodities": {
+    "rice": "Arroz",
+    "beef": "Carne de res",
+    "chicken": "Pollo",
+    "cookingOil": "Aceite de cocina",
+    "sugar": "Azúcar",
+    "eggs": "Huevos",
+    "electricity": "Electricidad",
+    "water": "Agua"
+  },
+  "info": {
+    "title": "Información sobre el control de precios básicos",
+    "description": "Establece los precios nacionales de los productos básicos. Los precios afectan a la satisfacción pública y a la población.",
+    "satisfaction": "Índice de satisfacción pública (precios básicos)",
+    "populationImpact": "Impacto de los precios básicos en la población: {percent}% / mes"
+  },
+  "confirmation": {
+    "title": "Confirmar política de precios",
+    "changesApply": "Se aplicarán los cambios de precios de los productos básicos. ¿Continuar?",
+    "noChanges": "No se han cambiado los precios. Confirma para volver al foro.",
+    "back": "Volver",
+    "yes": "Sí, confirmar"
+  }
+}

@@ -19,10 +19,10 @@ import ProductionAISuggestionsModal from "./ai_suggestions/ProductionAISuggestio
 import { generateProductionSectorAnalysis } from "./ai_suggestions/productionAISuggestionsLogic";
 import { getEconomicEmbargoProductionMultiplier } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
 import { getActiveProductionBanForResource } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/5_laranganProduksiLogic";
-import { formatProductionProductName } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog";
 import { getProductionBonusMultiplier } from "../../../../bonus_logic";
 import { getTravelOilConsumptionThisMonth } from "../../3_produksi_konsumsi/fuelLogic/travelFuelLogic";
 import { BuildingCardGridRoot, BuildingCardRoot } from "@/app/page/root_modals_design_menu/card_building_root";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 const ELECTRICITY_FUEL_RESOURCE_KEYS = [
   "gas_alam",
@@ -68,6 +68,7 @@ const calculateTotalFuelConsumption = (countryDetail: any) => {
 interface BaseProduksiGridProps {
   keys: string[];
   title: string;
+  translatedTitle?: string;
   Icon: any;
   countryDetail: any;
   setCountryDetail?: (detail: any) => void;
@@ -88,6 +89,7 @@ interface BaseProduksiGridProps {
 export default function BaseProduksiGrid({
   keys,
   title,
+  translatedTitle,
   Icon,
   countryDetail,
   setCountryDetail,
@@ -104,20 +106,15 @@ export default function BaseProduksiGrid({
   currentDate,
   onNavigateToTab,
 }: BaseProduksiGridProps) {
+  const { t } = useLanguage();
+  const displayTitle = translatedTitle || title;
   const formatLabel = (key: string) => {
-    const customLabels: Record<string, string> = {
-      "pembangkit_listrik_tenaga_nuklir": "PLTN",
-  "pembangkit_listrik_tenaga_air": "PLTA",
-  "pembangkit_listrik_tenaga_surya": "PLTS",
-  "pembangkit_listrik_tenaga_uap": "PLTU",
-  "pembangkit_listrik_tenaga_gas": "PLTG",
-  "pembangkit_listrik_tenaga_angin": "PLTB",
-  "pembangkit_listrik_tenaga_panas_bumi": "PLTP",
-  "pembangkit_listrik_tenaga_hidrogen": "PLTH",
-  "pembangkit_listrik_tenaga_gelombang_laut": "PLTGL",
-  "pembangkit_listrik_tenaga_fusi_nuklir": "PLTFN"
-    };
-    if (customLabels[key]) return customLabels[key];
+    const buildingKey = `navigation_construction_production.buildingLabels.${key}`;
+    const buildingLabel = t(buildingKey);
+    if (buildingLabel !== buildingKey) return buildingLabel;
+    const rewardKey = `side_reward.items.${key}`;
+    const rewardLabel = t(rewardKey);
+    if (rewardLabel !== rewardKey) return rewardLabel;
     return key.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase());
   };
 
@@ -155,7 +152,7 @@ export default function BaseProduksiGrid({
   const showAIButton = SUPPORTED_AI_SECTORS.includes(normalizedTitle);
 
   const handleOpenAISuggestions = () => {
-    const analysis = generateProductionSectorAnalysis(normalizedTitle, title, keys, countryDetail, metadata);
+    const analysis = generateProductionSectorAnalysis(normalizedTitle, displayTitle, keys, countryDetail, metadata);
     setAiAnalysisResult(analysis);
     setIsAIModalOpen(true);
   };
@@ -175,13 +172,13 @@ export default function BaseProduksiGrid({
       <div className="production-section-header flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <Icon className="h-6 w-6 text-root-accent" />
-          <h3 className="production-section-title text-lg font-black text-root-accent uppercase tracking-wider">{title}</h3>
+          <h3 className="production-section-title text-lg font-black text-root-accent uppercase tracking-wider">{displayTitle}</h3>
         </div>
 
         {showAIButton && (
           <RootAISuggestionsButton
             onClick={handleOpenAISuggestions}
-            title={`Analisis AI untuk sektor ${title}`}
+            title={t("navigation_construction_production.grid.aiAnalysis", { sector: displayTitle })}
           />
         )}
       </div>
@@ -221,12 +218,12 @@ export default function BaseProduksiGrid({
             <React.Fragment key={key}>
               {isElectricityTab && key === fuelRequiredKeys[0] && (
                 <div className="production-grid-section-label col-span-full border-b border-root-accent/15 pb-2 pt-1 text-xs font-black uppercase tracking-wider text-root-muted">
-                  Pembangkit Membutuhkan Bahan Bakar
+                  {t("navigation_construction_production.grid.fuelRequired")}
                 </div>
               )}
               {isElectricityTab && key === noFuelRequiredKeys[0] && (
                 <div className="production-grid-section-label col-span-full border-b border-root-accent/15 pb-2 pt-4 text-xs font-black uppercase tracking-wider text-root-muted">
-                  Pembangkit Tidak Membutuhkan Bahan Bakar
+                  {t("navigation_construction_production.grid.fuelNotRequired")}
                 </div>
               )}
               <BuildingCardRoot
@@ -237,14 +234,14 @@ export default function BaseProduksiGrid({
               role="button"
               tabIndex={0}
               aria-disabled={!isAvailable}
-              title={productionBan ? `Diblokir resolusi PBB: ${formatProductionProductName(key)}` : undefined}
+              title={productionBan ? t("navigation_construction_production.grid.blockedByResolution", { building: formatLabel(key) }) : undefined}
               highlighted={isHighlighted}
               unavailable={!isAvailable}
               className={`production-building-card group flex-grow ${isAvailable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
             >
               {productionBan && (
                 <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-root-canvas/85 p-3 text-center text-[10px] font-black uppercase tracking-wide text-rose-300 opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none">
-                  Diblokir resolusi PBB: {formatProductionProductName(key)}
+                  {t("navigation_construction_production.grid.blockedByResolution", { building: formatLabel(key) })}
                 </div>
               )}
               {/* Badge Tanggal */}
@@ -285,7 +282,9 @@ export default function BaseProduksiGrid({
                         e.stopPropagation();
                         setHoveredBuildingKey(hoveredBuildingKey === key ? null : key);
                       }}
-                      title={isProductionBanned ? "Diblokir oleh resolusi PBB yang sedang berlaku" : "Info bangunan"}
+                      title={isProductionBanned
+                        ? t("navigation_construction_production.grid.blocked")
+                        : t("navigation_construction_production.grid.infoBuilding")}
                     >
                       <Info />
                     </button>
@@ -324,7 +323,7 @@ export default function BaseProduksiGrid({
                           {rawProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                         </span>
                         {isProductionZero && (
-                          <span className="text-[8px] sm:text-[9px] font-bold text-rose-400 leading-tight">(bahan bakar defisit)</span>
+                          <span className="text-[8px] sm:text-[9px] font-bold text-rose-400 leading-tight">{t("navigation_construction_production.grid.fuelDeficit")}</span>
                         )}
                       </>
                     ) : (
@@ -352,7 +351,7 @@ export default function BaseProduksiGrid({
                                 {displayVal.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
                               </span>
                               {isDeficit && (
-                                <span className="text-[9px] font-bold text-rose-400 leading-none mt-0.5">(bahan baku defisit)</span>
+                                <span className="text-[9px] font-bold text-rose-400 leading-none mt-0.5">{t("navigation_construction_production.grid.rawMaterialDeficit")}</span>
                               )}
                             </div>
                           );
@@ -371,7 +370,7 @@ export default function BaseProduksiGrid({
                             </span>
                             {travelOilConsumption > 0 && (
                               <span className="mt-0.5 text-[8px] sm:text-[9px] font-bold leading-tight text-amber-300">
-                                Konsumsi perjalanan bulan ini: {travelOilConsumption.toLocaleString('id-ID')} barel
+                                {t("navigation_construction_production.grid.travelConsumption", { amount: travelOilConsumption.toLocaleString('id-ID') })}
                               </span>
                             )}
                           </div>
@@ -387,7 +386,7 @@ export default function BaseProduksiGrid({
         })}
         {keys.length === 0 && (
           <div className="col-span-full rounded-xl border border-root-accent/20 bg-root-canvas p-4 text-sm text-root-subtle">
-            Data untuk kategori ini tidak tersedia.
+            {t("navigation_construction_production.grid.noData")}
           </div>
         )}
       </BuildingCardGridRoot>

@@ -65,6 +65,7 @@ interface RootAISuggestionsModalProps {
   icon?: ElementType<{ className?: string }>;
   metrics: RootAISuggestionMetric[];
   items: RootAISuggestionItem[];
+  itemCountLabel?: string;
   summary?: string;
   summaryTitle?: string;
 }
@@ -79,6 +80,7 @@ export default function RootAISuggestionsModal({
   icon: HeaderIcon = Sparkles,
   metrics,
   items,
+  itemCountLabel,
   summary,
   summaryTitle = "Ringkasan AI",
 }: RootAISuggestionsModalProps) {
@@ -122,7 +124,7 @@ export default function RootAISuggestionsModal({
           <section className="root-ai-modal__section">
             <div className="root-ai-modal__section-heading">
               <h3>{sectionTitle}</h3>
-              <span>{items.length} item</span>
+              <span>{itemCountLabel || `${items.length} item`}</span>
             </div>
 
             <div className="root-ai-modal__list">

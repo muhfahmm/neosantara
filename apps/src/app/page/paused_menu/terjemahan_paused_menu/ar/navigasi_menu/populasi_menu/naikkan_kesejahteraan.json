@@ -1,0 +1,19 @@
+{
+  "initiatives": {
+    "cashTransfer": "مساعدة نقدية مباشرة",
+    "foodSubsidy": "دعم السلع الغذائية الأساسية",
+    "studentAid": "مساعدة تعليمية للطلاب",
+    "healthCoverage": "تغطية صحية شاملة",
+    "housingUpgrade": "تحسين الإسكان العام",
+    "nationalMarket": "سوق وطني بأسعار مخفضة"
+  },
+  "success": "تم إطلاق مبادرة «{title}» بنجاح! موعد الإنجاز المتوقع: {date}.",
+  "running": "جارٍ التنفيذ",
+  "welfareBoost": "تحسين الرفاه: {value}٪+",
+  "cost": "التكلفة:",
+  "duration": "المدة:",
+  "days": "{value} يومًا",
+  "active": "نشط",
+  "launch": "إطلاق",
+  "sponsor": "تمويل {title}"
+}

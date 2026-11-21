@@ -253,7 +253,6 @@ export default function DiplomacyTracking({
                 }
                 setIsTrackingOpen(open => !open);
               }}
-              title="Pelacakan aktivitas diplomasi"
               aria-label={isTrackingOpen ? 'Tutup pelacakan aktivitas' : 'Buka pelacakan aktivitas'}
               aria-expanded={isTrackingOpen}
               className="side-floating-btn side-btn-tracking"

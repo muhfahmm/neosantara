@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { LayoutGrid } from "lucide-react";
 import { menuItems, subMenuItems } from "../navigationData";
 import { useViewportMode } from "@/app/hooks/useViewportMode";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface BottomNavProps {
   activeMenu: string;
@@ -36,6 +37,7 @@ export default function BottomNav({
   }, []);
 
   const [activeTab, setActiveTab] = useState<string | null>(null);
+  const { t } = useLanguage();
   const viewportMode = useViewportMode();
   const isLandscapePhone = viewportMode === 'landscapePhone';
   const isPortraitPhone = viewportMode === 'portraitPhone';
@@ -107,7 +109,7 @@ export default function BottomNav({
       }`}
     >
       <nav
-        aria-label="Navigasi menu utama"
+        aria-label={t('navbar.navigation.mainMenu')}
         className={`root-bottom-nav pointer-events-auto flex w-max max-w-full flex-wrap items-center border border-root-accent/30 bg-root-surface/95 backdrop-blur-md transition-[background-color,box-shadow] duration-200 ${
           isLandscapePhone
             ? 'gap-0.5 rounded-md p-0.5'
@@ -120,12 +122,13 @@ export default function BottomNav({
         <div className={`flex min-w-0 flex-wrap items-center ${isLandscapePhone ? 'gap-0.5' : 'gap-1'}`}>
           {(isMenuSelected
             ? [
-                { id: "Peta Taktis", icon: LayoutGrid, label: "Peta Taktis" },
+                { id: "Peta Taktis", icon: LayoutGrid, label: t('navbar.navigation.top.map'), translationKey: "navbar.navigation.top.map" },
                 menuItems.find(item => item.id === activeTab),
               ]
             : menuItems
           ).filter(Boolean).map((item: any) => {
             const Icon = item.icon;
+            const label = t(item.translationKey);
             const isActive = activeTab === item.id;
             const isMap = item.id === "Peta Taktis";
             const hasSubItems = Boolean(subMenuItems[item.id]?.length);
@@ -135,8 +138,7 @@ export default function BottomNav({
                 <button
                   data-tutorial={item.id === "Ekonomi" ? "menu-ekonomi" : item.id === "Pembangunan" ? "menu-pembangunan" : undefined}
                   type="button"
-                  title={item.label}
-                  aria-label={item.label}
+                  aria-label={label}
                   aria-pressed={isActive}
                   aria-expanded={!isMap && hasSubItems ? isActive : undefined}
                   aria-controls={!isMap && isActive && hasSubItems ? "bottom-nav-submenu" : undefined}
@@ -159,11 +161,11 @@ export default function BottomNav({
                   />
                   {isActive && !isMobile && (
                     <span className={`whitespace-nowrap font-black uppercase ${isLandscapePhone ? 'text-[8px] tracking-wide' : 'text-[10px] tracking-widest'}`}>
-                      {item.label}
+                      {label}
                     </span>
                   )}
                 </button>
-                {!isActive && !isMobile && <Tooltip label={item.label} />}
+                {!isActive && !isMobile && <Tooltip label={label} />}
               </div>
             );
           })}
@@ -182,15 +184,16 @@ export default function BottomNav({
           <div
             id="bottom-nav-submenu"
             role="group"
-            aria-label={`Submenu ${activeTab}`}
+            aria-label={t('navbar.navigation.subMenu')}
             className={`flex min-w-0 flex-wrap items-center ${isLandscapePhone ? 'gap-0.5' : 'gap-1'}`}
           >
-            {currentSubItems.map((sub: any) => (
+            {currentSubItems.map((sub: any) => {
+              const label = t(sub.translationKey);
+              return (
               <div key={sub.id} className="relative group shrink-0">
                 <button
                   type="button"
-                  title={sub.label}
-                  aria-label={sub.label}
+                  aria-label={label}
                   onClick={() => setActiveMenu(sub.id)}
                   className={`inline-flex shrink-0 cursor-pointer items-center justify-center border border-transparent font-semibold text-root-text transition-colors hover:bg-root-accent/10 hover:text-root-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent/60 ${
                     isLandscapePhone
@@ -206,12 +209,13 @@ export default function BottomNav({
                   />
                   {!isMobile && (
                     <span className="whitespace-nowrap font-black uppercase tracking-wider">
-                      {sub.label}
+                      {label}
                     </span>
                   )}
                 </button>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </nav>
@@ -223,7 +227,7 @@ function Tooltip({ label }: { label: string }) {
   return (
     <div
       role="tooltip"
-      className="pointer-events-none absolute bottom-full left-1/2 z-[9999] mb-3 -translate-x-1/2 whitespace-nowrap rounded-lg border border-root-accent/30 bg-root-surface px-4 py-2.5 text-[13px] font-semibold text-root-text opacity-0 transition-opacity duration-150 group-hover:block group-hover:opacity-100"
+      className="pointer-events-none absolute bottom-full left-1/2 z-[9999] mb-4 max-w-[calc(100vw-1rem)] -translate-x-1/2 whitespace-nowrap rounded-lg border border-root-accent/30 bg-root-surface px-4 py-2.5 text-[13px] font-semibold text-root-text opacity-0 transition-opacity duration-150 group-hover:block group-hover:opacity-100"
     >
       {label}
       <div className="absolute top-full left-1/2 -translate-x-1/2 border-x-4 border-x-transparent border-t-4 border-t-root-surface"></div>

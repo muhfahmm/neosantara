@@ -1,0 +1,22 @@
+{
+  "title": "民众满意度",
+  "infoButton": "民众满意度统计信息",
+  "civilSatisfaction": "民众满意度：",
+  "statisticsTab": "统计",
+  "increaseTab": "提高满意度",
+  "sectors": {
+    "tax": "税收",
+    "goodsPrices": "基本商品价格",
+    "foodProduction": "粮食生产",
+    "electricityProduction": "电力生产",
+    "housing": "住房",
+    "publicServices": "公共服务与设施",
+    "doctrine": "国家理念与开放度",
+    "economicPolicy": "经济政策与体制",
+    "subsidies": "补贴分配与政策"
+  },
+  "info": {
+    "title": "民众满意度统计",
+    "description": "满意度评分汇总了整体状况以及税收、物价、粮食和公共服务等领域指标。请在“统计”页签查看评分，再打开相关领域了解影响满意度的政策。"
+  }
+}

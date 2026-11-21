@@ -21,6 +21,10 @@
     "kasNegaraTitle": "Haushalt der Staatskasse",
     "kasNegaraDesc": "Klicken, um die Staatskasse im NEO-Shop aufzufüllen.",
     "populasi": "Klicken, um Bevölkerungsdetails anzuzeigen",
+    "populationTitle": "Bevölkerungsdetails",
+    "births": "Geburten",
+    "deaths": "Todesfälle",
+    "netGrowth": "Nettowachstum",
     "fps": "FPS-Monitordetails öffnen"
   },
   "actions": {
@@ -28,5 +32,58 @@
     "restart": "Neustart",
     "openMenu": "Pausemenü öffnen",
     "zoom": "Zoom"
+  },
+  "navigation": {
+    "gameMenu": "Spielmenü",
+    "mainMenu": "Hauptmenü-Navigation",
+    "subMenu": "Unternavigation",
+    "mainMap": "Hauptsimulation",
+    "globalMap": "Weltkarte",
+    "top": {
+      "groupLabel": "Kartennavigation",
+      "map": "Taktische Karte",
+      "diplomacy": "Diplomatische Beziehungen",
+      "focusHome": "Eigenes Land fokussieren und heranzoomen"
+    },
+    "main": {
+      "kepuasan": "Zufriedenheit",
+      "populasi": "Bevölkerung",
+      "produksiKonsumsi": "Produktion & Verbrauch",
+      "ekonomi": "Wirtschaft",
+      "pembangunan": "Entwicklung",
+      "pertahanan": "Verteidigung",
+      "geopolitik": "Geopolitik",
+      "sosialBudaya": "Gesellschaft & Kultur",
+      "kementerian": "Ministerium"
+    },
+    "sub": {
+      "kepuasanStatistics": "Zufriedenheitsstatistik",
+      "increaseSatisfaction": "Zufriedenheit erhöhen",
+      "populationSummary": "Bevölkerungsübersicht",
+      "trade": "Handel",
+      "tax": "Steuern",
+      "loans": "Kredite",
+      "income": "Einnahmen",
+      "purchasingPower": "Kaufkraft",
+      "economicSystem": "Wirtschaftssystem",
+      "production": "Produktion",
+      "publicFacilities": "Öffentliche Einrichtungen",
+      "housing": "Wohnraum",
+      "nationalGrid": "Nationales Stromnetz",
+      "foodIndustry": "Lebensmittelindustrie",
+      "attackCountry": "Land angreifen",
+      "intelligence": "Nachrichtendienst",
+      "capturedTerritory": "Eroberte Gebiete",
+      "fleet": "Flotte",
+      "icbm": "ICBM",
+      "un": "UN",
+      "embassy": "Botschaften",
+      "internationalOrganizations": "Internationale Organisationen",
+      "relationLevel": "Beziehungen",
+      "religion": "Religion & Glaube",
+      "nationalIdeology": "Nationale Ideologie",
+      "opennessDoctrine": "Doktrin & Offenheit",
+      "ministry": "Ministerium"
+    }
   }
 }

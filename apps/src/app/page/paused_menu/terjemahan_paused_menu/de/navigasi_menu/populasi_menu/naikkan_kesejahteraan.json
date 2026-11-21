@@ -1,0 +1,19 @@
+{
+  "initiatives": {
+    "cashTransfer": "Direkte Geldhilfe",
+    "foodSubsidy": "Grundnahrungsmittelsubvention",
+    "studentAid": "Bildungshilfe für Schüler",
+    "healthCoverage": "Universelle Gesundheitsversorgung",
+    "housingUpgrade": "Verbesserung des öffentlichen Wohnraums",
+    "nationalMarket": "Nationaler Markt für günstige Waren"
+  },
+  "success": "Die Initiative „{title}“ wurde gestartet! Voraussichtlicher Abschluss: {date}.",
+  "running": "Läuft",
+  "welfareBoost": "Wohlergehensbonus: +{value}%",
+  "cost": "Kosten:",
+  "duration": "Dauer:",
+  "days": "{value} Tage",
+  "active": "Aktiv",
+  "launch": "Starten",
+  "sponsor": "{title} finanzieren"
+}

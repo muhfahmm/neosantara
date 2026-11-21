@@ -55,7 +55,7 @@ export default function ShopModal({
         <button
           type="button"
           onClick={onClick}
-          title={t('side_shop.title')}
+          aria-label={t('side_shop.title')}
           className="side-floating-btn side-btn-shop"
         >
           <Image

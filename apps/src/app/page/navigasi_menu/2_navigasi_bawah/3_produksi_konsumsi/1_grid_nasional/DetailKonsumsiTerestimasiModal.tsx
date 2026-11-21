@@ -5,6 +5,7 @@ import { Zap, Activity, Building2, Home, Factory, Search, Shield, TrendingUp, Tr
 import { getCountryConsumptionBreakdown } from "./consumptionLogic";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface DetailKonsumsiTerestimasiModalProps {
   isOpen: boolean;
@@ -15,6 +16,20 @@ interface DetailKonsumsiTerestimasiModalProps {
   onNavigateToMenu?: (category: string, itemKey: string) => void;
 }
 
+const SECTOR_TRANSLATION_KEYS: Record<string, string> = {
+  "Produksi & Manufaktur": "productionManufacturing",
+  "Infrastruktur": "infrastructure",
+  "Pendidikan": "education",
+  "Kesehatan": "health",
+  "Hukum & Keamanan": "lawSecurity",
+  "Olahraga & Hiburan": "sportsEntertainment",
+  "Komersial": "commercial",
+  "Hiburan": "entertainment",
+  "Militer & Pertahanan": "militaryDefense",
+  "Kepolisian": "police",
+  "Hunian & Permukiman": "housing",
+};
+
 export default function DetailKonsumsiTerestimasiModal({
   isOpen,
   onClose,
@@ -23,6 +38,7 @@ export default function DetailKonsumsiTerestimasiModal({
   estimatedConsumptionMW,
   onNavigateToMenu,
 }: DetailKonsumsiTerestimasiModalProps) {
+  const { t, language } = useLanguage();
   const [activeTab, setActiveTab] = useState<"semua" | "produksi" | "tempat_umum" | "hunian" | "pertahanan">("semua");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -53,15 +69,28 @@ export default function DetailKonsumsiTerestimasiModal({
     ];
   }, [produksiBreakdown, tempatUmumBreakdown, hunianBreakdown, pertahananBreakdown]);
 
+  const localizedItems = useMemo(() => allItems.map((item) => {
+    const buildingKey = `navigation_electricity_grid.detail.buildings.${item.key}`;
+    const translatedLabel = t(buildingKey);
+    const sectorKey = SECTOR_TRANSLATION_KEYS[item.sector];
+    const sectorPath = sectorKey ? `navigation_electricity_grid.detail.sectors.${sectorKey}` : "";
+    const translatedSector = sectorPath ? t(sectorPath) : item.sector;
+    return {
+      ...item,
+      label: translatedLabel === buildingKey ? item.label : translatedLabel,
+      sector: translatedSector === sectorPath ? item.sector : translatedSector,
+    };
+  }), [allItems, t]);
+
   const filteredItems = useMemo(() => {
-    return allItems.filter((item) => {
+    return localizedItems.filter((item) => {
       const matchTab = activeTab === "semua" || item.category === activeTab;
       const matchQuery =
         item.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.sector.toLowerCase().includes(searchQuery.toLowerCase());
       return matchTab && matchQuery && (item.count > 0 || item.total > 0);
     });
-  }, [allItems, activeTab, searchQuery]);
+  }, [localizedItems, activeTab, searchQuery]);
 
   const nettoMW = totalProductionMW - totalAllBreakdownConsumption;
 
@@ -78,7 +107,7 @@ export default function DetailKonsumsiTerestimasiModal({
               <Zap className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
             <div>
-              <h2 className="text-[length:var(--modal-font-title)] font-bold text-rose-400 tracking-tight leading-none uppercase">Rincian Konsumsi Listrik Terestimasi</h2>
+              <h2 className="text-[length:var(--modal-font-title)] font-bold text-rose-400 tracking-tight leading-none uppercase">{t("navigation_electricity_grid.detail.title")}</h2>
             </div>
           </div>
 
@@ -96,13 +125,13 @@ export default function DetailKonsumsiTerestimasiModal({
               <div>
                 <div className="flex items-center gap-1 mb-1">
                   <TrendingUp className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  <p className="text-[9px] font-black uppercase tracking-wider text-emerald-400">Total Produksi Listrik</p>
+                  <p className="text-[9px] font-black uppercase tracking-wider text-emerald-400">{t("navigation_electricity_grid.totalProduction")}</p>
                 </div>
                 <p className="text-sm sm:text-base lg:text-lg font-black font-mono tabular-nums game-stat-number text-emerald-400 mt-1 break-words">
-                  {totalProductionMW.toLocaleString("id-ID", { maximumFractionDigits: 2 })} <span className="text-xs font-bold font-sans text-root-subtle">MW</span>
+                  {totalProductionMW.toLocaleString(language, { maximumFractionDigits: 2 })} <span className="text-xs font-bold font-sans text-root-subtle">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-emerald-300/70 mt-1.5 font-medium">Pembangkit aktif</p>
+              <p className="text-[9px] text-emerald-300/70 mt-1.5 font-medium">{t("navigation_electricity_grid.detail.activePlants")}</p>
             </div>
 
             {/* Total Konsumsi */}
@@ -110,13 +139,13 @@ export default function DetailKonsumsiTerestimasiModal({
               <div>
                 <div className="flex items-center gap-1 mb-1">
                   <TrendingDown className="w-3.5 h-3.5 text-rose-400 shrink-0" />
-                  <p className="text-[9px] font-black uppercase tracking-wider text-rose-400">Total Konsumsi Terestimasi</p>
+                  <p className="text-[9px] font-black uppercase tracking-wider text-rose-400">{t("navigation_electricity_grid.detail.estimatedConsumption")}</p>
                 </div>
                 <p className="text-sm sm:text-base lg:text-lg font-black font-mono tabular-nums game-stat-number text-rose-400 mt-1 break-words">
-                  {totalAllBreakdownConsumption.toLocaleString("id-ID", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} <span className="text-xs font-bold font-sans text-root-subtle">MW</span>
+                  {totalAllBreakdownConsumption.toLocaleString(language, { minimumFractionDigits: 0, maximumFractionDigits: 2 })} <span className="text-xs font-bold font-sans text-root-subtle">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-rose-300/70 mt-1.5 font-medium">Beban energi nasional</p>
+              <p className="text-[9px] text-rose-300/70 mt-1.5 font-medium">{t("navigation_electricity_grid.detail.nationalEnergyLoad")}</p>
             </div>
 
             {/* Total Netto Listrik */}
@@ -124,14 +153,14 @@ export default function DetailKonsumsiTerestimasiModal({
               <div>
                 <div className="flex items-center gap-1 mb-1">
                   <Activity className={`w-3.5 h-3.5 shrink-0 ${nettoMW >= 0 ? 'text-cyan-400' : 'text-amber-400'}`} />
-                  <p className={`text-[9px] font-black uppercase tracking-wider ${nettoMW >= 0 ? 'text-cyan-400' : 'text-amber-400'}`}>Total Netto Listrik</p>
+                  <p className={`text-[9px] font-black uppercase tracking-wider ${nettoMW >= 0 ? 'text-cyan-400' : 'text-amber-400'}`}>{t("navigation_electricity_grid.detail.netElectricity")}</p>
                 </div>
                 <p className={`text-sm sm:text-base lg:text-lg font-black font-mono tabular-nums game-stat-number mt-1 break-words ${nettoMW >= 0 ? 'text-cyan-400' : 'text-rose-400'}`}>
-                  {nettoMW >= 0 ? '+' : ''}{nettoMW.toLocaleString("id-ID", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} <span className="text-xs font-bold font-sans text-root-subtle">MW</span>
+                  {nettoMW >= 0 ? '+' : ''}{nettoMW.toLocaleString(language, { minimumFractionDigits: 0, maximumFractionDigits: 2 })} <span className="text-xs font-bold font-sans text-root-subtle">MW</span>
                 </p>
               </div>
               <p className={`text-[9px] mt-1.5 font-medium ${nettoMW >= 0 ? 'text-cyan-300/70' : 'text-amber-300/70'}`}>
-                {nettoMW >= 0 ? 'Surplus daya nasional' : 'Defisit daya nasional'}
+                {nettoMW >= 0 ? t("navigation_electricity_grid.detail.nationalSurplus") : t("navigation_electricity_grid.detail.nationalDeficit")}
               </p>
             </div>
 
@@ -145,13 +174,13 @@ export default function DetailKonsumsiTerestimasiModal({
               <div>
                 <div className="flex items-center gap-1 mb-1">
                   <Factory className="w-3.5 h-3.5 text-root-accent shrink-0" />
-                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Produksi & Tambang</p>
+                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">{t("navigation_electricity_grid.detail.productionAndMining")}</p>
                 </div>
                 <p className="text-sm sm:text-base lg:text-lg font-black font-mono tabular-nums game-stat-number text-root-accent">
-                  {totalProduksiConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold font-sans text-root-subtle">MW</span>
+                  {totalProduksiConsumption.toLocaleString(language, { maximumFractionDigits: 1 })} <span className="text-xs font-bold font-sans text-root-subtle">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{produksiBreakdown.filter(p => p.count > 0).length} jenis industri</p>
+              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{t("navigation_electricity_grid.detail.industryCount", { count: produksiBreakdown.filter(p => p.count > 0).length })}</p>
             </div>
 
             {/* Sektor Tempat Umum */}
@@ -159,13 +188,13 @@ export default function DetailKonsumsiTerestimasiModal({
               <div>
                 <div className="flex items-center gap-1 mb-1">
                   <Building2 className="w-3.5 h-3.5 text-root-accent shrink-0" />
-                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Tempat Umum</p>
+                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">{t("navigation_electricity_grid.detail.publicPlaces")}</p>
                 </div>
                 <p className="text-sm sm:text-base lg:text-lg font-black font-mono tabular-nums game-stat-number text-root-accent">
-                  {totalTempatUmumConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold font-sans text-root-subtle">MW</span>
+                  {totalTempatUmumConsumption.toLocaleString(language, { maximumFractionDigits: 1 })} <span className="text-xs font-bold font-sans text-root-subtle">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{tempatUmumBreakdown.filter(t => t.count > 0).length} fasilitas publik</p>
+              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{t("navigation_electricity_grid.detail.publicFacilitiesCount", { count: tempatUmumBreakdown.filter(t => t.count > 0).length })}</p>
             </div>
 
             {/* Sektor Pertahanan & Keamanan */}
@@ -173,13 +202,13 @@ export default function DetailKonsumsiTerestimasiModal({
               <div>
                 <div className="flex items-center gap-1 mb-1">
                   <Shield className="w-3.5 h-3.5 text-root-accent" />
-                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Pertahanan & Keamanan</p>
+                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">{t("navigation_electricity_grid.detail.defenseSecurity")}</p>
                 </div>
                 <p className="text-sm sm:text-base lg:text-lg font-black text-root-accent">
-                  {totalPertahananConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold text-root-subtle">MW</span>
+                  {totalPertahananConsumption.toLocaleString(language, { maximumFractionDigits: 1 })} <span className="text-xs font-bold text-root-subtle">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{pertahananBreakdown.filter(p => p.count > 0).length} pangkalan & infrastruktur</p>
+              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{t("navigation_electricity_grid.detail.basesInfrastructureCount", { count: pertahananBreakdown.filter(p => p.count > 0).length })}</p>
             </div>
 
             {/* Sektor Hunian */}
@@ -187,13 +216,13 @@ export default function DetailKonsumsiTerestimasiModal({
               <div>
                 <div className="flex items-center gap-1 mb-1">
                   <Home className="w-3.5 h-3.5 text-root-accent" />
-                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Hunian & Permukiman</p>
+                  <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">{t("navigation_electricity_grid.detail.housingSettlements")}</p>
                 </div>
                 <p className="text-base sm:text-lg font-black text-root-accent">
-                  {totalHunianConsumption.toLocaleString("id-ID", { maximumFractionDigits: 2 })} <span className="text-xs font-bold text-root-subtle">MW</span>
+                  {totalHunianConsumption.toLocaleString(language, { maximumFractionDigits: 2 })} <span className="text-xs font-bold text-root-subtle">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">Beban rumah tangga</p>
+              <p className="text-[9px] text-root-subtle mt-1.5 font-medium">{t("navigation_electricity_grid.detail.householdLoad")}</p>
             </div>
 
           </div>
@@ -209,7 +238,7 @@ export default function DetailKonsumsiTerestimasiModal({
                   : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
                   }`}
               >
-                Semua Sektor
+                {t("navigation_electricity_grid.detail.tabs.all")}
               </button>
               <button
                 onClick={() => setActiveTab("produksi")}
@@ -218,7 +247,7 @@ export default function DetailKonsumsiTerestimasiModal({
                   : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
                   }`}
               >
-                Produksi
+                {t("navigation_electricity_grid.detail.tabs.production")}
               </button>
               <button
                 onClick={() => setActiveTab("tempat_umum")}
@@ -227,7 +256,7 @@ export default function DetailKonsumsiTerestimasiModal({
                   : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
                   }`}
               >
-                Tempat Umum
+                {t("navigation_electricity_grid.detail.tabs.publicPlaces")}
               </button>
               <button
                 onClick={() => setActiveTab("pertahanan")}
@@ -236,7 +265,7 @@ export default function DetailKonsumsiTerestimasiModal({
                   : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
                   }`}
               >
-                Pertahanan & Keamanan
+                {t("navigation_electricity_grid.detail.tabs.defenseSecurity")}
               </button>
               <button
                 onClick={() => setActiveTab("hunian")}
@@ -245,7 +274,7 @@ export default function DetailKonsumsiTerestimasiModal({
                   : "bg-root-surface text-root-subtle hover:text-root-accent hover:bg-root-surface/80"
                   }`}
               >
-                Hunian
+                {t("navigation_electricity_grid.detail.tabs.housing")}
               </button>
             </div>
 
@@ -256,7 +285,7 @@ export default function DetailKonsumsiTerestimasiModal({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari fasilitas..."
+                placeholder={t("navigation_electricity_grid.detail.searchFacilities")}
                 className="w-full bg-root-surface border border-root-accent/30 rounded-lg pl-8 pr-3 py-1.5 text-xs text-root-text placeholder-root-subtle focus:outline-none focus:border-root-accent"
               />
             </div>
@@ -277,7 +306,7 @@ export default function DetailKonsumsiTerestimasiModal({
                         {item.sector}
                       </span>
                       <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-root-surface border border-root-accent/20 text-root-accent shrink-0">
-                        {item.count.toLocaleString("id-ID", { maximumFractionDigits: 2 })} unit
+                        {item.count.toLocaleString(language, { maximumFractionDigits: 2 })} {t("navigation_electricity_grid.detail.unit")}
                       </span>
                     </div>
                     <h4 className="text-xs sm:text-sm font-black text-root-text uppercase tracking-wide leading-snug">
@@ -287,15 +316,15 @@ export default function DetailKonsumsiTerestimasiModal({
 
                   <div className="border-t border-root-accent/10 mt-3 pt-2 flex items-center justify-between">
                     <div>
-                      <p className="text-[9px] text-root-subtle">Konsumsi / Unit:</p>
+                      <p className="text-[9px] text-root-subtle">{t("navigation_electricity_grid.detail.consumptionPerUnit")}</p>
                       <p className="text-xs font-bold text-root-text">
-                        {item.rate.toLocaleString("id-ID", { maximumFractionDigits: 4 })} MW
+                        {item.rate.toLocaleString(language, { maximumFractionDigits: 4 })} MW
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[9px] text-rose-400 font-bold">Total Beban:</p>
+                      <p className="text-[9px] text-rose-400 font-bold">{t("navigation_electricity_grid.detail.totalLoad")}</p>
                       <p className="text-sm font-black text-rose-400">
-                        {item.total.toLocaleString("id-ID", { maximumFractionDigits: 2 })} MW
+                        {item.total.toLocaleString(language, { maximumFractionDigits: 2 })} MW
                       </p>
                     </div>
                   </div>
@@ -303,7 +332,7 @@ export default function DetailKonsumsiTerestimasiModal({
               ))
             ) : (
               <div className="col-span-full py-12 text-center bg-root-canvas border border-root-accent/10 rounded-xl">
-                <p className="text-xs text-root-subtle font-bold uppercase tracking-wider">Tidak ada fasilitas yang sesuai kriteria pencarian.</p>
+                <p className="text-xs text-root-subtle font-bold uppercase tracking-wider">{t("navigation_electricity_grid.detail.noFacilities")}</p>
               </div>
             )}
           </div>

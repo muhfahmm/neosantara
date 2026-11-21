@@ -1,0 +1,19 @@
+{
+  "initiatives": {
+    "cashTransfer": "Bantuan Tunai Langsung",
+    "foodSubsidy": "Subsidi Pangan Pokok",
+    "studentAid": "Bantuan Pendidikan Siswa",
+    "healthCoverage": "Jaminan Kesehatan Universal",
+    "housingUpgrade": "Perbaikan Perumahan Rakyat",
+    "nationalMarket": "Pasar Murah Nasional"
+  },
+  "success": "Inisiatif \"{title}\" berhasil diluncurkan! Target selesai: {date}.",
+  "running": "Berjalan",
+  "welfareBoost": "Boost Kesejahteraan: +{value}%",
+  "cost": "Biaya:",
+  "duration": "Durasi:",
+  "days": "{value} hari",
+  "active": "Aktif",
+  "launch": "Luncurkan",
+  "sponsor": "Danai {title}"
+}

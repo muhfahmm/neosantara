@@ -1,0 +1,19 @@
+{
+  "initiatives": {
+    "cashTransfer": "직접 현금 지원",
+    "foodSubsidy": "주식 보조금",
+    "studentAid": "학생 교육 지원",
+    "healthCoverage": "보편적 의료 보장",
+    "housingUpgrade": "공공 주택 개선",
+    "nationalMarket": "전국 저가 시장"
+  },
+  "success": "{title} 정책이 시작되었습니다! 완료 예정일: {date}.",
+  "running": "진행 중",
+  "welfareBoost": "복지 향상: +{value}%",
+  "cost": "비용:",
+  "duration": "기간:",
+  "days": "{value}일",
+  "active": "활성",
+  "launch": "시작",
+  "sponsor": "{title} 지원"
+}

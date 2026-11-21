@@ -19,6 +19,7 @@ import { calculateTunawismaLogic } from "./logic/tunawismaLogic";
 import { calculateKriminalitasLogic } from "./logic/kriminalitasLogic";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface DetailKematianModalProps {
   isOpen: boolean;
@@ -44,6 +45,7 @@ export default function DetailKematianModal({
   onOpenArmada,
 }: DetailKematianModalProps) {
 
+  const { t, language } = useLanguage();
   // Fetch building metadata agar rumus Pangan identik 100% dengan IndeksKesejahteraanModal
   const [metadata, setMetadata] = useState<any>(null);
   useEffect(() => {
@@ -92,7 +94,7 @@ export default function DetailKematianModal({
     ? propsDailyDeaths
     : calculateDailyDeaths(populasi, lifeExpectancy, securityLevel, detailWithDefaults);
 
-  const formatNumber = (num: number) => num.toLocaleString('id-ID', { maximumFractionDigits: 2 });
+  const formatNumber = (num: number) => num.toLocaleString(language, { maximumFractionDigits: 2 });
   const countryDisplayName = selectedCountry?.country || "Indonesia";
 
   return (
@@ -105,7 +107,7 @@ export default function DetailKematianModal({
       >
         <div className="flex w-full min-w-0 flex-col overflow-hidden bg-root-surface">
           <RootInfoModalHeader
-            title="Rincian Angka Kematian"
+            title={t("navigation_population_deaths.title")}
             onClose={onClose}
             size="standard"
             icon={<Skull aria-hidden="true" />}
@@ -120,11 +122,11 @@ export default function DetailKematianModal({
                 <div className="space-y-0.5">
                   <p className="flex items-center gap-1.5 text-[10px] sm:text-xs font-black uppercase tracking-wider text-rose-400">
                     <Skull className="h-3.5 w-3.5 text-rose-400" />
-                    Kematian Harian
+                    {t("navigation_population_deaths.dailyDeaths")}
                   </p>
                   <p className="text-base sm:text-lg font-black text-rose-400 tabular-nums tracking-tight">
                     -{formatNumber(dailyDeaths)}
-                    <span className="text-[10px] sm:text-xs font-bold text-root-subtle ml-1">/hr</span>
+                    <span className="text-[10px] sm:text-xs font-bold text-root-subtle ml-1">{t("navigation_population_deaths.perHour")}</span>
                   </p>
                 </div>
                 <div className="p-2 rounded-xl bg-root-canvas border border-rose-500/30 text-rose-400 shadow-inner">
@@ -137,7 +139,7 @@ export default function DetailKematianModal({
             <div className="space-y-2">
               <div className="flex items-center gap-1.5 pb-1 border-b border-root-accent/15">
                 <h3 className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-root-accent">
-                  Faktor yang Memengaruhi
+                  {t("navigation_population_deaths.factors")}
                 </h3>
               </div>
 
@@ -146,39 +148,42 @@ export default function DetailKematianModal({
                 <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-2.5 space-y-1">
                   <div className="flex items-center gap-1.5 text-root-subtle">
                     <Heart className="h-3.5 w-3.5 text-rose-400" />
-                    <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Harapan Hidup</h4>
+                    <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">{t("navigation_population_deaths.lifeExpectancy")}</h4>
                   </div>
                   <div className="flex items-center justify-between text-xs sm:text-sm font-black tabular-nums text-root-text">
-                    <span>{harapanHidup} tahun</span>
+                    <span>{harapanHidup} {t("navigation_population_deaths.years")}</span>
                     <span className="text-[10px] sm:text-xs font-bold text-root-accent">× {lifeExpectancyFactor.toFixed(2)}</span>
                   </div>
-                  <p className="text-[9px] text-root-subtle leading-tight">Semakin tinggi harapan hidup, semakin rendah angka kematian.</p>
+                  <p className="text-[9px] text-root-subtle leading-tight">{t("navigation_population_deaths.lifeExpectancyDescription")}</p>
                 </div>
 
                 {/* 2. Keamanan */}
                 <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-2.5 space-y-1">
                   <div className="flex items-center gap-1.5 text-root-subtle">
                     <Shield className="h-3.5 w-3.5 text-cyan-400" />
-                    <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Tingkat Keamanan</h4>
+                    <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">{t("navigation_population_deaths.security")}</h4>
                   </div>
                   <div className="flex items-center justify-between text-xs sm:text-sm font-black tabular-nums text-root-text">
                     <span>{tingkatKeamanan}%</span>
                     <span className="text-[10px] sm:text-xs font-bold text-root-accent">× {securityFactor.toFixed(2)}</span>
                   </div>
-                  <p className="text-[9px] text-root-subtle leading-tight">Lingkungan aman mengurangi fatalitas kecelakaan & kejahatan.</p>
+                  <p className="text-[9px] text-root-subtle leading-tight">{t("navigation_population_deaths.securityDescription")}</p>
                 </div>
 
                 {/* 3. Tunawisma */}
                 <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-2.5 space-y-1">
                   <div className="flex items-center gap-1.5 text-root-subtle">
                     <Home className="h-3.5 w-3.5 text-amber-400" />
-                    <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Tunawisma</h4>
+                    <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">{t("navigation_population_deaths.homeless")}</h4>
                   </div>
                   <div className="flex items-center justify-between text-xs sm:text-sm font-black tabular-nums text-root-text">
-                    <span>{formatNumber(homelessCount)} jiwa ({(homelessRatio * 100).toFixed(2)}%)</span>
+                    <span>{t("navigation_population_deaths.homelessCount", {
+                      count: formatNumber(homelessCount),
+                      ratio: (homelessRatio * 100).toFixed(2),
+                    })}</span>
                     <span className="text-[10px] sm:text-xs font-bold text-root-accent">× {homelessFactor.toFixed(2)}</span>
                   </div>
-                  <p className="text-[9px] text-root-subtle leading-tight">Setiap 1% tunawisma meningkatkan kematian sebesar 5%.</p>
+                  <p className="text-[9px] text-root-subtle leading-tight">{t("navigation_population_deaths.homelessDescription")}</p>
                 </div>
 
                 {/* 4. Kesehatan (clickable) */}
@@ -191,15 +196,15 @@ export default function DetailKematianModal({
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <HeartPulse className="h-3.5 w-3.5 text-emerald-400" />
-                      <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Fasilitas Kesehatan</h4>
+                      <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">{t("navigation_population_deaths.healthFacilities")}</h4>
                     </div>
-                    <span className="text-[9px] font-black uppercase tracking-wider text-root-accent hover:underline">Buka →</span>
+                    <span className="text-[9px] font-black uppercase tracking-wider text-root-accent hover:underline">{t("navigation_population_deaths.open")}</span>
                   </div>
                   <div className="flex items-center justify-between text-xs sm:text-sm font-black tabular-nums text-root-text">
-                    <span>{calculateKesehatanScore(countryDetail)} POIN <span className="text-[9px] font-normal text-root-subtle">(rasio {hospitalRatio.toFixed(2)})</span></span>
+                    <span>{calculateKesehatanScore(countryDetail)} {t("navigation_population_deaths.points")} <span className="text-[9px] font-normal text-root-subtle">{t("navigation_population_deaths.ratio", { value: hospitalRatio.toFixed(2) })}</span></span>
                     <span className="text-[10px] sm:text-xs font-bold text-root-accent">× {healthFactor.toFixed(2)}</span>
                   </div>
-                  <p className="text-[9px] text-root-subtle leading-tight">Ketersediaan RS menurunkan kematian penyakit yang dapat diobati.</p>
+                  <p className="text-[9px] text-root-subtle leading-tight">{t("navigation_population_deaths.healthDescription")}</p>
                 </div>
 
                 {/* 5. Ketahanan Pangan (clickable) */}
@@ -212,15 +217,15 @@ export default function DetailKematianModal({
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <Utensils className="h-3.5 w-3.5 text-lime-400" />
-                      <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Ketahanan Pangan</h4>
+                      <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">{t("navigation_population_deaths.foodSecurity")}</h4>
                     </div>
                     <span className="text-[9px] font-black uppercase tracking-wider text-root-accent hover:underline">Buka →</span>
                   </div>
                   <div className="flex items-center justify-between text-xs sm:text-sm font-black tabular-nums text-root-text">
-                    <span>{indeksKetahananPangan} POIN</span>
+                    <span>{indeksKetahananPangan} {t("navigation_population_deaths.points")}</span>
                     <span className="text-[10px] sm:text-xs font-bold text-root-accent">× {foodSecurityFactor.toFixed(2)}</span>
                   </div>
-                  <p className="text-[9px] text-root-subtle leading-tight">Ketersediaan pangan yang cukup mengurangi risiko malnutrisi.</p>
+                  <p className="text-[9px] text-root-subtle leading-tight">{t("navigation_population_deaths.foodDescription")}</p>
                 </div>
 
                 {/* 6. Kriminalitas (clickable) */}
@@ -233,15 +238,15 @@ export default function DetailKematianModal({
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <AlertTriangle className="h-3.5 w-3.5 text-amber-400" />
-                      <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Penegakan Hukum</h4>
+                      <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">{t("navigation_population_deaths.lawEnforcement")}</h4>
                     </div>
-                    <span className="text-[9px] font-black uppercase tracking-wider text-root-accent hover:underline">Buka →</span>
+                    <span className="text-[9px] font-black uppercase tracking-wider text-root-accent hover:underline">{t("navigation_population_deaths.open")}</span>
                   </div>
                   <div className="flex items-center justify-between text-xs sm:text-sm font-black tabular-nums text-root-text">
-                    <span>{calculatePenegakanHukumScore(countryDetail)} POIN</span>
+                    <span>{calculatePenegakanHukumScore(countryDetail)} {t("navigation_population_deaths.points")}</span>
                     <span className="text-[10px] sm:text-xs font-bold text-root-accent">× {crimeFactor.toFixed(2)}</span>
                   </div>
-                  <p className="text-[9px] text-root-subtle leading-tight">Kepuasan hukum & kepolisian dari Indeks Kesejahteraan.</p>
+                  <p className="text-[9px] text-root-subtle leading-tight">{t("navigation_population_deaths.lawDescription")}</p>
                 </div>
 
               </div>

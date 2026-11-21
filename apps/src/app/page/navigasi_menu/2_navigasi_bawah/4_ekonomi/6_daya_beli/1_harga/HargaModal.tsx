@@ -19,14 +19,12 @@ import { generateHargaChangeNotification } from "@/app/page/menus/inbox/logic/7_
 import { markMissionAsClaimable } from "@/app/page/menus/mission/missionModals";
 import { generateDemonstrasiHargaNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/demonstrasiEkonomiLogic";
 import { calculatePriceCommodityImpacts } from "@/app/logic/economic_logic/economicPopulationImpact";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 // ─────────────────────────────────────────────────────────────────────────
 // Helper murni & Pre-computed Constants
 // ─────────────────────────────────────────────────────────────────────────
-const PRICE_OPTIONS = [10000, 25000, 50000, 75000, 100000].map((val) => ({
-  value: val,
-  label: val.toLocaleString("id-ID", { maximumFractionDigits: 2 }),
-}));
+const PRICE_OPTIONS = [10000, 25000, 50000, 75000, 100000];
 
 const MIN_PRICE = 10000;
 const MAX_PRICE = 100000;
@@ -61,19 +59,20 @@ type PendingChange = { key: string; value: number; oldValue: number };
 // ─────────────────────────────────────────────────────────────────────────
 interface CommodityCardProps {
   itemKey: string;
+  itemName: string;
   currentValue: number;
   impact: number;
+  locale: string;
+  currentValueLabel: string;
+  populationImpactLabel: string;
+  monthUnit: string;
   showImpact?: boolean;
   onPriceChange: (key: string, val: number) => void;
 }
 
 const CommodityCard = React.memo(
-  ({ itemKey, currentValue, impact, showImpact = true, onPriceChange }: CommodityCardProps) => {
-    const formattedName = itemKey
-      .replace("harga_", "")
-      .replace(/_/g, " ")
-      .toUpperCase();
-    const formattedValue = currentValue.toLocaleString("id-ID", {
+  ({ itemKey, itemName, currentValue, impact, locale, currentValueLabel, populationImpactLabel, monthUnit, showImpact = true, onPriceChange }: CommodityCardProps) => {
+    const formattedValue = currentValue.toLocaleString(locale, {
       maximumFractionDigits: 2,
     });
 
@@ -82,19 +81,19 @@ const CommodityCard = React.memo(
         <div className="commodity-price-card-header flex items-center justify-between mb-2.5 lg:mb-3">
           <div>
             <p className="text-xs lg:text-sm font-black text-root-accent uppercase">
-              {formattedName}
+              {itemName}
             </p>
             <p className="text-[11px] lg:text-xs text-root-subtle">
-              Nilai saat ini:{" "}
+              {currentValueLabel}:{" "}
               <span className="font-bold text-root-text">
                 {formattedValue}
               </span>
             </p>
             {showImpact && (
               <p className="text-[11px] lg:text-xs text-root-subtle mt-1">
-                Dampak populasi:{" "}
+                {populationImpactLabel}:{" "}
                 <span className="font-bold text-root-accent">
-                  {impact.toFixed(2)}% / bulan
+                  {impact.toFixed(2)}% / {monthUnit}
                 </span>
               </p>
             )}
@@ -104,15 +103,15 @@ const CommodityCard = React.memo(
         <div className="commodity-price-options flex flex-wrap gap-1.5 lg:gap-2">
           {PRICE_OPTIONS.map((option) => (
             <button
-              key={option.value}
-              onClick={() => onPriceChange(itemKey, option.value)}
+              key={option}
+              onClick={() => onPriceChange(itemKey, option)}
               className={`commodity-price-option px-2.5 lg:px-3 py-1.5 lg:py-2 rounded-lg border text-[10px] lg:text-xs font-black uppercase transition cursor-pointer ${
-                currentValue === option.value
+                currentValue === option
                   ? "bg-root-accent text-root-canvas border-root-accent font-bold"
                   : "bg-root-surface text-root-text border-root-accent/30 hover:border-root-accent"
               }`}
             >
-              {option.label}
+              {option.toLocaleString(locale, { maximumFractionDigits: 2 })}
             </button>
           ))}
         </div>
@@ -157,12 +156,25 @@ function HargaModalContent({
   onConfirmChanges,
   tabBar,
 }: Omit<ModalProps, "isOpen">) {
+  const { language, t } = useLanguage();
+  const commodityNames: Record<string, string> = {
+    harga_beras: t("navigation_economy_purchasing_power.commodities.rice"),
+    harga_daging_sapi: t("navigation_economy_purchasing_power.commodities.beef"),
+    harga_ayam: t("navigation_economy_purchasing_power.commodities.chicken"),
+    harga_minyak_goreng: t("navigation_economy_purchasing_power.commodities.cookingOil"),
+    harga_gula: t("navigation_economy_purchasing_power.commodities.sugar"),
+    harga_telur: t("navigation_economy_purchasing_power.commodities.eggs"),
+    harga_listrik: t("navigation_economy_purchasing_power.commodities.electricity"),
+    harga_air: t("navigation_economy_purchasing_power.commodities.water"),
+  };
+  const formatCommodityName = (key: string) =>
+    commodityNames[key] ?? key.replace("harga_", "").replace(/_/g, " ");
   const [, startTransition] = useTransition();
 
   const [prices, setPrices] = useState<Record<string, number>>({});
   const [committedPriceSnapshot, setCommittedPriceSnapshot] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<"loadFailed" | null>(null);
   const [subsidyActive, setSubsidyActive] = useState(false);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
@@ -241,7 +253,7 @@ function HargaModalContent({
       } catch (err) {
         if (cancelled) return;
         console.error("Failed to load price data", err);
-        setError("Gagal memuat data harga dari database.");
+        setError("loadFailed");
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -326,8 +338,8 @@ function HargaModalContent({
       );
 
       if (value > oldValue) {
-        const oldIndex = PRICE_OPTIONS.findIndex((o) => o.value === oldValue);
-        const newIndex = PRICE_OPTIONS.findIndex((o) => o.value === value);
+        const oldIndex = PRICE_OPTIONS.findIndex((option) => option === oldValue);
+        const newIndex = PRICE_OPTIONS.findIndex((option) => option === value);
         const levelJump =
           oldIndex !== -1 && newIndex !== -1
             ? newIndex - oldIndex
@@ -499,10 +511,10 @@ function HargaModalContent({
 
     setIsConfirmDialogOpen(false);
     const confirmedChanges = pendingPriceChanges.map(([key, value]) =>
-      `${key.replace("harga_", "").replace(/_/g, " ")}: ${value.toLocaleString("id-ID")}`
+      `${formatCommodityName(key)}: ${value.toLocaleString(language)}`
     );
     if (subsidyActive && !Boolean(countryDetailRef.current?.subsidyActive)) {
-      confirmedChanges.push(`Subsidi harga pokok: aktif (-${SUBSIDY_COST.toLocaleString("id-ID")} NEO)`);
+      confirmedChanges.push(`${t("navigation_economy_purchasing_power.subsidyActive")} (-${SUBSIDY_COST.toLocaleString(language)} NEO)`);
     }
     onConfirmChanges?.(confirmedChanges);
     onClose();
@@ -516,13 +528,13 @@ function HargaModalContent({
     {!isInfoOpen && <NotebookModalWrapper onClose={onClose} frameClassName="harga-modal-frame">
       <div className="root-modal-util-b74379da23">
         <RootInfoModalHeader
-          title="Kontrol Harga Barang Pokok"
+          title={t("navigation_economy_purchasing_power.title")}
           onClose={onClose}
           size="standard"
           icon={<Tag aria-hidden="true" />}
           actions={
             <>
-            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi kontrol harga barang pokok" aria-label="Informasi kontrol harga barang pokok" className="root-modal-info-button root-modal-util-1697100c43">
+            <button type="button" onClick={() => setIsInfoOpen(true)} title={t("navigation_economy_purchasing_power.infoButton")} aria-label={t("navigation_economy_purchasing_power.infoButton")} className="root-modal-info-button root-modal-util-1697100c43">
               <Info aria-hidden="true" />
             </button>
             {forumDialogMode && (
@@ -531,7 +543,7 @@ function HargaModalContent({
                 onClick={() => setIsConfirmDialogOpen(true)}
                 className="rounded-xl border border-root-accent/40 bg-root-accent px-3 py-2 text-[10px] font-black uppercase tracking-wider text-root-accent-ink transition hover:bg-[#72ffd0] sm:px-4"
               >
-                Konfirmasi
+                {t("navigation_economy_purchasing_power.confirm")}
               </button>
             )}
             </>
@@ -544,24 +556,29 @@ function HargaModalContent({
           {loading ? (
             <div className="flex items-center gap-2 text-sm text-root-accent mb-6">
               <Loader2 className="h-4 w-4 animate-spin text-root-accent" />
-              Memuat data harga negara...
+              {t("navigation_economy_purchasing_power.loading")}
             </div>
           ) : null}
 
-          {error ? <p className="text-sm text-rose-400 mb-4">{error}</p> : null}
+          {error ? <p className="text-sm text-rose-400 mb-4">{t(`navigation_economy_purchasing_power.errors.${error}`)}</p> : null}
 
           <div className="harga-modal-list space-y-3 lg:space-y-4 mb-4 lg:mb-6">
             {priceEntries.length === 0 ? (
               <p className="text-sm text-root-subtle">
-                Belum ada data harga yang tersedia untuk negara ini.
+                {t("navigation_economy_purchasing_power.noData")}
               </p>
             ) : (
               priceEntries.map(([key, value]) => (
                 <CommodityCard
                   key={key}
                   itemKey={key}
+                  itemName={formatCommodityName(key)}
                   currentValue={value}
                   impact={impactByKey.get(key) ?? 0}
+                  locale={language}
+                  currentValueLabel={t("navigation_economy_purchasing_power.currentValue")}
+                  populationImpactLabel={t("navigation_economy_purchasing_power.populationImpact")}
+                  monthUnit={t("navigation_economy_purchasing_power.monthUnit")}
                   showImpact={!forumDialogMode}
                   onPriceChange={handlePriceChange}
                 />
@@ -575,14 +592,14 @@ function HargaModalContent({
     <MenuInfoModal
       isOpen={isInfoOpen}
       onClose={() => setIsInfoOpen(false)}
-      title="Informasi Kontrol Harga Barang Pokok"
-      description="Atur harga nasional untuk setiap barang pokok. Harga memengaruhi kepuasan rakyat dan dampak populasi."
+      title={t("navigation_economy_purchasing_power.info.title")}
+      description={t("navigation_economy_purchasing_power.info.description")}
     >
       {!forumDialogMode && (
         <div className={`root-satisfaction-index harga-satisfaction-card mt-4 border border-root-accent/30 bg-root-canvas p-4 lg:mt-6 lg:p-5 ${rootBorderRadius.card}`}>
           <div className="flex items-center justify-between gap-3">
             <span className="root-satisfaction-index-title font-black uppercase tracking-widest text-root-accent">
-              Indeks Kepuasan Rakyat (Harga Pokok)
+              {t("navigation_economy_purchasing_power.info.satisfaction")}
             </span>
             <span className="root-satisfaction-index-value shrink-0 font-black text-root-accent">
               {satisfaction} / 100
@@ -600,9 +617,9 @@ function HargaModalContent({
                 avgCommodityModifier >= 0 ? "text-root-accent" : "text-rose-400"
               }`}
             >
-              Dampak populasi harga pokok:{" "}
-              {avgCommodityModifier >= 0 ? "+" : ""}
-              {avgCommodityModifier.toFixed(2)}% / bulan
+              {t("navigation_economy_purchasing_power.info.populationImpact", {
+                percent: `${avgCommodityModifier >= 0 ? "+" : ""}${avgCommodityModifier.toFixed(2)}`,
+              })}
             </p>
           )}
         </div>
@@ -611,22 +628,22 @@ function HargaModalContent({
     {isConfirmDialogOpen && createPortal(
       <div className="fixed inset-0 z-[2147483647] flex items-center justify-center p-4 ">
         <div role="dialog" aria-modal="true" aria-labelledby="price-confirm-title" className={`w-full max-w-md border border-root-accent/30 bg-root-canvas p-6 shadow-2xl ${rootBorderRadius.card}`}>
-          <h3 id="price-confirm-title" className="text-lg font-bold text-white">Konfirmasi kebijakan harga</h3>
+          <h3 id="price-confirm-title" className="text-lg font-bold text-white">{t("navigation_economy_purchasing_power.confirmation.title")}</h3>
           <p className="mt-2 text-sm text-slate-300">
             {pendingPriceChanges.length > 0
-              ? "Perubahan harga barang pokok akan diterapkan. Lanjutkan?"
-              : "Belum ada perubahan harga. Konfirmasi untuk kembali ke forum dialog."}
+              ? t("navigation_economy_purchasing_power.confirmation.changesApply")
+              : t("navigation_economy_purchasing_power.confirmation.noChanges")}
           </p>
           {pendingPriceChanges.length > 0 && (
             <ul className="mt-3 space-y-1 text-sm text-root-accent">
               {pendingPriceChanges.map(([key, value]) => (
-                <li key={key}>{key.replace("harga_", "").replace(/_/g, " ")}: {value.toLocaleString("id-ID")}</li>
+                <li key={key}>{formatCommodityName(key)}: {value.toLocaleString(language)}</li>
               ))}
             </ul>
           )}
           <div className="mt-6 flex justify-end gap-2">
-            <button type="button" onClick={() => setIsConfirmDialogOpen(false)} className="rounded-lg border border-slate-600 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:text-white">Kembali</button>
-            <button type="button" onClick={confirmForumPriceChanges} className="rounded-lg bg-root-accent px-4 py-2 text-xs font-bold text-root-accent-ink transition hover:bg-[#72ffd0]">Ya, konfirmasi</button>
+            <button type="button" onClick={() => setIsConfirmDialogOpen(false)} className="rounded-lg border border-slate-600 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:text-white">{t("navigation_economy_purchasing_power.confirmation.back")}</button>
+            <button type="button" onClick={confirmForumPriceChanges} className="rounded-lg bg-root-accent px-4 py-2 text-xs font-bold text-root-accent-ink transition hover:bg-[#72ffd0]">{t("navigation_economy_purchasing_power.confirmation.yes")}</button>
           </div>
         </div>
       </div>,

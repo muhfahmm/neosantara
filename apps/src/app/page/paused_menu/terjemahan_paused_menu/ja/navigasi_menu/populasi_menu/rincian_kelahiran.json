@@ -1,0 +1,17 @@
+{
+  "title": "人口増加の詳細",
+  "dailyNetGrowth": "1日の純増加数",
+  "perHour": "/時間",
+  "births": "出生",
+  "deaths": "死亡",
+  "factors": "影響要因",
+  "basePopulation": "基本人口",
+  "people": "人",
+  "welfare": "福祉",
+  "healthFacilities": "医療施設",
+  "educationLevel": "教育水準",
+  "open": "開く →",
+  "points": "ポイント",
+  "index": "指数",
+  "ratio": "(比率 {value})"
+}

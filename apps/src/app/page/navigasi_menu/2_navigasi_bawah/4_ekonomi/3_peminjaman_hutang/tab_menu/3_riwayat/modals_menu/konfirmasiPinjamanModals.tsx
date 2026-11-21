@@ -1,11 +1,12 @@
 "use client"
 import React from "react";
 import { CreditCard } from "lucide-react";
-import { renderFlag } from "../../utils";
+import { getLocalizedLoanSourceName, renderFlag } from "../../utils";
 import NotebookModalWrapper from "../../../../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface KonfirmasiPinjamanModalProps {
   isOpen: boolean;
@@ -32,9 +33,17 @@ export default function KonfirmasiPinjamanModal({
   totalPayment,
   currentMoney,
 }: KonfirmasiPinjamanModalProps) {
+  const { language, t } = useLanguage();
   if (!isOpen) return null;
 
   const isFundsSufficient = true;
+  const displaySource = getLocalizedLoanSourceName(
+    loanSource,
+    language,
+    t("navigation_economy_loans.institutions.imf"),
+    t("navigation_economy_loans.institutions.worldBank")
+  );
+  const formatNumber = (value: number) => value.toLocaleString(language, { maximumFractionDigits: 0 });
 
   return (
     <NotebookModalWrapper zIndexClass="z-[70]" frameClassName="loan-confirm-modal-frame loan-confirm-history-modal-frame">
@@ -47,7 +56,7 @@ export default function KonfirmasiPinjamanModal({
               <CreditCard className="h-4 w-4 text-root-accent sm:h-5 sm:w-5" />
             </div>
             <div className="min-w-0">
-              <h3 className={rootModalTypography.title}>Konfirmasi Pinjaman</h3>
+              <h3 className={rootModalTypography.title}>{t("navigation_economy_loans.confirmation.title")}</h3>
             </div>
           </div>
           <RootModalCloseButton onClick={onClose} />
@@ -62,31 +71,31 @@ export default function KonfirmasiPinjamanModal({
                     <CreditCard className="h-6 w-6 text-root-accent" />
                   </div>
                   <div>
-                    <h4 className="text-lg font-black text-root-accent uppercase">Sumber Pinjaman</h4>
+                    <h4 className="text-lg font-black text-root-accent uppercase">{t("navigation_economy_loans.confirmation.source")}</h4>
                   </div>
                 </div>
 
                 <div className={`loan-confirm-details border border-root-accent/20 bg-root-canvas p-5 ${rootBorderRadius.card}`}>
                   <div className="flex items-center gap-3 mb-4 text-root-accent font-black">
-                    {renderFlag(iso, loanSource)}
-                    <span>{loanSource}</span>
+                    {renderFlag(iso, displaySource)}
+                    <span>{displaySource}</span>
                   </div>
                   <div className="text-sm text-root-text space-y-3 font-semibold">
                     <div className="flex justify-between">
-                      <span className="text-root-subtle">Jumlah Pinjaman</span>
-                      <span className="font-black text-root-accent">{maxLoan.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                      <span className="text-root-subtle">{t("navigation_economy_loans.confirmation.amount")}</span>
+                      <span className="font-black text-root-accent">{formatNumber(maxLoan)} NEO</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-root-subtle">Bunga</span>
+                      <span className="text-root-subtle">{t("navigation_economy_loans.confirmation.interest")}</span>
                       <span className="font-black text-root-accent">{interest}%</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-root-subtle">Masa Tenggang</span>
-                      <span className="font-black text-root-accent">{term} Hari</span>
+                      <span className="text-root-subtle">{t("navigation_economy_loans.confirmation.term")}</span>
+                      <span className="font-black text-root-accent">{term} {t("navigation_economy_loans.dayUnit")}</span>
                     </div>
                     <div className="flex justify-between pt-3 border-t border-root-accent/20">
-                      <span className="font-black">Total Pembayaran</span>
-                      <span className="font-black text-root-accent">{totalPayment.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                      <span className="font-black">{t("navigation_economy_loans.confirmation.totalPayment")}</span>
+                      <span className="font-black text-root-accent">{formatNumber(totalPayment)} NEO</span>
                     </div>
                   </div>
                 </div>
@@ -96,20 +105,20 @@ export default function KonfirmasiPinjamanModal({
             <div className={`loan-confirm-panel flex flex-col justify-between border border-root-accent/30 bg-root-surface p-6 ${rootBorderRadius.card}`}>
               <div className="loan-confirm-panel-content space-y-6 text-root-text">
                 <div>
-                  <h4 className="text-lg font-black text-root-accent uppercase tracking-wider">Ringkasan Pinjaman</h4>
+                  <h4 className="text-lg font-black text-root-accent uppercase tracking-wider">{t("navigation_economy_loans.confirmation.summary")}</h4>
                 </div>
 
                 <div className="loan-confirm-summary-grid grid grid-cols-1 gap-4 text-sm">
                   <div className={`border border-root-accent/20 bg-root-canvas p-4 ${rootBorderRadius.card}`}>
-                    <p className="text-root-subtle text-xs font-bold uppercase">Saldo Kas Negara</p>
-                    <p className="mt-2 text-[15px] font-black text-root-accent">{currentMoney.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</p>
+                    <p className="text-root-subtle text-xs font-bold uppercase">{t("navigation_economy_loans.confirmation.cashBalance")}</p>
+                    <p className="mt-2 text-[15px] font-black text-root-accent">{formatNumber(currentMoney)} NEO</p>
                   </div>
                   <div className={`border border-root-accent/20 bg-root-canvas p-4 ${rootBorderRadius.card}`}>
-                    <p className="text-root-subtle text-xs font-bold uppercase">Total Outstanding</p>
-                    <p className="mt-2 text-[15px] font-black text-rose-400">{totalPayment.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</p>
+                    <p className="text-root-subtle text-xs font-bold uppercase">{t("navigation_economy_loans.confirmation.outstanding")}</p>
+                    <p className="mt-2 text-[15px] font-black text-rose-400">{formatNumber(totalPayment)} NEO</p>
                   </div>
                   <div className={`border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-400 ${rootBorderRadius.card}`}>
-                    <p className="font-black uppercase text-[10px] tracking-wider">Pinjaman siap dikonfirmasi</p>
+                    <p className="font-black uppercase text-[10px] tracking-wider">{t("navigation_economy_loans.confirmation.ready")}</p>
                   </div>
                 </div>
               </div>
@@ -119,20 +128,20 @@ export default function KonfirmasiPinjamanModal({
 
         <div className="loan-confirm-footer flex flex-col gap-4 px-8 pb-8 pt-4 lg:flex-row lg:items-center lg:justify-end bg-root-canvas border-t border-root-accent/20">
           <div className={`border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs font-bold text-emerald-400 lg:flex-1 ${rootBorderRadius.card}`}>
-            Pinjaman akan langsung ditambahkan ke kas negara saat disetujui.
+            {t("navigation_economy_loans.confirmation.approvalNote")}
           </div>
 
           <button
             onClick={onClose}
             className={`w-full cursor-pointer border border-root-accent/30 bg-root-surface px-5 py-3 text-xs font-bold uppercase text-root-text transition-all hover:border-root-accent lg:w-auto ${rootBorderRadius.card}`}
           >
-            Batal
+            {t("navigation_economy_loans.confirmation.cancel")}
           </button>
           <button
             onClick={onConfirm}
             className={`w-full cursor-pointer bg-root-accent px-5 py-3 text-xs font-bold uppercase text-root-canvas transition-all hover:bg-root-accent/80 lg:w-auto ${rootBorderRadius.card}`}
           >
-            Konfirmasi Pinjaman
+            {t("navigation_economy_loans.confirmation.confirm")}
           </button>
         </div>
       </div>

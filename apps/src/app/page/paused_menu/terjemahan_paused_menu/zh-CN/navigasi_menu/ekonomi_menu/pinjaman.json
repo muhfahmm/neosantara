@@ -1,0 +1,84 @@
+{
+  "title": "贷款与债务",
+  "infoButton": "贷款与债务信息",
+  "dayUnit": "天",
+  "monthUnit": "个月",
+  "tabs": { "bilateral": "其他国家", "multilateral": "国际机构", "history": "历史记录" },
+  "search": { "placeholder": "搜索贷款来源国...", "ariaLabel": "搜索贷款来源国" },
+  "summary": { "debtRatio": "债务占GDP比率", "safeLimit": "安全上限：", "totalDebt": "债务总额" },
+  "institutions": { "imf": "国际货币基金组织 (IMF)", "worldBank": "世界银行" },
+  "bilateral": { "noResults": "没有符合搜索条件的国家。", "maximum": "贷款上限", "gracePeriod": "还款期限", "borrow": "借款" },
+  "institution": {
+    "restrictedBanner": "部门平均国有化比例超过50%的共产主义国家无法申请国际货币基金组织和世界银行贷款。",
+    "blocked": "申请已受限",
+    "available": "现在可以借款",
+    "cooldownRemaining": "{date}后可再次申请",
+    "interest": "利率：{percent}%",
+    "amount": "贷款金额",
+    "decreaseAmount": "减少100万",
+    "setMaximumAmount": "设为1500万",
+    "repaymentTerm": "还款期限",
+    "submit": "申请贷款",
+    "errors": {
+      "restricted": "部门平均国有化比例超过50%的共产主义国家无法申请国际货币基金组织和世界银行贷款。",
+      "cooldown": "您可以在{date}后再次申请贷款。",
+      "invalidAmount": "请输入有效的贷款金额。",
+      "maximum": "{institution}的最高贷款额度为{amount} NEO。",
+      "termRange": "请选择180至1825天的期限。"
+    }
+  },
+  "terms": {
+    "title": "选择还款期限",
+    "selected": "已选择",
+    "shortDefault": "6个月",
+    "options": { "sixMonths": "6个月", "nineMonths": "9个月", "oneYear": "1年", "twoYears": "2年", "threeYears": "3年", "fourYears": "4年", "fiveYears": "5年" }
+  },
+  "history": {
+    "active": "未结清债务（{count}）",
+    "paid": "已还清（{count}）",
+    "emptyActive": "没有未结清债务。",
+    "emptyPaid": "尚无已还清的贷款。",
+    "paymentAria": "确认偿还来自{source}的贷款",
+    "headers": { "source": "贷款方", "principal": "本金", "interest": "初始利率", "paid": "已还金额", "penalty": "罚金", "currentTotal": "当前总额", "dueDate": "到期日" }
+  },
+  "confirmation": {
+    "title": "确认贷款",
+    "source": "贷款来源",
+    "amount": "贷款金额",
+    "interest": "利率",
+    "term": "还款期限",
+    "totalPayment": "还款总额",
+    "summary": "贷款摘要",
+    "cashBalance": "国库余额",
+    "outstanding": "未偿还总额",
+    "ready": "贷款已准备好确认",
+    "approvalNote": "贷款获批后将立即计入国库。",
+    "cancel": "取消",
+    "confirm": "确认贷款"
+  },
+  "payment": {
+    "title": "确认还款",
+    "amountDue": "您将支付{amount}",
+    "sourceLabel": "贷款来源：",
+    "insufficientAlert": "国库资金不足，无法完成此次还款。",
+    "insufficient": "资金不足，无法全额偿还贷款",
+    "payNow": "立即还款"
+  },
+  "penalties": {
+    "generalTitle": "逾期罚金说明",
+    "detailTitle": "逾期罚金详情",
+    "loanData": "贷款信息",
+    "accumulated": "累计罚金",
+    "missed": "逾期时间",
+    "general": {
+      "paragraphOne": "贷款到期时若无法全额还款，系统会尽可能使用国库资金偿还。",
+      "paragraphTwo": "剩余欠款会标记为逾期，并按月增加罚金。",
+      "paragraphThree": "此计算方式适用于双边和多边贷款。"
+    }
+  },
+  "info": {
+    "title": "贷款与债务信息",
+    "paragraphOne": "向其他国家或国际机构借款会同时增加国库资金和国家债务。每笔贷款都有利率和到期日，批准前请先查看条款。",
+    "paragraphTwo": "债务占GDP比率用于比较总债务与国家经济规模。基础安全上限为60%，可能受生效加成影响。请关注贷款记录并在到期前还款，以避免罚金。"
+  }
+}

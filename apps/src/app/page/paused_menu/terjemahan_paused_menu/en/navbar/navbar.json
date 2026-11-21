@@ -21,6 +21,10 @@
     "kasNegaraTitle": "National Treasury Budget",
     "kasNegaraDesc": "Click to top up treasury in NEO Store.",
     "populasi": "Click to view population details",
+    "populationTitle": "Population Details",
+    "births": "Births",
+    "deaths": "Deaths",
+    "netGrowth": "Net Growth",
     "fps": "Open FPS monitor details"
   },
   "actions": {
@@ -28,5 +32,58 @@
     "restart": "Restart",
     "openMenu": "Open Paused Menu",
     "zoom": "Zoom"
+  },
+  "navigation": {
+    "gameMenu": "Game Menu",
+    "mainMenu": "Main menu navigation",
+    "subMenu": "Submenu navigation",
+    "mainMap": "Main Simulation",
+    "globalMap": "Global Map",
+    "top": {
+      "groupLabel": "Map view navigation",
+      "map": "Tactical Map",
+      "diplomacy": "Diplomatic Relations",
+      "focusHome": "Focus & Zoom to Home Country"
+    },
+    "main": {
+      "kepuasan": "Satisfaction",
+      "populasi": "Population",
+      "produksiKonsumsi": "Production & Consumption",
+      "ekonomi": "Economy",
+      "pembangunan": "Development",
+      "pertahanan": "Defense",
+      "geopolitik": "Geopolitics",
+      "sosialBudaya": "Society & Culture",
+      "kementerian": "Ministry"
+    },
+    "sub": {
+      "kepuasanStatistics": "Satisfaction Statistics",
+      "increaseSatisfaction": "Increase Satisfaction",
+      "populationSummary": "Population Overview",
+      "trade": "Trade",
+      "tax": "Tax",
+      "loans": "Loans",
+      "income": "Income",
+      "purchasingPower": "Purchasing Power",
+      "economicSystem": "Economic System",
+      "production": "Production",
+      "publicFacilities": "Public Facilities",
+      "housing": "Housing",
+      "nationalGrid": "National Grid",
+      "foodIndustry": "Food Industry",
+      "attackCountry": "Attack a Country",
+      "intelligence": "Intelligence",
+      "capturedTerritory": "Captured Territories",
+      "fleet": "Fleet",
+      "icbm": "ICBM",
+      "un": "UN",
+      "embassy": "Embassies",
+      "internationalOrganizations": "International Organizations",
+      "relationLevel": "Relations",
+      "religion": "Religion & Beliefs",
+      "nationalIdeology": "National Ideology",
+      "opennessDoctrine": "Doctrine & Openness",
+      "ministry": "Ministry"
+    }
   }
 }

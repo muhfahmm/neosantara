@@ -17,6 +17,7 @@ import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 import {
   applyDiplomasiAcaraSatisfactionBonus,
   applyKementerianOlahragaSatisfactionBoost,
@@ -53,6 +54,7 @@ export default function NaikkanKepuasanModal({
   setPresidentRating,
   currentDate,
 }: NaikkanKepuasanModalProps) {
+  const { t, language } = useLanguage();
   const [feedback, setFeedback] = useState<{
     type: "success" | "error";
     message: string;
@@ -138,7 +140,7 @@ export default function NaikkanKepuasanModal({
   const initiatives = [
     {
       id: "konser",
-      title: "Konser",
+      title: t("navigation_satisfaction_increase.events.concert"),
       cost: 25000,
       boost: 5,
       duration: 1,
@@ -147,7 +149,7 @@ export default function NaikkanKepuasanModal({
     },
     {
       id: "festival",
-      title: "Festival",
+      title: t("navigation_satisfaction_increase.events.festival"),
       cost: 50000,
       boost: 10,
       duration: 3,
@@ -156,7 +158,7 @@ export default function NaikkanKepuasanModal({
     },
     {
       id: "karnaval",
-      title: "Karnaval",
+      title: t("navigation_satisfaction_increase.events.carnival"),
       cost: 150000,
       boost: 15,
       duration: 3,
@@ -165,7 +167,7 @@ export default function NaikkanKepuasanModal({
     },
     {
       id: "piala_davis",
-      title: "Piala Davis",
+      title: t("navigation_satisfaction_increase.events.davisCup"),
       cost: 400000,
       boost: 30,
       duration: 7,
@@ -174,7 +176,7 @@ export default function NaikkanKepuasanModal({
     },
     {
       id: "piala_dunia_rugbi",
-      title: "Piala Dunia Rugbi",
+      title: t("navigation_satisfaction_increase.events.rugbyWorldCup"),
       cost: 500000,
       boost: 50,
       duration: 14,
@@ -183,7 +185,7 @@ export default function NaikkanKepuasanModal({
     },
     {
       id: "olimpiade",
-      title: "Olimpiade",
+      title: t("navigation_satisfaction_increase.events.olympics"),
       cost: 1500000,
       boost: 75,
       duration: 40,
@@ -192,7 +194,7 @@ export default function NaikkanKepuasanModal({
     },
     {
       id: "piala_dunia_fifa",
-      title: "Piala Dunia FIFA",
+      title: t("navigation_satisfaction_increase.events.fifaWorldCup"),
       cost: 2500000,
       boost: 100,
       duration: 30,
@@ -201,7 +203,7 @@ export default function NaikkanKepuasanModal({
     },
     {
       id: "balap_f1",
-      title: "Balap F1",
+      title: t("navigation_satisfaction_increase.events.f1Race"),
       cost: 800000,
       boost: 40,
       duration: 3,
@@ -221,7 +223,7 @@ export default function NaikkanKepuasanModal({
         month: "short",
         year: "numeric",
       };
-      const parts = new Intl.DateTimeFormat("id-ID", options).formatToParts(
+      const parts = new Intl.DateTimeFormat(language, options).formatToParts(
         date
       );
       const day = parts.find((p) => p.type === "day")?.value || "";
@@ -232,6 +234,9 @@ export default function NaikkanKepuasanModal({
       return dateString;
     }
   };
+
+  const formatAmount = (amount: number) =>
+    amount.toLocaleString(language, { maximumFractionDigits: 2 });
 
   const checkCompletion = () => {
     if (!isOpen || !countryDetail || !currentDate) return;
@@ -343,12 +348,12 @@ export default function NaikkanKepuasanModal({
 
     setFeedback({
       type: "success",
-      message: `Presiden meluncurkan program ${title}! Anggaran berkurang -${cost.toLocaleString(
-        "id-ID",
-        { maximumFractionDigits: 2 }
-      )} NEO. Acara berlangsung selama ${duration} hari dan akan selesai serta meningkatkan kepuasan pada ${formatBadgeDate(
-        endDateStr
-      )}.`,
+      message: t("navigation_satisfaction_increase.feedback.success", {
+        title,
+        cost: formatAmount(cost),
+        duration,
+        endDate: formatBadgeDate(endDateStr),
+      }),
     });
     setTimeout(() => setFeedback(null), 6000);
   };
@@ -370,7 +375,7 @@ export default function NaikkanKepuasanModal({
                   <Smile className={"root-modal-util-ea2c28151c"} />
                 </div>
                 <h2 className={`root-modal-util-6b4648c53a root-modal-util-c2385a463d`}>
-                  Kepuasan Rakyat
+                  {t("navigation_satisfaction_increase.title")}
                 </h2>
               </div>
 
@@ -378,7 +383,7 @@ export default function NaikkanKepuasanModal({
 
             {/* Tombol Tutup */}
             <div className={"root-modal-util-08dfbca033"}>
-              <button type="button" onClick={() => setIsMenuInfoOpen(true)} title="Informasi peningkatan kepuasan rakyat" aria-label="Informasi peningkatan kepuasan rakyat" className={"root-modal-info-button root-modal-util-1697100c43"}>
+              <button type="button" onClick={() => setIsMenuInfoOpen(true)} title={t("navigation_satisfaction_increase.infoButton")} aria-label={t("navigation_satisfaction_increase.infoButton")} className={"root-modal-info-button root-modal-util-1697100c43"}>
                 <Info aria-hidden="true" />
               </button>
               <RootModalCloseButton
@@ -394,7 +399,7 @@ export default function NaikkanKepuasanModal({
             <div className={"root-modal-util-6cfc7e6ab3"}>
               <Smile className={"root-modal-util-00f4ec4a9a"} />
               <span className={`root-modal-util-14d6efe9ef root-modal-util-614c0c7dff `}>
-                Kepuasan Sipil:
+                {t("navigation_satisfaction_increase.civilSatisfaction")}
               </span>
               <span className={`root-modal-util-04f32edb66 root-modal-util-4457a4d3a8 `}>
                 {Math.round(kepuasan)}%
@@ -406,12 +411,12 @@ export default function NaikkanKepuasanModal({
                 className={"satisfaction-modal-tabs"}
                 items={[
                   {
-                    label: "Statistik",
+                    label: t("navigation_satisfaction_increase.statisticsTab"),
                     isActive: false,
                     onClick: () => setActiveMenu?.("Dashboard:Kepuasan"),
                     onPointerDown: () => setActiveMenu?.("Dashboard:Kepuasan"),
                   },
-                  { label: "Naikkan Peringkat", isActive: true },
+                  { label: t("navigation_satisfaction_increase.increaseTab"), isActive: true },
                 ]}
               />
             </div>
@@ -483,7 +488,9 @@ export default function NaikkanKepuasanModal({
                     >
                       {isEventOngoing && (
                         <div className={"root-modal-util-29ccb89328"}>
-                          Selesai: {formatBadgeDate(lastEndDate)}
+                          {t("navigation_satisfaction_increase.finished", {
+                            date: formatBadgeDate(lastEndDate),
+                          })}
                         </div>
                       )}
 
@@ -508,24 +515,33 @@ export default function NaikkanKepuasanModal({
                                   +{baseBoost}%
                                 </span>
                                 <span className={"root-modal-util-070a7f2c69"}>
-                                  +{boostedBoost}% Kepuasan
+                                  {t("navigation_satisfaction_increase.satisfactionBonus", {
+                                    value: boostedBoost,
+                                  })}
                                 </span>
                               </span>
                             ) : (
                               <span className={"root-modal-util-d613bb47ed"}>
-                                +{baseBoost}% Kepuasan
+                                {t("navigation_satisfaction_increase.satisfactionBonus", {
+                                  value: baseBoost,
+                                })}
                               </span>
                             )}
                             {isSport && olahragaBonusPercent > 0 && (
                               <span className={"root-modal-util-c5483046dc"}>
-                                +Kem. Olahraga (
-                                {olahragaBonusPercent.toFixed(0)}%)
+                                {t("navigation_satisfaction_increase.sportsBonus", {
+                                  value: olahragaBonusPercent.toFixed(0),
+                                })}
                               </span>
                             )}
                           </div>
                           <div className={`root-modal-util-34a3521642 root-modal-util-8866ac9a30 `}>
                             <Clock className={"root-modal-util-01ac82f339"} />
-                            <span className={"root-modal-util-3d9a1150e3"}>Durasi: {item.duration} hari</span>
+                            <span className={"root-modal-util-3d9a1150e3"}>
+                              {t("navigation_satisfaction_increase.duration", {
+                                days: item.duration,
+                              })}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -548,7 +564,9 @@ export default function NaikkanKepuasanModal({
                               : "root-modal-util-3685ff24fe hover:brightness-110"
                           }`}
                         >
-                          {isEventOngoing ? "Sedang Berlangsung" : "Pilih Acara"}
+                          {isEventOngoing
+                            ? t("navigation_satisfaction_increase.ongoing")
+                            : t("navigation_satisfaction_increase.chooseEvent")}
                         </button>
                       </div>
                     </div>
@@ -564,7 +582,7 @@ export default function NaikkanKepuasanModal({
       <MenuInfoModal
         isOpen={isMenuInfoOpen}
         onClose={() => setIsMenuInfoOpen(false)}
-        title="Informasi Peningkatan Kepuasan Rakyat"
+        title={t("navigation_satisfaction_increase.info.title")}
         contentSized={false}
       >
         <div className="space-y-4">
@@ -574,19 +592,14 @@ export default function NaikkanKepuasanModal({
                 <BarChart3 className="root-modal-util-ea2c28151c" />
               </div>
               <h4 className="root-modal-util-9361ef65fc root-modal-util-1ebbaf6952">
-                Tab Statistik
+                {t("navigation_satisfaction_increase.info.statisticsTitle")}
               </h4>
             </div>
             <p className="root-modal-util-27a7c73979">
-              Menampilkan{" "}
-              <strong className="root-modal-util-070a7f2c69">dashboard lengkap</strong>{" "}
-              kondisi kepuasan rakyat saat ini. Berisi grafik historis,
-              faktor-faktor yang mempengaruhi kepuasan (ekonomi, keamanan,
-              layanan publik), serta proyeksi tren beberapa hari ke depan.
+              {t("navigation_satisfaction_increase.info.statisticsDescription")}
             </p>
             <p className="root-modal-util-34a3521642 root-modal-util-c8845f1281">
-              Cocok untuk: analisis mendalam sebelum mengambil keputusan
-              strategis.
+              {t("navigation_satisfaction_increase.info.statisticsUse")}
             </p>
           </div>
 
@@ -596,27 +609,21 @@ export default function NaikkanKepuasanModal({
                 <PartyPopper className="root-modal-util-ea2c28151c" />
               </div>
               <h4 className="root-modal-util-9361ef65fc root-modal-util-1ebbaf6952">
-                Tab Naikkan Peringkat
+                {t("navigation_satisfaction_increase.info.increaseTitle")}
               </h4>
             </div>
             <p className="root-modal-util-27a7c73979">
-              Menampilkan daftar{" "}
-              <strong className="root-modal-util-070a7f2c69">
-                acara & program publik
-              </strong>{" "}
-              yang bisa presiden luncurkan untuk meningkatkan kepuasan rakyat.
-              Setiap acara punya biaya, durasi, dan boost kepuasan tersendiri.
+              {t("navigation_satisfaction_increase.info.increaseDescription")}
             </p>
             <ul className="root-modal-util-34a3521642 root-modal-util-7678944519">
               <li>
-                Acara berjalan sesuai durasi, boost kepuasan berlaku setelah
-                selesai.
+                {t("navigation_satisfaction_increase.info.eventCompletion")}
               </li>
-              <li>Satu acara hanya bisa aktif satu kali dalam satu waktu.</li>
               <li>
-                Bonus riset{" "}
-                <strong className="root-modal-util-070a7f2c69">Diplomasi Acara</strong>{" "}
-                dapat meningkatkan boost secara signifikan.
+                {t("navigation_satisfaction_increase.info.singleEvent")}
+              </li>
+              <li>
+                {t("navigation_satisfaction_increase.info.diplomacyBonus")}
               </li>
             </ul>
           </div>
@@ -626,9 +633,7 @@ export default function NaikkanKepuasanModal({
               <Lightbulb className="root-modal-util-378483ea7a" />
             </div>
             <p className="root-modal-util-8ff7188727 root-modal-util-cb351c8e19">
-              <strong>Tips:</strong> Cek tab <strong>Statistik</strong> dulu
-              untuk melihat kondisi kepuasan saat ini, lalu pilih acara yang
-              paling cocok di tab <strong>Naikkan Peringkat</strong>.
+              {t("navigation_satisfaction_increase.info.tip")}
             </p>
           </div>
 
@@ -638,7 +643,7 @@ export default function NaikkanKepuasanModal({
               onClick={() => setIsMenuInfoOpen(false)}
               className="root-modal-util-c21ef9bab6"
             >
-              Mengerti
+              {t("navigation_satisfaction_increase.info.understood")}
             </button>
           </div>
         </div>
@@ -650,7 +655,9 @@ export default function NaikkanKepuasanModal({
         onClose={() => setIsDanaTidakCukupOpen(false)}
         requiredCost={pendingCost}
         currentBudget={anggaran}
-        actionName={`Sponsori ${pendingTitle}`}
+        actionName={t("navigation_satisfaction_increase.insufficientFunds.sponsor", {
+          title: pendingTitle,
+        })}
       />
     </>
   );

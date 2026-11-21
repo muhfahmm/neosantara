@@ -91,8 +91,8 @@ export function calculateActualElectricityProduction(
   };
 }
 
-export function formatElectricityMW(value: number): string {
-  return value.toLocaleString("id-ID", { maximumFractionDigits: 2 });
+export function formatElectricityMW(value: number, locale = "id-ID"): string {
+  return value.toLocaleString(locale, { maximumFractionDigits: 2 });
 }
 
 export function logElectricityProductionCalculation(

@@ -1,0 +1,50 @@
+{
+  "title": "民众满意度",
+  "infoButton": "提高民众满意度的信息",
+  "civilSatisfaction": "民众满意度：",
+  "statisticsTab": "统计",
+  "increaseTab": "提高满意度",
+  "events": {
+    "concert": "音乐会",
+    "festival": "节庆活动",
+    "carnival": "狂欢节",
+    "davisCup": "戴维斯杯",
+    "rugbyWorldCup": "橄榄球世界杯",
+    "olympics": "奥运会",
+    "fifaWorldCup": "国际足联世界杯",
+    "f1Race": "F1 赛车"
+  },
+  "finished": "结束时间：{date}",
+  "satisfactionBonus": "满意度 +{value}%",
+  "sportsBonus": "体育部加成（+{value}%）",
+  "duration": "持续时间：{days} 天",
+  "ongoing": "进行中",
+  "chooseEvent": "选择活动",
+  "feedback": {
+    "success": "总统已启动{title}！国库减少 {cost} NEO。活动持续 {duration} 天，将于 {endDate} 结束并提高满意度。"
+  },
+  "info": {
+    "title": "提高民众满意度",
+    "statisticsTitle": "统计页签",
+    "statisticsDescription": "显示当前民众满意度的完整面板，包括历史图表、影响满意度的因素（经济、治安和公共服务）以及未来几天的趋势预测。",
+    "statisticsUse": "适用于：制定战略决策前进行深入分析。",
+    "increaseTitle": "提高满意度页签",
+    "increaseDescription": "列出总统可以启动以提高民众满意度的公共活动和计划。每项活动都有各自的费用、持续时间和满意度加成。",
+    "eventCompletion": "活动按指定时长进行；活动结束后才会生效满意度加成。",
+    "singleEvent": "同一时间每种活动只能进行一场。",
+    "diplomacyBonus": "“活动外交”研究加成可以显著提高活动效果。",
+    "tip": "提示：先查看统计页签了解当前满意度，再从提高满意度页签中选择合适的活动。",
+    "understood": "知道了"
+  },
+  "insufficientFunds": {
+    "title": "资金不足",
+    "closeLabel": "关闭资金不足对话框",
+    "failed": "{action}失败！",
+    "description": "国库资金不足，无法执行此操作。",
+    "required": "所需资金：",
+    "available": "可用国库：",
+    "shortage": "资金缺口：",
+    "takeLoan": "申请贷款",
+    "sponsor": "赞助{title}"
+  }
+}

@@ -3,6 +3,7 @@
 import { AlertTriangle, ArrowDown, Info } from "lucide-react";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface TradeMarketBlockedModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ export default function TradeMarketBlockedModal({
   isOpen,
   onClose,
 }: TradeMarketBlockedModalProps) {
+  const { t } = useLanguage();
   if (!isOpen) return null;
 
   return (
@@ -29,7 +31,7 @@ export default function TradeMarketBlockedModal({
         className="overflow-hidden text-white"
       >
         <RootInfoModalHeader
-          title="Info Blokir"
+          title={t("navigation_economy_trade.market.blockedInfoTitle")}
           titleId="trade-market-blocked-title"
           onClose={onClose}
           size="standard"
@@ -41,10 +43,10 @@ export default function TradeMarketBlockedModal({
             <AlertTriangle className="h-5 w-5 shrink-0 text-rose-300 sm:h-6 sm:w-6" />
             <div className="min-w-0">
               <h3 className="text-sm font-black uppercase tracking-wide text-rose-200 sm:text-lg">
-                Perdagangan Diblokir
+                {t("navigation_economy_trade.market.blockedTitle")}
               </h3>
               <p className="mt-1 text-xs leading-relaxed text-[#E1EEEE] sm:text-base">
-                Skor sentralisasi melewati batas 85.
+                {t("navigation_economy_trade.market.blockedScore")}
               </p>
             </div>
           </div>
@@ -52,10 +54,10 @@ export default function TradeMarketBlockedModal({
             <ArrowDown className="mt-0.5 h-5 w-5 shrink-0 text-amber-300 sm:h-6 sm:w-6" />
             <div className="min-w-0">
               <p className="mb-1 text-xs font-black uppercase tracking-wider text-amber-200 sm:text-sm">
-                Solusi
+                {t("navigation_economy_trade.market.solution")}
               </p>
               <p className="text-xs leading-relaxed text-[#F1F7F7] sm:text-base">
-                Kurangi nasionalisasi atau sesuaikan ideologi/agama hingga skor di bawah 85.
+                {t("navigation_economy_trade.market.blockedSolution")}
               </p>
             </div>
           </div>

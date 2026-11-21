@@ -21,6 +21,10 @@
     "kasNegaraTitle": "国家予算",
     "kasNegaraDesc": "クリックしてNEOショップで国庫を補充します。",
     "populasi": "クリックして人口の詳細を表示",
+    "populationTitle": "人口の詳細",
+    "births": "出生",
+    "deaths": "死亡",
+    "netGrowth": "純増加",
     "fps": "FPSモニターの詳細を開く"
   },
   "actions": {
@@ -28,5 +32,58 @@
     "restart": "やり直し",
     "openMenu": "ポーズメニューを開く",
     "zoom": "ズーム"
+  },
+  "navigation": {
+    "gameMenu": "ゲームメニュー",
+    "mainMenu": "メインメニューのナビゲーション",
+    "subMenu": "サブメニューのナビゲーション",
+    "mainMap": "メインシミュレーション",
+    "globalMap": "世界地図",
+    "top": {
+      "groupLabel": "マップ表示ナビゲーション",
+      "map": "戦術マップ",
+      "diplomacy": "外交関係",
+      "focusHome": "自国にフォーカスしてズーム"
+    },
+    "main": {
+      "kepuasan": "満足度",
+      "populasi": "人口",
+      "produksiKonsumsi": "生産と消費",
+      "ekonomi": "経済",
+      "pembangunan": "開発",
+      "pertahanan": "防衛",
+      "geopolitik": "地政学",
+      "sosialBudaya": "社会と文化",
+      "kementerian": "省庁"
+    },
+    "sub": {
+      "kepuasanStatistics": "満足度統計",
+      "increaseSatisfaction": "満足度を上げる",
+      "populationSummary": "人口概要",
+      "trade": "貿易",
+      "tax": "税金",
+      "loans": "融資",
+      "income": "収入",
+      "purchasingPower": "購買力",
+      "economicSystem": "経済体制",
+      "production": "生産",
+      "publicFacilities": "公共施設",
+      "housing": "住宅",
+      "nationalGrid": "全国電力網",
+      "foodIndustry": "食品産業",
+      "attackCountry": "国を攻撃",
+      "intelligence": "情報機関",
+      "capturedTerritory": "占領地域",
+      "fleet": "艦隊",
+      "icbm": "ICBM",
+      "un": "国連",
+      "embassy": "大使館",
+      "internationalOrganizations": "国際機関",
+      "relationLevel": "関係レベル",
+      "religion": "宗教と信仰",
+      "nationalIdeology": "国家イデオロギー",
+      "opennessDoctrine": "開放性の教義",
+      "ministry": "省庁"
+    }
   }
 }

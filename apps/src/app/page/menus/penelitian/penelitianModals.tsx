@@ -78,7 +78,7 @@ export default function BottomLeftPenelitianIcon({
       {!isMenuButtonHidden && typeof document !== 'undefined' && createPortal(
         <button
           onClick={onClick}
-          title={t('side_penelitian.title')}
+          aria-label={t('side_penelitian.title')}
           className="side-floating-btn side-btn-penelitian"
         >
           <img

@@ -1,0 +1,84 @@
+{
+  "title": "融資・債務",
+  "infoButton": "融資と債務の情報",
+  "dayUnit": "日",
+  "monthUnit": "か月",
+  "tabs": { "bilateral": "他国", "multilateral": "国際機関", "history": "履歴" },
+  "search": { "placeholder": "貸付国を検索...", "ariaLabel": "貸付国を検索" },
+  "summary": { "debtRatio": "債務対GDP比率", "safeLimit": "安全上限：", "totalDebt": "債務総額" },
+  "institutions": { "imf": "国際通貨基金 (IMF)", "worldBank": "世界銀行" },
+  "bilateral": { "noResults": "検索に一致する国はありません。", "maximum": "融資上限", "gracePeriod": "返済期間", "borrow": "借りる" },
+  "institution": {
+    "restrictedBanner": "平均セクター国有化率が50%を超える共産主義国は、IMFと世界銀行から融資を受けられません。",
+    "blocked": "申請停止中",
+    "available": "現在申請可能",
+    "cooldownRemaining": "{date}に再申請できます",
+    "interest": "金利：{percent}%",
+    "amount": "融資額",
+    "decreaseAmount": "100万減らす",
+    "setMaximumAmount": "1,500万に設定",
+    "repaymentTerm": "返済期間",
+    "submit": "融資を申請",
+    "errors": {
+      "restricted": "平均国有化率が50%を超える共産主義国は、IMFと世界銀行に融資を申請できません。",
+      "cooldown": "{date}以降に再度申請できます。",
+      "invalidAmount": "有効な融資額を入力してください。",
+      "maximum": "{institution}の融資上限は{amount} NEOです。",
+      "termRange": "180日から1825日の期間を選択してください。"
+    }
+  },
+  "terms": {
+    "title": "返済期間を選択",
+    "selected": "選択中",
+    "shortDefault": "6か月",
+    "options": { "sixMonths": "6か月", "nineMonths": "9か月", "oneYear": "1年", "twoYears": "2年", "threeYears": "3年", "fourYears": "4年", "fiveYears": "5年" }
+  },
+  "history": {
+    "active": "返済中（{count}）",
+    "paid": "完済（{count}）",
+    "emptyActive": "返済中の債務はありません。",
+    "emptyPaid": "完済した融資はありません。",
+    "paymentAria": "{source}からの融資の返済を確認",
+    "headers": { "source": "貸付元", "principal": "元金", "interest": "当初金利", "paid": "返済済み", "penalty": "遅延金", "currentTotal": "現在の合計", "dueDate": "返済期限" }
+  },
+  "confirmation": {
+    "title": "融資の確認",
+    "source": "融資元",
+    "amount": "融資額",
+    "interest": "金利",
+    "term": "返済期間",
+    "totalPayment": "返済総額",
+    "summary": "融資概要",
+    "cashBalance": "国庫残高",
+    "outstanding": "未返済総額",
+    "ready": "融資を確定できます",
+    "approvalNote": "承認されると融資額が国庫に加算されます。",
+    "cancel": "キャンセル",
+    "confirm": "融資を確定"
+  },
+  "payment": {
+    "title": "返済の確認",
+    "amountDue": "{amount}を支払います",
+    "sourceLabel": "融資元：",
+    "insufficientAlert": "国庫の残高が不足しているため、支払いを実行できません。",
+    "insufficient": "融資を全額返済するための資金が不足しています",
+    "payNow": "今すぐ支払う"
+  },
+  "penalties": {
+    "generalTitle": "返済遅延のペナルティ",
+    "detailTitle": "遅延ペナルティの詳細",
+    "loanData": "融資データ",
+    "accumulated": "累積ペナルティ",
+    "missed": "延滞期間",
+    "general": {
+      "paragraphOne": "返済期限に全額を支払えない場合、システムは国庫から可能な限り返済します。",
+      "paragraphTwo": "残額がある場合は延滞扱いとなり、毎月ペナルティが加算されます。",
+      "paragraphThree": "この計算は二国間融資と多国間融資の両方に適用されます。"
+    }
+  },
+  "info": {
+    "title": "融資・債務情報",
+    "paragraphOne": "他国や国際機関からの融資は、国庫と国家債務を同時に増やします。各融資には金利と返済期限があるため、承認前に条件を確認してください。",
+    "paragraphTwo": "債務対GDP比率は、総債務と国家経済の規模を比較します。基本の安全上限は60%ですが、有効なボーナスによって変わる場合があります。履歴を確認し、遅延ペナルティを避けるため期限前に返済してください。"
+  }
+}

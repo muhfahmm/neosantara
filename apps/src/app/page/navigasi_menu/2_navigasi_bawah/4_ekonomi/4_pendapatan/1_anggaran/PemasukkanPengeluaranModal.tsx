@@ -37,6 +37,7 @@ import {
   getKementerianPariwisataIncomeBonusPercent,
 } from "@/app/page/bonus_logic";
 import { getGoldStateProfitSharePercent } from "../../7_sistem_ekonomi/logic/nationalizationLogic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -79,12 +80,14 @@ const calculateTourismIncome = (countryDetail: any) => {
 
 // --- KOMPONEN UTAMA ---
 export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDetail, selectedCountry, onGotoPajak, onGotoProduction, tabBar }: ModalProps) {
+  const { language, t } = useLanguage();
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"summary" | "income" | "outcome">("summary");
   const [outcomeMainTab, setOutcomeMainTab] = useState<"kabinet" | "subsidi" | "total">("kabinet");
   const [kabinetSubTab, setKabinetSubTab] = useState<"kementerian" | "keamanan" | "layanan">("kementerian");
 
   if (!isOpen) return null;
+  const formatNumber = (value: number) => value.toLocaleString(language, { maximumFractionDigits: 0 });
 
   const taxRevenue = calculateTotalTaxIncome(countryDetail);
   const goldIncome = calculateGoldIncome(countryDetail);
@@ -107,60 +110,60 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
 
   const ideology = String(countryDetail?.ideology || "").trim().toLowerCase();
   const ideologyTaxBadge = ideology === "demokrasi"
-    ? `Bonus Demokrasi: penerimaan seluruh pajak +${DEMOCRACY_TAX_REVENUE_BONUS * 100}%`
+    ? t("navigation_economy_income.bonuses.democracy", { percent: DEMOCRACY_TAX_REVENUE_BONUS * 100 })
     : ideology === "kapitalisme"
-      ? `Bonus Kapitalisme: penerimaan seluruh pajak +${CAPITALISM_TAX_REVENUE_BONUS * 100}%`
+      ? t("navigation_economy_income.bonuses.capitalism", { percent: CAPITALISM_TAX_REVENUE_BONUS * 100 })
       : ideology === "liberalisme"
-        ? `Bonus Liberalisme: penerimaan seluruh pajak +${LIBERALISM_TAX_REVENUE_BONUS * 100}%`
+        ? t("navigation_economy_income.bonuses.liberalism", { percent: LIBERALISM_TAX_REVENUE_BONUS * 100 })
         : ideology === "konservatisme"
-          ? `Bonus Konservatisme: penerimaan seluruh pajak +${CONSERVATISM_TAX_REVENUE_BONUS * 100}%`
+          ? t("navigation_economy_income.bonuses.conservatism", { percent: CONSERVATISM_TAX_REVENUE_BONUS * 100 })
           : undefined;
   const religionTaxBadge = String(countryDetail?.religion || "").trim().toLowerCase() === "kristen ortodoks"
-    ? `Bonus Kristen Ortodoks: Penerimaan pajak pribadi +${ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS * 100}%`
+    ? t("navigation_economy_income.bonuses.orthodoxPersonal", { percent: ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS * 100 })
     : String(countryDetail?.religion || "").trim().toLowerCase() === "buddha"
-      ? `Bonus Buddha: Penerimaan pajak lingkungan +${BUDDHA_ENVIRONMENTAL_TAX_REVENUE_BONUS * 100}%`
+      ? t("navigation_economy_income.bonuses.buddhaEnvironmental", { percent: BUDDHA_ENVIRONMENTAL_TAX_REVENUE_BONUS * 100 })
       : undefined;
 
   const countryName = String(countryDetail?.country || countryDetail?.nama || "").trim();
-  const euTaxBadge = isMemberOfEU(countryName) ? "Bonus EU: Penerimaan Pajak +10%" : undefined;
-  const bricsTaxBadge = isMemberOfBRICS(countryName) ? "Bonus BRICS: Penerimaan Pajak +10%" : undefined;
-  const g20TaxBadge = isMemberOfG20(countryName) ? "Bonus G20: Penerimaan Pajak +20%" : undefined;
+  const euTaxBadge = isMemberOfEU(countryName) ? t("navigation_economy_income.bonuses.eu") : undefined;
+  const bricsTaxBadge = isMemberOfBRICS(countryName) ? t("navigation_economy_income.bonuses.brics") : undefined;
+  const g20TaxBadge = isMemberOfG20(countryName) ? t("navigation_economy_income.bonuses.g20") : undefined;
 
   const incomeItems: FinancialItem[] = [
     {
-      label: "Revenue Pajak Nasional",
+      label: t("navigation_economy_income.income.tax"),
       amount: taxRevenue,
       badge: [ideologyTaxBadge, religionTaxBadge, euTaxBadge, bricsTaxBadge, g20TaxBadge].filter(Boolean).join(" | ") || undefined,
       onClick: () => onGotoPajak?.()
     },
     {
-      label: `Sektor Komersial (${commercialCount} Gedung)`,
+      label: t("navigation_economy_income.income.commercial", { count: commercialCount }),
       amount: commercialIncome,
-      badge: commercialCount > 0 ? `Mall: ${mallCount}, Hotel: ${hotelCount}, Grosir: ${grosirCount}` : undefined,
+      badge: commercialCount > 0 ? t("navigation_economy_income.income.commercialBreakdown", { mall: mallCount, hotel: hotelCount, wholesale: grosirCount }) : undefined,
     },
     {
-      label: `Sektor Wisata & Pariwisata (${tourismCount} Destinasi)`,
+      label: t("navigation_economy_income.income.tourism", { count: tourismCount }),
       amount: tourismIncome,
       baseAmount: baseTourismIncome,
       badge: [
-        tourismCount > 0 ? `${tourismCount} Destinasi Wisata Terdaftar` : undefined,
-        pariwisataBonusPercent > 0 ? `+Kem. Pariwisata (${pariwisataBonusPercent.toFixed(1)}%)` : undefined
+        tourismCount > 0 ? t("navigation_economy_income.income.registeredTourism", { count: tourismCount }) : undefined,
+        pariwisataBonusPercent > 0 ? t("navigation_economy_income.income.tourismBonus", { percent: pariwisataBonusPercent.toFixed(1) }) : undefined
       ].filter(Boolean).join(" | ") || undefined,
     },
     {
       label: goldBuildingCount > 0
-        ? `Bagian Negara Tambang Emas (${goldUnits.toLocaleString('id-ID', { maximumFractionDigits: 0 })} unit)`
-        : "Bagian Negara Tambang Emas",
+        ? t("navigation_economy_income.income.goldShareUnits", { count: formatNumber(goldUnits) })
+        : t("navigation_economy_income.income.goldShare"),
       amount: goldIncome,
-      displayAmount: goldBuildingCount > 0 ? `+ ${goldIncome.toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO` : undefined,
-      badge: goldBuildingCount > 0 ? `Bagian negara ${goldStateSharePercent}%` : undefined,
+      displayAmount: goldBuildingCount > 0 ? `+ ${formatNumber(goldIncome)} NEO` : undefined,
+      badge: goldBuildingCount > 0 ? t("navigation_economy_income.income.stateShare", { percent: goldStateSharePercent }) : undefined,
       onClick: () => onGotoProduction?.("mineral", "emas"),
     }
   ];
 
   const outcomeItems: FinancialItem[] = [
-    { label: "Biaya Operasional Dewan Kabinet", amount: ministryCostPerDay },
-    { label: "Alokasi Kebijakan Subsidi", amount: totalSubsidyCost }
+    { label: t("navigation_economy_income.outcome.cabinetCosts"), amount: ministryCostPerDay },
+    { label: t("navigation_economy_income.outcome.subsidyAllocation"), amount: totalSubsidyCost }
   ];
 
   const totalIncome = incomeItems.reduce((sum, item) => sum + item.amount, 0);
@@ -186,7 +189,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
       <div className="root-modal-util-b74379da23">
 
         <RootInfoModalHeader
-          title="Neraca Pemasukkan & Pengeluaran"
+          title={t("navigation_economy_income.title")}
           onClose={onClose}
           size="standard"
           icon={<BarChart3 aria-hidden="true" />}
@@ -194,8 +197,8 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
             <button
               type="button"
               onClick={() => setIsInfoOpen(true)}
-              title="Informasi neraca pemasukan dan pengeluaran"
-              aria-label="Informasi neraca pemasukan dan pengeluaran"
+              title={t("navigation_economy_income.infoButton")}
+              aria-label={t("navigation_economy_income.infoButton")}
               className="root-modal-info-button root-modal-util-1697100c43"
             >
               <Info className="h-3.5 w-3.5" />
@@ -209,9 +212,9 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
         <div className="px-4 lg:px-6 2xl:px-8 pt-3.5 lg:pt-4.5 2xl:pt-6 relative z-10 bg-root-canvas">
           <RootModalTabs
             items={[
-              { label: "Ringkasan PDB", isActive: activeTab === "summary", onClick: () => setActiveTab("summary") },
-              { label: "Pemasukkan", isActive: activeTab === "income", onClick: () => setActiveTab("income"), icon: <ArrowUpRight className="h-3.5 w-3.5" /> },
-              { label: "Pengeluaran", isActive: activeTab === "outcome", onClick: () => setActiveTab("outcome"), icon: <ArrowDownRight className="h-3.5 w-3.5" /> },
+              { label: t("navigation_economy_income.tabs.summary"), isActive: activeTab === "summary", onClick: () => setActiveTab("summary") },
+              { label: t("navigation_economy_income.tabs.income"), isActive: activeTab === "income", onClick: () => setActiveTab("income"), icon: <ArrowUpRight className="h-3.5 w-3.5" /> },
+              { label: t("navigation_economy_income.tabs.outcome"), isActive: activeTab === "outcome", onClick: () => setActiveTab("outcome"), icon: <ArrowDownRight className="h-3.5 w-3.5" /> },
             ]}
           />
         </div>
@@ -225,40 +228,40 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
               <div className="space-y-6">
                 <div className={`space-y-4 border border-root-accent/30 bg-root-surface p-6 ${rootBorderRadius.card}`}>
                   <h4 className="text-[10px] text-root-accent font-black uppercase tracking-wider mb-2">
-                    Rincian Aliran Saldo & PDB Negara
+                    {t("navigation_economy_income.summary.detailTitle")}
                   </h4>
                   <div className="space-y-4">
                     {/* Section Pemasukkan */}
                     <div className="space-y-2">
                       <div className="flex justify-between items-center text-xs font-black text-emerald-400 pb-1 border-b border-root-accent/20">
                         <span className="flex items-center gap-2 min-w-0">
-                          <ArrowUpRight className="h-4 w-4 shrink-0" /> <span className="truncate">Rincian Pemasukkan (Pendapatan Negara)</span>
+                          <ArrowUpRight className="h-4 w-4 shrink-0" /> <span className="truncate">{t("navigation_economy_income.summary.incomeTitle")}</span>
                         </span>
-                        <span className="font-mono tabular-nums game-stat-number shrink-0">+ {totalIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                        <span className="font-mono tabular-nums game-stat-number shrink-0">+ {formatNumber(totalIncome)}</span>
                       </div>
                       <div className="pl-4 space-y-1.5 text-xs">
                         <div className="flex justify-between items-center text-root-text gap-2">
-                          <span className="font-semibold truncate">• Revenue Pajak Nasional:</span>
-                          <span className="font-bold font-mono tabular-nums game-stat-number text-emerald-400 shrink-0">+ {taxRevenue.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                          <span className="font-semibold truncate">• {t("navigation_economy_income.income.tax")}:</span>
+                          <span className="font-bold font-mono tabular-nums game-stat-number text-emerald-400 shrink-0">+ {formatNumber(taxRevenue)}</span>
                         </div>
                         <div className="flex justify-between items-center text-root-text gap-2">
-                          <span className="font-semibold truncate">• Sektor Komersial ({commercialCount} Gedung):</span>
-                          <span className="font-bold font-mono tabular-nums game-stat-number text-emerald-400 shrink-0">+ {commercialIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                          <span className="font-semibold truncate">• {t("navigation_economy_income.income.commercial", { count: commercialCount })}:</span>
+                          <span className="font-bold font-mono tabular-nums game-stat-number text-emerald-400 shrink-0">+ {formatNumber(commercialIncome)}</span>
                         </div>
                         <div className="flex justify-between items-center text-root-text gap-2">
-                          <span className="font-semibold truncate">• Sektor Wisata & Pariwisata ({tourismCount} Destinasi):</span>
+                          <span className="font-semibold truncate">• {t("navigation_economy_income.income.tourism", { count: tourismCount })}:</span>
                           <span className="font-bold font-mono tabular-nums game-stat-number text-emerald-400 shrink-0">
                             {baseTourismIncome > 0 && tourismIncome > baseTourismIncome && (
                               <span className="mr-1.5 text-rose-400 line-through">
-                                + {baseTourismIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}
+                                + {formatNumber(baseTourismIncome)}
                               </span>
                             )}
-                            + {tourismIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}
+                            + {formatNumber(tourismIncome)}
                           </span>
                         </div>
                         <div className="flex justify-between items-center text-root-text gap-2">
-                          <span className="font-semibold truncate">• Produksi Tambang Emas ({goldBuildingCount} Unit):</span>
-                          <span className="font-bold font-mono tabular-nums game-stat-number text-emerald-400 shrink-0">+ {goldIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                          <span className="font-semibold truncate">• {t("navigation_economy_income.summary.goldProduction", { count: goldBuildingCount })}:</span>
+                          <span className="font-bold font-mono tabular-nums game-stat-number text-emerald-400 shrink-0">+ {formatNumber(goldIncome)}</span>
                         </div>
                       </div>
                     </div>
@@ -267,34 +270,34 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                     <div className="space-y-2 pt-2">
                       <div className="flex justify-between items-center text-xs font-black text-rose-400 pb-1 border-b border-root-accent/20">
                         <span className="flex items-center gap-2 min-w-0">
-                          <ArrowDownRight className="h-4 w-4 shrink-0" /> <span className="truncate">Rincian Pengeluaran (Beban Negara)</span>
+                          <ArrowDownRight className="h-4 w-4 shrink-0" /> <span className="truncate">{t("navigation_economy_income.summary.outcomeTitle")}</span>
                         </span>
-                        <span className="font-mono tabular-nums game-stat-number shrink-0">- {totalOutcome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                        <span className="font-mono tabular-nums game-stat-number shrink-0">- {formatNumber(totalOutcome)}</span>
                       </div>
                       <div className="pl-4 space-y-1.5 text-xs">
                         <div className="flex justify-between items-center text-root-text gap-2">
-                          <span className="font-semibold truncate">• Biaya Operasional Dewan Kabinet (22 Departemen):</span>
-                          <span className="font-bold font-mono tabular-nums game-stat-number text-rose-400 shrink-0">- {ministryCostPerDay.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                          <span className="font-semibold truncate">• {t("navigation_economy_income.summary.cabinetCosts", { count: 22 })}:</span>
+                          <span className="font-bold font-mono tabular-nums game-stat-number text-rose-400 shrink-0">- {formatNumber(ministryCostPerDay)}</span>
                         </div>
                         <div className="flex justify-between items-center text-root-text gap-2">
-                          <span className="font-semibold truncate">• Alokasi Kebijakan Subsidi (6 Pos Kebutuhan):</span>
-                          <span className="font-bold font-mono tabular-nums game-stat-number text-rose-400 shrink-0">- {totalSubsidyCost.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                          <span className="font-semibold truncate">• {t("navigation_economy_income.summary.subsidyCosts", { count: 6 })}:</span>
+                          <span className="font-bold font-mono tabular-nums game-stat-number text-rose-400 shrink-0">- {formatNumber(totalSubsidyCost)}</span>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="mt-4 pt-4 border-t border-root-accent/30">
                     <div className="flex justify-between items-center text-sm font-black text-root-text gap-2">
-                      <span className="truncate">Netto Saldo Harian (Pemasukkan - Pengeluaran):</span>
+                      <span className="truncate">{t("navigation_economy_income.summary.netBalance")}</span>
                       <span className={`font-mono tabular-nums game-stat-number shrink-0 ${netBalance >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
-                        {netBalance >= 0 ? "+ " : "- "}{Math.abs(netBalance).toLocaleString("id-ID", { maximumFractionDigits: 0 })}
+                        {netBalance >= 0 ? "+ " : "- "}{formatNumber(Math.abs(netBalance))}
                       </span>
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-between items-center text-xs font-black text-root-text pt-2 px-1 gap-2">
-                  <span className="text-root-subtle truncate">Total Saldo Kas Negara:</span>
-                  <span className="text-root-accent font-mono tabular-nums game-stat-number shrink-0">{anggaran.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                  <span className="text-root-subtle truncate">{t("navigation_economy_income.cashBalance")}</span>
+                  <span className="text-root-accent font-mono tabular-nums game-stat-number shrink-0">{formatNumber(anggaran)} NEO</span>
                 </div>
               </div>
             )}
@@ -321,10 +324,10 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                           <span>
                             {item.baseAmount !== undefined && item.baseAmount > 0 && item.amount > item.baseAmount && (
                               <span className="mr-1.5 text-rose-400 line-through">
-                                + {item.baseAmount.toLocaleString("id-ID", { maximumFractionDigits: 0 })}
+                                + {formatNumber(item.baseAmount)}
                               </span>
                             )}
-                            {item.displayAmount ?? `+ ${item.amount.toLocaleString("id-ID", { maximumFractionDigits: 0 })}`}
+                            {item.displayAmount ?? `+ ${formatNumber(item.amount)}`}
                           </span>
                         </div>
                       </div>
@@ -332,14 +335,14 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                   </div>
                   <div className="pt-4 border-t border-root-accent/30 mt-4">
                     <div className="flex justify-between items-center text-sm font-black text-root-text">
-                      <span>Total Pemasukkan:</span>
-                      <span className="text-emerald-400">+ {totalIncome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                      <span>{t("navigation_economy_income.income.total")}</span>
+                      <span className="text-emerald-400">+ {formatNumber(totalIncome)}</span>
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-between items-center text-xs font-black text-root-text pt-2 px-1">
-                  <span className="text-root-subtle">Total Saldo Kas Negara:</span>
-                  <span className="text-root-accent">{anggaran.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                  <span className="text-root-subtle">{t("navigation_economy_income.cashBalance")}</span>
+                  <span className="text-root-accent">{formatNumber(anggaran)} NEO</span>
                 </div>
               </div>
             )}
@@ -350,9 +353,9 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                 {/* Top Level Tabs: Kabinet (22), Alokasi Subsidi (6), Total Pengeluaran */}
                 <RootModalTabs
                   items={[
-                    { label: "Kabinet (22)", isActive: outcomeMainTab === "kabinet", onClick: () => setOutcomeMainTab("kabinet") },
-                    { label: "Alokasi Subsidi (6)", isActive: outcomeMainTab === "subsidi", onClick: () => setOutcomeMainTab("subsidi") },
-                    { label: "Total Pengeluaran", isActive: outcomeMainTab === "total", onClick: () => setOutcomeMainTab("total") },
+                    { label: t("navigation_economy_income.outcome.cabinetTab", { count: 22 }), isActive: outcomeMainTab === "kabinet", onClick: () => setOutcomeMainTab("kabinet") },
+                    { label: t("navigation_economy_income.outcome.subsidyTab", { count: 6 }), isActive: outcomeMainTab === "subsidi", onClick: () => setOutcomeMainTab("subsidi") },
+                    { label: t("navigation_economy_income.outcome.totalTab"), isActive: outcomeMainTab === "total", onClick: () => setOutcomeMainTab("total") },
                   ]}
                 />
 
@@ -362,38 +365,38 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                   <div className="space-y-4">
                     <div className={`space-y-4 border border-root-accent/30 bg-root-surface p-6 ${rootBorderRadius.card}`}>
                       <h4 className="text-[10px] text-root-accent font-black uppercase tracking-wider mb-4">
-                        Ringkasan Total Pengeluaran Negara
+                        {t("navigation_economy_income.outcome.totalSummaryTitle")}
                       </h4>
                       <div className="space-y-3">
                         <div className="flex justify-between items-center text-xs font-bold text-rose-400 py-2 border-b border-root-accent/20">
-                          <span className="font-semibold text-root-text">1. Biaya Operasional Kabinet (22)</span>
-                          <span>- {ministryCostPerDay.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                          <span className="font-semibold text-root-text">{t("navigation_economy_income.outcome.cabinetTotal", { count: 22 })}</span>
+                          <span>- {formatNumber(ministryCostPerDay)}</span>
                         </div>
                         <div className="pl-4 space-y-1 text-[11px] text-root-subtle">
                           <div className="flex justify-between">
-                            <span>• Subtotal Kementerian (15):</span>
-                            <span>- {calculateTabCostDaily(countryDetail, KEMENTERIAN).toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                            <span>• {t("navigation_economy_income.outcome.ministrySubtotal", { count: 15 })}:</span>
+                            <span>- {formatNumber(calculateTabCostDaily(countryDetail, KEMENTERIAN))}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span>• Subtotal Keamanan (5):</span>
-                            <span>- {calculateTabCostDaily(countryDetail, KEAMANAN).toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                            <span>• {t("navigation_economy_income.outcome.securitySubtotal", { count: 5 })}:</span>
+                            <span>- {formatNumber(calculateTabCostDaily(countryDetail, KEAMANAN))}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span>• Subtotal Layanan (2):</span>
-                            <span>- {calculateTabCostDaily(countryDetail, LAYANAN).toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                            <span>• {t("navigation_economy_income.outcome.servicesSubtotal", { count: 2 })}:</span>
+                            <span>- {formatNumber(calculateTabCostDaily(countryDetail, LAYANAN))}</span>
                           </div>
                         </div>
 
                         <div className="flex justify-between items-center text-xs font-bold text-rose-400 py-2 border-b border-root-accent/20 pt-3">
-                          <span className="font-semibold text-root-text">2. Alokasi Kebijakan Subsidi (6)</span>
-                          <span>- {totalSubsidyCost.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                          <span className="font-semibold text-root-text">{t("navigation_economy_income.outcome.subsidyTab", { count: 6 })}</span>
+                          <span>- {formatNumber(totalSubsidyCost)}</span>
                         </div>
                       </div>
 
                       <div className="pt-4 border-t border-root-accent/30 mt-4">
                         <div className="flex justify-between items-center text-sm font-black text-root-text">
-                          <span>Grand Total Pengeluaran (Kabinet + Subsidi):</span>
-                          <span className="text-rose-400">- {totalOutcome.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                          <span>{t("navigation_economy_income.outcome.grandTotal")}</span>
+                          <span className="text-rose-400">- {formatNumber(totalOutcome)}</span>
                         </div>
                       </div>
                     </div>
@@ -403,15 +406,15 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                     {/* Sub-tabs under Kabinet: Kementerian (15), Keamanan (5), Layanan (2) */}
                     <RootModalTabs
                       items={[
-                        { label: "Kementerian (15)", isActive: kabinetSubTab === "kementerian", onClick: () => setKabinetSubTab("kementerian") },
-                        { label: "Keamanan (5)", isActive: kabinetSubTab === "keamanan", onClick: () => setKabinetSubTab("keamanan") },
-                        { label: "Layanan (2)", isActive: kabinetSubTab === "layanan", onClick: () => setKabinetSubTab("layanan") },
+                        { label: t("navigation_economy_income.outcome.ministries", { count: 15 }), isActive: kabinetSubTab === "kementerian", onClick: () => setKabinetSubTab("kementerian") },
+                        { label: t("navigation_economy_income.outcome.security", { count: 5 }), isActive: kabinetSubTab === "keamanan", onClick: () => setKabinetSubTab("keamanan") },
+                        { label: t("navigation_economy_income.outcome.services", { count: 2 }), isActive: kabinetSubTab === "layanan", onClick: () => setKabinetSubTab("layanan") },
                       ]}
                     />
 
                     <div className={`space-y-4 border border-root-accent/30 bg-root-surface p-6 ${rootBorderRadius.card}`}>
                       <h4 className="text-[10px] text-root-accent font-black uppercase tracking-wider mb-4">
-                        {kabinetSubTab === "kementerian" ? "Kementerian" : kabinetSubTab === "keamanan" ? "Keamanan" : "Layanan"}
+                        {kabinetSubTab === "kementerian" ? t("navigation_economy_income.outcome.ministryTitle") : kabinetSubTab === "keamanan" ? t("navigation_economy_income.outcome.securityTitle") : t("navigation_economy_income.outcome.servicesTitle")}
                       </h4>
                       <div className="space-y-3">
                         {currentOutcomeTabDepts.map((dept, index) => {
@@ -434,18 +437,18 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                                 ) : (
                                   <Icon className="h-4 w-4 shrink-0 text-root-subtle" />
                                 )}
-                                <span className="font-semibold text-root-text">{dept.name}</span>
-                                <span className="text-[10px] text-root-subtle">(Level {level})</span>
+                                <span className="font-semibold text-root-text">{t(`navigation_economy_income.departments.${dept.id}`)}</span>
+                                <span className="text-[10px] text-root-subtle">({t("navigation_economy_income.outcome.level")} {level})</span>
                               </div>
-                              <span>- {dailyCost.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                              <span>- {formatNumber(dailyCost)}</span>
                             </div>
                           );
                         })}
                       </div>
                       <div className="pt-4 border-t border-root-accent/30 mt-4">
                         <div className="flex justify-between items-center text-sm font-black text-root-text">
-                          <span>Subtotal {kabinetSubTab === "kementerian" ? "Kementerian" : kabinetSubTab === "keamanan" ? "Keamanan" : "Layanan"}:</span>
-                          <span className="text-rose-400">- {outcomeTabCostDaily.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                          <span>{t("navigation_economy_income.outcome.subtotal", { category: kabinetSubTab === "kementerian" ? t("navigation_economy_income.outcome.ministryTitle") : kabinetSubTab === "keamanan" ? t("navigation_economy_income.outcome.securityTitle") : t("navigation_economy_income.outcome.servicesTitle") })}:</span>
+                          <span className="text-rose-400">- {formatNumber(outcomeTabCostDaily)}</span>
                         </div>
                       </div>
                     </div>
@@ -453,8 +456,8 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                     <div className={`space-y-2 border border-root-accent/30 bg-root-surface p-6 ${rootBorderRadius.card}`}>
                       <div className="pt-2">
                         <div className="flex justify-between items-center text-sm font-black text-root-text">
-                          <span>Total Pengeluaran Dewan Kabinet:</span>
-                          <span className="text-rose-400">- {ministryCostPerDay.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</span>
+                          <span>{t("navigation_economy_income.outcome.totalCabinetCosts")}</span>
+                          <span className="text-rose-400">- {formatNumber(ministryCostPerDay)}</span>
                         </div>
                       </div>
                     </div>
@@ -462,8 +465,8 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                 )}
 
                 <div className="flex justify-between items-center text-xs font-black text-root-text pt-2 px-1">
-                  <span className="text-root-subtle">Total Saldo Kas Negara:</span>
-                  <span className="text-root-accent">{anggaran.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                  <span className="text-root-subtle">{t("navigation_economy_income.cashBalance")}</span>
+                  <span className="text-root-accent">{formatNumber(anggaran)} NEO</span>
                 </div>
               </div>
             )}
@@ -475,8 +478,8 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
     <MenuInfoModal
       isOpen={isInfoOpen}
       onClose={() => setIsInfoOpen(false)}
-      title="Informasi Neraca Pemasukan & Pengeluaran"
-      description="Tinjau sumber pemasukan negara dan rincian pengeluaran, termasuk dampaknya pada saldo dan PDB. Gunakan tab Ringkasan PDB, Pemasukan, dan Pengeluaran untuk melihat setiap bagian anggaran."
+      title={t("navigation_economy_income.info.title")}
+      description={t("navigation_economy_income.info.description")}
     />
     </>
   );

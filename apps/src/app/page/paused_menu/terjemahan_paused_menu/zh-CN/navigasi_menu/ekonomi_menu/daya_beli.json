@@ -1,0 +1,69 @@
+{
+  "title": "基本生活用品价格管控",
+  "monthUnit": "月",
+  "tabs": { "essentials": "生活必需品价格", "subsidyPolicy": "补贴政策" },
+  "subsidy": {
+    "title": "补贴分配与政策",
+    "infoButton": "补贴分配与政策信息",
+    "confirm": "确认",
+    "categories": { "all": "所有部门" },
+    "summary": {
+      "totalBudget": "补贴预算总支出",
+      "activeSectors": "已启用部门 / 总数",
+      "sectorCount": "{active} / {total} 个部门",
+      "approvalSupport": "公众支持度加成",
+      "approvalValue": "支持度 +{percent}%",
+      "populationImpact": "人口净影响",
+      "saved": "补贴分配已成功更新！"
+    },
+    "sidebarLabel": "补贴政策类别",
+    "viewDetails": "查看政策详情",
+    "viewItemDetails": "查看{item}补贴详情",
+    "enableItem": "启用{item}补贴",
+    "disableItem": "停用{item}补贴",
+    "info": {
+      "title": "补贴分配与政策信息",
+      "description": "选择各部门的补贴项目，并在调整分配前查看每月成本。补贴使用国家预算，可能影响公众支持度和人口增长。",
+      "satisfaction": "民众满意度指数（补贴）"
+    },
+    "confirmation": {
+      "title": "确认补贴政策",
+      "description": "补贴分配变更将会生效。是否继续？",
+      "back": "返回",
+      "confirm": "是，确认"
+    }
+  },
+  "infoButton": "基本生活用品价格管控信息",
+  "confirm": "确认",
+  "loading": "正在加载国家价格数据...",
+  "noData": "暂无该国家的价格数据。",
+  "currentValue": "当前价格",
+  "populationImpact": "人口影响",
+  "subsidyActive": "基本生活用品补贴：已启用",
+  "errors": {
+    "loadFailed": "无法从数据库加载价格数据。"
+  },
+  "commodities": {
+    "rice": "大米",
+    "beef": "牛肉",
+    "chicken": "鸡肉",
+    "cookingOil": "食用油",
+    "sugar": "糖",
+    "eggs": "鸡蛋",
+    "electricity": "电力",
+    "water": "水"
+  },
+  "info": {
+    "title": "基本生活用品价格管控信息",
+    "description": "设定基本生活用品的国家价格。价格会影响民众满意度和人口变化。",
+    "satisfaction": "民众满意度指数（基本生活用品价格）",
+    "populationImpact": "基本生活用品价格对人口的影响：{percent}% / 月"
+  },
+  "confirmation": {
+    "title": "确认价格政策",
+    "changesApply": "将应用基本生活用品价格变更。是否继续？",
+    "noChanges": "价格没有变化。确认后返回论坛。",
+    "back": "返回",
+    "yes": "确认"
+  }
+}

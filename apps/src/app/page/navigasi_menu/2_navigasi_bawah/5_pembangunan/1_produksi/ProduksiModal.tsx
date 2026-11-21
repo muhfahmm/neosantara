@@ -66,32 +66,8 @@ import { LIBERALISM_TAX_REVENUE_BONUS } from "../../../../bonus_logic/ideologi_b
 import { CONSERVATISM_TAX_REVENUE_BONUS } from "../../../../bonus_logic/ideologi_bonus_logic/konservatisme";
 import { COMMUNISM_PRODUCTION_BONUS } from "../../../../bonus_logic/ideologi_bonus_logic/komunisme";
 import { isMemberOfFAO } from "../../../../bonus_logic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
-
-
-const RELIGION_BONUS_INFO: Record<string, string> = {
-  islam: "Bonus +10% produksi SDA non-emas di Mineral & Energi serta sektor Peternakan, Agrikultur, Perikanan, dan Olahan Pangan.",
-  katolik: "Bonus pengaruh suara negara di PBB +10.",
-  protestan: "Bonus harga jual komoditas +5% dan diskon harga beli komoditas 5%.",
-  "kristen ortodoks": "Bonus penerimaan Pajak Penghasilan Pribadi +5%.",
-  hindu: "Bonus pertumbuhan populasi +8%.",
-  buddha: "Bonus penerimaan Pajak Lingkungan +10%.",
-  yahudi: "Diskon waktu pembangunan pabrik dan tambang 10%; emas tidak termasuk.",
-  shinto: "Bonus produksi kelistrikan +10%.",
-  ateisme: "Bonus kecepatan riset sains +15%.",
-};
-
-const IDEOLOGY_BONUS_INFO: Record<string, string> = {
-  demokrasi: `Bonus penerimaan seluruh pajak +${DEMOCRACY_TAX_REVENUE_BONUS * 100}%.`,
-  monarki: "Bonus kekuatan militer +15%.",
-  kapitalisme: `Bonus penerimaan seluruh pajak +${CAPITALISM_TAX_REVENUE_BONUS * 100}%.`,
-  sosialisme: "Bonus tingkat kelahiran +10%.",
-  komunisme: `Produksi Semua Lini: +${COMMUNISM_PRODUCTION_BONUS * 100}%`,
-  nasionalisme: "Bonus kecepatan produksi pangan +10%.",
-  konservatisme: `Bonus penerimaan pajak +${CONSERVATISM_TAX_REVENUE_BONUS * 100}%.`,
-  liberalisme: `Bonus penerimaan pajak +${LIBERALISM_TAX_REVENUE_BONUS * 100}%.`,
-  otoritarianisme: "Bonus kekuatan militer +25%.",
-};
 
 
 interface MaterialRequirement {
@@ -126,6 +102,18 @@ export default function ProduksiModal({
   targetHighlightedKey,
   onProductionDeepLinkHandled,
 }: ModalProps) {
+  const { t } = useLanguage();
+  const tr = (key: string, params?: Record<string, string | number>) =>
+    t(`navigation_construction_production.${key}`, params);
+  const translateConfirmation = (key: string, params?: Record<string, string | number>) => {
+    if (key.startsWith("materials.")) {
+      const resourceKey = key.slice("materials.".length);
+      const rewardKey = `side_reward.items.${resourceKey}`;
+      const translated = t(rewardKey);
+      return translated === rewardKey ? key : translated;
+    }
+    return tr(`confirmation.${key}`, params);
+  };
   const [activeTab, setActiveTab] = useState<string>(targetTab || "kelistrikan");
   const viewportMode = useViewportMode();
 
@@ -169,9 +157,44 @@ export default function ProduksiModal({
     (1 - getEconomicEmbargoIncomeMultiplier(playerCountryName)) * 100
   );
   const currentReligion = String(countryDetail?.religion || "").trim();
-  const currentReligionBonus = RELIGION_BONUS_INFO[currentReligion.toLowerCase()];
+  const currentReligionBonusKey: Record<string, string> = {
+    islam: "islam",
+    katolik: "catholic",
+    protestan: "protestant",
+    "kristen ortodoks": "orthodox",
+    hindu: "hindu",
+    buddha: "buddhist",
+    yahudi: "jewish",
+    shinto: "shinto",
+    ateisme: "atheism",
+  };
+  const currentReligionBonus = currentReligionBonusKey[currentReligion.toLowerCase()]
+    ? tr(`bonus.religions.${currentReligionBonusKey[currentReligion.toLowerCase()]}`)
+    : undefined;
   const currentIdeology = String(countryDetail?.ideology || "").trim();
-  const currentIdeologyBonus = IDEOLOGY_BONUS_INFO[currentIdeology.toLowerCase()];
+  const currentIdeologyBonusKey: Record<string, string> = {
+    demokrasi: "democracy",
+    monarki: "monarchy",
+    kapitalisme: "capitalism",
+    sosialisme: "socialism",
+    komunisme: "communism",
+    nasionalisme: "nationalism",
+    konservatisme: "conservatism",
+    liberalisme: "liberalism",
+    otoritarianisme: "authoritarianism",
+  };
+  const ideologyBonusPercent: Record<string, number> = {
+    demokrasi: DEMOCRACY_TAX_REVENUE_BONUS * 100,
+    kapitalisme: CAPITALISM_TAX_REVENUE_BONUS * 100,
+    konservatisme: CONSERVATISM_TAX_REVENUE_BONUS * 100,
+    liberalisme: LIBERALISM_TAX_REVENUE_BONUS * 100,
+    komunisme: COMMUNISM_PRODUCTION_BONUS * 100,
+  };
+  const currentIdeologyBonus = currentIdeologyBonusKey[currentIdeology.toLowerCase()]
+    ? tr(`bonus.ideologies.${currentIdeologyBonusKey[currentIdeology.toLowerCase()]}`, {
+        percent: ideologyBonusPercent[currentIdeology.toLowerCase()] ?? 0,
+      })
+    : undefined;
   const pendidikanProductionBonusPercent = getKementerianPendidikanProductionBonusPercent(
     countryDetail,
     "padi"
@@ -293,7 +316,7 @@ export default function ProduksiModal({
     const normalizedKey = normalizeResourceKey(resourceKey);
     const tabId = CARD_TAB_MAP[normalizedKey];
     if (!tabId) {
-      setToast(`Tidak ada kartu untuk ${label}`);
+      setToast(tr("status.noCard", { building: label }));
       setTimeout(() => setToast(null), 2000);
       return;
     }
@@ -464,7 +487,7 @@ export default function ProduksiModal({
     const { key, label } = selectedBuilding;
     const bMeta = findMeta(key);
     if (loadingMetadata || !bMeta || !safeDateString) {
-      setToast("Metadata bangunan masih dimuat atau tanggal tidak tersedia.");
+      setToast(tr("status.metadataUnavailable"));
       setTimeout(() => setToast(null), 2500);
       return;
     }
@@ -496,14 +519,14 @@ export default function ProduksiModal({
       getBulkBuildQuantityTarget(originalCost)
     );
     if (quantity > maxQuantity) {
-      setToast(`Jumlah pembangunan melebihi batas anggaran atau material tersedia (maksimal ${maxQuantity}).`);
+      setToast(tr("status.budgetOrMaterials", { max: maxQuantity }));
       setTimeout(() => setToast(null), 2500);
       return;
     }
 
     const totalCost = cost * quantity;
     if (anggaran < totalCost) {
-      setToast(`Kas negara tidak mencukupi untuk membangun ${quantity} ${label}!`);
+      setToast(tr("status.insufficientFunds", { count: quantity, building: label }));
       setTimeout(() => setToast(null), 2500);
       return;
     }
@@ -555,7 +578,7 @@ export default function ProduksiModal({
       setCountryDetail(updatedDetail);
       setSelectedBuilding(null);
       recordBuildingProgress(key, quantity);
-      setToast(`✅ Berhasil! ${quantity} ${label} dibangun secara instan.`);
+      setToast(tr("status.builtInstantly", { count: quantity, building: label }));
       setTimeout(() => setToast(null), 3000);
       return;
     }
@@ -594,35 +617,35 @@ export default function ProduksiModal({
     setCountryDetail(updatedDetail);
     setSelectedBuilding(null);
     recordBuildingProgress(key, quantity);
-    setToast(`✅ Pembangunan ${quantity} ${label} telah dijadwalkan!`);
+    setToast(tr("status.scheduled", { count: quantity, building: label }));
     setTimeout(() => setToast(null), 3000);
   };
 
   const TABS = [
-    { id: "kelistrikan", label: "Kelistrikan", component: KelistrikanTab },
-    { id: "mineral", label: "Mineral & Energi", component: MineralEnergiTab },
-    { id: "manufaktur", label: "Manufaktur", component: ManufakturTab },
-    { id: "peternakan", label: "Peternakan", component: PeternakanTab },
-    { id: "agrikultur", label: "Agrikultur", component: AgrikulturTab },
-    { id: "perikanan", label: "Perikanan", component: PerikananTab },
-    { id: "olahan pangan", label: "Olahan Pangan", component: OlahanPanganTab },
+    { id: "kelistrikan", label: tr("tabs.kelistrikan"), component: KelistrikanTab },
+    { id: "mineral", label: tr("tabs.mineral"), component: MineralEnergiTab },
+    { id: "manufaktur", label: tr("tabs.manufaktur"), component: ManufakturTab },
+    { id: "peternakan", label: tr("tabs.peternakan"), component: PeternakanTab },
+    { id: "agrikultur", label: tr("tabs.agrikultur"), component: AgrikulturTab },
+    { id: "perikanan", label: tr("tabs.perikanan"), component: PerikananTab },
+    { id: "olahan pangan", label: tr("tabs.olahanPangan"), component: OlahanPanganTab },
   ];
 
   const productionTabDescriptions: Record<string, string> = {
-    kelistrikan: "Kelola pembangunan pembangkit listrik. Kapasitas produksi dan ketersediaan bahan bakar menentukan pasokan listrik nasional; bandingkan produksi dengan konsumsi untuk melihat neraca energi.",
-    mineral: "Bangun fasilitas ekstraksi mineral dan energi seperti bijih besi, emas, batu bara, minyak, dan gas. Produksi sumber daya ini mendukung pendapatan serta menyediakan bahan untuk sektor industri.",
-    manufaktur: "Kembangkan pabrik untuk mengolah bahan mentah menjadi barang dan material industri. Pastikan pasokan bahan baku serta anggaran cukup sebelum menjadwalkan pembangunan.",
-    peternakan: "Kelola produksi komoditas peternakan untuk memenuhi konsumsi masyarakat. Periksa hasil produksi dan ketersediaan fasilitas sebelum menambah kapasitas.",
-    agrikultur: "Bangun fasilitas pertanian untuk menghasilkan komoditas pangan dan perkebunan. Produksi sektor ini berkontribusi pada pemenuhan kebutuhan domestik dan neraca pangan.",
-    perikanan: "Kembangkan perikanan tangkap dan budidaya untuk memasok hasil laut. Kapasitas fasilitas memengaruhi produksi yang tersedia bagi konsumsi nasional.",
-    "olahan pangan": "Bangun fasilitas pengolahan pangan yang mengubah bahan mentah menjadi produk konsumsi. Ketersediaan bahan baku dari sektor pertanian, peternakan, dan perikanan dapat mendukung produksinya.",
+    kelistrikan: tr("descriptions.kelistrikan"),
+    mineral: tr("descriptions.mineral"),
+    manufaktur: tr("descriptions.manufaktur"),
+    peternakan: tr("descriptions.peternakan"),
+    agrikultur: tr("descriptions.agrikultur"),
+    perikanan: tr("descriptions.perikanan"),
+    "olahan pangan": tr("descriptions.olahanPangan"),
   };
 
   if (!isOpen) return null;
 
   const handleBuild = (key: string, label: string, quantity?: number) => {
     if (!isBuildingAvailable(key, countryDetail?.country || '', sdaStatus)) {
-      setToast(`❌ ${label} tidak tersedia untuk negara ini`);
+      setToast(tr("status.unavailable", { building: label }));
       setTimeout(() => setToast(null), 2000);
       return;
     }
@@ -660,7 +683,7 @@ export default function ProduksiModal({
                     <Hammer aria-hidden="true" className="root-modal-util-d252947d10" />
                   </div>
                   <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                    Produksi & Pembangunan
+                    {tr("title")}
                   </h2>
                 </div>
               </div>
@@ -668,11 +691,11 @@ export default function ProduksiModal({
                 <button
                   type="button"
                   onClick={() => setSelectedTabInfo({
-                    title: `Informasi ${activeSection.label}`,
+                    title: tr("tabInfo", { category: activeSection.label }),
                     description: productionTabDescriptions[activeSection.id],
                   })}
-                  aria-label={`Informasi ${activeSection.label}`}
-                  title={`Informasi ${activeSection.label}`}
+                  aria-label={tr("tabInfo", { category: activeSection.label })}
+                  title={tr("tabInfo", { category: activeSection.label })}
                   className="root-modal-info-button root-modal-util-1697100c43"
                 >
                   <Info aria-hidden="true" />
@@ -682,7 +705,7 @@ export default function ProduksiModal({
             </div>
 
             <RootModalSidebarLayout
-              ariaLabel="Kategori produksi dan pembangunan"
+              ariaLabel={tr("ariaLabel")}
               activeItemId={activeTab}
               scrollKey={viewportMode}
               className="building-modal-body production-modal-body"
@@ -696,6 +719,7 @@ export default function ProduksiModal({
               }))}
             >
                 <ComponentToRender
+                  translatedTitle={activeSection.label}
                   countryDetail={countryDetail}
                   setCountryDetail={setCountryDetail}
                   metadata={metadata}
@@ -723,8 +747,8 @@ export default function ProduksiModal({
               <button
                 type="button"
                 onClick={() => setShowSanctionInfo(true)}
-                aria-label="Informasi bonus agama, ideologi, kementerian, sanksi, dan embargo"
-                title="Lihat informasi bonus agama, ideologi, kementerian, sanksi, dan embargo"
+                aria-label={tr("bonus.buttonTitle")}
+                title={tr("bonus.buttonTitle")}
                 className="root-modal-info-button production-bonus-info flex h-8 w-8 items-center justify-center rounded-full border border-root-accent/40 bg-root-surface text-root-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-root-accent cursor-pointer"
               >
                 <Info className="h-4 w-4" />
@@ -737,64 +761,66 @@ export default function ProduksiModal({
       <MenuInfoModal
         isOpen={showSanctionInfo}
         onClose={() => setShowSanctionInfo(false)}
-        title="Info Bonus Agama, Ideologi, Kementerian & Sanksi"
+        title={tr("bonus.title")}
       >
         <div className="space-y-4 text-xs leading-relaxed text-root-body sm:text-sm">
               {currentReligionBonus || currentIdeologyBonus || isMemberOfFAO(playerCountryName) || pendidikanProductionBonusPercent > 0 ? (
                 <div className="rounded-lg border border-root-modal-positive-border bg-root-modal-positive-bg p-3 text-root-body space-y-2">
                   {pendidikanProductionBonusPercent > 0 && (
                     <p>
-                      <strong className="text-white">Kementerian Pendidikan:</strong>{" "}
-                      Bonus <strong className="text-root-modal-positive">+{pendidikanProductionBonusPercent.toFixed(1)}%</strong> produksi pangan dan sumber daya alam, berdasarkan level kabinet (1% per blok) serta bonus menteri jika ada. Berlaku di sektor <strong className="text-root-modal-positive">Mineral & Energi, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan</strong>.
+                      <strong className="text-white">{tr("bonus.educationMinistry")}:</strong>{" "}
+                      <strong className="text-root-modal-positive">+{pendidikanProductionBonusPercent.toFixed(1)}%</strong>{" "}
+                      {tr("bonus.ministryEducation")}
                     </p>
                   )}
                   {currentReligionBonus && (
                     <p>
-                      <strong className="text-white">Agama saat ini: {currentReligion}.</strong>{" "}
+                      <strong className="text-white">{tr("bonus.religionCurrent", { religion: currentReligion })}</strong>{" "}
                       {currentReligionBonus}
                     </p>
                   )}
                   {currentIdeologyBonus && (
                     <p>
-                      <strong className="text-white">Ideologi saat ini: {countryDetail?.ideology}.</strong>{" "}
+                      <strong className="text-white">{tr("bonus.ideologyCurrent", { ideology: countryDetail?.ideology || "" })}</strong>{" "}
                       {currentIdeologyBonus}
                     </p>
                   )}
                   {isMemberOfFAO(playerCountryName) && (
                     <p>
-                      <strong className="text-white">Keanggotaan Organisasi Internasional (FAO):</strong>{" "}
-                      Bonus +10% hasil produksi nasional di sektor <strong className="text-root-modal-positive">Peternakan, Agrikultur, Perikanan, dan Olahan Pangan</strong>.
+                      <strong className="text-white">{tr("bonus.faoMembership")}</strong>{" "}
+                      {tr("bonus.faoBonus")}
                     </p>
                   )}
                 </div>
               ) : (
                 <div className="rounded-lg border border-root-accent/20 bg-root-canvas p-3 space-y-2">
                   <p>
-                    Agama saat ini: <strong className="text-white">{currentReligion || "Belum tersedia"}</strong>. Tidak ada bonus agama khusus yang tercatat.
+                    {tr("bonus.religionCurrent", { religion: currentReligion || tr("bonus.unavailable") })}{" "}
+                    <strong className="text-white">{tr("bonus.noReligion")}</strong>
                   </p>
                   <p>
-                    Ideologi saat ini: <strong className="text-white">{countryDetail?.ideology || "Belum tersedia"}</strong>. Tidak ada bonus ideologi khusus yang tercatat.
+                    {tr("bonus.ideologyCurrent", { ideology: countryDetail?.ideology || tr("bonus.unavailable") })}{" "}
+                    <strong className="text-white">{tr("bonus.noIdeology")}</strong>
                   </p>
                   <p>
-                    Keanggotaan FAO: <strong className="text-root-subtle">Tidak Aktif (Bukan Anggota Organisasi Pangan dan Pertanian FAO)</strong>.
+                    {tr("bonus.faoMembership")} <strong className="text-root-subtle">{tr("bonus.faoInactive")}</strong>.
                   </p>
                 </div>
               )}
               {hasActiveSanctions ? (
                 <p>
-                  Negara <strong className="text-white">{playerCountryName}</strong> sedang terkena resolusi PBB berikut:
+                  {tr("bonus.activeSanctions", { country: playerCountryName })}
                 </p>
               ) : (
                 <p>
-                  Negara <strong className="text-white">{playerCountryName}</strong> tidak sedang terkena sanksi atau embargo PBB.
+                  {tr("bonus.noSanctions", { country: playerCountryName })}
                 </p>
               )}
               {hasActiveSanctions && (activeAssemblyEmbargoes.length > 0 || activeSecurityBlockades.some(item => item.type === "economic" || item.type === "naval")) && (
                 <p className="rounded-lg border border-root-modal-warning/30 bg-root-modal-warning-bg p-3 text-root-body">
-                  Dampak setiap resolusi produksi aktif diakumulasikan. Total pengurangan produksi sektor terdampak saat ini:{" "}
-                  <strong>{effectiveProductionReduction}%</strong>
+                  {tr("bonus.sanctionEffect", { percent: effectiveProductionReduction })}
                   {activeAssemblyEmbargoes.length > 0 && (
-                    <>; pendapatan non-emas berkurang <strong>{effectiveIncomeReduction}%</strong>.</>
+                    <> {tr("bonus.nonGoldIncomeEffect", { percent: effectiveIncomeReduction })}</>
                   )}
                 </p>
               )}
@@ -803,31 +829,31 @@ export default function ProduksiModal({
                   <ul className="list-disc space-y-2 pl-5 marker:text-root-accent">
                     {activeAssemblyEmbargoes.length > 0 && (
                       <li>
-                        <strong className="text-white">Embargo ekonomi — Sidang Umum PBB:</strong>{" "}
-                        {activeAssemblyEmbargoes.length} resolusi aktif; masing-masing mengurangi produksi 60% di Mineral & Energi (selain emas), Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan serta pendapatan non-emas. Emas tidak terkena pemotongan.
+                        <strong className="text-white">{tr("bonus.assemblyEmbargo")}</strong>{" "}
+                        {tr("bonus.assemblyEmbargoDetail", { count: activeAssemblyEmbargoes.length })}
                       </li>
                     )}
                     {activeSecurityBlockades.some(item => item.type === "economic") && (
                       <li>
-                        <strong className="text-white">Blokade ekonomi — Dewan Keamanan PBB:</strong>{" "}
-                        {activeSecurityBlockades.filter(item => item.type === "economic").length} resolusi aktif; masing-masing mengurangi produksi 50% di Mineral & Energi (selain emas), Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan. Emas tidak terkena pemotongan.
+                        <strong className="text-white">{tr("bonus.economicBlockade")}</strong>{" "}
+                        {tr("bonus.economicBlockadeDetail", { count: activeSecurityBlockades.filter(item => item.type === "economic").length })}
                       </li>
                     )}
                     {activeSecurityBlockades.some(item => item.type === "naval") && (
                       <li>
-                        <strong className="text-white">Blokade laut — Dewan Keamanan PBB:</strong>{" "}
-                        {activeSecurityBlockades.filter(item => item.type === "naval").length} resolusi aktif; masing-masing mengurangi produksi 25% di Mineral & Energi (selain emas), Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan. Emas tidak terkena pemotongan.
+                        <strong className="text-white">{tr("bonus.navalBlockade")}</strong>{" "}
+                        {tr("bonus.navalBlockadeDetail", { count: activeSecurityBlockades.filter(item => item.type === "naval").length })}
                       </li>
                     )}
                     {activeSecurityBlockades.some(item => item.type === "full") && (
                       <li>
-                        <strong className="text-white">Blokade penuh — Dewan Keamanan PBB:</strong>{" "}
-                        akses Pasar Perdagangan Global, Pinjaman & Hutang, perdagangan, dan penandatanganan kontrak dibatasi selama resolusi aktif.
+                        <strong className="text-white">{tr("bonus.fullBlockade")}</strong>{" "}
+                        {tr("bonus.fullBlockadeDetail")}
                       </li>
                     )}
                   </ul>
                   <p className="text-xs text-root-subtle">
-                    Dampak berakhir otomatis saat resolusi berakhir atau masa berlakunya habis.
+                    {tr("bonus.sanctionExpiry")}
                   </p>
                 </>
               )}
@@ -898,6 +924,7 @@ export default function ProduksiModal({
             loadingMetadata={loadingMetadata}
             initialQuantity={selectedBuilding.initialQuantity}
             quantityTarget={getBulkBuildQuantityTarget(originalCost)}
+            translate={translateConfirmation}
           />
         );
       })()}
@@ -908,12 +935,12 @@ export default function ProduksiModal({
             <div className="px-6 py-5 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10">
               <div className="flex items-center gap-2 text-rose-400">
                 <AlertCircle className="h-5 w-5" />
-                <h3 className="text-base font-black uppercase tracking-wider">⚠️ Stok Material Kosong</h3>
+                <h3 className="text-base font-black uppercase tracking-wider">⚠️ {tr("warning.emptyMaterials")}</h3>
               </div>
               <SharedModalCloseButton onClick={() => setShowMaterialWarningModal(false)} className="text-root-subtle hover:text-root-accent" appearance="custom"><X className="h-5 w-5" /></SharedModalCloseButton>
             </div>
             <div className="p-6 relative z-10 flex-1 space-y-4">
-              <p className="text-sm text-root-text">Pembangunan <strong className="font-black text-root-accent">{selectedBuilding?.label}</strong> tidak dapat dilanjutkan karena material berikut ini stoknya kosong (0):</p>
+              <p className="text-sm text-root-text">{tr("warning.cannotContinue", { building: selectedBuilding?.label || "" })}</p>
               <div className="bg-root-canvas border border-rose-500/30 rounded-xl p-4 flex flex-col gap-2 text-xs font-bold text-root-text">
                 {insufficientMaterials.map((mat, idx) => (
                   <div key={idx} className="flex justify-between items-center">
@@ -922,11 +949,11 @@ export default function ProduksiModal({
                   </div>
                 ))}
               </div>
-              <p className="text-[10px] text-root-subtle italic">Klik nama material pada daftar di atas untuk menambah stok (kembali ke tab terkait).</p>
+              <p className="text-[10px] text-root-subtle italic">{tr("warning.clickMaterial")}</p>
             </div>
             <div className="p-4 bg-root-canvas border-t border-root-accent/20 flex justify-end relative z-10">
               <SharedModalCloseButton onClick={() => setShowMaterialWarningModal(false)} className="py-2.5 px-6 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-md" appearance="custom">
-                Tutup & Lengkapi Stok
+                {tr("warning.closeAndRestock")}
               </SharedModalCloseButton>
             </div>
           </div>

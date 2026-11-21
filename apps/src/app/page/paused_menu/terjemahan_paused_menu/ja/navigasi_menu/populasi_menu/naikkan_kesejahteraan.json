@@ -1,0 +1,19 @@
+{
+  "initiatives": {
+    "cashTransfer": "現金給付",
+    "foodSubsidy": "主食補助金",
+    "studentAid": "学生教育支援",
+    "healthCoverage": "国民皆保険",
+    "housingUpgrade": "公営住宅の改善",
+    "nationalMarket": "全国低価格市場"
+  },
+  "success": "施策「{title}」を開始しました。完了予定日: {date}。",
+  "running": "実施中",
+  "welfareBoost": "福祉向上: +{value}%",
+  "cost": "費用:",
+  "duration": "期間:",
+  "days": "{value}日",
+  "active": "有効",
+  "launch": "開始",
+  "sponsor": "{title}に資金提供"
+}

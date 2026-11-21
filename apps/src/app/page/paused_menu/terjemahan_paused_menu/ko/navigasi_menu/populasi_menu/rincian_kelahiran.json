@@ -1,0 +1,17 @@
+{
+  "title": "인구 증가 상세",
+  "dailyNetGrowth": "일일 순증가",
+  "perHour": "/시간",
+  "births": "출생",
+  "deaths": "사망",
+  "factors": "영향 요인",
+  "basePopulation": "기본 인구",
+  "people": "명",
+  "welfare": "복지",
+  "healthFacilities": "의료 시설",
+  "educationLevel": "교육 수준",
+  "open": "열기 →",
+  "points": "점",
+  "index": "지수",
+  "ratio": "(비율 {value})"
+}

@@ -1,0 +1,17 @@
+{
+  "title": "Population Growth Details",
+  "dailyNetGrowth": "Daily Net Growth",
+  "perHour": "/hr",
+  "births": "Births",
+  "deaths": "Deaths",
+  "factors": "Contributing Factors",
+  "basePopulation": "Base Population",
+  "people": "people",
+  "welfare": "Welfare",
+  "healthFacilities": "Healthcare Facilities",
+  "educationLevel": "Education Level",
+  "open": "Open →",
+  "points": "POINTS",
+  "index": "INDEX",
+  "ratio": "(ratio {value})"
+}

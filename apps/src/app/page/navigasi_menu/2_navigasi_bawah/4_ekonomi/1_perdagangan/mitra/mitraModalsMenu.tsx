@@ -11,6 +11,8 @@ import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import { getLocalizedCountryName } from "@/app/logic/countryNameLogic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 export interface TradePartner {
   id: number;
@@ -44,6 +46,7 @@ export default function MitraModalsMenu({
   currentUserCountry = "Amerika serikat",
   countryDetail,
 }: MitraModalsMenuProps) {
+  const { language, t } = useLanguage();
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState<TradePartner | null>(null);
   const [isRemoveConfirmOpen, setIsRemoveConfirmOpen] = useState(false);
@@ -83,7 +86,7 @@ export default function MitraModalsMenu({
         <NotebookModalWrapper onClose={onClose} zIndexClass="z-[80]">
           <div className="root-modal-util-b74379da23 min-w-0">
             <RootInfoModalHeader
-              title="Mitra Dagang Global"
+              title={t("navigation_economy_trade.partners.title")}
               onClose={onClose}
               size="standard"
               icon={<Handshake aria-hidden="true" />}
@@ -93,8 +96,8 @@ export default function MitraModalsMenu({
               {partners.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-10 text-root-subtle">
                   <Globe className="h-12 w-12 mb-3 opacity-30 text-root-accent" />
-                  <p className="text-sm font-bold text-root-text">Belum ada hubungan dagang</p>
-                  <p className={`${rootModalTypography.body} break-words`}>Jalin hubungan dagang dengan negara lain melalui menu Jual/Beli.</p>
+                  <p className="text-sm font-bold text-root-text">{t("navigation_economy_trade.partners.emptyTitle")}</p>
+                  <p className={`${rootModalTypography.body} break-words`}>{t("navigation_economy_trade.partners.emptyDescription")}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -125,7 +128,7 @@ export default function MitraModalsMenu({
                         })()}
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <h4 className="min-w-0 break-words text-sm font-black text-root-text uppercase">{partner.nama_negara}</h4>
+                            <h4 className="min-w-0 break-words text-sm font-black text-root-text uppercase">{getLocalizedCountryName(partner.nama_negara, language)}</h4>
                             {partner.jenis_perjanjian && partner.jenis_perjanjian.trim().toLowerCase() !== "perdagangan" && (
                               <span className="px-2 py-0.5 bg-root-accent/10 text-root-accent border border-root-accent/30 rounded-full text-[8px] font-bold uppercase tracking-wider">
                                 {partner.jenis_perjanjian}
@@ -135,7 +138,11 @@ export default function MitraModalsMenu({
                               ${partner.status_hubungan === 'Aktif' ? 'bg-emerald-950/40 text-emerald-400 border border-emerald-500/30' : 
                                 partner.status_hubungan === 'Pasif' ? 'bg-amber-950/40 text-amber-400 border border-amber-500/30' : 
                                 'bg-root-surface text-root-subtle border border-root-subtle/30'}`}>
-                              {partner.status_hubungan}
+                              {partner.status_hubungan === "Aktif"
+                                ? t("navigation_economy_trade.partners.active")
+                                : partner.status_hubungan === "Pasif"
+                                  ? t("navigation_economy_trade.partners.passive")
+                                  : partner.status_hubungan}
                             </span>
                           </div>
                           {partner.region.trim().toLowerCase() !== "internasional" && (
@@ -148,8 +155,8 @@ export default function MitraModalsMenu({
                       <div className="flex items-center gap-4">
                         {partner.total_nilai_dagang !== undefined && (
                           <div className="text-right">
-                            <p className="text-[9px] text-root-subtle uppercase">Nilai Dagang</p>
-                            <p className="text-xs font-black text-root-accent">{partner.total_nilai_dagang.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</p>
+                            <p className="text-[9px] text-root-subtle uppercase">{t("navigation_economy_trade.partners.tradeValue")}</p>
+                            <p className="text-xs font-black text-root-accent">{partner.total_nilai_dagang.toLocaleString(language, { maximumFractionDigits: 2 })} NEO</p>
                           </div>
                         )}
                         <div className="flex items-center gap-3">
@@ -161,7 +168,7 @@ export default function MitraModalsMenu({
                             }}
                             className="px-3 py-2 rounded-lg border border-rose-500/40 text-rose-400 bg-rose-950/30 hover:bg-rose-600 hover:text-white text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer"
                           >
-                            Putus Hubungan
+                            {t("navigation_economy_trade.partners.remove")}
                           </button>
                           <ChevronRight className="h-4 w-4 text-root-subtle group-hover:text-root-accent group-hover:translate-x-0.5 transition-all" />
                         </div>
@@ -177,7 +184,7 @@ export default function MitraModalsMenu({
                     <div className="p-2 rounded-full bg-root-accent/10 border border-root-accent/30">
                       <Plus className="h-6 w-6 text-root-accent" />
                     </div>
-                    <span className="text-sm font-black text-root-accent uppercase tracking-wider">Tambah Mitra</span>
+                    <span className="text-sm font-black text-root-accent uppercase tracking-wider">{t("navigation_economy_trade.partners.add")}</span>
                   </button>
                 </div>
               )}
@@ -187,7 +194,7 @@ export default function MitraModalsMenu({
       )}
       <ConfirmRemoveTradeModal
         isOpen={isRemoveConfirmOpen}
-        partnerName={removeTarget?.nama_negara || null}
+        partnerName={removeTarget ? getLocalizedCountryName(removeTarget.nama_negara, language) : null}
         onClose={() => { setIsRemoveConfirmOpen(false); setRemoveTarget(null); }}
         onConfirm={() => {
           if (removeTarget && onRemovePartner) onRemovePartner(removeTarget.id);

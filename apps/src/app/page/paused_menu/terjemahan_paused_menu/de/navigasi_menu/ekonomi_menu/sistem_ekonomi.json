@@ -1,0 +1,92 @@
+{
+  "title": "Wirtschaftspolitik und Wirtschaftssystem",
+  "infoButton": "Informationen zu Wirtschaftspolitik und Wirtschaftssystem",
+  "ariaLabel": "Bereiche der Wirtschaftspolitik und des Wirtschaftssystems",
+  "monthUnit": "Monat",
+  "yearUnit": "Jahr",
+  "tabs": { "spectrum": "Systemspektrum", "policies": "Politikkarten", "ownership": "Produktionsbesitz" },
+  "satisfaction": "Zufriedenheitsindex der Bevölkerung (Wirtschaftspolitik)",
+  "info": {
+    "title": "Informationen zu Wirtschaftspolitik und Wirtschaftssystem",
+    "description": "Legen Sie das Wirtschaftssystem fest, wählen Sie sektorale Richtlinien und passen Sie Eigentum oder Verstaatlichungsgrad der Produktionssektoren an. Diese Entscheidungen bestimmen die wirtschaftliche Ausrichtung und den staatlichen Gewinnanteil."
+  },
+  "spectrum": {
+    "populationImpact": "Auswirkung auf die Bevölkerung",
+    "policyScore": "Politikwert: {score}/100",
+    "category": "Kategorie: {category}",
+    "centralizedScale": "0% ZENTRAL GEPLANT",
+    "freeMarketScale": "100% FREIER MARKT",
+    "netPopulationImpact": "Nettoauswirkung auf die Bevölkerung",
+    "gdpGrowthBonus": "Bonus für BIP-Wachstum",
+    "categories": { "centralized": "Zentralisiert", "mixed": "Gemischt", "freeMarket": "Freier Markt" },
+    "presets": { "command": "Planwirtschaft", "socialism": "Sozialismus", "mixed": "Gemischt", "regulatedMarket": "Regulierter Markt", "laissezFaire": "Laissez-faire" },
+    "systems": {
+      "command": { "title": "Planwirtschaft", "description": "Die Regierung kontrolliert Preise, Produktionsquoten und Ressourcenverteilung vollständig. Staatsunternehmen dominieren alle Wirtschaftssektoren." },
+      "marketSocialism": { "title": "Marktsozialismus", "description": "Der Staat kontrolliert wichtige Sektoren streng reguliert; kleine und mittlere Unternehmen dürfen mit begrenzten Erträgen arbeiten." },
+      "mixed": { "title": "Gemischte Wirtschaft", "description": "Ein Gleichgewicht zwischen staatlicher Regulierung und privater Marktfreiheit. Der Staat verwaltet grundlegende öffentliche Dienste." },
+      "regulatedMarket": { "title": "Regulierter Markt", "description": "Private Märkte treiben das Wachstum an. Die Regierung überwacht Wettbewerb und makroökonomische Stabilität." },
+      "laissezFaire": { "title": "Laissez-faire / freier Kapitalismus", "description": "Vollständige Deregulierung und uneingeschränkte Märkte. Der Wettbewerb folgt Angebot und Nachfrage." }
+    }
+  },
+  "policies": {
+    "price_control": {
+      "name": "Preiskontrolle für Grundbedarf",
+      "optionA": { "label": "Staatliche Preisobergrenze", "effect": "Preise bleiben stabil, aber das Risiko von Engpässen steigt." },
+      "optionB": { "label": "Freie Marktpreise", "effect": "Waren sind reichlich vorhanden, doch plötzliche Inflationssprünge sind wahrscheinlicher." }
+    },
+    "strategic_ownership": {
+      "name": "Eigentum an strategischen Industrien",
+      "optionA": { "label": "Staatsmonopol / Verstaatlichung", "effect": "Die Staatseinnahmen steigen, die betriebliche Effizienz sinkt jedoch." },
+      "optionB": { "label": "Privatisierung und private Investoren", "effect": "Innovation und Effizienz steigen, staatliche Lizenzgebühren sinken jedoch." }
+    },
+    "trade_policy": {
+      "name": "Außenhandelsregulierung",
+      "optionA": { "label": "Strenger Protektionismus", "effect": "Die heimische Industrie wird geschützt, die Auswahl für Verbraucher ist jedoch begrenzt." },
+      "optionB": { "label": "Freihandel", "effect": "Import und Export wachsen stark, doch der Wettbewerb für lokale Betriebe nimmt zu." }
+    },
+    "labor_regulation": {
+      "name": "Arbeits- und Mindestlohnpolitik",
+      "optionA": { "label": "Hoher Mindestlohn und strenger Schutz", "effect": "Das Wohl der Beschäftigten steigt, ausländische Investitionen werden jedoch unattraktiver." },
+      "optionB": { "label": "Flexible Arbeit und freie Verträge", "effect": "Die Beschäftigung steigt, die soziale Ungleichheit kann jedoch zunehmen." }
+    },
+    "land_property_rights": {
+      "name": "Land- und Eigentumsrechte",
+      "optionA": { "label": "Staatseigentum und gemeinschaftliche Nutzung", "effect": "Land und Wohnraum gehören dem Staat; die Bevölkerung erhält gemeinschaftliche Nutzungsrechte." },
+      "optionB": { "label": "Uneingeschränktes Privateigentum", "effect": "Land und Immobilien können frei gehandelt werden." }
+    },
+    "labor_unions_rights": {
+      "name": "Gewerkschafts- und Managementrechte",
+      "optionA": { "label": "Staatsgewerkschaften und Arbeiterräte", "effect": "Gewerkschaften werden staatliche Organe; Arbeiterräte wirken an der Fabrikverwaltung mit." },
+      "optionB": { "label": "Freier Arbeitsmarkt", "effect": "Private Unternehmensleitungen entscheiden; Streiks können zur Sicherung der Lieferketten eingeschränkt werden." }
+    },
+    "monetary_banking": {
+      "name": "Geld- und Bankenpolitik",
+      "optionA": { "label": "Einheitliche Zentralbank und Devisenkontrolle", "effect": "Banken sind staatlich; Devisen werden kontrolliert und Kapitalflucht begrenzt." },
+      "optionB": { "label": "Privatbanken und freier Kapitalverkehr", "effect": "Wettbewerbsfähige Banken und ungehinderte Kapitalströme." }
+    }
+  },
+  "ownership": {
+    "level": "Stufe",
+    "stateShare": "Staatsanteil: {percent}%",
+    "calculatingElectricity": "Geschätzten Stromüberschuss berechnen...",
+    "electricityEstimate": "Geschätzter Staatsanteil am Überschuss: {surplus} MW × {price} NEO × {percent}% = {amount} NEO. Der Wert ist nicht im Staatshaushalt enthalten, da Strom noch nicht gehandelt wird.",
+    "errors": { "noMetadata": "Kraftwerksdaten fehlen; der Überschuss kann nicht geschätzt werden.", "loadFailed": "Kraftwerksdaten konnten nicht geladen werden." },
+    "sectors": {
+      "electricity": "Stromversorgung",
+      "mineralsEnergy": "Mineralien und Energie",
+      "manufacturing": "Verarbeitendes Gewerbe",
+      "livestock": "Viehzucht",
+      "agriculture": "Landwirtschaft",
+      "fisheries": "Fischerei",
+      "foodProcessing": "Lebensmittelverarbeitung"
+    },
+    "levels": {
+      "marketFree": { "name": "Freier Markt", "description": "Der Sektor wird privat verwaltet; der Staat erhält grundlegende Steuern und Lizenzgebühren." },
+      "strictRegulation": { "name": "Strenge Regulierung", "description": "Der Staat regelt Preise und Quoten, während private Betreiber weiterhin dominieren." },
+      "mixed": { "name": "Gemischte Wirtschaft", "description": "Der Staat hält die Mehrheit und beaufsichtigt private Betreiber." },
+      "stateDominance": { "name": "Staatliche Dominanz", "description": "Der Staat kontrolliert nahezu alle produktiven Vermögenswerte." },
+      "fullNationalization": { "name": "Vollständige Verstaatlichung", "description": "Alle produktiven Vermögenswerte werden staatlich verwaltet." }
+    }
+  }
+}
+

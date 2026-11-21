@@ -1,0 +1,40 @@
+{
+  "title": "Tax",
+  "infoButton": "Tax policy information",
+  "confirm": "Confirm",
+  "taxes": {
+    "policyTitle": "Fiscal Tax Policy",
+    "vat": "Value-Added Tax (VAT)",
+    "corporate": "Corporate Tax",
+    "personalIncome": "Personal Income Tax",
+    "excise": "Excise Duty",
+    "environmental": "Environmental Tax"
+  },
+  "bonuses": {
+    "orthodoxPersonal": "Eastern Orthodox bonus: personal income tax revenue +{percent}%",
+    "buddhaEnvironmental": "Buddhist bonus: environmental tax revenue +{percent}%",
+    "ministry": "Ministry of Finance bonus: all tax revenue +{percent}% (+{amount} NEO)",
+    "democracy": "Democracy bonus: all tax revenue +{percent}%",
+    "capitalism": "Capitalism bonus: all tax revenue +{percent}%",
+    "liberalism": "Liberalism bonus: all tax revenue +{percent}%",
+    "conservatism": "Conservatism bonus: all tax revenue +{percent}%",
+    "fiscalHarmony": "Global Fiscal Harmonization bonus: all tax revenue +{percent}%"
+  },
+  "summary": {
+    "totalRevenue": "Total Tax Revenue",
+    "bonus": "+ bonus ({percent}%) =",
+    "populationImpact": "Tax population impact: {percent}% / month"
+  },
+  "info": {
+    "title": "Tax Policy Information",
+    "description": "Adjust national tax rates to fund military spending and public infrastructure. Beware: high taxes may trigger public protests!",
+    "satisfaction": "Public Satisfaction Index (Tax)"
+  },
+  "confirmation": {
+    "title": "Confirm Tax Demand",
+    "changesApply": "Tax rate changes will be applied as selected. Continue?",
+    "noChanges": "No rate changes have been made. Confirm to return to the forum.",
+    "back": "Back",
+    "yes": "Yes, confirm"
+  }
+}

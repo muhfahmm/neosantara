@@ -7,6 +7,7 @@ import { EconomicSystemEffect } from "../../logic/logikaSistemEkonomi";
 import { calculateEconomicPopulationImpact } from "@/app/logic/economic_logic/economicPopulationImpact";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface Props {
   sliderValue: number;
@@ -17,11 +18,11 @@ interface Props {
 }
 
 const SPECTRUM_PRESETS = [
-  { label: "Komando Mutlak", value: 10, min: 0, max: 20 },
-  { label: "Sosialisme", value: 30, min: 21, max: 40 },
-  { label: "Campuran", value: 50, min: 41, max: 60 },
-  { label: "Pasar Terregulasi", value: 70, min: 61, max: 80 },
-  { label: "Laissez-Faire", value: 90, min: 81, max: 100 },
+  { key: "command", value: 10, min: 0, max: 20 },
+  { key: "socialism", value: 30, min: 21, max: 40 },
+  { key: "mixed", value: 50, min: 41, max: 60 },
+  { key: "regulatedMarket", value: 70, min: 61, max: 80 },
+  { key: "laissezFaire", value: 90, min: 81, max: 100 },
 ];
 
 export default function SpektrumSistemTab({
@@ -31,6 +32,19 @@ export default function SpektrumSistemTab({
   systemDetails,
   countryDetail,
 }: Props) {
+  const { t } = useLanguage();
+  const systemKey = sliderValue <= 20
+    ? "command"
+    : sliderValue <= 40
+      ? "marketSocialism"
+      : sliderValue <= 60
+        ? "mixed"
+        : sliderValue <= 80
+          ? "regulatedMarket"
+          : "laissezFaire";
+  const systemTitle = t(`navigation_economy_system.spectrum.systems.${systemKey}.title`);
+  const systemDescription = t(`navigation_economy_system.spectrum.systems.${systemKey}.description`);
+  const categoryKey = systemDetails.category === "Terpusat" ? "centralized" : systemDetails.category === "Campuran" ? "mixed" : "freeMarket";
   const handleSelectPreset = (val: number) => {
     setSliderValue(val);
     onCommit?.(val);
@@ -63,11 +77,11 @@ export default function SpektrumSistemTab({
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 border-b border-root-accent/15 pb-2.5 lg:pb-3">
           <div>
             <h3 className={`${rootModalTypography.sectionTitle} mt-0.5`}>
-              {systemDetails.title}
+              {systemTitle}
             </h3>
             {/* Indikator Dampak Populasi Mirip Harga Pokok */}
             <p className="text-[11px] lg:text-xs text-root-subtle mt-1">
-              Dampak populasi:{" "}
+              {t("navigation_economy_system.spectrum.populationImpact")}:{" "}
               <span
                 className={`font-bold ${
                   populationImpact.monthlyModifierPercent < 0
@@ -76,10 +90,10 @@ export default function SpektrumSistemTab({
                 }`}
               >
                 {populationImpact.monthlyModifierPercent >= 0 ? "+" : ""}
-                {populationImpact.monthlyModifierPercent.toFixed(2)}% / bulan
+                {populationImpact.monthlyModifierPercent.toFixed(2)}% / {t("navigation_economy_system.monthUnit")}
               </span>{" "}
               <span className="text-[9px] text-root-muted">
-                (Skor Kebijakan: {populationImpact.policyScore.toFixed(0)}/100)
+                ({t("navigation_economy_system.spectrum.policyScore", { score: populationImpact.policyScore.toFixed(0) })})
               </span>
             </p>
           </div>
@@ -92,20 +106,20 @@ export default function SpektrumSistemTab({
                 : "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
             }`}
           >
-            Kategori: {systemDetails.category}
+            {t("navigation_economy_system.spectrum.category", { category: t(`navigation_economy_system.spectrum.categories.${categoryKey}`) })}
           </span>
         </div>
 
         <p className="text-[10px] lg:text-xs text-root-text leading-relaxed">
-          {systemDetails.description}
+          {systemDescription}
         </p>
 
         {/* THE INTERACTIVE SLIDER */}
         <div className="space-y-2 pt-1">
           <div className="flex justify-between items-center text-[10px] lg:text-xs font-black uppercase tracking-wider">
-            <span className="text-rose-400 flex items-center gap-1">🔴 0% TERPUSAT (KOMANDO)</span>
+            <span className="text-rose-400 flex items-center gap-1">🔴 {t("navigation_economy_system.spectrum.centralizedScale")}</span>
             <span className="text-root-accent font-bold">{sliderValue}%</span>
-            <span className="text-emerald-400 flex items-center gap-1">🟢 100% PASAR BEBAS</span>
+            <span className="text-emerald-400 flex items-center gap-1">🟢 {t("navigation_economy_system.spectrum.freeMarketScale")}</span>
           </div>
 
           <input
@@ -124,7 +138,7 @@ export default function SpektrumSistemTab({
               const isActive = sliderValue >= preset.min && sliderValue <= preset.max;
               return (
                 <button
-                  key={preset.label}
+                  key={preset.key}
                   type="button"
                   onClick={() => handleSelectPreset(preset.value)}
                   className={`economic-spectrum-preset min-w-0 flex-1 px-1 sm:px-2 py-1.5 rounded-lg border text-center transition-all cursor-pointer flex flex-col items-center justify-center ${
@@ -134,7 +148,7 @@ export default function SpektrumSistemTab({
                   }`}
                 >
                   <span className="economic-spectrum-preset-label text-[9px] lg:text-[10px] uppercase font-bold tracking-tight leading-tight">
-                    {preset.label}
+                    {t(`navigation_economy_system.spectrum.presets.${preset.key}`)}
                   </span>
                   <span
                     className={`economic-spectrum-preset-value text-[8px] font-semibold mt-0.5 ${
@@ -165,7 +179,7 @@ export default function SpektrumSistemTab({
           </div>
           <div className="min-w-0">
             <p className="economic-impact-label text-[8px] lg:text-[9px] font-black text-root-subtle uppercase tracking-wider">
-              Dampak Netto Populasi
+              {t("navigation_economy_system.spectrum.netPopulationImpact")}
             </p>
             <p
               className={`economic-impact-value text-sm font-black mt-0.5 whitespace-nowrap ${
@@ -173,7 +187,7 @@ export default function SpektrumSistemTab({
               }`}
             >
               {populationImpact.monthlyModifierPercent >= 0 ? "+" : ""}
-              {populationImpact.monthlyModifierPercent.toFixed(2)}% / bulan
+              {populationImpact.monthlyModifierPercent.toFixed(2)}% / {t("navigation_economy_system.monthUnit")}
             </p>
           </div>
         </div>
@@ -184,10 +198,10 @@ export default function SpektrumSistemTab({
           </div>
           <div className="min-w-0">
             <p className="economic-impact-label text-[8px] lg:text-[9px] font-black text-root-subtle uppercase tracking-wider">
-              Bonus Pertumbuhan PDB
+              {t("navigation_economy_system.spectrum.gdpGrowthBonus")}
             </p>
             <p className="economic-impact-value text-sm font-black text-root-text mt-0.5 whitespace-nowrap">
-              +{systemDetails.gdpGrowthBonus.toFixed(1)}% / Tahun
+              +{systemDetails.gdpGrowthBonus.toFixed(1)}% / {t("navigation_economy_system.yearUnit")}
             </p>
           </div>
         </div>

@@ -5,6 +5,7 @@ import { HandHelping, Tag } from "lucide-react";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 import HargaModal from "./1_harga/HargaModal";
 import SubsidiModal from "./2_kebijakan_subsidi/SubsidiModal";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 type DayaBeliTab = "harga" | "subsidi";
 type CountryDetail = Record<string, unknown>;
@@ -25,6 +26,7 @@ export default function DayaBeliModal({
   countryDetail,
   setCountryDetail,
 }: DayaBeliModalProps) {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<DayaBeliTab>(initialTab);
 
   if (!isOpen) return null;
@@ -34,13 +36,13 @@ export default function DayaBeliModal({
       <RootModalTabs
         items={[
           {
-            label: "Harga Kebutuhan",
+            label: t("navigation_economy_purchasing_power.tabs.essentials"),
             icon: <Tag aria-hidden="true" className="h-3.5 w-3.5" />,
             isActive: activeTab === "harga",
             onClick: () => setActiveTab("harga"),
           },
           {
-            label: "Kebijakan Subsidi",
+            label: t("navigation_economy_purchasing_power.tabs.subsidyPolicy"),
             icon: <HandHelping aria-hidden="true" className="h-3.5 w-3.5" />,
             isActive: activeTab === "subsidi",
             onClick: () => setActiveTab("subsidi"),

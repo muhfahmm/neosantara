@@ -921,7 +921,7 @@ export function CountryDetailModal({
                 )}
                 {isPlayerOccupiedProvince && provinceReferendum?.status === 'pending' && (
                   <span className={`${COUNTRY_SUMMARY_FONT_SIZE} font-bold normal-case text-amber-300`}>
-                    {t('detail_negara_ai.referendumPending', { date: provinceReferendum.votingEndsAt })}
+                    {t('detail_negara_ai.referendumPending', { date: provinceReferendum.votingEndsAt || '' })}
                   </span>
                 )}
                 {isPlayerOccupiedProvince && provinceReferendum?.status === 'failed' && (

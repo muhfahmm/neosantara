@@ -1,0 +1,22 @@
+{
+  "title": "Zufriedenheit der Bevölkerung",
+  "infoButton": "Informationen zur Zufriedenheitsstatistik",
+  "civilSatisfaction": "Zufriedenheit der Bevölkerung:",
+  "statisticsTab": "Statistik",
+  "increaseTab": "Zufriedenheit steigern",
+  "sectors": {
+    "tax": "Steuern",
+    "goodsPrices": "Preise für Grundbedarfsgüter",
+    "foodProduction": "Lebensmittelproduktion",
+    "electricityProduction": "Stromerzeugung",
+    "housing": "Wohnraum",
+    "publicServices": "Öffentliche Dienste & Einrichtungen",
+    "doctrine": "Doktrin & Offenheit",
+    "economicPolicy": "Wirtschaftspolitik & -system",
+    "subsidies": "Subventionsverteilung & -politik"
+  },
+  "info": {
+    "title": "Statistik zur Zufriedenheit der Bevölkerung",
+    "description": "Der Zufriedenheitswert fasst die allgemeine Lage und sektorale Kennzahlen wie Steuern, Preise, Lebensmittel und öffentliche Dienste zusammen. Prüfe im Statistik-Tab die Werte und öffne einen passenden Sektor, um die darauf wirkenden Maßnahmen anzusehen."
+  }
+}

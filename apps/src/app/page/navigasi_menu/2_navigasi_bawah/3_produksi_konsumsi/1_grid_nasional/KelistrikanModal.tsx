@@ -23,6 +23,8 @@ import {
 } from "./consumptionLogic";
 import { applyNpcCountrySimulationState } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
+import { getLocalizedCountryName } from "@/app/logic/countryNameLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -39,20 +41,8 @@ interface SortConfig {
   direction: 'asc' | 'desc';
 }
 
-const POWER_SOURCE_DESCRIPTIONS: Record<string, string> = {
-  "pembangkit_listrik_tenaga_nuklir": "Pembangkit Listrik Tenaga Nuklir (PLTN)",
-  "pembangkit_listrik_tenaga_air": "Pembangkit Listrik Tenaga Air (PLTA)",
-  "pembangkit_listrik_tenaga_surya": "Pembangkit Listrik Tenaga Surya (PLTS)",
-  "pembangkit_listrik_tenaga_uap": "Pembangkit Listrik Tenaga Uap (PLTU)",
-  "pembangkit_listrik_tenaga_gas": "Pembangkit Listrik Tenaga Gas (PLTG)",
-  "pembangkit_listrik_tenaga_angin": "Pembangkit Listrik Tenaga Bayu (PLTB)",
-  "pembangkit_listrik_tenaga_panas_bumi": "Pembangkit Listrik Tenaga Panas Bumi (PLTP)",
-  "pembangkit_listrik_tenaga_hidrogen": "Pembangkit Listrik Tenaga Hidrogen (PLTH)",
-  "pembangkit_listrik_tenaga_gelombang_laut": "Pembangkit Listrik Tenaga Gelombang Laut (PLTGL)",
-  "pembangkit_listrik_tenaga_fusi_nuklir": "Pembangkit Listrik Tenaga Fusi Nuklir (PLTFN)",
-};
-
 export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCountryDetail, metadata, prefetchedAllCountries, onNavigateToMenu }: ModalProps) {
+  const { t, language } = useLanguage();
   const [activeTab, setActiveTab] = useState<"user" | "global">("user");
   const [allCountries, setAllCountries] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -113,8 +103,8 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
         return {
           key,
-          label: bMeta?.label || key.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase()),
-          desc: POWER_SOURCE_DESCRIPTIONS[key] || bMeta?.desc || "Sumber energi listrik nasional.",
+          label: t(`navigation_electricity_grid.plantLabels.${key}`),
+          desc: t(`navigation_electricity_grid.plantDescriptions.${key}`),
           value: count,
           unitProduction,
           actualProduction: plantProduction.actual,
@@ -126,6 +116,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
     countryDetail,
     findMeta,
     productionCalculation,
+    t,
   ]);
 
   const totalCapacityMW = productionCalculation?.actualTotal ?? 0;
@@ -169,10 +160,11 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
           .replace(/_/g, ' ')
           .replace(/\b\w/g, (char: string) => char.toUpperCase());
       }
-      const name = rawName || 'Unknown';
+      const sourceName = rawName || 'Unknown';
+      const name = getLocalizedCountryName(sourceName, language);
       const isUser = Boolean(
         userCountryName && (
-          name.toLowerCase().trim() === userCountryName ||
+          sourceName.toLowerCase().trim() === userCountryName ||
           country?.name_id?.toLowerCase().trim() === userCountryName ||
           country?.name_en?.toLowerCase().trim() === userCountryName ||
           country?.country?.toLowerCase().trim() === userCountryName
@@ -187,7 +179,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
         isUser,
       };
     }).sort((a, b) => b.production - a.production);
-  }, [isOpen, activeTab, allCountries, countryDetail, metadata]);
+  }, [isOpen, activeTab, allCountries, countryDetail, metadata, language]);
 
   const sortedData = useMemo(() => [...globalElectricityData].sort((a, b) => {
     let aValue: string | number;
@@ -249,12 +241,12 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
   const gridTabItems = [
     {
-      label: "Neraca User",
+      label: t("navigation_electricity_grid.tabs.user"),
       isActive: activeTab === "user",
       onClick: () => setActiveTab("user"),
     },
     {
-      label: `Neraca ${allCountries.length || 212} Negara`,
+      label: t("navigation_electricity_grid.tabs.global", { count: allCountries.length || 212 }),
       isActive: activeTab === "global",
       onClick: () => setActiveTab("global"),
     },
@@ -272,12 +264,12 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                   <Zap aria-hidden="true" className={"root-modal-util-d252947d10"} />
                 </div>
                 <h2 className={"root-modal-util-6b4648c53a root-modal-util-c2385a463d"}>
-                  Grid Nasional
+                  {t("navigation_electricity_grid.title")}
                 </h2>
               </div>
             </div>
             <div className={"root-modal-util-08dfbca033"}>
-              <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi grid kelistrikan nasional" aria-label="Informasi grid kelistrikan nasional" className={"root-modal-info-button root-modal-util-1697100c43"}>
+              <button type="button" onClick={() => setIsInfoOpen(true)} title={t("navigation_electricity_grid.infoButton")} aria-label={t("navigation_electricity_grid.infoButton")} className={"root-modal-info-button root-modal-util-1697100c43"}>
                 <Info aria-hidden="true" />
               </button>
               <RootModalCloseButton onClick={onClose} />
@@ -293,8 +285,8 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
               items={gridTabItems}
               searchValue={searchQuery}
               onSearchChange={setSearchQuery}
-              searchPlaceholder="Cari nama negara..."
-              searchAriaLabel="Cari nama negara"
+              searchPlaceholder={t("navigation_electricity_grid.searchPlaceholder")}
+              searchAriaLabel={t("navigation_electricity_grid.searchAriaLabel")}
             />
           </div>
 
@@ -311,15 +303,15 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                       <div className={"root-modal-util-63608157d8"}>
                         <BatteryCharging className={"root-modal-util-dca7f530c4"} />
                       </div>
-                      <h3 className={"root-modal-util-9361ef65fc"}>Statistik Grid</h3>
+                      <h3 className={"root-modal-util-9361ef65fc"}>{t("navigation_electricity_grid.statsTitle")}</h3>
                     </div>
                   </div>
                   {/* Grid Card di dalamnya memanjang ke samping (3 kolom) */}
                   <div className={"root-modal-util-4d7d412dd7"}>
                     <div className={`root-modal-util-aa624b5175 root-modal-util-5f22e64f22`}>
-                      <p className={"root-modal-util-14d6efe9ef"}>✓ Total Produksi Listrik</p>
+                      <p className={"root-modal-util-14d6efe9ef"}>✓ {t("navigation_electricity_grid.totalProduction")}</p>
                       <p className={"root-modal-util-2db284c577"}>
-                        {formatElectricityMW(totalCapacityMW)} MW
+                        {formatElectricityMW(totalCapacityMW, language)} MW
                       </p>
                     </div>
                     
@@ -328,11 +320,11 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                       className={`root-modal-util-3131d60355 root-modal-util-5f22e64f22 root-modal-util-1421381c23 group`}
                     >
                       <div className={"root-modal-util-d27e953630"}>
-                        <p className={"root-modal-util-14d6efe9ef"}>✗ Konsumsi Terestimasi</p>
-                        <span className={"root-modal-util-cd303386bb"}>Detail →</span>
+                        <p className={"root-modal-util-14d6efe9ef"}>✗ {t("navigation_electricity_grid.estimatedConsumption")}</p>
+                        <span className={"root-modal-util-cd303386bb"}>{t("navigation_electricity_grid.detail")} →</span>
                       </div>
                       <p className={"root-modal-util-7a65e083b3"}>
-                        {formatElectricityMW(estimatedConsumptionMW)} MW
+                        {formatElectricityMW(estimatedConsumptionMW, language)} MW
                       </p>
                     </div>
 
@@ -343,12 +335,12 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                       <p className={`root-modal-util-67abd46500 ${balanceMW > 0 ? "root-modal-util-edbfd1c508" :
                           balanceMW < 0 ? "root-modal-util-35f302741d" :
                             "root-modal-util-8d44cef396"
-                        }`}>Neraca Daya</p>
+                        }`}>{t("navigation_electricity_grid.powerBalance")}</p>
                       <p className={`root-modal-util-b71689d5a3 ${balanceMW > 0 ? "root-modal-util-edbfd1c508" :
                           balanceMW < 0 ? "root-modal-util-35f302741d" :
                             "root-modal-util-8d44cef396"
                         }`}>
-                        {balanceMW > 0 ? '+' : balanceMW < 0 ? '-' : ''}{formatElectricityMW(Math.abs(balanceMW))} MW
+                        {balanceMW > 0 ? '+' : balanceMW < 0 ? '-' : ''}{formatElectricityMW(Math.abs(balanceMW), language)} MW
                       </p>
                     </div>
                   </div>
@@ -361,7 +353,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                       <MapPin className={"root-modal-util-dca7f530c4"} />
                     </div>
                     <div>
-                      <h3 className={"root-modal-util-9361ef65fc"}>Ringkasan Sumber Daya</h3>
+                      <h3 className={"root-modal-util-9361ef65fc"}>{t("navigation_electricity_grid.sourcesTitle")}</h3>
                     </div>
                   </div>
 
@@ -375,18 +367,18 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                         </div>
                         <div className={"root-modal-util-4a90ed8d74"}>
                           <p className={"root-modal-util-8b089e3b8c"}>
-                            {formatElectricityMW(source.actualProduction)} MW
+                            {formatElectricityMW(source.actualProduction, language)} MW
                           </p>
                           <p className={"root-modal-util-d8fb0b4a8a"}>
                             {source.fuelShortage
-                              ? "Bahan bakar kurang — tidak berproduksi"
-                              : source.value > 0 ? `${source.value} unit` : 'Tidak tersedia'}
+                              ? t("navigation_electricity_grid.fuelShortage")
+                              : source.value > 0 ? `${source.value} ${t("navigation_electricity_grid.unit")}` : t("navigation_electricity_grid.unavailable")}
                           </p>
                         </div>
                       </div>
                     )) : (
                       <div className={`root-modal-util-a6e25069d7 root-modal-util-5f22e64f22 root-modal-util-8ff7188727`}>
-                        Data pembangkit listrik tidak tersedia.
+                        {t("navigation_electricity_grid.noPlants")}
                       </div>
                     )}
                   </div>
@@ -399,30 +391,30 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                   <RootTable className="w-full table-fixed text-[10px] sm:text-xs">
                     <thead className={"root-modal-util-ecea3fcb79"}>
                       <tr className={"root-modal-util-48bed30924"}>
-                        <th className="w-10 sm:w-12 px-1.5 sm:px-2.5 py-2 text-left font-black uppercase tracking-wider text-root-accent">No</th>
+                        <th className="w-10 sm:w-12 px-1.5 sm:px-2.5 py-2 text-left font-black uppercase tracking-wider text-root-accent">{t("navigation_electricity_grid.table.number")}</th>
                         <th
                           onClick={() => handleSort('name')}
                           className="w-[34%] sm:w-[32%] cursor-pointer px-1.5 sm:px-2.5 py-2 text-left font-black uppercase tracking-wider text-root-accent hover:bg-root-surface"
                         >
-                          Negara <SortIndicator column="name" />
+                          {t("navigation_electricity_grid.table.country")} <SortIndicator column="name" />
                         </th>
                         <th
                           onClick={() => handleSort('production')}
                           className="w-[22%] cursor-pointer px-1.5 sm:px-2.5 py-2 text-right font-black uppercase tracking-wider text-emerald-400 hover:bg-emerald-950/40"
                         >
-                          Produksi (MW) <SortIndicator column="production" />
+                          {t("navigation_electricity_grid.table.production")} <SortIndicator column="production" />
                         </th>
                         <th
                           onClick={() => handleSort('consumption')}
                           className="w-[22%] cursor-pointer px-1.5 sm:px-2.5 py-2 text-right font-black uppercase tracking-wider text-rose-400 hover:bg-rose-950/40"
                         >
-                          Konsumsi (MW) <SortIndicator column="consumption" />
+                          {t("navigation_electricity_grid.table.consumption")} <SortIndicator column="consumption" />
                         </th>
                         <th
                           onClick={() => handleSort('balance')}
                           className="w-[22%] cursor-pointer px-1.5 sm:px-2.5 py-2 text-right font-black uppercase tracking-wider text-root-accent hover:bg-root-surface"
                         >
-                          Neraca Daya <SortIndicator column="balance" />
+                          {t("navigation_electricity_grid.table.powerBalance")} <SortIndicator column="balance" />
                         </th>
                       </tr>
                     </thead>
@@ -430,7 +422,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                       {allCountries.length === 0 ? (
                         <tr>
                           <td colSpan={5} className={"root-modal-util-fe9e2d64f9"}>
-                            Memuat data negara...
+                            {t("navigation_electricity_grid.table.loading")}
                           </td>
                         </tr>
                       ) : filteredData.length > 0 ? (
@@ -444,23 +436,23 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                             </td>
                             <td className={`px-1.5 sm:px-2.5 py-2 font-bold truncate ${country.isUser ? "root-modal-util-edbfd1c508" : "root-modal-util-070a7f2c69"}`} title={country.name}>
                               <span>{country.name}</span>
-                              {country.isUser && <span className={"root-modal-util-13dc0814cd"}>Negara Anda</span>}
+                              {country.isUser && <span className={"root-modal-util-13dc0814cd"}>{t("navigation_electricity_grid.table.userCountry")}</span>}
                             </td>
                             <td className="px-1.5 sm:px-2.5 py-2 text-right font-bold text-emerald-400 truncate">
-                              {country.production <= 0 ? "0" : country.production.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
+                              {country.production <= 0 ? "0" : country.production.toLocaleString(language, { maximumFractionDigits: 2 })}
                             </td>
                             <td className="px-1.5 sm:px-2.5 py-2 text-right font-bold text-rose-400 truncate">
-                              {country.consumption <= 0 ? "0" : country.consumption.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
+                              {country.consumption <= 0 ? "0" : country.consumption.toLocaleString(language, { maximumFractionDigits: 2 })}
                             </td>
                             <td className={`px-1.5 sm:px-2.5 py-2 text-right font-black truncate ${country.balance > 0.01 ? "root-modal-util-edbfd1c508" : country.balance < -0.01 ? "root-modal-util-35f302741d" : "root-modal-util-8d44cef396"}`}>
-                              {country.balance === 0 ? "0" : `${country.balance > 0 ? "+" : "-"}${Math.abs(country.balance).toLocaleString("id-ID", { maximumFractionDigits: 2 })}`}
+                              {country.balance === 0 ? "0" : `${country.balance > 0 ? "+" : "-"}${Math.abs(country.balance).toLocaleString(language, { maximumFractionDigits: 2 })}`}
                             </td>
                           </tr>
                         ))
                       ) : (
                         <tr>
                           <td colSpan={5} className={"root-modal-util-fe9e2d64f9"}>
-                            Tidak ada negara yang cocok dengan pencarian.
+                            {t("navigation_electricity_grid.table.noResults")}
                           </td>
                         </tr>
                       )}
@@ -477,13 +469,13 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
       <MenuInfoModal
         isOpen={isInfoOpen}
         onClose={() => setIsInfoOpen(false)}
-        title="Informasi Grid Kelistrikan Nasional"
-        description="Pantau neraca daya negara Anda atau bandingkan produksi, konsumsi, dan neraca listrik dengan negara lain."
+        title={t("navigation_electricity_grid.infoTitle")}
+        description={t("navigation_electricity_grid.infoDescription")}
       >
         <div className="root-satisfaction-index root-modal-util-c624fd55b4 root-modal-util-5f22e64f22 mt-4">
           <div className="root-modal-util-56e6b92b69">
             <span className="root-satisfaction-index-title root-modal-util-84cf691742">
-              Indeks Kepuasan Rakyat (Listrik)
+              {t("navigation_electricity_grid.satisfactionIndex")}
             </span>
             <span className="root-satisfaction-index-value root-modal-util-ca525b9094">
               {electricitySatisfaction} / 100

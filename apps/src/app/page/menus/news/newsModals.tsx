@@ -309,7 +309,7 @@ export default function TopRightNewsIcon({
       {mounted && !isMenuButtonHidden && createPortal(
         <button
           onClick={onClick}
-          title="Berita - Berita dan Update Negara"
+          aria-label="Berita - Berita dan Update Negara"
           className="side-floating-btn side-btn-news"
         >
           <Image

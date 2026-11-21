@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { BarChart3, ArrowDownRight } from "lucide-react";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { ALL_DEPARTMENTS, getDailyMinistryCost } from "@/app/logic/economic_logic/departments";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface OutcomeModalProps {
   isOpen: boolean;
@@ -39,7 +40,8 @@ const getMinistryIncomeByName = (name: string, countryDetail: any) => {
 };
 
 export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountryDetail }: OutcomeModalProps) {
-  if (!isOpen) return null;
+  const { language, t } = useLanguage();
+  const formatNumber = (value: number) => value.toLocaleString(language, { maximumFractionDigits: 0 });
 
   // Calculate ministry daily cost (per hari) dari SEMUA 22 department
   const ministryDailyCost = calculateTotalMinistryCost(countryDetail);
@@ -57,6 +59,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
     asn_salary: countryDetail?.asn_salary_budget ?? ministryCostPerMonth,
     debt_interest: countryDetail?.debt_interest_budget || 0
   });
+  if (!isOpen) return null;
 
   const handleBudgetChange = (key: string, value: number) => {
     const newBudgets = { ...budgets, [key]: value };
@@ -77,21 +80,21 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
 
   // Build outcome items dynamically
   const outcomeItems: OutcomeItem[] = [
-    { label: "Pemeliharaan Militer", amount: budgets.military, color: "text-red-700", description: "Pengaruh: Stabilitas Keamanan" },
-    { label: "Beban Subsidi Publik", amount: budgets.subsidy, color: "text-orange-700", description: "Pengaruh: Approval Rating" },
-    { label: "Anggaran Pendidikan", amount: budgets.education, color: "text-amber-700", description: "Pengaruh: Kualitas SDM" },
-    { label: "Anggaran Kesehatan", amount: budgets.health, color: "text-yellow-700", description: "Pengaruh: Kepuasan & Kesejahteraan" },
-    { label: "Anggaran Infrastruktur", amount: budgets.infrastructure, color: "text-lime-700", description: "Pengaruh: Produktivitas Ekonomi" },
-    { label: "Gaji ASN/Birokrasi", amount: budgets.asn_salary, color: "text-green-700", description: "Fixed Cost, Scaling" },
-    { label: "Biaya Operasional Dewan Kabinet", amount: ministryCostPerMonth, color: "text-blue-700", description: "Total Pengeluaran Semua Ministry" }
+    { label: t("navigation_economy_income.outcome.modal.military"), amount: budgets.military, color: "text-red-700", description: t("navigation_economy_income.outcome.modal.effects.military") },
+    { label: t("navigation_economy_income.outcome.modal.subsidy"), amount: budgets.subsidy, color: "text-orange-700", description: t("navigation_economy_income.outcome.modal.effects.subsidy") },
+    { label: t("navigation_economy_income.outcome.modal.education"), amount: budgets.education, color: "text-amber-700", description: t("navigation_economy_income.outcome.modal.effects.education") },
+    { label: t("navigation_economy_income.outcome.modal.health"), amount: budgets.health, color: "text-yellow-700", description: t("navigation_economy_income.outcome.modal.effects.health") },
+    { label: t("navigation_economy_income.outcome.modal.infrastructure"), amount: budgets.infrastructure, color: "text-lime-700", description: t("navigation_economy_income.outcome.modal.effects.infrastructure") },
+    { label: t("navigation_economy_income.outcome.modal.civilService"), amount: budgets.asn_salary, color: "text-green-700", description: t("navigation_economy_income.outcome.modal.effects.civilService") },
+    { label: t("navigation_economy_income.outcome.modal.cabinet"), amount: ministryCostPerMonth, color: "text-blue-700", description: t("navigation_economy_income.outcome.modal.effects.cabinet") }
   ];
 
   if (budgets.debt_interest > 0) {
     outcomeItems.push({
-      label: "Cicilan Utang + Bunga",
+      label: t("navigation_economy_income.outcome.modal.debt"),
       amount: budgets.debt_interest,
       color: "text-rose-900",
-      description: "Cicilan Obligasi"
+      description: t("navigation_economy_income.outcome.modal.effects.debt")
     });
   }
 
@@ -102,7 +105,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       <div className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden relative font-sans pointer-events-auto flex flex-col">
         <RootInfoModalHeader
-          title="Alokasi Pengeluaran Negara"
+          title={t("navigation_economy_income.outcome.modal.title")}
           onClose={onClose}
           size="standard"
           icon={<BarChart3 aria-hidden="true" className="text-root-accent" />}
@@ -111,7 +114,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
         <div className="relative z-10 min-h-0 flex-1 overflow-y-auto bg-root-surface p-4 custom-scrollbar sm:p-6">
           <div className="space-y-6 max-w-4xl">
             <p className="text-xs text-root-subtle font-semibold leading-relaxed">
-              Atur alokasi anggaran pengeluaran negara. Setiap kategori memiliki pengaruh berbeda terhadap stabilitas ekonomi dan kesejahteraan rakyat.
+              {t("navigation_economy_income.outcome.modal.description")}
             </p>
 
             {/* Budget Sliders */}
@@ -120,10 +123,10 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
               <div className="bg-root-canvas border border-root-accent/30 p-4 rounded-xl space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="text-xs font-black text-root-accent uppercase">Pemeliharaan Militer</h4>
-                    <p className="text-[10px] text-root-subtle mt-1">Pengaruh: Stabilitas Keamanan</p>
+                    <h4 className="text-xs font-black text-root-accent uppercase">{t("navigation_economy_income.outcome.modal.military")}</h4>
+                    <p className="text-[10px] text-root-subtle mt-1">{t("navigation_economy_income.outcome.modal.effects.military")}</p>
                   </div>
-                  <span className="text-sm font-black text-rose-400">- {budgets.military.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                  <span className="text-sm font-black text-rose-400">- {formatNumber(budgets.military)} NEO</span>
                 </div>
                 <input
                   type="range"
@@ -140,10 +143,10 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
               <div className="bg-root-canvas border border-root-accent/30 p-4 rounded-xl space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="text-xs font-black text-root-accent uppercase">Beban Subsidi Publik</h4>
-                    <p className="text-[10px] text-root-subtle mt-1">Pengaruh: Approval Rating</p>
+                    <h4 className="text-xs font-black text-root-accent uppercase">{t("navigation_economy_income.outcome.modal.subsidy")}</h4>
+                    <p className="text-[10px] text-root-subtle mt-1">{t("navigation_economy_income.outcome.modal.effects.subsidy")}</p>
                   </div>
-                  <span className="text-sm font-black text-amber-400">- {budgets.subsidy.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                  <span className="text-sm font-black text-amber-400">- {formatNumber(budgets.subsidy)} NEO</span>
                 </div>
                 <input
                   type="range"
@@ -160,10 +163,10 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
               <div className="bg-root-canvas border border-root-accent/30 p-4 rounded-xl space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="text-xs font-black text-root-accent uppercase">Anggaran Pendidikan</h4>
-                    <p className="text-[10px] text-root-subtle mt-1">Pengaruh: Kualitas SDM & Produktivitas (Jangka Panjang)</p>
+                    <h4 className="text-xs font-black text-root-accent uppercase">{t("navigation_economy_income.outcome.modal.education")}</h4>
+                    <p className="text-[10px] text-root-subtle mt-1">{t("navigation_economy_income.outcome.modal.effects.education")}</p>
                   </div>
-                  <span className="text-sm font-black text-amber-300">- {budgets.education.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                  <span className="text-sm font-black text-amber-300">- {formatNumber(budgets.education)} NEO</span>
                 </div>
                 <input
                   type="range"
@@ -180,10 +183,10 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
               <div className="bg-root-canvas border border-root-accent/30 p-4 rounded-xl space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="text-xs font-black text-root-accent uppercase">Anggaran Kesehatan</h4>
-                    <p className="text-[10px] text-root-subtle mt-1">Pengaruh: Kepuasan Rakyat & Pencegahan Wabah</p>
+                    <h4 className="text-xs font-black text-root-accent uppercase">{t("navigation_economy_income.outcome.modal.health")}</h4>
+                    <p className="text-[10px] text-root-subtle mt-1">{t("navigation_economy_income.outcome.modal.effects.health")}</p>
                   </div>
-                  <span className="text-sm font-black text-yellow-400">- {budgets.health.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                  <span className="text-sm font-black text-yellow-400">- {formatNumber(budgets.health)} NEO</span>
                 </div>
                 <input
                   type="range"
@@ -200,10 +203,10 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
               <div className="bg-root-canvas border border-root-accent/30 p-4 rounded-xl space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="text-xs font-black text-root-accent uppercase">Anggaran Infrastruktur</h4>
-                    <p className="text-[10px] text-root-subtle mt-1">Pengaruh: Produktivitas Ekonomi (Jangka Panjang)</p>
+                    <h4 className="text-xs font-black text-root-accent uppercase">{t("navigation_economy_income.outcome.modal.infrastructure")}</h4>
+                    <p className="text-[10px] text-root-subtle mt-1">{t("navigation_economy_income.outcome.modal.effects.infrastructure")}</p>
                   </div>
-                  <span className="text-sm font-black text-emerald-400">- {budgets.infrastructure.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                  <span className="text-sm font-black text-emerald-400">- {formatNumber(budgets.infrastructure)} NEO</span>
                 </div>
                 <input
                   type="range"
@@ -220,10 +223,10 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
               <div className="bg-root-canvas border border-root-accent/30 p-4 rounded-xl space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="text-xs font-black text-root-accent uppercase">Gaji ASN/Birokrasi</h4>
-                    <p className="text-[10px] text-root-subtle mt-1">Fixed Cost, Scaling dengan Jumlah Pegawai</p>
+                    <h4 className="text-xs font-black text-root-accent uppercase">{t("navigation_economy_income.outcome.modal.civilService")}</h4>
+                    <p className="text-[10px] text-root-subtle mt-1">{t("navigation_economy_income.outcome.modal.effects.civilService")}</p>
                   </div>
-                  <span className="text-sm font-black text-emerald-400">- {budgets.asn_salary.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                  <span className="text-sm font-black text-emerald-400">- {formatNumber(budgets.asn_salary)} NEO</span>
                 </div>
                 <input
                   type="range"
@@ -240,15 +243,15 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
               <div className="bg-root-canvas border border-root-accent/30 p-4 rounded-xl space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="text-xs font-black text-root-accent uppercase">Biaya Operasional Dewan Kabinet</h4>
-                    <p className="text-[10px] text-root-subtle mt-1">Total Pengeluaran Semua Ministry (Otomatis)</p>
+                    <h4 className="text-xs font-black text-root-accent uppercase">{t("navigation_economy_income.outcome.modal.cabinet")}</h4>
+                    <p className="text-[10px] text-root-subtle mt-1">{t("navigation_economy_income.outcome.modal.effects.cabinet")}</p>
                   </div>
-                  <span className="text-sm font-black text-root-accent">- {ministryCostPerMonth.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                  <span className="text-sm font-black text-root-accent">- {formatNumber(ministryCostPerMonth)} NEO</span>
                 </div>
-                <p className="text-[10px] text-root-subtle italic">Dihitung otomatis dari level semua kementerian, keamanan, dan layanan. Tidak bisa diatur manual.</p>
+                <p className="text-[10px] text-root-subtle italic">{t("navigation_economy_income.outcome.modal.autoCalculation")}</p>
                 <div className="bg-root-surface border border-root-accent/20 rounded p-2">
                   <p className="text-[10px] text-root-text font-semibold">
-                    Breakdown: {ministryCostPerMonth.toLocaleString("id-ID", { maximumFractionDigits: 0 })} = {(ministryCostPerMonth / 30).toLocaleString("id-ID", { maximumFractionDigits: 0 })} × 30
+                    {t("navigation_economy_income.outcome.modal.breakdown")}: {formatNumber(ministryCostPerMonth)} = {formatNumber(ministryCostPerMonth / 30)} × 30
                   </p>
                 </div>
               </div>
@@ -258,12 +261,12 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                 <div className="bg-root-canvas border border-root-accent/30 p-4 rounded-xl space-y-3">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h4 className="text-xs font-black text-root-accent uppercase">Cicilan Utang + Bunga</h4>
-                      <p className="text-[10px] text-root-subtle mt-1">Cicilan Obligasi (Otomatis)</p>
+                      <h4 className="text-xs font-black text-root-accent uppercase">{t("navigation_economy_income.outcome.modal.debt")}</h4>
+                      <p className="text-[10px] text-root-subtle mt-1">{t("navigation_economy_income.outcome.modal.effects.debt")}</p>
                     </div>
-                    <span className="text-sm font-black text-rose-400">- {budgets.debt_interest.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                    <span className="text-sm font-black text-rose-400">- {formatNumber(budgets.debt_interest)} NEO</span>
                   </div>
-                  <p className="text-[10px] text-root-subtle italic">Cicilan utang otomatis, tidak bisa diatur</p>
+                  <p className="text-[10px] text-root-subtle italic">{t("navigation_economy_income.outcome.modal.automaticDebt")}</p>
                 </div>
               )}
             </div>
@@ -271,12 +274,12 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
             {/* Total Summary */}
             <div className="bg-root-canvas border border-root-accent/30 p-6 rounded-xl space-y-4 mt-8">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-black text-root-accent uppercase tracking-widest">Total Pengeluaran</span>
-                <span className="text-2xl font-black text-rose-400">- {totalOutcome.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                <span className="text-xs font-black text-root-accent uppercase tracking-widest">{t("navigation_economy_income.outcome.modal.total")}</span>
+                <span className="text-2xl font-black text-rose-400">- {formatNumber(totalOutcome)} NEO</span>
               </div>
               <div className="flex justify-between items-center pt-3 border-t border-root-accent/20">
-                <span className="text-xs font-bold text-root-subtle uppercase">Total Saldo Kas Negara:</span>
-                <span className="text-lg font-black text-root-accent">{anggaran.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                <span className="text-xs font-bold text-root-subtle uppercase">{t("navigation_economy_income.cashBalance")}</span>
+                <span className="text-lg font-black text-root-accent">{formatNumber(anggaran)} NEO</span>
               </div>
             </div>
           </div>

@@ -1,0 +1,69 @@
+{
+  "title": "생필품 가격 통제",
+  "monthUnit": "월",
+  "tabs": { "essentials": "생필품 가격", "subsidyPolicy": "보조금 정책" },
+  "subsidy": {
+    "title": "보조금 배분 및 정책",
+    "infoButton": "보조금 배분 및 정책 정보",
+    "confirm": "확인",
+    "categories": { "all": "전체 부문" },
+    "summary": {
+      "totalBudget": "총 보조금 예산 부담",
+      "activeSectors": "활성 부문 / 전체",
+      "sectorCount": "{active} / {total}개 부문",
+      "approvalSupport": "국민 지지율 지원",
+      "approvalValue": "지지율 +{percent}%",
+      "populationImpact": "순인구 영향",
+      "saved": "보조금 배분이 업데이트되었습니다."
+    },
+    "sidebarLabel": "보조금 정책 범주",
+    "viewDetails": "정책 세부 정보 보기",
+    "viewItemDetails": "{item} 보조금 세부 정보 보기",
+    "enableItem": "{item} 보조금 활성화",
+    "disableItem": "{item} 보조금 비활성화",
+    "info": {
+      "title": "보조금 배분 및 정책 정보",
+      "description": "부문별 보조금 프로그램을 선택하고 배분을 변경하기 전에 월별 비용을 확인하세요. 보조금은 국가 예산을 사용하며 국민 지지율과 인구 증가에 영향을 줄 수 있습니다.",
+      "satisfaction": "국민 만족도 지수 (보조금)"
+    },
+    "confirmation": {
+      "title": "보조금 정책 확인",
+      "description": "보조금 배분 변경 사항을 적용합니다. 계속하시겠습니까?",
+      "back": "돌아가기",
+      "confirm": "예, 확인"
+    }
+  },
+  "infoButton": "생필품 가격 통제 정보",
+  "confirm": "확인",
+  "loading": "국가 가격 데이터를 불러오는 중...",
+  "noData": "이 국가의 가격 데이터가 없습니다.",
+  "currentValue": "현재 가격",
+  "populationImpact": "인구 영향",
+  "subsidyActive": "생필품 보조금: 활성",
+  "errors": {
+    "loadFailed": "데이터베이스에서 가격 데이터를 불러오지 못했습니다."
+  },
+  "commodities": {
+    "rice": "쌀",
+    "beef": "소고기",
+    "chicken": "닭고기",
+    "cookingOil": "식용유",
+    "sugar": "설탕",
+    "eggs": "달걀",
+    "electricity": "전기",
+    "water": "물"
+  },
+  "info": {
+    "title": "생필품 가격 통제 정보",
+    "description": "생필품의 국가 가격을 설정합니다. 가격은 국민 만족도와 인구 변화에 영향을 줍니다.",
+    "satisfaction": "국민 만족도 지수 (생필품 가격)",
+    "populationImpact": "생필품 가격의 인구 영향: {percent}% / 월"
+  },
+  "confirmation": {
+    "title": "가격 정책 확인",
+    "changesApply": "선택한 생필품 가격 변경 사항을 적용합니다. 계속하시겠습니까?",
+    "noChanges": "가격이 변경되지 않았습니다. 확인하면 포럼으로 돌아갑니다.",
+    "back": "뒤로",
+    "yes": "예, 확인"
+  }
+}

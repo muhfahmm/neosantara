@@ -734,7 +734,7 @@ export default function TopLeftIcon({
               setShowToast(false);
               if (onClick) onClick();
             }}
-            title="Inbox - Pesan dan Notifikasi"
+            aria-label="Inbox - Pesan dan Notifikasi"
             className="side-floating-btn pointer-events-auto !static"
           >
             <div className="relative flex h-full w-full items-center justify-center">
@@ -918,7 +918,7 @@ export default function TopLeftIcon({
                   {/* === KOLOM KANAN: DETAIL KONTEN & AKSI === */}
                   <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-6 bg-root-canvas">
                     {selectedNotification ? (
-                      <div className="max-w-2xl mx-auto space-y-4">
+                      <div className="inbox-notification-detail max-w-2xl mx-auto space-y-4">
                         {renderActiveNotificationDetail(selectedNotification)}
 
                         {/* 🔥 Ilustrasi Gambar Notifikasi */}

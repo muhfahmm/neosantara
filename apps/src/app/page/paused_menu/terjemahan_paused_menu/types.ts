@@ -16,6 +16,24 @@ import type idShop from './id/side_menu/shop/shop.json';
 import type idPelacakanAktivitas from './id/side_menu/pelacakan_aktivitas/pelacakan_aktivitas.json';
 import type idCountryDetailUser from './id/detail_negara/detail_negara_user/main.json';
 import type idCountryDetailAI from './id/detail_negara/detail_negara_ai/main.json';
+import type idSatisfactionStatistics from './id/navigasi_menu/kepuasan_menu/statistik.json';
+import type idSatisfactionIncrease from './id/navigasi_menu/kepuasan_menu/naikkan_kepuasan.json';
+import type idPopulationSummary from './id/navigasi_menu/populasi_menu/ringkasan_populasi.json';
+import type idPopulationBirths from './id/navigasi_menu/populasi_menu/rincian_kelahiran.json';
+import type idPopulationDeaths from './id/navigasi_menu/populasi_menu/rincian_kematian.json';
+import type idPopulationWelfare from './id/navigasi_menu/populasi_menu/kesejahteraan.json';
+import type idPopulationWelfareInitiatives from './id/navigasi_menu/populasi_menu/naikkan_kesejahteraan.json';
+import type idElectricityGrid from './id/navigasi_menu/produksi_konsumsi/listrik_nasional/listrik_nasional.json';
+import type idFoodConsumption from './id/navigasi_menu/produksi_konsumsi/konsumsi_makanan/konsumsi_makanan.json';
+import type idEconomyTrade from './id/navigasi_menu/ekonomi_menu/perdagangan.json';
+import type idEconomyTax from './id/navigasi_menu/ekonomi_menu/pajak.json';
+import type idEconomyLoans from './id/navigasi_menu/ekonomi_menu/pinjaman.json';
+import type idEconomyIncome from './id/navigasi_menu/ekonomi_menu/pendapatan.json';
+import type idEconomyPurchasingPower from './id/navigasi_menu/ekonomi_menu/daya_beli.json';
+import type idEconomySystem from './id/navigasi_menu/ekonomi_menu/sistem_ekonomi.json';
+import type idConstructionProduction from './id/navigasi_menu/pembangunan_menu/produksi/produksi.json';
+import type idConstructionPublicPlaces from './id/navigasi_menu/pembangunan_menu/tempat_umum/tempat_umum.json';
+import type idConstructionHousing from './id/navigasi_menu/pembangunan_menu/hunian_permukiman/hunian_permukiman.json';
 
 export type TextDirection = 'ltr' | 'rtl';
 
@@ -63,7 +81,25 @@ export type TranslationNamespace =
   | 'side_shop'
   | 'side_pelacakan_aktivitas'
   | 'detail_negara_user'
-  | 'detail_negara_ai';
+  | 'detail_negara_ai'
+  | 'navigation_satisfaction_statistics'
+  | 'navigation_satisfaction_increase'
+  | 'navigation_population_summary'
+  | 'navigation_population_births'
+  | 'navigation_population_deaths'
+  | 'navigation_population_welfare'
+  | 'navigation_population_welfare_initiatives'
+  | 'navigation_electricity_grid'
+  | 'navigation_food_consumption'
+  | 'navigation_economy_trade'
+  | 'navigation_economy_tax'
+  | 'navigation_economy_loans'
+  | 'navigation_economy_income'
+  | 'navigation_economy_purchasing_power'
+  | 'navigation_economy_system'
+  | 'navigation_construction_production'
+  | 'navigation_construction_public_places'
+  | 'navigation_construction_housing';
 
 type ResearchTranslation = typeof idPenelitian & {
   categories: {
@@ -88,6 +124,24 @@ export interface TranslationSchema {
   side_pelacakan_aktivitas: typeof idPelacakanAktivitas;
   detail_negara_user: typeof idCountryDetailUser;
   detail_negara_ai: typeof idCountryDetailAI;
+  navigation_satisfaction_statistics: typeof idSatisfactionStatistics;
+  navigation_satisfaction_increase: typeof idSatisfactionIncrease;
+  navigation_population_summary: typeof idPopulationSummary;
+  navigation_population_births: typeof idPopulationBirths;
+  navigation_population_deaths: typeof idPopulationDeaths;
+  navigation_population_welfare: typeof idPopulationWelfare;
+  navigation_population_welfare_initiatives: typeof idPopulationWelfareInitiatives;
+  navigation_electricity_grid: typeof idElectricityGrid;
+  navigation_food_consumption: typeof idFoodConsumption;
+  navigation_economy_trade: typeof idEconomyTrade;
+  navigation_economy_tax: typeof idEconomyTax;
+  navigation_economy_loans: typeof idEconomyLoans;
+  navigation_economy_income: typeof idEconomyIncome;
+  navigation_economy_purchasing_power: typeof idEconomyPurchasingPower;
+  navigation_economy_system: typeof idEconomySystem;
+  navigation_construction_production: typeof idConstructionProduction;
+  navigation_construction_public_places: typeof idConstructionPublicPlaces;
+  navigation_construction_housing: typeof idConstructionHousing;
 }
 
 export type TranslationRecord = Record<string, string | Record<string, unknown>>;
@@ -116,6 +170,24 @@ export type TranslationKey =
   | `side_pelacakan_aktivitas.${NestedKeyOf<typeof idPelacakanAktivitas>}`
   | `detail_negara_user.${NestedKeyOf<typeof idCountryDetailUser>}`
   | `detail_negara_ai.${NestedKeyOf<typeof idCountryDetailAI>}`
+  | `navigation_satisfaction_statistics.${NestedKeyOf<typeof idSatisfactionStatistics>}`
+  | `navigation_satisfaction_increase.${NestedKeyOf<typeof idSatisfactionIncrease>}`
+  | `navigation_population_summary.${NestedKeyOf<typeof idPopulationSummary>}`
+  | `navigation_population_births.${NestedKeyOf<typeof idPopulationBirths>}`
+  | `navigation_population_deaths.${NestedKeyOf<typeof idPopulationDeaths>}`
+  | `navigation_population_welfare.${NestedKeyOf<typeof idPopulationWelfare>}`
+  | `navigation_population_welfare_initiatives.${NestedKeyOf<typeof idPopulationWelfareInitiatives>}`
+  | `navigation_electricity_grid.${NestedKeyOf<typeof idElectricityGrid>}`
+  | `navigation_food_consumption.${NestedKeyOf<typeof idFoodConsumption>}`
+  | `navigation_economy_trade.${NestedKeyOf<typeof idEconomyTrade>}`
+  | `navigation_economy_tax.${NestedKeyOf<typeof idEconomyTax>}`
+  | `navigation_economy_loans.${NestedKeyOf<typeof idEconomyLoans>}`
+  | `navigation_economy_income.${NestedKeyOf<typeof idEconomyIncome>}`
+  | `navigation_economy_purchasing_power.${NestedKeyOf<typeof idEconomyPurchasingPower>}`
+  | `navigation_economy_system.${NestedKeyOf<typeof idEconomySystem>}`
+  | `navigation_construction_production.${NestedKeyOf<typeof idConstructionProduction>}`
+  | `navigation_construction_public_places.${NestedKeyOf<typeof idConstructionPublicPlaces>}`
+  | `navigation_construction_housing.${NestedKeyOf<typeof idConstructionHousing>}`
   | (string & {});
 
 export type InterpolationParams = Record<string, string | number>;

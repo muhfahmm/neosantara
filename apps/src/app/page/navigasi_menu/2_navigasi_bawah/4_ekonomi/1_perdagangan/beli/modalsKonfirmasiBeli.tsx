@@ -49,6 +49,8 @@ import {
 import { recordTrade } from "../umum/tradeVolumeLedger";
 import CandlestickChart from "../umum/CandlestickChart";
 import { markMissionAsClaimable } from "@/app/page/menus/mission/missionModals";
+import { getLocalizedCountryName } from "@/app/logic/countryNameLogic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 const getFlagEmoji = (countryName: string) => {
   const matched = COUNTRIES_DATA.find(c => c.country.toLowerCase().trim() === countryName.toLowerCase().trim());
@@ -57,7 +59,7 @@ const getFlagEmoji = (countryName: string) => {
   return String.fromCodePoint(...codePoints) + " ";
 };
 
-const formatTradePrice = (price: number) => String(Math.round(price));
+const formatTradePrice = (price: number, locale = "id-ID") => Math.round(price).toLocaleString(locale);
 const EMPTY_PRICE_CANDLES = Object.freeze([]);
 
 import {
@@ -183,6 +185,12 @@ export default function ModalsKonfirmasiBeli({
   importTariffModifier = 0,
   canBuy = true,
 }: ModalsKonfirmasiBeliProps) {
+  const { language, t } = useLanguage();
+  const translatedProduct = (productKey: string, fallback: string) => {
+    const category = isArmsProduct(productKey) ? "armsProducts" : "products";
+    const translation = t(`navigation_economy_trade.transaction.${category}.${productKey}`);
+    return translation.startsWith("navigation_economy_trade.") ? fallback : translation;
+  };
   const [metadata, setMetadata] = useState<MetadataMap>({});
   const [selectedProduct, setSelectedProduct] = useState<string>("");
   const [selectedCountry, setSelectedCountry] = useState<string>("");
@@ -752,7 +760,7 @@ export default function ModalsKonfirmasiBeli({
       <div className="root-modal-util-b74379da23 min-w-0">
 
         <RootInfoModalHeader
-          title="Beli Komoditas"
+          title={t("navigation_economy_trade.transaction.buyTitle")}
           onClose={onClose}
           size="standard"
           icon={<ShoppingCart aria-hidden="true" />}
@@ -763,18 +771,21 @@ export default function ModalsKonfirmasiBeli({
           {/* --- INPUT CARD PRODUK & NEGARA --- */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1">
-              <label className="text-root-text font-bold text-sm tracking-wide">Produk:</label>
+              <label className="text-root-text font-bold text-sm tracking-wide">{t("navigation_economy_trade.transaction.product")}</label>
               <button
                 onClick={() => setIsProductPickerOpen(true)}
                 className="w-full px-4 py-3 rounded-md bg-root-canvas border border-root-accent/30 text-root-accent text-sm font-bold flex items-center justify-between hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer"
               >
-                <span>{getArmsTradeProducts().find(product => product.dataKey === effectiveSelectedProduct)?.label || formatLabel(effectiveSelectedProduct)}</span>
-                <span className="text-[10px] opacity-70 uppercase tracking-wider">Ubah</span>
+                <span>{translatedProduct(
+                  effectiveSelectedProduct,
+                  getArmsTradeProducts().find(product => product.dataKey === effectiveSelectedProduct)?.label || formatLabel(effectiveSelectedProduct)
+                )}</span>
+                <span className="text-[10px] opacity-70 uppercase tracking-wider">{t("navigation_economy_trade.transaction.change")}</span>
               </button>
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-root-text font-bold text-sm tracking-wide">Negara:</label>
+              <label className="text-root-text font-bold text-sm tracking-wide">{t("navigation_economy_trade.transaction.country")}</label>
               <button
                 onClick={() => setIsCountryPickerOpen(true)}
                 className="w-full px-4 py-3 rounded-md bg-root-canvas border border-root-accent/30 text-root-accent text-sm font-bold flex items-center justify-between hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer"
@@ -798,22 +809,26 @@ export default function ModalsKonfirmasiBeli({
                       </div>
                     );
                   })()}
-                  <span>{effectiveSelectedCountry}</span>
+                  <span>{getLocalizedCountryName(effectiveSelectedCountry, language)}</span>
                 </span>
-                <span className="text-[10px] opacity-70 uppercase tracking-wider">Ubah</span>
+                <span className="text-[10px] opacity-70 uppercase tracking-wider">{t("navigation_economy_trade.transaction.change")}</span>
               </button>
             </div>
           </div>
 
           <div className="flex flex-col gap-1">
             <div className="flex justify-between items-center pt-1 pb-0">
-              <span className="text-root-subtle font-bold text-sm tracking-wide">{isArmsProduct(effectiveSelectedProduct) ? "Unit Alutsista Mitra:" : `Bangunan ${formatLabel(effectiveSelectedProduct)} (Mitra):`}</span>
+              <span className="text-root-subtle font-bold text-sm tracking-wide">{isArmsProduct(effectiveSelectedProduct)
+                ? t("navigation_economy_trade.transaction.partnerArmsUnits")
+                : t("navigation_economy_trade.transaction.partnerBuilding", {
+                    product: translatedProduct(effectiveSelectedProduct, formatLabel(effectiveSelectedProduct)),
+                  })}</span>
               <span className="text-sm font-black text-root-text">
-                {(isArmsProduct(effectiveSelectedProduct) ? partnerProduction : Number(partnerData?.[effectiveSelectedProduct] || 0)).toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[10px] text-root-subtle font-bold">Unit</span>
+                {(isArmsProduct(effectiveSelectedProduct) ? partnerProduction : Number(partnerData?.[effectiveSelectedProduct] || 0)).toLocaleString(language, { maximumFractionDigits: 2 })} <span className="text-[10px] text-root-subtle font-bold">{t("navigation_economy_trade.transaction.unit")}</span>
               </span>
             </div>
             <div className="flex justify-between items-center pt-0 pb-1">
-              <span className="text-root-subtle font-bold text-sm tracking-wide">Produksi Mitra (Total):</span>
+              <span className="text-root-subtle font-bold text-sm tracking-wide">{t("navigation_economy_trade.transaction.partnerProduction")}</span>
               <span className="text-sm font-black text-root-text">
                 {(() => {
                   const matchedOffer = partnerOffers?.find(
@@ -821,14 +836,14 @@ export default function ModalsKonfirmasiBeli({
                       o.productKey === effectiveSelectedProduct
                   );
                   const displayValue = matchedOffer ? Math.max(matchedOffer.quantity, partnerProduction) : partnerProduction;
-                  return displayValue.toLocaleString('id-ID', { maximumFractionDigits: 2 });
-                })()} <span className="text-[10px] text-root-subtle font-bold">Unit</span>
+                  return displayValue.toLocaleString(language, { maximumFractionDigits: 2 });
+                })()} <span className="text-[10px] text-root-subtle font-bold">{t("navigation_economy_trade.transaction.unit")}</span>
               </span>
             </div>
           </div>
 
           <div className="flex items-center justify-between gap-2">
-            <label className="text-root-text font-bold text-sm tracking-wide">Kuantitas:</label>
+            <label className="text-root-text font-bold text-sm tracking-wide">{t("navigation_economy_trade.transaction.quantity")}</label>
             <div className="flex items-center gap-1.5">
               <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-1.5 rounded bg-root-canvas border border-root-accent/30 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer"><Minus className="h-3.5 w-3.5" /></button>
               <input type="number" min={1} value={quantity} onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))} className="w-16 px-2 py-1.5 text-center rounded bg-root-canvas text-root-accent text-sm font-bold border border-root-accent/30 focus:outline-none focus:border-root-accent" />
@@ -838,14 +853,14 @@ export default function ModalsKonfirmasiBeli({
           </div>
 
           <div className="flex justify-between items-center pt-3 border-t border-root-accent/20">
-            <span className="text-root-subtle font-bold text-sm tracking-wide">Harga / unit:</span>
+            <span className="text-root-subtle font-bold text-sm tracking-wide">{t("navigation_economy_trade.transaction.pricePerUnit")}</span>
             <div className="flex items-center gap-1.5">
               {hasTradeDiscount && (
                 <span className="text-sm font-bold text-rose-400 line-through">
-                  {formatTradePrice(originalPricePerUnit)}
+                  {formatTradePrice(originalPricePerUnit, language)}
                 </span>
               )}
-              <span className="text-lg font-black text-root-accent">{formatTradePrice(pricePerUnit)}</span>
+              <span className="text-lg font-black text-root-accent">{formatTradePrice(pricePerUnit, language)}</span>
               <span className="text-[10px] text-root-subtle font-bold mt-0.5">NEO</span>
             </div>
           </div>
@@ -853,27 +868,42 @@ export default function ModalsKonfirmasiBeli({
             <div className="flex justify-end gap-1.5 flex-wrap">
               {hasProtestantDiscount && (
                 <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                  Bonus Agama Protestan: Diskon beli {PROTESTANT_BUY_PRICE_DISCOUNT * 100}%
+                  {t("navigation_economy_trade.transaction.bonusLabels.protestant", {
+                    effect: t("navigation_economy_trade.transaction.bonusLabels.buyEffect"),
+                    percent: PROTESTANT_BUY_PRICE_DISCOUNT * 100,
+                  })}
                 </span>
               )}
               {isWTOActive && (
                 <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                  Bonus Organisasi WTO: Diskon beli {Math.round((1 - wtoBuyMultiplier) * 100)}%
+                  {t("navigation_economy_trade.transaction.bonusLabels.wto", {
+                    effect: t("navigation_economy_trade.transaction.bonusLabels.buyEffect"),
+                    percent: Math.round((1 - wtoBuyMultiplier) * 100),
+                  })}
                 </span>
               )}
               {isOPECActive && (
                 <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                  Bonus Organisasi OPEC: Diskon beli {Math.round((1 - opecBuyMultiplier) * 100)}%
+                  {t("navigation_economy_trade.transaction.bonusLabels.opec", {
+                    effect: t("navigation_economy_trade.transaction.bonusLabels.buyEffect"),
+                    percent: Math.round((1 - opecBuyMultiplier) * 100),
+                  })}
                 </span>
               )}
               {strategicTradeBonusPercent > 0 && (
                 <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                  Bonus Riset Diplomasi Dagang: Diskon beli {strategicTradeBonusPercent}%
+                  {t("navigation_economy_trade.transaction.bonusLabels.research", {
+                    effect: t("navigation_economy_trade.transaction.bonusLabels.buyEffect"),
+                    percent: strategicTradeBonusPercent,
+                  })}
                 </span>
               )}
               {getKementerianPerdaganganPriceBonusPercent(countryDetail) > 0 && (
                 <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                  Bonus Kementerian Perdagangan: Diskon beli {getKementerianPerdaganganPriceBonusPercent(countryDetail)}%
+                  {t("navigation_economy_trade.transaction.bonusLabels.ministry", {
+                    effect: t("navigation_economy_trade.transaction.bonusLabels.buyEffect"),
+                    percent: getKementerianPerdaganganPriceBonusPercent(countryDetail),
+                  })}
                 </span>
               )}
             </div>
@@ -881,21 +911,21 @@ export default function ModalsKonfirmasiBeli({
 
           {importTariffCost > 0 && (
             <div className="flex justify-between items-center text-xs text-amber-300">
-              <span>Tarif impor tambahan ({Math.round(importTariffModifier * 100)}%)</span>
-              <span>{formatTradePrice(importTariffCost)} NEO</span>
+              <span>{t("navigation_economy_trade.transaction.importTariff", { percent: Math.round(importTariffModifier * 100) })}</span>
+              <span>{formatTradePrice(importTariffCost, language)} NEO</span>
             </div>
           )}
           <div className="flex justify-between items-center border-t border-root-accent/20 pt-2 mt-1">
-            <span className="text-root-text font-bold text-sm tracking-wide">Total Pembelian :</span>
+            <span className="text-root-text font-bold text-sm tracking-wide">{t("navigation_economy_trade.transaction.purchaseTotal")}</span>
             <div className="flex items-center gap-1.5">
-              <span className="text-lg font-black text-root-accent">{formatTradePrice(totalPrice)}</span>
+              <span className="text-lg font-black text-root-accent">{formatTradePrice(totalPrice, language)}</span>
               <span className="text-[10px] text-root-subtle font-bold mt-0.5">NEO</span>
             </div>
           </div>
           {/* CHART CANDLESTICK HARGA BELI */}
           <div className="pt-3 border-t border-root-accent/20 mt-2 w-full">
             <div className="flex items-center justify-between mb-3">
-              <div className="text-root-accent font-bold text-sm tracking-wide">Grafik Harga Historis (Candlestick)</div>
+              <div className="text-root-accent font-bold text-sm tracking-wide">{t("navigation_economy_trade.transaction.chartTitle")}</div>
               <div className="flex gap-1.5">
                 {PRICE_TIME_RANGES.map(({ label, value }) => (
                   <button
@@ -916,8 +946,8 @@ export default function ModalsKonfirmasiBeli({
         </div>
 
         <div className="px-5 py-4 pb-8 border-t border-root-accent/20 flex gap-3 bg-root-canvas relative z-10">
-          <button onClick={onClose} className="flex-1 py-2.5 rounded-lg border border-root-accent/30 bg-root-surface hover:bg-root-accent hover:text-root-canvas text-root-accent text-xs font-black uppercase tracking-wide transition-all cursor-pointer">Batal</button>
-          <button onClick={handleConfirm} className="flex-1 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-root-canvas text-xs font-black uppercase tracking-wide transition-all cursor-pointer">Beli</button>
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-lg border border-root-accent/30 bg-root-surface hover:bg-root-accent hover:text-root-canvas text-root-accent text-xs font-black uppercase tracking-wide transition-all cursor-pointer">{t("navigation_economy_trade.transaction.cancel")}</button>
+          <button onClick={handleConfirm} className="flex-1 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-root-canvas text-xs font-black uppercase tracking-wide transition-all cursor-pointer">{t("navigation_economy_trade.transaction.buy")}</button>
         </div>
       </div>
 

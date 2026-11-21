@@ -3,6 +3,7 @@
 import { AlertTriangle } from "lucide-react";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface ArmsTradeBudgetModalProps {
   availableCash: number;
@@ -10,14 +11,15 @@ interface ArmsTradeBudgetModalProps {
   onClose: () => void;
 }
 
-const formatCash = (value: number) =>
-  `${Math.max(0, value).toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO`;
+const formatCash = (value: number, locale: string) =>
+  `${Math.max(0, value).toLocaleString(locale, { maximumFractionDigits: 2 })} NEO`;
 
 export default function ArmsTradeBudgetModal({
   availableCash,
   requiredCash,
   onClose,
 }: ArmsTradeBudgetModalProps) {
+  const { language, t } = useLanguage();
   const shortfall = Math.max(0, requiredCash - availableCash);
 
   return (
@@ -32,7 +34,7 @@ export default function ArmsTradeBudgetModal({
         className="overflow-hidden"
       >
         <RootInfoModalHeader
-          title="Kas Mitra Tidak Mencukupi"
+          title={t("navigation_economy_trade.transaction.budgetUnavailableTitle")}
           titleId="arms-trade-budget-title"
           onClose={onClose}
           size="standard"
@@ -40,22 +42,22 @@ export default function ArmsTradeBudgetModal({
         />
         <div className="space-y-3 p-4 text-sm sm:p-5">
           <p className="text-[#A7C4C4]">
-            Mitra belum memiliki anggaran yang cukup untuk membeli alutsista ini. Transaksi tidak dilakukan.
+            {t("navigation_economy_trade.transaction.budgetUnavailableDescription")}
           </p>
           <div className="grid grid-cols-2 gap-2 rounded-xl border border-white/10 bg-root-canvas p-3">
-            <span className="text-root-subtle">Kas mitra tersedia</span>
-            <strong className="text-right text-root-text">{formatCash(availableCash)}</strong>
-            <span className="text-root-subtle">Nilai transaksi</span>
-            <strong className="text-right text-root-text">{formatCash(requiredCash)}</strong>
-            <span className="text-amber-300">Kekurangan</span>
-            <strong className="text-right text-amber-300">{formatCash(shortfall)}</strong>
+            <span className="text-root-subtle">{t("navigation_economy_trade.transaction.availablePartnerCash")}</span>
+            <strong className="text-right text-root-text">{formatCash(availableCash, language)}</strong>
+            <span className="text-root-subtle">{t("navigation_economy_trade.transaction.transactionValue")}</span>
+            <strong className="text-right text-root-text">{formatCash(requiredCash, language)}</strong>
+            <span className="text-amber-300">{t("navigation_economy_trade.transaction.shortfall")}</span>
+            <strong className="text-right text-amber-300">{formatCash(shortfall, language)}</strong>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="w-full rounded-lg bg-amber-400 px-4 py-2.5 text-xs font-black uppercase tracking-wide text-root-canvas transition hover:bg-amber-300"
           >
-            Mengerti
+            {t("navigation_economy_trade.transaction.understand")}
           </button>
         </div>
       </section>

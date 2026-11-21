@@ -1,0 +1,23 @@
+{
+  "title": "死亡率の詳細",
+  "dailyDeaths": "1日の死亡数",
+  "perHour": "/時間",
+  "factors": "影響要因",
+  "lifeExpectancy": "平均寿命",
+  "years": "年",
+  "lifeExpectancyDescription": "平均寿命が長いほど死亡率は低くなります。",
+  "security": "治安レベル",
+  "securityDescription": "安全な環境は事故や犯罪による死亡を減らします。",
+  "homeless": "ホームレス",
+  "homelessCount": "{count}人 ({ratio}%)",
+  "homelessDescription": "ホームレス率が1%上がるごとに死亡数が5%増加します。",
+  "healthFacilities": "医療施設",
+  "open": "開く →",
+  "points": "ポイント",
+  "ratio": "(比率 {value})",
+  "healthDescription": "病院の整備により、治療可能な病気による死亡が減少します。",
+  "foodSecurity": "食料安全保障",
+  "foodDescription": "十分な食料供給は栄養失調のリスクを下げます。",
+  "lawEnforcement": "法執行",
+  "lawDescription": "福祉指数に基づく司法・警察への満足度です。"
+}

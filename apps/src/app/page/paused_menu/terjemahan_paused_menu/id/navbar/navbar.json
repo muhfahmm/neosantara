@@ -21,6 +21,10 @@
     "kasNegaraTitle": "Anggaran Kas Negara",
     "kasNegaraDesc": "Klik untuk menambah kas negara di Toko NEO.",
     "populasi": "Klik untuk melihat detail populasi",
+    "populationTitle": "Rincian Demografi",
+    "births": "Lahir",
+    "deaths": "Mati",
+    "netGrowth": "Pertumbuhan Bersih",
     "fps": "Buka detail monitor FPS"
   },
   "actions": {
@@ -28,5 +32,58 @@
     "restart": "Mulai Ulang",
     "openMenu": "Buka Menu Jeda",
     "zoom": "Zoom"
+  },
+  "navigation": {
+    "gameMenu": "Menu Game",
+    "mainMenu": "Navigasi menu utama",
+    "subMenu": "Navigasi submenu",
+    "mainMap": "Simulasi Utama",
+    "globalMap": "Peta Global",
+    "top": {
+      "groupLabel": "Navigasi tampilan peta",
+      "map": "Peta Taktis",
+      "diplomacy": "Hubungan Diplomatik",
+      "focusHome": "Fokus & Zoom ke Negara Sendiri"
+    },
+    "main": {
+      "kepuasan": "Kepuasan",
+      "populasi": "Populasi",
+      "produksiKonsumsi": "Produksi & Konsumsi",
+      "ekonomi": "Ekonomi",
+      "pembangunan": "Pembangunan",
+      "pertahanan": "Pertahanan",
+      "geopolitik": "Geopolitik",
+      "sosialBudaya": "Sosial & Budaya",
+      "kementerian": "Kementerian"
+    },
+    "sub": {
+      "kepuasanStatistics": "Statistik Kepuasan",
+      "increaseSatisfaction": "Naikkan Kepuasan",
+      "populationSummary": "Ringkasan Populasi",
+      "trade": "Perdagangan",
+      "tax": "Pajak",
+      "loans": "Pinjaman",
+      "income": "Pendapatan",
+      "purchasingPower": "Daya Beli",
+      "economicSystem": "Sistem Ekonomi",
+      "production": "Produksi",
+      "publicFacilities": "Tempat Umum",
+      "housing": "Hunian Permukiman",
+      "nationalGrid": "Grid Nasional",
+      "foodIndustry": "Industri Pangan",
+      "attackCountry": "Serang Negara",
+      "intelligence": "Intelijen",
+      "capturedTerritory": "Wilayah yang Direbut",
+      "fleet": "Armada",
+      "icbm": "ICBM",
+      "un": "PBB",
+      "embassy": "Kedutaan Besar",
+      "internationalOrganizations": "Organisasi Internasional",
+      "relationLevel": "Tingkat Hubungan",
+      "religion": "Agama & Kepercayaan",
+      "nationalIdeology": "Ideologi Negara",
+      "opennessDoctrine": "Doktrin & Keterbukaan",
+      "ministry": "Kementerian"
+    }
   }
 }

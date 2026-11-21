@@ -1,0 +1,19 @@
+{
+  "initiatives": {
+    "cashTransfer": "直接现金援助",
+    "foodSubsidy": "基本食品补贴",
+    "studentAid": "学生教育援助",
+    "healthCoverage": "全民医疗保障",
+    "housingUpgrade": "改善公共住房",
+    "nationalMarket": "全国平价市场"
+  },
+  "success": "“{title}”计划已成功启动！预计完成日期：{date}。",
+  "running": "进行中",
+  "welfareBoost": "福利提升：+{value}%",
+  "cost": "费用：",
+  "duration": "持续时间：",
+  "days": "{value} 天",
+  "active": "已启用",
+  "launch": "启动",
+  "sponsor": "资助{title}"
+}

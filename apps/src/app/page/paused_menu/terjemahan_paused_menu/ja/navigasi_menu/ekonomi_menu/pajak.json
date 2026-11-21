@@ -1,0 +1,40 @@
+{
+  "title": "税金",
+  "infoButton": "税制に関する情報",
+  "confirm": "確認",
+  "taxes": {
+    "policyTitle": "財政・税制政策",
+    "vat": "付加価値税（VAT）",
+    "corporate": "法人税",
+    "personalIncome": "個人所得税",
+    "excise": "物品税",
+    "environmental": "環境税"
+  },
+  "bonuses": {
+    "orthodoxPersonal": "正教会ボーナス：個人所得税収 +{percent}%",
+    "buddhaEnvironmental": "仏教ボーナス：環境税収 +{percent}%",
+    "ministry": "財務省ボーナス：全税収 +{percent}%（+{amount} NEO）",
+    "democracy": "民主主義ボーナス：全税収 +{percent}%",
+    "capitalism": "資本主義ボーナス：全税収 +{percent}%",
+    "liberalism": "自由主義ボーナス：全税収 +{percent}%",
+    "conservatism": "保守主義ボーナス：全税収 +{percent}%",
+    "fiscalHarmony": "国際財政調和ボーナス：全税収 +{percent}%"
+  },
+  "summary": {
+    "totalRevenue": "税収合計",
+    "bonus": "+ ボーナス（{percent}%）=",
+    "populationImpact": "税制による人口への影響：{percent}% / 月"
+  },
+  "info": {
+    "title": "税制情報",
+    "description": "税率を調整して軍事費や公共インフラを賄います。税率を上げすぎると、国民の抗議を招く可能性があります。",
+    "satisfaction": "国民満足度指数（税制）"
+  },
+  "confirmation": {
+    "title": "税制変更の確認",
+    "changesApply": "選択した税率変更を適用します。続行しますか？",
+    "noChanges": "税率は変更されていません。確認してフォーラムに戻ります。",
+    "back": "戻る",
+    "yes": "はい、確認"
+  }
+}

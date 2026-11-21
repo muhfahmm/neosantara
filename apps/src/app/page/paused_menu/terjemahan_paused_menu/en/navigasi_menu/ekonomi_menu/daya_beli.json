@@ -1,0 +1,69 @@
+{
+  "title": "Essential Goods Price Control",
+  "monthUnit": "month",
+  "tabs": { "essentials": "Essential Goods", "subsidyPolicy": "Subsidy Policy" },
+  "subsidy": {
+    "title": "Subsidy Allocation & Policy",
+    "infoButton": "Subsidy allocation and policy information",
+    "confirm": "Confirm",
+    "categories": { "all": "All Sectors" },
+    "summary": {
+      "totalBudget": "Total Subsidy Budget",
+      "activeSectors": "Active Sectors / Total",
+      "sectorCount": "{active} of {total} sectors",
+      "approvalSupport": "Public Approval Support",
+      "approvalValue": "+{percent}% approval",
+      "populationImpact": "Net Population Impact",
+      "saved": "Subsidy allocation updated successfully!"
+    },
+    "sidebarLabel": "Subsidy policy categories",
+    "viewDetails": "View Policy Details",
+    "viewItemDetails": "View details for {item} subsidy",
+    "enableItem": "Enable {item} subsidy",
+    "disableItem": "Disable {item} subsidy",
+    "info": {
+      "title": "Subsidy Allocation & Policy Information",
+      "description": "Choose subsidy programs for different sectors and review their monthly costs before changing allocations. Subsidies use the national budget and may affect public approval and population growth.",
+      "satisfaction": "Public Satisfaction Index (Subsidies)"
+    },
+    "confirmation": {
+      "title": "Confirm subsidy policy",
+      "description": "The subsidy allocation changes will be applied. Continue?",
+      "back": "Back",
+      "confirm": "Yes, confirm"
+    }
+  },
+  "infoButton": "Essential goods price control information",
+  "confirm": "Confirm",
+  "loading": "Loading national price data...",
+  "noData": "No price data is available for this country.",
+  "currentValue": "Current value",
+  "populationImpact": "Population impact",
+  "subsidyActive": "Essential goods subsidy: active",
+  "errors": {
+    "loadFailed": "Failed to load price data from the database."
+  },
+  "commodities": {
+    "rice": "Rice",
+    "beef": "Beef",
+    "chicken": "Chicken",
+    "cookingOil": "Cooking Oil",
+    "sugar": "Sugar",
+    "eggs": "Eggs",
+    "electricity": "Electricity",
+    "water": "Water"
+  },
+  "info": {
+    "title": "Essential Goods Price Control Information",
+    "description": "Set national prices for essential goods. Prices affect public satisfaction and population trends.",
+    "satisfaction": "Public Satisfaction Index (Essential Goods Prices)",
+    "populationImpact": "Essential goods price impact on population: {percent}% / month"
+  },
+  "confirmation": {
+    "title": "Confirm price policy",
+    "changesApply": "The essential goods price changes will be applied. Continue?",
+    "noChanges": "No prices have changed. Confirm to return to the forum.",
+    "back": "Back",
+    "yes": "Yes, confirm"
+  }
+}

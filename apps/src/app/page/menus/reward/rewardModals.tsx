@@ -359,7 +359,7 @@ export default function TopRightGiftIcon({
         {mounted && !isMenuButtonHidden && createPortal(
           <button
             onClick={onClick}
-            title="Hadiah - Bonus dan Reward"
+            aria-label="Hadiah - Bonus dan Reward"
             style={{
               top: isMobile ? 'calc(var(--safe-top) + var(--navbar-h) + 0.5rem)' : undefined,
               right: isMobile ? 'calc(var(--safe-right) + 0.5rem)' : undefined,
@@ -403,7 +403,7 @@ export default function TopRightGiftIcon({
       {mounted && !isMenuButtonHidden && createPortal(
         <button
           onClick={onClick}
-          title="Hadiah - Bonus dan Reward"
+          aria-label="Hadiah - Bonus dan Reward"
           className="side-floating-btn side-btn-reward"
         >
           <Image

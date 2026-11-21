@@ -1,0 +1,40 @@
+{
+  "title": "세금",
+  "infoButton": "세금 정책 정보",
+  "confirm": "확인",
+  "taxes": {
+    "policyTitle": "재정 세금 정책",
+    "vat": "부가가치세",
+    "corporate": "법인세",
+    "personalIncome": "개인소득세",
+    "excise": "소비세",
+    "environmental": "환경세"
+  },
+  "bonuses": {
+    "orthodoxPersonal": "정교회 보너스: 개인소득세 수입 +{percent}%",
+    "buddhaEnvironmental": "불교 보너스: 환경세 수입 +{percent}%",
+    "ministry": "재무부 보너스: 전체 세수 +{percent}% (+{amount} NEO)",
+    "democracy": "민주주의 보너스: 전체 세수 +{percent}%",
+    "capitalism": "자본주의 보너스: 전체 세수 +{percent}%",
+    "liberalism": "자유주의 보너스: 전체 세수 +{percent}%",
+    "conservatism": "보수주의 보너스: 전체 세수 +{percent}%",
+    "fiscalHarmony": "글로벌 재정 조화 보너스: 전체 세수 +{percent}%"
+  },
+  "summary": {
+    "totalRevenue": "총 세수",
+    "bonus": "+ 보너스 ({percent}%) =",
+    "populationImpact": "세금의 인구 영향: {percent}% / 월"
+  },
+  "info": {
+    "title": "세금 정책 정보",
+    "description": "세율을 조정해 군사비와 공공 기반 시설을 마련하세요. 세율이 지나치게 높으면 국민 시위가 발생할 수 있습니다.",
+    "satisfaction": "국민 만족도 지수 (세금)"
+  },
+  "confirmation": {
+    "title": "세금 요구 확인",
+    "changesApply": "선택한 세율 변경 사항을 적용합니다. 계속하시겠습니까?",
+    "noChanges": "변경된 세율이 없습니다. 확인하면 포럼으로 돌아갑니다.",
+    "back": "뒤로",
+    "yes": "예, 확인"
+  }
+}

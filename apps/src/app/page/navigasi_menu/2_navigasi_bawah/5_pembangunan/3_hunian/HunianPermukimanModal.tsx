@@ -28,23 +28,12 @@ import {
 } from "@/app/page/bonus_logic";
 import { BuildingCardRoot } from "@/app/page/root_modals_design_menu/card_building_root";
 import { recordFacilityMissionProgress } from "@/app/page/menus/mission/missionModals";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 const DEFAULT_ELECTRICITY_CONSUMPTION: Record<string, number> = {
   rumah_subsidi: 0.0009,
   apartemen: 0.0022,
   mansion: 0.0055,
-};
-
-const HOUSING_INFO_TITLES: Record<string, string> = {
-  rumah_subsidi: "Perumahan Subsidi Rakyat",
-  apartemen: "Apartemen Modern & High-Rise",
-  mansion: "Kompleks Mansion Mewah",
-};
-
-const HOUSING_TAB_LABELS: Record<string, string> = {
-  rumah_subsidi: "Rumah Subsidi",
-  apartemen: "Apartemen",
-  mansion: "Mansion",
 };
 
 // 🟢 IMPOR REQUIREMENTS
@@ -129,6 +118,18 @@ export default function HunianPermukimanModal({
   currentDate,
   initialTab,
 }: ModalProps) {
+  const { t } = useLanguage();
+  const tr = (key: string, params?: Record<string, string | number>) =>
+    t(`navigation_construction_housing.${key}`, params);
+  const translateConfirmation = (key: string, params?: Record<string, string | number>) => {
+    if (key.startsWith("materials.")) {
+      const resourceKey = key.slice("materials.".length);
+      const rewardKey = `side_reward.items.${resourceKey}`;
+      const translated = t(rewardKey);
+      return translated === rewardKey ? key : translated;
+    }
+    return tr(`confirmation.${key}`, params);
+  };
   const [activeTab, setActiveTab] = useState(initialTab || "rumah_subsidi");
   const [selectedItemInfo, setSelectedItemInfo] = useState<{
     title: string;
@@ -207,13 +208,13 @@ export default function HunianPermukimanModal({
     const normalizedKey = normalizeResourceKey(resourceKey);
     const tabId = CARD_TAB_MAP[normalizedKey];
     if (!tabId) {
-      setToast(`Material ${label} tidak memiliki tab produksi yang terdaftar.`);
+      setToast(tr("warning.materialTabMissing", { material: label }));
       setTimeout(() => setToast(null), 2000);
       return;
     }
     setShowConfirm(false);
     setSelectedBuilding(null);
-    setToast(`🔗 ${label} diproduksi di tab ${tabId.toUpperCase()}.`);
+    setToast(tr("warning.materialProducedInTab", { material: label, tab: tabId.toUpperCase() }));
     setTimeout(() => setToast(null), 2500);
     onGotoProduction?.(tabId, normalizedKey);
   };
@@ -258,14 +259,14 @@ export default function HunianPermukimanModal({
       getBulkBuildQuantityTarget(originalCost)
     );
     if (quantity > maxQuantity) {
-      setToast(`Jumlah pembangunan melebihi batas anggaran atau material tersedia (maksimal ${maxQuantity}).`);
+      setToast(tr("warning.budgetOrMaterials", { max: maxQuantity }));
       setTimeout(() => setToast(null), 2500);
       return;
     }
 
     const totalCost = cost * quantity;
     if (anggaran < totalCost) {
-      setToast(`Kas negara tidak mencukupi untuk membangun ${quantity} ${label}!`);
+      setToast(tr("warning.insufficientFunds", { count: quantity, building: label }));
       setTimeout(() => setToast(null), 2500);
       return;
     }
@@ -286,40 +287,21 @@ export default function HunianPermukimanModal({
     
     setShowConfirm(false);
     setSelectedBuilding(null);
-    setToast(`✅ Berhasil! ${quantity} ${label} dibangun.`);
+    setToast(tr("warning.built", { count: quantity, building: label }));
     setTimeout(() => setToast(null), 2500);
   };
 
   const HUNIAN_KEYS = ["rumah_subsidi", "apartemen", "mansion"];
-  const defaultLabels: Record<string, { label: string; detailDesc: string }> = {
-    rumah_subsidi: {
-      label: "Perumahan Subsidi",
-      detailDesc: "Rumah tapak bersubsidi yang disediakan pemerintah bagi masyarakat berpenghasilan rendah untuk mendukung pemerataan papan."
-    },
-    apartemen: {
-      label: "Apartemen",
-      detailDesc: "Kompleks hunian vertikal modern di pusat perkotaan untuk mengoptimalkan ruang lahan terbatas bagi populasi padat."
-    },
-    mansion: {
-      label: "Mansion",
-      detailDesc: "Rumah mewah berukuran sangat besar dengan fasilitas premium lengkap bagi kalangan menengah ke atas."
-    }
-  };
-
   const items = HUNIAN_KEYS.map((k) => {
-    const bMeta = findMeta(k) || {};
     return {
       key: k,
-      label: bMeta.nama_bangunan || bMeta.label || defaultLabels[k]?.label || k.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase()),
-      detailDesc: bMeta.deskripsi || defaultLabels[k]?.detailDesc || "",
+      label: tr(`buildings.${k}`),
+      detailDesc: tr(`descriptions.${k}`),
       value: Number(countryDetail?.[k]) || 0
     };
   });
 
-  const getLabel = (k: string) => {
-    const bMeta = findMeta(k) || {};
-    return bMeta.nama_bangunan || bMeta.label || defaultLabels[k]?.label || k.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase());
-  };
+  const getLabel = (k: string) => tr(`buildings.${k}`);
 
   const activeItem = items.find((it) => it.key === activeTab) || items[0];
 
@@ -420,7 +402,7 @@ export default function HunianPermukimanModal({
                   <Home aria-hidden="true" className="root-modal-util-d252947d10" />
                 </div>
                 <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                  Hunian & Permukiman
+                  {tr("title")}
                 </h2>
               </div>
             </div>
@@ -432,14 +414,14 @@ export default function HunianPermukimanModal({
                   const activeMeta = findMeta(activeItem.key);
                   const baseCapacity = Number(activeMeta?.kapasitas) || DEFAULT_CAPACITIES[activeItem.key] || 0;
                   setSelectedItemInfo({
-                    title: `Informasi ${HOUSING_INFO_TITLES[activeItem.key] || activeItem.label}`,
+                    title: tr("actions.groupInfo", { building: tr(`buildings.${activeItem.key}`) }),
                     baseCapacity,
                     effectiveCapacity: applyTotalHousingCapacityBonus(baseCapacity, countryDetail),
                     bonusPercent: housingBonusPercent,
                   });
                 }}
-                aria-label={`Informasi ${activeItem?.label ?? "hunian aktif"}`}
-                title={`Informasi ${activeItem?.label ?? "hunian aktif"}`}
+                aria-label={tr("actions.groupInfo", { building: activeItem?.label ?? "" })}
+                title={tr("actions.groupInfo", { building: activeItem?.label ?? "" })}
                 className="root-modal-info-button root-modal-util-1697100c43"
               >
                 <Info aria-hidden="true" />
@@ -449,7 +431,7 @@ export default function HunianPermukimanModal({
           </div>
 
           <RootModalSidebarLayout
-            ariaLabel="Kategori hunian dan permukiman"
+            ariaLabel={tr("ariaLabel")}
             className="building-modal-body"
             sidebarClassName="building-modal-tabs"
             contentClassName="building-modal-content flex flex-col justify-between p-4 sm:p-5 lg:p-6"
@@ -457,7 +439,7 @@ export default function HunianPermukimanModal({
               id: it.key,
               isActive: activeTab === it.key,
               onSelect: () => setActiveTab(it.key),
-              label: HOUSING_TAB_LABELS[it.key] ?? it.label,
+              label: tr(`tabs.${it.key}`),
             }))}
           >
               <div>
@@ -471,7 +453,7 @@ export default function HunianPermukimanModal({
 
                         <RootAISuggestionsButton
                           onClick={handleOpenAIModal}
-                          title="Buka rekomendasi AI hunian"
+                          title={tr("actions.aiSuggestions")}
                         />
                       </div>
                       <p className="text-[11px] sm:text-xs text-root-text mt-3 leading-relaxed bg-root-canvas border border-root-accent/20 p-3 sm:p-4 rounded-xl sm:rounded-2xl">{activeItem.detailDesc}</p>
@@ -480,7 +462,7 @@ export default function HunianPermukimanModal({
                     <BuildingCardRoot
                       role="button"
                       tabIndex={0}
-                      aria-label={`Bangun ${activeItem.label}`}
+                      aria-label={tr("actions.build", { building: activeItem.label })}
                       onClick={() => handleBuild(activeItem.key, activeItem.label)}
                       onKeyDown={(event) => {
                         if (event.key === "Enter" || event.key === " ") {
@@ -520,7 +502,7 @@ export default function HunianPermukimanModal({
                               e.stopPropagation();
                               setHoveredBuildingKey(hoveredBuildingKey === activeItem.key ? null : activeItem.key);
                             }}
-                            title="Info bangunan"
+                            title={tr("actions.buildingInfo")}
                           >
                             <Info />
                           </button>
@@ -563,31 +545,31 @@ export default function HunianPermukimanModal({
           <div className="-mt-2 space-y-2">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-3">
-                <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">Total Keseluruhan Unit Hunian</p>
+                <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">{tr("info.totalHousingUnits")}</p>
                 <p className="root-housing-capacity-value text-root-accent">{totalValue.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</p>
               </div>
               <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-3">
-                <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">Populasi</p>
-                <p className="root-housing-capacity-value text-root-text">{formatNumber(population)} Jiwa</p>
+                <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">{tr("info.population")}</p>
+                <p className="root-housing-capacity-value text-root-text">{formatNumber(population)} {tr("actions.people")}</p>
               </div>
               <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-3">
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">Kapasitas Standar AI</p>
+                  <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">{tr("info.standardAICapacity")}</p>
                   {selectedItemInfo.bonusPercent > 0 && (
                     <span className="rounded border border-root-accent/40 bg-root-accent/20 px-1.5 py-0.5 text-[8px] font-black text-root-accent">
-                      +{selectedItemInfo.bonusPercent}% Bonus
+                      {tr("info.bonus", { percent: selectedItemInfo.bonusPercent })}
                     </span>
                   )}
                 </div>
                 <p className="root-housing-capacity-value mt-1 flex flex-wrap items-center gap-1.5 text-root-text">
-                  <span>1 Unit:</span>
+                  <span>{tr("info.oneUnit")}</span>
                   {selectedItemInfo.effectiveCapacity !== selectedItemInfo.baseCapacity && (
                     <span className="font-bold text-rose-400 line-through">
                       {selectedItemInfo.baseCapacity.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                     </span>
                   )}
                   <span className="text-root-accent">
-                    {selectedItemInfo.effectiveCapacity.toLocaleString("id-ID", { maximumFractionDigits: 2 })} Jiwa
+                    {selectedItemInfo.effectiveCapacity.toLocaleString("id-ID", { maximumFractionDigits: 2 })} {tr("actions.people")}
                   </span>
                 </p>
               </div>
@@ -596,37 +578,37 @@ export default function HunianPermukimanModal({
             <section className="rounded-xl border border-root-accent/30 bg-root-canvas p-3 sm:p-4">
               <h3 className={`${rootModalTypography.sectionTitle} !text-root-accent flex items-center gap-2`}>
                 <Home aria-hidden="true" className="h-4 w-4 shrink-0 text-root-accent" />
-                Kapasitas Hunian vs Kebutuhan
+                {tr("info.capacityVsNeed")}
               </h3>
 
               <div className="mt-3 grid grid-cols-2 gap-2 lg:grid-cols-4">
                 <div className="flex flex-col justify-between rounded-lg border border-root-accent/20 bg-root-surface p-2.5">
-                  <p className="text-[8px] font-bold uppercase text-root-subtle">Total Kapasitas</p>
+                  <p className="text-[8px] font-bold uppercase text-root-subtle">{tr("info.totalCapacity")}</p>
                   <p className="root-housing-capacity-value text-emerald-400">
-                    {totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[8px] font-bold text-root-subtle">orang</span>
+                    {totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[8px] font-bold text-root-subtle">{tr("actions.person")}</span>
                   </p>
                 </div>
                 <div className="flex flex-col justify-between rounded-lg border border-root-accent/20 bg-root-surface p-2.5">
-                  <p className="text-[8px] font-bold uppercase text-root-subtle">Kebutuhan (Populasi)</p>
+                  <p className="text-[8px] font-bold uppercase text-root-subtle">{tr("info.populationNeed")}</p>
                   <p className={`root-housing-capacity-value ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
-                    {population.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className={`text-[8px] font-bold ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>orang</span>
+                    {population.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className={`text-[8px] font-bold ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>{tr("actions.person")}</span>
                   </p>
                 </div>
                 <div className={`flex flex-col justify-between rounded-lg border p-2.5 ${isSufficient ? 'border-emerald-500/30 bg-root-surface' : 'border-rose-500/30 bg-root-surface'}`}>
                   <p className="text-[8px] font-bold uppercase text-root-subtle">
-                    {isSufficient ? 'Surplus Hunian' : 'Kekurangan / Tunawisma'}
+                    {isSufficient ? tr("info.housingSurplus") : tr("info.homelessShortage")}
                   </p>
                   <p className={`root-housing-capacity-value ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
                     {isSufficient
                       ? `+${(totalCapacity - population).toLocaleString('id-ID', { maximumFractionDigits: 2 })}`
                       : `-${shortage.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`}
                     <span className={`text-[8px] font-bold block ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
-                      {isSufficient ? ' (surplus)' : ' (tunawisma)'}
+                      {isSufficient ? ` ${tr("info.surplus")}` : ` ${tr("info.homeless")}`}
                     </span>
                   </p>
                 </div>
                 <div className="flex flex-col justify-between rounded-lg border border-root-accent/20 bg-root-surface p-2.5">
-                  <p className="text-[8px] font-bold uppercase text-root-subtle">Keterpenuhan</p>
+                  <p className="text-[8px] font-bold uppercase text-root-subtle">{tr("info.coverage")}</p>
                   <p className={`root-housing-capacity-value ${percentageMet >= 100 ? 'text-emerald-400' : 'text-amber-400'}`}>
                     {percentageMet.toFixed(1)}%
                   </p>
@@ -644,17 +626,17 @@ export default function HunianPermukimanModal({
                         {item.label}
                       </p>
                       <span className="root-housing-breakdown-badge shrink-0 rounded-md bg-root-accent px-2 py-0.5 font-black uppercase text-root-canvas">
-                        Kategori Aktif
+                        {tr("info.activeCategory")}
                       </span>
                     </div>
 
                     <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                       <div className="flex flex-col justify-between rounded-lg border border-root-accent/20 bg-root-surface p-2.5">
-                        <span className="root-housing-breakdown-label font-bold uppercase text-root-subtle">Jumlah Unit Terdaftar</span>
-                        <span className="root-housing-breakdown-value mt-1 font-black text-root-text">{item.count.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span>
+                        <span className="root-housing-breakdown-label font-bold uppercase text-root-subtle">{tr("info.registeredUnits")}</span>
+                        <span className="root-housing-breakdown-value mt-1 font-black text-root-text">{item.count.toLocaleString('id-ID', { maximumFractionDigits: 2 })} {tr("actions.unit")}</span>
                       </div>
                       <div className="flex flex-col justify-between rounded-lg border border-root-accent/20 bg-root-surface p-2.5">
-                        <span className="root-housing-breakdown-label font-bold uppercase text-root-subtle">Kapasitas / Unit</span>
+                        <span className="root-housing-breakdown-label font-bold uppercase text-root-subtle">{tr("info.unitCapacity")}</span>
                         <div className="mt-1 flex items-center gap-1.5">
                           {housingBonusPercent > 0 && item.capacityPerUnit !== item.baseCapacityPerUnit && (
                             <span className="root-housing-breakdown-previous-value font-bold text-rose-400 line-through opacity-80">
@@ -662,13 +644,13 @@ export default function HunianPermukimanModal({
                             </span>
                           )}
                           <span className="root-housing-breakdown-value font-black text-root-text">
-                            {item.capacityPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa/unit
+                            {item.capacityPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })} {tr("actions.people")}/{tr("actions.unit")}
                           </span>
                         </div>
                       </div>
                       <div className="flex flex-col justify-between rounded-lg border border-root-accent/20 bg-root-surface p-2.5">
-                        <span className="root-housing-breakdown-label font-bold uppercase text-root-subtle">Total Kapasitas Kategori</span>
-                        <span className="root-housing-breakdown-value mt-1 font-black text-root-accent">{item.totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa</span>
+                        <span className="root-housing-breakdown-label font-bold uppercase text-root-subtle">{tr("info.totalCategoryCapacity")}</span>
+                        <span className="root-housing-breakdown-value mt-1 font-black text-root-accent">{item.totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} {tr("actions.people")}</span>
                       </div>
                     </div>
 
@@ -679,7 +661,7 @@ export default function HunianPermukimanModal({
                       />
                     </div>
                     <p className="root-housing-breakdown-note mt-1.5 font-semibold text-root-subtle">
-                      Mengakomodasi {item.percentage.toFixed(1)}% dari total populasi negara.
+                      {tr("info.accommodates", { percent: item.percentage.toFixed(1) })}
                     </p>
                   </div>
                 ))}
@@ -687,14 +669,17 @@ export default function HunianPermukimanModal({
 
               {!isSufficient && (
                 <div className="mt-3 rounded-xl border border-rose-500/30 bg-root-surface p-3 text-xs font-bold text-rose-400">
-                  ⚠️ Masih terdapat {shortage.toLocaleString('id-ID', { maximumFractionDigits: 2 })} tunawisma (kekurangan tempat hunian). {Math.round(100 - percentageMet)}% populasi belum terakomodasi.
+                  {tr("actions.shortage", {
+                    count: shortage.toLocaleString('id-ID', { maximumFractionDigits: 2 }),
+                    percent: Math.round(100 - percentageMet),
+                  })}
                 </div>
               )}
             </section>
             <div className="root-satisfaction-index rounded-xl border border-root-accent/30 bg-root-canvas p-4 shadow-md">
               <div className="flex items-center justify-between gap-3">
                 <span className="root-satisfaction-index-title font-black uppercase tracking-wider text-root-subtle">
-                  Indeks Kepuasan Rakyat (Perumahan)
+                  {tr("info.satisfactionHousing")}
                 </span>
                 <span className="root-satisfaction-index-value shrink-0 font-black text-root-accent">
                   {housingSatisfaction} / 100
@@ -755,6 +740,7 @@ export default function HunianPermukimanModal({
             loadingMetadata={false}
             initialQuantity={initialBuildQty}
             quantityTarget={getBulkBuildQuantityTarget(originalCost)}
+            translate={translateConfirmation}
           />
         );
       })()}
@@ -766,7 +752,7 @@ export default function HunianPermukimanModal({
             <div className="px-6 py-5 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10">
               <div className="flex items-center gap-2 text-rose-400">
                 <AlertCircle className="h-5 w-5" />
-                <h3 className="text-base font-black uppercase tracking-wider">⚠️ Stok Material Kosong</h3>
+                <h3 className="text-base font-black uppercase tracking-wider">⚠️ {tr("warning.emptyMaterials")}</h3>
               </div>
               <SharedModalCloseButton onClick={() => setShowMaterialWarningModal(false)} className="text-root-subtle hover:text-root-accent" appearance="custom">
                 <X className="h-5 w-5" />
@@ -774,7 +760,7 @@ export default function HunianPermukimanModal({
             </div>
             <div className="p-6 relative z-10 flex-1 space-y-4">
               <p className="text-sm text-root-text">
-                Pembangunan <strong className="font-black text-root-accent">{selectedBuilding?.label}</strong> tidak dapat dilanjutkan karena material berikut ini stoknya kosong (0):
+                {tr("warning.cannotContinue", { building: selectedBuilding?.label || "" })}
               </p>
               <div className="bg-root-canvas border border-rose-500/30 rounded-xl p-4 flex flex-col gap-2 text-xs font-bold text-root-text">
                 {insufficientMaterials.map((mat, idx) => (
@@ -785,11 +771,11 @@ export default function HunianPermukimanModal({
                 ))}
               </div>
               <p className="text-[10px] text-root-subtle italic">
-                Klik nama material pada daftar di atas untuk melihat informasi produksinya.
+                {tr("warning.clickMaterial")}
               </p>
             </div>
             <div className="p-4 bg-root-canvas border-t border-root-accent/20 flex justify-end relative z-10">
-              <SharedModalCloseButton onClick={() => setShowMaterialWarningModal(false)} className="py-2.5 px-6 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-md" appearance="custom">Tutup & Lengkapi Stok</SharedModalCloseButton>
+              <SharedModalCloseButton onClick={() => setShowMaterialWarningModal(false)} className="py-2.5 px-6 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-md" appearance="custom">{tr("warning.closeAndRestock")}</SharedModalCloseButton>
             </div>
           </div>
         </div>

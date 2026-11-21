@@ -32,6 +32,7 @@ import {
   getFoodIngredientsRequirements,
 } from "../../../3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
 import { SHINTO_ELECTRICITY_PRODUCTION_BONUS } from "../../../../../bonus_logic/agama_bonus_logic/shinto";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 const ELECTRICITY_FUEL_RESOURCE_KEYS = [
   "gas_alam",
@@ -134,6 +135,14 @@ export default function InfoBangunan({
   onClose,
   onNavigateToTab,
 }: InfoBangunanProps) {
+  const { t } = useLanguage();
+  const tr = (key: string, params?: Record<string, string | number>) =>
+    t(`navigation_construction_production.info.${key}`, params);
+  const localizedItem = (key: string, fallback: string) => {
+    const rewardKey = `side_reward.items.${key}`;
+    const translated = t(rewardKey);
+    return translated === rewardKey ? fallback : translated;
+  };
   const fuelRequirements = isElectricityTab ? getKelistrikanFuelRequirements(buildingKey) : [];
   const hasFuelConsumption = fuelRequirements.length > 0;
   const industrialMaterialRequirements = getIndustrialMaterialRequirements(buildingKey);
@@ -213,7 +222,7 @@ export default function InfoBangunan({
     <NotebookModalWrapper onClose={onClose}>
       <div className="root-modal-util-b74379da23">
         <RootInfoModalHeader
-          title={`Info Bangunan - ${label}`}
+          title={tr("title", { building: label })}
           icon={<Utensils aria-hidden="true" />}
           onClose={onClose}
           size="standard"
@@ -223,7 +232,7 @@ export default function InfoBangunan({
           <div className={`root-info-modal-summary flex flex-col gap-1 border border-root-accent/20 bg-root-canvas p-3 sm:p-4 ${rootBorderRadius.card}`}>
             {productionMultiplier < 1 && (
               <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[10px] font-bold text-amber-300">
-                Produksi dikurangi {Math.round((1 - productionMultiplier) * 100)}% oleh resolusi PBB yang aktif.
+                {tr("productionReduction", { percent: Math.round((1 - productionMultiplier) * 100) })}
               </div>
             )}
             {(() => {
@@ -255,14 +264,14 @@ export default function InfoBangunan({
 
               return (
                 <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-[10px] font-bold text-emerald-300">
-                  Produksi lini terkait ditingkatkan {bonusParts.join(" dan ")}.
+                  {tr("productionBonus", { bonuses: bonusParts.join(", ") })}
                 </div>
               );
             })()}
             {isElectricityTab ? (
               <>
                 <div className="flex justify-between items-center">
-                  <span className="text-root-muted">Produksi Listrik (Total):</span>
+                  <span className="text-root-muted">{tr("productionElectricityTotal")}</span>
                   <span className="flex items-center gap-2 text-xs font-black">
                     {hasShintoElectricityBonus && (
                       <span className="text-rose-400 line-through">
@@ -272,11 +281,11 @@ export default function InfoBangunan({
                     <span className={isProductionZero ? "text-rose-400" : "text-emerald-400"}>
                       {rawProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                     </span>
-                    {isProductionZero && ' (bahan bakar defisit)'}
+                    {isProductionZero && ` ${tr("deficitFuel")}`}
                   </span>
                 </div>
                 <div className="flex justify-between items-center pl-4 text-root-muted">
-                  <span>Per Unit:</span>
+                  <span>{tr("perUnit")}</span>
                   <span className="text-root-text">{(bMeta?.produksi || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</span>
                 </div>
 
@@ -287,21 +296,21 @@ export default function InfoBangunan({
                   const isRawDeficit = isFoodCommodity && isFoodRawMaterialDeficit(activeFoodKey, countryDetail, metadata);
                   return (
                     <div className="flex justify-between items-center">
-                      <span className="text-root-muted">Total Produksi ({label}) Per Hari:</span>
+                      <span className="text-root-muted">{tr("productionTotalPerDay", { building: label })}</span>
                       <span className={`text-xs font-black ${isRawDeficit ? 'text-rose-400' : 'text-emerald-400'}`}>
                         {totalFoodProduction.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
-                        {isRawDeficit && ' (bahan baku defisit)'}
+                        {isRawDeficit && ` ${tr("deficitRawMaterial")}`}
                       </span>
                     </div>
                   );
                 })()}
                 <div className="flex justify-between items-center pl-4 text-root-muted">
-                  <span>Total Produksi Per Unit:</span>
+                  <span>{tr("productionPerUnit")}</span>
                   <span className="text-root-text">{((bMeta?.produksi || 0) * totalProductionMultiplier).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
                 </div>
                 {isFoodCommodity && (
                   <div className="flex justify-between items-center">
-                    <span className="text-root-muted">Total Konsumsi ({label}) Per Hari:</span>
+                    <span className="text-root-muted">{tr("consumptionTotalPerDay", { building: label })}</span>
                     <span className="text-xs font-black text-rose-400">
                       {totalFoodConsumption.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
                     </span>
@@ -313,17 +322,17 @@ export default function InfoBangunan({
             )}
 
             <div className="flex justify-between items-center border-t border-root-accent/10 pt-1 mt-1">
-              <span className="text-root-muted">Biaya Pembangunan:</span>
+              <span className="text-root-muted">{tr("cost")}</span>
               <span className="text-root-accent font-black">{(Number(bMeta?.biaya_pembangunan) || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
             </div>
             {bMeta?.waktu_pembangunan !== undefined && (
               <div className="flex justify-between items-center">
-                <span className="text-root-muted">Waktu Pembangunan:</span>
+                <span className="text-root-muted">{tr("buildTime")}</span>
                 <span className="text-root-text font-bold">{bMeta.waktu_pembangunan} hari</span>
               </div>
             )}
             <div className="flex justify-between items-center">
-              <span className="text-root-muted">Jumlah Bangunan Saat Ini:</span>
+              <span className="text-root-muted">{tr("buildingCount")}</span>
               <span className="text-root-accent font-black">{perCount} unit</span>
             </div>
           </div>
@@ -363,7 +372,7 @@ export default function InfoBangunan({
                 <div className="rounded-xl bg-root-canvas border border-amber-500/30 p-4 space-y-2 mt-3">
                   <div className="flex items-center justify-between border-b border-amber-500/20 pb-2 mb-1">
                     <div className="font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5 text-xs">
-                      🍽️ TOTAL KONSUMSI ({displayFoodLabel.toUpperCase()})
+                      🍽️ {tr("totalConsumption", { item: displayFoodLabel.toUpperCase() })}
                     </div>
                     {onNavigateToTab && (
                       <button
@@ -374,20 +383,20 @@ export default function InfoBangunan({
                         }}
                         className="px-3 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wider bg-root-modal-warning-bg text-root-modal-warning border border-root-modal-warning/40 hover:bg-root-modal-warning-bg hover:border-root-modal-warning transition-all cursor-pointer shadow-sm"
                       >
-                        Buka Sektor {card1TabId.toUpperCase()} &rarr;
+                        {tr("sector", { sector: card1TabId.toUpperCase() })}
                       </button>
                     )}
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-root-text font-bold">Total Produksi ({displayFoodLabel}):</span>
+                    <span className="text-root-text font-bold">{tr("productionForItem", { item: displayFoodLabel })}</span>
                     {formatColoredNumber(totalFoodProduction, true)}
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-root-text font-bold">Total Konsumsi ({displayFoodLabel}):</span>
+                    <span className="text-root-text font-bold">{tr("consumptionForItem", { item: displayFoodLabel })}</span>
                     {formatColoredNumber(totalFoodConsumption, false)}
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t border-amber-500/20 mt-1 text-xs">
-                    <span className="text-amber-400 font-black uppercase">SALDO / NETTO (PROD - KONSUMSI):</span>
+                    <span className="text-amber-400 font-black uppercase">{tr("totalBalance")}</span>
                     {formatColoredNumber(foodNettoRaw, foodNettoRaw >= 0)}
                   </div>
                 </div>
@@ -401,7 +410,9 @@ export default function InfoBangunan({
                       <div className="rounded-xl bg-root-canvas border border-rose-500/30 p-4 space-y-3 mt-3">
                         <div className="flex items-center justify-between border-b border-rose-500/20 pb-2 mb-1">
                           <div className="font-black uppercase tracking-wider text-rose-400 flex items-center gap-1.5 text-xs">
-                            ⚡ TOTAL KONSUMSI {ingredients.length === 1 ? ingredients[0].label.toUpperCase() : 'BAHAN BAKU'}
+                            ⚡ {ingredients.length === 1
+                              ? tr("totalConsumption", { item: localizedItem(ingredients[0].key, ingredients[0].label).toUpperCase() })
+                              : tr("rawMaterialConsumption")}
                           </div>
                           {onNavigateToTab && (
                             <button
@@ -412,7 +423,7 @@ export default function InfoBangunan({
                               }}
                               className="px-3 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wider bg-root-modal-negative-bg text-root-modal-negative border border-root-modal-negative/40 hover:bg-root-modal-negative-bg hover:border-root-modal-negative transition-all cursor-pointer shadow-sm"
                             >
-                              Buka Sektor {card2TabId.toUpperCase()} &rarr;
+                              {tr("sector", { sector: card2TabId.toUpperCase() })}
                             </button>
                           )}
                         </div>
@@ -428,25 +439,25 @@ export default function InfoBangunan({
                             <div key={idx} className={`flex flex-col gap-1 ${idx > 0 ? 'pt-2 border-t border-rose-500/20' : ''}`}>
                               {ingredients.length > 1 && (
                                 <div className="font-bold text-rose-300 text-[11px] uppercase tracking-tight">
-                                  {ing.label}
+                                  {localizedItem(ing.key, ing.label)}
                                 </div>
                               )}
                               <div className="flex justify-between items-center text-xs">
-                                <span className="text-root-text font-bold">Total Produksi ({ing.label}):</span>
+                                <span className="text-root-text font-bold">{tr("productionForItem", { item: localizedItem(ing.key, ing.label) })}</span>
                                 {formatColoredNumber(ingGrossProd, true)}
                               </div>
                               <div className="flex justify-between items-center text-xs">
-                                <span className="text-root-text font-bold">Konsumsi ({displayFoodLabel} - {perCount} unit):</span>
+                                <span className="text-root-text font-bold">{tr("consumptionForBuilding", { item: displayFoodLabel, count: perCount })}</span>
                                 {formatColoredNumber(-ingCons, false)}
                               </div>
                               {ingPopCons > 0 && (
                                 <div className="flex justify-between items-center text-xs pl-2 text-root-muted">
-                                  <span className="font-semibold">Konsumsi (Masyarakat / Internal):</span>
+                                  <span className="font-semibold">{tr("publicInternalConsumption")}</span>
                                   {formatColoredNumber(-ingPopCons, false)}
                                 </div>
                               )}
                               <div className="flex justify-between items-center pt-2 border-t border-rose-500/20 mt-1 text-xs">
-                                <span className="text-rose-400 font-black uppercase">SALDO (PROD - KONSUMSI):</span>
+                                <span className="text-rose-400 font-black uppercase">{tr("netBalance")}</span>
                                 {formatColoredNumber(ingSaldo, ingSaldo >= 0)}
                               </div>
                             </div>
@@ -492,7 +503,7 @@ export default function InfoBangunan({
                     <div className="rounded-xl bg-root-canvas border border-rose-500/30 p-4 space-y-3 mt-3">
                       <div className="flex items-center justify-between border-b border-rose-500/20 pb-2 mb-1">
                         <div className="font-black uppercase tracking-wider text-rose-400 flex items-center gap-1.5 text-xs">
-                          ⚡ TOTAL KONSUMSI BAHAN BAKU PABRIK
+                          ⚡ {tr("rawMaterialConsumption")}
                         </div>
                         {onNavigateToTab && (
                           <button
@@ -503,28 +514,28 @@ export default function InfoBangunan({
                             }}
                             className="px-3 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wider bg-root-modal-negative-bg text-root-modal-negative border border-root-modal-negative/40 hover:bg-root-modal-negative-bg hover:border-root-modal-negative transition-all cursor-pointer shadow-sm"
                           >
-                            Buka Sektor {card2ConsumerTabId.toUpperCase()} &rarr;
+                            {tr("sector", { sector: card2ConsumerTabId.toUpperCase() })}
                           </button>
                         )}
                       </div>
                       <div className="flex justify-between items-center text-xs">
-                        <span className="text-root-text font-bold">Total Produksi ({fuelName}):</span>
+                        <span className="text-root-text font-bold">{tr("productionForItem", { item: fuelName })}</span>
                         {formatColoredNumber(totalFoodProduction, true)}
                       </div>
                       {factoryCons > 0 && (
                         <div className="flex justify-between items-center text-xs">
-                          <span className="text-root-text font-bold">Konsumsi ({consumerLabelStr}):</span>
+                          <span className="text-root-text font-bold">{tr("consumptionForItem", { item: consumerLabelStr })}</span>
                           {formatColoredNumber(-factoryCons, false)}
                         </div>
                       )}
                       {popCons > 0 && (
                         <div className="flex justify-between items-center text-xs">
-                          <span className="text-root-text font-bold">Konsumsi (Masyarakat / Internal):</span>
+                          <span className="text-root-text font-bold">{tr("publicInternalConsumption")}</span>
                           {formatColoredNumber(-popCons, false)}
                         </div>
                       )}
                       <div className="flex justify-between items-center pt-2 border-t border-rose-500/20 mt-1 text-xs">
-                        <span className="text-rose-400 font-black uppercase">SALDO (PROD - KONSUMSI):</span>
+                        <span className="text-rose-400 font-black uppercase">{tr("netBalance")}</span>
                         {formatColoredNumber(saldoVal, saldoVal >= 0)}
                       </div>
                     </div>
@@ -539,7 +550,7 @@ export default function InfoBangunan({
               return (
                 <div className="rounded-xl bg-root-canvas border border-rose-500/30 p-4 space-y-3 mt-3">
                   <div className="font-black uppercase tracking-wider text-rose-400 border-b border-rose-500/20 pb-2 mb-2 flex items-center gap-1.5 text-xs">
-                    ⚡ Total Konsumsi Bahan Bakar
+                    ⚡ {tr("fuelConsumption")}
                   </div>
                   {fuelRequirements.map((req, idx) => {
                     const fCount = Number(countryDetail?.[req.resourceKey]) || 0;
@@ -552,18 +563,18 @@ export default function InfoBangunan({
                     return (
                       <div key={idx} className={`flex flex-col gap-1 ${idx > 0 ? 'pt-2 border-t border-rose-500/20' : ''}`}>
                         <div className="font-bold text-rose-300 text-[11px] uppercase tracking-tight">
-                          {req.label}
+                          {localizedItem(req.resourceKey, req.label)}
                         </div>
                         <div className="flex justify-between items-center text-xs">
-                          <span className="text-root-text">Produksi:</span>
+                          <span className="text-root-text">{tr("production")}</span>
                           <span className="font-black text-emerald-400">+{totalFuelProd.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between items-center text-xs">
-                          <span className="text-root-text">Konsumsi:</span>
+                          <span className="text-root-text">{tr("consumption")}</span>
                           <span className="font-black text-rose-400">-{totalFuelCons.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between items-center text-xs pt-1 border-t border-rose-500/20 mt-0.5">
-                          <span className="text-rose-400 font-black uppercase">Saldo:</span>
+                          <span className="text-rose-400 font-black uppercase">{tr("balance")}</span>
                           <span className={`font-black ${saldo < 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
                             {saldo >= 0 ? `+${saldo.toLocaleString('id-ID', { maximumFractionDigits: 2 })}` : saldo.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                           </span>
@@ -578,7 +589,7 @@ export default function InfoBangunan({
           {hasIndustrialMaterialConsumption && (
             <div className="rounded-xl bg-root-canvas border border-rose-500/30 p-4 space-y-3 mt-3">
               <div className="font-black uppercase tracking-wider text-rose-400 border-b border-rose-500/20 pb-2 mb-2 flex items-center gap-1.5 text-xs">
-                ⚙️ Total Konsumsi Bahan Baku
+                ⚙️ {tr("rawMaterialConsumption")}
               </div>
               {industrialMaterialRequirements.map((requirement) => {
                 const resourceCount = Math.max(0, Number(countryDetail?.[requirement.resourceKey]) || 0);
@@ -596,18 +607,18 @@ export default function InfoBangunan({
                 return (
                   <div key={requirement.resourceKey} className="flex flex-col gap-1">
                     <div className="font-bold text-rose-300 text-[11px] uppercase tracking-tight">
-                      {requirement.label}
+                      {localizedItem(requirement.resourceKey, requirement.label)}
                     </div>
                     <div className="flex justify-between items-center text-xs">
-                      <span className="text-root-text">Produksi tambang / hari:</span>
+                      <span className="text-root-text">{tr("miningProductionPerDay")}</span>
                       <span className="font-black text-emerald-400">+{production.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                     </div>
                     <div className="flex justify-between items-center text-xs">
-                      <span className="text-root-text">Konsumsi pabrik / hari:</span>
+                      <span className="text-root-text">{tr("factoryConsumptionPerDay")}</span>
                       <span className="font-black text-rose-400">-{consumption.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                     </div>
                     <div className="flex justify-between items-center text-xs pt-1 border-t border-rose-500/20 mt-0.5">
-                      <span className="text-rose-400 font-black uppercase">Saldo:</span>
+                      <span className="text-rose-400 font-black uppercase">{tr("balance")}</span>
                       <span className={`font-black ${balance < 0 ? "text-rose-400" : "text-emerald-400"}`}>
                         {balance >= 0 ? `+${balance.toLocaleString("id-ID", { maximumFractionDigits: 2 })}` : balance.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                       </span>
@@ -630,18 +641,18 @@ export default function InfoBangunan({
               return (
                 <div className="rounded-xl bg-root-canvas border border-rose-500/30 p-4 space-y-2 mt-3">
                   <div className="font-black uppercase tracking-wider text-rose-400 border-b border-rose-500/20 pb-2 mb-1 flex items-center gap-1.5 text-xs">
-                    ⚡ Total Konsumsi {hasIndustrialResourceConsumption ? "Bahan Baku" : "Bahan Bakar"}
+                    ⚡ {hasIndustrialResourceConsumption ? tr("rawMaterialConsumption") : tr("fuelConsumption")}
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-root-text font-bold">Total Produksi ({fuelName}) / hari:</span>
+                    <span className="text-root-text font-bold">{tr("productionTotalPerDay", { building: fuelName })}</span>
                     <span className="font-black text-emerald-400">+{prodVal.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-root-text font-bold">Konsumsi ({fuelName}) / hari:</span>
+                    <span className="text-root-text font-bold">{tr("consumptionTotalPerDay", { building: fuelName })}</span>
                     <span className="font-black text-rose-400">-{consVal.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t border-rose-500/20 mt-1 text-xs">
-                    <span className="text-rose-400 font-black uppercase">Saldo (Prod - Konsumsi):</span>
+                    <span className="text-rose-400 font-black uppercase">{tr("netBalance")}</span>
                     <span className={`font-black ${saldoVal < 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
                       {saldoVal >= 0 ? `+${saldoVal.toLocaleString('id-ID', { maximumFractionDigits: 2 })}` : saldoVal.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                     </span>

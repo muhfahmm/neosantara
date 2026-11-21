@@ -1,0 +1,181 @@
+{
+  "title": "Kebijakan & Sistem Ekonomi",
+  "infoButton": "Informasi kebijakan dan sistem ekonomi",
+  "ariaLabel": "Bagian kebijakan dan sistem ekonomi",
+  "monthUnit": "bulan",
+  "yearUnit": "tahun",
+  "tabs": {
+    "spectrum": "Spektrum Sistem",
+    "policies": "Kartu Kebijakan",
+    "ownership": "Kepemilikan Produksi"
+  },
+  "satisfaction": "Indeks Kepuasan Rakyat (Kebijakan Ekonomi)",
+  "info": {
+    "title": "Informasi Kebijakan & Sistem Ekonomi",
+    "description": "Atur spektrum sistem ekonomi, pilih kebijakan sektoral, dan sesuaikan kepemilikan atau tingkat nasionalisasi sektor produksi. Perubahan kebijakan membentuk arah ekonomi serta porsi keuntungan negara."
+  },
+  "spectrum": {
+    "populationImpact": "Dampak populasi",
+    "policyScore": "Skor Kebijakan: {score}/100",
+    "category": "Kategori: {category}",
+    "centralizedScale": "0% TERPUSAT (KOMANDO)",
+    "freeMarketScale": "100% PASAR BEBAS",
+    "netPopulationImpact": "Dampak Netto Populasi",
+    "gdpGrowthBonus": "Bonus Pertumbuhan PDB",
+    "categories": {
+      "centralized": "Terpusat",
+      "mixed": "Campuran",
+      "freeMarket": "Pasar Bebas"
+    },
+    "presets": {
+      "command": "Komando Mutlak",
+      "socialism": "Sosialisme",
+      "mixed": "Campuran",
+      "regulatedMarket": "Pasar Terregulasi",
+      "laissezFaire": "Laissez-Faire"
+    },
+    "systems": {
+      "command": {
+        "title": "Ekonomi Komando (Command Economy)",
+        "description": "Pemerintah memegang kendali mutlak atas penetapan harga, kuota produksi, dan alokasi sumber daya. BUMN mendominasi seluruh sektor ekonomi."
+      },
+      "marketSocialism": {
+        "title": "Sosialisme Pasar (Market Socialism)",
+        "description": "Sektor vital dikuasai oleh negara dengan regulasi ketat, sementara usaha kecil dan menengah diizinkan beroperasi dengan aturan imbal hasil yang dibatasi."
+      },
+      "mixed": {
+        "title": "Ekonomi Campuran (Mixed Economy)",
+        "description": "Keseimbangan ideal antara peran regulasi pemerintah dan kebebasan mekanisme pasar swasta. Negara mengelola layanan publik mendasar."
+      },
+      "regulatedMarket": {
+        "title": "Pasar Bebas Teregulasi (Regulated Market)",
+        "description": "Pasar swasta menjadi penggerak utama pertumbuhan ekonomi. Pemerintah berfokus pada pengawasan persaingan usaha dan stabilitas makro."
+      },
+      "laissezFaire": {
+        "title": "Laissez-Faire / Kapitalisme Bebas",
+        "description": "Deregulasi penuh dan kebebasan pasar tanpa batas. Persaingan bisnis berjalan sesuai hukum penawaran dan permintaan."
+      }
+    }
+  },
+  "policies": {
+    "price_control": {
+      "name": "Pengendalian Harga Pokok",
+      "optionA": {
+        "label": "HET / Batas Harga Negara",
+        "effect": "Stabilitas harga terjaga, tetapi risiko kelangkaan stok barang meningkat."
+      },
+      "optionB": {
+        "label": "Mekanisme Pasar Murni",
+        "effect": "Stok barang melimpah, tetapi rawan lonjakan inflasi mendadak."
+      }
+    },
+    "strategic_ownership": {
+      "name": "Kepemilikan Industri Strategis",
+      "optionA": {
+        "label": "Monopoli BUMN / Nasionalisasi",
+        "effect": "Penerimaan kas negara meningkat, tetapi efisiensi operasional lebih rendah."
+      },
+      "optionB": {
+        "label": "Privatisasi & Investor Swasta",
+        "effect": "Inovasi dan efisiensi meningkat pesat, tetapi royalti negara lebih kecil."
+      }
+    },
+    "trade_policy": {
+      "name": "Regulasi Perdagangan Luar Negeri",
+      "optionA": {
+        "label": "Proteksionisme Ketat",
+        "effect": "Industri dalam negeri terlindungi, tetapi pilihan konsumen terbatas."
+      },
+      "optionB": {
+        "label": "Perdagangan Bebas (Free Trade)",
+        "effect": "Ekspor-impor meningkat pesat, tetapi persaingan industri lokal lebih berat."
+      }
+    },
+    "labor_regulation": {
+      "name": "Kebijakan Tenaga Kerja & Upah Minimum",
+      "optionA": {
+        "label": "Upah Minimum Tinggi & Proteksi Ketat",
+        "effect": "Kesejahteraan buruh meningkat, tetapi daya tarik investasi asing turun."
+      },
+      "optionB": {
+        "label": "Fleksibilitas Kerja & Kontrak Bebas",
+        "effect": "Penyerapan tenaga kerja tinggi, tetapi potensi ketimpangan sosial naik."
+      }
+    },
+    "land_property_rights": {
+      "name": "Hak Kepemilikan Tanah & Properti",
+      "optionA": {
+        "label": "Kepemilikan Negara & Hak Pakai Komunal",
+        "effect": "Tanah dan perumahan dikuasai negara; masyarakat memperoleh hak pakai komunal."
+      },
+      "optionB": {
+        "label": "Hak Milik Privat Absolut",
+        "effect": "Jual-beli tanah dan properti berlangsung bebas."
+      }
+    },
+    "labor_unions_rights": {
+      "name": "Hak Berserikat vs Hak Manajemen",
+      "optionA": {
+        "label": "Serikat Negara & Dewan Pekerja",
+        "effect": "Serikat menjadi organ negara; pengelolaan pabrik melibatkan dewan pekerja kolektif."
+      },
+      "optionB": {
+        "label": "Kebebasan Pasar Tenaga Kerja",
+        "effect": "Manajemen swasta memimpin; mogok kerja dapat dibatasi demi kelancaran rantai pasok."
+      }
+    },
+    "monetary_banking": {
+      "name": "Kebijakan Moneter & Perbankan",
+      "optionA": {
+        "label": "Bank Sentral Tunggal & Kontrol Devisa",
+        "effect": "Bank dikuasai negara; devisa dikontrol dan pelarian modal ke luar negeri dibatasi."
+      },
+      "optionB": {
+        "label": "Perbankan Swasta & Arus Modal Bebas",
+        "effect": "Perbankan kompetitif; arus modal masuk dan keluar tanpa hambatan."
+      }
+    }
+  },
+  "ownership": {
+    "level": "Level",
+    "stateShare": "Bagian negara: {percent}%",
+    "calculatingElectricity": "Menghitung estimasi surplus listrik...",
+    "electricityEstimate": "Estimasi bagian negara dari surplus: {surplus} MW × {price} NEO × {percent}% = {amount} NEO. Estimasi ini belum dimasukkan ke Anggaran Nasional karena listrik belum memiliki transaksi jual-beli.",
+    "errors": {
+      "noMetadata": "Metadata pembangkit listrik tidak tersedia; estimasi surplus belum dapat dihitung.",
+      "loadFailed": "Gagal memuat metadata pembangkit listrik."
+    },
+    "sectors": {
+      "electricity": "Kelistrikan",
+      "mineralsEnergy": "Mineral & Energi",
+      "manufacturing": "Manufaktur",
+      "livestock": "Peternakan",
+      "agriculture": "Agrikultur",
+      "fisheries": "Perikanan",
+      "foodProcessing": "Olahan Pangan"
+    },
+    "levels": {
+      "marketFree": {
+        "name": "Pasar Bebas",
+        "description": "Sektor dikelola swasta; negara menerima pajak dan royalti dasar."
+      },
+      "strictRegulation": {
+        "name": "Regulasi Ketat",
+        "description": "Negara mengatur harga dan kuota, sementara swasta masih dominan."
+      },
+      "mixed": {
+        "name": "Ekonomi Campuran",
+        "description": "Negara memiliki saham mayoritas dan mengawasi operator swasta."
+      },
+      "stateDominance": {
+        "name": "Dominasi Negara",
+        "description": "Negara menguasai hampir seluruh aset produktif."
+      },
+      "fullNationalization": {
+        "name": "Nasionalisasi Penuh",
+        "description": "Seluruh aset produktif dikelola negara."
+      }
+    }
+  }
+}
+

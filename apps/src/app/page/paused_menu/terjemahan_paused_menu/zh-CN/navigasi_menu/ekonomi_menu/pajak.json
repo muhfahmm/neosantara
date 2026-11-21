@@ -1,0 +1,40 @@
+{
+  "title": "税收",
+  "infoButton": "税收政策信息",
+  "confirm": "确认",
+  "taxes": {
+    "policyTitle": "财政税收政策",
+    "vat": "增值税",
+    "corporate": "企业所得税",
+    "personalIncome": "个人所得税",
+    "excise": "消费税",
+    "environmental": "环境税"
+  },
+  "bonuses": {
+    "orthodoxPersonal": "东正教加成：个人所得税收入 +{percent}%",
+    "buddhaEnvironmental": "佛教加成：环境税收入 +{percent}%",
+    "ministry": "财政部加成：全部税收收入 +{percent}%（+{amount} NEO）",
+    "democracy": "民主制度加成：全部税收收入 +{percent}%",
+    "capitalism": "资本主义加成：全部税收收入 +{percent}%",
+    "liberalism": "自由主义加成：全部税收收入 +{percent}%",
+    "conservatism": "保守主义加成：全部税收收入 +{percent}%",
+    "fiscalHarmony": "全球财政协调加成：全部税收收入 +{percent}%"
+  },
+  "summary": {
+    "totalRevenue": "税收总收入",
+    "bonus": "+ 加成（{percent}%）=",
+    "populationImpact": "税收对人口的影响：{percent}% / 月"
+  },
+  "info": {
+    "title": "税收政策信息",
+    "description": "调整国家税率以资助军事开支和公共基础设施。注意：高税率可能引发民众抗议。",
+    "satisfaction": "民众满意度指数（税收）"
+  },
+  "confirmation": {
+    "title": "确认税收调整",
+    "changesApply": "将按所选方案应用税率变更。是否继续？",
+    "noChanges": "税率没有变化。确认后返回论坛。",
+    "back": "返回",
+    "yes": "确认"
+  }
+}

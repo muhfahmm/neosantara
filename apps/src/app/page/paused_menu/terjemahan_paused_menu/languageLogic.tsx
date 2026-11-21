@@ -42,6 +42,24 @@ import idShop from './id/side_menu/shop/shop.json';
 import idPelacakanAktivitas from './id/side_menu/pelacakan_aktivitas/pelacakan_aktivitas.json';
 import idCountryDetailUser from './id/detail_negara/detail_negara_user/main.json';
 import idCountryDetailAI from './id/detail_negara/detail_negara_ai/main.json';
+import idSatisfactionStatistics from './id/navigasi_menu/kepuasan_menu/statistik.json';
+import idSatisfactionIncrease from './id/navigasi_menu/kepuasan_menu/naikkan_kepuasan.json';
+import idPopulationSummary from './id/navigasi_menu/populasi_menu/ringkasan_populasi.json';
+import idPopulationBirths from './id/navigasi_menu/populasi_menu/rincian_kelahiran.json';
+import idPopulationDeaths from './id/navigasi_menu/populasi_menu/rincian_kematian.json';
+import idPopulationWelfare from './id/navigasi_menu/populasi_menu/kesejahteraan.json';
+import idPopulationWelfareInitiatives from './id/navigasi_menu/populasi_menu/naikkan_kesejahteraan.json';
+import idElectricityGrid from './id/navigasi_menu/produksi_konsumsi/listrik_nasional/listrik_nasional.json';
+import idFoodConsumption from './id/navigasi_menu/produksi_konsumsi/konsumsi_makanan/konsumsi_makanan.json';
+import idEconomyTrade from './id/navigasi_menu/ekonomi_menu/perdagangan.json';
+import idEconomyTax from './id/navigasi_menu/ekonomi_menu/pajak.json';
+import idEconomyLoans from './id/navigasi_menu/ekonomi_menu/pinjaman.json';
+import idEconomyIncome from './id/navigasi_menu/ekonomi_menu/pendapatan.json';
+import idEconomyPurchasingPower from './id/navigasi_menu/ekonomi_menu/daya_beli.json';
+import idEconomySystem from './id/navigasi_menu/ekonomi_menu/sistem_ekonomi.json';
+import idConstructionProduction from './id/navigasi_menu/pembangunan_menu/produksi/produksi.json';
+import idConstructionPublicPlaces from './id/navigasi_menu/pembangunan_menu/tempat_umum/tempat_umum.json';
+import idConstructionHousing from './id/navigasi_menu/pembangunan_menu/hunian_permukiman/hunian_permukiman.json';
 
 const ID_DICTIONARY: LanguageDictionary = {
   common: idCommon,
@@ -65,6 +83,24 @@ const ID_DICTIONARY: LanguageDictionary = {
   side_pelacakan_aktivitas: idPelacakanAktivitas,
   detail_negara_user: idCountryDetailUser,
   detail_negara_ai: idCountryDetailAI,
+  navigation_satisfaction_statistics: idSatisfactionStatistics,
+  navigation_satisfaction_increase: idSatisfactionIncrease,
+  navigation_population_summary: idPopulationSummary,
+  navigation_population_births: idPopulationBirths,
+  navigation_population_deaths: idPopulationDeaths,
+  navigation_population_welfare: idPopulationWelfare,
+  navigation_population_welfare_initiatives: idPopulationWelfareInitiatives,
+  navigation_electricity_grid: idElectricityGrid,
+  navigation_food_consumption: idFoodConsumption,
+  navigation_economy_trade: idEconomyTrade,
+  navigation_economy_tax: idEconomyTax,
+  navigation_economy_loans: idEconomyLoans,
+  navigation_economy_income: idEconomyIncome,
+  navigation_economy_purchasing_power: idEconomyPurchasingPower,
+  navigation_economy_system: idEconomySystem,
+  navigation_construction_production: idConstructionProduction,
+  navigation_construction_public_places: idConstructionPublicPlaces,
+  navigation_construction_housing: idConstructionHousing,
 };
 
 const STORAGE_KEY = 'app_language';
@@ -123,6 +159,24 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     side_pelacakan_aktivitas,
     detail_negara_user,
     detail_negara_ai,
+    satisfactionStatistics,
+    satisfactionIncrease,
+    populationSummary,
+    populationBirths,
+    populationDeaths,
+    populationWelfare,
+    populationWelfareInitiatives,
+    electricityGrid,
+    foodConsumption,
+    economyTrade,
+    economyTax,
+    economyLoans,
+    economyIncome,
+    economyPurchasingPower,
+    economySystem,
+    constructionProduction,
+    constructionPublicPlaces,
+    constructionHousing,
   ] = await Promise.all([
     import(`./${code}/common.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navbar/navbar.json`).then((m) => m.default).catch(() => ({})),
@@ -141,6 +195,24 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     import(`./${code}/side_menu/pelacakan_aktivitas/pelacakan_aktivitas.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/detail_negara/detail_negara_user/main.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/detail_negara/detail_negara_ai/main.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/kepuasan_menu/statistik.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/kepuasan_menu/naikkan_kepuasan.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/populasi_menu/ringkasan_populasi.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/populasi_menu/rincian_kelahiran.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/populasi_menu/rincian_kematian.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/populasi_menu/kesejahteraan.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/populasi_menu/naikkan_kesejahteraan.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/produksi_konsumsi/listrik_nasional/listrik_nasional.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/produksi_konsumsi/konsumsi_makanan/konsumsi_makanan.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/ekonomi_menu/perdagangan.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/ekonomi_menu/pajak.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/ekonomi_menu/pinjaman.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/ekonomi_menu/pendapatan.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/ekonomi_menu/daya_beli.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/ekonomi_menu/sistem_ekonomi.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/pembangunan_menu/produksi/produksi.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/pembangunan_menu/tempat_umum/tempat_umum.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/pembangunan_menu/hunian_permukiman/hunian_permukiman.json`).then((m) => m.default).catch(() => ({})),
   ]);
 
   return {
@@ -165,6 +237,24 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     side_pelacakan_aktivitas,
     detail_negara_user,
     detail_negara_ai,
+    navigation_satisfaction_statistics: satisfactionStatistics,
+    navigation_satisfaction_increase: satisfactionIncrease,
+    navigation_population_summary: populationSummary,
+    navigation_population_births: populationBirths,
+    navigation_population_deaths: populationDeaths,
+    navigation_population_welfare: populationWelfare,
+    navigation_population_welfare_initiatives: populationWelfareInitiatives,
+    navigation_electricity_grid: electricityGrid,
+    navigation_food_consumption: foodConsumption,
+    navigation_economy_trade: economyTrade,
+    navigation_economy_tax: economyTax,
+    navigation_economy_loans: economyLoans,
+    navigation_economy_income: economyIncome,
+    navigation_economy_purchasing_power: economyPurchasingPower,
+    navigation_economy_system: economySystem,
+    navigation_construction_production: constructionProduction,
+    navigation_construction_public_places: constructionPublicPlaces,
+    navigation_construction_housing: constructionHousing,
   };
 }
 

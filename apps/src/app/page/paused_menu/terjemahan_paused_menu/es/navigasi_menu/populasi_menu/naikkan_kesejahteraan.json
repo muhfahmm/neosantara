@@ -1,0 +1,19 @@
+{
+  "initiatives": {
+    "cashTransfer": "Ayuda directa en efectivo",
+    "foodSubsidy": "Subsidio para alimentos básicos",
+    "studentAid": "Ayuda educativa para estudiantes",
+    "healthCoverage": "Cobertura sanitaria universal",
+    "housingUpgrade": "Mejora de vivienda pública",
+    "nationalMarket": "Mercado nacional asequible"
+  },
+  "success": "¡La iniciativa «{title}» se ha lanzado! Finalización prevista: {date}.",
+  "running": "En curso",
+  "welfareBoost": "Mejora del bienestar: +{value}%",
+  "cost": "Coste:",
+  "duration": "Duración:",
+  "days": "{value} días",
+  "active": "Activo",
+  "launch": "Lanzar",
+  "sponsor": "Financiar {title}"
+}

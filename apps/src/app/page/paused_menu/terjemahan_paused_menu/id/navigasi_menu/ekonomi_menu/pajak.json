@@ -1,0 +1,40 @@
+{
+  "title": "Pajak",
+  "infoButton": "Informasi kebijakan pajak",
+  "confirm": "Konfirmasi",
+  "taxes": {
+    "policyTitle": "Kebijakan Perpajakan Fiskal",
+    "vat": "Pajak Pertambahan Nilai (PPN)",
+    "corporate": "Pajak Korporasi",
+    "personalIncome": "Pajak Penghasilan Pribadi",
+    "excise": "Cukai",
+    "environmental": "Pajak Lingkungan"
+  },
+  "bonuses": {
+    "orthodoxPersonal": "Bonus Kristen Ortodoks: penerimaan pajak pribadi +{percent}%",
+    "buddhaEnvironmental": "Bonus Buddha: penerimaan pajak lingkungan +{percent}%",
+    "ministry": "Bonus Kementerian Keuangan: seluruh penerimaan pajak +{percent}% (+{amount} NEO)",
+    "democracy": "Bonus Demokrasi: seluruh penerimaan pajak +{percent}%",
+    "capitalism": "Bonus Kapitalisme: seluruh penerimaan pajak +{percent}%",
+    "liberalism": "Bonus Liberalisme: seluruh penerimaan pajak +{percent}%",
+    "conservatism": "Bonus Konservatisme: seluruh penerimaan pajak +{percent}%",
+    "fiscalHarmony": "Bonus Harmonisasi Fiskal Global: seluruh penerimaan pajak +{percent}%"
+  },
+  "summary": {
+    "totalRevenue": "Total Pendapatan Pajak",
+    "bonus": "+ bonus ({percent}%) =",
+    "populationImpact": "Dampak populasi pajak: {percent}% / bulan"
+  },
+  "info": {
+    "title": "Informasi Kebijakan Pajak",
+    "description": "Sesuaikan tarif pajak nasional untuk membiayai belanja militer dan infrastruktur publik. Hati-hati, pajak tinggi dapat memicu protes rakyat!",
+    "satisfaction": "Indeks Kepuasan Rakyat (Pajak)"
+  },
+  "confirmation": {
+    "title": "Konfirmasi tuntutan pajak",
+    "changesApply": "Perubahan tarif pajak akan diterapkan sesuai pilihan Anda. Lanjutkan?",
+    "noChanges": "Belum ada perubahan tarif. Konfirmasi untuk kembali ke forum dialog.",
+    "back": "Kembali",
+    "yes": "Ya, konfirmasi"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "title": "Public Satisfaction",
+  "infoButton": "Public satisfaction improvement information",
+  "civilSatisfaction": "Public Satisfaction:",
+  "statisticsTab": "Statistics",
+  "increaseTab": "Increase Satisfaction",
+  "events": {
+    "concert": "Concert",
+    "festival": "Festival",
+    "carnival": "Carnival",
+    "davisCup": "Davis Cup",
+    "rugbyWorldCup": "Rugby World Cup",
+    "olympics": "Olympics",
+    "fifaWorldCup": "FIFA World Cup",
+    "f1Race": "F1 Race"
+  },
+  "finished": "Ends: {date}",
+  "satisfactionBonus": "+{value}% Satisfaction",
+  "sportsBonus": "+Sports Ministry Bonus ({value}%)",
+  "duration": "Duration: {days} days",
+  "ongoing": "In Progress",
+  "chooseEvent": "Select Event",
+  "feedback": {
+    "success": "The president launched {title}! Treasury decreased by -{cost} NEO. The event runs for {duration} days and will finish, increasing satisfaction on {endDate}."
+  },
+  "info": {
+    "title": "Public Satisfaction Improvement",
+    "statisticsTitle": "Statistics Tab",
+    "statisticsDescription": "Shows a complete dashboard of current public satisfaction, including historical charts, factors that affect satisfaction (the economy, security, and public services), and a trend forecast for the next few days.",
+    "statisticsUse": "Best for: in-depth analysis before making strategic decisions.",
+    "increaseTitle": "Increase Satisfaction Tab",
+    "increaseDescription": "Lists public events and programs the president can launch to improve public satisfaction. Each event has its own cost, duration, and satisfaction boost.",
+    "eventCompletion": "Events run for their stated duration; the satisfaction boost takes effect when an event ends.",
+    "singleEvent": "Only one instance of each event can be active at a time.",
+    "diplomacyBonus": "The Event Diplomacy research bonus can significantly increase event boosts.",
+    "tip": "Tip: Check the Statistics tab first to review current satisfaction, then choose the best-fit event from the Increase Satisfaction tab.",
+    "understood": "Got it"
+  },
+  "insufficientFunds": {
+    "title": "Insufficient Funds",
+    "closeLabel": "Close insufficient funds dialog",
+    "failed": "{action} failed!",
+    "description": "The national treasury does not have enough funds to carry out this action.",
+    "required": "Required funds:",
+    "available": "Available treasury:",
+    "shortage": "Funding shortfall:",
+    "takeLoan": "Take a Loan",
+    "sponsor": "Sponsor {title}"
+  }
+}

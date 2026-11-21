@@ -15,6 +15,7 @@ import { calculateKesehatanScore, calculatePendidikanScore } from "@/app/logic/k
 import { calculateKesehatanLogic } from "../kematian_modals/logic/kesehatanLogic";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface DetailKelahiranModalProps {
   isOpen: boolean;
@@ -37,6 +38,7 @@ export default function DetailKelahiranModal({
   netDailyChange: propsNetDailyChange,
   onOpenTempatUmum,
 }: DetailKelahiranModalProps) {
+  const { t, language } = useLanguage();
   if (!isOpen) return null;
 
   const populasi = countryDetail?.jumlah_penduduk || 10_000_000;
@@ -76,7 +78,7 @@ export default function DetailKelahiranModal({
   const netDailyChange = propsNetDailyChange !== undefined ? propsNetDailyChange : (dailyBirths - dailyDeaths);
   const welfareFactor = 0.75;
 
-  const formatNumber = (num: number) => num.toLocaleString('id-ID', { maximumFractionDigits: 2 });
+  const formatNumber = (num: number) => num.toLocaleString(language, { maximumFractionDigits: 2 });
 
   return (
     <NotebookModalWrapper
@@ -87,7 +89,7 @@ export default function DetailKelahiranModal({
     >
       <div className="flex w-full min-w-0 flex-col overflow-hidden bg-root-surface">
         <RootInfoModalHeader
-          title="Rincian Pertumbuhan Penduduk"
+          title={t("navigation_population_births.title")}
           onClose={onClose}
           size="standard"
           icon={<Users aria-hidden="true" />}
@@ -102,11 +104,11 @@ export default function DetailKelahiranModal({
               <div className="space-y-0.5">
                 <p className="flex items-center gap-1.5 text-[10px] sm:text-xs font-black uppercase tracking-wider text-root-subtle">
                   <TrendingUp className="h-3.5 w-3.5 text-root-accent" />
-                  Pertumbuhan Bersih Harian
+                  {t("navigation_population_births.dailyNetGrowth")}
                 </p>
                 <p className={`text-base sm:text-lg font-black tabular-nums tracking-tight ${netDailyChange >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
                   {netDailyChange >= 0 ? '+' : ''}{formatNumber(netDailyChange)}
-                  <span className="text-[10px] sm:text-xs font-bold text-root-subtle ml-1">/hr</span>
+                  <span className="text-[10px] sm:text-xs font-bold text-root-subtle ml-1">{t("navigation_population_births.perHour")}</span>
                 </p>
               </div>
               <div className="p-2 rounded-xl bg-root-canvas border border-root-accent/20 text-root-accent shadow-inner">
@@ -116,13 +118,13 @@ export default function DetailKelahiranModal({
 
             <div className="grid grid-cols-2 gap-2">
               <div className="rounded-lg bg-root-canvas/90 border border-emerald-500/30 p-2 text-center">
-                <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-wide text-emerald-400/80 mb-0.5">Kelahiran</p>
+                <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-wide text-emerald-400/80 mb-0.5">{t("navigation_population_births.births")}</p>
                 <p className="text-xs sm:text-sm font-black text-emerald-400 tabular-nums">
                   +{formatNumber(dailyBirths)}
                 </p>
               </div>
               <div className="rounded-lg bg-root-canvas/90 border border-rose-500/30 p-2 text-center">
-                <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-wide text-rose-400/80 mb-0.5">Kematian</p>
+                <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-wide text-rose-400/80 mb-0.5">{t("navigation_population_births.deaths")}</p>
                 <p className="text-xs sm:text-sm font-black text-rose-400 tabular-nums">
                   -{formatNumber(dailyDeaths)}
                 </p>
@@ -135,7 +137,7 @@ export default function DetailKelahiranModal({
             <div className="flex items-center gap-1.5 pb-1 border-b border-root-accent/15">
               <Sparkles className="h-3.5 w-3.5 text-root-accent" />
               <h3 className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-root-accent">
-                Faktor yang Memengaruhi
+                {t("navigation_population_births.factors")}
               </h3>
             </div>
 
@@ -144,10 +146,10 @@ export default function DetailKelahiranModal({
               <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-2.5 space-y-1">
                 <div className="flex items-center gap-1.5 text-root-subtle">
                   <Users className="h-3.5 w-3.5 text-root-accent" />
-                  <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Populasi Dasar</h4>
+                  <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">{t("navigation_population_births.basePopulation")}</h4>
                 </div>
                 <p className="text-xs sm:text-sm font-black tabular-nums text-root-text">
-                  {formatNumber(populasi)} <span className="text-[10px] font-bold text-root-subtle">jiwa</span>
+                  {formatNumber(populasi)} <span className="text-[10px] font-bold text-root-subtle">{t("navigation_population_births.people")}</span>
                 </p>
               </div>
 
@@ -155,11 +157,11 @@ export default function DetailKelahiranModal({
               <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-2.5 space-y-1">
                 <div className="flex items-center gap-1.5 text-root-subtle">
                   <Banknote className="h-3.5 w-3.5 text-root-accent" />
-                  <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Kesejahteraan</h4>
+                  <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">{t("navigation_population_births.welfare")}</h4>
                 </div>
                 <div className="flex items-center justify-between text-xs sm:text-sm font-black tabular-nums text-root-text">
                   <span>
-                    {countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : 50} <span className="text-[10px] font-bold text-root-subtle">INDX</span>
+                    {countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : 50} <span className="text-[10px] font-bold text-root-subtle">{t("navigation_population_births.index")}</span>
                   </span>
                   <span className="text-[10px] sm:text-xs font-bold text-root-accent">
                     × {welfareFactor.toFixed(2)}
@@ -177,14 +179,14 @@ export default function DetailKelahiranModal({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     <HeartPulse className="h-3.5 w-3.5 text-root-accent" />
-                    <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Fasilitas Kesehatan</h4>
+                    <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">{t("navigation_population_births.healthFacilities")}</h4>
                   </div>
-                  <span className="text-[9px] font-black uppercase tracking-wider text-root-accent hover:underline">Buka →</span>
+                  <span className="text-[9px] font-black uppercase tracking-wider text-root-accent hover:underline">{t("navigation_population_births.open")}</span>
                 </div>
                 <div className="flex items-center justify-between text-xs sm:text-sm font-black tabular-nums text-root-text">
                   <span>
-                    {kesehatanScore} <span className="text-[10px] font-bold text-root-subtle">POIN</span>
-                    <span className="text-[9px] font-normal text-root-subtle ml-1">(rasio {hospitalRatio.toFixed(2)})</span>
+                    {kesehatanScore} <span className="text-[10px] font-bold text-root-subtle">{t("navigation_population_births.points")}</span>
+                    <span className="text-[9px] font-normal text-root-subtle ml-1">{t("navigation_population_births.ratio", { value: hospitalRatio.toFixed(2) })}</span>
                   </span>
                   <span className="text-[10px] sm:text-xs font-bold text-root-accent">
                     × {healthFactor.toFixed(2)}
@@ -202,14 +204,14 @@ export default function DetailKelahiranModal({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     <GraduationCap className="h-3.5 w-3.5 text-root-accent" />
-                    <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">Tingkat Pendidikan</h4>
+                    <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-text">{t("navigation_population_births.educationLevel")}</h4>
                   </div>
-                  <span className="text-[9px] font-black uppercase tracking-wider text-root-accent hover:underline">Buka →</span>
+                  <span className="text-[9px] font-black uppercase tracking-wider text-root-accent hover:underline">{t("navigation_population_births.open")}</span>
                 </div>
                 <div className="flex items-center justify-between text-xs sm:text-sm font-black tabular-nums text-root-text">
                   <span>
-                    {pendidikanScore} <span className="text-[10px] font-bold text-root-subtle">POIN</span>
-                    <span className="text-[9px] font-normal text-root-subtle ml-1">(rasio {educationRatio.toFixed(2)})</span>
+                    {pendidikanScore} <span className="text-[10px] font-bold text-root-subtle">{t("navigation_population_births.points")}</span>
+                    <span className="text-[9px] font-normal text-root-subtle ml-1">{t("navigation_population_births.ratio", { value: educationRatio.toFixed(2) })}</span>
                   </span>
                   <span className="text-[10px] sm:text-xs font-bold text-root-accent">
                     × {educationFactor.toFixed(2)}

@@ -9,6 +9,7 @@ import {
   ProductionSectorAnalysisResult,
   calculateDeficitDetailData,
 } from "./productionAISuggestionsLogic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface ProductionAISuggestionsModalProps {
   isOpen: boolean;
@@ -30,6 +31,9 @@ export default function ProductionAISuggestionsModal({
   metadata,
   onBuildClick,
 }: ProductionAISuggestionsModalProps) {
+  const { t } = useLanguage();
+  const tr = (key: string, params?: Record<string, string | number>) =>
+    t(`navigation_construction_production.aiSuggestions.${key}`, params);
   const [selectedDeficitKey, setSelectedDeficitKey] = useState<string | null>(null);
 
   if (!isOpen || !analysis) return null;
@@ -42,7 +46,7 @@ export default function ProductionAISuggestionsModal({
     value: `${item.balance >= 0 ? "+" : ""}${formatNumber(item.balance)}`,
     ...(item.isDeficit
       ? {
-          actionLabel: "Rekomendasi",
+          actionLabel: tr("recommendation"),
           onAction: () => setSelectedDeficitKey(item.key),
         }
       : {}),
@@ -54,18 +58,20 @@ export default function ProductionAISuggestionsModal({
         isOpen={isOpen}
         onClose={onClose}
         sectorLabel={analysis.sectorLabel}
-        subtitle="Evaluasi kebutuhan dan pasokan komoditas"
-        sectionTitle="Rincian Analisis Komoditas"
+        title={tr("title", { sector: analysis.sectorLabel })}
+        subtitle={tr("subtitle")}
+        sectionTitle={tr("sectionTitle")}
+        itemCountLabel={tr("itemCount", { count: analysis.commodities.length })}
         metrics={[
-          { label: "Total Defisit Sektor", value: `-${formatNumber(analysis.totalDeficit)}`, tone: "deficit" },
-          { label: "Total Surplus Sektor", value: `+${formatNumber(analysis.totalSurplus)}`, tone: "surplus" },
+          { label: tr("totalDeficit"), value: `-${formatNumber(analysis.totalDeficit)}`, tone: "deficit" },
+          { label: tr("totalSurplus"), value: `+${formatNumber(analysis.totalSurplus)}`, tone: "surplus" },
         ]}
-        items={items}
         summary={
           deficitCount > 0
-            ? `Terdapat ${deficitCount} komoditas di sektor ${analysis.sectorLabel} yang mengalami defisit pasokan. Pilih "Rekomendasi" pada komoditas defisit untuk melihat jumlah unit yang disarankan.`
-            : `Sektor ${analysis.sectorLabel} saat ini memenuhi kebutuhan nasional berdasarkan perhitungan pasokan.`
+            ? tr("summaryWithDeficit", { count: deficitCount, sector: analysis.sectorLabel })
+            : tr("summaryBalanced", { sector: analysis.sectorLabel })
         }
+        items={items}
       />
 
       {selectedDeficitKey && (

@@ -8,6 +8,8 @@ import { TradePartner } from "./mitraModalsMenu";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import SharedModalCloseButton from "@/app/page/root_modals_design_menu/ModalCloseButton";
+import { getLocalizedCountryName } from "@/app/logic/countryNameLogic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface MitraDetailModalsProps {
   isOpen: boolean;
@@ -25,8 +27,15 @@ export default function MitraDetailModals({
   onBeli,
   onJual
 }: MitraDetailModalsProps) {
+  const { language, t } = useLanguage();
   // Jika modal tertutup atau data partner kosong, jangan render
   if (!isOpen || !partner) return null;
+  const partnerName = getLocalizedCountryName(partner.nama_negara, language);
+  const partnerStatus = partner.status_hubungan === "Aktif"
+    ? t("navigation_economy_trade.partners.active")
+    : partner.status_hubungan === "Pasif"
+      ? t("navigation_economy_trade.partners.passive")
+      : partner.status_hubungan;
 
   return (
     <NotebookModalWrapper
@@ -39,7 +48,7 @@ export default function MitraDetailModals({
         className="root-modal-util-b74379da23 min-w-0"
       >
         <RootInfoModalHeader
-          title="Detail Hubungan Dagang"
+          title={t("navigation_economy_trade.partners.detailTitle")}
           titleId="trade-partner-detail-title"
           onClose={onClose}
           size="standard"
@@ -56,7 +65,7 @@ export default function MitraDetailModals({
                 <Globe className="h-8 w-8 text-root-accent" />
               </div>
               <div>
-                <h3 className="text-3xl font-black text-root-text uppercase">{partner.nama_negara}</h3>
+                <h3 className="text-3xl font-black text-root-text uppercase">{partnerName}</h3>
                 <p className="text-sm text-root-subtle font-semibold flex items-center gap-2 mt-0.5">
                   <span className="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
                   {partner.region}
@@ -70,20 +79,20 @@ export default function MitraDetailModals({
               <div className="bg-root-canvas border border-root-accent/20 p-5 rounded-xl space-y-3">
                 <div className="flex items-center gap-2 text-root-accent border-b border-root-accent/20 pb-2 mb-2">
                   <Handshake className="h-5 w-5" />
-                  <h4 className="text-sm font-black uppercase tracking-wider">Status Hubungan</h4>
+                  <h4 className="text-sm font-black uppercase tracking-wider">{t("navigation_economy_trade.partners.statusTitle")}</h4>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-root-subtle font-semibold">Status Saat Ini:</span>
+                  <span className="text-sm text-root-subtle font-semibold">{t("navigation_economy_trade.partners.currentStatus")}</span>
                   <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
                     ${partner.status_hubungan === 'Aktif' ? 'bg-emerald-950/40 text-emerald-400 border border-emerald-500/30' : 
                       partner.status_hubungan === 'Pasif' ? 'bg-amber-950/40 text-amber-400 border border-amber-500/30' : 
                       'bg-root-surface text-root-subtle border border-root-subtle/30'}`}>
-                    {partner.status_hubungan}
+                    {partnerStatus}
                   </span>
                 </div>
                 {partner.jenis_perjanjian && (
                   <div className="flex justify-between items-center pt-1">
-                    <span className="text-sm text-root-subtle font-semibold">Jenis Perjanjian:</span>
+                    <span className="text-sm text-root-subtle font-semibold">{t("navigation_economy_trade.partners.agreementType")}</span>
                     <span className="px-3 py-1 bg-root-accent/10 text-root-accent border border-root-accent/30 rounded-full text-[10px] font-bold uppercase tracking-wider">
                       {partner.jenis_perjanjian}
                     </span>
@@ -95,12 +104,12 @@ export default function MitraDetailModals({
               <div className="bg-root-canvas border border-root-accent/20 p-5 rounded-xl space-y-3">
                 <div className="flex items-center gap-2 text-root-accent border-b border-root-accent/20 pb-2 mb-2">
                   <ArrowRightLeft className="h-5 w-5" />
-                  <h4 className="text-sm font-black uppercase tracking-wider">Aksi Perdagangan</h4>
+                  <h4 className="text-sm font-black uppercase tracking-wider">{t("navigation_economy_trade.partners.actionsTitle")}</h4>
                 </div>
                 <div className="flex flex-col gap-3 pt-1">
                   <div className="flex items-center justify-between border-b border-root-accent/10 pb-2">
-                    <span className="text-sm text-root-subtle font-semibold">Mulai transaksi dengan:</span>
-                    <span className="text-sm font-bold text-root-text">{partner.nama_negara}</span>
+                    <span className="text-sm text-root-subtle font-semibold">{t("navigation_economy_trade.partners.startTransactionWith")}</span>
+                    <span className="text-sm font-bold text-root-text">{partnerName}</span>
                   </div>
                   <div className="flex gap-3">
                     {/* TOMBOL BELI */}
@@ -108,14 +117,14 @@ export default function MitraDetailModals({
                       onClick={() => onBeli && onBeli(partner)}
                       className="flex-1 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-root-canvas text-xs font-black uppercase tracking-wide transition-all cursor-pointer"
                     >
-                      Beli
+                      {t("navigation_economy_trade.transaction.buy")}
                     </button>
                     {/* TOMBOL JUAL */}
                     <button
                       onClick={() => onJual && onJual(partner)}
                       className="flex-1 py-2.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-black uppercase tracking-wide transition-all cursor-pointer"
                     >
-                      Jual
+                      {t("navigation_economy_trade.transaction.sell")}
                     </button>
                   </div>
                 </div>
@@ -126,11 +135,13 @@ export default function MitraDetailModals({
             <div className="bg-root-canvas border border-root-accent/20 p-6 rounded-xl">
               <div className="flex items-center gap-2 mb-3 border-b border-root-accent/20 pb-2">
                 <FileText className="h-5 w-5 text-root-accent" />
-                <h4 className="text-sm font-black text-root-accent uppercase tracking-wider">Catatan Perdagangan</h4>
+                <h4 className="text-sm font-black text-root-accent uppercase tracking-wider">{t("navigation_economy_trade.partners.notesTitle")}</h4>
               </div>
               <p className="text-sm text-root-subtle leading-relaxed">
-                Mitra dagang ini memiliki status hubungan <strong className="text-root-accent">{partner.status_hubungan}</strong> dengan negara Anda.
-                {partner.jenis_perjanjian ? ` Perjanjian yang berlaku saat ini adalah: ${partner.jenis_perjanjian}.` : ''}
+                {t("navigation_economy_trade.partners.notesDescription", {
+                  status: partnerStatus,
+                  agreement: partner.jenis_perjanjian || "—",
+                })}
               </p>
             </div>
 
@@ -144,7 +155,7 @@ export default function MitraDetailModals({
             onClick={onClose} 
             className="px-6 py-2.5 rounded-xl border border-root-accent/30 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer text-xs font-black uppercase tracking-wider"
            appearance="custom">
-            Tutup
+            {t("navigation_economy_trade.partners.close")}
           </SharedModalCloseButton>
         </div>
       </div>

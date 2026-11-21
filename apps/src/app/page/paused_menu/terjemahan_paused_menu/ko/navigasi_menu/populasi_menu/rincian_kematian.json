@@ -1,0 +1,23 @@
+{
+  "title": "사망률 상세",
+  "dailyDeaths": "일일 사망 수",
+  "perHour": "/시간",
+  "factors": "영향 요인",
+  "lifeExpectancy": "기대 수명",
+  "years": "년",
+  "lifeExpectancyDescription": "기대 수명이 높을수록 사망률이 낮아집니다.",
+  "security": "치안 수준",
+  "securityDescription": "안전한 환경은 사고와 범죄로 인한 사망을 줄입니다.",
+  "homeless": "노숙",
+  "homelessCount": "{count}명 ({ratio}%)",
+  "homelessDescription": "노숙률이 1% 증가할 때마다 사망률이 5% 증가합니다.",
+  "healthFacilities": "의료 시설",
+  "open": "열기 →",
+  "points": "점",
+  "ratio": "(비율 {value})",
+  "healthDescription": "병원 이용 가능성이 높으면 치료 가능한 질병으로 인한 사망이 줄어듭니다.",
+  "foodSecurity": "식량 안보",
+  "foodDescription": "충분한 식량 공급은 영양실조 위험을 낮춥니다.",
+  "lawEnforcement": "법 집행",
+  "lawDescription": "복지 지수에 반영된 사법 및 경찰 만족도입니다."
+}

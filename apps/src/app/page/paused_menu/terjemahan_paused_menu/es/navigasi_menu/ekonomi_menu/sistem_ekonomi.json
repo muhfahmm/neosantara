@@ -1,0 +1,92 @@
+{
+  "title": "Política y sistema económico",
+  "infoButton": "Información sobre política y sistema económico",
+  "ariaLabel": "Secciones de política y sistema económico",
+  "monthUnit": "mes",
+  "yearUnit": "año",
+  "tabs": { "spectrum": "Espectro del sistema", "policies": "Tarjetas de políticas", "ownership": "Propiedad productiva" },
+  "satisfaction": "Índice de satisfacción pública (política económica)",
+  "info": {
+    "title": "Información sobre política y sistema económico",
+    "description": "Configura el espectro económico, elige políticas sectoriales y ajusta la propiedad o nacionalización de los sectores productivos. Estas decisiones definen el rumbo económico y la participación estatal en los beneficios."
+  },
+  "spectrum": {
+    "populationImpact": "Impacto en la población",
+    "policyScore": "Puntuación política: {score}/100",
+    "category": "Categoría: {category}",
+    "centralizedScale": "0% PLANIFICACIÓN CENTRAL",
+    "freeMarketScale": "100% LIBRE MERCADO",
+    "netPopulationImpact": "Impacto neto en la población",
+    "gdpGrowthBonus": "Bonificación de crecimiento del PIB",
+    "categories": { "centralized": "Centralizada", "mixed": "Mixta", "freeMarket": "Libre mercado" },
+    "presets": { "command": "Mando absoluto", "socialism": "Socialismo", "mixed": "Mixta", "regulatedMarket": "Mercado regulado", "laissezFaire": "Laissez-faire" },
+    "systems": {
+      "command": { "title": "Economía dirigida", "description": "El gobierno controla por completo los precios, las cuotas de producción y la asignación de recursos. Las empresas estatales dominan todos los sectores." },
+      "marketSocialism": { "title": "Socialismo de mercado", "description": "El Estado controla los sectores vitales con regulación estricta y permite operar a las pequeñas y medianas empresas con rendimientos limitados." },
+      "mixed": { "title": "Economía mixta", "description": "Equilibrio entre regulación pública y libertad del mercado privado. El Estado gestiona los servicios públicos esenciales." },
+      "regulatedMarket": { "title": "Mercado regulado", "description": "Los mercados privados impulsan el crecimiento. El gobierno supervisa la competencia y la estabilidad macroeconómica." },
+      "laissezFaire": { "title": "Laissez-faire / capitalismo libre", "description": "Desregulación total y mercados sin restricciones. La competencia sigue las leyes de oferta y demanda." }
+    }
+  },
+  "policies": {
+    "price_control": {
+      "name": "Control de precios básicos",
+      "optionA": { "label": "Precio máximo estatal", "effect": "Los precios se mantienen estables, pero aumenta el riesgo de escasez." },
+      "optionB": { "label": "Precios de libre mercado", "effect": "Abundan los productos, pero pueden producirse picos repentinos de inflación." }
+    },
+    "strategic_ownership": {
+      "name": "Propiedad de industrias estratégicas",
+      "optionA": { "label": "Monopolio estatal / nacionalización", "effect": "Aumentan los ingresos públicos, pero disminuye la eficiencia operativa." },
+      "optionB": { "label": "Privatización e inversión privada", "effect": "Mejoran rápidamente la innovación y la eficiencia, pero disminuyen las regalías estatales." }
+    },
+    "trade_policy": {
+      "name": "Regulación del comercio exterior",
+      "optionA": { "label": "Proteccionismo estricto", "effect": "Protege a la industria nacional, pero limita las opciones de los consumidores." },
+      "optionB": { "label": "Libre comercio", "effect": "Aumentan las importaciones y exportaciones, pero la industria local afronta más competencia." }
+    },
+    "labor_regulation": {
+      "name": "Política laboral y salario mínimo",
+      "optionA": { "label": "Salario mínimo alto y protección estricta", "effect": "Mejora el bienestar laboral, pero reduce el atractivo para la inversión extranjera." },
+      "optionB": { "label": "Trabajo flexible y contratos libres", "effect": "Aumenta el empleo, pero puede crecer la desigualdad social." }
+    },
+    "land_property_rights": {
+      "name": "Derechos de propiedad de tierras e inmuebles",
+      "optionA": { "label": "Propiedad estatal y uso comunal", "effect": "El Estado controla tierras y viviendas; la población recibe derechos de uso comunal." },
+      "optionB": { "label": "Propiedad privada absoluta", "effect": "La compraventa de tierras e inmuebles es libre." }
+    },
+    "labor_unions_rights": {
+      "name": "Derechos sindicales frente a la dirección",
+      "optionA": { "label": "Sindicatos estatales y consejos obreros", "effect": "Los sindicatos pasan a ser organismos estatales y los consejos obreros participan en la gestión." },
+      "optionB": { "label": "Mercado laboral libre", "effect": "La dirección privada lidera; las huelgas pueden limitarse para mantener el suministro." }
+    },
+    "monetary_banking": {
+      "name": "Política monetaria y bancaria",
+      "optionA": { "label": "Banco central único y control de divisas", "effect": "La banca es estatal; se controlan las divisas y se limita la fuga de capitales." },
+      "optionB": { "label": "Banca privada y libre flujo de capital", "effect": "Banca competitiva y flujos de capital sin restricciones." }
+    }
+  },
+  "ownership": {
+    "level": "Nivel",
+    "stateShare": "Participación estatal: {percent}%",
+    "calculatingElectricity": "Calculando el excedente eléctrico estimado...",
+    "electricityEstimate": "Participación estatal estimada del excedente: {surplus} MW × {price} NEO × {percent}% = {amount} NEO. No se incluye en el presupuesto nacional porque aún no hay transacciones de compraventa de electricidad.",
+    "errors": { "noMetadata": "No hay metadatos de centrales eléctricas; no se puede estimar el excedente.", "loadFailed": "No se pudieron cargar los metadatos de las centrales eléctricas." },
+    "sectors": {
+      "electricity": "Electricidad",
+      "mineralsEnergy": "Minerales y energía",
+      "manufacturing": "Manufactura",
+      "livestock": "Ganadería",
+      "agriculture": "Agricultura",
+      "fisheries": "Pesca",
+      "foodProcessing": "Procesamiento de alimentos"
+    },
+    "levels": {
+      "marketFree": { "name": "Libre mercado", "description": "El sector es gestionado por empresas privadas; el Estado recibe impuestos y regalías básicas." },
+      "strictRegulation": { "name": "Regulación estricta", "description": "El Estado regula precios y cuotas, aunque el sector privado sigue siendo dominante." },
+      "mixed": { "name": "Economía mixta", "description": "El Estado tiene una participación mayoritaria y supervisa a los operadores privados." },
+      "stateDominance": { "name": "Dominio estatal", "description": "El Estado controla casi todos los activos productivos." },
+      "fullNationalization": { "name": "Nacionalización completa", "description": "El Estado gestiona todos los activos productivos." }
+    }
+  }
+}
+

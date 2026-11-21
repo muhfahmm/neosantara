@@ -1,0 +1,23 @@
+{
+  "title": "Rincian Angka Kematian",
+  "dailyDeaths": "Kematian Harian",
+  "perHour": "/hr",
+  "factors": "Faktor yang Memengaruhi",
+  "lifeExpectancy": "Harapan Hidup",
+  "years": "tahun",
+  "lifeExpectancyDescription": "Semakin tinggi harapan hidup, semakin rendah angka kematian.",
+  "security": "Tingkat Keamanan",
+  "securityDescription": "Lingkungan aman mengurangi fatalitas kecelakaan & kejahatan.",
+  "homeless": "Tunawisma",
+  "homelessCount": "{count} jiwa ({ratio}%)",
+  "homelessDescription": "Setiap 1% tunawisma meningkatkan kematian sebesar 5%.",
+  "healthFacilities": "Fasilitas Kesehatan",
+  "open": "Buka →",
+  "points": "POIN",
+  "ratio": "(rasio {value})",
+  "healthDescription": "Ketersediaan RS menurunkan kematian penyakit yang dapat diobati.",
+  "foodSecurity": "Ketahanan Pangan",
+  "foodDescription": "Ketersediaan pangan yang cukup mengurangi risiko malnutrisi.",
+  "lawEnforcement": "Penegakan Hukum",
+  "lawDescription": "Kepuasan hukum & kepolisian dari Indeks Kesejahteraan."
+}

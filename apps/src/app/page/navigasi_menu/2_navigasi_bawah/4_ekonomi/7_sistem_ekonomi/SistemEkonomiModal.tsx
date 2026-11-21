@@ -29,6 +29,7 @@ import {
   type NationalizationLevels,
   type NationalizationSectorId,
 } from "./logic/nationalizationLogic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 const NATIONALIZATION_ESTIMATE_YEAR = 2026;
 
@@ -81,12 +82,49 @@ const SektorTab = React.memo(({
   electricityEstimatedStateShare,
   diplomacyMonthsToNextPoint
 }: any) => {
+  const { language, t } = useLanguage();
+  const sectorNames: Record<string, string> = {
+    kelistrikan: t("navigation_economy_system.ownership.sectors.electricity"),
+    mineral_energi: t("navigation_economy_system.ownership.sectors.mineralsEnergy"),
+    manufaktur: t("navigation_economy_system.ownership.sectors.manufacturing"),
+    peternakan: t("navigation_economy_system.ownership.sectors.livestock"),
+    agrikultur: t("navigation_economy_system.ownership.sectors.agriculture"),
+    perikanan: t("navigation_economy_system.ownership.sectors.fisheries"),
+    olahan_pangan: t("navigation_economy_system.ownership.sectors.foodProcessing"),
+  };
+  const levelTranslations: Record<number, { name: string; description: string }> = {
+    0: {
+      name: t("navigation_economy_system.ownership.levels.marketFree.name"),
+      description: t("navigation_economy_system.ownership.levels.marketFree.description"),
+    },
+    25: {
+      name: t("navigation_economy_system.ownership.levels.strictRegulation.name"),
+      description: t("navigation_economy_system.ownership.levels.strictRegulation.description"),
+    },
+    50: {
+      name: t("navigation_economy_system.ownership.levels.mixed.name"),
+      description: t("navigation_economy_system.ownership.levels.mixed.description"),
+    },
+    75: {
+      name: t("navigation_economy_system.ownership.levels.stateDominance.name"),
+      description: t("navigation_economy_system.ownership.levels.stateDominance.description"),
+    },
+    100: {
+      name: t("navigation_economy_system.ownership.levels.fullNationalization.name"),
+      description: t("navigation_economy_system.ownership.levels.fullNationalization.description"),
+    },
+  };
+  const formatNumber = (value: number) => value.toLocaleString(language, { maximumFractionDigits: 2 });
+  const electricityError = electricityMetadataError
+    ? t(`navigation_economy_system.ownership.errors.${electricityMetadataError}`)
+    : null;
   return (
     <div className="economic-ownership-tab space-y-4">
       <div className="grid gap-3">
         {NATIONALIZATION_SECTORS.map((sector) => {
           const level = getNationalizationLevel(sectorLevels, sector.id);
           const levelDetails = NATIONALIZATION_LEVELS.find((item) => item.value === level) ?? NATIONALIZATION_LEVELS[0];
+          const localizedLevel = levelTranslations[level] ?? levelTranslations[0];
           return (
             <section
               key={sector.id}
@@ -95,11 +133,11 @@ const SektorTab = React.memo(({
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h4 className="economic-ownership-title text-sm font-black text-root-text">{sector.name}</h4>
-                  <p className="economic-ownership-description mt-1 text-[11px] text-root-body">{levelDetails.description}</p>
+                  <h4 className="economic-ownership-title text-sm font-black text-root-text">{sectorNames[sector.id] ?? sector.name}</h4>
+                  <p className="economic-ownership-description mt-1 text-[11px] text-root-body">{localizedLevel.description}</p>
                 </div>
                 <label className="economic-ownership-level-label flex items-center gap-2 text-[10px] font-bold uppercase text-root-subtle">
-                  Level
+                  {t("navigation_economy_system.ownership.level")}
                   <select
                     value={level}
                     onChange={(event) => handleSectorLevelChange(sector.id, Number(event.target.value))}
@@ -107,28 +145,28 @@ const SektorTab = React.memo(({
                   >
                     {NATIONALIZATION_LEVELS.map((option) => (
                       <option key={option.value} value={option.value}>
-                        {option.value}% — {option.name}
+                        {option.value}% — {levelTranslations[option.value]?.name ?? option.name}
                       </option>
                     ))}
                   </select>
                 </label>
               </div>
               <div className="economic-ownership-profit mt-3 flex flex-wrap gap-x-5 gap-y-1 border-t border-root-accent/10 pt-3 text-[11px]">
-                <span className="economic-ownership-profit-value text-emerald-300">Bagian negara: {levelDetails.stateProfitSharePercent}%</span>
+                <span className="economic-ownership-profit-value text-emerald-300">{t("navigation_economy_system.ownership.stateShare", { percent: levelDetails.stateProfitSharePercent })}</span>
               </div>
               {sector.id === "kelistrikan" && (
                 <div className="economic-ownership-electricity-note mt-3 rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 text-[11px] text-amber-200">
                   {isElectricityMetadataLoading ? (
-                    <p>Menghitung estimasi surplus listrik...</p>
-                  ) : electricityMetadataError ? (
-                    <p>{electricityMetadataError}</p>
+                    <p>{t("navigation_economy_system.ownership.calculatingElectricity")}</p>
+                  ) : electricityError ? (
+                    <p>{electricityError}</p>
                   ) : (
-                    <p>
-                      Estimasi bagian negara dari surplus: {electricitySurplusMW.toLocaleString("id-ID", { maximumFractionDigits: 2 })} MW ×{" "}
-                      {electricityPrice.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO × {electricityProfitShare}% ={" "}
-                      {electricityEstimatedStateShare.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO. Estimasi ini belum
-                      dimasukkan ke Anggaran Nasional karena listrik belum memiliki transaksi jual-beli.
-                    </p>
+                    <p>{t("navigation_economy_system.ownership.electricityEstimate", {
+                      surplus: formatNumber(electricitySurplusMW),
+                      price: formatNumber(electricityPrice),
+                      percent: electricityProfitShare,
+                      amount: formatNumber(electricityEstimatedStateShare),
+                    })}</p>
                   )}
                 </div>
               )}
@@ -141,11 +179,12 @@ const SektorTab = React.memo(({
 });
 
 const SatisfactionBar = React.memo(({ average }: { average: number }) => {
+  const { t } = useLanguage();
   return (
     <div className={`root-satisfaction-index mt-6 border border-root-accent/30 bg-root-surface p-5 ${rootBorderRadius.card}`}>
       <div className="flex items-center justify-between gap-3">
         <span className="root-satisfaction-index-title font-black uppercase tracking-widest text-root-accent">
-          Indeks Kepuasan Rakyat (Kebijakan Ekonomi)
+          {t("navigation_economy_system.satisfaction")}
         </span>
         <span className="root-satisfaction-index-value shrink-0 font-black text-amber-400">
           {average} / 100
@@ -164,6 +203,7 @@ const SatisfactionBar = React.memo(({ average }: { average: number }) => {
 // --- MAIN COMPONENT ---
 
 export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, setCountryDetail }: ModalProps) {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<"sistem" | "kebijakan" | "sektor">("sistem");
 
   // Economic System Slider Value & Policy Choices (Loaded Instantly in 0ms)
@@ -216,7 +256,7 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
         if (cancelled) return;
         if (Object.keys(metadata).length === 0) {
           setIsElectricityMetadataLoading(false);
-          setElectricityMetadataError("Metadata pembangkit listrik tidak tersedia; estimasi surplus belum dapat dihitung.");
+          setElectricityMetadataError("noMetadata");
           return;
         }
         setElectricityMetadata(metadata);
@@ -227,7 +267,7 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
         console.error("Gagal memuat metadata listrik untuk nasionalisasi:", error);
         if (!cancelled) {
           setIsElectricityMetadataLoading(false);
-          setElectricityMetadataError("Gagal memuat metadata pembangkit listrik.");
+          setElectricityMetadataError("loadFailed");
         }
       });
     return () => {
@@ -318,9 +358,9 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
   }, [countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name_id, countryDetail?.nationalization_diplomacy_month_counter, setCountryDetail]);
 
   const tabs: { id: typeof activeTab; label: string }[] = [
-    { id: "sistem", label: "Spektrum Sistem" },
-    { id: "kebijakan", label: "Kartu Kebijakan" },
-    { id: "sektor", label: "Kepemilikan Produksi" },
+    { id: "sistem", label: t("navigation_economy_system.tabs.spectrum") },
+    { id: "kebijakan", label: t("navigation_economy_system.tabs.policies") },
+    { id: "sektor", label: t("navigation_economy_system.tabs.ownership") },
   ];
   const electricityLevel = getNationalizationLevel(sectorLevels, "kelistrikan");
   const diplomacyMonthCounter = Math.max(
@@ -345,19 +385,19 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
       <div className="root-modal-util-b74379da23">
         
         <RootInfoModalHeader
-          title="Kebijakan & Sistem Ekonomi"
+          title={t("navigation_economy_system.title")}
           onClose={onClose}
           size="standard"
           icon={<Scale aria-hidden="true" />}
           actions={
-            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi kebijakan dan sistem ekonomi" aria-label="Informasi kebijakan dan sistem ekonomi" className="root-modal-info-button root-modal-util-1697100c43">
+            <button type="button" onClick={() => setIsInfoOpen(true)} title={t("navigation_economy_system.infoButton")} aria-label={t("navigation_economy_system.infoButton")} className="root-modal-info-button root-modal-util-1697100c43">
               <Info aria-hidden="true" />
             </button>
           }
         />
 
         <RootModalSidebarLayout
-          ariaLabel="Bagian kebijakan dan sistem ekonomi"
+          ariaLabel={t("navigation_economy_system.ariaLabel")}
           contentClassName="economic-system-modal-content p-3 lg:p-4 2xl:p-5"
           items={tabs.map((tab) => ({
             id: tab.id,
@@ -404,8 +444,8 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
     <MenuInfoModal
       isOpen={isInfoOpen}
       onClose={() => setIsInfoOpen(false)}
-      title="Informasi Kebijakan & Sistem Ekonomi"
-      description="Atur spektrum sistem ekonomi, pilih kebijakan sektoral, dan sesuaikan kepemilikan atau tingkat nasionalisasi sektor produksi. Perubahan kebijakan membentuk arah ekonomi serta porsi keuntungan negara."
+      title={t("navigation_economy_system.info.title")}
+      description={t("navigation_economy_system.info.description")}
     >
       <SatisfactionBar average={economicPolicyAverage} />
     </MenuInfoModal>

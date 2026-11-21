@@ -1,0 +1,22 @@
+{
+  "title": "Satisfacción ciudadana",
+  "infoButton": "Información sobre las estadísticas de satisfacción ciudadana",
+  "civilSatisfaction": "Satisfacción ciudadana:",
+  "statisticsTab": "Estadísticas",
+  "increaseTab": "Aumentar la satisfacción",
+  "sectors": {
+    "tax": "Impuestos",
+    "goodsPrices": "Precios de productos básicos",
+    "foodProduction": "Producción de alimentos",
+    "electricityProduction": "Producción eléctrica",
+    "housing": "Vivienda",
+    "publicServices": "Servicios e instalaciones públicas",
+    "doctrine": "Doctrina y apertura",
+    "economicPolicy": "Política y sistema económicos",
+    "subsidies": "Asignación y política de subsidios"
+  },
+  "info": {
+    "title": "Estadísticas de satisfacción ciudadana",
+    "description": "La puntuación resume la situación general y los indicadores sectoriales, como los impuestos, los precios, los alimentos y los servicios públicos. Usa la pestaña Estadísticas para consultar las puntuaciones y abre un sector relacionado para ver las políticas que influyen en él."
+  }
+}

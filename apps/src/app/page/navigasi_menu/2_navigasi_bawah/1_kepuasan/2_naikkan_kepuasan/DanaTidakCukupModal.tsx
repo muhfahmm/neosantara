@@ -5,6 +5,7 @@ import { AlertCircle } from "lucide-react";
 import { createPortal } from "react-dom";
 
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 interface DanaTidakCukupModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -22,9 +23,13 @@ export default function DanaTidakCukupModal({
   actionName = "Aksi ini",
   onTakeLoan,
 }: DanaTidakCukupModalProps) {
+  const { t, language } = useLanguage();
   if (!isOpen) return null;
 
   const shortage = Math.max(0, requiredCost - currentBudget);
+  const formatAmount = (amount: number) =>
+    amount.toLocaleString(language, { maximumFractionDigits: 2 });
+  const translation = "navigation_satisfaction_increase.insufficientFunds";
 
   const modalContent = (
     <NotebookModalWrapper onClose={onClose} zIndexClass="z-[100000001]">
@@ -36,7 +41,7 @@ export default function DanaTidakCukupModal({
                 <AlertCircle className="root-modal-util-ea2c28151c !text-root-danger" />
               </div>
               <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                <span className="text-root-danger">Dana Tidak Mencukupi</span>
+                <span className="text-root-danger">{t(`${translation}.title`)}</span>
               </h2>
             </div>
           </div>
@@ -44,7 +49,7 @@ export default function DanaTidakCukupModal({
             <RootModalCloseButton
               type="button"
               onClick={onClose}
-              ariaLabel="Tutup modal dana tidak mencukupi"
+              ariaLabel={t(`${translation}.closeLabel`)}
             />
           </div>
         </header>
@@ -57,24 +62,24 @@ export default function DanaTidakCukupModal({
               </div>
             </div>
             <h4 className="mb-2 text-lg font-black uppercase tracking-wide text-root-text">
-              {actionName} gagal!
+              {t(`${translation}.failed`, { action: actionName })}
             </h4>
             <p className="mb-4 text-sm font-semibold leading-relaxed text-root-subtle">
-              Kas negara tidak mencukupi untuk melaksanakan aksi ini.
+              {t(`${translation}.description`)}
             </p>
 
             <div className="space-y-2 rounded-xl border border-root-accent/20 bg-root-canvas p-4 text-left text-xs text-root-text">
               <div className="flex justify-between gap-4">
-                <span className="font-bold text-root-subtle">Dana dibutuhkan:</span>
-                <span className="font-black text-rose-400">{requiredCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
+                <span className="font-bold text-root-subtle">{t(`${translation}.required`)}</span>
+                <span className="font-black text-rose-400">{formatAmount(requiredCost)} NEO</span>
               </div>
               <div className="flex justify-between gap-4">
-                <span className="font-bold text-root-subtle">Kas tersedia:</span>
-                <span className="font-black text-root-accent">{currentBudget.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
+                <span className="font-bold text-root-subtle">{t(`${translation}.available`)}</span>
+                <span className="font-black text-root-accent">{formatAmount(currentBudget)} NEO</span>
               </div>
               <div className="mt-1 flex justify-between gap-4 border-t border-root-accent/20 pt-2">
-                <span className="font-bold text-root-subtle">Kekurangan dana:</span>
-                <span className="font-black text-rose-400">- {shortage.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
+                <span className="font-bold text-root-subtle">{t(`${translation}.shortage`)}</span>
+                <span className="font-black text-rose-400">- {formatAmount(shortage)} NEO</span>
               </div>
             </div>
           </div>
@@ -85,7 +90,7 @@ export default function DanaTidakCukupModal({
                 onClick={onTakeLoan}
                 className="w-full sm:w-auto cursor-pointer rounded-xl border border-root-accent bg-root-accent px-6 py-2 text-center text-[11px] font-black uppercase tracking-widest text-root-canvas shadow transition-all duration-150 hover:bg-[#00e699] sm:text-xs"
               >
-                Ambil Pinjaman
+                {t(`${translation}.takeLoan`)}
               </button>
             </div>
           )}

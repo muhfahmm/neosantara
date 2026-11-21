@@ -1,0 +1,109 @@
+{
+  "title": "Loans & Debt",
+  "infoButton": "Loans and debt information",
+  "dayUnit": "days",
+  "monthUnit": "months",
+  "tabs": { "bilateral": "Other Countries", "multilateral": "International Institutions", "history": "History" },
+  "search": { "placeholder": "Search borrower country...", "ariaLabel": "Search borrower country" },
+  "summary": {
+    "debtRatio": "Debt-to-GDP Ratio",
+    "safeLimit": "Safe Limit:",
+    "totalDebt": "Total Debt Burden"
+  },
+  "institutions": { "imf": "International Monetary Fund (IMF)", "worldBank": "World Bank" },
+  "bilateral": {
+    "noResults": "No countries match your search.",
+    "maximum": "Loan cap",
+    "gracePeriod": "Repayment term",
+    "borrow": "Borrow"
+  },
+  "institution": {
+    "restrictedBanner": "IMF and World Bank loans are blocked for communist countries with average sector nationalization above 50%.",
+    "blocked": "Applications blocked",
+    "available": "Available to borrow now",
+    "cooldownRemaining": "Available again on {date}",
+    "interest": "Interest: {percent}%",
+    "amount": "Loan amount",
+    "decreaseAmount": "Decrease by 1 million",
+    "setMaximumAmount": "Set to 15 million",
+    "repaymentTerm": "Repayment term",
+    "submit": "Apply for credit",
+    "errors": {
+      "restricted": "IMF and World Bank loans are unavailable to communist countries with average nationalization above 50%.",
+      "cooldown": "You can apply for another loan after {date}.",
+      "invalidAmount": "Enter a valid loan amount.",
+      "maximum": "The maximum loan from {institution} is {amount} NEO.",
+      "termRange": "Choose a term between 180 and 1,825 days."
+    }
+  },
+  "terms": {
+    "title": "Choose a term",
+    "selected": "Selected",
+    "shortDefault": "6 mo",
+    "options": {
+      "sixMonths": "6 months",
+      "nineMonths": "9 months",
+      "oneYear": "1 year",
+      "twoYears": "2 years",
+      "threeYears": "3 years",
+      "fourYears": "4 years",
+      "fiveYears": "5 years"
+    }
+  },
+  "history": {
+    "active": "Active Debt ({count})",
+    "paid": "Paid Off ({count})",
+    "emptyActive": "There is no active debt.",
+    "emptyPaid": "No loans have been repaid yet.",
+    "paymentAria": "Confirm payment for the loan from {source}",
+    "headers": {
+      "source": "Lender",
+      "principal": "Principal",
+      "interest": "Initial Interest",
+      "paid": "Paid",
+      "penalty": "Penalty",
+      "currentTotal": "Current Total",
+      "dueDate": "Due Date"
+    }
+  },
+  "confirmation": {
+    "title": "Confirm Loan",
+    "source": "Loan Source",
+    "amount": "Loan Amount",
+    "interest": "Interest",
+    "term": "Repayment Term",
+    "totalPayment": "Total Repayment",
+    "summary": "Loan Summary",
+    "cashBalance": "National Treasury Balance",
+    "outstanding": "Total Outstanding",
+    "ready": "Loan is ready to confirm",
+    "approvalNote": "The loan will be added to the national treasury once approved.",
+    "cancel": "Cancel",
+    "confirm": "Confirm Loan"
+  },
+  "payment": {
+    "title": "Confirm Payment",
+    "amountDue": "You are about to pay {amount}",
+    "sourceLabel": "for a loan from",
+    "insufficientAlert": "The national treasury does not have enough funds for this payment.",
+    "insufficient": "Not enough funds to repay this loan in full",
+    "payNow": "Pay Now"
+  },
+  "penalties": {
+    "generalTitle": "Late Payment Penalty",
+    "detailTitle": "Late Payment Penalty Details",
+    "loanData": "Loan Details",
+    "accumulated": "Accumulated Penalty",
+    "missed": "Missed",
+    "general": {
+      "paragraphOne": "When a loan is due and cannot be repaid in full, the system pays as much as possible from the national treasury.",
+      "paragraphTwo": "Any remaining balance is marked as overdue, and a penalty is added each month.",
+      "paragraphThree": "This calculation applies to both bilateral and multilateral loans."
+    }
+  },
+  "info": {
+    "title": "Loans & Debt Information",
+    "paragraphOne": "Loans from other countries or international institutions increase both the treasury and national debt. Each loan has interest and a due date, so review its terms before accepting.",
+    "paragraphTwo": "The debt-to-GDP ratio compares total debt with the size of the national economy. The base safe limit is 60% and may change with active bonuses. Monitor loan history and pay before the due date to avoid penalties."
+  }
+}

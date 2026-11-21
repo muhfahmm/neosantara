@@ -32,6 +32,7 @@ import {
   generateSectorAnalysis,
   calculateDeficitRecommendation
 } from "./logic/AI_suggestionsLogic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -61,11 +62,11 @@ const safeNumber = (value: any): number => {
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
-const formatColoredNumber = (value: any, isPositive: boolean = true) => {
+const formatColoredNumber = (value: any, isPositive: boolean = true, locale = "id") => {
   const parsed = safeNumber(value);
   if (parsed === 0) return <span className={"root-modal-util-45beb2b6f2"}>0</span>;
   const absValue = Math.abs(parsed);
-  const formatted = absValue.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 });
+  const formatted = absValue.toLocaleString(locale, { minimumFractionDigits: 0, maximumFractionDigits: 3 });
   const mainColor = isPositive ? "root-modal-util-edbfd1c508" : "root-modal-util-35f302741d";
   const sign = isPositive ? '+' : '-';
   return <span className={`root-modal-util-7fbb85697d ${mainColor}`}>{sign}{formatted}</span>;
@@ -88,6 +89,7 @@ const normalizePopulationFromProfile = (country: any, profileMap: Map<string, nu
 };
 
 export default function IndustriPanganModal({ isOpen, onClose, countryDetail, setCountryDetail, metadata, onGotoProduction, prefetchedAllCountries }: ModalProps) {
+  const { t, language } = useLanguage();
   const [activeTab, setActiveTab] = useState<"my" | "global">("my");
   const [allCountries, setAllCountries] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -183,19 +185,31 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
     const bonusParts: string[] = [];
 
     if (getCommunismProductionMultiplier(key, countryDetail?.ideology) > 1) {
-      bonusParts.push(`${COMMUNISM_PRODUCTION_BONUS * 100}% oleh bonus ideologi Komunisme`);
+      bonusParts.push(t("navigation_food_consumption.bonuses.communism", {
+        percent: COMMUNISM_PRODUCTION_BONUS * 100,
+      }));
     }
-    if (religion === "shinto" && getShintoElectricityProductionMultiplier(key) > 1) {
-      bonusParts.push("10% oleh bonus agama Shinto");
+    const shintoMultiplier = getShintoElectricityProductionMultiplier(key);
+    if (religion === "shinto" && shintoMultiplier > 1) {
+      bonusParts.push(t("navigation_food_consumption.bonuses.shinto", {
+        percent: Math.round((shintoMultiplier - 1) * 100),
+      }));
     }
-    if (religion === "islam" && getIslamProductionMultiplier(key) > 1) {
-      bonusParts.push("10% oleh bonus agama Islam");
+    const islamMultiplier = getIslamProductionMultiplier(key);
+    if (religion === "islam" && islamMultiplier > 1) {
+      bonusParts.push(t("navigation_food_consumption.bonuses.islam", {
+        percent: Math.round((islamMultiplier - 1) * 100),
+      }));
     }
     if (isMemberOfFAO(countryName) && FAO_BONUS_RESOURCES.has(normalizedKey)) {
-      bonusParts.push("10% oleh bonus keanggotaan FAO");
+      bonusParts.push(t("navigation_food_consumption.bonuses.fao", { percent: 10 }));
     }
 
-    return bonusParts.length > 0 ? `Produksi ditingkatkan ${bonusParts.join(" dan ")}.` : null;
+    return bonusParts.length > 0
+      ? t("navigation_food_consumption.bonuses.summary", {
+          bonuses: bonusParts.join(t("navigation_food_consumption.bonuses.conjunction")),
+        })
+      : null;
   };
 
   const openCommodityInfo = (key: string, label: string, production: number, consumption: number, balance: number) => {
@@ -276,7 +290,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
       <AISuggestModal
         isOpen={aiSectorAnalysis !== null}
         onClose={() => setAiSectorAnalysis(null)}
-        sectorLabel={aiSectorAnalysis?.sectorLabel || ''}
+        sectorId={aiSectorAnalysis?.sectorId || ''}
         totalDeficit={aiSectorAnalysis?.totalDeficit || 0}
         totalSurplus={aiSectorAnalysis?.totalSurplus || 0}
         commodities={aiSectorAnalysis?.commodities || []}
@@ -306,12 +320,12 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
             <div className={"root-no-scrollbar-glow root-modal-util-442b6700f1 neon-scrollbar"}>
               <div className={"root-modal-util-83c631f722"}>
                 <div className={`root-modal-util-548951b485 root-modal-util-5f22e64f22 root-modal-util-9274009d5e `}>
-                  <span className={"root-modal-util-14d6efe9ef"}>Total Produksi</span>
-                  <div className={"root-modal-util-76e5b7f137"}>{formatColoredNumber(selectedCommodityInfo.production, true)}</div>
+                  <span className={"root-modal-util-14d6efe9ef"}>{t("navigation_food_consumption.totalProduction")}</span>
+                  <div className={"root-modal-util-76e5b7f137"}>{formatColoredNumber(selectedCommodityInfo.production, true, language)}</div>
                 </div>
                 <div className={`root-modal-util-057a5de724 root-modal-util-5f22e64f22 root-modal-util-9274009d5e `}>
-                  <span className={"root-modal-util-14d6efe9ef"}>Total Konsumsi</span>
-                  <div className={"root-modal-util-76e5b7f137"}>{formatColoredNumber(selectedCommodityInfo.consumption, false)}</div>
+                  <span className={"root-modal-util-14d6efe9ef"}>{t("navigation_food_consumption.totalConsumption")}</span>
+                  <div className={"root-modal-util-76e5b7f137"}>{formatColoredNumber(selectedCommodityInfo.consumption, false, language)}</div>
                 </div>
               </div>
               {selectedCommodityInfo.bonusDescription && (
@@ -321,8 +335,8 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
               )}
               <div className={`root-modal-util-c3dd845bb0 root-modal-util-5f22e64f22`}>
                 <div className={"root-modal-util-f1cb411495"}>
-                  <span className={"root-modal-util-14d6efe9ef"}>Netto:</span>
-                  {formatColoredNumber(selectedCommodityInfo.balance, selectedCommodityInfo.balance >= 0)}
+                  <span className={"root-modal-util-14d6efe9ef"}>{t("navigation_food_consumption.net")}</span>
+                  {formatColoredNumber(selectedCommodityInfo.balance, selectedCommodityInfo.balance >= 0, language)}
                 </div>
               </div>
             </div>
@@ -341,7 +355,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                   <Utensils aria-hidden="true" className={"root-modal-util-d252947d10"} />
                 </div>
                 <h2 className={"root-modal-util-6b4648c53a root-modal-util-c2385a463d"}>
-                  Industri Pangan
+                  {t("navigation_food_consumption.title")}
                 </h2>
               </div>
             </div>
@@ -349,8 +363,8 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
               <button
                 type="button"
                 onClick={() => setIsMenuInfoOpen(true)}
-                title="Informasi industri pangan dan konsumsi"
-                aria-label="Informasi industri pangan dan konsumsi"
+                title={t("navigation_food_consumption.infoButton")}
+                aria-label={t("navigation_food_consumption.infoButton")}
                 className={"root-modal-info-button root-modal-util-1697100c43"}
               >
                 <Info aria-hidden="true" />
@@ -364,16 +378,18 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
               {Object.entries(SECTOR_MAP).map(([sectorId, sectorData]) => {
                 const SectorIcon = sectorData.icon;
                 const sectorItems = sectorData.items.filter(key => FOOD_CONSUMPTION_PER_CAPITA[key] !== undefined);
+                const sectorTranslationKey = `navigation_food_consumption.sectors.${sectorId}`;
+                const sectorLabel = t(sectorTranslationKey);
                 if (sectorItems.length === 0) return null;
                 let deficitCount = 0; let surplusCount = 0;
                 sectorItems.forEach(key => { const prod = calculateProduction(key, countryDetail, metadata); const cons = calculateConsumption(population, FOOD_CONSUMPTION_PER_CAPITA[key]); if (prod - cons < 0) deficitCount++; else if (prod - cons > 0) surplusCount++; });
                 return (
                   <div key={sectorId} className={`root-modal-util-5298bdd041 root-modal-util-5f22e64f22 root-modal-util-23cdffb29e `}>
                     <div className={"root-modal-util-46d52ba86c"}>
-                      <div className={"root-modal-util-d4cd52ca73"}><div className={"root-modal-util-a27f83ec88"}><SectorIcon className={"root-modal-util-f541a30647"} /></div><h4 className={`root-modal-util-9361ef65fc root-modal-util-3d9a1150e3 `}>{sectorData.label} ({sectorItems.length} Komoditas)</h4></div>
+                      <div className={"root-modal-util-d4cd52ca73"}><div className={"root-modal-util-a27f83ec88"}><SectorIcon className={"root-modal-util-f541a30647"} /></div><h4 className={`root-modal-util-9361ef65fc root-modal-util-3d9a1150e3 `}>{sectorLabel === sectorTranslationKey ? sectorData.label : sectorLabel} ({t("navigation_food_consumption.commodityCount", { count: sectorItems.length })})</h4></div>
                       <RootAISuggestionsButton
                         onClick={() => analyzeSector(sectorId)}
-                        title={`Analisis AI untuk sektor ${sectorData.label}`}
+                        title={t("navigation_food_consumption.analyzeSector", { sector: sectorLabel === sectorTranslationKey ? sectorData.label : sectorLabel })}
                         status={deficitCount > 0 ? "deficit" : surplusCount > 0 ? "surplus" : "neutral"}
                       />
                     </div>
@@ -384,21 +400,25 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                         const production = calculateProduction(key, countryDetail, metadata);
                         const consumption = calculateConsumption(population, consumptionPerCapita);
                         const netBalance = production - consumption;
-                        const label = metadata?.[key]?.label || key.replace(/_/g, ' ').replace(/\b\w/g, (ch) => ch.toUpperCase());
+                        const commodityTranslationKey = `navigation_food_consumption.commodities.${key}`;
+                        const translatedLabel = t(commodityTranslationKey);
+                        const label = translatedLabel === commodityTranslationKey
+                          ? metadata?.[key]?.label || key.replace(/_/g, ' ').replace(/\b\w/g, (ch) => ch.toUpperCase())
+                          : translatedLabel;
                         return (
                           <div key={key} className={`root-modal-util-7ffb0bad63 root-modal-util-5f22e64f22 root-modal-util-e1012a77bf `}>
                             <div className={"root-modal-util-a5a609ec40"}>
                               <div className={"root-modal-util-32533cb404"}>
-                                <button type="button" onClick={(e) => { e.stopPropagation(); openCommodityInfo(key, label, production, consumption, netBalance); }} title={`Detail konsumsi ${label}`} className={"root-modal-util-182614346b"}><Info className={"root-modal-util-7b11a622cc"} /></button>
+                                <button type="button" onClick={(e) => { e.stopPropagation(); openCommodityInfo(key, label, production, consumption, netBalance); }} title={t("navigation_food_consumption.detailCommodity", { commodity: label })} className={"root-modal-util-182614346b"}><Info className={"root-modal-util-7b11a622cc"} /></button>
                                 <span className={`root-modal-util-14d6efe9ef food-commodity-mobile-title root-modal-util-e0b60b8e1d `}>{label}</span>
                               </div>
-                              {onGotoProduction && (<button onClick={() => handleBuildClick(key)} title={`Bangun ${label}`} className={"root-modal-util-44803908b4"}><Plus className={"root-modal-util-a35739b19e"} /></button>)}
+                              {onGotoProduction && (<button onClick={() => handleBuildClick(key)} title={t("navigation_food_consumption.buildCommodity", { commodity: label })} className={"root-modal-util-44803908b4"}><Plus className={"root-modal-util-a35739b19e"} /></button>)}
                             </div>
                             <div className={"food-commodity-mobile-value root-modal-util-a8f233d4d7"}>
-                              <div className={`root-modal-util-3b859a66cf root-modal-util-5f22e64f22 root-modal-util-1b774baba7 `}><span className={`root-modal-util-14d6efe9ef food-commodity-mobile-label`}>Total Produksi</span>{formatColoredNumber(production, true)}</div>
-                              <div className={`root-modal-util-a4b253bd54 root-modal-util-5f22e64f22 root-modal-util-4b89a46abe `}><span className={`root-modal-util-14d6efe9ef food-commodity-mobile-label`}>Total Konsumsi</span>{formatColoredNumber(consumption, false)}</div>
+                              <div className={`root-modal-util-3b859a66cf root-modal-util-5f22e64f22 root-modal-util-1b774baba7 `}><span className={`root-modal-util-14d6efe9ef food-commodity-mobile-label`}>{t("navigation_food_consumption.totalProduction")}</span>{formatColoredNumber(production, true, language)}</div>
+                              <div className={`root-modal-util-a4b253bd54 root-modal-util-5f22e64f22 root-modal-util-4b89a46abe `}><span className={`root-modal-util-14d6efe9ef food-commodity-mobile-label`}>{t("navigation_food_consumption.totalConsumption")}</span>{formatColoredNumber(consumption, false, language)}</div>
                             </div>
-                            <div className={"food-commodity-mobile-value root-modal-util-1eaefe7a3f"}><span className={`root-modal-util-14d6efe9ef food-commodity-mobile-label`}>Netto:</span>{formatColoredNumber(netBalance, netBalance >= 0)}</div>
+                            <div className={"food-commodity-mobile-value root-modal-util-1eaefe7a3f"}><span className={`root-modal-util-14d6efe9ef food-commodity-mobile-label`}>{t("navigation_food_consumption.net")}</span>{formatColoredNumber(netBalance, netBalance >= 0, language)}</div>
                           </div>
                         );
                       })}
@@ -411,7 +431,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
               <div className={`root-satisfaction-index root-modal-util-2e2a9db707 root-modal-util-5f22e64f22`}>
                 <div className={"root-modal-util-56e6b92b69"}>
                   <span className={"root-satisfaction-index-title root-modal-util-84cf691742"}>
-                    Indeks Kepuasan Rakyat (Pangan)
+                    {t("navigation_food_consumption.satisfactionIndex")}
                   </span>
                   <span className={"root-satisfaction-index-value root-modal-util-9a9af14778"}>
                     {foodSatisfaction} / 100
@@ -432,8 +452,8 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
       <MenuInfoModal
         isOpen={isMenuInfoOpen}
         onClose={() => setIsMenuInfoOpen(false)}
-        title="Informasi Industri Pangan & Konsumsi Masyarakat"
-        description="Tinjau produksi, konsumsi, dan neraca bersih komoditas pangan menurut sektor. Gunakan tombol informasi pada komoditas untuk melihat rinciannya, atau tombol tambah untuk menuju menu produksi."
+        title={t("navigation_food_consumption.infoTitle")}
+        description={t("navigation_food_consumption.infoDescription")}
       />
     </>
   );

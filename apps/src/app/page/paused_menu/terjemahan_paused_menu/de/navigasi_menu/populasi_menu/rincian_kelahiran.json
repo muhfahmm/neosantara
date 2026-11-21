@@ -1,0 +1,17 @@
+{
+  "title": "Details zum Bevölkerungswachstum",
+  "dailyNetGrowth": "Täglicher Nettozuwachs",
+  "perHour": "/Std.",
+  "births": "Geburten",
+  "deaths": "Todesfälle",
+  "factors": "Einflussfaktoren",
+  "basePopulation": "Ausgangsbevölkerung",
+  "people": "Personen",
+  "welfare": "Wohlergehen",
+  "healthFacilities": "Gesundheitseinrichtungen",
+  "educationLevel": "Bildungsniveau",
+  "open": "Öffnen →",
+  "points": "PUNKTE",
+  "index": "INDEX",
+  "ratio": "(Verhältnis {value})"
+}

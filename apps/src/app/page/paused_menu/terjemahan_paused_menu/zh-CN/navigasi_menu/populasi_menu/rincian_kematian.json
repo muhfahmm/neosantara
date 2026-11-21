@@ -1,0 +1,23 @@
+{
+  "title": "死亡率详情",
+  "dailyDeaths": "每日死亡数",
+  "perHour": "/小时",
+  "factors": "影响因素",
+  "lifeExpectancy": "预期寿命",
+  "years": "年",
+  "lifeExpectancyDescription": "预期寿命越高，死亡率越低。",
+  "security": "治安水平",
+  "securityDescription": "安全的环境可以减少事故和犯罪造成的死亡。",
+  "homeless": "无家可归者",
+  "homelessCount": "{count} 人（{ratio}%）",
+  "homelessDescription": "无家可归率每增加 1%，死亡数就增加 5%。",
+  "healthFacilities": "医疗设施",
+  "open": "打开 →",
+  "points": "分",
+  "ratio": "（比例 {value}）",
+  "healthDescription": "医院可用性提高能减少可治疗疾病造成的死亡。",
+  "foodSecurity": "粮食安全",
+  "foodDescription": "充足的粮食供应可以降低营养不良风险。",
+  "lawEnforcement": "执法",
+  "lawDescription": "福利指数中的司法与警察满意度。"
+}

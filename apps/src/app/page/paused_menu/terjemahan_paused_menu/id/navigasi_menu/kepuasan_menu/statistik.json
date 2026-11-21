@@ -1,0 +1,22 @@
+{
+  "title": "Kepuasan Rakyat",
+  "infoButton": "Informasi statistik kepuasan rakyat",
+  "civilSatisfaction": "Kepuasan Sipil:",
+  "statisticsTab": "Statistik",
+  "increaseTab": "Naikkan Kepuasan",
+  "sectors": {
+    "tax": "Pajak",
+    "goodsPrices": "Harga Barang Pokok",
+    "foodProduction": "Produksi Pangan",
+    "electricityProduction": "Produksi Listrik",
+    "housing": "Hunian Permukiman",
+    "publicServices": "Layanan Publik & Tempat Umum",
+    "doctrine": "Doktrin & Keterbukaan",
+    "economicPolicy": "Kebijakan & Sistem Ekonomi",
+    "subsidies": "Alokasi & Kebijakan Subsidi"
+  },
+  "info": {
+    "title": "Informasi Statistik Kepuasan Rakyat",
+    "description": "Nilai kepuasan merangkum kondisi umum dan indikator sektoral seperti pajak, harga, pangan, serta layanan publik. Gunakan tab Statistik untuk meninjau skor dan akses sektor terkait untuk melihat kebijakan yang memengaruhinya."
+  }
+}

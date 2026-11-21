@@ -3,10 +3,18 @@
 
 import React, { memo } from "react";
 import { ECONOMIC_POLICIES } from "../../logic/logikaSistemEkonomi";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface Props {
   policyChoices: Record<string, "A" | "B">;
   handlePolicyChange: (policyId: string, choice: "A" | "B") => void;
+}
+
+interface LocalizedPolicy {
+  id: string;
+  name: string;
+  optionA: { label: string; type: string; effect: string };
+  optionB: { label: string; type: string; effect: string };
 }
 
 const PolicyCard = memo(function PolicyCard({
@@ -14,7 +22,7 @@ const PolicyCard = memo(function PolicyCard({
   currentChoice,
   onSelect,
 }: {
-  policy: typeof ECONOMIC_POLICIES[number];
+  policy: LocalizedPolicy;
   currentChoice: "A" | "B";
   onSelect: (policyId: string, choice: "A" | "B") => void;
 }) {
@@ -74,9 +82,24 @@ const PolicyCard = memo(function PolicyCard({
 });
 
 function KartuKebijakanTabComponent({ policyChoices, handlePolicyChange }: Props) {
+  const { t } = useLanguage();
+  const policies: LocalizedPolicy[] = ECONOMIC_POLICIES.map((policy) => ({
+    id: policy.id,
+    name: t(`navigation_economy_system.policies.${policy.id}.name`),
+    optionA: {
+      label: t(`navigation_economy_system.policies.${policy.id}.optionA.label`),
+      type: t("navigation_economy_system.spectrum.categories.centralized"),
+      effect: t(`navigation_economy_system.policies.${policy.id}.optionA.effect`),
+    },
+    optionB: {
+      label: t(`navigation_economy_system.policies.${policy.id}.optionB.label`),
+      type: t("navigation_economy_system.spectrum.categories.freeMarket"),
+      effect: t(`navigation_economy_system.policies.${policy.id}.optionB.effect`),
+    },
+  }));
   return (
     <div className="economic-policy-list space-y-2.5 lg:space-y-3.5 max-w-full">
-      {ECONOMIC_POLICIES.map((policy) => {
+      {policies.map((policy) => {
         const currentChoice = policyChoices[policy.id] || "A";
         return (
           <PolicyCard

@@ -1713,7 +1713,7 @@ export default function MissionModals({
       {mounted && !isMenuButtonHidden && createPortal(
         <button
           onClick={onClick}
-          title="Misi & Sasaran Strategis"
+          aria-label="Misi & Sasaran Strategis"
           className="side-floating-btn side-btn-misi"
         >
           <img

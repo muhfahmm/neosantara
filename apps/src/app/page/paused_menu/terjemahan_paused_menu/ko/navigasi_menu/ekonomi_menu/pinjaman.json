@@ -1,0 +1,84 @@
+{
+  "title": "대출 및 부채",
+  "infoButton": "대출 및 부채 정보",
+  "dayUnit": "일",
+  "monthUnit": "개월",
+  "tabs": { "bilateral": "다른 국가", "multilateral": "국제 기관", "history": "내역" },
+  "search": { "placeholder": "대출 국가 검색...", "ariaLabel": "대출 국가 검색" },
+  "summary": { "debtRatio": "GDP 대비 부채 비율", "safeLimit": "안전 한도:", "totalDebt": "총 부채 부담" },
+  "institutions": { "imf": "국제통화기금 (IMF)", "worldBank": "세계은행" },
+  "bilateral": { "noResults": "검색 결과와 일치하는 국가가 없습니다.", "maximum": "대출 한도", "gracePeriod": "상환 기간", "borrow": "대출" },
+  "institution": {
+    "restrictedBanner": "부문 평균 국유화율이 50%를 초과하는 공산주의 국가는 IMF와 세계은행 대출이 제한됩니다.",
+    "blocked": "신청 제한됨",
+    "available": "지금 대출 가능",
+    "cooldownRemaining": "{date}부터 다시 신청 가능",
+    "interest": "이자율: {percent}%",
+    "amount": "대출 금액",
+    "decreaseAmount": "100만큼 줄이기",
+    "setMaximumAmount": "1,500만으로 설정",
+    "repaymentTerm": "상환 기간",
+    "submit": "대출 신청",
+    "errors": {
+      "restricted": "부문 평균 국유화율이 50%를 초과하는 공산주의 국가는 IMF와 세계은행 대출을 이용할 수 없습니다.",
+      "cooldown": "{date} 이후에 다시 대출을 신청할 수 있습니다.",
+      "invalidAmount": "올바른 대출 금액을 입력하세요.",
+      "maximum": "{institution}의 최대 대출 금액은 {amount} NEO입니다.",
+      "termRange": "180~1825일 사이의 기간을 선택하세요."
+    }
+  },
+  "terms": {
+    "title": "상환 기간 선택",
+    "selected": "선택됨",
+    "shortDefault": "6개월",
+    "options": { "sixMonths": "6개월", "nineMonths": "9개월", "oneYear": "1년", "twoYears": "2년", "threeYears": "3년", "fourYears": "4년", "fiveYears": "5년" }
+  },
+  "history": {
+    "active": "활성 부채 ({count})",
+    "paid": "상환 완료 ({count})",
+    "emptyActive": "활성 부채가 없습니다.",
+    "emptyPaid": "아직 상환한 대출이 없습니다.",
+    "paymentAria": "{source} 대출 상환 확인",
+    "headers": { "source": "대출 기관", "principal": "원금", "interest": "초기 이자", "paid": "상환액", "penalty": "연체료", "currentTotal": "현재 합계", "dueDate": "만기일" }
+  },
+  "confirmation": {
+    "title": "대출 확인",
+    "source": "대출 기관",
+    "amount": "대출 금액",
+    "interest": "이자율",
+    "term": "상환 기간",
+    "totalPayment": "총 상환액",
+    "summary": "대출 요약",
+    "cashBalance": "국고 잔액",
+    "outstanding": "총 미상환액",
+    "ready": "대출을 확인할 수 있습니다",
+    "approvalNote": "승인되면 대출금이 국고에 추가됩니다.",
+    "cancel": "취소",
+    "confirm": "대출 확인"
+  },
+  "payment": {
+    "title": "상환 확인",
+    "amountDue": "{amount}을(를) 상환합니다",
+    "sourceLabel": "대출 기관:",
+    "insufficientAlert": "상환에 필요한 국고 자금이 부족합니다.",
+    "insufficient": "대출을 전액 상환하기에 자금이 부족합니다",
+    "payNow": "지금 상환"
+  },
+  "penalties": {
+    "generalTitle": "연체료 안내",
+    "detailTitle": "연체료 상세 정보",
+    "loanData": "대출 정보",
+    "accumulated": "누적 연체료",
+    "missed": "연체 기간",
+    "general": {
+      "paragraphOne": "대출 만기일에 전액 상환할 수 없으면 시스템은 국고에서 가능한 만큼 상환합니다.",
+      "paragraphTwo": "잔액이 남으면 연체로 표시되고 매월 연체료가 추가됩니다.",
+      "paragraphThree": "이 계산은 양자 및 다자간 대출에 모두 적용됩니다."
+    }
+  },
+  "info": {
+    "title": "대출 및 부채 정보",
+    "paragraphOne": "다른 국가나 국제 기관의 대출은 국고와 국가 부채를 모두 늘립니다. 각 대출에는 이자와 만기일이 있으므로 승인 전에 조건을 확인하세요.",
+    "paragraphTwo": "GDP 대비 부채 비율은 총부채와 국가 경제 규모를 비교합니다. 기본 안전 한도는 60%이며 활성 보너스에 따라 달라질 수 있습니다. 대출 내역을 확인하고 연체료를 피하려면 만기 전에 상환하세요."
+  }
+}

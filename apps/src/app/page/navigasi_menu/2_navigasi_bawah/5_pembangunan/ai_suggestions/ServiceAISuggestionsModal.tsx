@@ -8,6 +8,7 @@ import {
   TempatUmumSectorAnalysis,
   HunianSectorAnalysis,
 } from "./serviceAISuggestionsLogic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface ServiceAISuggestionsModalProps {
   isOpen: boolean;
@@ -24,9 +25,25 @@ export default function ServiceAISuggestionsModal({
   hunianAnalysis,
   onBuildClick,
 }: ServiceAISuggestionsModalProps) {
+  const { t, language } = useLanguage();
+  const publicTranslation = (key: string, params?: Record<string, string | number>) =>
+    t(`navigation_construction_public_places.aiSuggestions.${key}`, params);
+  const housingTranslation = (key: string, params?: Record<string, string | number>) =>
+    t(`navigation_construction_housing.aiSuggestions.${key}`, params);
+  const localized = (key: string, fallback: string) => {
+    const translated = t(key);
+    return translated === key ? fallback : translated;
+  };
+  const formatNumber = (value: number) =>
+    value.toLocaleString(language, { maximumFractionDigits: 2 });
+
   if (!isOpen || (!tempatUmumAnalysis && !hunianAnalysis)) return null;
 
   if (tempatUmumAnalysis) {
+    const sectorLabel = localized(
+      `navigation_construction_public_places.groups.${tempatUmumAnalysis.tabId}.label`,
+      tempatUmumAnalysis.tabLabel
+    );
     const satisfactionTone =
       tempatUmumAnalysis.satisfactionScore <= 40
         ? "deficit"
@@ -35,13 +52,15 @@ export default function ServiceAISuggestionsModal({
           : "surplus";
     const items: RootAISuggestionItem[] = tempatUmumAnalysis.facilities.map((item) => ({
       key: item.key,
-      label: item.label,
+      label: localized(`navigation_construction_public_places.facilities.${item.key}`, item.label),
       status: item.isDeficit ? "deficit" : "surplus",
-      details: `Tersedia ${item.count} unit · Target ideal ${item.targetCount} unit`,
-      value: item.isDeficit ? `Defisit -${item.deficit} unit` : `Mencukupi (${item.count} unit)`,
+      details: publicTranslation("facilityDetails", { count: item.count, target: item.targetCount }),
+      value: item.isDeficit
+        ? publicTranslation("facilityDeficit", { count: item.deficit })
+        : publicTranslation("facilitySufficient", { count: item.count }),
       ...(item.isDeficit
         ? {
-            actionLabel: "Bangun",
+            actionLabel: publicTranslation("build"),
             onAction: () => {
               onClose();
               onBuildClick?.(item.key, item.label, item.recommendedBuildQty);
@@ -54,36 +73,55 @@ export default function ServiceAISuggestionsModal({
       <RootAISuggestionsModal
         isOpen={isOpen}
         onClose={onClose}
-        sectorLabel={tempatUmumAnalysis.tabLabel}
-        subtitle="Evaluasi kebutuhan dan ketersediaan fasilitas publik"
-        sectionTitle="Rincian Analisis Fasilitas"
+        sectorLabel={sectorLabel}
+        title={publicTranslation("title", { sector: sectorLabel })}
+        subtitle={publicTranslation("subtitle")}
+        sectionTitle={publicTranslation("sectionTitle")}
+        itemCountLabel={publicTranslation("itemCount", { count: items.length })}
         metrics={[
           {
-            label: `Indeks Kepuasan · ${tempatUmumAnalysis.tabLabel}`,
+            label: publicTranslation("satisfactionIndex", { sector: sectorLabel }),
             value: `${tempatUmumAnalysis.satisfactionScore} / 100`,
             tone: satisfactionTone,
             progress: tempatUmumAnalysis.satisfactionScore,
           },
-          { label: "Rasio per Kapita", value: tempatUmumAnalysis.ratio.toFixed(2) },
-          { label: "Persentase Keterpenuhan", value: `${tempatUmumAnalysis.percentageMet.toFixed(1)}%` },
+          { label: publicTranslation("perCapitaRatio"), value: tempatUmumAnalysis.ratio.toFixed(2) },
+          { label: publicTranslation("fulfillment"), value: `${tempatUmumAnalysis.percentageMet.toFixed(1)}%` },
         ]}
         items={items}
-        summary={tempatUmumAnalysis.recommendation}
+        summary={publicTranslation(
+          tempatUmumAnalysis.status === "MENCUKUPI"
+            ? "summarySufficient"
+            : tempatUmumAnalysis.status === "TERBATAS"
+              ? "summaryLimited"
+              : "summaryCrisis",
+          { sector: sectorLabel }
+        )}
       />
     );
   }
 
   if (!hunianAnalysis) return null;
 
+  const sectorLabel = localized(
+    `navigation_construction_housing.tabs.${hunianAnalysis.tabId}`,
+    hunianAnalysis.tabLabel
+  );
   const items: RootAISuggestionItem[] = hunianAnalysis.housingItems.map((item) => ({
     key: item.key,
-    label: item.label,
+    label: localized(`navigation_construction_housing.buildings.${item.key}`, item.label),
     status: item.isDeficit ? "deficit" : "surplus",
-    details: `Kapasitas ${item.capacityPerUnit} jiwa/unit · Terpasang ${item.count} unit (${item.totalCapacity.toLocaleString("id-ID", { maximumFractionDigits: 2 })} jiwa)`,
-    value: item.isDeficit ? `Kebutuhan +${item.deficitUnitsNeeded} unit` : "Mencukupi",
+    details: housingTranslation("itemDetails", {
+      capacity: formatNumber(item.capacityPerUnit),
+      count: item.count,
+      total: formatNumber(item.totalCapacity),
+    }),
+    value: item.isDeficit
+      ? housingTranslation("unitsNeeded", { count: item.deficitUnitsNeeded })
+      : housingTranslation("sufficient"),
     ...(item.isDeficit
       ? {
-          actionLabel: "Bangun",
+          actionLabel: housingTranslation("build"),
           onAction: () => {
             onClose();
             onBuildClick?.(item.key, item.label, item.deficitUnitsNeeded);
@@ -96,28 +134,39 @@ export default function ServiceAISuggestionsModal({
     <RootAISuggestionsModal
       isOpen={isOpen}
       onClose={onClose}
-      sectorLabel={hunianAnalysis.tabLabel}
-      subtitle="Evaluasi kapasitas hunian terhadap jumlah penduduk"
-      sectionTitle="Rincian Analisis Hunian"
+      sectorLabel={sectorLabel}
+      title={housingTranslation("title", { sector: sectorLabel })}
+      subtitle={housingTranslation("subtitle")}
+      sectionTitle={housingTranslation("sectionTitle")}
+      itemCountLabel={housingTranslation("itemCount", { count: items.length })}
       metrics={[
         {
-          label: "Kapasitas per Unit",
-          value: `${hunianAnalysis.capacityPerUnit.toLocaleString("id-ID", { maximumFractionDigits: 2 })} jiwa`,
+          label: housingTranslation("capacityPerUnit"),
+          value: `${formatNumber(hunianAnalysis.capacityPerUnit)} ${housingTranslation("people")}`,
         },
         {
-          label: "Kapasitas Terpasang",
-          value: `${hunianAnalysis.totalCapacity.toLocaleString("id-ID", { maximumFractionDigits: 2 })} jiwa`,
+          label: housingTranslation("installedCapacity"),
+          value: `${formatNumber(hunianAnalysis.totalCapacity)} ${housingTranslation("people")}`,
         },
         {
-          label: hunianAnalysis.isDeficit ? "Defisit Kapasitas Hunian" : "Surplus Kapasitas Hunian",
+          label: housingTranslation(hunianAnalysis.isDeficit ? "capacityDeficit" : "capacitySurplus"),
           value: hunianAnalysis.isDeficit
-            ? `-${hunianAnalysis.populationDeficit.toLocaleString("id-ID", { maximumFractionDigits: 2 })} jiwa`
-            : `+${hunianAnalysis.populationSurplus.toLocaleString("id-ID", { maximumFractionDigits: 2 })} jiwa`,
+            ? `-${formatNumber(hunianAnalysis.populationDeficit)} ${housingTranslation("people")}`
+            : `+${formatNumber(hunianAnalysis.populationSurplus)} ${housingTranslation("people")}`,
           tone: hunianAnalysis.isDeficit ? "deficit" : "surplus",
         },
       ]}
       items={items}
-      summary={hunianAnalysis.recommendation}
+      summary={housingTranslation(
+        hunianAnalysis.isDeficit ? "summaryDeficit" : "summarySufficient",
+        {
+          deficit: formatNumber(hunianAnalysis.populationDeficit),
+          surplus: formatNumber(hunianAnalysis.populationSurplus),
+          units: formatNumber(hunianAnalysis.deficitUnitsNeeded),
+          population: formatNumber(hunianAnalysis.population),
+          sector: sectorLabel,
+        }
+      )}
     />
   );
 }

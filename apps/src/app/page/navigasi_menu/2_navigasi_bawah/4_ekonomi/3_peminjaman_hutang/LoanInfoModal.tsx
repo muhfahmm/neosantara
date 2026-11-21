@@ -4,6 +4,7 @@ import { Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface LoanInfoModalProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface LoanInfoModalProps {
 }
 
 export default function LoanInfoModal({ isOpen, onClose }: LoanInfoModalProps) {
+  const { t } = useLanguage();
   if (!isOpen) return null;
 
   return (
@@ -22,7 +24,7 @@ export default function LoanInfoModal({ isOpen, onClose }: LoanInfoModalProps) {
     >
       <div className="flex h-full min-w-0 w-full flex-col overflow-hidden bg-root-surface font-sans">
         <RootInfoModalHeader
-          title="Informasi Pinjaman & Hutang"
+          title={t("navigation_economy_loans.info.title")}
           onClose={onClose}
           size="standard"
           icon={<Info aria-hidden="true" />}
@@ -30,15 +32,10 @@ export default function LoanInfoModal({ isOpen, onClose }: LoanInfoModalProps) {
 
         <div className="loan-modal-content min-h-0 flex-1 overflow-y-auto space-y-3 bg-root-surface p-4 sm:p-5 custom-scrollbar">
           <p className={`${rootModalTypography.body} ${rootModalTypography.muted} break-words`}>
-            Pinjaman dari negara lain atau lembaga dunia menambah kas sekaligus
-            total hutang negara. Setiap pinjaman memiliki bunga dan tanggal jatuh
-            tempo, jadi periksa ketentuannya sebelum menyetujui.
+            {t("navigation_economy_loans.info.paragraphOne")}
           </p>
           <p className={`${rootModalTypography.body} ${rootModalTypography.muted} break-words`}>
-            Rasio hutang terhadap PDB membandingkan total hutang dengan ukuran
-            ekonomi negara. Batas aman dasarnya 60% dan dapat berubah karena
-            bonus yang aktif. Pantau riwayat pinjaman dan lakukan pembayaran
-            sebelum jatuh tempo untuk menghindari denda.
+            {t("navigation_economy_loans.info.paragraphTwo")}
           </p>
         </div>
       </div>

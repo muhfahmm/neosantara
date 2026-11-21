@@ -2,6 +2,7 @@
 
 import { Crosshair, Map, Smile, type LucideIcon } from 'lucide-react';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface TopNavProps {
   activeView: 'map' | 'diplomacy';
@@ -10,6 +11,7 @@ interface TopNavProps {
 }
 
 export default function TopNav({ activeView, onSelect, onFocusHome }: TopNavProps) {
+  const { t } = useLanguage();
   const viewportMode = useViewportMode();
   const isLandscapePhone = viewportMode === 'landscapePhone';
   const isPortraitPhone = viewportMode === 'portraitPhone';
@@ -32,10 +34,10 @@ export default function TopNav({ activeView, onSelect, onFocusHome }: TopNavProp
       } : undefined}
       className={`${containerClasses} pointer-events-none`}
       role="group"
-      aria-label="Navigasi tampilan peta"
+      aria-label={t('navbar.navigation.top.groupLabel')}
     >
       <NavButton
-        label="Peta Taktis"
+        label={t('navbar.navigation.top.map')}
         Icon={Map}
         active={activeView === 'map'}
         onClick={() => handleSelect('map')}
@@ -43,7 +45,7 @@ export default function TopNav({ activeView, onSelect, onFocusHome }: TopNavProp
         isPortraitPhone={isPortraitPhone}
       />
       <NavButton
-        label="Hubungan Diplomatik"
+        label={t('navbar.navigation.top.diplomacy')}
         Icon={Smile}
         active={activeView === 'diplomacy'}
         onClick={() => handleSelect(activeView === 'diplomacy' ? 'map' : 'diplomacy')}
@@ -51,7 +53,7 @@ export default function TopNav({ activeView, onSelect, onFocusHome }: TopNavProp
         isPortraitPhone={isPortraitPhone}
       />
       <NavButton
-        label="Fokus & Zoom ke Negara Sendiri"
+        label={t('navbar.navigation.top.focusHome')}
         Icon={Crosshair}
         active={false}
         onClick={onFocusHome}
@@ -83,7 +85,6 @@ function NavButton({
       onClick={onClick}
       aria-label={label}
       aria-current={active ? 'page' : undefined}
-      title={label}
       className={`pointer-events-auto flex cursor-pointer items-center justify-center rounded-lg transition-all ${
         isLandscapePhone
           ? 'px-1.5 py-1 min-h-[30px]'

@@ -1,0 +1,23 @@
+{
+  "title": "Details zur Sterberate",
+  "dailyDeaths": "Tägliche Todesfälle",
+  "perHour": "/Std.",
+  "factors": "Einflussfaktoren",
+  "lifeExpectancy": "Lebenserwartung",
+  "years": "Jahre",
+  "lifeExpectancyDescription": "Eine höhere Lebenserwartung senkt die Sterberate.",
+  "security": "Sicherheitsniveau",
+  "securityDescription": "Eine sichere Umgebung verringert Todesfälle durch Unfälle und Kriminalität.",
+  "homeless": "Obdachlosigkeit",
+  "homelessCount": "{count} Personen ({ratio}%)",
+  "homelessDescription": "Jeder Prozentpunkt Obdachlosigkeit erhöht die Todesfälle um 5%.",
+  "healthFacilities": "Gesundheitseinrichtungen",
+  "open": "Öffnen →",
+  "points": "PUNKTE",
+  "ratio": "(Verhältnis {value})",
+  "healthDescription": "Eine gute Krankenhausversorgung senkt Todesfälle durch behandelbare Krankheiten.",
+  "foodSecurity": "Ernährungssicherheit",
+  "foodDescription": "Eine ausreichende Lebensmittelversorgung senkt das Risiko von Mangelernährung.",
+  "lawEnforcement": "Rechtsdurchsetzung",
+  "lawDescription": "Zufriedenheit mit Justiz und Polizei laut Wohlergehensindex."
+}

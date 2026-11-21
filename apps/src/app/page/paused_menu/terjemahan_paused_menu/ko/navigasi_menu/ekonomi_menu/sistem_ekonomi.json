@@ -1,0 +1,92 @@
+{
+  "title": "경제 정책 및 체제",
+  "infoButton": "경제 정책 및 체제 정보",
+  "ariaLabel": "경제 정책 및 체제 섹션",
+  "monthUnit": "개월",
+  "yearUnit": "년",
+  "tabs": { "spectrum": "경제 체제 스펙트럼", "policies": "정책 카드", "ownership": "생산 소유권" },
+  "satisfaction": "국민 만족도 지수 (경제 정책)",
+  "info": {
+    "title": "경제 정책 및 체제 정보",
+    "description": "경제 체제의 방향을 정하고 부문별 정책을 선택하며 생산 부문의 소유권이나 국유화 수준을 조정하세요. 선택한 정책은 경제 방향과 국가의 이익 배분을 결정합니다."
+  },
+  "spectrum": {
+    "populationImpact": "인구 영향",
+    "policyScore": "정책 점수: {score}/100",
+    "category": "분류: {category}",
+    "centralizedScale": "0% 중앙 계획",
+    "freeMarketScale": "100% 자유 시장",
+    "netPopulationImpact": "순 인구 영향",
+    "gdpGrowthBonus": "GDP 성장 보너스",
+    "categories": { "centralized": "중앙집중형", "mixed": "혼합형", "freeMarket": "자유 시장형" },
+    "presets": { "command": "계획 경제", "socialism": "사회주의", "mixed": "혼합형", "regulatedMarket": "규제 시장", "laissezFaire": "자유방임" },
+    "systems": {
+      "command": { "title": "계획 경제", "description": "정부가 가격, 생산 할당량, 자원 배분을 전적으로 통제합니다. 국영 기업이 모든 경제 부문을 지배합니다." },
+      "marketSocialism": { "title": "시장 사회주의", "description": "국가가 핵심 부문을 엄격히 규제하고 중소기업은 제한된 수익률 아래 운영할 수 있습니다." },
+      "mixed": { "title": "혼합 경제", "description": "정부 규제와 민간 시장의 자유를 조화합니다. 국가는 기본 공공 서비스를 관리합니다." },
+      "regulatedMarket": { "title": "규제 시장", "description": "민간 시장이 경제 성장을 주도하고 정부는 경쟁 감독과 거시경제 안정에 집중합니다." },
+      "laissezFaire": { "title": "자유방임 / 자유 자본주의", "description": "규제를 완전히 완화하고 시장을 제한 없이 운영합니다. 기업 경쟁은 수요와 공급에 따릅니다." }
+    }
+  },
+  "policies": {
+    "price_control": {
+      "name": "생필품 가격 통제",
+      "optionA": { "label": "국가 가격 상한", "effect": "가격은 안정되지만 품귀 위험이 커집니다." },
+      "optionB": { "label": "자유 시장 가격", "effect": "상품 공급은 풍부하지만 갑작스러운 인플레이션이 발생할 수 있습니다." }
+    },
+    "strategic_ownership": {
+      "name": "전략 산업 소유권",
+      "optionA": { "label": "국영 독점 / 국유화", "effect": "국고 수입은 늘지만 운영 효율은 낮아집니다." },
+      "optionB": { "label": "민영화 및 민간 투자", "effect": "혁신과 효율이 빠르게 향상되지만 국가 로열티는 줄어듭니다." }
+    },
+    "trade_policy": {
+      "name": "대외 무역 규제",
+      "optionA": { "label": "엄격한 보호무역주의", "effect": "국내 산업을 보호하지만 소비자 선택권이 제한됩니다." },
+      "optionB": { "label": "자유 무역", "effect": "수출입이 늘지만 국내 산업의 경쟁이 심해집니다." }
+    },
+    "labor_regulation": {
+      "name": "노동 및 최저임금 정책",
+      "optionA": { "label": "높은 최저임금 및 엄격한 보호", "effect": "노동자 복지는 향상되지만 외국인 투자는 줄어들 수 있습니다." },
+      "optionB": { "label": "유연 근무 및 자유 계약", "effect": "고용은 늘지만 사회적 불평등이 커질 수 있습니다." }
+    },
+    "land_property_rights": {
+      "name": "토지 및 재산권",
+      "optionA": { "label": "국가 소유 및 공동 사용권", "effect": "국가가 토지와 주택을 소유하고 주민에게 공동 사용권을 부여합니다." },
+      "optionB": { "label": "절대적 사유 재산권", "effect": "토지와 부동산을 자유롭게 거래할 수 있습니다." }
+    },
+    "labor_unions_rights": {
+      "name": "노동조합권과 경영권",
+      "optionA": { "label": "국가 노동조합 및 노동자 평의회", "effect": "노동조합이 국가 기관이 되고 노동자 평의회가 공장 운영에 참여합니다." },
+      "optionB": { "label": "자유 노동 시장", "effect": "민간 경영이 주도하며 공급망 유지를 위해 파업을 제한할 수 있습니다." }
+    },
+    "monetary_banking": {
+      "name": "통화 및 은행 정책",
+      "optionA": { "label": "단일 중앙은행 및 외환 통제", "effect": "은행을 국가가 소유하고 외환과 자본 유출을 통제합니다." },
+      "optionB": { "label": "민간 은행 및 자유로운 자본 이동", "effect": "경쟁적인 은행업과 자유로운 자본 유입·유출을 허용합니다." }
+    }
+  },
+  "ownership": {
+    "level": "레벨",
+    "stateShare": "국가 지분: {percent}%",
+    "calculatingElectricity": "전력 잉여량을 계산하는 중...",
+    "electricityEstimate": "잉여 전력에 대한 예상 국가 지분: {surplus} MW × {price} NEO × {percent}% = {amount} NEO. 아직 전력 거래가 없어 국가 예산에는 포함되지 않습니다.",
+    "errors": { "noMetadata": "발전소 메타데이터가 없어 잉여량을 계산할 수 없습니다.", "loadFailed": "발전소 메타데이터를 불러오지 못했습니다." },
+    "sectors": {
+      "electricity": "전력",
+      "mineralsEnergy": "광물 및 에너지",
+      "manufacturing": "제조업",
+      "livestock": "축산업",
+      "agriculture": "농업",
+      "fisheries": "수산업",
+      "foodProcessing": "식품 가공"
+    },
+    "levels": {
+      "marketFree": { "name": "자유 시장", "description": "민간 부문이 운영하며 국가는 기본 세금과 로열티를 받습니다." },
+      "strictRegulation": { "name": "엄격한 규제", "description": "민간 부문이 주도하지만 국가는 가격과 할당량을 규제합니다." },
+      "mixed": { "name": "혼합 경제", "description": "국가가 과반 지분을 보유하고 민간 운영자를 감독합니다." },
+      "stateDominance": { "name": "국가 주도", "description": "국가가 거의 모든 생산 자산을 통제합니다." },
+      "fullNationalization": { "name": "완전 국유화", "description": "모든 생산 자산을 국가가 관리합니다." }
+    }
+  }
+}
+

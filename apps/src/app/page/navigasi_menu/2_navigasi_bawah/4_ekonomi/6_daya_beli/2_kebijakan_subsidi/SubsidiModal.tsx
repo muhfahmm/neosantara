@@ -33,6 +33,7 @@ import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
 import { calculateSubsidySatisfaction } from "@/app/logic/kepuasanCalculator";
 import { calculateEconomicPopulationImpact } from "@/app/logic/economic_logic/economicPopulationImpact";
 import { markMissionAsClaimable } from "@/app/page/menus/mission/missionModals";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -60,6 +61,7 @@ const resolveSubsidyItemsForCountry = (countryDetail: any): SubsidyItem[] => {
 };
 
 export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountryDetail, forumDialogMode = false, onConfirmChanges, tabBar }: ModalProps) {
+  const { t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<string>("Semua");
 
   const [subsidyItems, setSubsidyItems] = useState<SubsidyItem[]>(() => resolveSubsidyItemsForCountry(countryDetail));
@@ -210,15 +212,16 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
     onClose();
   };
 
-  const categories = [
-    { id: "Semua", label: "Semua Sektor" },
-    { id: "Energi", label: "Energi" },
-    { id: "Pangan", label: "Pangan" },
-    { id: "Pendidikan & Kesehatan", label: "Pendidikan & Kesehatan" },
-    { id: "Transportasi & Perumahan", label: "Transportasi & Perumahan" },
-    { id: "UMKM & Ekonomi", label: "UMKM & Ekonomi" },
-    { id: "Perlindungan Sosial", label: "Perlindungan Sosial" },
-  ];
+  const categoryLabels: Record<string, string> = {
+    Semua: t("navigation_economy_purchasing_power.subsidy.categories.all"),
+    Energi: t("navigation_economy_income.subsidies.categories.energy"),
+    Pangan: t("navigation_economy_income.subsidies.categories.food"),
+    "Pendidikan & Kesehatan": t("navigation_economy_income.subsidies.categories.educationHealth"),
+    "Transportasi & Perumahan": t("navigation_economy_income.subsidies.categories.transportHousing"),
+    "UMKM & Ekonomi": t("navigation_economy_income.subsidies.categories.smallBusiness"),
+    "Perlindungan Sosial": t("navigation_economy_income.subsidies.categories.socialProtection"),
+  };
+  const categories = Object.entries(categoryLabels).map(([id, label]) => ({ id, label }));
 
   const summary: TotalSubsidySummary = calculateSubsidySummary(subsidyItems);
   const subsidySatisfaction = calculateSubsidySatisfaction({
@@ -238,13 +241,13 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
         <div className="root-modal-util-b74379da23">
 
           <RootInfoModalHeader
-            title="Alokasi & Kebijakan Subsidi"
+            title={t("navigation_economy_purchasing_power.subsidy.title")}
             onClose={onClose}
             size="standard"
             icon={<HandHelping aria-hidden="true" />}
             actions={
               <>
-              <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi alokasi dan kebijakan subsidi" aria-label="Informasi alokasi dan kebijakan subsidi" className="root-modal-info-button root-modal-util-1697100c43">
+              <button type="button" onClick={() => setIsInfoOpen(true)} title={t("navigation_economy_purchasing_power.subsidy.infoButton")} aria-label={t("navigation_economy_purchasing_power.subsidy.infoButton")} className="root-modal-info-button root-modal-util-1697100c43">
                 <Info aria-hidden="true" />
               </button>
               {forumDialogMode && (
@@ -253,7 +256,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
                   onClick={() => setIsConfirmDialogOpen(true)}
                   className="rounded-xl border border-root-accent/40 bg-root-accent px-3 py-2 text-[10px] font-black uppercase tracking-wider text-root-accent-ink transition hover:bg-root-accent/85 sm:px-4"
                 >
-                  Konfirmasi
+                  {t("navigation_economy_purchasing_power.subsidy.confirmation.confirm")}
                 </button>
               )}
               </>
@@ -265,25 +268,25 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
           {/* TOP STATS SUMMARY BANNER */}
           {!forumDialogMode && <div className="subsidy-summary-cards px-4 lg:px-6 py-2 lg:py-3 bg-root-canvas/80 border-b border-root-accent/15 grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-2.5 shrink-0">
             <div className={`subsidy-summary-card border border-root-accent/20 bg-root-surface p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
-              <p className="text-[9px] lg:text-[10px] font-black text-root-subtle uppercase tracking-wider">Total Beban Anggaran Subsidi</p>
+              <p className="text-[9px] lg:text-[10px] font-black text-root-subtle uppercase tracking-wider">{t("navigation_economy_purchasing_power.subsidy.summary.totalBudget")}</p>
               <p className="text-xs lg:text-sm font-black text-root-accent mt-0.5">{formatCurrencyCompact(summary.totalCost)}</p>
             </div>
 
             <div className={`subsidy-summary-card border border-root-accent/20 bg-root-surface p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
-              <p className="text-[9px] lg:text-[10px] font-black text-root-subtle uppercase tracking-wider">Sektor Aktif / Total</p>
-              <p className="text-xs lg:text-sm font-black text-root-text mt-0.5">{summary.activeCount} dari {summary.totalCount} Sektor</p>
+              <p className="text-[9px] lg:text-[10px] font-black text-root-subtle uppercase tracking-wider">{t("navigation_economy_purchasing_power.subsidy.summary.activeSectors")}</p>
+              <p className="text-xs lg:text-sm font-black text-root-text mt-0.5">{t("navigation_economy_purchasing_power.subsidy.summary.sectorCount", { active: summary.activeCount, total: summary.totalCount })}</p>
             </div>
 
             <div className={`subsidy-summary-card border border-root-accent/20 bg-root-surface p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
-              <p className="text-[9px] lg:text-[10px] font-black text-root-subtle uppercase tracking-wider">Dukungan Kepuasan Rakyat</p>
-              <p className="text-xs lg:text-sm font-black text-emerald-400 mt-0.5">+{summary.totalApprovalBonus}% Approval</p>
+              <p className="text-[9px] lg:text-[10px] font-black text-root-subtle uppercase tracking-wider">{t("navigation_economy_purchasing_power.subsidy.summary.approvalSupport")}</p>
+              <p className="text-xs lg:text-sm font-black text-emerald-400 mt-0.5">{t("navigation_economy_purchasing_power.subsidy.summary.approvalValue", { percent: summary.totalApprovalBonus })}</p>
             </div>
 
             <div className={`subsidy-summary-card border border-root-accent/20 bg-root-surface p-2 lg:p-2.5 ${rootBorderRadius.card}`}>
-              <p className="text-[9px] lg:text-[10px] font-black text-root-subtle uppercase tracking-wider">Dampak Netto Populasi</p>
+              <p className="text-[9px] lg:text-[10px] font-black text-root-subtle uppercase tracking-wider">{t("navigation_economy_purchasing_power.subsidy.summary.populationImpact")}</p>
               <p className={`text-xs lg:text-sm font-black mt-0.5 ${subsidyMonthlyPopModifier >= 0 ? "text-root-accent" : "text-rose-400"
                 }`}>
-                {subsidyMonthlyPopModifier >= 0 ? "+" : ""}{subsidyMonthlyPopModifier.toFixed(2)}% / bln
+                {subsidyMonthlyPopModifier >= 0 ? "+" : ""}{subsidyMonthlyPopModifier.toFixed(2)}% / {t("navigation_economy_purchasing_power.monthUnit")}
               </p>
             </div>
           </div>}
@@ -291,12 +294,12 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
           {/* FEEDBACK SUCCESS TOAST */}
           {isSavedSuccess && (
             <div className={`absolute top-24 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 bg-emerald-500 px-6 py-2.5 text-xs font-black uppercase tracking-widest text-root-canvas shadow-2xl animate-in fade-in zoom-in-95 ${rootBorderRadius.card}`}>
-              <Check className="w-4 h-4" /> Alokasi Subsidi Berhasil Diperbarui!
+              <Check className="w-4 h-4" /> {t("navigation_economy_purchasing_power.subsidy.summary.saved")}
             </div>
           )}
 
           <RootModalSidebarLayout
-            ariaLabel="Kategori kebijakan subsidi"
+            ariaLabel={t("navigation_economy_purchasing_power.subsidy.sidebarLabel")}
             activeItemId={selectedCategory}
             contentClassName="p-4 lg:p-6 2xl:p-8"
             items={categories.map((cat) => ({
@@ -341,14 +344,14 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
       <MenuInfoModal
         isOpen={isInfoOpen}
         onClose={() => setIsInfoOpen(false)}
-        title="Informasi Alokasi & Kebijakan Subsidi"
-        description="Pilih program subsidi untuk berbagai sektor dan tinjau biaya bulanannya sebelum mengubah alokasi. Subsidi menggunakan anggaran negara serta dapat memengaruhi dukungan kepuasan rakyat dan pertumbuhan populasi."
+        title={t("navigation_economy_purchasing_power.subsidy.info.title")}
+        description={t("navigation_economy_purchasing_power.subsidy.info.description")}
       >
         {!forumDialogMode && (
           <div className={`root-satisfaction-index mt-4 border border-root-accent/30 bg-root-surface p-5 ${rootBorderRadius.card}`}>
             <div className="flex items-center justify-between gap-3">
               <span className="root-satisfaction-index-title font-black uppercase tracking-widest text-root-accent">
-                Indeks Kepuasan Rakyat (Subsidi)
+                {t("navigation_economy_purchasing_power.subsidy.info.satisfaction")}
               </span>
               <span className="root-satisfaction-index-value shrink-0 font-black text-amber-400">
                 {subsidySatisfaction} / 100
@@ -373,13 +376,13 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
       {isConfirmDialogOpen && createPortal(
         <div className="fixed inset-0 z-[2147483647] flex items-center justify-center p-4 ">
           <div role="dialog" aria-modal="true" aria-labelledby="subsidy-confirm-title" className={`w-full max-w-md border border-root-accent/30 bg-root-canvas p-6 shadow-2xl ${rootBorderRadius.card}`}>
-            <h3 id="subsidy-confirm-title" className="text-lg font-bold text-white">Konfirmasi kebijakan subsidi</h3>
+            <h3 id="subsidy-confirm-title" className="text-lg font-bold text-white">{t("navigation_economy_purchasing_power.subsidy.confirmation.title")}</h3>
             <p className="mt-2 text-sm text-root-body">
-              Perubahan alokasi subsidi akan diterapkan. Lanjutkan?
+              {t("navigation_economy_purchasing_power.subsidy.confirmation.description")}
             </p>
             <div className="mt-6 flex justify-end gap-2">
-              <button type="button" onClick={() => setIsConfirmDialogOpen(false)} className="rounded-lg border border-root-accent/30 px-4 py-2 text-xs font-semibold text-root-muted transition hover:border-root-accent hover:text-root-accent">Kembali</button>
-              <button type="button" onClick={confirmForumSubsidies} className="rounded-lg bg-root-accent px-4 py-2 text-xs font-bold text-root-accent-ink transition hover:bg-root-accent/85">Ya, konfirmasi</button>
+              <button type="button" onClick={() => setIsConfirmDialogOpen(false)} className="rounded-lg border border-root-accent/30 px-4 py-2 text-xs font-semibold text-root-muted transition hover:border-root-accent hover:text-root-accent">{t("navigation_economy_purchasing_power.subsidy.confirmation.back")}</button>
+              <button type="button" onClick={confirmForumSubsidies} className="rounded-lg bg-root-accent px-4 py-2 text-xs font-bold text-root-accent-ink transition hover:bg-root-accent/85">{t("navigation_economy_purchasing_power.subsidy.confirmation.confirm")}</button>
             </div>
           </div>
         </div>,

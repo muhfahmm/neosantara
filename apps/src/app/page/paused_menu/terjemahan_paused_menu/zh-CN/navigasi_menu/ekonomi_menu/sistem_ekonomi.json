@@ -1,0 +1,92 @@
+{
+  "title": "经济政策与体制",
+  "infoButton": "经济政策与体制信息",
+  "ariaLabel": "经济政策与体制分区",
+  "monthUnit": "月",
+  "yearUnit": "年",
+  "tabs": { "spectrum": "体制光谱", "policies": "政策卡片", "ownership": "生产所有权" },
+  "satisfaction": "民众满意度指数（经济政策）",
+  "info": {
+    "title": "经济政策与体制信息",
+    "description": "设置经济体制光谱、选择部门政策，并调整生产部门的所有权或国有化程度。这些选择会影响经济方向和国家利润份额。"
+  },
+  "spectrum": {
+    "populationImpact": "人口影响",
+    "policyScore": "政策评分：{score}/100",
+    "category": "类别：{category}",
+    "centralizedScale": "0% 中央计划",
+    "freeMarketScale": "100% 自由市场",
+    "netPopulationImpact": "人口净影响",
+    "gdpGrowthBonus": "GDP增长加成",
+    "categories": { "centralized": "中央集权", "mixed": "混合型", "freeMarket": "自由市场" },
+    "presets": { "command": "指令经济", "socialism": "社会主义", "mixed": "混合型", "regulatedMarket": "受监管市场", "laissezFaire": "自由放任" },
+    "systems": {
+      "command": { "title": "指令经济", "description": "政府全面控制价格、生产配额和资源分配，国有企业主导所有经济部门。" },
+      "marketSocialism": { "title": "市场社会主义", "description": "国家严格监管关键部门，同时允许中小企业在收益受限的条件下经营。" },
+      "mixed": { "title": "混合经济", "description": "平衡政府监管与私人市场自由，国家负责管理基本公共服务。" },
+      "regulatedMarket": { "title": "受监管市场", "description": "私人市场推动经济增长，政府负责监督竞争并维持宏观经济稳定。" },
+      "laissezFaire": { "title": "自由放任／自由资本主义", "description": "全面放松管制并开放市场，商业竞争遵循供需规律。" }
+    }
+  },
+  "policies": {
+    "price_control": {
+      "name": "基本生活用品价格管控",
+      "optionA": { "label": "国家最高限价", "effect": "价格保持稳定，但商品短缺风险会上升。" },
+      "optionB": { "label": "自由市场定价", "effect": "商品供应充足，但可能出现突发通胀。" }
+    },
+    "strategic_ownership": {
+      "name": "战略产业所有权",
+      "optionA": { "label": "国有垄断／国有化", "effect": "国库收入增加，但运营效率降低。" },
+      "optionB": { "label": "私有化与私人投资", "effect": "创新和效率迅速提升，但国家特许收益减少。" }
+    },
+    "trade_policy": {
+      "name": "对外贸易管制",
+      "optionA": { "label": "严格保护主义", "effect": "保护国内产业，但限制消费者的选择。" },
+      "optionB": { "label": "自由贸易", "effect": "进出口快速增长，但本地产业面临更激烈的竞争。" }
+    },
+    "labor_regulation": {
+      "name": "劳动与最低工资政策",
+      "optionA": { "label": "高最低工资与严格保护", "effect": "改善劳动者福利，但会降低外国投资吸引力。" },
+      "optionB": { "label": "灵活就业与自由合同", "effect": "就业人数增加，但社会不平等可能加剧。" }
+    },
+    "land_property_rights": {
+      "name": "土地与财产权",
+      "optionA": { "label": "国家所有与集体使用权", "effect": "国家拥有土地和住房，居民获得集体使用权。" },
+      "optionB": { "label": "绝对私人产权", "effect": "土地和房地产可自由买卖。" }
+    },
+    "labor_unions_rights": {
+      "name": "工会权利与管理权",
+      "optionA": { "label": "国家工会与工人委员会", "effect": "工会成为国家机构，工人委员会参与工厂管理。" },
+      "optionB": { "label": "自由劳动力市场", "effect": "由私人管理层主导，并可限制罢工以维持供应链。" }
+    },
+    "monetary_banking": {
+      "name": "货币与银行政策",
+      "optionA": { "label": "单一央行与外汇管制", "effect": "银行归国家所有，外汇受控，资本外逃受到限制。" },
+      "optionB": { "label": "私人银行与资本自由流动", "effect": "采用竞争性银行体系，资本可自由流入和流出。" }
+    }
+  },
+  "ownership": {
+    "level": "等级",
+    "stateShare": "国家收益份额：{percent}%",
+    "calculatingElectricity": "正在计算预计电力盈余...",
+    "electricityEstimate": "预计盈余电力的国家收益：{surplus} MW × {price} NEO × {percent}% = {amount} NEO。由于尚无电力买卖交易，该估算不会计入国家预算。",
+    "errors": { "noMetadata": "缺少发电厂元数据，无法估算盈余。", "loadFailed": "无法加载发电厂元数据。" },
+    "sectors": {
+      "electricity": "电力",
+      "mineralsEnergy": "矿产与能源",
+      "manufacturing": "制造业",
+      "livestock": "畜牧业",
+      "agriculture": "农业",
+      "fisheries": "渔业",
+      "foodProcessing": "食品加工"
+    },
+    "levels": {
+      "marketFree": { "name": "自由市场", "description": "由私人部门管理，国家获得基础税收和特许权使用费。" },
+      "strictRegulation": { "name": "严格监管", "description": "国家监管价格和配额，但私人部门仍占主导地位。" },
+      "mixed": { "name": "混合经济", "description": "国家持有多数股权并监督私人运营商。" },
+      "stateDominance": { "name": "国家主导", "description": "国家控制几乎所有生产性资产。" },
+      "fullNationalization": { "name": "全面国有化", "description": "所有生产性资产均由国家管理。" }
+    }
+  }
+}
+

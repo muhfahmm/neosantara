@@ -41,6 +41,7 @@ import {
   PUBLIC_SERVICE_CATEGORIES,
   PENEGAKAN_HUKUM_KEYS,
 } from "@/app/logic/kepuasanCalculator";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 
 
@@ -102,6 +103,18 @@ export default function TempatUmumModal({
   currentDate,
   initialTab = "infrastruktur", // 🔥 Default ke infrastruktur, bisa di-override
 }: ModalProps) {
+  const { t } = useLanguage();
+  const tr = (key: string, params?: Record<string, string | number>) =>
+    t(`navigation_construction_public_places.${key}`, params);
+  const translateConfirmation = (key: string, params?: Record<string, string | number>) => {
+    if (key.startsWith("materials.")) {
+      const resourceKey = key.slice("materials.".length);
+      const rewardKey = `side_reward.items.${resourceKey}`;
+      const translated = t(rewardKey);
+      return translated === rewardKey ? key : translated;
+    }
+    return tr(`confirmation.${key}`, params);
+  };
   // 🔥 FIX 3: Pastikan nama state adalah activeTabId dan setActiveTabId
   const [activeTabId, setActiveTabId] = useState<string>(initialTab);
   const [selectedGroupInfo, setSelectedGroupInfo] = useState<{ title: string; description: string; capacity: string } | null>(null);
@@ -182,7 +195,7 @@ export default function TempatUmumModal({
     const normalizedKey = normalizeResourceKey(resourceKey);
     const tabId = CARD_TAB_MAP[normalizedKey];
     if (!tabId) {
-      setToast(`Material ${label} tidak memiliki tab produksi yang terdaftar.`);
+      setToast(tr("warning.materialTabMissing", { material: label }));
       setTimeout(() => setToast(null), 2000);
       return;
     }
@@ -239,14 +252,14 @@ export default function TempatUmumModal({
       getBulkBuildQuantityTarget(originalCost)
     );
     if (quantity > maxQuantity) {
-      setToast(`Jumlah pembangunan melebihi batas anggaran atau material tersedia (maksimal ${maxQuantity}).`);
+      setToast(tr("warning.budgetOrMaterials", { max: maxQuantity }));
       setTimeout(() => setToast(null), 2500);
       return;
     }
 
     const totalCost = cost * quantity;
     if (anggaran < totalCost) {
-      setToast(`Kas negara tidak mencukupi untuk membangun ${quantity} ${label}!`);
+      setToast(tr("warning.insufficientFunds", { count: quantity, building: label }));
       setTimeout(() => setToast(null), 2500);
       return;
     }
@@ -367,14 +380,19 @@ export default function TempatUmumModal({
       const items = group.keys
         .map((key) => ({
           key,
-          label: key.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase()),
+          label: tr(`facilities.${key}`),
           value: data[key] !== undefined ? Number(data[key]) : null,
         }))
         .filter((item) => item.value !== null);
 
-      return { ...group, items };
+      return {
+        ...group,
+        label: tr(`groups.${group.id}.label`),
+        description: tr(`groups.${group.id}.description`),
+        items,
+      };
     }).filter((group) => group.items.length > 0);
-  }, [data]);
+  }, [data, t]);
 
   const activeGroup = useMemo(() => {
     return groups.find((g) => g.id === activeTabId) || groups[0];
@@ -403,12 +421,12 @@ export default function TempatUmumModal({
   const ongoingConstructions = countryDetail?.ongoingConstructions || [];
 
   const categoriesList = [
-    { id: "infrastruktur", label: "Infrastruktur", keys: PUBLIC_SERVICE_CATEGORIES.infrastruktur.keys },
-    { id: "pendidikan", label: "Pendidikan", keys: PUBLIC_SERVICE_CATEGORIES.pendidikan.keys },
-    { id: "kesehatan", label: "Kesehatan", keys: PUBLIC_SERVICE_CATEGORIES.kesehatan.keys },
-    { id: "penegakan_hukum", label: "Penegakan Hukum", keys: PENEGAKAN_HUKUM_KEYS },
-    { id: "olahraga_hiburan", label: "Olahraga & Hiburan", keys: PUBLIC_SERVICE_CATEGORIES.olahraga_hiburan.keys },
-    { id: "komersial", label: "Komersial", keys: PUBLIC_SERVICE_CATEGORIES.komersial.keys },
+    { id: "infrastruktur", label: tr("groups.infrastruktur.label"), keys: PUBLIC_SERVICE_CATEGORIES.infrastruktur.keys },
+    { id: "pendidikan", label: tr("groups.pendidikan.label"), keys: PUBLIC_SERVICE_CATEGORIES.pendidikan.keys },
+    { id: "kesehatan", label: tr("groups.kesehatan.label"), keys: PUBLIC_SERVICE_CATEGORIES.kesehatan.keys },
+    { id: "penegakan_hukum", label: tr("groups.penegakan_hukum.label"), keys: PENEGAKAN_HUKUM_KEYS },
+    { id: "olahraga_hiburan", label: tr("groups.olahraga_hiburan.label"), keys: PUBLIC_SERVICE_CATEGORIES.olahraga_hiburan.keys },
+    { id: "komersial", label: tr("groups.komersial.label"), keys: PUBLIC_SERVICE_CATEGORIES.komersial.keys },
   ] as const;
 
   const totalPenduduk = Number(data.jumlah_penduduk) || 1;
@@ -439,7 +457,7 @@ export default function TempatUmumModal({
                   <Landmark aria-hidden="true" className="root-modal-util-d252947d10" />
                 </div>
                 <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                  Tempat Umum & Layanan Publik
+                  {tr("title")}
                 </h2>
               </div>
             </div>
@@ -447,7 +465,7 @@ export default function TempatUmumModal({
               <button
                 type="button"
                 onClick={() => activeGroup && setSelectedGroupInfo({
-                  title: `Informasi ${activeGroup.label}`,
+                  title: tr("actions.groupInfo", { group: activeGroup.label }),
                   description: activeGroup.description,
                   capacity: `${
                     activeGroup.id === "infrastruktur" ? "20.000" :
@@ -455,10 +473,10 @@ export default function TempatUmumModal({
                     activeGroup.id === "kesehatan" ? "25.000" :
                     activeGroup.id === "penegakan_hukum" ? "7.000" :
                     activeGroup.id === "olahraga_hiburan" ? "12.500" : "50.000"
-                  } Jiwa`,
+                  } ${tr("info.people")}`,
                 })}
-                aria-label={`Informasi ${activeGroup?.label ?? "kategori aktif"}`}
-                title={`Informasi ${activeGroup?.label ?? "kategori aktif"}`}
+                aria-label={tr("actions.groupInfo", { group: activeGroup?.label ?? "" })}
+                title={tr("actions.groupInfo", { group: activeGroup?.label ?? "" })}
                 className="root-modal-info-button root-modal-util-1697100c43"
               >
                 <Info aria-hidden="true" />
@@ -468,7 +486,7 @@ export default function TempatUmumModal({
           </div>
 
           <RootModalSidebarLayout
-            ariaLabel="Kategori tempat umum dan layanan publik"
+            ariaLabel={tr("ariaLabel")}
             className="building-modal-body"
             sidebarClassName="building-modal-tabs"
             contentClassName="building-modal-content flex flex-col justify-between p-4 sm:p-5 lg:p-6"
@@ -500,7 +518,7 @@ export default function TempatUmumModal({
 
                       <RootAISuggestionsButton
                         onClick={handleOpenAIModal}
-                        title="Buka rekomendasi AI fasilitas publik"
+                        title={tr("actions.aiSuggestions")}
                       />
                     </div>
 
@@ -522,7 +540,7 @@ export default function TempatUmumModal({
                             key={it.key}
                             role="button"
                             tabIndex={0}
-                            aria-label={`Bangun ${it.label}`}
+                            aria-label={tr("actions.build", { building: it.label })}
                             onClick={() => handleBuild(it.key, it.label)}
                             onKeyDown={(event) => {
                               if (event.key === "Enter" || event.key === " ") {
@@ -573,7 +591,7 @@ export default function TempatUmumModal({
                                       e.stopPropagation();
                                       setHoveredBuildingKey(hoveredBuildingKey === it.key ? null : it.key);
                                     }}
-                                    title="Info bangunan"
+                                    title={tr("actions.buildingInfo")}
                                   >
                                     <Info />
                                   </button>
@@ -622,8 +640,8 @@ export default function TempatUmumModal({
             <div className="flex items-center gap-2 rounded-xl border border-root-accent/30 bg-root-canvas px-3 py-2">
               <Users aria-hidden="true" className="h-4 w-4 shrink-0 text-root-accent" />
               <div>
-                <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">Kapasitas Standar AI</p>
-                <p className="text-xs font-black text-root-accent">1 Bangunan: {selectedGroupInfo.capacity}</p>
+                <p className="text-[9px] font-black uppercase tracking-wider text-root-subtle">{tr("info.capacityStandard")}</p>
+                <p className="text-xs font-black text-root-accent">{tr("info.oneBuildingCapacity", { capacity: selectedGroupInfo.capacity })}</p>
               </div>
             </div>
 
@@ -631,7 +649,7 @@ export default function TempatUmumModal({
               <div className="root-satisfaction-index flex flex-col justify-between rounded-2xl border border-root-accent/30 bg-root-canvas p-4 shadow-md">
                 <div className="flex items-center justify-between gap-2">
                   <span className="root-satisfaction-index-title font-black uppercase tracking-wider text-root-subtle">
-                    Indeks Kepuasan Rata-rata
+                    {tr("info.averageSatisfaction")}
                   </span>
                   <span className="root-satisfaction-index-value font-black text-root-accent">
                     {averageServiceSatisfaction} / 100
@@ -661,8 +679,8 @@ export default function TempatUmumModal({
                     <div className="flex items-center justify-between gap-2">
                       <span className="root-satisfaction-index-title font-black uppercase tracking-wider text-root-subtle">
                         {activeCategory.id === "kesehatan" || activeCategory.id === "penegakan_hukum"
-                          ? `Kepuasan Rakyat (${activeCategory.label})`
-                          : `Indeks Kepuasan (${activeCategory.label})`}
+                          ? tr("info.publicSatisfaction", { group: activeCategory.label })
+                          : tr("info.satisfactionIndex", { group: activeCategory.label })}
                       </span>
                       <span className="root-satisfaction-index-value font-black text-root-accent">
                         {satisfactionScore} / 100
@@ -732,6 +750,7 @@ export default function TempatUmumModal({
             loadingMetadata={loadingMetadata}
             initialQuantity={initialBuildQty}
             quantityTarget={getBulkBuildQuantityTarget(originalCost)}
+            translate={translateConfirmation}
           />
         );
       })()}
@@ -742,7 +761,7 @@ export default function TempatUmumModal({
             <div className="px-6 py-5 border-b border-root-accent/30 flex items-center justify-between bg-root-canvas relative z-10">
               <div className="flex items-center gap-2 text-rose-400">
                 <AlertTriangle className="h-5 w-5" />
-                <h3 className="text-base font-black uppercase tracking-wider">⚠️ Stok Material Kosong</h3>
+                <h3 className="text-base font-black uppercase tracking-wider">⚠️ {tr("actions.emptyMaterials")}</h3>
               </div>
               <SharedModalCloseButton onClick={() => setShowMaterialWarningModal(false)} className="text-root-subtle hover:text-root-accent" appearance="custom">
                 <X className="h-5 w-5" />
@@ -750,7 +769,7 @@ export default function TempatUmumModal({
             </div>
             <div className="p-6 relative z-10 flex-1 space-y-4">
               <p className="text-sm text-root-text">
-                Pembangunan <strong className="font-black text-root-accent">{selectedBuilding?.label}</strong> tidak dapat dilanjutkan karena material berikut ini stoknya kosong (0):
+                {tr("actions.cannotContinue", { building: selectedBuilding?.label || "" })}
               </p>
               <div className="bg-root-canvas border border-rose-500/30 rounded-xl p-4 flex flex-col gap-2 text-xs font-bold text-root-text">
                 {insufficientMaterials.map((mat, idx) => (
@@ -761,11 +780,11 @@ export default function TempatUmumModal({
                 ))}
               </div>
               <p className="text-[10px] text-root-subtle italic">
-                Klik nama material pada daftar di atas meihat informasi produksinya.
+                {tr("actions.clickMaterial")}
               </p>
             </div>
             <div className="p-4 bg-root-canvas border-t border-root-accent/20 flex justify-end relative z-10">
-              <SharedModalCloseButton onClick={() => setShowMaterialWarningModal(false)} className="py-2.5 px-6 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-md" appearance="custom">Tutup & Lengkapi Stok</SharedModalCloseButton>
+              <SharedModalCloseButton onClick={() => setShowMaterialWarningModal(false)} className="py-2.5 px-6 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer bg-root-accent text-root-canvas hover:bg-root-accent/80 shadow-md" appearance="custom">{tr("actions.closeAndRestock")}</SharedModalCloseButton>
             </div>
           </div>
         </div>

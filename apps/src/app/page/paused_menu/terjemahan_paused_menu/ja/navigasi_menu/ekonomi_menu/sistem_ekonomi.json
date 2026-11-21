@@ -1,0 +1,92 @@
+{
+  "title": "経済政策・経済システム",
+  "infoButton": "経済政策と経済システムの情報",
+  "ariaLabel": "経済政策と経済システムの各セクション",
+  "monthUnit": "か月",
+  "yearUnit": "年",
+  "tabs": { "spectrum": "経済システムの指標", "policies": "政策カード", "ownership": "生産部門の所有権" },
+  "satisfaction": "国民満足度指数（経済政策）",
+  "info": {
+    "title": "経済政策・経済システム情報",
+    "description": "経済システムの指標を設定し、部門別政策を選び、生産部門の所有形態や国有化レベルを調整します。政策の選択は経済の方向性と国家の利益配分を決定します。"
+  },
+  "spectrum": {
+    "populationImpact": "人口への影響",
+    "policyScore": "政策スコア：{score}/100",
+    "category": "カテゴリー：{category}",
+    "centralizedScale": "0% 中央計画",
+    "freeMarketScale": "100% 自由市場",
+    "netPopulationImpact": "人口への純影響",
+    "gdpGrowthBonus": "GDP成長ボーナス",
+    "categories": { "centralized": "中央集権型", "mixed": "混合型", "freeMarket": "自由市場型" },
+    "presets": { "command": "計画経済", "socialism": "社会主義", "mixed": "混合型", "regulatedMarket": "規制市場", "laissezFaire": "自由放任" },
+    "systems": {
+      "command": { "title": "計画経済", "description": "政府が価格、生産割当、資源配分を全面的に管理します。国有企業がすべての経済部門を支配します。" },
+      "marketSocialism": { "title": "市場社会主義", "description": "国が重要部門を厳しく規制し、中小企業は利益制限のもとで運営できます。" },
+      "mixed": { "title": "混合経済", "description": "政府の規制と民間市場の自由を両立させます。国は基礎的な公共サービスを管理します。" },
+      "regulatedMarket": { "title": "規制市場", "description": "民間市場が成長を牽引し、政府は競争監視とマクロ経済の安定に注力します。" },
+      "laissezFaire": { "title": "自由放任／自由資本主義", "description": "規制を全面的に撤廃し、市場を自由化します。企業競争は需要と供給に従います。" }
+    }
+  },
+  "policies": {
+    "price_control": {
+      "name": "生活必需品の価格管理",
+      "optionA": { "label": "国による価格上限", "effect": "価格は安定しますが、品不足のリスクが高まります。" },
+      "optionB": { "label": "自由市場価格", "effect": "商品は豊富になりますが、急激なインフレが起きやすくなります。" }
+    },
+    "strategic_ownership": {
+      "name": "戦略産業の所有権",
+      "optionA": { "label": "国営独占／国有化", "effect": "国庫収入は増えますが、運営効率は低下します。" },
+      "optionB": { "label": "民営化・民間投資", "effect": "革新と効率が大きく向上しますが、国のロイヤルティ収入は減ります。" }
+    },
+    "trade_policy": {
+      "name": "外国貿易規制",
+      "optionA": { "label": "厳格な保護主義", "effect": "国内産業を保護しますが、消費者の選択肢が限られます。" },
+      "optionB": { "label": "自由貿易", "effect": "輸出入が増えますが、国内産業の競争は厳しくなります。" }
+    },
+    "labor_regulation": {
+      "name": "労働・最低賃金政策",
+      "optionA": { "label": "高い最低賃金と厳格な保護", "effect": "労働者の福利は向上しますが、外国投資の魅力が低下します。" },
+      "optionB": { "label": "柔軟な雇用と自由契約", "effect": "雇用は増えますが、社会的不平等が拡大する可能性があります。" }
+    },
+    "land_property_rights": {
+      "name": "土地・不動産の所有権",
+      "optionA": { "label": "国有と共同利用権", "effect": "土地と住宅を国が所有し、住民には共同利用権を与えます。" },
+      "optionB": { "label": "絶対的な私有権", "effect": "土地や不動産を自由に売買できます。" }
+    },
+    "labor_unions_rights": {
+      "name": "労働組合と経営側の権利",
+      "optionA": { "label": "国営組合と労働者評議会", "effect": "組合を国の機関とし、労働者評議会が工場運営に参加します。" },
+      "optionB": { "label": "自由な労働市場", "effect": "民間経営が主導し、供給網維持のためストライキを制限できます。" }
+    },
+    "monetary_banking": {
+      "name": "金融・銀行政策",
+      "optionA": { "label": "単一中央銀行と為替管理", "effect": "銀行を国有化し、外貨を管理して資本流出を制限します。" },
+      "optionB": { "label": "民間銀行と自由な資本移動", "effect": "競争的な銀行制度と、制限のない資本移動を導入します。" }
+    }
+  },
+  "ownership": {
+    "level": "レベル",
+    "stateShare": "国家の収益分：{percent}%",
+    "calculatingElectricity": "電力余剰の推定値を計算中...",
+    "electricityEstimate": "余剰電力からの国家収益推定：{surplus} MW × {price} NEO × {percent}% = {amount} NEO。電力の売買がまだないため、国家予算には含まれません。",
+    "errors": { "noMetadata": "発電所のメタデータがなく、余剰を推定できません。", "loadFailed": "発電所のメタデータを読み込めませんでした。" },
+    "sectors": {
+      "electricity": "電力",
+      "mineralsEnergy": "鉱物・エネルギー",
+      "manufacturing": "製造業",
+      "livestock": "畜産",
+      "agriculture": "農業",
+      "fisheries": "漁業",
+      "foodProcessing": "食品加工"
+    },
+    "levels": {
+      "marketFree": { "name": "自由市場", "description": "民間部門が管理し、国は基本税とロイヤルティを受け取ります。" },
+      "strictRegulation": { "name": "厳格な規制", "description": "民間部門が主導する一方、国が価格と割当を管理します。" },
+      "mixed": { "name": "混合経済", "description": "国が過半数の株式を持ち、民間運営者を監督します。" },
+      "stateDominance": { "name": "国家主導", "description": "国がほぼすべての生産資産を支配します。" },
+      "fullNationalization": { "name": "完全国有化", "description": "すべての生産資産を国が管理します。" }
+    }
+  }
+}
+

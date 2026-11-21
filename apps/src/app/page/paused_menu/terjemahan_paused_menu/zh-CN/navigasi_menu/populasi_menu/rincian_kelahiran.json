@@ -1,0 +1,17 @@
+{
+  "title": "人口增长详情",
+  "dailyNetGrowth": "每日净增长",
+  "perHour": "/小时",
+  "births": "出生",
+  "deaths": "死亡",
+  "factors": "影响因素",
+  "basePopulation": "基础人口",
+  "people": "人",
+  "welfare": "福利",
+  "healthFacilities": "医疗设施",
+  "educationLevel": "教育水平",
+  "open": "打开 →",
+  "points": "分",
+  "index": "指数",
+  "ratio": "（比例 {value}）"
+}

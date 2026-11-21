@@ -43,6 +43,7 @@ import {
 } from "@/app/page/bonus_logic";
 import { calculateTaxSatisfaction } from "@/app/logic/kepuasanCalculator";
 import { markMissionAsClaimable } from "@/app/page/menus/mission/missionModals";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -145,6 +146,15 @@ function PajakModalContent({
   forumDialogMode = false,
   onConfirmChanges,
 }: Omit<ModalProps, "isOpen">) {
+  const { language, t } = useLanguage();
+  const taxLabels: Record<string, string> = {
+    vat: t("navigation_economy_tax.taxes.vat"),
+    corporate_tax: t("navigation_economy_tax.taxes.corporate"),
+    income_tax: t("navigation_economy_tax.taxes.personalIncome"),
+    cigarette_tax: t("navigation_economy_tax.taxes.excise"),
+    environment_tax: t("navigation_economy_tax.taxes.environmental"),
+  };
+  const formatNumber = (value: number) => value.toLocaleString(language);
   // Identitas negara — untuk deteksi ganti negara tanpa memicu re-init
   // setiap kali countryDetail berubah (NPC sim, kepuasan auto-refresh, dll.).
   const countryKey = String(
@@ -353,7 +363,7 @@ function PajakModalContent({
     });
     setIsConfirmDialogOpen(false);
     onConfirmChanges?.(pendingTaxChanges.map(([taxId, value]) =>
-      `${TAX_NAME_LABEL[taxId] ?? taxId}: ${value}%`
+      `${taxLabels[taxId] ?? TAX_NAME_LABEL[taxId] ?? taxId}: ${value}%`
     ));
     onClose();
   };
@@ -469,7 +479,7 @@ function PajakModalContent({
     <NotebookModalWrapper onClose={onClose} frameClassName="tax-policy-modal-frame">
       <div className="root-modal-util-b74379da23">
         <RootInfoModalHeader
-          title="Kebijakan Perpajakan Fiskal"
+          title={t("navigation_economy_tax.taxes.policyTitle")}
           onClose={onClose}
           size="standard"
           icon={<FileText aria-hidden="true" />}
@@ -478,8 +488,8 @@ function PajakModalContent({
             <button
               type="button"
               onClick={() => setIsTaxPolicyInfoOpen(true)}
-              title="Informasi kebijakan pajak"
-              aria-label="Informasi kebijakan pajak"
+              title={t("navigation_economy_tax.infoButton")}
+              aria-label={t("navigation_economy_tax.infoButton")}
               className="root-modal-info-button root-modal-util-1697100c43"
             >
               <Info aria-hidden="true" />
@@ -490,7 +500,7 @@ function PajakModalContent({
                 onClick={() => setIsConfirmDialogOpen(true)}
                 className="rounded-xl border border-root-accent/40 bg-root-accent px-3 py-2 text-[10px] font-black uppercase tracking-wider text-root-accent-ink transition hover:bg-[#72ffd0] sm:px-4"
               >
-                Konfirmasi
+                {t("navigation_economy_tax.confirm")}
               </button>
             )}
             </>
@@ -502,11 +512,11 @@ function PajakModalContent({
             {/* 1. PPN - Pajak Pertambahan Nilai */}
             <div className="tax-policy-rate-card space-y-2">
               <div className={`tax-policy-rate-heading flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
-                <span>Pajak Pertambahan Nilai (PPN)</span>
+                <span>{taxLabels.vat}</span>
                 <div className="tax-policy-rate-values flex items-center gap-2">
                   <span className="text-root-text font-mono tabular-nums game-stat-number">{tempRates.vat}%</span>
                   <span className="text-emerald-400 font-black font-mono tabular-nums game-stat-number">
-                    ({vatRevenue.toLocaleString("id-ID")} NEO)
+                    ({formatNumber(vatRevenue)} NEO)
                   </span>
                 </div>
               </div>
@@ -543,13 +553,13 @@ function PajakModalContent({
             {/* 2. Korporasi - Pajak Korporasi */}
             <div className="tax-policy-rate-card space-y-2">
               <div className={`tax-policy-rate-heading flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
-                <span>Pajak Korporasi</span>
+                <span>{taxLabels.corporate_tax}</span>
                 <div className="tax-policy-rate-values flex items-center gap-2">
                   <span className="text-root-text font-mono tabular-nums game-stat-number">
                     {tempRates.corporate_tax}%
                   </span>
                   <span className="text-emerald-400 font-black font-mono tabular-nums game-stat-number">
-                    ({corporateTaxRevenue.toLocaleString("id-ID")} NEO)
+                    ({formatNumber(corporateTaxRevenue)} NEO)
                   </span>
                 </div>
               </div>
@@ -586,11 +596,11 @@ function PajakModalContent({
             {/* 3. Penghasilan - Pajak Penghasilan Pribadi */}
             <div className="tax-policy-rate-card space-y-2">
               <div className={`tax-policy-rate-heading flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
-                <span>Pajak Penghasilan Pribadi</span>
+                <span>{taxLabels.income_tax}</span>
                 <div className="tax-policy-rate-values flex items-center gap-2">
                   <span className="text-root-text font-mono tabular-nums game-stat-number">{tempRates.income_tax}%</span>
                   <span className="text-emerald-400 font-black font-mono tabular-nums game-stat-number">
-                    ({personalIncomeTaxRevenue.toLocaleString("id-ID")} NEO)
+                    ({formatNumber(personalIncomeTaxRevenue)} NEO)
                   </span>
                 </div>
               </div>
@@ -624,8 +634,9 @@ function PajakModalContent({
               />
               {hasOrthodoxTaxBonus && (
                 <span className="inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                  Bonus Kristen Ortodoks: Penerimaan +
-                  {ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS * 100}%
+                  {t("navigation_economy_tax.bonuses.orthodoxPersonal", {
+                    percent: ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS * 100,
+                  })}
                 </span>
               )}
             </div>
@@ -633,13 +644,13 @@ function PajakModalContent({
             {/* 4. Cukai - Cukai */}
             <div className="tax-policy-rate-card space-y-2">
               <div className={`tax-policy-rate-heading flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
-                <span>Cukai</span>
+                <span>{taxLabels.cigarette_tax}</span>
                 <div className="tax-policy-rate-values flex items-center gap-2">
                   <span className="text-root-text font-mono tabular-nums game-stat-number">
                     {tempRates.cigarette_tax}%
                   </span>
                   <span className="text-emerald-400 font-black font-mono tabular-nums game-stat-number">
-                    ({cigaretteTaxRevenue.toLocaleString("id-ID")} NEO)
+                    ({formatNumber(cigaretteTaxRevenue)} NEO)
                   </span>
                 </div>
               </div>
@@ -676,13 +687,13 @@ function PajakModalContent({
             {/* 5. Lingkungan - Pajak Lingkungan */}
             <div className="tax-policy-rate-card space-y-2">
               <div className={`tax-policy-rate-heading flex justify-between ${rootModalTypography.sectionTitle} uppercase`}>
-                <span>Pajak Lingkungan</span>
+                <span>{taxLabels.environment_tax}</span>
                 <div className="tax-policy-rate-values flex items-center gap-2">
                   <span className="text-root-text font-mono tabular-nums game-stat-number">
                     {tempRates.environment_tax}%
                   </span>
                   <span className="text-emerald-400 font-black font-mono tabular-nums game-stat-number">
-                    ({environmentalTaxRevenue.toLocaleString("id-ID")} NEO)
+                    ({formatNumber(environmentalTaxRevenue)} NEO)
                   </span>
                 </div>
               </div>
@@ -716,8 +727,9 @@ function PajakModalContent({
               />
               {hasBuddhaTaxBonus && (
                 <span className="inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                  Bonus Buddha: Penerimaan pajak lingkungan +
-                  {BUDDHA_ENVIRONMENTAL_TAX_REVENUE_BONUS * 100}%
+                  {t("navigation_economy_tax.bonuses.buddhaEnvironmental", {
+                    percent: BUDDHA_ENVIRONMENTAL_TAX_REVENUE_BONUS * 100,
+                  })}
                 </span>
               )}
             </div>
@@ -729,26 +741,23 @@ function PajakModalContent({
           <div className={`tax-policy-revenue-card mt-8 p-5 ${rootBorderRadius.card} border border-root-accent/30 bg-root-surface`}>
             <div className="flex justify-between items-center flex-wrap gap-2">
               <span className={`${rootModalTypography.sectionTitle} uppercase tracking-widest flex items-center gap-1.5`}>
-                Total Pendapatan Pajak
+                {t("navigation_economy_tax.summary.totalRevenue")}
                 {hasKemenkeuBonus && (
                   <span className="text-xs font-black text-root-accent normal-case">
-                    + bonus ({kemenkeuTaxBonusPercent}%) =
+                    {t("navigation_economy_tax.summary.bonus", {
+                      percent: kemenkeuTaxBonusPercent,
+                    })}
                   </span>
                 )}
               </span>
               <div className="flex items-center gap-2">
                 {hasKemenkeuBonus && (
                   <span className="text-base font-bold text-rose-400 line-through opacity-80">
-                    {Math.round(totalIncomeWithHarmonisasi).toLocaleString(
-                      "id-ID",
-                      { maximumFractionDigits: 2 }
-                    )}
+                    {formatNumber(Math.round(totalIncomeWithHarmonisasi))}
                   </span>
                 )}
                 <span className="text-2xl font-black text-emerald-400">
-                  {totalIncome.toLocaleString("id-ID", {
-                    maximumFractionDigits: 2,
-                  })}{" "}
+                  {formatNumber(totalIncome)}{" "}
                   NEO
                 </span>
               </div>
@@ -756,42 +765,45 @@ function PajakModalContent({
             <div className="mt-3 flex flex-wrap gap-2">
               {hasKemenkeuBonus && (
                 <span className={`inline-flex ${rootBorderRadius.card} border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400`}>
-                  Bonus Kementerian Keuangan: Seluruh penerimaan pajak +
-                  {kemenkeuTaxBonusPercent}% (+
-                  {kemenkeuBonusAmount.toLocaleString("id-ID", {
-                    maximumFractionDigits: 2,
-                  })}{" "}
-                  NEO)
+                  {t("navigation_economy_tax.bonuses.ministry", {
+                    percent: kemenkeuTaxBonusPercent,
+                    amount: formatNumber(kemenkeuBonusAmount),
+                  })}
                 </span>
               )}
               {hasDemocracyTaxBonus && (
                 <span className={`inline-flex ${rootBorderRadius.card} border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400`}>
-                  Bonus Demokrasi: seluruh penerimaan pajak +
-                  {DEMOCRACY_TAX_REVENUE_BONUS * 100}%
+                  {t("navigation_economy_tax.bonuses.democracy", {
+                    percent: DEMOCRACY_TAX_REVENUE_BONUS * 100,
+                  })}
                 </span>
               )}
               {hasCapitalismTaxBonus && (
                 <span className={`inline-flex ${rootBorderRadius.card} border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400`}>
-                  Bonus Kapitalisme: seluruh penerimaan pajak +
-                  {CAPITALISM_TAX_REVENUE_BONUS * 100}%
+                  {t("navigation_economy_tax.bonuses.capitalism", {
+                    percent: CAPITALISM_TAX_REVENUE_BONUS * 100,
+                  })}
                 </span>
               )}
               {hasLiberalismTaxBonus && (
                 <span className={`inline-flex ${rootBorderRadius.card} border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400`}>
-                  Bonus Liberalisme: seluruh penerimaan pajak +
-                  {LIBERALISM_TAX_REVENUE_BONUS * 100}%
+                  {t("navigation_economy_tax.bonuses.liberalism", {
+                    percent: LIBERALISM_TAX_REVENUE_BONUS * 100,
+                  })}
                 </span>
               )}
               {hasConservatismTaxBonus && (
                 <span className={`inline-flex ${rootBorderRadius.card} border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400`}>
-                  Bonus Konservatisme: seluruh penerimaan pajak +
-                  {CONSERVATISM_TAX_REVENUE_BONUS * 100}%
+                  {t("navigation_economy_tax.bonuses.conservatism", {
+                    percent: CONSERVATISM_TAX_REVENUE_BONUS * 100,
+                  })}
                 </span>
               )}
               {harmonisasiTaxBonusPercent > 0 && (
                 <span className={`inline-flex ${rootBorderRadius.card} border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400`}>
-                  Bonus Harmonisasi Fiskal Global: Seluruh penerimaan pajak +
-                  {harmonisasiTaxBonusPercent}%
+                  {t("navigation_economy_tax.bonuses.fiscalHarmony", {
+                    percent: harmonisasiTaxBonusPercent,
+                  })}
                 </span>
               )}
             </div>
@@ -802,8 +814,9 @@ function PajakModalContent({
               populationTaxModifier >= 0 ? "text-root-accent" : "text-rose-400"
             }`}
           >
-            Dampak populasi pajak: {populationTaxModifier >= 0 ? "+" : ""}
-            {populationTaxModifier.toFixed(2)}% / bulan
+            {t("navigation_economy_tax.summary.populationImpact", {
+              percent: `${populationTaxModifier >= 0 ? "+" : ""}${populationTaxModifier.toFixed(2)}`,
+            })}
           </p>
           </div>
           )}
@@ -819,16 +832,16 @@ function PajakModalContent({
     {isConfirmDialogOpen && createPortal(
       <div className="fixed inset-0 z-[2147483647] flex items-center justify-center p-4 ">
         <div role="dialog" aria-modal="true" aria-labelledby="tax-confirm-title" className={`w-full max-w-md ${rootBorderRadius.card} border border-root-accent/30 bg-root-canvas p-6 shadow-2xl`}>
-          <h3 id="tax-confirm-title" className={rootModalTypography.title}>Konfirmasi tuntutan pajak</h3>
+          <h3 id="tax-confirm-title" className={rootModalTypography.title}>{t("navigation_economy_tax.confirmation.title")}</h3>
           <p className={`mt-2 ${rootModalTypography.body} break-words`}>
             {pendingTaxChanges.length > 0
-              ? "Perubahan tarif pajak akan diterapkan sesuai pilihan Anda. Lanjutkan?"
-              : "Belum ada perubahan tarif. Konfirmasi untuk kembali ke forum dialog."}
+              ? t("navigation_economy_tax.confirmation.changesApply")
+              : t("navigation_economy_tax.confirmation.noChanges")}
           </p>
           {pendingTaxChanges.length > 0 && (
             <ul className="mt-3 space-y-1 text-sm text-root-accent">
               {pendingTaxChanges.map(([taxId, value]) => (
-                <li key={taxId}>{TAX_NAME_LABEL[taxId] ?? taxId}: {value}%</li>
+                <li key={taxId}>{taxLabels[taxId] ?? TAX_NAME_LABEL[taxId] ?? taxId}: {value}%</li>
               ))}
             </ul>
           )}
@@ -838,14 +851,14 @@ function PajakModalContent({
               onClick={() => setIsConfirmDialogOpen(false)}
               className="rounded-lg border border-slate-600 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:text-white"
             >
-              Kembali
+              {t("navigation_economy_tax.confirmation.back")}
             </button>
             <button
               type="button"
               onClick={confirmForumTaxChanges}
               className="rounded-lg bg-root-accent px-4 py-2 text-xs font-bold text-root-accent-ink transition hover:bg-[#72ffd0]"
             >
-              Ya, konfirmasi
+              {t("navigation_economy_tax.confirmation.yes")}
             </button>
           </div>
         </div>

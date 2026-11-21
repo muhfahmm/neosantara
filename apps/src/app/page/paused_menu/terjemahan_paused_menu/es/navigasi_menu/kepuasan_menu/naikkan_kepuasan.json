@@ -1,0 +1,50 @@
+{
+  "title": "Satisfacción ciudadana",
+  "infoButton": "Información sobre cómo aumentar la satisfacción ciudadana",
+  "civilSatisfaction": "Satisfacción ciudadana:",
+  "statisticsTab": "Estadísticas",
+  "increaseTab": "Aumentar la satisfacción",
+  "events": {
+    "concert": "Concierto",
+    "festival": "Festival",
+    "carnival": "Carnaval",
+    "davisCup": "Copa Davis",
+    "rugbyWorldCup": "Copa Mundial de Rugby",
+    "olympics": "Juegos Olímpicos",
+    "fifaWorldCup": "Copa Mundial de la FIFA",
+    "f1Race": "Carrera de F1"
+  },
+  "finished": "Finaliza: {date}",
+  "satisfactionBonus": "+{value}% de satisfacción",
+  "sportsBonus": "+Bonificación del Ministerio de Deportes ({value}%)",
+  "duration": "Duración: {days} días",
+  "ongoing": "En curso",
+  "chooseEvent": "Elegir evento",
+  "feedback": {
+    "success": "¡El presidente ha lanzado el programa {title}! El tesoro nacional disminuye en -{cost} NEO. El evento dura {duration} días y finalizará el {endDate}, cuando aumentará la satisfacción."
+  },
+  "info": {
+    "title": "Aumentar la satisfacción ciudadana",
+    "statisticsTitle": "Pestaña Estadísticas",
+    "statisticsDescription": "Muestra un panel completo de la satisfacción ciudadana actual, con gráficos históricos, factores que influyen en ella (economía, seguridad y servicios públicos) y una previsión de tendencias para los próximos días.",
+    "statisticsUse": "Ideal para: realizar un análisis detallado antes de tomar decisiones estratégicas.",
+    "increaseTitle": "Pestaña Aumentar la satisfacción",
+    "increaseDescription": "Muestra eventos y programas públicos que el presidente puede lanzar para mejorar la satisfacción ciudadana. Cada evento tiene un coste, una duración y una bonificación propios.",
+    "eventCompletion": "Los eventos duran el tiempo indicado; la bonificación de satisfacción se aplica cuando terminan.",
+    "singleEvent": "Solo puede haber una instancia de cada evento activa a la vez.",
+    "diplomacyBonus": "La bonificación de investigación Diplomacia de eventos puede aumentar considerablemente los efectos.",
+    "tip": "Consejo: consulta primero la pestaña Estadísticas y luego elige el evento más adecuado en Aumentar la satisfacción.",
+    "understood": "Entendido"
+  },
+  "insufficientFunds": {
+    "title": "Fondos insuficientes",
+    "closeLabel": "Cerrar el aviso de fondos insuficientes",
+    "failed": "¡{action} ha fallado!",
+    "description": "El tesoro nacional no tiene fondos suficientes para realizar esta acción.",
+    "required": "Fondos necesarios:",
+    "available": "Fondos disponibles:",
+    "shortage": "Fondos faltantes:",
+    "takeLoan": "Solicitar un préstamo",
+    "sponsor": "Patrocinar {title}"
+  }
+}

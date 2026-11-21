@@ -1,0 +1,69 @@
+{
+  "title": "生活必需品の価格管理",
+  "monthUnit": "月",
+  "tabs": { "essentials": "生活必需品価格", "subsidyPolicy": "補助金政策" },
+  "subsidy": {
+    "title": "補助金の配分と政策",
+    "infoButton": "補助金の配分と政策に関する情報",
+    "confirm": "確認",
+    "categories": { "all": "全部門" },
+    "summary": {
+      "totalBudget": "補助金予算の合計負担",
+      "activeSectors": "有効部門 / 全部門",
+      "sectorCount": "{active} / {total} 部門",
+      "approvalSupport": "国民支持率への効果",
+      "approvalValue": "支持率 +{percent}%",
+      "populationImpact": "人口への純影響",
+      "saved": "補助金の配分を更新しました。"
+    },
+    "sidebarLabel": "補助金政策のカテゴリ",
+    "viewDetails": "政策の詳細を表示",
+    "viewItemDetails": "{item}補助金の詳細を表示",
+    "enableItem": "{item}補助金を有効化",
+    "disableItem": "{item}補助金を無効化",
+    "info": {
+      "title": "補助金の配分と政策に関する情報",
+      "description": "各部門の補助金プログラムを選択し、配分を変更する前に月ごとの費用を確認してください。補助金は国家予算を使用し、国民の支持や人口増加に影響することがあります。",
+      "satisfaction": "国民満足度指数（補助金）"
+    },
+    "confirmation": {
+      "title": "補助金政策の確認",
+      "description": "補助金配分の変更を適用します。続行しますか？",
+      "back": "戻る",
+      "confirm": "はい、確認"
+    }
+  },
+  "infoButton": "生活必需品の価格管理情報",
+  "confirm": "確認",
+  "loading": "国内価格データを読み込み中...",
+  "noData": "この国の価格データはありません。",
+  "currentValue": "現在の価格",
+  "populationImpact": "人口への影響",
+  "subsidyActive": "生活必需品補助金：有効",
+  "errors": {
+    "loadFailed": "データベースから価格データを読み込めませんでした。"
+  },
+  "commodities": {
+    "rice": "米",
+    "beef": "牛肉",
+    "chicken": "鶏肉",
+    "cookingOil": "食用油",
+    "sugar": "砂糖",
+    "eggs": "卵",
+    "electricity": "電気",
+    "water": "水"
+  },
+  "info": {
+    "title": "生活必需品の価格管理情報",
+    "description": "生活必需品の国内価格を設定します。価格は国民の満足度と人口動向に影響します。",
+    "satisfaction": "国民満足度指数（生活必需品価格）",
+    "populationImpact": "生活必需品価格による人口への影響：{percent}% / 月"
+  },
+  "confirmation": {
+    "title": "価格政策の確認",
+    "changesApply": "生活必需品の価格変更を適用します。続行しますか？",
+    "noChanges": "価格は変更されていません。確認してフォーラムに戻ります。",
+    "back": "戻る",
+    "yes": "はい、確認"
+  }
+}

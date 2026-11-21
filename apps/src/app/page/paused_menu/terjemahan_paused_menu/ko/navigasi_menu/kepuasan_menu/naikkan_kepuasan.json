@@ -1,0 +1,50 @@
+{
+  "title": "국민 만족도",
+  "infoButton": "만족도 향상 정보",
+  "civilSatisfaction": "국민 만족도:",
+  "statisticsTab": "통계",
+  "increaseTab": "만족도 높이기",
+  "events": {
+    "concert": "콘서트",
+    "festival": "축제",
+    "carnival": "카니발",
+    "davisCup": "데이비스 컵",
+    "rugbyWorldCup": "럭비 월드컵",
+    "olympics": "올림픽",
+    "fifaWorldCup": "FIFA 월드컵",
+    "f1Race": "F1 레이스"
+  },
+  "finished": "종료: {date}",
+  "satisfactionBonus": "만족도 +{value}%",
+  "sportsBonus": "체육부 보너스 +({value}%)",
+  "duration": "기간: {days}일",
+  "ongoing": "진행 중",
+  "chooseEvent": "행사 선택",
+  "feedback": {
+    "success": "대통령이 {title} 프로그램을 시작했습니다! 국고에서 {cost} NEO가 차감됩니다. 행사는 {duration}일 동안 진행되며 {endDate}에 종료되어 만족도가 상승합니다."
+  },
+  "info": {
+    "title": "국민 만족도 높이기",
+    "statisticsTitle": "통계 탭",
+    "statisticsDescription": "현재 국민 만족도에 대한 종합 대시보드를 보여줍니다. 과거 그래프, 만족도에 영향을 주는 요소(경제, 치안, 공공 서비스), 향후 며칠간의 추세 예측을 확인할 수 있습니다.",
+    "statisticsUse": "추천 용도: 전략적 결정을 내리기 전의 심층 분석.",
+    "increaseTitle": "만족도 높이기 탭",
+    "increaseDescription": "대통령이 국민 만족도를 높이기 위해 개최할 수 있는 공공 행사와 프로그램 목록입니다. 행사마다 비용, 기간, 만족도 상승 효과가 다릅니다.",
+    "eventCompletion": "행사는 지정된 기간 동안 진행되며, 만족도 상승 효과는 종료 후 적용됩니다.",
+    "singleEvent": "각 행사는 한 번에 하나만 진행할 수 있습니다.",
+    "diplomacyBonus": "행사 외교 연구 보너스는 행사 효과를 크게 높일 수 있습니다.",
+    "tip": "팁: 먼저 통계 탭에서 현재 만족도를 확인한 뒤 만족도 높이기 탭에서 적절한 행사를 선택하세요.",
+    "understood": "확인"
+  },
+  "insufficientFunds": {
+    "title": "자금 부족",
+    "closeLabel": "자금 부족 창 닫기",
+    "failed": "{action} 실패!",
+    "description": "국고에 자금이 부족하여 이 작업을 실행할 수 없습니다.",
+    "required": "필요 자금:",
+    "available": "사용 가능한 국고:",
+    "shortage": "부족액:",
+    "takeLoan": "대출 받기",
+    "sponsor": "{title} 후원"
+  }
+}

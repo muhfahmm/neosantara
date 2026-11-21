@@ -1,0 +1,23 @@
+{
+  "title": "Death Rate Details",
+  "dailyDeaths": "Daily Deaths",
+  "perHour": "/hr",
+  "factors": "Contributing Factors",
+  "lifeExpectancy": "Life Expectancy",
+  "years": "years",
+  "lifeExpectancyDescription": "Higher life expectancy leads to a lower death rate.",
+  "security": "Security Level",
+  "securityDescription": "A safe environment reduces deaths from accidents and crime.",
+  "homeless": "Homelessness",
+  "homelessCount": "{count} people ({ratio}%)",
+  "homelessDescription": "Every 1% of homelessness increases deaths by 5%.",
+  "healthFacilities": "Healthcare Facilities",
+  "open": "Open →",
+  "points": "POINTS",
+  "ratio": "(ratio {value})",
+  "healthDescription": "Healthcare availability reduces deaths from treatable diseases.",
+  "foodSecurity": "Food Security",
+  "foodDescription": "Adequate food availability lowers the risk of malnutrition.",
+  "lawEnforcement": "Law Enforcement",
+  "lawDescription": "Public satisfaction with law and policing from the Welfare Index."
+}

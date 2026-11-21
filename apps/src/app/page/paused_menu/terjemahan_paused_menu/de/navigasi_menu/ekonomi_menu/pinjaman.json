@@ -1,0 +1,84 @@
+{
+  "title": "Kredite und Schulden",
+  "infoButton": "Informationen zu Krediten und Schulden",
+  "dayUnit": "Tage",
+  "monthUnit": "Monate",
+  "tabs": { "bilateral": "Andere Länder", "multilateral": "Internationale Institutionen", "history": "Verlauf" },
+  "search": { "placeholder": "Kreditgeberland suchen...", "ariaLabel": "Kreditgeberland suchen" },
+  "summary": { "debtRatio": "Schuldenquote zum BIP", "safeLimit": "Sicherheitsgrenze:", "totalDebt": "Gesamtschuldenlast" },
+  "institutions": { "imf": "Internationaler Währungsfonds (IWF)", "worldBank": "Weltbank" },
+  "bilateral": { "noResults": "Keine Länder entsprechen der Suche.", "maximum": "Kreditlimit", "gracePeriod": "Rückzahlungsfrist", "borrow": "Kredit aufnehmen" },
+  "institution": {
+    "restrictedBanner": "IWF- und Weltbankkredite sind für kommunistische Länder mit einer durchschnittlichen Sektornationalisierung über 50% gesperrt.",
+    "blocked": "Anträge gesperrt",
+    "available": "Jetzt verfügbar",
+    "cooldownRemaining": "Wieder verfügbar am {date}",
+    "interest": "Zinsen: {percent}%",
+    "amount": "Kreditbetrag",
+    "decreaseAmount": "Um 1 Million verringern",
+    "setMaximumAmount": "Auf 15 Millionen setzen",
+    "repaymentTerm": "Rückzahlungsfrist",
+    "submit": "Kredit beantragen",
+    "errors": {
+      "restricted": "IWF- und Weltbankkredite sind für kommunistische Länder mit einer durchschnittlichen Nationalisierung über 50% nicht verfügbar.",
+      "cooldown": "Ein neuer Kreditantrag ist nach dem {date} möglich.",
+      "invalidAmount": "Geben Sie einen gültigen Kreditbetrag ein.",
+      "maximum": "Der Höchstbetrag von {institution} beträgt {amount} NEO.",
+      "termRange": "Wählen Sie eine Laufzeit zwischen 180 und 1825 Tagen."
+    }
+  },
+  "terms": {
+    "title": "Laufzeit wählen",
+    "selected": "Ausgewählt",
+    "shortDefault": "6 Mon.",
+    "options": { "sixMonths": "6 Monate", "nineMonths": "9 Monate", "oneYear": "1 Jahr", "twoYears": "2 Jahre", "threeYears": "3 Jahre", "fourYears": "4 Jahre", "fiveYears": "5 Jahre" }
+  },
+  "history": {
+    "active": "Offene Schulden ({count})",
+    "paid": "Abbezahlt ({count})",
+    "emptyActive": "Keine offenen Schulden.",
+    "emptyPaid": "Bisher wurden keine Kredite zurückgezahlt.",
+    "paymentAria": "Zahlung des Kredits von {source} bestätigen",
+    "headers": { "source": "Kreditgeber", "principal": "Kreditsumme", "interest": "Anfangszins", "paid": "Bezahlt", "penalty": "Strafe", "currentTotal": "Aktueller Gesamtbetrag", "dueDate": "Fälligkeit" }
+  },
+  "confirmation": {
+    "title": "Kredit bestätigen",
+    "source": "Kreditgeber",
+    "amount": "Kreditbetrag",
+    "interest": "Zinsen",
+    "term": "Rückzahlungsfrist",
+    "totalPayment": "Gesamtrückzahlung",
+    "summary": "Kreditübersicht",
+    "cashBalance": "Staatshaushalt",
+    "outstanding": "Offener Gesamtbetrag",
+    "ready": "Kredit kann bestätigt werden",
+    "approvalNote": "Der Kredit wird nach der Genehmigung dem Staatshaushalt gutgeschrieben.",
+    "cancel": "Abbrechen",
+    "confirm": "Kredit bestätigen"
+  },
+  "payment": {
+    "title": "Zahlung bestätigen",
+    "amountDue": "Sie zahlen jetzt {amount}",
+    "sourceLabel": "für einen Kredit von",
+    "insufficientAlert": "Der Staatshaushalt reicht für diese Zahlung nicht aus.",
+    "insufficient": "Nicht genügend Geld für die vollständige Rückzahlung",
+    "payNow": "Jetzt bezahlen"
+  },
+  "penalties": {
+    "generalTitle": "Erklärung zu Zahlungsverzug",
+    "detailTitle": "Details zu Zahlungsverzugsstrafen",
+    "loanData": "Kreditdaten",
+    "accumulated": "Aufgelaufene Strafe",
+    "missed": "Überfällig",
+    "general": {
+      "paragraphOne": "Ist ein Kredit fällig und kann nicht vollständig bezahlt werden, zahlt das System so viel wie möglich aus dem Staatshaushalt.",
+      "paragraphTwo": "Ein verbleibender Betrag wird als überfällig markiert; monatlich fällt eine Strafe an.",
+      "paragraphThree": "Diese Berechnung gilt für bilaterale und multilaterale Kredite."
+    }
+  },
+  "info": {
+    "title": "Informationen zu Krediten und Schulden",
+    "paragraphOne": "Kredite anderer Länder oder internationaler Institutionen erhöhen den Staatshaushalt und die Staatsschulden. Jeder Kredit hat Zinsen und einen Fälligkeitstermin; prüfen Sie die Bedingungen vor der Zustimmung.",
+    "paragraphTwo": "Die Schuldenquote zum BIP vergleicht die Gesamtschulden mit der Größe der Volkswirtschaft. Die grundlegende Sicherheitsgrenze beträgt 60% und kann sich durch aktive Boni ändern. Behalten Sie den Kreditverlauf im Blick und zahlen Sie vor Fälligkeit, um Strafen zu vermeiden."
+  }
+}

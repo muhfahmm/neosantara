@@ -1,0 +1,109 @@
+{
+  "title": "Pinjaman & Hutang",
+  "infoButton": "Informasi pinjaman dan hutang",
+  "dayUnit": "hari",
+  "monthUnit": "bulan",
+  "tabs": { "bilateral": "Negara Lain", "multilateral": "Lembaga Dunia", "history": "Riwayat" },
+  "search": { "placeholder": "Cari nama negara peminjam...", "ariaLabel": "Cari nama negara peminjam" },
+  "summary": {
+    "debtRatio": "Rasio Hutang terhadap PDB",
+    "safeLimit": "Batas Aman:",
+    "totalDebt": "Total Beban Hutang"
+  },
+  "institutions": { "imf": "Dana Moneter Internasional (IMF)", "worldBank": "Bank Dunia" },
+  "bilateral": {
+    "noResults": "Tidak ada negara yang cocok dengan pencarian.",
+    "maximum": "Plafon",
+    "gracePeriod": "Masa Tenggang",
+    "borrow": "Pinjam"
+  },
+  "institution": {
+    "restrictedBanner": "Pinjaman IMF dan Bank Dunia diblokir: ideologi Komunis dengan rata-rata nasionalisasi sektor di atas 50%.",
+    "blocked": "Pengajuan diblokir",
+    "available": "Bisa pinjam sekarang",
+    "cooldownRemaining": "Tersedia kembali pada {date}",
+    "interest": "Bunga {percent}%",
+    "amount": "Jumlah Pinjaman",
+    "decreaseAmount": "Kurangi 1 juta",
+    "setMaximumAmount": "Setel 15 juta",
+    "repaymentTerm": "Tenor Pengembalian",
+    "submit": "Ajukan Kredit",
+    "errors": {
+      "restricted": "Pinjaman IMF dan Bank Dunia tidak tersedia bagi negara Komunis dengan rata-rata nasionalisasi di atas 50%.",
+      "cooldown": "Anda dapat mengajukan pinjaman kembali setelah {date}.",
+      "invalidAmount": "Masukkan jumlah pinjaman yang valid.",
+      "maximum": "Maksimal pinjaman untuk {institution} adalah {amount} NEO.",
+      "termRange": "Pilih tenor antara 180 dan 1825 hari."
+    }
+  },
+  "terms": {
+    "title": "Pilih Tenor",
+    "selected": "Terpilih",
+    "shortDefault": "6 bln",
+    "options": {
+      "sixMonths": "6 Bulan",
+      "nineMonths": "9 Bulan",
+      "oneYear": "1 Tahun",
+      "twoYears": "2 Tahun",
+      "threeYears": "3 Tahun",
+      "fourYears": "4 Tahun",
+      "fiveYears": "5 Tahun"
+    }
+  },
+  "history": {
+    "active": "Hutang Aktif ({count})",
+    "paid": "Sudah Lunas ({count})",
+    "emptyActive": "Tidak ada hutang aktif.",
+    "emptyPaid": "Belum ada pinjaman yang dilunasi.",
+    "paymentAria": "Konfirmasi pembayaran pinjaman {source}",
+    "headers": {
+      "source": "Negara",
+      "principal": "Pokok Pinjaman",
+      "interest": "Bunga Awal",
+      "paid": "Sudah Dibayar",
+      "penalty": "Denda",
+      "currentTotal": "Total Saat Ini",
+      "dueDate": "Jatuh Tempo"
+    }
+  },
+  "confirmation": {
+    "title": "Konfirmasi Pinjaman",
+    "source": "Sumber Pinjaman",
+    "amount": "Jumlah Pinjaman",
+    "interest": "Bunga",
+    "term": "Masa Tenggang",
+    "totalPayment": "Total Pembayaran",
+    "summary": "Ringkasan Pinjaman",
+    "cashBalance": "Saldo Kas Negara",
+    "outstanding": "Total Terutang",
+    "ready": "Pinjaman siap dikonfirmasi",
+    "approvalNote": "Pinjaman akan langsung ditambahkan ke kas negara saat disetujui.",
+    "cancel": "Batal",
+    "confirm": "Konfirmasi Pinjaman"
+  },
+  "payment": {
+    "title": "Konfirmasi Pembayaran",
+    "amountDue": "Anda akan membayar {amount}",
+    "sourceLabel": "untuk pinjaman dari",
+    "insufficientAlert": "Kas negara tidak mencukupi untuk melakukan pembayaran ini.",
+    "insufficient": "Uang tidak cukup untuk membayar penuh pinjaman ini",
+    "payNow": "Bayar Sekarang"
+  },
+  "penalties": {
+    "generalTitle": "Penjelasan Denda Telat Bayar",
+    "detailTitle": "Detail Denda Telat Bayar",
+    "loanData": "Data Pinjaman",
+    "accumulated": "Denda terakumulasi",
+    "missed": "Telah terlewat",
+    "general": {
+      "paragraphOne": "Jika pinjaman jatuh tempo dan tidak dapat dibayar penuh, sistem akan membayar sebanyak mungkin dari kas negara.",
+      "paragraphTwo": "Jika masih ada sisa, pinjaman ditandai sebagai terlewat dan denda ditambahkan setiap bulan.",
+      "paragraphThree": "Perhitungan ini berlaku untuk pinjaman bilateral dan multilateral."
+    }
+  },
+  "info": {
+    "title": "Informasi Pinjaman & Hutang",
+    "paragraphOne": "Pinjaman dari negara lain atau lembaga dunia menambah kas sekaligus total hutang negara. Setiap pinjaman memiliki bunga dan tanggal jatuh tempo, jadi periksa ketentuannya sebelum menyetujui.",
+    "paragraphTwo": "Rasio hutang terhadap PDB membandingkan total hutang dengan ukuran ekonomi negara. Batas aman dasarnya 60% dan dapat berubah karena bonus yang aktif. Pantau riwayat pinjaman dan lakukan pembayaran sebelum jatuh tempo untuk menghindari denda."
+  }
+}

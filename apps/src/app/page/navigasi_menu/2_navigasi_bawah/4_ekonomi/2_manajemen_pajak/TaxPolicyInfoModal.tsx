@@ -5,6 +5,7 @@ import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface TaxPolicyInfoModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export default function TaxPolicyInfoModal({
   onClose,
   satisfaction,
 }: TaxPolicyInfoModalProps) {
+  const { t } = useLanguage();
   if (!isOpen) return null;
 
   return (
@@ -29,7 +31,7 @@ export default function TaxPolicyInfoModal({
     >
       <div className="flex min-w-0 flex-col overflow-hidden">
         <RootInfoModalHeader
-          title="Informasi Kebijakan Pajak"
+          title={t("navigation_economy_tax.info.title")}
           onClose={onClose}
           size="standard"
           icon={<Info aria-hidden="true" />}
@@ -37,13 +39,12 @@ export default function TaxPolicyInfoModal({
 
         <div className="space-y-4 bg-root-surface p-4 sm:p-5">
           <p className={`${rootModalTypography.body} ${rootModalTypography.muted} break-words`}>
-            Sesuaikan tarif pajak nasional untuk membiayai belanja militer dan
-            infrastruktur publik. Hati-hati, pajak tinggi memicu protes rakyat!
+            {t("navigation_economy_tax.info.description")}
           </p>
           <div className={`root-satisfaction-index tax-policy-satisfaction-card p-5 ${rootBorderRadius.card} border border-root-accent/30 bg-root-surface`}>
             <div className="flex items-center justify-between gap-3">
               <span className="root-satisfaction-index-title font-black uppercase tracking-widest text-root-text">
-                Indeks Kepuasan Rakyat (Pajak)
+                {t("navigation_economy_tax.info.satisfaction")}
               </span>
               <span className="root-satisfaction-index-value shrink-0 font-black text-amber-400">
                 {satisfaction} / 100

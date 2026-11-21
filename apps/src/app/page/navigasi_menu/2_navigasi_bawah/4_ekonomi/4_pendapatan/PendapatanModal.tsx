@@ -4,6 +4,7 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import { BarChart3, TrendingUp } from "lucide-react";
 import RootModalSearchToolbar from "@/app/page/root_modals_design_menu/RootModalSearchToolbar";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 const PemasukkanPengeluaranModal = dynamic(
   () => import("./1_anggaran/PemasukkanPengeluaranModal"),
@@ -43,6 +44,7 @@ export default function PendapatanModal({
   onGotoPajak,
   onGotoProduction,
 }: PendapatanModalProps) {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<PendapatanTab>(initialTab);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -59,7 +61,7 @@ export default function PendapatanModal({
       showSearch={activeTab === "pdb"}
       items={[
         {
-          label: "Anggaran",
+          label: t("navigation_economy_income.mainTabs.budget"),
           icon: <BarChart3 aria-hidden="true" className="h-3.5 w-3.5" />,
           isActive: activeTab === "anggaran",
           onClick: () => {
@@ -68,7 +70,7 @@ export default function PendapatanModal({
           },
         },
         {
-          label: "PDB Nasional & Dunia",
+          label: t("navigation_economy_income.mainTabs.gdp"),
           icon: <TrendingUp aria-hidden="true" className="h-3.5 w-3.5" />,
           isActive: activeTab === "pdb",
           onClick: () => setActiveTab("pdb"),
@@ -76,8 +78,8 @@ export default function PendapatanModal({
       ]}
       searchValue={searchQuery}
       onSearchChange={setSearchQuery}
-      searchPlaceholder="Cari negara / benua..."
-      searchAriaLabel="Cari negara atau benua"
+      searchPlaceholder={t("navigation_economy_income.mainTabs.searchPlaceholder")}
+      searchAriaLabel={t("navigation_economy_income.mainTabs.searchAriaLabel")}
     />
   );
 

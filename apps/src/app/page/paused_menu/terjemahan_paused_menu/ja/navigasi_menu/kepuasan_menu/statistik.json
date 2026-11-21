@@ -1,0 +1,22 @@
+{
+  "title": "国民満足度",
+  "infoButton": "満足度統計の情報",
+  "civilSatisfaction": "国民満足度:",
+  "statisticsTab": "統計",
+  "increaseTab": "満足度を上げる",
+  "sectors": {
+    "tax": "税金",
+    "goodsPrices": "生活必需品の価格",
+    "foodProduction": "食料生産",
+    "electricityProduction": "電力生産",
+    "housing": "住宅",
+    "publicServices": "公共サービス・施設",
+    "doctrine": "国家方針・開放性",
+    "economicPolicy": "経済政策・制度",
+    "subsidies": "補助金の配分・政策"
+  },
+  "info": {
+    "title": "国民満足度の統計",
+    "description": "満足度スコアは、税金、物価、食料、公共サービスなどの全体状況と分野別指標をまとめたものです。「統計」タブでスコアを確認し、関連する分野を開いて影響する政策を確認してください。"
+  }
+}

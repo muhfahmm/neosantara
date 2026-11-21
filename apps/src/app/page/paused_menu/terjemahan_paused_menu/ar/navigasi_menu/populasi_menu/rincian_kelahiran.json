@@ -1,0 +1,17 @@
+{
+  "title": "تفاصيل النمو السكاني",
+  "dailyNetGrowth": "صافي النمو اليومي",
+  "perHour": "/ساعة",
+  "births": "المواليد",
+  "deaths": "الوفيات",
+  "factors": "العوامل المؤثرة",
+  "basePopulation": "عدد السكان الأساسي",
+  "people": "نسمة",
+  "welfare": "الرفاه",
+  "healthFacilities": "المرافق الصحية",
+  "educationLevel": "مستوى التعليم",
+  "open": "افتح ←",
+  "points": "نقاط",
+  "index": "مؤشر",
+  "ratio": "(النسبة {value})"
+}

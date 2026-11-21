@@ -1,0 +1,23 @@
+{
+  "title": "Detalles de la tasa de mortalidad",
+  "dailyDeaths": "Muertes diarias",
+  "perHour": "/h",
+  "factors": "Factores que influyen",
+  "lifeExpectancy": "Esperanza de vida",
+  "years": "años",
+  "lifeExpectancyDescription": "Cuanto mayor sea la esperanza de vida, menor será la tasa de mortalidad.",
+  "security": "Nivel de seguridad",
+  "securityDescription": "Un entorno seguro reduce las muertes por accidentes y delitos.",
+  "homeless": "Personas sin hogar",
+  "homelessCount": "{count} personas ({ratio}%)",
+  "homelessDescription": "Cada 1% de personas sin hogar aumenta las muertes un 5%.",
+  "healthFacilities": "Centros de salud",
+  "open": "Abrir →",
+  "points": "PUNTOS",
+  "ratio": "(proporción {value})",
+  "healthDescription": "La disponibilidad de hospitales reduce las muertes por enfermedades tratables.",
+  "foodSecurity": "Seguridad alimentaria",
+  "foodDescription": "Una disponibilidad suficiente de alimentos reduce el riesgo de malnutrición.",
+  "lawEnforcement": "Aplicación de la ley",
+  "lawDescription": "Satisfacción con la justicia y la policía según el Índice de Bienestar."
+}

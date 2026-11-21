@@ -1,0 +1,50 @@
+{
+  "title": "国民満足度",
+  "infoButton": "満足度向上の情報",
+  "civilSatisfaction": "国民満足度:",
+  "statisticsTab": "統計",
+  "increaseTab": "満足度を上げる",
+  "events": {
+    "concert": "コンサート",
+    "festival": "フェスティバル",
+    "carnival": "カーニバル",
+    "davisCup": "デビスカップ",
+    "rugbyWorldCup": "ラグビーワールドカップ",
+    "olympics": "オリンピック",
+    "fifaWorldCup": "FIFAワールドカップ",
+    "f1Race": "F1レース"
+  },
+  "finished": "終了: {date}",
+  "satisfactionBonus": "満足度 +{value}%",
+  "sportsBonus": "スポーツ省ボーナス +({value}%)",
+  "duration": "期間: {days}日",
+  "ongoing": "開催中",
+  "chooseEvent": "イベントを選択",
+  "feedback": {
+    "success": "大統領が「{title}」を開催しました。国庫から{cost} NEOが支出されました。開催期間は{duration}日で、{endDate}に終了すると満足度が上昇します。"
+  },
+  "info": {
+    "title": "国民満足度を上げる",
+    "statisticsTitle": "統計タブ",
+    "statisticsDescription": "現在の国民満足度を総合的に表示します。過去のグラフ、満足度に影響する要因（経済、安全、公共サービス）、今後数日間の傾向予測を確認できます。",
+    "statisticsUse": "おすすめ: 戦略的な決定を行う前の詳細な分析。",
+    "increaseTitle": "満足度向上タブ",
+    "increaseDescription": "大統領が国民満足度を上げるために開催できる公共イベントや事業の一覧です。イベントごとに費用、期間、満足度上昇量が異なります。",
+    "eventCompletion": "イベントは指定期間続き、終了後に満足度上昇効果が適用されます。",
+    "singleEvent": "同じイベントを同時に複数開催することはできません。",
+    "diplomacyBonus": "研究「イベント外交」により、イベントの効果を大幅に高められます。",
+    "tip": "ヒント: まず統計タブで現在の満足度を確認し、満足度向上タブから最適なイベントを選びましょう。",
+    "understood": "了解"
+  },
+  "insufficientFunds": {
+    "title": "資金不足",
+    "closeLabel": "資金不足ダイアログを閉じる",
+    "failed": "{action}に失敗しました！",
+    "description": "国庫の資金が不足しているため、この操作を実行できません。",
+    "required": "必要な資金:",
+    "available": "利用可能な国庫:",
+    "shortage": "不足額:",
+    "takeLoan": "融資を受ける",
+    "sponsor": "{title}を支援"
+  }
+}

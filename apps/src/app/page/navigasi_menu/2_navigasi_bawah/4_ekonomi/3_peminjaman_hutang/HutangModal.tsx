@@ -34,6 +34,7 @@ import BayarHutangModal from "./tab_menu/3_riwayat/modals_menu/BayarHutangModal"
 import PenaltyInfoModal from "./tab_menu/3_riwayat/modals_menu/PenaltyInfoModal";
 import GeneralPenaltyModal from "./tab_menu/3_riwayat/modals_menu/GeneralPenaltyModal";
 import LoanInfoModal from "./LoanInfoModal";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -101,6 +102,7 @@ const generateLoanSources = () => {
 // 🔥 DEFINISIKAN TIPE DATA PINJAMAN
 
 export default function HutangModal({ isOpen, onClose, countryDetail, setCountryDetail, currentDate, resetTrigger }: ModalProps) {
+  const { language, t } = useLanguage();
   const [activeTab, setActiveTab] = useState<"bilateral" | "multilateral" | "history">("bilateral");
   const [countrySearchQuery, setCountrySearchQuery] = useState("");
   const [loanSources, setLoanSources] = useState<any[]>([]);
@@ -127,7 +129,7 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
   };
 
   const formatIdDate = (date: Date) => {
-    return date.toLocaleDateString("id-ID");
+    return date.toLocaleDateString(language);
   };
 
   const addDays = (date: Date, days: number) => {
@@ -369,7 +371,7 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
         <div className="root-modal-util-b74379da23">
 
           <RootInfoModalHeader
-            title="Pinjaman & Hutang"
+            title={t("navigation_economy_loans.title")}
             onClose={onClose}
             size="standard"
             icon={<CreditCard aria-hidden="true" />}
@@ -377,8 +379,8 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
             <button
               type="button"
               onClick={() => setIsLoanInfoOpen(true)}
-              title="Informasi pinjaman dan hutang"
-              aria-label="Informasi pinjaman dan hutang"
+              title={t("navigation_economy_loans.infoButton")}
+              aria-label={t("navigation_economy_loans.infoButton")}
               className="root-modal-info-button root-modal-util-1697100c43"
             >
               <Info aria-hidden="true" />
@@ -397,23 +399,23 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
               searchContainerClassName="loan-modal-search xl:!w-[35%] xl:!flex-none"
               showSearch={activeTab === "bilateral"}
               items={[
-                { label: "Negara Lain", isActive: activeTab === "bilateral", onClick: () => setActiveTab("bilateral") },
-                { label: "Lembaga Dunia", isActive: activeTab === "multilateral", onClick: () => setActiveTab("multilateral") },
-                { label: "Riwayat", isActive: activeTab === "history", onClick: () => setActiveTab("history") },
+                { label: t("navigation_economy_loans.tabs.bilateral"), isActive: activeTab === "bilateral", onClick: () => setActiveTab("bilateral") },
+                { label: t("navigation_economy_loans.tabs.multilateral"), isActive: activeTab === "multilateral", onClick: () => setActiveTab("multilateral") },
+                { label: t("navigation_economy_loans.tabs.history"), isActive: activeTab === "history", onClick: () => setActiveTab("history") },
               ]}
               searchValue={countrySearchQuery}
               onSearchChange={setCountrySearchQuery}
-              searchPlaceholder="Cari nama negara peminjam..."
-              searchAriaLabel="Cari nama negara peminjam"
+              searchPlaceholder={t("navigation_economy_loans.search.placeholder")}
+              searchAriaLabel={t("navigation_economy_loans.search.ariaLabel")}
             />
 
             <div className="loan-modal-stat-grid grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-2.5">
               <div className={`loan-modal-stat-card flex min-w-0 flex-col justify-center border border-root-accent/30 bg-root-surface p-2.5 lg:p-3 ${rootBorderRadius.card}`}>
-                <h4 className={`${rootModalTypography.label} loan-modal-stat-label mb-1 text-[11px] lg:text-xs`}>Rasio Hutang terhadap PDB</h4>
+                <h4 className={`${rootModalTypography.label} loan-modal-stat-label mb-1 text-[11px] lg:text-xs`}>{t("navigation_economy_loans.summary.debtRatio")}</h4>
                 <div className="loan-modal-debt-ratio flex justify-between items-end gap-2 mb-1.5">
                   <span className="text-lg lg:text-xl font-black text-root-accent">{debtRatio}%</span>
                   <div className="text-[9px] lg:text-[11px] font-bold text-right flex items-center gap-1">
-                    <span className="text-root-subtle">Batas Aman:</span>
+                    <span className="text-root-subtle">{t("navigation_economy_loans.summary.safeLimit")}</span>
                     {getBankSentralLoanSafeLimitBonusPercent(countryDetail) > 0 ? (
                       <span className="flex items-center gap-1">
                         <span className="line-through text-rose-400 opacity-80">60%</span>
@@ -443,8 +445,8 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
               </div>
 
               <div className={`loan-modal-stat-card loan-modal-total-card flex min-w-0 flex-col justify-center border border-root-accent/30 bg-root-surface p-2.5 lg:p-3 ${rootBorderRadius.card}`}>
-                <span className={`${rootModalTypography.sectionTitle} text-xs lg:text-sm`}>Total Beban Hutang</span>
-                <span className="text-sm lg:text-base font-black text-rose-400 mt-0.5 break-words">{totalHutang.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                <span className={`${rootModalTypography.sectionTitle} text-xs lg:text-sm`}>{t("navigation_economy_loans.summary.totalDebt")}</span>
+                <span className="text-sm lg:text-base font-black text-rose-400 mt-0.5 break-words">{totalHutang.toLocaleString(language, { maximumFractionDigits: 0 })} NEO</span>
               </div>
             </div>
           </div>

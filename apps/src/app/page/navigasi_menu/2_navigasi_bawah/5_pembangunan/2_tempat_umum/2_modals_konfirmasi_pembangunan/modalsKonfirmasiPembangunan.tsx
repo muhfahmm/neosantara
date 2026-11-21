@@ -5,6 +5,7 @@ import RootConstructionConfirmationModal, {
   type ConstructionMaterialRequirement,
 } from "@/app/page/root_modals_design_menu/RootConstructionConfirmationModal";
 import { calculateMaxBuildQuantity, getBulkBuildQuantityTarget } from "../../build_logic/build_logic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface PublicBuildingConfirmationProps {
   isOpen: boolean;
@@ -29,6 +30,7 @@ interface PublicBuildingConfirmationProps {
   isDisabled?: boolean;
   initialQuantity?: number;
   quantityTarget?: number;
+  translate?: (key: string, params?: Record<string, string | number>) => string;
 }
 
 export default function KonfirmasiPembangunanModal({
@@ -50,7 +52,11 @@ export default function KonfirmasiPembangunanModal({
   isDisabled = false,
   initialQuantity = 1,
   quantityTarget,
+  translate,
 }: PublicBuildingConfirmationProps) {
+  const { t } = useLanguage();
+  const tr = (key: string, params?: Record<string, string | number>) =>
+    t(`navigation_construction_public_places.confirmation.${key}`, params);
   const maxQuantity = calculateMaxBuildQuantity(
     cost,
     anggaran,
@@ -73,17 +79,20 @@ export default function KonfirmasiPembangunanModal({
       onMaterialClick={onMaterialClick}
       loading={loadingMetadata}
       disabled={isDisabled}
+      translate={translate}
       detailContent={(quantity) => (
         <>
           {waktuPembangunan !== undefined && (
             <div className="flex justify-between gap-3">
-              <span className="text-root-muted">Estimasi Waktu Pembangunan Total:</span>
-              <span className="font-semibold text-root-text">{waktuPembangunan * quantity} Hari</span>
+              <span className="text-root-muted">{tr("totalTime")}</span>
+              <span className="font-semibold text-root-text">
+                {waktuPembangunan * quantity} {tr(waktuPembangunan * quantity === 1 ? "day" : "days")}
+              </span>
             </div>
           )}
           {produksiPerHari !== undefined && (
             <div className="flex justify-between gap-3">
-              <span className="text-root-muted">Produksi {produksiLabel || ""} per hari:</span>
+              <span className="text-root-muted">{tr("productionPerDay", { building: produksiLabel || "" })}</span>
               <span className="font-bold text-emerald-400">
                 +{produksiPerHari.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
               </span>
@@ -91,7 +100,7 @@ export default function KonfirmasiPembangunanModal({
           )}
           {pendapatanPerHari !== undefined && (
             <div className="flex justify-between gap-3">
-              <span className="text-root-muted">Penghasilan {pendapatanLabel || "NEO"} per hari:</span>
+              <span className="text-root-muted">{tr("revenuePerDay", { unit: pendapatanLabel || "NEO" })}</span>
               <span className="font-bold text-emerald-400">
                 +{pendapatanPerHari.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
               </span>
@@ -99,7 +108,7 @@ export default function KonfirmasiPembangunanModal({
           )}
           {dampakKepuasan !== undefined && (
             <div className="flex justify-between gap-3">
-              <span className="text-root-muted">Dampak ke Kepuasan:</span>
+              <span className="text-root-muted">{tr("satisfactionImpact")}</span>
               <span className="font-bold text-emerald-400">+{dampakKepuasan.toFixed(1)}</span>
             </div>
           )}

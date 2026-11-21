@@ -21,6 +21,10 @@
     "kasNegaraTitle": "Presupuesto del Tesoro Nacional",
     "kasNegaraDesc": "Haz clic para recargar el tesoro en la Tienda NEO.",
     "populasi": "Haz clic para ver detalles de población",
+    "populationTitle": "Detalles de población",
+    "births": "Nacimientos",
+    "deaths": "Muertes",
+    "netGrowth": "Crecimiento neto",
     "fps": "Abrir detalles del monitor FPS"
   },
   "actions": {
@@ -28,5 +32,58 @@
     "restart": "Reiniciar",
     "openMenu": "Abrir Menú de Pausa",
     "zoom": "Zoom"
+  },
+  "navigation": {
+    "gameMenu": "Menú del juego",
+    "mainMenu": "Navegación del menú principal",
+    "subMenu": "Navegación del submenú",
+    "mainMap": "Simulación principal",
+    "globalMap": "Mapa global",
+    "top": {
+      "groupLabel": "Navegación de vista del mapa",
+      "map": "Mapa táctico",
+      "diplomacy": "Relaciones diplomáticas",
+      "focusHome": "Centrar y acercar a tu país"
+    },
+    "main": {
+      "kepuasan": "Satisfacción",
+      "populasi": "Población",
+      "produksiKonsumsi": "Producción y consumo",
+      "ekonomi": "Economía",
+      "pembangunan": "Desarrollo",
+      "pertahanan": "Defensa",
+      "geopolitik": "Geopolítica",
+      "sosialBudaya": "Sociedad y cultura",
+      "kementerian": "Ministerio"
+    },
+    "sub": {
+      "kepuasanStatistics": "Estadísticas de satisfacción",
+      "increaseSatisfaction": "Aumentar la satisfacción",
+      "populationSummary": "Resumen de población",
+      "trade": "Comercio",
+      "tax": "Impuestos",
+      "loans": "Préstamos",
+      "income": "Ingresos",
+      "purchasingPower": "Poder adquisitivo",
+      "economicSystem": "Sistema económico",
+      "production": "Producción",
+      "publicFacilities": "Servicios públicos",
+      "housing": "Vivienda",
+      "nationalGrid": "Red eléctrica nacional",
+      "foodIndustry": "Industria alimentaria",
+      "attackCountry": "Atacar un país",
+      "intelligence": "Inteligencia",
+      "capturedTerritory": "Territorios conquistados",
+      "fleet": "Flota",
+      "icbm": "ICBM",
+      "un": "ONU",
+      "embassy": "Embajadas",
+      "internationalOrganizations": "Organizaciones internacionales",
+      "relationLevel": "Relaciones",
+      "religion": "Religión y creencias",
+      "nationalIdeology": "Ideología nacional",
+      "opennessDoctrine": "Doctrina y apertura",
+      "ministry": "Ministerio"
+    }
   }
 }

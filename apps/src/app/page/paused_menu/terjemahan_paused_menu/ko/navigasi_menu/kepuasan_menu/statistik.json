@@ -1,0 +1,22 @@
+{
+  "title": "국민 만족도",
+  "infoButton": "만족도 통계 정보",
+  "civilSatisfaction": "국민 만족도:",
+  "statisticsTab": "통계",
+  "increaseTab": "만족도 높이기",
+  "sectors": {
+    "tax": "세금",
+    "goodsPrices": "생필품 가격",
+    "foodProduction": "식량 생산",
+    "electricityProduction": "전력 생산",
+    "housing": "주거",
+    "publicServices": "공공 서비스 및 시설",
+    "doctrine": "국가 이념 및 개방성",
+    "economicPolicy": "경제 정책 및 체제",
+    "subsidies": "보조금 배분 및 정책"
+  },
+  "info": {
+    "title": "국민 만족도 통계",
+    "description": "만족도 점수는 세금, 물가, 식량, 공공 서비스와 같은 전반적인 상황과 분야별 지표를 요약합니다. 통계 탭에서 점수를 확인하고 관련 분야를 열어 영향을 주는 정책을 살펴보세요."
+  }
+}

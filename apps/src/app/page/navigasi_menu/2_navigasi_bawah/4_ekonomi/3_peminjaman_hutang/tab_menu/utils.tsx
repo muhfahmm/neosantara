@@ -1,3 +1,5 @@
+import { getLocalizedCountryName } from "@/app/logic/countryNameLogic";
+
 export interface LoanRecord {
   id: number | string;
   source: string;
@@ -20,6 +22,18 @@ export const formatLoanSourceName = (source: string) => {
   if (/^imf\b/i.test(normalizedSource)) return "IMF";
   if (/^(bank dunia|world bank)\b/i.test(normalizedSource)) return "Bank Dunia";
   return source;
+};
+
+export const getLocalizedLoanSourceName = (
+  source: string,
+  locale: string,
+  imfName: string,
+  worldBankName: string
+) => {
+  const normalizedSource = formatLoanSourceName(source);
+  if (normalizedSource === "IMF") return imfName;
+  if (normalizedSource === "Bank Dunia") return worldBankName;
+  return getLocalizedCountryName(normalizedSource, locale);
 };
 
 export const getLoanSourceFlagIso = (source: string, iso?: string | null, type?: LoanRecord["type"]) => {

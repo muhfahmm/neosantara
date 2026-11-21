@@ -6,6 +6,8 @@ import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/Note
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
+import { getLocalizedCountryName } from "@/app/logic/countryNameLogic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 // Definisikan tipe data agar modal bisa menerima format Flat ataupun Grouped
 type Item = { label: string; value: string; disabled?: boolean };
@@ -29,11 +31,34 @@ export default function PilihItemModal({
   onSelect, 
   selectedValue 
 }: PilihItemModalProps) {
+  const { language, t } = useLanguage();
   if (!isOpen || typeof document === "undefined") return null;
 
   // Cek tipe data: Apakah ini array Grouped (memiliki properti 'category')?
   const isGrouped = data.length > 0 && 'category' in data[0];
   const HeaderIcon = title === "Pilih Negara Mitra" ? Handshake : PackageSearch;
+  const translatedTitle = title === "Pilih Negara Mitra"
+    ? t("navigation_economy_trade.transaction.choosePartner")
+    : title === "Pilih Komoditas atau Alutsista"
+      ? t("navigation_economy_trade.transaction.chooseProduct")
+      : title;
+  const categoryKeys: Record<string, string> = {
+    "Mineral Kritis": "criticalMinerals",
+    "Manufaktur": "manufacturing",
+    "Peternakan": "livestock",
+    "Agrikultur": "agriculture",
+    "Perikanan": "fishery",
+    "Olahan Pangan": "foodProcessing",
+    "Alutsista Darat": "landArms",
+    "Alutsista Laut": "navalArms",
+    "Alutsista Udara": "airArms",
+  };
+  const translatedProduct = (item: Item, category: string) => {
+    const isArms = category.startsWith("Alutsista");
+    const translationKey = `navigation_economy_trade.transaction.${isArms ? "armsProducts" : "products"}.${item.value}`;
+    const translated = t(translationKey);
+    return translated.startsWith("navigation_economy_trade.") ? item.label : translated;
+  };
 
   return createPortal(
     <NotebookModalWrapper
@@ -42,7 +67,7 @@ export default function PilihItemModal({
     >
       <div className="flex h-full min-w-0 flex-col overflow-hidden">
         <RootInfoModalHeader
-          title={title}
+          title={translatedTitle}
           onClose={onClose}
           size="standard"
           icon={<HeaderIcon aria-hidden="true" />}
@@ -57,7 +82,9 @@ export default function PilihItemModal({
               <div key={groupIndex} className="mb-8 last:mb-0">
                 {/* Judul Kategori */}
                 <div className="col-span-full text-[12px] font-black text-root-accent uppercase tracking-wider mb-3 border-b border-root-accent/20 pb-2">
-                  {group.category}
+                  {categoryKeys[group.category]
+                    ? t(`navigation_economy_trade.transaction.categories.${categoryKeys[group.category]}`)
+                    : group.category}
                 </div>
                 
                 {/* Grid Item per Kategori */}
@@ -86,13 +113,13 @@ export default function PilihItemModal({
                       >
                         <div className="flex flex-col gap-1">
                           <span className={`text-sm font-bold tracking-wide ${isSelected ? 'text-root-canvas' : 'text-root-text'}`}>
-                            {item.label}
+                            {translatedProduct(item, group.category)}
                           </span>
                           {item.disabled && (
-                            <span className="text-[10px] text-rose-400 font-bold uppercase">Tidak Tersedia</span>
+                            <span className="text-[10px] text-rose-400 font-bold uppercase">{t("navigation_economy_trade.transaction.unavailable")}</span>
                           )}
                           {isSelected && (
-                            <span className="text-[10px] text-root-canvas font-extrabold uppercase">Terpilih</span>
+                            <span className="text-[10px] text-root-canvas font-extrabold uppercase">{t("navigation_economy_trade.transaction.selected")}</span>
                           )}
                         </div>
                         {!item.disabled && (
@@ -143,7 +170,7 @@ export default function PilihItemModal({
                           </div>
                         );
                       })()}
-                      <span className={`text-sm font-bold tracking-wide ${isSelected ? 'text-root-canvas' : 'text-root-text'}`}>{item.label}</span>
+                      <span className={`text-sm font-bold tracking-wide ${isSelected ? 'text-root-canvas' : 'text-root-text'}`}>{getLocalizedCountryName(item.label, language)}</span>
                     </div>
                     {!item.disabled && (
                       <ChevronRight className={`h-4 w-4 transition-transform group-hover:translate-x-1 ${isSelected ? 'text-root-canvas' : 'text-root-accent'}`} />

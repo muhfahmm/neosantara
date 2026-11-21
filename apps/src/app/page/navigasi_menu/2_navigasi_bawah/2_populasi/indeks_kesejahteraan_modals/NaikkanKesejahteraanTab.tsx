@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { X, Heart, Coins, Sparkles, AlertCircle, CheckCircle2, Clock } from "lucide-react";
 import DanaTidakCukupModal from "../../1_kepuasan/2_naikkan_kepuasan/DanaTidakCukupModal";
 import { markMissionAsClaimable } from "@/app/page/menus/mission/missionModals";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface NaikkanKesejahteraanTabProps {
   countryDetail: any;
@@ -26,6 +27,7 @@ export default function NaikkanKesejahteraanTab({
   selectedCountry,
   currentDate,
 }: NaikkanKesejahteraanTabProps) {
+  const { t, language } = useLanguage();
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [isDanaTidakCukupOpen, setIsDanaTidakCukupOpen] = useState(false);
   const [pendingCost, setPendingCost] = useState(0);
@@ -107,7 +109,7 @@ export default function NaikkanKesejahteraanTab({
   const initiatives = [
     {
       id: "cash_transfer",
-      title: "Bantuan Tunai Langsung",
+      title: t("navigation_population_welfare_initiatives.initiatives.cashTransfer"),
       cost: 40000,
       boost: 4,
       duration: 7,
@@ -115,7 +117,7 @@ export default function NaikkanKesejahteraanTab({
     },
     {
       id: "food_subsidy",
-      title: "Subsidi Pangan Pokok",
+      title: t("navigation_population_welfare_initiatives.initiatives.foodSubsidy"),
       cost: 75000,
       boost: 8,
       duration: 30,
@@ -123,7 +125,7 @@ export default function NaikkanKesejahteraanTab({
     },
     {
       id: "student_aid",
-      title: "Bantuan Pendidikan Siswa",
+      title: t("navigation_population_welfare_initiatives.initiatives.studentAid"),
       cost: 120000,
       boost: 12,
       duration: 7,
@@ -131,7 +133,7 @@ export default function NaikkanKesejahteraanTab({
     },
     {
       id: "health_coverage",
-      title: "Jaminan Kesehatan Universal",
+      title: t("navigation_population_welfare_initiatives.initiatives.healthCoverage"),
       cost: 250000,
       boost: 18,
       duration: 30,
@@ -139,7 +141,7 @@ export default function NaikkanKesejahteraanTab({
     },
     {
       id: "housing_upgrade",
-      title: "Perbaikan Perumahan Rakyat",
+      title: t("navigation_population_welfare_initiatives.initiatives.housingUpgrade"),
       cost: 600000,
       boost: 25,
       duration: 14,
@@ -147,7 +149,7 @@ export default function NaikkanKesejahteraanTab({
     },
     {
       id: "national_market",
-      title: "Pasar Murah Nasional",
+      title: t("navigation_population_welfare_initiatives.initiatives.nationalMarket"),
       cost: 1000000,
       boost: 35,
       duration: 20,
@@ -162,7 +164,7 @@ export default function NaikkanKesejahteraanTab({
       const date = new Date(y, m - 1, d);
       if (isNaN(date.getTime())) return dateString;
       const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
-      const parts = new Intl.DateTimeFormat('id-ID', options).formatToParts(date);
+      const parts = new Intl.DateTimeFormat(language, options).formatToParts(date);
       const day = parts.find((p) => p.type === 'day')?.value || '';
       const month = parts.find((p) => p.type === 'month')?.value || '';
       const year = parts.find((p) => p.type === 'year')?.value || '';
@@ -214,7 +216,10 @@ export default function NaikkanKesejahteraanTab({
 
     setFeedback({
       type: "success",
-      message: `Inisiatif "${init.title}" berhasil diluncurkan! Target selesai: ${formatBadgeDate(endStr)}.`,
+      message: t("navigation_population_welfare_initiatives.success", {
+        title: init.title,
+        date: formatBadgeDate(endStr),
+      }),
     });
   };
 
@@ -308,7 +313,7 @@ export default function NaikkanKesejahteraanTab({
               {isLaunched && (
                 <div className={"root-modal-util-65ecbf5d72"}>
                   <Clock className={"root-modal-util-a9546f0c0b"} />
-                  Berjalan
+                  {t("navigation_population_welfare_initiatives.running")}
                 </div>
               )}
 
@@ -318,14 +323,14 @@ export default function NaikkanKesejahteraanTab({
                 </div>
                 <div>
                   <h4 className={"root-modal-util-40903f9bc1"}>{init.title}</h4>
-                  <p className={"root-modal-util-aaa3ba0056"}>Boost Kesejahteraan: +{init.boost}%</p>
+                  <p className={"root-modal-util-aaa3ba0056"}>{t("navigation_population_welfare_initiatives.welfareBoost", { value: init.boost })}</p>
                 </div>
               </div>
 
               <div className={"root-modal-util-218307b888"}>
                 <div className={"root-modal-util-38d6c4f454"}>
-                  <p>Biaya: <span className={"root-modal-util-ca525b9094"}>{init.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span></p>
-                  <p>Durasi: <span className={"root-modal-util-da18d116be"}>{init.duration} hari</span></p>
+                  <p>{t("navigation_population_welfare_initiatives.cost")} <span className={"root-modal-util-ca525b9094"}>{init.cost.toLocaleString(language, { maximumFractionDigits: 2 })} NEO</span></p>
+                  <p>{t("navigation_population_welfare_initiatives.duration")} <span className={"root-modal-util-da18d116be"}>{t("navigation_population_welfare_initiatives.days", { value: init.duration })}</span></p>
                 </div>
 
                 <button
@@ -337,7 +342,9 @@ export default function NaikkanKesejahteraanTab({
                       : "root-modal-util-ec7258ed63"
                   }`}
                 >
-                  {isLaunched ? "Aktif" : "Luncurkan"}
+                  {isLaunched
+                    ? t("navigation_population_welfare_initiatives.active")
+                    : t("navigation_population_welfare_initiatives.launch")}
                 </button>
               </div>
             </div>
@@ -351,7 +358,9 @@ export default function NaikkanKesejahteraanTab({
         onClose={() => setIsDanaTidakCukupOpen(false)}
         requiredCost={pendingCost}
         currentBudget={anggaran}
-        actionName={pendingTitle}
+        actionName={t("navigation_satisfaction_increase.insufficientFunds.sponsor", {
+          title: pendingTitle,
+        })}
       />
     </div>
   );

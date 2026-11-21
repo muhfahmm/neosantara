@@ -21,6 +21,10 @@
     "kasNegaraTitle": "国家预算资金",
     "kasNegaraDesc": "点击在 NEO 商店中充实国库。",
     "populasi": "点击查看人口详情",
+    "populationTitle": "人口详情",
+    "births": "出生",
+    "deaths": "死亡",
+    "netGrowth": "净增长",
     "fps": "打开帧率监控详情"
   },
   "actions": {
@@ -28,5 +32,58 @@
     "restart": "重新开始",
     "openMenu": "打开暂停菜单",
     "zoom": "缩放"
+  },
+  "navigation": {
+    "gameMenu": "游戏菜单",
+    "mainMenu": "主菜单导航",
+    "subMenu": "子菜单导航",
+    "mainMap": "主模拟",
+    "globalMap": "世界地图",
+    "top": {
+      "groupLabel": "地图视图导航",
+      "map": "战术地图",
+      "diplomacy": "外交关系",
+      "focusHome": "聚焦并缩放至本国"
+    },
+    "main": {
+      "kepuasan": "满意度",
+      "populasi": "人口",
+      "produksiKonsumsi": "生产与消费",
+      "ekonomi": "经济",
+      "pembangunan": "建设",
+      "pertahanan": "防务",
+      "geopolitik": "地缘政治",
+      "sosialBudaya": "社会与文化",
+      "kementerian": "内阁"
+    },
+    "sub": {
+      "kepuasanStatistics": "满意度统计",
+      "increaseSatisfaction": "提高满意度",
+      "populationSummary": "人口概况",
+      "trade": "贸易",
+      "tax": "税收",
+      "loans": "贷款",
+      "income": "收入",
+      "purchasingPower": "购买力",
+      "economicSystem": "经济制度",
+      "production": "生产",
+      "publicFacilities": "公共设施",
+      "housing": "住房",
+      "nationalGrid": "国家电网",
+      "foodIndustry": "食品工业",
+      "attackCountry": "攻击国家",
+      "intelligence": "情报",
+      "capturedTerritory": "占领领土",
+      "fleet": "舰队",
+      "icbm": "洲际弹道导弹",
+      "un": "联合国",
+      "embassy": "大使馆",
+      "internationalOrganizations": "国际组织",
+      "relationLevel": "关系等级",
+      "religion": "宗教与信仰",
+      "nationalIdeology": "国家意识形态",
+      "opennessDoctrine": "开放理念",
+      "ministry": "内阁"
+    }
   }
 }

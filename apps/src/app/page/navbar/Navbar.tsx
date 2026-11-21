@@ -264,7 +264,7 @@ export function Navbar({
                         <button
                             onClick={onOpenGameMenu}
                             data-tutorial="game-menu"
-                            title="Game Menu"
+                            aria-label={t('navbar.navigation.gameMenu')}
                             className="w-7 h-7 rounded-full bg-root-canvas border border-root-accent/40 text-root-accent flex items-center justify-center cursor-pointer active:scale-95 shrink-0"
                         >
                             <Power className="w-3.5 h-3.5" />
@@ -281,11 +281,10 @@ export function Navbar({
                         ) : (
                             <span className="text-xs shrink-0">🌐</span>
                         )}
-                        <span 
-                            title={selectedCountry ? displayCountryName : 'Main'}
+                        <span
                             className="max-w-[70px] min-[800px]:max-w-[100px] truncate text-[10px] font-black leading-tight text-root-text uppercase tracking-tight"
                         >
-                            {selectedCountry ? displayCountryName : 'Main'}
+                            {selectedCountry ? displayCountryName : t('navbar.navigation.mainMap')}
                         </span>
                         <FpsMonitoring wasmModuleRef={wasmModuleRef} />
                     </div>
@@ -331,20 +330,18 @@ export function Navbar({
 
                     <div className="flex shrink-0 items-center gap-1">
                         <AttackDebugButton selectedCountry={selectedCountry} countryDetail={countryDetail} />
-                        <ZoomIndicator mapZoom={mapZoom} compact />
+                        <ZoomIndicator mapZoom={mapZoom} zoomLabel={t('navbar.actions.zoom')} compact />
                         <button
                             onClick={onOpenSaveModal}
                             data-tutorial="tombol-simpan"
-                            aria-label="Simpan Game"
-                            title="Simpan Game"
+                            aria-label={t('navbar.actions.quickSave')}
                             className="flex h-6 w-6 items-center justify-center rounded-md border border-root-accent/30 bg-root-canvas text-root-accent cursor-pointer active:scale-95 shrink-0"
                         >
                             <Save className="h-3.5 w-3.5" />
                         </button>
                         <button
                             onClick={onOpenRestartConfirm}
-                            aria-label="Restart Game"
-                            title="Restart Game"
+                            aria-label={t('navbar.actions.restart')}
                             className="flex h-6 w-6 items-center justify-center rounded-md border border-root-accent/30 bg-root-canvas text-root-accent cursor-pointer active:scale-95 shrink-0"
                         >
                             <RotateCcw className="h-3.5 w-3.5" />
@@ -359,7 +356,7 @@ export function Navbar({
                         <div className="flex min-w-0 flex-1 items-center gap-1.5">
                             <button
                                 onClick={onOpenGameMenu}
-                                title="Game Menu"
+                                aria-label={t('navbar.navigation.gameMenu')}
                                 className="w-7 h-7 rounded-full bg-root-canvas border border-root-accent/40 text-root-accent flex items-center justify-center cursor-pointer active:scale-95 shrink-0"
                             >
                                 <Power className="w-3.5 h-3.5" />
@@ -371,11 +368,10 @@ export function Navbar({
                                     alt={displayCountryName}
                                 />
                             )}
-                            <span 
-                                title={selectedCountry ? displayCountryName : 'Main Simulation'}
+                            <span
                                 className="max-w-[120px] truncate text-xs font-black leading-tight text-root-text uppercase tracking-tight"
                             >
-                                {selectedCountry ? displayCountryName : 'Main Simulation'}
+                                {selectedCountry ? displayCountryName : t('navbar.navigation.mainMap')}
                             </span>
                             <FpsMonitoring wasmModuleRef={wasmModuleRef} />
                         </div>
@@ -383,16 +379,14 @@ export function Navbar({
                             <button
                                 onClick={onOpenSaveModal}
                                 data-tutorial="tombol-simpan"
-                                aria-label="Simpan Game"
-                                title="Simpan Game"
+                                aria-label={t('navbar.actions.quickSave')}
                                 className="flex h-7 w-7 items-center justify-center rounded-md border border-root-accent/30 bg-root-canvas text-root-accent cursor-pointer active:scale-95"
                             >
                                 <Save className="h-4 w-4" />
                             </button>
                             <button
                                 onClick={onOpenRestartConfirm}
-                                aria-label="Restart Game"
-                                title="Restart Game"
+                                aria-label={t('navbar.actions.restart')}
                                 className="flex h-7 w-7 items-center justify-center rounded-md border border-root-accent/30 bg-root-canvas text-root-accent cursor-pointer active:scale-95"
                             >
                                 <RotateCcw className="h-4 w-4" />
@@ -402,7 +396,7 @@ export function Navbar({
 
                     <div className="map-status-navbar-panel flex items-center justify-center gap-1.5 pointer-events-auto bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg">
                         <AttackDebugButton selectedCountry={selectedCountry} countryDetail={countryDetail} />
-                        <ZoomIndicator mapZoom={mapZoom} compact />
+                        <ZoomIndicator mapZoom={mapZoom} zoomLabel={t('navbar.actions.zoom')} compact />
                     </div>
 
                     {/* Baris 2: Angka lengkap dengan label dan perubahan harian */}
@@ -469,14 +463,15 @@ export function Navbar({
                                 <button
                                     onClick={onOpenGameMenu}
                                     data-tutorial="game-menu"
-                                    title="Game Menu"
+                                    aria-label={t('navbar.navigation.gameMenu')}
                                     className="w-7 h-7 lg:w-8 lg:h-8 2xl:w-9 2xl:h-9 rounded-full bg-root-canvas border-[2px] border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all flex items-center justify-center cursor-pointer z-30"
                                 >
                                     <Power className="w-3 h-3 2xl:w-3.5 2xl:h-3.5" />
                                 </button>
-                                
-                                <div className="absolute top-[34px] lg:top-[38px] 2xl:top-[42px] left-1/2 -translate-x-1/2 bg-root-surface border border-root-accent/30 px-2 py-1 text-root-accent text-[8px] sm:text-[10px] font-black tracking-wider uppercase rounded-md whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                    Game Menu
+                                <div
+                                    className="absolute left-0 top-full mt-3 max-w-[calc(100vw-1rem)] bg-root-surface border border-root-accent/30 px-2 py-1 text-root-accent text-[8px] sm:text-[10px] font-black tracking-wider uppercase rounded-md whitespace-nowrap z-50 pointer-events-none opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                                >
+                                    {t('navbar.navigation.gameMenu')}
                                 </div>
                             </div>
                             <div data-tutorial="negara-terpilih" className="flex items-center gap-1.5 2xl:gap-2 px-1 2xl:px-2 py-0.5 rounded-xl min-w-[100px] lg:min-w-[115px] 2xl:min-w-[140px]">
@@ -495,10 +490,10 @@ export function Navbar({
                                 )}
                                 <div className="flex flex-col leading-tight">
                                     <span className="text-[9px] lg:text-[10px] 2xl:text-[11px] font-black text-root-text tracking-tight uppercase">
-                                        {selectedCountry ? displayCountryName : 'Main Simulation'}
+                                        {selectedCountry ? displayCountryName : t('navbar.navigation.mainMap')}
                                     </span>
                                     <span className="text-[7px] lg:text-[8px] 2xl:text-[9px] font-bold text-root-subtle uppercase tracking-widest">
-                                        {selectedCountry ? selectedCountry.capital : 'Global Map'}
+                                        {selectedCountry ? selectedCountry.capital : t('navbar.navigation.globalMap')}
                                     </span>
                                 </div>
                                 <FpsMonitoring wasmModuleRef={wasmModuleRef} />
@@ -514,7 +509,6 @@ export function Navbar({
                             <button
                                 onClick={onOpenPopulasi}
                                 className="group relative flex-shrink-0 cursor-pointer text-left hover:opacity-85 transition-opacity"
-                                title={t('navbar.tooltips.populasi')}
                             >
                                 <StatusItem 
                                     icon={<Users className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
@@ -529,13 +523,13 @@ export function Navbar({
                                     } 
                                 />
                                 <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max bg-root-surface border border-root-accent/30 rounded-xl p-3 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none">
-                                    <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-1.5 border-b border-root-accent/20 pb-1.5 text-center">Rincian Demografi</p>
+                                    <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-1.5 border-b border-root-accent/20 pb-1.5 text-center">{t('navbar.tooltips.populationTitle')}</p>
                                     <div className="grid grid-cols-2 gap-x-6 text-[11px] font-bold text-root-text">
-                                        <span className="text-root-accent text-center">Lahir: +{dailyBirths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
-                                        <span className="text-rose-400 text-center">Mati: -{dailyDeaths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
+                                        <span className="text-root-accent text-center">{t('navbar.tooltips.births')}: +{dailyBirths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
+                                        <span className="text-rose-400 text-center">{t('navbar.tooltips.deaths')}: -{dailyDeaths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                                     </div>
                                     <div className="mt-1.5 pt-1.5 border-t border-root-accent/20 text-[10px] text-root-subtle text-center">
-                                        Pertumbuhan Bersih: <span className={`font-bold ${netDailyChange >= 0 ? 'text-root-accent' : 'text-rose-400'}`}>{netPopulationLabel}</span>
+                                        {t('navbar.tooltips.netGrowth')}: <span className={`font-bold ${netDailyChange >= 0 ? 'text-root-accent' : 'text-rose-400'}`}>{netPopulationLabel}</span>
                                     </div>
                                 </div>
                             </button>
@@ -544,7 +538,6 @@ export function Navbar({
                             <button
                                 onClick={onOpenKasShop}
                                 className="group relative flex-shrink-0 cursor-pointer text-left hover:opacity-85 transition-opacity"
-                                title={t('navbar.tooltips.kasNegara')}
                             >
                                 <StatusItem
                                     icon={<Landmark className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
@@ -574,7 +567,6 @@ export function Navbar({
                             <button 
                                 onClick={onOpenKepuasan}
                                 className="cursor-pointer hover:opacity-80 transition-opacity"
-                                title={t('navbar.tooltips.kepuasan')}
                             >
                                 <StatusItem 
                                     icon={<Smile className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
@@ -587,7 +579,6 @@ export function Navbar({
                             <button
                                 onClick={onOpenPeringkat}
                                 className="cursor-pointer transition-opacity hover:opacity-80"
-                                title={t('navbar.tooltips.peringkat')}
                             >
                                 <StatusItem
                                     icon={<Star className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 fill-root-accent text-root-accent" />}
@@ -600,7 +591,6 @@ export function Navbar({
                             <button 
                                 onClick={onOpenKesejahteraan}
                                 className="cursor-pointer hover:opacity-80 transition-opacity"
-                                title={t('navbar.tooltips.kesejahteraan')}
                             >
                                 <StatusItem
                                     icon={<Activity className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-root-accent" />}
@@ -614,7 +604,6 @@ export function Navbar({
                             <button
                                 onClick={onOpenGemsShop}
                                 className="group relative flex-shrink-0 cursor-pointer text-left hover:opacity-85 transition-opacity"
-                                title={t('navbar.tooltips.gems')}
                             >
                                 <StatusItem
                                     icon={<Gem className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-cyan-400 fill-cyan-400/20" />}
@@ -642,11 +631,11 @@ export function Navbar({
                     {/* 3. Right Side: Save & Restart Buttons */}
                     <div className="flex items-center gap-1.5 2xl:gap-1.5 shrink-0 relative z-20 pointer-events-auto bg-root-surface border border-root-accent/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
                         <AttackDebugButton selectedCountry={selectedCountry} countryDetail={countryDetail} />
-                        <ZoomIndicator mapZoom={mapZoom} />
+                        <ZoomIndicator mapZoom={mapZoom} zoomLabel={t('navbar.actions.zoom')} />
                         <button
                             onClick={onOpenSaveModal}
                             data-tutorial="tombol-simpan"
-                            title="Simpan Game"
+                            aria-label={t('navbar.actions.quickSave')}
                             className="flex items-center justify-center w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-xl border border-root-accent/30 bg-root-canvas text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer"
                         >
                             <Save className="w-3.5 h-3.5 2xl:w-4 2xl:h-4" />
@@ -654,7 +643,7 @@ export function Navbar({
                         
                         <button
                             onClick={onOpenRestartConfirm}
-                            title="Atur Ulang Game"
+                            aria-label={t('navbar.actions.restart')}
                             className="flex items-center justify-center w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-xl border border-root-accent/30 bg-root-canvas text-root-accent hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer"
                         >
                             <RotateCcw className="w-3.5 h-3.5 2xl:w-4 2xl:h-4" />
@@ -710,12 +699,11 @@ function MobileStatusItem({
     );
 }
 
-function ZoomIndicator({ mapZoom, compact = false }: { mapZoom: number; compact?: boolean }) {
+function ZoomIndicator({ mapZoom, zoomLabel, compact = false }: { mapZoom: number; zoomLabel: string; compact?: boolean }) {
     return (
         <div
             role="status"
-            aria-label={`Zoom peta ${mapZoom.toFixed(1)} kali`}
-            title="Tingkat zoom peta"
+            aria-label={`${zoomLabel} ${mapZoom.toFixed(1)}x`}
             className={`flex flex-col items-center justify-center rounded-lg border border-root-accent/20 bg-root-canvas px-1.5 ${
                 compact ? 'h-7 min-w-[42px]' : 'h-8 min-w-[48px] lg:h-9 lg:min-w-[54px] 2xl:h-10'
             }`}

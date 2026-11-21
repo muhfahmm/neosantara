@@ -1,0 +1,17 @@
+{
+  "title": "Rincian Pertumbuhan Penduduk",
+  "dailyNetGrowth": "Pertumbuhan Bersih Harian",
+  "perHour": "/hr",
+  "births": "Kelahiran",
+  "deaths": "Kematian",
+  "factors": "Faktor yang Memengaruhi",
+  "basePopulation": "Populasi Dasar",
+  "people": "jiwa",
+  "welfare": "Kesejahteraan",
+  "healthFacilities": "Fasilitas Kesehatan",
+  "educationLevel": "Tingkat Pendidikan",
+  "open": "Buka →",
+  "points": "POIN",
+  "index": "INDX",
+  "ratio": "(rasio {value})"
+}

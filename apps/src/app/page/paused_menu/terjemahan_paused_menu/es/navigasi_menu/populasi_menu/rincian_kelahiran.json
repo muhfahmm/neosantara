@@ -1,0 +1,17 @@
+{
+  "title": "Detalles del crecimiento de la población",
+  "dailyNetGrowth": "Crecimiento neto diario",
+  "perHour": "/h",
+  "births": "Nacimientos",
+  "deaths": "Muertes",
+  "factors": "Factores que influyen",
+  "basePopulation": "Población base",
+  "people": "personas",
+  "welfare": "Bienestar",
+  "healthFacilities": "Centros de salud",
+  "educationLevel": "Nivel educativo",
+  "open": "Abrir →",
+  "points": "PUNTOS",
+  "index": "ÍNDICE",
+  "ratio": "(proporción {value})"
+}

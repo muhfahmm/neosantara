@@ -30,6 +30,7 @@ import { calculateEconomicPopulationImpact } from "@/app/logic/economic_logic/ec
 import { calculatePopulationPolicyImpact } from "@/app/logic/populations_logic/populationPolicyImpact";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import { parseActiveEspionageEffects } from "@/app/page/detail_negara/3_operasi_militer/covertEffectsLogic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 // ==============================
 // Tipe data yang diharapkan dari countryDetail
@@ -137,6 +138,7 @@ export default function RingkasanPopulasiModal({
   metadata = {},
 }: RingkasanPopulasiModalProps) {
 
+  const { t, language } = useLanguage();
   const [isDetailBirthOpen, setIsDetailBirthOpen] = useState(false);
   const [isDetailDeathOpen, setIsDetailDeathOpen] = useState(false);
   const [isTempatUmumOpen, setIsTempatUmumOpen] = useState(false);
@@ -201,7 +203,7 @@ export default function RingkasanPopulasiModal({
                   <Users2 aria-hidden="true" className={"root-modal-util-d252947d10"} />
                 </div>
                 <h2 className={"root-modal-util-6b4648c53a root-modal-util-c2385a463d"}>
-                  Kependudukan
+                  {t("navigation_population_summary.title")}
                 </h2>
               </div>
             </div>
@@ -210,7 +212,7 @@ export default function RingkasanPopulasiModal({
           <div className={"root-modal-util-ba14ec0ad8"} role="status" aria-live="polite">
             <div className={"root-modal-util-f9009b6328"}>
               <span className={"root-modal-util-7bb8d7d0aa"} />
-              Menyiapkan ringkasan populasi...
+              {t("navigation_population_summary.loading")}
             </div>
           </div>
         </div>
@@ -248,7 +250,7 @@ export default function RingkasanPopulasiModal({
   const formatModifier = (value: number) =>
     `${value > 0 ? "+" : ""}${value.toFixed(2)}%`;
   const formatPeople = (value: number) =>
-    `${value > 0 ? "+" : ""}${value.toLocaleString("id-ID")} jiwa`;
+    `${value > 0 ? "+" : ""}${value.toLocaleString(language)} ${t("navigation_population_summary.people")}`;
     
   const activePandemic = Array.isArray(countryDetail?.active_outbreaks)
     ? countryDetail.active_outbreaks.find((outbreak: any) =>
@@ -309,12 +311,12 @@ export default function RingkasanPopulasiModal({
   const activeCountryName = countryName || "Indonesia";
   const populationPolicyImpactContent = (
     <section
-      aria-label="Perhitungan dampak kebijakan ekonomi terhadap populasi"
+      aria-label={t("navigation_population_summary.impact.ariaLabel")}
       className={`root-modal-util-5f22e64f22 root-modal-util-35d227f918 `}
     >
       <div className={"root-modal-util-979863afec"}>
         <h3 className={"root-modal-util-9361ef65fc"}>
-          Perhitungan Dampak Kebijakan ke Populasi
+          {t("navigation_population_summary.impact.title")}
         </h3>
         <div className={"root-modal-util-308fc069e4"}>
           <p className={`${policyImpactColor} root-modal-util-5e563e2e22 `}>
@@ -325,10 +327,10 @@ export default function RingkasanPopulasiModal({
 
       <div className={"root-modal-util-15b68ca001"}>
         {[
-          { label: "Pajak", detail: `Beban ${taxImpact.burden.toFixed(1)}%`, modifier: populationPolicyImpact.taxMonthlyModifierPercent },
-          { label: "Harga pokok", detail: `Kepuasan ${economicImpact.priceScore.toFixed(0)}/100`, modifier: economicImpact.priceMonthlyModifierPercent * populationPolicyImpact.scaleFactor },
-          { label: "Sistem ekonomi", detail: `Skor ${economicImpact.policyScore.toFixed(0)}/100`, modifier: economicImpact.systemMonthlyModifierPercent * populationPolicyImpact.scaleFactor },
-          { label: "Subsidi", detail: `Dukungan ${economicImpact.subsidyScore.toFixed(0)}/100`, modifier: economicImpact.subsidyMonthlyModifierPercent * populationPolicyImpact.scaleFactor },
+          { label: t("navigation_population_summary.impact.tax"), detail: t("navigation_population_summary.impact.taxDetail", { value: taxImpact.burden.toFixed(1) }), modifier: populationPolicyImpact.taxMonthlyModifierPercent },
+          { label: t("navigation_population_summary.impact.prices"), detail: t("navigation_population_summary.impact.priceDetail", { value: economicImpact.priceScore.toFixed(0) }), modifier: economicImpact.priceMonthlyModifierPercent * populationPolicyImpact.scaleFactor },
+          { label: t("navigation_population_summary.impact.economicSystem"), detail: t("navigation_population_summary.impact.scoreDetail", { value: economicImpact.policyScore.toFixed(0) }), modifier: economicImpact.systemMonthlyModifierPercent * populationPolicyImpact.scaleFactor },
+          { label: t("navigation_population_summary.impact.subsidies"), detail: t("navigation_population_summary.impact.supportDetail", { value: economicImpact.subsidyScore.toFixed(0) }), modifier: economicImpact.subsidyMonthlyModifierPercent * populationPolicyImpact.scaleFactor },
         ].map((item) => (
           <div
             key={item.label}
@@ -337,7 +339,9 @@ export default function RingkasanPopulasiModal({
             <p className={"root-modal-util-14d6efe9ef"}>{item.label}</p>
             <p className={`root-modal-util-04f32edb66 root-modal-util-35febc0dce `}>{item.detail}</p>
             <p className={`root-modal-util-04f32edb66 root-modal-util-d554c43cfb `}>
-              {formatModifier(item.modifier)} / bln
+              {t("navigation_population_summary.impact.monthly", {
+                value: formatModifier(item.modifier),
+              })}
             </p>
           </div>
         ))}
@@ -345,19 +349,19 @@ export default function RingkasanPopulasiModal({
 
       {populationPolicyImpact.wasCapped && (
         <p className={"root-modal-util-ede89a3918"}>
-          Modifier gabungan dibatasi maksimal ±0,75% per bulan.
+          {t("navigation_population_summary.impact.limit")}
         </p>
       )}
 
       <div className={"root-modal-util-9fb6bbc497"}>
         <div className={`root-modal-util-5f22e64f22 root-modal-util-f27e9555f7 `}>
-          <p className={"root-modal-util-14d6efe9ef"}>Estimasi dampak harian</p>
+          <p className={"root-modal-util-14d6efe9ef"}>{t("navigation_population_summary.impact.dailyEstimate")}</p>
           <p className={`${policyImpactColor} root-modal-util-43728c6ebf `}>
             {formatPeople(estimatedPolicyDailyChange)}
           </p>
         </div>
         <div className={`root-modal-util-5f22e64f22 root-modal-util-f27e9555f7 `}>
-          <p className={"root-modal-util-14d6efe9ef"}>Estimasi dampak bulanan</p>
+          <p className={"root-modal-util-14d6efe9ef"}>{t("navigation_population_summary.impact.monthlyEstimate")}</p>
           <p className={`${policyImpactColor} root-modal-util-43728c6ebf `}>
             {formatPeople(estimatedPolicyMonthlyChange)}
           </p>
@@ -381,7 +385,7 @@ export default function RingkasanPopulasiModal({
                   <Users2 aria-hidden="true" className={"root-modal-util-d252947d10"} />
                 </div>
                 <h2 className={"root-modal-util-6b4648c53a root-modal-util-c2385a463d"}>
-                  Kependudukan
+                  {t("navigation_population_summary.title")}
                 </h2>
               </div>
             </div>
@@ -389,8 +393,8 @@ export default function RingkasanPopulasiModal({
               <button
                 type="button"
                 onClick={() => setIsInfoOpen(true)}
-                title="Informasi kependudukan"
-                aria-label="Informasi kependudukan"
+                title={t("navigation_population_summary.infoButton")}
+                aria-label={t("navigation_population_summary.infoButton")}
                 className={"root-modal-info-button root-modal-util-1697100c43"}
               >
                 <Info aria-hidden="true" />
@@ -410,10 +414,10 @@ export default function RingkasanPopulasiModal({
                 <Users className={"root-modal-util-dd9e5c184a"} />
               </div>
               <div className={"population-summary-text root-modal-util-3b4c716cd4"}>
-                <p className={`root-modal-util-14d6efe9ef root-modal-util-e82ae8be04`}>Total Populasi</p>
+                <p className={`root-modal-util-14d6efe9ef root-modal-util-e82ae8be04`}>{t("navigation_population_summary.totalPopulation")}</p>
                 <p className={`population-summary-value root-modal-util-04f32edb66 root-modal-util-1f576198ed `}>
-                  <span className={"population-summary-number"}>{populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
-                  <span className={"root-modal-util-89dacfbf44"}>JIWA</span>
+                  <span className={"population-summary-number"}>{populasi.toLocaleString(language, { maximumFractionDigits: 2 })}</span>
+                  <span className={"root-modal-util-89dacfbf44"}>{t("navigation_population_summary.people")}</span>
                 </p>
               </div>
             </div>
@@ -427,10 +431,10 @@ export default function RingkasanPopulasiModal({
                   <ShieldAlert className={"root-modal-util-389f7e7cc1"} />
                 </div>
                 <div className={"population-summary-text root-modal-util-3b4c716cd4"}>
-                  <p className={`root-modal-util-14d6efe9ef root-modal-util-e82ae8be04`}>Tunawisma</p>
+                  <p className={`root-modal-util-14d6efe9ef root-modal-util-e82ae8be04`}>{t("navigation_population_summary.homeless")}</p>
                   <p className={`population-summary-value root-modal-util-04f32edb66 root-modal-util-1f576198ed `}>
-                    <span className={"population-summary-number"}>{homelessCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
-                    <span className={"root-modal-util-89dacfbf44"}>JIWA</span>
+                    <span className={"population-summary-number"}>{homelessCount.toLocaleString(language, { maximumFractionDigits: 2 })}</span>
+                    <span className={"root-modal-util-89dacfbf44"}>{t("navigation_population_summary.people")}</span>
                   </p>
                 </div>
               </div>
@@ -448,10 +452,10 @@ export default function RingkasanPopulasiModal({
                   <BadgeDollarSign className={"root-modal-util-dd9e5c184a"} />
                 </div>
                 <div className={"population-summary-text root-modal-util-3b4c716cd4"}>
-                  <p className={`root-modal-util-14d6efe9ef root-modal-util-e82ae8be04`}>Kesejahteraan</p>
+                  <p className={`root-modal-util-14d6efe9ef root-modal-util-e82ae8be04`}>{t("navigation_population_summary.welfare")}</p>
                   <p className={`population-summary-value root-modal-util-04f32edb66 root-modal-util-1f576198ed `}>
                     <span className={"population-summary-number"}>{countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : 50}</span>
-                    <span className={"root-modal-util-5738bd9779"}>INDX</span>
+                    <span className={"root-modal-util-5738bd9779"}>{t("navigation_population_summary.index")}</span>
                   </p>
                 </div>
               </div>
@@ -468,7 +472,7 @@ export default function RingkasanPopulasiModal({
             <div className={`root-modal-util-815c1f66a3 root-modal-util-5f22e64f22 root-modal-util-2845c975bf `}>
               <h3 className={`root-modal-util-9361ef65fc root-modal-util-6cfc7e6ab3 `}>
                 <Info className={"root-modal-util-3e8ca13a1c"} />
-                Informasi Demografi
+                {t("navigation_population_summary.demographics")}
               </h3>
               <div className={`root-modal-util-8ff7188727 root-modal-util-1a8cbfedf4 `}>
                 {/* 3 Card Sejajar: Kelahiran, Kematian, Pertumbuhan */}
@@ -478,8 +482,8 @@ export default function RingkasanPopulasiModal({
                     onClick={() => setIsDetailBirthOpen(true)}
                   >
                     <div className={"root-modal-util-145b76d2b1"}>
-                      <p className={"root-modal-util-14d6efe9ef"}>Angka Kelahiran Harian</p>
-                      <p className={"root-modal-util-3ac23452ed"}>+{dailyBirths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</p>
+                      <p className={"root-modal-util-14d6efe9ef"}>{t("navigation_population_summary.dailyBirths")}</p>
+                      <p className={"root-modal-util-3ac23452ed"}>+{dailyBirths.toLocaleString(language, { maximumFractionDigits: 2 })}</p>
                     </div>
                     <ChevronRight className={"root-modal-util-dd3d200219"} />
                   </div>
@@ -488,8 +492,8 @@ export default function RingkasanPopulasiModal({
                     onClick={() => setIsDetailDeathOpen(true)}
                   >
                     <div className={"root-modal-util-145b76d2b1"}>
-                      <p className={"root-modal-util-14d6efe9ef"}>Angka Kematian Harian</p>
-                      <p className={"root-modal-util-2dd074bccf"}>-{dailyDeaths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</p>
+                      <p className={"root-modal-util-14d6efe9ef"}>{t("navigation_population_summary.dailyDeaths")}</p>
+                      <p className={"root-modal-util-2dd074bccf"}>-{dailyDeaths.toLocaleString(language, { maximumFractionDigits: 2 })}</p>
                     </div>
                     <ChevronRight className={"root-modal-util-a7d56a73b0"} />
                   </div>
@@ -497,9 +501,9 @@ export default function RingkasanPopulasiModal({
                     className={`root-modal-util-5f22e64f22 root-modal-util-fc926a3906 ${totalMonthlyGrowthPercent >= 0 ? "root-modal-util-c2db1cca90" : "root-modal-util-e9a647a894"} root-modal-util-fb153a3e4d `}
                   >
                     <div className={"root-modal-util-145b76d2b1"}>
-                      <p className={"root-modal-util-14d6efe9ef"}>Pertumbuhan Populasi</p>
+                      <p className={"root-modal-util-14d6efe9ef"}>{t("navigation_population_summary.populationGrowth")}</p>
                       <p className={`root-modal-util-04f32edb66 root-modal-util-66fd6b5b6b `}>
-                        {totalMonthlyGrowthPercent >= 0 ? '+' : ''}{totalMonthlyGrowthPercent.toFixed(2)}%<span className={"root-modal-util-8769eee0db"}>/ bulan</span>
+                        {totalMonthlyGrowthPercent >= 0 ? '+' : ''}{totalMonthlyGrowthPercent.toFixed(2)}%<span className={"root-modal-util-8769eee0db"}>{t("navigation_population_summary.perMonth")}</span>
                       </p>
                     </div>
                   </div>
@@ -508,15 +512,18 @@ export default function RingkasanPopulasiModal({
                 {/* Perbandingan Kelahiran vs Kematian */}
                 <div className={"root-modal-util-a7cd7a5d10"}>
                   <div className={`root-modal-util-14d6efe9ef root-modal-util-34d63445f0 `}>
-                    <span>Perbandingan kelahiran &amp; kematian</span>
+                    <span>{t("navigation_population_summary.birthDeathComparison")}</span>
                     <div className={"root-modal-util-09b2adf189"}>
-                      <span className={"root-modal-util-edbfd1c508"}>Kelahiran {birthShare.toFixed(1)}%</span>
-                      <span className={"root-modal-util-35f302741d"}>Kematian {deathShare.toFixed(1)}%</span>
+                      <span className={"root-modal-util-edbfd1c508"}>{t("navigation_population_summary.birthShare", { value: birthShare.toFixed(1) })}</span>
+                      <span className={"root-modal-util-35f302741d"}>{t("navigation_population_summary.deathShare", { value: deathShare.toFixed(1) })}</span>
                     </div>
                   </div>
                   <div
                     role="img"
-                    aria-label={`Perbandingan harian: kelahiran ${birthShare.toFixed(1)}%, kematian ${deathShare.toFixed(1)}%`}
+                    aria-label={t("navigation_population_summary.comparisonAria", {
+                      birth: birthShare.toFixed(1),
+                      death: deathShare.toFixed(1),
+                    })}
                     className={"root-modal-util-3feef48a6a"}
                   >
                     <div
@@ -534,28 +541,30 @@ export default function RingkasanPopulasiModal({
 
             {/* Pandemic Section */}
             {activeEspionageEffect && (
-              <section className={`root-modal-util-5f22e64f22 root-modal-util-3550b6cc81 `} aria-label="Efek spionase aktif">
+              <section className={`root-modal-util-5f22e64f22 root-modal-util-3550b6cc81 `} aria-label={t("navigation_population_summary.activeEspionageAria")}>
                 <div className={"root-modal-util-6d820b6d38"}>
                   <div className={"root-modal-util-9b8c2cda10"}>
                     <ShieldAlert className={"root-modal-util-3a33b9b074"} />
                   </div>
                   <div>
                     <div className={"root-modal-util-edc71f0dcc"}>
-                      <p className={"root-modal-util-14d6efe9ef"}>Efek Spionase Aktif</p>
+                      <p className={"root-modal-util-14d6efe9ef"}>{t("navigation_population_summary.espionageTitle")}</p>
                       <span className={"root-modal-util-a85f41c475"}>
                         <Clock className={"root-modal-util-2797a07007"} />
-                        Sisa {activeEspionageEffect.remainingDays} hari game
+                        {t("navigation_population_summary.remainingGameDays", {
+                          days: activeEspionageEffect.remainingDays,
+                        })}
                       </span>
                     </div>
-                    <h3 className={`root-modal-util-04f32edb66 root-modal-util-dbcbe995b4 `}>Kekuatan & HP militer ×{activeEspionageEffect.multiplier.toFixed(2)}</h3>
-                    <p className={"root-modal-util-ff67d08b4e"}>Jumlah pasukan dan alutsista tidak berubah. Efek pulih otomatis saat durasi habis.</p>
+                    <h3 className={`root-modal-util-04f32edb66 root-modal-util-dbcbe995b4 `}>{t("navigation_population_summary.militaryStrengthHp", { multiplier: activeEspionageEffect.multiplier.toFixed(2) })}</h3>
+                    <p className={"root-modal-util-ff67d08b4e"}>{t("navigation_population_summary.espionageDescription")}</p>
                   </div>
                 </div>
               </section>
             )}
 
             {activePandemic && (
-              <section className={`root-modal-util-5f22e64f22 root-modal-util-1db77bfde1 `} aria-label="Pandemi aktif">
+              <section className={`root-modal-util-5f22e64f22 root-modal-util-1db77bfde1 `} aria-label={t("navigation_population_summary.activePandemicAria")}>
                 <div className={"root-modal-util-21539036a3"}>
                   <div className={"root-modal-util-6d820b6d38"}>
                     <div className={"root-modal-util-679d69ab9b"}>
@@ -563,16 +572,20 @@ export default function RingkasanPopulasiModal({
                     </div>
                     <div>
                       <div className={"root-modal-util-6cfc7e6ab3"}>
-                        <p className={"root-modal-util-14d6efe9ef"}>Pandemi Aktif</p>
+                        <p className={"root-modal-util-14d6efe9ef"}>{t("navigation_population_summary.pandemicActive")}</p>
                         {remainingPandemicDays !== null && (
                           <span className={"root-modal-util-d93c6d1885"}>
                             <Clock className={"root-modal-util-2797a07007"} />
-                            Sisa {remainingPandemicDays} Hari
+                            {t("navigation_population_summary.remainingGameDays", {
+                              days: remainingPandemicDays,
+                            })}
                           </span>
                         )}
                       </div>
-                      <h3 className={`root-modal-util-04f32edb66 root-modal-util-dbcbe995b4 `}>{activePandemic.eventName || "Pandemi global"}</h3>
-                      <p className={"root-modal-util-ff67d08b4e"}>Tangani sekarang: pulihkan {pandemicDeaths.toLocaleString("id-ID")} jiwa.</p>
+                      <h3 className={`root-modal-util-04f32edb66 root-modal-util-dbcbe995b4 `}>{activePandemic.eventName || t("navigation_population_summary.globalPandemic")}</h3>
+                      <p className={"root-modal-util-ff67d08b4e"}>{t("navigation_population_summary.treatNow", {
+                        count: pandemicDeaths.toLocaleString(language),
+                      })}</p>
                     </div>
                   </div>
                   <button
@@ -581,10 +594,12 @@ export default function RingkasanPopulasiModal({
                     onClick={treatPandemic}
                     className={"root-modal-util-e0468dc83b"}
                   >
-                    Tangani · {pandemicCost.toLocaleString("id-ID")} NEO
+                    {t("navigation_population_summary.handle", {
+                      cost: pandemicCost.toLocaleString(language),
+                    })}
                   </button>
                 </div>
-                {!canTreatPandemic && <p className={"root-modal-util-3844ce614c"}>Kas negara tidak mencukupi.</p>}
+                {!canTreatPandemic && <p className={"root-modal-util-3844ce614c"}>{t("navigation_population_summary.insufficientTreasury")}</p>}
               </section>
             )}
 
@@ -598,7 +613,7 @@ export default function RingkasanPopulasiModal({
     <MenuInfoModal
       isOpen={isInfoOpen}
       onClose={() => setIsInfoOpen(false)}
-      title="Informasi Kependudukan"
+      title={t("navigation_population_summary.infoTitle")}
     >
       {populationPolicyImpactContent}
     </MenuInfoModal>

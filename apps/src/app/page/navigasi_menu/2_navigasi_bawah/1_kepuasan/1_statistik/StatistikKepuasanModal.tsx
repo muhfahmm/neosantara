@@ -7,6 +7,7 @@ import NotebookModalWrapper from "../../NotebookModalWrapper";
 import MenuInfoModal from "@/app/page/navigasi_menu/2_navigasi_bawah/MenuInfoModal";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 import {
   calculateKepuasan,
   calculateSatisfactionIndicatorScores,
@@ -33,6 +34,7 @@ export default function StatistikKepuasanModal({
   selectedCountry,
   metadata,
 }: StatistikKepuasanModalProps) {
+  const { t } = useLanguage();
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   if (!isOpen) return null;
 
@@ -49,63 +51,63 @@ export default function StatistikKepuasanModal({
   // Sektor-sektor yang diminta
   const sectors = [
     {
-      name: "Pajak",
+      name: t("navigation_satisfaction_statistics.sectors.tax"),
       score: sectorScores.pajak,
       image:
         "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-01.svg",
       menuId: "Menu:Pajak",
     },
     {
-      name: "Harga Barang Pokok",
+      name: t("navigation_satisfaction_statistics.sectors.goodsPrices"),
       score: sectorScores.harga,
       image:
         "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-02.svg",
       menuId: "Menu:Harga",
     },
     {
-      name: "Produksi Pangan",
+      name: t("navigation_satisfaction_statistics.sectors.foodProduction"),
       score: sectorScores.pangan,
       image:
         "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-03.svg",
       menuId: "Menu:IndustriPangan",
     },
     {
-      name: "Produksi Listrik",
+      name: t("navigation_satisfaction_statistics.sectors.electricityProduction"),
       score: sectorScores.listrik,
       image:
         "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-04.svg",
       menuId: "Menu:Kelistrikan",
     },
     {
-      name: "Hunian Permukiman",
+      name: t("navigation_satisfaction_statistics.sectors.housing"),
       score: sectorScores.hunian,
       image:
         "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-05.svg",
       menuId: "Menu:HunianPermukiman",
     },
     {
-      name: "Layanan Publik & Tempat Umum",
+      name: t("navigation_satisfaction_statistics.sectors.publicServices"),
       score: sectorScores.layananPublik,
       image:
         "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-06.svg",
       menuId: "Menu:TempatUmum",
     },
     {
-      name: "Doktrin & Keterbukaan",
+      name: t("navigation_satisfaction_statistics.sectors.doctrine"),
       score: sectorScores.keterbukaan,
       image:
         "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-07.svg",
       menuId: "Menu:DoktrinKeterbukaan",
     },
     {
-      name: "Kebijakan & Sistem Ekonomi",
+      name: t("navigation_satisfaction_statistics.sectors.economicPolicy"),
       score: economicPolicySatisfaction,
       image:
         "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-08.svg",
       menuId: "Menu:SistemEkonomi",
     },
     {
-      name: "Alokasi & Kebijakan Subsidi",
+      name: t("navigation_satisfaction_statistics.sectors.subsidies"),
       score: subsidySatisfaction,
       image:
         "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-09.svg",
@@ -126,7 +128,7 @@ export default function StatistikKepuasanModal({
               </div>
               <div>
                 <h2 className={`root-modal-util-6b4648c53a root-modal-util-c2385a463d`}>
-                  Kepuasan Rakyat
+                  {t("navigation_satisfaction_statistics.title")}
                 </h2>
               </div>
             </div>
@@ -134,7 +136,7 @@ export default function StatistikKepuasanModal({
           </div>
 
           <div className={"root-modal-util-6cfc7e6ab3"}>
-            <button type="button" onClick={() => setIsInfoOpen(true)} title="Informasi statistik kepuasan rakyat" aria-label="Informasi statistik kepuasan rakyat" className={"root-modal-info-button root-modal-util-1697100c43"}>
+            <button type="button" onClick={() => setIsInfoOpen(true)} title={t("navigation_satisfaction_statistics.infoButton")} aria-label={t("navigation_satisfaction_statistics.infoButton")} className={"root-modal-info-button root-modal-util-1697100c43"}>
               <Info aria-hidden="true" />
             </button>
             <RootModalCloseButton onClick={onClose} />
@@ -145,7 +147,7 @@ export default function StatistikKepuasanModal({
           <div className={"root-modal-util-6cfc7e6ab3"}>
             <Smile className={"root-modal-util-00f4ec4a9a"} />
             <span className={"root-modal-util-14d6efe9ef root-modal-util-614c0c7dff"}>
-              Kepuasan Sipil:
+              {t("navigation_satisfaction_statistics.civilSatisfaction")}
             </span>
             <span className={"root-modal-util-04f32edb66 root-modal-util-4457a4d3a8"}>
               {Math.round(generalSatisfaction)}%
@@ -156,9 +158,9 @@ export default function StatistikKepuasanModal({
             <RootModalTabs
               className={"satisfaction-modal-tabs"}
               items={[
-                { label: "Statistik", isActive: true },
+                { label: t("navigation_satisfaction_statistics.statisticsTab"), isActive: true },
                 {
-                  label: "Naikkan Peringkat",
+                  label: t("navigation_satisfaction_statistics.increaseTab"),
                   isActive: false,
                   onClick: () => setActiveMenu?.("Action:NaikkanKepuasan"),
                   onPointerDown: () => setActiveMenu?.("Action:NaikkanKepuasan"),
@@ -219,8 +221,8 @@ export default function StatistikKepuasanModal({
     <MenuInfoModal
       isOpen={isInfoOpen}
       onClose={() => setIsInfoOpen(false)}
-      title="Informasi Statistik Kepuasan Rakyat"
-      description="Nilai kepuasan merangkum kondisi umum dan indikator sektoral seperti pajak, harga, pangan, serta layanan publik. Gunakan tab Statistik untuk meninjau skor dan akses sektor terkait untuk melihat kebijakan yang memengaruhinya."
+      title={t("navigation_satisfaction_statistics.info.title")}
+      description={t("navigation_satisfaction_statistics.info.description")}
     />
     </>
   );

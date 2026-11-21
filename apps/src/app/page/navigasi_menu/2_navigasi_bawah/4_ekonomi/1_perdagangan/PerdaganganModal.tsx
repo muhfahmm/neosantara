@@ -47,6 +47,8 @@ import {
   applyNpcCountrySimulationState,
   NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
 } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
+import { getLocalizedCountryName } from "@/app/logic/countryNameLogic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 
 interface AgreementData {
@@ -162,6 +164,7 @@ export default function PerdaganganModal({
   inboxNotifications = [],
   onRemoveInboxNotification
 }: ModalProps) {
+  const { language, t } = useLanguage();
   const [historyFilter, setHistoryFilter] = useState<"semua" | "jual" | "beli">("semua");
   const storedHistory = countryDetail?.tradeHistory;
   const history = useMemo(() => {
@@ -850,55 +853,85 @@ export default function PerdaganganModal({
     if (isWTOActive) {
       list.push({
         id: "wto",
-        title: "Organisasi Perdagangan Dunia (WTO)",
-        category: "Organisasi Internasional",
-        desc: "Sebagai anggota resmi WTO, negara Anda terintegrasi dalam sistem pasar bebas multilateral.",
-        sellBonusText: `Harga Jual Komoditas +${Math.round((wtoSellMultiplier - 1) * 100)}%`,
-        buyDiscountText: `Harga Beli Komoditas -${Math.round((1 - wtoBuyMultiplier) * 100)}%`,
+        title: t("navigation_economy_trade.priceEffects.effects.wto.title"),
+        category: t("navigation_economy_trade.priceEffects.effects.wto.category"),
+        desc: t("navigation_economy_trade.priceEffects.effects.wto.description"),
+        sellBonusText: t("navigation_economy_trade.priceEffects.sellPrice", {
+          product: t("navigation_economy_trade.transaction.commodities"),
+          percent: Math.round((wtoSellMultiplier - 1) * 100),
+        }),
+        buyDiscountText: t("navigation_economy_trade.priceEffects.buyPrice", {
+          product: t("navigation_economy_trade.transaction.commodities"),
+          percent: Math.round((1 - wtoBuyMultiplier) * 100),
+        }),
       });
     }
 
     if (isOPECActive) {
       list.push({
         id: "opec",
-        title: "Organisasi Negara Pengekspor Minyak (OPEC)",
-        category: "Organisasi Regional",
-        desc: "Kartel minyak global yang mengatur kuota dan meningkatkan kekuatan tawar minyak bumi.",
-        sellBonusText: `Harga Jual Minyak Bumi +${Math.round((opecSellMultiplier - 1) * 100)}%`,
-        buyDiscountText: `Harga Beli Minyak Bumi -${Math.round((1 - opecBuyMultiplier) * 100)}%`,
+        title: t("navigation_economy_trade.priceEffects.effects.opec.title"),
+        category: t("navigation_economy_trade.priceEffects.effects.opec.category"),
+        desc: t("navigation_economy_trade.priceEffects.effects.opec.description"),
+        sellBonusText: t("navigation_economy_trade.priceEffects.sellPrice", {
+          product: t("navigation_economy_trade.transaction.products.minyak_bumi"),
+          percent: Math.round((opecSellMultiplier - 1) * 100),
+        }),
+        buyDiscountText: t("navigation_economy_trade.priceEffects.buyPrice", {
+          product: t("navigation_economy_trade.transaction.products.minyak_bumi"),
+          percent: Math.round((1 - opecBuyMultiplier) * 100),
+        }),
       });
     }
 
     if (ministryTradeBonusPercent > 0) {
       list.push({
         id: "kementerian_perdagangan",
-        title: "Kementerian Perdagangan",
-        category: "Kabinet Pemerintahan",
-        desc: "Kebijakan diplomasi niaga dan penguatan neraca perdagangan bilateral/multilateral nasional.",
-        sellBonusText: `Harga Jual Komoditas +${ministryTradeBonusPercent}%`,
-        buyDiscountText: `Harga Beli Komoditas -${ministryTradeBonusPercent}%`,
+        title: t("navigation_economy_trade.priceEffects.effects.ministry.title"),
+        category: t("navigation_economy_trade.priceEffects.effects.ministry.category"),
+        desc: t("navigation_economy_trade.priceEffects.effects.ministry.description"),
+        sellBonusText: t("navigation_economy_trade.priceEffects.sellPrice", {
+          product: t("navigation_economy_trade.transaction.commodities"),
+          percent: ministryTradeBonusPercent,
+        }),
+        buyDiscountText: t("navigation_economy_trade.priceEffects.buyPrice", {
+          product: t("navigation_economy_trade.transaction.commodities"),
+          percent: ministryTradeBonusPercent,
+        }),
       });
     }
 
     if (strategicTradeBonusPercent > 0) {
       list.push({
         id: "riset_diplomasi_dagang",
-        title: "Riset: Diplomasi Perdagangan Strategis",
-        category: "Penelitian & Riset",
-        desc: "Hasil riset enkripsi negosiasi niaga dan pembukaan koridor logistik perdagangan global.",
-        sellBonusText: `Harga Jual Komoditas +${strategicTradeBonusPercent}%`,
-        buyDiscountText: `Harga Beli Komoditas -${strategicTradeBonusPercent}%`,
+        title: t("navigation_economy_trade.priceEffects.effects.research.title"),
+        category: t("navigation_economy_trade.priceEffects.effects.research.category"),
+        desc: t("navigation_economy_trade.priceEffects.effects.research.description"),
+        sellBonusText: t("navigation_economy_trade.priceEffects.sellPrice", {
+          product: t("navigation_economy_trade.transaction.commodities"),
+          percent: strategicTradeBonusPercent,
+        }),
+        buyDiscountText: t("navigation_economy_trade.priceEffects.buyPrice", {
+          product: t("navigation_economy_trade.transaction.commodities"),
+          percent: strategicTradeBonusPercent,
+        }),
       });
     }
 
     if (hasProtestantBonus) {
       list.push({
         id: "agama_protestan",
-        title: "Etos Kerja & Perniagaan Protestan",
-        category: "Nilai Agama & Budaya",
-        desc: "Karakteristik etos kewirausahaan dan perdagangan bebas yang menguntungkan perniagaan.",
-        sellBonusText: `Harga Jual Komoditas +${PROTESTANT_SELL_PRICE_BONUS * 100}%`,
-        buyDiscountText: `Harga Beli Komoditas -${PROTESTANT_BUY_PRICE_DISCOUNT * 100}%`,
+        title: t("navigation_economy_trade.priceEffects.effects.protestant.title"),
+        category: t("navigation_economy_trade.priceEffects.effects.protestant.category"),
+        desc: t("navigation_economy_trade.priceEffects.effects.protestant.description"),
+        sellBonusText: t("navigation_economy_trade.priceEffects.sellPrice", {
+          product: t("navigation_economy_trade.transaction.commodities"),
+          percent: PROTESTANT_SELL_PRICE_BONUS * 100,
+        }),
+        buyDiscountText: t("navigation_economy_trade.priceEffects.buyPrice", {
+          product: t("navigation_economy_trade.transaction.commodities"),
+          percent: PROTESTANT_BUY_PRICE_DISCOUNT * 100,
+        }),
       });
     }
 
@@ -913,6 +946,7 @@ export default function PerdaganganModal({
     ministryTradeBonusPercent,
     strategicTradeBonusPercent,
     hasProtestantBonus,
+    t,
   ]);
 
   if (!isOpen) return null;
@@ -932,7 +966,7 @@ export default function PerdaganganModal({
                     <ArrowRightLeft aria-hidden="true" className="root-modal-util-d252947d10" />
                   </div>
                   <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                    Pasar Perdagangan Global
+                    {t("navigation_economy_trade.market.title")}
                   </h2>
                 </div>
               </div>
@@ -941,8 +975,8 @@ export default function PerdaganganModal({
                   <button
                     type="button"
                     onClick={() => setShowWTOTradeInfoModal(true)}
-                    title="Lihat Informasi Efek Harga WTO & Agama"
-                    aria-label="Informasi efek harga perdagangan"
+                    title={t("navigation_economy_trade.market.priceInfoButton")}
+                    aria-label={t("navigation_economy_trade.market.priceInfoButton")}
                     className="root-modal-info-button root-modal-util-1697100c43"
                   >
                     <Info aria-hidden="true" />
@@ -952,8 +986,8 @@ export default function PerdaganganModal({
                   <button
                     type="button"
                     onClick={() => setShowBlockedInfoModal(true)}
-                    title="Informasi Blokir Pasar"
-                    aria-label="Informasi blokir pasar"
+                    title={t("navigation_economy_trade.market.blockedInfoButton")}
+                    aria-label={t("navigation_economy_trade.market.blockedInfoButton")}
                     className="root-modal-info-button root-modal-util-1697100c43"
                   >
                     <Info aria-hidden="true" />
@@ -968,46 +1002,52 @@ export default function PerdaganganModal({
                 <div className="flex h-full min-h-[280px] flex-col items-center justify-center rounded-2xl border border-rose-500/30 bg-rose-950/20 p-4 text-center sm:p-6 lg:p-8">
                   <AlertTriangle className="mb-2 h-8 w-8 text-rose-400 sm:h-10 sm:w-10 lg:h-12 lg:w-12" />
                   <h3 className="mb-3 text-base font-black uppercase tracking-wider text-rose-400 sm:text-xl lg:text-2xl">
-                    Perdagangan Diblokir
+                    {t("navigation_economy_trade.market.blockedTitle")}
                   </h3>
                   
                   <div className="mb-4 grid w-full max-w-xl grid-cols-2 gap-2 sm:gap-2.5">
                     <div className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-rose-500/20 bg-root-canvas px-3 py-2 text-left">
-                      <span className="text-[10px] font-semibold text-[#DCEAEA] sm:text-xs lg:text-sm">Sentralisasi</span>
+                      <span className="text-[10px] font-semibold text-[#DCEAEA] sm:text-xs lg:text-sm">{t("navigation_economy_trade.market.centralization")}</span>
                       <strong className="shrink-0 text-xs font-black text-rose-300 sm:text-sm lg:text-base">{tradeAccess.centralizationScore.toFixed(1)}</strong>
                     </div>
                     <div className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-rose-500/20 bg-root-canvas px-3 py-2 text-left">
-                      <span className="text-[10px] font-semibold text-[#DCEAEA] sm:text-xs lg:text-sm">Nasionalisasi</span>
+                      <span className="text-[10px] font-semibold text-[#DCEAEA] sm:text-xs lg:text-sm">{t("navigation_economy_trade.market.nationalization")}</span>
                       <strong className="shrink-0 text-xs font-black text-[#F3F7F7] sm:text-sm lg:text-base">{tradeAccess.averageNationalization.toFixed(1)}%</strong>
                     </div>
                     <div className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-rose-500/20 bg-root-canvas px-3 py-2 text-left">
-                      <span className="text-[10px] font-semibold text-[#DCEAEA] sm:text-xs lg:text-sm">Ideologi</span>
+                      <span className="text-[10px] font-semibold text-[#DCEAEA] sm:text-xs lg:text-sm">{t("navigation_economy_trade.market.ideology")}</span>
                       <strong className="shrink-0 text-xs font-black text-[#F3F7F7] sm:text-sm lg:text-base">×{tradeAccess.ideologyModifier.toFixed(2)}</strong>
                     </div>
                     <div className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-rose-500/20 bg-root-canvas px-3 py-2 text-left">
-                      <span className="text-[10px] font-semibold text-[#DCEAEA] sm:text-xs lg:text-sm">Agama</span>
+                      <span className="text-[10px] font-semibold text-[#DCEAEA] sm:text-xs lg:text-sm">{t("navigation_economy_trade.market.religion")}</span>
                       <strong className="shrink-0 text-xs font-black text-[#F3F7F7] sm:text-sm lg:text-base">×{tradeAccess.religionModifier.toFixed(2)}</strong>
                     </div>
                   </div>
                   <p className="text-xs font-medium text-[#DCEAEA] sm:text-sm lg:text-base">
-                    Batas akses: skor sentralisasi di bawah 85.
+                    {t("navigation_economy_trade.market.accessLimit")}
                   </p>
                 </div>
               ) : (
                 <>
                   {tradeAccess.status === "waspada" && (
                     <p className="mb-3 min-w-0 break-words rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[11px] font-bold text-amber-300">
-                      Sentralisasi tinggi. Tarif impor: +{Math.round(tradeAccess.importTariffModifier * 100)}%. Skor: {tradeAccess.centralizationScore.toFixed(1)}.
+                      {t("navigation_economy_trade.market.centralizationWarning", {
+                        percent: Math.round(tradeAccess.importTariffModifier * 100),
+                        score: tradeAccess.centralizationScore.toFixed(1),
+                      })}
                     </p>
                   )}
                   {tradeAccess.status === "dibatasi" && (
                     <p className="mb-3 min-w-0 break-words rounded-lg border border-orange-500/30 bg-orange-500/10 px-3 py-2 text-[11px] font-bold text-orange-300">
-                      Impor diblokir. Tarif ekspor: +{Math.round(tradeAccess.exportTariffModifier * 100)}%. Skor: {tradeAccess.centralizationScore.toFixed(1)}.
+                      {t("navigation_economy_trade.market.restrictedWarning", {
+                        percent: Math.round(tradeAccess.exportTariffModifier * 100),
+                        score: tradeAccess.centralizationScore.toFixed(1),
+                      })}
                     </p>
                   )}
                   {isCountryUnderEconomicEmbargo(countryName) && (
                     <p className="mb-3 min-w-0 break-words rounded-lg border border-rose-500/40 bg-rose-950/40 px-3 py-2 text-[11px] font-bold text-rose-300">
-                      Embargo ekonomi PBB aktif. Perdagangan internasional diblokir.
+                      {t("navigation_economy_trade.market.activeEmbargo")}
                     </p>
                   )}
 
@@ -1017,40 +1057,40 @@ export default function PerdaganganModal({
                       onClick={() => setIsMitraOpen(true)}
                       className="min-h-0 w-[48px] flex-none whitespace-nowrap rounded-md border px-1 py-1 text-center text-[8px] font-bold uppercase leading-tight tracking-normal transition-all flex items-center justify-center text-root-accent bg-root-surface border-root-accent/30 hover:bg-root-accent hover:text-root-canvas cursor-pointer sm:w-[80px] sm:text-[11px] lg:w-[110px]"
                     >
-                      Mitra
+                      {t("navigation_economy_trade.market.tabs.partners")}
                     </button>
                     <button
                       onClick={() => openJualModals()}
                       disabled={!tradeAccess.canSell}
                       className={`min-h-0 w-[48px] flex-none whitespace-nowrap rounded-md border px-1 py-1 text-center text-[8px] font-bold uppercase leading-tight tracking-normal transition-all flex items-center justify-center sm:w-[80px] sm:text-[11px] lg:w-[110px] ${tradeAccess.canSell ? "bg-root-surface border-root-accent/30 hover:bg-root-accent hover:text-root-canvas text-root-accent cursor-pointer" : "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed"}`}
                     >
-                      Jual
+                      {t("navigation_economy_trade.market.tabs.sell")}
                     </button>
                     <button
                       onClick={handleOpenGlobalBuy}
                       disabled={!tradeAccess.canBuy}
                       className={`min-h-0 w-[48px] flex-none whitespace-nowrap rounded-md border px-1 py-1 text-center text-[8px] font-bold uppercase leading-tight tracking-normal transition-all flex items-center justify-center sm:w-[80px] sm:text-[11px] lg:w-[110px] ${tradeAccess.canBuy ? "bg-root-surface border-root-accent/30 hover:bg-root-accent hover:text-root-canvas text-root-accent cursor-pointer" : "bg-orange-950/30 border-orange-500/30 text-orange-300 cursor-not-allowed"}`}
                     >
-                      Beli
+                      {t("navigation_economy_trade.market.tabs.buy")}
                     </button>
                     <button
                       onClick={() => openJualModals()}
                       disabled={!tradeAccess.canSell}
                       className={`min-h-0 w-[48px] flex-none whitespace-nowrap rounded-md border px-1 py-1 text-center text-[8px] font-bold uppercase leading-tight tracking-normal transition-all flex items-center justify-center sm:w-[80px] sm:text-[11px] lg:w-[110px] ${tradeAccess.canSell ? "bg-root-surface border-root-accent/30 hover:bg-root-accent hover:text-root-canvas text-root-accent cursor-pointer" : "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed"}`}
                     >
-                      Jual Semua
+                      {t("navigation_economy_trade.market.tabs.sellAll")}
                     </button>
                     <button
                       onClick={() => { setIsOfferOpen(!isOfferOpen); setIsArmsOfferOpen(false); }}
                       className={`min-h-0 w-[48px] flex-none whitespace-nowrap rounded-md border px-1 py-1 text-center text-[8px] font-bold uppercase leading-tight tracking-normal transition-all flex items-center justify-center sm:w-[80px] sm:text-[11px] lg:w-[110px] cursor-pointer ${isOfferOpen ? 'bg-root-accent text-root-canvas border-root-accent' : 'bg-root-surface border-root-accent/30 text-root-accent hover:bg-root-accent hover:text-root-canvas'}`}
                     >
-                      Tawaran
+                      {t("navigation_economy_trade.market.tabs.offers")}
                     </button>
                     <button
                       onClick={() => { setIsArmsOfferOpen(!isArmsOfferOpen); setIsOfferOpen(false); }}
                       className={`min-h-0 w-[48px] flex-none whitespace-nowrap rounded-md border px-1 py-1 text-center text-[8px] font-bold uppercase leading-tight tracking-normal transition-all flex items-center justify-center sm:w-[80px] sm:text-[11px] lg:w-[110px] cursor-pointer ${isArmsOfferOpen ? 'bg-root-accent text-root-canvas border-root-accent' : 'bg-root-surface border-root-accent/30 text-root-accent hover:bg-root-accent hover:text-root-canvas'}`}
                     >
-                      Alutsista
+                      {t("navigation_economy_trade.market.tabs.arms")}
                     </button>
                   </div>
 
@@ -1073,10 +1113,10 @@ export default function PerdaganganModal({
                   )}
 
                   <div className="flex items-center justify-between mb-1.5">
-                    <h3 className="text-[10px] font-black text-root-accent uppercase tracking-widest">Riwayat 90 Hari</h3>
+                    <h3 className="text-[10px] font-black text-root-accent uppercase tracking-widest">{t("navigation_economy_trade.history.title")}</h3>
                     <div className="inline-flex rounded-md overflow-hidden border border-root-accent/30">
-                      <button onClick={() => setHistoryFilter(effectiveFilter === "jual" ? "semua" : "jual")} className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${effectiveFilter === "jual" ? "bg-rose-600 text-white" : "bg-root-canvas text-rose-400 hover:bg-rose-950/40"}`}>Jual</button>
-                      <button onClick={() => setHistoryFilter(effectiveFilter === "beli" ? "semua" : "beli")} className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${effectiveFilter === "beli" ? "bg-emerald-600 text-white" : "bg-root-canvas text-emerald-400 hover:bg-emerald-950/40"}`}>Beli</button>
+                      <button onClick={() => setHistoryFilter(effectiveFilter === "jual" ? "semua" : "jual")} className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${effectiveFilter === "jual" ? "bg-rose-600 text-white" : "bg-root-canvas text-rose-400 hover:bg-rose-950/40"}`}>{t("navigation_economy_trade.market.tabs.sell")}</button>
+                      <button onClick={() => setHistoryFilter(effectiveFilter === "beli" ? "semua" : "beli")} className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${effectiveFilter === "beli" ? "bg-emerald-600 text-white" : "bg-root-canvas text-emerald-400 hover:bg-emerald-950/40"}`}>{t("navigation_economy_trade.market.tabs.buy")}</button>
                     </div>
                   </div>
 
@@ -1084,24 +1124,24 @@ export default function PerdaganganModal({
                     <RootTable className="w-full text-left">
                       <thead>
                         <tr className="bg-root-canvas border-b border-root-accent/20">
-                          <th className="px-2 py-1.5 text-[9px] font-black text-root-accent uppercase tracking-wider">Tanggal</th>
-                          <th className="px-2 py-1.5 text-[9px] font-black text-root-accent uppercase tracking-wider">Tipe</th>
-                          <th className="px-2 py-1.5 text-[9px] font-black text-root-accent uppercase tracking-wider">Kuantitas</th>
-                          <th className="px-2 py-1.5 text-[9px] font-black text-root-accent uppercase tracking-wider">Biaya</th>
-                          <th className="px-2 py-1.5 text-[9px] font-black text-root-accent uppercase tracking-wider">Negara</th>
+                          <th className="px-2 py-1.5 text-[9px] font-black text-root-accent uppercase tracking-wider">{t("navigation_economy_trade.history.date")}</th>
+                          <th className="px-2 py-1.5 text-[9px] font-black text-root-accent uppercase tracking-wider">{t("navigation_economy_trade.history.type")}</th>
+                          <th className="px-2 py-1.5 text-[9px] font-black text-root-accent uppercase tracking-wider">{t("navigation_economy_trade.history.quantity")}</th>
+                          <th className="px-2 py-1.5 text-[9px] font-black text-root-accent uppercase tracking-wider">{t("navigation_economy_trade.history.cost")}</th>
+                          <th className="px-2 py-1.5 text-[9px] font-black text-root-accent uppercase tracking-wider">{t("navigation_economy_trade.history.country")}</th>
                         </tr>
                       </thead>
                       <tbody className="bg-root-surface divide-y divide-root-accent/10">
                         {filteredHistory.length === 0 ? (
-                          <tr><td colSpan={5} className="px-2 py-4 text-center text-[11px] text-root-subtle font-semibold">Belum ada riwayat.</td></tr>
+                          <tr><td colSpan={5} className="px-2 py-4 text-center text-[11px] text-root-subtle font-semibold">{t("navigation_economy_trade.history.empty")}</td></tr>
                         ) : (
                           filteredHistory.map((item, idx) => (
                             <tr key={idx} className="hover:bg-root-accent/5 transition-colors">
-                              <td className="px-2 py-1.5 text-[10px] font-semibold text-root-text">{item.tanggal}</td>
-                              <td className="px-2 py-1.5 text-[10px] font-bold uppercase"><span className={item.tipe === "jual" ? "text-rose-400" : "text-emerald-400"}>{item.tipe}</span></td>
-                              <td className="px-2 py-1.5 text-[10px] font-semibold text-root-text">{item.kuantitas}</td>
-                              <td className="px-2 py-1.5 text-[10px] font-bold text-root-accent">{item.tipe === "jual" ? "+" : "-"} {item.biaya.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</td>
-                              <td className="px-2 py-1.5 text-[10px] font-semibold text-root-text">{item.negara}</td>
+                              <td className="px-2 py-1.5 text-[10px] font-semibold text-root-text">{parseTradeHistoryDate(item)?.toLocaleDateString(language) || item.tanggal}</td>
+                              <td className="px-2 py-1.5 text-[10px] font-bold uppercase"><span className={item.tipe === "jual" ? "text-rose-400" : "text-emerald-400"}>{t(item.tipe === "jual" ? "navigation_economy_trade.market.tabs.sell" : "navigation_economy_trade.market.tabs.buy")}</span></td>
+                              <td className="px-2 py-1.5 text-[10px] font-semibold text-root-text">{item.kuantitas.replace(/x\s*Satuan$/i, ` ${t("navigation_economy_trade.transaction.unit")}`)}</td>
+                              <td className="px-2 py-1.5 text-[10px] font-bold text-root-accent">{item.tipe === "jual" ? "+" : "-"} {item.biaya.toLocaleString(language, { maximumFractionDigits: 2 })}</td>
+                              <td className="px-2 py-1.5 text-[10px] font-semibold text-root-text">{getLocalizedCountryName(item.negara, language)}</td>
                             </tr>
                           ))
                         )}

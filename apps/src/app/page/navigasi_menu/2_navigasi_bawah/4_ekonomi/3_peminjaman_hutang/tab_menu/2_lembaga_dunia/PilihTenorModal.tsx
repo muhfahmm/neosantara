@@ -1,9 +1,10 @@
 "use client"
 import React from "react";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface TenorOption {
-  label: string;
+  labelKey: string;
   days: number;
 }
 
@@ -15,23 +16,24 @@ interface PilihTenorModalProps {
 }
 
 const TENOR_OPTIONS: TenorOption[] = [
-  { label: "6 Bulan", days: 180 },
-  { label: "9 Bulan", days: 270 },
-  { label: "1 Tahun", days: 365 },
-  { label: "2 Tahun", days: 730 },
-  { label: "3 Tahun", days: 1095 },
-  { label: "4 Tahun", days: 1460 },
-  { label: "5 Tahun", days: 1825 },
+  { labelKey: "sixMonths", days: 180 },
+  { labelKey: "nineMonths", days: 270 },
+  { labelKey: "oneYear", days: 365 },
+  { labelKey: "twoYears", days: 730 },
+  { labelKey: "threeYears", days: 1095 },
+  { labelKey: "fourYears", days: 1460 },
+  { labelKey: "fiveYears", days: 1825 },
 ];
 
 export default function PilihTenorModal({ isOpen, onClose, selectedTerm, onSelectTerm }: PilihTenorModalProps) {
+  const { language, t } = useLanguage();
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       <div className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto">
         <RootInfoModalHeader
-          title="Pilih Tenor"
+          title={t("navigation_economy_loans.terms.title")}
           onClose={onClose}
           size="standard"
         />
@@ -42,7 +44,7 @@ export default function PilihTenorModal({ isOpen, onClose, selectedTerm, onSelec
               const active = option.days === selectedTerm;
               return (
                 <button
-                  key={option.label}
+                  key={option.labelKey}
                   type="button"
                   onClick={() => onSelectTerm(option.days)}
                   className={`rounded-2xl border px-4 py-6 text-left transition ${
@@ -51,16 +53,16 @@ export default function PilihTenorModal({ isOpen, onClose, selectedTerm, onSelec
                       : "border-root-accent/20 bg-root-surface text-root-text hover:border-root-accent/50 hover:bg-root-surface/80 cursor-pointer"
                   }`}
                 >
-                  <div className="text-lg font-black">{option.label}</div>
-                  <div className={`text-[10px] mt-1 ${active ? "text-root-canvas" : "text-root-subtle"}`}>{option.days.toLocaleString("id-ID", { maximumFractionDigits: 2 })} hari</div>
+                  <div className="text-lg font-black">{t(`navigation_economy_loans.terms.options.${option.labelKey}`)}</div>
+                  <div className={`text-[10px] mt-1 ${active ? "text-root-canvas" : "text-root-subtle"}`}>{option.days.toLocaleString(language, { maximumFractionDigits: 0 })} {t("navigation_economy_loans.dayUnit")}</div>
                 </button>
               );
             })}
           </div>
 
           <div className="mt-6 rounded-2xl border border-root-accent/30 bg-root-surface p-4 text-sm text-root-text">
-            <p className="font-black text-root-accent">Terpilih:</p>
-            <p className="mt-1 font-bold">{selectedTerm.toLocaleString("id-ID", { maximumFractionDigits: 2 })} hari</p>
+            <p className="font-black text-root-accent">{t("navigation_economy_loans.terms.selected")}:</p>
+            <p className="mt-1 font-bold">{selectedTerm.toLocaleString(language, { maximumFractionDigits: 0 })} {t("navigation_economy_loans.dayUnit")}</p>
           </div>
         </div>
       </div>

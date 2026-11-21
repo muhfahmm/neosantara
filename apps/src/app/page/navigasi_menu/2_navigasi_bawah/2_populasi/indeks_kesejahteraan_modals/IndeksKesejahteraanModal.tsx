@@ -32,6 +32,7 @@ import { RootModalTabs } from "@/app/page/root_modals_design_menu/RootModalTabs"
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 // ── Kelas CSS untuk Scrollbar (Tailwind Murni) ──
 const scrollbarDark = "root-modal-util-62ec13c825";
@@ -63,6 +64,7 @@ export default function IndeksKesejahteraanModal({
   currentDate,
   initialTab,
 }: IndeksKesejahteraanModalProps) {
+  const { t, language } = useLanguage();
   const [activeTab, setActiveTab] = useState<"statistik" | "naikkan">(
     initialTab ?? "statistik",
   );
@@ -157,7 +159,7 @@ export default function IndeksKesejahteraanModal({
       <NotebookModalWrapper onClose={onClose} zIndexClass="z-[70]">
         <div className={"root-modal-util-4644119199"}>
           <RootInfoModalHeader
-            title="Kesejahteraan"
+            title={t("navigation_population_welfare.title")}
             icon={<MapPin aria-hidden="true" />}
             onClose={onClose}
             size="standard"
@@ -166,7 +168,7 @@ export default function IndeksKesejahteraanModal({
           <div className={"satisfaction-modal-summary root-modal-util-6614545ce3"}>
             <div className={"root-modal-util-6cfc7e6ab3"}>
               <span className={"root-modal-util-14d6efe9ef root-modal-util-614c0c7dff"}>
-                Indeks Kesejahteraan:
+                {t("navigation_population_welfare.indexLabel")}
               </span>
               <span className={"root-modal-util-04f32edb66 root-modal-util-4457a4d3a8"}>
                 {overallScore}/100
@@ -177,13 +179,13 @@ export default function IndeksKesejahteraanModal({
                 className={"satisfaction-modal-tabs"}
                 items={[
                   {
-                    label: "Statistik",
+                    label: t("navigation_population_welfare.statisticsTab"),
                     isActive: activeTab === "statistik",
                     onClick: () => setActiveTab("statistik"),
                     onPointerDown: () => setActiveTab("statistik"),
                   },
                   {
-                    label: "Naikkan Kesejahteraan",
+                    label: t("navigation_population_welfare.increaseTab"),
                     isActive: activeTab === "naikkan",
                     onClick: () => setActiveTab("naikkan"),
                     onPointerDown: () => setActiveTab("naikkan"),
@@ -202,7 +204,7 @@ export default function IndeksKesejahteraanModal({
                     {/* Breakdown Komponen */}
                     <h3 className={"root-modal-util-8c1ba2cf8a"}>
                       <span className={"root-modal-util-308fa49d4e"}></span>
-                      Breakdown Sektor & Layanan Dasar
+                      {t("navigation_population_welfare.breakdownTitle")}
                     </h3>
 
                     <div className={"welfare-breakdown-grid root-modal-util-fcddc39279"}>
@@ -217,14 +219,14 @@ export default function IndeksKesejahteraanModal({
                               <Zap className={`root-modal-util-ce72f65c94 ${listrikColor.icon}`} />
                             </div>
                             <div>
-                              <p className={"root-modal-util-bfc85419bc"}>Kelistrikan</p>
-                              <p className={"root-modal-util-ff4a95d9d4"}>Cakupan pasokan</p>
+                              <p className={"root-modal-util-bfc85419bc"}>{t("navigation_population_welfare.sectors.electricity")}</p>
+                              <p className={"root-modal-util-ff4a95d9d4"}>{t("navigation_population_welfare.sectors.supplyCoverage")}</p>
                             </div>
                           </div>
                           <span className={`root-modal-util-d385c0a7e6 ${listrikColor.text}`}>{listrikActualScore}</span>
                         </div>
                         <p className={"root-modal-util-12e912b2e4"}>
-                          Indeks kecukupan listrik: <span className={"root-modal-util-da18d116be"}>{listrikActualScore}/100</span>
+                          {t("navigation_population_welfare.sectors.electricityIndex")} <span className={"root-modal-util-da18d116be"}>{listrikActualScore}/100</span>
                         </p>
                       </div>
 
@@ -246,8 +248,8 @@ export default function IndeksKesejahteraanModal({
                                   <Library className={`root-modal-util-ce72f65c94 ${pendidikanColor.icon}`} />
                                 </div>
                                 <div>
-                                  <p className={"root-modal-util-bfc85419bc"}>Pendidikan</p>
-                                  <p className={"root-modal-util-ff4a95d9d4"}>35% Bobot</p>
+                                  <p className={"root-modal-util-bfc85419bc"}>{t("navigation_population_welfare.sectors.education")}</p>
+                                  <p className={"root-modal-util-ff4a95d9d4"}>{t("navigation_population_welfare.sectors.weight35")}</p>
                                 </div>
                               </div>
                               <div className={"root-modal-util-2ad094a613"}>
@@ -262,15 +264,15 @@ export default function IndeksKesejahteraanModal({
                               </div>
                             </div>
                             <div className={"root-modal-util-f99ad0a975"}>
-                              <p>• Fasilitas: <span className={"root-modal-util-da18d116be"}>{currentPendidikan.toLocaleString("id-ID")}</span> unit</p>
-                              <p>• Target: <span className={"root-modal-util-da18d116be"}>{targetPendidikan.toLocaleString("id-ID")}</span> unit</p>
+                              <p>• {t("navigation_population_welfare.sectors.facilities")} <span className={"root-modal-util-da18d116be"}>{currentPendidikan.toLocaleString(language)}</span> {t("navigation_population_welfare.sectors.unit")}</p>
+                              <p>• {t("navigation_population_welfare.sectors.target")} <span className={"root-modal-util-da18d116be"}>{targetPendidikan.toLocaleString(language)}</span> {t("navigation_population_welfare.sectors.unit")}</p>
                               {neededPendidikan > 0 ? (
                                 <p className={"root-modal-util-02fffef823"}>
-                                  • Kurang: <span className={"root-modal-util-7fbb85697d"}>+{neededPendidikan.toLocaleString("id-ID")}</span> unit
+                                  • {t("navigation_population_welfare.sectors.shortage")} <span className={"root-modal-util-7fbb85697d"}>+{neededPendidikan.toLocaleString(language)}</span> {t("navigation_population_welfare.sectors.unit")}
                                 </p>
                               ) : (
                                 <p className={"root-modal-util-69c630ecae"}>
-                                  <CheckCircle2 className={"root-modal-util-326a1fe33b"} /> Target tercapai
+                                  <CheckCircle2 className={"root-modal-util-326a1fe33b"} /> {t("navigation_population_welfare.sectors.targetReached")}
                                 </p>
                               )}
                             </div>
@@ -303,8 +305,8 @@ export default function IndeksKesejahteraanModal({
                                   <Hospital className={`root-modal-util-ce72f65c94 ${kesehatanColor.icon}`} />
                                 </div>
                                 <div>
-                                  <p className={"root-modal-util-bfc85419bc"}>Kesehatan</p>
-                                  <p className={"root-modal-util-ff4a95d9d4"}>40% Bobot</p>
+                                  <p className={"root-modal-util-bfc85419bc"}>{t("navigation_population_welfare.sectors.health")}</p>
+                                  <p className={"root-modal-util-ff4a95d9d4"}>{t("navigation_population_welfare.sectors.weight40")}</p>
                                 </div>
                               </div>
                               <div className={"root-modal-util-2ad094a613"}>
@@ -319,12 +321,12 @@ export default function IndeksKesejahteraanModal({
                               </div>
                             </div>
                             <div className={"root-modal-util-f99ad0a975"}>
-                              <p>• Skor: <span className={"root-modal-util-da18d116be"}>{kesehatanActualScore}/100</span></p>
+                              <p>• {t("navigation_population_welfare.sectors.score")} <span className={"root-modal-util-da18d116be"}>{kesehatanActualScore}/100</span></p>
                               <div className={"root-modal-util-d58dbd7f1c"}>
-                                <p>• Epidemi: <span className={"root-modal-util-cb014ce7f3"}>{risikoEpidemiPercent}%/thn ({risikoEpidemiBulanan.toLocaleString("id-ID", { maximumFractionDigits: 2 })}%/bln)</span></p>
-                                <p>• Pandemi: <span className={"root-modal-util-cb014ce7f3"}>{risikoPandemiPercent}%/thn ({risikoPandemiBulanan.toLocaleString("id-ID", { maximumFractionDigits: 2 })}%/bln)</span></p>
+                                <p>• {t("navigation_population_welfare.sectors.epidemic")} <span className={"root-modal-util-cb014ce7f3"}>{risikoEpidemiPercent}{t("navigation_population_welfare.sectors.perYear")} ({risikoEpidemiBulanan.toLocaleString(language, { maximumFractionDigits: 2 })}{t("navigation_population_welfare.sectors.perMonth")})</span></p>
+                                <p>• {t("navigation_population_welfare.sectors.pandemic")} <span className={"root-modal-util-cb014ce7f3"}>{risikoPandemiPercent}{t("navigation_population_welfare.sectors.perYear")} ({risikoPandemiBulanan.toLocaleString(language, { maximumFractionDigits: 2 })}{t("navigation_population_welfare.sectors.perMonth")})</span></p>
                                 {isWHOMember && (
-                                  <span className={"root-modal-util-8de47573c6"}>WHO -5%</span>
+                                  <span className={"root-modal-util-8de47573c6"}>{t("navigation_population_welfare.healthInfo.whoBonus")}</span>
                                 )}
                               </div>
                             </div>
@@ -343,14 +345,14 @@ export default function IndeksKesejahteraanModal({
                               <Landmark className={`root-modal-util-ce72f65c94 ${tempatUmumColor.icon}`} />
                             </div>
                             <div>
-                              <p className={"root-modal-util-bfc85419bc"}>Infrastruktur</p>
-                              <p className={"root-modal-util-ff4a95d9d4"}>25% Bobot</p>
+                              <p className={"root-modal-util-bfc85419bc"}>{t("navigation_population_welfare.sectors.infrastructure")}</p>
+                              <p className={"root-modal-util-ff4a95d9d4"}>{t("navigation_population_welfare.sectors.weight25")}</p>
                             </div>
                           </div>
                           <span className={`root-modal-util-d385c0a7e6 ${tempatUmumColor.text}`}>{infrastrukturActualScore}</span>
                         </div>
                         <p className={"root-modal-util-12e912b2e4"}>
-                          Skor transportasi & infrastruktur: <span className={"root-modal-util-da18d116be"}>{infrastrukturActualScore}/100</span>
+                          {t("navigation_population_welfare.sectors.transportScore")} <span className={"root-modal-util-da18d116be"}>{infrastrukturActualScore}/100</span>
                         </p>
                       </div>
 
@@ -375,8 +377,8 @@ export default function IndeksKesejahteraanModal({
                                   <ShieldCheck className={`root-modal-util-ce72f65c94 ${penegakanHukumColor.icon}`} />
                                 </div>
                                 <div>
-                                  <p className={"root-modal-util-bfc85419bc"}>Penegakan Hukum</p>
-                                  <p className={"root-modal-util-ff4a95d9d4"}>Kepuasan Rakyat</p>
+                                  <p className={"root-modal-util-bfc85419bc"}>{t("navigation_population_welfare.sectors.law")}</p>
+                                  <p className={"root-modal-util-ff4a95d9d4"}>{t("navigation_population_welfare.sectors.publicSatisfaction")}</p>
                                 </div>
                               </div>
                               <div className={"root-modal-util-2ad094a613"}>
@@ -391,11 +393,11 @@ export default function IndeksKesejahteraanModal({
                               </div>
                             </div>
                             <div className={"root-modal-util-f99ad0a975"}>
-                              <p>• Skor Hukum: <span className={"root-modal-util-da18d116be"}>{lawScore}/100</span></p>
+                              <p>• {t("navigation_population_welfare.sectors.lawScore")} <span className={"root-modal-util-da18d116be"}>{lawScore}/100</span></p>
                               <div className={"root-modal-util-d58dbd7f1c"}>
                                 <p>• Risiko Kriminal: <span className={"root-modal-util-cb014ce7f3"}>{securityRiskPercent}%</span></p>
                                 {isInterpolMember && (
-                                  <span className={"root-modal-util-8de47573c6"}>Interpol -5%</span>
+                                  <span className={"root-modal-util-8de47573c6"}>{t("navigation_population_welfare.lawInfo.interpolBonus")}</span>
                                 )}
                               </div>
                             </div>
@@ -414,18 +416,18 @@ export default function IndeksKesejahteraanModal({
                               <Wheat className={`root-modal-util-ce72f65c94 ${panganColor.icon}`} />
                             </div>
                             <div>
-                              <p className={"root-modal-util-bfc85419bc"}>Pangan</p>
-                              <p className={"root-modal-util-ff4a95d9d4"}>Kepuasan Rakyat</p>
+                              <p className={"root-modal-util-bfc85419bc"}>{t("navigation_population_welfare.sectors.food")}</p>
+                              <p className={"root-modal-util-ff4a95d9d4"}>{t("navigation_population_welfare.sectors.publicSatisfaction")}</p>
                             </div>
                           </div>
                           <span className={`root-modal-util-d385c0a7e6 ${panganColor.text}`}>{panganActualScore}</span>
                         </div>
                         <div className={"root-modal-util-f99ad0a975"}>
-                          <p>• Indeks: <span className={"root-modal-util-da18d116be"}>{panganActualScore}/100</span></p>
+                          <p>• {t("navigation_population_welfare.sectors.index")} <span className={"root-modal-util-da18d116be"}>{panganActualScore}/100</span></p>
                           {panganActualScore < 100 ? (
-                            <p className={"root-modal-util-02fffef823"}>Tingkatkan produksi pangan</p>
+                            <p className={"root-modal-util-02fffef823"}>{t("navigation_population_welfare.sectors.increaseFoodProduction")}</p>
                           ) : (
-                            <p className={"root-modal-util-69c630ecae"}><CheckCircle2 className={"root-modal-util-326a1fe33b"} /> Terpenuhi 100%</p>
+                            <p className={"root-modal-util-69c630ecae"}><CheckCircle2 className={"root-modal-util-326a1fe33b"} /> {t("navigation_population_welfare.sectors.fulfilled")}</p>
                           )}
                         </div>
                       </div>
@@ -441,18 +443,18 @@ export default function IndeksKesejahteraanModal({
                               <Home className={`root-modal-util-ce72f65c94 ${hunianColor.icon}`} />
                             </div>
                             <div>
-                              <p className={"root-modal-util-bfc85419bc"}>Hunian</p>
-                              <p className={"root-modal-util-ff4a95d9d4"}>Kepuasan Rakyat</p>
+                              <p className={"root-modal-util-bfc85419bc"}>{t("navigation_population_welfare.sectors.housing")}</p>
+                              <p className={"root-modal-util-ff4a95d9d4"}>{t("navigation_population_welfare.sectors.publicSatisfaction")}</p>
                             </div>
                           </div>
                           <span className={`root-modal-util-d385c0a7e6 ${hunianColor.text}`}>{hunianActualScore}</span>
                         </div>
                         <div className={"root-modal-util-f99ad0a975"}>
-                          <p>• Indeks: <span className={"root-modal-util-da18d116be"}>{hunianActualScore}/100</span></p>
+                          <p>• {t("navigation_population_welfare.sectors.index")} <span className={"root-modal-util-da18d116be"}>{hunianActualScore}/100</span></p>
                           {hunianActualScore < 100 ? (
-                            <p className={"root-modal-util-02fffef823"}>Tambah rumah subsidi</p>
+                            <p className={"root-modal-util-02fffef823"}>{t("navigation_population_welfare.sectors.addSubsidizedHomes")}</p>
                           ) : (
-                            <p className={"root-modal-util-69c630ecae"}><CheckCircle2 className={"root-modal-util-326a1fe33b"} /> Terpenuhi 100%</p>
+                            <p className={"root-modal-util-69c630ecae"}><CheckCircle2 className={"root-modal-util-326a1fe33b"} /> {t("navigation_population_welfare.sectors.fulfilled")}</p>
                           )}
                         </div>
                       </div>
@@ -468,18 +470,18 @@ export default function IndeksKesejahteraanModal({
                               <Globe className={`root-modal-util-ce72f65c94 ${keterbukaanColor.icon}`} />
                             </div>
                             <div>
-                              <p className={"root-modal-util-bfc85419bc"}>Keterbukaan</p>
-                              <p className={"root-modal-util-ff4a95d9d4"}>HAM & Kebebasan</p>
+                              <p className={"root-modal-util-bfc85419bc"}>{t("navigation_population_welfare.sectors.openness")}</p>
+                              <p className={"root-modal-util-ff4a95d9d4"}>{t("navigation_population_welfare.sectors.rightsFreedom")}</p>
                             </div>
                           </div>
                           <span className={`root-modal-util-d385c0a7e6 ${keterbukaanColor.text}`}>{keterbukaanActualScore}</span>
                         </div>
                         <div className={"root-modal-util-f99ad0a975"}>
-                          <p>• Indeks: <span className={"root-modal-util-da18d116be"}>{keterbukaanActualScore}/100</span></p>
+                          <p>• {t("navigation_population_welfare.sectors.index")} <span className={"root-modal-util-da18d116be"}>{keterbukaanActualScore}/100</span></p>
                           {keterbukaanActualScore < 100 ? (
-                            <p className={"root-modal-util-02fffef823"}>Jamin kebebasan pers</p>
+                            <p className={"root-modal-util-02fffef823"}>{t("navigation_population_welfare.sectors.ensurePressFreedom")}</p>
                           ) : (
-                            <p className={"root-modal-util-69c630ecae"}><CheckCircle2 className={"root-modal-util-326a1fe33b"} /> Optimal 100%</p>
+                            <p className={"root-modal-util-69c630ecae"}><CheckCircle2 className={"root-modal-util-326a1fe33b"} /> {t("navigation_population_welfare.sectors.optimal")}</p>
                           )}
                         </div>
                       </div>
@@ -512,7 +514,7 @@ export default function IndeksKesejahteraanModal({
                   <Library className="h-5 w-5" />
                 </span>
                 <h3 className={`${rootModalTypography.title} min-w-0`}>
-                  Pengaruh Poin Pendidikan
+                  {t("navigation_population_welfare.educationInfo.title")}
                 </h3>
               </div>
               <RootModalCloseButton onClick={() => setShowPendidikanInfoModal(false)} />
@@ -521,31 +523,40 @@ export default function IndeksKesejahteraanModal({
 
             {(() => {
               const eduModifier = getEducationResearchModifier(pendidikanActualScore);
+              const researchTimeLabel = eduModifier.percentageChange > 0
+                ? t("navigation_population_welfare.educationInfo.researchTimePenalty", {
+                    value: eduModifier.percentageChange,
+                  })
+                : eduModifier.percentageChange < 0
+                  ? t("navigation_population_welfare.educationInfo.researchTimeBonus", {
+                      value: Math.abs(eduModifier.percentageChange),
+                    })
+                  : t("navigation_population_welfare.educationInfo.researchTimeNeutral");
               return (
                 <div className={"root-modal-util-f8b3c1b860"}>
                   <div className={"root-modal-util-38ae88ec05"}>
                     <div className={"root-modal-util-336d1f1d8f"}>
-                      <span className={"root-modal-util-c5fc255da3"}>Poin Saat Ini:</span>
+                      <span className={"root-modal-util-c5fc255da3"}>{t("navigation_population_welfare.educationInfo.currentPoints")}</span>
                       <span className={"root-modal-util-569f745188"}>{pendidikanActualScore} / 100</span>
                     </div>
                     <div className={`root-modal-util-94239ed579 ${eduModifier.isPenalty ? "root-modal-util-8a6983338b" : "root-modal-util-5f01ac7ec5"}`}>
-                      <span>Waktu Riset:</span>
-                      <span className={"root-modal-util-e45589f405"}>{eduModifier.label}</span>
+                      <span>{t("navigation_population_welfare.educationInfo.researchTime")}</span>
+                      <span className={"root-modal-util-e45589f405"}>{researchTimeLabel}</span>
                     </div>
                   </div>
 
                   <div className={"root-modal-util-5a2508227c"}>
-                    <p className={"root-modal-util-f02c422297"}>Skala Efek:</p>
+                    <p className={"root-modal-util-f02c422297"}>{t("navigation_population_welfare.educationInfo.effectScale")}</p>
                     <div className={"root-modal-util-4d27ab2ea5"}>
                       {[
-                        { range: '0-25', effect: '+25% Waktu', penalty: true, isCurrent: pendidikanActualScore <= 25 },
-                        { range: '26-40', effect: '+20% Waktu', penalty: true, isCurrent: pendidikanActualScore >= 26 && pendidikanActualScore <= 40 },
-                        { range: '41-65', effect: '+15% Waktu', penalty: true, isCurrent: pendidikanActualScore >= 41 && pendidikanActualScore <= 65 },
-                        { range: '66-80', effect: '-5% Waktu', penalty: false, isCurrent: pendidikanActualScore >= 66 && pendidikanActualScore <= 80 },
-                        { range: '81-100', effect: '-10% Waktu', penalty: false, isCurrent: pendidikanActualScore >= 81 },
+                        { range: '0-25', effect: t("navigation_population_welfare.educationInfo.tiers.veryLow"), penalty: true, isCurrent: pendidikanActualScore <= 25 },
+                        { range: '26-40', effect: t("navigation_population_welfare.educationInfo.tiers.low"), penalty: true, isCurrent: pendidikanActualScore >= 26 && pendidikanActualScore <= 40 },
+                        { range: '41-65', effect: t("navigation_population_welfare.educationInfo.tiers.belowAverage"), penalty: true, isCurrent: pendidikanActualScore >= 41 && pendidikanActualScore <= 65 },
+                        { range: '66-80', effect: t("navigation_population_welfare.educationInfo.tiers.good"), penalty: false, isCurrent: pendidikanActualScore >= 66 && pendidikanActualScore <= 80 },
+                        { range: '81-100', effect: t("navigation_population_welfare.educationInfo.tiers.excellent"), penalty: false, isCurrent: pendidikanActualScore >= 81 },
                       ].map((tier, idx) => (
                         <div key={idx} className={`root-modal-util-ad24a432b1 ${tier.isCurrent ? (tier.penalty ? "root-modal-util-67755adf0d" : "root-modal-util-958da07d7a") : "root-modal-util-e53d8041e6"}`}>
-                          <span className={"root-modal-util-c4ffe894c4"}>{tier.range} Poin</span>
+                          <span className={"root-modal-util-c4ffe894c4"}>{t("navigation_population_welfare.educationInfo.points", { range: tier.range })}</span>
                           <span className={"root-modal-util-16ece4f30e"}>{tier.effect} {tier.isCurrent && <Star className={"root-modal-util-66c05d1d5e"} />}</span>
                         </div>
                       ))}
@@ -553,22 +564,22 @@ export default function IndeksKesejahteraanModal({
                   </div>
 
                   <div className={"root-modal-util-609d307c0d"}>
-                    <p className={"root-modal-util-31afa83c1d"}><Info className={"root-modal-util-326a1fe33b"} /> Petunjuk:</p>
+                    <p className={"root-modal-util-31afa83c1d"}><Info className={"root-modal-util-326a1fe33b"} /> {t("navigation_population_welfare.educationInfo.guidance")}</p>
                     {eduModifier.isPenalty ? (
                       <div className={"root-modal-util-afef770b5b"}>
-                        <p className={"root-modal-util-b64f7344df"}><AlertTriangle className={"root-modal-util-80ba67b58c"} /><span>Pendidikan rendah! Waktu riset +{eduModifier.percentageChange}% lebih lambat.</span></p>
-                        <p className={"root-modal-util-9d069da587"}><Lightbulb className={"root-modal-util-80ba67b58c"} /><span>Segera bangun fasilitas hingga skor &gt;65 poin!</span></p>
+                        <p className={"root-modal-util-b64f7344df"}><AlertTriangle className={"root-modal-util-80ba67b58c"} /><span>{t("navigation_population_welfare.educationInfo.penalty", { value: eduModifier.percentageChange })}</span></p>
+                        <p className={"root-modal-util-9d069da587"}><Lightbulb className={"root-modal-util-80ba67b58c"} /><span>{t("navigation_population_welfare.educationInfo.buildToThreshold")}</span></p>
                       </div>
                     ) : (
                       <div className={"root-modal-util-afef770b5b"}>
-                        <p className={"root-modal-util-08fbb6b90c"}><CheckCircle2 className={"root-modal-util-80ba67b58c"} /><span>Pendidikan baik! Efisiensi riset {eduModifier.percentageChange}%.</span></p>
-                        <p className={"root-modal-util-9d069da587"}><Lightbulb className={"root-modal-util-80ba67b58c"} /><span>Tingkatkan ke 81-100 poin untuk maksimal.</span></p>
+                        <p className={"root-modal-util-08fbb6b90c"}><CheckCircle2 className={"root-modal-util-80ba67b58c"} /><span>{t("navigation_population_welfare.educationInfo.bonus", { value: eduModifier.percentageChange })}</span></p>
+                        <p className={"root-modal-util-9d069da587"}><Lightbulb className={"root-modal-util-80ba67b58c"} /><span>{t("navigation_population_welfare.educationInfo.maximize")}</span></p>
                       </div>
                     )}
                   </div>
 
                   <button onClick={() => { setShowPendidikanInfoModal(false); onOpenTempatUmum?.('pendidikan'); if (!onOpenTempatUmum) setActiveMenu?.("Menu:TempatUmum"); onClose(); }} className={"root-modal-util-b0fb4ac7fe"}>
-                    <Library className={"root-modal-util-0bfbea3268"} /> Bangun Fasilitas Pendidikan
+                    <Library className={"root-modal-util-0bfbea3268"} /> {t("navigation_population_welfare.educationInfo.buildButton")}
                   </button>
                 </div>
               );
@@ -591,7 +602,7 @@ export default function IndeksKesejahteraanModal({
                   <Hospital className="h-5 w-5" />
                 </span>
                 <h3 className={`${rootModalTypography.title} min-w-0`}>
-                  Pengaruh Pelayanan Kesehatan
+                  {t("navigation_population_welfare.healthInfo.title")}
                 </h3>
               </div>
               <RootModalCloseButton onClick={() => setShowKesehatanInfoModal(false)} />
@@ -614,30 +625,30 @@ export default function IndeksKesejahteraanModal({
                 <div className={"root-modal-util-f8b3c1b860"}>
                   <div className={"root-modal-util-38ae88ec05"}>
                     <div className={"root-modal-util-336d1f1d8f"}>
-                      <span className={"root-modal-util-c5fc255da3"}>Skor Saat Ini:</span>
+                      <span className={"root-modal-util-c5fc255da3"}>{t("navigation_population_welfare.healthInfo.currentScore")}</span>
                       <span className={"root-modal-util-569f745188"}>{kesehatanActualScore} / 100</span>
                     </div>
                     <div className={`root-modal-util-94239ed579 ${isPenalty ? "root-modal-util-8a6983338b" : "root-modal-util-5f01ac7ec5"}`}>
                       <div className={"root-modal-util-e2eedc5718"}>
-                        <p className={"root-modal-util-33481acba8"}><span>Epidemi:</span><span className={"root-modal-util-7fbb85697d"}>{risikoEpidemiPercent}%/thn ({risikoEpidemiBulanan.toLocaleString("id-ID", { maximumFractionDigits: 2 })}%/bln)</span></p>
-                        <p className={"root-modal-util-33481acba8"}><span>Pandemi:</span><span className={"root-modal-util-7fbb85697d"}>{risikoPandemiPercent}%/thn ({risikoPandemiBulanan.toLocaleString("id-ID", { maximumFractionDigits: 2 })}%/bln)</span></p>
+                        <p className={"root-modal-util-33481acba8"}><span>{t("navigation_population_welfare.healthInfo.epidemic")}</span><span className={"root-modal-util-7fbb85697d"}>{risikoEpidemiPercent}{t("navigation_population_welfare.healthInfo.perYear")} ({risikoEpidemiBulanan.toLocaleString(language, { maximumFractionDigits: 2 })}{t("navigation_population_welfare.healthInfo.perMonth")})</span></p>
+                        <p className={"root-modal-util-33481acba8"}><span>{t("navigation_population_welfare.healthInfo.pandemic")}</span><span className={"root-modal-util-7fbb85697d"}>{risikoPandemiPercent}{t("navigation_population_welfare.healthInfo.perYear")} ({risikoPandemiBulanan.toLocaleString(language, { maximumFractionDigits: 2 })}{t("navigation_population_welfare.healthInfo.perMonth")})</span></p>
                       </div>
-                      {isWHOMember && <span className={"root-modal-util-54ee19d77c"}>WHO -5%</span>}
+                      {isWHOMember && <span className={"root-modal-util-54ee19d77c"}>{t("navigation_population_welfare.healthInfo.whoBonus")}</span>}
                     </div>
                   </div>
 
                   <div className={"root-modal-util-5a2508227c"}>
-                    <p className={"root-modal-util-f02c422297"}>Skala Kesehatan & Wabah:</p>
+                    <p className={"root-modal-util-f02c422297"}>{t("navigation_population_welfare.healthInfo.scale")}</p>
                     <div className={"root-modal-util-4d27ab2ea5"}>
                       {[
-                        { range: '0-25', effect: 'Kritis! 75-100%', penalty: true, isCurrent: kesehatanActualScore <= 25 },
-                        { range: '26-40', effect: 'Tinggi! 60-74%', penalty: true, isCurrent: kesehatanActualScore >= 26 && kesehatanActualScore <= 40 },
-                        { range: '41-65', effect: 'Sedang. 35-59%', penalty: true, isCurrent: kesehatanActualScore >= 41 && kesehatanActualScore <= 65 },
-                        { range: '66-80', effect: 'Baik. 20-34%', penalty: false, isCurrent: kesehatanActualScore >= 66 && kesehatanActualScore <= 80 },
-                        { range: '81-100', effect: 'Sangat Baik! 0-19%', penalty: false, isCurrent: kesehatanActualScore >= 81 },
+                        { range: '0-25', effect: t("navigation_population_welfare.healthInfo.tiers.critical"), penalty: true, isCurrent: kesehatanActualScore <= 25 },
+                        { range: '26-40', effect: t("navigation_population_welfare.healthInfo.tiers.high"), penalty: true, isCurrent: kesehatanActualScore >= 26 && kesehatanActualScore <= 40 },
+                        { range: '41-65', effect: t("navigation_population_welfare.healthInfo.tiers.moderate"), penalty: true, isCurrent: kesehatanActualScore >= 41 && kesehatanActualScore <= 65 },
+                        { range: '66-80', effect: t("navigation_population_welfare.healthInfo.tiers.good"), penalty: false, isCurrent: kesehatanActualScore >= 66 && kesehatanActualScore <= 80 },
+                        { range: '81-100', effect: t("navigation_population_welfare.healthInfo.tiers.excellent"), penalty: false, isCurrent: kesehatanActualScore >= 81 },
                       ].map((tier, idx) => (
                         <div key={idx} className={`root-modal-util-ad24a432b1 ${tier.isCurrent ? (tier.penalty ? "root-modal-util-67755adf0d" : "root-modal-util-958da07d7a") : "root-modal-util-e53d8041e6"}`}>
-                          <span className={"root-modal-util-c4ffe894c4"}>{tier.range} Poin</span>
+                          <span className={"root-modal-util-c4ffe894c4"}>{t("navigation_population_welfare.healthInfo.points", { range: tier.range })}</span>
                           <span className={"root-modal-util-16ece4f30e"}>{tier.effect} {tier.isCurrent && <Star className={"root-modal-util-66c05d1d5e"} />}</span>
                         </div>
                       ))}
@@ -645,22 +656,22 @@ export default function IndeksKesejahteraanModal({
                   </div>
 
                   <div className={"root-modal-util-609d307c0d"}>
-                    <p className={"root-modal-util-31afa83c1d"}><Info className={"root-modal-util-326a1fe33b"} /> Petunjuk:</p>
+                    <p className={"root-modal-util-31afa83c1d"}><Info className={"root-modal-util-326a1fe33b"} /> {t("navigation_population_welfare.healthInfo.guidance")}</p>
                     {isPenalty ? (
                       <div className={"root-modal-util-afef770b5b"}>
-                        <p className={"root-modal-util-b64f7344df"}><AlertTriangle className={"root-modal-util-80ba67b58c"} /><span>Kesehatan Rentan! Risiko wabah tinggi.</span></p>
-                        <p className={"root-modal-util-9d069da587"}><Lightbulb className={"root-modal-util-80ba67b58c"} /><span>Bangun fasilitas kesehatan &gt;65 poin.</span></p>
+                        <p className={"root-modal-util-b64f7344df"}><AlertTriangle className={"root-modal-util-80ba67b58c"} /><span>{t("navigation_population_welfare.healthInfo.penalty")}</span></p>
+                        <p className={"root-modal-util-9d069da587"}><Lightbulb className={"root-modal-util-80ba67b58c"} /><span>{t("navigation_population_welfare.healthInfo.buildToThreshold")}</span></p>
                       </div>
                     ) : (
                       <div className={"root-modal-util-afef770b5b"}>
-                        <p className={"root-modal-util-08fbb6b90c"}><CheckCircle2 className={"root-modal-util-80ba67b58c"} /><span>Kesehatan Baik! Risiko wabah rendah.</span></p>
-                        <p className={"root-modal-util-9d069da587"}><Lightbulb className={"root-modal-util-80ba67b58c"} /><span>Pertahankan & capai 81-100 poin.</span></p>
+                        <p className={"root-modal-util-08fbb6b90c"}><CheckCircle2 className={"root-modal-util-80ba67b58c"} /><span>{t("navigation_population_welfare.healthInfo.bonus")}</span></p>
+                        <p className={"root-modal-util-9d069da587"}><Lightbulb className={"root-modal-util-80ba67b58c"} /><span>{t("navigation_population_welfare.healthInfo.maximize")}</span></p>
                       </div>
                     )}
                   </div>
 
                   <button onClick={() => { setShowKesehatanInfoModal(false); onOpenTempatUmum?.('kesehatan'); if (!onOpenTempatUmum) setActiveMenu?.("Menu:TempatUmum"); onClose(); }} className={"root-modal-util-b0fb4ac7fe"}>
-                    <Hospital className={"root-modal-util-0bfbea3268"} /> Bangun Fasilitas Kesehatan
+                    <Hospital className={"root-modal-util-0bfbea3268"} /> {t("navigation_population_welfare.healthInfo.buildButton")}
                   </button>
                 </div>
               );
@@ -683,7 +694,7 @@ export default function IndeksKesejahteraanModal({
                   <ShieldCheck className="h-5 w-5" />
                 </span>
                 <h3 className={`${rootModalTypography.title} min-w-0`}>
-                  Pengaruh Penegakan Hukum
+                  {t("navigation_population_welfare.lawInfo.title")}
                 </h3>
               </div>
               <RootModalCloseButton onClick={() => setShowPenegakanHukumInfoModal(false)} />
@@ -704,30 +715,30 @@ export default function IndeksKesejahteraanModal({
                 <div className={"root-modal-util-f8b3c1b860"}>
                   <div className={"root-modal-util-38ae88ec05"}>
                     <div className={"root-modal-util-336d1f1d8f"}>
-                      <span className={"root-modal-util-c5fc255da3"}>Skor Saat Ini:</span>
+                      <span className={"root-modal-util-c5fc255da3"}>{t("navigation_population_welfare.lawInfo.currentScore")}</span>
                       <span className={"root-modal-util-569f745188"}>{lawScore} / 100</span>
                     </div>
                     <div className={`root-modal-util-94239ed579 ${isPenalty ? "root-modal-util-8a6983338b" : "root-modal-util-5f01ac7ec5"}`}>
-                      <span>Risiko Kriminal:</span>
+                      <span>{t("navigation_population_welfare.lawInfo.crimeRisk")}</span>
                       <div className={"root-modal-util-2ad094a613"}>
                         <span className={"root-modal-util-e45589f405"}>{securityRiskPercent}%</span>
-                        {isInterpolMember && <span className={"root-modal-util-c3a2883716"}>Interpol -5%</span>}
+                        {isInterpolMember && <span className={"root-modal-util-c3a2883716"}>{t("navigation_population_welfare.lawInfo.interpolBonus")}</span>}
                       </div>
                     </div>
                   </div>
 
                   <div className={"root-modal-util-5a2508227c"}>
-                    <p className={"root-modal-util-f02c422297"}>Skala Penegakan Hukum:</p>
+                    <p className={"root-modal-util-f02c422297"}>{t("navigation_population_welfare.lawInfo.scale")}</p>
                     <div className={"root-modal-util-4d27ab2ea5"}>
                       {[
-                        { range: '0-25', effect: 'Krisis! Kriminal Tinggi', penalty: true, isCurrent: lawScore <= 25 },
-                        { range: '26-40', effect: 'Rawan! Meningkat', penalty: true, isCurrent: lawScore >= 26 && lawScore <= 40 },
-                        { range: '41-65', effect: 'Sedang. Perlu Ditingkatkan', penalty: true, isCurrent: lawScore >= 41 && lawScore <= 65 },
-                        { range: '66-80', effect: 'Aman. Stabil', penalty: false, isCurrent: lawScore >= 66 && lawScore <= 80 },
-                        { range: '81-100', effect: 'Sangat Aman! Minimal', penalty: false, isCurrent: lawScore >= 81 },
+                        { range: '0-25', effect: t("navigation_population_welfare.lawInfo.tiers.crisis"), penalty: true, isCurrent: lawScore <= 25 },
+                        { range: '26-40', effect: t("navigation_population_welfare.lawInfo.tiers.highRisk"), penalty: true, isCurrent: lawScore >= 26 && lawScore <= 40 },
+                        { range: '41-65', effect: t("navigation_population_welfare.lawInfo.tiers.moderate"), penalty: true, isCurrent: lawScore >= 41 && lawScore <= 65 },
+                        { range: '66-80', effect: t("navigation_population_welfare.lawInfo.tiers.safe"), penalty: false, isCurrent: lawScore >= 66 && lawScore <= 80 },
+                        { range: '81-100', effect: t("navigation_population_welfare.lawInfo.tiers.verySafe"), penalty: false, isCurrent: lawScore >= 81 },
                       ].map((tier, idx) => (
                         <div key={idx} className={`root-modal-util-ad24a432b1 ${tier.isCurrent ? (tier.penalty ? "root-modal-util-67755adf0d" : "root-modal-util-958da07d7a") : "root-modal-util-e53d8041e6"}`}>
-                          <span className={"root-modal-util-c4ffe894c4"}>{tier.range} Poin</span>
+                          <span className={"root-modal-util-c4ffe894c4"}>{t("navigation_population_welfare.lawInfo.points", { range: tier.range })}</span>
                           <span className={"root-modal-util-16ece4f30e"}>{tier.effect} {tier.isCurrent && <Star className={"root-modal-util-66c05d1d5e"} />}</span>
                         </div>
                       ))}
@@ -735,22 +746,22 @@ export default function IndeksKesejahteraanModal({
                   </div>
 
                   <div className={"root-modal-util-609d307c0d"}>
-                    <p className={"root-modal-util-31afa83c1d"}><Info className={"root-modal-util-326a1fe33b"} /> Petunjuk:</p>
+                    <p className={"root-modal-util-31afa83c1d"}><Info className={"root-modal-util-326a1fe33b"} /> {t("navigation_population_welfare.lawInfo.guidance")}</p>
                     {isPenalty ? (
                       <div className={"root-modal-util-afef770b5b"}>
-                        <p className={"root-modal-util-b64f7344df"}><AlertTriangle className={"root-modal-util-80ba67b58c"} /><span>Hukum Lemah! Kriminalitas tinggi.</span></p>
-                        <p className={"root-modal-util-9d069da587"}><Lightbulb className={"root-modal-util-80ba67b58c"} /><span>Bangun Pos Polisi, Pengadilan, dll &gt;65 poin.</span></p>
+                        <p className={"root-modal-util-b64f7344df"}><AlertTriangle className={"root-modal-util-80ba67b58c"} /><span>{t("navigation_population_welfare.lawInfo.penalty")}</span></p>
+                        <p className={"root-modal-util-9d069da587"}><Lightbulb className={"root-modal-util-80ba67b58c"} /><span>{t("navigation_population_welfare.lawInfo.buildToThreshold")}</span></p>
                       </div>
                     ) : (
                       <div className={"root-modal-util-afef770b5b"}>
-                        <p className={"root-modal-util-08fbb6b90c"}><CheckCircle2 className={"root-modal-util-80ba67b58c"} /><span>Hukum Baik! Risiko kriminal rendah.</span></p>
-                        <p className={"root-modal-util-9d069da587"}><Lightbulb className={"root-modal-util-80ba67b58c"} /><span>Pertahankan & capai 81-100 poin.</span></p>
+                        <p className={"root-modal-util-08fbb6b90c"}><CheckCircle2 className={"root-modal-util-80ba67b58c"} /><span>{t("navigation_population_welfare.lawInfo.bonus")}</span></p>
+                        <p className={"root-modal-util-9d069da587"}><Lightbulb className={"root-modal-util-80ba67b58c"} /><span>{t("navigation_population_welfare.lawInfo.maximize")}</span></p>
                       </div>
                     )}
                   </div>
 
                   <button onClick={() => { setShowPenegakanHukumInfoModal(false); onOpenTempatUmum?.('penegakan_hukum'); if (!onOpenTempatUmum) setActiveMenu?.("Menu:TempatUmum"); onClose(); }} className={"root-modal-util-b0fb4ac7fe"}>
-                    <ShieldCheck className={"root-modal-util-0bfbea3268"} /> Bangun Sarana Hukum
+                    <ShieldCheck className={"root-modal-util-0bfbea3268"} /> {t("navigation_population_welfare.lawInfo.buildButton")}
                   </button>
                 </div>
               );

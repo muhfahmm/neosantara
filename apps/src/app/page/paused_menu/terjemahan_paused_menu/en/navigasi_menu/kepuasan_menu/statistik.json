@@ -1,0 +1,22 @@
+{
+  "title": "Public Satisfaction",
+  "infoButton": "Public satisfaction statistics information",
+  "civilSatisfaction": "Public Satisfaction:",
+  "statisticsTab": "Statistics",
+  "increaseTab": "Increase Satisfaction",
+  "sectors": {
+    "tax": "Tax",
+    "goodsPrices": "Essential Goods Prices",
+    "foodProduction": "Food Production",
+    "electricityProduction": "Electricity Production",
+    "housing": "Housing",
+    "publicServices": "Public Services & Facilities",
+    "doctrine": "Doctrine & Openness",
+    "economicPolicy": "Economic Policy & System",
+    "subsidies": "Subsidy Allocation & Policy"
+  },
+  "info": {
+    "title": "Public Satisfaction Statistics",
+    "description": "The satisfaction score summarizes overall conditions and sector indicators such as taxes, prices, food, and public services. Use the Statistics tab to review scores, then open a related sector to see the policies that affect it."
+  }
+}

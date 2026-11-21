@@ -1,0 +1,40 @@
+{
+  "title": "Impuestos",
+  "infoButton": "Información de política fiscal",
+  "confirm": "Confirmar",
+  "taxes": {
+    "policyTitle": "Política fiscal",
+    "vat": "Impuesto sobre el Valor Añadido (IVA)",
+    "corporate": "Impuesto de sociedades",
+    "personalIncome": "Impuesto sobre la renta personal",
+    "excise": "Impuesto especial",
+    "environmental": "Impuesto ambiental"
+  },
+  "bonuses": {
+    "orthodoxPersonal": "Bonificación ortodoxa: ingresos del impuesto sobre la renta personal +{percent}%",
+    "buddhaEnvironmental": "Bonificación budista: ingresos del impuesto ambiental +{percent}%",
+    "ministry": "Bonificación del Ministerio de Finanzas: ingresos fiscales totales +{percent}% (+{amount} NEO)",
+    "democracy": "Bonificación de democracia: ingresos fiscales totales +{percent}%",
+    "capitalism": "Bonificación de capitalismo: ingresos fiscales totales +{percent}%",
+    "liberalism": "Bonificación de liberalismo: ingresos fiscales totales +{percent}%",
+    "conservatism": "Bonificación de conservadurismo: ingresos fiscales totales +{percent}%",
+    "fiscalHarmony": "Bonificación de armonización fiscal global: ingresos fiscales totales +{percent}%"
+  },
+  "summary": {
+    "totalRevenue": "Ingresos fiscales totales",
+    "bonus": "+ bonificación ({percent}%) =",
+    "populationImpact": "Impacto fiscal en la población: {percent}% / mes"
+  },
+  "info": {
+    "title": "Información de política fiscal",
+    "description": "Ajusta los impuestos nacionales para financiar el gasto militar y las infraestructuras públicas. Ten cuidado: los impuestos altos pueden provocar protestas.",
+    "satisfaction": "Índice de satisfacción pública (impuestos)"
+  },
+  "confirmation": {
+    "title": "Confirmar demanda fiscal",
+    "changesApply": "Se aplicarán los cambios de impuestos seleccionados. ¿Continuar?",
+    "noChanges": "No hay cambios en los impuestos. Confirma para volver al foro.",
+    "back": "Volver",
+    "yes": "Sí, confirmar"
+  }
+}

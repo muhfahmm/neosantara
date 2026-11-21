@@ -1,0 +1,19 @@
+{
+  "initiatives": {
+    "cashTransfer": "Direct Cash Assistance",
+    "foodSubsidy": "Staple Food Subsidy",
+    "studentAid": "Student Education Aid",
+    "healthCoverage": "Universal Health Coverage",
+    "housingUpgrade": "Public Housing Improvement",
+    "nationalMarket": "National Affordable Market"
+  },
+  "success": "Initiative \"{title}\" launched successfully! Target completion: {date}.",
+  "running": "In Progress",
+  "welfareBoost": "Welfare Boost: +{value}%",
+  "cost": "Cost:",
+  "duration": "Duration:",
+  "days": "{value} days",
+  "active": "Active",
+  "launch": "Launch",
+  "sponsor": "Fund {title}"
+}

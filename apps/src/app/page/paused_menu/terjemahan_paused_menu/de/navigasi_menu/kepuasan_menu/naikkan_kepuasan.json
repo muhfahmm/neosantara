@@ -1,0 +1,50 @@
+{
+  "title": "Zufriedenheit der Bevölkerung",
+  "infoButton": "Informationen zur Steigerung der Zufriedenheit",
+  "civilSatisfaction": "Zufriedenheit der Bevölkerung:",
+  "statisticsTab": "Statistik",
+  "increaseTab": "Zufriedenheit steigern",
+  "events": {
+    "concert": "Konzert",
+    "festival": "Festival",
+    "carnival": "Karneval",
+    "davisCup": "Davis Cup",
+    "rugbyWorldCup": "Rugby-Weltmeisterschaft",
+    "olympics": "Olympische Spiele",
+    "fifaWorldCup": "FIFA-Weltmeisterschaft",
+    "f1Race": "Formel-1-Rennen"
+  },
+  "finished": "Endet: {date}",
+  "satisfactionBonus": "+{value}% Zufriedenheit",
+  "sportsBonus": "+Bonus des Sportministeriums ({value}%)",
+  "duration": "Dauer: {days} Tage",
+  "ongoing": "Läuft",
+  "chooseEvent": "Veranstaltung auswählen",
+  "feedback": {
+    "success": "Der Präsident hat {title} gestartet! Der Staatshaushalt sinkt um -{cost} NEO. Die Veranstaltung dauert {duration} Tage und endet am {endDate}; dann steigt die Zufriedenheit."
+  },
+  "info": {
+    "title": "Zufriedenheit der Bevölkerung steigern",
+    "statisticsTitle": "Statistik-Tab",
+    "statisticsDescription": "Zeigt ein vollständiges Dashboard zur aktuellen Zufriedenheit der Bevölkerung mit historischen Diagrammen, Einflussfaktoren (Wirtschaft, Sicherheit und öffentliche Dienste) sowie einer Trendprognose für die nächsten Tage.",
+    "statisticsUse": "Geeignet für: eine gründliche Analyse vor strategischen Entscheidungen.",
+    "increaseTitle": "Tab „Zufriedenheit steigern“",
+    "increaseDescription": "Zeigt öffentliche Veranstaltungen und Programme, die der Präsident zur Steigerung der Zufriedenheit starten kann. Jede Veranstaltung hat eigene Kosten, Dauer und Zufriedenheitsboni.",
+    "eventCompletion": "Veranstaltungen laufen über die angegebene Dauer; der Zufriedenheitsbonus gilt nach ihrem Ende.",
+    "singleEvent": "Jede Veranstaltung kann jeweils nur einmal gleichzeitig aktiv sein.",
+    "diplomacyBonus": "Der Forschungsbonus „Veranstaltungsdiplomatie“ kann die Veranstaltungsboni deutlich erhöhen.",
+    "tip": "Tipp: Prüfe zuerst im Statistik-Tab die aktuelle Zufriedenheit und wähle anschließend im Tab „Zufriedenheit steigern“ eine passende Veranstaltung.",
+    "understood": "Verstanden"
+  },
+  "insufficientFunds": {
+    "title": "Unzureichende Mittel",
+    "closeLabel": "Dialog zu unzureichenden Mitteln schließen",
+    "failed": "{action} fehlgeschlagen!",
+    "description": "Die Staatskasse verfügt nicht über genügend Mittel für diese Aktion.",
+    "required": "Benötigte Mittel:",
+    "available": "Verfügbare Staatskasse:",
+    "shortage": "Fehlbetrag:",
+    "takeLoan": "Kredit aufnehmen",
+    "sponsor": "{title} sponsern"
+  }
+}

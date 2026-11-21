@@ -1,0 +1,69 @@
+{
+  "title": "Preiskontrolle für Grundbedarf",
+  "monthUnit": "Monat",
+  "tabs": { "essentials": "Grundbedarf", "subsidyPolicy": "Subventionspolitik" },
+  "subsidy": {
+    "title": "Subventionszuweisung und -politik",
+    "infoButton": "Informationen zu Subventionszuweisung und -politik",
+    "confirm": "Bestätigen",
+    "categories": { "all": "Alle Bereiche" },
+    "summary": {
+      "totalBudget": "Gesamtes Subventionsbudget",
+      "activeSectors": "Aktive Bereiche / Gesamt",
+      "sectorCount": "{active} von {total} Bereichen",
+      "approvalSupport": "Unterstützung der öffentlichen Zustimmung",
+      "approvalValue": "+{percent}% Zustimmung",
+      "populationImpact": "Netto-Bevölkerungseffekt",
+      "saved": "Subventionszuweisung erfolgreich aktualisiert!"
+    },
+    "sidebarLabel": "Kategorien der Subventionspolitik",
+    "viewDetails": "Richtliniendetails anzeigen",
+    "viewItemDetails": "Details zur Subvention {item} anzeigen",
+    "enableItem": "Subvention {item} aktivieren",
+    "disableItem": "Subvention {item} deaktivieren",
+    "info": {
+      "title": "Informationen zu Subventionszuweisung und -politik",
+      "description": "Wählen Sie Subventionsprogramme für verschiedene Bereiche und prüfen Sie deren monatliche Kosten, bevor Sie Zuweisungen ändern. Subventionen werden aus dem Staatshaushalt finanziert und können Zustimmung sowie Bevölkerungswachstum beeinflussen.",
+      "satisfaction": "Zufriedenheitsindex der Bevölkerung (Subventionen)"
+    },
+    "confirmation": {
+      "title": "Subventionspolitik bestätigen",
+      "description": "Die Änderungen der Subventionszuweisung werden übernommen. Fortfahren?",
+      "back": "Zurück",
+      "confirm": "Ja, bestätigen"
+    }
+  },
+  "infoButton": "Informationen zur Preiskontrolle",
+  "confirm": "Bestätigen",
+  "loading": "Nationale Preisdaten werden geladen...",
+  "noData": "Für dieses Land sind keine Preisdaten verfügbar.",
+  "currentValue": "Aktueller Wert",
+  "populationImpact": "Auswirkung auf die Bevölkerung",
+  "subsidyActive": "Subvention für Grundbedarf: aktiv",
+  "errors": {
+    "loadFailed": "Preisdaten konnten nicht aus der Datenbank geladen werden."
+  },
+  "commodities": {
+    "rice": "Reis",
+    "beef": "Rindfleisch",
+    "chicken": "Hähnchen",
+    "cookingOil": "Speiseöl",
+    "sugar": "Zucker",
+    "eggs": "Eier",
+    "electricity": "Strom",
+    "water": "Wasser"
+  },
+  "info": {
+    "title": "Informationen zur Preiskontrolle für Grundbedarf",
+    "description": "Legen Sie nationale Preise für Grundbedarf fest. Die Preise beeinflussen die Zufriedenheit und die Bevölkerungsentwicklung.",
+    "satisfaction": "Zufriedenheitsindex der Bevölkerung (Grundbedarfspreise)",
+    "populationImpact": "Auswirkung der Grundbedarfspreise auf die Bevölkerung: {percent}% / Monat"
+  },
+  "confirmation": {
+    "title": "Preispolitik bestätigen",
+    "changesApply": "Die Preisänderungen für Grundbedarf werden übernommen. Fortfahren?",
+    "noChanges": "Es wurden keine Preise geändert. Bestätigen Sie, um zum Forum zurückzukehren.",
+    "back": "Zurück",
+    "yes": "Ja, bestätigen"
+  }
+}

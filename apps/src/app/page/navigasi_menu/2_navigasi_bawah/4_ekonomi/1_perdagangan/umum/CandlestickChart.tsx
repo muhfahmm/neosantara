@@ -2,6 +2,7 @@
 
 import { memo } from 'react';
 import type { PriceCandle, PriceTimeRange } from './priceHistoryLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface CandlestickChartProps {
   series: readonly PriceCandle[];
@@ -9,33 +10,33 @@ interface CandlestickChartProps {
   currentPrice: number;
 }
 
-function formatPrice(price: number): string {
-  return String(Math.round(price));
+function formatPrice(price: number, locale: string): string {
+  return Math.round(price).toLocaleString(locale);
 }
 
-function formatVolume(volume: number): string {
-  return volume.toLocaleString('id-ID', { maximumFractionDigits: 1 });
+function formatVolume(volume: number, locale: string): string {
+  return volume.toLocaleString(locale, { maximumFractionDigits: 1 });
 }
 
-function formatXLabel(candle: PriceCandle, range: PriceTimeRange): string {
+function formatXLabel(candle: PriceCandle, range: PriceTimeRange, locale: string): string {
   const date = new Date(candle.time);
   if (range === '1d') {
     return `${date.getUTCHours()}:${String(date.getUTCMinutes()).padStart(2, '0')}`;
   }
   if (range === '1w') {
-    return date.toLocaleDateString('id-ID', {
+    return date.toLocaleDateString(locale, {
       timeZone: 'UTC',
       weekday: 'short',
       day: 'numeric',
       month: 'short',
     });
   }
-  return date.toLocaleDateString('id-ID', { timeZone: 'UTC', day: 'numeric', month: 'short' });
+  return date.toLocaleDateString(locale, { timeZone: 'UTC', day: 'numeric', month: 'short' });
 }
 
-function formatTooltipTime(candle: PriceCandle, range: PriceTimeRange): string {
+function formatTooltipTime(candle: PriceCandle, range: PriceTimeRange, locale: string): string {
   const date = new Date(candle.time);
-  return date.toLocaleString('id-ID', {
+  return date.toLocaleString(locale, {
     timeZone: 'UTC',
     ...(range === '1d'
       ? { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }
@@ -48,10 +49,11 @@ function CandlestickChart({
   timeRange,
   currentPrice,
 }: CandlestickChartProps) {
+  const { language, t } = useLanguage();
   if (series.length < 2) {
     return (
       <div className="w-full h-[262px] flex items-center justify-center text-xs text-root-subtle">
-        Tidak ada data harga
+        {t('navigation_economy_trade.transaction.noPriceData')}
       </div>
     );
   }
@@ -105,7 +107,7 @@ function CandlestickChart({
                 fontSize="9"
                 fill="#6B8A8A"
               >
-                {formatPrice(price)}
+                {formatPrice(price, language)}
               </text>
             </g>
           );
@@ -113,10 +115,10 @@ function CandlestickChart({
         <line x1={padding.left} y1={padding.top} x2={padding.left} y2={height - padding.bottom} stroke="rgba(0, 255, 170, 0.2)" />
         <line x1={padding.left} y1={height - padding.bottom} x2={width - padding.right} y2={height - padding.bottom} stroke="rgba(0, 255, 170, 0.2)" />
         <text x={padding.left} y={height - 3} textAnchor="middle" fontSize="9" fill="#6B8A8A">
-          {formatXLabel(series[0], timeRange)}
+          {formatXLabel(series[0], timeRange, language)}
         </text>
         <text x={width - padding.right} y={height - 3} textAnchor="middle" fontSize="9" fill="#6B8A8A">
-          {formatXLabel(series[series.length - 1], timeRange)}
+          {formatXLabel(series[series.length - 1], timeRange, language)}
         </text>
 
         {series.map((candle, index) => {
@@ -128,12 +130,12 @@ function CandlestickChart({
           const isUp = candle.close >= candle.open;
           const color = isUp ? '#00FFAA' : '#ff4d4d';
           const tooltip = [
-            formatTooltipTime(candle, timeRange),
-            `O ${formatPrice(candle.open)}`,
-            `H ${formatPrice(candle.high)}`,
-            `L ${formatPrice(candle.low)}`,
-            `C ${formatPrice(candle.close)}`,
-            `Volume ${formatVolume(candle.volume)}`,
+            formatTooltipTime(candle, timeRange, language),
+            `O ${formatPrice(candle.open, language)}`,
+            `H ${formatPrice(candle.high, language)}`,
+            `L ${formatPrice(candle.low, language)}`,
+            `C ${formatPrice(candle.close, language)}`,
+            `${t('navigation_economy_trade.transaction.volume')} ${formatVolume(candle.volume, language)}`,
           ].join(' | ');
           return (
             <g
@@ -165,7 +167,7 @@ function CandlestickChart({
         />
         <circle cx={width - padding.right} cy={yScale(currentPrice)} r="4" fill="#00FFAA" stroke="#0A1A1A" strokeWidth="2" />
         <text x={width - padding.right + 5} y={yScale(currentPrice) + 3} fontSize="9" fill="#00FFAA" fontWeight="bold">
-          {formatPrice(currentPrice)} NEO
+          {formatPrice(currentPrice, language)} NEO
         </text>
       </svg>
 
@@ -184,7 +186,7 @@ function CandlestickChart({
           const barWidth = Math.min(12, (chartWidth / series.length) * 0.65);
           const barHeight = Math.max(1, (candle.volume / maxVolume) * 30);
           const color = candle.close >= candle.open ? '#00FFAA' : '#ff4d4d';
-          const tooltip = `${formatTooltipTime(candle, timeRange)} | Volume ${formatVolume(candle.volume)}`;
+          const tooltip = `${formatTooltipTime(candle, timeRange, language)} | ${t('navigation_economy_trade.transaction.volume')} ${formatVolume(candle.volume, language)}`;
           return (
             <g
               key={timeRange === '1d' ? `volume-hour-${index}` : `volume-${candle.time}-${index}`}

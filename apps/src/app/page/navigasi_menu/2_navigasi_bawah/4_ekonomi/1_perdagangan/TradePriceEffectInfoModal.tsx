@@ -4,6 +4,7 @@ import { ArrowRightLeft } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 export interface TradePriceBonus {
   id: string;
@@ -25,6 +26,7 @@ export default function TradePriceEffectInfoModal({
   onClose,
   bonuses,
 }: TradePriceEffectInfoModalProps) {
+  const { t } = useLanguage();
   if (!isOpen) return null;
 
   return (
@@ -37,7 +39,7 @@ export default function TradePriceEffectInfoModal({
     >
       <div className="flex min-w-0 flex-col overflow-hidden">
         <RootInfoModalHeader
-          title="Informasi Efek Harga Perdagangan"
+          title={t("navigation_economy_trade.priceEffects.title")}
           onClose={onClose}
           size="standard"
           icon={<ArrowRightLeft aria-hidden="true" />}
@@ -47,17 +49,17 @@ export default function TradePriceEffectInfoModal({
           {bonuses.length === 0 ? (
             <div className="p-4 rounded-xl bg-root-canvas border border-root-accent/20 text-center space-y-2">
               <p className={`${rootModalTypography.body} break-words`}>
-                Belum ada bonus harga perdagangan yang aktif.
+                {t("navigation_economy_trade.priceEffects.emptyTitle")}
               </p>
               <p className={`${rootModalTypography.body} ${rootModalTypography.muted} mx-auto max-w-lg break-words`}>
-                Bergabunglah dengan WTO atau OPEC, tingkatkan Kementerian Perdagangan, riset Diplomasi Dagang, atau terapkan agama terkait.
+                {t("navigation_economy_trade.priceEffects.emptyDescription")}
               </p>
             </div>
           ) : (
             <div className="space-y-2">
               <div className="flex items-center justify-between pb-1 border-b border-root-accent/15">
                 <span className="text-[10px] font-black uppercase tracking-wider text-root-accent">
-                  Daftar Bonus Aktif ({bonuses.length})
+                  {t("navigation_economy_trade.priceEffects.activeBonuses", { count: bonuses.length })}
                 </span>
               </div>
 

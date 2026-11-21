@@ -1,0 +1,40 @@
+{
+  "title": "Steuern",
+  "infoButton": "Informationen zur Steuerpolitik",
+  "confirm": "Bestätigen",
+  "taxes": {
+    "policyTitle": "Steuerpolitik",
+    "vat": "Mehrwertsteuer (MwSt.)",
+    "corporate": "Körperschaftsteuer",
+    "personalIncome": "Einkommensteuer",
+    "excise": "Verbrauchsteuer",
+    "environmental": "Umweltsteuer"
+  },
+  "bonuses": {
+    "orthodoxPersonal": "Bonus der orthodoxen Kirche: Einnahmen aus der Einkommensteuer +{percent}%",
+    "buddhaEnvironmental": "Buddhistischer Bonus: Einnahmen aus der Umweltsteuer +{percent}%",
+    "ministry": "Bonus des Finanzministeriums: gesamte Steuereinnahmen +{percent}% (+{amount} NEO)",
+    "democracy": "Demokratiebonus: gesamte Steuereinnahmen +{percent}%",
+    "capitalism": "Kapitalismusbonus: gesamte Steuereinnahmen +{percent}%",
+    "liberalism": "Liberalismusbonus: gesamte Steuereinnahmen +{percent}%",
+    "conservatism": "Konservatismusbonus: gesamte Steuereinnahmen +{percent}%",
+    "fiscalHarmony": "Bonus für globale Steuerharmonisierung: gesamte Steuereinnahmen +{percent}%"
+  },
+  "summary": {
+    "totalRevenue": "Gesamte Steuereinnahmen",
+    "bonus": "+ Bonus ({percent} %) =",
+    "populationImpact": "Steuerbedingte Bevölkerungswirkung: {percent}% / Monat"
+  },
+  "info": {
+    "title": "Informationen zur Steuerpolitik",
+    "description": "Passen Sie die nationalen Steuersätze an, um Militärausgaben und öffentliche Infrastruktur zu finanzieren. Achtung: Hohe Steuern können Proteste auslösen.",
+    "satisfaction": "Zufriedenheitsindex der Bevölkerung (Steuern)"
+  },
+  "confirmation": {
+    "title": "Steuerforderung bestätigen",
+    "changesApply": "Die ausgewählten Steuersatzänderungen werden übernommen. Fortfahren?",
+    "noChanges": "Es wurden keine Steuersätze geändert. Bestätigen Sie, um zum Forum zurückzukehren.",
+    "back": "Zurück",
+    "yes": "Ja, bestätigen"
+  }
+}

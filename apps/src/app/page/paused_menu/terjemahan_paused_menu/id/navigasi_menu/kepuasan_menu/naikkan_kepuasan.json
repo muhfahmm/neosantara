@@ -1,0 +1,50 @@
+{
+  "title": "Kepuasan Rakyat",
+  "infoButton": "Informasi peningkatan kepuasan rakyat",
+  "civilSatisfaction": "Kepuasan Sipil:",
+  "statisticsTab": "Statistik",
+  "increaseTab": "Naikkan Kepuasan",
+  "events": {
+    "concert": "Konser",
+    "festival": "Festival",
+    "carnival": "Karnaval",
+    "davisCup": "Piala Davis",
+    "rugbyWorldCup": "Piala Dunia Rugbi",
+    "olympics": "Olimpiade",
+    "fifaWorldCup": "Piala Dunia FIFA",
+    "f1Race": "Balap F1"
+  },
+  "finished": "Selesai: {date}",
+  "satisfactionBonus": "+{value}% Kepuasan",
+  "sportsBonus": "+Bonus Kementerian Olahraga ({value}%)",
+  "duration": "Durasi: {days} hari",
+  "ongoing": "Sedang Berlangsung",
+  "chooseEvent": "Pilih Acara",
+  "feedback": {
+    "success": "Presiden meluncurkan program {title}! Anggaran berkurang -{cost} NEO. Acara berlangsung selama {duration} hari dan akan selesai serta meningkatkan kepuasan pada {endDate}."
+  },
+  "info": {
+    "title": "Informasi Peningkatan Kepuasan Rakyat",
+    "statisticsTitle": "Tab Statistik",
+    "statisticsDescription": "Menampilkan dashboard lengkap kondisi kepuasan rakyat saat ini. Berisi grafik historis, faktor-faktor yang memengaruhi kepuasan (ekonomi, keamanan, layanan publik), serta proyeksi tren beberapa hari ke depan.",
+    "statisticsUse": "Cocok untuk: analisis mendalam sebelum mengambil keputusan strategis.",
+    "increaseTitle": "Tab Naikkan Kepuasan",
+    "increaseDescription": "Menampilkan daftar acara dan program publik yang bisa diluncurkan presiden untuk meningkatkan kepuasan rakyat. Setiap acara memiliki biaya, durasi, dan peningkatan kepuasan tersendiri.",
+    "eventCompletion": "Acara berjalan sesuai durasi; peningkatan kepuasan berlaku setelah acara selesai.",
+    "singleEvent": "Satu acara hanya bisa aktif satu kali dalam satu waktu.",
+    "diplomacyBonus": "Bonus riset Diplomasi Acara dapat meningkatkan efek acara secara signifikan.",
+    "tip": "Tips: Cek tab Statistik terlebih dahulu untuk melihat kondisi kepuasan saat ini, lalu pilih acara yang paling cocok di tab Naikkan Kepuasan.",
+    "understood": "Mengerti"
+  },
+  "insufficientFunds": {
+    "title": "Dana Tidak Mencukupi",
+    "closeLabel": "Tutup modal dana tidak mencukupi",
+    "failed": "{action} gagal!",
+    "description": "Kas negara tidak mencukupi untuk melaksanakan aksi ini.",
+    "required": "Dana dibutuhkan:",
+    "available": "Kas tersedia:",
+    "shortage": "Kekurangan dana:",
+    "takeLoan": "Ambil Pinjaman",
+    "sponsor": "Sponsori {title}"
+  }
+}

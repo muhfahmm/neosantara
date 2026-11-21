@@ -1,0 +1,95 @@
+{
+  "title": "Economic Policy & System",
+  "infoButton": "Economic policy and system information",
+  "ariaLabel": "Economic policy and system sections",
+  "monthUnit": "month",
+  "yearUnit": "year",
+  "tabs": { "spectrum": "System Spectrum", "policies": "Policy Cards", "ownership": "Production Ownership" },
+  "satisfaction": "Public Satisfaction Index (Economic Policy)",
+  "info": {
+    "title": "Economic Policy & System Information",
+    "description": "Set the economic system spectrum, choose sector policies, and adjust ownership or nationalization levels for production sectors. These choices shape the economy and the state's share of profits."
+  },
+  "spectrum": {
+    "populationImpact": "Population impact",
+    "policyScore": "Policy score: {score}/100",
+    "category": "Category: {category}",
+    "centralizedScale": "0% CENTRALLY PLANNED",
+    "freeMarketScale": "100% FREE MARKET",
+    "netPopulationImpact": "Net Population Impact",
+    "gdpGrowthBonus": "GDP Growth Bonus",
+    "categories": { "centralized": "Centralized", "mixed": "Mixed", "freeMarket": "Free Market" },
+    "presets": { "command": "Command", "socialism": "Socialism", "mixed": "Mixed", "regulatedMarket": "Regulated Market", "laissezFaire": "Laissez-Faire" },
+    "systems": {
+      "command": { "title": "Command Economy", "description": "The government has full control over prices, production quotas, and resource allocation. State-owned enterprises dominate every economic sector." },
+      "marketSocialism": { "title": "Market Socialism", "description": "The state controls vital sectors through strict regulation, while small and medium businesses may operate under capped returns." },
+      "mixed": { "title": "Mixed Economy", "description": "A balance between government regulation and private-market freedom. The state manages essential public services." },
+      "regulatedMarket": { "title": "Regulated Market", "description": "Private markets drive economic growth. The government focuses on competition oversight and macroeconomic stability." },
+      "laissezFaire": { "title": "Laissez-Faire / Free Capitalism", "description": "Full deregulation and unrestricted markets. Business competition follows the laws of supply and demand." }
+    }
+  },
+  "policies": {
+    "price_control": {
+      "name": "Essential Goods Price Control",
+      "optionA": { "label": "State Price Ceiling", "effect": "Prices remain stable, but the risk of shortages increases." },
+      "optionB": { "label": "Free Market Pricing", "effect": "Goods remain plentiful, but sudden inflation spikes are more likely." }
+    },
+    "strategic_ownership": {
+      "name": "Strategic Industry Ownership",
+      "optionA": { "label": "State Monopoly / Nationalization", "effect": "National treasury revenue rises, but operational efficiency falls." },
+      "optionB": { "label": "Privatization & Private Investors", "effect": "Innovation and efficiency improve rapidly, but state royalties shrink." }
+    },
+    "trade_policy": {
+      "name": "Foreign Trade Regulation",
+      "optionA": { "label": "Strict Protectionism", "effect": "Domestic industries are protected, but consumer choice is limited." },
+      "optionB": { "label": "Free Trade", "effect": "Imports and exports grow quickly, but local industries face tougher competition." }
+    },
+    "labor_regulation": {
+      "name": "Labor & Minimum Wage Policy",
+      "optionA": { "label": "High Minimum Wage & Strict Protections", "effect": "Workers' welfare improves, but foreign investment becomes less attractive." },
+      "optionB": { "label": "Flexible Work & Open Contracts", "effect": "Employment rises, but social inequality may increase." }
+    },
+    "land_property_rights": {
+      "name": "Land & Property Rights",
+      "optionA": { "label": "State Ownership & Communal Use", "effect": "The state owns land and housing; people receive communal usage rights." },
+      "optionB": { "label": "Absolute Private Property Rights", "effect": "Land and property can be freely bought and sold." }
+    },
+    "labor_unions_rights": {
+      "name": "Union Rights vs. Management Rights",
+      "optionA": { "label": "State Unions & Workers' Councils", "effect": "Unions become state bodies, and collective worker councils participate in factory management." },
+      "optionB": { "label": "Free Labor Market", "effect": "Private management leads; strikes may be restricted to keep supply chains running." }
+    },
+    "monetary_banking": {
+      "name": "Monetary & Banking Policy",
+      "optionA": { "label": "Single Central Bank & Currency Controls", "effect": "Banks are state-owned; currency is controlled and capital flight is restricted." },
+      "optionB": { "label": "Private Banking & Free Capital Flows", "effect": "Competitive banking and unrestricted capital flows in and out." }
+    }
+  },
+  "ownership": {
+    "level": "Level",
+    "stateShare": "State share: {percent}%",
+    "calculatingElectricity": "Calculating estimated electricity surplus...",
+    "electricityEstimate": "Estimated state share of surplus: {surplus} MW × {price} NEO × {percent}% = {amount} NEO. This estimate is not included in the national budget because electricity has no buy/sell transactions yet.",
+    "errors": {
+      "noMetadata": "Power plant metadata is unavailable; surplus cannot be estimated.",
+      "loadFailed": "Failed to load power plant metadata."
+    },
+    "sectors": {
+      "electricity": "Electricity",
+      "mineralsEnergy": "Minerals & Energy",
+      "manufacturing": "Manufacturing",
+      "livestock": "Livestock",
+      "agriculture": "Agriculture",
+      "fisheries": "Fisheries",
+      "foodProcessing": "Food Processing"
+    },
+    "levels": {
+      "marketFree": { "name": "Free Market", "description": "The private sector manages this sector; the state receives basic taxes and royalties." },
+      "strictRegulation": { "name": "Strict Regulation", "description": "The state regulates prices and quotas while private operators remain dominant." },
+      "mixed": { "name": "Mixed Economy", "description": "The state holds a majority stake and oversees private operators." },
+      "stateDominance": { "name": "State Dominance", "description": "The state controls nearly all productive assets." },
+      "fullNationalization": { "name": "Full Nationalization", "description": "All productive assets are managed by the state." }
+    }
+  }
+}
+
