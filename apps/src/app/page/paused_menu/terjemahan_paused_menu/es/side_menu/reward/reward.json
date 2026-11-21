@@ -51,5 +51,8 @@
     "minyak_goreng": "Aceite de Cocina",
     "susu": "Leche Fresca",
     "beras": "Arroz"
-  }
+  },
+  "cannotClaimTitle": "Aún no se puede reclamar la recompensa",
+  "cannotClaimDesc": "Selecciona o carga un país antes de reclamar la recompensa.",
+  "closeFeedback": "Cerrar retroalimentación"
 }

@@ -51,5 +51,8 @@
     "minyak_goreng": "Minyak Goreng",
     "susu": "Susu Segar",
     "beras": "Beras"
-  }
+  },
+  "cannotClaimTitle": "Hadiah Belum Dapat Diklaim",
+  "cannotClaimDesc": "Pilih atau muat negara terlebih dahulu sebelum mengklaim hadiah.",
+  "closeFeedback": "Tutup feedback"
 }

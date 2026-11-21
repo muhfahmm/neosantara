@@ -51,5 +51,8 @@
     "minyak_goreng": "食用油",
     "susu": "鲜奶",
     "beras": "大米"
-  }
+  },
+  "cannotClaimTitle": "奖励尚不可领取",
+  "cannotClaimDesc": "请先选择或加载国家再领取奖励。",
+  "closeFeedback": "关闭提示"
 }

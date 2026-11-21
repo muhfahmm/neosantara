@@ -51,5 +51,8 @@
     "minyak_goreng": "食用油",
     "susu": "牛乳",
     "beras": "精米"
-  }
+  },
+  "cannotClaimTitle": "報酬はまだ受け取れません",
+  "cannotClaimDesc": "報酬を受け取る前に国を選択またはロードしてください。",
+  "closeFeedback": "フィードバックを閉じる"
 }

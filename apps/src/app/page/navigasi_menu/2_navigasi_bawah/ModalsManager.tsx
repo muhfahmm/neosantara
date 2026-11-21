@@ -126,6 +126,7 @@ function ModalsManager({
   onRemoveNotification,
   onOpenInbox,
 }: ModalsManagerProps) {
+  const { t } = useLanguage();
   const [metadata, setMetadata] = useState<Record<string, any>>(() => initialMetadata || {});
 
   useEffect(() => {
@@ -337,15 +338,15 @@ function ModalsManager({
         >
           <div className="border-b border-rose-500/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
             <h2 id="economic-embargo-access-title" className="text-[length:var(--modal-font-title)] font-black uppercase tracking-wide text-rose-400">
-              Akses dibatasi oleh embargo ekonomi
+              {t('game.embargoTitle')}
             </h2>
           </div>
           <div className="space-y-4 px-4 py-4 text-sm leading-relaxed text-slate-300 sm:px-6 sm:py-5">
             <p>
-              Negara {selectedCountry.country} tidak dapat mengakses Pasar Perdagangan Global atau Pinjaman & Hutang selama embargo ekonomi aktif.
+              {t('game.embargoCountryDesc', { country: selectedCountry.country || '' })}
             </p>
             <p className="text-xs text-root-subtle">
-              Pembatasan berakhir ketika resolusi embargo tidak lagi aktif. Embargo dan sanksi yang berlaku saat ini akan hilang setelah halaman dimuat ulang.
+              {t('game.embargoNotice')}
             </p>
           </div>
           <div className="flex justify-end border-t border-root-accent/15 bg-root-canvas px-4 py-3 sm:px-6 sm:py-4">
@@ -354,7 +355,7 @@ function ModalsManager({
               onClick={onClose}
               className="rounded-xl bg-root-accent px-5 py-2.5 text-xs font-black uppercase tracking-wider text-root-canvas transition-colors hover:bg-root-accent/80 cursor-pointer"
             >
-              Mengerti
+              {t('game.embargoUnderstand')}
             </button>
           </div>
         </div>

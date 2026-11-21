@@ -51,5 +51,8 @@
     "minyak_goreng": "식용유",
     "susu": "우유",
     "beras": "쌀"
-  }
+  },
+  "cannotClaimTitle": "아직 보상을 받을 수 없습니다",
+  "cannotClaimDesc": "보상을 받기 전에 먼저 국가를 선택하거나 로드하세요.",
+  "closeFeedback": "피드백 닫기"
 }

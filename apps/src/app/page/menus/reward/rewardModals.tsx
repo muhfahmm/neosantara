@@ -313,8 +313,8 @@ export default function TopRightGiftIcon({
     const reward = weeklyRewards[currentDay - 1];
     if (!canClaimReward || !reward) {
       setFeedbackModal({
-        title: 'Hadiah Belum Dapat Diklaim',
-        message: 'Pilih atau muat negara terlebih dahulu sebelum mengklaim hadiah.',
+        title: t('side_reward.cannotClaimTitle'),
+        message: t('side_reward.cannotClaimDesc'),
         variant: 'danger',
       });
       return;
@@ -534,7 +534,7 @@ export default function TopRightGiftIcon({
               title={feedbackModal.title}
               onClose={() => setFeedbackModal(null)}
               icon={feedbackModal.variant === 'success' ? <Check /> : <AlertTriangle />}
-              closeAriaLabel="Tutup feedback"
+              closeAriaLabel={t('side_reward.closeFeedback')}
               size="compact"
             />
 
@@ -562,7 +562,7 @@ export default function TopRightGiftIcon({
                     type="button"
                     className="px-4 py-1.5 bg-root-surface hover:bg-[#1A3838] border border-root-accent/30 rounded-lg text-root-subtle hover:text-white font-black text-xs uppercase tracking-wider cursor-pointer transition-all"
                   >
-                    {feedbackModal.cancelLabel ?? 'Batal'}
+                    {feedbackModal.cancelLabel ?? t('common.cancel')}
                   </button>
                   <button
                     onClick={feedbackModal.onConfirm ?? (() => setFeedbackModal(null))}

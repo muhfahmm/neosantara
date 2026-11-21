@@ -51,5 +51,8 @@
     "minyak_goreng": "Speiseöl",
     "susu": "Frischmilch",
     "beras": "Reis"
-  }
+  },
+  "cannotClaimTitle": "Belohnung kann noch nicht beansprucht werden",
+  "cannotClaimDesc": "Wählen oder laden Sie zuerst ein Land, bevor Sie die Belohnung beanspruchen.",
+  "closeFeedback": "Feedback schließen"
 }

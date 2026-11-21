@@ -134,5 +134,9 @@
     "pbbCoalition": "Pasukan Gabungan PBB",
     "attackingCountry": "Negara penyerang"
   },
-  "embargoBanner": "Pembatasan berakhir ketika resolusi embargo tidak lagi aktif. Embargo dan sanksi yang berlaku saat ini akan hilang setelah halaman dimuat ulang."
+  "embargoBanner": "Pembatasan berakhir ketika resolusi embargo tidak lagi aktif. Embargo dan sanksi yang berlaku saat ini akan hilang setelah halaman dimuat ulang.",
+  "embargoTitle": "Akses dibatasi oleh embargo ekonomi",
+  "embargoCountryDesc": "Negara {country} tidak dapat mengakses Pasar Perdagangan Global atau Pinjaman & Hutang selama embargo ekonomi aktif.",
+  "embargoNotice": "Pembatasan berakhir ketika resolusi embargo tidak lagi aktif. Embargo dan sanksi yang berlaku saat ini akan hilang setelah halaman dimuat ulang.",
+  "embargoUnderstand": "Mengerti"
 }

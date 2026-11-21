@@ -134,5 +134,9 @@
     "pbbCoalition": "Gemeinsame UN-Streitkräfte",
     "attackingCountry": "Angreifende Nation"
   },
-  "embargoBanner": "Die Beschränkungen enden, sobald die Embargo-Resolution nicht mehr aktiv ist. Derzeit gültige Embargos und Sanktionen verschwinden nach dem Neuladen der Seite."
+  "embargoBanner": "Die Beschränkungen enden, sobald die Embargo-Resolution nicht mehr aktiv ist. Derzeit gültige Embargos und Sanktionen verschwinden nach dem Neuladen der Seite.",
+  "embargoTitle": "Zugang durch Wirtschaftsembargo eingeschränkt",
+  "embargoCountryDesc": "{country} kann während eines aktiven Wirtschaftsembargos weder auf den globalen Handelsmarkt noch auf Staatskredite zugreifen.",
+  "embargoNotice": "Die Beschränkungen enden, sobald die Embargo-Resolution nicht mehr aktiv ist. Derzeit gültige Embargos und Sanktionen werden nach dem Neuladen der Seite aufgehoben.",
+  "embargoUnderstand": "Verstanden"
 }

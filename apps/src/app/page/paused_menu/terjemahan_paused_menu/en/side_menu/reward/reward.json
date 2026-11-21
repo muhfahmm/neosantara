@@ -51,5 +51,8 @@
     "minyak_goreng": "Cooking Oil",
     "susu": "Fresh Milk",
     "beras": "Rice"
-  }
+  },
+  "cannotClaimTitle": "Reward Cannot Be Claimed Yet",
+  "cannotClaimDesc": "Select or load a country before claiming the reward.",
+  "closeFeedback": "Close feedback"
 }

@@ -134,5 +134,9 @@
     "pbbCoalition": "UN Joint Coalition Forces",
     "attackingCountry": "Attacking nation"
   },
-  "embargoBanner": "Restrictions end when the embargo resolution is no longer active. Currently effective embargoes and sanctions will be cleared after reloading the page."
+  "embargoBanner": "Restrictions end when the embargo resolution is no longer active. Currently effective embargoes and sanctions will be cleared after reloading the page.",
+  "embargoTitle": "Access restricted by economic embargo",
+  "embargoCountryDesc": "{country} cannot access Global Trade Market or State Loans & Debts while economic embargo is active.",
+  "embargoNotice": "Restrictions end when the embargo resolution is no longer active. Currently effective embargoes and sanctions will clear after reloading the page.",
+  "embargoUnderstand": "Understood"
 }

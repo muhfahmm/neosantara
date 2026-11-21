@@ -134,5 +134,9 @@
     "pbbCoalition": "Fuerzas Conjuntas de la ONU",
     "attackingCountry": "Nación atacante"
   },
-  "embargoBanner": "Las restricciones finalizan cuando la resolución de embargo ya no esté activa. Los embargos y sanciones actualmente vigentes desaparecerán después de recargar la página."
+  "embargoBanner": "Las restricciones finalizan cuando la resolución de embargo ya no esté activa. Los embargos y sanciones actualmente vigentes desaparecerán después de recargar la página.",
+  "embargoTitle": "Acceso restringido por embargo económico",
+  "embargoCountryDesc": "{country} no puede acceder al Mercado Global de Comercio ni a Préstamos Estatales mientras el embargo económico esté activo.",
+  "embargoNotice": "Las restricciones terminan cuando la resolución de embargo deja de estar activa. Los embargos y sanciones actuales desaparecerán tras recargar la página.",
+  "embargoUnderstand": "Entendido"
 }
