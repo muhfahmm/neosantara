@@ -15,6 +15,7 @@ import InfoArmadaAktifModal from "../modals_info/1_info_armada_aktif_modal";
 import { REQUIREMENTS as INFANTERI_REQUIREMENTS, findRequirements as findInfanteriRequirements } from "../construction_support/1_barak_militer/requirements";
 import { getBuildingMetadata } from "@/lib/buildingMetadataRegistry";
 import { BuildingCardGridRoot, BuildingCardRoot } from "@/app/page/root_modals_design_menu/card_building_root";
+import { useMilitaryMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useMilitaryMenuTranslation";
 
 interface TabProps {
   countryDetail: any;
@@ -66,20 +67,20 @@ const groupMeta = {
 };
 const groupKeys = Object.keys(groupMeta) as (keyof typeof groupMeta)[];
 
-const formatNumber = (value: unknown) => {
+const formatNumber = (value: unknown, locale: string) => {
   const numeric = Number(value ?? 0);
-  return Number.isFinite(numeric) ? numeric.toLocaleString("id-ID", { maximumFractionDigits: 2 }) : "0";
+  return Number.isFinite(numeric) ? numeric.toLocaleString(locale, { maximumFractionDigits: 2 }) : "0";
 };
 
 // Format Tanggal
-const formatBadgeDate = (dateString: string) => {
+const formatBadgeDate = (dateString: string, locale: string) => {
   if (!dateString) return '';
   try {
     const [y, m, d] = dateString.split('-').map(Number);
     const date = new Date(y, m - 1, d);
     if (isNaN(date.getTime())) return dateString;
     const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
-    const parts = new Intl.DateTimeFormat('id-ID', options).formatToParts(date);
+    const parts = new Intl.DateTimeFormat(locale, options).formatToParts(date);
     const day = parts.find((p) => p.type === 'day')?.value || '';
     const month = parts.find((p) => p.type === 'month')?.value || '';
     const year = parts.find((p) => p.type === 'year')?.value || '';
@@ -121,6 +122,7 @@ const getSafeDateString = (currentDate?: string | Date, gameDate?: string): stri
 };
 
 export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCountryDetail, onCapacityFull, highlightKey, onGotoProduction, currentDate }: TabProps) {
+  const { language, translate: tr } = useMilitaryMenuTranslation();
   const viewportMode = useViewportMode();
   const unitBreakdown = getArmadaUnitBreakdown(countryDetail || {});
 
@@ -148,12 +150,12 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
     if (group === "laut") {
       const cap = getInfraCapacityDetails("pangkalan_laut", countryDetail);
       if (!cap) return "0 / 0";
-      return `${formatNumber(cap.used)} / ${formatNumber(cap.totalCapacity)}`;
+      return `${formatNumber(cap.used, language)} / ${formatNumber(cap.totalCapacity, language)}`;
     }
     if (group === "udara") {
       const cap = getInfraCapacityDetails("pangkalan_udara", countryDetail);
       if (!cap) return "0 / 0";
-      return `${formatNumber(cap.used)} / ${formatNumber(cap.totalCapacity)}`;
+      return `${formatNumber(cap.used, language)} / ${formatNumber(cap.totalCapacity, language)}`;
     }
     if (group === "darat") {
       const barakCap = getInfraCapacityDetails("barak", countryDetail);
@@ -161,7 +163,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
       const gudangCap = getInfraCapacityDetails("gudang_senjata", countryDetail);
       const totalUsed = (barakCap?.used || 0) + (hangarCap?.used || 0) + (gudangCap?.used || 0);
       const totalCap = (barakCap?.totalCapacity || 0) + (hangarCap?.totalCapacity || 0) + (gudangCap?.totalCapacity || 0);
-      return `${formatNumber(totalUsed)} / ${formatNumber(totalCap)}`;
+      return `${formatNumber(totalUsed, language)} / ${formatNumber(totalCap, language)}`;
     }
     return "0 / 0";
   };
@@ -304,11 +306,11 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
     let type = isRecruitment ? "recruitment" : "construction";
 
     if (isRecruitment && quantity === 0) {
-      alert("Masukkan jumlah pasukan yang ingin direkrut.");
+      alert(tr("confirmation.errorRecruitQuantity"));
       return;
     }
     if (!isRecruitment && quantity <= 0) {
-      alert("Masukkan jumlah unit yang ingin dibangun.");
+      alert(tr("confirmation.errorUnitQuantity"));
       return;
     }
 
@@ -317,7 +319,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
     const currentAnggaran = Number(countryDetail?.anggaran) || 0;
 
     if (!isRecruitment && totalCost > currentAnggaran) {
-      alert("Kas negara tidak cukup untuk membangun unit sejumlah ini.");
+      alert(tr("confirmation.errorBudget"));
       return;
     }
 
@@ -359,7 +361,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
     <div className="defense-armada-content space-y-6">
       {isNATOActive && (
         <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-xs font-bold text-emerald-300">
-          Kekuatan Militer & Total HP seluruh matra (Darat, Laut, Udara) ditingkatkan +15% oleh bonus keanggotaan NATO.
+          {tr("menu.natoBonus", { percent: 15 })}
         </div>
       )}
 
@@ -397,23 +399,25 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
               <div className="flex items-center gap-3">
                 <Icon className="h-6 w-6 text-root-accent" />
                 <h3 className="text-base font-black text-root-accent uppercase tracking-wider">
-                  Matra {groupMeta[group].title}
+                  {tr("groups.branch", {
+                    group: tr(`groups.${group === "darat" ? "land" : group === "laut" ? "sea" : "air"}`),
+                  })}
                 </h3>
               </div>
               <div className="text-right text-[10px] font-black uppercase tracking-wider text-root-subtle">
                 <p>
-                  Kekuatan:{" "}
+                  {tr("metrics.strength")}:{" "}
                   {hasPowerBonus && (
-                    <span className="mr-1 text-rose-400 line-through">{formatNumber(baseGroupPower)}</span>
+                    <span className="mr-1 text-rose-400 line-through">{formatNumber(baseGroupPower, language)}</span>
                   )}
-                  <span className="text-root-accent">{formatNumber(totalGroupPower)}</span>
+                  <span className="text-root-accent">{formatNumber(totalGroupPower, language)}</span>
                 </p>
                 <p>
-                  Total HP:{" "}
+                  {tr("metrics.totalHealth")}:{" "}
                   {hasHealthBonus && (
-                    <span className="mr-1 text-rose-400 line-through">{formatNumber(baseGroupHealth)}</span>
+                    <span className="mr-1 text-rose-400 line-through">{formatNumber(baseGroupHealth, language)}</span>
                   )}
-                  <span className="text-rose-400">{formatNumber(totalGroupHealth)}</span>
+                  <span className="text-rose-400">{formatNumber(totalGroupHealth, language)}</span>
                 </p>
               </div>
             </div>
@@ -427,11 +431,11 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
             <BuildingCardGridRoot className="defense-card-grid four-column-building-grid">
               {armadaCatalog[group].map((item) => {
                 const value = getData(item.key, group);
-                let displayText = formatNumber(value);
+                let displayText = formatNumber(value, language);
 
                 if (item.key === "barak") {
                   const infantryCount = getData("pasukan_infanteri", "darat");
-                  displayText = formatNumber(infantryCount);
+                  displayText = formatNumber(infantryCount, language);
                 }
 
                 const pendingItems = (countryDetail?.ongoingConstructions || []).filter(
@@ -448,20 +452,20 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                   <BuildingCardRoot
                     key={`${group}-${item.key}`}
                     onClick={() => {
-                      setSelectedForBuild({ key: item.key, label: item.label });
+                      setSelectedForBuild({ key: item.key, label: tr(`units.${item.key}`) });
                       setIsConfirmBuildOpen(true);
                     }}
                     className={`defense-armada-card fleet-unit-building-card cursor-pointer p-2 sm:p-2.5 min-h-[88px] sm:min-h-[96px] ${hasPending ? "fleet-has-pending-badge" : "fleet-no-pending-badge"}`}
                   >
                     {hasPending && lastEndDate && (
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[9px] sm:text-[10px] font-bold px-2 py-0.5 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
-                        {formatBadgeDate(lastEndDate)}
+                        {formatBadgeDate(lastEndDate, language)}
                       </div>
                     )}
 
                     <div className="building-card-header flex items-start justify-between mb-1.5 sm:mb-2">
                       <p className="building-card-label min-w-0 text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1.5 leading-snug">
-                        {item.label}
+                        {tr(`units.${item.key}`)}
                       </p>
                       <button
                         onClick={(e) => {
@@ -469,6 +473,8 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                           handleInfoClick(item.key);
                         }}
                         className="building-card-info-button flex-shrink-0 flex items-center justify-center rounded-full bg-root-surface border border-root-accent/30 text-root-subtle hover:text-root-accent hover:border-root-accent transition-colors cursor-pointer"
+                        title={tr("menu.infoButton")}
+                        aria-label={tr("menu.infoButton")}
                       >
                         <Info />
                       </button>
@@ -489,7 +495,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                           </span>
                           {hasPending && (
                             <span className="shrink-0 text-[8px] sm:text-[9px] font-black text-root-accent">
-                              +{formatNumber(totalPendingQuantity)}
+                              +{formatNumber(totalPendingQuantity, language)}
                             </span>
                           )}
                         </div>
@@ -587,7 +593,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
           selectedItem={allArmadaItems.find(i => i.key === infoKey)}
           selectedCategory={allArmadaItems.find(i => i.key === infoKey)?.group}
           groupMeta={groupMeta}
-          formatNumber={formatNumber}
+          formatNumber={(value) => formatNumber(value, language)}
           unitBreakdown={unitBreakdown}
           countryIdeology={countryDetail?.ideology ?? countryDetail?.ideologi}
           capacityInfo={getArmadaCapacityInfo(infoKey, countryDetail)}
@@ -597,7 +603,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
           })()}
           capacityDisplay={(() => {
             const cap = getArmadaCapacityInfo(infoKey, countryDetail);
-            return cap ? `${formatNumber(cap.used)} / ${formatNumber(cap.totalCapacity)}` : "";
+          return cap ? `${formatNumber(cap.used, language)} / ${formatNumber(cap.totalCapacity, language)}` : "";
           })()}
           onNavigateToInfra={onCapacityFull}
         />

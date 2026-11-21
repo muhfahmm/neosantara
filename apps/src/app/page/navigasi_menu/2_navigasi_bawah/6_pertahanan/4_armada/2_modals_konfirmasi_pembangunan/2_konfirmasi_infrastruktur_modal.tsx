@@ -18,6 +18,7 @@ import {
   getKapasitasPangkalanLautBonusPercent,
 } from "@/app/page/bonus_logic";
 import { calculateMaxBuildQuantity } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
+import { useMilitaryMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useMilitaryMenuTranslation";
 
 export default function KonfirmasiInfrastrukturModal({
   isOpen,
@@ -67,10 +68,13 @@ export default function KonfirmasiInfrastrukturModal({
   countryDetail,
   selectedBuildingKey,
 }: KonfirmasiPembangunanModalProps) {
+  const { language, translate: tr } = useMilitaryMenuTranslation();
+  const formatNumber = (value: number) =>
+    value.toLocaleString(language, { maximumFractionDigits: 2 });
   let capacityDisplay = "";
   switch (capacityType) {
     case "infanteri":
-      capacityDisplay = `${currentCapacity.toLocaleString("id-ID", { maximumFractionDigits: 2 })} / ${maxCapacity.toLocaleString("id-ID", { maximumFractionDigits: 2 })}`;
+      capacityDisplay = `${formatNumber(currentCapacity)} / ${formatNumber(maxCapacity)}`;
       break;
     case "hangar_tank": {
       const totalVehicles = currentTankCount + currentApcCount;
@@ -78,7 +82,7 @@ export default function KonfirmasiInfrastrukturModal({
         HANGAR_TANK_CAPACITY *
           (1 + getKapasitasHangarTankBonusPercent(countryDetail) / 100)
       );
-      capacityDisplay = `${totalVehicles.toLocaleString("id-ID", { maximumFractionDigits: 2 })} / ${(currentHangarCount * effectiveCapacity).toLocaleString("id-ID", { maximumFractionDigits: 2 })}`;
+      capacityDisplay = `${formatNumber(totalVehicles)} / ${formatNumber(currentHangarCount * effectiveCapacity)}`;
       break;
     }
     case "gudang_senjata": {
@@ -91,7 +95,7 @@ export default function KonfirmasiInfrastrukturModal({
         GUDANG_SENJATA_CAPACITY *
           (1 + getKapasitasGudangSenjataBonusPercent(countryDetail) / 100)
       );
-      capacityDisplay = `${totalWeapons.toLocaleString("id-ID", { maximumFractionDigits: 2 })} / ${(currentGudangCount * effectiveCapacity).toLocaleString("id-ID", { maximumFractionDigits: 2 })}`;
+      capacityDisplay = `${formatNumber(totalWeapons)} / ${formatNumber(currentGudangCount * effectiveCapacity)}`;
       break;
     }
     case "pangkalan_laut": {
@@ -108,7 +112,7 @@ export default function KonfirmasiInfrastrukturModal({
         PANGKALAN_LAUT_CAPACITY *
           (1 + getKapasitasPangkalanLautBonusPercent(countryDetail) / 100)
       );
-      capacityDisplay = `${totalShips.toLocaleString("id-ID", { maximumFractionDigits: 2 })} / ${(currentPangkalanLautCount * effectiveCapacity).toLocaleString("id-ID", { maximumFractionDigits: 2 })}`;
+      capacityDisplay = `${formatNumber(totalShips)} / ${formatNumber(currentPangkalanLautCount * effectiveCapacity)}`;
       break;
     }
     case "pangkalan_udara": {
@@ -125,7 +129,7 @@ export default function KonfirmasiInfrastrukturModal({
         PANGKALAN_UDARA_CAPACITY *
           (1 + getKapasitasPangkalanUdaraBonusPercent(countryDetail) / 100)
       );
-      capacityDisplay = `${totalAircraft.toLocaleString("id-ID", { maximumFractionDigits: 2 })} / ${(currentPangkalanUdaraCount * effectiveCapacity).toLocaleString("id-ID", { maximumFractionDigits: 2 })}`;
+      capacityDisplay = `${formatNumber(totalAircraft)} / ${formatNumber(currentPangkalanUdaraCount * effectiveCapacity)}`;
       break;
     }
   }
@@ -167,8 +171,35 @@ export default function KonfirmasiInfrastrukturModal({
     <RootConstructionConfirmationModal
       isOpen={isOpen}
       onClose={onClose}
-      title="Pembangunan Infrastruktur Militer"
+      title={tr("confirmation.infrastructureTitle")}
       capacityDisplay={capacityDisplay}
+      quantityLabel={tr("confirmation.infrastructureQuantity")}
+      quantityUnit={tr("confirmation.buildings")}
+      translate={(key, params) => {
+        const keyMap: Record<string, string> = {
+          cost: "costTotal",
+          loading: "loading",
+          quantity: "infrastructureQuantity",
+          maximum: "maximum",
+          materials: "materials",
+          hide: "hide",
+          show: "show",
+          noMaterials: "noMaterials",
+          balance: "currentBalance",
+          cancel: "cancel",
+          materialShortage: "materialsShortage",
+          quantityOverStock: "quantityOverStock",
+          insufficientFunds: "insufficientFunds",
+          start: "startConstruction",
+        };
+        const translationKey = key.startsWith("materials.")
+          ? key
+          : `confirmation.${keyMap[key] ?? key}`;
+        if (key === "maximum" && params?.max !== undefined) {
+          return `${tr(translationKey)} (${formatNumber(Number(params.max))})`;
+        }
+        return tr(translationKey, params);
+      }}
       cost={cost}
       budget={anggaran}
       requirements={requirements}
@@ -188,39 +219,39 @@ export default function KonfirmasiInfrastrukturModal({
           }}
           className="shrink-0 cursor-pointer rounded-xl border border-root-accent/20 bg-[#1A3838] px-4 py-2 text-[10px] font-black uppercase text-root-subtle shadow-sm transition-all hover:bg-[#254D4D] hover:shadow-md"
         >
-          Reset
+          {tr("confirmation.reset")}
         </button>
       )}
       detailContent={(quantity) => (
         <>
           {waktuPembangunan !== undefined && (
             <div className="flex justify-between gap-3">
-              <span className="text-root-muted">Estimasi Waktu Pembangunan Total:</span>
+              <span className="text-root-muted">{tr("confirmation.estimatedTotalTime")}</span>
               <span className="flex items-center gap-2 font-semibold">
                 {constructionDiscountPercent > 0 && (
                   <span className="text-red-400 line-through text-xs">
-                    {waktuPembangunan * quantity} Hari
+                    {formatNumber(waktuPembangunan * quantity)} {tr("confirmation.days")}
                   </span>
                 )}
                 <span className={constructionDiscountPercent > 0 ? "text-root-accent" : "text-root-text"}>
                   {effectiveTimePerBuilding !== undefined
-                    ? effectiveTimePerBuilding * quantity
-                    : 0} Hari
+                    ? formatNumber(effectiveTimePerBuilding * quantity)
+                    : 0} {tr("confirmation.days")}
                 </span>
               </span>
             </div>
           )}
           {produksiPerHari !== undefined && (
             <div className="flex justify-between gap-3">
-              <span className="text-root-muted">Produksi {produksiLabel || ""} per hari:</span>
+              <span className="text-root-muted">{tr("confirmation.productionPerDay", { production: produksiLabel ? tr(`materials.${produksiLabel}`) : "" })}</span>
               <span className="font-bold text-root-accent">
-                +{produksiPerHari.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
+                +{formatNumber(produksiPerHari)}
               </span>
             </div>
           )}
           {dampakKepuasan !== undefined && (
             <div className="flex justify-between gap-3">
-              <span className="text-root-muted">Dampak ke Kepuasan:</span>
+              <span className="text-root-muted">{tr("confirmation.satisfactionImpact")}</span>
               <span className="font-bold text-root-accent">+{dampakKepuasan.toFixed(1)}</span>
             </div>
           )}

@@ -27,6 +27,7 @@ import {
 
 import { getBuildingMetadata } from "@/lib/buildingMetadataRegistry";
 import { BuildingCardGridRoot, BuildingCardRoot } from "@/app/page/root_modals_design_menu/card_building_root";
+import { useMilitaryMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useMilitaryMenuTranslation";
 
 interface TabProps {
   countryDetail: any;
@@ -38,9 +39,9 @@ interface TabProps {
   currentDate?: string | Date;
 }
 
-const formatNumber = (value: unknown) => {
+const formatNumber = (value: unknown, locale: string) => {
   const numeric = Number(value ?? 0);
-  return Number.isFinite(numeric) ? numeric.toLocaleString("id-ID", { maximumFractionDigits: 2 }) : "0";
+  return Number.isFinite(numeric) ? numeric.toLocaleString(locale, { maximumFractionDigits: 2 }) : "0";
 };
 
 const getNestedValue = (obj: any, key: string): number => {
@@ -74,14 +75,14 @@ const getSafeDateString = (currentDate?: string | Date, gameDate?: string): stri
   return `${y}-${m}-${day}`;
 };
 
-const formatBadgeDate = (dateString: string) => {
+const formatBadgeDate = (dateString: string, locale: string) => {
   if (!dateString) return '';
   try {
     const [y, m, d] = dateString.split('-').map(Number);
     const date = new Date(y, m - 1, d);
     if (isNaN(date.getTime())) return dateString;
     const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
-    const parts = new Intl.DateTimeFormat('id-ID', options).formatToParts(date);
+    const parts = new Intl.DateTimeFormat(locale, options).formatToParts(date);
     const day = parts.find((p) => p.type === 'day')?.value || '';
     const month = parts.find((p) => p.type === 'month')?.value || '';
     const year = parts.find((p) => p.type === 'year')?.value || '';
@@ -109,6 +110,7 @@ export default function InfrastrukturMiliter({
   ongoingConstructions = [], 
   currentDate 
 }: TabProps) {
+  const { language, translate: tr } = useMilitaryMenuTranslation();
   const viewportMode = useViewportMode();
   const [selectedForBuild, setSelectedForBuild] = useState<{ key: string; label: string } | null>(null);
   const [isConfirmBuildOpen, setIsConfirmBuildOpen] = useState(false);
@@ -210,7 +212,7 @@ export default function InfrastrukturMiliter({
   const handleInfoClick = (key: string) => {
     const item = infrastrukturData[key];
     if (!item) {
-      alert("Data infrastruktur belum dimuat.");
+      alert(tr("alerts.infraNotLoaded"));
       return;
     }
     if (isMobilePhone(viewportMode)) {
@@ -236,7 +238,10 @@ export default function InfrastrukturMiliter({
 
     // 1. Cek kas negara
     if (currentAnggaran < totalCost) {
-      alert(`💰 Kas negara tidak mencukupi!\nDibutuhkan: ${formatNumber(totalCost)} NEO\nTersedia: ${formatNumber(currentAnggaran)} NEO`);
+      alert(tr("alerts.budgetShortage", {
+        required: formatNumber(totalCost, language),
+        available: formatNumber(currentAnggaran, language),
+      }));
       return;
     }
 
@@ -263,7 +268,9 @@ export default function InfrastrukturMiliter({
     const materialStocks = calculateMaterialStocks(countryDetail);
     const missing = calculateMissingMaterials(requirementsForDeduction, materialStocks, qty);
     if (missing.length > 0) {
-      alert(`❌ Material berikut tidak mencukupi:\n${missing.map(m => `${m.label} (butuh ${(Number(m.amount) || 0) * qty})`).join('\n')}`);
+      alert(tr("alerts.materialsShortage", {
+        materials: missing.map(m => `${tr(`materials.${m.resourceKey}`)}: ${formatNumber((Number(m.amount) || 0) * qty, language)}`).join("\n"),
+      }));
       return;
     }
 
@@ -494,7 +501,7 @@ export default function InfrastrukturMiliter({
             <BuildingCardRoot
               key={key}
               onClick={() => {
-                setSelectedForBuild({ key, label: item.label });
+                setSelectedForBuild({ key, label: tr(`infrastructure.${key}.title`) });
                 setIsConfirmBuildOpen(true);
               }}
               highlighted={highlightKey === key}
@@ -502,13 +509,13 @@ export default function InfrastrukturMiliter({
             >
               {isBuilding && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-root-accent text-[9px] sm:text-[10px] font-bold px-2 py-0.5 border border-root-accent/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
-                  {formatBadgeDate(lastEndDate)}
+                  {formatBadgeDate(lastEndDate, language)}
                 </div>
               )}
               
               <div className="building-card-header flex items-start justify-between mb-1.5 sm:mb-2">
                 <p className="building-card-label text-[9px] sm:text-[10px] font-black uppercase text-root-subtle tracking-wider flex-1 pr-1.5 leading-snug">
-                  {item.label}
+                  {tr(`infrastructure.${key}.title`)}
                 </p>
                 <button
                   onClick={(e) => {
@@ -516,6 +523,8 @@ export default function InfrastrukturMiliter({
                     handleInfoClick(key);
                   }}
                   className="building-card-info-button flex-shrink-0 flex items-center justify-center rounded-full bg-root-surface border border-root-accent/30 text-root-subtle hover:text-root-accent hover:border-root-accent transition-colors cursor-pointer"
+                  title={tr("menu.infoButton")}
+                  aria-label={tr("menu.infoButton")}
                 >
                   <Info />
                 </button>
@@ -532,7 +541,7 @@ export default function InfrastrukturMiliter({
                 <div className="building-card-quantity min-w-0 w-full flex flex-col items-center justify-center">
                   <div>
                     <div className="min-w-0 flex items-center justify-center gap-1 flex-wrap">
-                      <span className="building-card-count text-xs sm:text-sm lg:text-base font-black text-root-text leading-tight break-words">{formatNumber(value)}</span>
+                      <span className="building-card-count text-xs sm:text-sm lg:text-base font-black text-root-text leading-tight break-words">{formatNumber(value, language)}</span>
                       {isBuilding && (
                         <span className="text-[10px] sm:text-xs font-bold text-root-accent leading-none">
                           +{queueCount}
@@ -563,8 +572,8 @@ export default function InfrastrukturMiliter({
             setIsInfoOpen(false);
             setInfoKey(null);
           }}
-          selectedItem={infrastrukturData[infoKey]}
-          formatNumber={formatNumber}
+          selectedItem={{ ...infrastrukturData[infoKey], label: tr(`infrastructure.${infoKey}.title`), deskripsi: tr(`infrastructure.${infoKey}.description`) }}
+          formatNumber={(value) => formatNumber(value, language)}
           getNestedValue={getNestedValue}
           countryDetail={countryDetail}
         />

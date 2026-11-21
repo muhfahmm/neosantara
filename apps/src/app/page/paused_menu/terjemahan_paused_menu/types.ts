@@ -38,6 +38,7 @@ import type idDefenseAttack from './id/navigasi_menu/pertahanan_menu/serang_nega
 import type idDefenseEspionage from './id/navigasi_menu/pertahanan_menu/spionase/spionase.json';
 import type idDefenseSabotage from './id/navigasi_menu/pertahanan_menu/sabotase/sabotase.json';
 import type idDefenseAnnexedTerritories from './id/navigasi_menu/pertahanan_menu/wilayah_direbut/wilayah_direbut.json';
+import type idMilitaryMenu from './id/navigasi_menu/militer_menu/militer_menu.json';
 
 export type TextDirection = 'ltr' | 'rtl';
 
@@ -107,7 +108,8 @@ export type TranslationNamespace =
   | 'navigation_defense_attack'
   | 'navigation_defense_espionage'
   | 'navigation_defense_sabotage'
-  | 'navigation_defense_annexed_territories';
+  | 'navigation_defense_annexed_territories'
+  | 'navigation_military_menu';
 
 type ResearchTranslation = typeof idPenelitian & {
   categories: {
@@ -154,6 +156,7 @@ export interface TranslationSchema {
   navigation_defense_espionage: typeof idDefenseEspionage;
   navigation_defense_sabotage: typeof idDefenseSabotage;
   navigation_defense_annexed_territories: typeof idDefenseAnnexedTerritories;
+  navigation_military_menu: typeof idMilitaryMenu;
 }
 
 export type TranslationRecord = Record<string, string | Record<string, unknown>>;
@@ -204,6 +207,7 @@ export type TranslationKey =
   | `navigation_defense_espionage.${NestedKeyOf<typeof idDefenseEspionage>}`
   | `navigation_defense_sabotage.${NestedKeyOf<typeof idDefenseSabotage>}`
   | `navigation_defense_annexed_territories.${NestedKeyOf<typeof idDefenseAnnexedTerritories>}`
+  | `navigation_military_menu.${NestedKeyOf<typeof idMilitaryMenu>}`
   | (string & {});
 
 export type InterpolationParams = Record<string, string | number>;

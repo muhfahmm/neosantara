@@ -12,6 +12,7 @@ import { KonfirmasiPembangunanModalProps } from "../construction_support/konfirm
 import { calculateRecruitmentDays } from "../logic/recruitmentLogic";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { useMilitaryMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useMilitaryMenuTranslation";
 
 export default function KonfirmasiArmadaAktifModal({
   isOpen,
@@ -64,6 +65,13 @@ export default function KonfirmasiArmadaAktifModal({
   unitDataKey = "pasukan_infanteri",
   currentGameDate = new Date().toISOString(),
 }: KonfirmasiPembangunanModalProps & { unitDataKey?: string; currentGameDate?: string }) {
+  const { language, translate: tr } = useMilitaryMenuTranslation();
+  const formatNumber = (value: number) =>
+    value.toLocaleString(language, { maximumFractionDigits: 2 });
+  const facilityKey = capacityType === "infanteri"
+    ? "barak"
+    : capacityType;
+  const facilityLabel = tr(`infrastructure.${facilityKey}.title`);
   const [showMaterialGrid, setShowMaterialGrid] = useState(true);
   const [buildAmount, setBuildAmount] = useState<number>(capacityType === "infanteri" ? 10000 : 1);
   const [estimatedDays, setEstimatedDays] = useState<number>(0);
@@ -186,23 +194,21 @@ export default function KonfirmasiArmadaAktifModal({
 
   // ====== LOGIKA KAPASITAS UNTUK DITAMPILKAN ======
   let capacityDisplay = "";
-  let warningText = "";
   let capacityInfoComponent = null;
 
   // Infanteri
   if (capacityType === "infanteri") {
     const used = safeCurrentInfanteriCount;
     const total = maxCapacity;
-    capacityDisplay = `${used.toLocaleString('id-ID', { maximumFractionDigits: 2 })} / ${total.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
-    warningText = `Kapasitas Infanteri sudah penuh (${total.toLocaleString('id-ID', { maximumFractionDigits: 2 })} pasukan). Anda harus membangun Barak baru untuk menambah Infanteri lebih banyak.`;
+    capacityDisplay = `${formatNumber(used)} / ${formatNumber(total)}`;
     capacityInfoComponent = (
       <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-4 space-y-2">
-        <p className="text-xs font-bold text-emerald-900">Detail Kapasitas Barak:</p>
+        <p className="text-xs font-bold text-emerald-900">{tr("capacityDetails.infantryTitle")}:</p>
         <div className="text-xs text-emerald-800 space-y-1">
-          <div className="flex justify-between"><span>Infanteri Saat Ini:</span><span className="font-bold">{used.toLocaleString('id-ID', { maximumFractionDigits: 2 })} pasukan</span></div>
-          <div className="flex justify-between"><span>Jumlah Barak:</span><span className="font-bold">{currentBarakCount} unit</span></div>
-          <div className="flex justify-between border-t border-emerald-200 pt-1 mt-1"><span>Kapasitas Total:</span><span className="font-bold text-emerald-900">{total.toLocaleString('id-ID', { maximumFractionDigits: 2 })} pasukan</span></div>
-          <div className="flex justify-between"><span>Sisa Kapasitas:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{Math.max(0, remaining).toLocaleString('id-ID', { maximumFractionDigits: 2 })} pasukan</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.currentInfantry")}:</span><span className="font-bold">{formatNumber(used)} {tr("units.troops")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.barracksCount")}:</span><span className="font-bold">{formatNumber(currentBarakCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between border-t border-emerald-200 pt-1 mt-1"><span>{tr("capacityDetails.totalCapacity")}:</span><span className="font-bold text-emerald-900">{formatNumber(total)} {tr("units.troops")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.remainingCapacity")}:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{formatNumber(Math.max(0, remaining))} {tr("units.troops")}</span></div>
         </div>
       </div>
     );
@@ -212,18 +218,17 @@ export default function KonfirmasiArmadaAktifModal({
   else if (capacityType === "hangar_tank") {
     const totalVehicles = currentTankCount + currentApcCount;
     const maxHangar = currentHangarCount * HANGAR_TANK_CAPACITY;
-    capacityDisplay = `${totalVehicles.toLocaleString('id-ID', { maximumFractionDigits: 2 })} / ${maxHangar.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
-    warningText = `Kapasitas Hangar Tank sudah penuh (${currentHangarCount} hangar × ${HANGAR_TANK_CAPACITY.toLocaleString('id-ID', { maximumFractionDigits: 2 })} = ${maxHangar.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit). Anda harus membangun Hangar Tank baru untuk menambah Tank/APC lebih banyak.`;
+    capacityDisplay = `${formatNumber(totalVehicles)} / ${formatNumber(maxHangar)}`;
     capacityInfoComponent = (
       <div className="bg-amber-50/80 border border-amber-200 rounded-xl p-4 space-y-2">
-        <p className="text-xs font-bold text-amber-900">🚜 Detail Kapasitas Hangar Tank:</p>
+        <p className="text-xs font-bold text-amber-900">🚜 {tr("capacityDetails.hangarTitle")}:</p>
         <div className="text-xs text-amber-800 space-y-1">
-          <div className="flex justify-between"><span>Tank Tempur Utama:</span><span className="font-bold">{currentTankCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>APC / IFV:</span><span className="font-bold">{currentApcCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Total Kendaraan:</span><span className="font-bold">{totalVehicles.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Jumlah Hangar:</span><span className="font-bold">{currentHangarCount} unit</span></div>
-          <div className="flex justify-between border-t border-amber-200 pt-1 mt-1"><span>Kapasitas Total:</span><span className="font-bold text-amber-900">{maxHangar.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Sisa Kapasitas:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{Math.max(0, remaining).toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.tank")}:</span><span className="font-bold">{formatNumber(currentTankCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.apc")}:</span><span className="font-bold">{formatNumber(currentApcCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.totalVehicles")}:</span><span className="font-bold">{formatNumber(totalVehicles)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.hangarCount")}:</span><span className="font-bold">{formatNumber(currentHangarCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between border-t border-amber-200 pt-1 mt-1"><span>{tr("capacityDetails.totalCapacity")}:</span><span className="font-bold text-amber-900">{formatNumber(maxHangar)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.remainingCapacity")}:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{formatNumber(Math.max(0, remaining))} {tr("units.unit")}</span></div>
         </div>
       </div>
     );
@@ -233,20 +238,19 @@ export default function KonfirmasiArmadaAktifModal({
   else if (capacityType === "gudang_senjata") {
     const totalWeapons = currentArtileriCount + currentRoketCount + currentPertahanUdaraCount + currentKendaraanTaktisCount;
     const maxGudang = currentGudangCount * GUDANG_SENJATA_CAPACITY;
-    capacityDisplay = `${totalWeapons.toLocaleString('id-ID', { maximumFractionDigits: 2 })} / ${maxGudang.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
-    warningText = `Kapasitas Gudang Senjata sudah penuh (${currentGudangCount} gudang × ${GUDANG_SENJATA_CAPACITY.toLocaleString('id-ID', { maximumFractionDigits: 2 })} = ${maxGudang.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit). Anda harus membangun Gudang Senjata baru untuk menambah Senjata lebih banyak.`;
+    capacityDisplay = `${formatNumber(totalWeapons)} / ${formatNumber(maxGudang)}`;
     capacityInfoComponent = (
       <div className="bg-purple-50/80 border border-purple-200 rounded-xl p-4 space-y-2">
-        <p className="text-xs font-bold text-purple-900">💣 Detail Kapasitas Gudang Senjata:</p>
+        <p className="text-xs font-bold text-purple-900">💣 {tr("capacityDetails.warehouseTitle")}:</p>
         <div className="text-xs text-purple-800 space-y-1">
-          <div className="flex justify-between"><span>Artileri Berat:</span><span className="font-bold">{currentArtileriCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Sistem Peluncur Roket:</span><span className="font-bold">{currentRoketCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Pertahanan Udara Mobile:</span><span className="font-bold">{currentPertahanUdaraCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Kendaraan Taktis:</span><span className="font-bold">{currentKendaraanTaktisCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Total Senjata:</span><span className="font-bold">{totalWeapons.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Jumlah Gudang:</span><span className="font-bold">{currentGudangCount} unit</span></div>
-          <div className="flex justify-between border-t border-purple-200 pt-1 mt-1"><span>Kapasitas Total:</span><span className="font-bold text-purple-900">{maxGudang.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Sisa Kapasitas:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{Math.max(0, remaining).toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.artillery")}:</span><span className="font-bold">{formatNumber(currentArtileriCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.rockets")}:</span><span className="font-bold">{formatNumber(currentRoketCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.mobileAirDefense")}:</span><span className="font-bold">{formatNumber(currentPertahanUdaraCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.tacticalVehicles")}:</span><span className="font-bold">{formatNumber(currentKendaraanTaktisCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.totalWeapons")}:</span><span className="font-bold">{formatNumber(totalWeapons)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.warehouseCount")}:</span><span className="font-bold">{formatNumber(currentGudangCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between border-t border-purple-200 pt-1 mt-1"><span>{tr("capacityDetails.totalCapacity")}:</span><span className="font-bold text-purple-900">{formatNumber(maxGudang)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.remainingCapacity")}:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{formatNumber(Math.max(0, remaining))} {tr("units.unit")}</span></div>
         </div>
       </div>
     );
@@ -257,24 +261,23 @@ export default function KonfirmasiArmadaAktifModal({
     const totalKapal = kapalIndukCount + kapalIndukNuklirCount + kapalDestroyerCount + kapalKorvetCount +
                        kapalSelamNuklirCount + kapalSelamRegulerCount + kapalRanjauCount + kapalLogistikCount;
     const maxPangkalan = currentPangkalanLautCount * PANGKALAN_LAUT_CAPACITY;
-    capacityDisplay = `${totalKapal.toLocaleString('id-ID', { maximumFractionDigits: 2 })} / ${maxPangkalan.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
-    warningText = `Kapasitas Pangkalan Laut sudah penuh (${currentPangkalanLautCount} pangkalan × ${PANGKALAN_LAUT_CAPACITY.toLocaleString('id-ID', { maximumFractionDigits: 2 })} = ${maxPangkalan.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit). Anda harus membangun Pangkalan Laut baru untuk menambah Kapal lebih banyak.`;
+    capacityDisplay = `${formatNumber(totalKapal)} / ${formatNumber(maxPangkalan)}`;
     capacityInfoComponent = (
       <div className="bg-sky-50/80 border border-sky-200 rounded-xl p-4 space-y-2">
-        <p className="text-xs font-bold text-sky-900">⚓ Detail Kapasitas Pangkalan Laut:</p>
+        <p className="text-xs font-bold text-sky-900">⚓ {tr("capacityDetails.navalTitle")}:</p>
         <div className="text-xs text-sky-800 space-y-1">
-          <div className="flex justify-between"><span>Kapal Induk:</span><span className="font-bold">{kapalIndukCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Kapal Induk Nuklir:</span><span className="font-bold">{kapalIndukNuklirCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Kapal Destroyer:</span><span className="font-bold">{kapalDestroyerCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Kapal Korvet:</span><span className="font-bold">{kapalKorvetCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Kapal Selam Nuklir:</span><span className="font-bold">{kapalSelamNuklirCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Kapal Selam Reguler:</span><span className="font-bold">{kapalSelamRegulerCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Kapal Ranjau:</span><span className="font-bold">{kapalRanjauCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Kapal Logistik:</span><span className="font-bold">{kapalLogistikCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Total Kapal:</span><span className="font-bold">{totalKapal.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Jumlah Pangkalan:</span><span className="font-bold">{currentPangkalanLautCount} unit</span></div>
-          <div className="flex justify-between border-t border-sky-200 pt-1 mt-1"><span>Kapasitas Total:</span><span className="font-bold text-sky-900">{maxPangkalan.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Sisa Kapasitas:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{Math.max(0, remaining).toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.carrier")}:</span><span className="font-bold">{formatNumber(kapalIndukCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.nuclearCarrier")}:</span><span className="font-bold">{formatNumber(kapalIndukNuklirCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.destroyer")}:</span><span className="font-bold">{formatNumber(kapalDestroyerCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.corvette")}:</span><span className="font-bold">{formatNumber(kapalKorvetCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.nuclearSubmarine")}:</span><span className="font-bold">{formatNumber(kapalSelamNuklirCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.regularSubmarine")}:</span><span className="font-bold">{formatNumber(kapalSelamRegulerCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.minelayer")}:</span><span className="font-bold">{formatNumber(kapalRanjauCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.logisticsShip")}:</span><span className="font-bold">{formatNumber(kapalLogistikCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.totalShips")}:</span><span className="font-bold">{formatNumber(totalKapal)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.navalBaseCount")}:</span><span className="font-bold">{formatNumber(currentPangkalanLautCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between border-t border-sky-200 pt-1 mt-1"><span>{tr("capacityDetails.totalCapacity")}:</span><span className="font-bold text-sky-900">{formatNumber(maxPangkalan)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.remainingCapacity")}:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{formatNumber(Math.max(0, remaining))} {tr("units.unit")}</span></div>
         </div>
       </div>
     );
@@ -285,24 +288,23 @@ export default function KonfirmasiArmadaAktifModal({
     const totalPesawat = jetTemturSilamanCount + jetTemturInterceptorCount + pesawatPengebomCount + helikopterSerangCount +
                          pesawatPengintaiCount + droneIntaiUavCount + droneKamikazeCount + pesawatAngkutCount;
     const maxPangkalan = currentPangkalanUdaraCount * PANGKALAN_UDARA_CAPACITY;
-    capacityDisplay = `${totalPesawat.toLocaleString('id-ID', { maximumFractionDigits: 2 })} / ${maxPangkalan.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
-    warningText = `Kapasitas Pangkalan Udara sudah penuh (${currentPangkalanUdaraCount} pangkalan × ${PANGKALAN_UDARA_CAPACITY.toLocaleString('id-ID', { maximumFractionDigits: 2 })} = ${maxPangkalan.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit). Anda harus membangun Pangkalan Udara baru untuk menambah Pesawat lebih banyak.`;
+    capacityDisplay = `${formatNumber(totalPesawat)} / ${formatNumber(maxPangkalan)}`;
     capacityInfoComponent = (
       <div className="bg-indigo-50/80 border border-indigo-200 rounded-xl p-4 space-y-2">
-        <p className="text-xs font-bold text-indigo-900">✈️ Detail Kapasitas Pangkalan Udara:</p>
+        <p className="text-xs font-bold text-indigo-900">✈️ {tr("capacityDetails.airbaseTitle")}:</p>
         <div className="text-xs text-indigo-800 space-y-1">
-          <div className="flex justify-between"><span>Jet Tempur Siluman:</span><span className="font-bold">{jetTemturSilamanCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Jet Tempur Interceptor:</span><span className="font-bold">{jetTemturInterceptorCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Pesawat Pengebom:</span><span className="font-bold">{pesawatPengebomCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Helikopter Serang:</span><span className="font-bold">{helikopterSerangCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Pesawat Pengintai:</span><span className="font-bold">{pesawatPengintaiCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Drone Intai UAV:</span><span className="font-bold">{droneIntaiUavCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Drone Kamikaze:</span><span className="font-bold">{droneKamikazeCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Pesawat Angkut:</span><span className="font-bold">{pesawatAngkutCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Total Pesawat:</span><span className="font-bold">{totalPesawat.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Jumlah Pangkalan:</span><span className="font-bold">{currentPangkalanUdaraCount} unit</span></div>
-          <div className="flex justify-between border-t border-indigo-200 pt-1 mt-1"><span>Kapasitas Total:</span><span className="font-bold text-indigo-900">{maxPangkalan.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
-          <div className="flex justify-between"><span>Sisa Kapasitas:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{Math.max(0, remaining).toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.stealthFighter")}:</span><span className="font-bold">{formatNumber(jetTemturSilamanCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.interceptor")}:</span><span className="font-bold">{formatNumber(jetTemturInterceptorCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.bomber")}:</span><span className="font-bold">{formatNumber(pesawatPengebomCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.attackHelicopter")}:</span><span className="font-bold">{formatNumber(helikopterSerangCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.reconAircraft")}:</span><span className="font-bold">{formatNumber(pesawatPengintaiCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.uav")}:</span><span className="font-bold">{formatNumber(droneIntaiUavCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.kamikazeDrone")}:</span><span className="font-bold">{formatNumber(droneKamikazeCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.transportAircraft")}:</span><span className="font-bold">{formatNumber(pesawatAngkutCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.totalAircraft")}:</span><span className="font-bold">{formatNumber(totalPesawat)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.airbaseCount")}:</span><span className="font-bold">{formatNumber(currentPangkalanUdaraCount)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between border-t border-indigo-200 pt-1 mt-1"><span>{tr("capacityDetails.totalCapacity")}:</span><span className="font-bold text-indigo-900">{formatNumber(maxPangkalan)} {tr("units.unit")}</span></div>
+          <div className="flex justify-between"><span>{tr("capacityDetails.remainingCapacity")}:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{formatNumber(Math.max(0, remaining))} {tr("units.unit")}</span></div>
         </div>
       </div>
     );
@@ -323,11 +325,11 @@ export default function KonfirmasiArmadaAktifModal({
 
   const handleConfirmClick = () => {
     if (buildAmount <= 0) {
-      alert("Jumlah unit harus lebih dari 0.");
+      alert(tr("confirmation.enterQuantity"));
       return;
     }
     if (capacityType !== "infanteri" && !isAnggaranCukup) {
-      alert("Kas negara tidak cukup untuk membangun unit sejumlah ini.");
+      alert(tr("confirmation.errorBudget"));
       return;
     }
     onConfirm(buildAmount);
@@ -349,7 +351,7 @@ export default function KonfirmasiArmadaAktifModal({
                 <Hammer aria-hidden="true" className="root-modal-util-d252947d10 text-root-accent" />
               </div>
               <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                Perekrutan / Pembangunan Militer
+                {tr("confirmation.title")}
               </h2>
             </div>
           </div>
@@ -375,13 +377,12 @@ export default function KonfirmasiArmadaAktifModal({
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-rose-500/20 text-rose-400 font-black border border-rose-500/40">!</div>
                 <div>
                   <p className="text-sm font-black uppercase tracking-wider text-rose-400">
-                    {capacityType === "infanteri" ? "Kapasitas Infanteri Penuh" :
-                     capacityType === "hangar_tank" ? "Kapasitas Hangar Tank Penuh" :
-                     capacityType === "gudang_senjata" ? "Kapasitas Gudang Senjata Penuh" :
-                     capacityType === "pangkalan_laut" ? "Kapasitas Pangkalan Laut Penuh" :
-                     "Kapasitas Pangkalan Udara Penuh"}
+                    {tr("confirmation.capacityFullTitle")}
                   </p>
-                  <p className="text-xs leading-relaxed text-root-text mt-1.5">{warningText}</p>
+                  <p className="text-xs leading-relaxed text-root-text mt-1.5">
+                    {tr("confirmation.capacityFullWarning", { facility: facilityLabel })}
+                  </p>
+                  {capacityInfoComponent}
                 </div>
               </div>
               <button
@@ -389,13 +390,7 @@ export default function KonfirmasiArmadaAktifModal({
                 onClick={handleNavigateToInfra}
                 className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-root-accent px-4 py-3 text-xs font-black uppercase text-root-canvas transition hover:bg-root-accent/80 cursor-pointer shadow-md"
               >
-                Buka Tab Infrastruktur dan Sorot {
-                  capacityType === "infanteri" ? "Barak" :
-                  capacityType === "hangar_tank" ? "Hangar Tank" :
-                  capacityType === "gudang_senjata" ? "Gudang Senjata" :
-                  capacityType === "pangkalan_laut" ? "Pangkalan Laut" :
-                  "Pangkalan Udara"
-                }
+                {tr("confirmation.openInfrastructure", { facility: facilityLabel })}
               </button>
             </div>
           )}
@@ -406,9 +401,12 @@ export default function KonfirmasiArmadaAktifModal({
               <div className="flex items-start gap-3">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-rose-500/20 text-rose-400 font-black border border-rose-500/40">!</div>
                 <div>
-                  <p className="text-sm font-black uppercase tracking-wider text-rose-400">Kas Negara Tidak Cukup</p>
+                  <p className="text-sm font-black uppercase tracking-wider text-rose-400">{tr("confirmation.budgetWarningTitle")}</p>
                   <p className="text-xs leading-relaxed text-root-text mt-1">
-                    Total biaya pembangunan ({totalCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO) melebihi kas negara saat ini ({anggaran.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO). Kurangi jumlah unit atau tunggu kas negara bertambah.
+                    {tr("confirmation.budgetWarning", {
+                      total: formatNumber(totalCost),
+                      budget: formatNumber(anggaran),
+                    })}
                   </p>
                 </div>
               </div>
@@ -420,7 +418,7 @@ export default function KonfirmasiArmadaAktifModal({
             <label className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <span className="defense-confirm-input-label font-black uppercase tracking-wider text-root-subtle">
-                  {capacityType === "infanteri" ? "Jumlah Pasukan yang Direkrut" : "Jumlah Unit yang Dibangun"}
+                  {tr(capacityType === "infanteri" ? "confirmation.quantityRecruit" : "confirmation.quantityUnits")}
                 </span>
                 <button
                   type="button"
@@ -431,7 +429,7 @@ export default function KonfirmasiArmadaAktifModal({
                   disabled={capacityFull || effectiveMaxBuildable <= 0}
                   className="px-3 py-1 bg-root-surface hover:bg-root-accent/20 text-root-accent text-[10px] font-black uppercase rounded-lg transition-colors cursor-pointer border border-root-accent/30 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  Maks
+                  {tr("confirmation.maximum")}
                 </button>
               </div>
               <input
@@ -450,7 +448,10 @@ export default function KonfirmasiArmadaAktifModal({
               />
             </label>
             <p className="defense-confirm-amount-hint text-[10px] text-root-subtle">
-              Maksimal: {Math.max(0, effectiveMaxBuildable).toLocaleString('id-ID', { maximumFractionDigits: 2 })} {capacityType === "infanteri" ? "pasukan" : "unit"}.
+              {tr("confirmation.maximumHint", {
+                max: formatNumber(Math.max(0, effectiveMaxBuildable)),
+                unit: tr(capacityType === "infanteri" ? "units.troops" : "units.unit"),
+              })}
             </p>
           </div>
 
@@ -459,12 +460,12 @@ export default function KonfirmasiArmadaAktifModal({
             <div className="defense-confirm-estimate bg-root-canvas border border-emerald-500/30 rounded-xl p-3.5 space-y-2 mt-2">
               <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
                 <Calendar className="w-4 h-4 text-emerald-400" />
-                <span>Estimasi Waktu Pembangunan</span>
+                <span>{tr("confirmation.timeEstimate")}</span>
               </div>
               <div className="space-y-1 text-xs text-root-text">
                 <div className="flex justify-between">
-                  <span className="text-root-subtle">Waktu Dibutuhkan:</span>
-                  <span className="font-bold text-emerald-400">{estimatedDays} hari</span>
+                  <span className="text-root-subtle">{tr("confirmation.timeNeeded")}:</span>
+                  <span className="font-bold text-emerald-400">{formatNumber(estimatedDays)} {tr("confirmation.days")}</span>
                 </div>
               </div>
             </div>
@@ -474,23 +475,23 @@ export default function KonfirmasiArmadaAktifModal({
           <div className="defense-confirm-cost-card bg-root-canvas border border-root-accent/20 rounded-xl p-4 space-y-2.5 text-xs text-root-text">
             {capacityType === "infanteri" ? (
               <div className="flex justify-between font-bold">
-                <span className="text-root-subtle">Biaya Pembangunan:</span>
+                <span className="text-root-subtle">{tr("confirmation.constructionCost")}:</span>
                 <span className="text-root-accent font-black">
-                  {loadingMetadata ? 'Memuat...' : `${costPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`}
+                  {loadingMetadata ? tr("confirmation.loading") : `${formatNumber(costPerUnit)} NEO`}
                 </span>
               </div>
             ) : (
               <>
                 <div className="flex justify-between">
-                  <span className="text-root-subtle">Biaya per Unit:</span>
+                  <span className="text-root-subtle">{tr("confirmation.unitCost")}:</span>
                   <span className="text-root-text font-bold">
-                    {loadingMetadata ? 'Memuat...' : `${costPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`}
+                    {loadingMetadata ? tr("confirmation.loading") : `${formatNumber(costPerUnit)} NEO`}
                   </span>
                 </div>
                 <div className="flex justify-between font-bold">
-                  <span className="text-root-subtle">Total Biaya ({buildAmount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit):</span>
+                  <span className="text-root-subtle">{tr("confirmation.totalCost", { count: formatNumber(buildAmount) })}</span>
                   <span className={isAnggaranCukup ? "text-root-accent font-black" : "text-rose-400 font-black"}>
-                    {loadingMetadata ? 'Memuat...' : `${totalCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`}
+                    {loadingMetadata ? tr("confirmation.loading") : `${formatNumber(totalCost)} NEO`}
                   </span>
                 </div>
               </>
@@ -498,8 +499,8 @@ export default function KonfirmasiArmadaAktifModal({
 
             {waktuPembangunan !== undefined && capacityType !== "infanteri" && (
               <div className="flex justify-between">
-                <span className="text-root-subtle">Waktu Pembangunan per Unit:</span>
-                <span className="text-root-text font-bold">{waktuPembangunan} Hari</span>
+                <span className="text-root-subtle">{tr("confirmation.timePerUnit")}</span>
+                <span className="text-root-text font-bold">{formatNumber(waktuPembangunan)} {tr("confirmation.days")}</span>
               </div>
             )}
 
@@ -507,7 +508,7 @@ export default function KonfirmasiArmadaAktifModal({
               requirements && requirements.length > 0 ? (
                 <div className="space-y-3 text-xs pt-1">
                   <div className="flex items-center justify-between">
-                    <div className="font-black uppercase tracking-wider text-root-accent">Material Dibutuhkan</div>
+                    <div className="font-black uppercase tracking-wider text-root-accent">{tr("confirmation.materials")}</div>
                     <button
                       onClick={() => setShowMaterialGrid(!showMaterialGrid)}
                       className="flex items-center gap-1.5 px-2.5 py-1 bg-root-surface border border-root-accent/30 rounded-lg text-root-subtle hover:text-root-accent transition-all cursor-pointer"
@@ -515,12 +516,12 @@ export default function KonfirmasiArmadaAktifModal({
                       {showMaterialGrid ? (
                         <>
                           <EyeOff className="h-3 w-3" />
-                          <span className="text-[9px] font-bold uppercase">Sembunyikan</span>
+                          <span className="text-[9px] font-bold uppercase">{tr("confirmation.hide")}</span>
                         </>
                       ) : (
                         <>
                           <Eye className="h-3 w-3" />
-                          <span className="text-[9px] font-bold uppercase">Tampilkan</span>
+                          <span className="text-[9px] font-bold uppercase">{tr("confirmation.show")}</span>
                         </>
                       )}
                     </button>
@@ -539,19 +540,19 @@ export default function KonfirmasiArmadaAktifModal({
                         <button
                           key={`${material.resourceKey}-${material.group}`}
                           type="button"
-                          onClick={() => onMaterialClick(material.resourceKey, material.label)}
+                          onClick={() => onMaterialClick(material.resourceKey, tr(`materials.${material.resourceKey}`))}
                           className={`flex flex-col items-center justify-center rounded-xl p-2.5 min-h-[50px] cursor-pointer border transition-all ${
                             isStockZero ? 'border-rose-500/40 bg-rose-500/10 text-rose-300 hover:border-rose-500' : 'border-root-accent/30 bg-root-surface hover:border-root-accent'
                           }`}
                         >
-                          <div className="font-bold text-[10px] text-center text-root-text">{material.label}</div>
+                          <div className="font-bold text-[10px] text-center text-root-text">{tr(`materials.${material.resourceKey}`)}</div>
                           {material.amount !== undefined && (
                             <div className="text-[9px] uppercase tracking-wider text-root-subtle mt-1">
                               x{material.amount}
                             </div>
                           )}
                           <div className={`text-[10px] font-black mt-0.5 ${isStockZero ? 'text-rose-400' : 'text-emerald-400'}`}>
-                            {stock.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
+                            {formatNumber(stock)}
                           </div>
                         </button>
                       );
@@ -559,7 +560,7 @@ export default function KonfirmasiArmadaAktifModal({
                   </div>
                 </div>
               ) : (
-                <div className="text-root-subtle">Tidak ada material yang dibutuhkan untuk bangunan ini.</div>
+                <div className="text-root-subtle">{tr("confirmation.noMaterials")}</div>
               )
             )}
           </div>
@@ -574,7 +575,7 @@ export default function KonfirmasiArmadaAktifModal({
             onClick={onClose}
             className="flex-1 py-2.5 rounded-xl border border-root-accent/30 text-root-subtle bg-root-surface hover:text-root-accent hover:border-root-accent text-xs font-black uppercase cursor-pointer transition-all text-center shadow-sm"
           >
-            Batal
+            {tr("confirmation.cancel")}
           </button>
           <button
             onClick={handleConfirmClick}
@@ -585,11 +586,11 @@ export default function KonfirmasiArmadaAktifModal({
               'bg-root-accent text-root-canvas border border-root-accent hover:bg-root-accent/80'
             }`}
           >
-            {capacityFull ? 'Kapasitas Penuh' :
-             buildAmount <= 0 ? 'Masukkan Jumlah' :
-             capacityType !== "infanteri" && hasMissingMaterials ? 'Material Kurang' :
-             capacityType !== "infanteri" && !isAnggaranCukup ? 'Dana Tidak Cukup' :
-             (capacityType === "infanteri" ? 'Mulai Perekrutan' : 'Mulai Pembangunan')}
+            {capacityFull ? tr("confirmation.capacityFull") :
+             buildAmount <= 0 ? tr("confirmation.enterQuantity") :
+             capacityType !== "infanteri" && hasMissingMaterials ? tr("confirmation.materialsShortage") :
+             capacityType !== "infanteri" && !isAnggaranCukup ? tr("confirmation.insufficientFunds") :
+             tr(capacityType === "infanteri" ? "confirmation.startRecruitment" : "confirmation.startConstruction")}
           </button>
         </div>
       </div>

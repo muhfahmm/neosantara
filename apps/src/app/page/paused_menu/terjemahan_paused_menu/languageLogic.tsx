@@ -64,6 +64,7 @@ import idDefenseAttack from './id/navigasi_menu/pertahanan_menu/serang_negara/se
 import idDefenseEspionage from './id/navigasi_menu/pertahanan_menu/spionase/spionase.json';
 import idDefenseSabotage from './id/navigasi_menu/pertahanan_menu/sabotase/sabotase.json';
 import idDefenseAnnexedTerritories from './id/navigasi_menu/pertahanan_menu/wilayah_direbut/wilayah_direbut.json';
+import idMilitaryMenu from './id/navigasi_menu/militer_menu/militer_menu.json';
 
 const ID_DICTIONARY: LanguageDictionary = {
   common: idCommon,
@@ -109,6 +110,7 @@ const ID_DICTIONARY: LanguageDictionary = {
   navigation_defense_espionage: idDefenseEspionage,
   navigation_defense_sabotage: idDefenseSabotage,
   navigation_defense_annexed_territories: idDefenseAnnexedTerritories,
+  navigation_military_menu: idMilitaryMenu,
 };
 
 const STORAGE_KEY = 'app_language';
@@ -189,6 +191,7 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     defenseEspionage,
     defenseSabotage,
     defenseAnnexedTerritories,
+    militaryMenu,
   ] = await Promise.all([
     import(`./${code}/common.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navbar/navbar.json`).then((m) => m.default).catch(() => ({})),
@@ -229,6 +232,7 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     import(`./${code}/navigasi_menu/pertahanan_menu/spionase/spionase.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navigasi_menu/pertahanan_menu/sabotase/sabotase.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navigasi_menu/pertahanan_menu/wilayah_direbut/wilayah_direbut.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/militer_menu/militer_menu.json`).then((m) => m.default).catch(() => ({})),
   ]);
 
   return {
@@ -275,6 +279,7 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     navigation_defense_espionage: defenseEspionage,
     navigation_defense_sabotage: defenseSabotage,
     navigation_defense_annexed_territories: defenseAnnexedTerritories,
+    navigation_military_menu: militaryMenu,
   };
 }
 

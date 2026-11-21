@@ -14,6 +14,7 @@ import {
   getKomandanAngkatanDaratBonusPercent,
   getKomandanArmadaBonusPercent,
 } from "@/app/page/bonus_logic";
+import { useMilitaryMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useMilitaryMenuTranslation";
 
 
 interface ModalProps {
@@ -27,6 +28,7 @@ interface ModalProps {
 }
 
 export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountryDetail, onGotoProduction, currentDate, initialTab = 'aktif' }: ModalProps) {
+  const { translate: tr } = useMilitaryMenuTranslation();
   const [activeTab, setActiveTab] = useState<'aktif' | 'infrastruktur'>(initialTab === 'polisi' as any ? 'aktif' : initialTab);
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   
@@ -66,6 +68,21 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
   }, [countryDetail, metadata]);
 
   const estimatedConsumption = Math.round(totalAllBreakdownConsumption);
+  const ideology = String(countryDetail?.ideology ?? countryDetail?.ideologi ?? "");
+  const ideologyLabels = [
+    "Demokrasi",
+    "Monarki",
+    "Kapitalisme",
+    "Sosialisme",
+    "Komunisme",
+    "Nasionalisme",
+    "Konservatisme",
+    "Liberalisme",
+    "Otoritarianisme",
+  ];
+  const ideologyLabel = ideologyLabels.includes(ideology)
+    ? tr(`ideologies.${ideology}`)
+    : ideology;
 
 
   return (
@@ -80,7 +97,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
                   <ShieldAlert aria-hidden="true" className="root-modal-util-d252947d10 text-rose-500 animate-pulse" />
                 </div>
                 <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                  Pertahanan & Keamanan
+                  {tr("menu.title")}
                 </h2>
               </div>
             </div>
@@ -88,8 +105,8 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
               <button
                 type="button"
                 onClick={() => setShowDefenseBonusInfo(true)}
-                aria-label="Informasi armada dan bonus pertahanan"
-                title="Informasi armada dan bonus pertahanan"
+                aria-label={tr("menu.infoButton")}
+                title={tr("menu.infoButton")}
                 className="root-modal-info-button root-modal-util-1697100c43"
               >
                 <Info aria-hidden="true" />
@@ -99,12 +116,12 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
           </div>
 
         <RootModalSidebarLayout
-          ariaLabel="Bagian armada dan infrastruktur militer"
+          ariaLabel={tr("menu.sidebarAria")}
           activeItemId={activeTab}
           contentClassName="defense-content space-y-4 p-4 sm:p-5 lg:p-6"
           items={[
-            { id: "aktif", label: "Armada Aktif", icon: <Swords className="h-4 w-4 shrink-0" /> },
-            { id: "infrastruktur", label: "Infrastruktur", icon: <Building2 className="h-4 w-4 shrink-0" /> },
+            { id: "aktif", label: tr("tabs.activeFleet"), icon: <Swords className="h-4 w-4 shrink-0" /> },
+            { id: "infrastruktur", label: tr("tabs.infrastructure"), icon: <Building2 className="h-4 w-4 shrink-0" /> },
           ].map((item) => ({
             ...item,
             isActive: activeTab === item.id,
@@ -133,33 +150,38 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
           className="root-modal-util-b74379da23 menu-info-content-sized-dialog"
         >
           <RootInfoModalHeader
-            title="Informasi Armada & Bonus Pertahanan"
+            title={tr("menu.infoTitle")}
             titleId="defense-bonus-info-title"
             onClose={() => setShowDefenseBonusInfo(false)}
             size="standard"
           />
           <div className={`root-info-modal-content min-h-0 bg-root-surface p-4 sm:p-5 lg:p-6 space-y-4 ${rootModalTypography.body}`}>
             <p>
-              Kelola armada militer aktif dan infrastruktur pendukungnya. Armada aktif menentukan kemampuan pertahanan dan operasi laut, sementara infrastruktur militer mendukung kapasitas serta kesiapan pasukan.
+              {tr("info.generalDescription")}
             </p>
             <div className="space-y-2.5 rounded-lg border border-root-modal-positive-border bg-root-modal-positive-bg p-3 text-root-body">
               <p>
-                <strong className="text-root-text">Kementerian Pertahanan:</strong>{" "}
-                Bonus <strong className="text-root-modal-positive">+{pertahananBonusPercent.toFixed(1)}%</strong> Kekuatan Militer untuk seluruh matra (Darat, Laut, dan Udara). Berasal dari level kabinet (1% per blok) ditambah bonus pengangkatan menteri jika ada.
+                <strong className="text-root-text">{tr("info.ministry")}:</strong>{" "}
+                {tr("info.ministryDescription", { percent: pertahananBonusPercent.toFixed(1) })}
               </p>
               <p>
-                <strong className="text-root-text">Komandan Matra Keamanan:</strong>{" "}
-                Komandan Angkatan Darat memberikan <strong className="text-root-modal-positive">+{getKomandanAngkatanDaratBonusPercent(countryDetail).toFixed(1)}%</strong> Kekuatan Darat, dan Komandan Armada memberikan <strong className="text-root-modal-positive">+{getKomandanArmadaBonusPercent(countryDetail).toFixed(1)}%</strong> Kekuatan Laut (1% per level blok).
+                <strong className="text-root-text">{tr("info.commanders")}:</strong>{" "}
+                {tr("info.commandersDescription", {
+                  land: getKomandanAngkatanDaratBonusPercent(countryDetail).toFixed(1),
+                  sea: getKomandanArmadaBonusPercent(countryDetail).toFixed(1),
+                })}
               </p>
-              {countryDetail?.ideology && (
+              {ideology && (
                 <p>
-                  <strong className="text-root-text">Ideologi ({countryDetail.ideology}):</strong>{" "}
-                  Mempengaruhi kekuatan militer nasional berdasarkan doktrin negara.
+                  <strong className="text-root-text">
+                    {tr("info.ideologyTitle", { ideology: ideologyLabel })}:
+                  </strong>{" "}
+                  {tr("info.ideologyDescription")}
                 </p>
               )}
               <p>
-                <strong className="text-root-text">Aliansi & Riset Militer:</strong>{" "}
-                Keanggotaan aliansi militer seperti NATO (+15%) serta riset militer (Tank Gen 5, Jet Superioritas, Kapal Perang) memberikan pengali kekuatan tambahan pada armada tempur.
+                <strong className="text-root-text">{tr("info.allianceResearch")}:</strong>{" "}
+                {tr("info.allianceResearchDescription")}
               </p>
             </div>
           </div>
