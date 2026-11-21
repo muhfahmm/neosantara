@@ -1,0 +1,20 @@
+{
+  "menu": {
+    "title": "Wilayah yang Dikuasai",
+    "infoTitle": "Wilayah yang Dikuasai",
+    "infoDescription": "Daftar ini memuat negara yang telah dianeksasi sepenuhnya serta kota yang masih dikuasai secara terpisah. Data mengikuti perubahan kendali di peta.",
+    "emptyTitle": "Belum ada wilayah yang dikuasai",
+    "emptyDescription": "Wilayah atau kota yang dikuasai {country} akan muncul di sini.",
+    "countryFallback": "Negara"
+  },
+  "summary": {
+    "description": "Wilayah di bawah kendali {country}",
+    "annexedCountries": "Negara dianeksasi: {count}",
+    "capturedCities": "Kota dikuasai: {count}"
+  },
+  "territory": {
+    "fullAnnexation": "Aneksasi penuh",
+    "capturedCityCount": "{count} kota dikuasai",
+    "showCities": "Lihat kota ({count})"
+  }
+}

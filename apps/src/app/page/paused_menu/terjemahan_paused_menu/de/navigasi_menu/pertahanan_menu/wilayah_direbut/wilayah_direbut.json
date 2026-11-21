@@ -1,0 +1,20 @@
+{
+  "menu": {
+    "title": "Kontrollierte Gebiete",
+    "infoTitle": "Kontrollierte Gebiete",
+    "infoDescription": "Diese Liste zeigt vollständig annektierte Länder und separat kontrollierte Städte. Die Einträge werden anhand der Änderungen auf der Karte aktualisiert.",
+    "emptyTitle": "Noch keine Gebiete unter Kontrolle",
+    "emptyDescription": "Von {country} kontrollierte Gebiete oder Städte erscheinen hier.",
+    "countryFallback": "dein Land"
+  },
+  "summary": {
+    "description": "Von {country} kontrollierte Gebiete",
+    "annexedCountries": "Annektierte Länder: {count}",
+    "capturedCities": "Kontrollierte Städte: {count}"
+  },
+  "territory": {
+    "fullAnnexation": "Vollständig annektiert",
+    "capturedCityCount": "{count} kontrollierte Städte",
+    "showCities": "Städte anzeigen ({count})"
+  }
+}

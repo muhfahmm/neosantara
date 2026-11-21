@@ -1,0 +1,20 @@
+{
+  "menu": {
+    "title": "控制领土",
+    "infoTitle": "控制领土",
+    "infoDescription": "此列表显示已完全吞并的国家，以及单独控制的城市。列表会根据地图上的控制权变化更新。",
+    "emptyTitle": "尚未控制任何领土",
+    "emptyDescription": "由{country}控制的领土或城市会显示在此处。",
+    "countryFallback": "你的国家"
+  },
+  "summary": {
+    "description": "{country}控制的领土",
+    "annexedCountries": "已吞并国家：{count}",
+    "capturedCities": "控制城市：{count}"
+  },
+  "territory": {
+    "fullAnnexation": "完全吞并",
+    "capturedCityCount": "控制城市：{count}",
+    "showCities": "查看城市（{count}）"
+  }
+}

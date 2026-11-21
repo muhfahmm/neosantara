@@ -1,0 +1,20 @@
+{
+  "menu": {
+    "title": "Controlled Territories",
+    "infoTitle": "Controlled Territories",
+    "infoDescription": "This list shows countries fully annexed and cities held separately. Entries follow control changes on the map.",
+    "emptyTitle": "No territories controlled yet",
+    "emptyDescription": "Territories or cities controlled by {country} will appear here.",
+    "countryFallback": "your country"
+  },
+  "summary": {
+    "description": "Territories controlled by {country}",
+    "annexedCountries": "Countries annexed: {count}",
+    "capturedCities": "Cities controlled: {count}"
+  },
+  "territory": {
+    "fullAnnexation": "Fully annexed",
+    "capturedCityCount": "{count} cities controlled",
+    "showCities": "View cities ({count})"
+  }
+}

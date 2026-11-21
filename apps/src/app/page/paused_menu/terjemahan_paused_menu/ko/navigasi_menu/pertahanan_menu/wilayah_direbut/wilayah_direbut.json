@@ -1,0 +1,20 @@
+{
+  "menu": {
+    "title": "지배 지역",
+    "infoTitle": "지배 지역",
+    "infoDescription": "완전히 합병한 국가와 별도로 지배 중인 도시를 보여줍니다. 지도에서 지배권이 변경되면 목록도 업데이트됩니다.",
+    "emptyTitle": "아직 지배 중인 지역이 없습니다",
+    "emptyDescription": "{country}가 지배하는 지역과 도시가 여기에 표시됩니다.",
+    "countryFallback": "자국"
+  },
+  "summary": {
+    "description": "{country}의 지배 지역",
+    "annexedCountries": "합병 국가: {count}",
+    "capturedCities": "지배 도시: {count}"
+  },
+  "territory": {
+    "fullAnnexation": "완전 합병",
+    "capturedCityCount": "지배 도시 {count}개",
+    "showCities": "도시 보기 ({count})"
+  }
+}

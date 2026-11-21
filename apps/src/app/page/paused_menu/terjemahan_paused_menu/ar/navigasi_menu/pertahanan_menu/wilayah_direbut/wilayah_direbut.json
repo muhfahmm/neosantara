@@ -1,0 +1,20 @@
+{
+  "menu": {
+    "title": "الأقاليم الخاضعة للسيطرة",
+    "infoTitle": "الأقاليم الخاضعة للسيطرة",
+    "infoDescription": "تعرض هذه القائمة الدول التي تم ضمها بالكامل والمدن الخاضعة للسيطرة بشكل منفصل. تُحدّث البيانات وفقًا لتغيّر السيطرة على الخريطة.",
+    "emptyTitle": "لا توجد أقاليم خاضعة للسيطرة بعد",
+    "emptyDescription": "ستظهر هنا الأقاليم أو المدن التي تسيطر عليها {country}.",
+    "countryFallback": "دولتك"
+  },
+  "summary": {
+    "description": "الأقاليم التي تسيطر عليها {country}",
+    "annexedCountries": "الدول المُلحقة: {count}",
+    "capturedCities": "المدن الخاضعة للسيطرة: {count}"
+  },
+  "territory": {
+    "fullAnnexation": "ضم كامل",
+    "capturedCityCount": "مدن خاضعة للسيطرة: {count}",
+    "showCities": "عرض المدن ({count})"
+  }
+}

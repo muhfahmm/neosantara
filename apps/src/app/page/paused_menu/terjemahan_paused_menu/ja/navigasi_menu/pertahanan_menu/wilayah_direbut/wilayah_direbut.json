@@ -1,0 +1,20 @@
+{
+  "menu": {
+    "title": "支配地域",
+    "infoTitle": "支配地域",
+    "infoDescription": "完全に併合した国と、個別に支配している都市を表示します。地図上の支配状況に応じて更新されます。",
+    "emptyTitle": "支配している地域はありません",
+    "emptyDescription": "{country}が支配する地域や都市がここに表示されます。",
+    "countryFallback": "自国"
+  },
+  "summary": {
+    "description": "{country}の支配地域",
+    "annexedCountries": "併合した国: {count}",
+    "capturedCities": "支配している都市: {count}"
+  },
+  "territory": {
+    "fullAnnexation": "完全併合",
+    "capturedCityCount": "支配都市: {count}",
+    "showCities": "都市を表示 ({count})"
+  }
+}

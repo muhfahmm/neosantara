@@ -6,6 +6,8 @@ import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCl
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
 import MenuInfoButton from "../../MenuInfoButton";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
+import { getAnnexedTerritories } from "./annexedTerritoriesLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -14,43 +16,23 @@ interface ModalProps {
   playerCountryName: string;
 }
 
-interface AnnexedCountry {
-  name: string;
-  iso?: string;
-}
-
-interface AnnexationRecord {
-  attackerCountry?: string;
-}
-
-function getAnnexedCountries(playerCountryName: string): AnnexedCountry[] {
-  if (typeof window === "undefined" || !playerCountryName.trim()) return [];
-
+function readAnnexedTerritories(playerCountryName: string) {
+  if (typeof window === "undefined") return [];
   const gameWindow = window as Window & {
-    neosantara_annexed_countries?: Record<string, AnnexationRecord>;
+    neosantara_annexed_countries?: Record<string, { attackerCountry?: string }>;
+    neosantara_city_owner?: Record<string, {
+      cityId?: string;
+      cityName?: string;
+      countryIso?: string;
+      ownerCountry?: string;
+    }>;
   };
-  const annexedStore = gameWindow.neosantara_annexed_countries ?? {};
-  const normalizedPlayerCountry = playerCountryName.trim().toLocaleLowerCase();
-  const annexedCountries = new Map<string, AnnexedCountry>();
-
-  Object.entries(annexedStore).forEach(([targetKey, record]) => {
-    if (record?.attackerCountry?.trim().toLocaleLowerCase() !== normalizedPlayerCountry) return;
-
-    const normalizedTargetKey = targetKey.trim().toLocaleLowerCase().replace(/^iso_/, "");
-    const targetCountry = COUNTRIES_DATA.find(
-      country =>
-        country.country.trim().toLocaleLowerCase() === normalizedTargetKey ||
-        String(country.iso || "").trim().toLocaleLowerCase() === normalizedTargetKey
-    );
-    if (!targetCountry) return;
-
-    const name = targetCountry.country;
-    const iso = targetCountry.iso?.trim().toLocaleLowerCase();
-    const countryKey = iso || name.trim().toLocaleLowerCase();
-    annexedCountries.set(countryKey, { name, iso });
-  });
-
-  return [...annexedCountries.values()].sort((a, b) => a.name.localeCompare(b.name, "id"));
+  return getAnnexedTerritories(
+    playerCountryName,
+    gameWindow.neosantara_annexed_countries || {},
+    gameWindow.neosantara_city_owner || {},
+    COUNTRIES_DATA,
+  );
 }
 
 export default function WilayahDirebutModal({
@@ -59,9 +41,10 @@ export default function WilayahDirebutModal({
   countryDetail,
   playerCountryName
 }: ModalProps) {
-  const [annexedCountries, setAnnexedCountries] = useState<AnnexedCountry[]>(
-    () => getAnnexedCountries(playerCountryName)
-  );
+  const { t, language } = useLanguage();
+  const tr = (key: string, params?: Record<string, string | number>) =>
+    t(`navigation_defense_annexed_territories.${key}`, params);
+  const [annexedTerritories, setAnnexedTerritories] = useState(() => readAnnexedTerritories(playerCountryName));
   const countryDetailName = [
     countryDetail?.country,
     countryDetail?.nama_negara,
@@ -70,15 +53,20 @@ export default function WilayahDirebutModal({
   ].find((name): name is string => typeof name === "string");
 
   useEffect(() => {
-    const updateAnnexedCountries = () => {
-      setAnnexedCountries(getAnnexedCountries(playerCountryName));
+    const updateAnnexedTerritories = () => {
+      setAnnexedTerritories(readAnnexedTerritories(playerCountryName));
     };
-    updateAnnexedCountries();
-    window.addEventListener("map_territory_color_updated", updateAnnexedCountries);
-    return () => window.removeEventListener("map_territory_color_updated", updateAnnexedCountries);
+    updateAnnexedTerritories();
+    window.addEventListener("map_territory_color_updated", updateAnnexedTerritories);
+    return () => window.removeEventListener("map_territory_color_updated", updateAnnexedTerritories);
   }, [playerCountryName]);
 
   if (!isOpen) return null;
+
+  const fullyAnnexedCount = annexedTerritories.filter(territory => territory.fullyAnnexed).length;
+  const capturedCityCount = annexedTerritories.reduce((total, territory) => total + territory.cities.length, 0);
+  const formatCount = (count: number) => count.toLocaleString(language);
+  const countryLabel = playerCountryName || countryDetailName || tr("menu.countryFallback");
 
   return (
     <NotebookModalWrapper onClose={onClose}>
@@ -90,61 +78,90 @@ export default function WilayahDirebutModal({
                 <Shield aria-hidden="true" className="root-modal-util-d252947d10 text-rose-500" />
               </div>
               <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                Wilayah yang Direbut
+                {tr("menu.title")}
                 <span className="ml-2 align-middle text-[9px] font-semibold tracking-normal text-root-subtle normal-case">
-                  {playerCountryName || countryDetailName || "Negara"}
+                  {countryLabel}
                 </span>
               </h2>
             </div>
           </div>
           <div className="root-modal-util-08dfbca033">
             <MenuInfoButton
-              title="Wilayah yang Direbut"
-              description="Daftar ini menampilkan negara atau wilayah yang saat ini berada di bawah kendali negara Anda setelah berhasil direbut. Jumlah dan daftar wilayah diperbarui ketika status penguasaan di peta berubah."
+              title={tr("menu.infoTitle")}
+              description={tr("menu.infoDescription")}
             />
             <RootModalCloseButton onClick={onClose} />
           </div>
         </div>
 
         <div className="annexed-territories-content flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-root-surface relative z-10 neon-scrollbar">
-          {annexedCountries.length === 0 ? (
+          {annexedTerritories.length === 0 ? (
             <div className="annexed-territories-empty flex min-h-[280px] flex-col items-center justify-center text-center">
               <div className="p-5 rounded-full bg-root-canvas border border-root-accent/20 mb-5">
                 <Globe2 className="h-12 w-12 text-root-subtle" strokeWidth={1.5} />
               </div>
               <h3 className="annexed-territories-empty-title text-xl sm:text-2xl font-black uppercase text-root-text">
-                Belum ada negara yang dianeksasi
+                {tr("menu.emptyTitle")}
               </h3>
               <p className="mt-2 max-w-md text-sm text-root-subtle">
-                Negara yang berhasil direbut oleh {playerCountryName || "negara Anda"} akan ditampilkan di sini.
+                {tr("menu.emptyDescription", { country: countryLabel })}
               </p>
             </div>
           ) : (
             <div>
-              <div className={`annexed-territories-summary mb-4 flex items-center justify-between gap-3 border border-root-accent/20 bg-root-canvas p-3 ${rootBorderRadius.card}`}>
-                <p className="text-xs font-bold uppercase tracking-wider text-root-subtle">
-                  Wilayah yang berada di bawah kendali {playerCountryName}
-                </p>
-                <span className="annexed-territories-count shrink-0 rounded-full border border-root-accent/30 bg-root-accent/10 px-3 py-1 text-xs font-black text-root-accent">
-                  {annexedCountries.length} Negara
-                </span>
+              <div className={`annexed-territories-summary mb-4 flex flex-col gap-3 border border-root-accent/20 bg-root-canvas p-3 sm:flex-row sm:items-center sm:justify-between ${rootBorderRadius.card}`}>
+                <p className="text-xs font-bold uppercase tracking-wider text-root-subtle">{tr("summary.description", { country: countryLabel })}</p>
+                <div className="flex flex-wrap gap-2 sm:justify-end">
+                  <span className="annexed-territories-count rounded-full border border-root-accent/30 bg-root-accent/10 px-3 py-1 text-xs font-black text-root-accent">
+                    {tr("summary.annexedCountries", { count: formatCount(fullyAnnexedCount) })}
+                  </span>
+                  <span className="annexed-territories-count rounded-full border border-root-accent/30 bg-root-accent/10 px-3 py-1 text-xs font-black text-root-accent">
+                    {tr("summary.capturedCities", { count: formatCount(capturedCityCount) })}
+                  </span>
+                </div>
               </div>
               <div className="annexed-territories-grid grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {annexedCountries.map(country => (
+                {annexedTerritories.map(territory => (
                   <div
-                    key={country.name}
+                    key={territory.iso}
                     className="annexed-territory-card flex items-center gap-3 rounded-xl border border-root-accent/20 bg-root-canvas p-4"
                   >
-                    {country.iso ? (
+                    {territory.iso ? (
                       <img
-                        src={`https://flagcdn.com/w40/${country.iso.toLowerCase()}.png`}
-                        alt={`Bendera ${country.name}`}
-                        className="h-6 w-9 rounded border border-root-accent/20 object-cover"
+                        src={`https://flagcdn.com/w40/${territory.iso}.png`}
+                        alt=""
+                        className="h-6 w-9 shrink-0 rounded border border-root-accent/20 object-cover"
                       />
                     ) : (
-                      <MapPin className="h-5 w-5 text-root-accent" />
+                      <MapPin aria-hidden="true" className="h-5 w-5 shrink-0 text-root-accent" />
                     )}
-                    <span className="annexed-territory-name text-sm font-bold text-root-text">{country.name}</span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="annexed-territory-name text-sm font-bold text-root-text">{territory.name}</span>
+                        <span className="rounded-full border border-root-accent/30 bg-root-accent/10 px-2 py-1 text-[10px] font-bold text-root-accent">
+                          {territory.fullyAnnexed
+                            ? tr("territory.fullAnnexation")
+                            : tr("territory.capturedCityCount", { count: formatCount(territory.cities.length) })}
+                        </span>
+                      </div>
+                      {territory.cities.length > 0 && (
+                        <details className="mt-2 border-t border-root-accent/10 pt-2">
+                          <summary className="cursor-pointer text-xs font-semibold text-root-subtle hover:text-root-text">
+                            {tr("territory.showCities", { count: formatCount(territory.cities.length) })}
+                          </summary>
+                          <ul className="mt-2 flex flex-wrap gap-1.5">
+                            {territory.cities.map(city => (
+                              <li
+                                key={city}
+                                className="rounded-md border border-root-accent/15 bg-root-surface px-2 py-1 text-xs text-root-text"
+                              >
+                                {city}
+                              </li>
+                            ))}
+                          </ul>
+                        </details>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
