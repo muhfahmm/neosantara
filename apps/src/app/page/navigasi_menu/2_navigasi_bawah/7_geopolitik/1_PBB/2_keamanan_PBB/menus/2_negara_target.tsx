@@ -4,6 +4,7 @@ import { FileText } from "lucide-react";
 import NotebookModalWrapper from "../../../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
 
 interface CountryOption {
   id: number;
@@ -34,6 +35,7 @@ export default function CountryTargetModal({
   onSelectTarget,
   renderFlag,
 }: Props) {
+  const { pbb } = useGeopoliticsMenuTranslation();
   if (!isOpen) return null;
 
   return (
@@ -45,8 +47,8 @@ export default function CountryTargetModal({
               <FileText className="h-6 w-6 text-root-accent" />
             </div>
             <div>
-              <h3 className={rootModalTypography.title}>Pilih Negara Target</h3>
-              <p className="text-xs text-root-subtle font-medium mt-0.5">Pilih benua, lalu pilih negara target Anda.</p>
+              <h3 className={rootModalTypography.title}>{pbb("common.chooseCountry")}</h3>
+              <p className="text-xs text-root-subtle font-medium mt-0.5">{pbb("common.targetHint")}</p>
             </div>
           </div>
           <RootModalCloseButton onClick={onClose} />

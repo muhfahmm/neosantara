@@ -11,6 +11,28 @@ import type { OrgApplication, OrganizationApplicationType } from "./orgMembershi
 import { getDaysElapsed, formatDate } from "@/app/logic/production_logic";
 import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
 import DanaTidakCukupOrganisasiModal from "./DanaTidakCukupOrganisasiModal";
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
+
+const ORGANIZATION_KEYS: Record<string, string> = {
+  "Interpol": "interpol",
+  "Organisasi Kesehatan Dunia (WHO)": "who",
+  "UNESCO": "unesco",
+  "Organisasi Perdagangan Dunia (WTO)": "wto",
+  "Organisasi Buruh Internasional (ILO)": "ilo",
+  "Organisasi Pangan dan Pertanian (FAO)": "fao",
+  "Organisasi Maritim Internasional (IMO)": "imo",
+  "Organisasi Telekomunikasi Internasional (ITU)": "itu",
+  "Organisasi Meteorologi Dunia (WMO)": "wmo",
+  "Perhimpunan Bangsa-Bangsa Asia Tenggara (ASEAN)": "asean",
+  "Uni Eropa (EU)": "eu",
+  "Liga Arab": "arabLeague",
+  "Uni Afrika (AU)": "africanUnion",
+  "Organisasi Kerja Sama Islam (OKI)": "oic",
+  "BRICS (Brasil, Rusia, India, China, Afrika Selatan)": "brics",
+  "Pakta Pertahanan Atlantik Utara (NATO)": "nato",
+  "Organisasi Negara-Negara Pengekspor Minyak Bumi (OPEC)": "opec",
+  "Kelompok Duapuluh (G20)": "g20",
+};
 
 interface PermohonanKeanggotaanModalProps {
   isOpen: boolean;
@@ -39,12 +61,14 @@ export default function PermohonanKeanggotaanModal({
   currentBudget,
   setCountryDetail,
 }: PermohonanKeanggotaanModalProps) {
+  const { organizations, language } = useGeopoliticsMenuTranslation();
   const [mounted, setMounted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [currentApp, setCurrentApp] = useState<OrgApplication | undefined>(undefined);
   const [isInsufficientFundsOpen, setIsInsufficientFundsOpen] = useState(false);
   const submissionStarted = useRef(false);
   const applicationFee = organizationType === "pbb" ? 1_000_000 : 500_000;
+  const orgKey = ORGANIZATION_KEYS[orgName] || "default";
 
   const getCurrentDateStr = () => {
     return getCurrentGameDateString() || formatDate(new Date());
@@ -123,10 +147,10 @@ export default function PermohonanKeanggotaanModal({
             </div>
             <div className="min-w-0">
               <div className="mb-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-root-accent">
-                Permohonan Keanggotaan
+                {organizations("application.title")}
               </div>
               <h2 id="membership-application-title" className="text-[length:var(--modal-font-title)] font-bold leading-tight text-root-text">
-                {orgName}
+                {organizations(`organizationNames.${orgKey}`)}
               </h2>
             </div>
           </div>
@@ -142,18 +166,18 @@ export default function PermohonanKeanggotaanModal({
                 <Clock className="w-8 h-8 animate-pulse" />
               </div>
               <h4 className="text-sm font-black text-amber-400 uppercase tracking-wider">
-                Permohonan Sedang Ditinjau (30 Hari)
+                {organizations("application.pendingTitle")}
               </h4>
               <p className="text-xs text-[#8AA4A4] max-w-sm mx-auto leading-relaxed">
-                Permohonan keanggotaan negara <span className="text-root-accent font-bold">{countryName}</span> sedang diproses oleh Dewan Anggota <span className="text-root-accent font-bold">{orgName}</span>.
+                {organizations("application.pendingDescription", { country: countryName, organization: organizations(`organizationNames.${orgKey}`) })}
               </p>
               <div className="grid grid-cols-2 gap-3 pt-2 text-[11px]">
                 <div className="p-3 rounded-xl bg-root-canvas border border-root-accent/20">
-                  <span className="text-root-subtle block">Masa Peninjauan</span>
-                  <span className="font-extrabold text-root-accent text-sm">{remainingDays} Hari Lagi</span>
+                  <span className="text-root-subtle block">{organizations("application.reviewPeriod")}</span>
+                  <span className="font-extrabold text-root-accent text-sm">{organizations("application.daysRemaining", { days: remainingDays })}</span>
                 </div>
                 <div className="p-3 rounded-xl bg-root-canvas border border-root-accent/20">
-                  <span className="text-root-subtle block">Peluang Penerimaan</span>
+                  <span className="text-root-subtle block">{organizations("application.approvalChance")}</span>
                   <span className="font-extrabold text-emerald-400 text-sm">{currentApp.approvalRate}%</span>
                 </div>
               </div>
@@ -164,10 +188,10 @@ export default function PermohonanKeanggotaanModal({
                 <CheckCircle className="w-8 h-8" />
               </div>
               <h4 className="text-sm font-black text-emerald-400 uppercase tracking-wider">
-                Permohonan Diterima!
+                {organizations("application.acceptedTitle")}
               </h4>
               <p className="text-xs text-[#8AA4A4] max-w-sm mx-auto leading-relaxed">
-                Selamat! Permohonan keanggotaan negara <span className="text-root-accent font-bold">{countryName}</span> di <span className="text-root-accent font-bold">{orgName}</span> resmi disetujui (Peluang Penerimaan: {currentApp.approvalRate}%). Seluruh bonus keanggotaan kini telah aktif.
+                {organizations("application.acceptedDescription", { country: countryName, organization: organizations(`organizationNames.${orgKey}`), rate: currentApp.approvalRate })}
               </p>
             </div>
           ) : currentApp?.status === "rejected" ? (
@@ -176,39 +200,39 @@ export default function PermohonanKeanggotaanModal({
                 <AlertTriangle className="w-8 h-8" />
               </div>
               <h4 className="text-sm font-black text-rose-400 uppercase tracking-wider">
-                Permohonan Ditolak
+                {organizations("application.rejectedTitle")}
               </h4>
               <p className="text-xs text-[#8AA4A4] max-w-sm mx-auto leading-relaxed">
-                Permohonan keanggotaan negara <span className="text-root-accent font-bold">{countryName}</span> sebelumnya ditolak oleh dewan anggota. Anda dapat mencoba mengajukan permohonan keanggotaan kembali.
+                {organizations("application.rejectedDescription", { country: countryName })}
               </p>
             </div>
           ) : (
             <div className="rounded-xl border border-root-accent/20 bg-root-canvas p-4 space-y-2">
               <div className="flex items-center gap-2 text-root-accent font-bold">
                 <ShieldCheck className="h-4 w-4" />
-                <span>Ringkasan Pengajuan Permohonan</span>
+                <span>{organizations("application.summaryTitle")}</span>
               </div>
               <div className="grid grid-cols-2 gap-2 border-t border-root-accent/10 pt-1 text-[11px]">
                 <div>
-                  <span className="text-root-subtle block">Negara Pemohon:</span>
-                  <span className="font-bold text-root-text">{countryName || "Indonesia"}</span>
+                  <span className="text-root-subtle block">{organizations("application.applicantCountry")}</span>
+                  <span className="font-bold text-root-text">{countryName || organizations("application.defaultCountry")}</span>
                 </div>
                 <div>
-                  <span className="text-root-subtle block">Organisasi Target:</span>
-                  <span className="font-bold text-root-accent">{orgName}</span>
+                  <span className="text-root-subtle block">{organizations("application.targetOrganization")}</span>
+                  <span className="font-bold text-root-accent">{organizations(`organizationNames.${orgKey}`)}</span>
                 </div>
                 <div>
-                  <span className="text-root-subtle block">Waktu Proses:</span>
-                  <span className="font-bold text-amber-400">30 Hari Simu</span>
+                  <span className="text-root-subtle block">{organizations("application.processingTime")}</span>
+                  <span className="font-bold text-amber-400">{organizations("application.simulationDays", { days: 30 })}</span>
                 </div>
                 <div>
-                  <span className="text-root-subtle block">Estimasi Penerimaan:</span>
-                  <span className="font-bold text-emerald-400">Tinggi (65% - 90%)</span>
+                  <span className="text-root-subtle block">{organizations("application.estimatedAcceptance")}</span>
+                  <span className="font-bold text-emerald-400">{organizations("application.highChance")}</span>
                 </div>
                 <div>
-                  <span className="text-root-subtle block">Biaya Pengajuan:</span>
+                  <span className="text-root-subtle block">{organizations("application.fee")}</span>
                   <span className="font-bold text-amber-400">
-                    {applicationFee.toLocaleString("id-ID")} NEO
+                    {applicationFee.toLocaleString(language)} NEO
                   </span>
                 </div>
               </div>
@@ -221,7 +245,7 @@ export default function PermohonanKeanggotaanModal({
             onClick={onClose}
             className="rounded-xl border border-root-accent/30 bg-root-surface px-5 py-2 text-xs font-bold text-root-subtle hover:bg-root-accent hover:text-root-canvas transition-all cursor-pointer uppercase tracking-wider"
            appearance="custom">
-            {currentApp?.status === "pending" || currentApp?.status === "accepted" ? "Tutup" : "Batal"}
+            {currentApp?.status === "pending" || currentApp?.status === "accepted" ? organizations("common.close") : organizations("common.cancel")}
           </SharedModalCloseButton>
           {(!currentApp || currentApp.status === "rejected") && (
             <button
@@ -232,12 +256,12 @@ export default function PermohonanKeanggotaanModal({
               {submitting ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin text-root-canvas" />
-                  Mengirim...
+                  {organizations("application.sending")}
                 </>
               ) : (
                 <>
                   <Send className="h-4 w-4" />
-                  Kirim Permohonan
+                  {organizations("application.submit")}
                 </>
               )}
             </button>

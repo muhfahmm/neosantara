@@ -5,6 +5,7 @@ import { Users } from "lucide-react";
 import NotebookModalWrapper from "../../../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
 
 interface CountryOption {
   id: number;
@@ -28,6 +29,7 @@ export default function CountryListModal({
   countries,
   renderFlag
 }: Props) {
+  const { pbb } = useGeopoliticsMenuTranslation();
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
@@ -44,7 +46,7 @@ export default function CountryListModal({
             <div>
               <h3 className={rootModalTypography.title}>{title}</h3>
               <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">
-                {countries.length} negara terdaftar
+                {pbb("common.registeredCountries", { count: countries.length })}
               </p>
             </div>
           </div>
@@ -54,7 +56,7 @@ export default function CountryListModal({
           <div className="w-full">
             {countries.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-root-subtle font-medium text-lg">Belum ada negara dalam daftar ini.</p>
+                <p className="text-root-subtle font-medium text-lg">{pbb("common.noCountries")}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">

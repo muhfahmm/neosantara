@@ -8,6 +8,8 @@ import PermohonanKeanggotaanModal from "../PermohonanKeanggotaanModal";
 import { getApplicationForOrg, isUserJoinedOrg } from "../orgMembershipLogic";
 import { getDaysElapsed, formatDate } from "@/app/logic/production_logic";
 import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
+import { getLocalizedCountryName } from "@/app/logic/countryNameLogic";
 
 interface OrganisasiRegionalProps {
   orgName: string;
@@ -29,23 +31,31 @@ interface MemberData {
 }
 
 const ORGANIZATION_BENEFITS: Record<string, string> = {
-  "Interpol": "Tingkat Kejahatan Turun -5%",
-  "Organisasi Kesehatan Dunia (WHO)": "Risiko Epidemi & Pandemi Turun -5%",
-  "UNESCO": "Kecepatan Riset Sains +5%",
-  "Organisasi Perdagangan Dunia (WTO)": "Harga Jual +15%, Harga Beli -10%",
-  "Organisasi Buruh Internasional (ILO)": "Hasil Perikanan +10%",
-  "Organisasi Pangan dan Pertanian (FAO)": "Produksi Pangan +10%",
-  "Organisasi Telekomunikasi Internasional (ITU)": "Kecepatan Riset +5%",
-  "Organisasi Meteorologi Dunia (WMO)": "Risiko Bencana Alam -5%",
-  "Organisasi Maritim Internasional (IMO)": "Hasil Perikanan +10%",
+  "Interpol": "interpol",
+  "Organisasi Kesehatan Dunia (WHO)": "who",
+  "UNESCO": "unesco",
+  "Organisasi Perdagangan Dunia (WTO)": "wto",
+  "Organisasi Buruh Internasional (ILO)": "ilo",
+  "Organisasi Pangan dan Pertanian (FAO)": "fao",
+  "Organisasi Telekomunikasi Internasional (ITU)": "itu",
+  "Organisasi Meteorologi Dunia (WMO)": "wmo",
+  "Organisasi Maritim Internasional (IMO)": "imo",
 };
 
 export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCountry, countryDetail, setCountryDetail, onClose, onOpenCountryDetail, onOpenPlayerDetail }: OrganisasiRegionalProps) {
+  const { language, organizations } = useGeopoliticsMenuTranslation();
   const [members, setMembers] = useState<MemberData[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPermohonanOpen, setIsPermohonanOpen] = useState(false);
 
   const playerCountryName = selectedCountry?.country || "";
+  const benefitKey = ORGANIZATION_BENEFITS[orgName];
+  const benefitValue = ["interpol", "who", "wmo"].includes(benefitKey || "")
+    ? -5
+    : ["unesco", "itu"].includes(benefitKey || "") ? 5 : 10;
+  const benefitText = benefitKey
+    ? organizations(`benefits.${benefitKey}`, { value: `${benefitValue > 0 ? "+" : ""}${benefitValue}`, sell: "+15", buy: "-10" })
+    : "";
 
   const getIsoFromName = (name: string) => {
     const found = COUNTRIES_DATA?.find(
@@ -98,15 +108,14 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
   return (
     <div className="w-full h-full flex flex-col bg-root-surface">
       <RootInfoModalHeader
-        title={orgName}
+        title={organizations(`organizationNames.${benefitKey || "default"}`)}
         onClose={onClose}
         icon={Icon ? <Icon aria-hidden="true" className="text-root-accent" /> : undefined}
         size="standard"
       />
 
-      {/* BODY - Daftar Negara Anggota */}
       <div className="flex-1 overflow-y-auto p-3 sm:p-5 bg-root-surface custom-scrollbar">
-        {ORGANIZATION_BENEFITS[orgName] && (() => {
+        {benefitKey && (() => {
           const app = getApplicationForOrg(playerCountryName, orgName);
           const currentDateStr = getCurrentGameDateString() || formatDate(new Date());
           const remainingDays = app ? Math.max(0, 30 - getDaysElapsed(app.submissionDate, currentDateStr)) : 30;
@@ -115,13 +124,13 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
           return (
             <div className="mb-4 p-3.5 rounded-xl bg-[#0E2A20] border border-emerald-500/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-bold text-emerald-300 shadow-md">
               <div className="flex items-center gap-2 flex-wrap">
-                <span>Efek Keanggotaan Organisasi:</span>
-                <span className="font-black text-emerald-400 text-sm">{ORGANIZATION_BENEFITS[orgName]}</span>
+                <span>{organizations("members.benefitTitle")}</span>
+                <span className="font-black text-emerald-400 text-sm">{benefitText}</span>
               </div>
               {isMember ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-black text-[11px] uppercase tracking-wider shrink-0 shadow-sm">
                   <Check className="h-3.5 w-3.5 text-emerald-400" />
-                  <span>Anggota Aktif</span>
+                  <span>{organizations("members.activeMember")}</span>
                 </span>
               ) : app?.status === "pending" ? (
                 <button
@@ -129,7 +138,7 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500/30 font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer shadow-sm shrink-0"
                 >
                   <Clock className="h-3.5 w-3.5 animate-pulse text-amber-400" />
-                  <span>Peninjauan ({remainingDays} Hari)</span>
+                  <span>{organizations("members.reviewing", { days: remainingDays })}</span>
                 </button>
               ) : (
                 <button
@@ -137,7 +146,7 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-root-accent text-root-canvas hover:bg-root-accent/80 font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer shadow-sm shrink-0"
                 >
                   <Send className="h-3.5 w-3.5" />
-                  <span>Kirim Permohonan</span>
+                  <span>{organizations("members.apply")}</span>
                 </button>
               )}
             </div>
@@ -147,23 +156,24 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
         <div className="w-full bg-root-canvas border border-root-accent/20 rounded-xl p-6 shadow-md">
           <div className="flex justify-between items-center mb-4 border-b border-root-accent/20 pb-2">
             <h4 className="text-xs font-black text-root-accent uppercase tracking-wider">
-              Daftar Negara Anggota ({members.length} Negara)
+              {organizations("members.listTitle", { count: members.length })}
             </h4>
           </div>
 
           {loading ? (
             <div className="flex items-center justify-center py-10 gap-2 text-root-accent/60 font-bold">
               <Loader2 className="h-5 w-5 animate-spin text-root-accent" />
-              Memuat data anggota...
+              {organizations("members.loading")}
             </div>
           ) : members.length === 0 ? (
             <div className="py-10 text-center text-root-accent/60 font-medium">
-              Belum ada data anggota yang ditemukan untuk organisasi ini.
+              {organizations("members.empty")}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
               {members.map((member, idx) => {
                 const isPlayer = member.country?.toLowerCase().trim() === playerCountryName.toLowerCase().trim();
+                const displayName = getLocalizedCountryName(member.iso || member.country, language);
                 return (
                   <div
                     key={idx}
@@ -176,16 +186,16 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
                   >
                     <div className="flex items-center justify-between gap-2 min-w-0">
                       <div className="flex items-center gap-2 min-w-0 flex-1">
-                        {renderFlag(member.iso || getIsoFromName(member.country), member.country)}
+                        {renderFlag(member.iso || getIsoFromName(member.country), displayName)}
                         <span className={`text-sm font-bold truncate block ${isPlayer ? 'text-root-accent' : 'text-root-accent/90'}`}>
-                          {member.country}
+                          {displayName}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         {isPlayer && (
                           <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-root-accent text-root-canvas text-[9px] font-black uppercase tracking-wider shadow-sm">
                             <User className="w-3 h-3" />
-                            ANDA
+                            {organizations("members.you")}
                           </span>
                         )}
                         <ChevronRight className="h-4 w-4 text-root-accent/40 group-hover:text-root-accent transition-colors" />
@@ -196,7 +206,11 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
                       member.status === 'Anggota' ? 'bg-root-accent/10 text-root-accent border border-root-accent/30' :
                       'bg-root-accent/5 text-root-accent/60 border border-root-accent/20'
                     }`}>
-                      {member.status || 'Anggota'}
+                      {member.status === "Anggota Tetap"
+                        ? organizations("members.permanent")
+                        : member.status === "Anggota" || !member.status
+                          ? organizations("members.regular")
+                          : member.status}
                     </span>
                   </div>
                 );

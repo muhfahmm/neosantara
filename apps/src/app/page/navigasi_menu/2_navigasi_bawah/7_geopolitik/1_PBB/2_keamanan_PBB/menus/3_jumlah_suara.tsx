@@ -4,6 +4,7 @@ import { Users } from "lucide-react";
 import NotebookModalWrapper from "../../../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
 
 interface CountryOption {
   id: number;
@@ -27,6 +28,7 @@ export default function CountryListModal({
   countries,
   renderFlag,
 }: Props) {
+  const { pbb } = useGeopoliticsMenuTranslation();
   if (!isOpen) return null;
 
   return (
@@ -39,7 +41,7 @@ export default function CountryListModal({
             </div>
             <div>
               <h3 className={rootModalTypography.title}>{title}</h3>
-              <p className="text-xs text-root-subtle font-medium mt-0.5">{countries.length} negara terdaftar</p>
+              <p className="text-xs text-root-subtle font-medium mt-0.5">{pbb("common.registeredCountries", { count: countries.length })}</p>
             </div>
           </div>
           <RootModalCloseButton onClick={onClose} />
@@ -48,7 +50,7 @@ export default function CountryListModal({
           <div className="w-full">
             {countries.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-root-subtle font-medium text-lg">Belum ada negara dalam daftar ini.</p>
+                <p className="text-root-subtle font-medium text-lg">{pbb("common.noCountries")}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">

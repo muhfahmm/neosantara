@@ -1,4 +1,5 @@
 "use client"
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
@@ -34,6 +35,7 @@ export default function ModalSetuju({
   renderFlag,
   onBribeCountry
 }: Props) {
+  const { language, pbb } = useGeopoliticsMenuTranslation();
   const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -61,10 +63,10 @@ export default function ModalSetuju({
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-black text-emerald-400 tracking-tight leading-none uppercase flex items-center gap-2">
-                Daftar Anggota DK PBB Setuju
+                {pbb("vote.council.yesTitle")}
               </h3>
               <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">
-                {resolutionTitle ? `Usulan: ${resolutionTitle} • ` : ''}Total {countries.length} Anggota DK
+                {resolutionTitle ? pbb("common.councilProposed", { title: resolutionTitle, count: countries.length }) : pbb("vote.totalCountries", { count: countries.length })}
               </p>
             </div>
           </div>
@@ -72,7 +74,7 @@ export default function ModalSetuju({
             onClick={onClose}
             className="p-1.5 lg:p-2 rounded-xl border border-emerald-500/30 bg-root-surface text-root-subtle hover:text-emerald-400 hover:border-emerald-500 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
            appearance="custom">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">{pbb("common.close")}</span>
             <X className="h-4 w-4" />
           </SharedModalCloseButton>
         </div>
@@ -82,7 +84,7 @@ export default function ModalSetuju({
           <Search className="w-4 h-4 text-root-subtle" />
           <input
             type="text"
-            placeholder="Cari nama negara..."
+            placeholder={pbb("common.searchCountry")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="bg-transparent text-xs text-root-text placeholder-root-subtle focus:outline-none w-full"
@@ -94,7 +96,7 @@ export default function ModalSetuju({
           <div className="w-full">
             {filtered.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-root-subtle font-medium text-sm">Tidak ada negara yang ditemukan.</p>
+                <p className="text-root-subtle font-medium text-sm">{pbb("common.noResults")}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 w-full">
@@ -150,7 +152,7 @@ export default function ModalSetuju({
                           onClick={() => onBribeCountry && onBribeCountry(country.iso, targetBribeVote)}
                           className="px-2.5 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 hover:border-amber-400 text-amber-400 rounded-lg text-[10px] font-bold tracking-wider uppercase transition-all flex items-center gap-1 shrink-0 cursor-pointer"
                         >
-                          💸 Suap (${formatBribeCost(country.name)})
+                          {pbb("vote.bribeButton", { amount: formatBribeCost(country.name, language) })}
                         </button>
                       )}
                     </div>
@@ -163,8 +165,8 @@ export default function ModalSetuju({
 
         {/* Footer info */}
         <div className="px-6 py-2.5 bg-root-canvas border-t border-emerald-500/20 flex items-center justify-between text-[11px] font-bold text-root-subtle shrink-0">
-          <span>Dewan Keamanan PBB • {countries.length} Suara Setuju</span>
-          <span className="text-emerald-400 uppercase">Status: Mendukung Usulan</span>
+          <span>{pbb("common.voteCountCouncil", { count: countries.length, kind: pbb("common.support") })}</span>
+          <span className="text-emerald-400 uppercase">{pbb("common.statusSupport")}</span>
         </div>
       </div>
     </div>,

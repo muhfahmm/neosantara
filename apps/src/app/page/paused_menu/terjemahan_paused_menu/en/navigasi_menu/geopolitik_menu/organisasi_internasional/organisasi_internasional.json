@@ -1,0 +1,68 @@
+{
+  "common": { "close": "Close", "cancel": "Cancel", "understand": "Got it" },
+  "menu": { "title": "International Bloc Membership", "infoTitle": "International Organizations", "infoDescription": "Explore UN organizations, specialized agencies, and regional organizations. Open an organization to review membership, information, and cooperation opportunities available to your country." },
+  "tabs": { "un": "UN Organizations & Specialized Agencies", "regional": "Regional Organizations & Economic Blocs" },
+  "cards": { "viewMembership": "View {organization} membership", "information": "{organization} information" },
+  "organizationNames": {
+    "default": "International Organization", "interpol": "Interpol", "who": "World Health Organization (WHO)", "unesco": "UN Educational, Scientific and Cultural Organization (UNESCO)", "wto": "World Trade Organization (WTO)", "ilo": "International Labour Organization (ILO)", "fao": "Food and Agriculture Organization (FAO)", "imo": "International Maritime Organization (IMO)", "itu": "International Telecommunication Union (ITU)", "wmo": "World Meteorological Organization (WMO)",
+    "asean": "Association of Southeast Asian Nations (ASEAN)", "eu": "European Union (EU)", "arabLeague": "Arab League", "africanUnion": "African Union (AU)", "oic": "Organization of Islamic Cooperation (OIC)", "brics": "BRICS (Brazil, Russia, India, China, South Africa)", "nato": "North Atlantic Treaty Organization (NATO)", "opec": "Organization of the Petroleum Exporting Countries (OPEC)", "g20": "Group of Twenty (G20)",
+    "apec": "Asia-Pacific Economic Cooperation (APEC)", "sco": "Shanghai Cooperation Organization (SCO)", "oas": "Organization of American States (OAS)", "gcc": "Gulf Cooperation Council (GCC)", "mercosur": "Southern Common Market (MERCOSUR)", "commonwealth": "Commonwealth of Nations", "g7": "Group of Seven (G7)", "quad": "Quadrilateral Security Dialogue (QUAD)", "oecd": "Organisation for Economic Co-operation and Development (OECD)"
+  },
+  "organizationInfo": {
+    "default": { "description": "An international cooperation forum for member countries.", "focus": "Dialogue and policy coordination among members." },
+    "interpol": { "description": "An organization that helps member countries' police forces cooperate against cross-border crime.", "focus": "Police information sharing, international assistance coordination, and cross-border crime enforcement." },
+    "who": { "description": "A UN agency that directs and coordinates international cooperation on health.", "focus": "Public health, outbreak response, and global health guidance." },
+    "unesco": { "description": "A UN agency that promotes cooperation in education, science, and culture.", "focus": "Education, heritage preservation, science, and freedom of expression." },
+    "wto": { "description": "An organization providing rules for international trade and a forum for resolving trade disputes.", "focus": "Trade rules, negotiations, and dispute settlement among members." },
+    "ilo": { "description": "A UN agency advancing workers' rights and decent employment standards.", "focus": "Labour standards, worker protection, and dialogue among governments, employers, and workers." },
+    "fao": { "description": "A UN agency leading international efforts to end hunger and improve food security.", "focus": "Agriculture, food, nutrition, and sustainable natural-resource management." },
+    "imo": { "description": "A UN agency developing safety and environmental-protection rules for international shipping.", "focus": "Ship safety, maritime security, and prevention of marine pollution." },
+    "itu": { "description": "A UN agency coordinating radio spectrum, satellite orbits, and telecommunications standards.", "focus": "Global connectivity and development of information and communication technologies." },
+    "wmo": { "description": "A UN agency facilitating global cooperation on weather, climate, and water observations.", "focus": "Meteorological data, early warnings, climate, and hydrology." },
+    "asean": { "description": "A regional organization promoting cooperation and integration among Southeast Asian countries.", "focus": "Regional political-security, economic, and socio-cultural cooperation.", "requirement": "The country must be in Southeast Asia." },
+    "eu": { "description": "A political and economic union of European countries with shared institutions and policies.", "focus": "A common market, cross-border policies, and regional cooperation.", "requirement": "The country must be in Europe." },
+    "arabLeague": { "description": "A regional organization promoting coordination and ties among Arab member states.", "focus": "Political, economic, cultural, and social consultation and cooperation.", "requirement": "The country must be in the Middle East or North Africa." },
+    "africanUnion": { "description": "A continental organization promoting unity, peace, and development in Africa.", "focus": "African integration, conflict resolution, and sustainable development.", "requirement": "The country must be in Africa." },
+    "oic": { "description": "An intergovernmental organization strengthening cooperation and solidarity among its members.", "focus": "Political consultation, development, humanitarian assistance, and issues affecting the Muslim world.", "requirement": "Islam must be the country's main religion." },
+    "brics": { "description": "A cooperation forum for BRICS countries to strengthen dialogue and coordination on global issues.", "focus": "Economic cooperation, development, and coordination in global governance.", "requirement": "Relations with both China and Russia must score above 50." },
+    "nato": { "description": "A collective-defense alliance of member states in the North Atlantic and Europe.", "focus": "Security consultation and collective defense under the alliance treaty.", "requirement": "The country must be in North America or Europe." },
+    "opec": { "description": "An organization of oil-exporting countries that coordinates members' petroleum policies.", "focus": "Oil-policy coordination and energy-market stability.", "requirement": "The country must produce petroleum." },
+    "g20": { "description": "An international economic cooperation forum for major economies, the European Union, and the African Union.", "focus": "Global economic coordination, financial stability, and development.", "requirement": "The country must rank among the world's top 20 economies by GDP." }
+  },
+  "info": { "title": "Organization Information", "about": "About the organization", "focus": "Areas of focus", "membershipBenefit": "Membership Effects / Bonuses:", "researchBonus": "International Organization Cooperation research: +{percent}% to benefits", "benefitInactive": "Benefits activate when the country becomes a member." },
+  "benefits": {
+    "interpol": "Crime rate {value}%", "who": "Epidemic and pandemic risk {value}%", "unesco": "Science research speed {value}%", "wto": "Selling prices {sell}%; purchase prices {buy}%", "ilo": "Manufacturing output {value}%", "fao": "Food production {value}%", "imo": "Fishery output {value}%", "itu": "Research speed {value}%", "wmo": "Natural-disaster risk {value}%", "asean": "Construction speed {value}%", "eu": "Tax revenue {value}%", "arabLeague": "Diplomatic influence: +{value} UN votes", "africanUnion": "Construction speed {value}%", "oic": "Food production {value}%", "brics": "National income {value}%", "nato": "Military strength {value}%", "opec": "Oil prices {value}%", "g20": "National income {value}%"
+  },
+  "eligibility": {
+    "title": "Membership Requirements", "loading": "Loading country data to verify requirements...", "error": "Requirement verification data could not be loaded. Please try again later.",
+    "requirements": {
+      "geography": { "asean": "Only countries in Southeast Asia are eligible to join.", "eu": "Only countries in Europe are eligible to join.", "nato": "Only countries in North America or Europe are eligible to join.", "arabLeague": "Only countries in the Middle East or North Africa are eligible to join.", "africanUnion": "Only countries in Africa are eligible to join." },
+      "oil-production": { "opec": "The country must produce petroleum." },
+      "diplomacy": { "brics": "Relations with both China and Russia must score above 50." },
+      "gdp-ranking": { "g20": "The country must rank among the world's top 20 economies by GDP." },
+      "religion": { "oic": "Islam must be the country's main religion." }
+    },
+    "reasons": {
+      "geography": {
+        "asean": { "eligible": "{country} is in Southeast Asia.", "ineligible": "{country} is not in Southeast Asia.", "unknown": "The country's ISO code is unavailable; its region cannot be verified." },
+        "eu": { "eligible": "{country} is in Europe.", "ineligible": "{country} is not in Europe.", "unknown": "The country's continent data is unavailable." },
+        "nato": { "eligible": "{country} is in North America or Europe.", "ineligible": "{country} is not in North America or Europe.", "unknown": "The country's continent data is unavailable." },
+        "arabLeague": { "eligible": "{country} is in the Middle East or North Africa.", "ineligible": "{country} is not in the Middle East or North Africa.", "unknown": "The country's ISO code is unavailable; its region cannot be verified." },
+        "africanUnion": { "eligible": "{country} is in Africa.", "ineligible": "{country} is not in Africa.", "unknown": "The country's continent data is unavailable." }
+      },
+      "oil": { "eligible": "{country} produces {value} petroleum.", "ineligible": "{country} has no petroleum production (production: {value}).", "unknown": "Petroleum production data for this country is unavailable." },
+      "diplomacy": { "eligible": "Relations with China ({china}) and Russia ({russia}) meet the requirement.", "ineligible": "Relations with China ({china}) and Russia ({russia}) must both be above 50.", "unknown": "Diplomatic relation data is unavailable; eligibility cannot be determined.", "loading": "Retrieving diplomatic relation scores.", "details": "Relations with China: {china}; Russia: {russia}." },
+      "gdp": { "eligible": "{country} ranks among the world's top 20 by net GDP.", "ineligible": "{country} ranks {rank}; the requirement is a rank of 1–20.", "unknown": "The country's GDP ranking cannot be calculated from the available country data.", "details": "Net GDP rank: {rank} of {total} countries." },
+      "religion": { "eligible": "The main religion of {country} is Islam.", "ineligible": "The main religion of {country} is {religion}, not Islam.", "unknown": "The country's main religion data is unavailable." },
+      "default": "Membership eligibility cannot be verified."
+    }
+  },
+  "members": {
+    "benefitTitle": "Membership Effects / Benefits", "alreadyMember": "Already a Member", "activeMember": "Active Member", "reviewing": "Under Review ({days} days)", "requirementsUnmet": "Membership requirements are unmet or cannot yet be verified.", "apply": "Submit Application", "listTitle": "Member Countries ({count})", "loading": "Loading member data...", "empty": "No member data was found for this organization.", "you": "YOU", "permanent": "Permanent Member", "regular": "Member"
+  },
+  "application": {
+    "defaultCountry": "Indonesia",
+    "title": "Membership Application", "pendingTitle": "Application Under Review (30 Days)", "pendingDescription": "The membership application for {country} is being processed by the {organization} Member Council.", "reviewPeriod": "Review Period", "daysRemaining": "{days} days remaining", "approvalChance": "Approval Chance", "acceptedTitle": "Application Accepted!", "acceptedDescription": "Congratulations! {country}'s application to join {organization} has been approved (approval chance: {rate}%). All membership bonuses are now active.", "rejectedTitle": "Application Rejected", "rejectedDescription": "{country}'s previous membership application was rejected by the member council. You may apply again.", "summaryTitle": "Application Summary", "applicantCountry": "Applicant country:", "targetOrganization": "Target organization:", "processingTime": "Processing time:", "simulationDays": "{days} simulation days", "estimatedAcceptance": "Estimated acceptance:", "highChance": "High (65%–90%)", "fee": "Application fee:", "sending": "Sending...", "submit": "Submit Application"
+  },
+  "insufficientFunds": { "title": "Insufficient Funds", "close": "Close insufficient-funds information", "description": "The national treasury does not have enough funds to pay the membership application fee.", "fee": "Application fee:", "available": "Available funds:", "shortage": "Shortfall:" }
+}

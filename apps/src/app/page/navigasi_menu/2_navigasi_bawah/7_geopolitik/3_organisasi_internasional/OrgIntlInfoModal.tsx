@@ -10,6 +10,7 @@ import {
   EligibilityCountry,
   useOrgMembershipEligibility,
 } from "./2_organisasi_regional/requirementsLogic/membershipEligibility";
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
 
 interface OrgIntlInfoModalProps {
   isOpen: boolean;
@@ -21,106 +22,25 @@ interface OrgIntlInfoModalProps {
   selectedCountry?: EligibilityCountry | null;
 }
 
-const ORGANIZATION_INFO: Record<string, { description: string; focus: string; requirement?: string; benefit?: string }> = {
-  "Interpol": {
-    description: "Organisasi yang membantu kepolisian negara anggota bekerja sama dalam menangani kejahatan lintas negara.",
-    focus: "Pertukaran informasi kepolisian, koordinasi bantuan internasional, serta penindakan kejahatan lintas batas.",
-    benefit: "Tingkat kejahatan turun -5%",
-  },
-  "Organisasi Kesehatan Dunia (WHO)": {
-    description: "Badan PBB yang mengarahkan dan mengoordinasikan kerja sama internasional di bidang kesehatan.",
-    focus: "Kesehatan masyarakat, penanganan wabah, serta penyusunan pedoman kesehatan global.",
-    benefit: "Risiko epidemi & pandemi turun -5%",
-  },
-  "UNESCO": {
-    description: "Badan PBB yang mendorong kerja sama antarnegara di bidang pendidikan, ilmu pengetahuan, dan kebudayaan.",
-    focus: "Pendidikan, pelestarian warisan, ilmu pengetahuan, dan kebebasan berekspresi.",
-    benefit: "Kecepatan Riset Sains +5%",
-  },
-  "Organisasi Perdagangan Dunia (WTO)": {
-    description: "Organisasi yang menyediakan kerangka aturan perdagangan internasional dan forum penyelesaian sengketa dagang.",
-    focus: "Aturan perdagangan, negosiasi, dan penyelesaian sengketa antaranggota.",
-    benefit: "Harga Jual +15%, Harga Beli -10%",
-  },
-  "Organisasi Buruh Internasional (ILO)": {
-    description: "Badan PBB yang memajukan hak-hak pekerja dan standar ketenagakerjaan yang layak.",
-    focus: "Standar kerja, perlindungan pekerja, dan dialog antara pemerintah, pengusaha, serta pekerja.",
-    benefit: "Produksi Manufaktur +10%",
-  },
-  "Organisasi Pangan dan Pertanian (FAO)": {
-    description: "Badan PBB yang memimpin upaya internasional untuk mengatasi kelaparan dan meningkatkan ketahanan pangan.",
-    focus: "Pertanian, pangan, gizi, dan pengelolaan sumber daya alam berkelanjutan.",
-    benefit: "Produksi Pangan +10%",
-  },
-  "Organisasi Maritim Internasional (IMO)": {
-    description: "Badan PBB yang mengembangkan aturan keselamatan dan perlindungan lingkungan untuk pelayaran internasional.",
-    focus: "Keselamatan kapal, keamanan maritim, dan pencegahan pencemaran laut.",
-    benefit: "Hasil Perikanan +10%",
-  },
-  "Organisasi Telekomunikasi Internasional (ITU)": {
-    description: "Badan PBB yang mengoordinasikan penggunaan spektrum radio, orbit satelit, dan standar telekomunikasi.",
-    focus: "Konektivitas global dan pengembangan teknologi informasi dan komunikasi.",
-    benefit: "Kecepatan Riset +5%",
-  },
-  "Organisasi Meteorologi Dunia (WMO)": {
-    description: "Badan PBB yang memfasilitasi kerja sama global dalam pengamatan cuaca, iklim, dan air.",
-    focus: "Data meteorologi, peringatan dini, iklim, dan hidrologi.",
-    benefit: "Risiko Bencana Alam -5%",
-  },
-  "Perhimpunan Bangsa-Bangsa Asia Tenggara (ASEAN)": {
-    description: "Organisasi regional untuk mendorong kerja sama dan integrasi di antara negara-negara Asia Tenggara.",
-    focus: "Kerja sama politik-keamanan, ekonomi, dan sosial-budaya kawasan.",
-    requirement: "Negara harus berada di kawasan Asia Tenggara.",
-    benefit: "Kecepatan Pembangunan +10%",
-  },
-  "Uni Eropa (EU)": {
-    description: "Persatuan politik dan ekonomi negara-negara Eropa dengan lembaga dan kebijakan bersama di berbagai bidang.",
-    focus: "Pasar bersama, kebijakan lintas negara, dan kerja sama regional.",
-    requirement: "Negara harus berada di kawasan Eropa.",
-    benefit: "Penerimaan Pajak +10%",
-  },
-  "Liga Arab": {
-    description: "Organisasi regional yang mendorong koordinasi dan hubungan antarnegara anggota Arab.",
-    focus: "Konsultasi dan kerja sama politik, ekonomi, budaya, serta sosial.",
-    requirement: "Negara harus berada di kawasan Timur Tengah atau Afrika Utara.",
-    benefit: "Pengaruh Diplomasi +5 Suara PBB",
-  },
-  "Uni Afrika (AU)": {
-    description: "Organisasi kontinental yang mendorong persatuan, perdamaian, dan pembangunan di Afrika.",
-    focus: "Integrasi Afrika, penyelesaian konflik, dan pembangunan berkelanjutan.",
-    requirement: "Negara harus berada di benua Afrika.",
-    benefit: "Kecepatan Pembangunan +10%",
-  },
-  "Organisasi Kerja Sama Islam (OKI)": {
-    description: "Organisasi antar-pemerintah yang memperkuat kerja sama dan solidaritas di antara negara-negara anggotanya.",
-    focus: "Konsultasi politik, pembangunan, bantuan kemanusiaan, dan isu dunia Islam.",
-    requirement: "Agama utama negara harus Islam.",
-    benefit: "Produksi Pangan +10%",
-  },
-  "BRICS (Brasil, Rusia, India, China, Afrika Selatan)": {
-    description: "Forum kerja sama negara-negara BRICS untuk memperkuat dialog dan koordinasi di berbagai isu global.",
-    focus: "Kerja sama ekonomi, pembangunan, dan koordinasi dalam tata kelola global.",
-    requirement: "Skor hubungan dengan China dan Rusia harus sama-sama di atas 50.",
-    benefit: "Pendapatan Negara +10%",
-  },
-  "Pakta Pertahanan Atlantik Utara (NATO)": {
-    description: "Aliansi pertahanan kolektif negara-negara anggota di kawasan Atlantik Utara dan Eropa.",
-    focus: "Konsultasi keamanan dan pertahanan kolektif berdasarkan perjanjian aliansi.",
-    requirement: "Negara harus berada di Amerika Utara atau Eropa.",
-    benefit: "Kekuatan Militer +15%",
-  },
-  "Organisasi Negara-Negara Pengekspor Minyak Bumi (OPEC)": {
-    description: "Organisasi negara-negara pengekspor minyak yang mengoordinasikan kebijakan perminyakan para anggotanya.",
-    focus: "Koordinasi kebijakan minyak dan stabilitas pasar energi.",
-    requirement: "Negara harus memiliki produksi minyak bumi.",
-    benefit: "Harga Minyak +20%",
-  },
-  "Kelompok Duapuluh (G20)": {
-    description: "Forum kerja sama ekonomi internasional bagi ekonomi besar dan Uni Eropa serta Uni Afrika.",
-    focus: "Koordinasi ekonomi global, stabilitas keuangan, dan pembangunan.",
-    requirement: "Negara harus termasuk dalam 20 besar berdasarkan PDB dunia.",
-    benefit: "Pendapatan Negara +20%",
-  },
+const ORGANIZATION_KEYS: Record<string, string> = {
+  "Interpol": "interpol",
+  "Organisasi Kesehatan Dunia (WHO)": "who",
+  "UNESCO": "unesco",
+  "Organisasi Perdagangan Dunia (WTO)": "wto",
+  "Organisasi Buruh Internasional (ILO)": "ilo",
+  "Organisasi Pangan dan Pertanian (FAO)": "fao",
+  "Organisasi Maritim Internasional (IMO)": "imo",
+  "Organisasi Telekomunikasi Internasional (ITU)": "itu",
+  "Organisasi Meteorologi Dunia (WMO)": "wmo",
+  "Perhimpunan Bangsa-Bangsa Asia Tenggara (ASEAN)": "asean",
+  "Uni Eropa (EU)": "eu",
+  "Liga Arab": "arabLeague",
+  "Uni Afrika (AU)": "africanUnion",
+  "Organisasi Kerja Sama Islam (OKI)": "oic",
+  "BRICS (Brasil, Rusia, India, China, Afrika Selatan)": "brics",
+  "Pakta Pertahanan Atlantik Utara (NATO)": "nato",
+  "Organisasi Negara-Negara Pengekspor Minyak Bumi (OPEC)": "opec",
+  "Kelompok Duapuluh (G20)": "g20",
 };
 
 export default function OrgIntlInfoModal({
@@ -132,6 +52,7 @@ export default function OrgIntlInfoModal({
   countryDetail,
   selectedCountry,
 }: OrgIntlInfoModalProps) {
+  const { organizations } = useGeopoliticsMenuTranslation();
   const eligibility = useOrgMembershipEligibility(orgName, selectedCountry, countryDetail, isOpen);
 
   useEffect(() => {
@@ -145,24 +66,29 @@ export default function OrgIntlInfoModal({
 
   if (!isOpen || typeof document === "undefined") return null;
 
-  const info = ORGANIZATION_INFO[orgName] || {
-    description: "Forum kerja sama internasional bagi negara-negara anggota.",
-    focus: "Dialog dan koordinasi kebijakan antaranggota.",
+  const orgKey = ORGANIZATION_KEYS[orgName] || "default";
+  const benefitValues: Record<string, Record<string, number>> = {
+    interpol: { value: -5 }, who: { value: -5 }, unesco: { value: 5 }, wto: { sell: 15, buy: -10 },
+    ilo: { value: 10 }, fao: { value: 10 }, imo: { value: 10 }, itu: { value: 5 }, wmo: { value: -5 },
+    asean: { value: 10 }, eu: { value: 10 }, arabLeague: { value: 5 }, africanUnion: { value: 10 },
+    oic: { value: 10 }, brics: { value: 10 }, nato: { value: 15 }, opec: { value: 20 }, g20: { value: 20 },
   };
+  const baseBenefitValues = benefitValues[orgKey] || {};
   const researchBonusPercent = isMember
     ? getKerjaSamaOrganisasiRegionalBonusPercent(countryDetail)
     : 0;
-  const scaleBenefitValue = (value: string) => {
-    const scaledValue = Number((Number(value) * (1 + researchBonusPercent / 100)).toFixed(2));
-    const sign = value.startsWith("+") && scaledValue > 0 ? "+" : "";
-    return `${sign}${scaledValue}`;
-  };
-  const adjustedBenefit = info.benefit?.replace(
-    /([+-]?\d+(?:\.\d+)?)%/g,
-    (_match, value: string) => `${scaleBenefitValue(value)}%`
-  ).replace(
-    /([+-]?\d+(?:\.\d+)?)(?= Suara PBB)/,
-    (_match, value: string) => scaleBenefitValue(value)
+  const adjustedBenefitValues = Object.fromEntries(
+    Object.entries(baseBenefitValues).map(([key, value]) => [
+      key,
+      Number((value * (1 + researchBonusPercent / 100)).toFixed(2)),
+    ])
+  );
+  const hasBenefit = Boolean(baseBenefitValues.value !== undefined || baseBenefitValues.sell !== undefined);
+  const benefitParams = Object.fromEntries(
+    Object.entries(adjustedBenefitValues).map(([key, value]) => [
+      key,
+      orgKey === "arabLeague" && key === "value" ? String(value) : `${value > 0 ? "+" : ""}${value}`,
+    ])
   );
 
   return (
@@ -187,9 +113,9 @@ export default function OrgIntlInfoModal({
             <div className="min-w-0">
               <div className="mb-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-root-accent">
                 <Info className="h-3 w-3" />
-                Informasi Organisasi
+                {organizations("info.title")}
               </div>
-              <h2 id="organization-info-title" className="text-[length:var(--modal-font-title)] font-bold leading-tight text-root-text">{orgName}</h2>
+              <h2 id="organization-info-title" className="text-[length:var(--modal-font-title)] font-bold leading-tight text-root-text">{organizations(`organizationNames.${orgKey}`)}</h2>
             </div>
           </div>
           <div className="ml-3">
@@ -199,35 +125,28 @@ export default function OrgIntlInfoModal({
 
         <div className="organization-info-content space-y-5 bg-root-surface p-4 sm:p-6">
           <section>
-            <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-root-accent">Tentang organisasi</h3>
-            <p className="text-sm leading-relaxed text-root-body">{info.description}</p>
+            <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-root-accent">{organizations("info.about")}</h3>
+            <p className="text-sm leading-relaxed text-root-body">{organizations(`organizationInfo.${orgKey}.description`)}</p>
           </section>
-          {eligibility.requirements.length > 0 ? (
-            <MembershipEligibilityPanel eligibility={eligibility} />
-          ) : info.requirement && (
-            <section className="rounded-xl border border-root-accent/20 bg-root-canvas p-4">
-              <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-root-accent">Syarat Keanggotaan</h3>
-              <p className="text-sm leading-relaxed text-root-body">{info.requirement}</p>
-            </section>
-          )}
+          {eligibility.requirements.length > 0 && <MembershipEligibilityPanel eligibility={eligibility} orgName={orgName} />}
           <section className="rounded-xl border border-root-accent/20 bg-root-canvas p-4">
-            <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-root-accent">Fokus kerja</h3>
-            <p className="text-sm leading-relaxed text-root-body">{info.focus}</p>
+            <h3 className="mb-2 text-xs font-black uppercase tracking-widest text-root-accent">{organizations("info.focus")}</h3>
+            <p className="text-sm leading-relaxed text-root-body">{organizations(`organizationInfo.${orgKey}.focus`)}</p>
           </section>
-          {info.benefit && (
+          {hasBenefit && (
             <section className="flex items-center justify-between rounded-xl border border-root-modal-positive-border bg-root-modal-positive-bg p-4">
               <div>
-                <h3 className="text-xs font-black uppercase tracking-widest text-root-modal-positive">Efek Keanggotaan / Bonus:</h3>
+                <h3 className="text-xs font-black uppercase tracking-widest text-root-modal-positive">{organizations("info.membershipBenefit")}</h3>
                 {isMember && researchBonusPercent > 0 && (
                   <p className="mt-1 text-[11px] font-semibold text-root-body">
-                    Riset Kerja Sama Organisasi Internasional: +{researchBonusPercent}% terhadap manfaat
+                    {organizations("info.researchBonus", { percent: researchBonusPercent })}
                   </p>
                 )}
                 {!isMember && (
-                  <p className="mt-1 text-[11px] font-semibold text-root-subtle">Manfaat aktif setelah negara menjadi anggota.</p>
+                  <p className="mt-1 text-[11px] font-semibold text-root-subtle">{organizations("info.benefitInactive")}</p>
                 )}
               </div>
-              <span className="text-right text-sm font-black text-root-modal-positive">{adjustedBenefit}</span>
+              <span className="text-right text-sm font-black text-root-modal-positive">{organizations(`benefits.${orgKey}`, benefitParams)}</span>
             </section>
           )}
         </div>

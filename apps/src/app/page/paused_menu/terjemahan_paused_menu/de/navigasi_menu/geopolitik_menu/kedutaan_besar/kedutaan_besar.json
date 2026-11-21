@@ -1,0 +1,36 @@
+{
+  "header": {
+    "title": "Ausländische Botschaften"
+  },
+  "info": {
+    "title": "Botschaften",
+    "description": "Verwalte diplomatische Vertretungen und sieh dir die für dein Land eingetragenen Botschaften und Partner an. Botschaftsbeziehungen fördern die Kommunikation zwischen Ländern; Maßnahmen gegen Botschaften können Beziehungen und Zusammenarbeit beeinträchtigen."
+  },
+  "empty": {
+    "title": "Es sind noch keine ausländischen Botschaften eingetragen.",
+    "description": "Errichte eine Botschaft über die Länder-Detailseite, um diplomatische Beziehungen aufzubauen."
+  },
+  "status": {
+    "active": "Aktiv"
+  },
+  "types": {
+    "embassy": "Botschaft",
+    "trade": "Handel"
+  },
+  "labels": {
+    "continent": "Kontinent"
+  },
+  "actions": {
+    "viewDetails": "Details ansehen",
+    "destroyEmbassy": "Botschaft zerstören",
+    "close": "Schließen"
+  },
+  "confirm": {
+    "title": "Zerstörung der Botschaft bestätigen",
+    "message": "Möchtest du die Botschaft in {country} wirklich zerstören? Diese Aktion kann nicht rückgängig gemacht werden und beendet die diplomatischen Beziehungen."
+  },
+  "success": {
+    "title": "Erfolgreich",
+    "message": "Die Botschaft in {country} wurde zerstört."
+  }
+}

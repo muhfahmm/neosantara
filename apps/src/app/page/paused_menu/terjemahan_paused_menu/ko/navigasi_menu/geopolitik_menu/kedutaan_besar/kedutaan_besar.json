@@ -1,0 +1,36 @@
+{
+  "header": {
+    "title": "외국 대사관"
+  },
+  "info": {
+    "title": "대사관",
+    "description": "외교 공관을 관리하고 자국에 등록된 대사관과 협력국을 확인합니다. 대사관 관계는 국가 간 소통을 돕습니다. 대사관에 대한 조치는 외교 관계와 협력에 영향을 줄 수 있습니다."
+  },
+  "empty": {
+    "title": "아직 등록된 외국 대사관이 없습니다.",
+    "description": "국가 상세 페이지에서 대사관을 건설하여 외교 관계를 시작하세요."
+  },
+  "status": {
+    "active": "활성"
+  },
+  "types": {
+    "embassy": "대사관",
+    "trade": "무역"
+  },
+  "labels": {
+    "continent": "대륙"
+  },
+  "actions": {
+    "viewDetails": "상세 보기",
+    "destroyEmbassy": "대사관 파괴",
+    "close": "닫기"
+  },
+  "confirm": {
+    "title": "대사관 파괴 확인",
+    "message": "{country}에 있는 대사관을 정말 파괴하시겠습니까? 이 작업은 취소할 수 없으며 외교 관계가 단절됩니다."
+  },
+  "success": {
+    "title": "완료",
+    "message": "{country}에 있는 대사관이 파괴되었습니다."
+  }
+}

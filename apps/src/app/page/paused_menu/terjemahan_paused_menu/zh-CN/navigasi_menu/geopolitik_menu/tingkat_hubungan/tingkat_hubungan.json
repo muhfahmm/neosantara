@@ -1,0 +1,55 @@
+{
+  "menu": {
+    "title": "外交关系",
+    "infoTitle": "关系",
+    "infoDescription": "查看与其他国家的外交关系，按关系浏览国家，并使用可用的外交行动改善关系。关系可能影响双边合作以及其他国家的回应。"
+  },
+  "toolbar": {
+    "legend": "关系图例",
+    "improveAllAria": "改善与所有国家的关系",
+    "improveAllTitle": "改善与所有国家的关系",
+    "searchAria": "搜索国家或洲",
+    "searchPlaceholder": "搜索国家 / 洲..."
+  },
+  "table": {
+    "number": "编号",
+    "country": "国家",
+    "continent": "洲",
+    "embassies": "大使馆",
+    "relation": "关系",
+    "sortNumber": "按编号排序",
+    "sortCountry": "按国家名称排序",
+    "sortContinent": "按洲排序",
+    "sortEmbassies": "按大使馆状态排序",
+    "sortRelation": "按关系排序",
+    "emptySearch": "没有符合搜索“{query}”的结果。",
+    "embassyPresent": "设有大使馆",
+    "embassyAbsent": "无"
+  },
+  "legend": {
+    "title": "外交关系指标",
+    "countryCount": "（{count} 个国家）"
+  },
+  "statuses": {
+    "veryPoor": "极差",
+    "poor": "差",
+    "neutral": "中立",
+    "good": "良好",
+    "veryGood": "极好"
+  },
+  "continents": {
+    "asia": "亚洲",
+    "africa": "非洲",
+    "europe": "欧洲",
+    "northAmerica": "北美洲",
+    "southAmerica": "南美洲",
+    "oceania": "大洋洲",
+    "other": "其他"
+  },
+  "diplomacy": {
+    "choosePath": "选择外交途径",
+    "moneyPath": "资金途径 (NEO)",
+    "commodityGiftPath": "商品赠礼途径",
+    "allCountries": "所有国家"
+  }
+}

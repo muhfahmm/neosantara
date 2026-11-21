@@ -1,0 +1,36 @@
+{
+  "header": {
+    "title": "Embajadas Extranjeras"
+  },
+  "info": {
+    "title": "Embajadas",
+    "description": "Administra las misiones diplomáticas y consulta las embajadas o los socios registrados para tu país. Las relaciones diplomáticas facilitan la comunicación entre países; las acciones contra las embajadas pueden afectar las relaciones y la cooperación."
+  },
+  "empty": {
+    "title": "Aún no hay embajadas extranjeras registradas.",
+    "description": "Construye una embajada desde la página de detalles de un país para empezar a establecer relaciones diplomáticas."
+  },
+  "status": {
+    "active": "Activa"
+  },
+  "types": {
+    "embassy": "Embajada",
+    "trade": "Comercio"
+  },
+  "labels": {
+    "continent": "Continente"
+  },
+  "actions": {
+    "viewDetails": "Ver detalles",
+    "destroyEmbassy": "Destruir embajada",
+    "close": "Cerrar"
+  },
+  "confirm": {
+    "title": "Confirmar destrucción de embajada",
+    "message": "¿Seguro que quieres destruir la embajada en {country}? Esta acción no se puede deshacer y romperá las relaciones diplomáticas."
+  },
+  "success": {
+    "title": "Operación completada",
+    "message": "La embajada en {country} ha sido destruida."
+  }
+}

@@ -11,6 +11,8 @@ import {
   getLigaArabUNVoteBonus,
   getSuaraPBBResearchBonus,
 } from "@/app/page/bonus_logic";
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
+import { getLocalizedCountryName } from "@/app/logic/countryNameLogic";
 
 interface CountryVoteRow {
   name_id: string;
@@ -47,6 +49,7 @@ const renderFlag = (iso?: string, fallbackName?: string) => {
 };
 
 export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
+  const { language, pbb } = useGeopoliticsMenuTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [countryProfiles, setCountryProfiles] = useState<CountryProfile[]>([]);
 
@@ -155,16 +158,17 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
     if (!searchQuery.trim()) return countryVotes;
     const q = searchQuery.toLowerCase().trim();
     return countryVotes.filter(item =>
-      item.name_id.toLowerCase().includes(q)
+      item.name_id.toLowerCase().includes(q) ||
+      getLocalizedCountryName(item.iso || item.name_id, language).toLowerCase().includes(q)
     );
-  }, [countryVotes, searchQuery]);
+  }, [countryVotes, searchQuery, language]);
 
   return (
     <div className="bg-root-canvas border border-root-accent/20 p-6 rounded-xl shadow-lg">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-root-accent/15 mb-4">
         <div className="flex items-center gap-3">
           <Vote className="h-5 w-5 text-root-accent" />
-          <h4 className="text-sm font-black text-root-text uppercase tracking-wide">Suara Negara di Majelis Umum</h4>
+          <h4 className="text-sm font-black text-root-text uppercase tracking-wide">{pbb("countryVotes.title")}</h4>
         </div>
 
         <div className="flex items-center gap-3">
@@ -173,14 +177,14 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-root-accent/60" />
             <input
               type="text"
-              placeholder="Cari negara..."
+              placeholder={pbb("common.search")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-[#051111] border border-root-accent/30 rounded-lg pl-8 pr-3 py-1 text-xs text-root-text placeholder-root-subtle focus:outline-none focus:border-root-accent transition-colors"
             />
           </div>
           <div className="text-[10px] font-black uppercase tracking-widest text-root-subtle whitespace-nowrap">
-            {filteredVotes.length} negara
+            {pbb("common.registeredCountries", { count: filteredVotes.length })}
           </div>
         </div>
       </div>
@@ -190,22 +194,23 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
           <thead className="bg-[#051111] border-b border-root-accent/20 sticky top-0 z-10">
             <tr>
               {/* ✅ KOLOM NOMOR BARU */}
-              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-center text-[9px] sm:text-[10px] font-black text-root-accent uppercase tracking-wider whitespace-nowrap w-12">No</th>
-              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black text-root-accent uppercase tracking-wider whitespace-nowrap">Negara</th>
-              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black text-root-accent uppercase tracking-wider whitespace-nowrap">Bendera</th>
-              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black text-root-accent uppercase tracking-wider whitespace-nowrap">Suara PBB</th>
+              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-center text-[9px] sm:text-[10px] font-black text-root-accent uppercase tracking-wider whitespace-nowrap w-12">{pbb("countryVotes.number")}</th>
+              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black text-root-accent uppercase tracking-wider whitespace-nowrap">{pbb("countryVotes.country")}</th>
+              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black text-root-accent uppercase tracking-wider whitespace-nowrap">{pbb("countryVotes.flag")}</th>
+              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black text-root-accent uppercase tracking-wider whitespace-nowrap">{pbb("countryVotes.vote")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-root-accent/10">
             {filteredVotes.length === 0 ? (
               <tr>
                 <td colSpan={4} className="px-3 py-6 text-center text-xs text-root-subtle">
-                  Tidak ada negara yang ditemukan.
+                  {pbb("common.noResults")}
                 </td>
               </tr>
             ) : (
               filteredVotes.map((item, idx) => {
-                const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "Negara";
+                const displayName = getLocalizedCountryName(item.iso || item.name_id, language);
+                const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || pbb("countryVotes.defaultCountry");
                 const isUserCountry = item.name_id.toLowerCase().trim() === selectedCountryName.toLowerCase().trim();
 
                 return (
@@ -229,13 +234,13 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
                         {idx + 1}
                       </span>
                     </td>
-                    <td className={`px-3 py-2 font-bold ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>{item.name_id}</td>
-                    <td className="px-3 py-2">{renderFlag(item.iso, item.name_id)}</td>
+                    <td className={`px-3 py-2 font-bold ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>{displayName}</td>
+                    <td className="px-3 py-2">{renderFlag(item.iso, displayName)}</td>
                     <td className={`px-3 py-2 font-bold ${isUserCountry ? 'text-root-accent' : 'text-root-subtle'}`}>
-                      <span>{item.un_vote}</span>
+                      <span>{item.un_vote.toLocaleString(language)}</span>
                       {isUserCountry && getSuaraPBBResearchBonus(countryDetail) > 0 && (
                         <span className="ml-2 inline-flex items-center rounded-md bg-root-accent/20 border border-root-accent/40 px-2 py-0.5 text-[9px] font-black text-root-accent uppercase">
-                          +{getSuaraPBBResearchBonus(countryDetail)} Riset Suara PBB
+                          +{getSuaraPBBResearchBonus(countryDetail).toLocaleString(language)} {pbb("countryVotes.researchBonus")}
                         </span>
                       )}
                     </td>

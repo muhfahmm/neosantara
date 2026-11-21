@@ -1,0 +1,55 @@
+{
+  "menu": {
+    "title": "Diplomatic Relations",
+    "infoTitle": "Relations",
+    "infoDescription": "View diplomatic relations with other countries, browse countries by relationship, and use available diplomatic actions to improve them. Relations can affect bilateral cooperation and other countries' responses."
+  },
+  "toolbar": {
+    "legend": "Relations Legend",
+    "improveAllAria": "Improve relations with all countries",
+    "improveAllTitle": "Improve Relations with All Countries",
+    "searchAria": "Search countries or continents",
+    "searchPlaceholder": "Search countries / continents..."
+  },
+  "table": {
+    "number": "No.",
+    "country": "Country",
+    "continent": "Continent",
+    "embassies": "Embassy",
+    "relation": "Relations",
+    "sortNumber": "Sort by number",
+    "sortCountry": "Sort by country name",
+    "sortContinent": "Sort by continent",
+    "sortEmbassies": "Sort by embassy status",
+    "sortRelation": "Sort by relations",
+    "emptySearch": "No results match the search \"{query}\".",
+    "embassyPresent": "Embassy Present",
+    "embassyAbsent": "None"
+  },
+  "legend": {
+    "title": "Diplomatic Relations Indicator",
+    "countryCount": "({count} countries)"
+  },
+  "statuses": {
+    "veryPoor": "Very Poor",
+    "poor": "Poor",
+    "neutral": "Neutral",
+    "good": "Good",
+    "veryGood": "Very Good"
+  },
+  "continents": {
+    "asia": "Asia",
+    "africa": "Africa",
+    "europe": "Europe",
+    "northAmerica": "North America",
+    "southAmerica": "South America",
+    "oceania": "Oceania",
+    "other": "Other"
+  },
+  "diplomacy": {
+    "choosePath": "Choose a Diplomatic Approach",
+    "moneyPath": "Monetary Approach (NEO)",
+    "commodityGiftPath": "Commodity Gift Approach",
+    "allCountries": "All Countries"
+  }
+}

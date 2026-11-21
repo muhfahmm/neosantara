@@ -10,10 +10,10 @@ import OrganisasiRegional from "./2_organisasi_regional/organisasiRegional";
 import OrgIntlInfoModal from "./OrgIntlInfoModal";
 import MenuInfoButton from "../../MenuInfoButton";
 import {
-  getOrgMembers,
   ORGANIZATION_MEMBERSHIP_UPDATED_EVENT
 } from "@/../../json/14_database_organisasi_internasional";
 import { isUserJoinedOrg } from "./orgMembershipLogic";
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
 
 interface ModalProps {
   isOpen: boolean;
@@ -94,7 +94,38 @@ const orgImageMap: Record<string, string> = {
   "Kelompok Duapuluh (G20)": "/images/game/interface/sub-tabs/geopolitik/organisasi-regional/g20.svg",
 };
 
+const organizationTranslationKeys: Record<string, string> = {
+  "Interpol": "interpol",
+  "Organisasi Kesehatan Dunia (WHO)": "who",
+  "UNESCO": "unesco",
+  "Organisasi Perdagangan Dunia (WTO)": "wto",
+  "Organisasi Buruh Internasional (ILO)": "ilo",
+  "Organisasi Pangan dan Pertanian (FAO)": "fao",
+  "Organisasi Maritim Internasional (IMO)": "imo",
+  "Organisasi Telekomunikasi Internasional (ITU)": "itu",
+  "Organisasi Meteorologi Dunia (WMO)": "wmo",
+  "Perhimpunan Bangsa-Bangsa Asia Tenggara (ASEAN)": "asean",
+  "Uni Eropa (EU)": "eu",
+  "Liga Arab": "arabLeague",
+  "Uni Afrika (AU)": "africanUnion",
+  "Organisasi Kerja Sama Islam (OKI)": "oic",
+  "BRICS (Brasil, Rusia, India, China, Afrika Selatan)": "brics",
+  "Pakta Pertahanan Atlantik Utara (NATO)": "nato",
+  "Organisasi Negara-Negara Pengekspor Minyak Bumi (OPEC)": "opec",
+  "Kelompok Duapuluh (G20)": "g20",
+  "Kerja Sama Ekonomi Asia-Pasifik (APEC)": "apec",
+  "Organisasi Kerja Sama Shanghai (SCO)": "sco",
+  "Organisasi Negara-Negara Amerika (OAS)": "oas",
+  "Dewan Kerja Sama Teluk (GCC)": "gcc",
+  "Pasar Umum Selatan (MERCOSUR)": "mercosur",
+  "Persemakmuran Bangsa-Bangsa (Commonwealth)": "commonwealth",
+  "Kelompok Tujuh (G7)": "g7",
+  "Dialog Keamanan Kuadrilateral (QUAD)": "quad",
+  "Organisasi Kerja Sama dan Pembangunan Ekonomi (OECD)": "oecd",
+};
+
 export default function OrgIntlModal({ isOpen, onClose, selectedCountry, countryDetail, setCountryDetail, onOpenCountryDetail, onOpenPlayerDetail }: ModalProps) {
+  const { organizations } = useGeopoliticsMenuTranslation();
   const [activeTab, setActiveTab] = useState<"pbb" | "regional">("pbb");
   const [isChildModalOpen, setIsChildModalOpen] = useState(false);
   const [selectedOrgName, setSelectedOrgName] = useState<string | null>(null);
@@ -153,14 +184,14 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                 <Globe aria-hidden="true" className="root-modal-util-d252947d10 text-root-accent animate-pulse" />
               </div>
               <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                Keanggotaan Blok Internasional
+                {organizations("menu.title")}
               </h2>
             </div>
           </div>
           <div className="root-modal-util-08dfbca033">
             <MenuInfoButton
-              title="Organisasi Internasional"
-              description="Jelajahi organisasi PBB dan badan khusus serta organisasi regional. Buka tiap organisasi untuk melihat keanggotaan, informasi, dan peluang kerja sama yang tersedia bagi negara Anda."
+              title={organizations("menu.infoTitle")}
+              description={organizations("menu.infoDescription")}
             />
             <SharedModalCloseButton onClick={handleClose} />
           </div>
@@ -171,8 +202,8 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
           <RootModalTabs
             className="mb-6"
             items={[
-              { label: "Organisasi PBB & Badan Khusus", isActive: activeTab === "pbb", onClick: () => setActiveTab("pbb") },
-              { label: "Organisasi Regional & Blok Ekonomi", isActive: activeTab === "regional", onClick: () => setActiveTab("regional") },
+              { label: organizations("tabs.un"), isActive: activeTab === "pbb", onClick: () => setActiveTab("pbb") },
+              { label: organizations("tabs.regional"), isActive: activeTab === "regional", onClick: () => setActiveTab("regional") },
             ]}
           />
 
@@ -194,21 +225,21 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                       type="button"
                       onClick={() => handleOrgClick(org)}
                       className="flex min-h-[88px] w-full items-center gap-3 pr-7 text-left cursor-pointer"
-                      aria-label={`Lihat keanggotaan ${org}`}
+                      aria-label={organizations("cards.viewMembership", { organization: organizations(`organizationNames.${organizationTranslationKeys[org]}`) })}
                     >
                       {orgImageMap[org] ? (
                         <Image src={orgImageMap[org]} alt="" aria-hidden="true" width={48} height={48} className="h-12 w-12 flex-shrink-0 object-contain" />
                       ) : (
                         <Icon className="h-6 w-6 flex-shrink-0 text-root-accent" />
                       )}
-                      <span className="text-[10px] font-bold text-root-text uppercase tracking-tight leading-tight">{org}</span>
+                      <span className="text-[10px] font-bold text-root-text uppercase tracking-tight leading-tight">{organizations(`organizationNames.${organizationTranslationKeys[org]}`)}</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setInfoOrgName(org)}
                       className="absolute right-2 top-2 rounded-lg border border-root-accent/20 bg-root-surface p-1 text-root-subtle transition-all hover:border-root-accent hover:bg-root-accent/10 hover:text-root-accent cursor-pointer"
-                      aria-label={`Informasi ${org}`}
-                      title={`Informasi ${org}`}
+                      aria-label={organizations("cards.information", { organization: organizations(`organizationNames.${organizationTranslationKeys[org]}`) })}
+                      title={organizations("cards.information", { organization: organizations(`organizationNames.${organizationTranslationKeys[org]}`) })}
                     >
                       <Info className="h-3.5 w-3.5" />
                     </button>
@@ -236,21 +267,21 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                       type="button"
                       onClick={() => handleOrgClick(org)}
                       className="flex min-h-[88px] w-full items-center gap-3 pr-7 text-left cursor-pointer"
-                      aria-label={`Lihat keanggotaan ${org}`}
+                      aria-label={organizations("cards.viewMembership", { organization: organizations(`organizationNames.${organizationTranslationKeys[org]}`) })}
                     >
                       {orgImageMap[org] ? (
                         <Image src={orgImageMap[org]} alt="" aria-hidden="true" width={48} height={48} className="h-12 w-12 flex-shrink-0 object-contain" />
                       ) : (
                         <Icon className="h-6 w-6 flex-shrink-0 text-root-accent" />
                       )}
-                      <span className="text-[10px] font-bold text-root-text uppercase tracking-tight leading-tight">{org}</span>
+                      <span className="text-[10px] font-bold text-root-text uppercase tracking-tight leading-tight">{organizations(`organizationNames.${organizationTranslationKeys[org]}`)}</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setInfoOrgName(org)}
                       className="absolute right-2 top-2 rounded-lg border border-root-accent/20 bg-root-surface p-1 text-root-subtle transition-all hover:border-root-accent hover:bg-root-accent/10 hover:text-root-accent cursor-pointer"
-                      aria-label={`Informasi ${org}`}
-                      title={`Informasi ${org}`}
+                      aria-label={organizations("cards.information", { organization: organizations(`organizationNames.${organizationTranslationKeys[org]}`) })}
+                      title={organizations("cards.information", { organization: organizations(`organizationNames.${organizationTranslationKeys[org]}`) })}
                     >
                       <Info className="h-3.5 w-3.5" />
                     </button>

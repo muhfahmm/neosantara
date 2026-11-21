@@ -1,0 +1,68 @@
+{
+  "common": { "close": "关闭", "cancel": "取消", "understand": "知道了" },
+  "menu": { "title": "国际组织集团成员资格", "infoTitle": "国际组织", "infoDescription": "浏览联合国组织、专门机构和区域组织。打开各组织可查看成员资格、相关信息以及贵国可参与的合作机会。" },
+  "tabs": { "un": "联合国组织及专门机构", "regional": "区域组织及经济集团" },
+  "cards": { "viewMembership": "查看{organization}成员资格", "information": "{organization}信息" },
+  "organizationNames": {
+    "default": "国际组织", "interpol": "国际刑警组织", "who": "世界卫生组织（WHO）", "unesco": "联合国教育、科学及文化组织（UNESCO）", "wto": "世界贸易组织（WTO）", "ilo": "国际劳工组织（ILO）", "fao": "联合国粮食及农业组织（FAO）", "imo": "国际海事组织（IMO）", "itu": "国际电信联盟（ITU）", "wmo": "世界气象组织（WMO）",
+    "asean": "东南亚国家联盟（ASEAN）", "eu": "欧洲联盟（EU）", "arabLeague": "阿拉伯国家联盟", "africanUnion": "非洲联盟（AU）", "oic": "伊斯兰合作组织（OIC）", "brics": "金砖国家（巴西、俄罗斯、印度、中国、南非）", "nato": "北大西洋公约组织（NATO）", "opec": "石油输出国组织（OPEC）", "g20": "二十国集团（G20）",
+    "apec": "亚太经济合作组织（APEC）", "sco": "上海合作组织（SCO）", "oas": "美洲国家组织（OAS）", "gcc": "海湾阿拉伯国家合作委员会（GCC）", "mercosur": "南方共同市场（MERCOSUR）", "commonwealth": "英联邦", "g7": "七国集团（G7）", "quad": "四方安全对话（QUAD）", "oecd": "经济合作与发展组织（OECD）"
+  },
+  "organizationInfo": {
+    "default": { "description": "成员国开展国际合作的论坛。", "focus": "成员之间的对话与政策协调。" },
+    "interpol": { "description": "协助成员国警方合作打击跨国犯罪的组织。", "focus": "警务信息交流、国际援助协调及跨境犯罪执法。" },
+    "who": { "description": "负责指导和协调国际卫生合作的联合国机构。", "focus": "公共卫生、疫情应对和全球卫生指南。" },
+    "unesco": { "description": "推动各国在教育、科学和文化领域合作的联合国机构。", "focus": "教育、文化遗产保护、科学和言论自由。" },
+    "wto": { "description": "制定国际贸易规则并为解决贸易争端提供论坛的组织。", "focus": "贸易规则、谈判和成员间争端解决。" },
+    "ilo": { "description": "推动劳动者权利和体面劳动标准的联合国机构。", "focus": "劳动标准、劳动者保护以及政府、雇主和劳动者之间的对话。" },
+    "fao": { "description": "领导国际社会消除饥饿、改善粮食安全工作的联合国机构。", "focus": "农业、粮食、营养和自然资源的可持续管理。" },
+    "imo": { "description": "制定国际航运安全和环境保护规则的联合国机构。", "focus": "船舶安全、海上安全及防止海洋污染。" },
+    "itu": { "description": "协调无线电频谱、卫星轨道和电信标准的联合国机构。", "focus": "全球互联互通以及信息通信技术发展。" },
+    "wmo": { "description": "促进天气、气候和水文观测领域全球合作的联合国机构。", "focus": "气象数据、预警、气候和水文学。" },
+    "asean": { "description": "促进东南亚国家合作与一体化的区域组织。", "focus": "区域政治安全、经济和社会文化合作。", "requirement": "国家必须位于东南亚地区。" },
+    "eu": { "description": "欧洲国家组成的政治和经济联盟，拥有共同机构和政策。", "focus": "共同市场、跨国政策和区域合作。", "requirement": "国家必须位于欧洲。" },
+    "arabLeague": { "description": "促进阿拉伯成员国协调与关系的区域组织。", "focus": "政治、经济、文化和社会领域的协商与合作。", "requirement": "国家必须位于中东或北非。" },
+    "africanUnion": { "description": "促进非洲团结、和平与发展的大陆组织。", "focus": "非洲一体化、冲突解决和可持续发展。", "requirement": "国家必须位于非洲大陆。" },
+    "oic": { "description": "加强成员国合作与团结的政府间组织。", "focus": "政治协商、发展、人道主义援助及伊斯兰世界议题。", "requirement": "伊斯兰教必须是该国的主要宗教。" },
+    "brics": { "description": "金砖国家加强全球议题对话与协调的合作论坛。", "focus": "经济合作、发展和全球治理协调。", "requirement": "与中国和俄罗斯的关系分数都必须高于50。" },
+    "nato": { "description": "由北大西洋和欧洲成员国组成的集体防御联盟。", "focus": "依据联盟条约开展安全磋商和集体防御。", "requirement": "国家必须位于北美或欧洲。" },
+    "opec": { "description": "协调成员国石油政策的石油出口国组织。", "focus": "石油政策协调和能源市场稳定。", "requirement": "国家必须生产石油。" },
+    "g20": { "description": "主要经济体、欧盟和非盟开展国际经济合作的论坛。", "focus": "全球经济协调、金融稳定和发展。", "requirement": "国家必须按GDP排名进入全球前20名。" }
+  },
+  "info": { "title": "组织信息", "about": "组织简介", "focus": "工作重点", "membershipBenefit": "成员效果 / 加成：", "researchBonus": "国际组织合作研究：效果增加{percent}%", "benefitInactive": "国家成为成员后即可启用相关效果。" },
+  "benefits": {
+    "interpol": "犯罪率{value}%", "who": "流行病及大流行风险{value}%", "unesco": "科学研究速度{value}%", "wto": "售价{sell}%；购买价格{buy}%", "ilo": "制造业产量{value}%", "fao": "粮食产量{value}%", "imo": "渔业产量{value}%", "itu": "研究速度{value}%", "wmo": "自然灾害风险{value}%", "asean": "建设速度{value}%", "eu": "税收收入{value}%", "arabLeague": "外交影响力：联合国票数+{value}", "africanUnion": "建设速度{value}%", "oic": "粮食产量{value}%", "brics": "国家收入{value}%", "nato": "军事实力{value}%", "opec": "石油价格{value}%", "g20": "国家收入{value}%"
+  },
+  "eligibility": {
+    "title": "成员资格要求", "loading": "正在加载国家数据以验证要求...", "error": "无法加载资格验证数据，请稍后重试。",
+    "requirements": {
+      "geography": { "asean": "仅东南亚国家可以加入。", "eu": "仅欧洲国家可以加入。", "nato": "仅北美或欧洲国家可以加入。", "arabLeague": "仅中东或北非国家可以加入。", "africanUnion": "仅非洲国家可以加入。" },
+      "oil-production": { "opec": "国家必须生产石油。" },
+      "diplomacy": { "brics": "与中国和俄罗斯的关系分数都必须高于50。" },
+      "gdp-ranking": { "g20": "国家必须按GDP排名进入全球前20名。" },
+      "religion": { "oic": "伊斯兰教必须是该国的主要宗教。" }
+    },
+    "reasons": {
+      "geography": {
+        "asean": { "eligible": "{country}位于东南亚。", "ineligible": "{country}不在东南亚。", "unknown": "缺少国家ISO代码，无法验证所在地区。" },
+        "eu": { "eligible": "{country}位于欧洲。", "ineligible": "{country}不在欧洲。", "unknown": "没有该国的大洲数据。" },
+        "nato": { "eligible": "{country}位于北美或欧洲。", "ineligible": "{country}不在北美或欧洲。", "unknown": "没有该国的大洲数据。" },
+        "arabLeague": { "eligible": "{country}位于中东或北非。", "ineligible": "{country}不在中东或北非。", "unknown": "缺少国家ISO代码，无法验证所在地区。" },
+        "africanUnion": { "eligible": "{country}位于非洲。", "ineligible": "{country}不在非洲。", "unknown": "没有该国的大洲数据。" }
+      },
+      "oil": { "eligible": "{country}的石油产量为{value}。", "ineligible": "{country}没有石油产量（产量：{value}）。", "unknown": "没有该国的石油生产数据。" },
+      "diplomacy": { "eligible": "与中国（{china}）和俄罗斯（{russia}）的关系符合要求。", "ineligible": "与中国（{china}）和俄罗斯（{russia}）的关系分数都必须高于50。", "unknown": "缺少外交关系数据，无法确定资格。", "loading": "正在获取外交关系分数。", "details": "与中国的关系：{china}；与俄罗斯的关系：{russia}。" },
+      "gdp": { "eligible": "{country}的净GDP排名位于全球前20。", "ineligible": "{country}排名第{rank}，要求排名为1至20。", "unknown": "无法根据所有国家的数据计算该国的GDP排名。", "details": "净GDP排名：{total}个国家中的第{rank}名。" },
+      "religion": { "eligible": "{country}的主要宗教是伊斯兰教。", "ineligible": "{country}的主要宗教是{religion}，不是伊斯兰教。", "unknown": "没有该国的主要宗教数据。" },
+      "default": "无法验证成员资格。"
+    }
+  },
+  "members": {
+    "benefitTitle": "成员效果 / 福利", "alreadyMember": "已是成员", "activeMember": "正式成员", "reviewing": "审核中（{days}天）", "requirementsUnmet": "未满足成员资格要求，或暂时无法验证。", "apply": "提交申请", "listTitle": "成员国（{count}个）", "loading": "正在加载成员数据...", "empty": "未找到该组织的成员数据。", "you": "您", "permanent": "常任成员", "regular": "成员"
+  },
+  "application": {
+    "defaultCountry": "印度尼西亚",
+    "title": "成员资格申请", "pendingTitle": "申请审核中（30天）", "pendingDescription": "{organization}成员理事会正在处理{country}的成员申请。", "reviewPeriod": "审核期限", "daysRemaining": "还剩{days}天", "approvalChance": "通过概率", "acceptedTitle": "申请已获批准！", "acceptedDescription": "恭喜！{country}加入{organization}的申请已获批准（通过概率：{rate}%）。所有成员加成现已启用。", "rejectedTitle": "申请被拒绝", "rejectedDescription": "成员理事会拒绝了{country}之前提交的申请。您可以再次申请。", "summaryTitle": "申请摘要", "applicantCountry": "申请国家：", "targetOrganization": "目标组织：", "processingTime": "处理时间：", "simulationDays": "模拟{days}天", "estimatedAcceptance": "预计通过率：", "highChance": "高（65%–90%）", "fee": "申请费用：", "sending": "正在发送...", "submit": "提交申请"
+  },
+  "insufficientFunds": { "title": "资金不足", "close": "关闭资金不足信息", "description": "国库资金不足，无法支付成员申请费用。", "fee": "申请费用：", "available": "可用资金：", "shortage": "资金缺口：" }
+}

@@ -1,0 +1,36 @@
+{
+  "header": {
+    "title": "外国大使館"
+  },
+  "info": {
+    "title": "大使館",
+    "description": "外交使節を管理し、自国に登録されている大使館やパートナーを確認します。大使館を通じた関係は国家間の連絡を支え、大使館への行動は外交関係や協力に影響することがあります。"
+  },
+  "empty": {
+    "title": "登録されている外国大使館はまだありません。",
+    "description": "国の詳細ページから大使館を建設し、外交関係を始めましょう。"
+  },
+  "status": {
+    "active": "活動中"
+  },
+  "types": {
+    "embassy": "大使館",
+    "trade": "貿易"
+  },
+  "labels": {
+    "continent": "大陸"
+  },
+  "actions": {
+    "viewDetails": "詳細を見る",
+    "destroyEmbassy": "大使館を破壊",
+    "close": "閉じる"
+  },
+  "confirm": {
+    "title": "大使館の破壊を確認",
+    "message": "{country}にある大使館を本当に破壊しますか？この操作は取り消せず、外交関係が断絶されます。"
+  },
+  "success": {
+    "title": "成功",
+    "message": "{country}にある大使館を破壊しました。"
+  }
+}

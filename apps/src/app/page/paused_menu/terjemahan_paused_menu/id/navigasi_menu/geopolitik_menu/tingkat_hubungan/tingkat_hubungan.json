@@ -1,0 +1,55 @@
+{
+  "menu": {
+    "title": "Tingkat Hubungan Diplomatik",
+    "infoTitle": "Tingkat Hubungan",
+    "infoDescription": "Lihat tingkat hubungan diplomatik dengan negara lain, telusuri negara berdasarkan hubungan, dan gunakan aksi diplomasi yang tersedia untuk memperbaikinya. Hubungan dapat memengaruhi kerja sama bilateral serta respons negara lain."
+  },
+  "toolbar": {
+    "legend": "Legenda Hubungan",
+    "improveAllAria": "Tingkatkan hubungan semua negara",
+    "improveAllTitle": "Tingkatkan Hubungan Semua Negara",
+    "searchAria": "Cari negara atau benua",
+    "searchPlaceholder": "Cari negara / benua..."
+  },
+  "table": {
+    "number": "No",
+    "country": "Nama Negara",
+    "continent": "Benua",
+    "embassies": "Kedutaan Besar",
+    "relation": "Tingkat Hubungan",
+    "sortNumber": "Urutkan berdasarkan nomor",
+    "sortCountry": "Urutkan berdasarkan nama negara",
+    "sortContinent": "Urutkan berdasarkan benua",
+    "sortEmbassies": "Urutkan berdasarkan status kedutaan",
+    "sortRelation": "Urutkan berdasarkan tingkat hubungan",
+    "emptySearch": "Tidak ada data yang cocok dengan pencarian \"{query}\".",
+    "embassyPresent": "Ada Kedutaan",
+    "embassyAbsent": "Tidak Ada"
+  },
+  "legend": {
+    "title": "Indikator Hubungan Diplomatik",
+    "countryCount": "({count} negara)"
+  },
+  "statuses": {
+    "veryPoor": "Sangat Buruk",
+    "poor": "Buruk",
+    "neutral": "Netral",
+    "good": "Baik",
+    "veryGood": "Sangat Baik"
+  },
+  "continents": {
+    "asia": "Asia",
+    "africa": "Afrika",
+    "europe": "Eropa",
+    "northAmerica": "Amerika Utara",
+    "southAmerica": "Amerika Selatan",
+    "oceania": "Oseania",
+    "other": "Lainnya"
+  },
+  "diplomacy": {
+    "choosePath": "Pilih Jalur Diplomasi",
+    "moneyPath": "Jalur Uang (NEO)",
+    "commodityGiftPath": "Jalur Hadiah Komoditas",
+    "allCountries": "Semua Negara"
+  }
+}

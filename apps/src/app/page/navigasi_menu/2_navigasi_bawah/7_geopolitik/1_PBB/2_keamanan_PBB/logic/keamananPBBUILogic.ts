@@ -750,9 +750,9 @@ export function getCountryPBBVote(countryName: string): number {
   return Math.round(baseVote * getCouncilVoteMultiplier(countryIso));
 }
 
-export function formatBribeCost(countryName: string): string {
+export function formatBribeCost(countryName: string, locale = 'id-ID'): string {
   const vote = getCountryPBBVote(countryName);
-  return `${vote.toLocaleString('id-ID', { maximumFractionDigits: 2 })}.000`;
+  return (vote * 1000).toLocaleString(locale, { maximumFractionDigits: 0 });
 }
 
 export function getSecurityCouncilCountryBreakdown(

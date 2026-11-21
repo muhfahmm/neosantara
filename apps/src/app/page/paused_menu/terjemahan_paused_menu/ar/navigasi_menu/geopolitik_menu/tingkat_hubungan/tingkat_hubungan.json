@@ -1,0 +1,55 @@
+{
+  "menu": {
+    "title": "العلاقات الدبلوماسية",
+    "infoTitle": "العلاقات",
+    "infoDescription": "اطّلع على العلاقات الدبلوماسية مع الدول الأخرى، وتصفح الدول حسب مستوى العلاقة، واستخدم الإجراءات الدبلوماسية المتاحة لتحسينها. قد تؤثر العلاقات في التعاون الثنائي واستجابات الدول الأخرى."
+  },
+  "toolbar": {
+    "legend": "دليل العلاقات",
+    "improveAllAria": "تحسين العلاقات مع جميع الدول",
+    "improveAllTitle": "تحسين العلاقات مع جميع الدول",
+    "searchAria": "البحث عن الدول أو القارات",
+    "searchPlaceholder": "البحث عن الدول / القارات..."
+  },
+  "table": {
+    "number": "الرقم",
+    "country": "الدولة",
+    "continent": "القارة",
+    "embassies": "السفارة",
+    "relation": "العلاقات",
+    "sortNumber": "الترتيب حسب الرقم",
+    "sortCountry": "الترتيب حسب اسم الدولة",
+    "sortContinent": "الترتيب حسب القارة",
+    "sortEmbassies": "الترتيب حسب حالة السفارة",
+    "sortRelation": "الترتيب حسب العلاقات",
+    "emptySearch": "لا توجد نتائج تطابق البحث \"{query}\".",
+    "embassyPresent": "توجد سفارة",
+    "embassyAbsent": "لا توجد"
+  },
+  "legend": {
+    "title": "مؤشر العلاقات الدبلوماسية",
+    "countryCount": "({count} دولة)"
+  },
+  "statuses": {
+    "veryPoor": "سيئة جدًا",
+    "poor": "سيئة",
+    "neutral": "محايدة",
+    "good": "جيدة",
+    "veryGood": "جيدة جدًا"
+  },
+  "continents": {
+    "asia": "آسيا",
+    "africa": "أفريقيا",
+    "europe": "أوروبا",
+    "northAmerica": "أمريكا الشمالية",
+    "southAmerica": "أمريكا الجنوبية",
+    "oceania": "أوقيانوسيا",
+    "other": "أخرى"
+  },
+  "diplomacy": {
+    "choosePath": "اختر المسار الدبلوماسي",
+    "moneyPath": "المسار المالي (NEO)",
+    "commodityGiftPath": "مسار هدايا السلع",
+    "allCountries": "جميع الدول"
+  }
+}

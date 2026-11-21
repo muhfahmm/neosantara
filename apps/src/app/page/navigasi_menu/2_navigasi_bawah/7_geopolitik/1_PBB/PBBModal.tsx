@@ -9,6 +9,7 @@ import ResolusiPBB from "./1_resolusi_PBB/menus/1_resolusiPBB";
 import KeamananPBB from "./2_keamanan_PBB/menus/1_keamananPBB";
 import SuaraPBB from "./3_suara_negara_PBB/suaraPBB";
 import SecurityCouncilElectionPanel from "./2_keamanan_PBB/logika_anggota_tidak_tetap/SecurityCouncilElectionPanel";
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
 
 interface ModalProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ interface ModalProps {
 }
 
 export default function PBBModal({ isOpen, onClose, selectedCountry, countryDetail, setCountryDetail, currentDate }: ModalProps) {
+  const { pbb } = useGeopoliticsMenuTranslation();
   const [activeTab, setActiveTab] = useState<"resolusi" | "keamanan" | "suara">("resolusi");
   const [isElectionInfoOpen, setIsElectionInfoOpen] = useState(false);
 
@@ -29,13 +31,13 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
       <div className="root-modal-util-b74379da23">
         
         <RootInfoModalHeader
-          title="Sidang Umum Perserikatan Bangsa-Bangsa"
+          title={pbb("root.title")}
           onClose={onClose}
           icon={<Award />}
           actions={
             <MenuInfoButton
-              title="PBB"
-              description="Pantau agenda Perserikatan Bangsa-Bangsa melalui resolusi, Dewan Keamanan, dan suara negara. Partisipasi serta keputusan di setiap bagian dapat memengaruhi kebijakan global dan posisi diplomatik negara."
+              title={pbb("root.infoTitle")}
+              description={pbb("root.infoDescription")}
             />
           }
           size="standard"
@@ -47,18 +49,18 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
           <div className="flex w-full items-center justify-between gap-3 mb-4 sm:mb-5">
             <RootModalTabs
               items={[
-                { label: "Resolusi PBB", isActive: activeTab === "resolusi", onClick: () => setActiveTab("resolusi") },
-                { label: "Dewan Keamanan", isActive: activeTab === "keamanan", onClick: () => setActiveTab("keamanan") },
-                { label: "Suara Negara", isActive: activeTab === "suara", onClick: () => setActiveTab("suara") },
+                { label: pbb("root.tabResolution"), isActive: activeTab === "resolusi", onClick: () => setActiveTab("resolusi") },
+                { label: pbb("root.tabCouncil"), isActive: activeTab === "keamanan", onClick: () => setActiveTab("keamanan") },
+                { label: pbb("root.tabVotes"), isActive: activeTab === "suara", onClick: () => setActiveTab("suara") },
               ]}
             />
             <button
               type="button"
               onClick={() => setIsElectionInfoOpen(open => !open)}
-              aria-label="Informasi pemilihan anggota tidak tetap Dewan Keamanan PBB"
+              aria-label={pbb("root.electionInfo")}
               aria-expanded={isElectionInfoOpen}
               aria-controls="pbb-security-council-election-info"
-              title="Pemilihan anggota tidak tetap DK PBB"
+              title={pbb("election.title")}
               className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-all ${
                 isElectionInfoOpen
                   ? "border-root-accent bg-root-accent text-root-canvas"

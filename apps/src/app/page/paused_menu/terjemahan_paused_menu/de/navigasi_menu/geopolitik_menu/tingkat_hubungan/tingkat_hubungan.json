@@ -1,0 +1,55 @@
+{
+  "menu": {
+    "title": "Diplomatische Beziehungen",
+    "infoTitle": "Beziehungen",
+    "infoDescription": "Sieh dir die diplomatischen Beziehungen zu anderen Ländern an, durchsuche Länder nach ihrem Beziehungsstatus und nutze verfügbare diplomatische Aktionen, um die Beziehungen zu verbessern. Sie können die bilaterale Zusammenarbeit und die Reaktionen anderer Länder beeinflussen."
+  },
+  "toolbar": {
+    "legend": "Beziehungslegende",
+    "improveAllAria": "Beziehungen zu allen Ländern verbessern",
+    "improveAllTitle": "Beziehungen zu allen Ländern verbessern",
+    "searchAria": "Länder oder Kontinente suchen",
+    "searchPlaceholder": "Länder / Kontinente suchen..."
+  },
+  "table": {
+    "number": "Nr.",
+    "country": "Land",
+    "continent": "Kontinent",
+    "embassies": "Botschaft",
+    "relation": "Beziehungen",
+    "sortNumber": "Nach Nummer sortieren",
+    "sortCountry": "Nach Ländernamen sortieren",
+    "sortContinent": "Nach Kontinent sortieren",
+    "sortEmbassies": "Nach Botschaftsstatus sortieren",
+    "sortRelation": "Nach Beziehungen sortieren",
+    "emptySearch": "Keine Ergebnisse für die Suche \"{query}\".",
+    "embassyPresent": "Botschaft vorhanden",
+    "embassyAbsent": "Keine"
+  },
+  "legend": {
+    "title": "Indikator für diplomatische Beziehungen",
+    "countryCount": "({count} Länder)"
+  },
+  "statuses": {
+    "veryPoor": "Sehr schlecht",
+    "poor": "Schlecht",
+    "neutral": "Neutral",
+    "good": "Gut",
+    "veryGood": "Sehr gut"
+  },
+  "continents": {
+    "asia": "Asien",
+    "africa": "Afrika",
+    "europe": "Europa",
+    "northAmerica": "Nordamerika",
+    "southAmerica": "Südamerika",
+    "oceania": "Ozeanien",
+    "other": "Sonstige"
+  },
+  "diplomacy": {
+    "choosePath": "Diplomatischen Weg wählen",
+    "moneyPath": "Geldweg (NEO)",
+    "commodityGiftPath": "Weg der Rohstoffgeschenke",
+    "allCountries": "Alle Länder"
+  }
+}

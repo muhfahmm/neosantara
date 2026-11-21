@@ -1,0 +1,55 @@
+{
+  "menu": {
+    "title": "외교 관계",
+    "infoTitle": "관계",
+    "infoDescription": "다른 국가와의 외교 관계를 확인하고 관계별로 국가를 살펴보세요. 이용 가능한 외교 행동으로 관계를 개선할 수도 있습니다. 관계는 양자 협력과 다른 국가의 대응에 영향을 줄 수 있습니다."
+  },
+  "toolbar": {
+    "legend": "관계 범례",
+    "improveAllAria": "모든 국가와의 관계 개선",
+    "improveAllTitle": "모든 국가와의 관계 개선",
+    "searchAria": "국가 또는 대륙 검색",
+    "searchPlaceholder": "국가 / 대륙 검색..."
+  },
+  "table": {
+    "number": "번호",
+    "country": "국가",
+    "continent": "대륙",
+    "embassies": "대사관",
+    "relation": "관계",
+    "sortNumber": "번호순 정렬",
+    "sortCountry": "국가명순 정렬",
+    "sortContinent": "대륙순 정렬",
+    "sortEmbassies": "대사관 상태순 정렬",
+    "sortRelation": "관계순 정렬",
+    "emptySearch": "검색어 \"{query}\"와 일치하는 결과가 없습니다.",
+    "embassyPresent": "대사관 있음",
+    "embassyAbsent": "없음"
+  },
+  "legend": {
+    "title": "외교 관계 지표",
+    "countryCount": "({count}개국)"
+  },
+  "statuses": {
+    "veryPoor": "매우 나쁨",
+    "poor": "나쁨",
+    "neutral": "중립",
+    "good": "좋음",
+    "veryGood": "매우 좋음"
+  },
+  "continents": {
+    "asia": "아시아",
+    "africa": "아프리카",
+    "europe": "유럽",
+    "northAmerica": "북아메리카",
+    "southAmerica": "남아메리카",
+    "oceania": "오세아니아",
+    "other": "기타"
+  },
+  "diplomacy": {
+    "choosePath": "외교 방식 선택",
+    "moneyPath": "자금 경로 (NEO)",
+    "commodityGiftPath": "자원 선물 경로",
+    "allCountries": "모든 국가"
+  }
+}

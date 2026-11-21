@@ -5,6 +5,7 @@ import { FileText } from "lucide-react";
 import NotebookModalWrapper from "../../../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
 
 interface CountryOption {
   id: number;
@@ -35,6 +36,7 @@ export default function CountryTargetModal({
   onSelectTarget,
   renderFlag
 }: Props) {
+  const { pbb } = useGeopoliticsMenuTranslation();
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
@@ -49,8 +51,8 @@ export default function CountryTargetModal({
               <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
             </div>
             <div>
-              <h3 className={rootModalTypography.title}>Pilih Negara Target</h3>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">Pilih benua, lalu pilih negara target Anda.</p>
+              <h3 className={rootModalTypography.title}>{pbb("common.chooseCountry")}</h3>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">{pbb("common.targetHint")}</p>
             </div>
           </div>
           <RootModalCloseButton onClick={onClose} />
@@ -68,7 +70,7 @@ export default function CountryTargetModal({
                       : 'bg-root-canvas border border-root-accent/20 text-root-subtle hover:text-root-text hover:border-root-accent/40'
                   }`}
                 >
-                  {continent} ({groupedCountries[continent].length})
+                  {pbb(`continents.${continent.toLowerCase().replace(/[^a-z]+/g, "")}`)} ({groupedCountries[continent].length})
                 </button>
               ))}
             </div>

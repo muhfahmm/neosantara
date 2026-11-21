@@ -16,6 +16,7 @@ import ModalVeto from "./7_modal_veto";
 import { ActiveSecurityCouncilItem, loadActiveSecurityCouncilItems, saveActiveSecurityCouncilItems, calculate15SecurityCouncilVotes, TOTAL_SECURITY_MEMBERS, getSimulationDateString, getSecurityCouncilCountryBreakdown, isPermanentSecurityCouncilMember, canUseSecurityCouncilVeto, tickPBBSecurityCouncil } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
 import { tickPBBResolutions } from "../../1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { PBB_RESOLUTION_DURATION_OPTIONS } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
 import { clearAnnexedCountryVotes, isCountryAnnexed } from "../../pbbVotingEligibility";
 import NotebookModalWrapper from "../../../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
@@ -88,6 +89,7 @@ const renderFlag = (iso: string | undefined, altName: string, size: "sm" | "md" 
 };
 
 export default function KeamananPBB({ selectedCountry, countryDetail, setCountryDetail }: KeamananPBBProps) {
+  const { language, pbb } = useGeopoliticsMenuTranslation();
   const isGlobalWarBanActive = hasActiveGlobalWarBan();
   const [isResolusiModalOpen, setIsResolusiModalOpen] = useState(false);
   const [isMembershipOpen, setIsMembershipOpen] = useState(false);
@@ -107,6 +109,32 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
   const [isOpponentsModalOpen, setIsOpponentsModalOpen] = useState(false);
 
   const [countries, setCountries] = useState<CountryOption[]>([]);
+  const actionTranslationKeys: Record<string, string> = {
+    military: "actionMilitary",
+    economic: "actionEconomic",
+    naval: "actionNaval",
+    full: "actionFull",
+    treasure: "actionAid",
+  };
+  const actionLabel = (type: string) => {
+    const key = actionTranslationKeys[type];
+    return key ? pbb(`council.${key}`) : pbb("common.councilResolutionTitle");
+  };
+  const actionDescription = (type: string) => {
+    const key = actionTranslationKeys[type];
+    return key ? pbb(`council.${key}Desc`) : "";
+  };
+  const durationLabel = (duration: string) => {
+    const keys: Record<string, string> = {
+      "1 bulan": "duration.month1",
+      "3 bulan": "duration.month3",
+      "6 bulan": "duration.month6",
+      "9 bulan": "duration.month9",
+      "1 tahun": "duration.year1",
+      "30 Hari": "duration.days30",
+    };
+    return keys[duration] ? pbb(keys[duration]) : duration;
+  };
   const [allies, setAllies] = useState<CountryOption[]>([]);
   const [annexationRevision, setAnnexationRevision] = useState(0);
   const [nonPermanentMembers, setNonPermanentMembers] = useState<SecurityCouncilMember[]>(() => getStoredCouncilMembers());
@@ -540,7 +568,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
               <div>
                 <h3 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">{title}</h3>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">
-                  {countryList.length} negara terdaftar
+                  {pbb("common.registeredCountries", { count: countryList.length })}
                 </p>
               </div>
             </div>
@@ -548,7 +576,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
               onClick={onClose} 
               className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
               appearance="custom">
-              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">{pbb("common.close")}</span>
               <X className="h-4 w-4" />
             </SharedModalCloseButton>
           </div>
@@ -556,7 +584,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
             <div className="w-full">
               {countryList.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-root-subtle font-medium text-lg">Belum ada negara dalam daftar ini.</p>
+                  <p className="text-root-subtle font-medium text-lg">{pbb("common.noCountries")}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
@@ -586,7 +614,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
       {/* Keanggotaan Dewan Keamanan */}
       <div className="bg-root-canvas border border-root-accent/20 rounded-xl shadow-lg overflow-hidden">
         <button onClick={() => setIsMembershipOpen(!isMembershipOpen)} className="w-full flex items-center justify-between px-6 py-4 bg-[#051111] border-b border-root-accent/20 cursor-pointer hover:bg-root-accent/5 transition-colors">
-          <div className="flex items-center gap-3"><Shield className="h-5 w-5 text-root-accent" /><h4 className="text-sm font-black text-root-text uppercase tracking-wide">Keanggotaan Dewan Keamanan PBB</h4><div className="flex gap-2 ml-2"><span className="text-[10px] font-bold bg-amber-500/15 text-amber-400 px-2 py-1 rounded-lg border border-amber-500/30">5 Tetap</span><span className="text-[10px] font-bold bg-cyan-500/15 text-cyan-400 px-2 py-1 rounded-lg border border-cyan-500/30">10 Tidak Tetap</span></div></div>
+          <div className="flex items-center gap-3"><Shield className="h-5 w-5 text-root-accent" />          <h4 className="text-sm font-black text-root-text uppercase tracking-wide">{pbb("council.membership")}</h4><div className="flex gap-2 ml-2"><span className="text-[10px] font-bold bg-amber-500/15 text-amber-400 px-2 py-1 rounded-lg border border-amber-500/30">{pbb("council.permanentCount")}</span><span className="text-[10px] font-bold bg-cyan-500/15 text-cyan-400 px-2 py-1 rounded-lg border border-cyan-500/30">{pbb("council.nonPermanentCount")}</span></div></div>
           <ChevronDown className={`h-5 w-5 text-root-accent transition-transform duration-500 ease-in-out ${isMembershipOpen ? 'rotate-180' : 'rotate-0'}`} />
         </button>
         <div className={`transition-all duration-500 ease-in-out overflow-hidden ${isMembershipOpen ? 'max-h-[1500px] opacity-100' : 'max-h-0 opacity-0'}`}>
@@ -621,8 +649,8 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                   {/* Anggota Tetap */}
                   <div className="flex-1 bg-[#051111] border border-root-accent/20 rounded-xl p-4 shadow-sm">
                     <div className="flex justify-between items-center border-b border-root-accent/15 pb-2 mb-3">
-                      <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider">Anggota Tetap</span>
-                      <span className="text-[8px] font-black text-rose-400 bg-rose-500/15 px-2 py-0.5 rounded border border-rose-500/30">Hak Veto</span>
+                      <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider">{pbb("council.permanent")}</span>
+                      <span className="text-[8px] font-black text-rose-400 bg-rose-500/15 px-2 py-0.5 rounded border border-rose-500/30">{pbb("council.vetoRight")}</span>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       {dynamicPermanentMembers.map((m) => {
@@ -636,9 +664,9 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                         if (isAnnexed) {
                           return (
                             <div key={m.iso} className="bg-root-surface/40 border border-dashed border-rose-500/40 p-3 rounded-lg flex flex-col items-center justify-center text-center relative shadow-sm opacity-60">
-                              <span className="text-[9px] font-black text-rose-400 uppercase tracking-widest">[SLOT KOSONG]</span>
+                              <span className="text-[9px] font-black text-rose-400 uppercase tracking-widest">{pbb("council.emptySlot")}</span>
                               <span className="text-[10px] font-bold text-root-subtle mt-1 line-through">{m.name}</span>
-                              <span className="text-[8px] font-bold text-rose-500/80 uppercase mt-0.5">(Dianeksasi)</span>
+                              <span className="text-[8px] font-bold text-rose-500/80 uppercase mt-0.5">{pbb("council.annexed")}</span>
                             </div>
                           );
                         }
@@ -652,7 +680,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                                 : 'bg-root-canvas border border-amber-500/30'
                             }`}
                           >
-                            <div className="absolute -top-2 -right-2 bg-amber-500 text-root-canvas text-[8px] font-black px-1.5 py-0.5 rounded-lg uppercase tracking-wider shadow-sm">Veto</div>
+                            <div className="absolute -top-2 -right-2 bg-amber-500 text-root-canvas text-[8px] font-black px-1.5 py-0.5 rounded-lg uppercase tracking-wider shadow-sm">{pbb("council.veto")}</div>
                             {renderFlag(m.iso, m.name)}
                             <span className={`text-[10px] font-black mt-1 leading-tight ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>{m.name}</span>
                           </div>
@@ -664,7 +692,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                   {/* Anggota Tidak Tetap */}
                   <div className="flex-1 bg-[#051111] border border-root-accent/20 rounded-xl p-4 shadow-sm">
                     <div className="border-b border-root-accent/15 pb-2 mb-3">
-                      <span className="text-[10px] font-black text-cyan-400 uppercase tracking-wider">Anggota Tidak Tetap</span>
+                      <span className="text-[10px] font-black text-cyan-400 uppercase tracking-wider">{pbb("council.nonPermanent")}</span>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       {dynamicNonPermanentMembers.map((m) => {
@@ -678,9 +706,9 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                         if (isAnnexed) {
                           return (
                             <div key={m.iso} className="bg-root-surface/40 border border-dashed border-cyan-500/40 p-3 rounded-lg flex flex-col items-center justify-center text-center relative shadow-sm opacity-60">
-                              <span className="text-[9px] font-black text-cyan-400 uppercase tracking-widest">[SLOT KOSONG]</span>
+                              <span className="text-[9px] font-black text-cyan-400 uppercase tracking-widest">{pbb("council.emptySlot")}</span>
                               <span className="text-[10px] font-bold text-root-subtle mt-1 line-through">{m.name}</span>
-                              <span className="text-[8px] font-bold text-cyan-500/80 uppercase mt-0.5">(Dianeksasi)</span>
+                              <span className="text-[8px] font-bold text-cyan-500/80 uppercase mt-0.5">{pbb("council.annexed")}</span>
                             </div>
                           );
                         }
@@ -696,9 +724,9 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                           >
                             {renderFlag(m.iso, m.name)}
                             <span className={`text-[10px] font-bold mt-1 leading-tight ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>{m.name}</span>
-                            <span className="mt-1 text-[8px] text-[#789090]">{m.region} · sampai {m.termEndYear}</span>
+                            <span className="mt-1 text-[8px] text-[#789090]">{m.region} · {pbb("council.memberUntil", { year: m.termEndYear })}</span>
                             <span className={`mt-1 text-[8px] font-bold ${m.vetoUsed ? 'text-rose-300' : 'text-amber-300'}`}>
-                              {m.vetoUsed ? "Veto terbatas telah digunakan" : "1 veto terbatas tersedia"}
+                              {m.vetoUsed ? pbb("council.vetoUsed") : pbb("council.vetoAvailable")}
                             </span>
                           </div>
                         );
@@ -719,10 +747,10 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
         </div>
         <div>
           <h3 className="text-lg font-black text-root-text uppercase tracking-wide">
-            {activeSecurityCouncilItems.length > 0 ? "Resolusi Dewan Keamanan PBB Aktif" : "Belum Ada Resolusi Aktif"}
+            {activeSecurityCouncilItems.length > 0 ? pbb("council.activeTitle") : pbb("council.emptyTitle")}
           </h3>
           <p className="text-xs text-root-subtle mt-1 max-w-md">
-            Mulailah dengan mengajukan rancangan resolusi baru untuk dibahas oleh negara-negara anggota Dewan Keamanan PBB.
+            {pbb("council.createHint")}
           </p>
         </div>
         <button
@@ -730,7 +758,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
           className="mt-2 px-6 py-3 rounded-xl bg-root-accent text-root-canvas border border-root-accent shadow-lg shadow-root-accent/20 text-sm font-black uppercase tracking-wider flex items-center gap-2 hover:bg-root-accent/80 active:scale-95 transition-all cursor-pointer"
         >
           <Plus className="h-5 w-5" />
-          Buat Resolusi Baru
+          {pbb("council.createButton")}
         </button>
       </div>
 
@@ -740,10 +768,10 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
           <div className="flex items-center justify-between px-1">
             <h4 className="text-xs font-black text-root-accent uppercase tracking-widest flex items-center gap-2">
               <Clock className="w-4 h-4 text-root-accent" />
-              Daftar Agenda Sidang Dewan Keamanan PBB ({activeSecurityCouncilItems.length})
+              {pbb("council.agenda", { count: activeSecurityCouncilItems.length })}
             </h4>
             <span className="text-[10px] font-bold text-root-subtle uppercase tracking-wider">
-              Dewan Keamanan PBB
+              {pbb("root.tabCouncil")}
             </span>
           </div>
 
@@ -757,14 +785,14 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-root-accent/15 pb-3">
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-black text-root-accent bg-root-accent/10 px-3 py-1 rounded-lg border border-root-accent/30 uppercase">
-                      {item.label}
+                      {actionLabel(item.type)}
                     </span>
                     <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md border ${
                       item.daysRemaining === 0 
                         ? 'text-slate-400 bg-slate-500/10 border-slate-500/20' 
                         : 'text-amber-400 bg-amber-500/10 border-amber-500/20'
                     }`}>
-                      Sisa: {item.daysRemaining} Hari
+                      {pbb("council.remainingDays", { count: item.daysRemaining })}
                     </span>
                   </div>
 
@@ -776,15 +804,15 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                       : 'bg-rose-500/15 text-rose-400 border-rose-500/30'
                   }`}>
                     {item.daysRemaining === 0 || item.status !== 'voting'
-                      ? item.status === 'passed' ? 'STATUS: DITERIMA' : (item.status === 'vetoed' ? 'STATUS: DIVETO' : 'STATUS: DITOLAK')
-                      : 'STATUS: DALAM PEMUNGUTAN SUARA (DK PBB)'}
+                      ? item.status === 'passed' ? pbb("council.statusPassed") : (item.status === 'vetoed' ? pbb("council.statusVetoed") : pbb("council.statusRejected"))
+                      : pbb("council.statusVoting")}
                   </span>
                 </div>
 
                 {/* Info Pengusul & Target */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-[#051111] p-3.5 rounded-xl border border-root-accent/15">
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-bold text-root-subtle uppercase">Pengusul:</span>
+                    <span className="text-[10px] font-bold text-root-subtle uppercase">{pbb("common.proposer")}</span>
                     <div className="flex items-center gap-2">
                       {renderFlag(item.proposer.iso, item.proposer.name, "sm")}
                       <span className="text-xs font-bold text-root-text">{item.proposer.name}</span>
@@ -792,7 +820,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-bold text-root-subtle uppercase">Target:</span>
+                    <span className="text-[10px] font-bold text-root-subtle uppercase">{pbb("common.target")}</span>
                     <div className="flex items-center gap-2">
                       {renderFlag(item.target.iso, item.target.name, "sm")}
                       <span className="text-xs font-bold text-root-text">{item.target.name}</span>
@@ -803,23 +831,23 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                 {/* Badge Kategori & Deskripsi */}
                 <div className="space-y-1.5">
                   <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-root-accent/10 border border-root-accent/30 text-root-accent text-[10px] font-black uppercase tracking-wider">
-                    <span>Kategori: {item.label}</span>
+                    <span>{pbb("common.category")} {actionLabel(item.type)}</span>
                   </div>
                   <p className="text-xs font-medium text-slate-300 leading-relaxed">
-                    {item.desc}
+                    {actionDescription(item.type)}
                   </p>
                 </div>
 
                 {/* Info Durasi & Sisa Hari / Cooldown Penghapusan */}
                 <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[11px] font-bold text-root-subtle bg-[#051111] px-3.5 py-2 rounded-lg border border-root-accent/10">
-                  <span className="text-root-accent">Durasi: {item.duration || '30 Hari'}</span>
+                  <span className="text-root-accent">{pbb("common.duration")} {durationLabel(item.duration || '30 Hari')}</span>
                   <span>•</span>
                   {item.status === 'voting' ? (
-                    <span>Progres sisa hari: <strong className="text-amber-400">{item.daysRemaining} hari tersisa</strong> (30 Hari - {30 - item.daysRemaining} Hari)</span>
+                    <span>{pbb("common.voteProgress", { remaining: item.daysRemaining, elapsed: 30 - item.daysRemaining })}</span>
                   ) : item.status === 'passed' ? (
-                    <span>Masa berlaku tersisa: <strong className="text-emerald-400">{item.daysRemaining} hari</strong></span>
+                    <span>{pbb("common.activeRemaining", { count: item.daysRemaining })}</span>
                   ) : (
-                    <span>Cooldown Penghapusan: <strong className="text-rose-400">{item.daysRemaining} Hari Tersisa</strong> (Akan terhapus otomatis)</span>
+                    <span>{pbb("common.cooldown", { count: item.daysRemaining })}</span>
                   )}
                 </div>
 
@@ -831,26 +859,26 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                       className="flex items-center gap-1.5 text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-1.5 rounded-lg border border-emerald-500/20 transition-all cursor-pointer"
                     >
                       <Shield className="w-4 h-4" />
-                      <span>{item.voteStats.supportersCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Setuju</span>
+                      <span>{item.voteStats.supportersCount.toLocaleString(language, { maximumFractionDigits: 2 })} {pbb("common.support")}</span>
                     </button>
                     <button
                       onClick={() => { setActiveModalItem(item); setActiveModalType('no'); }}
                       className="flex items-center gap-1.5 text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 px-3 py-1.5 rounded-lg border border-rose-500/20 transition-all cursor-pointer"
                     >
-                      <span>{item.voteStats.opponentsCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Menolak</span>
+                      <span>{item.voteStats.opponentsCount.toLocaleString(language, { maximumFractionDigits: 2 })} {pbb("common.reject")}</span>
                     </button>
                     <button
                       onClick={() => { setActiveModalItem(item); setActiveModalType('veto'); }}
                       className="flex items-center gap-1.5 text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 px-3 py-1.5 rounded-lg border border-amber-500/20 transition-all cursor-pointer"
                     >
-                      <span>{item.voteStats.vetoCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Veto</span>
+                      <span>{item.voteStats.vetoCount.toLocaleString(language, { maximumFractionDigits: 2 })} {pbb("council.veto")}</span>
                     </button>
                     {(item.voteStats.abstainCount || 0) > 0 && (
                       <button
                         onClick={() => { setActiveModalItem(item); setActiveModalType('abstain'); }}
                         className="flex items-center gap-1.5 text-slate-300 bg-slate-500/10 hover:bg-slate-500/20 px-3 py-1.5 rounded-lg border border-slate-500/20 transition-all cursor-pointer"
                       >
-                        <span>{item.voteStats.abstainCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Abstain</span>
+                        <span>{item.voteStats.abstainCount.toLocaleString(language, { maximumFractionDigits: 2 })} {pbb("common.abstain")}</span>
                       </button>
                     )}
                   </div>
@@ -859,8 +887,8 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                   <div className="flex items-center gap-2 w-full md:w-auto justify-end">
                     <span className="text-[10px] font-bold text-root-subtle uppercase mr-1">
                       {isSelectedCountryAnnexed
-                        ? 'Negara dianeksasi — tidak memiliki hak suara'
-                        : item.status !== 'voting' ? 'Voting Ditutup:' : 'Suara Anda:'}
+                        ? pbb("council.annexedVote")
+                        : item.status !== 'voting' ? pbb("resolution.voteClosed") : pbb("resolution.yourVote")}
                     </span>
                     <button
                       disabled={item.status !== 'voting' || isSelectedCountryAnnexed || Boolean(item.userVeto)}
@@ -875,7 +903,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                             : 'bg-[#051111] text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 cursor-pointer'
                       }`}
                     >
-                      Setuju
+                      {pbb("common.support")}
                     </button>
                     <button
                       disabled={item.status !== 'voting' || isSelectedCountryAnnexed || Boolean(item.userVeto)}
@@ -890,15 +918,15 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                             : 'bg-[#051111] text-rose-400 border border-rose-500/30 hover:bg-rose-500/20 cursor-pointer'
                       }`}
                     >
-                      Menolak
+                      {pbb("common.reject")}
                     </button>
                     {selectedCountry?.iso && canUseSecurityCouncilVeto(selectedCountry.iso, item.id) && (
                       <button
                         disabled={item.status !== 'voting' || isSelectedCountryAnnexed || Boolean(item.userVeto)}
                         onClick={() => handleSecurityVeto(item.id)}
                         title={isPermanentSecurityCouncilMember(selectedCountry.iso)
-                          ? 'Gunakan hak veto tetap'
-                          : 'Gunakan satu hak veto terbatas masa jabatan'}
+                          ? pbb("council.vetoPermanent")
+                          : pbb("council.vetoLimited")}
                         className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all ${
                           item.userVeto
                             ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-500/30 cursor-not-allowed'
@@ -907,7 +935,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                               : 'bg-[#051111] text-amber-400 border border-amber-500/40 hover:bg-amber-500/20 cursor-pointer'
                         }`}
                       >
-                        <span className="inline-flex items-center gap-1"><ShieldAlert className="h-3.5 w-3.5" /> Veto</span>
+                        <span className="inline-flex items-center gap-1"><ShieldAlert className="h-3.5 w-3.5" /> {pbb("council.veto")}</span>
                       </button>
                     )}
                     <button
@@ -923,7 +951,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                             : 'bg-[#051111] text-slate-400 border border-slate-500/30 hover:bg-slate-500/20 cursor-pointer'
                       }`}
                     >
-                      Abstain
+                      {pbb("common.abstain")}
                     </button>
                   </div>
                 </div>
@@ -941,7 +969,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
         >
           <div className="root-modal-util-b74379da23">
             <RootInfoModalHeader
-              title="Resolusi Dewan Keamanan PBB"
+              title={pbb("common.councilResolutionTitle")}
               onClose={() => setIsResolusiModalOpen(false)}
               icon={<Shield />}
               size="standard"
@@ -966,10 +994,10 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                               ? 'border-root-accent bg-root-accent/15 shadow-md text-root-accent'
                               : 'border-root-accent/20 bg-root-canvas text-root-subtle hover:border-root-accent/50 hover:text-root-text'
                           }`}
-                          title={action.label}
+                          title={actionLabel(action.id)}
                         >
                           <Image src={action.image} alt="" aria-hidden="true" width={64} height={64} className="h-16 w-16 shrink-0 object-contain" />
-                          <span className="text-[10px] font-bold mt-1.5 text-center leading-tight">{action.label}</span>
+                          <span className="text-[10px] font-bold mt-1.5 text-center leading-tight">{actionLabel(action.id)}</span>
                         </button>
                       );
                     })}
@@ -979,14 +1007,14 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                 {selectedType && (
                   <div className="text-center">
                     <h3 className="text-2xl font-black text-root-text uppercase tracking-wide">
-                      {RESOLUTION_ACTIONS.find(a => a.id === selectedType)?.label}
+                      {actionLabel(selectedType)}
                     </h3>
                     <p className="text-sm text-root-subtle mt-2 leading-relaxed max-w-2xl mx-auto">
-                      {RESOLUTION_ACTIONS.find(a => a.id === selectedType)?.desc}
+                      {actionDescription(selectedType)}
                     </p>
                     {selectedType === 'military' && isGlobalWarBanActive && (
                       <p className="text-sm font-bold text-rose-400 mt-3">
-                        Invasi militer tidak dapat diajukan selama larangan perang global aktif.
+                        {pbb("council.militaryBanMessage")}
                       </p>
                     )}
                   </div>
@@ -994,16 +1022,16 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-2">Pilih durasi:</p>
+                    <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-2">{pbb("common.durationSelect")}</p>
                     <div className="relative" ref={durationRef}>
                       <button type="button" onClick={() => setIsDurationOpen(!isDurationOpen)} className="w-full flex items-center justify-between gap-3 px-5 py-3.5 rounded-xl bg-root-canvas text-root-text border border-root-accent/30 shadow-md hover:border-root-accent/60 transition-all cursor-pointer">
-                        <span className="text-sm font-bold">{selectedDuration}</span>
+                        <span className="text-sm font-bold">{durationLabel(selectedDuration)}</span>
                         <div className="flex items-center gap-1"><Clock className="w-4 h-4 text-root-accent" /></div>
                       </button>
                       {isDurationOpen && (
                         <div className="absolute top-full left-0 right-0 mt-2 bg-[#051111] border border-root-accent/30 rounded-xl shadow-xl z-30 overflow-hidden">
                           {PBB_RESOLUTION_DURATION_OPTIONS.map((dur) => (
-                            <button key={dur} onClick={() => { setSelectedDuration(dur); setIsDurationOpen(false); }} className={`w-full px-5 py-3 text-left text-sm font-bold transition-colors cursor-pointer hover:bg-root-accent/10 ${selectedDuration === dur ? 'bg-root-accent/20 text-root-accent' : 'text-root-text'}`}>{dur}</button>
+                            <button key={dur} onClick={() => { setSelectedDuration(dur); setIsDurationOpen(false); }} className={`w-full px-5 py-3 text-left text-sm font-bold transition-colors cursor-pointer hover:bg-root-accent/10 ${selectedDuration === dur ? 'bg-root-accent/20 text-root-accent' : 'text-root-text'}`}>{durationLabel(dur)}</button>
                           ))}
                         </div>
                       )}
@@ -1011,7 +1039,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                   </div>
 
                   <div>
-                    <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-2">Pilih negara:</p>
+                    <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-2">{pbb("common.countrySelect")}</p>
                     <button 
                       type="button"
                       onClick={() => setIsCountryModalOpen(true)}
@@ -1024,7 +1052,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                             <span className="text-sm font-bold truncate">{selectedTarget.name}</span>
                           </>
                         ) : (
-                          <span className="text-sm font-bold text-root-subtle">-- Pilih Negara --</span>
+                          <span className="text-sm font-bold text-root-subtle">{pbb("resolution.targetPlaceholder")}</span>
                         )}
                       </div>
                       <ChevronDown className="w-4 h-4 text-root-accent" />
@@ -1033,13 +1061,13 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                 </div>
 
                 <div className="flex items-center justify-center gap-4">
-                  <span className="text-sm font-bold text-root-subtle">Durasi pemungutan suara:</span>
+                  <span className="text-sm font-bold text-root-subtle">{pbb("common.voteDuration")}</span>
                   <div className="flex items-center gap-2"><span className="text-sm font-bold text-root-accent">30 h.</span><Clock className="w-4 h-4 text-root-accent" /></div>
                 </div>
 
                 {/* Kotak Perkiraan Suara */}
                 <div className="p-6 rounded-2xl bg-root-canvas border border-root-accent/20 shadow-inner">
-                  <p className="text-center text-[11px] font-black text-root-subtle uppercase tracking-wider mb-4">Perkiraan Jumlah Suara</p>
+                  <p className="text-center text-[11px] font-black text-root-subtle uppercase tracking-wider mb-4">{pbb("common.estimatedVotes")}</p>
                   <div className="flex justify-between items-center px-4 max-w-sm mx-auto gap-3">
                     
                     <button 
@@ -1049,9 +1077,9 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                           ? 'border-root-accent/10 bg-root-accent/5 opacity-50 cursor-not-allowed text-root-subtle'
                           : 'border-root-accent/30 bg-root-accent/10 hover:bg-root-accent/20 hover:border-root-accent text-root-accent cursor-pointer'
                       }`}
-                      title={voteStats.supporters.length === 0 ? "Tidak ada negara yang mendukung" : "Lihat daftar negara pendukung"}
+                      title={voteStats.supporters.length === 0 ? pbb("common.noSupporters") : pbb("common.viewSupporters")}
                     >
-                      <span className="text-[10px] font-bold uppercase tracking-wider">Setuju</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider">{pbb("common.support")}</span>
                       <span className="text-2xl font-black mt-0.5">
                         {voteStats.supporters.length}
                       </span>
@@ -1064,9 +1092,9 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                           ? 'border-rose-500/10 bg-rose-500/5 opacity-50 cursor-not-allowed text-root-subtle'
                           : 'border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 hover:border-rose-500 text-rose-400 cursor-pointer'
                       }`}
-                      title={voteStats.opponents.length === 0 ? "Tidak ada negara yang menentang" : "Lihat daftar negara penentang"}
+                      title={voteStats.opponents.length === 0 ? pbb("common.noOpponents") : pbb("common.viewOpponents")}
                     >
-                      <span className="text-[10px] font-bold uppercase tracking-wider">Menentang</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider">{pbb("common.oppose")}</span>
                       <span className="text-2xl font-black mt-0.5">
                         {voteStats.opponents.length}
                       </span>
@@ -1078,7 +1106,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
             </div>
 
             <div className="flex items-center justify-end gap-4 px-8 py-4 border-t border-root-accent/20 bg-root-canvas relative z-10 shrink-0">
-              <button onClick={() => setIsResolusiModalOpen(false)} className="px-6 py-2.5 rounded-xl border border-root-accent/30 bg-root-accent/10 text-root-accent hover:bg-root-accent/20 transition-all font-bold text-xs uppercase tracking-wider cursor-pointer">Batal</button>
+              <button onClick={() => setIsResolusiModalOpen(false)} className="px-6 py-2.5 rounded-xl border border-root-accent/30 bg-root-accent/10 text-root-accent hover:bg-root-accent/20 transition-all font-bold text-xs uppercase tracking-wider cursor-pointer">{pbb("common.cancel")}</button>
               <button
                 onClick={handleSubmit}
                 disabled={selectedType === 'military' && isGlobalWarBanActive}
@@ -1088,7 +1116,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                     : 'bg-root-accent text-root-canvas hover:bg-root-accent/80 active:scale-95 cursor-pointer'
                 }`}
               >
-                Tambahkan
+                {pbb("common.add")}
               </button>
             </div>
           </div>
@@ -1105,15 +1133,15 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                   <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">Pilih Negara Target</h3>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">Pilih benua, lalu pilih negara target Anda.</p>
+                  <h3 className="text-base sm:text-xl font-bold text-root-accent tracking-tight leading-none uppercase">{pbb("common.chooseCountry")}</h3>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">{pbb("common.targetHint")}</p>
                 </div>
               </div>
               <SharedModalCloseButton
                 onClick={() => setIsCountryModalOpen(false)}
                 className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
                appearance="custom">
-                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">{pbb("common.close")}</span>
                 <X className="h-4 w-4" />
               </SharedModalCloseButton>
             </div>
@@ -1130,7 +1158,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                           : 'bg-root-canvas border border-root-accent/20 text-root-subtle hover:text-root-text hover:border-root-accent/40'
                       }`}
                     >
-                      {continent} ({groupedCountries[continent].length})
+                      {pbb(`continents.${continent.toLowerCase().replace(/[^a-z]+/g, "")}`)} ({groupedCountries[continent].length})
                     </button>
                   ))}
                 </div>
@@ -1164,7 +1192,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
       <ModalSetuju
         isOpen={activeModalType === 'yes'}
         onClose={() => { setActiveModalType(null); setActiveModalItem(null); }}
-        resolutionTitle={activeModalItem ? `${activeModalItem.label} (${activeModalItem.target.name})` : undefined}
+        resolutionTitle={activeModalItem ? `${actionLabel(activeModalItem.type)} (${activeModalItem.target.name})` : undefined}
         countries={activeBreakdown.supporters}
         userVote={activeModalItem?.userVote}
         renderFlag={renderFlag}
@@ -1174,7 +1202,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
       <ModalMenolak
         isOpen={activeModalType === 'no'}
         onClose={() => { setActiveModalType(null); setActiveModalItem(null); }}
-        resolutionTitle={activeModalItem ? `${activeModalItem.label} (${activeModalItem.target.name})` : undefined}
+        resolutionTitle={activeModalItem ? `${actionLabel(activeModalItem.type)} (${activeModalItem.target.name})` : undefined}
         countries={activeBreakdown.opponents}
         userVote={activeModalItem?.userVote}
         renderFlag={renderFlag}
@@ -1184,7 +1212,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
       <ModalAbstain
         isOpen={activeModalType === 'abstain'}
         onClose={() => { setActiveModalType(null); setActiveModalItem(null); }}
-        resolutionTitle={activeModalItem ? `${activeModalItem.label} (${activeModalItem.target.name})` : undefined}
+        resolutionTitle={activeModalItem ? `${actionLabel(activeModalItem.type)} (${activeModalItem.target.name})` : undefined}
         countries={activeBreakdown.abstain}
         userVote={activeModalItem?.userVote}
         renderFlag={renderFlag}
@@ -1194,7 +1222,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
       <ModalVeto
         isOpen={activeModalType === 'veto'}
         onClose={() => { setActiveModalType(null); setActiveModalItem(null); }}
-        resolutionTitle={activeModalItem ? `${activeModalItem.label} (${activeModalItem.target.name})` : undefined}
+        resolutionTitle={activeModalItem ? `${actionLabel(activeModalItem.type)} (${activeModalItem.target.name})` : undefined}
         countries={activeBreakdown.veto}
         renderFlag={renderFlag}
         onBribeCountry={handleBribeCountry}

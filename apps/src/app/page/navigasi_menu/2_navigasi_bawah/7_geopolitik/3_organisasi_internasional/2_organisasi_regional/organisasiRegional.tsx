@@ -10,6 +10,8 @@ import { getDaysElapsed, formatDate } from "@/app/logic/production_logic";
 import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
 import MembershipEligibilityPanel from "./requirementsLogic/MembershipEligibilityPanel";
 import { EligibilityCountry, useOrgMembershipEligibility } from "./requirementsLogic/membershipEligibility";
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
+import { getLocalizedCountryName } from "@/app/logic/countryNameLogic";
 
 interface OrganisasiPBBModalProps {
   orgName: string;
@@ -35,30 +37,29 @@ interface AnnexedCountriesWindow extends Window {
 }
 
 const ORGANIZATION_BENEFITS: Record<string, string> = {
-  "asean": "Kecepatan Pembangunan +10%",
-  "perhimpunan bangsa-bangsa asia tenggara (asean)": "Kecepatan Pembangunan +10%",
-  "uni eropa": "Penerimaan Pajak +10%",
-  "uni eropa (eu)": "Penerimaan Pajak +10%",
-  "liga arab": "Pengaruh Diplomasi +5 suara PBB",
-  "uni afrika": "Kecepatan Pembangunan +10%",
-  "organisasi kerja sama islam (oki)": "Produksi Pangan +10%",
-  "oki": "Produksi Pangan +10%",
-  "brics": "Pendapatan Negara +10%",
-  "pakta pertahanan atletik utara (nato)": "Kekuatan Militer +15%",
-  "nato": "Kekuatan Militer +15%",
-  "opec": "Harga Minyak +20%",
-  "organisasi negara-negara pengeskpor minyak bumi (opec)": "Harga Minyak +20%",
-  "g20": "Pendapatan Negara +20%",
-  "group of twenty (g20)": "Pendapatan Negara +20%",
+  "Perhimpunan Bangsa-Bangsa Asia Tenggara (ASEAN)": "asean",
+  "Uni Eropa (EU)": "eu",
+  "Liga Arab": "arabLeague",
+  "Uni Afrika (AU)": "africanUnion",
+  "Organisasi Kerja Sama Islam (OKI)": "oic",
+  "BRICS (Brasil, Rusia, India, China, Afrika Selatan)": "brics",
+  "Pakta Pertahanan Atlantik Utara (NATO)": "nato",
+  "Organisasi Negara-Negara Pengekspor Minyak Bumi (OPEC)": "opec",
+  "Kelompok Duapuluh (G20)": "g20",
 };
 
 export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCountry, countryDetail, setCountryDetail, onClose, onOpenCountryDetail, onOpenPlayerDetail }: OrganisasiPBBModalProps) {
+  const { language, organizations } = useGeopoliticsMenuTranslation();
   const [members, setMembers] = useState<MemberData[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPermohonanOpen, setIsPermohonanOpen] = useState(false);
 
   const playerCountryName = selectedCountry?.country || "";
-  const benefitText = ORGANIZATION_BENEFITS[orgName?.toLowerCase()?.trim()] || "";
+  const benefitKey = ORGANIZATION_BENEFITS[orgName] || "";
+  const benefitValue = benefitKey === "arabLeague" ? 5 : benefitKey === "nato" ? 15 : benefitKey === "eu" ? 10 : benefitKey === "g20" ? 20 : 10;
+  const benefitText = benefitKey
+    ? organizations(`benefits.${benefitKey}`, { value: `${benefitKey === "arabLeague" ? "" : "+"}${benefitValue}`, votes: 5 })
+    : "";
   const eligibility = useOrgMembershipEligibility(orgName, selectedCountry, countryDetail);
 
   const getIsoFromName = (name: string) => {
@@ -114,7 +115,7 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
   return (
     <div className="w-full h-full flex flex-col bg-root-surface">
       <RootInfoModalHeader
-        title={orgName}
+        title={organizations(`organizationNames.${benefitKey || "default"}`)}
         onClose={onClose}
         icon={Icon ? <Icon aria-hidden="true" className="text-root-accent" /> : undefined}
         size="standard"
@@ -133,7 +134,7 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
               {benefitText && (
                 <div>
                   <span className="text-xs font-black uppercase tracking-wider text-root-accent block">
-                    Efek / Keuntungan Keanggotaan
+                    {organizations("members.benefitTitle")}
                   </span>
                   <span className="text-sm sm:text-base font-extrabold text-root-accent tracking-wide">
                     {benefitText}
@@ -143,7 +144,7 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
               {isMember ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-black text-[11px] uppercase tracking-wider shrink-0 shadow-sm">
                   <Check className="h-3.5 w-3.5 text-emerald-400" />
-                  <span>Sudah Menjadi Anggota</span>
+                  <span>{organizations("members.alreadyMember")}</span>
                 </span>
               ) : app?.status === "pending" ? (
                 <button
@@ -151,13 +152,13 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500/30 font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer shadow-sm shrink-0"
                 >
                   <Clock className="h-3.5 w-3.5 animate-pulse text-amber-400" />
-                  <span>Peninjauan ({remainingDays} Hari)</span>
+                  <span>{organizations("members.reviewing", { days: remainingDays })}</span>
                 </button>
               ) : (
                 <button
                   onClick={() => setIsPermohonanOpen(true)}
                   disabled={eligibility.canApply !== true}
-                  title={eligibility.canApply === true ? undefined : "Syarat keanggotaan belum terpenuhi atau belum dapat diverifikasi."}
+                  title={eligibility.canApply === true ? undefined : organizations("members.requirementsUnmet")}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-black text-[11px] uppercase tracking-wider transition-all shadow-sm shrink-0 ${
                     eligibility.canApply === true
                       ? "bg-root-accent text-root-canvas hover:bg-root-accent/80 cursor-pointer"
@@ -165,35 +166,36 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
                   }`}
                 >
                   <Send className="h-3.5 w-3.5" />
-                  <span>Kirim Permohonan</span>
+                  <span>{organizations("members.apply")}</span>
                 </button>
               )}
             </div>
           );
         })()}
 
-        <MembershipEligibilityPanel eligibility={eligibility} />
+        <MembershipEligibilityPanel eligibility={eligibility} orgName={orgName} />
 
         <div className="w-full bg-root-canvas border border-root-accent/20 rounded-xl p-6 shadow-md">
           <div className="flex justify-between items-center mb-4 border-b border-root-accent/20 pb-2">
             <h4 className="text-xs font-black text-root-accent uppercase tracking-wider">
-              Daftar Negara Anggota ({members.length} Negara)
+              {organizations("members.listTitle", { count: members.length })}
             </h4>
           </div>
 
           {loading ? (
             <div className="flex items-center justify-center py-10 gap-2 text-root-accent/60 font-bold">
               <Loader2 className="h-5 w-5 animate-spin text-root-accent" />
-              Memuat data anggota...
+              {organizations("members.loading")}
             </div>
           ) : members.length === 0 ? (
             <div className="py-10 text-center text-root-accent/60 font-medium">
-              Belum ada data anggota yang ditemukan untuk organisasi ini.
+              {organizations("members.empty")}
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {members.map((member, idx) => {
                 const isPlayer = member.country?.toLowerCase().trim() === playerCountryName.toLowerCase().trim();
+                const displayName = getLocalizedCountryName(member.iso || member.country, language);
                 return (
                   <div
                     key={idx}
@@ -206,16 +208,16 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        {renderFlag(member.iso || getIsoFromName(member.country), member.country)}
+                        {renderFlag(member.iso || getIsoFromName(member.country), displayName)}
                         <span className={`text-sm font-bold ${isPlayer ? 'text-root-accent' : 'text-root-accent/90'}`}>
-                          {member.country}
+                          {displayName}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         {isPlayer && (
                           <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-root-accent text-root-canvas text-[9px] font-black uppercase tracking-wider shadow-sm">
                             <User className="w-3 h-3" />
-                            ANDA
+                            {organizations("members.you")}
                           </span>
                         )}
                         <ChevronRight className="h-4 w-4 text-root-accent/40 group-hover:text-root-accent transition-colors" />
@@ -226,7 +228,11 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
                       member.status === 'Anggota' ? 'bg-root-accent/10 text-root-accent border border-root-accent/30' :
                       'bg-root-accent/5 text-root-accent/60 border border-root-accent/20'
                     }`}>
-                      {member.status || 'Anggota'}
+                      {member.status === "Anggota Tetap"
+                        ? organizations("members.permanent")
+                        : member.status === "Anggota" || !member.status
+                          ? organizations("members.regular")
+                          : member.status}
                     </span>
                   </div>
                 );

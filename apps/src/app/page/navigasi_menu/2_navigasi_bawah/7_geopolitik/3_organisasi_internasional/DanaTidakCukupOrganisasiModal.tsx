@@ -4,6 +4,7 @@ import { AlertCircle } from "lucide-react";
 import { createPortal } from "react-dom";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
 
 interface DanaTidakCukupOrganisasiModalProps {
   isOpen: boolean;
@@ -18,11 +19,12 @@ export default function DanaTidakCukupOrganisasiModal({
   requiredCost,
   currentBudget,
 }: DanaTidakCukupOrganisasiModalProps) {
+  const { organizations, language } = useGeopoliticsMenuTranslation();
   if (!isOpen || typeof document === "undefined") return null;
 
   const shortage = Math.max(0, requiredCost - currentBudget);
   const formatNeo = (amount: number) =>
-    `${amount.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO`;
+    `${amount.toLocaleString(language, { maximumFractionDigits: 2 })} NEO`;
 
   return createPortal(
     <NotebookModalWrapper
@@ -49,30 +51,30 @@ export default function DanaTidakCukupOrganisasiModal({
               id="insufficient-organization-funds-title"
               className="text-sm font-black text-root-danger sm:text-base"
             >
-              Dana Tidak Mencukupi
+              {organizations("insufficientFunds.title")}
             </h2>
           </div>
           <RootModalCloseButton
             onClick={onClose}
-            ariaLabel="Tutup informasi dana tidak mencukupi"
+            ariaLabel={organizations("insufficientFunds.close")}
           />
         </header>
 
         <div className="space-y-4 bg-root-surface p-4 text-sm text-root-text sm:p-6">
           <p className="text-root-subtle">
-            Kas negara tidak cukup untuk membayar biaya pengajuan keanggotaan.
+            {organizations("insufficientFunds.description")}
           </p>
           <div className="space-y-2 rounded-xl border border-root-accent/20 bg-root-canvas p-4 text-xs">
             <div className="flex justify-between gap-4">
-              <span className="text-root-subtle">Biaya pengajuan:</span>
+              <span className="text-root-subtle">{organizations("insufficientFunds.fee")}</span>
               <span className="font-black text-rose-400">{formatNeo(requiredCost)}</span>
             </div>
             <div className="flex justify-between gap-4">
-              <span className="text-root-subtle">Kas tersedia:</span>
+              <span className="text-root-subtle">{organizations("insufficientFunds.available")}</span>
               <span className="font-black text-root-accent">{formatNeo(currentBudget)}</span>
             </div>
             <div className="flex justify-between gap-4 border-t border-root-accent/20 pt-2">
-              <span className="text-root-subtle">Kekurangan:</span>
+              <span className="text-root-subtle">{organizations("insufficientFunds.shortage")}</span>
               <span className="font-black text-rose-400">{formatNeo(shortage)}</span>
             </div>
           </div>
@@ -82,7 +84,7 @@ export default function DanaTidakCukupOrganisasiModal({
               onClick={onClose}
               className="rounded-xl border border-root-accent/30 bg-root-canvas px-5 py-2 text-xs font-black uppercase tracking-wider text-root-subtle transition-colors hover:border-root-accent hover:text-root-accent"
             >
-              Mengerti
+              {organizations("common.understand")}
             </button>
           </div>
         </div>

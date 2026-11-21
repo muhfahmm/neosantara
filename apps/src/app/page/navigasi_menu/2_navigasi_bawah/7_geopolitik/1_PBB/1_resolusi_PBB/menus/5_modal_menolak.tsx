@@ -1,4 +1,5 @@
 "use client"
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
@@ -34,6 +35,7 @@ export default function ModalMenolak({
   renderFlag,
   onBribeCountry
 }: Props) {
+  const { language, pbb } = useGeopoliticsMenuTranslation();
   const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -61,10 +63,10 @@ export default function ModalMenolak({
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-black text-rose-400 tracking-tight leading-none uppercase flex items-center gap-2">
-                Daftar Negara Menolak (Menentang Resolusi)
+                {pbb("vote.assembly.noTitle")}
               </h3>
               <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">
-                {resolutionTitle ? `Usulan: ${resolutionTitle} • ` : ''}Total {countries.length} Negara
+                {resolutionTitle ? pbb("common.resolutionProposed", { title: resolutionTitle, count: countries.length }) : pbb("vote.totalCountries", { count: countries.length })}
               </p>
             </div>
           </div>
@@ -72,7 +74,7 @@ export default function ModalMenolak({
             onClick={onClose}
             className="p-1.5 lg:p-2 rounded-xl border border-rose-500/30 bg-root-surface text-root-subtle hover:text-rose-400 hover:border-rose-500 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
            appearance="custom">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">{pbb("common.close")}</span>
             <X className="h-4 w-4" />
           </SharedModalCloseButton>
         </div>
@@ -82,7 +84,7 @@ export default function ModalMenolak({
           <Search className="w-4 h-4 text-root-subtle" />
           <input
             type="text"
-            placeholder="Cari nama negara..."
+            placeholder={pbb("common.searchCountry")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="bg-transparent text-xs text-root-text placeholder-root-subtle focus:outline-none w-full"
@@ -94,7 +96,7 @@ export default function ModalMenolak({
           <div className="w-full">
             {filtered.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-root-subtle font-medium text-sm">Tidak ada negara yang ditemukan.</p>
+                <p className="text-root-subtle font-medium text-sm">{pbb("common.noResults")}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 w-full">
@@ -126,18 +128,18 @@ export default function ModalMenolak({
                           <span className="text-[9px] font-semibold text-rose-400/80 uppercase tracking-wider truncate">
                             {isUser ? (
                               <span className="text-[9px] font-black uppercase text-cyan-400">
-                                👤 SUARA ANDA ({c.name})
+                                {pbb("vote.playerVote", { country: c.name })}
                               </span>
                             ) : isTarget ? (
                               <span className="text-[9px] font-black uppercase text-rose-400">
-                                🎯 NEGARA TARGET
+                                {pbb("vote.targetCountry")}
                               </span>
                             ) : isProposer ? (
                               <span className="text-[9px] font-black uppercase text-emerald-400">
-                                🏛️ PENGUSUL RESOLUSI
+                                {pbb("common.proposerBadge")}
                               </span>
                             ) : (
-                              c.continent || 'Anggota PBB'
+                              c.continent || pbb("common.unknownContinent")
                             )}
                           </span>
                         </div>
@@ -147,11 +149,11 @@ export default function ModalMenolak({
                         {showBribeButton && onBribeCountry && (
                           <button
                             type="button"
-                            title={`Suap ${c.name} (${formatBribeCost(c.name)})`}
+                            title={pbb("vote.bribeTitle", { country: c.name, amount: formatBribeCost(c.name, language) })}
                             onClick={() => userVote && onBribeCountry(c.iso, userVote)}
                             className="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/30 active:scale-95 transition-all text-[10px] font-black uppercase flex items-center gap-1 cursor-pointer shadow-sm"
                           >
-                            <span>💰 Suap ({formatBribeCost(c.name)})</span>
+                            <span>{pbb("vote.bribeButton", { amount: formatBribeCost(c.name, language) })}</span>
                           </button>
                         )}
                         <span className="text-[10px] font-extrabold text-root-subtle bg-[#051111] px-2 py-0.5 rounded border border-root-accent/10">

@@ -1,0 +1,68 @@
+{
+  "common": { "close": "닫기", "cancel": "취소", "understand": "확인" },
+  "menu": { "title": "국제 블록 회원 자격", "infoTitle": "국제기구", "infoDescription": "유엔 기구, 전문 기관, 지역 기구를 둘러보세요. 각 기구를 열어 회원 자격, 정보, 국가에서 이용할 수 있는 협력 기회를 확인할 수 있습니다." },
+  "tabs": { "un": "유엔 기구 및 전문 기관", "regional": "지역 기구 및 경제 블록" },
+  "cards": { "viewMembership": "{organization} 회원 자격 보기", "information": "{organization} 정보" },
+  "organizationNames": {
+    "default": "국제기구", "interpol": "인터폴", "who": "세계보건기구(WHO)", "unesco": "유엔 교육과학문화기구(UNESCO)", "wto": "세계무역기구(WTO)", "ilo": "국제노동기구(ILO)", "fao": "유엔 식량농업기구(FAO)", "imo": "국제해사기구(IMO)", "itu": "국제전기통신연합(ITU)", "wmo": "세계기상기구(WMO)",
+    "asean": "동남아시아국가연합(ASEAN)", "eu": "유럽연합(EU)", "arabLeague": "아랍연맹", "africanUnion": "아프리카연합(AU)", "oic": "이슬람협력기구(OIC)", "brics": "BRICS(브라질, 러시아, 인도, 중국, 남아프리카공화국)", "nato": "북대서양조약기구(NATO)", "opec": "석유수출국기구(OPEC)", "g20": "주요 20개국(G20)",
+    "apec": "아시아태평양경제협력체(APEC)", "sco": "상하이협력기구(SCO)", "oas": "미주기구(OAS)", "gcc": "걸프협력회의(GCC)", "mercosur": "남미공동시장(MERCOSUR)", "commonwealth": "영연방", "g7": "주요 7개국(G7)", "quad": "쿼드 안보 대화(QUAD)", "oecd": "경제협력개발기구(OECD)"
+  },
+  "organizationInfo": {
+    "default": { "description": "회원국을 위한 국제 협력 포럼입니다.", "focus": "회원국 간 대화와 정책 조정." },
+    "interpol": { "description": "회원국 경찰이 국경을 넘는 범죄에 공동 대응하도록 지원하는 기구입니다.", "focus": "경찰 정보 교환, 국제 지원 조정, 초국경 범죄 대응." },
+    "who": { "description": "보건 분야의 국제 협력을 주도하고 조정하는 유엔 기구입니다.", "focus": "공중 보건, 감염병 대응, 세계 보건 지침." },
+    "unesco": { "description": "교육, 과학, 문화 분야의 국제 협력을 증진하는 유엔 기구입니다.", "focus": "교육, 문화유산 보존, 과학, 표현의 자유." },
+    "wto": { "description": "국제 무역 규범과 무역 분쟁 해결을 위한 장을 제공하는 기구입니다.", "focus": "무역 규칙, 협상, 회원국 간 분쟁 해결." },
+    "ilo": { "description": "노동자의 권리와 양질의 노동 기준을 증진하는 유엔 기구입니다.", "focus": "노동 기준, 노동자 보호, 정부·사용자·노동자 간 대화." },
+    "fao": { "description": "기아 퇴치와 식량 안보 향상을 위한 국제적 노력을 이끄는 유엔 기구입니다.", "focus": "농업, 식량, 영양, 지속 가능한 천연자원 관리." },
+    "imo": { "description": "국제 해운의 안전과 환경 보호 규칙을 개발하는 유엔 기구입니다.", "focus": "선박 안전, 해양 안보, 해양 오염 방지." },
+    "itu": { "description": "무선 주파수, 위성 궤도, 통신 표준을 조정하는 유엔 기구입니다.", "focus": "세계 연결성과 정보통신기술 개발." },
+    "wmo": { "description": "날씨, 기후, 수자원 관측에 대한 세계 협력을 지원하는 유엔 기구입니다.", "focus": "기상 데이터, 조기 경보, 기후, 수문학." },
+    "asean": { "description": "동남아시아 국가 간 협력과 통합을 촉진하는 지역 기구입니다.", "focus": "지역 정치·안보, 경제, 사회문화 협력.", "requirement": "동남아시아 지역에 속한 국가여야 합니다." },
+    "eu": { "description": "공동 기관과 정책을 갖춘 유럽 국가들의 정치·경제 연합입니다.", "focus": "공동 시장, 국가 간 정책, 지역 협력.", "requirement": "유럽 지역에 속한 국가여야 합니다." },
+    "arabLeague": { "description": "아랍 회원국 간 조정과 관계를 증진하는 지역 기구입니다.", "focus": "정치, 경제, 문화, 사회 분야의 협의와 협력.", "requirement": "중동 또는 북아프리카 지역에 속한 국가여야 합니다." },
+    "africanUnion": { "description": "아프리카의 단결, 평화, 발전을 촉진하는 대륙 기구입니다.", "focus": "아프리카 통합, 분쟁 해결, 지속 가능한 발전.", "requirement": "아프리카 대륙에 속한 국가여야 합니다." },
+    "oic": { "description": "회원국 간 협력과 연대를 강화하는 정부 간 기구입니다.", "focus": "정치 협의, 개발, 인도적 지원, 이슬람권 현안.", "requirement": "국가의 주요 종교가 이슬람교여야 합니다." },
+    "brics": { "description": "세계 현안에 대한 대화와 조정을 강화하는 BRICS 국가 협력 포럼입니다.", "focus": "경제 협력, 개발, 세계 거버넌스 조정.", "requirement": "중국과 러시아 양국과의 관계 점수가 모두 50을 넘어야 합니다." },
+    "nato": { "description": "북대서양과 유럽 회원국의 집단 방위 동맹입니다.", "focus": "동맹 조약에 따른 안보 협의와 집단 방위.", "requirement": "북아메리카 또는 유럽 지역에 속한 국가여야 합니다." },
+    "opec": { "description": "회원국의 석유 정책을 조정하는 석유 수출국 기구입니다.", "focus": "석유 정책 조정과 에너지 시장 안정.", "requirement": "석유를 생산하는 국가여야 합니다." },
+    "g20": { "description": "주요 경제국과 유럽연합, 아프리카연합의 국제 경제 협력 포럼입니다.", "focus": "세계 경제 조정, 금융 안정, 개발.", "requirement": "세계 GDP 기준 상위 20개국에 포함되어야 합니다." }
+  },
+  "info": { "title": "기구 정보", "about": "기구 소개", "focus": "주요 활동 분야", "membershipBenefit": "회원 효과 / 보너스:", "researchBonus": "국제기구 협력 연구: 혜택에 +{percent}%", "benefitInactive": "국가가 회원이 되면 혜택이 활성화됩니다." },
+  "benefits": {
+    "interpol": "범죄율 {value}%", "who": "전염병 및 팬데믹 위험 {value}%", "unesco": "과학 연구 속도 {value}%", "wto": "판매 가격 {sell}%, 구매 가격 {buy}%", "ilo": "제조업 생산 {value}%", "fao": "식량 생산 {value}%", "imo": "수산물 생산 {value}%", "itu": "연구 속도 {value}%", "wmo": "자연재해 위험 {value}%", "asean": "건설 속도 {value}%", "eu": "세수 {value}%", "arabLeague": "외교 영향력: 유엔 표결 +{value}", "africanUnion": "건설 속도 {value}%", "oic": "식량 생산 {value}%", "brics": "국가 수입 {value}%", "nato": "군사력 {value}%", "opec": "유가 {value}%", "g20": "국가 수입 {value}%"
+  },
+  "eligibility": {
+    "title": "회원 자격 요건", "loading": "요건 확인을 위한 국가 데이터를 불러오는 중...", "error": "요건 확인 데이터를 불러오지 못했습니다. 나중에 다시 시도하세요.",
+    "requirements": {
+      "geography": { "asean": "동남아시아 국가만 가입할 수 있습니다.", "eu": "유럽 국가만 가입할 수 있습니다.", "nato": "북아메리카 또는 유럽 국가만 가입할 수 있습니다.", "arabLeague": "중동 또는 북아프리카 국가만 가입할 수 있습니다.", "africanUnion": "아프리카 국가만 가입할 수 있습니다." },
+      "oil-production": { "opec": "석유를 생산해야 합니다." },
+      "diplomacy": { "brics": "중국과 러시아 양국과의 관계 점수가 모두 50을 넘어야 합니다." },
+      "gdp-ranking": { "g20": "세계 GDP 기준 상위 20개국에 포함되어야 합니다." },
+      "religion": { "oic": "국가의 주요 종교가 이슬람교여야 합니다." }
+    },
+    "reasons": {
+      "geography": {
+        "asean": { "eligible": "{country}은(는) 동남아시아에 있습니다.", "ineligible": "{country}은(는) 동남아시아에 있지 않습니다.", "unknown": "국가 ISO 코드가 없어 지역을 확인할 수 없습니다." },
+        "eu": { "eligible": "{country}은(는) 유럽에 있습니다.", "ineligible": "{country}은(는) 유럽에 있지 않습니다.", "unknown": "국가 대륙 데이터를 사용할 수 없습니다." },
+        "nato": { "eligible": "{country}은(는) 북아메리카 또는 유럽에 있습니다.", "ineligible": "{country}은(는) 북아메리카 또는 유럽에 있지 않습니다.", "unknown": "국가 대륙 데이터를 사용할 수 없습니다." },
+        "arabLeague": { "eligible": "{country}은(는) 중동 또는 북아프리카에 있습니다.", "ineligible": "{country}은(는) 중동 또는 북아프리카에 있지 않습니다.", "unknown": "국가 ISO 코드가 없어 지역을 확인할 수 없습니다." },
+        "africanUnion": { "eligible": "{country}은(는) 아프리카에 있습니다.", "ineligible": "{country}은(는) 아프리카에 있지 않습니다.", "unknown": "국가 대륙 데이터를 사용할 수 없습니다." }
+      },
+      "oil": { "eligible": "{country}의 석유 생산량은 {value}입니다.", "ineligible": "{country}은(는) 석유를 생산하지 않습니다(생산량: {value}).", "unknown": "국가의 석유 생산 데이터를 사용할 수 없습니다." },
+      "diplomacy": { "eligible": "중국({china}) 및 러시아({russia})와의 관계가 요건을 충족합니다.", "ineligible": "중국({china}) 및 러시아({russia})와의 관계 점수는 모두 50을 넘어야 합니다.", "unknown": "외교 관계 데이터가 없어 가입 자격을 판단할 수 없습니다.", "loading": "외교 관계 점수를 가져오는 중입니다.", "details": "중국과의 관계: {china}; 러시아: {russia}." },
+      "gdp": { "eligible": "{country}은(는) 순 GDP 세계 상위 20위에 포함됩니다.", "ineligible": "{country}은(는) {rank}위입니다. 요건은 1~20위입니다.", "unknown": "전체 국가 데이터로 GDP 순위를 계산할 수 없습니다.", "details": "순 GDP 순위: {total}개국 중 {rank}위." },
+      "religion": { "eligible": "{country}의 주요 종교는 이슬람교입니다.", "ineligible": "{country}의 주요 종교는 이슬람교가 아닌 {religion}입니다.", "unknown": "국가의 주요 종교 데이터를 사용할 수 없습니다." },
+      "default": "회원 자격을 확인할 수 없습니다."
+    }
+  },
+  "members": {
+    "benefitTitle": "회원 효과 / 혜택", "alreadyMember": "이미 회원입니다", "activeMember": "정회원", "reviewing": "심사 중 ({days}일)", "requirementsUnmet": "회원 요건을 충족하지 않거나 아직 확인할 수 없습니다.", "apply": "가입 신청", "listTitle": "회원국 ({count}개국)", "loading": "회원 데이터를 불러오는 중...", "empty": "이 기구의 회원 데이터를 찾을 수 없습니다.", "you": "나", "permanent": "상임 회원국", "regular": "회원국"
+  },
+  "application": {
+    "defaultCountry": "인도네시아",
+    "title": "회원 가입 신청", "pendingTitle": "신청 심사 중 (30일)", "pendingDescription": "{country}의 가입 신청을 {organization} 회원 이사회에서 처리하고 있습니다.", "reviewPeriod": "심사 기간", "daysRemaining": "{days}일 남음", "approvalChance": "승인 확률", "acceptedTitle": "신청이 승인되었습니다!", "acceptedDescription": "축하합니다! {country}의 {organization} 가입 신청이 승인되었습니다(승인 확률: {rate}%). 모든 회원 혜택이 활성화되었습니다.", "rejectedTitle": "신청이 거부되었습니다", "rejectedDescription": "{country}의 이전 가입 신청이 회원 이사회에서 거부되었습니다. 다시 신청할 수 있습니다.", "summaryTitle": "신청 요약", "applicantCountry": "신청 국가:", "targetOrganization": "대상 기구:", "processingTime": "처리 기간:", "simulationDays": "시뮬레이션 {days}일", "estimatedAcceptance": "예상 승인:", "highChance": "높음 (65%~90%)", "fee": "신청 비용:", "sending": "전송 중...", "submit": "신청 전송"
+  },
+  "insufficientFunds": { "title": "자금 부족", "close": "자금 부족 정보 닫기", "description": "국고가 부족하여 회원 가입 신청 비용을 지불할 수 없습니다.", "fee": "신청 비용:", "available": "사용 가능한 자금:", "shortage": "부족액:" }
+}

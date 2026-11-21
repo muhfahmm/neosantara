@@ -1,0 +1,55 @@
+{
+  "menu": {
+    "title": "外交関係",
+    "infoTitle": "関係",
+    "infoDescription": "他国との外交関係を確認し、関係性で国を検索して、利用可能な外交アクションで関係を改善しましょう。関係は二国間協力や他国の対応に影響することがあります。"
+  },
+  "toolbar": {
+    "legend": "関係の凡例",
+    "improveAllAria": "すべての国との関係を改善",
+    "improveAllTitle": "すべての国との関係を改善",
+    "searchAria": "国または大陸を検索",
+    "searchPlaceholder": "国 / 大陸を検索..."
+  },
+  "table": {
+    "number": "番号",
+    "country": "国名",
+    "continent": "大陸",
+    "embassies": "大使館",
+    "relation": "関係",
+    "sortNumber": "番号で並べ替え",
+    "sortCountry": "国名で並べ替え",
+    "sortContinent": "大陸で並べ替え",
+    "sortEmbassies": "大使館の有無で並べ替え",
+    "sortRelation": "関係で並べ替え",
+    "emptySearch": "検索「{query}」に一致するデータはありません。",
+    "embassyPresent": "大使館あり",
+    "embassyAbsent": "なし"
+  },
+  "legend": {
+    "title": "外交関係の指標",
+    "countryCount": "（{count}か国）"
+  },
+  "statuses": {
+    "veryPoor": "非常に悪い",
+    "poor": "悪い",
+    "neutral": "中立",
+    "good": "良い",
+    "veryGood": "非常に良い"
+  },
+  "continents": {
+    "asia": "アジア",
+    "africa": "アフリカ",
+    "europe": "ヨーロッパ",
+    "northAmerica": "北アメリカ",
+    "southAmerica": "南アメリカ",
+    "oceania": "オセアニア",
+    "other": "その他"
+  },
+  "diplomacy": {
+    "choosePath": "外交手段を選択",
+    "moneyPath": "資金ルート（NEO）",
+    "commodityGiftPath": "資源贈呈ルート",
+    "allCountries": "すべての国"
+  }
+}

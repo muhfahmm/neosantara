@@ -1,0 +1,36 @@
+{
+  "header": {
+    "title": "Foreign Embassies"
+  },
+  "info": {
+    "title": "Embassies",
+    "description": "Manage diplomatic missions and view embassies or partners recorded for your country. Embassy relations support communication between countries; actions against embassies may affect relations and cooperation."
+  },
+  "empty": {
+    "title": "No foreign embassies are registered yet.",
+    "description": "Build an embassy from a country's details page to start establishing diplomatic relations."
+  },
+  "status": {
+    "active": "Active"
+  },
+  "types": {
+    "embassy": "Embassy",
+    "trade": "Trade"
+  },
+  "labels": {
+    "continent": "Continent"
+  },
+  "actions": {
+    "viewDetails": "View Details",
+    "destroyEmbassy": "Destroy Embassy",
+    "close": "Close"
+  },
+  "confirm": {
+    "title": "Confirm Embassy Destruction",
+    "message": "Are you sure you want to destroy the embassy in {country}? This action cannot be undone and will sever diplomatic relations."
+  },
+  "success": {
+    "title": "Success",
+    "message": "The embassy in {country} has been destroyed."
+  }
+}

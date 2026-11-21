@@ -807,8 +807,8 @@ export function getCountryPBBVote(countryName: string): number {
   return Math.round(baseVote * getCouncilVoteMultiplier(getIsoForCountryName(countryName)));
 }
 
-export function formatBribeCost(countryName: string): string {
-  return getResolutionBribeCost(countryName).toLocaleString('id-ID', {
+export function formatBribeCost(countryName: string, locale = 'id-ID'): string {
+  return getResolutionBribeCost(countryName).toLocaleString(locale, {
     maximumFractionDigits: 0,
   });
 }

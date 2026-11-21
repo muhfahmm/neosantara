@@ -1,0 +1,68 @@
+{
+  "common": { "close": "閉じる", "cancel": "キャンセル", "understand": "了解" },
+  "menu": { "title": "国際ブロックへの加盟", "infoTitle": "国際機関", "infoDescription": "国連機関、専門機関、地域機関を確認できます。各機関を開くと、加盟状況、情報、お住まいの国が利用できる協力機会を確認できます。" },
+  "tabs": { "un": "国連機関・専門機関", "regional": "地域機関・経済ブロック" },
+  "cards": { "viewMembership": "{organization}の加盟状況を見る", "information": "{organization}の情報" },
+  "organizationNames": {
+    "default": "国際機関", "interpol": "インターポール", "who": "世界保健機関（WHO）", "unesco": "国連教育科学文化機関（UNESCO）", "wto": "世界貿易機関（WTO）", "ilo": "国際労働機関（ILO）", "fao": "国連食糧農業機関（FAO）", "imo": "国際海事機関（IMO）", "itu": "国際電気通信連合（ITU）", "wmo": "世界気象機関（WMO）",
+    "asean": "東南アジア諸国連合（ASEAN）", "eu": "欧州連合（EU）", "arabLeague": "アラブ連盟", "africanUnion": "アフリカ連合（AU）", "oic": "イスラム協力機構（OIC）", "brics": "BRICS（ブラジル、ロシア、インド、中国、南アフリカ）", "nato": "北大西洋条約機構（NATO）", "opec": "石油輸出国機構（OPEC）", "g20": "G20（主要20か国・地域）",
+    "apec": "アジア太平洋経済協力（APEC）", "sco": "上海協力機構（SCO）", "oas": "米州機構（OAS）", "gcc": "湾岸協力会議（GCC）", "mercosur": "南米南部共同市場（MERCOSUR）", "commonwealth": "英連邦", "g7": "G7（主要7か国）", "quad": "日米豪印戦略対話（QUAD）", "oecd": "経済協力開発機構（OECD）"
+  },
+  "organizationInfo": {
+    "default": { "description": "加盟国のための国際協力フォーラムです。", "focus": "加盟国間の対話と政策調整。" },
+    "interpol": { "description": "加盟国の警察機関が国境を越える犯罪に協力して対処できるよう支援する組織です。", "focus": "警察情報の共有、国際支援の調整、越境犯罪への対処。" },
+    "who": { "description": "保健分野における国際協力を主導・調整する国連機関です。", "focus": "公衆衛生、感染症への対応、世界的な保健指針。" },
+    "unesco": { "description": "教育、科学、文化における国際協力を促進する国連機関です。", "focus": "教育、文化遺産の保護、科学、表現の自由。" },
+    "wto": { "description": "国際貿易のルールを定め、貿易紛争を解決する場を提供する組織です。", "focus": "貿易ルール、交渉、加盟国間の紛争解決。" },
+    "ilo": { "description": "労働者の権利と適切な労働基準を推進する国連機関です。", "focus": "労働基準、労働者保護、政府・雇用主・労働者間の対話。" },
+    "fao": { "description": "飢餓の解消と食料安全保障の向上に向けた国際的な取り組みを主導する国連機関です。", "focus": "農業、食料、栄養、天然資源の持続可能な管理。" },
+    "imo": { "description": "国際海運の安全と環境保護に関する規則を策定する国連機関です。", "focus": "船舶の安全、海上保安、海洋汚染の防止。" },
+    "itu": { "description": "無線周波数、衛星軌道、電気通信規格を調整する国連機関です。", "focus": "世界的な接続性と情報通信技術の発展。" },
+    "wmo": { "description": "気象、気候、水の観測に関する世界的な協力を促進する国連機関です。", "focus": "気象データ、早期警報、気候、水文学。" },
+    "asean": { "description": "東南アジア諸国間の協力と統合を促進する地域機関です。", "focus": "地域の政治・安全保障、経済、社会文化協力。", "requirement": "東南アジア地域の国であること。" },
+    "eu": { "description": "共通の機関や政策を持つ、欧州諸国の政治・経済連合です。", "focus": "共通市場、国境を越えた政策、地域協力。", "requirement": "欧州の国であること。" },
+    "arabLeague": { "description": "アラブ加盟国間の連携と関係を促進する地域機関です。", "focus": "政治、経済、文化、社会分野での協議と協力。", "requirement": "中東または北アフリカの国であること。" },
+    "africanUnion": { "description": "アフリカの団結、平和、発展を促進する大陸機関です。", "focus": "アフリカ統合、紛争解決、持続可能な開発。", "requirement": "アフリカ大陸の国であること。" },
+    "oic": { "description": "加盟国間の協力と連帯を強化する政府間機関です。", "focus": "政治協議、開発、人道支援、イスラム世界の課題。", "requirement": "国の主要な宗教がイスラム教であること。" },
+    "brics": { "description": "世界的な課題に関する対話と連携を強化するBRICS諸国の協力フォーラムです。", "focus": "経済協力、開発、グローバル・ガバナンスでの連携。", "requirement": "中国とロシアとの関係スコアがどちらも50を超えること。" },
+    "nato": { "description": "北大西洋地域と欧州の加盟国による集団防衛同盟です。", "focus": "同盟条約に基づく安全保障協議と集団防衛。", "requirement": "北米または欧州の国であること。" },
+    "opec": { "description": "加盟国の石油政策を調整する産油国の組織です。", "focus": "石油政策の調整とエネルギー市場の安定。", "requirement": "原油を生産していること。" },
+    "g20": { "description": "主要経済国、欧州連合、アフリカ連合による国際経済協力フォーラムです。", "focus": "世界経済の調整、金融安定、開発。", "requirement": "世界のGDP上位20か国に入ること。" }
+  },
+  "info": { "title": "機関情報", "about": "機関について", "focus": "主な活動分野", "membershipBenefit": "加盟効果・ボーナス:", "researchBonus": "国際機関協力の研究: 効果に+{percent}%", "benefitInactive": "加盟国になると効果が有効になります。" },
+  "benefits": {
+    "interpol": "犯罪率 {value}%", "who": "感染症・パンデミックのリスク {value}%", "unesco": "科学研究速度 {value}%", "wto": "販売価格 {sell}%、購入価格 {buy}%", "ilo": "製造業生産 {value}%", "fao": "食料生産 {value}%", "imo": "漁業生産 {value}%", "itu": "研究速度 {value}%", "wmo": "自然災害リスク {value}%", "asean": "建設速度 {value}%", "eu": "税収 {value}%", "arabLeague": "外交影響力: 国連票 +{value}", "africanUnion": "建設速度 {value}%", "oic": "食料生産 {value}%", "brics": "国家収入 {value}%", "nato": "軍事力 {value}%", "opec": "原油価格 {value}%", "g20": "国家収入 {value}%"
+  },
+  "eligibility": {
+    "title": "加盟条件", "loading": "条件確認のため国データを読み込み中...", "error": "条件確認データを読み込めませんでした。後でもう一度お試しください。",
+    "requirements": {
+      "geography": { "asean": "東南アジア地域の国のみ加盟できます。", "eu": "欧州の国のみ加盟できます。", "nato": "北米または欧州の国のみ加盟できます。", "arabLeague": "中東または北アフリカの国のみ加盟できます。", "africanUnion": "アフリカの国のみ加盟できます。" },
+      "oil-production": { "opec": "原油を生産していること。" },
+      "diplomacy": { "brics": "中国とロシアとの関係スコアがどちらも50を超えること。" },
+      "gdp-ranking": { "g20": "世界のGDP上位20か国に入ること。" },
+      "religion": { "oic": "国の主要な宗教がイスラム教であること。" }
+    },
+    "reasons": {
+      "geography": {
+        "asean": { "eligible": "{country}は東南アジアにあります。", "ineligible": "{country}は東南アジアにありません。", "unknown": "国のISOコードがないため、地域を確認できません。" },
+        "eu": { "eligible": "{country}は欧州にあります。", "ineligible": "{country}は欧州にありません。", "unknown": "国の大陸データを利用できません。" },
+        "nato": { "eligible": "{country}は北米または欧州にあります。", "ineligible": "{country}は北米にも欧州にもありません。", "unknown": "国の大陸データを利用できません。" },
+        "arabLeague": { "eligible": "{country}は中東または北アフリカにあります。", "ineligible": "{country}は中東にも北アフリカにもありません。", "unknown": "国のISOコードがないため、地域を確認できません。" },
+        "africanUnion": { "eligible": "{country}はアフリカにあります。", "ineligible": "{country}はアフリカにありません。", "unknown": "国の大陸データを利用できません。" }
+      },
+      "oil": { "eligible": "{country}の原油生産量は{value}です。", "ineligible": "{country}は原油を生産していません（生産量: {value}）。", "unknown": "この国の原油生産データを利用できません。" },
+      "diplomacy": { "eligible": "中国（{china}）とロシア（{russia}）との関係は条件を満たしています。", "ineligible": "中国（{china}）とロシア（{russia}）との関係スコアはいずれも50を超える必要があります。", "unknown": "外交関係データがなく、資格を判断できません。", "loading": "外交関係スコアを取得しています。", "details": "中国との関係: {china}、ロシア: {russia}。" },
+      "gdp": { "eligible": "{country}は世界の純GDP上位20か国に入っています。", "ineligible": "{country}は{rank}位です。条件は1～20位です。", "unknown": "全ての国のデータからGDP順位を計算できません。", "details": "純GDP順位: {total}か国中{rank}位。" },
+      "religion": { "eligible": "{country}の主要な宗教はイスラム教です。", "ineligible": "{country}の主要な宗教は{religion}で、イスラム教ではありません。", "unknown": "国の主要な宗教データを利用できません。" },
+      "default": "加盟資格を確認できません。"
+    }
+  },
+  "members": {
+    "benefitTitle": "加盟効果・特典", "alreadyMember": "加盟済み", "activeMember": "正会員", "reviewing": "審査中（残り{days}日）", "requirementsUnmet": "加盟条件を満たしていないか、まだ確認できません。", "apply": "加盟を申請", "listTitle": "加盟国（{count}か国）", "loading": "加盟国データを読み込み中...", "empty": "この機関の加盟国データはありません。", "you": "あなた", "permanent": "常任加盟国", "regular": "加盟国"
+  },
+  "application": {
+    "defaultCountry": "インドネシア",
+    "title": "加盟申請", "pendingTitle": "申請を審査中（30日）", "pendingDescription": "{country}の加盟申請は{organization}の加盟国評議会で処理されています。", "reviewPeriod": "審査期間", "daysRemaining": "残り{days}日", "approvalChance": "承認確率", "acceptedTitle": "申請が承認されました！", "acceptedDescription": "おめでとうございます。{country}の{organization}加盟申請が承認されました（承認確率: {rate}%）。加盟ボーナスが有効になりました。", "rejectedTitle": "申請は却下されました", "rejectedDescription": "{country}の前回の加盟申請は加盟国評議会に却下されました。再度申請できます。", "summaryTitle": "申請内容", "applicantCountry": "申請国:", "targetOrganization": "申請先機関:", "processingTime": "処理期間:", "simulationDays": "シミュレーション{days}日", "estimatedAcceptance": "承認見込み:", "highChance": "高い（65%～90%）", "fee": "申請費用:", "sending": "送信中...", "submit": "申請を送信"
+  },
+  "insufficientFunds": { "title": "資金不足", "close": "資金不足の情報を閉じる", "description": "国庫の資金が不足しているため、加盟申請費用を支払えません。", "fee": "申請費用:", "available": "利用可能な資金:", "shortage": "不足額:" }
+}

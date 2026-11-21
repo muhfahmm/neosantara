@@ -1,0 +1,36 @@
+{
+  "header": {
+    "title": "外国使馆"
+  },
+  "info": {
+    "title": "使馆",
+    "description": "管理外交使团，并查看为本国登记的使馆或伙伴关系。使馆关系有助于国家间沟通；针对使馆采取行动可能影响外交关系与合作。"
+  },
+  "empty": {
+    "title": "尚未登记外国使馆。",
+    "description": "请在国家详情页面建造使馆，以开始建立外交关系。"
+  },
+  "status": {
+    "active": "运作中"
+  },
+  "types": {
+    "embassy": "使馆",
+    "trade": "贸易"
+  },
+  "labels": {
+    "continent": "洲"
+  },
+  "actions": {
+    "viewDetails": "查看详情",
+    "destroyEmbassy": "摧毁使馆",
+    "close": "关闭"
+  },
+  "confirm": {
+    "title": "确认摧毁使馆",
+    "message": "确定要摧毁位于{country}的使馆吗？此操作无法撤销，并将断绝外交关系。"
+  },
+  "success": {
+    "title": "成功",
+    "message": "位于{country}的使馆已被摧毁。"
+  }
+}

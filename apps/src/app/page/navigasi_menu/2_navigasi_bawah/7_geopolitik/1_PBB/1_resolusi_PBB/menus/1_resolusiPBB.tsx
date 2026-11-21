@@ -22,9 +22,13 @@ import PilihProdukLarangan from "../1_pilihProdukLarangan";
 import { ActiveResolutionItem, loadActiveResolutions, saveActiveResolutions, calculate206AIVotes, TOTAL_UN_MEMBERS, getSimulationDateString, getResolutionCountryBreakdown, getResolutionBribeCost, tickPBBResolutions } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { tickPBBSecurityCouncil } from "../../2_keamanan_PBB/logic/keamananPBBUILogic";
 import { PBB_RESOLUTION_DURATION_OPTIONS } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
-import { formatProductionProductName, getProductionBanProduct } from "../logic/productionBanCatalog";
+import {
+  formatProductionProductName,
+  PRODUCTION_BAN_CATEGORIES,
+} from "../logic/productionBanCatalog";
 import { clearAnnexedCountryVotes, isCountryAnnexed } from "../../pbbVotingEligibility";
 import { getIsoForCountryName } from "../../pbbCountryIso";
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
 
 interface ResolusiPBBProps {
   selectedCountry: any;
@@ -83,6 +87,7 @@ export const formatCountryName = (name: string) => {
 };
 
 export default function ResolusiPBB({ selectedCountry, countryDetail, setCountryDetail }: ResolusiPBBProps) {
+  const { language, pbb } = useGeopoliticsMenuTranslation();
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   const [selectedType, setSelectedType] = useState<string>("war_ban");
@@ -123,6 +128,43 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
     { id: 'military_invasion', image: '/images/game/interface/sub-tabs/geopolitik/resolusi-pbb/resolusi-invasi.svg', label: 'Resolusi Invasi', desc: 'Resolusi memungkinkan negara diinvasi tanpa kecaman oleh negara lain.' },
     { id: 'production_ban', image: '/images/game/interface/sub-tabs/geopolitik/resolusi-pbb/larangan-produksi.svg', label: 'Larangan Produksi', desc: 'Produksi produk yang dipilih dihentikan selama periode yang dipilih.' },
   ];
+  const actionTranslationKeys: Record<string, string> = {
+    war_ban: "warBan",
+    arms_embargo: "armsEmbargo",
+    economic_embargo: "economicEmbargo",
+    military_invasion: "invasion",
+    production_ban: "productionBan",
+  };
+  const actionLabel = (type: string) => {
+    const key = actionTranslationKeys[type];
+    return key ? pbb(`resolution.${key}`) : pbb("common.resolutionTitle");
+  };
+  const actionDescription = (type: string) => {
+    const key = actionTranslationKeys[type];
+    return key ? pbb(`resolution.${key}Desc`) : "";
+  };
+  const durationLabel = (duration: string) => {
+    const keys: Record<string, string> = {
+      "1 bulan": "duration.month1",
+      "3 bulan": "duration.month3",
+      "6 bulan": "duration.month6",
+      "9 bulan": "duration.month9",
+      "1 tahun": "duration.year1",
+      "30 Hari": "duration.days30",
+    };
+    return keys[duration] ? pbb(keys[duration]) : duration;
+  };
+  const resolutionLabel = (resolution: ActiveResolutionItem) => {
+    const label = actionLabel(resolution.type);
+    if (resolution.type !== "production_ban") return label;
+    const storedProduct = resolution.label.split(":").slice(1).join(":").trim();
+    const productKey = resolution.productKey || PRODUCTION_BAN_CATEGORIES
+      .flatMap(category => category.products)
+      .find(key => formatProductionProductName(key).toLowerCase() === storedProduct.toLowerCase()
+        || key.replace(/_/g, " ").toLowerCase() === storedProduct.toLowerCase());
+    const product = productKey ? pbb(`products.items.${productKey}`) : storedProduct;
+    return product ? `${label}: ${product}` : label;
+  };
 
   useEffect(() => {
     if (COUNTRIES_DATA && Array.isArray(COUNTRIES_DATA)) {
@@ -294,6 +336,11 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
 
   const isWarBan = selectedType === 'war_ban';
   const isProductionBan = selectedType === 'production_ban';
+  const selectedProductCategory = selectedProductKey
+    ? PRODUCTION_BAN_CATEGORIES.find(category =>
+        category.products.some(productKey => productKey === selectedProductKey)
+      )
+    : undefined;
 
   const [activeResolutions, setActiveResolutions] = useState<ActiveResolutionItem[]>([]);
 
@@ -357,11 +404,11 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
     if (!targetRes.userVote || !setCountryDetail) {
       window.dispatchEvent(new CustomEvent('neosantara_system_notification', {
         detail: {
-          title: '❌ SUAP TIDAK DAPAT DIPROSES',
-          sender: 'Delegasi Perserikatan Bangsa-Bangsa',
+          title: pbb("notifications.bribeErrorTitle"),
+          sender: pbb("notifications.bribeSender"),
           message: !targetRes.userVote
-            ? 'Berikan suara pada resolusi ini terlebih dahulu agar negara lain dapat mengikuti posisi Anda.'
-            : 'Data kas negara tidak tersedia untuk membayar suap.',
+            ? pbb("notifications.bribeNeedVote")
+            : pbb("notifications.bribeNoBudgetData"),
           type: 'peringkat',
         },
       }));
@@ -375,9 +422,13 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
     if (availableBudget < bribeCost) {
       window.dispatchEvent(new CustomEvent('neosantara_system_notification', {
         detail: {
-          title: '❌ KAS NEGARA TIDAK MENCUKUPI',
-          sender: 'Kementerian Keuangan',
-          message: `Suap kepada ${country.name} membutuhkan ${bribeCost.toLocaleString('id-ID')} NEO. Kas negara tersedia ${availableBudget.toLocaleString('id-ID')} NEO.`,
+          title: pbb("notifications.insufficientFundsTitle"),
+          sender: pbb("notifications.financeSender"),
+          message: pbb("notifications.bribeInsufficientFunds", {
+            country: country.name,
+            required: bribeCost.toLocaleString(language),
+            available: availableBudget.toLocaleString(language),
+          }),
           type: 'peringkat',
         },
       }));
@@ -434,9 +485,14 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
     );
     window.dispatchEvent(new CustomEvent('neosantara_system_notification', {
       detail: {
-        title: '💰 SUAP RESOLUSI PBB BERHASIL',
-        sender: 'Delegasi Perserikatan Bangsa-Bangsa',
-        message: `${country.name} kini mengikuti suara Anda (${toVote === 'yes' ? 'setuju' : toVote === 'no' ? 'menolak' : 'abstain'}) pada resolusi "${targetRes.label}". Biaya: ${bribeCost.toLocaleString('id-ID')} NEO.`,
+        title: pbb("notifications.bribeSuccessTitle"),
+        sender: pbb("notifications.bribeSender"),
+        message: pbb("notifications.bribeSuccess", {
+          country: country.name,
+          vote: pbb(toVote === "yes" ? "common.support" : toVote === "no" ? "common.reject" : "common.abstain"),
+          resolution: resolutionLabel(targetRes),
+          cost: bribeCost.toLocaleString(language),
+        }),
         type: 'peringkat',
       },
     }));
@@ -536,10 +592,10 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
         </div>
         <div>
           <h3 className="text-lg font-black text-root-text uppercase tracking-wide">
-            {activeResolutions.length > 0 ? "Sidang umum majelis PBB aktif" : "Belum Ada Resolusi Aktif"}
+            {activeResolutions.length > 0 ? pbb("resolution.activeTitle") : pbb("resolution.emptyTitle")}
           </h3>
           <p className="text-xs text-root-subtle mt-1 max-w-md">
-            Mulailah dengan mengajukan rancangan resolusi baru untuk dibahas oleh negara-negara anggota Majelis Umum.
+            {pbb("resolution.createHint")}
           </p>
         </div>
         <button
@@ -547,7 +603,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
           className="mt-2 px-6 py-3 rounded-xl bg-root-accent text-root-canvas border border-root-accent shadow-lg shadow-root-accent/20 text-sm font-black uppercase tracking-wider flex items-center gap-2 hover:bg-root-accent/80 active:scale-95 transition-all cursor-pointer"
         >
           <Plus className="h-5 w-5" />
-          Buat Resolusi Baru
+          {pbb("council.createButton")}
         </button>
       </div>
 
@@ -557,10 +613,10 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
           <div className="flex items-center justify-between px-1">
             <h4 className="text-xs font-black text-root-accent uppercase tracking-widest flex items-center gap-2">
               <Clock className="w-4 h-4 text-root-accent" />
-              Daftar Resolusi Sedang Dibahas ({activeResolutions.length})
+              {pbb("resolution.activeAgenda", { count: activeResolutions.length })}
             </h4>
             <span className="text-[10px] font-bold text-root-subtle uppercase tracking-wider">
-              Majelis Umum PBB
+              {pbb("root.tabResolution")}
             </span>
           </div>
 
@@ -574,14 +630,14 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-root-accent/15 pb-3">
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-black text-root-accent bg-root-accent/10 px-3 py-1 rounded-lg border border-root-accent/30 uppercase">
-                      {res.label}
+                      {resolutionLabel(res)}
                     </span>
                     <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md border ${
                       res.daysRemaining === 0 
                         ? 'text-slate-400 bg-slate-500/10 border-slate-500/20' 
                         : 'text-amber-400 bg-amber-500/10 border-amber-500/20'
                     }`}>
-                      Sisa: {res.daysRemaining} Hari
+                      {pbb("common.daysLeft", { count: res.daysRemaining })}
                     </span>
                   </div>
 
@@ -593,15 +649,15 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                       : 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30'
                   }`}>
                     {res.daysRemaining === 0 || res.status !== 'voting'
-                      ? res.status === 'passed' ? 'STATUS: DITERIMA' : 'STATUS: DITOLAK'
-                      : 'STATUS: DALAM PEMUNGUTAN SUARA'}
+                      ? res.status === 'passed' ? pbb("resolution.statusPassed") : pbb("resolution.statusRejected")
+                      : pbb("resolution.statusVoting")}
                   </span>
                 </div>
 
                 {/* Info Pengusul & Target */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-[#051111] p-3.5 rounded-xl border border-root-accent/15">
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-bold text-root-subtle uppercase">Pengusul:</span>
+                    <span className="text-[10px] font-bold text-root-subtle uppercase">{pbb("common.proposer")}</span>
                     <div className="flex items-center gap-2">
                       {renderFlag(res.proposer.iso, res.proposer.name, "sm")}
                       <span className="text-xs font-bold text-root-text">{res.proposer.name}</span>
@@ -609,7 +665,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-bold text-root-subtle uppercase">Target:</span>
+                    <span className="text-[10px] font-bold text-root-subtle uppercase">{pbb("common.target")}</span>
                     <div className="flex items-center gap-2">
                       {renderFlag(res.target.iso, res.target.name, "sm")}
                       <span className="text-xs font-bold text-root-text">{res.target.name}</span>
@@ -620,23 +676,23 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                 {/* Badge Kategori & Deskripsi */}
                 <div className="space-y-1.5">
                   <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-root-accent/10 border border-root-accent/30 text-root-accent text-[10px] font-black uppercase tracking-wider">
-                    <span>Kategori: {res.label}</span>
+                    <span>{pbb("common.category")} {resolutionLabel(res)}</span>
                   </div>
                   <p className="text-xs font-medium text-slate-300 leading-relaxed">
-                    {res.desc}
+                    {actionDescription(res.type)}
                   </p>
                 </div>
 
                 {/* Info Durasi & Sisa Hari / Cooldown Penghapusan */}
                 <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[11px] font-bold text-root-subtle bg-[#051111] px-3.5 py-2 rounded-lg border border-root-accent/10">
-                  <span className="text-root-accent">Durasi: {res.duration || '30 Hari'}</span>
+                  <span className="text-root-accent">{pbb("common.duration")} {durationLabel(res.duration || '30 Hari')}</span>
                   <span>•</span>
                   {res.status === 'voting' ? (
-                    <span>Progres sisa hari: <strong className="text-amber-400">{res.daysRemaining} hari tersisa</strong> (30 Hari - {30 - res.daysRemaining} Hari)</span>
+                    <span>{pbb("common.voteProgress", { remaining: res.daysRemaining, elapsed: 30 - res.daysRemaining })}</span>
                   ) : res.status === 'passed' ? (
-                    <span>Masa berlaku tersisa: <strong className="text-emerald-400">{res.daysRemaining} hari</strong></span>
+                    <span>{pbb("common.activeRemaining", { count: res.daysRemaining })}</span>
                   ) : (
-                    <span>Cooldown Penghapusan: <strong className="text-rose-400">{res.daysRemaining} Hari Tersisa</strong> (Akan terhapus otomatis)</span>
+                    <span>{pbb("common.cooldown", { count: res.daysRemaining })}</span>
                   )}
                 </div>
 
@@ -652,7 +708,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                       className="flex items-center gap-1.5 text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/30 hover:bg-emerald-500/20 active:scale-95 transition-all cursor-pointer"
                     >
                       <ThumbsUp className="w-4 h-4" />
-                      <span>{Math.round(res.voteStats.supportersCount)} Setuju</span>
+                      <span>{Math.round(res.voteStats.supportersCount)} {pbb("common.support")}</span>
                     </button>
                     <button
                       type="button"
@@ -663,7 +719,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                       className="flex items-center gap-1.5 text-rose-400 bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/30 hover:bg-rose-500/20 active:scale-95 transition-all cursor-pointer"
                     >
                       <ThumbsDown className="w-4 h-4" />
-                      <span>{Math.round(res.voteStats.opponentsCount)} Menolak</span>
+                      <span>{Math.round(res.voteStats.opponentsCount)} {pbb("common.reject")}</span>
                     </button>
                     {res.voteStats.abstainCount > 0 && (
                       <button
@@ -674,7 +730,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                         }}
                         className="flex items-center gap-1.5 text-slate-300 bg-slate-500/10 px-3 py-1.5 rounded-lg border border-slate-500/30 hover:bg-slate-500/20 active:scale-95 transition-all cursor-pointer"
                       >
-                        <span>{Math.round(res.voteStats.abstainCount)} Abstain</span>
+                        <span>{Math.round(res.voteStats.abstainCount)} {pbb("common.abstain")}</span>
                       </button>
                     )}
                   </div>
@@ -683,8 +739,8 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                   <div className="flex items-center gap-2 w-full md:w-auto justify-end">
                     <span className="text-[10px] font-bold text-root-subtle uppercase mr-1">
                       {isSelectedCountryAnnexed
-                        ? 'Negara dianeksasi — tidak memiliki hak suara'
-                        : res.status !== 'voting' ? 'Voting Ditutup:' : 'Suara Anda:'}
+                        ? pbb("resolution.annexedVote")
+                        : res.status !== 'voting' ? pbb("resolution.voteClosed") : pbb("resolution.yourVote")}
                     </span>
                     <button
                       disabled={res.status !== 'voting' || isSelectedCountryAnnexed}
@@ -699,7 +755,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                             : 'bg-[#051111] text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 cursor-pointer'
                       }`}
                     >
-                      Setuju
+                      {pbb("common.support")}
                     </button>
                     <button
                       disabled={res.status !== 'voting' || isSelectedCountryAnnexed}
@@ -714,7 +770,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                             : 'bg-[#051111] text-rose-400 border border-rose-500/30 hover:bg-rose-500/20 cursor-pointer'
                       }`}
                     >
-                      Menolak
+                      {pbb("common.reject")}
                     </button>
                     <button
                       disabled={res.status !== 'voting' || isSelectedCountryAnnexed}
@@ -729,7 +785,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                             : 'bg-[#051111] text-slate-400 border border-slate-500/30 hover:bg-slate-500/20 cursor-pointer'
                       }`}
                     >
-                      Abstain
+                      {pbb("common.abstain")}
                     </button>
                   </div>
                 </div>
@@ -748,7 +804,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
           <div className="root-modal-util-b74379da23">
             
             <RootInfoModalHeader
-              title="Resolusi Sidang Umum PBB"
+              title={pbb("resolution.createTitle")}
               onClose={() => setShowCreateModal(false)}
               icon={<FileText />}
               size="standard"
@@ -770,10 +826,10 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                               ? 'border-root-accent bg-root-accent/15 shadow-md text-root-accent'
                               : 'border-root-accent/20 bg-root-canvas text-root-subtle hover:border-root-accent/50 hover:text-root-text'
                           }`}
-                          title={action.label}
+                          title={actionLabel(action.id)}
                         >
                           <Image src={action.image} alt="" aria-hidden="true" width={64} height={64} className="h-16 w-16 shrink-0 object-contain" />
-                          <span className="text-[10px] font-bold mt-1.5 text-center leading-tight">{action.label}</span>
+                          <span className="text-[10px] font-bold mt-1.5 text-center leading-tight">{actionLabel(action.id)}</span>
                         </button>
                       );
                     })}
@@ -783,26 +839,26 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                 {selectedType && (
                   <div className="text-center">
                     <h3 className="text-2xl font-black text-root-text uppercase tracking-wide">
-                      {RESOLUTION_ACTIONS.find(a => a.id === selectedType)?.label}
+                      {actionLabel(selectedType)}
                     </h3>
                     <p className="text-sm text-root-subtle mt-2 leading-relaxed max-w-2xl mx-auto">
-                      {RESOLUTION_ACTIONS.find(a => a.id === selectedType)?.desc}
+                      {actionDescription(selectedType)}
                     </p>
                   </div>
                 )}
 
                 <div className={`grid grid-cols-1 ${isWarBan ? '' : 'md:grid-cols-2'} gap-6`}>
                   <div className={isWarBan ? 'w-full' : ''}>
-                    <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-2">Pilih durasi:</p>
+                    <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-2">{pbb("common.durationSelect")}</p>
                     <div className="relative" ref={durationRef}>
                       <button type="button" onClick={() => setIsDurationOpen(!isDurationOpen)} className="w-full flex items-center justify-between gap-3 px-5 py-3.5 rounded-xl bg-root-canvas text-root-text border border-root-accent/30 shadow-md hover:border-root-accent/60 transition-all cursor-pointer">
-                        <span className="text-sm font-bold">{selectedDuration}</span>
+                        <span className="text-sm font-bold">{durationLabel(selectedDuration)}</span>
                         <div className="flex items-center gap-1"><Clock className="w-4 h-4 text-root-accent" /></div>
                       </button>
                       {isDurationOpen && (
                         <div className="absolute top-full left-0 right-0 mt-2 bg-[#051111] border border-root-accent/30 rounded-xl shadow-xl z-30 overflow-hidden">
                           {PBB_RESOLUTION_DURATION_OPTIONS.map((dur) => (
-                            <button key={dur} onClick={() => { setSelectedDuration(dur); setIsDurationOpen(false); }} className={`w-full px-5 py-3 text-left text-sm font-bold transition-colors cursor-pointer hover:bg-root-accent/10 ${selectedDuration === dur ? 'bg-root-accent/20 text-root-accent' : 'text-root-text'}`}>{dur}</button>
+                            <button key={dur} onClick={() => { setSelectedDuration(dur); setIsDurationOpen(false); }} className={`w-full px-5 py-3 text-left text-sm font-bold transition-colors cursor-pointer hover:bg-root-accent/10 ${selectedDuration === dur ? 'bg-root-accent/20 text-root-accent' : 'text-root-text'}`}>{durationLabel(dur)}</button>
                           ))}
                         </div>
                       )}
@@ -812,7 +868,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                   {!isWarBan && (
                     <div>
                       <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-2">
-                        {isProductionBan ? "Pilih produk:" : "Pilih negara:"}
+                        {isProductionBan ? pbb("resolution.productSelect") : pbb("common.countrySelect")}
                       </p>
                       
                       {isProductionBan ? (
@@ -824,12 +880,12 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                           >
                             <span className={`text-sm font-bold ${selectedProductKey ? 'text-root-accent' : 'text-root-subtle'}`}>
                               {selectedProductKey
-                                ? `${getProductionBanProduct(selectedProductKey)?.category}: ${formatProductionProductName(selectedProductKey)}`
-                                : 'Pilih kategori dan produk'}
+                                ? `${pbb(`products.categories.${selectedProductCategory?.id}`)}: ${pbb(`products.items.${selectedProductKey}`)}`
+                                : pbb("resolution.productSelect")}
                             </span>
                             <Package className="w-4 h-4 text-root-accent" />
                           </button>
-                          <p className="text-[10px] text-root-subtle mt-2">Pemilihan produk membuka daftar sektor dan produk produksi.</p>
+                          <p className="text-[10px] text-root-subtle mt-2">{pbb("resolution.productHelp")}</p>
                         </div>
                       ) : (
                         <button 
@@ -844,7 +900,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                                 <span className="text-sm font-bold truncate">{selectedTarget.name}</span>
                               </>
                             ) : (
-                              <span className="text-sm font-bold text-root-subtle">-- Pilih Negara --</span>
+                              <span className="text-sm font-bold text-root-subtle">{pbb("resolution.targetPlaceholder")}</span>
                             )}
                           </div>
                           <ChevronDown className="w-4 h-4 text-root-accent" />
@@ -855,12 +911,12 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                 </div>
 
                 <div className="flex items-center justify-center gap-4">
-                  <span className="text-sm font-bold text-root-subtle">Durasi pemungutan suara:</span>
+                  <span className="text-sm font-bold text-root-subtle">{pbb("common.voteDuration")}</span>
                   <div className="flex items-center gap-2"><span className="text-sm font-bold text-root-accent">30 h.</span><Clock className="w-4 h-4 text-root-accent" /></div>
                 </div>
 
                 <div className="p-6 rounded-2xl bg-root-canvas border border-root-accent/20 shadow-inner">
-                  <p className="text-center text-[11px] font-black text-root-subtle uppercase tracking-wider mb-4">Perkiraan Jumlah Suara</p>
+                  <p className="text-center text-[11px] font-black text-root-subtle uppercase tracking-wider mb-4">{pbb("common.estimatedVotes")}</p>
                   <div className="flex justify-between items-center px-4 max-w-sm mx-auto gap-3">
                     <button
                       onClick={() => { if (voteStats.supporters.length > 0) setIsSupportersModalOpen(true); }}
@@ -869,9 +925,9 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                           ? 'border-root-accent/10 bg-root-accent/5 opacity-50 cursor-not-allowed text-root-subtle'
                           : 'border-root-accent/30 bg-root-accent/10 hover:bg-root-accent/20 hover:border-root-accent text-root-accent cursor-pointer'
                       }`}
-                      title={voteStats.supporters.length === 0 ? "Tidak ada negara yang mendukung" : "Lihat daftar negara pendukung"}
+                      title={voteStats.supporters.length === 0 ? pbb("common.noSupporters") : pbb("common.viewSupporters")}
                     >
-                      <span className="text-[10px] font-bold uppercase tracking-wider">Setuju</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider">{pbb("common.support")}</span>
                       <span className="text-2xl font-black mt-0.5">
                         {voteStats.supporters.length}
                       </span>
@@ -884,9 +940,9 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
                           ? 'border-rose-500/10 bg-rose-500/5 opacity-50 cursor-not-allowed text-root-subtle'
                           : 'border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 hover:border-rose-500 text-rose-400 cursor-pointer'
                       }`}
-                      title={voteStats.opponents.length === 0 ? "Tidak ada negara yang menentang" : "Lihat daftar negara penentang"}
+                      title={voteStats.opponents.length === 0 ? pbb("common.noOpponents") : pbb("common.viewOpponents")}
                     >
-                      <span className="text-[10px] font-bold uppercase tracking-wider">Menentang</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider">{pbb("common.oppose")}</span>
                       <span className="text-2xl font-black mt-0.5">
                         {voteStats.opponents.length}
                       </span>
@@ -897,13 +953,13 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
             </div>
 
             <div className="flex items-center justify-end gap-4 px-8 py-4 border-t border-root-accent/20 bg-root-canvas relative z-10 shrink-0">
-              <button onClick={() => { setShowCreateModal(false); }} className="px-6 py-2.5 rounded-xl border border-root-accent/30 bg-root-accent/10 text-root-accent hover:bg-root-accent/20 transition-all font-bold text-xs uppercase tracking-wider cursor-pointer">Batal</button>
+              <button onClick={() => { setShowCreateModal(false); }} className="px-6 py-2.5 rounded-xl border border-root-accent/30 bg-root-accent/10 text-root-accent hover:bg-root-accent/20 transition-all font-bold text-xs uppercase tracking-wider cursor-pointer">{pbb("common.cancel")}</button>
               <button
                 onClick={handleSubmitResolution}
                 disabled={isProductionBan && !selectedProductKey}
                 className="px-6 py-2.5 rounded-xl bg-root-accent text-root-canvas font-black text-xs uppercase tracking-wider shadow-md hover:bg-root-accent/80 active:scale-95 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                Tambahkan
+                {pbb("common.add")}
               </button>
             </div>
 
@@ -938,14 +994,14 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
       <CountryListModal
         isOpen={isSupportersModalOpen}
         onClose={() => setIsSupportersModalOpen(false)}
-        title="Negara yang Mendukung"
+        title={pbb("resolution.voteTitle")}
         countries={voteStats.supporters}
         renderFlag={renderFlag}
       />
       <CountryListModal
         isOpen={isOpponentsModalOpen}
         onClose={() => setIsOpponentsModalOpen(false)}
-        title="Negara yang Menentang"
+        title={pbb("resolution.oppositionTitle")}
         countries={voteStats.opponents}
         renderFlag={renderFlag}
       />
@@ -954,7 +1010,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
       <ModalSetuju
         isOpen={modalSetujuOpen}
         onClose={() => setModalSetujuOpen(false)}
-        resolutionTitle={activeModalResolution?.label}
+        resolutionTitle={activeModalResolution ? resolutionLabel(activeModalResolution) : undefined}
         countries={activeCountryBreakdown.supporters}
         userVote={activeModalResolution?.userVote || null}
         renderFlag={renderFlag}
@@ -967,7 +1023,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
       <ModalMenolak
         isOpen={modalMenolakOpen}
         onClose={() => setModalMenolakOpen(false)}
-        resolutionTitle={activeModalResolution?.label}
+        resolutionTitle={activeModalResolution ? resolutionLabel(activeModalResolution) : undefined}
         countries={activeCountryBreakdown.opponents}
         userVote={activeModalResolution?.userVote || null}
         renderFlag={renderFlag}
@@ -980,7 +1036,7 @@ export default function ResolusiPBB({ selectedCountry, countryDetail, setCountry
       <ModalAbstain
         isOpen={modalAbstainOpen}
         onClose={() => setModalAbstainOpen(false)}
-        resolutionTitle={activeModalResolution?.label}
+        resolutionTitle={activeModalResolution ? resolutionLabel(activeModalResolution) : undefined}
         countries={activeCountryBreakdown.abstain}
         userVote={activeModalResolution?.userVote || null}
         renderFlag={renderFlag}

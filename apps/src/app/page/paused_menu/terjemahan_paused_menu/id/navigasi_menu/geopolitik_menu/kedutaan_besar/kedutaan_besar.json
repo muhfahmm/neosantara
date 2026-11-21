@@ -1,0 +1,36 @@
+{
+  "header": {
+    "title": "Kantor Kedutaan Besar Asing"
+  },
+  "info": {
+    "title": "Kedutaan Besar",
+    "description": "Kelola perwakilan diplomatik dan lihat kedutaan atau mitra yang tercatat untuk negara Anda. Hubungan kedutaan mendukung komunikasi antarnegara; tindakan terhadap kedutaan dapat memengaruhi hubungan dan kerja sama."
+  },
+  "empty": {
+    "title": "Belum ada kedutaan asing yang terdaftar.",
+    "description": "Bangun kedutaan melalui halaman detail negara untuk mulai menambahkan hubungan diplomatik."
+  },
+  "status": {
+    "active": "Aktif"
+  },
+  "types": {
+    "embassy": "Kedutaan Besar",
+    "trade": "Perdagangan"
+  },
+  "labels": {
+    "continent": "Benua"
+  },
+  "actions": {
+    "viewDetails": "Lihat Detail",
+    "destroyEmbassy": "Hancurkan Kedutaan",
+    "close": "Tutup"
+  },
+  "confirm": {
+    "title": "Konfirmasi Penghancuran Kedutaan",
+    "message": "Apakah Anda yakin ingin menghancurkan Kedutaan Besar di {country}? Tindakan ini tidak dapat dibatalkan dan akan memutuskan hubungan diplomatik."
+  },
+  "success": {
+    "title": "Berhasil",
+    "message": "Kedutaan Besar di {country} telah dihancurkan."
+  }
+}

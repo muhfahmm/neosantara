@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
 import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles";
 import {
   addPlayerNomination,
@@ -32,6 +33,7 @@ export default function SecurityCouncilElectionPanel({
   setCountryDetail,
   onMembersChange,
 }: Props) {
+  const { pbb } = useGeopoliticsMenuTranslation();
   const year = Number.isFinite(currentDate?.getTime()) ? currentDate!.getFullYear() : new Date().getFullYear();
   const currentMonth = currentDate?.getMonth() ?? new Date().getMonth();
   const currentDay = currentDate?.getDate() ?? new Date().getDate();
@@ -65,7 +67,7 @@ export default function SecurityCouncilElectionPanel({
       .catch(fetchError => {
         if (!active) return;
         console.error("Gagal memuat profil negara untuk pemilu Dewan Keamanan:", fetchError);
-        setError("Data profil negara gagal dimuat. Coba buka kembali menu Dewan Keamanan.");
+        setError(pbb("election.loadError"));
         setProfilesLoaded(true);
       });
     return () => { active = false; };
@@ -87,7 +89,7 @@ export default function SecurityCouncilElectionPanel({
         if (raw) setElection(JSON.parse(raw) as SecurityCouncilElectionState);
       } catch (syncError) {
         console.error("Gagal menyinkronkan roster setelah penggunaan hak veto:", syncError);
-        setError("Status hak veto tidak dapat disinkronkan.");
+        setError(pbb("election.vetoSyncError"));
       }
     };
     window.addEventListener("pbb_security_council_roster_updated", syncVetoUsage);
@@ -109,7 +111,7 @@ export default function SecurityCouncilElectionPanel({
       );
     } catch (storageError) {
       console.error("Gagal menyimpan hasil pemilu Dewan Keamanan:", storageError);
-      setError("Hasil pemilu tidak dapat disimpan ke penyimpanan permainan.");
+      setError(pbb("election.saveError"));
     }
   }, [election, onMembersChange]);
 
@@ -142,38 +144,38 @@ export default function SecurityCouncilElectionPanel({
 
   const vote = () => {
     if (voters.length !== 193 || profiledVoterCount !== 193) {
-      setError(`Pemilu dihentikan: diperlukan profil untuk seluruh 193 anggota; hanya ${profiledVoterCount} profil anggota yang cocok.`);
+      setError(pbb("election.voterProfilesError", { count: profiledVoterCount }));
       return;
     }
     const next = resolveElection(election, voters);
     if (next.phase !== "completed") {
-      setError("Pemungutan suara belum dapat diselesaikan. Pastikan nominasi dan kampanye sudah dimulai.");
+      setError(pbb("election.voteIncomplete"));
       return;
     }
     updateElection(next);
   };
 
   const phaseLabel = election.phase === "nomination"
-    ? "Nominasi"
+    ? pbb("election.phaseNomination")
     : election.phase === "campaign"
-      ? "Kampanye diplomatik"
-      : "Hasil pemilu";
+      ? pbb("election.phaseCampaign")
+      : pbb("election.phaseResults");
 
   return (
     <section className="rounded-xl border border-cyan-500/25 bg-root-canvas p-5 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h4 className="text-sm font-black uppercase tracking-wide text-cyan-300">
-            Pemilihan Anggota Tidak Tetap DK PBB
+            {pbb("election.title")}
           </h4>
           <p className="mt-1 text-[11px] text-[#8AA4A4]">
-            Pemilihan {election.year} • Kohor {election.cohort} • 5 kursi tahun ini • Masa jabatan 2 tahun
+            {pbb("election.details", { year: election.year, cohort: election.cohort })}
           </p>
           <p className="mt-1 text-[10px] text-cyan-200/80">
-            Total 10 anggota tidak tetap aktif; 5 kursi berganti setiap tahun.
+            {pbb("election.activeMembers")}
           </p>
           <p className="mt-1 text-[10px] text-[#789090]">
-            Juni · Markas Besar PBB, New York · Sidang Majelis Umum PBB
+            {pbb("election.location")}
           </p>
         </div>
         <span className="rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-1 text-[10px] font-bold uppercase text-cyan-300">
@@ -183,11 +185,11 @@ export default function SecurityCouncilElectionPanel({
 
       <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
         {[
-          ["Reputasi diplomatik", "30%"],
-          ["Pengaruh global", "25%"],
-          ["Kontribusi PBB", "20%"],
-          ["Kekuatan lunak", "15%"],
-          ["Hubungan bilateral", "10%"],
+          [pbb("election.metricDiplomacy"), "30%"],
+          [pbb("election.metricInfluence"), "25%"],
+          [pbb("election.metricContribution"), "20%"],
+          [pbb("election.metricSoftPower"), "15%"],
+          [pbb("election.metricBilateral"), "10%"],
         ].map(([label, weight]) => (
           <div key={label} className="rounded-lg border border-white/5 bg-[#051111] p-2">
             <p className="text-[9px] font-bold uppercase tracking-wide text-root-subtle">{label}</p>
@@ -195,30 +197,30 @@ export default function SecurityCouncilElectionPanel({
           </div>
         ))}
         <div className="rounded-lg border border-white/5 bg-[#051111] p-2">
-          <p className="text-[9px] font-bold uppercase tracking-wide text-root-subtle">Pemilih berhak</p>
+          <p className="text-[9px] font-bold uppercase tracking-wide text-root-subtle">{pbb("election.eligibleVoters")}</p>
           <p className="mt-1 text-xs font-black text-root-text">{voters.length} / 193</p>
         </div>
       </div>
 
       <p className="text-[10px] leading-relaxed text-[#789090]">
-        Skor kontribusi misi perdamaian dan bantuan PBB dicatat melalui aksi kampanye karena profil negara saat ini belum memiliki metrik historis terpisah untuk kontribusi tersebut.
+        {pbb("election.contributionNote")}
       </p>
 
       {error && <p role="alert" className="rounded-lg border border-rose-500/30 bg-rose-500/10 p-2 text-xs text-rose-300">{error}</p>}
-      {!profilesLoaded && <p className="text-xs text-[#8AA4A4]">Memuat profil dan data pemilih...</p>}
+      {!profilesLoaded && <p className="text-xs text-[#8AA4A4]">{pbb("election.waiting")}</p>}
       {profilesLoaded && voters.length !== 193 && (
         <p role="alert" className="rounded-lg border border-rose-500/30 bg-rose-500/10 p-2 text-xs text-rose-300">
-          Daftar anggota PBB yang dikenali berjumlah {voters.length}, bukan 193. Pemungutan suara belum tersedia.
+          {pbb("election.memberCountError", { count: voters.length })}
         </p>
       )}
       {profilesLoaded && profiledVoterCount < 193 && (
         <p role="alert" className="rounded-lg border border-rose-500/30 bg-rose-500/10 p-2 text-xs text-rose-300">
-          Data kualifikasi hanya cocok untuk {profiledVoterCount} dari 193 profil anggota PBB.
+          {pbb("election.profileMatchError", { count: profiledVoterCount })}
         </p>
       )}
       {!player && (
         <p className="text-xs text-amber-300">
-          Negara yang sedang dimainkan bukan anggota PBB berdaulat, sehingga tidak dapat mencalonkan diri atau memilih.
+          {pbb("election.notMember")}
         </p>
       )}
 
@@ -230,7 +232,7 @@ export default function SecurityCouncilElectionPanel({
             disabled={!canNominate || !profilesLoaded || profiledVoterCount !== 193 || !player || voters.length !== 193 || !nominationOpen}
             className="rounded-lg bg-cyan-400 px-3 py-2 text-[10px] font-black uppercase tracking-wide text-root-accent-ink disabled:cursor-not-allowed disabled:opacity-40"
           >
-            Nominasi negara saya
+            {pbb("election.nominate")}
           </button>
         </div>
       )}
@@ -244,7 +246,7 @@ export default function SecurityCouncilElectionPanel({
               disabled={playerCandidate.campaignCount >= 3}
               className="rounded-lg bg-cyan-400 px-3 py-2 text-[10px] font-black uppercase tracking-wide text-root-accent-ink disabled:cursor-not-allowed disabled:opacity-40"
             >
-              Kampanye kontribusi ({playerCandidate.campaignCount}/3)
+              {pbb("election.campaign", { count: playerCandidate.campaignCount })}
             </button>
           )}
         </div>
@@ -257,20 +259,20 @@ export default function SecurityCouncilElectionPanel({
           disabled={voters.length !== 193 || profiledVoterCount !== 193}
           className="rounded-lg border border-emerald-400/40 bg-emerald-500/10 px-3 py-2 text-[10px] font-black uppercase tracking-wide text-emerald-200 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Selesaikan pemungutan suara
+          {pbb("election.completeVote")}
         </button>
       )}
 
       {!electionWindow && election.phase !== "completed" && (
         <p className="text-xs text-[#8AA4A4]">
-          Pemilihan berikutnya dijadwalkan pada Juni {election.year}. Nominasi dibuka 1–14 Juni, kampanye 15–24 Juni, pemungutan suara 25–30 Juni, dan hasil diumumkan 30 Juni.
+          {pbb("election.nextSchedule", { year: election.year })}
         </p>
       )}
       {currentMonth === 5 && election.phase !== "completed" && currentDay < 15 && (
-        <p className="text-xs text-[#8AA4A4]">Nominasi dibuka sampai 14 Juni. Kampanye dimulai otomatis pada 15 Juni.</p>
+        <p className="text-xs text-[#8AA4A4]">{pbb("election.nominationSchedule")}</p>
       )}
       {currentMonth === 5 && election.phase === "campaign" && currentDay >= 25 && (
-        <p className="text-xs text-[#8AA4A4]">Sidang pemungutan suara dimulai otomatis hari ini; hasil resmi dijadwalkan 30 Juni.</p>
+        <p className="text-xs text-[#8AA4A4]">{pbb("election.votingSchedule")}</p>
       )}
 
       {election.nominees.length > 0 && (
@@ -281,12 +283,12 @@ export default function SecurityCouncilElectionPanel({
               <div key={candidate.slug} className="flex items-center justify-between gap-3 rounded-lg border border-white/5 bg-[#051111] px-3 py-2">
                 <div className="min-w-0">
                   <p className="truncate text-xs font-bold text-root-text">{candidate.name}</p>
-                  <p className="text-[9px] text-[#789090]">{candidate.region} · Skor {candidate.score.toFixed(1)}</p>
+                  <p className="text-[9px] text-[#789090]">{candidate.region} · {pbb("election.score", { score: candidate.score.toFixed(1) })}</p>
                 </div>
                 <div className="shrink-0 text-right">
-                  <p className="text-xs font-black text-cyan-200">{candidate.votes} suara</p>
+                  <p className="text-xs font-black text-cyan-200">{pbb("election.votes", { count: candidate.votes })}</p>
                   {candidate.campaignCount > 0 && (
-                    <p className="text-[9px] text-emerald-300">Kontribusi {candidate.contributionScore}</p>
+                    <p className="text-[9px] text-emerald-300">{pbb("election.contribution", { score: candidate.contributionScore })}</p>
                   )}
                 </div>
               </div>
@@ -297,20 +299,20 @@ export default function SecurityCouncilElectionPanel({
       {election.phase === "completed" && (
         <div className="rounded-lg border border-emerald-500/25 bg-emerald-500/5 p-3">
           <p className="text-[10px] font-black uppercase tracking-wide text-emerald-300">
-            Anggota terpilih · jabatan 1 Januari {election.year + 1} sampai 31 Desember {election.year + 2}
+            {pbb("election.winners", { startYear: election.year + 1, endYear: election.year + 2 })}
           </p>
           <p className="mt-1 text-xs text-[#D0E0E0]">
-            {election.history.at(-1)?.winners.join(", ") || "Hasil pemilu tersimpan"}
+            {election.history.at(-1)?.winners.join(", ") || pbb("election.savedResults")}
           </p>
           {playerCandidate && election.history.at(-1)?.winners.includes(playerCandidate.name) && (
             <p className="mt-2 text-[10px] text-emerald-200">
-              Negara Anda memperoleh +25 reputasi diplomatik dan +15 kekuatan lunak permanen; pengaruh suara PBB meningkat 50% selama masa jabatan.
+              {pbb("election.playerReward")}
             </p>
           )}
         </div>
       )}
       <p className="text-[10px] text-[#789090]">
-        Anggota wajib memilih Setuju, Tolak, atau Abstain untuk setiap resolusi selama masa jabatan. Tidak memilih menurunkan 1 poin reputasi diplomatik.
+        {pbb("election.memberDuty")}
       </p>
     </section>
   );

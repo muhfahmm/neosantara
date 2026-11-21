@@ -7,10 +7,8 @@ import NotebookModalWrapper from "../../../NotebookModalWrapper";
 import RootModalCloseButton from "@/app/page/root_modals_design_menu/RootModalCloseButton";
 import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import { rootModalTypography } from "@/app/page/root_modals_design_menu/rootModalTypography";
-import {
-  formatProductionProductName,
-  PRODUCTION_BAN_CATEGORIES,
-} from "./logic/productionBanCatalog";
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
+import { PRODUCTION_BAN_CATEGORIES } from "./logic/productionBanCatalog";
 
 interface PilihProdukLaranganProps {
   isOpen: boolean;
@@ -25,6 +23,7 @@ export default function PilihProdukLarangan({
   onClose,
   onSelect,
 }: PilihProdukLaranganProps) {
+  const { pbb } = useGeopoliticsMenuTranslation();
   const [activeCategoryId, setActiveCategoryId] = useState<string>(PRODUCTION_BAN_CATEGORIES[0].id);
 
   if (!isOpen || typeof document === "undefined") return null;
@@ -41,27 +40,31 @@ export default function PilihProdukLarangan({
               <Package className="h-4 w-4 sm:h-5 sm:w-5 text-root-accent" />
             </div>
             <div>
-              <h3 className={rootModalTypography.title}>Pilih Produk yang Dilarang</h3>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">Pilih satu produk dari sektor produksi negara.</p>
+              <h3 className={rootModalTypography.title}>{pbb("resolution.productTitle")}</h3>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">{pbb("resolution.productHint")}</p>
             </div>
           </div>
           <RootModalCloseButton onClick={onClose} />
         </div>
 
         <RootModalSidebarLayout
-          ariaLabel="Kategori produk yang dilarang"
+          ariaLabel={pbb("resolution.productTitle")}
           contentClassName="p-4 sm:p-5 lg:p-6"
           items={PRODUCTION_BAN_CATEGORIES.map(category => ({
             id: category.id,
             isActive: activeCategory.id === category.id,
             onSelect: () => setActiveCategoryId(category.id),
-            label: category.label,
+            label: pbb(`products.categories.${category.id}`),
             trailing: <span className="shrink-0 text-[10px] font-black">{category.products.length}</span>,
           }))}
         >
             <div className="flex items-center justify-between gap-3 mb-4">
-              <h4 className="text-sm sm:text-base font-black text-root-text uppercase tracking-wider">{activeCategory.label}</h4>
-              <span className="text-[10px] font-bold text-root-subtle uppercase">{activeCategory.products.length} produk</span>
+              <h4 className="text-sm sm:text-base font-black text-root-text uppercase tracking-wider">
+                {pbb(`products.categories.${activeCategory.id}`)}
+              </h4>
+              <span className="text-[10px] font-bold text-root-subtle uppercase">
+                {pbb("products.count", { count: activeCategory.products.length })}
+              </span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {activeCategory.products.map(productKey => {
@@ -77,7 +80,7 @@ export default function PilihProdukLarangan({
                         : "border-root-accent/20 bg-root-canvas text-root-text hover:border-root-accent/60 hover:bg-root-accent/5"
                     }`}
                   >
-                    <span className="text-xs sm:text-sm font-bold">{formatProductionProductName(productKey)}</span>
+                    <span className="text-xs sm:text-sm font-bold">{pbb(`products.items.${productKey}`)}</span>
                     {isSelected && <Check className="w-4 h-4 shrink-0 text-root-accent" />}
                   </button>
                 );
@@ -92,11 +95,11 @@ export default function PilihProdukLarangan({
             className="px-4 py-2.5 rounded-xl border border-root-accent/30 bg-root-accent/10 text-root-accent hover:bg-root-accent/20 transition-all font-bold text-xs uppercase tracking-wider cursor-pointer flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
-            Kembali ke Resolusi
+            {pbb("products.back")}
           </button>
           {selectedProductKey && (
             <span className="text-right text-[10px] sm:text-xs font-bold text-root-accent">
-              Dipilih: {formatProductionProductName(selectedProductKey)}
+              {pbb("products.selected", { product: pbb(`products.items.${selectedProductKey}`) })}
             </span>
           )}
         </div>

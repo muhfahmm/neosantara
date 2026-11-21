@@ -7,6 +7,7 @@ import { getArmadaPowerSummary } from "../../4_armada/logic/armadaLogic";
 import KonfirmasiSpionaseModals from "../modals_konfirmasi/konfirmasiSpionaseModals";
 import { getTravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
 import { useTravelFuelQuote } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/useTravelFuelQuote";
+import { getLocalizedCountryName } from "@/app/logic/countryNameLogic";
 // 🔥 Import COUNTRIES_DATA untuk meng-enrich ISO
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
@@ -140,7 +141,8 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, update
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
       sortableItems = sortableItems.filter(item =>
-        item.countryName.toLowerCase().includes(q)
+        item.countryName.toLowerCase().includes(q) ||
+        getLocalizedCountryName(item.iso || item.countryName, language).toLowerCase().includes(q)
       );
     }
     if (sortConfig !== null) {
@@ -161,7 +163,7 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, update
       });
     }
     return sortableItems;
-  }, [rawRankings, sortConfig, searchQuery]);
+  }, [rawRankings, sortConfig, searchQuery, language]);
 
   const handleSort = (key: keyof RankingRow) => {
     let direction: 'asc' | 'desc' = 'asc';
@@ -220,6 +222,7 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, update
               {rankings.map((row, index) => {
                 const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || fallbackCountry;
                 const isUserCountry = row.countryName.toLowerCase().trim() === selectedCountryName.toLowerCase().trim();
+                const displayName = getLocalizedCountryName(row.iso || row.countryName, language);
                 
                 return (
                   <RootTableRow 
@@ -233,14 +236,14 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, update
                         {row.iso && row.iso.length === 2 ? (
                           <img
                             src={`https://flagcdn.com/w20/${row.iso.toLowerCase()}.png`}
-                            alt={row.countryName}
+                            alt={displayName}
                             className="w-5 h-4 object-cover rounded-sm border border-root-accent/20 shadow-sm shrink-0"
                             onError={(e) => (e.target as HTMLImageElement).style.display = "none"}
                           />
                         ) : (
                           <div className="w-5 h-4 rounded-sm bg-root-surface border border-root-accent/20 shrink-0" />
                         )}
-                        <span className="truncate">{row.countryName}</span>
+                        <span className="truncate">{displayName}</span>
                       </div>
                     </RootTableCell>
 
@@ -255,7 +258,7 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, update
                           onClick={() => handleOpenModal(row)}
                           className="p-1.5 rounded-lg border transition-all bg-root-accent/10 text-root-accent hover:bg-root-accent hover:text-root-canvas border-root-accent/30 cursor-pointer"
                           title={tr('table.actionTitle')}
-                          aria-label={tr('table.actionAria', { country: row.countryName })}
+                          aria-label={tr('table.actionAria', { country: displayName })}
                         >
                           <Binoculars className="w-4 h-4" />
                         </button>

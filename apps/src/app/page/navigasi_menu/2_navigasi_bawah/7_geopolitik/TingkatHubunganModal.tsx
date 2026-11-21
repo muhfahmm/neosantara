@@ -14,6 +14,8 @@ import BeriHadiahModal from "@/app/page/detail_negara/2_geopolitik/2_beri_hadiah
 import MenuInfoButton from "../MenuInfoButton";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { rootBorderRadius } from "@/app/page/root_modals_design_menu/rootBorderRadius";
+import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
+import { getLocalizedCountryName } from "@/app/logic/countryNameLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -36,6 +38,7 @@ const normalizeContinent = (continent: any) => {
 };
 
 export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry, countryDetail, setCountryDetail }: ModalProps) {
+  const { language, relations } = useGeopoliticsMenuTranslation();
   // ═══════════════════════════════════════════════════════════════
   // ✅ SEMUA HOOKS DIDEKLARASIKAN DI SINI — JANGAN DIHAPUS
   // ═══════════════════════════════════════════════════════════════
@@ -52,6 +55,21 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
   const [isPilihJalurOpen, setIsPilihJalurOpen] = useState(false);
   const [isTingkatkanUangOpen, setIsTingkatkanUangOpen] = useState(false);
   const [isBeriHadiahBarangOpen, setIsBeriHadiahBarangOpen] = useState(false);
+
+  const localizedContinent = (continent: unknown) => {
+    const normalized = normalizeContinent(continent);
+    const keys: Record<string, string> = {
+      Asia: 'asia',
+      Africa: 'africa',
+      Europe: 'europe',
+      'North America': 'northAmerica',
+      'South America': 'southAmerica',
+      Oceania: 'oceania',
+      Lainnya: 'other',
+    };
+    const key = keys[normalized];
+    return key ? relations(`continents.${key}`) : normalized;
+  };
 
   useEffect(() => {
     const refreshRelations = () => setRelationRevision(revision => revision + 1);
@@ -109,7 +127,8 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
     return {
       no: idx + 1,
       name: c.country,
-      continent: normalizeContinent(c.continent),
+      iso: c.iso,
+      continent: localizedContinent(c.continent),
       relation: relVal,
       hasEmbassy: embassyExists,
     };
@@ -132,7 +151,9 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
   if (searchQuery.trim() !== '') {
     const q = searchQuery.toLowerCase();
     rows = rows.filter(
-      (item) => item.name.toLowerCase().includes(q) || item.continent.toLowerCase().includes(q)
+      (item) => item.name.toLowerCase().includes(q) ||
+        getLocalizedCountryName(item.iso || item.name, language).toLowerCase().includes(q) ||
+        item.continent.toLowerCase().includes(q)
     );
   }
 
@@ -161,13 +182,13 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
         <div className="root-modal-util-b74379da23">
 
           <RootInfoModalHeader
-            title="Tingkat Hubungan Diplomatik"
+            title={relations('menu.title')}
             onClose={onClose}
             icon={<Globe />}
             actions={
               <MenuInfoButton
-                title="Tingkat Hubungan"
-                description="Lihat tingkat hubungan diplomatik dengan negara lain, telusuri negara berdasarkan hubungan, dan gunakan aksi diplomasi yang tersedia untuk memperbaikinya. Hubungan dapat memengaruhi kerja sama bilateral serta respons negara lain."
+                title={relations('menu.infoTitle')}
+                description={relations('menu.infoDescription')}
               />
             }
             size="standard"
@@ -180,14 +201,14 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
               className="inline-flex h-9 shrink-0 cursor-pointer items-center gap-2 rounded-lg border border-root-accent/30 bg-root-canvas px-4 text-[10px] font-black uppercase tracking-wider text-root-accent transition-all hover:bg-root-accent/10"
             >
               <Info className="h-3.5 w-3.5" />
-              Legenda Hubungan
+              {relations('toolbar.legend')}
             </button>
             <div className="flex min-w-[220px] flex-1 items-center justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setIsPilihJalurOpen(true)}
-                aria-label="Tingkatkan hubungan semua negara"
-                title="Tingkatkan Hubungan Semua Negara"
+                aria-label={relations('toolbar.improveAllAria')}
+                title={relations('toolbar.improveAllTitle')}
                 className="inline-flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-root-accent/40 bg-root-surface text-root-accent shadow-sm transition-all hover:border-root-accent hover:bg-root-accent hover:text-root-canvas"
               >
                 <Heart aria-hidden="true" className="h-4 w-4 fill-current" />
@@ -196,8 +217,8 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                 <Search aria-hidden="true" className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-root-accent/60" />
                 <input
                   type="search"
-                  aria-label="Cari negara atau benua"
-                  placeholder="Cari negara / benua..."
+                  aria-label={relations('toolbar.searchAria')}
+                  placeholder={relations('toolbar.searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className={`h-9 w-full border border-root-accent/30 bg-[#051111] py-1 pl-8 pr-3 text-xs text-root-text placeholder-root-subtle transition-colors focus:border-root-accent focus:outline-none ${rootBorderRadius.card}`}
@@ -213,23 +234,29 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                 <RootTable className="min-w-full table-auto border-separate border-spacing-0 text-left">
                   <thead className="sticky top-0 z-10 bg-root-canvas">
                     <tr className="border-b border-root-accent/20">
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 border-b border-root-accent/20 text-center cursor-pointer hover:bg-root-accent/10 transition text-[9px] sm:text-[10px] text-root-accent font-black uppercase tracking-wider whitespace-nowrap w-14" onClick={() => handleSort('no')}>No{renderSortArrow('no')}</th>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 border-b border-root-accent/20 cursor-pointer hover:bg-root-accent/10 transition text-[9px] sm:text-[10px] text-root-accent font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('name')}>Nama Negara{renderSortArrow('name')}</th>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 border-b border-root-accent/20 cursor-pointer hover:bg-root-accent/10 transition text-[9px] sm:text-[10px] text-root-accent font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('continent')}>Benua{renderSortArrow('continent')}</th>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 border-b border-root-accent/20 text-center cursor-pointer hover:bg-root-accent/10 transition text-[9px] sm:text-[10px] text-root-accent font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('hasEmbassy')}>Kedutaan Besar{renderSortArrow('hasEmbassy')}</th>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 border-b border-root-accent/20 text-center cursor-pointer hover:bg-root-accent/10 transition text-[9px] sm:text-[10px] text-root-accent font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('relation')}>Tingkat Hubungan{renderSortArrow('relation')}</th>
+                      <th aria-label={relations('table.sortNumber')} aria-sort={sortConfig.key === 'no' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'} className="sticky top-0 z-10 bg-root-canvas px-3 py-2 border-b border-root-accent/20 text-center cursor-pointer hover:bg-root-accent/10 transition text-[9px] sm:text-[10px] text-root-accent font-black uppercase tracking-wider whitespace-nowrap w-14" onClick={() => handleSort('no')}>{relations('table.number')}{renderSortArrow('no')}</th>
+                      <th aria-label={relations('table.sortCountry')} aria-sort={sortConfig.key === 'name' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'} className="sticky top-0 z-10 bg-root-canvas px-3 py-2 border-b border-root-accent/20 cursor-pointer hover:bg-root-accent/10 transition text-[9px] sm:text-[10px] text-root-accent font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('name')}>{relations('table.country')}{renderSortArrow('name')}</th>
+                      <th aria-label={relations('table.sortContinent')} aria-sort={sortConfig.key === 'continent' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'} className="sticky top-0 z-10 bg-root-canvas px-3 py-2 border-b border-root-accent/20 cursor-pointer hover:bg-root-accent/10 transition text-[9px] sm:text-[10px] text-root-accent font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('continent')}>{relations('table.continent')}{renderSortArrow('continent')}</th>
+                      <th aria-label={relations('table.sortEmbassies')} aria-sort={sortConfig.key === 'hasEmbassy' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'} className="sticky top-0 z-10 bg-root-canvas px-3 py-2 border-b border-root-accent/20 text-center cursor-pointer hover:bg-root-accent/10 transition text-[9px] sm:text-[10px] text-root-accent font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('hasEmbassy')}>{relations('table.embassies')}{renderSortArrow('hasEmbassy')}</th>
+                      <th aria-label={relations('table.sortRelation')} aria-sort={sortConfig.key === 'relation' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'} className="sticky top-0 z-10 bg-root-canvas px-3 py-2 border-b border-root-accent/20 text-center cursor-pointer hover:bg-root-accent/10 transition text-[9px] sm:text-[10px] text-root-accent font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('relation')}>{relations('table.relation')}{renderSortArrow('relation')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-root-accent/10">
                     {sortedRows.length === 0 ? (
                       <tr>
                         <td className="px-4 py-6 text-center text-sm font-bold text-root-subtle" colSpan={5}>
-                          Tidak ada data yang cocok dengan pencarian "{searchQuery}".
+                          {relations('table.emptySearch', { query: searchQuery })}
                         </td>
                       </tr>
                     ) : (
                       sortedRows.map((row, index) => {
-                        const { alias, className } = getRelationBadge(row.relation);
+                        const { className } = getRelationBadge(row.relation);
+                        const boundedRelation = Math.max(0, Math.min(100, Math.round(row.relation)));
+                        const statusKey = boundedRelation <= 25 ? 'veryPoor'
+                          : boundedRelation <= 40 ? 'poor'
+                            : boundedRelation <= 65 ? 'neutral'
+                              : boundedRelation <= 80 ? 'good'
+                                : 'veryGood';
                         return (
                           <tr key={`${row.name}-${index}`} className="hover:bg-root-accent/5 transition-colors">
                             <td className="px-4 py-3 text-center text-xs font-bold text-root-subtle">{index + 1}</td>
@@ -240,7 +267,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                                 ) : (
                                   <Building2 className="w-4 h-4 text-root-muted opacity-60 shrink-0" />
                                 )}
-                                <span>{row.name}</span>
+                                <span>{getLocalizedCountryName(row.iso || row.name, language)}</span>
                               </div>
                             </td>
                             <td className="px-4 py-3 text-xs font-bold text-root-subtle">{row.continent}</td>
@@ -248,18 +275,18 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                               {row.hasEmbassy ? (
                                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-root-accent/15 text-root-accent border border-root-accent/30 text-[11px] font-bold">
                                   <ShieldCheck className="w-3.5 h-3.5" />
-                                  Ada Kedutaan
+                                  {relations('table.embassyPresent')}
                                 </span>
                               ) : (
                                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-root-canvas text-root-muted border border-root-accent/20 text-[11px] font-medium">
                                   <ShieldAlert className="w-3.5 h-3.5 opacity-60" />
-                                  Tidak Ada
+                                  {relations('table.embassyAbsent')}
                                 </span>
                               )}
                             </td>
                             <td className="px-4 py-3 text-center text-xs font-bold">
                               <span className={`inline-block px-3 py-0.5 rounded-md border font-black text-xs shadow-sm ${className}`}>
-                                {row.relation} - {alias}
+                                {row.relation} - {relations(`statuses.${statusKey}`)}
                               </span>
                             </td>
                           </tr>
@@ -289,7 +316,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
             className="root-modal-util-b74379da23 menu-info-content-sized-dialog"
           >
             <RootInfoModalHeader
-              title="Indikator Hubungan Diplomatik"
+              title={relations('legend.title')}
               titleId="relation-legend-title"
               onClose={() => setIsLegendOpen(false)}
               icon={<Info />}
@@ -300,36 +327,36 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
               <div className="flex items-center justify-between border-b border-root-accent/15 pb-2">
                 <span className="text-xs font-bold text-root-text">0 - 25</span>
                 <div className="flex items-center gap-3">
-                  <span className="inline-block px-3 py-1 rounded-md bg-red-500/15 text-red-400 border border-red-500/30 font-bold text-xs">Sangat Buruk</span>
-                  <span className="text-xs font-semibold text-root-subtle w-20 text-right">({countByCategory.sangatBuruk} negara)</span>
+                  <span className="inline-block px-3 py-1 rounded-md bg-red-500/15 text-red-400 border border-red-500/30 font-bold text-xs">{relations('statuses.veryPoor')}</span>
+                  <span className="text-xs font-semibold text-root-subtle w-20 text-right">{relations('legend.countryCount', { count: countByCategory.sangatBuruk })}</span>
                 </div>
               </div>
               <div className="flex items-center justify-between border-b border-root-accent/15 pb-2">
                 <span className="text-xs font-bold text-root-text">26 - 40</span>
                 <div className="flex items-center gap-3">
-                  <span className="inline-block px-3 py-1 rounded-md bg-rose-500/15 text-rose-400 border border-rose-500/30 font-bold text-xs">Buruk</span>
-                  <span className="text-xs font-semibold text-root-subtle w-20 text-right">({countByCategory.buruk} negara)</span>
+                  <span className="inline-block px-3 py-1 rounded-md bg-rose-500/15 text-rose-400 border border-rose-500/30 font-bold text-xs">{relations('statuses.poor')}</span>
+                  <span className="text-xs font-semibold text-root-subtle w-20 text-right">{relations('legend.countryCount', { count: countByCategory.buruk })}</span>
                 </div>
               </div>
               <div className="flex items-center justify-between border-b border-root-accent/15 pb-2">
                 <span className="text-xs font-bold text-root-text">41 - 65</span>
                 <div className="flex items-center gap-3">
-                  <span className="inline-block px-3 py-1 rounded-md bg-yellow-500/15 text-yellow-400 border border-yellow-500/30 font-bold text-xs">Netral</span>
-                  <span className="text-xs font-semibold text-root-subtle w-20 text-right">({countByCategory.netral} negara)</span>
+                  <span className="inline-block px-3 py-1 rounded-md bg-yellow-500/15 text-yellow-400 border border-yellow-500/30 font-bold text-xs">{relations('statuses.neutral')}</span>
+                  <span className="text-xs font-semibold text-root-subtle w-20 text-right">{relations('legend.countryCount', { count: countByCategory.netral })}</span>
                 </div>
               </div>
               <div className="flex items-center justify-between border-b border-root-accent/15 pb-2">
                 <span className="text-xs font-bold text-root-text">66 - 80</span>
                 <div className="flex items-center gap-3">
-                  <span className="inline-block px-3 py-1 rounded-md bg-green-500/15 text-green-400 border border-green-500/30 font-bold text-xs">Baik</span>
-                  <span className="text-xs font-semibold text-root-subtle w-20 text-right">({countByCategory.baik} negara)</span>
+                  <span className="inline-block px-3 py-1 rounded-md bg-green-500/15 text-green-400 border border-green-500/30 font-bold text-xs">{relations('statuses.good')}</span>
+                  <span className="text-xs font-semibold text-root-subtle w-20 text-right">{relations('legend.countryCount', { count: countByCategory.baik })}</span>
                 </div>
               </div>
               <div className="flex items-center justify-between border-b border-root-accent/15 pb-2">
                 <span className="text-xs font-bold text-root-text">81 - 100</span>
                 <div className="flex items-center gap-3">
-                  <span className="inline-block px-3 py-1 rounded-md bg-root-accent/15 text-root-accent border border-root-accent/30 font-bold text-xs">Sangat Baik</span>
-                  <span className="text-xs font-semibold text-root-subtle w-20 text-right">({countByCategory.sangatBaik} negara)</span>
+                  <span className="inline-block px-3 py-1 rounded-md bg-root-accent/15 text-root-accent border border-root-accent/30 font-bold text-xs">{relations('statuses.veryGood')}</span>
+                  <span className="text-xs font-semibold text-root-subtle w-20 text-right">{relations('legend.countryCount', { count: countByCategory.sangatBaik })}</span>
                 </div>
               </div>
             </div>
@@ -348,7 +375,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
           <div className="root-modal-util-b74379da23 menu-info-content-sized-dialog">
 
             <RootInfoModalHeader
-              title="Pilih Jalur Diplomasi"
+              title={relations('diplomacy.choosePath')}
               onClose={() => setIsPilihJalurOpen(false)}
               icon={<Sparkles />}
               size="standard"
@@ -368,7 +395,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                     <Coins className="h-8 w-8 sm:h-10 sm:w-10 text-root-accent group-hover:text-root-canvas transition-colors" />
                   </div>
                   <h4 className="text-base sm:text-lg font-black text-root-accent uppercase tracking-wide">
-                    Jalur Uang (NEO)
+                    {relations('diplomacy.moneyPath')}
                   </h4>
                 </button>
 
@@ -384,7 +411,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                     <Gift className="h-8 w-8 sm:h-10 sm:w-10 text-root-accent group-hover:text-root-canvas transition-colors" />
                   </div>
                   <h4 className="text-base sm:text-lg font-black text-root-accent uppercase tracking-wide">
-                    Jalur Hadiah Komoditas
+                    {relations('diplomacy.commodityGiftPath')}
                   </h4>
                 </button>
               </div>
