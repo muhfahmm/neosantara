@@ -1,0 +1,63 @@
+{
+  "title": "Falsafah & Ideologi Negara",
+  "tabCountry": "Ideologi Negara",
+  "tabWorld": "Dunia",
+  "searchPlaceholder": "Cari ideologi atau negara...",
+  "sortDefault": "Bawaan",
+  "sortAvailableFirst": "Tersedia Dulu",
+  "sortAZ": "Nama A-Z",
+  "sortZA": "Nama Z-A",
+  "currentIdeologyBadge": "Sedang Dianut",
+  "scheduledBadge": "Perubahan Dijadwalkan",
+  "scheduledFinishNotice": "Selesai dalam {days} hari ({date})",
+  "instantCostNotice": "Biaya Instan: {cost} NEO",
+  "colCountry": "Negara",
+  "colIdeology": "Ideologi Resmi",
+  "noData": "Tidak ada data ideologi.",
+  "ideologies": {
+    "demokrasi": "Demokrasi",
+    "monarki": "Monarki",
+    "kapitalisme": "Kapitalisme",
+    "sosialisme": "Sosialisme",
+    "komunisme": "Komunisme",
+    "nasionalisme": "Nasionalisme",
+    "konservatisme": "Konservatisme",
+    "liberalisme": "Liberalisme",
+    "otoritarianisme": "Otoritarianisme"
+  },
+  "bonuses": {
+    "demokrasi": "Penerimaan Pajak: +10%",
+    "monarki": "Kekuatan Militer: +15%",
+    "kapitalisme": "Penerimaan Pajak: +50%",
+    "sosialisme": "Bonus ke Tingkat Kelahiran: +10%",
+    "komunisme": "Produksi Semua Lini: +10%",
+    "nasionalisme": "Produksi Pangan: +10%",
+    "konservatisme": "Penerimaan Pajak: +5%",
+    "liberalisme": "Penerimaan Pajak: +25%",
+    "otoritarianisme": "Kekuatan Militer: +25%"
+  },
+  "infoModal": {
+    "title": "Informasi Ideologi",
+    "sectionCharacteristics": "Karakteristik Utama",
+    "sectionPros": "Kelebihan & Manfaat",
+    "sectionCons": "Kelemahan & Risiko",
+    "sectionBonuses": "Bonus Efek Utama Negara",
+    "btnClose": "Tutup"
+  },
+  "confirmModal": {
+    "titleInfo": "Efektivitas Ideologi",
+    "titleConfirm": "Konfirmasi Perubahan Ideologi",
+    "activeEffects": "Efek ideologi yang sedang aktif",
+    "warningText": "Perubahan haluan ideologi negara memerlukan adaptasi politik selama 7 hari atau biaya instan untuk stabilitas rezim kilat.",
+    "btnGradual": "Terapkan Bertahap (7 Hari)",
+    "btnInstant": "Terapkan Instan ({cost} NEO)",
+    "btnCancel": "Batal"
+  },
+  "fundsModal": {
+    "title": "Dana Tidak Cukup!",
+    "desc": "Anda memerlukan {cost} NEO untuk melakukan perubahan instan ini.",
+    "currentTreasury": "Kas negara Anda saat ini: {money} NEO",
+    "btnTakeLoan": "Ambil Hutang",
+    "btnClose": "Tutup"
+  }
+}

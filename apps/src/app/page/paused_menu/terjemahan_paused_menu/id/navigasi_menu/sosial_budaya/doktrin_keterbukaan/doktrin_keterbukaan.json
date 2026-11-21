@@ -1,0 +1,93 @@
+{
+  "title": "Doktrin Keterbukaan Negara",
+  "subtitle": "Pengaturan kebebasan sipil, kontrol media & informasi, serta perbatasan geopolitik.",
+  "scoreLabel": "Skor Keterbukaan Nasional",
+  "tabCivil": "Kebebasan Sipil & HAM",
+  "tabMedia": "Media & Informasi",
+  "tabGlobal": "Perbatasan & Geopolitik",
+  "thresholdLowLabel": "Efek Kebijakan Ketat (<30%)",
+  "thresholdHighLabel": "Efek Kebijakan Terbuka (>70%)",
+  "regimes": {
+    "autarki": {
+      "label": "Negara Terisolasi Total (Autarki)",
+      "badge": "Isolasionis Ekstrem",
+      "desc": "Negara menutup diri sepenuhnya dari dunia luar, menerapkan sensor pers dan internet ketat, melarang demonstrasi, dan memberlakukan autarki ekonomi."
+    },
+    "proteksionis": {
+      "label": "Negara Proteksionis & Otoriter",
+      "badge": "Tipe Terbatas",
+      "desc": "Pemerintah membatasi pergerakan warga dan imigrasi, menyaring ketat saluran media publik, serta membatasi hak unjuk rasa demi stabilitas kekuasaan."
+    },
+    "moderat": {
+      "label": "Negara Moderat & Campuran",
+      "badge": "Tipe Moderat",
+      "desc": "Negara menyeimbangkan antara perlindungan kebebasan sipil, regulasi ketertiban masyarakat, dan keterbukaan ekonomi perdagangan luar negeri."
+    },
+    "demokratis": {
+      "label": "Negara Terbuka & Demokratis",
+      "badge": "Tipe Demokratis",
+      "desc": "Jaminan kebebasan berekspresi dan pers ditegakkan, perbatasan relatif terbuka, akses internet bebas, dan transparansi anggaran publik tinggi."
+    },
+    "globalis": {
+      "label": "Negara Globalis & Pasar Bebas",
+      "badge": "Hegemon Pasar Bebas",
+      "desc": "Penegakan penuh hak asasi manusia, kebebasan jurnalisme dan demonstrasi total, kebijakan bebas visa universal, serta pasar bebas tanpa hambatan."
+    }
+  },
+  "indicators": {
+    "speechScore": {
+      "title": "Kebebasan Berpendapat & Berekspresi",
+      "desc": "Tingkat kebebasan warga negara dalam menyampaikan pendapat, mengkritik pemerintah, dan mendiskusikan gagasan politik tanpa ancaman pidana.",
+      "lowNotice": "Sensor ketat diterapkan terhadap setiap kritik pada rezim berkuasa; ancaman hukum bagi pembangkang politik.",
+      "highNotice": "Warga bebas berekspresi tanpa batas sensor; jaminan penuh terhadap keberagaman opini publik."
+    },
+    "religionScore": {
+      "title": "Kebebasan Beragama & Kepercayaan",
+      "desc": "Jaminan konstitusional bagi setiap warga untuk menganut, beribadah, atau berpindah keyakinan tanpa diskriminasi negara.",
+      "lowNotice": "Agama dikontrol ketat oleh badan negara; aliran non-resmi diawasi atau dilarang beroperasi.",
+      "highNotice": "Perlindungan penuh atas kebebasan beragama dan hak minoritas beribadah di seluruh penjuru negeri."
+    },
+    "demoScore": {
+      "title": "Hak Demonstrasi & Unjuk Rasa",
+      "desc": "Kemudahan warga negara dalam berkumpul secara damai dan menggelar aksi demonstrasi untuk menyuarakan aspirasi publik.",
+      "lowNotice": "Unjuk rasa dilarang keras dan dibubarkan paksa oleh aparat keamanan; sanksi tegas bagi inisiator.",
+      "highNotice": "Demonstrasi damai dilindungi undang-undang tanpa memerlukan izin rumit dari aparat kepolisian."
+    },
+    "transparencyScore": {
+      "title": "Transparansi & Akuntabilitas Pemerintah",
+      "desc": "Keterbukaan anggaran negara, transparansi tender pengadaan publik, serta kemudahan akses data investigasi korupsi.",
+      "lowNotice": "Anggaran belanja dan transaksi publik dirahasiakan rapat di bawah status rahasia negara.",
+      "highNotice": "Seluruh audit keuangan dan pembelanjaan negara dipublikasikan secara terbuka kepada rakyat."
+    },
+    "mediaScore": {
+      "title": "Kebebasan Pers & Media Massa",
+      "desc": "Independensi media cetak, televisi, dan jurnalis dalam melakukan liputan investigatif tanpa sensor dan intervensi otoritas.",
+      "lowNotice": "Seluruh stasiun televisi dan kantor berita beroperasi di bawah mandat serta sensor kementerian informasi.",
+      "highNotice": "Jurnalisme investigatif bebas beroperasi dan mengawasi setiap kebijakan publik tanpa intervensi."
+    },
+    "internetScore": {
+      "title": "Keterbukaan Akses Internet & Informasi Digital",
+      "desc": "Tingkat keterbukaan jaringan telekomunikasi internet terhadap portal berita dunia, media sosial, dan lalu lintas web global.",
+      "lowNotice": "Negara menerapkan firewall nasional dan intranet tertutup; akses ke web global disaring ketat.",
+      "highNotice": "Akses internet bebas tanpa sensor firewall; kecepatan jaringan digital berstandar global."
+    },
+    "borderScore": {
+      "title": "Keterbukaan Perbatasan & Kebijakan Visa",
+      "desc": "Kebijakan keimigrasian nasional bagi kedatangan turis internasional, ekspatriat, tenaga kerja asing, dan pengungsi.",
+      "lowNotice": "Perbatasan ditutup rapat dengan penjagaan militer perbatasan; visa luar negeri nyaris mustahil disetujui.",
+      "highNotice": "Pemberlakuan bebas visa kunjungan untuk puluhan negara sahabat guna menarik wisatawan dan investor."
+    },
+    "tradeScore": {
+      "title": "Kebijakan Tarif & Perdagangan Internasional",
+      "desc": "Tingkat keterbukaan regulasi impor dan ekspor barang, bea masuk, tarif perlindungan industri, dan kuota dagang.",
+      "lowNotice": "Penerapan proteksionisme tarif ekstrem dan kuota ketat demi memaksakan substitusi impor.",
+      "highNotice": "Penghapusan hambatan tarif dagang dan pembukaan kawasan perdagangan bebas seluas-luasnya."
+    },
+    "diplomacyScore": {
+      "title": "Keterlibatan Kerjasama Global & Diplomasi",
+      "desc": "Komitmen diplomasi negara dalam organisasi internasional, perjanjian multilateral, pakta pertahanan, dan misi perdamaian PBB.",
+      "lowNotice": "Doktrin isolasionis non-blok kaku; menolak mengikatkan diri pada perjanjian dan konvensi internasional.",
+      "highNotice": "Negara berperan aktif sebagai motor utama inisiatif multilateralisme dan misi perdamaian dunia."
+    }
+  }
+}

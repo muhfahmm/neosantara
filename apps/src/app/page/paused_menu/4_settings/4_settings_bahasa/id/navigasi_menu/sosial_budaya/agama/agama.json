@@ -1,0 +1,55 @@
+{
+  "title": "Agama & Keyakinan Negara",
+  "tabCountry": "Agama Negara",
+  "tabWorld": "Dunia",
+  "searchPlaceholder": "Cari agama atau negara...",
+  "sortDefault": "Bawaan",
+  "sortAvailableFirst": "Tersedia Dulu",
+  "sortAZ": "Nama A-Z",
+  "sortZA": "Nama Z-A",
+  "currentReligionBadge": "Sedang Dianut",
+  "scheduledBadge": "Perubahan Dijadwalkan",
+  "scheduledFinishNotice": "Selesai dalam {days} hari ({date})",
+  "instantCostNotice": "Biaya Instan: {cost} NEO",
+  "colCountry": "Negara",
+  "colReligion": "Agama Mayoritas",
+  "noData": "Tidak ada data agama.",
+  "religions": {
+    "islam": "Islam",
+    "katolik": "Katolik",
+    "protestan": "Protestan",
+    "kristen_ortodoks": "Kristen Ortodoks",
+    "hindu": "Hindu",
+    "buddha": "Buddha",
+    "yahudi": "Yahudi",
+    "shinto": "Shinto",
+    "ateisme": "Ateisme"
+  },
+  "bonuses": {
+    "islam": "Jumlah makanan dan sumber daya: +10%",
+    "katolik": "Pengaruh Suara Negara di PBB: +10",
+    "protestan": "Harga jual: +5%, Harga beli: -5%",
+    "kristen_ortodoks": "Penerimaan Pajak Penghasilan Pribadi: +5%",
+    "hindu": "Laju Pertumbuhan Populasi: +8%",
+    "buddha": "Penerimaan Pajak Lingkungan: +10%",
+    "yahudi": "Waktu pembangunan pabrik dan tambang: -10%",
+    "shinto": "Produksi Kelistrikan: +10%",
+    "ateisme": "Kecepatan Riset Sains: +15%"
+  },
+  "confirmModal": {
+    "titleInfo": "Efektivitas Agama",
+    "titleConfirm": "Konfirmasi Perubahan Agama",
+    "activeEffects": "Efek agama yang sedang aktif",
+    "warningText": "Perubahan keyakinan resmi negara memerlukan adaptasi sosial selama 7 hari atau biaya instan untuk transisi kilat.",
+    "btnGradual": "Terapkan Bertahap (7 Hari)",
+    "btnInstant": "Terapkan Instan ({cost} NEO)",
+    "btnCancel": "Batal"
+  },
+  "fundsModal": {
+    "title": "Dana Tidak Cukup!",
+    "desc": "Anda memerlukan {cost} NEO untuk melakukan perubahan instan ini.",
+    "currentTreasury": "Kas negara Anda saat ini: {money} NEO",
+    "btnTakeLoan": "Ambil Hutang",
+    "btnClose": "Tutup"
+  }
+}

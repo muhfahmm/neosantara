@@ -1,0 +1,137 @@
+{
+  "title": "Staatsphilosophie & Ideologie",
+  "tabCountry": "Staatsideologie",
+  "tabWorld": "Welt",
+  "searchPlaceholder": "Ideologie oder Land suchen...",
+  "sortDefault": "Standard",
+  "sortAvailableFirst": "Verfügbare zuerst",
+  "sortAZ": "Name A-Z",
+  "sortZA": "Name Z-A",
+  "currentIdeologyBadge": "Geltende Doktrin",
+  "scheduledBadge": "Reform geplant",
+  "scheduledFinishNotice": "Abgeschlossen in {days} Tagen ({date})",
+  "instantCostNotice": "Sofortkosten: {cost} NEO",
+  "colCountry": "Land",
+  "colIdeology": "Offizielle Doktrin",
+  "noData": "Keine Ideologiedaten vorhanden.",
+  "ideologies": {
+    "demokrasi": "Demokratie",
+    "monarki": "Monarchie",
+    "kapitalisme": "Kapitalismus",
+    "sosialisme": "Sozialismus",
+    "komunisme": "Kommunismus",
+    "nasionalisme": "Nationalismus",
+    "konservatisme": "Konservatismus",
+    "liberalisme": "Liberalismus",
+    "otoritarianisme": "Autoritarismus"
+  },
+  "bonuses": {
+    "demokrasi": "Steuereinnahmen: +10%",
+    "monarki": "Militärische Stärke: +15%",
+    "kapitalisme": "Steuereinnahmen: +50%",
+    "sosialisme": "Geburtenrate-Bonus: +10%",
+    "komunisme": "Produktion in allen Sektoren: +10%",
+    "nasionalisme": "Nahrungsmittelproduktion: +10%",
+    "konservatisme": "Steuereinnahmen: +5%",
+    "liberalisme": "Steuereinnahmen: +25%",
+    "otoritarianisme": "Militärische Stärke: +25%"
+  },
+  "infoModal": {
+    "title": "Ideologie-Enzyklopädie",
+    "sectionCharacteristics": "Hauptmerkmale",
+    "sectionPros": "Stärken & Vorteile",
+    "sectionCons": "Schwächen & Risiken",
+    "sectionBonuses": "Nationale strategische Boni",
+    "btnClose": "Schließen",
+    "details": {
+      "demokrasi": {
+        "description": "Ein Regierungssystem, in dem die höchste Staatsgewalt beim Volk liegt und durch regelmäßige Wahlen ausgeübt wird.",
+        "characteristics": {
+          "first": "Mehrparteiensystem und bürgerliche Freiheiten",
+          "second": "Hohe öffentliche Rechenschaftspflicht",
+          "third": "Schutz der Menschenrechte"
+        }
+      },
+      "monarki": {
+        "description": "Ein traditionelles Regierungssystem unter einem König, einer Königin oder einem erblichen Staatsoberhaupt.",
+        "characteristics": {
+          "first": "Führung wird innerhalb einer Familie weitergegeben",
+          "second": "Langfristige Stabilität der Führung",
+          "third": "Starke kulturelle Traditionen"
+        }
+      },
+      "kapitalisme": {
+        "description": "Ein Wirtschafts- und Politiksystem, in dem private Eigentümer Handel und Industrie gewinnorientiert kontrollieren.",
+        "characteristics": {
+          "first": "Freie Märkte und starker Wettbewerb",
+          "second": "Privater Besitz von Vermögenswerten",
+          "third": "Innovation durch finanzielle Anreize"
+        }
+      },
+      "sosialisme": {
+        "description": "Ein soziales und wirtschaftliches System, in dem Produktions- und Vertriebsmittel zum Wohl der Allgemeinheit gemeinschaftlich verwaltet werden.",
+        "characteristics": {
+          "first": "Umfangreiche soziale Sicherung",
+          "second": "Wirtschaftliche Gleichheit",
+          "third": "Kostengünstige oder kostenlose öffentliche Dienste"
+        }
+      },
+      "komunisme": {
+        "description": "Eine Ideologie, die eine klassenlose Gesellschaft auf Grundlage des gemeinschaftlichen Eigentums an Produktionsmitteln anstrebt.",
+        "characteristics": {
+          "first": "Vollständig staatlich geplante Wirtschaft",
+          "second": "Einparteienregierung",
+          "third": "Gemeinschaftliche Verteilung von Gütern"
+        }
+      },
+      "nasionalisme": {
+        "description": "Eine Ideologie, die Souveränität, Einheit, Kultur und nationale Interessen an erste Stelle setzt.",
+        "characteristics": {
+          "first": "Wirtschaftliche und ernährungsbezogene Eigenständigkeit",
+          "second": "Stolz auf die nationale Identität",
+          "third": "Schutz vor ausländischem Einfluss"
+        }
+      },
+      "konservatisme": {
+        "description": "Eine Lehre, die den Erhalt traditioneller Werte, des Rechts, der Ordnung und etablierter Institutionen in den Mittelpunkt stellt.",
+        "characteristics": {
+          "first": "Stabilität kultureller und religiöser Werte",
+          "second": "Starke soziale Ordnung",
+          "third": "Schrittweiser Wandel"
+        }
+      },
+      "liberalisme": {
+        "description": "Eine Ideologie, die individuelle Freiheit, Bürgerrechte, freundschaftliche internationale Beziehungen und freie Märkte betont.",
+        "characteristics": {
+          "first": "Individuelle Freiheit und Marktfreiheit",
+          "second": "Unterstützung der Globalisierung",
+          "third": "Begrenzte Wirtschaftsregulierung"
+        }
+      },
+      "otoritarianisme": {
+        "description": "Ein politisches System, das die Macht bei den Herrschenden konzentriert, ohne wirksame Kontrolle durch die Opposition.",
+        "characteristics": {
+          "first": "Zentralisierte und entschlossene Führung",
+          "second": "Schnelle Mobilisierung von Ressourcen",
+          "third": "Strenge nationale Disziplin"
+        }
+      }
+    }
+  },
+  "confirmModal": {
+    "titleInfo": "Ideologische Wirksamkeit",
+    "titleConfirm": "Ideologiewechsel bestätigen",
+    "activeEffects": "Derzeit aktive ideologische Boni",
+    "warningText": "Die Neuausrichtung der Staatsideologie erfordert eine 7-tägige politische Übergangsphase oder Sonderausgaben zur sofortigen Stabilisierung.",
+    "btnGradual": "Schrittweise einführen (7 Tage)",
+    "btnInstant": "Sofort einführen ({cost} NEO)",
+    "btnCancel": "Abbrechen"
+  },
+  "fundsModal": {
+    "title": "Unzureichende Staatsmittel!",
+    "desc": "Sie benötigen {cost} NEO für diese Sofortreform.",
+    "currentTreasury": "Aktuelle Staatskasse: {money} NEO",
+    "btnTakeLoan": "Kredit aufnehmen",
+    "btnClose": "Schließen"
+  }
+}

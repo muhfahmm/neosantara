@@ -7,6 +7,8 @@ import Image from "next/image";
 import { Info, Shield, Globe, Vote, Crown, DollarSign, Handshake, Hammer, Flag, Feather, Sword, Check } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
+import { getLocalizedCountryName } from "@/app/logic/countryNameLogic";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
 import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
 
@@ -73,6 +75,7 @@ const IDEOLOGY_ICONS: Record<string, React.ReactNode> = {
 };
 
 export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDetail, setCountryDetail, onNotification }: ModalProps) {
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<"ideologi" | "dunia">("ideologi");
   const [selectedIdeology, setSelectedIdeology] = useState<string | null>(null);
@@ -293,15 +296,15 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                 </div>
                 <div>
                   <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                    Ideologi Dasar Kedaulatan
+                    {t('nav_sosial_budaya_ideologi.title') || 'Ideologi Dasar Kedaulatan'}
                   </h2>
                 </div>
               </div>
             </div>
             <div className="root-modal-util-6cfc7e6ab3">
               <MenuInfoButton
-                title="Ideologi Negara"
-                description="Tentukan ideologi yang menjadi dasar kebijakan dan kedaulatan negara. Tiap ideologi memberikan efek berbeda; tinjau bonusnya sebelum melakukan perubahan yang membutuhkan anggaran dan konfirmasi."
+                title={t('nav_sosial_budaya_ideologi.title') || 'Ideologi Negara'}
+                description={t('nav_sosial_budaya_ideologi.confirmModal.warningText') || 'Tentukan ideologi yang menjadi dasar kebijakan dan kedaulatan negara. Tiap ideologi memberikan efek berbeda; tinjau bonusnya sebelum melakukan perubahan yang membutuhkan anggaran dan konfirmasi.'}
               />
               <RootModalCloseButton onClick={onClose} />
             </div>
@@ -313,16 +316,16 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                 className="satisfaction-modal-tabs"
                 items={[
                   {
-                    label: "Ideologi & Kedaulatan",
-                    isActive: activeTab === "ideologi",
-                    onClick: () => setActiveTab("ideologi"),
-                    onPointerDown: () => setActiveTab("ideologi"),
+                    label: t('nav_sosial_budaya_ideologi.tabCountry') || 'Ideologi & Kedaulatan',
+                    isActive: activeTab === 'ideologi',
+                    onClick: () => setActiveTab('ideologi'),
+                    onPointerDown: () => setActiveTab('ideologi'),
                   },
                   {
-                    label: "Ideologi Dunia",
-                    isActive: activeTab === "dunia",
-                    onClick: () => setActiveTab("dunia"),
-                    onPointerDown: () => setActiveTab("dunia"),
+                    label: t('nav_sosial_budaya_ideologi.tabWorld') || 'Ideologi Dunia',
+                    isActive: activeTab === 'dunia',
+                    onClick: () => setActiveTab('dunia'),
+                    onPointerDown: () => setActiveTab('dunia'),
                   },
                 ]}
               />
@@ -330,13 +333,15 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
           </div>
 
           <div className="satisfaction-modal-content satisfaction-modal-content-body root-modal-enter root-modal-fade-in root-modal-util-9c12d57a09 root-modal-util-90f9f3a7db flex min-h-0 flex-col">
-            {activeTab === "ideologi" && (
+            {activeTab === 'ideologi' && (
               <div className="space-y-6">
                 <div className="root-modal-util-8230f2ccb3">
                   <div className="root-modal-util-7ccf491d2f">
                     <Shield aria-hidden="true" className="root-modal-util-79b40bc7fa" />
                   </div>
-                  <h3 className="root-modal-util-9361ef65fc root-modal-util-cdb3e20c19">Pilih Ideologi Negara</h3>
+                  <h3 className="root-modal-util-9361ef65fc root-modal-util-cdb3e20c19">
+                    {t('nav_sosial_budaya_ideologi.tabCountry') || 'Pilih Ideologi Negara'}
+                  </h3>
                   <div className="root-modal-util-d43b1ea5a7" />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -344,6 +349,9 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                     const isActive = String(countryDetail?.ideology || '').toLowerCase() === String(option).toLowerCase();
                     const isSelected = String(selectedIdeology || '').toLowerCase() === String(option).toLowerCase();
                     const isScheduled = pendingIdeologyChange?.toValue.toLowerCase() === option.toLowerCase();
+                    const ideoKey = option.toLowerCase().replace(/\s+/g, '_');
+                    const localizedIdeo = t(`nav_sosial_budaya_ideologi.ideologies.${ideoKey}` as any) || option;
+                    const localizedBonus = t(`nav_sosial_budaya_ideologi.bonuses.${ideoKey}` as any) || IDEOLOGY_BONUSES[option] || 'Tidak ada bonus spesifik';
 
                     return (
                       <div key={option} className="relative">
@@ -367,7 +375,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                             setInfoTarget(option);
                           }}
                           className="absolute top-2.5 right-2.5 p-1 rounded-lg border border-root-accent/20 bg-[#051111] text-root-subtle hover:text-root-accent hover:border-root-accent hover:bg-root-accent/10 transition-all cursor-pointer z-10"
-                          title={`Informasi ${option}`}
+                          title={`Informasi ${localizedIdeo}`}
                         >
                           <Info className="w-3.5 h-3.5" />
                         </button>
@@ -384,14 +392,14 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                           <div className="flex items-center gap-2">
                             {isActive && <Check className="w-4 h-4 text-root-accent font-bold" />}
                             <span className={`text-sm font-bold ${isActive ? 'text-root-accent' : 'text-root-text'}`}>
-                              {option}
+                              {localizedIdeo}
                             </span>
                           </div>
                           <p className="text-xs text-root-subtle mt-1 leading-tight">
-                            {IDEOLOGY_BONUSES[option] || 'Tidak ada bonus spesifik'}
+                            {localizedBonus}
                           </p>
                           <span className="text-[10px] font-semibold text-root-accent mt-1">
-                            Waktu perubahan: {SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari (pilihan Ubah)
+                            {t('nav_sosial_budaya_ideologi.scheduledFinishNotice', { days: SOCIAL_CULTURAL_CHANGE_DELAY_DAYS, date: '' }) || `Waktu perubahan: ${SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari (pilihan Ubah)`}
                           </span>
                         </div>
                         </div>
@@ -408,17 +416,19 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
               </div>
             )}
 
-            {activeTab === "dunia" && (
+            {activeTab === 'dunia' && (
               <div className="flex min-h-0 flex-1 flex-col gap-4">
                 <div className="root-modal-util-8230f2ccb3">
                   <div className="root-modal-util-7ccf491d2f">
                     <Globe aria-hidden="true" className="root-modal-util-79b40bc7fa" />
                   </div>
-                  <h4 className="root-modal-util-9361ef65fc">Daftar Ideologi Seluruh Negara ({worldIdeologies.length} Negara)</h4>
+                  <h4 className="root-modal-util-9361ef65fc">
+                    {t('nav_sosial_budaya_ideologi.tabWorld') || 'Daftar Ideologi Seluruh Negara'} ({worldIdeologies.length} {t('nav_sosial_budaya_ideologi.colCountry') || 'Negara'})
+                  </h4>
                   <div className="root-modal-util-d43b1ea5a7" />
                   {sameIdeologyCount !== null && (
                     <span className="text-xs font-bold text-root-accent bg-root-accent/10 rounded-full px-2.5 py-1 whitespace-nowrap">
-                      {sameIdeologyCount}/212 seideologi
+                      {sameIdeologyCount}/212 {t('nav_sosial_budaya_ideologi.currentIdeologyBadge') || 'seideologi'}
                     </span>
                   )}
                 </div>
@@ -427,9 +437,9 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                     <thead className="bg-[#051111] border-b border-root-accent/20 sticky top-0 z-10">
                       <tr>
                         <th className="px-4 py-3 font-bold text-root-accent uppercase tracking-wider w-12 text-center">No</th>
-                        <th className="px-4 py-3 font-bold text-root-accent uppercase tracking-wider">Negara</th>
+                        <th className="px-4 py-3 font-bold text-root-accent uppercase tracking-wider">{t('nav_sosial_budaya_ideologi.colCountry') || 'Negara'}</th>
                         <th onClick={cycleSortMode} className="px-4 py-3 font-bold text-root-accent uppercase tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors">
-                          Ideologi
+                          {t('nav_sosial_budaya_ideologi.colIdeology') || 'Ideologi'}
                           <span className="ml-2 text-[10px] text-root-subtle">
                             {sortMode === "default" && "↕"}
                             {sortMode === "unavailable-last" && "↑↓"}
@@ -443,15 +453,18 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                       {sortedWorldIdeologies.map((item, idx) => {
                         const isUserCountry = countryDetail?.country &&
                           item.country.toLowerCase().trim() === countryDetail.country.toLowerCase().trim();
+                        const localizedCountry = getLocalizedCountryName(item.country);
+                        const ideoKey = item.ideology.toLowerCase().replace(/\s+/g, '_');
+                        const localizedIdeo = t(`nav_sosial_budaya_ideologi.ideologies.${ideoKey}` as any) || item.ideology;
                         return (
                           <tr key={idx} className={`transition-colors ${isUserCountry ? 'bg-root-accent/15 hover:bg-root-accent/25 border-l-4 border-l-root-accent' : 'hover:bg-root-accent/5'}`}>
                             <td className={`px-4 py-2.5 text-center font-bold ${isUserCountry ? 'text-root-accent' : 'text-root-subtle'}`}>{idx + 1}</td>
                             <td className={`px-4 py-2.5 font-bold ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>
-                              {item.country}
+                              {localizedCountry}
                             </td>
                             <td className={`px-4 py-2.5 ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>
                               {item.ideology === 'Belum tersedia' ? (
-                                <span className="text-root-subtle italic font-medium">Belum tersedia</span>
+                                <span className="text-root-subtle italic font-medium">{t('nav_sosial_budaya_ideologi.noData') || 'Belum tersedia'}</span>
                               ) : (
                                 <div className="flex items-center gap-2 font-bold">
                                   {getIdeologyImage(item.ideology) ? (
@@ -459,7 +472,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                                   ) : (
                                     IDEOLOGY_ICONS[item.ideology] || <Shield className="w-4 h-4 text-root-accent" />
                                   )}
-                                  {item.ideology}
+                                  {localizedIdeo}
                                 </div>
                               )}
                             </td>

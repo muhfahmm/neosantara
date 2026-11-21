@@ -1,0 +1,137 @@
+{
+  "title": "Filosofía e Ideología del Estado",
+  "tabCountry": "Ideología Estatal",
+  "tabWorld": "Mundo",
+  "searchPlaceholder": "Buscar ideología o país...",
+  "sortDefault": "Predeterminado",
+  "sortAvailableFirst": "Disponibles Primero",
+  "sortAZ": "Nombre A-Z",
+  "sortZA": "Nombre Z-A",
+  "currentIdeologyBadge": "Ideología Vigente",
+  "scheduledBadge": "Transición Programada",
+  "scheduledFinishNotice": "Se completa en {days} días ({date})",
+  "instantCostNotice": "Coste Instantáneo: {cost} NEO",
+  "colCountry": "País",
+  "colIdeology": "Ideología Oficial",
+  "noData": "No se encontraron datos de ideología.",
+  "ideologies": {
+    "demokrasi": "Democracia",
+    "monarki": "Monarquía",
+    "kapitalisme": "Capitalismo",
+    "sosialisme": "Socialismo",
+    "komunisme": "Comunismo",
+    "nasionalisme": "Nacionalismo",
+    "konservatisme": "Conservadurismo",
+    "liberalisme": "Liberalismo",
+    "otoritarianisme": "Autoritarismo"
+  },
+  "bonuses": {
+    "demokrasi": "Recaudación de Impuestos: +10%",
+    "monarki": "Poder Militar: +15%",
+    "kapitalisme": "Recaudación de Impuestos: +50%",
+    "sosialisme": "Bono a la Tasa de Natalidad: +10%",
+    "komunisme": "Producción en Todos los Sectores: +10%",
+    "nasionalisme": "Producción de Alimentos: +10%",
+    "konservatisme": "Recaudación de Impuestos: +5%",
+    "liberalisme": "Recaudación de Impuestos: +25%",
+    "otoritarianisme": "Poder Militar: +25%"
+  },
+  "infoModal": {
+    "title": "Enciclopedia de Ideología",
+    "sectionCharacteristics": "Características Fundamentales",
+    "sectionPros": "Fortalezas y Beneficios",
+    "sectionCons": "Debilidades y Riesgos",
+    "sectionBonuses": "Efectos Estratégicos del Estado",
+    "btnClose": "Cerrar",
+    "details": {
+      "demokrasi": {
+        "description": "Un sistema de gobierno en el que la autoridad suprema reside en el pueblo y se ejerce mediante elecciones periódicas.",
+        "characteristics": {
+          "first": "Sistema multipartidista y libertades civiles",
+          "second": "Alta rendición de cuentas públicas",
+          "third": "Protección de los derechos humanos"
+        }
+      },
+      "monarki": {
+        "description": "Un sistema de gobierno tradicional dirigido por un rey, una reina o un jefe de Estado que hereda el cargo.",
+        "characteristics": {
+          "first": "Liderazgo transmitido por linaje familiar",
+          "second": "Estabilidad del liderazgo a largo plazo",
+          "third": "Fuertes tradiciones culturales"
+        }
+      },
+      "kapitalisme": {
+        "description": "Un sistema económico y político en el que propietarios privados controlan el comercio y la industria con fines de lucro.",
+        "characteristics": {
+          "first": "Mercados libres y alta competencia",
+          "second": "Propiedad privada de los activos",
+          "third": "Innovación impulsada por incentivos financieros"
+        }
+      },
+      "sosialisme": {
+        "description": "Un sistema social y económico en el que los medios de producción y distribución se gestionan colectivamente para el bienestar público.",
+        "characteristics": {
+          "first": "Amplia protección social",
+          "second": "Igualdad económica",
+          "third": "Servicios públicos gratuitos o de bajo costo"
+        }
+      },
+      "komunisme": {
+        "description": "Una ideología que busca una sociedad sin clases basada en la propiedad colectiva de los medios de producción.",
+        "characteristics": {
+          "first": "Economía totalmente planificada por el Estado",
+          "second": "Gobierno de partido único",
+          "third": "Distribución colectiva de bienes"
+        }
+      },
+      "nasionalisme": {
+        "description": "Una ideología que antepone la soberanía, la unidad, la cultura y los intereses nacionales.",
+        "characteristics": {
+          "first": "Autosuficiencia económica y alimentaria",
+          "second": "Orgullo de la identidad nacional",
+          "third": "Protección frente a influencias extranjeras"
+        }
+      },
+      "konservatisme": {
+        "description": "Una doctrina que prioriza la conservación de los valores tradicionales, la ley, el orden y las instituciones establecidas.",
+        "characteristics": {
+          "first": "Estabilidad de los valores culturales y religiosos",
+          "second": "Fuerte orden social",
+          "third": "Cambios graduales"
+        }
+      },
+      "liberalisme": {
+        "description": "Una ideología centrada en la libertad individual, los derechos civiles, las relaciones internacionales amistosas y los mercados libres.",
+        "characteristics": {
+          "first": "Libertad individual y de mercado",
+          "second": "Apoyo a la globalización",
+          "third": "Regulación económica limitada"
+        }
+      },
+      "otoritarianisme": {
+        "description": "Un sistema político que concentra el poder en los gobernantes sin una supervisión eficaz de la oposición.",
+        "characteristics": {
+          "first": "Liderazgo centralizado y firme",
+          "second": "Movilización rápida de recursos",
+          "third": "Disciplina nacional estricta"
+        }
+      }
+    }
+  },
+  "confirmModal": {
+    "titleInfo": "Efectividad Ideológica",
+    "titleConfirm": "Confirmar Cambio de Ideología",
+    "activeEffects": "Efectos ideológicos activos actualmente",
+    "warningText": "Reorientar la ideología nacional requiere un período de adaptación de 7 días o un presupuesto inmediato para garantizar la estabilidad.",
+    "btnGradual": "Aplicar Gradualmente (7 Días)",
+    "btnInstant": "Aplicar Instantáneamente ({cost} NEO)",
+    "btnCancel": "Cancelar"
+  },
+  "fundsModal": {
+    "title": "¡Fondos Insuficientes!",
+    "desc": "Necesita {cost} NEO para completar esta transición inmediata.",
+    "currentTreasury": "Tesorería nacional actual: {money} NEO",
+    "btnTakeLoan": "Solicitar Préstamo",
+    "btnClose": "Cerrar"
+  }
+}

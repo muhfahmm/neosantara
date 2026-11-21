@@ -1,0 +1,63 @@
+{
+  "title": "Filosofía e Ideología del Estado",
+  "tabCountry": "Ideología Estatal",
+  "tabWorld": "Mundo",
+  "searchPlaceholder": "Buscar ideología o país...",
+  "sortDefault": "Predeterminado",
+  "sortAvailableFirst": "Disponibles Primero",
+  "sortAZ": "Nombre A-Z",
+  "sortZA": "Nombre Z-A",
+  "currentIdeologyBadge": "Ideología Vigente",
+  "scheduledBadge": "Transición Programada",
+  "scheduledFinishNotice": "Se completa en {days} días ({date})",
+  "instantCostNotice": "Coste Instantáneo: {cost} NEO",
+  "colCountry": "País",
+  "colIdeology": "Ideología Oficial",
+  "noData": "No se encontraron datos de ideología.",
+  "ideologies": {
+    "demokrasi": "Democracia",
+    "monarki": "Monarquía",
+    "kapitalisme": "Capitalismo",
+    "sosialisme": "Socialismo",
+    "komunisme": "Comunismo",
+    "nasionalisme": "Nacionalismo",
+    "konservatisme": "Conservadurismo",
+    "liberalisme": "Liberalismo",
+    "otoritarianisme": "Autoritarismo"
+  },
+  "bonuses": {
+    "demokrasi": "Recaudación de Impuestos: +10%",
+    "monarki": "Poder Militar: +15%",
+    "kapitalisme": "Recaudación de Impuestos: +50%",
+    "sosialisme": "Bono a la Tasa de Natalidad: +10%",
+    "komunisme": "Producción en Todos los Sectores: +10%",
+    "nasionalisme": "Producción de Alimentos: +10%",
+    "konservatisme": "Recaudación de Impuestos: +5%",
+    "liberalisme": "Recaudación de Impuestos: +25%",
+    "otoritarianisme": "Poder Militar: +25%"
+  },
+  "infoModal": {
+    "title": "Enciclopedia de Ideología",
+    "sectionCharacteristics": "Características Fundamentales",
+    "sectionPros": "Fortalezas y Beneficios",
+    "sectionCons": "Debilidades y Riesgos",
+    "sectionBonuses": "Efectos Estratégicos del Estado",
+    "btnClose": "Cerrar"
+  },
+  "confirmModal": {
+    "titleInfo": "Efectividad Ideológica",
+    "titleConfirm": "Confirmar Cambio de Ideología",
+    "activeEffects": "Efectos ideológicos activos actualmente",
+    "warningText": "Reorientar la ideología nacional requiere un período de adaptación de 7 días o un presupuesto inmediato para garantizar la estabilidad.",
+    "btnGradual": "Aplicar Gradualmente (7 Días)",
+    "btnInstant": "Aplicar Instantáneamente ({cost} NEO)",
+    "btnCancel": "Cancelar"
+  },
+  "fundsModal": {
+    "title": "¡Fondos Insuficientes!",
+    "desc": "Necesita {cost} NEO para completar esta transición inmediata.",
+    "currentTreasury": "Tesorería nacional actual: {money} NEO",
+    "btnTakeLoan": "Solicitar Préstamo",
+    "btnClose": "Cerrar"
+  }
+}

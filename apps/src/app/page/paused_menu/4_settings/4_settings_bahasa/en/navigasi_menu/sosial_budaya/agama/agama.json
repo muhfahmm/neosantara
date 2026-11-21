@@ -1,0 +1,55 @@
+{
+  "title": "State Religion & Beliefs",
+  "tabCountry": "State Religion",
+  "tabWorld": "World",
+  "searchPlaceholder": "Search religion or country...",
+  "sortDefault": "Default",
+  "sortAvailableFirst": "Available First",
+  "sortAZ": "Name A-Z",
+  "sortZA": "Name Z-A",
+  "currentReligionBadge": "Currently Practiced",
+  "scheduledBadge": "Change Scheduled",
+  "scheduledFinishNotice": "Completes in {days} days ({date})",
+  "instantCostNotice": "Instant Cost: {cost} NEO",
+  "colCountry": "Country",
+  "colReligion": "Majority Religion",
+  "noData": "No religion data found.",
+  "religions": {
+    "islam": "Islam",
+    "katolik": "Catholicism",
+    "protestan": "Protestantism",
+    "kristen_ortodoks": "Eastern Orthodoxy",
+    "hindu": "Hinduism",
+    "buddha": "Buddhism",
+    "yahudi": "Judaism",
+    "shinto": "Shinto",
+    "ateisme": "Atheism"
+  },
+  "bonuses": {
+    "islam": "Food and resource yield: +10%",
+    "katolik": "UN General Assembly Vote Influence: +10",
+    "protestan": "Selling prices: +5%, Buying prices: -5%",
+    "kristen_ortodoks": "Personal Income Tax Revenue: +5%",
+    "hindu": "Population Growth Rate: +8%",
+    "buddha": "Environmental Tax Revenue: +10%",
+    "yahudi": "Factory and mine construction time: -10%",
+    "shinto": "Electricity Production: +10%",
+    "ateisme": "Scientific Research Speed: +15%"
+  },
+  "confirmModal": {
+    "titleInfo": "Religion Effectiveness",
+    "titleConfirm": "Confirm Religion Change",
+    "activeEffects": "Currently active religious bonuses",
+    "warningText": "Reforming the official national religion requires a 7-day social adaptation period or an instant payment for swift transition.",
+    "btnGradual": "Adopt Gradually (7 Days)",
+    "btnInstant": "Adopt Instantly ({cost} NEO)",
+    "btnCancel": "Cancel"
+  },
+  "fundsModal": {
+    "title": "Insufficient Funds!",
+    "desc": "You require {cost} NEO to carry out this instant transition.",
+    "currentTreasury": "Current national treasury: {money} NEO",
+    "btnTakeLoan": "Take a Loan",
+    "btnClose": "Close"
+  }
+}

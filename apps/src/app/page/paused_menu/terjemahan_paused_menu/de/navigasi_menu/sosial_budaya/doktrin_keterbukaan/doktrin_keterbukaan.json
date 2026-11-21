@@ -1,0 +1,93 @@
+{
+  "title": "Nationale Offenheitsdoktrin",
+  "subtitle": "Vorschriften zu bürgerlichen Freiheiten, Medienkontrolle und geopolitischen Grenzregimen.",
+  "scoreLabel": "Nationaler Offenheitsindex",
+  "tabCivil": "Bürgerrechte & Menschenrechte",
+  "tabMedia": "Medien & Digitale Information",
+  "tabGlobal": "Grenzen & Geopolitik",
+  "thresholdLowLabel": "Auswirkungen restriktiver Politik (<30%)",
+  "thresholdHighLabel": "Auswirkungen offener Politik (>70%)",
+  "regimes": {
+    "autarki": {
+      "label": "Vollständig isolierter Staat (Autarkie)",
+      "badge": "Extremer Isolationismus",
+      "desc": "Völlig von der Außenwelt abgeschottet, strenge Zensur von Medien und Internet, Demonstrationsverbote und vollständige wirtschaftliche Autarkie."
+    },
+    "proteksionis": {
+      "label": "Protektionistischer & Autoritärer Staat",
+      "badge": "Eingeschränktes Modell",
+      "desc": "Die Regierung beschränkt Immigration und Bürgerbewegungen, filtert Medien und schränkt Demonstrationen ein, um Stabilität zu sichern."
+    },
+    "moderat": {
+      "label": "Moderater & Gemischter Staat",
+      "badge": "Moderates Modell",
+      "desc": "Ausgewogene Balance zwischen individuellen Freiheiten, öffentlicher Ordnung und Öffnung für den internationalen Handel."
+    },
+    "demokratis": {
+      "label": "Offener & Demokratischer Staat",
+      "badge": "Demokratisches Modell",
+      "desc": "Meinungs- und Pressefreiheit garantiert, offene Grenzen, unzensiertes Internet und transparente Haushaltsführung."
+    },
+    "globalis": {
+      "label": "Globalistischer Freihandelsstaat",
+      "badge": "Freihandels-Hegemon",
+      "desc": "Vollständiger Schutz der Menschenrechte, unbeschränkte Pressefreiheit, visumfreie Grenzen und barrierefreier Welthandel."
+    }
+  },
+  "indicators": {
+    "speechScore": {
+      "title": "Meinungs- & Redefreiheit",
+      "desc": "Grad der Freiheit der Bürger, Meinungen zu äußern und Regierungsentscheidungen ohne Angst vor Sanktionen zu kritisieren.",
+      "lowNotice": "Strenge Zensur von Kritik am Regime; strafrechtliche Verfolgung von Dissidenten.",
+      "highNotice": "Uneingeschränkte Meinungsfreiheit mit vollständigem Schutz des pluralistischen Diskurses."
+    },
+    "religionScore": {
+      "title": "Religions- & Glaubensfreiheit",
+      "desc": "Verfassungsrechtliche Garantie für Bürger, ihren Glauben ohne staatliche Benachteiligung auszuüben.",
+      "lowNotice": "Religionsgemeinschaften staatlich kontrolliert; nicht autorisierte Konfessionen verboten.",
+      "highNotice": "Umfassender Schutz der Glaubensfreiheit und der Kultstätten aller Minderheiten."
+    },
+    "demoScore": {
+      "title": "Versammlungs- & Demonstrationsrecht",
+      "desc": "Erleichterung für Bürger, friedlich in der Öffentlichkeit zu demonstrieren.",
+      "lowNotice": "Öffentliche Kundgebungen untersagt und durch Sicherheitskräfte aufgelöst.",
+      "highNotice": "Friedliche Proteste gesetzlich geschützt, ohne restriktive polizeiliche Vorabgenehmigung."
+    },
+    "transparencyScore": {
+      "title": "Regierungstransparenz & Rechenschaft",
+      "desc": "Offenlegung öffentlicher Ausgaben, Vergabeverfahren und Korruptionsbekämpfung.",
+      "lowNotice": "Staatsausgaben und Vergaben unterliegen strengster Geheimhaltung.",
+      "highNotice": "Haushaltspläne und Prüfungsberichte sind für alle Bürger frei einsehbar."
+    },
+    "mediaScore": {
+      "title": "Pressefreiheit & Massenmedien",
+      "desc": "Unabhängigkeit von Journalisten und Medienhäusern von staatlicher Zensur.",
+      "lowNotice": "Alle Sender und Agenturen unterstehen direkt dem Informationsministerium.",
+      "highNotice": "Freier Recherchejournalismus ohne Einschüchterungsversuche der Exekutive."
+    },
+    "internetScore": {
+      "title": "Offener Internetzugang & Digitale Freiheit",
+      "desc": "Verfügbarkeit des weltweiten Netzes ohne Filterung sozialer Plattformen.",
+      "lowNotice": "Nationale Firewall in Kraft; globaler Datenverkehr extrem blockiert.",
+      "highNotice": "Vollständig unzensiertes Internet mit moderner digitaler Infrastruktur."
+    },
+    "borderScore": {
+      "title": "Grenzoffenheit & Visumpolitik",
+      "desc": "Einreisebestimmungen für internationale Touristen, Fachkräfte und Geschäftsreisende.",
+      "lowNotice": "Militärisch befestigte und geschlossene Grenzen; Visa kaum erhältlich.",
+      "highNotice": "Visafreie Einreise für zahlreiche Partnerstaaten zur Ankurbelung der Wirtschaft."
+    },
+    "tradeScore": {
+      "title": "Zollpolitik & Internationaler Handel",
+      "desc": "Abbau von Zöllen, Handelsquoten und Hemmnissen im grenzüberschreitenden Warenverkehr.",
+      "lowNotice": "Extreme Schutzzölle und Quoten zur Erzwingung von Importsubstitutionen.",
+      "highNotice": "Zollfreie Handelszonen und umfassende Liberalisierung der Importe und Exporte."
+    },
+    "diplomacyScore": {
+      "title": "Internationales Engagement & Diplomatie",
+      "desc": "Beteiligung an multilateralen Konferenzen, Verteidigungspakten und UN-Friedensmissionen.",
+      "lowNotice": "Strikter Isolationismus; Ablehnung multilateraler Verpflichtungen.",
+      "highNotice": "Führende Rolle in multilateralen Foren und internationalen Friedensmissionen."
+    }
+  }
+}

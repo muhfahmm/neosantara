@@ -1,0 +1,63 @@
+{
+  "title": "State Ideology & Philosophy",
+  "tabCountry": "State Ideology",
+  "tabWorld": "World",
+  "searchPlaceholder": "Search ideology or country...",
+  "sortDefault": "Default",
+  "sortAvailableFirst": "Available First",
+  "sortAZ": "Name A-Z",
+  "sortZA": "Name Z-A",
+  "currentIdeologyBadge": "Currently Practiced",
+  "scheduledBadge": "Change Scheduled",
+  "scheduledFinishNotice": "Completes in {days} days ({date})",
+  "instantCostNotice": "Instant Cost: {cost} NEO",
+  "colCountry": "Country",
+  "colIdeology": "Official Ideology",
+  "noData": "No ideology data found.",
+  "ideologies": {
+    "demokrasi": "Democracy",
+    "monarki": "Monarchy",
+    "kapitalisme": "Capitalism",
+    "sosialisme": "Socialism",
+    "komunisme": "Communism",
+    "nasionalisme": "Nationalism",
+    "konservatisme": "Conservatism",
+    "liberalisme": "Liberalism",
+    "otoritarianisme": "Authoritarianism"
+  },
+  "bonuses": {
+    "demokrasi": "Tax Revenue: +10%",
+    "monarki": "Military Power: +15%",
+    "kapitalisme": "Tax Revenue: +50%",
+    "sosialisme": "Birth Rate Bonus: +10%",
+    "komunisme": "All Sector Production: +10%",
+    "nasionalisme": "Food Production: +10%",
+    "konservatisme": "Tax Revenue: +5%",
+    "liberalisme": "Tax Revenue: +25%",
+    "otoritarianisme": "Military Power: +25%"
+  },
+  "infoModal": {
+    "title": "Ideology Encyclopedia",
+    "sectionCharacteristics": "Core Characteristics",
+    "sectionPros": "Strengths & Advantages",
+    "sectionCons": "Weaknesses & Risks",
+    "sectionBonuses": "National Strategic Bonuses",
+    "btnClose": "Close"
+  },
+  "confirmModal": {
+    "titleInfo": "Ideology Effectiveness",
+    "titleConfirm": "Confirm Ideology Shift",
+    "activeEffects": "Currently active ideological bonuses",
+    "warningText": "Realigning the state doctrine requires a 7-day political transition period or an instant stabilization budget.",
+    "btnGradual": "Adopt Gradually (7 Days)",
+    "btnInstant": "Adopt Instantly ({cost} NEO)",
+    "btnCancel": "Cancel"
+  },
+  "fundsModal": {
+    "title": "Insufficient Funds!",
+    "desc": "You require {cost} NEO to carry out this instant reform.",
+    "currentTreasury": "Current national treasury: {money} NEO",
+    "btnTakeLoan": "Take a Loan",
+    "btnClose": "Close"
+  }
+}

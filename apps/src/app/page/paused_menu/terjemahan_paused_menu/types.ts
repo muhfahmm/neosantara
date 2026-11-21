@@ -44,6 +44,9 @@ import type idGeopoliticsPbb from './id/navigasi_menu/geopolitik_menu/pbb_menu/p
 import type idGeopoliticsEmbassy from './id/navigasi_menu/geopolitik_menu/kedutaan_besar/kedutaan_besar.json';
 import type idGeopoliticsOrganizations from './id/navigasi_menu/geopolitik_menu/organisasi_internasional/organisasi_internasional.json';
 import type idGeopoliticsRelations from './id/navigasi_menu/geopolitik_menu/tingkat_hubungan/tingkat_hubungan.json';
+import type idSosialBudayaAgama from './id/navigasi_menu/sosial_budaya/agama/agama.json';
+import type idSosialBudayaIdeologi from './id/navigasi_menu/sosial_budaya/ideologi/ideologi.json';
+import type idSosialBudayaDoktrin from './id/navigasi_menu/sosial_budaya/doktrin_keterbukaan/doktrin_keterbukaan.json';
 
 export type TextDirection = 'ltr' | 'rtl';
 
@@ -119,7 +122,10 @@ export type TranslationNamespace =
   | 'navigation_geopolitics_pbb'
   | 'navigation_geopolitics_embassy'
   | 'navigation_geopolitics_organizations'
-  | 'navigation_geopolitics_relations';
+  | 'navigation_geopolitics_relations'
+  | 'nav_sosial_budaya_agama'
+  | 'nav_sosial_budaya_ideologi'
+  | 'nav_sosial_budaya_doktrin';
 
 type ResearchTranslation = typeof idPenelitian & {
   categories: {
@@ -172,6 +178,9 @@ export interface TranslationSchema {
   navigation_geopolitics_embassy: typeof idGeopoliticsEmbassy;
   navigation_geopolitics_organizations: typeof idGeopoliticsOrganizations;
   navigation_geopolitics_relations: typeof idGeopoliticsRelations;
+  nav_sosial_budaya_agama: typeof idSosialBudayaAgama;
+  nav_sosial_budaya_ideologi: typeof idSosialBudayaIdeologi;
+  nav_sosial_budaya_doktrin: typeof idSosialBudayaDoktrin;
 }
 
 export type TranslationRecord = Record<string, string | Record<string, unknown>>;
@@ -228,6 +237,9 @@ export type TranslationKey =
   | `navigation_geopolitics_embassy.${NestedKeyOf<typeof idGeopoliticsEmbassy>}`
   | `navigation_geopolitics_organizations.${NestedKeyOf<typeof idGeopoliticsOrganizations>}`
   | `navigation_geopolitics_relations.${NestedKeyOf<typeof idGeopoliticsRelations>}`
+  | `nav_sosial_budaya_agama.${NestedKeyOf<typeof idSosialBudayaAgama>}`
+  | `nav_sosial_budaya_ideologi.${NestedKeyOf<typeof idSosialBudayaIdeologi>}`
+  | `nav_sosial_budaya_doktrin.${NestedKeyOf<typeof idSosialBudayaDoktrin>}`
   | (string & {});
 
 export type InterpolationParams = Record<string, string | number>;

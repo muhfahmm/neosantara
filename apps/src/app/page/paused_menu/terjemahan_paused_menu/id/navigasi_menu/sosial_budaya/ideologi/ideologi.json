@@ -1,0 +1,137 @@
+{
+  "title": "Falsafah & Ideologi Negara",
+  "tabCountry": "Ideologi Negara",
+  "tabWorld": "Dunia",
+  "searchPlaceholder": "Cari ideologi atau negara...",
+  "sortDefault": "Bawaan",
+  "sortAvailableFirst": "Tersedia Dulu",
+  "sortAZ": "Nama A-Z",
+  "sortZA": "Nama Z-A",
+  "currentIdeologyBadge": "Sedang Dianut",
+  "scheduledBadge": "Perubahan Dijadwalkan",
+  "scheduledFinishNotice": "Selesai dalam {days} hari ({date})",
+  "instantCostNotice": "Biaya Instan: {cost} NEO",
+  "colCountry": "Negara",
+  "colIdeology": "Ideologi Resmi",
+  "noData": "Tidak ada data ideologi.",
+  "ideologies": {
+    "demokrasi": "Demokrasi",
+    "monarki": "Monarki",
+    "kapitalisme": "Kapitalisme",
+    "sosialisme": "Sosialisme",
+    "komunisme": "Komunisme",
+    "nasionalisme": "Nasionalisme",
+    "konservatisme": "Konservatisme",
+    "liberalisme": "Liberalisme",
+    "otoritarianisme": "Otoritarianisme"
+  },
+  "bonuses": {
+    "demokrasi": "Penerimaan Pajak: +10%",
+    "monarki": "Kekuatan Militer: +15%",
+    "kapitalisme": "Penerimaan Pajak: +50%",
+    "sosialisme": "Bonus ke Tingkat Kelahiran: +10%",
+    "komunisme": "Produksi Semua Lini: +10%",
+    "nasionalisme": "Produksi Pangan: +10%",
+    "konservatisme": "Penerimaan Pajak: +5%",
+    "liberalisme": "Penerimaan Pajak: +25%",
+    "otoritarianisme": "Kekuatan Militer: +25%"
+  },
+  "infoModal": {
+    "title": "Informasi Ideologi",
+    "sectionCharacteristics": "Karakteristik Utama",
+    "sectionPros": "Kelebihan & Manfaat",
+    "sectionCons": "Kelemahan & Risiko",
+    "sectionBonuses": "Bonus Efek Utama Negara",
+    "btnClose": "Tutup",
+    "details": {
+      "demokrasi": {
+        "description": "Sistem pemerintahan yang menempatkan kekuasaan tertinggi di tangan rakyat dan dijalankan melalui pemilihan umum berkala.",
+        "characteristics": {
+          "first": "Sistem multipartai dan kebebasan sipil",
+          "second": "Akuntabilitas publik yang tinggi",
+          "third": "Perlindungan hak asasi manusia"
+        }
+      },
+      "monarki": {
+        "description": "Sistem pemerintahan tradisional yang dipimpin raja atau ratu, atau kepala negara yang mewarisi kekuasaan.",
+        "characteristics": {
+          "first": "Kepemimpinan berdasarkan garis keturunan",
+          "second": "Stabilitas kepemimpinan jangka panjang",
+          "third": "Tradisi budaya yang kuat"
+        }
+      },
+      "kapitalisme": {
+        "description": "Sistem ekonomi dan politik yang memberi pemilik swasta kendali atas perdagangan dan industri untuk memperoleh keuntungan.",
+        "characteristics": {
+          "first": "Pasar bebas dan persaingan tinggi",
+          "second": "Kepemilikan aset oleh pihak swasta",
+          "third": "Inovasi yang didorong insentif finansial"
+        }
+      },
+      "sosialisme": {
+        "description": "Sistem sosial dan ekonomi yang mengelola alat produksi dan distribusi secara bersama demi kesejahteraan publik.",
+        "characteristics": {
+          "first": "Jaminan sosial yang luas",
+          "second": "Pemerataan ekonomi",
+          "third": "Layanan publik berbiaya rendah atau gratis"
+        }
+      },
+      "komunisme": {
+        "description": "Ideologi yang bertujuan membentuk masyarakat tanpa kelas melalui kepemilikan bersama atas alat produksi.",
+        "characteristics": {
+          "first": "Ekonomi yang sepenuhnya direncanakan negara",
+          "second": "Pemerintahan satu partai",
+          "third": "Distribusi barang secara kolektif"
+        }
+      },
+      "nasionalisme": {
+        "description": "Ideologi yang mengutamakan kedaulatan, persatuan, budaya, dan kepentingan nasional.",
+        "characteristics": {
+          "first": "Kemandirian ekonomi dan pangan",
+          "second": "Kebanggaan terhadap identitas nasional",
+          "third": "Perlindungan dari pengaruh luar"
+        }
+      },
+      "konservatisme": {
+        "description": "Paham yang mengutamakan pelestarian nilai tradisional, hukum, ketertiban, dan lembaga yang sudah mapan.",
+        "characteristics": {
+          "first": "Stabilitas nilai budaya dan agama",
+          "second": "Ketertiban sosial yang kuat",
+          "third": "Perubahan berlangsung secara bertahap"
+        }
+      },
+      "liberalisme": {
+        "description": "Ideologi yang berfokus pada kebebasan individu, hak sipil, hubungan internasional yang bersahabat, dan pasar bebas.",
+        "characteristics": {
+          "first": "Kebebasan individu dan pasar",
+          "second": "Dukungan terhadap globalisasi",
+          "third": "Regulasi ekonomi yang terbatas"
+        }
+      },
+      "otoritarianisme": {
+        "description": "Sistem politik yang memusatkan kekuasaan pada penguasa tanpa pengawasan oposisi yang efektif.",
+        "characteristics": {
+          "first": "Kepemimpinan terpusat dan tegas",
+          "second": "Mobilisasi sumber daya yang cepat",
+          "third": "Disiplin nasional yang ketat"
+        }
+      }
+    }
+  },
+  "confirmModal": {
+    "titleInfo": "Efektivitas Ideologi",
+    "titleConfirm": "Konfirmasi Perubahan Ideologi",
+    "activeEffects": "Efek ideologi yang sedang aktif",
+    "warningText": "Perubahan haluan ideologi negara memerlukan adaptasi politik selama 7 hari atau biaya instan untuk stabilitas rezim kilat.",
+    "btnGradual": "Terapkan Bertahap (7 Hari)",
+    "btnInstant": "Terapkan Instan ({cost} NEO)",
+    "btnCancel": "Batal"
+  },
+  "fundsModal": {
+    "title": "Dana Tidak Cukup!",
+    "desc": "Anda memerlukan {cost} NEO untuk melakukan perubahan instan ini.",
+    "currentTreasury": "Kas negara Anda saat ini: {money} NEO",
+    "btnTakeLoan": "Ambil Hutang",
+    "btnClose": "Tutup"
+  }
+}

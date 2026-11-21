@@ -1,0 +1,55 @@
+{
+  "title": "国家の宗教と信仰",
+  "tabCountry": "国家宗教",
+  "tabWorld": "世界の宗教",
+  "searchPlaceholder": "宗教や国名を検索...",
+  "sortDefault": "デフォルト順",
+  "sortAvailableFirst": "利用可能順",
+  "sortAZ": "名称 A-Z",
+  "sortZA": "名称 Z-A",
+  "currentReligionBadge": "現在信仰中",
+  "scheduledBadge": "改革予定",
+  "scheduledFinishNotice": "{days}日後に完了予定 ({date})",
+  "instantCostNotice": "即時移行費用: {cost} NEO",
+  "colCountry": "国名",
+  "colReligion": "主要宗教",
+  "noData": "宗教データがありません。",
+  "religions": {
+    "islam": "イスラム教",
+    "katolik": "カトリック",
+    "protestan": "プロテスタント",
+    "kristen_ortodoks": "正教会",
+    "hindu": "ヒンドゥー教",
+    "buddha": "仏教",
+    "yahudi": "ユダヤ教",
+    "shinto": "神道",
+    "ateisme": "無神論 / 世俗主義"
+  },
+  "bonuses": {
+    "islam": "食料および天然資源生産量: +10%",
+    "katolik": "国連総会での投票影響力: +10",
+    "protestan": "売却価格: +5%, 購入価格: -5%",
+    "kristen_ortodoks": "個人所得税収: +5%",
+    "hindu": "人口増加率: +8%",
+    "buddha": "環境税収: +10%",
+    "yahudi": "工場および鉱山の建設期間: -10%",
+    "shinto": "国内発電出力: +10%",
+    "ateisme": "科学研究速度: +15%"
+  },
+  "confirmModal": {
+    "titleInfo": "宗教の効力とボーナス",
+    "titleConfirm": "国家宗教の変更確認",
+    "activeEffects": "現在有効な宗教ボーナス",
+    "warningText": "国教の改革には7日間の社会適応期間、または即時断行のための予算が必要です。",
+    "btnGradual": "段階的移行 (7日間)",
+    "btnInstant": "即時移行 ({cost} NEO)",
+    "btnCancel": "キャンセル"
+  },
+  "fundsModal": {
+    "title": "国庫資金不足！",
+    "desc": "即時移行には {cost} NEO の資金が必要です。",
+    "currentTreasury": "現在の国庫残高: {money} NEO",
+    "btnTakeLoan": "国家借款を受ける",
+    "btnClose": "閉じる"
+  }
+}

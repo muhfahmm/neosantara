@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { AlertCircle } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface IdeologiGagalModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ export default function IdeologiGagalModal({
   cost,
   currentMoney,
 }: IdeologiGagalModalProps) {
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -44,7 +46,7 @@ export default function IdeologiGagalModal({
         className="w-full overflow-hidden rounded-xl bg-root-surface"
       >
         <RootInfoModalHeader
-          title="Dana Tidak Cukup"
+          title={t('nav_sosial_budaya_ideologi.fundsModal.title') || "Dana Tidak Cukup"}
           onClose={onClose}
           size="standard"
           icon={<AlertCircle aria-hidden="true" className="text-rose-400" />}
@@ -57,11 +59,11 @@ export default function IdeologiGagalModal({
               <AlertCircle className="w-10 h-10 text-rose-500" />
             </div>
 
-            <h3 className="text-2xl font-black text-root-text mb-2 text-center">Dana Tidak Cukup!</h3>
+            <h3 className="text-2xl font-black text-root-text mb-2 text-center">{t('nav_sosial_budaya_ideologi.fundsModal.title') || 'Dana Tidak Cukup!'}</h3>
             <p className="text-sm text-root-subtle text-center mb-6 leading-relaxed">
-              Anda memerlukan <span className="font-black text-root-accent">{cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span> untuk perubahan ini.
+              {t('nav_sosial_budaya_ideologi.fundsModal.desc', { cost: cost.toLocaleString('id-ID', { maximumFractionDigits: 2 }) }) || `Anda memerlukan ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO untuk perubahan ini.`}
               <br />
-              Kas negara Anda saat ini: <span className="font-black text-rose-400">{currentMoney.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
+              {t('nav_sosial_budaya_ideologi.fundsModal.currentTreasury', { money: currentMoney.toLocaleString('id-ID', { maximumFractionDigits: 2 }) }) || `Kas negara Anda saat ini: ${currentMoney.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`}
             </p>
 
             {/* BUTTONS */}
@@ -74,14 +76,14 @@ export default function IdeologiGagalModal({
                   }}
                   className="w-full py-3 rounded-xl bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40 font-black text-xs uppercase shadow-md active:scale-95 transition-all cursor-pointer"
                 >
-                  Ambil Hutang
+                  {t('nav_sosial_budaya_ideologi.fundsModal.btnTakeLoan') || 'Ambil Hutang'}
                 </button>
               )}
               <SharedModalCloseButton
                 onClick={onClose}
                 className="w-full py-3 rounded-xl border border-root-accent/30 bg-root-accent/10 text-root-accent font-bold text-xs uppercase shadow-md hover:bg-root-accent/20 active:scale-95 transition-all cursor-pointer"
                appearance="custom">
-                Tutup
+                {t('nav_sosial_budaya_ideologi.fundsModal.btnClose') || 'Tutup'}
               </SharedModalCloseButton>
             </div>
           </div>

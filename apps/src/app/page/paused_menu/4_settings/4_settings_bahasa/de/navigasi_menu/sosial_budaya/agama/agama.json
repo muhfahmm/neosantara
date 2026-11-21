@@ -1,0 +1,55 @@
+{
+  "title": "Staatsreligion & Weltanschauung",
+  "tabCountry": "Staatsreligion",
+  "tabWorld": "Welt",
+  "searchPlaceholder": "Religion oder Land suchen...",
+  "sortDefault": "Standard",
+  "sortAvailableFirst": "Verfügbare zuerst",
+  "sortAZ": "Name A-Z",
+  "sortZA": "Name Z-A",
+  "currentReligionBadge": "Derzeit praktiziert",
+  "scheduledBadge": "Reform geplant",
+  "scheduledFinishNotice": "Abgeschlossen in {days} Tagen ({date})",
+  "instantCostNotice": "Sofortkosten: {cost} NEO",
+  "colCountry": "Land",
+  "colReligion": "Mehrheitsreligion",
+  "noData": "Keine Religionsdaten vorhanden.",
+  "religions": {
+    "islam": "Islam",
+    "katolik": "Katholizismus",
+    "protestan": "Protestantismus",
+    "kristen_ortodoks": "Orthodoxes Christentum",
+    "hindu": "Hinduismus",
+    "buddha": "Buddhismus",
+    "yahudi": "Judentum",
+    "shinto": "Shintoismus",
+    "ateisme": "Atheismus / Säkularismus"
+  },
+  "bonuses": {
+    "islam": "Nahrungs- und Ressourcenertrag: +10%",
+    "katolik": "Stimmenteinfluss in der UN-Vollversammlung: +10",
+    "protestan": "Verkaufspreise: +5%, Einkaufspreise: -5%",
+    "kristen_ortodoks": "Einkommensteueraufkommen: +5%",
+    "hindu": "Bevölkerungswachstumsrate: +8%",
+    "buddha": "Umweltsteueraufkommen: +10%",
+    "yahudi": "Bauzeit für Fabriken und Minen: -10%",
+    "shinto": "Elektrizitätserzeugung: +10%",
+    "ateisme": "Wissenschaftliche Forschungsgeschwindigkeit: +15%"
+  },
+  "confirmModal": {
+    "titleInfo": "Religiöse Wirksamkeit",
+    "titleConfirm": "Religionswechsel bestätigen",
+    "activeEffects": "Derzeit aktive Glaubenseffekte",
+    "warningText": "Die Neuausrichtung der Staatsreligion erfordert eine 7-tägige gesellschaftliche Übergangszeit oder eine Sofortzahlung.",
+    "btnGradual": "Schrittweise einführen (7 Tage)",
+    "btnInstant": "Sofort einführen ({cost} NEO)",
+    "btnCancel": "Abbrechen"
+  },
+  "fundsModal": {
+    "title": "Unzureichende Staatsmittel!",
+    "desc": "Sie benötigen {cost} NEO für diesen sofortigen Übergang.",
+    "currentTreasury": "Aktuelle Staatskasse: {money} NEO",
+    "btnTakeLoan": "Kredit aufnehmen",
+    "btnClose": "Schließen"
+  }
+}

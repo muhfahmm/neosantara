@@ -1,0 +1,93 @@
+{
+  "title": "State Openness Doctrine",
+  "subtitle": "Regulations on civil liberties, information control, and geopolitical borders.",
+  "scoreLabel": "National Openness Index",
+  "tabCivil": "Civil Liberties & Human Rights",
+  "tabMedia": "Media & Digital Information",
+  "tabGlobal": "Borders & Geopolitics",
+  "thresholdLowLabel": "Strict Policy Impact (<30%)",
+  "thresholdHighLabel": "Open Policy Impact (>70%)",
+  "regimes": {
+    "autarki": {
+      "label": "Total Isolated State (Autarky)",
+      "badge": "Extreme Isolationist",
+      "desc": "Completely closed from the outside world, strict state censorship of press and internet, banned demonstrations, and total economic autarky."
+    },
+    "proteksionis": {
+      "label": "Protectionist & Authoritarian State",
+      "badge": "Restricted Model",
+      "desc": "The government restricts citizen movement and immigration, filters media outlets, and limits protest rights to preserve domestic order."
+    },
+    "moderat": {
+      "label": "Moderate & Mixed State",
+      "badge": "Moderate Model",
+      "desc": "Balances individual rights, social public order regulations, and pragmatic openness to international trade."
+    },
+    "demokratis": {
+      "label": "Open & Democratic State",
+      "badge": "Democratic Model",
+      "desc": "Freedom of speech and press guaranteed, borders open, uncensored digital network, and strong budget transparency."
+    },
+    "globalis": {
+      "label": "Globalist & Free Market State",
+      "badge": "Free Market Hegemon",
+      "desc": "Full protection of human rights, uninhibited journalistic freedom, visa-free borders, and seamless trade integration."
+    }
+  },
+  "indicators": {
+    "speechScore": {
+      "title": "Freedom of Speech & Expression",
+      "desc": "The degree to which citizens can voice opinions, critique officials, and debate public policies without fear of state reprisal.",
+      "lowNotice": "Strict censorship on anti-regime discourse; legal penalties for dissenting voices.",
+      "highNotice": "Universal freedom of expression with full protection for diverse political dialogue."
+    },
+    "religionScore": {
+      "title": "Freedom of Religion & Belief",
+      "desc": "Constitutional guarantee for citizens to practice, establish, or change their faith without governmental discrimination.",
+      "lowNotice": "Religions monitored by state agencies; unapproved denominations prohibited.",
+      "highNotice": "Robust protection of religious freedom and minority worship places nationwide."
+    },
+    "demoScore": {
+      "title": "Right to Assembly & Demonstration",
+      "desc": "Ease with which citizens can gather peacefully in public spaces to advocate for civic causes.",
+      "lowNotice": "Public rallies forbidden and promptly dissolved by law enforcement.",
+      "highNotice": "Peaceful protests legally safeguarded without burdensome municipal permits."
+    },
+    "transparencyScore": {
+      "title": "Government Transparency & Integrity",
+      "desc": "Openness of public expenditures, government procurement tenders, and anti-corruption oversight.",
+      "lowNotice": "State budgets and financial records classified under state secrecy directives.",
+      "highNotice": "Public procurement and state budgets audited and published openly to all citizens."
+    },
+    "mediaScore": {
+      "title": "Press Freedom & Mass Media",
+      "desc": "Independence of news broadcasting stations and investigative reporters from official state censorship.",
+      "lowNotice": "All broadcasting networks operate strictly under the information ministry guidelines.",
+      "highNotice": "Investigative journalism investigates state governance freely without intimidation."
+    },
+    "internetScore": {
+      "title": "Open Internet & Digital Access",
+      "desc": "Availability of uncensored global internet, social platforms, and international web traffic.",
+      "lowNotice": "The state enforces a national firewall; global internet access is heavily restricted.",
+      "highNotice": "Uncensored internet access with high-speed digital infrastructure."
+    },
+    "borderScore": {
+      "title": "Border Openness & Visa Policy",
+      "desc": "Entry procedures for foreign tourists, skilled expats, immigrants, and cross-border trade travelers.",
+      "lowNotice": "Heavily fortified borders; foreign visa issuances are virtually nonexistent.",
+      "highNotice": "Universal visa-free entry for international travelers to stimulate tourism and investments."
+    },
+    "tradeScore": {
+      "title": "Trade Tariffs & Economic Openness",
+      "desc": "Tariff barriers on imports and exports, customs regulations, and trade quotas.",
+      "lowNotice": "Steep protectionist tariffs and strict quotas enforced to mandate import substitution.",
+      "highNotice": "Zero-tariff free trade zones and broad liberalization of international commerce."
+    },
+    "diplomacyScore": {
+      "title": "Global Engagement & Diplomacy",
+      "desc": "Participation in international multilateral forums, diplomatic treaties, and UN peace operations.",
+      "lowNotice": "Rigid isolationist stance; avoids international treaties and conventions.",
+      "highNotice": "Proactive diplomatic leadership in multilateral alliances and global peacekeeping missions."
+    }
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "title": "State Ideology & Philosophy",
+  "tabCountry": "State Ideology",
+  "tabWorld": "World",
+  "searchPlaceholder": "Search ideology or country...",
+  "sortDefault": "Default",
+  "sortAvailableFirst": "Available First",
+  "sortAZ": "Name A-Z",
+  "sortZA": "Name Z-A",
+  "currentIdeologyBadge": "Currently Practiced",
+  "scheduledBadge": "Change Scheduled",
+  "scheduledFinishNotice": "Completes in {days} days ({date})",
+  "instantCostNotice": "Instant Cost: {cost} NEO",
+  "colCountry": "Country",
+  "colIdeology": "Official Ideology",
+  "noData": "No ideology data found.",
+  "ideologies": {
+    "demokrasi": "Democracy",
+    "monarki": "Monarchy",
+    "kapitalisme": "Capitalism",
+    "sosialisme": "Socialism",
+    "komunisme": "Communism",
+    "nasionalisme": "Nationalism",
+    "konservatisme": "Conservatism",
+    "liberalisme": "Liberalism",
+    "otoritarianisme": "Authoritarianism"
+  },
+  "bonuses": {
+    "demokrasi": "Tax Revenue: +10%",
+    "monarki": "Military Power: +15%",
+    "kapitalisme": "Tax Revenue: +50%",
+    "sosialisme": "Birth Rate Bonus: +10%",
+    "komunisme": "All Sector Production: +10%",
+    "nasionalisme": "Food Production: +10%",
+    "konservatisme": "Tax Revenue: +5%",
+    "liberalisme": "Tax Revenue: +25%",
+    "otoritarianisme": "Military Power: +25%"
+  },
+  "infoModal": {
+    "title": "Ideology Encyclopedia",
+    "sectionCharacteristics": "Core Characteristics",
+    "sectionPros": "Strengths & Advantages",
+    "sectionCons": "Weaknesses & Risks",
+    "sectionBonuses": "National Strategic Bonuses",
+    "btnClose": "Close",
+    "details": {
+      "demokrasi": {
+        "description": "A system of government in which supreme authority rests with the people and is exercised through regular elections.",
+        "characteristics": {
+          "first": "A multi-party system and civil liberties",
+          "second": "Strong public accountability",
+          "third": "Protection of human rights"
+        }
+      },
+      "monarki": {
+        "description": "A traditional system of government led by a king, queen, or head of state who inherits the position.",
+        "characteristics": {
+          "first": "Leadership passed down through a family line",
+          "second": "Long-term leadership stability",
+          "third": "Strong cultural traditions"
+        }
+      },
+      "kapitalisme": {
+        "description": "An economic and political system in which private owners control trade and industry for profit.",
+        "characteristics": {
+          "first": "Free markets and strong competition",
+          "second": "Private ownership of assets",
+          "third": "Innovation driven by financial incentives"
+        }
+      },
+      "sosialisme": {
+        "description": "A social and economic system in which the means of production and distribution are managed collectively for public welfare.",
+        "characteristics": {
+          "first": "Broad social safety nets",
+          "second": "Economic equality",
+          "third": "Low-cost or free public services"
+        }
+      },
+      "komunisme": {
+        "description": "An ideology that seeks a classless society based on collective ownership of the means of production.",
+        "characteristics": {
+          "first": "A fully state-planned economy",
+          "second": "Single-party government",
+          "third": "Collective distribution of goods"
+        }
+      },
+      "nasionalisme": {
+        "description": "An ideology that places sovereignty, unity, culture, and national interests above all else.",
+        "characteristics": {
+          "first": "Economic and food self-sufficiency",
+          "second": "Pride in national identity",
+          "third": "Protection from foreign influence"
+        }
+      },
+      "konservatisme": {
+        "description": "A doctrine that prioritizes preserving traditional values, law, order, and established institutions.",
+        "characteristics": {
+          "first": "Stability in cultural and religious values",
+          "second": "Strong social order",
+          "third": "Gradual change"
+        }
+      },
+      "liberalisme": {
+        "description": "An ideology focused on individual freedom, civil rights, friendly international relations, and free markets.",
+        "characteristics": {
+          "first": "Individual and market freedoms",
+          "second": "Support for globalization",
+          "third": "Limited economic regulation"
+        }
+      },
+      "otoritarianisme": {
+        "description": "A political system that concentrates power in the hands of rulers without effective opposition oversight.",
+        "characteristics": {
+          "first": "Centralized and decisive leadership",
+          "second": "Rapid resource mobilization",
+          "third": "Strict national discipline"
+        }
+      }
+    }
+  },
+  "confirmModal": {
+    "titleInfo": "Ideology Effectiveness",
+    "titleConfirm": "Confirm Ideology Shift",
+    "activeEffects": "Currently active ideological bonuses",
+    "warningText": "Realigning the state doctrine requires a 7-day political transition period or an instant stabilization budget.",
+    "btnGradual": "Adopt Gradually (7 Days)",
+    "btnInstant": "Adopt Instantly ({cost} NEO)",
+    "btnCancel": "Cancel"
+  },
+  "fundsModal": {
+    "title": "Insufficient Funds!",
+    "desc": "You require {cost} NEO to carry out this instant reform.",
+    "currentTreasury": "Current national treasury: {money} NEO",
+    "btnTakeLoan": "Take a Loan",
+    "btnClose": "Close"
+  }
+}

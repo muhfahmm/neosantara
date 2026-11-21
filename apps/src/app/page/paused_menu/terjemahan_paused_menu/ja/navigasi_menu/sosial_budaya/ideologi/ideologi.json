@@ -1,0 +1,137 @@
+{
+  "title": "国家の哲学と政治イデオロギー",
+  "tabCountry": "国家体制",
+  "tabWorld": "世界の政治体制",
+  "searchPlaceholder": "イデオロギーや国名を検索...",
+  "sortDefault": "デフォルト順",
+  "sortAvailableFirst": "利用可能順",
+  "sortAZ": "名称 A-Z",
+  "sortZA": "名称 Z-A",
+  "currentIdeologyBadge": "現在採用中",
+  "scheduledBadge": "体制移行予定",
+  "scheduledFinishNotice": "{days}日後に完了予定 ({date})",
+  "instantCostNotice": "即時移行費用: {cost} NEO",
+  "colCountry": "国名",
+  "colIdeology": "公式イデオロギー",
+  "noData": "イデオロギーのデータがありません。",
+  "ideologies": {
+    "demokrasi": "民主主義",
+    "monarki": "君主制",
+    "kapitalisme": "資本主義",
+    "sosialisme": "社会主義",
+    "komunisme": "共産主義",
+    "nasionalisme": "ナショナリズム",
+    "konservatisme": "保守主義",
+    "liberalisme": "自由主義",
+    "otoritarianisme": "権威主義 / 全体主義"
+  },
+  "bonuses": {
+    "demokrasi": "税収総額: +10%",
+    "monarki": "軍事戦闘力: +15%",
+    "kapitalisme": "税収総額: +50%",
+    "sosialisme": "出生率ボーナス: +10%",
+    "komunisme": "全産業総合生産力: +10%",
+    "nasionalisme": "食料生産量: +10%",
+    "konservatisme": "税収総額: +5%",
+    "liberalisme": "税収総額: +25%",
+    "otoritarianisme": "軍事戦闘力: +25%"
+  },
+  "infoModal": {
+    "title": "イデオロギー詳細百科",
+    "sectionCharacteristics": "主な体制特徴",
+    "sectionPros": "利点と国家恩恵",
+    "sectionCons": "課題と潜在的リスク",
+    "sectionBonuses": "国家主要戦略ボーナス",
+    "btnClose": "閉じる",
+    "details": {
+      "demokrasi": {
+        "description": "最高権力を国民が持ち、定期的な選挙を通じて行使する政治体制です。",
+        "characteristics": {
+          "first": "複数政党制と市民の自由",
+          "second": "高い公的説明責任",
+          "third": "人権の保護"
+        }
+      },
+      "monarki": {
+        "description": "王や女王、または世襲の国家元首が統治する伝統的な政治体制です。",
+        "characteristics": {
+          "first": "家系によって受け継がれる指導体制",
+          "second": "長期的な指導体制の安定",
+          "third": "根強い文化的伝統"
+        }
+      },
+      "kapitalisme": {
+        "description": "民間の所有者が利益を目的として貿易や産業を管理する経済・政治体制です。",
+        "characteristics": {
+          "first": "自由市場と激しい競争",
+          "second": "民間による資産所有",
+          "third": "金銭的な動機に基づく革新"
+        }
+      },
+      "sosialisme": {
+        "description": "公共の福祉のため、生産と流通の手段を共同で管理する社会・経済体制です。",
+        "characteristics": {
+          "first": "幅広い社会保障",
+          "second": "経済的な平等",
+          "third": "低価格または無料の公共サービス"
+        }
+      },
+      "komunisme": {
+        "description": "生産手段の共有を基盤とする、階級のない社会を目指す思想です。",
+        "characteristics": {
+          "first": "国家による全面的な計画経済",
+          "second": "一党制の政府",
+          "third": "物資の共同配分"
+        }
+      },
+      "nasionalisme": {
+        "description": "主権、団結、文化、国益を最優先する思想です。",
+        "characteristics": {
+          "first": "経済と食料の自立",
+          "second": "国家のアイデンティティへの誇り",
+          "third": "外国からの影響を防ぐ"
+        }
+      },
+      "konservatisme": {
+        "description": "伝統的価値観、法、秩序、確立された制度の維持を重視する考え方です。",
+        "characteristics": {
+          "first": "文化的・宗教的価値観の安定",
+          "second": "強固な社会秩序",
+          "third": "段階的な変化"
+        }
+      },
+      "liberalisme": {
+        "description": "個人の自由、市民権、友好的な国際関係、自由市場を重視する思想です。",
+        "characteristics": {
+          "first": "個人と市場の自由",
+          "second": "グローバル化の推進",
+          "third": "限定的な経済規制"
+        }
+      },
+      "otoritarianisme": {
+        "description": "有効な野党の監視を受けず、支配者に権力が集中する政治体制です。",
+        "characteristics": {
+          "first": "中央集権的で断固とした指導",
+          "second": "迅速な資源動員",
+          "third": "厳格な国家規律"
+        }
+      }
+    }
+  },
+  "confirmModal": {
+    "titleInfo": "イデオロギー効果と恩恵",
+    "titleConfirm": "国家体制の変革確認",
+    "activeEffects": "現在有効な体制ボーナス",
+    "warningText": "国家指導方針の転換には7日間の政治的適応期間、または政権安定のための即時断行予算が必要です。",
+    "btnGradual": "段階的移行 (7日間)",
+    "btnInstant": "即時移行 ({cost} NEO)",
+    "btnCancel": "キャンセル"
+  },
+  "fundsModal": {
+    "title": "国庫資金不足！",
+    "desc": "即時体制改革には {cost} NEO の資金が必要です。",
+    "currentTreasury": "現在の国庫残高: {money} NEO",
+    "btnTakeLoan": "国家借款を受ける",
+    "btnClose": "閉じる"
+  }
+}

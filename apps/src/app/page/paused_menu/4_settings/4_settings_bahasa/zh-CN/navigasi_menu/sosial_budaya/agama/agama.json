@@ -1,0 +1,55 @@
+{
+  "title": "国家宗教与主流信仰",
+  "tabCountry": "本国宗教",
+  "tabWorld": "世界宗教",
+  "searchPlaceholder": "搜索宗教或国家...",
+  "sortDefault": "默认排序",
+  "sortAvailableFirst": "可变更优先",
+  "sortAZ": "名称 A-Z",
+  "sortZA": "名称 Z-A",
+  "currentReligionBadge": "现行国教",
+  "scheduledBadge": "宗教改革进行中",
+  "scheduledFinishNotice": "预计在 {days} 天后完成 ({date})",
+  "instantCostNotice": "即时推行费用: {cost} NEO",
+  "colCountry": "国家",
+  "colReligion": "主体宗教",
+  "noData": "暂无宗教数据。",
+  "religions": {
+    "islam": "伊斯兰教",
+    "katolik": "天主教",
+    "protestan": "基督教新教",
+    "kristen_ortodoks": "东正教",
+    "hindu": "印度教",
+    "buddha": "佛教",
+    "yahudi": "犹太教",
+    "shinto": "神道教",
+    "ateisme": "无神论 / 世俗化"
+  },
+  "bonuses": {
+    "islam": "粮食与战略资源产出: +10%",
+    "katolik": "联合国大会投票影响力: +10",
+    "protestan": "贸易售价: +5%, 采购价: -5%",
+    "kristen_ortodoks": "个人所得税收收益: +5%",
+    "hindu": "国民人口年化增长率: +8%",
+    "buddha": "生态环境环保税收入: +10%",
+    "yahudi": "工业制造厂与矿场工期: -10%",
+    "shinto": "全国电力发电产出: +10%",
+    "ateisme": "前沿科学研发速度: +15%"
+  },
+  "confirmModal": {
+    "titleInfo": "宗教效能与加成",
+    "titleConfirm": "确认调整国家官方宗教",
+    "activeEffects": "当前生效的宗教神圣加成",
+    "warningText": "更改国家主流信仰需要7天的社会思想转型过渡期，或支付专项财政经费完成闪电推行。",
+    "btnGradual": "渐进过渡推行 (7天)",
+    "btnInstant": "闪电立即推行 ({cost} NEO)",
+    "btnCancel": "取消"
+  },
+  "fundsModal": {
+    "title": "国家财政资金不足！",
+    "desc": "推行本次闪电宗教改革需要储备 {cost} NEO。",
+    "currentTreasury": "当前国家财政国库余额: {money} NEO",
+    "btnTakeLoan": "申请国家贷款",
+    "btnClose": "关闭"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "title": "国家官方意识形态与哲学",
+  "tabCountry": "国家意识形态",
+  "tabWorld": "世界意识形态",
+  "searchPlaceholder": "搜索意识形态或国家...",
+  "sortDefault": "默认排序",
+  "sortAvailableFirst": "可变更优先",
+  "sortAZ": "名称 A-Z",
+  "sortZA": "名称 Z-A",
+  "currentIdeologyBadge": "现行意识形态",
+  "scheduledBadge": "政治体制转型中",
+  "scheduledFinishNotice": "预计在 {days} 天后完成 ({date})",
+  "instantCostNotice": "即时推行费用: {cost} NEO",
+  "colCountry": "国家",
+  "colIdeology": "官方体制",
+  "noData": "暂无意识形态数据。",
+  "ideologies": {
+    "demokrasi": "民主体制",
+    "monarki": "君主体制",
+    "kapitalisme": "自由资本主义",
+    "sosialisme": "社会主义",
+    "komunisme": "共产主义",
+    "nasionalisme": "民族主义",
+    "konservatisme": "传统保守主义",
+    "liberalisme": "自由主义",
+    "otoritarianisme": "权威主义 / 极权体制"
+  },
+  "bonuses": {
+    "demokrasi": "国家财政税收: +10%",
+    "monarki": "军队综合作战力: +15%",
+    "kapitalisme": "国家财政税收: +50%",
+    "sosialisme": "国民生育繁衍率: +10%",
+    "komunisme": "全国全行业工业综合产能: +10%",
+    "nasionalisme": "国家粮食农业总产量: +10%",
+    "konservatisme": "国家财政税收: +5%",
+    "liberalisme": "国家财政税收: +25%",
+    "otoritarianisme": "军队综合作战力: +25%"
+  },
+  "infoModal": {
+    "title": "国家意识形态档案",
+    "sectionCharacteristics": "核心政体特征",
+    "sectionPros": "体制优势与红利",
+    "sectionCons": "制度弊端与风险",
+    "sectionBonuses": "国家主要战略加成",
+    "btnClose": "关闭"
+  },
+  "confirmModal": {
+    "titleInfo": "意识形态政体效能",
+    "titleConfirm": "确认调整国家官方意识形态",
+    "activeEffects": "当前生效的政体战略加成",
+    "warningText": "重塑国家意识形态纲领需要7天的政局适应期，或拨发紧急财政资金实现政体平稳即时过渡。",
+    "btnGradual": "渐进过渡转型 (7天)",
+    "btnInstant": "闪电立即推行 ({cost} NEO)",
+    "btnCancel": "取消"
+  },
+  "fundsModal": {
+    "title": "国家财政资金不足！",
+    "desc": "推行本次闪电政体转型需要储备 {cost} NEO。",
+    "currentTreasury": "当前国家财政国库余额: {money} NEO",
+    "btnTakeLoan": "申请国家贷款",
+    "btnClose": "关闭"
+  }
+}

@@ -70,6 +70,9 @@ import idGeopoliticsPbb from './id/navigasi_menu/geopolitik_menu/pbb_menu/pbb_me
 import idGeopoliticsEmbassy from './id/navigasi_menu/geopolitik_menu/kedutaan_besar/kedutaan_besar.json';
 import idGeopoliticsOrganizations from './id/navigasi_menu/geopolitik_menu/organisasi_internasional/organisasi_internasional.json';
 import idGeopoliticsRelations from './id/navigasi_menu/geopolitik_menu/tingkat_hubungan/tingkat_hubungan.json';
+import idSosialBudayaAgama from './id/navigasi_menu/sosial_budaya/agama/agama.json';
+import idSosialBudayaIdeologi from './id/navigasi_menu/sosial_budaya/ideologi/ideologi.json';
+import idSosialBudayaDoktrin from './id/navigasi_menu/sosial_budaya/doktrin_keterbukaan/doktrin_keterbukaan.json';
 
 const ID_DICTIONARY: LanguageDictionary = {
   common: idCommon,
@@ -121,6 +124,9 @@ const ID_DICTIONARY: LanguageDictionary = {
   navigation_geopolitics_embassy: idGeopoliticsEmbassy,
   navigation_geopolitics_organizations: idGeopoliticsOrganizations,
   navigation_geopolitics_relations: idGeopoliticsRelations,
+  nav_sosial_budaya_agama: idSosialBudayaAgama,
+  nav_sosial_budaya_ideologi: idSosialBudayaIdeologi,
+  nav_sosial_budaya_doktrin: idSosialBudayaDoktrin,
 };
 
 const STORAGE_KEY = 'app_language';
@@ -207,6 +213,9 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     geopoliticsEmbassy,
     geopoliticsOrganizations,
     geopoliticsRelations,
+    sosialBudayaAgama,
+    sosialBudayaIdeologi,
+    sosialBudayaDoktrin,
   ] = await Promise.all([
     import(`./${code}/common.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navbar/navbar.json`).then((m) => m.default).catch(() => ({})),
@@ -253,6 +262,9 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     import(`./${code}/navigasi_menu/geopolitik_menu/kedutaan_besar/kedutaan_besar.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navigasi_menu/geopolitik_menu/organisasi_internasional/organisasi_internasional.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navigasi_menu/geopolitik_menu/tingkat_hubungan/tingkat_hubungan.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/sosial_budaya/agama/agama.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/sosial_budaya/ideologi/ideologi.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/sosial_budaya/doktrin_keterbukaan/doktrin_keterbukaan.json`).then((m) => m.default).catch(() => ({})),
   ]);
 
   return {
@@ -305,6 +317,9 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     navigation_geopolitics_embassy: geopoliticsEmbassy,
     navigation_geopolitics_organizations: geopoliticsOrganizations,
     navigation_geopolitics_relations: geopoliticsRelations,
+    nav_sosial_budaya_agama: sosialBudayaAgama,
+    nav_sosial_budaya_ideologi: sosialBudayaIdeologi,
+    nav_sosial_budaya_doktrin: sosialBudayaDoktrin,
   };
 }
 

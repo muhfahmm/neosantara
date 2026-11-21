@@ -1,0 +1,55 @@
+{
+  "title": "국가 종교 및 신앙",
+  "tabCountry": "국가 종교",
+  "tabWorld": "세계의 종교",
+  "searchPlaceholder": "종교 또는 국가 검색...",
+  "sortDefault": "기본 정렬",
+  "sortAvailableFirst": "변경 가능 우선",
+  "sortAZ": "이름순 A-Z",
+  "sortZA": "이름순 Z-A",
+  "currentReligionBadge": "현재 신봉 중",
+  "scheduledBadge": "개혁 예정됨",
+  "scheduledFinishNotice": "{days}일 후 완료 예정 ({date})",
+  "instantCostNotice": "즉각 도입 비용: {cost} NEO",
+  "colCountry": "국가",
+  "colReligion": "주요 종교",
+  "noData": "종교 데이터가 없습니다.",
+  "religions": {
+    "islam": "이슬람교",
+    "katolik": "가톨릭",
+    "protestan": "개신교",
+    "kristen_ortodoks": "정교회",
+    "hindu": "힌두교",
+    "buddha": "불교",
+    "yahudi": "유대교",
+    "shinto": "신도",
+    "ateisme": "무신론 / 세속주의"
+  },
+  "bonuses": {
+    "islam": "식량 및 자원 생산량: +10%",
+    "katolik": "유엔 총회 투표 영향력: +10",
+    "protestan": "수출 단가: +5%, 수입 단가: -5%",
+    "kristen_ortodoks": "개인 소득세 수입: +5%",
+    "hindu": "인구 성장률: +8%",
+    "buddha": "환경세 수입: +10%",
+    "yahudi": "공장 및 광산 건설 기간: -10%",
+    "shinto": "전력 발전량: +10%",
+    "ateisme": "과학 연구 속도: +15%"
+  },
+  "confirmModal": {
+    "titleInfo": "종교 효과 및 보너스",
+    "titleConfirm": "국가 종교 변경 확인",
+    "activeEffects": "현재 활성화된 종교 효과",
+    "warningText": "국가 공인 종교 개혁은 7일간의 사회적 적응 기간 또는 즉각적 단행을 위한 예산이 필요합니다.",
+    "btnGradual": "점진적 도입 (7일)",
+    "btnInstant": "즉시 도입 ({cost} NEO)",
+    "btnCancel": "취소"
+  },
+  "fundsModal": {
+    "title": "재정 국고 부족!",
+    "desc": "즉각적인 개혁 단행을 위해 {cost} NEO가 필요합니다.",
+    "currentTreasury": "현재 국고 잔액: {money} NEO",
+    "btnTakeLoan": "차관 신청",
+    "btnClose": "닫기"
+  }
+}

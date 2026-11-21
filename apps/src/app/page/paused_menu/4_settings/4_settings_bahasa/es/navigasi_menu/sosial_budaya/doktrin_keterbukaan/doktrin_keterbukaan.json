@@ -1,0 +1,93 @@
+{
+  "title": "Doctrina de Apertura del Estado",
+  "subtitle": "Regulaciones sobre libertades civiles, control de medios e información y fronteras geopolíticas.",
+  "scoreLabel": "Índice de Apertura Nacional",
+  "tabCivil": "Libertades Civiles y DD.HH.",
+  "tabMedia": "Medios e Información Digital",
+  "tabGlobal": "Fronteras y Geopolítica",
+  "thresholdLowLabel": "Efectos de Política Estricta (<30%)",
+  "thresholdHighLabel": "Efectos de Política Abierta (>70%)",
+  "regimes": {
+    "autarki": {
+      "label": "Estado Totalmente Aislado (Autarquía)",
+      "badge": "Aislacionista Extremo",
+      "desc": "Completamente cerrado al mundo exterior, censura estricta de medios e internet, manifestaciones prohibidas y autarquía económica absoluta."
+    },
+    "proteksionis": {
+      "label": "Estado Proteccionista y Autoritario",
+      "badge": "Modelo Restringido",
+      "desc": "El gobierno restringe la inmigración, filtra medios públicos y limita protestas para mantener la estabilidad."
+    },
+    "moderat": {
+      "label": "Estado Moderado y Mixto",
+      "badge": "Modelo Moderado",
+      "desc": "Equilibrio pragmático entre derechos civiles, orden público y apertura al comercio internacional."
+    },
+    "demokratis": {
+      "label": "Estado Abierto y Democrático",
+      "badge": "Modelo Democrático",
+      "desc": "Garantía de libertad de expresión y prensa, fronteras accesibles, internet sin censura y alta transparencia presupuestaria."
+    },
+    "globalis": {
+      "label": "Estado Globalista y de Libre Mercado",
+      "badge": "Hegemón del Libre Mercado",
+      "desc": "Máxima protección de los derechos humanos, libertad periodística plena, fronteras sin visado y comercio internacional sin aranceles."
+    }
+  },
+  "indicators": {
+    "speechScore": {
+      "title": "Libertad de Expresión y Opinión",
+      "desc": "Nivel de libertad de los ciudadanos para debatir políticas y criticar al gobierno sin temor a represalias penales.",
+      "lowNotice": "Censura implacable sobre las críticas al régimen; duras sanciones a disidentes.",
+      "highNotice": "Libertad de expresión plena y protección del debate cívico y pluralista."
+    },
+    "religionScore": {
+      "title": "Libertad Religiosa y de Culto",
+      "desc": "Garantía constitucional para profesar o cambiar de religión sin discriminación institucional.",
+      "lowNotice": "Prácticas religiosas intervenidas por el Estado; cultos no oficiales prohibidos.",
+      "highNotice": "Protección absoluta de la libertad religiosa y los lugares de culto de minorías."
+    },
+    "demoScore": {
+      "title": "Derecho a Manifestación y Huelga",
+      "desc": "Facilidad con que los ciudadanos pueden congregarse pacíficamente para expresar demandas sociales.",
+      "lowNotice": "Manifestaciones prohibidas y disueltas de inmediato por las fuerzas del orden.",
+      "highNotice": "Protestas pacíficas amparadas por ley sin requerir permisos policiales engorrosos."
+    },
+    "transparencyScore": {
+      "title": "Transparencia y Rendición de Cuentas",
+      "desc": "Apertura de los presupuestos estatales, contrataciones públicas y fiscalización anticorrupción.",
+      "lowNotice": "Gastos públicos clasificados bajo estricto secreto de Estado.",
+      "highNotice": "Auditorías fiscales y presupuestos del Estado publicados íntegramente a los ciudadanos."
+    },
+    "mediaScore": {
+      "title": "Libertad de Prensa y Periodismo",
+      "desc": "Independencia de medios de comunicación y reporteros de investigación ante la censura gubernamental.",
+      "lowNotice": "Las cadenas y agencias informativas operan bajo estricto control ministerial.",
+      "highNotice": "El periodismo investigativo opera libremente fiscalizando al poder público."
+    },
+    "internetScore": {
+      "title": "Acceso a Internet y Redes Digitales",
+      "desc": "Conectividad sin filtros al tráfico web mundial, plataformas digitales y redes sociales globales.",
+      "lowNotice": "El Estado impone un cortafuegos nacional; acceso global fuertemente restringido.",
+      "highNotice": "Acceso a internet abierto sin censura de cortafuegos y alta velocidad digital."
+    },
+    "borderScore": {
+      "title": "Apertura Fronteriza y Visados",
+      "desc": "Regulaciones migratorias para turistas, inversores, expatriados calificados y viajeros internacionales.",
+      "lowNotice": "Fronteras militarizadas y cerradas; concesión de visados casi inexistente.",
+      "highNotice": "Exención universal de visados para decenas de naciones aliadas con el fin de fomentar el turismo."
+    },
+    "tradeScore": {
+      "title": "Aranceles y Comercio Internacional",
+      "desc": "Apertura a las importaciones y exportaciones de mercancías, tasas aduaneras y cuotas comerciales.",
+      "lowNotice": "Aranceles proteccionistas extremos para imponer la sustitución forzada de importaciones.",
+      "highNotice": "Zonas francas con arancel cero y liberalización total del intercambio mercantil."
+    },
+    "diplomacyScore": {
+      "title": "Compromiso Diplomático y Multilateral",
+      "desc": "Participación en cumbres internacionales, foros multilaterales y misiones de paz de la ONU.",
+      "lowNotice": "Aislacionismo riguroso; rechazo a firmar acuerdos y tratados internacionales.",
+      "highNotice": "Liderazgo activo en alianzas multinacionales y misiones de mantenimiento de la paz."
+    }
+  }
+}

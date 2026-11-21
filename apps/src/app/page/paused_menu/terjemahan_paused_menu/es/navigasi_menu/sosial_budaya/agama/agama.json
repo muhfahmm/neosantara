@@ -1,0 +1,55 @@
+{
+  "title": "Religión y Creencias del Estado",
+  "tabCountry": "Religión Estatal",
+  "tabWorld": "Mundo",
+  "searchPlaceholder": "Buscar religión o país...",
+  "sortDefault": "Predeterminado",
+  "sortAvailableFirst": "Disponibles Primero",
+  "sortAZ": "Nombre A-Z",
+  "sortZA": "Nombre Z-A",
+  "currentReligionBadge": "Profesa Actualmente",
+  "scheduledBadge": "Cambio Programado",
+  "scheduledFinishNotice": "Se completa en {days} días ({date})",
+  "instantCostNotice": "Coste Instantáneo: {cost} NEO",
+  "colCountry": "País",
+  "colReligion": "Religión Mayoritaria",
+  "noData": "No se encontraron datos religiosos.",
+  "religions": {
+    "islam": "Islam",
+    "katolik": "Catolicismo",
+    "protestan": "Protestantismo",
+    "kristen_ortodoks": "Ortodoxia Oriental",
+    "hindu": "Hinduismo",
+    "buddha": "Budismo",
+    "yahudi": "Judaísmo",
+    "shinto": "Sintoísmo",
+    "ateisme": "Ateísmo / Secularismo"
+  },
+  "bonuses": {
+    "islam": "Producción de alimentos y recursos: +10%",
+    "katolik": "Influencia de voto en la ONU: +10",
+    "protestan": "Precios de venta: +5%, Precios de compra: -5%",
+    "kristen_ortodoks": "Ingresos por Impuesto sobre la Renta: +5%",
+    "hindu": "Tasa de crecimiento demográfico: +8%",
+    "buddha": "Recaudación de impuestos ambientales: +10%",
+    "yahudi": "Tiempo de construcción de fábricas y minas: -10%",
+    "shinto": "Producción de energía eléctrica: +10%",
+    "ateisme": "Velocidad de investigación científica: +15%"
+  },
+  "confirmModal": {
+    "titleInfo": "Efectividad Religiosa",
+    "titleConfirm": "Confirmar Cambio de Religión",
+    "activeEffects": "Efectos religiosos activos actualmente",
+    "warningText": "Modificar la religión oficial requiere un período de adaptación social de 7 días o un pago inmediato para una transición rápida.",
+    "btnGradual": "Aplicar Gradualmente (7 Días)",
+    "btnInstant": "Aplicar Instantáneamente ({cost} NEO)",
+    "btnCancel": "Cancelar"
+  },
+  "fundsModal": {
+    "title": "¡Fondos Insuficientes!",
+    "desc": "Necesita {cost} NEO para completar esta transición inmediata.",
+    "currentTreasury": "Tesorería nacional actual: {money} NEO",
+    "btnTakeLoan": "Solicitar Préstamo",
+    "btnClose": "Cerrar"
+  }
+}

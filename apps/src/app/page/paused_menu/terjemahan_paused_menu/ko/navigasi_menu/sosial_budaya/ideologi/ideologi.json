@@ -1,0 +1,137 @@
+{
+  "title": "국가 철학 및 이념 체제",
+  "tabCountry": "국가 이념",
+  "tabWorld": "세계의 이념",
+  "searchPlaceholder": "이념 또는 국가 검색...",
+  "sortDefault": "기본 정렬",
+  "sortAvailableFirst": "변경 가능 우선",
+  "sortAZ": "이름순 A-Z",
+  "sortZA": "이름순 Z-A",
+  "currentIdeologyBadge": "현재 채택 중",
+  "scheduledBadge": "체제 전환 예정됨",
+  "scheduledFinishNotice": "{days}일 후 완료 예정 ({date})",
+  "instantCostNotice": "즉각 도입 비용: {cost} NEO",
+  "colCountry": "국가",
+  "colIdeology": "공식 이념",
+  "noData": "이념 데이터가 없습니다.",
+  "ideologies": {
+    "demokrasi": "민주주의",
+    "monarki": "군주제",
+    "kapitalisme": "자본주의",
+    "sosialisme": "사회주의",
+    "komunisme": "공산주의",
+    "nasionalisme": "민족주의",
+    "konservatisme": "보수주의",
+    "liberalisme": "자유주의",
+    "otoritarianisme": "권위주의"
+  },
+  "bonuses": {
+    "demokrasi": "조세 수입: +10%",
+    "monarki": "군사력: +15%",
+    "kapitalisme": "조세 수입: +50%",
+    "sosialisme": "출산율 보너스: +10%",
+    "komunisme": "전 산업 총 생산량: +10%",
+    "nasionalisme": "식량 생산량: +10%",
+    "konservatisme": "조세 수입: +5%",
+    "liberalisme": "조세 수입: +25%",
+    "otoritarianisme": "군사력: +25%"
+  },
+  "infoModal": {
+    "title": "이념 백과사전",
+    "sectionCharacteristics": "핵심 체제 특성",
+    "sectionPros": "강점 및 이점",
+    "sectionCons": "약점 및 위험 요소",
+    "sectionBonuses": "국가 전략 보너스",
+    "btnClose": "닫기",
+    "details": {
+      "demokrasi": {
+        "description": "최고 권력이 국민에게 있고 정기적인 선거를 통해 행사되는 정부 체제입니다.",
+        "characteristics": {
+          "first": "다당제와 시민의 자유",
+          "second": "높은 공적 책임성",
+          "third": "인권 보호"
+        }
+      },
+      "monarki": {
+        "description": "왕이나 여왕 또는 세습 국가 원수가 통치하는 전통적인 정부 체제입니다.",
+        "characteristics": {
+          "first": "가문을 따라 이어지는 지도 체제",
+          "second": "장기적인 지도 체제의 안정성",
+          "third": "강한 문화적 전통"
+        }
+      },
+      "kapitalisme": {
+        "description": "민간 소유자가 이윤을 위해 무역과 산업을 통제하는 경제·정치 체제입니다.",
+        "characteristics": {
+          "first": "자유 시장과 치열한 경쟁",
+          "second": "민간의 자산 소유",
+          "third": "재정적 유인에 기반한 혁신"
+        }
+      },
+      "sosialisme": {
+        "description": "공공의 복지를 위해 생산과 분배 수단을 공동으로 관리하는 사회·경제 체제입니다.",
+        "characteristics": {
+          "first": "폭넓은 사회 안전망",
+          "second": "경제적 평등",
+          "third": "저렴하거나 무료인 공공 서비스"
+        }
+      },
+      "komunisme": {
+        "description": "생산 수단의 공동 소유를 바탕으로 계급 없는 사회를 추구하는 이념입니다.",
+        "characteristics": {
+          "first": "국가가 전적으로 계획하는 경제",
+          "second": "일당 정부",
+          "third": "재화의 공동 분배"
+        }
+      },
+      "nasionalisme": {
+        "description": "주권, 단결, 문화, 국가 이익을 최우선으로 두는 이념입니다.",
+        "characteristics": {
+          "first": "경제 및 식량 자립",
+          "second": "국가 정체성에 대한 자부심",
+          "third": "외부 영향으로부터의 보호"
+        }
+      },
+      "konservatisme": {
+        "description": "전통적 가치, 법과 질서, 기존 제도의 보존을 우선시하는 사상입니다.",
+        "characteristics": {
+          "first": "문화 및 종교적 가치의 안정",
+          "second": "강한 사회 질서",
+          "third": "점진적인 변화"
+        }
+      },
+      "liberalisme": {
+        "description": "개인의 자유, 시민권, 우호적인 국제 관계와 자유 시장에 중점을 두는 이념입니다.",
+        "characteristics": {
+          "first": "개인과 시장의 자유",
+          "second": "세계화 지지",
+          "third": "제한적인 경제 규제"
+        }
+      },
+      "otoritarianisme": {
+        "description": "효과적인 야당의 견제 없이 통치자에게 권력이 집중되는 정치 체제입니다.",
+        "characteristics": {
+          "first": "중앙집권적이고 단호한 지도력",
+          "second": "신속한 자원 동원",
+          "third": "엄격한 국가 규율"
+        }
+      }
+    }
+  },
+  "confirmModal": {
+    "titleInfo": "이념 효과 및 보너스",
+    "titleConfirm": "국가 공식 이념 변경 확인",
+    "activeEffects": "현재 활성화된 체제 보너스",
+    "warningText": "국가 정책 이념 전환에는 7일간의 정치적 적응 기간 또는 즉각적 단행을 위한 안정화 예산이 필요합니다.",
+    "btnGradual": "점진적 도입 (7일)",
+    "btnInstant": "즉시 도입 ({cost} NEO)",
+    "btnCancel": "취소"
+  },
+  "fundsModal": {
+    "title": "재정 국고 부족!",
+    "desc": "즉각적인 개혁 단행을 위해 {cost} NEO가 필요합니다.",
+    "currentTreasury": "현재 국고 잔액: {money} NEO",
+    "btnTakeLoan": "차관 신청",
+    "btnClose": "닫기"
+  }
+}

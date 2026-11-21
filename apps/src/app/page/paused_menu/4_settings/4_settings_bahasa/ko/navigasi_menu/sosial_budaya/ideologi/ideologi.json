@@ -1,0 +1,63 @@
+{
+  "title": "국가 철학 및 이념 체제",
+  "tabCountry": "국가 이념",
+  "tabWorld": "세계의 이념",
+  "searchPlaceholder": "이념 또는 국가 검색...",
+  "sortDefault": "기본 정렬",
+  "sortAvailableFirst": "변경 가능 우선",
+  "sortAZ": "이름순 A-Z",
+  "sortZA": "이름순 Z-A",
+  "currentIdeologyBadge": "현재 채택 중",
+  "scheduledBadge": "체제 전환 예정됨",
+  "scheduledFinishNotice": "{days}일 후 완료 예정 ({date})",
+  "instantCostNotice": "즉각 도입 비용: {cost} NEO",
+  "colCountry": "국가",
+  "colIdeology": "공식 이념",
+  "noData": "이념 데이터가 없습니다.",
+  "ideologies": {
+    "demokrasi": "민주주의",
+    "monarki": "군주제",
+    "kapitalisme": "자본주의",
+    "sosialisme": "사회주의",
+    "komunisme": "공산주의",
+    "nasionalisme": "민족주의",
+    "konservatisme": "보수주의",
+    "liberalisme": "자유주의",
+    "otoritarianisme": "권위주의"
+  },
+  "bonuses": {
+    "demokrasi": "조세 수입: +10%",
+    "monarki": "군사력: +15%",
+    "kapitalisme": "조세 수입: +50%",
+    "sosialisme": "출산율 보너스: +10%",
+    "komunisme": "전 산업 총 생산량: +10%",
+    "nasionalisme": "식량 생산량: +10%",
+    "konservatisme": "조세 수입: +5%",
+    "liberalisme": "조세 수입: +25%",
+    "otoritarianisme": "군사력: +25%"
+  },
+  "infoModal": {
+    "title": "이념 백과사전",
+    "sectionCharacteristics": "핵심 체제 특성",
+    "sectionPros": "강점 및 이점",
+    "sectionCons": "약점 및 위험 요소",
+    "sectionBonuses": "국가 전략 보너스",
+    "btnClose": "닫기"
+  },
+  "confirmModal": {
+    "titleInfo": "이념 효과 및 보너스",
+    "titleConfirm": "국가 공식 이념 변경 확인",
+    "activeEffects": "현재 활성화된 체제 보너스",
+    "warningText": "국가 정책 이념 전환에는 7일간의 정치적 적응 기간 또는 즉각적 단행을 위한 안정화 예산이 필요합니다.",
+    "btnGradual": "점진적 도입 (7일)",
+    "btnInstant": "즉시 도입 ({cost} NEO)",
+    "btnCancel": "취소"
+  },
+  "fundsModal": {
+    "title": "재정 국고 부족!",
+    "desc": "즉각적인 개혁 단행을 위해 {cost} NEO가 필요합니다.",
+    "currentTreasury": "현재 국고 잔액: {money} NEO",
+    "btnTakeLoan": "차관 신청",
+    "btnClose": "닫기"
+  }
+}

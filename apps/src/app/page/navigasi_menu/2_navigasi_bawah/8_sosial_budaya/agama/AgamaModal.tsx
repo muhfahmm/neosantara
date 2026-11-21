@@ -7,6 +7,8 @@ import Image from "next/image";
 import { Star, Globe, MoonStar, Church, Sun, CircleDot, Atom, Check } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalTabs from "@/app/page/root_modals_design_menu/RootModalTabs";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
+import { getLocalizedCountryName } from "@/app/logic/countryNameLogic";
 import MenuInfoButton from "../../MenuInfoButton";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
 import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
@@ -75,6 +77,7 @@ const RELIGION_ICONS: Record<string, React.ReactNode> = {
 };
 
 export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail, setCountryDetail, onNotification }: ModalProps) {
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<"agama" | "dunia">("agama");
   const [selectedReligion, setSelectedReligion] = useState<string | null>(null);
@@ -297,15 +300,15 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                 </div>
                 <div>
                   <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                    Agama & Kebebasan Berkeyakinan
+                    {t('nav_sosial_budaya_agama.title') || 'Agama & Kebebasan Berkeyakinan'}
                   </h2>
                 </div>
               </div>
             </div>
             <div className="root-modal-util-6cfc7e6ab3">
               <MenuInfoButton
-                title="Agama & Kepercayaan"
-                description="Pilih dan kelola agama atau kepercayaan negara, lalu tinjau persebarannya di dunia. Setiap pilihan memiliki bonus tersendiri dan perubahan agama memerlukan biaya serta konfirmasi."
+                title={t('nav_sosial_budaya_agama.title') || 'Agama & Kepercayaan'}
+                description={t('nav_sosial_budaya_agama.confirmModal.warningText') || 'Pilih dan kelola agama atau kepercayaan negara, lalu tinjau persebarannya di dunia. Setiap pilihan memiliki bonus tersendiri dan perubahan agama memerlukan biaya serta konfirmasi.'}
               />
               <RootModalCloseButton onClick={onClose} />
             </div>
@@ -317,16 +320,16 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                 className="satisfaction-modal-tabs"
                 items={[
                   {
-                    label: "Agama & Kebebasan Berkeyakinan",
-                    isActive: activeTab === "agama",
-                    onClick: () => setActiveTab("agama"),
-                    onPointerDown: () => setActiveTab("agama"),
+                    label: t('nav_sosial_budaya_agama.tabCountry') || 'Agama & Kebebasan Berkeyakinan',
+                    isActive: activeTab === 'agama',
+                    onClick: () => setActiveTab('agama'),
+                    onPointerDown: () => setActiveTab('agama'),
                   },
                   {
-                    label: "Agama Dunia",
-                    isActive: activeTab === "dunia",
-                    onClick: () => setActiveTab("dunia"),
-                    onPointerDown: () => setActiveTab("dunia"),
+                    label: t('nav_sosial_budaya_agama.tabWorld') || 'Agama Dunia',
+                    isActive: activeTab === 'dunia',
+                    onClick: () => setActiveTab('dunia'),
+                    onPointerDown: () => setActiveTab('dunia'),
                   },
                 ]}
               />
@@ -334,13 +337,15 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
           </div>
 
           <div className="satisfaction-modal-content satisfaction-modal-content-body root-modal-enter root-modal-fade-in root-modal-util-9c12d57a09 root-modal-util-90f9f3a7db flex min-h-0 flex-col">
-            {activeTab === "agama" && (
+            {activeTab === 'agama' && (
               <div className="space-y-6">
                 <div className="root-modal-util-8230f2ccb3">
                   <div className="root-modal-util-7ccf491d2f">
                     <Star aria-hidden="true" className="root-modal-util-79b40bc7fa" />
                   </div>
-                  <h3 className="root-modal-util-9361ef65fc root-modal-util-cdb3e20c19">Pilih Agama Baru</h3>
+                  <h3 className="root-modal-util-9361ef65fc root-modal-util-cdb3e20c19">
+                    {t('nav_sosial_budaya_agama.tabCountry') || 'Pilih Agama Baru'}
+                  </h3>
                   <div className="root-modal-util-d43b1ea5a7" />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -348,6 +353,9 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                     const isActive = String(countryDetail?.religion || '').toLowerCase() === String(r).toLowerCase();
                     const isSelected = String(selectedReligion || '').toLowerCase() === String(r).toLowerCase();
                     const isScheduled = pendingReligionChange?.toValue.toLowerCase() === r.toLowerCase();
+                    const relKey = r.toLowerCase().replace(/\s+/g, '_');
+                    const localizedReligionName = t(`nav_sosial_budaya_agama.religions.${relKey}` as any) || r;
+                    const localizedBonus = t(`nav_sosial_budaya_agama.bonuses.${relKey}` as any) || RELIGION_BONUSES[r] || 'Tidak ada bonus spesifik';
 
                     return (
                       <div key={r} className="relative">
@@ -376,14 +384,14 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                           <div className="flex items-center gap-2">
                             {isActive && <Check className="w-4 h-4 text-root-accent font-bold" />}
                             <span className={`text-sm font-bold ${isActive ? 'text-root-accent' : 'text-root-text'}`}>
-                              {r}
+                              {localizedReligionName}
                             </span>
                           </div>
                           <p className="text-xs text-root-subtle mt-1 leading-tight">
-                            {RELIGION_BONUSES[r] || 'Tidak ada bonus spesifik'}
+                            {localizedBonus}
                           </p>
                           <span className="text-[10px] font-semibold text-root-accent mt-1">
-                            Waktu perubahan: {SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari (pilihan Ubah)
+                            {t('nav_sosial_budaya_agama.scheduledFinishNotice', { days: SOCIAL_CULTURAL_CHANGE_DELAY_DAYS, date: '' }) || `Waktu perubahan: ${SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari (pilihan Ubah)`}
                           </span>
                         </div>
                         </button>
@@ -400,17 +408,19 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
               </div>
             )}
 
-            {activeTab === "dunia" && (
+            {activeTab === 'dunia' && (
               <div className="flex min-h-0 flex-1 flex-col gap-4">
                 <div className="root-modal-util-8230f2ccb3">
                   <div className="root-modal-util-7ccf491d2f">
                     <Globe aria-hidden="true" className="root-modal-util-79b40bc7fa" />
                   </div>
-                  <h4 className="root-modal-util-9361ef65fc">Daftar Agama Seluruh Negara ({worldReligions.length} Negara)</h4>
+                  <h4 className="root-modal-util-9361ef65fc">
+                    {t('nav_sosial_budaya_agama.tabWorld') || 'Daftar Agama Seluruh Negara'} ({worldReligions.length} {t('nav_sosial_budaya_agama.colCountry') || 'Negara'})
+                  </h4>
                   <div className="root-modal-util-d43b1ea5a7" />
                   {sameReligionCount !== null && (
                     <span className="text-xs font-bold text-root-accent bg-root-accent/10 rounded-full px-2.5 py-1 whitespace-nowrap">
-                      {sameReligionCount}/212 seagama
+                      {sameReligionCount}/212 {t('nav_sosial_budaya_agama.currentReligionBadge') || 'seagama'}
                     </span>
                   )}
                 </div>
@@ -419,9 +429,9 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                     <thead className="bg-[#051111] border-b border-root-accent/20 sticky top-0 z-10">
                       <tr>
                         <th className="px-4 py-3 font-bold text-root-accent uppercase tracking-wider w-12 text-center">No</th>
-                        <th className="px-4 py-3 font-bold text-root-accent uppercase tracking-wider">Negara</th>
+                        <th className="px-4 py-3 font-bold text-root-accent uppercase tracking-wider">{t('nav_sosial_budaya_agama.colCountry') || 'Negara'}</th>
                         <th onClick={cycleSortMode} className="px-4 py-3 font-bold text-root-accent uppercase tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors">
-                          Agama
+                          {t('nav_sosial_budaya_agama.colReligion') || 'Agama'}
                           <span className="ml-2 text-[10px] text-root-subtle">
                             {sortMode === "default" && "↕"}
                             {sortMode === "unavailable-last" && "↑↓"}
@@ -435,15 +445,18 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                       {sortedWorldReligions.map((item, idx) => {
                         const isUserCountry = countryDetail?.country &&
                           item.country.toLowerCase().trim() === countryDetail.country.toLowerCase().trim();
+                        const localizedCountry = getLocalizedCountryName(item.country);
+                        const relKey = item.religion.toLowerCase().replace(/\s+/g, '_');
+                        const localizedRel = t(`nav_sosial_budaya_agama.religions.${relKey}` as any) || item.religion;
                         return (
                           <tr key={idx} className={`transition-colors ${isUserCountry ? 'bg-root-accent/15 hover:bg-root-accent/25 border-l-4 border-l-root-accent' : 'hover:bg-root-accent/5'}`}>
                             <td className={`px-4 py-2.5 text-center font-bold ${isUserCountry ? 'text-root-accent' : 'text-root-subtle'}`}>{idx + 1}</td>
                             <td className={`px-4 py-2.5 font-bold ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>
-                              {item.country}
+                              {localizedCountry}
                             </td>
                             <td className={`px-4 py-2.5 ${isUserCountry ? 'text-root-accent' : 'text-root-text'}`}>
                               {item.religion === 'Belum tersedia' ? (
-                                <span className="text-root-subtle italic font-medium">Belum tersedia</span>
+                                <span className="text-root-subtle italic font-medium">{t('nav_sosial_budaya_agama.noData') || 'Belum tersedia'}</span>
                               ) : (
                                 <div className="flex items-center gap-2 font-bold">
                                   {getReligionImage(item.religion) ? (
@@ -451,7 +464,7 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                                   ) : (
                                     RELIGION_ICONS[item.religion] || <Globe className="w-4 h-4 text-root-accent" />
                                   )}
-                                  {item.religion}
+                                  {localizedRel}
                                 </div>
                               )}
                             </td>

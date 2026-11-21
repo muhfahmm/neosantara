@@ -1,0 +1,137 @@
+{
+  "title": "国家官方意识形态与哲学",
+  "tabCountry": "国家意识形态",
+  "tabWorld": "世界意识形态",
+  "searchPlaceholder": "搜索意识形态或国家...",
+  "sortDefault": "默认排序",
+  "sortAvailableFirst": "可变更优先",
+  "sortAZ": "名称 A-Z",
+  "sortZA": "名称 Z-A",
+  "currentIdeologyBadge": "现行意识形态",
+  "scheduledBadge": "政治体制转型中",
+  "scheduledFinishNotice": "预计在 {days} 天后完成 ({date})",
+  "instantCostNotice": "即时推行费用: {cost} NEO",
+  "colCountry": "国家",
+  "colIdeology": "官方体制",
+  "noData": "暂无意识形态数据。",
+  "ideologies": {
+    "demokrasi": "民主体制",
+    "monarki": "君主体制",
+    "kapitalisme": "自由资本主义",
+    "sosialisme": "社会主义",
+    "komunisme": "共产主义",
+    "nasionalisme": "民族主义",
+    "konservatisme": "传统保守主义",
+    "liberalisme": "自由主义",
+    "otoritarianisme": "权威主义 / 极权体制"
+  },
+  "bonuses": {
+    "demokrasi": "国家财政税收: +10%",
+    "monarki": "军队综合作战力: +15%",
+    "kapitalisme": "国家财政税收: +50%",
+    "sosialisme": "国民生育繁衍率: +10%",
+    "komunisme": "全国全行业工业综合产能: +10%",
+    "nasionalisme": "国家粮食农业总产量: +10%",
+    "konservatisme": "国家财政税收: +5%",
+    "liberalisme": "国家财政税收: +25%",
+    "otoritarianisme": "军队综合作战力: +25%"
+  },
+  "infoModal": {
+    "title": "国家意识形态档案",
+    "sectionCharacteristics": "核心政体特征",
+    "sectionPros": "体制优势与红利",
+    "sectionCons": "制度弊端与风险",
+    "sectionBonuses": "国家主要战略加成",
+    "btnClose": "关闭",
+    "details": {
+      "demokrasi": {
+        "description": "最高权力属于人民，并通过定期选举行使权力的政府制度。",
+        "characteristics": {
+          "first": "多党制与公民自由",
+          "second": "高度的公共问责",
+          "third": "保护人权"
+        }
+      },
+      "monarki": {
+        "description": "由国王、女王或世袭国家元首领导的传统政府制度。",
+        "characteristics": {
+          "first": "领导权由家族世代传承",
+          "second": "长期稳定的领导体制",
+          "third": "深厚的文化传统"
+        }
+      },
+      "kapitalisme": {
+        "description": "私人所有者为获取利润而控制贸易和工业的经济与政治制度。",
+        "characteristics": {
+          "first": "自由市场与激烈竞争",
+          "second": "资产由私人所有",
+          "third": "以经济激励推动创新"
+        }
+      },
+      "sosialisme": {
+        "description": "为实现公共福祉而共同管理生产和分配资料的社会与经济制度。",
+        "characteristics": {
+          "first": "广泛的社会保障",
+          "second": "经济平等",
+          "third": "低价或免费的公共服务"
+        }
+      },
+      "komunisme": {
+        "description": "以生产资料公有制为基础，旨在建立无阶级社会的意识形态。",
+        "characteristics": {
+          "first": "由国家全面计划的经济",
+          "second": "一党执政",
+          "third": "共同分配物资"
+        }
+      },
+      "nasionalisme": {
+        "description": "将主权、团结、文化和国家利益置于首位的意识形态。",
+        "characteristics": {
+          "first": "经济与粮食自给自足",
+          "second": "对国家身份的自豪感",
+          "third": "抵御外来影响"
+        }
+      },
+      "konservatisme": {
+        "description": "优先维护传统价值观、法律、秩序和既有制度的思想。",
+        "characteristics": {
+          "first": "文化与宗教价值观稳定",
+          "second": "稳固的社会秩序",
+          "third": "循序渐进的变革"
+        }
+      },
+      "liberalisme": {
+        "description": "注重个人自由、公民权利、友好国际关系和自由市场的意识形态。",
+        "characteristics": {
+          "first": "个人与市场自由",
+          "second": "支持全球化",
+          "third": "有限的经济监管"
+        }
+      },
+      "otoritarianisme": {
+        "description": "权力集中于统治者手中，且缺乏有效反对派监督的政治制度。",
+        "characteristics": {
+          "first": "集中而果断的领导",
+          "second": "快速调动资源",
+          "third": "严格的国家纪律"
+        }
+      }
+    }
+  },
+  "confirmModal": {
+    "titleInfo": "意识形态政体效能",
+    "titleConfirm": "确认调整国家官方意识形态",
+    "activeEffects": "当前生效的政体战略加成",
+    "warningText": "重塑国家意识形态纲领需要7天的政局适应期，或拨发紧急财政资金实现政体平稳即时过渡。",
+    "btnGradual": "渐进过渡转型 (7天)",
+    "btnInstant": "闪电立即推行 ({cost} NEO)",
+    "btnCancel": "取消"
+  },
+  "fundsModal": {
+    "title": "国家财政资金不足！",
+    "desc": "推行本次闪电政体转型需要储备 {cost} NEO。",
+    "currentTreasury": "当前国家财政国库余额: {money} NEO",
+    "btnTakeLoan": "申请国家贷款",
+    "btnClose": "关闭"
+  }
+}

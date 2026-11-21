@@ -1,0 +1,63 @@
+{
+  "title": "Staatsphilosophie & Ideologie",
+  "tabCountry": "Staatsideologie",
+  "tabWorld": "Welt",
+  "searchPlaceholder": "Ideologie oder Land suchen...",
+  "sortDefault": "Standard",
+  "sortAvailableFirst": "Verfügbare zuerst",
+  "sortAZ": "Name A-Z",
+  "sortZA": "Name Z-A",
+  "currentIdeologyBadge": "Geltende Doktrin",
+  "scheduledBadge": "Reform geplant",
+  "scheduledFinishNotice": "Abgeschlossen in {days} Tagen ({date})",
+  "instantCostNotice": "Sofortkosten: {cost} NEO",
+  "colCountry": "Land",
+  "colIdeology": "Offizielle Doktrin",
+  "noData": "Keine Ideologiedaten vorhanden.",
+  "ideologies": {
+    "demokrasi": "Demokratie",
+    "monarki": "Monarchie",
+    "kapitalisme": "Kapitalismus",
+    "sosialisme": "Sozialismus",
+    "komunisme": "Kommunismus",
+    "nasionalisme": "Nationalismus",
+    "konservatisme": "Konservatismus",
+    "liberalisme": "Liberalismus",
+    "otoritarianisme": "Autoritarismus"
+  },
+  "bonuses": {
+    "demokrasi": "Steuereinnahmen: +10%",
+    "monarki": "Militärische Stärke: +15%",
+    "kapitalisme": "Steuereinnahmen: +50%",
+    "sosialisme": "Geburtenrate-Bonus: +10%",
+    "komunisme": "Produktion in allen Sektoren: +10%",
+    "nasionalisme": "Nahrungsmittelproduktion: +10%",
+    "konservatisme": "Steuereinnahmen: +5%",
+    "liberalisme": "Steuereinnahmen: +25%",
+    "otoritarianisme": "Militärische Stärke: +25%"
+  },
+  "infoModal": {
+    "title": "Ideologie-Enzyklopädie",
+    "sectionCharacteristics": "Hauptmerkmale",
+    "sectionPros": "Stärken & Vorteile",
+    "sectionCons": "Schwächen & Risiken",
+    "sectionBonuses": "Nationale strategische Boni",
+    "btnClose": "Schließen"
+  },
+  "confirmModal": {
+    "titleInfo": "Ideologische Wirksamkeit",
+    "titleConfirm": "Ideologiewechsel bestätigen",
+    "activeEffects": "Derzeit aktive ideologische Boni",
+    "warningText": "Die Neuausrichtung der Staatsideologie erfordert eine 7-tägige politische Übergangsphase oder Sonderausgaben zur sofortigen Stabilisierung.",
+    "btnGradual": "Schrittweise einführen (7 Tage)",
+    "btnInstant": "Sofort einführen ({cost} NEO)",
+    "btnCancel": "Abbrechen"
+  },
+  "fundsModal": {
+    "title": "Unzureichende Staatsmittel!",
+    "desc": "Sie benötigen {cost} NEO für diese Sofortreform.",
+    "currentTreasury": "Aktuelle Staatskasse: {money} NEO",
+    "btnTakeLoan": "Kredit aufnehmen",
+    "btnClose": "Schließen"
+  }
+}

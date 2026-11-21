@@ -1,0 +1,63 @@
+{
+  "title": "国家の哲学と政治イデオロギー",
+  "tabCountry": "国家体制",
+  "tabWorld": "世界の政治体制",
+  "searchPlaceholder": "イデオロギーや国名を検索...",
+  "sortDefault": "デフォルト順",
+  "sortAvailableFirst": "利用可能順",
+  "sortAZ": "名称 A-Z",
+  "sortZA": "名称 Z-A",
+  "currentIdeologyBadge": "現在採用中",
+  "scheduledBadge": "体制移行予定",
+  "scheduledFinishNotice": "{days}日後に完了予定 ({date})",
+  "instantCostNotice": "即時移行費用: {cost} NEO",
+  "colCountry": "国名",
+  "colIdeology": "公式イデオロギー",
+  "noData": "イデオロギーのデータがありません。",
+  "ideologies": {
+    "demokrasi": "民主主義",
+    "monarki": "君主制",
+    "kapitalisme": "資本主義",
+    "sosialisme": "社会主義",
+    "komunisme": "共産主義",
+    "nasionalisme": "ナショナリズム",
+    "konservatisme": "保守主義",
+    "liberalisme": "自由主義",
+    "otoritarianisme": "権威主義 / 全体主義"
+  },
+  "bonuses": {
+    "demokrasi": "税収総額: +10%",
+    "monarki": "軍事戦闘力: +15%",
+    "kapitalisme": "税収総額: +50%",
+    "sosialisme": "出生率ボーナス: +10%",
+    "komunisme": "全産業総合生産力: +10%",
+    "nasionalisme": "食料生産量: +10%",
+    "konservatisme": "税収総額: +5%",
+    "liberalisme": "税収総額: +25%",
+    "otoritarianisme": "軍事戦闘力: +25%"
+  },
+  "infoModal": {
+    "title": "イデオロギー詳細百科",
+    "sectionCharacteristics": "主な体制特徴",
+    "sectionPros": "利点と国家恩恵",
+    "sectionCons": "課題と潜在的リスク",
+    "sectionBonuses": "国家主要戦略ボーナス",
+    "btnClose": "閉じる"
+  },
+  "confirmModal": {
+    "titleInfo": "イデオロギー効果と恩恵",
+    "titleConfirm": "国家体制の変革確認",
+    "activeEffects": "現在有効な体制ボーナス",
+    "warningText": "国家指導方針の転換には7日間の政治的適応期間、または政権安定のための即時断行予算が必要です。",
+    "btnGradual": "段階的移行 (7日間)",
+    "btnInstant": "即時移行 ({cost} NEO)",
+    "btnCancel": "キャンセル"
+  },
+  "fundsModal": {
+    "title": "国庫資金不足！",
+    "desc": "即時体制改革には {cost} NEO の資金が必要です。",
+    "currentTreasury": "現在の国庫残高: {money} NEO",
+    "btnTakeLoan": "国家借款を受ける",
+    "btnClose": "閉じる"
+  }
+}

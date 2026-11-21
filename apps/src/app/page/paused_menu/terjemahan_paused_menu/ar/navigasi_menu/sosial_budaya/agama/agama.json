@@ -1,0 +1,55 @@
+{
+  "title": "دين الدولة ومعتقداتها",
+  "tabCountry": "دين الدولة",
+  "tabWorld": "العالم",
+  "searchPlaceholder": "ابحث عن دين أو دولة...",
+  "sortDefault": "افتراضي",
+  "sortAvailableFirst": "المتاح أولاً",
+  "sortAZ": "الاسم أ-ي",
+  "sortZA": "الاسم ي-أ",
+  "currentReligionBadge": "المتبع حالياً",
+  "scheduledBadge": "تغيير مجدول",
+  "scheduledFinishNotice": "يكتمل خلال {days} أيام ({date})",
+  "instantCostNotice": "التكلفة الفورية: {cost} NEO",
+  "colCountry": "الدولة",
+  "colReligion": "الدين الأغلبي",
+  "noData": "لا توجد بيانات للأديان.",
+  "religions": {
+    "islam": "الإسلام",
+    "katolik": "الكاثوليكية",
+    "protestan": "البروتستانتية",
+    "kristen_ortodoks": "الأرثوذكسية الشرقية",
+    "hindu": "الهندوسية",
+    "buddha": "البوذية",
+    "yahudi": "اليهودية",
+    "shinto": "الشنتوية",
+    "ateisme": "الإلحاد / العلمانية"
+  },
+  "bonuses": {
+    "islam": "إنتاج الغذاء والموارد: +10%",
+    "katolik": "نفوذ التصويت في الجمعية العامة للأمم المتحدة: +10",
+    "protestan": "أسعار البيع: +5%، أسعار الشراء: -5%",
+    "kristen_ortodoks": "عائدات ضريبة الدخل الشخصي: +5%",
+    "hindu": "معدل نمو السكان: +8%",
+    "buddha": "عائدات الضرائب البيئية: +10%",
+    "yahudi": "مدة بناء المصانع والمناجم: -10%",
+    "shinto": "إنتاج الطاقة الكهربائية: +10%",
+    "ateisme": "سرعة البحث العلمي: +15%"
+  },
+  "confirmModal": {
+    "titleInfo": "فعالية الدين والتأثيرات",
+    "titleConfirm": "تأكيد تغيير دين الدولة",
+    "activeEffects": "المكافآت الدينية المفعلة حالياً",
+    "warningText": "يتطلب تغيير الدين الرسمي للدولة فترة تكيف مجتمعي مدتها 7 أيام أو تمويلاً فورياً للتحول السريع.",
+    "btnGradual": "تطبيق تدريجي (7 أيام)",
+    "btnInstant": "تطبيق فوري ({cost} NEO)",
+    "btnCancel": "إلغاء"
+  },
+  "fundsModal": {
+    "title": "أموال الخزينة غير كافية!",
+    "desc": "تحتاج إلى {cost} NEO لتنفيذ هذا التحول الفوري.",
+    "currentTreasury": "خزينة الدولة الحالية: {money} NEO",
+    "btnTakeLoan": "طلب قرض وطني",
+    "btnClose": "إغلاق"
+  }
+}

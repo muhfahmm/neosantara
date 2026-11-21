@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { Coins, Shield } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 import { SOCIAL_CULTURAL_CHANGE_DELAY_DAYS } from "@/app/page/menus/inbox/logic/10_sosial_budaya/socialCulturalChangeLogic";
 
 interface IdeologiConfirmModalProps {
@@ -27,6 +28,7 @@ export default function IdeologiConfirmModal({
   bonusText,
   cost,
 }: IdeologiConfirmModalProps) {
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -50,7 +52,7 @@ export default function IdeologiConfirmModal({
         className="w-full overflow-hidden rounded-xl bg-root-surface"
       >
         <RootInfoModalHeader
-          title="Konfirmasi Perubahan Ideologi"
+          title={t('nav_sosial_budaya_ideologi.confirmModal.titleConfirm') || "Konfirmasi Perubahan Ideologi"}
           onClose={onClose}
           size="standard"
           icon={<Shield aria-hidden="true" className="text-root-accent" />}
@@ -75,7 +77,7 @@ export default function IdeologiConfirmModal({
               <span>{cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
             </div>
             <p className="mt-3 text-center text-xs text-root-subtle">
-              Pilih Seketika untuk perubahan langsung atau Ubah untuk perubahan dalam {SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari.
+              {t('nav_sosial_budaya_ideologi.confirmModal.warningText') || `Pilih Seketika untuk perubahan langsung atau Ubah untuk perubahan dalam ${SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari.`}
             </p>
 
             {/* ACTION BUTTONS */}
@@ -85,14 +87,14 @@ export default function IdeologiConfirmModal({
                 onClick={onInstantChange}
                 className="flex-1 py-2.5 rounded-xl bg-[#00D68F] hover:bg-[#00C282] text-root-canvas font-extrabold text-xs uppercase shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                Seketika
+                {t('nav_sosial_budaya_ideologi.confirmModal.btnInstant', { cost: cost.toLocaleString('id-ID') }) || 'Seketika'}
               </button>
               <button
                 type="button"
                 onClick={onConfirm}
                 className="flex-1 py-2.5 rounded-xl bg-[#00D68F] hover:bg-[#00C282] text-root-canvas font-extrabold text-xs uppercase shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                Ubah
+                {t('nav_sosial_budaya_ideologi.confirmModal.btnGradual') || 'Ubah'}
               </button>
             </div>
           </div>

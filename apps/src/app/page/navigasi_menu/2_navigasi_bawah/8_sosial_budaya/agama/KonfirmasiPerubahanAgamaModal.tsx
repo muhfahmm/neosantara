@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { Coins, Church } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 import { SOCIAL_CULTURAL_CHANGE_DELAY_DAYS } from "@/app/page/menus/inbox/logic/10_sosial_budaya/socialCulturalChangeLogic";
 
 interface AgamaConfirmModalProps {
@@ -29,6 +30,7 @@ export default function AgamaConfirmModal({
   bonusText,
   cost,
 }: AgamaConfirmModalProps) {
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -52,7 +54,7 @@ export default function AgamaConfirmModal({
         className="w-full overflow-hidden rounded-xl bg-root-surface"
       >
         <RootInfoModalHeader
-          title={isInfoMode ? "Efektivitas Agama" : "Konfirmasi Perubahan Agama"}
+          title={isInfoMode ? (t('nav_sosial_budaya_agama.confirmModal.titleInfo') || "Efektivitas Agama") : (t('nav_sosial_budaya_agama.confirmModal.titleConfirm') || "Konfirmasi Perubahan Agama")}
           onClose={onClose}
           size="standard"
           icon={<Church aria-hidden="true" className="text-root-accent" />}
@@ -72,7 +74,7 @@ export default function AgamaConfirmModal({
             <h3 className="text-xl font-bold text-root-text mt-4 text-center">{title}</h3>
             {isInfoMode && (
               <span className="mt-2 text-[10px] font-black uppercase tracking-wider text-root-subtle">
-                Efek agama yang sedang aktif
+                {t('nav_sosial_budaya_agama.confirmModal.activeEffects') || 'Efek agama yang sedang aktif'}
               </span>
             )}
             <p className="text-[#00D68F] text-sm font-semibold mt-1 text-center">{bonusText}</p>
@@ -86,7 +88,7 @@ export default function AgamaConfirmModal({
 
             {!isInfoMode && (
               <p className="mt-3 text-center text-xs text-root-subtle">
-                Pilih Seketika untuk perubahan langsung atau Ubah untuk perubahan dalam {SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari.
+                {t('nav_sosial_budaya_agama.confirmModal.warningText') || `Pilih Seketika untuk perubahan langsung atau Ubah untuk perubahan dalam ${SOCIAL_CULTURAL_CHANGE_DELAY_DAYS} hari.`}
               </p>
             )}
 
@@ -97,14 +99,14 @@ export default function AgamaConfirmModal({
                   onClick={onInstantChange}
                   className="flex-1 py-2.5 rounded-xl bg-[#00D68F] hover:bg-[#00C282] text-root-canvas font-extrabold text-xs uppercase shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  Seketika
+                  {t('nav_sosial_budaya_agama.confirmModal.btnInstant', { cost: cost.toLocaleString('id-ID') }) || 'Seketika'}
                 </button>
                 <button
                   type="button"
                   onClick={onConfirm}
                   className="flex-1 py-2.5 rounded-xl bg-[#00D68F] hover:bg-[#00C282] text-root-canvas font-extrabold text-xs uppercase shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  Ubah
+                  {t('nav_sosial_budaya_agama.confirmModal.btnGradual') || 'Ubah'}
                 </button>
               </div>
             )}

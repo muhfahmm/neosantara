@@ -15,6 +15,7 @@ import { markMissionAsClaimable } from "@/app/page/menus/mission/missionModals";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import RootModalSidebarLayout from "@/app/page/root_modals_design_menu/RootModalSidebarLayout";
 import MenuInfoButton from "../../MenuInfoButton";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface DoktrinKeterbukaanModalProps {
   isOpen: boolean;
@@ -37,6 +38,7 @@ export default function DoktrinKeterbukaanModal({
   setCountryDetail,
   selectedCountry,
 }: DoktrinKeterbukaanModalProps) {
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const countryName = selectedCountry?.country || countryDetail?.nama_negara || countryDetail?.country || "Negara";
 
@@ -97,38 +99,38 @@ export default function DoktrinKeterbukaanModal({
   const getRegimeStatus = (score: number) => {
     if (score <= 20) {
       return {
-        label: "Negara Terisolasi Total (Autarki)",
+        label: t('nav_sosial_budaya_doktrin.regimes.autarki.label') || "Negara Terisolasi Total (Autarki)",
         color: "bg-rose-950/80 text-rose-300 border-rose-500/50",
-        badge: "Isolasionis Ekstrem",
-        desc: "Negara memutus hubungan dengan dunia luar, mengontrol ketat pers, agama, demonstrasi, internet, perbatasan, dan autarki ekonomi.",
+        badge: t('nav_sosial_budaya_doktrin.regimes.autarki.badge') || "Isolasionis Ekstrem",
+        desc: t('nav_sosial_budaya_doktrin.regimes.autarki.desc') || "Negara memutus hubungan dengan dunia luar, mengontrol ketat pers, agama, demonstrasi, internet, perbatasan, dan autarki ekonomi.",
       };
     } else if (score <= 40) {
       return {
-        label: "Negara Proteksionis & Otoriter",
+        label: t('nav_sosial_budaya_doktrin.regimes.proteksionis.label') || "Negara Proteksionis & Otoriter",
         color: "bg-amber-950/80 text-amber-300 border-amber-500/50",
-        badge: "Tipe Terbatas",
-        desc: "Pemerintah membatasi imigrasi, menyaring media, serta memperketat izin demonstrasi dan transparansi anggaran.",
+        badge: t('nav_sosial_budaya_doktrin.regimes.proteksionis.badge') || "Tipe Terbatas",
+        desc: t('nav_sosial_budaya_doktrin.regimes.proteksionis.desc') || "Pemerintah membatasi imigrasi, menyaring media, serta memperketat izin demonstrasi dan transparansi anggaran.",
       };
     } else if (score <= 60) {
       return {
-        label: "Negara Moderat & Campuran",
+        label: t('nav_sosial_budaya_doktrin.regimes.moderat.label') || "Negara Moderat & Campuran",
         color: "bg-cyan-950/80 text-cyan-300 border-cyan-500/50",
-        badge: "Tipe Moderat",
-        desc: "Menyeimbangkan antara kebebasan sipil, kontrol ketertiban publik, dan keterbukaan ekonomi luar negeri.",
+        badge: t('nav_sosial_budaya_doktrin.regimes.moderat.badge') || "Tipe Moderat",
+        desc: t('nav_sosial_budaya_doktrin.regimes.moderat.desc') || "Menyeimbangkan antara kebebasan sipil, kontrol ketertiban publik, dan keterbukaan ekonomi luar negeri.",
       };
     } else if (score <= 80) {
       return {
-        label: "Negara Terbuka & Demokratis",
+        label: t('nav_sosial_budaya_doktrin.regimes.demokratis.label') || "Negara Terbuka & Demokratis",
         color: "bg-emerald-950/80 text-emerald-300 border-emerald-500/50",
-        badge: "Tipe Demokratis",
-        desc: "Kebebasan pers & beragama terjamin, perbatasan terbuka, internet bebas, dan transparansi pemerintah yang tinggi.",
+        badge: t('nav_sosial_budaya_doktrin.regimes.demokratis.badge') || "Tipe Demokratis",
+        desc: t('nav_sosial_budaya_doktrin.regimes.demokratis.desc') || "Kebebasan pers & beragama terjamin, perbatasan terbuka, internet bebas, dan transparansi pemerintah yang tinggi.",
       };
     } else {
       return {
-        label: "Negara Globalis & Pasar Bebas",
+        label: t('nav_sosial_budaya_doktrin.regimes.globalis.label') || "Negara Globalis & Pasar Bebas",
         color: "bg-teal-950/80 text-root-accent border-root-accent/50",
-        badge: "Hegemon Pasar Bebas",
-        desc: "Jaminan penuh HAM, kebebasan pers & demonstrasi total, internet terbuka penuh, visa bebas, dan pasar bebas tanpa batas.",
+        badge: t('nav_sosial_budaya_doktrin.regimes.globalis.badge') || "Hegemon Pasar Bebas",
+        desc: t('nav_sosial_budaya_doktrin.regimes.globalis.desc') || "Jaminan penuh HAM, kebebasan pers & demonstrasi total, internet terbuka penuh, visa bebas, dan pasar bebas tanpa batas.",
       };
     }
   };
@@ -264,21 +266,21 @@ export default function DoktrinKeterbukaanModal({
               </div>
               <div>
                 <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                  Doktrin & Keterbukaan Negara
+                  {t('nav_sosial_budaya_doktrin.title') || "Doktrin & Keterbukaan Negara"}
                 </h2>
               </div>
             </div>
           </div>
           <div className="root-modal-util-6cfc7e6ab3">
             <MenuInfoButton
-              title="Doktrin & Keterbukaan"
-              description="Atur kebijakan keterbukaan negara pada kebebasan sipil dan HAM, media dan informasi, serta perbatasan dan geopolitik. Perubahan indikator memengaruhi karakter kebijakan dalam negeri dan hubungan dengan dunia."
+              title={t('nav_sosial_budaya_doktrin.title') || "Doktrin & Keterbukaan"}
+              description={t('nav_sosial_budaya_doktrin.subtitle') || "Atur kebijakan keterbukaan negara pada kebebasan sipil dan HAM, media dan informasi, serta perbatasan dan geopolitik. Perubahan indikator memengaruhi karakter kebijakan dalam negeri dan hubungan dengan dunia."}
             >
               <div className="mt-4 space-y-3 rounded-2xl border border-root-accent/20 bg-root-canvas p-4 shadow-md sm:p-5">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <span className="block text-[10px] font-bold uppercase tracking-wider text-root-subtle">
-                      Status Keterbukaan Nasional
+                      {t('nav_sosial_budaya_doktrin.scoreLabel') || "Status Keterbukaan Nasional"}
                     </span>
                     <div className="mt-0.5 flex flex-wrap items-center gap-2">
                       <h3 className="text-base font-bold text-root-text sm:text-lg">{regime.label}</h3>
@@ -288,7 +290,7 @@ export default function DoktrinKeterbukaanModal({
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="block text-xs font-bold uppercase text-root-subtle">Indeks Keterbukaan</span>
+                    <span className="block text-xs font-bold uppercase text-root-subtle">{t('nav_sosial_budaya_doktrin.scoreLabel') || "Indeks Keterbukaan"}</span>
                     <span className="text-xl font-black text-root-accent sm:text-2xl">{overallScore} / 100</span>
                   </div>
                 </div>
@@ -296,10 +298,10 @@ export default function DoktrinKeterbukaanModal({
                 <div className="space-y-1 pt-1">
                   <div className="flex justify-between text-[10px] font-bold uppercase">
                     <span className="flex items-center gap-1 text-rose-400">
-                      <Lock className="h-3 w-3" /> Tertutup Total (0%)
+                      <Lock className="h-3 w-3" /> {t('nav_sosial_budaya_doktrin.thresholdLowLabel') || "Tertutup Total (<30%)"}
                     </span>
                     <span className="flex items-center gap-1 text-root-accent">
-                      Terbuka Bebas (100%) <Unlock className="h-3 w-3" />
+                      {t('nav_sosial_budaya_doktrin.thresholdHighLabel') || "Terbuka Bebas (>70%)"} <Unlock className="h-3 w-3" />
                     </span>
                   </div>
                   <div className="relative h-2.5 w-full overflow-hidden rounded-full border border-root-accent/20 bg-root-surface sm:h-3">
@@ -326,7 +328,12 @@ export default function DoktrinKeterbukaanModal({
             id: tab.id,
             isActive: activeTab === tab.id,
             onSelect: () => setActiveTab(tab.id),
-            label: tab.label,
+            label:
+              tab.id === "civil"
+                ? t('nav_sosial_budaya_doktrin.tabCivil') || tab.label
+                : tab.id === "media"
+                ? t('nav_sosial_budaya_doktrin.tabMedia') || tab.label
+                : t('nav_sosial_budaya_doktrin.tabGlobal') || tab.label,
           }))}
         >
             {/* TAB 1: KEBEBASAN SIPIL & HAM */}
@@ -340,8 +347,12 @@ export default function DoktrinKeterbukaanModal({
                         <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/kebebasan-sipil-ham/kebebasan-sipil-ham-asset-01.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-root-text">Kebebasan Berbicara & Berekspresi</h4>
-                        <p className="text-xs text-root-subtle">Jaminan hak berpendapat tanpa rasa takut akan penangkapan politik.</p>
+                        <h4 className="text-sm font-bold text-root-text">
+                          {t('nav_sosial_budaya_doktrin.indicators.speechScore.title') || "Kebebasan Berbicara & Berekspresi"}
+                        </h4>
+                        <p className="text-xs text-root-subtle">
+                          {t('nav_sosial_budaya_doktrin.indicators.speechScore.desc') || "Jaminan hak berpendapat tanpa rasa takut akan penangkapan politik."}
+                        </p>
                       </div>
                     </div>
                     <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
@@ -360,12 +371,12 @@ export default function DoktrinKeterbukaanModal({
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
                     <div className="p-2 rounded bg-rose-950/40 border border-rose-500/30 text-rose-300">
-                      <span className="font-bold block">🔒 Dibatasi Ketat (&lt;30%):</span>
-                      <span>+15% Stabilitas Operasional Opini Publik.</span>
+                      <span className="font-bold block">🔒 (&lt;30%):</span>
+                      <span>{t('nav_sosial_budaya_doktrin.indicators.speechScore.lowNotice') || "+15% Stabilitas Operasional Opini Publik."}</span>
                     </div>
                     <div className="p-2 rounded bg-emerald-950/40 border border-emerald-500/30 text-emerald-300">
-                      <span className="font-bold block">🗣️ Bebas Total (&gt;70%):</span>
-                      <span>+10 Indeks Hak Asasi Manusia (HAM), +5 Kepuasan Warga.</span>
+                      <span className="font-bold block">🗣️ (&gt;70%):</span>
+                      <span>{t('nav_sosial_budaya_doktrin.indicators.speechScore.highNotice') || "+10 Indeks Hak Asasi Manusia (HAM), +5 Kepuasan Warga."}</span>
                     </div>
                   </div>
                 </div>
@@ -378,8 +389,12 @@ export default function DoktrinKeterbukaanModal({
                         <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/kebebasan-sipil-ham/kebebasan-sipil-ham-asset-02.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-root-text">Kebebasan Beragama & Kepercayaan</h4>
-                        <p className="text-xs text-root-subtle">Hak beribadah, pendirian tempat ibadah, dan pengakuan aliran kepercayaan.</p>
+                        <h4 className="text-sm font-bold text-root-text">
+                          {t('nav_sosial_budaya_doktrin.indicators.religionScore.title') || "Kebebasan Beragama & Kepercayaan"}
+                        </h4>
+                        <p className="text-xs text-root-subtle">
+                          {t('nav_sosial_budaya_doktrin.indicators.religionScore.desc') || "Hak beribadah, pendirian tempat ibadah, dan pengakuan aliran kepercayaan."}
+                        </p>
                       </div>
                     </div>
                     <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
@@ -398,12 +413,12 @@ export default function DoktrinKeterbukaanModal({
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
                     <div className="p-2 rounded bg-rose-950/40 border border-rose-500/30 text-rose-300">
-                      <span className="font-bold block">🔒 Dikontrol Negara (&lt;30%):</span>
-                      <span>Agama resmi tunggal atau ateisme negara (seperti Korut).</span>
+                      <span className="font-bold block">🔒 (&lt;30%):</span>
+                      <span>{t('nav_sosial_budaya_doktrin.indicators.religionScore.lowNotice') || "Agama resmi tunggal atau ateisme negara (seperti Korut)."}</span>
                     </div>
                     <div className="p-2 rounded bg-emerald-950/40 border border-emerald-500/30 text-emerald-300">
-                      <span className="font-bold block">🕊️ Bebas Beragama (&gt;70%):</span>
-                      <span>Kerukunan antar pemeluk agama & perlindungan minoritas.</span>
+                      <span className="font-bold block">🕊️ (&gt;70%):</span>
+                      <span>{t('nav_sosial_budaya_doktrin.indicators.religionScore.highNotice') || "Kerukunan antar pemeluk agama & perlindungan minoritas."}</span>
                     </div>
                   </div>
                 </div>
@@ -416,8 +431,12 @@ export default function DoktrinKeterbukaanModal({
                         <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/kebebasan-sipil-ham/kebebasan-sipil-ham-asset-03.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-root-text">Hak Demonstrasi & Unjuk Rasa</h4>
-                        <p className="text-xs text-root-subtle">Legalitas aksi damai, pemogokan buruh, dan kumpul massa di muka umum.</p>
+                        <h4 className="text-sm font-bold text-root-text">
+                          {t('nav_sosial_budaya_doktrin.indicators.demoScore.title') || "Hak Demonstrasi & Unjuk Rasa"}
+                        </h4>
+                        <p className="text-xs text-root-subtle">
+                          {t('nav_sosial_budaya_doktrin.indicators.demoScore.desc') || "Legalitas aksi damai, pemogokan buruh, dan kumpul massa di muka umum."}
+                        </p>
                       </div>
                     </div>
                     <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
@@ -436,12 +455,12 @@ export default function DoktrinKeterbukaanModal({
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
                     <div className="p-2 rounded bg-rose-950/40 border border-rose-500/30 text-rose-300">
-                      <span className="font-bold block">🚫 Dilarang / Dibubarkan Paksa (&lt;30%):</span>
-                      <span>Nol aksi unjuk rasa, risko pembangkangan tersembunyi.</span>
+                      <span className="font-bold block">🚫 (&lt;30%):</span>
+                      <span>{t('nav_sosial_budaya_doktrin.indicators.demoScore.lowNotice') || "Nol aksi unjuk rasa, risko pembangkangan tersembunyi."}</span>
                     </div>
                     <div className="p-2 rounded bg-emerald-950/40 border border-emerald-500/30 text-emerald-300">
-                      <span className="font-bold block">📢 Bebas Berdemonstrasi (&gt;70%):</span>
-                      <span>Penyaluran aspirasi terbuka, risiko kemacetan & gelombang protes.</span>
+                      <span className="font-bold block">📢 (&gt;70%):</span>
+                      <span>{t('nav_sosial_budaya_doktrin.indicators.demoScore.highNotice') || "Penyaluran aspirasi terbuka, risiko kemacetan & gelombang protes."}</span>
                     </div>
                   </div>
                 </div>
@@ -454,8 +473,12 @@ export default function DoktrinKeterbukaanModal({
                         <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/kebebasan-sipil-ham/kebebasan-sipil-ham-asset-04.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-root-text">Transparansi Pemerintah & Akuntabilitas</h4>
-                        <p className="text-xs text-root-subtle">Keterbukaan informasi anggaran negara dan audit publik.</p>
+                        <h4 className="text-sm font-bold text-root-text">
+                          {t('nav_sosial_budaya_doktrin.indicators.transparencyScore.title') || "Transparansi Pemerintah & Akuntabilitas"}
+                        </h4>
+                        <p className="text-xs text-root-subtle">
+                          {t('nav_sosial_budaya_doktrin.indicators.transparencyScore.desc') || "Keterbukaan informasi anggaran negara dan audit publik."}
+                        </p>
                       </div>
                     </div>
                     <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
@@ -474,12 +497,12 @@ export default function DoktrinKeterbukaanModal({
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
                     <div className="p-2 rounded bg-rose-950/40 border border-rose-500/30 text-rose-300">
-                      <span className="font-bold block">🔒 Tertutup / Rahasia Negara (&lt;30%):</span>
-                      <span>Pengeluaran pejabat tidak diaudit publik.</span>
+                      <span className="font-bold block">🔒 (&lt;30%):</span>
+                      <span>{t('nav_sosial_budaya_doktrin.indicators.transparencyScore.lowNotice') || "Pengeluaran pejabat tidak diaudit publik."}</span>
                     </div>
                     <div className="p-2 rounded bg-emerald-950/40 border border-emerald-500/30 text-emerald-300">
-                      <span className="font-bold block">🔍 Transparan Real-Time (&gt;70%):</span>
-                      <span>Anggaran dapat diawasi publik, +Kepuasan Publik.</span>
+                      <span className="font-bold block">🔍 (&gt;70%):</span>
+                      <span>{t('nav_sosial_budaya_doktrin.indicators.transparencyScore.highNotice') || "Anggaran dapat diawasi publik, +Kepuasan Publik."}</span>
                     </div>
                   </div>
                 </div>
@@ -497,8 +520,12 @@ export default function DoktrinKeterbukaanModal({
                         <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/media-informasi/media-informasi-asset-01.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-root-text">Kebebasan Media Konvensional & Sosmed</h4>
-                        <p className="text-xs text-root-subtle">Izin stasiun TV, radio, koran, portals berita online, dan platform media sosial.</p>
+                        <h4 className="text-sm font-bold text-root-text">
+                          {t('nav_sosial_budaya_doktrin.indicators.mediaScore.title') || "Kebebasan Media Konvensional & Sosmed"}
+                        </h4>
+                        <p className="text-xs text-root-subtle">
+                          {t('nav_sosial_budaya_doktrin.indicators.mediaScore.desc') || "Izin stasiun TV, radio, koran, portals berita online, dan platform media sosial."}
+                        </p>
                       </div>
                     </div>
                     <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
@@ -517,12 +544,12 @@ export default function DoktrinKeterbukaanModal({
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
                     <div className="p-2 rounded bg-rose-950/40 border border-rose-500/30 text-rose-300">
-                      <span className="font-bold block">📺 Monopoli Media Negara (&lt;30%):</span>
-                      <span>Hanya media TV/Koran pemerintah yang diizinkan beroperasi.</span>
+                      <span className="font-bold block">📺 (&lt;30%):</span>
+                      <span>{t('nav_sosial_budaya_doktrin.indicators.mediaScore.lowNotice') || "Hanya media TV/Koran pemerintah yang diizinkan beroperasi."}</span>
                     </div>
                     <div className="p-2 rounded bg-emerald-950/40 border border-emerald-500/30 text-emerald-300">
-                      <span className="font-bold block">📱 Media Swasta & Sosmed Bebas (&gt;70%):</span>
-                      <span>Media swasta & sosmed bebas beroperasi tanpa sensor politik.</span>
+                      <span className="font-bold block">📱 (&gt;70%):</span>
+                      <span>{t('nav_sosial_budaya_doktrin.indicators.mediaScore.highNotice') || "Media swasta & sosmed bebas beroperasi tanpa sensor politik."}</span>
                     </div>
                   </div>
                 </div>
@@ -535,8 +562,12 @@ export default function DoktrinKeterbukaanModal({
                         <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/media-informasi/media-informasi-asset-02.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-root-text">Kebebasan Internet (Internet Freedom)</h4>
-                        <p className="text-xs text-root-subtle">Akses jaringan internet global tanpa firewall/blokir situs asing.</p>
+                        <h4 className="text-sm font-bold text-root-text">
+                          {t('nav_sosial_budaya_doktrin.indicators.internetScore.title') || "Kebebasan Internet (Internet Freedom)"}
+                        </h4>
+                        <p className="text-xs text-root-subtle">
+                          {t('nav_sosial_budaya_doktrin.indicators.internetScore.desc') || "Akses jaringan internet global tanpa firewall/blokir situs asing."}
+                        </p>
                       </div>
                     </div>
                     <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
@@ -555,12 +586,12 @@ export default function DoktrinKeterbukaanModal({
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
                     <div className="p-2 rounded bg-rose-950/40 border border-rose-500/30 text-rose-300">
-                      <span className="font-bold block">🔒 Intranet Nasional / Firewall (&lt;30%):</span>
-                      <span>Memutus akses ke situs web & aplikasi luar negeri.</span>
+                      <span className="font-bold block">🔒 (&lt;30%):</span>
+                      <span>{t('nav_sosial_budaya_doktrin.indicators.internetScore.lowNotice') || "Memutus akses ke situs web & aplikasi luar negeri."}</span>
                     </div>
                     <div className="p-2 rounded bg-emerald-950/40 border border-emerald-500/30 text-emerald-300">
-                      <span className="font-bold block">🌐 Internet Bebas Global (&gt;70%):</span>
-                      <span>Meningkatkan pertumbuhan ekonomi digital & teknologi.</span>
+                      <span className="font-bold block">🌐 (&gt;70%):</span>
+                      <span>{t('nav_sosial_budaya_doktrin.indicators.internetScore.highNotice') || "Meningkatkan pertumbuhan ekonomi digital & teknologi."}</span>
                     </div>
                   </div>
                 </div>
@@ -578,8 +609,12 @@ export default function DoktrinKeterbukaanModal({
                         <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/perbatasan-geopolitik/perbatasan-geopolitik-asset-01.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-root-text">Akses Perbatasan & Imigrasi</h4>
-                        <p className="text-xs text-root-subtle">Pengawasan perbatasan, kemudahan visa, dan aturan masuk/keluar wilayah.</p>
+                        <h4 className="text-sm font-bold text-root-text">
+                          {t('nav_sosial_budaya_doktrin.indicators.borderScore.title') || "Akses Perbatasan & Imigrasi"}
+                        </h4>
+                        <p className="text-xs text-root-subtle">
+                          {t('nav_sosial_budaya_doktrin.indicators.borderScore.desc') || "Pengawasan perbatasan, kemudahan visa, dan aturan masuk/keluar wilayah."}
+                        </p>
                       </div>
                     </div>
                     <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
@@ -598,12 +633,12 @@ export default function DoktrinKeterbukaanModal({
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
                     <div className="p-2 rounded bg-rose-950/40 border border-rose-500/30 text-rose-300">
-                      <span className="font-bold block">🔒 Tertutup Total (&lt;30%):</span>
-                      <span>+12% Stabilitas Internal, Warga dilarang keluar negeri.</span>
+                      <span className="font-bold block">🔒 (&lt;30%):</span>
+                      <span>{t('nav_sosial_budaya_doktrin.indicators.borderScore.lowNotice') || "+12% Stabilitas Internal, Warga dilarang keluar negeri."}</span>
                     </div>
                     <div className="p-2 rounded bg-emerald-950/40 border border-emerald-500/30 text-emerald-300">
-                      <span className="font-bold block">✈️ Bebas Visa (&gt;70%):</span>
-                      <span>+15% Pertumbuhan Wisata, +10% Riset & Inovasi.</span>
+                      <span className="font-bold block">✈️ (&gt;70%):</span>
+                      <span>{t('nav_sosial_budaya_doktrin.indicators.borderScore.highNotice') || "+15% Pertumbuhan Wisata, +10% Riset & Inovasi."}</span>
                     </div>
                   </div>
                 </div>
@@ -616,8 +651,12 @@ export default function DoktrinKeterbukaanModal({
                         <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/perbatasan-geopolitik/perbatasan-geopolitik-asset-02.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-root-text">Perdagangan Bebas & Investasi Asing (PMA)</h4>
-                        <p className="text-xs text-root-subtle">Keterbukaan pasar domestik untuk barang impor, saham asing, dan perusahaan multinasional.</p>
+                        <h4 className="text-sm font-bold text-root-text">
+                          {t('nav_sosial_budaya_doktrin.indicators.tradeScore.title') || "Perdagangan Bebas & Investasi Asing (PMA)"}
+                        </h4>
+                        <p className="text-xs text-root-subtle">
+                          {t('nav_sosial_budaya_doktrin.indicators.tradeScore.desc') || "Keterbukaan pasar domestik untuk barang impor, saham asing, dan perusahaan multinasional."}
+                        </p>
                       </div>
                     </div>
                     <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
@@ -636,12 +675,12 @@ export default function DoktrinKeterbukaanModal({
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
                     <div className="p-2 rounded bg-rose-950/40 border border-rose-500/30 text-rose-300">
-                      <span className="font-bold block">🔒 Autarki Ekonomi (&lt;30%):</span>
-                      <span>Proteksi pasar domestik total, embargo barang luar.</span>
+                      <span className="font-bold block">🔒 (&lt;30%):</span>
+                      <span>{t('nav_sosial_budaya_doktrin.indicators.tradeScore.lowNotice') || "Proteksi pasar domestik total, embargo barang luar."}</span>
                     </div>
                     <div className="p-2 rounded bg-emerald-950/40 border border-emerald-500/30 text-emerald-300">
-                      <span className="font-bold block">📈 Pasar Bebas Global (&gt;70%):</span>
-                      <span>+20% Investasi Asing (PMA), Kemudahan Ekspor/Impor.</span>
+                      <span className="font-bold block">📈 (&gt;70%):</span>
+                      <span>{t('nav_sosial_budaya_doktrin.indicators.tradeScore.highNotice') || "+20% Investasi Asing (PMA), Kemudahan Ekspor/Impor."}</span>
                     </div>
                   </div>
                 </div>
@@ -654,8 +693,12 @@ export default function DoktrinKeterbukaanModal({
                         <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/perbatasan-geopolitik/perbatasan-geopolitik-asset-03.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-root-text">Kerjasama Multilateral & Aliansi Global</h4>
-                        <p className="text-xs text-root-subtle">Partisipasi dalam aliansi internasional, PBB, dan pakta pertahanan bersama.</p>
+                        <h4 className="text-sm font-bold text-root-text">
+                          {t('nav_sosial_budaya_doktrin.indicators.diplomacyScore.title') || "Kerjasama Multilateral & Aliansi Global"}
+                        </h4>
+                        <p className="text-xs text-root-subtle">
+                          {t('nav_sosial_budaya_doktrin.indicators.diplomacyScore.desc') || "Partisipasi dalam aliansi internasional, PBB, dan pakta pertahanan bersama."}
+                        </p>
                       </div>
                     </div>
                     <span className="text-sm font-bold text-root-accent bg-root-surface px-3 py-1 rounded-lg border border-root-accent/30">
@@ -674,22 +717,18 @@ export default function DoktrinKeterbukaanModal({
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
                     <div className="p-2 rounded bg-rose-950/40 border border-rose-500/30 text-rose-300">
-                      <span className="font-bold block">🛡️ Isolasionis (&lt;30%):</span>
-                      <span>Bebas dari Intervensi Luar Negeri, Kemandirian Militer.</span>
+                      <span className="font-bold block">🛡️ (&lt;30%):</span>
+                      <span>{t('nav_sosial_budaya_doktrin.indicators.diplomacyScore.lowNotice') || "Bebas dari Intervensi Luar Negeri, Kemandirian Militer."}</span>
                     </div>
                     <div className="p-2 rounded bg-emerald-950/40 border border-emerald-500/30 text-emerald-300">
-                      <span className="font-bold block">🤝 Multilateralis (&gt;70%):</span>
-                      <span>+15% Reputasi Diplomatik, Pengaruh Luar Negeri Kuat.</span>
+                      <span className="font-bold block">🤝 (&gt;70%):</span>
+                      <span>{t('nav_sosial_budaya_doktrin.indicators.diplomacyScore.highNotice') || "+15% Reputasi Diplomatik, Pengaruh Luar Negeri Kuat."}</span>
                     </div>
                   </div>
                 </div>
               </div>
             )}
 
-          <div className="flex items-center gap-1.5 border-t border-root-accent/20 pt-3 text-xs font-semibold text-root-subtle">
-            <span className="text-root-accent" aria-hidden="true">✓</span>
-            Perubahan doktrin terupdate secara otomatis & berdampak langsung pada negara.
-          </div>
         </RootModalSidebarLayout>
       </div>
     </NotebookModalWrapper>,
