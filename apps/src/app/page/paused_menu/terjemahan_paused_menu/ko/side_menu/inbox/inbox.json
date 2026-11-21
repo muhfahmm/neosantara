@@ -696,6 +696,26 @@
     "yearMany": "{count}년"
   },
   "dynamicNotifications": {
+    "playerLoot": {
+      "title": "💰 약탈 작전 성공",
+      "sender": "국군 사령부 ({attacker})",
+      "message": "{target} 약탈 작전이 성공했습니다! 국고에서 {cash} NEO와 천연자원을 확보했습니다.{lossNote}",
+      "lossNote": " 투입 부대 전투 손실 ({percent}%): {losses}."
+    },
+    "conquest": {
+      "title": "🚩 도시 점령 성공",
+      "pbbTitle": "🏳️ 유엔이 영토를 점령했습니다",
+      "noCityTitle": "도시 합병 취소",
+      "sender": "군사령부({attacker})",
+      "pbbSender": "유엔 연합군",
+      "noCitySender": "군사령부",
+      "cityMessage": "{attacker}군이 {target}의 {city}시를 점령했습니다. {outcome}{lossNote} 점령 지역은 지도에서 밝은 녹색으로 표시됩니다.",
+      "pbbMessage": "유엔 연합군이 {target}의 {city}시를 점령했습니다. 해당 지역은 참가국의 영토가 아닌 유엔 관리하에 놓입니다.{lossNote}",
+      "noCityMessage": "지도 데이터에서 {target}의 목표 도시를 찾지 못했습니다. 영토는 변경되지 않았습니다.",
+      "fullCollapse": "수도 또는 기록된 모든 도시가 함락되어 {target}이 붕괴하고 완전히 합병되었습니다.",
+      "remainingCities": "{target}의 다른 도시들은 기존 소유국의 영토로 남아 있습니다.",
+      "lossNote": " 투입 부대 전투 손실 ({percent}%): {losses}."
+    },
     "pbb": {
       "sender": "유엔 사무국",
       "unauthorizedAttackCancelledTitle": "🕊️ 승인 없는 공격 계획 취소",
@@ -718,6 +738,10 @@
         "sedang": "보안 경보! {partner}의 요원이 동부 지역 군사 시설에 침투했습니다. 무기 효율에 관한 기밀 문서가 유출될 위험이 있습니다.",
         "berat": "정보 비상사태! {partner}의 고위급 스파이 조직이 국가 연구 전략 자료와 군 함대 위치를 유출하고 있습니다!"
       },
+      "activeTitle": "🕵️ 첩보 효과 활성화",
+      "activeSender": "국가정보기관",
+      "activeMessage": "첩보 작전으로 군사력과 군 체력이 게임 내 {remainingDays}일 동안 ×0.95로 감소했습니다. 병력과 장비 수량은 변하지 않았습니다.",
+      "extendedMessage": "새로운 첩보 효과가 기존 효과를 연장하거나 유지했습니다. 군사력과 군 체력은 ×0.95로 유지됩니다(효과 중첩 없음). 남은 기간은 {remainingDays}일입니다.",
       "targets": {
         "default": "국가 정보",
         "military": "군사·국방 정보",
@@ -739,6 +763,18 @@
       "incomingMessage": "{partner}와 관련된 {eventName}이 감지되었습니다. 핵심 시설을 보호하고 피해를 즉시 처리하십시오.",
       "incomingSender": "국방·안보부",
       "defaultTarget": "군사 시설",
+      "impactTitle": "💥 사보타주 피해 발생",
+      "impactSender": "국방안보부",
+      "infrastructureResultMessage": "사보타주로 발전소와 에너지 광물 시설이 종류별 5%(최소 1) 감소했습니다. 피해: {losses}.",
+      "militaryResultMessage": "사보타주로 군사 장비가 범주별 영구 5% 감소했습니다. 손실: {losses}. 병력과 보병 인원은 감소하지 않았습니다.",
+      "lossEntry": "{unit}: -{lost} (잔여 {remaining})",
+      "noInfrastructureLosses": "감소시킬 수 있는 발전소나 에너지 광물 시설이 없습니다.",
+      "noMilitaryLosses": "감소시킬 수 있는 군사 장비가 없습니다.",
+      "infrastructureItems": {
+        "litium": "리튬 광산",
+        "logam_tanah_jarang": "희토류 광산",
+        "bijih_besi": "철광석 광산"
+      },
       "targetOptions": {
         "militaryFacility": "군사 시설 및 공장",
         "energyInfrastructure": "전력·에너지 기반 시설",

@@ -1,0 +1,103 @@
+{
+  "menu": {
+    "title": "间谍行动",
+    "targetFallback": "目标",
+    "infoTitle": "情报部门",
+    "infoDescription": "通过间谍行动收集其他国家的情报。每次行动都需要经费，并可能影响外交关系；请权衡风险与预期收益后选择目标。",
+    "searchPlaceholder": "搜索目标国家...",
+    "searchAriaLabel": "搜索目标国家",
+    "spionageTab": "间谍行动",
+    "sabotageTab": "破坏行动"
+  },
+  "table": {
+    "number": "序号",
+    "country": "国家",
+    "land": "陆军",
+    "sea": "海军",
+    "air": "空军",
+    "totalPower": "总战力",
+    "actions": "操作",
+    "actionTitle": "发起间谍任务",
+    "actionAria": "对{country}发起间谍任务"
+  },
+  "confirmation": {
+    "title": "确认对{target}执行间谍行动",
+    "operationTarget": "间谍行动目标",
+    "personnelTitle": "情报人员",
+    "personnelCount": "间谍：{count}",
+    "recruit": "招募",
+    "sendPersonnel": "派遣人员：",
+    "maximum": "最多（{count}）",
+    "decrease": "减少间谍人员",
+    "increase": "增加间谍人员",
+    "countAria": "间谍人员数量",
+    "cancel": "取消",
+    "launch": "执行任务",
+    "depleted": "没有可用间谍",
+    "insufficientPersonnel": "当前有{available}名间谍，但行动需要{required}名人员。",
+    "targets": {
+      "militer": {
+        "label": "军事与国防情报",
+        "description": "潜入军事总部，调查军队规模、作战技术和部队战备状态。"
+      },
+      "ekonomi": {
+        "label": "经济与预算情报",
+        "description": "获取该国预算余额、税率和预估每日税收。"
+      }
+    }
+  },
+  "fuel": {
+    "label": "行程费用",
+    "calculating": "正在计算...",
+    "barrels": "桶石油",
+    "stock": "库存",
+    "remaining": "剩余",
+    "fallback": "数据库费率不可用，当前使用临时估算费用。",
+    "insufficient": "石油储备不足",
+    "warning": "警告：剩余石油低于火力发电厂的日需求量（{amount}桶）。"
+  },
+  "recruit": {
+    "title": "招募间谍",
+    "personnelNow": "现有间谍：",
+    "person": "人",
+    "costPerPerson": "每人费用：",
+    "count": "招募数量：",
+    "maximum": "最多（{count}）",
+    "totalCost": "招募总费用：",
+    "availableBalance": "可用余额：",
+    "confirm": "招募（{count}）",
+    "insufficientFunds": "NEO不足"
+  },
+  "result": {
+    "title": "间谍行动结果",
+    "success": "间谍任务成功",
+    "failure": "间谍任务失败",
+    "successMessage": "在{target}执行的间谍行动{operationTarget}成功。情报人员已收集目标的机密信息。",
+    "failureMessage": "在{target}执行的间谍行动{operationTarget}失败。情报人员被当地安全部门发现。",
+    "successChance": "行动开始时的成功率：",
+    "close": "关闭"
+  },
+  "report": {
+    "fiscalTitle": "财政报告 — {country}",
+    "budget": "国家预算",
+    "dailyTax": "预估每日税收",
+    "daily": "天",
+    "militaryTitle": "军力报告 — {country}",
+    "land": "陆军",
+    "air": "空军",
+    "sea": "海军",
+    "unitsAndPower": "{units}个单位 · 战力{power}",
+    "total": "总计：{units}个单位 · 战力{power} · HP {health}",
+    "noUnits": "未发现任何单位。",
+    "unit": "单位",
+    "power": "战力",
+    "health": "HP",
+    "taxLabels": {
+      "income_tax": "个人所得税",
+      "corporate_tax": "企业税",
+      "vat": "增值税",
+      "cigarette_tax": "消费税",
+      "environment_tax": "环境税"
+    }
+  }
+}

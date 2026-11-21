@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { AlertTriangle } from 'lucide-react';
 import NotebookModalWrapper from '../../../NotebookModalWrapper';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 interface SerangBelumSelesaiModalsProps {
   isOpen: boolean;
@@ -20,6 +21,9 @@ export default function SerangBelumSelesaiModals({
   ongoingCity,
   requestedTarget,
 }: SerangBelumSelesaiModalsProps) {
+  const { t } = useLanguage();
+  const tr = (key: string, params?: Record<string, string | number>) =>
+    t(`navigation_defense_attack.${key}`, params);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -61,7 +65,7 @@ export default function SerangBelumSelesaiModals({
               id="attack-in-progress-title"
               className="text-lg sm:text-xl font-black uppercase tracking-wide text-rose-400"
             >
-              Serangan Masih Berjalan
+              {tr("blocked.title")}
             </h2>
           </div>
         </div>
@@ -69,9 +73,10 @@ export default function SerangBelumSelesaiModals({
         {/* Body Content */}
         <div className="flex flex-col space-y-4 bg-root-surface p-4">
           <p className="text-sm leading-relaxed text-root-text">
-            Pasukan Anda sedang bergerak menuju <strong className="text-white">{targetLabel}</strong>.
-            {' '}Selesaikan serangan tersebut sampai pasukan tiba dan hasil pertempuran diproses
-            sebelum menyerang <strong className="text-white">{requestedTarget ?? 'negara lain'}</strong>.
+            {tr("blocked.message", {
+              ongoingTarget: targetLabel,
+              requestedTarget: requestedTarget ?? tr("blocked.otherCountry"),
+            })}
           </p>
         </div>
 
@@ -83,7 +88,7 @@ export default function SerangBelumSelesaiModals({
             onClick={onClose}
             className="w-full sm:w-auto px-6 py-2 rounded-xl bg-root-accent hover:bg-root-accent/85 border border-root-accent text-root-accent-ink font-black text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-root-accent"
           >
-            Mengerti
+            {tr("blocked.acknowledge")}
           </button>
         </div>
 

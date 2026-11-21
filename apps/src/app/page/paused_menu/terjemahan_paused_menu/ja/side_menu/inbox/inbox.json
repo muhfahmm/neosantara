@@ -696,6 +696,26 @@
     "yearMany": "{count}年"
   },
   "dynamicNotifications": {
+    "playerLoot": {
+      "title": "💰 略奪作戦成功",
+      "sender": "軍司令部（{attacker}）",
+      "message": "{target}への略奪作戦に成功しました。国庫から{cash} NEOと天然資源を確保しました。{lossNote}",
+      "lossNote": " 部隊の戦闘損失（{percent}%）：{losses}。"
+    },
+    "conquest": {
+      "title": "🚩 都市を制圧しました",
+      "pbbTitle": "🏳️ 国連が領土を占領しました",
+      "noCityTitle": "都市の併合を中止しました",
+      "sender": "軍司令部（{attacker}）",
+      "pbbSender": "国連合同軍",
+      "noCitySender": "軍司令部",
+      "cityMessage": "{attacker}軍が{target}の都市{city}を制圧しました。{outcome}{lossNote} 制圧地域は地図上で明るい緑色に表示されます。",
+      "pbbMessage": "国連連合軍が{target}の都市{city}を占領しました。この地域は参加国の領土ではなく、国連の管理下に置かれます。{lossNote}",
+      "noCityMessage": "{target}の対象都市が地図データに見つかりませんでした。領土は変更されていません。",
+      "fullCollapse": "首都または記録されているすべての都市が陥落し、{target}は崩壊して完全に併合されました。",
+      "remainingCities": "{target}の他の都市は引き続き元の所有国の領土です。",
+      "lossNote": " 部隊の戦闘損失（{percent}%）：{losses}。"
+    },
     "pbb": {
       "sender": "国際連合事務局",
       "unauthorizedAttackCancelledTitle": "🕊️ 無許可の攻撃計画を中止",
@@ -718,6 +738,10 @@
         "sedang": "安全保障上の警告です。{partner}の工作員が東部地域の軍事施設に侵入しました。兵器の有効性に関する機密文書が漏洩するおそれがあります。",
         "berat": "諜報上の緊急事態です！{partner}の高度なスパイ網が、国家研究の戦略データと軍艦隊の位置情報を漏洩させています！"
       },
+      "activeTitle": "🕵️ スパイ活動の影響が発生",
+      "activeSender": "国家情報機関",
+      "activeMessage": "スパイ活動により、軍事力と耐久力がゲーム内{remainingDays}日間×0.95に低下しました。兵員数と装備数に変化はありません。",
+      "extendedMessage": "新たなスパイ活動により、既存の効果が延長または維持されました。軍事力と耐久力は×0.95のままです（効果は累積しません）。残り{remainingDays}日です。",
       "targets": {
         "default": "国家情報",
         "military": "軍事・防衛情報",
@@ -739,6 +763,18 @@
       "incomingMessage": "{partner}に関連する{eventName}が検知されました。重要施設を保護し、直ちに被害に対処してください。",
       "incomingSender": "国防・安全保障省",
       "defaultTarget": "軍事施設",
+      "impactTitle": "💥 破壊工作による被害が発生",
+      "impactSender": "国防・安全保障省",
+      "infrastructureResultMessage": "破壊工作により、発電施設とエネルギー鉱物施設が種類ごとに5%（最低1）減少しました。被害：{losses}。",
+      "militaryResultMessage": "破壊工作により、軍事装備がカテゴリーごとに恒久的に5%減少しました。損失：{losses}。人員・歩兵は減少していません。",
+      "lossEntry": "{unit}: -{lost}（残り{remaining}）",
+      "noInfrastructureLosses": "減少させられる発電施設やエネルギー鉱物施設はありませんでした。",
+      "noMilitaryLosses": "減少させられる軍事装備はありませんでした。",
+      "infrastructureItems": {
+        "litium": "リチウム鉱山",
+        "logam_tanah_jarang": "レアアース鉱山",
+        "bijih_besi": "鉄鉱石鉱山"
+      },
       "targetOptions": {
         "militaryFacility": "軍事施設・工場",
         "energyInfrastructure": "電力・エネルギーインフラ",

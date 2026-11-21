@@ -8,6 +8,7 @@ import { convertBarakToSoldiers } from "../../4_armada/logic/1_barak_logic";
 import { getActivePlayerAttack, type PlayerAttackStatus } from "./playerAttackStatus";
 import TravelFuelCostPanel from "../../../3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
 import type { TravelFuelStatus } from "../../../3_produksi_konsumsi/fuelLogic/travelFuelLogic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface SerangModalsProps {
   isOpen: boolean;
@@ -58,9 +59,9 @@ const deploymentUnitKeys = Object.values(armadaCatalog).flatMap((units) =>
   units.map(({ key }) => key)
 );
 
-const formatNumber = (value: unknown) => {
+const formatNumber = (value: unknown, locale: string) => {
   const numeric = Number(value ?? 0);
-  return Number.isFinite(numeric) ? numeric.toLocaleString("id-ID", { maximumFractionDigits: 0 }) : "0";
+  return Number.isFinite(numeric) ? numeric.toLocaleString(locale, { maximumFractionDigits: 0 }) : "0";
 };
 
 const getArmadaPayload = (source: any) => {
@@ -127,6 +128,9 @@ export default function SerangModals({
   onAttackBlocked,
   travelFuelStatus,
 }: SerangModalsProps) {
+  const { t, language } = useLanguage();
+  const tr = (key: string, params?: Record<string, string | number>) =>
+    t(`navigation_defense_attack.${key}`, params);
   const [deploymentPct, setDeploymentPct] = useState<Record<string, number>>({});
 
   React.useEffect(() => {
@@ -145,14 +149,14 @@ export default function SerangModals({
   if (!isOpen || !targetCountry) return null;
 
   const targetSource = targetCountry?.payload || targetCountry;
-  const attackerName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "Negara Anda";
+  const attackerName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || tr("fallback.yourCountry");
   const targetName = targetCountry?.countryName ||
     targetCountry?.payload?.countryName ||
     targetSource?.country ||
     targetSource?.nama_negara ||
     targetSource?.name_id ||
     targetSource?.name_en ||
-    "Target";
+    tr("fallback.target");
   const handleConfirm = () => {
     const activeAttack = getActivePlayerAttack();
     if (activeAttack) {
@@ -257,7 +261,7 @@ export default function SerangModals({
                 <Swords className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
               </div>
               <div>
-                <h3 className="text-[length:var(--modal-font-title)] font-bold text-root-accent tracking-tight leading-none uppercase">Konfirmasi Serangan</h3>
+                <h3 className="text-[length:var(--modal-font-title)] font-bold text-root-accent tracking-tight leading-none uppercase">{tr("deployment.title")}</h3>
               </div>
             </div>
             <div className="hidden sm:flex items-center gap-2 ml-4 lg:ml-8 pl-4 lg:pl-8 border-l border-root-accent/30">
@@ -267,7 +271,7 @@ export default function SerangModals({
             </div>
           </div>
           <SharedModalCloseButton onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm" appearance="custom">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">{tr("deployment.close")}</span>
             <X className="h-4 w-4" />
           </SharedModalCloseButton>
         </div>
@@ -286,17 +290,17 @@ export default function SerangModals({
                   <div className="p-2.5 rounded-full bg-root-accent/10 border border-root-accent/30">
                     <Shield className="w-6 h-6 text-root-accent" />
                   </div>
-                  <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">Pasukan Penyerang</p>
+                  <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">{tr("deployment.attacker")}</p>
                   <p className="text-xl font-black text-root-accent">{attackerName}</p>
                   <p className="text-xs text-root-text">
-                    Kekuatan: <span className="font-black text-root-accent">{formatNumber(attackerTotalPower)}</span>
+                    {tr("deployment.power")}: <span className="font-black text-root-accent">{formatNumber(attackerTotalPower, language)}</span>
                   </p>
                 </div>
 
                 {/* ELEMEN TENGAH: VS */}
                 <div className="flex items-center justify-center py-2 md:py-0">
                   <div className="flex h-14 w-14 items-center justify-center rounded-full border border-root-accent/30 bg-root-surface text-xl font-black text-root-accent shadow-sm">
-                    VS
+                    {tr("deployment.versus")}
                   </div>
                 </div>
 
@@ -305,37 +309,42 @@ export default function SerangModals({
                   <div className="p-2.5 rounded-full bg-rose-500/10 border border-rose-500/30">
                     <Shield className="w-6 h-6 text-rose-400" />
                   </div>
-                  <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">Pasukan Target</p>
+                  <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">{tr("deployment.target")}</p>
                   <p className="text-xl font-black text-rose-400">{targetName}</p>
                   <p className="text-xs text-root-text">
-                    Kekuatan: <span className="font-black text-rose-400">{formatNumber(targetTotalPower)}</span>
+                    {tr("deployment.power")}: <span className="font-black text-rose-400">{formatNumber(targetTotalPower, language)}</span>
                   </p>
                 </div>
               </div>
 
             </div>
 
-            <TravelFuelCostPanel status={travelFuelStatus} label="Bahan bakar serangan" />
+            <TravelFuelCostPanel
+              status={travelFuelStatus}
+              label={tr("deployment.fuelLabel")}
+              locale={language}
+              translate={(key, params) => tr(`fuel.${key}`, params)}
+            />
 
             {/* BAGIAN 2: RINCIAN PASUKAN PER MATRA */}
             <div className="bg-root-canvas border border-root-accent/20 p-6 rounded-2xl shadow-sm space-y-4">
               {/* BUTTON OTOMATISASI GLOBAL */}
               <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-root-surface border border-root-accent/20">
                 <span className="text-xs font-black text-root-accent uppercase tracking-wider">
-                  ⚡ OTOMATISASI PENGERAHAN PASUKAN:
+                  ⚡ {tr("deployment.automation")}
                 </span>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleSetAllGlobalPct(100)}
                     className="px-3 py-1.5 rounded-lg bg-root-accent text-root-accent-ink hover:bg-root-accent/85 font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer shadow-md active:scale-95"
                   >
-                    Kerahkan Semua (100%)
+                    {tr("deployment.deployAll")}
                   </button>
                   <button
                     onClick={() => handleSetAllGlobalPct(0)}
                     className="px-3 py-1.5 rounded-lg bg-root-surface border border-root-accent/30 text-root-subtle hover:text-root-accent font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer active:scale-95"
                   >
-                    Reset Semua (0%)
+                    {tr("deployment.resetAll")}
                   </button>
                 </div>
               </div>
@@ -343,26 +352,27 @@ export default function SerangModals({
               <div className="flex flex-col gap-4">
                 {(['darat', 'laut', 'udara'] as ArmadaGroup[]).map((group) => {
                   const Icon = groupMeta[group].icon;
+                  const groupLabel = tr(`groups.${group}`);
                   return (
                     <div key={group} className="rounded-xl border border-root-accent/20 bg-root-surface p-4">
                       <div className="space-y-3">
                         <div className="w-full flex items-center justify-between rounded-xl border border-root-accent/20 bg-root-canvas px-4 py-3 text-sm font-black text-root-accent">
                           <div className="flex items-center gap-3">
                             <Icon className="h-5 w-5 text-root-accent" />
-                            <span className="uppercase tracking-wider">{group}</span>
+                            <span className="uppercase tracking-wider">{groupLabel}</span>
                           </div>
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleSetAllGroupPct(group, 100)}
                               className="px-2.5 py-1 rounded-md bg-root-accent/15 border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-accent-ink font-bold text-[10px] uppercase tracking-wider transition-all cursor-pointer"
                             >
-                              Kerahkan Matra (100%)
+                              {tr("deployment.deployGroup")}
                             </button>
                             <button
                               onClick={() => handleSetAllGroupPct(group, 0)}
                               className="px-2.5 py-1 rounded-md bg-root-surface border border-root-accent/20 text-root-subtle hover:text-root-accent font-bold text-[10px] uppercase tracking-wider transition-all cursor-pointer"
                             >
-                              Reset (0%)
+                              {tr("deployment.resetGroup")}
                             </button>
                           </div>
                         </div>
@@ -370,8 +380,8 @@ export default function SerangModals({
                         {/* Pasukan Militer User */}
                         <div className="w-full space-y-2 pt-1">
                           <div className="text-[10px] font-black uppercase tracking-wider text-root-accent mb-2 flex items-center justify-between">
-                            <span>Jenis Alutsista / Pasukan</span>
-                            <span>Jumlah Unit</span>
+                            <span>{tr("deployment.unitType")}</span>
+                            <span>{tr("deployment.unitCount")}</span>
                           </div>
                           {attackerBreakdown[group].map((item) => {
                             const pct = deploymentPct[item.key] ?? 0;
@@ -384,11 +394,11 @@ export default function SerangModals({
                               >
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center justify-between text-xs font-semibold text-root-text">
-                                    <span>{item.label}</span>
+                                    <span>{tr(`units.${item.key}`)}</span>
                                     <span className="font-black text-root-accent font-mono">
-                                      {formatNumber(deployedQty)}{" "}
+                                      {formatNumber(deployedQty, language)}{" "}
                                       <span className="text-[10px] text-root-subtle font-normal">
-                                        / {formatNumber(item.quantity)}
+                                        / {formatNumber(item.quantity, language)}
                                       </span>
                                     </span>
                                   </div>
@@ -426,7 +436,7 @@ export default function SerangModals({
         {/* FOOTER MODAL */}
         <div className="px-6 py-4 border-t border-root-accent/30 bg-root-canvas relative z-10 shrink-0 flex items-center justify-end gap-4">
           <button onClick={onClose} className="px-6 py-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
-            Batal
+            {tr("deployment.cancel")}
           </button>
           <button 
             onClick={handleConfirm}
@@ -438,7 +448,7 @@ export default function SerangModals({
             }`}
           >
             <Swords className="w-4 h-4" />
-            Konfirmasi Serangan
+            {tr("deployment.confirm")}
           </button>
         </div>
 

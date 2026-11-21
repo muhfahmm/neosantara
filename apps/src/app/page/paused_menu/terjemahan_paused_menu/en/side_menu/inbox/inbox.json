@@ -696,6 +696,26 @@
     "yearMany": "{count} years"
   },
   "dynamicNotifications": {
+    "playerLoot": {
+      "title": "💰 LOOTING OPERATION SUCCESSFUL",
+      "sender": "Armed Forces Headquarters ({attacker})",
+      "message": "The looting operation against {target} succeeded! {cash} NEO from the national treasury and natural resources have been secured.{lossNote}",
+      "lossNote": " Combat losses to your forces ({percent}%): {losses}."
+    },
+    "conquest": {
+      "title": "🚩 CITY CONQUERED",
+      "pbbTitle": "🏳️ TERRITORY OCCUPIED BY THE UN",
+      "noCityTitle": "City Annexation Cancelled",
+      "sender": "Armed Forces Headquarters ({attacker})",
+      "pbbSender": "United Nations Combined Forces",
+      "noCitySender": "Armed Forces Headquarters",
+      "cityMessage": "The forces of {attacker} successfully captured the city of {city} in {target}. {outcome}{lossNote} Conquered territory is highlighted in bright green on the map.",
+      "pbbMessage": "United Nations coalition forces occupied the city of {city} in {target}. The territory is under UN administration, not the ownership of a participating country.{lossNote}",
+      "noCityMessage": "The target city in {target} was not found in the map data. No territory was changed.",
+      "fullCollapse": "The capital or all recorded cities have fallen; {target} has collapsed and been fully annexed.",
+      "remainingCities": "Other cities in {target} remain under their original ownership.",
+      "lossNote": " Combat losses to your forces ({percent}%): {losses}."
+    },
     "pbb": {
       "sender": "United Nations Secretariat",
       "unauthorizedAttackCancelledTitle": "🕊️ Unauthorized Attack Plan Cancelled",
@@ -718,6 +738,10 @@
         "sedang": "Security alert! An agent from {partner} infiltrated a military installation in the eastern region. Classified weapons-effectiveness documents may be exposed.",
         "berat": "INTELLIGENCE EMERGENCY! A high-level spy network from {partner} is leaking strategic national research data and the positions of our military fleets!"
       },
+      "activeTitle": "🕵️ ESPIONAGE EFFECT ACTIVE",
+      "activeSender": "National Intelligence Agency",
+      "activeMessage": "Espionage reduced military strength and health to ×0.95 for {remainingDays} in-game days. Troop and equipment counts are unchanged.",
+      "extendedMessage": "A new espionage effect extended or maintained the active effect. Military strength and health remain at ×0.95 (effects do not stack), with {remainingDays} days remaining.",
       "targets": {
         "default": "National Intelligence Information",
         "military": "Military & Defense Intelligence",
@@ -739,6 +763,18 @@
       "incomingMessage": "{eventName} linked to {partner} has been detected. Protect critical facilities and address the damage immediately.",
       "incomingSender": "Ministry of Defense & Security",
       "defaultTarget": "Military Facility",
+      "impactTitle": "💥 SABOTAGE DAMAGE OCCURRED",
+      "impactSender": "Ministry of Defense and Security",
+      "infrastructureResultMessage": "Sabotage reduced electricity plants and energy-mineral facilities by 5% per type (minimum 1). Damage: {losses}.",
+      "militaryResultMessage": "Sabotage permanently reduced military equipment by 5% per category. Losses: {losses}. Personnel and infantry were not reduced.",
+      "lossEntry": "{unit}: -{lost} (remaining {remaining})",
+      "noInfrastructureLosses": "No electricity plants or energy-mineral facilities could be reduced.",
+      "noMilitaryLosses": "No military equipment could be reduced.",
+      "infrastructureItems": {
+        "litium": "Lithium Mine",
+        "logam_tanah_jarang": "Rare Earth Mine",
+        "bijih_besi": "Iron Ore Mine"
+      },
       "targetOptions": {
         "militaryFacility": "Military Facilities & Factories",
         "energyInfrastructure": "Electricity & Energy Infrastructure",

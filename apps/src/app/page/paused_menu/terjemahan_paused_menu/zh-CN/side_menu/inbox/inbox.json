@@ -696,6 +696,26 @@
     "yearMany": "{count}年"
   },
   "dynamicNotifications": {
+    "playerLoot": {
+      "title": "💰 掠夺行动成功",
+      "sender": "武装部队总司令部（{attacker}）",
+      "message": "对{target}的掠夺行动已成功！已从国库中获得{cash} NEO及自然资源。{lossNote}",
+      "lossNote": " 部队战斗损失（{percent}%）：{losses}。"
+    },
+    "conquest": {
+      "title": "🚩 城市已被征服",
+      "pbbTitle": "🏳️ 联合国已占领该地区",
+      "noCityTitle": "城市吞并已取消",
+      "sender": "武装部队总部（{attacker}）",
+      "pbbSender": "联合国联合部队",
+      "noCitySender": "武装部队总部",
+      "cityMessage": "{attacker}部队成功攻占了{target}的{city}市。{outcome}{lossNote} 被征服地区在地图上以亮绿色标示。",
+      "pbbMessage": "联合国联军占领了{target}的{city}市。该地区由联合国管理，不归属于任何参战国。{lossNote}",
+      "noCityMessage": "地图数据中未找到{target}的目标城市。领土未发生变化。",
+      "fullCollapse": "首都或所有已记录的城市均已陷落；{target}已崩溃并被完全吞并。",
+      "remainingCities": "{target}的其他城市仍归原所有者所有。",
+      "lossNote": " 部队战斗损失（{percent}%）：{losses}。"
+    },
     "pbb": {
       "sender": "联合国秘书处",
       "unauthorizedAttackCancelledTitle": "🕊️ 未经授权的攻击计划已取消",
@@ -718,6 +738,10 @@
         "sedang": "安全警报！来自{partner}的间谍潜入东部地区军事设施，武器效能机密文件可能泄露。",
         "berat": "情报紧急事件！来自{partner}的高级间谍网络正在泄露国家战略研究数据和我方舰队位置！"
       },
+      "activeTitle": "🕵️ 间谍行动效果生效",
+      "activeSender": "国家情报局",
+      "activeMessage": "间谍行动使军事实力和军队生命值在游戏内{remainingDays}天降至×0.95。部队和装备数量未发生变化。",
+      "extendedMessage": "新的间谍行动延长或维持了现有效果。军事实力和军队生命值仍为×0.95（效果不会叠加），剩余{remainingDays}天。",
       "targets": {
         "default": "国家情报信息",
         "military": "军事与国防情报",
@@ -739,6 +763,18 @@
       "incomingMessage": "发现与{partner}有关的{eventName}。请保护关键设施并立即处理损害。",
       "incomingSender": "国防与安全部",
       "defaultTarget": "军事设施",
+      "impactTitle": "💥 发生破坏行动损失",
+      "impactSender": "国防与安全部",
+      "infrastructureResultMessage": "破坏行动使发电设施和能源矿产设施每类减少5%（至少1）。损失：{losses}。",
+      "militaryResultMessage": "破坏行动使军事装备每类永久减少5%。损失：{losses}。人员和步兵未受影响。",
+      "lossEntry": "{unit}：-{lost}（剩余{remaining}）",
+      "noInfrastructureLosses": "没有可减少的发电设施或能源矿产设施。",
+      "noMilitaryLosses": "没有可减少的军事装备。",
+      "infrastructureItems": {
+        "litium": "锂矿",
+        "logam_tanah_jarang": "稀土矿",
+        "bijih_besi": "铁矿"
+      },
       "targetOptions": {
         "militaryFacility": "军事设施与工厂",
         "energyInfrastructure": "电力与能源基础设施",

@@ -1,0 +1,96 @@
+{
+  "menu": {
+    "title": "Sabotage",
+    "targetFallback": "Target",
+    "infoTitle": "Intelligence",
+    "infoDescription": "Use sabotage to carry out covert operations against other countries. Each operation costs money and may have diplomatic consequences, so weigh the risks against the expected results.",
+    "searchPlaceholder": "Search target country...",
+    "searchAriaLabel": "Search target countries",
+    "spionageTab": "Espionage",
+    "sabotageTab": "Sabotage"
+  },
+  "table": {
+    "number": "No.",
+    "country": "Country",
+    "land": "Land",
+    "sea": "Sea",
+    "air": "Air",
+    "totalPower": "Total Power",
+    "actions": "Actions",
+    "actionTitle": "Launch sabotage operation",
+    "actionAria": "Launch a sabotage operation in {country}"
+  },
+  "confirmation": {
+    "title": "Sabotage Confirmation: {target}",
+    "operationTarget": "Sabotage Facility Target",
+    "personnelTitle": "Sabotage Personnel",
+    "personnelCount": "Saboteurs: {count}",
+    "recruit": "Recruit",
+    "sendPersonnel": "Personnel to deploy:",
+    "maximum": "Maximum ({count})",
+    "decrease": "Decrease sabotage personnel",
+    "increase": "Increase sabotage personnel",
+    "countAria": "Number of sabotage personnel",
+    "cancel": "Cancel",
+    "launch": "Launch Sabotage",
+    "depleted": "No Saboteurs Available",
+    "insufficientPersonnel": "{available} saboteurs are available, but the operation requires {required} personnel.",
+    "targets": {
+      "pabrik_militer": {
+        "label": "Military Facilities & Factories",
+        "description": "Blow up ammunition depots, tank factories, aircraft hangars, or warship docks."
+      },
+      "infrastruktur_energi": {
+        "label": "Electricity & Energy Infrastructure",
+        "description": "Disable power substations, oil refineries, or power-generating reactor facilities."
+      },
+      "rantai_pasok": {
+        "label": "Food Production Sabotage",
+        "description": "Destroy 5% of buildings across livestock, agriculture, fisheries, and food processing (at least one of each type)."
+      },
+      "manufaktur": {
+        "label": "Manufacturing Sabotage",
+        "description": "Destroy 5% of semiconductor, machinery, iron, cement, and timber factory buildings (at least one of each type)."
+      }
+    }
+  },
+  "fuel": {
+    "label": "Travel cost",
+    "calculating": "Calculating...",
+    "barrels": "barrels of oil",
+    "stock": "Stock",
+    "remaining": "Remaining",
+    "fallback": "Database tariff unavailable; cost is a temporary estimate.",
+    "insufficient": "Insufficient oil reserves",
+    "warning": "Warning: remaining oil is below the daily power-plant requirement ({amount} barrels)."
+  },
+  "recruit": {
+    "title": "Recruit Saboteurs",
+    "personnelNow": "Current Saboteurs:",
+    "person": "personnel",
+    "costPerPerson": "Cost Per Person:",
+    "count": "Recruitment Amount:",
+    "maximum": "Maximum ({count})",
+    "totalCost": "Total Recruitment Cost:",
+    "availableBalance": "Available Balance:",
+    "confirm": "Recruit ({count})",
+    "insufficientFunds": "Insufficient NEO"
+  },
+  "result": {
+    "title": "Sabotage Operation Results",
+    "success": "Sabotage Successful",
+    "failure": "Sabotage Failed",
+    "successMessage": "The sabotage operation{operationTarget} in {target} succeeded. The target installation was destroyed or disabled.",
+    "failureMessage": "The sabotage operation{operationTarget} in {target} failed. The opposing security system stopped the sabotage team.",
+    "lossTitleMilitary": "Enemy Military Facility Losses",
+    "lossTitleEnergy": "Enemy Energy Infrastructure Losses",
+    "lossTitleFood": "Enemy Food Production Building Losses",
+    "lossTitleManufacturing": "Enemy Manufacturing Building Losses",
+    "lossDescriptionMilitary": "The sabotage disabled 5% of the target's military equipment facilities. Destroyed units:",
+    "lossDescriptionEnergy": "The sabotage destroyed 5% of the target's power and energy-mineral facilities (at least one of each type). Loss details:",
+    "lossDescriptionFood": "The sabotage destroyed 5% of buildings across the target's four food-production categories (at least one of each type). Destroyed buildings:",
+    "lossDescriptionManufacturing": "The sabotage destroyed 5% of buildings in the manufacturing category (at least one of each type). Destroyed buildings:",
+    "successChance": "Success chance when the operation was launched:",
+    "close": "Close"
+  }
+}

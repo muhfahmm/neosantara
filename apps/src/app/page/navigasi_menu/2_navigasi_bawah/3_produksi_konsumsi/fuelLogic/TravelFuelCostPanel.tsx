@@ -5,12 +5,19 @@ import type { TravelFuelStatus } from "./travelFuelLogic";
 export default function TravelFuelCostPanel({
   status,
   label = "Biaya perjalanan",
+  locale = "id-ID",
+  translate,
 }: {
   status: TravelFuelStatus;
   label?: string;
+  locale?: string;
+  translate?: (
+    key: "calculating" | "barrels" | "stock" | "remaining" | "fallback" | "insufficient" | "warning",
+    params?: Record<string, string | number>,
+  ) => string;
 }) {
   const numberFormat = (value: number) =>
-    value.toLocaleString("id-ID", { maximumFractionDigits: 0 });
+    value.toLocaleString(locale, { maximumFractionDigits: 0 });
 
   return (
     <div className={`mb-5 rounded-xl border p-3 text-sm ${
@@ -22,26 +29,27 @@ export default function TravelFuelCostPanel({
         {label}:{" "}
         <span className={status.ok ? "text-root-accent" : "text-root-danger"}>
           {status.loading || status.cost === null
-            ? "Menghitung..."
-            : `${numberFormat(status.cost)} barel minyak`}
+            ? translate?.("calculating") ?? "Menghitung..."
+            : `${numberFormat(status.cost)} ${translate?.("barrels") ?? "barel minyak"}`}
         </span>
-        {" | "}Stok: {numberFormat(status.stock)}
-        {" | "}Sisa: {numberFormat(status.remaining)}
+        {" | "}{translate?.("stock") ?? "Stok"}: {numberFormat(status.stock)}
+        {" | "}{translate?.("remaining") ?? "Sisa"}: {numberFormat(status.remaining)}
       </p>
       {status.fallback && !status.loading && (
         <p className="mt-1 text-xs text-amber-300">
-          Tarif database tidak tersedia; biaya menggunakan estimasi sementara.
+          {translate?.("fallback") ?? "Tarif database tidak tersedia; biaya menggunakan estimasi sementara."}
         </p>
       )}
       {!status.ok && !status.loading && (
         <p className="mt-1 font-bold text-root-danger">
-          Stok minyak bumi tidak mencukupi
+          {translate?.("insufficient") ?? "Stok minyak bumi tidak mencukupi"}
         </p>
       )}
       {status.belowDailyPowerPlantNeed && status.ok && (
         <p className="mt-1 text-xs font-bold text-amber-300">
-          Peringatan: sisa minyak di bawah kebutuhan harian PLTU (
-          {numberFormat(status.dailyPowerPlantNeed)} barel).
+          {translate?.("warning", {
+            amount: numberFormat(status.dailyPowerPlantNeed),
+          }) ?? `Peringatan: sisa minyak di bawah kebutuhan harian PLTU (${numberFormat(status.dailyPowerPlantNeed)} barel).`}
         </p>
       )}
     </div>

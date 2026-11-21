@@ -1,0 +1,103 @@
+{
+  "menu": {
+    "title": "첩보",
+    "targetFallback": "대상",
+    "infoTitle": "정보부",
+    "infoDescription": "첩보 작전으로 다른 국가의 정보를 수집합니다. 작전에는 비용이 들고 외교적 결과를 초래할 수 있으므로 위험과 기대 효과를 고려해 대상을 선택하세요.",
+    "searchPlaceholder": "대상 국가 검색...",
+    "searchAriaLabel": "대상 국가 검색",
+    "spionageTab": "첩보",
+    "sabotageTab": "사보타주"
+  },
+  "table": {
+    "number": "번호",
+    "country": "국가",
+    "land": "육군",
+    "sea": "해군",
+    "air": "공군",
+    "totalPower": "총 전력",
+    "actions": "작전",
+    "actionTitle": "첩보 임무 시작",
+    "actionAria": "{country} 대상 첩보 임무 시작"
+  },
+  "confirmation": {
+    "title": "{target} 첩보 확인",
+    "operationTarget": "첩보 작전 대상",
+    "personnelTitle": "정보 요원",
+    "personnelCount": "첩보원: {count}",
+    "recruit": "모집",
+    "sendPersonnel": "파견 인원:",
+    "maximum": "최대 ({count})",
+    "decrease": "첩보 인원 줄이기",
+    "increase": "첩보 인원 늘리기",
+    "countAria": "첩보 인원 수",
+    "cancel": "취소",
+    "launch": "임무 시작",
+    "depleted": "첩보원 없음",
+    "insufficientPersonnel": "첩보원 {available}명이 있지만 작전에는 {required}명이 필요합니다.",
+    "targets": {
+      "militer": {
+        "label": "군사·방위 정보",
+        "description": "군 사령부에 침투해 전력 규모, 전투 기술 및 병력 준비 상태를 파악합니다."
+      },
+      "ekonomi": {
+        "label": "경제·예산 정보",
+        "description": "국가 예산 잔액, 세율 및 예상 일일 세수를 파악합니다."
+      }
+    }
+  },
+  "fuel": {
+    "label": "이동 비용",
+    "calculating": "계산 중...",
+    "barrels": "배럴",
+    "stock": "보유량",
+    "remaining": "잔여량",
+    "fallback": "데이터베이스 요금을 사용할 수 없어 임시 예상 비용을 표시합니다.",
+    "insufficient": "석유 보유량 부족",
+    "warning": "경고: 남은 석유가 화력 발전소의 일일 필요량보다 적습니다({amount} 배럴)."
+  },
+  "recruit": {
+    "title": "첩보원 모집",
+    "personnelNow": "현재 첩보원:",
+    "person": "명",
+    "costPerPerson": "1인당 비용:",
+    "count": "모집 인원:",
+    "maximum": "최대 ({count})",
+    "totalCost": "총 모집 비용:",
+    "availableBalance": "사용 가능 잔액:",
+    "confirm": "{count}명 모집",
+    "insufficientFunds": "NEO 부족"
+  },
+  "result": {
+    "title": "첩보 작전 결과",
+    "success": "첩보 임무 성공",
+    "failure": "첩보 임무 실패",
+    "successMessage": "{target}에서 첩보 작전{operationTarget}이 성공했습니다. 정보 요원들이 대상의 기밀 정보를 수집했습니다.",
+    "failureMessage": "{target}에서 첩보 작전{operationTarget}이 실패했습니다. 현지 보안 당국에 요원이 발각되었습니다.",
+    "successChance": "작전 시작 당시 성공 확률:",
+    "close": "닫기"
+  },
+  "report": {
+    "fiscalTitle": "재정 보고서 — {country}",
+    "budget": "국가 예산",
+    "dailyTax": "예상 일일 세수",
+    "daily": "일",
+    "militaryTitle": "군사력 보고서 — {country}",
+    "land": "육군",
+    "air": "공군",
+    "sea": "해군",
+    "unitsAndPower": "{units}개 부대 · 전력 {power}",
+    "total": "합계: {units}개 부대 · 전력 {power} · HP {health}",
+    "noUnits": "탐지된 부대가 없습니다.",
+    "unit": "부대",
+    "power": "전력",
+    "health": "HP",
+    "taxLabels": {
+      "income_tax": "개인 소득세",
+      "corporate_tax": "법인세",
+      "vat": "부가가치세",
+      "cigarette_tax": "소비세",
+      "environment_tax": "환경세"
+    }
+  }
+}

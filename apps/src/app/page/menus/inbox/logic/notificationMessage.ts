@@ -65,6 +65,383 @@ function getOrganizationNameKey(value: string): string | undefined {
 }
 
 type LegacyPbbNotificationKind = 'singleAttack' | 'batchAttacks' | 'warBan';
+const PLAYER_LOOT_NOTIFICATION_PREFIX = 'notif-player-loot-';
+const PLAYER_LOOT_MESSAGE_KEY = 'side_inbox.dynamicNotifications.playerLoot.message';
+const PLAYER_ANNEX_NOTIFICATION_PREFIX = 'notif-player-annex-';
+const COVERT_ESPIONAGE_RESULT_PREFIX = 'notif-covert-espionage-active-';
+const COVERT_SABOTAGE_RESULT_PREFIX = 'notif-covert-sabotage-result-';
+
+const LEGACY_LOOT_UNIT_KEYS: Record<string, string> = {
+  'prajurit infanteri': 'barak',
+  'tank tempur utama': 'tank_tempur_utama',
+  'apc ifv': 'apc_ifv',
+  'artileri berat': 'artileri_berat',
+  'sistem peluncur roket': 'sistem_peluncur_roket',
+  'pertahanan udara mobile': 'pertahanan_udara_mobile',
+  'kendaraan taktis': 'kendaraan_taktis',
+  'kapal induk': 'kapal_induk',
+  'kapal induk nuklir': 'kapal_induk_nuklir',
+  'kapal destroyer': 'kapal_destroyer',
+  'kapal korvet': 'kapal_korvet',
+  'kapal selam nuklir': 'kapal_selam_nuklir',
+  'kapal selam regular': 'kapal_selam_regular',
+  'kapal ranjau': 'kapal_ranjau',
+  'kapal logistik': 'kapal_logistik',
+  'jet tempur siluman': 'jet_tempur_siluman',
+  'jet tempur interceptor': 'jet_tempur_interceptor',
+  'pesawat pengebom': 'pesawat_pengebom',
+  'helikopter serang': 'helikopter_serang',
+  'pesawat pengintai': 'pesawat_pengintai',
+  'drone intai uav': 'drone_intai_uav',
+  'drone kamikaze': 'drone_kamikaze',
+  'pesawat angkut': 'pesawat_angkut',
+};
+
+interface PlayerLootNotificationFields {
+  id?: string;
+  message: string;
+  sender?: string;
+  attackerCountry?: string;
+  targetCountry?: string;
+  transferredCash?: number;
+  lossPercent?: number;
+  lootLosses?: Array<{ unitKey: string; quantity: number }>;
+}
+
+function isPlayerLootNotification(notification: { id?: string }): boolean {
+  return notification.id?.startsWith(PLAYER_LOOT_NOTIFICATION_PREFIX) ?? false;
+}
+
+function isPlayerAnnexNotification(notification: { id?: string }): boolean {
+  return notification.id?.startsWith(PLAYER_ANNEX_NOTIFICATION_PREFIX) ?? false;
+}
+
+function isLegacyAnnexationCancellation(notification: { id?: string; title?: string }): boolean {
+  return Boolean(
+    notification.id?.startsWith(`${PLAYER_ANNEX_NOTIFICATION_PREFIX}no-city-`) ||
+    notification.title?.toLowerCase().includes('aneksasi kota dibatalkan')
+  );
+}
+
+function isLegacyPbbOccupation(notification: { title?: string; sender?: string }): boolean {
+  return /wilayah diduduki pbb/i.test(notification.title || '') ||
+    /pasukan gabungan pbb/i.test(notification.sender || '');
+}
+
+function parseInboxNumber(value: string): number | undefined {
+  const normalized = value.trim().replace(/\s/g, '');
+  const parsed = Number(normalized.includes(',')
+    ? normalized.replace(/\./g, '').replace(',', '.')
+    : normalized.replace(/[.,]/g, ''));
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function formatInboxNumber(value: number): string {
+  const locale = typeof document !== 'undefined' && document.documentElement.lang
+    ? document.documentElement.lang
+    : 'id';
+  return new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(value);
+}
+
+function getPlayerLootLegacyData(message: string): {
+  targetCountry?: string;
+  transferredCash?: number;
+  lossPercent?: number;
+  lootLosses: Array<{ unitKey: string; quantity: number }>;
+} {
+  const match = message.match(
+    /^Operasi penjarahan atas\s+(.+?)\s+berhasil dilancarkan!\s+Kas negara sebesar\s+([\d.,]+)\s+NEO dan sumber daya alam telah diamankan\.(.*)$/i,
+  );
+  const lossMatch = match?.[3].match(
+    /Kerugian tempur armada Anda\s*\(([\d.,]+)%\):\s*(.+?)(?:\.\s*)?$/i,
+  );
+  const lootLosses = (lossMatch?.[2] ?? '')
+    .split(/,\s*/)
+    .flatMap((item) => {
+      const itemMatch = item.match(/^([\d.,]+)\s+(.+)$/);
+      if (!itemMatch) return [];
+      const quantity = parseInboxNumber(itemMatch[1]);
+      const unitKey = LEGACY_LOOT_UNIT_KEYS[itemMatch[2].trim().toLowerCase()];
+      return quantity !== undefined && unitKey ? [{ unitKey, quantity }] : [];
+    });
+
+  return {
+    targetCountry: match?.[1],
+    transferredCash: match ? parseInboxNumber(match[2]) : undefined,
+    lossPercent: lossMatch ? parseInboxNumber(lossMatch[1]) : undefined,
+    lootLosses,
+  };
+}
+
+function getPlayerLootMessage(
+  notification: PlayerLootNotificationFields,
+  t: TranslationFunction,
+): string {
+  const legacyData = getPlayerLootLegacyData(notification.message);
+  const targetCountry = notification.targetCountry || legacyData.targetCountry || '';
+  const cash = notification.transferredCash ?? legacyData.transferredCash;
+  const losses = notification.lootLosses ?? legacyData.lootLosses;
+  const lossPercent = notification.lossPercent ?? legacyData.lossPercent;
+  if (!targetCountry || cash === undefined) {
+    return localizeCountryNamesInText(notification.message);
+  }
+  const localizedLosses = losses
+    .map(({ unitKey, quantity }) => {
+      const normalizedUnitKey = unitKey === 'pasukan_infanteri' ? 'barak' : unitKey;
+      const unitName = t(`navigation_defense_attack.units.${normalizedUnitKey}`);
+      return `${formatInboxNumber(quantity)} ${unitName}`;
+    })
+    .join(', ');
+  const lossNote = localizedLosses && lossPercent !== undefined
+    ? t('side_inbox.dynamicNotifications.playerLoot.lossNote', {
+      percent: lossPercent,
+      losses: localizedLosses,
+    })
+    : '';
+
+  return t(PLAYER_LOOT_MESSAGE_KEY, {
+    target: getLocalizedCountryName(targetCountry),
+    cash: cash === undefined ? '' : formatInboxNumber(cash),
+    lossNote,
+  });
+}
+
+type PlayerAnnexationResult = {
+  attackerCountry: string;
+  targetCountry: string;
+  cityName?: string;
+  pbbOccupation: boolean;
+  countryCollapsed: boolean;
+  cityFound: boolean;
+  lossPercent: number;
+  losses: Array<{ unitKey: string; quantity: number }>;
+};
+
+function parseLegacyAnnexationLosses(text: string): {
+  lossPercent: number;
+  losses: Array<{ unitKey: string; quantity: number }>;
+} {
+  const lossMatch = text.match(
+    /Kerugian tempur armada Anda\s*\(([\d.,]+)%\):\s*(.+?)(?:\.\s*)?$/i,
+  );
+  const lossPercent = lossMatch ? parseInboxNumber(lossMatch[1]) : undefined;
+  const losses = (lossMatch?.[2] ?? '')
+    .split(/,\s*/)
+    .flatMap((item) => {
+      const itemMatch = item.match(/^([\d.,]+)\s+(.+)$/);
+      if (!itemMatch) return [];
+      const quantity = parseInboxNumber(itemMatch[1]);
+      const unitKey = LEGACY_LOOT_UNIT_KEYS[itemMatch[2].trim().toLowerCase()];
+      return quantity !== undefined && unitKey ? [{ unitKey, quantity }] : [];
+    });
+  return { lossPercent: lossPercent ?? 0, losses };
+}
+
+function getLegacyAnnexationResult(notification: {
+  id?: string;
+  title?: string;
+  sender?: string;
+  message: string;
+}): PlayerAnnexationResult | undefined {
+  const pbbOccupation = isLegacyPbbOccupation(notification);
+  const cancellation = isLegacyAnnexationCancellation(notification);
+  const noCityMatch = notification.message.match(
+    /^Kota target di\s+(.+?)\s+tidak ditemukan pada data peta\.\s+Tidak ada wilayah yang diubah\.$/i,
+  ) || notification.message.match(
+    /^Aneksasi\s+(.+?)\s+tidak dapat diterapkan karena kota target tidak ditemukan pada data peta\.$/i,
+  );
+  if (cancellation && noCityMatch) {
+    return {
+      attackerCountry: '',
+      targetCountry: noCityMatch[1],
+      pbbOccupation: false,
+      countryCollapsed: false,
+      cityFound: false,
+      ...parseLegacyAnnexationLosses(notification.message),
+    };
+  }
+
+  if (pbbOccupation) {
+    const match = notification.message.match(
+      /^Pasukan gabungan PBB berhasil menduduki Kota\s+(.+?)\s+di\s+(.+?)\.\s+Wilayah berada di bawah administrasi PBB, bukan negara peserta\.(.*)$/i,
+    );
+    if (!match) return undefined;
+    return {
+      attackerCountry: '',
+      targetCountry: match[2],
+      cityName: match[1],
+      pbbOccupation: true,
+      countryCollapsed: false,
+      cityFound: true,
+      ...parseLegacyAnnexationLosses(match[3]),
+    };
+  }
+
+  const match = notification.message.match(
+    /^Pasukan\s+(.+?)\s+berhasil menaklukkan Kota\s+(.+?)\s+di\s+(.+?)\.\s+([\s\S]*?)\s+Wilayah taklukan ditandai hijau terang pada peta\.$/i,
+  );
+  if (!match) return undefined;
+  return {
+    attackerCountry: match[1],
+    targetCountry: match[3],
+    cityName: match[2],
+    pbbOccupation: false,
+    countryCollapsed: /^Ibu kota atau seluruh kota yang terdata telah jatuh;/i.test(match[4]),
+    cityFound: true,
+    ...parseLegacyAnnexationLosses(match[4]),
+  };
+}
+
+function getPlayerAnnexationMessage(
+  notification: {
+    id?: string;
+    title?: string;
+    sender?: string;
+    message: string;
+    messageKey?: string;
+    annexationResult?: PlayerAnnexationResult;
+  },
+  t: TranslationFunction,
+): string {
+  const result = notification.annexationResult ??
+    getLegacyAnnexationResult(notification);
+  if (!result) return localizeCountryNamesInText(notification.message);
+
+  const prefix = 'side_inbox.dynamicNotifications.conquest';
+  const target = getLocalizedCountryName(result.targetCountry);
+  const losses = result.losses
+    .map(({ unitKey, quantity }) => {
+      const normalizedUnitKey = unitKey === 'pasukan_infanteri' ? 'barak' : unitKey;
+      return `${formatInboxNumber(quantity)} ${t(`navigation_defense_attack.units.${normalizedUnitKey}`)}`;
+    })
+    .join(', ');
+  const lossNote = losses
+    ? t(`${prefix}.lossNote`, { percent: result.lossPercent, losses })
+    : '';
+
+  if (!result.cityFound) {
+    return t(notification.messageKey || `${prefix}.noCityMessage`, { target });
+  }
+
+  const city = result.cityName || '';
+  if (result.pbbOccupation) {
+    return t(notification.messageKey || `${prefix}.pbbMessage`, {
+      city,
+      target,
+      lossNote,
+    });
+  }
+
+  const outcomeKey = result.countryCollapsed ? 'fullCollapse' : 'remainingCities';
+  const outcome = t(`${prefix}.${outcomeKey}`, { target });
+  return t(notification.messageKey || `${prefix}.cityMessage`, {
+    attacker: getLocalizedCountryName(result.attackerCountry),
+    city,
+    target,
+    outcome,
+    lossNote,
+  });
+}
+
+function getLegacyEspionageResultMessage(
+  message: string,
+  t: TranslationFunction,
+): string {
+  const remainingDays = message.match(/([\d.,]+)\s+hari\b/i)?.[1];
+  const parsedDays = remainingDays ? parseInboxNumber(remainingDays) : undefined;
+  if (parsedDays === undefined) return localizeCountryNamesInText(message);
+  const messageKey = /memperpanjang atau mempertahankan/i.test(message)
+    ? 'side_inbox.dynamicNotifications.espionage.extendedMessage'
+    : 'side_inbox.dynamicNotifications.espionage.activeMessage';
+  return t(messageKey, { remainingDays: parsedDays });
+}
+
+function parseLegacySabotageLosses(
+  message: string,
+  infrastructure: boolean,
+): Array<{ unitKey: string; lostQuantity: number; remainingQuantity: number }> | undefined {
+  const details = infrastructure
+    ? message.match(/Kerusakan:\s*(.*?)\.\s*$/i)?.[1]
+    : message.match(/Kerugian:\s*(.*?)\.\s*Personel\/infanteri/i)?.[1];
+  if (details === undefined) return undefined;
+  if (/^Tidak ada alutsista|^Tidak ada bangunan listrik/i.test(details)) return [];
+
+  const parsedLosses: Array<{
+    unitKey: string;
+    lostQuantity: number;
+    remainingQuantity: number;
+  } | undefined> = details.split(/;\s*/).map((detail) => {
+    const match = detail.match(/^(.+?):\s*-\s*([\d.,]+)\s*\(sisa\s+([\d.,]+)\)$/i);
+    if (!match) return undefined;
+    const lostQuantity = parseInboxNumber(match[2]);
+    const remainingQuantity = parseInboxNumber(match[3]);
+    if (lostQuantity === undefined || remainingQuantity === undefined) return undefined;
+    return {
+      unitKey: match[1].trim().toLowerCase().replace(/\s+/g, '_'),
+      lostQuantity,
+      remainingQuantity,
+    };
+  });
+  const validLosses = parsedLosses.filter(
+    (loss): loss is { unitKey: string; lostQuantity: number; remainingQuantity: number } =>
+      loss !== undefined,
+  );
+  return validLosses.length === parsedLosses.length ? validLosses : undefined;
+}
+
+function getLocalizedSabotageLosses(
+  losses: Array<{ unitKey: string; lostQuantity: number; remainingQuantity: number }>,
+  infrastructure: boolean,
+  t: TranslationFunction,
+): string {
+  if (losses.length === 0) {
+    return t(infrastructure
+      ? 'side_inbox.dynamicNotifications.sabotage.noInfrastructureLosses'
+      : 'side_inbox.dynamicNotifications.sabotage.noMilitaryLosses');
+  }
+  return losses.map((loss) => {
+    let unitName: string;
+    if (!infrastructure) {
+      unitName = t(`navigation_defense_attack.units.${loss.unitKey}`);
+    } else if (loss.unitKey.startsWith('pembangkit_listrik_')) {
+      unitName = t(`navigation_electricity_grid.plantDescriptions.${loss.unitKey}`);
+    } else if (['litium', 'logam_tanah_jarang', 'bijih_besi'].includes(loss.unitKey)) {
+      unitName = t(`side_inbox.dynamicNotifications.sabotage.infrastructureItems.${loss.unitKey}`);
+    } else {
+      unitName = t(`navigation_electricity_grid.detail.buildings.${loss.unitKey}`);
+    }
+    return t('side_inbox.dynamicNotifications.sabotage.lossEntry', {
+      unit: unitName,
+      lost: formatInboxNumber(loss.lostQuantity),
+      remaining: formatInboxNumber(loss.remainingQuantity),
+    });
+  }).join('; ');
+}
+
+function getCovertSabotageResultMessage(
+  notification: {
+    message: string;
+    messageKey?: string;
+    messageParams?: InboxMessageParams;
+    sabotageResult?: {
+      infrastructure: boolean;
+      losses: Array<{ unitKey: string; lostQuantity: number; remainingQuantity: number }>;
+    };
+  },
+  t: TranslationFunction,
+): string {
+  const infrastructure = notification.sabotageResult?.infrastructure ??
+    /^Sabotase mengurangi bangunan listrik/i.test(notification.message);
+  const losses = notification.sabotageResult?.losses ??
+    parseLegacySabotageLosses(notification.message, infrastructure);
+  if (!losses) return localizeCountryNamesInText(notification.message);
+  const messageKey = notification.messageKey ||
+    `side_inbox.dynamicNotifications.sabotage.${infrastructure ? 'infrastructureResultMessage' : 'militaryResultMessage'}`;
+  return t(messageKey, {
+    ...notification.messageParams,
+    losses: getLocalizedSabotageLosses(losses, infrastructure, t),
+  });
+}
 
 function getLegacyPbbNotificationKind(
   notification: { id?: string; title?: string }
@@ -181,6 +558,24 @@ export function getInboxNotificationTitle(
   t: TranslationFunction
 ): string {
   if (!notification.titleKey) {
+    if (isPlayerAnnexNotification(notification)) {
+      if (isLegacyAnnexationCancellation(notification)) {
+        return t('side_inbox.dynamicNotifications.conquest.noCityTitle');
+      }
+      if (isLegacyPbbOccupation(notification)) {
+        return t('side_inbox.dynamicNotifications.conquest.pbbTitle');
+      }
+      return t('side_inbox.dynamicNotifications.conquest.title');
+    }
+    if (notification.id?.startsWith(COVERT_ESPIONAGE_RESULT_PREFIX)) {
+      return t('side_inbox.dynamicNotifications.espionage.activeTitle');
+    }
+    if (notification.id?.startsWith(COVERT_SABOTAGE_RESULT_PREFIX)) {
+      return t('side_inbox.dynamicNotifications.sabotage.impactTitle');
+    }
+    if (isPlayerLootNotification(notification)) {
+      return t('side_inbox.dynamicNotifications.playerLoot.title');
+    }
     const pbbKind = getLegacyPbbNotificationKind(notification);
     if (pbbKind) return t(getLegacyPbbTranslationKey(pbbKind, 'Title'));
     if (notification.tradeType === 'spionase') {
@@ -223,10 +618,40 @@ export function getInboxNotificationSender(
     id?: string;
     title?: string;
     provinceName?: string;
+    attackerCountry?: string;
   },
   t: TranslationFunction
 ): string {
   if (!notification.senderKey) {
+    if (isPlayerAnnexNotification(notification)) {
+      if (isLegacyAnnexationCancellation(notification)) {
+        return t('side_inbox.dynamicNotifications.conquest.noCitySender');
+      }
+      if (isLegacyPbbOccupation(notification)) {
+        return t('side_inbox.dynamicNotifications.conquest.pbbSender');
+      }
+      const attackerCountry = notification.attackerCountry ||
+        notification.sender.match(/\(([^()]*)\)\s*$/)?.[1];
+      return attackerCountry
+        ? t('side_inbox.dynamicNotifications.conquest.sender', {
+          attacker: getLocalizedCountryName(attackerCountry),
+        })
+        : localizeCountryNamesInText(notification.sender);
+    }
+    if (notification.id?.startsWith(COVERT_ESPIONAGE_RESULT_PREFIX)) {
+      return t('side_inbox.dynamicNotifications.espionage.activeSender');
+    }
+    if (notification.id?.startsWith(COVERT_SABOTAGE_RESULT_PREFIX)) {
+      return t('side_inbox.dynamicNotifications.sabotage.impactSender');
+    }
+    if (isPlayerLootNotification(notification)) {
+      const attackerCountry = notification.attackerCountry ||
+        notification.sender.match(/\(([^()]*)\)\s*$/)?.[1] ||
+        '';
+      return t('side_inbox.dynamicNotifications.playerLoot.sender', {
+        attacker: getLocalizedCountryName(attackerCountry),
+      });
+    }
     if (getLegacyPbbNotificationKind(notification)) {
       return t('side_inbox.dynamicNotifications.pbb.sender');
     }
@@ -348,9 +773,32 @@ export function getInboxNotificationMessage(
     economicReport?: { budget: number; estimatedDailyTaxRevenue: number };
     id?: string;
     title?: string;
+    attackerCountry?: string;
+    transferredCash?: number;
+    lossPercent?: number;
+    lootLosses?: Array<{ unitKey: string; quantity: number }>;
+    sabotageResult?: {
+      infrastructure: boolean;
+      losses: Array<{ unitKey: string; lostQuantity: number; remainingQuantity: number }>;
+    };
+    annexationResult?: PlayerAnnexationResult;
   },
   t: TranslationFunction
 ): string {
+  if (notification.id?.startsWith(COVERT_ESPIONAGE_RESULT_PREFIX)) {
+    return notification.messageKey
+      ? t(notification.messageKey, notification.messageParams)
+      : getLegacyEspionageResultMessage(notification.message, t);
+  }
+  if (notification.id?.startsWith(COVERT_SABOTAGE_RESULT_PREFIX)) {
+    return getCovertSabotageResultMessage(notification, t);
+  }
+  if (isPlayerLootNotification(notification)) {
+    return getPlayerLootMessage(notification, t);
+  }
+  if (isPlayerAnnexNotification(notification) || notification.annexationResult) {
+    return getPlayerAnnexationMessage(notification, t);
+  }
   if (!notification.messageKey) {
     const pbbKind = getLegacyPbbNotificationKind(notification);
     if (pbbKind) {

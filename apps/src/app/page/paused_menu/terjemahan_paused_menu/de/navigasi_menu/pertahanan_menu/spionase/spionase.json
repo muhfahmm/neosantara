@@ -1,0 +1,103 @@
+{
+  "menu": {
+    "title": "Spionage",
+    "targetFallback": "Ziel",
+    "infoTitle": "Nachrichtendienst",
+    "infoDescription": "Nutze Spionage, um Informationen über andere Länder zu sammeln. Jede Operation kostet Geld und kann diplomatische Folgen haben. Wäge daher Risiken und erwarteten Nutzen ab.",
+    "searchPlaceholder": "Zielland suchen...",
+    "searchAriaLabel": "Zielländer suchen",
+    "spionageTab": "Spionage",
+    "sabotageTab": "Sabotage"
+  },
+  "table": {
+    "number": "Nr.",
+    "country": "Land",
+    "land": "Landstreitkräfte",
+    "sea": "Marine",
+    "air": "Luftwaffe",
+    "totalPower": "Gesamtstärke",
+    "actions": "Aktionen",
+    "actionTitle": "Spionagemission starten",
+    "actionAria": "Spionagemission gegen {country} starten"
+  },
+  "confirmation": {
+    "title": "Spionage für {target} bestätigen",
+    "operationTarget": "Ziel der Spionageoperation",
+    "personnelTitle": "Nachrichtendienstpersonal",
+    "personnelCount": "Spione: {count}",
+    "recruit": "Rekrutieren",
+    "sendPersonnel": "Einzusetzendes Personal:",
+    "maximum": "Maximum ({count})",
+    "decrease": "Spionagepersonal verringern",
+    "increase": "Spionagepersonal erhöhen",
+    "countAria": "Anzahl des Spionagepersonals",
+    "cancel": "Abbrechen",
+    "launch": "Mission starten",
+    "depleted": "Keine Spione verfügbar",
+    "insufficientPersonnel": "{available} Spione sind verfügbar, aber die Operation benötigt {required} Personen.",
+    "targets": {
+      "militer": {
+        "label": "Militär- und Verteidigungsaufklärung",
+        "description": "Dringe in das Militärhauptquartier ein, um Flottenstärke, Kampftechnik und Einsatzbereitschaft aufzudecken."
+      },
+      "ekonomi": {
+        "label": "Wirtschafts- und Haushaltsaufklärung",
+        "description": "Decke Staatshaushalt, Steuersätze und geschätzte tägliche Steuereinnahmen des Landes auf."
+      }
+    }
+  },
+  "fuel": {
+    "label": "Reisekosten",
+    "calculating": "Wird berechnet...",
+    "barrels": "Barrel Öl",
+    "stock": "Vorrat",
+    "remaining": "Verbleibend",
+    "fallback": "Datenbanktarif nicht verfügbar; die Kosten werden vorläufig geschätzt.",
+    "insufficient": "Ölvorrat nicht ausreichend",
+    "warning": "Warnung: Der verbleibende Ölbestand liegt unter dem Tagesbedarf der Wärmekraftwerke ({amount} Barrel)."
+  },
+  "recruit": {
+    "title": "Spione rekrutieren",
+    "personnelNow": "Aktuelle Spione:",
+    "person": "Personen",
+    "costPerPerson": "Kosten pro Person:",
+    "count": "Anzahl der Rekruten:",
+    "maximum": "Maximum ({count})",
+    "totalCost": "Gesamte Rekrutierungskosten:",
+    "availableBalance": "Verfügbares Guthaben:",
+    "confirm": "Rekrutieren ({count})",
+    "insufficientFunds": "NEO nicht ausreichend"
+  },
+  "result": {
+    "title": "Ergebnis der Spionageoperation",
+    "success": "Spionagemission erfolgreich",
+    "failure": "Spionagemission gescheitert",
+    "successMessage": "Die Spionageoperation{operationTarget} in {target} war erfolgreich. Unsere Agenten haben vertrauliche Informationen über das Ziel gesammelt.",
+    "failureMessage": "Die Spionageoperation{operationTarget} in {target} ist gescheitert. Unsere Agenten wurden von den örtlichen Sicherheitsbehörden entdeckt.",
+    "successChance": "Erfolgschance beim Start der Operation:",
+    "close": "Schließen"
+  },
+  "report": {
+    "fiscalTitle": "Finanzbericht — {country}",
+    "budget": "Staatshaushalt",
+    "dailyTax": "Geschätzte tägliche Steuereinnahmen",
+    "daily": "Tag",
+    "militaryTitle": "Bericht zur Militärstärke — {country}",
+    "land": "Landstreitkräfte",
+    "air": "Luftwaffe",
+    "sea": "Marine",
+    "unitsAndPower": "{units} Einheiten · Stärke {power}",
+    "total": "Gesamt: {units} Einheiten · Stärke {power} · HP {health}",
+    "noUnits": "Keine Einheiten erkannt.",
+    "unit": "Einheiten",
+    "power": "Stärke",
+    "health": "HP",
+    "taxLabels": {
+      "income_tax": "Einkommensteuer",
+      "corporate_tax": "Körperschaftsteuer",
+      "vat": "Mehrwertsteuer",
+      "cigarette_tax": "Verbrauchsteuer",
+      "environment_tax": "Umweltsteuer"
+    }
+  }
+}

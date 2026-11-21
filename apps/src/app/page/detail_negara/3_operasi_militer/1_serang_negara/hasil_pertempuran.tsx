@@ -2,6 +2,7 @@
 
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import { ArrowLeft, Flag, Skull, Swords, Trophy, X } from "lucide-react";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface HasilPertempuranProps {
 	isVictory: boolean;
@@ -18,6 +19,10 @@ export default function HasilPertempuran({
 	onClose,
 	onSelectAction,
 }: HasilPertempuranProps) {
+	const { t } = useLanguage();
+	const tr = (key: string, params?: Record<string, string | number>) =>
+		t(`navigation_defense_attack.${key}`, params);
+
 	return (
 		<div className="fixed inset-0 z-50 flex items-center justify-center  p-4 animate-in fade-in duration-200">
 			<div className="modal-responsive-shell overflow-y-auto bg-root-surface border border-root-accent/30 rounded-2xl shadow-2xl font-sans text-white relative">
@@ -25,13 +30,13 @@ export default function HasilPertempuran({
 					<div className="flex items-center gap-2.5">
 						<Swords className="w-5 h-5 text-root-accent" />
 						<h3 className="text-base font-black text-root-accent tracking-wider uppercase">
-							LAPORAN HASIL PERTEMPURAN
+							{tr("result.report")}
 						</h3>
 					</div>
 					<SharedModalCloseButton
 						onClick={onClose}
 						className="rounded-lg p-1.5 text-root-subtle hover:text-root-accent cursor-pointer transition-colors"
-						aria-label="Tutup laporan hasil pertempuran"
+						aria-label={tr("result.closeLabel")}
 					 appearance="custom">
 						<X className="h-4 w-4" />
 					</SharedModalCloseButton>
@@ -44,10 +49,10 @@ export default function HasilPertempuran({
 								<Trophy className="w-10 h-10 text-amber-400 animate-bounce" />
 							</div>
 							<h2 className="text-xl font-black text-root-accent uppercase tracking-wider">
-								KEMENANGAN MUTLAK!
+								{tr("result.victory")}
 							</h2>
 							<p className="text-xs text-emerald-200/90 font-medium">
-								Pasukan Angkatan Bersenjata <span className="font-bold text-white">{playerName}</span> berhasil menembus benteng pertahanan musuh dan menguasai wilayah <span className="font-bold text-white">{countryName}</span>!
+								{tr("result.victoryDescription", { player: playerName, country: countryName })}
 							</p>
 						</div>
 					) : (
@@ -56,10 +61,10 @@ export default function HasilPertempuran({
 								<Skull className="w-10 h-10 text-rose-400" />
 							</div>
 							<h2 className="text-xl font-black text-rose-400 uppercase tracking-wider">
-								SERANGAN TERTAHAN!
+								{tr("result.defeat")}
 							</h2>
 							<p className="text-xs text-rose-200/90 font-medium">
-								Pertahanan militer {countryName} terlalu tangguh. Pasukan garis depan terpaksa mengatur ulang posisi tempur.
+								{tr("result.defeatDescription", { country: countryName })}
 							</p>
 						</div>
 					)}
@@ -67,7 +72,7 @@ export default function HasilPertempuran({
 					{isVictory ? (
 						<div className="space-y-3">
 							<span className="text-[11px] font-black uppercase text-root-subtle tracking-wider block">
-								PILIH ANEKSASI ATAU OPSI TAKTIS:
+								{tr("result.chooseAction")}
 							</span>
 
 							<div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -78,9 +83,9 @@ export default function HasilPertempuran({
 								>
 									<Flag className="w-7 h-7 text-root-accent group-hover:scale-110 transition-transform" />
 									<div>
-										<span className="text-xs font-black text-root-accent block uppercase">ANEKSASI</span>
+										<span className="text-xs font-black text-root-accent block uppercase">{tr("result.annex")}</span>
 										<span className="text-[10px] text-emerald-300/80 leading-tight block mt-1">
-											Caplok & Integrasikan seluruh luas wilayah {countryName} menjadi warna {playerName}.
+											{tr("result.annexDescription", { country: countryName, player: playerName })}
 										</span>
 									</div>
 								</button>
@@ -92,9 +97,9 @@ export default function HasilPertempuran({
 								>
 									<Trophy className="w-7 h-7 text-amber-400 group-hover:scale-110 transition-transform" />
 									<div>
-										<span className="text-xs font-black text-amber-400 block uppercase">JARAH SDA</span>
+										<span className="text-xs font-black text-amber-400 block uppercase">{tr("result.plunder")}</span>
 										<span className="text-[10px] text-[#8ab0b8] leading-tight block mt-1">
-											Rampas kas & sumber daya alam {countryName} tanpa mencaplok wilayah.
+											{tr("result.plunderDescription", { country: countryName })}
 										</span>
 									</div>
 								</button>
@@ -106,9 +111,9 @@ export default function HasilPertempuran({
 								>
 									<ArrowLeft className="w-7 h-7 text-slate-400 group-hover:scale-110 transition-transform" />
 									<div>
-										<span className="text-xs font-black text-slate-300 block uppercase">MUNDUR</span>
+										<span className="text-xs font-black text-slate-300 block uppercase">{tr("result.retreat")}</span>
 										<span className="text-[10px] text-[#8ab0b8] leading-tight block mt-1">
-											Tarik mundur pasukan tanpa aksi lanjutan.
+											{tr("result.retreatDescription")}
 										</span>
 									</div>
 								</button>
@@ -121,7 +126,7 @@ export default function HasilPertempuran({
 								onClick={() => onSelectAction('mundur')}
 								className="w-full py-3.5 bg-[#17272e] hover:bg-[#1f343d] border border-rose-500/40 rounded-xl text-xs font-black uppercase tracking-wider text-rose-300 transition-all cursor-pointer"
 							>
-								Mundur & Tutup Laporan
+								{tr("result.retreatClose")}
 							</button>
 						</div>
 					)}

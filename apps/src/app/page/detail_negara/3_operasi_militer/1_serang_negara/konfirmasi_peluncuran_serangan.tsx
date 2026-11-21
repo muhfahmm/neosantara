@@ -2,6 +2,7 @@
 
 import { ShieldAlert, Swords } from "lucide-react";
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface KonfirmasiPeluncuranSeranganProps {
 	playerName: string;
@@ -24,11 +25,17 @@ export default function KonfirmasiPeluncuranSerangan({
 	onBack,
 	onConfirm,
 }: KonfirmasiPeluncuranSeranganProps) {
+	const { t, language } = useLanguage();
+	const tr = (key: string, params?: Record<string, string | number>) =>
+		t(`navigation_defense_attack.${key}`, params);
+	const formatNumber = (value: number) =>
+		value.toLocaleString(language, { maximumFractionDigits: 0 });
+
 	return (
 		<div className="fixed inset-0 z-[70] flex items-center justify-center  p-4 animate-in fade-in duration-200">
 			<div className="modal-responsive-shell overflow-y-auto bg-root-surface border border-root-accent/30 rounded-2xl shadow-2xl font-sans text-white relative">
 				<RootInfoModalHeader
-					title="Komando Operasi Militer"
+					title={tr("launch.title")}
 					onClose={onBack}
 					icon={<Swords />}
 					size="standard"
@@ -43,7 +50,7 @@ export default function KonfirmasiPeluncuranSerangan({
 								className="w-16 h-10 rounded object-cover border border-black/30 shadow-md"
 							/>
 							<span className="text-sm font-black uppercase text-root-accent text-center">{playerName}</span>
-							<span className="text-xs text-emerald-400 font-mono">Skor Militer: {playerPower}</span>
+							<span className="text-xs text-emerald-400 font-mono">{tr("launch.militaryScore")}: {formatNumber(playerPower)}</span>
 						</div>
 
 						<div className="px-4 flex flex-col items-center">
@@ -57,14 +64,14 @@ export default function KonfirmasiPeluncuranSerangan({
 								className="w-16 h-10 rounded object-cover border border-black/30 shadow-md"
 							/>
 							<span className="text-sm font-black uppercase text-rose-400 text-center">{targetName}</span>
-							<span className="text-xs text-rose-400 font-mono">Skor Militer: {targetPower}</span>
+							<span className="text-xs text-rose-400 font-mono">{tr("launch.militaryScore")}: {formatNumber(targetPower)}</span>
 						</div>
 					</div>
 
 					<div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-5 flex items-start gap-4">
 						<ShieldAlert className="w-6 h-6 text-rose-400 shrink-0 mt-0.5" />
 						<p className="text-sm text-[#b8cbd0] font-medium leading-relaxed">
-							Menyerang <strong>{targetName}</strong> secara langsung adalah agresi militer terbuka. Jika menang, Anda dapat melakukan <strong className="text-root-accent">Aneksasi</strong> untuk memperluas peta wilayah negara Anda!
+							{tr("launch.warning", { target: targetName })}
 						</p>
 					</div>
 
@@ -74,14 +81,14 @@ export default function KonfirmasiPeluncuranSerangan({
 							onClick={onBack}
 							className="flex-1 py-3.5 bg-[#17272e] hover:bg-[#1f343d] border border-root-accent/20 rounded-xl text-sm font-black uppercase tracking-wider text-[#8ab0b8] transition-all cursor-pointer"
 						>
-							Batal
+							{tr("launch.cancel")}
 						</button>
 						<button
 							type="button"
 							onClick={onConfirm}
 							className="flex-1 py-3.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-sm font-black uppercase tracking-wider transition-all cursor-pointer shadow-[0_0_20px_rgba(225,29,72,0.4)] flex items-center justify-center gap-2"
 						>
-							<Swords className="w-5 h-5" /> Lancarkan Serangan
+							<Swords className="w-5 h-5" /> {tr("launch.launch")}
 						</button>
 					</div>
 				</div>

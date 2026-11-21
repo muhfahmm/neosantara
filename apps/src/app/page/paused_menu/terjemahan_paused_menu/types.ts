@@ -34,6 +34,9 @@ import type idEconomySystem from './id/navigasi_menu/ekonomi_menu/sistem_ekonomi
 import type idConstructionProduction from './id/navigasi_menu/pembangunan_menu/produksi/produksi.json';
 import type idConstructionPublicPlaces from './id/navigasi_menu/pembangunan_menu/tempat_umum/tempat_umum.json';
 import type idConstructionHousing from './id/navigasi_menu/pembangunan_menu/hunian_permukiman/hunian_permukiman.json';
+import type idDefenseAttack from './id/navigasi_menu/pertahanan_menu/serang_negara/serang_negara.json';
+import type idDefenseEspionage from './id/navigasi_menu/pertahanan_menu/spionase/spionase.json';
+import type idDefenseSabotage from './id/navigasi_menu/pertahanan_menu/sabotase/sabotase.json';
 
 export type TextDirection = 'ltr' | 'rtl';
 
@@ -99,7 +102,10 @@ export type TranslationNamespace =
   | 'navigation_economy_system'
   | 'navigation_construction_production'
   | 'navigation_construction_public_places'
-  | 'navigation_construction_housing';
+  | 'navigation_construction_housing'
+  | 'navigation_defense_attack'
+  | 'navigation_defense_espionage'
+  | 'navigation_defense_sabotage';
 
 type ResearchTranslation = typeof idPenelitian & {
   categories: {
@@ -142,6 +148,9 @@ export interface TranslationSchema {
   navigation_construction_production: typeof idConstructionProduction;
   navigation_construction_public_places: typeof idConstructionPublicPlaces;
   navigation_construction_housing: typeof idConstructionHousing;
+  navigation_defense_attack: typeof idDefenseAttack;
+  navigation_defense_espionage: typeof idDefenseEspionage;
+  navigation_defense_sabotage: typeof idDefenseSabotage;
 }
 
 export type TranslationRecord = Record<string, string | Record<string, unknown>>;
@@ -188,6 +197,9 @@ export type TranslationKey =
   | `navigation_construction_production.${NestedKeyOf<typeof idConstructionProduction>}`
   | `navigation_construction_public_places.${NestedKeyOf<typeof idConstructionPublicPlaces>}`
   | `navigation_construction_housing.${NestedKeyOf<typeof idConstructionHousing>}`
+  | `navigation_defense_attack.${NestedKeyOf<typeof idDefenseAttack>}`
+  | `navigation_defense_espionage.${NestedKeyOf<typeof idDefenseEspionage>}`
+  | `navigation_defense_sabotage.${NestedKeyOf<typeof idDefenseSabotage>}`
   | (string & {});
 
 export type InterpolationParams = Record<string, string | number>;

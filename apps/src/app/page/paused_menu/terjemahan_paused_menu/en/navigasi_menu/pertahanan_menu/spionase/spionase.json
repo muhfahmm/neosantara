@@ -1,0 +1,103 @@
+{
+  "menu": {
+    "title": "Espionage",
+    "targetFallback": "Target",
+    "infoTitle": "Intelligence",
+    "infoDescription": "Use espionage to gather intelligence on other countries. Each operation costs money and may have diplomatic consequences, so weigh the risks against the expected results.",
+    "searchPlaceholder": "Search target country...",
+    "searchAriaLabel": "Search target countries",
+    "spionageTab": "Espionage",
+    "sabotageTab": "Sabotage"
+  },
+  "table": {
+    "number": "No.",
+    "country": "Country",
+    "land": "Land",
+    "sea": "Sea",
+    "air": "Air",
+    "totalPower": "Total Power",
+    "actions": "Actions",
+    "actionTitle": "Launch espionage mission",
+    "actionAria": "Launch an espionage mission against {country}"
+  },
+  "confirmation": {
+    "title": "Espionage Confirmation: {target}",
+    "operationTarget": "Espionage Operation Target",
+    "personnelTitle": "Intelligence Personnel",
+    "personnelCount": "Spies: {count}",
+    "recruit": "Recruit",
+    "sendPersonnel": "Personnel to deploy:",
+    "maximum": "Maximum ({count})",
+    "decrease": "Decrease espionage personnel",
+    "increase": "Increase espionage personnel",
+    "countAria": "Number of espionage personnel",
+    "cancel": "Cancel",
+    "launch": "Launch Mission",
+    "depleted": "No Spies Available",
+    "insufficientPersonnel": "{available} spies are available, but the operation requires {required} personnel.",
+    "targets": {
+      "militer": {
+        "label": "Military & Defense Intelligence",
+        "description": "Infiltrate military headquarters to uncover fleet numbers, combat technology, and troop readiness."
+      },
+      "ekonomi": {
+        "label": "Economic & Budget Intelligence",
+        "description": "Reveal the country's budget balance, tax rates, and estimated daily tax revenue."
+      }
+    }
+  },
+  "fuel": {
+    "label": "Travel cost",
+    "calculating": "Calculating...",
+    "barrels": "barrels of oil",
+    "stock": "Stock",
+    "remaining": "Remaining",
+    "fallback": "Database tariff unavailable; cost is a temporary estimate.",
+    "insufficient": "Insufficient oil reserves",
+    "warning": "Warning: remaining oil is below the daily power-plant requirement ({amount} barrels)."
+  },
+  "recruit": {
+    "title": "Recruit Spies",
+    "personnelNow": "Current Spies:",
+    "person": "personnel",
+    "costPerPerson": "Cost Per Person:",
+    "count": "Recruitment Amount:",
+    "maximum": "Maximum ({count})",
+    "totalCost": "Total Recruitment Cost:",
+    "availableBalance": "Available Balance:",
+    "confirm": "Recruit ({count})",
+    "insufficientFunds": "Insufficient NEO"
+  },
+  "result": {
+    "title": "Espionage Operation Results",
+    "success": "Espionage Mission Successful",
+    "failure": "Espionage Mission Failed",
+    "successMessage": "The espionage operation{operationTarget} in {target} succeeded. Our intelligence agents gathered classified information about the target.",
+    "failureMessage": "The espionage operation{operationTarget} in {target} failed. Our agents were detected by local security authorities.",
+    "successChance": "Success chance when the operation was launched:",
+    "close": "Close"
+  },
+  "report": {
+    "fiscalTitle": "Fiscal Report — {country}",
+    "budget": "National Budget",
+    "dailyTax": "Estimated Daily Tax Revenue",
+    "daily": "day",
+    "militaryTitle": "Military Strength Report — {country}",
+    "land": "Land",
+    "air": "Air",
+    "sea": "Sea",
+    "unitsAndPower": "{units} units · power {power}",
+    "total": "Total: {units} units · power {power} · HP {health}",
+    "noUnits": "No units detected.",
+    "unit": "units",
+    "power": "power",
+    "health": "HP",
+    "taxLabels": {
+      "income_tax": "Personal Income Tax",
+      "corporate_tax": "Corporate Tax",
+      "vat": "Value-Added Tax (VAT)",
+      "cigarette_tax": "Excise Tax",
+      "environment_tax": "Environmental Tax"
+    }
+  }
+}

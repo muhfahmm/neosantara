@@ -1,0 +1,96 @@
+{
+  "menu": {
+    "title": "사보타주",
+    "targetFallback": "대상",
+    "infoTitle": "정보부",
+    "infoDescription": "사보타주 작전으로 다른 국가를 상대로 비밀 작전을 수행합니다. 작전에는 비용이 들고 외교적 결과를 초래할 수 있으므로 위험과 기대 효과를 고려해 대상을 선택하세요.",
+    "searchPlaceholder": "대상 국가 검색...",
+    "searchAriaLabel": "대상 국가 검색",
+    "spionageTab": "첩보",
+    "sabotageTab": "사보타주"
+  },
+  "table": {
+    "number": "번호",
+    "country": "국가",
+    "land": "육군",
+    "sea": "해군",
+    "air": "공군",
+    "totalPower": "총 전력",
+    "actions": "작전",
+    "actionTitle": "사보타주 작전 시작",
+    "actionAria": "{country}에서 사보타주 작전 시작"
+  },
+  "confirmation": {
+    "title": "{target} 사보타주 확인",
+    "operationTarget": "사보타주 시설 대상",
+    "personnelTitle": "사보타주 요원",
+    "personnelCount": "공작원: {count}",
+    "recruit": "모집",
+    "sendPersonnel": "파견 인원:",
+    "maximum": "최대 ({count})",
+    "decrease": "사보타주 인원 줄이기",
+    "increase": "사보타주 인원 늘리기",
+    "countAria": "사보타주 인원 수",
+    "cancel": "취소",
+    "launch": "사보타주 실행",
+    "depleted": "공작원 없음",
+    "insufficientPersonnel": "공작원 {available}명이 있지만 작전에는 {required}명이 필요합니다.",
+    "targets": {
+      "pabrik_militer": {
+        "label": "군사 시설 및 공장",
+        "description": "탄약고, 전차 공장, 항공기 격납고 또는 군함 부두를 폭파합니다."
+      },
+      "infrastruktur_energi": {
+        "label": "전력·에너지 기반 시설",
+        "description": "변전소, 정유 시설 또는 발전용 원자로 시설을 무력화합니다."
+      },
+      "rantai_pasok": {
+        "label": "식량 생산 사보타주",
+        "description": "축산, 농업, 어업, 식품 가공 건물의 5%를 파괴합니다(유형별 최소 1개)."
+      },
+      "manufaktur": {
+        "label": "제조업 사보타주",
+        "description": "반도체, 기계, 철강, 시멘트, 목재 공장 건물의 5%를 파괴합니다(유형별 최소 1개)."
+      }
+    }
+  },
+  "fuel": {
+    "label": "이동 비용",
+    "calculating": "계산 중...",
+    "barrels": "배럴",
+    "stock": "보유량",
+    "remaining": "잔여량",
+    "fallback": "데이터베이스 요금을 사용할 수 없어 임시 예상 비용을 표시합니다.",
+    "insufficient": "석유 보유량 부족",
+    "warning": "경고: 남은 석유가 화력 발전소의 일일 필요량보다 적습니다({amount} 배럴)."
+  },
+  "recruit": {
+    "title": "공작원 모집",
+    "personnelNow": "현재 공작원:",
+    "person": "명",
+    "costPerPerson": "1인당 비용:",
+    "count": "모집 인원:",
+    "maximum": "최대 ({count})",
+    "totalCost": "총 모집 비용:",
+    "availableBalance": "사용 가능 잔액:",
+    "confirm": "{count}명 모집",
+    "insufficientFunds": "NEO 부족"
+  },
+  "result": {
+    "title": "사보타주 작전 결과",
+    "success": "사보타주 성공",
+    "failure": "사보타주 실패",
+    "successMessage": "{target}에서 사보타주 작전{operationTarget}이 성공했습니다. 대상 시설이 파괴되거나 무력화되었습니다.",
+    "failureMessage": "{target}에서 사보타주 작전{operationTarget}이 실패했습니다. 상대 보안 체계가 공작팀을 저지했습니다.",
+    "lossTitleMilitary": "적 군사 시설 피해",
+    "lossTitleEnergy": "적 에너지 기반 시설 피해",
+    "lossTitleFood": "적 식량 생산 건물 피해",
+    "lossTitleManufacturing": "적 제조업 건물 피해",
+    "lossDescriptionMilitary": "대상의 군사 장비 시설 5%를 무력화했습니다. 파괴된 부대:",
+    "lossDescriptionEnergy": "대상의 전력 및 에너지 광물 시설 5%를 파괴했습니다(유형별 최소 1개). 피해 내역:",
+    "lossDescriptionFood": "대상의 4개 식량 생산 범주 건물 5%를 파괴했습니다(유형별 최소 1개). 파괴된 건물:",
+    "lossDescriptionManufacturing": "제조업 범주 건물 5%를 파괴했습니다(유형별 최소 1개). 파괴된 건물:",
+    "successChance": "작전 시작 당시 성공 확률:",
+    "close": "닫기"
+  }
+}

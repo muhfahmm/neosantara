@@ -8,6 +8,7 @@ import type { TravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah
 import { getCovertPersonnel, recruitPersonnel, COVERT_PERSONNEL_UPDATED_EVENT } from "@/app/page/detail_negara/3_operasi_militer/covertPersonnelStorage";
 import { SABOTASE_TARGET_OPTIONS } from "@/app/page/detail_negara/3_operasi_militer/3_sabotase/sabotaseTargetOptions";
 import RekrutPenyabotModal from "@/app/page/detail_negara/3_operasi_militer/3_sabotase/RekrutPenyabotModal";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface KonfirmasiSabotaseModalsProps {
   isOpen: boolean;
@@ -30,6 +31,9 @@ export default function KonfirmasiSabotaseModals({
   travelFuelStatus,
   onConfirm,
 }: KonfirmasiSabotaseModalsProps) {
+  const { t, language } = useLanguage();
+  const tr = (key: string, params?: Record<string, string | number>) =>
+    t(`navigation_defense_sabotage.${key}`, params);
   const [penyabotCount, setPenyabotCount] = useState<number>(() => getCovertPersonnel().penyabot);
   const [personnelToSend, setPersonnelToSend] = useState(1);
   const [isRecruitModalOpen, setIsRecruitModalOpen] = useState(false);
@@ -67,7 +71,7 @@ export default function KonfirmasiSabotaseModals({
 
   if (!isOpen || !targetCountry) return null;
 
-  const targetName = targetCountry.countryName || "Target";
+  const targetName = targetCountry.countryName || tr('menu.targetFallback');
   const hasAgent = penyabotCount >= 1;
   const isFuelOk = travelFuelStatus ? travelFuelStatus.ok : true;
   const maxPersonnelToSend = penyabotCount;
@@ -76,6 +80,7 @@ export default function KonfirmasiSabotaseModals({
     : 0;
   const canLaunch = hasAgent && selectedPersonnelCount >= 1 && selectedPersonnelCount <= penyabotCount && isFuelOk;
   const selectedTargetOption = SABOTASE_TARGET_OPTIONS.find(t => t.id === selectedTargetId) || SABOTASE_TARGET_OPTIONS[0];
+  const selectedTargetLabel = tr(`confirmation.targets.${selectedTargetOption.id}.label`);
   const handleRecruitConfirm = (count: number, totalCost: number) => {
     if (currentBudget < totalCost) return;
     recruitPersonnel('penyabot', count);
@@ -112,7 +117,7 @@ export default function KonfirmasiSabotaseModals({
       <div className="flex flex-col font-sans animate-in fade-in zoom-in-95 duration-150">
         
         <RootInfoModalHeader
-          title={`Konfirmasi Sabotase ${targetName}`}
+          title={tr('confirmation.title', { target: targetName })}
           onClose={handleClose}
           icon={<Bomb className="text-rose-400" />}
           size="standard"
@@ -125,7 +130,7 @@ export default function KonfirmasiSabotaseModals({
             <div className="relative text-left" ref={targetDropdownRef}>
               <div className="text-[11px] font-bold uppercase tracking-wider text-root-subtle mb-1.5 flex items-center gap-1.5">
                 <Target className="w-3.5 h-3.5 text-rose-400" />
-                <span>Target Fasilitas Sabotase</span>
+                <span>{tr('confirmation.operationTarget')}</span>
               </div>
               <button
                 type="button"
@@ -134,7 +139,7 @@ export default function KonfirmasiSabotaseModals({
               >
                 <div className="flex flex-col truncate pr-2">
                   <span className="font-bold text-xs text-rose-400 truncate">
-                    {selectedTargetOption.label}
+                    {selectedTargetLabel}
                   </span>
                 </div>
                 <ChevronDown className={`w-4 h-4 text-rose-400 transition-transform duration-200 shrink-0 ${isTargetDropdownOpen ? 'rotate-180' : ''}`} />
@@ -155,10 +160,10 @@ export default function KonfirmasiSabotaseModals({
                       }`}
                     >
                       <div className={`text-xs font-bold ${selectedTargetId === opt.id ? 'text-rose-400' : 'text-root-text'}`}>
-                        {opt.label}
+                        {tr(`confirmation.targets.${opt.id}.label`)}
                       </div>
                       <div className="text-[11px] text-root-subtle mt-0.5 leading-snug">
-                        {opt.description}
+                        {tr(`confirmation.targets.${opt.id}.description`)}
                       </div>
                     </button>
                   ))}
@@ -173,10 +178,10 @@ export default function KonfirmasiSabotaseModals({
                 </div>
                 <div>
                   <span className="block text-[11px] font-bold uppercase tracking-wider text-root-subtle">
-                    Personel Sabotase
+                    {tr('confirmation.personnelTitle')}
                   </span>
                   <span className="text-sm font-black text-white">
-                    Penyabot: <span className="text-rose-400">{penyabotCount}</span>
+                    {tr('confirmation.personnelCount', { count: penyabotCount })}
                   </span>
                 </div>
               </div>
@@ -189,20 +194,20 @@ export default function KonfirmasiSabotaseModals({
                 className="flex items-center gap-1.5 rounded-lg border border-rose-500 px-4 py-1.5 text-xs font-black uppercase tracking-wider text-rose-400 transition-colors hover:bg-rose-500/10 cursor-pointer"
               >
                 <UserPlus className="h-3.5 w-3.5" />
-                Rekrut
+                {tr('confirmation.recruit')}
               </button>
             </div>
             <div className="w-full rounded-xl border border-rose-500/30 bg-root-canvas p-3.5">
               <div className="mb-2 flex items-center justify-between text-xs font-bold text-root-subtle">
-                <span>Personel untuk dikirim:</span>
-                <span className="text-rose-400">Maksimal ({penyabotCount})</span>
+                <span>{tr('confirmation.sendPersonnel')}</span>
+                <span className="text-rose-400">{tr('confirmation.maximum', { count: penyabotCount })}</span>
               </div>
               <div className="flex items-center gap-3">
                 <button
                   type="button"
                   onClick={() => setPersonnelToSend(current => Math.max(1, current - 1))}
                   disabled={!hasAgent || selectedPersonnelCount <= 1}
-                  aria-label="Kurangi personel sabotase"
+                  aria-label={tr('confirmation.decrease')}
                   className="flex h-10 w-10 items-center justify-center rounded-lg border border-rose-500/30 bg-root-surface text-rose-400 transition-colors hover:bg-rose-500/10 disabled:cursor-not-allowed disabled:opacity-30"
                 >
                   <Minus className="h-4 w-4" />
@@ -212,7 +217,7 @@ export default function KonfirmasiSabotaseModals({
                   min={hasAgent ? 1 : 0}
                   max={maxPersonnelToSend}
                   value={selectedPersonnelCount}
-                  aria-label="Jumlah personel sabotase"
+                  aria-label={tr('confirmation.countAria')}
                   onChange={event => {
                     const value = Number.parseInt(event.target.value, 10);
                     setPersonnelToSend(!hasAgent
@@ -227,21 +232,28 @@ export default function KonfirmasiSabotaseModals({
                   type="button"
                   onClick={() => setPersonnelToSend(current => Math.min(maxPersonnelToSend, current + 1))}
                   disabled={!hasAgent || selectedPersonnelCount >= penyabotCount}
-                  aria-label="Tambah personel sabotase"
+                  aria-label={tr('confirmation.increase')}
                   className="flex h-10 w-10 items-center justify-center rounded-lg border border-rose-500/30 bg-root-surface text-rose-400 transition-colors hover:bg-rose-500/10 disabled:cursor-not-allowed disabled:opacity-30"
                 >
                   <Plus className="h-4 w-4" />
                 </button>
               </div>
             </div>
-            {travelFuelStatus && <TravelFuelCostPanel status={travelFuelStatus} />}
+            {travelFuelStatus && (
+              <TravelFuelCostPanel
+                status={travelFuelStatus}
+                label={tr('fuel.label')}
+                locale={language}
+                translate={(key, params) => tr(`fuel.${key}`, params)}
+              />
+            )}
           </div>
         </div>
 
         {/* FOOTER */}
         <div className="px-4 sm:px-5 py-3 border-t border-rose-500/30 bg-root-canvas relative z-10 shrink-0 flex items-center justify-end gap-3">
           <button onClick={handleClose} className="px-6 py-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
-            Batal
+            {tr('confirmation.cancel')}
           </button>
           <button
             onClick={() => {
@@ -253,7 +265,7 @@ export default function KonfirmasiSabotaseModals({
             className="px-6 py-2 rounded-xl bg-rose-600 text-white shadow-lg shadow-rose-900/30 font-black text-xs uppercase tracking-wider hover:bg-rose-500 active:scale-95 transition-all cursor-pointer flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-40"
           >
             <Bomb className="w-4 h-4" />
-            {!hasAgent ? "Penyabot Habis" : "Luncurkan Sabotase"}
+            {!hasAgent ? tr('confirmation.depleted') : tr('confirmation.launch')}
           </button>
         </div>
         </div>

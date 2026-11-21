@@ -696,6 +696,26 @@
     "yearMany": "{count} tahun"
   },
   "dynamicNotifications": {
+    "playerLoot": {
+      "title": "💰 OPERASI PENJARAHAN BERHASIL",
+      "sender": "Markas Besar Angkatan Bersenjata ({attacker})",
+      "message": "Operasi penjarahan atas {target} berhasil dilancarkan! Kas negara sebesar {cash} NEO dan sumber daya alam telah diamankan.{lossNote}",
+      "lossNote": " Kerugian tempur armada Anda ({percent}%): {losses}."
+    },
+    "conquest": {
+      "title": "🚩 KOTA BERHASIL DITAKLUKKAN",
+      "pbbTitle": "🏳️ WILAYAH DIDUDUKI PBB",
+      "noCityTitle": "Aneksasi Kota Dibatalkan",
+      "sender": "Markas Besar Angkatan Bersenjata ({attacker})",
+      "pbbSender": "Pasukan Gabungan PBB",
+      "noCitySender": "Markas Besar Angkatan Bersenjata",
+      "cityMessage": "Pasukan {attacker} berhasil menaklukkan Kota {city} di {target}. {outcome}{lossNote} Wilayah taklukan ditandai hijau terang pada peta.",
+      "pbbMessage": "Pasukan gabungan PBB berhasil menduduki Kota {city} di {target}. Wilayah berada di bawah administrasi PBB, bukan negara peserta.{lossNote}",
+      "noCityMessage": "Kota target di {target} tidak ditemukan pada data peta. Tidak ada wilayah yang diubah.",
+      "fullCollapse": "Ibu kota atau seluruh kota yang terdata telah jatuh; {target} kini runtuh dan dianeksasi penuh.",
+      "remainingCities": "Kota lain di {target} tetap berada di bawah kepemilikan semula.",
+      "lossNote": " Kerugian tempur armada Anda ({percent}%): {losses}."
+    },
     "pbb": {
       "sender": "Sekretariat Perserikatan Bangsa-Bangsa",
       "unauthorizedAttackCancelledTitle": "🕊️ Rencana Serangan Tanpa Mandat Dibatalkan",
@@ -718,6 +738,10 @@
         "sedang": "Peringatan Keamanan! Agen spionase {partner} menyusup ke instalasi militer wilayah timur. Beberapa dokumen rahasia efektivitas persenjataan berisiko bocor!",
         "berat": "DARURAT INTELIJEN! Jaringan mata-mata tingkat tinggi dari {partner} membocorkan data strategis riset nasional dan posisi armada militer kita!"
       },
+      "activeTitle": "🕵️ EFEK SPIONASE AKTIF",
+      "activeSender": "Badan Intelijen Negara",
+      "activeMessage": "Efek spionase menurunkan kekuatan dan HP militer menjadi ×0,95 selama {remainingDays} hari game. Jumlah pasukan dan alutsista tidak berubah.",
+      "extendedMessage": "Efek spionase baru memperpanjang atau mempertahankan efek aktif. Kekuatan dan HP militer tetap ×0,95 (tidak menumpuk), dengan {remainingDays} hari tersisa.",
       "targets": {
         "default": "Informasi Intelijen Negara",
         "military": "Intelijen Militer & Pertahanan",
@@ -756,6 +780,18 @@
         "militer": "-5% alutsista secara permanen jika dibiarkan",
         "siber": "-5% alutsista secara permanen jika dibiarkan",
         "nuklir": "-5% alutsista secara permanen jika dibiarkan"
+      },
+      "impactTitle": "💥 KERUSAKAN SABOTASE TERJADI",
+      "impactSender": "Kementerian Pertahanan & Keamanan",
+      "infrastructureResultMessage": "Sabotase mengurangi bangunan listrik dan mineral energi 5% per jenis (minimal 1). Kerusakan: {losses}.",
+      "militaryResultMessage": "Sabotase mengurangi alutsista 5% per kategori secara permanen. Kerugian: {losses}. Personel/infanteri tidak dikurangi.",
+      "lossEntry": "{unit}: -{lost} (sisa {remaining})",
+      "noInfrastructureLosses": "Tidak ada bangunan listrik atau mineral energi yang dapat dikurangi.",
+      "noMilitaryLosses": "Tidak ada alutsista yang dapat dikurangi.",
+      "infrastructureItems": {
+        "litium": "Tambang Litium",
+        "logam_tanah_jarang": "Tambang Logam Tanah Jarang",
+        "bijih_besi": "Tambang Bijih Besi"
       },
       "offensiveSuccessTitle": "💣 Misi Sabotase Berhasil: {country}",
       "offensiveFailureTitle": "❌ Misi Sabotase Gagal: {country}",

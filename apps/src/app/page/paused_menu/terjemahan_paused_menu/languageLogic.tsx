@@ -60,6 +60,9 @@ import idEconomySystem from './id/navigasi_menu/ekonomi_menu/sistem_ekonomi.json
 import idConstructionProduction from './id/navigasi_menu/pembangunan_menu/produksi/produksi.json';
 import idConstructionPublicPlaces from './id/navigasi_menu/pembangunan_menu/tempat_umum/tempat_umum.json';
 import idConstructionHousing from './id/navigasi_menu/pembangunan_menu/hunian_permukiman/hunian_permukiman.json';
+import idDefenseAttack from './id/navigasi_menu/pertahanan_menu/serang_negara/serang_negara.json';
+import idDefenseEspionage from './id/navigasi_menu/pertahanan_menu/spionase/spionase.json';
+import idDefenseSabotage from './id/navigasi_menu/pertahanan_menu/sabotase/sabotase.json';
 
 const ID_DICTIONARY: LanguageDictionary = {
   common: idCommon,
@@ -101,6 +104,9 @@ const ID_DICTIONARY: LanguageDictionary = {
   navigation_construction_production: idConstructionProduction,
   navigation_construction_public_places: idConstructionPublicPlaces,
   navigation_construction_housing: idConstructionHousing,
+  navigation_defense_attack: idDefenseAttack,
+  navigation_defense_espionage: idDefenseEspionage,
+  navigation_defense_sabotage: idDefenseSabotage,
 };
 
 const STORAGE_KEY = 'app_language';
@@ -177,6 +183,9 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     constructionProduction,
     constructionPublicPlaces,
     constructionHousing,
+    defenseAttack,
+    defenseEspionage,
+    defenseSabotage,
   ] = await Promise.all([
     import(`./${code}/common.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navbar/navbar.json`).then((m) => m.default).catch(() => ({})),
@@ -213,6 +222,9 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     import(`./${code}/navigasi_menu/pembangunan_menu/produksi/produksi.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navigasi_menu/pembangunan_menu/tempat_umum/tempat_umum.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navigasi_menu/pembangunan_menu/hunian_permukiman/hunian_permukiman.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/pertahanan_menu/serang_negara/serang_negara.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/pertahanan_menu/spionase/spionase.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/pertahanan_menu/sabotase/sabotase.json`).then((m) => m.default).catch(() => ({})),
   ]);
 
   return {
@@ -255,6 +267,9 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     navigation_construction_production: constructionProduction,
     navigation_construction_public_places: constructionPublicPlaces,
     navigation_construction_housing: constructionHousing,
+    navigation_defense_attack: defenseAttack,
+    navigation_defense_espionage: defenseEspionage,
+    navigation_defense_sabotage: defenseSabotage,
   };
 }
 

@@ -1,0 +1,103 @@
+{
+  "menu": {
+    "title": "Espionaje",
+    "targetFallback": "Objetivo",
+    "infoTitle": "Inteligencia",
+    "infoDescription": "Usa el espionaje para obtener información de otros países. Cada operación cuesta dinero y puede tener consecuencias diplomáticas; sopesa los riesgos y los resultados esperados.",
+    "searchPlaceholder": "Buscar país objetivo...",
+    "searchAriaLabel": "Buscar países objetivo",
+    "spionageTab": "Espionaje",
+    "sabotageTab": "Sabotaje"
+  },
+  "table": {
+    "number": "N.º",
+    "country": "País",
+    "land": "Tierra",
+    "sea": "Mar",
+    "air": "Aire",
+    "totalPower": "Poder total",
+    "actions": "Acciones",
+    "actionTitle": "Lanzar misión de espionaje",
+    "actionAria": "Lanzar una misión de espionaje contra {country}"
+  },
+  "confirmation": {
+    "title": "Confirmar espionaje en {target}",
+    "operationTarget": "Objetivo de la operación de espionaje",
+    "personnelTitle": "Personal de inteligencia",
+    "personnelCount": "Espías: {count}",
+    "recruit": "Reclutar",
+    "sendPersonnel": "Personal que se enviará:",
+    "maximum": "Máximo ({count})",
+    "decrease": "Reducir personal de espionaje",
+    "increase": "Aumentar personal de espionaje",
+    "countAria": "Cantidad de personal de espionaje",
+    "cancel": "Cancelar",
+    "launch": "Lanzar misión",
+    "depleted": "No quedan espías",
+    "insufficientPersonnel": "Hay {available} espías disponibles, pero la operación requiere {required} agentes.",
+    "targets": {
+      "militer": {
+        "label": "Inteligencia militar y defensa",
+        "description": "Infiltrarse en el cuartel general para descubrir el tamaño de las fuerzas, la tecnología de combate y la preparación de las tropas."
+      },
+      "ekonomi": {
+        "label": "Inteligencia económica y presupuestaria",
+        "description": "Revelar el saldo presupuestario, las tasas impositivas y la recaudación fiscal diaria estimada del país."
+      }
+    }
+  },
+  "fuel": {
+    "label": "Coste del viaje",
+    "calculating": "Calculando...",
+    "barrels": "barriles de petróleo",
+    "stock": "Reservas",
+    "remaining": "Restante",
+    "fallback": "La tarifa de la base de datos no está disponible; se usa una estimación temporal.",
+    "insufficient": "Reservas de petróleo insuficientes",
+    "warning": "Aviso: el petróleo restante es inferior a la necesidad diaria de las centrales térmicas ({amount} barriles)."
+  },
+  "recruit": {
+    "title": "Reclutar espías",
+    "personnelNow": "Espías actuales:",
+    "person": "personal",
+    "costPerPerson": "Coste por persona:",
+    "count": "Cantidad a reclutar:",
+    "maximum": "Máximo ({count})",
+    "totalCost": "Coste total de reclutamiento:",
+    "availableBalance": "Saldo disponible:",
+    "confirm": "Reclutar ({count})",
+    "insufficientFunds": "NEO insuficientes"
+  },
+  "result": {
+    "title": "Resultados de la operación de espionaje",
+    "success": "Misión de espionaje exitosa",
+    "failure": "Misión de espionaje fallida",
+    "successMessage": "La operación de espionaje{operationTarget} en {target} tuvo éxito. Nuestros agentes recopilaron información confidencial del objetivo.",
+    "failureMessage": "La operación de espionaje{operationTarget} en {target} fracasó. Las autoridades de seguridad locales detectaron a nuestros agentes.",
+    "successChance": "Probabilidad de éxito al iniciar la operación:",
+    "close": "Cerrar"
+  },
+  "report": {
+    "fiscalTitle": "Informe fiscal — {country}",
+    "budget": "Presupuesto nacional",
+    "dailyTax": "Recaudación fiscal diaria estimada",
+    "daily": "día",
+    "militaryTitle": "Informe de poderío militar — {country}",
+    "land": "Tierra",
+    "air": "Aire",
+    "sea": "Mar",
+    "unitsAndPower": "{units} unidades · poder {power}",
+    "total": "Total: {units} unidades · poder {power} · PV {health}",
+    "noUnits": "No se detectaron unidades.",
+    "unit": "unidades",
+    "power": "poder",
+    "health": "PV",
+    "taxLabels": {
+      "income_tax": "Impuesto sobre la renta personal",
+      "corporate_tax": "Impuesto corporativo",
+      "vat": "Impuesto sobre el valor añadido (IVA)",
+      "cigarette_tax": "Impuesto especial",
+      "environment_tax": "Impuesto ambiental"
+    }
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "menu": {
+    "title": "التجسس",
+    "targetFallback": "الهدف",
+    "infoTitle": "الاستخبارات",
+    "infoDescription": "استخدم التجسس لجمع المعلومات عن الدول الأخرى. تتطلب كل عملية ميزانية وقد تؤثر في العلاقات الدبلوماسية؛ وازن بين المخاطر والنتائج المتوقعة عند اختيار الهدف.",
+    "searchPlaceholder": "ابحث عن الدولة المستهدفة...",
+    "searchAriaLabel": "ابحث عن الدول المستهدفة",
+    "spionageTab": "التجسس",
+    "sabotageTab": "التخريب"
+  },
+  "table": {
+    "number": "الرقم",
+    "country": "الدولة",
+    "land": "البرية",
+    "sea": "البحرية",
+    "air": "الجوية",
+    "totalPower": "القوة الإجمالية",
+    "actions": "الإجراءات",
+    "actionTitle": "إطلاق مهمة تجسس",
+    "actionAria": "إطلاق مهمة تجسس ضد {country}"
+  },
+  "confirmation": {
+    "title": "تأكيد التجسس على {target}",
+    "operationTarget": "هدف عملية التجسس",
+    "personnelTitle": "أفراد الاستخبارات",
+    "personnelCount": "الجواسيس: {count}",
+    "recruit": "تجنيد",
+    "sendPersonnel": "الأفراد المرسلون:",
+    "maximum": "الحد الأقصى ({count})",
+    "decrease": "تقليل أفراد التجسس",
+    "increase": "زيادة أفراد التجسس",
+    "countAria": "عدد أفراد التجسس",
+    "cancel": "إلغاء",
+    "launch": "إطلاق المهمة",
+    "depleted": "لا يوجد جواسيس",
+    "insufficientPersonnel": "يتوفر {available} من الجواسيس، لكن العملية تحتاج إلى {required} أفراد.",
+    "targets": {
+      "militer": {
+        "label": "الاستخبارات العسكرية والدفاعية",
+        "description": "التسلل إلى القيادة العسكرية لكشف حجم القوات والتقنيات القتالية ومستوى جاهزية الجنود."
+      },
+      "ekonomi": {
+        "label": "الاستخبارات الاقتصادية والمالية",
+        "description": "كشف رصيد ميزانية الدولة ومعدلات الضرائب وإيرادات الضرائب اليومية المقدرة."
+      }
+    }
+  },
+  "fuel": {
+    "label": "تكلفة التنقل",
+    "calculating": "جارٍ الحساب...",
+    "barrels": "برميل نفط",
+    "stock": "المخزون",
+    "remaining": "المتبقي",
+    "fallback": "تعرفة قاعدة البيانات غير متاحة؛ يتم استخدام تقدير مؤقت للتكلفة.",
+    "insufficient": "مخزون النفط غير كافٍ",
+    "warning": "تحذير: كمية النفط المتبقية أقل من الاحتياج اليومي لمحطات الطاقة الحرارية ({amount} برميل)."
+  },
+  "recruit": {
+    "title": "تجنيد جواسيس",
+    "personnelNow": "الجواسيس الحاليون:",
+    "person": "أفراد",
+    "costPerPerson": "التكلفة للفرد:",
+    "count": "عدد المجندين:",
+    "maximum": "الحد الأقصى ({count})",
+    "totalCost": "إجمالي تكلفة التجنيد:",
+    "availableBalance": "الرصيد المتاح:",
+    "confirm": "تجنيد ({count})",
+    "insufficientFunds": "رصيد NEO غير كافٍ"
+  },
+  "result": {
+    "title": "نتائج عملية التجسس",
+    "success": "نجاح مهمة التجسس",
+    "failure": "فشل مهمة التجسس",
+    "successMessage": "نجحت عملية التجسس{operationTarget} في {target}. جمع عملاؤنا معلومات سرية عن الهدف.",
+    "failureMessage": "فشلت عملية التجسس{operationTarget} في {target}. اكتشفت سلطات الأمن المحلية عملاءنا.",
+    "successChance": "احتمال النجاح عند إطلاق العملية:",
+    "close": "إغلاق"
+  },
+  "report": {
+    "fiscalTitle": "التقرير المالي — {country}",
+    "budget": "ميزانية الدولة",
+    "dailyTax": "إيرادات الضرائب اليومية المقدرة",
+    "daily": "يوم",
+    "militaryTitle": "تقرير القوة العسكرية — {country}",
+    "land": "البرية",
+    "air": "الجوية",
+    "sea": "البحرية",
+    "unitsAndPower": "{units} وحدات · القوة {power}",
+    "total": "الإجمالي: {units} وحدات · القوة {power} · HP {health}",
+    "noUnits": "لم يتم رصد أي وحدات.",
+    "unit": "وحدات",
+    "power": "القوة",
+    "health": "HP",
+    "taxLabels": {
+      "income_tax": "ضريبة الدخل الشخصي",
+      "corporate_tax": "ضريبة الشركات",
+      "vat": "ضريبة القيمة المضافة",
+      "cigarette_tax": "ضريبة الاستهلاك",
+      "environment_tax": "الضريبة البيئية"
+    }
+  }
+}

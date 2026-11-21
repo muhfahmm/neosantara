@@ -1,0 +1,96 @@
+{
+  "menu": {
+    "title": "破壊工作",
+    "targetFallback": "目標",
+    "infoTitle": "情報機関",
+    "infoDescription": "破壊工作で他国に対する秘密作戦を実行します。各作戦には費用がかかり、外交関係に影響する可能性があります。リスクと期待できる成果を考慮して目標を選んでください。",
+    "searchPlaceholder": "対象国を検索...",
+    "searchAriaLabel": "対象国を検索",
+    "spionageTab": "諜報",
+    "sabotageTab": "破壊工作"
+  },
+  "table": {
+    "number": "番号",
+    "country": "国",
+    "land": "陸軍",
+    "sea": "海軍",
+    "air": "空軍",
+    "totalPower": "総戦力",
+    "actions": "操作",
+    "actionTitle": "破壊工作を開始",
+    "actionAria": "{country}で破壊工作を開始"
+  },
+  "confirmation": {
+    "title": "{target}への破壊工作を確認",
+    "operationTarget": "破壊工作の標的施設",
+    "personnelTitle": "破壊工作要員",
+    "personnelCount": "工作員：{count}",
+    "recruit": "採用",
+    "sendPersonnel": "派遣する要員：",
+    "maximum": "最大（{count}）",
+    "decrease": "破壊工作要員を減らす",
+    "increase": "破壊工作要員を増やす",
+    "countAria": "破壊工作要員数",
+    "cancel": "キャンセル",
+    "launch": "破壊工作を開始",
+    "depleted": "工作員がいません",
+    "insufficientPersonnel": "利用可能な工作員は{available}人ですが、作戦には{required}人必要です。",
+    "targets": {
+      "pabrik_militer": {
+        "label": "軍事施設・工場",
+        "description": "弾薬庫、戦車工場、航空機格納庫、軍艦用ドックを爆破します。"
+      },
+      "infrastruktur_energi": {
+        "label": "電力・エネルギーインフラ",
+        "description": "変電所、石油精製所、発電用原子炉施設を機能停止させます。"
+      },
+      "rantai_pasok": {
+        "label": "食料生産への破壊工作",
+        "description": "畜産、農業、漁業、食品加工施設の建物を5%破壊します（各種類最低1棟）。"
+      },
+      "manufaktur": {
+        "label": "製造業への破壊工作",
+        "description": "半導体、機械、鉄鋼、セメント、木材工場の建物を5%破壊します（各種類最低1棟）。"
+      }
+    }
+  },
+  "fuel": {
+    "label": "移動費用",
+    "calculating": "計算中...",
+    "barrels": "バレル",
+    "stock": "備蓄",
+    "remaining": "残量",
+    "fallback": "データベースの料金を取得できないため、暫定見積もりを使用しています。",
+    "insufficient": "石油備蓄が不足しています",
+    "warning": "警告：残りの石油が火力発電所の日次必要量を下回っています（{amount}バレル）。"
+  },
+  "recruit": {
+    "title": "工作員を採用",
+    "personnelNow": "現在の工作員：",
+    "person": "人",
+    "costPerPerson": "1人あたりの費用：",
+    "count": "採用人数：",
+    "maximum": "最大（{count}）",
+    "totalCost": "採用費用の合計：",
+    "availableBalance": "利用可能な資金：",
+    "confirm": "{count}人を採用",
+    "insufficientFunds": "NEOが不足しています"
+  },
+  "result": {
+    "title": "破壊工作の結果",
+    "success": "破壊工作成功",
+    "failure": "破壊工作失敗",
+    "successMessage": "{target}での破壊工作{operationTarget}に成功し、標的施設を破壊または停止しました。",
+    "failureMessage": "{target}での破壊工作{operationTarget}は失敗し、敵の警備システムに阻止されました。",
+    "lossTitleMilitary": "敵軍事施設の損失",
+    "lossTitleEnergy": "敵エネルギーインフラの損失",
+    "lossTitleFood": "敵食料生産施設の損失",
+    "lossTitleManufacturing": "敵製造施設の損失",
+    "lossDescriptionMilitary": "標的の軍事装備施設の5%を無力化しました。破壊された部隊：",
+    "lossDescriptionEnergy": "標的の電力・エネルギー鉱物施設の5%を破壊しました（各種類最低1件）。損失の詳細：",
+    "lossDescriptionFood": "4つの食料生産カテゴリーの建物を5%破壊しました（各種類最低1棟）。破壊された建物：",
+    "lossDescriptionManufacturing": "製造カテゴリーの建物を5%破壊しました（各種類最低1棟）。破壊された建物：",
+    "successChance": "作戦開始時の成功率：",
+    "close": "閉じる"
+  }
+}

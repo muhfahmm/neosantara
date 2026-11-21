@@ -1,0 +1,103 @@
+{
+  "menu": {
+    "title": "諜報",
+    "targetFallback": "目標",
+    "infoTitle": "情報機関",
+    "infoDescription": "諜報活動で他国の情報を収集します。各作戦には費用がかかり、外交関係に影響する可能性があります。リスクと期待できる成果を考慮して目標を選んでください。",
+    "searchPlaceholder": "対象国を検索...",
+    "searchAriaLabel": "対象国を検索",
+    "spionageTab": "諜報",
+    "sabotageTab": "破壊工作"
+  },
+  "table": {
+    "number": "番号",
+    "country": "国",
+    "land": "陸軍",
+    "sea": "海軍",
+    "air": "空軍",
+    "totalPower": "総戦力",
+    "actions": "操作",
+    "actionTitle": "諜報任務を開始",
+    "actionAria": "{country}への諜報任務を開始"
+  },
+  "confirmation": {
+    "title": "{target}への諜報を確認",
+    "operationTarget": "諜報作戦の目標",
+    "personnelTitle": "情報要員",
+    "personnelCount": "スパイ：{count}",
+    "recruit": "採用",
+    "sendPersonnel": "派遣する要員：",
+    "maximum": "最大（{count}）",
+    "decrease": "諜報要員を減らす",
+    "increase": "諜報要員を増やす",
+    "countAria": "諜報要員数",
+    "cancel": "キャンセル",
+    "launch": "任務を開始",
+    "depleted": "スパイがいません",
+    "insufficientPersonnel": "利用可能なスパイは{available}人ですが、作戦には{required}人必要です。",
+    "targets": {
+      "militer": {
+        "label": "軍事・防衛情報",
+        "description": "軍司令部に潜入し、部隊数、戦闘技術、部隊の即応態勢を調査します。"
+      },
+      "ekonomi": {
+        "label": "経済・予算情報",
+        "description": "国家予算、税率、推定日次税収を調査します。"
+      }
+    }
+  },
+  "fuel": {
+    "label": "移動費用",
+    "calculating": "計算中...",
+    "barrels": "バレル",
+    "stock": "備蓄",
+    "remaining": "残量",
+    "fallback": "データベースの料金を取得できないため、暫定見積もりを使用しています。",
+    "insufficient": "石油備蓄が不足しています",
+    "warning": "警告：残りの石油が火力発電所の日次必要量を下回っています（{amount}バレル）。"
+  },
+  "recruit": {
+    "title": "スパイを採用",
+    "personnelNow": "現在のスパイ：",
+    "person": "人",
+    "costPerPerson": "1人あたりの費用：",
+    "count": "採用人数：",
+    "maximum": "最大（{count}）",
+    "totalCost": "採用費用の合計：",
+    "availableBalance": "利用可能な資金：",
+    "confirm": "{count}人を採用",
+    "insufficientFunds": "NEOが不足しています"
+  },
+  "result": {
+    "title": "諜報作戦の結果",
+    "success": "諜報任務成功",
+    "failure": "諜報任務失敗",
+    "successMessage": "{target}での諜報作戦{operationTarget}に成功し、対象の機密情報を収集しました。",
+    "failureMessage": "{target}での諜報作戦{operationTarget}は失敗し、現地の治安当局に発見されました。",
+    "successChance": "作戦開始時の成功率：",
+    "close": "閉じる"
+  },
+  "report": {
+    "fiscalTitle": "財政報告 — {country}",
+    "budget": "国家予算",
+    "dailyTax": "推定日次税収",
+    "daily": "日",
+    "militaryTitle": "軍事力報告 — {country}",
+    "land": "陸軍",
+    "air": "空軍",
+    "sea": "海軍",
+    "unitsAndPower": "{units}部隊 · 戦力{power}",
+    "total": "合計：{units}部隊 · 戦力{power} · HP {health}",
+    "noUnits": "部隊は確認されませんでした。",
+    "unit": "部隊",
+    "power": "戦力",
+    "health": "HP",
+    "taxLabels": {
+      "income_tax": "個人所得税",
+      "corporate_tax": "法人税",
+      "vat": "付加価値税",
+      "cigarette_tax": "物品税",
+      "environment_tax": "環境税"
+    }
+  }
+}

@@ -696,6 +696,26 @@
     "yearMany": "{count} Jahre"
   },
   "dynamicNotifications": {
+    "playerLoot": {
+      "title": "💰 PLÜNDERUNG ERFOLGREICH",
+      "sender": "Oberkommando der Streitkräfte ({attacker})",
+      "message": "Die Plünderungsoperation gegen {target} war erfolgreich! {cash} NEO aus der Staatskasse und natürliche Ressourcen wurden gesichert.{lossNote}",
+      "lossNote": " Kampfverluste deiner Streitkräfte ({percent}%): {losses}."
+    },
+    "conquest": {
+      "title": "🚩 STADT EROBERT",
+      "pbbTitle": "🏳️ GEBIET VON DER UNO BESETZT",
+      "noCityTitle": "Stadtannexion abgebrochen",
+      "sender": "Hauptquartier der Streitkräfte ({attacker})",
+      "pbbSender": "Gemeinsame Streitkräfte der Vereinten Nationen",
+      "noCitySender": "Hauptquartier der Streitkräfte",
+      "cityMessage": "Die Streitkräfte von {attacker} haben die Stadt {city} in {target} erobert. {outcome}{lossNote} Erobertes Gebiet ist auf der Karte hellgrün markiert.",
+      "pbbMessage": "Die Koalitionsstreitkräfte der Vereinten Nationen haben die Stadt {city} in {target} besetzt. Das Gebiet steht unter UN-Verwaltung und gehört keinem teilnehmenden Land.{lossNote}",
+      "noCityMessage": "Die Zielstadt in {target} wurde nicht in den Kartendaten gefunden. Es wurde kein Gebiet verändert.",
+      "fullCollapse": "Die Hauptstadt oder alle erfassten Städte sind gefallen; {target} ist zusammengebrochen und vollständig annektiert.",
+      "remainingCities": "Die übrigen Städte in {target} bleiben in ihrem ursprünglichen Besitz.",
+      "lossNote": " Kampfverluste deiner Streitkräfte ({percent}%): {losses}."
+    },
     "pbb": {
       "sender": "Sekretariat der Vereinten Nationen",
       "unauthorizedAttackCancelledTitle": "🕊️ Angriffsplan ohne Mandat abgebrochen",
@@ -718,6 +738,10 @@
         "sedang": "Sicherheitswarnung! Ein Agent aus {partner} ist in eine militärische Anlage im Osten eingedrungen. Geheime Dokumente zur Waffenwirksamkeit könnten offengelegt werden.",
         "berat": "NACHRICHTENDIENSTLICHER NOTFALL! Ein hochrangiges Spionagenetzwerk aus {partner} gibt strategische Forschungsdaten und die Positionen unserer Flotten preis!"
       },
+      "activeTitle": "🕵️ SPIONAGEEFFEKT AKTIV",
+      "activeSender": "Nationaler Nachrichtendienst",
+      "activeMessage": "Spionage senkte die militärische Stärke und Gesundheit für {remainingDays} Spieltage auf ×0,95. Truppen- und Ausrüstungszahlen blieben unverändert.",
+      "extendedMessage": "Ein neuer Spionageeffekt hat den aktiven Effekt verlängert oder aufrechterhalten. Militärische Stärke und Gesundheit bleiben bei ×0,95 (Effekte stapeln sich nicht); es verbleiben {remainingDays} Tage.",
       "targets": {
         "default": "Nationale Geheimdienstinformationen",
         "military": "Militär- und Verteidigungsaufklärung",
@@ -739,6 +763,18 @@
       "incomingMessage": "{eventName} mit Verbindung zu {partner} wurde entdeckt. Schützen Sie kritische Anlagen und beheben Sie die Schäden umgehend.",
       "incomingSender": "Ministerium für Verteidigung und Sicherheit",
       "defaultTarget": "Militäranlage",
+      "impactTitle": "💥 SABOTAGESCHÄDEN AUFGETRETEN",
+      "impactSender": "Ministerium für Verteidigung und Sicherheit",
+      "infrastructureResultMessage": "Sabotage verringerte Kraftwerke und Energierohstoffanlagen um 5 % je Typ (mindestens 1). Schäden: {losses}.",
+      "militaryResultMessage": "Sabotage verringerte die militärische Ausrüstung dauerhaft um 5 % je Kategorie. Verluste: {losses}. Personal und Infanterie wurden nicht reduziert.",
+      "lossEntry": "{unit}: -{lost} (verbleibend {remaining})",
+      "noInfrastructureLosses": "Es konnten keine Kraftwerke oder Energierohstoffanlagen reduziert werden.",
+      "noMilitaryLosses": "Es konnte keine militärische Ausrüstung reduziert werden.",
+      "infrastructureItems": {
+        "litium": "Lithiumbergwerk",
+        "logam_tanah_jarang": "Seltene-Erden-Mine",
+        "bijih_besi": "Eisenerzmine"
+      },
       "targetOptions": {
         "militaryFacility": "Militärische Anlagen und Fabriken",
         "energyInfrastructure": "Strom- und Energieinfrastruktur",

@@ -7,6 +7,8 @@ import { CheckCircle2, Eye, XCircle } from "lucide-react";
 import type { SpionaseOperationResult } from "./logic/spionaseLogic";
 import EconomicIntelReportPanel from "./EconomicIntelReportPanel";
 import MilitaryIntelReportPanel from "./MilitaryIntelReportPanel";
+import { SPIONASE_TARGET_OPTIONS } from "./spionaseTargetOptions";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface ResultSpionaseModalsProps {
   result: SpionaseOperationResult | null;
@@ -17,10 +19,21 @@ export default function ResultSpionaseModals({
   result,
   onClose,
 }: ResultSpionaseModalsProps) {
+  const { t } = useLanguage();
+  const tr = (key: string, params?: Record<string, string | number>) =>
+    t(`navigation_defense_espionage.${key}`, params);
   if (!result) return null;
 
   const ResultIcon = result.succeeded ? CheckCircle2 : XCircle;
   const resultColor = result.succeeded ? "text-root-accent" : "text-rose-400";
+  const operationTargetId = SPIONASE_TARGET_OPTIONS.find(
+    option => option.label === result.operationTarget,
+  )?.id;
+  const operationTarget = result.operationTarget
+    ? ` (${operationTargetId
+      ? tr(`confirmation.targets.${operationTargetId}.label`)
+      : result.operationTarget})`
+    : "";
 
   const modalContent = (
     <div
@@ -31,7 +44,7 @@ export default function ResultSpionaseModals({
     >
       <div className="modal-responsive-shell overflow-y-auto rounded-2xl border border-root-accent/30 bg-root-surface text-white shadow-2xl">
         <RootInfoModalHeader
-          title="Hasil Operasi Spionase"
+          title={tr('result.title')}
           titleId="spionase-result-header-title"
           onClose={onClose}
           icon={<Eye />}
@@ -45,12 +58,13 @@ export default function ResultSpionaseModals({
               id="spionase-result-title"
               className={`text-xl font-black uppercase tracking-wide ${resultColor}`}
             >
-              {result.succeeded ? "Misi Spionase Berhasil" : "Misi Spionase Gagal"}
+              {result.succeeded ? tr('result.success') : tr('result.failure')}
             </h3>
             <p className="mt-2 text-sm text-root-text">
-              {result.succeeded
-                ? `Operasi spionase${result.operationTarget ? ` (${result.operationTarget})` : ''} berhasil dilaksanakan di ${result.targetCountry}. Agen intelijen kami berhasil mengumpulkan informasi rahasia sasaran.`
-                : `Operasi spionase${result.operationTarget ? ` (${result.operationTarget})` : ''} gagal dilaksanakan di ${result.targetCountry}. Agen intelijen terdeteksi oleh otoritas keamanan setempat.`}
+              {tr(result.succeeded ? 'result.successMessage' : 'result.failureMessage', {
+                operationTarget,
+                target: result.targetCountry,
+              })}
             </p>
           </div>
 
@@ -62,7 +76,7 @@ export default function ResultSpionaseModals({
           )}
 
           <p className="text-xs font-semibold text-root-subtle">
-            Peluang keberhasilan saat operasi diluncurkan:{" "}
+            {tr('result.successChance')}{" "}
             <span className="font-black text-root-accent">{result.successChance}%</span>
           </p>
         </div>
@@ -74,7 +88,7 @@ export default function ResultSpionaseModals({
             className="w-full rounded-xl bg-root-accent px-4 py-2.5 text-xs font-black uppercase tracking-widest text-root-canvas transition-colors hover:bg-[#00e699]"
             appearance="custom"
           >
-            Tutup
+            {tr('result.close')}
           </SharedModalCloseButton>
         </div>
       </div>

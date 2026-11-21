@@ -25,6 +25,7 @@ import {
   getCovertPersonnel,
   consumePersonnel,
 } from "@/app/page/detail_negara/3_operasi_militer/covertPersonnelStorage";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -35,6 +36,7 @@ interface ModalProps {
 }
 
 export default function IntelijenModal({ isOpen, onClose, countryDetail, setCountryDetail, prefetchedAllCountries }: ModalProps) {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'spionase' | 'sabotase'>('spionase');
   const [isPersonnelRecruitModalOpen, setIsPersonnelRecruitModalOpen] = useState(false);
   const [isCovertConfirmationOpen, setIsCovertConfirmationOpen] = useState(false);
@@ -48,6 +50,8 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
     succeeded: boolean;
   }>());
   const launchedTravelFuelIdsRef = useRef(new Set<string>());
+  const tr = (operation: 'spionase' | 'sabotase', key: string, params?: Record<string, string | number>) =>
+    t(`navigation_defense_${operation === 'spionase' ? 'espionage' : 'sabotage'}.${key}`, params);
   const handleClose = () => {
     setIsPersonnelRecruitModalOpen(false);
     setIsCovertConfirmationOpen(false);
@@ -132,7 +136,10 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
     if (!Number.isInteger(personnelCount) || personnelCount < 1) return;
     const personnel = getCovertPersonnel();
     if (personnel.mataMata < personnelCount) {
-      alert(`Mata-mata tersedia ${personnel.mataMata}, tetapi operasi membutuhkan ${personnelCount} personel.`);
+      alert(tr('spionase', 'confirmation.insufficientPersonnel', {
+        available: personnel.mataMata,
+        required: personnelCount,
+      }));
       return;
     }
     if (launchedTravelFuelIdsRef.current.has(pathId)) return;
@@ -161,7 +168,10 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
     if (!Number.isInteger(personnelCount) || personnelCount < 1) return;
     const personnel = getCovertPersonnel();
     if (personnel.penyabot < personnelCount) {
-      alert(`Penyabot tersedia ${personnel.penyabot}, tetapi operasi membutuhkan ${personnelCount} personel.`);
+      alert(tr('sabotase', 'confirmation.insufficientPersonnel', {
+        available: personnel.penyabot,
+        required: personnelCount,
+      }));
       return;
     }
     if (launchedTravelFuelIdsRef.current.has(pathId)) return;
@@ -200,14 +210,14 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
                   )}
                 </div>
                 <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                  {activeTab === 'spionase' ? 'Spionase' : 'Sabotase'}
+                  {tr(activeTab, 'menu.title')}
                 </h2>
               </div>
             </div>
             <div className="root-modal-util-08dfbca033">
               <MenuInfoButton
-                title="Intelijen"
-                description="Gunakan Spionase untuk mengumpulkan informasi negara lain dan Sabotase untuk menjalankan operasi rahasia. Setiap operasi membutuhkan anggaran dan dapat menimbulkan konsekuensi diplomatik; pilih sasaran dengan mempertimbangkan risiko serta hasil yang diharapkan."
+                title={tr(activeTab, 'menu.infoTitle')}
+                description={tr(activeTab, 'menu.infoDescription')}
               />
               <RootModalCloseButton onClick={handleClose} />
             </div>
@@ -217,13 +227,13 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
             <RootModalSearchToolbar
               items={[
                 {
-                  label: "Spionase",
+                  label: tr(activeTab, 'menu.spionageTab'),
                   icon: <Eye className="h-3.5 w-3.5" />,
                   isActive: activeTab === "spionase",
                   onClick: () => setActiveTab("spionase"),
                 },
                 {
-                  label: "Sabotase",
+                  label: tr(activeTab, 'menu.sabotageTab'),
                   icon: <Bomb className="h-3.5 w-3.5" />,
                   isActive: activeTab === "sabotase",
                   onClick: () => setActiveTab("sabotase"),
@@ -231,8 +241,8 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
               ]}
               searchValue={searchQuery}
               onSearchChange={setSearchQuery}
-              searchPlaceholder="Cari negara target..."
-              searchAriaLabel="Cari negara target"
+              searchPlaceholder={tr(activeTab, 'menu.searchPlaceholder')}
+              searchAriaLabel={tr(activeTab, 'menu.searchAriaLabel')}
             />
           <div className="intelijen-results min-h-0 min-w-0 flex-1 overflow-y-auto p-4 sm:p-6">
             <div className="h-full min-h-0 w-full">

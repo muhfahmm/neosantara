@@ -696,6 +696,26 @@
     "yearMany": "{count} años"
   },
   "dynamicNotifications": {
+    "playerLoot": {
+      "title": "💰 OPERACIÓN DE SAQUEO EXITOSA",
+      "sender": "Cuartel General de las Fuerzas Armadas ({attacker})",
+      "message": "¡La operación de saqueo contra {target} se completó con éxito! Se aseguraron {cash} NEO del tesoro nacional y recursos naturales.{lossNote}",
+      "lossNote": " Pérdidas de combate de tus fuerzas ({percent}%): {losses}."
+    },
+    "conquest": {
+      "title": "🚩 CIUDAD CONQUISTADA",
+      "pbbTitle": "🏳️ TERRITORIO OCUPADO POR LA ONU",
+      "noCityTitle": "Anexión de ciudad cancelada",
+      "sender": "Cuartel General de las Fuerzas Armadas ({attacker})",
+      "pbbSender": "Fuerzas Conjuntas de las Naciones Unidas",
+      "noCitySender": "Cuartel General de las Fuerzas Armadas",
+      "cityMessage": "Las fuerzas de {attacker} conquistaron la ciudad de {city} en {target}. {outcome}{lossNote} El territorio conquistado aparece en verde brillante en el mapa.",
+      "pbbMessage": "Las fuerzas de la coalición de la ONU ocuparon la ciudad de {city} en {target}. El territorio está bajo administración de la ONU, no pertenece a ningún país participante.{lossNote}",
+      "noCityMessage": "No se encontró la ciudad objetivo de {target} en los datos del mapa. No se modificó ningún territorio.",
+      "fullCollapse": "La capital o todas las ciudades registradas han caído; {target} ha colapsado y ha sido anexionado por completo.",
+      "remainingCities": "Las demás ciudades de {target} siguen bajo su propiedad original.",
+      "lossNote": " Pérdidas de combate de tus fuerzas ({percent}%): {losses}."
+    },
     "pbb": {
       "sender": "Secretaría de las Naciones Unidas",
       "unauthorizedAttackCancelledTitle": "🕊️ Plan de ataque sin mandato cancelado",
@@ -718,6 +738,10 @@
         "sedang": "¡Alerta de seguridad! Un agente de {partner} se infiltró en una instalación militar de la región oriental. Podrían filtrarse documentos confidenciales sobre la eficacia del armamento.",
         "berat": "¡EMERGENCIA DE INTELIGENCIA! Una red de espionaje de alto nivel de {partner} está filtrando datos estratégicos de investigación nacional y la posición de nuestras flotas militares."
       },
+      "activeTitle": "🕵️ EFECTO DE ESPIONAJE ACTIVO",
+      "activeSender": "Agencia Nacional de Inteligencia",
+      "activeMessage": "El espionaje redujo la fuerza y la salud militar a ×0,95 durante {remainingDays} días de juego. La cantidad de tropas y equipos no cambió.",
+      "extendedMessage": "El nuevo efecto de espionaje prolongó o mantuvo el efecto activo. La fuerza y la salud militar permanecen en ×0,95 (los efectos no se acumulan), con {remainingDays} días restantes.",
       "targets": {
         "default": "Información de inteligencia nacional",
         "military": "Inteligencia militar y de defensa",
@@ -739,6 +763,18 @@
       "incomingMessage": "Se detectó {eventName} relacionado con {partner}. Proteja las instalaciones críticas y atienda los daños de inmediato.",
       "incomingSender": "Ministerio de Defensa y Seguridad",
       "defaultTarget": "Instalación militar",
+      "impactTitle": "💥 DAÑOS POR SABOTAJE",
+      "impactSender": "Ministerio de Defensa y Seguridad",
+      "infrastructureResultMessage": "El sabotaje redujo un 5% por tipo (mínimo 1) las centrales eléctricas y las instalaciones de minerales energéticos. Daños: {losses}.",
+      "militaryResultMessage": "El sabotaje redujo permanentemente un 5% por categoría el equipo militar. Pérdidas: {losses}. No se redujeron el personal ni la infantería.",
+      "lossEntry": "{unit}: -{lost} (restantes: {remaining})",
+      "noInfrastructureLosses": "No se pudieron reducir centrales eléctricas ni instalaciones de minerales energéticos.",
+      "noMilitaryLosses": "No se pudo reducir ningún equipo militar.",
+      "infrastructureItems": {
+        "litium": "Mina de litio",
+        "logam_tanah_jarang": "Mina de tierras raras",
+        "bijih_besi": "Mina de mineral de hierro"
+      },
       "targetOptions": {
         "militaryFacility": "Instalaciones y fábricas militares",
         "energyInfrastructure": "Infraestructura eléctrica y energética",

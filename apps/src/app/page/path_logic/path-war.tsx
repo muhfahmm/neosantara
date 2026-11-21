@@ -15,6 +15,8 @@ import {
   AlertTriangle,
   Skull,
 } from 'lucide-react';
+import { getLocalizedCountryName } from '@/app/logic/countryNameLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { COUNTRIES_DATA, CAPITALS_DATA } from '@/app/page/map_system/map-data';
 import ModalCloseButton from '../root_modals_design_menu/ModalCloseButton';
 import { getArmadaPowerSummary } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
@@ -613,37 +615,37 @@ export interface WarResultOutput {
   winner?: 'attacker' | 'target' | 'draw';
 }
 
-const UNIT_LOSS_LABELS: Record<WarUnit['kind'], string> = {
-  infanteri: 'Pasukan Infanteri',
-  tank: 'Tank Tempur Utama',
-  apcIfv: 'APC / IFV',
-  artileriBerat: 'Artileri Berat',
-  peluncurRoket: 'Sistem Peluncur Roket',
-  pertahananUdaraMobile: 'Pertahanan Udara Mobile',
-  kendaraanTaktis: 'Kendaraan Taktis',
-  kapalInduk: 'Kapal Induk',
-  kapalIndukNuklir: 'Kapal Induk Nuklir',
-  destroyer: 'Kapal Destroyer',
-  korvet: 'Kapal Korvet',
-  kapalSelamNuklir: 'Kapal Selam Nuklir',
-  kapalSelamReguler: 'Kapal Selam Reguler',
-  kapalRanjau: 'Kapal Ranjau',
-  kapalLogistik: 'Kapal Logistik',
-  jetTempurSiluman: 'Jet Tempur Siluman',
-  jetTempurInterceptor: 'Jet Tempur Interceptor',
-  pesawatPengebom: 'Pesawat Pengebom',
-  helikopterSerang: 'Helikopter Serang',
-  pesawatPengintai: 'Pesawat Pengintai',
-  droneIntaiUav: 'Drone Intai UAV',
-  droneKamikaze: 'Drone Kamikaze',
-  pesawatAngkut: 'Pesawat Angkut',
+const UNIT_LOSS_TRANSLATION_KEYS: Record<WarUnit['kind'], string> = {
+  infanteri: 'barak',
+  tank: 'tank_tempur_utama',
+  apcIfv: 'apc_ifv',
+  artileriBerat: 'artileri_berat',
+  peluncurRoket: 'sistem_peluncur_roket',
+  pertahananUdaraMobile: 'pertahanan_udara_mobile',
+  kendaraanTaktis: 'kendaraan_taktis',
+  kapalInduk: 'kapal_induk',
+  kapalIndukNuklir: 'kapal_induk_nuklir',
+  destroyer: 'kapal_destroyer',
+  korvet: 'kapal_korvet',
+  kapalSelamNuklir: 'kapal_selam_nuklir',
+  kapalSelamReguler: 'kapal_selam_regular',
+  kapalRanjau: 'kapal_ranjau',
+  kapalLogistik: 'kapal_logistik',
+  jetTempurSiluman: 'jet_tempur_siluman',
+  jetTempurInterceptor: 'jet_tempur_interceptor',
+  pesawatPengebom: 'pesawat_pengebom',
+  helikopterSerang: 'helikopter_serang',
+  pesawatPengintai: 'pesawat_pengintai',
+  droneIntaiUav: 'drone_intai_uav',
+  droneKamikaze: 'drone_kamikaze',
+  pesawatAngkut: 'pesawat_angkut',
 };
 
 function calculateUnitLosses(units: WarUnit[], lossRatio: number) {
   return units.map((unit) => {
     const lost = Math.min(unit.quantity, Math.round(unit.quantity * lossRatio));
     return {
-      label: UNIT_LOSS_LABELS[unit.kind],
+      translationKey: UNIT_LOSS_TRANSLATION_KEYS[unit.kind],
       deployed: unit.quantity,
       lost,
       remaining: unit.quantity - lost,
@@ -815,6 +817,9 @@ export default function WarMap({
   onResolve,
   onAutoResolve,
 }: WarMapProps) {
+  const { t, language } = useLanguage();
+  const tr = (key: string, params?: Record<string, string | number>) =>
+    t(`navigation_defense_attack.${key}`, params);
   const [phase, setPhase] = useState<WarPhase>('travel');
   const phaseRef = useRef<WarPhase>('travel');
   phaseRef.current = phase;
@@ -879,6 +884,12 @@ export default function WarMap({
     return false;
   }, [isUserDefenderProp, target.country]);
   const isAiAttacker = isNpcWar || isUserDefender;
+  const localizedAttackerCountry = getLocalizedCountryName(attacker.country, language);
+  const localizedTargetCountry = getLocalizedCountryName(target.country, language);
+  const localizedAttackerName = isPbbCoalition
+    ? tr("analysis.coalition")
+    : localizedAttackerCountry;
+  const localizedTargetName = localizedTargetCountry;
   const canViewAttackerForces = isAiAttacker || isPbbCoalition;
   const attackerForceDisplayName = isPbbCoalition
     ? 'Pasukan Gabungan PBB'
@@ -1666,58 +1677,37 @@ export default function WarMap({
                   }`}
               >
                 {isUserDefender
-                  ? (result === 'win' ? 'Pertahanan Berhasil!' : 'Pertahanan Terpukul Kalah!')
-                  : (result === 'win' ? 'Kemenangan Mutlak!' : 'Pasukan Terpukul Mundur')}
+                  ? tr(result === 'win' ? "warResult.defenseWon" : "warResult.defenseLost")
+                  : tr(result === 'win' ? "result.victory" : "warResult.attackerLost")}
               </h2>
               <p className="text-xs text-root-text mt-2 leading-relaxed">
-                {isUserDefender ? (
-                  result === 'win' ? (
-                    <>
-                      Pasukan <strong className="text-white">{target.country}</strong>{' '}
-                      berhasil memukul mundur{' '}
-                      {isPbbCoalition ? 'Pasukan Gabungan PBB' : <>agresi militer <strong className="text-white">{attacker.country}</strong></>}! Pertahanan nasional berdiri kokoh.
-                    </>
-                  ) : (
-                    <>
-                      {isPbbCoalition
-                        ? <strong className="text-white">Pasukan Gabungan PBB</strong>
-                        : <>Pasukan <strong className="text-white">{attacker.country}</strong></>}{' '}
-                      berhasil menembus benteng pertahanan{' '}
-                      <strong className="text-white">{target.country}</strong>. Kerugian armada dialami.
-                    </>
-                  )
-                ) : (
-                  result === 'win' ? (
-                    <>
-                      {isPbbCoalition
-                        ? <strong className="text-white">Pasukan Gabungan PBB</strong>
-                        : <>Pasukan <strong className="text-white">{attacker.country}</strong></>}{' '}
-                      berhasil menembus benteng pertahanan{' '}
-                      <strong className="text-white">{target.country}</strong>!
-                    </>
-                  ) : (
-                    <>
-                      {isPbbCoalition
-                        ? <strong className="text-white">Pasukan Gabungan PBB</strong>
-                        : <>Pasukan <strong className="text-white">{attacker.country}</strong></>}{' '}
-                      gagal menembus pertahanan{' '}
-                      <strong className="text-white">{target.country}</strong>.
-                    </>
-                  )
+                {tr(
+                  isUserDefender
+                    ? result === 'win'
+                      ? "warResult.defenseVictorySummary"
+                      : "warResult.defenseDefeatSummary"
+                    : result === 'win'
+                      ? "warResult.attackerVictorySummary"
+                      : "warResult.attackerDefeatSummary",
+                  {
+                    attacker: localizedAttackerName,
+                    defender: localizedTargetName,
+                    target: localizedTargetName,
+                  },
                 )}
               </p>
               {target.cityName && (
                 <div className="mx-auto mt-4 flex w-fit items-center gap-2 rounded-xl border border-root-accent/30 bg-root-accent/10 px-4 py-2">
                   <Flag className="h-4 w-4 text-root-accent" />
                   <span className="text-[10px] font-bold uppercase tracking-wider text-root-subtle">
-                    Kota sasaran
+                    {tr("warResult.targetCity")}
                   </span>
                   <strong className="text-sm text-root-accent">
-                    {target.cityName}, {target.country}
+                    {target.cityName}, {localizedTargetName}
                   </strong>
                   {target.cityIsCapital && (
                     <span className="rounded bg-amber-400/15 px-2 py-1 text-[9px] font-bold uppercase text-amber-300">
-                      Ibu kota
+                      {tr("warResult.capital")}
                     </span>
                   )}
                 </div>
@@ -1727,18 +1717,24 @@ export default function WarMap({
             <div className="grid grid-cols-2 divide-x divide-root-accent/10 border-b border-root-accent/10">
               <div className="p-4 text-center">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mb-1">
-                  {isPbbCoalition ? 'Skor Pasukan Gabungan PBB' : `Skor Penyerang (${attacker.country})`}
+                  {tr(
+                    isPbbCoalition ? "warResult.coalitionScore" : "warResult.attackerScore",
+                    { country: localizedAttackerCountry },
+                  )}
                 </p>
                 <p className="text-lg font-black text-root-accent">
-                  {battleOutcome?.attackerScore.toLocaleString()}
+                  {battleOutcome?.attackerScore.toLocaleString(language)}
                 </p>
               </div>
               <div className="p-4 text-center">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mb-1">
-                  {isPbbCoalition ? `Skor Pertahanan (${target.country})` : `Skor Bertahan (${target.country})`}
+                  {tr(
+                    isPbbCoalition ? "warResult.defenseScore" : "warResult.defenderScore",
+                    { country: localizedTargetName },
+                  )}
                 </p>
                 <p className="text-lg font-black text-root-danger">
-                  {battleOutcome?.targetScore.toLocaleString()}
+                  {battleOutcome?.targetScore.toLocaleString(language)}
                 </p>
               </div>
             </div>
@@ -1746,35 +1742,38 @@ export default function WarMap({
             <div className="border-b border-root-accent/10 p-5">
               <h3 className="mb-1 flex items-center gap-2 text-xs font-black uppercase tracking-widest text-root-text">
                 <Skull className="h-4 w-4 text-root-danger" />
-                Rincian Kehilangan Unit
+                {tr("warResult.lossTitle")}
               </h3>
               <p className="mb-4 text-[10px] text-root-subtle">
-                Estimasi kehilangan dibagi proporsional berdasarkan penurunan kekuatan tempur.
+                {tr("warResult.lossDescription")}
               </p>
               <div className="grid gap-3 sm:grid-cols-2">
                 {[
                   {
-                    name: isPbbCoalition ? 'Pasukan Gabungan PBB' : attacker.country,
+                    name: localizedAttackerName,
                     color: '#00FFAA',
                     losses: attackerLosses,
                   },
-                  { name: target.country, color: '#FF2D55', losses: targetLosses },
+                  { name: localizedTargetName, color: '#FF2D55', losses: targetLosses },
                 ].map((side) => (
                   <section key={side.name} className="min-w-0 rounded-xl border border-white/10 bg-black/20 p-3">
                     <h4 className="mb-2 truncate text-[10px] font-black uppercase tracking-wider" style={{ color: side.color }}>
                       {side.name}
                     </h4>
                     {side.losses.length === 0 ? (
-                      <p className="text-[10px] text-root-subtle">Tidak ada kehilangan unit yang tercatat.</p>
+                      <p className="text-[10px] text-root-subtle">{tr("warResult.noLosses")}</p>
                     ) : (
                       <div className="max-h-36 space-y-2 overflow-y-auto pr-1">
-                        {side.losses.map((loss) => (
-                          <div key={loss.label} className="flex items-start justify-between gap-2 text-[10px]">
-                            <span className="text-[#CBD5D5]">{loss.label}</span>
+                        {side.losses.map((loss, index) => (
+                          <div key={`${loss.translationKey}-${index}`} className="flex items-start justify-between gap-2 text-[10px]">
+                            <span className="text-[#CBD5D5]">{tr(`units.${loss.translationKey}`)}</span>
                             <span className="shrink-0 text-right">
-                              <span className="font-bold text-root-danger">-{loss.lost.toLocaleString('id-ID')}</span>
+                              <span className="font-bold text-root-danger">-{loss.lost.toLocaleString(language)}</span>
                               <span className="block text-[9px] text-root-subtle">
-                                sisa {loss.remaining.toLocaleString('id-ID')} / {loss.deployed.toLocaleString('id-ID')}
+                                {tr("warResult.remaining", {
+                                  remaining: loss.remaining.toLocaleString(language),
+                                  deployed: loss.deployed.toLocaleString(language),
+                                })}
                               </span>
                             </span>
                           </div>
@@ -1792,24 +1791,27 @@ export default function WarMap({
                   <div className={`flex items-start gap-3 p-3 rounded-xl ${result === 'win' ? 'bg-root-accent/10 border border-root-accent/30' : 'bg-root-danger/10 border border-root-danger/30'}`}>
                     <AlertTriangle className={`h-4 w-4 ${result === 'win' ? 'text-root-accent' : 'text-root-danger'} mt-0.5 flex-shrink-0`} />
                     <p className="text-[11px] text-root-text leading-relaxed">
-                      {result === 'win'
-                        ? `Operasi pertahanan nasional sukses besar! ${isPbbCoalition ? 'Pasukan Gabungan PBB' : `Pasukan ${attacker.country}`} dipaksa mundur.`
-                        : `Wilayah nasional terdampak serangan ${isPbbCoalition ? 'Pasukan Gabungan PBB' : `musuh (${attacker.country})`}. Kerugian armada pertahanan telah terjadi.`}
+                      {tr(
+                        result === 'win'
+                          ? "warResult.defenseSuccessAlert"
+                          : "warResult.defenseFailureAlert",
+                        { attacker: localizedAttackerName },
+                      )}
                     </p>
                   </div>
                   <button
                     onClick={() => handleAction('retreat')}
                     className="w-full py-3 rounded-xl bg-root-surface hover:bg-[#1A3838] border border-root-accent/30 text-xs font-black uppercase tracking-widest text-root-text transition-colors cursor-pointer"
                   >
-                    {result === 'win' ? 'Selesai Pertahanan' : 'Tarik Sisa Pasukan & Evaluasi'}
+                    {tr(result === 'win' ? "warResult.defenseDone" : "warResult.defenseEvaluate")}
                   </button>
                 </div>
               ) : (
                 <>
                   <p className="text-[10px] font-black uppercase tracking-widest text-root-subtle mb-2">
                     {result === 'win'
-                      ? (isPbbCoalition ? 'PILIH OPSI TAKTIS PASUKAN PBB:' : 'Pilih Aneksasi atau Opsi Taktis:')
-                      : 'Pilihan:'}
+                      ? tr(isPbbCoalition ? "warResult.coalitionActionChoice" : "warResult.actionChoice")
+                      : tr("warResult.choice")}
                   </p>
 
                   {result === 'win' ? (
@@ -1818,8 +1820,13 @@ export default function WarMap({
                       {/* FIX: Tombol Duduki / Aneksasi */}
                       <ActionButton
                         icon={<Flag className="h-5 w-5" />}
-                        title={isPbbCoalition ? 'Pendudukan PBB' : 'Aneksasi'}
-                        desc={isPbbCoalition ? 'Tempatkan wilayah di bawah administrasi PBB' : 'Caplok & integrasikan wilayah target'}
+                        title={isPbbCoalition ? tr("warResult.occupation") : tr("result.annex")}
+                        desc={isPbbCoalition
+                          ? tr("warResult.occupationDescription")
+                          : tr("result.annexDescription", {
+                            country: localizedTargetName,
+                            player: localizedAttackerCountry,
+                          })}
                         accent="#00FFAA"
                         onClick={() => handleAction('annex')}
                       />
@@ -1828,8 +1835,8 @@ export default function WarMap({
                       {!isPbbCoalition && (
                         <ActionButton
                           icon={<Trophy className="h-5 w-5" />}
-                          title="Jarah SDA"
-                          desc="Rampas sumber daya tanpa mencaplok"
+                          title={tr("result.plunder")}
+                          desc={tr("result.plunderDescription", { country: localizedTargetName })}
                           accent="#FFEB3B"
                           onClick={() => handleAction('loot')}
                         />
@@ -1838,8 +1845,8 @@ export default function WarMap({
                       {/* Tombol Mundur */}
                       <ActionButton
                         icon={<ArrowLeft className="h-5 w-5" />}
-                        title="Mundur"
-                        desc="Tarik pasukan tanpa aksi lanjutan"
+                        title={tr("result.retreat")}
+                        desc={tr("result.retreatDescription")}
                         accent="#6B8A8A"
                         onClick={() => handleAction('retreat')}
                       />
@@ -1849,15 +1856,14 @@ export default function WarMap({
                       <div className="flex items-start gap-3 p-3 rounded-xl bg-root-danger/10 border border-root-danger/30">
                         <AlertTriangle className="h-4 w-4 text-root-danger mt-0.5 flex-shrink-0" />
                         <p className="text-[11px] text-root-text leading-relaxed">
-                          Hubungan diplomatik dengan {target.country} memburuk. Reputasi
-                          internasional Anda menurun.
+                          {tr("warResult.diplomacyWarning", { country: localizedTargetName })}
                         </p>
                       </div>
                       <button
                         onClick={() => handleAction('retreat')}
                         className="w-full py-3 rounded-xl bg-root-surface hover:bg-[#1A3838] border border-root-accent/30 text-xs font-black uppercase tracking-widest text-root-text transition-colors cursor-pointer"
                       >
-                        Tarik Pasukan
+                        {tr("warResult.withdraw")}
                       </button>
                     </div>
                   )}

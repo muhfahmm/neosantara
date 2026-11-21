@@ -9,6 +9,7 @@ import { getTravelFuelStatus } from "@/app/page/navigasi_menu/2_navigasi_bawah/3
 import { useTravelFuelQuote } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/useTravelFuelQuote";
 // 🔥 Import COUNTRIES_DATA untuk meng-enrich ISO
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 type RankingRow = {
   countryName: string;
@@ -19,9 +20,9 @@ type RankingRow = {
   iso?: string; // 🔥 Tambahkan field ISO
 };
 
-const formatNumber = (value: unknown) => {
+const formatNumber = (value: unknown, locale: string) => {
   const numeric = Number(value ?? 0);
-  return Number.isFinite(numeric) ? numeric.toLocaleString("id-ID", { maximumFractionDigits: 0 }) : "0";
+  return Number.isFinite(numeric) ? numeric.toLocaleString(locale, { maximumFractionDigits: 0 }) : "0";
 };
 
 // 🔥 Fungsi pencarian ISO (cari dari COUNTRIES_DATA terlebih dahulu)
@@ -57,6 +58,10 @@ interface SabotaseProps {
 }
 
 export default function Sabotase({ prefetchedAllCountries, countryDetail, updatePlayerCountryDetail, onRecruitModalVisibilityChange, onConfirmationModalVisibilityChange, onAction, searchQuery }: SabotaseProps) {
+  const { t, language } = useLanguage();
+  const tr = (key: string, params?: Record<string, string | number>) =>
+    t(`navigation_defense_sabotage.${key}`, params);
+  const fallbackCountry = tr('menu.targetFallback');
   const [sortConfig, setSortConfig] = useState<{ key: keyof RankingRow; direction: 'asc' | 'desc' } | null>({
     key: 'totalPower',
     direction: 'desc'
@@ -116,7 +121,7 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, update
       .map((country: any) => {
         const summary = getArmadaPowerSummary(country);
         const groupTotals = summary.totals.groups;
-        const countryName = country?.nama_negara || country?.country || country?.name_id || country?.name_en || "Negara";
+        const countryName = country?.nama_negara || country?.country || country?.name_id || country?.name_en || fallbackCountry;
         const iso = extractISO(country, countryName); // 🔥 Ambil ISO dengan nama negara sebagai parameter
 
         return {
@@ -128,7 +133,7 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, update
           iso, // 🔥 Simpan ISO
         };
       });
-  }, [prefetchedAllCountries, countryDetail]);
+  }, [prefetchedAllCountries, countryDetail, fallbackCountry]);
 
   const rankings = useMemo(() => {
     let sortableItems = [...rawRankings];
@@ -192,28 +197,28 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, update
           <RootTable className="intelijen-table w-full text-xs md:text-[10px] lg:text-[11px] 2xl:text-xs">
             <RootTableHeader className="whitespace-nowrap">
               <tr>
-                <RootTableHeadCell className="w-10">No</RootTableHeadCell>
+                <RootTableHeadCell className="w-10">{tr('table.number')}</RootTableHeadCell>
                 <RootTableHeadCell className="cursor-pointer hover:bg-root-accent/10 transition-colors" onClick={() => handleSort('countryName')}>
-                  Negara{getSortArrow('countryName')}
+                {tr('table.country')}{getSortArrow('countryName')}
                 </RootTableHeadCell>
                 <RootTableHeadCell className="text-right cursor-pointer hover:bg-root-accent/10 transition-colors" onClick={() => handleSort('darat')}>
-                  Darat{getSortArrow('darat')}
+                {tr('table.land')}{getSortArrow('darat')}
                 </RootTableHeadCell>
                 <RootTableHeadCell className="text-right cursor-pointer hover:bg-root-accent/10 transition-colors" onClick={() => handleSort('laut')}>
-                  Laut{getSortArrow('laut')}
+                {tr('table.sea')}{getSortArrow('laut')}
                 </RootTableHeadCell>
                 <RootTableHeadCell className="text-right cursor-pointer hover:bg-root-accent/10 transition-colors" onClick={() => handleSort('udara')}>
-                  Udara{getSortArrow('udara')}
+                {tr('table.air')}{getSortArrow('udara')}
                 </RootTableHeadCell>
                 <RootTableHeadCell className="text-right cursor-pointer hover:bg-root-accent/10 transition-colors" onClick={() => handleSort('totalPower')}>
-                  Total Kekuatan{getSortArrow('totalPower')}
+                {tr('table.totalPower')}{getSortArrow('totalPower')}
                 </RootTableHeadCell>
-                <RootTableHeadCell className="text-center">Aksi</RootTableHeadCell>
+                <RootTableHeadCell className="text-center">{tr('table.actions')}</RootTableHeadCell>
               </tr>
             </RootTableHeader>
             <tbody className="divide-y divide-root-accent/10">
               {rankings.map((row, index) => {
-                const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "Negara";
+                const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || fallbackCountry;
                 const isUserCountry = row.countryName.toLowerCase().trim() === selectedCountryName.toLowerCase().trim();
                 
                 return (
@@ -239,18 +244,18 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, update
                       </div>
                     </RootTableCell>
 
-                    <RootTableCell isNumeric className="text-root-text">{formatNumber(row.darat)}</RootTableCell>
-                    <RootTableCell isNumeric className="text-root-text">{formatNumber(row.laut)}</RootTableCell>
-                    <RootTableCell isNumeric className="text-root-text">{formatNumber(row.udara)}</RootTableCell>
-                    <RootTableCell isNumeric className={`font-black ${isUserCountry ? 'text-root-accent' : 'text-rose-400'}`}>{formatNumber(row.totalPower)}</RootTableCell>
+                    <RootTableCell isNumeric className="text-root-text">{formatNumber(row.darat, language)}</RootTableCell>
+                    <RootTableCell isNumeric className="text-root-text">{formatNumber(row.laut, language)}</RootTableCell>
+                    <RootTableCell isNumeric className="text-root-text">{formatNumber(row.udara, language)}</RootTableCell>
+                    <RootTableCell isNumeric className={`font-black ${isUserCountry ? 'text-root-accent' : 'text-rose-400'}`}>{formatNumber(row.totalPower, language)}</RootTableCell>
                     <RootTableCell className="text-center">
                       {!isUserCountry && (
                         <button
                           type="button"
                           onClick={() => handleOpenModal(row)}
                           className="p-1.5 rounded-lg border transition-all bg-orange-500/10 text-orange-400 hover:bg-orange-500 hover:text-white border-orange-500/30 cursor-pointer"
-                          title="Lancarkan operasi sabotase"
-                          aria-label={`Lancarkan operasi sabotase di ${row.countryName}`}
+                          title={tr('table.actionTitle')}
+                          aria-label={tr('table.actionAria', { country: row.countryName })}
                         >
                           <Bomb className="w-4 h-4" />
                         </button>

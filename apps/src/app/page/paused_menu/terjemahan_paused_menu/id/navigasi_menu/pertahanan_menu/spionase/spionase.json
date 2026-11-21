@@ -1,0 +1,103 @@
+{
+  "menu": {
+    "title": "Spionase",
+    "targetFallback": "Target",
+    "infoTitle": "Intelijen",
+    "infoDescription": "Gunakan Spionase untuk mengumpulkan informasi negara lain. Setiap operasi membutuhkan anggaran dan dapat menimbulkan konsekuensi diplomatik; pilih sasaran dengan mempertimbangkan risiko serta hasil yang diharapkan.",
+    "searchPlaceholder": "Cari negara target...",
+    "searchAriaLabel": "Cari negara target",
+    "spionageTab": "Spionase",
+    "sabotageTab": "Sabotase"
+  },
+  "table": {
+    "number": "No",
+    "country": "Negara",
+    "land": "Darat",
+    "sea": "Laut",
+    "air": "Udara",
+    "totalPower": "Total Kekuatan",
+    "actions": "Aksi",
+    "actionTitle": "Luncurkan misi spionase",
+    "actionAria": "Luncurkan misi spionase ke {country}"
+  },
+  "confirmation": {
+    "title": "Konfirmasi Spionase {target}",
+    "operationTarget": "Tujuan Operasi Spionase",
+    "personnelTitle": "Personel Intelijen",
+    "personnelCount": "Mata-Mata: {count}",
+    "recruit": "Rekrut",
+    "sendPersonnel": "Personel untuk dikirim:",
+    "maximum": "Maksimal ({count})",
+    "decrease": "Kurangi personel spionase",
+    "increase": "Tambah personel spionase",
+    "countAria": "Jumlah personel spionase",
+    "cancel": "Batal",
+    "launch": "Luncurkan Misi",
+    "depleted": "Mata-Mata Habis",
+    "insufficientPersonnel": "Mata-mata tersedia {available}, tetapi operasi membutuhkan {required} personel.",
+    "targets": {
+      "militer": {
+        "label": "Intelijen Militer & Pertahanan",
+        "description": "Menyusup ke markas militer untuk mengungkap jumlah armada, teknologi tempur, dan kesiapan pasukan."
+      },
+      "ekonomi": {
+        "label": "Intelijen Ekonomi & Anggaran",
+        "description": "Mengungkap saldo anggaran negara, tarif pajak, dan estimasi penerimaan pajak harian."
+      }
+    }
+  },
+  "fuel": {
+    "label": "Biaya perjalanan",
+    "calculating": "Menghitung...",
+    "barrels": "barel minyak",
+    "stock": "Stok",
+    "remaining": "Sisa",
+    "fallback": "Tarif database tidak tersedia; biaya menggunakan estimasi sementara.",
+    "insufficient": "Stok minyak bumi tidak mencukupi",
+    "warning": "Peringatan: sisa minyak di bawah kebutuhan harian PLTU ({amount} barel)."
+  },
+  "recruit": {
+    "title": "Rekrut Mata-Mata",
+    "personnelNow": "Mata-Mata Saat Ini:",
+    "person": "personel",
+    "costPerPerson": "Biaya Per Orang:",
+    "count": "Jumlah Rekrut:",
+    "maximum": "Maksimal ({count})",
+    "totalCost": "Total Biaya Rekrut:",
+    "availableBalance": "Kas / Saldo Tersedia:",
+    "confirm": "Rekrut ({count})",
+    "insufficientFunds": "NEO Tidak Mencukupi"
+  },
+  "result": {
+    "title": "Hasil Operasi Spionase",
+    "success": "Misi Spionase Berhasil",
+    "failure": "Misi Spionase Gagal",
+    "successMessage": "Operasi spionase{operationTarget} berhasil dilaksanakan di {target}. Agen intelijen kami berhasil mengumpulkan informasi rahasia sasaran.",
+    "failureMessage": "Operasi spionase{operationTarget} gagal dilaksanakan di {target}. Agen intelijen terdeteksi oleh otoritas keamanan setempat.",
+    "successChance": "Peluang keberhasilan saat operasi diluncurkan:",
+    "close": "Tutup"
+  },
+  "report": {
+    "fiscalTitle": "Laporan Fiskal — {country}",
+    "budget": "Anggaran Negara",
+    "dailyTax": "Estimasi Penerimaan Pajak",
+    "daily": "hari",
+    "militaryTitle": "Laporan Kekuatan Militer — {country}",
+    "land": "Darat",
+    "air": "Udara",
+    "sea": "Laut",
+    "unitsAndPower": "{units} unit · daya {power}",
+    "total": "Total: {units} unit · daya {power} · HP {health}",
+    "noUnits": "Tidak ada unit terdeteksi.",
+    "unit": "unit",
+    "power": "daya",
+    "health": "HP",
+    "taxLabels": {
+      "income_tax": "Pajak Penghasilan Pribadi",
+      "corporate_tax": "Pajak Korporasi",
+      "vat": "Pajak Pertambahan Nilai (PPN)",
+      "cigarette_tax": "Cukai",
+      "environment_tax": "Pajak Lingkungan"
+    }
+  }
+}

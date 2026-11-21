@@ -1,0 +1,96 @@
+{
+  "menu": {
+    "title": "Sabotase",
+    "targetFallback": "Target",
+    "infoTitle": "Intelijen",
+    "infoDescription": "Gunakan Sabotase untuk menjalankan operasi rahasia terhadap negara lain. Setiap operasi membutuhkan anggaran dan dapat menimbulkan konsekuensi diplomatik; pilih sasaran dengan mempertimbangkan risiko serta hasil yang diharapkan.",
+    "searchPlaceholder": "Cari negara target...",
+    "searchAriaLabel": "Cari negara target",
+    "spionageTab": "Spionase",
+    "sabotageTab": "Sabotase"
+  },
+  "table": {
+    "number": "No",
+    "country": "Negara",
+    "land": "Darat",
+    "sea": "Laut",
+    "air": "Udara",
+    "totalPower": "Total Kekuatan",
+    "actions": "Aksi",
+    "actionTitle": "Luncurkan operasi sabotase",
+    "actionAria": "Luncurkan operasi sabotase di {country}"
+  },
+  "confirmation": {
+    "title": "Konfirmasi Sabotase {target}",
+    "operationTarget": "Target Fasilitas Sabotase",
+    "personnelTitle": "Personel Sabotase",
+    "personnelCount": "Penyabot: {count}",
+    "recruit": "Rekrut",
+    "sendPersonnel": "Personel untuk dikirim:",
+    "maximum": "Maksimal ({count})",
+    "decrease": "Kurangi personel sabotase",
+    "increase": "Tambah personel sabotase",
+    "countAria": "Jumlah personel sabotase",
+    "cancel": "Batal",
+    "launch": "Luncurkan Sabotase",
+    "depleted": "Penyabot Habis",
+    "insufficientPersonnel": "Penyabot tersedia {available}, tetapi operasi membutuhkan {required} personel.",
+    "targets": {
+      "pabrik_militer": {
+        "label": "Fasilitas & Pabrik Militer",
+        "description": "Meledakkan gudang amunisi, pabrik tank, hanggar pesawat, atau dermaga kapal perang musuh."
+      },
+      "infrastruktur_energi": {
+        "label": "Infrastruktur Listrik & Energi",
+        "description": "Melumpuhkan gardu induk pembangkit listrik, kilang minyak, atau instalasi reaktor tenaga listrik."
+      },
+      "rantai_pasok": {
+        "label": "Sabotase Produksi Pangan",
+        "description": "Menghancurkan 5% bangunan produksi Peternakan, Agrikultur, Perikanan, dan Olahan Pangan (minimal 1 per jenis)."
+      },
+      "manufaktur": {
+        "label": "Sabotase Manufaktur",
+        "description": "Menghancurkan 5% bangunan pabrik semikonduktor, mesin, besi, semen, dan kayu (minimal 1 per jenis)."
+      }
+    }
+  },
+  "fuel": {
+    "label": "Biaya perjalanan",
+    "calculating": "Menghitung...",
+    "barrels": "barel minyak",
+    "stock": "Stok",
+    "remaining": "Sisa",
+    "fallback": "Tarif database tidak tersedia; biaya menggunakan estimasi sementara.",
+    "insufficient": "Stok minyak bumi tidak mencukupi",
+    "warning": "Peringatan: sisa minyak di bawah kebutuhan harian PLTU ({amount} barel)."
+  },
+  "recruit": {
+    "title": "Rekrut Penyabot",
+    "personnelNow": "Penyabot Saat Ini:",
+    "person": "personel",
+    "costPerPerson": "Biaya Per Orang:",
+    "count": "Jumlah Rekrut:",
+    "maximum": "Maksimal ({count})",
+    "totalCost": "Total Biaya Rekrut:",
+    "availableBalance": "Kas / Saldo Tersedia:",
+    "confirm": "Rekrut ({count})",
+    "insufficientFunds": "NEO Tidak Mencukupi"
+  },
+  "result": {
+    "title": "Hasil Operasi Sabotase",
+    "success": "Aksi Sabotase Berhasil",
+    "failure": "Aksi Sabotase Gagal",
+    "successMessage": "Operasi sabotase{operationTarget} berhasil dilaksanakan di {target}. Instalasi target telah berhasil diledakkan atau dilumpuhkan.",
+    "failureMessage": "Operasi sabotase{operationTarget} gagal dilaksanakan di {target}. Tim penyabot digagalkan oleh sistem keamanan lawan.",
+    "lossTitleMilitary": "Kerugian Alutsista Fasilitas Musuh",
+    "lossTitleEnergy": "Kerugian Infrastruktur Energi Musuh",
+    "lossTitleFood": "Kerugian Bangunan Produksi Pangan Musuh",
+    "lossTitleManufacturing": "Kerugian Bangunan Manufaktur Musuh",
+    "lossDescriptionMilitary": "Sabotase berhasil melumpuhkan 5% fasilitas alutsista militer target. Rincian unit yang dihancurkan:",
+    "lossDescriptionEnergy": "Sabotase menghancurkan 5% bangunan listrik dan mineral energi target (minimal 1 per jenis). Rincian kerugian:",
+    "lossDescriptionFood": "Sabotase menghancurkan 5% bangunan pada empat tab produksi pangan target (minimal 1 per jenis). Rincian bangunan yang dihancurkan:",
+    "lossDescriptionManufacturing": "Sabotase menghancurkan 5% bangunan pada kategori Manufaktur (minimal 1 per jenis). Rincian bangunan yang dihancurkan:",
+    "successChance": "Peluang keberhasilan saat operasi diluncurkan:",
+    "close": "Tutup"
+  }
+}

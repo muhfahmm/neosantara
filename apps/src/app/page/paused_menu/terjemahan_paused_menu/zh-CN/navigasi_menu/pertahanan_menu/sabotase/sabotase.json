@@ -1,0 +1,96 @@
+{
+  "menu": {
+    "title": "破坏行动",
+    "targetFallback": "目标",
+    "infoTitle": "情报部门",
+    "infoDescription": "通过破坏行动对其他国家执行秘密任务。每次行动都需要经费，并可能影响外交关系；请权衡风险与预期收益后选择目标。",
+    "searchPlaceholder": "搜索目标国家...",
+    "searchAriaLabel": "搜索目标国家",
+    "spionageTab": "间谍行动",
+    "sabotageTab": "破坏行动"
+  },
+  "table": {
+    "number": "序号",
+    "country": "国家",
+    "land": "陆军",
+    "sea": "海军",
+    "air": "空军",
+    "totalPower": "总战力",
+    "actions": "操作",
+    "actionTitle": "发起破坏行动",
+    "actionAria": "在{country}发起破坏行动"
+  },
+  "confirmation": {
+    "title": "确认对{target}执行破坏行动",
+    "operationTarget": "破坏行动设施目标",
+    "personnelTitle": "破坏行动人员",
+    "personnelCount": "破坏人员：{count}",
+    "recruit": "招募",
+    "sendPersonnel": "派遣人员：",
+    "maximum": "最多（{count}）",
+    "decrease": "减少破坏行动人员",
+    "increase": "增加破坏行动人员",
+    "countAria": "破坏行动人员数量",
+    "cancel": "取消",
+    "launch": "执行破坏行动",
+    "depleted": "没有可用破坏人员",
+    "insufficientPersonnel": "当前有{available}名破坏人员，但行动需要{required}名人员。",
+    "targets": {
+      "pabrik_militer": {
+        "label": "军事设施与工厂",
+        "description": "炸毁弹药库、坦克工厂、飞机机库或军舰码头。"
+      },
+      "infrastruktur_energi": {
+        "label": "电力与能源基础设施",
+        "description": "瘫痪变电站、炼油厂或发电反应堆设施。"
+      },
+      "rantai_pasok": {
+        "label": "粮食生产破坏行动",
+        "description": "摧毁畜牧、农业、渔业和食品加工建筑的5%（每种至少一座）。"
+      },
+      "manufaktur": {
+        "label": "制造业破坏行动",
+        "description": "摧毁半导体、机械、钢铁、水泥和木材工厂建筑的5%（每种至少一座）。"
+      }
+    }
+  },
+  "fuel": {
+    "label": "行程费用",
+    "calculating": "正在计算...",
+    "barrels": "桶石油",
+    "stock": "库存",
+    "remaining": "剩余",
+    "fallback": "数据库费率不可用，当前使用临时估算费用。",
+    "insufficient": "石油储备不足",
+    "warning": "警告：剩余石油低于火力发电厂的日需求量（{amount}桶）。"
+  },
+  "recruit": {
+    "title": "招募破坏人员",
+    "personnelNow": "现有破坏人员：",
+    "person": "人",
+    "costPerPerson": "每人费用：",
+    "count": "招募数量：",
+    "maximum": "最多（{count}）",
+    "totalCost": "招募总费用：",
+    "availableBalance": "可用余额：",
+    "confirm": "招募（{count}）",
+    "insufficientFunds": "NEO不足"
+  },
+  "result": {
+    "title": "破坏行动结果",
+    "success": "破坏行动成功",
+    "failure": "破坏行动失败",
+    "successMessage": "在{target}执行的破坏行动{operationTarget}成功。目标设施已被摧毁或瘫痪。",
+    "failureMessage": "在{target}执行的破坏行动{operationTarget}失败。对方安全系统阻止了破坏小组。",
+    "lossTitleMilitary": "敌方军事设施损失",
+    "lossTitleEnergy": "敌方能源基础设施损失",
+    "lossTitleFood": "敌方粮食生产建筑损失",
+    "lossTitleManufacturing": "敌方制造业建筑损失",
+    "lossDescriptionMilitary": "行动瘫痪了目标5%的军事装备设施。被摧毁的单位：",
+    "lossDescriptionEnergy": "行动摧毁了目标5%的电力与能源矿物设施（每种至少一处）。损失详情：",
+    "lossDescriptionFood": "行动摧毁了目标四类粮食生产设施中5%的建筑（每种至少一座）。被摧毁的建筑：",
+    "lossDescriptionManufacturing": "行动摧毁了制造业类别中5%的建筑（每种至少一座）。被摧毁的建筑：",
+    "successChance": "行动开始时的成功率：",
+    "close": "关闭"
+  }
+}

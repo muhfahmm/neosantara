@@ -2790,6 +2790,7 @@ export default function MapPage() {
                 applyNpcWarLosses(detail.targetCountryDetail, Number(detail.targetLossRatio));
             }
 
+            let attackerLosses: Array<{ unitKey: string; quantity: number }> = [];
             const applyAttackerArmyLosses = (fallbackRatio: number, randomizeLosses: boolean) => {
                 const hasCommittedTroops = detail.troopsCommitted === true;
                 const armySource = hasCommittedTroops && detail.committedArmySnapshot
@@ -2807,12 +2808,13 @@ export default function MapPage() {
                     !Array.isArray(detail.deployedUnitsConfig)
                     ? detail.deployedUnitsConfig as Record<string, number>
                     : undefined;
-                const { updatedDetail: detailAfterBattle, lossSummaryText } = applyWarLossesToUserArmada(
+                const { updatedDetail: detailAfterBattle, lossSummaryText, losses } = applyWarLossesToUserArmada(
                     armySource,
                     lossRatio,
                     hasCommittedTroops ? false : randomizeLosses,
                     deploymentConfig,
                 );
+                attackerLosses = losses;
                 setCountryDetail(detailAfterBattle);
                 return lossSummaryText;
             };
@@ -2832,11 +2834,27 @@ export default function MapPage() {
                     if (detail.troopsCommitted === true && detail.committedArmySnapshot) {
                         setCountryDetail(detail.committedArmySnapshot);
                     }
+                    const titleKey = 'side_inbox.dynamicNotifications.conquest.noCityTitle';
+                    const senderKey = 'side_inbox.dynamicNotifications.conquest.noCitySender';
+                    const messageKey = 'side_inbox.dynamicNotifications.conquest.noCityMessage';
                     setNotifications(prev => [{
                         id: `notif-player-annex-no-city-${Date.now()}`,
-                        title: 'Aneksasi Kota Dibatalkan',
-                        sender: 'Markas Besar Angkatan Bersenjata',
-                        message: `Kota target di ${targetCountry} tidak ditemukan pada data peta. Tidak ada wilayah yang diubah.`,
+                        title: getDefaultInboxText(titleKey),
+                        titleKey,
+                        sender: getDefaultInboxText(senderKey),
+                        senderKey,
+                        message: getDefaultInboxText(messageKey, { target: targetCountry }),
+                        messageKey,
+                        messageParams: { target: targetCountry },
+                        annexationResult: {
+                            attackerCountry,
+                            targetCountry,
+                            pbbOccupation: false,
+                            countryCollapsed: false,
+                            cityFound: false,
+                            lossPercent: 0,
+                            losses: [],
+                        },
                         timestamp: dateStr,
                         type: 'peringkat',
                         value: 0,
@@ -3082,17 +3100,51 @@ export default function MapPage() {
                 const lossNote = (userLossText && userLossText !== 'Tidak ada kerugian unit')
                     ? ` Kerugian tempur armada Anda (${lossPercent}%): ${userLossText}.`
                     : '';
+                const titleKey = isPbbCoalition
+                    ? 'side_inbox.dynamicNotifications.conquest.pbbTitle'
+                    : 'side_inbox.dynamicNotifications.conquest.title';
+                const senderKey = isPbbCoalition
+                    ? 'side_inbox.dynamicNotifications.conquest.pbbSender'
+                    : 'side_inbox.dynamicNotifications.conquest.sender';
+                const messageKey = !targetCity
+                    ? 'side_inbox.dynamicNotifications.conquest.noCityMessage'
+                    : isPbbCoalition
+                        ? 'side_inbox.dynamicNotifications.conquest.pbbMessage'
+                        : 'side_inbox.dynamicNotifications.conquest.cityMessage';
+                const outcomeKey = countryCollapsed
+                    ? 'side_inbox.dynamicNotifications.conquest.fullCollapse'
+                    : 'side_inbox.dynamicNotifications.conquest.remainingCities';
+                const messageParams: Record<string, string | number> = !targetCity
+                    ? { target: targetCountry }
+                    : isPbbCoalition
+                        ? { city: targetCity.cityName, target: targetCountry, lossNote }
+                        : {
+                            attacker: attackerCountry,
+                            city: targetCity.cityName,
+                            target: targetCountry,
+                            outcome: getDefaultInboxText(outcomeKey, { target: targetCountry }),
+                            lossNote,
+                        };
                 const notifMsg: NotificationMessage = {
                     id: `notif-player-annex-${Date.now()}`,
-                    title: isPbbCoalition ? '🏳️ WILAYAH DIDUDUKI PBB' : '🚩 KOTA BERHASIL DITAKLUKKAN',
-                    sender: isPbbCoalition
-                        ? 'Pasukan Gabungan PBB'
-                        : `Markas Besar Angkatan Bersenjata (${attackerCountry})`,
-                    message: targetCity
-                        ? isPbbCoalition
-                            ? `Pasukan gabungan PBB berhasil menduduki Kota ${targetCity.cityName} di ${targetCountry}. Wilayah berada di bawah administrasi PBB, bukan negara peserta.${lossNote}`
-                            : `Pasukan ${attackerCountry} berhasil menaklukkan Kota ${targetCity.cityName} di ${targetCountry}. ${countryCollapsed ? `Ibu kota atau seluruh kota yang terdata telah jatuh; ${targetCountry} kini runtuh dan dianeksasi penuh.` : `Kota lain di ${targetCountry} tetap berada di bawah kepemilikan semula.`}${lossNote} Wilayah taklukan ditandai hijau terang pada peta.`
-                        : `Aneksasi ${targetCountry} tidak dapat diterapkan karena kota target tidak ditemukan pada data peta.`,
+                    title: getDefaultInboxText(titleKey),
+                    titleKey,
+                    sender: getDefaultInboxText(senderKey, { attacker: attackerCountry }),
+                    senderKey,
+                    senderParams: isPbbCoalition ? undefined : { attacker: attackerCountry },
+                    message: getDefaultInboxText(messageKey, messageParams),
+                    messageKey,
+                    messageParams,
+                    annexationResult: {
+                        attackerCountry,
+                        targetCountry,
+                        ...(targetCity ? { cityName: targetCity.cityName } : {}),
+                        pbbOccupation: isPbbCoalition,
+                        countryCollapsed,
+                        cityFound: Boolean(targetCity),
+                        lossPercent,
+                        losses: attackerLosses,
+                    },
                     timestamp: dateStr,
                     type: 'peringkat',
                     value: 100,
@@ -4738,13 +4790,19 @@ export default function MapPage() {
             const nextEffects = addEspionageEffect(activeEffectsAtCurrentDate, notification.id, currentDateStr, durationDays);
             const activeEffect = nextEffects[0];
             const wasAlreadyActive = activeEffectsAtCurrentDate.length > 0;
+            const titleKey = 'side_inbox.dynamicNotifications.espionage.activeTitle';
+            const senderKey = 'side_inbox.dynamicNotifications.espionage.activeSender';
+            const messageKey = `side_inbox.dynamicNotifications.espionage.${wasAlreadyActive ? 'extendedMessage' : 'activeMessage'}`;
+            const messageParams = { remainingDays: activeEffect.remainingDays };
             resultNotification = {
                 id: `notif-covert-espionage-active-${encodeURIComponent(notification.id)}`,
-                title: '🕵️ EFEK SPIONASE AKTIF',
-                sender: 'Badan Intelijen Negara',
-                message: wasAlreadyActive
-                    ? `Efek spionase baru memperpanjang atau mempertahankan efek aktif. Kekuatan dan HP militer tetap ×0,95 (tidak menumpuk), dengan ${activeEffect.remainingDays} hari tersisa.`
-                    : `Efek spionase menurunkan kekuatan dan HP militer menjadi ×0,95 selama ${activeEffect.remainingDays} hari game. Jumlah pasukan dan alutsista tidak berubah.`,
+                title: getDefaultInboxText(titleKey),
+                titleKey,
+                sender: getDefaultInboxText(senderKey),
+                senderKey,
+                message: getDefaultInboxText(messageKey, messageParams),
+                messageKey,
+                messageParams,
                 timestamp: currentDateStr,
                 type: 'peringkat',
                 value: 0,
@@ -4841,13 +4899,23 @@ export default function MapPage() {
                 : infrastructureSabotage
                     ? 'Tidak ada bangunan listrik atau mineral energi yang dapat dikurangi.'
                     : 'Tidak ada alutsista yang dapat dikurangi.';
+            const titleKey = 'side_inbox.dynamicNotifications.sabotage.impactTitle';
+            const senderKey = 'side_inbox.dynamicNotifications.sabotage.impactSender';
+            const messageKey = `side_inbox.dynamicNotifications.sabotage.${infrastructureSabotage ? 'infrastructureResultMessage' : 'militaryResultMessage'}`;
+            const messageParams = { losses: lossesMessage };
             resultNotification = {
                 id: `notif-covert-sabotage-result-${encodeURIComponent(notification.id)}`,
-                title: '💥 KERUSAKAN SABOTASE TERJADI',
-                sender: 'Kementerian Pertahanan & Keamanan',
-                message: infrastructureSabotage
-                    ? `Sabotase mengurangi bangunan listrik dan mineral energi 5% per jenis (minimal 1). Kerusakan: ${lossesMessage}.`
-                    : `Sabotase mengurangi alutsista 5% per kategori secara permanen. Kerugian: ${lossesMessage}. Personel/infanteri tidak dikurangi.`,
+                title: getDefaultInboxText(titleKey),
+                titleKey,
+                sender: getDefaultInboxText(senderKey),
+                senderKey,
+                message: getDefaultInboxText(messageKey, messageParams),
+                messageKey,
+                messageParams,
+                sabotageResult: {
+                    infrastructure: infrastructureSabotage,
+                    losses,
+                },
                 timestamp: currentDateStr,
                 type: 'kesejahteraan',
                 value: 0,

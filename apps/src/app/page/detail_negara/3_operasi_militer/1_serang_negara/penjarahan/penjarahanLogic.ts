@@ -2,6 +2,7 @@ import { applyWarLossesToUserArmada } from '../war_algoritm/battleEngine';
 import { generateInvasionNews } from '@/app/page/menus/news/logic/1_berita_invasi/beritaInvasiLogic';
 import { generateResourceLootNews } from '@/app/page/menus/news/logic/3_berita_pengambilan_sda/beritaPengambilanSDALogic';
 import type { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { getDefaultInboxText } from '@/app/page/menus/inbox/logic/notificationMessage';
 import {
   getNpcCountrySimulationSnapshot,
   updateNpcCountrySimulationState,
@@ -203,6 +204,7 @@ export function resolvePlayerLootOperation(
   const lossPercent = hasCommittedTroops && Number.isFinite(reportedLossRatio)
     ? Math.round(reportedLossRatio * 100)
     : 25;
+  const lootLosses = attackerLossResult?.losses ?? [];
   const lossNote = userLossText && userLossText !== 'Tidak ada kerugian unit'
     ? ` Kerugian tempur armada Anda (${lossPercent}%): ${userLossText}.`
     : '';
@@ -224,9 +226,22 @@ export function resolvePlayerLootOperation(
     newsItems,
     notification: {
       id: `notif-player-loot-${Date.now()}`,
-      title: '💰 OPERASI PENJARAHAN BERHASIL',
-      sender: `Markas Besar Angkatan Bersenjata (${input.attackerCountry})`,
+      title: getDefaultInboxText('side_inbox.dynamicNotifications.playerLoot.title'),
+      titleKey: 'side_inbox.dynamicNotifications.playerLoot.title',
+      sender: getDefaultInboxText(
+        'side_inbox.dynamicNotifications.playerLoot.sender',
+        { attacker: input.attackerCountry },
+      ),
+      senderKey: 'side_inbox.dynamicNotifications.playerLoot.sender',
+      senderParams: { attacker: input.attackerCountry },
       message: `Operasi penjarahan atas ${input.targetCountry} berhasil dilancarkan! Kas negara sebesar ${transferredCash.toLocaleString('id-ID')} NEO dan sumber daya alam telah diamankan.${lossNote}`,
+      messageKey: 'side_inbox.dynamicNotifications.playerLoot.message',
+      messageParams: { target: input.targetCountry, cash: transferredCash },
+      attackerCountry: input.attackerCountry,
+      targetCountry: input.targetCountry,
+      transferredCash,
+      lossPercent,
+      lootLosses,
       timestamp: input.dateStr,
       type: 'peringkat',
       value: 80,

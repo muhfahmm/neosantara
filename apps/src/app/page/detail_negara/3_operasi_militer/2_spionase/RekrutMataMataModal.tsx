@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import RootConfirmModal from "@/app/page/root_modals_design_menu/RootConfirmModal";
 import { UserPlus, Eye, Plus, Minus } from "lucide-react";
 import { RECRUIT_COST_PER_PERSON } from "../covertPersonnelStorage";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface RekrutMataMataModalProps {
   isOpen: boolean;
@@ -20,6 +21,9 @@ export default function RekrutMataMataModal({
   onClose,
   onConfirm,
 }: RekrutMataMataModalProps) {
+  const { t, language } = useLanguage();
+  const tr = (key: string, params?: Record<string, string | number>) =>
+    t(`navigation_defense_espionage.${key}`, params);
   const [count, setCount] = useState<number>(1);
 
   if (!isOpen) return null;
@@ -41,7 +45,7 @@ export default function RekrutMataMataModal({
   return (
     <RootConfirmModal
       isOpen={isOpen}
-      title="Rekrut Mata-Mata"
+      title={tr('recruit.title')}
       icon={<UserPlus className="w-5 h-5 text-root-accent" />}
       onClose={onClose}
       onConfirm={() => {
@@ -49,7 +53,7 @@ export default function RekrutMataMataModal({
           onConfirm(count, totalCost);
         }
       }}
-      confirmLabel={hasBudget ? `Rekrut (${count})` : "NEO Tidak Mencukupi"}
+      confirmLabel={hasBudget ? tr('recruit.confirm', { count }) : tr('recruit.insufficientFunds')}
       confirmDisabled={!hasBudget || count <= 0}
       footerBorderClassName="border-root-accent/20"
     >
@@ -57,28 +61,28 @@ export default function RekrutMataMataModal({
         {/* Info Ringkasan Status */}
         <div className="grid grid-cols-2 gap-2 p-3 bg-root-canvas border border-root-accent/20 rounded-xl text-xs">
           <div>
-            <span className="text-root-subtle block mb-0.5">Mata-Mata Saat Ini:</span>
+            <span className="text-root-subtle block mb-0.5">{tr('recruit.personnelNow')}</span>
             <span className="font-bold text-root-accent flex items-center gap-1.5">
               <Eye className="w-3.5 h-3.5" />
-              {currentPersonnelCount} personel
+              {currentPersonnelCount} {tr('recruit.person')}
             </span>
           </div>
           <div>
-            <span className="text-root-subtle block mb-0.5">Biaya Per Orang:</span>
-            <span className="font-bold text-white">{RECRUIT_COST_PER_PERSON.toLocaleString('id-ID')} NEO</span>
+            <span className="text-root-subtle block mb-0.5">{tr('recruit.costPerPerson')}</span>
+            <span className="font-bold text-white">{RECRUIT_COST_PER_PERSON.toLocaleString(language)} NEO</span>
           </div>
         </div>
 
         {/* Counter Pemilihan Jumlah */}
         <div className="flex flex-col gap-2 p-4 bg-root-canvas border border-root-accent/30 rounded-xl">
           <div className="flex items-center justify-between text-xs font-bold text-root-subtle">
-            <span>Jumlah Rekrut:</span>
+            <span>{tr('recruit.count')}</span>
             <button
               type="button"
               onClick={handleSetMax}
               className="text-[10px] text-root-accent uppercase tracking-wider underline hover:text-[#00e699] cursor-pointer"
             >
-              Maksimal ({maxPossible})
+              {tr('recruit.maximum', { count: maxPossible })}
             </button>
           </div>
 
@@ -96,6 +100,7 @@ export default function RekrutMataMataModal({
               type="number"
               min={1}
               value={count}
+              aria-label={tr('recruit.count')}
               onChange={(e) => {
                 const val = parseInt(e.target.value, 10);
                 if (Number.isNaN(val) || val < 1) setCount(1);
@@ -135,15 +140,15 @@ export default function RekrutMataMataModal({
         {/* Biaya dan Saldo */}
         <div className="p-3 bg-root-canvas border border-root-accent/20 rounded-xl space-y-1.5 text-xs">
           <div className="flex justify-between items-center">
-            <span className="text-root-subtle">Total Biaya Rekrut:</span>
+            <span className="text-root-subtle">{tr('recruit.totalCost')}</span>
             <span className="font-bold text-root-accent text-sm">
-              {totalCost.toLocaleString('id-ID')} NEO
+              {totalCost.toLocaleString(language)} NEO
             </span>
           </div>
           <div className="flex justify-between items-center text-[11px]">
-            <span className="text-root-subtle">Kas / Saldo Tersedia:</span>
+            <span className="text-root-subtle">{tr('recruit.availableBalance')}</span>
             <span className={hasBudget ? "text-root-text font-bold" : "text-rose-400 font-bold"}>
-              {currentBudget.toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO
+              {currentBudget.toLocaleString(language, { maximumFractionDigits: 0 })} NEO
             </span>
           </div>
         </div>

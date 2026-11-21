@@ -1,0 +1,96 @@
+{
+  "menu": {
+    "title": "Sabotage",
+    "targetFallback": "Ziel",
+    "infoTitle": "Nachrichtendienst",
+    "infoDescription": "Nutze Sabotage für verdeckte Operationen gegen andere Länder. Jede Operation kostet Geld und kann diplomatische Folgen haben. Wäge daher Risiken und erwarteten Nutzen ab.",
+    "searchPlaceholder": "Zielland suchen...",
+    "searchAriaLabel": "Zielländer suchen",
+    "spionageTab": "Spionage",
+    "sabotageTab": "Sabotage"
+  },
+  "table": {
+    "number": "Nr.",
+    "country": "Land",
+    "land": "Landstreitkräfte",
+    "sea": "Marine",
+    "air": "Luftwaffe",
+    "totalPower": "Gesamtstärke",
+    "actions": "Aktionen",
+    "actionTitle": "Sabotageoperation starten",
+    "actionAria": "Sabotageoperation in {country} starten"
+  },
+  "confirmation": {
+    "title": "Sabotage in {target} bestätigen",
+    "operationTarget": "Sabotageziel",
+    "personnelTitle": "Sabotagepersonal",
+    "personnelCount": "Saboteure: {count}",
+    "recruit": "Rekrutieren",
+    "sendPersonnel": "Einzusetzendes Personal:",
+    "maximum": "Maximum ({count})",
+    "decrease": "Sabotagepersonal verringern",
+    "increase": "Sabotagepersonal erhöhen",
+    "countAria": "Anzahl des Sabotagepersonals",
+    "cancel": "Abbrechen",
+    "launch": "Sabotage starten",
+    "depleted": "Keine Saboteure verfügbar",
+    "insufficientPersonnel": "{available} Saboteure sind verfügbar, aber die Operation benötigt {required} Personen.",
+    "targets": {
+      "pabrik_militer": {
+        "label": "Militäranlagen und Fabriken",
+        "description": "Sprenge Munitionslager, Panzerfabriken, Flugzeughangars oder Kriegsschiffdocks."
+      },
+      "infrastruktur_energi": {
+        "label": "Strom- und Energieinfrastruktur",
+        "description": "Setze Umspannwerke, Ölraffinerien oder Kraftwerksreaktoren außer Betrieb."
+      },
+      "rantai_pasok": {
+        "label": "Sabotage der Lebensmittelproduktion",
+        "description": "Zerstöre 5 % der Gebäude für Viehzucht, Landwirtschaft, Fischerei und Lebensmittelverarbeitung (mindestens eines je Typ)."
+      },
+      "manufaktur": {
+        "label": "Sabotage der Fertigungsindustrie",
+        "description": "Zerstöre 5 % der Fabriken für Halbleiter, Maschinen, Eisen, Zement und Holz (mindestens eine je Typ)."
+      }
+    }
+  },
+  "fuel": {
+    "label": "Reisekosten",
+    "calculating": "Wird berechnet...",
+    "barrels": "Barrel Öl",
+    "stock": "Vorrat",
+    "remaining": "Verbleibend",
+    "fallback": "Datenbanktarif nicht verfügbar; die Kosten werden vorläufig geschätzt.",
+    "insufficient": "Ölvorrat nicht ausreichend",
+    "warning": "Warnung: Der verbleibende Ölbestand liegt unter dem Tagesbedarf der Wärmekraftwerke ({amount} Barrel)."
+  },
+  "recruit": {
+    "title": "Saboteure rekrutieren",
+    "personnelNow": "Aktuelle Saboteure:",
+    "person": "Personen",
+    "costPerPerson": "Kosten pro Person:",
+    "count": "Anzahl der Rekruten:",
+    "maximum": "Maximum ({count})",
+    "totalCost": "Gesamte Rekrutierungskosten:",
+    "availableBalance": "Verfügbares Guthaben:",
+    "confirm": "Rekrutieren ({count})",
+    "insufficientFunds": "NEO nicht ausreichend"
+  },
+  "result": {
+    "title": "Ergebnis der Sabotageoperation",
+    "success": "Sabotage erfolgreich",
+    "failure": "Sabotage gescheitert",
+    "successMessage": "Die Sabotageoperation{operationTarget} in {target} war erfolgreich. Die Zieleinrichtung wurde zerstört oder außer Betrieb gesetzt.",
+    "failureMessage": "Die Sabotageoperation{operationTarget} in {target} ist gescheitert. Das gegnerische Sicherheitssystem hat das Team aufgehalten.",
+    "lossTitleMilitary": "Verluste an feindlichen Militäranlagen",
+    "lossTitleEnergy": "Verluste an feindlicher Energieinfrastruktur",
+    "lossTitleFood": "Verluste an Gebäuden der feindlichen Lebensmittelproduktion",
+    "lossTitleManufacturing": "Verluste an feindlichen Fertigungsgebäuden",
+    "lossDescriptionMilitary": "Die Sabotage setzte 5 % der militärischen Ausrüstungseinrichtungen des Ziels außer Betrieb. Zerstörte Einheiten:",
+    "lossDescriptionEnergy": "Die Sabotage zerstörte 5 % der Strom- und Energiemineralgebäude des Ziels (mindestens eines je Typ). Verlustdetails:",
+    "lossDescriptionFood": "Die Sabotage zerstörte 5 % der Gebäude in den vier Lebensmittelproduktionsbereichen (mindestens eines je Typ). Zerstörte Gebäude:",
+    "lossDescriptionManufacturing": "Die Sabotage zerstörte 5 % der Gebäude in der Fertigungsindustrie (mindestens eines je Typ). Zerstörte Gebäude:",
+    "successChance": "Erfolgschance beim Start der Operation:",
+    "close": "Schließen"
+  }
+}

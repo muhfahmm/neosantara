@@ -1,0 +1,96 @@
+{
+  "menu": {
+    "title": "Sabotaje",
+    "targetFallback": "Objetivo",
+    "infoTitle": "Inteligencia",
+    "infoDescription": "Usa el sabotaje para realizar operaciones encubiertas contra otros países. Cada operación cuesta dinero y puede tener consecuencias diplomáticas; sopesa los riesgos y los resultados esperados.",
+    "searchPlaceholder": "Buscar país objetivo...",
+    "searchAriaLabel": "Buscar países objetivo",
+    "spionageTab": "Espionaje",
+    "sabotageTab": "Sabotaje"
+  },
+  "table": {
+    "number": "N.º",
+    "country": "País",
+    "land": "Tierra",
+    "sea": "Mar",
+    "air": "Aire",
+    "totalPower": "Poder total",
+    "actions": "Acciones",
+    "actionTitle": "Lanzar operación de sabotaje",
+    "actionAria": "Lanzar una operación de sabotaje en {country}"
+  },
+  "confirmation": {
+    "title": "Confirmar sabotaje en {target}",
+    "operationTarget": "Instalación objetivo del sabotaje",
+    "personnelTitle": "Personal de sabotaje",
+    "personnelCount": "Saboteadores: {count}",
+    "recruit": "Reclutar",
+    "sendPersonnel": "Personal que se enviará:",
+    "maximum": "Máximo ({count})",
+    "decrease": "Reducir personal de sabotaje",
+    "increase": "Aumentar personal de sabotaje",
+    "countAria": "Cantidad de personal de sabotaje",
+    "cancel": "Cancelar",
+    "launch": "Lanzar sabotaje",
+    "depleted": "No quedan saboteadores",
+    "insufficientPersonnel": "Hay {available} saboteadores disponibles, pero la operación requiere {required} agentes.",
+    "targets": {
+      "pabrik_militer": {
+        "label": "Instalaciones y fábricas militares",
+        "description": "Hacer explotar depósitos de munición, fábricas de tanques, hangares de aviones o muelles de buques de guerra."
+      },
+      "infrastruktur_energi": {
+        "label": "Infraestructura eléctrica y energética",
+        "description": "Inutilizar subestaciones, refinerías de petróleo o instalaciones de reactores de generación eléctrica."
+      },
+      "rantai_pasok": {
+        "label": "Sabotaje de la producción alimentaria",
+        "description": "Destruir el 5 % de los edificios de ganadería, agricultura, pesca y procesamiento de alimentos (al menos uno de cada tipo)."
+      },
+      "manufaktur": {
+        "label": "Sabotaje de manufactura",
+        "description": "Destruir el 5 % de las fábricas de semiconductores, maquinaria, hierro, cemento y madera (al menos una de cada tipo)."
+      }
+    }
+  },
+  "fuel": {
+    "label": "Coste del viaje",
+    "calculating": "Calculando...",
+    "barrels": "barriles de petróleo",
+    "stock": "Reservas",
+    "remaining": "Restante",
+    "fallback": "La tarifa de la base de datos no está disponible; se usa una estimación temporal.",
+    "insufficient": "Reservas de petróleo insuficientes",
+    "warning": "Aviso: el petróleo restante es inferior a la necesidad diaria de las centrales térmicas ({amount} barriles)."
+  },
+  "recruit": {
+    "title": "Reclutar saboteadores",
+    "personnelNow": "Saboteadores actuales:",
+    "person": "personal",
+    "costPerPerson": "Coste por persona:",
+    "count": "Cantidad a reclutar:",
+    "maximum": "Máximo ({count})",
+    "totalCost": "Coste total de reclutamiento:",
+    "availableBalance": "Saldo disponible:",
+    "confirm": "Reclutar ({count})",
+    "insufficientFunds": "NEO insuficientes"
+  },
+  "result": {
+    "title": "Resultados de la operación de sabotaje",
+    "success": "Sabotaje exitoso",
+    "failure": "Sabotaje fallido",
+    "successMessage": "La operación de sabotaje{operationTarget} en {target} tuvo éxito. La instalación objetivo fue destruida o inutilizada.",
+    "failureMessage": "La operación de sabotaje{operationTarget} en {target} fracasó. El sistema de seguridad enemigo detuvo al equipo de saboteadores.",
+    "lossTitleMilitary": "Pérdidas en instalaciones militares enemigas",
+    "lossTitleEnergy": "Pérdidas en infraestructura energética enemiga",
+    "lossTitleFood": "Pérdidas en edificios de producción alimentaria enemiga",
+    "lossTitleManufacturing": "Pérdidas en edificios manufactureros enemigos",
+    "lossDescriptionMilitary": "El sabotaje inutilizó el 5 % de las instalaciones de armamento militar del objetivo. Unidades destruidas:",
+    "lossDescriptionEnergy": "El sabotaje destruyó el 5 % de las instalaciones eléctricas y minerales energéticos del objetivo (al menos una de cada tipo). Detalle de pérdidas:",
+    "lossDescriptionFood": "El sabotaje destruyó el 5 % de los edificios de las cuatro categorías de producción alimentaria (al menos uno de cada tipo). Edificios destruidos:",
+    "lossDescriptionManufacturing": "El sabotaje destruyó el 5 % de los edificios de manufactura (al menos uno de cada tipo). Edificios destruidos:",
+    "successChance": "Probabilidad de éxito al iniciar la operación:",
+    "close": "Cerrar"
+  }
+}

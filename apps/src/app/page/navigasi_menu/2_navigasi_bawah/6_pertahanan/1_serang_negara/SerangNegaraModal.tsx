@@ -21,11 +21,13 @@ import { applyWarLossesToUserArmada } from "@/app/page/detail_negara/3_operasi_m
 import SerangBelumSelesaiModals from "./modals_menu/SerangBelumSelesaiModals";
 import { getActivePlayerAttack, type PlayerAttackStatus } from "./modals_menu/playerAttackStatus";
 import { useTravelFuelQuote } from "../../3_produksi_konsumsi/fuelLogic/useTravelFuelQuote";
+import { getLocalizedCountryName } from "@/app/logic/countryNameLogic";
 import {
   checkTravelFuel,
   consumeTravelFuel,
   getTravelFuelStatus,
 } from "../../3_produksi_konsumsi/fuelLogic/travelFuelLogic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -37,6 +39,7 @@ interface ModalProps {
 
 type RankingRow = {
   countryName: string;
+  displayCountryName: string;
   totalPower: number;
   totalHealth: number;
   darat: number;
@@ -46,9 +49,9 @@ type RankingRow = {
   iso?: string; // 🔥 Tambahkan field ISO untuk bendera
 };
 
-const formatNumber = (value: unknown) => {
+const formatNumber = (value: unknown, locale: string) => {
   const numeric = Number(value ?? 0);
-  return Number.isFinite(numeric) ? numeric.toLocaleString("id-ID", { maximumFractionDigits: 0 }) : "0";
+  return Number.isFinite(numeric) ? numeric.toLocaleString(locale, { maximumFractionDigits: 0 }) : "0";
 };
 
 export default function SerangNegaraModal({ 
@@ -58,6 +61,9 @@ export default function SerangNegaraModal({
   setCountryDetail, 
   prefetchedAllCountries,
 }: ModalProps) {
+  const { t, language } = useLanguage();
+  const tr = (key: string, params?: Record<string, string | number>) =>
+    t(`navigation_defense_attack.${key}`, params);
   // 🔥 State untuk menampung target yang dipilih dan membuka modal serang
   const [selectedTarget, setSelectedTarget] = useState<RankingRow | null>(null);
   const [isSerangModalOpen, setIsSerangModalOpen] = useState(false);
@@ -152,7 +158,7 @@ export default function SerangNegaraModal({
     // 1. Petakan data negara dasar
     const countryMap = new Map<string, any>();
     source.forEach((c: any) => {
-      const cName = c?.nama_negara || c?.country || c?.name_id || c?.name_en || "Negara";
+      const cName = c?.nama_negara || c?.country || c?.name_id || c?.name_en || t("navigation_defense_attack.fallback.country");
       countryMap.set(cName.toLowerCase().trim(), JSON.parse(JSON.stringify(c)));
     });
 
@@ -194,13 +200,13 @@ export default function SerangNegaraModal({
 
     return Array.from(countryMap.values())
       .filter((country: any) => {
-        const cName = (country?.nama_negara || country?.country || country?.name_id || country?.name_en || "Negara").toLowerCase().trim();
+        const cName = (country?.nama_negara || country?.country || country?.name_id || country?.name_en || t("navigation_defense_attack.fallback.country")).toLowerCase().trim();
         return !annexedTargets.has(cName);
       })
       .map((country: any) => {
         const summary = getArmadaPowerSummary(country);
         const groupTotals = summary?.totals?.groups;
-        const countryName = country?.nama_negara || country?.country || country?.name_id || country?.name_en || "Negara";
+        const countryName = country?.nama_negara || country?.country || country?.name_id || country?.name_en || t("navigation_defense_attack.fallback.country");
         
         let iso = "";
         if (COUNTRIES_DATA && Array.isArray(COUNTRIES_DATA)) {
@@ -224,6 +230,7 @@ export default function SerangNegaraModal({
 
         return {
           countryName,
+          displayCountryName: getLocalizedCountryName(countryName, language),
           totalPower: summary?.totals?.totalPower ?? 0,
           totalHealth: summary?.totals?.totalHealth ?? 0,
           darat: groupTotals?.darat?.power ?? 0,
@@ -233,24 +240,25 @@ export default function SerangNegaraModal({
           iso: iso,
         };
       });
-  }, [prefetchedAllCountries, internalCountries, countryDetail]);
+  }, [prefetchedAllCountries, internalCountries, countryDetail, t, language]);
 
   const rankings = useMemo(() => {
     let sortableItems = [...rawRankings];
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
       sortableItems = sortableItems.filter(item => 
+        item.displayCountryName.toLowerCase().includes(q) ||
         item.countryName.toLowerCase().includes(q)
       );
     }
     if (sortConfig !== null) {
+      const countryCollator = new Intl.Collator(language, { sensitivity: "base" });
       sortableItems.sort((a, b) => {
         if (typeof a[sortConfig.key] === 'string') {
-          const aVal = a[sortConfig.key] as string;
-          const bVal = b[sortConfig.key] as string;
-          if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
-          if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
-          return 0;
+          const aVal = sortConfig.key === "countryName" ? a.displayCountryName : a[sortConfig.key] as string;
+          const bVal = sortConfig.key === "countryName" ? b.displayCountryName : b[sortConfig.key] as string;
+          const comparison = countryCollator.compare(aVal, bVal);
+          return sortConfig.direction === 'asc' ? comparison : -comparison;
         } else {
           const aVal = a[sortConfig.key] as number;
           const bVal = b[sortConfig.key] as number;
@@ -261,7 +269,7 @@ export default function SerangNegaraModal({
       });
     }
     return sortableItems;
-  }, [rawRankings, sortConfig, searchQuery]);
+  }, [rawRankings, sortConfig, searchQuery, language]);
 
   const handleSort = (key: keyof RankingRow) => {
     let direction: 'asc' | 'desc' = 'asc';
@@ -411,9 +419,12 @@ export default function SerangNegaraModal({
     closeAttackFlow();
   };
 
-  const selectedCountryName = useMemo(() => {
-    return countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "Negara";
-  }, [countryDetail]);
+  const selectedCountryName =
+    countryDetail?.country ||
+    countryDetail?.nama_negara ||
+    countryDetail?.name_id ||
+    countryDetail?.name_en ||
+    t("navigation_defense_attack.fallback.country");
 
   if (!isOpen) return null;
 
@@ -429,14 +440,14 @@ export default function SerangNegaraModal({
                   <Shield aria-hidden="true" className="root-modal-util-d252947d10 text-rose-500 animate-pulse" />
                 </div>
                 <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                  Serang Negara
+                  {tr("title")}
                 </h2>
               </div>
             </div>
             <div className="root-modal-util-08dfbca033">
               <MenuInfoButton
-                title="Serang Negara"
-                description="Pilih negara sasaran dan tinjau perbandingan kekuatan darat, laut, serta udara sebelum memulai operasi militer. Periksa kesiapan armada dan status serangan aktif karena serangan dapat mengubah hubungan diplomatik dan kondisi negara."
+                title={tr("info.title")}
+                description={tr("info.description")}
               />
               <RootModalCloseButton onClick={onClose} />
             </div>
@@ -447,8 +458,8 @@ export default function SerangNegaraModal({
               <Search aria-hidden="true" className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-root-accent/60" />
               <input
                 type="search"
-                aria-label="Cari negara"
-                placeholder="Cari negara..."
+                aria-label={tr("search.ariaLabel")}
+                placeholder={tr("search.placeholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className={`attack-country-search-input h-9 w-full border border-root-accent/30 bg-[#051111] py-1 pl-8 pr-3 text-xs text-root-text placeholder-root-subtle transition-colors focus:border-root-accent focus:outline-none ${rootBorderRadius.card}`}
@@ -463,30 +474,30 @@ export default function SerangNegaraModal({
                   <RootTable className="attack-country-table w-full text-xs md:h-full">
                     <thead className="bg-root-canvas border-b border-root-accent/20 sticky top-0 z-10 text-[9px] sm:text-[10px] lg:text-xs whitespace-nowrap">
                       <tr>
-                        <th className="px-2 py-1.5 text-left font-black text-root-accent uppercase tracking-normal sm:tracking-wider w-10 bg-root-canvas">Rank</th>
+                        <th className="px-2 py-1.5 text-left font-black text-root-accent uppercase tracking-normal sm:tracking-wider w-10 bg-root-canvas">{tr("table.rank")}</th>
                         <th className="px-2 py-1.5 text-left font-black text-root-accent uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors bg-root-canvas" onClick={() => handleSort('countryName')}>
-                          Negara{getSortArrow('countryName')}
+                          {tr("table.country")}{getSortArrow('countryName')}
                         </th>
                         <th className="px-2 py-1.5 text-right font-black text-root-accent uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors bg-root-canvas" onClick={() => handleSort('darat')}>
-                          Darat{getSortArrow('darat')}
+                          {tr("table.land")}{getSortArrow('darat')}
                         </th>
                         <th className="px-2 py-1.5 text-right font-black text-root-accent uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors bg-root-canvas" onClick={() => handleSort('laut')}>
-                          Laut{getSortArrow('laut')}
+                          {tr("table.sea")}{getSortArrow('laut')}
                         </th>
                         <th className="px-2 py-1.5 text-right font-black text-root-accent uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors bg-root-canvas" onClick={() => handleSort('udara')}>
-                          Udara{getSortArrow('udara')}
+                          {tr("table.air")}{getSortArrow('udara')}
                         </th>
                         <th className="px-2 py-1.5 text-right font-black text-root-accent uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-root-accent/10 transition-colors bg-root-canvas" onClick={() => handleSort('totalPower')}>
-                          Total Kekuatan{getSortArrow('totalPower')}
+                          {tr("table.totalPower")}{getSortArrow('totalPower')}
                         </th>
-                        <th className="px-2 py-1.5 text-center font-black text-root-accent uppercase tracking-normal sm:tracking-wider bg-root-canvas">Aksi</th>
+                        <th className="px-2 py-1.5 text-center font-black text-root-accent uppercase tracking-normal sm:tracking-wider bg-root-canvas">{tr("table.actions")}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-root-accent/10">
                       {isLoading && rankings.length === 0 ? (
-                        <tr><td colSpan={7} className="px-4 py-8 text-center text-sm font-bold text-root-subtle">Memuat ranking kekuatan negara…</td></tr>
+                        <tr><td colSpan={7} className="px-4 py-8 text-center text-sm font-bold text-root-subtle">{tr("table.loading")}</td></tr>
                       ) : rankings.length === 0 ? (
-                        <tr><td colSpan={7} className="px-4 py-8 text-center text-sm font-bold text-root-subtle">Data ranking belum tersedia.</td></tr>
+                        <tr><td colSpan={7} className="px-4 py-8 text-center text-sm font-bold text-root-subtle">{tr("table.empty")}</td></tr>
                       ) : (
                         rankings.map((row, index) => {
                           const isUser = row.countryName.toLowerCase().trim() === selectedCountryName.toLowerCase().trim();
@@ -513,22 +524,22 @@ export default function SerangNegaraModal({
                                   ) : (
                                     <div className="w-5 h-4 rounded-sm bg-root-surface border border-root-accent/20 flex-shrink-0" />
                                   )}
-                                  <span>{row.countryName}</span>
+                                  <span>{row.displayCountryName}</span>
                                 </div>
                               </td>
                               
-                              <td className="px-3 py-2.5 text-root-text">{formatNumber(row.darat)}</td>
-                              <td className="px-3 py-2.5 text-root-text">{formatNumber(row.laut)}</td>
-                              <td className="px-3 py-2.5 text-root-text">{formatNumber(row.udara)}</td>
-                              <td className={`px-3 py-2.5 font-black ${isUser ? 'text-root-accent' : 'text-rose-400'}`}>{formatNumber(row.totalPower)}</td>
+                              <td className="px-3 py-2.5 text-root-text">{formatNumber(row.darat, language)}</td>
+                              <td className="px-3 py-2.5 text-root-text">{formatNumber(row.laut, language)}</td>
+                              <td className="px-3 py-2.5 text-root-text">{formatNumber(row.udara, language)}</td>
+                              <td className={`px-3 py-2.5 font-black ${isUser ? 'text-root-accent' : 'text-rose-400'}`}>{formatNumber(row.totalPower, language)}</td>
                               <td className="px-3 py-2.5 text-center">
                                 {!isUser && (
                                   <button
                                     type="button"
                                     onClick={() => handleOpenAttackModal(row)}
                                     className="p-1.5 rounded-lg border transition-all bg-root-modal-negative-bg text-root-modal-negative hover:border-root-modal-negative border-root-modal-negative/30 cursor-pointer"
-                                    title="Serang negara ini"
-                                    aria-label={`Serang ${row.countryName}`}
+                                    title={tr("table.attackTitle")}
+                                    aria-label={tr("table.attackAria", { country: row.displayCountryName })}
                                   >
                                     <Swords className="w-4 h-4" />
                                   </button>

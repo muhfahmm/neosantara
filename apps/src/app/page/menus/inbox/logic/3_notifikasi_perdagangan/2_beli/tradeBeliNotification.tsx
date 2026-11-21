@@ -46,18 +46,18 @@ export default function TradeBeliNotification({ notification, onAccept, onReject
         </p>
         
         {/* Detail Penawaran */}
-        <div className="bg-white/80 border border-emerald-100 rounded-lg p-2.5 mt-2 grid grid-cols-3 gap-2 text-center text-[10px] font-bold text-[#5c3c10]">
+        <div className="bg-root-canvas border border-root-accent/25 rounded-lg p-2.5 mt-2 grid grid-cols-3 gap-2 text-center text-[10px] font-bold text-root-text">
           <div>
-            <div className="text-slate-400 text-[9px] uppercase">{t('side_inbox.trade.buyQty')}</div>
+            <div className="text-root-body text-[10px] font-extrabold tracking-wide uppercase">{t('side_inbox.trade.buyQty')}</div>
             <div>{notification.quantity?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Unit</div>
           </div>
           <div>
-            <div className="text-slate-400 text-[9px] uppercase">{t('side_inbox.trade.unitPrice')}</div>
+            <div className="text-root-body text-[10px] font-extrabold tracking-wide uppercase">{t('side_inbox.trade.unitPrice')}</div>
             <div>{notification.pricePerUnit?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
           </div>
           <div>
-            <div className="text-slate-400 text-[9px] uppercase">{t('side_inbox.trade.totalCost')}</div>
-            <div className="text-emerald-700">{notification.totalPrice?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
+            <div className="text-root-body text-[10px] font-extrabold tracking-wide uppercase">{t('side_inbox.trade.totalCost')}</div>
+            <div className="text-root-accent">{notification.totalPrice?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
           </div>
         </div>
 

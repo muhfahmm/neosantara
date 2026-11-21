@@ -14,6 +14,25 @@ export interface NotificationMessage {
   messageKey?: string;
   messageParams?: InboxMessageParams;
   messageParamKeys?: Record<string, string>;
+  attackerCountry?: string;
+  targetCountry?: string;
+  transferredCash?: number;
+  lossPercent?: number;
+  lootLosses?: Array<{ unitKey: string; quantity: number }>;
+  sabotageResult?: {
+    infrastructure: boolean;
+    losses: Array<{ unitKey: string; lostQuantity: number; remainingQuantity: number }>;
+  };
+  annexationResult?: {
+    attackerCountry: string;
+    targetCountry: string;
+    cityName?: string;
+    pbbOccupation: boolean;
+    countryCollapsed: boolean;
+    cityFound: boolean;
+    lossPercent: number;
+    losses: Array<{ unitKey: string; quantity: number }>;
+  };
   effectText?: string;
   effectTextKey?: string;
   effectTextParams?: InboxMessageParams;
