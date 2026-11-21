@@ -230,7 +230,8 @@
     "navy": "Navy",
     "airForce": "Air Force",
     "totalUnitsToSend": "Total units to send",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "resetAll": "Restablecer todo"
   },
   "military": {
     "attackInProgressTitle": "Attack Still in Progress",
@@ -262,7 +263,9 @@
     "targetCity": "Target City",
     "noCityData": "No city data available for this country",
     "paymentChanceNote": "Chance increases with payment size. Effective minimum: 20,000 NEO for meaningful results.",
-    "suggest": "Suggest"
+    "suggest": "Suggest",
+    "requestAttackPromptPrefix": "Solicitar a",
+    "requestAttackPromptSuffix": "lanzar un ataque contra el objetivo seleccionado. Establezca la cantidad que está dispuesto a pagar por esta solicitud."
   },
   "building": {
     "tabs": {
@@ -279,6 +282,370 @@
       "militaryFacilities": "Facilities & Military",
       "foodProduction": "Food Production",
       "housing": "Housing"
+    },
+    "hargaBarang": {
+      "title": "Precios de Productos Básicos y Asequibilidad",
+      "desc": "Monitoreo del índice de precios de necesidades básicas en el mercado interno",
+      "foodSubsidyActive": "Subsidio Alimentario Activo (+5 Puntos)",
+      "average": "Promedio:",
+      "avgMarketPrice": "Precio Promedio de Mercado",
+      "basedOnCommodities": "Basado en {count} productos alimenticios básicos",
+      "affordabilityStatus": "Estado de Asequibilidad",
+      "consumerPurchasingPower": "Poder adquisitivo de los consumidores",
+      "priceSatisfactionIndex": "Índice de Satisfacción de Precios",
+      "statusVeryAffordable": "Muy Asequible",
+      "statusModerate": "Moderado / Adecuado",
+      "statusHighInflation": "Alta Inflación",
+      "statusCheap": "Barato",
+      "statusFair": "Justo",
+      "statusExpensive": "Alto",
+      "statusLabel": "Estado:",
+      "commodities": {
+        "harga_beras": "Arroz",
+        "harga_daging_sapi": "Carne de Res",
+        "harga_ayam": "Carne de Pollo",
+        "harga_minyak_goreng": "Aceite de Cocina",
+        "harga_gula": "Azúcar",
+        "harga_telur": "Huevos de Gallina",
+        "harga_listrik": "Tarifa Eléctrica",
+        "harga_air": "Tarifa de Agua Potable"
+      }
+    },
+    "subsidi": {
+      "title": "Política de Subsidios del Gobierno",
+      "desc": "Colchón social, intervención de precios en bienes básicos, energía y asistencia",
+      "totalBudgetBurden": "Carga Presupuestaria Total:",
+      "activePrograms": "Programas Activos",
+      "open": "Abierto",
+      "subsidiesActive": "{count} programas de subsidio activos protegen el poder adquisitivo",
+      "dailyBudgetCost": "Costo Diario de Presupuesto",
+      "dailyBudgetExpense": "Gasto de caja del Presupuesto Nacional por día",
+      "publicSatisfactionBonus": "Bono de Satisfacción Pública",
+      "positiveImpact": "Impacto positivo en la aprobación pública",
+      "searchPlaceholder": "Buscar programa de subsidio...",
+      "all": "Todos",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "costAllocation": "Asignación de Costo:",
+      "perDay": "NEO/día",
+      "points": "Puntos"
+    },
+    "sistemEkonomi": {
+      "title": "Sistema Económico y Espectro Político",
+      "desc": "Equilibrio entre la intervención estatal, el libre mercado y políticas estructurales",
+      "spectrumPosition": "Posición del Espectro:",
+      "categoryCentralized": "Centralizado",
+      "categoryFreeMarket": "Libre Mercado",
+      "categoryMixed": "Mixto",
+      "labelCommand": "Comando",
+      "labelMixed": "Mixto",
+      "labelFreeMarket": "Libre Mercado",
+      "economicGrowth": "Crecimiento Económico",
+      "inflation": "Inflación",
+      "workerSatisfaction": "Satisfacción Laboral",
+      "investorSatisfaction": "Satisfacción de Inversores",
+      "structuralPoliciesTitle": "Políticas Económicas Estructurales (7 Políticas)",
+      "nationalizationTitle": "Nivel de Control y Nacionalización de Sectores Estratégicos",
+      "stateShare": "Estado: {percent}%"
+    },
+    "pajak": {
+      "title": "Estructura de Política Fiscal Tributaria",
+      "desc": "Tasas de ingresos de caja del Presupuesto Nacional de 5 instrumentos tributarios",
+      "totalRevenue": "Ingresos Totales:",
+      "perDaySuffix": "NEO / día",
+      "avgTaxRate": "Tasa Impositiva Promedio",
+      "fiscalBurden5Sectors": "Carga fiscal combinada de 5 sectores",
+      "estDailyCash": "Caja Diaria Estimada",
+      "nationalBudgetIncome": "Ingresos de caja del Presupuesto Nacional",
+      "taxSatisfactionIndex": "Índice de Satisfacción Tributaria",
+      "rateRangeLimit": "Rango de tarifas: {min}% - {max}% (Estándar {base}%)",
+      "estimatedRevenue": "Ingresos Estimados:",
+      "taxes": {
+        "income_tax": "Impuesto sobre la Renta (IRPF)",
+        "corporate_tax": "Impuesto de Sociedades",
+        "vat": "Impuesto al Valor Agregado (IVA)",
+        "cigarette_tax": "Impuesto a Tabacos y Bienes de Lujo",
+        "environment_tax": "Impuesto al Carbono y Ambiental"
+      }
+    },
+    "doktrin": {
+      "badge": "Doctrina y Apertura del Estado",
+      "regimes": {
+        "autarki": {
+          "label": "Estado Totalmente Aislado (Autarquía)",
+          "desc": "Corta lazos con el exterior, controlando estrictamente prensa, religión, protestas, internet y comercio."
+        },
+        "proteksionis": {
+          "label": "Estado Proteccionista y Restringido",
+          "desc": "El gobierno limita la inmigración, filtra medios y endurece permisos para protestas."
+        },
+        "moderat": {
+          "label": "Estado Moderado y Mixto",
+          "desc": "Equilibrio entre libertades civiles, orden público y apertura económica internacional."
+        },
+        "terbuka": {
+          "label": "Estado Abierto y Democrático",
+          "desc": "Libertades garantizadas, fronteras abiertas, internet libre y alta transparencia gubernamental."
+        },
+        "globalis": {
+          "label": "Estado Globalista y Plenamente Abierto",
+          "desc": "Garantía total de prensa libre, fronteras abiertas, internet neutral e integración global."
+        }
+      },
+      "indexTitle": "Índice de Apertura",
+      "categories": {
+        "all": "Todos los Indicadores (9)",
+        "civil": "Libertades Civiles y DD.HH. (4)",
+        "media": "Medios e Información (2)",
+        "global": "Fronteras y Geopolítica (3)"
+      },
+      "categoryTags": {
+        "civil": "Civil y Derechos",
+        "media": "Medios y Digital",
+        "global": "Geopolítica y Fronteras"
+      },
+      "regulationStatus": "Estado Regulatorio",
+      "statusOpenFree": "Abierto y Libre",
+      "statusModerate": "Moderado Equilibrado",
+      "statusRestricted": "Regulado Estrictamente",
+      "indicators": {
+        "speechScore": {
+          "name": "Libertad de Expresión y Opinión",
+          "desc": "Protección legal para la crítica, libertad de expresión y opinión pública",
+          "lowLabel": "Censura Severa (Autoritario)",
+          "highLabel": "Plena Libertad (Democrático)"
+        },
+        "religionScore": {
+          "name": "Tolerancia y Libertad Religiosa",
+          "desc": "Garantía de culto e igualdad de derechos para minorías religiosas",
+          "lowLabel": "Religión Única Obligatoria",
+          "highLabel": "Pluralismo y Laicismo Abierto"
+        },
+        "demoScore": {
+          "name": "Derecho de Protesta y Asociación",
+          "desc": "Permiso para manifestaciones pacíficas, sindicatos y organizaciones civiles",
+          "lowLabel": "Prohibido Totalmente",
+          "highLabel": "Protegido por la Constitución"
+        },
+        "transparencyScore": {
+          "name": "Transparencia y Rendición de Cuentas",
+          "desc": "Presupuestos abiertos, documentos públicos y auditoría de funcionarios",
+          "lowLabel": "Secreto de Estado Absoluto",
+          "highLabel": "Datos Abiertos de Gobierno"
+        },
+        "mediaScore": {
+          "name": "Libertad de Prensa y Radiodifusión",
+          "desc": "Independencia de periodistas, televisión y medios de comunicación",
+          "lowLabel": "Medios Monopolio del Estado",
+          "highLabel": "Prensa Libre e Independiente"
+        },
+        "internetScore": {
+          "name": "Apertura de Internet y Medios Digitales",
+          "desc": "Acceso sin censura a redes y libertad de plataformas digitales",
+          "lowLabel": "Intranet Cerrada (Firewall)",
+          "highLabel": "Internet Abierto y Neutral"
+        },
+        "borderScore": {
+          "name": "Política de Inmigración y Fronteras",
+          "desc": "Facilidad de entrada para extranjeros, turistas y concesión de visados",
+          "lowLabel": "Fronteras Estrictamente Cerradas",
+          "highLabel": "Libre de Visado Global"
+        },
+        "tradeScore": {
+          "name": "Apertura al Comercio Exterior",
+          "desc": "Aranceles bajos, exportaciones ágiles e inversión internacional favorable",
+          "lowLabel": "Proteccionismo Autárquico",
+          "highLabel": "Libre Mercado Multilateral"
+        },
+        "diplomacyScore": {
+          "name": "Diplomacia y Cooperación Internacional",
+          "desc": "Participación activa en foros internacionales, pactos de paz y tratados",
+          "lowLabel": "Aislacionista Independiente",
+          "highLabel": "Integración Global Activa"
+        }
+      }
+    },
+    "hunian": {
+      "badge": "Sector de Vivienda e Infraestructura Residencial",
+      "title": "Vivienda y Asentamientos Nacionales",
+      "desc": "Monitoreo de viviendas subvencionadas, edificios de apartamentos y mansiones para satisfacer las necesidades de techo.",
+      "housingCapacity": "Capacidad Habitacional",
+      "people": "Habitantes",
+      "unit": "Unidades",
+      "perUnit": "Habitantes/Unidad",
+      "surplus": "Superávit +{count} Habitantes",
+      "deficit": "Déficit {count} Habitantes",
+      "searchPlaceholder": "Buscar tipo de vivienda...",
+      "all": "Todas las Viviendas",
+      "portion": "{percent}% Cuota",
+      "buildingCount": "Cantidad de Edificios",
+      "capacityPerUnit": "Capacidad / Unidad",
+      "totalCapacity": "Capacidad Total",
+      "availabilityStatus": "Estado de Disponibilidad",
+      "statusActive": "Disponible Activo",
+      "statusUnbuilt": "No Construido",
+      "items": {
+        "rumah_subsidi": {
+          "label": "Vivienda Subvencionada",
+          "categoryLabel": "Vivienda Asequible",
+          "desc": "Viviendas unifamiliares subvencionadas para familias de bajos ingresos",
+          "detailDesc": "Proporcionadas por el gobierno con subsidios de intereses y precios para garantizar una vivienda digna a cada familia."
+        },
+        "apartemen": {
+          "label": "Apartamentos Verticales",
+          "categoryLabel": "Vivienda Vertical",
+          "desc": "Complejos residenciales verticales integrados en zonas urbanas densas",
+          "detailDesc": "Torres de apartamentos para maximizar el uso eficiente del suelo urbano y albergar grandes poblaciones."
+        },
+        "mansion": {
+          "label": "Mansiones y Residencial de Lujo",
+          "categoryLabel": "Vivienda Premium",
+          "desc": "Zonas residenciales exclusivas para clases medias-altas y altas",
+          "detailDesc": "Propiedades amplias con jardines privados e instalaciones exclusivas para el segmento económico alto."
+        }
+      }
+    },
+    "kelistrikan": {
+      "title": "Estadísticas de la Red Eléctrica Nacional",
+      "desc": "Equilibrio de capacidad de generación frente a la carga de consumo nacional",
+      "production": "Producción:",
+      "load": "Carga:",
+      "totalSupply": "Suministro Total de Centrales",
+      "activeUnits": "{count} Unidades Activas",
+      "operatingAtCapacity": "Centrales operando a capacidad instalada",
+      "totalNationalLoad": "Carga Total de Consumo",
+      "servedPopulation": "Población atendida: ~{population} Millones",
+      "electricityBalance": "Balance de Potencia Eléctrica",
+      "surplusCapacity": "Superávit Eléctrico Seguro",
+      "deficitRisk": "Déficit / Riesgo de Apagón",
+      "surplusNote": "Reservas de energía cubren adecuadamente la demanda",
+      "deficitNote": "La demanda supera la capacidad de suministro",
+      "electricitySatisfaction": "Satisfacción Eléctrica",
+      "publicAccessLevel": "Fiabilidad eléctrica y nivel de acceso público",
+      "consumptionBreakdown": "Desglose de Consumo por Sectores Nacionales",
+      "sectorHousing": "Sector Vivienda y Residencial",
+      "sectorHousingDesc": "Viviendas subsidiadas, apartamentos, mansiones",
+      "sectorPublic": "Lugares Públicos y Servicios",
+      "sectorPublicDesc": "Escuelas, hospitales, oficinas, ocio",
+      "sectorProduction": "Fábricas y Centros de Producción",
+      "sectorProductionDesc": "Plantas industriales, minería, procesamiento",
+      "sectorMilitary": "Infraestructura y Bases Militares",
+      "sectorMilitaryDesc": "Cuarteles, hangares, bases navales y aéreas",
+      "detailLoadAnalysis": "Análisis Detallado de Consumo",
+      "activePowerPlants": "Centrales Eléctricas Activas ({count} Instalaciones)",
+      "unitProductionLabel": "{prod} MW / unidad",
+      "unitsActiveCount": "{count} Unidades Activas",
+      "fuelShortageWarning": "Escasez de combustible"
+    },
+    "spektrumKepuasan": {
+      "title": "Espectro de Satisfacción Pública",
+      "desc": "Aprobación ciudadana y nivel de satisfacción en sectores vitales del país",
+      "socialStatus": "Estado Social:",
+      "statusVeryStable": "Muy Estable",
+      "statusStable": "Bastante Estable",
+      "statusCritical": "Crítico / Inestabilidad",
+      "publicApproval": "Aprobación Pública General",
+      "publicApprovalDesc": "Sentimiento ciudadano sobre el desempeño del gobierno y servicios estatales",
+      "stable": "Estable",
+      "highestSector": "Sector Más Alto",
+      "lowestSector": "Necesita Mejora",
+      "mainSectors": "Sectores Principales",
+      "spectrumLegend": "Espectro de Satisfacción:",
+      "grades": {
+        "veryPoor": "Muy Malo",
+        "poor": "Malo",
+        "neutral": "Neutral",
+        "good": "Bueno",
+        "veryGood": "Muy Bueno"
+      },
+      "sectors": {
+        "pajak": {
+          "name": "IMPUESTOS",
+          "desc": "Asequibilidad de la carga tributaria para ciudadanos y empresas"
+        },
+        "harga": {
+          "name": "PRECIOS BÁSICOS",
+          "desc": "Estabilidad de precios de los 8 alimentos y productos básicos"
+        },
+        "pangan": {
+          "name": "PRODUCCIÓN DE ALIMENTOS",
+          "desc": "Rendimiento de agricultura, ganadería, pesca y procesamiento"
+        },
+        "listrik": {
+          "name": "GENERACIÓN ELÉCTRICA",
+          "desc": "Fiabilidad de la red eléctrica para abastecer el consumo máximo"
+        },
+        "hunian": {
+          "name": "VIVIENDA Y ASENTAMIENTOS",
+          "desc": "Disponibilidad de viviendas subvencionadas, apartamentos y casas"
+        },
+        "layananPublik": {
+          "name": "SERVICIOS PÚBLICOS",
+          "desc": "Acceso a educación, sanidad, seguridad ciudadana y recreación"
+        },
+        "keterbukaan": {
+          "name": "DOCTRINA Y APERTURA",
+          "desc": "Libertad de expresión, prensa, tolerancia y transparencia de gobierno"
+        },
+        "sistem_ekonomi": {
+          "name": "SISTEMA ECONÓMICO",
+          "desc": "Regulación del mercado, protección laboral e incentivo a la inversión"
+        },
+        "subsidi": {
+          "name": "POLÍTICA DE SUBSIDIOS",
+          "desc": "Cobertura de protección social, subsidios alimentarios y energéticos"
+        }
+      }
+    },
+    "produksiPangan": {
+      "badge": "Sector Alimentario Nacional Integrado",
+      "title": "Capacidad de Producción Alimentaria",
+      "desc": "Monitoreo de cosechas agrícolas, ganadería, pesca y plantas procesadoras de alimentos.",
+      "totalCapacity": "Capacidad Total Instalada",
+      "unitFacility": "Unidades / Instalaciones",
+      "facilitiesActive": "Instalaciones operando activamente",
+      "allSubsectors": "Todos los Subsectores ({count})",
+      "searchPlaceholder": "Buscar alimento o producto...",
+      "activeFacilitiesCount": "{count} Instalaciones Activas",
+      "totalProductionUnits": "Total de {count} unidades de producción alimentaria",
+      "statusActive": "Activo",
+      "statusUnbuilt": "No Construido",
+      "unit": "unidades",
+      "subcategories": {
+        "peternakan": {
+          "title": "Ganadería",
+          "desc": "Centros de cría de ganado rumiante y aves de corral"
+        },
+        "agrikultur": {
+          "title": "Agricultura",
+          "desc": "Tierras para granos básicos, cultivos secundarios y plantaciones"
+        },
+        "perikanan": {
+          "title": "Pesca",
+          "desc": "Centros de pesca marina y acuicultura de agua dulce"
+        },
+        "olahan_pangan": {
+          "title": "Procesamiento de Alimentos",
+          "desc": "Fábricas de procesamiento de materias primas en alimentos listos"
+        }
+      }
+    },
+    "pembangunanSipilMiliter": {
+      "tabCivil": "Instalaciones Civiles",
+      "tabMilitary": "Militar e Infraestructura",
+      "searchPlaceholder": "Buscar elemento de construcción...",
+      "civilianCategories": "Categorías Civiles",
+      "activeFleetUnits": "Unidades de Flota Activas ({count} Tipos)",
+      "militaryInfraBases": "Infraestructura y Bases Militares ({count} Instalaciones)",
+      "basesSuffix": "Bases",
+      "underConstruction": "En construcción · finaliza {date}",
+      "underConstructionDays": " · {days} días",
+      "inProduction": "En producción · finaliza {date}",
+      "inProductionCount": "+{count} en producción",
+      "inConstructionCount": "+{count} en construcción",
+      "infantryCapacity": "Tropas / Capacidad",
+      "infantryUnitLabel": "Tropas / Capacidad",
+      "unit": "unidades"
     }
   }
 }

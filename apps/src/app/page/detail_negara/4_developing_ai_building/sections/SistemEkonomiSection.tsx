@@ -21,6 +21,7 @@ import {
   NATIONALIZATION_LEVELS,
   getNationalizationLevel,
 } from "@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/7_sistem_ekonomi/logic/nationalizationLogic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface SistemEkonomiSectionProps {
   countryDetail: Record<string, any> | null;
@@ -29,6 +30,7 @@ interface SistemEkonomiSectionProps {
 export default function SistemEkonomiSection({
   countryDetail,
 }: SistemEkonomiSectionProps) {
+  const { t } = useLanguage();
   const [dbData, setDbData] = React.useState<Record<string, any> | null>(null);
 
   React.useEffect(() => {
@@ -110,10 +112,10 @@ export default function SistemEkonomiSection({
           </div>
           <div>
             <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-root-accent flex items-center gap-2">
-              Sistem Ekonomi & Spektrum Kebijakan
+              {t("detail_negara_ai.building.sistemEkonomi.title")}
             </h4>
             <p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
-              Keseimbangan intervensi negara terhadap pasar bebas dan kebijakan struktural
+              {t("detail_negara_ai.building.sistemEkonomi.desc")}
             </p>
           </div>
         </div>
@@ -129,7 +131,7 @@ export default function SistemEkonomiSection({
                 : "bg-cyan-500/15 border-cyan-500/30 text-cyan-300"
             }`}
           >
-            {systemDetails.category}
+            {systemDetails.category === "Terpusat" ? t("detail_negara_ai.building.sistemEkonomi.categoryCentralized") : systemDetails.category === "Pasar Bebas" ? t("detail_negara_ai.building.sistemEkonomi.categoryFreeMarket") : t("detail_negara_ai.building.sistemEkonomi.categoryMixed")}
           </span>
         </div>
       </div>
@@ -139,14 +141,14 @@ export default function SistemEkonomiSection({
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
             <p className="text-[10px] font-black uppercase tracking-widest text-root-subtle">
-              Sistem yang Berlaku
+              {t("detail_negara_ai.building.sistemEkonomi.spectrumPosition")}
             </p>
             <h5 className="text-base sm:text-lg font-black text-root-accent uppercase">
               {systemDetails.title}
             </h5>
           </div>
           <div className="text-right">
-            <span className="text-[10px] font-bold text-root-subtle uppercase">Posisi Spektrum:</span>
+            <span className="text-[10px] font-bold text-root-subtle uppercase">{t("detail_negara_ai.building.sistemEkonomi.spectrumPosition")}</span>
             <span className="text-base font-black text-root-accent ml-1.5">{sliderValue} / 100</span>
           </div>
         </div>
@@ -160,9 +162,9 @@ export default function SistemEkonomiSection({
             />
           </div>
           <div className="flex justify-between text-[9px] font-bold uppercase tracking-wider text-root-subtle">
-            <span>Komando Terpusat (0)</span>
-            <span>Campuran (50)</span>
-            <span>Pasar Bebas Murni (100)</span>
+            <span>0 ({t("detail_negara_ai.building.sistemEkonomi.labelCommand")})</span>
+            <span>50 ({t("detail_negara_ai.building.sistemEkonomi.labelMixed")})</span>
+            <span>100 ({t("detail_negara_ai.building.sistemEkonomi.labelFreeMarket")})</span>
           </div>
         </div>
 
@@ -174,7 +176,7 @@ export default function SistemEkonomiSection({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
           <div className="bg-root-surface border border-root-accent/15 p-2.5 rounded-xl">
             <span className="text-[9px] font-bold uppercase tracking-wider text-root-subtle">
-              Bonus PDB
+              {t("detail_negara_ai.building.sistemEkonomi.economicGrowth")}
             </span>
             <p className="text-sm font-black text-emerald-400 mt-0.5">
               +{systemDetails.gdpGrowthBonus}%
@@ -182,7 +184,7 @@ export default function SistemEkonomiSection({
           </div>
           <div className="bg-root-surface border border-root-accent/15 p-2.5 rounded-xl">
             <span className="text-[9px] font-bold uppercase tracking-wider text-root-subtle">
-              Dampak Inflasi
+              {t("detail_negara_ai.building.sistemEkonomi.inflation")}
             </span>
             <p className="text-sm font-black text-rose-400 mt-0.5">
               {systemDetails.inflationImpact > 0 ? "+" : ""}
@@ -191,7 +193,7 @@ export default function SistemEkonomiSection({
           </div>
           <div className="bg-root-surface border border-root-accent/15 p-2.5 rounded-xl">
             <span className="text-[9px] font-bold uppercase tracking-wider text-root-subtle">
-              Kepuasan Buruh
+              {t("detail_negara_ai.building.sistemEkonomi.workerSatisfaction")}
             </span>
             <p
               className={`text-sm font-black mt-0.5 ${
@@ -204,7 +206,7 @@ export default function SistemEkonomiSection({
           </div>
           <div className="bg-root-surface border border-root-accent/15 p-2.5 rounded-xl">
             <span className="text-[9px] font-bold uppercase tracking-wider text-root-subtle">
-              Kepuasan Investor
+              {t("detail_negara_ai.building.sistemEkonomi.investorSatisfaction")}
             </span>
             <p
               className={`text-sm font-black mt-0.5 ${
@@ -223,7 +225,7 @@ export default function SistemEkonomiSection({
       {/* 7 KARTU KEBIJAKAN EKONOMI */}
       <div>
         <h5 className="text-xs font-black uppercase tracking-wider text-root-accent flex items-center gap-2 mb-3">
-          <Layers className="w-4 h-4" /> Kebijakan Struktural Perekonomian (7 Kebijakan)
+          <Layers className="w-4 h-4" /> {t("detail_negara_ai.building.sistemEkonomi.structuralPoliciesTitle")}
         </h5>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -272,7 +274,7 @@ export default function SistemEkonomiSection({
       {/* TINGKAT NASIONALISASI SEKTOR STRATEGIS */}
       <div>
         <h5 className="text-xs font-black uppercase tracking-wider text-root-accent flex items-center gap-2 mb-3">
-          <Building2 className="w-4 h-4" /> Tingkat Penguasaan & Nasionalisasi Sektor Strategis
+          <Building2 className="w-4 h-4" /> {t("detail_negara_ai.building.sistemEkonomi.nationalizationTitle")}
         </h5>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
@@ -293,7 +295,7 @@ export default function SistemEkonomiSection({
                     {levelObj.name}
                   </span>
                   <span className="text-[8px] text-root-subtle block mt-0.5">
-                    Negara: {levelObj.stateProfitSharePercent}%
+                    {t("detail_negara_ai.building.sistemEkonomi.stateShare", { percent: levelObj.stateProfitSharePercent })}
                   </span>
                 </div>
               </div>

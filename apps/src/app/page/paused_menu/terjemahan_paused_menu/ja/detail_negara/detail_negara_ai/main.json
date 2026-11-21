@@ -230,7 +230,8 @@
     "navy": "Navy",
     "airForce": "Air Force",
     "totalUnitsToSend": "Total units to send",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "resetAll": "すべてリセット"
   },
   "military": {
     "attackInProgressTitle": "Attack Still in Progress",
@@ -262,7 +263,9 @@
     "targetCity": "Target City",
     "noCityData": "No city data available for this country",
     "paymentChanceNote": "Chance increases with payment size. Effective minimum: 20,000 NEO for meaningful results.",
-    "suggest": "Suggest"
+    "suggest": "Suggest",
+    "requestAttackPromptPrefix": "選択した標的に対して",
+    "requestAttackPromptSuffix": "に攻撃を開始するよう要請します。この要請に対して支払う金額を設定してください。"
   },
   "building": {
     "tabs": {
@@ -279,6 +282,370 @@
       "militaryFacilities": "Facilities & Military",
       "foodProduction": "Food Production",
       "housing": "Housing"
+    },
+    "hargaBarang": {
+      "title": "基本生活物資の価格と国民の負担感",
+      "desc": "国内市場における基本生活必需品価格指数のモニタリング",
+      "foodSubsidyActive": "食料補助金適用中 (+5ポイント)",
+      "average": "平均:",
+      "avgMarketPrice": "平均市場価格",
+      "basedOnCommodities": "{count}の主要食料品に基づく",
+      "affordabilityStatus": "購入しやすさの状態",
+      "consumerPurchasingPower": "消費者の購買力",
+      "priceSatisfactionIndex": "価格満足度指数",
+      "statusVeryAffordable": "非常に手頃",
+      "statusModerate": "適正 / 良好",
+      "statusHighInflation": "高インフレ",
+      "statusCheap": "安価",
+      "statusFair": "適正",
+      "statusExpensive": "高額",
+      "statusLabel": "状態:",
+      "commodities": {
+        "harga_beras": "米",
+        "harga_daging_sapi": "牛肉",
+        "harga_ayam": "鶏肉",
+        "harga_minyak_goreng": "食用油",
+        "harga_gula": "砂糖",
+        "harga_telur": "鶏卵",
+        "harga_listrik": "電気料金",
+        "harga_air": "水道料金"
+      }
+    },
+    "subsidi": {
+      "title": "政府補助金政策",
+      "desc": "セーフティネット、生活必需品・エネルギー価格介入、国民支援策",
+      "totalBudgetBurden": "国家財政の総負担:",
+      "activePrograms": "適用中のプログラム",
+      "open": "開放",
+      "subsidiesActive": "{count}件の補助金施策が購買力を保護中",
+      "dailyBudgetCost": "1日あたりの財政支出",
+      "dailyBudgetExpense": "国家予算の1日あたり支出額",
+      "publicSatisfactionBonus": "国民満足度ボーナス",
+      "positiveImpact": "国民支持率に対する好影響",
+      "searchPlaceholder": "補助金プログラムを検索...",
+      "all": "すべて",
+      "active": "有効",
+      "inactive": "無効",
+      "costAllocation": "予算配分:",
+      "perDay": "NEO/日",
+      "points": "ポイント"
+    },
+    "sistemEkonomi": {
+      "title": "経済体制と政策スペクトラム",
+      "desc": "自由市場に対する国家介入と構造的経済政策のバランス",
+      "spectrumPosition": "スペクトラム位置:",
+      "categoryCentralized": "中央統制型",
+      "categoryFreeMarket": "自由市場型",
+      "categoryMixed": "混合型",
+      "labelCommand": "統制",
+      "labelMixed": "混合",
+      "labelFreeMarket": "自由市場",
+      "economicGrowth": "経済成長率",
+      "inflation": "インフレ率",
+      "workerSatisfaction": "労働者満足度",
+      "investorSatisfaction": "投資家満足度",
+      "structuralPoliciesTitle": "構造的経済政策 (7項目)",
+      "nationalizationTitle": "戦略的セクターの国有化・支配水準",
+      "stateShare": "国家持分: {percent}%"
+    },
+    "pajak": {
+      "title": "租税・財政政策構造",
+      "desc": "国内5つの税制手段による国家予算歳入率",
+      "totalRevenue": "総歳入:",
+      "perDaySuffix": "NEO / 日",
+      "avgTaxRate": "平均税率",
+      "fiscalBurden5Sectors": "主要5セクターの複合財政負担",
+      "estDailyCash": "推定日次歳入",
+      "nationalBudgetIncome": "国家予算の現金歳入",
+      "taxSatisfactionIndex": "納税満足度指数",
+      "rateRangeLimit": "税率許容範囲: {min}% - {max}% (標準 {base}%)",
+      "estimatedRevenue": "推定税収:",
+      "taxes": {
+        "income_tax": "個人所得税",
+        "corporate_tax": "法人税",
+        "vat": "付加価値税 (消費税)",
+        "cigarette_tax": "たばこ・贅沢品物品税",
+        "environment_tax": "炭素税・環境税"
+      }
+    },
+    "doktrin": {
+      "badge": "国家ドクトリンと開放性",
+      "regimes": {
+        "autarki": {
+          "label": "完全孤立国 (自給自足型鎖国)",
+          "desc": "対外関係を断絶し、報道・宗教・デモ・ネット・貿易を厳しく統制。"
+        },
+        "proteksionis": {
+          "label": "保護主義・制限国",
+          "desc": "政府が入国を制限し、報道を検閲し、デモや団体の結成を厳しく制限。"
+        },
+        "moderat": {
+          "label": "穏健・混合型国家",
+          "desc": "市民の自由、法秩序の維持、国際経済の開放性のバランスを維持。"
+        },
+        "terbuka": {
+          "label": "開放・民主主義国家",
+          "desc": "報道と信教の自由が保障され、開かれた国境と高い政府透明性を確保。"
+        },
+        "globalis": {
+          "label": "グローバリスト・完全開放国家",
+          "desc": "報道の自由、ビザなし渡航、完全に中立なインターネット、世界市場統合を実現。"
+        }
+      },
+      "indexTitle": "開放度指数",
+      "categories": {
+        "all": "全指標 (9)",
+        "civil": "市民の自由と人権 (4)",
+        "media": "メディアと情報 (2)",
+        "global": "国境と地政学 (3)"
+      },
+      "categoryTags": {
+        "civil": "市民・人権",
+        "media": "メディア・デジタル",
+        "global": "地政学・国境"
+      },
+      "regulationStatus": "規制状態",
+      "statusOpenFree": "開放・自由",
+      "statusModerate": "適正なバランス",
+      "statusRestricted": "規制強化",
+      "indicators": {
+        "speechScore": {
+          "name": "言論・表現の自由",
+          "desc": "政府批判、言論の自由、公の意見に対する法的保護水準",
+          "lowLabel": "厳しい検閲 (権威主義)",
+          "highLabel": "完全な自由 (民主的)"
+        },
+        "religionScore": {
+          "name": "寛容と信教の自由",
+          "desc": "信仰の自由の保障、少数派宗教信者の権利平等",
+          "lowLabel": "単一宗教の強制",
+          "highLabel": "多元主義と世俗的開放"
+        },
+        "demoScore": {
+          "name": "デモ・集会結社の権利",
+          "desc": "平和的な抗議デモ、労働組合や市民団体の結成の自由",
+          "lowLabel": "全面禁止",
+          "highLabel": "憲法で保護"
+        },
+        "transparencyScore": {
+          "name": "透明性と公的アカウンタビリティ",
+          "desc": "国家予算の開示、公文書の公開、高官の資産監査",
+          "lowLabel": "絶対的国家機密",
+          "highLabel": "オープンデータ政府"
+        },
+        "mediaScore": {
+          "name": "報道と放送の自由",
+          "desc": "ジャーナリストや民間メディアの独立性と検閲の不在",
+          "lowLabel": "国営独占メディア",
+          "highLabel": "独立した自由な報道"
+        },
+        "internetScore": {
+          "name": "インターネットとデジタルの開放性",
+          "desc": "不当な遮断のないネット接続とデジタルプラットフォームの自由",
+          "lowLabel": "閉鎖的イントラネット (検閲)",
+          "highLabel": "中立で開かれたネット"
+        },
+        "borderScore": {
+          "name": "出入国・国境管理政策",
+          "desc": "外国人観光客やビジネス渡航者の受け入れとビザ取得の容易さ",
+          "lowLabel": "厳重に閉ざされた国境",
+          "highLabel": "世界ビザ免除"
+        },
+        "tradeScore": {
+          "name": "対外貿易の開放度",
+          "desc": "低関税、円滑な輸出、グローバル企業の投資環境",
+          "lowLabel": "自給自足型保護主義",
+          "highLabel": "多国間自由貿易"
+        },
+        "diplomacyScore": {
+          "name": "外交と国際協力",
+          "desc": "国際機関、平和協定、国際条約への積極的な参加",
+          "lowLabel": "自立的孤立主義",
+          "highLabel": "積極的な国際協調"
+        }
+      }
+    },
+    "hunian": {
+      "badge": "住宅・都市定住基盤部門",
+      "title": "国家住宅・居住環境",
+      "desc": "全国民の居住ニーズを満たす公的助成住宅、高層アパート、高級邸宅の供給状況モニタリング。",
+      "housingCapacity": "総居住収容力",
+      "people": "人",
+      "unit": "戸/棟",
+      "perUnit": "人/戸",
+      "surplus": "余剰 +{count} 人",
+      "deficit": "不足 {count} 人",
+      "searchPlaceholder": "住宅タイプを検索...",
+      "all": "全住宅",
+      "portion": "{percent}% 割合",
+      "buildingCount": "建物総数",
+      "capacityPerUnit": "1戸/棟あたりの収容力",
+      "totalCapacity": "総収容可能人口",
+      "availabilityStatus": "供給状況",
+      "statusActive": "供給中",
+      "statusUnbuilt": "未建設",
+      "items": {
+        "rumah_subsidi": {
+          "label": "公的助成住宅",
+          "categoryLabel": "手頃な価格の住宅",
+          "desc": "低所得世帯向けの政府補助金付き一戸建て住宅",
+          "detailDesc": "全世帯が適切な住居を持てるよう、価格優遇と金利補助を国が提供。"
+        },
+        "apartemen": {
+          "label": "高層集合住宅",
+          "categoryLabel": "高層集合住宅",
+          "desc": "過密都市空間と統合された高層垂直居住施設",
+          "detailDesc": "都市の土地利用効率を最大化し大人口を収容するための高層タワーマンション群。"
+        },
+        "mansion": {
+          "label": "高級邸宅・邸宅街",
+          "categoryLabel": "プレミアム住宅",
+          "desc": "中上位〜富裕層向けの排他的高級住宅エリア",
+          "detailDesc": "プライベートガーデンや専用施設を備えた、高所得層向けの広大な一戸建て邸宅。"
+        }
+      }
+    },
+    "kelistrikan": {
+      "title": "国家電力グリッド統計",
+      "desc": "総発電設備容量と全国各セクターの電力消費負荷のバランス",
+      "production": "発電量:",
+      "load": "消費負荷:",
+      "totalSupply": "総発電供給量",
+      "activeUnits": "{count}基が稼働中",
+      "operatingAtCapacity": "設備容量通りに稼働中",
+      "totalNationalLoad": "全社会総消費電力負荷",
+      "servedPopulation": "給電人口: 約{population}百万人",
+      "electricityBalance": "電力需給バランス",
+      "surplusCapacity": "安全な電力余剰",
+      "deficitRisk": "不足 / 停電リスク",
+      "surplusNote": "予備電力は需要を十分に満たしています",
+      "deficitNote": "需要が発電設備容量を超過しています",
+      "electricitySatisfaction": "電力満足度",
+      "publicAccessLevel": "電力の信頼性と公共アクセスの水準",
+      "consumptionBreakdown": "主要セクター別消費電力の内訳",
+      "sectorHousing": "住宅・居住セクター",
+      "sectorHousingDesc": "助成住宅、アパート、高級邸宅",
+      "sectorPublic": "公共施設・行政サービス",
+      "sectorPublicDesc": "学校、病院、オフィス、娯楽施設",
+      "sectorProduction": "工場・産業生産拠点",
+      "sectorProductionDesc": "製造工場、鉱山、加工処理プラント",
+      "sectorMilitary": "軍事基盤施設・基地",
+      "sectorMilitaryDesc": "兵舎、格納庫、海空軍基地",
+      "detailLoadAnalysis": "詳細電力消費負荷分析",
+      "activePowerPlants": "稼働中の発電所 ({count}施設)",
+      "unitProductionLabel": "{prod} MW / 基",
+      "unitsActiveCount": "{count}基が稼働中",
+      "fuelShortageWarning": "燃料不足"
+    },
+    "spektrumKepuasan": {
+      "title": "国民満足度スペクトラム",
+      "desc": "国家の重要全分野における国民支持率と満足度指標",
+      "socialStatus": "社会状況:",
+      "statusVeryStable": "非常に安定",
+      "statusStable": "おおむね安定",
+      "statusCritical": "危機的 / 動揺",
+      "publicApproval": "国民の総合的支持度",
+      "publicApprovalDesc": "国家の指導力と公共サービスに対する国民の総合評価",
+      "stable": "安定",
+      "highestSector": "最高評価分野",
+      "lowestSector": "改善が必要な分野",
+      "mainSectors": "主要セクター",
+      "spectrumLegend": "満足度スペクトラム:",
+      "grades": {
+        "veryPoor": "極めて低い",
+        "poor": "低い",
+        "neutral": "普通",
+        "good": "良好",
+        "veryGood": "極めて良好"
+      },
+      "sectors": {
+        "pajak": {
+          "name": "税負担",
+          "desc": "国民および事業者に対する税制負担の適正さ"
+        },
+        "harga": {
+          "name": "生活物資価格",
+          "desc": "主要8品目の基本的食料品価格の安定性と購入しやすさ"
+        },
+        "pangan": {
+          "name": "食料生産供給",
+          "desc": "農業、畜産業、水産業、加工食品の生産収穫の充足度"
+        },
+        "listrik": {
+          "name": "電力生産供給",
+          "desc": "ピーク時消費負荷に対する発電所の安定供給能力"
+        },
+        "hunian": {
+          "name": "住宅・居住環境",
+          "desc": "助成住宅、アパート、一戸建ての供給充足度"
+        },
+        "layananPublik": {
+          "name": "公共サービス施設",
+          "desc": "教育、医療、治安法務、文化娯楽施設へのアクセス性"
+        },
+        "keterbukaan": {
+          "name": "ドクトリンと開放",
+          "desc": "表現の自由、報道の自由、信教の寛容性、行政の透明性"
+        },
+        "sistem_ekonomi": {
+          "name": "経済体制・政策",
+          "desc": "自由市場の適正規制、労働者保護、投資促進のバランス"
+        },
+        "subsidi": {
+          "name": "補助金・社会保障",
+          "desc": "セーフティネット、食料・エネルギー補助金の適用範囲"
+        }
+      }
+    },
+    "produksiPangan": {
+      "badge": "総合国家食料部門",
+      "title": "食料総合生産力",
+      "desc": "農産物収穫、畜産拠点、漁業・養殖場、食品加工工場の生産能力モニタリング。",
+      "totalCapacity": "総設備能力",
+      "unitFacility": "施設 / 拠点",
+      "facilitiesActive": "稼働中の生産施設",
+      "allSubsectors": "全サブセクター ({count})",
+      "searchPlaceholder": "食料品目を検索...",
+      "activeFacilitiesCount": "{count}施設が稼働中",
+      "totalProductionUnits": "合計{count}件の食料生産施設",
+      "statusActive": "稼働中",
+      "statusUnbuilt": "未建設",
+      "unit": "件",
+      "subcategories": {
+        "peternakan": {
+          "title": "畜産業",
+          "desc": "家畜牛・豚・鶏等の繁殖・肥育拠点"
+        },
+        "agrikultur": {
+          "title": "農耕・農業",
+          "desc": "主要主食穀物、農作物、農園・プランテーション"
+        },
+        "perikanan": {
+          "title": "水産・漁業",
+          "desc": "海洋沿岸・遠洋漁業および淡水養殖拠点"
+        },
+        "olahan_pangan": {
+          "title": "食品加工",
+          "desc": "農水産原料を加工し最終食料品を製造する近代工場群"
+        }
+      }
+    },
+    "pembangunanSipilMiliter": {
+      "tabCivil": "民生施設",
+      "tabMilitary": "軍事・防衛インフラ",
+      "searchPlaceholder": "建設項目を検索...",
+      "civilianCategories": "民生部門カテゴリ",
+      "activeFleetUnits": "現役戦闘部隊 ({count}種類)",
+      "militaryInfraBases": "軍事インフラ・軍事基地 ({count}施設)",
+      "basesSuffix": "基地",
+      "underConstruction": "建設中 · 完成予定 {date}",
+      "underConstructionDays": " · 残り{days}日",
+      "inProduction": "建造中 · 完成予定 {date}",
+      "inProductionCount": "+{count}ユニット製造中",
+      "inConstructionCount": "+{count}施設建設中",
+      "infantryCapacity": "兵力 / 収容能力",
+      "infantryUnitLabel": "兵力 / 収容能力",
+      "unit": "基/両/隻/機"
     }
   }
 }

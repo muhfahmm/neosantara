@@ -15,21 +15,66 @@ interface KeywordModalProps {
 export function KeywordModal({ isOpen, onClose }: KeywordModalProps) {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
+  const [selectedCategoryKey, setSelectedCategoryKey] = useState<string>('all');
 
   if (!isOpen) return null;
 
-  const categories = ['Semua', 'Menu Utama', 'Sub Menu (Angka)', 'Menu Cepat', 'Time Controller', 'Navigasi Panel', 'Zoom & Map'];
+  const categoryKeys: Array<{ key: string; idName: string; label: string }> = [
+    { key: 'all', idName: 'Semua', label: t('paused_menu.keyboardModal.categories.all') || t('paused_menu.keyboardModal.categoryAll') || 'Semua' },
+    { key: 'mainMenu', idName: 'Menu Utama', label: t('paused_menu.keyboardModal.categories.mainMenu') || 'Menu Utama' },
+    { key: 'subMenu', idName: 'Sub Menu (Angka)', label: t('paused_menu.keyboardModal.categories.subMenu') || 'Sub Menu (Angka)' },
+    { key: 'quickMenu', idName: 'Menu Cepat', label: t('paused_menu.keyboardModal.categories.quickMenu') || 'Menu Cepat' },
+    { key: 'timeController', idName: 'Time Controller', label: t('paused_menu.keyboardModal.categories.timeController') || 'Time Controller' },
+    { key: 'panelNavigation', idName: 'Navigasi Panel', label: t('paused_menu.keyboardModal.categories.panelNavigation') || 'Navigasi Panel' },
+    { key: 'zoomMap', idName: 'Zoom & Map', label: t('paused_menu.keyboardModal.categories.zoomMap') || 'Zoom & Map' },
+  ];
+
+  const getLocalizedCategory = (cat: string) => {
+    switch (cat) {
+      case 'Menu Utama':
+        return t('paused_menu.keyboardModal.categories.mainMenu') || cat;
+      case 'Sub Menu (Angka)':
+        return t('paused_menu.keyboardModal.categories.subMenu') || cat;
+      case 'Menu Cepat':
+        return t('paused_menu.keyboardModal.categories.quickMenu') || cat;
+      case 'Time Controller':
+        return t('paused_menu.keyboardModal.categories.timeController') || cat;
+      case 'Navigasi Panel':
+        return t('paused_menu.keyboardModal.categories.panelNavigation') || cat;
+      case 'Zoom & Map':
+        return t('paused_menu.keyboardModal.categories.zoomMap') || cat;
+      default:
+        return cat;
+    }
+  };
+
+  const getLocalizedDescription = (item: ShortcutDefinition) => {
+    if (item.id) {
+      const translated = t(`paused_menu.keyboardModal.shortcuts.${item.id}`);
+      if (translated && !translated.startsWith('paused_menu.keyboardModal.shortcuts.')) {
+        return translated;
+      }
+    }
+    return item.description;
+  };
+
   const allShortcuts: ShortcutDefinition[] = Object.values(GAME_SHORTCUTS);
   const query = searchQuery.toLowerCase().trim();
 
+  const selectedCategoryObj = categoryKeys.find((c) => c.key === selectedCategoryKey);
+  const selectedCategoryName = selectedCategoryObj ? selectedCategoryObj.idName : 'Semua';
+
   const filteredShortcuts = allShortcuts.filter((item) => {
-    const matchesCategory = selectedCategory === 'Semua' || item.category === selectedCategory;
+    const matchesCategory = selectedCategoryKey === 'all' || item.category === selectedCategoryName;
+    const localizedDesc = getLocalizedDescription(item);
+    const localizedCat = getLocalizedCategory(item.category);
     const matchesQuery =
       !query ||
       item.label.toLowerCase().includes(query) ||
       item.description.toLowerCase().includes(query) ||
-      item.category.toLowerCase().includes(query);
+      localizedDesc.toLowerCase().includes(query) ||
+      item.category.toLowerCase().includes(query) ||
+      localizedCat.toLowerCase().includes(query);
     return matchesCategory && matchesQuery;
   });
 
@@ -67,19 +112,19 @@ export function KeywordModal({ isOpen, onClose }: KeywordModalProps) {
             </div>
 
             <div className="flex items-center gap-1.5 overflow-x-auto py-0.5">
-              {categories.map((category) => (
+              {categoryKeys.map((cat) => (
                 <button
-                  key={category}
+                  key={cat.key}
                   type="button"
-                  onClick={() => setSelectedCategory(category)}
-                  aria-pressed={selectedCategory === category}
+                  onClick={() => setSelectedCategoryKey(cat.key)}
+                  aria-pressed={selectedCategoryKey === cat.key}
                   className={`cursor-pointer whitespace-nowrap rounded border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider transition-all ${
-                    selectedCategory === category
+                    selectedCategoryKey === cat.key
                       ? 'border-root-accent bg-root-accent text-root-canvas shadow-[0_0_10px_rgba(0,255,170,0.3)]'
                       : 'border-root-accent/20 bg-root-canvas text-root-subtle hover:border-root-accent/40 hover:text-root-accent'
                   }`}
                 >
-                  {category}
+                  {cat.label}
                 </button>
               ))}
             </div>
@@ -90,9 +135,11 @@ export function KeywordModal({ isOpen, onClose }: KeywordModalProps) {
               <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
                 <Command className="h-10 w-10 text-root-subtle/50" />
                 <span className="text-xs font-bold uppercase tracking-wider text-root-subtle">
-                  Tidak ada shortcut ditemukan
+                  {t('paused_menu.keyboardModal.emptyTitle') || 'Tidak ada shortcut ditemukan'}
                 </span>
-                <p className="text-[10px] text-root-subtle/70">Coba ubah kata kunci pencarian atau kategori filter.</p>
+                <p className="text-[10px] text-root-subtle/70">
+                  {t('paused_menu.keyboardModal.emptyDesc') || 'Coba ubah kata kunci pencarian atau kategori filter.'}
+                </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2">
@@ -102,7 +149,7 @@ export function KeywordModal({ isOpen, onClose }: KeywordModalProps) {
                     className="group flex items-center justify-between rounded-lg border border-root-accent/20 bg-root-canvas p-3 shadow-sm transition-all hover:border-root-accent/50"
                   >
                     <span className="min-w-0 flex-1 text-xs font-bold leading-tight text-root-text transition-colors group-hover:text-root-accent">
-                      {item.description}
+                      {getLocalizedDescription(item)}
                     </span>
                     <div className="ml-2 flex shrink-0 items-center gap-1">
                       <kbd className="flex h-6 min-w-[30px] items-center justify-center rounded border-2 border-root-accent/40 bg-root-surface px-2 font-mono text-[11px] font-black uppercase tracking-wider text-root-accent shadow-[0_2px_0_rgba(0,255,170,0.2)] transition-all group-hover:border-root-accent">

@@ -11,7 +11,8 @@
   "theme": {
     "title": "显示主题",
     "dark": "深色",
-    "light": "浅色"
+    "light": "浅色",
+    "storageError": "此设备无法读取或保存主题偏好设置。"
   },
   "map": {
     "title": "地图边界与城市显示",
@@ -28,5 +29,6 @@
     "selectDesc": "选择界面与游戏文本的显示语言。",
     "current": "当前语言",
     "saved": "语言设置已保存"
-  }
+  },
+  "themeStorageError": "此设备无法读取或保存主题偏好设置。"
 }

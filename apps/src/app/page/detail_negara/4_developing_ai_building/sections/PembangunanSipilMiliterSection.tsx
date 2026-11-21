@@ -23,6 +23,8 @@ import {
 } from "lucide-react";
 import { getInfraCapacityDetails } from "@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/infraCapacityHelper";
 import { convertBarakToSoldiers } from "@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/1_barak_logic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
+
 
 interface PembangunanSipilMiliterSectionProps {
   countryDetail: Record<string, any> | null;
@@ -397,6 +399,7 @@ function PembangunanSipilMiliterSectionView({
   initialBuildingKey,
   categoryOnly,
 }: PembangunanSipilMiliterSectionProps) {
+  const { t } = useLanguage();
   const initialCivilCategory = CIVIL_CATEGORIES.find((category) =>
     category.items.some((item) => item.key === initialBuildingKey),
   );
@@ -569,7 +572,7 @@ function PembangunanSipilMiliterSectionView({
             }`}
           >
             <Factory className="w-3.5 h-3.5" />
-            <span>Fasilitas Sipil</span>
+            <span>{t("detail_negara_ai.building.pembangunanSipilMiliter.tabCivil")}</span>
           </button>
           <button
             onClick={() => {
@@ -583,7 +586,7 @@ function PembangunanSipilMiliterSectionView({
             }`}
           >
             <Shield className="w-3.5 h-3.5" />
-            <span>Militer & Infrastruktur</span>
+            <span>{t("detail_negara_ai.building.pembangunanSipilMiliter.tabMilitary")}</span>
           </button>
         </div>}
 
@@ -593,7 +596,7 @@ function PembangunanSipilMiliterSectionView({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari item pembangunan..."
+            placeholder={t("detail_negara_ai.building.pembangunanSipilMiliter.searchPlaceholder")}
             className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-root-surface border border-root-accent/30 text-xs text-root-text placeholder:text-root-subtle focus:outline-none focus:border-root-accent"
           />
         </div>
@@ -695,8 +698,8 @@ function PembangunanSipilMiliterSectionView({
                     >
                       {pendingCount > 0 && completionDate && (
                         <div className="absolute -top-3 left-2 z-10 bg-root-canvas text-amber-300 text-[9px] font-bold px-2 py-0.5 border border-amber-400/40 rounded whitespace-nowrap">
-                          Dalam pembangunan · selesai {formatCompletionDate(completionDate)}
-                          {remainingDays > 0 ? ` · ${remainingDays} hari` : ""}
+                          {t("detail_negara_ai.building.pembangunanSipilMiliter.underConstruction", { date: formatCompletionDate(completionDate) })}
+                          {remainingDays > 0 ? t("detail_negara_ai.building.pembangunanSipilMiliter.underConstructionDays", { days: remainingDays }) : ""}
                         </div>
                       )}
                       <p className="text-[10px] font-black uppercase tracking-wider text-[#8AB0A8] leading-tight line-clamp-2">
@@ -717,7 +720,7 @@ function PembangunanSipilMiliterSectionView({
                         </div>
                         {pendingCount > 0 && (
                           <p className="text-[9px] font-bold text-amber-300 mt-1">
-                            +{formatNumber(pendingCount)} dalam pembangunan
+                            {t("detail_negara_ai.building.pembangunanSipilMiliter.inConstructionCount", { count: formatNumber(pendingCount) })}
                           </p>
                         )}
                         {item.defaultUnit && (
@@ -741,7 +744,7 @@ function PembangunanSipilMiliterSectionView({
               <div className="flex items-center gap-2 mb-2.5 border-b border-root-accent/15 pb-1.5">
                 <Swords className="w-3.5 h-3.5 text-root-accent" />
                 <h5 className="text-xs font-black uppercase tracking-wider text-root-accent">
-                  Unit Armada Aktif (23 Jenis Unit)
+                  {t("detail_negara_ai.building.pembangunanSipilMiliter.activeFleetUnits", { count: filteredMilitaryUnits.length })}
                 </h5>
               </div>
 
@@ -753,7 +756,7 @@ function PembangunanSipilMiliterSectionView({
 
                   if (unit.isInfantry) {
                     displayText = `${formatNumber(infantryData.count)} / ${formatNumber(infantryData.capacity)}`;
-                    subText = "Pasukan / Kapasitas";
+                    subText = t("detail_negara_ai.building.pembangunanSipilMiliter.infantryCapacity");
                     isHighlighted = true;
                   } else {
                     const count = getMilitaryUnitValue(unit.key, unit.group);
@@ -784,8 +787,8 @@ function PembangunanSipilMiliterSectionView({
                     >
                       {pendingCount > 0 && completionDate && (
                         <div className="absolute -top-3 left-2 z-10 bg-root-canvas text-amber-300 text-[9px] font-bold px-2 py-0.5 border border-amber-400/40 rounded whitespace-nowrap">
-                          Dalam pembuatan · selesai {formatCompletionDate(completionDate)}
-                          {remainingDays > 0 ? ` · ${remainingDays} hari` : ""}
+                          {t("detail_negara_ai.building.pembangunanSipilMiliter.inProduction", { date: formatCompletionDate(completionDate) })}
+                          {remainingDays > 0 ? t("detail_negara_ai.building.pembangunanSipilMiliter.underConstructionDays", { days: remainingDays }) : ""}
                         </div>
                       )}
                       <div className="flex items-start justify-between gap-1 mb-1.5">
@@ -810,7 +813,7 @@ function PembangunanSipilMiliterSectionView({
                         </p>
                         {pendingCount > 0 && (
                           <p className="text-[9px] font-bold text-amber-300 mt-1">
-                            +{formatNumber(pendingCount)} dalam pembuatan
+                            {t("detail_negara_ai.building.pembangunanSipilMiliter.inProductionCount", { count: formatNumber(pendingCount) })}
                           </p>
                         )}
                       </div>
@@ -825,7 +828,7 @@ function PembangunanSipilMiliterSectionView({
               <div className="flex items-center gap-2 mb-2.5 border-b border-root-accent/15 pb-1.5">
                 <Warehouse className="w-3.5 h-3.5 text-amber-400" />
                 <h5 className="text-xs font-black uppercase tracking-wider text-root-accent">
-                  Infrastruktur Militer & Pangkalan (5 Fasilitas)
+                  {t("detail_negara_ai.building.pembangunanSipilMiliter.militaryInfraBases", { count: filteredMilitaryInfra.length })}
                 </h5>
               </div>
 
@@ -850,8 +853,8 @@ function PembangunanSipilMiliterSectionView({
                     >
                       {pendingCount > 0 && completionDate && (
                         <div className="absolute -top-3 left-2 z-10 bg-root-canvas text-amber-300 text-[9px] font-bold px-2 py-0.5 border border-amber-400/40 rounded whitespace-nowrap">
-                          Dalam pembangunan · selesai {formatCompletionDate(completionDate)}
-                          {remainingDays > 0 ? ` · ${remainingDays} hari` : ""}
+                          {t("detail_negara_ai.building.pembangunanSipilMiliter.underConstruction", { date: formatCompletionDate(completionDate) })}
+                          {remainingDays > 0 ? t("detail_negara_ai.building.pembangunanSipilMiliter.underConstructionDays", { days: remainingDays }) : ""}
                         </div>
                       )}
                       <div className="flex items-start justify-between gap-1 mb-1">
@@ -873,12 +876,12 @@ function PembangunanSipilMiliterSectionView({
                             {formatNumber(count)}
                           </span>
                           <span className="text-[9px] font-bold text-root-subtle uppercase">
-                            Pangkalan
+                            {t("detail_negara_ai.building.pembangunanSipilMiliter.basesSuffix")}
                           </span>
                         </div>
                         {pendingCount > 0 && (
                           <p className="text-[9px] font-bold text-amber-300 mt-1">
-                            +{formatNumber(pendingCount)} dalam pembangunan
+                            {t("detail_negara_ai.building.pembangunanSipilMiliter.inConstructionCount", { count: formatNumber(pendingCount) })}
                           </p>
                         )}
                         <p className="text-[8px] font-semibold text-root-subtle mt-0.5 leading-tight truncate">

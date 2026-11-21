@@ -230,7 +230,8 @@
     "navy": "Angkatan Laut",
     "airForce": "Angkatan Udara",
     "totalUnitsToSend": "Total unit yang akan dikirim",
-    "processing": "Memproses..."
+    "processing": "Memproses...",
+    "resetAll": "Reset Semua"
   },
   "military": {
     "attackInProgressTitle": "Serangan Masih Berlangsung",
@@ -262,7 +263,9 @@
     "targetCity": "Kota yang Diserang",
     "noCityData": "Tidak ada data kota untuk negara ini",
     "paymentChanceNote": "Peluang meningkat seiring besarnya pembayaran. Minimum efektif: 20.000 NEO untuk hasil yang berarti.",
-    "suggest": "Sarankan"
+    "suggest": "Sarankan",
+    "requestAttackPromptPrefix": "Minta",
+    "requestAttackPromptSuffix": "melancarkan serangan terhadap sasaran pilihan Anda. Tetapkan jumlah yang bersedia Anda bayar untuk permintaan tersebut."
   },
   "building": {
     "tabs": {
@@ -279,6 +282,370 @@
       "militaryFacilities": "Fasilitas & Militer",
       "foodProduction": "Produksi Pangan",
       "housing": "Hunian"
+    },
+    "hargaBarang": {
+      "title": "Harga Barang Pokok & Keterjangkauan Rakyat",
+      "desc": "Pemantauan indeks harga kebutuhan dasar masyarakat di pasar domestik",
+      "foodSubsidyActive": "Subsidi Pangan Aktif (+5 Poin)",
+      "average": "Rata-rata:",
+      "avgMarketPrice": "Rata-rata Harga Pasar",
+      "basedOnCommodities": "Berdasarkan {count} komoditas pangan pokok",
+      "affordabilityStatus": "Status Keterjangkauan",
+      "consumerPurchasingPower": "Daya beli masyarakat konsumen",
+      "priceSatisfactionIndex": "Indeks Kepuasan Harga",
+      "statusVeryAffordable": "Sangat Terjangkau",
+      "statusModerate": "Moderat / Cukup",
+      "statusHighInflation": "Inflasi Tinggi",
+      "statusCheap": "Murah",
+      "statusFair": "Wajar",
+      "statusExpensive": "Tinggi",
+      "statusLabel": "Status:",
+      "commodities": {
+        "harga_beras": "Beras",
+        "harga_daging_sapi": "Daging Sapi",
+        "harga_ayam": "Daging Ayam",
+        "harga_minyak_goreng": "Minyak Goreng",
+        "harga_gula": "Gula Pasir",
+        "harga_telur": "Telur Ayam",
+        "harga_listrik": "Tarif Listrik",
+        "harga_air": "Tarif Air Bersih"
+      }
+    },
+    "subsidi": {
+      "title": "Kebijakan Subsidi Pemerintah",
+      "desc": "Bantalan sosial, intervensi harga bahan pokok, energi, dan bantuan masyarakat",
+      "totalBudgetBurden": "Total Beban Anggaran Nasional:",
+      "activePrograms": "Program Aktif",
+      "open": "Terbuka",
+      "subsidiesActive": "{count} program subsidi aktif melindungi daya beli",
+      "dailyBudgetCost": "Beban Kas Harian",
+      "dailyBudgetExpense": "Pengeluaran kas Anggaran Nasional per hari",
+      "publicSatisfactionBonus": "Bonus Kepuasan Rakyat",
+      "positiveImpact": "Dampak positif terhadap persetujuan publik",
+      "searchPlaceholder": "Cari program subsidi...",
+      "all": "Semua",
+      "active": "Aktif",
+      "inactive": "Nonaktif",
+      "costAllocation": "Alokasi Biaya:",
+      "perDay": "NEO/hari",
+      "points": "Poin"
+    },
+    "sistemEkonomi": {
+      "title": "Sistem Ekonomi & Spektrum Kebijakan",
+      "desc": "Keseimbangan intervensi negara terhadap pasar bebas dan kebijakan struktural",
+      "spectrumPosition": "Posisi Spektrum:",
+      "categoryCentralized": "Terpusat",
+      "categoryFreeMarket": "Pasar Bebas",
+      "categoryMixed": "Campuran",
+      "labelCommand": "Komando",
+      "labelMixed": "Campuran",
+      "labelFreeMarket": "Pasar Bebas",
+      "economicGrowth": "Pertumbuhan Ekonomi",
+      "inflation": "Inflasi",
+      "workerSatisfaction": "Kepuasan Buruh",
+      "investorSatisfaction": "Kepuasan Investor",
+      "structuralPoliciesTitle": "Kebijakan Struktural Perekonomian (7 Kebijakan)",
+      "nationalizationTitle": "Tingkat Penguasaan & Nasionalisasi Sektor Strategis",
+      "stateShare": "Negara: {percent}%"
+    },
+    "pajak": {
+      "title": "Struktur Kebijakan Perpajakan Fiskal",
+      "desc": "Tarif penerimaan kas Anggaran Nasional dari 5 instrumen perpajakan domestik",
+      "totalRevenue": "Total Penerimaan:",
+      "perDaySuffix": "NEO / hari",
+      "avgTaxRate": "Rata-rata Tarif Pajak",
+      "fiscalBurden5Sectors": "Beban fiskal gabungan 5 sektor",
+      "estDailyCash": "Estimasi Kas Harian",
+      "nationalBudgetIncome": "Pemasukan kas Anggaran Nasional",
+      "taxSatisfactionIndex": "Indeks Kepuasan Pajak",
+      "rateRangeLimit": "Batas rentang tarif: {min}% - {max}% (Standar {base}%)",
+      "estimatedRevenue": "Estimasi Pendapatan:",
+      "taxes": {
+        "income_tax": "Pajak Penghasilan (PPh)",
+        "corporate_tax": "Pajak Korporasi / Perusahaan",
+        "vat": "Pajak Pertambahan Nilai (PPN)",
+        "cigarette_tax": "Cukai Tembakau & Barang Mewah",
+        "environment_tax": "Pajak Karbon & Lingkungan"
+      }
+    },
+    "doktrin": {
+      "badge": "Doktrin & Keterbukaan Negara",
+      "regimes": {
+        "autarki": {
+          "label": "Negara Terisolasi Total (Autarki)",
+          "desc": "Negara memutus hubungan dengan dunia luar, mengontrol ketat pers, agama, demonstrasi, internet, dan perdagangan."
+        },
+        "proteksionis": {
+          "label": "Negara Proteksionis & Terbatas",
+          "desc": "Pemerintah membatasi arus imigrasi dan menyaring media publik serta memperketat izin demonstrasi dan organisasi."
+        },
+        "moderat": {
+          "label": "Negara Moderat & Campuran",
+          "desc": "Menyeimbangkan antara kebebasan sipil, ketertiban hukum publik, dan keterbukaan ekonomi hubungan internasional."
+        },
+        "terbuka": {
+          "label": "Negara Terbuka & Demokratis",
+          "desc": "Kebebasan pers & beragama terjamin, perbatasan terbuka, internet bebas, dan transparansi pemerintahan tinggi."
+        },
+        "globalis": {
+          "label": "Negara Globalis & Terbuka Penuh",
+          "desc": "Jaminan penuh kebebasan pers, perbatasan bebas, internet terbuka mutlak, dan integrasi pasar global menyeluruh."
+        }
+      },
+      "indexTitle": "Indeks Keterbukaan",
+      "categories": {
+        "all": "Semua Indikator (9)",
+        "civil": "Kebebasan Sipil & HAM (4)",
+        "media": "Media & Informasi (2)",
+        "global": "Perbatasan & Geopolitik (3)"
+      },
+      "categoryTags": {
+        "civil": "Sipil & HAM",
+        "media": "Media & Digital",
+        "global": "Geopolitik & Perbatasan"
+      },
+      "regulationStatus": "Status Regulasi",
+      "statusOpenFree": "Terbuka & Bebas",
+      "statusModerate": "Moderat Berimbang",
+      "statusRestricted": "Dibatasi Regulasi",
+      "indicators": {
+        "speechScore": {
+          "name": "Kebebasan Berpendapat & Berekspresi",
+          "desc": "Tingkat perlindungan hukum terhadap kritik, kebebasan berbicara, dan beropini publik",
+          "lowLabel": "Sensor Keras (Otoriter)",
+          "highLabel": "Bebas Penuh (Demokratis)"
+        },
+        "religionScore": {
+          "name": "Toleransi & Kebebasan Beragama",
+          "desc": "Jaminan kebebasan beribadah, kesetaraan hak penganut agama dan keyakinan minoritas",
+          "lowLabel": "Agama Tunggal Wajib",
+          "highLabel": "Pluralisme & Sekuler Terbuka"
+        },
+        "demoScore": {
+          "name": "Hak Berdemonstrasi & Berserikat",
+          "desc": "Izin melakukan unjuk rasa damai, pembentukan serikat pekerja dan organisasi masyarakat",
+          "lowLabel": "Dilarang Total",
+          "highLabel": "Dilindungi Konstitusi"
+        },
+        "transparencyScore": {
+          "name": "Transparansi & Akuntabilitas Publik",
+          "desc": "Keterbukaan anggaran belanja negara, dokumen kebijakan publik, dan audit kekayaan pejabat",
+          "lowLabel": "Rahasia Negara Mutlak",
+          "highLabel": "Open Government Data"
+        },
+        "mediaScore": {
+          "name": "Kebebasan Pers & Penyiaran",
+          "desc": "Kemerdekaan jurnalis, stasiun televisi, dan media cetak independen tanpa sensor sepihak",
+          "lowLabel": "Media Monopoli Negara",
+          "highLabel": "Pers Independen Bebas"
+        },
+        "internetScore": {
+          "name": "Keterbukaan Internet & Digital",
+          "desc": "Akses jaringan internet tanpa pemblokiran sewenang-wenang dan kebebasan platform digital",
+          "lowLabel": "Intranet Tertutup (Firewall)",
+          "highLabel": "Internet Netral & Terbuka"
+        },
+        "borderScore": {
+          "name": "Kebijakan Imigrasi & Perbatasan",
+          "desc": "Kemudahan masuknya warga asing, turis mancanegara, dan penerimaan visa kunjungan",
+          "lowLabel": "Perbatasan Tertutup Ketat",
+          "highLabel": "Bebas Visa Global"
+        },
+        "tradeScore": {
+          "name": "Keterbukaan Perdagangan Luar Negeri",
+          "desc": "Tarif impor rendah, kemudahan ekspor produk, serta iklim investasi perusahaan global",
+          "lowLabel": "Proteksionisme Autarki",
+          "highLabel": "Pasar Bebas Multilateral"
+        },
+        "diplomacyScore": {
+          "name": "Diplomasi & Kerja Sama Internasional",
+          "desc": "Partisipasi aktif dalam organisasi internasional, pakta perdamaian, dan traktat global",
+          "lowLabel": "Isolasionis Mandiri",
+          "highLabel": "Integrasi Global Aktif"
+        }
+      }
+    },
+    "hunian": {
+      "badge": "Sektor Hunian & Infrastruktur Permukiman",
+      "title": "Hunian Permukiman Nasional",
+      "desc": "Monitoring ketersediaan unit rumah subsidi, gedung apartemen vertikal, serta kawasan mansion dalam memenuhi kebutuhan papan seluruh penduduk negara.",
+      "housingCapacity": "Kapasitas Daya Tampung",
+      "people": "Jiwa",
+      "unit": "Unit",
+      "perUnit": "Jiwa/Unit",
+      "surplus": "Surplus +{count} Jiwa",
+      "deficit": "Defisit {count} Jiwa",
+      "searchPlaceholder": "Cari tipe hunian...",
+      "all": "Semua Hunian",
+      "portion": "{percent}% Porsi",
+      "buildingCount": "Jumlah Bangunan",
+      "capacityPerUnit": "Daya Tampung / Unit",
+      "totalCapacity": "Total Kapasitas",
+      "availabilityStatus": "Status Ketersediaan",
+      "statusActive": "Tersedia Aktif",
+      "statusUnbuilt": "Belum Dibangun",
+      "items": {
+        "rumah_subsidi": {
+          "label": "Perumahan Subsidi",
+          "categoryLabel": "Hunian Terjangkau",
+          "desc": "Rumah tapak bersubsidi untuk masyarakat berpenghasilan rendah",
+          "detailDesc": "Disediakan pemerintah dengan insentif harga dan subsidi bunga agar seluruh keluarga memiliki hunian layak huni."
+        },
+        "apartemen": {
+          "label": "Apartemen Vertikal",
+          "categoryLabel": "Hunian Vertikal",
+          "desc": "Kompleks hunian vertikal terintegrasi ruang kota padat",
+          "detailDesc": "Pembangunan menara apartemen bertingkat untuk memaksimalkan efisiensi lahan perkotaan dan menampung populasi besar."
+        },
+        "mansion": {
+          "label": "Mansion & Residensial Mewah",
+          "categoryLabel": "Hunian Premium",
+          "desc": "Kawasan pemukiman eksklusif kalangan menengah ke atas",
+          "detailDesc": "Rumah bertapak luas dengan kelengkapan taman privat dan fasilitas eksklusif untuk segmen ekonomi atas."
+        }
+      }
+    },
+    "kelistrikan": {
+      "title": "Statistik Grid Kelistrikan Nasional",
+      "desc": "Keseimbangan kapasitas pembangkitan daya terhadap beban konsumsi sektor nasional",
+      "production": "Produksi:",
+      "load": "Beban:",
+      "totalSupply": "Total Pasokan Pembangkit",
+      "activeUnits": "{count} Unit Aktif",
+      "operatingAtCapacity": "Pembangkit beroperasi sesuai kapasitas terpasang",
+      "totalNationalLoad": "Total Beban Konsumsi",
+      "servedPopulation": "Populasi yang terlayani: ~{population} Juta Jiwa",
+      "electricityBalance": "Neraca Daya Listrik",
+      "surplusCapacity": "Surplus Daya Aman",
+      "deficitRisk": "Defisit / Risiko Pemadaman",
+      "surplusNote": "Cadangan daya listrik mencukupi kebutuhan",
+      "deficitNote": "Kebutuhan melebihi kapasitas pasokan pembangkit",
+      "electricitySatisfaction": "Kepuasan Kelistrikan",
+      "publicAccessLevel": "Tingkat keandalan daya dan akses publik",
+      "consumptionBreakdown": "Rincian Beban Konsumsi Sektor Nasional",
+      "sectorHousing": "Sektor Hunian / Permukiman",
+      "sectorHousingDesc": "Rumah subsidi, apartemen, mansion",
+      "sectorPublic": "Tempat Umum & Layanan Publik",
+      "sectorPublicDesc": "Sekolah, rumah sakit, kantor, hiburan",
+      "sectorProduction": "Pabrik & Sentra Produksi",
+      "sectorProductionDesc": "Pabrik manufaktur, tambang, pengolahan",
+      "sectorMilitary": "Infrastruktur & Pangkalan Militer",
+      "sectorMilitaryDesc": "Barak, hangar, pangkalan laut & udara",
+      "detailLoadAnalysis": "Detail Analisis Beban Konsumsi",
+      "activePowerPlants": "Pembangkit Listrik Aktif ({count} Fasilitas)",
+      "unitProductionLabel": "{prod} MW / unit",
+      "unitsActiveCount": "{count} Unit Aktif",
+      "fuelShortageWarning": "Kekurangan bahan bakar"
+    },
+    "spektrumKepuasan": {
+      "title": "Spektrum Kepuasan Rakyat",
+      "desc": "Indikator persetujuan umum publik dan kepuasan di seluruh sektor vital nasional",
+      "socialStatus": "Status Sosial:",
+      "statusVeryStable": "Sangat Stabil",
+      "statusStable": "Cukup Stabil",
+      "statusCritical": "Kritis / Gejolak",
+      "publicApproval": "Persetujuan Umum Rakyat",
+      "publicApprovalDesc": "Agregat sentimen publik terhadap kinerja kepemimpinan dan pelayanan negara",
+      "stable": "Stabil",
+      "highestSector": "Sektor Tertinggi",
+      "lowestSector": "Perlu Ditingkatkan",
+      "mainSectors": "Sektor Utama",
+      "spectrumLegend": "Spektrum Kepuasan:",
+      "grades": {
+        "veryPoor": "Sangat Buruk",
+        "poor": "Buruk",
+        "neutral": "Netral",
+        "good": "Baik",
+        "veryGood": "Sangat Baik"
+      },
+      "sectors": {
+        "pajak": {
+          "name": "PAJAK",
+          "desc": "Keterjangkauan beban tarif fiskal bagi masyarakat dan pelaku usaha"
+        },
+        "harga": {
+          "name": "HARGA BARANG POKOK",
+          "desc": "Stabilitas dan keterjangkauan 8 bahan pangan pokok kebutuhan harian"
+        },
+        "pangan": {
+          "name": "PRODUKSI PANGAN",
+          "desc": "Kecukupan hasil panen pertanian, peternakan, perikanan dan olahan"
+        },
+        "listrik": {
+          "name": "PRODUKSI LISTRIK",
+          "desc": "Keandalan kapasitas daya pembangkit terhadap beban puncak konsumsi"
+        },
+        "hunian": {
+          "name": "HUNIAN PERMUKIMAN",
+          "desc": "Ketersediaan rumah subsidi, apartemen, dan perumahan bagi seluruh warga"
+        },
+        "layananPublik": {
+          "name": "LAYANAN PUBLIK & TEMPAT UMUM",
+          "desc": "Akses fasilitas pendidikan, kesehatan, fasilitas hukum, dan rekreasi publik"
+        },
+        "keterbukaan": {
+          "name": "DOKTRIN & KETERBUKAAN",
+          "desc": "Kebebasan berekspresi, pers, toleransi beragama dan transparansi pemerintahan"
+        },
+        "sistem_ekonomi": {
+          "name": "KEBIJAKAN & SISTEM EKONOMI",
+          "desc": "Keseimbangan regulasi pasar bebas, proteksi tenaga kerja, dan investasi"
+        },
+        "subsidi": {
+          "name": "ALOKASI & KEBIJAKAN SUBSIDI",
+          "desc": "Cakupan perlindungan sosial, bantuan pangan, tarif energi, dan jaring pengaman"
+        }
+      }
+    },
+    "produksiPangan": {
+      "badge": "Sektor Pangan Nasional Terpadu",
+      "title": "Kapasitas Produksi Pangan",
+      "desc": "Monitoring hasil komoditas agrikultur, sentra peternakan, perikanan tangkap dan budidaya, serta industri pengolahan bahan pangan nasional.",
+      "totalCapacity": "Total Kapasitas Terpasang",
+      "unitFacility": "Unit / Fasilitas",
+      "facilitiesActive": "Fasilitas aktif beroperasi",
+      "allSubsectors": "Semua Sub-Sektor ({count})",
+      "searchPlaceholder": "Cari komoditas pangan...",
+      "activeFacilitiesCount": "{count} Fasilitas Aktif",
+      "totalProductionUnits": "Total {count} unit fasilitas produksi pangan",
+      "statusActive": "Aktif",
+      "statusUnbuilt": "Belum Dibangun",
+      "unit": "unit",
+      "subcategories": {
+        "peternakan": {
+          "title": "Peternakan",
+          "desc": "Sentra pembiakan ternak ruminansia dan unggas nasional"
+        },
+        "agrikultur": {
+          "title": "Agrikultur",
+          "desc": "Lahan komoditas pangan pokok, palawija, dan perkebunan"
+        },
+        "perikanan": {
+          "title": "Perikanan",
+          "desc": "Sentra budidaya tambak perikanan laut & air tawar"
+        },
+        "olahan_pangan": {
+          "title": "Olahan Pangan",
+          "desc": "Pabrik pengolahan bahan mentah pangan menjadi bahan pokok siap konsumsi"
+        }
+      }
+    },
+    "pembangunanSipilMiliter": {
+      "tabCivil": "Fasilitas Sipil",
+      "tabMilitary": "Militer & Infrastruktur",
+      "searchPlaceholder": "Cari item pembangunan...",
+      "civilianCategories": "Kategori Sipil",
+      "activeFleetUnits": "Unit Armada Aktif ({count} Jenis Unit)",
+      "militaryInfraBases": "Infrastruktur Militer & Pangkalan ({count} Fasilitas)",
+      "basesSuffix": "Pangkalan",
+      "underConstruction": "Dalam pembangunan · selesai {date}",
+      "underConstructionDays": " · {days} hari",
+      "inProduction": "Dalam pembuatan · selesai {date}",
+      "inProductionCount": "+{count} dalam pembuatan",
+      "inConstructionCount": "+{count} dalam pembangunan",
+      "infantryCapacity": "Pasukan / Kapasitas",
+      "infantryUnitLabel": "Pasukan / Kapasitas",
+      "unit": "unit"
     }
   }
 }

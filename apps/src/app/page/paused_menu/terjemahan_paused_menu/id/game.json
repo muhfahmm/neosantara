@@ -15,7 +15,20 @@
   "notification": {
     "gameSaved": "Permainan berhasil disimpan.",
     "gameLoaded": "Permainan berhasil dimuat.",
-    "autosave": "Penyimpanan otomatis selesai."
+    "autosave": "Penyimpanan otomatis selesai.",
+    "exportFailedTitle": "Gagal Menyelesaikan Ekspor",
+    "exportFailedStock": "Stok {product} Anda tidak mencukupi ({stock} unit dari {required} unit yang dibutuhkan).",
+    "importFailedTitle": "Gagal Menyelesaikan Impor",
+    "importFailedBudget": "Anggaran negara tidak mencukupi untuk melakukan impor ini. ({available} NEO tersedia dari {required} NEO).",
+    "sendTroopsFailedTitle": "Gagal Mengirim Pasukan",
+    "sendTroopsFailedBudget": "Anggaran negara tidak mencukupi untuk mengirim pasukan pengamanan (Tersedia: {available} NEO, Dibutuhkan: {required} NEO).",
+    "policeOperationFailedTitle": "Operasi Kepolisian Gagal",
+    "sendAidFailedTitle": "Gagal Menyalurkan Bantuan",
+    "actionBudgetInsufficient": "Anggaran negara tidak mencukupi untuk {action} ({available} NEO dari {required} NEO).",
+    "actionPolice": "mendanai operasi kepolisian",
+    "actionAid": "menyalurkan bantuan",
+    "saveGameFailed": "Gagal menyimpan permainan.",
+    "errorOccurred": "Terjadi kesalahan: {error}"
   },
   "requireEmbassy": {
     "title": "Kedutaan Besar Diperlukan",
@@ -110,5 +123,16 @@
   },
   "selectCountry": {
     "startSimulation": "MULAI SIMULASI"
-  }
+  },
+  "attackerForces": {
+    "movementInfo": "Informasi Pergerakan Militer",
+    "unitsBrought": "Jumlah unit yang dibawa dalam serangan ini",
+    "notAvailable": "Data jumlah pasukan penyerang belum tersedia.",
+    "noteTitle": "Catatan:",
+    "unitsAdjust": "Jumlah unit menyesuaikan persentase pengerahan yang Anda pilih.",
+    "deploymentDesc": "{force} mengerahkan {percent}% dari armadanya untuk operasi ini. Persentase pengerahan dipilih secara acak antara 50% dan 75%.",
+    "pbbCoalition": "Pasukan Gabungan PBB",
+    "attackingCountry": "Negara penyerang"
+  },
+  "embargoBanner": "Pembatasan berakhir ketika resolusi embargo tidak lagi aktif. Embargo dan sanksi yang berlaku saat ini akan hilang setelah halaman dimuat ulang."
 }

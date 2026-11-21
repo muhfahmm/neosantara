@@ -133,5 +133,6 @@
     "currentTreasury": "Aktuelle Staatskasse: {money} NEO",
     "btnTakeLoan": "Kredit aufnehmen",
     "btnClose": "Schließen"
-  }
+  },
+  "noSpecificBonus": "Kein spezifischer Bonus"
 }

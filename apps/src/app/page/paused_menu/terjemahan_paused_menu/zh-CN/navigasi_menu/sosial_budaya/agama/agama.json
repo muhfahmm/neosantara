@@ -51,5 +51,6 @@
     "currentTreasury": "当前国家财政国库余额: {money} NEO",
     "btnTakeLoan": "申请国家贷款",
     "btnClose": "关闭"
-  }
+  },
+  "noSpecificBonus": "无特定加成"
 }

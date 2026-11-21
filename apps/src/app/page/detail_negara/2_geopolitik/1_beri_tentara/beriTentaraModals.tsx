@@ -481,7 +481,7 @@ export default function BeriTentaraModal({
               onClick={handleReset}
               className="ml-auto shrink-0 text-xs font-bold text-rose-400 hover:text-rose-300 underline uppercase tracking-wider cursor-pointer"
             >
-              Reset Semua
+              {t("detail_negara_ai.geopolitics.resetAll" as any) || "Reset Semua"}
             </button>
           )}
         </div>

@@ -26,7 +26,8 @@
     "mapCapitals": "수도",
     "languageTitle": "언어 설정",
     "languageSubtitle": "LANGUAGE SELECTOR",
-    "languageDesc": "인터페이스 및 게임 텍스트 언어를 선택하세요."
+    "languageDesc": "인터페이스 및 게임 텍스트 언어를 선택하세요.",
+    "themeStorageError": "이 기기에서 테마 설정을 읽거나 저장할 수 없습니다."
   },
   "saveGameModal": {
     "title": "게임 저장",
@@ -38,7 +39,12 @@
     "saveNamePlaceholder": "저장 파일 이름 입력...",
     "saveButton": "저장",
     "savingButton": "저장 중...",
-    "overwriteWarning": "이 저장 파일이 덮어쓰기됩니다. 계속하시겠습니까?"
+    "overwriteWarning": "이 저장 파일이 덮어쓰기됩니다. 계속하시겠습니까?",
+    "overwriteTitle": "“{name}” 슬롯을 덮어쓰시겠습니까?",
+    "overwriteDesc": "현재 게임 진행 상황이 이 슬롯에 덮어씌워집니다.",
+    "overwriteCancel": "취소",
+    "overwriteConfirm": "예, 덮어쓰기",
+    "overwriting": "저장 중..."
   },
   "loadGameModal": {
     "title": "게임 불러오기",
@@ -73,6 +79,59 @@
     "searchPlaceholder": "키 또는 기능 검색...",
     "searchAria": "키보드 단축키 검색",
     "clearSearchAria": "검색 지우기",
-    "categoryAll": "전체"
+    "categoryAll": "전체",
+    "emptyTitle": "단축키를 찾을 수 없습니다",
+    "emptyDesc": "검색어나 카테고리 필터를 변경해 보세요.",
+    "categories": {
+      "all": "전체",
+      "mainMenu": "메인 메뉴",
+      "subMenu": "서브 메뉴 (숫자)",
+      "quickMenu": "빠른 메뉴",
+      "timeController": "시간 조절",
+      "panelNavigation": "패널 이동",
+      "zoomMap": "줌 및 지도"
+    },
+    "shortcuts": {
+      "KEY_A": "⚓ 함대 및 군사 사령부",
+      "KEY_B": "🏦 국가 대출 및 부채",
+      "KEY_C": "🏛️ 국무회의 및 내각",
+      "KEY_D": "🤝 양자 대사관",
+      "KEY_E": "👛 국가 예산 수입 및 지출",
+      "KEY_F": "🎯 본국으로 포커스 및 줌 초기화",
+      "KEY_G": "🌐 글로벌 무역 시장",
+      "KEY_H": "🏠 주택 및 주거 단지",
+      "KEY_I": "📬 알림 수신함",
+      "KEY_J": "👁️ 정보부 및 첩보 작전",
+      "KEY_K": "😊 국민 만족도 통계",
+      "KEY_L": "⚡ 국가 전력망",
+      "KEY_M": "🗺️ 메인 지도 (모든 창 닫기)",
+      "KEY_N": "🌍 유엔 총회",
+      "KEY_O": "👥 인구 및 인구 통계 요약",
+      "KEY_P": "🏭 공장 건설 및 생산",
+      "KEY_Q": "💡 국가 이념 및 헌법",
+      "KEY_R": "🔬 핵심 연구 및 개발",
+      "KEY_S": "💸 보조금 배분 정책",
+      "KEY_T": "💰 조세 및 세율 정책",
+      "KEY_U": "🏛️ 공공장소 및 편의시설",
+      "KEY_V": "🕌 종교 생활 및 포용성",
+      "KEY_W": "⚔️ 군사 작전 / 국가 공격",
+      "KEY_X": "🚀 ICBM 및 핵무기 발사",
+      "KEY_Y": "🌾 식량 산업 수지 및 비축량",
+      "KEY_Z": "📊 국가 및 세계 GDP",
+      "KEY_1": "📈 국민 만족도 향상",
+      "KEY_2": "🏷️ 생필품 물가지수",
+      "KEY_3": "⚖️ 경제 체제 및 정책",
+      "KEY_4": "🚩 점령 및 합병된 영토",
+      "KEY_5": "🏛️ 유엔 전문기구",
+      "KEY_6": "🌐 세계 지역 기구",
+      "KEY_7": "🤝 국제 외교 관계",
+      "KEY_8": "📜 국가 개방 독트린",
+      "KEY_9": "💣 전략 사보타주 (정보부)",
+      "TIME_TOGGLE_PAUSE": "⏯️ 시간 재생 / 일시정지",
+      "TIME_SPEED_SLOW": "⏪ 시간 감속",
+      "TIME_SPEED_FAST": "⏩ 시간 가속",
+      "NAV_CLOSE": "❌ 활성 패널 닫기",
+      "OPEN_MISSION": "🎯 대통령 임무 열기"
+    }
   }
 }

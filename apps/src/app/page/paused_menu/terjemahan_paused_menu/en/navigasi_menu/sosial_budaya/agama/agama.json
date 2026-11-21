@@ -51,5 +51,6 @@
     "currentTreasury": "Current national treasury: {money} NEO",
     "btnTakeLoan": "Take a Loan",
     "btnClose": "Close"
-  }
+  },
+  "noSpecificBonus": "No specific bonus"
 }

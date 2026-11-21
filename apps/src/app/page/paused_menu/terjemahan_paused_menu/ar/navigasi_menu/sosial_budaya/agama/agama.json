@@ -51,5 +51,6 @@
     "currentTreasury": "خزينة الدولة الحالية: {money} NEO",
     "btnTakeLoan": "طلب قرض وطني",
     "btnClose": "إغلاق"
-  }
+  },
+  "noSpecificBonus": "لا توجد مكافأة محددة"
 }

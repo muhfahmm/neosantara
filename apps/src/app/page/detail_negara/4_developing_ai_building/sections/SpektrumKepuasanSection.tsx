@@ -22,6 +22,7 @@ import {
   calculateKepuasan,
   calculateSatisfactionIndicatorScores,
 } from "@/app/logic/kepuasanCalculator";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface SpektrumKepuasanSectionProps {
   countryDetail: Record<string, any> | null;
@@ -29,17 +30,17 @@ interface SpektrumKepuasanSectionProps {
   onNavigateTab?: (tabId: string) => void;
 }
 
-// 5 Kategori Spektrum Warna Persis Gambar Referensi 2:
-// 0 - 25:   Sangat Buruk (Merah Terang / Rose Red)
-// 26 - 40:  Buruk (Merah Tua Keunguan / Wine Red)
-// 41 - 65:  Netral (Kuning / Amber / Gold)
-// 66 - 80:  Baik (Hijau Medium / Green)
-// 81 - 100: Sangat Baik (Hijau Neon Terang / Mint Cyan-Green)
-export function getSatisfactionGrade(score: number) {
+// 5 Kategori Spektrum Warna:
+// 0 - 25:   Sangat Buruk
+// 26 - 40:  Buruk
+// 41 - 65:  Netral
+// 66 - 80:  Baik
+// 81 - 100: Sangat Baik
+export function getSatisfactionGrade(score: number, t?: (key: any) => string) {
   const clamped = Math.min(100, Math.max(0, Math.round(score)));
   if (clamped <= 25) {
     return {
-      label: "Sangat Buruk",
+      label: t ? t("detail_negara_ai.building.spektrumKepuasan.grades.veryPoor") : "Sangat Buruk",
       textColor: "text-[#EF4444]", // Merah terang
       barColor: "bg-[#EF4444]",
       glowColor: "shadow-[0_0_8px_rgba(239,68,68,0.5)]",
@@ -48,7 +49,7 @@ export function getSatisfactionGrade(score: number) {
   }
   if (clamped <= 40) {
     return {
-      label: "Buruk",
+      label: t ? t("detail_negara_ai.building.spektrumKepuasan.grades.poor") : "Buruk",
       textColor: "text-[#F43F5E]", // Merah raspberry / rose
       barColor: "bg-[#E11D48]",
       glowColor: "shadow-[0_0_8px_rgba(225,29,72,0.5)]",
@@ -57,7 +58,7 @@ export function getSatisfactionGrade(score: number) {
   }
   if (clamped <= 65) {
     return {
-      label: "Netral",
+      label: t ? t("detail_negara_ai.building.spektrumKepuasan.grades.neutral") : "Netral",
       textColor: "text-[#EAB308]", // Kuning emas
       barColor: "bg-[#EAB308]",
       glowColor: "shadow-[0_0_8px_rgba(234,179,8,0.5)]",
@@ -66,7 +67,7 @@ export function getSatisfactionGrade(score: number) {
   }
   if (clamped <= 80) {
     return {
-      label: "Baik",
+      label: t ? t("detail_negara_ai.building.spektrumKepuasan.grades.good") : "Baik",
       textColor: "text-[#10B981]", // Hijau emerald
       barColor: "bg-[#10B981]",
       glowColor: "shadow-[0_0_8px_rgba(16,185,129,0.5)]",
@@ -74,7 +75,7 @@ export function getSatisfactionGrade(score: number) {
     };
   }
   return {
-    label: "Sangat Baik",
+    label: t ? t("detail_negara_ai.building.spektrumKepuasan.grades.veryGood") : "Sangat Baik",
     textColor: "text-root-accent", // Hijau neon / mint
     barColor: "bg-root-accent",
     glowColor: "shadow-[0_0_8px_rgba(0,255,170,0.5)]",
@@ -87,6 +88,8 @@ export default function SpektrumKepuasanSection({
   metadata = {},
   onNavigateTab,
 }: SpektrumKepuasanSectionProps) {
+  const { t } = useLanguage();
+
   // Hitung skor kepuasan secara komprehensif
   const indicatorScores = useMemo(
     () => calculateSatisfactionIndicatorScores(countryDetail, metadata),
@@ -101,77 +104,77 @@ export default function SpektrumKepuasanSection({
   const sectors = useMemo(() => [
     {
       id: "pajak",
-      name: "PAJAK",
+      name: t("detail_negara_ai.building.spektrumKepuasan.sectors.pajak.name"),
       score: indicatorScores.pajak,
       icon: Landmark,
       tabTarget: "pajak",
-      desc: "Keterjangkauan beban tarif fiskal bagi masyarakat dan pelaku usaha",
+      desc: t("detail_negara_ai.building.spektrumKepuasan.sectors.pajak.desc"),
     },
     {
       id: "harga",
-      name: "HARGA BARANG POKOK",
+      name: t("detail_negara_ai.building.spektrumKepuasan.sectors.harga.name"),
       score: indicatorScores.harga,
       icon: Coins,
       tabTarget: "harga",
-      desc: "Stabilitas dan keterjangkauan 8 bahan pangan pokok kebutuhan harian",
+      desc: t("detail_negara_ai.building.spektrumKepuasan.sectors.harga.desc"),
     },
     {
       id: "pangan",
-      name: "PRODUKSI PANGAN",
+      name: t("detail_negara_ai.building.spektrumKepuasan.sectors.pangan.name"),
       score: indicatorScores.pangan,
       icon: Apple,
       tabTarget: "produksi_pangan",
-      desc: "Kecukupan hasil panen pertanian, peternakan, perikanan dan olahan",
+      desc: t("detail_negara_ai.building.spektrumKepuasan.sectors.pangan.desc"),
     },
     {
       id: "listrik",
-      name: "PRODUKSI LISTRIK",
+      name: t("detail_negara_ai.building.spektrumKepuasan.sectors.listrik.name"),
       score: indicatorScores.listrik,
       icon: Plug,
       tabTarget: "pembangkit_listrik_tenaga_nuklir",
-      desc: "Keandalan kapasitas daya pembangkit terhadap beban puncak konsumsi",
+      desc: t("detail_negara_ai.building.spektrumKepuasan.sectors.listrik.desc"),
     },
     {
       id: "hunian",
-      name: "HUNIAN PERMUKIMAN",
+      name: t("detail_negara_ai.building.spektrumKepuasan.sectors.hunian.name"),
       score: indicatorScores.hunian,
       icon: Home,
       tabTarget: "hunian",
-      desc: "Ketersediaan rumah subsidi, apartemen, dan perumahan bagi seluruh warga",
+      desc: t("detail_negara_ai.building.spektrumKepuasan.sectors.hunian.desc"),
     },
     {
       id: "layananPublik",
-      name: "LAYANAN PUBLIK & TEMPAT UMUM",
+      name: t("detail_negara_ai.building.spektrumKepuasan.sectors.layananPublik.name"),
       score: indicatorScores.layananPublik,
       icon: Landmark,
       tabTarget: "fasilitas_militer",
-      desc: "Akses fasilitas pendidikan, kesehatan, fasilitas hukum, dan rekreasi publik",
+      desc: t("detail_negara_ai.building.spektrumKepuasan.sectors.layananPublik.desc"),
     },
     {
       id: "keterbukaan",
-      name: "DOKTRIN & KETERBUKAAN",
+      name: t("detail_negara_ai.building.spektrumKepuasan.sectors.keterbukaan.name"),
       score: indicatorScores.keterbukaan,
       icon: Globe,
       tabTarget: "keterbukaan",
-      desc: "Kebebasan berekspresi, pers, toleransi beragama dan transparansi pemerintahan",
+      desc: t("detail_negara_ai.building.spektrumKepuasan.sectors.keterbukaan.desc"),
     },
     {
       id: "sistem_ekonomi",
-      name: "KEBIJAKAN & SISTEM EKONOMI",
+      name: t("detail_negara_ai.building.spektrumKepuasan.sectors.sistem_ekonomi.name"),
       score: indicatorScores.sistemEkonomi,
       icon: Scale,
       tabTarget: "sistem_ekonomi",
-      desc: "Keseimbangan regulasi pasar bebas, proteksi tenaga kerja, dan investasi",
+      desc: t("detail_negara_ai.building.spektrumKepuasan.sectors.sistem_ekonomi.desc"),
     },
     {
       id: "subsidi",
-      name: "ALOKASI & KEBIJAKAN SUBSIDI",
+      name: t("detail_negara_ai.building.spektrumKepuasan.sectors.subsidi.name"),
       score: indicatorScores.subsidi,
       icon: HandHelping,
       tabTarget: "subsidi",
-      desc: "Cakupan perlindungan sosial, bantuan pangan, tarif energi, dan jaring pengaman",
+      desc: t("detail_negara_ai.building.spektrumKepuasan.sectors.subsidi.desc"),
     },
-  ], [indicatorScores]);
+  ], [indicatorScores, t]);
 
   // Map alert AI aktif per indikator
   const alertMap = useMemo(() => {
@@ -212,10 +215,10 @@ export default function SpektrumKepuasanSection({
           </div>
           <div>
             <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-root-accent flex items-center gap-2">
-              Spektrum Kepuasan Rakyat
+              {t("detail_negara_ai.building.spektrumKepuasan.title")}
             </h4>
             <p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
-              Indikator persetujuan umum publik dan kepuasan di seluruh sektor vital nasional
+              {t("detail_negara_ai.building.spektrumKepuasan.desc")}
             </p>
           </div>
         </div>
@@ -224,15 +227,21 @@ export default function SpektrumKepuasanSection({
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 px-3 py-1.5 bg-root-surface border border-root-accent/30 rounded-xl">
             <TrendingUp className="w-3.5 h-3.5 text-root-accent" />
-            <span className="text-[10px] font-bold text-root-subtle uppercase">Status Sosial:</span>
+            <span className="text-[10px] font-bold text-root-subtle uppercase">
+              {t("detail_negara_ai.building.spektrumKepuasan.socialStatus")}
+            </span>
             <span className="text-[11px] font-black text-root-accent">
-              {generalSatisfaction >= 70 ? "Sangat Stabil" : generalSatisfaction >= 45 ? "Cukup Stabil" : "Kritis / Gejolak"}
+              {generalSatisfaction >= 70
+                ? t("detail_negara_ai.building.spektrumKepuasan.statusVeryStable")
+                : generalSatisfaction >= 45
+                ? t("detail_negara_ai.building.spektrumKepuasan.statusStable")
+                : t("detail_negara_ai.building.spektrumKepuasan.statusCritical")}
             </span>
           </div>
         </div>
       </div>
 
-      {/* KARTU UTAMA: PERSETUJUAN UMUM RAKYAT (PERSIS SEPERTI GAMBAR) */}
+      {/* KARTU UTAMA: PERSETUJUAN UMUM RAKYAT */}
       <div className="bg-root-canvas border border-root-accent/30 p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg shadow-root-accent/5">
         <div className="flex items-center gap-4 w-full sm:w-auto">
           <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-root-surface border-2 border-root-accent/40 flex items-center justify-center shrink-0 shadow-inner">
@@ -240,10 +249,10 @@ export default function SpektrumKepuasanSection({
           </div>
           <div>
             <h3 className="text-xs sm:text-sm font-black text-root-text uppercase tracking-wider mb-1">
-              Persetujuan Umum Rakyat
+              {t("detail_negara_ai.building.spektrumKepuasan.publicApproval")}
             </h3>
             <p className="text-[10px] sm:text-xs text-root-subtle">
-              Agregat sentimen publik terhadap kinerja kepemimpinan dan pelayanan negara
+              {t("detail_negara_ai.building.spektrumKepuasan.publicApprovalDesc")}
             </p>
           </div>
         </div>
@@ -254,7 +263,7 @@ export default function SpektrumKepuasanSection({
               {generalSatisfaction}%
             </p>
             <p className="text-[9px] text-root-accent font-black uppercase tracking-widest mt-1 flex items-center justify-end gap-1">
-              <TrendingUp className="w-3 h-3" /> Stabil
+              <TrendingUp className="w-3 h-3" /> {t("detail_negara_ai.building.spektrumKepuasan.stable")}
             </p>
           </div>
         </div>
@@ -265,7 +274,7 @@ export default function SpektrumKepuasanSection({
         <div className="bg-root-canvas border border-root-accent/20 p-3.5 rounded-2xl flex items-center justify-between">
           <div>
             <span className="text-[9px] font-black uppercase tracking-widest text-root-subtle block mb-0.5">
-              Sektor Tertinggi
+              {t("detail_negara_ai.building.spektrumKepuasan.highestSector")}
             </span>
             <span className="text-xs font-black text-emerald-400 uppercase">
               {highestSector.name}
@@ -279,7 +288,7 @@ export default function SpektrumKepuasanSection({
         <div className="bg-root-canvas border border-root-accent/20 p-3.5 rounded-2xl flex items-center justify-between">
           <div>
             <span className="text-[9px] font-black uppercase tracking-widest text-root-subtle block mb-0.5">
-              Perlu Ditingkatkan
+              {t("detail_negara_ai.building.spektrumKepuasan.lowestSector")}
             </span>
             <span className="text-xs font-black text-amber-400 uppercase">
               {lowestSector.name}
@@ -298,37 +307,37 @@ export default function SpektrumKepuasanSection({
             <TrendingUp className="h-3.5 w-3.5 text-root-accent" />
           </div>
           <h4 className="text-xs sm:text-sm font-black text-root-text uppercase tracking-wider italic">
-            Sektor Utama
+            {t("detail_negara_ai.building.spektrumKepuasan.mainSectors")}
           </h4>
           <div className="h-[1px] flex-1 bg-gradient-to-r from-root-accent/30 to-transparent ml-2" />
         </div>
 
-        {/* LEGENDA SPEKTRUM WARNA (PERSIS GAMBAR 2) */}
+        {/* LEGENDA SPEKTRUM WARNA */}
         <div className="bg-root-canvas border border-root-accent/20 p-3 rounded-2xl mb-3">
           <div className="flex flex-wrap items-center justify-between gap-2 text-[10px] font-bold">
             <span className="text-root-subtle uppercase tracking-wider font-black text-[9px] flex items-center gap-1">
-              <Percent className="w-3 h-3 text-root-accent" /> Spektrum Kepuasan:
+              <Percent className="w-3 h-3 text-root-accent" /> {t("detail_negara_ai.building.spektrumKepuasan.spectrumLegend")}
             </span>
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#EF4444]/15 border border-[#EF4444]/30 text-[#EF4444]">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" />
-                0 - 25: Sangat Buruk
+                0 - 25: {t("detail_negara_ai.building.spektrumKepuasan.grades.veryPoor")}
               </span>
               <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#881337]/30 border border-[#BE123C]/40 text-[#FB7185]">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#E11D48]" />
-                26 - 40: Buruk
+                26 - 40: {t("detail_negara_ai.building.spektrumKepuasan.grades.poor")}
               </span>
               <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#CA8A04]/15 border border-[#EAB308]/30 text-[#FACC15]">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#EAB308]" />
-                41 - 65: Netral
+                41 - 65: {t("detail_negara_ai.building.spektrumKepuasan.grades.neutral")}
               </span>
               <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#064E3B]/40 border border-[#059669]/40 text-[#34D399]">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
-                66 - 80: Baik
+                66 - 80: {t("detail_negara_ai.building.spektrumKepuasan.grades.good")}
               </span>
               <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#064E3B]/60 border border-root-accent/40 text-root-accent">
                 <span className="w-1.5 h-1.5 rounded-full bg-root-accent" />
-                81 - 100: Sangat Baik
+                81 - 100: {t("detail_negara_ai.building.spektrumKepuasan.grades.veryGood")}
               </span>
             </div>
           </div>
@@ -339,11 +348,11 @@ export default function SpektrumKepuasanSection({
           {sectors.map((sector) => {
             const Icon = sector.icon;
             const isClickable = Boolean(sector.tabTarget && onNavigateTab);
-            const grade = getSatisfactionGrade(sector.score);
+            const grade = getSatisfactionGrade(sector.score, t);
 
-              const activeAlert = alertMap[sector.id];
+            const activeAlert = alertMap[sector.id];
 
-              return (
+            return (
               <div
                 key={sector.id}
                 onClick={() => {

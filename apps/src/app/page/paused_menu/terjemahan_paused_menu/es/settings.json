@@ -11,7 +11,8 @@
   "theme": {
     "title": "Tema de Pantalla",
     "dark": "Oscuro",
-    "light": "Claro"
+    "light": "Claro",
+    "storageError": "No se pueden leer ni guardar las preferencias de tema en este dispositivo."
   },
   "map": {
     "title": "Líneas de Mapa y Ciudades",
@@ -28,5 +29,6 @@
     "selectDesc": "Elige el idioma de la interfaz y del juego.",
     "current": "Idioma Actual",
     "saved": "Preferencia de idioma guardada"
-  }
+  },
+  "themeStorageError": "No se pueden leer ni guardar las preferencias de tema en este dispositivo."
 }

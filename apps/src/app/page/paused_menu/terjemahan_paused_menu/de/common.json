@@ -10,5 +10,40 @@
   "error": "Ein Fehler ist aufgetreten",
   "success": "Erfolgreich",
   "search": "Suchen...",
-  "infoTitle": "{title} Informationen"
+  "infoTitle": "{title} Informationen",
+  "understand": "Verstanden",
+  "errorBoundary": {
+    "title": "NEOSANTARA WIEDERHERSTELLUNGSMODUS",
+    "description": "Beim Laden der Systemschnittstelle ist ein Problem aufgetreten. Sie können die Seite neu laden oder direkt zur Simulation gehen.",
+    "startSimulation": "Simulation Starten",
+    "reload": "Neu Laden"
+  },
+  "rootConfirmModal": {
+    "confirm": "Bestätigen",
+    "understand": "Verstanden",
+    "cancel": "Abbrechen"
+  },
+  "rootConstructionModal": {
+    "title": "Baubestätigung",
+    "cost": "Baukosten (Gesamt):",
+    "quantityBuilding": "Gebäudeanzahl",
+    "unitBuilding": "Gebäude",
+    "maximum": "Max ({max})",
+    "materialsNeeded": "Erforderliche Materialien",
+    "hide": "Ausblenden",
+    "show": "Anzeigen",
+    "noMaterials": "Für dieses Gebäude werden keine Materialien benötigt.",
+    "currentBalance": "Aktuelle Staatskasse:",
+    "cancel": "Abbrechen",
+    "materialShortage": "Unzureichende Materialien",
+    "quantityOverStock": "Menge überschreitet Vorrat",
+    "insufficientFunds": "Unzureichende Mittel",
+    "startConstruction": "Bau Beginnen"
+  },
+  "rootAISuggestionsModal": {
+    "title": "KI-Empfehlungen & Analyse für den Sektor {sector}",
+    "subtitle": "Bewertung der Sektoranforderungen und des Zustands",
+    "itemCount": "{count} Elemente",
+    "openItem": "{item} Öffnen"
+  }
 }

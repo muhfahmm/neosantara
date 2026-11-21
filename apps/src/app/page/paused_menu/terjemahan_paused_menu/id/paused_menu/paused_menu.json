@@ -26,7 +26,8 @@
     "mapCapitals": "Ibu Kota",
     "languageTitle": "Pengaturan Bahasa",
     "languageSubtitle": "LANGUAGE SELECTOR",
-    "languageDesc": "Pilih bahasa tampilan antarmuka dan teks game."
+    "languageDesc": "Pilih bahasa tampilan antarmuka dan teks game.",
+    "themeStorageError": "Preferensi tema tidak dapat dibaca atau disimpan di perangkat ini."
   },
   "saveGameModal": {
     "title": "Simpan Permainan",
@@ -38,7 +39,12 @@
     "saveNamePlaceholder": "Masukkan nama simpanan...",
     "saveButton": "Simpan",
     "savingButton": "Menyimpan...",
-    "overwriteWarning": "Simpanan ini akan ditimpa. Lanjutkan?"
+    "overwriteWarning": "Simpanan ini akan ditimpa. Lanjutkan?",
+    "overwriteTitle": "Timpa \"{name}\"?",
+    "overwriteDesc": "Progres permainan saat ini akan menimpa slot ini.",
+    "overwriteCancel": "Batal",
+    "overwriteConfirm": "Ya, Timpa",
+    "overwriting": "Menyimpan..."
   },
   "loadGameModal": {
     "title": "Muat Permainan",
@@ -73,6 +79,59 @@
     "searchPlaceholder": "Cari tombol atau fungsi (cth: Map, Pause, Tab)...",
     "searchAria": "Cari pintasan keyboard",
     "clearSearchAria": "Hapus pencarian",
-    "categoryAll": "Semua"
+    "categoryAll": "Semua",
+    "emptyTitle": "Tidak ada shortcut ditemukan",
+    "emptyDesc": "Coba ubah kata kunci pencarian atau kategori filter.",
+    "categories": {
+      "all": "Semua",
+      "mainMenu": "Menu Utama",
+      "subMenu": "Sub Menu (Angka)",
+      "quickMenu": "Menu Cepat",
+      "timeController": "Time Controller",
+      "panelNavigation": "Navigasi Panel",
+      "zoomMap": "Zoom & Map"
+    },
+    "shortcuts": {
+      "KEY_A": "⚓ Komando Armada Militer",
+      "KEY_B": "🏦 Pinjaman & Hutang Negara",
+      "KEY_C": "🏛️ Dewan Kabinet Menteri",
+      "KEY_D": "🤝 Kedutaan Besar Bilateral",
+      "KEY_E": "👛 Pemasukan & Pengeluaran Anggaran Nasional",
+      "KEY_F": "🎯 Fokus & Reset Zoom ke Negara Sendiri",
+      "KEY_G": "🌐 Pasar Perdagangan Global",
+      "KEY_H": "🏠 Hunian & Permukiman Warga",
+      "KEY_I": "📬 Inbox / Kotak Pesan Notifikasi",
+      "KEY_J": "👁️ Operasi Intelijen & Spionase",
+      "KEY_K": "😊 Statistik Kepuasan Rakyat",
+      "KEY_L": "⚡ Grid Kelistrikan Nasional",
+      "KEY_M": "🗺️ Map Utama (Tutup Semua Modal)",
+      "KEY_N": "🌍 Sidang Umum PBB",
+      "KEY_O": "👥 Ringkasan Populasi & Demografi",
+      "KEY_P": "🏭 Produksi & Pembangunan Pabrik",
+      "KEY_Q": "💡 Ideologi & Dasar Negara",
+      "KEY_R": "🔬 Fokus Utama Riset & Penelitian",
+      "KEY_S": "💸 Kebijakan Alokasi Subsidi",
+      "KEY_T": "💰 Kebijakan Tarif Perpajakan",
+      "KEY_U": "🏛️ Tempat Umum & Fasilitas Publik",
+      "KEY_V": "🕌 Kehidupan Beragama & Toleransi",
+      "KEY_W": "⚔️ Operasi Militer / Serang Negara",
+      "KEY_X": "🚀 Peluncuran ICBM & Senjata Nuklir",
+      "KEY_Y": "🌾 Neraca Industri & Stok Pangan",
+      "KEY_Z": "📊 PDB Nasional & Dunia",
+      "KEY_1": "📈 Naikkan Kepuasan Rakyat",
+      "KEY_2": "🏷️ Indeks Harga Barang Pokok",
+      "KEY_3": "⚖️ Kebijakan & Sistem Ekonomi",
+      "KEY_4": "🚩 Wilayah yang Direbut / Aneksasi",
+      "KEY_5": "🏛️ Badan Khusus PBB",
+      "KEY_6": "🌐 Organisasi Regional Dunia",
+      "KEY_7": "🤝 Hubungan Diplomatik Internasional",
+      "KEY_8": "📜 Doktrin Keterbukaan Negara",
+      "KEY_9": "💣 Sabotase Strategis (Intelijen)",
+      "TIME_TOGGLE_PAUSE": "⏯️ Play / Pause Waktu",
+      "TIME_SPEED_SLOW": "⏪ Perlambat Waktu",
+      "TIME_SPEED_FAST": "⏩ Percepat Waktu",
+      "NAV_CLOSE": "❌ Tutup Panel Aktif",
+      "OPEN_MISSION": "🎯 Buka Misi Presiden"
+    }
   }
 }

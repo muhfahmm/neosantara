@@ -230,7 +230,8 @@
     "navy": "Navy",
     "airForce": "Air Force",
     "totalUnitsToSend": "Total units to send",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "resetAll": "Alles zurücksetzen"
   },
   "military": {
     "attackInProgressTitle": "Attack Still in Progress",
@@ -262,7 +263,9 @@
     "targetCity": "Target City",
     "noCityData": "No city data available for this country",
     "paymentChanceNote": "Chance increases with payment size. Effective minimum: 20,000 NEO for meaningful results.",
-    "suggest": "Suggest"
+    "suggest": "Suggest",
+    "requestAttackPromptPrefix": "Bitten Sie",
+    "requestAttackPromptSuffix": "einen Angriff auf Ihr ausgewähltes Ziel zu starten. Legen Sie den Betrag fest, den Sie bereit sind, für diese Anfrage zu zahlen."
   },
   "building": {
     "tabs": {
@@ -279,6 +282,370 @@
       "militaryFacilities": "Facilities & Military",
       "foodProduction": "Food Production",
       "housing": "Housing"
+    },
+    "hargaBarang": {
+      "title": "Grundnahrungsmittelpreise & Erschwinglichkeit",
+      "desc": "Überwachung des Preisindex für Grundbedürfnisse auf dem Binnenmarkt",
+      "foodSubsidyActive": "Aktive Nahrungsmittelsubvention (+5 Punkte)",
+      "average": "Durchschnitt:",
+      "avgMarketPrice": "Durchschnittlicher Marktpreis",
+      "basedOnCommodities": "Basierend auf {count} Grundnahrungsmitteln",
+      "affordabilityStatus": "Erschwinglichkeitsstatus",
+      "consumerPurchasingPower": "Kaufkraft der Verbraucher",
+      "priceSatisfactionIndex": "Preiszufriedenheitsindex",
+      "statusVeryAffordable": "Sehr erschwinglich",
+      "statusModerate": "Moderat / Ausreichend",
+      "statusHighInflation": "Hohe Inflation",
+      "statusCheap": "Günstig",
+      "statusFair": "Angemessen",
+      "statusExpensive": "Hoch",
+      "statusLabel": "Status:",
+      "commodities": {
+        "harga_beras": "Reis",
+        "harga_daging_sapi": "Rindfleisch",
+        "harga_ayam": "Hühnerfleisch",
+        "harga_minyak_goreng": "Speiseöl",
+        "harga_gula": "Zucker",
+        "harga_telur": "Eier",
+        "harga_listrik": "Stromtarif",
+        "harga_air": "Trinkwassertarif"
+      }
+    },
+    "subsidi": {
+      "title": "Regierungssubventionspolitik",
+      "desc": "Soziales Auffangnetz, Preisinterventionen bei Grundgütern, Energie und Hilfen",
+      "totalBudgetBurden": "Gesamtbelastung des Staatshaushalts:",
+      "activePrograms": "Aktive Programme",
+      "open": "Offen",
+      "subsidiesActive": "{count} aktive Subventionsprogramme schützen die Kaufkraft",
+      "dailyBudgetCost": "Tägliche Haushaltskosten",
+      "dailyBudgetExpense": "Tägliche Haushaltsausgaben des Staates",
+      "publicSatisfactionBonus": "Bonus für öffentliche Zufriedenheit",
+      "positiveImpact": "Positive Auswirkung auf die Zustimmung der Bevölkerung",
+      "searchPlaceholder": "Subventionsprogramm suchen...",
+      "all": "Alle",
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "costAllocation": "Kostenzuweisung:",
+      "perDay": "NEO/Tag",
+      "points": "Punkte"
+    },
+    "sistemEkonomi": {
+      "title": "Wirtschaftssystem & Politikspektrum",
+      "desc": "Gleichgewicht zwischen staatlicher Intervention, freiem Markt und Strukturpolitik",
+      "spectrumPosition": "Position im Spektrum:",
+      "categoryCentralized": "Zentralistisch",
+      "categoryFreeMarket": "Freie Marktwirtschaft",
+      "categoryMixed": "Gemischt",
+      "labelCommand": "Zentralverwaltung",
+      "labelMixed": "Gemischt",
+      "labelFreeMarket": "Freier Markt",
+      "economicGrowth": "Wirtschaftswachstum",
+      "inflation": "Inflation",
+      "workerSatisfaction": "Arbeiterzufriedenheit",
+      "investorSatisfaction": "Investorenzufriedenheit",
+      "structuralPoliciesTitle": "Strukturelle Wirtschaftspolitiken (7 Maßnahmen)",
+      "nationalizationTitle": "Kontroll- und Verstaatlichungsgrad strategischer Sektoren",
+      "stateShare": "Staat: {percent}%"
+    },
+    "pajak": {
+      "title": "Steuerpolitische Struktur",
+      "desc": "Einnahmensätze des Staatshaushalts aus 5 inländischen Steuerinstrumenten",
+      "totalRevenue": "Gesamteinnahmen:",
+      "perDaySuffix": "NEO / Tag",
+      "avgTaxRate": "Durchschnittlicher Steuersatz",
+      "fiscalBurden5Sectors": "Kombinierte Steuerbelastung aus 5 Sektoren",
+      "estDailyCash": "Geschätzte tägliche Einnahmen",
+      "nationalBudgetIncome": "Haushaltseinnahmen des Staates",
+      "taxSatisfactionIndex": "Steuerzufriedenheitsindex",
+      "rateRangeLimit": "Tarifbereich: {min}% - {max}% (Standard {base}%)",
+      "estimatedRevenue": "Geschätzte Einnahmen:",
+      "taxes": {
+        "income_tax": "Einkommensteuer",
+        "corporate_tax": "Körperschaftsteuer",
+        "vat": "Mehrwertsteuer (MwSt)",
+        "cigarette_tax": "Tabak- & Luxusgütersteuer",
+        "environment_tax": "CO2- & Umweltsteuer"
+      }
+    },
+    "doktrin": {
+      "badge": "Staatsdoktrin & Offenheit",
+      "regimes": {
+        "autarki": {
+          "label": "Vollständig isolierter Staat (Autarkie)",
+          "desc": "Bricht alle Beziehungen ab und kontrolliert Presse, Religion, Demos, Internet und Handel strikt."
+        },
+        "proteksionis": {
+          "label": "Protektionistischer & Beschränkter Staat",
+          "desc": "Begrenzt Zuwanderung, filtert Medien und verschärft Genehmigungen für Kundgebungen."
+        },
+        "moderat": {
+          "label": "Moderater & Gemischter Staat",
+          "desc": "Ausgewogenheit zwischen bürgerlichen Freiheiten, Ordnung und internationaler Offenheit."
+        },
+        "terbuka": {
+          "label": "Offener & Demokratischer Staat",
+          "desc": "Garantierte Presse- & Religionsfreiheit, offene Grenzen, freies Internet und Transparenz."
+        },
+        "globalis": {
+          "label": "Globalistischer & Vollkommen Offener Staat",
+          "desc": "Volle Pressefreiheit, visafreie Einreise, neutrales Internet und globale Integration."
+        }
+      },
+      "indexTitle": "Offenheitsindex",
+      "categories": {
+        "all": "Alle Indikatoren (9)",
+        "civil": "Bürgerrechte & Menschenrechte (4)",
+        "media": "Medien & Information (2)",
+        "global": "Grenzen & Geopolitik (3)"
+      },
+      "categoryTags": {
+        "civil": "Zivil & Rechte",
+        "media": "Medien & Digital",
+        "global": "Geopolitik & Grenzen"
+      },
+      "regulationStatus": "Regulierungsstatus",
+      "statusOpenFree": "Offen & Frei",
+      "statusModerate": "Ausgewogen Moderat",
+      "statusRestricted": "Strikte Regulierung",
+      "indicators": {
+        "speechScore": {
+          "name": "Meinungs- & Ausdrucksfreiheit",
+          "desc": "Rechtlicher Schutz für Kritik, Redefreiheit und öffentliche Meinungsbildung",
+          "lowLabel": "Strenge Zensur (Autoritär)",
+          "highLabel": "Völlig frei (Demokratisch)"
+        },
+        "religionScore": {
+          "name": "Toleranz & Religionsfreiheit",
+          "desc": "Garantierte Glaubensfreiheit und Gleichberechtigung von Minderheiten",
+          "lowLabel": "Einheitsreligion vorgeschrieben",
+          "highLabel": "Pluralismus & säkular offen"
+        },
+        "demoScore": {
+          "name": "Versammlungs- & Vereinigungsrecht",
+          "desc": "Erlaubnis für friedliche Demonstrationen, Gewerkschaften und Bürgerinitiativen",
+          "lowLabel": "Vollständig verboten",
+          "highLabel": "Verfassungsrechtlich geschützt"
+        },
+        "transparencyScore": {
+          "name": "Transparenz & Rechenschaftspflicht",
+          "desc": "Offene Haushalte, zugängliche Dokumente und Offenlegung von Vermögen",
+          "lowLabel": "Absolutes Staatsgeheimnis",
+          "highLabel": "Open Government Data"
+        },
+        "mediaScore": {
+          "name": "Presse- & Rundfunkfreiheit",
+          "desc": "Unabhängigkeit von Journalisten, Sendern und Printmedien ohne Einmischung",
+          "lowLabel": "Staatliches Medienmonopol",
+          "highLabel": "Freie unabhängige Presse"
+        },
+        "internetScore": {
+          "name": "Internet & Digitale Offenheit",
+          "desc": "Internetzugang ohne Zensur und Freiheit digitaler Plattformen",
+          "lowLabel": "Geschlossenes Intranet (Firewall)",
+          "highLabel": "Netzneutral & offen"
+        },
+        "borderScore": {
+          "name": "Einwanderungs- & Grenzpolitik",
+          "desc": "Erleichterte Einreise für Ausländer, Touristen und Visaerteilung",
+          "lowLabel": "Strikt geschlossene Grenzen",
+          "highLabel": "Weltweit visafrei"
+        },
+        "tradeScore": {
+          "name": "Außenhandelsoffenheit",
+          "desc": "Niedrige Importzölle, einfacher Export und investitionsfreundliches Klima",
+          "lowLabel": "Autarker Protektionismus",
+          "highLabel": "Multilateraler Freihandel"
+        },
+        "diplomacyScore": {
+          "name": "Diplomatie & Internationale Kooperation",
+          "desc": "Aktive Teilnahme an globalen Organisationen, Friedenspakten und Verträgen",
+          "lowLabel": "Eigenständiger Isolationismus",
+          "highLabel": "Aktive globale Integration"
+        }
+      }
+    },
+    "hunian": {
+      "badge": "Wohnbau- & Siedlungsinfrastruktursektor",
+      "title": "Nationaler Wohnungsbau & Siedlungen",
+      "desc": "Überwachung der Verfügbarkeit von Sozialwohnungen, Hochhausapartments und Luxusanwesen zur Deckung des Wohnbedarfs.",
+      "housingCapacity": "Wohnraumkapazität",
+      "people": "Einwohner",
+      "unit": "Einheiten",
+      "perUnit": "Einwohner/Einheit",
+      "surplus": "Überschuss +{count} Einwohner",
+      "deficit": "Defizit {count} Einwohner",
+      "searchPlaceholder": "Wohnungstyp suchen...",
+      "all": "Alle Wohnungen",
+      "portion": "{percent}% Anteil",
+      "buildingCount": "Anzahl Gebäude",
+      "capacityPerUnit": "Kapazität / Einheit",
+      "totalCapacity": "Gesamtkapazität",
+      "availabilityStatus": "Verfügbarkeitsstatus",
+      "statusActive": "Aktiv verfügbar",
+      "statusUnbuilt": "Noch nicht gebaut",
+      "items": {
+        "rumah_subsidi": {
+          "label": "Geförderter Wohnbau",
+          "categoryLabel": "Erschwinglicher Wohnraum",
+          "desc": "Subventionierte Eigenheime für Familien mit geringerem Einkommen",
+          "detailDesc": "Vom Staat bereitgestellt mit Zins- und Preisförderung, damit jede Familie ein würdevolles Zuhause hat."
+        },
+        "apartemen": {
+          "label": "Vertikale Apartments",
+          "categoryLabel": "Vertikales Wohnen",
+          "desc": "Vertikale Wohnkomplexe für dicht besiedelte urbane Zentren",
+          "detailDesc": "Bau mehrstöckiger Wohntürme zur optimalen Nutzung städtischer Flächen für große Bevölkerungen."
+        },
+        "mansion": {
+          "label": "Villen & Luxusanwesen",
+          "categoryLabel": "Premium-Wohnen",
+          "desc": "Exklusive Wohnviertel für gehobene Einkommensschichten",
+          "detailDesc": "Großzügige Anwesen mit Privatgärten und exklusiver Ausstattung für gehobene Ansprüche."
+        }
+      }
+    },
+    "kelistrikan": {
+      "title": "Nationale Stromnetzstatistiken",
+      "desc": "Gleichgewicht zwischen Erzeugungskapazität und nationaler Verbrauchslast",
+      "production": "Erzeugung:",
+      "load": "Last:",
+      "totalSupply": "Gesamterzeugung aller Kraftwerke",
+      "activeUnits": "{count} aktive Einheiten",
+      "operatingAtCapacity": "Kraftwerke arbeiten nach installierter Leistung",
+      "totalNationalLoad": "Gesamte Verbrauchslast",
+      "servedPopulation": "Versorgte Bevölkerung: ~{population} Mio. Einwohner",
+      "electricityBalance": "Stromleistungsbilanz",
+      "surplusCapacity": "Sicherer Stromüberschuss",
+      "deficitRisk": "Defizit / Blackout-Gefahr",
+      "surplusNote": "Stromreserven decken den Bedarf zuverlässig",
+      "deficitNote": "Bedarf übersteigt Kraftwerkskapazitäten",
+      "electricitySatisfaction": "Stromzufriedenheit",
+      "publicAccessLevel": "Netzzuverlässigkeit und öffentlicher Zugang",
+      "consumptionBreakdown": "Aufschlüsselung der Sektorverbrauchslast",
+      "sectorHousing": "Wohn- & Siedlungssektor",
+      "sectorHousingDesc": "Sozialwohnungen, Apartments, Villen",
+      "sectorPublic": "Öffentliche Einrichtungen & Dienste",
+      "sectorPublicDesc": "Schulen, Krankenhäuser, Ämter, Kultur",
+      "sectorProduction": "Fabriken & Produktionszentren",
+      "sectorProductionDesc": "Industriebetriebe, Bergwerke, Verarbeitung",
+      "sectorMilitary": "Militärische Infrastruktur & Basen",
+      "sectorMilitaryDesc": "Kasernen, Hangars, Marine- & Luftstützpunkte",
+      "detailLoadAnalysis": "Detaillierte Lastanalyse",
+      "activePowerPlants": "Aktive Kraftwerke ({count} Anlagen)",
+      "unitProductionLabel": "{prod} MW / Einheit",
+      "unitsActiveCount": "{count} Einheiten aktiv",
+      "fuelShortageWarning": "Brennstoffmangel"
+    },
+    "spektrumKepuasan": {
+      "title": "Spektrum der öffentlichen Zufriedenheit",
+      "desc": "Zustimmung der Bevölkerung und Zufriedenheit in allen lebenswichtigen Sektoren",
+      "socialStatus": "Sozialer Status:",
+      "statusVeryStable": "Sehr stabil",
+      "statusStable": "Ziemlich stabil",
+      "statusCritical": "Kritisch / Unruhen",
+      "publicApproval": "Allgemeine Zustimmung der Bevölkerung",
+      "publicApprovalDesc": "Gesamteinschätzung der Führungskompetenz und staatlicher Leistungen",
+      "stable": "Stabil",
+      "highestSector": "Höchster Sektor",
+      "lowestSector": "Verbesserungsbedarf",
+      "mainSectors": "Hauptsektoren",
+      "spectrumLegend": "Zufriedenheitsspektrum:",
+      "grades": {
+        "veryPoor": "Sehr schlecht",
+        "poor": "Schlecht",
+        "neutral": "Neutral",
+        "good": "Gut",
+        "veryGood": "Sehr gut"
+      },
+      "sectors": {
+        "pajak": {
+          "name": "STEUERN",
+          "desc": "Erschwinglichkeit der Steuerlast für Bürger und Unternehmen"
+        },
+        "harga": {
+          "name": "GRUNDPREISE",
+          "desc": "Preisstabilität bei 8 Grundnahrungsmitteln des täglichen Bedarfs"
+        },
+        "pangan": {
+          "name": "NAHRUNGSPRODUKTION",
+          "desc": "Erträge aus Landwirtschaft, Viehzucht, Fischerei und Verarbeitung"
+        },
+        "listrik": {
+          "name": "STROMERZEUGUNG",
+          "desc": "Zuverlässigkeit der Kraftwerkskapazitäten in Spitzenlastzeiten"
+        },
+        "hunian": {
+          "name": "WOHNEN & SIEDLUNGEN",
+          "desc": "Verfügbarkeit von Sozialwohnungen, Apartments und Wohnraum"
+        },
+        "layananPublik": {
+          "name": "ÖFFENTLICHE DIENSTE",
+          "desc": "Zugang zu Bildung, Gesundheit, Rechtssicherheit und Freizeit"
+        },
+        "keterbukaan": {
+          "name": "DOKTRIN & OFFENHEIT",
+          "desc": "Meinungsfreiheit, freie Presse, Toleranz und Regierungstransparenz"
+        },
+        "sistem_ekonomi": {
+          "name": "WIRTSCHAFTSSYSTEM",
+          "desc": "Ausgewogenheit zwischen Marktregulierung, Arbeitsschutz und Investitionen"
+        },
+        "subsidi": {
+          "name": "SUBVENTIONSVERTEILUNG",
+          "desc": "Soziale Sicherungsnetze, Nahrungsmittel- und Energiezuschüsse"
+        }
+      }
+    },
+    "produksiPangan": {
+      "badge": "Integrierter nationaler Ernährungssektor",
+      "title": "Nahrungsmittelproduktionskapazität",
+      "desc": "Überwachung von Agrarerträgen, Viehzucht, Fischerei und Lebensmittelverarbeitung.",
+      "totalCapacity": "Gesamte installierte Kapazität",
+      "unitFacility": "Einheiten / Anlagen",
+      "facilitiesActive": "Aktiv betriebene Anlagen",
+      "allSubsectors": "Alle Teilsektoren ({count})",
+      "searchPlaceholder": "Lebensmittelgut suchen...",
+      "activeFacilitiesCount": "{count} aktive Anlagen",
+      "totalProductionUnits": "Insgesamt {count} Nahrungsproduktionsanlagen",
+      "statusActive": "Aktiv",
+      "statusUnbuilt": "Noch nicht gebaut",
+      "unit": "Einheiten",
+      "subcategories": {
+        "peternakan": {
+          "title": "Viehzucht",
+          "desc": "Zuchtbetriebe für Nutztiere und Geflügel"
+        },
+        "agrikultur": {
+          "title": "Landwirtschaft",
+          "desc": "Anbauflächen für Grundnahrungsmittel und Plantagen"
+        },
+        "perikanan": {
+          "title": "Fischerei",
+          "desc": "Meeres- und Binnengewässer-Aquakulturzentren"
+        },
+        "olahan_pangan": {
+          "title": "Lebensmittelverarbeitung",
+          "desc": "Fabriken zur Verarbeitung von Rohstoffen zu Grundlebensmitteln"
+        }
+      }
+    },
+    "pembangunanSipilMiliter": {
+      "tabCivil": "Zivile Einrichtungen",
+      "tabMilitary": "Militär & Infrastruktur",
+      "searchPlaceholder": "Bauobjekt suchen...",
+      "civilianCategories": "Zivile Kategorien",
+      "activeFleetUnits": "Aktive Flotteneinsatzkräfte ({count} Einheitstypen)",
+      "militaryInfraBases": "Militärische Infrastruktur & Basen ({count} Anlagen)",
+      "basesSuffix": "Basen",
+      "underConstruction": "Im Bau · fertiggestellt am {date}",
+      "underConstructionDays": " · {days} Tage",
+      "inProduction": "In Produktion · fertiggestellt am {date}",
+      "inProductionCount": "+{count} in Produktion",
+      "inConstructionCount": "+{count} im Bau",
+      "infantryCapacity": "Truppen / Kapazität",
+      "infantryUnitLabel": "Truppen / Kapazität",
+      "unit": "Einheiten"
     }
   }
 }

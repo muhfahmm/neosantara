@@ -8,6 +8,7 @@ import { useEffect } from 'react';
  */
 
 export interface ShortcutDefinition {
+  id?: string;
   key: string;
   code?: string;
   label: string;
@@ -18,54 +19,54 @@ export interface ShortcutDefinition {
 
 export const GAME_SHORTCUTS: Record<string, ShortcutDefinition> = {
   // 🔤 1. Menu Utama Huruf (A - Z)
-  KEY_A: { key: 'a', label: 'A', description: '⚓ Komando Armada Militer', category: 'Menu Utama', action: 'Menu:Armada' },
-  KEY_B: { key: 'b', label: 'B', description: '🏦 Pinjaman & Hutang Negara', category: 'Menu Utama', action: 'Menu:Hutang' },
-  KEY_C: { key: 'c', label: 'C', description: '🏛️ Dewan Kabinet Menteri', category: 'Menu Utama', action: 'Dashboard:Kementerian' },
-  KEY_D: { key: 'd', label: 'D', description: '🤝 Kedutaan Besar Bilateral', category: 'Menu Utama', action: 'Menu:KedutaanBesar' },
-  KEY_E: { key: 'e', label: 'E', description: '👛 Pemasukan & Pengeluaran Anggaran Nasional', category: 'Menu Utama', action: 'Menu:Budget' },
-  KEY_F: { key: 'f', label: 'F', description: '🎯 Fokus & Reset Zoom ke Negara Sendiri', category: 'Zoom & Map', action: 'MAP_FOCUS_HOME' },
-  KEY_G: { key: 'g', label: 'G', description: '🌐 Pasar Perdagangan Global', category: 'Menu Utama', action: 'Menu:Perdagangan' },
-  KEY_H: { key: 'h', label: 'H', description: '🏠 Hunian & Permukiman Warga', category: 'Menu Utama', action: 'Menu:HunianPermukiman' },
-  KEY_I: { key: 'i', label: 'I', description: '📬 Inbox / Kotak Pesan Notifikasi', category: 'Menu Utama', action: 'inbox' },
-  KEY_J: { key: 'j', label: 'J', description: '👁️ Operasi Intelijen & Spionase', category: 'Menu Utama', action: 'Menu:Intelijen' },
-  KEY_K: { key: 'k', label: 'K', description: '😊 Statistik Kepuasan Rakyat', category: 'Menu Utama', action: 'Dashboard:Kepuasan' },
-  KEY_L: { key: 'l', label: 'L', description: '⚡ Grid Kelistrikan Nasional', category: 'Menu Utama', action: 'Menu:Kelistrikan' },
-  KEY_M: { key: 'm', label: 'M', description: '🗺️ Map Utama (Tutup Semua Modal)', category: 'Menu Utama', action: 'Peta Taktis' },
-  KEY_N: { key: 'n', label: 'N', description: '🌍 Sidang Umum PBB', category: 'Menu Utama', action: 'Menu:PBB' },
-  KEY_O: { key: 'o', label: 'O', description: '👥 Ringkasan Populasi & Demografi', category: 'Menu Utama', action: 'Dashboard:Populasi:Overview' },
-  KEY_P: { key: 'p', label: 'P', description: '🏭 Produksi & Pembangunan Pabrik', category: 'Menu Utama', action: 'Menu:Produksi' },
-  KEY_Q: { key: 'q', label: 'Q', description: '💡 Ideologi & Dasar Negara', category: 'Menu Utama', action: 'Menu:Ideologi' },
-  KEY_R: { key: 'r', label: 'R', description: '🔬 Fokus Utama Riset & Penelitian', category: 'Menu Utama', action: 'Menu:Penelitian' },
-  KEY_S: { key: 's', label: 'S', description: '💸 Kebijakan Alokasi Subsidi', category: 'Menu Utama', action: 'Menu:KebijakanSubsidi' },
-  KEY_T: { key: 't', label: 'T', description: '💰 Kebijakan Tarif Perpajakan', category: 'Menu Utama', action: 'Menu:Pajak' },
-  KEY_U: { key: 'u', label: 'U', description: '🏛️ Tempat Umum & Fasilitas Publik', category: 'Menu Utama', action: 'Menu:TempatUmum' },
-  KEY_V: { key: 'v', label: 'V', description: '🕌 Kehidupan Beragama & Toleransi', category: 'Menu Utama', action: 'Menu:Agama' },
-  KEY_W: { key: 'w', label: 'W', description: '⚔️ Operasi Militer / Serang Negara', category: 'Menu Utama', action: 'Menu:SerangNegara' },
-  KEY_X: { key: 'x', label: 'X', description: '🚀 Peluncuran ICBM & Senjata Nuklir', category: 'Menu Utama', action: 'Menu:ICBM' },
-  KEY_Y: { key: 'y', label: 'Y', description: '🌾 Neraca Industri & Stok Pangan', category: 'Menu Utama', action: 'Menu:IndustriPangan' },
-  KEY_Z: { key: 'z', label: 'Z', description: '📊 PDB Nasional & Dunia', category: 'Menu Utama', action: 'Menu:PDB' },
+  KEY_A: { id: 'KEY_A', key: 'a', label: 'A', description: '⚓ Komando Armada Militer', category: 'Menu Utama', action: 'Menu:Armada' },
+  KEY_B: { id: 'KEY_B', key: 'b', label: 'B', description: '🏦 Pinjaman & Hutang Negara', category: 'Menu Utama', action: 'Menu:Hutang' },
+  KEY_C: { id: 'KEY_C', key: 'c', label: 'C', description: '🏛️ Dewan Kabinet Menteri', category: 'Menu Utama', action: 'Dashboard:Kementerian' },
+  KEY_D: { id: 'KEY_D', key: 'd', label: 'D', description: '🤝 Kedutaan Besar Bilateral', category: 'Menu Utama', action: 'Menu:KedutaanBesar' },
+  KEY_E: { id: 'KEY_E', key: 'e', label: 'E', description: '👛 Pemasukan & Pengeluaran Anggaran Nasional', category: 'Menu Utama', action: 'Menu:Budget' },
+  KEY_F: { id: 'KEY_F', key: 'f', label: 'F', description: '🎯 Fokus & Reset Zoom ke Negara Sendiri', category: 'Zoom & Map', action: 'MAP_FOCUS_HOME' },
+  KEY_G: { id: 'KEY_G', key: 'g', label: 'G', description: '🌐 Pasar Perdagangan Global', category: 'Menu Utama', action: 'Menu:Perdagangan' },
+  KEY_H: { id: 'KEY_H', key: 'h', label: 'H', description: '🏠 Hunian & Permukiman Warga', category: 'Menu Utama', action: 'Menu:HunianPermukiman' },
+  KEY_I: { id: 'KEY_I', key: 'i', label: 'I', description: '📬 Inbox / Kotak Pesan Notifikasi', category: 'Menu Utama', action: 'inbox' },
+  KEY_J: { id: 'KEY_J', key: 'j', label: 'J', description: '👁️ Operasi Intelijen & Spionase', category: 'Menu Utama', action: 'Menu:Intelijen' },
+  KEY_K: { id: 'KEY_K', key: 'k', label: 'K', description: '😊 Statistik Kepuasan Rakyat', category: 'Menu Utama', action: 'Dashboard:Kepuasan' },
+  KEY_L: { id: 'KEY_L', key: 'l', label: 'L', description: '⚡ Grid Kelistrikan Nasional', category: 'Menu Utama', action: 'Menu:Kelistrikan' },
+  KEY_M: { id: 'KEY_M', key: 'm', label: 'M', description: '🗺️ Map Utama (Tutup Semua Modal)', category: 'Menu Utama', action: 'Peta Taktis' },
+  KEY_N: { id: 'KEY_N', key: 'n', label: 'N', description: '🌍 Sidang Umum PBB', category: 'Menu Utama', action: 'Menu:PBB' },
+  KEY_O: { id: 'KEY_O', key: 'o', label: 'O', description: '👥 Ringkasan Populasi & Demografi', category: 'Menu Utama', action: 'Dashboard:Populasi:Overview' },
+  KEY_P: { id: 'KEY_P', key: 'p', label: 'P', description: '🏭 Produksi & Pembangunan Pabrik', category: 'Menu Utama', action: 'Menu:Produksi' },
+  KEY_Q: { id: 'KEY_Q', key: 'q', label: 'Q', description: '💡 Ideologi & Dasar Negara', category: 'Menu Utama', action: 'Menu:Ideologi' },
+  KEY_R: { id: 'KEY_R', key: 'r', label: 'R', description: '🔬 Fokus Utama Riset & Penelitian', category: 'Menu Utama', action: 'Menu:Penelitian' },
+  KEY_S: { id: 'KEY_S', key: 's', label: 'S', description: '💸 Kebijakan Alokasi Subsidi', category: 'Menu Utama', action: 'Menu:KebijakanSubsidi' },
+  KEY_T: { id: 'KEY_T', key: 't', label: 'T', description: '💰 Kebijakan Tarif Perpajakan', category: 'Menu Utama', action: 'Menu:Pajak' },
+  KEY_U: { id: 'KEY_U', key: 'u', label: 'U', description: '🏛️ Tempat Umum & Fasilitas Publik', category: 'Menu Utama', action: 'Menu:TempatUmum' },
+  KEY_V: { id: 'KEY_V', key: 'v', label: 'V', description: '🕌 Kehidupan Beragama & Toleransi', category: 'Menu Utama', action: 'Menu:Agama' },
+  KEY_W: { id: 'KEY_W', key: 'w', label: 'W', description: '⚔️ Operasi Militer / Serang Negara', category: 'Menu Utama', action: 'Menu:SerangNegara' },
+  KEY_X: { id: 'KEY_X', key: 'x', label: 'X', description: '🚀 Peluncuran ICBM & Senjata Nuklir', category: 'Menu Utama', action: 'Menu:ICBM' },
+  KEY_Y: { id: 'KEY_Y', key: 'y', label: 'Y', description: '🌾 Neraca Industri & Stok Pangan', category: 'Menu Utama', action: 'Menu:IndustriPangan' },
+  KEY_Z: { id: 'KEY_Z', key: 'z', label: 'Z', description: '📊 PDB Nasional & Dunia', category: 'Menu Utama', action: 'Menu:PDB' },
 
   // 🔢 2. Sub Menu Angka (1 - 9)
-  KEY_1: { key: '1', label: '1', description: '📈 Naikkan Kepuasan Rakyat', category: 'Sub Menu (Angka)', action: 'Action:NaikkanKepuasan' },
-  KEY_2: { key: '2', label: '2', description: '🏷️ Indeks Harga Barang Pokok', category: 'Sub Menu (Angka)', action: 'Menu:Harga' },
-  KEY_3: { key: '3', label: '3', description: '⚖️ Kebijakan & Sistem Ekonomi', category: 'Sub Menu (Angka)', action: 'Menu:SistemEkonomi' },
-  KEY_4: { key: '4', label: '4', description: '🚩 Wilayah yang Direbut / Aneksasi', category: 'Sub Menu (Angka)', action: 'Menu:WilayahDirebut' },
-  KEY_5: { key: '5', label: '5', description: '🏛️ Badan Khusus PBB', category: 'Sub Menu (Angka)', action: 'Menu:OrganisasiInternasional:organisasi_pbb' },
-  KEY_6: { key: '6', label: '6', description: '🌐 Organisasi Regional Dunia', category: 'Sub Menu (Angka)', action: 'Menu:OrganisasiInternasional:organisasi_regional' },
-  KEY_7: { key: '7', label: '7', description: '🤝 Hubungan Diplomatik Internasional', category: 'Sub Menu (Angka)', action: 'Menu:TingkatHubungan' },
-  KEY_8: { key: '8', label: '8', description: '📜 Doktrin Keterbukaan Negara', category: 'Sub Menu (Angka)', action: 'Menu:DoktrinKeterbukaan' },
-  KEY_9: { key: '9', label: '9', description: '💣 Sabotase Strategis (Intelijen)', category: 'Sub Menu (Angka)', action: 'Menu:Intelijen' },
+  KEY_1: { id: 'KEY_1', key: '1', label: '1', description: '📈 Naikkan Kepuasan Rakyat', category: 'Sub Menu (Angka)', action: 'Action:NaikkanKepuasan' },
+  KEY_2: { id: 'KEY_2', key: '2', label: '2', description: '🏷️ Indeks Harga Barang Pokok', category: 'Sub Menu (Angka)', action: 'Menu:Harga' },
+  KEY_3: { id: 'KEY_3', key: '3', label: '3', description: '⚖️ Kebijakan & Sistem Ekonomi', category: 'Sub Menu (Angka)', action: 'Menu:SistemEkonomi' },
+  KEY_4: { id: 'KEY_4', key: '4', label: '4', description: '🚩 Wilayah yang Direbut / Aneksasi', category: 'Sub Menu (Angka)', action: 'Menu:WilayahDirebut' },
+  KEY_5: { id: 'KEY_5', key: '5', label: '5', description: '🏛️ Badan Khusus PBB', category: 'Sub Menu (Angka)', action: 'Menu:OrganisasiInternasional:organisasi_pbb' },
+  KEY_6: { id: 'KEY_6', key: '6', label: '6', description: '🌐 Organisasi Regional Dunia', category: 'Sub Menu (Angka)', action: 'Menu:OrganisasiInternasional:organisasi_regional' },
+  KEY_7: { id: 'KEY_7', key: '7', label: '7', description: '🤝 Hubungan Diplomatik Internasional', category: 'Sub Menu (Angka)', action: 'Menu:TingkatHubungan' },
+  KEY_8: { id: 'KEY_8', key: '8', label: '8', description: '📜 Doktrin Keterbukaan Negara', category: 'Sub Menu (Angka)', action: 'Menu:DoktrinKeterbukaan' },
+  KEY_9: { id: 'KEY_9', key: '9', label: '9', description: '💣 Sabotase Strategis (Intelijen)', category: 'Sub Menu (Angka)', action: 'Menu:Intelijen' },
 
   // ⏱️ 3. Time Controller
-  TIME_TOGGLE_PAUSE: { key: ' ', code: 'Space', label: 'Space', description: '⏯️ Play / Pause Waktu', category: 'Time Controller', action: 'TIME_TOGGLE_PAUSE' },
-  TIME_SPEED_SLOW: { key: 'ArrowLeft', code: 'ArrowLeft', label: '←', description: '⏪ Perlambat Waktu', category: 'Time Controller', action: 'TIME_SPEED_SLOW' },
-  TIME_SPEED_FAST: { key: 'ArrowRight', code: 'ArrowRight', label: '→', description: '⏩ Percepat Waktu', category: 'Time Controller', action: 'TIME_SPEED_FAST' },
+  TIME_TOGGLE_PAUSE: { id: 'TIME_TOGGLE_PAUSE', key: ' ', code: 'Space', label: 'Space', description: '⏯️ Play / Pause Waktu', category: 'Time Controller', action: 'TIME_TOGGLE_PAUSE' },
+  TIME_SPEED_SLOW: { id: 'TIME_SPEED_SLOW', key: 'ArrowLeft', code: 'ArrowLeft', label: '←', description: '⏪ Perlambat Waktu', category: 'Time Controller', action: 'TIME_SPEED_SLOW' },
+  TIME_SPEED_FAST: { id: 'TIME_SPEED_FAST', key: 'ArrowRight', code: 'ArrowRight', label: '→', description: '⏩ Percepat Waktu', category: 'Time Controller', action: 'TIME_SPEED_FAST' },
 
   // ❌ 4. Navigasi Panel
-  NAV_CLOSE: { key: 'Escape', code: 'Escape', label: 'Esc', description: '❌ Tutup Panel Aktif', category: 'Navigasi Panel', action: 'NAV_CLOSE' },
+  NAV_CLOSE: { id: 'NAV_CLOSE', key: 'Escape', code: 'Escape', label: 'Esc', description: '❌ Tutup Panel Aktif', category: 'Navigasi Panel', action: 'NAV_CLOSE' },
 
   // ⚡ 5. Menu Cepat
-  OPEN_MISSION: { key: 'M', code: 'KeyM', label: 'Shift + M', description: '🎯 Buka Misi Presiden', category: 'Menu Cepat', action: 'OPEN_MISSION' },
+  OPEN_MISSION: { id: 'OPEN_MISSION', key: 'M', code: 'KeyM', label: 'Shift + M', description: '🎯 Buka Misi Presiden', category: 'Menu Cepat', action: 'OPEN_MISSION' },
 };
 
 /**

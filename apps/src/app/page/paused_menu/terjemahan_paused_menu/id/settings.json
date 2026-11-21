@@ -11,7 +11,8 @@
   "theme": {
     "title": "Tema Tampilan",
     "dark": "Gelap",
-    "light": "Terang"
+    "light": "Terang",
+    "storageError": "Preferensi tema tidak dapat dibaca atau disimpan di perangkat ini."
   },
   "map": {
     "title": "Tampilan Garis & Kota Peta",
@@ -28,5 +29,6 @@
     "selectDesc": "Pilih bahasa tampilan antarmuka dan teks game.",
     "current": "Bahasa Aktif",
     "saved": "Pilihan bahasa tersimpan"
-  }
+  },
+  "themeStorageError": "Preferensi tema tidak dapat dibaca atau disimpan di perangkat ini."
 }

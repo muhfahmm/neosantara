@@ -17,6 +17,7 @@ import {
   Info,
 } from "lucide-react";
 import { fetchDoktrinKeterbukaanFromDb } from "../../../../../../../json/2_database_doktrin_keterbukaan/index";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface DoktrinKeterbukaanSectionProps {
   countryDetail?: Record<string, any> | null;
@@ -24,106 +25,31 @@ interface DoktrinKeterbukaanSectionProps {
 
 interface DoctrineIndicator {
   key: string;
-  name: string;
   category: "civil" | "media" | "global";
-  desc: string;
-  lowLabel: string;
-  highLabel: string;
   icon: React.ElementType;
 }
 
 const DOCTRINE_INDICATORS: DoctrineIndicator[] = [
   // 1. Kebebasan Sipil & HAM
-  {
-    key: "speechScore",
-    name: "Kebebasan Berpendapat & Berekspresi",
-    category: "civil",
-    desc: "Tingkat perlindungan hukum terhadap kritik, kebebasan berbicara, dan beropini publik",
-    lowLabel: "Sensor Keras (Otoriter)",
-    highLabel: "Bebas Penuh (Demokratis)",
-    icon: Users,
-  },
-  {
-    key: "religionScore",
-    name: "Toleransi & Kebebasan Beragama",
-    category: "civil",
-    desc: "Jaminan kebebasan beribadah, kesetaraan hak penganut agama dan keyakinan minoritas",
-    lowLabel: "Agama Tunggal Wajib",
-    highLabel: "Pluralisme & Sekuler Terbuka",
-    icon: Shield,
-  },
-  {
-    key: "demoScore",
-    name: "Hak Berdemonstrasi & Berserikat",
-    category: "civil",
-    desc: "Izin melakukan unjuk rasa damai, pembentukan serikat pekerja dan organisasi masyarakat",
-    lowLabel: "Dilarang Total",
-    highLabel: "Dilindungi Konstitusi",
-    icon: Users,
-  },
-  {
-    key: "transparencyScore",
-    name: "Transparansi & Akuntabilitas Publik",
-    category: "civil",
-    desc: "Keterbukaan anggaran belanja negara, dokumen kebijakan publik, dan audit kekayaan pejabat",
-    lowLabel: "Rahasia Negara Mutlak",
-    highLabel: "Open Government Data",
-    icon: Eye,
-  },
+  { key: "speechScore", category: "civil", icon: Users },
+  { key: "religionScore", category: "civil", icon: Shield },
+  { key: "demoScore", category: "civil", icon: Users },
+  { key: "transparencyScore", category: "civil", icon: Eye },
 
   // 2. Media & Informasi
-  {
-    key: "mediaScore",
-    name: "Kebebasan Pers & Penyiaran",
-    category: "media",
-    desc: "Kemerdekaan jurnalis, stasiun televisi, dan media cetak independen tanpa sensor sepihak",
-    lowLabel: "Media Monopoli Negara",
-    highLabel: "Pers Independen Bebas",
-    icon: Tv,
-  },
-  {
-    key: "internetScore",
-    name: "Keterbukaan Internet & Digital",
-    category: "media",
-    desc: "Akses jaringan internet tanpa pemblokiran sewenang-wenang dan kebebasan platform digital",
-    lowLabel: "Intranet Tertutup (Firewall)",
-    highLabel: "Internet Netral & Terbuka",
-    icon: Globe,
-  },
+  { key: "mediaScore", category: "media", icon: Tv },
+  { key: "internetScore", category: "media", icon: Globe },
 
   // 3. Perbatasan & Geopolitik
-  {
-    key: "borderScore",
-    name: "Kebijakan Imigrasi & Perbatasan",
-    category: "global",
-    desc: "Kemudahan masuknya warga asing, turis mancanegara, dan penerimaan visa kunjungan",
-    lowLabel: "Perbatasan Tertutup Ketat",
-    highLabel: "Bebas Visa Global",
-    icon: Plane,
-  },
-  {
-    key: "tradeScore",
-    name: "Keterbukaan Perdagangan Luar Negeri",
-    category: "global",
-    desc: "Tarif impor rendah, kemudahan ekspor produk, serta iklim investasi perusahaan global",
-    lowLabel: "Proteksionisme Autarki",
-    highLabel: "Pasar Bebas Multilateral",
-    icon: Scale,
-  },
-  {
-    key: "diplomacyScore",
-    name: "Diplomasi & Kerja Sama Internasional",
-    category: "global",
-    desc: "Partisipasi aktif dalam organisasi internasional, pakta perdamaian, dan traktat global",
-    lowLabel: "Isolasionis Mandiri",
-    highLabel: "Integrasi Global Aktif",
-    icon: Globe,
-  },
+  { key: "borderScore", category: "global", icon: Plane },
+  { key: "tradeScore", category: "global", icon: Scale },
+  { key: "diplomacyScore", category: "global", icon: Globe },
 ];
 
 export default function DoktrinKeterbukaanSection({
   countryDetail,
 }: DoktrinKeterbukaanSectionProps) {
+  const { t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [dbData, setDbData] = useState<Record<string, any> | null>(null);
 
@@ -160,94 +86,94 @@ export default function DoktrinKeterbukaanSection({
     };
 
     return {
-      speechScore: getVal("speechScore", 50),
+      speechScore: getVal("speechScore", 55),
       religionScore: getVal("religionScore", 60),
-      demoScore: getVal("demoScore", 45),
-      transparencyScore: getVal("transparencyScore", 55),
+      demoScore: getVal("demoScore", 50),
+      transparencyScore: getVal("transparencyScore", 45),
       mediaScore: getVal("mediaScore", 50),
-      internetScore: getVal("internetScore", 60),
-      borderScore: getVal("borderScore", 40),
+      internetScore: getVal("internetScore", 65),
+      borderScore: getVal("borderScore", 55),
       tradeScore: getVal("tradeScore", 60),
-      diplomacyScore: getVal("diplomacyScore", 55),
+      diplomacyScore: getVal("diplomacyScore", 70),
     };
   }, [countryDetail, dbData]);
 
+  // Overall Openness Score (Average)
   const overallScore = useMemo(() => {
-    const list = Object.values(scores);
-    return Math.round(list.reduce((acc, v) => acc + v, 0) / list.length);
+    const vals = Object.values(scores);
+    const sum = vals.reduce((acc, curr) => acc + curr, 0);
+    return Math.round(sum / vals.length);
   }, [scores]);
 
+  // Status Rezim Keterbukaan
   const regime = useMemo(() => {
     if (overallScore <= 20) {
       return {
-        label: "Negara Terisolasi Total (Autarki)",
-        color: "bg-rose-950/80 text-rose-300 border-rose-500/50",
-        badge: "Tipe Tertutup / Otoriter Ekstrem",
-        desc: "Negara memutus hubungan dengan dunia luar, mengontrol ketat pers, agama, demonstrasi, internet, perbatasan, dan autarki ekonomi.",
-      };
-    } else if (overallScore <= 40) {
-      return {
-        label: "Negara Proteksionis & Terbatas",
-        color: "bg-amber-950/80 text-amber-300 border-amber-500/50",
-        badge: "Tipe Terbatas",
-        desc: "Pemerintah membatasi arus imigrasi dan menyaring media publik serta memperketat izin demonstrasi masyarakat.",
-      };
-    } else if (overallScore <= 60) {
-      return {
-        label: "Negara Moderat & Campuran",
-        color: "bg-cyan-950/80 text-cyan-300 border-cyan-500/50",
-        badge: "Tipe Moderat",
-        desc: "Menyeimbangkan antara kebebasan sipil, ketertiban hukum publik, dan keterbukaan ekonomi hubungan internasional.",
-      };
-    } else if (overallScore <= 80) {
-      return {
-        label: "Negara Terbuka & Demokratis",
-        color: "bg-emerald-950/80 text-emerald-300 border-emerald-500/50",
-        badge: "Tipe Demokratis",
-        desc: "Kebebasan pers & beragama terjamin, perbatasan terbuka, internet bebas, dan transparansi pemerintah yang sangat tinggi.",
-      };
-    } else {
-      return {
-        label: "Negara Globalis & Terbuka Penuh",
-        color: "bg-teal-950/80 text-root-accent border-root-accent/50",
-        badge: "Tipe Kosmopolitan",
-        desc: "Jaminan penuh kebebasan pers, perbatasan bebas, internet terbuka mutlak, dan integrasi pasar global tanpa hambatan.",
+        label: t("detail_negara_ai.building.doktrin.regimes.autarki.label"),
+        desc: t("detail_negara_ai.building.doktrin.regimes.autarki.desc"),
+        color: "text-rose-400 bg-rose-500/10 border-rose-500/30",
+        badge: "Otoriter Autarki",
       };
     }
-  }, [overallScore]);
+    if (overallScore <= 40) {
+      return {
+        label: t("detail_negara_ai.building.doktrin.regimes.proteksionis.label"),
+        desc: t("detail_negara_ai.building.doktrin.regimes.proteksionis.desc"),
+        color: "text-amber-400 bg-amber-500/10 border-amber-500/30",
+        badge: "Proteksionis Terbatas",
+      };
+    }
+    if (overallScore <= 60) {
+      return {
+        label: t("detail_negara_ai.building.doktrin.regimes.moderat.label"),
+        desc: t("detail_negara_ai.building.doktrin.regimes.moderat.desc"),
+        color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30",
+        badge: "Moderat Campuran",
+      };
+    }
+    if (overallScore <= 80) {
+      return {
+        label: t("detail_negara_ai.building.doktrin.regimes.terbuka.label"),
+        desc: t("detail_negara_ai.building.doktrin.regimes.terbuka.desc"),
+        color: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30",
+        badge: "Demokratis Terbuka",
+      };
+    }
+    return {
+      label: t("detail_negara_ai.building.doktrin.regimes.globalis.label"),
+      desc: t("detail_negara_ai.building.doktrin.regimes.globalis.desc"),
+      color: "text-root-accent bg-root-accent/10 border-root-accent/30",
+      badge: "Globalis Bebas Penuh",
+    };
+  }, [overallScore, t]);
+
+  const filteredIndicators = useMemo(() => {
+    return DOCTRINE_INDICATORS.filter(
+      (ind) => selectedCategory === "all" || ind.category === selectedCategory
+    );
+  }, [selectedCategory]);
 
   const getScoreColor = (val: number) => {
-    if (val <= 25) return "text-rose-400";
-    if (val <= 40) return "text-amber-400";
-    if (val <= 65) return "text-yellow-400";
-    if (val <= 80) return "text-emerald-400";
-    return "text-root-accent";
+    if (val >= 70) return "text-emerald-400";
+    if (val >= 45) return "text-amber-400";
+    return "text-rose-400";
   };
 
   const getBarGradient = (val: number) => {
-    if (val <= 25) return "from-rose-600 to-rose-500";
-    if (val <= 40) return "from-rose-500 to-amber-500";
-    if (val <= 65) return "from-amber-500 to-yellow-400";
-    if (val <= 80) return "from-emerald-500 to-emerald-400";
-    return "from-root-accent to-[#10B981]";
+    if (val >= 70) return "from-emerald-600 to-emerald-400";
+    if (val >= 45) return "from-amber-600 to-amber-400";
+    return "from-rose-600 to-rose-400";
   };
-
-  const filteredIndicators = useMemo(() => {
-    if (selectedCategory === "all") return DOCTRINE_INDICATORS;
-    return DOCTRINE_INDICATORS.filter((it) => it.category === selectedCategory);
-  }, [selectedCategory]);
 
   return (
     <div className="space-y-6">
-      {/* 1. HERO BANNER INDEKS KETERBUKAAN */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0F2826] via-[#0A1F1E] to-[#041211] p-5 sm:p-7 border border-root-accent/30 shadow-2xl">
-
-
+      {/* 1. HERO SUMMARY SECTION */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0D2E2B] via-[#09221F] to-[#041412] p-5 sm:p-7 border border-root-accent/30 shadow-2xl">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="space-y-2 max-w-xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-root-accent/15 border border-root-accent/30 text-root-accent text-xs font-black tracking-wider uppercase">
               <Globe className="w-3.5 h-3.5" />
-              <span>Doktrin & Keterbukaan Negara</span>
+              <span>{t("detail_negara_ai.building.doktrin.badge")}</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-wide">
               {regime.label}
@@ -255,14 +181,14 @@ export default function DoktrinKeterbukaanSection({
             <p className="text-xs sm:text-sm text-[#A0D4C2] leading-relaxed">{regime.desc}</p>
           </div>
 
-          {/* INDEKS OVERALL CARD */}
-          <div className="bg-[#031510]/80  border-2 border-root-accent/40 rounded-2xl p-4 sm:p-5 flex items-center gap-4 min-w-[260px] shadow-lg">
+          {/* Skor Keterbukaan Global */}
+          <div className="bg-[#031510]/80 border-2 border-root-accent/40 rounded-2xl p-4 sm:p-5 flex items-center gap-4 min-w-[270px] shadow-lg">
             <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-root-accent/30 to-root-accent/5 border border-root-accent/50 flex items-center justify-center shrink-0">
               <Sparkles className="w-7 h-7 text-root-accent" />
             </div>
             <div>
               <span className="text-[10px] font-black tracking-wider uppercase text-root-subtle">
-                Indeks Keterbukaan
+                {t("detail_negara_ai.building.doktrin.indexTitle")}
               </span>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl sm:text-4xl font-black text-root-accent">
@@ -277,20 +203,19 @@ export default function DoktrinKeterbukaanSection({
           </div>
         </div>
 
-        {/* PROGRESS SPEKTRUM NASIONAL */}
-        <div className="mt-6 pt-5 border-t border-root-accent/20 space-y-2">
-          <div className="flex justify-between text-[11px] font-bold uppercase">
+        {/* Bar Indikator Utama */}
+        <div className="mt-6 pt-5 border-t border-root-accent/20">
+          <div className="flex justify-between items-center text-xs font-bold mb-2">
             <span className="flex items-center gap-1.5 text-rose-400">
-              <Lock className="w-3.5 h-3.5" /> Tertutup Total (0%)
+              <Lock className="w-3.5 h-3.5" /> 0 (Autarki)
             </span>
             <span className="flex items-center gap-1.5 text-root-accent">
-              Terbuka Penuh (100%) <Unlock className="w-3.5 h-3.5" />
+              100 (Globalis) <Unlock className="w-3.5 h-3.5" />
             </span>
           </div>
-
-          <div className="h-3 w-full bg-[#051714] rounded-full overflow-hidden border border-root-accent/20 p-0.5">
+          <div className="h-3 w-full bg-root-surface rounded-full overflow-hidden border border-root-accent/30">
             <div
-              className="h-full bg-gradient-to-r from-rose-600 via-amber-500 via-yellow-400 to-root-accent rounded-full transition-all duration-500 relative"
+              className="h-full bg-gradient-to-r from-rose-500 via-amber-400 to-root-accent transition-all duration-500 rounded-full"
               style={{ width: `${Math.max(5, Math.min(100, overallScore))}%` }}
             />
           </div>
@@ -300,10 +225,10 @@ export default function DoktrinKeterbukaanSection({
       {/* 2. FILTER KATEGORI */}
       <div className="flex items-center gap-2 overflow-x-auto no-scrollbar bg-root-canvas p-2.5 rounded-xl border border-root-accent/20">
         {[
-          { id: "all", label: "Semua Indikator (9)", icon: Globe },
-          { id: "civil", label: "Kebebasan Sipil & HAM (4)", icon: Users },
-          { id: "media", label: "Media & Informasi (2)", icon: Tv },
-          { id: "global", label: "Perbatasan & Geopolitik (3)", icon: Plane },
+          { id: "all", label: t("detail_negara_ai.building.doktrin.categories.all"), icon: Globe },
+          { id: "civil", label: t("detail_negara_ai.building.doktrin.categories.civil"), icon: Users },
+          { id: "media", label: t("detail_negara_ai.building.doktrin.categories.media"), icon: Tv },
+          { id: "global", label: t("detail_negara_ai.building.doktrin.categories.global"), icon: Plane },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = selectedCategory === tab.id;
@@ -331,6 +256,16 @@ export default function DoktrinKeterbukaanSection({
           const scoreColor = getScoreColor(val);
           const barGradient = getBarGradient(val);
 
+          const itemName = t(`detail_negara_ai.building.doktrin.indicators.${item.key}.name` as any);
+          const itemDesc = t(`detail_negara_ai.building.doktrin.indicators.${item.key}.desc` as any);
+          const lowLabel = t(`detail_negara_ai.building.doktrin.indicators.${item.key}.lowLabel` as any);
+          const highLabel = t(`detail_negara_ai.building.doktrin.indicators.${item.key}.highLabel` as any);
+          const catTag = item.category === "civil"
+            ? t("detail_negara_ai.building.doktrin.categoryTags.civil")
+            : item.category === "media"
+            ? t("detail_negara_ai.building.doktrin.categoryTags.media")
+            : t("detail_negara_ai.building.doktrin.categoryTags.global");
+
           return (
             <div
               key={item.key}
@@ -344,14 +279,10 @@ export default function DoktrinKeterbukaanSection({
                     </div>
                     <div>
                       <h3 className="text-xs font-bold text-white group-hover:text-root-accent transition-colors leading-tight">
-                        {item.name}
+                        {itemName}
                       </h3>
                       <span className="text-[9px] font-black uppercase text-root-subtle tracking-wider">
-                        {item.category === "civil"
-                          ? "Sipil & HAM"
-                          : item.category === "media"
-                            ? "Media & Digital"
-                            : "Geopolitik & Perbatasan"}
+                        {catTag}
                       </span>
                     </div>
                   </div>
@@ -361,14 +292,14 @@ export default function DoktrinKeterbukaanSection({
                   </span>
                 </div>
 
-                <p className="text-xs text-gray-300 leading-relaxed mb-4">{item.desc}</p>
+                <p className="text-xs text-gray-300 leading-relaxed mb-4">{itemDesc}</p>
               </div>
 
               {/* PROGRESS BAR & SPEKTRUM NILAI */}
               <div className="space-y-1.5 pt-2 border-t border-root-accent/10">
                 <div className="flex justify-between text-[10px] font-semibold text-gray-400">
-                  <span className="truncate max-w-[120px]">{item.lowLabel}</span>
-                  <span className="truncate max-w-[120px] text-right">{item.highLabel}</span>
+                  <span className="truncate max-w-[120px]">{lowLabel}</span>
+                  <span className="truncate max-w-[120px] text-right">{highLabel}</span>
                 </div>
 
                 <div className="h-2 w-full bg-root-surface rounded-full overflow-hidden border border-root-accent/20">
@@ -379,14 +310,14 @@ export default function DoktrinKeterbukaanSection({
                 </div>
 
                 <div className="flex items-center justify-between pt-1 text-[10px]">
-                  <span className="text-root-subtle">Status Regulasi</span>
+                  <span className="text-root-subtle">{t("detail_negara_ai.building.doktrin.regulationStatus")}</span>
                   <span className={`font-bold flex items-center gap-1 ${scoreColor}`}>
                     <CheckCircle2 className="w-3 h-3" />
                     {val >= 70
-                      ? "Terbuka & Bebas"
+                      ? t("detail_negara_ai.building.doktrin.statusOpenFree")
                       : val >= 45
-                        ? "Moderat Berimbang"
-                        : "Dibatasi Regulasi"}
+                      ? t("detail_negara_ai.building.doktrin.statusModerate")
+                      : t("detail_negara_ai.building.doktrin.statusRestricted")}
                   </span>
                 </div>
               </div>

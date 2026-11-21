@@ -26,6 +26,7 @@ import dynamic from 'next/dynamic';
 import useKeyboardShortcuts from '../paused_menu/5_keyword';
 import { subMenuItems } from '../navigasi_menu/navigationData';
 import ModalsManager from '../navigasi_menu/2_navigasi_bawah/ModalsManager';
+import { useLanguage } from '../paused_menu/terjemahan_paused_menu/languageLogic';
 import {
     canAcceptTradeDeal,
     getTradeRejectionDescription,
@@ -1239,6 +1240,7 @@ function TimeControllerPortal({
 }
 
 export default function MapPage() {
+    const { t } = useLanguage();
     const router = useRouter();
     const viewportMode = useViewportMode();
     const isLandscapePhone = viewportMode === 'landscapePhone';
@@ -9142,7 +9144,7 @@ export default function MapPage() {
             setIsCreatingNewSaveSlot(false);
         } catch (error: any) {
             console.error('Error saving game:', error);
-            alert(`Terjadi kesalahan: ${error.message || 'Gagal menyimpan permainan.'}`);
+            alert(t('game.notification.errorOccurred', { error: error.message || t('game.notification.saveGameFailed') }));
         } finally {
             timeManager?.setPaused(wasPaused);
             setIsPaused(wasPaused);
@@ -10141,8 +10143,12 @@ export default function MapPage() {
                             setInboxModalOpen(false);
                             setResultModal({
                                 isOpen: true,
-                                title: 'Gagal Menyelesaikan Ekspor',
-                                message: `Stok ${tNotif.productKey} Anda tidak mencukupi (${myStock} unit dari ${tNotif.quantity} unit yang dibutuhkan).`,
+                                title: t('game.notification.exportFailedTitle'),
+                                message: t('game.notification.exportFailedStock', {
+                                    product: tNotif.productKey,
+                                    stock: myStock,
+                                    required: tNotif.quantity,
+                                }),
                                 type: 'error',
                                 persistent: true,
                                 // modal decoupled
@@ -10223,8 +10229,11 @@ export default function MapPage() {
                             setInboxModalOpen(false);
                             setResultModal({
                                 isOpen: true,
-                                title: 'Gagal Menyelesaikan Impor',
-                                message: `Anggaran negara tidak mencukupi untuk melakukan impor ini. (${budget.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO tersedia dari ${tNotif.totalPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO).`,
+                                title: t('game.notification.importFailedTitle'),
+                                message: t('game.notification.importFailedBudget', {
+                                    available: budget.toLocaleString('id-ID', { maximumFractionDigits: 2 }),
+                                    required: tNotif.totalPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 }),
+                                }),
                                 type: 'error',
                                 persistent: true,
                                 // modal decoupled
@@ -10528,8 +10537,11 @@ export default function MapPage() {
                             setInboxModalOpen(false);
                             setResultModal({
                                 isOpen: true,
-                                title: 'Gagal Mengirim Pasukan',
-                                message: `Anggaran negara tidak mencukupi untuk mengirim pasukan pengamanan (Tersedia: ${budget.toLocaleString('id-ID')} NEO, Dibutuhkan: ${cost.toLocaleString('id-ID')} NEO).`,
+                                title: t('game.notification.sendTroopsFailedTitle'),
+                                message: t('game.notification.sendTroopsFailedBudget', {
+                                    available: budget.toLocaleString('id-ID'),
+                                    required: cost.toLocaleString('id-ID'),
+                                }),
                                 type: 'error',
                                 persistent: true,
                             });
@@ -10724,8 +10736,12 @@ export default function MapPage() {
                             setInboxModalOpen(false);
                             setResultModal({
                                 isOpen: true,
-                                title: isPoliceIncident ? 'Operasi Kepolisian Gagal' : 'Gagal Menyalurkan Bantuan',
-                                message: `Anggaran negara tidak mencukupi untuk ${isPoliceIncident ? 'mendanai operasi kepolisian' : 'menyalurkan bantuan'} (${budget.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO dari ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO).`,
+                                title: isPoliceIncident ? t('game.notification.policeOperationFailedTitle') : t('game.notification.sendAidFailedTitle'),
+                                message: t('game.notification.actionBudgetInsufficient', {
+                                    action: isPoliceIncident ? t('game.notification.actionPolice') : t('game.notification.actionAid'),
+                                    available: budget.toLocaleString('id-ID', { maximumFractionDigits: 2 }),
+                                    required: cost.toLocaleString('id-ID', { maximumFractionDigits: 2 }),
+                                }),
                                 type: 'error',
                                 compact: !isPoliceIncident,
                                 persistent: true,

@@ -133,5 +133,6 @@
     "currentTreasury": "Kas negara Anda saat ini: {money} NEO",
     "btnTakeLoan": "Ambil Hutang",
     "btnClose": "Tutup"
-  }
+  },
+  "noSpecificBonus": "Tidak ada bonus spesifik"
 }

@@ -7,6 +7,7 @@ import { fetchAllCountriesWithNpcState, clearAllCountriesCache } from '@/lib/all
 import { processDueLoans } from './4_ekonomi/3_peminjaman_hutang/tab_menu/logic/loanRepaymentLogic';
 import { processActiveResearch } from '@/app/page/menus/penelitian/penelitianPageMenu';
 import { isCountryUnderEconomicEmbargo } from './7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
+import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import {
   applyNpcCountrySimulationStates,
   getNpcCountrySimulationSnapshot,

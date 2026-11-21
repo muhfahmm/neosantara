@@ -11,7 +11,8 @@
   "theme": {
     "title": "Display Theme",
     "dark": "Dark",
-    "light": "Light"
+    "light": "Light",
+    "storageError": "Theme preferences cannot be read or saved on this device."
   },
   "map": {
     "title": "Map Borders & Cities Display",
@@ -28,5 +29,6 @@
     "selectDesc": "Choose your preferred display and game text language.",
     "current": "Current Language",
     "saved": "Language preference saved"
-  }
+  },
+  "themeStorageError": "Theme preferences cannot be read or saved on this device."
 }

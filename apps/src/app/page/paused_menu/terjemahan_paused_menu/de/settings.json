@@ -11,7 +11,8 @@
   "theme": {
     "title": "Erscheinungsbild",
     "dark": "Dunkel",
-    "light": "Hell"
+    "light": "Hell",
+    "storageError": "Design-Einstellungen können auf diesem Gerät nicht gelesen oder gespeichert werden."
   },
   "map": {
     "title": "Kartenlinien & Städtelandschaft",
@@ -28,5 +29,6 @@
     "selectDesc": "Wählen Sie die Sprache für Oberfläche und Texte.",
     "current": "Aktuelle Sprache",
     "saved": "Spracheinstellung gespeichert"
-  }
+  },
+  "themeStorageError": "Design-Einstellungen können auf diesem Gerät nicht gelesen oder gespeichert werden."
 }

@@ -36,6 +36,7 @@ import {
   applyBuddhaEnvironmentalTaxRevenueBonus,
 } from "@/app/page/bonus_logic/agama_bonus_logic/buddha";
 import { calculateTaxSatisfaction } from "@/app/logic/kepuasanCalculator";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface PajakSectionProps {
   countryDetail: Record<string, any> | null;
@@ -59,6 +60,7 @@ const formatNumber = (val: unknown): string => {
 };
 
 export default function PajakSection({ countryDetail }: PajakSectionProps) {
+  const { t } = useLanguage();
   const [dbTaxRates, setDbTaxRates] = React.useState<Record<string, number> | null>(null);
 
   // Jika countryDetail belum memiliki data pajak (atau bernilai 0), fetch dari /api/pajak-negara
@@ -180,6 +182,7 @@ export default function PajakSection({ countryDetail }: PajakSectionProps) {
 
       return {
         ...config,
+        name: t(`detail_negara_ai.building.pajak.taxes.${config.id}` as any),
         currentRate: rate,
         estimatedRevenue: income,
       };
@@ -223,9 +226,9 @@ export default function PajakSection({ countryDetail }: PajakSectionProps) {
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 px-3 py-1.5 bg-root-surface border border-root-accent/30 rounded-xl">
             <TrendingUp className="w-3.5 h-3.5 text-root-accent" />
-            <span className="text-[10px] font-bold text-root-subtle uppercase">Total Penerimaan:</span>
+            <span className="text-[10px] font-bold text-root-subtle uppercase">{t("detail_negara_ai.building.pajak.totalRevenue")}</span>
             <span className="text-[11px] font-black text-root-accent">
-              +{formatNumber(totalEstimatedRevenue)} NEO / hari
+              +{formatNumber(totalEstimatedRevenue)} {t("detail_negara_ai.building.pajak.perDaySuffix")}
             </span>
           </div>
         </div>
@@ -236,18 +239,18 @@ export default function PajakSection({ countryDetail }: PajakSectionProps) {
         <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-black uppercase tracking-widest text-root-subtle">
-              Rata-rata Tarif Pajak
+              {t("detail_negara_ai.building.pajak.avgTaxRate")}
             </span>
             <Percent className="w-4 h-4 text-root-accent" />
           </div>
           <p className="text-2xl font-black text-root-text">{averageTaxRate}%</p>
-          <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">Beban fiskal gabungan 5 sektor</p>
+          <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">{t("detail_negara_ai.building.pajak.fiscalBurden5Sectors")}</p>
         </div>
 
         <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-black uppercase tracking-widest text-root-subtle">
-              Estimasi Kas Harian
+              {t("detail_negara_ai.building.pajak.estDailyCash")}
             </span>
             <DollarSign className="w-4 h-4 text-emerald-400" />
           </div>
@@ -255,13 +258,13 @@ export default function PajakSection({ countryDetail }: PajakSectionProps) {
             +{formatNumber(totalEstimatedRevenue)}{" "}
             <span className="text-sm font-bold text-emerald-300">NEO</span>
           </p>
-          <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">Pemasukan kas Anggaran Nasional</p>
+          <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">{t("detail_negara_ai.building.pajak.nationalBudgetIncome")}</p>
         </div>
 
         <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-black uppercase tracking-widest text-root-subtle">
-              Indeks Kepuasan Pajak
+              {t("detail_negara_ai.building.pajak.taxSatisfactionIndex")}
             </span>
             <span className="text-xs font-bold text-root-accent">{taxSatisfactionScore}/100</span>
           </div>
@@ -303,13 +306,13 @@ export default function PajakSection({ countryDetail }: PajakSectionProps) {
                   {tax.name}
                 </h5>
                 <p className="text-[10px] text-root-subtle">
-                  Batas rentang tarif: {tax.minRate}% - {tax.maxRate}% (Standar {tax.baseRate}%)
+                  {t("detail_negara_ai.building.pajak.rateRangeLimit", { min: tax.minRate, max: tax.maxRate, base: tax.baseRate })}
                 </p>
               </div>
 
               <div className="mt-4 pt-3 border-t border-root-accent/15 flex items-center justify-between">
                 <span className="text-[10px] font-bold text-root-subtle uppercase tracking-wider">
-                  Estimasi Pendapatan:
+                  {t("detail_negara_ai.building.pajak.estimatedRevenue")}
                 </span>
                 <span className="text-xs font-black text-emerald-400">
                   +{formatNumber(tax.estimatedRevenue)} NEO

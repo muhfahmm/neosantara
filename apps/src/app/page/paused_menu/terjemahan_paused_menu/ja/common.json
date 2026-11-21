@@ -10,5 +10,40 @@
   "error": "エラーが発生しました",
   "success": "成功",
   "search": "検索...",
-  "infoTitle": "{title} の情報"
+  "infoTitle": "{title} の情報",
+  "understand": "了解",
+  "errorBoundary": {
+    "title": "NEOSANTARA リカバリーモード",
+    "description": "システム画面の読み込み中に問題が発生しました。ページを再読み込みするか、直接シミュレーションを開始してください。",
+    "startSimulation": "シミュレーション開始",
+    "reload": "再読み込み"
+  },
+  "rootConfirmModal": {
+    "confirm": "確認",
+    "understand": "了解",
+    "cancel": "キャンセル"
+  },
+  "rootConstructionModal": {
+    "title": "建設確認",
+    "cost": "建設費用（合計）：",
+    "quantityBuilding": "建築数",
+    "unitBuilding": "棟",
+    "maximum": "最大 ({max})",
+    "materialsNeeded": "必要資材",
+    "hide": "非表示",
+    "show": "表示",
+    "noMaterials": "この建物に必要な資材はありません。",
+    "currentBalance": "現在の国庫残高：",
+    "cancel": "キャンセル",
+    "materialShortage": "資材不足",
+    "quantityOverStock": "利用可能上限を超えています",
+    "insufficientFunds": "資金不足",
+    "startConstruction": "建設開始"
+  },
+  "rootAISuggestionsModal": {
+    "title": "{sector}セクターのAI推奨および分析",
+    "subtitle": "セクターの需要と状態の評価",
+    "itemCount": "{count} 項目",
+    "openItem": "{item} を開く"
+  }
 }

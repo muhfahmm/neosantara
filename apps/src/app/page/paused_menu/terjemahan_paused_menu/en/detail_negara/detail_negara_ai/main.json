@@ -230,7 +230,8 @@
     "navy": "Navy",
     "airForce": "Air Force",
     "totalUnitsToSend": "Total units to send",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "resetAll": "Reset All"
   },
   "military": {
     "attackInProgressTitle": "Attack Still in Progress",
@@ -262,7 +263,9 @@
     "targetCity": "Target City",
     "noCityData": "No city data available for this country",
     "paymentChanceNote": "Chance increases with payment size. Effective minimum: 20,000 NEO for meaningful results.",
-    "suggest": "Suggest"
+    "suggest": "Suggest",
+    "requestAttackPromptPrefix": "Request",
+    "requestAttackPromptSuffix": "to launch an attack against your selected target. Set the amount you are willing to pay for this request."
   },
   "building": {
     "tabs": {
@@ -279,6 +282,370 @@
       "militaryFacilities": "Facilities & Military",
       "foodProduction": "Food Production",
       "housing": "Housing"
+    },
+    "hargaBarang": {
+      "title": "Basic Commodity Prices & Public Affordability",
+      "desc": "Monitoring price index of basic public necessities in the domestic market",
+      "foodSubsidyActive": "Active Food Subsidy (+5 Points)",
+      "average": "Average:",
+      "avgMarketPrice": "Average Market Price",
+      "basedOnCommodities": "Based on {count} basic food commodities",
+      "affordabilityStatus": "Affordability Status",
+      "consumerPurchasingPower": "Consumer purchasing power",
+      "priceSatisfactionIndex": "Price Satisfaction Index",
+      "statusVeryAffordable": "Very Affordable",
+      "statusModerate": "Moderate / Adequate",
+      "statusHighInflation": "High Inflation",
+      "statusCheap": "Cheap",
+      "statusFair": "Fair",
+      "statusExpensive": "High",
+      "statusLabel": "Status:",
+      "commodities": {
+        "harga_beras": "Rice",
+        "harga_daging_sapi": "Beef",
+        "harga_ayam": "Chicken Meat",
+        "harga_minyak_goreng": "Cooking Oil",
+        "harga_gula": "Granulated Sugar",
+        "harga_telur": "Chicken Eggs",
+        "harga_listrik": "Electricity Tariff",
+        "harga_air": "Clean Water Tariff"
+      }
+    },
+    "subsidi": {
+      "title": "Government Subsidy Policy",
+      "desc": "Social cushion, price intervention on staple goods, energy, and community aid",
+      "totalBudgetBurden": "Total National Budget Burden:",
+      "activePrograms": "Active Programs",
+      "open": "Open",
+      "subsidiesActive": "{count} active subsidy programs protecting purchasing power",
+      "dailyBudgetCost": "Daily Budget Cost",
+      "dailyBudgetExpense": "National Budget cash expenditure per day",
+      "publicSatisfactionBonus": "Public Satisfaction Bonus",
+      "positiveImpact": "Positive impact on public approval",
+      "searchPlaceholder": "Search subsidy program...",
+      "all": "All",
+      "active": "Active",
+      "inactive": "Inactive",
+      "costAllocation": "Cost Allocation:",
+      "perDay": "NEO/day",
+      "points": "Points"
+    },
+    "sistemEkonomi": {
+      "title": "Economic System & Policy Spectrum",
+      "desc": "Balance of state intervention versus free market and structural policies",
+      "spectrumPosition": "Spectrum Position:",
+      "categoryCentralized": "Centralized",
+      "categoryFreeMarket": "Free Market",
+      "categoryMixed": "Mixed",
+      "labelCommand": "Command",
+      "labelMixed": "Mixed",
+      "labelFreeMarket": "Free Market",
+      "economicGrowth": "Economic Growth",
+      "inflation": "Inflation",
+      "workerSatisfaction": "Worker Satisfaction",
+      "investorSatisfaction": "Investor Satisfaction",
+      "structuralPoliciesTitle": "Structural Economic Policies (7 Policies)",
+      "nationalizationTitle": "Control & Nationalization Level of Strategic Sectors",
+      "stateShare": "State: {percent}%"
+    },
+    "pajak": {
+      "title": "Fiscal Tax Policy Structure",
+      "desc": "National Budget cash revenue rates from 5 domestic taxation instruments",
+      "totalRevenue": "Total Revenue:",
+      "perDaySuffix": "NEO / day",
+      "avgTaxRate": "Average Tax Rate",
+      "fiscalBurden5Sectors": "Combined fiscal burden across 5 sectors",
+      "estDailyCash": "Estimated Daily Cash",
+      "nationalBudgetIncome": "National Budget cash revenue",
+      "taxSatisfactionIndex": "Tax Satisfaction Index",
+      "rateRangeLimit": "Rate range limit: {min}% - {max}% (Standard {base}%)",
+      "estimatedRevenue": "Estimated Revenue:",
+      "taxes": {
+        "income_tax": "Personal Income Tax (PIT)",
+        "corporate_tax": "Corporate Income Tax",
+        "vat": "Value Added Tax (VAT)",
+        "cigarette_tax": "Tobacco & Luxury Goods Excise",
+        "environment_tax": "Carbon & Environmental Tax"
+      }
+    },
+    "doktrin": {
+      "badge": "State Doctrine & Openness",
+      "regimes": {
+        "autarki": {
+          "label": "Totally Isolated State (Autarky)",
+          "desc": "The state cuts ties with the outside world, strictly controlling press, religion, protests, internet, and trade."
+        },
+        "proteksionis": {
+          "label": "Protectionist & Restricted State",
+          "desc": "The government restricts immigration, filters public media, and tightens permits for protests and assemblies."
+        },
+        "moderat": {
+          "label": "Moderate & Mixed State",
+          "desc": "Balances civil liberties, public order, and economic openness in international relations."
+        },
+        "terbuka": {
+          "label": "Open & Democratic State",
+          "desc": "Press & religious freedoms are guaranteed, borders are open, internet is free, with high governance transparency."
+        },
+        "globalis": {
+          "label": "Globalist & Fully Open State",
+          "desc": "Full guarantee of press freedom, borderless entry, completely neutral internet, and deep global market integration."
+        }
+      },
+      "indexTitle": "Openness Index",
+      "categories": {
+        "all": "All Indicators (9)",
+        "civil": "Civil Liberties & Human Rights (4)",
+        "media": "Media & Information (2)",
+        "global": "Borders & Geopolitics (3)"
+      },
+      "categoryTags": {
+        "civil": "Civil & Rights",
+        "media": "Media & Digital",
+        "global": "Geopolitics & Borders"
+      },
+      "regulationStatus": "Regulatory Status",
+      "statusOpenFree": "Open & Free",
+      "statusModerate": "Balanced Moderate",
+      "statusRestricted": "Strictly Regulated",
+      "indicators": {
+        "speechScore": {
+          "name": "Freedom of Speech & Expression",
+          "desc": "Legal protection for criticism, free speech, and public opinions",
+          "lowLabel": "Harsh Censorship (Authoritarian)",
+          "highLabel": "Fully Free (Democratic)"
+        },
+        "religionScore": {
+          "name": "Tolerance & Religious Freedom",
+          "desc": "Guaranteed freedom of worship, equal rights for religious minorities",
+          "lowLabel": "Mandatory Single Religion",
+          "highLabel": "Pluralism & Open Secularism"
+        },
+        "demoScore": {
+          "name": "Right to Protest & Assembly",
+          "desc": "Permit for peaceful rallies, labor unions, and civil organizations",
+          "lowLabel": "Totally Banned",
+          "highLabel": "Constitutionally Protected"
+        },
+        "transparencyScore": {
+          "name": "Transparency & Public Accountability",
+          "desc": "Open state budgets, public policy records, and official asset audits",
+          "lowLabel": "Absolute State Secrets",
+          "highLabel": "Open Government Data"
+        },
+        "mediaScore": {
+          "name": "Press & Broadcasting Freedom",
+          "desc": "Independence of journalists, TV networks, and independent print media",
+          "lowLabel": "State Monopoly Media",
+          "highLabel": "Independent Free Press"
+        },
+        "internetScore": {
+          "name": "Internet & Digital Openness",
+          "desc": "Uncensored internet network access and digital platform freedom",
+          "lowLabel": "Closed Intranet (Firewall)",
+          "highLabel": "Neutral & Open Internet"
+        },
+        "borderScore": {
+          "name": "Immigration & Border Policy",
+          "desc": "Ease of entry for foreign nationals, tourists, and visa issuance",
+          "lowLabel": "Tightly Closed Borders",
+          "highLabel": "Global Visa-Free"
+        },
+        "tradeScore": {
+          "name": "Foreign Trade Openness",
+          "desc": "Low import tariffs, easy exports, and welcoming global investment climate",
+          "lowLabel": "Autarkic Protectionism",
+          "highLabel": "Multilateral Free Market"
+        },
+        "diplomacyScore": {
+          "name": "Diplomacy & International Cooperation",
+          "desc": "Active participation in international organizations and global treaties",
+          "lowLabel": "Independent Isolationist",
+          "highLabel": "Active Global Integration"
+        }
+      }
+    },
+    "hunian": {
+      "badge": "Housing & Residential Infrastructure Sector",
+      "title": "National Housing & Settlements",
+      "desc": "Monitoring availability of subsidized housing units, vertical apartment buildings, and luxury estates to meet shelter needs.",
+      "housingCapacity": "Housing Capacity",
+      "people": "People",
+      "unit": "Units",
+      "perUnit": "People/Unit",
+      "surplus": "Surplus +{count} People",
+      "deficit": "Deficit {count} People",
+      "searchPlaceholder": "Search housing type...",
+      "all": "All Housing",
+      "portion": "{percent}% Share",
+      "buildingCount": "Building Count",
+      "capacityPerUnit": "Capacity / Unit",
+      "totalCapacity": "Total Capacity",
+      "availabilityStatus": "Availability Status",
+      "statusActive": "Active Available",
+      "statusUnbuilt": "Not Yet Built",
+      "items": {
+        "rumah_subsidi": {
+          "label": "Subsidized Housing",
+          "categoryLabel": "Affordable Housing",
+          "desc": "Subsidized landed homes for low-income families",
+          "detailDesc": "Provided by government with price incentives and interest subsidies to ensure all families have decent housing."
+        },
+        "apartemen": {
+          "label": "Vertical Apartments",
+          "categoryLabel": "Vertical Housing",
+          "desc": "High-density urban integrated vertical living complexes",
+          "detailDesc": "Multi-story apartment towers designed to maximize urban land efficiency and house large populations."
+        },
+        "mansion": {
+          "label": "Mansions & Luxury Residential",
+          "categoryLabel": "Premium Housing",
+          "desc": "Exclusive residential areas for upper-middle and high net worth",
+          "detailDesc": "Spacious landed properties with private gardens and exclusive amenities for the high-end economic segment."
+        }
+      }
+    },
+    "kelistrikan": {
+      "title": "National Electricity Grid Statistics",
+      "desc": "Balance of power generation capacity versus national sector consumption loads",
+      "production": "Production:",
+      "load": "Load:",
+      "totalSupply": "Total Power Plant Supply",
+      "activeUnits": "{count} Active Units",
+      "operatingAtCapacity": "Plants operating according to installed capacity",
+      "totalNationalLoad": "Total Consumption Load",
+      "servedPopulation": "Served population: ~{population} Million People",
+      "electricityBalance": "Electricity Power Balance",
+      "surplusCapacity": "Safe Power Surplus",
+      "deficitRisk": "Deficit / Blackout Risk",
+      "surplusNote": "Power reserves sufficiently meet demand",
+      "deficitNote": "Demand exceeds power plant supply capacity",
+      "electricitySatisfaction": "Electricity Satisfaction",
+      "publicAccessLevel": "Power reliability and public access level",
+      "consumptionBreakdown": "National Sector Consumption Load Breakdown",
+      "sectorHousing": "Housing & Residential Sector",
+      "sectorHousingDesc": "Subsidized housing, apartments, mansions",
+      "sectorPublic": "Public Places & Services",
+      "sectorPublicDesc": "Schools, hospitals, offices, recreation",
+      "sectorProduction": "Factories & Production Centers",
+      "sectorProductionDesc": "Manufacturing plants, mines, processing",
+      "sectorMilitary": "Military Infrastructure & Bases",
+      "sectorMilitaryDesc": "Barracks, hangars, naval & air bases",
+      "detailLoadAnalysis": "Detailed Load Consumption Analysis",
+      "activePowerPlants": "Active Power Plants ({count} Facilities)",
+      "unitProductionLabel": "{prod} MW / unit",
+      "unitsActiveCount": "{count} Active Units",
+      "fuelShortageWarning": "Fuel shortage"
+    },
+    "spektrumKepuasan": {
+      "title": "Public Satisfaction Spectrum",
+      "desc": "General public approval indicators and satisfaction across all vital national sectors",
+      "socialStatus": "Social Status:",
+      "statusVeryStable": "Very Stable",
+      "statusStable": "Moderately Stable",
+      "statusCritical": "Critical / Unrest",
+      "publicApproval": "General Public Approval",
+      "publicApprovalDesc": "Aggregate public sentiment toward leadership performance and state services",
+      "stable": "Stable",
+      "highestSector": "Highest Sector",
+      "lowestSector": "Needs Improvement",
+      "mainSectors": "Key Sectors",
+      "spectrumLegend": "Satisfaction Spectrum:",
+      "grades": {
+        "veryPoor": "Very Poor",
+        "poor": "Poor",
+        "neutral": "Neutral",
+        "good": "Good",
+        "veryGood": "Very Good"
+      },
+      "sectors": {
+        "pajak": {
+          "name": "TAXATION",
+          "desc": "Affordability of fiscal tax burden for citizens and businesses"
+        },
+        "harga": {
+          "name": "BASIC COMMODITY PRICES",
+          "desc": "Stability and affordability of 8 basic daily staple foods"
+        },
+        "pangan": {
+          "name": "FOOD PRODUCTION",
+          "desc": "Adequacy of yields across agriculture, livestock, fisheries and processing"
+        },
+        "listrik": {
+          "name": "ELECTRICITY GENERATION",
+          "desc": "Reliability of power generation capacity during peak consumption"
+        },
+        "hunian": {
+          "name": "HOUSING & SETTLEMENTS",
+          "desc": "Availability of subsidized homes, apartments, and residential units"
+        },
+        "layananPublik": {
+          "name": "PUBLIC SERVICES & AMENITIES",
+          "desc": "Access to education, healthcare, legal facilities, and public recreation"
+        },
+        "keterbukaan": {
+          "name": "DOCTRINE & OPENNESS",
+          "desc": "Freedom of expression, press, religious tolerance, and government transparency"
+        },
+        "sistem_ekonomi": {
+          "name": "ECONOMIC SYSTEM & POLICY",
+          "desc": "Balance of free market regulation, labor protection, and investments"
+        },
+        "subsidi": {
+          "name": "SUBSIDY ALLOCATION & POLICY",
+          "desc": "Coverage of social safety nets, food aid, energy tariffs, and assistance"
+        }
+      }
+    },
+    "produksiPangan": {
+      "badge": "Integrated National Food Sector",
+      "title": "Food Production Capacity",
+      "desc": "Monitoring agricultural yields, livestock centers, fisheries, and domestic food processing industries.",
+      "totalCapacity": "Total Installed Capacity",
+      "unitFacility": "Units / Facilities",
+      "facilitiesActive": "Facilities operating actively",
+      "allSubsectors": "All Sub-Sectors ({count})",
+      "searchPlaceholder": "Search food commodity...",
+      "activeFacilitiesCount": "{count} Active Facilities",
+      "totalProductionUnits": "Total {count} food production facility units",
+      "statusActive": "Active",
+      "statusUnbuilt": "Not Yet Built",
+      "unit": "units",
+      "subcategories": {
+        "peternakan": {
+          "title": "Livestock",
+          "desc": "Breeding centers for ruminants and national poultry"
+        },
+        "agrikultur": {
+          "title": "Agriculture",
+          "desc": "Farmlands for staple grains, secondary crops, and plantations"
+        },
+        "perikanan": {
+          "title": "Fisheries",
+          "desc": "Marine and freshwater aquaculture and aquaculture centers"
+        },
+        "olahan_pangan": {
+          "title": "Food Processing",
+          "desc": "Factories converting raw food materials into ready-to-consume staples"
+        }
+      }
+    },
+    "pembangunanSipilMiliter": {
+      "tabCivil": "Civilian Facilities",
+      "tabMilitary": "Military & Infrastructure",
+      "searchPlaceholder": "Search construction item...",
+      "civilianCategories": "Civilian Categories",
+      "activeFleetUnits": "Active Fleet Units ({count} Unit Types)",
+      "militaryInfraBases": "Military Infrastructure & Bases ({count} Facilities)",
+      "basesSuffix": "Bases",
+      "underConstruction": "Under construction · finishes {date}",
+      "underConstructionDays": " · {days} days",
+      "inProduction": "In production · finishes {date}",
+      "inProductionCount": "+{count} in production",
+      "inConstructionCount": "+{count} under construction",
+      "infantryCapacity": "Troops / Capacity",
+      "infantryUnitLabel": "Troops / Capacity",
+      "unit": "units"
     }
   }
 }

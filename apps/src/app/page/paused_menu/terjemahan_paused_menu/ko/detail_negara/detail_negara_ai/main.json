@@ -230,7 +230,8 @@
     "navy": "Navy",
     "airForce": "Air Force",
     "totalUnitsToSend": "Total units to send",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "resetAll": "모두 초기화"
   },
   "military": {
     "attackInProgressTitle": "Attack Still in Progress",
@@ -262,7 +263,9 @@
     "targetCity": "Target City",
     "noCityData": "No city data available for this country",
     "paymentChanceNote": "Chance increases with payment size. Effective minimum: 20,000 NEO for meaningful results.",
-    "suggest": "Suggest"
+    "suggest": "Suggest",
+    "requestAttackPromptPrefix": "선택한 목표에 대해",
+    "requestAttackPromptSuffix": "에게 공격을 개시하도록 요청합니다. 이 요청에 대해 지불할 의사가 있는 금액을 설정하십시오."
   },
   "building": {
     "tabs": {
@@ -279,6 +282,370 @@
       "militaryFacilities": "Facilities & Military",
       "foodProduction": "Food Production",
       "housing": "Housing"
+    },
+    "hargaBarang": {
+      "title": "기본 생필품 가격 및 국민 부담도",
+      "desc": "국내 시장의 기본 생필품 가격 지수 모니터링",
+      "foodSubsidyActive": "식품 보조금 적용 중 (+5점)",
+      "average": "평균:",
+      "avgMarketPrice": "평균 시장 가격",
+      "basedOnCommodities": "{count}개 주요 식품 품목 기준",
+      "affordabilityStatus": "구매 용이성 상태",
+      "consumerPurchasingPower": "소비자 구매력",
+      "priceSatisfactionIndex": "가격 만족도 지수",
+      "statusVeryAffordable": "매우 저렴",
+      "statusModerate": "적정 / 양호",
+      "statusHighInflation": "고인플레이션",
+      "statusCheap": "저렴",
+      "statusFair": "적정",
+      "statusExpensive": "높음",
+      "statusLabel": "상태:",
+      "commodities": {
+        "harga_beras": "쌀",
+        "harga_daging_sapi": "소고기",
+        "harga_ayam": "닭고기",
+        "harga_minyak_goreng": "식용유",
+        "harga_gula": "설탕",
+        "harga_telur": "달걀",
+        "harga_listrik": "전기 요금",
+        "harga_air": "수도 요금"
+      }
+    },
+    "subsidi": {
+      "title": "정부 보조금 정책",
+      "desc": "사회 안전망, 생필품 및 에너지 가격 개입, 국민 지원 혜택",
+      "totalBudgetBurden": "국가 재정 총 부담:",
+      "activePrograms": "적용 중인 프로그램",
+      "open": "개방",
+      "subsidiesActive": "{count}개 보조금 정책이 국민 구매력 보호 중",
+      "dailyBudgetCost": "일일 재정 지출",
+      "dailyBudgetExpense": "일일 국가 예산 지출액",
+      "publicSatisfactionBonus": "국민 만족도 보너스",
+      "positiveImpact": "국민 지지도에 긍정적인 영향",
+      "searchPlaceholder": "보조금 프로그램 검색...",
+      "all": "전체",
+      "active": "활성",
+      "inactive": "비활성",
+      "costAllocation": "비용 배정:",
+      "perDay": "NEO/일",
+      "points": "점"
+    },
+    "sistemEkonomi": {
+      "title": "경제 체제 및 정책 스펙트럼",
+      "desc": "자유 시장에 대한 국가 개입과 구조적 정책의 균형",
+      "spectrumPosition": "스펙트럼 위치:",
+      "categoryCentralized": "중앙 통제",
+      "categoryFreeMarket": "자유 시장",
+      "categoryMixed": "혼합 체제",
+      "labelCommand": "통제",
+      "labelMixed": "혼합",
+      "labelFreeMarket": "자유 시장",
+      "economicGrowth": "경제 성장률",
+      "inflation": "인플레이션",
+      "workerSatisfaction": "노동자 만족도",
+      "investorSatisfaction": "투자자 만족도",
+      "structuralPoliciesTitle": "구조적 경제 정책 (7개 정책)",
+      "nationalizationTitle": "전략 부문 국유화 및 지배 수준",
+      "stateShare": "국가: {percent}%"
+    },
+    "pajak": {
+      "title": "조세 및 재정 정책 구조",
+      "desc": "국내 5개 조세 수단을 통한 국가 예산 현금 수입 세율",
+      "totalRevenue": "총 세입:",
+      "perDaySuffix": "NEO / 일",
+      "avgTaxRate": "평균 세율",
+      "fiscalBurden5Sectors": "5대 부문 통합 재정 부담",
+      "estDailyCash": "예상 일일 재정 수입",
+      "nationalBudgetIncome": "국가 예산 현금 수입",
+      "taxSatisfactionIndex": "조세 만족도 지수",
+      "rateRangeLimit": "세율 범위: {min}% - {max}% (표준 {base}%)",
+      "estimatedRevenue": "예상 수입:",
+      "taxes": {
+        "income_tax": "소득세",
+        "corporate_tax": "법인세",
+        "vat": "부가가치세 (VAT)",
+        "cigarette_tax": "담배 및 사치품 소비세",
+        "environment_tax": "탄소세 및 환경세"
+      }
+    },
+    "doktrin": {
+      "badge": "국가 독트린 및 개방도",
+      "regimes": {
+        "autarki": {
+          "label": "완전 고립 국가 (폐쇄 자급자족)",
+          "desc": "외부와 단절하고 언론, 종교, 시위, 인터넷 및 무역을 철저히 통제."
+        },
+        "proteksionis": {
+          "label": "보호주의 및 제한 국가",
+          "desc": "정부가 입국을 제한하고 공공 매체를 검열하며 시위 허가를 통제."
+        },
+        "moderat": {
+          "label": "온건 및 혼합 국가",
+          "desc": "시민의 자유, 법질서, 국제 경제 개방의 균형을 유지."
+        },
+        "terbuka": {
+          "label": "개방 및 민주 국가",
+          "desc": "언론과 종교의 자유가 보장되고 국경 개방과 높은 행정 투명성 확보."
+        },
+        "globalis": {
+          "label": "글로벌리즘 및 전면 개방 국가",
+          "desc": "언론 자유 완벽 보장, 무비자 국경, 중립 인터넷, 글로벌 시장 통합."
+        }
+      },
+      "indexTitle": "개방성 지수",
+      "categories": {
+        "all": "전체 지표 (9)",
+        "civil": "시민의 자유 및 인권 (4)",
+        "media": "미디어 및 정보 (2)",
+        "global": "국경 및 지정학 (3)"
+      },
+      "categoryTags": {
+        "civil": "시민 및 인권",
+        "media": "미디어 및 디지털",
+        "global": "지정학 및 국경"
+      },
+      "regulationStatus": "규제 상태",
+      "statusOpenFree": "개방 및 자유",
+      "statusModerate": "균형 잡힌 온건",
+      "statusRestricted": "엄격한 규제",
+      "indicators": {
+        "speechScore": {
+          "name": "의견 및 표현의 자유",
+          "desc": "비판, 언론 자유 및 대중적 의견에 대한 법적 보호 수준",
+          "lowLabel": "강력한 검열 (권위주의)",
+          "highLabel": "완전한 자유 (민주주의)"
+        },
+        "religionScore": {
+          "name": "관용 및 종교의 자유",
+          "desc": "예배의 자유 보장, 소수 종교인의 권리 평등",
+          "lowLabel": "단일 종교 의무화",
+          "highLabel": "다원주의 및 세속적 개방"
+        },
+        "demoScore": {
+          "name": "집회 및 결사의 자유",
+          "desc": "평화로운 시위, 노동조합 및 시민단체 결성의 허용",
+          "lowLabel": "전면 금지",
+          "highLabel": "헌법상 보장"
+        },
+        "transparencyScore": {
+          "name": "공공 투명성 및 책임성",
+          "desc": "국가 예산 공개, 공공 정책 문서 열람 및 공직자 재산 감사",
+          "lowLabel": "절대 국가 기밀",
+          "highLabel": "정부 데이터 전면 공개"
+        },
+        "mediaScore": {
+          "name": "언론 및 방송의 자유",
+          "desc": "언론인, 방송국 및 독립 출판 언론의 자주성",
+          "lowLabel": "국영 독점 언론",
+          "highLabel": "독립 자유 언론"
+        },
+        "internetScore": {
+          "name": "인터넷 및 디지털 개방성",
+          "desc": "임의 차단 없는 인터넷망 접근권 및 디지털 플랫폼 자유",
+          "lowLabel": "폐쇄 인트라넷 (방화벽)",
+          "highLabel": "중립적 개방 인터넷"
+        },
+        "borderScore": {
+          "name": "이민 및 국경 출입 정책",
+          "desc": "외국인, 관광객 입국 및 비자 발급의 편의성",
+          "lowLabel": "철저한 폐쇄 국경",
+          "highLabel": "글로벌 무비자"
+        },
+        "tradeScore": {
+          "name": "대외 무역 개방성",
+          "desc": "낮은 관세, 원활한 수출입 및 글로벌 기업 투자 환경",
+          "lowLabel": "자급자족 보호주의",
+          "highLabel": "다자간 자유무역"
+        },
+        "diplomacyScore": {
+          "name": "외교 및 국제 협력",
+          "desc": "국제기구, 평화 협정 및 글로벌 조약에의 적극적 참여",
+          "lowLabel": "자립적 고립주의",
+          "highLabel": "적극적 글로벌 통합"
+        }
+      }
+    },
+    "hunian": {
+      "badge": "주거 및 정주 인프라 부문",
+      "title": "국가 주거 및 정주 환경",
+      "desc": "전 국민의 주거 수요 충족을 위한 공공 임대 주택, 고층 아파트 단지 및 고급 맨션 현황 모니터링.",
+      "housingCapacity": "총 수용 인원",
+      "people": "명",
+      "unit": "단위",
+      "perUnit": "명/단위",
+      "surplus": "여유 +{count} 명",
+      "deficit": "부족 {count} 명",
+      "searchPlaceholder": "주거 유형 검색...",
+      "all": "전체 주거",
+      "portion": "{percent}% 점유율",
+      "buildingCount": "총 건물 수",
+      "capacityPerUnit": "단위당 수용력",
+      "totalCapacity": "총 수용력",
+      "availabilityStatus": "공급 상태",
+      "statusActive": "공급 중",
+      "statusUnbuilt": "미건설",
+      "items": {
+        "rumah_subsidi": {
+          "label": "보조금 지원 공공 주택",
+          "categoryLabel": "저렴한 주택",
+          "desc": "저소득 가구를 위한 정부 보조금 단독 주택",
+          "detailDesc": "모든 국민이 적절한 주거 환경을 누릴 수 있도록 가격 우대 및 이자 지원 제공."
+        },
+        "apartemen": {
+          "label": "고층 아파트 단지",
+          "categoryLabel": "수직형 아파트",
+          "desc": "고밀도 도심 복합 수직 주거 단지",
+          "detailDesc": "도시 토지 효율성을 극대화하고 대규모 인구를 수용하기 위한 고층 아파트 타워."
+        },
+        "mansion": {
+          "label": "고급 맨션 및 저택 단지",
+          "categoryLabel": "프리미엄 주택",
+          "desc": "중상류층 및 부유층을 위한 전용 고급 주거지",
+          "detailDesc": "개인 정원과 전용 부대시설을 갖춘 최고급 대저택 단지."
+        }
+      }
+    },
+    "kelistrikan": {
+      "title": "국가 전력망 통계",
+      "desc": "발전 설비 용량과 국가 부문별 전력 소비 부하의 균형",
+      "production": "발전량:",
+      "load": "소비 부하:",
+      "totalSupply": "발전소 총 공급량",
+      "activeUnits": "{count}개 가동 중",
+      "operatingAtCapacity": "설비 용량에 맞춰 정상 가동 중",
+      "totalNationalLoad": "국가 총 소비 부하",
+      "servedPopulation": "전력 공급 인구: ~{population}백만 명",
+      "electricityBalance": "전력 수급 밸런스",
+      "surplusCapacity": "안정적 전력 잉여",
+      "deficitRisk": "전력 부족 / 정전 위험",
+      "surplusNote": "예비 전력이 수요를 충분히 충족함",
+      "deficitNote": "전력 수요가 공급 능력을 초과함",
+      "electricitySatisfaction": "전력 만족도",
+      "publicAccessLevel": "전력 공급 안정성 및 공공 접근성",
+      "consumptionBreakdown": "국가 부문별 전력 소비 상세 내역",
+      "sectorHousing": "주거 및 정주 부문",
+      "sectorHousingDesc": "공공주택, 아파트, 저택",
+      "sectorPublic": "공공시설 및 행정 서비스",
+      "sectorPublicDesc": "학교, 병원, 관공서, 문화시설",
+      "sectorProduction": "공장 및 산업 생산 시설",
+      "sectorProductionDesc": "제조공장, 광산, 가공 플랜트",
+      "sectorMilitary": "군사 인프라 및 기지",
+      "sectorMilitaryDesc": "병영, 격납고, 해·공군 기지",
+      "detailLoadAnalysis": "상세 전력 부하 분석",
+      "activePowerPlants": "가동 발전소 ({count}개소)",
+      "unitProductionLabel": "{prod} MW / 기",
+      "unitsActiveCount": "{count}기 가동 중",
+      "fuelShortageWarning": "연료 부족"
+    },
+    "spektrumKepuasan": {
+      "title": "국민 만족도 스펙트럼",
+      "desc": "국가 핵심 전 부문에 걸친 대중적 지지도 및 만족도 지표",
+      "socialStatus": "사회적 상태:",
+      "statusVeryStable": "매우 안정",
+      "statusStable": "비교적 안정",
+      "statusCritical": "위기 / 동요",
+      "publicApproval": "국민 종합 지지도",
+      "publicApprovalDesc": "국정 운영 성과 및 공공 서비스에 대한 종합적인 국민 여론",
+      "stable": "안정",
+      "highestSector": "최우수 부문",
+      "lowestSector": "개선 필요 부문",
+      "mainSectors": "주요 부문",
+      "spectrumLegend": "만족도 스펙트럼:",
+      "grades": {
+        "veryPoor": "매우 나쁨",
+        "poor": "나쁨",
+        "neutral": "보통",
+        "good": "좋음",
+        "veryGood": "매우 좋음"
+      },
+      "sectors": {
+        "pajak": {
+          "name": "조세 부담",
+          "desc": "국민과 기업에 대한 재정 조세 부담의 적정성"
+        },
+        "harga": {
+          "name": "기본 물가",
+          "desc": "8대 주요 일상 생필품 가격의 안정성 및 구매력"
+        },
+        "pangan": {
+          "name": "식량 생산",
+          "desc": "농업, 축산업, 수산업 및 가공식품 생산의 자급도"
+        },
+        "listrik": {
+          "name": "전력 공급",
+          "desc": "최대 소비 전력 부하에 대한 발전소의 공급 신뢰도"
+        },
+        "hunian": {
+          "name": "주거 및 정주",
+          "desc": "공공주택, 아파트 및 일반 주택의 공급 적정성"
+        },
+        "layananPublik": {
+          "name": "공공 서비스",
+          "desc": "교육, 의료, 치안 사법 및 문화 여가 시설 접근성"
+        },
+        "keterbukaan": {
+          "name": "독트린 및 개방성",
+          "desc": "표현의 자유, 언론, 종교적 관용 및 정부 투명성"
+        },
+        "sistem_ekonomi": {
+          "name": "경제 체제 및 정책",
+          "desc": "자유 시장 규제, 노동자 보호 및 투자 활성화의 균형"
+        },
+        "subsidi": {
+          "name": "보조금 및 복지",
+          "desc": "사회 안전망, 식량 및 에너지 보조금 지원 범위"
+        }
+      }
+    },
+    "produksiPangan": {
+      "badge": "국가 종합 식량 부문",
+      "title": "식량 종합 생산 능력",
+      "desc": "농작물 수확, 축산 거점, 어업 및 양식장, 식품 가공 공장 생산 현황 모니터링.",
+      "totalCapacity": "총 설비 용량",
+      "unitFacility": "개소 / 시설",
+      "facilitiesActive": "정상 가동 중인 시설",
+      "allSubsectors": "전체 하위 부문 ({count})",
+      "searchPlaceholder": "식량 품목 검색...",
+      "activeFacilitiesCount": "{count}개 시설 가동 중",
+      "totalProductionUnits": "총 {count}개 식량 생산 시설",
+      "statusActive": "가동 중",
+      "statusUnbuilt": "미건설",
+      "unit": "개",
+      "subcategories": {
+        "peternakan": {
+          "title": "축산업",
+          "desc": "가축 및 가금류 표준 사육 거점"
+        },
+        "agrikultur": {
+          "title": "농업 및 경작",
+          "desc": "주요 곡물, 밭작물 및 플랜테이션 재배 농경지"
+        },
+        "perikanan": {
+          "title": "수산업 및 어업",
+          "desc": "원양 어업 및 내수면 양식장 거점"
+        },
+        "olahan_pangan": {
+          "title": "식품 가공업",
+          "desc": "원재료를 소비 가능한 주식으로 가공하는 식품 공장"
+        }
+      }
+    },
+    "pembangunanSipilMiliter": {
+      "tabCivil": "민간 시설",
+      "tabMilitary": "군사 및 국방 인프라",
+      "searchPlaceholder": "건설 항목 검색...",
+      "civilianCategories": "민간 부문 분류",
+      "activeFleetUnits": "현역 전력 유닛 ({count}개 유닛)",
+      "militaryInfraBases": "군사 인프라 및 기지 ({count}개 시설)",
+      "basesSuffix": "개 기지",
+      "underConstruction": "건설 중 · 완공 예정일 {date}",
+      "underConstructionDays": " · {days}일 남음",
+      "inProduction": "생산 중 · 완성 예정일 {date}",
+      "inProductionCount": "+{count}개 생산 중",
+      "inConstructionCount": "+{count}개소 건설 중",
+      "infantryCapacity": "병력 / 수용 인원",
+      "infantryUnitLabel": "병력 / 수용 인원",
+      "unit": "유닛"
     }
   }
 }

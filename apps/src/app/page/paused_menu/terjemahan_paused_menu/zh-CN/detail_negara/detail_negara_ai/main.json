@@ -230,7 +230,8 @@
     "navy": "Navy",
     "airForce": "Air Force",
     "totalUnitsToSend": "Total units to send",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "resetAll": "重置全部"
   },
   "military": {
     "attackInProgressTitle": "Attack Still in Progress",
@@ -262,7 +263,9 @@
     "targetCity": "Target City",
     "noCityData": "No city data available for this country",
     "paymentChanceNote": "Chance increases with payment size. Effective minimum: 20,000 NEO for meaningful results.",
-    "suggest": "Suggest"
+    "suggest": "Suggest",
+    "requestAttackPromptPrefix": "请求",
+    "requestAttackPromptSuffix": "对您选定的目标发起进攻。请设定您愿意为此请求支付的金额。"
   },
   "building": {
     "tabs": {
@@ -279,6 +282,370 @@
       "militaryFacilities": "Facilities & Military",
       "foodProduction": "Food Production",
       "housing": "Housing"
+    },
+    "hargaBarang": {
+      "title": "主要商品价格与大众承受力",
+      "desc": "国内市场基本民生需求价格指数监测",
+      "foodSubsidyActive": "食品补贴生效中 (+5 分)",
+      "average": "平均:",
+      "avgMarketPrice": "市场平均价格",
+      "basedOnCommodities": "基于 {count} 种主要食品商品",
+      "affordabilityStatus": "承受力状态",
+      "consumerPurchasingPower": "消费者的购买力",
+      "priceSatisfactionIndex": "价格满意度指数",
+      "statusVeryAffordable": "极具承受力",
+      "statusModerate": "适中 / 良好",
+      "statusHighInflation": "高通胀",
+      "statusCheap": "廉价",
+      "statusFair": "合理",
+      "statusExpensive": "偏高",
+      "statusLabel": "状态:",
+      "commodities": {
+        "harga_beras": "大米",
+        "harga_daging_sapi": "牛肉",
+        "harga_ayam": "鸡肉",
+        "harga_minyak_goreng": "食用油",
+        "harga_gula": "白砂糖",
+        "harga_telur": "鸡蛋",
+        "harga_listrik": "电费标准",
+        "harga_air": "自来水费"
+      }
+    },
+    "subsidi": {
+      "title": "政府补贴政策",
+      "desc": "社会安全垫、基本物资与能源价格干预以及民众援助",
+      "totalBudgetBurden": "国家总预算负担:",
+      "activePrograms": "生效项目",
+      "open": "开启",
+      "subsidiesActive": "{count} 个生效补贴项目保障购买力",
+      "dailyBudgetCost": "每日财政支出",
+      "dailyBudgetExpense": "国家预算每日现金支出",
+      "publicSatisfactionBonus": "民众满意度加成",
+      "positiveImpact": "对公众支持率的积极影响",
+      "searchPlaceholder": "搜索补贴项目...",
+      "all": "全部",
+      "active": "生效中",
+      "inactive": "未启用",
+      "costAllocation": "资金分配:",
+      "perDay": "NEO/天",
+      "points": "分"
+    },
+    "sistemEkonomi": {
+      "title": "经济体制与政策光谱",
+      "desc": "国家干预与自由市场及结构性政策之间的平衡",
+      "spectrumPosition": "光谱定位:",
+      "categoryCentralized": "高度集权",
+      "categoryFreeMarket": "自由市场",
+      "categoryMixed": "混合体制",
+      "labelCommand": "指令制",
+      "labelMixed": "混合制",
+      "labelFreeMarket": "自由市场",
+      "economicGrowth": "经济增长",
+      "inflation": "通货膨胀",
+      "workerSatisfaction": "劳工满意度",
+      "investorSatisfaction": "投资者满意度",
+      "structuralPoliciesTitle": "经济结构政策 (7 项政策)",
+      "nationalizationTitle": "战略行业控制度与国有化水平",
+      "stateShare": "国家占比: {percent}%"
+    },
+    "pajak": {
+      "title": "财政税收政策结构",
+      "desc": "来自 5 项国内税收工具的国家预算现金收入税率",
+      "totalRevenue": "总税收收入:",
+      "perDaySuffix": "NEO / 天",
+      "avgTaxRate": "平均税率",
+      "fiscalBurden5Sectors": "5 个行业综合财政负担",
+      "estDailyCash": "预计每日财政收入",
+      "nationalBudgetIncome": "国家预算现金收入",
+      "taxSatisfactionIndex": "税收满意度指数",
+      "rateRangeLimit": "税率浮动范围: {min}% - {max}% (基准 {base}%)",
+      "estimatedRevenue": "预计收入:",
+      "taxes": {
+        "income_tax": "个人所得税",
+        "corporate_tax": "企业所得税",
+        "vat": "增值税",
+        "cigarette_tax": "烟草及奢侈品消费税",
+        "environment_tax": "碳税与环保税"
+      }
+    },
+    "doktrin": {
+      "badge": "国家学说与开放度",
+      "regimes": {
+        "autarki": {
+          "label": "完全孤立国 (封闭自守)",
+          "desc": "切断与外界一切联系，严厉控制新闻、宗教、示威、互联网及对外贸易。"
+        },
+        "proteksionis": {
+          "label": "贸易保护与受限国",
+          "desc": "政府限制移民入境并审查公众媒体，严格限制示威集会许可。"
+        },
+        "moderat": {
+          "label": "温和混合型国家",
+          "desc": "在公民自由、法律秩序与国际经贸开放之间保持审慎平衡。"
+        },
+        "terbuka": {
+          "label": "开放民主型国家",
+          "desc": "新闻与宗教自由受保障，边界开放，网络自由，政府透明度极高。"
+        },
+        "globalis": {
+          "label": "全球化全面开放国",
+          "desc": "全面保障新闻自由，无障碍免签入境，完全中立网络，深度融入全球市场。"
+        }
+      },
+      "indexTitle": "开放度指数",
+      "categories": {
+        "all": "全部指标 (9)",
+        "civil": "公民自由与人权 (4)",
+        "media": "媒体与信息 (2)",
+        "global": "边境与地缘政治 (3)"
+      },
+      "categoryTags": {
+        "civil": "公民与人权",
+        "media": "媒体与数字",
+        "global": "地缘政治与边境"
+      },
+      "regulationStatus": "监管状态",
+      "statusOpenFree": "开放且自由",
+      "statusModerate": "温和适度",
+      "statusRestricted": "严格监管",
+      "indicators": {
+        "speechScore": {
+          "name": "言论与表达自由",
+          "desc": "对建设性批评、言论自由及公众表达的法律保护水平",
+          "lowLabel": "严格审查 (威权)",
+          "highLabel": "充分自由 (民主)"
+        },
+        "religionScore": {
+          "name": "包容度与宗教信仰自由",
+          "desc": "宗教信仰和少数群体信仰权利平等的宪政保障",
+          "lowLabel": "强制唯一定义",
+          "highLabel": "多元包容与世俗开放"
+        },
+        "demoScore": {
+          "name": "和平示威与集会结社权利",
+          "desc": "和平抗议集会、工会及民间社会组织组建的法定权利",
+          "lowLabel": "全面禁止",
+          "highLabel": "受宪法充分保护"
+        },
+        "transparencyScore": {
+          "name": "政务透明与公众问责",
+          "desc": "国家财政预算公开、政策文书公布及官员财产公开审计",
+          "lowLabel": "绝对国家机密",
+          "highLabel": "开放政府数据"
+        },
+        "mediaScore": {
+          "name": "新闻出版与广播自由",
+          "desc": "记者、电视台和独立印刷媒体不受单方面干涉的自由",
+          "lowLabel": "国家垄断媒体",
+          "highLabel": "独立自由新闻"
+        },
+        "internetScore": {
+          "name": "互联网与数字网络开放",
+          "desc": "免于肆意封锁的互联网访问权及数字平台自由度",
+          "lowLabel": "封闭内网 (防火墙)",
+          "highLabel": "中立开放网络"
+        },
+        "borderScore": {
+          "name": "移民与边境出入境政策",
+          "desc": "外籍人士、国际旅客入境及签证审批的便利度",
+          "lowLabel": "严密闭关锁国",
+          "highLabel": "全球免签入境"
+        },
+        "tradeScore": {
+          "name": "对外贸易开放度",
+          "desc": "低关税、出口便利及国际企业投资环境的包容性",
+          "lowLabel": "自给自足保护主义",
+          "highLabel": "多边自由贸易"
+        },
+        "diplomacyScore": {
+          "name": "外交与国际深度合作",
+          "desc": "积极参与国际公约组织、和平条约及多边全球公约",
+          "lowLabel": "自主孤立主义",
+          "highLabel": "深度全球一体化"
+        }
+      }
+    },
+    "hunian": {
+      "badge": "住宅与定居点基础设施部门",
+      "title": "国家住房与定居点",
+      "desc": "监测保障性经济适用房、高层公寓大厦及豪华庄园的供应情况，满足全民住房需求。",
+      "housingCapacity": "住房总承载力",
+      "people": "人",
+      "unit": "套/栋",
+      "perUnit": "人/单元",
+      "surplus": "盈余 +{count} 人",
+      "deficit": "短缺 {count} 人",
+      "searchPlaceholder": "搜索住房类型...",
+      "all": "全部住房",
+      "portion": "{percent}% 占比",
+      "buildingCount": "建筑总数",
+      "capacityPerUnit": "单套/栋承载容量",
+      "totalCapacity": "总承载容量",
+      "availabilityStatus": "供给状态",
+      "statusActive": "正常供应",
+      "statusUnbuilt": "尚未建设",
+      "items": {
+        "rumah_subsidi": {
+          "label": "保障性经济房",
+          "categoryLabel": "普惠保障房",
+          "desc": "面向低收入家庭的政府补贴落地住房",
+          "detailDesc": "政府提供购房补贴与利息减免，确保所有家庭均能享有体面住房。"
+        },
+        "apartemen": {
+          "label": "高层公寓",
+          "categoryLabel": "垂直高密住宅",
+          "desc": "高密度城市一体化垂直住宅综合体",
+          "detailDesc": "高层公寓楼宇建设，极大提升城市土地利用效率，容纳庞大人口。"
+        },
+        "mansion": {
+          "label": "高档庄园豪宅",
+          "categoryLabel": "高品质豪宅",
+          "desc": "面向中高阶层专属配套的高端封闭式住宅区",
+          "detailDesc": "占地辽阔的高档私家庄园，配有私密花园及奢华专属社区设施。"
+        }
+      }
+    },
+    "kelistrikan": {
+      "title": "国家电网统计",
+      "desc": "发电装机容量与全社会各行业用电负荷平衡",
+      "production": "发电量:",
+      "load": "用电负荷:",
+      "totalSupply": "电网总装机出力",
+      "activeUnits": "{count} 个运转机组",
+      "operatingAtCapacity": "电厂按装机容量正常运转",
+      "totalNationalLoad": "全社会总用电负荷",
+      "servedPopulation": "服务用电人口: ~{population} 百万人",
+      "electricityBalance": "电力供需平衡",
+      "surplusCapacity": "电力充裕安全",
+      "deficitRisk": "电力缺口 / 限电停电风险",
+      "surplusNote": "电力备用裕度充分满足需求",
+      "deficitNote": "用电负荷超过电厂供应能力",
+      "electricitySatisfaction": "电力满意度",
+      "publicAccessLevel": "供电可靠性与公众通电水平",
+      "consumptionBreakdown": "全国各行业用电负荷明细",
+      "sectorHousing": "居民住宅与生活部门",
+      "sectorHousingDesc": "保障房、公寓楼宇、独栋别墅",
+      "sectorPublic": "公共设施与市政服务",
+      "sectorPublicDesc": "学校、医院、机关办公、文体娱乐",
+      "sectorProduction": "工业制造与生产中心",
+      "sectorProductionDesc": "制造业工厂、矿山采掘、冶炼加工",
+      "sectorMilitary": "国防军工与军事基地",
+      "sectorMilitaryDesc": "军营、机库、海空军基地",
+      "detailLoadAnalysis": "用电负荷详细分析",
+      "activePowerPlants": "运行电厂 ({count} 座设施)",
+      "unitProductionLabel": "{prod} MW / 台",
+      "unitsActiveCount": "{count} 台机组运行",
+      "fuelShortageWarning": "燃料供应不足"
+    },
+    "spektrumKepuasan": {
+      "title": "民众满意度光谱",
+      "desc": "国家各重大民生领域的社会公众支持率与满意度指数",
+      "socialStatus": "社会稳定度:",
+      "statusVeryStable": "高度稳定",
+      "statusStable": "基本稳定",
+      "statusCritical": "临界 / 动荡",
+      "publicApproval": "社会公众总支持率",
+      "publicApprovalDesc": "公众对国家执政施政绩效与公共服务质量的综合民意评价",
+      "stable": "平稳",
+      "highestSector": "满意度最高领域",
+      "lowestSector": "亟需改进领域",
+      "mainSectors": "核心领域",
+      "spectrumLegend": "满意度评价光谱:",
+      "grades": {
+        "veryPoor": "极差",
+        "poor": "较差",
+        "neutral": "一般",
+        "good": "良好",
+        "veryGood": "极佳"
+      },
+      "sectors": {
+        "pajak": {
+          "name": "税收负担",
+          "desc": "民众与企业的税收税赋承受力"
+        },
+        "harga": {
+          "name": "主要物价",
+          "desc": "日常 8 种主要民生必需品价格的稳定性与普惠度"
+        },
+        "pangan": {
+          "name": "粮食供给",
+          "desc": "农作物耕种、畜牧养殖、水产捕捞及食品加工产出充裕度"
+        },
+        "listrik": {
+          "name": "电力供给",
+          "desc": "电厂发电装机容量满足全社会用电高峰的可靠性"
+        },
+        "hunian": {
+          "name": "住房安居",
+          "desc": "保障性住房、城市公寓及各类住宅的普惠供给"
+        },
+        "layananPublik": {
+          "name": "公共服务与市政",
+          "desc": "教育、医疗卫生、司法治安及文体娱乐设施的普惠可及性"
+        },
+        "keterbukaan": {
+          "name": "社会学说与开放",
+          "desc": "言论与新闻自由、信仰包容度及政务公开透明度"
+        },
+        "sistem_ekonomi": {
+          "name": "经济体制与政策",
+          "desc": "自由市场规范、劳工权益保障与商业投资环境平衡"
+        },
+        "subsidi": {
+          "name": "补贴与社会保障",
+          "desc": "民生安全网、粮食平抑、能源补贴等财政支持覆盖面"
+        }
+      }
+    },
+    "produksiPangan": {
+      "badge": "国家综合粮食农业部门",
+      "title": "粮食综合生产能力",
+      "desc": "监测大宗农作物耕种、畜牧养殖基地、水产捕捞养殖及农产品深加工工业产能。",
+      "totalCapacity": "总装机设计产能",
+      "unitFacility": "座 / 处设施",
+      "facilitiesActive": "各类生产设施运转良好",
+      "allSubsectors": "全部子领域 ({count})",
+      "searchPlaceholder": "搜索粮食农业项目...",
+      "activeFacilitiesCount": "{count} 处运转设施",
+      "totalProductionUnits": "共计 {count} 处粮食农业生产设施",
+      "statusActive": "正常运转",
+      "statusUnbuilt": "尚未建设",
+      "unit": "处",
+      "subcategories": {
+        "peternakan": {
+          "title": "畜牧业",
+          "desc": "国家反刍家畜与禽类标准化繁育养殖基地"
+        },
+        "agrikultur": {
+          "title": "种植农业",
+          "desc": "主粮粮食作物、旱粮杂粮及经济作物种植田"
+        },
+        "perikanan": {
+          "title": "渔业水产",
+          "desc": "海水远洋捕捞与淡水高效池塘养殖中心"
+        },
+        "olahan_pangan": {
+          "title": "食品加工",
+          "desc": "将原粮及农畜生鲜加工成即食主食的现代化食品工坊"
+        }
+      }
+    },
+    "pembangunanSipilMiliter": {
+      "tabCivil": "民用基础设施",
+      "tabMilitary": "国防与军事设施",
+      "searchPlaceholder": "搜索建设项目...",
+      "civilianCategories": "民用分类",
+      "activeFleetUnits": "现役作战部队 ({count} 类单位)",
+      "militaryInfraBases": "军事基地与国防要塞 ({count} 类设施)",
+      "basesSuffix": "座基地",
+      "underConstruction": "在建中 · 预计竣工 {date}",
+      "underConstructionDays": " · 还需 {days} 天",
+      "inProduction": "生产建造中 · 预计完成 {date}",
+      "inProductionCount": "+{count} 单位制造中",
+      "inConstructionCount": "+{count} 处设施在建中",
+      "infantryCapacity": "驻军兵力 / 营房容量",
+      "infantryUnitLabel": "兵力 / 容量",
+      "unit": "单位"
     }
   }
 }

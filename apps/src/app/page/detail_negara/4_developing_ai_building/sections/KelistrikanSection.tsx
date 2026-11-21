@@ -22,6 +22,7 @@ import {
   logElectricityProductionCalculation,
 } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
 import DetailKonsumsiTerestimasiModal from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/DetailKonsumsiTerestimasiModal";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface KelistrikanSectionProps {
   countryDetail: Record<string, any> | null;
@@ -37,6 +38,7 @@ export default function KelistrikanSection({
   countryDetail,
   metadata,
 }: KelistrikanSectionProps) {
+  const { t } = useLanguage();
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const production = useMemo(
     () => {
@@ -110,10 +112,10 @@ export default function KelistrikanSection({
           </div>
           <div>
             <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-root-accent flex items-center gap-2">
-              Statistik Grid Kelistrikan Nasional
+              {t("detail_negara_ai.building.kelistrikan.title")}
             </h4>
             <p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
-              Keseimbangan kapasitas pembangkitan daya terhadap beban konsumsi sektor nasional
+              {t("detail_negara_ai.building.kelistrikan.desc")}
             </p>
           </div>
         </div>
@@ -122,14 +124,14 @@ export default function KelistrikanSection({
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 px-3 py-1.5 bg-root-surface border border-root-accent/30 rounded-xl">
             <TrendingUp className="w-3.5 h-3.5 text-root-accent" />
-            <span className="text-[10px] font-bold text-root-subtle uppercase">Produksi:</span>
+            <span className="text-[10px] font-bold text-root-subtle uppercase">{t("detail_negara_ai.building.kelistrikan.production")}</span>
             <span className="text-[11px] font-black text-root-accent">
               {formatNumber(totalProductionMW)} MW
             </span>
           </div>
           <div className="flex items-center gap-1.5 px-3 py-1.5 bg-root-surface border border-rose-500/30 rounded-xl">
             <TrendingDown className="w-3.5 h-3.5 text-rose-400" />
-            <span className="text-[10px] font-bold text-root-subtle uppercase">Beban:</span>
+            <span className="text-[10px] font-bold text-root-subtle uppercase">{t("detail_negara_ai.building.kelistrikan.load")}</span>
             <span className="text-[11px] font-black text-rose-400">
               {formatNumber(estimatedConsumptionMW)} MW
             </span>
@@ -143,10 +145,10 @@ export default function KelistrikanSection({
         <div className="bg-emerald-950/30 border border-emerald-500/30 rounded-2xl p-4 flex flex-col justify-between shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400 flex items-center gap-1.5">
-              <TrendingUp className="w-3.5 h-3.5" /> Total Pasokan Pembangkit
+              <TrendingUp className="w-3.5 h-3.5" /> {t("detail_negara_ai.building.kelistrikan.totalSupply")}
             </span>
             <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">
-              {totalActivePlantsCount} Unit Aktif
+              {t("detail_negara_ai.building.kelistrikan.activeUnits", { count: totalActivePlantsCount })}
             </span>
           </div>
           <div>
@@ -213,7 +215,7 @@ export default function KelistrikanSection({
               <span className="text-sm font-bold opacity-80">MW</span>
             </p>
             <p className="text-[10px] text-[#8AB0A8] mt-2 font-medium">
-              Populasi yang terlayani: ~{populationMillions} Juta Jiwa
+              {t("detail_negara_ai.building.kelistrikan.servedPopulation", { population: populationMillions })}
             </p>
           </div>
         </div>
@@ -254,7 +256,7 @@ export default function KelistrikanSection({
         <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl flex flex-col justify-between">
           <div>
             <h5 className="text-xs font-black uppercase tracking-wider text-root-accent flex items-center gap-2 mb-3">
-              <Layers className="w-4 h-4" /> Distribusi Beban Sektor
+              <Layers className="w-4 h-4" /> {t("detail_negara_ai.building.kelistrikan.consumptionBreakdown")}
             </h5>
 
             <div className="space-y-2.5">
@@ -263,8 +265,8 @@ export default function KelistrikanSection({
                 <div className="flex items-center gap-2">
                   <Home className="w-4 h-4 text-teal-400" />
                   <div>
-                    <p className="text-xs font-bold text-root-text">Sektor Hunian / Permukiman</p>
-                    <p className="text-[10px] text-root-subtle">Rumah subsidi, apartemen, mansion</p>
+                    <p className="text-xs font-bold text-root-text">{t("detail_negara_ai.building.kelistrikan.sectorHousing")}</p>
+                    <p className="text-[10px] text-root-subtle">{t("detail_negara_ai.building.kelistrikan.sectorHousingDesc")}</p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -279,8 +281,8 @@ export default function KelistrikanSection({
                 <div className="flex items-center gap-2">
                   <Building2 className="w-4 h-4 text-blue-400" />
                   <div>
-                    <p className="text-xs font-bold text-root-text">Tempat Umum & Layanan Publik</p>
-                    <p className="text-[10px] text-root-subtle">Sekolah, rumah sakit, kantor, hiburan</p>
+                    <p className="text-xs font-bold text-root-text">{t("detail_negara_ai.building.kelistrikan.sectorPublic")}</p>
+                    <p className="text-[10px] text-root-subtle">{t("detail_negara_ai.building.kelistrikan.sectorPublicDesc")}</p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -295,8 +297,8 @@ export default function KelistrikanSection({
                 <div className="flex items-center gap-2">
                   <Factory className="w-4 h-4 text-amber-400" />
                   <div>
-                    <p className="text-xs font-bold text-root-text">Pabrik & Sentra Produksi</p>
-                    <p className="text-[10px] text-root-subtle">Pabrik manufaktur, tambang, pengolahan</p>
+                    <p className="text-xs font-bold text-root-text">{t("detail_negara_ai.building.kelistrikan.sectorProduction")}</p>
+                    <p className="text-[10px] text-root-subtle">{t("detail_negara_ai.building.kelistrikan.sectorProductionDesc")}</p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -311,8 +313,8 @@ export default function KelistrikanSection({
                 <div className="flex items-center gap-2">
                   <Shield className="w-4 h-4 text-rose-400" />
                   <div>
-                    <p className="text-xs font-bold text-root-text">Infrastruktur & Pangkalan Militer</p>
-                    <p className="text-[10px] text-root-subtle">Barak, hangar, pangkalan laut & udara</p>
+                    <p className="text-xs font-bold text-root-text">{t("detail_negara_ai.building.kelistrikan.sectorMilitary")}</p>
+                    <p className="text-[10px] text-root-subtle">{t("detail_negara_ai.building.kelistrikan.sectorMilitaryDesc")}</p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -328,7 +330,7 @@ export default function KelistrikanSection({
             onClick={() => setIsDetailModalOpen(true)}
             className="w-full mt-4 py-2 rounded-xl bg-root-surface hover:bg-root-accent/15 border border-root-accent/30 text-xs font-black uppercase tracking-wider text-root-accent transition-all cursor-pointer flex items-center justify-center gap-1.5"
           >
-            Buka Rincian Beban Lengkap <ChevronRight className="w-3.5 h-3.5" />
+            {t("detail_negara_ai.building.kelistrikan.detailLoadAnalysis")} <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
@@ -336,7 +338,7 @@ export default function KelistrikanSection({
         <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl flex flex-col justify-between">
           <div>
             <h5 className="text-xs font-black uppercase tracking-wider text-root-accent flex items-center gap-2 mb-3">
-              <Zap className="w-4 h-4" /> Pasokan Berdasarkan Jenis Pembangkit
+              <Zap className="w-4 h-4" /> {t("detail_negara_ai.building.kelistrikan.activePowerPlants", { count: activeSources.length })}
             </h5>
 
             <div className="space-y-2 max-h-[260px] overflow-y-auto no-scrollbar pr-1">
@@ -349,7 +351,7 @@ export default function KelistrikanSection({
                     <p className="font-bold text-root-text truncate">{plant.label}</p>
                     <p className="text-[9px] text-root-subtle">
                       {plant.fuelShortage
-                        ? "Bahan bakar kurang — tidak berproduksi"
+                        ? t("detail_negara_ai.building.kelistrikan.fuelShortageWarning")
                         : `${plant.count} unit aktif × ${formatNumber(plant.unitProduction)} MW`}
                     </p>
                   </div>

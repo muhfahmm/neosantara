@@ -10,5 +10,40 @@
   "error": "حدث خطأ",
   "success": "تم بنجاح",
   "search": "بحث...",
-  "infoTitle": "معلومات {title}"
+  "infoTitle": "معلومات {title}",
+  "understand": "فهمت",
+  "errorBoundary": {
+    "title": "وضع استرداد NEOSANTARA",
+    "description": "حدثت مشكلة أثناء تحميل واجهة النظام. يمكنك إعادة تحميل الصفحة أو الانتقال مباشرة إلى المحاكاة.",
+    "startSimulation": "بدء المحاكاة",
+    "reload": "إعادة التحميل"
+  },
+  "rootConfirmModal": {
+    "confirm": "تأكيد",
+    "understand": "فهمت",
+    "cancel": "إلغاء"
+  },
+  "rootConstructionModal": {
+    "title": "تأكيد البناء",
+    "cost": "تكلفة البناء (الإجمالية):",
+    "quantityBuilding": "عدد المباني",
+    "unitBuilding": "مبنى",
+    "maximum": "الحد الأقصى ({max})",
+    "materialsNeeded": "المواد المطلوبة",
+    "hide": "إخفاء",
+    "show": "إظهار",
+    "noMaterials": "لا توجد مواد مطلوبة لهذا المبنى.",
+    "currentBalance": "الخزينة الوطنية الحالية:",
+    "cancel": "إلغاء",
+    "materialShortage": "نقص في المواد",
+    "quantityOverStock": "الكمية تتجاوز المتاح",
+    "insufficientFunds": "الأموال غير كافية",
+    "startConstruction": "بدء البناء"
+  },
+  "rootAISuggestionsModal": {
+    "title": "توصيات وتحليلات الذكاء الاصطناعي لقطاع {sector}",
+    "subtitle": "تقييم متطلبات وظروف القطاع",
+    "itemCount": "{count} عنصر",
+    "openItem": "فتح {item}"
+  }
 }

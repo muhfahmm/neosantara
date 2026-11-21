@@ -15,7 +15,20 @@
   "notification": {
     "gameSaved": "游戏保存成功。",
     "gameLoaded": "游戏加载成功。",
-    "autosave": "自动保存完成。"
+    "autosave": "自动保存完成。",
+    "exportFailedTitle": "出口未能完成",
+    "exportFailedStock": "您的 {product} 库存不足（需 {required} 单位，当前仅有 {stock} 单位）。",
+    "importFailedTitle": "进口未能完成",
+    "importFailedBudget": "国库预算不足以进行本次进口。（可用：{available} NEO，需：{required} NEO）。",
+    "sendTroopsFailedTitle": "派遣部队失败",
+    "sendTroopsFailedBudget": "国库预算不足以派遣维安部队（可用：{available} NEO，需：{required} NEO）。",
+    "policeOperationFailedTitle": "警察行动失败",
+    "sendAidFailedTitle": "运送援助失败",
+    "actionBudgetInsufficient": "国库预算不足以{action}（可用：{available} NEO，需：{required} NEO）。",
+    "actionPolice": "资助警察行动",
+    "actionAid": "运送援助",
+    "saveGameFailed": "未能保存游戏。",
+    "errorOccurred": "发生错误：{error}"
   },
   "requireEmbassy": {
     "title": "需要大使馆",
@@ -110,5 +123,16 @@
   },
   "selectCountry": {
     "startSimulation": "开始模拟"
-  }
+  },
+  "attackerForces": {
+    "movementInfo": "军事调动信息",
+    "unitsBrought": "本次进攻调动的单位数量",
+    "notAvailable": "进攻部队数量数据暂不可用。",
+    "noteTitle": "备注：",
+    "unitsAdjust": "单位数量根据您选择的部署百分比调整。",
+    "deploymentDesc": "{force}为此次行动部署了其舰队的 {percent}%。部署比例在 50% 至 75% 之间随机抽取。",
+    "pbbCoalition": "联合国联合部队",
+    "attackingCountry": "进攻国"
+  },
+  "embargoBanner": "当禁运决议不再有效时，限制即告结束。当前生效的禁运与制裁将在重新加载页面后消除。"
 }

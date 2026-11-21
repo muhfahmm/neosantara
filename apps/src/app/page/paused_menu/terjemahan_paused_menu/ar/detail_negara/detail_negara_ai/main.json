@@ -230,7 +230,8 @@
     "navy": "Navy",
     "airForce": "Air Force",
     "totalUnitsToSend": "Total units to send",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "resetAll": "إعادة ضبط الكل"
   },
   "military": {
     "attackInProgressTitle": "Attack Still in Progress",
@@ -262,7 +263,9 @@
     "targetCity": "Target City",
     "noCityData": "No city data available for this country",
     "paymentChanceNote": "Chance increases with payment size. Effective minimum: 20,000 NEO for meaningful results.",
-    "suggest": "Suggest"
+    "suggest": "Suggest",
+    "requestAttackPromptPrefix": "طلب من",
+    "requestAttackPromptSuffix": "شن هجوم على الهدف المحدد. حدد المبلغ الذي ترغب في دفعه مقابل هذا الطلب."
   },
   "building": {
     "tabs": {
@@ -279,6 +282,370 @@
       "militaryFacilities": "Facilities & Military",
       "foodProduction": "Food Production",
       "housing": "Housing"
+    },
+    "hargaBarang": {
+      "title": "أسعار السلع الأساسية والقدرة على تحمل التكاليف",
+      "desc": "مراقبة الرقم القياسي لأسعار الاحتياجات الأساسية في السوق المحلية",
+      "foodSubsidyActive": "دعم المواد الغذائية نشط (+5 نقاط)",
+      "average": "المتوسط:",
+      "avgMarketPrice": "متوسط سعر السوق",
+      "basedOnCommodities": "بناءً على {count} من السلع الغذائية الأساسية",
+      "affordabilityStatus": "حالة القدرة على تحمل التكاليف",
+      "consumerPurchasingPower": "القوة الشرائية للمستهلك",
+      "priceSatisfactionIndex": "مؤشر الرضا عن الأسعار",
+      "statusVeryAffordable": "في متناول الجميع جداً",
+      "statusModerate": "معتدل / كافٍ",
+      "statusHighInflation": "تضخم مرتفع",
+      "statusCheap": "رخيص",
+      "statusFair": "عادل",
+      "statusExpensive": "مرتفع",
+      "statusLabel": "الحالة:",
+      "commodities": {
+        "harga_beras": "أرز",
+        "harga_daging_sapi": "لحم بقري",
+        "harga_ayam": "لحم دجاج",
+        "harga_minyak_goreng": "زيت طهي",
+        "harga_gula": "سكر",
+        "harga_telur": "بيض مائدة",
+        "harga_listrik": "تعرفة الكهرباء",
+        "harga_air": "تعرفة المياه النقية"
+      }
+    },
+    "subsidi": {
+      "title": "سياسة الدعم الحكومي",
+      "desc": "شبكة الأمان الاجتماعي، والتدخل في أسعار السلع الأساسية والطاقة ودعم المجتمع",
+      "totalBudgetBurden": "إجمالي عبء الميزانية الوطنية:",
+      "activePrograms": "البرامج النشطة",
+      "open": "مفتوح",
+      "subsidiesActive": "{count} من برامج الدعم النشطة تحمي القوة الشرائية",
+      "dailyBudgetCost": "تكلفة الميزانية اليومية",
+      "dailyBudgetExpense": "إنفاق الميزانية الوطنية يومياً",
+      "publicSatisfactionBonus": "مكافأة رضا الجمهور",
+      "positiveImpact": "تأثير إيجابي على التأييد الشعبي",
+      "searchPlaceholder": "البحث في برامج الدعم...",
+      "all": "الكل",
+      "active": "نشط",
+      "inactive": "معطل",
+      "costAllocation": "تخصيص التكلفة:",
+      "perDay": "NEO/يوم",
+      "points": "نقاط"
+    },
+    "sistemEkonomi": {
+      "title": "النظام الاقتصادي وطيف السياسات",
+      "desc": "التوازن بين تدخل الدولة والسوق الحرة والسياسات الهيكلية",
+      "spectrumPosition": "موضع الطيف:",
+      "categoryCentralized": "مركزي",
+      "categoryFreeMarket": "سوق حرة",
+      "categoryMixed": "مختلط",
+      "labelCommand": "موجه",
+      "labelMixed": "مختلط",
+      "labelFreeMarket": "سوق حرة",
+      "economicGrowth": "النمو الاقتصادي",
+      "inflation": "التضخم",
+      "workerSatisfaction": "رضا العمال",
+      "investorSatisfaction": "رضا المستثمرين",
+      "structuralPoliciesTitle": "السياسات الاقتصادية الهيكلية (7 سياسات)",
+      "nationalizationTitle": "مستوى السيطرة وتأميم القطاعات الاستراتيجية",
+      "stateShare": "الدولة: {percent}%"
+    },
+    "pajak": {
+      "title": "هيكل السياسة الضريبية والمالية",
+      "desc": "معدلات إيرادات الميزانية الوطنية من 5 أدوات ضريبية محلية",
+      "totalRevenue": "إجمالي الإيرادات:",
+      "perDaySuffix": "NEO / يوم",
+      "avgTaxRate": "متوسط معدل الضريبة",
+      "fiscalBurden5Sectors": "العبء المالي المجمع عبر 5 قطاعات",
+      "estDailyCash": "النقد اليومي المقدر",
+      "nationalBudgetIncome": "إيرادات الميزانية الوطنية",
+      "taxSatisfactionIndex": "مؤشر الرضا الضريبي",
+      "rateRangeLimit": "نطاق المعدل: {min}% - {max}% (الأساسي {base}%)",
+      "estimatedRevenue": "الإيرادات المقدرة:",
+      "taxes": {
+        "income_tax": "ضريبة الدخل الفردي",
+        "corporate_tax": "ضريبة الشركات",
+        "vat": "ضريبة القيمة المضافة",
+        "cigarette_tax": "ضريبة التبغ والسلع الكمالية",
+        "environment_tax": "ضريبة الكربون والبيئة"
+      }
+    },
+    "doktrin": {
+      "badge": "عقيدة الدولة والانفتاح",
+      "regimes": {
+        "autarki": {
+          "label": "دولة معزولة تماماً (اكتفاء ذاتي مغلق)",
+          "desc": "تقطع الدولة علاقاتها بالعالم الخارجي، وتتحكم بشكل صارم في الصحافة والأديان والإنترنت والتجارة."
+        },
+        "proteksionis": {
+          "label": "دولة حمائية ومحدودة",
+          "desc": "تقيد الحكومة الهجرة وتراقب وسائل الإعلام وتشدد تصاريح المظاهرات."
+        },
+        "moderat": {
+          "label": "دولة معتدلة ومختلطة",
+          "desc": "توازن بين الحريات المدنية والنظام القانوني العام والانفتاح الاقتصادي الدولي."
+        },
+        "terbuka": {
+          "label": "دولة منفتحة وديمقراطية",
+          "desc": "حريات الصحافة والأديان مضمونة، والحدود مفتوحة، والإنترنت حر، وشفافية الحكومة عالية."
+        },
+        "globalis": {
+          "label": "دولة عولمية منفتحة بالكامل",
+          "desc": "ضمان كامل لحرية الصحافة، دخول بدون تأشيرة، إنترنت محايد، واندماج عميق في السوق العالمية."
+        }
+      },
+      "indexTitle": "مؤشر الانفتاح",
+      "categories": {
+        "all": "جميع المؤشرات (9)",
+        "civil": "الحريات المدنية وحقوق الإنسان (4)",
+        "media": "الإعلام والمعلومات (2)",
+        "global": "الحدود والجيوسياسة (3)"
+      },
+      "categoryTags": {
+        "civil": "المدنية والحقوق",
+        "media": "الإعلام والرقمية",
+        "global": "الجيوسياسة والحدود"
+      },
+      "regulationStatus": "الحالة التنظيمية",
+      "statusOpenFree": "منفتح وحر",
+      "statusModerate": "معتدل ومتوازن",
+      "statusRestricted": "مقيد تنظيمياً",
+      "indicators": {
+        "speechScore": {
+          "name": "حرية الرأي والتعبير",
+          "desc": "الحماية القانونية للنقد وحرية التعبير وإبداء الرأي العام",
+          "lowLabel": "رقابة مشددة (سلطوية)",
+          "highLabel": "حرية كاملة (ديمقراطية)"
+        },
+        "religionScore": {
+          "name": "التسامح والحرية الدينية",
+          "desc": "ضمان حرية العبادة والمساواة في الحقوق للأقليات الدينية",
+          "lowLabel": "دين رسمي واحد إلزامي",
+          "highLabel": "تعددية وعلمانية منفتحة"
+        },
+        "demoScore": {
+          "name": "حق التظاهر وتكوين الجمعيات",
+          "desc": "السماح بالمظاهرات السلمية والنقابات العمالية والمنظمات المدنية",
+          "lowLabel": "محظور تماماً",
+          "highLabel": "محمي دستورياً"
+        },
+        "transparencyScore": {
+          "name": "الشفافية والمساءلة العامة",
+          "desc": "علانية الميزانية الوطنية ووثائق السياسات والتدقيق في أصول المسؤولين",
+          "lowLabel": "أسرار دولة مطلقة",
+          "highLabel": "بيانات حكومية مفتوحة"
+        },
+        "mediaScore": {
+          "name": "حرية الصحافة والبث",
+          "desc": "استقلالية الصحفيين والقنوات التلفزيونية والإعلام المطبوع المستقل",
+          "lowLabel": "إعلام محتكر من الدولة",
+          "highLabel": "صحافة حرة مستقلة"
+        },
+        "internetScore": {
+          "name": "انفتاح الإنترنت والبيئة الرقمية",
+          "desc": "الوصول لشبكة الإنترنت دون حجب تعسفي وحرية المنصات الرقمية",
+          "lowLabel": "شبكة داخلية مغلقة (جدار ناري)",
+          "highLabel": "إنترنت محايد ومفتوح"
+        },
+        "borderScore": {
+          "name": "سياسة الهجرة والحدود",
+          "desc": "سهولة دخول الأجانب والسياح وإصدار تأشيرات الزيارة",
+          "lowLabel": "حدود مغلقة بإحكام",
+          "highLabel": "دخول عالمي بدون تأشيرة"
+        },
+        "tradeScore": {
+          "name": "الانفتاح التجاري الخارجي",
+          "desc": "رسوم استيراد منخفضة وسهولة تصدير ومناخ استثماري عالمي مشجع",
+          "lowLabel": "حمائية اكتفائية",
+          "highLabel": "سوق حرة متعددة الأطراف"
+        },
+        "diplomacyScore": {
+          "name": "الدبلوماسية والتعاون الدولي",
+          "desc": "المشاركة الفعالة في المنظمات الدولية ومعاهدات السلام العالمية",
+          "lowLabel": "انعزالية استقلالية",
+          "highLabel": "اندماج عالمي نشط"
+        }
+      }
+    },
+    "hunian": {
+      "badge": "قطاع الإسكان والبنية التحتية السكنية",
+      "title": "الإسكان والمستوطنات الوطنية",
+      "desc": "مراقبة توفر الوحدات السكنية المدعومة والمباني السكنية العمودية والمنازل الفاخرة لتلبية احتياجات السكان.",
+      "housingCapacity": "الطاقة الاستيعابية للإسكان",
+      "people": "نسمة",
+      "unit": "وحدة",
+      "perUnit": "نسمة/وحدة",
+      "surplus": "فائض +{count} نسمة",
+      "deficit": "عجز {count} نسمة",
+      "searchPlaceholder": "البحث في أنواع الإسكان...",
+      "all": "جميع المساكن",
+      "portion": "{percent}% الحصة",
+      "buildingCount": "عدد المباني",
+      "capacityPerUnit": "السعة / وحدة",
+      "totalCapacity": "السعة الإجمالية",
+      "availabilityStatus": "حالة التوفر",
+      "statusActive": "متوفر ونشط",
+      "statusUnbuilt": "لم يُبنَ بعد",
+      "items": {
+        "rumah_subsidi": {
+          "label": "إسكان مدعوم",
+          "categoryLabel": "إسكان ميسور",
+          "desc": "منازل أرضية مدعومة للأسر ذات الدخل المحدود",
+          "detailDesc": "توفرها الحكومة بحوافز سعرية ودعم فوائد لضمان حصول كل أسرة على سكن لائق."
+        },
+        "apartemen": {
+          "label": "شقق عمودية",
+          "categoryLabel": "سكن عمودي",
+          "desc": "مجمعات سكنية عمودية متكاملة للمناطق الحضرية المكتظة",
+          "detailDesc": "أبراج شقق متعددة الطوابق لتعظيم كفاءة الأراضي الحضرية واستيعاب أعداد سكانية كبيرة."
+        },
+        "mansion": {
+          "label": "قصور ومجمعات فاخرة",
+          "categoryLabel": "سكن راقٍ",
+          "desc": "مناطق سكنية حصرية للفئات المتوسطة العليا والثرية",
+          "detailDesc": "عقارات واسعة بحدائق خاصة ومرافق حصرية مخصصة للفئات ذات القدرة العالية."
+        }
+      }
+    },
+    "kelistrikan": {
+      "title": "إحصاءات شبكة الكهرباء الوطنية",
+      "desc": "توازن قدرة التوليد مقابل أحمال استهلاك القطاعات الوطنية",
+      "production": "الإنتاج:",
+      "load": "الحمل:",
+      "totalSupply": "إجمالي إمداد المحطات",
+      "activeUnits": "{count} وحدة نشطة",
+      "operatingAtCapacity": "المحطات تعمل وفقاً للسعة المركبة",
+      "totalNationalLoad": "إجمالي حمل الاستهلاك",
+      "servedPopulation": "السكان المخدومون: ~{population} مليون نسمة",
+      "electricityBalance": "ميزان الطاقة الكهربائية",
+      "surplusCapacity": "فائض طاقة آمن",
+      "deficitRisk": "عجز / خطر انقطاع التيار",
+      "surplusNote": "احتياطيات الطاقة تلبي الطلب بشكل كافٍ",
+      "deficitNote": "الطلب يتجاوز قدرة المحطات على التوليد",
+      "electricitySatisfaction": "الرضا عن الكهرباء",
+      "publicAccessLevel": "موثوقية الطاقة ومستوى الوصول العام",
+      "consumptionBreakdown": "تفاصيل أحمال الاستهلاك للقطاعات الوطنية",
+      "sectorHousing": "قطاع الإسكان والاستقرار",
+      "sectorHousingDesc": "مساكن مدعومة، شقق، قصور",
+      "sectorPublic": "المرافق العامة والخدمات",
+      "sectorPublicDesc": "مدارس، مستشفيات، مكاتب، ترفيه",
+      "sectorProduction": "المصانع ومراكز الإنتاج",
+      "sectorProductionDesc": "مصانع تحويلية، مناجم، معالجة",
+      "sectorMilitary": "البنية التحتية والقواعد العسكرية",
+      "sectorMilitaryDesc": "ثكنات، حظائر، قواعد بحرية وجوية",
+      "detailLoadAnalysis": "تحليل تفصيلي لأحمال الاستهلاك",
+      "activePowerPlants": "محطات الكهرباء العاملة ({count} منشأة)",
+      "unitProductionLabel": "{prod} ميغاواط / وحدة",
+      "unitsActiveCount": "{count} وحدة نشطة",
+      "fuelShortageWarning": "نقص في الوقود"
+    },
+    "spektrumKepuasan": {
+      "title": "طيف رضا الجمهور",
+      "desc": "مؤشرات التأييد الشعبي والرضا العام عبر جميع القطاعات الحيوية في الدولة",
+      "socialStatus": "الوضع الاجتماعي:",
+      "statusVeryStable": "مستقر للغاية",
+      "statusStable": "مستقر نوعاً ما",
+      "statusCritical": "حرج / اضطراب",
+      "publicApproval": "التأييد الشعبي العام",
+      "publicApprovalDesc": "التقييم العام للمواطنين لأداء القيادة وجودة الخدمات الحكومية",
+      "stable": "مستقر",
+      "highestSector": "أعلى قطاع",
+      "lowestSector": "يحتاج إلى تحسين",
+      "mainSectors": "القطاعات الرئيسية",
+      "spectrumLegend": "طيف مستويات الرضا:",
+      "grades": {
+        "veryPoor": "سيئ جداً",
+        "poor": "سيئ",
+        "neutral": "محايد",
+        "good": "جيد",
+        "veryGood": "ممتاز"
+      },
+      "sectors": {
+        "pajak": {
+          "name": "الضرائب",
+          "desc": "مدى ملاءمة العبء الضريبي المالي للمواطنين وقطاع الأعمال"
+        },
+        "harga": {
+          "name": "أسعار السلع الأساسية",
+          "desc": "استقرار أسعار 8 سلع غذائية أساسية وتوفرها بأسعار مناسبة"
+        },
+        "pangan": {
+          "name": "إنتاج الغذاء",
+          "desc": "كفاية محاصيل الزراعة والثروة الحيوانية والسمكية والتصنيع"
+        },
+        "listrik": {
+          "name": "إنتاج الكهرباء",
+          "desc": "موثوقية قدرة المحطات التوليدية خلال أوقات ذروة الاستهلاك"
+        },
+        "hunian": {
+          "name": "الإسكان والمستوطنات",
+          "desc": "توفر المساكن المدعومة والشقق والمجمعات السكنية للمواطنين"
+        },
+        "layananPublik": {
+          "name": "الخدمات والمرافق العامة",
+          "desc": "سهولة الوصول للتعليم والصحة والأمن والمرافق الترفيهية"
+        },
+        "keterbukaan": {
+          "name": "العقيدة والانفتاح",
+          "desc": "حرية التعبير والصحافة والتسامح الديني وشفافية الحكومة"
+        },
+        "sistem_ekonomi": {
+          "name": "النظام والسياسة الاقتصادية",
+          "desc": "التوازن بين تنظيم السوق الحرة وحماية العمالة والاستثمار"
+        },
+        "subsidi": {
+          "name": "سياسات وتخصيص الدعم",
+          "desc": "تغطية شبكات الأمان الاجتماعي ودعم المواد الغذائية والطاقة"
+        }
+      }
+    },
+    "produksiPangan": {
+      "badge": "قطاع الأغذية الوطني المتكامل",
+      "title": "طاقة إنتاج الغذاء",
+      "desc": "مراقبة المحاصيل الزراعية ومراكز الثروة الحيوانية والسمكية وصناعات تصنيع الأغذية.",
+      "totalCapacity": "إجمالي السعة المركبة",
+      "unitFacility": "وحدات / مرافق",
+      "facilitiesActive": "المرافق تعمل بنشاط",
+      "allSubsectors": "جميع القطاعات الفرعية ({count})",
+      "searchPlaceholder": "البحث في السلع الغذائية...",
+      "activeFacilitiesCount": "{count} منشأة نشطة",
+      "totalProductionUnits": "إجمالي {count} وحدة منشأة لإنتاج الغذاء",
+      "statusActive": "نشط",
+      "statusUnbuilt": "لم يُبنَ بعد",
+      "unit": "وحدة",
+      "subcategories": {
+        "peternakan": {
+          "title": "الثروة الحيوانية",
+          "desc": "مراكز تربية المواشي والدواجن الوطنية"
+        },
+        "agrikultur": {
+          "title": "الزراعة",
+          "desc": "أراضي المحاصيل الأساسية والمزارع النباتية"
+        },
+        "perikanan": {
+          "title": "مصايد الأسماك",
+          "desc": "مراكز الصيد البحري والاستزراع المائي"
+        },
+        "olahan_pangan": {
+          "title": "الصناعات الغذائية",
+          "desc": "مصانع تحويل المواد الخام إلى أغذية أساسية جاهزة"
+        }
+      }
+    },
+    "pembangunanSipilMiliter": {
+      "tabCivil": "المرافق المدنية",
+      "tabMilitary": "الجيش والبنية التحتية",
+      "searchPlaceholder": "البحث في عناصر البناء...",
+      "civilianCategories": "التصنيفات المدنية",
+      "activeFleetUnits": "وحدات الأسطول النشطة ({count} أنواع)",
+      "militaryInfraBases": "البنية التحتية والقواعد العسكرية ({count} مرافق)",
+      "basesSuffix": "قواعد",
+      "underConstruction": "قيد الإنشاء · يكتمل في {date}",
+      "underConstructionDays": " · {days} أيام",
+      "inProduction": "قيد التصنيع · يكتمل في {date}",
+      "inProductionCount": "+{count} قيد التصنيع",
+      "inConstructionCount": "+{count} قيد الإنشاء",
+      "infantryCapacity": "القوات / السعة",
+      "infantryUnitLabel": "القوات / السعة",
+      "unit": "وحدة"
     }
   }
 }

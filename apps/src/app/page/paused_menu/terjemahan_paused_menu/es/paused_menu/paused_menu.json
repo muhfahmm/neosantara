@@ -26,7 +26,8 @@
     "mapCapitals": "Capitales",
     "languageTitle": "Ajustes de Idioma",
     "languageSubtitle": "LANGUAGE SELECTOR",
-    "languageDesc": "Elige el idioma de la interfaz y del juego."
+    "languageDesc": "Elige el idioma de la interfaz y del juego.",
+    "themeStorageError": "No se pueden leer ni guardar las preferencias de tema en este dispositivo."
   },
   "saveGameModal": {
     "title": "Guardar Partida",
@@ -38,7 +39,12 @@
     "saveNamePlaceholder": "Nombre de la partida...",
     "saveButton": "Guardar",
     "savingButton": "Guardando...",
-    "overwriteWarning": "Esta partida se sobrescribirá. ¿Continuar?"
+    "overwriteWarning": "Esta partida se sobrescribirá. ¿Continuar?",
+    "overwriteTitle": "¿Sobrescribir \"{name}\"?",
+    "overwriteDesc": "El progreso actual del juego sobrescribirá esta ranura.",
+    "overwriteCancel": "Cancelar",
+    "overwriteConfirm": "Sí, sobrescribir",
+    "overwriting": "Guardando..."
   },
   "loadGameModal": {
     "title": "Cargar Partida",
@@ -73,6 +79,59 @@
     "searchPlaceholder": "Buscar teclas o funciones...",
     "searchAria": "Buscar atajos de teclado",
     "clearSearchAria": "Borrar búsqueda",
-    "categoryAll": "Todos"
+    "categoryAll": "Todos",
+    "emptyTitle": "No se encontraron atajos",
+    "emptyDesc": "Intenta cambiar los términos de búsqueda o el filtro de categoría.",
+    "categories": {
+      "all": "Todos",
+      "mainMenu": "Menú Principal",
+      "subMenu": "Submenú (Números)",
+      "quickMenu": "Menú Rápido",
+      "timeController": "Control de Tiempo",
+      "panelNavigation": "Navegación de Paneles",
+      "zoomMap": "Zoom y Mapa"
+    },
+    "shortcuts": {
+      "KEY_A": "⚓ Comando de Flota Militar",
+      "KEY_B": "🏦 Deuda Nacional y Préstamos",
+      "KEY_C": "🏛️ Gabinete Ministerial",
+      "KEY_D": "🤝 Embajadas Bilaterales",
+      "KEY_E": "👛 Ingresos y Gastos del Presupuesto Nacional",
+      "KEY_F": "🎯 Enfocar y Restablecer Zoom a la Patria",
+      "KEY_G": "🌐 Mercado de Comercio Global",
+      "KEY_H": "🏠 Vivienda y Asentamientos de Ciudadanos",
+      "KEY_I": "📬 Bandeja de Notificaciones",
+      "KEY_J": "👁️ Inteligencia y Operaciones de Espionaje",
+      "KEY_K": "😊 Aprobación y Satisfacción Popular",
+      "KEY_L": "⚡ Red Eléctrica Nacional",
+      "KEY_M": "🗺️ Mapa Principal (Cerrar Modales)",
+      "KEY_N": "🌍 Asamblea General de la ONU",
+      "KEY_O": "👥 Resumen de Población y Demografía",
+      "KEY_P": "🏭 Producción y Construcción de Fábricas",
+      "KEY_Q": "💡 Ideología y Constitución del Estado",
+      "KEY_R": "🔬 Investigación y Desarrollo Principal",
+      "KEY_S": "💸 Política de Asignación de Subsidios",
+      "KEY_T": "💰 Política Arancelaria y Tributaria",
+      "KEY_U": "🏛️ Lugares Públicos e Instalaciones",
+      "KEY_V": "🕌 Vida Religiosa y Tolerancia",
+      "KEY_W": "⚔️ Operaciones Militares / Atacar País",
+      "KEY_X": "🚀 Lanzamiento de ICBM y Armas Nucleares",
+      "KEY_Y": "🌾 Balance y Reservas de la Industria Alimentaria",
+      "KEY_Z": "📊 PIB Nacional y Global",
+      "KEY_1": "📈 Aumentar Satisfacción Pública",
+      "KEY_2": "🏷️ Índice de Precios de Productos Básicos",
+      "KEY_3": "⚖️ Sistema Económico y Políticas",
+      "KEY_4": "🚩 Territorios Anexados / Capturados",
+      "KEY_5": "🏛️ Organismos Especializados de la ONU",
+      "KEY_6": "🌐 Organizaciones Regionales Mundiales",
+      "KEY_7": "🤝 Relaciones Diplomáticas Internacionales",
+      "KEY_8": "📜 Doctrina de Apertura del Estado",
+      "KEY_9": "💣 Sabotaje Estratégico (Inteligencia)",
+      "TIME_TOGGLE_PAUSE": "⏯️ Reproducir / Pausar Tiempo",
+      "TIME_SPEED_SLOW": "⏪ Reducir Velocidad",
+      "TIME_SPEED_FAST": "⏩ Acelerar Velocidad",
+      "NAV_CLOSE": "❌ Cerrar Panel Activo",
+      "OPEN_MISSION": "🎯 Abrir Misión Presidencial"
+    }
   }
 }

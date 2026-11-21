@@ -15,7 +15,20 @@
   "notification": {
     "gameSaved": "Partida guardada con éxito.",
     "gameLoaded": "Partida cargada con éxito.",
-    "autosave": "Autoguardado completado."
+    "autosave": "Autoguardado completado.",
+    "exportFailedTitle": "Error al Completar la Exportación",
+    "exportFailedStock": "Su stock de {product} es insuficiente ({stock} unidades de {required} unidades requeridas).",
+    "importFailedTitle": "Error al Completar la Importación",
+    "importFailedBudget": "El presupuesto estatal es insuficiente para esta importación. ({available} NEO disponibles de {required} NEO).",
+    "sendTroopsFailedTitle": "Error al Enviar Tropas",
+    "sendTroopsFailedBudget": "El presupuesto estatal es insuficiente para enviar tropas de seguridad (Disponible: {available} NEO, Requerido: {required} NEO).",
+    "policeOperationFailedTitle": "Operación Policial Fallida",
+    "sendAidFailedTitle": "Error al Enviar Ayuda",
+    "actionBudgetInsufficient": "El presupuesto estatal no alcanza para {action} ({available} NEO de {required} NEO).",
+    "actionPolice": "financiar la operación policial",
+    "actionAid": "enviar la ayuda",
+    "saveGameFailed": "Error al guardar la partida.",
+    "errorOccurred": "Ocurrió un error: {error}"
   },
   "requireEmbassy": {
     "title": "Embajada Requerida",
@@ -110,5 +123,16 @@
   },
   "selectCountry": {
     "startSimulation": "INICIAR SIMULACIÓN"
-  }
+  },
+  "attackerForces": {
+    "movementInfo": "Información de Movimiento Militar",
+    "unitsBrought": "Número de unidades desplegadas en este ataque",
+    "notAvailable": "Datos de cantidad de fuerzas atacantes no disponibles.",
+    "noteTitle": "Nota:",
+    "unitsAdjust": "La cantidad de unidades se ajusta al porcentaje de despliegue seleccionado.",
+    "deploymentDesc": "{force} desplegó el {percent}% de su flota para esta operación. El porcentaje fue elegido aleatoriamente entre 50% y 75%.",
+    "pbbCoalition": "Fuerzas Conjuntas de la ONU",
+    "attackingCountry": "Nación atacante"
+  },
+  "embargoBanner": "Las restricciones finalizan cuando la resolución de embargo ya no esté activa. Los embargos y sanciones actualmente vigentes desaparecerán después de recargar la página."
 }

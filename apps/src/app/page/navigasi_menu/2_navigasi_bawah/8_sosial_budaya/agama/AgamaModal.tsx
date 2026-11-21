@@ -263,6 +263,13 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
     setIsSaving(false);
   };
 
+  const noBonusFallback = t('nav_sosial_budaya_agama.noSpecificBonus' as any) || 'Tidak ada bonus spesifik';
+
+  const selectedRelKey = selectedReligion ? selectedReligion.toLowerCase().replace(/\s+/g, '_') : '';
+  const selectedBonusText = selectedReligion
+    ? (t(`nav_sosial_budaya_agama.bonuses.${selectedRelKey}` as any) || RELIGION_BONUSES[selectedReligion] || noBonusFallback)
+    : '';
+
   return createPortal(
     <>
       {/* 🔥 RENDER KONFIRMASI & GAGAL MODAL */}
@@ -275,9 +282,9 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
         }}
         onInstantChange={() => handleChange(true)}
         onConfirm={() => handleChange(false)}
-        title={selectedReligion || ''}
+        title={selectedReligion ? (t(`nav_sosial_budaya_agama.religions.${selectedRelKey}` as any) || selectedReligion) : ''}
         icon={selectedReligion ? RELIGION_ICONS[selectedReligion] : <Globe className="w-5 h-5" />}
-        bonusText={selectedReligion ? RELIGION_BONUSES[selectedReligion] || 'Tidak ada bonus spesifik' : ''}
+        bonusText={selectedBonusText}
         cost={RELIGION_CHANGE_COST}
       />
       <AgamaGagalModal
@@ -355,7 +362,7 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                     const isScheduled = pendingReligionChange?.toValue.toLowerCase() === r.toLowerCase();
                     const relKey = r.toLowerCase().replace(/\s+/g, '_');
                     const localizedReligionName = t(`nav_sosial_budaya_agama.religions.${relKey}` as any) || r;
-                    const localizedBonus = t(`nav_sosial_budaya_agama.bonuses.${relKey}` as any) || RELIGION_BONUSES[r] || 'Tidak ada bonus spesifik';
+                    const localizedBonus = t(`nav_sosial_budaya_agama.bonuses.${relKey}` as any) || RELIGION_BONUSES[r] || noBonusFallback;
 
                     return (
                       <div key={r} className="relative">

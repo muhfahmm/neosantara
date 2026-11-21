@@ -15,7 +15,20 @@
   "notification": {
     "gameSaved": "Spiel erfolgreich gespeichert.",
     "gameLoaded": "Spiel erfolgreich geladen.",
-    "autosave": "Automatisches Speichern abgeschlossen."
+    "autosave": "Automatisches Speichern abgeschlossen.",
+    "exportFailedTitle": "Export konnte nicht abgeschlossen werden",
+    "exportFailedStock": "Ihr Bestand an {product} reicht nicht aus ({stock} Einheiten von {required} benötigten Einheiten).",
+    "importFailedTitle": "Import konnte nicht abgeschlossen werden",
+    "importFailedBudget": "Das Staatsbudget reicht für diesen Import nicht aus. ({available} NEO verfügbar von {required} NEO).",
+    "sendTroopsFailedTitle": "Entsendung von Truppen fehlgeschlagen",
+    "sendTroopsFailedBudget": "Das Staatsbudget reicht nicht aus, um Sicherheitstruppen zu entsenden (Verfügbar: {available} NEO, Benötigt: {required} NEO).",
+    "policeOperationFailedTitle": "Polizeieinsatz fehlgeschlagen",
+    "sendAidFailedTitle": "Hilfslieferung fehlgeschlagen",
+    "actionBudgetInsufficient": "Das Staatsbudget reicht nicht aus, um {action} ({available} NEO von {required} NEO).",
+    "actionPolice": "den Polizeieinsatz zu finanzieren",
+    "actionAid": "Hilfe zu leisten",
+    "saveGameFailed": "Spiel konnte nicht gespeichert werden.",
+    "errorOccurred": "Ein Fehler ist aufgetreten: {error}"
   },
   "requireEmbassy": {
     "title": "Botschaft erforderlich",
@@ -110,5 +123,16 @@
   },
   "selectCountry": {
     "startSimulation": "SIMULATION STARTEN"
-  }
+  },
+  "attackerForces": {
+    "movementInfo": "Militärische Bewegungsdaten",
+    "unitsBrought": "Anzahl der für diesen Angriff eingesetzten Einheiten",
+    "notAvailable": "Angaben zur Anzahl der Angriffstruppen sind noch nicht verfügbar.",
+    "noteTitle": "Hinweis:",
+    "unitsAdjust": "Die Einheitenanzahl richtet sich nach dem gewählten Einsatzprozentsatz.",
+    "deploymentDesc": "{force} setzte {percent}% seiner Flotte für diesen Einsatz ein. Der Prozentsatz wurde zufällig zwischen 50% und 75% ermittelt.",
+    "pbbCoalition": "Gemeinsame UN-Streitkräfte",
+    "attackingCountry": "Angreifende Nation"
+  },
+  "embargoBanner": "Die Beschränkungen enden, sobald die Embargo-Resolution nicht mehr aktiv ist. Derzeit gültige Embargos und Sanktionen verschwinden nach dem Neuladen der Seite."
 }

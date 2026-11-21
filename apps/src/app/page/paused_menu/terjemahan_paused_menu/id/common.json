@@ -10,5 +10,40 @@
   "error": "Terjadi kesalahan",
   "success": "Berhasil",
   "search": "Cari...",
-  "infoTitle": "Informasi {title}"
+  "infoTitle": "Informasi {title}",
+  "understand": "Mengerti",
+  "errorBoundary": {
+    "title": "NEOSANTARA RECOVERY MODE",
+    "description": "Terjadi kendala saat memuat antarmuka sistem. Anda dapat memuat ulang halaman atau langsung menuju simulasi.",
+    "startSimulation": "Mulai Simulasi",
+    "reload": "Muat Ulang"
+  },
+  "rootConfirmModal": {
+    "confirm": "Konfirmasi",
+    "understand": "Mengerti",
+    "cancel": "Batal"
+  },
+  "rootConstructionModal": {
+    "title": "Konfirmasi Pembangunan",
+    "cost": "Biaya Pembangunan (Total):",
+    "quantityBuilding": "Jumlah Bangunan",
+    "unitBuilding": "bangunan",
+    "maximum": "Maks ({max})",
+    "materialsNeeded": "Material Dibutuhkan",
+    "hide": "Sembunyikan",
+    "show": "Tampilkan",
+    "noMaterials": "Tidak ada material yang dibutuhkan untuk bangunan ini.",
+    "currentBalance": "Kas Negara Saat Ini:",
+    "cancel": "Batal",
+    "materialShortage": "Material Kurang",
+    "quantityOverStock": "Jumlah Melebihi Stok",
+    "insufficientFunds": "Dana Tidak Cukup",
+    "startConstruction": "Mulai Pembangunan"
+  },
+  "rootAISuggestionsModal": {
+    "title": "Rekomendasi & Analisis AI Sektor {sector}",
+    "subtitle": "Evaluasi kebutuhan dan kondisi sektor",
+    "itemCount": "{count} item",
+    "openItem": "Buka {item}"
+  }
 }

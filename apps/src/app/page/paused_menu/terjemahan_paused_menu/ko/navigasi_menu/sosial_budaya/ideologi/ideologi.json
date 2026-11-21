@@ -133,5 +133,6 @@
     "currentTreasury": "현재 국고 잔액: {money} NEO",
     "btnTakeLoan": "차관 신청",
     "btnClose": "닫기"
-  }
+  },
+  "noSpecificBonus": "특정 보너스 없음"
 }

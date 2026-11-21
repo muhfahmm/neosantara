@@ -133,5 +133,6 @@
     "currentTreasury": "Tesorería nacional actual: {money} NEO",
     "btnTakeLoan": "Solicitar Préstamo",
     "btnClose": "Cerrar"
-  }
+  },
+  "noSpecificBonus": "Sin bonificación específica"
 }

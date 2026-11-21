@@ -51,5 +51,6 @@
     "currentTreasury": "現在の国庫残高: {money} NEO",
     "btnTakeLoan": "国家借款を受ける",
     "btnClose": "閉じる"
-  }
+  },
+  "noSpecificBonus": "特定のボーナスなし"
 }

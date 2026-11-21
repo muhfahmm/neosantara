@@ -26,7 +26,8 @@
     "mapCapitals": "Capitals",
     "languageTitle": "Language Settings",
     "languageSubtitle": "LANGUAGE SELECTOR",
-    "languageDesc": "Choose your preferred display and game text language."
+    "languageDesc": "Choose your preferred display and game text language.",
+    "themeStorageError": "Theme preferences cannot be read or saved on this device."
   },
   "saveGameModal": {
     "title": "Save Game",
@@ -38,7 +39,12 @@
     "saveNamePlaceholder": "Enter save name...",
     "saveButton": "Save",
     "savingButton": "Saving...",
-    "overwriteWarning": "This save will be overwritten. Proceed?"
+    "overwriteWarning": "This save will be overwritten. Proceed?",
+    "overwriteTitle": "Overwrite \"{name}\"?",
+    "overwriteDesc": "Current game progress will overwrite this slot.",
+    "overwriteCancel": "Cancel",
+    "overwriteConfirm": "Yes, Overwrite",
+    "overwriting": "Saving..."
   },
   "loadGameModal": {
     "title": "Load Game",
@@ -73,6 +79,59 @@
     "searchPlaceholder": "Search keys or actions (e.g. Map, Pause, Tab)...",
     "searchAria": "Search keyboard shortcuts",
     "clearSearchAria": "Clear search",
-    "categoryAll": "All"
+    "categoryAll": "All",
+    "emptyTitle": "No shortcuts found",
+    "emptyDesc": "Try changing search keywords or category filters.",
+    "categories": {
+      "all": "All",
+      "mainMenu": "Main Menu",
+      "subMenu": "Sub Menu (Numbers)",
+      "quickMenu": "Quick Menu",
+      "timeController": "Time Controller",
+      "panelNavigation": "Panel Navigation",
+      "zoomMap": "Zoom & Map"
+    },
+    "shortcuts": {
+      "KEY_A": "⚓ Military Fleet Command",
+      "KEY_B": "🏦 National Debt & Loans",
+      "KEY_C": "🏛️ Council of Ministers / Cabinet",
+      "KEY_D": "🤝 Bilateral Embassies",
+      "KEY_E": "👛 National Budget Income & Expenses",
+      "KEY_F": "🎯 Focus & Reset Zoom to Homeland",
+      "KEY_G": "🌐 Global Trade Market",
+      "KEY_H": "🏠 Citizen Housing & Settlement",
+      "KEY_I": "📬 Notification Inbox",
+      "KEY_J": "👁️ Intelligence & Espionage Operations",
+      "KEY_K": "😊 Public Approval & Satisfaction",
+      "KEY_L": "⚡ National Power Grid",
+      "KEY_M": "🗺️ Main Map (Close All Modals)",
+      "KEY_N": "🌍 UN General Assembly",
+      "KEY_O": "👥 Population & Demographic Summary",
+      "KEY_P": "🏭 Factory Construction & Production",
+      "KEY_Q": "💡 Ideology & Constitution",
+      "KEY_R": "🔬 Main Research & Development",
+      "KEY_S": "💸 Subsidy Allocation Policy",
+      "KEY_T": "💰 Tax Rate Policy",
+      "KEY_U": "🏛️ Public Places & Facilities",
+      "KEY_V": "🕌 Religious Life & Tolerance",
+      "KEY_W": "⚔️ Military Operations / Attack Nation",
+      "KEY_X": "🚀 Launch ICBM & Nuclear Weapons",
+      "KEY_Y": "🌾 Food Industry Balance & Stock",
+      "KEY_Z": "📊 National & Global GDP",
+      "KEY_1": "📈 Boost Public Satisfaction",
+      "KEY_2": "🏷️ Commodity Price Index",
+      "KEY_3": "⚖️ Economic System & Policies",
+      "KEY_4": "🚩 Annexed / Captured Territories",
+      "KEY_5": "🏛️ UN Specialized Agencies",
+      "KEY_6": "🌐 World Regional Organizations",
+      "KEY_7": "🤝 International Diplomatic Relations",
+      "KEY_8": "📜 State Openness Doctrine",
+      "KEY_9": "💣 Strategic Sabotage (Intelligence)",
+      "TIME_TOGGLE_PAUSE": "⏯️ Play / Pause Time",
+      "TIME_SPEED_SLOW": "⏪ Slow Down Time",
+      "TIME_SPEED_FAST": "⏩ Speed Up Time",
+      "NAV_CLOSE": "❌ Close Active Panel",
+      "OPEN_MISSION": "🎯 Open Presidential Mission"
+    }
   }
 }

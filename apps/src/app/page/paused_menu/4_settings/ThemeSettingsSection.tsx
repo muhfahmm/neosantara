@@ -108,7 +108,7 @@ export function ThemeSettingsSection() {
             </div>
             {storageError && (
                 <p role="status" className="text-[10px] text-root-danger">
-                    Preferensi tema tidak dapat dibaca atau disimpan di perangkat ini.
+                    {t('settings.theme.storageError') || t('paused_menu.settings.themeStorageError') || t('settings.themeStorageError')}
                 </p>
             )}
         </div>

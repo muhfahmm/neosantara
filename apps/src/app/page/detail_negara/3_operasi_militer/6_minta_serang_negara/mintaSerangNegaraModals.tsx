@@ -178,7 +178,9 @@ export default function MintaSerangNegaraModal({
 					{/* Info Banner */}
 					<div className="p-3 sm:p-4 rounded-xl bg-root-canvas border border-root-accent/20 shrink-0">
 						<p className="text-[11px] sm:text-xs text-root-text leading-relaxed">
-							Minta <strong className="text-root-accent font-bold">{countryName || "Sekutu"}</strong> melancarkan serangan terhadap sasaran pilihan Anda. Tetapkan jumlah yang bersedia Anda bayar untuk permintaan tersebut.
+							{t("detail_negara_ai.military.requestAttackPromptPrefix" as any) || "Minta"}{" "}
+							<strong className="text-root-accent font-bold">{countryName || (t("detail_negara_ai.geopolitics.ally" as any) || "Sekutu")}</strong>{" "}
+							{t("detail_negara_ai.military.requestAttackPromptSuffix" as any) || "melancarkan serangan terhadap sasaran pilihan Anda. Tetapkan jumlah yang bersedia Anda bayar untuk permintaan tersebut."}
 						</p>
 					</div>
 

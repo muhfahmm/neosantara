@@ -26,7 +26,8 @@
     "mapCapitals": "Hauptstädte",
     "languageTitle": "Spracheinstellungen",
     "languageSubtitle": "LANGUAGE SELECTOR",
-    "languageDesc": "Wählen Sie die Sprache für Oberfläche und Texte."
+    "languageDesc": "Wählen Sie die Sprache für Oberfläche und Texte.",
+    "themeStorageError": "Design-Einstellungen können auf diesem Gerät nicht gelesen oder gespeichert werden."
   },
   "saveGameModal": {
     "title": "Spiel Speichern",
@@ -38,7 +39,12 @@
     "saveNamePlaceholder": "Speicherstandname eingeben...",
     "saveButton": "Speichern",
     "savingButton": "Speichern...",
-    "overwriteWarning": "Dieser Speicherstand wird überschrieben. Fortfahren?"
+    "overwriteWarning": "Dieser Speicherstand wird überschrieben. Fortfahren?",
+    "overwriteTitle": "„{name}“ überschreiben?",
+    "overwriteDesc": "Der aktuelle Spielfortschritt überschreibt diesen Speicherplatz.",
+    "overwriteCancel": "Abbrechen",
+    "overwriteConfirm": "Ja, überschreiben",
+    "overwriting": "Speichern..."
   },
   "loadGameModal": {
     "title": "Spiel Laden",
@@ -73,6 +79,59 @@
     "searchPlaceholder": "Tasten oder Aktionen suchen...",
     "searchAria": "Tastaturkürzel suchen",
     "clearSearchAria": "Suche löschen",
-    "categoryAll": "Alle"
+    "categoryAll": "Alle",
+    "emptyTitle": "Keine Tastenkürzel gefunden",
+    "emptyDesc": "Versuchen Sie, den Suchbegriff oder die Kategorie zu ändern.",
+    "categories": {
+      "all": "Alle",
+      "mainMenu": "Hauptmenü",
+      "subMenu": "Untermenü (Zahlen)",
+      "quickMenu": "Schnellmenü",
+      "timeController": "Zeitsteuerung",
+      "panelNavigation": "Panel-Navigation",
+      "zoomMap": "Zoom & Karte"
+    },
+    "shortcuts": {
+      "KEY_A": "⚓ Militärflottenkommando",
+      "KEY_B": "🏦 Staatsverschuldung & Kredite",
+      "KEY_C": "🏛️ Ministerkabinett",
+      "KEY_D": "🤝 Bilaterale Botschaften",
+      "KEY_E": "👛 Staatshaushalt & Finanzen",
+      "KEY_F": "🎯 Fokus & Zoom auf Heimatland zurücksetzen",
+      "KEY_G": "🌐 Globaler Handelsmarkt",
+      "KEY_H": "🏠 Wohnungsbau & Siedlungen",
+      "KEY_I": "📬 Benachrichtigungspostfach",
+      "KEY_J": "👁️ Geheimdienst- & Spionageoperationen",
+      "KEY_K": "😊 Bevölkerungszufriedenheit",
+      "KEY_L": "⚡ Nationales Stromnetz",
+      "KEY_M": "🗺️ Hauptkarte (Alle Fenster schließen)",
+      "KEY_N": "🌍 UN-Generalversammlung",
+      "KEY_O": "👥 Bevölkerungs- & Demografieübersicht",
+      "KEY_P": "🏭 Fabrikbau & Produktion",
+      "KEY_Q": "💡 Staatsideologie & Verfassung",
+      "KEY_R": "🔬 Forschung & Entwicklung",
+      "KEY_S": "💸 Subventionspolitik",
+      "KEY_T": "💰 Steuer- & Abgabenpolitik",
+      "KEY_U": "🏛️ Öffentliche Einrichtungen",
+      "KEY_V": "🕌 Religionsausübung & Toleranz",
+      "KEY_W": "⚔️ Militäreinsatz / Land angreifen",
+      "KEY_X": "🚀 Start von Interkontinentalraketen & Atomwaffen",
+      "KEY_Y": "🌾 Lebensmittelbilanz & Reserven",
+      "KEY_Z": "📊 Nationales & weltweites BIP",
+      "KEY_1": "📈 Bevölkerungszufriedenheit steigern",
+      "KEY_2": "🏷️ Grundnahrungsmittelpreisindex",
+      "KEY_3": "⚖️ Wirtschaftssystem & Richtlinien",
+      "KEY_4": "🚩 Eroberte / Annektierte Gebiete",
+      "KEY_5": "🏛️ UN-Sonderorganisationen",
+      "KEY_6": "🌐 Regionale Weltorganisationen",
+      "KEY_7": "🤝 Internationale diplomatische Beziehungen",
+      "KEY_8": "📜 Doktrin der staatlichen Offenheit",
+      "KEY_9": "💣 Strategische Sabotage (Geheimdienst)",
+      "TIME_TOGGLE_PAUSE": "⏯️ Zeit abspielen / pausieren",
+      "TIME_SPEED_SLOW": "⏪ Zeit verlangsamen",
+      "TIME_SPEED_FAST": "⏩ Zeit beschleunigen",
+      "NAV_CLOSE": "❌ Aktives Panel schließen",
+      "OPEN_MISSION": "🎯 Präsidentenmission öffnen"
+    }
   }
 }

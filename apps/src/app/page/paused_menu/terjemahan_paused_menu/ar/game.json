@@ -15,7 +15,20 @@
   "notification": {
     "gameSaved": "تم حفظ اللعبة بنجاح.",
     "gameLoaded": "تم تحميل اللعبة بنجاح.",
-    "autosave": "اكتمل الحفظ التلقائي."
+    "autosave": "اكتمل الحفظ التلقائي.",
+    "exportFailedTitle": "فشل إتمام التصدير",
+    "exportFailedStock": "مخزونك من {product} غير كافٍ ({stock} وحدة من أصل {required} وحدة مطلوبة).",
+    "importFailedTitle": "فشل إتمام الاستيراد",
+    "importFailedBudget": "ميزانية الدولة غير كافية لإجراء هذا الاستيراد. ({available} NEO متوفرة من أصل {required} NEO).",
+    "sendTroopsFailedTitle": "فشل إرسال القوات",
+    "sendTroopsFailedBudget": "ميزانية الدولة غير كافية لإرسال قوات أمنية (المتاح: {available} NEO، المطلوب: {required} NEO).",
+    "policeOperationFailedTitle": "فشلت العملية الشرطية",
+    "sendAidFailedTitle": "فشل تقديم المساعدات",
+    "actionBudgetInsufficient": "ميزانية الدولة غير كافية لـ {action} ({available} NEO من أصل {required} NEO).",
+    "actionPolice": "تمويل العملية الشرطية",
+    "actionAid": "تقديم المساعدات",
+    "saveGameFailed": "فشل حفظ اللعبة.",
+    "errorOccurred": "حدث خطأ: {error}"
   },
   "requireEmbassy": {
     "title": "السفارة مطلوبة",
@@ -110,5 +123,16 @@
   },
   "selectCountry": {
     "startSimulation": "بدء المحاكاة"
-  }
+  },
+  "attackerForces": {
+    "movementInfo": "معلومات التحركات العسكرية",
+    "unitsBrought": "عدد الوحدات المشاركة في هذا الهجوم",
+    "notAvailable": "بيانات أعداد القوات المهاجمة غير متوفرة بعد.",
+    "noteTitle": "ملاحظة:",
+    "unitsAdjust": "يتم تعديل عدد الوحدات وفقاً لنسبة الانتشار التي تختارها.",
+    "deploymentDesc": "نشرت {force} نسبة {percent}% من أسطولها لهذه العملية. تم تحديد نسبة النشر عشوائياً بين 50% و75%.",
+    "pbbCoalition": "قوات تحالف الأمم المتحدة المشتركة",
+    "attackingCountry": "الدولة المهاجمة"
+  },
+  "embargoBanner": "تنتهي القيود عندما لا يعود قرار الحظر ساريًا. ستختفي عقوبات وحظر الحالية بعد إعادة تحميل الصفحة."
 }

@@ -9,6 +9,7 @@ import {
   Smile,
   ShieldCheck,
 } from "lucide-react";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface HargaBarangPokokSectionProps {
   countryDetail: Record<string, any> | null;
@@ -16,14 +17,14 @@ interface HargaBarangPokokSectionProps {
 
 // 8 Komoditas pokok resmi sesuai tabel database_harga_barang
 const DATABASE_COMMODITIES = [
-  { key: "harga_beras", label: "Beras", defaultPrice: 25000, unit: "kg" },
-  { key: "harga_daging_sapi", label: "Daging Sapi", defaultPrice: 75000, unit: "kg" },
-  { key: "harga_ayam", label: "Daging Ayam", defaultPrice: 50000, unit: "kg" },
-  { key: "harga_minyak_goreng", label: "Minyak Goreng", defaultPrice: 25000, unit: "liter" },
-  { key: "harga_gula", label: "Gula Pasir", defaultPrice: 25000, unit: "kg" },
-  { key: "harga_telur", label: "Telur Ayam", defaultPrice: 50000, unit: "kg" },
-  { key: "harga_listrik", label: "Tarif Listrik", defaultPrice: 75000, unit: "kWh" },
-  { key: "harga_air", label: "Tarif Air Bersih", defaultPrice: 25000, unit: "m³" },
+  { key: "harga_beras", defaultPrice: 25000, unit: "kg" },
+  { key: "harga_daging_sapi", defaultPrice: 75000, unit: "kg" },
+  { key: "harga_ayam", defaultPrice: 50000, unit: "kg" },
+  { key: "harga_minyak_goreng", defaultPrice: 25000, unit: "liter" },
+  { key: "harga_gula", defaultPrice: 25000, unit: "kg" },
+  { key: "harga_telur", defaultPrice: 50000, unit: "kg" },
+  { key: "harga_listrik", defaultPrice: 75000, unit: "kWh" },
+  { key: "harga_air", defaultPrice: 25000, unit: "m³" },
 ];
 
 const formatNumber = (val: unknown): string => {
@@ -34,6 +35,7 @@ const formatNumber = (val: unknown): string => {
 export default function HargaBarangPokokSection({
   countryDetail,
 }: HargaBarangPokokSectionProps) {
+  const { t } = useLanguage();
   const [dbPrices, setDbPrices] = React.useState<Record<string, number> | null>(null);
 
   // Fetch data harga dari /api/price-data jika harga belum ada di countryDetail
@@ -92,10 +94,11 @@ export default function HargaBarangPokokSection({
       }
       return {
         ...c,
+        label: t(`detail_negara_ai.building.hargaBarang.commodities.${c.key}` as any),
         price: Number(val !== undefined && !isNaN(Number(val)) ? val : c.defaultPrice),
       };
     });
-  }, [pricesMap]);
+  }, [pricesMap, t]);
 
   // Hitung rata-rata harga barang pokok
   const averagePrice = useMemo(() => {
@@ -132,10 +135,10 @@ export default function HargaBarangPokokSection({
           </div>
           <div>
             <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-root-accent flex items-center gap-2">
-              Harga Barang Pokok & Keterjangkauan Rakyat
+              {t("detail_negara_ai.building.hargaBarang.title")}
             </h4>
             <p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
-              Pemantauan indeks harga kebutuhan dasar masyarakat di pasar domestik
+              {t("detail_negara_ai.building.hargaBarang.desc")}
             </p>
           </div>
         </div>
@@ -146,13 +149,15 @@ export default function HargaBarangPokokSection({
             <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
               <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400">
-                Subsidi Pangan Aktif (+5 Poin)
+                {t("detail_negara_ai.building.hargaBarang.foodSubsidyActive")}
               </span>
             </div>
           )}
           <div className="flex items-center gap-1.5 px-3 py-1.5 bg-root-surface border border-root-accent/30 rounded-xl">
             <DollarSign className="w-3.5 h-3.5 text-root-accent" />
-            <span className="text-[10px] font-bold text-root-subtle uppercase">Rata-rata:</span>
+            <span className="text-[10px] font-bold text-root-subtle uppercase">
+              {t("detail_negara_ai.building.hargaBarang.average")}
+            </span>
             <span className="text-[11px] font-black text-root-accent">
               Rp {formatNumber(averagePrice)}
             </span>
@@ -165,33 +170,41 @@ export default function HargaBarangPokokSection({
         <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-black uppercase tracking-widest text-root-subtle">
-              Rata-rata Harga Pasar
+              {t("detail_negara_ai.building.hargaBarang.avgMarketPrice")}
             </span>
             <ShoppingBasket className="w-4 h-4 text-root-accent" />
           </div>
           <p className="text-2xl font-black text-root-text">
             Rp {formatNumber(averagePrice)}
           </p>
-          <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">Berdasarkan {items.length} komoditas pangan pokok</p>
+          <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">
+            {t("detail_negara_ai.building.hargaBarang.basedOnCommodities", { count: items.length })}
+          </p>
         </div>
 
         <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-black uppercase tracking-widest text-root-subtle">
-              Status Keterjangkauan
+              {t("detail_negara_ai.building.hargaBarang.affordabilityStatus")}
             </span>
             <Smile className="w-4 h-4 text-root-accent" />
           </div>
           <p className="text-2xl font-black text-root-accent">
-            {priceSatisfaction >= 75 ? "Sangat Terjangkau" : priceSatisfaction >= 50 ? "Moderat / Cukup" : "Inflasi Tinggi"}
+            {priceSatisfaction >= 75
+              ? t("detail_negara_ai.building.hargaBarang.statusVeryAffordable")
+              : priceSatisfaction >= 50
+              ? t("detail_negara_ai.building.hargaBarang.statusModerate")
+              : t("detail_negara_ai.building.hargaBarang.statusHighInflation")}
           </p>
-          <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">Daya beli masyarakat konsumen</p>
+          <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">
+            {t("detail_negara_ai.building.hargaBarang.consumerPurchasingPower")}
+          </p>
         </div>
 
         <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-black uppercase tracking-widest text-root-subtle">
-              Indeks Kepuasan Harga
+              {t("detail_negara_ai.building.hargaBarang.priceSatisfactionIndex")}
             </span>
             <span className="text-xs font-bold text-root-accent">{priceSatisfaction}/100</span>
           </div>
@@ -235,9 +248,13 @@ export default function HargaBarangPokokSection({
                   Rp {formatNumber(item.price)}
                 </p>
                 <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-root-accent/10 text-[9px] font-semibold text-root-subtle">
-                  <span>Status:</span>
+                  <span>{t("detail_negara_ai.building.hargaBarang.statusLabel")}</span>
                   <span className={isCheap ? "text-emerald-400" : isExpensive ? "text-rose-400" : "text-amber-400"}>
-                    {isCheap ? "Murah" : isExpensive ? "Tinggi" : "Wajar"}
+                    {isCheap
+                      ? t("detail_negara_ai.building.hargaBarang.statusCheap")
+                      : isExpensive
+                      ? t("detail_negara_ai.building.hargaBarang.statusExpensive")
+                      : t("detail_negara_ai.building.hargaBarang.statusFair")}
                   </span>
                 </div>
               </div>

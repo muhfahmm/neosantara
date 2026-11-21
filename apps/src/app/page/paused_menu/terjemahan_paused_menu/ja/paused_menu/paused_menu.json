@@ -26,7 +26,8 @@
     "mapCapitals": "首都",
     "languageTitle": "言語設定",
     "languageSubtitle": "LANGUAGE SELECTOR",
-    "languageDesc": "インターフェースと言語を選択してください。"
+    "languageDesc": "インターフェースと言語を選択してください。",
+    "themeStorageError": "この端末ではテーマ設定の読み込みまたは保存ができません。"
   },
   "saveGameModal": {
     "title": "ゲーム保存",
@@ -38,7 +39,12 @@
     "saveNamePlaceholder": "セーブ名を入力...",
     "saveButton": "保存",
     "savingButton": "保存中...",
-    "overwriteWarning": "このセーブデータは上書きされます。続行しますか？"
+    "overwriteWarning": "このセーブデータは上書きされます。続行しますか？",
+    "overwriteTitle": "「{name}」を上書きしますか？",
+    "overwriteDesc": "現在のゲーム進行状況でこのスロットを上書きします。",
+    "overwriteCancel": "キャンセル",
+    "overwriteConfirm": "はい、上書きする",
+    "overwriting": "保存中..."
   },
   "loadGameModal": {
     "title": "ゲーム読込",
@@ -73,6 +79,59 @@
     "searchPlaceholder": "キーまたはアクションを検索...",
     "searchAria": "キーボードショートカットを検索",
     "clearSearchAria": "検索をクリア",
-    "categoryAll": "すべて"
+    "categoryAll": "すべて",
+    "emptyTitle": "ショートカットが見つかりません",
+    "emptyDesc": "検索キーワードやカテゴリフィルターを変更してみてください。",
+    "categories": {
+      "all": "すべて",
+      "mainMenu": "メインメニュー",
+      "subMenu": "サブメニュー (数字)",
+      "quickMenu": "クイックメニュー",
+      "timeController": "時間操作",
+      "panelNavigation": "パネル移動",
+      "zoomMap": "ズーム＆マップ"
+    },
+    "shortcuts": {
+      "KEY_A": "⚓ 艦隊・軍事司令部",
+      "KEY_B": "🏦 国家債務と融資",
+      "KEY_C": "🏛️ 内閣・閣僚評議会",
+      "KEY_D": "🤝 二国間大使館",
+      "KEY_E": "👛 国家予算の歳入・歳出",
+      "KEY_F": "🎯 自国へのフォーカスとズーム初期化",
+      "KEY_G": "🌐 グローバル貿易市場",
+      "KEY_H": "🏠 住宅・居住地域",
+      "KEY_I": "📬 通知受信トレイ",
+      "KEY_J": "👁️ 情報部・諜報作戦",
+      "KEY_K": "😊 国民満足度統計",
+      "KEY_L": "⚡ 国家送電網",
+      "KEY_M": "🗺️ メインマップ（全ウィンドウを閉じる）",
+      "KEY_N": "🌍 国連総会",
+      "KEY_O": "👥 人口・人口統計概要",
+      "KEY_P": "🏭 工場建設と生産",
+      "KEY_Q": "💡 国家理念・憲法",
+      "KEY_R": "🔬 主要研究・開発",
+      "KEY_S": "💸 補助金配分方針",
+      "KEY_T": "💰 税率・関税政策",
+      "KEY_U": "🏛️ 公共施設・インフラ",
+      "KEY_V": "🕌 宗教と寛容性",
+      "KEY_W": "⚔️ 軍事行動 / 国家攻撃",
+      "KEY_X": "🚀 ICBMおよび核兵器発射",
+      "KEY_Y": "🌾 食糧産業収支・備蓄",
+      "KEY_Z": "📊 国内および世界GDP",
+      "KEY_1": "📈 国民満足度の上昇",
+      "KEY_2": "🏷️ 生活必需品物価指数",
+      "KEY_3": "⚖️ 経済体制・方針",
+      "KEY_4": "🚩 占領・併合地域",
+      "KEY_5": "🏛️ 国連専門機関",
+      "KEY_6": "🌐 世界地域機関",
+      "KEY_7": "🤝 国際外交関係",
+      "KEY_8": "📜 国家開放ドクトリン",
+      "KEY_9": "💣 戦略サボタージュ（諜報）",
+      "TIME_TOGGLE_PAUSE": "⏯️ 時間の再生 / 一時停止",
+      "TIME_SPEED_SLOW": "⏪ 時間を遅くする",
+      "TIME_SPEED_FAST": "⏩ 時間を速くする",
+      "NAV_CLOSE": "❌ アクティブなパネルを閉じる",
+      "OPEN_MISSION": "🎯 大統領任務を開く"
+    }
   }
 }

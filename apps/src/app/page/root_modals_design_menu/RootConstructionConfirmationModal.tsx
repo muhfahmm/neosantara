@@ -6,6 +6,7 @@ import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/Note
 import RootModalCloseButton from "./RootModalCloseButton";
 import { rootBorderRadius } from "./rootBorderRadius";
 import { rootModalTypography } from "./rootModalTypography";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 export interface ConstructionMaterialRequirement {
   resourceKey: string;
@@ -54,8 +55,8 @@ export default function RootConstructionConfirmationModal({
   onMaterialClick,
   loading,
   disabled = false,
-  quantityLabel = "Jumlah Bangunan",
-  quantityUnit = "bangunan",
+  quantityLabel,
+  quantityUnit,
   quantityAction,
   detailContent,
   beforeCostContent,
@@ -63,6 +64,7 @@ export default function RootConstructionConfirmationModal({
   showCurrentBalance = true,
   translate,
 }: RootConstructionConfirmationModalProps) {
+  const { t } = useLanguage();
   const [quantity, setQuantity] = useState(initialQuantity || 1);
   const [showMaterialGrid, setShowMaterialGrid] = useState(true);
   const [selectedMaterialKey, setSelectedMaterialKey] = useState<string | null>(null);
@@ -77,6 +79,9 @@ export default function RootConstructionConfirmationModal({
   }, [isOpen, initialQuantity]);
 
   if (!isOpen) return null;
+
+  const resolvedQuantityLabel = quantityLabel || t('common.rootConstructionModal.quantityBuilding');
+  const resolvedQuantityUnit = quantityUnit || t('common.rootConstructionModal.unitBuilding');
 
   const totalCost = cost * quantity;
   const budgetIsSufficient = budget >= totalCost;
@@ -114,7 +119,7 @@ export default function RootConstructionConfirmationModal({
                 <Hammer aria-hidden="true" className="root-modal-util-d252947d10 text-root-accent" />
               </div>
               <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                {title || label("title", "Konfirmasi Pembangunan")}
+                {title || label("title", t('common.rootConstructionModal.title'))}
               </h2>
             </div>
           </div>
@@ -136,15 +141,15 @@ export default function RootConstructionConfirmationModal({
 
           <div className="root-construction-confirm-cost-card space-y-2.5 rounded-xl border border-root-accent/20 bg-root-canvas p-4 text-xs text-root-text">
             <div className="root-construction-confirm-cost-row flex justify-between gap-3 font-bold">
-              <span className="text-root-muted">{label("cost", "Biaya Pembangunan (Total):")}</span>
+              <span className="text-root-muted">{label("cost", t('common.rootConstructionModal.cost'))}</span>
               <span className="shrink-0 font-black text-root-accent">
-                {loading ? label("loading", "Memuat...") : `${totalCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO`}
+                {loading ? label("loading", t('common.loading')) : `${totalCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO`}
               </span>
             </div>
 
             <div className="root-construction-confirm-quantity-card rounded-xl border border-root-accent/30 bg-root-surface p-4">
               <label className="flex flex-col gap-2">
-                <span className={rootModalTypography.sectionTitle}>{label("quantity", quantityLabel)}</span>
+                <span className={rootModalTypography.sectionTitle}>{label("quantity", resolvedQuantityLabel)}</span>
                 <div className="root-construction-confirm-quantity-controls flex items-center gap-2">
                   <input
                     type="number"
@@ -169,7 +174,7 @@ export default function RootConstructionConfirmationModal({
                     disabled={maxQuantity < 1}
                     className="root-construction-confirm-quantity-max shrink-0 cursor-pointer rounded-xl bg-root-accent px-4 py-2 text-xs font-black uppercase text-root-canvas shadow-sm transition-all hover:bg-root-accent/80 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {label("maximum", `Maks (${maxQuantity})`, { max: maxQuantity })}
+                    {label("maximum", t('common.rootConstructionModal.maximum', { max: maxQuantity }), { max: maxQuantity })}
                   </button>
                   {quantityAction?.(setQuantity)}
                 </div>
@@ -185,7 +190,7 @@ export default function RootConstructionConfirmationModal({
             {requirements.length > 0 ? (
               <div className="root-construction-confirm-material-section space-y-3 text-xs">
                 <div className="flex items-center justify-between">
-                  <div className={rootModalTypography.sectionTitle}>{label("materials", "Material Dibutuhkan")}</div>
+                  <div className={rootModalTypography.sectionTitle}>{label("materials", t('common.rootConstructionModal.materialsNeeded'))}</div>
                   <button
                     type="button"
                     aria-expanded={showMaterialGrid}
@@ -195,12 +200,12 @@ export default function RootConstructionConfirmationModal({
                     {showMaterialGrid ? (
                       <>
                         <EyeOff className="h-3 w-3" />
-                        <span className="text-[9px] font-bold uppercase">{label("hide", "Sembunyikan")}</span>
+                        <span className="text-[9px] font-bold uppercase">{label("hide", t('common.rootConstructionModal.hide'))}</span>
                       </>
                     ) : (
                       <>
                         <Eye className="h-3 w-3" />
-                        <span className="text-[9px] font-bold uppercase">{label("show", "Tampilkan")}</span>
+                        <span className="text-[9px] font-bold uppercase">{label("show", t('common.rootConstructionModal.show'))}</span>
                       </>
                     )}
                   </button>
@@ -252,13 +257,13 @@ export default function RootConstructionConfirmationModal({
               </div>
             ) : (
               <div className="root-construction-confirm-no-material text-root-muted">
-                {label("noMaterials", "Tidak ada material yang dibutuhkan untuk bangunan ini.")}
+                {label("noMaterials", t('common.rootConstructionModal.noMaterials'))}
               </div>
             )}
 
             {showCurrentBalance && (
               <div className="root-construction-confirm-cost-row root-construction-confirm-balance flex items-center justify-between gap-3 pt-1 text-xs font-black text-root-text">
-                <span className="text-root-muted">{label("balance", "Kas Negara Saat Ini:")}</span>
+                <span className="text-root-muted">{label("balance", t('common.rootConstructionModal.currentBalance'))}</span>
                 <span className="shrink-0 text-root-accent">
                   {budget.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
                 </span>
@@ -275,7 +280,7 @@ export default function RootConstructionConfirmationModal({
             onClick={onClose}
             className="flex-1 cursor-pointer rounded-xl border border-root-accent/30 bg-root-surface py-2.5 text-center text-xs font-bold uppercase text-root-muted transition-all hover:text-root-accent"
           >
-            {label("cancel", "Batal")}
+            {label("cancel", t('common.rootConstructionModal.cancel'))}
           </button>
           <button
             type="button"
@@ -288,12 +293,12 @@ export default function RootConstructionConfirmationModal({
             }`}
           >
             {hasMissingMaterials
-              ? label("materialShortage", "Material Kurang")
+              ? label("materialShortage", t('common.rootConstructionModal.materialShortage'))
               : quantityExceedsAvailable
-                ? label("quantityOverStock", "Jumlah Melebihi Stok")
+                ? label("quantityOverStock", t('common.rootConstructionModal.quantityOverStock'))
                 : !budgetIsSufficient
-                  ? label("insufficientFunds", "Dana Tidak Cukup")
-                  : label("start", "Mulai Pembangunan")}
+                  ? label("insufficientFunds", t('common.rootConstructionModal.insufficientFunds'))
+                  : label("start", t('common.rootConstructionModal.startConstruction'))}
           </button>
         </div>
       </div>

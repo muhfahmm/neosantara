@@ -10,5 +10,40 @@
   "error": "An error occurred",
   "success": "Success",
   "search": "Search...",
-  "infoTitle": "{title} Information"
+  "infoTitle": "{title} Information",
+  "understand": "Understand",
+  "errorBoundary": {
+    "title": "NEOSANTARA RECOVERY MODE",
+    "description": "An issue occurred while loading the system interface. You can reload the page or proceed directly to simulation.",
+    "startSimulation": "Start Simulation",
+    "reload": "Reload"
+  },
+  "rootConfirmModal": {
+    "confirm": "Confirm",
+    "understand": "Understand",
+    "cancel": "Cancel"
+  },
+  "rootConstructionModal": {
+    "title": "Construction Confirmation",
+    "cost": "Construction Cost (Total):",
+    "quantityBuilding": "Building Quantity",
+    "unitBuilding": "buildings",
+    "maximum": "Max ({max})",
+    "materialsNeeded": "Materials Required",
+    "hide": "Hide",
+    "show": "Show",
+    "noMaterials": "No materials required for this building.",
+    "currentBalance": "Current State Treasury:",
+    "cancel": "Cancel",
+    "materialShortage": "Insufficient Materials",
+    "quantityOverStock": "Quantity Exceeds Stock",
+    "insufficientFunds": "Insufficient Funds",
+    "startConstruction": "Start Construction"
+  },
+  "rootAISuggestionsModal": {
+    "title": "AI Recommendations & Analysis for {sector} Sector",
+    "subtitle": "Evaluation of sector requirements and conditions",
+    "itemCount": "{count} items",
+    "openItem": "Open {item}"
+  }
 }

@@ -5,6 +5,7 @@ import { AlertCircle, ArrowRight, CheckCircle2, MessageSquare, Sparkles } from "
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import RootModalCloseButton from "./RootModalCloseButton";
 import RootInfoModalHeader from "./RootInfoModalHeader";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 export type RootAISuggestionStatus = "deficit" | "surplus" | "neutral";
 
@@ -75,22 +76,27 @@ export default function RootAISuggestionsModal({
   onClose,
   sectorLabel,
   title,
-  subtitle = "Evaluasi kebutuhan dan kondisi sektor",
+  subtitle,
   sectionTitle,
   icon: HeaderIcon = Sparkles,
   metrics,
   items,
   itemCountLabel,
   summary,
-  summaryTitle = "Ringkasan AI",
+  summaryTitle,
 }: RootAISuggestionsModalProps) {
+  const { t } = useLanguage();
   if (!isOpen) return null;
+
+  const resolvedTitle = title || t('common.rootAISuggestionsModal.title', { sector: sectorLabel });
+  const resolvedSubtitle = subtitle || t('common.rootAISuggestionsModal.subtitle');
+  const resolvedItemCountLabel = itemCountLabel || t('common.rootAISuggestionsModal.itemCount', { count: items.length });
 
   return (
     <NotebookModalWrapper onClose={onClose} zIndexClass="z-[75]">
       <div className="root-modal-util-b74379da23">
         <RootInfoModalHeader
-          title={title || `Rekomendasi & Analisis AI Sektor ${sectorLabel}`}
+          title={resolvedTitle}
           onClose={onClose}
           icon={<HeaderIcon />}
           size="standard"
@@ -124,7 +130,7 @@ export default function RootAISuggestionsModal({
           <section className="root-ai-modal__section">
             <div className="root-ai-modal__section-heading">
               <h3>{sectionTitle}</h3>
-              <span>{itemCountLabel || `${items.length} item`}</span>
+              <span>{resolvedItemCountLabel}</span>
             </div>
 
             <div className="root-ai-modal__list">
@@ -162,8 +168,8 @@ export default function RootAISuggestionsModal({
                             type="button"
                             onClick={item.onNavigate}
                             className="root-ai-modal__navigate"
-                            aria-label={item.navigationLabel || `Buka ${item.label}`}
-                            title={item.navigationLabel || `Buka ${item.label}`}
+                            aria-label={item.navigationLabel || t('common.rootAISuggestionsModal.openItem', { item: item.label })}
+                            title={item.navigationLabel || t('common.rootAISuggestionsModal.openItem', { item: item.label })}
                           >
                             <ArrowRight className="h-4 w-4" />
                           </button>

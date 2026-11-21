@@ -10,5 +10,40 @@
   "error": "Ocurrió un error",
   "success": "Éxito",
   "search": "Buscar...",
-  "infoTitle": "Información de {title}"
+  "infoTitle": "Información de {title}",
+  "understand": "Entendido",
+  "errorBoundary": {
+    "title": "MODO DE RECUPERACIÓN NEOSANTARA",
+    "description": "Ocurrió un problema al cargar la interfaz del sistema. Puede recargar la página o ir directamente a la simulación.",
+    "startSimulation": "Iniciar Simulación",
+    "reload": "Recargar"
+  },
+  "rootConfirmModal": {
+    "confirm": "Confirmar",
+    "understand": "Entendido",
+    "cancel": "Cancelar"
+  },
+  "rootConstructionModal": {
+    "title": "Confirmación de Construcción",
+    "cost": "Costo de Construcción (Total):",
+    "quantityBuilding": "Cantidad de Edificios",
+    "unitBuilding": "edificios",
+    "maximum": "Máx ({max})",
+    "materialsNeeded": "Materiales Requeridos",
+    "hide": "Ocultar",
+    "show": "Mostrar",
+    "noMaterials": "No se requieren materiales para este edificio.",
+    "currentBalance": "Tesorería Estatal Actual:",
+    "cancel": "Cancelar",
+    "materialShortage": "Materiales Insuficientes",
+    "quantityOverStock": "La cantidad excede el disponible",
+    "insufficientFunds": "Fondos Insuficientes",
+    "startConstruction": "Iniciar Construcción"
+  },
+  "rootAISuggestionsModal": {
+    "title": "Recomendaciones y Análisis de IA para el Sector {sector}",
+    "subtitle": "Evaluación de requisitos y condiciones del sector",
+    "itemCount": "{count} elementos",
+    "openItem": "Abrir {item}"
+  }
 }

@@ -15,7 +15,20 @@
   "notification": {
     "gameSaved": "Game successfully saved.",
     "gameLoaded": "Game successfully loaded.",
-    "autosave": "Autosave completed."
+    "autosave": "Autosave completed.",
+    "exportFailedTitle": "Failed to Complete Export",
+    "exportFailedStock": "Your {product} stock is insufficient ({stock} units of {required} units needed).",
+    "importFailedTitle": "Failed to Complete Import",
+    "importFailedBudget": "State budget is insufficient for this import. ({available} NEO available out of {required} NEO).",
+    "sendTroopsFailedTitle": "Failed to Send Troops",
+    "sendTroopsFailedBudget": "State budget is insufficient to send security troops (Available: {available} NEO, Required: {required} NEO).",
+    "policeOperationFailedTitle": "Police Operation Failed",
+    "sendAidFailedTitle": "Failed to Deliver Aid",
+    "actionBudgetInsufficient": "State budget is insufficient to {action} ({available} NEO out of {required} NEO).",
+    "actionPolice": "fund police operations",
+    "actionAid": "deliver aid",
+    "saveGameFailed": "Failed to save game.",
+    "errorOccurred": "An error occurred: {error}"
   },
   "requireEmbassy": {
     "title": "Embassy Required",
@@ -110,5 +123,16 @@
   },
   "selectCountry": {
     "startSimulation": "START SIMULATION"
-  }
+  },
+  "attackerForces": {
+    "movementInfo": "Military Movement Information",
+    "unitsBrought": "Number of units deployed in this assault",
+    "notAvailable": "Attacking forces count data is not yet available.",
+    "noteTitle": "Note:",
+    "unitsAdjust": "Unit count adjusts to your selected deployment percentage.",
+    "deploymentDesc": "{force} deployed {percent}% of their fleet for this operation. Deployment percentage was chosen randomly between 50% and 75%.",
+    "pbbCoalition": "UN Joint Coalition Forces",
+    "attackingCountry": "Attacking nation"
+  },
+  "embargoBanner": "Restrictions end when the embargo resolution is no longer active. Currently effective embargoes and sanctions will be cleared after reloading the page."
 }

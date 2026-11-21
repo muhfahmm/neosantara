@@ -15,7 +15,20 @@
   "notification": {
     "gameSaved": "ゲームを保存しました。",
     "gameLoaded": "ゲームを読み込みました。",
-    "autosave": "オートセーブが完了しました。"
+    "autosave": "オートセーブが完了しました。",
+    "exportFailedTitle": "輸出の完了に失敗しました",
+    "exportFailedStock": "{product} の在庫が不足しています（必要数 {required} 単位中、現在 {stock} 単位）。",
+    "importFailedTitle": "輸入の完了に失敗しました",
+    "importFailedBudget": "この輸入を行うための国家予算が不足しています（必要額 {required} NEO 中、利用可能 {available} NEO）。",
+    "sendTroopsFailedTitle": "部隊の派遣に失敗しました",
+    "sendTroopsFailedBudget": "警備部隊を派遣するための国家予算が不足しています（利用可能：{available} NEO、必要：{required} NEO）。",
+    "policeOperationFailedTitle": "警察作戦失敗",
+    "sendAidFailedTitle": "支援の提供に失敗しました",
+    "actionBudgetInsufficient": "{action}のための国家予算が不足しています（必要額 {required} NEO 中、利用可能 {available} NEO）。",
+    "actionPolice": "警察作戦の資金調達",
+    "actionAid": "支援の提供",
+    "saveGameFailed": "ゲームの保存に失敗しました。",
+    "errorOccurred": "エラーが発生しました: {error}"
   },
   "requireEmbassy": {
     "title": "大使館が必要です",
@@ -110,5 +123,16 @@
   },
   "selectCountry": {
     "startSimulation": "シミュレーション開始"
-  }
+  },
+  "attackerForces": {
+    "movementInfo": "軍事移動情報",
+    "unitsBrought": "この攻撃に投入された部隊数",
+    "notAvailable": "攻撃部隊の兵力データはまだありません。",
+    "noteTitle": "注釈:",
+    "unitsAdjust": "部隊数は選択した動員率に応じて調整されます。",
+    "deploymentDesc": "{force}はこの作戦に艦隊戦力の {percent}% を動員しました。動員率は 50% から 75% の間でランダムに決定されます。",
+    "pbbCoalition": "国連連合軍",
+    "attackingCountry": "攻撃国"
+  },
+  "embargoBanner": "禁輸決議が無効になると制限は終了します。現在適用されている禁輸や制裁はページ再読み込み後に解除されます。"
 }

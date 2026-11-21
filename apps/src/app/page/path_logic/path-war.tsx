@@ -1568,13 +1568,13 @@ export default function WarMap({
             <header className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-root-accent/20 bg-root-canvas px-4 py-2.5 sm:px-6 sm:py-3">
               <div className="min-w-0">
                 <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#FF7088]">
-                  Informasi Pergerakan Militer
+                  {t('game.attackerForces.movementInfo') || 'Informasi Pergerakan Militer'}
                 </p>
                 <h2 id="attacker-forces-title" className="mt-1 break-words text-[length:var(--modal-font-title)] font-black text-root-accent">
                   {attackerForceDisplayName}
                 </h2>
                 <p className="mt-1 break-words text-xs text-white/65">
-                  Jumlah unit yang dibawa dalam serangan ini
+                  {t('game.attackerForces.unitsBrought') || 'Jumlah unit yang dibawa dalam serangan ini'}
                 </p>
               </div>
               <ModalCloseButton
@@ -1599,7 +1599,7 @@ export default function WarMap({
                             >
                               <span className="min-w-0 break-words text-white/75">{unit.displayName || unit.label}</span>
                               <strong className="shrink-0 tabular-nums text-white">
-                                {Math.round(unit.quantity).toLocaleString('id-ID')}
+                                {Math.round(unit.quantity).toLocaleString(language === 'id' ? 'id-ID' : 'en-US')}
                               </strong>
                             </li>
                           ))}
@@ -1609,15 +1609,20 @@ export default function WarMap({
                   </div>
                 ) : (
                   <p className="break-words rounded-xl bg-white/5 p-3 text-sm text-white/70">
-                    Data jumlah pasukan penyerang belum tersedia.
+                    {t('game.attackerForces.notAvailable') || 'Data jumlah pasukan penyerang belum tersedia.'}
                   </p>
                 )}
 
                 <aside className="mt-5 max-w-full rounded-xl border border-amber-300/25 bg-amber-300/10 p-3 text-xs leading-relaxed text-amber-100/85 [overflow-wrap:anywhere]">
-                  <strong className="mr-1">Catatan:</strong>
+                  <strong className="mr-1">{t('game.attackerForces.noteTitle') || 'Catatan:'}</strong>
                   {canViewAttackerForces
-                    ? `${isPbbCoalition ? 'Pasukan Gabungan PBB' : 'Negara penyerang'} mengerahkan ${effectiveAttackerDeploymentPercent}% dari armadanya untuk operasi ini. Persentase pengerahan dipilih secara acak antara 50% dan 75%.`
-                    : 'Jumlah unit menyesuaikan persentase pengerahan yang Anda pilih.'}
+                    ? t('game.attackerForces.deploymentDesc', {
+                        force: isPbbCoalition
+                          ? (t('game.attackerForces.pbbCoalition') || 'Pasukan Gabungan PBB')
+                          : (t('game.attackerForces.attackingCountry') || 'Negara penyerang'),
+                        percent: effectiveAttackerDeploymentPercent
+                      }) || `${isPbbCoalition ? 'Pasukan Gabungan PBB' : 'Negara penyerang'} mengerahkan ${effectiveAttackerDeploymentPercent}% dari armadanya untuk operasi ini. Persentase pengerahan dipilih secara acak antara 50% dan 75%.`
+                    : (t('game.attackerForces.unitsAdjust') || 'Jumlah unit menyesuaikan persentase pengerahan yang Anda pilih.')}
                 </aside>
             </div>
           </section>

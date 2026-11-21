@@ -257,6 +257,18 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
     setIsSaving(false);
   };
 
+  const noBonusFallback = t('nav_sosial_budaya_ideologi.noSpecificBonus' as any) || 'Tidak ada bonus spesifik';
+
+  const selectedIdeoKey = selectedIdeology ? selectedIdeology.toLowerCase().replace(/\s+/g, '_') : '';
+  const selectedBonusText = selectedIdeology
+    ? (t(`nav_sosial_budaya_ideologi.bonuses.${selectedIdeoKey}` as any) || IDEOLOGY_BONUSES[selectedIdeology] || noBonusFallback)
+    : '';
+
+  const infoTargetKey = infoTarget ? infoTarget.toLowerCase().replace(/\s+/g, '_') : '';
+  const infoTargetBonusText = infoTarget
+    ? (t(`nav_sosial_budaya_ideologi.bonuses.${infoTargetKey}` as any) || IDEOLOGY_BONUSES[infoTarget] || noBonusFallback)
+    : '';
+
   return createPortal(
     <>
       {/* 🔥 RENDER KONFIRMASI MODAL BARU */}
@@ -265,9 +277,9 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
         onClose={() => setIsConfirmOpen(false)}
         onInstantChange={() => handleChange(true)}
         onConfirm={() => handleChange(false)}
-        title={selectedIdeology || ''}
+        title={selectedIdeology ? (t(`nav_sosial_budaya_ideologi.ideologies.${selectedIdeoKey}` as any) || selectedIdeology) : ''}
         icon={selectedIdeology ? IDEOLOGY_ICONS[selectedIdeology] : <Shield className="w-5 h-5" />}
-        bonusText={selectedIdeology ? IDEOLOGY_BONUSES[selectedIdeology] || 'Tidak ada bonus spesifik' : ''}
+        bonusText={selectedBonusText}
         cost={IDEOLOGY_CHANGE_COST}
       />
       <IdeologiGagalModal
@@ -282,7 +294,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
         onClose={() => setInfoTarget(null)}
         title={infoTarget || ''}
         icon={infoTarget ? IDEOLOGY_ICONS[infoTarget] : <Shield className="w-5 h-5" />}
-        bonusText={infoTarget ? IDEOLOGY_BONUSES[infoTarget] || '' : ''}
+        bonusText={infoTargetBonusText}
       />
 
       {!isConfirmOpen && !showErrorModal && !infoTarget && (
@@ -351,7 +363,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                     const isScheduled = pendingIdeologyChange?.toValue.toLowerCase() === option.toLowerCase();
                     const ideoKey = option.toLowerCase().replace(/\s+/g, '_');
                     const localizedIdeo = t(`nav_sosial_budaya_ideologi.ideologies.${ideoKey}` as any) || option;
-                    const localizedBonus = t(`nav_sosial_budaya_ideologi.bonuses.${ideoKey}` as any) || IDEOLOGY_BONUSES[option] || 'Tidak ada bonus spesifik';
+                    const localizedBonus = t(`nav_sosial_budaya_ideologi.bonuses.${ideoKey}` as any) || IDEOLOGY_BONUSES[option] || noBonusFallback;
 
                     return (
                       <div key={option} className="relative">

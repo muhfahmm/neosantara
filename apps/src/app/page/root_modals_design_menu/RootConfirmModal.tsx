@@ -4,6 +4,7 @@ import React, { useId, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import RootInfoModalHeader from "./RootInfoModalHeader";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 export interface RootConfirmModalProps {
   isOpen: boolean;
@@ -29,7 +30,7 @@ export default function RootConfirmModal({
   children,
   icon,
   variant = "confirm",
-  confirmLabel = "Konfirmasi",
+  confirmLabel,
   cancelLabel,
   onConfirm,
   confirmDisabled = false,
@@ -38,9 +39,13 @@ export default function RootConfirmModal({
   footerBorderClassName = "border-root-accent/20",
   zIndexClass = "z-[100000001]",
 }: RootConfirmModalProps) {
+  const { t } = useLanguage();
   const titleId = useId();
 
   if (!isOpen) return null;
+
+  const resolvedConfirmLabel = confirmLabel || t('common.rootConfirmModal.confirm');
+  const resolvedCancelLabel = cancelLabel || (variant === "info" || !onConfirm ? t('common.rootConfirmModal.understand') : t('common.rootConfirmModal.cancel'));
 
   const isInfoOnly = variant === "info" || !onConfirm;
   const dialog = (
@@ -76,7 +81,7 @@ export default function RootConfirmModal({
               onClick={onClose}
               className="w-full sm:w-auto px-6 bg-root-accent hover:bg-[#00e699] border border-root-accent rounded-xl py-2 text-center text-root-canvas font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
             >
-              {cancelLabel || "Mengerti"}
+              {resolvedCancelLabel}
             </button>
           ) : (
             <>
@@ -85,7 +90,7 @@ export default function RootConfirmModal({
                 onClick={onClose}
                 className="w-full sm:w-auto px-6 bg-root-canvas hover:bg-[#142A2A] border border-root-accent/30 rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
               >
-                {cancelLabel || "Batal"}
+                {resolvedCancelLabel}
               </button>
 
               <button
@@ -106,7 +111,7 @@ export default function RootConfirmModal({
                     : "bg-root-accent hover:bg-[#00e699] border border-root-accent text-root-canvas cursor-pointer"
                 }`}
               >
-                {confirmLabel}
+                {resolvedConfirmLabel}
               </button>
             </>
           )}

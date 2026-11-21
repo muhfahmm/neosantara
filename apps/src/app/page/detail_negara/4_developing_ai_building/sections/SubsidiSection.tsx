@@ -18,6 +18,7 @@ import {
   clampSubsidyCost,
 } from "../../../../../../../json/5_database_kebijakan_subsidi/index";
 import { calculateSubsidySatisfaction } from "@/app/logic/kepuasanCalculator";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface SubsidiSectionProps {
   countryDetail: Record<string, any> | null;
@@ -29,7 +30,8 @@ const formatNumber = (val: unknown): string => {
 };
 
 export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string>("Semua");
+  const { t } = useLanguage();
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [dbSubsidyStates, setDbSubsidyStates] = useState<Record<string, boolean> | null>(null);
 
@@ -91,12 +93,12 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
 
   const categories = useMemo(() => {
     const setCats = new Set(subsidyItems.map((i) => i.category));
-    return ["Semua", ...Array.from(setCats)];
+    return ["all", ...Array.from(setCats)];
   }, [subsidyItems]);
 
   const filteredItems = useMemo(() => {
     return subsidyItems.filter((item) => {
-      const matchCat = selectedCategory === "Semua" || item.category === selectedCategory;
+      const matchCat = selectedCategory === "all" || item.category === selectedCategory;
       const matchQuery =
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -114,50 +116,54 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
           </div>
           <div>
             <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-root-accent flex items-center gap-2">
-              Kebijakan Subsidi Pemerintah
+              {t("detail_negara_ai.building.subsidi.title")}
             </h4>
             <p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
-              Bantalan sosial, intervensi harga bahan pokok, energi, dan bantuan masyarakat
+              {t("detail_negara_ai.building.subsidi.desc")}
             </p>
           </div>
         </div>
 
         {/* Quick Badges */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-root-surface border border-root-accent/30 rounded-xl">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-root-surface border border-rose-500/30 rounded-xl">
             <DollarSign className="w-3.5 h-3.5 text-rose-400" />
-            <span className="text-[10px] font-bold text-root-subtle uppercase">Total Beban Anggaran Nasional:</span>
+            <span className="text-[10px] font-bold text-root-subtle uppercase">
+              {t("detail_negara_ai.building.subsidi.totalBudgetBurden")}
+            </span>
             <span className="text-[11px] font-black text-rose-400">
-              {formatCurrencyCompact(summary.totalCost)} / hari
+              {formatCurrencyCompact(summary.totalCost)}
             </span>
           </div>
         </div>
       </div>
 
-      {/* TOP SUMMARY STATS */}
+      {/* TOP SUMMARY CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
         <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-black uppercase tracking-widest text-root-subtle">
-              Subsidi Aktif
+              {t("detail_negara_ai.building.subsidi.activePrograms")}
             </span>
             <span className="text-xs font-bold text-root-accent">
-              {summary.activeCount} / {summary.totalCount} Program
+              {summary.activeCount}/{summary.totalCount}
             </span>
           </div>
           <p className="text-2xl font-black text-root-accent">
             {summary.activeCount}{" "}
-            <span className="text-sm font-bold text-root-subtle">Terbuka</span>
+            <span className="text-sm font-bold text-root-subtle">
+              {t("detail_negara_ai.building.subsidi.open")}
+            </span>
           </p>
           <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">
-            Program bantuan sosial yang didanai negara
+            {t("detail_negara_ai.building.subsidi.subsidiesActive", { count: summary.activeCount })}
           </p>
         </div>
 
         <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-black uppercase tracking-widest text-root-subtle">
-              Total Biaya Harian
+              {t("detail_negara_ai.building.subsidi.dailyBudgetCost")}
             </span>
             <TrendingDown className="w-4 h-4 text-rose-400" />
           </div>
@@ -165,22 +171,26 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
             {formatNumber(summary.totalCost)}{" "}
             <span className="text-sm font-bold text-rose-300">NEO</span>
           </p>
-          <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">Pengeluaran kas Anggaran Nasional per hari</p>
+          <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">
+            {t("detail_negara_ai.building.subsidi.dailyBudgetExpense")}
+          </p>
         </div>
 
         <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-black uppercase tracking-widest text-root-subtle">
-              Bonus Kepuasan Rakyat
+              {t("detail_negara_ai.building.subsidi.publicSatisfactionBonus")}
             </span>
             <Heart className="w-4 h-4 text-root-accent" />
           </div>
           <p className="text-2xl font-black text-root-accent">
             +{satisfactionBonus}{" "}
-            <span className="text-sm font-bold text-root-subtle">Poin</span>
+            <span className="text-sm font-bold text-root-subtle">
+              {t("detail_negara_ai.building.subsidi.points")}
+            </span>
           </p>
           <p className="text-[10px] text-[#8AB0A8] mt-1 font-medium">
-            Dampak positif terhadap persetujuan publik
+            {t("detail_negara_ai.building.subsidi.positiveImpact")}
           </p>
         </div>
       </div>
@@ -192,12 +202,13 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${selectedCategory === cat
+              className={`px-3 py-1 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                selectedCategory === cat
                   ? "bg-root-accent text-root-canvas font-black shadow-sm"
                   : "bg-root-surface text-root-subtle hover:text-root-accent border border-root-accent/20"
-                }`}
+              }`}
             >
-              {cat}
+              {cat === "all" ? t("detail_negara_ai.building.subsidi.all") : cat}
             </button>
           ))}
         </div>
@@ -208,7 +219,7 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari program subsidi..."
+            placeholder={t("detail_negara_ai.building.subsidi.searchPlaceholder")}
             className="w-full pl-8 pr-3 py-1 rounded-xl bg-root-surface border border-root-accent/30 text-xs text-root-text placeholder:text-root-subtle focus:outline-none focus:border-root-accent"
           />
         </div>
@@ -220,10 +231,11 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
           return (
             <div
               key={item.id}
-              className={`rounded-2xl p-3.5 flex flex-col justify-between border transition-all shadow-sm ${item.isSubsidized
+              className={`rounded-2xl p-3.5 flex flex-col justify-between border transition-all shadow-sm ${
+                item.isSubsidized
                   ? "bg-root-canvas border-root-accent/40"
                   : "bg-root-canvas/70 border-root-accent/15 opacity-70"
-                }`}
+              }`}
             >
               <div>
                 <div className="flex items-start justify-between gap-2 mb-2">
@@ -231,18 +243,19 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
                     {item.category}
                   </span>
                   <span
-                    className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full flex items-center gap-1 border ${item.isSubsidized
+                    className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full flex items-center gap-1 border ${
+                      item.isSubsidized
                         ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-300"
                         : "bg-rose-500/15 border-rose-500/30 text-rose-300"
-                      }`}
+                    }`}
                   >
                     {item.isSubsidized ? (
                       <>
-                        <CheckCircle className="w-3 h-3" /> Aktif
+                        <CheckCircle className="w-3 h-3" /> {t("detail_negara_ai.building.subsidi.active")}
                       </>
                     ) : (
                       <>
-                        <XCircle className="w-3 h-3" /> Nonaktif
+                        <XCircle className="w-3 h-3" /> {t("detail_negara_ai.building.subsidi.inactive")}
                       </>
                     )}
                   </span>
@@ -258,13 +271,14 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
 
               <div className="mt-3 pt-2.5 border-t border-root-accent/10 flex items-center justify-between text-xs">
                 <span className="text-[10px] font-bold text-root-subtle uppercase">
-                  Alokasi Biaya:
+                  {t("detail_negara_ai.building.subsidi.costAllocation")}
                 </span>
                 <span
-                  className={`font-black ${item.isSubsidized ? "text-rose-400" : "text-root-subtle"
-                    }`}
+                  className={`font-black ${
+                    item.isSubsidized ? "text-rose-400" : "text-root-subtle"
+                  }`}
                 >
-                  {formatNumber(item.budgetCost)} NEO/hari
+                  {formatNumber(item.budgetCost)} {t("detail_negara_ai.building.subsidi.perDay")}
                 </span>
               </div>
             </div>

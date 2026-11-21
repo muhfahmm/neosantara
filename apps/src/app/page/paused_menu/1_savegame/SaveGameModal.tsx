@@ -131,12 +131,18 @@ export function SaveGameModal({
                         <div className="absolute inset-0 z-10 flex items-center justify-center bg-root-canvas/90 p-6">
                             <div className="w-full max-w-sm space-y-4 rounded-xl border-2 border-amber-500/60 bg-root-canvas p-5 text-center">
                                 <RotateCw className="mx-auto h-6 w-6 text-amber-400" />
-                                <h3 className="text-sm font-extrabold">Timpa “{saveToOverwrite.save_name}”?</h3>
-                                <p className="text-xs text-root-subtle">Progres permainan saat ini akan menimpa slot ini.</p>
+                                <h3 className="text-sm font-extrabold">
+                                    {t('paused_menu.saveGameModal.overwriteTitle', { name: saveToOverwrite.save_name })}
+                                </h3>
+                                <p className="text-xs text-root-subtle">
+                                    {t('paused_menu.saveGameModal.overwriteDesc')}
+                                </p>
                                 <div className="grid grid-cols-2 gap-2">
-                                    <button type="button" onClick={() => setSaveToOverwrite(null)} disabled={isSaving} className="rounded border border-root-accent/30 py-2 text-xs font-bold disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">Batal</button>
+                                    <button type="button" onClick={() => setSaveToOverwrite(null)} disabled={isSaving} className="rounded border border-root-accent/30 py-2 text-xs font-bold disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
+                                        {t('paused_menu.saveGameModal.overwriteCancel')}
+                                    </button>
                                     <button type="button" onClick={() => onSave(saveToOverwrite.id, saveToOverwrite.save_name)} disabled={isSaving} className="rounded border border-amber-500 bg-amber-500/25 py-2 text-xs font-extrabold text-amber-300 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
-                                        {isSaving ? 'Menyimpan...' : 'Ya, Timpa'}
+                                        {isSaving ? t('paused_menu.saveGameModal.overwriting') : t('paused_menu.saveGameModal.overwriteConfirm')}
                                     </button>
                                 </div>
                             </div>

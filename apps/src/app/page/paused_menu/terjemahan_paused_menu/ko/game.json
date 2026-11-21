@@ -15,7 +15,20 @@
   "notification": {
     "gameSaved": "게임이 저장되었습니다.",
     "gameLoaded": "게임을 불러왔습니다.",
-    "autosave": "자동 저장이 완료되었습니다."
+    "autosave": "자동 저장이 완료되었습니다.",
+    "exportFailedTitle": "수출 완료 실패",
+    "exportFailedStock": "{product} 재고가 부족합니다 (필요한 {required}단위 중 {stock}단위 보유).",
+    "importFailedTitle": "수입 완료 실패",
+    "importFailedBudget": "이 수입을 진행하기 위한 국가 예산이 부족합니다 (필요한 {required} NEO 중 {available} NEO 보유).",
+    "sendTroopsFailedTitle": "부대 파견 실패",
+    "sendTroopsFailedBudget": "치안 부대를 파견하기 위한 국가 예산이 부족합니다 (보유: {available} NEO, 필요: {required} NEO).",
+    "policeOperationFailedTitle": "경찰 작전 실패",
+    "sendAidFailedTitle": "구호 지원 전달 실패",
+    "actionBudgetInsufficient": "{action}을(를) 위한 국가 예산이 부족합니다 (필요한 {required} NEO 중 {available} NEO 보유).",
+    "actionPolice": "경찰 작전 자금 지원",
+    "actionAid": "구호 지원 전달",
+    "saveGameFailed": "게임을 저장하지 못했습니다.",
+    "errorOccurred": "오류가 발생했습니다: {error}"
   },
   "requireEmbassy": {
     "title": "대사관 필요",
@@ -110,5 +123,16 @@
   },
   "selectCountry": {
     "startSimulation": "시뮬레이션 시작"
-  }
+  },
+  "attackerForces": {
+    "movementInfo": "군사 이동 정보",
+    "unitsBrought": "이번 공격에 동원된 부대 수",
+    "notAvailable": "공격 병력 데이터가 아직 없습니다.",
+    "noteTitle": "참고:",
+    "unitsAdjust": "부대 수는 선택한 배치 비율에 따라 조정됩니다.",
+    "deploymentDesc": "{force}은(는) 이번 작전에 함대 전력의 {percent}%를 배치했습니다. 배치 비율은 50%에서 75% 사이에서 무작위로 결정되었습니다.",
+    "pbbCoalition": "유엔 연합군",
+    "attackingCountry": "공격국"
+  },
+  "embargoBanner": "금수 조치 결의안이 더 이상 효력을 발휘하지 않으면 제한이 종료됩니다. 현재 적용 중인 금수 및 제재는 페이지를 새로고침하면 해제됩니다."
 }

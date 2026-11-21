@@ -10,5 +10,40 @@
   "error": "发生错误",
   "success": "成功",
   "search": "搜索...",
-  "infoTitle": "{title} 信息"
+  "infoTitle": "{title} 信息",
+  "understand": "明白",
+  "errorBoundary": {
+    "title": "NEOSANTARA 恢复模式",
+    "description": "加载系统界面时发生错误。您可以刷新页面或直接进入模拟。",
+    "startSimulation": "开始模拟",
+    "reload": "重新加载"
+  },
+  "rootConfirmModal": {
+    "confirm": "确认",
+    "understand": "明白",
+    "cancel": "取消"
+  },
+  "rootConstructionModal": {
+    "title": "建造确认",
+    "cost": "建造费用（总计）：",
+    "quantityBuilding": "建筑数量",
+    "unitBuilding": "座建筑",
+    "maximum": "最大 ({max})",
+    "materialsNeeded": "所需材料",
+    "hide": "隐藏",
+    "show": "显示",
+    "noMaterials": "此建筑不需要任何材料。",
+    "currentBalance": "当前国库资金：",
+    "cancel": "取消",
+    "materialShortage": "材料不足",
+    "quantityOverStock": "数量超出可用上限",
+    "insufficientFunds": "资金不足",
+    "startConstruction": "开始建造"
+  },
+  "rootAISuggestionsModal": {
+    "title": "{sector}部门 AI 建议与分析",
+    "subtitle": "评估部门需求与现状",
+    "itemCount": "{count} 项",
+    "openItem": "打开 {item}"
+  }
 }

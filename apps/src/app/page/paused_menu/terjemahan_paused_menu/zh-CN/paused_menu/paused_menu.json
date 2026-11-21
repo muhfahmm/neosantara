@@ -26,7 +26,8 @@
     "mapCapitals": "首都",
     "languageTitle": "语言设置",
     "languageSubtitle": "LANGUAGE SELECTOR",
-    "languageDesc": "选择界面与游戏文本的显示语言。"
+    "languageDesc": "选择界面与游戏文本的显示语言。",
+    "themeStorageError": "此设备无法读取或保存主题偏好设置。"
   },
   "saveGameModal": {
     "title": "保存游戏",
@@ -38,7 +39,12 @@
     "saveNamePlaceholder": "输入存档名称...",
     "saveButton": "保存",
     "savingButton": "正在保存...",
-    "overwriteWarning": "该存档将被覆盖。是否继续？"
+    "overwriteWarning": "该存档将被覆盖。是否继续？",
+    "overwriteTitle": "覆盖“{name}”？",
+    "overwriteDesc": "当前游戏进度将覆盖此存档栏位。",
+    "overwriteCancel": "取消",
+    "overwriteConfirm": "确认覆盖",
+    "overwriting": "保存中..."
   },
   "loadGameModal": {
     "title": "加载游戏",
@@ -73,6 +79,59 @@
     "searchPlaceholder": "搜索按键或功能...",
     "searchAria": "搜索快捷键",
     "clearSearchAria": "清除搜索",
-    "categoryAll": "全部"
+    "categoryAll": "全部",
+    "emptyTitle": "未找到快捷键",
+    "emptyDesc": "尝试更改搜索关键字或分类筛选。",
+    "categories": {
+      "all": "全部",
+      "mainMenu": "主菜单",
+      "subMenu": "子菜单 (数字)",
+      "quickMenu": "快捷菜单",
+      "timeController": "时间控制器",
+      "panelNavigation": "面板导航",
+      "zoomMap": "缩放与地图"
+    },
+    "shortcuts": {
+      "KEY_A": "⚓ 舰队指挥部",
+      "KEY_B": "🏦 国家贷款与债务",
+      "KEY_C": "🏛️ 内阁各部会议",
+      "KEY_D": "🤝 双边大使馆",
+      "KEY_E": "👛 国家财政收支预算",
+      "KEY_F": "🎯 聚焦并重置缩放至本国",
+      "KEY_G": "🌐 全球贸易市场",
+      "KEY_H": "🏠 居民住房与定居点",
+      "KEY_I": "📬 通知收件箱",
+      "KEY_J": "👁️ 情报与间谍行动",
+      "KEY_K": "😊 民众满意度统计",
+      "KEY_L": "⚡ 国家电网系统",
+      "KEY_M": "🗺️ 主地图（关闭所有模态框）",
+      "KEY_N": "🌍 联合国大会",
+      "KEY_O": "👥 人口与人口结构概览",
+      "KEY_P": "🏭 工厂建设与生产",
+      "KEY_Q": "💡 国家意识形态与宪政",
+      "KEY_R": "🔬 核心研究与开发",
+      "KEY_S": "💸 财政补贴分配政策",
+      "KEY_T": "💰 税收与税率政策",
+      "KEY_U": "🏛️ 公共场所与市政设施",
+      "KEY_V": "🕌 宗教生活与包容度",
+      "KEY_W": "⚔️ 军事行动 / 攻击国家",
+      "KEY_X": "🚀 发射洲际导弹与核武器",
+      "KEY_Y": "🌾 粮食产业结余与储备",
+      "KEY_Z": "📊 国家与全球 GDP",
+      "KEY_1": "📈 提高民众满意度",
+      "KEY_2": "🏷️ 大宗基本商品价格指数",
+      "KEY_3": "⚖️ 经济体制与政策",
+      "KEY_4": "🚩 占领 / 兼并领土",
+      "KEY_5": "🏛️ 联合国专门机构",
+      "KEY_6": "🌐 世界区域组织",
+      "KEY_7": "🤝 国际外交关系",
+      "KEY_8": "📜 国家对外开放学说",
+      "KEY_9": "💣 战略破坏行动（情报）",
+      "TIME_TOGGLE_PAUSE": "⏯️ 继续 / 暂停时间",
+      "TIME_SPEED_SLOW": "⏪ 减慢时间流速",
+      "TIME_SPEED_FAST": "⏩ 加快时间流速",
+      "NAV_CLOSE": "❌ 关闭当前面板",
+      "OPEN_MISSION": "🎯 打开总统任务"
+    }
   }
 }
