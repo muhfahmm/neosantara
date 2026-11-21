@@ -10,7 +10,17 @@
     "totalDeficit": "Total Defisit Sektor",
     "totalSurplus": "Total Surplus Sektor",
     "summaryWithDeficit": "Terdapat {count} komoditas di sektor {sector} yang mengalami defisit pasokan. Pilih rekomendasi pada komoditas defisit untuk melihat jumlah unit yang disarankan.",
-    "summaryBalanced": "Sektor {sector} saat ini memenuhi kebutuhan nasional berdasarkan perhitungan pasokan."
+    "summaryBalanced": "Sektor {sector} saat ini memenuhi kebutuhan nasional berdasarkan perhitungan pasokan.",
+    "buildingLabels": {
+      "air_mineral": "Pabrik Air Mineral",
+      "gula": "Pabrik Gula",
+      "roti": "Pabrik Roti",
+      "pengolahan_daging": "Pabrik Pengolahan Daging",
+      "mie_instan": "Pabrik Mi Instan",
+      "minyak_goreng": "Pabrik Minyak Goreng",
+      "susu": "Pabrik Pengolahan Susu",
+      "beras": "Pabrik Pengolahan Beras"
+    }
   },
   "tabInfo": "Informasi {category}",
   "status": {

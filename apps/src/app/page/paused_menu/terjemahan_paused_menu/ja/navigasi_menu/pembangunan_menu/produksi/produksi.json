@@ -10,7 +10,17 @@
     "totalDeficit": "部門の総不足量",
     "totalSurplus": "部門の総余剰量",
     "summaryWithDeficit": "{sector}部門では{count}品目が供給不足です。不足品目の推奨を選択すると、推奨建設数を確認できます。",
-    "summaryBalanced": "{sector}部門は現在、供給量の計算上、国内需要を満たしています。"
+    "summaryBalanced": "{sector}部門は現在、供給量の計算上、国内需要を満たしています。",
+    "buildingLabels": {
+      "air_mineral": "ミネラルウォーター工場",
+      "gula": "製糖工場",
+      "roti": "パン工場",
+      "pengolahan_daging": "食肉加工工場",
+      "mie_instan": "インスタント麺工場",
+      "minyak_goreng": "食用油工場",
+      "susu": "乳製品加工工場",
+      "beras": "米加工工場"
+    }
   },
   "tabInfo": "{category}の情報",
   "status": {

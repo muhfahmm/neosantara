@@ -10,7 +10,17 @@
     "totalDeficit": "Déficit total del sector",
     "totalSurplus": "Superávit total del sector",
     "summaryWithDeficit": "Hay {count} productos del sector {sector} con déficit de suministro. Selecciona la recomendación de un producto deficitario para ver las unidades sugeridas.",
-    "summaryBalanced": "El sector {sector} satisface actualmente la demanda nacional según la estimación de suministro."
+    "summaryBalanced": "El sector {sector} satisface actualmente la demanda nacional según la estimación de suministro.",
+    "buildingLabels": {
+      "air_mineral": "Fábrica de agua mineral",
+      "gula": "Fábrica de azúcar",
+      "roti": "Fábrica de pan",
+      "pengolahan_daging": "Planta procesadora de carne",
+      "mie_instan": "Fábrica de fideos instantáneos",
+      "minyak_goreng": "Fábrica de aceite de cocina",
+      "susu": "Planta procesadora de lácteos",
+      "beras": "Planta procesadora de arroz"
+    }
   },
   "tabInfo": "Información de {category}",
   "status": {

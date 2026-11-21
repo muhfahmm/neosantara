@@ -10,7 +10,17 @@
     "totalDeficit": "부문 총 부족량",
     "totalSurplus": "부문 총 잉여량",
     "summaryWithDeficit": "{sector} 부문에서 {count}개 상품의 공급이 부족합니다. 부족 상품의 추천을 선택하면 권장 건설 수량을 확인할 수 있습니다.",
-    "summaryBalanced": "{sector} 부문은 현재 공급량 기준으로 국내 수요를 충족하고 있습니다."
+    "summaryBalanced": "{sector} 부문은 현재 공급량 기준으로 국내 수요를 충족하고 있습니다.",
+    "buildingLabels": {
+      "air_mineral": "생수 공장",
+      "gula": "설탕 공장",
+      "roti": "빵 공장",
+      "pengolahan_daging": "육류 가공 공장",
+      "mie_instan": "인스턴트 면 공장",
+      "minyak_goreng": "식용유 공장",
+      "susu": "유제품 가공 공장",
+      "beras": "쌀 가공 공장"
+    }
   },
   "tabInfo": "{category} 정보",
   "status": {

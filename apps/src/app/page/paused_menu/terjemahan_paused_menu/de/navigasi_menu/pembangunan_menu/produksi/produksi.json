@@ -10,7 +10,17 @@
     "totalDeficit": "Gesamtdefizit des Sektors",
     "totalSurplus": "Gesamtüberschuss des Sektors",
     "summaryWithDeficit": "{count} Rohstoffe im Sektor {sector} weisen ein Angebotsdefizit auf. Wähle die Empfehlung eines defizitären Rohstoffs, um die empfohlene Anzahl anzuzeigen.",
-    "summaryBalanced": "Der Sektor {sector} deckt den nationalen Bedarf derzeit gemäß der Angebotsberechnung."
+    "summaryBalanced": "Der Sektor {sector} deckt den nationalen Bedarf derzeit gemäß der Angebotsberechnung.",
+    "buildingLabels": {
+      "air_mineral": "Mineralwasserfabrik",
+      "gula": "Zuckerfabrik",
+      "roti": "Brotfabrik",
+      "pengolahan_daging": "Fleischverarbeitungsbetrieb",
+      "mie_instan": "Instantnudelfabrik",
+      "minyak_goreng": "Speiseölfabrik",
+      "susu": "Molkereibetrieb",
+      "beras": "Reisverarbeitungsbetrieb"
+    }
   },
   "tabInfo": "Informationen zu {category}",
   "status": {

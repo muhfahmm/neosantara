@@ -138,6 +138,12 @@ export default function InfoBangunan({
   const { t } = useLanguage();
   const tr = (key: string, params?: Record<string, string | number>) =>
     t(`navigation_construction_production.info.${key}`, params);
+  const localizedSector = (sectorId: string) => {
+    const tabKey = sectorId === "olahan pangan" ? "olahanPangan" : sectorId;
+    const translationKey = `navigation_construction_production.tabs.${tabKey}`;
+    const translated = t(translationKey);
+    return translated === translationKey ? sectorId.toUpperCase() : translated;
+  };
   const localizedItem = (key: string, fallback: string) => {
     const rewardKey = `side_reward.items.${key}`;
     const translated = t(rewardKey);
@@ -383,7 +389,7 @@ export default function InfoBangunan({
                         }}
                         className="px-3 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wider bg-root-modal-warning-bg text-root-modal-warning border border-root-modal-warning/40 hover:bg-root-modal-warning-bg hover:border-root-modal-warning transition-all cursor-pointer shadow-sm"
                       >
-                        {tr("sector", { sector: card1TabId.toUpperCase() })}
+                        {tr("sector", { sector: localizedSector(card1TabId) })}
                       </button>
                     )}
                   </div>
@@ -423,7 +429,7 @@ export default function InfoBangunan({
                               }}
                               className="px-3 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wider bg-root-modal-negative-bg text-root-modal-negative border border-root-modal-negative/40 hover:bg-root-modal-negative-bg hover:border-root-modal-negative transition-all cursor-pointer shadow-sm"
                             >
-                              {tr("sector", { sector: card2TabId.toUpperCase() })}
+                              {tr("sector", { sector: localizedSector(card2TabId) })}
                             </button>
                           )}
                         </div>
@@ -514,7 +520,7 @@ export default function InfoBangunan({
                             }}
                             className="px-3 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wider bg-root-modal-negative-bg text-root-modal-negative border border-root-modal-negative/40 hover:bg-root-modal-negative-bg hover:border-root-modal-negative transition-all cursor-pointer shadow-sm"
                           >
-                            {tr("sector", { sector: card2ConsumerTabId.toUpperCase() })}
+                            {tr("sector", { sector: localizedSector(card2ConsumerTabId) })}
                           </button>
                         )}
                       </div>

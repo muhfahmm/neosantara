@@ -34,6 +34,14 @@ export default function ProductionAISuggestionsModal({
   const { t } = useLanguage();
   const tr = (key: string, params?: Record<string, string | number>) =>
     t(`navigation_construction_production.aiSuggestions.${key}`, params);
+  const localizedItem = (key: string, fallback: string) => {
+    const translationKey = `navigation_construction_production.aiSuggestions.buildingLabels.${key}`;
+    const translated = t(translationKey);
+    if (translated !== translationKey) return translated;
+    const commodityKey = `navigation_food_consumption.commodities.${key}`;
+    const commodity = t(commodityKey);
+    return commodity === commodityKey ? fallback : commodity;
+  };
   const [selectedDeficitKey, setSelectedDeficitKey] = useState<string | null>(null);
 
   if (!isOpen || !analysis) return null;
@@ -41,7 +49,7 @@ export default function ProductionAISuggestionsModal({
   const deficitCount = analysis.commodities.filter((item) => item.isDeficit).length;
   const items: RootAISuggestionItem[] = analysis.commodities.map((item) => ({
     key: item.key,
-    label: item.label,
+    label: localizedItem(item.key, item.label),
     status: item.isDeficit ? "deficit" : item.isSurplus ? "surplus" : "neutral",
     value: `${item.balance >= 0 ? "+" : ""}${formatNumber(item.balance)}`,
     ...(item.isDeficit

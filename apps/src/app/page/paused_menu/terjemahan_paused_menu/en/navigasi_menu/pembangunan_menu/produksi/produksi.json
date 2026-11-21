@@ -10,7 +10,17 @@
     "totalDeficit": "Total Sector Deficit",
     "totalSurplus": "Total Sector Surplus",
     "summaryWithDeficit": "There are {count} commodities in the {sector} sector with a supply deficit. Choose a deficit commodity's recommendation to see the suggested number of units.",
-    "summaryBalanced": "The {sector} sector currently meets national demand based on supply estimates."
+    "summaryBalanced": "The {sector} sector currently meets national demand based on supply estimates.",
+    "buildingLabels": {
+      "air_mineral": "Mineral Water Factory",
+      "gula": "Sugar Factory",
+      "roti": "Bread Factory",
+      "pengolahan_daging": "Meat Processing Plant",
+      "mie_instan": "Instant Noodle Factory",
+      "minyak_goreng": "Cooking Oil Factory",
+      "susu": "Dairy Processing Plant",
+      "beras": "Rice Processing Plant"
+    }
   },
   "tabInfo": "{category} information",
   "status": {

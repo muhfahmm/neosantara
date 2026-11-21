@@ -10,7 +10,17 @@
     "totalDeficit": "部门总缺口",
     "totalSurplus": "部门总盈余",
     "summaryWithDeficit": "{sector}部门有{count}种商品供应不足。选择缺口商品的建议可查看推荐建设数量。",
-    "summaryBalanced": "根据供应量估算，{sector}部门目前满足国内需求。"
+    "summaryBalanced": "根据供应量估算，{sector}部门目前满足国内需求。",
+    "buildingLabels": {
+      "air_mineral": "矿泉水工厂",
+      "gula": "制糖厂",
+      "roti": "面包厂",
+      "pengolahan_daging": "肉类加工厂",
+      "mie_instan": "方便面工厂",
+      "minyak_goreng": "食用油工厂",
+      "susu": "乳制品加工厂",
+      "beras": "大米加工厂"
+    }
   },
   "tabInfo": "{category}信息",
   "status": {
