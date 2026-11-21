@@ -7,6 +7,7 @@ import NotebookModalWrapper from "../../../../NotebookModalWrapper";
 import TabelDalamPembangunan from "./tab_menu/tabelDalamPembangunan";
 import TabelSelesai from "./tab_menu/tabelSelesai";
 import TabelStokIcbm from "./tab_menu/tabelStokIcbm";
+import { formatIcbmDate, useIcbmMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useIcbmMenuTranslation";
 
 interface IcbmBuildStatusModalProps {
   isOpen: boolean;
@@ -17,18 +18,6 @@ interface IcbmBuildStatusModalProps {
   onOpenDetail?: () => void;
 }
 
-const formatTanggalIndo = (dateStr: string | Date) => {
-  if (!dateStr) return "-";
-  const dateObj = typeof dateStr === "string" ? new Date(`${dateStr}T00:00:00`) : dateStr;
-  if (!(dateObj instanceof Date) || isNaN(dateObj.getTime())) return String(dateStr);
-  
-  const day = dateObj.getDate();
-  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-  const month = monthNames[dateObj.getMonth()];
-  const year = dateObj.getFullYear();
-  return `${day} ${month} ${year}`;
-};
-
 export default function IcbmBuildStatusModal({ 
   isOpen, 
   onClose, 
@@ -37,13 +26,15 @@ export default function IcbmBuildStatusModal({
   totalReadyIcbm,
   onOpenDetail 
 }: IcbmBuildStatusModalProps) {
-  if (!isOpen) return null;
+  const { language, translate } = useIcbmMenuTranslation();
 
   const safeDateString = (() => {
-    if (!currentDate) return formatTanggalIndo(new Date());
+    if (!currentDate) return new Date().toISOString().slice(0, 10);
     if (typeof currentDate === 'string') return currentDate;
-    if (currentDate instanceof Date && !isNaN(currentDate.getTime())) return currentDate.toISOString().slice(0, 10);
-    return formatTanggalIndo(new Date());
+    if (currentDate instanceof Date && !isNaN(currentDate.getTime())) {
+      return `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+    }
+    return new Date().toISOString().slice(0, 10);
   })();
 
   const icbmBuildTask = countryDetail?.icbmBuildTask || null;
@@ -112,6 +103,7 @@ export default function IcbmBuildStatusModal({
   const activeTabOptions = ['Dalam Pembangunan', 'Selesai', 'Stok ICBM'] as const;
   type ActiveTab = (typeof activeTabOptions)[number];
   const [activeTab, setActiveTab] = useState<ActiveTab>('Dalam Pembangunan');
+  if (!isOpen) return null;
 
   const resolvedTotalReady = typeof totalReadyIcbm === 'number'
     ? totalReadyIcbm
@@ -135,28 +127,28 @@ export default function IcbmBuildStatusModal({
               <Rocket className="h-4 w-4 sm:h-5 sm:w-5 text-amber-400" />
             </div>
             <div>
-              <h3 className="text-[length:var(--modal-font-title)] font-bold text-root-accent tracking-tight leading-none uppercase">Status Pembangunan ICBM</h3>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">Pantau perkembangan produksi rudal balistik antarbenua</p>
+              <h3 className="text-[length:var(--modal-font-title)] font-bold text-root-accent tracking-tight leading-none uppercase">{translate("buildStatus.title")}</h3>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-root-subtle mt-1">{translate("buildStatus.subtitle")}</p>
             </div>
           </div>
           <SharedModalCloseButton
             onClick={onClose} 
             className="p-1.5 lg:p-2 rounded-xl border border-root-accent/30 bg-root-surface text-root-subtle hover:text-root-accent hover:border-root-accent transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
             appearance="custom">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">{translate("common.close")}</span>
             <X className="h-4 w-4" />
           </SharedModalCloseButton>
         </div>
 
         <RootModalSidebarLayout
-          ariaLabel="Status pembangunan ICBM"
+          ariaLabel={translate("buildStatus.ariaLabel")}
           activeItemId={activeTab}
           contentClassName="p-4 sm:p-6"
           items={activeTabOptions.map((tab) => ({
             id: tab,
             isActive: activeTab === tab,
             onSelect: () => setActiveTab(tab),
-            label: tab,
+            label: translate(tab === 'Dalam Pembangunan' ? "buildStatus.inProgress" : tab === 'Selesai' ? "buildStatus.completed" : "buildStatus.stock"),
             trailing: tab === 'Stok ICBM' ? (
               <span className={`ml-1 shrink-0 rounded-full border px-1.5 py-0.5 text-[10px] font-bold ${
                 activeTab === tab
@@ -179,6 +171,7 @@ export default function IcbmBuildStatusModal({
                     totalReadyIcbm={resolvedTotalReady}
                     countryName={userCountryName}
                     consumedCount={consumedCount}
+                    language={language}
                   />
                 )}
               </div>

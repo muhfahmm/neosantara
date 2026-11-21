@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { X, AlertCircle, Coins, Banknote } from "lucide-react";
 import NeonAlertModal from "../NeonAlertModal";
 import NotebookModalWrapper from "../../../../NotebookModalWrapper";
+import { useIcbmMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useIcbmMenuTranslation";
 
 interface DanaTidakCukupModalsProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ export default function DanaTidakCukupModals({
   onTakeLoan
 }: DanaTidakCukupModalsProps) {
   const [showLoanUnavailable, setShowLoanUnavailable] = useState(false);
+  const { language, translate } = useIcbmMenuTranslation();
 
   if (!isOpen) return null;
 
@@ -45,12 +47,12 @@ export default function DanaTidakCukupModals({
           <div className="flex items-center gap-3">
             <AlertCircle className="h-6 w-6 text-root-danger animate-pulse drop-shadow-[0_0_6px_#FF2D55]" />
             <div>
-              <h2 className="text-[length:var(--modal-font-title)] font-bold text-root-danger tracking-tight leading-none uppercase">Dana Tidak Mencukupi</h2>
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-root-subtle mt-1">Gagal melakukan pendanaan program nuklir</p>
+              <h2 className="text-[length:var(--modal-font-title)] font-bold text-root-danger tracking-tight leading-none uppercase">{translate("program.insufficientTitle")}</h2>
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-root-subtle mt-1">{translate("program.insufficientSubtitle")}</p>
             </div>
           </div>
           <SharedModalCloseButton onClick={onClose} className="p-2.5 rounded-xl border border-root-danger/40 text-root-subtle hover:text-root-danger hover:bg-root-danger/10 transition-all cursor-pointer flex items-center gap-1.5" appearance="custom">
-            <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
+            <span className="text-[10px] font-black uppercase tracking-widest pl-1">{translate("common.close")}</span>
             <X className="h-5 w-5" />
           </SharedModalCloseButton>
         </div>
@@ -63,25 +65,25 @@ export default function DanaTidakCukupModals({
                 <Coins className="w-12 h-12 text-root-danger drop-shadow-[0_0_8px_#FF2D55]" />
               </div>
               <p className="text-sm font-semibold text-[#D6F5EC]">
-                Saldo kas negara Anda tidak mencukupi untuk memulai riset pengayaan uranium.
+                {translate("program.insufficientDescription")}
               </p>
               <p className="text-xs text-[#9CC9BD] leading-relaxed text-justify">
-                Anda perlu mengumpulkan dana lebih banyak melalui pajak, perdagangan, atau pinjaman internasional sebelum dapat membangun hulu ledak nuklir pertama.
+                {translate("program.insufficientGuidance")}
               </p>
             </div>
 
             <div className="bg-root-canvas border border-root-accent/20 p-4 rounded-xl space-y-3">
               <div className="flex justify-between text-xs font-bold text-[#D6F5EC]">
-                <span>Kas Anggaran Saat Ini:</span>
-                <span className="text-[#FF6B88]">{currentBudget.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                <span>{translate("program.currentBudget")}</span>
+                <span className="text-[#FF6B88]">{currentBudget.toLocaleString(language, { maximumFractionDigits: 0 })} NEO</span>
               </div>
               <div className="flex justify-between text-xs font-bold text-[#D6F5EC]">
-                <span>Biaya yang Dibutuhkan:</span>
-                <span className="text-root-accent">{requiredBudget.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                <span>{translate("program.requiredBudget")}</span>
+                <span className="text-root-accent">{requiredBudget.toLocaleString(language, { maximumFractionDigits: 0 })} NEO</span>
               </div>
               <div className="flex justify-between text-xs font-bold text-[#FF6B88] border-t border-root-danger/20 pt-3">
-                <span>Total Kekurangan Dana:</span>
-                <span>- {kekurangan.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                <span>{translate("program.totalDeficit")}</span>
+                <span>- {kekurangan.toLocaleString(language, { maximumFractionDigits: 0 })} NEO</span>
               </div>
             </div>
 
@@ -91,14 +93,14 @@ export default function DanaTidakCukupModals({
                 onClick={onClose}
                 className="px-5 py-2 rounded-xl border border-root-danger/50 text-[#FF6B88] hover:bg-root-danger/10 transition-all font-black text-xs uppercase tracking-wider cursor-pointer"
               >
-                Kembali
+                {translate("common.back")}
               </button>
               <button 
                 onClick={handleTakeLoan}
                 className="flex items-center gap-2 px-5 py-2 rounded-xl bg-root-accent text-[#04100F] font-black text-xs uppercase tracking-wider shadow-[0_0_16px_rgba(0,255,170,0.5)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
               >
                 <Banknote className="w-4 h-4" />
-                Ambil Hutang
+                {translate("program.borrow")}
               </button>
             </div>
           </div>
@@ -109,8 +111,8 @@ export default function DanaTidakCukupModals({
         isOpen={showLoanUnavailable}
         onClose={() => setShowLoanUnavailable(false)}
         variant="info"
-        title="Fitur Belum Tersedia"
-        message="Fitur ambil hutang belum terhubung ke sistem keuangan negara."
+        title={translate("program.loanUnavailableTitle")}
+        message={translate("program.loanUnavailableMessage")}
       />
     </>
   );

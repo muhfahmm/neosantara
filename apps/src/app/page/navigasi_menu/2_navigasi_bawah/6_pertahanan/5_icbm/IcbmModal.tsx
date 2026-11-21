@@ -18,6 +18,7 @@ import { generateProgramNuklirSelesaiNotification } from "@/app/page/menus/inbox
 import { launchIcbmWarStrike } from "./modals_menu/3_perang_nuklir/icbmWarLogic";
 import PerangNuklirModal from "@/app/page/detail_negara/3_operasi_militer/4_perang_nuklir/perangNuklirModals";
 import NeonAlertModal from "./modals_menu/NeonAlertModal";
+import { formatIcbmDate, useIcbmMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useIcbmMenuTranslation";
 
 interface ModalProps {
   isOpen: boolean;
@@ -31,7 +32,7 @@ interface ModalProps {
 }
 
 export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail, setCountryDetail, onOpenDebt, onGotoProduction, prefetchedAllCountries }: ModalProps) {
-  if (!isOpen) return null;
+  const { language, translate } = useIcbmMenuTranslation();
 
   const formatDateString = (date?: string | Date) => {
     if (!date) return "";
@@ -42,18 +43,8 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
     return `${year}-${month}-${day}`;
   };
 
-  // 🔥 FUNGSI UNTUK MEMFORMAT TANGGAL MENJADI 1-jan-2026
   const formatTanggalIndo = (dateStr: string | null | undefined) => {
-    if (!dateStr) return "";
-    const dateObj = new Date(dateStr + 'T00:00:00');
-    if (isNaN(dateObj.getTime())) return dateStr;
-
-    const day = dateObj.getDate();
-    const year = dateObj.getFullYear();
-    const monthNames = ['jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'ags', 'sep', 'okt', 'nov', 'des'];
-    const month = monthNames[dateObj.getMonth()];
-    
-    return `${day}-${month}-${year}`;
+    return dateStr ? formatIcbmDate(dateStr, language) : "";
   };
 
   const safeCurrentDate = formatDateString(currentDate) || formatDateString(new Date());
@@ -64,16 +55,18 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
 
   // Selaraskan local task jika countryDetail berubah (misal task dikurangi/dihapus saat uji coba)
   useEffect(() => {
+    if (!isOpen) return;
     if (countryDetail?.icbmBuildTask !== undefined) {
       setLocalIcbmBuildTask(countryDetail.icbmBuildTask);
     }
-  }, [countryDetail?.icbmBuildTask]);
+  }, [countryDetail?.icbmBuildTask, isOpen]);
 
   useEffect(() => {
+    if (!isOpen) return;
     fetchBuildingMetadata()
       .then((data) => setMetadata(data || {}))
       .catch(() => setMetadata({}));
-  }, []);
+  }, [isOpen]);
 
   const currentCash = Number(countryDetail?.anggaran) || 0;
   const uraniumBuildingCount = Number(countryDetail?.uranium) || 0;
@@ -169,9 +162,6 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
   const isNuclearProgramActive = Boolean(countryDetail?.programNuklirActive) || buildCompleted;
   const isNuclearProgramBuilding = Boolean(programBuildTask) && !buildCompleted;
   const isIcbmLocked = !isNuclearProgramActive;
-  const icbmCardStatusText = isIcbmLocked
-    ? "Terkunci. Aktifkan Program Nuklir terlebih dahulu."
-    : "Bangun ICBM untuk melihat jadwal penyelesaian.";
   const buildEndDate = programBuildTask?.endDate || null;
 
   const handleIcbmBuild = (task: { quantity: number; startDate: string; endDate: string }) => {
@@ -180,6 +170,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
   };
 
   useEffect(() => {
+    if (!isOpen) return;
     if (!isNuclearProgramActive && buildCompleted && programBuildTask) {
       setCountryDetail((prev: any) => {
         const ongoing = prev?.ongoingConstructions || [];
@@ -195,42 +186,44 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
         };
       });
     }
-  }, [buildCompleted, isNuclearProgramActive, programBuildTask, safeDateString, setCountryDetail]);
+  }, [buildCompleted, isNuclearProgramActive, programBuildTask, safeDateString, setCountryDetail, isOpen]);
 
   useEffect(() => {
+    if (!isOpen) return;
     try {
       if (isNuclearProgramActive) sessionStorage.setItem('programNuklirActive', '1');
       else sessionStorage.removeItem('programNuklirActive');
     } catch (e) {}
-  }, [isNuclearProgramActive]);
+  }, [isNuclearProgramActive, isOpen]);
 
   useEffect(() => {
+    if (!isOpen) return;
     try {
       const flag = sessionStorage.getItem('programNuklirActive') === '1';
       if (flag && !Boolean(countryDetail?.programNuklirActive) && countryDetail) {
         setCountryDetail((prev: any) => ({ ...(prev || {}), programNuklirActive: true }));
       }
     } catch (e) {}
-  }, [countryDetail, setCountryDetail]);
+  }, [countryDetail, setCountryDetail, isOpen]);
 
   const status = (() => {
     if (isNuclearProgramActive) {
       return {
         isActive: true,
-        message: "PROGRAM NUKLIR TELAH AKTIF",
+        message: translate("dashboard.programActive"),
         color: "text-emerald-700 border-emerald-600/30 bg-emerald-500/5",
       };
     }
     if (isNuclearProgramBuilding) {
       return {
         isActive: false,
-        message: "PROGRAM NUKLIR DALAM PEMBANGUNAN",
+        message: translate("dashboard.programBuilding"),
         color: "text-amber-700 border-amber-600/30 bg-amber-500/5",
       };
     }
     return {
       isActive: false,
-      message: "PROGRAM NUKLIR BELUM AKTIF",
+      message: translate("dashboard.programInactive"),
       color: "text-rose-700 border-rose-600/30 bg-rose-500/5",
     };
   })();
@@ -247,17 +240,18 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
 
   // Bersihkan lingering session flag sub-menu ICBM agar selalu berada di menu awal
   useEffect(() => {
+    if (!isOpen) return;
     try {
       sessionStorage.removeItem('program_nuklir_modal_open');
       sessionStorage.removeItem('icbm_detail_open');
       sessionStorage.removeItem('perang_nuklir_detail_open');
     } catch (e) {}
-  }, []);
+  }, [isOpen]);
 
   const nuclearOptions = [
     {
       id: 1,
-      title: "Program Nuklir",
+      titleKey: "dashboard.programCard",
       icon: Atom,
       color: "text-amber-400",
       bg: "bg-amber-400/10",
@@ -266,7 +260,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
     },
     {
       id: 2,
-      title: "ICBM",
+      titleKey: "dashboard.icbmCard",
       icon: Rocket,
       color: "text-rose-700",
       bg: "bg-rose-100",
@@ -275,7 +269,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
     },
     {
       id: 3,
-      title: "Perang Nuklir",
+      titleKey: "dashboard.warCard",
       icon: Bomb,
       color: "text-orange-600",
       bg: "bg-orange-100",
@@ -284,7 +278,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
     },
     {
       id: 4,
-      title: "Status Nuklir & ICBM Dunia",
+      titleKey: "dashboard.worldStatusCard",
       icon: Globe,
       color: "text-root-accent",
       bg: "bg-root-accent/10",
@@ -329,6 +323,8 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
     isUjicobaIcbmOpen ||
     neonAlert !== null;
 
+  if (!isOpen) return null;
+
   return (
     <>
       {!isAnySubModalOpen && (
@@ -342,14 +338,14 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                   <Shield aria-hidden="true" className="root-modal-util-d252947d10 text-rose-500 animate-pulse" />
                 </div>
                 <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                  Komando Strategis Nuklir
+                  {translate("dashboard.title")}
                 </h2>
               </div>
             </div>
             <div className="root-modal-util-08dfbca033">
               <MenuInfoButton
-                title="ICBM"
-                description="Kelola program rudal balistik antarbenua dan fasilitas strategis terkait. Status program, pembangunan, serta kesiapan peluncuran ditampilkan di menu ini; tindakan strategis dapat berdampak besar pada keamanan dan hubungan antarnegara."
+                title={translate("dashboard.infoTitle")}
+                description={translate("dashboard.infoDescription")}
               />
               <RootModalCloseButton onClick={onClose} />
             </div>
@@ -368,12 +364,12 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                   </p>
                   {isNuclearProgramBuilding && (
                     <p className="text-[10px] text-amber-400 font-bold">
-                      Dalam tahap pembangunan hingga {formatTanggalIndo(buildEndDate)}
+                      {translate("dashboard.buildingUntil", { date: formatTanggalIndo(buildEndDate) })}
                     </p>
                   )}
                   {isNuclearProgramActive && (
                     <p className="text-[10px] text-root-accent font-bold flex items-center justify-center gap-1">
-                      <Target className="w-3.5 h-3.5 text-root-accent" /> Sistem Siap Meluncur!
+                      <Target className="w-3.5 h-3.5 text-root-accent" /> {translate("dashboard.systemReady")}
                     </p>
                   )}
                 </div>
@@ -381,13 +377,13 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
               
               <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div className="rounded-xl border border-root-accent/20 bg-root-surface p-4 text-center shadow-sm flex flex-col justify-center min-h-[140px]">
-                  <p className="text-[10px] font-black text-root-subtle uppercase tracking-wider mb-2">Kas Negara</p>
-                  <div className="text-lg font-black text-root-accent leading-tight break-words">{currentCash.toLocaleString('id-ID', { maximumFractionDigits: 0 })} <span className="text-[10px] text-root-subtle font-bold">NEO</span></div>
+                  <p className="text-[10px] font-black text-root-subtle uppercase tracking-wider mb-2">{translate("dashboard.nationalBudget")}</p>
+                  <div className="text-lg font-black text-root-accent leading-tight break-words">{currentCash.toLocaleString(language, { maximumFractionDigits: 0 })} <span className="text-[10px] text-root-subtle font-bold">NEO</span></div>
                 </div>
 
                 <div className="rounded-xl border border-root-accent/20 bg-root-surface p-4 text-center shadow-sm flex flex-col justify-center min-h-[140px]">
-                  <p className="text-[10px] font-black text-root-subtle uppercase tracking-wider mb-2">Stok Uranium</p>
-                  <div className="text-lg font-black text-root-accent leading-tight break-words">{uraniumStock.toLocaleString('id-ID', { maximumFractionDigits: 0 })}</div>
+                  <p className="text-[10px] font-black text-root-subtle uppercase tracking-wider mb-2">{translate("dashboard.uraniumStock")}</p>
+                  <div className="text-lg font-black text-root-accent leading-tight break-words">{uraniumStock.toLocaleString(language, { maximumFractionDigits: 0 })}</div>
                 </div>
 
                 <div className="relative overflow-visible">
@@ -397,7 +393,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                     </div>
                   ) : null}
                   <div className="rounded-xl border border-root-accent/20 bg-root-surface p-4 text-center shadow-sm flex flex-col justify-center min-h-[140px]">
-                    <p className="text-[10px] font-black text-root-subtle uppercase tracking-wider mb-2">ICBM</p>
+                    <p className="text-[10px] font-black text-root-subtle uppercase tracking-wider mb-2">{translate("dashboard.icbm")}</p>
                     
                     <div className="text-lg font-black text-root-accent leading-tight break-words">
                       {totalReadyIcbm}
@@ -408,15 +404,15 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
 
                     {isIcbmLocked ? (
                       <p className="mt-2 text-[10px] text-root-subtle flex items-center justify-center gap-1">
-                        <Lock className="w-3 h-3 text-root-subtle" /> Terkunci. Aktifkan Program Nuklir terlebih dahulu.
+                        <Lock className="w-3 h-3 text-root-subtle" /> {translate("dashboard.locked")}
                       </p>
                     ) : isIcbmBuildQueued && remainingBuildQuantity > 0 ? (
                       <div className="mt-2 inline-flex items-center justify-center gap-1 rounded-full bg-root-accent/10 px-3 py-0.5 text-[10px] font-bold text-root-accent">
-                        +{remainingBuildQuantity} sedang dibangun
+                        {translate("dashboard.buildInProgress", { count: remainingBuildQuantity.toLocaleString(language) })}
                       </div>
                     ) : isIcbmBuildQueued && remainingBuildQuantity === 0 ? (
                       <div className="mt-2 inline-flex items-center justify-center gap-1 rounded-full bg-root-accent/20 px-3 py-0.5 text-[10px] font-bold text-root-accent">
-                        <Check className="w-3.5 h-3.5 text-root-accent" /> Semua ICBM telah selesai dibangun!
+                        <Check className="w-3.5 h-3.5 text-root-accent" /> {translate("dashboard.allBuildComplete")}
                       </div>
                     ) : null}
                     
@@ -426,7 +422,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                       className={`mt-3 inline-flex items-center justify-center gap-2 rounded-lg px-3 py-1.5 text-xs font-black text-root-canvas shadow-sm transition-all ${isIcbmLocked ? 'bg-root-subtle/30 text-root-subtle cursor-not-allowed' : 'bg-root-accent hover:bg-root-accent/80 cursor-pointer'}`}
                     >
                       <Clock className="h-3.5 w-3.5" />
-                      Lihat Status ICBM
+                      {translate("dashboard.viewStatus")}
                     </button>
                   </div>
                 </div>
@@ -472,16 +468,16 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                     <span className={`text-xs sm:text-sm font-black uppercase tracking-wide mb-1 ${
                       isLockedCard ? 'text-root-subtle' : isUnlockerCardActive ? 'text-root-accent' : option.isAlwaysUnlocked ? 'text-root-accent' : 'text-root-text'
                     }`}>
-                      {isUnlockerCardActive ? "Program Aktif!" : option.title}
+                      {isUnlockerCardActive ? translate("dashboard.programCardActive") : translate(option.titleKey)}
                     </span>
                     
                     {(isLockedCard || isUnlockerBuilding) && (
                       <p className="text-[10px] leading-relaxed text-root-subtle">
                       {isLockedCard ? (
                         <span className="flex items-center justify-center gap-1">
-                          <Lock className="w-3 h-3 inline shrink-0" /> Terkunci. Aktifkan Program Nuklir terlebih dahulu.
+                          <Lock className="w-3 h-3 inline shrink-0" /> {translate("dashboard.locked")}
                         </span>
-                      ) : "Program nuklir sedang dibangun. Tunggu hingga selesai untuk membuka ICBM dan Perang Nuklir."}
+                      ) : translate("dashboard.buildingWait")}
                       </p>
                     )}
                   </button>
@@ -513,26 +509,26 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                       <span className={`text-sm sm:text-base font-black uppercase tracking-wider ${
                         !isNuclearProgramActive || totalReadyIcbm <= 0 ? 'text-root-subtle' : 'text-rose-400 group-hover:text-rose-300'
                       }`}>
-                        Uji Coba ICBM
+                        {translate("dashboard.testTitle")}
                       </span>
                       {isNuclearProgramActive && totalReadyIcbm > 0 && (
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                          Siap Uji
+                          {translate("dashboard.readyToTest")}
                         </span>
                       )}
                     </div>
                     <p className="text-[11px] text-root-subtle font-medium mt-0.5">
                       {!isNuclearProgramActive 
-                        ? "Terkunci: Memerlukan Program Nuklir Aktif" 
+                        ? translate("dashboard.testLocked")
                         : totalReadyIcbm <= 0 
-                        ? "Tidak ada rudal ICBM yang siap diluncurkan" 
-                        : `Lakukan uji coba balistik samudra (Sisa rudal: ${totalReadyIcbm} unit)`}
+                        ? translate("dashboard.noReadyMissile")
+                        : translate("dashboard.testRemaining", { count: totalReadyIcbm.toLocaleString(language) })}
                     </p>
                   </div>
                 </div>
 
                 <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-rose-500/30 bg-root-canvas text-xs font-bold text-rose-400 group-hover:border-rose-400">
-                  <span>Protokol Luncur</span>
+                  <span>{translate("dashboard.launchProtocol")}</span>
                   <Rocket className="w-3.5 h-3.5 text-rose-400" />
                 </div>
               </button>
@@ -586,7 +582,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
         onAction={(target) => {
           setIsPerangNuklirDetailOpen(false);
           if (totalReadyIcbm <= 0) {
-            setNeonAlert({ title: "Gagal Meluncurkan", message: "Persediaan rudal ICBM Anda tidak mencukupi (0 unit). Silakan rakit rudal ICBM terlebih dahulu." });
+            setNeonAlert({ title: translate("war.noMissileTitle"), message: translate("war.noMissileMessage") });
             return;
           }
           setTargetNuclearStrike({
@@ -623,7 +619,10 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
           if (!strikeResult.success) {
             setIsConfirmStrikeOpen(false);
             setIsPerangNuklirDetailOpen(false);
-            setNeonAlert({ title: "Gagal Meluncurkan", message: strikeResult.message });
+            setNeonAlert({
+              title: translate("war.noMissileTitle"),
+              message: translate(strikeResult.messageKey === "selfTarget" ? "war.selfTarget" : "war.invalidTarget"),
+            });
             return;
           }
 
@@ -649,9 +648,9 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
             window.dispatchEvent(
               new CustomEvent("neosantara_system_notification", {
                 detail: {
-                  title: `💥 SERANGAN RUDAL ICBM DILUNCURKAN`,
-                  sender: `Pusat Komando Strategis Nuklir`,
-                  message: `Presiden! Satu unit Rudal Balistik Antarbenua (ICBM) berkepala nuklir telah berhasil diluncurkan menuju target sasaran di ${targetNuclearStrike.countryName}. Seluruh 210 negara dunia memberikan pinalti hubungan diplomatik -5 poin atas peluncuran senjata pemusnah massal ini!`,
+                  title: `💥 ${translate("war.launched")}`,
+                  sender: translate("war.notificationSender"),
+                  message: translate("war.notificationMessage", { country: targetNuclearStrike.countryName }),
                   date: safeCurrentDate,
                   type: "peringkat",
                 },

@@ -26,7 +26,8 @@ export interface TestLaunchResult {
  */
 export function getRealisticTargetLocationName(
   rawLocationName: string,
-  userCountryName: string
+  userCountryName: string,
+  translate?: (key: string, params?: Record<string, string | number>) => string
 ): { realisticName: string; isDomestic: boolean; isSea: boolean } {
   const normUser = (userCountryName || "").toLowerCase().trim();
   const normRaw = (rawLocationName || "").toLowerCase().trim();
@@ -42,34 +43,35 @@ export function getRealisticTargetLocationName(
   if (isDomestic) {
     if (normUser === "china" || normUser === "tiongkok") {
       return {
-        realisticName: "Pangkalan Uji Coba Rudal & Nuklir Lop Nur (Xinjiang, China)",
+        realisticName: translate?.("test.domesticLocationChina") || "Pangkalan Uji Coba Rudal & Nuklir Lop Nur (Xinjiang, China)",
         isDomestic: true,
         isSea: false,
       };
     }
     if (normUser === "rusia") {
       return {
-        realisticName: "Pusat Uji Balistik Antarbenua Plesetsk & Poligon Kura (Rusia)",
+        realisticName: translate?.("test.domesticLocationRussia") || "Pusat Uji Balistik Antarbenua Plesetsk & Poligon Kura (Rusia)",
         isDomestic: true,
         isSea: false,
       };
     }
     if (normUser === "amerika serikat") {
       return {
-        realisticName: "Kawasan Uji Coba Rudal Strategis White Sands (New Mexico, AS)",
+        realisticName: translate?.("test.domesticLocationUs") || "Kawasan Uji Coba Rudal Strategis White Sands (New Mexico, AS)",
         isDomestic: true,
         isSea: false,
       };
     }
     if (normUser === "indonesia") {
       return {
-        realisticName: "Pusat Riset Peluncuran Roket Strategis Pameungpeuk (Indonesia)",
+        realisticName: translate?.("test.domesticLocationIndonesia") || "Pusat Riset Peluncuran Roket Strategis Pameungpeuk (Indonesia)",
         isDomestic: true,
         isSea: false,
       };
     }
     return {
-      realisticName: `Fasilitas Uji Coba Senjata Strategis Nasional (${userCountryName})`,
+      realisticName: translate?.("test.domesticLocationGeneric", { country: userCountryName }) ||
+        `Fasilitas Uji Coba Senjata Strategis Nasional (${userCountryName})`,
       isDomestic: true,
       isSea: false,
     };
@@ -87,20 +89,20 @@ export function getRealisticTargetLocationName(
   if (isSea) {
     if (normUser === "china" || normUser === "tiongkok") {
       return {
-        realisticName: "Zona Latihan Perairan Bebas Samudra Pasifik Barat",
+        realisticName: translate?.("test.seaLocationChina") || "Zona Latihan Perairan Bebas Samudra Pasifik Barat",
         isDomestic: false,
         isSea: true,
       };
     }
     return {
-      realisticName: rawLocationName || "Zona Latihan Samudra Internasional",
+      realisticName: rawLocationName || translate?.("test.seaLocationGeneric") || "Zona Latihan Samudra Internasional",
       isDomestic: false,
       isSea: true,
     };
   }
 
   return {
-    realisticName: rawLocationName || "Target Latihan Terpilih",
+    realisticName: rawLocationName || translate?.("test.targetLocationGeneric") || "Target Latihan Terpilih",
     isDomestic: false,
     isSea: false,
   };
@@ -157,7 +159,8 @@ export function executeIcbmTestLaunch(
   testDate: string,
   countryName = "Indonesia",
   rawTargetLocation = "Area Koordinat Terpilih",
-  coordinates?: { x: number; y: number }
+  coordinates?: { x: number; y: number },
+  translate?: (key: string, params?: Record<string, string | number>) => string
 ): TestLaunchResult {
   if (currentIcbmCount <= 0) {
     return {
@@ -176,7 +179,8 @@ export function executeIcbmTestLaunch(
   // 1. Dapatkan nama lokasi sasaran yang realistis
   const { realisticName, isDomestic, isSea } = getRealisticTargetLocationName(
     rawTargetLocation,
-    countryName
+    countryName,
+    translate
   );
 
   const affectedNeighbors: NeighborImpact[] = [];

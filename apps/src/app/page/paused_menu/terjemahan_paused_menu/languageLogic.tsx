@@ -65,6 +65,7 @@ import idDefenseEspionage from './id/navigasi_menu/pertahanan_menu/spionase/spio
 import idDefenseSabotage from './id/navigasi_menu/pertahanan_menu/sabotase/sabotase.json';
 import idDefenseAnnexedTerritories from './id/navigasi_menu/pertahanan_menu/wilayah_direbut/wilayah_direbut.json';
 import idMilitaryMenu from './id/navigasi_menu/militer_menu/militer_menu.json';
+import idIcbmMenu from './id/navigasi_menu/icbm_menu/icbm_menu.json';
 
 const ID_DICTIONARY: LanguageDictionary = {
   common: idCommon,
@@ -111,6 +112,7 @@ const ID_DICTIONARY: LanguageDictionary = {
   navigation_defense_sabotage: idDefenseSabotage,
   navigation_defense_annexed_territories: idDefenseAnnexedTerritories,
   navigation_military_menu: idMilitaryMenu,
+  navigation_icbm_menu: idIcbmMenu,
 };
 
 const STORAGE_KEY = 'app_language';
@@ -192,6 +194,7 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     defenseSabotage,
     defenseAnnexedTerritories,
     militaryMenu,
+    icbmMenu,
   ] = await Promise.all([
     import(`./${code}/common.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navbar/navbar.json`).then((m) => m.default).catch(() => ({})),
@@ -233,6 +236,7 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     import(`./${code}/navigasi_menu/pertahanan_menu/sabotase/sabotase.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navigasi_menu/pertahanan_menu/wilayah_direbut/wilayah_direbut.json`).then((m) => m.default).catch(() => ({})),
     import(`./${code}/navigasi_menu/militer_menu/militer_menu.json`).then((m) => m.default).catch(() => ({})),
+    import(`./${code}/navigasi_menu/icbm_menu/icbm_menu.json`).then((m) => m.default).catch(() => ({})),
   ]);
 
   return {
@@ -280,6 +284,7 @@ async function loadLanguageDictionary(code: LanguageCode): Promise<LanguageDicti
     navigation_defense_sabotage: defenseSabotage,
     navigation_defense_annexed_territories: defenseAnnexedTerritories,
     navigation_military_menu: militaryMenu,
+    navigation_icbm_menu: icbmMenu,
   };
 }
 

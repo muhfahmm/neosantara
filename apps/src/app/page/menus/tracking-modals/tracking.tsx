@@ -299,6 +299,9 @@ export default function DiplomacyTracking({
 
               {activePaths.map(path => {
                 const details = PATH_REGISTRY[path.kind].metadata;
+                const documentLabel = path.kind === 'icbm'
+                  ? t('navigation_icbm_menu.tracking.document')
+                  : details.document;
                 const estimate = estimateTravelTime(path.senderCountry, path.targetCountry, {
                   diplomacyKind: path.kind,
                   durationByDistance: path.kind === 'defense-alliance' || path.kind === 'spionase' || path.kind === 'sabotase',
@@ -323,14 +326,14 @@ export default function DiplomacyTracking({
                         <svg viewBox="-8 -8 16 16" aria-hidden="true" className="h-4 w-4 shrink-0">
                           <details.Icon accent={details.accent} />
                         </svg>
-                        {details.document} · {estimate.days} HARI
+                        {documentLabel} · {t('navigation_icbm_menu.tracking.duration', { days: estimate.days })}
                       </span>
                       <span className="min-w-0 truncate text-right" style={{ color: details.accent }}>{path.targetCountry}</span>
                     </div>
                     <div
                       className="h-2 overflow-hidden rounded-full bg-[#021010]"
                       role="progressbar"
-                      aria-label={`${details.document}: ${path.senderCountry} menuju ${path.targetCountry}`}
+                      aria-label={`${documentLabel}: ${path.senderCountry} → ${path.targetCountry}`}
                       aria-valuemin={0}
                       aria-valuemax={100}
                       aria-valuenow={Math.round(path.progress * 100)}

@@ -11,6 +11,7 @@ import {
   getNpcCountrySimulationSnapshot,
   NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
 } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
+import { useIcbmMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useIcbmMenuTranslation";
 
 export interface DatabaseIcbmRow {
   country_id: number;
@@ -42,12 +43,13 @@ type RankingRow = {
   udara: number;
 };
 
-const formatNumber = (value: unknown) => {
+const formatNumber = (value: unknown, language: string) => {
   const numeric = Number(value ?? 0);
-  return Number.isFinite(numeric) ? numeric.toLocaleString("id-ID", { maximumFractionDigits: 0 }) : "0";
+  return Number.isFinite(numeric) ? numeric.toLocaleString(language, { maximumFractionDigits: 0 }) : "0";
 };
 
 export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail, currentDate, prefetchedAllCountries, onAction, initialTab = 'ranking' }: PerangNuklirDetailModalProps) {
+  const { language, translate } = useIcbmMenuTranslation();
   const [activeTab, setActiveTab] = useState<'ranking' | 'icbm_owners'>(initialTab);
   const [searchQuery, setSearchQuery] = useState("");
   const [icbmList, setIcbmList] = useState<DatabaseIcbmRow[]>([]);
@@ -108,7 +110,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
       .map((country: any) => {
         const summary = getArmadaPowerSummary(country);
         const groupTotals = summary.totals.groups;
-        const countryName = country?.nama_negara || country?.country || country?.name_id || country?.name_en || "Negara";
+        const countryName = country?.nama_negara || country?.country || country?.name_id || country?.name_en || translate("common.unknownCountry");
 
         return {
           countryName,
@@ -118,7 +120,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
           udara: groupTotals?.udara?.power ?? 0,
         };
       });
-  }, [prefetchedAllCountries]);
+  }, [prefetchedAllCountries, translate]);
 
   const rankings = useMemo(() => {
     let sortableItems = [...rawRankings];
@@ -134,10 +136,10 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
       if (a.totalPower !== b.totalPower) {
         return b.totalPower - a.totalPower;
       }
-      return a.countryName.localeCompare(a.countryName, "id", { sensitivity: "base" });
+      return a.countryName.localeCompare(b.countryName, language, { sensitivity: "base" });
     });
     return sortableItems;
-  }, [rawRankings, searchQuery]);
+  }, [rawRankings, searchQuery, language]);
 
   // 🔥 Helper parser tanggal lokal untuk menghitung ICBM yang sudah selesai dirakit
   const parseDateLocal = (dateValue: string | Date | null | undefined) => {
@@ -272,7 +274,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
       mapBySlug.set(playerSlug, {
         country_id: Number(countryDetail?.id) || 999,
         country_slug: playerSlug,
-        country_name: countryDetail?.country || countryDetail?.nama_negara || "Negara Pemain",
+        country_name: countryDetail?.country || countryDetail?.nama_negara || translate("common.playerCountry"),
         iso: countryDetail?.iso || "ID",
         icbm_status: calculatedPlayerTotal > 0,
         icbm_jumlah: calculatedPlayerTotal,
@@ -435,7 +437,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
     }
 
     return Array.from(mapBySlug.values());
-  }, [icbmList, countryDetail, prefetchedAllCountries, currentDate, simulationVersion]);
+  }, [icbmList, countryDetail, prefetchedAllCountries, currentDate, simulationVersion, translate]);
 
   // 🔥 Filter data negara pemilik ICBM + pencarian
   const filteredIcbmOwners = useMemo(() => {
@@ -478,7 +480,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                 <Radiation aria-hidden="true" className="root-modal-util-d252947d10 text-rose-500 animate-pulse" />
               </div>
               <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d min-w-0">
-                Perang Nuklir & Intelijen Strategis
+                {translate("war.title")}
               </h2>
             </div>
           </div>
@@ -492,7 +494,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-root-accent/60" />
               <input
                 type="text"
-                placeholder={activeTab === 'ranking' ? "Cari negara..." : "Cari negara nuklir / ICBM..."}
+                placeholder={activeTab === 'ranking' ? translate("war.searchRanking") : translate("war.searchOwners")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className={`h-9 w-full border border-root-accent/30 bg-[#051111] py-1 pl-8 pr-3 text-xs text-root-text placeholder-root-subtle transition-colors focus:border-root-accent focus:outline-none ${rootBorderRadius.card}`}
@@ -501,20 +503,20 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
         </div>
 
         <RootModalSidebarLayout
-          ariaLabel="Bagian statistik militer dan nuklir"
+          ariaLabel={translate("war.ariaLabel")}
           activeItemId={activeTab}
           contentClassName="flex flex-col gap-4 p-4 sm:p-6"
           items={[
             {
               id: 'ranking',
-              label: 'Ranking Kekuatan Militer',
+              label: translate("war.rankingTab"),
               icon: <Radiation className="h-4 w-4 shrink-0" />,
               isActive: activeTab === 'ranking',
               onSelect: () => setActiveTab('ranking'),
             },
             {
               id: 'icbm_owners',
-              label: 'Negara Nuklir & ICBM',
+              label: translate("war.ownersTab"),
               icon: <Rocket className="h-4 w-4 shrink-0 text-rose-500" />,
               isActive: activeTab === 'icbm_owners',
               onSelect: () => setActiveTab('icbm_owners'),
@@ -537,19 +539,19 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                 <RootTable className="w-full text-xs">
                   <thead className="bg-root-canvas text-root-accent border-b border-root-accent/20 sticky top-0 z-10">
                     <tr>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Rank</th>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Negara</th>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Darat</th>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Laut</th>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Udara</th>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Total Kekuatan</th>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Aksi</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">{translate("war.rank")}</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">{translate("war.country")}</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">{translate("war.land")}</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">{translate("war.sea")}</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">{translate("war.air")}</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">{translate("war.totalPower")}</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">{translate("war.action")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-root-accent/10 text-xs font-bold text-root-text">
                     {rankings.length > 0 ? (
                       rankings.map((row, index) => {
-                        const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "Negara";
+                        const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || translate("common.unknownCountry");
                         const isUserCountry = row.countryName.toLowerCase().trim() === selectedCountryName.toLowerCase().trim();
                         
                         return (
@@ -563,12 +565,12 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                           >
                             <td className="px-3 py-2 text-root-subtle">#{index + 1}</td>
                             <td className="px-3 py-2 font-black text-root-text">
-                              {row.countryName} {isUserCountry && <span className="text-[10px] text-root-accent ml-1">(Anda)</span>}
+                              {row.countryName} {isUserCountry && <span className="text-[10px] text-root-accent ml-1">{translate("war.you")}</span>}
                             </td>
-                            <td className="px-3 py-2 text-right text-root-subtle">{formatNumber(row.darat)}</td>
-                            <td className="px-3 py-2 text-right text-root-subtle">{formatNumber(row.laut)}</td>
-                            <td className="px-3 py-2 text-right text-root-subtle">{formatNumber(row.udara)}</td>
-                            <td className="px-3 py-2 text-right text-root-accent font-black">{formatNumber(row.totalPower)}</td>
+                            <td className="px-3 py-2 text-right text-root-subtle">{formatNumber(row.darat, language)}</td>
+                            <td className="px-3 py-2 text-right text-root-subtle">{formatNumber(row.laut, language)}</td>
+                            <td className="px-3 py-2 text-right text-root-subtle">{formatNumber(row.udara, language)}</td>
+                            <td className="px-3 py-2 text-right text-root-accent font-black">{formatNumber(row.totalPower, language)}</td>
                             <td className="px-3 py-2 text-center">
                               <button
                                 onClick={() => onAction?.(row)}
@@ -578,7 +580,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                                     ? 'bg-root-subtle/20 text-root-subtle cursor-not-allowed'
                                     : 'bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white border border-rose-500/30 cursor-pointer'
                                 }`}
-                                title="Deklarasikan perang nuklir"
+                                title={translate("war.attack")}
                               >
                                 <Radiation className="w-4 h-4" />
                               </button>
@@ -589,7 +591,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                     ) : (
                       <tr>
                         <td colSpan={7} className="px-4 py-8 text-center text-root-subtle">
-                          Data negara belum tersedia.
+                          {translate("war.rankingEmpty")}
                         </td>
                       </tr>
                     )}
@@ -600,26 +602,26 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                 <RootTable className="w-full text-xs">
                   <thead className="bg-root-canvas text-root-accent border-b border-root-accent/20 sticky top-0 z-10">
                     <tr>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">No</th>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Negara</th>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Kode ISO</th>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Program Nuklir</th>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Status ICBM</th>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Jumlah ICBM</th>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Level Ancaman</th>
-                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Aksi Serang</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">{translate("buildStatus.no")}</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">{translate("war.country")}</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">{translate("war.iso")}</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">{translate("war.nuclearProgram")}</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">{translate("war.icbmStatus")}</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">{translate("war.icbmCount")}</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">{translate("war.threatLevel")}</th>
+                      <th className="sticky top-0 z-10 bg-root-canvas px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">{translate("war.attackAction")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-root-accent/10 text-xs font-bold text-root-text">
                     {isLoadingIcbm ? (
                       <tr>
                         <td colSpan={7} className="px-4 py-8 text-center text-root-accent">
-                          Memuat data negara berkemampuan Nuklir & ICBM...
+                          {translate("war.ownersLoading")}
                         </td>
                       </tr>
                     ) : filteredIcbmOwners.length > 0 ? (
                       filteredIcbmOwners.map((row, idx) => {
-                        const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "Negara";
+                        const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || translate("common.unknownCountry");
                         const isUserCountry = row.country_name.toLowerCase().trim() === selectedCountryName.toLowerCase().trim() ||
                                               row.country_slug.toLowerCase().trim() === (countryDetail?.country_slug || "").toLowerCase().trim();
 
@@ -636,7 +638,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                             <td className="px-3 py-2.5 font-black text-root-text flex items-center gap-2">
                               <Rocket className="w-3.5 h-3.5 text-rose-500 shrink-0" />
                               <span>{row.country_name}</span>
-                              {isUserCountry && <span className="text-[10px] text-root-accent ml-1 font-bold">(Anda)</span>}
+                              {isUserCountry && <span className="text-[10px] text-root-accent ml-1 font-bold">{translate("war.you")}</span>}
                             </td>
                             <td className="px-3 py-2.5 text-center uppercase tracking-widest text-root-subtle font-mono">
                               {row.iso}
@@ -644,15 +646,15 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                             <td className="px-3 py-2.5 text-center">
                               {row.nuclear_program_status === 'AKTIF' || (!row.nuclear_program_status && row.has_nuclear_program) ? (
                                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-root-accent/20 text-root-accent border border-root-accent/40">
-                                  AKTIF
+                                  {translate("war.active")}
                                 </span>
                               ) : row.nuclear_program_status === 'RISET' ? (
                                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-400/20 text-amber-300 border border-amber-400/40 animate-pulse">
-                                  DALAM RISET
+                                  {translate("war.research")}
                                 </span>
                               ) : (
                                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-root-subtle/10 text-root-subtle border border-root-subtle/20">
-                                  BELUM AKTIF
+                                  {translate("war.notActive")}
                                 </span>
                               )}
                             </td>
@@ -660,26 +662,26 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                               {row.icbm_status && row.icbm_jumlah > 0 ? (
                                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/30">
                                   <ShieldAlert className="w-3 h-3" />
-                                  AKTIF
+                                  {translate("war.active")}
                                 </span>
                               ) : (
                                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-root-subtle/10 text-root-subtle border border-root-subtle/20">
-                                  BELUM ADA
+                                  {translate("war.none")}
                                 </span>
                               )}
                             </td>
                             <td className="px-3 py-2.5 text-right font-black text-root-accent text-sm whitespace-nowrap">
-                              {formatNumber(row.icbm_jumlah)}{" "}
+                              {formatNumber(row.icbm_jumlah, language)}{" "}
                               {Boolean(row.in_progress_icbm && row.in_progress_icbm > 0) && (
-                                <span className="text-[11px] font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-1.5 py-0.5 rounded-full ml-1" title="Sedang dalam proses perakitan">
+                                <span className="text-[11px] font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-1.5 py-0.5 rounded-full ml-1" title={translate("war.assembling")}>
                                   +{row.in_progress_icbm}
                                 </span>
                               )}
-                              <span className="text-[10px] font-normal text-root-subtle ml-1">Unit</span>
+                              <span className="text-[10px] font-normal text-root-subtle ml-1">{translate("war.unit")}</span>
                             </td>
                             <td className="px-3 py-2.5 text-center">
                               <span className="px-2 py-0.5 rounded text-[10px] font-black bg-root-canvas border border-root-accent/30 text-root-accent">
-                                {row.icbm_jumlah >= 300 ? 'Level V (Superpower)' : row.icbm_jumlah >= 10 ? 'Level III (Regional)' : row.icbm_jumlah > 0 ? 'Level II (Terkonfirmasi)' : 'Level I (Riset Nuklir)'}
+                                {row.icbm_jumlah >= 300 ? translate("war.threatSuperpower") : row.icbm_jumlah >= 10 ? translate("war.threatRegional") : row.icbm_jumlah > 0 ? translate("war.threatConfirmed") : translate("war.threatResearch")}
                               </span>
                             </td>
                             <td className="px-3 py-2.5 text-center">
@@ -691,7 +693,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                                     ? 'bg-root-subtle/20 text-root-subtle cursor-not-allowed'
                                     : 'bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white border border-rose-500/30 cursor-pointer shadow-sm'
                                 }`}
-                                title={`Luncurkan rudal ICBM terhadap ${row.country_name}`}
+                                title={translate("war.attackAction")}
                               >
                                 <Radiation className="w-4 h-4" />
                               </button>
@@ -702,7 +704,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                     ) : (
                       <tr>
                         <td colSpan={8} className="px-4 py-8 text-center text-root-subtle">
-                          Tidak ditemukan negara dengan status Nuklir atau ICBM.
+                          {translate("war.ownersEmpty")}
                         </td>
                       </tr>
                     )}

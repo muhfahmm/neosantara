@@ -31,6 +31,7 @@ export interface IcbmStrikeParams {
 export interface IcbmStrikeResult {
   success: boolean;
   message: string;
+  messageKey?: "invalidTarget" | "selfTarget";
   attackerCountry: string;
   targetCountry: string;
   affectedWorldCountriesCount: number;
@@ -263,6 +264,7 @@ export function launchIcbmWarStrike(params: IcbmStrikeParams): IcbmStrikeResult 
     return {
       success: false,
       message: "Data negara penyerang atau sasaran tidak valid.",
+      messageKey: "invalidTarget",
       attackerCountry,
       targetCountry,
       affectedWorldCountriesCount: 0,
@@ -274,6 +276,7 @@ export function launchIcbmWarStrike(params: IcbmStrikeParams): IcbmStrikeResult 
     return {
       success: false,
       message: "Tidak dapat meluncurkan serangan rudal nuklir ke negara sendiri!",
+      messageKey: "selfTarget",
       attackerCountry,
       targetCountry,
       affectedWorldCountriesCount: 0,

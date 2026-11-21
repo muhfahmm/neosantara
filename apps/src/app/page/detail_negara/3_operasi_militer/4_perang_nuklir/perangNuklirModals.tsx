@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { useState } from "react";
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import IcbmTidakTersediaModal from "./IcbmTidakTersediaModal";
+import { useIcbmMenuTranslation } from '@/app/page/paused_menu/terjemahan_paused_menu/useIcbmMenuTranslation';
 
 interface PerangNuklirModalProps {
 	isOpen: boolean;
@@ -15,7 +16,9 @@ interface PerangNuklirModalProps {
 
 export default function PerangNuklirModal({ isOpen, countryName, onClose, onConfirm, availableIcbmCount }: PerangNuklirModalProps) {
 	const [isIcbmUnavailableOpen, setIsIcbmUnavailableOpen] = useState(false);
+	const { translate } = useIcbmMenuTranslation();
 	if (!isOpen) return null;
+	const confirmationLead = translate("war.confirmationLead");
 
 	const modalContent = (
 		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
@@ -26,7 +29,7 @@ export default function PerangNuklirModal({ isOpen, countryName, onClose, onConf
 				aria-labelledby="nuclear-confirm-title"
 			>
 				<RootInfoModalHeader
-					title="Konfirmasi Perang Nuklir"
+					title={translate("war.confirmationTitle")}
 					titleId="nuclear-confirm-title"
 					onClose={onClose}
 					size="standard"
@@ -34,7 +37,9 @@ export default function PerangNuklirModal({ isOpen, countryName, onClose, onConf
 
 				<div className="p-5 sm:p-6">
 					<p className="text-sm sm:text-base text-root-text leading-relaxed">
-						Melancarkan serangan nuklir terhadap <strong className="text-white">{countryName}</strong>? Ini adalah eskalasi tertinggi dan hampir selalu membawa kehancuran besar.
+						{confirmationLead}{confirmationLead ? " " : null}
+						<strong className="text-white">{countryName}</strong>
+						{translate("war.confirmationTail")}
 					</p>
 				</div>
 
@@ -44,7 +49,7 @@ export default function PerangNuklirModal({ isOpen, countryName, onClose, onConf
 						onClick={onClose}
 						className="w-full sm:w-auto px-6 bg-root-canvas hover:bg-[#142A2A] border border-root-accent/30 rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
 					>
-						Batal
+						{translate("common.cancel")}
 					</button>
 
 					<button
@@ -59,7 +64,7 @@ export default function PerangNuklirModal({ isOpen, countryName, onClose, onConf
 						}}
 						className="w-full sm:w-auto px-6 bg-rose-700 hover:bg-rose-800 border border-rose-600 rounded-xl py-2 text-center text-white font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
 					>
-						Konfirmasi Nuklir
+						{translate("war.confirmNuclear")}
 					</button>
 				</div>
 

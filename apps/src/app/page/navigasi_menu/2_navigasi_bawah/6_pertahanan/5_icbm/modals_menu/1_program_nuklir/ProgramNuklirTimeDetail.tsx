@@ -3,6 +3,7 @@ import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalClos
 import React from "react";
 import { X, Clock3 } from "lucide-react";
 import NotebookModalWrapper from "../../../../NotebookModalWrapper";
+import { useIcbmMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useIcbmMenuTranslation";
 
 interface ProgramNuklirTimeDetailProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export default function ProgramNuklirTimeDetail({
   durationLabel = "1 Tahun",
   durationDays = 1,
 }: ProgramNuklirTimeDetailProps) {
+  const { language, translate } = useIcbmMenuTranslation();
   if (!isOpen) return null;
 
   return (
@@ -26,15 +28,15 @@ export default function ProgramNuklirTimeDetail({
           <div className="flex items-center gap-3">
             <Clock3 className="h-6 w-6 text-[#FBBF24] drop-shadow-[0_0_6px_#FBBF24]" />
             <div>
-              <h2 className="text-[length:var(--modal-font-title)] font-bold text-[#FBBF24] uppercase tracking-tight">Waktu Pembangunan Program Nuklir</h2>
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-root-subtle mt-1">Estimasi pembangunan selama program nuklir aktif</p>
+              <h2 className="text-[length:var(--modal-font-title)] font-bold text-[#FBBF24] uppercase tracking-tight">{translate("programTime.title")}</h2>
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-root-subtle mt-1">{translate("programTime.subtitle")}</p>
             </div>
           </div>
           <SharedModalCloseButton
             onClick={onClose}
             className="p-2.5 rounded-xl border border-[#FBBF24]/40 text-root-subtle hover:text-[#FBBF24] hover:bg-[#FBBF24]/10 transition-all cursor-pointer flex items-center gap-1.5"
            appearance="custom">
-            <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
+            <span className="text-[10px] font-black uppercase tracking-widest pl-1">{translate("common.close")}</span>
             <X className="h-5 w-5" />
           </SharedModalCloseButton>
         </div>
@@ -46,19 +48,19 @@ export default function ProgramNuklirTimeDetail({
                 <Clock3 className="h-8 w-8" />
               </div>
               <div>
-                <p className="text-sm uppercase tracking-[0.24em] text-root-subtle font-bold">Durasi Pembangunan</p>
+                <p className="text-sm uppercase tracking-[0.24em] text-root-subtle font-bold">{translate("programTime.duration")}</p>
                 <h3 className="text-3xl font-black text-[#FBBF24] mt-1 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]">{durationLabel}</h3>
               </div>
             </div>
 
             <div className="mt-5 grid grid-cols-1 gap-3 text-sm text-[#D6F5EC]">
               <div className="rounded-2xl bg-[#0A1D1B] p-4 border border-root-accent/15">
-                <p className="font-bold text-root-accent">Total Waktu:</p>
-                <p className="mt-2 text-base">{durationDays.toLocaleString("id-ID", { maximumFractionDigits: 0 })} Hari</p>
+                <p className="font-bold text-root-accent">{translate("programTime.totalTime")}</p>
+                <p className="mt-2 text-base">{translate("programTime.days", { count: durationDays.toLocaleString(language) })}</p>
               </div>
               <div className="rounded-2xl bg-[#0A1D1B] p-4 border border-root-accent/15">
-                <p className="font-bold text-root-accent">Keterangan:</p>
-                <p className="mt-2 text-[#9CC9BD] leading-relaxed">Program nuklir memerlukan waktu pembangunan selama satu tahun penuh (365 hari) untuk menyelesaikan riset, pengayaan bahan bakar, dan pembangunan fasilitas strategis.</p>
+                <p className="font-bold text-root-accent">{translate("programTime.descriptionLabel")}</p>
+                <p className="mt-2 text-[#9CC9BD] leading-relaxed">{translate("programTime.description")}</p>
               </div>
             </div>
 
@@ -67,7 +69,7 @@ export default function ProgramNuklirTimeDetail({
                 onClick={onClose}
                 className="px-8 py-3 rounded-xl bg-[#FBBF24] text-[#04100F] font-black text-xs uppercase tracking-wider shadow-[0_0_16px_rgba(251,191,36,0.5)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
               >
-                Mengerti
+                {translate("common.understand")}
               </button>
             </div>
           </div>

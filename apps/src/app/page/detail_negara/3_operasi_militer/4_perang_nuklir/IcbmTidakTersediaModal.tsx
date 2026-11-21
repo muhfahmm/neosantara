@@ -3,6 +3,7 @@
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import { AlertTriangle } from 'lucide-react';
 import { createPortal } from 'react-dom';
+import { useIcbmMenuTranslation } from '@/app/page/paused_menu/terjemahan_paused_menu/useIcbmMenuTranslation';
 
 interface IcbmTidakTersediaModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ export default function IcbmTidakTersediaModal({
   isOpen,
   onClose,
 }: IcbmTidakTersediaModalProps) {
+  const { translate } = useIcbmMenuTranslation();
   if (!isOpen || typeof document === 'undefined') return null;
 
   return createPortal(
@@ -24,7 +26,7 @@ export default function IcbmTidakTersediaModal({
     >
       <div className="modal-responsive-shell overflow-y-auto flex flex-col bg-root-surface border border-root-accent/30 rounded-2xl shadow-2xl relative pointer-events-auto">
         <RootInfoModalHeader
-          title="ICBM Tidak Tersedia"
+          title={translate("war.unavailableTitle")}
           titleId="icbm-unavailable-title"
           onClose={onClose}
           icon={<AlertTriangle />}
@@ -33,8 +35,7 @@ export default function IcbmTidakTersediaModal({
 
         <div className="p-5 sm:p-6">
           <p className="text-sm sm:text-base leading-relaxed text-root-text">
-            Negara Anda belum memiliki rudal ICBM siap diluncurkan. Serangan nuklir
-            tidak dapat dikonfirmasi sebelum setidaknya satu ICBM tersedia.
+            {translate("war.unavailableMessage")}
           </p>
         </div>
 
@@ -44,7 +45,7 @@ export default function IcbmTidakTersediaModal({
             onClick={onClose}
             className="w-full sm:w-auto px-6 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-black text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
           >
-            Mengerti
+            {translate("war.unavailableAction")}
           </button>
         </div>
 

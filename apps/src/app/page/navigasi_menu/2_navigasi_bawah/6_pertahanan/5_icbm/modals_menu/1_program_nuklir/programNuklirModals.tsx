@@ -6,6 +6,7 @@ import NotebookModalWrapper from "../../../../NotebookModalWrapper";
 import DanaTidakCukupModals from "./danaTidakCukupModals";
 import ProgramNuklirTimeDetail from "./ProgramNuklirTimeDetail";
 import { generateProgramNuklirDimulaiNotification } from "@/app/page/menus/inbox/logic/2_notifikasi_pertahanan/5_icbm/icbmLogic";
+import { useIcbmMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useIcbmMenuTranslation";
 
 interface ProgramNuklirModalsProps {
   isOpen: boolean;
@@ -24,7 +25,7 @@ export default function ProgramNuklirModals({
   setCountryDetail,
   onTakeLoan
 }: ProgramNuklirModalsProps) {
-  if (!isOpen) return null;
+  const { language, translate } = useIcbmMenuTranslation();
 
   const anggaran = countryDetail?.anggaran || 0;
   const biayaProgram = 2500; // data logika harga 25.000.000 NEO
@@ -55,6 +56,7 @@ export default function ProgramNuklirModals({
   const [isDanaTidakCukupOpen, setIsDanaTidakCukupOpen] = useState(false);
 
   const [isTimeDetailOpen, setIsTimeDetailOpen] = useState(false);
+  if (!isOpen) return null;
 
   const handleBayar = () => {
     if (anggaran < biayaProgram) {
@@ -107,9 +109,9 @@ export default function ProgramNuklirModals({
                     <Atom aria-hidden="true" className="root-modal-util-d252947d10 text-amber-400 animate-pulse" />
                   </div>
                   <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                    Aktivasi Program Nuklir
+                    {translate("program.title")}
                     <span className="ml-2 align-middle text-[9px] font-semibold tracking-normal text-root-subtle normal-case">
-                      Pendanaan Riset & Pengayaan Uranium
+                      {translate("program.subtitle")}
                     </span>
                   </h2>
                 </div>
@@ -131,17 +133,17 @@ export default function ProgramNuklirModals({
 
                 <div className="bg-root-canvas border border-root-accent/20 p-5 sm:p-6 rounded-2xl space-y-3 shadow-inner">
                   <div className="flex justify-between text-xs sm:text-sm font-bold text-root-text">
-                    <span>Waktu Pembangunan:</span>
-                    <span className="text-root-text">1 Tahun / 365 Hari</span>
+                    <span>{translate("program.constructionTime")}</span>
+                    <span className="text-root-text">{translate("program.yearDuration")}</span>
                   </div>
                   <div className="flex justify-between text-xs sm:text-sm font-bold text-rose-400 border-t border-root-accent/20 pt-3">
-                    <span>Biaya Riset & Pengembangan:</span>
-                    <span>- {biayaProgram.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
+                    <span>{translate("program.researchCost")}</span>
+                    <span>- {biayaProgram.toLocaleString(language, { maximumFractionDigits: 0 })} NEO</span>
                   </div>
                 </div>
                 {isProgramBuilding && (
                   <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-[11px] font-bold text-amber-400 text-center">
-                    Program nuklir sudah dalam tahap pembangunan. Silakan tunggu 1 Tahun / 365 Hari sampai selesai.
+                    {translate("program.alreadyBuilding")}
                   </div>
                 )}
 
@@ -150,14 +152,14 @@ export default function ProgramNuklirModals({
                     onClick={onClose}
                     className="px-6 py-2.5 rounded-xl border border-root-accent/30 bg-root-canvas text-root-subtle hover:text-root-accent hover:border-root-accent transition-all font-bold text-xs uppercase tracking-wider cursor-pointer"
                   >
-                    Batal
+                    {translate("common.cancel")}
                   </button>
                   <button 
                     onClick={handleBayar}
                     disabled={isProgramBuilding}
                     className={`px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-md transition-all ${isProgramBuilding ? 'bg-root-subtle/30 text-root-subtle cursor-not-allowed' : 'bg-root-accent text-root-canvas hover:bg-root-accent/80 active:scale-95 cursor-pointer'}`}
                   >
-                    Danai Program ({biayaProgram.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO)
+                    {translate("program.fund", { amount: biayaProgram.toLocaleString(language, { maximumFractionDigits: 0 }) })}
                   </button>
                 </div>
 
@@ -180,7 +182,7 @@ export default function ProgramNuklirModals({
       <ProgramNuklirTimeDetail
         isOpen={isTimeDetailOpen}
         onClose={() => setIsTimeDetailOpen(false)}
-        durationLabel="1 Tahun"
+        durationLabel={translate("programTime.yearLabel")}
         durationDays={365}
       />
     </>

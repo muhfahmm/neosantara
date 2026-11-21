@@ -7,6 +7,7 @@ import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 import { calculateProductionIncrement, formatDate, getDaysElapsed } from "@/app/logic/production_logic";
 import ConfirmBuildIcbmModal from "./ConfirmBuildIcbmModal";
 import IcbmInsufficientFundsModal from "./IcbmInsufficientFundsModal";
+import { formatIcbmDate, useIcbmMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useIcbmMenuTranslation";
 
 interface IcbmDetailModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ interface IcbmDetailModalProps {
 }
 
 export default function IcbmDetailModal({ isOpen, onClose, countryDetail, currentDate, onGotoProduction, onIcbmBuild, onOpenDebt, setCountryDetail }: IcbmDetailModalProps) {
+  const { language, translate } = useIcbmMenuTranslation();
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   
   // 🔥 State untuk Kuantitas (Gambar ke-2)
@@ -61,20 +63,10 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
     const totalUraniumCost = uraniumCostPerUnit * quantity;
     const totalBuildDays = buildDurationPerUnitDays * quantity;
 
-    const formatTanggalIndo = (dateStr: string | Date) => {
-      const dateObj = typeof dateStr === 'string' ? new Date(`${dateStr}T00:00:00`) : dateStr;
-      if (!(dateObj instanceof Date) || isNaN(dateObj.getTime())) return String(dateStr);
-      const day = dateObj.getDate();
-      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
-      const month = monthNames[dateObj.getMonth()];
-      const year = dateObj.getFullYear();
-      return `${day} ${month} ${year}`;
-    };
-
     const completionDate = (() => {
       const baseDate = new Date(`${safeDateString}T00:00:00`);
       baseDate.setDate(baseDate.getDate() + totalBuildDays);
-      return formatTanggalIndo(baseDate);
+      return formatIcbmDate(baseDate, language);
     })();
 
     const completionIso = (() => {
@@ -120,19 +112,38 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
         const prevUraniumStock = Number(prev?.inventory_uranium) || 0;
         const userCountryName = prev?.country || prev?.nama || "Indonesia";
         const existingPending = Array.isArray(prev?.pending_notifications) ? prev.pending_notifications : [];
+        const titleKey = "navigation_icbm_menu.build.notificationTitle";
+        const senderKey = "navigation_icbm_menu.build.notificationSender";
+        const messageKey = "navigation_icbm_menu.build.notificationMessage";
+        const effectTextKey = "navigation_icbm_menu.build.notificationEffect";
+        const titleParams = { count: quantity };
+        const messageParams = {
+          count: quantity,
+          country: userCountryName,
+          startDate: formatIcbmDate(safeDateString, language),
+          endDate: completionDate,
+        };
+        const effectTextParams = { date: completionDate };
 
         const icbmNotif = {
           id: `icbm-build-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
-          title: `🚀 PRODUKSI RUDAL ICBM DIMULAI: ${quantity} Unit`,
-          sender: `Komando Strategis Nuklir Nasional`,
-          message: `Lapor Presiden! Perakitan ${quantity} unit Rudal Balistik Antar-Benua (ICBM) untuk negara ${userCountryName} resmi dimulai pada ${safeDateString}. Estimasi rampung pada ${completionIso}.`,
+          title: translate("build.notificationTitle", titleParams),
+          titleKey,
+          titleParams,
+          sender: translate("build.notificationSender"),
+          senderKey,
+          message: translate("build.notificationMessage", messageParams),
+          messageKey,
+          messageParams,
           timestamp: safeDateString,
           type: 'peringkat',
           value: 0,
           isRead: false,
           tradeType: 'icbm_dimulai',
           endDateStr: completionIso,
-          effectText: `Estimasi Rampung: ${completionIso}`,
+          effectText: translate("build.notificationEffect", effectTextParams),
+          effectTextKey,
+          effectTextParams,
           isHandled: false,
         };
 
@@ -166,7 +177,7 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
                     <Rocket aria-hidden="true" className="root-modal-util-d252947d10 text-rose-500 animate-pulse" />
                   </div>
                   <h2 className="root-modal-util-6b4648c53a root-modal-util-c2385a463d">
-                    ICBM Strategis
+                    {translate("build.title")}
                   </h2>
                 </div>
               </div>
@@ -181,16 +192,16 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
                   <div className="p-4 sm:p-5 rounded-full bg-root-canvas border border-root-accent/30 inline-flex items-center justify-center mx-auto shadow-md">
                     <Rocket className="w-12 h-12 sm:w-14 sm:h-14 text-rose-500" />
                   </div>
-                  <p className="text-xs sm:text-sm font-bold text-root-text">Kas Negara & Produksi Uranium</p>
+                  <p className="text-xs sm:text-sm font-bold text-root-text">{translate("build.budgetAndUranium")}</p>
                 </div>
 
                 <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-2">
                   <div className="rounded-2xl border border-root-accent/20 bg-root-canvas p-4 sm:p-5">
-                    <h3 className="text-[10px] sm:text-xs font-black text-root-subtle uppercase tracking-wider mb-2">Stok Uranium</h3>
-                    <div className="text-lg sm:text-xl font-black leading-tight text-amber-400 break-words">{uraniumStock.toLocaleString('id-ID', { maximumFractionDigits: 0 })}</div>
+                    <h3 className="text-[10px] sm:text-xs font-black text-root-subtle uppercase tracking-wider mb-2">{translate("build.uraniumStock")}</h3>
+                    <div className="text-lg sm:text-xl font-black leading-tight text-amber-400 break-words">{uraniumStock.toLocaleString(language, { maximumFractionDigits: 0 })}</div>
                   </div>
                   <div className="rounded-2xl border border-root-accent/20 bg-root-canvas p-4 sm:p-5">
-                    <h3 className="text-[10px] sm:text-xs font-black text-root-subtle uppercase tracking-wider mb-2">Selesai Pada</h3>
+                    <h3 className="text-[10px] sm:text-xs font-black text-root-subtle uppercase tracking-wider mb-2">{translate("build.completionDate")}</h3>
                     <div className="text-lg sm:text-xl font-black leading-tight text-emerald-400 break-words">{completionDate}</div>
                   </div>
                 </div>
@@ -201,7 +212,7 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
                     
                     {/* Kuantitas */}
                     <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:gap-3">
-                      <span className="whitespace-nowrap text-[11px] sm:text-xs font-bold text-root-text">Kuantitas:</span>
+                      <span className="whitespace-nowrap text-[11px] sm:text-xs font-bold text-root-text">{translate("build.quantity")}</span>
                       <div className="flex items-center gap-2">
                         <input
                           type="number"
@@ -228,7 +239,7 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
                     <div className="flex w-full min-w-0 flex-col gap-3 lg:w-auto lg:flex-1 lg:flex-row lg:items-center lg:gap-3">
                       <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center lg:gap-3">
                         <div className="flex shrink-0 flex-col gap-1 text-[10px] font-bold text-rose-400">
-                          <span className="whitespace-nowrap">-{totalCashCost.toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</span>
+                          <span className="whitespace-nowrap">-{totalCashCost.toLocaleString(language, { maximumFractionDigits: 0 })} NEO</span>
                           <span className="whitespace-nowrap">-{totalUraniumCost} uranium</span>
                         </div>
                         <div className="flex min-w-0 flex-1 items-center">
@@ -237,8 +248,8 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
                             className="flex w-full min-w-0 items-center justify-center gap-1.5 rounded-xl bg-root-accent px-3 py-2.5 text-[10px] font-black uppercase text-root-canvas shadow-md transition-all hover:bg-root-accent/80 active:scale-95 sm:gap-2 sm:px-4 sm:text-xs cursor-pointer"
                           >
                             <Clock className="h-4 w-4 text-root-canvas" />
-                            <span className="whitespace-nowrap">Bangun</span>
-                            <span className="whitespace-nowrap rounded-full bg-black/20 px-2 py-0.5 text-[10px] font-black text-root-canvas">{totalBuildDays} hari</span>
+                            <span className="whitespace-nowrap">{translate("build.build")}</span>
+                            <span className="whitespace-nowrap rounded-full bg-black/20 px-2 py-0.5 text-[10px] font-black text-root-canvas">{translate("build.days", { count: totalBuildDays.toLocaleString(language) })}</span>
                           </button>
                         </div>
                       </div>

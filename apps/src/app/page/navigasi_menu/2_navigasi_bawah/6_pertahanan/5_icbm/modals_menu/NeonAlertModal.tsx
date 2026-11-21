@@ -3,6 +3,7 @@ import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalClos
 import React from "react";
 import { AlertTriangle, CheckCircle2, Info, X } from "lucide-react";
 import NotebookModalWrapper from "../../../NotebookModalWrapper";
+import { useIcbmMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useIcbmMenuTranslation";
 
 export type NeonAlertVariant = "error" | "success" | "info";
 
@@ -15,22 +16,22 @@ interface NeonAlertModalProps {
   buttonLabel?: string;
 }
 
-const VARIANTS = {
-  error: { color: "var(--root-modal-alert-error)", Icon: AlertTriangle, title: "Peringatan" },
-  success: { color: "var(--root-modal-positive)", Icon: CheckCircle2, title: "Berhasil" },
-  info: { color: "var(--root-modal-info)", Icon: Info, title: "Informasi" },
-} as const;
-
 export default function NeonAlertModal({
   isOpen,
   onClose,
   title,
   message,
   variant = "error",
-  buttonLabel = "Mengerti",
+  buttonLabel,
 }: NeonAlertModalProps) {
+  const { translate } = useIcbmMenuTranslation();
   if (!isOpen) return null;
-  const { color, Icon, title: defaultTitle } = VARIANTS[variant];
+  const variants = {
+    error: { color: "var(--root-modal-alert-error)", Icon: AlertTriangle, title: translate("alerts.warning") },
+    success: { color: "var(--root-modal-positive)", Icon: CheckCircle2, title: translate("alerts.success") },
+    info: { color: "var(--root-modal-info)", Icon: Info, title: translate("alerts.information") },
+  } as const;
+  const { color, Icon, title: defaultTitle } = variants[variant];
 
   return (
     <NotebookModalWrapper
@@ -51,7 +52,7 @@ export default function NeonAlertModal({
           </div>
           <SharedModalCloseButton
             onClick={onClose}
-            aria-label="Tutup"
+            aria-label={translate("alerts.close")}
             className="p-2 rounded-lg border text-root-subtle hover:text-root-text hover:border-root-accent transition-all cursor-pointer"
             style={{ borderColor: `${color}55` }}
            appearance="custom">
@@ -67,7 +68,7 @@ export default function NeonAlertModal({
             className="px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider text-root-accent-ink transition-all active:scale-95 hover:brightness-95 cursor-pointer"
             style={{ background: color }}
           >
-            {buttonLabel}
+            {buttonLabel || translate("alerts.understand")}
           </button>
         </div>
     </div>
