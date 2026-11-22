@@ -69,18 +69,19 @@ export interface LanguageMeta {
   code: LanguageCode;
   nativeName: string;
   nameEn: string;
+  flagCode: string;
   dir: TextDirection;
 }
 
 export const SUPPORTED_LANGUAGES: readonly LanguageMeta[] = [
-  { code: 'id', nativeName: 'Bahasa Indonesia', nameEn: 'Indonesian', dir: 'ltr' },
-  { code: 'en', nativeName: 'English', nameEn: 'English', dir: 'ltr' },
-  { code: 'zh-CN', nativeName: '简体中文', nameEn: 'Simplified Chinese', dir: 'ltr' },
-  { code: 'es', nativeName: 'Español', nameEn: 'Spanish', dir: 'ltr' },
-  { code: 'de', nativeName: 'Deutsch', nameEn: 'German', dir: 'ltr' },
-  { code: 'ja', nativeName: '日本語', nameEn: 'Japanese', dir: 'ltr' },
-  { code: 'ko', nativeName: '한국어', nameEn: 'Korean', dir: 'ltr' },
-  { code: 'ar', nativeName: 'العربية', nameEn: 'Arabic', dir: 'rtl' },
+  { code: 'id', nativeName: 'Bahasa Indonesia', nameEn: 'Indonesian', flagCode: 'id', dir: 'ltr' },
+  { code: 'en', nativeName: 'English', nameEn: 'English', flagCode: 'gb', dir: 'ltr' },
+  { code: 'zh-CN', nativeName: '简体中文', nameEn: 'Simplified Chinese', flagCode: 'cn', dir: 'ltr' },
+  { code: 'es', nativeName: 'Español', nameEn: 'Spanish', flagCode: 'es', dir: 'ltr' },
+  { code: 'de', nativeName: 'Deutsch', nameEn: 'German', flagCode: 'de', dir: 'ltr' },
+  { code: 'ja', nativeName: '日本語', nameEn: 'Japanese', flagCode: 'jp', dir: 'ltr' },
+  { code: 'ko', nativeName: '한국어', nameEn: 'Korean', flagCode: 'kr', dir: 'ltr' },
+  { code: 'ar', nativeName: 'العربية', nameEn: 'Arabic', flagCode: 'sa', dir: 'rtl' },
 ] as const;
 
 export const DEFAULT_LANGUAGE: LanguageCode = 'id';

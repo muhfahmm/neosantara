@@ -46,13 +46,29 @@ export function LanguageSettingsSection() {
                   : 'bg-root-canvas border-root-accent/20 text-gray-400 hover:text-white hover:border-root-accent/40'
               }`}
             >
-              <div className="flex flex-col min-w-0 pr-1">
-                <span className="text-[12px] font-bold tracking-wide truncate">
-                  {item.nativeName}
-                </span>
-                <span className="text-[10px] text-gray-400 group-hover:text-gray-300 font-mono">
-                  {item.nameEn} ({item.code})
-                </span>
+              <div className="flex items-center gap-2.5 min-w-0 pr-1">
+                <img
+                  src={`https://flagcdn.com/w40/${item.flagCode}.png`}
+                  alt=""
+                  aria-hidden="true"
+                  className="w-5 h-4 shrink-0 rounded-[2px] object-cover shadow-[0_0_0_1px_rgba(255,255,255,0.12)]"
+                  onError={(event) => {
+                    event.currentTarget.style.display = 'none';
+                  }}
+                />
+                <div className="flex flex-col min-w-0">
+                  <div className="flex items-baseline gap-1.5 min-w-0">
+                    <span className="text-[12px] font-bold tracking-wide truncate">
+                      {item.nativeName}
+                    </span>
+                    <span className="shrink-0 text-[9px] font-mono text-root-accent/70">
+                      ({item.code})
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-gray-400 group-hover:text-gray-300 font-mono">
+                    {item.nameEn}
+                  </span>
+                </div>
               </div>
 
               {isSelected && (
