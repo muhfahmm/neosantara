@@ -6,6 +6,7 @@ import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/Note
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import RootModalTabs from '@/app/page/root_modals_design_menu/RootModalTabs';
 import PencapaianContent from './pencapaianModals';
+import { addPlayerDiamonds } from './playerDiamonds';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
 import {
@@ -1070,21 +1071,6 @@ function getMissionRoute(mission: Pick<MissionCard, 'id' | 'category'>): Mission
   }
 
   return target;
-}
-
-/** Helper untuk menambah saldo player_diamonds */
-export function addPlayerDiamonds(amount: number): number {
-  if (typeof window === 'undefined' || amount <= 0) return 0;
-  try {
-    const saved = localStorage.getItem('player_diamonds');
-    const current = saved !== null ? parseInt(saved, 10) || 0 : 500;
-    const nextTotal = current + amount;
-    localStorage.setItem('player_diamonds', nextTotal.toString());
-    window.dispatchEvent(new CustomEvent('player_diamonds_updated', { detail: { diamonds: nextTotal, added: amount } }));
-    return nextTotal;
-  } catch {
-    return 0;
-  }
 }
 
 export function getLocalizedMissionTitle(card: MissionCard, t?: (key: string, params?: any) => string): string {

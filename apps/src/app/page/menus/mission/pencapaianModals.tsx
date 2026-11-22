@@ -12,6 +12,7 @@ import { getEmbassiesForCountry } from '../../../../../../json/6_database_keduta
 import { getTradeAgreementsForCountry } from '../../../../../../json/9_database_mitra_perdagangan/tradeAgreementRegistry';
 import { COUNTRY_SOCIAL_PROFILES } from '../../../../../../json/semua_fitur_negara/0_profiles/countryProfilesData';
 import { COUNTRIES_DATA } from '../../map_system/map-data';
+import { addPlayerDiamonds } from './playerDiamonds';
 
 export type AchievementCategory =
   | 'kepuasan'
@@ -1984,6 +1985,10 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
       baselines: nextBaselines,
     };
     saveAchievementState(nextState);
+
+    if (item.reward.gems) {
+      addPlayerDiamonds(item.reward.gems);
+    }
 
     // Apply reward to countryDetail
     if (setCountryDetail) {
