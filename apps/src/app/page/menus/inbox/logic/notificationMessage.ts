@@ -84,6 +84,8 @@ type LegacyPbbNotificationKind = 'singleAttack' | 'batchAttacks' | 'warBan';
 const PLAYER_LOOT_NOTIFICATION_PREFIX = 'notif-player-loot-';
 const PLAYER_LOOT_MESSAGE_KEY = 'side_inbox.dynamicNotifications.playerLoot.message';
 const PLAYER_ANNEX_NOTIFICATION_PREFIX = 'notif-player-annex-';
+const AI_WAR_ANNEX_NOTIFICATION_PREFIX = 'notif-ai-war-annex-';
+const AI_WAR_LOOT_NOTIFICATION_PREFIX = 'notif-ai-war-loot-';
 const COVERT_ESPIONAGE_RESULT_PREFIX = 'notif-covert-espionage-active-';
 const COVERT_SABOTAGE_RESULT_PREFIX = 'notif-covert-sabotage-result-';
 
@@ -574,6 +576,18 @@ export function getInboxNotificationTitle(
   t: TranslationFunction
 ): string {
   if (!notification.titleKey) {
+    if (notification.id?.startsWith('notif-npc-war-')) {
+      return t('side_inbox.dynamicNotifications.npcWar.title');
+    }
+    if (notification.id?.startsWith(AI_WAR_ANNEX_NOTIFICATION_PREFIX)) {
+      return t('side_inbox.dynamicNotifications.aiWar.annexTitle');
+    }
+    if (notification.id?.startsWith(AI_WAR_LOOT_NOTIFICATION_PREFIX)) {
+      return t('side_inbox.dynamicNotifications.aiWar.lootTitle');
+    }
+    if (notification.title.toLowerCase().includes('pembangunan kedutaan dimulai')) {
+      return t('side_inbox.dynamicNotifications.embassyConstruction.title');
+    }
     if (isPlayerAnnexNotification(notification)) {
       if (isLegacyAnnexationCancellation(notification)) {
         return t('side_inbox.dynamicNotifications.conquest.noCityTitle');
@@ -616,7 +630,14 @@ export function getInboxNotificationTitle(
     }
     return localizeCountryNamesInText(notification.title);
   }
-  const params = localizeInboxParams({ ...notification.titleParams }, t);
+  const titleParams = { ...notification.titleParams };
+  if (
+    notification.titleKey === 'side_inbox.disaster.naturalTitle' &&
+    typeof titleParams.province === 'string'
+  ) {
+    titleParams.province = getLocalizedCountryName(titleParams.province);
+  }
+  const params = localizeInboxParams(titleParams, t);
   for (const [name, key] of Object.entries(notification.titleParamKeys ?? {})) {
     params[name] = t(key);
   }
@@ -639,6 +660,31 @@ export function getInboxNotificationSender(
   t: TranslationFunction
 ): string {
   if (!notification.senderKey) {
+    if (notification.id?.startsWith('notif-npc-war-')) {
+      const attackerCountry = notification.attackerCountry ||
+        notification.sender.match(/^Kementerian Luar Negeri\s*[—-]\s*(.+)$/i)?.[1] ||
+        '';
+      return t('side_inbox.dynamicNotifications.npcWar.sender', {
+        attacker: getLocalizedCountryName(attackerCountry),
+      });
+    }
+    if (
+      notification.id?.startsWith(AI_WAR_ANNEX_NOTIFICATION_PREFIX) ||
+      notification.id?.startsWith(AI_WAR_LOOT_NOTIFICATION_PREFIX)
+    ) {
+      const attackerCountry = notification.attackerCountry ||
+        notification.sender.match(/^Laporan Perang\s+(.+)$/i)?.[1] ||
+        '';
+      return t('side_inbox.dynamicNotifications.aiWar.sender', {
+        attacker: getLocalizedCountryName(attackerCountry),
+      });
+    }
+    if (notification.title?.toLowerCase().includes('pembangunan kedutaan dimulai')) {
+      const country = notification.sender.match(/^Kementerian Luar Negeri\s+(.+)$/i)?.[1] || '';
+      return t('side_inbox.dynamicNotifications.embassyConstruction.sender', {
+        country: getLocalizedCountryName(country),
+      });
+    }
     if (isPlayerAnnexNotification(notification)) {
       if (isLegacyAnnexationCancellation(notification)) {
         return t('side_inbox.dynamicNotifications.conquest.noCitySender');
@@ -801,6 +847,51 @@ export function getInboxNotificationMessage(
   },
   t: TranslationFunction
 ): string {
+  if (!notification.messageKey && notification.id?.startsWith('notif-npc-war-')) {
+    const match = notification.message.match(/^(.+?) melancarkan serangan terhadap (.+?)\./i);
+    return t('side_inbox.dynamicNotifications.npcWar.message', {
+      attacker: getLocalizedCountryName(notification.attackerCountry || match?.[1] || ''),
+      target: getLocalizedCountryName(notification.targetCountry || match?.[2] || ''),
+    });
+  }
+  if (
+    !notification.messageKey &&
+    (notification.id?.startsWith(AI_WAR_ANNEX_NOTIFICATION_PREFIX) ||
+      notification.id?.startsWith(AI_WAR_LOOT_NOTIFICATION_PREFIX))
+  ) {
+    const isAnnexation = notification.id.startsWith(AI_WAR_ANNEX_NOTIFICATION_PREFIX);
+    if (isAnnexation) {
+      const match = notification.message.match(
+        /^(.+?) memenangkan perang dan menganeksasi seluruh wilayah (.+?)\.$/i
+      );
+      const attacker = getLocalizedCountryName(notification.attackerCountry || match?.[1] || '');
+      return t('side_inbox.dynamicNotifications.aiWar.annexMessage', {
+        attacker,
+        target: getLocalizedCountryName(notification.targetCountry || match?.[2] || ''),
+      });
+    }
+    const match = notification.message.match(
+      /^(.+?) memenangkan perang dan menjarah kas negara \((.+?) NEO\) serta sumber daya (.+?)\./i
+    );
+    const attacker = getLocalizedCountryName(notification.attackerCountry || match?.[1] || '');
+    return t('side_inbox.dynamicNotifications.aiWar.lootMessage', {
+      attacker,
+      cash: match?.[2] || '',
+      target: getLocalizedCountryName(notification.targetCountry || match?.[3] || ''),
+    });
+  }
+  if (
+    !notification.messageKey &&
+    notification.title?.toLowerCase().includes('pembangunan kedutaan dimulai')
+  ) {
+    const match = notification.message.match(
+      /Kedutaan Besar di\s+(.+?)\s+dimulai dan dijadwalkan selesai pada\s+(.+?)\./i
+    );
+    return t('side_inbox.dynamicNotifications.embassyConstruction.message', {
+      target: getLocalizedCountryName(match?.[1] || ''),
+      date: match?.[2] || '',
+    });
+  }
   if (notification.id?.startsWith(COVERT_ESPIONAGE_RESULT_PREFIX)) {
     return notification.messageKey
       ? t(notification.messageKey, notification.messageParams)

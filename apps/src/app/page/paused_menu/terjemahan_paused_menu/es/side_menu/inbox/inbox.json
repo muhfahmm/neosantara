@@ -309,6 +309,11 @@
     "infrastructureDamage": "Daño a Infraestructura",
     "aidCost": "Coste de Ayuda y Evacuación",
     "sendAid": "Enviar Ayuda de Emergencia",
+    "emergencyAidSuccessTitle": "AYUDA DE EMERGENCIA ENTREGADA",
+    "emergencyAidSuccessMessage": "¡La ayuda de emergencia por valor de {cost} NEO se entregó correctamente! {populationText} La calificación presidencial aumentó +5 puntos y mejoraron la satisfacción y el bienestar de la población.",
+    "populationSaved": "Se salvaron {count} personas.",
+    "policeOperationSuccessTitle": "Operación policial exitosa",
+    "policeOperationSuccessMessage": "La operación policial se financió con {cost} NEO. La calificación presidencial aumentó +2 puntos y mejoraron la seguridad, la satisfacción y el bienestar.",
     "handled": "AYUDA DESPLEGADA COMPLETAMENTE",
     "wabahTitle": "☣️ EPIDEMIA SANITARIA: {name} EN {province}",
     "wabahBadge": "Brote Epidémico",
@@ -696,6 +701,27 @@
     "yearMany": "{count} años"
   },
   "dynamicNotifications": {
+    "npcWar": {
+      "title": "⚔️ GUERRA ENTRE NACIONES",
+      "sender": "Ministerio de Asuntos Exteriores — {attacker}",
+      "message": "{attacker} lanzó un ataque contra {target}. Los movimientos de tropas pueden verse en el mapa y se informará sobre el desarrollo del conflicto."
+    },
+    "aiWar": {
+      "annexTitle": "🚩 GUERRA DE IA: PAÍS ANEXIONADO",
+      "lootTitle": "💰 GUERRA DE IA: PAÍS SAQUEADO",
+      "sender": "Informe de guerra: {attacker}",
+      "annexMessage": "{attacker} ganó la guerra y anexionó todo el territorio de {target}.",
+      "lootMessage": "{attacker} ganó la guerra y saqueó el tesoro de {target} ({cash} NEO) y sus recursos. El territorio del país permanece sin cambios.",
+      "annexModalTitle": "PAÍS ANEXIONADO",
+      "lootModalTitle": "PAÍS SAQUEADO",
+      "annexModalMessage": "{attacker} ganó la guerra. Todo el territorio de {target} ahora forma parte de {attacker}.",
+      "lootModalMessage": "{attacker} ganó la guerra y saqueó los recursos de {target}. La propiedad territorial del país atacado no ha cambiado."
+    },
+    "embassyConstruction": {
+      "title": "Construcción de embajada iniciada",
+      "sender": "Ministerio de Asuntos Exteriores — {country}",
+      "message": "La construcción de la embajada en {target} ha comenzado y está prevista para finalizar el {date}."
+    },
     "playerLoot": {
       "title": "💰 OPERACIÓN DE SAQUEO EXITOSA",
       "sender": "Cuartel General de las Fuerzas Armadas ({attacker})",

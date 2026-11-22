@@ -309,6 +309,11 @@
     "infrastructureDamage": "أضرار البنية التحتية",
     "aidCost": "تكلفة الإغاثة والإجلاء",
     "sendAid": "إرسال مساعدات طارئة",
+    "emergencyAidSuccessTitle": "تم إيصال المساعدات الطارئة",
+    "emergencyAidSuccessMessage": "تم إيصال مساعدات طارئة بقيمة {cost} NEO بنجاح! {populationText} ارتفع تقييم الرئيس بمقدار +5 نقاط وتحسن رضا السكان ورفاههم.",
+    "populationSaved": "تم إنقاذ {count} شخصًا.",
+    "policeOperationSuccessTitle": "نجحت العملية الشرطية",
+    "policeOperationSuccessMessage": "تم تمويل العملية الشرطية بمبلغ {cost} NEO. ارتفع تقييم الرئيس بمقدار +2 نقاط وتحسن الأمن والرضا والرفاه.",
     "handled": "تم إرسال الإغاثة بالكامل",
     "wabahTitle": "☣️ تفشي مرض: {name} في {province}",
     "wabahBadge": "تفشي مرض",
@@ -696,6 +701,27 @@
     "yearMany": "{count} سنوات"
   },
   "dynamicNotifications": {
+    "npcWar": {
+      "title": "⚔️ حرب بين الدول",
+      "sender": "وزارة الخارجية — {attacker}",
+      "message": "شنّت {attacker} هجومًا على {target}. يمكن رؤية تحركات القوات على الخريطة وسترد تقارير عن تطورات النزاع."
+    },
+    "aiWar": {
+      "annexTitle": "🚩 حرب الذكاء الاصطناعي: تم ضم الدولة",
+      "lootTitle": "💰 حرب الذكاء الاصطناعي: تم نهب الدولة",
+      "sender": "تقرير الحرب: {attacker}",
+      "annexMessage": "فازت {attacker} بالحرب وضمّت كامل أراضي {target}.",
+      "lootMessage": "فازت {attacker} بالحرب ونهبت خزينة {target} ({cash} NEO) ومواردها. لم تتغير أراضي الدولة.",
+      "annexModalTitle": "تم ضم الدولة",
+      "lootModalTitle": "تم نهب الدولة",
+      "annexModalMessage": "فازت {attacker} بالحرب. أصبحت كامل أراضي {target} الآن جزءًا من {attacker}.",
+      "lootModalMessage": "فازت {attacker} بالحرب ونهبت موارد {target}. لم تتغير ملكية أراضي الدولة التي تعرضت للهجوم."
+    },
+    "embassyConstruction": {
+      "title": "بدأ بناء السفارة",
+      "sender": "وزارة الخارجية — {country}",
+      "message": "بدأ بناء السفارة في {target} ومن المقرر اكتماله في {date}."
+    },
     "playerLoot": {
       "title": "💰 نجاح عملية النهب",
       "sender": "القيادة العامة للقوات المسلحة ({attacker})",

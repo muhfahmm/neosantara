@@ -838,12 +838,12 @@ export default function WarMap({
   const defenseResolutionReportedRef = useRef(false);
 
   useEffect(() => {
-    const isVisible = phase === 'comparison' || phase === 'result';
+    const isVisible = shouldShowBattleAnalysis && (phase === 'comparison' || phase === 'result');
     if (lastAnalysisVisibilityRef.current !== isVisible) {
       lastAnalysisVisibilityRef.current = isVisible;
       onAnalysisVisibilityChange?.(isVisible);
     }
-  }, [phase, onAnalysisVisibilityChange]);
+  }, [phase, shouldShowBattleAnalysis, onAnalysisVisibilityChange]);
 
   useEffect(() => () => {
     if (!lastAnalysisVisibilityRef.current) return;
@@ -1629,7 +1629,7 @@ export default function WarMap({
         </NotebookModalWrapper>
       )}
 
-      {phase === 'comparison' && (
+      {shouldShowBattleAnalysis && phase === 'comparison' && (
         <PerbandinganPasukan
           key={`comparison-${attacker.country}-${target.country}`}
           attackerName={isPbbCoalition ? 'Pasukan Gabungan PBB' : attacker.country}
@@ -1652,7 +1652,7 @@ export default function WarMap({
 
       {/* ══════════ LAYAR HASIL PERTEMPURAN (Fase 'result') ══════════ */}
       {/* Container utama transparan dan tidak menghalangi interaksi. */}
-      {phase === 'result' && result && (
+      {shouldShowBattleAnalysis && phase === 'result' && result && (
         <div
           style={{
             paddingTop: 'var(--modal-top-offset)',

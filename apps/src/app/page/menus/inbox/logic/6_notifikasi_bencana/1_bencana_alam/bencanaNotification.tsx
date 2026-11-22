@@ -15,9 +15,10 @@ interface BencanaNotificationProps {
 }
 
 export default function BencanaNotification({ notification, onAccept, onReject }: BencanaNotificationProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const isHandled = notification.isHandled;
   const responseCost = notification.bantuanCost;
+  const numberFormat = new Intl.NumberFormat(language, { maximumFractionDigits: 2 });
 
   return (
     <div className={`border-l-4 ${isHandled ? 'bg-emerald-950/30 border-emerald-500' : 'bg-rose-950/40 border-rose-500'} p-4 sm:p-5 rounded-r-2xl shadow-lg flex gap-4 items-start select-none relative overflow-hidden transition-all border border-rose-500/20`}>
@@ -51,15 +52,15 @@ export default function BencanaNotification({ notification, onAccept, onReject }
         <div className="bg-root-canvas border border-rose-500/30 rounded-xl p-3 grid grid-cols-2 sm:grid-cols-3 gap-2 text-center text-xs font-bold text-white shadow-inner">
           <div className="border-r border-rose-500/20 pr-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">{t('side_inbox.disaster.victims')}</div>
-            <div className="text-rose-400 font-extrabold mt-0.5">{notification.korban?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} {t('side_inbox.demo.people')}</div>
+            <div className="text-rose-400 font-extrabold mt-0.5">{numberFormat.format(notification.korban ?? 0)} {t('side_inbox.demo.people')}</div>
           </div>
           <div className="border-r border-rose-500/20 pr-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">{t('side_inbox.disaster.financialLoss')}</div>
-            <div className="text-amber-400 font-extrabold mt-0.5">{notification.totalKerugian?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
+            <div className="text-amber-400 font-extrabold mt-0.5">{numberFormat.format(notification.totalKerugian ?? 0)} NEO</div>
           </div>
           <div>
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">{t('side_inbox.disaster.aidCost')}</div>
-            <div className="text-emerald-400 font-extrabold mt-0.5">{responseCost?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
+            <div className="text-emerald-400 font-extrabold mt-0.5">{numberFormat.format(responseCost ?? 0)} NEO</div>
           </div>
         </div>
 

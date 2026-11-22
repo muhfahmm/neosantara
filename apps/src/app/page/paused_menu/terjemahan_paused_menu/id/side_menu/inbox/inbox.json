@@ -309,6 +309,11 @@
     "infrastructureDamage": "Kerusakan Infrastruktur",
     "aidCost": "Biaya Bantuan & Evakuasi",
     "sendAid": "Kirim Bantuan Darurat",
+    "emergencyAidSuccessTitle": "BANTUAN DARURAT DISALURKAN",
+    "emergencyAidSuccessMessage": "Berhasil menyalurkan bantuan sebesar {cost} NEO! {populationText} Peringkat Presiden naik +5 poin, serta kepuasan dan kesejahteraan masyarakat meningkat.",
+    "populationSaved": "{count} jiwa selamat.",
+    "policeOperationSuccessTitle": "Operasi Kepolisian Berhasil",
+    "policeOperationSuccessMessage": "Operasi kepolisian berhasil didanai sebesar {cost} NEO. Peringkat Presiden naik +2 poin, serta tingkat keamanan, kepuasan, dan kesejahteraan meningkat.",
     "handled": "BANTUAN TUNTAS DISALURKAN",
     "wabahTitle": "☣️ WABAH PENYAKIT: {name} DI {province}",
     "wabahBadge": "Wabah Penyakit",
@@ -696,6 +701,27 @@
     "yearMany": "{count} tahun"
   },
   "dynamicNotifications": {
+    "npcWar": {
+      "title": "⚔️ PERANG ANTARNEGARA",
+      "sender": "Kementerian Luar Negeri — {attacker}",
+      "message": "{attacker} melancarkan serangan terhadap {target}. Pergerakan pasukan terlihat pada peta dan perkembangan konflik akan diberitakan."
+    },
+    "aiWar": {
+      "annexTitle": "🚩 PERANG AI: NEGARA DIANEKSASI",
+      "lootTitle": "💰 PERANG AI: NEGARA DIJARAH",
+      "sender": "Laporan Perang {attacker}",
+      "annexMessage": "{attacker} memenangkan perang dan menganeksasi seluruh wilayah {target}.",
+      "lootMessage": "{attacker} memenangkan perang dan menjarah kas negara ({cash} NEO) serta sumber daya {target}. Kepemilikan wilayah negara tersebut tidak berubah.",
+      "annexModalTitle": "NEGARA DIANEKSASI",
+      "lootModalTitle": "NEGARA DIJARAH",
+      "annexModalMessage": "{attacker} memenangkan perang. Seluruh wilayah {target} kini menjadi bagian dari {attacker}.",
+      "lootModalMessage": "{attacker} memenangkan perang dan menjarah sumber daya {target}. Tidak ada perubahan kepemilikan wilayah pada negara yang diserang."
+    },
+    "embassyConstruction": {
+      "title": "Pembangunan Kedutaan Dimulai",
+      "sender": "Kementerian Luar Negeri {country}",
+      "message": "Pembangunan kedutaan besar di {target} dimulai dan dijadwalkan selesai pada {date}."
+    },
     "playerLoot": {
       "title": "💰 OPERASI PENJARAHAN BERHASIL",
       "sender": "Markas Besar Angkatan Bersenjata ({attacker})",

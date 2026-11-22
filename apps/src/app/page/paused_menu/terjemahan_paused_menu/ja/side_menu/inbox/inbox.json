@@ -309,6 +309,11 @@
     "infrastructureDamage": "インフラ被害",
     "aidCost": "救援・避難費用",
     "sendAid": "緊急支援物資の輸送",
+    "emergencyAidSuccessTitle": "緊急支援を届けました",
+    "emergencyAidSuccessMessage": "{cost} NEO相当の緊急支援を届けました。{populationText}大統領の評価が+5ポイント上昇し、国民の満足度と福祉が向上しました。",
+    "populationSaved": "{count}人が救助されました。",
+    "policeOperationSuccessTitle": "警察活動に成功しました",
+    "policeOperationSuccessMessage": "{cost} NEOの資金で警察活動を実施しました。大統領の評価が+2ポイント上昇し、安全、満足度、福祉が向上しました。",
     "handled": "救援をすべて派遣済み",
     "wabahTitle": "☣️ 感染症の流行：{province} の {name}",
     "wabahBadge": "感染症の流行",
@@ -696,6 +701,27 @@
     "yearMany": "{count}年"
   },
   "dynamicNotifications": {
+    "npcWar": {
+      "title": "⚔️ 国家間戦争",
+      "sender": "外務省 — {attacker}",
+      "message": "{attacker}が{target}を攻撃しました。部隊の動きは地図で確認でき、戦況は随時報告されます。"
+    },
+    "aiWar": {
+      "annexTitle": "🚩 AI戦争：国家が併合されました",
+      "lootTitle": "💰 AI戦争：国家が略奪されました",
+      "sender": "戦争報告：{attacker}",
+      "annexMessage": "{attacker}が戦争に勝利し、{target}の全領土を併合しました。",
+      "lootMessage": "{attacker}が戦争に勝利し、{target}の国庫（{cash} NEO）と資源を略奪しました。領土の所有権に変更はありません。",
+      "annexModalTitle": "国家が併合されました",
+      "lootModalTitle": "国家が略奪されました",
+      "annexModalMessage": "{attacker}が戦争に勝利し、{target}の全領土が{attacker}の一部になりました。",
+      "lootModalMessage": "{attacker}が戦争に勝利し、{target}の資源を略奪しました。攻撃された国の領土の所有権に変更はありません。"
+    },
+    "embassyConstruction": {
+      "title": "大使館の建設を開始",
+      "sender": "外務省 — {country}",
+      "message": "{target}で大使館の建設が始まり、完成予定日は{date}です。"
+    },
     "playerLoot": {
       "title": "💰 略奪作戦成功",
       "sender": "軍司令部（{attacker}）",

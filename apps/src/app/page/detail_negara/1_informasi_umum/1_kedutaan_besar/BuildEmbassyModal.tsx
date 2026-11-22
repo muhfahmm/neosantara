@@ -27,11 +27,11 @@ export default function BuildEmbassyModal({
   onClose,
   onConfirm,
 }: BuildEmbassyModalProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const continentLabel = continent || t("detail_negara_ai.embassy.otherContinent");
   const budgetAfterBuild = currentBudget - cost;
-  const formattedCurrentBudget = currentBudget.toLocaleString("id-ID", { maximumFractionDigits: 2 });
-  const formattedBudgetAfterBuild = budgetAfterBuild.toLocaleString("id-ID", { maximumFractionDigits: 2 });
+  const formattedCurrentBudget = currentBudget.toLocaleString(language, { maximumFractionDigits: 2 });
+  const formattedBudgetAfterBuild = budgetAfterBuild.toLocaleString(language, { maximumFractionDigits: 2 });
   const hasBudget = currentBudget >= cost;
 
   const discountPct = getWaktuPembangunanKedutaanBonusPercent(countryDetail);
@@ -60,11 +60,11 @@ export default function BuildEmbassyModal({
             <span>
               <span className="line-through text-rose-400 mr-1">10 NEO</span>
               <strong className="text-root-accent">
-                {cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
+                {cost.toLocaleString(language, { maximumFractionDigits: 2 })} NEO
               </strong>
             </span>
           ) : (
-            <strong className="text-root-accent">{cost} NEO</strong>
+            <strong className="text-root-accent">{cost.toLocaleString(language, { maximumFractionDigits: 2 })} NEO</strong>
           )}{" "}
           {t("detail_negara_ai.embassy.withBuildTime")}{" "}
           {discountPct > 0 ? (

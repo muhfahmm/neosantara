@@ -309,6 +309,11 @@
     "infrastructureDamage": "Infrastrukturschäden",
     "aidCost": "Kosten für Hilfe und Evakuierung",
     "sendAid": "Soforthilfe Entsenden",
+    "emergencyAidSuccessTitle": "NOTHILFE WURDE GELIEFERT",
+    "emergencyAidSuccessMessage": "Nothilfe im Wert von {cost} NEO wurde erfolgreich geliefert! {populationText} Die Bewertung des Präsidenten stieg um +5 Punkte; Zufriedenheit und Wohlstand der Bevölkerung verbesserten sich.",
+    "populationSaved": "{count} Menschen wurden gerettet.",
+    "policeOperationSuccessTitle": "Polizeieinsatz erfolgreich",
+    "policeOperationSuccessMessage": "Der Polizeieinsatz wurde mit {cost} NEO finanziert. Die Bewertung des Präsidenten stieg um +2 Punkte; Sicherheit, Zufriedenheit und Wohlstand verbesserten sich.",
     "handled": "SOFORTHILFE VOLLSTÄNDIG ENTSANDT",
     "wabahTitle": "☣️ KRANKHEITSAUSBRUCH: {name} IN {province}",
     "wabahBadge": "Krankheitsausbruch",
@@ -696,6 +701,27 @@
     "yearMany": "{count} Jahre"
   },
   "dynamicNotifications": {
+    "npcWar": {
+      "title": "⚔️ KRIEG ZWISCHEN NATIONEN",
+      "sender": "Außenministerium — {attacker}",
+      "message": "{attacker} hat {target} angegriffen. Truppenbewegungen sind auf der Karte sichtbar; über den weiteren Konfliktverlauf wird berichtet."
+    },
+    "aiWar": {
+      "annexTitle": "🚩 KI-KRIEG: LAND ANNEKTIERT",
+      "lootTitle": "💰 KI-KRIEG: LAND GEPLÜNDERT",
+      "sender": "Kriegsbericht: {attacker}",
+      "annexMessage": "{attacker} hat den Krieg gewonnen und das gesamte Gebiet von {target} annektiert.",
+      "lootMessage": "{attacker} hat den Krieg gewonnen und die Staatskasse von {target} ({cash} NEO) sowie dessen Ressourcen geplündert. Das Staatsgebiet bleibt unverändert.",
+      "annexModalTitle": "LAND ANNEKTIERT",
+      "lootModalTitle": "LAND GEPLÜNDERT",
+      "annexModalMessage": "{attacker} hat den Krieg gewonnen. Das gesamte Gebiet von {target} gehört nun zu {attacker}.",
+      "lootModalMessage": "{attacker} hat den Krieg gewonnen und Ressourcen von {target} geplündert. Die Gebietszugehörigkeit des angegriffenen Landes hat sich nicht geändert."
+    },
+    "embassyConstruction": {
+      "title": "Botschaftsbau begonnen",
+      "sender": "Außenministerium — {country}",
+      "message": "Der Bau der Botschaft in {target} hat begonnen und soll am {date} abgeschlossen sein."
+    },
     "playerLoot": {
       "title": "💰 PLÜNDERUNG ERFOLGREICH",
       "sender": "Oberkommando der Streitkräfte ({attacker})",

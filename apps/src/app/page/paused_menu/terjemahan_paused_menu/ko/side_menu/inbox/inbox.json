@@ -309,6 +309,11 @@
     "infrastructureDamage": "기반 시설 피해",
     "aidCost": "구호 및 대피 비용",
     "sendAid": "긴급 구호 자금 지원",
+    "emergencyAidSuccessTitle": "긴급 구호 지원 완료",
+    "emergencyAidSuccessMessage": "{cost} NEO 상당의 긴급 구호를 성공적으로 전달했습니다! {populationText} 대통령 평점이 +5 상승했고 국민 만족도와 복지가 개선되었습니다.",
+    "populationSaved": "{count}명이 구조되었습니다.",
+    "policeOperationSuccessTitle": "경찰 작전 성공",
+    "policeOperationSuccessMessage": "{cost} NEO를 투입해 경찰 작전을 수행했습니다. 대통령 평점이 +2 상승했고 치안, 만족도, 복지가 개선되었습니다.",
     "handled": "구호품 파견 완료",
     "wabahTitle": "☣️ 전염병 발생: {province}의 {name}",
     "wabahBadge": "전염병 발생",
@@ -696,6 +701,27 @@
     "yearMany": "{count}년"
   },
   "dynamicNotifications": {
+    "npcWar": {
+      "title": "⚔️ 국가 간 전쟁",
+      "sender": "외교부 — {attacker}",
+      "message": "{attacker}이(가) {target}을(를) 공격했습니다. 지도에서 병력 이동을 확인할 수 있으며 전황은 계속 보고될 예정입니다."
+    },
+    "aiWar": {
+      "annexTitle": "🚩 AI 전쟁: 국가 합병",
+      "lootTitle": "💰 AI 전쟁: 국가 약탈",
+      "sender": "전쟁 보고: {attacker}",
+      "annexMessage": "{attacker}이(가) 전쟁에서 승리하고 {target}의 모든 영토를 합병했습니다.",
+      "lootMessage": "{attacker}이(가) 전쟁에서 승리하고 {target}의 국고({cash} NEO)와 자원을 약탈했습니다. 국가 영토에는 변동이 없습니다.",
+      "annexModalTitle": "국가 합병",
+      "lootModalTitle": "국가 약탈",
+      "annexModalMessage": "{attacker}이(가) 전쟁에서 승리했습니다. 이제 {target}의 모든 영토가 {attacker}의 일부가 되었습니다.",
+      "lootModalMessage": "{attacker}이(가) 전쟁에서 승리하고 {target}의 자원을 약탈했습니다. 공격받은 국가의 영토 소유권은 변경되지 않았습니다."
+    },
+    "embassyConstruction": {
+      "title": "대사관 건설 시작",
+      "sender": "외교부 — {country}",
+      "message": "{target}의 대사관 건설이 시작되었으며 {date}에 완료될 예정입니다."
+    },
     "playerLoot": {
       "title": "💰 약탈 작전 성공",
       "sender": "국군 사령부 ({attacker})",

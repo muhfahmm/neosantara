@@ -197,13 +197,38 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     ].join('-');
   };
 
-  const withDiplomacyNotification = (detail: Record<string, any>, title: string, message: string, value = 0) => ({
+  const withDiplomacyNotification = (
+    detail: Record<string, any>,
+    title: string,
+    message: string,
+    value = 0,
+    translation?: {
+      titleKey: string;
+      titleParams?: Record<string, string | number>;
+      senderKey: string;
+      senderParams?: Record<string, string | number>;
+      messageKey: string;
+      messageParams?: Record<string, string | number>;
+    }
+  ) => ({
     ...detail,
     pending_notifications: [{
       id: `diplomacy-action-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       title,
+      ...(translation ? {
+        titleKey: translation.titleKey,
+        titleParams: translation.titleParams,
+      } : {}),
       sender: `Kementerian Luar Negeri ${playerCountryName || 'Indonesia'}`,
+      ...(translation ? {
+        senderKey: translation.senderKey,
+        senderParams: translation.senderParams,
+      } : {}),
       message,
+      ...(translation ? {
+        messageKey: translation.messageKey,
+        messageParams: translation.messageParams,
+      } : {}),
       timestamp: getCurrentDateString(),
       type: 'peringkat' as const,
       value,
@@ -767,7 +792,14 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
                     continent: continentLabel
                   }
                 ]
-              }, 'Pembangunan Kedutaan Dimulai', `Pembangunan Kedutaan Besar di ${countryName} dimulai dan dijadwalkan selesai pada ${endDateStr}.`);
+              }, 'Pembangunan Kedutaan Dimulai', `Pembangunan Kedutaan Besar di ${countryName} dimulai dan dijadwalkan selesai pada ${endDateStr}.`, 0, {
+                titleKey: 'side_inbox.dynamicNotifications.embassyConstruction.title',
+                titleParams: { target: countryName },
+                senderKey: 'side_inbox.dynamicNotifications.embassyConstruction.sender',
+                senderParams: { country: playerCountryName || 'Indonesia' },
+                messageKey: 'side_inbox.dynamicNotifications.embassyConstruction.message',
+                messageParams: { target: countryName, date: endDateStr },
+              });
             });
           }
 

@@ -27,6 +27,7 @@ import useKeyboardShortcuts from '../paused_menu/5_keyword';
 import { subMenuItems } from '../navigasi_menu/navigationData';
 import ModalsManager from '../navigasi_menu/2_navigasi_bawah/ModalsManager';
 import { useLanguage } from '../paused_menu/terjemahan_paused_menu/languageLogic';
+import { getLocalizedCountryName } from '@/app/logic/countryNameLogic';
 import {
     canAcceptTradeDeal,
     getTradeRejectionDescription,
@@ -1242,7 +1243,7 @@ function TimeControllerPortal({
 }
 
 export default function MapPage() {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const router = useRouter();
     const viewportMode = useViewportMode();
     const isLandscapePhone = viewportMode === 'landscapePhone';
@@ -3609,10 +3610,12 @@ export default function MapPage() {
     const isWarAnalysisActiveRef = useRef(false);
     const [isAttackerForcesModalOpen, setIsAttackerForcesModalOpen] = useState(false);
     const handleWarAnalysisVisibilityChange = useCallback((isVisible: boolean) => {
-        if (isWarAnalysisActiveRef.current !== isVisible) {
-            isWarAnalysisActiveRef.current = isVisible;
-            setIsWarAnalysisActive(isVisible);
-            if (isVisible) {
+        const analysisIsVisible = isVisible &&
+            activeWarAnimationRef.current?.shouldShowBattleAnalysis === true;
+        if (isWarAnalysisActiveRef.current !== analysisIsVisible) {
+            isWarAnalysisActiveRef.current = analysisIsVisible;
+            setIsWarAnalysisActive(analysisIsVisible);
+            if (analysisIsVisible) {
                 setActiveMenu('Peta Taktis');
                 setIsPresidentMenuOpen(false);
                 setIsSaveModalOpen(false);
@@ -6587,6 +6590,13 @@ export default function MapPage() {
                             title: '⚔️ PERANG ANTARNEGARA',
                             sender: `Kementerian Luar Negeri — ${inv.attackerCountry}`,
                             message: `${inv.attackerCountry} melancarkan serangan terhadap ${inv.targetCountry}. Pergerakan pasukan terlihat pada peta dan perkembangan konflik akan diberitakan.`,
+                            titleKey: 'side_inbox.dynamicNotifications.npcWar.title',
+                            senderKey: 'side_inbox.dynamicNotifications.npcWar.sender',
+                            senderParams: { attacker: inv.attackerCountry },
+                            messageKey: 'side_inbox.dynamicNotifications.npcWar.message',
+                            messageParams: { attacker: inv.attackerCountry, target: inv.targetCountry },
+                            attackerCountry: inv.attackerCountry,
+                            targetCountry: inv.targetCountry,
                             timestamp: currentDateStr,
                             type: 'peringkat',
                             value: 50,
@@ -10878,12 +10888,23 @@ export default function MapPage() {
 
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true } : n));
                         setInboxModalOpen(false);
+                        const localizedCost = cost.toLocaleString(language, { maximumFractionDigits: 2 });
+                        const populationSaved = populationToRestore > 0
+                            ? t('side_inbox.disaster.populationSaved', {
+                                count: populationToRestore.toLocaleString(language),
+                            })
+                            : '';
                         setResultModal({
                             isOpen: true,
-                            title: isPoliceIncident ? 'Operasi Kepolisian Berhasil' : 'Bantuan Darurat Disalurkan',
+                            title: t(isPoliceIncident
+                                ? 'side_inbox.disaster.policeOperationSuccessTitle'
+                                : 'side_inbox.disaster.emergencyAidSuccessTitle'),
                             message: isPoliceIncident
-                                ? `Operasi kepolisian berhasil didanai sebesar ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO. Peringkat Presiden naik +2 poin, serta tingkat keamanan, kepuasan, dan kesejahteraan meningkat.`
-                                : `Berhasil menyalurkan bantuan sebesar ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO! ${populationToRestore > 0 ? `${populationToRestore.toLocaleString('id-ID')} jiwa selamat. ` : ''}Peringkat Presiden naik +5 poin, serta Kepuasan & Kesejahteraan masyarakat meningkat.`,
+                                ? t('side_inbox.disaster.policeOperationSuccessMessage', { cost: localizedCost })
+                                : t('side_inbox.disaster.emergencyAidSuccessMessage', {
+                                    cost: localizedCost,
+                                    populationText: populationSaved,
+                                }),
                             type: 'success',
                             compact: !isPoliceIncident,
                             persistent: true,
@@ -11512,6 +11533,16 @@ export default function MapPage() {
                                         title: '🚩 PERANG AI: NEGARA DIANEKSASI',
                                         sender: `Laporan Perang ${activeWarAnimation.attacker}`,
                                         message: `${activeWarAnimation.attacker} memenangkan perang dan menganeksasi seluruh wilayah ${activeWarAnimation.target}.`,
+                                        titleKey: 'side_inbox.dynamicNotifications.aiWar.annexTitle',
+                                        senderKey: 'side_inbox.dynamicNotifications.aiWar.sender',
+                                        senderParams: { attacker: activeWarAnimation.attacker },
+                                        messageKey: 'side_inbox.dynamicNotifications.aiWar.annexMessage',
+                                        messageParams: {
+                                            attacker: activeWarAnimation.attacker,
+                                            target: activeWarAnimation.target,
+                                        },
+                                        attackerCountry: activeWarAnimation.attacker,
+                                        targetCountry: activeWarAnimation.target,
                                         timestamp: currentDateStr,
                                         type: 'peringkat',
                                         value: 100,
@@ -11519,8 +11550,11 @@ export default function MapPage() {
                                     }, ...prev]);
                                     setWarResultModal({
                                         isOpen: true,
-                                        title: 'NEGARA DIANEKSASI',
-                                        message: `${activeWarAnimation.attacker} memenangkan perang. Seluruh wilayah ${activeWarAnimation.target} kini menjadi bagian dari ${activeWarAnimation.attacker}.`,
+                                        title: t('side_inbox.dynamicNotifications.aiWar.annexModalTitle'),
+                                        message: t('side_inbox.dynamicNotifications.aiWar.annexModalMessage', {
+                                            attacker: getLocalizedCountryName(activeWarAnimation.attacker),
+                                            target: getLocalizedCountryName(activeWarAnimation.target),
+                                        }),
                                         type: 'success',
                                         compact: true,
                                     });
@@ -11549,11 +11583,23 @@ export default function MapPage() {
                                         currentDateStr
                                     );
                                     setNewsList(previous => [lootNews, ...previous]);
+                                    const formattedLootCash = new Intl.NumberFormat(language).format(lootedCash);
                                     setNotifications(prev => [{
                                         id: `notif-ai-war-loot-${Date.now()}`,
                                         title: '💰 PERANG AI: NEGARA DIJARAH',
                                         sender: `Laporan Perang ${activeWarAnimation.attacker}`,
-                                        message: `${activeWarAnimation.attacker} memenangkan perang dan menjarah kas negara (${new Intl.NumberFormat('id-ID').format(lootedCash)} NEO) serta sumber daya ${activeWarAnimation.target}. Kepemilikan wilayah negara tersebut tidak berubah.`,
+                                        message: `${activeWarAnimation.attacker} memenangkan perang dan menjarah kas negara (${formattedLootCash} NEO) serta sumber daya ${activeWarAnimation.target}. Kepemilikan wilayah negara tersebut tidak berubah.`,
+                                        titleKey: 'side_inbox.dynamicNotifications.aiWar.lootTitle',
+                                        senderKey: 'side_inbox.dynamicNotifications.aiWar.sender',
+                                        senderParams: { attacker: activeWarAnimation.attacker },
+                                        messageKey: 'side_inbox.dynamicNotifications.aiWar.lootMessage',
+                                        messageParams: {
+                                            attacker: activeWarAnimation.attacker,
+                                            target: activeWarAnimation.target,
+                                            cash: formattedLootCash,
+                                        },
+                                        attackerCountry: activeWarAnimation.attacker,
+                                        targetCountry: activeWarAnimation.target,
                                         timestamp: currentDateStr,
                                         type: 'peringkat',
                                         value: 80,
@@ -11561,8 +11607,11 @@ export default function MapPage() {
                                     }, ...prev]);
                                     setWarResultModal({
                                         isOpen: true,
-                                        title: 'NEGARA DIJARAH',
-                                        message: `${activeWarAnimation.attacker} memenangkan perang dan menjarah sumber daya ${activeWarAnimation.target}. Tidak ada perubahan kepemilikan wilayah pada negara yang diserang.`,
+                                        title: t('side_inbox.dynamicNotifications.aiWar.lootModalTitle'),
+                                        message: t('side_inbox.dynamicNotifications.aiWar.lootModalMessage', {
+                                            attacker: getLocalizedCountryName(activeWarAnimation.attacker),
+                                            target: getLocalizedCountryName(activeWarAnimation.target),
+                                        }),
                                         type: 'info',
                                         compact: true,
                                     });

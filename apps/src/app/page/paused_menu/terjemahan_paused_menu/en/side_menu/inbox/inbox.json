@@ -309,6 +309,11 @@
     "infrastructureDamage": "Infrastructure Damage",
     "aidCost": "Relief & Evacuation Cost",
     "sendAid": "Send Emergency Aid",
+    "emergencyAidSuccessTitle": "EMERGENCY AID DELIVERED",
+    "emergencyAidSuccessMessage": "Emergency aid worth {cost} NEO was delivered successfully! {populationText} The President's rating increased by +5 points, and public satisfaction and welfare improved.",
+    "populationSaved": "{count} people were saved.",
+    "policeOperationSuccessTitle": "Police Operation Successful",
+    "policeOperationSuccessMessage": "The police operation was funded with {cost} NEO. The President's rating increased by +2 points, and security, satisfaction, and welfare improved.",
     "handled": "RELIEF FULLY DISPATCHED",
     "wabahTitle": "☣️ DISEASE EPIDEMIC: {name} IN {province}",
     "wabahBadge": "Disease Epidemic",
@@ -696,6 +701,27 @@
     "yearMany": "{count} years"
   },
   "dynamicNotifications": {
+    "npcWar": {
+      "title": "⚔️ WAR BETWEEN NATIONS",
+      "sender": "Ministry of Foreign Affairs — {attacker}",
+      "message": "{attacker} launched an attack against {target}. Troop movements are visible on the map, and conflict updates will follow."
+    },
+    "aiWar": {
+      "annexTitle": "🚩 AI WAR: COUNTRY ANNEXED",
+      "lootTitle": "💰 AI WAR: COUNTRY PLUNDERED",
+      "sender": "War Report: {attacker}",
+      "annexMessage": "{attacker} won the war and annexed all of {target}'s territory.",
+      "lootMessage": "{attacker} won the war and looted {target}'s treasury ({cash} NEO) and resources. The country's territory remains unchanged.",
+      "annexModalTitle": "COUNTRY ANNEXED",
+      "lootModalTitle": "COUNTRY PLUNDERED",
+      "annexModalMessage": "{attacker} won the war. All of {target}'s territory is now part of {attacker}.",
+      "lootModalMessage": "{attacker} won the war and looted resources from {target}. The attacked country's territorial ownership has not changed."
+    },
+    "embassyConstruction": {
+      "title": "Embassy Construction Started",
+      "sender": "Ministry of Foreign Affairs — {country}",
+      "message": "Construction of the embassy in {target} has started and is scheduled to finish on {date}."
+    },
     "playerLoot": {
       "title": "💰 LOOTING OPERATION SUCCESSFUL",
       "sender": "Armed Forces Headquarters ({attacker})",
