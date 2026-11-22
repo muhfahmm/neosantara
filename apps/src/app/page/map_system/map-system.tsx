@@ -4312,38 +4312,40 @@ export default function MapPage() {
                 };
             }
 
-            setIsPresidentMenuOpen(false);
-            setCountryDetailModalOpen(false);
-            setCountryDetailModalName(null);
-            setCountryDetailModalCity(null);
-            setCountryDetailModalCityId(null);
-            setAiConstructionNavigation(null);
-            setAutoBuildEmbassyState(false);
-            setRequireEmbassyModalOpen(false);
-            setRequireEmbassyPartner(null);
-            setPlayerDetailModalOpen(false);
-            setInboxModalOpen(false);
-            setGiftModalOpen(false);
-            setNewsModalOpen(false);
-            setPenelitianModalOpen(false);
-            setMissionModalOpen(false);
-            setIsSaveModalOpen(false);
-            setIsRestartConfirmOpen(false);
-            setAparatConfirmState({ isOpen: false, notification: null });
-            setHasilBubarkanState(previous => ({ ...previous, isOpen: false }));
-            setTradeRejectionState(previous => ({ ...previous, isOpen: false }));
-            setClosedTradeRejectionState(previous => ({ ...previous, isOpen: false }));
-            setIsRatingWarningOpen(false);
-            setIsKudetaOpen(false);
-            setAnnexedModalData(previous => ({ ...previous, isOpen: false }));
-            setResultModal(previous => ({ ...previous, isOpen: false }));
-            setIsDialogTerbukaOpen(false);
-            const pauseState = dialogPauseStateRef.current;
-            dialogPauseStateRef.current = null;
-            if (pauseState && !pauseState.wasPaused) {
-                isPausedRef.current = false;
-                setIsPaused(false);
-                timeManagerRef.current?.setPaused(false);
+            if (showBattleAnalysis) {
+                setIsPresidentMenuOpen(false);
+                setCountryDetailModalOpen(false);
+                setCountryDetailModalName(null);
+                setCountryDetailModalCity(null);
+                setCountryDetailModalCityId(null);
+                setAiConstructionNavigation(null);
+                setAutoBuildEmbassyState(false);
+                setRequireEmbassyModalOpen(false);
+                setRequireEmbassyPartner(null);
+                setPlayerDetailModalOpen(false);
+                setInboxModalOpen(false);
+                setGiftModalOpen(false);
+                setNewsModalOpen(false);
+                setPenelitianModalOpen(false);
+                setMissionModalOpen(false);
+                setIsSaveModalOpen(false);
+                setIsRestartConfirmOpen(false);
+                setAparatConfirmState({ isOpen: false, notification: null });
+                setHasilBubarkanState(previous => ({ ...previous, isOpen: false }));
+                setTradeRejectionState(previous => ({ ...previous, isOpen: false }));
+                setClosedTradeRejectionState(previous => ({ ...previous, isOpen: false }));
+                setIsRatingWarningOpen(false);
+                setIsKudetaOpen(false);
+                setAnnexedModalData(previous => ({ ...previous, isOpen: false }));
+                setResultModal(previous => ({ ...previous, isOpen: false }));
+                setIsDialogTerbukaOpen(false);
+                const pauseState = dialogPauseStateRef.current;
+                dialogPauseStateRef.current = null;
+                if (pauseState && !pauseState.wasPaused) {
+                    isPausedRef.current = false;
+                    setIsPaused(false);
+                    timeManagerRef.current?.setPaused(false);
+                }
             }
 
             const attackerPowerSummary = getArmadaPowerSummary(attackerDetailData);
@@ -11534,6 +11536,10 @@ export default function MapPage() {
                                         sender: `Laporan Perang ${activeWarAnimation.attacker}`,
                                         message: `${activeWarAnimation.attacker} memenangkan perang dan menganeksasi seluruh wilayah ${activeWarAnimation.target}.`,
                                         titleKey: 'side_inbox.dynamicNotifications.aiWar.annexTitle',
+                                        titleParams: {
+                                            attacker: activeWarAnimation.attacker,
+                                            target: activeWarAnimation.target,
+                                        },
                                         senderKey: 'side_inbox.dynamicNotifications.aiWar.sender',
                                         senderParams: { attacker: activeWarAnimation.attacker },
                                         messageKey: 'side_inbox.dynamicNotifications.aiWar.annexMessage',

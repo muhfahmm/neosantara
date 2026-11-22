@@ -707,7 +707,7 @@
       "message": "{attacker} lanzó un ataque contra {target}. Los movimientos de tropas pueden verse en el mapa y se informará sobre el desarrollo del conflicto."
     },
     "aiWar": {
-      "annexTitle": "🚩 GUERRA DE IA: PAÍS ANEXIONADO",
+      "annexTitle": "⚔️ GUERRA ENTRE {attacker} Y {target}",
       "lootTitle": "💰 GUERRA DE IA: PAÍS SAQUEADO",
       "sender": "Informe de guerra: {attacker}",
       "annexMessage": "{attacker} ganó la guerra y anexionó todo el territorio de {target}.",
@@ -744,6 +744,7 @@
     },
     "pbb": {
       "sender": "Secretaría de las Naciones Unidas",
+      "securityCouncilSender": "Consejo de Seguridad de las Naciones Unidas",
       "unauthorizedAttackCancelledTitle": "🕊️ Plan de ataque sin mandato cancelado",
       "unauthorizedAttackCancelledMessage": "No se lanzó el ataque de {attacker} contra {target}. Los ataques sin mandato tienen un {chance}% de probabilidad de continuar; este intento se canceló antes de iniciar el conflicto.",
       "unauthorizedAttacksCancelledTitle": "🕊️ Ataques sin mandato cancelados",

@@ -707,7 +707,7 @@
       "message": "{attacker}が{target}を攻撃しました。部隊の動きは地図で確認でき、戦況は随時報告されます。"
     },
     "aiWar": {
-      "annexTitle": "🚩 AI戦争：国家が併合されました",
+      "annexTitle": "⚔️ {attacker}と{target}の国家間戦争",
       "lootTitle": "💰 AI戦争：国家が略奪されました",
       "sender": "戦争報告：{attacker}",
       "annexMessage": "{attacker}が戦争に勝利し、{target}の全領土を併合しました。",
@@ -744,6 +744,7 @@
     },
     "pbb": {
       "sender": "国際連合事務局",
+      "securityCouncilSender": "国際連合安全保障理事会",
       "unauthorizedAttackCancelledTitle": "🕊️ 無許可の攻撃計画を中止",
       "unauthorizedAttackCancelledMessage": "{attacker}による{target}への攻撃は実行されませんでした。無許可攻撃の実行確率は{chance}%であり、この試みは紛争開始前に中止されました。",
       "unauthorizedAttacksCancelledTitle": "🕊️ 無許可攻撃を中止",

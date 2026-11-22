@@ -707,7 +707,7 @@
       "message": "{attacker} hat {target} angegriffen. Truppenbewegungen sind auf der Karte sichtbar; über den weiteren Konfliktverlauf wird berichtet."
     },
     "aiWar": {
-      "annexTitle": "🚩 KI-KRIEG: LAND ANNEKTIERT",
+      "annexTitle": "⚔️ KRIEG ZWISCHEN {attacker} UND {target}",
       "lootTitle": "💰 KI-KRIEG: LAND GEPLÜNDERT",
       "sender": "Kriegsbericht: {attacker}",
       "annexMessage": "{attacker} hat den Krieg gewonnen und das gesamte Gebiet von {target} annektiert.",
@@ -744,6 +744,7 @@
     },
     "pbb": {
       "sender": "Sekretariat der Vereinten Nationen",
+      "securityCouncilSender": "Sicherheitsrat der Vereinten Nationen",
       "unauthorizedAttackCancelledTitle": "🕊️ Angriffsplan ohne Mandat abgebrochen",
       "unauthorizedAttackCancelledMessage": "Der Angriff von {attacker} auf {target} wurde nicht gestartet. Angriffe ohne Mandat haben eine Erfolgswahrscheinlichkeit von {chance}%; dieser Versuch wurde vor Beginn des Konflikts abgebrochen.",
       "unauthorizedAttacksCancelledTitle": "🕊️ Angriffe ohne Mandat abgebrochen",

@@ -570,7 +570,10 @@ export function getInboxNotificationTitle(
     isOffensive?: boolean;
     operationResult?: string;
     partnerCountry?: string;
+    proposerCountry?: string;
     targetCountry?: string;
+    attackerCountry?: string;
+    message?: string;
     id?: string;
   },
   t: TranslationFunction
@@ -580,7 +583,18 @@ export function getInboxNotificationTitle(
       return t('side_inbox.dynamicNotifications.npcWar.title');
     }
     if (notification.id?.startsWith(AI_WAR_ANNEX_NOTIFICATION_PREFIX)) {
-      return t('side_inbox.dynamicNotifications.aiWar.annexTitle');
+      const match = notification.message?.match(
+        /^(.+?) memenangkan perang dan menganeksasi seluruh wilayah (.+?)\.$/i
+      );
+      const attackerCountry = notification.attackerCountry || match?.[1];
+      const targetCountry = notification.targetCountry || match?.[2];
+      if (attackerCountry && targetCountry) {
+        return t('side_inbox.dynamicNotifications.aiWar.annexTitle', {
+          attacker: getLocalizedCountryName(attackerCountry),
+          target: getLocalizedCountryName(targetCountry),
+        });
+      }
+      return localizeCountryNamesInText(notification.title);
     }
     if (notification.id?.startsWith(AI_WAR_LOOT_NOTIFICATION_PREFIX)) {
       return t('side_inbox.dynamicNotifications.aiWar.lootTitle');
@@ -605,6 +619,12 @@ export function getInboxNotificationTitle(
     }
     if (isPlayerLootNotification(notification)) {
       return t('side_inbox.dynamicNotifications.playerLoot.title');
+    }
+    if (notification.tradeType === 'usulan_keamanan_pbb') {
+      return t('side_inbox.listTitles.keamananPBB', {
+        proposer: getLocalizedCountryName(notification.proposerCountry || ''),
+        target: getLocalizedCountryName(notification.targetCountry || ''),
+      });
     }
     const pbbKind = getLegacyPbbNotificationKind(notification);
     if (pbbKind) return t(getLegacyPbbTranslationKey(pbbKind, 'Title'));
@@ -631,6 +651,13 @@ export function getInboxNotificationTitle(
     return localizeCountryNamesInText(notification.title);
   }
   const titleParams = { ...notification.titleParams };
+  if (notification.titleKey === 'side_inbox.dynamicNotifications.aiWar.annexTitle') {
+    const match = notification.message?.match(
+      /^(.+?) memenangkan perang dan menganeksasi seluruh wilayah (.+?)\.$/i
+    );
+    titleParams.attacker ??= notification.attackerCountry || match?.[1] || '';
+    titleParams.target ??= notification.targetCountry || match?.[2] || '';
+  }
   if (
     notification.titleKey === 'side_inbox.disaster.naturalTitle' &&
     typeof titleParams.province === 'string'
@@ -652,6 +679,8 @@ export function getInboxNotificationSender(
     tradeType?: string;
     isOffensive?: boolean;
     partnerCountry?: string;
+    proposerCountry?: string;
+    targetCountry?: string;
     id?: string;
     title?: string;
     provinceName?: string;
@@ -713,6 +742,9 @@ export function getInboxNotificationSender(
       return t('side_inbox.dynamicNotifications.playerLoot.sender', {
         attacker: getLocalizedCountryName(attackerCountry),
       });
+    }
+    if (notification.tradeType === 'usulan_keamanan_pbb') {
+      return t('side_inbox.dynamicNotifications.pbb.securityCouncilSender');
     }
     if (getLegacyPbbNotificationKind(notification)) {
       return t('side_inbox.dynamicNotifications.pbb.sender');

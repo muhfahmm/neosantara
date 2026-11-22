@@ -707,7 +707,7 @@
       "message": "{attacker}이(가) {target}을(를) 공격했습니다. 지도에서 병력 이동을 확인할 수 있으며 전황은 계속 보고될 예정입니다."
     },
     "aiWar": {
-      "annexTitle": "🚩 AI 전쟁: 국가 합병",
+      "annexTitle": "⚔️ {attacker}와 {target} 간의 국가 전쟁",
       "lootTitle": "💰 AI 전쟁: 국가 약탈",
       "sender": "전쟁 보고: {attacker}",
       "annexMessage": "{attacker}이(가) 전쟁에서 승리하고 {target}의 모든 영토를 합병했습니다.",
@@ -744,6 +744,7 @@
     },
     "pbb": {
       "sender": "유엔 사무국",
+      "securityCouncilSender": "유엔 안전보장이사회",
       "unauthorizedAttackCancelledTitle": "🕊️ 승인 없는 공격 계획 취소",
       "unauthorizedAttackCancelledMessage": "{attacker}의 {target} 공격은 실행되지 않았습니다. 승인 없는 공격의 실행 확률은 {chance}%이며, 이번 시도는 충돌이 시작되기 전에 취소되었습니다.",
       "unauthorizedAttacksCancelledTitle": "🕊️ 승인 없는 공격 취소",

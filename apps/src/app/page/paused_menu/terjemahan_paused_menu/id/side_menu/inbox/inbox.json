@@ -707,7 +707,7 @@
       "message": "{attacker} melancarkan serangan terhadap {target}. Pergerakan pasukan terlihat pada peta dan perkembangan konflik akan diberitakan."
     },
     "aiWar": {
-      "annexTitle": "🚩 PERANG AI: NEGARA DIANEKSASI",
+      "annexTitle": "⚔️ PERANG ANTAR NEGARA ANTARA {attacker} DENGAN {target}",
       "lootTitle": "💰 PERANG AI: NEGARA DIJARAH",
       "sender": "Laporan Perang {attacker}",
       "annexMessage": "{attacker} memenangkan perang dan menganeksasi seluruh wilayah {target}.",
@@ -744,6 +744,7 @@
     },
     "pbb": {
       "sender": "Sekretariat Perserikatan Bangsa-Bangsa",
+      "securityCouncilSender": "Dewan Keamanan Tertinggi PBB",
       "unauthorizedAttackCancelledTitle": "🕊️ Rencana Serangan Tanpa Mandat Dibatalkan",
       "unauthorizedAttackCancelledMessage": "Serangan {attacker} terhadap {target} tidak jadi diluncurkan. Serangan tanpa mandat hanya memiliki peluang {chance}%; upaya ini dibatalkan sebelum konflik dimulai.",
       "unauthorizedAttacksCancelledTitle": "🕊️ Serangan Tanpa Mandat Dibatalkan",

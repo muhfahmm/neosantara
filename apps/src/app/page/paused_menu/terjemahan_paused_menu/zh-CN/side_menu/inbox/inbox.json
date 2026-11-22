@@ -707,7 +707,7 @@
       "message": "{attacker}对{target}发动了攻击。地图上可以看到部队调动，后续冲突进展将另行通报。"
     },
     "aiWar": {
-      "annexTitle": "🚩 AI战争：国家已被吞并",
+      "annexTitle": "⚔️ {attacker}与{target}之间的国家战争",
       "lootTitle": "💰 AI战争：国家遭到掠夺",
       "sender": "战争报告：{attacker}",
       "annexMessage": "{attacker}赢得战争并吞并了{target}的全部领土。",
@@ -744,6 +744,7 @@
     },
     "pbb": {
       "sender": "联合国秘书处",
+      "securityCouncilSender": "联合国安全理事会",
       "unauthorizedAttackCancelledTitle": "🕊️ 未经授权的攻击计划已取消",
       "unauthorizedAttackCancelledMessage": "{attacker}对{target}的攻击未能发动。未经授权的攻击只有{chance}%的执行概率；此次行动在冲突开始前已取消。",
       "unauthorizedAttacksCancelledTitle": "🕊️ 未经授权的攻击已取消",

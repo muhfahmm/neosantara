@@ -707,7 +707,7 @@
       "message": "شنّت {attacker} هجومًا على {target}. يمكن رؤية تحركات القوات على الخريطة وسترد تقارير عن تطورات النزاع."
     },
     "aiWar": {
-      "annexTitle": "🚩 حرب الذكاء الاصطناعي: تم ضم الدولة",
+      "annexTitle": "⚔️ حرب بين {attacker} و{target}",
       "lootTitle": "💰 حرب الذكاء الاصطناعي: تم نهب الدولة",
       "sender": "تقرير الحرب: {attacker}",
       "annexMessage": "فازت {attacker} بالحرب وضمّت كامل أراضي {target}.",
@@ -744,6 +744,7 @@
     },
     "pbb": {
       "sender": "أمانة الأمم المتحدة",
+      "securityCouncilSender": "مجلس الأمن التابع للأمم المتحدة",
       "unauthorizedAttackCancelledTitle": "🕊️ إلغاء خطة هجوم بلا تفويض",
       "unauthorizedAttackCancelledMessage": "لم يُشن هجوم {attacker} على {target}. تبلغ فرصة تنفيذ الهجمات بلا تفويض {chance}٪؛ وأُلغيت هذه المحاولة قبل بدء النزاع.",
       "unauthorizedAttacksCancelledTitle": "🕊️ إلغاء هجمات بلا تفويض",

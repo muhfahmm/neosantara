@@ -707,7 +707,7 @@
       "message": "{attacker} launched an attack against {target}. Troop movements are visible on the map, and conflict updates will follow."
     },
     "aiWar": {
-      "annexTitle": "🚩 AI WAR: COUNTRY ANNEXED",
+      "annexTitle": "⚔️ WAR BETWEEN {attacker} AND {target}",
       "lootTitle": "💰 AI WAR: COUNTRY PLUNDERED",
       "sender": "War Report: {attacker}",
       "annexMessage": "{attacker} won the war and annexed all of {target}'s territory.",
@@ -744,6 +744,7 @@
     },
     "pbb": {
       "sender": "United Nations Secretariat",
+      "securityCouncilSender": "United Nations Security Council",
       "unauthorizedAttackCancelledTitle": "🕊️ Unauthorized Attack Plan Cancelled",
       "unauthorizedAttackCancelledMessage": "The attack by {attacker} against {target} was not launched. Unauthorized attacks have a {chance}% chance of proceeding; this attempt was cancelled before the conflict began.",
       "unauthorizedAttacksCancelledTitle": "🕊️ Unauthorized Attacks Cancelled",
