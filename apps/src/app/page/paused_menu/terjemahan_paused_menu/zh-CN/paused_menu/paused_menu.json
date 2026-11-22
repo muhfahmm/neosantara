@@ -6,18 +6,25 @@
     "restart": "重新开始",
     "settings": "设置",
     "keyboardShortcuts": "快捷键",
-    "googleLogin": "Google 登录（原型）",
+    "googleLogin": "Google / Play Games 账号",
     "exitGame": "退出游戏"
   },
   "googleLogin": {
     "title": "Google 登录",
     "backLabel": "返回暂停菜单",
-    "prototypeBadge": "原型",
     "heading": "连接您的 Google 账号",
-    "description": "使用 Google 账号保存并同步游戏进度。",
+    "description": "使用 Google 登录。游戏进度目前不会自动同步。",
     "notConnected": "尚未连接",
+    "connectedAs": "已连接：{email}",
     "continueButton": "继续使用 Google",
-    "prototypeNotice": "这仅为界面模拟。Google 登录和 Google Play Games 同步尚未启用。"
+    "signOutButton": "退出 Google 账号",
+    "signingIn": "正在连接...",
+    "configurationRequired": "尚未配置 Firebase。请在 apps/.env.local 中填写 Firebase 变量，然后重启服务器。",
+    "playGamesButton": "继续使用 Google Play Games",
+    "playGamesConfigurationRequired": "Android 需要配置 Firebase Android App ID、Play Games Web Client ID、Game Services Project ID，以及 strings.xml 中的游戏 ID。",
+    "playGamesAndroidOnly": "Google Play Games 仅在 Android 应用中可用。浏览器使用 Firebase Google 登录。",
+    "loginCancelled": "登录已取消。您尚未登录，可以随时重试。",
+    "authError": "登录失败。请检查 Firebase、Play Games 和授权域名配置。"
   },
   "settings": {
     "title": "设置",

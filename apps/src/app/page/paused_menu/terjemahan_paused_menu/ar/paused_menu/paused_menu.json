@@ -6,18 +6,25 @@
     "restart": "إعادة البدء",
     "settings": "الإعدادات",
     "keyboardShortcuts": "اختصارات لوحة المفاتيح",
-    "googleLogin": "تسجيل الدخول إلى Google (نموذج أولي)",
+    "googleLogin": "حساب Google / Play Games",
     "exitGame": "الخروج من اللعبة"
   },
   "googleLogin": {
     "title": "تسجيل الدخول إلى Google",
     "backLabel": "العودة إلى قائمة الإيقاف المؤقت",
-    "prototypeBadge": "نموذج أولي",
     "heading": "ربط حساب Google",
-    "description": "احفظ تقدم اللعبة وزامنه باستخدام حساب Google.",
+    "description": "سجّل الدخول باستخدام Google. لا تتم مزامنة تقدم اللعبة تلقائيًا حتى الآن.",
     "notConnected": "غير متصل",
+    "connectedAs": "متصل باسم {email}",
     "continueButton": "المتابعة باستخدام Google",
-    "prototypeNotice": "هذه محاكاة للواجهة فقط. لم يتم تفعيل تسجيل الدخول إلى Google أو المزامنة مع Google Play Games."
+    "signOutButton": "تسجيل الخروج من Google",
+    "signingIn": "جارٍ الاتصال...",
+    "configurationRequired": "لم يتم إعداد Firebase. أدخل متغيرات Firebase في apps/.env.local ثم أعد تشغيل الخادم.",
+    "playGamesButton": "المتابعة باستخدام Google Play Games",
+    "playGamesConfigurationRequired": "على Android، أعد إعداد Firebase Android App ID وPlay Games Web Client ID وGame Services Project ID ومعرّف اللعبة في strings.xml.",
+    "playGamesAndroidOnly": "يتوفر Google Play Games في تطبيق Android. يستخدم المتصفح تسجيل الدخول إلى Google عبر Firebase.",
+    "loginCancelled": "تم إلغاء تسجيل الدخول. لم يتم تسجيل الدخول، ويمكنك المحاولة مجددًا في أي وقت.",
+    "authError": "فشل تسجيل الدخول. تحقق من إعدادات Firebase وPlay Games والنطاقات المصرح بها."
   },
   "settings": {
     "title": "الإعدادات",

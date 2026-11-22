@@ -3,9 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
+import { invoke, isTauri } from '@tauri-apps/api/core';
 import {
-    Volume2, Music, Monitor, Keyboard, Cloud, Info
+    Volume2, Music, Monitor, Keyboard, Cloud, Info, Gamepad2
 } from 'lucide-react';
+import type { User } from 'firebase/auth';
 import { KeywordModal } from './5_keyword/keyword';
 import { MapSettingsSection } from './4_settings/MapSettingsSection';
 import { ThemeSettingsSection } from './4_settings/ThemeSettingsSection';
@@ -17,12 +19,47 @@ import { deleteGameSave, fetchLoadableGameSaves, loadGameSave, type LoadGameSave
 import PausedMenuFrame from '../root_modals_design_menu/rootFrameMenu';
 import { PausedMenuHeader } from '../root_modals_design_menu/PausedMenuHeader';
 import { soundManager } from '@/lib/soundManager';
+import {
+    isFirebaseConfigured,
+    isPlayGamesConfigured,
+    getNativePlayGamesAuthConfig,
+    observeFirebaseAuth,
+    signInWithGoogle,
+    signOutFromFirebase,
+} from '@/lib/firebaseClient';
 
 interface GameMenuModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSaveGameClick: () => void;
     onRestartClick: () => void;
+}
+
+interface NativeAuthState {
+    isSignedIn: boolean;
+    uid?: string;
+    displayName?: string;
+    email?: string;
+}
+
+interface PlayGamesUser {
+    uid: string;
+    displayName: string | null;
+    email: string | null;
+}
+
+function toPlayGamesUser(state: NativeAuthState): PlayGamesUser | null {
+    if (!state.isSignedIn || !state.uid) return null;
+    return {
+        uid: state.uid,
+        displayName: state.displayName || null,
+        email: state.email || null,
+    };
+}
+
+function isGooglePopupCancellation(error: unknown): boolean {
+    if (typeof error !== 'object' || error === null || !('code' in error)) return false;
+    return error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request';
 }
 
 export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick }: GameMenuModalProps) {
@@ -33,13 +70,20 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
     const [isLoadingSaves, setIsLoadingSaves] = useState(false);
     const [mounted, setMounted] = useState(false);
     const [showKeywordModal, setShowKeywordModal] = useState(false);
-    const [showGooglePrototypeNotice, setShowGooglePrototypeNotice] = useState(false);
+    const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
+    const [playGamesUser, setPlayGamesUser] = useState<PlayGamesUser | null>(null);
+    const [isFirebaseAuthReady, setIsFirebaseAuthReady] = useState(!isFirebaseConfigured);
+    const [isPlayGamesAuthReady, setIsPlayGamesAuthReady] = useState(false);
+    const [isGoogleAuthBusy, setIsGoogleAuthBusy] = useState(false);
+    const [hasGoogleAuthError, setHasGoogleAuthError] = useState(false);
+    const [hasGoogleAuthCancelled, setHasGoogleAuthCancelled] = useState(false);
 
     // Options states terhubung ke soundManager
     const [musicVol, setMusicVol] = useState(() => soundManager ? soundManager.getMusicVolume() : 80);
     const [sfxVol, setSfxVol] = useState(() => soundManager ? soundManager.getSfxVolume() : 70);
     const [resolution, setResolution] = useState('1920x1080');
     const [showMainMenuConfirm, setShowMainMenuConfirm] = useState(false);
+    const isAndroidTauri = mounted && isTauri() && /android/i.test(navigator.userAgent);
 
     useEffect(() => {
         setMounted(true);
@@ -48,6 +92,46 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
             setSfxVol(soundManager.getSfxVolume());
         }
     }, []);
+
+    useEffect(() => {
+        if (!isFirebaseConfigured || (isTauri() && /android/i.test(navigator.userAgent))) return;
+
+        return observeFirebaseAuth(
+            (user) => {
+                setFirebaseUser(user);
+                setIsFirebaseAuthReady(true);
+            },
+            (error) => {
+                console.error('Firebase auth state could not be read:', error);
+                setHasGoogleAuthError(true);
+                setIsFirebaseAuthReady(true);
+            },
+        );
+    }, []);
+
+    useEffect(() => {
+        if (!isAndroidTauri || !isPlayGamesConfigured) return;
+
+        let isActive = true;
+        invoke<NativeAuthState>('play_games_current_user', {
+            config: getNativePlayGamesAuthConfig(),
+        })
+            .then((state) => {
+                if (!isActive) return;
+                setPlayGamesUser(toPlayGamesUser(state));
+                setIsPlayGamesAuthReady(true);
+            })
+            .catch((error: unknown) => {
+                console.error('Could not read native Firebase auth state:', error);
+                if (!isActive) return;
+                setHasGoogleAuthError(true);
+                setIsPlayGamesAuthReady(true);
+            });
+
+        return () => {
+            isActive = false;
+        };
+    }, [isAndroidTauri]);
 
     useEffect(() => {
         if (isOpen) {
@@ -81,6 +165,47 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
     const handleOpenLoad = () => {
         fetchSaveFiles();
         setSubview('load');
+    };
+
+    const handleGoogleAuth = async () => {
+        setIsGoogleAuthBusy(true);
+        setHasGoogleAuthError(false);
+        setHasGoogleAuthCancelled(false);
+        try {
+            if (firebaseUser) {
+                await signOutFromFirebase();
+            } else {
+                await signInWithGoogle();
+            }
+        } catch (error) {
+            if (isGooglePopupCancellation(error)) {
+                setHasGoogleAuthCancelled(true);
+                return;
+            }
+            console.error('Firebase Google sign-in action failed:', error);
+            setHasGoogleAuthError(true);
+        } finally {
+            setIsGoogleAuthBusy(false);
+        }
+    };
+
+    const handlePlayGamesAuth = async () => {
+        setIsGoogleAuthBusy(true);
+        setHasGoogleAuthError(false);
+        setHasGoogleAuthCancelled(false);
+        try {
+            const command = playGamesUser ? 'play_games_sign_out' : 'play_games_sign_in';
+            const state = await invoke<NativeAuthState>(command, {
+                config: getNativePlayGamesAuthConfig(),
+            });
+            setPlayGamesUser(toPlayGamesUser(state));
+            setIsPlayGamesAuthReady(true);
+        } catch (error) {
+            console.error('Play Games Firebase sign-in action failed:', error);
+            setHasGoogleAuthError(true);
+        } finally {
+            setIsGoogleAuthBusy(false);
+        }
     };
 
     const handleDeleteSave = async (id: number, e: React.MouseEvent<HTMLButtonElement>) => {
@@ -182,7 +307,8 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                     </button>
                                     <button
                                         onClick={() => {
-                                            setShowGooglePrototypeNotice(false);
+                                            setHasGoogleAuthError(false);
+                                            setHasGoogleAuthCancelled(false);
                                             setSubview('googleLogin');
                                         }}
                                         className="paused-menu-action w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99] flex items-center justify-center gap-2"
@@ -299,11 +425,6 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                     title={t('paused_menu.googleLogin.title')}
                                     onBack={() => setSubview('menu')}
                                     backLabel={t('paused_menu.googleLogin.backLabel')}
-                                    rightContent={
-                                        <span className="shrink-0 rounded border border-amber-400/40 bg-amber-400/10 px-2 py-1 text-[9px] font-black uppercase tracking-wider text-amber-300">
-                                            {t('paused_menu.googleLogin.prototypeBadge')}
-                                        </span>
-                                    }
                                 />
                                 <div className="mx-auto flex w-full max-w-lg flex-col items-center gap-5 py-8 text-center">
                                     <div className="flex h-16 w-16 items-center justify-center rounded-full border border-root-accent/30 bg-root-canvas shadow-[0_0_24px_rgba(0,255,170,0.08)]">
@@ -317,22 +438,84 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                             {t('paused_menu.googleLogin.description')}
                                         </p>
                                     </div>
-                                    <div className="flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1.5 text-xs font-bold text-amber-200">
-                                        <span className="h-2 w-2 rounded-full bg-amber-300" />
-                                        {t('paused_menu.googleLogin.notConnected')}
-                                    </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowGooglePrototypeNotice(true)}
-                                        className="flex w-full max-w-sm items-center justify-center gap-3 rounded-lg border border-slate-300/70 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-100 active:scale-[0.99]"
-                                    >
-                                        <span aria-hidden="true" className="text-lg font-black text-[#4285F4]">G</span>
-                                        {t('paused_menu.googleLogin.continueButton')}
-                                    </button>
-                                    {showGooglePrototypeNotice && (
-                                        <p role="status" className="flex max-w-sm items-start gap-2 rounded-lg border border-root-accent/20 bg-root-canvas/70 p-3 text-left text-xs leading-relaxed text-root-subtle">
-                                            <Info className="mt-0.5 h-4 w-4 shrink-0 text-root-accent" />
-                                            <span>{t('paused_menu.googleLogin.prototypeNotice')}</span>
+                                    {isAndroidTauri ? (
+                                        <>
+                                            {!isPlayGamesConfigured ? (
+                                                <p role="status" className="max-w-sm rounded-lg border border-amber-400/30 bg-amber-400/10 p-3 text-xs leading-relaxed text-amber-100">
+                                                    {t('paused_menu.googleLogin.playGamesConfigurationRequired')}
+                                                </p>
+                                            ) : playGamesUser ? (
+                                                <p className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 text-xs font-bold text-emerald-200">
+                                                    {t('paused_menu.googleLogin.connectedAs', {
+                                                        email: playGamesUser.email || playGamesUser.displayName || playGamesUser.uid,
+                                                    })}
+                                                </p>
+                                            ) : (
+                                                <div className="flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1.5 text-xs font-bold text-amber-200">
+                                                    <span className="h-2 w-2 rounded-full bg-amber-300" />
+                                                    {t('paused_menu.googleLogin.notConnected')}
+                                                </div>
+                                            )}
+                                            <button
+                                                type="button"
+                                                onClick={handlePlayGamesAuth}
+                                                disabled={!isPlayGamesConfigured || !isPlayGamesAuthReady || isGoogleAuthBusy}
+                                                className="flex w-full max-w-sm items-center justify-center gap-3 rounded-lg border border-slate-300/70 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-100 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+                                            >
+                                                <Gamepad2 className="h-5 w-5 text-emerald-600" />
+                                                {isGoogleAuthBusy || !isPlayGamesAuthReady
+                                                    ? t('paused_menu.googleLogin.signingIn')
+                                                    : playGamesUser
+                                                        ? t('paused_menu.googleLogin.signOutButton')
+                                                        : t('paused_menu.googleLogin.playGamesButton')}
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            {!isFirebaseConfigured ? (
+                                                <p role="status" className="max-w-sm rounded-lg border border-amber-400/30 bg-amber-400/10 p-3 text-xs leading-relaxed text-amber-100">
+                                                    {t('paused_menu.googleLogin.configurationRequired')}
+                                                </p>
+                                            ) : firebaseUser ? (
+                                                <p className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 text-xs font-bold text-emerald-200">
+                                                    {t('paused_menu.googleLogin.connectedAs', {
+                                                        email: firebaseUser.email || firebaseUser.displayName || '',
+                                                    })}
+                                                </p>
+                                            ) : (
+                                                <div className="flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1.5 text-xs font-bold text-amber-200">
+                                                    <span className="h-2 w-2 rounded-full bg-amber-300" />
+                                                    {t('paused_menu.googleLogin.notConnected')}
+                                                </div>
+                                            )}
+                                            <button
+                                                type="button"
+                                                onClick={handleGoogleAuth}
+                                                disabled={!isFirebaseConfigured || !isFirebaseAuthReady || isGoogleAuthBusy}
+                                                className="flex w-full max-w-sm items-center justify-center gap-3 rounded-lg border border-slate-300/70 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-100 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+                                            >
+                                                <span aria-hidden="true" className="text-lg font-black text-[#4285F4]">G</span>
+                                                {isGoogleAuthBusy || !isFirebaseAuthReady
+                                                    ? t('paused_menu.googleLogin.signingIn')
+                                                    : firebaseUser
+                                                        ? t('paused_menu.googleLogin.signOutButton')
+                                                        : t('paused_menu.googleLogin.continueButton')}
+                                            </button>
+                                            <p className="max-w-sm text-xs leading-relaxed text-root-subtle">
+                                                {t('paused_menu.googleLogin.playGamesAndroidOnly')}
+                                            </p>
+                                        </>
+                                    )}
+                                    {hasGoogleAuthCancelled && (
+                                        <p role="status" className="flex max-w-sm items-start gap-2 rounded-lg border border-amber-400/30 bg-amber-400/10 p-3 text-left text-xs leading-relaxed text-amber-200">
+                                            <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
+                                            <span>{t('paused_menu.googleLogin.loginCancelled')}</span>
+                                        </p>
+                                    )}
+                                    {hasGoogleAuthError && (
+                                        <p role="alert" className="flex max-w-sm items-start gap-2 rounded-lg border border-rose-400/30 bg-rose-400/10 p-3 text-left text-xs leading-relaxed text-rose-200">
+                                            <Info className="mt-0.5 h-4 w-4 shrink-0 text-rose-300" />
+                                            <span>{t('paused_menu.googleLogin.authError')}</span>
                                         </p>
                                     )}
                                 </div>

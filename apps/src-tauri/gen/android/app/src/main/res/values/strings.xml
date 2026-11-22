@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">"Presiden Simulator"</string>
     <string name="main_activity_title">"Presiden Simulator"</string>
+    <string name="game_services_project_id" translatable="false">REPLACE_WITH_PLAY_GAMES_PROJECT_ID</string>
 </resources>

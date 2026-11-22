@@ -6,18 +6,25 @@
     "restart": "Mulai Ulang",
     "settings": "Pengaturan",
     "keyboardShortcuts": "Pintasan Keyboard",
-    "googleLogin": "Login Google (Prototype)",
+    "googleLogin": "Akun Google / Play Games",
     "exitGame": "Keluar Permainan"
   },
   "googleLogin": {
     "title": "Login Google",
     "backLabel": "Kembali ke menu jeda",
-    "prototypeBadge": "Prototype",
     "heading": "Hubungkan akun Google",
-    "description": "Simpan dan sinkronkan progres permainan menggunakan akun Google Anda.",
+    "description": "Gunakan akun Google untuk login. Progres game belum tersinkron otomatis.",
     "notConnected": "Belum terhubung",
+    "connectedAs": "Terhubung sebagai {email}",
     "continueButton": "Lanjutkan dengan Google",
-    "prototypeNotice": "Ini hanya simulasi tampilan. Login Google dan sinkronisasi Google Play Games belum diaktifkan."
+    "signOutButton": "Keluar dari Google",
+    "signingIn": "Menghubungkan...",
+    "configurationRequired": "Konfigurasi Firebase belum diisi. Lengkapi variabel Firebase di apps/.env.local lalu mulai ulang server.",
+    "playGamesButton": "Lanjutkan dengan Google Play Games",
+    "playGamesConfigurationRequired": "Untuk Android, lengkapi Firebase Android App ID, Web Client ID Play Games, Game Services Project ID, dan ID game di strings.xml.",
+    "playGamesAndroidOnly": "Google Play Games tersedia di aplikasi Android. Browser menggunakan login Google Firebase.",
+    "loginCancelled": "Login dibatalkan. Anda belum masuk dan bisa mencoba lagi kapan saja.",
+    "authError": "Login gagal. Periksa konfigurasi Firebase, Play Games, dan domain yang diizinkan."
   },
   "settings": {
     "title": "Pengaturan",

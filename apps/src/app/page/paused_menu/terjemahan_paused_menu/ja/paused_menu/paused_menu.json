@@ -6,18 +6,25 @@
     "restart": "やり直し",
     "settings": "設定",
     "keyboardShortcuts": "キーボードショートカット",
-    "googleLogin": "Googleログイン（プロトタイプ）",
+    "googleLogin": "Google / Play Games アカウント",
     "exitGame": "ゲーム終了"
   },
   "googleLogin": {
     "title": "Googleログイン",
     "backLabel": "ポーズメニューに戻る",
-    "prototypeBadge": "プロトタイプ",
     "heading": "Googleアカウントを連携",
-    "description": "Googleアカウントでゲームの進行状況を保存・同期します。",
+    "description": "Googleでログインします。ゲームの進行状況はまだ自動同期されません。",
     "notConnected": "未連携",
+    "connectedAs": "{email} と連携済み",
     "continueButton": "Googleで続行",
-    "prototypeNotice": "これは画面のシミュレーションです。GoogleログインとGoogle Play Gamesの同期はまだ有効になっていません。"
+    "signOutButton": "Googleからログアウト",
+    "signingIn": "接続中...",
+    "configurationRequired": "Firebaseが設定されていません。apps/.env.local にFirebaseの変数を入力して、サーバーを再起動してください。",
+    "playGamesButton": "Google Play Gamesで続行",
+    "playGamesConfigurationRequired": "AndroidではFirebase Android App ID、Play Games Web Client ID、Game Services Project ID、およびstrings.xmlのゲームIDを設定してください。",
+    "playGamesAndroidOnly": "Google Play GamesはAndroidアプリで利用できます。ブラウザではFirebase Googleログインを使用します。",
+    "loginCancelled": "ログインをキャンセルしました。まだログインしていません。いつでも再試行できます。",
+    "authError": "ログインに失敗しました。Firebase、Play Games、承認済みドメインの設定を確認してください。"
   },
   "settings": {
     "title": "設定",

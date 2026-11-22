@@ -6,18 +6,25 @@
     "restart": "Reiniciar",
     "settings": "Ajustes",
     "keyboardShortcuts": "Atajos de Teclado",
-    "googleLogin": "Inicio de sesión de Google (Prototipo)",
+    "googleLogin": "Cuenta de Google / Play Games",
     "exitGame": "Salir del Juego"
   },
   "googleLogin": {
     "title": "Inicio de sesión de Google",
     "backLabel": "Volver al menú de pausa",
-    "prototypeBadge": "Prototipo",
     "heading": "Conecta tu cuenta de Google",
-    "description": "Guarda y sincroniza tu progreso con tu cuenta de Google.",
+    "description": "Inicia sesión con Google. El progreso del juego aún no se sincroniza automáticamente.",
     "notConnected": "Sin conexión",
+    "connectedAs": "Conectado como {email}",
     "continueButton": "Continuar con Google",
-    "prototypeNotice": "Esto solo es una simulación visual. El inicio de sesión de Google y la sincronización con Google Play Games aún no están activados."
+    "signOutButton": "Cerrar sesión de Google",
+    "signingIn": "Conectando...",
+    "configurationRequired": "Firebase no está configurado. Completa las variables de Firebase en apps/.env.local y reinicia el servidor.",
+    "playGamesButton": "Continuar con Google Play Games",
+    "playGamesConfigurationRequired": "En Android, configura el Firebase Android App ID, el Play Games Web Client ID, el Game Services Project ID y el ID del juego en strings.xml.",
+    "playGamesAndroidOnly": "Google Play Games está disponible en la aplicación Android. El navegador usa el inicio de sesión de Google con Firebase.",
+    "loginCancelled": "Se canceló el inicio de sesión. No has iniciado sesión; puedes intentarlo de nuevo cuando quieras.",
+    "authError": "No se pudo iniciar sesión. Comprueba la configuración de Firebase, Play Games y los dominios autorizados."
   },
   "settings": {
     "title": "Ajustes",

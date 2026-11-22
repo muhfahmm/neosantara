@@ -6,18 +6,25 @@
     "restart": "Neustart",
     "settings": "Einstellungen",
     "keyboardShortcuts": "Tastaturkürzel",
-    "googleLogin": "Google-Anmeldung (Prototyp)",
+    "googleLogin": "Google-/Play-Games-Konto",
     "exitGame": "Spiel Beenden"
   },
   "googleLogin": {
     "title": "Google-Anmeldung",
     "backLabel": "Zurück zum Pausenmenü",
-    "prototypeBadge": "Prototyp",
     "heading": "Google-Konto verbinden",
-    "description": "Speichere und synchronisiere deinen Spielfortschritt mit deinem Google-Konto.",
+    "description": "Melde dich mit Google an. Der Spielfortschritt wird noch nicht automatisch synchronisiert.",
     "notConnected": "Nicht verbunden",
+    "connectedAs": "Verbunden als {email}",
     "continueButton": "Mit Google fortfahren",
-    "prototypeNotice": "Dies ist nur eine UI-Simulation. Google-Anmeldung und die Synchronisierung mit Google Play Games sind nicht aktiviert."
+    "signOutButton": "Von Google abmelden",
+    "signingIn": "Verbindung wird hergestellt...",
+    "configurationRequired": "Firebase ist nicht konfiguriert. Trage die Firebase-Variablen in apps/.env.local ein und starte den Server neu.",
+    "playGamesButton": "Mit Google Play Games fortfahren",
+    "playGamesConfigurationRequired": "Für Android müssen Firebase Android App ID, Play Games Web Client ID, Game Services Project ID und die Spiel-ID in strings.xml eingerichtet werden.",
+    "playGamesAndroidOnly": "Google Play Games ist in der Android-App verfügbar. Im Browser wird die Firebase-Google-Anmeldung verwendet.",
+    "loginCancelled": "Die Anmeldung wurde abgebrochen. Du bist nicht angemeldet und kannst es jederzeit erneut versuchen.",
+    "authError": "Die Anmeldung ist fehlgeschlagen. Prüfe Firebase, Play Games und die autorisierten Domains."
   },
   "settings": {
     "title": "Einstellungen",

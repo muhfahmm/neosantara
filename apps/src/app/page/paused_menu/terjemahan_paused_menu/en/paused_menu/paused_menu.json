@@ -6,18 +6,25 @@
     "restart": "Restart",
     "settings": "Settings",
     "keyboardShortcuts": "Keyboard Shortcuts",
-    "googleLogin": "Google Login (Prototype)",
+    "googleLogin": "Google / Play Games Account",
     "exitGame": "Exit Game"
   },
   "googleLogin": {
     "title": "Google Login",
     "backLabel": "Back to paused menu",
-    "prototypeBadge": "Prototype",
     "heading": "Connect your Google account",
-    "description": "Save and sync your game progress with your Google account.",
+    "description": "Use Google to sign in. Game progress is not automatically synced yet.",
     "notConnected": "Not connected",
+    "connectedAs": "Connected as {email}",
     "continueButton": "Continue with Google",
-    "prototypeNotice": "This is a UI simulation only. Google sign-in and Google Play Games sync are not enabled."
+    "signOutButton": "Sign out of Google",
+    "signingIn": "Connecting...",
+    "configurationRequired": "Firebase is not configured. Fill in the Firebase variables in apps/.env.local, then restart the server.",
+    "playGamesButton": "Continue with Google Play Games",
+    "playGamesConfigurationRequired": "For Android, configure the Firebase Android App ID, Play Games Web Client ID, Game Services Project ID, and the game ID in strings.xml.",
+    "playGamesAndroidOnly": "Google Play Games is available in the Android app. The browser uses Firebase Google sign-in.",
+    "loginCancelled": "Sign-in was cancelled. You are not signed in, and can try again anytime.",
+    "authError": "Sign-in failed. Check your Firebase, Play Games, and authorized-domain configuration."
   },
   "settings": {
     "title": "Settings",

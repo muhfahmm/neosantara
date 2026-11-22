@@ -6,18 +6,25 @@
     "restart": "다시 시작",
     "settings": "설정",
     "keyboardShortcuts": "키보드 단축키",
-    "googleLogin": "Google 로그인 (프로토타입)",
+    "googleLogin": "Google / Play Games 계정",
     "exitGame": "게임 종료"
   },
   "googleLogin": {
     "title": "Google 로그인",
     "backLabel": "일시정지 메뉴로 돌아가기",
-    "prototypeBadge": "프로토타입",
     "heading": "Google 계정 연결",
-    "description": "Google 계정으로 게임 진행 상황을 저장하고 동기화하세요.",
+    "description": "Google로 로그인합니다. 게임 진행 상황은 아직 자동으로 동기화되지 않습니다.",
     "notConnected": "연결되지 않음",
+    "connectedAs": "{email}(으)로 연결됨",
     "continueButton": "Google로 계속",
-    "prototypeNotice": "이 화면은 UI 시뮬레이션입니다. Google 로그인 및 Google Play Games 동기화는 아직 활성화되지 않았습니다."
+    "signOutButton": "Google 로그아웃",
+    "signingIn": "연결 중...",
+    "configurationRequired": "Firebase가 설정되지 않았습니다. apps/.env.local에 Firebase 변수를 입력한 뒤 서버를 다시 시작하세요.",
+    "playGamesButton": "Google Play Games로 계속",
+    "playGamesConfigurationRequired": "Android에서 Firebase Android App ID, Play Games Web Client ID, Game Services Project ID 및 strings.xml의 게임 ID를 설정하세요.",
+    "playGamesAndroidOnly": "Google Play Games는 Android 앱에서 사용할 수 있습니다. 브라우저에서는 Firebase Google 로그인을 사용합니다.",
+    "loginCancelled": "로그인이 취소되었습니다. 로그인되지 않았으며 언제든지 다시 시도할 수 있습니다.",
+    "authError": "로그인에 실패했습니다. Firebase, Play Games 및 승인된 도메인 설정을 확인하세요."
   },
   "settings": {
     "title": "설정",
