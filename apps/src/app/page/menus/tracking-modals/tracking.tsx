@@ -273,7 +273,7 @@ export default function DiplomacyTracking({
           )}
 
       {isTrackingOpen && (
-        <NotebookModalWrapper onClose={() => setIsTrackingOpen(false)} zIndexClass="z-[200]">
+        <NotebookModalWrapper onClose={() => setIsTrackingOpen(false)} zIndexClass="z-[99999]">
           <div className="root-modal-util-52b6b298fe tracking-modal-typography font-sans">
 
             <RootInfoModalHeader

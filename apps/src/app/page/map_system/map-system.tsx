@@ -11885,7 +11885,16 @@ export default function MapPage() {
             <DiplomacyTracking
                 isUiHidden={isWarAnalysisActive || isDialogTerbukaOpen}
                 isMenuButtonHidden={researchMainPageOpen}
-                onOpen={() => setCountryDetailModalOpen(false)}
+                onOpen={() => {
+                    setCountryDetailModalOpen(false);
+                    setInboxModalOpen(false);
+                    setGiftModalOpen(false);
+                    setNewsModalOpen(false);
+                    setPenelitianModalOpen(false);
+                    setMissionModalOpen(false);
+                    setShopModalOpen(false);
+                    setActiveMenu("");
+                }}
             />
 
             {!isWarAnalysisActive && !isDialogTerbukaOpen && !isMenuModalOpen && !(countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen) && (
