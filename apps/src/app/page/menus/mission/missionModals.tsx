@@ -1870,7 +1870,12 @@ export default function MissionModals({
 
             {/* TAB CONTENT: PENCAPAIAN ATAU MISI */}
             {activeTab === 'pencapaian' ? (
-              <PencapaianContent countryDetail={countryDetail} setCountryDetail={setCountryDetail} />
+              <PencapaianContent
+                countryDetail={countryDetail}
+                setCountryDetail={setCountryDetail}
+                onStartMission={onStartMission}
+                onClose={onClose}
+              />
             ) : (
             /* BODY: HANYA 5 KARTU KEBAWAH */
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-root-canvas relative z-10 custom-scrollbar space-y-3">

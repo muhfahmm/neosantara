@@ -6,7 +6,7 @@ import {
   Trophy, Award, CheckCircle2, Lock, Sparkles, Gem, Coins,
   Smile, Users2, Zap, Landmark, Building2, Microscope, Banknote, Globe2, Factory, Home, Hammer,
   Briefcase, Sword, Map as MapIcon, PhoneCall, Gift, Globe, HeartHandshake, Shield, Siren, Skull, TrendingUp, Calendar,
-  BookOpen, Flame
+  BookOpen, Flame, Play
 } from 'lucide-react';
 import { getEmbassiesForCountry } from '../../../../../../json/6_database_kedutaan_besar/embassyRegistry';
 import { getTradeAgreementsForCountry } from '../../../../../../json/9_database_mitra_perdagangan/tradeAgreementRegistry';
@@ -251,9 +251,9 @@ export const BUILDING_ACHIEVEMENT_CATEGORIES: BuildingCategoryConfig[] = [
 
 const BUILDING_TIER_TARGETS = [100, 1000, 5000];
 const BUILDING_TIER_REWARDS = [
-  { gems: 100, neo: 25000000, xp: 2 },
-  { gems: 250, neo: 75000000, xp: 3 },
-  { gems: 500, neo: 200000000, xp: 4 },
+  { gems: 100, neo: 150000, xp: 5 },
+  { gems: 150, neo: 200000, xp: 7 },
+  { gems: 200, neo: 300000, xp: 10 },
 ];
 
 function countBuildingsForCategory(cd: any, keys: string[]): number {
@@ -581,7 +581,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Smile,
     accent: '#10b981',
     maxProgress: 100,
-    reward: { gems: 150, neo: 50000000 , xp: 2 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd, _, state) => {
       // Ambil nilai kesejahteraan real dari navbar / detail
       const rawWelfare = Number(cd?.kesejahteraan ?? cd?.indeks_kesejahteraan ?? cd?.kesejahteraan_masyarakat ?? 59);
@@ -615,7 +615,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Award,
     accent: '#34d399',
     maxProgress: 100,
-    reward: { gems: 120, neo: 40000000 , xp: 2 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd, _, state) => {
       const kepuasan = Number(cd?.kepuasan ?? cd?.satisfaction ?? 74);
       const currentVal = Math.max(0, Math.min(100, Math.round(kepuasan)));
@@ -646,7 +646,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Building2,
     accent: '#059669',
     maxProgress: 1,
-    reward: { gems: 120, neo: 40000000 , xp: 2 },
+    reward: { gems: 250, neo: 50000, xp: 3 },
     computeProgress: (cd) => {
       const tunawisma = cd?.tunawisma ?? 0;
       const isUnlocked = tunawisma === 0;
@@ -661,7 +661,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Users2,
     accent: '#3b82f6',
     maxProgress: 4,
-    reward: { gems: 150, neo: 60000000 , xp: 2 },
+    reward: { gems: 50, neo: 120000, xp: 4 },
     computeProgress: (cd) => {
       let met = 2;
       if (cd?.listrikDefisit === 0) met++;
@@ -676,7 +676,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Users2,
     accent: '#60a5fa',
     maxProgress: 100,
-    reward: { gems: 150, neo: 45000000 , xp: 2 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd) => {
       const populasi = Number(cd?.jumlah_penduduk || cd?.population || 10000000);
       
@@ -730,7 +730,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: TrendingUp,
     accent: '#2563eb',
     maxProgress: 6,
-    reward: { gems: 200, neo: 60000000 , xp: 2 },
+    reward: { gems: 50, neo: 120000, xp: 4 },
     computeProgress: (cd) => {
       // Ambil streak bulan surplus populasi
       const surplusStreak = Number(cd?.population_surplus_months_streak ?? 6);
@@ -759,7 +759,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Zap,
     accent: '#f59e0b',
     maxProgress: 100,
-    reward: { gems: 200, neo: 80000000 , xp: 2 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd) => {
       const defisit = cd?.listrikDefisit ?? 0;
       return { current: defisit === 0 ? 100 : 50, isUnlocked: defisit === 0 };
@@ -771,7 +771,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Zap,
     accent: '#fbbf24',
     maxProgress: 1,
-    reward: { gems: 180, neo: 70000000 , xp: 2 },
+    reward: { gems: 250, neo: 50000, xp: 3 },
     computeProgress: (cd) => {
       const surplus = cd?.panganSurplus ?? true;
       return { current: surplus ? 1 : 0, isUnlocked: Boolean(surplus) };
@@ -787,7 +787,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Landmark,
     accent: '#10b981',
     maxProgress: 12,
-    reward: { gems: 250, neo: 100000000 , xp: 3 },
+    reward: { gems: 100, neo: 150000, xp: 6 },
     computeProgress: (cd, currentDate) => {
       const now = currentDate || new Date();
       const currentYear = now.getFullYear();
@@ -822,7 +822,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Landmark,
     accent: '#059669',
     maxProgress: 1,
-    reward: { gems: 300, neo: 150000000 , xp: 3 },
+    reward: { gems: 250, neo: 50000, xp: 3 },
     computeProgress: (cd) => {
       const loans = cd?.activeLoans ?? 0;
       return { current: loans === 0 ? 1 : 0, isUnlocked: loans === 0 };
@@ -835,7 +835,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Globe,
     accent: '#34d399',
     maxProgress: 1,
-    reward: { gems: 200, neo: 75000000 , xp: 2 },
+    reward: { gems: 250, neo: 50000, xp: 3 },
     computeProgress: (cd) => {
       const history = Array.isArray(cd?.tradeHistory) ? cd.tradeHistory : [];
       // Cek apakah ada riwayat jual atau beli atau aksi pasar global
@@ -863,7 +863,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Landmark,
     accent: '#6ee7b7',
     maxProgress: 100,
-    reward: { gems: 200, neo: 60000000 , xp: 2 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd, _, state) => {
       // Ambil skor kepuasan harga barang pokok yang identik dengan modal Info Daya Beli (HargaModal)
       const prices = cd?.harga || {};
@@ -977,7 +977,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Banknote,
     accent: '#38bdf8',
     maxProgress: 12,
-    reward: { gems: 250, neo: 100000000 , xp: 3 },
+    reward: { gems: 100, neo: 150000, xp: 6 },
     computeProgress: (cd) => {
       const current = countCompletedResearchInSector(cd, RESEARCH_SECTOR_CARDS.ekonomi);
       const target = 12;
@@ -1006,7 +1006,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Shield,
     accent: '#f43f5e',
     maxProgress: 18,
-    reward: { gems: 350, neo: 150000000 , xp: 3 },
+    reward: { gems: 150, neo: 200000, xp: 8 },
     computeProgress: (cd) => {
       const current = countCompletedResearchInSector(cd, RESEARCH_SECTOR_CARDS.militer);
       const target = 18;
@@ -1035,7 +1035,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Globe2,
     accent: '#06b6d4',
     maxProgress: 25,
-    reward: { gems: 500, neo: 250000000 , xp: 4 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd) => {
       const current = countCompletedResearchInSector(cd, RESEARCH_SECTOR_CARDS.diplomasi);
       const target = 25;
@@ -1066,7 +1066,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Briefcase,
     accent: '#0ea5e9',
     maxProgress: 15,
-    reward: { gems: 300, neo: 120000000 , xp: 3 },
+    reward: { gems: 150, neo: 200000, xp: 8 },
     computeProgress: (cd) => {
       const { maxedCount, totalCount, allMaxed } = countMinistryMaxedDepartments(cd, MINISTRY_DEPARTMENTS_CONFIG.kementerian);
       const isUnlocked = allMaxed;
@@ -1094,7 +1094,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Shield,
     accent: '#f43f5e',
     maxProgress: 4,
-    reward: { gems: 250, neo: 90000000 , xp: 3 },
+    reward: { gems: 50, neo: 120000, xp: 4 },
     computeProgress: (cd) => {
       const { maxedCount, totalCount, allMaxed } = countMinistryMaxedDepartments(cd, MINISTRY_DEPARTMENTS_CONFIG.keamanan);
       const isUnlocked = allMaxed;
@@ -1122,7 +1122,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Landmark,
     accent: '#eab308',
     maxProgress: 2,
-    reward: { gems: 200, neo: 75000000 , xp: 2 },
+    reward: { gems: 25, neo: 100000, xp: 3 },
     computeProgress: (cd) => {
       const { maxedCount, totalCount, allMaxed } = countMinistryMaxedDepartments(cd, MINISTRY_DEPARTMENTS_CONFIG.layanan);
       const isUnlocked = allMaxed;
@@ -1152,7 +1152,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Building2,
     accent: '#38bdf8',
     maxProgress: 100,
-    reward: { gems: 350, neo: 150000000 , xp: 3 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
       const count = getActiveEmbassiesCount(cd);
@@ -1182,7 +1182,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Shield,
     accent: '#60a5fa',
     maxProgress: 100,
-    reward: { gems: 350, neo: 150000000 , xp: 3 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
       const pacts = Array.isArray(cd?.nonAggressionPacts) ? cd.nonAggressionPacts : [];
@@ -1213,7 +1213,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Shield,
     accent: '#3b82f6',
     maxProgress: 100,
-    reward: { gems: 500, neo: 250000000 , xp: 4 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
       const alliances = Array.isArray(cd?.defenseAlliances) ? cd.defenseAlliances : [];
@@ -1244,7 +1244,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: HeartHandshake,
     accent: '#10b981',
     maxProgress: 100,
-    reward: { gems: 400, neo: 200000000 , xp: 4 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
       const count = getActiveTradeAgreementsCount(cd);
@@ -1274,7 +1274,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Microscope,
     accent: '#06b6d4',
     maxProgress: 100,
-    reward: { gems: 400, neo: 200000000 , xp: 4 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
       const contracts = Array.isArray(cd?.researchContracts) ? cd.researchContracts : [];
@@ -1305,7 +1305,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Sword,
     accent: '#ef4444',
     maxProgress: 100,
-    reward: { gems: 450, neo: 220000000 , xp: 4 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
       const troops = Array.isArray(cd?.diplomaticTroopsSent) ? cd.diplomaticTroopsSent : [];
@@ -1336,7 +1336,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Gift,
     accent: '#ec4899',
     maxProgress: 100,
-    reward: { gems: 350, neo: 150000000 , xp: 3 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
       const gifts = Array.isArray(cd?.diplomaticGiftsSent) ? cd.diplomaticGiftsSent : [];
@@ -1367,7 +1367,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: HeartHandshake,
     accent: '#f97316',
     maxProgress: 100,
-    reward: { gems: 350, neo: 160000000 , xp: 3 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
       const improved = Array.isArray(cd?.relationsImproved) ? cd.relationsImproved : [];
@@ -1398,7 +1398,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: PhoneCall,
     accent: '#a855f7',
     maxProgress: 100,
-    reward: { gems: 400, neo: 180000000 , xp: 4 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
       const requests = Array.isArray(cd?.aidRequests) ? cd.aidRequests : [];
@@ -1429,7 +1429,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: MapIcon,
     accent: '#eab308',
     maxProgress: 25,
-    reward: { gems: 500, neo: 250000000 , xp: 4 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd, 25);
       const ceded = Array.isArray(cd?.territoriesCeded) ? cd.territoriesCeded : [];
@@ -1462,7 +1462,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: BookOpen,
     accent: '#ec4899',
     maxProgress: 100,
-    reward: { gems: 200, neo: 80000000 , xp: 2 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd) => {
       const data = getSameReligionCountriesCount(cd);
       const current = data.count;
@@ -1492,7 +1492,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Flame,
     accent: '#f43f5e',
     maxProgress: 100,
-    reward: { gems: 200, neo: 80000000 , xp: 2 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd) => {
       const data = getSameIdeologyCountriesCount(cd);
       const current = data.count;
@@ -1573,7 +1573,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Shield,
     accent: '#ef4444',
     maxProgress: 10,
-    reward: { gems: 220, neo: 85000000 , xp: 2 },
+    reward: { gems: 100, neo: 150000, xp: 6 },
     computeProgress: (cd) => {
       const militaryUnits = cd?.militaryPower ?? 8;
       const current = Math.min(10, militaryUnits);
@@ -1586,7 +1586,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Shield,
     accent: '#f87171',
     maxProgress: 3,
-    reward: { gems: 180, neo: 65000000 , xp: 2 },
+    reward: { gems: 25, neo: 100000, xp: 3 },
     computeProgress: (cd) => {
       const spySuccess = cd?.intelOperationsSuccess ?? 1;
       const current = Math.min(3, spySuccess);
@@ -1599,7 +1599,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Shield,
     accent: '#b91c1c',
     maxProgress: 1,
-    reward: { gems: 250, neo: 100000000 , xp: 3 },
+    reward: { gems: 250, neo: 50000, xp: 3 },
     computeProgress: (cd) => {
       const hasAnnexed = (cd?.annexedTerritories?.length || 0) > 0;
       const isUnlocked = !hasAnnexed || Boolean(cd?.annexedStabilized);
@@ -1612,7 +1612,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Shield,
     accent: '#dc2626',
     maxProgress: 1,
-    reward: { gems: 300, neo: 120000000 , xp: 3 },
+    reward: { gems: 250, neo: 50000, xp: 3 },
     computeProgress: (cd) => {
       const hasDefenseHQ = Boolean(cd?.buildings?.markas_pertahanan || cd?.hasDefenseTech);
       return { current: hasDefenseHQ ? 1 : 0, isUnlocked: hasDefenseHQ };
@@ -1626,7 +1626,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Siren,
     accent: '#eab308',
     maxProgress: 100,
-    reward: { gems: 300, neo: 120000000 , xp: 3 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd) => {
       const target = 100;
       const disasterResolved = Number(cd?.disasterResolvedCount ?? 0);
@@ -1656,7 +1656,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Siren,
     accent: '#ef4444',
     maxProgress: 100,
-    reward: { gems: 400, neo: 180000000 , xp: 4 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd) => {
       const target = 100;
       const pandemicHandled = Number(cd?.pandemicHandledCount ?? 0);
@@ -1686,7 +1686,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Siren,
     accent: '#ca8a04',
     maxProgress: 100,
-    reward: { gems: 300, neo: 120000000 , xp: 3 },
+    reward: { gems: 200, neo: 300000, xp: 10 },
     computeProgress: (cd) => {
       const target = 100;
       const epidemicHandled = Number(cd?.epidemicHandledCount ?? 0);
@@ -1716,9 +1716,51 @@ interface PencapaianModalsProps {
   countryDetail?: any;
   setCountryDetail?: (updater: any) => void;
   currentDate?: Date;
+  onStartMission?: (destination: any) => void;
+  onClose?: () => void;
 }
 
-export function PencapaianContent({ countryDetail, setCountryDetail, currentDate }: PencapaianModalsProps) {
+function getAchievementRoute(achievement: Pick<AchievementItem, 'id' | 'category'>): any {
+  const { id, category } = achievement;
+  if (category === 'kepuasan') {
+    return { menuId: 'Action:NaikkanKepuasan' };
+  }
+  if (category === 'populasi') {
+    return { menuId: 'Dashboard:Populasi:Overview' };
+  }
+  if (category === 'produksi') {
+    return { menuId: 'Menu:Produksi' };
+  }
+  if (category === 'ekonomi') {
+    if (id === 'bebas_utang') return { menuId: 'Menu:Hutang' };
+    return { menuId: 'Menu:Pajak' };
+  }
+  if (category === 'pembangunan') {
+    if (id.startsWith('bangun_')) return { menuId: 'Menu:TempatUmum' };
+    return { menuId: 'Menu:Produksi' };
+  }
+  if (category === 'penelitian') {
+    return { menuId: 'Menu:Penelitian' };
+  }
+  if (category === 'kementerian') {
+    return { menuId: 'Menu:Kementerian' };
+  }
+  if (category === 'geopolitik') {
+    return { menuId: 'Menu:KedutaanBesar' };
+  }
+  if (category === 'sosial_budaya') {
+    return { menuId: 'Menu:SosialBudaya' };
+  }
+  if (category === 'pertahanan') {
+    return { menuId: 'Menu:Armada' };
+  }
+  if (category === 'tanggap_darurat') {
+    return { menuId: 'Menu:TanggapDarurat' };
+  }
+  return { menuId: 'Menu:Overview' };
+}
+
+export function PencapaianContent({ countryDetail, setCountryDetail, currentDate, onStartMission, onClose }: PencapaianModalsProps) {
   const { t } = useLanguage();
   const [filterStatus, setFilterStatus] = useState<'all' | 'locked' | 'unlocked'>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -2112,140 +2154,138 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
           const categoryName = t(`side_pencapaian.categories.${item.category}`) || item.category;
           const pct = Math.min(100, Math.round((item.currentProgress / item.maxProgress) * 100));
 
+          const handleStart = () => {
+            const route = getAchievementRoute(item);
+            onStartMission?.(route);
+            onClose?.();
+          };
+
           return (
             <div
               key={item.id}
-              className={`rounded-xl border p-3.5 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-                item.isClaimed
+              className={`group flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl transition-all ${
+                item.isReadyToClaim
+                  ? 'bg-[#122A26] border-2 border-emerald-400 shadow-[0_0_15px_rgba(0,255,170,0.2)]'
+                  : item.isClaimed
                   ? 'border-emerald-500/30 bg-root-surface/60 opacity-90'
-                  : item.isReadyToClaim
-                  ? 'border-amber-400/60 bg-amber-500/10 shadow-md ring-1 ring-amber-400/30'
-                  : item.isUnlocked
-                  ? 'border-root-accent/30 bg-root-surface'
-                  : 'border-root-accent/15 bg-root-surface/40 opacity-75'
+                  : 'bg-root-surface border border-root-accent/20 hover:border-root-accent/50'
               }`}
             >
-              {/* Left Details */}
-              <div className="flex items-start gap-3 min-w-0 flex-1">
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border"
-                  style={{
-                    backgroundColor: item.isUnlocked ? `${item.accent}20` : 'rgba(100,100,100,0.1)',
-                    borderColor: item.isUnlocked ? `${item.accent}50` : 'rgba(100,100,100,0.2)',
-                  }}
-                >
-                  {item.isClaimed ? (
-                    <CheckCircle2 className="h-5 w-5 text-emerald-400" />
-                  ) : item.isUnlocked ? (
-                    <Icon className="h-5 w-5" style={{ color: item.accent }} />
-                  ) : (
-                    <Lock className="h-4 w-4 text-root-subtle" />
-                  )}
-                </div>
-
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-[9px] font-black uppercase tracking-wider text-root-subtle">
-                      {categoryName}
-                    </span>
-                    {item.isClaimed && (
-                      <span className="rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 text-[8px] font-black uppercase">
-                        {t('side_pencapaian.rewardClaimed')}
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="text-xs font-black text-root-text tracking-wide mt-0.5 truncate">
-                    {title}
-                  </h3>
-                  <p className="text-[11px] text-root-subtle mt-0.5 line-clamp-3">
-                    {description}
-                  </p>
-
-                  {/* Extra custom badges for dynamic indicators */}
-                  {item.extraBadges && item.extraBadges.length > 0 && (
-                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                      {item.extraBadges.map((badge, bIdx) => {
-                        const BadgeIcon = badge.icon;
-                        return (
-                          <span
-                            key={bIdx}
-                            className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[9px] font-bold ${badge.colorClass}`}
-                          >
-                            {BadgeIcon && <BadgeIcon className="h-2.5 w-2.5" />}
-                            {badge.label}
-                          </span>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {/* Progress Bar */}
-                  <div className="mt-2.5 space-y-1">
-                    <div className="flex items-center justify-between text-[9px] font-semibold text-root-subtle">
-                      <span>{t('side_pencapaian.progress')}</span>
-                      <span>
-                        {item.currentProgress} / {item.maxProgress} ({pct}%)
-                      </span>
-                    </div>
-                    <div className="h-1.5 w-full bg-root-canvas rounded-full overflow-hidden border border-root-accent/15">
-                      <div
-                        className="h-full transition-all duration-500 rounded-full"
-                        style={{
-                          width: `${pct}%`,
-                          backgroundColor: item.isUnlocked ? item.accent : 'var(--root-accent)',
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
+              {/* ICON BESAR */}
+              <div
+                className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center shrink-0 shadow-inner"
+                style={{
+                  backgroundColor: `${item.accent}15`,
+                  border: `1px solid ${item.accent}40`,
+                }}
+              >
+                {item.isClaimed ? (
+                  <CheckCircle2 className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-400" />
+                ) : (
+                  <Icon className="w-7 h-7 sm:w-8 sm:h-8" style={{ color: item.accent }} />
+                )}
               </div>
 
-              {/* Right Reward & Action */}
-              <div className="shrink-0 flex sm:flex-col items-center sm:items-end justify-between gap-2 border-t sm:border-t-0 pt-2 sm:pt-0 border-root-accent/10">
-                {/* Rewards preview */}
-                <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                  {item.reward.gems && (
-                    <span className="inline-flex items-center gap-1 rounded-md bg-cyan-500/10 border border-cyan-500/30 px-1.5 py-0.5 text-[9px] font-bold text-cyan-300">
-                      <Gem className="h-2.5 w-2.5 text-cyan-400" />
-                      +{item.reward.gems}
+              {/* KONTEN TENGAH */}
+              <div className="flex-1 min-w-0 w-full">
+                {/* JUDUL / INSTRUKSI MISI (SEBAGAI JUDUL DI ATAS) */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  {item.isReadyToClaim && (
+                    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded border border-emerald-400/50 bg-emerald-400/20 text-emerald-300 animate-pulse">
+                      🎉 {t('side_misi.readyToClaim')}
                     </span>
                   )}
-                  {item.reward.neo && (
-                    <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 text-[9px] font-bold text-amber-300">
-                      <Coins className="h-2.5 w-2.5 text-amber-400" />
-                      +{(item.reward.neo / 1000000).toFixed(0)}M
+
+                  <p className="text-xs sm:text-sm text-root-text font-bold leading-relaxed">
+                    👉 <span className="text-root-text font-semibold">{description || title}</span>
+                  </p>
+
+                  <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-amber-400/10 border border-amber-400/40 text-amber-300">
+                    ({item.currentProgress} / {item.maxProgress})
+                  </span>
+
+                  {item.isClaimed && (
+                    <span className="rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.5 text-[8px] font-black uppercase">
+                      {t('side_pencapaian.rewardClaimed')}
                     </span>
                   )}
-                  {item.reward.xp && (
-                    <span className="inline-flex items-center gap-1 rounded-md bg-purple-500/10 border border-purple-500/30 px-1.5 py-0.5 text-[9px] font-bold text-purple-300">
-                      <Sparkles className="h-2.5 w-2.5 text-purple-400" />
+                </div>
+
+                {/* Extra custom badges for dynamic indicators */}
+                {item.extraBadges && item.extraBadges.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                    {item.extraBadges.map((badge, bIdx) => {
+                      const BadgeIcon = badge.icon;
+                      return (
+                        <span
+                          key={bIdx}
+                          className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[9px] font-bold ${badge.colorClass}`}
+                        >
+                          {BadgeIcon && <BadgeIcon className="h-2.5 w-2.5" />}
+                          {badge.label}
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* BADGES HADIAH USULAN */}
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-amber-300">
+                    <Gift className="h-3 w-3" />
+                    {t('side_misi.suggestedReward')}
+                  </span>
+
+                  {item.reward.neo !== undefined && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-500/15 border border-blue-400/40 text-blue-200 font-black text-[10px]">
+                      <Coins className="h-3 w-3 text-blue-300" />
+                      {item.reward.neo.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO
+                    </span>
+                  )}
+
+                  {item.reward.gems !== undefined && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-cyan-500/15 border border-cyan-400/40 text-cyan-200 font-black text-[10px]">
+                      <Gem className="h-3 w-3 text-cyan-300" />
+                      {item.reward.gems} Gems
+                    </span>
+                  )}
+
+                  {item.reward.xp !== undefined && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-purple-500/15 border border-purple-400/40 text-purple-200 font-black text-[10px]">
+                      <Sparkles className="h-3 w-3 text-purple-300" />
                       +{item.reward.xp} XP
                     </span>
                   )}
                 </div>
-
-                {/* Claim Button */}
-                {item.isReadyToClaim ? (
-                  <button
-                    type="button"
-                    onClick={() => handleClaim(item)}
-                    className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 text-[10px] font-black uppercase tracking-wider shadow-md hover:brightness-110 active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
-                  >
-                    <Sparkles className="h-3 w-3" />
-                    {t('side_pencapaian.rewardReady')}
-                  </button>
-                ) : item.isClaimed ? (
-                  <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
-                    <CheckCircle2 className="h-3 w-3" />
-                    {t('side_pencapaian.rewardClaimed')}
-                  </span>
-                ) : (
-                  <span className="text-[10px] font-bold text-root-subtle flex items-center gap-1">
-                    <Lock className="h-3 w-3" />
-                    {t('side_pencapaian.rewardLocked')}
-                  </span>
-                )}
               </div>
+
+              {/* TOMBOL AKSI: KLAIM ATAU MULAI */}
+              {item.isReadyToClaim ? (
+                <button
+                  type="button"
+                  onClick={() => handleClaim(item)}
+                  aria-label={`${t('side_misi.claimReward')}: ${title}`}
+                  className="w-full sm:w-auto shrink-0 px-5 py-2.5 rounded-lg bg-root-accent hover:opacity-90 active:scale-95 text-root-accent-ink font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-md shadow-root-accent/20 cursor-pointer"
+                >
+                  <Gift className="w-3.5 h-3.5" />
+                  {t('side_misi.claimReward')}
+                </button>
+              ) : item.isClaimed ? (
+                <div className="w-full sm:w-auto shrink-0 px-4 py-2 rounded-lg bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  {t('side_pencapaian.rewardClaimed')}
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleStart}
+                  aria-label={`${t('side_misi.start')}: ${title}`}
+                  className="w-full sm:w-auto shrink-0 px-5 py-2.5 rounded-lg bg-root-accent hover:opacity-90 active:scale-95 text-root-accent-ink font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-md shadow-root-accent/20 cursor-pointer"
+                >
+                  <Play className="w-3.5 h-3.5 fill-root-accent-ink" />
+                  {t('side_misi.start')}
+                </button>
+              )}
             </div>
           );
         })}
