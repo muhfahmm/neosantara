@@ -2152,7 +2152,7 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
               </div>
 
               {/* KONTEN TENGAH */}
-              <div className="flex-1 min-w-0 w-full">
+              <div className="flex-1 min-w-0 w-full space-y-1.5">
                 {/* JUDUL / INSTRUKSI MISI (SEBAGAI JUDUL DI ATAS) */}
                 <div className="flex items-center gap-2 flex-wrap">
                   {item.isReadyToClaim && (
@@ -2165,10 +2165,6 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
                     👉 <span className="text-root-text font-semibold">{description || title}</span>
                   </p>
 
-                  <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-amber-400/10 border border-amber-400/40 text-amber-300">
-                    ({item.currentProgress} / {item.maxProgress})
-                  </span>
-
                   {item.isClaimed && (
                     <span className="rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.5 text-[8px] font-black uppercase">
                       {t('side_pencapaian.rewardClaimed')}
@@ -2176,26 +2172,33 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
                   )}
                 </div>
 
-                {/* Extra custom badges for dynamic indicators */}
-                {item.extraBadges && item.extraBadges.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
-                    {item.extraBadges.map((badge, bIdx) => {
-                      const BadgeIcon = badge.icon;
-                      return (
-                        <span
-                          key={bIdx}
-                          className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[9px] font-bold ${badge.colorClass}`}
-                        >
-                          {BadgeIcon && <BadgeIcon className="h-2.5 w-2.5" />}
-                          {badge.label}
-                        </span>
-                      );
-                    })}
-                  </div>
-                )}
+                {/* BARIS TARGET & PROGRES (FLEX) */}
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-amber-400/10 border border-amber-400/40 text-amber-300 shrink-0">
+                    ({item.currentProgress} / {item.maxProgress})
+                  </span>
+
+                  {/* Extra custom badges for dynamic indicators */}
+                  {item.extraBadges && item.extraBadges.length > 0 && (
+                    <>
+                      {item.extraBadges.map((badge, bIdx) => {
+                        const BadgeIcon = badge.icon;
+                        return (
+                          <span
+                            key={bIdx}
+                            className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[9px] font-bold shrink-0 ${badge.colorClass}`}
+                          >
+                            {BadgeIcon && <BadgeIcon className="h-2.5 w-2.5" />}
+                            {badge.label}
+                          </span>
+                        );
+                      })}
+                    </>
+                  )}
+                </div>
 
                 {/* BADGES HADIAH USULAN */}
-                <div className="mt-2 flex flex-wrap items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2 pt-0.5">
                   {item.reward.neo !== undefined && (
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-500/15 border border-blue-400/40 text-blue-200 font-black text-[10px]">
                       <Coins className="h-3 w-3 text-blue-300" />
