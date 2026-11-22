@@ -29,11 +29,11 @@
   "items": {
     "negara_sejahtera": {
       "title": "Negara Sejahtera",
-      "description": "Pertahankan indeks kepuasan rakyat minimal 80% selama beberapa bulan dalam game."
+      "description": "Tingkatkan indeks kesejahteraan nasional sebesar +10 dari target sebelumnya hingga mencapai target puncak 100/100."
     },
     "kebahagiaan_merata": {
       "title": "Kebahagiaan Merata",
-      "description": "Tingkatkan beberapa sektor kepuasan rakyat hingga mencapai target yang ditentukan."
+      "description": "Tingkatkan indeks kepuasan rakyat sebesar +10 dari target bertahap hingga menyentuh kepuasan maksimal 100%."
     },
     "rumah_untuk_semua": {
       "title": "Rumah untuk Semua",
@@ -45,11 +45,11 @@
     },
     "penduduk_sehat": {
       "title": "Penduduk Sehat",
-      "description": "Turunkan angka kematian atau tangani wabah hingga kondisi kesehatan kembali stabil."
+      "description": "Jaga kesehatan masyarakat dan minimalkan angka kematian akibat wabah atau penyakit hingga di bawah 20%."
     },
     "pertumbuhan_terjaga": {
       "title": "Pertumbuhan Terjaga",
-      "description": "Capai target pertumbuhan populasi tanpa membiarkan kebutuhan dasar mengalami defisit berkepanjangan."
+      "description": "Pertahankan laju pertumbuhan populasi agar tetap surplus (+) selama 6 bulan berturut-turut tanpa mengalami defisit (-). Petunjuk: Pastikan pemenuhan pangan, fasilitas hunian, dan stabilitas keamanan selalu tercukupi agar tidak terjadi penurunan populasi."
     },
     "mandiri_energi": {
       "title": "Mandiri Energi",
@@ -59,13 +59,9 @@
       "title": "Lumbung Pangan",
       "description": "Penuhi kebutuhan pangan warga dan capai surplus produksi."
     },
-    "rantai_produksi_lengkap": {
-      "title": "Rantai Produksi Lengkap",
-      "description": "Bangun fasilitas produksi dari beberapa kategori industri yang berbeda."
-    },
     "anggaran_sehat": {
       "title": "Anggaran Sehat",
-      "description": "Catat surplus anggaran nasional selama beberapa periode berturut-turut."
+      "description": "Catat surplus anggaran dan pendapatan kas negara yang stabil selama periode {periodText} (target evaluasi: {targetDate})."
     },
     "bebas_utang": {
       "title": "Bebas Utang",
@@ -73,11 +69,11 @@
     },
     "mitra_dagang_dunia": {
       "title": "Mitra Dagang Dunia",
-      "description": "Selesaikan perdagangan dengan beberapa negara dan perdagangkan beragam komoditas."
+      "description": "Lakukan transaksi pada Pasar Perdagangan Global dengan menekan Jual, Beli, atau Jual Semua untuk menambah kas negara dan memperluas perdagangan global."
     },
     "daya_beli_terjaga": {
       "title": "Daya Beli Terjaga",
-      "description": "Pertahankan harga kebutuhan pokok pada tingkat yang terjangkau selama beberapa bulan dalam game."
+      "description": "Pertahankan Indeks Kepuasan Rakyat atas Harga Barang Pokok di atas target bertahap: 65, 75, dan 80. Klaim hadiah saat ini untuk mengaktifkan target berikutnya!"
     },
     "pembangun_bangsa": {
       "title": "Pembangun Bangsa",

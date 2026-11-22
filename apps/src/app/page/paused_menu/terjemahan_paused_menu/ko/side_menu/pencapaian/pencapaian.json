@@ -28,12 +28,12 @@
   },
   "items": {
     "negara_sejahtera": {
-      "title": "Prosperous Nation",
-      "description": "Maintain public satisfaction at 80% or above for multiple in-game months."
+      "title": "번영하는 국가",
+      "description": "국가 복지 지수를 이전 목표치보다 +10씩 올려 최고 목표치 100/100을 달성하세요."
     },
     "kebahagiaan_merata": {
-      "title": "Equitable Happiness",
-      "description": "Elevate multiple public satisfaction sectors to their target benchmarks."
+      "title": "골고루 누리는 행복",
+      "description": "시민 만족도를 단계별로 +10씩 높여 최대 100%에 도달하세요."
     },
     "rumah_untuk_semua": {
       "title": "Homes for All",
@@ -44,12 +44,12 @@
       "description": "Fulfill fundamental population needs such as food, electricity, housing, and public spaces."
     },
     "penduduk_sehat": {
-      "title": "Healthy Citizens",
-      "description": "Lower mortality rates or contain outbreaks until public health restabilizes."
+      "title": "건강한 국민",
+      "description": "공중 보건을 관리하여 질병 및 전염병 사망률을 20% 미만으로 억제하세요."
     },
     "pertumbuhan_terjaga": {
-      "title": "Sustained Growth",
-      "description": "Achieve population growth targets without prolonged basic necessity shortages."
+      "title": "안정적인 성장",
+      "description": "인구 증가율을 6개월 연속 흑자(+)로 유지하세요 (적자 금지). 힌트: 식량, 주거, 치안을 유지하여 인구 감소를 예방하세요."
     },
     "mandiri_energi": {
       "title": "Energy Independence",
@@ -59,25 +59,21 @@
       "title": "National Granary",
       "description": "Fulfill national food requirements and maintain a production surplus."
     },
-    "rantai_produksi_lengkap": {
-      "title": "Complete Supply Chain",
-      "description": "Construct production facilities across multiple distinct industrial sectors."
-    },
     "anggaran_sehat": {
-      "title": "Balanced Budget",
-      "description": "Record consecutive national budget surpluses over multiple fiscal periods."
+      "title": "건전한 재정",
+      "description": "{periodText} 동안 국가 재정 흑자와 국고 안정을 유지하세요 (목표 평가일: {targetDate})."
     },
     "bebas_utang": {
       "title": "Debt Free",
       "description": "Repay all active sovereign loans and debts in full."
     },
     "mitra_dagang_dunia": {
-      "title": "Global Trading Partner",
-      "description": "Conclude trade deals with several nations across diverse commodities."
+      "title": "세계 무역 파트너",
+      "description": "글로벌 무역 시장에서 판매, 구매, 전량 판매를 진행하여 국고를 늘리세요."
     },
     "daya_beli_terjaga": {
-      "title": "Stable Purchasing Power",
-      "description": "Maintain essential goods prices at affordable levels across multiple months."
+      "title": "안정된 구매력",
+      "description": "필수 생필품 가격에 대한 국민 만족도를 단계별 목표(65, 75, 80) 이상으로 유지하세요. 수령 시 다음 단계 활성화!"
     },
     "pembangun_bangsa": {
       "title": "Nation Builder",

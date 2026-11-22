@@ -5,7 +5,7 @@ import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/langu
 import {
   Trophy, Award, CheckCircle2, Lock, Sparkles, Gem, Coins,
   Smile, Users2, Zap, Landmark, Building2, Microscope,
-  Briefcase, Globe, HeartHandshake, Shield, Siren, Filter
+  Briefcase, Globe, HeartHandshake, Shield, Siren, Skull, TrendingUp, Calendar
 } from 'lucide-react';
 
 export type AchievementCategory =
@@ -21,6 +21,15 @@ export type AchievementCategory =
   | 'pertahanan'
   | 'tanggap_darurat';
 
+export interface DynamicAchievementInfo {
+  target: number;
+  current: number;
+  isUnlocked: boolean;
+  extraBadges?: Array<{ label: string; colorClass: string; icon?: React.ElementType }>;
+  dynamicDescription?: string;
+  dynamicTitle?: string;
+}
+
 export interface AchievementItem {
   id: string;
   category: AchievementCategory;
@@ -32,36 +41,96 @@ export interface AchievementItem {
     neo?: number;
     titleBadge?: string;
   };
-  computeProgress: (countryDetail: any) => { current: number; isUnlocked: boolean };
+  computeProgress: (countryDetail: any, currentDate?: Date, achievementState?: AchievementState) => {
+    current: number;
+    isUnlocked: boolean;
+    target?: number;
+    extraBadges?: Array<{ label: string; colorClass: string; icon?: React.ElementType }>;
+    dynamicDescription?: string;
+    dynamicTitle?: string;
+  };
 }
 
+export interface AchievementState {
+  claimed: Record<string, boolean>;
+  milestones: {
+    negara_sejahtera_tier?: number;
+    kebahagiaan_merata_tier?: number;
+    daya_beli_tier?: number; // 0 for target 65, 1 for target 75, 2 for target 80, 3 completed
+  };
+}
+
+const LOCAL_STORAGE_ACHIEVEMENTS_KEY = 'neosantara_achievements_state';
+
+// ─────────────────────────────────────────────────────────────────────────
+// LOGIKA KHUSUS ACHIEVEMENT ITEMS
+// ─────────────────────────────────────────────────────────────────────────
 const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
-  // Kepuasan & Kesejahteraan
+  // ═══ 1. KEPUASAN & KESEJAHTERAAN ═══
   {
+    // Logika 1: Mengikuti kesejahteraan di navbar lalu +10 bertahap (misal 59 -> target 69)
     id: 'negara_sejahtera',
     category: 'kepuasan',
     icon: Smile,
     accent: '#10b981',
     maxProgress: 100,
     reward: { gems: 150, neo: 50000000 },
-    computeProgress: (cd) => {
-      const kepuasan = cd?.kepuasan ?? cd?.satisfaction ?? 75;
-      const current = Math.min(100, Math.round(kepuasan));
-      return { current, isUnlocked: kepuasan >= 80 };
+    computeProgress: (cd, _, state) => {
+      // Ambil nilai kesejahteraan real dari navbar / detail
+      const rawWelfare = Number(cd?.kesejahteraan ?? cd?.indeks_kesejahteraan ?? cd?.kesejahteraan_masyarakat ?? 59);
+      const currentVal = Math.max(0, Math.min(100, Math.round(rawWelfare)));
+
+      // Target dihitung dinamis persis +10 dari nilai awal / tier sebelumnya
+      const currentTier = state?.milestones?.negara_sejahtera_tier ?? 0;
+      const initialTarget = Math.min(100, currentVal + 10);
+      let targetVal = Math.min(100, initialTarget + (currentTier * 10));
+
+      const isUnlocked = currentVal >= targetVal;
+
+      return {
+        current: currentVal,
+        target: targetVal,
+        isUnlocked,
+        dynamicDescription: `Petunjuk: Tingkatkan indeks kesejahteraan nasional hingga mencapai ${targetVal}/100. Rawat kebutuhan pokok, fasilitas medis, dan subsidi masyarakat.`,
+        extraBadges: [
+          {
+            label: `Target Kesejahteraan: ${targetVal}/100`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-root-accent/15 text-root-accent border-root-accent/30',
+          },
+        ],
+      };
     },
   },
   {
+    // Logika 2: Kebahagiaan merata target +10 bertahap (misal 74 -> target 84)
     id: 'kebahagiaan_merata',
     category: 'kepuasan',
     icon: Award,
     accent: '#34d399',
-    maxProgress: 5,
-    reward: { gems: 100, neo: 30000000 },
-    computeProgress: (cd) => {
-      const sectors = cd?.sectorsSatisfaction || {};
-      const count = Object.values(sectors).filter((v: any) => Number(v) >= 70).length;
-      const current = Math.min(5, count > 0 ? count : 3);
-      return { current, isUnlocked: current >= 5 };
+    maxProgress: 100,
+    reward: { gems: 120, neo: 40000000 },
+    computeProgress: (cd, _, state) => {
+      const kepuasan = Number(cd?.kepuasan ?? cd?.satisfaction ?? 74);
+      const currentVal = Math.max(0, Math.min(100, Math.round(kepuasan)));
+
+      const currentTier = state?.milestones?.kebahagiaan_merata_tier ?? 0;
+      const initialTarget = Math.min(100, currentVal + 10);
+      let targetVal = Math.min(100, initialTarget + (currentTier * 10));
+
+      const isUnlocked = currentVal >= targetVal;
+
+      return {
+        current: currentVal,
+        target: targetVal,
+        isUnlocked,
+        dynamicDescription: `Petunjuk: Tingkatkan indeks kepuasan rakyat hingga mencapai ${targetVal}%. Buat inisiatif acara rakyat atau optimalkan sektor-sektor pelayanan publik.`,
+        extraBadges: [
+          {
+            label: `Target Kepuasan: ${targetVal}%`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-root-accent/15 text-root-accent border-root-accent/30',
+          },
+        ],
+      };
     },
   },
   {
@@ -78,7 +147,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     },
   },
 
-  // Populasi
+  // ═══ 2. POPULASI ═══
   {
     id: 'layanan_untuk_semua',
     category: 'populasi',
@@ -94,32 +163,89 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     },
   },
   {
+    // Logika 3: Penduduk Sehat dengan badge persentase angka kematian & angka penduduk yang akan mati akibat penyakit/wabah
     id: 'penduduk_sehat',
     category: 'populasi',
     icon: Users2,
     accent: '#60a5fa',
     maxProgress: 100,
-    reward: { gems: 100, neo: 35000000 },
+    reward: { gems: 150, neo: 45000000 },
     computeProgress: (cd) => {
-      const health = cd?.healthIndex ?? 85;
-      return { current: Math.min(100, health), isUnlocked: health >= 80 };
+      const populasi = Number(cd?.jumlah_penduduk || cd?.population || 10000000);
+      
+      // Hitung dampak wabah atau penyakit aktif
+      const activeOutbreaks: any[] = Array.isArray(cd?.active_outbreaks) ? cd.active_outbreaks : [];
+      let totalPenyakitDeaths = 0;
+      let totalPenyakitVictims = 0;
+
+      activeOutbreaks.forEach((outbreak) => {
+        const d = Number(outbreak.perkiraanKematian || 0);
+        const k = Number(outbreak.korban || d * 2 || 1);
+        totalPenyakitDeaths += d;
+        totalPenyakitVictims += k;
+      });
+
+      // Jika tidak ada wabah aktif, gunakan estimasi rasio kematian kesehatan harian
+      const baseHealthRate = totalPenyakitVictims > 0
+        ? (totalPenyakitDeaths / totalPenyakitVictims) * 100
+        : Math.max(0.1, Number(cd?.healthDeathRatePercent ?? 1.8));
+
+      const deathsCount = totalPenyakitDeaths > 0
+        ? totalPenyakitDeaths
+        : Math.round((populasi * (baseHealthRate / 100)) / 365);
+
+      const isUnlocked = baseHealthRate <= 20;
+      const current = Math.min(100, Math.max(0, Math.round(100 - baseHealthRate)));
+
+      return {
+        current,
+        target: 100,
+        isUnlocked,
+        extraBadges: [
+          {
+            label: `Mortalitas Penyakit: ${baseHealthRate.toFixed(1)}%`,
+            colorClass: 'bg-rose-500/15 text-rose-300 border-rose-500/30',
+            icon: Skull,
+          },
+          {
+            label: `Estimasi Jiwa Terancam: ${deathsCount.toLocaleString('id-ID')} jiwa`,
+            colorClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+            icon: Users2,
+          },
+        ],
+      };
     },
   },
   {
+    // Logika 4: Pertumbuhan Terjaga (Populasi tetap surplus 6 bulan berturut-turut tanpa defisit)
     id: 'pertumbuhan_terjaga',
     category: 'populasi',
-    icon: Users2,
+    icon: TrendingUp,
     accent: '#2563eb',
-    maxProgress: 1,
-    reward: { gems: 120, neo: 45000000 },
+    maxProgress: 6,
+    reward: { gems: 200, neo: 60000000 },
     computeProgress: (cd) => {
-      const pop = cd?.population ?? 1000000;
-      const isUnlocked = pop >= 1500000;
-      return { current: isUnlocked ? 1 : 0, isUnlocked };
+      // Ambil streak bulan surplus populasi
+      const surplusStreak = Number(cd?.population_surplus_months_streak ?? 6);
+      const current = Math.min(6, Math.max(0, surplusStreak));
+      const isUnlocked = current >= 6;
+
+      return {
+        current,
+        target: 6,
+        isUnlocked,
+        extraBadges: [
+          {
+            label: `Surplus Berjalan: ${current} / 6 Bulan`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30',
+            icon: TrendingUp,
+          },
+        ],
+      };
     },
   },
 
-  // Produksi & Konsumsi
+  // ═══ 3. PRODUKSI & KONSUMSI ═══
   {
     id: 'mandiri_energi',
     category: 'produksi',
@@ -144,32 +270,43 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
       return { current: surplus ? 1 : 0, isUnlocked: Boolean(surplus) };
     },
   },
-  {
-    id: 'rantai_produksi_lengkap',
-    category: 'produksi',
-    icon: Zap,
-    accent: '#d97706',
-    maxProgress: 8,
-    reward: { gems: 250, neo: 100000000 },
-    computeProgress: (cd) => {
-      const prods = Object.keys(cd?.buildings || cd?.produksi || {}).length;
-      const current = Math.min(8, prods > 0 ? prods : 4);
-      return { current, isUnlocked: current >= 8 };
-    },
-  },
+  // Note: 'rantai_produksi_lengkap' dihapus sesuai poin permintaan nomor 5!
 
-  // Ekonomi
+  // ═══ 4. EKONOMI ═══
   {
+    // Logika 6: Anggaran Sehat (Surplus anggaran stabil selama 1 atau 2 tahun dengan tanggal evaluasi)
     id: 'anggaran_sehat',
     category: 'ekonomi',
     icon: Landmark,
     accent: '#10b981',
-    maxProgress: 6,
-    reward: { gems: 200, neo: 90000000 },
-    computeProgress: (cd) => {
-      const surplusStreak = cd?.budgetSurplusMonths ?? 4;
-      const current = Math.min(6, surplusStreak);
-      return { current, isUnlocked: current >= 6 };
+    maxProgress: 12,
+    reward: { gems: 250, neo: 100000000 },
+    computeProgress: (cd, currentDate) => {
+      const now = currentDate || new Date();
+      const currentYear = now.getFullYear();
+      const targetYear = currentYear + 1;
+      const targetDateFormatted = `31/12/${targetYear}`;
+
+      const surplusMonths = Number(cd?.budgetSurplusMonths ?? cd?.surplus_months ?? 12);
+      const current = Math.min(12, Math.max(0, surplusMonths));
+      const isUnlocked = current >= 12;
+
+      return {
+        current,
+        target: 12,
+        isUnlocked,
+        extraBadges: [
+          {
+            label: `Durasi Target: 1 Tahun (hingga ${targetDateFormatted})`,
+            colorClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
+            icon: Calendar,
+          },
+          {
+            label: `Surplus Tercatat: ${current} / 12 Bulan`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+          },
+        ],
+      };
     },
   },
   {
@@ -185,32 +322,98 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     },
   },
   {
+    // Logika 7: Mitra Dagang Dunia (Terhubung dengan Pasar Perdagangan Global jika menekan Jual, Beli, atau Jual Semua menambah kas)
     id: 'mitra_dagang_dunia',
     category: 'ekonomi',
-    icon: Landmark,
+    icon: Globe,
     accent: '#34d399',
-    maxProgress: 5,
-    reward: { gems: 150, neo: 60000000 },
+    maxProgress: 1,
+    reward: { gems: 200, neo: 75000000 },
     computeProgress: (cd) => {
-      const tradePartners = cd?.tradePartnersCount ?? (cd?.tradeDeals?.length || 3);
-      const current = Math.min(5, tradePartners);
-      return { current, isUnlocked: current >= 5 };
+      const history = Array.isArray(cd?.tradeHistory) ? cd.tradeHistory : [];
+      // Cek apakah ada riwayat jual atau beli atau aksi pasar global
+      const hasExecutedTrade = history.some((t: any) => t && (t.tipe === 'jual' || t.tipe === 'beli') && Number(t.biaya) > 0);
+      const manualTradeCounter = Number(cd?.globalMarketTransactionsCount || (hasExecutedTrade ? 1 : 0));
+      const isUnlocked = manualTradeCounter >= 1;
+
+      return {
+        current: isUnlocked ? 1 : 0,
+        target: 1,
+        isUnlocked,
+        extraBadges: [
+          {
+            label: isUnlocked ? 'Transaksi Pasar Global: Selesai' : 'Belum Ada Transaksi Global',
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-rose-500/15 text-rose-300 border-rose-500/30',
+          },
+        ],
+      };
     },
   },
   {
+    // Logika 8: Daya Beli Terjaga (Target bertahap: 65 -> 75 -> 80 untuk Kepuasan Harga Barang Pokok)
     id: 'daya_beli_terjaga',
     category: 'ekonomi',
     icon: Landmark,
     accent: '#6ee7b7',
     maxProgress: 100,
-    reward: { gems: 120, neo: 50000000 },
-    computeProgress: (cd) => {
-      const purchasingPower = cd?.purchasingPower ?? 82;
-      return { current: Math.min(100, purchasingPower), isUnlocked: purchasingPower >= 80 };
+    reward: { gems: 200, neo: 60000000 },
+    computeProgress: (cd, _, state) => {
+      // Ambil skor kepuasan harga barang pokok yang identik dengan modal Info Daya Beli (HargaModal)
+      const prices = cd?.harga || {};
+      const subsidyActive = Boolean(cd?.subsidyActive);
+      const priceEntries = Object.entries(prices).filter(([k]) => k.startsWith('harga_'));
+
+      let calculatedHarga = 50;
+      if (priceEntries.length > 0) {
+        const minPrice = 10000;
+        const maxPrice = 100000;
+        let totalScore = 0;
+        for (const [, value] of priceEntries) {
+          const valNum = Number(value) || 0;
+          let score = 100 - ((valNum - minPrice) / (maxPrice - minPrice)) * 100;
+          score = Math.min(100, Math.max(0, score));
+          totalScore += score;
+        }
+        let avgScore = totalScore / priceEntries.length;
+        if (subsidyActive) avgScore = Math.min(100, avgScore + 5);
+        calculatedHarga = Math.round(avgScore);
+      } else if (cd?.satisfaction?.price !== undefined) {
+        calculatedHarga = Number(cd.satisfaction.price);
+      } else if (cd?.priceSatisfaction !== undefined) {
+        calculatedHarga = Number(cd.priceSatisfaction);
+      } else if (cd?.sectorsSatisfaction?.harga !== undefined) {
+        calculatedHarga = Number(cd.sectorsSatisfaction.harga);
+      }
+
+      const currentVal = Math.max(0, Math.min(100, Math.round(calculatedHarga)));
+
+      // Tingkat target: 0 -> 65, 1 -> 75, 2 -> 80
+      const tierIndex = state?.milestones?.daya_beli_tier ?? 0;
+      const targets = [65, 75, 80];
+      const targetVal = targets[Math.min(tierIndex, targets.length - 1)];
+
+      const isUnlocked = currentVal >= targetVal;
+
+      return {
+        current: currentVal,
+        target: targetVal,
+        isUnlocked,
+        dynamicDescription: `Petunjuk: Pertahankan indeks kepuasan rakyat atas harga barang pokok hingga mencapai minimal ${targetVal}/100. Atur harga kebutuhan pokok pada Menu Daya Beli atau aktifkan subsidi harga.`,
+        extraBadges: [
+          {
+            label: `Target Tahap ${tierIndex + 1}: ${targetVal}/100`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30',
+          },
+          {
+            label: `Indeks Kepuasan Harga Pokok: ${currentVal}/100`,
+            colorClass: 'bg-root-accent/15 text-root-accent border-root-accent/30',
+          },
+        ],
+      };
     },
   },
 
-  // Pembangunan
+  // ═══ 5. PEMBANGUNAN ═══
   {
     id: 'pembangun_bangsa',
     category: 'pembangunan',
@@ -251,7 +454,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     },
   },
 
-  // Penelitian
+  // ═══ 6. PENELITIAN ═══
   {
     id: 'negeri_inovatif',
     category: 'penelitian',
@@ -292,7 +495,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     },
   },
 
-  // Kementerian
+  // ═══ 7. KEMENTERIAN & KABINET ═══
   {
     id: 'kabinet_andal',
     category: 'kementerian',
@@ -332,7 +535,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     },
   },
 
-  // Geopolitik & Diplomasi
+  // ═══ 8. GEOPOLITIK & DIPLOMASI ═══
   {
     id: 'diplomat_ulung',
     category: 'geopolitik',
@@ -386,7 +589,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     },
   },
 
-  // Sosial & Budaya
+  // ═══ 9. SOSIAL & BUDAYA ═══
   {
     id: 'masyarakat_harmonis',
     category: 'sosial_budaya',
@@ -424,7 +627,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     },
   },
 
-  // Pertahanan
+  // ═══ 10. PERTAHANAN ═══
   {
     id: 'penjaga_negeri',
     category: 'pertahanan',
@@ -477,7 +680,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     },
   },
 
-  // Tanggap Darurat
+  // ═══ 11. TANGGAP DARURAT ═══
   {
     id: 'tanggap_bencana',
     category: 'tanggap_darurat',
@@ -518,18 +721,13 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
   },
 ];
 
-const LOCAL_STORAGE_ACHIEVEMENTS_KEY = 'neosantara_achievements_state';
-
-interface AchievementState {
-  claimed: Record<string, boolean>;
-}
-
 interface PencapaianModalsProps {
   countryDetail?: any;
   setCountryDetail?: (updater: any) => void;
+  currentDate?: Date;
 }
 
-export function PencapaianContent({ countryDetail, setCountryDetail }: PencapaianModalsProps) {
+export function PencapaianContent({ countryDetail, setCountryDetail, currentDate }: PencapaianModalsProps) {
   const { t } = useLanguage();
   const [filterStatus, setFilterStatus] = useState<'all' | 'locked' | 'unlocked'>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -537,12 +735,23 @@ export function PencapaianContent({ countryDetail, setCountryDetail }: Pencapaia
 
   // Load state from localStorage or countryDetail
   const [achievementState, setAchievementState] = useState<AchievementState>(() => {
-    if (typeof window === 'undefined') return { claimed: {} };
+    if (typeof window === 'undefined') {
+      return { claimed: {}, milestones: {} };
+    }
     try {
       const stored = localStorage.getItem(LOCAL_STORAGE_ACHIEVEMENTS_KEY);
-      if (stored) return JSON.parse(stored);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return {
+          claimed: parsed.claimed || {},
+          milestones: parsed.milestones || {},
+        };
+      }
     } catch {}
-    return { claimed: countryDetail?.achievementsClaimed || {} };
+    return {
+      claimed: countryDetail?.achievementsClaimed || {},
+      milestones: countryDetail?.achievementMilestones || {},
+    };
   });
 
   const saveAchievementState = (nextState: AchievementState) => {
@@ -554,6 +763,7 @@ export function PencapaianContent({ countryDetail, setCountryDetail }: Pencapaia
       setCountryDetail((prev: any) => ({
         ...prev,
         achievementsClaimed: nextState.claimed,
+        achievementMilestones: nextState.milestones,
       }));
     }
   };
@@ -561,25 +771,27 @@ export function PencapaianContent({ countryDetail, setCountryDetail }: Pencapaia
   // Evaluate all achievements
   const evaluatedAchievements = useMemo(() => {
     return ACHIEVEMENT_DEFINITIONS.map((def) => {
-      const { current, isUnlocked } = def.computeProgress(countryDetail);
+      const computed = def.computeProgress(countryDetail, currentDate, achievementState);
       const isClaimed = Boolean(achievementState.claimed[def.id]);
-      const isReadyToClaim = isUnlocked && !isClaimed;
+      const isReadyToClaim = computed.isUnlocked && !isClaimed;
+      const maxTarget = computed.target ?? def.maxProgress;
+
       return {
         ...def,
-        currentProgress: current,
-        isUnlocked,
+        currentProgress: computed.current,
+        maxProgress: maxTarget,
+        isUnlocked: computed.isUnlocked,
         isClaimed,
         isReadyToClaim,
+        extraBadges: computed.extraBadges,
+        dynamicDescription: computed.dynamicDescription,
+        dynamicTitle: computed.dynamicTitle,
       };
     });
-  }, [countryDetail, achievementState]);
+  }, [countryDetail, currentDate, achievementState]);
 
   const totalUnlocked = useMemo(() => {
     return evaluatedAchievements.filter((a) => a.isUnlocked).length;
-  }, [evaluatedAchievements]);
-
-  const totalClaimable = useMemo(() => {
-    return evaluatedAchievements.filter((a) => a.isReadyToClaim).length;
   }, [evaluatedAchievements]);
 
   // Filtered list
@@ -601,12 +813,38 @@ export function PencapaianContent({ countryDetail, setCountryDetail }: Pencapaia
   const handleClaim = (item: typeof evaluatedAchievements[0]) => {
     if (!item.isReadyToClaim) return;
 
+    // Handle multistep milestone progression
+    let nextMilestones = { ...achievementState.milestones };
+    let shouldLockAgainForNextTier = false;
+
+    if (item.id === 'negara_sejahtera') {
+      const currentTier = nextMilestones.negara_sejahtera_tier ?? 0;
+      if (item.maxProgress < 100) {
+        nextMilestones.negara_sejahtera_tier = currentTier + 1;
+        shouldLockAgainForNextTier = true; // resets claimed so user can claim next tier when reached!
+      }
+    } else if (item.id === 'kebahagiaan_merata') {
+      const currentTier = nextMilestones.kebahagiaan_merata_tier ?? 0;
+      if (item.maxProgress < 100) {
+        nextMilestones.kebahagiaan_merata_tier = currentTier + 1;
+        shouldLockAgainForNextTier = true;
+      }
+    } else if (item.id === 'daya_beli_terjaga') {
+      const currentTier = nextMilestones.daya_beli_tier ?? 0;
+      if (currentTier < 2) {
+        // Tier 0 (65) -> Tier 1 (75) -> Tier 2 (80)
+        nextMilestones.daya_beli_tier = currentTier + 1;
+        shouldLockAgainForNextTier = true;
+      }
+    }
+
     const nextState: AchievementState = {
       ...achievementState,
       claimed: {
         ...achievementState.claimed,
-        [item.id]: true,
+        [item.id]: !shouldLockAgainForNextTier,
       },
+      milestones: nextMilestones,
     };
     saveAchievementState(nextState);
 
@@ -624,7 +862,7 @@ export function PencapaianContent({ countryDetail, setCountryDetail }: Pencapaia
       });
     }
 
-    const title = t(`side_pencapaian.items.${item.id}.title`) || item.id;
+    const title = item.dynamicTitle || t(`side_pencapaian.items.${item.id}.title`) || item.id;
     const rewardText = [
       item.reward.gems ? `${item.reward.gems} Gems` : null,
       item.reward.neo ? `${item.reward.neo.toLocaleString('id-ID')} NEO` : null,
@@ -741,8 +979,18 @@ export function PencapaianContent({ countryDetail, setCountryDetail }: Pencapaia
       <div className="flex-1 overflow-y-auto p-3 sm:p-4 custom-scrollbar space-y-2.5">
         {filteredList.map((item) => {
           const Icon = item.icon;
-          const title = t(`side_pencapaian.items.${item.id}.title`) || item.id;
-          const description = t(`side_pencapaian.items.${item.id}.description`) || '';
+          const title = item.dynamicTitle || t(`side_pencapaian.items.${item.id}.title`) || item.id;
+          
+          let description = item.dynamicDescription || t(`side_pencapaian.items.${item.id}.description`) || '';
+          // Inject template variables like {periodText} and {targetDate} for anggaran_sehat
+          if (item.id === 'anggaran_sehat') {
+            const now = currentDate || new Date();
+            const targetYear = now.getFullYear() + 1;
+            description = description
+              .replace('{periodText}', '1 Tahun')
+              .replace('{targetDate}', `31/12/${targetYear}`);
+          }
+
           const categoryName = t(`side_pencapaian.categories.${item.category}`) || item.category;
           const pct = Math.min(100, Math.round((item.currentProgress / item.maxProgress) * 100));
 
@@ -791,9 +1039,27 @@ export function PencapaianContent({ countryDetail, setCountryDetail }: Pencapaia
                   <h3 className="text-xs font-black text-root-text tracking-wide mt-0.5 truncate">
                     {title}
                   </h3>
-                  <p className="text-[11px] text-root-subtle mt-0.5 line-clamp-2">
+                  <p className="text-[11px] text-root-subtle mt-0.5 line-clamp-3">
                     {description}
                   </p>
+
+                  {/* Extra custom badges for dynamic indicators */}
+                  {item.extraBadges && item.extraBadges.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                      {item.extraBadges.map((badge, bIdx) => {
+                        const BadgeIcon = badge.icon;
+                        return (
+                          <span
+                            key={bIdx}
+                            className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[9px] font-bold ${badge.colorClass}`}
+                          >
+                            {BadgeIcon && <BadgeIcon className="h-2.5 w-2.5" />}
+                            {badge.label}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
 
                   {/* Progress Bar */}
                   <div className="mt-2.5 space-y-1">
@@ -839,7 +1105,7 @@ export function PencapaianContent({ countryDetail, setCountryDetail }: Pencapaia
                   <button
                     type="button"
                     onClick={() => handleClaim(item)}
-                    className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 text-[10px] font-black uppercase tracking-wider shadow-md hover:brightness-110 active:scale-95 transition-all flex items-center gap-1"
+                    className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 text-[10px] font-black uppercase tracking-wider shadow-md hover:brightness-110 active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
                   >
                     <Sparkles className="h-3 w-3" />
                     {t('side_pencapaian.rewardReady')}

@@ -28,12 +28,12 @@
   },
   "items": {
     "negara_sejahtera": {
-      "title": "Prosperous Nation",
-      "description": "Maintain public satisfaction at 80% or above for multiple in-game months."
+      "title": "أمة مزدهرة",
+      "description": "ارفع مؤشر الرفاه الوطني بمقدار +10 عن الهدف السابق حتى الوصول إلى 100/100."
     },
     "kebahagiaan_merata": {
-      "title": "Equitable Happiness",
-      "description": "Elevate multiple public satisfaction sectors to their target benchmarks."
+      "title": "سعادة متكافئة",
+      "description": "ارفع رضا المواطنين تدريجياً بمقدار +10 حتى بلوغ 100% كحد أقصى."
     },
     "rumah_untuk_semua": {
       "title": "Homes for All",
@@ -44,12 +44,12 @@
       "description": "Fulfill fundamental population needs such as food, electricity, housing, and public spaces."
     },
     "penduduk_sehat": {
-      "title": "Healthy Citizens",
-      "description": "Lower mortality rates or contain outbreaks until public health restabilizes."
+      "title": "سكان أصحاء",
+      "description": "حافظ على الصحة العامة وخفض معدل وفيات الأوبئة إلى أقل من 20%."
     },
     "pertumbuhan_terjaga": {
-      "title": "Sustained Growth",
-      "description": "Achieve population growth targets without prolonged basic necessity shortages."
+      "title": "نمو مستدام",
+      "description": "حافظ على فائض النمو السكاني (+) لمدة 6 أشهر متتالية دون عجز (-). تلميح: وفر الغذاء والسكن والأمن."
     },
     "mandiri_energi": {
       "title": "Energy Independence",
@@ -59,25 +59,21 @@
       "title": "National Granary",
       "description": "Fulfill national food requirements and maintain a production surplus."
     },
-    "rantai_produksi_lengkap": {
-      "title": "Complete Supply Chain",
-      "description": "Construct production facilities across multiple distinct industrial sectors."
-    },
     "anggaran_sehat": {
-      "title": "Balanced Budget",
-      "description": "Record consecutive national budget surpluses over multiple fiscal periods."
+      "title": "ميزانية سليمة",
+      "description": "حقق فائضاً واستقراراً في ميزانية الدولة لمدة {periodText} (تاريخ التقييم: {targetDate})."
     },
     "bebas_utang": {
       "title": "Debt Free",
       "description": "Repay all active sovereign loans and debts in full."
     },
     "mitra_dagang_dunia": {
-      "title": "Global Trading Partner",
-      "description": "Conclude trade deals with several nations across diverse commodities."
+      "title": "شريك تجاري عالمي",
+      "description": "قم بعمليات بيع أو شراء أو بيع الكل في سوق التجارة العالمية لزيادة خزينة الدولة."
     },
     "daya_beli_terjaga": {
-      "title": "Stable Purchasing Power",
-      "description": "Maintain essential goods prices at affordable levels across multiple months."
+      "title": "قدرة شرائية مصونة",
+      "description": "حافظ على مؤشر رضا أسعار السلع الأساسية فوق المستويات: 65 و75 و80. استلم المكافأة لتفعيل المستوى التالي!"
     },
     "pembangun_bangsa": {
       "title": "Nation Builder",

@@ -28,12 +28,12 @@
   },
   "items": {
     "negara_sejahtera": {
-      "title": "Prosperous Nation",
-      "description": "Maintain public satisfaction at 80% or above for multiple in-game months."
+      "title": "Wohlhabende Nation",
+      "description": "Erhöhen Sie den Wohlstandsindex um +10 ausgehend vom vorherigen Meilenstein bis zum Höchstwert 100/100."
     },
     "kebahagiaan_merata": {
-      "title": "Equitable Happiness",
-      "description": "Elevate multiple public satisfaction sectors to their target benchmarks."
+      "title": "Universelles Glück",
+      "description": "Steigern Sie die Bürgerzufriedenheit um jeweils +10 bis zum Maximum von 100%."
     },
     "rumah_untuk_semua": {
       "title": "Homes for All",
@@ -44,12 +44,12 @@
       "description": "Fulfill fundamental population needs such as food, electricity, housing, and public spaces."
     },
     "penduduk_sehat": {
-      "title": "Healthy Citizens",
-      "description": "Lower mortality rates or contain outbreaks until public health restabilizes."
+      "title": "Gesunde Bevölkerung",
+      "description": "Schützen Sie die öffentliche Gesundheit und halten Sie die Krankheitsmortalität unter 20%."
     },
     "pertumbuhan_terjaga": {
-      "title": "Sustained Growth",
-      "description": "Achieve population growth targets without prolonged basic necessity shortages."
+      "title": "Beständiges Wachstum",
+      "description": "Halten Sie das Bevölkerungswachstum 6 aufeinanderfolgende Monate im Überschuss (+) ohne Defizit (-). Hinweis: Sichern Sie Nahrung, Wohnraum und Sicherheit."
     },
     "mandiri_energi": {
       "title": "Energy Independence",
@@ -59,25 +59,21 @@
       "title": "National Granary",
       "description": "Fulfill national food requirements and maintain a production surplus."
     },
-    "rantai_produksi_lengkap": {
-      "title": "Complete Supply Chain",
-      "description": "Construct production facilities across multiple distinct industrial sectors."
-    },
     "anggaran_sehat": {
-      "title": "Balanced Budget",
-      "description": "Record consecutive national budget surpluses over multiple fiscal periods."
+      "title": "Gesunder Haushalt",
+      "description": "Halten Sie den Staatshaushalt über {periodText} im Überschuss (Stichtag: {targetDate})."
     },
     "bebas_utang": {
       "title": "Debt Free",
       "description": "Repay all active sovereign loans and debts in full."
     },
     "mitra_dagang_dunia": {
-      "title": "Global Trading Partner",
-      "description": "Conclude trade deals with several nations across diverse commodities."
+      "title": "Globaler Handelspartner",
+      "description": "Führen Sie Transaktionen auf dem Weltmarkt via Verkaufen, Kaufen oder Alles Verkaufen durch."
     },
     "daya_beli_terjaga": {
-      "title": "Stable Purchasing Power",
-      "description": "Maintain essential goods prices at affordable levels across multiple months."
+      "title": "Gesicherte Kaufkraft",
+      "description": "Halten Sie den Zufriedenheitsindex für Grundpreise über den Stufen 65, 75 und 80. Belohnung einfordern schaltet die nächste Stufe frei!"
     },
     "pembangun_bangsa": {
       "title": "Nation Builder",
