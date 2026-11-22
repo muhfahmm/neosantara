@@ -5,6 +5,10 @@ import type { CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles"
 import { createInboxNotificationText, getDefaultInboxText } from "@/app/page/menus/inbox/logic/notificationMessage";
 import type { NotificationMessage } from "@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic";
 
+/* ------------------------------------------------------------------ */
+/* Tipe                                                                */
+/* ------------------------------------------------------------------ */
+
 export type CouncilRegion =
   | "Afrika"
   | "Asia-Pasifik"
@@ -42,7 +46,14 @@ export interface ElectionHistoryItem {
   votes: Record<string, number>;
 }
 
+/** Catatan masa jabatan terakhir sebuah negara yang SUDAH selesai / dicopot. */
+export interface PastTerm {
+  iso: string;
+  termEndYear: number;
+}
+
 export interface SecurityCouncilElectionState {
+  schemaVersion: number;
   year: number;
   nextElectionYear: number;
   cohort: "A" | "B";
@@ -50,7 +61,10 @@ export interface SecurityCouncilElectionState {
   scheduleStage: number;
   nominees: ElectionCandidate[];
   members: SecurityCouncilMember[];
+  /** Turunan (derived): dihitung ulang dari pastTerms, tidak dipercaya dari storage. */
   recentlyServedIsos: string[];
+  /** Sumber kebenaran untuk negara yang sudah pernah menjabat. */
+  pastTerms: PastTerm[];
   history: ElectionHistoryItem[];
   permanentBonuses: Record<string, { reputation: number; softPower: number }>;
 }
@@ -63,7 +77,20 @@ export interface ElectionCountry {
   profile: CountryProfile | null;
 }
 
+/* ------------------------------------------------------------------ */
+/* Konstanta                                                           */
+/* ------------------------------------------------------------------ */
+
 export const SECURITY_COUNCIL_ELECTION_STATE_KEY = "neosantara_pbb_security_council_election";
+
+const SCHEMA_VERSION = 2;
+
+/**
+ * Negara tidak boleh dicalonkan jika masa jabatan terakhirnya berakhir pada
+ * tahun >= (tahunPemilu - COOLING_OFF_YEARS). Anggota yang MASIH menjabat
+ * selalu diblokir terpisah lewat daftar members.
+ */
+export const COOLING_OFF_YEARS = 1;
 
 export const COHORT_SEATS: Record<"A" | "B", Partial<Record<CouncilRegion, number>>> = {
   A: {
@@ -89,22 +116,6 @@ export const PERMANENT_SECURITY_COUNCIL_MEMBERS = [
   { name: "China", iso: "cn" },
 ];
 
-export function isPermanentSecurityCouncilMember(iso: string): boolean {
-  const normalizedIso = iso.toLowerCase();
-  return PERMANENT_SECURITY_COUNCIL_MEMBERS.some(member => member.iso === normalizedIso);
-}
-
-export function isIneligibleElectionCandidate(
-  members: SecurityCouncilMember[],
-  iso: string,
-  recentlyServedIsos: string[] = [],
-): boolean {
-  const normalizedIso = iso.trim().toLowerCase();
-  return isPermanentSecurityCouncilMember(normalizedIso) ||
-    members.some(member => member.iso.trim().toLowerCase() === normalizedIso) ||
-    recentlyServedIsos.some(memberIso => memberIso.trim().toLowerCase() === normalizedIso);
-}
-
 const INITIAL_MEMBERS: Omit<SecurityCouncilMember, "termStartYear" | "termEndYear">[] = [
   { name: "Afrika Selatan", iso: "za", region: "Afrika", cohort: "A", vetoUsed: false },
   { name: "Mesir", iso: "eg", region: "Afrika", cohort: "A", vetoUsed: false },
@@ -119,25 +130,10 @@ const INITIAL_MEMBERS: Omit<SecurityCouncilMember, "termStartYear" | "termEndYea
 ];
 
 const NON_MEMBER_TERRITORIES = new Set([
-  "hong kong",
-  "makau",
-  "taiwan",
-  "kosovo",
-  "vatikan",
-  "gibraltar",
-  "kepulauan faroe",
-  "bermuda",
-  "greenland",
-  "puerto rico",
-  "guam",
-  "samoa amerika",
-  "tahiti",
-  "mayotte",
-  "reunion",
-  "guadeloupe",
-  "martinique",
-  "bonaire sint eustatius dan saba",
-  "palestina",
+  "hong kong", "makau", "taiwan", "kosovo", "vatikan", "gibraltar",
+  "kepulauan faroe", "bermuda", "greenland", "puerto rico", "guam",
+  "samoa amerika", "tahiti", "mayotte", "reunion", "guadeloupe",
+  "martinique", "bonaire sint eustatius dan saba", "palestina",
 ]);
 
 const EASTERN_EUROPE = new Set([
@@ -151,11 +147,114 @@ const WESTERN_EUROPE_EXCEPTIONS = new Set([
   "amerika serikat", "kanada", "israel", "australia", "selandia baru",
 ]);
 
-const normalizeName = (value: string) =>
+const VALID_PHASES: SecurityCouncilElectionState["phase"][] = [
+  "nomination", "campaign", "voting", "completed",
+];
+
+/* ------------------------------------------------------------------ */
+/* Helper umum                                                         */
+/* ------------------------------------------------------------------ */
+
+export const normalizeName = (value: string) =>
   value.toLocaleLowerCase("id-ID").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, " ").trim();
 
 const normalizeSlug = (value: string) => normalizeName(value).replace(/\s+/g, "-");
+
+const toIso = (value: string) => value.trim().toLowerCase();
+
+const getCohortForYear = (electionYear: number): "A" | "B" =>
+  electionYear % 2 === 0 ? "A" : "B";
+
+function hash(value: string): number {
+  let result = 2166136261;
+  for (let index = 0; index < value.length; index += 1) {
+    result ^= value.charCodeAt(index);
+    result = Math.imul(result, 16777619);
+  }
+  return result >>> 0;
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  Boolean(value) && typeof value === "object" && !Array.isArray(value);
+
+/* ------------------------------------------------------------------ */
+/* Anggota tetap & kelayakan                                           */
+/* ------------------------------------------------------------------ */
+
+export function isPermanentSecurityCouncilMember(iso: string): boolean {
+  const normalizedIso = toIso(iso);
+  return PERMANENT_SECURITY_COUNCIL_MEMBERS.some(member => member.iso === normalizedIso);
+}
+
+/**
+ * Tidak layak jika: anggota tetap, sedang menjabat (members), atau baru saja
+ * selesai menjabat (recentlyServedIsos).
+ */
+export function isIneligibleElectionCandidate(
+  members: SecurityCouncilMember[],
+  iso: string,
+  recentlyServedIsos: string[] = [],
+): boolean {
+  const normalizedIso = toIso(iso);
+  return isPermanentSecurityCouncilMember(normalizedIso) ||
+    members.some(member => toIso(member.iso) === normalizedIso) ||
+    recentlyServedIsos.some(memberIso => toIso(memberIso) === normalizedIso);
+}
+
+/** Gabungkan catatan masa jabatan; per negara hanya akhir jabatan TERBARU yang dipakai. */
+function mergePastTerms(...lists: PastTerm[][]): PastTerm[] {
+  const latest = new Map<string, number>();
+  lists.flat().forEach(term => {
+    if (!term || typeof term.iso !== "string" || !Number.isFinite(term.termEndYear)) return;
+    const iso = toIso(term.iso);
+    if (!iso) return;
+    latest.set(iso, Math.max(latest.get(iso) ?? -Infinity, term.termEndYear));
+  });
+  return [...latest].map(([iso, termEndYear]) => ({ iso, termEndYear }));
+}
+
+/** Negara yang selesai menjabat dalam jendela cooling-off sebelum pemilu `electionYear`. */
+export function getRecentlyServedIsos(electionYear: number, pastTerms: PastTerm[]): string[] {
+  return [...new Set(
+    pastTerms
+      .filter(term => term.termEndYear >= electionYear - COOLING_OFF_YEARS)
+      .map(term => toIso(term.iso))
+  )];
+}
+
+/**
+ * Migrasi data lama (tanpa pastTerms): susun ulang dari history.
+ * Pemenang pemilu tahun Y menjabat Y+1 s/d Y+2. Anggota awal berakhir
+ * pada pemilu pertama kohortnya.
+ */
+function reconstructPastTerms(history: ElectionHistoryItem[]): PastTerm[] {
+  if (history.length === 0) return [];
+  const nameToIso = new Map(
+    getSecurityCouncilElectionCandidateCountries().map(country => [normalizeName(country.name), country.iso])
+  );
+  const terms: PastTerm[] = [];
+  history.forEach(item => {
+    const isos = item.winnerIsos?.length
+      ? item.winnerIsos
+      : item.winners
+        .map(name => nameToIso.get(normalizeName(name)))
+        .filter((iso): iso is string => Boolean(iso));
+    isos.forEach(iso => terms.push({ iso, termEndYear: item.year + 2 }));
+  });
+  const first = history[0];
+  INITIAL_MEMBERS.forEach(member => {
+    terms.push({
+      iso: member.iso,
+      termEndYear: first.year + (member.cohort === first.cohort ? 0 : 1),
+    });
+  });
+  return mergePastTerms(terms);
+}
+
+/* ------------------------------------------------------------------ */
+/* Data negara                                                         */
+/* ------------------------------------------------------------------ */
 
 function getRegion(name: string, continent: string): CouncilRegion | null {
   const normalized = normalizeName(name);
@@ -182,19 +281,18 @@ function getElectionCountries(
     if (!includeNonMemberTerritories && NON_MEMBER_TERRITORIES.has(normalizedName)) return [];
     const region = getRegion(country.country, country.continent);
     if (!region) return [];
+    const profile = profilesByName.get(normalizedName) || null;
     return [{
       name: country.country,
-      iso: country.iso.toLowerCase(),
-      slug: profilesByName.get(normalizedName)?.country_slug || normalizeSlug(country.country),
+      iso: toIso(country.iso),
+      slug: profile?.country_slug || normalizeSlug(country.country),
       region,
-      profile: profilesByName.get(normalizedName) || null,
+      profile,
     }];
   });
 }
 
-export function getEligibleUNMemberCountries(
-  profiles: CountryProfile[] = []
-): ElectionCountry[] {
+export function getEligibleUNMemberCountries(profiles: CountryProfile[] = []): ElectionCountry[] {
   return getElectionCountries(profiles, false);
 }
 
@@ -204,53 +302,14 @@ export function getSecurityCouncilElectionCandidateCountries(
   return getElectionCountries(profiles, true);
 }
 
-function getRecentlyServedIsos(
-  electionYear: number,
-  history: ElectionHistoryItem[],
-  members: SecurityCouncilMember[],
-): string[] {
-  const previousElectionYear = electionYear - 1;
-  const previousCohort = previousElectionYear % 2 === 0 ? "A" : "B";
-  const servedDuringPreviousYear = members
-    .filter(member =>
-      member.termStartYear <= previousElectionYear &&
-      member.termEndYear >= previousElectionYear
-    )
-    .map(member => member.iso.toLowerCase());
-  const previousRosterElection = history.find(item =>
-    item.year === electionYear - 3 && item.cohort === previousCohort
-  );
-  let departedIsos: string[];
-  if (previousRosterElection) {
-    const recentlyServed = new Set(
-      (previousRosterElection.winnerIsos || [])
-        .filter(iso => typeof iso === "string")
-        .map(iso => iso.toLowerCase())
-    );
-    if (recentlyServed.size === 0) {
-      const countryIsos = new Map(
-        getSecurityCouncilElectionCandidateCountries()
-          .map(country => [normalizeName(country.name), country.iso])
-      );
-      previousRosterElection.winners.forEach(name => {
-        const iso = countryIsos.get(normalizeName(name));
-        if (iso) recentlyServed.add(iso);
-      });
-    }
-    departedIsos = [...recentlyServed];
-  } else {
-    departedIsos = INITIAL_MEMBERS
-      .filter(member => member.cohort === previousCohort)
-      .map(member => member.iso.toLowerCase());
-  }
-
-  return [...new Set([...servedDuringPreviousYear, ...departedIsos])];
-}
+/* ------------------------------------------------------------------ */
+/* Pembuatan & normalisasi state                                       */
+/* ------------------------------------------------------------------ */
 
 export function createInitialElectionState(year: number): SecurityCouncilElectionState {
   const electionYear = year + 1;
-  const cohort: "A" | "B" = electionYear % 2 === 0 ? "A" : "B";
-  const members = INITIAL_MEMBERS.map(member => {
+  const cohort = getCohortForYear(electionYear);
+  const members: SecurityCouncilMember[] = INITIAL_MEMBERS.map(member => {
     const termEndYear = electionYear + (member.cohort === cohort ? 0 : 1);
     return {
       ...member,
@@ -259,6 +318,7 @@ export function createInitialElectionState(year: number): SecurityCouncilElectio
     };
   });
   return {
+    schemaVersion: SCHEMA_VERSION,
     year: electionYear,
     nextElectionYear: electionYear,
     cohort,
@@ -266,202 +326,212 @@ export function createInitialElectionState(year: number): SecurityCouncilElectio
     scheduleStage: 0,
     nominees: [],
     members,
-    recentlyServedIsos: getRecentlyServedIsos(electionYear, [], members),
+    recentlyServedIsos: [],
+    pastTerms: [],
     history: [],
     permanentBonuses: {},
   };
 }
 
-export function normalizeElectionState(
-  existing: unknown,
-  year: number
-): SecurityCouncilElectionState {
+function sanitizeMembers(
+  raw: unknown,
+  fallback: SecurityCouncilMember[]
+): SecurityCouncilMember[] | null {
+  if (!Array.isArray(raw) || raw.length !== 10) return null;
+  const result: SecurityCouncilMember[] = [];
+  for (let index = 0; index < raw.length; index += 1) {
+    const member = raw[index] as Partial<SecurityCouncilMember> | null;
+    if (
+      !member ||
+      typeof member.name !== "string" ||
+      typeof member.iso !== "string" ||
+      typeof member.region !== "string" ||
+      (member.cohort !== "A" && member.cohort !== "B")
+    ) return null;
+    result.push({
+      name: member.name,
+      iso: toIso(member.iso),
+      region: member.region as CouncilRegion,
+      cohort: member.cohort,
+      termStartYear: Number.isFinite(member.termStartYear)
+        ? Number(member.termStartYear)
+        : fallback[index].termStartYear,
+      termEndYear: Number.isFinite(member.termEndYear)
+        ? Number(member.termEndYear)
+        : fallback[index].termEndYear,
+      vetoUsed: Boolean(member.vetoUsed),
+      vetoUsedOn: typeof member.vetoUsedOn === "string" ? member.vetoUsedOn : undefined,
+    });
+  }
+  return result;
+}
+
+const isValidHistoryItem = (item: unknown): item is ElectionHistoryItem =>
+  isRecord(item) &&
+  Number.isInteger(item.year) &&
+  (item.cohort === "A" || item.cohort === "B") &&
+  Array.isArray(item.winners) &&
+  isRecord(item.votes);
+
+const isValidCandidate = (item: unknown): item is ElectionCandidate =>
+  isRecord(item) &&
+  typeof item.name === "string" &&
+  typeof item.iso === "string" &&
+  typeof item.slug === "string" &&
+  typeof item.region === "string";
+
+/** Isi ulang kandidat pemenang pada data lama agar tetap tampil di hasil. */
+function backfillWinnerNominees(
+  nominees: ElectionCandidate[],
+  members: SecurityCouncilMember[],
+  history: ElectionHistoryItem[]
+): ElectionCandidate[] {
+  const last = history.at(-1);
+  if (!last) return nominees;
+  const winnerIsos = new Set((last.winnerIsos || []).map(toIso));
+  if (winnerIsos.size === 0) {
+    const winnerNames = new Set(last.winners.map(normalizeName));
+    members.forEach(member => {
+      if (winnerNames.has(normalizeName(member.name))) winnerIsos.add(toIso(member.iso));
+    });
+  }
+  const result = [...nominees];
+  members.forEach(member => {
+    const iso = toIso(member.iso);
+    if (!winnerIsos.has(iso) || result.some(candidate => toIso(candidate.iso) === iso)) return;
+    const slug = normalizeSlug(member.name);
+    result.push({
+      name: member.name,
+      iso,
+      slug,
+      region: member.region,
+      score: 0,
+      votes: last.votes[slug] || 0,
+      campaignCount: 0,
+      contributionScore: 0,
+    });
+  });
+  return result;
+}
+
+export function normalizeElectionState(existing: unknown, year: number): SecurityCouncilElectionState {
   const fallback = createInitialElectionState(year);
-  if (!existing || typeof existing !== "object") return fallback;
-  const state = existing as Partial<SecurityCouncilElectionState>;
-  const storedMembers = state.members;
-  if (!Array.isArray(storedMembers) || storedMembers.length !== 10) return fallback;
-  const hasElectionYear = Number.isInteger(state.year);
-  const hasNextElectionYear = Number.isInteger(state.nextElectionYear);
-  const history = Array.isArray(state.history) ? state.history : [];
-  const storedElectionYear = hasElectionYear
-    ? Number(state.year)
-    : Number(state.nextElectionYear) || year + 1;
-  const initialTermYear = Math.min(...storedMembers
-    .map(member => member.termStartYear)
-    .filter((termYear): termYear is number => Number.isInteger(termYear)));
-  const isUnstartedInitialElection =
-    (state.phase || "nomination") === "nomination" &&
-    (state.scheduleStage || 0) === 0 &&
-    history.length === 0 &&
-    (!Array.isArray(state.nominees) || state.nominees.length === 0);
-  const migrateInitialSchedule = isUnstartedInitialElection &&
-    Number.isFinite(initialTermYear) &&
-    storedElectionYear > initialTermYear + 1;
-  const electionYear = migrateInitialSchedule ? initialTermYear + 1 : storedElectionYear;
-  const cohort: "A" | "B" = electionYear % 2 === 0 ? "A" : "B";
-  const members = migrateInitialSchedule
-    ? storedMembers.map(member => {
-      const termEndYear = electionYear + (member.cohort === cohort ? 0 : 1);
-      return {
-        ...member,
-        termStartYear: Math.min(initialTermYear, termEndYear - 1),
-        termEndYear,
-      };
-    })
-    : storedMembers;
-  const storedRecentlyServedIsos = !migrateInitialSchedule && Array.isArray(state.recentlyServedIsos)
-    ? [...new Set(state.recentlyServedIsos
-      .filter((iso): iso is string => typeof iso === "string")
-      .map(iso => iso.toLowerCase()))]
-    : [];
-  const getRecentlyServedForYear = (targetYear: number) => [...new Set([
-    ...storedRecentlyServedIsos,
-    ...getRecentlyServedIsos(targetYear, history, members),
-  ])];
-  const recentlyServedIsos = getRecentlyServedForYear(electionYear);
-  const nextElectionYear = state.phase === "completed"
-    ? hasNextElectionYear
-      ? Number(state.nextElectionYear)
-      : electionYear + 1
-    : electionYear;
-  if (state.phase === "completed" && year >= nextElectionYear) {
-    const next = createInitialElectionState(nextElectionYear - 1);
+  if (!isRecord(existing)) return fallback;
+  const raw = existing as Partial<SecurityCouncilElectionState>;
+
+  const storedMembers = sanitizeMembers(raw.members, fallback.members);
+  if (!storedMembers) return fallback;
+
+  const history = Array.isArray(raw.history) ? raw.history.filter(isValidHistoryItem) : [];
+  const phase = VALID_PHASES.includes(raw.phase as SecurityCouncilElectionState["phase"])
+    ? (raw.phase as SecurityCouncilElectionState["phase"])
+    : "nomination";
+  const scheduleStage = Number.isInteger(raw.scheduleStage) ? Number(raw.scheduleStage) : 0;
+  const storedNominees = Array.isArray(raw.nominees) ? raw.nominees.filter(isValidCandidate) : [];
+  const permanentBonuses = isRecord(raw.permanentBonuses)
+    ? (raw.permanentBonuses as SecurityCouncilElectionState["permanentBonuses"])
+    : {};
+
+  let storedYear = Number.isInteger(raw.year)
+    ? Number(raw.year)
+    : Number.isInteger(raw.nextElectionYear)
+      ? Number(raw.nextElectionYear)
+      : year + 1;
+
+  // Migrasi: pemilu awal yang belum berjalan tetapi jadwalnya terlanjur terlalu jauh.
+  let members = storedMembers;
+  const initialTermYear = Math.min(...storedMembers.map(member => member.termStartYear));
+  const isUnstartedInitial =
+    phase === "nomination" && scheduleStage === 0 &&
+    history.length === 0 && storedNominees.length === 0;
+  if (isUnstartedInitial && Number.isFinite(initialTermYear) && storedYear > initialTermYear + 1) {
+    storedYear = initialTermYear + 1;
+    const cohort = getCohortForYear(storedYear);
+    members = storedMembers.map(member => {
+      const termEndYear = storedYear + (member.cohort === cohort ? 0 : 1);
+      return { ...member, termStartYear: Math.min(initialTermYear, termEndYear - 1), termEndYear };
+    });
+  }
+
+  // pastTerms: pakai yang tersimpan hanya jika skema sudah baru, selain itu rekonstruksi.
+  const pastTerms = raw.schemaVersion === SCHEMA_VERSION && Array.isArray(raw.pastTerms)
+    ? mergePastTerms(raw.pastTerms)
+    : reconstructPastTerms(history);
+
+  const storedNext = Number.isInteger(raw.nextElectionYear)
+    ? Number(raw.nextElectionYear)
+    : storedYear + 1;
+
+  // Pemilu sebelumnya selesai dan tahun pemilu berikutnya sudah tiba → siklus baru.
+  if (phase === "completed" && year >= storedNext) {
     return {
-      ...next,
-      members: members.map((member, index) => {
-        const defaultMember = next.members[index];
-        return {
-          ...member,
-          termStartYear: Number.isFinite(member.termStartYear)
-            ? member.termStartYear
-            : defaultMember.termStartYear,
-          termEndYear: Number.isFinite(member.termEndYear)
-            ? member.termEndYear
-            : defaultMember.termEndYear,
-        };
-      }),
-      recentlyServedIsos: getRecentlyServedForYear(nextElectionYear),
+      schemaVersion: SCHEMA_VERSION,
+      year: storedNext,
+      nextElectionYear: storedNext,
+      cohort: getCohortForYear(storedNext),
+      phase: "nomination",
+      scheduleStage: 0,
+      nominees: [],
+      members,
+      recentlyServedIsos: getRecentlyServedIsos(storedNext, pastTerms),
+      pastTerms,
       history,
-      permanentBonuses: state.permanentBonuses || {},
+      permanentBonuses,
     };
   }
-  const nominees = Array.isArray(state.nominees)
-    ? state.phase === "completed"
-      ? [...state.nominees]
-      : state.nominees.filter(candidate =>
-        !isIneligibleElectionCandidate(members, candidate.iso, recentlyServedIsos))
-    : [];
-  if (state.phase === "completed") {
-    const completedElection = history.at(-1);
-    if (completedElection) {
-      const winnerIsos = new Set(
-        (completedElection.winnerIsos || []).map(iso => iso.trim().toLowerCase())
-      );
-      if (winnerIsos.size === 0) {
-        const winnerNames = new Set(completedElection.winners.map(normalizeName));
-        members.forEach(member => {
-          if (winnerNames.has(normalizeName(member.name))) {
-            winnerIsos.add(member.iso.trim().toLowerCase());
-          }
-        });
-      }
-      if (winnerIsos.size > 0) {
-        const countriesByIso = new Map(
-          getSecurityCouncilElectionCandidateCountries()
-            .map(country => [country.iso.toLowerCase(), country])
-        );
-        members.forEach(member => {
-          const iso = member.iso.trim().toLowerCase();
-          if (
-            !winnerIsos.has(iso) ||
-            nominees.some(candidate => candidate.iso.trim().toLowerCase() === iso)
-          ) return;
-          const country = countriesByIso.get(iso);
-          const slug = country?.slug || normalizeSlug(member.name);
-          nominees.push({
-            name: member.name,
-            iso,
-            slug,
-            region: member.region,
-            score: 0,
-            votes: completedElection.votes[slug] || 0,
-            campaignCount: 0,
-            contributionScore: 0,
-          });
-        });
-      }
-    }
-  }
+
+  const recentlyServedIsos = getRecentlyServedIsos(storedYear, pastTerms);
+  const nominees = phase === "completed"
+    ? backfillWinnerNominees(storedNominees, members, history)
+    : storedNominees.filter(candidate =>
+      !isIneligibleElectionCandidate(members, candidate.iso, recentlyServedIsos));
+
   return {
-    ...fallback,
-    ...state,
-    year: electionYear,
-    nextElectionYear,
-    cohort,
-    members: members.map((member, index) => {
-      const defaultMember = fallback.members[index];
-      return {
-        ...member,
-        termStartYear: Number.isFinite(member.termStartYear)
-          ? member.termStartYear
-          : defaultMember.termStartYear,
-        termEndYear: Number.isFinite(member.termEndYear)
-          ? member.termEndYear
-          : defaultMember.termEndYear,
-      };
-    }),
+    schemaVersion: SCHEMA_VERSION,
+    year: storedYear,
+    nextElectionYear: phase === "completed" ? storedNext : storedYear,
+    cohort: getCohortForYear(storedYear),
+    phase,
+    scheduleStage,
     nominees,
+    members,
     recentlyServedIsos,
-    scheduleStage: Number.isInteger(state.scheduleStage) ? state.scheduleStage : 0,
-    phase: state.phase || "nomination",
+    pastTerms,
     history,
-    permanentBonuses: state.permanentBonuses || {},
-  } as SecurityCouncilElectionState;
+    permanentBonuses,
+  };
 }
 
-function getDefaultCouncilMembers(year: number): SecurityCouncilMember[] {
-  return createInitialElectionState(year).members;
-}
-
-export function getStoredCouncilMembers(): SecurityCouncilMember[] {
-  const currentYear = getCurrentElectionYear();
-  if (typeof window === "undefined") {
-    return getDefaultCouncilMembers(currentYear);
-  }
-  try {
-    const raw = localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
-    if (!raw) return getDefaultCouncilMembers(currentYear);
-    const parsed = JSON.parse(raw) as Partial<SecurityCouncilElectionState>;
-    if (
-      !Array.isArray(parsed.members) ||
-      parsed.members.length !== 10 ||
-      parsed.members.some(member =>
-        !member ||
-        typeof member.name !== "string" ||
-        typeof member.iso !== "string" ||
-        typeof member.region !== "string" ||
-        (member.cohort !== "A" && member.cohort !== "B")
-      )
-    ) {
-      throw new Error("Data anggota tidak tetap Dewan Keamanan tidak valid.");
-    }
-    return normalizeElectionState(parsed, currentYear).members;
-  } catch (error) {
-    console.error("Gagal membaca roster Dewan Keamanan PBB:", error);
-    return getDefaultCouncilMembers(currentYear);
-  }
-}
+/* ------------------------------------------------------------------ */
+/* Storage & roster                                                    */
+/* ------------------------------------------------------------------ */
 
 export function getCurrentElectionYear(): number {
   const year = Number(getCurrentGameDateString().slice(0, 4));
   return Number.isFinite(year) && year > 0 ? year : new Date().getFullYear();
 }
 
+function saveElectionState(state: SecurityCouncilElectionState) {
+  localStorage.setItem(SECURITY_COUNCIL_ELECTION_STATE_KEY, JSON.stringify(state));
+  window.dispatchEvent(new CustomEvent("pbb_security_council_roster_updated"));
+}
+
+export function getStoredCouncilMembers(): SecurityCouncilMember[] {
+  const currentYear = getCurrentElectionYear();
+  const fallbackMembers = () => createInitialElectionState(currentYear).members;
+  if (typeof window === "undefined") return fallbackMembers();
+  try {
+    const raw = localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
+    if (!raw) return fallbackMembers();
+    return normalizeElectionState(JSON.parse(raw), currentYear).members;
+  } catch (error) {
+    console.error("Gagal membaca roster Dewan Keamanan PBB:", error);
+    return fallbackMembers();
+  }
+}
+
 export function getCouncilVoteMultiplier(countryIso: string, year = getCurrentElectionYear()): number {
-  const member = getStoredCouncilMembers().find(
-    candidate => candidate.iso.toLowerCase() === countryIso.toLowerCase()
-  );
+  const member = getStoredCouncilMembers().find(candidate => toIso(candidate.iso) === toIso(countryIso));
   return member && year >= member.termStartYear && year <= member.termEndYear ? 1.5 : 1;
 }
 
@@ -473,9 +543,7 @@ export function getCouncilRoster() {
 }
 
 export function isLimitedVetoAvailable(countryIso: string, resolutionId?: string): boolean {
-  const member = getStoredCouncilMembers().find(
-    candidate => candidate.iso.toLowerCase() === countryIso.toLowerCase()
-  );
+  const member = getStoredCouncilMembers().find(candidate => toIso(candidate.iso) === toIso(countryIso));
   const currentYear = getCurrentElectionYear();
   return Boolean(
     member &&
@@ -490,15 +558,14 @@ export function markLimitedVetoUsed(countryIso: string, resolutionId: string): S
   try {
     const raw = localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
     if (!raw) return null;
-    const state = JSON.parse(raw) as SecurityCouncilElectionState;
+    const state = normalizeElectionState(JSON.parse(raw), getCurrentElectionYear());
     const members = state.members.map(member =>
-      member.iso.toLowerCase() === countryIso.toLowerCase()
+      toIso(member.iso) === toIso(countryIso)
         ? { ...member, vetoUsed: true, vetoUsedOn: resolutionId }
         : member
     );
     const updated = { ...state, members };
-    localStorage.setItem(SECURITY_COUNCIL_ELECTION_STATE_KEY, JSON.stringify(updated));
-    window.dispatchEvent(new CustomEvent("pbb_security_council_roster_updated"));
+    saveElectionState(updated);
     return updated;
   } catch (error) {
     console.error("Gagal menyimpan penggunaan hak veto anggota tidak tetap:", error);
@@ -510,91 +577,72 @@ export function expelCountryFromSecurityCouncil(countryNameOrIso: string): Secur
   if (typeof window === "undefined") return null;
   const currentYear = getCurrentElectionYear();
   const searchKey = normalizeName(countryNameOrIso);
-  const searchIso = countryNameOrIso.toLowerCase().trim();
+  const searchIso = toIso(countryNameOrIso);
+  const matches = (name: string, iso: string) =>
+    normalizeName(name) === searchKey || toIso(iso) === searchIso;
 
   try {
     const raw = localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
     const state = normalizeElectionState(raw ? JSON.parse(raw) : null, currentYear);
-    
-    // Cari apakah negara tersebut saat ini menjabat sebagai Anggota Tidak Tetap
-    const memberIndex = state.members.findIndex(m =>
-      normalizeName(m.name) === searchKey || m.iso.toLowerCase() === searchIso
-    );
+    const nominees = state.nominees.filter(candidate => !matches(candidate.name, candidate.iso));
+    const memberIndex = state.members.findIndex(member => matches(member.name, member.iso));
 
     if (memberIndex === -1) {
-      // Periksa juga jika ada di nominees/kandidat kampanye, hapus dari nominasi
-      if (state.nominees.some(n => normalizeName(n.name) === searchKey || n.iso.toLowerCase() === searchIso)) {
-        const filteredNominees = state.nominees.filter(n =>
-          normalizeName(n.name) !== searchKey && n.iso.toLowerCase() !== searchIso
-        );
-        const updatedState = { ...state, nominees: filteredNominees };
-        localStorage.setItem(SECURITY_COUNCIL_ELECTION_STATE_KEY, JSON.stringify(updatedState));
-        window.dispatchEvent(new CustomEvent("pbb_security_council_roster_updated"));
-      }
+      if (nominees.length !== state.nominees.length) saveElectionState({ ...state, nominees });
       return null;
     }
 
-    const removedMember = state.members[memberIndex];
-    const region = removedMember.region;
-    const cohort = removedMember.cohort;
-
-    // Cari negara pengganti dari kawasan (region) yang sama untuk mengisi sisa masa jabatan
-    const eligibleCountries = getEligibleUNMemberCountries([]);
-    const occupiedIsos = new Set([
-      ...PERMANENT_SECURITY_COUNCIL_MEMBERS.map(p => p.iso.toLowerCase()),
-      ...state.members.map(m => m.iso.toLowerCase())
+    const removed = state.members[memberIndex];
+    // Negara yang dicopot dianggap sudah menjabat → ikut terkena cooling-off.
+    const pastTerms = mergePastTerms(state.pastTerms, [{ iso: removed.iso, termEndYear: currentYear }]);
+    const recent = new Set(getRecentlyServedIsos(state.year, pastTerms));
+    const occupied = new Set([
+      ...PERMANENT_SECURITY_COUNCIL_MEMBERS.map(member => member.iso),
+      ...state.members.map(member => toIso(member.iso)),
     ]);
+    const pool = getEligibleUNMemberCountries([])
+      .filter(country => !occupied.has(country.iso) && !matches(country.name, country.iso));
+    const ranked = (list: ElectionCountry[]) =>
+      [...list].sort((a, b) =>
+        hash(`${currentYear}_replace_${a.iso}`) - hash(`${currentYear}_replace_${b.iso}`) ||
+        a.iso.localeCompare(b.iso));
 
-    const replacementCandidate = eligibleCountries.find(c =>
-      c.region === region &&
-      !occupiedIsos.has(c.iso.toLowerCase()) &&
-      normalizeName(c.name) !== searchKey &&
-      c.iso.toLowerCase() !== searchIso
-    );
+    // Prioritas: sekawasan & belum cooling-off → sekawasan → siapa pun yang belum cooling-off → siapa pun.
+    const replacement =
+      ranked(pool.filter(c => c.region === removed.region && !recent.has(c.iso)))[0] ||
+      ranked(pool.filter(c => c.region === removed.region))[0] ||
+      ranked(pool.filter(c => !recent.has(c.iso)))[0] ||
+      ranked(pool)[0];
+    if (!replacement) return null;
 
-    const replacementMember: SecurityCouncilMember = replacementCandidate
-      ? {
-          name: replacementCandidate.name,
-          iso: replacementCandidate.iso,
-          region,
-          cohort,
-          termStartYear: removedMember.termStartYear,
-          termEndYear: removedMember.termEndYear,
-          vetoUsed: false,
-        }
-      : {
-          name: "Swiss",
-          iso: "ch",
-          region: "Eropa Barat",
-          cohort,
-          termStartYear: removedMember.termStartYear,
-          termEndYear: removedMember.termEndYear,
-          vetoUsed: false,
-        };
-
-    const newMembers = [...state.members];
-    newMembers[memberIndex] = replacementMember;
-
-    // Bersihkan juga dari calon nominasi jika ada
-    const newNominees = state.nominees.filter(n =>
-      normalizeName(n.name) !== searchKey && n.iso.toLowerCase() !== searchIso
-    );
-
-    const updatedState: SecurityCouncilElectionState = {
-      ...state,
-      members: newMembers,
-      nominees: newNominees,
+    const members = [...state.members];
+    members[memberIndex] = {
+      name: replacement.name,
+      iso: replacement.iso,
+      region: removed.region,
+      cohort: removed.cohort,
+      termStartYear: removed.termStartYear,
+      termEndYear: removed.termEndYear,
+      vetoUsed: false,
     };
 
-    localStorage.setItem(SECURITY_COUNCIL_ELECTION_STATE_KEY, JSON.stringify(updatedState));
-    window.dispatchEvent(new CustomEvent("pbb_security_council_roster_updated"));
-
-    return removedMember;
+    saveElectionState({
+      ...state,
+      members,
+      nominees,
+      pastTerms,
+      recentlyServedIsos: getRecentlyServedIsos(state.year, pastTerms),
+    });
+    return removed;
   } catch (error) {
     console.error("Gagal mencopot anggota tidak tetap Dewan Keamanan:", error);
     return null;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Skor kandidat                                                       */
+/* ------------------------------------------------------------------ */
 
 function numberOrDiplomaticScore(value: unknown): number {
   if (typeof value === "number") return Math.max(0, Math.min(100, value));
@@ -611,15 +659,6 @@ function averageBilateralScore(country: ElectionCountry, voters: ElectionCountry
     (total, voter) => total + getRelationValue(voter.name, country.name, year),
     0
   ) / voters.length;
-}
-
-function hash(value: string): number {
-  let result = 2166136261;
-  for (let index = 0; index < value.length; index += 1) {
-    result ^= value.charCodeAt(index);
-    result = Math.imul(result, 16777619);
-  }
-  return result >>> 0;
 }
 
 function candidateBaseScore(
@@ -646,6 +685,21 @@ function candidateBaseScore(
   ));
 }
 
+const toCandidate = (country: ElectionCountry, score: number): ElectionCandidate => ({
+  name: country.name,
+  iso: country.iso,
+  slug: country.slug,
+  region: country.region,
+  score,
+  votes: 0,
+  campaignCount: 0,
+  contributionScore: 0,
+});
+
+/* ------------------------------------------------------------------ */
+/* Tahapan pemilu                                                      */
+/* ------------------------------------------------------------------ */
+
 export function addPlayerNomination(
   state: SecurityCouncilElectionState,
   player: ElectionCountry,
@@ -656,22 +710,10 @@ export function addPlayerNomination(
     isIneligibleElectionCandidate(state.members, player.iso, state.recentlyServedIsos) ||
     state.nominees.some(candidate => candidate.slug === player.slug)
   ) return state;
-  const eligibleSeats = COHORT_SEATS[state.cohort][player.region] || 0;
-  if (!eligibleSeats) return state;
-  const bonus = state.permanentBonuses[player.slug];
-  const nominees = state.nominees.filter(candidate => candidate.region !== player.region);
-  const regional = state.nominees.filter(candidate => candidate.region === player.region);
-  const updatedCandidate: ElectionCandidate = {
-    name: player.name,
-    iso: player.iso,
-    slug: player.slug,
-    region: player.region,
-    score: candidateBaseScore(player, voters, state.year, bonus),
-    votes: 0,
-    campaignCount: 0,
-    contributionScore: 0,
-  };
-  return { ...state, nominees: [...nominees, ...regional, updatedCandidate] };
+  if (!(COHORT_SEATS[state.cohort][player.region] || 0)) return state;
+
+  const score = candidateBaseScore(player, voters, state.year, state.permanentBonuses[player.slug]);
+  return { ...state, nominees: [...state.nominees, toCandidate(player, score)] };
 }
 
 export function beginElectionCampaign(
@@ -680,16 +722,22 @@ export function beginElectionCampaign(
   voters: ElectionCountry[]
 ): SecurityCouncilElectionState {
   if (state.phase !== "nomination") return state;
-  const nominees = state.nominees.filter(candidate =>
-    !isIneligibleElectionCandidate(state.members, candidate.iso, state.recentlyServedIsos));
+
+  const blocked = (iso: string) =>
+    isIneligibleElectionCandidate(state.members, iso, state.recentlyServedIsos);
+  const nominees = state.nominees.filter(candidate => !blocked(candidate.iso));
+  // Kandidat NPC hanya boleh berasal dari anggota PBB (bukan wilayah non-anggota).
+  const memberIsos = new Set(voters.map(voter => voter.iso));
+
   (Object.keys(COHORT_SEATS[state.cohort]) as CouncilRegion[]).forEach(region => {
     const seats = COHORT_SEATS[state.cohort][region] || 0;
-    const occupied = nominees.filter(candidate => candidate.region === region).map(candidate => candidate.slug);
-    const nomineePool = countries
+    const occupied = new Set(nominees.filter(candidate => candidate.region === region).map(candidate => candidate.slug));
+    const pool = countries
       .filter(country =>
         country.region === region &&
-        !isIneligibleElectionCandidate(state.members, country.iso, state.recentlyServedIsos) &&
-        !occupied.includes(country.slug)
+        memberIsos.has(country.iso) &&
+        !blocked(country.iso) &&
+        !occupied.has(country.slug)
       )
       .map(country => ({
         country,
@@ -699,19 +747,9 @@ export function beginElectionCampaign(
       .sort((a, b) => a.selectionRank - b.selectionRank || a.country.iso.localeCompare(b.country.iso))
       .slice(0, Math.max(seats * 3, seats + 1))
       .sort((a, b) => b.score - a.score || a.country.iso.localeCompare(b.country.iso));
-    const npcNominees = nomineePool
-      .map(({ country, score }) => ({
-        name: country.name,
-        iso: country.iso,
-        slug: country.slug,
-        region,
-        score,
-        votes: 0,
-        campaignCount: 0,
-        contributionScore: 0,
-      }));
-    nominees.push(...npcNominees);
+    nominees.push(...pool.map(({ country, score }) => toCandidate(country, score)));
   });
+
   return { ...state, nominees, phase: "campaign" };
 }
 
@@ -722,45 +760,36 @@ export function campaignForCandidate(
   if (state.phase !== "campaign") return state;
   const nominees = state.nominees.filter(candidate =>
     !isIneligibleElectionCandidate(state.members, candidate.iso, state.recentlyServedIsos));
-  const removedIneligibleNominees = nominees.length !== state.nominees.length;
-  let found = false;
+  let changed = nominees.length !== state.nominees.length;
   const updatedNominees = nominees.map(candidate => {
     if (candidate.slug !== playerSlug || candidate.campaignCount >= 3) return candidate;
-    found = true;
-    const campaignCount = candidate.campaignCount + 1;
+    changed = true;
     return {
       ...candidate,
-      campaignCount,
+      campaignCount: candidate.campaignCount + 1,
       contributionScore: candidate.contributionScore + 25,
       score: Math.min(100, candidate.score + 5),
     };
   });
-  return found || removedIneligibleNominees
-    ? { ...state, nominees: updatedNominees }
-    : state;
+  return changed ? { ...state, nominees: updatedNominees } : state;
 }
 
 function calculateElectionVotes(
   state: SecurityCouncilElectionState,
   voters: ElectionCountry[]
 ): ElectionCandidate[] {
-  const voteCounts = new Map<string, number>();
   const nominees = state.nominees
     .filter(candidate =>
       !isIneligibleElectionCandidate(state.members, candidate.iso, state.recentlyServedIsos))
-    .map(candidate => {
-      voteCounts.set(candidate.slug, 0);
-      return { ...candidate, votes: 0 };
-    });
+    .map(candidate => ({ ...candidate, votes: 0 }));
+  const voteCounts = new Map<string, number>(nominees.map(candidate => [candidate.slug, 0]));
+  const votableNominees = nominees.filter(candidate => COHORT_SEATS[state.cohort][candidate.region]);
+  const regions = [...new Set(votableNominees.map(candidate => candidate.region))];
 
   voters.forEach(voter => {
-    const candidatesByRegion = nominees.filter(candidate =>
-      COHORT_SEATS[state.cohort][candidate.region]
-    );
-    const regions = [...new Set(candidatesByRegion.map(candidate => candidate.region))];
     regions.forEach(region => {
       const seats = COHORT_SEATS[state.cohort][region] || 0;
-      const ranked = candidatesByRegion
+      votableNominees
         .filter(candidate => candidate.region === region)
         .map(candidate => ({
           candidate,
@@ -770,17 +799,14 @@ function calculateElectionVotes(
             ((hash(`${state.year}_${voter.iso}_${candidate.iso}`) % 2001) / 100),
         }))
         .sort((a, b) => b.score - a.score)
-        .slice(0, seats);
-      ranked.forEach(({ candidate }) => {
-        voteCounts.set(candidate.slug, (voteCounts.get(candidate.slug) || 0) + 1);
-      });
+        .slice(0, seats)
+        .forEach(({ candidate }) => {
+          voteCounts.set(candidate.slug, (voteCounts.get(candidate.slug) || 0) + 1);
+        });
     });
   });
 
-  return nominees.map(candidate => ({
-    ...candidate,
-    votes: voteCounts.get(candidate.slug) || 0,
-  }));
+  return nominees.map(candidate => ({ ...candidate, votes: voteCounts.get(candidate.slug) || 0 }));
 }
 
 export function updateElectionVoteTally(
@@ -789,19 +815,14 @@ export function updateElectionVoteTally(
   day: number
 ): SecurityCouncilElectionState {
   if (state.phase !== "voting" || voters.length !== 193 || day < 25 || day > 30) return state;
-
   const votingDaysElapsed = Math.min(6, Math.max(1, Math.floor(day) - 24));
   const voterCount = Math.ceil(voters.length * votingDaysElapsed / 6);
   const participatingVoters = [...voters]
     .sort((a, b) =>
       hash(`${state.year}_${a.iso}_ballot`) - hash(`${state.year}_${b.iso}_ballot`) ||
-      a.iso.localeCompare(b.iso)
-    )
+      a.iso.localeCompare(b.iso))
     .slice(0, voterCount);
-  return {
-    ...state,
-    nominees: calculateElectionVotes(state, participatingVoters),
-  };
+  return { ...state, nominees: calculateElectionVotes(state, participatingVoters) };
 }
 
 export function resolveElection(
@@ -809,18 +830,45 @@ export function resolveElection(
   voters: ElectionCountry[]
 ): SecurityCouncilElectionState {
   if ((state.phase !== "campaign" && state.phase !== "voting") || voters.length !== 193) return state;
+
   const updatedNominees = calculateElectionVotes(state, voters);
   const winners: ElectionCandidate[] = [];
+
   (Object.keys(COHORT_SEATS[state.cohort]) as CouncilRegion[]).forEach(region => {
     const seats = COHORT_SEATS[state.cohort][region] || 0;
-    winners.push(...updatedNominees
+    const regionWinners = updatedNominees
       .filter(candidate => candidate.region === region)
-      .sort((a, b) => b.votes - a.votes || b.score - a.score)
-      .slice(0, seats));
+      .sort((a, b) => b.votes - a.votes || b.score - a.score || a.iso.localeCompare(b.iso))
+      .slice(0, seats);
+
+    // Jika kandidat kurang dari jumlah kursi, isi kursi kosong agar roster tetap 10 anggota.
+    const missing = seats - regionWinners.length;
+    if (missing > 0) {
+      const taken = new Set(regionWinners.map(candidate => candidate.iso));
+      const fillers = voters
+        .filter(voter =>
+          voter.region === region &&
+          !taken.has(voter.iso) &&
+          !isIneligibleElectionCandidate(state.members, voter.iso, state.recentlyServedIsos))
+        .sort((a, b) =>
+          hash(`${state.year}_fill_${a.iso}`) - hash(`${state.year}_fill_${b.iso}`) ||
+          a.iso.localeCompare(b.iso))
+        .slice(0, missing)
+        .map(voter => toCandidate(voter, 0));
+      updatedNominees.push(...fillers);
+      regionWinners.push(...fillers);
+    }
+    winners.push(...regionWinners);
   });
 
-  const recentlyServedIsos = state.members.map(member => member.iso.toLowerCase());
-  const replacedMembers = state.members.filter(member => member.termEndYear > state.year);
+  // Anggota yang masa jabatannya habis tahun ini → dicatat ke pastTerms (INI inti perbaikan bug).
+  const departing = state.members.filter(member => member.termEndYear <= state.year);
+  const remaining = state.members.filter(member => member.termEndYear > state.year);
+  const pastTerms = mergePastTerms(
+    state.pastTerms,
+    departing.map(member => ({ iso: member.iso, termEndYear: member.termEndYear }))
+  );
+
   const newMembers: SecurityCouncilMember[] = winners.map(winner => ({
     name: winner.name,
     iso: winner.iso,
@@ -830,14 +878,15 @@ export function resolveElection(
     termEndYear: state.year + 2,
     vetoUsed: false,
   }));
+
   const historyItem: ElectionHistoryItem = {
     year: state.year,
     cohort: state.cohort,
     winners: winners.map(winner => winner.name),
-    winnerIsos: winners.map(winner => winner.iso.toLowerCase()),
+    winnerIsos: winners.map(winner => toIso(winner.iso)),
     votes: Object.fromEntries(updatedNominees.map(candidate => [candidate.slug, candidate.votes])),
   };
-  const members = [...replacedMembers, ...newMembers];
+
   const permanentBonuses = { ...state.permanentBonuses };
   winners.forEach(winner => {
     permanentBonuses[winner.slug] = {
@@ -845,18 +894,25 @@ export function resolveElection(
       softPower: (permanentBonuses[winner.slug]?.softPower || 0) + 15,
     };
   });
+
+  const nextElectionYear = state.year + 1;
   return {
     ...state,
     phase: "completed",
     scheduleStage: 4,
-    nextElectionYear: state.year + 1,
+    nextElectionYear,
     nominees: updatedNominees,
-    members,
-    recentlyServedIsos,
+    members: [...remaining, ...newMembers],
+    pastTerms,
+    recentlyServedIsos: getRecentlyServedIsos(nextElectionYear, pastTerms),
     history: [...state.history, historyItem],
     permanentBonuses,
   };
 }
+
+/* ------------------------------------------------------------------ */
+/* Jadwal otomatis                                                     */
+/* ------------------------------------------------------------------ */
 
 const ELECTION_SCHEDULE = [
   { day: 1, stage: 1, titleKey: "nominationTitle", messageKey: "nominationMessage" },
@@ -883,19 +939,18 @@ function createElectionScheduleNotification(
   const messageKey = `${translationPrefix}.${schedule.messageKey}`;
   const winners = election?.history.at(-1)?.winners.join(", ") ||
     getDefaultInboxText(`${translationPrefix}.noResults`);
-  const messageParams = {
-    year,
-    winners,
-    startYear: year + 1,
-    endYear: year + 2,
-  };
   return {
     id: `pbb-security-election-${year}-${stage}`,
     title: getDefaultInboxText(titleKey),
     titleKey,
     sender: getDefaultInboxText(`${translationPrefix}.sender`),
     senderKey: `${translationPrefix}.sender`,
-    ...createInboxNotificationText(messageKey, messageParams),
+    ...createInboxNotificationText(messageKey, {
+      year,
+      winners,
+      startYear: year + 1,
+      endYear: year + 2,
+    }),
     timestamp: dateStr,
     type: "peringkat",
     value: 0,
@@ -918,23 +973,23 @@ export function tickSecurityCouncilElectionSchedule(
   if (!existing) return { state, notifications: [] };
   if (state.phase === "completed") return null;
 
-  const electionOverdue = year > state.year ||
-    (year === state.year && date.getMonth() > 5);
+  const electionOverdue = year > state.year || (year === state.year && date.getMonth() > 5);
   const isElectionMonth = year === state.year && date.getMonth() === 5;
   if (!electionOverdue && !isElectionMonth) return null;
+
   const targetStage = electionOverdue
     ? ELECTION_SCHEDULE.length
     : ELECTION_SCHEDULE.reduce(
-      (stage, item) => date.getDate() >= item.day ? item.stage : stage,
+      (stage, item) => (date.getDate() >= item.day ? item.stage : stage),
       0
     );
   if (targetStage === 0) return null;
 
   const notifications: NotificationMessage[] = [];
   const isVotingPeriod = isElectionMonth && date.getDate() >= 25 && date.getDate() <= 30;
-  const voters = targetStage === ELECTION_SCHEDULE.length || isVotingPeriod
-    ? getEligibleUNMemberCountries(profiles)
-    : null;
+  const needsVoters = targetStage === ELECTION_SCHEDULE.length || isVotingPeriod;
+  const voters = needsVoters ? getEligibleUNMemberCountries(profiles) : null;
+
   if (voters && (voters.length !== 193 || voters.filter(country => country.profile).length !== 193)) {
     const profiledVoters = voters.filter(country => country.profile).length;
     return {
@@ -949,23 +1004,17 @@ export function tickSecurityCouncilElectionSchedule(
     if (nextStage === 1) {
       state = { ...state, phase: "nomination", nominees: [] };
     } else if (nextStage === 2) {
-      const candidates = getSecurityCouncilElectionCandidateCountries(profiles);
-      const voters = getEligibleUNMemberCountries(profiles);
-      state = beginElectionCampaign(state, candidates, voters);
+      state = beginElectionCampaign(
+        state,
+        getSecurityCouncilElectionCandidateCountries(profiles),
+        getEligibleUNMemberCountries(profiles)
+      );
       if (state.phase !== "campaign") {
-        return {
-          state,
-          notifications,
-          error: "Kampanye pemilihan tidak dapat dimulai dari tahap nominasi.",
-        };
+        return { state, notifications, error: "Kampanye pemilihan tidak dapat dimulai dari tahap nominasi." };
       }
     } else if (nextStage === 3) {
       if (state.phase !== "campaign") {
-        return {
-          state,
-          notifications,
-          error: "Pemungutan suara ditunda karena tahap kampanye belum selesai.",
-        };
+        return { state, notifications, error: "Pemungutan suara ditunda karena tahap kampanye belum selesai." };
       }
       state = { ...state, phase: "voting" };
     } else if (nextStage === 4) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
 import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles";
 import {
@@ -10,6 +10,7 @@ import {
   getSecurityCouncilElectionCandidateCountries,
   isIneligibleElectionCandidate,
   normalizeElectionState,
+  normalizeName,
   SECURITY_COUNCIL_ELECTION_STATE_KEY,
   type SecurityCouncilElectionState,
   type SecurityCouncilMember,
@@ -23,8 +24,19 @@ interface Props {
   onMembersChange?: (members: SecurityCouncilMember[]) => void;
 }
 
-const normalizeName = (value: string) => value.toLowerCase().normalize("NFD")
-  .replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+const TOTAL_VOTERS = 193;
+
+/** localStorage adalah sumber kebenaran (dipakai tick jadwal, veto, dan pencopotan). */
+function readStoredElection(): unknown | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (readError) {
+    console.error("Gagal membaca state pemilu Dewan Keamanan:", readError);
+    return null;
+  }
+}
 
 export default function SecurityCouncilElectionPanel({
   selectedCountry,
@@ -34,34 +46,48 @@ export default function SecurityCouncilElectionPanel({
   onMembersChange,
 }: Props) {
   const { pbb } = useGeopoliticsMenuTranslation();
-  const year = Number.isFinite(currentDate?.getTime()) ? currentDate!.getFullYear() : new Date().getFullYear();
-  const currentMonth = currentDate?.getMonth() ?? new Date().getMonth();
-  const currentDay = currentDate?.getDate() ?? new Date().getDate();
-  const savedState = countryDetail?.pbbSecurityCouncilElection;
+
+  // Ref agar callback dari parent / fungsi terjemahan yang tidak stabil tidak memicu effect berulang.
+  const pbbRef = useRef(pbb);
+  const onMembersChangeRef = useRef(onMembersChange);
+  const setCountryDetailRef = useRef(setCountryDetail);
+  pbbRef.current = pbb;
+  onMembersChangeRef.current = onMembersChange;
+  setCountryDetailRef.current = setCountryDetail;
+
+  const hasValidDate = Boolean(currentDate) && Number.isFinite(currentDate!.getTime());
+  const now = hasValidDate ? currentDate! : new Date();
+  const year = now.getFullYear();
+  const currentMonth = now.getMonth();
+  const currentDay = now.getDate();
+
   const [election, setElection] = useState<SecurityCouncilElectionState>(() =>
-    normalizeElectionState(savedState, year)
+    normalizeElectionState(readStoredElection() ?? countryDetail?.pbbSecurityCouncilElection, year)
   );
+  const [profiles, setProfiles] = useState<CountryProfile[]>([]);
+  const [profilesLoaded, setProfilesLoaded] = useState(false);
+  const [error, setError] = useState("");
+
   const electionWindow = election.year === year && currentMonth === 5;
   const nominationOpen = electionWindow && currentDay >= 1 && currentDay < 15;
   const campaignOpen = electionWindow && currentDay >= 15 && currentDay < 25;
   const scheduleYear = election.phase === "completed" ? election.nextElectionYear : election.year;
-  const [profiles, setProfiles] = useState<CountryProfile[]>([]);
-  const [profilesLoaded, setProfilesLoaded] = useState(false);
-  const [error, setError] = useState("");
+
   const voters = useMemo(() => getEligibleUNMemberCountries(profiles), [profiles]);
   const candidateCountries = useMemo(() => getSecurityCouncilElectionCandidateCountries(profiles), [profiles]);
   const profiledVoterCount = voters.filter(country => country.profile).length;
+
   const player = useMemo(() => {
     const selectedIso = selectedCountry?.iso?.trim().toLowerCase();
-    const countryByIso = selectedIso
-      ? candidateCountries.find(country => country.iso.toLowerCase() === selectedIso)
-      : null;
-    if (countryByIso) return countryByIso;
-
-    const playerName = selectedCountry?.country || "";
-    return candidateCountries.find(country => normalizeName(country.name) === normalizeName(playerName)) || null;
+    if (selectedIso) {
+      const byIso = candidateCountries.find(country => country.iso.toLowerCase() === selectedIso);
+      if (byIso) return byIso;
+    }
+    const playerName = normalizeName(selectedCountry?.country || "");
+    return candidateCountries.find(country => normalizeName(country.name) === playerName) || null;
   }, [candidateCountries, selectedCountry?.country, selectedCountry?.iso]);
 
+  /* ---------------- Muat profil negara ---------------- */
   useEffect(() => {
     let active = true;
     fetchAllCountryProfilesFromDb()
@@ -73,60 +99,109 @@ export default function SecurityCouncilElectionPanel({
       .catch(fetchError => {
         if (!active) return;
         console.error("Gagal memuat profil negara untuk pemilu Dewan Keamanan:", fetchError);
-        setError(pbb("election.loadError"));
+        setError(pbbRef.current("election.loadError"));
         setProfilesLoaded(true);
       });
     return () => { active = false; };
   }, []);
 
+  /* ---------------- Sinkron dari storage ---------------- */
+  const syncFromStorage = useCallback(() => {
+    try {
+      const stored = readStoredElection();
+      if (!stored) return;
+      const next = normalizeElectionState(stored, year);
+      setElection(previous => JSON.stringify(previous) === JSON.stringify(next) ? previous : next);
+    } catch (syncError) {
+      console.error("Gagal menyinkronkan roster Dewan Keamanan:", syncError);
+      setError(pbbRef.current("election.vetoSyncError"));
+    }
+  }, [year]);
+
+  // Tanggal game berubah (tick jadwal bisa menulis storage) → ambil state terbaru.
+  useEffect(() => {
+    syncFromStorage();
+  }, [syncFromStorage, currentMonth, currentDay]);
+
+  // Tahun berganti → normalisasi (memulai siklus pemilu berikutnya bila perlu).
   useEffect(() => {
     setElection(previous => {
       const next = normalizeElectionState(previous, year);
-      onMembersChange?.(next.members);
-      return next;
+      return JSON.stringify(previous) === JSON.stringify(next) ? previous : next;
     });
-  }, [year, onMembersChange]);
+  }, [year]);
 
   useEffect(() => {
-    const syncVetoUsage = () => {
-      if (typeof window === "undefined") return;
-      try {
-        const raw = localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
-        if (raw) setElection(normalizeElectionState(JSON.parse(raw), year));
-      } catch (syncError) {
-        console.error("Gagal menyinkronkan roster setelah penggunaan hak veto:", syncError);
-        setError(pbb("election.vetoSyncError"));
-      }
-    };
-    window.addEventListener("pbb_security_council_roster_updated", syncVetoUsage);
-    window.addEventListener("pbb_security_council_election_updated", syncVetoUsage);
+    window.addEventListener("pbb_security_council_roster_updated", syncFromStorage);
+    window.addEventListener("pbb_security_council_election_updated", syncFromStorage);
     return () => {
-      window.removeEventListener("pbb_security_council_roster_updated", syncVetoUsage);
-      window.removeEventListener("pbb_security_council_election_updated", syncVetoUsage);
+      window.removeEventListener("pbb_security_council_roster_updated", syncFromStorage);
+      window.removeEventListener("pbb_security_council_election_updated", syncFromStorage);
     };
-  }, [pbb, year]);
+  }, [syncFromStorage]);
 
-  const serializedElection = JSON.stringify(election);
+  /* ---------------- Simpan ke storage & countryDetail ---------------- */
+  const serializedElection = useMemo(() => JSON.stringify(election), [election]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
     try {
       if (localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY) !== serializedElection) {
         localStorage.setItem(SECURITY_COUNCIL_ELECTION_STATE_KEY, serializedElection);
       }
-      onMembersChange?.(election.members);
-      setCountryDetail?.(previous => {
-        if (
-          !previous ||
-          JSON.stringify(previous.pbbSecurityCouncilElection) === serializedElection
-        ) return previous;
+      onMembersChangeRef.current?.(election.members);
+      setCountryDetailRef.current?.(previous => {
+        if (!previous || JSON.stringify(previous.pbbSecurityCouncilElection) === serializedElection) {
+          return previous;
+        }
         return { ...previous, pbbSecurityCouncilElection: election };
       });
     } catch (storageError) {
       console.error("Gagal menyimpan hasil pemilu Dewan Keamanan:", storageError);
-      setError(pbb("election.saveError"));
+      setError(pbbRef.current("election.saveError"));
     }
-  }, [election, onMembersChange, pbb, serializedElection, setCountryDetail]);
+  }, [election, serializedElection]);
+
+  /* ---------------- Turunan UI ---------------- */
+  const isPlayerIneligible = Boolean(player && isIneligibleElectionCandidate(
+    election.members,
+    player.iso,
+    election.recentlyServedIsos,
+  ));
+  const canNominate = Boolean(
+    player &&
+    election.phase === "nomination" &&
+    !isPlayerIneligible &&
+    election.nominees.every(candidate => candidate.slug !== player.slug)
+  );
+
+  const eligibleNominees = useMemo(
+    () => election.nominees.filter(candidate => !isIneligibleElectionCandidate(
+      election.members,
+      candidate.iso,
+      election.recentlyServedIsos,
+    )),
+    [election.members, election.nominees, election.recentlyServedIsos]
+  );
+  // Setelah pemilu selesai, pemenang sudah jadi anggota sehingga semua kandidat tetap ditampilkan.
+  const visibleNominees = election.phase === "completed" ? election.nominees : eligibleNominees;
+
+  const latestElection = election.history.at(-1);
+  const winnerIsoSet = useMemo(() => {
+    if (election.phase !== "completed" || !latestElection) return null;
+    const isos = new Set((latestElection.winnerIsos || []).map(iso => iso.trim().toLowerCase()));
+    if (isos.size === 0) {
+      const names = new Set(latestElection.winners.map(normalizeName));
+      election.nominees.forEach(candidate => {
+        if (names.has(normalizeName(candidate.name))) isos.add(candidate.iso.trim().toLowerCase());
+      });
+    }
+    return isos;
+  }, [election.phase, election.nominees, latestElection]);
+
+  const playerCandidate = player && !isPlayerIneligible
+    ? eligibleNominees.find(candidate => candidate.slug === player.slug)
+    : undefined;
+  const playerWon = Boolean(player && winnerIsoSet?.has(player.iso.toLowerCase()));
 
   const updateElection = (next: SecurityCouncilElectionState) => {
     setElection(next);
@@ -136,44 +211,13 @@ export default function SecurityCouncilElectionPanel({
     );
   };
 
-  const canNominate = Boolean(
-    player && election.phase === "nomination" &&
-    !isIneligibleElectionCandidate(
-      election.members,
-      player.iso,
-      election.recentlyServedIsos,
-    ) &&
-    election.nominees.every(candidate => candidate.slug !== player.slug)
-  );
-  const isPlayerIneligible = Boolean(player && isIneligibleElectionCandidate(
-    election.members,
-    player.iso,
-    election.recentlyServedIsos,
-  ));
-  const eligibleNominees = election.nominees.filter(candidate =>
-    !isIneligibleElectionCandidate(
-      election.members,
-      candidate.iso,
-      election.recentlyServedIsos,
-    ));
-  const visibleNominees = election.phase === "completed"
-    ? election.nominees
-    : eligibleNominees;
-  const latestElection = election.history.at(-1);
-  const electionWinners = election.phase === "completed"
-    ? new Set(latestElection?.winnerIsos?.map(iso => iso.trim().toLowerCase()) || [])
-    : null;
-  const playerCandidate = player && !isPlayerIneligible
-    ? eligibleNominees.find(candidate => candidate.slug === player.slug)
-    : undefined;
-
   const nominatePlayer = () => {
-    if (!player || !canNominate) return;
+    if (!player || !canNominate || !nominationOpen) return;
     updateElection(addPlayerNomination(election, player, voters));
   };
 
   const campaign = () => {
-    if (!player) return;
+    if (!player || !campaignOpen) return;
     updateElection(campaignForCandidate(election, player.slug));
   };
 
@@ -186,6 +230,8 @@ export default function SecurityCouncilElectionPanel({
         : election.phase === "campaign"
           ? pbb("election.phaseCampaign")
           : pbb("election.phaseVoting");
+
+  const dataReady = profilesLoaded && voters.length === TOTAL_VOTERS && profiledVoterCount === TOTAL_VOTERS;
 
   return (
     <section className="rounded-xl border border-cyan-500/25 bg-root-canvas p-5 space-y-4">
@@ -200,7 +246,7 @@ export default function SecurityCouncilElectionPanel({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-lg border border-white/10 bg-[#051111] px-2.5 py-1 text-[10px] font-bold text-[#8AA4A4]">
-            {pbb("election.eligibleVoters")}: {profiledVoterCount}/193
+            {pbb("election.eligibleVoters")}: {profiledVoterCount}/{TOTAL_VOTERS}
           </span>
           <span className="rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-1 text-[10px] font-bold uppercase text-cyan-300">
             {phaseLabel}
@@ -237,54 +283,50 @@ export default function SecurityCouncilElectionPanel({
         </p>
       </details>
 
-      {error && <p role="alert" className="rounded-lg border border-rose-500/30 bg-rose-500/10 p-2 text-xs text-rose-300">{error}</p>}
+      {error && (
+        <p role="alert" className="rounded-lg border border-rose-500/30 bg-rose-500/10 p-2 text-xs text-rose-300">
+          {error}
+        </p>
+      )}
       {!profilesLoaded && <p className="text-xs text-[#8AA4A4]">{pbb("election.waiting")}</p>}
-      {profilesLoaded && voters.length !== 193 && (
+      {profilesLoaded && voters.length !== TOTAL_VOTERS && (
         <p role="alert" className="rounded-lg border border-rose-500/30 bg-rose-500/10 p-2 text-xs text-rose-300">
           {pbb("election.memberCountError", { count: voters.length })}
         </p>
       )}
-      {profilesLoaded && profiledVoterCount < 193 && (
+      {profilesLoaded && profiledVoterCount < TOTAL_VOTERS && (
         <p role="alert" className="rounded-lg border border-rose-500/30 bg-rose-500/10 p-2 text-xs text-rose-300">
           {pbb("election.profileMatchError", { count: profiledVoterCount })}
         </p>
       )}
-      {!player && (
-        <p className="text-xs text-amber-300">
-          {pbb("election.notMember")}
-        </p>
-      )}
+      {!player && <p className="text-xs text-amber-300">{pbb("election.notMember")}</p>}
 
       {election.phase === "nomination" && nominationOpen && (
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
             onClick={nominatePlayer}
-            disabled={!canNominate || !profilesLoaded || profiledVoterCount !== 193 || !player || voters.length !== 193 || !nominationOpen}
+            disabled={!canNominate || !dataReady}
             className="rounded-lg bg-cyan-400 px-3 py-2 text-[10px] font-black uppercase tracking-wide text-root-accent-ink disabled:cursor-not-allowed disabled:opacity-40"
           >
             {pbb("election.nominate")}
           </button>
           {player && isPlayerIneligible && (
-            <p className="w-full text-xs text-amber-300">
-              {pbb("election.currentMemberIneligible")}
-            </p>
+            <p className="w-full text-xs text-amber-300">{pbb("election.currentMemberIneligible")}</p>
           )}
         </div>
       )}
 
-      {election.phase === "campaign" && campaignOpen && (
+      {election.phase === "campaign" && campaignOpen && playerCandidate && (
         <div className="flex flex-wrap items-center gap-2">
-          {playerCandidate && (
-            <button
-              type="button"
-              onClick={campaign}
-              disabled={playerCandidate.campaignCount >= 3}
-              className="rounded-lg bg-cyan-400 px-3 py-2 text-[10px] font-black uppercase tracking-wide text-root-accent-ink disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              {pbb("election.campaign", { count: playerCandidate.campaignCount })}
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={campaign}
+            disabled={playerCandidate.campaignCount >= 3}
+            className="rounded-lg bg-cyan-400 px-3 py-2 text-[10px] font-black uppercase tracking-wide text-root-accent-ink disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {pbb("election.campaign", { count: playerCandidate.campaignCount })}
+          </button>
         </div>
       )}
 
@@ -293,30 +335,29 @@ export default function SecurityCouncilElectionPanel({
           {[...visibleNominees]
             .sort((a, b) => a.region.localeCompare(b.region) || b.votes - a.votes || b.score - a.score)
             .map(candidate => {
-              const isWinner = electionWinners && (
-                electionWinners.has(candidate.iso.toLowerCase()) ||
-                (!latestElection?.winnerIsos?.length &&
-                  latestElection?.winners.includes(candidate.name))
-              );
+              const isWinner = Boolean(winnerIsoSet?.has(candidate.iso.toLowerCase()));
+              const tone = winnerIsoSet
+                ? isWinner
+                  ? "border-emerald-400/70 bg-emerald-500/10"
+                  : "border-rose-500/60 bg-rose-500/5"
+                : "border-white/5 bg-[#051111]";
               return (
                 <div
                   key={candidate.slug}
-                  className={`flex items-center justify-between gap-3 rounded-lg border px-3 py-2 ${
-                    electionWinners
-                      ? isWinner
-                        ? "border-emerald-400/70 bg-emerald-500/10"
-                        : "border-rose-500/60 bg-rose-500/5"
-                      : "border-white/5 bg-[#051111]"
-                  }`}
+                  className={`flex items-center justify-between gap-3 rounded-lg border px-3 py-2 ${tone}`}
                 >
                   <div className="min-w-0">
                     <p className="truncate text-xs font-bold text-root-text">{candidate.name}</p>
-                    <p className="text-[9px] text-[#789090]">{candidate.region} · {pbb("election.score", { score: candidate.score.toFixed(1) })}</p>
+                    <p className="text-[9px] text-[#789090]">
+                      {candidate.region} · {pbb("election.score", { score: candidate.score.toFixed(1) })}
+                    </p>
                   </div>
                   <div className="shrink-0 text-right">
                     <p className="text-xs font-black text-cyan-200">{pbb("election.votes", { count: candidate.votes })}</p>
                     {candidate.campaignCount > 0 && (
-                      <p className="text-[9px] text-emerald-300">{pbb("election.contribution", { score: candidate.contributionScore })}</p>
+                      <p className="text-[9px] text-emerald-300">
+                        {pbb("election.contribution", { score: candidate.contributionScore })}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -331,18 +372,15 @@ export default function SecurityCouncilElectionPanel({
             {pbb("election.winners", { startYear: election.year + 1, endYear: election.year + 2 })}
           </p>
           <p className="mt-1 text-xs text-[#D0E0E0]">
-            {election.history.at(-1)?.winners.join(", ") || pbb("election.savedResults")}
+            {latestElection?.winners.join(", ") || pbb("election.savedResults")}
           </p>
-          {playerCandidate && election.history.at(-1)?.winners.includes(playerCandidate.name) && (
-            <p className="mt-2 text-[10px] text-emerald-200">
-              {pbb("election.playerReward")}
-            </p>
+          {playerWon && (
+            <p className="mt-2 text-[10px] text-emerald-200">{pbb("election.playerReward")}</p>
           )}
         </div>
       )}
-      <p className="text-[10px] text-[#789090]">
-        {pbb("election.memberDuty")}
-      </p>
+
+      <p className="text-[10px] text-[#789090]">{pbb("election.memberDuty")}</p>
     </section>
   );
 }
