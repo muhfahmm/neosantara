@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import {
-    Volume2, Music, Monitor, Keyboard
+    Volume2, Music, Monitor, Keyboard, Cloud, Info
 } from 'lucide-react';
 import { KeywordModal } from './5_keyword/keyword';
 import { MapSettingsSection } from './4_settings/MapSettingsSection';
@@ -28,11 +28,12 @@ interface GameMenuModalProps {
 export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick }: GameMenuModalProps) {
     const router = useRouter();
     const { t } = useLanguage();
-    const [subview, setSubview] = useState<'menu' | 'load' | 'options'>('menu');
+    const [subview, setSubview] = useState<'menu' | 'load' | 'options' | 'googleLogin'>('menu');
     const [saveFiles, setSaveFiles] = useState<LoadGameSave[]>([]);
     const [isLoadingSaves, setIsLoadingSaves] = useState(false);
     const [mounted, setMounted] = useState(false);
     const [showKeywordModal, setShowKeywordModal] = useState(false);
+    const [showGooglePrototypeNotice, setShowGooglePrototypeNotice] = useState(false);
 
     // Options states terhubung ke soundManager
     const [musicVol, setMusicVol] = useState(() => soundManager ? soundManager.getMusicVolume() : 80);
@@ -179,6 +180,16 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                         <Keyboard className="w-4 h-4 text-root-accent" />
                                         <span>{t('paused_menu.main.keyboardShortcuts')}</span>
                                     </button>
+                                    <button
+                                        onClick={() => {
+                                            setShowGooglePrototypeNotice(false);
+                                            setSubview('googleLogin');
+                                        }}
+                                        className="paused-menu-action w-full bg-root-canvas hover:bg-root-accent/10 active:bg-root-accent/20 border border-root-accent/30 hover:border-root-accent/60 rounded py-3 text-center text-root-text hover:text-root-accent font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99] flex items-center justify-center gap-2"
+                                    >
+                                        <Cloud className="w-4 h-4 text-root-accent" />
+                                        <span>{t('paused_menu.main.googleLogin')}</span>
+                                    </button>
                                     </div>
                                 </div>
 
@@ -278,6 +289,52 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
 
                                     {/* Pengaturan Peta (Batas Negara vs Kota) */}
                                     <MapSettingsSection />
+                                </div>
+                            </div>
+                        )}
+
+                        {subview === 'googleLogin' && (
+                            <div className="flex-1">
+                                <PausedMenuHeader
+                                    title={t('paused_menu.googleLogin.title')}
+                                    onBack={() => setSubview('menu')}
+                                    backLabel={t('paused_menu.googleLogin.backLabel')}
+                                    rightContent={
+                                        <span className="shrink-0 rounded border border-amber-400/40 bg-amber-400/10 px-2 py-1 text-[9px] font-black uppercase tracking-wider text-amber-300">
+                                            {t('paused_menu.googleLogin.prototypeBadge')}
+                                        </span>
+                                    }
+                                />
+                                <div className="mx-auto flex w-full max-w-lg flex-col items-center gap-5 py-8 text-center">
+                                    <div className="flex h-16 w-16 items-center justify-center rounded-full border border-root-accent/30 bg-root-canvas shadow-[0_0_24px_rgba(0,255,170,0.08)]">
+                                        <Cloud className="h-8 w-8 text-root-accent" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <h3 className="text-lg font-extrabold text-root-text">
+                                            {t('paused_menu.googleLogin.heading')}
+                                        </h3>
+                                        <p className="text-sm leading-relaxed text-root-subtle">
+                                            {t('paused_menu.googleLogin.description')}
+                                        </p>
+                                    </div>
+                                    <div className="flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1.5 text-xs font-bold text-amber-200">
+                                        <span className="h-2 w-2 rounded-full bg-amber-300" />
+                                        {t('paused_menu.googleLogin.notConnected')}
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowGooglePrototypeNotice(true)}
+                                        className="flex w-full max-w-sm items-center justify-center gap-3 rounded-lg border border-slate-300/70 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-100 active:scale-[0.99]"
+                                    >
+                                        <span aria-hidden="true" className="text-lg font-black text-[#4285F4]">G</span>
+                                        {t('paused_menu.googleLogin.continueButton')}
+                                    </button>
+                                    {showGooglePrototypeNotice && (
+                                        <p role="status" className="flex max-w-sm items-start gap-2 rounded-lg border border-root-accent/20 bg-root-canvas/70 p-3 text-left text-xs leading-relaxed text-root-subtle">
+                                            <Info className="mt-0.5 h-4 w-4 shrink-0 text-root-accent" />
+                                            <span>{t('paused_menu.googleLogin.prototypeNotice')}</span>
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         )}

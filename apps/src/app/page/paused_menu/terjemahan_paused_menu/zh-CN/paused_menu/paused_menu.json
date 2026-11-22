@@ -6,7 +6,18 @@
     "restart": "重新开始",
     "settings": "设置",
     "keyboardShortcuts": "快捷键",
+    "googleLogin": "Google 登录（原型）",
     "exitGame": "退出游戏"
+  },
+  "googleLogin": {
+    "title": "Google 登录",
+    "backLabel": "返回暂停菜单",
+    "prototypeBadge": "原型",
+    "heading": "连接您的 Google 账号",
+    "description": "使用 Google 账号保存并同步游戏进度。",
+    "notConnected": "尚未连接",
+    "continueButton": "继续使用 Google",
+    "prototypeNotice": "这仅为界面模拟。Google 登录和 Google Play Games 同步尚未启用。"
   },
   "settings": {
     "title": "设置",

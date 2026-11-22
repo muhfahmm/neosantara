@@ -6,7 +6,18 @@
     "restart": "إعادة البدء",
     "settings": "الإعدادات",
     "keyboardShortcuts": "اختصارات لوحة المفاتيح",
+    "googleLogin": "تسجيل الدخول إلى Google (نموذج أولي)",
     "exitGame": "الخروج من اللعبة"
+  },
+  "googleLogin": {
+    "title": "تسجيل الدخول إلى Google",
+    "backLabel": "العودة إلى قائمة الإيقاف المؤقت",
+    "prototypeBadge": "نموذج أولي",
+    "heading": "ربط حساب Google",
+    "description": "احفظ تقدم اللعبة وزامنه باستخدام حساب Google.",
+    "notConnected": "غير متصل",
+    "continueButton": "المتابعة باستخدام Google",
+    "prototypeNotice": "هذه محاكاة للواجهة فقط. لم يتم تفعيل تسجيل الدخول إلى Google أو المزامنة مع Google Play Games."
   },
   "settings": {
     "title": "الإعدادات",

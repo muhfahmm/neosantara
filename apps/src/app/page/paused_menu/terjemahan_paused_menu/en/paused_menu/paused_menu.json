@@ -6,7 +6,18 @@
     "restart": "Restart",
     "settings": "Settings",
     "keyboardShortcuts": "Keyboard Shortcuts",
+    "googleLogin": "Google Login (Prototype)",
     "exitGame": "Exit Game"
+  },
+  "googleLogin": {
+    "title": "Google Login",
+    "backLabel": "Back to paused menu",
+    "prototypeBadge": "Prototype",
+    "heading": "Connect your Google account",
+    "description": "Save and sync your game progress with your Google account.",
+    "notConnected": "Not connected",
+    "continueButton": "Continue with Google",
+    "prototypeNotice": "This is a UI simulation only. Google sign-in and Google Play Games sync are not enabled."
   },
   "settings": {
     "title": "Settings",

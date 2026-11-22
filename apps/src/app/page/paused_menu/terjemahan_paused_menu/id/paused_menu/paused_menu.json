@@ -6,7 +6,18 @@
     "restart": "Mulai Ulang",
     "settings": "Pengaturan",
     "keyboardShortcuts": "Pintasan Keyboard",
+    "googleLogin": "Login Google (Prototype)",
     "exitGame": "Keluar Permainan"
+  },
+  "googleLogin": {
+    "title": "Login Google",
+    "backLabel": "Kembali ke menu jeda",
+    "prototypeBadge": "Prototype",
+    "heading": "Hubungkan akun Google",
+    "description": "Simpan dan sinkronkan progres permainan menggunakan akun Google Anda.",
+    "notConnected": "Belum terhubung",
+    "continueButton": "Lanjutkan dengan Google",
+    "prototypeNotice": "Ini hanya simulasi tampilan. Login Google dan sinkronisasi Google Play Games belum diaktifkan."
   },
   "settings": {
     "title": "Pengaturan",

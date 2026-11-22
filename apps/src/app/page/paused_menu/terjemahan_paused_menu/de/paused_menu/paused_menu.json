@@ -6,7 +6,18 @@
     "restart": "Neustart",
     "settings": "Einstellungen",
     "keyboardShortcuts": "Tastaturkürzel",
+    "googleLogin": "Google-Anmeldung (Prototyp)",
     "exitGame": "Spiel Beenden"
+  },
+  "googleLogin": {
+    "title": "Google-Anmeldung",
+    "backLabel": "Zurück zum Pausenmenü",
+    "prototypeBadge": "Prototyp",
+    "heading": "Google-Konto verbinden",
+    "description": "Speichere und synchronisiere deinen Spielfortschritt mit deinem Google-Konto.",
+    "notConnected": "Nicht verbunden",
+    "continueButton": "Mit Google fortfahren",
+    "prototypeNotice": "Dies ist nur eine UI-Simulation. Google-Anmeldung und die Synchronisierung mit Google Play Games sind nicht aktiviert."
   },
   "settings": {
     "title": "Einstellungen",

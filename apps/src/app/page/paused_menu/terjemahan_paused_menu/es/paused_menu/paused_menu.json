@@ -6,7 +6,18 @@
     "restart": "Reiniciar",
     "settings": "Ajustes",
     "keyboardShortcuts": "Atajos de Teclado",
+    "googleLogin": "Inicio de sesión de Google (Prototipo)",
     "exitGame": "Salir del Juego"
+  },
+  "googleLogin": {
+    "title": "Inicio de sesión de Google",
+    "backLabel": "Volver al menú de pausa",
+    "prototypeBadge": "Prototipo",
+    "heading": "Conecta tu cuenta de Google",
+    "description": "Guarda y sincroniza tu progreso con tu cuenta de Google.",
+    "notConnected": "Sin conexión",
+    "continueButton": "Continuar con Google",
+    "prototypeNotice": "Esto solo es una simulación visual. El inicio de sesión de Google y la sincronización con Google Play Games aún no están activados."
   },
   "settings": {
     "title": "Ajustes",

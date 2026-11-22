@@ -6,7 +6,18 @@
     "restart": "다시 시작",
     "settings": "설정",
     "keyboardShortcuts": "키보드 단축키",
+    "googleLogin": "Google 로그인 (프로토타입)",
     "exitGame": "게임 종료"
+  },
+  "googleLogin": {
+    "title": "Google 로그인",
+    "backLabel": "일시정지 메뉴로 돌아가기",
+    "prototypeBadge": "프로토타입",
+    "heading": "Google 계정 연결",
+    "description": "Google 계정으로 게임 진행 상황을 저장하고 동기화하세요.",
+    "notConnected": "연결되지 않음",
+    "continueButton": "Google로 계속",
+    "prototypeNotice": "이 화면은 UI 시뮬레이션입니다. Google 로그인 및 Google Play Games 동기화는 아직 활성화되지 않았습니다."
   },
   "settings": {
     "title": "설정",
