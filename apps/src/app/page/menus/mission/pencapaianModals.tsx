@@ -44,6 +44,7 @@ export interface AchievementItem {
   reward: {
     gems?: number;
     neo?: number;
+    xp?: number;
     titleBadge?: string;
   };
   computeProgress: (countryDetail: any, currentDate?: Date, achievementState?: AchievementState) => {
@@ -236,9 +237,9 @@ export const BUILDING_ACHIEVEMENT_CATEGORIES: BuildingCategoryConfig[] = [
 
 const BUILDING_TIER_TARGETS = [100, 1000, 5000];
 const BUILDING_TIER_REWARDS = [
-  { gems: 100, neo: 25000000 },
-  { gems: 250, neo: 75000000 },
-  { gems: 500, neo: 200000000 },
+  { gems: 100, neo: 25000000, xp: 2 },
+  { gems: 250, neo: 75000000, xp: 3 },
+  { gems: 500, neo: 200000000, xp: 4 },
 ];
 
 function countBuildingsForCategory(cd: any, keys: string[]): number {
@@ -566,7 +567,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Smile,
     accent: '#10b981',
     maxProgress: 100,
-    reward: { gems: 150, neo: 50000000 },
+    reward: { gems: 150, neo: 50000000 , xp: 2 },
     computeProgress: (cd, _, state) => {
       // Ambil nilai kesejahteraan real dari navbar / detail
       const rawWelfare = Number(cd?.kesejahteraan ?? cd?.indeks_kesejahteraan ?? cd?.kesejahteraan_masyarakat ?? 59);
@@ -600,7 +601,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Award,
     accent: '#34d399',
     maxProgress: 100,
-    reward: { gems: 120, neo: 40000000 },
+    reward: { gems: 120, neo: 40000000 , xp: 2 },
     computeProgress: (cd, _, state) => {
       const kepuasan = Number(cd?.kepuasan ?? cd?.satisfaction ?? 74);
       const currentVal = Math.max(0, Math.min(100, Math.round(kepuasan)));
@@ -631,7 +632,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Building2,
     accent: '#059669',
     maxProgress: 1,
-    reward: { gems: 120, neo: 40000000 },
+    reward: { gems: 120, neo: 40000000 , xp: 2 },
     computeProgress: (cd) => {
       const tunawisma = cd?.tunawisma ?? 0;
       const isUnlocked = tunawisma === 0;
@@ -646,7 +647,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Users2,
     accent: '#3b82f6',
     maxProgress: 4,
-    reward: { gems: 150, neo: 60000000 },
+    reward: { gems: 150, neo: 60000000 , xp: 2 },
     computeProgress: (cd) => {
       let met = 2;
       if (cd?.listrikDefisit === 0) met++;
@@ -661,7 +662,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Users2,
     accent: '#60a5fa',
     maxProgress: 100,
-    reward: { gems: 150, neo: 45000000 },
+    reward: { gems: 150, neo: 45000000 , xp: 2 },
     computeProgress: (cd) => {
       const populasi = Number(cd?.jumlah_penduduk || cd?.population || 10000000);
       
@@ -715,7 +716,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: TrendingUp,
     accent: '#2563eb',
     maxProgress: 6,
-    reward: { gems: 200, neo: 60000000 },
+    reward: { gems: 200, neo: 60000000 , xp: 2 },
     computeProgress: (cd) => {
       // Ambil streak bulan surplus populasi
       const surplusStreak = Number(cd?.population_surplus_months_streak ?? 6);
@@ -744,7 +745,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Zap,
     accent: '#f59e0b',
     maxProgress: 100,
-    reward: { gems: 200, neo: 80000000 },
+    reward: { gems: 200, neo: 80000000 , xp: 2 },
     computeProgress: (cd) => {
       const defisit = cd?.listrikDefisit ?? 0;
       return { current: defisit === 0 ? 100 : 50, isUnlocked: defisit === 0 };
@@ -756,7 +757,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Zap,
     accent: '#fbbf24',
     maxProgress: 1,
-    reward: { gems: 180, neo: 70000000 },
+    reward: { gems: 180, neo: 70000000 , xp: 2 },
     computeProgress: (cd) => {
       const surplus = cd?.panganSurplus ?? true;
       return { current: surplus ? 1 : 0, isUnlocked: Boolean(surplus) };
@@ -772,7 +773,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Landmark,
     accent: '#10b981',
     maxProgress: 12,
-    reward: { gems: 250, neo: 100000000 },
+    reward: { gems: 250, neo: 100000000 , xp: 3 },
     computeProgress: (cd, currentDate) => {
       const now = currentDate || new Date();
       const currentYear = now.getFullYear();
@@ -807,7 +808,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Landmark,
     accent: '#059669',
     maxProgress: 1,
-    reward: { gems: 300, neo: 150000000 },
+    reward: { gems: 300, neo: 150000000 , xp: 3 },
     computeProgress: (cd) => {
       const loans = cd?.activeLoans ?? 0;
       return { current: loans === 0 ? 1 : 0, isUnlocked: loans === 0 };
@@ -820,7 +821,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Globe,
     accent: '#34d399',
     maxProgress: 1,
-    reward: { gems: 200, neo: 75000000 },
+    reward: { gems: 200, neo: 75000000 , xp: 2 },
     computeProgress: (cd) => {
       const history = Array.isArray(cd?.tradeHistory) ? cd.tradeHistory : [];
       // Cek apakah ada riwayat jual atau beli atau aksi pasar global
@@ -848,7 +849,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Landmark,
     accent: '#6ee7b7',
     maxProgress: 100,
-    reward: { gems: 200, neo: 60000000 },
+    reward: { gems: 200, neo: 60000000 , xp: 2 },
     computeProgress: (cd, _, state) => {
       // Ambil skor kepuasan harga barang pokok yang identik dengan modal Info Daya Beli (HargaModal)
       const prices = cd?.harga || {};
@@ -962,7 +963,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Banknote,
     accent: '#38bdf8',
     maxProgress: 12,
-    reward: { gems: 250, neo: 100000000 },
+    reward: { gems: 250, neo: 100000000 , xp: 3 },
     computeProgress: (cd) => {
       const current = countCompletedResearchInSector(cd, RESEARCH_SECTOR_CARDS.ekonomi);
       const target = 12;
@@ -991,7 +992,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Shield,
     accent: '#f43f5e',
     maxProgress: 18,
-    reward: { gems: 350, neo: 150000000 },
+    reward: { gems: 350, neo: 150000000 , xp: 3 },
     computeProgress: (cd) => {
       const current = countCompletedResearchInSector(cd, RESEARCH_SECTOR_CARDS.militer);
       const target = 18;
@@ -1020,7 +1021,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Globe2,
     accent: '#06b6d4',
     maxProgress: 25,
-    reward: { gems: 500, neo: 250000000 },
+    reward: { gems: 500, neo: 250000000 , xp: 4 },
     computeProgress: (cd) => {
       const current = countCompletedResearchInSector(cd, RESEARCH_SECTOR_CARDS.diplomasi);
       const target = 25;
@@ -1051,7 +1052,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Briefcase,
     accent: '#0ea5e9',
     maxProgress: 15,
-    reward: { gems: 300, neo: 120000000 },
+    reward: { gems: 300, neo: 120000000 , xp: 3 },
     computeProgress: (cd) => {
       const { maxedCount, totalCount, allMaxed } = countMinistryMaxedDepartments(cd, MINISTRY_DEPARTMENTS_CONFIG.kementerian);
       const isUnlocked = allMaxed;
@@ -1079,7 +1080,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Shield,
     accent: '#f43f5e',
     maxProgress: 4,
-    reward: { gems: 250, neo: 90000000 },
+    reward: { gems: 250, neo: 90000000 , xp: 3 },
     computeProgress: (cd) => {
       const { maxedCount, totalCount, allMaxed } = countMinistryMaxedDepartments(cd, MINISTRY_DEPARTMENTS_CONFIG.keamanan);
       const isUnlocked = allMaxed;
@@ -1107,7 +1108,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Landmark,
     accent: '#eab308',
     maxProgress: 2,
-    reward: { gems: 200, neo: 75000000 },
+    reward: { gems: 200, neo: 75000000 , xp: 2 },
     computeProgress: (cd) => {
       const { maxedCount, totalCount, allMaxed } = countMinistryMaxedDepartments(cd, MINISTRY_DEPARTMENTS_CONFIG.layanan);
       const isUnlocked = allMaxed;
@@ -1137,7 +1138,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Building2,
     accent: '#38bdf8',
     maxProgress: 100,
-    reward: { gems: 350, neo: 150000000 },
+    reward: { gems: 350, neo: 150000000 , xp: 3 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
       const count = getActiveEmbassiesCount(cd);
@@ -1167,7 +1168,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Shield,
     accent: '#60a5fa',
     maxProgress: 100,
-    reward: { gems: 350, neo: 150000000 },
+    reward: { gems: 350, neo: 150000000 , xp: 3 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
       const pacts = Array.isArray(cd?.nonAggressionPacts) ? cd.nonAggressionPacts : [];
@@ -1198,7 +1199,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Shield,
     accent: '#3b82f6',
     maxProgress: 100,
-    reward: { gems: 500, neo: 250000000 },
+    reward: { gems: 500, neo: 250000000 , xp: 4 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
       const alliances = Array.isArray(cd?.defenseAlliances) ? cd.defenseAlliances : [];
@@ -1229,7 +1230,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: HeartHandshake,
     accent: '#10b981',
     maxProgress: 100,
-    reward: { gems: 400, neo: 200000000 },
+    reward: { gems: 400, neo: 200000000 , xp: 4 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
       const count = getActiveTradeAgreementsCount(cd);
@@ -1259,7 +1260,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Microscope,
     accent: '#06b6d4',
     maxProgress: 100,
-    reward: { gems: 400, neo: 200000000 },
+    reward: { gems: 400, neo: 200000000 , xp: 4 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
       const contracts = Array.isArray(cd?.researchContracts) ? cd.researchContracts : [];
@@ -1290,7 +1291,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Sword,
     accent: '#ef4444',
     maxProgress: 100,
-    reward: { gems: 450, neo: 220000000 },
+    reward: { gems: 450, neo: 220000000 , xp: 4 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
       const troops = Array.isArray(cd?.diplomaticTroopsSent) ? cd.diplomaticTroopsSent : [];
@@ -1321,7 +1322,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Gift,
     accent: '#ec4899',
     maxProgress: 100,
-    reward: { gems: 350, neo: 150000000 },
+    reward: { gems: 350, neo: 150000000 , xp: 3 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
       const gifts = Array.isArray(cd?.diplomaticGiftsSent) ? cd.diplomaticGiftsSent : [];
@@ -1352,7 +1353,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: HeartHandshake,
     accent: '#f97316',
     maxProgress: 100,
-    reward: { gems: 350, neo: 160000000 },
+    reward: { gems: 350, neo: 160000000 , xp: 3 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
       const improved = Array.isArray(cd?.relationsImproved) ? cd.relationsImproved : [];
@@ -1383,7 +1384,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: PhoneCall,
     accent: '#a855f7',
     maxProgress: 100,
-    reward: { gems: 400, neo: 180000000 },
+    reward: { gems: 400, neo: 180000000 , xp: 4 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
       const requests = Array.isArray(cd?.aidRequests) ? cd.aidRequests : [];
@@ -1414,7 +1415,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: MapIcon,
     accent: '#eab308',
     maxProgress: 25,
-    reward: { gems: 500, neo: 250000000 },
+    reward: { gems: 500, neo: 250000000 , xp: 4 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd, 25);
       const ceded = Array.isArray(cd?.territoriesCeded) ? cd.territoriesCeded : [];
@@ -1447,7 +1448,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: BookOpen,
     accent: '#ec4899',
     maxProgress: 100,
-    reward: { gems: 200, neo: 80000000 },
+    reward: { gems: 200, neo: 80000000 , xp: 2 },
     computeProgress: (cd) => {
       const data = getSameReligionCountriesCount(cd);
       const current = data.count;
@@ -1477,7 +1478,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Flame,
     accent: '#f43f5e',
     maxProgress: 100,
-    reward: { gems: 200, neo: 80000000 },
+    reward: { gems: 200, neo: 80000000 , xp: 2 },
     computeProgress: (cd) => {
       const data = getSameIdeologyCountriesCount(cd);
       const current = data.count;
@@ -1558,7 +1559,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Shield,
     accent: '#ef4444',
     maxProgress: 10,
-    reward: { gems: 220, neo: 85000000 },
+    reward: { gems: 220, neo: 85000000 , xp: 2 },
     computeProgress: (cd) => {
       const militaryUnits = cd?.militaryPower ?? 8;
       const current = Math.min(10, militaryUnits);
@@ -1571,7 +1572,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Shield,
     accent: '#f87171',
     maxProgress: 3,
-    reward: { gems: 180, neo: 65000000 },
+    reward: { gems: 180, neo: 65000000 , xp: 2 },
     computeProgress: (cd) => {
       const spySuccess = cd?.intelOperationsSuccess ?? 1;
       const current = Math.min(3, spySuccess);
@@ -1584,7 +1585,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Shield,
     accent: '#b91c1c',
     maxProgress: 1,
-    reward: { gems: 250, neo: 100000000 },
+    reward: { gems: 250, neo: 100000000 , xp: 3 },
     computeProgress: (cd) => {
       const hasAnnexed = (cd?.annexedTerritories?.length || 0) > 0;
       const isUnlocked = !hasAnnexed || Boolean(cd?.annexedStabilized);
@@ -1597,7 +1598,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Shield,
     accent: '#dc2626',
     maxProgress: 1,
-    reward: { gems: 300, neo: 120000000 },
+    reward: { gems: 300, neo: 120000000 , xp: 3 },
     computeProgress: (cd) => {
       const hasDefenseHQ = Boolean(cd?.buildings?.markas_pertahanan || cd?.hasDefenseTech);
       return { current: hasDefenseHQ ? 1 : 0, isUnlocked: hasDefenseHQ };
@@ -1611,7 +1612,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Siren,
     accent: '#eab308',
     maxProgress: 100,
-    reward: { gems: 300, neo: 120000000 },
+    reward: { gems: 300, neo: 120000000 , xp: 3 },
     computeProgress: (cd) => {
       const target = 100;
       const disasterResolved = Number(cd?.disasterResolvedCount ?? 0);
@@ -1641,7 +1642,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Siren,
     accent: '#ef4444',
     maxProgress: 100,
-    reward: { gems: 400, neo: 180000000 },
+    reward: { gems: 400, neo: 180000000 , xp: 4 },
     computeProgress: (cd) => {
       const target = 100;
       const pandemicHandled = Number(cd?.pandemicHandledCount ?? 0);
@@ -1671,7 +1672,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     icon: Siren,
     accent: '#ca8a04',
     maxProgress: 100,
-    reward: { gems: 300, neo: 120000000 },
+    reward: { gems: 300, neo: 120000000 , xp: 3 },
     computeProgress: (cd) => {
       const target = 100;
       const epidemicHandled = Number(cd?.epidemicHandledCount ?? 0);
@@ -1888,14 +1889,28 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
         if (item.reward.neo) {
           next.uangKas = (next.uangKas || 0) + item.reward.neo;
         }
+        if (item.reward.xp) {
+          next.xp = (Number(next.xp) || 0) + item.reward.xp;
+        }
         return next;
       });
+    }
+
+    // Persist XP to localStorage & dispatch event
+    if (item.reward.xp) {
+      try {
+        const currentExp = Number(localStorage.getItem('neosantara_player_xp') || 0);
+        const nextExp = currentExp + item.reward.xp;
+        localStorage.setItem('neosantara_player_xp', String(nextExp));
+        window.dispatchEvent(new CustomEvent('player_xp_updated', { detail: { xp: nextExp, added: item.reward.xp } }));
+      } catch {}
     }
 
     const title = item.dynamicTitle || t(`side_pencapaian.items.${item.id}.title`) || item.id;
     const rewardText = [
       item.reward.gems ? `${item.reward.gems} Gems` : null,
       item.reward.neo ? `${item.reward.neo.toLocaleString('id-ID')} NEO` : null,
+      item.reward.xp ? `+${item.reward.xp} XP` : null,
     ].filter(Boolean).join(' + ');
 
     const toast = (t('side_pencapaian.claimedToast') || '🎉 Selamat! Hadiah {title} diklaim: {reward}')
@@ -2141,7 +2156,7 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
               {/* Right Reward & Action */}
               <div className="shrink-0 flex sm:flex-col items-center sm:items-end justify-between gap-2 border-t sm:border-t-0 pt-2 sm:pt-0 border-root-accent/10">
                 {/* Rewards preview */}
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 flex-wrap justify-end">
                   {item.reward.gems && (
                     <span className="inline-flex items-center gap-1 rounded-md bg-cyan-500/10 border border-cyan-500/30 px-1.5 py-0.5 text-[9px] font-bold text-cyan-300">
                       <Gem className="h-2.5 w-2.5 text-cyan-400" />
@@ -2152,6 +2167,12 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
                     <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 text-[9px] font-bold text-amber-300">
                       <Coins className="h-2.5 w-2.5 text-amber-400" />
                       +{(item.reward.neo / 1000000).toFixed(0)}M
+                    </span>
+                  )}
+                  {item.reward.xp && (
+                    <span className="inline-flex items-center gap-1 rounded-md bg-purple-500/10 border border-purple-500/30 px-1.5 py-0.5 text-[9px] font-bold text-purple-300">
+                      <Sparkles className="h-2.5 w-2.5 text-purple-400" />
+                      +{item.reward.xp} XP
                     </span>
                   )}
                 </div>

@@ -732,9 +732,27 @@ export function markMissionAsClaimable(cardId: string): void {
   } catch {}
 }
 
+export function getMissionXpReward(cardId?: string): number {
+  if (!cardId) return 3;
+  let hash = 0;
+  for (let i = 0; i < cardId.length; i++) {
+    hash = (hash * 31 + cardId.charCodeAt(i)) & 0xffffffff;
+  }
+  return 2 + (Math.abs(hash) % 3); // menghasilkan nilai antara 2, 3, atau 4 XP
+}
+
+export function getPlayerTotalExp(): number {
+  if (typeof window === 'undefined') return 0;
+  try {
+    return Number(localStorage.getItem('neosantara_player_xp') || 0);
+  } catch {
+    return 0;
+  }
+}
+
 /**
  * Klaim hadiah misi yang sudah selesai:
- * 1. Tambah Gems dan NEO
+ * 1. Tambah Gems, XP, dan NEO
  * 2. Tambah NEO ke anggaran dan bonus stok SDA bila tersedia
  * 3. Catat jumlah penyelesaian misi (sehingga hadiah berikutnya bertambah)
  * 4. Hapus dari daftar klaim
@@ -743,27 +761,36 @@ export function claimMissionReward(
   cardId: string,
   countryDetail?: any,
   setCountryDetail?: (updater: any) => void
-): { claimed: boolean; diamond: number; nextCompletionCount: number; neo?: number; sda?: { amount: number; productKey: string } } {
-  if (typeof window === 'undefined') return { claimed: false, diamond: 0, nextCompletionCount: 0 };
+): { claimed: boolean; diamond: number; nextCompletionCount: number; xp: number; neo?: number; sda?: { amount: number; productKey: string } } {
+  if (typeof window === 'undefined') return { claimed: false, diamond: 0, xp: 0, nextCompletionCount: 0 };
   try {
     if (!getClaimableMissionsList().includes(cardId)) {
-      return { claimed: false, diamond: 0, nextCompletionCount: getMissionCompletionCount(cardId) };
+      return { claimed: false, diamond: 0, xp: 0, nextCompletionCount: getMissionCompletionCount(cardId) };
     }
     const card = MISSION_CARDS.find(c => c.id === cardId);
-    if (!card) return { claimed: false, diamond: 0, nextCompletionCount: getMissionCompletionCount(cardId) };
+    if (!card) return { claimed: false, diamond: 0, xp: 0, nextCompletionCount: getMissionCompletionCount(cardId) };
     if (getActiveMissionPoolIds().includes(cardId)) {
       const target = getMissionRequiredTarget(card, getMissionCompletionCount(cardId));
       if (target !== null && getMissionBuildingProgress(cardId) < target) {
         reconcileClaimableMissionsForActivePool();
-        return { claimed: false, diamond: 0, nextCompletionCount: getMissionCompletionCount(cardId) };
+        return { claimed: false, diamond: 0, xp: 0, nextCompletionCount: getMissionCompletionCount(cardId) };
       }
     }
     const count = getMissionCompletionCount(cardId);
     const badges = getMissionRewardBadges(card, count);
     const diamond = badges.diamond;
+    const grantedXp = badges.xp;
 
     // 1. Tambah Gems pemain
     addPlayerDiamonds(diamond);
+
+    // Tambah XP pemain ke localStorage & dispatch event
+    try {
+      const curXp = Number(localStorage.getItem('neosantara_player_xp') || 0);
+      const nextXp = curXp + grantedXp;
+      localStorage.setItem('neosantara_player_xp', String(nextXp));
+      window.dispatchEvent(new CustomEvent('player_xp_updated', { detail: { xp: nextXp, added: grantedXp } }));
+    } catch {}
 
     const grantedNeo = badges.neo;
     const grantedSda = badges.sda;
@@ -773,6 +800,9 @@ export function claimMissionReward(
         const next = { ...prev };
         if (grantedNeo && grantedNeo > 0) {
           next.anggaran = (Number(next.anggaran) || 0) + grantedNeo;
+        }
+        if (grantedXp && grantedXp > 0) {
+          next.xp = (Number(next.xp) || 0) + grantedXp;
         }
         if (grantedSda && grantedSda.amount > 0) {
           if (!next.inventory) next.inventory = {};
@@ -812,9 +842,9 @@ export function claimMissionReward(
     // 5. Ganti kartu yang selesai dengan kartu baru secara acak di dalam pool 5 kartu
     replaceCompletedMissionInPool(cardId);
 
-    return { claimed: true, diamond, nextCompletionCount, neo: grantedNeo, sda: grantedSda };
+    return { claimed: true, diamond, xp: grantedXp, nextCompletionCount, neo: grantedNeo, sda: grantedSda };
   } catch {
-    return { claimed: false, diamond: 0, nextCompletionCount: getMissionCompletionCount(cardId) };
+    return { claimed: false, diamond: 0, xp: 0, nextCompletionCount: getMissionCompletionCount(cardId) };
   }
 }
 
@@ -917,6 +947,7 @@ interface MissionRewardBadges {
   neo: number;
   sda?: { amount: number; productKey: string };
   diamond: number;
+  xp: number;
 }
 
 function getMissionRewardBadges(card: MissionCard, completionCount = 0): MissionRewardBadges {
@@ -933,6 +964,7 @@ function getMissionRewardBadges(card: MissionCard, completionCount = 0): Mission
   const totalCompletionCount = getTotalMissionCompletionCount();
   const neo = getProgressiveNeoReward(totalCompletionCount, card.id);
   const diamond = getProgressiveDiamondReward(totalCompletionCount, card.id);
+  const xp = getMissionXpReward(card.id);
   const sda = productKey && productRewardCategories.includes(card.categoryLabel)
     ? { amount: getProgressiveSdaReward(completionCount), productKey }
     : undefined;
@@ -941,6 +973,7 @@ function getMissionRewardBadges(card: MissionCard, completionCount = 0): Mission
     neo,
     sda,
     diamond,
+    xp,
   };
 }
 
@@ -1679,6 +1712,9 @@ export default function MissionModals({
     const result = claimMissionReward(cardId, countryDetail, setCountryDetail);
     if (!result.claimed) return;
     let rewardText = `+${result.diamond} Gems`;
+    if (result.xp) {
+      rewardText += ` & +${result.xp} XP`;
+    }
     if (result.neo) {
       rewardText += ` & +${result.neo.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`;
     }
@@ -1708,7 +1744,30 @@ export default function MissionModals({
     .map(id => MISSION_CARDS.find(card => card.id === id))
     .filter((card): card is MissionCard => Boolean(card));
 
-  const totalExp = 0;
+  const [liveXp, setLiveXp] = useState<number>(0);
+  useEffect(() => {
+    const readXp = () => {
+      const stored = Number(localStorage.getItem('neosantara_player_xp') || 0);
+      const cdXp = Number(countryDetail?.xp || 0);
+      setLiveXp(Math.max(stored, cdXp));
+    };
+    readXp();
+    const handleXpUpdate = (e: any) => {
+      if (typeof e.detail?.xp === 'number') {
+        setLiveXp(e.detail.xp);
+      } else {
+        readXp();
+      }
+    };
+    window.addEventListener('player_xp_updated', handleXpUpdate);
+    window.addEventListener('storage', readXp);
+    return () => {
+      window.removeEventListener('player_xp_updated', handleXpUpdate);
+      window.removeEventListener('storage', readXp);
+    };
+  }, [countryDetail?.xp]);
+
+  const totalExp = liveXp;
   const totalClaimable = claimableList.length;
 
   return (
@@ -1848,6 +1907,7 @@ export default function MissionModals({
                             {badges.neo !== undefined && ` · ${badges.neo.toLocaleString('id-ID')} NEO`}
                             {badges.sda && ` · ${badges.sda.amount.toLocaleString('id-ID')} ${t(`side_reward.items.${badges.sda.productKey}`) || formatProductionProductName(badges.sda.productKey)}`}
                             {` · ${badges.diamond} Gems`}
+                            {` · +${badges.xp} XP`}
                           </p>
                         </div>
                         <button
@@ -1951,6 +2011,11 @@ export default function MissionModals({
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-cyan-500/15 border border-cyan-400/40 text-cyan-200 font-black text-[10px]">
                           <Gem className="h-3 w-3 text-cyan-300" />
                           {badges.diamond} Gems
+                        </span>
+
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-purple-500/15 border border-purple-400/40 text-purple-200 font-black text-[10px]">
+                          <Sparkles className="h-3 w-3 text-purple-300" />
+                          +{badges.xp} XP
                         </span>
                       </div>
                     </div>
