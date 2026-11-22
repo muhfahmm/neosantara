@@ -123,6 +123,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
         <React.Fragment>
             <div className={isConfirming ? 'pointer-events-none' : 'pointer-events-auto'}>
                 <PausedMenuFrame zIndexClass="z-[99999999]">
+                    <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
                     <div className="paused-menu-content relative flex min-h-0 flex-1 flex-col overflow-y-auto p-4 custom-scrollbar sm:p-8">
                         {/* View: MAIN LIST MENU */}
                         {subview === 'menu' && (
@@ -281,17 +282,18 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                             </div>
                         )}
 
-                        {/* Ink Stamp at the Bottom Right — Green Theme */}
-                        <div className="paused-menu-stamp absolute bottom-6 right-6 border-2 border-dashed border-root-accent/30 text-root-accent/40 px-3 py-1 font-mono text-[9px] font-black uppercase tracking-wider rounded rotate-[-4deg] pointer-events-none select-none">
-                            PRESIDEN EXEC. 16FA-923
-                        </div>
+                    </div>
 
-                        {/* Decorative Elegant Divider at the Bottom */}
-                        <div className="paused-menu-footer-divider flex items-center justify-center gap-1.5 text-root-accent/40 mt-6 shrink-0">
+                    <div className="paused-menu-footer relative flex h-10 shrink-0 items-center justify-center border-t border-root-accent/10 px-4 sm:h-12 sm:px-6">
+                        <div className="paused-menu-footer-divider flex items-center gap-1.5 text-root-accent/40">
                             <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-root-accent/40" />
                             <span className="text-[10px] tracking-widest font-black uppercase">❖ ❖ ❖</span>
                             <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-root-accent/40" />
                         </div>
+                        <div className="paused-menu-stamp absolute right-4 border-2 border-dashed border-root-accent/30 px-3 py-1 font-mono text-[9px] font-black uppercase tracking-wider text-root-accent/40 rounded rotate-[-4deg] pointer-events-none select-none sm:right-6">
+                            PRESIDEN EXEC. 16FA-923
+                        </div>
+                    </div>
                     </div>
                 </PausedMenuFrame>
             </div>
