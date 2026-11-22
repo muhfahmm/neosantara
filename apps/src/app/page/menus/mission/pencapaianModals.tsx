@@ -1893,9 +1893,9 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
     return evaluatedAchievements.filter((a) => a.isUnlocked).length;
   }, [evaluatedAchievements]);
 
-  // Filtered list
+  // Filtered and sorted list (hadiah siap klaim berada di paling atas)
   const filteredList = useMemo(() => {
-    return evaluatedAchievements.filter((item) => {
+    const list = evaluatedAchievements.filter((item) => {
       if (selectedCategory !== 'all' && item.category !== selectedCategory) {
         return false;
       }
@@ -1906,6 +1906,21 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
         return false;
       }
       return true;
+    });
+
+    return list.sort((a, b) => {
+      // 1. Yang siap klaim paling atas
+      if (a.isReadyToClaim && !b.isReadyToClaim) return -1;
+      if (!a.isReadyToClaim && b.isReadyToClaim) return 1;
+
+      // 2. Yang sudah diklaim diletakkan paling bawah
+      if (a.isClaimed && !b.isClaimed) return 1;
+      if (!a.isClaimed && b.isClaimed) return -1;
+
+      // 3. Sisanya urut berdasarkan persentase progres tertinggi
+      const pctA = a.currentProgress / (a.maxProgress || 1);
+      const pctB = b.currentProgress / (b.maxProgress || 1);
+      return pctB - pctA;
     });
   }, [evaluatedAchievements, selectedCategory, filterStatus]);
 
