@@ -2,6 +2,7 @@ import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
 import { getRelationValue } from "../../../../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry";
 import type { CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles";
+import { createInboxNotificationText, getDefaultInboxText } from "@/app/page/menus/inbox/logic/notificationMessage";
 import type { NotificationMessage } from "@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic";
 
 export type CouncilRegion =
@@ -652,10 +653,10 @@ export function resolveElection(
 }
 
 const ELECTION_SCHEDULE = [
-  { day: 1, stage: 1, title: "NOMINASI PEMILIHAN DK PBB DIBUKA" },
-  { day: 15, stage: 2, title: "KAMPANYE DIPLOMATIK PEMILIHAN DK PBB DIMULAI" },
-  { day: 25, stage: 3, title: "SIDANG PEMUNGUTAN SUARA ANGGOTA TIDAK TETAP DK PBB" },
-  { day: 30, stage: 4, title: "HASIL PEMILIHAN ANGGOTA TIDAK TETAP DK PBB" },
+  { day: 1, stage: 1, titleKey: "nominationTitle", messageKey: "nominationMessage" },
+  { day: 15, stage: 2, titleKey: "campaignTitle", messageKey: "campaignMessage" },
+  { day: 25, stage: 3, titleKey: "votingTitle", messageKey: "votingMessage" },
+  { day: 30, stage: 4, titleKey: "resultsTitle", messageKey: "resultsMessage" },
 ] as const;
 
 export interface ElectionScheduleResult {
@@ -671,21 +672,30 @@ function createElectionScheduleNotification(
   election?: SecurityCouncilElectionState
 ): NotificationMessage {
   const schedule = ELECTION_SCHEDULE[stage - 1];
-  const notices: Record<number, string> = {
-    1: `Sidang Majelis Umum PBB untuk memilih 5 dari 10 anggota tidak tetap Dewan Keamanan dibuka. Nominasi berlangsung hingga 14 Juni. Lokasi: Markas Besar PBB, New York.`,
-    2: `Kampanye diplomatik telah dimulai. Negara kandidat dapat menyelesaikan kampanye hingga 24 Juni. Sidang pemungutan suara dijadwalkan pada 25 Juni di Markas Besar PBB, New York.`,
-    3: `Sidang Majelis Umum PBB untuk pemungutan suara 5 kursi anggota tidak tetap dimulai. Pemungutan suara berlangsung hingga 30 Juni di Markas Besar PBB, New York.`,
-    4: `Hasil pemilihan anggota tidak tetap Dewan Keamanan PBB tahun ${year}: ${election?.history.at(-1)?.winners.join(", ") || "hasil belum tersedia"}. Masa jabatan dimulai 1 Januari ${year + 1} dan berlangsung selama 2 tahun.`,
+  const translationPrefix = "side_inbox.notificationMessages.securityCouncilElection";
+  const titleKey = `${translationPrefix}.${schedule.titleKey}`;
+  const messageKey = `${translationPrefix}.${schedule.messageKey}`;
+  const winners = election?.history.at(-1)?.winners.join(", ") ||
+    getDefaultInboxText(`${translationPrefix}.noResults`);
+  const messageParams = {
+    year,
+    winners,
+    startYear: year + 1,
+    endYear: year + 2,
   };
   return {
     id: `pbb-security-election-${year}-${stage}`,
-    title: `🗳️ ${schedule.title}`,
-    sender: "Sekretariat Majelis Umum Perserikatan Bangsa-Bangsa",
-    message: notices[stage],
+    title: getDefaultInboxText(titleKey),
+    titleKey,
+    sender: getDefaultInboxText(`${translationPrefix}.sender`),
+    senderKey: `${translationPrefix}.sender`,
+    ...createInboxNotificationText(messageKey, messageParams),
     timestamp: dateStr,
     type: "peringkat",
-    value: stage,
+    value: 0,
+    hideValue: true,
     isRead: false,
+    priority: "critical",
   };
 }
 
@@ -758,9 +768,8 @@ export function tickSecurityCouncilElectionSchedule(
     }
 
     state = { ...state, scheduleStage: nextStage };
-    const notificationDate = electionOverdue
-      ? `${state.year}-06-${String(ELECTION_SCHEDULE[nextStage - 1].day).padStart(2, "0")}`
-      : dateStr;
+    const notificationDate =
+      `${state.year}-06-${String(ELECTION_SCHEDULE[nextStage - 1].day).padStart(2, "0")}`;
     notifications.push(createElectionScheduleNotification(state.year, nextStage, notificationDate, state));
   }
 

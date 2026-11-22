@@ -20,9 +20,11 @@ export default function PeringkatNotification({ notification, onCrackdownClick }
       <div className="flex-1 space-y-1">
         <div className="flex items-center justify-between">
           <h4 className="text-sm font-black text-red-900 uppercase tracking-wide">{getInboxNotificationTitle(notification, t)}</h4>
-          <span className="text-[10px] font-bold text-red-700 bg-red-100/50 px-2 py-0.5 rounded border border-red-200">
-            {t('side_inbox.types.peringkat')}: {notification.value}/100
-          </span>
+          {!notification.hideValue && (
+            <span className="text-[10px] font-bold text-red-700 bg-red-100/50 px-2 py-0.5 rounded border border-red-200">
+              {t('side_inbox.types.peringkat')}: {notification.value}/100
+            </span>
+          )}
         </div>
         <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
           {t('side_inbox.senderPrefix', { sender: getInboxNotificationSender(notification, t), date: notification.timestamp })}

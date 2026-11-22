@@ -1,5 +1,17 @@
 {
   "notificationMessages": {
+    "securityCouncilElection": {
+      "sender": "Secretariat of the United Nations General Assembly",
+      "nominationTitle": "🗳️ UNSC NON-PERMANENT MEMBER NOMINATIONS OPEN",
+      "nominationMessage": "Nominations to elect 5 of the 10 non-permanent members of the UN Security Council for {year} are open. Nominations run from June 1–14 at UN Headquarters in New York.",
+      "campaignTitle": "📣 UN SECURITY COUNCIL ELECTION CAMPAIGN BEGINS",
+      "campaignMessage": "Diplomatic campaigning for the {year} election runs from June 15–24. Voting begins on June 25.",
+      "votingTitle": "🗳️ UN SECURITY COUNCIL ELECTION VOTING BEGINS",
+      "votingMessage": "The UN General Assembly begins voting to elect 5 non-permanent Security Council members for {year}. Voting runs from June 25–30.",
+      "resultsTitle": "🏛️ UN SECURITY COUNCIL ELECTION RESULTS",
+      "resultsMessage": "Results of the {year} UN Security Council election: {winners}. The elected members will serve from January 1, {startYear} through December 31, {endYear}.",
+      "noResults": "results unavailable"
+    },
     "ratings": {
       "satisfaction": "Mr. President, public satisfaction has fallen to {value}/100. Discontent is spreading across several provinces. If it continues to drop below 10, widespread protests will be unavoidable and national stability will be threatened. Please hold a cultural festival or lower taxes on basic goods immediately.",
       "ranking": "Mr. President, public confidence in your leadership has fallen to {value}/100. Parliament is taking notice of the downward trend, and opposition rumors of impeachment are emerging. If your ranking falls below 10, you risk being ousted. Please address public concerns, stabilize prices, and protect public welfare.",

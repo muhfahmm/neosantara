@@ -40,6 +40,7 @@ export interface NotificationMessage {
   timestamp: string;
   type: 'kepuasan' | 'peringkat' | 'kesejahteraan';
   value: number;
+  hideValue?: boolean;
   isRead: boolean;
   priority?: 'normal' | 'critical';
   diplomacyArrivalDate?: string;

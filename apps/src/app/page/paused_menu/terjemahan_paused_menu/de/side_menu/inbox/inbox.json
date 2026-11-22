@@ -1,5 +1,17 @@
 {
   "notificationMessages": {
+    "securityCouncilElection": {
+      "sender": "Sekretariat der Generalversammlung der Vereinten Nationen",
+      "nominationTitle": "🗳️ Nominierungen für nichtständige Sitze im UN-Sicherheitsrat eröffnet",
+      "nominationMessage": "Die Nominierungen zur Wahl von 5 der 10 nichtständigen Mitglieder des UN-Sicherheitsrats für {year} sind eröffnet. Die Nominierungsphase läuft vom 1. bis 14. Juni am UN-Hauptsitz in New York.",
+      "campaignTitle": "📣 Wahlkampf für den UN-Sicherheitsrat beginnt",
+      "campaignMessage": "Der diplomatische Wahlkampf für die Wahl {year} läuft vom 15. bis 24. Juni. Die Abstimmung beginnt am 25. Juni.",
+      "votingTitle": "🗳️ Abstimmung über nichtständige Sitze im UN-Sicherheitsrat beginnt",
+      "votingMessage": "Die UN-Generalversammlung beginnt mit der Wahl von 5 nichtständigen Mitgliedern des Sicherheitsrats für {year}. Die Abstimmung läuft vom 25. bis 30. Juni.",
+      "resultsTitle": "🏛️ Ergebnisse der Wahl zum UN-Sicherheitsrat",
+      "resultsMessage": "Ergebnisse der UN-Sicherheitsratswahl {year}: {winners}. Die gewählten Mitglieder beginnen ihre Amtszeit am 1. Januar {startYear}; sie endet am 31. Dezember {endYear}.",
+      "noResults": "Ergebnisse nicht verfügbar"
+    },
     "ratings": {
       "satisfaction": "Herr Präsident, die Zufriedenheit der Bevölkerung ist auf {value}/100 gesunken. In mehreren Provinzen breitet sich Unzufriedenheit aus. Sinkt der Wert weiter unter 10, sind Massenproteste unvermeidlich und die Stabilität des Landes ist gefährdet. Bitte veranstalten Sie ein Kulturfest oder senken Sie die Steuern auf Grundbedarfsgüter.",
       "ranking": "Herr Präsident, das Vertrauen der Bevölkerung in Ihre Führung ist auf {value}/100 gesunken. Das Parlament beobachtet den negativen Trend, und in der Opposition werden erste Amtsenthebungsgerüchte laut. Fällt Ihr Rang unter 10, droht Ihnen die Absetzung. Bitte erfüllen Sie die Anliegen der Bevölkerung, stabilisieren Sie die Preise und sichern Sie ihr Wohlergehen.",

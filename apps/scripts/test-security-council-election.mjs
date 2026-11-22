@@ -75,6 +75,17 @@ const mockRequire = specifier => {
   if (specifier === "@/app/logic/gameSessionState") {
     return { getCurrentGameDateString: () => gameDate };
   }
+  if (specifier === "@/app/page/menus/inbox/logic/notificationMessage") {
+    return {
+      createInboxNotificationText: (messageKey, messageParams) => ({
+        message: messageKey,
+        messageKey,
+        messageParams,
+        messageParamKeys: {},
+      }),
+      getDefaultInboxText: key => key,
+    };
+  }
   if (specifier.endsWith("/relationsRegistry")) {
     return { getRelationValue: () => 50 };
   }
@@ -200,11 +211,52 @@ test("missed election completes sequentially and emits each stage notification",
     result.notifications.map(notification => notification.timestamp),
     ["2028-06-01", "2028-06-15", "2028-06-25", "2028-06-30"]
   );
+  assert.deepEqual(
+    result.notifications.map(notification => notification.titleKey),
+    [
+      "side_inbox.notificationMessages.securityCouncilElection.nominationTitle",
+      "side_inbox.notificationMessages.securityCouncilElection.campaignTitle",
+      "side_inbox.notificationMessages.securityCouncilElection.votingTitle",
+      "side_inbox.notificationMessages.securityCouncilElection.resultsTitle",
+    ]
+  );
+  assert.ok(result.notifications.every(notification =>
+    notification.priority === "critical" &&
+    notification.hideValue === true &&
+    notification.isRead === false
+  ));
 
   const nextElection = normalizeElectionState(result.state, 2029);
   assert.equal(nextElection.year, 2029);
   assert.equal(nextElection.cohort, "B");
   assert.deepEqual(nextElection.members, result.state.members);
+});
+
+test("election notifications are emitted only on the four June stage dates", () => {
+  const initial = createInitialElectionState(2026);
+  const nomination = tickSecurityCouncilElectionSchedule("2028-06-01", initial, profiles);
+  assert.ok(nomination);
+  assert.deepEqual(nomination.notifications.map(notification => notification.timestamp), ["2028-06-01"]);
+
+  const nominationStillOpen = tickSecurityCouncilElectionSchedule("2028-06-14", nomination.state, profiles);
+  assert.ok(nominationStillOpen);
+  assert.deepEqual(nominationStillOpen.notifications, []);
+
+  const campaign = tickSecurityCouncilElectionSchedule("2028-06-15", nominationStillOpen.state, profiles);
+  assert.ok(campaign);
+  assert.deepEqual(campaign.notifications.map(notification => notification.timestamp), ["2028-06-15"]);
+
+  const campaignStillOpen = tickSecurityCouncilElectionSchedule("2028-06-24", campaign.state, profiles);
+  assert.ok(campaignStillOpen);
+  assert.deepEqual(campaignStillOpen.notifications, []);
+
+  const voting = tickSecurityCouncilElectionSchedule("2028-06-25", campaignStillOpen.state, profiles);
+  assert.ok(voting);
+  assert.deepEqual(voting.notifications.map(notification => notification.timestamp), ["2028-06-25"]);
+
+  const results = tickSecurityCouncilElectionSchedule("2028-06-30", voting.state, profiles);
+  assert.ok(results);
+  assert.deepEqual(results.notifications.map(notification => notification.timestamp), ["2028-06-30"]);
 });
 
 test("missed election with incomplete voter data returns an error without advancing", () => {

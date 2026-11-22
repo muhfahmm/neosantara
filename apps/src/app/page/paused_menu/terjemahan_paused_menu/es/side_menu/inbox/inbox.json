@@ -1,5 +1,17 @@
 {
   "notificationMessages": {
+    "securityCouncilElection": {
+      "sender": "Secretaría de la Asamblea General de las Naciones Unidas",
+      "nominationTitle": "🗳️ SE ABREN LAS NOMINACIONES PARA MIEMBROS NO PERMANENTES DEL CONSEJO DE SEGURIDAD",
+      "nominationMessage": "Se abre la nominación para elegir a 5 de los 10 miembros no permanentes del Consejo de Seguridad para {year}. Las nominaciones estarán abiertas del 1 al 14 de junio en la sede de la ONU en Nueva York.",
+      "campaignTitle": "📣 COMIENZA LA CAMPAÑA ELECTORAL DEL CONSEJO DE SEGURIDAD",
+      "campaignMessage": "La campaña diplomática para las elecciones de {year} se celebrará del 15 al 24 de junio. La votación comenzará el 25 de junio.",
+      "votingTitle": "🗳️ COMIENZA LA VOTACIÓN PARA EL CONSEJO DE SEGURIDAD",
+      "votingMessage": "La Asamblea General de la ONU comienza a elegir a 5 miembros no permanentes del Consejo de Seguridad para {year}. La votación tendrá lugar del 25 al 30 de junio.",
+      "resultsTitle": "🏛️ RESULTADOS DE LAS ELECCIONES DEL CONSEJO DE SEGURIDAD",
+      "resultsMessage": "Resultados de las elecciones del Consejo de Seguridad de la ONU de {year}: {winners}. Los miembros electos ejercerán su mandato desde el 1 de enero de {startYear} hasta el 31 de diciembre de {endYear}.",
+      "noResults": "resultados no disponibles"
+    },
     "ratings": {
       "satisfaction": "Señor presidente, la satisfacción ciudadana ha caído a {value}/100 y el descontento comienza a extenderse por varias provincias. Si baja de 10, las protestas generalizadas serán inevitables y la estabilidad nacional estará en peligro. Organice un festival cultural o reduzca de inmediato los impuestos sobre los productos básicos.",
       "ranking": "Señor presidente, la confianza ciudadana en su liderazgo ha caído a {value}/100. El Parlamento ya observa la tendencia negativa y surgen rumores de destitución entre la oposición. Si su clasificación cae por debajo de 10, podría ser derrocado. Atienda las demandas públicas, estabilice los precios y proteja el bienestar de la población.",

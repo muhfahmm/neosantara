@@ -1,5 +1,17 @@
 {
   "notificationMessages": {
+    "securityCouncilElection": {
+      "sender": "Sekretariat Majelis Umum Perserikatan Bangsa-Bangsa",
+      "nominationTitle": "🗳️ NOMINASI ANGGOTA TIDAK TETAP DK PBB DIBUKA",
+      "nominationMessage": "Pencalonan untuk memilih 5 dari 10 anggota tidak tetap Dewan Keamanan PBB tahun {year} telah dibuka. Nominasi berlangsung pada 1–14 Juni di Markas Besar PBB, New York.",
+      "campaignTitle": "📣 KAMPANYE PEMILIHAN DK PBB DIMULAI",
+      "campaignMessage": "Kampanye diplomatik kandidat untuk pemilihan tahun {year} berlangsung pada 15–24 Juni. Pemungutan suara akan dimulai pada 25 Juni.",
+      "votingTitle": "🗳️ PEMUNGUTAN SUARA ANGGOTA TIDAK TETAP DK PBB DIMULAI",
+      "votingMessage": "Majelis Umum PBB mulai memilih 5 anggota tidak tetap Dewan Keamanan tahun {year}. Pemungutan suara berlangsung pada 25–30 Juni.",
+      "resultsTitle": "🏛️ HASIL PEMILIHAN ANGGOTA TIDAK TETAP DK PBB",
+      "resultsMessage": "Hasil pemilihan Dewan Keamanan PBB tahun {year}: {winners}. Para anggota terpilih akan menjabat mulai 1 Januari {startYear} hingga 31 Desember {endYear}.",
+      "noResults": "hasil belum tersedia"
+    },
     "ratings": {
       "satisfaction": "Lapor Presiden! Indeks kepuasan rakyat telah merosot ke angka {value}/100. Ketidakpuasan mulai menyebar di berbagai provinsi. Jika terus dibiarkan hingga di bawah 10, gelombang aksi protes besar-besaran tidak akan terhindarkan dan stabilitas negara akan terancam! Mohon segera luncurkan festival budaya atau turunkan tarif pajak barang pokok.",
       "ranking": "Presiden, tingkat kepercayaan rakyat (Peringkat Anda) telah merosot ke angka {value}/100. Parlemen mulai memperhatikan tren negatif ini dan desas-desus oposisi tentang pemakzulan mulai terdengar. Jika peringkat terus merosot di bawah 10, Anda terancam dilengserkan! Tolong segera penuhi aspirasi rakyat, stabilkan harga, dan jaga kesejahteraan mereka.",

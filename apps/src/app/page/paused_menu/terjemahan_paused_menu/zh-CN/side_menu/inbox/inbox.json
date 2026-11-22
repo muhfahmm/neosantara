@@ -1,5 +1,17 @@
 {
   "notificationMessages": {
+    "securityCouncilElection": {
+      "sender": "联合国大会秘书处",
+      "nominationTitle": "🗳️ 联合国安理会非常任理事国提名开始",
+      "nominationMessage": "{year}年联合国安理会非常任理事国选举提名现已开始，将从10个非常任理事国席位中选出5个。提名时间为6月1日至14日，地点在纽约联合国总部。",
+      "campaignTitle": "📣 联合国安理会选举竞选开始",
+      "campaignMessage": "{year}年选举的外交竞选活动将于6月15日至24日举行。投票将于6月25日开始。",
+      "votingTitle": "🗳️ 联合国安理会非常任理事国投票开始",
+      "votingMessage": "联合国大会开始投票选出{year}年安理会5个非常任理事国席位。投票时间为6月25日至30日。",
+      "resultsTitle": "🏛️ 联合国安理会选举结果",
+      "resultsMessage": "{year}年联合国安理会选举结果：{winners}。当选成员任期从{startYear}年1月1日至{endYear}年12月31日。",
+      "noResults": "暂无选举结果"
+    },
     "ratings": {
       "satisfaction": "总统阁下，民众满意度已降至{value}/100，不满情绪开始在多个省份蔓延。若继续跌破10，大规模抗议将不可避免，国家稳定也将受到威胁。请尽快举办文化节或降低生活必需品税率。",
       "ranking": "总统阁下，民众对您领导能力的信任度（您的排名）已降至{value}/100。议会开始关注这一负面趋势，反对派也出现了弹劾传闻。若排名跌破10，您可能会被罢免。请尽快回应民众诉求、稳定物价并保障民生。",
