@@ -11,7 +11,6 @@ const sourcePath = fileURLToPath(new URL(
   import.meta.url
 ));
 const source = await readFile(sourcePath, "utf8");
-
 const countriesData = [];
 const addCountries = (count, continent, prefix) => {
   for (let index = 0; index < count; index += 1) {
@@ -101,11 +100,11 @@ new Function("require", "module", "exports", compiled)(
   electionModule,
   electionModule.exports
 );
-
 const {
   createInitialElectionState,
   addPlayerNomination,
   beginElectionCampaign,
+  campaignForCandidate,
   getEligibleUNMemberCountries,
   getSecurityCouncilElectionCandidateCountries,
   getStoredCouncilMembers,
@@ -197,25 +196,53 @@ globalThis.window = {};
 
 test("new-game schedule and initial cohort terms remain fixed", () => {
   const initial = createInitialElectionState(2026);
-  assert.equal(initial.year, 2028);
-  assert.equal(initial.nextElectionYear, 2028);
-  assert.equal(initial.cohort, "A");
+  assert.equal(initial.year, 2027);
+  assert.equal(initial.nextElectionYear, 2027);
+  assert.equal(initial.cohort, "B");
   assert.equal(eligibleCountries.length, 193);
   assert.equal(electionCandidates.length, 194);
+  assert.deepEqual(
+    new Set(initial.recentlyServedIsos),
+    new Set(initial.members.map(member => member.iso))
+  );
 
   for (const member of initial.members) {
     assert.equal(member.termStartYear, 2026);
-    assert.equal(member.termEndYear, member.cohort === "A" ? 2028 : 2029);
+    assert.equal(member.termEndYear, member.cohort === "B" ? 2027 : 2028);
   }
-  assert.equal(normalizeElectionState(initial, 2027).year, 2028);
+  assert.equal(normalizeElectionState(initial, 2027).year, 2027);
   assert.equal(tickSecurityCouncilElectionSchedule("2026-06-30", initial, profiles), null);
-  assert.equal(tickSecurityCouncilElectionSchedule("2027-06-30", initial, profiles), null);
+  const firstElection = tickSecurityCouncilElectionSchedule("2027-06-30", initial, profiles);
+  assert.ok(firstElection);
+  assert.equal(firstElection.state.phase, "completed");
 });
 
-test("a new game in 2027 schedules cohort B for 2029", () => {
+test("legacy unstarted elections migrate to one year after the initial roster", () => {
+  const initial = createInitialElectionState(2026);
+  const legacyState = {
+    ...initial,
+    year: 2028,
+    nextElectionYear: 2028,
+    cohort: "A",
+    members: initial.members.map(member => ({
+      ...member,
+      termEndYear: member.cohort === "A" ? 2028 : 2029,
+    })),
+  };
+  const migrated = normalizeElectionState(legacyState, 2026);
+
+  assert.equal(migrated.year, 2027);
+  assert.equal(migrated.cohort, "B");
+  assert.ok(migrated.members.filter(member => member.cohort === "B")
+    .every(member => member.termEndYear === 2027));
+  assert.ok(migrated.members.filter(member => member.cohort === "A")
+    .every(member => member.termEndYear === 2028));
+});
+
+test("a new game in 2027 schedules cohort A for 2028", () => {
   const initial = createInitialElectionState(2027);
-  assert.equal(initial.year, 2029);
-  assert.equal(initial.cohort, "B");
+  assert.equal(initial.year, 2028);
+  assert.equal(initial.cohort, "A");
 });
 
 test("automatic candidate pools vary by election year and remain deterministic", () => {
@@ -262,15 +289,15 @@ test("daily voting tallies grow until all voters have participated", () => {
 
 test("scheduled voting updates daily and completes automatically on June 30", () => {
   const initial = createInitialElectionState(2026);
-  const nomination = tickSecurityCouncilElectionSchedule("2028-06-01", initial, profiles);
+  const nomination = tickSecurityCouncilElectionSchedule("2027-06-01", initial, profiles);
   assert.ok(nomination);
-  const campaign = tickSecurityCouncilElectionSchedule("2028-06-15", nomination.state, profiles);
+  const campaign = tickSecurityCouncilElectionSchedule("2027-06-15", nomination.state, profiles);
   assert.ok(campaign);
 
   let state = campaign.state;
   let previousVotes = 0;
   for (let day = 25; day < 30; day += 1) {
-    const result = tickSecurityCouncilElectionSchedule(`2028-06-${day}`, state, profiles);
+    const result = tickSecurityCouncilElectionSchedule(`2027-06-${day}`, state, profiles);
     assert.ok(result);
     assert.equal(result.error, undefined);
     assert.equal(result.state.phase, "voting");
@@ -280,11 +307,37 @@ test("scheduled voting updates daily and completes automatically on June 30", ()
     state = result.state;
   }
 
-  const results = tickSecurityCouncilElectionSchedule("2028-06-30", state, profiles);
+  const results = tickSecurityCouncilElectionSchedule("2027-06-30", state, profiles);
   assert.ok(results);
   assert.equal(results.state.phase, "completed");
   assert.equal(results.notifications.length, 1);
-  assert.equal(results.notifications[0].timestamp, "2028-06-30");
+  assert.equal(results.notifications[0].timestamp, "2027-06-30");
+
+  const formerMember = campaign.state.members.find(member =>
+    member.cohort === campaign.state.cohort
+  );
+  const formerCountry = {
+    name: formerMember.name,
+    iso: formerMember.iso,
+    slug: countrySlug(formerMember.name),
+    region: formerMember.region,
+    profile: null,
+  };
+  const nextElection = normalizeElectionState(results.state, results.state.nextElectionYear);
+  assert.ok(nextElection.recentlyServedIsos.includes(formerMember.iso));
+  assert.equal(addPlayerNomination(nextElection, formerCountry, eligibleCountries), nextElection);
+  const staleCampaign = campaignForCandidate({
+    ...nextElection,
+    phase: "campaign",
+    nominees: [{
+      ...formerCountry,
+      score: 100,
+      votes: 0,
+      campaignCount: 0,
+      contributionScore: 0,
+    }],
+  }, formerCountry.slug);
+  assert.deepEqual(staleCampaign.nominees, []);
 });
 
 test("fallback roster is active in its current and following election years", () => {
@@ -309,11 +362,11 @@ test("fallback roster is active in its current and following election years", ()
 test("completed election preserves the other cohort and prepares next year's election", () => {
   const initial = createInitialElectionState(2026);
   const nominees = [
-    ["Candidate Africa 1", "ca1", "Afrika"],
-    ["Candidate Africa 2", "ca2", "Afrika"],
+    ["Candidate Africa", "ca1", "Afrika"],
     ["Candidate Asia", "ca3", "Asia-Pasifik"],
     ["Candidate Latin", "ca4", "Amerika Latin & Karibia"],
     ["Candidate Europe", "ca5", "Eropa Barat"],
+    ["Candidate Eastern Europe", "ca6", "Eropa Timur"],
   ].map(([name, slug, region]) => ({
     name,
     iso: slug,
@@ -330,19 +383,64 @@ test("completed election preserves the other cohort and prepares next year's ele
   );
 
   assert.equal(completed.phase, "completed");
-  assert.equal(completed.nextElectionYear, 2029);
+  assert.equal(completed.history.at(-1).winnerIsos.length, 5);
+  assert.ok(completed.history.at(-1).winnerIsos.every(iso =>
+    !initial.members.some(member => member.iso === iso)
+  ));
+  const winnerIsos = new Set(completed.history.at(-1).winnerIsos);
+  const persistedResults = {
+    ...completed,
+    nominees: completed.nominees.filter(candidate => !winnerIsos.has(candidate.iso)),
+  };
+  const reloadedResults = normalizeElectionState(persistedResults, completed.year);
+  assert.equal(reloadedResults.phase, "completed");
+  assert.deepEqual(
+    new Set(reloadedResults.nominees
+      .filter(candidate => winnerIsos.has(candidate.iso))
+      .map(candidate => candidate.iso)),
+    winnerIsos
+  );
+  assert.equal(completed.nextElectionYear, 2028);
   assert.equal(completed.members.filter(member => member.cohort === "A").length, 5);
   assert.equal(completed.members.filter(member => member.cohort === "B").length, 5);
-  assert.ok(completed.members.filter(member => member.cohort === "A")
-    .every(member => member.termStartYear === 2029 && member.termEndYear === 2030));
   assert.ok(completed.members.filter(member => member.cohort === "B")
-    .every(member => member.termEndYear === 2029));
+    .every(member => member.termStartYear === 2028 && member.termEndYear === 2029));
+  assert.ok(completed.members.filter(member => member.cohort === "A")
+    .every(member => member.termEndYear === 2028));
 
   const nextElection = normalizeElectionState(completed, 2029);
-  assert.equal(nextElection.year, 2029);
-  assert.equal(nextElection.cohort, "B");
+  assert.equal(nextElection.year, 2028);
+  assert.equal(nextElection.cohort, "A");
   assert.deepEqual(nextElection.members, completed.members);
   assert.equal(nextElection.history.length, 1);
+});
+
+test("election replaces seats by term end year rather than cohort label", () => {
+  const initial = createInitialElectionState(2026);
+  const expiringMember = initial.members.find(member =>
+    member.cohort === initial.cohort
+  );
+  const continuingMember = initial.members.find(member =>
+    member.cohort !== initial.cohort
+  );
+  const members = initial.members.map(member => {
+    if (member.iso === expiringMember.iso) return { ...member, cohort: "B" };
+    if (member.iso === continuingMember.iso) return { ...member, cohort: "A" };
+    return member;
+  });
+  const nominees = beginElectionCampaign(
+    initial,
+    eligibleCountries,
+    eligibleCountries
+  ).nominees;
+  const completed = resolveElection(
+    { ...initial, members, phase: "campaign", nominees },
+    eligibleCountries
+  );
+
+  assert.equal(completed.history.at(-1).winnerIsos.length, 5);
+  assert.ok(!completed.members.some(member => member.iso === expiringMember.iso));
+  assert.ok(completed.members.some(member => member.iso === continuingMember.iso));
 });
 
 test("countries whose terms ended last year cannot nominate again", () => {
@@ -363,13 +461,16 @@ test("countries whose terms ended last year cannot nominate again", () => {
     campaignCount: 0,
     contributionScore: 0,
   }));
-  const recentlyServed = initial.members.filter(member => member.cohort === initial.cohort);
+  const previouslyServed = initial.members.filter(member =>
+    member.cohort === initial.cohort
+  );
+  const allPreviousMembers = initial.members;
   const completed = resolveElection(
     { ...initial, phase: "campaign", nominees },
     eligibleCountries
   );
   const nextElection = normalizeElectionState(completed, completed.nextElectionYear);
-  const formerMember = recentlyServed[0];
+  const formerMember = previouslyServed[0];
   const formerCountry = {
     name: formerMember.name,
     iso: formerMember.iso,
@@ -380,7 +481,7 @@ test("countries whose terms ended last year cannot nominate again", () => {
 
   assert.deepEqual(
     new Set(completed.recentlyServedIsos),
-    new Set(recentlyServed.map(member => member.iso))
+    new Set(allPreviousMembers.map(member => member.iso))
   );
   assert.equal(addPlayerNomination(nextElection, formerCountry, eligibleCountries), nextElection);
   assert.ok(!beginElectionCampaign(
@@ -388,10 +489,24 @@ test("countries whose terms ended last year cannot nominate again", () => {
     [formerCountry, ...electionCandidates],
     eligibleCountries
   ).nominees.some(candidate => candidate.iso === formerMember.iso));
+
+  const staleCampaignState = {
+    ...nextElection,
+    phase: "campaign",
+    nominees: [{
+      ...formerCountry,
+      score: 100,
+      votes: 0,
+      campaignCount: 0,
+      contributionScore: 0,
+    }],
+  };
+  const campaign = campaignForCandidate(staleCampaignState, formerCountry.slug);
+  assert.deepEqual(campaign.nominees, []);
 });
 
 test("legacy election history restores the prior year's ineligible members", () => {
-  const initial = createInitialElectionState(2029);
+  const initial = createInitialElectionState(2030);
   const legacyState = normalizeElectionState({
     ...initial,
     recentlyServedIsos: undefined,
@@ -416,12 +531,12 @@ test("missed election completes sequentially and emits each stage notification",
   assert.ok(result);
   assert.equal(result.error, undefined);
   assert.equal(result.state.phase, "completed");
-  assert.equal(result.state.year, 2028);
-  assert.equal(result.state.nextElectionYear, 2029);
+  assert.equal(result.state.year, 2027);
+  assert.equal(result.state.nextElectionYear, 2028);
   assert.equal(result.notifications.length, 4);
   assert.deepEqual(
     result.notifications.map(notification => notification.timestamp),
-    ["2028-06-01", "2028-06-15", "2028-06-25", "2028-06-30"]
+    ["2027-06-01", "2027-06-15", "2027-06-25", "2027-06-30"]
   );
   assert.deepEqual(
     result.notifications.map(notification => notification.titleKey),
@@ -439,36 +554,36 @@ test("missed election completes sequentially and emits each stage notification",
   ));
 
   const nextElection = normalizeElectionState(result.state, 2029);
-  assert.equal(nextElection.year, 2029);
-  assert.equal(nextElection.cohort, "B");
+  assert.equal(nextElection.year, 2028);
+  assert.equal(nextElection.cohort, "A");
   assert.deepEqual(nextElection.members, result.state.members);
 });
 
 test("election notifications are emitted only on the four June stage dates", () => {
   const initial = createInitialElectionState(2026);
-  const nomination = tickSecurityCouncilElectionSchedule("2028-06-01", initial, profiles);
+  const nomination = tickSecurityCouncilElectionSchedule("2027-06-01", initial, profiles);
   assert.ok(nomination);
-  assert.deepEqual(nomination.notifications.map(notification => notification.timestamp), ["2028-06-01"]);
+  assert.deepEqual(nomination.notifications.map(notification => notification.timestamp), ["2027-06-01"]);
 
-  const nominationStillOpen = tickSecurityCouncilElectionSchedule("2028-06-14", nomination.state, profiles);
+  const nominationStillOpen = tickSecurityCouncilElectionSchedule("2027-06-14", nomination.state, profiles);
   assert.ok(nominationStillOpen);
   assert.deepEqual(nominationStillOpen.notifications, []);
 
-  const campaign = tickSecurityCouncilElectionSchedule("2028-06-15", nominationStillOpen.state, profiles);
+  const campaign = tickSecurityCouncilElectionSchedule("2027-06-15", nominationStillOpen.state, profiles);
   assert.ok(campaign);
-  assert.deepEqual(campaign.notifications.map(notification => notification.timestamp), ["2028-06-15"]);
+  assert.deepEqual(campaign.notifications.map(notification => notification.timestamp), ["2027-06-15"]);
 
-  const campaignStillOpen = tickSecurityCouncilElectionSchedule("2028-06-24", campaign.state, profiles);
+  const campaignStillOpen = tickSecurityCouncilElectionSchedule("2027-06-24", campaign.state, profiles);
   assert.ok(campaignStillOpen);
   assert.deepEqual(campaignStillOpen.notifications, []);
 
-  const voting = tickSecurityCouncilElectionSchedule("2028-06-25", campaignStillOpen.state, profiles);
+  const voting = tickSecurityCouncilElectionSchedule("2027-06-25", campaignStillOpen.state, profiles);
   assert.ok(voting);
-  assert.deepEqual(voting.notifications.map(notification => notification.timestamp), ["2028-06-25"]);
+  assert.deepEqual(voting.notifications.map(notification => notification.timestamp), ["2027-06-25"]);
 
-  const results = tickSecurityCouncilElectionSchedule("2028-06-30", voting.state, profiles);
+  const results = tickSecurityCouncilElectionSchedule("2027-06-30", voting.state, profiles);
   assert.ok(results);
-  assert.deepEqual(results.notifications.map(notification => notification.timestamp), ["2028-06-30"]);
+  assert.deepEqual(results.notifications.map(notification => notification.timestamp), ["2027-06-30"]);
 });
 
 test("missed election with incomplete voter data returns an error without advancing", () => {

@@ -1,7 +1,7 @@
 // detail path: c:\EM\apps\src\app\page\navigasi_menu\2_navigasi_bawah\ModalsManager.tsx
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { fetchBuildingMetadata } from '../../../../lib/buildingMetadata';
 import { fetchAllCountriesWithNpcState, clearAllCountriesCache } from '@/lib/allCountriesCache';
 import { processDueLoans } from './4_ekonomi/3_peminjaman_hutang/tab_menu/logic/loanRepaymentLogic';
@@ -128,6 +128,12 @@ function ModalsManager({
 }: ModalsManagerProps) {
   const { t } = useLanguage();
   const [metadata, setMetadata] = useState<Record<string, any>>(() => initialMetadata || {});
+  const updatePbbCountryDetail = useCallback(
+    (update: (previous: ModalCountryDetail | null) => ModalCountryDetail | null) => {
+      setCountryDetail(previous => update(previous) || previous);
+    },
+    [setCountryDetail],
+  );
 
   useEffect(() => {
     if (initialMetadata && Object.keys(initialMetadata).length > 0) {
@@ -740,7 +746,7 @@ function ModalsManager({
           onClose={onClose}
           selectedCountry={selectedCountry}
           countryDetail={countryDetail}
-          setCountryDetail={update => setCountryDetail(previous => update(previous) || previous)}
+          setCountryDetail={updatePbbCountryDetail}
           currentDate={currentDate}
         />
       );

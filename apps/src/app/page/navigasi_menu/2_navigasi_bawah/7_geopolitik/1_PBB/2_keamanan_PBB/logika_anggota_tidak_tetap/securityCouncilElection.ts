@@ -99,10 +99,10 @@ export function isIneligibleElectionCandidate(
   iso: string,
   recentlyServedIsos: string[] = [],
 ): boolean {
-  const normalizedIso = iso.toLowerCase();
+  const normalizedIso = iso.trim().toLowerCase();
   return isPermanentSecurityCouncilMember(normalizedIso) ||
-    members.some(member => member.iso.toLowerCase() === normalizedIso) ||
-    recentlyServedIsos.some(memberIso => memberIso.toLowerCase() === normalizedIso);
+    members.some(member => member.iso.trim().toLowerCase() === normalizedIso) ||
+    recentlyServedIsos.some(memberIso => memberIso.trim().toLowerCase() === normalizedIso);
 }
 
 const INITIAL_MEMBERS: Omit<SecurityCouncilMember, "termStartYear" | "termEndYear">[] = [
@@ -207,12 +207,20 @@ export function getSecurityCouncilElectionCandidateCountries(
 function getRecentlyServedIsos(
   electionYear: number,
   history: ElectionHistoryItem[],
+  members: SecurityCouncilMember[],
 ): string[] {
   const previousElectionYear = electionYear - 1;
   const previousCohort = previousElectionYear % 2 === 0 ? "A" : "B";
+  const servedDuringPreviousYear = members
+    .filter(member =>
+      member.termStartYear <= previousElectionYear &&
+      member.termEndYear >= previousElectionYear
+    )
+    .map(member => member.iso.toLowerCase());
   const previousRosterElection = history.find(item =>
     item.year === electionYear - 3 && item.cohort === previousCohort
   );
+  let departedIsos: string[];
   if (previousRosterElection) {
     const recentlyServed = new Set(
       (previousRosterElection.winnerIsos || [])
@@ -229,17 +237,27 @@ function getRecentlyServedIsos(
         if (iso) recentlyServed.add(iso);
       });
     }
-    return [...recentlyServed];
+    departedIsos = [...recentlyServed];
+  } else {
+    departedIsos = INITIAL_MEMBERS
+      .filter(member => member.cohort === previousCohort)
+      .map(member => member.iso.toLowerCase());
   }
 
-  return INITIAL_MEMBERS
-    .filter(member => member.cohort === previousCohort)
-    .map(member => member.iso.toLowerCase());
+  return [...new Set([...servedDuringPreviousYear, ...departedIsos])];
 }
 
 export function createInitialElectionState(year: number): SecurityCouncilElectionState {
-  const electionYear = year + 2;
+  const electionYear = year + 1;
   const cohort: "A" | "B" = electionYear % 2 === 0 ? "A" : "B";
+  const members = INITIAL_MEMBERS.map(member => {
+    const termEndYear = electionYear + (member.cohort === cohort ? 0 : 1);
+    return {
+      ...member,
+      termStartYear: Math.min(year, termEndYear - 1),
+      termEndYear,
+    };
+  });
   return {
     year: electionYear,
     nextElectionYear: electionYear,
@@ -247,15 +265,8 @@ export function createInitialElectionState(year: number): SecurityCouncilElectio
     phase: "nomination",
     scheduleStage: 0,
     nominees: [],
-    members: INITIAL_MEMBERS.map(member => {
-      const termEndYear = electionYear + (member.cohort === cohort ? 0 : 1);
-      return {
-        ...member,
-        termStartYear: Math.min(year, termEndYear - 1),
-        termEndYear,
-      };
-    }),
-    recentlyServedIsos: [],
+    members,
+    recentlyServedIsos: getRecentlyServedIsos(electionYear, [], members),
     history: [],
     permanentBonuses: {},
   };
@@ -268,24 +279,54 @@ export function normalizeElectionState(
   const fallback = createInitialElectionState(year);
   if (!existing || typeof existing !== "object") return fallback;
   const state = existing as Partial<SecurityCouncilElectionState>;
-  const members = state.members;
-  if (!Array.isArray(members) || members.length !== 10) return fallback;
+  const storedMembers = state.members;
+  if (!Array.isArray(storedMembers) || storedMembers.length !== 10) return fallback;
   const hasElectionYear = Number.isInteger(state.year);
   const hasNextElectionYear = Number.isInteger(state.nextElectionYear);
-  const electionYear = hasElectionYear ? Number(state.year) : Number(state.nextElectionYear) || year + 2;
   const history = Array.isArray(state.history) ? state.history : [];
-  const recentlyServedIsos = Array.isArray(state.recentlyServedIsos)
+  const storedElectionYear = hasElectionYear
+    ? Number(state.year)
+    : Number(state.nextElectionYear) || year + 1;
+  const initialTermYear = Math.min(...storedMembers
+    .map(member => member.termStartYear)
+    .filter((termYear): termYear is number => Number.isInteger(termYear)));
+  const isUnstartedInitialElection =
+    (state.phase || "nomination") === "nomination" &&
+    (state.scheduleStage || 0) === 0 &&
+    history.length === 0 &&
+    (!Array.isArray(state.nominees) || state.nominees.length === 0);
+  const migrateInitialSchedule = isUnstartedInitialElection &&
+    Number.isFinite(initialTermYear) &&
+    storedElectionYear > initialTermYear + 1;
+  const electionYear = migrateInitialSchedule ? initialTermYear + 1 : storedElectionYear;
+  const cohort: "A" | "B" = electionYear % 2 === 0 ? "A" : "B";
+  const members = migrateInitialSchedule
+    ? storedMembers.map(member => {
+      const termEndYear = electionYear + (member.cohort === cohort ? 0 : 1);
+      return {
+        ...member,
+        termStartYear: Math.min(initialTermYear, termEndYear - 1),
+        termEndYear,
+      };
+    })
+    : storedMembers;
+  const storedRecentlyServedIsos = !migrateInitialSchedule && Array.isArray(state.recentlyServedIsos)
     ? [...new Set(state.recentlyServedIsos
       .filter((iso): iso is string => typeof iso === "string")
       .map(iso => iso.toLowerCase()))]
-    : getRecentlyServedIsos(electionYear, history);
+    : [];
+  const getRecentlyServedForYear = (targetYear: number) => [...new Set([
+    ...storedRecentlyServedIsos,
+    ...getRecentlyServedIsos(targetYear, history, members),
+  ])];
+  const recentlyServedIsos = getRecentlyServedForYear(electionYear);
   const nextElectionYear = state.phase === "completed"
     ? hasNextElectionYear
       ? Number(state.nextElectionYear)
       : electionYear + 1
     : electionYear;
   if (state.phase === "completed" && year >= nextElectionYear) {
-    const next = createInitialElectionState(nextElectionYear - 2);
+    const next = createInitialElectionState(nextElectionYear - 1);
     return {
       ...next,
       members: members.map((member, index) => {
@@ -300,14 +341,58 @@ export function normalizeElectionState(
             : defaultMember.termEndYear,
         };
       }),
-      recentlyServedIsos: Array.isArray(state.recentlyServedIsos)
-        ? recentlyServedIsos
-        : getRecentlyServedIsos(nextElectionYear, history),
+      recentlyServedIsos: getRecentlyServedForYear(nextElectionYear),
       history,
       permanentBonuses: state.permanentBonuses || {},
     };
   }
-  const cohort: "A" | "B" = electionYear % 2 === 0 ? "A" : "B";
+  const nominees = Array.isArray(state.nominees)
+    ? state.phase === "completed"
+      ? [...state.nominees]
+      : state.nominees.filter(candidate =>
+        !isIneligibleElectionCandidate(members, candidate.iso, recentlyServedIsos))
+    : [];
+  if (state.phase === "completed") {
+    const completedElection = history.at(-1);
+    if (completedElection) {
+      const winnerIsos = new Set(
+        (completedElection.winnerIsos || []).map(iso => iso.trim().toLowerCase())
+      );
+      if (winnerIsos.size === 0) {
+        const winnerNames = new Set(completedElection.winners.map(normalizeName));
+        members.forEach(member => {
+          if (winnerNames.has(normalizeName(member.name))) {
+            winnerIsos.add(member.iso.trim().toLowerCase());
+          }
+        });
+      }
+      if (winnerIsos.size > 0) {
+        const countriesByIso = new Map(
+          getSecurityCouncilElectionCandidateCountries()
+            .map(country => [country.iso.toLowerCase(), country])
+        );
+        members.forEach(member => {
+          const iso = member.iso.trim().toLowerCase();
+          if (
+            !winnerIsos.has(iso) ||
+            nominees.some(candidate => candidate.iso.trim().toLowerCase() === iso)
+          ) return;
+          const country = countriesByIso.get(iso);
+          const slug = country?.slug || normalizeSlug(member.name);
+          nominees.push({
+            name: member.name,
+            iso,
+            slug,
+            region: member.region,
+            score: 0,
+            votes: completedElection.votes[slug] || 0,
+            campaignCount: 0,
+            contributionScore: 0,
+          });
+        });
+      }
+    }
+  }
   return {
     ...fallback,
     ...state,
@@ -326,10 +411,7 @@ export function normalizeElectionState(
           : defaultMember.termEndYear,
       };
     }),
-    nominees: Array.isArray(state.nominees)
-      ? state.nominees.filter(candidate =>
-        !isIneligibleElectionCandidate(members, candidate.iso, recentlyServedIsos))
-      : [],
+    nominees,
     recentlyServedIsos,
     scheduleStage: Number.isInteger(state.scheduleStage) ? state.scheduleStage : 0,
     phase: state.phase || "nomination",
@@ -638,26 +720,24 @@ export function campaignForCandidate(
   playerSlug: string
 ): SecurityCouncilElectionState {
   if (state.phase !== "campaign") return state;
-  if (state.nominees.some(candidate =>
-    candidate.slug === playerSlug &&
-    isIneligibleElectionCandidate(state.members, candidate.iso, state.recentlyServedIsos)
-  )) return state;
+  const nominees = state.nominees.filter(candidate =>
+    !isIneligibleElectionCandidate(state.members, candidate.iso, state.recentlyServedIsos));
+  const removedIneligibleNominees = nominees.length !== state.nominees.length;
   let found = false;
-  const nominees = state.nominees
-    .filter(candidate =>
-      !isIneligibleElectionCandidate(state.members, candidate.iso, state.recentlyServedIsos))
-    .map(candidate => {
-      if (candidate.slug !== playerSlug || candidate.campaignCount >= 3) return candidate;
-      found = true;
-      const campaignCount = candidate.campaignCount + 1;
-      return {
-        ...candidate,
-        campaignCount,
-        contributionScore: candidate.contributionScore + 25,
-        score: Math.min(100, candidate.score + 5),
-      };
-    });
-  return found ? { ...state, nominees } : state;
+  const updatedNominees = nominees.map(candidate => {
+    if (candidate.slug !== playerSlug || candidate.campaignCount >= 3) return candidate;
+    found = true;
+    const campaignCount = candidate.campaignCount + 1;
+    return {
+      ...candidate,
+      campaignCount,
+      contributionScore: candidate.contributionScore + 25,
+      score: Math.min(100, candidate.score + 5),
+    };
+  });
+  return found || removedIneligibleNominees
+    ? { ...state, nominees: updatedNominees }
+    : state;
 }
 
 function calculateElectionVotes(
@@ -739,10 +819,8 @@ export function resolveElection(
       .slice(0, seats));
   });
 
-  const recentlyServedIsos = state.members
-    .filter(member => member.cohort === state.cohort)
-    .map(member => member.iso.toLowerCase());
-  const replacedMembers = state.members.filter(member => member.cohort !== state.cohort);
+  const recentlyServedIsos = state.members.map(member => member.iso.toLowerCase());
+  const replacedMembers = state.members.filter(member => member.termEndYear > state.year);
   const newMembers: SecurityCouncilMember[] = winners.map(winner => ({
     name: winner.name,
     iso: winner.iso,

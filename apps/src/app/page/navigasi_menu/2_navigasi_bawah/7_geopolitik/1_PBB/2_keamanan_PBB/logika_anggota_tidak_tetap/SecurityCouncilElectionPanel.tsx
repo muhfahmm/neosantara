@@ -52,9 +52,15 @@ export default function SecurityCouncilElectionPanel({
   const candidateCountries = useMemo(() => getSecurityCouncilElectionCandidateCountries(profiles), [profiles]);
   const profiledVoterCount = voters.filter(country => country.profile).length;
   const player = useMemo(() => {
+    const selectedIso = selectedCountry?.iso?.trim().toLowerCase();
+    const countryByIso = selectedIso
+      ? candidateCountries.find(country => country.iso.toLowerCase() === selectedIso)
+      : null;
+    if (countryByIso) return countryByIso;
+
     const playerName = selectedCountry?.country || "";
     return candidateCountries.find(country => normalizeName(country.name) === normalizeName(playerName)) || null;
-  }, [candidateCountries, selectedCountry?.country]);
+  }, [candidateCountries, selectedCountry?.country, selectedCountry?.iso]);
 
   useEffect(() => {
     let active = true;
@@ -100,20 +106,27 @@ export default function SecurityCouncilElectionPanel({
     };
   }, [pbb, year]);
 
+  const serializedElection = JSON.stringify(election);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
-      localStorage.setItem(SECURITY_COUNCIL_ELECTION_STATE_KEY, JSON.stringify(election));
+      if (localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY) !== serializedElection) {
+        localStorage.setItem(SECURITY_COUNCIL_ELECTION_STATE_KEY, serializedElection);
+      }
       onMembersChange?.(election.members);
-      setCountryDetail?.(previous => previous
-        ? { ...previous, pbbSecurityCouncilElection: election }
-        : previous
-      );
+      setCountryDetail?.(previous => {
+        if (
+          !previous ||
+          JSON.stringify(previous.pbbSecurityCouncilElection) === serializedElection
+        ) return previous;
+        return { ...previous, pbbSecurityCouncilElection: election };
+      });
     } catch (storageError) {
       console.error("Gagal menyimpan hasil pemilu Dewan Keamanan:", storageError);
       setError(pbb("election.saveError"));
     }
-  }, [election, onMembersChange]);
+  }, [election, onMembersChange, pbb, serializedElection, setCountryDetail]);
 
   const updateElection = (next: SecurityCouncilElectionState) => {
     setElection(next);
@@ -132,11 +145,26 @@ export default function SecurityCouncilElectionPanel({
     ) &&
     election.nominees.every(candidate => candidate.slug !== player.slug)
   );
+  const isPlayerIneligible = Boolean(player && isIneligibleElectionCandidate(
+    election.members,
+    player.iso,
+    election.recentlyServedIsos,
+  ));
+  const eligibleNominees = election.nominees.filter(candidate =>
+    !isIneligibleElectionCandidate(
+      election.members,
+      candidate.iso,
+      election.recentlyServedIsos,
+    ));
+  const visibleNominees = election.phase === "completed"
+    ? election.nominees
+    : eligibleNominees;
+  const latestElection = election.history.at(-1);
   const electionWinners = election.phase === "completed"
-    ? new Set(election.history.at(-1)?.winners || [])
+    ? new Set(latestElection?.winnerIsos?.map(iso => iso.trim().toLowerCase()) || [])
     : null;
-  const playerCandidate = player
-    ? election.nominees.find(candidate => candidate.slug === player.slug)
+  const playerCandidate = player && !isPlayerIneligible
+    ? eligibleNominees.find(candidate => candidate.slug === player.slug)
     : undefined;
 
   const nominatePlayer = () => {
@@ -237,11 +265,7 @@ export default function SecurityCouncilElectionPanel({
           >
             {pbb("election.nominate")}
           </button>
-          {player && isIneligibleElectionCandidate(
-            election.members,
-            player.iso,
-            election.recentlyServedIsos,
-          ) && (
+          {player && isPlayerIneligible && (
             <p className="w-full text-xs text-amber-300">
               {pbb("election.currentMemberIneligible")}
             </p>
@@ -264,33 +288,40 @@ export default function SecurityCouncilElectionPanel({
         </div>
       )}
 
-      {election.nominees.length > 0 && (
+      {visibleNominees.length > 0 && (
         <div className="max-h-64 space-y-2 overflow-y-auto pr-1">
-          {[...election.nominees]
+          {[...visibleNominees]
             .sort((a, b) => a.region.localeCompare(b.region) || b.votes - a.votes || b.score - a.score)
-            .map(candidate => (
-              <div
-                key={candidate.slug}
-                className={`flex items-center justify-between gap-3 rounded-lg border px-3 py-2 ${
-                  electionWinners
-                    ? electionWinners.has(candidate.name)
-                      ? "border-emerald-400/70 bg-emerald-500/10"
-                      : "border-rose-500/60 bg-rose-500/5"
-                    : "border-white/5 bg-[#051111]"
-                }`}
-              >
-                <div className="min-w-0">
-                  <p className="truncate text-xs font-bold text-root-text">{candidate.name}</p>
-                  <p className="text-[9px] text-[#789090]">{candidate.region} · {pbb("election.score", { score: candidate.score.toFixed(1) })}</p>
+            .map(candidate => {
+              const isWinner = electionWinners && (
+                electionWinners.has(candidate.iso.toLowerCase()) ||
+                (!latestElection?.winnerIsos?.length &&
+                  latestElection?.winners.includes(candidate.name))
+              );
+              return (
+                <div
+                  key={candidate.slug}
+                  className={`flex items-center justify-between gap-3 rounded-lg border px-3 py-2 ${
+                    electionWinners
+                      ? isWinner
+                        ? "border-emerald-400/70 bg-emerald-500/10"
+                        : "border-rose-500/60 bg-rose-500/5"
+                      : "border-white/5 bg-[#051111]"
+                  }`}
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-xs font-bold text-root-text">{candidate.name}</p>
+                    <p className="text-[9px] text-[#789090]">{candidate.region} · {pbb("election.score", { score: candidate.score.toFixed(1) })}</p>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <p className="text-xs font-black text-cyan-200">{pbb("election.votes", { count: candidate.votes })}</p>
+                    {candidate.campaignCount > 0 && (
+                      <p className="text-[9px] text-emerald-300">{pbb("election.contribution", { score: candidate.contributionScore })}</p>
+                    )}
+                  </div>
                 </div>
-                <div className="shrink-0 text-right">
-                  <p className="text-xs font-black text-cyan-200">{pbb("election.votes", { count: candidate.votes })}</p>
-                  {candidate.campaignCount > 0 && (
-                    <p className="text-[9px] text-emerald-300">{pbb("election.contribution", { score: candidate.contributionScore })}</p>
-                  )}
-                </div>
-              </div>
-            ))}
+              );
+            })}
         </div>
       )}
 
