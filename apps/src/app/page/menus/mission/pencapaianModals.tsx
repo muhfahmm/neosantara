@@ -2155,12 +2155,6 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
               <div className="flex-1 min-w-0 w-full space-y-1.5">
                 {/* JUDUL / INSTRUKSI MISI (SEBAGAI JUDUL DI ATAS) */}
                 <div className="flex items-center gap-2 flex-wrap">
-                  {item.isReadyToClaim && (
-                    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded border border-emerald-400/50 bg-emerald-400/20 text-emerald-300 animate-pulse">
-                      🎉 {t('side_misi.readyToClaim')}
-                    </span>
-                  )}
-
                   <p className="text-xs sm:text-sm text-root-text font-bold leading-relaxed">
                     👉 <span className="text-root-text font-semibold">{description || title}</span>
                   </p>

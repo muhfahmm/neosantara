@@ -1908,8 +1908,7 @@ export default function MissionModals({
                         <div className="min-w-0">
                           <p className="text-xs font-bold text-root-text">{getLocalizedMissionTitle(card, t)}</p>
                           <p className="mt-1 text-[10px] font-semibold text-emerald-200">
-                            {t('side_misi.readyToClaim')}
-                            {badges.neo !== undefined && ` · ${badges.neo.toLocaleString('id-ID')} NEO`}
+                            {badges.neo !== undefined && `${badges.neo.toLocaleString('id-ID')} NEO`}
                             {badges.sda && ` · ${badges.sda.amount.toLocaleString('id-ID')} ${t(`side_reward.items.${badges.sda.productKey}`) || formatProductionProductName(badges.sda.productKey)}`}
                             {` · ${badges.diamond} Gems`}
                             {` · +${badges.xp} XP`}
@@ -1962,12 +1961,6 @@ export default function MissionModals({
                     <div className="flex-1 min-w-0 w-full">
                       {/* JUDUL / INSTRUKSI MISI (SEBAGAI JUDUL DI ATAS) */}
                       <div className="flex items-center gap-2 flex-wrap">
-                        {isClaimable && (
-                          <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded border border-emerald-400/50 bg-emerald-400/20 text-emerald-300 animate-pulse">
-                            🎉 {t('side_misi.readyToClaim')}
-                          </span>
-                        )}
-
                         <p className="text-xs sm:text-sm text-root-text font-bold leading-relaxed">
                           👉 <span className="text-root-text font-semibold">{getMissionInstruction(card, completionCount, t)}</span>
                         </p>

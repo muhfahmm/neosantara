@@ -8,7 +8,6 @@
   "filterUnlocked": "달성 완료",
   "filterCategory": "카테고리",
   "rewardClaimed": "수령 완료",
-  "rewardReady": "보상 받기",
   "rewardLocked": "잠김",
   "progress": "진행도",
   "claimedToast": "🎉 축하합니다! 업적 \"{title}\"의 보상을 수령했습니다: {reward}!",

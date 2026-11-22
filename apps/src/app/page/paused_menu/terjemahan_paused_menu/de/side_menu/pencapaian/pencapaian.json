@@ -8,7 +8,6 @@
   "filterUnlocked": "Freigeschaltet",
   "filterCategory": "Kategorie",
   "rewardClaimed": "Eingelöst",
-  "rewardReady": "Belohnung abholen",
   "rewardLocked": "Gesperrt",
   "progress": "Fortschritt",
   "claimedToast": "🎉 Glückwunsch! Belohnung für \"{title}\" eingelöst: {reward}!",

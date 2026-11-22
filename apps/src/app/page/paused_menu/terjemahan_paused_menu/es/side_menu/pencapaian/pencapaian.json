@@ -8,7 +8,6 @@
   "filterUnlocked": "Desbloqueados",
   "filterCategory": "Categoría",
   "rewardClaimed": "Reclamado",
-  "rewardReady": "Reclamar",
   "rewardLocked": "Bloqueado",
   "progress": "Progreso",
   "claimedToast": "🎉 ¡Felicidades! Recompensa por \"{title}\" reclamada: {reward}!",

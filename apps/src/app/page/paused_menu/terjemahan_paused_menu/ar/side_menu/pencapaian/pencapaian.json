@@ -8,7 +8,6 @@
   "filterUnlocked": "مفتوح",
   "filterCategory": "الفئة",
   "rewardClaimed": "تم الاستلام",
-  "rewardReady": "استلام المكافأة",
   "rewardLocked": "مقفل",
   "progress": "التقدم",
   "claimedToast": "🎉 تهانينا! تم استلام مكافأة الإنجاز \"{title}\": {reward}!",

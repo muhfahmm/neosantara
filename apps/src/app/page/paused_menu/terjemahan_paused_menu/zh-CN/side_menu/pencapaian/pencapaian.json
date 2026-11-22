@@ -8,7 +8,6 @@
   "filterUnlocked": "已解锁",
   "filterCategory": "分类",
   "rewardClaimed": "已领取",
-  "rewardReady": "领取奖励",
   "rewardLocked": "未达成",
   "progress": "进度",
   "claimedToast": "🎉 恭喜！已领取成就“{title}”的奖励：{reward}！",

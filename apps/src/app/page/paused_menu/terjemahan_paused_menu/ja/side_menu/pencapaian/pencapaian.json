@@ -8,7 +8,6 @@
   "filterUnlocked": "解放済み",
   "filterCategory": "カテゴリー",
   "rewardClaimed": "受取済",
-  "rewardReady": "報酬受取",
   "rewardLocked": "ロック中",
   "progress": "進捗",
   "claimedToast": "🎉 おめでとうございます！実績「{title}」の報酬を受け取りました: {reward}！",

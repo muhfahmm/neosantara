@@ -8,7 +8,6 @@
   "filterUnlocked": "Unlocked",
   "filterCategory": "Category",
   "rewardClaimed": "Claimed",
-  "rewardReady": "Claim Reward",
   "rewardLocked": "Locked",
   "progress": "Progress",
   "claimedToast": "🎉 Congratulations! Achievement reward for \"{title}\" claimed: {reward}!",
