@@ -166,6 +166,102 @@
     "negara_tangguh": {
       "title": "Resilient State",
       "description": "Restore vital services post-crisis without prolonged civilian deprivations."
+    },
+    "bangun_kelistrikan": {
+      "title": "電力インフラの建設",
+      "description": "ヒント：電力インフラ施設を建設し、全国累計100棟の目標を達成して国家の基盤を強化しましょう。"
+    },
+    "bangun_mineral_energi": {
+      "title": "鉱物・エネルギーの建設",
+      "description": "ヒント：鉱物・エネルギー施設を建設し、全国累計100棟の目標を達成して国家の基盤を強化しましょう。"
+    },
+    "bangun_manufaktur": {
+      "title": "製造業施設の建設",
+      "description": "ヒント：製造業施設施設を建設し、全国累計100棟の目標を達成して国家の基盤を強化しましょう。"
+    },
+    "bangun_peternakan": {
+      "title": "畜産施設の建設",
+      "description": "ヒント：畜産施設施設を建設し、全国累計100棟の目標を達成して国家の基盤を強化しましょう。"
+    },
+    "bangun_agrikultur": {
+      "title": "農業施設の建設",
+      "description": "ヒント：農業施設施設を建設し、全国累計100棟の目標を達成して国家の基盤を強化しましょう。"
+    },
+    "bangun_perikanan": {
+      "title": "水産業施設の建設",
+      "description": "ヒント：水産業施設施設を建設し、全国累計100棟の目標を達成して国家の基盤を強化しましょう。"
+    },
+    "bangun_olahan_pangan": {
+      "title": "食品加工施設の建設",
+      "description": "ヒント：食品加工施設施設を建設し、全国累計100棟の目標を達成して国家の基盤を強化しましょう。"
+    },
+    "bangun_infrastruktur": {
+      "title": "公共インフラの建設",
+      "description": "ヒント：公共インフラ施設を建設し、全国累計100棟の目標を達成して国家の基盤を強化しましょう。"
+    },
+    "bangun_pendidikan": {
+      "title": "教育施設の建設",
+      "description": "ヒント：教育施設施設を建設し、全国累計100棟の目標を達成して国家の基盤を強化しましょう。"
+    },
+    "bangun_kesehatan": {
+      "title": "医療機関の建設",
+      "description": "ヒント：医療機関施設を建設し、全国累計100棟の目標を達成して国家の基盤を強化しましょう。"
+    },
+    "bangun_penegakan_hukum": {
+      "title": "法執行施設の建設",
+      "description": "ヒント：法執行施設施設を建設し、全国累計100棟の目標を達成して国家の基盤を強化しましょう。"
+    },
+    "bangun_olahraga_hiburan": {
+      "title": "スポーツ・娯楽施設の建設",
+      "description": "ヒント：スポーツ・娯楽施設施設を建設し、全国累計100棟の目標を達成して国家の基盤を強化しましょう。"
+    },
+    "bangun_komersial": {
+      "title": "商業施設の建設",
+      "description": "ヒント：商業施設施設を建設し、全国累計100棟の目標を達成して国家の基盤を強化しましょう。"
+    },
+    "bangun_rumah_subsidi": {
+      "title": "公営助成住宅の建設",
+      "description": "ヒント：公営助成住宅施設を建設し、全国累計100棟の目標を達成して国家の基盤を強化しましょう。"
+    },
+    "bangun_apartemen": {
+      "title": "集合アパートの建設",
+      "description": "ヒント：集合アパート施設を建設し、全国累計100棟の目標を達成して国家の基盤を強化しましょう。"
+    },
+    "bangun_mansion": {
+      "title": "高級邸宅・マンションの建設",
+      "description": "ヒント：高級邸宅・マンション施設を建設し、全国累計100棟の目標を達成して国家の基盤を強化しましょう。"
+    },
+    "bangun_infrastruktur_militer": {
+      "title": "軍事インフラの建設",
+      "description": "ヒント：軍事インフラ施設を建設し、全国累計100棟の目標を達成して国家の基盤を強化しましょう。"
     }
+  },
+  "building_achievements": {
+    "title_template": "{name}の建設",
+    "desc_template": "ヒント：新たに国家{name}施設を+{target}棟建設してください（新規に建設された建物のみカウントされます）。",
+    "badge_template": "第{stage}段階目標: +{target}棟の新設",
+    "progress_badge": "新規建設: {current} / {target}",
+    "finished_desc": "おめでとうございます！国家{name}の拡張全段階（新規+{target}棟）をすべて達成しました。",
+    "finished_badge": "建設完了（+5,000棟）",
+    "names": {
+      "kelistrikan": "電力インフラ",
+      "mineral_energi": "鉱物・エネルギー",
+      "manufaktur": "製造業施設",
+      "peternakan": "畜産施設",
+      "agrikultur": "農業施設",
+      "perikanan": "水産業施設",
+      "olahan_pangan": "食品加工施設",
+      "infrastruktur": "公共インフラ",
+      "pendidikan": "教育施設",
+      "kesehatan": "医療機関",
+      "penegakan_hukum": "法執行施設",
+      "olahraga_hiburan": "スポーツ・娯楽施設",
+      "komersial": "商業施設",
+      "rumah_subsidi": "公営助成住宅",
+      "apartemen": "集合アパート",
+      "mansion": "高級邸宅・マンション",
+      "infrastruktur_militer": "軍事インフラ"
+    },
+    "total_facilities": "全国総施設数: {total}棟"
   }
 }

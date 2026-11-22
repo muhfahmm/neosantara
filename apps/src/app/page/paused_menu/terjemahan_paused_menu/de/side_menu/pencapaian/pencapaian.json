@@ -166,6 +166,102 @@
     "negara_tangguh": {
       "title": "Resilient State",
       "description": "Restore vital services post-crisis without prolonged civilian deprivations."
+    },
+    "bangun_kelistrikan": {
+      "title": "Bau von Elektrizität",
+      "description": "Hinweis: Errichten Sie Elektrizität-Einrichtungen bis zum Ziel von 100 nationalen Gebäuden."
+    },
+    "bangun_mineral_energi": {
+      "title": "Bau von Mineralien & Energie",
+      "description": "Hinweis: Errichten Sie Mineralien & Energie-Einrichtungen bis zum Ziel von 100 nationalen Gebäuden."
+    },
+    "bangun_manufaktur": {
+      "title": "Bau von Fertigung",
+      "description": "Hinweis: Errichten Sie Fertigung-Einrichtungen bis zum Ziel von 100 nationalen Gebäuden."
+    },
+    "bangun_peternakan": {
+      "title": "Bau von Viehzucht",
+      "description": "Hinweis: Errichten Sie Viehzucht-Einrichtungen bis zum Ziel von 100 nationalen Gebäuden."
+    },
+    "bangun_agrikultur": {
+      "title": "Bau von Landwirtschaft",
+      "description": "Hinweis: Errichten Sie Landwirtschaft-Einrichtungen bis zum Ziel von 100 nationalen Gebäuden."
+    },
+    "bangun_perikanan": {
+      "title": "Bau von Fischerei",
+      "description": "Hinweis: Errichten Sie Fischerei-Einrichtungen bis zum Ziel von 100 nationalen Gebäuden."
+    },
+    "bangun_olahan_pangan": {
+      "title": "Bau von Lebensmittelverarbeitung",
+      "description": "Hinweis: Errichten Sie Lebensmittelverarbeitung-Einrichtungen bis zum Ziel von 100 nationalen Gebäuden."
+    },
+    "bangun_infrastruktur": {
+      "title": "Bau von Öffentliche Infrastruktur",
+      "description": "Hinweis: Errichten Sie Öffentliche Infrastruktur-Einrichtungen bis zum Ziel von 100 nationalen Gebäuden."
+    },
+    "bangun_pendidikan": {
+      "title": "Bau von Bildung",
+      "description": "Hinweis: Errichten Sie Bildung-Einrichtungen bis zum Ziel von 100 nationalen Gebäuden."
+    },
+    "bangun_kesehatan": {
+      "title": "Bau von Gesundheitswesen",
+      "description": "Hinweis: Errichten Sie Gesundheitswesen-Einrichtungen bis zum Ziel von 100 nationalen Gebäuden."
+    },
+    "bangun_penegakan_hukum": {
+      "title": "Bau von Strafverfolgung",
+      "description": "Hinweis: Errichten Sie Strafverfolgung-Einrichtungen bis zum Ziel von 100 nationalen Gebäuden."
+    },
+    "bangun_olahraga_hiburan": {
+      "title": "Bau von Sport & Unterhaltung",
+      "description": "Hinweis: Errichten Sie Sport & Unterhaltung-Einrichtungen bis zum Ziel von 100 nationalen Gebäuden."
+    },
+    "bangun_komersial": {
+      "title": "Bau von Gewerbe",
+      "description": "Hinweis: Errichten Sie Gewerbe-Einrichtungen bis zum Ziel von 100 nationalen Gebäuden."
+    },
+    "bangun_rumah_subsidi": {
+      "title": "Bau von Sozialer Wohnungsbau",
+      "description": "Hinweis: Errichten Sie Sozialer Wohnungsbau-Einrichtungen bis zum Ziel von 100 nationalen Gebäuden."
+    },
+    "bangun_apartemen": {
+      "title": "Bau von Apartments",
+      "description": "Hinweis: Errichten Sie Apartments-Einrichtungen bis zum Ziel von 100 nationalen Gebäuden."
+    },
+    "bangun_mansion": {
+      "title": "Bau von Villen & Anwesen",
+      "description": "Hinweis: Errichten Sie Villen & Anwesen-Einrichtungen bis zum Ziel von 100 nationalen Gebäuden."
+    },
+    "bangun_infrastruktur_militer": {
+      "title": "Bau von Militärische Infrastruktur",
+      "description": "Hinweis: Errichten Sie Militärische Infrastruktur-Einrichtungen bis zum Ziel von 100 nationalen Gebäuden."
     }
+  },
+  "building_achievements": {
+    "title_template": "Bau von {name}",
+    "desc_template": "Hinweis: Bauen Sie +{target} neue nationale {name}-Einrichtungen (Fortschritt zählt neu errichtete Gebäude).",
+    "badge_template": "Ziel Stufe {stage}: +{target} Neue Gebäude",
+    "progress_badge": "Neue Gebäude: {current} / {target}",
+    "finished_desc": "Herzlichen Glückwunsch! Sie haben alle Ausbaustufen für {name} erfolgreich abgeschlossen (+{target} neue Gebäude).",
+    "finished_badge": "Bau Vollendet (+5.000 Gebäude)",
+    "names": {
+      "kelistrikan": "Elektrizität",
+      "mineral_energi": "Mineralien & Energie",
+      "manufaktur": "Fertigung",
+      "peternakan": "Viehzucht",
+      "agrikultur": "Landwirtschaft",
+      "perikanan": "Fischerei",
+      "olahan_pangan": "Lebensmittelverarbeitung",
+      "infrastruktur": "Öffentliche Infrastruktur",
+      "pendidikan": "Bildung",
+      "kesehatan": "Gesundheitswesen",
+      "penegakan_hukum": "Strafverfolgung",
+      "olahraga_hiburan": "Sport & Unterhaltung",
+      "komersial": "Gewerbe",
+      "rumah_subsidi": "Sozialer Wohnungsbau",
+      "apartemen": "Apartments",
+      "mansion": "Villen & Anwesen",
+      "infrastruktur_militer": "Militärische Infrastruktur"
+    },
+    "total_facilities": "Gesamte Nationale Anlagen: {total}"
   }
 }

@@ -166,6 +166,102 @@
     "negara_tangguh": {
       "title": "Resilient State",
       "description": "Restore vital services post-crisis without prolonged civilian deprivations."
+    },
+    "bangun_kelistrikan": {
+      "title": "전력 발전 시설 건설",
+      "description": "안내: 전력 발전 시설 시설을 건설하여 전국 누적 100개 건물 목표를 달성하세요."
+    },
+    "bangun_mineral_energi": {
+      "title": "광물 및 에너지 건설",
+      "description": "안내: 광물 및 에너지 시설을 건설하여 전국 누적 100개 건물 목표를 달성하세요."
+    },
+    "bangun_manufaktur": {
+      "title": "제조업 시설 건설",
+      "description": "안내: 제조업 시설 시설을 건설하여 전국 누적 100개 건물 목표를 달성하세요."
+    },
+    "bangun_peternakan": {
+      "title": "축산 시설 건설",
+      "description": "안내: 축산 시설 시설을 건설하여 전국 누적 100개 건물 목표를 달성하세요."
+    },
+    "bangun_agrikultur": {
+      "title": "농업 시설 건설",
+      "description": "안내: 농업 시설 시설을 건설하여 전국 누적 100개 건물 목표를 달성하세요."
+    },
+    "bangun_perikanan": {
+      "title": "수산업 시설 건설",
+      "description": "안내: 수산업 시설 시설을 건설하여 전국 누적 100개 건물 목표를 달성하세요."
+    },
+    "bangun_olahan_pangan": {
+      "title": "식품 가공 시설 건설",
+      "description": "안내: 식품 가공 시설 시설을 건설하여 전국 누적 100개 건물 목표를 달성하세요."
+    },
+    "bangun_infrastruktur": {
+      "title": "공공 인프라 건설",
+      "description": "안내: 공공 인프라 시설을 건설하여 전국 누적 100개 건물 목표를 달성하세요."
+    },
+    "bangun_pendidikan": {
+      "title": "教育 시설 건설",
+      "description": "안내: 教育 시설 시설을 건설하여 전국 누적 100개 건물 목표를 달성하세요."
+    },
+    "bangun_kesehatan": {
+      "title": "의료 시설 건설",
+      "description": "안내: 의료 시설 시설을 건설하여 전국 누적 100개 건물 목표를 달성하세요."
+    },
+    "bangun_penegakan_hukum": {
+      "title": "법 집행 기관 건설",
+      "description": "안내: 법 집행 기관 시설을 건설하여 전국 누적 100개 건물 목표를 달성하세요."
+    },
+    "bangun_olahraga_hiburan": {
+      "title": "스포츠 및 오락 건설",
+      "description": "안내: 스포츠 및 오락 시설을 건설하여 전국 누적 100개 건물 목표를 달성하세요."
+    },
+    "bangun_komersial": {
+      "title": "상업 시설 건설",
+      "description": "안내: 상업 시설 시설을 건설하여 전국 누적 100개 건물 목표를 달성하세요."
+    },
+    "bangun_rumah_subsidi": {
+      "title": "서민 보조 주택 건설",
+      "description": "안내: 서민 보조 주택 시설을 건설하여 전국 누적 100개 건물 목표를 달성하세요."
+    },
+    "bangun_apartemen": {
+      "title": "공동 아파트 건설",
+      "description": "안내: 공동 아파트 시설을 건설하여 전국 누적 100개 건물 목표를 달성하세요."
+    },
+    "bangun_mansion": {
+      "title": "고급 저택 건설",
+      "description": "안내: 고급 저택 시설을 건설하여 전국 누적 100개 건물 목표를 달성하세요."
+    },
+    "bangun_infrastruktur_militer": {
+      "title": "군사 인프라 건설",
+      "description": "안내: 군사 인프라 시설을 건설하여 전국 누적 100개 건물 목표를 달성하세요."
     }
+  },
+  "building_achievements": {
+    "title_template": "{name} 건설",
+    "desc_template": "안내: 전국에 {name} 시설을 +{target}개 신규 건설하세요 (새로 지어진 건물만 누적 집계됩니다).",
+    "badge_template": "{stage}단계 목표: +{target}개 신규 건물",
+    "progress_badge": "신규 건설: {current} / {target}",
+    "finished_desc": "축하합니다! 국가 {name} 확장 전 단계를 모두 완수했습니다 (신규 +{target}개 건물).",
+    "finished_badge": "건설 완수 (+5,000개 건물)",
+    "names": {
+      "kelistrikan": "전력 발전 시설",
+      "mineral_energi": "광물 및 에너지",
+      "manufaktur": "제조업 시설",
+      "peternakan": "축산 시설",
+      "agrikultur": "농업 시설",
+      "perikanan": "수산업 시설",
+      "olahan_pangan": "식품 가공 시설",
+      "infrastruktur": "공공 인프라",
+      "pendidikan": "教育 시설",
+      "kesehatan": "의료 시설",
+      "penegakan_hukum": "법 집행 기관",
+      "olahraga_hiburan": "스포츠 및 오락",
+      "komersial": "상업 시설",
+      "rumah_subsidi": "서민 보조 주택",
+      "apartemen": "공동 아파트",
+      "mansion": "고급 저택",
+      "infrastruktur_militer": "군사 인프라"
+    },
+    "total_facilities": "전국 총 시설: {total}개"
   }
 }

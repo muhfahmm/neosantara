@@ -166,6 +166,102 @@
     "negara_tangguh": {
       "title": "Resilient State",
       "description": "Restore vital services post-crisis without prolonged civilian deprivations."
+    },
+    "bangun_kelistrikan": {
+      "title": "Construcción de Electricidad",
+      "description": "Guía: Construye instalaciones de Electricidad hasta alcanzar la meta de 100 edificios nacionales."
+    },
+    "bangun_mineral_energi": {
+      "title": "Construcción de Minerales y Energía",
+      "description": "Guía: Construye instalaciones de Minerales y Energía hasta alcanzar la meta de 100 edificios nacionales."
+    },
+    "bangun_manufaktur": {
+      "title": "Construcción de Manufactura",
+      "description": "Guía: Construye instalaciones de Manufactura hasta alcanzar la meta de 100 edificios nacionales."
+    },
+    "bangun_peternakan": {
+      "title": "Construcción de Ganadería",
+      "description": "Guía: Construye instalaciones de Ganadería hasta alcanzar la meta de 100 edificios nacionales."
+    },
+    "bangun_agrikultur": {
+      "title": "Construcción de Agricultura",
+      "description": "Guía: Construye instalaciones de Agricultura hasta alcanzar la meta de 100 edificios nacionales."
+    },
+    "bangun_perikanan": {
+      "title": "Construcción de Pesca",
+      "description": "Guía: Construye instalaciones de Pesca hasta alcanzar la meta de 100 edificios nacionales."
+    },
+    "bangun_olahan_pangan": {
+      "title": "Construcción de Alimentos Procesados",
+      "description": "Guía: Construye instalaciones de Alimentos Procesados hasta alcanzar la meta de 100 edificios nacionales."
+    },
+    "bangun_infrastruktur": {
+      "title": "Construcción de Infraestructura Pública",
+      "description": "Guía: Construye instalaciones de Infraestructura Pública hasta alcanzar la meta de 100 edificios nacionales."
+    },
+    "bangun_pendidikan": {
+      "title": "Construcción de Educación",
+      "description": "Guía: Construye instalaciones de Educación hasta alcanzar la meta de 100 edificios nacionales."
+    },
+    "bangun_kesehatan": {
+      "title": "Construcción de Salud",
+      "description": "Guía: Construye instalaciones de Salud hasta alcanzar la meta de 100 edificios nacionales."
+    },
+    "bangun_penegakan_hukum": {
+      "title": "Construcción de Fuerzas de Seguridad",
+      "description": "Guía: Construye instalaciones de Fuerzas de Seguridad hasta alcanzar la meta de 100 edificios nacionales."
+    },
+    "bangun_olahraga_hiburan": {
+      "title": "Construcción de Deportes y Entretenimiento",
+      "description": "Guía: Construye instalaciones de Deportes y Entretenimiento hasta alcanzar la meta de 100 edificios nacionales."
+    },
+    "bangun_komersial": {
+      "title": "Construcción de Comercial",
+      "description": "Guía: Construye instalaciones de Comercial hasta alcanzar la meta de 100 edificios nacionales."
+    },
+    "bangun_rumah_subsidi": {
+      "title": "Construcción de Vivienda Subsidiada",
+      "description": "Guía: Construye instalaciones de Vivienda Subsidiada hasta alcanzar la meta de 100 edificios nacionales."
+    },
+    "bangun_apartemen": {
+      "title": "Construcción de Apartamentos",
+      "description": "Guía: Construye instalaciones de Apartamentos hasta alcanzar la meta de 100 edificios nacionales."
+    },
+    "bangun_mansion": {
+      "title": "Construcción de Mansiones",
+      "description": "Guía: Construye instalaciones de Mansiones hasta alcanzar la meta de 100 edificios nacionales."
+    },
+    "bangun_infrastruktur_militer": {
+      "title": "Construcción de Infraestructura Militar",
+      "description": "Guía: Construye instalaciones de Infraestructura Militar hasta alcanzar la meta de 100 edificios nacionales."
     }
+  },
+  "building_achievements": {
+    "title_template": "Construcción de {name}",
+    "desc_template": "Guía: Construye +{target} nuevas instalaciones nacionales de {name} (el progreso cuenta los nuevos edificios construidos).",
+    "badge_template": "Objetivo Etapa {stage}: +{target} Nuevos Edificios",
+    "progress_badge": "Nuevos Edificios: {current} / {target}",
+    "finished_desc": "¡Felicitaciones! Has completado todas las etapas de expansión de {name} (+{target} nuevos edificios).",
+    "finished_badge": "Construcción Finalizada (+5.000 Edificios)",
+    "names": {
+      "kelistrikan": "Electricidad",
+      "mineral_energi": "Minerales y Energía",
+      "manufaktur": "Manufactura",
+      "peternakan": "Ganadería",
+      "agrikultur": "Agricultura",
+      "perikanan": "Pesca",
+      "olahan_pangan": "Alimentos Procesados",
+      "infrastruktur": "Infraestructura Pública",
+      "pendidikan": "Educación",
+      "kesehatan": "Salud",
+      "penegakan_hukum": "Fuerzas de Seguridad",
+      "olahraga_hiburan": "Deportes y Entretenimiento",
+      "komersial": "Comercial",
+      "rumah_subsidi": "Vivienda Subsidiada",
+      "apartemen": "Apartamentos",
+      "mansion": "Mansiones",
+      "infrastruktur_militer": "Infraestructura Militar"
+    },
+    "total_facilities": "Instalaciones Totales: {total}"
   }
 }

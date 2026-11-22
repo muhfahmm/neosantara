@@ -166,6 +166,102 @@
     "negara_tangguh": {
       "title": "Resilient State",
       "description": "Restore vital services post-crisis without prolonged civilian deprivations."
+    },
+    "bangun_kelistrikan": {
+      "title": "电力设施建设",
+      "description": "指南：建设国家电力设施设施，累计达到100座建筑，以巩固国家主权与实力。"
+    },
+    "bangun_mineral_energi": {
+      "title": "矿产与能源建设",
+      "description": "指南：建设国家矿产与能源设施，累计达到100座建筑，以巩固国家主权与实力。"
+    },
+    "bangun_manufaktur": {
+      "title": "制造业建设",
+      "description": "指南：建设国家制造业设施，累计达到100座建筑，以巩固国家主权与实力。"
+    },
+    "bangun_peternakan": {
+      "title": "畜牧业建设",
+      "description": "指南：建设国家畜牧业设施，累计达到100座建筑，以巩固国家主权与实力。"
+    },
+    "bangun_agrikultur": {
+      "title": "农业设施建设",
+      "description": "指南：建设国家农业设施设施，累计达到100座建筑，以巩固国家主权与实力。"
+    },
+    "bangun_perikanan": {
+      "title": "渔业设施建设",
+      "description": "指南：建设国家渔业设施设施，累计达到100座建筑，以巩固国家主权与实力。"
+    },
+    "bangun_olahan_pangan": {
+      "title": "食品加工建设",
+      "description": "指南：建设国家食品加工设施，累计达到100座建筑，以巩固国家主权与实力。"
+    },
+    "bangun_infrastruktur": {
+      "title": "公共基础设施建设",
+      "description": "指南：建设国家公共基础设施设施，累计达到100座建筑，以巩固国家主权与实力。"
+    },
+    "bangun_pendidikan": {
+      "title": "教育设施建设",
+      "description": "指南：建设国家教育设施设施，累计达到100座建筑，以巩固国家主权与实力。"
+    },
+    "bangun_kesehatan": {
+      "title": "医疗卫生建设",
+      "description": "指南：建设国家医疗卫生设施，累计达到100座建筑，以巩固国家主权与实力。"
+    },
+    "bangun_penegakan_hukum": {
+      "title": "执法机构建设",
+      "description": "指南：建设国家执法机构设施，累计达到100座建筑，以巩固国家主权与实力。"
+    },
+    "bangun_olahraga_hiburan": {
+      "title": "体育与娱乐建设",
+      "description": "指南：建设国家体育与娱乐设施，累计达到100座建筑，以巩固国家主权与实力。"
+    },
+    "bangun_komersial": {
+      "title": "商业设施建设",
+      "description": "指南：建设国家商业设施设施，累计达到100座建筑，以巩固国家主权与实力。"
+    },
+    "bangun_rumah_subsidi": {
+      "title": "保障房与廉租房建设",
+      "description": "指南：建设国家保障房与廉租房设施，累计达到100座建筑，以巩固国家主权与实力。"
+    },
+    "bangun_apartemen": {
+      "title": "住宅公寓建设",
+      "description": "指南：建设国家住宅公寓设施，累计达到100座建筑，以巩固国家主权与实力。"
+    },
+    "bangun_mansion": {
+      "title": "高级庄园府邸建设",
+      "description": "指南：建设国家高级庄园府邸设施，累计达到100座建筑，以巩固国家主权与实力。"
+    },
+    "bangun_infrastruktur_militer": {
+      "title": "军事基础设施建设",
+      "description": "指南：建设国家军事基础设施设施，累计达到100座建筑，以巩固国家主权与实力。"
     }
+  },
+  "building_achievements": {
+    "title_template": "{name}建设",
+    "desc_template": "指南：新建+{target}座国家{name}设施（仅累计新开工建成的设施）。",
+    "badge_template": "第{stage}阶段目标：+{target}座新建建筑",
+    "progress_badge": "新建建筑：{current} / {target}",
+    "finished_desc": "恭喜！您已完成国家{name}扩建的所有阶段（累计新建+{target}座建筑）。",
+    "finished_badge": "建设工程竣工（+5,000座新建筑）",
+    "names": {
+      "kelistrikan": "电力设施",
+      "mineral_energi": "矿产与能源",
+      "manufaktur": "制造业",
+      "peternakan": "畜牧业",
+      "agrikultur": "农业设施",
+      "perikanan": "渔业设施",
+      "olahan_pangan": "食品加工",
+      "infrastruktur": "公共基础设施",
+      "pendidikan": "教育设施",
+      "kesehatan": "医疗卫生",
+      "penegakan_hukum": "执法机构",
+      "olahraga_hiburan": "体育与娱乐",
+      "komersial": "商业设施",
+      "rumah_subsidi": "保障房与廉租房",
+      "apartemen": "住宅公寓",
+      "mansion": "高级庄园府邸",
+      "infrastruktur_militer": "军事基础设施"
+    },
+    "total_facilities": "全国现有总设施：{total}座"
   }
 }

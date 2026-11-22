@@ -4,7 +4,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import {
   Trophy, Award, CheckCircle2, Lock, Sparkles, Gem, Coins,
-  Smile, Users2, Zap, Landmark, Building2, Microscope,
+  Smile, Users2, Zap, Landmark, Building2, Microscope, Factory, Home, Hammer,
   Briefcase, Globe, HeartHandshake, Shield, Siren, Skull, TrendingUp, Calendar
 } from 'lucide-react';
 
@@ -57,7 +57,9 @@ export interface AchievementState {
     negara_sejahtera_tier?: number;
     kebahagiaan_merata_tier?: number;
     daya_beli_tier?: number; // 0 for target 65, 1 for target 75, 2 for target 80, 3 completed
+    [key: string]: number | undefined;
   };
+  baselines?: Record<string, number>;
 }
 
 const LOCAL_STORAGE_ACHIEVEMENTS_KEY = 'neosantara_achievements_state';
@@ -65,6 +67,187 @@ const LOCAL_STORAGE_ACHIEVEMENTS_KEY = 'neosantara_achievements_state';
 // ─────────────────────────────────────────────────────────────────────────
 // LOGIKA KHUSUS ACHIEVEMENT ITEMS
 // ─────────────────────────────────────────────────────────────────────────
+
+// ═══ KONFIGURASI 17 KATEGORI PEMBANGUNAN & MILITER (3 TAHAP: 100, 1000, 5000) ═══
+export interface BuildingCategoryConfig {
+  id: string;
+  category: AchievementCategory;
+  nameKey: string;
+  icon: React.ElementType;
+  accent: string;
+  keys: string[];
+}
+
+export const BUILDING_ACHIEVEMENT_CATEGORIES: BuildingCategoryConfig[] = [
+  // --- PRODUKSI (7 TAB GAMBAR 1) ---
+  {
+    id: 'bangun_kelistrikan',
+    category: 'pembangunan',
+    nameKey: 'kelistrikan',
+    icon: Zap,
+    accent: '#38bdf8',
+    keys: [
+      'pembangkit_listrik_tenaga_nuklir', 'pembangkit_listrik_tenaga_air', 'pembangkit_listrik_tenaga_surya',
+      'pembangkit_listrik_tenaga_uap', 'pembangkit_listrik_tenaga_gas', 'pembangkit_listrik_tenaga_angin',
+      'pembangkit_listrik_tenaga_panas_bumi', 'pembangkit_listrik_tenaga_hidrogen',
+      'pembangkit_listrik_tenaga_gelombang_laut', 'pembangkit_listrik_tenaga_fusi_nuklir'
+    ],
+  },
+  {
+    id: 'bangun_mineral_energi',
+    category: 'pembangunan',
+    nameKey: 'mineral_energi',
+    icon: Building2,
+    accent: '#f59e0b',
+    keys: ['emas', 'uranium', 'batu_bara', 'minyak_bumi', 'gas_alam', 'garam', 'litium', 'logam_tanah_jarang', 'bijih_besi'],
+  },
+  {
+    id: 'bangun_manufaktur',
+    category: 'pembangunan',
+    nameKey: 'manufaktur',
+    icon: Factory,
+    accent: '#64748b',
+    keys: ['pabrik_semikonduktor', 'pabrik_mesin', 'pabrik_besi', 'semen_beton', 'kayu'],
+  },
+  {
+    id: 'bangun_peternakan',
+    category: 'pembangunan',
+    nameKey: 'peternakan',
+    icon: Building2,
+    accent: '#10b981',
+    keys: ['ayam_unggas', 'sapi_perah', 'sapi_potong', 'domba_kambing'],
+  },
+  {
+    id: 'bangun_agrikultur',
+    category: 'pembangunan',
+    nameKey: 'agrikultur',
+    icon: Building2,
+    accent: '#22c55e',
+    keys: ['padi', 'gandum', 'jagung', 'sayur', 'umbi', 'kedelai', 'kelapa_sawit', 'kopi', 'teh', 'kakao', 'tebu', 'karet'],
+  },
+  {
+    id: 'bangun_perikanan',
+    category: 'pembangunan',
+    nameKey: 'perikanan',
+    icon: Building2,
+    accent: '#06b6d4',
+    keys: ['udang', 'mutiara', 'ikan'],
+  },
+  {
+    id: 'bangun_olahan_pangan',
+    category: 'pembangunan',
+    nameKey: 'olahan_pangan',
+    icon: Factory,
+    accent: '#eab308',
+    keys: ['air_mineral', 'gula', 'roti', 'pengolahan_daging', 'mie_instan', 'minyak_goreng', 'susu', 'beras'],
+  },
+
+  // --- TEMPAT UMUM / LAYANAN PUBLIK (6 TAB GAMBAR 2) ---
+  {
+    id: 'bangun_infrastruktur',
+    category: 'pembangunan',
+    nameKey: 'infrastruktur',
+    icon: Hammer,
+    accent: '#8b5cf6',
+    keys: ['jalur_sepeda', 'jalan_raya', 'terminal_bus', 'stasiun_kereta_api', 'kereta_bawah_tanah', 'pelabuhan', 'bandara', 'helipad'],
+  },
+  {
+    id: 'bangun_pendidikan',
+    category: 'pembangunan',
+    nameKey: 'pendidikan',
+    icon: Building2,
+    accent: '#6366f1',
+    keys: ['prasekolah', 'dasar', 'menengah', 'lanjutan', 'universitas', 'lembaga_pendidikan', 'laboratorium', 'observatorium', 'pusat_penelitian', 'pusat_pengembangan'],
+  },
+  {
+    id: 'bangun_kesehatan',
+    category: 'pembangunan',
+    nameKey: 'kesehatan',
+    icon: Building2,
+    accent: '#ec4899',
+    keys: ['rumah_sakit_besar', 'rumah_sakit_kecil', 'pusat_diagnostik'],
+  },
+  {
+    id: 'bangun_penegakan_hukum',
+    category: 'pembangunan',
+    nameKey: 'penegakan_hukum',
+    icon: Shield,
+    accent: '#3b82f6',
+    keys: ['pusat_bantuan_hukum', 'pengadilan', 'kejaksaan', 'pos_polisi', 'armada_mobil_polisi', 'akademi_polisi'],
+  },
+  {
+    id: 'bangun_olahraga_hiburan',
+    category: 'pembangunan',
+    nameKey: 'olahraga_hiburan',
+    icon: Building2,
+    accent: '#f97316',
+    keys: ['kolam_renang', 'sirkuit_balap', 'stadion', 'stadion_internasional', 'gym', 'golf', 'esports', 'gokart', 'bioskop', 'teater'],
+  },
+  {
+    id: 'bangun_komersial',
+    category: 'pembangunan',
+    nameKey: 'komersial',
+    icon: Building2,
+    accent: '#14b8a6',
+    keys: ['mall', 'hotel', 'pusat_grosir_tekstil'],
+  },
+
+  // --- HUNIAN PERMUKIMAN (3 TAB GAMBAR 3) ---
+  {
+    id: 'bangun_rumah_subsidi',
+    category: 'pembangunan',
+    nameKey: 'rumah_subsidi',
+    icon: Home,
+    accent: '#0284c7',
+    keys: ['rumah_subsidi', 'perumahan_subsidi'],
+  },
+  {
+    id: 'bangun_apartemen',
+    category: 'pembangunan',
+    nameKey: 'apartemen',
+    icon: Building2,
+    accent: '#8b5cf6',
+    keys: ['apartemen'],
+  },
+  {
+    id: 'bangun_mansion',
+    category: 'pembangunan',
+    nameKey: 'mansion',
+    icon: Home,
+    accent: '#d97706',
+    keys: ['mansion'],
+  },
+
+  // --- MILITER / ARMADA (TAB INFRASTRUKTUR MILITER GAMBAR 4) ---
+  {
+    id: 'bangun_infrastruktur_militer',
+    category: 'pertahanan',
+    nameKey: 'infrastruktur_militer',
+    icon: Shield,
+    accent: '#ef4444',
+    keys: ['barak', 'hangar_tank', 'gudang_senjata', 'pangkalan_laut', 'pangkalan_udara'],
+  },
+];
+
+const BUILDING_TIER_TARGETS = [100, 1000, 5000];
+const BUILDING_TIER_REWARDS = [
+  { gems: 100, neo: 25000000 },
+  { gems: 250, neo: 75000000 },
+  { gems: 500, neo: 200000000 },
+];
+
+function countBuildingsForCategory(cd: any, keys: string[]): number {
+  if (!cd) return 0;
+  let total = 0;
+  for (const k of keys) {
+    const val = Number(cd[k] ?? cd?.buildings?.[k] ?? cd?.pertahanan?.[k] ?? 0);
+    if (!isNaN(val) && val > 0) {
+      total += val;
+    }
+  }
+  return total;
+}
+
 const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
   // ═══ 1. KEPUASAN & KESEJAHTERAAN ═══
   {
@@ -413,46 +596,55 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     },
   },
 
-  // ═══ 5. PEMBANGUNAN ═══
-  {
-    id: 'pembangun_bangsa',
-    category: 'pembangunan',
-    icon: Building2,
-    accent: '#8b5cf6',
-    maxProgress: 20,
-    reward: { gems: 200, neo: 75000000 },
-    computeProgress: (cd) => {
-      const bldCount = Object.values(cd?.buildings || {}).reduce((acc: number, v: any) => acc + (Number(v) || 0), 0);
-      const current = Math.min(20, bldCount > 0 ? bldCount : 12);
-      return { current, isUnlocked: current >= 20 };
-    },
-  },
-  {
-    id: 'kota_terhubung',
-    category: 'pembangunan',
-    icon: Building2,
-    accent: '#a78bfa',
-    maxProgress: 4,
-    reward: { gems: 150, neo: 50000000 },
-    computeProgress: (cd) => {
-      const transTypes = cd?.transportationBuiltCount ?? 2;
-      const current = Math.min(4, transTypes);
-      return { current, isUnlocked: current >= 4 };
-    },
-  },
-  {
-    id: 'pelayanan_publik_lengkap',
-    category: 'pembangunan',
-    icon: Building2,
-    accent: '#7c3aed',
-    maxProgress: 6,
-    reward: { gems: 180, neo: 65000000 },
-    computeProgress: (cd) => {
-      const pubCount = cd?.publicServicesCount ?? 4;
-      const current = Math.min(6, pubCount);
-      return { current, isUnlocked: current >= 6 };
-    },
-  },
+  // ═══ 5. PEMBANGUNAN (16 Kategori Tab: Produksi, Layanan Umum, Hunian) ═══
+  ...BUILDING_ACHIEVEMENT_CATEGORIES.filter(c => c.category === 'pembangunan').map((cfg) => {
+    return {
+      id: cfg.id,
+      category: 'pembangunan' as AchievementCategory,
+      icon: cfg.icon,
+      accent: cfg.accent,
+      maxProgress: 100,
+      reward: BUILDING_TIER_REWARDS[0],
+      computeProgress: (cd: any, _curDate?: Date, state?: AchievementState) => {
+        const tier = Number(state?.milestones?.[`${cfg.id}_tier`] ?? 0);
+        const stage = Math.min(3, tier + 1);
+        const target = BUILDING_TIER_TARGETS[Math.min(2, tier)];
+        const totalNow = countBuildingsForCategory(cd, cfg.keys);
+        
+        // Baseline initial bangunan saat pertama kali misi aktif
+        const baseline = state?.baselines?.[cfg.id] ?? totalNow;
+        const currentDelta = Math.max(0, totalNow - baseline);
+        const isUnlocked = tier >= 3 || currentDelta >= target;
+        const progressCurrent = Math.min(target, currentDelta);
+
+        return {
+          current: progressCurrent,
+          target,
+          isUnlocked,
+          extraBadges: [
+            {
+              label: tier >= 3 
+                ? 'Pembangunan Selesai (+5.000 Bangunan)'
+                : `Target Tahap ${stage}: +${target.toLocaleString()} Bangunan Baru`,
+              colorClass: isUnlocked 
+                ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' 
+                : 'bg-root-accent/15 text-root-accent border-root-accent/30',
+            },
+            {
+              label: `Bangunan Baru: ${progressCurrent.toLocaleString()} / ${target.toLocaleString()}`,
+              colorClass: isUnlocked
+                ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                : 'bg-root-accent/15 text-root-accent border-root-accent/30',
+            },
+            {
+              label: `Total Fasilitas: ${totalNow.toLocaleString()}`,
+              colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+            },
+          ],
+        };
+      },
+    };
+  }),
 
   // ═══ 6. PENELITIAN ═══
   {
@@ -627,7 +819,56 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     },
   },
 
-  // ═══ 10. PERTAHANAN ═══
+  // ═══ 10. PERTAHANAN (Termasuk Tab Infrastruktur Militer) ═══
+  ...BUILDING_ACHIEVEMENT_CATEGORIES.filter(c => c.category === 'pertahanan').map((cfg) => {
+    return {
+      id: cfg.id,
+      category: 'pertahanan' as AchievementCategory,
+      icon: cfg.icon,
+      accent: cfg.accent,
+      maxProgress: 100,
+      reward: BUILDING_TIER_REWARDS[0],
+      computeProgress: (cd: any, _curDate?: Date, state?: AchievementState) => {
+        const tier = Number(state?.milestones?.[`${cfg.id}_tier`] ?? 0);
+        const stage = Math.min(3, tier + 1);
+        const target = BUILDING_TIER_TARGETS[Math.min(2, tier)];
+        const totalNow = countBuildingsForCategory(cd, cfg.keys);
+        
+        // Baseline initial bangunan saat pertama kali misi aktif
+        const baseline = state?.baselines?.[cfg.id] ?? totalNow;
+        const currentDelta = Math.max(0, totalNow - baseline);
+        const isUnlocked = tier >= 3 || currentDelta >= target;
+        const progressCurrent = Math.min(target, currentDelta);
+
+        return {
+          current: progressCurrent,
+          target,
+          isUnlocked,
+          extraBadges: [
+            {
+              label: tier >= 3 
+                ? 'Pembangunan Selesai (+5.000 Bangunan)'
+                : `Target Tahap ${stage}: +${target.toLocaleString()} Bangunan Baru`,
+              colorClass: isUnlocked 
+                ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' 
+                : 'bg-root-accent/15 text-root-accent border-root-accent/30',
+            },
+            {
+              label: `Bangunan Baru: ${progressCurrent.toLocaleString()} / ${target.toLocaleString()}`,
+              colorClass: isUnlocked
+                ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                : 'bg-root-accent/15 text-root-accent border-root-accent/30',
+            },
+            {
+              label: `Total Fasilitas: ${totalNow.toLocaleString()}`,
+              colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+            },
+          ],
+        };
+      },
+    };
+  }),
+  
   {
     id: 'penjaga_negeri',
     category: 'pertahanan',
@@ -736,7 +977,7 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
   // Load state from localStorage or countryDetail
   const [achievementState, setAchievementState] = useState<AchievementState>(() => {
     if (typeof window === 'undefined') {
-      return { claimed: {}, milestones: {} };
+      return { claimed: {}, milestones: {}, baselines: {} };
     }
     try {
       const stored = localStorage.getItem(LOCAL_STORAGE_ACHIEVEMENTS_KEY);
@@ -745,12 +986,14 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
         return {
           claimed: parsed.claimed || {},
           milestones: parsed.milestones || {},
+          baselines: parsed.baselines || {},
         };
       }
     } catch {}
     return {
       claimed: countryDetail?.achievementsClaimed || {},
       milestones: countryDetail?.achievementMilestones || {},
+      baselines: countryDetail?.achievementBaselines || {},
     };
   });
 
@@ -764,9 +1007,33 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
         ...prev,
         achievementsClaimed: nextState.claimed,
         achievementMilestones: nextState.milestones,
+        achievementBaselines: nextState.baselines,
       }));
     }
   };
+
+  // Inisialisasi Baseline Jumlah Bangunan saat ini jika belum tercatat
+  // Agar bangunan bawaan/sebelumnya tidak langsung terhitung (hanya bangunan baru yang dihitung!)
+  useEffect(() => {
+    if (!countryDetail) return;
+    let baselinesChanged = false;
+    const currentBaselines = { ...(achievementState.baselines || {}) };
+
+    BUILDING_ACHIEVEMENT_CATEGORIES.forEach((cfg) => {
+      if (currentBaselines[cfg.id] === undefined) {
+        const totalNow = countBuildingsForCategory(countryDetail, cfg.keys);
+        currentBaselines[cfg.id] = totalNow;
+        baselinesChanged = true;
+      }
+    });
+
+    if (baselinesChanged) {
+      saveAchievementState({
+        ...achievementState,
+        baselines: currentBaselines,
+      });
+    }
+  }, [countryDetail]);
 
   // Evaluate all achievements
   const evaluatedAchievements = useMemo(() => {
@@ -775,6 +1042,13 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
       const isClaimed = Boolean(achievementState.claimed[def.id]);
       const isReadyToClaim = computed.isUnlocked && !isClaimed;
       const maxTarget = computed.target ?? def.maxProgress;
+
+      // Dynamic reward calculation for 3-tier building achievements
+      let currentReward = def.reward;
+      if (def.id.startsWith('bangun_')) {
+        const tier = Number(achievementState.milestones?.[`${def.id}_tier`] ?? 0);
+        currentReward = BUILDING_TIER_REWARDS[Math.min(2, tier)] || def.reward;
+      }
 
       return {
         ...def,
@@ -817,7 +1091,27 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
     let nextMilestones = { ...achievementState.milestones };
     let shouldLockAgainForNextTier = false;
 
-    if (item.id === 'negara_sejahtera') {
+    // Cek 17 kategori pembangunan & militer (3 tahap: 100 -> 1000 -> 5000)
+    let nextBaselines = { ...(achievementState.baselines || {}) };
+    if (item.id.startsWith('bangun_')) {
+      const tierKey = `${item.id}_tier`;
+      const currentTier = nextMilestones[tierKey] ?? 0;
+      const bConfig = BUILDING_ACHIEVEMENT_CATEGORIES.find(c => c.id === item.id);
+      const totalNow = bConfig ? countBuildingsForCategory(countryDetail, bConfig.keys) : 0;
+
+      if (currentTier < 2) {
+        // Tahap 1 (100) -> Tahap 2 (1000) -> Tahap 3 (5000)
+        nextMilestones[tierKey] = currentTier + 1;
+        // Reset baseline ke total bangunan saat ini agar tahap berikutnya menghitung +1.000 / +5.000 bangunan baru lagi
+        nextBaselines[item.id] = totalNow;
+        shouldLockAgainForNextTier = true; // resets claimed so user can claim next stage!
+      } else {
+        // Tahap 3 claimed -> Completed
+        nextMilestones[tierKey] = 3;
+        nextBaselines[item.id] = totalNow;
+        shouldLockAgainForNextTier = false;
+      }
+    } else if (item.id === 'negara_sejahtera') {
       const currentTier = nextMilestones.negara_sejahtera_tier ?? 0;
       if (item.maxProgress < 100) {
         nextMilestones.negara_sejahtera_tier = currentTier + 1;
@@ -845,6 +1139,7 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
         [item.id]: !shouldLockAgainForNextTier,
       },
       milestones: nextMilestones,
+      baselines: nextBaselines,
     };
     saveAchievementState(nextState);
 
@@ -979,9 +1274,30 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
       <div className="flex-1 overflow-y-auto p-3 sm:p-4 custom-scrollbar space-y-2.5">
         {filteredList.map((item) => {
           const Icon = item.icon;
-          const title = item.dynamicTitle || t(`side_pencapaian.items.${item.id}.title`) || item.id;
-          
+          let title = item.dynamicTitle || t(`side_pencapaian.items.${item.id}.title`) || item.id;
           let description = item.dynamicDescription || t(`side_pencapaian.items.${item.id}.description`) || '';
+
+          // Format dinamis untuk 17 kategori pembangunan & militer bertahap
+          if (item.id.startsWith('bangun_')) {
+            const bConfig = BUILDING_ACHIEVEMENT_CATEGORIES.find(c => c.id === item.id);
+            if (bConfig) {
+              const tier = Number(achievementState.milestones?.[`${item.id}_tier`] ?? 0);
+              const stage = Math.min(3, tier + 1);
+              const target = item.maxProgress || BUILDING_TIER_TARGETS[Math.min(2, tier)];
+              
+              const bldDoc = t('side_pencapaian.building_achievements') as any;
+              const catName = bldDoc?.names?.[bConfig.nameKey] || bConfig.nameKey;
+              
+              if (bldDoc?.title_template) {
+                title = bldDoc.title_template.replace('{name}', catName);
+              }
+              if (tier >= 3 && bldDoc?.finished_desc) {
+                description = bldDoc.finished_desc.replace('{name}', catName).replace('{target}', '5.000');
+              } else if (bldDoc?.desc_template) {
+                description = bldDoc.desc_template.replace('{name}', catName).replace('{target}', target.toLocaleString());
+              }
+            }
+          }
           // Inject template variables like {periodText} and {targetDate} for anggaran_sehat
           if (item.id === 'anggaran_sehat') {
             const now = currentDate || new Date();

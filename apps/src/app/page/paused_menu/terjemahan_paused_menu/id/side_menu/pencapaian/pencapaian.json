@@ -166,6 +166,102 @@
     "negara_tangguh": {
       "title": "Negara Tangguh",
       "description": "Pulihkan layanan penting setelah krisis tanpa membiarkan kebutuhan dasar warga terus mengalami defisit."
+    },
+    "bangun_kelistrikan": {
+      "title": "Pembangunan Kelistrikan",
+      "description": "Petunjuk: Bangun fasilitas Kelistrikan hingga mencapai target 100 bangunan nasional untuk memperkuat kedaulatan negara."
+    },
+    "bangun_mineral_energi": {
+      "title": "Pembangunan Mineral & Energi",
+      "description": "Petunjuk: Bangun fasilitas Mineral & Energi hingga mencapai target 100 bangunan nasional untuk memperkuat kedaulatan negara."
+    },
+    "bangun_manufaktur": {
+      "title": "Pembangunan Manufaktur",
+      "description": "Petunjuk: Bangun fasilitas Manufaktur hingga mencapai target 100 bangunan nasional untuk memperkuat kedaulatan negara."
+    },
+    "bangun_peternakan": {
+      "title": "Pembangunan Peternakan",
+      "description": "Petunjuk: Bangun fasilitas Peternakan hingga mencapai target 100 bangunan nasional untuk memperkuat kedaulatan negara."
+    },
+    "bangun_agrikultur": {
+      "title": "Pembangunan Agrikultur",
+      "description": "Petunjuk: Bangun fasilitas Agrikultur hingga mencapai target 100 bangunan nasional untuk memperkuat kedaulatan negara."
+    },
+    "bangun_perikanan": {
+      "title": "Pembangunan Perikanan",
+      "description": "Petunjuk: Bangun fasilitas Perikanan hingga mencapai target 100 bangunan nasional untuk memperkuat kedaulatan negara."
+    },
+    "bangun_olahan_pangan": {
+      "title": "Pembangunan Olahan Pangan",
+      "description": "Petunjuk: Bangun fasilitas Olahan Pangan hingga mencapai target 100 bangunan nasional untuk memperkuat kedaulatan negara."
+    },
+    "bangun_infrastruktur": {
+      "title": "Pembangunan Infrastruktur",
+      "description": "Petunjuk: Bangun fasilitas Infrastruktur hingga mencapai target 100 bangunan nasional untuk memperkuat kedaulatan negara."
+    },
+    "bangun_pendidikan": {
+      "title": "Pembangunan Pendidikan",
+      "description": "Petunjuk: Bangun fasilitas Pendidikan hingga mencapai target 100 bangunan nasional untuk memperkuat kedaulatan negara."
+    },
+    "bangun_kesehatan": {
+      "title": "Pembangunan Kesehatan",
+      "description": "Petunjuk: Bangun fasilitas Kesehatan hingga mencapai target 100 bangunan nasional untuk memperkuat kedaulatan negara."
+    },
+    "bangun_penegakan_hukum": {
+      "title": "Pembangunan Penegakan Hukum",
+      "description": "Petunjuk: Bangun fasilitas Penegakan Hukum hingga mencapai target 100 bangunan nasional untuk memperkuat kedaulatan negara."
+    },
+    "bangun_olahraga_hiburan": {
+      "title": "Pembangunan Olahraga & Hiburan",
+      "description": "Petunjuk: Bangun fasilitas Olahraga & Hiburan hingga mencapai target 100 bangunan nasional untuk memperkuat kedaulatan negara."
+    },
+    "bangun_komersial": {
+      "title": "Pembangunan Komersial",
+      "description": "Petunjuk: Bangun fasilitas Komersial hingga mencapai target 100 bangunan nasional untuk memperkuat kedaulatan negara."
+    },
+    "bangun_rumah_subsidi": {
+      "title": "Pembangunan Rumah Subsidi",
+      "description": "Petunjuk: Bangun fasilitas Rumah Subsidi hingga mencapai target 100 bangunan nasional untuk memperkuat kedaulatan negara."
+    },
+    "bangun_apartemen": {
+      "title": "Pembangunan Apartemen",
+      "description": "Petunjuk: Bangun fasilitas Apartemen hingga mencapai target 100 bangunan nasional untuk memperkuat kedaulatan negara."
+    },
+    "bangun_mansion": {
+      "title": "Pembangunan Mansion",
+      "description": "Petunjuk: Bangun fasilitas Mansion hingga mencapai target 100 bangunan nasional untuk memperkuat kedaulatan negara."
+    },
+    "bangun_infrastruktur_militer": {
+      "title": "Pembangunan Infrastruktur Militer",
+      "description": "Petunjuk: Bangun fasilitas Infrastruktur Militer hingga mencapai target 100 bangunan nasional untuk memperkuat kedaulatan negara."
     }
+  },
+  "building_achievements": {
+    "title_template": "Pembangunan {name}",
+    "desc_template": "Petunjuk: Bangun +{target} fasilitas {name} baru nasional (progres dari bangunan baru yang dibangun).",
+    "badge_template": "Target Tahap {stage}: +{target} Bangunan Baru",
+    "progress_badge": "Bangunan Baru: {current} / {target}",
+    "finished_desc": "Selamat! Anda telah menyelesaikan seluruh tahap ekspansi pembangunan {name} nasional (+{target} bangunan baru).",
+    "finished_badge": "Pembangunan Selesai (+5.000 Bangunan)",
+    "names": {
+      "kelistrikan": "Kelistrikan",
+      "mineral_energi": "Mineral & Energi",
+      "manufaktur": "Manufaktur",
+      "peternakan": "Peternakan",
+      "agrikultur": "Agrikultur",
+      "perikanan": "Perikanan",
+      "olahan_pangan": "Olahan Pangan",
+      "infrastruktur": "Infrastruktur",
+      "pendidikan": "Pendidikan",
+      "kesehatan": "Kesehatan",
+      "penegakan_hukum": "Penegakan Hukum",
+      "olahraga_hiburan": "Olahraga & Hiburan",
+      "komersial": "Komersial",
+      "rumah_subsidi": "Rumah Subsidi",
+      "apartemen": "Apartemen",
+      "mansion": "Mansion",
+      "infrastruktur_militer": "Infrastruktur Militer"
+    },
+    "total_facilities": "Total Fasilitas Nasional: {total}"
   }
 }

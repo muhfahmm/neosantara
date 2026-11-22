@@ -166,6 +166,102 @@
     "negara_tangguh": {
       "title": "Resilient State",
       "description": "Restore vital services post-crisis without prolonged civilian deprivations."
+    },
+    "bangun_kelistrikan": {
+      "title": "Electricity Construction",
+      "description": "Guide: Construct Electricity facilities up to the target of 100 national buildings to strengthen state sovereignty."
+    },
+    "bangun_mineral_energi": {
+      "title": "Mineral & Energy Construction",
+      "description": "Guide: Construct Mineral & Energy facilities up to the target of 100 national buildings to strengthen state sovereignty."
+    },
+    "bangun_manufaktur": {
+      "title": "Manufacturing Construction",
+      "description": "Guide: Construct Manufacturing facilities up to the target of 100 national buildings to strengthen state sovereignty."
+    },
+    "bangun_peternakan": {
+      "title": "Livestock Construction",
+      "description": "Guide: Construct Livestock facilities up to the target of 100 national buildings to strengthen state sovereignty."
+    },
+    "bangun_agrikultur": {
+      "title": "Agriculture Construction",
+      "description": "Guide: Construct Agriculture facilities up to the target of 100 national buildings to strengthen state sovereignty."
+    },
+    "bangun_perikanan": {
+      "title": "Fisheries Construction",
+      "description": "Guide: Construct Fisheries facilities up to the target of 100 national buildings to strengthen state sovereignty."
+    },
+    "bangun_olahan_pangan": {
+      "title": "Processed Food Construction",
+      "description": "Guide: Construct Processed Food facilities up to the target of 100 national buildings to strengthen state sovereignty."
+    },
+    "bangun_infrastruktur": {
+      "title": "Public Infrastructure Construction",
+      "description": "Guide: Construct Public Infrastructure facilities up to the target of 100 national buildings to strengthen state sovereignty."
+    },
+    "bangun_pendidikan": {
+      "title": "Education Construction",
+      "description": "Guide: Construct Education facilities up to the target of 100 national buildings to strengthen state sovereignty."
+    },
+    "bangun_kesehatan": {
+      "title": "Healthcare Construction",
+      "description": "Guide: Construct Healthcare facilities up to the target of 100 national buildings to strengthen state sovereignty."
+    },
+    "bangun_penegakan_hukum": {
+      "title": "Law Enforcement Construction",
+      "description": "Guide: Construct Law Enforcement facilities up to the target of 100 national buildings to strengthen state sovereignty."
+    },
+    "bangun_olahraga_hiburan": {
+      "title": "Sports & Entertainment Construction",
+      "description": "Guide: Construct Sports & Entertainment facilities up to the target of 100 national buildings to strengthen state sovereignty."
+    },
+    "bangun_komersial": {
+      "title": "Commercial Construction",
+      "description": "Guide: Construct Commercial facilities up to the target of 100 national buildings to strengthen state sovereignty."
+    },
+    "bangun_rumah_subsidi": {
+      "title": "Subsidized Housing Construction",
+      "description": "Guide: Construct Subsidized Housing facilities up to the target of 100 national buildings to strengthen state sovereignty."
+    },
+    "bangun_apartemen": {
+      "title": "Apartments Construction",
+      "description": "Guide: Construct Apartments facilities up to the target of 100 national buildings to strengthen state sovereignty."
+    },
+    "bangun_mansion": {
+      "title": "Mansions Construction",
+      "description": "Guide: Construct Mansions facilities up to the target of 100 national buildings to strengthen state sovereignty."
+    },
+    "bangun_infrastruktur_militer": {
+      "title": "Military Infrastructure Construction",
+      "description": "Guide: Construct Military Infrastructure facilities up to the target of 100 national buildings to strengthen state sovereignty."
     }
+  },
+  "building_achievements": {
+    "title_template": "{name} Construction",
+    "desc_template": "Guide: Construct +{target} new national {name} facilities (progress tracks newly constructed buildings).",
+    "badge_template": "Stage {stage} Target: +{target} New Buildings",
+    "progress_badge": "New Buildings: {current} / {target}",
+    "finished_desc": "Congratulations! You have completed all stages of national {name} construction expansion (+{target} new buildings).",
+    "finished_badge": "Construction Completed (+5,000 Buildings)",
+    "names": {
+      "kelistrikan": "Electricity",
+      "mineral_energi": "Mineral & Energy",
+      "manufaktur": "Manufacturing",
+      "peternakan": "Livestock",
+      "agrikultur": "Agriculture",
+      "perikanan": "Fisheries",
+      "olahan_pangan": "Processed Food",
+      "infrastruktur": "Public Infrastructure",
+      "pendidikan": "Education",
+      "kesehatan": "Healthcare",
+      "penegakan_hukum": "Law Enforcement",
+      "olahraga_hiburan": "Sports & Entertainment",
+      "komersial": "Commercial",
+      "rumah_subsidi": "Subsidized Housing",
+      "apartemen": "Apartments",
+      "mansion": "Mansions",
+      "infrastruktur_militer": "Military Infrastructure"
+    },
+    "total_facilities": "Total National Facilities: {total}"
   }
 }
