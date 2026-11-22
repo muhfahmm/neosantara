@@ -148,6 +148,7 @@
     "profileMatchError": "Qualification data matched only {count} of 193 UN member profiles.",
     "notMember": "The country you are playing is not a sovereign UN member and cannot nominate or vote.",
     "nominate": "Nominate my country",
+    "currentMemberIneligible": "Permanent or current Security Council members, and countries that served as non-permanent members in the previous year, cannot run.",
     "campaign": "Contribution campaign ({count}/3)",
     "completeVote": "Complete voting",
     "nextSchedule": "Election schedule: June {year}\nNominations: June 1–14\nCampaign: June 15–24\nVoting: June 25–30 (results on June 30)\nNew members take office: January 1, {startYear}.",

@@ -148,6 +148,7 @@
     "profileMatchError": "资格数据仅匹配到193个联合国成员国资料中的{count}个。",
     "notMember": "你正在游玩的国家不是主权联合国会员国，无法提名或投票。",
     "nominate": "提名我的国家",
+    "currentMemberIneligible": "安理会常任或现任成员，以及上一年度担任过非常任理事国的国家，不能参选。",
     "campaign": "贡献竞选（{count}/3）",
     "completeVote": "完成投票",
     "nextSchedule": "选举时间：{year}年6月\n提名：6月1日至14日\n竞选：6月15日至24日\n投票：6月25日至30日（结果于6月30日公布）\n当选成员任期开始：{startYear}年1月1日。",

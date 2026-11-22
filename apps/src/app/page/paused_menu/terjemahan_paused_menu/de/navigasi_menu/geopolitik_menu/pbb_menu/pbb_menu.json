@@ -148,6 +148,7 @@
     "profileMatchError": "Qualifikationsdaten stimmen nur mit {count} von 193 UN-Profilen überein.",
     "notMember": "Das gespielte Land ist kein souveränes UN-Mitglied und kann weder kandidieren noch abstimmen.",
     "nominate": "Mein Land nominieren",
+    "currentMemberIneligible": "Ständige oder derzeitige Mitglieder des Sicherheitsrats sowie Länder, die im Vorjahr einen nichtständigen Sitz innehatten, dürfen nicht kandidieren.",
     "campaign": "Beitragskampagne ({count}/3)",
     "completeVote": "Abstimmung abschließen",
     "nextSchedule": "Wahltermin: Juni {year}\nNominierungen: 1.–14. Juni\nWahlkampf: 15.–24. Juni\nAbstimmung: 25.–30. Juni (Ergebnis am 30. Juni)\nAmtsantritt der Gewählten: 1. Januar {startYear}.",

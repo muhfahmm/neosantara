@@ -56,6 +56,13 @@ interface NavbarProps {
     wasmModuleRef: React.RefObject<FpsMonitorWasmModule | null>;
 }
 
+function arePopulationMetricsEqual(
+    left: PopulationDailyMetrics,
+    right: PopulationDailyMetrics,
+): boolean {
+    return JSON.stringify(left) === JSON.stringify(right);
+}
+
 export function Navbar({
     selectedCountry,
     countryDetail,
@@ -100,28 +107,38 @@ export function Navbar({
         if (!countryDetail) return;
 
         let isCurrentRequest = true;
+        const updatePopulationMetrics = (metrics: PopulationDailyMetrics) => {
+            setPopulationMetricsResult(previous => {
+                if (
+                    previous &&
+                    previous.countryName === countryName &&
+                    arePopulationMetricsEqual(previous.metrics, metrics)
+                ) {
+                    return previous;
+                }
+
+                return { countryName, metrics };
+            });
+        };
+
         void calculateDailyPopulationChangeInRust(countryDetail, countryName, metadata, currentDate)
             .then(metrics => {
                 if (isCurrentRequest) {
-                    setPopulationMetricsResult({
-                        countryName,
-                        metrics,
-                    });
+                    updatePopulationMetrics(metrics);
                 }
             })
             .catch(error => {
                 console.error('Rust population food-metrics calculation failed; using TypeScript fallback:', error);
                 if (isCurrentRequest) {
                     try {
-                        setPopulationMetricsResult({
-                            countryName,
-                            metrics: calculateDailyPopulationChange(
+                        updatePopulationMetrics(
+                            calculateDailyPopulationChange(
                                 countryDetail,
                                 countryName,
                                 metadata,
                                 currentDate,
                             ),
-                        });
+                        );
                     } catch (fallbackError) {
                         console.error('TypeScript population-metrics fallback failed:', fallbackError);
                     }

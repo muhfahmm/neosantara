@@ -7932,8 +7932,15 @@ export default function MapPage() {
                             : currentDate.getDate() >= 15
                                 ? 2
                                 : 1;
-                const tickKey = `${currentDateStr}-${electionState.scheduleStage}`;
-                if (electionState.scheduleStage < dueStage && electionScheduleTickRef.current !== tickKey) {
+                const votingDayActive = electionState.phase === 'voting' &&
+                    currentDate.getMonth() === 5 &&
+                    currentDate.getDate() >= 25 &&
+                    currentDate.getDate() <= 30;
+                const tickKey = currentDateStr;
+                if (
+                    (electionState.scheduleStage < dueStage || votingDayActive) &&
+                    electionScheduleTickRef.current !== tickKey
+                ) {
                     electionScheduleTickRef.current = tickKey;
                     fetchAllCountryProfilesFromDb()
                         .then(profiles => {

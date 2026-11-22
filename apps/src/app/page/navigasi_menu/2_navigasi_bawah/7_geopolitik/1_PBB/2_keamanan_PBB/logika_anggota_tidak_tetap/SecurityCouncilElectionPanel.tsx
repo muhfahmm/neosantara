@@ -7,8 +7,9 @@ import {
   addPlayerNomination,
   campaignForCandidate,
   getEligibleUNMemberCountries,
+  getSecurityCouncilElectionCandidateCountries,
+  isIneligibleElectionCandidate,
   normalizeElectionState,
-  resolveElection,
   SECURITY_COUNCIL_ELECTION_STATE_KEY,
   type SecurityCouncilElectionState,
   type SecurityCouncilMember,
@@ -43,18 +44,17 @@ export default function SecurityCouncilElectionPanel({
   const electionWindow = election.year === year && currentMonth === 5;
   const nominationOpen = electionWindow && currentDay >= 1 && currentDay < 15;
   const campaignOpen = electionWindow && currentDay >= 15 && currentDay < 25;
-  const votingOpen = electionWindow && currentDay >= 25 && currentDay <= 30;
   const scheduleYear = election.phase === "completed" ? election.nextElectionYear : election.year;
   const [profiles, setProfiles] = useState<CountryProfile[]>([]);
   const [profilesLoaded, setProfilesLoaded] = useState(false);
   const [error, setError] = useState("");
-  const countries = useMemo(() => getEligibleUNMemberCountries(profiles), [profiles]);
-  const profiledVoterCount = countries.filter(country => country.profile).length;
+  const voters = useMemo(() => getEligibleUNMemberCountries(profiles), [profiles]);
+  const candidateCountries = useMemo(() => getSecurityCouncilElectionCandidateCountries(profiles), [profiles]);
+  const profiledVoterCount = voters.filter(country => country.profile).length;
   const player = useMemo(() => {
     const playerName = selectedCountry?.country || "";
-    return countries.find(country => normalizeName(country.name) === normalizeName(playerName)) || null;
-  }, [countries, selectedCountry?.country]);
-  const voters = countries;
+    return candidateCountries.find(country => normalizeName(country.name) === normalizeName(playerName)) || null;
+  }, [candidateCountries, selectedCountry?.country]);
 
   useEffect(() => {
     let active = true;
@@ -86,7 +86,7 @@ export default function SecurityCouncilElectionPanel({
       if (typeof window === "undefined") return;
       try {
         const raw = localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
-        if (raw) setElection(JSON.parse(raw) as SecurityCouncilElectionState);
+        if (raw) setElection(normalizeElectionState(JSON.parse(raw), year));
       } catch (syncError) {
         console.error("Gagal menyinkronkan roster setelah penggunaan hak veto:", syncError);
         setError(pbb("election.vetoSyncError"));
@@ -98,7 +98,7 @@ export default function SecurityCouncilElectionPanel({
       window.removeEventListener("pbb_security_council_roster_updated", syncVetoUsage);
       window.removeEventListener("pbb_security_council_election_updated", syncVetoUsage);
     };
-  }, []);
+  }, [pbb, year]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -125,9 +125,16 @@ export default function SecurityCouncilElectionPanel({
 
   const canNominate = Boolean(
     player && election.phase === "nomination" &&
-    (election.nominees.every(candidate => candidate.slug !== player.slug)) &&
-    election.members.every(member => member.iso !== player.iso || member.cohort === election.cohort)
+    !isIneligibleElectionCandidate(
+      election.members,
+      player.iso,
+      election.recentlyServedIsos,
+    ) &&
+    election.nominees.every(candidate => candidate.slug !== player.slug)
   );
+  const electionWinners = election.phase === "completed"
+    ? new Set(election.history.at(-1)?.winners || [])
+    : null;
   const playerCandidate = player
     ? election.nominees.find(candidate => candidate.slug === player.slug)
     : undefined;
@@ -140,19 +147,6 @@ export default function SecurityCouncilElectionPanel({
   const campaign = () => {
     if (!player) return;
     updateElection(campaignForCandidate(election, player.slug));
-  };
-
-  const vote = () => {
-    if (voters.length !== 193 || profiledVoterCount !== 193) {
-      setError(pbb("election.voterProfilesError", { count: profiledVoterCount }));
-      return;
-    }
-    const next = resolveElection(election, voters);
-    if (next.phase !== "completed") {
-      setError(pbb("election.voteIncomplete"));
-      return;
-    }
-    updateElection(next);
   };
 
   const phaseLabel = election.phase === "completed"
@@ -243,6 +237,15 @@ export default function SecurityCouncilElectionPanel({
           >
             {pbb("election.nominate")}
           </button>
+          {player && isIneligibleElectionCandidate(
+            election.members,
+            player.iso,
+            election.recentlyServedIsos,
+          ) && (
+            <p className="w-full text-xs text-amber-300">
+              {pbb("election.currentMemberIneligible")}
+            </p>
+          )}
         </div>
       )}
 
@@ -261,23 +264,21 @@ export default function SecurityCouncilElectionPanel({
         </div>
       )}
 
-      {election.phase === "voting" && votingOpen && (
-        <button
-          type="button"
-          onClick={vote}
-          disabled={voters.length !== 193 || profiledVoterCount !== 193}
-          className="rounded-lg border border-emerald-400/40 bg-emerald-500/10 px-3 py-2 text-[10px] font-black uppercase tracking-wide text-emerald-200 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          {pbb("election.completeVote")}
-        </button>
-      )}
-
       {election.nominees.length > 0 && (
         <div className="max-h-64 space-y-2 overflow-y-auto pr-1">
           {[...election.nominees]
             .sort((a, b) => a.region.localeCompare(b.region) || b.votes - a.votes || b.score - a.score)
             .map(candidate => (
-              <div key={candidate.slug} className="flex items-center justify-between gap-3 rounded-lg border border-white/5 bg-[#051111] px-3 py-2">
+              <div
+                key={candidate.slug}
+                className={`flex items-center justify-between gap-3 rounded-lg border px-3 py-2 ${
+                  electionWinners
+                    ? electionWinners.has(candidate.name)
+                      ? "border-emerald-400/70 bg-emerald-500/10"
+                      : "border-rose-500/60 bg-rose-500/5"
+                    : "border-white/5 bg-[#051111]"
+                }`}
+              >
                 <div className="min-w-0">
                   <p className="truncate text-xs font-bold text-root-text">{candidate.name}</p>
                   <p className="text-[9px] text-[#789090]">{candidate.region} · {pbb("election.score", { score: candidate.score.toFixed(1) })}</p>

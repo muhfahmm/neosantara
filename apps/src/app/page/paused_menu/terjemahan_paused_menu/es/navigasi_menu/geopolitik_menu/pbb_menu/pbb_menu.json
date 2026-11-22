@@ -148,6 +148,7 @@
     "profileMatchError": "Los datos de requisitos coinciden con {count} de los 193 perfiles.",
     "notMember": "El país actual no es miembro soberano de la ONU y no puede postularse ni votar.",
     "nominate": "Postular a mi país",
+    "currentMemberIneligible": "Los miembros permanentes o actuales del Consejo de Seguridad, y los países que ocuparon un puesto no permanente el año anterior, no pueden postularse.",
     "campaign": "Campaña de contribución ({count}/3)",
     "completeVote": "Completar la votación",
     "nextSchedule": "Elección: junio de {year}\nNominaciones: 1–14 de junio\nCampaña: 15–24 de junio\nVotación: 25–30 de junio (resultados el 30 de junio)\nLos elegidos asumen el: 1 de enero de {startYear}.",

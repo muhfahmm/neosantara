@@ -148,6 +148,7 @@
     "profileMatchError": "Data kualifikasi hanya cocok untuk {count} dari 193 profil anggota PBB.",
     "notMember": "Negara yang sedang dimainkan bukan anggota PBB berdaulat, sehingga tidak dapat mencalonkan diri atau memilih.",
     "nominate": "Nominasi negara saya",
+    "currentMemberIneligible": "Anggota tetap atau anggota DK PBB yang sedang menjabat, serta negara yang menjabat sebagai anggota tidak tetap pada tahun sebelumnya, tidak dapat mencalonkan diri.",
     "campaign": "Kampanye kontribusi ({count}/3)",
     "completeVote": "Selesaikan pemungutan suara",
     "nextSchedule": "Jadwal pemilu: Juni {year}\nNominasi: 1–14 Juni\nKampanye: 15–24 Juni\nVoting: 25–30 Juni (hasil 30 Juni)\nAnggota baru mulai menjabat: 1 Januari {startYear}.",
