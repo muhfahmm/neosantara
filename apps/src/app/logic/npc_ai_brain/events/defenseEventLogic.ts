@@ -8,6 +8,7 @@
  */
 
 import type { BrainContext } from "../core/brainContext";
+import { roundNeo } from "@/app/logic/economic_logic/neoCurrency";
 import { nilaiAngka, setCooldown } from "../core/brainContext";
 import type { AiInboxEvent, AiEventDecision } from "./eventTypes";
 
@@ -37,7 +38,7 @@ export function handleDefenseEvent(
     // Tingkatkan keamanan kontra-intelijen
     const biayaPenyelidikan = 15000;
     if (nilaiAngka(ctx.country.anggaran) > biayaPenyelidikan + 50000) {
-      ctx.country.anggaran = nilaiAngka(ctx.country.anggaran) - biayaPenyelidikan;
+      ctx.country.anggaran = roundNeo(nilaiAngka(ctx.country.anggaran) - biayaPenyelidikan);
       return {
         handled: true,
         category: "pertahanan",

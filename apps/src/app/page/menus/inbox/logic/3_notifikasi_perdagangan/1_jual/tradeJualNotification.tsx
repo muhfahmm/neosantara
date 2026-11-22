@@ -2,6 +2,7 @@ import React from 'react';
 import { ShoppingBag, Check, X } from 'lucide-react';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { getLocalizedCountryName } from '@/app/logic/countryNameLogic';
+import { formatNeo } from '@/app/logic/economic_logic/neoCurrency';
 
 interface TradeJualNotificationProps {
   notification: any; // TradeOfferNotification
@@ -10,7 +11,7 @@ interface TradeJualNotificationProps {
 }
 
 export default function TradeJualNotification({ notification, onAccept, onReject }: TradeJualNotificationProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const rawKey = notification.productKey || '';
   const localizedProduct = t(`side_inbox.items.${rawKey}`) || rawKey.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
   const partner = getLocalizedCountryName(notification.partnerName || 'Mitra');
@@ -22,8 +23,8 @@ export default function TradeJualNotification({ notification, onAccept, onReject
     partner,
     product: localizedProduct,
     quantity: notification.quantity?.toLocaleString('id-ID', { maximumFractionDigits: 2 }),
-    price: notification.pricePerUnit?.toLocaleString('id-ID', { maximumFractionDigits: 2 }),
-    total: notification.totalPrice?.toLocaleString('id-ID', { maximumFractionDigits: 2 }),
+    price: formatNeo(notification.pricePerUnit, language),
+    total: formatNeo(notification.totalPrice, language),
   }) ;
 
   return (
@@ -53,11 +54,11 @@ export default function TradeJualNotification({ notification, onAccept, onReject
           </div>
           <div>
             <div className="text-root-body text-[10px] font-extrabold tracking-wide uppercase">{t('side_inbox.trade.offerPrice')}</div>
-            <div>{notification.pricePerUnit?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
+            <div>{formatNeo(notification.pricePerUnit, language)} NEO</div>
           </div>
           <div>
             <div className="text-root-body text-[10px] font-extrabold tracking-wide uppercase">{t('side_inbox.trade.totalRevenue')}</div>
-            <div className="text-root-accent">{notification.totalPrice?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
+            <div className="text-root-accent">{formatNeo(notification.totalPrice, language)} NEO</div>
           </div>
         </div>
 

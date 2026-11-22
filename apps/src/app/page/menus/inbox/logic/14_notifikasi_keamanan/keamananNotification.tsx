@@ -3,6 +3,7 @@ import { Shield, Check, X } from 'lucide-react';
 import { KeamananNotification } from './keamananLogic';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { getInboxNotificationMessage, getInboxNotificationSender, getInboxNotificationTitle } from '@/app/page/menus/inbox/logic/notificationMessage';
+import { formatNeo } from '@/app/logic/economic_logic/neoCurrency';
 
 interface KeamananNotificationProps {
   notification: KeamananNotification;
@@ -15,7 +16,7 @@ export default function KeamananNotificationCard({
   onAccept,
   onReject,
 }: KeamananNotificationProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const isHandled = notification.isHandled;
 
   return (
@@ -53,11 +54,11 @@ export default function KeamananNotificationCard({
           </div>
           <div className="border-r border-rose-500/20 pr-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">{t('side_inbox.security.totalLoss')}</div>
-            <div className="text-amber-400 font-extrabold mt-0.5">{notification.totalKerugian.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
+            <div className="text-amber-400 font-extrabold mt-0.5">{formatNeo(notification.totalKerugian, language)} NEO</div>
           </div>
           <div>
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">{t('side_inbox.security.responseCost')}</div>
-            <div className="text-emerald-400 font-extrabold mt-0.5">{notification.bantuanCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
+            <div className="text-emerald-400 font-extrabold mt-0.5">{formatNeo(notification.bantuanCost, language)} NEO</div>
           </div>
         </div>
 

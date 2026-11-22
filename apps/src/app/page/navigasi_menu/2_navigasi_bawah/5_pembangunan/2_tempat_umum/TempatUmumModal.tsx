@@ -42,6 +42,7 @@ import {
   PENEGAKAN_HUKUM_KEYS,
 } from "@/app/logic/kepuasanCalculator";
 import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
+import { roundNeo } from "@/app/logic/economic_logic/neoCurrency";
 
 
 
@@ -257,7 +258,7 @@ export default function TempatUmumModal({
       return;
     }
 
-    const totalCost = cost * quantity;
+    const totalCost = roundNeo(cost * quantity);
     if (anggaran < totalCost) {
       setToast(tr("warning.insufficientFunds", { count: quantity, building: label }));
       setTimeout(() => setToast(null), 2500);

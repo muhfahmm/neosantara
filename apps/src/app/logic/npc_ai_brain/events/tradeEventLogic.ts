@@ -8,6 +8,7 @@
  */
 
 import { getMaterialStock } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
+import { roundNeo } from "@/app/logic/economic_logic/neoCurrency";
 import type { BrainContext } from "../core/brainContext";
 import { nilaiAngka } from "../core/brainContext";
 import type { AiInboxEvent, AiEventDecision } from "./eventTypes";
@@ -45,7 +46,7 @@ export function handleTradeEvent(
     // Terima jika barang sedang defisit/kurang dan kas cukup
     if ((alertsKekurangan || stokSekarang < 500) && kasSekarang - totalPrice > 50000) {
       // Eksekusi pembelian: potong anggaran dan tambah inventaris
-      ctx.country.anggaran = kasSekarang - totalPrice;
+      ctx.country.anggaran = roundNeo(kasSekarang - totalPrice);
       const invKey = `inventory_${productKey}`;
       ctx.country[invKey] = (Number(ctx.country[invKey]) || 0) + quantity;
 

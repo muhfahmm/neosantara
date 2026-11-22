@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDbPool } from '../../../lib/db';
 import { ensureGameSavesTable } from '@/lib/initGameSavesTable';
+import { normalizeCountryFinancialState, roundNeo } from '@/app/logic/economic_logic/neoCurrency';
 
 /**
  * GET handler: Fetch all saved game records, sorted by latest first.
@@ -16,7 +17,10 @@ export async function GET() {
         const parsedRows = rows.map((row: any) => ({
             ...row,
             country_name: row.country_name, // Keep original for compatibility
-            countryDetail: row.country_detail ? JSON.parse(row.country_detail) : null,
+            anggaran: roundNeo(row.anggaran),
+            countryDetail: row.country_detail
+                ? normalizeCountryFinancialState(JSON.parse(row.country_detail))
+                : null,
         }));
 
         return NextResponse.json(parsedRows);
@@ -59,7 +63,12 @@ export async function POST(request: Request) {
         }
 
         // Serialize full countryDetail for production tracking
-        const countryDetailJson = JSON.stringify(countryDetail || {});
+        const normalizedBudget = roundNeo(anggaran ?? countryDetail?.anggaran);
+        const normalizedCountryDetail = normalizeCountryFinancialState({
+            ...(countryDetail && typeof countryDetail === 'object' ? countryDetail : {}),
+            anggaran: normalizedBudget,
+        });
+        const countryDetailJson = JSON.stringify(normalizedCountryDetail);
 
         await ensureGameSavesTable();
         const pool = await getDbPool();
@@ -79,7 +88,7 @@ export async function POST(request: Request) {
                     gameDate,
                     capital || null,
                     jumlahPenduduk ? Number(jumlahPenduduk) : 0,
-                    anggaran ? Number(anggaran) : 0,
+                    normalizedBudget,
                     ideology || null,
                     religion || null,
                     unVote ? Number(unVote) : 0,
@@ -106,7 +115,7 @@ export async function POST(request: Request) {
                 gameDate,
                 capital || null,
                 jumlahPenduduk ? Number(jumlahPenduduk) : 0,
-                anggaran ? Number(anggaran) : 0,
+                normalizedBudget,
                 ideology || null,
                 religion || null,
                 unVote ? Number(unVote) : 0,

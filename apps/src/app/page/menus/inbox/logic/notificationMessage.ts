@@ -147,10 +147,30 @@ function isLegacyPbbOccupation(notification: { title?: string; sender?: string }
 }
 
 function parseInboxNumber(value: string): number | undefined {
-  const normalized = value.trim().replace(/\s/g, '');
-  const parsed = Number(normalized.includes(',')
-    ? normalized.replace(/\./g, '').replace(',', '.')
-    : normalized.replace(/[.,]/g, ''));
+  const normalized = value
+    .trim()
+    .replace(/\s/g, '')
+    .replace(/[٠-٩]/g, (digit) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(digit)))
+    .replace(/[۰-۹]/g, (digit) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)))
+    .replace(/٬/g, ',')
+    .replace(/٫/g, '.');
+  const lastDot = normalized.lastIndexOf('.');
+  const lastComma = normalized.lastIndexOf(',');
+  let canonical = normalized;
+  if (lastDot >= 0 && lastComma >= 0) {
+    const decimalSeparator = lastDot > lastComma ? '.' : ',';
+    const groupingSeparator = decimalSeparator === '.' ? ',' : '.';
+    canonical = normalized
+      .replace(new RegExp(`\\${groupingSeparator}`, 'g'), '')
+      .replace(decimalSeparator, '.');
+  } else if (lastComma >= 0) {
+    canonical = /,\d{3}$/.test(normalized)
+      ? normalized.replace(/,/g, '')
+      : normalized.replace(',', '.');
+  } else if (lastDot >= 0 && /\.{1}\d{3}$/.test(normalized)) {
+    canonical = normalized.replace(/\./g, '');
+  }
+  const parsed = Number(canonical);
   return Number.isFinite(parsed) ? parsed : undefined;
 }
 
@@ -158,7 +178,7 @@ function formatInboxNumber(value: number): string {
   const locale = typeof document !== 'undefined' && document.documentElement.lang
     ? document.documentElement.lang
     : 'id';
-  return new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(value);
+  return new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(value);
 }
 
 function getPlayerLootLegacyData(message: string): {
@@ -906,9 +926,10 @@ export function getInboxNotificationMessage(
       /^(.+?) memenangkan perang dan menjarah kas negara \((.+?) NEO\) serta sumber daya (.+?)\./i
     );
     const attacker = getLocalizedCountryName(notification.attackerCountry || match?.[1] || '');
+    const parsedCash = match?.[2] ? parseInboxNumber(match[2]) : undefined;
     return t('side_inbox.dynamicNotifications.aiWar.lootMessage', {
       attacker,
-      cash: match?.[2] || '',
+      cash: parsedCash === undefined ? match?.[2] || '' : formatInboxNumber(parsedCash),
       target: getLocalizedCountryName(notification.targetCountry || match?.[3] || ''),
     });
   }
@@ -1014,6 +1035,23 @@ export function getInboxNotificationMessage(
     return localizeCountryNamesInText(notification.message);
   }
   const params = localizeInboxParams({ ...notification.messageParams }, t);
+  if (notification.messageKey === 'side_inbox.dynamicNotifications.aiWar.lootMessage') {
+    const cash = notification.transferredCash ??
+      (typeof params.cash === 'number'
+        ? params.cash
+        : typeof params.cash === 'string'
+          ? parseInboxNumber(params.cash)
+          : undefined);
+    if (cash !== undefined) params.cash = formatInboxNumber(cash);
+  }
+  if (notification.messageKey?.startsWith('side_inbox.dynamicEventTranslations.disaster.message')) {
+    const loss = typeof params.loss === 'number'
+      ? params.loss
+      : typeof params.loss === 'string'
+        ? parseInboxNumber(params.loss)
+        : undefined;
+    if (loss !== undefined) params.loss = formatInboxNumber(loss);
+  }
   for (const [name, key] of Object.entries(notification.messageParamKeys ?? {})) {
     params[name] = t(key);
   }

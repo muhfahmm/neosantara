@@ -19,6 +19,7 @@
  */
 
 import { calculateNetBalanceWithEconomicEmbargo } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
+import { roundNeo } from "@/app/logic/economic_logic/neoCurrency";
 import type { BrainContext } from "../core/brainContext";
 import { nilaiAngka } from "../core/brainContext";
 import type { MilitaryCapacityStatus } from "./militaryCapacity";
@@ -70,7 +71,7 @@ export function prosesRekrutmenUdara(
     const totalBiaya = biaya * jumlahUnit;
 
     if (kas - totalBiaya >= 150000) {
-      ctx.country.anggaran = kas - totalBiaya;
+      ctx.country.anggaran = roundNeo(kas - totalBiaya);
 
       return {
         unitKey: targetKey,

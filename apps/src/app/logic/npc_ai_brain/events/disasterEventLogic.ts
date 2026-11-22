@@ -8,6 +8,7 @@
  */
 
 import type { BrainContext } from "../core/brainContext";
+import { roundNeo } from "@/app/logic/economic_logic/neoCurrency";
 import { nilaiAngka } from "../core/brainContext";
 import type { AiInboxEvent, AiEventDecision } from "./eventTypes";
 
@@ -23,7 +24,7 @@ export function handleDisasterEvent(
 
   // Jika kas mencukupi di atas batas aman cadangan
   if (kasSekarang > bantuanCost + 50000) {
-    ctx.country.anggaran = kasSekarang - bantuanCost;
+    ctx.country.anggaran = roundNeo(kasSekarang - bantuanCost);
 
     // Tingkatkan skor pemulihan atau kurangi dampak kepuasan
     if (ctx.country.kesejahteraan !== undefined) {

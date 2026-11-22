@@ -1,6 +1,7 @@
 import { LoanRecord } from "../utils";
 import { calculateDelayedInterestAmountForBilateralLoan } from "./loanInterestRiseNegara";
 import { calculateDelayedInterestAmountForMultilateralLoan } from "./loanInterestRiseWorldBank";
+import { roundNeo } from "@/app/logic/economic_logic/neoCurrency";
 
 interface ProcessDueLoansResult {
   nextLoanList: LoanRecord[];
@@ -37,6 +38,7 @@ export const processDueLoans = (
   dueDate.setHours(0, 0, 0, 0);
 
   let updated = false;
+  availableCash = roundNeo(availableCash);
 
   const nextLoanList = loans.map((entry) => {
     if (!entry?.returnDate) return entry;
@@ -56,9 +58,9 @@ export const processDueLoans = (
       status = "Aktif",
     } = entry;
 
-    totalRepayment = Number(totalRepayment) || 0;
-    paidAmount = Number(paidAmount) || 0;
-    amount = Number(amount) || 0;
+    totalRepayment = roundNeo(totalRepayment);
+    paidAmount = roundNeo(paidAmount);
+    amount = roundNeo(amount);
     interest = Number(interest) || 0;
 
     if (totalRepayment <= 0) return entry;
@@ -74,12 +76,12 @@ export const processDueLoans = (
 
     if (totalRepayment > 0) {
       missedMonths += 1;
-      const penaltyAmount = entry.type === "multilateral"
+      const penaltyAmount = roundNeo(entry.type === "multilateral"
         ? calculateDelayedInterestAmountForMultilateralLoan(totalRepayment, missedMonths)
-        : calculateDelayedInterestAmountForBilateralLoan(totalRepayment, missedMonths);
+        : calculateDelayedInterestAmountForBilateralLoan(totalRepayment, missedMonths));
 
       totalRepayment += penaltyAmount;
-      accumulatedPenalty += penaltyAmount;
+      accumulatedPenalty = roundNeo(accumulatedPenalty) + penaltyAmount;
 
       // 🔥 PERBAIKAN: Tambahkan 'as const' agar TypeScript tidak menganggapnya sebagai 'string' biasa
       return {
@@ -98,14 +100,14 @@ export const processDueLoans = (
       ...entry,
       status: "Lunas" as const,
       totalRepayment: 0,
-      paidAmount: paidAmount + payment,
+      paidAmount,
       accumulatedPenalty,
     };
   });
 
   const finalTotalHutang = nextLoanList
     .filter((loan) => loan.status === "Aktif")
-    .reduce((sum, loan) => sum + (loan.totalRepayment || 0), 0);
+    .reduce((sum, loan) => sum + roundNeo(loan.totalRepayment), 0);
 
   return {
     nextLoanList,

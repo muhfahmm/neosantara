@@ -14,7 +14,7 @@ interface WabahNotificationProps {
 export default function WabahNotification({ notification, onAccept, onReject }: WabahNotificationProps) {
   const { t, language } = useLanguage();
   const isHandled = notification.isHandled;
-  const numberFormat = new Intl.NumberFormat(language, { maximumFractionDigits: 2 });
+  const numberFormat = new Intl.NumberFormat(language, { maximumFractionDigits: 0 });
 
   return (
     <div className={`border-l-4 ${isHandled ? 'bg-emerald-950/30 border-emerald-500' : 'bg-lime-950/40 border-lime-500'} p-4 sm:p-5 rounded-r-2xl shadow-lg flex gap-4 items-start select-none relative overflow-hidden transition-all border border-lime-500/20`}>

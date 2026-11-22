@@ -1,5 +1,6 @@
 import { NotificationMessage } from '../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import { createInboxNotificationText, getDefaultInboxText } from '../notificationMessage';
+import { roundNeo } from '@/app/logic/economic_logic/neoCurrency';
 
 export interface KeamananNotification extends NotificationMessage {
   tradeType: 'keamanan';
@@ -136,8 +137,8 @@ export function generateKeamananNotification(
 
   const country = countryName || 'Indonesia';
   const korban = Math.min(10, randomInRange(selectedEvent.korbanRange));
-  const totalKerugian = randomInRange(selectedEvent.kerugianRange);
-  const responseCost = randomInRange(selectedEvent.responseCostRange);
+  const totalKerugian = roundNeo(randomInRange(selectedEvent.kerugianRange));
+  const responseCost = roundNeo(randomInRange(selectedEvent.responseCostRange));
   const clampedRiskPercent = Math.min(100, Math.max(0, securityRiskPercent));
   const titleKey = 'side_inbox.dynamicNotifications.security.title';
   const titleParams = { eventName: getDefaultInboxText(selectedEvent.nameKey) };

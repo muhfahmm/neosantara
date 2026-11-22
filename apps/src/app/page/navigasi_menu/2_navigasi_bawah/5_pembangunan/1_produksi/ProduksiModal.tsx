@@ -67,6 +67,7 @@ import { CONSERVATISM_TAX_REVENUE_BONUS } from "../../../../bonus_logic/ideologi
 import { COMMUNISM_PRODUCTION_BONUS } from "../../../../bonus_logic/ideologi_bonus_logic/komunisme";
 import { isMemberOfFAO } from "../../../../bonus_logic";
 import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
+import { roundNeo } from "@/app/logic/economic_logic/neoCurrency";
 
 
 
@@ -524,7 +525,7 @@ export default function ProduksiModal({
       return;
     }
 
-    const totalCost = cost * quantity;
+    const totalCost = roundNeo(cost * quantity);
     if (anggaran < totalCost) {
       setToast(tr("status.insufficientFunds", { count: quantity, building: label }));
       setTimeout(() => setToast(null), 2500);

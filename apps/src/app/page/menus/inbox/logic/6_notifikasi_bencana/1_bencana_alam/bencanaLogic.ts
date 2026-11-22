@@ -7,6 +7,7 @@ import {
   applyLayananDaruratDisasterDeathReduction,
 } from '@/app/page/bonus_logic';
 import { createInboxNotificationText, getDefaultInboxText } from '../../notificationMessage';
+import { roundNeo } from '@/app/logic/economic_logic/neoCurrency';
 
 export interface BencanaAlamNotification extends NotificationMessage {
   tradeType: 'bencana_alam';
@@ -288,7 +289,9 @@ function generateIncidentNotification(
   const [minR, maxR] = selectedEvent.kerugianRange;
   const rawKerugian = Math.floor((Math.random() * (maxR - minR + 1) + minR) * severityMultiplier);
   const baseKerugian = Math.max(50000, rawKerugian);
-  const totalKerugian = applyKementerianLingkunganHidupDisasterImpactReduction(baseKerugian, countryDetail);
+  const totalKerugian = roundNeo(
+    applyKementerianLingkunganHidupDisasterImpactReduction(baseKerugian, countryDetail),
+  );
 
   // For natural disasters, emergency aid is calculated at 1 NEO per affected person.
   const bantuanCost = korban;

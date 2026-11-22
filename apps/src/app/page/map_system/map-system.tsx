@@ -69,6 +69,7 @@ const RequireEmbassyModal = dynamic(() => import('./RequireEmbassyModal').then(m
 import { Navbar } from '../navbar/Navbar';
 const BottomNav = dynamic(() => import('../navigasi_menu/2_navigasi_bawah/BottomNav'), { ssr: false });
 import { calculateDailyPopulationChange, updateDailyPopulation } from '@/app/logic/populations_logic/population_logic';
+import { normalizeCountryFinancialState, roundNeo } from '@/app/logic/economic_logic/neoCurrency';
 import { logger } from '../../../lib/logger';
 const CountryDetailModal = dynamic(() => import('../detail_negara/detail_negara').then(m => m.CountryDetailModal), { ssr: false });
 const NegaraUserModal = dynamic(() => import('./negara_user'), { ssr: false });
@@ -1249,7 +1250,12 @@ export default function MapPage() {
     const isLandscapePhone = viewportMode === 'landscapePhone';
     const isPortraitPhone = viewportMode === 'portraitPhone';
     const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
-    const [countryDetail, setCountryDetail] = useState<any>(null);
+    const [countryDetail, setCountryDetailState] = useState<any>(null);
+    const setCountryDetail = useCallback<React.Dispatch<React.SetStateAction<any>>>((update) => {
+        setCountryDetailState((previous: any) => normalizeCountryFinancialState(
+            typeof update === 'function' ? update(previous) : update
+        ));
+    }, []);
     const [metadata, setMetadata] = useState<Record<string, any>>({});
     const [tutorialStartup, setTutorialStartup] = useState<'pending' | 'new-game' | 'resume' | 'suppressed'>('pending');
     const [isTutorialWelcomeOpen, setIsTutorialWelcomeOpen] = useState(false);
@@ -8384,12 +8390,12 @@ export default function MapPage() {
                     simPop = Math.max(0, Math.floor(simPop + stepMetrics.netDailyChange));
                     accumulatedBirths += stepMetrics.dailyBirths;
                     accumulatedDeaths += stepMetrics.dailyDeaths;
-                    simBudget = simBudget + stepNetBalance;
+                    simBudget = roundNeo(simBudget + roundNeo(stepNetBalance));
 
                     simDate = stepToDate;
                 }
 
-                simBudget = simBudget - (Number(prev.minister_recruitment_expense_pending) || 0);
+                simBudget = roundNeo(simBudget - roundNeo(prev.minister_recruitment_expense_pending));
 
                 const populationUpdates = {
                     jumlah_penduduk: simPop,
@@ -11287,7 +11293,7 @@ export default function MapPage() {
                                     outcome.attackerLossRatio,
                                 );
                             }
-                            if (activeWarAnimation.isUserDefender !== true) {
+                            if (!isUserDefender) {
                                 applyNpcWarLosses(
                                     activeWarAnimation.targetCountryDetail,
                                     outcome.targetLossRatio,
@@ -11695,7 +11701,7 @@ export default function MapPage() {
                             }
                             if (
                                 activeWarAnimation.isPlayerAttacker !== true &&
-                                activeWarAnimation.isUserDefender !== true
+                                !isUserDefender
                             ) {
                                 applyNpcWarLosses(activeWarAnimation.targetCountryDetail, targetLossRatio);
                             }

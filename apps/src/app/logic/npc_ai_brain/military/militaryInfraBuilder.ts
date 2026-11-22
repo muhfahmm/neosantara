@@ -16,6 +16,7 @@
  */
 
 import { findBuildingMetadata, getMaterialStock, deductBuildingMaterials } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
+import { roundNeo } from "@/app/logic/economic_logic/neoCurrency";
 import { calculateNetBalanceWithEconomicEmbargo } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
 import type { BrainContext } from "../core/brainContext";
 import { nilaiAngka, sedangCooldown, setCooldown, tambahHari } from "../core/brainContext";
@@ -139,7 +140,7 @@ export function cobaBangunInfraMiliter(
   }
 
   // Potong kas & kurangi stok
-  ctx.country.anggaran = kas - biayaTotal;
+  ctx.country.anggaran = roundNeo(kas - biayaTotal);
   if (reqs.length > 0) {
     ctx.country = deductBuildingMaterials(ctx.country, reqs, jumlah);
   }

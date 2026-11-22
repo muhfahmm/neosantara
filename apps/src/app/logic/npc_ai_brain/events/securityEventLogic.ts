@@ -8,6 +8,7 @@
  */
 
 import type { BrainContext } from "../core/brainContext";
+import { roundNeo } from "@/app/logic/economic_logic/neoCurrency";
 import { nilaiAngka } from "../core/brainContext";
 import type { AiInboxEvent, AiEventDecision } from "./eventTypes";
 
@@ -21,7 +22,7 @@ export function handleSecurityEvent(
 
   // Jika resiko keamanan tinggi (> 20%) dan kas cukup, lakukan respon taktis kepolisian
   if (kasSekarang > responseCost + 30000) {
-    ctx.country.anggaran = kasSekarang - responseCost;
+    ctx.country.anggaran = roundNeo(kasSekarang - responseCost);
 
     return {
       handled: true,

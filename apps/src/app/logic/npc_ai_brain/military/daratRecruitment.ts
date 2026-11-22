@@ -13,6 +13,7 @@
  */
 
 import { calculateNetBalanceWithEconomicEmbargo } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
+import { roundNeo } from "@/app/logic/economic_logic/neoCurrency";
 import type { BrainContext } from "../core/brainContext";
 import { nilaiAngka } from "../core/brainContext";
 import type { MilitaryCapacityStatus } from "./militaryCapacity";
@@ -53,7 +54,7 @@ export function prosesRekrutmenDarat(
     const biaya = (BIAYA_UNIT_DARAT.pasukan_infanteri / 1000) * jumlahRekrut;
 
     if (kas - biaya >= 100000) {
-      ctx.country.anggaran = kas - biaya;
+      ctx.country.anggaran = roundNeo(kas - biaya);
 
       return {
         unitKey: "pasukan_infanteri",
@@ -76,7 +77,7 @@ export function prosesRekrutmenDarat(
     const biaya = (BIAYA_UNIT_DARAT[targetKey] || 12000) * jumlahUnit;
 
     if (kas - biaya >= 100000) {
-      ctx.country.anggaran = kas - biaya;
+      ctx.country.anggaran = roundNeo(kas - biaya);
 
       return {
         unitKey: targetKey,
@@ -106,7 +107,7 @@ export function prosesRekrutmenDarat(
     const biaya = (BIAYA_UNIT_DARAT[targetKey] || 30000) * jumlahUnit;
 
     if (kas - biaya >= 100000) {
-      ctx.country.anggaran = kas - biaya;
+      ctx.country.anggaran = roundNeo(kas - biaya);
       ctx.country[targetKey] = nilaiAngka(ctx.country[targetKey]) + jumlahUnit;
       if (ctx.country.armada?.darat) {
         ctx.country.armada.darat[targetKey] = (ctx.country.armada.darat[targetKey] || 0) + jumlahUnit;

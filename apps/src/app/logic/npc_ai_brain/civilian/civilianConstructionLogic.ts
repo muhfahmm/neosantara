@@ -29,6 +29,7 @@
 
 import { findBuildingMetadata, getMaterialStock, deductBuildingMaterials } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
 import { calculateNetBalanceWithEconomicEmbargo } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
+import { roundNeo } from "@/app/logic/economic_logic/neoCurrency";
 import { getCountryConsumptionBreakdown } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
 import type { BrainContext, BrainResult } from "../core/brainContext";
 import { nilaiAngka, sedangCooldown, setCooldown, tambahHari } from "../core/brainContext";
@@ -244,7 +245,7 @@ export function jalankanPembangunanSipil(
   const totalBiaya = biayaPerUnit * jumlah;
 
   // Potong kas negara
-  ctx.country.anggaran = Math.max(0, nilaiAngka(ctx.country.anggaran) - totalBiaya);
+  ctx.country.anggaran = roundNeo(Math.max(0, nilaiAngka(ctx.country.anggaran) - totalBiaya));
 
   // Potong material
   const reqEntry = REQUIREMENTS_BY_SECTOR[buildingKey];

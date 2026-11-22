@@ -15,6 +15,7 @@
  */
 
 import type { BrainContext } from "../core/brainContext";
+import { roundNeo } from "@/app/logic/economic_logic/neoCurrency";
 import { nilaiAngka, sedangCooldown, setCooldown, tambahHari } from "../core/brainContext";
 import { findBuildingMetadata } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
 import {
@@ -358,7 +359,7 @@ export function jalankanKeputusanNuklirAI(ctx: BrainContext): NuclearDecision {
     }
 
     // Eksekusi aktivasi program nuklir
-    ctx.country.anggaran = currentKas - biayaProgram;
+    ctx.country.anggaran = roundNeo(currentKas - biayaProgram);
     const durasiHari = getDurasiProgramNuklirDinamis(ctx.metadata); // Dinamis mengikuti standar modal user (1 hari jika default)
     const completionDate = tambahHari(ctx.date, durasiHari);
 
@@ -440,7 +441,7 @@ export function jalankanKeputusanNuklirAI(ctx: BrainContext): NuclearDecision {
   const completionDate = tambahHari(ctx.date, totalDurasi);
 
   // Potong kas negara
-  ctx.country.anggaran = Math.max(0, currentKas - totalBiayaKas);
+  ctx.country.anggaran = roundNeo(Math.max(0, currentKas - totalBiayaKas));
   if (ctx.country.inventory_uranium !== undefined && nilaiAngka(ctx.country.inventory_uranium) > 0) {
     ctx.country.inventory_uranium = Math.max(0, nilaiAngka(ctx.country.inventory_uranium) - kuantitas);
   }

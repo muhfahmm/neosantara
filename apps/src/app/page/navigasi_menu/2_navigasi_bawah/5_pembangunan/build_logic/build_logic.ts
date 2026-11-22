@@ -11,6 +11,7 @@ import {
 import { getProductionBonusMultiplier } from "../../../../bonus_logic";
 import { getTotalIndustrialMaterialConsumption } from "../1_produksi/construction_support/1_produksi/industrialMaterialLogic";
 import { getMaterialStock as readMaterialStock } from "./materialStockLogic";
+import { roundNeo } from "@/app/logic/economic_logic/neoCurrency";
 
 export const RESOURCE_KEY_ALIASES: Record<string, string> = {};
 
@@ -38,9 +39,14 @@ export const calculateMaxBuildQuantity = (
   quantityTarget?: number
 ): number => {
   let maxQuantity = Number.POSITIVE_INFINITY;
-  const unitCost = Number(cost);
-  if (Number.isFinite(unitCost) && unitCost > 0) {
-    maxQuantity = Math.floor(Math.max(0, Number(budget) || 0) / unitCost);
+  const rawUnitCost = Number(cost);
+  const unitCost = roundNeo(rawUnitCost);
+  const availableBudget = Math.max(0, Number(budget) || 0);
+  if (Number.isFinite(rawUnitCost) && rawUnitCost > 0 && unitCost > 0) {
+    maxQuantity = Math.floor(availableBudget / unitCost);
+    while (maxQuantity > 0 && roundNeo(rawUnitCost * maxQuantity) > availableBudget) {
+      maxQuantity -= 1;
+    }
   }
 
   for (const requirement of requirements) {

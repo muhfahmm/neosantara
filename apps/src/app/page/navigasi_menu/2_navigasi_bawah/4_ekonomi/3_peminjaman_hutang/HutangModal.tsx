@@ -23,6 +23,7 @@ import {
   getBankSentralLoanSafeLimitBonusPercent,
   getSafeDebtLimitRatio,
 } from "@/app/page/bonus_logic";
+import { roundNeo } from "@/app/logic/economic_logic/neoCurrency";
 
 // 🔥 IMPOR MODAL KONFIRMASI PINJAMAN
 import KonfirmasiPinjamanModalNegaraLain from "./tab_menu/1_negara_lain/konfirmasiPinjamanModals";
@@ -323,9 +324,9 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
     const now = currentDate instanceof Date ? new Date(currentDate) : new Date();
     const isMultilateral = source.type === "multilateral";
 
-    const borrowAmount = isMultilateral ? Number(source.requestedAmount || source.maxLoan) : source.maxLoan;
+    const borrowAmount = roundNeo(isMultilateral ? Number(source.requestedAmount || source.maxLoan) : source.maxLoan);
     const borrowTerm = isMultilateral ? Number(source.requestedTerm || source.term) : source.term;
-    const totalYangHarusDibayar = borrowAmount + borrowAmount * (source.interest / 100);
+    const totalYangHarusDibayar = roundNeo(borrowAmount + borrowAmount * (source.interest / 100));
     const returnDate = formatIdDate(addDays(now, borrowTerm));
 
     const newLoanRecord: LoanRecord = {

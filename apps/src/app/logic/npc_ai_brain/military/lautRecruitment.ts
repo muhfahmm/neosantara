@@ -19,6 +19,7 @@
  */
 
 import { calculateNetBalanceWithEconomicEmbargo } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
+import { roundNeo } from "@/app/logic/economic_logic/neoCurrency";
 import type { BrainContext } from "../core/brainContext";
 import { nilaiAngka } from "../core/brainContext";
 import type { MilitaryCapacityStatus } from "./militaryCapacity";
@@ -68,7 +69,7 @@ export function prosesRekrutmenLaut(
   for (const targetKey of pilihanLaut) {
     const biaya = BIAYA_UNIT_LAUT[targetKey] || 150000;
     if (kas - biaya >= 200000) {
-      ctx.country.anggaran = kas - biaya;
+      ctx.country.anggaran = roundNeo(kas - biaya);
 
       return {
         unitKey: targetKey,

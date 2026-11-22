@@ -1,5 +1,6 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import { createInboxNotificationText, getDefaultInboxText } from '../../notificationMessage';
+import { roundNeo } from '@/app/logic/economic_logic/neoCurrency';
 
 export interface TradeOfferNotification extends NotificationMessage {
   tradeType: 'jual'; // AI menawarkan untuk membeli produk milik User (User MENJUAL ke AI)
@@ -18,7 +19,7 @@ export function generateAITradeJualNotification(
   dateStr: string
 ): TradeOfferNotification {
   const formatProduct = productKey.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-  const totalPrice = pricePerUnit * quantity;
+  const totalPrice = roundNeo(pricePerUnit * quantity);
   const senderKey = 'side_inbox.trade.jualSender';
   const senderParams = { partner: partnerName };
 
@@ -32,8 +33,8 @@ export function generateAITradeJualNotification(
       partner: partnerName,
       product: formatProduct,
       quantity: quantity.toLocaleString('id-ID', { maximumFractionDigits: 2 }),
-      price: pricePerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 }),
-      total: totalPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 }),
+      price: pricePerUnit.toLocaleString('id-ID', { maximumFractionDigits: 0 }),
+      total: totalPrice.toLocaleString('id-ID', { maximumFractionDigits: 0 }),
     }, { product: `side_inbox.items.${productKey}` }),
     timestamp: dateStr,
     type: 'kepuasan',

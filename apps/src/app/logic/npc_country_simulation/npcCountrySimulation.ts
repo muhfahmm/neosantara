@@ -39,6 +39,7 @@ import {
   advanceNpcDailyMetricsInRust,
   type NpcDailyMetricsWorkerCountry,
 } from "./npcSimulationWorkerClient";
+import { normalizeCountryFinancialState, roundNeo } from "@/app/logic/economic_logic/neoCurrency";
 
 export const NPC_COUNTRY_SIMULATION_UPDATED_EVENT = "neosantara:npc-country-simulation-updated";
 
@@ -131,8 +132,10 @@ export function updateNpcCountrySimulationState(
   if (!state || !slug || slug === state.playerCountrySlug) return false;
 
   state.countries[slug] = {
-    ...(state.countries[slug] || {}),
-    ...updates,
+    ...normalizeCountryFinancialState({
+      ...(state.countries[slug] || {}),
+      ...updates,
+    }),
   };
   if (typeof window !== "undefined") {
     window.dispatchEvent(new CustomEvent(NPC_COUNTRY_SIMULATION_UPDATED_EVENT));
@@ -167,11 +170,19 @@ export function restoreNpcCountrySimulationState(value: unknown): void {
   ) {
     throw new Error("Format state simulasi NPC di save tidak valid.");
   }
-  activeNpcSimulationState = state as NpcSimulationState;
+  activeNpcSimulationState = {
+    ...(state as NpcSimulationState),
+    countries: Object.fromEntries(
+      Object.entries(state.countries).map(([slug, country]) => [
+        slug,
+        normalizeCountryFinancialState(country as Record<string, unknown>),
+      ]),
+    ),
+  };
 }
 
 function getMutableCountryState(country: CountryRecord): Record<string, unknown> {
-  return Object.fromEntries(
+  return normalizeCountryFinancialState(Object.fromEntries(
     Object.entries(country).filter(([key]) =>
       key === "anggaran" ||
       key === "jumlah_penduduk" ||
@@ -235,7 +246,7 @@ function getMutableCountryState(country: CountryRecord): Record<string, unknown>
       key.startsWith("last_update_date_") ||
       typeof country[key] === "number" // izinkan penambahan jumlah bangunan oleh AI
     )
-  );
+  ));
 }
 
 function initializeNpcCountryMetrics(
@@ -264,7 +275,7 @@ function initializeNpcCountryMetrics(
   initialized.sector_deficit_month_counter = Number(initialized.sector_deficit_month_counter ?? 0);
   initialized.sector_deficit_kepuasan_penalty = Number(initialized.sector_deficit_kepuasan_penalty ?? 0);
   initialized.satisfaction_sector_baseline ??= createSatisfactionSectorBaseline(initialized, metadata);
-  initialized.anggaran = Number(
+  initialized.anggaran = roundNeo(
     initialized.anggaran ??
     initialized.kas_negara ??
     initialized.kas ??
@@ -464,7 +475,7 @@ function finishCountryDay(
     sector_deficit_month_counter: metrics.sector_deficit_month_counter,
     sector_deficit_kepuasan_penalty: metrics.sector_deficit_kepuasan_penalty,
   };
-  const currentTreasury = Number(withSatisfaction.anggaran) || 0;
+  const currentTreasury = roundNeo(withSatisfaction.anggaran);
   const dailyNetBalance = calculateNetBalanceWithEconomicEmbargo(
     withSatisfaction,
     prepared.countryName,
@@ -485,8 +496,9 @@ function finishCountryDay(
   // Eksekusi Otak AI Negara NPC (9 Indikator & Pembangunan Sektor)
   const brainExecution = runNpcCountryBrain(withSimulation, metadata, date);
   const updatedNpcCountry = brainExecution.updatedCountry as CountryRecord;
-  updatedNpcCountry.anggaran =
-    (Number(updatedNpcCountry.anggaran) || 0) + dailyNetBalance;
+  updatedNpcCountry.anggaran = roundNeo(
+    (Number(updatedNpcCountry.anggaran) || 0) + roundNeo(dailyNetBalance),
+  );
 
   // Evaluasi dan Kontrol Demografi Cerdas oleh AI (Pajak, Harga, Sistem Ekonomi, Subsidi)
   // Memastikan laju pertumbuhan tidak boleh minus, menjaga rentang minimal +1 s/d +500 jiwa/hari

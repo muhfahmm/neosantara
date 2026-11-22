@@ -10,6 +10,7 @@ import {
   getMaterialStock,
 } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
 import { isBuildingAvailable } from "@/app/logic/fisheries_production_logic/countryLandscapeLogic";
+import { roundNeo } from "@/app/logic/economic_logic/neoCurrency";
 import type { BrainContext } from "./brainContext";
 import { nilaiAngka, tambahHari } from "./brainContext";
 
@@ -115,7 +116,7 @@ export function bangunBangunan(
   // Terapkan biaya sekarang; bangunan baru aktif setelah durasi konstruksi selesai.
   const setelahMaterial = deductBuildingMaterials(ctx.country, requirements, jumlah);
   ctx.country = setelahMaterial;
-  ctx.country.anggaran = anggaran - biaya * jumlah;
+  ctx.country.anggaran = roundNeo(anggaran - biaya * jumlah);
   const waktuHari = Math.max(1, Math.round(nilaiAngka(meta.waktu_pembangunan, 3)));
   const queue = [...pendingQueue];
   queue.push({
