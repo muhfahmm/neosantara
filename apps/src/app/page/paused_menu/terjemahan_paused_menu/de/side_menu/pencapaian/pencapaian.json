@@ -87,46 +87,6 @@
       "title": "Comprehensive Public Care",
       "description": "Establish education, health, and diverse public service facilities."
     },
-    "negeri_inovatif": {
-      "title": "Innovative Realm",
-      "description": "Complete research breakthroughs across various distinct categories."
-    },
-    "lompatan_teknologi": {
-      "title": "Technological Leap",
-      "description": "Upgrade multiple research development cards to advanced tiers."
-    },
-    "riset_untuk_rakyat": {
-      "title": "Research for the People",
-      "description": "Complete research directly bolstering economy, welfare, or crisis mitigation."
-    },
-    "kabinet_andal": {
-      "title": "Reliable Cabinet",
-      "description": "Appoint qualified ministers across all key ministerial portfolios."
-    },
-    "pemerintahan_profesional": {
-      "title": "Professional Governance",
-      "description": "Upgrade administrative ministries to target capability levels."
-    },
-    "layanan_siaga": {
-      "title": "Alert Emergency Services",
-      "description": "Enhance emergency response and public healthcare readiness."
-    },
-    "diplomat_ulung": {
-      "title": "Master Diplomat",
-      "description": "Establish embassies and cultivate strong ties with multiple nations."
-    },
-    "tetangga_bersahabat": {
-      "title": "Friendly Neighbors",
-      "description": "Enact non-aggression pacts or mutual cooperation accords with neighbors."
-    },
-    "jaringan_global": {
-      "title": "Global Network",
-      "description": "Join several international or regional multilateral organizations."
-    },
-    "suara_dunia": {
-      "title": "World Voice",
-      "description": "Participate in UN sessions and achieve decisive diplomatic outcomes."
-    },
     "masyarakat_harmonis": {
       "title": "Harmonious Society",
       "description": "Attain targeted societal tolerance and civil satisfaction metrics."
@@ -234,6 +194,70 @@
     "bangun_infrastruktur_militer": {
       "title": "Bau von Militärische Infrastruktur",
       "description": "Hinweis: Errichten Sie Militärische Infrastruktur-Einrichtungen bis zum Ziel von 100 nationalen Gebäuden."
+    },
+    "riset_ekonomi_industri": {
+      "title": "Wirtschafts- & Industrieforschung",
+      "description": "Hinweis: Schließen Sie alle 12 Forschungsprojekte im Bereich Wirtschafts- & Industrieforschung im Nationalen Forschungszentrum ab."
+    },
+    "riset_militer_pertahanan": {
+      "title": "Militär- & Verteidigungsforschung",
+      "description": "Hinweis: Schließen Sie alle 18 Forschungsprojekte im Bereich Militär- & Verteidigungsforschung im Nationalen Forschungszentrum ab."
+    },
+    "riset_diplomasi_intelijen": {
+      "title": "Diplomatie- & Geheimdienstforschung",
+      "description": "Hinweis: Schließen Sie alle 25 Forschungsprojekte im Bereich Diplomatie- & Geheimdienstforschung im Nationalen Forschungszentrum ab."
+    },
+    "kementerian_sempurna": {
+      "title": "Vollendete Ministerien",
+      "description": "Hinweis: Stufen Sie alle 15 Ministerien im Reiter Ministerien auf Stufe 20/20 auf (alle 20 Kästchen gefüllt)."
+    },
+    "keamanan_sempurna": {
+      "title": "Uneinnehmbare Sicherheit",
+      "description": "Hinweis: Stufen Sie alle 4 Sicherheitsabteilungen im Reiter Sicherheit auf Stufe 20/20 auf (alle 20 Kästchen gefüllt)."
+    },
+    "layanan_sempurna": {
+      "title": "Erstklassiger Bürgerservice",
+      "description": "Hinweis: Stufen Sie alle 2 Dienstleistungsinstitutionen im Reiter Dienste auf Stufe 20/20 auf (alle 20 Kästchen gefüllt)."
+    },
+    "membangun_kedutaan_besar": {
+      "title": "Botschaft Errichten",
+      "description": "Hinweis: Errichten Sie offizielle Botschaften in allen {target} Partnerländern weltweit."
+    },
+    "pakta_non_agresi": {
+      "title": "Nichtangriffspakt",
+      "description": "Hinweis: Schließen Sie Nichtangriffspakte mit allen {target} Partnerländern weltweit ab."
+    },
+    "aliansi_pertahanan": {
+      "title": "Verteidigungsbündnis",
+      "description": "Hinweis: Bilden Sie Verteidigungsbündnisse mit allen {target} Partnerländern weltweit."
+    },
+    "perjanjian_dagang": {
+      "title": "Handelsabkommen",
+      "description": "Hinweis: Ratifizieren Sie Handelsabkommen mit allen {target} Partnerländern weltweit."
+    },
+    "kontrak_penelitian": {
+      "title": "Forschungsvertrag",
+      "description": "Hinweis: Schließen Sie Forschungsverträge mit allen {target} Partnerländern weltweit ab."
+    },
+    "beri_tentara": {
+      "title": "Truppen Entsenden",
+      "description": "Hinweis: Entsenden Sie Truppenhilfe an alle {target} Partnerländer weltweit."
+    },
+    "beri_hadiah": {
+      "title": "Diplomatische Geschenke",
+      "description": "Hinweis: Senden Sie diplomatische Geschenke an alle {target} Partnerländer weltweit."
+    },
+    "tingkatkan_hubungan": {
+      "title": "Beziehungen Verbessern",
+      "description": "Hinweis: Verbessern Sie die Beziehungen zu allen {target} Partnerländern weltweit."
+    },
+    "minta_bantuan": {
+      "title": "Hilfe Anfordern",
+      "description": "Hinweis: Fordern Sie Hilfe von allen {target} Partnerländern weltweit an."
+    },
+    "berikan_wilayah": {
+      "title": "Gebiet Abtreten",
+      "description": "Hinweis: Schließen Sie Gebietsabtretungsverträge mit {target} Partnerländern weltweit ab."
     }
   },
   "building_achievements": {

@@ -87,46 +87,6 @@
       "title": "Comprehensive Public Care",
       "description": "Establish education, health, and diverse public service facilities."
     },
-    "negeri_inovatif": {
-      "title": "Innovative Realm",
-      "description": "Complete research breakthroughs across various distinct categories."
-    },
-    "lompatan_teknologi": {
-      "title": "Technological Leap",
-      "description": "Upgrade multiple research development cards to advanced tiers."
-    },
-    "riset_untuk_rakyat": {
-      "title": "Research for the People",
-      "description": "Complete research directly bolstering economy, welfare, or crisis mitigation."
-    },
-    "kabinet_andal": {
-      "title": "Reliable Cabinet",
-      "description": "Appoint qualified ministers across all key ministerial portfolios."
-    },
-    "pemerintahan_profesional": {
-      "title": "Professional Governance",
-      "description": "Upgrade administrative ministries to target capability levels."
-    },
-    "layanan_siaga": {
-      "title": "Alert Emergency Services",
-      "description": "Enhance emergency response and public healthcare readiness."
-    },
-    "diplomat_ulung": {
-      "title": "Master Diplomat",
-      "description": "Establish embassies and cultivate strong ties with multiple nations."
-    },
-    "tetangga_bersahabat": {
-      "title": "Friendly Neighbors",
-      "description": "Enact non-aggression pacts or mutual cooperation accords with neighbors."
-    },
-    "jaringan_global": {
-      "title": "Global Network",
-      "description": "Join several international or regional multilateral organizations."
-    },
-    "suara_dunia": {
-      "title": "World Voice",
-      "description": "Participate in UN sessions and achieve decisive diplomatic outcomes."
-    },
     "masyarakat_harmonis": {
       "title": "Harmonious Society",
       "description": "Attain targeted societal tolerance and civil satisfaction metrics."
@@ -234,6 +194,70 @@
     "bangun_infrastruktur_militer": {
       "title": "군사 인프라 건설",
       "description": "안내: 군사 인프라 시설을 건설하여 전국 누적 100개 건물 목표를 달성하세요."
+    },
+    "riset_ekonomi_industri": {
+      "title": "경제 및 산업 연구",
+      "description": "안내: 국립연구센터의 경제 및 산업 연구 분야에 있는 12개 연구 프로젝트를 모두 완료하세요."
+    },
+    "riset_militer_pertahanan": {
+      "title": "군사 및 국방 연구",
+      "description": "안내: 국립연구센터의 군사 및 국방 연구 분야에 있는 18개 연구 프로젝트를 모두 완료하세요."
+    },
+    "riset_diplomasi_intelijen": {
+      "title": "외교 및 첩보 연구",
+      "description": "안내: 국립연구센터의 외교 및 첩보 연구 분야에 있는 25개 연구 프로젝트를 모두 완료하세요."
+    },
+    "kementerian_sempurna": {
+      "title": "정부 부처 극대화",
+      "description": "안내: 부처 탭의 15개 모든 부처를 레벨 20/20(20개 칸 모두 충족)까지 승급하세요."
+    },
+    "keamanan_sempurna": {
+      "title": "철통 안보 체계",
+      "description": "안내: 안보 탭의 4개 모든 보안 부서를 레벨 20/20(20개 칸 모두 충족)까지 승급하세요."
+    },
+    "layanan_sempurna": {
+      "title": "최상의 공공 서비스",
+      "description": "안내: 공공 서비스 탭의 2개 모든 기관을 레벨 20/20(20개 칸 모두 충족)까지 승급하세요."
+    },
+    "membangun_kedutaan_besar": {
+      "title": "대사관 개설",
+      "description": "안내: 전 세계 {target}개 모든 파트너 국가에 공식 대사관을 개설하세요."
+    },
+    "pakta_non_agresi": {
+      "title": "불가침 조약",
+      "description": "안내: 전 세계 {target}개 모든 파트너 국가와 불가침 조약을 체결하세요."
+    },
+    "aliansi_pertahanan": {
+      "title": "상호 방위 동맹",
+      "description": "안내: 전 세계 {target}개 모든 파트너 국가와 군사 방위 동맹을 체결하세요."
+    },
+    "perjanjian_dagang": {
+      "title": "양자 무역 협정",
+      "description": "안내: 전 세계 {target}개 모든 파트너 국가와 양자 무역 협정을 비준하세요."
+    },
+    "kontrak_penelitian": {
+      "title": "연구 협력 계약",
+      "description": "안내: 전 세계 {target}개 모든 파트너 국가와 과학 연구 계약을 체결하세요."
+    },
+    "beri_tentara": {
+      "title": "군사 병력 지원",
+      "description": "안내: 전 세계 {target}개 모든 파트너 국가에 군사 지원 병력을 파견하세요."
+    },
+    "beri_hadiah": {
+      "title": "외교적 선물 전달",
+      "description": "안내: 전 세계 {target}개 모든 파트너 국가에 외교적 선물을 전달하세요."
+    },
+    "tingkatkan_hubungan": {
+      "title": "양국 관계 증진",
+      "description": "안내: 전 세계 {target}개 모든 파트너 국가와의 양국 관계를 증진하세요."
+    },
+    "minta_bantuan": {
+      "title": "외교적 지원 요청",
+      "description": "안내: 전 세계 {target}개 모든 파트너 국가에 외교적 지원을 요청하세요."
+    },
+    "berikan_wilayah": {
+      "title": "영토 이양 및 양도",
+      "description": "안내: 전 세계 {target}개 파트너 국가에 영토를 이양하는 외교 협정을 체결하세요."
     }
   },
   "building_achievements": {

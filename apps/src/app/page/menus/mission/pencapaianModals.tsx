@@ -4,8 +4,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import {
   Trophy, Award, CheckCircle2, Lock, Sparkles, Gem, Coins,
-  Smile, Users2, Zap, Landmark, Building2, Microscope, Factory, Home, Hammer,
-  Briefcase, Globe, HeartHandshake, Shield, Siren, Skull, TrendingUp, Calendar
+  Smile, Users2, Zap, Landmark, Building2, Microscope, Banknote, Globe2, Factory, Home, Hammer,
+  Briefcase, Sword, Map, PhoneCall, Gift, Globe, HeartHandshake, Shield, Siren, Skull, TrendingUp, Calendar
 } from 'lucide-react';
 
 export type AchievementCategory =
@@ -246,6 +246,109 @@ function countBuildingsForCategory(cd: any, keys: string[]): number {
     }
   }
   return total;
+}
+
+// ═══ KONFIGURASI 3 SEKTOR RISET NASIONAL (EKONOMI, MILITER, DIPLOMASI) ═══
+export const RESEARCH_SECTOR_CARDS = {
+  ekonomi: [
+    'otomasi_industri', 'manufaktur_material', 'manufaktur_terintegrasi', 'manufaktur_lanjut',
+    'peternakan_modern', 'peternakan_genetika', 'perkebunan_komoditas', 'agrikultur_cerdas',
+    'perikanan_modern', 'perikanan_pascapanen', 'pengolahan_pangan', 'industri_pangan_terpadu',
+  ],
+  militer: [
+    'benteng_perbatasan', 'senjata_infanteri', 'tank_generasi_baru', 'drone_otonom',
+    'radar_pesisir', 'kapal_stealth', 'perang_siber', 'artileri_presisi',
+    'kapal_selam_diesel', 'helikopter_serang', 'spionase_strategis', 'sabotase_terarah',
+    'tank_generasi5', 'jet_superioritas', 'kapal_perang_multiperan', 'armor_reaktif',
+    'struktur_jet', 'hull_kapal_diperkuat',
+  ],
+  diplomasi: [
+    'manfaat_kedutaan', 'suara_pbb', 'biaya_kedutaan', 'kontra_separatisme',
+    'perjanjian_dagang', 'pandemi_kontrol', 'efek_acara', 'penyebaran_ideologi',
+    'misionaris', 'pakta_non_agresi', 'aliansi_pertahanan', 'mitigasi_bencana',
+    'pertahanan_diri', 'perlindungan_perang', 'bonus_organisasi_pbb', 'bonus_organisasi_regional',
+    'kursi_tetap_dewan_pbb', 'bonus_tempat_wisata', 'sanksi_ekonomi', 'suara_dewan_keamanan',
+    'hegemoni_diplomasi', 'kriptografi_kuantum', 'intelijen_satelit_quantum', 'isolasi_total_musuh',
+    'tatanan_dunia_baru',
+  ],
+};
+
+function countCompletedResearchInSector(cd: any, cardIds: string[]): number {
+  const completedList: string[] = Array.isArray(cd?.completed_research)
+    ? cd.completed_research
+    : Array.isArray(cd?.completedResearches)
+    ? cd.completedResearches
+    : [];
+  
+  const levels = cd?.research_levels || {};
+  let count = 0;
+  for (const id of cardIds) {
+    if (completedList.includes(id) || (Number(levels[id]) || 0) > 0) {
+      count++;
+    }
+  }
+  return count;
+}
+
+// ═══ KONFIGURASI 3 TAB KEMENTERIAN, KEAMANAN, DAN LAYANAN (TARGET LEVEL 20/20) ═══
+export const MINISTRY_DEPARTMENTS_CONFIG = {
+  kementerian: [
+    'infrastruktur', 'pendidikan', 'sains', 'kesehatan', 'olahraga',
+    'kehakiman', 'pertahanan', 'luar-negeri', 'kebudayaan', 'pariwisata',
+    'lingkungan', 'perumahan', 'pembangunan', 'perdagangan', 'keuangan',
+  ],
+  keamanan: [
+    'polisi', 'garda-nasional', 'komandan-angkatan-darat', 'komandan-armada',
+  ],
+  layanan: [
+    'layanan-darurat', 'bank-sentral',
+  ],
+};
+
+function getDeptLevelFromCountryDetail(cd: any, rawId: string): number {
+  if (!cd) return 1;
+  const key = rawId.replace(/-/g, '_');
+  const val = cd[`kem_${key}`] ?? cd[`keamanan_${key}`] ?? cd[`layanan_${key}`] ??
+    cd[`level_${key}`] ?? cd[`level_${rawId}`] ?? cd[rawId] ?? 1;
+  return Number(val) || 1;
+}
+
+function countMinistryMaxedDepartments(cd: any, deptIds: string[]): { maxedCount: number; totalCount: number; allMaxed: boolean; averageLevel: number } {
+  let maxed = 0;
+  let sumLevel = 0;
+  for (const id of deptIds) {
+    const lvl = getDeptLevelFromCountryDetail(cd, id);
+    sumLevel += lvl;
+    if (lvl >= 20) {
+      maxed++;
+    }
+  }
+  return {
+    maxedCount: maxed,
+    totalCount: deptIds.length,
+    allMaxed: maxed === deptIds.length,
+    averageLevel: Math.round(sumLevel / (deptIds.length || 1)),
+  };
+}
+
+// Helper dinamis menghitung jumlah negara mitra yang tersedia (basis 211 negara dikurangi negara yang dianeksasi)
+export function getDynamicTargetCountryCount(cd: any): number {
+  const BASE_COUNTRIES = 211;
+  let annexedCount = 0;
+
+  if (Array.isArray(cd?.annexedTerritories)) {
+    annexedCount = cd.annexedTerritories.length;
+  } else if (Array.isArray(cd?.annexedCountries)) {
+    annexedCount = cd.annexedCountries.length;
+  } else if (typeof window !== 'undefined') {
+    const windowAnnexed = (window as Window & { neosantara_annexed_countries?: Record<string, unknown> }).neosantara_annexed_countries;
+    if (windowAnnexed && typeof windowAnnexed === 'object') {
+      annexedCount = Object.keys(windowAnnexed).length;
+    }
+  }
+
+  // Jika ada negara yang dianeksasi, jumlah target dinamis turun: 211 -> 210 -> dst
+  return Math.max(1, BASE_COUNTRIES - annexedCount);
 }
 
 const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
@@ -646,138 +749,480 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     };
   }),
 
-  // ═══ 6. PENELITIAN ═══
+  // ═══ 6. PENELITIAN (3 Sektor: Riset Ekonomi & Industri [12], Riset Militer & Pertahanan [18], Riset Diplomasi & Intelijen [25]) ═══
   {
-    id: 'negeri_inovatif',
+    id: 'riset_ekonomi_industri',
     category: 'penelitian',
-    icon: Microscope,
+    icon: Banknote,
+    accent: '#38bdf8',
+    maxProgress: 12,
+    reward: { gems: 250, neo: 100000000 },
+    computeProgress: (cd) => {
+      const current = countCompletedResearchInSector(cd, RESEARCH_SECTOR_CARDS.ekonomi);
+      const target = 12;
+      const isUnlocked = current >= target;
+      return {
+        current,
+        target,
+        isUnlocked,
+        dynamicDescription: 'Petunjuk: Selesaikan seluruh 12 proyek penelitian di sektor Riset Ekonomi & Industri pada Pusat Penelitian & Riset Nasional.',
+        extraBadges: [
+          {
+            label: isUnlocked ? 'Sektor Selesai (12/12)' : 'Target: Selesaikan 12 Riset',
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-root-accent/15 text-root-accent border-root-accent/30',
+          },
+          {
+            label: `Progres Riset: ${current} / 12 Selesai`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
+    },
+  },
+  {
+    id: 'riset_militer_pertahanan',
+    category: 'penelitian',
+    icon: Shield,
+    accent: '#f43f5e',
+    maxProgress: 18,
+    reward: { gems: 350, neo: 150000000 },
+    computeProgress: (cd) => {
+      const current = countCompletedResearchInSector(cd, RESEARCH_SECTOR_CARDS.militer);
+      const target = 18;
+      const isUnlocked = current >= target;
+      return {
+        current,
+        target,
+        isUnlocked,
+        dynamicDescription: 'Petunjuk: Selesaikan seluruh 18 proyek penelitian di sektor Riset Militer & Pertahanan pada Pusat Penelitian & Riset Nasional.',
+        extraBadges: [
+          {
+            label: isUnlocked ? 'Sektor Selesai (18/18)' : 'Target: Selesaikan 18 Riset',
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-rose-500/15 text-rose-300 border-rose-500/30',
+          },
+          {
+            label: `Progres Riset: ${current} / 18 Selesai`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
+    },
+  },
+  {
+    id: 'riset_diplomasi_intelijen',
+    category: 'penelitian',
+    icon: Globe2,
     accent: '#06b6d4',
-    maxProgress: 10,
-    reward: { gems: 220, neo: 85000000 },
+    maxProgress: 25,
+    reward: { gems: 500, neo: 250000000 },
     computeProgress: (cd) => {
-      const resCount = cd?.completedResearches?.length ?? 6;
-      const current = Math.min(10, resCount);
-      return { current, isUnlocked: current >= 10 };
-    },
-  },
-  {
-    id: 'lompatan_teknologi',
-    category: 'penelitian',
-    icon: Microscope,
-    accent: '#22d3ee',
-    maxProgress: 3,
-    reward: { gems: 250, neo: 95000000 },
-    computeProgress: (cd) => {
-      const tier3Count = cd?.highTierResearchCount ?? 1;
-      const current = Math.min(3, tier3Count);
-      return { current, isUnlocked: current >= 3 };
-    },
-  },
-  {
-    id: 'riset_untuk_rakyat',
-    category: 'penelitian',
-    icon: Microscope,
-    accent: '#0891b2',
-    maxProgress: 5,
-    reward: { gems: 150, neo: 55000000 },
-    computeProgress: (cd) => {
-      const socialRes = cd?.welfareResearchesCount ?? 3;
-      const current = Math.min(5, socialRes);
-      return { current, isUnlocked: current >= 5 };
+      const current = countCompletedResearchInSector(cd, RESEARCH_SECTOR_CARDS.diplomasi);
+      const target = 25;
+      const isUnlocked = current >= target;
+      return {
+        current,
+        target,
+        isUnlocked,
+        dynamicDescription: 'Petunjuk: Selesaikan seluruh 25 proyek penelitian di sektor Riset Diplomasi & Intelijen pada Pusat Penelitian & Riset Nasional.',
+        extraBadges: [
+          {
+            label: isUnlocked ? 'Sektor Selesai (25/25)' : 'Target: Selesaikan 25 Riset',
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30',
+          },
+          {
+            label: `Progres Riset: ${current} / 25 Selesai`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
     },
   },
 
-  // ═══ 7. KEMENTERIAN & KABINET ═══
+  // ═══ 7. KEMENTERIAN & KABINET (3 Tab: Kementerian [15], Keamanan [4], Layanan [2] - Seluruh 20 Kotak/Level Terisi) ═══
   {
-    id: 'kabinet_andal',
+    id: 'kementerian_sempurna',
     category: 'kementerian',
     icon: Briefcase,
-    accent: '#f97316',
-    maxProgress: 5,
-    reward: { gems: 160, neo: 60000000 },
+    accent: '#0ea5e9',
+    maxProgress: 15,
+    reward: { gems: 300, neo: 120000000 },
     computeProgress: (cd) => {
-      const minCount = cd?.appointedMinistersCount ?? 5;
-      const current = Math.min(5, minCount);
-      return { current, isUnlocked: current >= 5 };
+      const { maxedCount, totalCount, allMaxed } = countMinistryMaxedDepartments(cd, MINISTRY_DEPARTMENTS_CONFIG.kementerian);
+      const isUnlocked = allMaxed;
+      return {
+        current: maxedCount,
+        target: totalCount,
+        isUnlocked,
+        dynamicDescription: 'Petunjuk: Tingkatkan seluruh 15 kementerian pada tab Kementerian hingga mencapai Level 20/20 (seluruh 20 kotak terisi).',
+        extraBadges: [
+          {
+            label: isUnlocked ? 'Seluruh 20 Kotak Terisi (15/15)' : 'Target: 15 Kementerian Level 20/20',
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-root-accent/15 text-root-accent border-root-accent/30',
+          },
+          {
+            label: `Maksimal 20/20: ${maxedCount} / ${totalCount} Departemen`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
     },
   },
   {
-    id: 'pemerintahan_profesional',
+    id: 'keamanan_sempurna',
     category: 'kementerian',
-    icon: Briefcase,
-    accent: '#fb923c',
-    maxProgress: 3,
-    reward: { gems: 200, neo: 80000000 },
-    computeProgress: (cd) => {
-      const upgradedMin = cd?.upgradedMinistriesCount ?? 2;
-      const current = Math.min(3, upgradedMin);
-      return { current, isUnlocked: current >= 3 };
-    },
-  },
-  {
-    id: 'layanan_siaga',
-    category: 'kementerian',
-    icon: Briefcase,
-    accent: '#ea580c',
-    maxProgress: 100,
-    reward: { gems: 140, neo: 50000000 },
-    computeProgress: (cd) => {
-      const readiness = cd?.emergencyReadiness ?? 85;
-      return { current: Math.min(100, readiness), isUnlocked: readiness >= 80 };
-    },
-  },
-
-  // ═══ 8. GEOPOLITIK & DIPLOMASI ═══
-  {
-    id: 'diplomat_ulung',
-    category: 'geopolitik',
-    icon: Globe,
-    accent: '#3b82f6',
-    maxProgress: 5,
-    reward: { gems: 180, neo: 70000000 },
-    computeProgress: (cd) => {
-      const emb = cd?.embassiesCount ?? (cd?.embassies?.length || 3);
-      const current = Math.min(5, emb);
-      return { current, isUnlocked: current >= 5 };
-    },
-  },
-  {
-    id: 'tetangga_bersahabat',
-    category: 'geopolitik',
-    icon: Globe,
-    accent: '#60a5fa',
-    maxProgress: 3,
-    reward: { gems: 150, neo: 55000000 },
-    computeProgress: (cd) => {
-      const treaties = cd?.treatiesCount ?? 2;
-      const current = Math.min(3, treaties);
-      return { current, isUnlocked: current >= 3 };
-    },
-  },
-  {
-    id: 'jaringan_global',
-    category: 'geopolitik',
-    icon: Globe,
-    accent: '#1d4ed8',
+    icon: Shield,
+    accent: '#f43f5e',
     maxProgress: 4,
-    reward: { gems: 220, neo: 80000000 },
-    computeProgress: (cd) => {
-      const orgs = cd?.joinedOrganizationsCount ?? 2;
-      const current = Math.min(4, orgs);
-      return { current, isUnlocked: current >= 4 };
-    },
-  },
-  {
-    id: 'suara_dunia',
-    category: 'geopolitik',
-    icon: Globe,
-    accent: '#2563eb',
-    maxProgress: 3,
     reward: { gems: 250, neo: 90000000 },
     computeProgress: (cd) => {
-      const unVotes = cd?.unResolutionsParticipated ?? 2;
-      const current = Math.min(3, unVotes);
-      return { current, isUnlocked: current >= 3 };
+      const { maxedCount, totalCount, allMaxed } = countMinistryMaxedDepartments(cd, MINISTRY_DEPARTMENTS_CONFIG.keamanan);
+      const isUnlocked = allMaxed;
+      return {
+        current: maxedCount,
+        target: totalCount,
+        isUnlocked,
+        dynamicDescription: 'Petunjuk: Tingkatkan seluruh 4 departemen keamanan pada tab Keamanan hingga mencapai Level 20/20 (seluruh 20 kotak terisi).',
+        extraBadges: [
+          {
+            label: isUnlocked ? 'Seluruh 20 Kotak Terisi (4/4)' : 'Target: 4 Keamanan Level 20/20',
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-rose-500/15 text-rose-300 border-rose-500/30',
+          },
+          {
+            label: `Maksimal 20/20: ${maxedCount} / ${totalCount} Departemen`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
+    },
+  },
+  {
+    id: 'layanan_sempurna',
+    category: 'kementerian',
+    icon: Landmark,
+    accent: '#eab308',
+    maxProgress: 2,
+    reward: { gems: 200, neo: 75000000 },
+    computeProgress: (cd) => {
+      const { maxedCount, totalCount, allMaxed } = countMinistryMaxedDepartments(cd, MINISTRY_DEPARTMENTS_CONFIG.layanan);
+      const isUnlocked = allMaxed;
+      return {
+        current: maxedCount,
+        target: totalCount,
+        isUnlocked,
+        dynamicDescription: 'Petunjuk: Tingkatkan seluruh 2 institusi layanan pada tab Layanan hingga mencapai Level 20/20 (seluruh 20 kotak terisi).',
+        extraBadges: [
+          {
+            label: isUnlocked ? 'Seluruh 20 Kotak Terisi (2/2)' : 'Target: 2 Layanan Level 20/20',
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+          },
+          {
+            label: `Maksimal 20/20: ${maxedCount} / ${totalCount} Departemen`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
+    },
+  },
+
+  // ═══ 8. GEOPOLITIK & DIPLOMASI (10 Misi Dinamis Target 211 Negara - Dianeksasi Turun Sendiri) ═══
+  {
+    id: 'membangun_kedutaan_besar',
+    category: 'geopolitik',
+    icon: Building2,
+    accent: '#38bdf8',
+    maxProgress: 211,
+    reward: { gems: 350, neo: 150000000 },
+    computeProgress: (cd) => {
+      const target = getDynamicTargetCountryCount(cd);
+      const count = Number(cd?.embassiesCount ?? (Array.isArray(cd?.embassies) ? cd.embassies.length : 1));
+      const current = Math.min(target, Math.max(0, count));
+      const isUnlocked = current >= target;
+      return {
+        current,
+        target,
+        isUnlocked,
+        dynamicDescription: `Petunjuk: Bangun kedutaan besar resmi di seluruh ${target} negara mitra di dunia.`,
+        extraBadges: [
+          {
+            label: isUnlocked ? `Kedutaan Lengkap (${target}/${target})` : `Target: ${target} Negara`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-root-accent/15 text-root-accent border-root-accent/30',
+          },
+          {
+            label: `Progres: ${current} / ${target} Negara`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
+    },
+  },
+  {
+    id: 'pakta_non_agresi',
+    category: 'geopolitik',
+    icon: Shield,
+    accent: '#60a5fa',
+    maxProgress: 211,
+    reward: { gems: 350, neo: 150000000 },
+    computeProgress: (cd) => {
+      const target = getDynamicTargetCountryCount(cd);
+      const count = Number(cd?.nonAggressionPactsCount ?? (Array.isArray(cd?.nonAggressionPacts) ? cd.nonAggressionPacts.length : (cd?.treatiesCount || 1)));
+      const current = Math.min(target, Math.max(0, count));
+      const isUnlocked = current >= target;
+      return {
+        current,
+        target,
+        isUnlocked,
+        dynamicDescription: `Petunjuk: Sepakati dan tandatangani perjanjian pakta non-agresi bersama seluruh ${target} negara mitra di dunia.`,
+        extraBadges: [
+          {
+            label: isUnlocked ? `Pakta Lengkap (${target}/${target})` : `Target: ${target} Negara`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-root-accent/15 text-root-accent border-root-accent/30',
+          },
+          {
+            label: `Progres: ${current} / ${target} Negara`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
+    },
+  },
+  {
+    id: 'aliansi_pertahanan',
+    category: 'geopolitik',
+    icon: Shield,
+    accent: '#3b82f6',
+    maxProgress: 211,
+    reward: { gems: 500, neo: 250000000 },
+    computeProgress: (cd) => {
+      const target = getDynamicTargetCountryCount(cd);
+      const count = Number(cd?.defenseAlliancesCount ?? (Array.isArray(cd?.defenseAlliances) ? cd.defenseAlliances.length : (cd?.alliancesCount || 1)));
+      const current = Math.min(target, Math.max(0, count));
+      const isUnlocked = current >= target;
+      return {
+        current,
+        target,
+        isUnlocked,
+        dynamicDescription: `Petunjuk: Bentuk pakta pertahanan militer aliansi bersama seluruh ${target} negara mitra di dunia.`,
+        extraBadges: [
+          {
+            label: isUnlocked ? `Aliansi Lengkap (${target}/${target})` : `Target: ${target} Negara`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-root-accent/15 text-root-accent border-root-accent/30',
+          },
+          {
+            label: `Progres: ${current} / ${target} Negara`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
+    },
+  },
+  {
+    id: 'perjanjian_dagang',
+    category: 'geopolitik',
+    icon: HeartHandshake,
+    accent: '#10b981',
+    maxProgress: 211,
+    reward: { gems: 400, neo: 200000000 },
+    computeProgress: (cd) => {
+      const target = getDynamicTargetCountryCount(cd);
+      const count = Number(cd?.tradeAgreementsCount ?? (Array.isArray(cd?.tradeAgreements) ? cd.tradeAgreements.length : (cd?.addedTradePartners?.length || 1)));
+      const current = Math.min(target, Math.max(0, count));
+      const isUnlocked = current >= target;
+      return {
+        current,
+        target,
+        isUnlocked,
+        dynamicDescription: `Petunjuk: Jalin kerja sama kemitraan ekonomi dan ratifikasi perjanjian dagang bilateral dengan seluruh ${target} negara mitra di dunia.`,
+        extraBadges: [
+          {
+            label: isUnlocked ? `Perjanjian Lengkap (${target}/${target})` : `Target: ${target} Negara`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-root-accent/15 text-root-accent border-root-accent/30',
+          },
+          {
+            label: `Progres: ${current} / ${target} Negara`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
+    },
+  },
+  {
+    id: 'kontrak_penelitian',
+    category: 'geopolitik',
+    icon: Microscope,
+    accent: '#06b6d4',
+    maxProgress: 211,
+    reward: { gems: 400, neo: 200000000 },
+    computeProgress: (cd) => {
+      const target = getDynamicTargetCountryCount(cd);
+      const count = Number(cd?.researchContractsCount ?? (Array.isArray(cd?.researchContracts) ? cd.researchContracts.length : 1));
+      const current = Math.min(target, Math.max(0, count));
+      const isUnlocked = current >= target;
+      return {
+        current,
+        target,
+        isUnlocked,
+        dynamicDescription: `Petunjuk: Sepakati kontrak kerja sama riset dan sains bilateral bersama seluruh ${target} negara mitra di dunia.`,
+        extraBadges: [
+          {
+            label: isUnlocked ? `Kontrak Lengkap (${target}/${target})` : `Target: ${target} Negara`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-root-accent/15 text-root-accent border-root-accent/30',
+          },
+          {
+            label: `Progres: ${current} / ${target} Negara`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
+    },
+  },
+  {
+    id: 'beri_tentara',
+    category: 'geopolitik',
+    icon: Sword,
+    accent: '#ef4444',
+    maxProgress: 211,
+    reward: { gems: 450, neo: 220000000 },
+    computeProgress: (cd) => {
+      const target = getDynamicTargetCountryCount(cd);
+      const sent = Number(cd?.troopsSentCount ?? cd?.bantuanTentaraCount ?? 1);
+      const current = Math.min(target, Math.max(0, sent));
+      const isUnlocked = current >= target;
+      return {
+        current,
+        target,
+        isUnlocked,
+        dynamicDescription: `Petunjuk: Salurkan kontribusi bantuan pasukan tentara militer ke seluruh ${target} negara mitra di dunia.`,
+        extraBadges: [
+          {
+            label: isUnlocked ? `Bantuan Lengkap (${target}/${target})` : `Target: ${target} Negara`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-rose-500/15 text-rose-300 border-rose-500/30',
+          },
+          {
+            label: `Progres: ${current} / ${target} Negara`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
+    },
+  },
+  {
+    id: 'beri_hadiah',
+    category: 'geopolitik',
+    icon: Gift,
+    accent: '#ec4899',
+    maxProgress: 211,
+    reward: { gems: 350, neo: 150000000 },
+    computeProgress: (cd) => {
+      const target = getDynamicTargetCountryCount(cd);
+      const gifts = Number(cd?.diplomaticGiftsSentCount ?? cd?.hadiahDiplomasiCount ?? 1);
+      const current = Math.min(target, Math.max(0, gifts));
+      const isUnlocked = current >= target;
+      return {
+        current,
+        target,
+        isUnlocked,
+        dynamicDescription: `Petunjuk: Kirimkan dana bantuan dan hibah hadiah diplomasi ke seluruh ${target} negara mitra di dunia.`,
+        extraBadges: [
+          {
+            label: isUnlocked ? `Hadiah Lengkap (${target}/${target})` : `Target: ${target} Negara`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-pink-500/15 text-pink-300 border-pink-500/30',
+          },
+          {
+            label: `Progres: ${current} / ${target} Negara`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
+    },
+  },
+  {
+    id: 'tingkatkan_hubungan',
+    category: 'geopolitik',
+    icon: HeartHandshake,
+    accent: '#f97316',
+    maxProgress: 211,
+    reward: { gems: 350, neo: 160000000 },
+    computeProgress: (cd) => {
+      const target = getDynamicTargetCountryCount(cd);
+      const improved = Number(cd?.relationsImprovedCount ?? cd?.tingkatkanHubunganCount ?? 1);
+      const current = Math.min(target, Math.max(0, improved));
+      const isUnlocked = current >= target;
+      return {
+        current,
+        target,
+        isUnlocked,
+        dynamicDescription: `Petunjuk: Lakukan diplomasi bilateral intensif guna meningkatkan hubungan dengan seluruh ${target} negara mitra di dunia.`,
+        extraBadges: [
+          {
+            label: isUnlocked ? `Hubungan Lengkap (${target}/${target})` : `Target: ${target} Negara`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-orange-500/15 text-orange-300 border-orange-500/30',
+          },
+          {
+            label: `Progres: ${current} / ${target} Negara`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
+    },
+  },
+  {
+    id: 'minta_bantuan',
+    category: 'geopolitik',
+    icon: PhoneCall,
+    accent: '#a855f7',
+    maxProgress: 211,
+    reward: { gems: 400, neo: 180000000 },
+    computeProgress: (cd) => {
+      const target = getDynamicTargetCountryCount(cd);
+      const requested = Number(cd?.aidRequestedCount ?? cd?.mintaBantuanCount ?? 1);
+      const current = Math.min(target, Math.max(0, requested));
+      const isUnlocked = current >= target;
+      return {
+        current,
+        target,
+        isUnlocked,
+        dynamicDescription: `Petunjuk: Ajukan dan terima permohonan bantuan diplomasi dari seluruh ${target} negara mitra di dunia.`,
+        extraBadges: [
+          {
+            label: isUnlocked ? `Bantuan Lengkap (${target}/${target})` : `Target: ${target} Negara`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-purple-500/15 text-purple-300 border-purple-500/30',
+          },
+          {
+            label: `Progres: ${current} / ${target} Negara`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
+    },
+  },
+  {
+    id: 'berikan_wilayah',
+    category: 'geopolitik',
+    icon: Map,
+    accent: '#eab308',
+    maxProgress: 211,
+    reward: { gems: 500, neo: 250000000 },
+    computeProgress: (cd) => {
+      const target = getDynamicTargetCountryCount(cd);
+      const ceded = Number(cd?.territoriesCededCount ?? cd?.berikanWilayahCount ?? 1);
+      const current = Math.min(target, Math.max(0, ceded));
+      const isUnlocked = current >= target;
+      return {
+        current,
+        target,
+        isUnlocked,
+        dynamicDescription: `Petunjuk: Selesaikan kesepakatan geopolitik transfer wilayah dengan ${target} negara mitra di dunia.`,
+        extraBadges: [
+          {
+            label: isUnlocked ? `Transfer Selesai (${target}/${target})` : `Target: ${target} Negara`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+          },
+          {
+            label: `Progres: ${current} / ${target} Negara`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
     },
   },
 
@@ -1298,6 +1743,11 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
               }
             }
           }
+          // Inject {target} dinamis untuk misi diplomasi (211 dikurangi negara yang dianeksasi)
+          if (item.category === 'geopolitik' && description.includes('{target}')) {
+            description = description.replace(/{target}/g, String(item.maxProgress || 211));
+          }
+
           // Inject template variables like {periodText} and {targetDate} for anggaran_sehat
           if (item.id === 'anggaran_sehat') {
             const now = currentDate || new Date();

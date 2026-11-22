@@ -87,46 +87,6 @@
       "title": "Comprehensive Public Care",
       "description": "Establish education, health, and diverse public service facilities."
     },
-    "negeri_inovatif": {
-      "title": "Innovative Realm",
-      "description": "Complete research breakthroughs across various distinct categories."
-    },
-    "lompatan_teknologi": {
-      "title": "Technological Leap",
-      "description": "Upgrade multiple research development cards to advanced tiers."
-    },
-    "riset_untuk_rakyat": {
-      "title": "Research for the People",
-      "description": "Complete research directly bolstering economy, welfare, or crisis mitigation."
-    },
-    "kabinet_andal": {
-      "title": "Reliable Cabinet",
-      "description": "Appoint qualified ministers across all key ministerial portfolios."
-    },
-    "pemerintahan_profesional": {
-      "title": "Professional Governance",
-      "description": "Upgrade administrative ministries to target capability levels."
-    },
-    "layanan_siaga": {
-      "title": "Alert Emergency Services",
-      "description": "Enhance emergency response and public healthcare readiness."
-    },
-    "diplomat_ulung": {
-      "title": "Master Diplomat",
-      "description": "Establish embassies and cultivate strong ties with multiple nations."
-    },
-    "tetangga_bersahabat": {
-      "title": "Friendly Neighbors",
-      "description": "Enact non-aggression pacts or mutual cooperation accords with neighbors."
-    },
-    "jaringan_global": {
-      "title": "Global Network",
-      "description": "Join several international or regional multilateral organizations."
-    },
-    "suara_dunia": {
-      "title": "World Voice",
-      "description": "Participate in UN sessions and achieve decisive diplomatic outcomes."
-    },
     "masyarakat_harmonis": {
       "title": "Harmonious Society",
       "description": "Attain targeted societal tolerance and civil satisfaction metrics."
@@ -234,6 +194,70 @@
     "bangun_infrastruktur_militer": {
       "title": "军事基础设施建设",
       "description": "指南：建设国家军事基础设施设施，累计达到100座建筑，以巩固国家主权与实力。"
+    },
+    "riset_ekonomi_industri": {
+      "title": "经济与工业研究",
+      "description": "指南：在国家研究与研发中心完成经济与工业研究领域的全部12项研发课题。"
+    },
+    "riset_militer_pertahanan": {
+      "title": "军事与国防研究",
+      "description": "指南：在国家研究与研发中心完成军事与国防研究领域的全部18项研发课题。"
+    },
+    "riset_diplomasi_intelijen": {
+      "title": "外交与情报研究",
+      "description": "指南：在国家研究与研发中心完成外交与情报研究领域的全部25项研发课题。"
+    },
+    "kementerian_sempurna": {
+      "title": "巅峰部委",
+      "description": "指南：将“部委”标签页下的全部15个部委升至满级20/20（填满全部20个方格）。"
+    },
+    "keamanan_sempurna": {
+      "title": "铜墙铁壁",
+      "description": "指南：将“安全”标签页下的全部4个安全部门升至满级20/20（填满全部20个方格）。"
+    },
+    "layanan_sempurna": {
+      "title": "卓越公共服务",
+      "description": "指南：将“服务”标签页下的全部2个公共服务机构升至满级20/20（填满全部20个方格）。"
+    },
+    "membangun_kedutaan_besar": {
+      "title": "建立大使馆",
+      "description": "指南：在全球全部{target}个伙伴国家建立正式大使馆。"
+    },
+    "pakta_non_agresi": {
+      "title": "互不侵犯条约",
+      "description": "指南：与全球全部{target}个伙伴国家缔结并批准互不侵犯条约。"
+    },
+    "aliansi_pertahanan": {
+      "title": "军事防御同盟",
+      "description": "指南：与全球全部{target}个伙伴国家建立共同军事防御同盟。"
+    },
+    "perjanjian_dagang": {
+      "title": "双边贸易协定",
+      "description": "指南：与全球全部{target}个伙伴国家批准双边贸易协定。"
+    },
+    "kontrak_penelitian": {
+      "title": "科研合作协议",
+      "description": "指南：与全球全部{target}个伙伴国家签署双边科研合作协议。"
+    },
+    "beri_tentara": {
+      "title": "派遣部队援助",
+      "description": "指南：向全球全部{target}个伙伴国家派遣军事部队援助。"
+    },
+    "beri_hadiah": {
+      "title": "赠送外交礼金",
+      "description": "指南：向全球全部{target}个伙伴国家赠送外交礼金。"
+    },
+    "tingkatkan_hubungan": {
+      "title": "增进双边关系",
+      "description": "指南：采取积极外交举措，增进与全球全部{target}个伙伴国家的双边关系。"
+    },
+    "minta_bantuan": {
+      "title": "请求盟友援助",
+      "description": "指南：向全球全部{target}个伙伴国家申请并获得外交援助。"
+    },
+    "berikan_wilayah": {
+      "title": "移交领土区域",
+      "description": "指南：落实领土外交条约，向全球{target}个伙伴国家移交领土区域。"
     }
   },
   "building_achievements": {

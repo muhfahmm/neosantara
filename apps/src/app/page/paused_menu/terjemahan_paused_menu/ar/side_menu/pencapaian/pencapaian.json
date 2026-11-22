@@ -87,46 +87,6 @@
       "title": "Comprehensive Public Care",
       "description": "Establish education, health, and diverse public service facilities."
     },
-    "negeri_inovatif": {
-      "title": "Innovative Realm",
-      "description": "Complete research breakthroughs across various distinct categories."
-    },
-    "lompatan_teknologi": {
-      "title": "Technological Leap",
-      "description": "Upgrade multiple research development cards to advanced tiers."
-    },
-    "riset_untuk_rakyat": {
-      "title": "Research for the People",
-      "description": "Complete research directly bolstering economy, welfare, or crisis mitigation."
-    },
-    "kabinet_andal": {
-      "title": "Reliable Cabinet",
-      "description": "Appoint qualified ministers across all key ministerial portfolios."
-    },
-    "pemerintahan_profesional": {
-      "title": "Professional Governance",
-      "description": "Upgrade administrative ministries to target capability levels."
-    },
-    "layanan_siaga": {
-      "title": "Alert Emergency Services",
-      "description": "Enhance emergency response and public healthcare readiness."
-    },
-    "diplomat_ulung": {
-      "title": "Master Diplomat",
-      "description": "Establish embassies and cultivate strong ties with multiple nations."
-    },
-    "tetangga_bersahabat": {
-      "title": "Friendly Neighbors",
-      "description": "Enact non-aggression pacts or mutual cooperation accords with neighbors."
-    },
-    "jaringan_global": {
-      "title": "Global Network",
-      "description": "Join several international or regional multilateral organizations."
-    },
-    "suara_dunia": {
-      "title": "World Voice",
-      "description": "Participate in UN sessions and achieve decisive diplomatic outcomes."
-    },
     "masyarakat_harmonis": {
       "title": "Harmonious Society",
       "description": "Attain targeted societal tolerance and civil satisfaction metrics."
@@ -234,6 +194,70 @@
     "bangun_infrastruktur_militer": {
       "title": "بناء البنية التحتية العسكرية",
       "description": "إرشاد: قم بتشييد مرافق البنية التحتية العسكرية حتى بلوغ الهدف الوطني البالغ 100 مبنى لتعزيز قوة الدولة."
+    },
+    "riset_ekonomi_industri": {
+      "title": "بحوث الاقتصاد والصناعة",
+      "description": "إرشاد: أكمل جميع المشاريع البحثية الـ 12 في قطاع بحوث الاقتصاد والصناعة في المركز الوطني للبحوث."
+    },
+    "riset_militer_pertahanan": {
+      "title": "بحوث الدفاع والعسكرية",
+      "description": "إرشاد: أكمل جميع المشاريع البحثية الـ 18 في قطاع بحوث الدفاع والعسكرية في المركز الوطني للبحوث."
+    },
+    "riset_diplomasi_intelijen": {
+      "title": "بحوث الدبلوماسية والاستخبارات",
+      "description": "إرشاد: أكمل جميع المشاريع البحثية الـ 25 في قطاع بحوث الدبلوماسية والاستخبارات في المركز الوطني للبحوث."
+    },
+    "kementerian_sempurna": {
+      "title": "الوزارات المكتملة",
+      "description": "إرشاد: قم بترقية جميع الوزارات الـ 15 في تبويب الوزارات إلى المستوى 20/20 (امتلاء جميع المربعات الـ 20 بالكامل)."
+    },
+    "keamanan_sempurna": {
+      "title": "الأمن القومي الحصين",
+      "description": "إرشاد: قم بترقية جميع أجهزة الأمن الـ 4 في تبويب الأمن إلى المستوى 20/20 (امتلاء جميع المربعات الـ 20 بالكامل)."
+    },
+    "layanan_sempurna": {
+      "title": "الخدمات العامة المثالية",
+      "description": "إرشاد: قم بترقية جميع مؤسسات الخدمة الـ 2 في تبويب الخدمات إلى المستوى 20/20 (امتلاء جميع المربعات الـ 20 بالكامل)."
+    },
+    "membangun_kedutaan_besar": {
+      "title": "بناء السفارة",
+      "description": "إرشاد: أقم سفارات رسمية في جميع الدول الشريكة البالغ عددها {target} دولة حول العالم."
+    },
+    "pakta_non_agresi": {
+      "title": "معاهدة عدم الاعتداء",
+      "description": "إرشاد: وقّع معاهدات عدم اعتداء مع جميع الدول الشريكة البالغ عددها {target} دولة حول العالم."
+    },
+    "aliansi_pertahanan": {
+      "title": "التحالف الدفاعي",
+      "description": "إرشاد: شكّل تحالفات دفاعية عسكرية مع جميع الدول الشريكة البالغ عددها {target} دولة حول العالم."
+    },
+    "perjanjian_dagang": {
+      "title": "الاتفاقية التجارية",
+      "description": "إرشاد: صادق على اتفاقيات تجارية ثنائية مع جميع الدول الشريكة البالغ عددها {target} دولة حول العالم."
+    },
+    "kontrak_penelitian": {
+      "title": "عقد الأبحاث المشتركة",
+      "description": "إرشاد: أبرم عقود أبحاث علمية مشتركة مع جميع الدول الشريكة البالغ عددها {target} دولة حول العالم."
+    },
+    "beri_tentara": {
+      "title": "إرسال قوات الدعم",
+      "description": "إرشاد: أرسل قوات دعم عسكرية إلى جميع الدول الشريكة البالغ عددها {target} دولة حول العالم."
+    },
+    "beri_hadiah": {
+      "title": "تقديم منحة دبلوماسية",
+      "description": "إرشاد: قدّم منحاً وهدايا دبلوماسية إلى جميع الدول الشريكة البالغ عددها {target} دولة حول العالم."
+    },
+    "tingkatkan_hubungan": {
+      "title": "تحسين العلاقات الثنائية",
+      "description": "إرشاد: بادر بتحسين العلاقات الثنائية مع جميع الدول الشريكة البالغ عددها {target} دولة حول العالم."
+    },
+    "minta_bantuan": {
+      "title": "طلب المساعدة الدولية",
+      "description": "إرشاد: اطلب مساعدات دبلوماسية من جميع الدول الشريكة البالغ عددها {target} دولة حول العالم."
+    },
+    "berikan_wilayah": {
+      "title": "تسليم الأراضي",
+      "description": "إرشاد: أتمم اتفاقيات تسليم الأراضي مع {target} دولة شريكة حول العالم."
     }
   },
   "building_achievements": {

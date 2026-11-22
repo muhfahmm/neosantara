@@ -87,46 +87,6 @@
       "title": "Pelayanan Publik Lengkap",
       "description": "Bangun fasilitas pendidikan, kesehatan, dan layanan publik lainnya."
     },
-    "negeri_inovatif": {
-      "title": "Negeri Inovatif",
-      "description": "Selesaikan sejumlah penelitian dari kategori yang berbeda."
-    },
-    "lompatan_teknologi": {
-      "title": "Lompatan Teknologi",
-      "description": "Tingkatkan beberapa kartu penelitian ke level yang lebih tinggi."
-    },
-    "riset_untuk_rakyat": {
-      "title": "Riset untuk Rakyat",
-      "description": "Selesaikan penelitian yang mendukung ekonomi, kesejahteraan, atau mitigasi krisis."
-    },
-    "kabinet_andal": {
-      "title": "Kabinet Andal",
-      "description": "Rekrut menteri untuk beberapa bidang pemerintahan."
-    },
-    "pemerintahan_profesional": {
-      "title": "Pemerintahan Profesional",
-      "description": "Tingkatkan sejumlah kementerian hingga level yang ditentukan."
-    },
-    "layanan_siaga": {
-      "title": "Layanan Siaga",
-      "description": "Tingkatkan kesiapan layanan darurat dan kesehatan."
-    },
-    "diplomat_ulung": {
-      "title": "Diplomat Ulung",
-      "description": "Bangun kedutaan dan tingkatkan hubungan dengan beberapa negara."
-    },
-    "tetangga_bersahabat": {
-      "title": "Tetangga Bersahabat",
-      "description": "Bentuk pakta non-agresi atau perjanjian kerja sama dengan negara lain."
-    },
-    "jaringan_global": {
-      "title": "Jaringan Global",
-      "description": "Bergabung dengan beberapa organisasi internasional atau regional."
-    },
-    "suara_dunia": {
-      "title": "Suara Dunia",
-      "description": "Berpartisipasi dalam agenda PBB dan capai hasil diplomatik tertentu."
-    },
     "masyarakat_harmonis": {
       "title": "Masyarakat Harmonis",
       "description": "Capai tingkat toleransi dan kepuasan sosial yang ditentukan."
@@ -234,6 +194,70 @@
     "bangun_infrastruktur_militer": {
       "title": "Pembangunan Infrastruktur Militer",
       "description": "Petunjuk: Bangun fasilitas Infrastruktur Militer hingga mencapai target 100 bangunan nasional untuk memperkuat kedaulatan negara."
+    },
+    "riset_ekonomi_industri": {
+      "title": "Riset Ekonomi & Industri",
+      "description": "Petunjuk: Selesaikan seluruh 12 proyek penelitian di sektor Riset Ekonomi & Industri pada Pusat Penelitian & Riset Nasional."
+    },
+    "riset_militer_pertahanan": {
+      "title": "Riset Militer & Pertahanan",
+      "description": "Petunjuk: Selesaikan seluruh 18 proyek penelitian di sektor Riset Militer & Pertahanan pada Pusat Penelitian & Riset Nasional."
+    },
+    "riset_diplomasi_intelijen": {
+      "title": "Riset Diplomasi & Intelijen",
+      "description": "Petunjuk: Selesaikan seluruh 25 proyek penelitian di sektor Riset Diplomasi & Intelijen pada Pusat Penelitian & Riset Nasional."
+    },
+    "kementerian_sempurna": {
+      "title": "Kementerian Maksimal",
+      "description": "Petunjuk: Tingkatkan seluruh 15 kementerian pada tab Kementerian hingga mencapai Level 20/20 (seluruh 20 kotak terisi)."
+    },
+    "keamanan_sempurna": {
+      "title": "Keamanan Tangguh",
+      "description": "Petunjuk: Tingkatkan seluruh 4 departemen keamanan pada tab Keamanan hingga mencapai Level 20/20 (seluruh 20 kotak terisi)."
+    },
+    "layanan_sempurna": {
+      "title": "Layanan Prima",
+      "description": "Petunjuk: Tingkatkan seluruh 2 institusi layanan pada tab Layanan hingga mencapai Level 20/20 (seluruh 20 kotak terisi)."
+    },
+    "membangun_kedutaan_besar": {
+      "title": "Membangun Kedutaan Besar",
+      "description": "Petunjuk: Bangun kedutaan besar resmi di seluruh {target} negara mitra di dunia."
+    },
+    "pakta_non_agresi": {
+      "title": "Pakta Non Agresi",
+      "description": "Petunjuk: Sepakati dan tandatangani perjanjian pakta non-agresi bersama seluruh {target} negara mitra di dunia."
+    },
+    "aliansi_pertahanan": {
+      "title": "Aliansi Pertahanan",
+      "description": "Petunjuk: Bentuk pakta pertahanan militer aliansi bersama seluruh {target} negara mitra di dunia."
+    },
+    "perjanjian_dagang": {
+      "title": "Perjanjian Dagang",
+      "description": "Petunjuk: Jalin kerja sama kemitraan ekonomi dan ratifikasi perjanjian dagang bilateral dengan seluruh {target} negara mitra di dunia."
+    },
+    "kontrak_penelitian": {
+      "title": "Kontrak Penelitian",
+      "description": "Petunjuk: Sepakati kontrak kerja sama riset dan sains bilateral bersama seluruh {target} negara mitra di dunia."
+    },
+    "beri_tentara": {
+      "title": "Beri Tentara",
+      "description": "Petunjuk: Salurkan kontribusi bantuan pasukan tentara militer ke seluruh {target} negara mitra di dunia."
+    },
+    "beri_hadiah": {
+      "title": "Beri Hadiah",
+      "description": "Petunjuk: Kirimkan dana bantuan dan hibah hadiah diplomasi ke seluruh {target} negara mitra di dunia."
+    },
+    "tingkatkan_hubungan": {
+      "title": "Tingkatkan Hubungan",
+      "description": "Petunjuk: Lakukan diplomasi bilateral intensif guna meningkatkan hubungan dengan seluruh {target} negara mitra di dunia."
+    },
+    "minta_bantuan": {
+      "title": "Minta Bantuan",
+      "description": "Petunjuk: Ajukan dan terima permohonan bantuan diplomasi dari seluruh {target} negara mitra di dunia."
+    },
+    "berikan_wilayah": {
+      "title": "Berikan Wilayah",
+      "description": "Petunjuk: Selesaikan kesepakatan geopolitik transfer wilayah dengan {target} negara mitra di dunia."
     }
   },
   "building_achievements": {

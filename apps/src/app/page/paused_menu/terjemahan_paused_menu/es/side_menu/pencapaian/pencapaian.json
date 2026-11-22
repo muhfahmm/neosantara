@@ -87,46 +87,6 @@
       "title": "Comprehensive Public Care",
       "description": "Establish education, health, and diverse public service facilities."
     },
-    "negeri_inovatif": {
-      "title": "Innovative Realm",
-      "description": "Complete research breakthroughs across various distinct categories."
-    },
-    "lompatan_teknologi": {
-      "title": "Technological Leap",
-      "description": "Upgrade multiple research development cards to advanced tiers."
-    },
-    "riset_untuk_rakyat": {
-      "title": "Research for the People",
-      "description": "Complete research directly bolstering economy, welfare, or crisis mitigation."
-    },
-    "kabinet_andal": {
-      "title": "Reliable Cabinet",
-      "description": "Appoint qualified ministers across all key ministerial portfolios."
-    },
-    "pemerintahan_profesional": {
-      "title": "Professional Governance",
-      "description": "Upgrade administrative ministries to target capability levels."
-    },
-    "layanan_siaga": {
-      "title": "Alert Emergency Services",
-      "description": "Enhance emergency response and public healthcare readiness."
-    },
-    "diplomat_ulung": {
-      "title": "Master Diplomat",
-      "description": "Establish embassies and cultivate strong ties with multiple nations."
-    },
-    "tetangga_bersahabat": {
-      "title": "Friendly Neighbors",
-      "description": "Enact non-aggression pacts or mutual cooperation accords with neighbors."
-    },
-    "jaringan_global": {
-      "title": "Global Network",
-      "description": "Join several international or regional multilateral organizations."
-    },
-    "suara_dunia": {
-      "title": "World Voice",
-      "description": "Participate in UN sessions and achieve decisive diplomatic outcomes."
-    },
     "masyarakat_harmonis": {
       "title": "Harmonious Society",
       "description": "Attain targeted societal tolerance and civil satisfaction metrics."
@@ -234,6 +194,70 @@
     "bangun_infrastruktur_militer": {
       "title": "Construcción de Infraestructura Militar",
       "description": "Guía: Construye instalaciones de Infraestructura Militar hasta alcanzar la meta de 100 edificios nacionales."
+    },
+    "riset_ekonomi_industri": {
+      "title": "Investigación Económica e Industrial",
+      "description": "Guía: Completa los 12 proyectos de investigación en el sector Económico e Industrial en el Centro Nacional de Investigación."
+    },
+    "riset_militer_pertahanan": {
+      "title": "Investigación Militar y Defensa",
+      "description": "Guía: Completa los 18 proyectos de investigación en el sector Militar y de Defensa en el Centro Nacional de Investigación."
+    },
+    "riset_diplomasi_intelijen": {
+      "title": "Investigación Diplomática e Inteligencia",
+      "description": "Guía: Completa los 25 proyectos de investigación en el sector Diplomático y de Inteligencia en el Centro Nacional de Investigación."
+    },
+    "kementerian_sempurna": {
+      "title": "Ministerios al Máximo",
+      "description": "Guía: Mejora los 15 ministerios en la pestaña Ministerios al Nivel 20/20 (las 20 casillas llenas)."
+    },
+    "keamanan_sempurna": {
+      "title": "Seguridad Implacable",
+      "description": "Guía: Mejora los 4 departamentos de seguridad en la pestaña Seguridad al Nivel 20/20 (las 20 casillas llenas)."
+    },
+    "layanan_sempurna": {
+      "title": "Servicios Públicos de Excelencia",
+      "description": "Guía: Mejora las 2 instituciones de servicio en la pestaña Servicios al Nivel 20/20 (las 20 casillas llenas)."
+    },
+    "membangun_kedutaan_besar": {
+      "title": "Construir Embajada",
+      "description": "Guía: Establece embajadas oficiales en los {target} países socios del mundo."
+    },
+    "pakta_non_agresi": {
+      "title": "Pacto de No Agresión",
+      "description": "Guía: Firma pactos de no agresión con los {target} países socios del mundo."
+    },
+    "aliansi_pertahanan": {
+      "title": "Alianza de Defensa",
+      "description": "Guía: Forma alianzas de defensa militar con los {target} países socios del mundo."
+    },
+    "perjanjian_dagang": {
+      "title": "Tratado Comercial",
+      "description": "Guía: Ratifica tratados comerciales bilaterales con los {target} países socios del mundo."
+    },
+    "kontrak_penelitian": {
+      "title": "Contrato de Investigación",
+      "description": "Guía: Firma contratos de investigación científica con los {target} países socios del mundo."
+    },
+    "beri_tentara": {
+      "title": "Enviar Tropas",
+      "description": "Guía: Envía tropas de ayuda militar a los {target} países socios del mundo."
+    },
+    "beri_hadiah": {
+      "title": "Entregar Obsequio",
+      "description": "Guía: Envía obsequios diplomáticos del tesoro a los {target} países socios del mundo."
+    },
+    "tingkatkan_hubungan": {
+      "title": "Mejorar Relaciones",
+      "description": "Guía: Mejora las relaciones bilaterales con los {target} países socios del mundo."
+    },
+    "minta_bantuan": {
+      "title": "Solicitar Ayuda",
+      "description": "Guía: Solicita y recibe asistencia diplomática de los {target} países socios del mundo."
+    },
+    "berikan_wilayah": {
+      "title": "Ceder Territorio",
+      "description": "Guía: Concluye acuerdos territoriales cediendo territorios a {target} países socios del mundo."
     }
   },
   "building_achievements": {
