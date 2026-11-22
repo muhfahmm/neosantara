@@ -283,5 +283,7 @@
       "infrastruktur_militer": "Infrastruktur Militer"
     },
     "total_facilities": "Total Fasilitas Nasional: {total}"
-  }
+  },
+  "noAchievements": "Tidak ada pencapaian yang sesuai dengan filter.",
+  "oneYear": "1 Tahun"
 }

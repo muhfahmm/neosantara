@@ -36,12 +36,12 @@
       "description": "Aumenta la satisfacción ciudadana en +10 respecto al paso anterior hasta alcanzar el 100%."
     },
     "rumah_untuk_semua": {
-      "title": "Homes for All",
-      "description": "Eliminate housing deficits or reduce homelessness to minimum levels."
+      "title": "Hogar para Todos",
+      "description": "Supera el déficit de vivienda o reduce la cantidad de ciudadanos sin hogar al límite mínimo."
     },
     "layanan_untuk_semua": {
-      "title": "Services for All",
-      "description": "Fulfill fundamental population needs such as food, electricity, housing, and public spaces."
+      "title": "Servicios para Todos",
+      "description": "Satisface las necesidades básicas de la población, como alimentos, electricidad, vivienda y espacios públicos."
     },
     "penduduk_sehat": {
       "title": "Población Saludable",
@@ -52,20 +52,20 @@
       "description": "Mantén un crecimiento poblacional con superávit (+) durante 6 meses consecutivos sin déficit (-). Consejo: Asegura alimentos, vivienda y seguridad para evitar pérdidas de población."
     },
     "mandiri_energi": {
-      "title": "Energy Independence",
-      "description": "Cover national electricity needs without deficit for multiple in-game months."
+      "title": "Independencia Energética",
+      "description": "Cubre la demanda eléctrica nacional sin déficit durante varios meses de juego."
     },
     "lumbung_pangan": {
-      "title": "National Granary",
-      "description": "Fulfill national food requirements and maintain a production surplus."
+      "title": "Granero Nacional",
+      "description": "Satisface las necesidades alimentarias de los ciudadanos y logra un superávit de producción."
     },
     "anggaran_sehat": {
       "title": "Presupuesto Saludable",
       "description": "Registra superávit presupuestario y estabilidad fiscal durante {periodText} (evaluación: {targetDate})."
     },
     "bebas_utang": {
-      "title": "Debt Free",
-      "description": "Repay all active sovereign loans and debts in full."
+      "title": "Libre de Deudas",
+      "description": "Liquida la totalidad de los préstamos soberanos y deudas activas del Estado."
     },
     "mitra_dagang_dunia": {
       "title": "Socio Comercial Global",
@@ -76,28 +76,28 @@
       "description": "Mantén el Índice de Satisfacción en Precios Básicos por encima de las metas: 65, 75 y 80. ¡Reclama para activar el siguiente nivel!"
     },
     "pembangun_bangsa": {
-      "title": "Nation Builder",
-      "description": "Construct production, public service, and residential complexes."
+      "title": "Constructor de la Nación",
+      "description": "Construye instalaciones de producción, servicios públicos y complejos residenciales."
     },
     "kota_terhubung": {
       "title": "Connected Metropolis",
       "description": "Develop multiple distinct transportation infrastructures."
     },
     "pelayanan_publik_lengkap": {
-      "title": "Comprehensive Public Care",
-      "description": "Establish education, health, and diverse public service facilities."
+      "title": "Servicios Públicos Integrales",
+      "description": "Construye instalaciones de educación, salud y diversos servicios públicos."
     },
     "penjaga_negeri": {
-      "title": "Guardian of the Realm",
-      "description": "Construct defense installations and maximize naval/armed forces readiness."
+      "title": "Guardián de la Patria",
+      "description": "Construye infraestructura de defensa y eleva al máximo la preparación de las fuerzas armadas y navales."
     },
     "mata_telinga_negara": {
       "title": "Eyes and Ears of the State",
       "description": "Successfully execute covert intelligence operations."
     },
     "wilayah_terkelola": {
-      "title": "Integrated Territory",
-      "description": "Stabilize and develop captured or annexed territorial provinces."
+      "title": "Territorio Gestionado",
+      "description": "Estabiliza y desarrolla los territorios conquistados o anexionados."
     },
     "kesiapan_strategis": {
       "title": "Strategic Preparedness",
@@ -283,5 +283,7 @@
       "infrastruktur_militer": "Infraestructura Militar"
     },
     "total_facilities": "Instalaciones Totales: {total}"
-  }
+  },
+  "noAchievements": "No hay logros que coincidan con el filtro seleccionado.",
+  "oneYear": "1 Año"
 }

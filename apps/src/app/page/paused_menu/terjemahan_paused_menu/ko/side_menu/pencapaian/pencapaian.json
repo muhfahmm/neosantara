@@ -283,5 +283,7 @@
       "infrastruktur_militer": "군사 인프라"
     },
     "total_facilities": "전국 총 시설: {total}개"
-  }
+  },
+  "noAchievements": "선택한 필터와 일치하는 업적이 없습니다.",
+  "oneYear": "1년"
 }

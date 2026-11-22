@@ -1994,10 +1994,7 @@ export default function MissionModals({
 
                       {/* BADGES HADIAH USULAN */}
                       <div className="mt-2 flex flex-wrap items-center gap-2">
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-amber-300">
-                          <Gift className="h-3 w-3" />
-                          {t('side_misi.suggestedReward')}
-                        </span>
+
 
                         {badges.neo !== undefined && (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-500/15 border border-blue-400/40 text-blue-200 font-black text-[10px]">

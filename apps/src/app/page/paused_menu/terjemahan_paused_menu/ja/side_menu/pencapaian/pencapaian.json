@@ -283,5 +283,7 @@
       "infrastruktur_militer": "軍事インフラ"
     },
     "total_facilities": "全国総施設数: {total}棟"
-  }
+  },
+  "noAchievements": "選択したフィルターに一致する実績はありません。",
+  "oneYear": "1年間"
 }

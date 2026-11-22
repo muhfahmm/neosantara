@@ -283,5 +283,7 @@
       "infrastruktur_militer": "军事基础设施"
     },
     "total_facilities": "全国现有总设施：{total}座"
-  }
+  },
+  "noAchievements": "没有符合所选成就筛选条件的内容。",
+  "oneYear": "1年"
 }

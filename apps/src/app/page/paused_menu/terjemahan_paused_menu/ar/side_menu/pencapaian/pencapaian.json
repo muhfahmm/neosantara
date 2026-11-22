@@ -283,5 +283,7 @@
       "infrastruktur_militer": "البنية التحتية العسكرية"
     },
     "total_facilities": "إجمالي المرافق الوطنية: {total}"
-  }
+  },
+  "noAchievements": "لا توجد إنجازات تطابق التصفية المحددة.",
+  "oneYear": "سنة واحدة"
 }

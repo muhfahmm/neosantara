@@ -283,5 +283,7 @@
       "infrastruktur_militer": "Military Infrastructure"
     },
     "total_facilities": "Total National Facilities: {total}"
-  }
+  },
+  "noAchievements": "No achievements match the selected filter.",
+  "oneYear": "1 Year"
 }

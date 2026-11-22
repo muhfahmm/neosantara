@@ -283,5 +283,7 @@
       "infrastruktur_militer": "Militärische Infrastruktur"
     },
     "total_facilities": "Gesamte Nationale Anlagen: {total}"
-  }
+  },
+  "noAchievements": "Keine Erfolge entsprechen dem ausgewählten Filter.",
+  "oneYear": "1 Jahr"
 }

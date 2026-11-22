@@ -2010,25 +2010,10 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
     setTimeout(() => setToastMessage(null), 4000);
   };
 
-  const categories = [
-    { id: 'all', label: t('side_pencapaian.categories.all') },
-    { id: 'kepuasan', label: t('side_pencapaian.categories.kepuasan') },
-    { id: 'populasi', label: t('side_pencapaian.categories.populasi') },
-    { id: 'produksi', label: t('side_pencapaian.categories.produksi') },
-    { id: 'ekonomi', label: t('side_pencapaian.categories.ekonomi') },
-    { id: 'pembangunan', label: t('side_pencapaian.categories.pembangunan') },
-    { id: 'penelitian', label: t('side_pencapaian.categories.penelitian') },
-    { id: 'kementerian', label: t('side_pencapaian.categories.kementerian') },
-    { id: 'geopolitik', label: t('side_pencapaian.categories.geopolitik') },
-    { id: 'sosial_budaya', label: t('side_pencapaian.categories.sosial_budaya') },
-    { id: 'pertahanan', label: t('side_pencapaian.categories.pertahanan') },
-    { id: 'tanggap_darurat', label: t('side_pencapaian.categories.tanggap_darurat') },
-  ];
-
   return (
     <div className="flex-1 flex flex-col min-h-0 bg-root-canvas overflow-hidden">
-      {/* HEADER / TOOLBAR FILTER */}
-      <div className="shrink-0 p-3 sm:p-4 border-b border-root-accent/20 bg-root-surface/50 space-y-3">
+      {/* HEADER / STATUS BAR (TANPA TAB KATEGORI PILIHAN) */}
+      <div className="shrink-0 p-3 sm:p-4 border-b border-root-accent/20 bg-root-surface/50">
         {/* Status bar */}
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
@@ -2078,27 +2063,6 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
             </button>
           </div>
         </div>
-
-        {/* Category Pills Slider */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
-          {categories.map((cat) => {
-            const isSelected = selectedCategory === cat.id;
-            return (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`shrink-0 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase whitespace-nowrap transition-all border ${
-                  isSelected
-                    ? 'border-root-accent bg-root-accent/20 text-root-accent shadow-sm'
-                    : 'border-root-accent/15 bg-root-surface text-root-subtle hover:border-root-accent/40 hover:text-root-text'
-                }`}
-              >
-                {cat.label}
-              </button>
-            );
-          })}
-        </div>
       </div>
 
       {/* TOAST FEEDBACK */}
@@ -2114,7 +2078,7 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
         {filteredList.map((item) => {
           const Icon = item.icon;
           let title = item.dynamicTitle || t(`side_pencapaian.items.${item.id}.title`) || item.id;
-          let description = item.dynamicDescription || t(`side_pencapaian.items.${item.id}.description`) || '';
+          let description = t(`side_pencapaian.items.${item.id}.description`) || item.dynamicDescription || '';
 
           // Format dinamis untuk 17 kategori pembangunan & militer bertahap
           if (item.id.startsWith('bangun_')) {
@@ -2146,8 +2110,9 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
           if (item.id === 'anggaran_sehat') {
             const now = currentDate || new Date();
             const targetYear = now.getFullYear() + 1;
+            const oneYearText = t('side_pencapaian.oneYear') || '1 Tahun';
             description = description
-              .replace('{periodText}', '1 Tahun')
+              .replace('{periodText}', oneYearText)
               .replace('{targetDate}', `31/12/${targetYear}`);
           }
 
@@ -2231,11 +2196,6 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
 
                 {/* BADGES HADIAH USULAN */}
                 <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-amber-300">
-                    <Gift className="h-3 w-3" />
-                    {t('side_misi.suggestedReward')}
-                  </span>
-
                   {item.reward.neo !== undefined && (
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-500/15 border border-blue-400/40 text-blue-200 font-black text-[10px]">
                       <Coins className="h-3 w-3 text-blue-300" />
@@ -2292,7 +2252,7 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
 
         {filteredList.length === 0 && (
           <div className="p-8 text-center text-root-subtle text-xs">
-            Tidak ada pencapaian yang sesuai dengan filter.
+            {t('side_pencapaian.noAchievements') || 'Tidak ada pencapaian yang sesuai dengan filter.'}
           </div>
         )}
       </div>
