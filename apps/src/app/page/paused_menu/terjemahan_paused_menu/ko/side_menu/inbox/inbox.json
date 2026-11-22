@@ -250,7 +250,7 @@
     "pemberontakanTitle": "🔥 {country}에서 무장 반란 발생",
     "pemberontakanSender": "{country} 보안 당국",
     "pemberontakanBadge": "지역 반란",
-    "pemberontakanEffect": "분리주의 위험: {risk} | 국가 불안정 위험",
+    "pemberontakanEffect": "분리주의 위험 (연간 / 월간 / 일간): {risk} | 국가 불안정 위험",
     "independenceDeclarationRisk": "독립 선언 위험",
     "affectedRegion": "피해 국가/지역: {province}",
     "risk": "위험도: {risk}",

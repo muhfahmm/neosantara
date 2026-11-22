@@ -389,7 +389,7 @@ export function getActiveUserCountryName(userCountryName?: string): string {
 
 /**
  * Default awal game / setelah refresh: KOSONG.
- * Sidang baru hanya muncul dari pemicu bulanan (25%/bulan) atau dibuat oleh pemain.
+ * Sidang baru muncul dari pemicu harian dengan peluang tahunan 15% atau dibuat oleh pemain.
  */
 export function getInitialActiveResolutions(_userCountryName: string = 'Indonesia'): ActiveResolutionItem[] {
   return [];
@@ -404,8 +404,8 @@ const RESOLUTION_TYPE_META: Record<string, { label: string; desc: string }> = {
 };
 
 /**
- * Membuat sidang Majelis Umum PBB nyata dari hasil pemicu bulanan AI.
- * Notifikasi inbox sudah dikirim oleh pemicu bulanan, jadi notifiedDay1 = true agar tidak dobel.
+ * Membuat sidang Majelis Umum PBB dari hasil pemicu harian AI.
+ * Notifikasi inbox sudah dikirim oleh pemicu, jadi notifiedDay1 = true agar tidak dobel.
  */
 export function spawnAIResolutionFromTrigger(
   trigger: {

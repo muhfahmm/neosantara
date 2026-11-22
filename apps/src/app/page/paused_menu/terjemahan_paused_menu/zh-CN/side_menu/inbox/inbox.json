@@ -250,7 +250,7 @@
     "pemberontakanTitle": "🔥 {country} 爆发武装暴动",
     "pemberontakanSender": "{country}安全部门",
     "pemberontakanBadge": "区域叛乱",
-    "pemberontakanEffect": "分离主义风险：{risk} | 国家动荡风险",
+    "pemberontakanEffect": "分离主义风险（年 / 月 / 日）：{risk} | 国家动荡风险",
     "independenceDeclarationRisk": "独立宣言风险",
     "affectedRegion": "波及省份/地区：{province}",
     "risk": "暴乱风险：{risk}",

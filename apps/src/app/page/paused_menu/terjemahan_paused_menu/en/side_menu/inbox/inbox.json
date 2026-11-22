@@ -250,7 +250,7 @@
     "pemberontakanTitle": "🔥 ARMED INSURGENCY IN {country}",
     "pemberontakanSender": "Security Authority of {country}",
     "pemberontakanBadge": "Regional Insurgency",
-    "pemberontakanEffect": "Separatism Risk: {risk} | National Instability Risk",
+    "pemberontakanEffect": "Separatism Risk (year / month / day): {risk} | National Instability Risk",
     "independenceDeclarationRisk": "Independence Declaration Risk",
     "affectedRegion": "Affected Nation/Region: {province}",
     "risk": "Risk: {risk}",

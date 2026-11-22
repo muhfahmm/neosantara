@@ -250,7 +250,7 @@
     "pemberontakanTitle": "🔥 PEMBERONTAKAN BERSENJATA DI {country}",
     "pemberontakanSender": "Otoritas Keamanan {country}",
     "pemberontakanBadge": "Pemberontakan Daerah",
-    "pemberontakanEffect": "Risiko Separatisme: {risk} | Risiko Instabilitas Nasional",
+    "pemberontakanEffect": "Risiko Separatisme (tahun / bulan / hari): {risk} | Risiko Instabilitas Nasional",
     "independenceDeclarationRisk": "Risiko Deklarasi Kemerdekaan",
     "affectedRegion": "Negara/Wilayah Terdampak: {province}",
     "risk": "Risiko: {risk}",

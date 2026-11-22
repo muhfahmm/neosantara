@@ -438,15 +438,15 @@ export function getActiveUserCountryName(userCountryName?: string): string {
 
 /**
  * Default awal game / setelah refresh: KOSONG.
- * Sidang DK PBB baru hanya muncul dari pemicu bulanan (25%/bulan) atau dibuat oleh pemain.
+ * Sidang DK PBB baru muncul dari pemicu harian dengan peluang tahunan 10% atau dibuat oleh pemain.
  */
 export function getInitialActiveSecurityCouncilItems(_userCountryName: string = 'Indonesia'): ActiveSecurityCouncilItem[] {
   return [];
 }
 
 /**
- * Membuat sidang Dewan Keamanan PBB nyata dari hasil pemicu bulanan AI.
- * Notifikasi inbox sudah dikirim oleh pemicu bulanan, jadi notifiedDay1 = true agar tidak dobel.
+ * Membuat sidang Dewan Keamanan PBB dari hasil pemicu harian AI.
+ * Notifikasi inbox sudah dikirim oleh pemicu, jadi notifiedDay1 = true agar tidak dobel.
  */
 export function spawnAISecurityCouncilFromTrigger(
   trigger: { proposerCountry: string; targetCountry: string; securityAction: string; duration?: string; violationId?: string },

@@ -92,8 +92,8 @@ export function generateAIKeamananPBBNotification(
 }
 
 /**
- * Mengecek dan mengevaluasi pemicu acak (25% per bulan ~ 3-5x per tahun)
- * untuk pengajuan Resolusi Dewan Keamanan PBB dari AI ke negara dengan skor hubungan 1-20.
+ * Mengevaluasi pemicu harian yang dikonversi dari peluang tahunan 10%
+ * untuk pengajuan Resolusi Dewan Keamanan PBB dari AI ke negara dengan skor hubungan 1-30.
  */
 export function evaluateAIKeamananPBBTrigger(
   allCountries: string[],

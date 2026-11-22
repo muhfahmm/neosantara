@@ -250,7 +250,7 @@
     "pemberontakanTitle": "🔥 INSURRECCIÓN ARMADA EN {country}",
     "pemberontakanSender": "Autoridad de Seguridad de {country}",
     "pemberontakanBadge": "Rebelión Regional",
-    "pemberontakanEffect": "Riesgo separatista: {risk} | Riesgo de inestabilidad nacional",
+    "pemberontakanEffect": "Riesgo separatista (año / mes / día): {risk} | Riesgo de inestabilidad nacional",
     "independenceDeclarationRisk": "Riesgo de declaración de independencia",
     "affectedRegion": "Región Afectada: {province}",
     "risk": "Riesgo: {risk}",

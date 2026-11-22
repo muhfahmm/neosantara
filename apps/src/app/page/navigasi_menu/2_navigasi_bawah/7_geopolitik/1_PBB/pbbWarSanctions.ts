@@ -17,9 +17,9 @@ const WAR_SANCTION_HISTORY_KEY = 'pbb_war_sanction_history_v1';
 const LEGACY_REPORTED_VIOLATIONS_KEY = 'pbb_reported_war_ban_violations_v1';
 const ATTACK_COUNTER_KEY_PREFIX = 'pbb_war_attack_counter_v1:';
 
-export const PBB_REGULAR_TRIGGER_PROBABILITIES = {
-  generalAssembly: 0.15,
-  securityCouncil: 0.05,
+export const PBB_REGULAR_TRIGGER_ANNUAL_CHANCE_PERCENT = {
+  generalAssembly: 15,
+  securityCouncil: 10,
 } as const;
 
 export type WarSanctionType =
@@ -196,14 +196,10 @@ export function pickSanctionTier(input: {
 export function selectSanctionTypes(input: {
   attackResult: WarSanctionAttackResult;
   violationCount: number;
-  activeSanctions: readonly WarSanctionType[];
   rng?: () => number;
 }): { tier: 1 | 2 | 3; types: WarSanctionType[] } {
   const tier = pickSanctionTier(input);
   const tierOptions = WAR_SANCTION_CONFIG.tiers[tier].types;
-  if (tierOptions.some(option => input.activeSanctions.includes(option.type as WarSanctionType))) {
-    return { tier, types: [] };
-  }
   const candidates = tierOptions;
 
   const totalWeight = candidates.reduce((sum, option) => sum + option.weight, 0);
@@ -225,24 +221,6 @@ function isWithinHistoryWindow(date: string, currentDate: string): boolean {
   if (![year, month, currentYear, currentMonth].every(Number.isFinite)) return false;
   const monthDifference = (currentYear - year) * 12 + currentMonth - month;
   return monthDifference >= 0 && monthDifference <= WAR_SANCTION_CONFIG.historyWindowMonths;
-}
-
-function getActiveSanctionTypes(attackerIdentity: string): WarSanctionType[] {
-  const activeAssemblySanctions = loadActiveResolutions()
-    .filter(item =>
-      getWarCountryIdentity(item.target.name) === attackerIdentity &&
-      (item.status === 'voting' || (item.status === 'passed' && item.daysRemaining > 0)) &&
-      ['arms_embargo', 'economic_embargo'].includes(item.type)
-    )
-    .map(item => item.type as WarSanctionType);
-  const activeSecuritySanctions = loadActiveSecurityCouncilItems()
-    .filter(item =>
-      getWarCountryIdentity(item.target.name) === attackerIdentity &&
-      (item.status === 'voting' || (item.status === 'passed' && item.daysRemaining > 0)) &&
-      ['economic', 'naval', 'full', 'military'].includes(item.type)
-    )
-    .map(item => item.type as WarSanctionType);
-  return [...activeAssemblySanctions, ...activeSecuritySanctions];
 }
 
 function getSanctionTitle(type: WarSanctionType): string {
@@ -357,11 +335,9 @@ export function submitInvasionViolationSanctions(
     { attackId, date: dateStr, attackerIdentity, targetIdentity },
   ];
   persistHistory();
-  const activeSanctions = getActiveSanctionTypes(attackerIdentity);
   const selection = selectSanctionTypes({
     attackResult: options.attackResult || 'failed',
     violationCount,
-    activeSanctions,
     rng: options.rng,
   });
   if (selection.types.length === 0) return [];

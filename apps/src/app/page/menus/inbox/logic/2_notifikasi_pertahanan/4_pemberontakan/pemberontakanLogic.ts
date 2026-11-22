@@ -14,15 +14,21 @@ export interface PemberontakanNotification extends NotificationMessage {
   isHandled?: boolean;
 }
 
+export interface SeparatismeChanceRates {
+  annualPercent: number;
+  monthlyPercent: number;
+  dailyPercent: number;
+}
+
 /**
- * Menghitung tingkat risiko separatisme (%) berdasarkan:
+ * Menghitung peluang tahunan risiko separatisme berdasarkan:
  * - Kekurangan Kepuasan: (100 - Kepuasan) %
  * - Kekurangan Kesejahteraan: (100 - Kesejahteraan) %
  * - Rata-rata risiko dasar = (Defisit Kepuasan + Defisit Kesejahteraan) / 2
  * - Dikurangi oleh bonus penelitian "Pencegahan Separatisme" jika sudah diteliti.
  * - Dikurangi oleh bonus Garda Nasional (Departemen Keamanan).
  */
-export function calculateSeparatismeRiskPercent(
+export function calculateSeparatismeAnnualChancePercent(
   countryDetail: Record<string, any> | null | undefined
 ): number {
   if (!countryDetail) return 0;
@@ -47,14 +53,20 @@ export function calculateSeparatismeRiskPercent(
   return Math.max(0, Math.min(100, Math.round(finalRisk * 10) / 10));
 }
 
+function formatChancePercent(percent: number): string {
+  return `${Number(percent.toFixed(4))}%`;
+}
+
 export function generatePemberontakanNotification(
   countryName: string,
   dateStr: string,
-  riskPercent?: number
+  chanceRates: SeparatismeChanceRates
 ): PemberontakanNotification {
-  const displayRisk = riskPercent !== undefined
-    ? `${riskPercent}%`
-    : getDefaultInboxText('side_inbox.defense.independenceDeclarationRisk');
+  const displayRisk = [
+    formatChancePercent(chanceRates.annualPercent),
+    formatChancePercent(chanceRates.monthlyPercent),
+    formatChancePercent(chanceRates.dailyPercent),
+  ].join(' / ');
   const titleKey = 'side_inbox.defense.pemberontakanTitle';
   const titleParams = { country: countryName };
   const senderKey = 'side_inbox.defense.pemberontakanSender';

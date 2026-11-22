@@ -250,7 +250,7 @@
     "pemberontakanTitle": "🔥 BEWAFFNETER AUFSTAND IN {country}",
     "pemberontakanSender": "Sicherheitsbehörde von {country}",
     "pemberontakanBadge": "Regionaler Aufstand",
-    "pemberontakanEffect": "Separatismusrisiko: {risk} | Risiko nationaler Instabilität",
+    "pemberontakanEffect": "Separatismusrisiko (Jahr / Monat / Tag): {risk} | Risiko nationaler Instabilität",
     "independenceDeclarationRisk": "Risiko einer Unabhängigkeitserklärung",
     "affectedRegion": "Betroffenes Land/Gebiet: {province}",
     "risk": "Risiko: {risk}",

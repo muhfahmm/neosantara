@@ -194,6 +194,7 @@ import {
     canPandemicOccur,
     canEpidemicOccur,
     getDailyOutbreakChancePercent,
+    getMonthlyOutbreakChancePercent,
     getPandemicBaseChancePercentByYear,
     handleMedicalAssistance,
     deactivateOutbreak,
@@ -215,7 +216,7 @@ import {
     generateDiserangNotification,
     getAttackChancePercentFromRelation,
 } from '../menus/inbox/logic/2_notifikasi_pertahanan/3_diserang/diserangLogic';
-import { generatePemberontakanNotification, calculateSeparatismeRiskPercent } from '../menus/inbox/logic/2_notifikasi_pertahanan/4_pemberontakan/pemberontakanLogic';
+import { generatePemberontakanNotification, calculateSeparatismeAnnualChancePercent } from '../menus/inbox/logic/2_notifikasi_pertahanan/4_pemberontakan/pemberontakanLogic';
 import { applyDoktrinPertahananDiriBonus, applyWarCasualtyToPopulation } from '../bonus_logic';
 import { generateICBMNotification, generateProgramNuklirSelesaiNotification, generateUjicobaNuklirAINotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/5_icbm/icbmLogic';
 import { isNegaraNuklirBawaan, getNegaraNuklirBaseIcbm } from '@/app/logic/npc_ai_brain/military/nuclearControllerAI';
@@ -305,7 +306,7 @@ import {
     getApprovedInvasionMandatesSnapshot,
     isUnauthorizedInvasion,
     isTradeEmbargoActive,
-    PBB_REGULAR_TRIGGER_PROBABILITIES,
+    PBB_REGULAR_TRIGGER_ANNUAL_CHANCE_PERCENT,
     submitInvasionViolationSanctions,
     type ApprovedInvasionMandateSnapshot,
     type WarSanctionAttackResult
@@ -5987,14 +5988,26 @@ export default function MapPage() {
             }
 
             // 5. Notifikasi Pertahanan & Intelijen (Spionase, Sabotase, Diserang, Pemberontakan, ICBM)
-            const separatismeRisk = calculateSeparatismeRiskPercent(countryDetail);
-            const isSeparatismeTriggered = separatismeRisk > 0 && (Math.random() * 100 < separatismeRisk);
+            const separatismeAnnualChancePercent = calculateSeparatismeAnnualChancePercent(countryDetail);
+            const separatismeMonthlyChancePercent = getMonthlyOutbreakChancePercent(
+                separatismeAnnualChancePercent,
+            );
+            const separatismeDailyChancePercent = getDailyOutbreakChancePercent(
+                separatismeAnnualChancePercent,
+                daysInYear,
+            );
+            const isSeparatismeTriggered = separatismeAnnualChancePercent > 0 &&
+                Math.random() * 100 < separatismeDailyChancePercent;
             const defensePartners = internationalPool.filter(
                 partner => partner.trim().toLowerCase() !== userCountryName.trim().toLowerCase()
             );
 
             if (isSeparatismeTriggered) {
-                newNotifsToAdd.push(generatePemberontakanNotification(userCountryName, currentDateStr, separatismeRisk));
+                newNotifsToAdd.push(generatePemberontakanNotification(userCountryName, currentDateStr, {
+                    annualPercent: separatismeAnnualChancePercent,
+                    monthlyPercent: separatismeMonthlyChancePercent,
+                    dailyPercent: separatismeDailyChancePercent,
+                }));
             }
 
             const COVERT_OPS_ANNUAL_CHANCE_PERCENT = 25;
@@ -6452,10 +6465,17 @@ export default function MapPage() {
                 }
             });
 
-            // 5F & 5G. Usulan Resolusi PBB & Dewan Keamanan PBB oleh AI.
-            // Satu kali undian per bulan agar presisi:
-            const triggerRes = Math.random() < PBB_REGULAR_TRIGGER_PROBABILITIES.generalAssembly;
-            const triggerSec = Math.random() < PBB_REGULAR_TRIGGER_PROBABILITIES.securityCouncil;
+            // Annual PBB chances are converted to daily rolls, like outbreak chances.
+            const generalAssemblyDailyChancePercent = getDailyOutbreakChancePercent(
+                PBB_REGULAR_TRIGGER_ANNUAL_CHANCE_PERCENT.generalAssembly,
+                daysInYear,
+            );
+            const securityCouncilDailyChancePercent = getDailyOutbreakChancePercent(
+                PBB_REGULAR_TRIGGER_ANNUAL_CHANCE_PERCENT.securityCouncil,
+                daysInYear,
+            );
+            const triggerRes = Math.random() * 100 < generalAssemblyDailyChancePercent;
+            const triggerSec = Math.random() * 100 < securityCouncilDailyChancePercent;
 
             if (triggerRes) {
                 const aiResNotif = evaluateAIResolusiPBBTrigger(

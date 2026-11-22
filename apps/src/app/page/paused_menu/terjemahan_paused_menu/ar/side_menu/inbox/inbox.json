@@ -250,7 +250,7 @@
     "pemberontakanTitle": "🔥 تمرد مسلح في {country}",
     "pemberontakanSender": "السلطة الأمنية في {country}",
     "pemberontakanBadge": "تمرد إقليمي",
-    "pemberontakanEffect": "خطر الانفصال: {risk} | خطر عدم الاستقرار الوطني",
+    "pemberontakanEffect": "خطر الانفصال (السنة / الشهر / اليوم): {risk} | خطر عدم الاستقرار الوطني",
     "independenceDeclarationRisk": "خطر إعلان الاستقلال",
     "affectedRegion": "الدولة/المنطقة المتضررة: {province}",
     "risk": "مستوى الخطر: {risk}",
