@@ -1,16 +1,17 @@
 'use client';
 
-import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
-    Play, Settings, Save, LogOut, Globe, Shield, Trash2, Calendar, Landmark,
-    TrendingUp, AlertTriangle, Activity, Radio, User, Signal, Crosshair,
+    Play, Settings, Save, LogOut, Globe, Shield,
+    TrendingUp, AlertTriangle, Activity, Radio, User, Signal, Crosshair, ScrollText,
     Wifi, Cpu, HardDrive, Star, Zap
 } from 'lucide-react';
 import Link from 'next/link';
-import { GameMenuModal } from './paused_menu/GameMenuModal';
 import { ExitConfirmModal } from './paused_menu/ExitConfirmModal';
+import { CreditsMenu } from './credits_menu/CreditsMenu';
+import { MainMenuContinueScreen, type MainMenuSave } from './main_menu/MainMenuContinueScreen';
+import { MainMenuSettingsScreen } from './main_menu/MainMenuSettingsScreen';
 import { soundManager } from '@/lib/soundManager';
 import { MOBILE_PREBAKED_CONTINENTS } from './map_system/rust_map_mobile/mobilePrebakedPaths';
 import { isMobileDevice } from './map_system/rust_map_mobile';
@@ -997,10 +998,9 @@ export default function PlayMenuPage() {
     const [isLoaded, setIsLoaded] = useState(false);
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-    const [isContinueModalOpen, setIsContinueModalOpen] = useState(false);
-    const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+    const [mainMenuScreen, setMainMenuScreen] = useState<'menu' | 'continue' | 'settings' | 'credits'>('menu');
     const [isExitModalOpen, setIsExitModalOpen] = useState(false);
-    const [saveFiles, setSaveFiles] = useState<any[]>([]);
+    const [saveFiles, setSaveFiles] = useState<MainMenuSave[]>([]);
     const [isLoadingSaves, setIsLoadingSaves] = useState(false);
 
     useEffect(() => {
@@ -1027,9 +1027,9 @@ export default function PlayMenuPage() {
         }
     };
 
-    const openContinueModal = () => {
+    const openContinueScreen = () => {
         fetchSaveFiles();
-        setIsContinueModalOpen(true);
+        setMainMenuScreen('continue');
     };
 
     const handleDeleteSave = async (id: number, e: React.MouseEvent) => {
@@ -1048,15 +1048,36 @@ export default function PlayMenuPage() {
         }
     };
 
-    const handleLoadSave = (save: any) => {
+    const handleLoadSave = (save: MainMenuSave) => {
         sessionStorage.setItem('presiden_simulator_load_save', JSON.stringify(save));
         window.location.href = `/page/map_system?country=${encodeURIComponent(save.country_name)}`;
     };
+
+    if (mainMenuScreen === 'continue') {
+        return (
+            <MainMenuContinueScreen
+                saves={saveFiles}
+                isLoading={isLoadingSaves}
+                onBack={() => setMainMenuScreen('menu')}
+                onLoad={handleLoadSave}
+                onDelete={handleDeleteSave}
+            />
+        );
+    }
+
+    if (mainMenuScreen === 'settings') {
+        return <MainMenuSettingsScreen onBack={() => setMainMenuScreen('menu')} />;
+    }
+
+    if (mainMenuScreen === 'credits') {
+        return <CreditsMenu onBack={() => setMainMenuScreen('menu')} />;
+    }
 
     const menuItems = [
         { id: 'start', label: t('menu_utama.start_label'), sub: t('menu_utama.start_sub'), icon: Play, color: '#10b981', path: '/page/map_system/pilih-negara' },
         { id: 'continue', label: t('menu_utama.continue_label'), sub: t('menu_utama.continue_sub'), icon: Save, color: '#3b82f6', path: '#' },
         { id: 'settings', label: t('menu_utama.settings_label'), sub: t('menu_utama.settings_sub'), icon: Settings, color: '#f59e0b', path: '#' },
+        { id: 'credits', label: t('menu_utama.credits_label'), sub: t('menu_utama.credits_sub'), icon: ScrollText, color: '#10b981', path: '#' },
         { id: 'exit', label: t('menu_utama.exit_label'), sub: t('menu_utama.exit_sub'), icon: LogOut, color: '#ef4444', path: '#' },
     ];
 
@@ -1217,7 +1238,7 @@ export default function PlayMenuPage() {
                                         className="w-full opacity-100"
                                     >
                                         {item.id === 'continue' ? (
-                                            <button type="button" onClick={openContinueModal} className={btnClass}>{inner}</button>
+                                            <button type="button" onClick={openContinueScreen} className={btnClass}>{inner}</button>
                                         ) : item.path === '#' ? (
                                             <button
                                                 type="button"
@@ -1225,7 +1246,9 @@ export default function PlayMenuPage() {
                                                     if (item.id === 'exit') {
                                                         setIsExitModalOpen(true);
                                                     } else if (item.id === 'settings') {
-                                                        setIsSettingsModalOpen(true);
+                                                        setMainMenuScreen('settings');
+                                                    } else if (item.id === 'credits') {
+                                                        setMainMenuScreen('credits');
                                                     } else {
                                                         alert(t('menu_utama.settings_coming_soon'));
                                                     }
@@ -1271,126 +1294,6 @@ export default function PlayMenuPage() {
                 {/* Corner accents (outside) */}
                 <div className="hidden sm:block absolute top-4 left-4 sm:top-8 sm:left-8 p-4 border-l border-t border-white/10 w-16 h-16 sm:w-24 sm:h-24 pointer-events-none" />
                 <div className="hidden sm:block absolute bottom-4 right-4 sm:bottom-8 sm:right-8 p-4 border-r border-b border-white/10 w-16 h-16 sm:w-24 sm:h-24 pointer-events-none" />
-
-                {/* ============================================
-                    CONTINUE MODAL
-                    ============================================ */}
-                <AnimatePresence>
-                    {isContinueModalOpen && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6">
-                            <motion.div
-                                initial={{ scale: 0.95, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                exit={{ scale: 0.95, opacity: 0 }}
-                                transition={{ duration: 0.3 }}
-                                className="modal-responsive-shell bg-slate-950/95 border-2 border-emerald-500/20 rounded-2xl p-4 sm:p-6 md:p-8 shadow-[0_0_50px_rgba(16,185,129,0.1)] relative overflow-hidden flex flex-col font-sans text-left"
-                            >
-                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.05)_0%,transparent_60%)] pointer-events-none" />
-
-                                <div className="flex items-center justify-between mb-4 sm:mb-6 border-b border-white/10 pb-3 sm:pb-4 z-10">
-                                    <div className="flex items-center gap-2.5 sm:gap-3">
-                                        <Save className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500 shrink-0" />
-                                        <h2 className="text-lg sm:text-xl md:text-2xl font-black text-white tracking-widest">
-                                            {t('menu_utama.continue_modal_title')}
-                                        </h2>
-                                    </div>
-                                    <button
-                                        onClick={() => setIsContinueModalOpen(false)}
-                                        className="text-slate-400 hover:text-white font-bold text-lg cursor-pointer transition-colors p-1"
-                                    >
-                                        ✕
-                                    </button>
-                                </div>
-
-                                <div className="flex-1 overflow-y-auto pr-1 space-y-4 no-scrollbar z-10">
-                                    {isLoadingSaves ? (
-                                        <div className="flex flex-col items-center justify-center py-12 gap-3 text-slate-400 font-bold">
-                                            <div className="w-8 h-8 rounded-full border-4 border-emerald-500/20 border-t-emerald-500 animate-spin" />
-                                            <span>{t('menu_utama.loading_saves')}</span>
-                                        </div>
-                                    ) : saveFiles.length === 0 ? (
-                                        <div className="flex flex-col items-center justify-center py-16 text-center gap-3 border border-white/5 bg-white/2 rounded-xl">
-                                            <Globe className="w-12 h-12 text-slate-600" />
-                                            <span className="text-slate-400 font-bold tracking-wider uppercase text-sm">
-                                                {t('menu_utama.no_saves_title')}
-                                            </span>
-                                            <p className="text-slate-500 text-xs max-w-xs leading-relaxed">
-                                                {t('menu_utama.no_saves_desc')}
-                                            </p>
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-3 font-sans">
-                                            {saveFiles.map((save) => (
-                                                <div
-                                                    key={save.id}
-                                                    onClick={() => handleLoadSave(save)}
-                                                    className="group relative flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-emerald-500/30 transition-all duration-300 cursor-pointer hover:scale-[1.01]"
-                                                >
-                                                    <div className="flex items-start gap-4">
-                                                        <img
-                                                            src={`https://flagcdn.com/w80/${save.country_iso.toLowerCase()}.png`}
-                                                            className="w-12 h-8 rounded object-cover border border-white/10 shadow-md shrink-0 mt-0.5"
-                                                            alt="flag"
-                                                            onError={(e) => {
-                                                                (e.target as HTMLImageElement).src = 'https://flagcdn.com/w80/un.png';
-                                                            }}
-                                                        />
-                                                        <div className="flex flex-col">
-                                                            <span className="text-base font-black text-white group-hover:text-emerald-400 transition-colors uppercase leading-tight">
-                                                                {save.save_name}
-                                                            </span>
-                                                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-400 mt-2 font-bold">
-                                                                <span className="flex items-center gap-1.5">
-                                                                    <Globe className="w-3.5 h-3.5 text-emerald-500" />
-                                                                    {save.country_name}
-                                                                </span>
-                                                                <span className="flex items-center gap-1.5">
-                                                                    <Calendar className="w-3.5 h-3.5 text-blue-400" />
-                                                                    {new Date(save.game_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                                                                </span>
-                                                                <span className="flex items-center gap-1.5">
-                                                                    <Landmark className="w-3.5 h-3.5 text-amber-500" />
-                                                                    {save.anggaran ? `${save.anggaran.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO` : '0 NEO'}
-                                                                </span>
-                                                                <span className="text-[9px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 uppercase tracking-wider font-extrabold shrink-0">
-                                                                    {save.ideology || '-'}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <button
-                                                        onClick={(e) => handleDeleteSave(save.id, e)}
-                                                        title={t('menu_utama.delete_save_title')}
-                                                        className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-all cursor-pointer z-20 shrink-0 self-center"
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </button>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="mt-6 border-t border-white/10 pt-4 flex justify-end z-10 font-sans">
-                                    <SharedModalCloseButton
-                                        onClick={() => setIsContinueModalOpen(false)}
-                                        className="py-2.5 px-6 rounded-xl border border-white/10 hover:bg-white/5 active:bg-white/10 text-slate-300 font-bold text-xs uppercase transition-all cursor-pointer"
-                                     appearance="custom">
-                                        {t('menu_utama.close')}
-                                    </SharedModalCloseButton>
-                                </div>
-                            </motion.div>
-                        </div>
-                    )}
-                </AnimatePresence>
-
-                <GameMenuModal
-                    isOpen={isSettingsModalOpen}
-                    onClose={() => setIsSettingsModalOpen(false)}
-                    onSaveGameClick={() => {}}
-                    onRestartClick={() => {}}
-                />
 
                 <ExitConfirmModal
                     isOpen={isExitModalOpen}

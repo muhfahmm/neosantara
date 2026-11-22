@@ -1,0 +1,48 @@
+.viewport::after {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  content: "";
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 3px,
+    rgb(0 255 170 / 2.5%) 4px
+  );
+}
+
+.viewport {
+  position: relative;
+  mask-image: linear-gradient(transparent, black 12%, black 88%, transparent);
+}
+
+.roll {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 56rem);
+  margin-inline: auto;
+  padding: 42vh 1.25rem 42vh;
+  animation: credits-roll 85s linear forwards;
+}
+
+@keyframes credits-roll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(-100% + 50vh));
+  }
+}
+
+@media (min-width: 640px) {
+  .roll {
+    padding-inline: 2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roll {
+    animation: none;
+  }
+}
