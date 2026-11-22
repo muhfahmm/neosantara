@@ -10,7 +10,6 @@ import {
   normalizeElectionState,
   resolveElection,
   SECURITY_COUNCIL_ELECTION_STATE_KEY,
-  type ElectionCountry,
   type SecurityCouncilElectionState,
   type SecurityCouncilMember,
 } from "./securityCouncilElection";
@@ -45,6 +44,7 @@ export default function SecurityCouncilElectionPanel({
   const nominationOpen = electionWindow && currentDay >= 1 && currentDay < 15;
   const campaignOpen = electionWindow && currentDay >= 15 && currentDay < 25;
   const votingOpen = electionWindow && currentDay >= 25 && currentDay <= 30;
+  const scheduleYear = election.phase === "completed" ? election.nextElectionYear : election.year;
   const [profiles, setProfiles] = useState<CountryProfile[]>([]);
   const [profilesLoaded, setProfilesLoaded] = useState(false);
   const [error, setError] = useState("");
@@ -155,11 +155,15 @@ export default function SecurityCouncilElectionPanel({
     updateElection(next);
   };
 
-  const phaseLabel = election.phase === "nomination"
-    ? pbb("election.phaseNomination")
-    : election.phase === "campaign"
-      ? pbb("election.phaseCampaign")
-      : pbb("election.phaseResults");
+  const phaseLabel = election.phase === "completed"
+    ? pbb("election.phaseResults")
+    : !electionWindow
+      ? pbb("election.phaseWaiting")
+      : election.phase === "nomination"
+        ? pbb("election.phaseNomination")
+        : election.phase === "campaign"
+          ? pbb("election.phaseCampaign")
+          : pbb("election.phaseVoting");
 
   return (
     <section className="rounded-xl border border-cyan-500/25 bg-root-canvas p-5 space-y-4">
@@ -169,42 +173,47 @@ export default function SecurityCouncilElectionPanel({
             {pbb("election.title")}
           </h4>
           <p className="mt-1 text-[11px] text-[#8AA4A4]">
-            {pbb("election.details", { year: election.year, cohort: election.cohort })}
-          </p>
-          <p className="mt-1 text-[10px] text-cyan-200/80">
             {pbb("election.activeMembers")}
           </p>
-          <p className="mt-1 text-[10px] text-[#789090]">
-            {pbb("election.location")}
-          </p>
         </div>
-        <span className="rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-1 text-[10px] font-bold uppercase text-cyan-300">
-          {phaseLabel}
-        </span>
-      </div>
-
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-        {[
-          [pbb("election.metricDiplomacy"), "30%"],
-          [pbb("election.metricInfluence"), "25%"],
-          [pbb("election.metricContribution"), "20%"],
-          [pbb("election.metricSoftPower"), "15%"],
-          [pbb("election.metricBilateral"), "10%"],
-        ].map(([label, weight]) => (
-          <div key={label} className="rounded-lg border border-white/5 bg-[#051111] p-2">
-            <p className="text-[9px] font-bold uppercase tracking-wide text-root-subtle">{label}</p>
-            <p className="mt-1 text-xs font-black text-root-text">{weight}</p>
-          </div>
-        ))}
-        <div className="rounded-lg border border-white/5 bg-[#051111] p-2">
-          <p className="text-[9px] font-bold uppercase tracking-wide text-root-subtle">{pbb("election.eligibleVoters")}</p>
-          <p className="mt-1 text-xs font-black text-root-text">{voters.length} / 193</p>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-lg border border-white/10 bg-[#051111] px-2.5 py-1 text-[10px] font-bold text-[#8AA4A4]">
+            {pbb("election.eligibleVoters")}: {profiledVoterCount}/193
+          </span>
+          <span className="rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-1 text-[10px] font-bold uppercase text-cyan-300">
+            {phaseLabel}
+          </span>
         </div>
       </div>
 
-      <p className="text-[10px] leading-relaxed text-[#789090]">
-        {pbb("election.contributionNote")}
-      </p>
+      <div className="rounded-lg border border-cyan-500/20 bg-cyan-500/5 px-3 py-2.5">
+        <p className="whitespace-pre-line text-xs font-bold leading-relaxed text-cyan-100">
+          {pbb("election.nextSchedule", { year: scheduleYear, startYear: scheduleYear + 1 })}
+        </p>
+      </div>
+
+      <details className="rounded-lg border border-white/5 bg-[#051111] px-3 py-2">
+        <summary className="cursor-pointer text-[10px] font-bold uppercase tracking-wide text-[#8AA4A4]">
+          {pbb("election.scoreBreakdown")}
+        </summary>
+        <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-5">
+          {[
+            [pbb("election.metricDiplomacy"), "30%"],
+            [pbb("election.metricInfluence"), "25%"],
+            [pbb("election.metricContribution"), "20%"],
+            [pbb("election.metricSoftPower"), "15%"],
+            [pbb("election.metricBilateral"), "10%"],
+          ].map(([label, weight]) => (
+            <div key={label} className="rounded-lg border border-white/5 bg-root-canvas p-2">
+              <p className="text-[9px] font-bold uppercase tracking-wide text-root-subtle">{label}</p>
+              <p className="mt-1 text-xs font-black text-root-text">{weight}</p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-2 text-[10px] leading-relaxed text-[#789090]">
+          {pbb("election.contributionNote")}
+        </p>
+      </details>
 
       {error && <p role="alert" className="rounded-lg border border-rose-500/30 bg-rose-500/10 p-2 text-xs text-rose-300">{error}</p>}
       {!profilesLoaded && <p className="text-xs text-[#8AA4A4]">{pbb("election.waiting")}</p>}
@@ -261,18 +270,6 @@ export default function SecurityCouncilElectionPanel({
         >
           {pbb("election.completeVote")}
         </button>
-      )}
-
-      {!electionWindow && election.phase !== "completed" && (
-        <p className="text-xs text-[#8AA4A4]">
-          {pbb("election.nextSchedule", { year: election.year })}
-        </p>
-      )}
-      {currentMonth === 5 && election.phase !== "completed" && currentDay < 15 && (
-        <p className="text-xs text-[#8AA4A4]">{pbb("election.nominationSchedule")}</p>
-      )}
-      {currentMonth === 5 && election.phase === "campaign" && currentDay >= 25 && (
-        <p className="text-xs text-[#8AA4A4]">{pbb("election.votingSchedule")}</p>
       )}
 
       {election.nominees.length > 0 && (

@@ -182,11 +182,14 @@ export function createInitialElectionState(year: number): SecurityCouncilElectio
     phase: "nomination",
     scheduleStage: 0,
     nominees: [],
-    members: INITIAL_MEMBERS.map(member => ({
-      ...member,
-      termStartYear: year - (member.cohort === cohort ? 2 : 1),
-      termEndYear: year - (member.cohort === cohort ? 1 : 0),
-    })),
+    members: INITIAL_MEMBERS.map(member => {
+      const termEndYear = electionYear + (member.cohort === cohort ? 0 : 1);
+      return {
+        ...member,
+        termStartYear: Math.min(year, termEndYear - 1),
+        termEndYear,
+      };
+    }),
     history: [],
     permanentBonuses: {},
   };
@@ -200,27 +203,34 @@ export function normalizeElectionState(
   if (!existing || typeof existing !== "object") return fallback;
   const state = existing as Partial<SecurityCouncilElectionState>;
   if (!Array.isArray(state.members) || state.members.length !== 10) return fallback;
-  const hasScheduledElectionYear = Number.isInteger(state.nextElectionYear);
-  const nextElectionYear = hasScheduledElectionYear
-    ? Number(state.nextElectionYear)
-    : state.phase === "completed" && Number.isInteger(state.year)
-      ? (state.year as number) + 1
-      : year + 2;
+  const hasElectionYear = Number.isInteger(state.year);
+  const hasNextElectionYear = Number.isInteger(state.nextElectionYear);
+  const electionYear = hasElectionYear ? Number(state.year) : Number(state.nextElectionYear) || year + 2;
+  const nextElectionYear = state.phase === "completed"
+    ? hasNextElectionYear
+      ? Number(state.nextElectionYear)
+      : electionYear + 1
+    : electionYear;
   if (state.phase === "completed" && year >= nextElectionYear) {
     const next = createInitialElectionState(nextElectionYear - 2);
     return {
       ...next,
-      members: state.members.map(member => ({
-        ...member,
-        termStartYear: Number.isFinite(member.termStartYear) ? member.termStartYear : nextElectionYear - 2,
-      })),
+      members: state.members.map((member, index) => {
+        const defaultMember = next.members[index];
+        return {
+          ...member,
+          termStartYear: Number.isFinite(member.termStartYear)
+            ? member.termStartYear
+            : defaultMember.termStartYear,
+          termEndYear: Number.isFinite(member.termEndYear)
+            ? member.termEndYear
+            : defaultMember.termEndYear,
+        };
+      }),
       history: Array.isArray(state.history) ? state.history : [],
       permanentBonuses: state.permanentBonuses || {},
     };
   }
-  const electionYear = hasScheduledElectionYear && Number.isInteger(state.year) && state.year! >= year
-    ? state.year!
-    : nextElectionYear;
   const cohort: "A" | "B" = electionYear % 2 === 0 ? "A" : "B";
   return {
     ...fallback,
@@ -228,49 +238,56 @@ export function normalizeElectionState(
     year: electionYear,
     nextElectionYear,
     cohort,
-    members: state.members.map(member => ({
-      ...member,
-      termStartYear: Number.isFinite(member.termStartYear) ? member.termStartYear : year - 1,
-    })),
-    nominees: hasScheduledElectionYear && Array.isArray(state.nominees) ? state.nominees : [],
-    scheduleStage: hasScheduledElectionYear && Number.isInteger(state.scheduleStage) ? state.scheduleStage : 0,
-    phase: hasScheduledElectionYear ? state.phase || "nomination" : "nomination",
+    members: state.members.map((member, index) => {
+      const defaultMember = fallback.members[index];
+      return {
+        ...member,
+        termStartYear: Number.isFinite(member.termStartYear)
+          ? member.termStartYear
+          : defaultMember.termStartYear,
+        termEndYear: Number.isFinite(member.termEndYear)
+          ? member.termEndYear
+          : defaultMember.termEndYear,
+      };
+    }),
+    nominees: Array.isArray(state.nominees) ? state.nominees : [],
+    scheduleStage: Number.isInteger(state.scheduleStage) ? state.scheduleStage : 0,
+    phase: state.phase || "nomination",
     history: Array.isArray(state.history) ? state.history : [],
     permanentBonuses: state.permanentBonuses || {},
   } as SecurityCouncilElectionState;
 }
 
+function getDefaultCouncilMembers(year: number): SecurityCouncilMember[] {
+  return createInitialElectionState(year).members;
+}
+
 export function getStoredCouncilMembers(): SecurityCouncilMember[] {
   const currentYear = getCurrentElectionYear();
   if (typeof window === "undefined") {
-    return INITIAL_MEMBERS.map(member => ({
-      ...member,
-      termStartYear: currentYear - 1,
-      termEndYear: currentYear,
-    }));
+    return getDefaultCouncilMembers(currentYear);
   }
   try {
     const raw = localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
-    if (!raw) return INITIAL_MEMBERS.map(member => ({
-      ...member,
-      termStartYear: currentYear - 1,
-      termEndYear: currentYear,
-    }));
+    if (!raw) return getDefaultCouncilMembers(currentYear);
     const parsed = JSON.parse(raw) as Partial<SecurityCouncilElectionState>;
-    if (!Array.isArray(parsed.members) || parsed.members.length !== 10) {
+    if (
+      !Array.isArray(parsed.members) ||
+      parsed.members.length !== 10 ||
+      parsed.members.some(member =>
+        !member ||
+        typeof member.name !== "string" ||
+        typeof member.iso !== "string" ||
+        typeof member.region !== "string" ||
+        (member.cohort !== "A" && member.cohort !== "B")
+      )
+    ) {
       throw new Error("Data anggota tidak tetap Dewan Keamanan tidak valid.");
     }
-    return parsed.members.map(member => ({
-      ...member,
-      termStartYear: Number.isFinite(member.termStartYear) ? member.termStartYear : currentYear - 1,
-    }));
+    return normalizeElectionState(parsed, currentYear).members;
   } catch (error) {
     console.error("Gagal membaca roster Dewan Keamanan PBB:", error);
-    return INITIAL_MEMBERS.map(member => ({
-      ...member,
-      termStartYear: currentYear - 1,
-      termEndYear: currentYear,
-    }));
+    return getDefaultCouncilMembers(currentYear);
   }
 }
 
@@ -683,12 +700,32 @@ export function tickSecurityCouncilElectionSchedule(
   const year = date.getFullYear();
   let state = normalizeElectionState(existing, year);
   if (!existing) return { state, notifications: [] };
-  if (date.getMonth() !== 5 || year !== state.year) return null;
-  const targetStage = ELECTION_SCHEDULE.reduce(
-    (stage, item) => date.getDate() >= item.day ? item.stage : stage,
-    0
-  );
+  if (state.phase === "completed") return null;
+
+  const electionOverdue = year > state.year ||
+    (year === state.year && date.getMonth() > 5);
+  const isElectionMonth = year === state.year && date.getMonth() === 5;
+  if (!electionOverdue && !isElectionMonth) return null;
+  const targetStage = electionOverdue
+    ? ELECTION_SCHEDULE.length
+    : ELECTION_SCHEDULE.reduce(
+      (stage, item) => date.getDate() >= item.day ? item.stage : stage,
+      0
+    );
+  if (targetStage === 0) return null;
+
   const notifications: NotificationMessage[] = [];
+  const voters = targetStage === ELECTION_SCHEDULE.length
+    ? getEligibleUNMemberCountries(profiles)
+    : null;
+  if (voters && (voters.length !== 193 || voters.filter(country => country.profile).length !== 193)) {
+    const profiledVoters = voters.filter(country => country.profile).length;
+    return {
+      state,
+      notifications,
+      error: `Pemilihan belum dapat dihitung: tersedia ${profiledVoters} profil dari 193 negara pemilih.`,
+    };
+  }
 
   while (state.scheduleStage < targetStage) {
     const nextStage = state.scheduleStage + 1;
@@ -714,23 +751,17 @@ export function tickSecurityCouncilElectionSchedule(
       }
       state = { ...state, phase: "voting" };
     } else if (nextStage === 4) {
-      const voters = getEligibleUNMemberCountries(profiles);
-      const profiledVoters = voters.filter(country => country.profile).length;
-      if (voters.length !== 193 || profiledVoters !== 193) {
-        return {
-          state,
-          notifications,
-          error: `Pemilihan belum dapat dihitung: tersedia ${profiledVoters} profil dari 193 negara pemilih.`,
-        };
-      }
-      state = resolveElection(state, voters);
+      state = resolveElection(state, voters || []);
       if (state.phase !== "completed") {
         return { state, notifications, error: "Hasil pemilihan Dewan Keamanan gagal dihitung." };
       }
     }
 
     state = { ...state, scheduleStage: nextStage };
-    notifications.push(createElectionScheduleNotification(year, nextStage, dateStr, state));
+    const notificationDate = electionOverdue
+      ? `${state.year}-06-${String(ELECTION_SCHEDULE[nextStage - 1].day).padStart(2, "0")}`
+      : dateStr;
+    notifications.push(createElectionScheduleNotification(state.year, nextStage, notificationDate, state));
   }
 
   return { state, notifications };

@@ -28,7 +28,7 @@ export interface EmbassyOfferCandidate extends DiplomaticOfferCandidate {
 export type EmbassyBuildInitiator = "USER" | "AI";
 
 export interface DiplomaticOfferState {
-  lastRollMonth: string | null;
+  lastRollDate: string | null;
   lastOfferMonth: string | null;
   lastOfferByCountry: Record<string, string>;
   lastOfferByType: Partial<Record<DiplomaticOfferKind, string>>;
@@ -46,12 +46,17 @@ export interface DiplomaticOfferContext {
   blockedCountryNames?: readonly string[];
 }
 
+export interface DailyDiplomaticOfferContext extends DiplomaticOfferContext {
+  date: string;
+  daysInMonth: number;
+}
+
 export interface MonthlyDiplomaticOffer {
   kind: MonthlyDiplomaticOfferKind;
   countryName: string;
 }
 
-export interface MonthlyDiplomaticOfferResult {
+export interface DiplomaticOfferResult {
   offer: MonthlyDiplomaticOffer | null;
   state: DiplomaticOfferState;
 }
@@ -111,7 +116,7 @@ export const DIPLOMATIC_OFFER_KINDS: readonly DiplomaticOfferKind[] = [
 const DEFENSE_ALLIANCE_CONFIG = DIPLOMATIC_OFFER_CONFIG.offers["defense-alliance"];
 
 const EMPTY_OFFER_STATE: DiplomaticOfferState = {
-  lastRollMonth: null,
+  lastRollDate: null,
   lastOfferMonth: null,
   lastOfferByCountry: {},
   lastOfferByType: {},
@@ -125,6 +130,13 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function isValidMonth(value: unknown): value is string {
   if (typeof value !== "string" || !/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) return false;
   return true;
+}
+
+function isValidDate(value: unknown): value is string {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const [year, month, day] = value.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.toISOString().slice(0, 10) === value;
 }
 
 function normalizeCountryName(countryName: string): string {
@@ -148,6 +160,26 @@ export function isDiplomaticInteractionBlocked(input: {
   bilateralWar: boolean;
 }): boolean {
   return input.playerUnderEmbargo || input.partnerUnderEmbargo || input.bilateralWar;
+}
+
+export function getDailyChancePercentFromMonthly(
+  monthlyChancePercent: number,
+  daysInMonth: number
+): number {
+  const safeChance = Number.isFinite(monthlyChancePercent)
+    ? Math.max(0, Math.min(100, monthlyChancePercent)) / 100
+    : 0;
+  const safeDays = Number.isFinite(daysInMonth)
+    ? Math.max(1, Math.floor(daysInMonth))
+    : 1;
+  return (1 - Math.pow(1 - safeChance, 1 / safeDays)) * 100;
+}
+
+export function getAnnualChancePercentFromMonthly(monthlyChancePercent: number): number {
+  const safeChance = Number.isFinite(monthlyChancePercent)
+    ? Math.max(0, Math.min(100, monthlyChancePercent)) / 100
+    : 0;
+  return (1 - Math.pow(1 - safeChance, 12)) * 100;
 }
 
 export function isEmbassyBuildRelationAllowed(
@@ -175,7 +207,7 @@ function isWithinCooldown(lastMonth: string | undefined, month: string, duration
 
 export function createEmptyDiplomaticOfferState(): DiplomaticOfferState {
   return {
-    lastRollMonth: EMPTY_OFFER_STATE.lastRollMonth,
+    lastRollDate: EMPTY_OFFER_STATE.lastRollDate,
     lastOfferMonth: EMPTY_OFFER_STATE.lastOfferMonth,
     lastOfferByCountry: {},
     lastOfferByType: {},
@@ -213,7 +245,7 @@ export function normalizeDiplomaticOfferState(value: unknown): DiplomaticOfferSt
   }
 
   return {
-    lastRollMonth: isValidMonth(value.lastRollMonth) ? value.lastRollMonth : null,
+    lastRollDate: isValidDate(value.lastRollDate) ? value.lastRollDate : null,
     lastOfferMonth: isValidMonth(value.lastOfferMonth) ? value.lastOfferMonth : null,
     lastOfferByCountry,
     lastOfferByType,
@@ -303,7 +335,6 @@ export function getEmbassyCandidates(
   context: DiplomaticOfferContext
 ): EmbassyOfferCandidate[] {
   if (!isValidMonth(context.month) ||
-      context.state.lastRollMonth === context.month ||
       context.state.lastOfferMonth === context.month ||
       context.diplomacyBlocked) return [];
 
@@ -386,7 +417,6 @@ export function getOfferChances(
   };
 
   if (!isValidMonth(context.month) ||
-      context.state.lastRollMonth === context.month ||
       context.state.lastOfferMonth === context.month) return chances;
 
   for (const kind of DIPLOMATIC_OFFER_KINDS) {
@@ -419,12 +449,16 @@ function nextRandomValue(rng: () => number): number {
   return Math.min(1 - Number.EPSILON, value);
 }
 
-export function rollMonthlyOffer(
-  context: DiplomaticOfferContext,
+export function rollDailyOffer(
+  context: DailyDiplomaticOfferContext,
   rng: () => number = Math.random
-): MonthlyDiplomaticOfferResult {
+): DiplomaticOfferResult {
   if (!isValidMonth(context.month) ||
-      context.state.lastRollMonth === context.month ||
+      !isValidDate(context.date) ||
+      context.date.slice(0, 7) !== context.month ||
+      !Number.isFinite(context.daysInMonth) ||
+      context.daysInMonth < 1 ||
+      context.state.lastRollDate === context.date ||
       context.state.lastOfferMonth === context.month) {
     return { offer: null, state: context.state };
   }
@@ -433,53 +467,67 @@ export function rollMonthlyOffer(
   const totalWeight = DIPLOMATIC_OFFER_KINDS.reduce((sum, kind) => sum + chances[kind], 0);
   const nextState: DiplomaticOfferState = {
     ...context.state,
-    lastRollMonth: context.month,
+    lastRollDate: context.date,
   };
 
   const embassyCandidates = getEmbassyCandidates(context);
-  if (embassyCandidates.length > 0) {
-    const combinedEmbassyChance = Math.min(
-      DIPLOMATIC_OFFER_CONFIG.embassy.monthlyCapPercent / 100,
-      1 - embassyCandidates.reduce(
-        (noOfferProbability, candidate) =>
-          noOfferProbability * (1 - getEmbassyChance(candidate.relationScore) / 100),
-        1
-      )
-    );
-    if (nextRandomValue(rng) < combinedEmbassyChance) {
-      const totalEmbassyWeight = embassyCandidates.reduce(
-        (total, candidate) => total + getEmbassyChance(candidate.relationScore),
-        0
-      );
-      let weightedChoice = nextRandomValue(rng) * totalEmbassyWeight;
-      const selectedCandidate = embassyCandidates.find(candidate => {
-        weightedChoice -= getEmbassyChance(candidate.relationScore);
-        return weightedChoice < 0;
-      });
-      if (!selectedCandidate) {
-        throw new Error("Embassy offer selection failed despite a successful monthly roll.");
-      }
-      const normalizedCountry = normalizeCountryName(selectedCandidate.countryName);
-      return {
-        offer: { kind: "embassy", countryName: selectedCandidate.countryName },
-        state: {
-          ...nextState,
-          lastOfferMonth: context.month,
-          lastOfferByCountry: {
-            ...nextState.lastOfferByCountry,
-            [normalizedCountry]: context.month,
-          },
-        },
-      };
-    }
-  }
+  const embassyMonthlyChance = Math.min(
+    DIPLOMATIC_OFFER_CONFIG.embassy.monthlyCapPercent / 100,
+    1 - embassyCandidates.reduce(
+      (noOfferProbability, candidate) =>
+        noOfferProbability * (1 - getEmbassyChance(candidate.relationScore) / 100),
+      1
+    )
+  );
+  const regularMonthlyChance = Math.min(
+    DIPLOMATIC_OFFER_CONFIG.maxMonthlyWeight,
+    totalWeight
+  ) / 100;
+  const combinedMonthlyChance = embassyMonthlyChance +
+    (1 - embassyMonthlyChance) * regularMonthlyChance;
+  const dailyChance = getDailyChancePercentFromMonthly(
+    combinedMonthlyChance * 100,
+    context.daysInMonth
+  ) / 100;
 
-  if (totalWeight <= 0 ||
-      nextRandomValue(rng) * 100 >= Math.min(DIPLOMATIC_OFFER_CONFIG.maxMonthlyWeight, totalWeight)) {
+  if (combinedMonthlyChance <= 0 || nextRandomValue(rng) >= dailyChance) {
     return { offer: null, state: nextState };
   }
 
-  let weightedChoice = nextRandomValue(rng) * totalWeight;
+  const monthlyOfferChoice = nextRandomValue(rng) * combinedMonthlyChance;
+  if (monthlyOfferChoice < embassyMonthlyChance) {
+    const totalEmbassyWeight = embassyCandidates.reduce(
+      (total, candidate) => total + getEmbassyChance(candidate.relationScore),
+      0
+    );
+    let weightedChoice = nextRandomValue(rng) * totalEmbassyWeight;
+    const selectedCandidate = embassyCandidates.find(candidate => {
+      weightedChoice -= getEmbassyChance(candidate.relationScore);
+      return weightedChoice < 0;
+    });
+    if (!selectedCandidate) {
+      throw new Error("Embassy offer selection failed despite a successful daily roll.");
+    }
+    const normalizedCountry = normalizeCountryName(selectedCandidate.countryName);
+    return {
+      offer: { kind: "embassy", countryName: selectedCandidate.countryName },
+      state: {
+        ...nextState,
+        lastOfferMonth: context.month,
+        lastOfferByCountry: {
+          ...nextState.lastOfferByCountry,
+          [normalizedCountry]: context.month,
+        },
+      },
+    };
+  }
+
+  if (totalWeight <= 0 || regularMonthlyChance <= 0) {
+    return { offer: null, state: nextState };
+  }
+
+  let weightedChoice = ((monthlyOfferChoice - embassyMonthlyChance) /
+    ((1 - embassyMonthlyChance) * regularMonthlyChance)) * totalWeight;
   let selectedKind: DiplomaticOfferKind | null = null;
   for (const kind of DIPLOMATIC_OFFER_KINDS) {
     weightedChoice -= chances[kind];

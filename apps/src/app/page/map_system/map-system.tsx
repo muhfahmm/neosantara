@@ -234,7 +234,7 @@ import {
     getPlayerCountryIdentity,
     normalizeDiplomaticOfferState,
     recordEmbassyOfferRejection,
-    rollMonthlyOffer,
+    rollDailyOffer,
     isDiplomaticInteractionBlocked,
     type DiplomaticOfferCandidate,
     type DiplomaticOfferKind,
@@ -5793,7 +5793,7 @@ export default function MapPage() {
             ])).filter(Boolean);
 
             const newNotifsToAdd: any[] = [];
-            let monthlyOfferStateForSave: DiplomaticOfferState | null = null;
+            let diplomaticOfferStateForSave: DiplomaticOfferState | null = null;
 
             // 1. Penawaran Transaksi Ekspor / Impor (8% daily chance)
             const transactionPartnerPool = allTradePartners.length > 0 ? allTradePartners : internationalPool;
@@ -5993,14 +5993,23 @@ export default function MapPage() {
                 partner => partner.trim().toLowerCase() !== userCountryName.trim().toLowerCase()
             );
 
-            if (isSeparatismeTriggered || (defensePartners.length > 0 && Math.random() < 0.25)) {
-                const defRoll = Math.random();
+            if (isSeparatismeTriggered) {
+                newNotifsToAdd.push(generatePemberontakanNotification(userCountryName, currentDateStr, separatismeRisk));
+            }
+
+            const COVERT_OPS_ANNUAL_CHANCE_PERCENT = 25;
+            const covertOpsDailyChancePercent = getDailyOutbreakChancePercent(
+                COVERT_OPS_ANNUAL_CHANCE_PERCENT,
+                daysInYear,
+            );
+            if (
+                defensePartners.length > 0 &&
+                Math.random() * 100 < covertOpsDailyChancePercent
+            ) {
                 const randomPartner = defensePartners[Math.floor(Math.random() * defensePartners.length)];
-                if (isSeparatismeTriggered) {
-                    newNotifsToAdd.push(generatePemberontakanNotification(userCountryName, currentDateStr, separatismeRisk));
-                } else if (defRoll < 0.35) {
+                if (Math.random() < 0.5) {
                     newNotifsToAdd.push(generateSpionaseNotification(randomPartner, currentDateStr, userCountryName));
-                } else if (defRoll < 0.65) {
+                } else {
                     newNotifsToAdd.push(generateSabotaseNotification(randomPartner, currentDateStr, userCountryName));
                 }
             }
@@ -6270,7 +6279,7 @@ export default function MapPage() {
                 };
             }
 
-            if (savedOfferState.lastRollMonth !== offerMonth && savedOfferState.lastOfferMonth !== offerMonth) {
+            if (savedOfferState.lastRollDate !== currentDateStr && savedOfferState.lastOfferMonth !== offerMonth) {
                 const tradeCandidatePool = activeEmbassies.length > 0 && Math.random() < 0.6
                     ? activeEmbassies
                     : internationalPool;
@@ -6367,8 +6376,10 @@ export default function MapPage() {
                             areSameWarCountry(targetCountry, country);
                     }),
                 }));
-                const offerResult = rollMonthlyOffer({
+                const offerResult = rollDailyOffer({
                     month: offerMonth,
+                    date: currentDateStr,
+                    daysInMonth: new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate(),
                     state: savedOfferState,
                     candidatesByType: {
                         "trade-agreement": toOfferCandidates(tradeCandidatePool),
@@ -6383,7 +6394,7 @@ export default function MapPage() {
                     diplomacyBlocked,
                     blockedCountryNames,
                 });
-                monthlyOfferStateForSave = offerResult.state;
+                diplomaticOfferStateForSave = offerResult.state;
                 diplomaticOfferStateRef.current = {
                     playerCountry: normalizedPlayerCountry,
                     state: offerResult.state,
@@ -6850,8 +6861,8 @@ export default function MapPage() {
                         : {}),
                     world_news_country_cursor: worldNewsResult.nextCursor,
                     last_notified_listrik_step: currentListrikStep,
-                    ...(monthlyOfferStateForSave
-                        ? { diplomaticOfferState: monthlyOfferStateForSave }
+                    ...(diplomaticOfferStateForSave
+                        ? { diplomaticOfferState: diplomaticOfferStateForSave }
                         : {})
                 };
                 const marketStartDay = Math.floor(Date.UTC(
@@ -7858,24 +7869,31 @@ export default function MapPage() {
             }
         }
 
-        if (
-            countryDetail?.pbbSecurityCouncilElection &&
-            currentDate.getMonth() === 5 &&
-            currentDate.getDate() <= 30
-        ) {
-            const electionYear = currentDate.getFullYear();
+        if (countryDetail?.pbbSecurityCouncilElection) {
+            const currentYear = currentDate.getFullYear();
             const electionState = normalizeElectionState(
                 countryDetail.pbbSecurityCouncilElection,
-                electionYear
+                currentYear
             );
-            if (electionState.year === electionYear) {
-                const dueStage = currentDate.getDate() >= 30
+            const electionOverdue = electionState.phase !== "completed" && (
+                electionState.year < currentYear ||
+                (electionState.year === currentYear && currentDate.getMonth() > 5)
+            );
+            if (electionOverdue || (
+                electionState.phase !== "completed" &&
+                electionState.year === currentYear &&
+                currentDate.getMonth() === 5
+            )) {
+                const electionYear = electionState.year;
+                const dueStage = electionOverdue
                     ? 4
-                    : currentDate.getDate() >= 25
-                        ? 3
-                        : currentDate.getDate() >= 15
-                            ? 2
-                            : 1;
+                    : currentDate.getDate() >= 30
+                        ? 4
+                        : currentDate.getDate() >= 25
+                            ? 3
+                            : currentDate.getDate() >= 15
+                                ? 2
+                                : 1;
                 const tickKey = `${currentDateStr}-${electionState.scheduleStage}`;
                 if (electionState.scheduleStage < dueStage && electionScheduleTickRef.current !== tickKey) {
                     electionScheduleTickRef.current = tickKey;

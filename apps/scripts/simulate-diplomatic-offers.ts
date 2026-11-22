@@ -2,6 +2,8 @@ import {
   DIPLOMATIC_OFFER_CONFIG,
   createEmptyDiplomaticOfferState,
   getDiplomaticOfferResearchBonuses,
+  getAnnualChancePercentFromMonthly,
+  getDailyChancePercentFromMonthly,
   getEmbassyCandidates,
   getEmbassyChance,
   getOfferChances,
@@ -9,10 +11,11 @@ import {
   isEmbassyBuildRelationAllowed,
   normalizeDiplomaticOfferState,
   recordEmbassyOfferRejection,
-  rollMonthlyOffer,
+  rollDailyOffer,
   type DiplomaticOfferCandidate,
   type DiplomaticOfferContext,
   type DiplomaticOfferKind,
+  type DailyDiplomaticOfferContext,
   type EmbassyOfferCandidate,
 } from "../src/app/page/map_system/diplomaticOfferLogic";
 
@@ -51,6 +54,18 @@ function monthKey(monthIndex: number): string {
   return `${year}-${String(month).padStart(2, "0")}`;
 }
 
+function dailyContext(
+  context: DiplomaticOfferContext,
+  day = 1,
+  daysInMonth = 30
+): DailyDiplomaticOfferContext {
+  return {
+    ...context,
+    date: `${context.month}-${String(day).padStart(2, "0")}`,
+    daysInMonth,
+  };
+}
+
 function makeRandom(seed: number): () => number {
   let state = seed >>> 0;
   return () => {
@@ -66,6 +81,14 @@ const baselineContext: DiplomaticOfferContext = {
   pendingOffers: [],
   researchBonusPercent: {},
 };
+assert(
+  Math.abs(getDailyChancePercentFromMonthly(15, 30) - 0.5403) < 0.001,
+  "Daily conversion must preserve a 15% monthly chance over a 30-day month."
+);
+assert(
+  Math.abs(getAnnualChancePercentFromMonthly(15) - 85.78) < 0.01,
+  "Annual conversion must preserve a 15% monthly chance over 12 months."
+);
 const baselineChances = getOfferChances(baselineContext);
 assert(baselineChances["trade-agreement"] === 15, "Trade weight should start at 15.");
 assert(baselineChances["non-aggression"] === 10, "NAP weight should start at 10.");
@@ -256,9 +279,9 @@ const weightedEmbassyContext: DiplomaticOfferContext = {
   ...baselineContext,
   embassyCandidates: weightedEmbassyCandidates,
 };
-const weightedEmbassyChoiceValues = [0, 0.2];
-const weightedEmbassyChoice = rollMonthlyOffer(
-  weightedEmbassyContext,
+const weightedEmbassyChoiceValues = [0, 0.2, 0.5];
+const weightedEmbassyChoice = rollDailyOffer(
+  dailyContext(weightedEmbassyContext),
   () => weightedEmbassyChoiceValues.shift() ?? 0
 );
 assert(
@@ -275,7 +298,7 @@ const countryCooldownContext: DiplomaticOfferContext = {
     lastOfferByCountry: { "trade partner 0": "2000-01" },
   },
 };
-const countryCooldownOffer = rollMonthlyOffer(countryCooldownContext, () => 0);
+const countryCooldownOffer = rollDailyOffer(dailyContext(countryCooldownContext), () => 0);
 assert(
   countryCooldownOffer.offer?.countryName !== "Trade Partner 0",
   "A country on cooldown must not be selected."
@@ -297,12 +320,24 @@ const scenarios = [
 
 const denseContext: DiplomaticOfferContext = {
   ...baselineContext,
+  candidatesByType: {
+    "trade-agreement": [],
+    "non-aggression": [],
+    "research-contract": [],
+    "defense-alliance": [],
+  },
   embassyCandidates: scenarios[1].candidates,
 };
-const cappedSuccess = rollMonthlyOffer(denseContext, () => 0.349999);
-assert(cappedSuccess.offer?.kind === "embassy", "Embassy roll should succeed below the monthly cap.");
-const cappedFailureValues = [0.350001, 0.5];
-const cappedFailure = rollMonthlyOffer(denseContext, () => cappedFailureValues.shift() ?? 0.5);
+const cappedDailyChance = getDailyChancePercentFromMonthly(35, 30) / 100;
+const cappedSuccess = rollDailyOffer(
+  dailyContext(denseContext),
+  () => cappedDailyChance - 0.000001
+);
+assert(cappedSuccess.offer?.kind === "embassy", "Embassy roll should succeed below the converted monthly cap.");
+const cappedFailure = rollDailyOffer(
+  dailyContext(denseContext),
+  () => cappedDailyChance + 0.000001
+);
 assert(cappedFailure.offer === null, "Embassy chance must not exceed the 35% monthly cap.");
 
 interface SimulationSummary {
@@ -339,56 +374,64 @@ function runSimulation(
   let monthsWithMultipleOffers = 0;
 
   for (let month = 0; month < 10_000; month += 1) {
-    const context: DiplomaticOfferContext = {
-      ...baselineContext,
-      month: monthKey(month),
-      state,
-      embassyCandidates,
-    };
-    const result = rollMonthlyOffer(context, rng);
-    state = result.state;
+    const monthString = monthKey(month);
+    const [year, monthNumber] = monthString.split("-").map(Number);
+    const daysInMonth = new Date(year, monthNumber, 0).getDate();
+    let offersThisMonth = 0;
 
-    if (!result.offer) {
-      noOfferMonths += 1;
-    } else {
-      const { kind, countryName } = result.offer;
-      if (kind === "embassy") {
-        embassyOffers += 1;
-        embassyOffersByCountry.set(
-          countryName,
-          (embassyOffersByCountry.get(countryName) || 0) + 1
-        );
-        const sender = embassyCandidates.find(candidate => candidate.countryName === countryName);
-        assert(Boolean(sender && getEmbassyChance(sender.relationScore) > 0), "An ineligible embassy AI made an offer.");
-      } else {
-        offersPerKind[kind] += 1;
-        if (kind === "defense-alliance") {
-          const sender = candidatesByType[kind].find(candidate => candidate.countryName === countryName);
-          assert(Boolean(sender && sender.relationScore > 80), "An alliance offer was made at relation <= 80.");
+    for (let day = 1; day <= daysInMonth; day += 1) {
+      const context = dailyContext({
+        ...baselineContext,
+        month: monthString,
+        state,
+        embassyCandidates,
+      }, day, daysInMonth);
+      const result = rollDailyOffer(context, rng);
+      state = result.state;
+
+      if (result.offer) {
+        offersThisMonth += 1;
+        const { kind, countryName } = result.offer;
+        if (kind === "embassy") {
+          embassyOffers += 1;
+          embassyOffersByCountry.set(
+            countryName,
+            (embassyOffersByCountry.get(countryName) || 0) + 1
+          );
+          const sender = embassyCandidates.find(candidate => candidate.countryName === countryName);
+          assert(Boolean(sender && getEmbassyChance(sender.relationScore) > 0), "An ineligible embassy AI made an offer.");
+        } else {
+          offersPerKind[kind] += 1;
+          if (kind === "defense-alliance") {
+            const sender = candidatesByType[kind].find(candidate => candidate.countryName === countryName);
+            assert(Boolean(sender && sender.relationScore > 80), "An alliance offer was made at relation <= 80.");
+          }
+          const lastTypeMonth = previousTypeOffers.get(kind);
+          if (lastTypeMonth !== undefined) {
+            assert(
+              month - lastTypeMonth >= DIPLOMATIC_OFFER_CONFIG.offers[kind].cooldownMonths,
+              `Type cooldown failed for ${kind}.`
+            );
+          }
+          previousTypeOffers.set(kind, month);
         }
-        const lastTypeMonth = previousTypeOffers.get(kind);
-        if (lastTypeMonth !== undefined) {
+
+        const lastCountryMonth = previousCountryOffers.get(countryName);
+        if (lastCountryMonth !== undefined) {
           assert(
-            month - lastTypeMonth >= DIPLOMATIC_OFFER_CONFIG.offers[kind].cooldownMonths,
-            `Type cooldown failed for ${kind}.`
+            month - lastCountryMonth >= DIPLOMATIC_OFFER_CONFIG.countryCooldownMonths,
+            `Country cooldown failed for ${countryName}.`
           );
         }
-        previousTypeOffers.set(kind, month);
+        previousCountryOffers.set(countryName, month);
       }
 
-      const lastCountryMonth = previousCountryOffers.get(countryName);
-      if (lastCountryMonth !== undefined) {
-        assert(
-          month - lastCountryMonth >= DIPLOMATIC_OFFER_CONFIG.countryCooldownMonths,
-          `Country cooldown failed for ${countryName}.`
-        );
-      }
-      previousCountryOffers.set(countryName, month);
+      const duplicateResult = rollDailyOffer({ ...context, state: result.state }, rng);
+      assert(duplicateResult.offer === null, "A daily offer roll must not repeat on the same game date.");
     }
 
-    const duplicateResult = rollMonthlyOffer({ ...context, state: result.state }, rng);
-    if (duplicateResult.offer) monthsWithMultipleOffers += 1;
-    assert(duplicateResult.offer === null, "More than one monthly offer was produced.");
+    if (offersThisMonth === 0) noOfferMonths += 1;
+    if (offersThisMonth > 1) monthsWithMultipleOffers += 1;
   }
 
   const regularOffers = offerKinds.reduce((total, kind) => total + offersPerKind[kind], 0);
