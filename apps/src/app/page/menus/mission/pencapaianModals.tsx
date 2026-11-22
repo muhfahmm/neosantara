@@ -78,9 +78,11 @@ export function clearAchievementProgressData(): void {
   if (typeof window === 'undefined') return;
   try {
     localStorage.removeItem(LOCAL_STORAGE_ACHIEVEMENTS_KEY);
+    localStorage.removeItem('neosantara_player_xp');
     window.dispatchEvent(new CustomEvent('achievements_state_updated', {
       detail: { claimed: {}, milestones: {}, baselines: {} }
     }));
+    window.dispatchEvent(new CustomEvent('player_xp_updated', { detail: { xp: 0, added: 0 } }));
   } catch {}
 }
 

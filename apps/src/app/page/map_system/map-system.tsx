@@ -7732,6 +7732,11 @@ export default function MapPage() {
                             setPlayerDiamonds(dia);
                             localStorage.setItem('player_diamonds', dia.toString());
                         }
+                        if (restoredDetail.playerXp !== undefined) {
+                            const xpVal = Number(restoredDetail.playerXp) || 0;
+                            localStorage.setItem('neosantara_player_xp', String(xpVal));
+                            window.dispatchEvent(new CustomEvent('player_xp_updated', { detail: { xp: xpVal, added: 0 } }));
+                        }
                         if (restoredDetail.missionCompletions !== undefined) {
                             if (restoredDetail.missionCompletions) {
                                 localStorage.setItem('presiden_simulator_mission_completions', restoredDetail.missionCompletions);
@@ -9146,6 +9151,7 @@ export default function MapPage() {
                     ...countryDetail,
                     presidentRating,
                     playerDiamonds,
+                    playerXp: typeof window !== 'undefined' ? Number(localStorage.getItem('neosantara_player_xp') || 0) : 0,
                     notifications,
                     organizationMemberships: getUserJoinedOrgSnapshot(selectedCountry.country),
                     missionCompletions: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_mission_completions') : null,

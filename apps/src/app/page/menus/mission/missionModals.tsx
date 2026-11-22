@@ -750,6 +750,14 @@ export function getPlayerTotalExp(): number {
   }
 }
 
+export function clearPlayerExpData(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem('neosantara_player_xp');
+    window.dispatchEvent(new CustomEvent('player_xp_updated', { detail: { xp: 0, added: 0 } }));
+  } catch {}
+}
+
 /**
  * Klaim hadiah misi yang sudah selesai:
  * 1. Tambah Gems, XP, dan NEO
@@ -898,6 +906,7 @@ export function clearMissionProgressData(): void {
     localStorage.removeItem(MISSION_BUILDING_PROGRESS_STORAGE_KEY);
     localStorage.removeItem(MISSION_BUILDING_TARGET_STORAGE_KEY);
     localStorage.removeItem(MISSION_REWARD_BASE_STORAGE_KEY);
+    localStorage.removeItem('neosantara_player_xp');
     // Acak ulang 5 kartu misi baru saat reset / refresh
     const freshPool = generateRandomMissionIds(MISSION_POOL_SIZE);
     localStorage.setItem(MISSION_RANDOM_POOL_STORAGE_KEY, JSON.stringify(freshPool));
@@ -908,6 +917,7 @@ export function clearMissionProgressData(): void {
     window.dispatchEvent(new CustomEvent('mission_active_updated', { detail: { cardId: null } }));
     window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { claimableList: [] } }));
     window.dispatchEvent(new CustomEvent('mission_building_progress_updated', { detail: {} }));
+    window.dispatchEvent(new CustomEvent('player_xp_updated', { detail: { xp: 0, added: 0 } }));
   } catch {}
 }
 

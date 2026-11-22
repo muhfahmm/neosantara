@@ -56,6 +56,8 @@ export function handleGameRestart(options: RestartOptions): void {
         localStorage.removeItem('pbb_reported_war_ban_violations_v1');
         localStorage.removeItem('neosantara_expelled_organization_countries');
         localStorage.removeItem('neosantara_org_applications');
+        localStorage.removeItem('neosantara_achievements_state');
+        localStorage.removeItem('neosantara_player_xp');
 
         // Hapus semua storage keanggotaan organisasi per negara, penelitian, covert op, dsb
         try {
@@ -106,6 +108,8 @@ export function handleGameRestart(options: RestartOptions): void {
             window.dispatchEvent(new CustomEvent('map_territory_color_updated'));
             window.dispatchEvent(new CustomEvent('country_relations_updated'));
             window.dispatchEvent(new CustomEvent('reset_penelitian_selection'));
+            window.dispatchEvent(new CustomEvent('achievements_state_updated', { detail: { claimed: {}, milestones: {}, baselines: {} } }));
+            window.dispatchEvent(new CustomEvent('player_xp_updated', { detail: { xp: 0, added: 0 } }));
             window.dispatchEvent(new CustomEvent('mission_active_updated', { detail: { cardId: null } }));
             window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { claimableList: [] } }));
         } catch (e) { }
