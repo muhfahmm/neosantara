@@ -118,7 +118,6 @@ export default function PilihNegaraPage() {
   const [mapLoadError, setMapLoadError] = useState<string | null>(null);
   const [mapLoadAttempt, setMapLoadAttempt] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('utama');
   const [hasInteracted, setHasInteracted] = useState(false);
   const [wasmModule, setWasmModule] = useState<any>(null);
   const wasmModuleRef = useRef<any>(null);
@@ -573,31 +572,8 @@ export default function PilihNegaraPage() {
 
       <div className="relative z-10 flex flex-col items-center justify-end min-h-screen pb-4 sm:pb-8 lg:pb-12 pointer-events-none px-4 sm:px-6">
 
-        {/* Tab & Search Kembali ke Tengah */}
+        {/* Search Kembali ke Tengah */}
         <div className="mb-3 sm:mb-6 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 pointer-events-auto w-full max-w-lg sm:max-w-none">
-          <div className="flex bg-root-surface p-1 rounded-xl sm:rounded-2xl border border-root-accent/30">
-            <button
-              onClick={() => setActiveTab('utama')}
-              className={`px-4 sm:px-6 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-black tracking-widest transition-all cursor-pointer ${
-                activeTab === 'utama'
-                  ? 'bg-root-accent text-root-canvas'
-                  : 'text-root-subtle hover:text-root-text'
-              }`}
-            >
-              {t('pilih_negara.tab_main_map')}
-            </button>
-            <button
-              onClick={() => setActiveTab('hubungan')}
-              className={`px-4 sm:px-6 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-black tracking-widest transition-all cursor-pointer ${
-                activeTab === 'hubungan'
-                  ? 'bg-root-accent text-root-canvas'
-                  : 'text-root-subtle hover:text-root-text'
-              }`}
-            >
-              {t('pilih_negara.tab_relations')}
-            </button>
-          </div>
-
           <div className="relative w-full sm:w-72 md:w-80">
             <Search className="absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-root-accent" />
             <input
@@ -614,7 +590,7 @@ export default function PilihNegaraPage() {
         </div>
 
         {/* RESOURCE MENU DENGAN BORDER BERDASARKAN DATABASE_SDA */}
-        <div className="sda-responsive-width static lg:absolute lg:right-4 xl:right-6 lg:top-[64px] xl:top-[92px] z-30 flex flex-wrap items-center justify-center lg:justify-end gap-1 lg:gap-1.5 xl:gap-2 pointer-events-auto p-2 lg:p-2.5 xl:p-3.5 bg-root-surface border border-root-accent/30 rounded-xl xl:rounded-2xl mb-2 lg:mb-0">
+        <div className="sda-responsive-width absolute top-[72px] right-2 sm:right-4 lg:top-[80px] lg:right-4 xl:top-[104px] xl:right-6 z-30 flex flex-wrap items-center justify-center lg:justify-end gap-1 lg:gap-1.5 xl:gap-2 pointer-events-auto p-2 lg:p-2.5 xl:p-3.5 bg-root-surface border border-root-accent/30 rounded-xl xl:rounded-2xl">
           
           {/* MODERN HEADER */}
           <div className="flex items-center justify-between w-full mb-1 lg:mb-2 xl:mb-3 pb-1 lg:pb-2 xl:pb-3 border-b border-root-accent/20">
