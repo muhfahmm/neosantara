@@ -68,7 +68,21 @@ export interface AchievementState {
   baselines?: Record<string, number>;
 }
 
-const LOCAL_STORAGE_ACHIEVEMENTS_KEY = 'neosantara_achievements_state';
+export const LOCAL_STORAGE_ACHIEVEMENTS_KEY = 'neosantara_achievements_state';
+
+/**
+ * Reset seluruh status pencapaian pemain ke nilai awal.
+ * Dipanggil saat game direset, new game, refresh/restart tanpa save game.
+ */
+export function clearAchievementProgressData(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem(LOCAL_STORAGE_ACHIEVEMENTS_KEY);
+    window.dispatchEvent(new CustomEvent('achievements_state_updated', {
+      detail: { claimed: {}, milestones: {}, baselines: {} }
+    }));
+  } catch {}
+}
 
 // ─────────────────────────────────────────────────────────────────────────
 // LOGIKA KHUSUS ACHIEVEMENT ITEMS
@@ -1732,6 +1746,39 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
       baselines: countryDetail?.achievementBaselines || {},
     };
   });
+
+  // Sinkronisasi bila ada event eksternal update/reset achievements_state_updated
+  useEffect(() => {
+    const handleSync = (e: any) => {
+      if (e.detail) {
+        setAchievementState({
+          claimed: e.detail.claimed || {},
+          milestones: e.detail.milestones || {},
+          baselines: e.detail.baselines || {},
+        });
+      } else {
+        try {
+          const stored = localStorage.getItem(LOCAL_STORAGE_ACHIEVEMENTS_KEY);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            setAchievementState({
+              claimed: parsed.claimed || {},
+              milestones: parsed.milestones || {},
+              baselines: parsed.baselines || {},
+            });
+          } else {
+            setAchievementState({ claimed: {}, milestones: {}, baselines: {} });
+          }
+        } catch {}
+      }
+    };
+    window.addEventListener('achievements_state_updated', handleSync);
+    window.addEventListener('storage', handleSync);
+    return () => {
+      window.removeEventListener('achievements_state_updated', handleSync);
+      window.removeEventListener('storage', handleSync);
+    };
+  }, []);
 
   const saveAchievementState = (nextState: AchievementState) => {
     setAchievementState(nextState);

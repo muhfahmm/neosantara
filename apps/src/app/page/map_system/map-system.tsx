@@ -336,6 +336,7 @@ import {
     markMissionAsClaimable,
     type MissionNavigationTarget
 } from '../menus/mission/missionModals';
+import { clearAchievementProgressData } from '../menus/mission/pencapaianModals';
 import { calculateFoodCoverageByGroup } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic';
 import {
     clearExpelledOrganizationCountries,
@@ -7291,6 +7292,7 @@ export default function MapPage() {
                 // tidak boleh menghapus progress sesi yang masih berjalan.
                 if (newGameMarker === '1') {
                     clearMissionProgressData();
+                    clearAchievementProgressData();
                     localStorage.setItem('player_diamonds', '500');
                     setPlayerDiamonds(500);
                     window.dispatchEvent(new CustomEvent('player_diamonds_updated', { detail: { diamonds: 500 } }));
@@ -7754,6 +7756,17 @@ export default function MapPage() {
                             }
                             window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { claimableList: restoredDetail.claimableMissions ? JSON.parse(restoredDetail.claimableMissions) : [] } }));
                         }
+                        if (restoredDetail.achievementsState !== undefined) {
+                            if (restoredDetail.achievementsState) {
+                                localStorage.setItem('neosantara_achievements_state', restoredDetail.achievementsState);
+                                try {
+                                    const parsedState = JSON.parse(restoredDetail.achievementsState);
+                                    window.dispatchEvent(new CustomEvent('achievements_state_updated', { detail: parsedState }));
+                                } catch {}
+                            } else {
+                                clearAchievementProgressData();
+                            }
+                        }
 
                         sessionStorage.removeItem('presiden_simulator_load_save');
                     } catch (error) {
@@ -7777,6 +7790,7 @@ export default function MapPage() {
                     if (isNewGame || (!loadSaveStr && !returningFromDialog)) {
                         expelCountryFromOrganizations(chosen.country);
                         clearMissionProgressData();
+                        clearAchievementProgressData();
                         clearActiveNpcCountrySimulationState();
                         localStorage.removeItem('programNuklirActive');
                         localStorage.removeItem('icbmBuildTask');
@@ -9137,6 +9151,7 @@ export default function MapPage() {
                     missionCompletions: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_mission_completions') : null,
                     activeMissionId: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_active_mission') : null,
                     claimableMissions: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_claimable_missions') : null,
+                    achievementsState: typeof window !== 'undefined' ? localStorage.getItem('neosantara_achievements_state') : null,
                     __neosantara_game_session: sessionState,
                 },
             });
