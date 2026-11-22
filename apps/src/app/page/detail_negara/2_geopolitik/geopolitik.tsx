@@ -281,7 +281,24 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
         targetCountryDetail={targetCountryDetail}
         setTargetCountryDetail={setTargetCountryDetail}
         onClose={() => setIsBeriTentaraOpen(false)}
-        onConfirm={() => { console.log(`Beri Tentara -> ${countryName}`); }}
+        onConfirm={() => {
+          if (setPlayerCountryDetail) {
+            setPlayerCountryDetail((prev: any) => {
+              if (!prev) return prev;
+              const prevTroops = Array.isArray(prev?.diplomaticTroopsSent) ? prev.diplomaticTroopsSent : [];
+              const normTarget = String(countryName || '').toLowerCase().trim();
+              const updatedTroops = prevTroops.some((p: string) => String(p).toLowerCase().trim() === normTarget)
+                ? prevTroops
+                : [...prevTroops, countryName];
+              return {
+                ...prev,
+                diplomaticTroopsSent: updatedTroops,
+                troopsSentCount: updatedTroops.length,
+              };
+            });
+          }
+          console.log(`Beri Tentara -> ${countryName}`);
+        }}
       />
       <BeriHadiahModal
         isOpen={isBeriHadiahOpen}
@@ -289,7 +306,24 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
         playerCountryDetail={playerCountryDetail}
         setPlayerCountryDetail={setPlayerCountryDetail}
         onClose={() => setIsBeriHadiahOpen(false)}
-        onConfirm={() => { console.log(`Beri Hadiah -> ${countryName}`); }}
+        onConfirm={() => {
+          if (setPlayerCountryDetail) {
+            setPlayerCountryDetail((prev: any) => {
+              if (!prev) return prev;
+              const prevGifts = Array.isArray(prev?.diplomaticGiftsSent) ? prev.diplomaticGiftsSent : [];
+              const normTarget = String(countryName || '').toLowerCase().trim();
+              const updatedGifts = prevGifts.some((p: string) => String(p).toLowerCase().trim() === normTarget)
+                ? prevGifts
+                : [...prevGifts, countryName];
+              return {
+                ...prev,
+                diplomaticGiftsSent: updatedGifts,
+                diplomaticGiftsSentCount: updatedGifts.length,
+              };
+            });
+          }
+          console.log(`Beri Hadiah -> ${countryName}`);
+        }}
       />
       <TingkatkanHubunganModal
         isOpen={isTingkatkanOpen}
@@ -298,11 +332,72 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
         setPlayerCountryDetail={setPlayerCountryDetail}
         onClose={() => setIsTingkatkanOpen(false)}
         onConfirm={(amount, gained) => {
+          if (setPlayerCountryDetail) {
+            setPlayerCountryDetail((prev: any) => {
+              if (!prev) return prev;
+              const prevImproved = Array.isArray(prev?.relationsImproved) ? prev.relationsImproved : [];
+              const normTarget = String(countryName || '').toLowerCase().trim();
+              const updatedImproved = prevImproved.some((p: string) => String(p).toLowerCase().trim() === normTarget)
+                ? prevImproved
+                : [...prevImproved, countryName];
+              return {
+                ...prev,
+                relationsImproved: updatedImproved,
+                relationsImprovedCount: updatedImproved.length,
+              };
+            });
+          }
           console.log(`Tingkatkan Hubungan -> ${countryName} sebesar ${amount} NEO (+${gained} tingkat)`);
         }}
       />
-      <MintaBantuanModal isOpen={isMintaBantuanOpen} countryName={countryName} onClose={closeAidRequestModal} onConfirm={requestAid} />
-      <BerikanWilayahModal isOpen={isBerikanWilayahOpen} countryName={countryName} playerCountryName={playerCountryName} onClose={closeBerikanWilayahModal} onConfirm={transferAnnexedTerritory} />
+      <MintaBantuanModal
+        isOpen={isMintaBantuanOpen}
+        countryName={countryName}
+        onClose={closeAidRequestModal}
+        onConfirm={() => {
+          if (setPlayerCountryDetail) {
+            setPlayerCountryDetail((prev: any) => {
+              if (!prev) return prev;
+              const prevRequests = Array.isArray(prev?.aidRequests) ? prev.aidRequests : [];
+              const normTarget = String(countryName || '').toLowerCase().trim();
+              const updatedRequests = prevRequests.some((p: string) => String(p).toLowerCase().trim() === normTarget)
+                ? prevRequests
+                : [...prevRequests, countryName];
+              return {
+                ...prev,
+                aidRequests: updatedRequests,
+                aidRequestedCount: updatedRequests.length,
+              };
+            });
+          }
+          requestAid();
+        }}
+      />
+      <BerikanWilayahModal
+        isOpen={isBerikanWilayahOpen}
+        countryName={countryName}
+        playerCountryName={playerCountryName}
+        onClose={closeBerikanWilayahModal}
+        onConfirm={(territoryName: string) => {
+          const success = transferAnnexedTerritory(territoryName);
+          if (success && setPlayerCountryDetail) {
+            setPlayerCountryDetail((prev: any) => {
+              if (!prev) return prev;
+              const prevCeded = Array.isArray(prev?.territoriesCeded) ? prev.territoriesCeded : [];
+              const normTarget = String(countryName || '').toLowerCase().trim();
+              const updatedCeded = prevCeded.some((p: string) => String(p).toLowerCase().trim() === normTarget)
+                ? prevCeded
+                : [...prevCeded, countryName];
+              return {
+                ...prev,
+                territoriesCeded: updatedCeded,
+                territoriesCededCount: updatedCeded.length,
+              };
+            });
+          }
+          return success;
+        }}
+      />
     </div>
   );
 }

@@ -5,8 +5,13 @@ import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/langu
 import {
   Trophy, Award, CheckCircle2, Lock, Sparkles, Gem, Coins,
   Smile, Users2, Zap, Landmark, Building2, Microscope, Banknote, Globe2, Factory, Home, Hammer,
-  Briefcase, Sword, Map, PhoneCall, Gift, Globe, HeartHandshake, Shield, Siren, Skull, TrendingUp, Calendar
+  Briefcase, Sword, Map as MapIcon, PhoneCall, Gift, Globe, HeartHandshake, Shield, Siren, Skull, TrendingUp, Calendar,
+  BookOpen, Flame
 } from 'lucide-react';
+import { getEmbassiesForCountry } from '../../../../../../json/6_database_kedutaan_besar/embassyRegistry';
+import { getTradeAgreementsForCountry } from '../../../../../../json/9_database_mitra_perdagangan/tradeAgreementRegistry';
+import { COUNTRY_SOCIAL_PROFILES } from '../../../../../../json/semua_fitur_negara/0_profiles/countryProfilesData';
+import { COUNTRIES_DATA } from '../../map_system/map-data';
 
 export type AchievementCategory =
   | 'kepuasan'
@@ -331,9 +336,9 @@ function countMinistryMaxedDepartments(cd: any, deptIds: string[]): { maxedCount
   };
 }
 
-// Helper dinamis menghitung jumlah negara mitra yang tersedia (basis 211 negara dikurangi negara yang dianeksasi)
-export function getDynamicTargetCountryCount(cd: any): number {
-  const BASE_COUNTRIES = 211;
+// Helper dinamis menghitung jumlah negara mitra yang tersedia (basis default, jika sisa negara di dunia < baseTarget maka turun dinamis)
+export function getDynamicTargetCountryCount(cd: any, defaultTarget: number = 100): number {
+  const TOTAL_WORLD_COUNTRIES = 211;
   let annexedCount = 0;
 
   if (Array.isArray(cd?.annexedTerritories)) {
@@ -347,8 +352,209 @@ export function getDynamicTargetCountryCount(cd: any): number {
     }
   }
 
-  // Jika ada negara yang dianeksasi, jumlah target dinamis turun: 211 -> 210 -> dst
-  return Math.max(1, BASE_COUNTRIES - annexedCount);
+  // Sisa negara yang belum dianeksasi di dunia
+  const remainingCountries = Math.max(1, TOTAL_WORLD_COUNTRIES - annexedCount);
+  // Target default, tetapi jika sisa negara di dunia kurang dari target maka otomatis turun sesuai sisa negara
+  return Math.min(defaultTarget, remainingCountries);
+}
+
+// Helper untuk menghitung jumlah kedutaan besar aktif dari database dan progres pemain
+export function getActiveEmbassiesCount(cd: any): number {
+  const countryName = cd?.country || cd?.nama || cd?.country_name || cd?.nama_negara || '';
+  const dbEmbassies = countryName ? getEmbassiesForCountry(countryName) : [];
+  const directEmbassies: any[] = Array.isArray(cd?.embassies) ? cd.embassies : [];
+  const removedEmbassies: string[] = Array.isArray(cd?.removedEmbassies) ? cd.removedEmbassies : [];
+  const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+
+  const uniqueActive = new Set<string>();
+
+  // Tambahkan dari database awal
+  dbEmbassies.forEach((mitra: string) => {
+    if (mitra) uniqueActive.add(mitra.toLowerCase().trim());
+  });
+
+  // Tambahkan dari penambahan dinamis pemain
+  directEmbassies.forEach((item: any) => {
+    const partner = typeof item === 'string' ? item : item?.mitra || item?.nama_negara || item?.country;
+    if (partner) uniqueActive.add(String(partner).toLowerCase().trim());
+  });
+
+  // Hilangkan kedutaan yang dihapus/dihancurkan pemain
+  removedEmbassies.forEach((rem: string) => {
+    if (rem) uniqueActive.delete(String(rem).toLowerCase().trim());
+  });
+
+  // Hilangkan negara mitra yang telah dianeksasi
+  Object.keys(annexedStore).forEach((annexKey: string) => {
+    if (annexKey && annexedStore[annexKey]) {
+      uniqueActive.delete(annexKey.toLowerCase().trim());
+    }
+  });
+
+  // Kurangi jika negara sendiri masuk
+  if (countryName) {
+    uniqueActive.delete(countryName.toLowerCase().trim());
+  }
+
+  return uniqueActive.size;
+}
+
+// Helper untuk menghitung jumlah perjanjian dagang bilateral aktif
+export function getActiveTradeAgreementsCount(cd: any): number {
+  const countryName = cd?.country || cd?.nama || cd?.country_name || cd?.nama_negara || '';
+  const dbTrade = countryName ? getTradeAgreementsForCountry(countryName) : [];
+  const directTrade: any[] = Array.isArray(cd?.tradeAgreements) ? cd.tradeAgreements : [];
+  const addedTrade: any[] = Array.isArray(cd?.addedTradePartners) ? cd.addedTradePartners : [];
+  const removedTrade: string[] = Array.isArray(cd?.removedTradePartners) ? cd.removedTradePartners : [];
+  const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+
+  const uniqueActive = new Set<string>();
+
+  // Tambahkan dari database awal
+  dbTrade.forEach((item: any) => {
+    const partner = typeof item === 'string' ? item : item?.mitra || item?.nama_negara || item?.mitra_country;
+    if (partner) uniqueActive.add(String(partner).toLowerCase().trim());
+  });
+
+  // Tambahkan dari perjanjian dagang dinamis pemain
+  directTrade.forEach((item: any) => {
+    const partner = typeof item === 'string' ? item : item?.mitra || item?.nama_negara;
+    if (partner) uniqueActive.add(String(partner).toLowerCase().trim());
+  });
+
+  addedTrade.forEach((item: any) => {
+    const partner = typeof item === 'string' ? item : item?.mitra || item?.nama_negara;
+    if (partner) uniqueActive.add(String(partner).toLowerCase().trim());
+  });
+
+  // Hilangkan hubungan dagang yang diputus
+  removedTrade.forEach((rem: string) => {
+    if (rem) uniqueActive.delete(String(rem).toLowerCase().trim());
+  });
+
+  // Hilangkan jika negara mitra telah dianeksasi
+  Object.keys(annexedStore).forEach((annexKey: string) => {
+    if (annexKey && annexedStore[annexKey]) {
+      uniqueActive.delete(annexKey.toLowerCase().trim());
+    }
+  });
+
+  if (countryName) {
+    uniqueActive.delete(countryName.toLowerCase().trim());
+  }
+
+  return uniqueActive.size;
+}
+
+// Helper untuk menghitung entitas array unik tidak termasuk negara dianeksasi
+function countUniqueDiplomaticPartners(list: any[] | undefined | null, cd?: any): number {
+  if (!Array.isArray(list) || list.length === 0) return 0;
+  const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+  const playerCountry = (cd?.country || cd?.nama || cd?.country_name || '').toLowerCase().trim();
+
+  const unique = new Set<string>();
+  list.forEach((item) => {
+    const name = typeof item === 'string' ? item : item?.partner || item?.country || item?.nama_negara || item?.targetCountry;
+    if (name) {
+      const normalized = String(name).toLowerCase().trim();
+      if (normalized && normalized !== playerCountry && !annexedStore[normalized] && !annexedStore[String(name)]) {
+        unique.add(normalized);
+      }
+    }
+  });
+  return unique.size;
+}
+
+// Helper untuk menghitung jumlah negara di dunia yang memiliki agama yang sama dengan user (termasuk negara user sendiri)
+export function getSameReligionCountriesCount(cd: any): { count: number; totalActiveCountries: number; userReligion: string } {
+  const userReligion = String(cd?.religion || 'Islam').trim();
+  const playerCountry = String(cd?.country || cd?.nama || cd?.country_name || '').toLowerCase().trim();
+  const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+
+  // Buat lookup dari profil negara
+  const profileLookup = new Map<string, string>();
+  for (const p of COUNTRY_SOCIAL_PROFILES) {
+    profileLookup.set(p.name_id.toLowerCase().trim(), p.religion);
+    profileLookup.set(p.name_en.toLowerCase().trim(), p.religion);
+    profileLookup.set(p.slug.toLowerCase().trim(), p.religion);
+  }
+
+  let matchCount = 0;
+  let totalActive = 0;
+
+  COUNTRIES_DATA.forEach((c) => {
+    const raw = String(c.country || '').trim();
+    const norm = raw.toLowerCase();
+    const clean = norm.replace(/[^a-z0-9]/g, '');
+    const iso = String(c.iso || '').toLowerCase().trim();
+
+    // Skip negara yang telah dianeksasi
+    if (annexedStore[raw] || annexedStore[norm] || (clean && annexedStore[clean])) return;
+    if (iso && (annexedStore[iso] || annexedStore[`iso_${iso}`])) return;
+
+    totalActive++;
+
+    let rel = profileLookup.get(norm) || profileLookup.get(clean) || '';
+    if (norm === playerCountry && cd?.religion) {
+      rel = cd.religion;
+    }
+
+    if (rel && rel.toLowerCase().trim() === userReligion.toLowerCase()) {
+      matchCount++;
+    }
+  });
+
+  return {
+    count: matchCount,
+    totalActiveCountries: totalActive || 211,
+    userReligion,
+  };
+}
+
+// Helper untuk menghitung jumlah negara di dunia yang memiliki ideologi yang sama dengan user (termasuk negara user sendiri)
+export function getSameIdeologyCountriesCount(cd: any): { count: number; totalActiveCountries: number; userIdeology: string } {
+  const userIdeology = String(cd?.ideology || 'Demokrasi').trim();
+  const playerCountry = String(cd?.country || cd?.nama || cd?.country_name || '').toLowerCase().trim();
+  const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+
+  // Buat lookup dari profil negara
+  const profileLookup = new Map<string, string>();
+  for (const p of COUNTRY_SOCIAL_PROFILES) {
+    profileLookup.set(p.name_id.toLowerCase().trim(), p.ideology);
+    profileLookup.set(p.name_en.toLowerCase().trim(), p.ideology);
+    profileLookup.set(p.slug.toLowerCase().trim(), p.ideology);
+  }
+
+  let matchCount = 0;
+  let totalActive = 0;
+
+  COUNTRIES_DATA.forEach((c) => {
+    const raw = String(c.country || '').trim();
+    const norm = raw.toLowerCase();
+    const clean = norm.replace(/[^a-z0-9]/g, '');
+    const iso = String(c.iso || '').toLowerCase().trim();
+
+    // Skip negara yang telah dianeksasi
+    if (annexedStore[raw] || annexedStore[norm] || (clean && annexedStore[clean])) return;
+    if (iso && (annexedStore[iso] || annexedStore[`iso_${iso}`])) return;
+
+    totalActive++;
+
+    let ideo = profileLookup.get(norm) || profileLookup.get(clean) || '';
+    if (norm === playerCountry && cd?.ideology) {
+      ideo = cd.ideology;
+    }
+
+    if (ideo && ideo.toLowerCase().trim() === userIdeology.toLowerCase()) {
+      matchCount++;
+    }
+  });
+
+  return {
+    count: matchCount,
+    totalActiveCountries: totalActive || 211,
+    userIdeology,
+  };
 }
 
 const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
@@ -924,17 +1130,17 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     },
   },
 
-  // ═══ 8. GEOPOLITIK & DIPLOMASI (10 Misi Dinamis Target 211 Negara - Dianeksasi Turun Sendiri) ═══
+  // ═══ 8. GEOPOLITIK & DIPLOMASI (10 Misi Target 100 Negara - Dinamis Berkurang Jika Sisa Negara di Dunia < 100) ═══
   {
     id: 'membangun_kedutaan_besar',
     category: 'geopolitik',
     icon: Building2,
     accent: '#38bdf8',
-    maxProgress: 211,
+    maxProgress: 100,
     reward: { gems: 350, neo: 150000000 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
-      const count = Number(cd?.embassiesCount ?? (Array.isArray(cd?.embassies) ? cd.embassies.length : 1));
+      const count = getActiveEmbassiesCount(cd);
       const current = Math.min(target, Math.max(0, count));
       const isUnlocked = current >= target;
       return {
@@ -960,11 +1166,12 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     category: 'geopolitik',
     icon: Shield,
     accent: '#60a5fa',
-    maxProgress: 211,
+    maxProgress: 100,
     reward: { gems: 350, neo: 150000000 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
-      const count = Number(cd?.nonAggressionPactsCount ?? (Array.isArray(cd?.nonAggressionPacts) ? cd.nonAggressionPacts.length : (cd?.treatiesCount || 1)));
+      const pacts = Array.isArray(cd?.nonAggressionPacts) ? cd.nonAggressionPacts : [];
+      const count = countUniqueDiplomaticPartners(pacts, cd) || Number(cd?.nonAggressionPactsCount ?? 0);
       const current = Math.min(target, Math.max(0, count));
       const isUnlocked = current >= target;
       return {
@@ -990,11 +1197,12 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     category: 'geopolitik',
     icon: Shield,
     accent: '#3b82f6',
-    maxProgress: 211,
+    maxProgress: 100,
     reward: { gems: 500, neo: 250000000 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
-      const count = Number(cd?.defenseAlliancesCount ?? (Array.isArray(cd?.defenseAlliances) ? cd.defenseAlliances.length : (cd?.alliancesCount || 1)));
+      const alliances = Array.isArray(cd?.defenseAlliances) ? cd.defenseAlliances : [];
+      const count = countUniqueDiplomaticPartners(alliances, cd) || Number(cd?.defenseAlliancesCount ?? 0);
       const current = Math.min(target, Math.max(0, count));
       const isUnlocked = current >= target;
       return {
@@ -1020,11 +1228,11 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     category: 'geopolitik',
     icon: HeartHandshake,
     accent: '#10b981',
-    maxProgress: 211,
+    maxProgress: 100,
     reward: { gems: 400, neo: 200000000 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
-      const count = Number(cd?.tradeAgreementsCount ?? (Array.isArray(cd?.tradeAgreements) ? cd.tradeAgreements.length : (cd?.addedTradePartners?.length || 1)));
+      const count = getActiveTradeAgreementsCount(cd);
       const current = Math.min(target, Math.max(0, count));
       const isUnlocked = current >= target;
       return {
@@ -1050,11 +1258,12 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     category: 'geopolitik',
     icon: Microscope,
     accent: '#06b6d4',
-    maxProgress: 211,
+    maxProgress: 100,
     reward: { gems: 400, neo: 200000000 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
-      const count = Number(cd?.researchContractsCount ?? (Array.isArray(cd?.researchContracts) ? cd.researchContracts.length : 1));
+      const contracts = Array.isArray(cd?.researchContracts) ? cd.researchContracts : [];
+      const count = countUniqueDiplomaticPartners(contracts, cd) || Number(cd?.researchContractsCount ?? 0);
       const current = Math.min(target, Math.max(0, count));
       const isUnlocked = current >= target;
       return {
@@ -1080,12 +1289,13 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     category: 'geopolitik',
     icon: Sword,
     accent: '#ef4444',
-    maxProgress: 211,
+    maxProgress: 100,
     reward: { gems: 450, neo: 220000000 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
-      const sent = Number(cd?.troopsSentCount ?? cd?.bantuanTentaraCount ?? 1);
-      const current = Math.min(target, Math.max(0, sent));
+      const troops = Array.isArray(cd?.diplomaticTroopsSent) ? cd.diplomaticTroopsSent : [];
+      const count = countUniqueDiplomaticPartners(troops, cd) || Number(cd?.troopsSentCount ?? 0);
+      const current = Math.min(target, Math.max(0, count));
       const isUnlocked = current >= target;
       return {
         current,
@@ -1110,12 +1320,13 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     category: 'geopolitik',
     icon: Gift,
     accent: '#ec4899',
-    maxProgress: 211,
+    maxProgress: 100,
     reward: { gems: 350, neo: 150000000 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
-      const gifts = Number(cd?.diplomaticGiftsSentCount ?? cd?.hadiahDiplomasiCount ?? 1);
-      const current = Math.min(target, Math.max(0, gifts));
+      const gifts = Array.isArray(cd?.diplomaticGiftsSent) ? cd.diplomaticGiftsSent : [];
+      const count = countUniqueDiplomaticPartners(gifts, cd) || Number(cd?.diplomaticGiftsSentCount ?? 0);
+      const current = Math.min(target, Math.max(0, count));
       const isUnlocked = current >= target;
       return {
         current,
@@ -1140,12 +1351,13 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     category: 'geopolitik',
     icon: HeartHandshake,
     accent: '#f97316',
-    maxProgress: 211,
+    maxProgress: 100,
     reward: { gems: 350, neo: 160000000 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
-      const improved = Number(cd?.relationsImprovedCount ?? cd?.tingkatkanHubunganCount ?? 1);
-      const current = Math.min(target, Math.max(0, improved));
+      const improved = Array.isArray(cd?.relationsImproved) ? cd.relationsImproved : [];
+      const count = countUniqueDiplomaticPartners(improved, cd) || Number(cd?.relationsImprovedCount ?? 0);
+      const current = Math.min(target, Math.max(0, count));
       const isUnlocked = current >= target;
       return {
         current,
@@ -1170,12 +1382,13 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     category: 'geopolitik',
     icon: PhoneCall,
     accent: '#a855f7',
-    maxProgress: 211,
+    maxProgress: 100,
     reward: { gems: 400, neo: 180000000 },
     computeProgress: (cd) => {
       const target = getDynamicTargetCountryCount(cd);
-      const requested = Number(cd?.aidRequestedCount ?? cd?.mintaBantuanCount ?? 1);
-      const current = Math.min(target, Math.max(0, requested));
+      const requests = Array.isArray(cd?.aidRequests) ? cd.aidRequests : [];
+      const count = countUniqueDiplomaticPartners(requests, cd) || Number(cd?.aidRequestedCount ?? 0);
+      const current = Math.min(target, Math.max(0, count));
       const isUnlocked = current >= target;
       return {
         current,
@@ -1198,14 +1411,15 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
   {
     id: 'berikan_wilayah',
     category: 'geopolitik',
-    icon: Map,
+    icon: MapIcon,
     accent: '#eab308',
-    maxProgress: 211,
+    maxProgress: 25,
     reward: { gems: 500, neo: 250000000 },
     computeProgress: (cd) => {
-      const target = getDynamicTargetCountryCount(cd);
-      const ceded = Number(cd?.territoriesCededCount ?? cd?.berikanWilayahCount ?? 1);
-      const current = Math.min(target, Math.max(0, ceded));
+      const target = getDynamicTargetCountryCount(cd, 25);
+      const ceded = Array.isArray(cd?.territoriesCeded) ? cd.territoriesCeded : [];
+      const count = countUniqueDiplomaticPartners(ceded, cd) || Number(cd?.territoriesCededCount ?? 0);
+      const current = Math.min(target, Math.max(0, count));
       const isUnlocked = current >= target;
       return {
         current,
@@ -1226,41 +1440,65 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     },
   },
 
-  // ═══ 9. SOSIAL & BUDAYA ═══
+  // ═══ 9. SOSIAL & BUDAYA (Hanya 2 Misi: Agama & Ideologi Menyesuaikan Jumlah Kesamaan Dunia) ═══
   {
-    id: 'masyarakat_harmonis',
+    id: 'kesamaan_agama',
     category: 'sosial_budaya',
-    icon: HeartHandshake,
+    icon: BookOpen,
     accent: '#ec4899',
     maxProgress: 100,
-    reward: { gems: 160, neo: 60000000 },
+    reward: { gems: 200, neo: 80000000 },
     computeProgress: (cd) => {
-      const tol = cd?.toleranceScore ?? 85;
-      return { current: Math.min(100, tol), isUnlocked: tol >= 80 };
+      const data = getSameReligionCountriesCount(cd);
+      const current = data.count;
+      const target = data.totalActiveCountries;
+      const isUnlocked = current >= target;
+      return {
+        current,
+        target,
+        isUnlocked,
+        dynamicDescription: `Petunjuk: Saat ini ${current} dari ${target} negara di dunia menganut ${data.userReligion}. Selaraskan keyakinan dunia untuk mencapai kesatuan keyakinan global.`,
+        extraBadges: [
+          {
+            label: `Agama: ${data.userReligion}`,
+            colorClass: 'bg-root-accent/15 text-root-accent border-root-accent/30',
+          },
+          {
+            label: `Seagama: ${current} / ${target} Negara`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
     },
   },
   {
-    id: 'identitas_nasional',
+    id: 'kesamaan_ideologi',
     category: 'sosial_budaya',
-    icon: HeartHandshake,
+    icon: Flame,
     accent: '#f43f5e',
-    maxProgress: 1,
-    reward: { gems: 140, neo: 45000000 },
-    computeProgress: (cd) => {
-      const setDoctrine = Boolean(cd?.doktrin || cd?.ideology);
-      return { current: setDoctrine ? 1 : 0, isUnlocked: setDoctrine };
-    },
-  },
-  {
-    id: 'kebijakan_inklusif',
-    category: 'sosial_budaya',
-    icon: HeartHandshake,
-    accent: '#db2777',
     maxProgress: 100,
-    reward: { gems: 150, neo: 50000000 },
+    reward: { gems: 200, neo: 80000000 },
     computeProgress: (cd) => {
-      const civilScore = cd?.civilFreedomScore ?? 80;
-      return { current: Math.min(100, civilScore), isUnlocked: civilScore >= 75 };
+      const data = getSameIdeologyCountriesCount(cd);
+      const current = data.count;
+      const target = data.totalActiveCountries;
+      const isUnlocked = current >= target;
+      return {
+        current,
+        target,
+        isUnlocked,
+        dynamicDescription: `Petunjuk: Saat ini ${current} dari ${target} negara di dunia berideologi ${data.userIdeology}. Perluas pengaruh doktrin ideologi Anda ke seluruh negara di dunia.`,
+        extraBadges: [
+          {
+            label: `Ideologi: ${data.userIdeology}`,
+            colorClass: 'bg-rose-500/15 text-rose-300 border-rose-500/30',
+          },
+          {
+            label: `Seideologi: ${current} / ${target} Negara`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
     },
   },
 
@@ -1743,9 +1981,9 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
               }
             }
           }
-          // Inject {target} dinamis untuk misi diplomasi (211 dikurangi negara yang dianeksasi)
+          // Inject {target} dinamis untuk misi diplomasi (target 100 negara atau sisa negara di dunia)
           if (item.category === 'geopolitik' && description.includes('{target}')) {
-            description = description.replace(/{target}/g, String(item.maxProgress || 211));
+            description = description.replace(/{target}/g, String(item.maxProgress || 100));
           }
 
           // Inject template variables like {periodText} and {targetDate} for anggaran_sehat

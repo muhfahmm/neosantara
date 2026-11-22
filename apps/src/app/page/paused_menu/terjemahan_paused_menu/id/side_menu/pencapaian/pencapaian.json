@@ -87,18 +87,6 @@
       "title": "Pelayanan Publik Lengkap",
       "description": "Bangun fasilitas pendidikan, kesehatan, dan layanan publik lainnya."
     },
-    "masyarakat_harmonis": {
-      "title": "Masyarakat Harmonis",
-      "description": "Capai tingkat toleransi dan kepuasan sosial yang ditentukan."
-    },
-    "identitas_nasional": {
-      "title": "Identitas Nasional",
-      "description": "Tetapkan ideologi, agama, atau doktrin negara dan pertahankan kestabilan sosial."
-    },
-    "kebijakan_inklusif": {
-      "title": "Kebijakan Inklusif",
-      "description": "Capai target keterbukaan atau kebebasan sipil yang ditentukan."
-    },
     "penjaga_negeri": {
       "title": "Penjaga Negeri",
       "description": "Bangun infrastruktur pertahanan dan tingkatkan kesiapan armada."
@@ -258,6 +246,14 @@
     "berikan_wilayah": {
       "title": "Berikan Wilayah",
       "description": "Petunjuk: Selesaikan kesepakatan geopolitik transfer wilayah dengan {target} negara mitra di dunia."
+    },
+    "kesamaan_agama": {
+      "title": "Solidaritas Agama Dunia",
+      "description": "Jalin keharmonisan dengan negara-negara di dunia yang menganut agama yang sama dengan negara Anda."
+    },
+    "kesamaan_ideologi": {
+      "title": "Kemitraan Ideologi Dunia",
+      "description": "Jalin persatuan doktrin dengan negara-negara di dunia yang menganut ideologi yang sama dengan negara Anda."
     }
   },
   "building_achievements": {

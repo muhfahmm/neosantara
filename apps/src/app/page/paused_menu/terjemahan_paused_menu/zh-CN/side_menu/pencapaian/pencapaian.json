@@ -87,18 +87,6 @@
       "title": "Comprehensive Public Care",
       "description": "Establish education, health, and diverse public service facilities."
     },
-    "masyarakat_harmonis": {
-      "title": "Harmonious Society",
-      "description": "Attain targeted societal tolerance and civil satisfaction metrics."
-    },
-    "identitas_nasional": {
-      "title": "National Identity",
-      "description": "Establish national ideology, state faith, or doctrine while securing social order."
-    },
-    "kebijakan_inklusif": {
-      "title": "Inclusive Policies",
-      "description": "Reach target milestones in civic freedom and open governance."
-    },
     "penjaga_negeri": {
       "title": "Guardian of the Realm",
       "description": "Construct defense installations and maximize naval/armed forces readiness."
@@ -258,6 +246,14 @@
     "berikan_wilayah": {
       "title": "移交领土区域",
       "description": "指南：落实领土外交条约，向全球{target}个伙伴国家移交领土区域。"
+    },
+    "kesamaan_agama": {
+      "title": "全球宗教团结",
+      "description": "与世界上和本国拥有相同宗教信仰的国家建立和谐关系。"
+    },
+    "kesamaan_ideologi": {
+      "title": "全球意识形态同盟",
+      "description": "与世界上和本国拥有相同意识形态的国家建立团结与合作。"
     }
   },
   "building_achievements": {
