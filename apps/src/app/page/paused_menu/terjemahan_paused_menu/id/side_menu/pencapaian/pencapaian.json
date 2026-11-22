@@ -105,15 +105,7 @@
     },
     "tanggap_bencana": {
       "title": "Tanggap Bencana",
-      "description": "Salurkan bantuan dan pulihkan kondisi setelah bencana alam."
-    },
-    "krisis_teratasi": {
-      "title": "Krisis Teratasi",
-      "description": "Tangani wabah penyakit hingga penyebarannya terkendali."
-    },
-    "negara_tangguh": {
-      "title": "Negara Tangguh",
-      "description": "Pulihkan layanan penting setelah krisis tanpa membiarkan kebutuhan dasar warga terus mengalami defisit."
+      "description": "Petunjuk: Salurkan bantuan dan selesaikan penanganan terhadap 100 peristiwa bencana alam yang melanda negara."
     },
     "bangun_kelistrikan": {
       "title": "Pembangunan Kelistrikan",
@@ -254,6 +246,14 @@
     "kesamaan_ideologi": {
       "title": "Kemitraan Ideologi Dunia",
       "description": "Jalin persatuan doktrin dengan negara-negara di dunia yang menganut ideologi yang sama dengan negara Anda."
+    },
+    "tanggap_pandemi": {
+      "title": "Penanganan Pandemi",
+      "description": "Petunjuk: Tanggapi, berikan tindakan karantina, dan pulihkan kondisi kesehatan nasional dari 100 krisis pandemi global."
+    },
+    "tanggap_epidemi": {
+      "title": "Pengendalian Epidemi",
+      "description": "Petunjuk: Salurkan bantuan medis darurat dan tangani 100 wabah epidemi lokal hingga penyebarannya terkendali."
     }
   },
   "building_achievements": {

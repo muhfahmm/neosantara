@@ -104,16 +104,8 @@
       "description": "Complete advanced military construction or strategic defense programs."
     },
     "tanggap_bencana": {
-      "title": "Disaster Response",
-      "description": "Deploy aid and restore normal conditions following natural disasters."
-    },
-    "krisis_teratasi": {
-      "title": "Crisis Resolved",
-      "description": "Contain epidemic outbreaks until disease spread is fully halted."
-    },
-    "negara_tangguh": {
-      "title": "Resilient State",
-      "description": "Restore vital services post-crisis without prolonged civilian deprivations."
+      "title": "灾难应急响应",
+      "description": "指南：向遭受自然灾害的地区输送紧急援助，妥善化解100次自然灾害。"
     },
     "bangun_kelistrikan": {
       "title": "电力设施建设",
@@ -254,6 +246,14 @@
     "kesamaan_ideologi": {
       "title": "全球意识形态同盟",
       "description": "与世界上和本国拥有相同意识形态的国家建立团结与合作。"
+    },
+    "tanggap_pandemi": {
+      "title": "全球大流行防控",
+      "description": "指南：应对100次全球大流行危机，推行隔离措施并恢复国民健康安全。"
+    },
+    "tanggap_epidemi": {
+      "title": "地方流行病控制",
+      "description": "指南：发放应急医疗援助，控制并遏制100次地方流行病疫情蔓延。"
     }
   },
   "building_achievements": {

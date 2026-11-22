@@ -104,16 +104,8 @@
       "description": "Complete advanced military construction or strategic defense programs."
     },
     "tanggap_bencana": {
-      "title": "Disaster Response",
-      "description": "Deploy aid and restore normal conditions following natural disasters."
-    },
-    "krisis_teratasi": {
-      "title": "Crisis Resolved",
-      "description": "Contain epidemic outbreaks until disease spread is fully halted."
-    },
-    "negara_tangguh": {
-      "title": "Resilient State",
-      "description": "Restore vital services post-crisis without prolonged civilian deprivations."
+      "title": "Katastrophenhilfe",
+      "description": "Leitfaden: Leisten Sie Nothilfe und bewältigen Sie 100 Naturkatastrophen im Land."
     },
     "bangun_kelistrikan": {
       "title": "Bau von Elektrizität",
@@ -254,6 +246,14 @@
     "kesamaan_ideologi": {
       "title": "Globale Ideologische Partnerschaft",
       "description": "Fördern Sie die doktrinäre Einheit mit Ländern weltweit, die dieselbe Ideologie wie Ihre Nation teilen."
+    },
+    "tanggap_pandemi": {
+      "title": "Pandemie-Eindämmung",
+      "description": "Leitfaden: Reagieren Sie, setzen Sie Quarantänemaßnahmen durch und überwinden Sie 100 weltweite Pandemiekrisen."
+    },
+    "tanggap_epidemi": {
+      "title": "Epidemie-Bekämpfung",
+      "description": "Leitfaden: Leisten Sie medizinische Nothilfe und kontrollieren Sie 100 lokale Epidemieausbrüche."
     }
   },
   "building_achievements": {

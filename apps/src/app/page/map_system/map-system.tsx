@@ -10777,6 +10777,12 @@ export default function MapPage() {
                         }
 
                         setCountryDetail((prev: any) => {
+                            const isPandemicOutbreak = tNotif.tradeType === 'wabah_penyakit' &&
+                                (String(tNotif.category || '').toLowerCase().includes('pandemi') ||
+                                 String(tNotif.outbreakType || '').toLowerCase().includes('pandemi'));
+                            const isEpidemicOutbreak = tNotif.tradeType === 'wabah_penyakit' && !isPandemicOutbreak;
+                            const isNaturalDisaster = tNotif.tradeType === 'bencana_alam' && !isPoliceIncident;
+
                             let updatedPrev = {
                                 ...prev,
                                 anggaran: budget - cost,
@@ -10792,6 +10798,15 @@ export default function MapPage() {
                                 active_disaster_effects: Array.isArray(prev?.active_disaster_effects)
                                     ? prev.active_disaster_effects.map((d: any) => d.id === notif.id ? { ...d, isHandled: true } : d)
                                     : prev?.active_disaster_effects,
+                                disasterResolvedCount: isNaturalDisaster
+                                    ? Number(prev?.disasterResolvedCount || 0) + 1
+                                    : Number(prev?.disasterResolvedCount || 0),
+                                pandemicHandledCount: isPandemicOutbreak
+                                    ? Number(prev?.pandemicHandledCount || 0) + 1
+                                    : Number(prev?.pandemicHandledCount || 0),
+                                epidemicHandledCount: isEpidemicOutbreak
+                                    ? Number(prev?.epidemicHandledCount || 0) + 1
+                                    : Number(prev?.epidemicHandledCount || 0),
                             };
 
                             // Restore populasi - tambahkan kembali semua perkiraanKematian

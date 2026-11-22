@@ -105,15 +105,7 @@
     },
     "tanggap_bencana": {
       "title": "Disaster Response",
-      "description": "Deploy aid and restore normal conditions following natural disasters."
-    },
-    "krisis_teratasi": {
-      "title": "Crisis Resolved",
-      "description": "Contain epidemic outbreaks until disease spread is fully halted."
-    },
-    "negara_tangguh": {
-      "title": "Resilient State",
-      "description": "Restore vital services post-crisis without prolonged civilian deprivations."
+      "description": "Guide: Deploy aid and resolve 100 natural disaster emergencies striking the country."
     },
     "bangun_kelistrikan": {
       "title": "Electricity Construction",
@@ -254,6 +246,14 @@
     "kesamaan_ideologi": {
       "title": "Global Ideological Fellowship",
       "description": "Foster doctrinal unity with countries around the world that share the same ideology as your nation."
+    },
+    "tanggap_pandemi": {
+      "title": "Pandemic Containment",
+      "description": "Guide: Respond, implement quarantine measures, and restore public health from 100 global pandemic crises."
+    },
+    "tanggap_epidemi": {
+      "title": "Epidemic Control",
+      "description": "Guide: Provide emergency medical assistance and contain 100 local epidemic outbreaks."
     }
   },
   "building_achievements": {

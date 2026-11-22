@@ -1566,7 +1566,7 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     },
   },
   {
-    id: 'mata_dan_telinga_negara',
+    id: 'mata_telinga_negara',
     category: 'pertahanan',
     icon: Shield,
     accent: '#f87171',
@@ -1610,37 +1610,89 @@ const ACHIEVEMENT_DEFINITIONS: AchievementItem[] = [
     category: 'tanggap_darurat',
     icon: Siren,
     accent: '#eab308',
-    maxProgress: 3,
-    reward: { gems: 180, neo: 70000000 },
+    maxProgress: 100,
+    reward: { gems: 300, neo: 120000000 },
     computeProgress: (cd) => {
-      const disasterResolved = cd?.disasterResolvedCount ?? 1;
-      const current = Math.min(3, disasterResolved);
-      return { current, isUnlocked: current >= 3 };
+      const target = 100;
+      const disasterResolved = Number(cd?.disasterResolvedCount ?? 0);
+      const current = Math.min(target, Math.max(0, disasterResolved));
+      const isUnlocked = current >= target;
+      return {
+        current,
+        target,
+        isUnlocked,
+        dynamicDescription: `Petunjuk: Salurkan bantuan dan selesaikan penanganan terhadap ${target} peristiwa bencana alam yang melanda negara.`,
+        extraBadges: [
+          {
+            label: isUnlocked ? `Bencana Teratasi (${target}/${target})` : `Target: ${target} Bencana`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+          },
+          {
+            label: `Progres: ${current} / ${target}`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
     },
   },
   {
-    id: 'krisis_teratasi',
+    id: 'tanggap_pandemi',
+    category: 'tanggap_darurat',
+    icon: Siren,
+    accent: '#ef4444',
+    maxProgress: 100,
+    reward: { gems: 400, neo: 180000000 },
+    computeProgress: (cd) => {
+      const target = 100;
+      const pandemicHandled = Number(cd?.pandemicHandledCount ?? 0);
+      const current = Math.min(target, Math.max(0, pandemicHandled));
+      const isUnlocked = current >= target;
+      return {
+        current,
+        target,
+        isUnlocked,
+        dynamicDescription: `Petunjuk: Tanggapi, berikan tindakan karantina, dan pulihkan kondisi kesehatan nasional dari ${target} krisis pandemi global.`,
+        extraBadges: [
+          {
+            label: isUnlocked ? `Pandemi Teratasi (${target}/${target})` : `Target: ${target} Pandemi`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-rose-500/15 text-rose-300 border-rose-500/30',
+          },
+          {
+            label: `Progres: ${current} / ${target}`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
+    },
+  },
+  {
+    id: 'tanggap_epidemi',
     category: 'tanggap_darurat',
     icon: Siren,
     accent: '#ca8a04',
-    maxProgress: 2,
-    reward: { gems: 200, neo: 80000000 },
+    maxProgress: 100,
+    reward: { gems: 300, neo: 120000000 },
     computeProgress: (cd) => {
-      const epidemicHandled = cd?.epidemicHandledCount ?? 1;
-      const current = Math.min(2, epidemicHandled);
-      return { current, isUnlocked: current >= 2 };
-    },
-  },
-  {
-    id: 'negara_tangguh',
-    category: 'tanggap_darurat',
-    icon: Siren,
-    accent: '#a16207',
-    maxProgress: 1,
-    reward: { gems: 250, neo: 90000000 },
-    computeProgress: (cd) => {
-      const resilient = cd?.postCrisisRestored ?? true;
-      return { current: resilient ? 1 : 0, isUnlocked: Boolean(resilient) };
+      const target = 100;
+      const epidemicHandled = Number(cd?.epidemicHandledCount ?? 0);
+      const current = Math.min(target, Math.max(0, epidemicHandled));
+      const isUnlocked = current >= target;
+      return {
+        current,
+        target,
+        isUnlocked,
+        dynamicDescription: `Petunjuk: Salurkan bantuan medis darurat dan tangani ${target} wabah epidemi lokal hingga penyebarannya terkendali.`,
+        extraBadges: [
+          {
+            label: isUnlocked ? `Epidemi Teratasi (${target}/${target})` : `Target: ${target} Epidemi`,
+            colorClass: isUnlocked ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-yellow-500/15 text-yellow-300 border-yellow-500/30',
+          },
+          {
+            label: `Progres: ${current} / ${target}`,
+            colorClass: 'bg-root-surface/50 text-root-text/80 border-root-border/40',
+          },
+        ],
+      };
     },
   },
 ];
