@@ -22,10 +22,10 @@ export function generateHunianDefisitNotification(
   const formattedPop = population.toLocaleString('id-ID', { maximumFractionDigits: 2 });
 
   const titleKey = housingSatisfaction <= 20
-    ? 'side_inbox.basicNeeds.housing.criticalTitle'
-    : 'side_inbox.basicNeeds.housing.title';
+    ? 'side_inbox.dynamicNotifications.basicNeeds.housing.criticalTitle'
+    : 'side_inbox.dynamicNotifications.basicNeeds.housing.title';
   const titleParams = { satisfaction: housingSatisfaction };
-  const messageKey = 'side_inbox.basicNeeds.housing.message';
+  const messageKey = 'side_inbox.dynamicNotifications.basicNeeds.housing.message';
   const messageParams = {
     satisfaction: housingSatisfaction,
     shortage: formattedShortage,
@@ -38,8 +38,8 @@ export function generateHunianDefisitNotification(
     title: getDefaultInboxText(titleKey, titleParams),
     titleKey,
     titleParams,
-    sender: getDefaultInboxText('side_inbox.basicNeeds.housing.sender'),
-    senderKey: 'side_inbox.basicNeeds.housing.sender',
+    sender: getDefaultInboxText('side_inbox.dynamicNotifications.basicNeeds.housing.sender'),
+    senderKey: 'side_inbox.dynamicNotifications.basicNeeds.housing.sender',
     ...createInboxNotificationText(messageKey, messageParams),
     timestamp: dateStr,
     type: 'kesejahteraan',

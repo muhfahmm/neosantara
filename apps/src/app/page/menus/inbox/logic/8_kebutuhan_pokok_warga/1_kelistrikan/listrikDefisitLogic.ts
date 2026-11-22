@@ -27,9 +27,9 @@ export function generateListrikDefisitNotification(
   // Setiap notifikasi kelistrikan kurang menurunkan rating sebesar 1 poin
   const ratingPenalty = 1; // Setiap notifikasi turun 1 poin
 
-  const titleKey = 'side_inbox.basicNeeds.electricity.title';
+  const titleKey = 'side_inbox.dynamicNotifications.basicNeeds.electricity.title';
   const titleParams = { step: deficitStep };
-  const messageKey = 'side_inbox.basicNeeds.electricity.message';
+  const messageKey = 'side_inbox.dynamicNotifications.basicNeeds.electricity.message';
   const messageParams = {
     deficit: formattedDeficitMW,
     production: formattedProd,
@@ -43,8 +43,8 @@ export function generateListrikDefisitNotification(
     title: getDefaultInboxText(titleKey, titleParams),
     titleKey,
     titleParams,
-    sender: getDefaultInboxText('side_inbox.basicNeeds.electricity.sender'),
-    senderKey: 'side_inbox.basicNeeds.electricity.sender',
+    sender: getDefaultInboxText('side_inbox.dynamicNotifications.basicNeeds.electricity.sender'),
+    senderKey: 'side_inbox.dynamicNotifications.basicNeeds.electricity.sender',
     ...createInboxNotificationText(messageKey, messageParams),
     timestamp: dateStr,
     type: 'peringkat', // Mengubah dari 'kepuasan' ke 'peringkat' untuk memicu penurunan rating

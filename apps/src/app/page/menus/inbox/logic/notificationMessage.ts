@@ -11,8 +11,24 @@ interface InboxNotificationText {
   messageParamKeys: Record<string, string>;
 }
 
+function normalizeInboxTemplateKey(key: string): string {
+  const basicNeedsPrefix = 'side_inbox.basicNeeds.';
+  if (
+    key.startsWith(basicNeedsPrefix) &&
+    !key.startsWith('side_inbox.dynamicNotifications.basicNeeds.')
+  ) {
+    const subPath = key.slice(basicNeedsPrefix.length);
+    const validCategories = ['electricity', 'housing', 'food', 'publicServices', 'population'];
+    if (validCategories.some((cat) => subPath.startsWith(cat))) {
+      return `side_inbox.dynamicNotifications.basicNeeds.${subPath}`;
+    }
+  }
+  return key;
+}
+
 function getIdTemplate(key: string): string {
-  const path = key.split('.').slice(1);
+  const normalizedKey = normalizeInboxTemplateKey(key);
+  const path = normalizedKey.split('.').slice(1);
   let value: unknown = idInbox;
   for (const segment of path) {
     if (!value || typeof value !== 'object') {

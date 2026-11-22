@@ -14,9 +14,9 @@ export function generatePanganDefisitNotification(
   deficitCommodityNames: string[],
   dateStr: string
 ): PanganDefisitNotification {
-  const titleKey = 'side_inbox.basicNeeds.food.title';
+  const titleKey = 'side_inbox.dynamicNotifications.basicNeeds.food.title';
   const titleParams = { count: deficitCount, total: totalSectors };
-  const messageKey = 'side_inbox.basicNeeds.food.message';
+  const messageKey = 'side_inbox.dynamicNotifications.basicNeeds.food.message';
   const messageParams = { count: deficitCount, total: totalSectors };
 
   return {
@@ -24,8 +24,8 @@ export function generatePanganDefisitNotification(
     title: getDefaultInboxText(titleKey, titleParams),
     titleKey,
     titleParams,
-    sender: getDefaultInboxText('side_inbox.basicNeeds.food.sender'),
-    senderKey: 'side_inbox.basicNeeds.food.sender',
+    sender: getDefaultInboxText('side_inbox.dynamicNotifications.basicNeeds.food.sender'),
+    senderKey: 'side_inbox.dynamicNotifications.basicNeeds.food.sender',
     ...createInboxNotificationText(messageKey, messageParams),
     timestamp: dateStr,
     type: 'kepuasan',

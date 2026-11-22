@@ -13,9 +13,9 @@ export function generateTempatUmumDefisitNotification(
   dateStr: string
 ): TempatUmumDefisitNotification {
   const formattedPop = population.toLocaleString('id-ID', { maximumFractionDigits: 2 });
-  const titleKey = 'side_inbox.basicNeeds.publicServices.title';
+  const titleKey = 'side_inbox.dynamicNotifications.basicNeeds.publicServices.title';
   const titleParams = { score };
-  const messageKey = 'side_inbox.basicNeeds.publicServices.message';
+  const messageKey = 'side_inbox.dynamicNotifications.basicNeeds.publicServices.message';
   const messageParams = { score, population: formattedPop };
 
   return {
@@ -23,8 +23,8 @@ export function generateTempatUmumDefisitNotification(
     title: getDefaultInboxText(titleKey, titleParams),
     titleKey,
     titleParams,
-    sender: getDefaultInboxText('side_inbox.basicNeeds.publicServices.sender'),
-    senderKey: 'side_inbox.basicNeeds.publicServices.sender',
+    sender: getDefaultInboxText('side_inbox.dynamicNotifications.basicNeeds.publicServices.sender'),
+    senderKey: 'side_inbox.dynamicNotifications.basicNeeds.publicServices.sender',
     ...createInboxNotificationText(messageKey, messageParams),
     timestamp: dateStr,
     type: 'kesejahteraan',

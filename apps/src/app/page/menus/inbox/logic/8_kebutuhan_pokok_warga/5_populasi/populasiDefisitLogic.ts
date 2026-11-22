@@ -15,8 +15,8 @@ export function generatePopulasiDefisitNotification(
   countryName: string,
 ): PopulasiDefisitNotification {
   const monthlyEstimate = dailyChange * 30;
-  const titleKey = "side_inbox.basicNeeds.population.title";
-  const messageKey = "side_inbox.basicNeeds.population.message";
+  const titleKey = "side_inbox.dynamicNotifications.basicNeeds.population.title";
+  const messageKey = "side_inbox.dynamicNotifications.basicNeeds.population.message";
   const messageParams = {
     country: countryName,
     dailyLoss: Math.abs(dailyChange).toLocaleString("id-ID"),
@@ -27,8 +27,8 @@ export function generatePopulasiDefisitNotification(
     id: `population-deficit-${countryName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${dateStr.slice(0, 7)}`,
     title: getDefaultInboxText(titleKey),
     titleKey,
-    sender: getDefaultInboxText("side_inbox.basicNeeds.population.sender"),
-    senderKey: "side_inbox.basicNeeds.population.sender",
+    sender: getDefaultInboxText("side_inbox.dynamicNotifications.basicNeeds.population.sender"),
+    senderKey: "side_inbox.dynamicNotifications.basicNeeds.population.sender",
     ...createInboxNotificationText(messageKey, messageParams),
     timestamp: dateStr,
     type: "kepuasan",
