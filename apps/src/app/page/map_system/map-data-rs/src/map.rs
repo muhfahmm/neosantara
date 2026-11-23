@@ -332,6 +332,15 @@ fn map_detail_level(scale: f64) -> usize {
     }
 }
 
+fn render_detail_level(scale: f64, zooming: bool) -> usize {
+    let detail_level = map_detail_level(scale);
+    if zooming && scale > 1.0 {
+        detail_level.min(1)
+    } else {
+        detail_level
+    }
+}
+
 fn province_lines_use_coarse_detail(scale: f64, is_panning: bool) -> bool {
     is_panning || scale < 19.0
 }
@@ -1555,12 +1564,9 @@ impl MapEngine {
         self.perf_labels_drawn = 0;
         self.perf_polys_drawn = 0;
         let animating = self.update_camera(frame_delta_ms);
-        // Pinch memakai path paling kasar; detail dipulihkan 150ms setelah jari berhenti.
-        let detail_level = if zooming {
-            0
-        } else {
-            map_detail_level(self.scale)
-        };
+        // Pertahankan geometri menengah selama zoom agar wilayah kompleks tidak
+        // hilang pada path overview; detail penuh tetap ditunda sampai zoom selesai.
+        let detail_level = render_detail_level(self.scale, zooming);
 
         // Rebuild cache bendera sekali setelah semua image selesai, bukan untuk
         // setiap batch image yang selesai dimuat.
@@ -1790,43 +1796,41 @@ impl MapEngine {
                 }
             }
 
-            if !zooming {
-                for &feature_index in &visible {
-                    let feature = &self.features[feature_index];
-                    let Some(city_indices) = self.city_ownership_by_iso.get(&feature.iso) else {
+            for &feature_index in &visible {
+                let feature = &self.features[feature_index];
+                let Some(city_indices) = self.city_ownership_by_iso.get(&feature.iso) else {
+                    continue;
+                };
+                for &city_index in city_indices {
+                    let city = &self.city_ownership[city_index];
+                    if city.cells.is_empty()
+                        || city.x + city.radius_x < vx0
+                        || city.x - city.radius_x > vx1
+                        || city.y + city.radius_y < vy0
+                        || city.y - city.radius_y > vy1
+                    {
+                        continue;
+                    }
+                    let Some(country_path) = feature.get_path(detail_level) else {
                         continue;
                     };
-                    for &city_index in city_indices {
-                        let city = &self.city_ownership[city_index];
-                        if city.cells.is_empty()
-                            || city.x + city.radius_x < vx0
-                            || city.x - city.radius_x > vx1
-                            || city.y + city.radius_y < vy0
-                            || city.y - city.radius_y > vy1
-                        {
-                            continue;
-                        }
-                        let Some(country_path) = feature.get_path(detail_level) else {
-                            continue;
-                        };
-                        let is_transparent = city.color.as_string().map_or(false, |c| {
-                            c == "transparent" || c == "rgba(0, 0, 0, 0)" || c == "none"
-                        });
-                        if !is_transparent {
-                            self.ctx.save();
-                            self.ctx.clip_with_path_2d(&country_path);
-                            self.ctx.set_fill_style(&city.color);
-                            self.ctx.begin_path();
-                            for ring in &city.cells {
-                                self.ctx.move_to(ring[0].0, ring[0].1);
-                                for p in &ring[1..] {
-                                    self.ctx.line_to(p.0, p.1);
-                                }
-                                self.ctx.close_path();
+                    let is_transparent = city.color.as_string().map_or(false, |c| {
+                        c == "transparent" || c == "rgba(0, 0, 0, 0)" || c == "none"
+                    });
+                    if !is_transparent {
+                        self.ctx.save();
+                        self.ctx.clip_with_path_2d(&country_path);
+                        self.ctx.set_fill_style(&city.color);
+                        self.ctx.begin_path();
+                        for ring in &city.cells {
+                            self.ctx.move_to(ring[0].0, ring[0].1);
+                            for p in &ring[1..] {
+                                self.ctx.line_to(p.0, p.1);
                             }
-                            self.ctx.fill();
-                            self.ctx.restore();
+                            self.ctx.close_path();
                         }
+                        self.ctx.fill();
+                        self.ctx.restore();
                     }
                 }
             }
@@ -2663,8 +2667,8 @@ pub fn start_map_engine(
 mod tests {
     use super::{
         is_small_feature, is_zoom_interaction_active, map_detail_level, normalize_feature_iso,
-        province_lines_use_coarse_detail, screen_distance_to_bbox, should_draw_province_lines,
-        should_show_non_capital_flags, wheel_zoom_factor,
+        province_lines_use_coarse_detail, render_detail_level, screen_distance_to_bbox,
+        should_draw_province_lines, should_show_non_capital_flags, wheel_zoom_factor,
     };
 
     #[test]
@@ -2732,6 +2736,14 @@ mod tests {
         assert_eq!(map_detail_level(19.1), 2);
         assert_eq!(map_detail_level(18.6), 1);
         assert_eq!(map_detail_level(1.0), 0);
+    }
+
+    #[test]
+    fn keeps_territory_geometry_visible_during_zoom_without_full_detail_cost() {
+        assert_eq!(render_detail_level(1.0, true), 0);
+        assert_eq!(render_detail_level(4.0, true), 1);
+        assert_eq!(render_detail_level(50.0, true), 1);
+        assert_eq!(render_detail_level(50.0, false), 2);
     }
 
     #[test]
