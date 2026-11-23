@@ -321,6 +321,10 @@ import {
     rollPbbChancePercent,
 } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbResolutionFrequency';
 import {
+    rollZeroRelationInvasionWindows,
+    type ZeroRelationInvasionSchedules,
+} from './zeroRelationInvasionLogic';
+import {
     getCountryIcbmCount,
     consumeCountryIcbm,
     launchIcbmWarStrike,
@@ -2791,7 +2795,12 @@ export default function MapPage() {
                 ? detail.attackerCountry
                 : selectedCountry?.country || countryDetail?.country || 'China';
             const attackerIso = String(
-                detail.attackerCountryDetail?.iso || selectedCountry?.iso || countryDetail?.iso || 'cn'
+                detail.attackerCountryDetail?.iso ||
+                (countryDetail?.country ? getIsoForCountryName(countryDetail.country) : '') ||
+                getIsoForCountryName(attackerCountry) ||
+                selectedCountry?.iso ||
+                countryDetail?.iso ||
+                'un'
             ).toLowerCase();
             if (
                 sameCountrySlug(countryDetail?.country_slug, detail.targetCountryDetail?.country_slug) ||
@@ -2809,7 +2818,11 @@ export default function MapPage() {
                 }, ...prev]);
                 return;
             }
-            const targetIso = getIsoForCountryName(targetCountry) || 'un';
+            const targetIso = String(
+                detail.targetCountryDetail?.iso ||
+                getIsoForCountryName(targetCountry) ||
+                'un'
+            ).toLowerCase();
 
             const year = currentDate.getFullYear();
             const month = String(currentDate.getMonth() + 1).padStart(2, '0');
@@ -6319,10 +6332,18 @@ export default function MapPage() {
                 }
             }
 
-            // Check all international countries for attack pool
-            const potentialAttackers = internationalPool.filter(
-                p => p.trim().toLowerCase() !== userCountryName.trim().toLowerCase()
-            );
+            // Check all countries in the world for possible AI attackers.
+            const playerIdentity = getWarCountryIdentity(userCountryName);
+            const potentialAttackers = Array.from(new Map(
+                COUNTRIES_DATA
+                    .filter(country => country.country.trim())
+                    .map(country => [
+                        getWarCountryIdentity(country.country, country.iso),
+                        country.country.trim(),
+                    ] as const)
+            ).entries())
+                .filter(([identity, name]) => identity && name && identity !== playerIdentity)
+                .map(([, name]) => name);
 
             // === INVASION YEARLY GATE (siklus 10/20/30/40/50%) ===
             // Probabilitas invasi meningkat tiap tahun, sama seperti pandemi.
@@ -6330,6 +6351,12 @@ export default function MapPage() {
             const INVASION_YEARLY_CYCLE = [10, 20, 30, 40, 50]; // %
             const invasionYear = currentDate.getFullYear();
             let invasionYearlyGatePassed = false;
+            type InvasionSchedule = { year: number; hit: boolean; day: number; fired?: boolean };
+            const invasionPendingState = countryDetail as typeof countryDetail & {
+                __invasionSchedulePending?: InvasionSchedule;
+                __zeroRelationInvasionSchedulesPending?: ZeroRelationInvasionSchedules;
+                zero_relation_invasion_schedules?: ZeroRelationInvasionSchedules;
+            };
             {
                 const gameStartStr2 = countryDetail?.game_start_date as string | undefined;
                 let gameStartYear2 = invasionYear;
@@ -6342,8 +6369,7 @@ export default function MapPage() {
                 const cycleIdx = yearIndex2 % INVASION_YEARLY_CYCLE.length;
                 const yearlyChance = INVASION_YEARLY_CYCLE[cycleIdx];
 
-                let invSchedule = countryDetail?.invasion_schedule as
-                    { year: number; hit: boolean; day: number; fired?: boolean } | undefined;
+                let invSchedule = countryDetail?.invasion_schedule as InvasionSchedule | undefined;
                 if (!invSchedule || invSchedule.year !== invasionYear) {
                     invSchedule = {
                         year: invasionYear,
@@ -6359,26 +6385,57 @@ export default function MapPage() {
                 invasionYearlyGatePassed = !isInGracePeriod &&
                     invSchedule.hit && !invSchedule.fired && dayOfYearInv >= invSchedule.day;
                 // Simpan jadwal ke countryDetail (akan di-persist bersama last_checked_notification_date)
-                (countryDetail as any).__invasionSchedulePending = invSchedule;
+                invasionPendingState.__invasionSchedulePending = invSchedule;
             }
 
-            if (potentialAttackers.length > 0 && invasionYearlyGatePassed) {
-                // Find countries with lowest relations or pick random
-                const attackerScores = potentialAttackers.map(attacker => ({
-                    attacker,
-                    score: getRelationValue(userCountryName, attacker, currentDateStr)
-                })).sort((a, b) => a.score - b.score);
+            const attackerScores = potentialAttackers.map(attacker => ({
+                attacker,
+                identity: getWarCountryIdentity(attacker),
+                score: getRelationValue(userCountryName, attacker, currentDateStr),
+            })).sort((a, b) => a.score - b.score);
+            const zeroRelationAttackers = attackerScores
+                .filter(item => item.score === 0)
+                .map(item => ({ identity: item.identity, country: item.attacker }));
+            const zeroRelationWindowChancePercent = applyDoktrinPertahananDiriBonus(80, countryDetail);
+            const zeroRelationInvasionRoll = rollZeroRelationInvasionWindows(
+                currentDateStr,
+                isInGracePeriod ? [] : zeroRelationAttackers,
+                invasionPendingState.zero_relation_invasion_schedules,
+                zeroRelationWindowChancePercent,
+            );
+            invasionPendingState.__zeroRelationInvasionSchedulesPending = zeroRelationInvasionRoll.schedules;
 
-                // Pick from top 3 worst relation countries or random if relations are fine
+            const selectedAttackers = zeroRelationInvasionRoll.triggeredTargets.flatMap(target => {
+                const attacker = attackerScores.find(item => item.identity === target.identity);
+                return attacker ? [attacker] : [];
+            });
+
+            if (
+                selectedAttackers.length === 0 &&
+                zeroRelationAttackers.length === 0 &&
+                potentialAttackers.length > 0 &&
+                invasionYearlyGatePassed
+            ) {
                 const criticalAttackers = attackerScores.filter(item => item.score < 25);
-                const chosenAttackerObj = criticalAttackers.length > 0
-                    ? criticalAttackers[Math.floor(Math.random() * criticalAttackers.length)]
-                    : attackerScores[Math.floor(Math.random() * attackerScores.length)];
+                selectedAttackers.push(
+                    criticalAttackers.length > 0
+                        ? criticalAttackers[Math.floor(Math.random() * criticalAttackers.length)]
+                        : attackerScores[Math.floor(Math.random() * attackerScores.length)]
+                );
+            }
 
+            if (zeroRelationInvasionRoll.triggeredTargets.length > 0 && invasionPendingState.__invasionSchedulePending) {
+                invasionPendingState.__invasionSchedulePending = {
+                    ...invasionPendingState.__invasionSchedulePending,
+                    fired: true,
+                };
+            }
+
+            for (const chosenAttackerObj of selectedAttackers) {
                 const attackerCountry = chosenAttackerObj.attacker;
                 const relationScore = chosenAttackerObj.score;
+                const isZeroRelationAttack = relationScore === 0;
 
-                // Base chance follows relation (relation <= 10 yields up to 80% chance)
                 let baseChance = getAttackChancePercentFromRelation(relationScore);
                 if (relationScore <= 10) {
                     baseChance = Math.max(baseChance, 80);
@@ -6386,13 +6443,14 @@ export default function MapPage() {
                     baseChance = Math.max(baseChance, 50);
                 }
 
-                const attackChancePercent = applyDoktrinPertahananDiriBonus(baseChance, countryDetail);
+                const attackChancePercent = isZeroRelationAttack
+                    ? zeroRelationWindowChancePercent
+                    : applyDoktrinPertahananDiriBonus(baseChance, countryDetail);
 
-                if (Math.random() * 100 < attackChancePercent) {
-                    // Tandai jadwal invasi sebagai sudah dieksekusi
-                    if ((countryDetail as any).__invasionSchedulePending) {
-                        (countryDetail as any).__invasionSchedulePending = {
-                            ...(countryDetail as any).__invasionSchedulePending,
+                if (isZeroRelationAttack || Math.random() * 100 < attackChancePercent) {
+                    if (!isZeroRelationAttack && invasionPendingState.__invasionSchedulePending) {
+                        invasionPendingState.__invasionSchedulePending = {
+                            ...invasionPendingState.__invasionSchedulePending,
                             fired: true,
                         };
                     }
@@ -7116,9 +7174,11 @@ export default function MapPage() {
                     consecutive_outbreak_count: nextConsecutive,
                     last_checked_notification_date: currentDateStr,
                     ...(nextPandemicSchedule ? { pandemic_schedule: nextPandemicSchedule } : {}),
-                    ...((countryDetail as any).__invasionSchedulePending
-                        ? { invasion_schedule: (countryDetail as any).__invasionSchedulePending }
+                    ...(invasionPendingState.__invasionSchedulePending
+                        ? { invasion_schedule: invasionPendingState.__invasionSchedulePending }
                         : {}),
+                    zero_relation_invasion_schedules:
+                        invasionPendingState.__zeroRelationInvasionSchedulesPending ?? {},
                     world_news_country_cursor: worldNewsResult.nextCursor,
                     last_notified_listrik_step: currentListrikStep,
                     ...(diplomaticOfferStateForSave

@@ -9,6 +9,7 @@ import ModalCloseButton from '../root_modals_design_menu/ModalCloseButton';
 import RootInfoModalHeader from '../root_modals_design_menu/RootInfoModalHeader';
 import { AlertTriangle, Swords, ShieldAlert, Flag } from 'lucide-react';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 
 export interface WarUnitLoss {
     unitKey: string;
@@ -58,8 +59,16 @@ export default function ResultModal({
     const isError = type === 'error';
 
     // Helper render avatar/bendera party
-    const renderFlag = (iso?: string) => {
-        if (!iso) {
+    const renderFlag = (iso?: string, countryName?: string) => {
+        let effectiveIso = String(iso || '').trim().toLowerCase();
+        if (!effectiveIso || effectiveIso === 'un' || effectiveIso.length !== 2) {
+            const resolved = countryName ? getIsoForCountryName(countryName) : '';
+            if (resolved && resolved !== 'un') {
+                effectiveIso = resolved.toLowerCase();
+            }
+        }
+
+        if (!effectiveIso) {
             return (
                 <div className="flex h-5 w-7 items-center justify-center rounded bg-slate-800 text-[10px] font-bold text-white shadow-inner">
                     <Flag className="h-3 w-3 text-root-accent" />
@@ -68,8 +77,8 @@ export default function ResultModal({
         }
         return (
             <Image
-                src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
-                alt={iso}
+                src={`https://flagcdn.com/w80/${effectiveIso}.png`}
+                alt={countryName || effectiveIso}
                 width={28}
                 height={20}
                 className="h-4 w-6 rounded-sm object-cover shadow"
@@ -78,6 +87,20 @@ export default function ResultModal({
                 }}
             />
         );
+    };
+
+    // Helper untuk mengambil nama alutsista sesuai bahasa yang sedang aktif dari database translasi
+    const getUnitLabel = (unitKey: string): string => {
+        const lookupKey = unitKey === 'pasukan_infanteri' ? 'barak' : unitKey;
+        const militerTrans = t(`navigation_military_menu.units.${lookupKey}`);
+        if (militerTrans && militerTrans !== `navigation_military_menu.units.${lookupKey}`) {
+            return militerTrans;
+        }
+        const pertahananTrans = t(`navigation_defense_attack.units.${lookupKey}`);
+        if (pertahananTrans && pertahananTrans !== `navigation_defense_attack.units.${lookupKey}`) {
+            return pertahananTrans;
+        }
+        return DEFENSE_UNIT_LABELS[unitKey] || unitKey.replace(/_/g, ' ');
     };
 
     const renderLossCards = (items: WarUnitLoss[]) => {
@@ -97,7 +120,7 @@ export default function ResultModal({
                 {items.map((loss) => {
                     const imageKey = loss.unitKey === 'pasukan_infanteri' ? 'barak' : loss.unitKey;
                     const image = getDefenseUnitCardImage(imageKey);
-                    const label = DEFENSE_UNIT_LABELS[loss.unitKey] || loss.unitKey.replace(/_/g, ' ');
+                    const label = getUnitLabel(loss.unitKey);
                     return (
                         <article
                             key={loss.unitKey}
@@ -161,7 +184,7 @@ export default function ResultModal({
                                             : 'border-transparent text-slate-400 hover:text-slate-200'
                                     }`}
                                 >
-                                    {renderFlag(attackerParty?.iso)}
+                                    {renderFlag(attackerParty?.iso, attackerParty?.name)}
                                     <span>{attackerParty?.name || 'Pasukan Anda'}</span>
                                 </button>
                                 <button
@@ -173,7 +196,7 @@ export default function ResultModal({
                                             : 'border-transparent text-slate-400 hover:text-slate-200'
                                     }`}
                                 >
-                                    {renderFlag(targetParty?.iso)}
+                                    {renderFlag(targetParty?.iso, targetParty?.name)}
                                     <span>{targetParty?.name || 'Pasukan Lawan'}</span>
                                 </button>
                             </div>
@@ -247,7 +270,7 @@ export default function ResultModal({
                                         : 'border border-transparent bg-slate-900/40 text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
                                 }`}
                             >
-                                {renderFlag(attackerParty?.iso)}
+                                {renderFlag(attackerParty?.iso, attackerParty?.name)}
                                 <span>{attackerParty?.name || 'Pasukan Anda'}</span>
                                 {attackerParty?.losses && attackerParty.losses.length > 0 && (
                                     <span className="rounded-full bg-root-accent/20 px-2 py-0.5 text-[10px] font-black text-root-accent">
@@ -264,7 +287,7 @@ export default function ResultModal({
                                         : 'border border-transparent bg-slate-900/40 text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
                                 }`}
                             >
-                                {renderFlag(targetParty?.iso)}
+                                {renderFlag(targetParty?.iso, targetParty?.name)}
                                 <span>{targetParty?.name || 'Pasukan Lawan'}</span>
                                 {targetParty?.losses && targetParty.losses.length > 0 && (
                                     <span className="rounded-full bg-rose-500/20 px-2 py-0.5 text-[10px] font-black text-rose-400">
