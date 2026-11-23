@@ -202,6 +202,28 @@ export default function SecurityCouncilElectionPanel({
     ? eligibleNominees.find(candidate => candidate.slug === player.slug)
     : undefined;
   const playerWon = Boolean(player && winnerIsoSet?.has(player.iso.toLowerCase()));
+  const sortedNominees = [...visibleNominees].sort(
+    (a, b) => a.region.localeCompare(b.region) || b.votes - a.votes || b.score - a.score
+  );
+  const nomineeGroups = winnerIsoSet
+    ? [
+      {
+        key: "elected",
+        title: pbb("election.electedCandidates"),
+        candidates: sortedNominees
+          .filter(candidate => winnerIsoSet.has(candidate.iso.toLowerCase()))
+          .slice(0, 5),
+      },
+      {
+        key: "not-elected",
+        title: pbb("election.notElectedCandidates"),
+        candidates: sortedNominees
+          .filter(candidate => !winnerIsoSet.has(candidate.iso.toLowerCase()))
+          .sort((a, b) => b.votes - a.votes || b.score - a.score)
+          .slice(0, 5),
+      },
+    ]
+    : [{ key: "candidates", title: "", candidates: sortedNominees }];
 
   const updateElection = (next: SecurityCouncilElectionState) => {
     setElection(next);
@@ -331,38 +353,52 @@ export default function SecurityCouncilElectionPanel({
       )}
 
       {visibleNominees.length > 0 && (
-        <div className="max-h-64 space-y-2 overflow-y-auto pr-1">
-          {[...visibleNominees]
-            .sort((a, b) => a.region.localeCompare(b.region) || b.votes - a.votes || b.score - a.score)
-            .map(candidate => {
-              const isWinner = Boolean(winnerIsoSet?.has(candidate.iso.toLowerCase()));
-              const tone = winnerIsoSet
-                ? isWinner
-                  ? "border-emerald-400/70 bg-emerald-500/10"
-                  : "border-rose-500/60 bg-rose-500/5"
-                : "border-white/5 bg-[#051111]";
-              return (
-                <div
-                  key={candidate.slug}
-                  className={`flex items-center justify-between gap-3 rounded-lg border px-3 py-2 ${tone}`}
-                >
-                  <div className="min-w-0">
-                    <p className="truncate text-xs font-bold text-root-text">{candidate.name}</p>
-                    <p className="text-[9px] text-[#789090]">
-                      {candidate.region} · {pbb("election.score", { score: candidate.score.toFixed(1) })}
-                    </p>
-                  </div>
-                  <div className="shrink-0 text-right">
-                    <p className="text-xs font-black text-cyan-200">{pbb("election.votes", { count: candidate.votes })}</p>
-                    {candidate.campaignCount > 0 && (
-                      <p className="text-[9px] text-emerald-300">
-                        {pbb("election.contribution", { score: candidate.contributionScore })}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+        <div className="space-y-3">
+          {nomineeGroups.map(group => group.candidates.length > 0 && (
+            <div key={group.key} className="space-y-2">
+              {group.title && (
+                <h5 className="text-[10px] font-black uppercase tracking-wide text-[#8AA4A4]">
+                  {group.title}
+                </h5>
+              )}
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-5">
+                {group.candidates.map((candidate, index) => {
+                  const isWinner = Boolean(winnerIsoSet?.has(candidate.iso.toLowerCase()));
+                  const tone = winnerIsoSet
+                    ? isWinner
+                      ? "border-emerald-400/70 bg-emerald-500/10"
+                      : "border-rose-500/60 bg-rose-500/5"
+                    : "border-white/5 bg-[#051111]";
+                  return (
+                    <div
+                      key={candidate.slug}
+                      className={`flex items-center justify-between gap-3 rounded-lg border px-3 py-2 ${tone}`}
+                    >
+                      <div className="flex min-w-0 items-center gap-3">
+                        <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-white/5 text-[10px] font-black text-[#8AA4A4]">
+                          {index + 1}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="truncate text-xs font-bold text-root-text">{candidate.name}</p>
+                          <p className="text-[9px] text-[#789090]">
+                            {candidate.region} · {pbb("election.score", { score: candidate.score.toFixed(1) })}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="shrink-0 text-right">
+                        <p className="text-xs font-black text-cyan-200">{pbb("election.votes", { count: candidate.votes })}</p>
+                        {candidate.campaignCount > 0 && (
+                          <p className="text-[9px] text-emerald-300">
+                            {pbb("election.contribution", { score: candidate.contributionScore })}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       )}
 

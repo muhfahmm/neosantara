@@ -158,6 +158,8 @@
     "votes": "{count}표",
     "contribution": "기여도 {score}",
     "winners": "당선 이사국 — 임기: {startYear}년 1월 1일~{endYear}년 12월 31일",
+    "electedCandidates": "당선",
+    "notElectedCandidates": "미당선",
     "savedResults": "선거 결과가 저장되었습니다",
     "playerReward": "자국의 외교 평판이 +25, 영구 소프트 파워가 +15 증가하며 임기 동안 유엔 투표 영향력이 50% 상승합니다.",
     "memberDuty": "이사국은 임기 동안 모든 결의안에 지지, 반대 또는 기권해야 합니다. 투표하지 않으면 외교 평판이 1점 감소합니다."

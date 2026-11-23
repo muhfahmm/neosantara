@@ -107,12 +107,14 @@ const {
   campaignForCandidate,
   getEligibleUNMemberCountries,
   getSecurityCouncilElectionCandidateCountries,
+  loadSecurityCouncilElectionState,
   getStoredCouncilMembers,
   getCouncilVoteMultiplier,
   isPermanentSecurityCouncilMember,
   isLimitedVetoAvailable,
   normalizeElectionState,
   resolveElection,
+  SECURITY_COUNCIL_ELECTION_STATE_KEY,
   updateElectionVoteTally,
   tickSecurityCouncilElectionSchedule,
 } = electionModule.exports;
@@ -193,6 +195,48 @@ globalThis.localStorage = {
   removeItem: key => localStorageValues.delete(key),
 };
 globalThis.window = {};
+
+test("saved election state is restored instead of replaced by fallback state", () => {
+  const fallback = createInitialElectionState(2026);
+  const saved = {
+    ...fallback,
+    phase: "campaign",
+    scheduleStage: 1,
+    members: fallback.members.map((member, index) =>
+      index === 0 ? { ...member, name: "Persisted member" } : member
+    ),
+  };
+  localStorageValues.set(SECURITY_COUNCIL_ELECTION_STATE_KEY, JSON.stringify(saved));
+
+  const restored = loadSecurityCouncilElectionState(2026, fallback);
+  assert.equal(restored.phase, "campaign");
+  assert.equal(restored.scheduleStage, 1);
+  assert.equal(restored.members[0].name, "Persisted member");
+
+  localStorageValues.set(
+    SECURITY_COUNCIL_ELECTION_STATE_KEY,
+    JSON.stringify(createInitialElectionState(2025))
+  );
+  assert.equal(loadSecurityCouncilElectionState(2026, fallback).year, fallback.year);
+  localStorageValues.clear();
+});
+
+test("saved state from an earlier browser session falls back to the default roster", () => {
+  const fallback = createInitialElectionState(2026);
+  localStorageValues.set(SECURITY_COUNCIL_ELECTION_STATE_KEY, JSON.stringify({
+    ...fallback,
+    sessionId: "previous-browser-session",
+    members: fallback.members.map((member, index) =>
+      index === 0 ? { ...member, name: "Stale member" } : member
+    ),
+  }));
+
+  assert.deepEqual(
+    loadSecurityCouncilElectionState(2026, fallback).members.map(member => member.iso),
+    ["za", "eg", "in", "mx", "au", "ke", "id", "br", "de", "pl"]
+  );
+  localStorageValues.clear();
+});
 
 test("new-game schedule and initial cohort terms remain fixed", () => {
   const initial = createInitialElectionState(2026);

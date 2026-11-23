@@ -158,6 +158,8 @@
     "votes": "{count} suara",
     "contribution": "Kontribusi {score}",
     "winners": "Anggota terpilih — masa jabatan 1 Januari {startYear} sampai 31 Desember {endYear}",
+    "electedCandidates": "Terpilih",
+    "notElectedCandidates": "Tidak terpilih",
     "savedResults": "Hasil pemilu tersimpan",
     "playerReward": "Negara Anda memperoleh +25 reputasi diplomatik dan +15 kekuatan lunak permanen; pengaruh suara PBB meningkat 50% selama masa jabatan.",
     "memberDuty": "Anggota wajib memilih Setuju, Tolak, atau Abstain untuk setiap resolusi selama masa jabatan. Tidak memilih menurunkan 1 poin reputasi diplomatik."

@@ -158,6 +158,8 @@
     "votes": "{count}票",
     "contribution": "贡献 {score}",
     "winners": "当选理事国 — 任期：{startYear}年1月1日至{endYear}年12月31日",
+    "electedCandidates": "当选",
+    "notElectedCandidates": "未当选",
     "savedResults": "选举结果已保存",
     "playerReward": "贵国外交声誉增加+25，永久软实力增加+15；任期内联合国投票影响力提高50%。",
     "memberDuty": "理事国在任期内必须对每项决议投支持、反对或弃权票。不投票将导致外交声誉降低1点。"

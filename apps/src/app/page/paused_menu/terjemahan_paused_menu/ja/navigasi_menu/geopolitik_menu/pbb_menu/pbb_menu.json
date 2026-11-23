@@ -158,6 +158,8 @@
     "votes": "{count}票",
     "contribution": "貢献度 {score}",
     "winners": "当選国 — 任期：{startYear}年1月1日から{endYear}年12月31日まで",
+    "electedCandidates": "当選",
+    "notElectedCandidates": "落選",
     "savedResults": "選挙結果を保存しました",
     "playerReward": "自国の外交的評価が+25、恒久的なソフトパワーが+15上昇し、任期中の国連投票への影響力が50%増加します。",
     "memberDuty": "理事国は任期中、すべての決議に賛成、反対、または棄権しなければなりません。投票しないと外交的評価が1ポイント低下します。"

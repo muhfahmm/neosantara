@@ -281,10 +281,11 @@ import { createPBBMembershipNotification } from '../menus/inbox/logic/16_notifik
 import { createRegionalMembershipNotification } from '../menus/inbox/logic/16_notifikasi_organisasi_internasional/2_notifikasi_organisasi_regional/organisasiRegionalNotificationLogic';
 import { fetchAllCountryProfilesFromDb } from '@/../../json/semua_fitur_negara/0_profiles';
 import {
-    createInitialElectionState,
     expelCountryFromSecurityCouncil,
     getEligibleUNMemberCountries,
+    loadSecurityCouncilElectionState,
     normalizeElectionState,
+    SECURITY_COUNCIL_ELECTION_STATE_KEY,
     tickSecurityCouncilElectionSchedule,
 } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logika_anggota_tidak_tetap/securityCouncilElection';
 import { calculateLayananPublikScore, calculateHunianScore } from '@/app/logic/kepuasanCalculator';
@@ -7891,28 +7892,50 @@ export default function MapPage() {
         const isGamePaused = isPausedRef.current || (typeof window !== 'undefined' && (window as any).neosantara_is_paused);
         if (isGamePaused) return;
 
-        if (countryDetail && !countryDetail.pbbSecurityCouncilElection) {
-            const initialElectionState = createInitialElectionState(currentDate.getFullYear());
+        let electionStateSource: unknown = countryDetail?.pbbSecurityCouncilElection;
+        if (countryDetail && !electionStateSource) {
+            const initialElectionState = loadSecurityCouncilElectionState(
+                currentDate.getFullYear(),
+                countryDetail.pbbSecurityCouncilElection
+            );
             try {
                 localStorage.setItem(
-                    "neosantara_pbb_security_council_election",
+                    SECURITY_COUNCIL_ELECTION_STATE_KEY,
                     JSON.stringify(initialElectionState)
                 );
                 setCountryDetail((previous: Record<string, unknown> | null) => previous
                     ? { ...previous, pbbSecurityCouncilElection: initialElectionState }
                     : previous
                 );
+                electionStateSource = initialElectionState;
             } catch (storageError) {
                 console.error("Gagal menginisialisasi jadwal pemilihan Dewan Keamanan:", storageError);
             }
         }
 
-        if (countryDetail?.pbbSecurityCouncilElection) {
+        if (electionStateSource) {
             const currentYear = currentDate.getFullYear();
             const electionState = normalizeElectionState(
-                countryDetail.pbbSecurityCouncilElection,
+                electionStateSource,
                 currentYear
             );
+            if (JSON.stringify(electionStateSource) !== JSON.stringify(electionState)) {
+                try {
+                    if (localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY) !== JSON.stringify(electionState)) {
+                        localStorage.setItem(
+                            SECURITY_COUNCIL_ELECTION_STATE_KEY,
+                            JSON.stringify(electionState)
+                        );
+                    }
+                } catch (storageError) {
+                    console.error("Gagal menyinkronkan state default Dewan Keamanan:", storageError);
+                }
+                setCountryDetail((previous: Record<string, unknown> | null) => previous
+                    ? { ...previous, pbbSecurityCouncilElection: electionState }
+                    : previous
+                );
+                window.dispatchEvent(new CustomEvent("pbb_security_council_roster_updated"));
+            }
             const electionOverdue = electionState.phase !== "completed" && (
                 electionState.year < currentYear ||
                 (electionState.year === currentYear && currentDate.getMonth() > 5)

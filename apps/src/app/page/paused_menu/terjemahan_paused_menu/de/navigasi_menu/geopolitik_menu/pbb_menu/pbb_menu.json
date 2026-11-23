@@ -158,6 +158,8 @@
     "votes": "{count} Stimmen",
     "contribution": "Beitrag {score}",
     "winners": "Gewählte Mitglieder — Amtszeit vom 1. Januar {startYear} bis 31. Dezember {endYear}",
+    "electedCandidates": "Gewählt",
+    "notElectedCandidates": "Nicht gewählt",
     "savedResults": "Wahlergebnisse gespeichert",
     "playerReward": "Dein Land erhält +25 diplomatisches Ansehen und dauerhaft +15 Soft Power; der UN-Stimmeinfluss steigt während der Amtszeit um 50 %.",
     "memberDuty": "Mitglieder müssen über jede Resolution abstimmen. Nicht abzustimmen senkt das diplomatische Ansehen um 1 Punkt."

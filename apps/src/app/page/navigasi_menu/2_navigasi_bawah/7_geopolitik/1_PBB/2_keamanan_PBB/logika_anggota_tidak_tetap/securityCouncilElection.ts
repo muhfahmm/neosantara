@@ -54,6 +54,8 @@ export interface PastTerm {
 
 export interface SecurityCouncilElectionState {
   schemaVersion: number;
+  /** Penanda sesi halaman. State dari sesi lain (refresh / keluar game) dianggap basi dan di-reset. */
+  sessionId?: string;
   year: number;
   nextElectionYear: number;
   cohort: "A" | "B";
@@ -84,6 +86,35 @@ export interface ElectionCountry {
 export const SECURITY_COUNCIL_ELECTION_STATE_KEY = "neosantara_pbb_security_council_election";
 
 const SCHEMA_VERSION = 2;
+
+/* ------------------------------------------------------------------ */
+/* Sesi game: state hanya berlaku selama sesi halaman yang sama        */
+/* ------------------------------------------------------------------ */
+
+const createSessionId = () =>
+  `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+
+// Dibuat ulang setiap halaman dimuat (refresh) sehingga data lama di localStorage otomatis basi.
+let currentSessionId = createSessionId();
+
+export function isElectionStateFromCurrentSession(existing: unknown): boolean {
+  return isRecord(existing) && existing.sessionId === currentSessionId;
+}
+
+/**
+ * Panggil saat pemain keluar ke menu utama / memulai game baru TANPA refresh halaman.
+ * Menghapus data tersimpan dan membuat sesi baru sehingga roster kembali ke default.
+ */
+export function resetSecurityCouncilElectionSession(): void {
+  currentSessionId = createSessionId();
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
+    window.dispatchEvent(new CustomEvent("pbb_security_council_roster_updated"));
+  } catch (error) {
+    console.error("Gagal mereset state pemilu Dewan Keamanan:", error);
+  }
+}
 
 /**
  * Negara tidak boleh dicalonkan jika masa jabatan terakhirnya berakhir pada
@@ -319,6 +350,7 @@ export function createInitialElectionState(year: number): SecurityCouncilElectio
   });
   return {
     schemaVersion: SCHEMA_VERSION,
+    sessionId: currentSessionId,
     year: electionYear,
     nextElectionYear: electionYear,
     cohort,
@@ -418,6 +450,8 @@ export function normalizeElectionState(existing: unknown, year: number): Securit
   const fallback = createInitialElectionState(year);
   if (!isRecord(existing)) return fallback;
   const raw = existing as Partial<SecurityCouncilElectionState>;
+  // State dari sesi/halaman lain (mis. sebelum refresh) tidak dipakai → kembali ke default.
+  if (raw.sessionId !== currentSessionId) return fallback;
 
   const storedMembers = sanitizeMembers(raw.members, fallback.members);
   if (!storedMembers) return fallback;
@@ -466,6 +500,7 @@ export function normalizeElectionState(existing: unknown, year: number): Securit
   if (phase === "completed" && year >= storedNext) {
     return {
       schemaVersion: SCHEMA_VERSION,
+      sessionId: currentSessionId,
       year: storedNext,
       nextElectionYear: storedNext,
       cohort: getCohortForYear(storedNext),
@@ -488,6 +523,7 @@ export function normalizeElectionState(existing: unknown, year: number): Securit
 
   return {
     schemaVersion: SCHEMA_VERSION,
+    sessionId: currentSessionId,
     year: storedYear,
     nextElectionYear: phase === "completed" ? storedNext : storedYear,
     cohort: getCohortForYear(storedYear),
@@ -960,6 +996,53 @@ function createElectionScheduleNotification(
   };
 }
 
+/** Baca state dari localStorage (satu-satunya sumber kebenaran). Null jika kosong / dari sesi lain. */
+export function readStoredElectionState(): SecurityCouncilElectionState | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return isElectionStateFromCurrentSession(parsed)
+      ? normalizeElectionState(parsed, getCurrentElectionYear())
+      : null;
+  } catch (error) {
+    console.error("Gagal membaca state pemilu Dewan Keamanan:", error);
+    return null;
+  }
+}
+
+/** Tulis state ke localStorage lalu beri tahu panel / komponen lain. */
+export function persistElectionState(state: SecurityCouncilElectionState): void {
+  if (typeof window === "undefined") return;
+  try {
+    const serialized = JSON.stringify(state);
+    if (localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY) === serialized) return;
+    localStorage.setItem(SECURITY_COUNCIL_ELECTION_STATE_KEY, serialized);
+    window.dispatchEvent(new CustomEvent("pbb_security_council_election_updated"));
+  } catch (error) {
+    console.error("Gagal menyimpan state pemilu Dewan Keamanan:", error);
+  }
+}
+
+/**
+ * Inisialisasi state pemilu untuk `year`.
+ * Prioritas: localStorage sesi ini -> data tersimpan (`saved`, mis. dari countryDetail) -> default.
+ * Data dari sesi lain (sebelum refresh) otomatis diabaikan oleh normalizeElectionState.
+ */
+export function loadSecurityCouncilElectionState(
+  year: number,
+  saved?: unknown
+): SecurityCouncilElectionState {
+  return normalizeElectionState(readStoredElectionState() ?? saved, year);
+}
+
+/**
+ * Maju MAKSIMAL SATU tahap per panggilan.
+ * Jika tanggal game melompati bulan Juni, tahap nominasi -> kampanye -> voting -> hasil
+ * berjalan di panggilan/hari berurutan, sehingga daftar kandidat sempat tampil sebelum hasil.
+ * localStorage dipakai sebagai sumber kebenaran tunggal (argumen `existing` hanya cadangan).
+ */
 export function tickSecurityCouncilElectionSchedule(
   dateStr: string,
   existing: unknown,
@@ -969,9 +1052,17 @@ export function tickSecurityCouncilElectionSchedule(
   if (!Number.isFinite(date.getTime())) return null;
 
   const year = date.getFullYear();
-  let state = normalizeElectionState(existing, year);
-  if (!existing) return { state, notifications: [] };
-  if (state.phase === "completed") return null;
+  const source = readStoredElectionState() ??
+    (isElectionStateFromCurrentSession(existing) ? existing : null);
+  let state = normalizeElectionState(source, year);
+  if (!source) {
+    persistElectionState(state);
+    return { state, notifications: [] };
+  }
+  if (state.phase === "completed") {
+    persistElectionState(state); // menyimpan hasil rollover tahun baru bila ada
+    return null;
+  }
 
   const electionOverdue = year > state.year || (year === state.year && date.getMonth() > 5);
   const isElectionMonth = year === state.year && date.getMonth() === 5;
@@ -986,9 +1077,10 @@ export function tickSecurityCouncilElectionSchedule(
   if (targetStage === 0) return null;
 
   const notifications: NotificationMessage[] = [];
+  const nextStage = state.scheduleStage + 1;
   const isVotingPeriod = isElectionMonth && date.getDate() >= 25 && date.getDate() <= 30;
-  const needsVoters = targetStage === ELECTION_SCHEDULE.length || isVotingPeriod;
-  const voters = needsVoters ? getEligibleUNMemberCountries(profiles) : null;
+  const willResolve = nextStage === ELECTION_SCHEDULE.length && nextStage <= targetStage;
+  const voters = willResolve || isVotingPeriod ? getEligibleUNMemberCountries(profiles) : null;
 
   if (voters && (voters.length !== 193 || voters.filter(country => country.profile).length !== 193)) {
     const profiledVoters = voters.filter(country => country.profile).length;
@@ -999,8 +1091,7 @@ export function tickSecurityCouncilElectionSchedule(
     };
   }
 
-  while (state.scheduleStage < targetStage) {
-    const nextStage = state.scheduleStage + 1;
+  if (nextStage <= targetStage) {
     if (nextStage === 1) {
       state = { ...state, phase: "nomination", nominees: [] };
     } else if (nextStage === 2) {
@@ -1034,5 +1125,6 @@ export function tickSecurityCouncilElectionSchedule(
     state = updateElectionVoteTally(state, voters || [], date.getDate());
   }
 
+  persistElectionState(state);
   return { state, notifications };
 }

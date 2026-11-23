@@ -158,6 +158,8 @@
     "votes": "{count} votes",
     "contribution": "Contribution {score}",
     "winners": "Elected members — term January 1, {startYear} to December 31, {endYear}",
+    "electedCandidates": "Elected",
+    "notElectedCandidates": "Not elected",
     "savedResults": "Election results saved",
     "playerReward": "Your country gains +25 diplomatic reputation and +15 permanent soft power; UN voting influence rises 50% during the term.",
     "memberDuty": "Members must Support, Reject, or Abstain on every resolution during their term. Not voting reduces diplomatic reputation by 1 point."

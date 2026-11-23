@@ -158,6 +158,8 @@
     "votes": "{count} votos",
     "contribution": "Contribución {score}",
     "winners": "Miembros elegidos — mandato del 1 de enero de {startYear} al 31 de diciembre de {endYear}",
+    "electedCandidates": "Elegidos",
+    "notElectedCandidates": "No elegidos",
     "savedResults": "Resultados electorales guardados",
     "playerReward": "Tu país obtiene +25 de reputación diplomática y +15 de poder blando permanente; la influencia de voto aumenta un 50 % durante el mandato.",
     "memberDuty": "Los miembros deben votar a favor, en contra o abstenerse en cada resolución. No votar reduce la reputación diplomática en 1 punto."
