@@ -127,7 +127,15 @@
     "behind": "🔴 متأخر",
     "attacker": "المهاجم",
     "target": "الهدف",
-    "automaticResult": "النتيجة التلقائية"
+    "automaticResult": "النتيجة التلقائية",
+    "winProbability": {
+      "title": "احتمال الفوز التقديري",
+      "user": "احتمال فوز {country} (أنت)",
+      "opponent": "احتمال فوز {country} (الخصم)",
+      "draw": "احتمال التعادل",
+      "simulations": "استنادًا إلى {count} محاكاة",
+      "balanced": "⚖️ متكافئ: لا يملك أي طرف أفضلية واضحة"
+    }
   },
   "warResult": {
     "defenseWon": "نجاح الدفاع!",

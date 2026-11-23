@@ -127,7 +127,15 @@
     "behind": "🔴 열세",
     "attacker": "공격",
     "target": "대상",
-    "automaticResult": "자동 결과"
+    "automaticResult": "자동 결과",
+    "winProbability": {
+      "title": "예상 승리 확률",
+      "user": "{country}(플레이어)의 승리 확률",
+      "opponent": "{country}(상대)의 승리 확률",
+      "draw": "무승부 확률",
+      "simulations": "{count}회 시뮬레이션 기준",
+      "balanced": "⚖️ 팽팽함: 어느 쪽도 뚜렷한 우위가 없습니다"
+    }
   },
   "warResult": {
     "defenseWon": "방어 성공!",

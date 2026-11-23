@@ -127,7 +127,15 @@
     "behind": "🔴 Tertinggal",
     "attacker": "Penyerang",
     "target": "Target",
-    "automaticResult": "Hasil Otomatis"
+    "automaticResult": "Hasil Otomatis",
+    "winProbability": {
+      "title": "Estimasi Peluang Menang",
+      "user": "Peluang {country} (Anda) menang",
+      "opponent": "Peluang {country} (lawan) menang",
+      "draw": "Peluang seri",
+      "simulations": "Berdasarkan {count} simulasi",
+      "balanced": "⚖️ Imbang: belum ada pihak yang unggul jelas"
+    }
   },
   "warResult": {
     "defenseWon": "Pertahanan Berhasil!",

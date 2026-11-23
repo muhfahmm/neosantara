@@ -127,7 +127,15 @@
     "behind": "🔴 Unterlegen",
     "attacker": "Angreifer",
     "target": "Ziel",
-    "automaticResult": "Automatisches Ergebnis"
+    "automaticResult": "Automatisches Ergebnis",
+    "winProbability": {
+      "title": "Geschätzte Siegwahrscheinlichkeit",
+      "user": "Siegchance für {country} (du)",
+      "opponent": "Siegchance für {country} (Gegner)",
+      "draw": "Unentschieden",
+      "simulations": "Basierend auf {count} Simulationen",
+      "balanced": "⚖️ Ausgeglichen: Keine Seite hat einen klaren Vorteil"
+    }
   },
   "warResult": {
     "defenseWon": "Verteidigung erfolgreich!",

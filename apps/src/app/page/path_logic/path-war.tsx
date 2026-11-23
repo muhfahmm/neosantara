@@ -24,7 +24,11 @@ import NotebookModalWrapper from '../navigasi_menu/2_navigasi_bawah/NotebookModa
 import { resolveRequestedInvasionOutcome } from '../detail_negara/3_operasi_militer/6_minta_serang_negara/requestedInvasionLogic';
 import PerbandinganPasukan from '../detail_negara/3_operasi_militer/1_serang_negara/perbandingan_pasukan';
 import { getWarUnitComposition, type WarUnit } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/warUnitComposition';
-import { simulateBattleTs } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
+import {
+  getMinimumLossRatioForCasualty,
+  resolveBattleDamage,
+  simulateBattleTs,
+} from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
 import {
   estimateTravelTime,
   getSimulationDayPosition,
@@ -592,6 +596,7 @@ export interface WarResultInput {
   attackerPower: number;
   targetPower: number;
   attackerDeploymentPowerRatio?: number;
+  targetDeploymentPowerRatio?: number;
   roll?: number;
   requestedInvasion?: boolean;
   attackerWinRoll?: number;
@@ -653,12 +658,41 @@ function calculateUnitLosses(units: WarUnit[], lossRatio: number) {
   }).filter((unit) => unit.lost > 0);
 }
 
+function getDeployedPowerRatio(
+  breakdown: ReturnType<typeof getArmadaPowerSummary>['breakdown'],
+  deploymentConfig: Record<string, unknown>,
+): number {
+  const totalPower = breakdown.reduce((total, unit) => total + unit.totalPower, 0);
+  if (totalPower <= 0) return 0;
+
+  const hasDeploymentConfig = Object.values(deploymentConfig).some(
+    value => typeof value === 'number' && Number.isFinite(value),
+  );
+  if (!hasDeploymentConfig) return 1;
+
+  const deployedPower = breakdown.reduce((total, unit) => {
+    const key = unit.dataKey === 'pasukan_infanteri' ? 'barak' : unit.dataKey;
+    const configuredPercent = deploymentConfig[key];
+    const percent = typeof configuredPercent === 'number' && Number.isFinite(configuredPercent)
+      ? Math.max(0, Math.min(100, configuredPercent))
+      : 0;
+    return total + unit.totalPower * percent / 100;
+  }, 0);
+
+  return deployedPower / totalPower;
+}
+
 export function computeWarResult(input: WarResultInput): WarResultOutput {
   const { attackerPower, targetPower, isUserDefender = false, isNpcWar = false } = input;
 
   let deployedPowerRatio = input.attackerDeploymentPowerRatio ?? 1.0;
   // Perang antar NPC/mandat tidak boleh dipengaruhi konfigurasi pasukan milik user.
-  if (input.attackerDeploymentPowerRatio === undefined && !isNpcWar && typeof window !== 'undefined') {
+  if (
+    input.attackerDeploymentPowerRatio === undefined &&
+    input.targetDeploymentPowerRatio === undefined &&
+    !isNpcWar &&
+    typeof window !== 'undefined'
+  ) {
     try {
       const saved = localStorage.getItem('deployed_units_config');
       if (saved) {
@@ -674,7 +708,10 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
   }
 
   const actualAttackerPower = isUserDefender ? Math.round(attackerPower) : Math.round(attackerPower * deployedPowerRatio);
-  const actualTargetPower = isUserDefender ? Math.round(targetPower * deployedPowerRatio) : Math.round(targetPower);
+  const targetDeploymentPowerRatio = input.targetDeploymentPowerRatio ?? deployedPowerRatio;
+  const actualTargetPower = isUserDefender
+    ? Math.round(targetPower * targetDeploymentPowerRatio)
+    : Math.round(targetPower);
   const requestedInvasionOutcome = input.requestedInvasion
     ? resolveRequestedInvasionOutcome({
       attackerPower: actualAttackerPower,
@@ -716,43 +753,55 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
     seed: input.seed,
   });
 
-  const winner = requestedInvasionOutcome
+  const requestedWinner = requestedInvasionOutcome
     ? requestedInvasionOutcome.attackerWins ? 'attacker' : 'target'
-    : battle.winner;
-  const isUserWin = isUserDefender
-    ? winner === 'target'
-    : winner === 'attacker';
+    : undefined;
 
-  let attackerScore = battle.attackerFinalPower;
-  let targetScore = battle.targetFinalPower;
-  let attackerLossRatio = actualAttackerPower > 0
-    ? Math.min(1, Math.max(0, 1 - battle.attackerFinalPower / actualAttackerPower))
-    : 0;
-  let targetLossRatio = actualTargetPower > 0
-    ? Math.min(1, Math.max(0, 1 - battle.targetFinalPower / actualTargetPower))
-    : 0;
+  let attackerDamage = Math.max(0, actualAttackerPower - battle.attackerFinalPower);
+  let targetDamage = Math.max(0, actualTargetPower - battle.targetFinalPower);
 
   // Jika penyerang menang dalam aneksasi wilayah yang belum ke ibukota,
   // pasukan target/bertahan hanya berkurang 10-15% (bukan musnah total).
-  if (winner === 'attacker' && input.targetCityIsCapital === false) {
+  if ((requestedWinner ?? battle.winner) === 'attacker' && input.targetCityIsCapital === false) {
     const seedVal = typeof input.seed === 'number' && Number.isFinite(input.seed)
       ? Math.abs(Math.sin(input.seed))
       : (typeof input.attackerWinRoll === 'number' && Number.isFinite(input.attackerWinRoll) ? input.attackerWinRoll : Math.random());
     const nonCapitalLossRatio = 0.10 + (seedVal % 1) * 0.05; // rentang 10% - 15% (0.10 - 0.15)
-    targetLossRatio = Math.min(targetLossRatio, nonCapitalLossRatio);
-    targetScore = Math.round(actualTargetPower * (1 - targetLossRatio));
+    targetDamage = Math.min(targetDamage, Math.max(1, Math.round(actualTargetPower * nonCapitalLossRatio)));
   }
 
+  const damageResolution = resolveBattleDamage({
+    attackerPower: actualAttackerPower,
+    targetPower: actualTargetPower,
+    attackerDamage,
+    targetDamage,
+    tieBreaker: battle.winner,
+    winnerOverride: requestedWinner,
+  });
+  const winner = damageResolution.winner;
+  const attackerScore = actualAttackerPower - damageResolution.attackerDamage;
+  const targetScore = actualTargetPower - damageResolution.targetDamage;
+  const attackerLossRatio = actualAttackerPower > 0
+    ? damageResolution.attackerDamage / actualAttackerPower
+    : 0;
+  const targetLossRatio = actualTargetPower > 0
+    ? damageResolution.targetDamage / actualTargetPower
+    : 0;
+
   return {
-    result: isUserWin ? 'win' : 'lose',
+    result: (isUserDefender ? winner === 'target' : winner === 'attacker') ? 'win' : 'lose',
     attackerScore,
     targetScore,
     attackerLossRatio,
     targetLossRatio,
     totalRounds: battle.totalRounds,
-    message: requestedInvasionOutcome
-      ? requestedInvasionOutcome.message
-      : battle.message,
+    message: requestedInvasionOutcome?.message ?? (
+      winner === 'attacker'
+        ? 'PENYERANG MENANG (KERUGIAN KEKUATAN LEBIH RENDAH)'
+        : winner === 'target'
+          ? 'TARGET MENANG (KERUGIAN KEKUATAN LEBIH RENDAH)'
+          : battle.message
+    ),
     log: battle.log,
     winner,
   };
@@ -827,6 +876,7 @@ export default function WarMap({
   const impactHandledRef = useRef(false);
   const battleOutcomeRef = useRef<WarResultOutput | null>(null);
   const [result, setResult] = useState<WarResult | null>(null);
+  const [resolvedBattleOutcome, setResolvedBattleOutcome] = useState<WarResultOutput | null>(null);
   const [showFlash, setShowFlash] = useState(false);
   const [showAttackerForces, setShowAttackerForces] = useState(false);
   const [attackerDeploymentPercent, setAttackerDeploymentPercent] = useState(50);
@@ -835,7 +885,6 @@ export default function WarMap({
   const onResolveRef = useRef(onResolve);
   const onAutoResolveRef = useRef(onAutoResolve);
   const autoResolveReportedRef = useRef(false);
-  const defenseResolutionReportedRef = useRef(false);
 
   useEffect(() => {
     const isVisible = shouldShowBattleAnalysis && (phase === 'comparison' || phase === 'result');
@@ -956,59 +1005,6 @@ export default function WarMap({
       : path;
   }, [isOpen, isNpcWar, isPbbCoalition, resolvedAttacker.country, resolvedTarget.country, resolvedAttacker.lat, resolvedAttacker.lng, resolvedTarget.lat, resolvedTarget.lng]);
 
-  const calculateBattleOutcome = useCallback(() => {
-    if (!isOpen) return null;
-    const attackerBreakdown = getArmadaPowerSummary(attacker).breakdown;
-    const totalAttackerPower = attackerBreakdown.reduce((total, unit) => total + unit.totalPower, 0);
-    const deployedAttackerPower = attackerBreakdown.reduce((total, unit) => {
-      const deploymentKey = unit.dataKey === 'pasukan_infanteri' ? 'barak' : unit.dataKey;
-      const percentage = committedDeploymentConfig?.[deploymentKey] ?? 0;
-      return total + unit.totalPower * Math.max(0, Math.min(100, percentage)) / 100;
-    }, 0);
-    const outcome = computeWarResult({
-      attackerPower:
-        (Number((attacker as Record<string, unknown>).pbbCoalitionPower) || attackerPower) *
-        effectiveAttackerDeploymentPercent / 100,
-      attackerDeploymentPowerRatio: !isAiAttacker && !isPbbCoalition && totalAttackerPower > 0
-        ? deployedAttackerPower / totalAttackerPower
-        : undefined,
-      targetPower,
-      attackerBonus,
-      defenderBonus,
-      isUserDefender,
-      isNpcWar: isNpcWar && !isPbbCoalition,
-      targetCityIsCapital: target.cityIsCapital,
-      requestedInvasion,
-      attackerWinRoll: requestedInvasionRollRef.current,
-    });
-    return outcome;
-  }, [
-    isOpen,
-    attacker,
-    target,
-    attackerPower,
-    targetPower,
-    effectiveAttackerDeploymentPercent,
-    isAiAttacker,
-    isPbbCoalition,
-    committedDeploymentConfig,
-    isUserDefender,
-    isNpcWar,
-    requestedInvasion,
-    attackerBonus,
-    defenderBonus,
-  ]);
-
-  const battleOutcome = useMemo(() => {
-    if (shouldShowBattleAnalysis && phase !== 'result') return null;
-    return calculateBattleOutcome();
-  }, [
-    calculateBattleOutcome,
-    shouldShowBattleAnalysis,
-    phase,
-  ]);
-  battleOutcomeRef.current = battleOutcome;
-
   const deploymentConfig = useMemo(() => {
     if (committedDeploymentConfig) return committedDeploymentConfig;
     if (typeof window === 'undefined') return {};
@@ -1024,6 +1020,90 @@ export default function WarMap({
       return {};
     }
   }, [committedDeploymentConfig]);
+
+  const calculateBattleOutcome = useCallback(() => {
+    if (!isOpen) return null;
+    const attackerBreakdown = getArmadaPowerSummary(attacker).breakdown;
+    const attackerDeploymentPowerRatio = getDeployedPowerRatio(attackerBreakdown, deploymentConfig);
+    const targetDeploymentPowerRatio = getDeployedPowerRatio(
+      getArmadaPowerSummary(target).breakdown,
+      deploymentConfig,
+    );
+    const outcome = computeWarResult({
+      attackerPower:
+        (Number((attacker as Record<string, unknown>).pbbCoalitionPower) || attackerPower) *
+        effectiveAttackerDeploymentPercent / 100,
+      attackerDeploymentPowerRatio: !isAiAttacker && !isPbbCoalition
+        ? attackerDeploymentPowerRatio
+        : undefined,
+      targetDeploymentPowerRatio: isUserDefender ? targetDeploymentPowerRatio : undefined,
+      targetPower,
+      attackerBonus,
+      defenderBonus,
+      isUserDefender,
+      isNpcWar: isNpcWar && !isPbbCoalition,
+      targetCityIsCapital: target.cityIsCapital,
+      requestedInvasion,
+      attackerWinRoll: requestedInvasionRollRef.current,
+    });
+    if (!outcome || outcome.winner === 'draw') return outcome;
+
+    const attackerUnits = getWarUnitComposition(
+      attacker,
+      deploymentConfig,
+      !isAiAttacker && !isPbbCoalition,
+    ).map(unit => ({
+      ...unit,
+      quantity: isAiAttacker
+        ? Math.round(unit.quantity * effectiveAttackerDeploymentPercent / 100)
+        : unit.quantity,
+    }));
+    const targetUnits = getWarUnitComposition(target, deploymentConfig, isUserDefender);
+
+    return outcome.winner === 'attacker'
+      ? {
+        ...outcome,
+        targetLossRatio: Math.max(
+          outcome.targetLossRatio,
+          getMinimumLossRatioForCasualty(targetUnits.map(unit => unit.quantity)),
+        ),
+      }
+      : {
+        ...outcome,
+        attackerLossRatio: Math.max(
+          outcome.attackerLossRatio,
+          getMinimumLossRatioForCasualty(attackerUnits.map(unit => unit.quantity)),
+        ),
+      };
+  }, [
+    isOpen,
+    attacker,
+    target,
+    attackerPower,
+    targetPower,
+    effectiveAttackerDeploymentPercent,
+    isAiAttacker,
+    isPbbCoalition,
+    committedDeploymentConfig,
+    deploymentConfig,
+    isUserDefender,
+    isNpcWar,
+    requestedInvasion,
+    attackerBonus,
+    defenderBonus,
+  ]);
+
+  const battleOutcome = useMemo(() => {
+    if (resolvedBattleOutcome) return resolvedBattleOutcome;
+    if (shouldShowBattleAnalysis && phase !== 'result') return null;
+    return calculateBattleOutcome();
+  }, [
+    calculateBattleOutcome,
+    resolvedBattleOutcome,
+    shouldShowBattleAnalysis,
+    phase,
+  ]);
+  battleOutcomeRef.current = battleOutcome;
 
   const attackerLosses = useMemo(() => {
     const units = getWarUnitComposition(
@@ -1088,13 +1168,13 @@ export default function WarMap({
       phaseRef.current = 'travel';
       progressRef.current = 0;
       autoResolveReportedRef.current = false;
-      defenseResolutionReportedRef.current = false;
       impactHandledRef.current = false;
       lastAnalysisVisibilityRef.current = false;
       requestedInvasionRollRef.current = Math.random();
       setAttackerDeploymentPercent(50 + Math.floor(Math.random() * 26));
       progressPathRef.current?.setAttribute('stroke-dasharray', '0 100');
       setResult(null);
+      setResolvedBattleOutcome(null);
       setShowFlash(false);
       setShowAttackerForces(false);
     }
@@ -1277,24 +1357,6 @@ export default function WarMap({
     };
   }, [phase, battleOutcome, isNpcWar, isUserDefender, isPbbCoalition, shouldShowBattleAnalysis, warPath, onAnalysisVisibilityChange]);
 
-  useEffect(() => {
-    if (phase !== 'result' || !isUserDefender || isPbbCoalition || !result || !warPath ||
-        defenseResolutionReportedRef.current) return;
-    const resolutionTimer = setTimeout(() => {
-      defenseResolutionReportedRef.current = true;
-      onResolveRef.current({
-        result,
-        action: 'retreat',
-        path: warPath,
-        isUserDefender: true,
-        isPbbCoalition,
-        attackerLossRatio: battleOutcome?.attackerLossRatio,
-        targetLossRatio: battleOutcome?.targetLossRatio,
-      });
-    }, 1800);
-    return () => clearTimeout(resolutionTimer);
-  }, [phase, isUserDefender, isPbbCoalition, result, warPath, battleOutcome]);
-
   const handleAction = useCallback(
     (action: WarAction) => {
       if (!warPath || !result) return;
@@ -1314,6 +1376,7 @@ export default function WarMap({
   const handleAutoResult = useCallback(() => {
     const outcome = calculateBattleOutcome();
     if (outcome) {
+      setResolvedBattleOutcome(outcome);
       battleOutcomeRef.current = outcome;
       setResult(outcome.result);
       setPhase('result');
@@ -1645,6 +1708,8 @@ export default function WarMap({
           isUserAttacker={(!isNpcWar && !isUserDefender) || isPlayerCoalitionAttacker}
           isUserDefender={isUserDefender}
           isCoalitionForce={isPbbCoalition}
+          requestedInvasion={requestedInvasion}
+          targetCityIsCapital={target.cityIsCapital}
           onAutoResult={handleAutoResult}
           onClose={() => onClose(battleOutcome ?? undefined)}
         />

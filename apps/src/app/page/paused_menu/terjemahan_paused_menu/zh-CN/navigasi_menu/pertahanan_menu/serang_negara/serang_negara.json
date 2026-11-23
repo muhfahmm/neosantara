@@ -127,7 +127,15 @@
     "behind": "🔴 落后",
     "attacker": "进攻方",
     "target": "目标",
-    "automaticResult": "自动结算"
+    "automaticResult": "自动结算",
+    "winProbability": {
+      "title": "预计获胜概率",
+      "user": "{country}（你）的获胜概率",
+      "opponent": "{country}（对手）的获胜概率",
+      "draw": "平局概率",
+      "simulations": "基于 {count} 次模拟",
+      "balanced": "⚖️ 势均力敌：双方都没有明显优势"
+    }
   },
   "warResult": {
     "defenseWon": "防御成功！",

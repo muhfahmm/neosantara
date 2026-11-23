@@ -127,7 +127,15 @@
     "behind": "🔴 劣勢",
     "attacker": "攻撃側",
     "target": "目標",
-    "automaticResult": "自動判定"
+    "automaticResult": "自動判定",
+    "winProbability": {
+      "title": "勝利確率の推定",
+      "user": "{country}（あなた）の勝率",
+      "opponent": "{country}（相手）の勝率",
+      "draw": "引き分けの確率",
+      "simulations": "{count}回のシミュレーションに基づく",
+      "balanced": "⚖️ 互角：どちらにも明確な優位性はありません"
+    }
   },
   "warResult": {
     "defenseWon": "防衛成功！",

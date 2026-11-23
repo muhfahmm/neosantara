@@ -407,6 +407,11 @@ const normalizeMapKey = (value: unknown) => String(value || '')
     .toLowerCase()
     .replace(/[^a-z0-9]/g, '');
 
+const sameCountrySlug = (first: unknown, second: unknown) => {
+    const firstSlug = String(first || '').trim().toLowerCase();
+    return firstSlug !== '' && firstSlug === String(second || '').trim().toLowerCase();
+};
+
 const NPC_WAR_UNIT_GROUPS = {
     darat: [
         'pasukan_infanteri', 'tank_tempur_utama', 'apc_ifv', 'artileri_berat',
@@ -2777,7 +2782,10 @@ export default function MapPage() {
             const attackerIso = String(
                 detail.attackerCountryDetail?.iso || selectedCountry?.iso || countryDetail?.iso || 'cn'
             ).toLowerCase();
-            if (areSameWarCountry(attackerCountry, targetCountry, attackerIso, getIsoForCountryName(targetCountry))) {
+            if (
+                sameCountrySlug(countryDetail?.country_slug, detail.targetCountryDetail?.country_slug) ||
+                areSameWarCountry(attackerCountry, targetCountry, attackerIso, getIsoForCountryName(targetCountry))
+            ) {
                 setNotifications(prev => [{
                     id: `notif-self-attack-block-${Date.now()}`,
                     title: 'Serangan Dibatalkan',
@@ -3896,8 +3904,9 @@ export default function MapPage() {
                 playerCountry: playerCountryIdentity,
                 source,
             });
-            const isPlayerAttacker = Boolean(playerCountryName) && (
+            let isPlayerAttacker = Boolean(playerCountryName) && (
                 detail.troopsCommitted === true ||
+                sameCountrySlug(detail.attackerCountryDetail?.country_slug, countryDetail?.country_slug) ||
                 areSameWarCountry(
                     detail.attacker,
                     playerCountryName || '',
@@ -3910,7 +3919,7 @@ export default function MapPage() {
                 playerCountryName || '',
                 detail.targetCountryDetail?.iso,
                 selectedCountry?.iso || countryDetail?.iso
-            );
+            ) || sameCountrySlug(detail.targetCountryDetail?.country_slug, countryDetail?.country_slug);
             let isNpcWar = detail.isPbbCoalition === true
                 ? !isPlayerDefender
                 : !isPlayerAttacker && !isPlayerDefender;
@@ -4252,6 +4261,26 @@ export default function MapPage() {
             }
             if (detail.isPbbCoalition && countries) {
                 targetDetailData = resolveCountryDetail(detail.target, undefined) || targetDetailData;
+            }
+
+            const resolvedPlayerAttacker = sameCountrySlug(
+                attackerDetailData.country_slug,
+                countryDetail?.country_slug,
+            );
+            const resolvedPlayerDefender = sameCountrySlug(
+                targetDetailData.country_slug,
+                countryDetail?.country_slug,
+            );
+            if (resolvedPlayerAttacker || resolvedPlayerDefender) {
+                isPlayerAttacker = isPlayerAttacker || resolvedPlayerAttacker;
+                isPlayerDefender = isPlayerDefender || resolvedPlayerDefender;
+                isNpcWar = detail.isPbbCoalition === true
+                    ? !isPlayerDefender
+                    : !isPlayerAttacker && !isPlayerDefender;
+                isPlayerAttack = isPlayerAttacker &&
+                    !isPlayerDefender &&
+                    detail.requestedInvasion !== true &&
+                    !isNpcWar;
             }
 
             if (detail.isPbbCoalition && Array.isArray(detail.coalitionParticipants)) {
@@ -11287,7 +11316,22 @@ export default function MapPage() {
                     selectedCountry?.country ||
                     '';
                 const userCountryIso = selectedCountry?.iso || countryDetail?.iso;
+                const isUserAttacker = activeWarAnimation.isPlayerAttacker === true ||
+                    sameCountrySlug(
+                        activeWarAnimation.attackerCountryDetail?.country_slug,
+                        countryDetail?.country_slug,
+                    ) ||
+                    areSameWarCountry(
+                        activeWarAnimation.attacker,
+                        userCountryName,
+                        activeWarAnimation.attackerCountryDetail?.iso,
+                        userCountryIso
+                    );
                 const isUserDefender = activeWarAnimation.isUserDefender === true ||
+                    sameCountrySlug(
+                        activeWarAnimation.targetCountryDetail?.country_slug,
+                        countryDetail?.country_slug,
+                    ) ||
                     areSameWarCountry(
                         activeWarAnimation.target,
                         userCountryName,
@@ -11303,7 +11347,7 @@ export default function MapPage() {
                         attackerPower={activeWarAnimation.attackerPower ?? 0}
                         targetPower={activeWarAnimation.targetPower ?? 0}
                         deployedUnitsConfig={activeWarAnimation.deployedUnitsConfig}
-                        isUserDefender={activeWarAnimation.isPbbCoalition ? isUserDefender : activeWarAnimation.isNpcWar ? false : isUserDefender}
+                        isUserDefender={isUserDefender}
                         isNpcWar={activeWarAnimation.isNpcWar === true}
                         requestedInvasion={activeWarAnimation.requestedInvasion === true}
                         isPbbCoalition={activeWarAnimation.isPbbCoalition === true}
@@ -11316,7 +11360,7 @@ export default function MapPage() {
                         onAutoResolve={outcome => {
                             if (
                                 activeWarAnimation.isPbbCoalition !== true &&
-                                activeWarAnimation.isPlayerAttacker !== true
+                                !isUserAttacker
                             ) {
                                 applyNpcWarLosses(
                                     activeWarAnimation.attackerCountryDetail,
@@ -11725,7 +11769,7 @@ export default function MapPage() {
                             }
                             if (
                                 activeWarAnimation.isPbbCoalition !== true &&
-                                activeWarAnimation.isPlayerAttacker !== true
+                                !isUserAttacker
                             ) {
                                 applyNpcWarLosses(activeWarAnimation.attackerCountryDetail, attackerLossRatio);
                             }

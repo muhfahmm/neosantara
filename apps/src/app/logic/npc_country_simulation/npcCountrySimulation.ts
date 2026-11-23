@@ -60,6 +60,8 @@ interface PendingSimulationJob {
 }
 
 let activeNpcSimulationState: NpcSimulationState | null = null;
+let currentNpcSimulationPlayerSlug = "";
+const pendingNpcCountryStateUpdates = new Map<string, Record<string, unknown>>();
 let simulationQueue: Promise<void> = Promise.resolve();
 let pendingSimulationJob: PendingSimulationJob | null = null;
 let pendingSimulationTimer: number | null = null;
@@ -97,6 +99,8 @@ function nextDate(date: string): string {
 export function clearActiveNpcCountrySimulationState(): void {
   simulationGeneration += 1;
   activeNpcSimulationState = null;
+  currentNpcSimulationPlayerSlug = "";
+  pendingNpcCountryStateUpdates.clear();
   pendingSimulationJob = null;
   if (pendingSimulationTimer !== null && typeof window !== "undefined") {
     window.clearTimeout(pendingSimulationTimer);
@@ -105,6 +109,17 @@ export function clearActiveNpcCountrySimulationState(): void {
   if (typeof window !== "undefined") {
     window.dispatchEvent(new CustomEvent(NPC_COUNTRY_SIMULATION_UPDATED_EVENT));
   }
+}
+
+function applyPendingNpcCountryStateUpdates(state: NpcSimulationState): void {
+  for (const [slug, updates] of pendingNpcCountryStateUpdates) {
+    if (slug === normalizeSlug(state.playerCountrySlug)) continue;
+    state.countries[slug] = normalizeCountryFinancialState({
+      ...(state.countries[slug] || {}),
+      ...updates,
+    });
+  }
+  pendingNpcCountryStateUpdates.clear();
 }
 
 function getConcurrentCountryStateUpdates(
@@ -129,7 +144,21 @@ export function updateNpcCountrySimulationState(
 ): boolean {
   const state = activeNpcSimulationState;
   const slug = normalizeSlug(countrySlug);
-  if (!state || !slug || slug === state.playerCountrySlug) return false;
+  if (
+    !slug ||
+    slug === normalizeSlug(state?.playerCountrySlug) ||
+    slug === currentNpcSimulationPlayerSlug
+  ) {
+    return false;
+  }
+
+  if (!state) {
+    pendingNpcCountryStateUpdates.set(slug, {
+      ...(pendingNpcCountryStateUpdates.get(slug) || {}),
+      ...updates,
+    });
+    return true;
+  }
 
   state.countries[slug] = {
     ...normalizeCountryFinancialState({
@@ -179,6 +208,8 @@ export function restoreNpcCountrySimulationState(value: unknown): void {
       ]),
     ),
   };
+  currentNpcSimulationPlayerSlug = normalizeSlug(activeNpcSimulationState.playerCountrySlug);
+  applyPendingNpcCountryStateUpdates(activeNpcSimulationState);
 }
 
 function getMutableCountryState(country: CountryRecord): Record<string, unknown> {
@@ -544,6 +575,7 @@ async function persistNpcSimulation(
   sourceCountries: CountryRecord[],
   metadata: Record<string, any>
 ): Promise<void> {
+  currentNpcSimulationPlayerSlug = normalizeSlug(playerCountrySlug);
   const generation = simulationGeneration;
   const previousState = activeNpcSimulationState?.playerCountrySlug === playerCountrySlug
     ? activeNpcSimulationState
@@ -563,6 +595,7 @@ async function persistNpcSimulation(
         initializeNpcCountryMetrics(country, metadata),
       );
     }
+    applyPendingNpcCountryStateUpdates(state);
     activeNpcSimulationState = state;
     window.dispatchEvent(new CustomEvent(NPC_COUNTRY_SIMULATION_UPDATED_EVENT));
     return;
@@ -741,6 +774,7 @@ export function useNpcCountrySimulation(
   const [countries, setCountries] = useState<CountryRecord[]>([]);
   const [loadedForPlayerSlug, setLoadedForPlayerSlug] = useState("");
   const normalizedPlayerSlug = normalizeSlug(playerCountrySlug);
+  currentNpcSimulationPlayerSlug = normalizedPlayerSlug;
   const currentDateString = currentDate ? toDateString(currentDate) : null;
 
   useEffect(() => {
@@ -775,9 +809,9 @@ export function useNpcCountrySimulation(
   }, [normalizedPlayerSlug, loadedForPlayerSlug, countries.length]);
 
   useEffect(() => {
-    // Jika game dalam keadaan PAUSED, jangan jadwalkan atau jalankan simulasi AI NPC!
+    // Saat paused, inisialisasi state awal tetap diperlukan, tetapi simulasi AI tidak dijalankan.
     const isGamePaused = isPaused || (typeof window !== "undefined" && Boolean((window as any).neosantara_is_paused));
-    if (isGamePaused) {
+    if (isGamePaused && activeNpcSimulationState?.playerCountrySlug === normalizedPlayerSlug) {
       if (pendingSimulationTimer !== null && typeof window !== "undefined") {
         window.clearTimeout(pendingSimulationTimer);
         pendingSimulationTimer = null;

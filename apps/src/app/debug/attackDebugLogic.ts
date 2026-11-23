@@ -1,11 +1,18 @@
 import { COUNTRIES_DATA, type CountryData } from '../page/map_system/map-data';
+import { applyWarLossesToUserArmada } from '../page/detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
 
 export type AttackDebugOptions = {
   attacker: string | 'random';
   withMandate: boolean;
-  ignoreWarBan?: boolean;
   showRoute?: boolean;
 };
+
+export type PlayerAttackDebugOptions = {
+  target: string | 'random';
+  showRoute?: boolean;
+};
+
+export type AttackDebugScenario = 'ai-attacks-player' | 'player-attacks-ai' | 'ai-vs-ai';
 
 export type AttackDebugPoint = {
   x: number;
@@ -47,7 +54,7 @@ export type AttackDebugStatus = {
 
 export type AttackDebugResult = {
   runId: string;
-  scenario: 'player-target' | 'ai-vs-ai';
+  scenario: AttackDebugScenario;
   attacker: string;
   target: string;
   notificationReceived: boolean;
@@ -102,7 +109,7 @@ let latestSnapshot: DebugNotificationSnapshot | null = null;
 const runDetails = new Map<string, {
   attacker: string;
   target: string;
-  scenario: AttackDebugResult['scenario'];
+  scenario: AttackDebugScenario;
 }>();
 const routeShownRuns = new Set<string>();
 
@@ -193,7 +200,7 @@ export function triggerAttackOnPlayer(options: AttackDebugOptions): string | nul
   runDetails.set(runId, {
     attacker: attacker.country,
     target: playerName,
-    scenario: 'player-target',
+    scenario: 'ai-attacks-player',
   });
   const targetDetail = context?.countryDetail
     ? { ...context.countryDetail, country: playerName }
@@ -202,14 +209,105 @@ export function triggerAttackOnPlayer(options: AttackDebugOptions): string | nul
     attacker: attacker.country,
     target: playerName,
     targetCountryDetail: targetDetail,
-    isNpcWar: true,
     __neosantaraDebugRunId: runId,
-    __neosantaraDebugIgnoreWarBan: options.ignoreWarBan === true,
   };
   if (!options.withMandate) {
     eventDetail.resolutionViolationAuthorized = true;
   }
 
+  window.setTimeout(() => {
+    window.dispatchEvent(new CustomEvent('start_war_animation', { detail: eventDetail }));
+  }, 0);
+  return runId;
+}
+
+export function triggerPlayerAttackOnAi(options: PlayerAttackDebugOptions): string | null {
+  if (!isDevelopment || typeof window === 'undefined') return null;
+  if ((window as AttackDebugWindow).__neosantara_debug_active_war) {
+    throw new Error('Perang lain sedang berjalan. Tunggu perang selesai sebelum menjalankan debug.');
+  }
+
+  const context = (window as AttackDebugWindow).__neosantara_debug_context;
+  const playerDetail = context?.countryDetail;
+  const playerName = playerDetail?.country ||
+    playerDetail?.nama_negara ||
+    playerDetail?.name_id ||
+    playerDetail?.name_en ||
+    context?.selectedCountry?.country;
+  if (!playerDetail || typeof playerName !== 'string' || !playerName.trim()) {
+    throw new Error('Data negara pemain belum tersedia; pilih negara sebelum menjalankan debug serangan.');
+  }
+
+  const eligibleCountries = COUNTRIES_DATA.filter(country =>
+    normalize(country.country) !== normalize(playerName)
+  );
+  const requestedTarget = options.target === 'random'
+    ? eligibleCountries[Math.floor(Math.random() * eligibleCountries.length)]
+    : COUNTRIES_DATA.find(country => normalize(country.country) === normalize(options.target));
+  const target = requestedTarget
+    ? eligibleCountries.find(country => country.iso === requestedTarget.iso)
+    : undefined;
+  if (!target) {
+    throw new Error(options.target === 'random'
+      ? 'Tidak tersedia negara AI yang dapat diserang.'
+      : `Negara target tidak ditemukan atau merupakan negara pemain: ${options.target}`);
+  }
+
+  let storedDeploymentConfig: unknown;
+  try {
+    const raw = window.localStorage.getItem('deployed_units_config');
+    storedDeploymentConfig = raw ? JSON.parse(raw) : null;
+  } catch (error) {
+    console.error('[AttackDebug] Gagal membaca konfigurasi pasukan yang dikerahkan.', error);
+    throw new Error('Konfigurasi pengerahan pasukan tidak valid; atur pasukan sebelum menguji serangan pemain.');
+  }
+  if (
+    !storedDeploymentConfig ||
+    typeof storedDeploymentConfig !== 'object' ||
+    Array.isArray(storedDeploymentConfig)
+  ) {
+    throw new Error('Konfigurasi pengerahan pasukan belum tersedia; atur pasukan sebelum menguji serangan pemain.');
+  }
+
+  const deployedUnitsConfig = Object.fromEntries(
+    Object.entries(storedDeploymentConfig).flatMap(([unit, value]) =>
+      typeof value === 'number' && Number.isFinite(value)
+        ? [[unit, Math.max(0, Math.min(100, value))]]
+        : []
+    ),
+  );
+  if (Object.values(deployedUnitsConfig).every(value => value <= 0)) {
+    throw new Error('Serangan dibatalkan karena tidak ada pasukan yang dikerahkan.');
+  }
+
+  const committedArmy = applyWarLossesToUserArmada(
+    playerDetail,
+    1,
+    false,
+    deployedUnitsConfig,
+  );
+  if (committedArmy.losses.length === 0) {
+    throw new Error('Serangan dibatalkan karena stok pasukan yang dipilih sudah habis.');
+  }
+
+  const runId = `attack-debug-player-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+  runDetails.set(runId, {
+    attacker: playerName,
+    target: target.country,
+    scenario: 'player-attacks-ai',
+  });
+
+  const eventDetail: Record<string, unknown> = {
+    attacker: playerName,
+    target: target.country,
+    attackerCountryDetail: playerDetail,
+    playerCountryDetail: playerDetail,
+    committedArmySnapshot: playerDetail,
+    committedArmyDetail: committedArmy.updatedDetail,
+    troopsCommitted: true,
+    deployedUnitsConfig,
+    __neosantaraDebugRunId: runId,
+  };
   window.setTimeout(() => {
     window.dispatchEvent(new CustomEvent('start_war_animation', { detail: eventDetail }));
   }, 0);
@@ -251,8 +349,6 @@ export function triggerAiVsAiDebugScenario(): string | null {
       detail: {
         attacker: attacker.country,
         target: target.country,
-        attackerCountryDetail: attacker,
-        targetCountryDetail: target,
         isNpcWar: true,
         resolutionViolationAuthorized: true,
         __neosantaraDebugRunId: runId,
@@ -312,7 +408,7 @@ export function observeAttackOutcome(runId: string, timeoutMs = 8000): Promise<A
   if (!isDevelopment || typeof window === 'undefined') {
     return Promise.resolve({
       runId,
-      scenario: 'player-target',
+      scenario: 'ai-attacks-player',
       attacker: '',
       target: '',
       notificationReceived: false,
@@ -344,7 +440,7 @@ export function observeAttackOutcome(runId: string, timeoutMs = 8000): Promise<A
   );
   const result: AttackDebugResult = {
     runId,
-    scenario: runDetails.get(runId)?.scenario ?? 'player-target',
+    scenario: runDetails.get(runId)?.scenario ?? 'ai-attacks-player',
     attacker: runDetails.get(runId)?.attacker ?? '',
     target: runDetails.get(runId)?.target ?? '',
     notificationReceived: false,
@@ -472,6 +568,33 @@ export function buildReport(result: AttackDebugResult): AttackDebugReport {
       summary: failed === 0 ? `Lulus: ${passed}/${checks.length}` : `Lulus ${passed}/${checks.length}; gagal/perlu verifikasi ${failed}.`,
     };
   }
+  if (result.scenario === 'player-attacks-ai') {
+    const checks = [
+      check(
+        'Serangan pemain masuk ke jalur perang utama',
+        result.activeWarAnimation || result.queued || result.warEnded,
+        result.activeWarAnimation
+          ? 'Animasi serangan pemain aktif.'
+          : result.queued
+            ? 'Serangan pemain masuk antrean perang.'
+            : result.cancellationReason ?? 'Jalur perang belum teramati.',
+      ),
+      check(
+        'Analisis mendahului hasil pertempuran',
+        result.analysisShown && result.resultPhaseShown && result.analysisBeforeResult,
+        `Analisis: ${result.analysisShown}; hasil: ${result.resultPhaseShown}; urutan benar: ${result.analysisBeforeResult}.`,
+      ),
+    ];
+    const passed = checks.filter(item => item.passed).length;
+    const failed = checks.length - passed;
+    return {
+      checks,
+      passed,
+      failed,
+      summary: failed === 0 ? `Lulus: ${passed}/${checks.length}` : `Lulus ${passed}/${checks.length}; gagal/perlu verifikasi ${failed}.`,
+    };
+  }
+
   const checks = [
     check(
       'Notifikasi serangan masuk inbox',

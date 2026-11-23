@@ -13,6 +13,7 @@ import { getArmadaPowerSummary } from '@/app/page/navigasi_menu/2_navigasi_bawah
 import { convertBarakToSoldiers } from '@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/1_barak_logic';
 import { getLocalizedCountryName } from '@/app/logic/countryNameLogic';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { estimateBattleWinProbability } from './war_algoritm/battleEngine';
 
 interface PerbandinganPasukanProps {
   attackerName: string;
@@ -28,6 +29,8 @@ interface PerbandinganPasukanProps {
   isUserAttacker?: boolean;
   isUserDefender?: boolean;
   isCoalitionForce?: boolean;
+  requestedInvasion?: boolean;
+  targetCityIsCapital?: boolean;
   onAutoResult: () => void;
   onClose?: () => void;
 }
@@ -146,6 +149,92 @@ const getDeployedMilitaryPower = (
     0,
   );
 
+function WinProbabilityPanel({
+  attackerPower,
+  targetPower,
+  requestedInvasion,
+  targetCityIsCapital,
+  isUserDefender,
+  userCountryName,
+  opponentCountryName,
+}: {
+  attackerPower: number;
+  targetPower: number;
+  requestedInvasion: boolean;
+  targetCityIsCapital?: boolean;
+  isUserDefender: boolean;
+  userCountryName: string;
+  opponentCountryName: string;
+}) {
+  const { t } = useLanguage();
+  const tr = (key: string, params?: Record<string, string | number>) =>
+    t(`navigation_defense_attack.${key}`, params);
+  const winProbability = React.useMemo(
+    () => estimateBattleWinProbability({
+      attackerPower,
+      targetPower,
+      requestedInvasion,
+      targetCityIsCapital,
+    }),
+    [attackerPower, targetPower, requestedInvasion, targetCityIsCapital],
+  );
+  const userWinPct = isUserDefender
+    ? winProbability.targetWinPct
+    : winProbability.attackerWinPct;
+  const opponentWinPct = isUserDefender
+    ? winProbability.attackerWinPct
+    : winProbability.targetWinPct;
+
+  return (
+    <div className="mt-5 rounded-xl border border-root-accent/20 bg-root-surface/70 p-4">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-root-subtle">
+          {tr('analysis.winProbability.title')}
+        </span>
+        <span className="text-[10px] font-semibold text-root-subtle">
+          {tr('analysis.winProbability.simulations', { count: winProbability.simulations })}
+        </span>
+      </div>
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+        <div className="rounded-lg border border-root-accent/20 bg-root-canvas px-3 py-2">
+          <p className="text-[10px] font-bold text-root-subtle">
+            {tr('analysis.winProbability.user', { country: userCountryName })}
+          </p>
+          <p className="font-mono text-lg font-black text-root-accent">
+            {userWinPct.toFixed(1)}%
+          </p>
+        </div>
+        <div className="rounded-lg border border-rose-500/20 bg-root-canvas px-3 py-2">
+          <p className="text-[10px] font-bold text-root-subtle">
+            {tr('analysis.winProbability.opponent', { country: opponentCountryName })}
+          </p>
+          <p className="font-mono text-lg font-black text-rose-400">
+            {opponentWinPct.toFixed(1)}%
+          </p>
+        </div>
+        <div className="rounded-lg border border-white/10 bg-root-canvas px-3 py-2">
+          <p className="text-[10px] font-bold text-root-subtle">
+            {tr('analysis.winProbability.draw')}
+          </p>
+          <p className="font-mono text-lg font-black text-root-text">
+            {winProbability.drawPct.toFixed(1)}%
+          </p>
+        </div>
+      </div>
+      <div className="mt-3 flex h-2 overflow-hidden rounded-full bg-root-canvas">
+        <div className="bg-root-accent" style={{ width: `${userWinPct}%` }} />
+        <div className="bg-rose-500" style={{ width: `${opponentWinPct}%` }} />
+        <div className="bg-white/35" style={{ width: `${winProbability.drawPct}%` }} />
+      </div>
+      {winProbability.isBalanced && (
+        <p className="mt-3 text-center text-[10px] font-bold text-amber-300">
+          {tr('analysis.winProbability.balanced')}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default function PerbandinganPasukan({
   attackerName,
   targetName,
@@ -155,6 +244,8 @@ export default function PerbandinganPasukan({
   isUserDefender = false,
   isUserAttacker = false,
   isCoalitionForce = false,
+  requestedInvasion = false,
+  targetCityIsCapital,
   onAutoResult,
 }: PerbandinganPasukanProps) {
   const { t, language } = useLanguage();
@@ -245,6 +336,8 @@ export default function PerbandinganPasukan({
     ? (actualAttackerPower / totalCombinedPower) * 100
     : 50;
   const targetPct = 100 - attackerPct;
+  const userCountryName = isUserDefender ? localizedTargetName : localizedAttackerName;
+  const opponentCountryName = isUserDefender ? localizedAttackerName : localizedTargetName;
 
   const groupMeta: Record<ArmadaGroup, { icon: typeof Swords; color: string; bg: string }> = {
     darat: { icon: Swords, color: 'text-rose-700', bg: 'bg-rose-100' },
@@ -402,6 +495,17 @@ export default function PerbandinganPasukan({
                     <Shield className="h-4 w-4 text-rose-400" />
                   </div>
                 </div>
+                {!isCoalitionForce && (isUserAttacker || isUserDefender) && (
+                  <WinProbabilityPanel
+                    attackerPower={actualAttackerPower}
+                    targetPower={actualTargetPower}
+                    requestedInvasion={requestedInvasion}
+                    targetCityIsCapital={targetCityIsCapital}
+                    isUserDefender={isUserDefender}
+                    userCountryName={userCountryName}
+                    opponentCountryName={opponentCountryName}
+                  />
+                )}
               </div>
             </div>
 

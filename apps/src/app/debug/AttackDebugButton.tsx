@@ -12,6 +12,7 @@ import {
   observeAttackOutcome,
   triggerAiVsAiDebugScenario,
   triggerAttackOnPlayer,
+  triggerPlayerAttackOnAi,
   type AttackDebugReport,
   type AttackDebugResult,
   type AttackDebugStatus,
@@ -126,7 +127,7 @@ export function AttackDebugButton({ selectedCountry, countryDetail }: AttackDebu
       if (route) markAttackDebugRouteShown(runId);
       setOverlayRoute(route);
       setRunStatus(`Berjalan: ${selectedAttacker} → ${runInfo?.target ?? countryName}`);
-      addLog(`Serangan dimulai oleh ${selectedAttacker} menuju ${runInfo?.target ?? countryName}${withMandate ? ' (menggunakan mandat PBB yang aktif bila tersedia)' : ' (tanpa mandat; pembatalan acak dilewati)'}.`);
+      addLog(`Serangan dimulai oleh ${selectedAttacker} menuju ${runInfo?.target ?? countryName}${withMandate ? ' (mengikuti pemeriksaan mandat aktif)' : ' (jalur serangan AI tanpa mandat yang lolos pemeriksaan awal)'}.`);
       if (showRoute && !route) addLog('Rute tidak tersedia: koordinat salah satu negara tidak ditemukan.');
       const outcome = await observeAttackOutcome(runId);
       if (currentGeneration !== generation.current) return;
@@ -156,6 +157,56 @@ export function AttackDebugButton({ selectedCountry, countryDetail }: AttackDebu
       if (currentGeneration === generation.current) setIsRunning(false);
     }
   }, [addLog, attacker, countryName, isRunning, showRoute, withMandate]);
+
+  const runPlayerAttack = useCallback(async () => {
+    if (isRunning) {
+      addLog('Serangan lain masih dalam observasi; permintaan baru diabaikan.');
+      return;
+    }
+
+    const currentGeneration = ++generation.current;
+    setIsRunning(true);
+    setReport(null);
+    setResult(null);
+    setRunStatus('Menyiapkan serangan pemain...');
+    try {
+      const runId = triggerPlayerAttackOnAi({ target: attacker, showRoute });
+      if (!runId) throw new Error('Debug serangan tidak tersedia.');
+      setActiveRunId(runId);
+      const runInfo = getAttackDebugRunInfo(runId);
+      const route = showRoute && runInfo &&
+        typeof document !== 'undefined' &&
+        document.getElementById('map-canvas') instanceof HTMLCanvasElement
+        ? getRouteGeometry(runInfo.attacker, runInfo.target)
+        : null;
+      if (route) markAttackDebugRouteShown(runId);
+      setOverlayRoute(route);
+      addLog(`Serangan pemain dimulai: ${runInfo?.attacker ?? countryName} → ${runInfo?.target ?? attacker}.`);
+      if (showRoute && !route) addLog('Rute tidak tersedia: koordinat salah satu negara tidak ditemukan.');
+
+      const outcome = await observeAttackOutcome(runId, 30000);
+      if (currentGeneration !== generation.current) return;
+      if (outcome.cancellationReason) setOverlayRoute(null);
+      setResult(outcome);
+      const finalReport = buildReport(outcome);
+      setReport(finalReport);
+      setRunStatus(outcome.cancellationReason
+        ? `Dibatalkan: ${outcome.cancellationReason}`
+        : outcome.activeWarAnimation
+          ? 'Serangan masuk ke alur perang utama; pilih aksi hasil untuk menyelesaikan.'
+          : outcome.queued
+            ? 'Serangan masuk antrean perang.'
+            : 'Jendela observasi selesai.');
+      addLog(`Observasi serangan pemain selesai: ${finalReport.summary}`);
+    } catch (error) {
+      if (currentGeneration !== generation.current) return;
+      const message = error instanceof Error ? error.message : 'Kesalahan debug tidak diketahui.';
+      setRunStatus(`Gagal: ${message}`);
+      addLog(`Gagal: ${message}`);
+    } finally {
+      if (currentGeneration === generation.current) setIsRunning(false);
+    }
+  }, [addLog, attacker, countryName, isRunning, showRoute]);
 
   const runAiVsAi = useCallback(async () => {
     if (isRunning) {
@@ -233,7 +284,7 @@ export function AttackDebugButton({ selectedCountry, countryDetail }: AttackDebu
       className="fixed right-3 top-16 z-[230] max-h-[calc(100dvh-5rem)] w-[min(94vw,440px)] overflow-y-auto rounded-xl border border-[#00FFAA]/50 bg-[#0F2424] p-4 text-[#E0E0E0] shadow-2xl"
     >
       <div className="mb-3 flex items-center justify-between gap-2">
-        <h2 className="text-sm font-black tracking-wide text-[#00FFAA]">DEBUG SERANGAN AI</h2>
+        <h2 className="text-sm font-black tracking-wide text-[#00FFAA]">DEBUG PERANG</h2>
         <button
           type="button"
           onClick={() => setIsOpen(false)}
@@ -246,9 +297,9 @@ export function AttackDebugButton({ selectedCountry, countryDetail }: AttackDebu
 
       <div className="space-y-3 text-xs">
         <label className="block space-y-1">
-          <span className="font-bold text-[#9AB6B3]">Negara penyerang</span>
+          <span className="font-bold text-[#9AB6B3]">Negara lawan</span>
           <select
-            aria-label="Pilih negara penyerang"
+            aria-label="Pilih negara lawan"
             value={attacker}
             onChange={event => setAttacker(event.target.value)}
             className="w-full rounded-md border border-[#00FFAA]/30 bg-[#0A1A1A] px-2 py-2 text-[#E0E0E0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00FFAA]"
@@ -264,7 +315,7 @@ export function AttackDebugButton({ selectedCountry, countryDetail }: AttackDebu
         </label>
 
         <label className="flex items-center justify-between gap-3 rounded-md border border-[#00FFAA]/15 bg-[#0A1A1A] px-3 py-2">
-          <span>Dengan mandat PBB</span>
+          <span>Gunakan mandat PBB aktif bila tersedia</span>
           <input
             aria-label="Dengan mandat PBB"
             type="checkbox"
@@ -307,10 +358,10 @@ export function AttackDebugButton({ selectedCountry, countryDetail }: AttackDebu
             type="button"
             onClick={() => void runAttack()}
             disabled={isRunning || !countryName}
-            aria-label="Serang negara pemain"
+            aria-label="Uji serangan AI ke pemain"
             className="flex-1 rounded-md bg-[#FF2D55] px-3 py-2 font-black text-white hover:bg-[#ff496c] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
           >
-            {isRunning ? 'SERANGAN BERJALAN...' : 'SERANG SAYA'}
+            {isRunning ? 'SERANGAN BERJALAN...' : 'AI SERANG PEMAIN'}
           </button>
           <button
             type="button"
@@ -321,6 +372,15 @@ export function AttackDebugButton({ selectedCountry, countryDetail }: AttackDebu
             Salin Laporan
           </button>
         </div>
+        <button
+          type="button"
+          onClick={() => void runPlayerAttack()}
+          disabled={isRunning || !countryName}
+          aria-label="Uji serangan pemain ke AI"
+          className="w-full rounded-md border border-[#FF2D55]/50 px-3 py-2 font-bold text-[#FF647F] hover:bg-[#FF2D55]/10 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00FFAA]"
+        >
+          SAYA SERANG AI
+        </button>
         <button
           type="button"
           onClick={() => void runAiVsAi()}

@@ -127,7 +127,15 @@
     "behind": "🔴 Behind",
     "attacker": "Attacker",
     "target": "Target",
-    "automaticResult": "Automatic Result"
+    "automaticResult": "Automatic Result",
+    "winProbability": {
+      "title": "Estimated Chance to Win",
+      "user": "Chance for {country} (you) to win",
+      "opponent": "Chance for {country} (opponent) to win",
+      "draw": "Chance of a draw",
+      "simulations": "Based on {count} simulations",
+      "balanced": "⚖️ Even: neither side has a clear advantage"
+    }
   },
   "warResult": {
     "defenseWon": "Defense Successful!",

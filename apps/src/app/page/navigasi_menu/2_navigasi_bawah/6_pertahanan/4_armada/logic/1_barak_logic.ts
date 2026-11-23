@@ -17,6 +17,18 @@ export const convertBarakToSoldiers = (barakCount: number): number => {
   return validCount * BARAK_TO_SOLDIERS_MULTIPLIER;
 };
 
+export const resolveInfantryQuantity = (
+  storedInfantry: unknown,
+  barakCount: unknown,
+): number => {
+  const infantryCount = Number(storedInfantry ?? 0);
+  if (Number.isFinite(infantryCount) && infantryCount > 0) return infantryCount;
+
+  const normalizedBarakCount = Number(barakCount ?? 0);
+  if (!Number.isFinite(normalizedBarakCount) || normalizedBarakCount <= 0) return 0;
+  return convertBarakToSoldiers(normalizedBarakCount);
+};
+
 /**
  * Dapatkan multiplier untuk konversi barak ke pasukan
  * @returns Multiplier value (10.000)

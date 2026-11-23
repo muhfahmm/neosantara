@@ -127,7 +127,15 @@
     "behind": "🔴 En desventaja",
     "attacker": "Atacante",
     "target": "Objetivo",
-    "automaticResult": "Resultado automático"
+    "automaticResult": "Resultado automático",
+    "winProbability": {
+      "title": "Probabilidad estimada de victoria",
+      "user": "Probabilidad de victoria de {country} (tú)",
+      "opponent": "Probabilidad de victoria de {country} (oponente)",
+      "draw": "Probabilidad de empate",
+      "simulations": "Basado en {count} simulaciones",
+      "balanced": "⚖️ Igualado: ningún bando tiene una ventaja clara"
+    }
   },
   "warResult": {
     "defenseWon": "¡Defensa exitosa!",

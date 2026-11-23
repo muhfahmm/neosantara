@@ -4,6 +4,7 @@ import { getAuthoritarianMilitaryStrengthMultiplier } from "@/app/page/bonus_log
 import { getNATOMilitaryMultiplier } from "@/app/page/bonus_logic";
 import { applyKerjaSamaRegionalToMultiplier } from "@/app/page/bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/4_Kerja Sama Organisasi Regional";
 import { getMilitaryResearchStrengthMultiplier } from "@/app/page/bonus_logic/militaryResearchBonus";
+import { resolveInfantryQuantity } from "./1_barak_logic";
 import {
   getEspionageMultiplier,
   parseActiveEspionageEffects,
@@ -83,6 +84,9 @@ const resolveCountryArmada = (source: unknown): ArmadaData => {
   const daratObj: Record<string, number> = {};
   const lautObj: Record<string, number> = {};
   const udaraObj: Record<string, number> = {};
+  const groundForces = (baseArmada.darat && typeof baseArmada.darat === "object"
+    ? baseArmada.darat
+    : candidate.darat) as Record<string, unknown> | undefined;
   const metadataByDataKey = getMetadataByDataKey();
 
   Object.values(metadataByDataKey).forEach((meta) => {
@@ -108,8 +112,12 @@ const resolveCountryArmada = (source: unknown): ArmadaData => {
     if (group === "udara") udaraObj[key] = numVal;
   });
 
+  const barakCount = [candidate.barak, baseArmada.barak, groundForces?.barak]
+    .map(normalizeNumber)
+    .find(value => value > 0) ?? 0;
+
   return {
-    barak: normalizeNumber(baseArmada.barak ?? candidate.barak),
+    barak: barakCount,
     darat: daratObj,
     laut: lautObj,
     udara: udaraObj,
@@ -119,6 +127,10 @@ const resolveCountryArmada = (source: unknown): ArmadaData => {
 const resolveQuantity = (armada: ArmadaData, dataKey: string): number => {
   if (dataKey === "barak") {
     return normalizeNumber(armada.barak);
+  }
+
+  if (dataKey === "pasukan_infanteri") {
+    return resolveInfantryQuantity(armada.darat?.[dataKey], armada.barak);
   }
 
   const group = getMetadataByDataKey()[dataKey]?.groupId;

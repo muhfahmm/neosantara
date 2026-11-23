@@ -28,6 +28,129 @@ export interface BattleResult {
   message: string;
 }
 
+export interface BattleDamageResolution {
+  attackerPower: number;
+  targetPower: number;
+  attackerDamage: number;
+  targetDamage: number;
+  tieBreaker: BattleResult['winner'];
+  winnerOverride?: Exclude<BattleResult['winner'], 'draw'>;
+}
+
+export interface BattleWinProbability {
+  attackerWinPct: number;
+  targetWinPct: number;
+  drawPct: number;
+  simulations: number;
+  isBalanced: boolean;
+}
+
+export function getMinimumLossRatioForCasualty(unitQuantities: readonly number[]): number {
+  const largestUnitCount = unitQuantities.reduce(
+    (largest, quantity) => Number.isFinite(quantity) ? Math.max(largest, quantity) : largest,
+    0,
+  );
+  return largestUnitCount > 0 ? 1 / largestUnitCount : 0;
+}
+
+export function resolveBattleDamage({
+  attackerPower,
+  targetPower,
+  attackerDamage: rawAttackerDamage,
+  targetDamage: rawTargetDamage,
+  tieBreaker,
+  winnerOverride,
+}: BattleDamageResolution): {
+  winner: BattleResult['winner'];
+  attackerDamage: number;
+  targetDamage: number;
+} {
+  const safeAttackerPower = Math.max(0, Math.round(attackerPower));
+  const safeTargetPower = Math.max(0, Math.round(targetPower));
+  const attackerDamage = Math.min(safeAttackerPower, Math.max(0, Math.round(rawAttackerDamage)));
+  const targetDamage = Math.min(safeTargetPower, Math.max(0, Math.round(rawTargetDamage)));
+  return { winner: winnerOverride ?? tieBreaker, attackerDamage, targetDamage };
+}
+
+export function estimateBattleWinProbability(
+  input: Omit<BattleInput, 'seed'> & {
+    requestedInvasion?: boolean;
+    targetCityIsCapital?: boolean;
+  },
+  simulations = 1000,
+): BattleWinProbability {
+  if (!Number.isSafeInteger(simulations) || simulations < 1 || simulations > 10000) {
+    throw new RangeError('simulations harus berupa bilangan bulat antara 1 dan 10000.');
+  }
+
+  const attackerPower = Math.round(input.attackerPower);
+  const targetPower = Math.round(input.targetPower);
+  let attackerWins = 0;
+  let targetWins = 0;
+  let draws = 0;
+
+  for (let index = 0; index < simulations; index += 1) {
+    const seed = index + 1;
+    const battle = simulateBattle({
+      ...input,
+      attackerPower,
+      targetPower,
+      seed,
+    }, false);
+    const requestedWinner = input.requestedInvasion
+      ? (() => {
+        const winChance = attackerPower > targetPower ? 0.6 : attackerPower < targetPower ? 0.4 : 0.5;
+        const roll = createSeededRandom(seed ^ 0x9e3779b9)();
+        return roll < winChance ? 'attacker' : 'target';
+      })()
+      : undefined;
+
+    const attackerDamage = Math.max(0, attackerPower - battle.attackerFinalPower);
+    let targetDamage = Math.max(0, targetPower - battle.targetFinalPower);
+    if (
+      (requestedWinner ?? battle.winner) === 'attacker' &&
+      input.targetCityIsCapital === false
+    ) {
+      const nonCapitalLossRatio = 0.1 + (Math.abs(Math.sin(seed)) % 1) * 0.05;
+      targetDamage = Math.min(
+        targetDamage,
+        Math.max(1, Math.round(targetPower * nonCapitalLossRatio)),
+      );
+    }
+
+    const outcome = resolveBattleDamage({
+      attackerPower,
+      targetPower,
+      attackerDamage,
+      targetDamage,
+      tieBreaker: battle.winner,
+      winnerOverride: requestedWinner,
+    }).winner;
+    if (outcome === 'attacker') attackerWins += 1;
+    else if (outcome === 'target') targetWins += 1;
+    else draws += 1;
+  }
+
+  const attackerWinPct = attackerWins / simulations * 100;
+  const targetWinPct = targetWins / simulations * 100;
+  const drawPct = draws / simulations * 100;
+  const winDifference = attackerWins / simulations - targetWins / simulations;
+  const differenceVariance = Math.max(
+    0,
+    (attackerWins + targetWins) / simulations - winDifference ** 2,
+  );
+  const uncertaintyMargin = 1.96 * Math.sqrt(differenceVariance / simulations);
+
+  return {
+    attackerWinPct,
+    targetWinPct,
+    drawPct,
+    simulations,
+    isBalanced: attackerWins + targetWins > 0 &&
+      Math.abs(winDifference) <= uncertaintyMargin,
+  };
+}
+
 function validateBattleInput(input: BattleInput): void {
   const { attackerPower, targetPower } = input;
   if (!Number.isFinite(attackerPower) || attackerPower < 0) {
@@ -84,6 +207,10 @@ function createSeededRandom(seed: number): () => number {
  * Algoritma Utama Simulasi Perang Multi-Ronde Berbasis DeepSeek AI Recommendation
  */
 export function simulateBattleTs(input: BattleInput): BattleResult {
+  return simulateBattle(input, true);
+}
+
+function simulateBattle(input: BattleInput, includeLogs: boolean): BattleResult {
   validateBattleInput(input);
 
   const {
@@ -189,7 +316,7 @@ export function simulateBattleTs(input: BattleInput): BattleResult {
       atkMorale = Math.min(1.2, atkMorale + 0.01);
     }
 
-    if (round <= 15) {
+    if (includeLogs && round <= 15) {
       logs.push(`Ronde ${round}: Penyerang ${Math.round(curAtk).toLocaleString('id-ID', { maximumFractionDigits: 2 })} | Target ${Math.round(curTgt).toLocaleString('id-ID', { maximumFractionDigits: 2 })}`);
     }
 
