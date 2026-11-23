@@ -10,6 +10,8 @@ interface RootInfoModalHeaderProps {
   icon?: ReactNode;
   actions?: ReactNode;
   centerContent?: ReactNode;
+  iconContainerClassName?: string;
+  iconClassName?: string;
   size?: "compact" | "standard";
   titleId?: string;
   closeAriaLabel?: string;
@@ -21,6 +23,8 @@ export default function RootInfoModalHeader({
   icon,
   actions,
   centerContent,
+  iconContainerClassName,
+  iconClassName = "root-modal-util-d252947d10",
   size = "compact",
   titleId,
   closeAriaLabel = "Tutup modal",
@@ -28,9 +32,9 @@ export default function RootInfoModalHeader({
   const isStandard = size === "standard";
   const headerIcon = icon ?? <Info aria-hidden="true" />;
   const renderedIcon =
-    isStandard && isValidElement<{ className?: string }>(headerIcon)
+    isStandard && iconClassName && isValidElement<{ className?: string }>(headerIcon)
       ? cloneElement(headerIcon, {
-          className: `${headerIcon.props.className ?? ""} root-modal-util-d252947d10`.trim(),
+          className: `${headerIcon.props.className ?? ""} ${iconClassName}`.trim(),
         })
       : headerIcon;
 
@@ -47,7 +51,9 @@ export default function RootInfoModalHeader({
       <div className={isStandard ? "satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar" : "root-info-modal-header-main"}>
         {isStandard ? (
           <div className="root-modal-util-08dfbca033">
-            <div className="root-modal-util-739d92b232">{renderedIcon}</div>
+            <div className={iconContainerClassName ?? "root-modal-util-739d92b232"}>
+              {renderedIcon}
+            </div>
             <h2
               id={titleId}
               className="root-modal-util-6b4648c53a root-modal-util-c2385a463d"

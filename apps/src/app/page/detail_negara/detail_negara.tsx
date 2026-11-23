@@ -4,6 +4,7 @@ import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModa
 import { rootModalTypography } from '@/app/page/root_modals_design_menu/rootModalTypography';
 import { getRelationTextColor, getRelationTier } from '@/app/logic/relationTiers';
 import { useState, useEffect, useRef, useMemo } from "react";
+import Image from "next/image";
 import { createPortal } from "react-dom";
 import { Globe, Landmark, Shield, Users, Banknote, Scale, Home, Handshake, Flame, Hammer } from 'lucide-react';
 import { COUNTRIES_DATA } from '../map_system/map-data';
@@ -845,6 +846,15 @@ export function CountryDetailModal({
     }
     displayIso = rulerIso || originalIso;
   }
+
+  // Tampilkan bendera negara asal di samping bendera penguasa jika wilayah ini dianeksasi
+  const hasTerritoryAnnexation = Boolean(
+    rulerIso &&
+    originalIso &&
+    rulerIso.toLowerCase() !== originalIso.toLowerCase()
+  );
+  const territoryOriginalIso = hasTerritoryAnnexation ? originalIso.toLowerCase() : null;
+
   const provinceTensionStatus = provinceTensionValue <= 25
     ? t('detail_negara_ai.tensionLevels.veryStable')
     : provinceTensionValue <= 40
@@ -857,14 +867,29 @@ export function CountryDetailModal({
   const isDevelopingAIBuildingTab = activeTab === "developing_ai_building";
 
   const headerFlagIcon = displayIso && displayIso.length === 2 ? (
-    <span className="flex h-4 w-4 items-center justify-center overflow-hidden rounded-sm sm:h-5 sm:w-5">
-      <img
+    <div className="flex shrink-0 items-center gap-2">
+      <Image
         src={`https://flagcdn.com/w80/${displayIso.toLowerCase()}.png`}
         alt={displayCountryName}
-        className="h-auto max-h-full w-full object-cover"
-        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+        width={80}
+        height={53}
+        unoptimized
+        className="h-7 w-10 shrink-0 rounded-sm object-fill"
+        onError={(e) => { e.currentTarget.style.display = 'none'; }}
       />
-    </span>
+      {territoryOriginalIso && (
+        <Image
+          src={`https://flagcdn.com/w80/${territoryOriginalIso}.png`}
+          alt={countryName || ''}
+          width={80}
+          height={53}
+          unoptimized
+          title={`Wilayah asal: ${countryName || ''}`}
+          className="h-7 w-10 shrink-0 rounded-sm object-fill"
+          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+        />
+      )}
+    </div>
   ) : (
     <Globe />
   );
@@ -892,6 +917,8 @@ export function CountryDetailModal({
           titleId="country-detail-modal-title"
           onClose={onClose}
           icon={headerFlagIcon}
+          iconContainerClassName="flex shrink-0 items-center"
+          iconClassName=""
           size="standard"
         />
 
