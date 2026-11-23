@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import { useGeopoliticsMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useGeopoliticsMenuTranslation";
 import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles";
+import { getIsoForCountryName } from "../../pbbCountryIso";
 import {
   addPlayerNomination,
   campaignForCandidate,
@@ -27,6 +29,30 @@ interface Props {
 }
 
 const TOTAL_VOTERS = 193;
+
+const renderCountryFlag = (iso: string, name: string) => {
+  const resolvedIso = getIsoForCountryName(name);
+  const suppliedIso = iso.trim().toLowerCase().split("-").pop();
+  const flagCode = resolvedIso !== "un"
+    ? resolvedIso
+    : suppliedIso && /^[a-z]{2}$/.test(suppliedIso) && suppliedIso !== "un"
+      ? suppliedIso
+      : "";
+  if (!flagCode) return null;
+  return (
+    <div className="w-6 h-4 rounded-sm overflow-hidden border border-root-accent/20 flex-shrink-0 shadow-sm bg-[#051111] relative flex items-center justify-center">
+      <Image
+        src={`https://flagcdn.com/w80/${flagCode}.png`}
+        alt={`Bendera ${name}`}
+        width={24}
+        height={16}
+        unoptimized
+        className="w-full h-full object-cover absolute inset-0"
+        onError={event => { event.currentTarget.style.display = "none"; }}
+      />
+    </div>
+  );
+};
 
 /** localStorage adalah sumber kebenaran (dipakai tick jadwal, veto, dan pencopotan). */
 function readStoredElection(): unknown | null {
@@ -372,7 +398,7 @@ export default function SecurityCouncilElectionPanel({
                 </h5>
               )}
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-5">
-                {group.candidates.map((candidate, index) => {
+                {group.candidates.map(candidate => {
                   const isWinner = Boolean(winnerIsoSet?.has(candidate.iso.toLowerCase()));
                   const tone = winnerIsoSet
                     ? isWinner
@@ -382,23 +408,26 @@ export default function SecurityCouncilElectionPanel({
                   return (
                     <div
                       key={candidate.slug}
-                      className={`flex items-center justify-between gap-3 rounded-lg border px-3 py-2 ${tone}`}
+                      className={`grid min-w-0 grid-cols-[1.5rem_minmax(0,1fr)_auto] items-start gap-3 rounded-lg border px-3 py-2 ${tone}`}
                     >
-                      <div className="flex min-w-0 items-center gap-3">
-                        <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-white/5 text-[10px] font-black text-[#8AA4A4]">
-                          {index + 1}
-                        </span>
-                        <div className="min-w-0">
-                          <p className="truncate text-xs font-bold text-root-text">{candidate.name}</p>
-                          <p className="text-[9px] text-[#789090]">
-                            {candidate.region} · {pbb("election.score", { score: candidate.score.toFixed(1) })}
-                          </p>
-                        </div>
+                      <div className="pt-0.5" title={candidate.iso.toUpperCase()}>
+                        {renderCountryFlag(candidate.iso, candidate.name)}
+                      </div>
+                      <div className="min-w-0">
+                        <p
+                          title={candidate.name}
+                          className="break-words text-[10px] font-bold leading-tight text-root-text"
+                        >
+                          {candidate.name}
+                        </p>
+                        <p className="break-words text-[8px] text-[#789090]">
+                          {candidate.region} · {pbb("election.score", { score: candidate.score.toFixed(1) })}
+                        </p>
                       </div>
                       <div className="shrink-0 text-right">
-                        <p className="text-xs font-black text-cyan-200">{pbb("election.votes", { count: candidate.votes })}</p>
+                        <p className="whitespace-nowrap text-[10px] font-black text-cyan-200">{pbb("election.votes", { count: candidate.votes })}</p>
                         {candidate.campaignCount > 0 && (
-                          <p className="text-[9px] text-emerald-300">
+                          <p className="text-[8px] text-emerald-300">
                             {pbb("election.contribution", { score: candidate.contributionScore })}
                           </p>
                         )}
