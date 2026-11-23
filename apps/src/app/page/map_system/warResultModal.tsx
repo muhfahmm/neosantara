@@ -1,12 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import Image from 'next/image';
 import { DEFENSE_UNIT_LABELS, getDefenseUnitCardImage } from '../navigasi_menu/2_navigasi_bawah/buildingCardImages';
 import NotebookModalWrapper from '../navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 import ModalCloseButton from '../root_modals_design_menu/ModalCloseButton';
 import RootInfoModalHeader from '../root_modals_design_menu/RootInfoModalHeader';
-import { AlertTriangle, Swords } from 'lucide-react';
+import { AlertTriangle, Swords, ShieldAlert, Flag } from 'lucide-react';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
 export interface WarUnitLoss {
@@ -14,11 +15,19 @@ export interface WarUnitLoss {
     quantity: number;
 }
 
+export interface WarCountryParty {
+    name: string;
+    iso?: string;
+    losses: WarUnitLoss[];
+}
+
 export interface ResultModalProps {
     isOpen: boolean;
     title: string;
     message: string;
     losses?: WarUnitLoss[];
+    attackerParty?: WarCountryParty;
+    targetParty?: WarCountryParty;
     type?: 'success' | 'error' | 'info';
     compact?: boolean;
     onClose: () => void;
@@ -29,15 +38,94 @@ export default function ResultModal({
     title,
     message,
     losses = [],
+    attackerParty,
+    targetParty,
     type = 'success',
     compact = false,
     onClose,
 }: ResultModalProps) {
     const { t } = useLanguage();
+    const [selectedTab, setSelectedTab] = useState<'attacker' | 'target'>('attacker');
     if (typeof document === 'undefined' || !isOpen) return null;
 
-    const isLosses = losses.length > 0;
+    const hasParties = Boolean(attackerParty || targetParty);
+    const activeParty = selectedTab === 'attacker'
+        ? (attackerParty || { name: 'Pasukan Anda', losses })
+        : (targetParty || { name: 'Pasukan Musuh', losses: [] });
+
+    const currentLosses = hasParties ? (activeParty.losses || []) : losses;
+    const isLosses = currentLosses.length > 0;
     const isError = type === 'error';
+
+    // Helper render avatar/bendera party
+    const renderFlag = (iso?: string) => {
+        if (!iso) {
+            return (
+                <div className="flex h-5 w-7 items-center justify-center rounded bg-slate-800 text-[10px] font-bold text-white shadow-inner">
+                    <Flag className="h-3 w-3 text-root-accent" />
+                </div>
+            );
+        }
+        return (
+            <Image
+                src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
+                alt={iso}
+                width={28}
+                height={20}
+                className="h-4 w-6 rounded-sm object-cover shadow"
+                onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = 'https://flagcdn.com/w80/un.png';
+                }}
+            />
+        );
+    };
+
+    const renderLossCards = (items: WarUnitLoss[]) => {
+        if (items.length === 0) {
+            return (
+                <div className="flex flex-col items-center justify-center py-10 text-center">
+                    <ShieldAlert className="mb-2 h-10 w-10 text-slate-500/70" />
+                    <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-slate-400">
+                        Tidak Ada Kerugian Alutsista Tercatat
+                    </p>
+                </div>
+            );
+        }
+
+        return (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 lg:gap-3">
+                {items.map((loss) => {
+                    const imageKey = loss.unitKey === 'pasukan_infanteri' ? 'barak' : loss.unitKey;
+                    const image = getDefenseUnitCardImage(imageKey);
+                    const label = DEFENSE_UNIT_LABELS[loss.unitKey] || loss.unitKey.replace(/_/g, ' ');
+                    return (
+                        <article
+                            key={loss.unitKey}
+                            className="flex items-center gap-2.5 lg:gap-3 rounded-lg border border-root-accent/20 bg-root-canvas p-2.5 lg:p-3 shadow-sm hover:border-root-accent/40 transition-colors"
+                        >
+                            {image && (
+                                <Image
+                                    src={image}
+                                    alt={label}
+                                    width={40}
+                                    height={40}
+                                    className="h-9 w-9 lg:h-11 lg:w-11 shrink-0 object-contain"
+                                />
+                            )}
+                            <div className="min-w-0">
+                                <p className="text-xs lg:text-sm font-bold uppercase leading-tight text-[#A0B0B0] truncate">
+                                    {label}
+                                </p>
+                                <p className="text-base lg:text-lg font-black text-rose-400">
+                                    −{loss.quantity.toLocaleString('id-ID')}
+                                </p>
+                            </div>
+                        </article>
+                    );
+                })}
+            </div>
+        );
+    };
 
     if (compact) {
         return (
@@ -56,35 +144,54 @@ export default function ResultModal({
                         size="compact"
                     />
                     <div className="flex-1">
-                        <p className="text-sm sm:text-base text-[#A0B0B0] leading-relaxed font-medium whitespace-pre-wrap">
-                            {message}
-                        </p>
-
-                        {isLosses && (
-                            <section aria-label={t('game.warResultModal.lossesAria')} className="mt-5 border-t border-root-accent/15 pt-4">
-                                <h3 className="mb-3 text-xs sm:text-sm font-black uppercase tracking-wider text-root-accent">
-                                    {t('game.warResultModal.lossesTitle')}
-                                </h3>
-                                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                                    {losses.map((loss) => {
-                                        const imageKey = loss.unitKey === 'pasukan_infanteri' ? 'barak' : loss.unitKey;
-                                        const image = getDefenseUnitCardImage(imageKey);
-                                        const label = DEFENSE_UNIT_LABELS[loss.unitKey] || loss.unitKey.replace(/_/g, ' ');
-                                        return (
-                                            <article key={loss.unitKey} className="flex items-center gap-2.5 rounded-lg border border-root-accent/20 bg-root-canvas p-2.5">
-                                                {image && (
-                                                    <Image src={image} alt={label} width={40} height={40} className="h-9 w-9 shrink-0 object-contain" />
-                                                )}
-                                                <div className="min-w-0">
-                                                    <p className="truncate text-xs font-bold uppercase leading-tight text-[#A0B0B0]">{label}</p>
-                                                    <p className="text-base font-black text-rose-400">−{loss.quantity.toLocaleString('id-ID')}</p>
-                                                </div>
-                                            </article>
-                                        );
-                                    })}
-                                </div>
-                            </section>
+                        {Boolean(title && !isLosses) && (
+                            <p className="text-sm sm:text-base text-[#A0B0B0] leading-relaxed font-medium whitespace-pre-wrap">
+                                {message}
+                            </p>
                         )}
+
+                        {hasParties && (
+                            <div className="mt-2 mb-4 flex border-b border-root-accent/20">
+                                <button
+                                    type="button"
+                                    onClick={() => setSelectedTab('attacker')}
+                                    className={`flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider border-b-2 transition-all ${
+                                        selectedTab === 'attacker'
+                                            ? 'border-root-accent text-root-accent bg-root-accent/10'
+                                            : 'border-transparent text-slate-400 hover:text-slate-200'
+                                    }`}
+                                >
+                                    {renderFlag(attackerParty?.iso)}
+                                    <span>{attackerParty?.name || 'Pasukan Anda'}</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setSelectedTab('target')}
+                                    className={`flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider border-b-2 transition-all ${
+                                        selectedTab === 'target'
+                                            ? 'border-rose-400 text-rose-400 bg-rose-400/10'
+                                            : 'border-transparent text-slate-400 hover:text-slate-200'
+                                    }`}
+                                >
+                                    {renderFlag(targetParty?.iso)}
+                                    <span>{targetParty?.name || 'Pasukan Lawan'}</span>
+                                </button>
+                            </div>
+                        )}
+
+                        <section aria-label={t('game.warResultModal.lossesAria')} className="pt-1">
+                            <div className="mb-3 flex items-center justify-between">
+                                <h4 className="text-xs sm:text-sm font-black uppercase tracking-wider text-root-accent">
+                                    {t('game.warResultModal.lossesTitle')}
+                                </h4>
+                                {hasParties && (
+                                    <span className="text-[10px] sm:text-xs font-bold uppercase text-slate-400">
+                                        {activeParty.name}
+                                    </span>
+                                )}
+                            </div>
+                            {renderLossCards(currentLosses)}
+                        </section>
                     </div>
                     <div className="mt-6 flex flex-col justify-end gap-3 border-t border-root-accent/20 pt-4 sm:flex-row">
                         <ModalCloseButton
@@ -128,42 +235,59 @@ export default function ResultModal({
                         </p>
                     )}
 
-                    {isLosses && (
-                        <section aria-label={t('game.warResultModal.lossesAria')} className="pt-1">
-                            <h4 className="mb-3 lg:mb-4 text-xs sm:text-sm lg:text-base font-black uppercase tracking-wider text-root-accent">
+                    {/* Tab Menu jika terdapat kedua belah pihak */}
+                    {hasParties && (
+                        <div className="mb-4 flex items-center gap-2 border-b border-root-accent/20 pb-1">
+                            <button
+                                type="button"
+                                onClick={() => setSelectedTab('attacker')}
+                                className={`flex items-center gap-2.5 rounded-lg px-4 py-2 text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                                    selectedTab === 'attacker'
+                                        ? 'border border-root-accent/60 bg-root-accent/20 text-root-accent shadow-[0_0_12px_rgba(0,255,170,0.2)]'
+                                        : 'border border-transparent bg-slate-900/40 text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                                }`}
+                            >
+                                {renderFlag(attackerParty?.iso)}
+                                <span>{attackerParty?.name || 'Pasukan Anda'}</span>
+                                {attackerParty?.losses && attackerParty.losses.length > 0 && (
+                                    <span className="rounded-full bg-root-accent/20 px-2 py-0.5 text-[10px] font-black text-root-accent">
+                                        {attackerParty.losses.length}
+                                    </span>
+                                )}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setSelectedTab('target')}
+                                className={`flex items-center gap-2.5 rounded-lg px-4 py-2 text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                                    selectedTab === 'target'
+                                        ? 'border border-rose-500/60 bg-rose-500/20 text-rose-400 shadow-[0_0_12px_rgba(244,63,94,0.2)]'
+                                        : 'border border-transparent bg-slate-900/40 text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                                }`}
+                            >
+                                {renderFlag(targetParty?.iso)}
+                                <span>{targetParty?.name || 'Pasukan Lawan'}</span>
+                                {targetParty?.losses && targetParty.losses.length > 0 && (
+                                    <span className="rounded-full bg-rose-500/20 px-2 py-0.5 text-[10px] font-black text-rose-400">
+                                        {targetParty.losses.length}
+                                    </span>
+                                )}
+                            </button>
+                        </div>
+                    )}
+
+                    <section aria-label={t('game.warResultModal.lossesAria')} className="pt-1">
+                        <div className="mb-3 lg:mb-4 flex items-center justify-between">
+                            <h4 className="text-xs sm:text-sm lg:text-base font-black uppercase tracking-wider text-root-accent">
                                 {t('game.warResultModal.lossesTitle')}
                             </h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 lg:gap-3">
-                                {losses.map((loss) => {
-                                    const imageKey = loss.unitKey === 'pasukan_infanteri' ? 'barak' : loss.unitKey;
-                                    const image = getDefenseUnitCardImage(imageKey);
-                                    const label = DEFENSE_UNIT_LABELS[loss.unitKey] || loss.unitKey.replace(/_/g, ' ');
-                                    return (
-                                        <article
-                                            key={loss.unitKey}
-                                            className="flex items-center gap-2.5 lg:gap-3 rounded-lg border border-root-accent/20 bg-root-canvas p-2.5 lg:p-3 shadow-sm"
-                                        >
-                                            {image && (
-                                                <Image
-                                                    src={image}
-                                                    alt={label}
-                                                    width={40}
-                                                    height={40}
-                                                    className="h-9 w-9 lg:h-11 lg:w-11 shrink-0 object-contain"
-                                                />
-                                            )}
-                                            <div className="min-w-0">
-                                                <p className="text-xs lg:text-sm font-bold uppercase leading-tight text-[#A0B0B0] truncate">{label}</p>
-                                                <p className="text-base lg:text-lg font-black text-rose-400">
-                                                    −{loss.quantity.toLocaleString('id-ID')}
-                                                </p>
-                                            </div>
-                                        </article>
-                                    );
-                                })}
-                            </div>
-                        </section>
-                    )}
+                            {hasParties && (
+                                <span className="text-xs sm:text-sm font-bold uppercase tracking-wide text-slate-300">
+                                    {activeParty.name}
+                                </span>
+                            )}
+                        </div>
+                        {renderLossCards(currentLosses)}
+                    </section>
                 </div>
 
                 {/* Footer Actions */}

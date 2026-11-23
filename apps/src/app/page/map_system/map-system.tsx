@@ -248,6 +248,7 @@ import {
 import { generateHubunganPanasNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/4_hubungan_panas/hubunganPanasLogic';
 import {
     evaluateAIResolusiPBBTrigger,
+    evaluateAIInvasionResolutionTrigger,
     generateAIResolusiPBBNotification
 } from '../menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/1_resolusi/resolusiPBBLogic';
 import { evaluateAIKeamananPBBTrigger } from '../menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBLogic';
@@ -309,11 +310,16 @@ import {
     getApprovedInvasionMandatesSnapshot,
     isUnauthorizedInvasion,
     isTradeEmbargoActive,
+    processUnauthorizedInvasionCouncilTriggers,
     PBB_REGULAR_TRIGGER_ANNUAL_CHANCE_PERCENT,
     submitInvasionViolationSanctions,
     type ApprovedInvasionMandateSnapshot,
     type WarSanctionAttackResult
 } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
+import {
+    getPbbChancePercentForPeriod,
+    rollPbbChancePercent,
+} from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbResolutionFrequency';
 import {
     getCountryIcbmCount,
     consumeCountryIcbm,
@@ -437,19 +443,23 @@ function toWarRecord(value: unknown): Record<string, unknown> {
 function applyNpcWarLosses(
     country: Record<string, unknown> | null | undefined,
     lossRatio: number | undefined,
-): void {
-    if (!country || typeof lossRatio !== 'number' || !Number.isFinite(lossRatio) || lossRatio <= 0) return;
+    countryNameFallback?: string,
+): Array<{ unitKey: string; quantity: number }> {
+    if (!country || typeof lossRatio !== 'number' || !Number.isFinite(lossRatio) || lossRatio <= 0) return [];
 
-    const countrySlug = typeof country.country_slug === 'string' ? country.country_slug : '';
+    const countrySlug = resolveCountrySlug(country, countryNameFallback);
     if (!countrySlug) {
-        console.error('[WarLosses] Cannot persist NPC casualties: country profile has no country_slug.', country);
-        return;
+        console.error('[WarLosses] Cannot persist NPC casualties: country profile has no resolvable country slug.', {
+            country,
+            countryNameFallback,
+        });
+        return [];
     }
 
     const result = applyWarLossesToUserArmada(country, lossRatio, false, {});
     const updatedDetail = toWarRecord(result.updatedDetail);
     const { losses } = result;
-    if (losses.length === 0) return;
+    if (losses.length === 0) return [];
 
     const armadaSource = toWarRecord(updatedDetail.armada);
     const armada: Record<string, unknown> = {
@@ -501,6 +511,7 @@ function applyNpcWarLosses(
             losses,
         });
     }
+    return losses;
 }
 
 function mergeNpcAnnexedForces(
@@ -2806,17 +2817,36 @@ export default function MapPage() {
             const dateStr = `${year}-${month}-${day}`;
 
             const newNewsItems: NewsItemData[] = [];
+            let appliedTargetLosses: Array<{ unitKey: string; quantity: number }> = [];
             if (actionType !== 'aneksasi') {
-                applyNpcWarLosses(detail.targetCountryDetail, Number(detail.targetLossRatio));
+                appliedTargetLosses = applyNpcWarLosses(
+                    detail.targetCountryDetail,
+                    Number(detail.targetLossRatio),
+                    targetCountry,
+                );
             }
 
-            let attackerLosses: Array<{ unitKey: string; quantity: number }> = [];
-            if (Array.isArray(detail.directAttackerLosses) && detail.directAttackerLosses.length > 0) {
-                attackerLosses = detail.directAttackerLosses.map((l: any) => ({
-                    unitKey: l.unitKey || l.translationKey || 'pasukan_infanteri',
-                    quantity: Number(l.lost || l.quantity || 0),
-                })).filter((l: any) => l.quantity > 0);
-            }
+            const normalizeDirectLosses = (directLosses: unknown) => {
+                if (!Array.isArray(directLosses)) return [];
+                return directLosses.reduce<Array<{ unitKey: string; quantity: number }>>((losses, item) => {
+                    if (!item || typeof item !== 'object') return losses;
+                    const loss = item as Record<string, unknown>;
+                    const rawUnitKey = typeof loss.unitKey === 'string'
+                        ? loss.unitKey
+                        : typeof loss.translationKey === 'string'
+                            ? loss.translationKey
+                            : '';
+                    const quantity = Number(loss.lost ?? loss.quantity);
+                    if (!rawUnitKey || !Number.isFinite(quantity) || quantity <= 0) return losses;
+                    losses.push({
+                        unitKey: rawUnitKey === 'barak' ? 'pasukan_infanteri' : rawUnitKey,
+                        quantity,
+                    });
+                    return losses;
+                }, []);
+            };
+            let attackerLosses = normalizeDirectLosses(detail.directAttackerLosses);
+            const targetLosses = normalizeDirectLosses(detail.directTargetLosses);
             const applyAttackerArmyLosses = (fallbackRatio: number, randomizeLosses: boolean) => {
                 const hasCommittedTroops = detail.troopsCommitted === true;
                 const armySource = hasCommittedTroops && detail.committedArmySnapshot
@@ -2895,6 +2925,17 @@ export default function MapPage() {
                 let userLossText = '';
                 userLossText = applyAttackerArmyLosses(0.25, true);
 
+                // Pastikan jika attackerLosses masih kosong (misal belum terisi dari snapshot/slider), selalu sediakan kerugian armada
+                if (attackerLosses.length === 0) {
+                    const fallbackArmySource = detail.committedArmySnapshot || countryDetail;
+                    if (fallbackArmySource) {
+                        const fallbackLoss = applyWarLossesToUserArmada(fallbackArmySource, 0.25, true, undefined);
+                        if (fallbackLoss.losses.length > 0) {
+                            attackerLosses = fallbackLoss.losses;
+                        }
+                    }
+                }
+
                 // 2. Berita Invasi
                 const territoryAuthority = isPbbCoalition
                     ? { country: 'Perserikatan Bangsa-Bangsa', iso: 'un', color: '#009EDB' }
@@ -2950,7 +2991,11 @@ export default function MapPage() {
                         ? Math.min(rawLossRatio, 0.15)
                         : (0.10 + Math.random() * 0.05);
                     const safeLossRatio = Math.max(0.10, Math.min(0.15, effectiveLossRatio));
-                    applyNpcWarLosses(detail.targetCountryDetail, safeLossRatio);
+                    appliedTargetLosses = applyNpcWarLosses(
+                        detail.targetCountryDetail,
+                        safeLossRatio,
+                        targetCountry,
+                    );
                 }
 
                 // 4. Gabungkan statistik (populasi, kas negara, kepuasan, kesejahteraan, seluruh bangunan & sisa militer target setelah kalah >50%)
@@ -3180,6 +3225,32 @@ export default function MapPage() {
                 };
                 setNotifications(prev => [notifMsg, ...prev]);
 
+                // Tampilkan selalu modal rincian kerugian alutsista dengan tab kedua belah pihak
+                const partyTargetLosses = appliedTargetLosses.length > 0
+                    ? appliedTargetLosses
+                    : targetLosses;
+                const finalLosses = attackerLosses.length > 0
+                    ? attackerLosses
+                    : partyTargetLosses;
+                setResultModal({
+                    isOpen: true,
+                    title: '',
+                    message: '',
+                    losses: finalLosses,
+                    attackerParty: {
+                        name: attackerCountry,
+                        iso: attackerIso,
+                        losses: attackerLosses,
+                    },
+                    targetParty: {
+                        name: targetCountry,
+                        iso: targetIso,
+                        losses: partyTargetLosses,
+                    },
+                    type: 'success',
+                    persistent: true,
+                });
+
             } else if (actionType === 'jarah') {
                 const lootResult = resolvePlayerLootOperation({
                     attackerCountry,
@@ -3200,6 +3271,45 @@ export default function MapPage() {
                 newNewsItems.push(...lootResult.newsItems);
                 setNotifications(prev => [lootResult.notification, ...prev]);
 
+                if (attackerLosses.length === 0 && lootResult.losses && lootResult.losses.length > 0) {
+                    attackerLosses = lootResult.losses;
+                }
+                if (attackerLosses.length === 0) {
+                    const fallbackArmySource = detail.committedArmySnapshot || countryDetail;
+                    if (fallbackArmySource) {
+                        const fallbackLoss = applyWarLossesToUserArmada(fallbackArmySource, 0.25, true, undefined);
+                        if (fallbackLoss.losses.length > 0) {
+                            attackerLosses = fallbackLoss.losses;
+                        }
+                    }
+                }
+                const partyTargetLosses = lootResult.losses && lootResult.losses.length > 0
+                    ? lootResult.losses
+                    : appliedTargetLosses.length > 0
+                        ? appliedTargetLosses
+                        : targetLosses;
+                const lootLosses = attackerLosses.length > 0
+                    ? attackerLosses
+                    : partyTargetLosses;
+                setResultModal({
+                    isOpen: true,
+                    title: '',
+                    message: '',
+                    losses: lootLosses,
+                    attackerParty: {
+                        name: attackerCountry,
+                        iso: attackerIso,
+                        losses: attackerLosses,
+                    },
+                    targetParty: {
+                        name: targetCountry,
+                        iso: targetIso,
+                        losses: partyTargetLosses,
+                    },
+                    type: 'success',
+                    persistent: true,
+                });
+
             } else if (actionType === 'mundur') {
                 // Cek apakah mundur dalam keadaan menang atau kalah terpukul mundur
                 const isVictoryRetreat = detail?.warResult === 'win';
@@ -3209,6 +3319,16 @@ export default function MapPage() {
                     : fallbackLossRate;
                 const lossPctStr = `${Math.round(lossRate * 100)}%`;
                 const lossSummaryText = applyAttackerArmyLosses(fallbackLossRate, isVictoryRetreat);
+
+                if (attackerLosses.length === 0) {
+                    const fallbackArmySource = detail.committedArmySnapshot || countryDetail;
+                    if (fallbackArmySource) {
+                        const fallbackLoss = applyWarLossesToUserArmada(fallbackArmySource, fallbackLossRate, true, undefined);
+                        if (fallbackLoss.losses.length > 0) {
+                            attackerLosses = fallbackLoss.losses;
+                        }
+                    }
+                }
 
                 if (lossSummaryText && lossSummaryText !== 'Tidak ada kerugian unit') {
                     setNotifications(prev => [{
@@ -3252,16 +3372,30 @@ export default function MapPage() {
                 };
                 setNotifications(prev => [notifMsg, ...prev]);
 
-                if (!isVictoryRetreat) {
-                    setResultModal({
-                        isOpen: true,
-                        title: 'Pertempuran Gagal — Pasukan Terpukul Mundur!',
-                        message: `Pasukan terpukul mundur dari ${targetCountry}! Kerugian tempur sebesar ${lossPctStr} dari unit yang dikerahkan: ${lossSummaryText}.`,
+                const partyTargetLosses = targetLosses.length > 0
+                    ? targetLosses
+                    : appliedTargetLosses;
+                const retreatLosses = attackerLosses.length > 0
+                    ? attackerLosses
+                    : partyTargetLosses;
+                setResultModal({
+                    isOpen: true,
+                    title: '',
+                    message: '',
+                    losses: retreatLosses,
+                    attackerParty: {
+                        name: attackerCountry,
+                        iso: attackerIso,
                         losses: attackerLosses,
-                        type: 'error',
-                        persistent: true,
-                    });
-                }
+                    },
+                    targetParty: {
+                        name: targetCountry,
+                        iso: targetIso,
+                        losses: partyTargetLosses,
+                    },
+                    type: isVictoryRetreat ? 'info' : 'error',
+                    persistent: true,
+                });
             }
 
             window.dispatchEvent(new CustomEvent('military_operation_resolved', {
@@ -5363,6 +5497,8 @@ export default function MapPage() {
         title: string;
         message: string;
         losses?: Array<{ unitKey: string; quantity: number }>;
+        attackerParty?: { name: string; iso?: string; losses: Array<{ unitKey: string; quantity: number }> };
+        targetParty?: { name: string; iso?: string; losses: Array<{ unitKey: string; quantity: number }> };
         type?: 'success' | 'error' | 'info';
         compact?: boolean;
         persistent?: boolean;
@@ -6525,17 +6661,27 @@ export default function MapPage() {
                 }
             });
 
-            // Annual PBB chances are converted to daily rolls, like outbreak chances.
-            const generalAssemblyDailyChancePercent = getDailyOutbreakChancePercent(
+            // Annual PBB chances are converted to daily rolls.
+            const generalAssemblyDailyChancePercent = getPbbChancePercentForPeriod(
                 PBB_REGULAR_TRIGGER_ANNUAL_CHANCE_PERCENT.generalAssembly,
+                'day',
                 daysInYear,
             );
-            const securityCouncilDailyChancePercent = getDailyOutbreakChancePercent(
+            const securityCouncilDailyChancePercent = getPbbChancePercentForPeriod(
                 PBB_REGULAR_TRIGGER_ANNUAL_CHANCE_PERCENT.securityCouncil,
+                'day',
                 daysInYear,
             );
-            const triggerRes = Math.random() * 100 < generalAssemblyDailyChancePercent;
-            const triggerSec = Math.random() * 100 < securityCouncilDailyChancePercent;
+            const generalAssemblyInvasionDailyChancePercent = getPbbChancePercentForPeriod(
+                PBB_REGULAR_TRIGGER_ANNUAL_CHANCE_PERCENT.generalAssemblyInvasion,
+                'day',
+                daysInYear,
+            );
+            const triggerRes = rollPbbChancePercent(generalAssemblyDailyChancePercent);
+            const triggerSec = rollPbbChancePercent(securityCouncilDailyChancePercent);
+            const triggerGeneralAssemblyInvasion = rollPbbChancePercent(
+                generalAssemblyInvasionDailyChancePercent,
+            );
 
             if (triggerRes) {
                 const aiResNotif = evaluateAIResolusiPBBTrigger(
@@ -6562,6 +6708,33 @@ export default function MapPage() {
                     spawnAISecurityCouncilFromTrigger(aiSecNotif, currentDateStr);
                 }
             }
+
+            if (triggerGeneralAssemblyInvasion) {
+                const invasionNotif = evaluateAIInvasionResolutionTrigger(
+                    internationalPool,
+                    userCountryName,
+                    (c1, c2) => getRelationValue(c1, c2, currentDateStr),
+                    currentDateStr,
+                );
+                if (invasionNotif) {
+                    const hasActiveMatchingInvasion = loadActiveResolutions().some(item =>
+                        item.type === 'military_invasion' &&
+                        areSameWarCountry(item.proposer.name, invasionNotif.proposerCountry) &&
+                        areSameWarCountry(item.target.name, invasionNotif.targetCountry) &&
+                        (item.status === 'voting' || (item.status === 'passed' && item.daysRemaining > 0))
+                    );
+                    if (!hasActiveMatchingInvasion) {
+                        newNotifsToAdd.push(invasionNotif);
+                        spawnAIResolutionFromTrigger(invasionNotif, currentDateStr);
+                    }
+                }
+            }
+
+            newNotifsToAdd.push(...processUnauthorizedInvasionCouncilTriggers(
+                currentDateStr,
+                daysInYear,
+                userCountryName,
+            ));
 
             // 5H. Evaluasi Berita Perang / Invasi / Aneksasi / Rampasan SDA Geopolitik (2% daily chance)
             if (Math.random() < 0.02) {
@@ -11761,7 +11934,7 @@ export default function MapPage() {
                             npcWarQueueRunningRef.current = false;
                             resumeGameTimeAfterWar();
                         }}
-                        onResolve={({ action, result, attackerLossRatio, targetLossRatio, attackerLosses: directLosses }) => {
+                        onResolve={({ action, result, attackerLossRatio, targetLossRatio, attackerLosses: directLosses, targetLosses: directTargetLosses }) => {
                             const setWarResultModal = (modal: Parameters<typeof setResultModal>[0]) => {
                                 if (activeWarAnimation.shouldShowBattleAnalysis !== true) return;
                                 const debugRunId = activeWarAnimation.__neosantaraDebugRunId;
@@ -11990,6 +12163,7 @@ export default function MapPage() {
                                         attackerLossRatio,
                                         targetLossRatio,
                                         directAttackerLosses: directLosses,
+                                        directTargetLosses,
                                     },
                                 })
                             );
@@ -12508,6 +12682,8 @@ export default function MapPage() {
                 title={resultModal.title}
                 message={resultModal.message}
                 losses={resultModal.losses}
+                attackerParty={resultModal.attackerParty}
+                targetParty={resultModal.targetParty}
                 type={resultModal.type}
                 compact={resultModal.compact}
                 onClose={() => {

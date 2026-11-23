@@ -30,9 +30,42 @@ const RESOLUTION_TYPES: Array<{
 
 const REGULAR_RESOLUTION_TYPES = RESOLUTION_TYPES.filter(resolution =>
   resolution.type === 'war_ban' ||
-  resolution.type === 'military_invasion' ||
   resolution.type === 'production_ban'
 );
+
+const FALLBACK_COUNTRIES = [
+  'Jepang', 'Amerika Serikat', 'Jerman', 'Inggris', 'Prancis', 'China',
+  'Korea Selatan', 'Australia', 'Rusia', 'Arab Saudi', 'Kanada', 'Brasil',
+  'India', 'Turki', 'Meksiko', 'Singapura', 'Malaysia', 'Thailand', 'Vietnam',
+  'Afrika Selatan', 'Italia', 'Spanyol', 'Mesir', 'Iran', 'Israel', 'Ukraina',
+  'Pakistan', 'Polandia', 'Argentina', 'Indonesia', 'Nigeria'
+];
+
+function getUniqueCountries(allCountries: string[]): string[] {
+  const fullCountryList = Array.isArray(allCountries) && allCountries.length > 25
+    ? allCountries
+    : [...allCountries, ...FALLBACK_COUNTRIES];
+  return Array.from(new Set(fullCountryList.filter(Boolean)));
+}
+
+function getResolutionCandidatePairs(
+  uniqueCountries: string[],
+  userCountryName: string,
+  getRelationScore: (countryA: string, countryB: string) => number,
+): Array<{ proposer: string; target: string; score: number }> {
+  const candidatePairs: Array<{ proposer: string; target: string; score: number }> = [];
+  for (const proposer of uniqueCountries) {
+    if (!proposer || proposer === userCountryName) continue;
+    if (isCountryAnnexed(proposer, getIsoForCountryName(proposer))) continue;
+
+    const potentialTargets = [...uniqueCountries, userCountryName].filter(c => c && c !== proposer);
+    for (const target of potentialTargets) {
+      const score = getRelationScore(proposer, target);
+      if (score >= 1 && score <= 30) candidatePairs.push({ proposer, target, score });
+    }
+  }
+  return candidatePairs;
+}
 
 /**
  * Generator notifikasi usulan Resolusi PBB dari negara AI ke AI lain / User.
@@ -105,8 +138,7 @@ export function generateAIResolusiPBBNotification(
 }
 
 /**
- * Mengevaluasi pemicu harian yang dikonversi dari peluang tahunan 15%
- * untuk pengajuan Resolusi PBB dari AI ke negara dengan skor hubungan 1-30.
+ * Mengevaluasi pemicu harian untuk resolusi reguler selain Resolusi Invasi.
  */
 export function evaluateAIResolusiPBBTrigger(
   allCountries: string[],
@@ -114,35 +146,8 @@ export function evaluateAIResolusiPBBTrigger(
   getRelationScore: (countryA: string, countryB: string) => number,
   dateStr: string
 ): AIResolusiPBBNotification | null {
-  // Gunakan seluruh daftar negara jika ada, fallback ke allCountries
-  const fullCountryList = Array.isArray(allCountries) && allCountries.length > 25
-    ? allCountries
-    : [
-        ...allCountries,
-        'Jepang', 'Amerika Serikat', 'Jerman', 'Inggris', 'Prancis', 'China',
-        'Korea Selatan', 'Australia', 'Rusia', 'Arab Saudi', 'Kanada', 'Brasil',
-        'India', 'Turki', 'Meksiko', 'Singapura', 'Malaysia', 'Thailand', 'Vietnam',
-        'Afrika Selatan', 'Italia', 'Spanyol', 'Mesir', 'Iran', 'Israel', 'Ukraina',
-        'Pakistan', 'Polandia', 'Argentina', 'Indonesia', 'Nigeria'
-      ];
-
-  const uniqueCountries = Array.from(new Set(fullCountryList.filter(Boolean)));
-  const candidatePairs: Array<{ proposer: string; target: string; score: number }> = [];
-
-  // Cari pasangan negara (AI vs User atau AI vs AI) yang skor hubungannya antara 1 s/d 30
-  // (Range lebih luas 1-30 agar resolusi tidak selalu monoton negara yang sama)
-  for (const proposer of uniqueCountries) {
-    if (!proposer || proposer === userCountryName) continue;
-    if (isCountryAnnexed(proposer, getIsoForCountryName(proposer))) continue;
-
-    const potentialTargets = [...uniqueCountries, userCountryName].filter(c => c && c !== proposer);
-    for (const target of potentialTargets) {
-      const score = getRelationScore(proposer, target);
-      if (score >= 1 && score <= 30) {
-        candidatePairs.push({ proposer, target, score });
-      }
-    }
-  }
+  const uniqueCountries = getUniqueCountries(allCountries);
+  const candidatePairs = getResolutionCandidatePairs(uniqueCountries, userCountryName, getRelationScore);
 
   // Jika tidak ada hubungan buruk <30, ada kemungkinan 35% resolusi global (Larangan Perang / Larangan Produksi)
   if (candidatePairs.length === 0) {
@@ -173,5 +178,25 @@ export function evaluateAIResolusiPBBTrigger(
     selectedPair.score,
     dateStr,
     selectedType.type
+  );
+}
+
+export function evaluateAIInvasionResolutionTrigger(
+  allCountries: string[],
+  userCountryName: string,
+  getRelationScore: (countryA: string, countryB: string) => number,
+  dateStr: string
+): AIResolusiPBBNotification | null {
+  const uniqueCountries = getUniqueCountries(allCountries);
+  const candidatePairs = getResolutionCandidatePairs(uniqueCountries, userCountryName, getRelationScore);
+  if (candidatePairs.length === 0) return null;
+
+  const selectedPair = candidatePairs[Math.floor(Math.random() * candidatePairs.length)];
+  return generateAIResolusiPBBNotification(
+    selectedPair.proposer,
+    selectedPair.target,
+    selectedPair.score,
+    dateStr,
+    'military_invasion'
   );
 }

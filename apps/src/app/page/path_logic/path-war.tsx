@@ -840,6 +840,7 @@ interface WarMapProps {
     attackerLossRatio?: number;
     targetLossRatio?: number;
     attackerLosses?: Array<{ translationKey?: string; unitKey?: string; lost: number }>;
+    targetLosses?: Array<{ translationKey?: string; unitKey?: string; lost: number }>;
   }) => void;
   onAutoResolve?: (outcome: WarResultOutput) => void;
 }
@@ -1374,9 +1375,14 @@ export default function WarMap({
           unitKey: l.translationKey,
           lost: l.lost,
         })),
+        targetLosses: targetLosses.map(l => ({
+          translationKey: l.translationKey,
+          unitKey: l.translationKey,
+          lost: l.lost,
+        })),
       });
     },
-    [warPath, result, onResolve, isPbbCoalition, battleOutcome, attackerLosses]
+    [warPath, result, onResolve, isPbbCoalition, battleOutcome, attackerLosses, targetLosses]
   );
 
   const handleAutoResult = useCallback(() => {

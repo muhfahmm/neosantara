@@ -6,20 +6,29 @@ import {
   loadActiveSecurityCouncilItems,
   spawnAISecurityCouncilFromTrigger
 } from './2_keamanan_PBB/logic/keamananPBBUILogic';
+import { generateAIKeamananPBBNotification } from '@/app/page/menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBLogic';
 import { getIsoForCountryName } from './pbbCountryIso';
 import { getEligibleReplacementProposer, isCountryAnnexed } from './pbbVotingEligibility';
 import { getWarCountryIdentity } from '@/app/page/detail_negara/3_operasi_militer/1_serang_negara/warCountryIdentity';
 import type { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import { chooseAIResolutionDuration } from './1_resolusi_PBB/logic/resolusiPBBUILogic';
 import { isCountryUnderEconomicEmbargo } from './1_resolusi_PBB/logic/3_economicEmbargoLogic';
+import {
+  getPbbChancePercentForPeriod,
+  PBB_RESOLUTION_ANNUAL_CHANCE_PERCENT,
+  PBB_UNAUTHORIZED_ATTACK_SANCTION_CHANCE_PERCENT,
+  rollPbbChancePercent,
+} from './pbbResolutionFrequency';
 
 const WAR_SANCTION_HISTORY_KEY = 'pbb_war_sanction_history_v1';
 const LEGACY_REPORTED_VIOLATIONS_KEY = 'pbb_reported_war_ban_violations_v1';
 const ATTACK_COUNTER_KEY_PREFIX = 'pbb_war_attack_counter_v1:';
 
 export const PBB_REGULAR_TRIGGER_ANNUAL_CHANCE_PERCENT = {
-  generalAssembly: 15,
-  securityCouncil: 10,
+  generalAssembly: PBB_RESOLUTION_ANNUAL_CHANCE_PERCENT.generalAssemblyRegular,
+  securityCouncil: PBB_RESOLUTION_ANNUAL_CHANCE_PERCENT.securityCouncilRegular,
+  generalAssemblyInvasion: PBB_RESOLUTION_ANNUAL_CHANCE_PERCENT.generalAssemblyInvasion,
+  securityCouncilInvasionAgainstViolator: PBB_RESOLUTION_ANNUAL_CHANCE_PERCENT.securityCouncilInvasionAgainstViolator,
 } as const;
 
 export type WarSanctionType =
@@ -43,6 +52,7 @@ interface ViolationHistoryEntry {
   attackId: string;
   date: string;
   attackerIdentity: string;
+  attackerCountry?: string;
   targetIdentity: string;
 }
 
@@ -66,10 +76,7 @@ export const WAR_SANCTION_CONFIG = {
       ],
     },
     3: {
-      types: [
-        { type: 'full', weight: 1 },
-        { type: 'military', weight: 1 },
-      ],
+      types: [{ type: 'full', weight: 1 }],
     },
   },
 } as const;
@@ -78,6 +85,7 @@ let violationHistory: ViolationHistoryByAttacker = {};
 let historyInitialized = false;
 let attackIdCounter = 0;
 const reportedViolationIds = new Set<string>();
+const securityCouncilInvasionTriggeredYears = new Set<string>();
 
 function ensureHistoryLoaded(): void {
   if (typeof window === 'undefined' || historyInitialized) return;
@@ -245,6 +253,7 @@ export function clearReportedInvasionViolations(): void {
   violationHistory = {};
   historyInitialized = true;
   attackIdCounter = 0;
+  securityCouncilInvasionTriggeredYears.clear();
   if (typeof window === 'undefined') return;
 
   try {
@@ -332,9 +341,14 @@ export function submitInvasionViolationSanctions(
   reportedViolationIds.add(violationId);
   violationHistory[attackerIdentity] = [
     ...currentHistory,
-    { attackId, date: dateStr, attackerIdentity, targetIdentity },
+    { attackId, date: dateStr, attackerIdentity, attackerCountry, targetIdentity },
   ];
   persistHistory();
+  if (!rollPbbChancePercent(
+    PBB_UNAUTHORIZED_ATTACK_SANCTION_CHANCE_PERCENT,
+    options.rng,
+  )) return [];
+
   const selection = selectSanctionTypes({
     attackResult: options.attackResult || 'failed',
     violationCount,
@@ -390,6 +404,76 @@ export function submitInvasionViolationSanctions(
     isRead: false,
     priority: 'critical',
   }];
+}
+
+export function processUnauthorizedInvasionCouncilTriggers(
+  dateStr: string,
+  daysInYear: number,
+  excludedProposerCountry = '',
+  rng: () => number = Math.random,
+): NotificationMessage[] {
+  if (typeof window === 'undefined') return [];
+  ensureHistoryLoaded();
+
+  const year = Number(dateStr.slice(0, 4));
+  if (!Number.isInteger(year)) return [];
+
+  const dailyChance = getPbbChancePercentForPeriod(
+    PBB_REGULAR_TRIGGER_ANNUAL_CHANCE_PERCENT.securityCouncilInvasionAgainstViolator,
+    'day',
+    daysInYear,
+  );
+  const notifications: NotificationMessage[] = [];
+  const activeSecurityItems = loadActiveSecurityCouncilItems();
+
+  for (const [attackerIdentity, entries] of Object.entries(violationHistory)) {
+    const recentEntries = entries.filter(entry => isWithinHistoryWindow(entry.date, dateStr));
+    const attackerCountry = recentEntries
+      .slice()
+      .reverse()
+      .find(entry => typeof entry.attackerCountry === 'string' && entry.attackerCountry.trim())
+      ?.attackerCountry;
+    if (!attackerCountry) continue;
+
+    const yearlyTriggerKey = `${attackerIdentity}:${year}`;
+    if (securityCouncilInvasionTriggeredYears.has(yearlyTriggerKey)) continue;
+
+    const activeMilitaryResolution = activeSecurityItems.some(item =>
+      item.type === 'military' &&
+      (item.status === 'voting' || (item.status === 'passed' && item.daysRemaining > 0)) &&
+      getWarCountryIdentity(item.target.name, item.target.iso) === attackerIdentity
+    );
+    if (activeMilitaryResolution) {
+      securityCouncilInvasionTriggeredYears.add(yearlyTriggerKey);
+      continue;
+    }
+
+    if (!rollPbbChancePercent(dailyChance, rng)) continue;
+
+    const proposer = getEligibleSanctionProposer([attackerCountry, excludedProposerCountry]);
+    if (!proposer) continue;
+
+    const latestViolation = recentEntries[recentEntries.length - 1];
+    const violationId = `council-invasion-${year}-${attackerIdentity}-${latestViolation.attackId}`;
+    const notification = generateAIKeamananPBBNotification(
+      proposer.name,
+      attackerCountry,
+      1,
+      dateStr,
+      'military',
+    );
+    spawnAISecurityCouncilFromTrigger({
+      proposerCountry: proposer.name,
+      targetCountry: attackerCountry,
+      securityAction: 'military',
+      duration: notification.duration,
+      violationId,
+    }, dateStr);
+    securityCouncilInvasionTriggeredYears.add(yearlyTriggerKey);
+    notifications.push(notification);
+  }
+
+  return notifications;
 }
 
 export function isTradeEmbargoActive(countryA: string, countryB: string): boolean {
