@@ -56,6 +56,8 @@ export interface SecurityCouncilElectionState {
   schemaVersion: number;
   /** Penanda sesi halaman. State dari sesi lain (refresh / keluar game) dianggap basi dan di-reset. */
   sessionId?: string;
+  /** Seed acak per game/sesi: membuat pilihan kandidat NPC & hasil suara berbeda di setiap game. */
+  seed: string;
   year: number;
   nextElectionYear: number;
   cohort: "A" | "B";
@@ -63,6 +65,8 @@ export interface SecurityCouncilElectionState {
   scheduleStage: number;
   nominees: ElectionCandidate[];
   members: SecurityCouncilMember[];
+  /** Pemenang pemilu yang baru resmi menjabat pada 1 Januari tahun berikutnya. */
+  incomingMembers: SecurityCouncilMember[];
   /** Turunan (derived): dihitung ulang dari pastTerms, tidak dipercaya dari storage. */
   recentlyServedIsos: string[];
   /** Sumber kebenaran untuk negara yang sudah pernah menjabat. */
@@ -85,7 +89,13 @@ export interface ElectionCountry {
 
 export const SECURITY_COUNCIL_ELECTION_STATE_KEY = "neosantara_pbb_security_council_election";
 
-const SCHEMA_VERSION = 2;
+const SCHEMA_VERSION = 4;
+
+/** Pemilu diadakan SETIAP tahun untuk 5 kursi; masa jabatan 2 tahun (dua kelompok kursi bergantian). */
+export const ELECTION_INTERVAL_YEARS = 1;
+export const TERM_YEARS = 2;
+/** 0 = pemilu pertama di tahun mulai game; 1 = satu tahun setelah tahun mulai game. */
+export const FIRST_ELECTION_OFFSET_YEARS = 0;
 
 /* ------------------------------------------------------------------ */
 /* Sesi game: state hanya berlaku selama sesi halaman yang sama        */
@@ -96,6 +106,8 @@ const createSessionId = () =>
 
 // Dibuat ulang setiap halaman dimuat (refresh) sehingga data lama di localStorage otomatis basi.
 let currentSessionId = createSessionId();
+// Seed acak untuk kandidat NPC & suara. Berubah setiap refresh / game baru, tetap selama satu sesi.
+let currentSeed = createSessionId();
 
 export function isElectionStateFromCurrentSession(existing: unknown): boolean {
   return isRecord(existing) && existing.sessionId === currentSessionId;
@@ -107,6 +119,7 @@ export function isElectionStateFromCurrentSession(existing: unknown): boolean {
  */
 export function resetSecurityCouncilElectionSession(): void {
   currentSessionId = createSessionId();
+  currentSeed = createSessionId();
   if (typeof window === "undefined") return;
   try {
     localStorage.removeItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
@@ -123,6 +136,7 @@ export function resetSecurityCouncilElectionSession(): void {
  */
 export const COOLING_OFF_YEARS = 1;
 
+/** Kursi per kawasan untuk tiap kelompok: 5 kursi dipilih setiap tahun, bergantian A dan B. */
 export const COHORT_SEATS: Record<"A" | "B", Partial<Record<CouncilRegion, number>>> = {
   A: {
     Afrika: 2,
@@ -194,6 +208,7 @@ const normalizeSlug = (value: string) => normalizeName(value).replace(/\s+/g, "-
 
 const toIso = (value: string) => value.trim().toLowerCase();
 
+// Tahun genap memilih kelompok A, tahun ganjil kelompok B.
 const getCohortForYear = (electionYear: number): "A" | "B" =>
   electionYear % 2 === 0 ? "A" : "B";
 
@@ -254,33 +269,35 @@ export function getRecentlyServedIsos(electionYear: number, pastTerms: PastTerm[
   )];
 }
 
-/**
- * Migrasi data lama (tanpa pastTerms): susun ulang dari history.
- * Pemenang pemilu tahun Y menjabat Y+1 s/d Y+2. Anggota awal berakhir
- * pada pemilu pertama kohortnya.
- */
-function reconstructPastTerms(history: ElectionHistoryItem[]): PastTerm[] {
-  if (history.length === 0) return [];
-  const nameToIso = new Map(
-    getSecurityCouncilElectionCandidateCountries().map(country => [normalizeName(country.name), country.iso])
-  );
-  const terms: PastTerm[] = [];
-  history.forEach(item => {
-    const isos = item.winnerIsos?.length
-      ? item.winnerIsos
-      : item.winners
-        .map(name => nameToIso.get(normalizeName(name)))
-        .filter((iso): iso is string => Boolean(iso));
-    isos.forEach(iso => terms.push({ iso, termEndYear: item.year + 2 }));
-  });
-  const first = history[0];
-  INITIAL_MEMBERS.forEach(member => {
-    terms.push({
-      iso: member.iso,
-      termEndYear: first.year + (member.cohort === first.cohort ? 0 : 1),
-    });
-  });
-  return mergePastTerms(terms);
+/** Cooling-off + pemenang yang belum resmi menjabat (tidak boleh dicalonkan lagi). */
+function buildRecentlyServed(
+  electionYear: number,
+  pastTerms: PastTerm[],
+  incomingMembers: SecurityCouncilMember[]
+): string[] {
+  return [...new Set([
+    ...getRecentlyServedIsos(electionYear, pastTerms),
+    ...incomingMembers.map(member => toIso(member.iso)),
+  ])];
+}
+
+/** 1 Januari: anggota yang habis masa jabatannya turun, pemenang pemilu resmi menjabat. */
+function applyIncomingMembers(
+  members: SecurityCouncilMember[],
+  incomingMembers: SecurityCouncilMember[],
+  electionYear: number,
+  pastTerms: PastTerm[]
+): { members: SecurityCouncilMember[]; pastTerms: PastTerm[] } {
+  if (incomingMembers.length === 0) return { members, pastTerms };
+  const departing = members.filter(member => member.termEndYear <= electionYear);
+  const remaining = members.filter(member => member.termEndYear > electionYear);
+  return {
+    members: [...remaining, ...incomingMembers],
+    pastTerms: mergePastTerms(
+      pastTerms,
+      departing.map(member => ({ iso: member.iso, termEndYear: member.termEndYear }))
+    ),
+  };
 }
 
 /* ------------------------------------------------------------------ */
@@ -338,7 +355,8 @@ export function getSecurityCouncilElectionCandidateCountries(
 /* ------------------------------------------------------------------ */
 
 export function createInitialElectionState(year: number): SecurityCouncilElectionState {
-  const electionYear = year + 1;
+  // Kelompok pertama habis di tahun pemilu pertama, kelompok kedua habis setahun kemudian.
+  const electionYear = year + FIRST_ELECTION_OFFSET_YEARS;
   const cohort = getCohortForYear(electionYear);
   const members: SecurityCouncilMember[] = INITIAL_MEMBERS.map(member => {
     const termEndYear = electionYear + (member.cohort === cohort ? 0 : 1);
@@ -351,6 +369,7 @@ export function createInitialElectionState(year: number): SecurityCouncilElectio
   return {
     schemaVersion: SCHEMA_VERSION,
     sessionId: currentSessionId,
+    seed: currentSeed,
     year: electionYear,
     nextElectionYear: electionYear,
     cohort,
@@ -358,6 +377,7 @@ export function createInitialElectionState(year: number): SecurityCouncilElectio
     scheduleStage: 0,
     nominees: [],
     members,
+    incomingMembers: [],
     recentlyServedIsos: [],
     pastTerms: [],
     history: [],
@@ -396,6 +416,31 @@ function sanitizeMembers(
     });
   }
   return result;
+}
+
+function sanitizeIncomingMembers(raw: unknown): SecurityCouncilMember[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.flatMap(item => {
+    const member = item as Partial<SecurityCouncilMember> | null;
+    if (
+      !member ||
+      typeof member.name !== "string" ||
+      typeof member.iso !== "string" ||
+      typeof member.region !== "string" ||
+      (member.cohort !== "A" && member.cohort !== "B") ||
+      !Number.isFinite(member.termStartYear) ||
+      !Number.isFinite(member.termEndYear)
+    ) return [];
+    return [{
+      name: member.name,
+      iso: toIso(member.iso),
+      region: member.region as CouncilRegion,
+      cohort: member.cohort,
+      termStartYear: Number(member.termStartYear),
+      termEndYear: Number(member.termEndYear),
+      vetoUsed: false,
+    }];
+  });
 }
 
 const isValidHistoryItem = (item: unknown): item is ElectionHistoryItem =>
@@ -450,11 +495,12 @@ export function normalizeElectionState(existing: unknown, year: number): Securit
   const fallback = createInitialElectionState(year);
   if (!isRecord(existing)) return fallback;
   const raw = existing as Partial<SecurityCouncilElectionState>;
-  // State dari sesi/halaman lain (mis. sebelum refresh) tidak dipakai → kembali ke default.
-  if (raw.sessionId !== currentSessionId) return fallback;
+  // State dari sesi lain (sebelum refresh) atau skema lama tidak dipakai → kembali ke default.
+  if (raw.sessionId !== currentSessionId || raw.schemaVersion !== SCHEMA_VERSION) return fallback;
+  const seed = typeof raw.seed === "string" && raw.seed ? raw.seed : currentSeed;
 
-  const storedMembers = sanitizeMembers(raw.members, fallback.members);
-  if (!storedMembers) return fallback;
+  const members = sanitizeMembers(raw.members, fallback.members);
+  if (!members) return fallback;
 
   const history = Array.isArray(raw.history) ? raw.history.filter(isValidHistoryItem) : [];
   const phase = VALID_PHASES.includes(raw.phase as SecurityCouncilElectionState["phase"])
@@ -465,65 +511,46 @@ export function normalizeElectionState(existing: unknown, year: number): Securit
   const permanentBonuses = isRecord(raw.permanentBonuses)
     ? (raw.permanentBonuses as SecurityCouncilElectionState["permanentBonuses"])
     : {};
+  const incomingMembers = sanitizeIncomingMembers(raw.incomingMembers);
+  const pastTerms = Array.isArray(raw.pastTerms) ? mergePastTerms(raw.pastTerms) : [];
 
-  let storedYear = Number.isInteger(raw.year)
-    ? Number(raw.year)
-    : Number.isInteger(raw.nextElectionYear)
-      ? Number(raw.nextElectionYear)
-      : year + 1;
-
-  // Migrasi: pemilu awal yang belum berjalan tetapi jadwalnya terlanjur terlalu jauh.
-  let members = storedMembers;
-  const initialTermYear = Math.min(...storedMembers.map(member => member.termStartYear));
-  const isUnstartedInitial =
-    phase === "nomination" && scheduleStage === 0 &&
-    history.length === 0 && storedNominees.length === 0;
-  if (isUnstartedInitial && Number.isFinite(initialTermYear) && storedYear > initialTermYear + 1) {
-    storedYear = initialTermYear + 1;
-    const cohort = getCohortForYear(storedYear);
-    members = storedMembers.map(member => {
-      const termEndYear = storedYear + (member.cohort === cohort ? 0 : 1);
-      return { ...member, termStartYear: Math.min(initialTermYear, termEndYear - 1), termEndYear };
-    });
-  }
-
-  // pastTerms: pakai yang tersimpan hanya jika skema sudah baru, selain itu rekonstruksi.
-  const pastTerms = raw.schemaVersion === SCHEMA_VERSION && Array.isArray(raw.pastTerms)
-    ? mergePastTerms(raw.pastTerms)
-    : reconstructPastTerms(history);
-
+  const storedYear = Number.isInteger(raw.year) ? Number(raw.year) : fallback.year;
   const storedNext = Number.isInteger(raw.nextElectionYear)
     ? Number(raw.nextElectionYear)
-    : storedYear + 1;
+    : storedYear + ELECTION_INTERVAL_YEARS;
 
-  // Pemilu sebelumnya selesai dan tahun pemilu berikutnya sudah tiba → siklus baru.
+  // Hasil sudah keluar dan tahun baru tiba (1 Januari): pemenang resmi menjabat, siklus berikutnya dimulai.
   if (phase === "completed" && year >= storedNext) {
+    const applied = applyIncomingMembers(members, incomingMembers, storedYear, pastTerms);
     return {
       schemaVersion: SCHEMA_VERSION,
       sessionId: currentSessionId,
+      seed,
       year: storedNext,
       nextElectionYear: storedNext,
       cohort: getCohortForYear(storedNext),
       phase: "nomination",
       scheduleStage: 0,
       nominees: [],
-      members,
-      recentlyServedIsos: getRecentlyServedIsos(storedNext, pastTerms),
-      pastTerms,
+      members: applied.members,
+      incomingMembers: [],
+      recentlyServedIsos: getRecentlyServedIsos(storedNext, applied.pastTerms),
+      pastTerms: applied.pastTerms,
       history,
       permanentBonuses,
     };
   }
 
-  const recentlyServedIsos = getRecentlyServedIsos(storedYear, pastTerms);
+  const recentlyServedIsos = buildRecentlyServed(storedYear, pastTerms, incomingMembers);
   const nominees = phase === "completed"
-    ? backfillWinnerNominees(storedNominees, members, history)
+    ? backfillWinnerNominees(storedNominees, [...members, ...incomingMembers], history)
     : storedNominees.filter(candidate =>
       !isIneligibleElectionCandidate(members, candidate.iso, recentlyServedIsos));
 
   return {
     schemaVersion: SCHEMA_VERSION,
     sessionId: currentSessionId,
+    seed,
     year: storedYear,
     nextElectionYear: phase === "completed" ? storedNext : storedYear,
     cohort: getCohortForYear(storedYear),
@@ -531,6 +558,7 @@ export function normalizeElectionState(existing: unknown, year: number): Securit
     scheduleStage,
     nominees,
     members,
+    incomingMembers,
     recentlyServedIsos,
     pastTerms,
     history,
@@ -631,16 +659,17 @@ export function expelCountryFromSecurityCouncil(countryNameOrIso: string): Secur
     const removed = state.members[memberIndex];
     // Negara yang dicopot dianggap sudah menjabat → ikut terkena cooling-off.
     const pastTerms = mergePastTerms(state.pastTerms, [{ iso: removed.iso, termEndYear: currentYear }]);
-    const recent = new Set(getRecentlyServedIsos(state.year, pastTerms));
+    const recent = new Set(buildRecentlyServed(state.year, pastTerms, state.incomingMembers));
     const occupied = new Set([
       ...PERMANENT_SECURITY_COUNCIL_MEMBERS.map(member => member.iso),
       ...state.members.map(member => toIso(member.iso)),
+      ...state.incomingMembers.map(member => toIso(member.iso)),
     ]);
     const pool = getEligibleUNMemberCountries([])
       .filter(country => !occupied.has(country.iso) && !matches(country.name, country.iso));
     const ranked = (list: ElectionCountry[]) =>
       [...list].sort((a, b) =>
-        hash(`${currentYear}_replace_${a.iso}`) - hash(`${currentYear}_replace_${b.iso}`) ||
+        hash(`${state.seed}_${currentYear}_replace_${a.iso}`) - hash(`${state.seed}_${currentYear}_replace_${b.iso}`) ||
         a.iso.localeCompare(b.iso));
 
     // Prioritas: sekawasan & belum cooling-off → sekawasan → siapa pun yang belum cooling-off → siapa pun.
@@ -667,7 +696,7 @@ export function expelCountryFromSecurityCouncil(countryNameOrIso: string): Secur
       members,
       nominees,
       pastTerms,
-      recentlyServedIsos: getRecentlyServedIsos(state.year, pastTerms),
+      recentlyServedIsos: buildRecentlyServed(state.year, pastTerms, state.incomingMembers),
     });
     return removed;
   } catch (error) {
@@ -778,7 +807,7 @@ export function beginElectionCampaign(
       .map(country => ({
         country,
         score: candidateBaseScore(country, voters, state.year, state.permanentBonuses[country.slug]),
-        selectionRank: hash(`${state.year}_${state.cohort}_${region}_${country.iso}`),
+        selectionRank: hash(`${state.seed}_${state.year}_${state.cohort}_${region}_${country.iso}`),
       }))
       .sort((a, b) => a.selectionRank - b.selectionRank || a.country.iso.localeCompare(b.country.iso))
       .slice(0, Math.max(seats * 3, seats + 1))
@@ -832,7 +861,7 @@ function calculateElectionVotes(
           score:
             (candidate.score * 0.55) +
             (getRelationValue(voter.name, candidate.name, state.year) * 0.45) +
-            ((hash(`${state.year}_${voter.iso}_${candidate.iso}`) % 2001) / 100),
+            ((hash(`${state.seed}_${state.year}_${voter.iso}_${candidate.iso}`) % 2001) / 100),
         }))
         .sort((a, b) => b.score - a.score)
         .slice(0, seats)
@@ -855,7 +884,7 @@ export function updateElectionVoteTally(
   const voterCount = Math.ceil(voters.length * votingDaysElapsed / 6);
   const participatingVoters = [...voters]
     .sort((a, b) =>
-      hash(`${state.year}_${a.iso}_ballot`) - hash(`${state.year}_${b.iso}_ballot`) ||
+      hash(`${state.seed}_${state.year}_${a.iso}_ballot`) - hash(`${state.seed}_${state.year}_${b.iso}_ballot`) ||
       a.iso.localeCompare(b.iso))
     .slice(0, voterCount);
   return { ...state, nominees: calculateElectionVotes(state, participatingVoters) };
@@ -887,7 +916,7 @@ export function resolveElection(
           !taken.has(voter.iso) &&
           !isIneligibleElectionCandidate(state.members, voter.iso, state.recentlyServedIsos))
         .sort((a, b) =>
-          hash(`${state.year}_fill_${a.iso}`) - hash(`${state.year}_fill_${b.iso}`) ||
+          hash(`${state.seed}_${state.year}_fill_${a.iso}`) - hash(`${state.seed}_${state.year}_fill_${b.iso}`) ||
           a.iso.localeCompare(b.iso))
         .slice(0, missing)
         .map(voter => toCandidate(voter, 0));
@@ -897,21 +926,13 @@ export function resolveElection(
     winners.push(...regionWinners);
   });
 
-  // Anggota yang masa jabatannya habis tahun ini → dicatat ke pastTerms (INI inti perbaikan bug).
-  const departing = state.members.filter(member => member.termEndYear <= state.year);
-  const remaining = state.members.filter(member => member.termEndYear > state.year);
-  const pastTerms = mergePastTerms(
-    state.pastTerms,
-    departing.map(member => ({ iso: member.iso, termEndYear: member.termEndYear }))
-  );
-
-  const newMembers: SecurityCouncilMember[] = winners.map(winner => ({
+  const incomingMembers: SecurityCouncilMember[] = winners.map(winner => ({
     name: winner.name,
     iso: winner.iso,
     region: winner.region,
     cohort: state.cohort,
     termStartYear: state.year + 1,
-    termEndYear: state.year + 2,
+    termEndYear: state.year + TERM_YEARS,
     vetoUsed: false,
   }));
 
@@ -931,16 +952,16 @@ export function resolveElection(
     };
   });
 
-  const nextElectionYear = state.year + 1;
+  const nextElectionYear = state.year + ELECTION_INTERVAL_YEARS;
   return {
     ...state,
     phase: "completed",
     scheduleStage: 4,
     nextElectionYear,
     nominees: updatedNominees,
-    members: [...remaining, ...newMembers],
-    pastTerms,
-    recentlyServedIsos: getRecentlyServedIsos(nextElectionYear, pastTerms),
+    // Roster lama tetap berlaku sampai 1 Januari; pemenang masuk antrean (incomingMembers).
+    incomingMembers,
+    recentlyServedIsos: buildRecentlyServed(nextElectionYear, state.pastTerms, incomingMembers),
     history: [...state.history, historyItem],
     permanentBonuses,
   };
@@ -985,7 +1006,7 @@ function createElectionScheduleNotification(
       year,
       winners,
       startYear: year + 1,
-      endYear: year + 2,
+      endYear: year + TERM_YEARS,
     }),
     timestamp: dateStr,
     type: "peringkat",
