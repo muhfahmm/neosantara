@@ -115,17 +115,21 @@ export default function ResultModal({
 
                 {/* Body Content */}
                 <div className="relative z-10 flex-1 min-h-0 p-4 sm:p-5 lg:p-6 overflow-y-auto bg-root-canvas/80 [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-root-canvas [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20 [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)] hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent [&::-webkit-scrollbar-button]:hidden">
-                    <h3
-                        className={`text-base sm:text-lg lg:text-xl font-black uppercase tracking-wide mb-3 lg:mb-4 ${isError ? 'text-rose-400' : 'text-root-text'}`}
-                    >
-                        {title}
-                    </h3>
-                    <p className="text-xs sm:text-sm lg:text-base text-[#A0B0B0] leading-relaxed font-medium whitespace-pre-wrap">
-                        {message}
-                    </p>
+                    {Boolean(title && !isLosses) && (
+                        <h3
+                            className={`text-base sm:text-lg lg:text-xl font-black uppercase tracking-wide mb-3 lg:mb-4 ${isError ? 'text-rose-400' : 'text-root-text'}`}
+                        >
+                            {title}
+                        </h3>
+                    )}
+                    {Boolean(message && !isLosses) && (
+                        <p className="text-xs sm:text-sm lg:text-base text-[#A0B0B0] leading-relaxed font-medium whitespace-pre-wrap">
+                            {message}
+                        </p>
+                    )}
 
                     {isLosses && (
-                        <section aria-label={t('game.warResultModal.lossesAria')} className="mt-5 lg:mt-6 pt-4 lg:pt-5 border-t border-root-accent/15">
+                        <section aria-label={t('game.warResultModal.lossesAria')} className="pt-1">
                             <h4 className="mb-3 lg:mb-4 text-xs sm:text-sm lg:text-base font-black uppercase tracking-wider text-root-accent">
                                 {t('game.warResultModal.lossesTitle')}
                             </h4>

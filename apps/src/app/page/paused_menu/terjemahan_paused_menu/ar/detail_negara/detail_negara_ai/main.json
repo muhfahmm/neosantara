@@ -2,6 +2,8 @@
   "unavailable": "البيانات غير متاحة",
   "city": "المدينة",
   "capital": "العاصمة",
+  "annexedProvinceName": "مقاطعة {name}",
+  "originalTerritory": "الإقليم الأصلي: {country}",
   "ideology": "الأيديولوجيا",
   "religion": "الديانة",
   "relation": "العلاقات",
@@ -149,6 +151,36 @@
     "confirm": "Impose Sanction"
   },
   "province": {
+    "actionOptions": {
+      "beri_kemerdekaan": {
+        "label": "منح الاستقلال",
+        "description": "إنهاء الضم واستعادة استقلال هذه المنطقة."
+      },
+      "tugaskan_misionaris": {
+        "label": "إيفاد المبشرين",
+        "description": "تغيير ديانة أغلبية السكان في المنطقة لتتوافق مع ديانة دولتك. يزيد بحث البعثات الدينية الدولية فرص النجاح."
+      },
+      "wajibkan_pajak": {
+        "label": "فرض دفع الضرائب",
+        "description": "فرض الضرائب، ما يضيف 3% إلى ميزانية المنطقة ويرفع صافي النقد الإيجابي لدولتك بنسبة 3%."
+      },
+      "kirim_bantuan": {
+        "label": "إرسال المساعدات",
+        "description": "اختر المساعدات من قطاعات الإنتاج في المنطقة. تخفض المساعدات التوتر حتى 25 نقطة ويمكن إرسالها حتى عندما يكون التوتر 0."
+      },
+      "tanamkan_ideologi": {
+        "label": "نشر الأيديولوجيا",
+        "description": "نشر أيديولوجية دولتك في هذه المنطقة. يزيد بحث نشر الأيديولوجيا فرص النجاح."
+      },
+      "jarah_provinsi": {
+        "label": "نهب المنطقة",
+        "description": "نهب المنطقة وزيادة التوتر عشوائياً بمقدار 10 إلى 30 نقطة."
+      },
+      "intimidasi": {
+        "label": "ترهيب المنطقة",
+        "description": "ترهيب المنطقة وزيادة التوتر عشوائياً بمقدار 10 إلى 30 نقطة."
+      }
+    },
     "liberateLabel": "Liberate Country",
     "liberateDescription": "End UN occupation and restore this country's sovereignty.",
     "resultPrefix": "Result:",

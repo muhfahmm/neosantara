@@ -2,6 +2,8 @@
   "unavailable": "Data tidak tersedia",
   "city": "Kota",
   "capital": "Ibukota",
+  "annexedProvinceName": "Provinsi {name}",
+  "originalTerritory": "Wilayah asal: {country}",
   "ideology": "Ideologi",
   "religion": "Agama",
   "relation": "Hubungan",
@@ -149,6 +151,36 @@
     "confirm": "Terapkan Sanksi"
   },
   "province": {
+    "actionOptions": {
+      "beri_kemerdekaan": {
+        "label": "Beri Kemerdekaan",
+        "description": "Mengakhiri aneksasi dan mengembalikan wilayah ini menjadi negara merdeka."
+      },
+      "tugaskan_misionaris": {
+        "label": "Tugaskan Misionaris",
+        "description": "Mengubah agama mayoritas wilayah ini agar sama dengan agama negara Anda. Penelitian Misi Keagamaan Internasional meningkatkan peluang keberhasilan."
+      },
+      "wajibkan_pajak": {
+        "label": "Wajibkan Membayar Pajak",
+        "description": "Memberlakukan pajak dengan tambahan 3% anggaran provinsi dan kenaikan 3% netto kas positif provinsi untuk negara Anda."
+      },
+      "kirim_bantuan": {
+        "label": "Kirim Bantuan",
+        "description": "Pilih bantuan dari sektor produksi provinsi. Bantuan mengurangi ketegangan hingga 25 poin dan tetap dapat dikirim saat ketegangan 0."
+      },
+      "tanamkan_ideologi": {
+        "label": "Tanamkan Ideologi",
+        "description": "Menanamkan ideologi negara Anda ke provinsi ini. Penelitian Penyebaran Ideologi meningkatkan peluang keberhasilan."
+      },
+      "jarah_provinsi": {
+        "label": "Jarah Provinsi",
+        "description": "Menjarah provinsi dan meningkatkan ketegangan secara acak 10–30 poin."
+      },
+      "intimidasi": {
+        "label": "Intimidasi",
+        "description": "Mengintimidasi provinsi dan meningkatkan ketegangan secara acak 10–30 poin."
+      }
+    },
     "liberateLabel": "Bebaskan Negara",
     "liberateDescription": "Mengakhiri pendudukan PBB dan memulihkan kedaulatan negara ini.",
     "resultPrefix": "Hasil",

@@ -820,7 +820,9 @@ export function CountryDetailModal({
   if (typeof document === "undefined") return null;
 
   const displayCountryName = isPlayerOccupiedProvince
-    ? (cityOwnerInfo && selectedCity ? `Provinsi ${selectedCity}` : `Provinsi ${countryName}`)
+    ? t('detail_negara_ai.annexedProvinceName', {
+        name: cityOwnerInfo && selectedCity ? selectedCity : countryName,
+      })
     : (isPbbOccupied ? countryName : annexedInfo?.attackerCountry || countryName);
 
   // Wilayah tetap menggunakan nama dan ibukota aslinya, tetapi memakai bendera penguasa.
@@ -884,7 +886,7 @@ export function CountryDetailModal({
           width={80}
           height={53}
           unoptimized
-          title={`Wilayah asal: ${countryName || ''}`}
+          title={t('detail_negara_ai.originalTerritory', { country: countryName || '' })}
           className="h-7 w-10 shrink-0 rounded-sm object-fill"
           onError={(e) => { e.currentTarget.style.display = 'none'; }}
         />

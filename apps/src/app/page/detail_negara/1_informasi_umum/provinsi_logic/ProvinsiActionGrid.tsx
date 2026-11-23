@@ -131,7 +131,7 @@ export default function ProvinsiActionGrid({
         actionLabel: selectedAction.id === 'tanamkan_ideologi' ? t('detail_negara_ai.province.ideologyLabel') : t('detail_negara_ai.province.missionaryLabel'),
         succeeded: actionSucceeded,
         successChance: successChance ?? 75,
-        message: actionMessage || `${selectedAction.label} ${actionSucceeded ? t('detail_negara_ai.province.succeededLower') : t('detail_negara_ai.province.failedLower')}.`
+        message: actionMessage || `${t(`detail_negara_ai.province.actionOptions.${selectedAction.id}.label`)} ${actionSucceeded ? t('detail_negara_ai.province.succeededLower') : t('detail_negara_ai.province.failedLower')}.`
       });
     }
     const detail: ProvinceActionEventDetail = {
@@ -151,7 +151,7 @@ export default function ProvinsiActionGrid({
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 items-stretch gap-4 pt-6">
-        {actions.map(({ id, label, icon: Icon }) => {
+        {actions.map(({ id, icon: Icon }) => {
           const missionaryActive = id === 'tugaskan_misionaris' && missionaryCompleted;
           const ideologyActive = id === 'tanamkan_ideologi' && ideologyCompleted;
           const taxActive = id === 'wajibkan_pajak' && taxAlreadyEnforced;
@@ -162,7 +162,7 @@ export default function ProvinsiActionGrid({
               ? t('detail_negara_ai.province.sameIdeology')
               : taxActive
                 ? t('detail_negara_ai.province.taxEnforced')
-                : label;
+                : t(`detail_negara_ai.province.actionOptions.${id}.label`);
           return (
           <button
             key={id}
@@ -211,13 +211,13 @@ export default function ProvinsiActionGrid({
             className="modal-responsive-shell bg-root-surface border-2 sm:border-3 border-root-accent/30 rounded-2xl overflow-hidden flex flex-col justify-center relative font-sans pointer-events-auto shadow-2xl p-6 sm:p-10"
           >
             <RootInfoModalHeader
-              title={`${t('detail_negara_ai.province.confirmPrefix')} ${selectedAction.label}`}
+              title={`${t('detail_negara_ai.province.confirmPrefix')} ${t(`detail_negara_ai.province.actionOptions.${selectedAction.id}.label`)}`}
               titleId="province-action-title"
               onClose={() => setSelectedAction(null)}
               size="compact"
             />
             <p className="text-sm text-[#B7D5CD] mb-6">
-              {selectedAction.description} {t('detail_negara_ai.province.targetLabel')}: <strong>{targetCountry}</strong>.
+              {t(`detail_negara_ai.province.actionOptions.${selectedAction.id}.description`)} {t('detail_negara_ai.province.targetLabel')}: <strong>{targetCountry}</strong>.
             </p>
             <div className="flex gap-3 justify-end">
               <button

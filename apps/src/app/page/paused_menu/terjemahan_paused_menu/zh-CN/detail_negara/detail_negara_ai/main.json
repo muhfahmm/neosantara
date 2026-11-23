@@ -2,6 +2,8 @@
   "unavailable": "暂无数据",
   "city": "城市",
   "capital": "首都",
+  "annexedProvinceName": "{name}省",
+  "originalTerritory": "原属领土：{country}",
   "ideology": "意识形态",
   "religion": "宗教",
   "relation": "关系",
@@ -149,6 +151,36 @@
     "confirm": "Impose Sanction"
   },
   "province": {
+    "actionOptions": {
+      "beri_kemerdekaan": {
+        "label": "给予独立",
+        "description": "结束吞并并恢复该地区的独立。"
+      },
+      "tugaskan_misionaris": {
+        "label": "派遣传教士",
+        "description": "将该地区的多数宗教改为与贵国相同。国际宗教传教研究可提高成功率。"
+      },
+      "wajibkan_pajak": {
+        "label": "强制缴税",
+        "description": "征收税款，使省预算增加3%，并使贵国的正净现金收入增加3%。"
+      },
+      "kirim_bantuan": {
+        "label": "提供援助",
+        "description": "从该省的生产部门选择援助。援助最多可降低25点紧张度，即使紧张度为0也可以发送。"
+      },
+      "tanamkan_ideologi": {
+        "label": "推行意识形态",
+        "description": "在该省推行贵国的意识形态。意识形态传播研究可提高成功率。"
+      },
+      "jarah_provinsi": {
+        "label": "掠夺省份",
+        "description": "掠夺该省，并随机提高10至30点紧张度。"
+      },
+      "intimidasi": {
+        "label": "威吓",
+        "description": "威吓该省，并随机提高10至30点紧张度。"
+      }
+    },
     "liberateLabel": "Liberate Country",
     "liberateDescription": "End UN occupation and restore this country's sovereignty.",
     "resultPrefix": "Result:",

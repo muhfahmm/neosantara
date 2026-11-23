@@ -2811,6 +2811,12 @@ export default function MapPage() {
             }
 
             let attackerLosses: Array<{ unitKey: string; quantity: number }> = [];
+            if (Array.isArray(detail.directAttackerLosses) && detail.directAttackerLosses.length > 0) {
+                attackerLosses = detail.directAttackerLosses.map((l: any) => ({
+                    unitKey: l.unitKey || l.translationKey || 'pasukan_infanteri',
+                    quantity: Number(l.lost || l.quantity || 0),
+                })).filter((l: any) => l.quantity > 0);
+            }
             const applyAttackerArmyLosses = (fallbackRatio: number, randomizeLosses: boolean) => {
                 const hasCommittedTroops = detail.troopsCommitted === true;
                 const armySource = hasCommittedTroops && detail.committedArmySnapshot
@@ -2834,7 +2840,9 @@ export default function MapPage() {
                     hasCommittedTroops ? false : randomizeLosses,
                     deploymentConfig,
                 );
-                attackerLosses = losses;
+                if (attackerLosses.length === 0 && losses.length > 0) {
+                    attackerLosses = losses;
+                }
                 setCountryDetail(detailAfterBattle);
                 return lossSummaryText;
             };
@@ -3243,6 +3251,17 @@ export default function MapPage() {
                     isRead: false
                 };
                 setNotifications(prev => [notifMsg, ...prev]);
+
+                if (!isVictoryRetreat) {
+                    setResultModal({
+                        isOpen: true,
+                        title: 'Pertempuran Gagal — Pasukan Terpukul Mundur!',
+                        message: `Pasukan terpukul mundur dari ${targetCountry}! Kerugian tempur sebesar ${lossPctStr} dari unit yang dikerahkan: ${lossSummaryText}.`,
+                        losses: attackerLosses,
+                        type: 'error',
+                        persistent: true,
+                    });
+                }
             }
 
             window.dispatchEvent(new CustomEvent('military_operation_resolved', {
@@ -3259,7 +3278,7 @@ export default function MapPage() {
             window.removeEventListener('trigger_requested_invasion', handleRequestedInvasion);
             window.removeEventListener('trigger_player_attack', handlePlayerAttack);
         };
-    }, [currentDate, countryDetail, selectedCountry?.country, selectedCountry?.iso]);
+    }, [currentDate, countryDetail, selectedCountry?.country, selectedCountry?.iso, t]);
 
     // ICBM Target Selection Mode & Efek Keclap Putih
     const [isSelectingIcbmTarget, setIsSelectingIcbmTarget] = useState(false);
@@ -11742,7 +11761,7 @@ export default function MapPage() {
                             npcWarQueueRunningRef.current = false;
                             resumeGameTimeAfterWar();
                         }}
-                        onResolve={({ action, result, attackerLossRatio, targetLossRatio }) => {
+                        onResolve={({ action, result, attackerLossRatio, targetLossRatio, attackerLosses: directLosses }) => {
                             const setWarResultModal = (modal: Parameters<typeof setResultModal>[0]) => {
                                 if (activeWarAnimation.shouldShowBattleAnalysis !== true) return;
                                 const debugRunId = activeWarAnimation.__neosantaraDebugRunId;
@@ -11878,15 +11897,6 @@ export default function MapPage() {
                                         },
                                         ...prev,
                                     ]);
-                                    setWarResultModal({
-                                        isOpen: true,
-                                        title: 'Pertahanan Berhasil!',
-                                        message: `Pasukan pertahanan nasional sukses memukul mundur agresi militer dari ${activeWarAnimation.attacker}! Kerugian tempur armada pertahanan sebesar 25%.`,
-                                        losses,
-                                        type: 'success',
-                                        persistent: true,
-
-                                    });
                                 }
                                 if (activeWarAnimation.requestedInvasion === true) {
                                     resolveAttackRequest({
@@ -11979,6 +11989,7 @@ export default function MapPage() {
                                         deployedUnitsConfig: activeWarAnimation.deployedUnitsConfig,
                                         attackerLossRatio,
                                         targetLossRatio,
+                                        directAttackerLosses: directLosses,
                                     },
                                 })
                             );

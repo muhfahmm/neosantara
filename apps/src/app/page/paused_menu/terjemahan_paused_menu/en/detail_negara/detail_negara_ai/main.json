@@ -2,6 +2,8 @@
   "unavailable": "Data unavailable",
   "city": "City",
   "capital": "Capital",
+  "annexedProvinceName": "Province of {name}",
+  "originalTerritory": "Original territory: {country}",
   "ideology": "Ideology",
   "religion": "Religion",
   "relation": "Relations",
@@ -149,6 +151,36 @@
     "confirm": "Impose Sanction"
   },
   "province": {
+    "actionOptions": {
+      "beri_kemerdekaan": {
+        "label": "Grant Independence",
+        "description": "End the annexation and restore this territory as an independent country."
+      },
+      "tugaskan_misionaris": {
+        "label": "Assign Missionaries",
+        "description": "Change the territory's majority religion to match your country. International Religious Mission research increases the chance of success."
+      },
+      "wajibkan_pajak": {
+        "label": "Enforce Tax Payments",
+        "description": "Apply taxes, adding 3% to the province budget and increasing your country's positive net cash by 3%."
+      },
+      "kirim_bantuan": {
+        "label": "Send Aid",
+        "description": "Choose aid from the province's production sectors. Aid lowers tension by up to 25 points and can still be sent when tension is 0."
+      },
+      "tanamkan_ideologi": {
+        "label": "Instill Ideology",
+        "description": "Instill your country's ideology in this province. Ideological Spread research increases the chance of success."
+      },
+      "jarah_provinsi": {
+        "label": "Loot Province",
+        "description": "Loot the province and randomly increase tension by 10–30 points."
+      },
+      "intimidasi": {
+        "label": "Intimidate",
+        "description": "Intimidate the province and randomly increase tension by 10–30 points."
+      }
+    },
     "liberateLabel": "Liberate Country",
     "liberateDescription": "End UN occupation and restore this country's sovereignty.",
     "resultPrefix": "Result:",

@@ -103,6 +103,7 @@ export interface PlayerLootOperationResult {
   targetTreasuryCleared: boolean;
   transferredCash: number;
   newsItems: ReturnType<typeof generateInvasionNews | typeof generateResourceLootNews>[];
+  losses?: Array<{ unitKey: string; quantity: number }>;
   notification: NotificationMessage;
 }
 
@@ -224,6 +225,7 @@ export function resolvePlayerLootOperation(
     targetTreasuryCleared,
     transferredCash,
     newsItems,
+    losses: lootLosses,
     notification: {
       id: `notif-player-loot-${Date.now()}`,
       title: getDefaultInboxText('side_inbox.dynamicNotifications.playerLoot.title'),

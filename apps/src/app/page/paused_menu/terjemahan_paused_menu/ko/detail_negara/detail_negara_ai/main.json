@@ -2,6 +2,8 @@
   "unavailable": "데이터를 사용할 수 없습니다",
   "city": "도시",
   "capital": "수도",
+  "annexedProvinceName": "{name}주",
+  "originalTerritory": "원래 영토: {country}",
   "ideology": "이념",
   "religion": "종교",
   "relation": "관계",
@@ -149,6 +151,36 @@
     "confirm": "Impose Sanction"
   },
   "province": {
+    "actionOptions": {
+      "beri_kemerdekaan": {
+        "label": "독립 부여",
+        "description": "합병을 종료하고 이 지역의 독립을 회복합니다."
+      },
+      "tugaskan_misionaris": {
+        "label": "선교사 파견",
+        "description": "지역의 다수 종교를 자국의 종교와 같게 변경합니다. 국제 종교 선교 연구로 성공 확률을 높일 수 있습니다."
+      },
+      "wajibkan_pajak": {
+        "label": "세금 납부 의무화",
+        "description": "세금을 부과하여 주 예산을 3% 늘리고 자국의 플러스 순현금도 3% 증가시킵니다."
+      },
+      "kirim_bantuan": {
+        "label": "지원 보내기",
+        "description": "지역 생산 부문에서 지원을 선택합니다. 긴장을 최대 25포인트 낮추며 긴장이 0이어도 보낼 수 있습니다."
+      },
+      "tanamkan_ideologi": {
+        "label": "이념 주입",
+        "description": "이 지역에 자국의 이념을 주입합니다. 이념 확산 연구로 성공 확률을 높일 수 있습니다."
+      },
+      "jarah_provinsi": {
+        "label": "지역 약탈",
+        "description": "지역을 약탈하고 긴장을 무작위로 10~30포인트 높입니다."
+      },
+      "intimidasi": {
+        "label": "위협",
+        "description": "지역을 위협하고 긴장을 무작위로 10~30포인트 높입니다."
+      }
+    },
     "liberateLabel": "Liberate Country",
     "liberateDescription": "End UN occupation and restore this country's sovereignty.",
     "resultPrefix": "Result:",

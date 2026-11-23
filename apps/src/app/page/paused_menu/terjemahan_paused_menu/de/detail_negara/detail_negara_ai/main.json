@@ -2,6 +2,8 @@
   "unavailable": "Keine Daten verfügbar",
   "city": "Stadt",
   "capital": "Hauptstadt",
+  "annexedProvinceName": "Provinz {name}",
+  "originalTerritory": "Ursprüngliches Gebiet: {country}",
   "ideology": "Ideologie",
   "religion": "Religion",
   "relation": "Beziehungen",
@@ -149,6 +151,36 @@
     "confirm": "Impose Sanction"
   },
   "province": {
+    "actionOptions": {
+      "beri_kemerdekaan": {
+        "label": "Unabhängigkeit gewähren",
+        "description": "Beenden Sie die Annexion und stellen Sie die Unabhängigkeit dieses Gebiets wieder her."
+      },
+      "tugaskan_misionaris": {
+        "label": "Missionare entsenden",
+        "description": "Ändern Sie die Mehrheitsreligion des Gebiets so, dass sie der Religion Ihres Landes entspricht. Die Forschung zu internationalen Religionsmissionen erhöht die Erfolgschance."
+      },
+      "wajibkan_pajak": {
+        "label": "Steuerzahlungen anordnen",
+        "description": "Erheben Sie Steuern: Das Provinzbudget steigt um 3 %, und der positive Nettokassenbestand Ihres Landes erhöht sich um 3 %."
+      },
+      "kirim_bantuan": {
+        "label": "Hilfe senden",
+        "description": "Wählen Sie Hilfe aus den Produktionssektoren der Provinz. Die Hilfe senkt die Spannung um bis zu 25 Punkte und kann auch bei einer Spannung von 0 gesendet werden."
+      },
+      "tanamkan_ideologi": {
+        "label": "Ideologie verbreiten",
+        "description": "Verbreiten Sie die Ideologie Ihres Landes in dieser Provinz. Die Forschung zur Verbreitung von Ideologien erhöht die Erfolgschance."
+      },
+      "jarah_provinsi": {
+        "label": "Provinz plündern",
+        "description": "Plündern Sie die Provinz und erhöhen Sie die Spannung zufällig um 10–30 Punkte."
+      },
+      "intimidasi": {
+        "label": "Einschüchtern",
+        "description": "Schüchtern Sie die Provinz ein und erhöhen Sie die Spannung zufällig um 10–30 Punkte."
+      }
+    },
     "liberateLabel": "Liberate Country",
     "liberateDescription": "End UN occupation and restore this country's sovereignty.",
     "resultPrefix": "Result:",

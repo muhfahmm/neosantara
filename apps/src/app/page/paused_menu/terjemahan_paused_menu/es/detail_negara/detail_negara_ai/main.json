@@ -2,6 +2,8 @@
   "unavailable": "Datos no disponibles",
   "city": "Ciudad",
   "capital": "Capital",
+  "annexedProvinceName": "Provincia de {name}",
+  "originalTerritory": "Territorio original: {country}",
   "ideology": "Ideología",
   "religion": "Religión",
   "relation": "Relaciones",
@@ -149,6 +151,36 @@
     "confirm": "Impose Sanction"
   },
   "province": {
+    "actionOptions": {
+      "beri_kemerdekaan": {
+        "label": "Conceder independencia",
+        "description": "Ponga fin a la anexión y devuelva a este territorio su independencia."
+      },
+      "tugaskan_misionaris": {
+        "label": "Asignar misioneros",
+        "description": "Cambie la religión mayoritaria del territorio para que coincida con la de su país. La investigación de Misiones Religiosas Internacionales aumenta la probabilidad de éxito."
+      },
+      "wajibkan_pajak": {
+        "label": "Exigir el pago de impuestos",
+        "description": "Aplique impuestos: aumentará un 3 % el presupuesto provincial y un 3 % el saldo neto positivo de su país."
+      },
+      "kirim_bantuan": {
+        "label": "Enviar ayuda",
+        "description": "Elija ayuda de los sectores productivos de la provincia. Reduce la tensión hasta 25 puntos y puede enviarse aunque la tensión sea 0."
+      },
+      "tanamkan_ideologi": {
+        "label": "Implantar ideología",
+        "description": "Implante la ideología de su país en esta provincia. La investigación de Difusión Ideológica aumenta la probabilidad de éxito."
+      },
+      "jarah_provinsi": {
+        "label": "Saquear provincia",
+        "description": "Saquea la provincia y aumenta la tensión aleatoriamente entre 10 y 30 puntos."
+      },
+      "intimidasi": {
+        "label": "Intimidar",
+        "description": "Intimida la provincia y aumenta la tensión aleatoriamente entre 10 y 30 puntos."
+      }
+    },
     "liberateLabel": "Liberate Country",
     "liberateDescription": "End UN occupation and restore this country's sovereignty.",
     "resultPrefix": "Result:",

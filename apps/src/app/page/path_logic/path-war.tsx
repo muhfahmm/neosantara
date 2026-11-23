@@ -839,6 +839,7 @@ interface WarMapProps {
     isPbbCoalition?: boolean;
     attackerLossRatio?: number;
     targetLossRatio?: number;
+    attackerLosses?: Array<{ translationKey?: string; unitKey?: string; lost: number }>;
   }) => void;
   onAutoResolve?: (outcome: WarResultOutput) => void;
 }
@@ -1360,7 +1361,7 @@ export default function WarMap({
   const handleAction = useCallback(
     (action: WarAction) => {
       if (!warPath || !result) return;
-      // 👈 Sertakan isPbbCoalition ke dalam payload
+      // 👈 Sertakan isPbbCoalition dan attackerLosses ke dalam payload
       onResolve({
         result,
         action,
@@ -1368,9 +1369,14 @@ export default function WarMap({
         isPbbCoalition,
         attackerLossRatio: battleOutcome?.attackerLossRatio,
         targetLossRatio: battleOutcome?.targetLossRatio,
+        attackerLosses: attackerLosses.map(l => ({
+          translationKey: l.translationKey,
+          unitKey: l.translationKey,
+          lost: l.lost,
+        })),
       });
     },
-    [warPath, result, onResolve, isPbbCoalition, battleOutcome]
+    [warPath, result, onResolve, isPbbCoalition, battleOutcome, attackerLosses]
   );
 
   const handleAutoResult = useCallback(() => {

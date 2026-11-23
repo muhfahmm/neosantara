@@ -2,6 +2,8 @@
   "unavailable": "データがありません",
   "city": "都市",
   "capital": "首都",
+  "annexedProvinceName": "{name}州",
+  "originalTerritory": "元の領土: {country}",
   "ideology": "イデオロギー",
   "religion": "宗教",
   "relation": "関係",
@@ -149,6 +151,36 @@
     "confirm": "Impose Sanction"
   },
   "province": {
+    "actionOptions": {
+      "beri_kemerdekaan": {
+        "label": "独立を認める",
+        "description": "併合を終了し、この地域の独立を回復します。"
+      },
+      "tugaskan_misionaris": {
+        "label": "宣教師を派遣",
+        "description": "地域の多数派宗教を自国の宗教に変更します。国際宗教宣教の研究により成功率が上がります。"
+      },
+      "wajibkan_pajak": {
+        "label": "納税を義務化",
+        "description": "税を課し、州予算を3%増加させ、自国のプラスの純現金収支を3%増加させます。"
+      },
+      "kirim_bantuan": {
+        "label": "支援を送る",
+        "description": "州の生産部門から支援を選びます。緊張度を最大25ポイント下げ、緊張度が0でも送ることができます。"
+      },
+      "tanamkan_ideologi": {
+        "label": "イデオロギーを浸透させる",
+        "description": "この州に自国のイデオロギーを浸透させます。イデオロギー普及の研究により成功率が上がります。"
+      },
+      "jarah_provinsi": {
+        "label": "州を略奪",
+        "description": "州を略奪し、緊張度をランダムに10～30ポイント上昇させます。"
+      },
+      "intimidasi": {
+        "label": "威圧",
+        "description": "州を威圧し、緊張度をランダムに10～30ポイント上昇させます。"
+      }
+    },
     "liberateLabel": "Liberate Country",
     "liberateDescription": "End UN occupation and restore this country's sovereignty.",
     "resultPrefix": "Result:",
