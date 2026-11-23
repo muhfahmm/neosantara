@@ -6,7 +6,9 @@ import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json
 import {
   addPlayerNomination,
   campaignForCandidate,
+  ELECTION_MONTH,
   getEligibleUNMemberCountries,
+  getScheduleYear,
   getSecurityCouncilElectionCandidateCountries,
   isIneligibleElectionCandidate,
   normalizeElectionState,
@@ -61,17 +63,25 @@ export default function SecurityCouncilElectionPanel({
   const currentMonth = now.getMonth();
   const currentDay = now.getDate();
 
+  // Tanggal penuh (bukan hanya tahun) → dasar semua penyesuaian jadwal.
+  const clock = useMemo(
+    () => new Date(year, currentMonth, currentDay),
+    [year, currentMonth, currentDay]
+  );
+
   const [election, setElection] = useState<SecurityCouncilElectionState>(() =>
-    normalizeElectionState(readStoredElection() ?? countryDetail?.pbbSecurityCouncilElection, year)
+    normalizeElectionState(readStoredElection() ?? countryDetail?.pbbSecurityCouncilElection, clock)
   );
   const [profiles, setProfiles] = useState<CountryProfile[]>([]);
   const [profilesLoaded, setProfilesLoaded] = useState(false);
   const [error, setError] = useState("");
 
-  const electionWindow = election.year === year && currentMonth === 5;
+  // Tahun jadwal SELALU diturunkan dari tanggal game (23 Nov 2026 → 2027, dst.).
+  const scheduleYear = useMemo(() => getScheduleYear(election, clock), [election, clock]);
+
+  const electionWindow = scheduleYear === year && currentMonth === ELECTION_MONTH;
   const nominationOpen = electionWindow && currentDay >= 1 && currentDay < 15;
   const campaignOpen = electionWindow && currentDay >= 15 && currentDay < 25;
-  const scheduleYear = election.phase === "completed" ? election.nextElectionYear : election.year;
 
   const voters = useMemo(() => getEligibleUNMemberCountries(profiles), [profiles]);
   const candidateCountries = useMemo(() => getSecurityCouncilElectionCandidateCountries(profiles), [profiles]);
@@ -110,26 +120,26 @@ export default function SecurityCouncilElectionPanel({
     try {
       const stored = readStoredElection();
       if (!stored) return;
-      const next = normalizeElectionState(stored, year);
+      const next = normalizeElectionState(stored, clock);
       setElection(previous => JSON.stringify(previous) === JSON.stringify(next) ? previous : next);
     } catch (syncError) {
       console.error("Gagal menyinkronkan roster Dewan Keamanan:", syncError);
       setError(pbbRef.current("election.vetoSyncError"));
     }
-  }, [year]);
+  }, [clock]);
 
   // Tanggal game berubah (tick jadwal bisa menulis storage) → ambil state terbaru.
   useEffect(() => {
     syncFromStorage();
-  }, [syncFromStorage, currentMonth, currentDay]);
+  }, [syncFromStorage]);
 
-  // Tahun berganti → normalisasi (memulai siklus pemilu berikutnya bila perlu).
+  // Tanggal game berubah → normalisasi ulang (rollover tahun / geser jadwal ke Juni berikutnya).
   useEffect(() => {
     setElection(previous => {
-      const next = normalizeElectionState(previous, year);
+      const next = normalizeElectionState(previous, clock);
       return JSON.stringify(previous) === JSON.stringify(next) ? previous : next;
     });
-  }, [year]);
+  }, [clock]);
 
   useEffect(() => {
     window.addEventListener("pbb_security_council_roster_updated", syncFromStorage);

@@ -58,6 +58,7 @@ export interface SecurityCouncilElectionState {
   sessionId?: string;
   /** Seed acak per game/sesi: membuat pilihan kandidat NPC & hasil suara berbeda di setiap game. */
   seed: string;
+  /** Tahun pemilu siklus ini (selalu Juni tahun tsb). */
   year: number;
   nextElectionYear: number;
   cohort: "A" | "B";
@@ -83,19 +84,24 @@ export interface ElectionCountry {
   profile: CountryProfile | null;
 }
 
+/** Acuan waktu: Date penuh (disarankan) atau angka tahun. */
+export type ElectionReferenceDate = Date | number;
+
 /* ------------------------------------------------------------------ */
 /* Konstanta                                                           */
 /* ------------------------------------------------------------------ */
 
 export const SECURITY_COUNCIL_ELECTION_STATE_KEY = "neosantara_pbb_security_council_election";
 
-const SCHEMA_VERSION = 4;
+const SCHEMA_VERSION = 5;
 
 /** Pemilu diadakan SETIAP tahun untuk 5 kursi; masa jabatan 2 tahun (dua kelompok kursi bergantian). */
 export const ELECTION_INTERVAL_YEARS = 1;
 export const TERM_YEARS = 2;
 /** 0 = pemilu pertama di tahun mulai game; 1 = satu tahun setelah tahun mulai game. */
 export const FIRST_ELECTION_OFFSET_YEARS = 0;
+/** Bulan pemilu (0-based): 5 = Juni. Jendela pemilu berakhir 30 Juni. */
+export const ELECTION_MONTH = 5;
 
 /* ------------------------------------------------------------------ */
 /* Sesi game: state hanya berlaku selama sesi halaman yang sama        */
@@ -221,8 +227,88 @@ function hash(value: string): number {
   return result >>> 0;
 }
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  Boolean(value) && typeof value === "object" && !Array.isArray(value);
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+/* ------------------------------------------------------------------ */
+/* Kalender: jadwal pemilu mengikuti tanggal game                      */
+/* ------------------------------------------------------------------ */
+
+/** Tanggal game saat ini sebagai Date (fallback ke tanggal sistem bila tidak valid). */
+export function getCurrentGameDate(): Date {
+  const date = new Date(`${getCurrentGameDateString().slice(0, 10)}T00:00:00`);
+  return Number.isFinite(date.getTime()) ? date : new Date();
+}
+
+export function getCurrentElectionYear(): number {
+  return getCurrentGameDate().getFullYear();
+}
+
+function toReferenceDate(reference: ElectionReferenceDate): Date {
+  if (reference instanceof Date && Number.isFinite(reference.getTime())) return reference;
+  if (typeof reference === "number" && Number.isFinite(reference)) {
+    // Pemanggil lama mengirim angka tahun: pakai tanggal game asli bila tahunnya sama,
+    // jangan dianggap 1 Januari (itu yang membuat Juni tidak pernah dilewati).
+    const gameDate = getCurrentGameDate();
+    return gameDate.getFullYear() === reference ? gameDate : new Date(reference, 0, 1);
+  }
+  return getCurrentGameDate();
+}
+
+/** True jika jendela pemilu (Juni) tahun `electionYear` sudah sepenuhnya lewat pada `date`. */
+function isElectionWindowPassed(date: Date, electionYear: number): boolean {
+  const year = date.getFullYear();
+  return year > electionYear || (year === electionYear && date.getMonth() > ELECTION_MONTH);
+}
+
+/**
+ * Tahun pemilu terdekat yang BELUM lewat, dimulai dari `startYear`.
+ * Contoh: 23 Nov 2026 → 2027, 23 Nov 2027 → 2028, dst.
+ */
+export function getUpcomingElectionYear(date: Date, startYear: number): number {
+  const earliest = date.getFullYear() + (date.getMonth() > ELECTION_MONTH ? 1 : 0);
+  return Math.max(startYear, earliest);
+}
+
+/**
+ * Tahun yang DITAMPILKAN di jadwal. Dihitung dari tanggal, bukan hanya dari state tersimpan,
+ * sehingga siklus yang belum dimulai selalu menunjuk ke Juni terdekat yang belum lewat.
+ */
+export function getScheduleYear(election: SecurityCouncilElectionState, date: Date): number {
+  if (election.phase === "completed") return election.nextElectionYear;
+  if (election.scheduleStage > 0) return election.year;
+  return getUpcomingElectionYear(date, election.year);
+}
+
+/** Geser siklus yang BELUM dimulai ke Juni terdekat yang belum lewat (tanpa memaksa hasil pemilu). */
+function skipToUpcomingElection(
+  state: SecurityCouncilElectionState,
+  date: Date
+): SecurityCouncilElectionState {
+  if (state.phase === "completed" || state.scheduleStage > 0) return state;
+  const target = getUpcomingElectionYear(date, state.year);
+  if (target === state.year) return state;
+
+  const cohort = getCohortForYear(target);
+  // Pemilu yang terlewat tidak menggantikan siapa pun → perpanjang jabatan agar roster tetap 10 anggota.
+  const members = state.members.map(member => {
+    const requiredEnd = member.cohort === cohort ? target : target + 1;
+    return member.termEndYear < requiredEnd ? { ...member, termEndYear: requiredEnd } : member;
+  });
+
+  return {
+    ...state,
+    year: target,
+    nextElectionYear: target,
+    cohort,
+    phase: "nomination",
+    scheduleStage: 0,
+    nominees: [],
+    members,
+    recentlyServedIsos: buildRecentlyServed(target, state.pastTerms, state.incomingMembers),
+  };
+}
 
 /* ------------------------------------------------------------------ */
 /* Anggota tetap & kelayakan                                           */
@@ -354,15 +440,21 @@ export function getSecurityCouncilElectionCandidateCountries(
 /* Pembuatan & normalisasi state                                       */
 /* ------------------------------------------------------------------ */
 
-export function createInitialElectionState(year: number): SecurityCouncilElectionState {
-  // Kelompok pertama habis di tahun pemilu pertama, kelompok kedua habis setahun kemudian.
-  const electionYear = year + FIRST_ELECTION_OFFSET_YEARS;
+/**
+ * State awal mengikuti tanggal game: jika Juni tahun ini sudah lewat,
+ * pemilu pertama otomatis dijadwalkan di Juni tahun berikutnya.
+ */
+export function createInitialElectionState(reference: ElectionReferenceDate): SecurityCouncilElectionState {
+  const date = toReferenceDate(reference);
+  const startYear = date.getFullYear();
+  const electionYear = getUpcomingElectionYear(date, startYear + FIRST_ELECTION_OFFSET_YEARS);
   const cohort = getCohortForYear(electionYear);
+  // Kelompok pertama habis di tahun pemilu pertama, kelompok kedua habis setahun kemudian.
   const members: SecurityCouncilMember[] = INITIAL_MEMBERS.map(member => {
     const termEndYear = electionYear + (member.cohort === cohort ? 0 : 1);
     return {
       ...member,
-      termStartYear: Math.min(year, termEndYear - 1),
+      termStartYear: Math.min(startYear, termEndYear - 1),
       termEndYear,
     };
   });
@@ -491,8 +583,19 @@ function backfillWinnerNominees(
   return result;
 }
 
-export function normalizeElectionState(existing: unknown, year: number): SecurityCouncilElectionState {
-  const fallback = createInitialElectionState(year);
+/**
+ * Normalisasi state terhadap TANGGAL game saat ini.
+ *  1. Sesi/skema lain → state default (sudah mengikuti tanggal).
+ *  2. Hasil sudah keluar & 1 Januari tiba → pemenang resmi menjabat, siklus berikutnya dimulai.
+ *  3. Siklus yang belum dimulai tetapi Juni-nya sudah lewat → dimajukan ke tahun berikutnya.
+ */
+export function normalizeElectionState(
+  existing: unknown,
+  reference: ElectionReferenceDate
+): SecurityCouncilElectionState {
+  const date = toReferenceDate(reference);
+  const year = date.getFullYear();
+  const fallback = createInitialElectionState(date);
   if (!isRecord(existing)) return fallback;
   const raw = existing as Partial<SecurityCouncilElectionState>;
   // State dari sesi lain (sebelum refresh) atau skema lama tidak dipakai → kembali ke default.
@@ -522,7 +625,7 @@ export function normalizeElectionState(existing: unknown, year: number): Securit
   // Hasil sudah keluar dan tahun baru tiba (1 Januari): pemenang resmi menjabat, siklus berikutnya dimulai.
   if (phase === "completed" && year >= storedNext) {
     const applied = applyIncomingMembers(members, incomingMembers, storedYear, pastTerms);
-    return {
+    const rolled: SecurityCouncilElectionState = {
       schemaVersion: SCHEMA_VERSION,
       sessionId: currentSessionId,
       seed,
@@ -539,6 +642,8 @@ export function normalizeElectionState(existing: unknown, year: number): Securit
       history,
       permanentBonuses,
     };
+    // Jika game melompat jauh, majukan ke Juni terdekat yang belum lewat.
+    return skipToUpcomingElection(rolled, date);
   }
 
   const recentlyServedIsos = buildRecentlyServed(storedYear, pastTerms, incomingMembers);
@@ -547,7 +652,7 @@ export function normalizeElectionState(existing: unknown, year: number): Securit
     : storedNominees.filter(candidate =>
       !isIneligibleElectionCandidate(members, candidate.iso, recentlyServedIsos));
 
-  return {
+  const current: SecurityCouncilElectionState = {
     schemaVersion: SCHEMA_VERSION,
     sessionId: currentSessionId,
     seed,
@@ -564,16 +669,13 @@ export function normalizeElectionState(existing: unknown, year: number): Securit
     history,
     permanentBonuses,
   };
+  // Siklus yang belum dimulai namun Juni-nya sudah lewat → pindah ke tahun berikutnya.
+  return skipToUpcomingElection(current, date);
 }
 
 /* ------------------------------------------------------------------ */
 /* Storage & roster                                                    */
 /* ------------------------------------------------------------------ */
-
-export function getCurrentElectionYear(): number {
-  const year = Number(getCurrentGameDateString().slice(0, 4));
-  return Number.isFinite(year) && year > 0 ? year : new Date().getFullYear();
-}
 
 function saveElectionState(state: SecurityCouncilElectionState) {
   localStorage.setItem(SECURITY_COUNCIL_ELECTION_STATE_KEY, JSON.stringify(state));
@@ -581,13 +683,13 @@ function saveElectionState(state: SecurityCouncilElectionState) {
 }
 
 export function getStoredCouncilMembers(): SecurityCouncilMember[] {
-  const currentYear = getCurrentElectionYear();
-  const fallbackMembers = () => createInitialElectionState(currentYear).members;
+  const gameDate = getCurrentGameDate();
+  const fallbackMembers = () => createInitialElectionState(gameDate).members;
   if (typeof window === "undefined") return fallbackMembers();
   try {
     const raw = localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
     if (!raw) return fallbackMembers();
-    return normalizeElectionState(JSON.parse(raw), currentYear).members;
+    return normalizeElectionState(JSON.parse(raw), gameDate).members;
   } catch (error) {
     console.error("Gagal membaca roster Dewan Keamanan PBB:", error);
     return fallbackMembers();
@@ -622,7 +724,7 @@ export function markLimitedVetoUsed(countryIso: string, resolutionId: string): S
   try {
     const raw = localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
     if (!raw) return null;
-    const state = normalizeElectionState(JSON.parse(raw), getCurrentElectionYear());
+    const state = normalizeElectionState(JSON.parse(raw), getCurrentGameDate());
     const members = state.members.map(member =>
       toIso(member.iso) === toIso(countryIso)
         ? { ...member, vetoUsed: true, vetoUsedOn: resolutionId }
@@ -639,7 +741,8 @@ export function markLimitedVetoUsed(countryIso: string, resolutionId: string): S
 
 export function expelCountryFromSecurityCouncil(countryNameOrIso: string): SecurityCouncilMember | null {
   if (typeof window === "undefined") return null;
-  const currentYear = getCurrentElectionYear();
+  const gameDate = getCurrentGameDate();
+  const currentYear = gameDate.getFullYear();
   const searchKey = normalizeName(countryNameOrIso);
   const searchIso = toIso(countryNameOrIso);
   const matches = (name: string, iso: string) =>
@@ -647,7 +750,7 @@ export function expelCountryFromSecurityCouncil(countryNameOrIso: string): Secur
 
   try {
     const raw = localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
-    const state = normalizeElectionState(raw ? JSON.parse(raw) : null, currentYear);
+    const state = normalizeElectionState(raw ? JSON.parse(raw) : null, gameDate);
     const nominees = state.nominees.filter(candidate => !matches(candidate.name, candidate.iso));
     const memberIndex = state.members.findIndex(member => matches(member.name, member.iso));
 
@@ -1025,7 +1128,7 @@ export function readStoredElectionState(): SecurityCouncilElectionState | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     return isElectionStateFromCurrentSession(parsed)
-      ? normalizeElectionState(parsed, getCurrentElectionYear())
+      ? normalizeElectionState(parsed, getCurrentGameDate())
       : null;
   } catch (error) {
     console.error("Gagal membaca state pemilu Dewan Keamanan:", error);
@@ -1047,47 +1150,50 @@ export function persistElectionState(state: SecurityCouncilElectionState): void 
 }
 
 /**
- * Inisialisasi state pemilu untuk `year`.
+ * Inisialisasi state pemilu untuk tanggal `reference`.
  * Prioritas: localStorage sesi ini -> data tersimpan (`saved`, mis. dari countryDetail) -> default.
- * Data dari sesi lain (sebelum refresh) otomatis diabaikan oleh normalizeElectionState.
  */
 export function loadSecurityCouncilElectionState(
-  year: number,
+  reference: ElectionReferenceDate,
   saved?: unknown
 ): SecurityCouncilElectionState {
-  return normalizeElectionState(readStoredElectionState() ?? saved, year);
+  return normalizeElectionState(readStoredElectionState() ?? saved, reference);
 }
 
 /**
  * Maju MAKSIMAL SATU tahap per panggilan.
- * Jika tanggal game melompati bulan Juni, tahap nominasi -> kampanye -> voting -> hasil
- * berjalan di panggilan/hari berurutan, sehingga daftar kandidat sempat tampil sebelum hasil.
- * localStorage dipakai sebagai sumber kebenaran tunggal (argumen `existing` hanya cadangan).
+ * Siklus yang belum dimulai dan Juni-nya sudah lewat TIDAK dipaksa berjalan: normalizeElectionState
+ * memajukannya ke Juni tahun berikutnya. Hanya siklus yang sudah berjalan (stage >= 1) yang
+ * diselesaikan bertahap bila tanggal game melompati Juni.
  */
 export function tickSecurityCouncilElectionSchedule(
   dateStr: string,
   existing: unknown,
   profiles: CountryProfile[]
 ): ElectionScheduleResult | null {
-  const date = new Date(`${dateStr}T00:00:00`);
+  const date = new Date(`${dateStr.slice(0, 10)}T00:00:00`);
   if (!Number.isFinite(date.getTime())) return null;
 
   const year = date.getFullYear();
   const source = readStoredElectionState() ??
     (isElectionStateFromCurrentSession(existing) ? existing : null);
-  let state = normalizeElectionState(source, year);
+  // Normalisasi terhadap TANGGAL → tahun pemilu sudah disesuaikan dengan kalender game.
+  let state = normalizeElectionState(source, date);
   if (!source) {
     persistElectionState(state);
     return { state, notifications: [] };
   }
   if (state.phase === "completed") {
-    persistElectionState(state); // menyimpan hasil rollover tahun baru bila ada
+    persistElectionState(state); // menyimpan hasil rollover / pergeseran tahun bila ada
     return null;
   }
 
-  const electionOverdue = year > state.year || (year === state.year && date.getMonth() > 5);
-  const isElectionMonth = year === state.year && date.getMonth() === 5;
-  if (!electionOverdue && !isElectionMonth) return null;
+  const electionOverdue = isElectionWindowPassed(date, state.year);
+  const isElectionMonth = year === state.year && date.getMonth() === ELECTION_MONTH;
+  if (!electionOverdue && !isElectionMonth) {
+    persistElectionState(state); // simpan pergeseran tahun bila ada
+    return null;
+  }
 
   const targetStage = electionOverdue
     ? ELECTION_SCHEDULE.length
@@ -1095,7 +1201,10 @@ export function tickSecurityCouncilElectionSchedule(
       (stage, item) => (date.getDate() >= item.day ? item.stage : stage),
       0
     );
-  if (targetStage === 0) return null;
+  if (targetStage === 0) {
+    persistElectionState(state);
+    return null;
+  }
 
   const notifications: NotificationMessage[] = [];
   const nextStage = state.scheduleStage + 1;
