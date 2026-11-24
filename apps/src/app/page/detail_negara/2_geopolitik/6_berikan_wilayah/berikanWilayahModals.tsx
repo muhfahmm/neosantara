@@ -7,6 +7,7 @@ import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModa
 import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 import { COUNTRIES_DATA } from '../../../map_system/map-data';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getLocalizedCountryName } from '@/app/logic/countryNameLogic';
 
 interface BerikanWilayahModalProps {
 	isOpen: boolean;
@@ -65,7 +66,7 @@ export default function BerikanWilayahModal({
 	onClose,
 	onConfirm,
 }: BerikanWilayahModalProps) {
-	const { t } = useLanguage();
+	const { t, language } = useLanguage();
 	// ─── Ambil daftar wilayah aneksasi milik player ───
 	const annexedTerritories = (() => {
 		if (typeof window === 'undefined') return [];
@@ -152,7 +153,7 @@ export default function BerikanWilayahModal({
 				<div className="flex-1 min-h-0 bg-root-surface relative z-10 p-6 sm:p-8 flex flex-col gap-4 overflow-y-auto custom-scrollbar">
 					{countryName && (
 						<p className="text-center text-xs font-black uppercase tracking-wider text-root-accent">
-							{t("detail_negara_ai.geopolitics.recipient")}: {countryName}
+							{t("detail_negara_ai.geopolitics.recipient")}: {getLocalizedCountryName(countryName, language)}
 						</p>
 					)}
 					{transferError && (
@@ -190,7 +191,7 @@ export default function BerikanWilayahModal({
 										{iso ? (
 											<img
 												src={`https://flagcdn.com/w40/${iso.toLowerCase()}.png`}
-												alt={territory}
+												alt={getLocalizedCountryName(iso || territory, language)}
 												className="w-7 h-5 rounded-sm object-cover border border-root-accent/20 shrink-0"
 												loading="lazy"
 												decoding="async"
@@ -203,7 +204,7 @@ export default function BerikanWilayahModal({
 										)}
 
 										{/* Nama Wilayah */}
-										<span className="truncate flex-1">{territory}</span>
+										<span className="truncate flex-1">{getLocalizedCountryName(iso || territory, language)}</span>
 									</button>
 								);
 							})}

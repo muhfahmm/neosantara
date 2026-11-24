@@ -26,6 +26,7 @@ import { convertBarakToSoldiers } from '@/app/page/navigasi_menu/2_navigasi_bawa
 import { getInfraCapacityDetails } from '@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/infraCapacityHelper';
 import { setRelationModifier } from '../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getLocalizedCountryName } from '@/app/logic/countryNameLogic';
 
 interface BeriTentaraModalProps {
   isOpen: boolean;
@@ -135,6 +136,10 @@ export default function BeriTentaraModal({
 
   const targetName = countryName || t("detail_negara_ai.geopolitics.ally");
   const playerName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name || t("detail_negara_ai.geopolitics.you");
+  const targetDisplayName = countryName ? getLocalizedCountryName(countryName, language) : targetName;
+  const playerDisplayName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name
+    ? getLocalizedCountryName(playerName, language)
+    : playerName;
 
   // Sisa kapasitas infra target negara sekutu (Barak, Hangar, Gudang Senjata, Pangkalan Laut, Pangkalan Udara)
   const targetInfraCapacities = useMemo(() => {
@@ -351,7 +356,7 @@ export default function BeriTentaraModal({
 
       setSuccessToast(t("detail_negara_ai.geopolitics.transferSuccessToast", {
         units: formatNumber(totalUnitsToGift),
-        country: targetName,
+        country: targetDisplayName,
         bonus: relationBonus,
       }));
 
@@ -395,7 +400,7 @@ export default function BeriTentaraModal({
           centerContent={
             <div className="flex min-w-0 items-center gap-2 text-[10px] sm:text-xs font-black uppercase tracking-wide text-root-accent">
               <ArrowRight className="h-4 w-4 shrink-0" />
-              <span className="truncate">{t("detail_negara_ai.geopolitics.ally")}: {targetName}</span>
+              <span className="truncate">{t("detail_negara_ai.geopolitics.ally")}: {targetDisplayName}</span>
             </div>
           }
         />
@@ -409,7 +414,7 @@ export default function BeriTentaraModal({
             </div>
             <div className="flex flex-col">
               <span className="text-[10px] font-black uppercase tracking-wider text-root-subtle">
-                {t("detail_negara_ai.geopolitics.militaryPower")} {playerName} ({t("detail_negara_ai.geopolitics.you")})
+                {t("detail_negara_ai.geopolitics.militaryPower")} {playerDisplayName} ({t("detail_negara_ai.geopolitics.you")})
               </span>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-black text-root-accent font-mono">
@@ -435,7 +440,7 @@ export default function BeriTentaraModal({
           <div className="flex items-center gap-3 w-full md:w-auto justify-start md:justify-end">
             <div className="flex flex-col items-start md:items-end">
               <span className="text-[10px] font-black uppercase tracking-wider text-root-subtle">
-                {t("detail_negara_ai.geopolitics.militaryPower")} {targetName} ({t("detail_negara_ai.geopolitics.ally")})
+                {t("detail_negara_ai.geopolitics.militaryPower")} {targetDisplayName} ({t("detail_negara_ai.geopolitics.ally")})
               </span>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-black text-[#FFD700] font-mono">
@@ -637,7 +642,7 @@ export default function BeriTentaraModal({
                     <span>
                       {t("detail_negara_ai.geopolitics.infrastructureFull", {
                         infrastructure: getInfrastructureLabel(unit),
-                        country: targetName,
+                        country: targetDisplayName,
                       })}
                     </span>
                   </div>

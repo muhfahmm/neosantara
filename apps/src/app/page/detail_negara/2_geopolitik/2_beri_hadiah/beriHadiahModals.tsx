@@ -22,6 +22,7 @@ import { getRelationValue, setRelationModifier } from "../../../../../../../json
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
+import { getLocalizedCountryName } from '@/app/logic/countryNameLogic';
 
 const CATEGORY_MAP: Record<string, string[]> = {
   criticalMinerals: ["uranium", "batu_bara", "minyak_bumi", "gas_alam", "garam", "litium", "logam_tanah_jarang", "bijih_besi"],
@@ -83,6 +84,9 @@ export default function BeriHadiahModal({
 
   const targetCountryName = countryName || t("detail_negara_ai.geopolitics.targetCountry");
   const isAllCountries = countryName === "Semua Negara";
+  const targetCountryDisplayName = countryName && !isAllCountries
+    ? getLocalizedCountryName(countryName, language)
+    : targetCountryName;
   const playerCountryName =
     playerCountryDetail?.country ||
     playerCountryDetail?.nama ||
@@ -197,7 +201,7 @@ export default function BeriHadiahModal({
             size="standard"
             centerContent={
               <p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
-                {t("detail_negara_ai.geopolitics.recipientCountry")}: <span className="text-root-text font-bold">{targetCountryName}</span>
+                {t("detail_negara_ai.geopolitics.recipientCountry")}: <span className="text-root-text font-bold">{targetCountryDisplayName}</span>
               </p>
             }
           />
@@ -210,7 +214,7 @@ export default function BeriHadiahModal({
                 <Sparkles className="h-4 w-4 text-root-accent shrink-0 mt-0.5" />
                 <p className="text-[11px] sm:text-xs text-root-text leading-relaxed">
                   {t("detail_negara_ai.geopolitics.commodityGiftSummary", {
-                    country: targetCountryName,
+                    country: targetCountryDisplayName,
                     threshold: numberFormat.format(10000),
                   })}
                 </p>

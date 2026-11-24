@@ -5,6 +5,7 @@ import { CAPITALS_DATA, COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { majorCities as MAJOR_CITIES_DATA } from "@/app/page/map_system/mapDataAssets";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
+import { getLocalizedCountryName } from '@/app/logic/countryNameLogic';
 
 type AttackTargetCity = {
 	cityId: string;
@@ -34,6 +35,9 @@ export default function MintaSerangNegaraModal({
 	onConfirm,
 }: MintaSerangNegaraModalProps) {
 	const { t, language } = useLanguage();
+	const targetCountryDisplayName = countryName
+		? getLocalizedCountryName(countryName, language)
+		: t("detail_negara_ai.geopolitics.ally");
 	const [selectedCountry, setSelectedCountry] = useState<string>("");
 	const [selectedCityId, setSelectedCityId] = useState<string>("");
 	const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
@@ -59,7 +63,11 @@ export default function MintaSerangNegaraModal({
 
 				return true;
 			})
-			.sort((a, b) => a.country.localeCompare(b.country, language));
+			.map((country) => ({
+				...country,
+				displayName: getLocalizedCountryName(country.iso || country.country, language),
+			}))
+			.sort((a, b) => a.displayName.localeCompare(b.displayName, language));
 	}, [countryName, language]);
 
 	const targetCities = useMemo(() => {
@@ -168,7 +176,7 @@ export default function MintaSerangNegaraModal({
 					centerContent={
 						<p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
 							{t("detail_negara_ai.military.militaryDiplomacyTarget", {
-								country: countryName || t("detail_negara_ai.geopolitics.ally"),
+								country: targetCountryDisplayName,
 							})}
 						</p>
 					}
@@ -181,7 +189,7 @@ export default function MintaSerangNegaraModal({
 					<div className="p-3 sm:p-4 rounded-xl bg-root-canvas border border-root-accent/20 shrink-0">
 						<p className="text-[11px] sm:text-xs text-root-text leading-relaxed">
 							{t("detail_negara_ai.military.requestAttackPrompt", {
-								country: countryName || t("detail_negara_ai.geopolitics.ally"),
+								country: targetCountryDisplayName,
 							})}
 						</p>
 					</div>
@@ -201,9 +209,14 @@ export default function MintaSerangNegaraModal({
 									className="w-full h-11 bg-root-canvas hover:bg-root-accent/5 border border-root-accent/40 hover:border-root-accent rounded-xl px-3 flex items-center justify-between text-white transition-all cursor-pointer"
 								>
 									<div className="flex items-center gap-2.5 truncate">
-										{renderFlag(selectedData?.iso, selectedData?.country)}
+										{renderFlag(
+											selectedData?.iso,
+											selectedData?.displayName
+										)}
 										<span className="font-sans font-bold text-xs sm:text-sm tracking-wide truncate text-root-text">
-											{selectedData?.country || t("detail_negara_ai.military.selectCountry")}
+											{selectedData
+												? selectedData.displayName
+												: t("detail_negara_ai.military.selectCountry")}
 										</span>
 									</div>
 									<ChevronDown className={`w-4 h-4 text-root-accent transition-transform duration-200 shrink-0 ${isDropdownOpen ? 'rotate-180' : ''}`} />
@@ -224,8 +237,8 @@ export default function MintaSerangNegaraModal({
 													selectedCountry === c.country ? 'bg-root-accent/10 border-l-4 border-root-accent' : ''
 												}`}
 											>
-												{renderFlag(c.iso, c.country)}
-												<span className="truncate flex-1">{c.country}</span>
+												{renderFlag(c.iso, c.displayName)}
+												<span className="truncate flex-1">{c.displayName}</span>
 												<span className="text-[10px] text-root-subtle font-mono uppercase bg-root-surface px-1.5 py-0.5 rounded border border-root-accent/20">
 													{c.iso?.toUpperCase()}
 												</span>

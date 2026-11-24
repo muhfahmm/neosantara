@@ -8,6 +8,7 @@ import { getRelationValue, setRelationModifier } from "../../../../../../../json
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
+import { getLocalizedCountryName } from '@/app/logic/countryNameLogic';
 
 interface TingkatkanHubunganModalProps {
 	isOpen: boolean;
@@ -41,6 +42,9 @@ export default function TingkatkanHubunganModal({
 
 	const targetCountryName = countryName || t("detail_negara_ai.geopolitics.targetCountry");
 	const isAllCountries = countryName === "Semua Negara";
+	const targetCountryDisplayName = countryName && !isAllCountries
+		? getLocalizedCountryName(countryName, language)
+		: targetCountryName;
 	const playerCountryName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name || "Indonesia";
 	const playerBudget = Number(playerCountryDetail?.anggaran || 0);
 
@@ -119,7 +123,7 @@ export default function TingkatkanHubunganModal({
 					size="standard"
 					centerContent={
 						<p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
-							{t("detail_negara_ai.geopolitics.targetCountry")}: <span className="text-root-text font-bold">{targetCountryName}</span>
+							{t("detail_negara_ai.geopolitics.targetCountry")}: <span className="text-root-text font-bold">{targetCountryDisplayName}</span>
 						</p>
 					}
 				/>
@@ -135,7 +139,7 @@ export default function TingkatkanHubunganModal({
 							<p className="text-[11px] sm:text-xs text-root-text leading-relaxed">
 								{t("detail_negara_ai.geopolitics.improveRelationSummary", {
 									amount: new Intl.NumberFormat(language).format(10000),
-									country: targetCountryName,
+									country: targetCountryDisplayName,
 								})}
 							</p>
 						</div>
