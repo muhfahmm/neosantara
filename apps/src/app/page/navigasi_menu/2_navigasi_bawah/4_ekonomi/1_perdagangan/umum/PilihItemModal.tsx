@@ -62,7 +62,7 @@ export default function PilihItemModal({
 
   return createPortal(
     <NotebookModalWrapper
-      zIndexClass="z-[80]"
+      zIndexClass="z-[100000001]"
       onClose={onClose}
     >
       <div className="flex h-full min-w-0 flex-col overflow-hidden">
@@ -94,6 +94,7 @@ export default function PilihItemModal({
                     return (
                       <button
                         key={item.value}
+                        type="button"
                         disabled={item.disabled}
                         onClick={() => {
                           if (!item.disabled) {
@@ -139,6 +140,7 @@ export default function PilihItemModal({
                 return (
                   <button
                     key={item.value}
+                    type="button"
                     disabled={item.disabled}
                     onClick={() => { if (!item.disabled) { onSelect(item.value); onClose(); } }}
                     className={`group flex items-center justify-between px-4 py-3 rounded-md border transition-all duration-200 w-full text-left

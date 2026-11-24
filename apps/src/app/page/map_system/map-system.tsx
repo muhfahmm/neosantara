@@ -1274,9 +1274,10 @@ export default function MapPage() {
     const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
     const [countryDetail, setCountryDetailState] = useState<any>(null);
     const setCountryDetail = useCallback<React.Dispatch<React.SetStateAction<any>>>((update) => {
-        setCountryDetailState((previous: any) => normalizeCountryFinancialState(
-            typeof update === 'function' ? update(previous) : update
-        ));
+        setCountryDetailState((previous: any) => {
+            const next = typeof update === 'function' ? update(previous) : update;
+            return next === previous ? previous : normalizeCountryFinancialState(next);
+        });
     }, []);
     const [metadata, setMetadata] = useState<Record<string, any>>({});
     const [tutorialStartup, setTutorialStartup] = useState<'pending' | 'new-game' | 'resume' | 'suppressed'>('pending');
@@ -10218,7 +10219,6 @@ export default function MapPage() {
                 isOpen={inboxModalOpen}
                 isMenuButtonHidden={researchMainPageOpen}
                 isWarAnalysisActive={isWarAnalysisActive}
-                isToastSuppressed={activeMenu === "Menu:Agama" || activeMenu === "Menu:Ideologi"}
                 onClose={() => setInboxModalOpen(false)}
                 notifications={notifications}
                 onClearAll={() => setNotifications([])}

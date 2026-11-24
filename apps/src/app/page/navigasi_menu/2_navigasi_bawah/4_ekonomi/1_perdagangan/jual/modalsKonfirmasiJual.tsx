@@ -410,7 +410,7 @@ export default function JualModalsMenu({
     : marketPrices[selectedProduct] || 0;
 
   useEffect(() => {
-    if (!countryDetail || !simulationDate) return;
+    if (!isOpen || !countryDetail || !simulationDate) return;
     const randomFactors = createDailyMarketPriceFactors(simulationDate);
     setCountryDetail((previous: Record<string, unknown>) => updateTradePriceHistory(previous, {
       country: String(previous.country || previous.nama || ''),
@@ -419,7 +419,7 @@ export default function JualModalsMenu({
       randomFactors,
       ...(selectedChartArmsProduct ? { currentPrice: chartCurrentPrice } : {}),
     }));
-  }, [countryDetail, simulationDate, selectedProduct, chartCurrentPrice, selectedChartArmsProduct, setCountryDetail]);
+  }, [isOpen, countryDetail, simulationDate, selectedProduct, chartCurrentPrice, selectedChartArmsProduct, setCountryDetail]);
 
   const effectiveDetail = useMemo(() => {
     if (!countryDetail || !simulationDate) return countryDetail;

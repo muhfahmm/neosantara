@@ -224,7 +224,6 @@ interface TopLeftIconProps {
   onRedirectClick?: (notification: NotificationMessage) => void;
   userCountryName?: string;
   isWarAnalysisActive?: boolean;
-  isToastSuppressed?: boolean;
   isMenuButtonHidden?: boolean;
 }
 
@@ -239,7 +238,6 @@ export default function TopLeftIcon({
   onRedirectClick,
   userCountryName,
   isWarAnalysisActive = false,
-  isToastSuppressed = false,
   isMenuButtonHidden = false,
 }: TopLeftIconProps) {
   const { t } = useLanguage();
@@ -262,7 +260,7 @@ export default function TopLeftIcon({
   const isLandscapePhone = viewportMode === 'landscapePhone';
   const isPortraitPhone = viewportMode === 'portraitPhone';
   const isMobile = isLandscapePhone || isPortraitPhone;
-  const isToastBlocked = isOpen || isWarAnalysisActive || isToastSuppressed;
+  const isToastBlocked = isOpen || isWarAnalysisActive;
   const orderedNotifications = useMemo(() => {
     return [...visibleNotifications].sort((first, second) => {
       const firstArrivalDate = first.diplomacyArrivalDate;
@@ -724,35 +722,37 @@ export default function TopLeftIcon({
 
   return (
     <>
-      {mounted && !isWarAnalysisActive && !isMenuButtonHidden && createPortal(
+      {mounted && !isWarAnalysisActive && createPortal(
         <div className="side-btn-inbox fixed z-[10000000002] flex flex-col items-start gap-2 pointer-events-none">
-          <button
-            onClick={() => {
-              if (toastNotification) {
-                dismissedToastIdRef.current = toastNotification.id;
-              }
-              setShowToast(false);
-              if (onClick) onClick();
-            }}
-            aria-label="Inbox - Pesan dan Notifikasi"
-            className="side-floating-btn pointer-events-auto !static"
-          >
-            <div className="relative flex h-full w-full items-center justify-center">
-              <Image
-                src="/images/game/interface/menu/inbox.svg"
-                alt=""
-                width={72}
-                height={72}
-                priority
-                onError={(event) => { event.currentTarget.style.display = 'none'; }}
-              />
-              {unreadCount > 0 && (
-                <div className="side-floating-badge animate-pulse">
-                  {unreadCount > 99 ? '99+' : unreadCount}
-                </div>
-              )}
-            </div>
-          </button>
+          {!isMenuButtonHidden && (
+            <button
+              onClick={() => {
+                if (toastNotification) {
+                  dismissedToastIdRef.current = toastNotification.id;
+                }
+                setShowToast(false);
+                if (onClick) onClick();
+              }}
+              aria-label="Inbox - Pesan dan Notifikasi"
+              className="side-floating-btn pointer-events-auto !static"
+            >
+              <div className="relative flex h-full w-full items-center justify-center">
+                <Image
+                  src="/images/game/interface/menu/inbox.svg"
+                  alt=""
+                  width={72}
+                  height={72}
+                  priority
+                  onError={(event) => { event.currentTarget.style.display = 'none'; }}
+                />
+                {unreadCount > 0 && (
+                  <div className="side-floating-badge animate-pulse">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </div>
+                )}
+              </div>
+            </button>
+          )}
 
           {/* Toast Notification Box */}
           <div

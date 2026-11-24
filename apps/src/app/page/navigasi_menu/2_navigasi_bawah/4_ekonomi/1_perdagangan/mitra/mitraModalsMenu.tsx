@@ -99,9 +99,9 @@ export default function MitraModalsMenu({
                   <p className="text-sm font-bold text-root-text">{t("navigation_economy_trade.partners.emptyTitle")}</p>
                   <p className={`${rootModalTypography.body} break-words`}>{t("navigation_economy_trade.partners.emptyDescription")}</p>
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {partners.map((partner, idx) => (
+              ) : null}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {partners.map((partner, idx) => (
                     <div 
                       key={idx}
                       className="bg-root-canvas border border-root-accent/20 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all hover:border-root-accent/50"
@@ -174,20 +174,18 @@ export default function MitraModalsMenu({
                         </div>
                       </div>
                     </div>
-                  ))}
-
-                  {/* BUTTON TAMBAH MITRA */}
-                  <button
-                    onClick={() => setIsTambahOpen(true)}
-                    className="bg-root-canvas border border-dashed border-root-accent/30 hover:border-root-accent p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-center gap-3 transition-all hover:bg-root-accent/5 cursor-pointer min-h-[80px]"
-                  >
-                    <div className="p-2 rounded-full bg-root-accent/10 border border-root-accent/30">
-                      <Plus className="h-6 w-6 text-root-accent" />
-                    </div>
-                    <span className="text-sm font-black text-root-accent uppercase tracking-wider">{t("navigation_economy_trade.partners.add")}</span>
-                  </button>
-                </div>
-              )}
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setIsTambahOpen(true)}
+                  className="bg-root-canvas border border-dashed border-root-accent/30 hover:border-root-accent p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-center gap-3 transition-all hover:bg-root-accent/5 cursor-pointer min-h-[80px]"
+                >
+                  <div className="p-2 rounded-full bg-root-accent/10 border border-root-accent/30">
+                    <Plus className="h-6 w-6 text-root-accent" />
+                  </div>
+                  <span className="text-sm font-black text-root-accent uppercase tracking-wider">{t("navigation_economy_trade.partners.add")}</span>
+                </button>
+              </div>
             </div>
           </div>
         </NotebookModalWrapper>

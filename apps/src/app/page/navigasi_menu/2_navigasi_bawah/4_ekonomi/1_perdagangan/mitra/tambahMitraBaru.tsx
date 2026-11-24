@@ -116,7 +116,7 @@ export default function TambahMitraBaru({
   return (
     <>
       <NotebookModalWrapper
-        zIndexClass="z-[70]"
+        zIndexClass="z-[90]"
       >
         <div
           role="dialog"

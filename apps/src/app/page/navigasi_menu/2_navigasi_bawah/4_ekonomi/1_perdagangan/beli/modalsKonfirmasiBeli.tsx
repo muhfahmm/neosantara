@@ -439,7 +439,7 @@ export default function ModalsKonfirmasiBeli({
     : marketPrices[effectiveSelectedProduct] || 0;
 
   useEffect(() => {
-    if (!countryDetail || !simulationDate) return;
+    if (!isOpen || !countryDetail || !simulationDate) return;
     const randomFactors = createDailyMarketPriceFactors(simulationDate);
     setCountryDetail(previous => updateTradePriceHistory(previous, {
       country: String(previous.country || previous.nama || ''),
@@ -448,7 +448,7 @@ export default function ModalsKonfirmasiBeli({
       randomFactors,
       ...(selectedChartArmsProduct ? { currentPrice: chartCurrentPrice } : {}),
     }));
-  }, [countryDetail, simulationDate, effectiveSelectedProduct, chartCurrentPrice, selectedChartArmsProduct, setCountryDetail]);
+  }, [isOpen, countryDetail, simulationDate, effectiveSelectedProduct, chartCurrentPrice, selectedChartArmsProduct, setCountryDetail]);
   const effectiveSelectedCountry = selectedCountry || partners[0]?.nama_negara || "";
 
   const stockAvailable = useMemo(() => {
