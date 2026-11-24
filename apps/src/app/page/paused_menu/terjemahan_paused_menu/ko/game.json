@@ -138,5 +138,12 @@
   "embargoTitle": "경제 금수 조치로 인한 접근 제한",
   "embargoCountryDesc": "경제 금수 조치가 활성화된 동안 {country}은(는) 글로벌 무역 시장이나 국가 대출에 접근할 수 없습니다.",
   "embargoNotice": "금수 조치 결의안이 종료되면 제한이 해제됩니다. 현재 적용 중인 제재는 페이지 새로고침 시 초기화됩니다.",
-  "embargoUnderstand": "확인"
+  "embargoUnderstand": "확인",
+  "calendar": {
+    "simulationCalendar": "시뮬레이션 캘린더",
+    "holidayTitle": "국경일 휴일",
+    "militaryTitle": "군사 및 국가 안보",
+    "holidayActivated": "대통령 휴가 모드가 활성화되었습니다! 국민들이 휴식을 즐깁니다.",
+    "militaryActivated": "대통령 정보 및 활성 군사 관계."
+  }
 }

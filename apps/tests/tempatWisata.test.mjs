@@ -22,8 +22,11 @@ test('parser extracts rows and unescapes doubled quotes', () => {
 
 test('real seed file parses to the same count as the DB table (748)', async () => {
   resetTempatWisataFallbackCache();
-  const real = path.resolve('../json/10_database_tempat_wisata/database_tempat_wisata.pg.sql');
-  const rows = await getTempatWisataFallback(real);
+  const fs = await import('node:fs');
+  const path1 = path.resolve('json/10_database_tempat_wisata/database_tempat_wisata.pg.sql');
+  const path2 = path.resolve('../json/10_database_tempat_wisata/database_tempat_wisata.pg.sql');
+  const targetPath = fs.existsSync(path1) ? path1 : path2;
+  const rows = await getTempatWisataFallback(targetPath);
   assert.equal(rows.length, 748);
 });
 

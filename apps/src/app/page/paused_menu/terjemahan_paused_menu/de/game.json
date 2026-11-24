@@ -138,5 +138,12 @@
   "embargoTitle": "Zugang durch Wirtschaftsembargo eingeschränkt",
   "embargoCountryDesc": "{country} kann während eines aktiven Wirtschaftsembargos weder auf den globalen Handelsmarkt noch auf Staatskredite zugreifen.",
   "embargoNotice": "Die Beschränkungen enden, sobald die Embargo-Resolution nicht mehr aktiv ist. Derzeit gültige Embargos und Sanktionen werden nach dem Neuladen der Seite aufgehoben.",
-  "embargoUnderstand": "Verstanden"
+  "embargoUnderstand": "Verstanden",
+  "calendar": {
+    "simulationCalendar": "Simulationskalender",
+    "holidayTitle": "Nationalfeiertag",
+    "militaryTitle": "Militär & Nationale Sicherheit",
+    "holidayActivated": "Präsidialer Urlaubsmodus aktiviert! Die Bürger genießen die Ruhezeit.",
+    "militaryActivated": "Präsidentschaftsinformationen & Aktive Militärbeziehungen."
+  }
 }

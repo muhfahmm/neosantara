@@ -138,5 +138,12 @@
   "embargoTitle": "访问受经济禁运限制",
   "embargoCountryDesc": "在经济禁运生效期间，{country}无法进入全球贸易市场或申请国家借贷。",
   "embargoNotice": "当禁运决议不再有效时，限制即告结束。重新加载页面后，当前适用的禁运和制裁将消失。",
-  "embargoUnderstand": "明白"
+  "embargoUnderstand": "明白",
+  "calendar": {
+    "simulationCalendar": "模拟日历",
+    "holidayTitle": "国家假日",
+    "militaryTitle": "军事与国家安全",
+    "holidayActivated": "总统假期模式已启动！民众正在享受休息时光。",
+    "militaryActivated": "总统信息与积极军事关系。"
+  }
 }

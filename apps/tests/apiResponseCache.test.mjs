@@ -9,10 +9,10 @@ import {
   invalidateCache,
 } from '../src/lib/apiResponseCache.ts';
 
-test('apiResponseCache: sets pre-serialized and pre-compressed buffers with ETag', () => {
+test('apiResponseCache: sets pre-serialized and pre-compressed buffers with ETag', async () => {
   invalidateCache();
   const sample = { hello: 'world', numbers: [1, 2, 3] };
-  const payload = setCachedResponse('sample_key', sample);
+  const payload = await setCachedResponse('sample_key', sample);
 
   assert.ok(payload.etag.startsWith('W/"'));
   assert.equal(gunzipSync(payload.gzipBuffer).toString('utf8'), JSON.stringify(sample));
@@ -20,9 +20,9 @@ test('apiResponseCache: sets pre-serialized and pre-compressed buffers with ETag
   assert.equal(getCachedResponse('sample_key'), payload);
 });
 
-test('apiResponseCache: serves 304 Not Modified when ETag matches If-None-Match', () => {
+test('apiResponseCache: serves 304 Not Modified when ETag matches If-None-Match', async () => {
   invalidateCache();
-  const payload = setCachedResponse('test_etag', { status: 'ok' });
+  const payload = await setCachedResponse('test_etag', { status: 'ok' });
   const req = new Request('http://localhost/api/test', {
     headers: { 'If-None-Match': payload.etag },
   });
@@ -35,7 +35,7 @@ test('apiResponseCache: serves 304 Not Modified when ETag matches If-None-Match'
 
 test('apiResponseCache: serves Brotli or Gzip based on Accept-Encoding', async () => {
   invalidateCache();
-  const payload = setCachedResponse('test_comp', { data: 'compressed-test-data' });
+  const payload = await setCachedResponse('test_comp', { data: 'compressed-test-data' });
 
   // Test Brotli
   const reqBr = new Request('http://localhost/api/test', {

@@ -131,7 +131,7 @@ export default function TingkatkanHubunganModal({
 				{/* BODY — Flex column, isi compact agar tidak perlu scroll */}
 				<div className="flex-1 min-h-0 bg-root-surface relative z-10 p-4 sm:p-6 flex flex-col gap-3 sm:gap-4">
 
-					{/* Notice + Budget Info — Grid 2 kolom */}
+					{/* Notice + Informasi Kas & Anggaran — Grid 2 kolom */}
 					<div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 shrink-0">
 						{/* Notice */}
 						<div className="p-3 rounded-xl bg-root-canvas border border-root-accent/20 flex items-start gap-2.5">
@@ -144,7 +144,7 @@ export default function TingkatkanHubunganModal({
 							</p>
 						</div>
 
-						{/* Budget Info */}
+						{/* Informasi Kas & Anggaran */}
 						<div className="flex items-center justify-between bg-root-canvas p-3 rounded-xl border border-root-accent/20">
 							<span className="text-[11px] sm:text-xs text-root-subtle font-semibold flex items-center gap-2">
 								<Coins className="h-4 w-4 text-root-accent" />

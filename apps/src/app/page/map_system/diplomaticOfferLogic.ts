@@ -1,5 +1,5 @@
 import { getResearchCardBonus, getResearchCardLevel } from "../bonus_logic/researchCardLevelBonus";
-import { getRelationTier } from "@/app/logic/relationTiers";
+import { getRelationTier, RELATION_THRESHOLDS } from "@/app/logic/relationTiers";
 
 export type DiplomaticOfferKind =
   | "trade-agreement"
@@ -64,15 +64,15 @@ export interface DiplomaticOfferResult {
 export const DIPLOMATIC_OFFER_CONFIG = {
   maxMonthlyWeight: 36,
   countryCooldownMonths: 3,
-  minimumGoodRelation: 40,
+  minimumGoodRelation: RELATION_THRESHOLDS.POOR_MAX,
   embassy: {
     relationTiers: {
-      neutral: { min: 41, max: 65, chancePercent: 10 },
-      good: { min: 66, max: 80, chancePercent: 25 },
-      veryGood: { min: 81, max: 100, chancePercent: 50 },
+      neutral: { min: RELATION_THRESHOLDS.NEUTRAL_MIN, max: RELATION_THRESHOLDS.NEUTRAL_MAX, chancePercent: 10 },
+      good: { min: RELATION_THRESHOLDS.GOOD_MIN, max: 80, chancePercent: 25 },
+      veryGood: { min: RELATION_THRESHOLDS.VERY_GOOD_MIN, max: 100, chancePercent: 50 },
     },
-    userBuildMinimumRelation: 65,
-    aiOfferBuildMinimumRelation: 41,
+    userBuildMinimumRelation: RELATION_THRESHOLDS.EMBASSY_USER_MIN,
+    aiOfferBuildMinimumRelation: RELATION_THRESHOLDS.EMBASSY_AI_OFFER_MIN,
     monthlyCapPercent: 35,
     rejectionCooldownMonths: 6,
   },

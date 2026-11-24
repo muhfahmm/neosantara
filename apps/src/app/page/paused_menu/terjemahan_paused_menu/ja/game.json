@@ -138,5 +138,12 @@
   "embargoTitle": "経済制裁（禁輸）によるアクセス制限",
   "embargoCountryDesc": "{country}は経済制裁が有効な間、世界貿易市場や国家融資・負債にアクセスできません。",
   "embargoNotice": "禁輸決議が無効になると制限は終了します。現在適用されている制裁はページの再読み込み後に解除されます。",
-  "embargoUnderstand": "了解"
+  "embargoUnderstand": "了解",
+  "calendar": {
+    "simulationCalendar": "シミュレーションカレンダー",
+    "holidayTitle": "祝日・休暇",
+    "militaryTitle": "軍事および国家安全保障",
+    "holidayActivated": "大統領休暇モードが有効化されました！国民は休息を楽しんでいます。",
+    "militaryActivated": "大統領情報および活発な軍事関係。"
+  }
 }

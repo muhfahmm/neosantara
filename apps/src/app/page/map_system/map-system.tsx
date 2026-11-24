@@ -12614,7 +12614,9 @@ export default function MapPage() {
                             <div className="flex items-center justify-end mb-1 sm:mb-2 xl:mb-3.5">
                                 {/* Calendar date label */}
                                 <div className="flex flex-col items-end leading-none">
-                                    <span className="text-[7px] sm:text-[8px] xl:text-[9px] font-black text-root-subtle tracking-wider xl:tracking-widest uppercase mb-0.5 xl:mb-1">SIMULATION CALENDAR</span>
+                                    <span className="text-[7px] sm:text-[8px] xl:text-[9px] font-black text-root-subtle tracking-wider xl:tracking-widest uppercase mb-0.5 xl:mb-1">
+                                        {t('game.calendar.simulationCalendar')}
+                                    </span>
                                     <span ref={dateTextRef} className="text-xs sm:text-xs lg:text-sm xl:text-lg font-black text-root-text tracking-tight">
                                         {timeManagerRef.current?.getFormattedDate() || calendarRef.current?.display.getDisplayDate() || '-'}
                                     </span>
@@ -12678,7 +12680,7 @@ export default function MapPage() {
                                         }
                                     }}
                                     title={calendarRef.current?.calendar.getSpeedButtonTitle() || `Ubah Kecepatan: ${speed}x`}
-                                    className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas flex items-center justify-center cursor-pointer transition-all z-20 text-[9px] sm:text-[10px] xl:text-[12px] font-black uppercase tracking-tighter"
+                                    className="min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas flex items-center justify-center cursor-pointer transition-all z-20 text-[9px] sm:text-[10px] xl:text-[12px] font-black uppercase tracking-tighter"
                                 >
                                     {calendarRef.current?.display.getSpeedLabel() || `×${speed}`}
                                 </button>
@@ -12689,11 +12691,20 @@ export default function MapPage() {
                                         if (calendarRef.current) {
                                             calendarRef.current.controls.handleHolidayClick();
                                         } else {
-                                            alert("Mode Liburan Presiden diaktifkan! Rakyat menikmati waktu istirahat.");
+                                            setNotifications(prev => [{
+                                                id: `holiday-info-${Date.now()}`,
+                                                title: t('game.calendar.holidayTitle'),
+                                                sender: 'Sekretariat Negara',
+                                                message: t('game.calendar.holidayActivated'),
+                                                timestamp: simulationDateString || 'Hari Ini',
+                                                type: 'kepuasan',
+                                                value: 0,
+                                                isRead: false,
+                                            }, ...prev]);
                                         }
                                     }}
-                                    title="Liburan Negara"
-                                    className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas flex items-center justify-center cursor-pointer transition-all z-20"
+                                    title={t('game.calendar.holidayTitle')}
+                                    className="min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas flex items-center justify-center cursor-pointer transition-all z-20"
                                 >
                                     <Palmtree className="w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4.5 xl:h-4.5" />
                                 </button>
@@ -12704,11 +12715,20 @@ export default function MapPage() {
                                         if (calendarRef.current) {
                                             calendarRef.current.controls.handleMilitaryClick();
                                         } else {
-                                            alert("Informasi Kepresidenan & Hubungan Militer Aktif.");
+                                            setNotifications(prev => [{
+                                                id: `military-info-${Date.now()}`,
+                                                title: t('game.calendar.militaryTitle'),
+                                                sender: 'Kementerian Pertahanan',
+                                                message: t('game.calendar.militaryActivated'),
+                                                timestamp: simulationDateString || 'Hari Ini',
+                                                type: 'peringkat',
+                                                value: 0,
+                                                isRead: false,
+                                            }, ...prev]);
                                         }
                                     }}
-                                    title="Militer & Keamanan Negara"
-                                    className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas flex items-center justify-center cursor-pointer transition-all z-20"
+                                    title={t('game.calendar.militaryTitle')}
+                                    className="min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas flex items-center justify-center cursor-pointer transition-all z-20"
                                 >
                                     <Shield className="w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4.5 xl:h-4.5" />
                                 </button>

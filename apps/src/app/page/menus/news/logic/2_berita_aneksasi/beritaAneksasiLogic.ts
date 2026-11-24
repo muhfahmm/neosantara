@@ -21,7 +21,7 @@ export interface MapStateUpdatePayload {
 }
 
 /**
- * Memproses hasil perang berupa pencaplokan wilayah (aneksasi) penuh.
+ * Memproses hasil perang berupa aneksasi wilayah penuh.
  * Menghasilkan teks berita dan payload untuk memperbarui warna wilayah target pada peta.
  */
 export function generateAnnexationNews(

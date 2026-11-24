@@ -138,5 +138,12 @@
   "embargoTitle": "Acceso restringido por embargo económico",
   "embargoCountryDesc": "{country} no puede acceder al Mercado Global de Comercio ni a Préstamos Estatales mientras el embargo económico esté activo.",
   "embargoNotice": "Las restricciones terminan cuando la resolución de embargo deja de estar activa. Los embargos y sanciones actuales desaparecerán tras recargar la página.",
-  "embargoUnderstand": "Entendido"
+  "embargoUnderstand": "Entendido",
+  "calendar": {
+    "simulationCalendar": "Calendario de Simulación",
+    "holidayTitle": "Feriado Nacional",
+    "militaryTitle": "Militar y Seguridad Nacional",
+    "holidayActivated": "¡Modo de Vacaciones Presidenciales activado! Los ciudadanos disfrutan del descanso.",
+    "militaryActivated": "Información de la Presidencia y Relaciones Militares Activas."
+  }
 }

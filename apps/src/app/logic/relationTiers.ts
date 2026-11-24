@@ -85,3 +85,16 @@ export function getRelationBadge(value: number): { alias: string; className: str
   };
 }
 
+/** Ambang batas hubungan diplomatik standar (Single Source of Truth) */
+export const RELATION_THRESHOLDS = {
+  ZERO_RELATION_HOSTILITY: 0,
+  HOSTILITY_MAX: RELATION_TIERS[0].max, // 25 (Sangat Buruk)
+  POOR_MAX: RELATION_TIERS[1].max, // 40 (Buruk)
+  NEUTRAL_MIN: RELATION_TIERS[2].min, // 41 (Netral min)
+  NEUTRAL_MAX: RELATION_TIERS[2].max, // 65 (Netral max)
+  EMBASSY_USER_MIN: RELATION_TIERS[2].max, // 65 (Ambang minimum user bangun kedutaan)
+  EMBASSY_AI_OFFER_MIN: RELATION_TIERS[2].min, // 41 (Ambang minimum tawaran AI kedutaan)
+  GOOD_MIN: RELATION_TIERS[3].min, // 66 (Baik min)
+  VERY_GOOD_MIN: RELATION_TIERS[4].min, // 81 (Sangat Baik min)
+} as const;
+

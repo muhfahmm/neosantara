@@ -1251,9 +1251,9 @@ export function getMissionInstruction(
     return `Buka menu Pertahanan & Militer lalu laksanakan tindakan strategis ${title}.`;
   }
 
-  // Geopolitik & Kedubes
+  // Geopolitik & Kedutaan Besar
   if (card.category === 'geopolitik') {
-    return `Buka menu Diplomasi & Kedubes lalu lakukan kerja sama bilateral berupa ${title}.`;
+    return `Buka menu Diplomasi & Kedutaan Besar lalu lakukan kerja sama bilateral berupa ${title}.`;
   }
 
   // PBB & Dewan Keamanan

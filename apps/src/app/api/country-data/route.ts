@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { queryDb } from '@/lib/db';
 import { getTempatWisataFallback } from '@/lib/tempatWisataFallback';
+import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 import path from 'path';
 import {
   getCachedResponse,
@@ -18,13 +19,45 @@ const extractFileOrder = (fileName: string): number => {
   return match ? parseInt(match[1], 10) : 9999;
 };
 
-const getContinentFromOrder = (order: number): string => {
-  if (order >= 1 && order <= 53) return 'Afrika';
-  if (order >= 54 && order <= 102) return 'Asia';
-  if (order >= 103 && order <= 151) return 'Eropa';
-  if (order >= 152 && order <= 178) return 'Amerika Utara';
-  if (order >= 179 && order <= 194) return 'Oceania';
-  if (order >= 195 && order <= 207) return 'Amerika Selatan';
+const CONTINENT_EN_TO_ID: Record<string, string> = {
+  Africa: 'Afrika',
+  Asia: 'Asia',
+  Europe: 'Eropa',
+  'North America': 'Amerika Utara',
+  'South America': 'Amerika Selatan',
+  Oceania: 'Oceania',
+};
+
+const COUNTRY_CONTINENT_MAP = new Map<string, string>();
+for (const country of COUNTRIES_DATA) {
+  const continentId = CONTINENT_EN_TO_ID[country.continent] || country.continent;
+  if (country.iso) {
+    COUNTRY_CONTINENT_MAP.set(country.iso.toLowerCase().trim(), continentId);
+  }
+  if (country.country) {
+    COUNTRY_CONTINENT_MAP.set(country.country.toLowerCase().trim().replace(/[\s-]+/g, '_'), continentId);
+    COUNTRY_CONTINENT_MAP.set(country.country.toLowerCase().trim().replace(/[\s_-]+/g, ''), continentId);
+  }
+}
+
+const getContinentForCountry = (slug: string, iso?: string, fallbackOrder?: number): string => {
+  if (iso) {
+    const byIso = COUNTRY_CONTINENT_MAP.get(iso.toLowerCase().trim());
+    if (byIso) return byIso;
+  }
+  if (slug) {
+    const cleanSlug = slug.toLowerCase().trim().replace(/[\s-]+/g, '_');
+    const bySlug = COUNTRY_CONTINENT_MAP.get(cleanSlug) || COUNTRY_CONTINENT_MAP.get(cleanSlug.replace(/_/g, ''));
+    if (bySlug) return bySlug;
+  }
+  if (typeof fallbackOrder === 'number') {
+    if (fallbackOrder >= 1 && fallbackOrder <= 53) return 'Afrika';
+    if (fallbackOrder >= 54 && fallbackOrder <= 102) return 'Asia';
+    if (fallbackOrder >= 103 && fallbackOrder <= 151) return 'Eropa';
+    if (fallbackOrder >= 152 && fallbackOrder <= 178) return 'Amerika Utara';
+    if (fallbackOrder >= 179 && fallbackOrder <= 194) return 'Oceania';
+    if (fallbackOrder >= 195 && fallbackOrder <= 212) return 'Amerika Selatan';
+  }
   return 'Lainnya';
 };
 
@@ -264,7 +297,7 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
       const countryObj: any = {
         __fileName: fileName,
         __fileOrder: order,
-        __continent: getContinentFromOrder(order),
+        __continent: getContinentForCountry(slug, prof.iso, order),
 
         country_slug: slug,
         iso: prof.iso || slug,

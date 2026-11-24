@@ -138,5 +138,12 @@
   "embargoTitle": "Access restricted by economic embargo",
   "embargoCountryDesc": "{country} cannot access Global Trade Market or State Loans & Debts while economic embargo is active.",
   "embargoNotice": "Restrictions end when the embargo resolution is no longer active. Currently effective embargoes and sanctions will clear after reloading the page.",
-  "embargoUnderstand": "Understood"
+  "embargoUnderstand": "Understood",
+  "calendar": {
+    "simulationCalendar": "Simulation Calendar",
+    "holidayTitle": "National Holiday",
+    "militaryTitle": "Military & National Security",
+    "holidayActivated": "Presidential Holiday Mode activated! Citizens enjoy rest time.",
+    "militaryActivated": "Presidency Information & Active Military Relations."
+  }
 }
