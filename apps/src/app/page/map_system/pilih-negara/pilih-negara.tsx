@@ -168,7 +168,11 @@ export default function PilihNegaraPage() {
         sessionStorage.removeItem('program_nuklir_modal_open');
         sessionStorage.removeItem('icbm_detail_open');
         sessionStorage.removeItem('perang_nuklir_detail_open');
-      } catch (e) {}
+      } catch (e) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn('[pilih-negara] Gagal membersihkan storage simulasi nuklir:', e);
+        }
+      }
     }
 
     let cancelled = false;

@@ -57,6 +57,23 @@ Laporan berkala hasil perbaikan bertahap berdasarkan temuan [audit_report.md](fi
 | **BID-6-001 / TSK-102** | `apps/src-tauri/tauri.conf.json` | Mengonfigurasi Content-Security-Policy (CSP) bertahap dan terverifikasi untuk Tauri WebView Android & Desktop: `"default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://flagcdn.com; connect-src 'self' http://localhost:* http://10.0.2.2:* https://*.firebaseio.com https://*.googleapis.com;"`. | **Sebelum**: `"csp": null` (tidak ada pembatasan asal sumber daya).<br>**Sesudah**: CSP aktif membatasi eksekusi skrip pihak ketiga, mengizinkan engine WebAssembly (`wasm-unsafe-eval`), style Tailwind, CDN bendera resmi, serta endpoint dev dan backend. |
 | **BID-6-002** | `apps/.env.example`<br>`.gitignore` | Verifikasi menyeluruh riwayat git commit: tidak pernah ada token/secret API Firebase yang bocor ke git log (`git log --all -p` bersih). Berkas `.env.local` diabaikan oleh `.gitignore` root dan apps. Template `apps/.env.example` sudah bersih tanpa kredensial riil. | **Sebelum**: Dikhawatirkan secret Firebase bocor.<br>**Sesudah**: Terverifikasi bersih; hanya template dummy di `.env.example`. |
 
+---
+
+## TAHAP 4: KUALITAS KODE & DEBUG CLEANUP
+
+**Cabang Git**: `fix/tahap-4-kualitas-kode`  
+**Status Build**: LULUS (`next build --webpack` sukses tanpa kesalahan tipe TypeScript).  
+**Status Test**: LULUS (Semua suite pengujian unit hijau 100%, total 16 tests pass).
+
+### 1. Item yang Diselesaikan
+
+| ID Temuan / Tugas | Berkas Diubah | Ringkasan Perubahan | Bukti Sebelum / Sesudah |
+| :--- | :--- | :--- | :--- |
+| **BID-6-004** | `apps/src/app/ClientErrorCatcher.tsx`<br>`apps/src/app/page/detail_negara/.../battleEngine.ts`<br>`apps/src/app/page/map_system/pilih-negara/pilih-negara.tsx`<br>`apps/src/app/page/navigasi_menu/.../KonfirmasiSerangModals.tsx` | 1. Mengganti parameter `payload: any` pada `ClientErrorCatcher.tsx` dengan antarmuka bertipe `ClientErrorPayload`.<br>2. Mengganti blok `catch {}` kosong dengan penanganan log peringatan terstruktur (`console.warn` di environment non-production) agar kegagalan operasi JSON atau localStorage tidak tertelan diam-diam. | **Sebelum**: Error dilempar tanpa jejak / silent swallowing di 18 lokasi; payload bertipe `any`.<br>**Sesudah**: Logging peringatan terpusat aktif di non-production; tipe data aman. |
+| **Pembersihan Debug Markers** | `apps/src/app/page/map_system/mapLoadTracker.ts` | Membersihkan tag komentar sementara `MAPLOAD-DBG-TEMP` menjadi komentar deskriptif produksi permanen. | **Sebelum**: Komentar debug `-TEMP` tersisa di file produksi.<br>**Sesudah**: Bersih dari penanda sementara. |
+| **Penyempurnaan Tipe API** | `apps/src/app/api/country-data/route.ts` | 1. Menambahkan interface `ProfileRow` untuk menggantikan deklarasi `any[]` pada query database profil.<br>2. Memperbaiki normalizer fungsi `normalizeKey` dengan type-guard string yang aman. | **Sebelum**: Query DB profil dan pemrosesan slug menggunakan `any[]`.<br>**Sesudah**: Tipe terdefinisi jelas, TypeScript build check lulus 100%. |
+
+
 
 **Cabang Git**: `fix/tahap-2-struktural`  
 **Status Build**: LULUS (`next build --webpack` sukses tanpa kesalahan tipe TypeScript).  

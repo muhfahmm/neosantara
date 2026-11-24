@@ -61,7 +61,14 @@ const getContinentForCountry = (slug: string, iso?: string, fallbackOrder?: numb
   return 'Lainnya';
 };
 
-const normalizeKey = (val: string) => val.trim().toLowerCase().replace(/[\s_-]+/g, '');
+interface ProfileRow {
+  id?: number | string;
+  country_slug?: string;
+  country_name?: string;
+  [key: string]: any;
+}
+
+const normalizeKey = (val: string) => (typeof val === 'string' ? val.trim().toLowerCase().replace(/[\s_-]+/g, '') : '');
 
 let cachedAllCountries: any[] | null = null;
 const cachedCountryMap = new Map<string, any>();
@@ -106,7 +113,7 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
       militer,
       pertahanan,
     ] = await Promise.all([
-      queryDb<any[]>('SELECT * FROM database_profiles_negara'),
+      queryDb<ProfileRow[]>('SELECT * FROM database_profiles_negara'),
       queryOptional('SELECT * FROM database_pajak_negara'),
       queryOptional('SELECT * FROM database_level_kabinet'),
       queryOptional('SELECT * FROM database_sda'),

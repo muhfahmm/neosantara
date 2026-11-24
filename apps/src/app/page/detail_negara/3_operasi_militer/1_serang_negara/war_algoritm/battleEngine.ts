@@ -422,7 +422,11 @@ export function applyWarLossesToUserArmada(
     try {
       const raw = localStorage.getItem("deployed_units_config");
       if (raw) savedConfig = JSON.parse(raw);
-    } catch (e) {}
+    } catch (e) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn("[battleEngine] Gagal mem-parse deployed_units_config dari localStorage:", e);
+      }
+    }
   }
 
   const nextDetail = JSON.parse(JSON.stringify(countryDetail));

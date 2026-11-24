@@ -1,4 +1,4 @@
-// MAPLOAD-DBG-TEMP: Diagnostic tracer for map loading stages on mobile
+// Diagnostic tracer for map loading stages on mobile
 export interface StageRecord {
   id: string;
   name: string;

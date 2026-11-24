@@ -204,7 +204,11 @@ export default function SerangModals({
     if (typeof window !== "undefined") {
       try {
         localStorage.setItem("deployed_units_config", JSON.stringify(next));
-      } catch (e) {}
+      } catch (e) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn('[KonfirmasiSerang] Gagal menyimpan deployed_units_config:', e);
+        }
+      }
     }
   };
 
@@ -237,7 +241,11 @@ export default function SerangModals({
     if (typeof window !== "undefined") {
       try {
         localStorage.setItem("deployed_units_config", JSON.stringify(next));
-      } catch (e) {}
+      } catch (e) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn('[KonfirmasiSerang] Gagal menyimpan deployed_units_config:', e);
+        }
+      }
     }
   };
 
@@ -250,7 +258,11 @@ export default function SerangModals({
     if (typeof window !== "undefined") {
       try {
         localStorage.setItem("deployed_units_config", JSON.stringify(next));
-      } catch (e) {}
+      } catch (e) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn('[KonfirmasiSerang] Gagal menyimpan deployed_units_config:', e);
+        }
+      }
     }
   };
 

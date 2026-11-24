@@ -2,9 +2,18 @@
 
 import { useEffect } from 'react';
 
+interface ClientErrorPayload {
+  type: string;
+  message: string;
+  filename?: string;
+  lineno?: number;
+  colno?: number;
+  stack?: string | null;
+}
+
 export default function ClientErrorCatcher() {
   useEffect(() => {
-    const send = async (payload: any) => {
+    const send = async (payload: ClientErrorPayload) => {
       try {
         await fetch('/api/client-error', {
           method: 'POST',
@@ -12,7 +21,9 @@ export default function ClientErrorCatcher() {
           body: JSON.stringify(payload),
         });
       } catch (e) {
-        // ignore
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn('[ClientErrorCatcher] Gagal mengirim log error client:', e);
+        }
       }
     };
 
