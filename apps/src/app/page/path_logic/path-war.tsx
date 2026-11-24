@@ -34,9 +34,8 @@ import {
   getSimulationDayPosition,
   getSimulationMillisecondsPerDay,
   isSimulationTimePaused,
-  MAX_TRAVEL_DAYS,
-  MIN_TRAVEL_DAYS,
 } from './time_logic';
+import { getDistanceBasedTravelDays } from './distanceBasedTravelTime';
 import {
   initializeRouteMathRust,
   isRouteMathRustReady,
@@ -540,7 +539,9 @@ export interface BuildWarPathInput {
 
 export function buildWarPath(input: BuildWarPathInput): WarPath | null {
   const { attacker, target } = input;
-  const travelEstimate = estimateTravelTime(attacker.country, target.country);
+  const travelEstimate = estimateTravelTime(attacker.country, target.country, {
+    diplomacyKind: 'serang-negara',
+  });
   const hasValidCoordinates = (point: CapitalPoint) =>
     Number.isFinite(point.lat) &&
     Number.isFinite(point.lng) &&
@@ -570,13 +571,11 @@ export function buildWarPath(input: BuildWarPathInput): WarPath | null {
         Math.cos(radians(target.lat)) *
         Math.sin(longitudeDifference / 2) ** 2;
     const distanceKm = 6371 * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
-    const normalizedDistance = Math.min(1, distanceKm / (Math.PI * 6371));
-
     console.warn('[WarPath] Using coordinate-based travel estimate', {
       attackerCountry: attacker.country,
       targetCountry: target.country,
     });
-    return Math.round(MIN_TRAVEL_DAYS + normalizedDistance * (MAX_TRAVEL_DAYS - MIN_TRAVEL_DAYS));
+    return getDistanceBasedTravelDays(distanceKm);
   })();
 
   return {

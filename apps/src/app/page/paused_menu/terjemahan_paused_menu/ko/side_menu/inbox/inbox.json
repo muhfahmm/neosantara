@@ -141,6 +141,7 @@
     }
   },
   "items": {
+    "emas": "금",
     "uranium": "우라늄",
     "batu_bara": "석탄",
     "minyak_bumi": "원유",
@@ -733,6 +734,11 @@
       "title": "대사관 건설 시작",
       "sender": "외교부 — {country}",
       "message": "{target}의 대사관 건설이 시작되었으며 {date}에 완료될 예정입니다."
+    },
+    "aidDelivery": {
+      "title": "동맹국 지원 도착",
+      "sender": "외교부 — {country}",
+      "message": "{country}에서 보낸 지원 수송대가 도착했습니다: {amount} {resource}이(가) 국가 비축분에 추가되었습니다."
     },
     "playerLoot": {
       "title": "💰 약탈 작전 성공",

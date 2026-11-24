@@ -1,48 +1,40 @@
 import { CAPITALS_DATA, COUNTRIES_DATA } from '../map_system/map-data';
 import { greatCircleDistanceKmRust } from './routeMathRust';
+import { getDistanceBasedTravelDays } from './distanceBasedTravelTime';
 
 export const GAME_DAYS_PER_1000_KM = 1;
 
 export const MIN_TRAVEL_DAYS = 3;
 export const MAX_TRAVEL_DAYS = 3;
 
-/**
- * Durasi dasar operasi militer, intelijen, dan ratifikasi perjanjian bilateral internasional (dalam hari simulasi):
- * - Kedutaan Besar: 60 hari (konstruksi gedung fisik)
- * - Aliansi Pertahanan: 45 hari (perundingan doktrin militer & pertahanan bersama)
- * - Kontrak Penelitian: 40 hari (penyelarasan protokol ilmiah & laboratorium)
- * - Perjanjian Perdagangan: 30 hari (tarif bea cukai, kuota & rute ekspor/impor)
- * - Pakta Non-Agresi: 25 hari (perjanjian demiliterisasi & gencatan senjata)
- * - Serang Negara: 14 hari (mobilisasi pasukan, logistik perang & armada tempur)
- * - Sabotase: 10 hari (infiltrasi tim penyabot, penanaman peledak & eksekusi)
- * - Spionase: 7 hari (penyusupan agen mata-mata, penyadapan & ekstraksi data)
- */
-export const DIPLOMACY_BASE_RATIFICATION_DAYS: Record<string, number> = {
-  'defense-alliance': 45,
-  'research-contract': 40,
-  'trade-agreement': 30,
-  'non-aggression-pact': 25,
-  'serang-negara': 14,
-  'serang': 14,
-  'sabotase': 10,
-  'spionase': 7,
-};
+const DISTANCE_BASED_TRAVEL_KINDS = new Set([
+  'spionase',
+  'sabotase',
+  'non-aggression-pact',
+  'trade-agreement',
+  'research-contract',
+  'defense-alliance',
+  'aid-delivery',
+  'serang',
+  'serang-negara',
+]);
 
 export const getDiplomaticRatificationDays = (
   kind?: string | null,
   distanceKm = 0,
 ): number => {
   if (!kind) return MAX_TRAVEL_DAYS;
-  const baseDays = DIPLOMACY_BASE_RATIFICATION_DAYS[kind];
-  if (!baseDays) return MAX_TRAVEL_DAYS;
+  if (DISTANCE_BASED_TRAVEL_KINDS.has(kind)) {
+    return getDistanceBasedTravelDays(distanceKm);
+  }
 
-  // Waktu perjalanan utusan diplomatik / logistik antar benua/jarak jauh (1 hari per 2.000 km, max +10 hari)
-  const travelDays = Math.min(10, Math.ceil(distanceKm / 2000));
-  return baseDays + travelDays;
+  return MAX_TRAVEL_DAYS;
 };
 
 const EARTH_RADIUS_KM = 6371;
 const MAX_GREAT_CIRCLE_DISTANCE_KM = Math.PI * EARTH_RADIUS_KM;
+export const MIN_EMBASSY_CONSTRUCTION_DAYS = 60;
+export const MAX_EMBASSY_CONSTRUCTION_DAYS = 120;
 const MAX_DISTANCE_BASED_TRAVEL_DAYS = Math.ceil(
   (MAX_GREAT_CIRCLE_DISTANCE_KM / 1000) * GAME_DAYS_PER_1000_KM,
 );
@@ -289,6 +281,28 @@ export const estimateTravelTime = (
     originContinent: origin.continent,
     destinationContinent: destination.continent,
   };
+};
+
+export const getEmbassyConstructionDaysFromDistance = (distanceKm: number) => {
+  if (!Number.isFinite(distanceKm) || distanceKm < 0) {
+    throw new RangeError('Embassy construction distance must be a non-negative finite number');
+  }
+
+  // Scale linearly from zero distance to the maximum possible great-circle distance.
+  const distanceRatio = clamp(distanceKm / MAX_GREAT_CIRCLE_DISTANCE_KM, 0, 1);
+  return MIN_EMBASSY_CONSTRUCTION_DAYS + Math.round(
+    distanceRatio * (MAX_EMBASSY_CONSTRUCTION_DAYS - MIN_EMBASSY_CONSTRUCTION_DAYS),
+  );
+};
+
+export const estimateEmbassyConstructionDays = (
+  originCountry: string,
+  destinationCountry: string,
+): number | null => {
+  const route = estimateTravelTime(originCountry, destinationCountry);
+  return route
+    ? getEmbassyConstructionDaysFromDistance(route.distanceKm)
+    : null;
 };
 
 const getSimulationClock = (): SimulationClock | null => {

@@ -141,6 +141,7 @@
     }
   },
   "items": {
+    "emas": "金",
     "uranium": "ウラン",
     "batu_bara": "石炭",
     "minyak_bumi": "原油",
@@ -733,6 +734,11 @@
       "title": "大使館の建設を開始",
       "sender": "外務省 — {country}",
       "message": "{target}で大使館の建設が始まり、完成予定日は{date}です。"
+    },
+    "aidDelivery": {
+      "title": "同盟国からの援助が到着",
+      "sender": "外務省 — {country}",
+      "message": "{country}からの援助コンボイが到着しました：{amount} {resource}が国家備蓄に追加されました。"
     },
     "playerLoot": {
       "title": "💰 略奪作戦成功",

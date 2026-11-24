@@ -1317,6 +1317,18 @@ export default function MapPage() {
             const amount = Number(detail?.amount) || 0;
             if (!detail?.id || !resourceKey || amount < 5000) return;
 
+            const titleKey = 'side_inbox.dynamicNotifications.aidDelivery.title';
+            const senderKey = 'side_inbox.dynamicNotifications.aidDelivery.sender';
+            const messageKey = 'side_inbox.dynamicNotifications.aidDelivery.message';
+            const senderCountry = detail.senderCountry || 'Sekutu';
+            const senderParams = { country: senderCountry };
+            const resourceNameKey = `side_inbox.items.${resourceKey}`;
+            const messageParams = {
+                country: senderCountry,
+                amount: new Intl.NumberFormat(language, { maximumFractionDigits: 2 }).format(amount),
+                resource: getDefaultInboxText(resourceNameKey),
+            };
+
             setCountryDetail((previous: any) => {
                 if (!previous || Array.isArray(previous.receivedAidDeliveryIds) && previous.receivedAidDeliveryIds.includes(detail.id)) return previous;
                 const inventory = { ...(previous.inventory || {}) };
@@ -1327,9 +1339,15 @@ export default function MapPage() {
                     receivedAidDeliveryIds: [...(Array.isArray(previous.receivedAidDeliveryIds) ? previous.receivedAidDeliveryIds : []), detail.id],
                     pending_notifications: [{
                         id: `aid-arrived-${detail.id}`,
-                        title: 'Bantuan Sekutu Tiba',
-                        sender: detail.senderCountry || 'Sekutu',
-                        message: `Konvoi bantuan tiba: +${amount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} ${resourceKey.replaceAll('_', ' ')} telah ditambahkan ke inventaris nasional.`,
+                        title: getDefaultInboxText(titleKey),
+                        titleKey,
+                        sender: getDefaultInboxText(senderKey, senderParams),
+                        senderKey,
+                        senderParams,
+                        message: getDefaultInboxText(messageKey, messageParams),
+                        messageKey,
+                        messageParams,
+                        messageParamKeys: { resource: resourceNameKey },
                         timestamp: new Date().toISOString().slice(0, 10),
                         type: 'peringkat',
                         value: 0,
@@ -1340,7 +1358,7 @@ export default function MapPage() {
         };
         window.addEventListener('neosantara_aid_arrived', handleAidArrival);
         return () => window.removeEventListener('neosantara_aid_arrived', handleAidArrival);
-    }, []);
+    }, [language, setCountryDetail]);
 
     useEffect(() => {
         initCountryIsoFromDatabase().catch(err => console.error("Failed to init country ISO from DB:", err));

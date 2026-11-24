@@ -141,6 +141,7 @@
     }
   },
   "items": {
+    "emas": "Gold",
     "uranium": "Uran",
     "batu_bara": "Kohle",
     "minyak_bumi": "Rohöl",
@@ -733,6 +734,11 @@
       "title": "Botschaftsbau begonnen",
       "sender": "Außenministerium — {country}",
       "message": "Der Bau der Botschaft in {target} hat begonnen und soll am {date} abgeschlossen sein."
+    },
+    "aidDelivery": {
+      "title": "Verbündetenhilfe eingetroffen",
+      "sender": "Außenministerium — {country}",
+      "message": "Der Hilfskonvoi aus {country} ist eingetroffen: {amount} {resource} wurden dem nationalen Inventar hinzugefügt."
     },
     "playerLoot": {
       "title": "💰 PLÜNDERUNG ERFOLGREICH",

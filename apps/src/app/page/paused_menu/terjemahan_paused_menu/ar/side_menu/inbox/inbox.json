@@ -141,6 +141,7 @@
     }
   },
   "items": {
+    "emas": "ذهب",
     "uranium": "يورانيوم",
     "batu_bara": "فحم حجري",
     "minyak_bumi": "نفط خام",
@@ -733,6 +734,11 @@
       "title": "بدأ بناء السفارة",
       "sender": "وزارة الخارجية — {country}",
       "message": "بدأ بناء السفارة في {target} ومن المقرر اكتماله في {date}."
+    },
+    "aidDelivery": {
+      "title": "وصول مساعدات الحليف",
+      "sender": "وزارة الخارجية — {country}",
+      "message": "وصلت قافلة المساعدات من {country}: تمت إضافة {amount} {resource} إلى المخزون الوطني."
     },
     "playerLoot": {
       "title": "💰 نجاح عملية النهب",

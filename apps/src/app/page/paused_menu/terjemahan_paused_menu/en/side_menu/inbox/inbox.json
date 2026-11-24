@@ -141,6 +141,7 @@
     }
   },
   "items": {
+    "emas": "Gold",
     "uranium": "Uranium",
     "batu_bara": "Coal",
     "minyak_bumi": "Crude Oil",
@@ -733,6 +734,11 @@
       "title": "Embassy Construction Started",
       "sender": "Ministry of Foreign Affairs — {country}",
       "message": "Construction of the embassy in {target} has started and is scheduled to finish on {date}."
+    },
+    "aidDelivery": {
+      "title": "Allied Aid Arrived",
+      "sender": "Ministry of Foreign Affairs — {country}",
+      "message": "The aid convoy from {country} has arrived: {amount} {resource} has been added to the national inventory."
     },
     "playerLoot": {
       "title": "💰 LOOTING OPERATION SUCCESSFUL",

@@ -141,6 +141,7 @@
     }
   },
   "items": {
+    "emas": "Emas",
     "uranium": "Uranium",
     "batu_bara": "Batu Bara",
     "minyak_bumi": "Minyak Bumi",
@@ -733,6 +734,11 @@
       "title": "Pembangunan Kedutaan Dimulai",
       "sender": "Kementerian Luar Negeri {country}",
       "message": "Pembangunan kedutaan besar di {target} dimulai dan dijadwalkan selesai pada {date}."
+    },
+    "aidDelivery": {
+      "title": "Bantuan Sekutu Tiba",
+      "sender": "Kementerian Luar Negeri — {country}",
+      "message": "Konvoi bantuan dari {country} tiba: {amount} {resource} telah ditambahkan ke inventaris nasional."
     },
     "playerLoot": {
       "title": "💰 OPERASI PENJARAHAN BERHASIL",

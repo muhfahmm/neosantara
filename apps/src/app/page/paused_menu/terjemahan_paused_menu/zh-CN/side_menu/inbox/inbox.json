@@ -141,6 +141,7 @@
     }
   },
   "items": {
+    "emas": "黄金",
     "uranium": "铀",
     "batu_bara": "煤炭",
     "minyak_bumi": "原油",
@@ -733,6 +734,11 @@
       "title": "大使馆建设已开始",
       "sender": "外交部 — {country}",
       "message": "{target}的大使馆建设已开始，预计于 {date} 完工。"
+    },
+    "aidDelivery": {
+      "title": "盟友援助已抵达",
+      "sender": "外交部 — {country}",
+      "message": "来自{country}的援助车队已抵达：{amount} {resource}已加入国家库存。"
     },
     "playerLoot": {
       "title": "💰 掠夺行动成功",

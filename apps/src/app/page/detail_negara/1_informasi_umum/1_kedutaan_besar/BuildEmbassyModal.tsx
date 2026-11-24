@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import RootConfirmModal from "@/app/page/root_modals_design_menu/RootConfirmModal";
-import { getWaktuPembangunanKedutaanBonusPercent } from "@/app/page/bonus_logic";
+import { getEffectiveEmbassyBuildTime } from "@/app/page/bonus_logic";
 import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface BuildEmbassyModalProps {
@@ -34,12 +34,8 @@ export default function BuildEmbassyModal({
   const formattedBudgetAfterBuild = budgetAfterBuild.toLocaleString(language, { maximumFractionDigits: 2 });
   const hasBudget = currentBudget >= cost;
 
-  const discountPct = getWaktuPembangunanKedutaanBonusPercent(countryDetail);
   const embassyCostDiscountPct = cost > 0 ? Math.max(0, (1 - cost / 10) * 100) : 0;
-  const effectiveBuildTimeDays =
-    discountPct > 0
-      ? Math.max(1, Math.floor(buildTimeDays * (1 - discountPct / 100)))
-      : buildTimeDays;
+  const effectiveBuildTimeDays = getEffectiveEmbassyBuildTime(buildTimeDays, countryDetail);
 
   return (
     <RootConfirmModal
@@ -67,7 +63,7 @@ export default function BuildEmbassyModal({
             <strong className="text-root-accent">{cost.toLocaleString(language, { maximumFractionDigits: 2 })} NEO</strong>
           )}{" "}
           {t("detail_negara_ai.embassy.withBuildTime")}{" "}
-          {discountPct > 0 ? (
+          {effectiveBuildTimeDays < buildTimeDays ? (
             <span>
               <span className="line-through text-rose-400 mr-1">{buildTimeDays} {t("detail_negara_ai.embassy.days")}</span>
               <strong className="text-root-accent">{effectiveBuildTimeDays} {t("detail_negara_ai.embassy.days")}</strong>

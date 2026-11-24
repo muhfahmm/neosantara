@@ -141,6 +141,7 @@
     }
   },
   "items": {
+    "emas": "Oro",
     "uranium": "Uranio",
     "batu_bara": "Carbón",
     "minyak_bumi": "Petróleo Crudo",
@@ -733,6 +734,11 @@
       "title": "Construcción de embajada iniciada",
       "sender": "Ministerio de Asuntos Exteriores — {country}",
       "message": "La construcción de la embajada en {target} ha comenzado y está prevista para finalizar el {date}."
+    },
+    "aidDelivery": {
+      "title": "Ayuda de un aliado recibida",
+      "sender": "Ministerio de Asuntos Exteriores — {country}",
+      "message": "Ha llegado el convoy de ayuda de {country}: se han añadido {amount} {resource} al inventario nacional."
     },
     "playerLoot": {
       "title": "💰 OPERACIÓN DE SAQUEO EXITOSA",

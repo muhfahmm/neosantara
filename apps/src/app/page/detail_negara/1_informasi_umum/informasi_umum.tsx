@@ -50,7 +50,11 @@ import {
   getTradeAgreementAcceptanceChancePercent,
   getNonAggressionPactAcceptanceChancePercent,
 } from "@/app/page/bonus_logic";
-import { estimateTravelTime } from '../../path_logic/time_logic';
+import {
+  estimateEmbassyConstructionDays,
+  estimateTravelTime,
+  MIN_EMBASSY_CONSTRUCTION_DAYS,
+} from '../../path_logic/time_logic';
 import TravelFuelCostPanel from "../../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
 import {
   consumeTravelFuel,
@@ -351,6 +355,10 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   const addedTradePartners = Array.isArray(playerCountryDetail?.addedTradePartners) ? playerCountryDetail.addedTradePartners : [];
 
   const embassyCost = getEffectiveEmbassyCost(10, playerCountryDetail);
+  const estimatedEmbassyBuildTimeDays =
+    estimateEmbassyConstructionDays(playerCountryName || 'Indonesia', countryName);
+  const embassyBuildTimeDays =
+    estimatedEmbassyBuildTimeDays ?? MIN_EMBASSY_CONSTRUCTION_DAYS;
   const embassyBuildInitiator: 'AI' | 'USER' = autoBuildEmbassy ? 'AI' : 'USER';
   const minimumEmbassyRelation = embassyBuildInitiator === 'AI'
     ? DIPLOMATIC_OFFER_CONFIG.embassy.aiOfferBuildMinimumRelation
@@ -494,7 +502,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     }
   }, [embassyActive]);
 
-  // Hitung status konstruksi kedutaan besar (Lama pembangunan: 60 Hari)
+  // Hitung status konstruksi kedutaan besar.
   const normTargetCountry = normCountryName;
   const ongoingEmbassyConstructions = Array.isArray(playerCountryDetail?.ongoingEmbassyConstructions)
     ? playerCountryDetail.ongoingEmbassyConstructions
@@ -766,8 +774,9 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         isOpen={isBuildEmbassyModalOpen && !isAnnexedTerritory}
         countryName={countryName}
         continent={continentLabel}
-        currentBudget={currentNetBalance}
+        currentBudget={playerBudget}
         cost={embassyCost}
+        buildTimeDays={embassyBuildTimeDays}
         countryDetail={playerCountryDetail}
         onClose={() => setIsBuildEmbassyModalOpen(false)}
         onConfirm={() => {
@@ -776,7 +785,14 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
             setIsEmbassyRelationRequirementModalOpen(true);
             return;
           }
-          const effectiveDays = getEffectiveEmbassyBuildTime(60, playerCountryDetail);
+          if (estimatedEmbassyBuildTimeDays === null) {
+            console.error('[Embassy] Unable to estimate construction duration', {
+              originCountry: playerCountryName || 'Indonesia',
+              targetCountry: countryName,
+              fallbackDays: MIN_EMBASSY_CONSTRUCTION_DAYS,
+            });
+          }
+          const effectiveDays = getEffectiveEmbassyBuildTime(embassyBuildTimeDays, playerCountryDetail);
           // Hitung Tanggal Selesai
           const baseDate = currentDate ? new Date(currentDate) : new Date();
           const endDateObj = new Date(baseDate);

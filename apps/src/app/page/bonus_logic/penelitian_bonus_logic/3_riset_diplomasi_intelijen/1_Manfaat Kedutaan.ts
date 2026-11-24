@@ -1,4 +1,8 @@
 import { RESEARCH_CARD_LEVEL_BONUS } from "../../researchCardLevelBonus";
+import {
+  MAX_EMBASSY_CONSTRUCTION_DAYS,
+  MIN_EMBASSY_CONSTRUCTION_DAYS,
+} from "@/app/page/path_logic/time_logic";
 
 export const MANFAAT_KEDUTAAN_RESEARCH_ID = "manfaat_kedutaan";
 
@@ -34,7 +38,16 @@ export function getEffectiveEmbassyBuildTime(
   baseDays: number,
   countryDetail: Record<string, unknown> | null | undefined
 ): number {
+  if (!Number.isFinite(baseDays) || baseDays <= 0) return baseDays;
+
+  const boundedBaseDays = Math.min(
+    MAX_EMBASSY_CONSTRUCTION_DAYS,
+    Math.max(MIN_EMBASSY_CONSTRUCTION_DAYS, baseDays),
+  );
   const discountPct = getWaktuPembangunanKedutaanBonusPercent(countryDetail);
-  if (discountPct <= 0 || !baseDays) return baseDays;
-  return Math.max(1, Math.floor(baseDays * (1 - discountPct / 100)));
+  if (discountPct <= 0) return boundedBaseDays;
+  return Math.max(
+    MIN_EMBASSY_CONSTRUCTION_DAYS,
+    Math.floor(boundedBaseDays * (1 - discountPct / 100)),
+  );
 }
