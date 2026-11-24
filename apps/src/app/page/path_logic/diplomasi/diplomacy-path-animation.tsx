@@ -199,7 +199,7 @@ export default function DiplomacyPathAnimation({
 
   const isAttackRoute = kind === 'serang-negara';
   const isCoupRoute = kind === 'kudeta';
-  const shouldPortalToDocument = isAttackRoute || isCoupRoute;
+  const shouldPortalToDocument = isAttackRoute;
   const zIndex = isAttackRoute ? 100000020 : 20;
   const zIndexClass = isAttackRoute ? 'z-[100000020]' : isCoupRoute ? 'z-20' : 'z-10';
   const overlay = (
