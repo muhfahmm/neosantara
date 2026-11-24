@@ -42,7 +42,7 @@ export default function RootInfoModalHeader({
     <header
       className={
         isStandard
-          ? "satisfaction-modal-header root-modal-util-9462ce2345 h-[52px] min-h-[52px] max-h-[52px] !py-0"
+          ? "satisfaction-modal-header root-modal-util-9462ce2345"
           : "root-info-modal-header"
       }
       data-size={isStandard ? undefined : size}

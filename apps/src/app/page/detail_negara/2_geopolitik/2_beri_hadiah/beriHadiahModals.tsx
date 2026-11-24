@@ -195,7 +195,6 @@ export default function BeriHadiahModal({
       <NotebookModalWrapper
         onClose={onClose}
         zIndexClass="z-[100000001]"
-        frameClassName="country-detail-modal-frame"
       >
         <div className="flex h-full min-h-0 flex-col overflow-hidden bg-root-surface font-sans">
           <RootInfoModalHeader

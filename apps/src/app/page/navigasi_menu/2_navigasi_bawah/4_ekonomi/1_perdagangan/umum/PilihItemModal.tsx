@@ -64,7 +64,6 @@ export default function PilihItemModal({
     <NotebookModalWrapper
       zIndexClass="z-[100000001]"
       onClose={onClose}
-      frameClassName="country-detail-modal-frame"
     >
       <div className="flex h-full min-w-0 flex-col overflow-hidden bg-root-surface font-sans">
         <RootInfoModalHeader
