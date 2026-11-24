@@ -597,24 +597,65 @@
     },
     "options": {
       "water_cannon": {
-        "title": "Cañón de agua", "subtitle": "Chorro de agua a alta presión", "description": "Dispersa a la multitud con agua a alta presión sin causar lesiones mortales.", "effectiveness": "Baja (40% de probabilidad)", "casualties": "0% de muertes", "impact": "Satisfacción -5, aprobación -2. Si falla, la multitud puede volverse más agresiva y burlarse de las fuerzas de seguridad."
+        "title": "Cañón de agua",
+        "subtitle": "Chorro de agua a alta presión",
+        "description": "Dispersa a la multitud con agua a alta presión sin causar lesiones mortales.",
+        "effectiveness": "Baja (40% de probabilidad)",
+        "casualties": "0% de muertes",
+        "impact": "Satisfacción -5, aprobación -2. Si falla, la multitud puede volverse más agresiva y burlarse de las fuerzas de seguridad."
       },
       "gas_air_mata": {
-        "title": "Gas lacrimógeno", "subtitle": "Gas CS para dispersar multitudes", "description": "Lanza gas CS contra la multitud, causando irritación ocular y respiratoria.", "effectiveness": "Media (70% de probabilidad)", "casualties": "1%–3% con lesiones o dificultad respiratoria", "impact": "Satisfacción -10, aprobación -5. Puede suscitar una preocupación leve de la ONU."
+        "title": "Gas lacrimógeno",
+        "subtitle": "Gas CS para dispersar multitudes",
+        "description": "Lanza gas CS contra la multitud, causando irritación ocular y respiratoria.",
+        "effectiveness": "Media (70% de probabilidad)",
+        "casualties": "1%–3% con lesiones o dificultad respiratoria",
+        "impact": "Satisfacción -10, aprobación -5. Puede suscitar una preocupación leve de la ONU."
       },
       "jam_malam": {
-        "title": "Toque de queda y bloqueo", "subtitle": "Emergencia civil, corte de internet y cierre de carreteras", "description": "Declara una emergencia civil, cierra las vías de acceso a la capital e interrumpe las comunicaciones por internet.", "effectiveness": "Media (requiere 2 días)", "casualties": "0% de muertes", "impact": "Satisfacción -8, aprobación -5. El flujo de caja diario se ralentiza temporalmente por la interrupción de la actividad comercial."
+        "title": "Toque de queda y bloqueo",
+        "subtitle": "Emergencia civil, corte de internet y cierre de carreteras",
+        "description": "Declara una emergencia civil, cierra las vías de acceso a la capital e interrumpe las comunicaciones por internet.",
+        "effectiveness": "Media (requiere 2 días)",
+        "casualties": "0% de muertes",
+        "impact": "Satisfacción -8, aprobación -5. El flujo de caja diario se ralentiza temporalmente por la interrupción de la actividad comercial."
       },
       "brimob": {
-        "title": "Policía antidisturbios", "subtitle": "Unidades antidisturbios con escudos", "description": "Despliega unidades antidisturbios con escudos y porras para detener o hacer retroceder a los manifestantes.", "effectiveness": "Alta (85% de probabilidad)", "casualties": "5%–12% con lesiones graves o críticas", "impact": "Satisfacción -15, aprobación -10. Provoca una condena de derechos humanos de la ONU y una caída de 20 puntos en las relaciones diplomáticas."
+        "title": "Policía antidisturbios",
+        "subtitle": "Unidades antidisturbios con escudos",
+        "description": "Despliega unidades antidisturbios con escudos y porras para detener o hacer retroceder a los manifestantes.",
+        "effectiveness": "Alta (85% de probabilidad)",
+        "casualties": "5%–12% con lesiones graves o críticas",
+        "impact": "Satisfacción -15, aprobación -10. Provoca una condena de derechos humanos de la ONU y una caída de 20 puntos en las relaciones diplomáticas."
       },
       "militer": {
-        "title": "Ejército (armamento completo)", "subtitle": "Vehículos blindados, tanques y personal armado", "description": "Despliega vehículos blindados, tanques y armas de fuego para dispersar a la multitud por la fuerza.", "effectiveness": "Muy alta (95% de probabilidad)", "casualties": "20%–35% de muertes", "impact": "Satisfacción -25, aprobación -20. Es muy probable que la ONU convoque una sesión de emergencia sobre un embargo económico."
+        "title": "Ejército (armamento completo)",
+        "subtitle": "Vehículos blindados, tanques y personal armado",
+        "description": "Despliega vehículos blindados, tanques y armas de fuego para dispersar a la multitud por la fuerza.",
+        "effectiveness": "Muy alta (95% de probabilidad)",
+        "casualties": "20%–35% de muertes",
+        "impact": "Satisfacción -25, aprobación -20. Es muy probable que la ONU convoque una sesión de emergencia sobre un embargo económico."
       }
     },
-    "causes": { "subsidi": "Subsidios", "harga": "Precios", "pajak": "Impuestos" },
-    "statuses": { "active": "En curso", "inDialogue": "En diálogo", "ignored": "Ignorada", "completed": "Completada", "riot": "Disturbios", "ongoing": "En curso" },
-    "tooltips": { "hardPower": "Usar las fuerzas de seguridad para dispersar a la multitud", "dialog": "Abrir un diálogo público y escuchar a los manifestantes", "fulfill": "Atender las demandas económicas para calmar el descontento", "ignore": "Dejar que la manifestación continúe sin intervenir" },
+    "causes": {
+      "subsidi": "Subsidios",
+      "harga": "Precios",
+      "pajak": "Impuestos"
+    },
+    "statuses": {
+      "active": "En curso",
+      "inDialogue": "En diálogo",
+      "ignored": "Ignorada",
+      "completed": "Completada",
+      "riot": "Disturbios",
+      "ongoing": "En curso"
+    },
+    "tooltips": {
+      "hardPower": "Usar las fuerzas de seguridad para dispersar a la multitud",
+      "dialog": "Abrir un diálogo público y escuchar a los manifestantes",
+      "fulfill": "Atender las demandas económicas para calmar el descontento",
+      "ignore": "Dejar que la manifestación continúe sin intervenir"
+    },
     "mass": "Multitud",
     "people": "ciudadanos",
     "status": "Estado",
@@ -1006,6 +1047,10 @@
       "reason2": "Una ideología cerrada aumenta el control estatal.",
       "reason3": "Fricción proteccionista con bloques comerciales internacionales.",
       "customReason": "El comercio con {partner} no cumple los requisitos diplomáticos y normativos nacionales. Sistema económico actual: {economy}."
+    },
+    "alliedAid": {
+      "title": "🛡️ SOLICITUD DE AYUDA MILITAR: {target}",
+      "sender": "MINISTERIO DE DEFENSA — {target}"
     }
   },
   "dynamicEventTranslations": {
@@ -1015,12 +1060,41 @@
       "sender": "AGENCIA NACIONAL DE GESTIÓN DE DESASTRES ({country})",
       "isolatedScale": "El análisis de campo confirma un desastre de escala aislada.",
       "catastrophicScale": "El análisis de campo confirma un desastre catastrófico.",
-      "categories": { "geological": "Desastre geológico", "hydrometeorological": "Desastre hidrometeorológico", "fire": "Desastre por incendio", "coastal": "Desastre marino y costero", "environmentalHealth": "Crisis de salud ambiental" },
+      "categories": {
+        "geological": "Desastre geológico",
+        "hydrometeorological": "Desastre hidrometeorológico",
+        "fire": "Desastre por incendio",
+        "coastal": "Desastre marino y costero",
+        "environmentalHealth": "Crisis de salud ambiental"
+      },
       "eventNames": {
-        "earthquakeLight": "Terremoto leve", "earthquakeMajor": "Terremoto grave", "volcanicEruption": "Erupción volcánica", "tsunami": "Tsunami", "landslide": "Deslizamiento de tierra",
-        "majorFlood": "Inundación grave", "flashFlood": "Inundación repentina", "drought": "Sequía prolongada", "tropicalStorm": "Tormenta tropical", "cyclone": "Ciclón tropical", "tornado": "Tornado", "hailstorm": "Granizada extrema",
-        "forestFire": "Incendio forestal", "peatFire": "Incendio de turberas", "industrialFire": "Incendio industrial", "settlementFire": "Incendio en zona densamente poblada", "coastalErosion": "Erosión costera", "waterspout": "Manga marina", "seaLevelRise": "Aumento del nivel del mar",
-        "foodPoisoning": "Intoxicación alimentaria masiva", "waterContamination": "Contaminación del agua potable", "airPollution": "Contaminación atmosférica extrema", "hazardousWaste": "Crisis de residuos peligrosos", "heatwave": "Ola de calor mortal", "snowstorm": "Tormenta de nieve y congelación extrema", "sinkhole": "Gran socavón repentino", "refineryFire": "Incendio en refinería y depósito de petróleo"
+        "earthquakeLight": "Terremoto leve",
+        "earthquakeMajor": "Terremoto grave",
+        "volcanicEruption": "Erupción volcánica",
+        "tsunami": "Tsunami",
+        "landslide": "Deslizamiento de tierra",
+        "majorFlood": "Inundación grave",
+        "flashFlood": "Inundación repentina",
+        "drought": "Sequía prolongada",
+        "tropicalStorm": "Tormenta tropical",
+        "cyclone": "Ciclón tropical",
+        "tornado": "Tornado",
+        "hailstorm": "Granizada extrema",
+        "forestFire": "Incendio forestal",
+        "peatFire": "Incendio de turberas",
+        "industrialFire": "Incendio industrial",
+        "settlementFire": "Incendio en zona densamente poblada",
+        "coastalErosion": "Erosión costera",
+        "waterspout": "Manga marina",
+        "seaLevelRise": "Aumento del nivel del mar",
+        "foodPoisoning": "Intoxicación alimentaria masiva",
+        "waterContamination": "Contaminación del agua potable",
+        "airPollution": "Contaminación atmosférica extrema",
+        "hazardousWaste": "Crisis de residuos peligrosos",
+        "heatwave": "Ola de calor mortal",
+        "snowstorm": "Tormenta de nieve y congelación extrema",
+        "sinkhole": "Gran socavón repentino",
+        "refineryFire": "Incendio en refinería y depósito de petróleo"
       }
     },
     "outbreak": {
@@ -1033,12 +1107,45 @@
       "pandemic": "PANDEMIA MUNDIAL",
       "localizedCluster": "Clúster localizado",
       "superSpreader": "Mutación de cepa supercontagiadora",
-      "categories": { "infectious": "Enfermedad infecciosa (epidemia)", "animalAndPlant": "Enfermedad animal y vegetal (epidemia)", "mutations": "Mutación genética y superbacteria", "pandemic": "Pandemia mundial" },
+      "categories": {
+        "infectious": "Enfermedad infecciosa (epidemia)",
+        "animalAndPlant": "Enfermedad animal y vegetal (epidemia)",
+        "mutations": "Mutación genética y superbacteria",
+        "pandemic": "Pandemia mundial"
+      },
       "eventNames": {
-        "dengue": "Brote de dengue", "malaria": "Brote de malaria", "cholera": "Brote de cólera", "typhoid": "Brote de fiebre tifoidea", "tuberculosis": "Brote de tuberculosis", "hepatitisA": "Brote de hepatitis A", "measles": "Brote de sarampión", "polio": "Brote de polio", "diphtheria": "Brote de difteria", "rabies": "Brote de rabia",
-        "avianFlu": "Gripe aviar H5N1", "footAndMouth": "Fiebre aftosa", "ricePlanthopper": "Plaga de saltamontes del arroz", "ganoderma": "Hongo Ganoderma", "tungro": "Virus del tungro del arroz", "ratInfestation": "Plaga masiva de ratas", "bananaWilt": "Marchitez bacteriana del banano", "africanSwineFever": "Peste porcina africana (PPA)",
-        "superbug": "Brote de superbacteria resistente", "candidaAuris": "Brote mortal de Candida auris", "autoimmune": "Enfermedad autoinmune masiva", "globalInfluenza": "Pandemia mundial de gripe", "coronavirusVariant": "Pandemia de una variante del coronavirus", "pathogenX": "Pandemia de un nuevo virus (Patógeno X)", "mpox": "Pandemia de viruela símica (mpox)", "hivVariant": "Pandemia de una nueva variante del VIH/sida", "zombieVirus": "Virus zombi (brote de biolaboratorio)", "engineeredSpanishFlu": "Mutación de gripe española modificada",
-        "mysteriousEncephalitis": "Brote de encefalitis misteriosa", "congoHemorrhagicFever": "Brote de fiebre hemorrágica de Crimea-Congo", "marburgVariant": "Pandemia de una nueva variante del virus de Marburgo", "redTide": "Anomalía de biotoxinas marinas (marea roja)"
+        "dengue": "Brote de dengue",
+        "malaria": "Brote de malaria",
+        "cholera": "Brote de cólera",
+        "typhoid": "Brote de fiebre tifoidea",
+        "tuberculosis": "Brote de tuberculosis",
+        "hepatitisA": "Brote de hepatitis A",
+        "measles": "Brote de sarampión",
+        "polio": "Brote de polio",
+        "diphtheria": "Brote de difteria",
+        "rabies": "Brote de rabia",
+        "avianFlu": "Gripe aviar H5N1",
+        "footAndMouth": "Fiebre aftosa",
+        "ricePlanthopper": "Plaga de saltamontes del arroz",
+        "ganoderma": "Hongo Ganoderma",
+        "tungro": "Virus del tungro del arroz",
+        "ratInfestation": "Plaga masiva de ratas",
+        "bananaWilt": "Marchitez bacteriana del banano",
+        "africanSwineFever": "Peste porcina africana (PPA)",
+        "superbug": "Brote de superbacteria resistente",
+        "candidaAuris": "Brote mortal de Candida auris",
+        "autoimmune": "Enfermedad autoinmune masiva",
+        "globalInfluenza": "Pandemia mundial de gripe",
+        "coronavirusVariant": "Pandemia de una variante del coronavirus",
+        "pathogenX": "Pandemia de un nuevo virus (Patógeno X)",
+        "mpox": "Pandemia de viruela símica (mpox)",
+        "hivVariant": "Pandemia de una nueva variante del VIH/sida",
+        "zombieVirus": "Virus zombi (brote de biolaboratorio)",
+        "engineeredSpanishFlu": "Mutación de gripe española modificada",
+        "mysteriousEncephalitis": "Brote de encefalitis misteriosa",
+        "congoHemorrhagicFever": "Brote de fiebre hemorrágica de Crimea-Congo",
+        "marburgVariant": "Pandemia de una nueva variante del virus de Marburgo",
+        "redTide": "Anomalía de biotoxinas marinas (marea roja)"
       }
     },
     "electricity": {
@@ -1046,9 +1153,53 @@
       "message": "{eventName} en {country} ha provocado un déficit de {deficit} MW y afecta a {areaCount} zonas durante aproximadamente {duration} días.",
       "sender": "COMPAÑÍA ELÉCTRICA ESTATAL (PLN) — {country}",
       "ratingImpact": "La clasificación bajó {impact} puntos",
-      "severities": { "ringan": "LEVE", "sedang": "MODERADA", "berat": "GRAVE", "kritis": "CRÍTICA" },
-      "eventNames": { "mildShortage": "Déficit eléctrico leve", "substationMaintenance": "Mantenimiento de subestación principal", "gasShortage": "Crisis de suministro de gas para centrales", "transmissionFault": "Fallo en la línea principal de transmisión", "hydropowerDrought": "La sequía reduce la energía hidroeléctrica", "turbineFailure": "Avería de turbina en central de carbón", "nationalEnergyCrisis": "Crisis energética nacional", "systemicBlackout": "Apagón sistémico a gran escala" },
-      "areas": { "mediumHousing": "Zona residencial media", "commercialArea": "Zona comercial", "lightIndustry": "Industria ligera", "cityCenterDistrict": "Distrito del centro", "industrialZone": "Zona industrial", "primaryGasPlant": "Central de gas principal", "manufacturingIndustry": "Industria manufacturera", "tradeDistrict": "Distrito comercial", "metropolitanArea": "Área metropolitana", "heavyIndustryZone": "Zona de industria pesada", "dataCenter": "Centro de datos", "primaryHydroSystem": "Sistema hidroeléctrico principal", "energyIntensiveIndustry": "Industria de alto consumo energético", "hospital": "Hospital", "governmentCenter": "Centro gubernamental", "mainCoalPlant": "Central de carbón principal", "strategicIndustrialZone": "Zona industrial estratégica", "internationalAirport": "Aeropuerto internacional", "mainPort": "Puerto principal", "nationalGrid": "Toda la red eléctrica nacional", "vitalIndustry": "Industria esencial", "healthFacilities": "Centros sanitarios", "transportSystem": "Sistema de transporte", "nationalCommunications": "Comunicaciones nacionales", "nationwideGrid": "Red eléctrica nacional", "interconnectionGrid": "Red de interconexión", "criticalInfrastructure": "Infraestructura crítica", "financialSector": "Sector financiero", "emergencyServices": "Servicios de emergencia" }
+      "severities": {
+        "ringan": "LEVE",
+        "sedang": "MODERADA",
+        "berat": "GRAVE",
+        "kritis": "CRÍTICA"
+      },
+      "eventNames": {
+        "mildShortage": "Déficit eléctrico leve",
+        "substationMaintenance": "Mantenimiento de subestación principal",
+        "gasShortage": "Crisis de suministro de gas para centrales",
+        "transmissionFault": "Fallo en la línea principal de transmisión",
+        "hydropowerDrought": "La sequía reduce la energía hidroeléctrica",
+        "turbineFailure": "Avería de turbina en central de carbón",
+        "nationalEnergyCrisis": "Crisis energética nacional",
+        "systemicBlackout": "Apagón sistémico a gran escala"
+      },
+      "areas": {
+        "mediumHousing": "Zona residencial media",
+        "commercialArea": "Zona comercial",
+        "lightIndustry": "Industria ligera",
+        "cityCenterDistrict": "Distrito del centro",
+        "industrialZone": "Zona industrial",
+        "primaryGasPlant": "Central de gas principal",
+        "manufacturingIndustry": "Industria manufacturera",
+        "tradeDistrict": "Distrito comercial",
+        "metropolitanArea": "Área metropolitana",
+        "heavyIndustryZone": "Zona de industria pesada",
+        "dataCenter": "Centro de datos",
+        "primaryHydroSystem": "Sistema hidroeléctrico principal",
+        "energyIntensiveIndustry": "Industria de alto consumo energético",
+        "hospital": "Hospital",
+        "governmentCenter": "Centro gubernamental",
+        "mainCoalPlant": "Central de carbón principal",
+        "strategicIndustrialZone": "Zona industrial estratégica",
+        "internationalAirport": "Aeropuerto internacional",
+        "mainPort": "Puerto principal",
+        "nationalGrid": "Toda la red eléctrica nacional",
+        "vitalIndustry": "Industria esencial",
+        "healthFacilities": "Centros sanitarios",
+        "transportSystem": "Sistema de transporte",
+        "nationalCommunications": "Comunicaciones nacionales",
+        "nationwideGrid": "Red eléctrica nacional",
+        "interconnectionGrid": "Red de interconexión",
+        "criticalInfrastructure": "Infraestructura crítica",
+        "financialSector": "Sector financiero",
+        "emergencyServices": "Servicios de emergencia"
+      }
     }
   },
   "tradeAccess": {

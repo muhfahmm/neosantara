@@ -98,6 +98,12 @@ interface ModalsManagerProps {
   metadata?: Record<string, any>;
   onRemoveNotification?: (notificationId: string) => void;
   onOpenInbox?: () => void;
+  militaryAidContext?: {
+    allyCountry: string;
+    attackerCountry: string;
+    allyIso?: string;
+    attackerIso?: string;
+  } | null;
 }
 
 function ModalsManager({
@@ -125,6 +131,7 @@ function ModalsManager({
   metadata: initialMetadata,
   onRemoveNotification,
   onOpenInbox,
+  militaryAidContext,
 }: ModalsManagerProps) {
   const { t } = useLanguage();
   const [metadata, setMetadata] = useState<Record<string, any>>(() => initialMetadata || {});
@@ -685,6 +692,7 @@ function ModalsManager({
           countryDetail={countryDetail}
           setCountryDetail={setCountryDetail}
           prefetchedAllCountries={prefetchedAllCountries ?? undefined}
+          militaryAidContext={militaryAidContext}
         />
       );
     case "Menu:Intelijen":

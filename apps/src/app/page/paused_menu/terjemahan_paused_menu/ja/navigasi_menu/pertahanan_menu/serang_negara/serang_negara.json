@@ -37,7 +37,9 @@
     "deployGroup": "兵科を展開（100%）",
     "resetGroup": "リセット（0%）",
     "cancel": "キャンセル",
-    "confirm": "攻撃を確認"
+    "confirm": "攻撃を確認",
+    "militaryAidTitle": "軍事支援の確認",
+    "militaryAidConfirm": "軍事支援を派遣"
   },
   "groups": {
     "darat": "陸軍",

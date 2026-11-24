@@ -206,8 +206,12 @@ export function createAllyHelpRequest(
   const notification: BantuanSekutuNotification = {
     id: uniqueId,
     requestId: uniqueId,
-    title: `🛡️ PERMINTAAN BANTUAN: ${context.targetCountry.toUpperCase()}`,
+    title: `🛡️ PERMINTAAN BANTUAN MILITER: ${context.targetCountry.toUpperCase()}`,
+    titleKey: 'side_inbox.dynamicNotifications.alliedAid.title',
+    titleParams: { target: context.targetCountry },
     sender: `KEMENTERIAN PERTAHANAN — ${context.targetCountry.toUpperCase()}`,
+    senderKey: 'side_inbox.dynamicNotifications.alliedAid.sender',
+    senderParams: { target: context.targetCountry },
     ...createInboxNotificationText('side_inbox.notificationMessages.alliedAidRequest', {
       target: context.targetCountry,
       attacker: context.attackerCountry,

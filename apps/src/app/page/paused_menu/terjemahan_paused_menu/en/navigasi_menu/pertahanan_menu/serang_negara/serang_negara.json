@@ -37,7 +37,9 @@
     "deployGroup": "Deploy Branch (100%)",
     "resetGroup": "Reset (0%)",
     "cancel": "Cancel",
-    "confirm": "Confirm Attack"
+    "confirm": "Confirm Attack",
+    "militaryAidTitle": "CONFIRM MILITARY AID",
+    "militaryAidConfirm": "SEND MILITARY AID"
   },
   "groups": {
     "darat": "Land",

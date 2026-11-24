@@ -37,7 +37,9 @@
     "deployGroup": "Desplegar fuerza (100%)",
     "resetGroup": "Restablecer (0%)",
     "cancel": "Cancelar",
-    "confirm": "Confirmar ataque"
+    "confirm": "Confirmar ataque",
+    "militaryAidTitle": "CONFIRMAR AYUDA MILITAR",
+    "militaryAidConfirm": "ENVIAR AYUDA MILITAR"
   },
   "groups": {
     "darat": "Tierra",

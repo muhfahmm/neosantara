@@ -597,24 +597,65 @@
     },
     "options": {
       "water_cannon": {
-        "title": "مدفع المياه", "subtitle": "رش المياه بضغط عالٍ", "description": "يستخدم تياراً مائياً عالي الضغط لتفريق الحشد دون التسبب بإصابات قاتلة.", "effectiveness": "منخفضة (احتمال التفريق 40٪)", "casualties": "0٪ وفيات", "impact": "الرضا -5، والتقييم -2. وقد يؤدي الفشل إلى زيادة عدوانية الحشد وسخريته من قوات الأمن."
+        "title": "مدفع المياه",
+        "subtitle": "رش المياه بضغط عالٍ",
+        "description": "يستخدم تياراً مائياً عالي الضغط لتفريق الحشد دون التسبب بإصابات قاتلة.",
+        "effectiveness": "منخفضة (احتمال التفريق 40٪)",
+        "casualties": "0٪ وفيات",
+        "impact": "الرضا -5، والتقييم -2. وقد يؤدي الفشل إلى زيادة عدوانية الحشد وسخريته من قوات الأمن."
       },
       "gas_air_mata": {
-        "title": "الغاز المسيل للدموع", "subtitle": "غاز CS لتفريق الحشود", "description": "يطلق غاز CS وسط الحشد مسبباً تهيج العينين والجهاز التنفسي.", "effectiveness": "متوسطة (احتمال التفريق 70٪)", "casualties": "إصابات أو ضيق تنفس لدى 1٪–3٪", "impact": "الرضا -10، والتقييم -5. وقد يثير قلقاً محدوداً لدى الأمم المتحدة."
+        "title": "الغاز المسيل للدموع",
+        "subtitle": "غاز CS لتفريق الحشود",
+        "description": "يطلق غاز CS وسط الحشد مسبباً تهيج العينين والجهاز التنفسي.",
+        "effectiveness": "متوسطة (احتمال التفريق 70٪)",
+        "casualties": "إصابات أو ضيق تنفس لدى 1٪–3٪",
+        "impact": "الرضا -10، والتقييم -5. وقد يثير قلقاً محدوداً لدى الأمم المتحدة."
       },
       "jam_malam": {
-        "title": "حظر التجول والحصار", "subtitle": "طوارئ مدنية وقطع الإنترنت وإغلاق الطرق", "description": "يفرض حالة طوارئ مدنية، ويغلق الطرق المؤدية إلى العاصمة، ويقطع اتصالات الإنترنت.", "effectiveness": "متوسطة (تحتاج إلى يومين)", "casualties": "0٪ وفيات", "impact": "الرضا -8، والتقييم -5. تتباطأ التدفقات النقدية اليومية مؤقتاً بسبب تعطل الأعمال."
+        "title": "حظر التجول والحصار",
+        "subtitle": "طوارئ مدنية وقطع الإنترنت وإغلاق الطرق",
+        "description": "يفرض حالة طوارئ مدنية، ويغلق الطرق المؤدية إلى العاصمة، ويقطع اتصالات الإنترنت.",
+        "effectiveness": "متوسطة (تحتاج إلى يومين)",
+        "casualties": "0٪ وفيات",
+        "impact": "الرضا -8، والتقييم -5. تتباطأ التدفقات النقدية اليومية مؤقتاً بسبب تعطل الأعمال."
       },
       "brimob": {
-        "title": "شرطة مكافحة الشغب", "subtitle": "وحدات مكافحة الشغب المزودة بالدروع", "description": "ينشر قوات مكافحة الشغب بالدروع والهراوات لاعتقال المحتجين أو دفعهم إلى الخلف.", "effectiveness": "مرتفعة (احتمال التفريق 85٪)", "casualties": "إصابات خطرة أو حرجة لدى 5٪–12٪", "impact": "الرضا -15، والتقييم -10. يؤدي إلى إدانة أممية لحقوق الإنسان وانخفاض العلاقات الدبلوماسية 20 نقطة."
+        "title": "شرطة مكافحة الشغب",
+        "subtitle": "وحدات مكافحة الشغب المزودة بالدروع",
+        "description": "ينشر قوات مكافحة الشغب بالدروع والهراوات لاعتقال المحتجين أو دفعهم إلى الخلف.",
+        "effectiveness": "مرتفعة (احتمال التفريق 85٪)",
+        "casualties": "إصابات خطرة أو حرجة لدى 5٪–12٪",
+        "impact": "الرضا -15، والتقييم -10. يؤدي إلى إدانة أممية لحقوق الإنسان وانخفاض العلاقات الدبلوماسية 20 نقطة."
       },
       "militer": {
-        "title": "الجيش (تسليح كامل)", "subtitle": "مركبات مدرعة ودبابات وأفراد مسلحون", "description": "ينشر المركبات المدرعة والدبابات والأسلحة النارية لتفريق الحشد بالقوة.", "effectiveness": "مرتفعة جداً (احتمال التفريق 95٪)", "casualties": "وفيات بنسبة 20٪–35٪", "impact": "الرضا -25، والتقييم -20. ومن المرجح جداً أن يعقد مجلس الأمن جلسة طارئة لفرض حظر اقتصادي."
+        "title": "الجيش (تسليح كامل)",
+        "subtitle": "مركبات مدرعة ودبابات وأفراد مسلحون",
+        "description": "ينشر المركبات المدرعة والدبابات والأسلحة النارية لتفريق الحشد بالقوة.",
+        "effectiveness": "مرتفعة جداً (احتمال التفريق 95٪)",
+        "casualties": "وفيات بنسبة 20٪–35٪",
+        "impact": "الرضا -25، والتقييم -20. ومن المرجح جداً أن يعقد مجلس الأمن جلسة طارئة لفرض حظر اقتصادي."
       }
     },
-    "causes": { "subsidi": "الدعم", "harga": "الأسعار", "pajak": "الضرائب" },
-    "statuses": { "active": "مستمر", "inDialogue": "قيد الحوار", "ignored": "متجاهل", "completed": "مكتمل", "riot": "أعمال شغب", "ongoing": "مستمر" },
-    "tooltips": { "hardPower": "استخدم قوات الأمن لتفريق الحشد بالقوة", "dialog": "افتح حواراً عاماً واستمع إلى مطالب المحتجين", "fulfill": "لبِّ المطالب الاقتصادية للمحتجين لتهدئة الغضب الشعبي", "ignore": "اترك المظاهرة دون تدخل حكومي" },
+    "causes": {
+      "subsidi": "الدعم",
+      "harga": "الأسعار",
+      "pajak": "الضرائب"
+    },
+    "statuses": {
+      "active": "مستمر",
+      "inDialogue": "قيد الحوار",
+      "ignored": "متجاهل",
+      "completed": "مكتمل",
+      "riot": "أعمال شغب",
+      "ongoing": "مستمر"
+    },
+    "tooltips": {
+      "hardPower": "استخدم قوات الأمن لتفريق الحشد بالقوة",
+      "dialog": "افتح حواراً عاماً واستمع إلى مطالب المحتجين",
+      "fulfill": "لبِّ المطالب الاقتصادية للمحتجين لتهدئة الغضب الشعبي",
+      "ignore": "اترك المظاهرة دون تدخل حكومي"
+    },
     "mass": "حجم الحشد",
     "people": "مواطن",
     "status": "الحالة",
@@ -1006,6 +1047,10 @@
       "reason2": "الأيديولوجيا المنغلقة تزيد سيطرة الدولة.",
       "reason3": "توتر حمائي مع كتل التجارة الدولية.",
       "customReason": "لا تستوفي التجارة مع {partner} المتطلبات الدبلوماسية والتنظيمية الوطنية. النظام الاقتصادي الحالي: {economy}."
+    },
+    "alliedAid": {
+      "title": "🛡️ طلب مساعدة عسكرية: {target}",
+      "sender": "وزارة الدفاع — {target}"
     }
   },
   "dynamicEventTranslations": {
@@ -1015,12 +1060,41 @@
       "sender": "الوكالة الوطنية لإدارة الكوارث ({country})",
       "isolatedScale": "يؤكد التحليل الميداني أن الكارثة محدودة النطاق.",
       "catastrophicScale": "يؤكد التحليل الميداني وقوع كارثة مدمرة.",
-      "categories": { "geological": "كارثة جيولوجية", "hydrometeorological": "كارثة هيدرومناخية", "fire": "كارثة حريق", "coastal": "كارثة بحرية وساحلية", "environmentalHealth": "أزمة صحة بيئية" },
+      "categories": {
+        "geological": "كارثة جيولوجية",
+        "hydrometeorological": "كارثة هيدرومناخية",
+        "fire": "كارثة حريق",
+        "coastal": "كارثة بحرية وساحلية",
+        "environmentalHealth": "أزمة صحة بيئية"
+      },
       "eventNames": {
-        "earthquakeLight": "زلزال خفيف", "earthquakeMajor": "زلزال قوي", "volcanicEruption": "ثوران بركاني", "tsunami": "تسونامي", "landslide": "انهيار أرضي",
-        "majorFlood": "فيضان كبير", "flashFlood": "فيضان مفاجئ", "drought": "جفاف طويل", "tropicalStorm": "عاصفة استوائية", "cyclone": "إعصار استوائي", "tornado": "إعصار قمعي", "hailstorm": "عاصفة برد شديدة",
-        "forestFire": "حريق غابات", "peatFire": "حريق أراضٍ خثية", "industrialFire": "حريق صناعي", "settlementFire": "حريق في منطقة سكنية مكتظة", "coastalErosion": "تآكل الساحل", "waterspout": "زوبعة مائية", "seaLevelRise": "ارتفاع مستوى البحر",
-        "foodPoisoning": "تسمم غذائي جماعي", "waterContamination": "تلوث مياه الشرب", "airPollution": "تلوث هواء شديد", "hazardousWaste": "أزمة نفايات خطرة", "heatwave": "موجة حر قاتلة", "snowstorm": "عاصفة ثلجية وصقيع شديد", "sinkhole": "حفرة أرضية عملاقة مفاجئة", "refineryFire": "حريق مصفاة ومستودع نفط"
+        "earthquakeLight": "زلزال خفيف",
+        "earthquakeMajor": "زلزال قوي",
+        "volcanicEruption": "ثوران بركاني",
+        "tsunami": "تسونامي",
+        "landslide": "انهيار أرضي",
+        "majorFlood": "فيضان كبير",
+        "flashFlood": "فيضان مفاجئ",
+        "drought": "جفاف طويل",
+        "tropicalStorm": "عاصفة استوائية",
+        "cyclone": "إعصار استوائي",
+        "tornado": "إعصار قمعي",
+        "hailstorm": "عاصفة برد شديدة",
+        "forestFire": "حريق غابات",
+        "peatFire": "حريق أراضٍ خثية",
+        "industrialFire": "حريق صناعي",
+        "settlementFire": "حريق في منطقة سكنية مكتظة",
+        "coastalErosion": "تآكل الساحل",
+        "waterspout": "زوبعة مائية",
+        "seaLevelRise": "ارتفاع مستوى البحر",
+        "foodPoisoning": "تسمم غذائي جماعي",
+        "waterContamination": "تلوث مياه الشرب",
+        "airPollution": "تلوث هواء شديد",
+        "hazardousWaste": "أزمة نفايات خطرة",
+        "heatwave": "موجة حر قاتلة",
+        "snowstorm": "عاصفة ثلجية وصقيع شديد",
+        "sinkhole": "حفرة أرضية عملاقة مفاجئة",
+        "refineryFire": "حريق مصفاة ومستودع نفط"
       }
     },
     "outbreak": {
@@ -1033,12 +1107,45 @@
       "pandemic": "جائحة عالمية",
       "localizedCluster": "بؤرة محلية",
       "superSpreader": "طفرة سلالة فائقة الانتشار",
-      "categories": { "infectious": "مرض معدٍ (وباء)", "animalAndPlant": "مرض حيواني ونباتي (وباء)", "mutations": "طفرة جينية وبكتيريا فائقة", "pandemic": "جائحة عالمية" },
+      "categories": {
+        "infectious": "مرض معدٍ (وباء)",
+        "animalAndPlant": "مرض حيواني ونباتي (وباء)",
+        "mutations": "طفرة جينية وبكتيريا فائقة",
+        "pandemic": "جائحة عالمية"
+      },
       "eventNames": {
-        "dengue": "تفشي حمى الضنك", "malaria": "تفشي الملاريا", "cholera": "تفشي الكوليرا", "typhoid": "تفشي التيفوئيد", "tuberculosis": "تفشي السل", "hepatitisA": "تفشي التهاب الكبد A", "measles": "تفشي الحصبة", "polio": "تفشي شلل الأطفال", "diphtheria": "تفشي الدفتيريا", "rabies": "تفشي داء الكلب",
-        "avianFlu": "إنفلونزا الطيور H5N1", "footAndMouth": "مرض الحمى القلاعية", "ricePlanthopper": "آفة نطاطات الأرز", "ganoderma": "فطر الجانوديرما", "tungro": "فيروس تونغرو الأرز", "ratInfestation": "انتشار كثيف للفئران", "bananaWilt": "ذبول الموز البكتيري", "africanSwineFever": "حمى الخنازير الأفريقية",
-        "superbug": "تفشي بكتيريا فائقة مقاومة للأدوية", "candidaAuris": "تفشي المبيضات أوريس القاتلة", "autoimmune": "مرض مناعي ذاتي جماعي", "globalInfluenza": "جائحة إنفلونزا عالمية", "coronavirusVariant": "جائحة متحور فيروس كورونا", "pathogenX": "جائحة فيروس جديد (الممرض X)", "mpox": "جائحة جدري القرود", "hivVariant": "جائحة متحور جديد لفيروس نقص المناعة", "zombieVirus": "فيروس الزومبي (تفشي مختبر حيوي)", "engineeredSpanishFlu": "طفرة مصطنعة للإنفلونزا الإسبانية",
-        "mysteriousEncephalitis": "تفشي التهاب دماغ غامض", "congoHemorrhagicFever": "تفشي الحمى النزفية الكونغولية", "marburgVariant": "جائحة متحور جديد لفيروس ماربورغ", "redTide": "اختلال السموم الحيوية البحرية (المد الأحمر)"
+        "dengue": "تفشي حمى الضنك",
+        "malaria": "تفشي الملاريا",
+        "cholera": "تفشي الكوليرا",
+        "typhoid": "تفشي التيفوئيد",
+        "tuberculosis": "تفشي السل",
+        "hepatitisA": "تفشي التهاب الكبد A",
+        "measles": "تفشي الحصبة",
+        "polio": "تفشي شلل الأطفال",
+        "diphtheria": "تفشي الدفتيريا",
+        "rabies": "تفشي داء الكلب",
+        "avianFlu": "إنفلونزا الطيور H5N1",
+        "footAndMouth": "مرض الحمى القلاعية",
+        "ricePlanthopper": "آفة نطاطات الأرز",
+        "ganoderma": "فطر الجانوديرما",
+        "tungro": "فيروس تونغرو الأرز",
+        "ratInfestation": "انتشار كثيف للفئران",
+        "bananaWilt": "ذبول الموز البكتيري",
+        "africanSwineFever": "حمى الخنازير الأفريقية",
+        "superbug": "تفشي بكتيريا فائقة مقاومة للأدوية",
+        "candidaAuris": "تفشي المبيضات أوريس القاتلة",
+        "autoimmune": "مرض مناعي ذاتي جماعي",
+        "globalInfluenza": "جائحة إنفلونزا عالمية",
+        "coronavirusVariant": "جائحة متحور فيروس كورونا",
+        "pathogenX": "جائحة فيروس جديد (الممرض X)",
+        "mpox": "جائحة جدري القرود",
+        "hivVariant": "جائحة متحور جديد لفيروس نقص المناعة",
+        "zombieVirus": "فيروس الزومبي (تفشي مختبر حيوي)",
+        "engineeredSpanishFlu": "طفرة مصطنعة للإنفلونزا الإسبانية",
+        "mysteriousEncephalitis": "تفشي التهاب دماغ غامض",
+        "congoHemorrhagicFever": "تفشي الحمى النزفية الكونغولية",
+        "marburgVariant": "جائحة متحور جديد لفيروس ماربورغ",
+        "redTide": "اختلال السموم الحيوية البحرية (المد الأحمر)"
       }
     },
     "electricity": {
@@ -1046,9 +1153,53 @@
       "message": "تسبب {eventName} في {country} بعجز قدره {deficit} ميغاواط وأثر في {areaCount} مناطق لمدة تقارب {duration} يومًا.",
       "sender": "شركة الكهرباء الحكومية (PLN) — {country}",
       "ratingImpact": "انخفض التقييم {impact} نقاط",
-      "severities": { "ringan": "خفيف", "sedang": "متوسط", "berat": "شديد", "kritis": "حرج" },
-      "eventNames": { "mildShortage": "عجز كهربائي خفيف", "substationMaintenance": "صيانة المحطة الفرعية الرئيسية", "gasShortage": "أزمة إمداد الغاز لمحطات التوليد", "transmissionFault": "عطل خط النقل الرئيسي", "hydropowerDrought": "الجفاف يخفض الطاقة الكهرومائية", "turbineFailure": "تعطل توربين محطة الفحم", "nationalEnergyCrisis": "أزمة طاقة وطنية", "systemicBlackout": "انقطاع شامل واسع النطاق" },
-      "areas": { "mediumHousing": "منطقة سكنية متوسطة", "commercialArea": "منطقة تجارية", "lightIndustry": "صناعة خفيفة", "cityCenterDistrict": "منطقة وسط المدينة", "industrialZone": "منطقة صناعية", "primaryGasPlant": "محطة الغاز الرئيسية", "manufacturingIndustry": "الصناعة التحويلية", "tradeDistrict": "منطقة تجارية", "metropolitanArea": "منطقة حضرية كبرى", "heavyIndustryZone": "منطقة صناعة ثقيلة", "dataCenter": "مركز بيانات", "primaryHydroSystem": "نظام الطاقة الكهرومائية الرئيسي", "energyIntensiveIndustry": "صناعة كثيفة الطاقة", "hospital": "مستشفى", "governmentCenter": "مركز حكومي", "mainCoalPlant": "محطة الفحم الرئيسية", "strategicIndustrialZone": "منطقة صناعية استراتيجية", "internationalAirport": "مطار دولي", "mainPort": "الميناء الرئيسي", "nationalGrid": "شبكة الكهرباء الوطنية بالكامل", "vitalIndustry": "صناعة حيوية", "healthFacilities": "مرافق صحية", "transportSystem": "نظام النقل", "nationalCommunications": "الاتصالات الوطنية", "nationwideGrid": "شبكة البلاد", "interconnectionGrid": "شبكة الربط الكهربائي", "criticalInfrastructure": "بنية تحتية حيوية", "financialSector": "القطاع المالي", "emergencyServices": "خدمات الطوارئ" }
+      "severities": {
+        "ringan": "خفيف",
+        "sedang": "متوسط",
+        "berat": "شديد",
+        "kritis": "حرج"
+      },
+      "eventNames": {
+        "mildShortage": "عجز كهربائي خفيف",
+        "substationMaintenance": "صيانة المحطة الفرعية الرئيسية",
+        "gasShortage": "أزمة إمداد الغاز لمحطات التوليد",
+        "transmissionFault": "عطل خط النقل الرئيسي",
+        "hydropowerDrought": "الجفاف يخفض الطاقة الكهرومائية",
+        "turbineFailure": "تعطل توربين محطة الفحم",
+        "nationalEnergyCrisis": "أزمة طاقة وطنية",
+        "systemicBlackout": "انقطاع شامل واسع النطاق"
+      },
+      "areas": {
+        "mediumHousing": "منطقة سكنية متوسطة",
+        "commercialArea": "منطقة تجارية",
+        "lightIndustry": "صناعة خفيفة",
+        "cityCenterDistrict": "منطقة وسط المدينة",
+        "industrialZone": "منطقة صناعية",
+        "primaryGasPlant": "محطة الغاز الرئيسية",
+        "manufacturingIndustry": "الصناعة التحويلية",
+        "tradeDistrict": "منطقة تجارية",
+        "metropolitanArea": "منطقة حضرية كبرى",
+        "heavyIndustryZone": "منطقة صناعة ثقيلة",
+        "dataCenter": "مركز بيانات",
+        "primaryHydroSystem": "نظام الطاقة الكهرومائية الرئيسي",
+        "energyIntensiveIndustry": "صناعة كثيفة الطاقة",
+        "hospital": "مستشفى",
+        "governmentCenter": "مركز حكومي",
+        "mainCoalPlant": "محطة الفحم الرئيسية",
+        "strategicIndustrialZone": "منطقة صناعية استراتيجية",
+        "internationalAirport": "مطار دولي",
+        "mainPort": "الميناء الرئيسي",
+        "nationalGrid": "شبكة الكهرباء الوطنية بالكامل",
+        "vitalIndustry": "صناعة حيوية",
+        "healthFacilities": "مرافق صحية",
+        "transportSystem": "نظام النقل",
+        "nationalCommunications": "الاتصالات الوطنية",
+        "nationwideGrid": "شبكة البلاد",
+        "interconnectionGrid": "شبكة الربط الكهربائي",
+        "criticalInfrastructure": "بنية تحتية حيوية",
+        "financialSector": "القطاع المالي",
+        "emergencyServices": "خدمات الطوارئ"
+      }
     }
   },
   "tradeAccess": {

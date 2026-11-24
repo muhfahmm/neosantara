@@ -4859,6 +4859,12 @@ export default function MapPage() {
 
     const [presidentRating, setPresidentRating] = useState<number>(50);
     const [kesejahteraan, setKesejahteraan] = useState<number>(50);
+    const [militaryAidContext, setMilitaryAidContext] = useState<{
+        allyCountry: string;
+        attackerCountry: string;
+        allyIso?: string;
+        attackerIso?: string;
+    } | null>(null);
     const [notifications, setNotificationsRaw] = useState<NotificationMessage[]>([]);
     const notificationDateRef = useRef('');
     const processedCovertNotificationsRef = useRef<{ countryIdentity: string; ids: Set<string> }>({
@@ -11213,18 +11219,18 @@ export default function MapPage() {
                             );
                         }
 
+                        // Simpan konteks bantuan militer sekutu agar modal pengerahan pasukan langsung diarahkan ke agresor dengan judul 'Konfirmasi Bantuan Militer'
+                        setMilitaryAidContext({
+                            allyCountry,
+                            attackerCountry,
+                            allyIso: tNotif.allyIso,
+                            attackerIso: tNotif.attackerIso,
+                        });
+
                         setInboxModalOpen(false);
 
-                        // Buka alur pengerahan pasukan resmi (Serang Negara terhadap agresor)
+                        // Buka alur pengerahan pasukan resmi (Serang Negara terhadap agresor dalam mode bantuan militer)
                         setActiveMenu('Menu:SerangNegara');
-
-                        setResultModal({
-                            isOpen: true,
-                            title: 'Bantuan Militer Sekutu Diterima',
-                            message: `Pemerintah telah berkomitmen membantu ${allyCountry} melawan agresi militer ${attackerCountry}. Silakan atur dan kerahkan kontingen pasukan Anda melalui menu Operasi Militer. Hubungan diplomatik dengan ${attackerCountry} menurun sebesar ${Math.abs(BANTUAN_SEKUTU_CONFIG.relationPenaltyWithAttackerOnAccept)} poin.`,
-                            type: 'success',
-                            persistent: true,
-                        });
                         return;
                     }
 
@@ -12497,7 +12503,12 @@ export default function MapPage() {
 
             <ModalsManager
                 activeMenu={isWarAnalysisActive ? 'Peta Taktis' : activeMenu}
-                setActiveMenu={setActiveMenu}
+                setActiveMenu={(menu) => {
+                    if (menu !== 'Menu:SerangNegara' && militaryAidContext) {
+                        setMilitaryAidContext(null);
+                    }
+                    setActiveMenu(menu);
+                }}
                 countryDetail={countryDetail}
                 metadata={metadata}
                 setCountryDetail={setCountryDetail}
@@ -12531,6 +12542,7 @@ export default function MapPage() {
                     setNotifications(previous => previous.filter(notification => notification.id !== notificationId));
                 }}
                 onOpenInbox={openInbox}
+                militaryAidContext={militaryAidContext}
             />
 
             {/* Premium Floating Time Controller Widget */}

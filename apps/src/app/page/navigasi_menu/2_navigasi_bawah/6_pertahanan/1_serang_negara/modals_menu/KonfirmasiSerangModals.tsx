@@ -20,6 +20,9 @@ interface SerangModalsProps {
   onConfirm: (deploymentConfig: Record<string, number>) => void;
   onAttackBlocked: (status: PlayerAttackStatus, requestedTarget: string) => void;
   travelFuelStatus: TravelFuelStatus;
+  mode?: "serang" | "bantuan_militer";
+  customTitle?: string;
+  customConfirmLabel?: string;
 }
 
 type ArmadaGroup = "darat" | "laut" | "udara";
@@ -129,10 +132,16 @@ export default function SerangModals({
   onConfirm,
   onAttackBlocked,
   travelFuelStatus,
+  mode = "serang",
+  customTitle,
+  customConfirmLabel,
 }: SerangModalsProps) {
   const { t, language } = useLanguage();
   const tr = (key: string, params?: Record<string, string | number>) =>
     t(`navigation_defense_attack.${key}`, params);
+  const isMilitaryAid = mode === "bantuan_militer";
+  const displayTitle = customTitle || (isMilitaryAid ? (tr("deployment.militaryAidTitle") || "KONFIRMASI BANTUAN MILITER") : tr("deployment.title"));
+  const displayConfirmLabel = customConfirmLabel || (isMilitaryAid ? (tr("deployment.militaryAidConfirm") || "KIRIM BANTUAN MILITER") : tr("deployment.confirm"));
   const [deploymentPct, setDeploymentPct] = useState<Record<string, number>>({});
 
   React.useEffect(() => {
@@ -290,7 +299,7 @@ export default function SerangModals({
                 <Swords className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
               </div>
               <div>
-                <h3 className="text-[length:var(--modal-font-title)] font-bold text-root-accent tracking-tight leading-none uppercase">{tr("deployment.title")}</h3>
+                <h3 className="text-[length:var(--modal-font-title)] font-bold text-root-accent tracking-tight leading-none uppercase">{displayTitle}</h3>
               </div>
             </div>
             <div className="hidden sm:flex items-center gap-2 ml-4 lg:ml-8 pl-4 lg:pl-8 border-l border-root-accent/30">
@@ -503,12 +512,14 @@ export default function SerangModals({
             disabled={!hasDeployedUnits || !travelFuelStatus.ok}
             className={`px-8 py-2 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${
               hasDeployedUnits && travelFuelStatus.ok
-                ? "bg-rose-600 text-white shadow-lg shadow-rose-900/30 hover:bg-rose-500 active:scale-95 cursor-pointer"
+                ? isMilitaryAid
+                  ? "bg-emerald-600 text-white shadow-lg shadow-emerald-900/30 hover:bg-emerald-500 active:scale-95 cursor-pointer"
+                  : "bg-rose-600 text-white shadow-lg shadow-rose-900/30 hover:bg-rose-500 active:scale-95 cursor-pointer"
                 : "bg-gray-800 text-gray-500 border border-gray-700/60 cursor-not-allowed opacity-60"
             }`}
           >
-            <Swords className="w-4 h-4" />
-            {tr("deployment.confirm")}
+            {isMilitaryAid ? <Shield className="w-4 h-4" /> : <Swords className="w-4 h-4" />}
+            {displayConfirmLabel}
           </button>
         </div>
 

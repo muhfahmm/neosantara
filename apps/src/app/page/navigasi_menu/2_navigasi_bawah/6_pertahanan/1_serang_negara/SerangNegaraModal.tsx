@@ -35,6 +35,12 @@ interface ModalProps {
   countryDetail: any;
   setCountryDetail: (detail: any) => void;
   prefetchedAllCountries?: any[];
+  militaryAidContext?: {
+    allyCountry: string;
+    attackerCountry: string;
+    allyIso?: string;
+    attackerIso?: string;
+  } | null;
 }
 
 type RankingRow = {
@@ -60,6 +66,7 @@ export default function SerangNegaraModal({
   countryDetail, 
   setCountryDetail, 
   prefetchedAllCountries,
+  militaryAidContext,
 }: ModalProps) {
   const { t, language } = useLanguage();
   const tr = (key: string, params?: Record<string, string | number>) =>
@@ -292,6 +299,19 @@ export default function SerangNegaraModal({
     attackFuelTripIdRef.current = `military-attack-${attackFuelInstanceId}-${attackFuelTripCounterRef.current}`;
     setIsSerangModalOpen(true);
   };
+
+  // Jika dibuka dari konteks bantuan sekutu, otomatis pilih target agresor dan buka modal konfirmasi bantuan militer
+  React.useEffect(() => {
+    if (!isOpen || !militaryAidContext?.attackerCountry || rankings.length === 0) return;
+    const normAttacker = militaryAidContext.attackerCountry.toLowerCase().trim();
+    const targetMatch = rankings.find(
+      r => r.countryName.toLowerCase().trim() === normAttacker
+    );
+    if (targetMatch) {
+      setSelectedTarget(targetMatch);
+      setIsSerangModalOpen(true);
+    }
+  }, [isOpen, militaryAidContext, rankings]);
 
   const handleConfirmAttack = (deploymentConfig: Record<string, number>) => {
     handleLaunchAttack(deploymentConfig);
@@ -568,6 +588,7 @@ export default function SerangNegaraModal({
           onConfirm={handleConfirmAttack}
           onAttackBlocked={(status, requestedTarget) => setBlockedPlayerAttack({ status, requestedTarget })}
           travelFuelStatus={attackFuelStatus}
+          mode={militaryAidContext ? "bantuan_militer" : "serang"}
         />
       )}
       {selectedTarget && isLaunchConfirmationOpen && (

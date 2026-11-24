@@ -646,6 +646,11 @@ export function getInboxNotificationTitle(
         target: getLocalizedCountryName(notification.targetCountry || ''),
       });
     }
+    if (notification.tradeType === 'bantuan_sekutu') {
+      return t('side_inbox.dynamicNotifications.alliedAid.title', {
+        target: getLocalizedCountryName(notification.targetCountry || (notification as any).allyCountry || ''),
+      });
+    }
     const pbbKind = getLegacyPbbNotificationKind(notification);
     if (pbbKind) return t(getLegacyPbbTranslationKey(pbbKind, 'Title'));
     if (notification.tradeType === 'spionase') {
@@ -765,6 +770,11 @@ export function getInboxNotificationSender(
     }
     if (notification.tradeType === 'usulan_keamanan_pbb') {
       return t('side_inbox.dynamicNotifications.pbb.securityCouncilSender');
+    }
+    if (notification.tradeType === 'bantuan_sekutu') {
+      return t('side_inbox.dynamicNotifications.alliedAid.sender', {
+        target: getLocalizedCountryName(notification.targetCountry || (notification as any).allyCountry || ''),
+      });
     }
     if (getLegacyPbbNotificationKind(notification)) {
       return t('side_inbox.dynamicNotifications.pbb.sender');

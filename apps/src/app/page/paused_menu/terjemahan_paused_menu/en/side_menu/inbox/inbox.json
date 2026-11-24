@@ -597,24 +597,65 @@
     },
     "options": {
       "water_cannon": {
-        "title": "Water Cannon", "subtitle": "High-pressure water spray", "description": "Uses a high-pressure water stream to disperse the crowd without causing fatal injuries.", "effectiveness": "Low (40% chance of dispersal)", "casualties": "0% fatalities", "impact": "Satisfaction -5, approval -2. Failure may make the crowd more aggressive and prompt them to mock security forces."
+        "title": "Water Cannon",
+        "subtitle": "High-pressure water spray",
+        "description": "Uses a high-pressure water stream to disperse the crowd without causing fatal injuries.",
+        "effectiveness": "Low (40% chance of dispersal)",
+        "casualties": "0% fatalities",
+        "impact": "Satisfaction -5, approval -2. Failure may make the crowd more aggressive and prompt them to mock security forces."
       },
       "gas_air_mata": {
-        "title": "Tear Gas", "subtitle": "CS gas for crowd dispersal", "description": "Fires CS gas into the crowd, causing eye and respiratory irritation.", "effectiveness": "Medium (70% chance of dispersal)", "casualties": "1%–3% injured or short of breath", "impact": "Satisfaction -10, approval -5. May prompt mild concern from the UN."
+        "title": "Tear Gas",
+        "subtitle": "CS gas for crowd dispersal",
+        "description": "Fires CS gas into the crowd, causing eye and respiratory irritation.",
+        "effectiveness": "Medium (70% chance of dispersal)",
+        "casualties": "1%–3% injured or short of breath",
+        "impact": "Satisfaction -10, approval -5. May prompt mild concern from the UN."
       },
       "jam_malam": {
-        "title": "Curfew & Blockade", "subtitle": "Civil emergency, internet shutdown, and road closures", "description": "Declares a civil emergency, closes access roads to the capital, and shuts down internet communications.", "effectiveness": "Medium (takes 2 days)", "casualties": "0% fatalities", "impact": "Satisfaction -8, approval -5. Daily cash flow temporarily slows as business activity is disrupted."
+        "title": "Curfew & Blockade",
+        "subtitle": "Civil emergency, internet shutdown, and road closures",
+        "description": "Declares a civil emergency, closes access roads to the capital, and shuts down internet communications.",
+        "effectiveness": "Medium (takes 2 days)",
+        "casualties": "0% fatalities",
+        "impact": "Satisfaction -8, approval -5. Daily cash flow temporarily slows as business activity is disrupted."
       },
       "brimob": {
-        "title": "Riot Police", "subtitle": "Shielded crowd-control units", "description": "Deploys shielded riot police with batons to arrest or push back demonstrators.", "effectiveness": "High (85% chance of dispersal)", "casualties": "5%–12% seriously injured or critical", "impact": "Satisfaction -15, approval -10. Triggers UN human rights condemnation and a 20-point decline in diplomatic relations."
+        "title": "Riot Police",
+        "subtitle": "Shielded crowd-control units",
+        "description": "Deploys shielded riot police with batons to arrest or push back demonstrators.",
+        "effectiveness": "High (85% chance of dispersal)",
+        "casualties": "5%–12% seriously injured or critical",
+        "impact": "Satisfaction -15, approval -10. Triggers UN human rights condemnation and a 20-point decline in diplomatic relations."
       },
       "militer": {
-        "title": "Military (Fully Armed)", "subtitle": "Armored vehicles, tanks, and armed personnel", "description": "Deploys armored vehicles, tanks, and firearms to forcibly disperse the crowd.", "effectiveness": "Very high (95% chance of dispersal)", "casualties": "20%–35% fatalities", "impact": "Satisfaction -25, approval -20. The UN is very likely to convene an emergency session on an economic embargo."
+        "title": "Military (Fully Armed)",
+        "subtitle": "Armored vehicles, tanks, and armed personnel",
+        "description": "Deploys armored vehicles, tanks, and firearms to forcibly disperse the crowd.",
+        "effectiveness": "Very high (95% chance of dispersal)",
+        "casualties": "20%–35% fatalities",
+        "impact": "Satisfaction -25, approval -20. The UN is very likely to convene an emergency session on an economic embargo."
       }
     },
-    "causes": { "subsidi": "Subsidy", "harga": "Prices", "pajak": "Taxes" },
-    "statuses": { "active": "Ongoing", "inDialogue": "In dialogue", "ignored": "Ignored", "completed": "Completed", "riot": "Riot", "ongoing": "Ongoing" },
-    "tooltips": { "hardPower": "Use security forces to disperse the crowd by force", "dialog": "Hold a public dialogue and hear the demonstrators' concerns", "fulfill": "Meet the demonstrators' economic demands to ease public anger", "ignore": "Leave the demonstration without government intervention" },
+    "causes": {
+      "subsidi": "Subsidy",
+      "harga": "Prices",
+      "pajak": "Taxes"
+    },
+    "statuses": {
+      "active": "Ongoing",
+      "inDialogue": "In dialogue",
+      "ignored": "Ignored",
+      "completed": "Completed",
+      "riot": "Riot",
+      "ongoing": "Ongoing"
+    },
+    "tooltips": {
+      "hardPower": "Use security forces to disperse the crowd by force",
+      "dialog": "Hold a public dialogue and hear the demonstrators' concerns",
+      "fulfill": "Meet the demonstrators' economic demands to ease public anger",
+      "ignore": "Leave the demonstration without government intervention"
+    },
     "mass": "Crowd",
     "people": "citizens",
     "status": "Status",
@@ -1006,6 +1047,10 @@
       "reason2": "A closed ideology increases state control.",
       "reason3": "Protectionist friction with international trade blocs.",
       "customReason": "Trade with {partner} does not meet national diplomatic and regulatory requirements. Current economic system: {economy}."
+    },
+    "alliedAid": {
+      "title": "🛡️ MILITARY AID REQUEST: {target}",
+      "sender": "MINISTRY OF DEFENSE — {target}"
     }
   },
   "dynamicEventTranslations": {
@@ -1015,12 +1060,41 @@
       "sender": "NATIONAL DISASTER MANAGEMENT AGENCY ({country})",
       "isolatedScale": "Field analysis confirms an isolated-scale disaster.",
       "catastrophicScale": "Field analysis confirms a catastrophic disaster.",
-      "categories": { "geological": "Geological Disaster", "hydrometeorological": "Hydrometeorological Disaster", "fire": "Fire Disaster", "coastal": "Marine & Coastal Disaster", "environmentalHealth": "Environmental Health Crisis" },
+      "categories": {
+        "geological": "Geological Disaster",
+        "hydrometeorological": "Hydrometeorological Disaster",
+        "fire": "Fire Disaster",
+        "coastal": "Marine & Coastal Disaster",
+        "environmentalHealth": "Environmental Health Crisis"
+      },
       "eventNames": {
-        "earthquakeLight": "Minor Earthquake", "earthquakeMajor": "Major Earthquake", "volcanicEruption": "Volcanic Eruption", "tsunami": "Tsunami", "landslide": "Landslide",
-        "majorFlood": "Major Flood", "flashFlood": "Flash Flood", "drought": "Prolonged Drought", "tropicalStorm": "Tropical Storm", "cyclone": "Tropical Cyclone", "tornado": "Tornado", "hailstorm": "Extreme Hailstorm",
-        "forestFire": "Forest Fire", "peatFire": "Peatland Fire", "industrialFire": "Industrial Fire", "settlementFire": "Dense-Settlement Fire", "coastalErosion": "Coastal Erosion", "waterspout": "Waterspout", "seaLevelRise": "Rising Sea Level",
-        "foodPoisoning": "Mass Food Poisoning", "waterContamination": "Drinking-Water Contamination", "airPollution": "Extreme Air Pollution", "hazardousWaste": "Hazardous-Waste Crisis", "heatwave": "Deadly Heatwave", "snowstorm": "Extreme Snowstorm and Frostbite", "sinkhole": "Sudden Giant Sinkhole", "refineryFire": "Oil Refinery and Depot Fire"
+        "earthquakeLight": "Minor Earthquake",
+        "earthquakeMajor": "Major Earthquake",
+        "volcanicEruption": "Volcanic Eruption",
+        "tsunami": "Tsunami",
+        "landslide": "Landslide",
+        "majorFlood": "Major Flood",
+        "flashFlood": "Flash Flood",
+        "drought": "Prolonged Drought",
+        "tropicalStorm": "Tropical Storm",
+        "cyclone": "Tropical Cyclone",
+        "tornado": "Tornado",
+        "hailstorm": "Extreme Hailstorm",
+        "forestFire": "Forest Fire",
+        "peatFire": "Peatland Fire",
+        "industrialFire": "Industrial Fire",
+        "settlementFire": "Dense-Settlement Fire",
+        "coastalErosion": "Coastal Erosion",
+        "waterspout": "Waterspout",
+        "seaLevelRise": "Rising Sea Level",
+        "foodPoisoning": "Mass Food Poisoning",
+        "waterContamination": "Drinking-Water Contamination",
+        "airPollution": "Extreme Air Pollution",
+        "hazardousWaste": "Hazardous-Waste Crisis",
+        "heatwave": "Deadly Heatwave",
+        "snowstorm": "Extreme Snowstorm and Frostbite",
+        "sinkhole": "Sudden Giant Sinkhole",
+        "refineryFire": "Oil Refinery and Depot Fire"
       }
     },
     "outbreak": {
@@ -1033,12 +1107,45 @@
       "pandemic": "GLOBAL PANDEMIC",
       "localizedCluster": "Localized Cluster",
       "superSpreader": "Super-spreader Strain Mutation",
-      "categories": { "infectious": "Infectious Disease (Epidemic)", "animalAndPlant": "Animal & Plant Disease (Epidemic)", "mutations": "Genetic Mutation & Superbug", "pandemic": "Global Pandemic" },
+      "categories": {
+        "infectious": "Infectious Disease (Epidemic)",
+        "animalAndPlant": "Animal & Plant Disease (Epidemic)",
+        "mutations": "Genetic Mutation & Superbug",
+        "pandemic": "Global Pandemic"
+      },
       "eventNames": {
-        "dengue": "Dengue Fever Outbreak", "malaria": "Malaria Outbreak", "cholera": "Cholera Outbreak", "typhoid": "Typhoid Outbreak", "tuberculosis": "Tuberculosis Outbreak", "hepatitisA": "Hepatitis A Outbreak", "measles": "Measles Outbreak", "polio": "Polio Outbreak", "diphtheria": "Diphtheria Outbreak", "rabies": "Rabies Outbreak",
-        "avianFlu": "H5N1 Avian Influenza", "footAndMouth": "Foot-and-Mouth Disease (FMD)", "ricePlanthopper": "Rice Planthopper Infestation", "ganoderma": "Ganoderma Fungus", "tungro": "Rice Tungro Virus", "ratInfestation": "Mass Rat Infestation", "bananaWilt": "Banana Bacterial Wilt", "africanSwineFever": "African Swine Fever (ASF)",
-        "superbug": "Drug-Resistant Superbug Outbreak", "candidaAuris": "Deadly Candida Auris Outbreak", "autoimmune": "Mass Autoimmune Disease", "globalInfluenza": "Global Influenza Pandemic", "coronavirusVariant": "Mutated Coronavirus Pandemic", "pathogenX": "New Virus Pandemic (Pathogen X)", "mpox": "Monkeypox (Mpox) Pandemic", "hivVariant": "New HIV/AIDS Variant Pandemic", "zombieVirus": "Zombie Virus (Bio-Lab Outbreak)", "engineeredSpanishFlu": "Engineered Spanish Flu Mutation",
-        "mysteriousEncephalitis": "Mysterious Encephalitis Outbreak", "congoHemorrhagicFever": "Congo Hemorrhagic Fever Outbreak (CCHF)", "marburgVariant": "New Marburg Virus Subtype Pandemic", "redTide": "Marine Biotoxin Anomaly (Red Tide)"
+        "dengue": "Dengue Fever Outbreak",
+        "malaria": "Malaria Outbreak",
+        "cholera": "Cholera Outbreak",
+        "typhoid": "Typhoid Outbreak",
+        "tuberculosis": "Tuberculosis Outbreak",
+        "hepatitisA": "Hepatitis A Outbreak",
+        "measles": "Measles Outbreak",
+        "polio": "Polio Outbreak",
+        "diphtheria": "Diphtheria Outbreak",
+        "rabies": "Rabies Outbreak",
+        "avianFlu": "H5N1 Avian Influenza",
+        "footAndMouth": "Foot-and-Mouth Disease (FMD)",
+        "ricePlanthopper": "Rice Planthopper Infestation",
+        "ganoderma": "Ganoderma Fungus",
+        "tungro": "Rice Tungro Virus",
+        "ratInfestation": "Mass Rat Infestation",
+        "bananaWilt": "Banana Bacterial Wilt",
+        "africanSwineFever": "African Swine Fever (ASF)",
+        "superbug": "Drug-Resistant Superbug Outbreak",
+        "candidaAuris": "Deadly Candida Auris Outbreak",
+        "autoimmune": "Mass Autoimmune Disease",
+        "globalInfluenza": "Global Influenza Pandemic",
+        "coronavirusVariant": "Mutated Coronavirus Pandemic",
+        "pathogenX": "New Virus Pandemic (Pathogen X)",
+        "mpox": "Monkeypox (Mpox) Pandemic",
+        "hivVariant": "New HIV/AIDS Variant Pandemic",
+        "zombieVirus": "Zombie Virus (Bio-Lab Outbreak)",
+        "engineeredSpanishFlu": "Engineered Spanish Flu Mutation",
+        "mysteriousEncephalitis": "Mysterious Encephalitis Outbreak",
+        "congoHemorrhagicFever": "Congo Hemorrhagic Fever Outbreak (CCHF)",
+        "marburgVariant": "New Marburg Virus Subtype Pandemic",
+        "redTide": "Marine Biotoxin Anomaly (Red Tide)"
       }
     },
     "electricity": {
@@ -1046,10 +1153,52 @@
       "message": "{eventName} in {country} has caused a {deficit} MW shortfall, affecting {areaCount} areas for an estimated {duration} days.",
       "sender": "STATE ELECTRICITY COMPANY (PLN) — {country}",
       "ratingImpact": "Rating decreased by {impact} points",
-      "severities": { "ringan": "MILD", "sedang": "MODERATE", "berat": "SEVERE", "kritis": "CRITICAL" },
-      "eventNames": { "mildShortage": "Minor Power Deficit", "substationMaintenance": "Main Substation Maintenance", "gasShortage": "Gas Supply Crisis for Gas Plants", "transmissionFault": "Main Transmission-Line Failure", "hydropowerDrought": "Drought Reduces Hydropower", "turbineFailure": "Coal-Plant Turbine Failure", "nationalEnergyCrisis": "National Energy Crisis", "systemicBlackout": "Large-Scale Systemic Blackout" },
+      "severities": {
+        "ringan": "MILD",
+        "sedang": "MODERATE",
+        "berat": "SEVERE",
+        "kritis": "CRITICAL"
+      },
+      "eventNames": {
+        "mildShortage": "Minor Power Deficit",
+        "substationMaintenance": "Main Substation Maintenance",
+        "gasShortage": "Gas Supply Crisis for Gas Plants",
+        "transmissionFault": "Main Transmission-Line Failure",
+        "hydropowerDrought": "Drought Reduces Hydropower",
+        "turbineFailure": "Coal-Plant Turbine Failure",
+        "nationalEnergyCrisis": "National Energy Crisis",
+        "systemicBlackout": "Large-Scale Systemic Blackout"
+      },
       "areas": {
-        "mediumHousing": "Mid-range residential areas", "commercialArea": "Commercial district", "lightIndustry": "Light industry", "cityCenterDistrict": "City-center district", "industrialZone": "Industrial zone", "primaryGasPlant": "Main gas power plant", "manufacturingIndustry": "Manufacturing industry", "tradeDistrict": "Trade district", "metropolitanArea": "Metropolitan area", "heavyIndustryZone": "Heavy-industry zone", "dataCenter": "Data center", "primaryHydroSystem": "Main hydropower system", "energyIntensiveIndustry": "Energy-intensive industry", "hospital": "Hospital", "governmentCenter": "Government center", "mainCoalPlant": "Main coal power plant", "strategicIndustrialZone": "Strategic industrial zone", "internationalAirport": "International airport", "mainPort": "Main port", "nationalGrid": "Entire national power grid", "vitalIndustry": "Critical industry", "healthFacilities": "Healthcare facilities", "transportSystem": "Transport system", "nationalCommunications": "National communications", "nationwideGrid": "Nationwide grid", "interconnectionGrid": "Interconnection grid", "criticalInfrastructure": "Critical infrastructure", "financialSector": "Financial sector", "emergencyServices": "Emergency services"
+        "mediumHousing": "Mid-range residential areas",
+        "commercialArea": "Commercial district",
+        "lightIndustry": "Light industry",
+        "cityCenterDistrict": "City-center district",
+        "industrialZone": "Industrial zone",
+        "primaryGasPlant": "Main gas power plant",
+        "manufacturingIndustry": "Manufacturing industry",
+        "tradeDistrict": "Trade district",
+        "metropolitanArea": "Metropolitan area",
+        "heavyIndustryZone": "Heavy-industry zone",
+        "dataCenter": "Data center",
+        "primaryHydroSystem": "Main hydropower system",
+        "energyIntensiveIndustry": "Energy-intensive industry",
+        "hospital": "Hospital",
+        "governmentCenter": "Government center",
+        "mainCoalPlant": "Main coal power plant",
+        "strategicIndustrialZone": "Strategic industrial zone",
+        "internationalAirport": "International airport",
+        "mainPort": "Main port",
+        "nationalGrid": "Entire national power grid",
+        "vitalIndustry": "Critical industry",
+        "healthFacilities": "Healthcare facilities",
+        "transportSystem": "Transport system",
+        "nationalCommunications": "National communications",
+        "nationwideGrid": "Nationwide grid",
+        "interconnectionGrid": "Interconnection grid",
+        "criticalInfrastructure": "Critical infrastructure",
+        "financialSector": "Financial sector",
+        "emergencyServices": "Emergency services"
       }
     }
   },

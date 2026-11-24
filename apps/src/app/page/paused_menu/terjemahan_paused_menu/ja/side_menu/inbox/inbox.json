@@ -597,24 +597,65 @@
     },
     "options": {
       "water_cannon": {
-        "title": "放水車", "subtitle": "高圧放水", "description": "高圧の水を放ち、致命傷を与えずに群衆を解散させます。", "effectiveness": "低（解散成功率40%）", "casualties": "死亡者0%", "impact": "満足度-5、支持率-2。失敗すると群衆がさらに攻撃的になり、治安部隊を嘲笑する恐れがあります。"
+        "title": "放水車",
+        "subtitle": "高圧放水",
+        "description": "高圧の水を放ち、致命傷を与えずに群衆を解散させます。",
+        "effectiveness": "低（解散成功率40%）",
+        "casualties": "死亡者0%",
+        "impact": "満足度-5、支持率-2。失敗すると群衆がさらに攻撃的になり、治安部隊を嘲笑する恐れがあります。"
       },
       "gas_air_mata": {
-        "title": "催涙ガス", "subtitle": "群衆を解散させるCSガス", "description": "群衆にCSガスを使用し、目や呼吸器に刺激を与えます。", "effectiveness": "中（解散成功率70%）", "casualties": "負傷または呼吸困難1%～3%", "impact": "満足度-10、支持率-5。国連から軽度の懸念が示される可能性があります。"
+        "title": "催涙ガス",
+        "subtitle": "群衆を解散させるCSガス",
+        "description": "群衆にCSガスを使用し、目や呼吸器に刺激を与えます。",
+        "effectiveness": "中（解散成功率70%）",
+        "casualties": "負傷または呼吸困難1%～3%",
+        "impact": "満足度-10、支持率-5。国連から軽度の懸念が示される可能性があります。"
       },
       "jam_malam": {
-        "title": "夜間外出禁止令・封鎖", "subtitle": "市民非常事態、ネット遮断、道路封鎖", "description": "市民非常事態を宣言し、首都への道路を封鎖してインターネット通信を遮断します。", "effectiveness": "中（効果まで2日）", "casualties": "死亡者0%", "impact": "満足度-8、支持率-5。事業活動の停滞により、日々の資金流入が一時的に減少します。"
+        "title": "夜間外出禁止令・封鎖",
+        "subtitle": "市民非常事態、ネット遮断、道路封鎖",
+        "description": "市民非常事態を宣言し、首都への道路を封鎖してインターネット通信を遮断します。",
+        "effectiveness": "中（効果まで2日）",
+        "casualties": "死亡者0%",
+        "impact": "満足度-8、支持率-5。事業活動の停滞により、日々の資金流入が一時的に減少します。"
       },
       "brimob": {
-        "title": "機動隊", "subtitle": "盾を装備した暴動鎮圧部隊", "description": "盾や警棒を装備した機動隊を投入し、デモ参加者を拘束または押し戻します。", "effectiveness": "高（解散成功率85%）", "casualties": "重傷または危篤5%～12%", "impact": "満足度-15、支持率-10。国連の人権非難と外交関係20ポイント低下を招きます。"
+        "title": "機動隊",
+        "subtitle": "盾を装備した暴動鎮圧部隊",
+        "description": "盾や警棒を装備した機動隊を投入し、デモ参加者を拘束または押し戻します。",
+        "effectiveness": "高（解散成功率85%）",
+        "casualties": "重傷または危篤5%～12%",
+        "impact": "満足度-15、支持率-10。国連の人権非難と外交関係20ポイント低下を招きます。"
       },
       "militer": {
-        "title": "軍（完全武装）", "subtitle": "装甲車、戦車、武装兵士", "description": "装甲車、戦車、銃器を投入し、群衆を強制的に解散させます。", "effectiveness": "非常に高（解散成功率95%）", "casualties": "死亡者20%～35%", "impact": "満足度-25、支持率-20。国連が経済禁輸制裁を議論する緊急会合を開く可能性が非常に高いです。"
+        "title": "軍（完全武装）",
+        "subtitle": "装甲車、戦車、武装兵士",
+        "description": "装甲車、戦車、銃器を投入し、群衆を強制的に解散させます。",
+        "effectiveness": "非常に高（解散成功率95%）",
+        "casualties": "死亡者20%～35%",
+        "impact": "満足度-25、支持率-20。国連が経済禁輸制裁を議論する緊急会合を開く可能性が非常に高いです。"
       }
     },
-    "causes": { "subsidi": "補助金", "harga": "価格", "pajak": "税金" },
-    "statuses": { "active": "継続中", "inDialogue": "対話中", "ignored": "無視", "completed": "完了", "riot": "暴動", "ongoing": "継続中" },
-    "tooltips": { "hardPower": "治安部隊を使って群衆を強制的に解散させる", "dialog": "公開対話を行い、デモ参加者の声を聞く", "fulfill": "デモ参加者の経済的要求に応じ、怒りを和らげる", "ignore": "政府が介入せずデモを続けさせる" },
+    "causes": {
+      "subsidi": "補助金",
+      "harga": "価格",
+      "pajak": "税金"
+    },
+    "statuses": {
+      "active": "継続中",
+      "inDialogue": "対話中",
+      "ignored": "無視",
+      "completed": "完了",
+      "riot": "暴動",
+      "ongoing": "継続中"
+    },
+    "tooltips": {
+      "hardPower": "治安部隊を使って群衆を強制的に解散させる",
+      "dialog": "公開対話を行い、デモ参加者の声を聞く",
+      "fulfill": "デモ参加者の経済的要求に応じ、怒りを和らげる",
+      "ignore": "政府が介入せずデモを続けさせる"
+    },
     "mass": "群衆規模",
     "people": "名",
     "status": "状態",
@@ -1006,6 +1047,10 @@
       "reason2": "閉鎖的な思想が国家統制を強めています。",
       "reason3": "国際貿易圏との保護主義的な対立。",
       "customReason": "{partner}との貿易は国内の外交・規制要件を満たしていません。現在の経済体制：{economy}。"
+    },
+    "alliedAid": {
+      "title": "🛡️ 軍事支援要請: {target}",
+      "sender": "防衛省 — {target}"
     }
   },
   "dynamicEventTranslations": {
@@ -1015,12 +1060,41 @@
       "sender": "{country}国家災害管理庁",
       "isolatedScale": "現地分析により局地規模の災害と確認されました。",
       "catastrophicScale": "現地分析により壊滅的な災害と確認されました。",
-      "categories": { "geological": "地質災害", "hydrometeorological": "水文気象災害", "fire": "火災災害", "coastal": "海洋・沿岸災害", "environmentalHealth": "環境衛生危機" },
+      "categories": {
+        "geological": "地質災害",
+        "hydrometeorological": "水文気象災害",
+        "fire": "火災災害",
+        "coastal": "海洋・沿岸災害",
+        "environmentalHealth": "環境衛生危機"
+      },
       "eventNames": {
-        "earthquakeLight": "軽度の地震", "earthquakeMajor": "大地震", "volcanicEruption": "火山噴火", "tsunami": "津波", "landslide": "土砂崩れ",
-        "majorFlood": "大規模洪水", "flashFlood": "鉄砲水", "drought": "長期干ばつ", "tropicalStorm": "熱帯暴風雨", "cyclone": "熱帯低気圧", "tornado": "竜巻", "hailstorm": "激しい雹害",
-        "forestFire": "森林火災", "peatFire": "泥炭地火災", "industrialFire": "工場火災", "settlementFire": "人口密集地の火災", "coastalErosion": "海岸侵食", "waterspout": "海上竜巻", "seaLevelRise": "海面上昇",
-        "foodPoisoning": "集団食中毒", "waterContamination": "飲料水汚染", "airPollution": "深刻な大気汚染", "hazardousWaste": "有害廃棄物危機", "heatwave": "致命的な熱波", "snowstorm": "極端な吹雪と凍傷", "sinkhole": "突発的な巨大陥没穴", "refineryFire": "製油所・石油基地火災"
+        "earthquakeLight": "軽度の地震",
+        "earthquakeMajor": "大地震",
+        "volcanicEruption": "火山噴火",
+        "tsunami": "津波",
+        "landslide": "土砂崩れ",
+        "majorFlood": "大規模洪水",
+        "flashFlood": "鉄砲水",
+        "drought": "長期干ばつ",
+        "tropicalStorm": "熱帯暴風雨",
+        "cyclone": "熱帯低気圧",
+        "tornado": "竜巻",
+        "hailstorm": "激しい雹害",
+        "forestFire": "森林火災",
+        "peatFire": "泥炭地火災",
+        "industrialFire": "工場火災",
+        "settlementFire": "人口密集地の火災",
+        "coastalErosion": "海岸侵食",
+        "waterspout": "海上竜巻",
+        "seaLevelRise": "海面上昇",
+        "foodPoisoning": "集団食中毒",
+        "waterContamination": "飲料水汚染",
+        "airPollution": "深刻な大気汚染",
+        "hazardousWaste": "有害廃棄物危機",
+        "heatwave": "致命的な熱波",
+        "snowstorm": "極端な吹雪と凍傷",
+        "sinkhole": "突発的な巨大陥没穴",
+        "refineryFire": "製油所・石油基地火災"
       }
     },
     "outbreak": {
@@ -1033,12 +1107,45 @@
       "pandemic": "世界的パンデミック",
       "localizedCluster": "局地的クラスター",
       "superSpreader": "スーパースプレッダー株の変異",
-      "categories": { "infectious": "感染症（流行病）", "animalAndPlant": "動植物の病気（流行病）", "mutations": "遺伝子変異・スーパー耐性菌", "pandemic": "世界的パンデミック" },
+      "categories": {
+        "infectious": "感染症（流行病）",
+        "animalAndPlant": "動植物の病気（流行病）",
+        "mutations": "遺伝子変異・スーパー耐性菌",
+        "pandemic": "世界的パンデミック"
+      },
       "eventNames": {
-        "dengue": "デング熱流行", "malaria": "マラリア流行", "cholera": "コレラ流行", "typhoid": "腸チフス流行", "tuberculosis": "結核流行", "hepatitisA": "A型肝炎流行", "measles": "麻疹流行", "polio": "ポリオ流行", "diphtheria": "ジフテリア流行", "rabies": "狂犬病流行",
-        "avianFlu": "H5N1鳥インフルエンザ", "footAndMouth": "口蹄疫", "ricePlanthopper": "稲ウンカ被害", "ganoderma": "ガノデルマ菌", "tungro": "イネ萎縮ウイルス", "ratInfestation": "大規模なネズミ被害", "bananaWilt": "バナナ細菌性萎凋病", "africanSwineFever": "アフリカ豚熱",
-        "superbug": "薬剤耐性スーパーバグ流行", "candidaAuris": "カンジダ・アウリス重症流行", "autoimmune": "自己免疫疾患の集団発生", "globalInfluenza": "世界的インフルエンザ・パンデミック", "coronavirusVariant": "変異コロナウイルス・パンデミック", "pathogenX": "新型ウイルス（病原体X）パンデミック", "mpox": "エムポックス・パンデミック", "hivVariant": "新型HIV/AIDS変異株パンデミック", "zombieVirus": "ゾンビウイルス（生物研究所流出）", "engineeredSpanishFlu": "人工改変されたスペイン風邪変異株",
-        "mysteriousEncephalitis": "原因不明の脳炎流行", "congoHemorrhagicFever": "クリミア・コンゴ出血熱流行", "marburgVariant": "新型マールブルグウイルス・パンデミック", "redTide": "海洋生物毒素異常（赤潮）"
+        "dengue": "デング熱流行",
+        "malaria": "マラリア流行",
+        "cholera": "コレラ流行",
+        "typhoid": "腸チフス流行",
+        "tuberculosis": "結核流行",
+        "hepatitisA": "A型肝炎流行",
+        "measles": "麻疹流行",
+        "polio": "ポリオ流行",
+        "diphtheria": "ジフテリア流行",
+        "rabies": "狂犬病流行",
+        "avianFlu": "H5N1鳥インフルエンザ",
+        "footAndMouth": "口蹄疫",
+        "ricePlanthopper": "稲ウンカ被害",
+        "ganoderma": "ガノデルマ菌",
+        "tungro": "イネ萎縮ウイルス",
+        "ratInfestation": "大規模なネズミ被害",
+        "bananaWilt": "バナナ細菌性萎凋病",
+        "africanSwineFever": "アフリカ豚熱",
+        "superbug": "薬剤耐性スーパーバグ流行",
+        "candidaAuris": "カンジダ・アウリス重症流行",
+        "autoimmune": "自己免疫疾患の集団発生",
+        "globalInfluenza": "世界的インフルエンザ・パンデミック",
+        "coronavirusVariant": "変異コロナウイルス・パンデミック",
+        "pathogenX": "新型ウイルス（病原体X）パンデミック",
+        "mpox": "エムポックス・パンデミック",
+        "hivVariant": "新型HIV/AIDS変異株パンデミック",
+        "zombieVirus": "ゾンビウイルス（生物研究所流出）",
+        "engineeredSpanishFlu": "人工改変されたスペイン風邪変異株",
+        "mysteriousEncephalitis": "原因不明の脳炎流行",
+        "congoHemorrhagicFever": "クリミア・コンゴ出血熱流行",
+        "marburgVariant": "新型マールブルグウイルス・パンデミック",
+        "redTide": "海洋生物毒素異常（赤潮）"
       }
     },
     "electricity": {
@@ -1046,9 +1153,53 @@
       "message": "{country}で{eventName}が発生し、{deficit} MWの不足が生じています。約{areaCount}地域に{duration}日間影響する見込みです。",
       "sender": "{country}国営電力会社（PLN）",
       "ratingImpact": "評価が{impact}ポイント低下",
-      "severities": { "ringan": "軽度", "sedang": "中程度", "berat": "深刻", "kritis": "危機的" },
-      "eventNames": { "mildShortage": "軽度の電力不足", "substationMaintenance": "主要変電所の保守", "gasShortage": "ガス発電所の供給危機", "transmissionFault": "主要送電線の障害", "hydropowerDrought": "干ばつによる水力発電の減少", "turbineFailure": "石炭火力タービンの故障", "nationalEnergyCrisis": "国家エネルギー危機", "systemicBlackout": "大規模な系統停電" },
-      "areas": { "mediumHousing": "中規模住宅地", "commercialArea": "商業地区", "lightIndustry": "軽工業", "cityCenterDistrict": "市街中心地区", "industrialZone": "工業地帯", "primaryGasPlant": "主要ガス発電所", "manufacturingIndustry": "製造業地区", "tradeDistrict": "商業地区", "metropolitanArea": "大都市圏", "heavyIndustryZone": "重工業地帯", "dataCenter": "データセンター", "primaryHydroSystem": "主要水力発電系統", "energyIntensiveIndustry": "エネルギー集約型産業", "hospital": "病院", "governmentCenter": "政府機関地区", "mainCoalPlant": "主要石炭火力発電所", "strategicIndustrialZone": "戦略工業地区", "internationalAirport": "国際空港", "mainPort": "主要港", "nationalGrid": "全国電力網", "vitalIndustry": "基幹産業", "healthFacilities": "医療施設", "transportSystem": "交通網", "nationalCommunications": "国内通信網", "nationwideGrid": "全国の電力網", "interconnectionGrid": "連系系統", "criticalInfrastructure": "重要インフラ", "financialSector": "金融部門", "emergencyServices": "緊急サービス" }
+      "severities": {
+        "ringan": "軽度",
+        "sedang": "中程度",
+        "berat": "深刻",
+        "kritis": "危機的"
+      },
+      "eventNames": {
+        "mildShortage": "軽度の電力不足",
+        "substationMaintenance": "主要変電所の保守",
+        "gasShortage": "ガス発電所の供給危機",
+        "transmissionFault": "主要送電線の障害",
+        "hydropowerDrought": "干ばつによる水力発電の減少",
+        "turbineFailure": "石炭火力タービンの故障",
+        "nationalEnergyCrisis": "国家エネルギー危機",
+        "systemicBlackout": "大規模な系統停電"
+      },
+      "areas": {
+        "mediumHousing": "中規模住宅地",
+        "commercialArea": "商業地区",
+        "lightIndustry": "軽工業",
+        "cityCenterDistrict": "市街中心地区",
+        "industrialZone": "工業地帯",
+        "primaryGasPlant": "主要ガス発電所",
+        "manufacturingIndustry": "製造業地区",
+        "tradeDistrict": "商業地区",
+        "metropolitanArea": "大都市圏",
+        "heavyIndustryZone": "重工業地帯",
+        "dataCenter": "データセンター",
+        "primaryHydroSystem": "主要水力発電系統",
+        "energyIntensiveIndustry": "エネルギー集約型産業",
+        "hospital": "病院",
+        "governmentCenter": "政府機関地区",
+        "mainCoalPlant": "主要石炭火力発電所",
+        "strategicIndustrialZone": "戦略工業地区",
+        "internationalAirport": "国際空港",
+        "mainPort": "主要港",
+        "nationalGrid": "全国電力網",
+        "vitalIndustry": "基幹産業",
+        "healthFacilities": "医療施設",
+        "transportSystem": "交通網",
+        "nationalCommunications": "国内通信網",
+        "nationwideGrid": "全国の電力網",
+        "interconnectionGrid": "連系系統",
+        "criticalInfrastructure": "重要インフラ",
+        "financialSector": "金融部門",
+        "emergencyServices": "緊急サービス"
+      }
     }
   },
   "tradeAccess": {

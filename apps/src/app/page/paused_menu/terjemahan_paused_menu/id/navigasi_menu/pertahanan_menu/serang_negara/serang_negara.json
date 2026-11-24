@@ -37,7 +37,9 @@
     "deployGroup": "Kerahkan Matra (100%)",
     "resetGroup": "Reset (0%)",
     "cancel": "Batal",
-    "confirm": "Konfirmasi Serangan"
+    "confirm": "Konfirmasi Serangan",
+    "militaryAidTitle": "KONFIRMASI BANTUAN MILITER",
+    "militaryAidConfirm": "KIRIM BANTUAN MILITER"
   },
   "groups": {
     "darat": "Darat",

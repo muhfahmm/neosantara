@@ -37,7 +37,9 @@
     "deployGroup": "نشر الفرع (100%)",
     "resetGroup": "إعادة الضبط (0%)",
     "cancel": "إلغاء",
-    "confirm": "تأكيد الهجوم"
+    "confirm": "تأكيد الهجوم",
+    "militaryAidTitle": "تأكيد المساعدة العسكرية",
+    "militaryAidConfirm": "إرسال المساعدة العسكرية"
   },
   "groups": {
     "darat": "القوات البرية",

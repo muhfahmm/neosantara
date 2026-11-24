@@ -597,24 +597,65 @@
     },
     "options": {
       "water_cannon": {
-        "title": "Water Cannon (Meriam Air)", "subtitle": "Semprotan air bertekanan tinggi", "description": "Menyemprotkan air bertekanan tinggi untuk membubarkan massa tanpa menimbulkan luka fatal.", "effectiveness": "Rendah (40% peluang bubar)", "casualties": "0% korban jiwa", "impact": "Kepuasan -5, peringkat -2. Jika gagal, massa menjadi lebih agresif dan mengejek aparat."
+        "title": "Water Cannon (Meriam Air)",
+        "subtitle": "Semprotan air bertekanan tinggi",
+        "description": "Menyemprotkan air bertekanan tinggi untuk membubarkan massa tanpa menimbulkan luka fatal.",
+        "effectiveness": "Rendah (40% peluang bubar)",
+        "casualties": "0% korban jiwa",
+        "impact": "Kepuasan -5, peringkat -2. Jika gagal, massa menjadi lebih agresif dan mengejek aparat."
       },
       "gas_air_mata": {
-        "title": "Gas Air Mata", "subtitle": "Gas CS untuk mengurai kerumunan", "description": "Menembakkan gas CS ke kerumunan sehingga mata dan saluran pernapasan mengalami iritasi.", "effectiveness": "Sedang (70% peluang bubar)", "casualties": "1%–3% luka atau sesak napas", "impact": "Kepuasan -10, peringkat -5. Dapat memicu kecaman ringan dari PBB."
+        "title": "Gas Air Mata",
+        "subtitle": "Gas CS untuk mengurai kerumunan",
+        "description": "Menembakkan gas CS ke kerumunan sehingga mata dan saluran pernapasan mengalami iritasi.",
+        "effectiveness": "Sedang (70% peluang bubar)",
+        "casualties": "1%–3% luka atau sesak napas",
+        "impact": "Kepuasan -10, peringkat -5. Dapat memicu kecaman ringan dari PBB."
       },
       "jam_malam": {
-        "title": "Jam Malam & Blokade", "subtitle": "Darurat sipil, pemadaman internet, dan penutupan jalan", "description": "Menetapkan darurat sipil, menutup akses jalan ibu kota, dan memutus jaringan internet.", "effectiveness": "Sedang (membutuhkan 2 hari)", "casualties": "0% korban jiwa", "impact": "Kepuasan -8, peringkat -5. Arus kas harian melambat sementara karena kegiatan bisnis terganggu."
+        "title": "Jam Malam & Blokade",
+        "subtitle": "Darurat sipil, pemadaman internet, dan penutupan jalan",
+        "description": "Menetapkan darurat sipil, menutup akses jalan ibu kota, dan memutus jaringan internet.",
+        "effectiveness": "Sedang (membutuhkan 2 hari)",
+        "casualties": "0% korban jiwa",
+        "impact": "Kepuasan -8, peringkat -5. Arus kas harian melambat sementara karena kegiatan bisnis terganggu."
       },
       "brimob": {
-        "title": "Brimob / Polisi Antihuru-hara", "subtitle": "Pasukan antihuru-hara dengan tameng", "description": "Mengerahkan pasukan antihuru-hara dengan tameng dan pentungan untuk menangkap atau memukul mundur demonstran.", "effectiveness": "Tinggi (85% peluang bubar)", "casualties": "5%–12% korban luka berat atau kritis", "impact": "Kepuasan -15, peringkat -10. Memicu kecaman HAM PBB dan penurunan hubungan diplomatik sebesar 20."
+        "title": "Brimob / Polisi Antihuru-hara",
+        "subtitle": "Pasukan antihuru-hara dengan tameng",
+        "description": "Mengerahkan pasukan antihuru-hara dengan tameng dan pentungan untuk menangkap atau memukul mundur demonstran.",
+        "effectiveness": "Tinggi (85% peluang bubar)",
+        "casualties": "5%–12% korban luka berat atau kritis",
+        "impact": "Kepuasan -15, peringkat -10. Memicu kecaman HAM PBB dan penurunan hubungan diplomatik sebesar 20."
       },
       "militer": {
-        "title": "Militer (Bersenjata Lengkap)", "subtitle": "Kendaraan lapis baja, tank, dan personel bersenjata", "description": "Mengerahkan kendaraan lapis baja, tank, dan senjata api untuk membubarkan massa secara paksa.", "effectiveness": "Sangat tinggi (95% peluang bubar)", "casualties": "20%–35% korban jiwa", "impact": "Kepuasan -25, peringkat -20. PBB hampir pasti menggelar sidang darurat untuk menjatuhkan sanksi embargo."
+        "title": "Militer (Bersenjata Lengkap)",
+        "subtitle": "Kendaraan lapis baja, tank, dan personel bersenjata",
+        "description": "Mengerahkan kendaraan lapis baja, tank, dan senjata api untuk membubarkan massa secara paksa.",
+        "effectiveness": "Sangat tinggi (95% peluang bubar)",
+        "casualties": "20%–35% korban jiwa",
+        "impact": "Kepuasan -25, peringkat -20. PBB hampir pasti menggelar sidang darurat untuk menjatuhkan sanksi embargo."
       }
     },
-    "causes": { "subsidi": "Subsidi", "harga": "Harga", "pajak": "Pajak" },
-    "statuses": { "active": "Berlangsung", "inDialogue": "Dalam dialog", "ignored": "Diabaikan", "completed": "Selesai", "riot": "Kerusuhan", "ongoing": "Berlangsung" },
-    "tooltips": { "hardPower": "Gunakan aparat keamanan untuk membubarkan massa secara paksa", "dialog": "Lakukan dialog publik dan dengarkan aspirasi demonstran", "fulfill": "Penuhi tuntutan ekonomi demonstran untuk meredakan amarah publik", "ignore": "Biarkan demonstrasi tanpa intervensi pemerintah" },
+    "causes": {
+      "subsidi": "Subsidi",
+      "harga": "Harga",
+      "pajak": "Pajak"
+    },
+    "statuses": {
+      "active": "Berlangsung",
+      "inDialogue": "Dalam dialog",
+      "ignored": "Diabaikan",
+      "completed": "Selesai",
+      "riot": "Kerusuhan",
+      "ongoing": "Berlangsung"
+    },
+    "tooltips": {
+      "hardPower": "Gunakan aparat keamanan untuk membubarkan massa secara paksa",
+      "dialog": "Lakukan dialog publik dan dengarkan aspirasi demonstran",
+      "fulfill": "Penuhi tuntutan ekonomi demonstran untuk meredakan amarah publik",
+      "ignore": "Biarkan demonstrasi tanpa intervensi pemerintah"
+    },
     "mass": "Massa",
     "people": "jiwa",
     "status": "Status",
@@ -1006,6 +1047,10 @@
       "reason2": "Ideologi tertutup meningkatkan kontrol negara.",
       "reason3": "Friksi proteksionisme dengan blok perdagangan internasional.",
       "customReason": "Perdagangan dengan {partner} tidak memenuhi syarat diplomasi dan regulasi nasional. Sistem ekonomi saat ini: {economy}."
+    },
+    "alliedAid": {
+      "title": "🛡️ PERMINTAAN BANTUAN MILITER: {target}",
+      "sender": "KEMENTERIAN PERTAHANAN — {target}"
     }
   },
   "dynamicEventTranslations": {
